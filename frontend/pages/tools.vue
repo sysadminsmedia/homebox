@@ -42,8 +42,9 @@
         <div class="border-t px-6 pb-3 border-gray-300 divide-gray-300 divide-y">
           <DetailAction @action="modals.import = true">
             <template #title>Import Inventory</template>
-            Imports the standard CSV format for Homebox. This will <b>not</b> overwrite any existing items in your
-            inventory. It will only add new items.
+            Imports the standard CSV format for Homebox. Without an <code>HB.import_ref</code> column, this will
+            <b>not</b> overwrite any existing items in your inventory, only add new items. Rows with an
+            <code>HB.import_ref</code> column are merged into existing items with the same import_ref, if one exists.
           </DetailAction>
           <DetailAction @action="getExportCSV()">
             <template #title>Export Inventory</template>
