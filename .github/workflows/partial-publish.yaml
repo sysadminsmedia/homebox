@@ -48,7 +48,7 @@ jobs:
         if: ${{ inputs.release == false }}
         run: |
           docker build --push --no-cache \
-            --tag=ghcr.io/hay-kot/homebox:${{ inputs.tag }} \
+            --tag=ghcr.io/sysadminsmedia/homebox:${{ inputs.tag }} \
             --build-arg=COMMIT=$(git rev-parse HEAD) \
             --build-arg=BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
             --platform=linux/amd64,linux/arm64,linux/arm/v7 .
@@ -57,7 +57,7 @@ jobs:
         if: ${{ inputs.release == false }}
         run: |
           docker build --push --no-cache \
-            --tag=ghcr.io/hay-kot/homebox:${{ inputs.tag }}-rootless \
+            --tag=ghcr.io/sysadminsmedia/homebox:${{ inputs.tag }}-rootless \
             --build-arg=COMMIT=$(git rev-parse HEAD) \
             --build-arg=BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
             --file Dockerfile.rootless \
@@ -67,9 +67,9 @@ jobs:
         if: ${{ inputs.release == true }}
         run: |
           docker build --push --no-cache \
-            --tag ghcr.io/hay-kot/homebox:nightly \
-            --tag ghcr.io/hay-kot/homebox:latest \
-            --tag ghcr.io/hay-kot/homebox:${{ inputs.tag }} \
+            --tag ghcr.io/sysadminsmedia/homebox:nightly \
+            --tag ghcr.io/sysadminsmedia/homebox:latest \
+            --tag ghcr.io/sysadminsmedia/homebox:${{ inputs.tag }} \
             --build-arg VERSION=${{ inputs.tag }} \
             --build-arg COMMIT=$(git rev-parse HEAD) \
             --build-arg BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
@@ -79,9 +79,9 @@ jobs:
         if: ${{ inputs.release == true }}
         run: |
           docker build --push --no-cache \
-            --tag ghcr.io/hay-kot/homebox:nightly-rootless \
-            --tag ghcr.io/hay-kot/homebox:latest-rootless \
-            --tag ghcr.io/hay-kot/homebox:${{ inputs.tag }}-rootless \
+            --tag ghcr.io/sysadminsmedia/homebox:nightly-rootless \
+            --tag ghcr.io/sysadminsmedia/homebox:latest-rootless \
+            --tag ghcr.io/sysadminsmedia/homebox:${{ inputs.tag }}-rootless \
             --build-arg VERSION=${{ inputs.tag }} \
             --build-arg COMMIT=$(git rev-parse HEAD) \
             --build-arg BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
