@@ -11,11 +11,11 @@ env:
 jobs:
   backend-tests:
     name: "Backend Server Tests"
-    uses: hay-kot/homebox/.github/workflows/partial-backend.yaml@main
+    uses: sysadminsmedia/homebox/.github/workflows/partial-backend.yaml@main
 
   frontend-tests:
     name: "Frontend and End-to-End Tests"
-    uses: hay-kot/homebox/.github/workflows/partial-frontend.yaml@main
+    uses: sysadminsmedia/homebox/.github/workflows/partial-frontend.yaml@main
 
   goreleaser:
     name: goreleaser
@@ -52,7 +52,7 @@ jobs:
 
   publish-tag:
     name: "Publish Tag"
-    uses: hay-kot/homebox/.github/workflows/partial-publish.yaml@main
+    uses: sysadminsmedia/homebox/.github/workflows/partial-publish.yaml@main
     with:
       release: true
       tag: ${{ github.ref_name }}
