@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <img src="assets/img/lilbox.svg" width="200px">
+  <img src="/lilbox.svg" width="200px">
   <br>
   Homebox
   <br>
