@@ -22,10 +22,10 @@ export default defineConfig({
       {
         text: 'Advanced',
         items: [
-          { item: 'Import CSV', link: '/import-csv' },
-          { item: 'Build', link: '/build'}
+          { text: 'Import CSV', link: '/import-csv' },
+          { text: 'Build from Source', link: '/build' }
         ]
-      }
+      },
     ],
 
     socialLinks: [
