@@ -2,7 +2,6 @@ package v1
 
 import (
 	"net/http"
-
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 )
@@ -24,8 +23,8 @@ func (ctrl *V1Controller) HandleBillOfMaterialsExport() errchain.HandlerFunc {
 			return err
 		}
 
-		w.Header().Set("Content-Type", "text/tsv")
-		w.Header().Set("Content-Disposition", "attachment; filename=bill-of-materials.tsv")
+		w.Header().Set("Content-Type", "text/csv")
+		w.Header().Set("Content-Disposition", "attachment; filename=bill-of-materials.csv")
 		_, err = w.Write(csv)
 		return err
 	}
