@@ -2,6 +2,7 @@
 name: "Bug Report"
 description: "Submit a bug report for the current release"
 labels: ["bug"]
+projects: ["sysadminsmedia/2"]
 body:
   - type: checkboxes
     id: checks
