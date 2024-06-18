@@ -1,7 +1,7 @@
 package services
 
 import (
-	"github.com/hay-kot/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 )
 
 func defaultLocations() []repo.LocationCreate {

@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
-	"github.com/hay-kot/homebox/backend/internal/sys/validate"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
 
 // routeID extracts the ID from the request URL. If the ID is not in a valid

@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hay-kot/homebox/backend/internal/core/services"
 	"github.com/rs/zerolog/log"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 )
 
 func (a *app) SetupDemo() {

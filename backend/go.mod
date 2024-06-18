@@ -1,4 +1,4 @@
-module github.com/hay-kot/homebox/backend
+module github.com/sysadminsmedia/homebox/backend
 
 go 1.22
 

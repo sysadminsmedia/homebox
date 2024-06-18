@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/hay-kot/homebox/backend/internal/data/ent/migrate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/migrate"
 
 	atlas "ariga.io/atlas/sql/migrate"
 	_ "ariga.io/atlas/sql/sqlite"

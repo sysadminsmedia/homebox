@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/containrrr/shoutrrr"
-	"github.com/hay-kot/homebox/backend/internal/data/repo"
-	"github.com/hay-kot/homebox/backend/internal/data/types"
 	"github.com/rs/zerolog/log"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 )
 
 type BackgroundService struct {
