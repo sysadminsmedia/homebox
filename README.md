@@ -38,5 +38,5 @@ Contributions are what make the open source community such an amazing place to l
 If you are not a coder, you can still contribute financially. Financial contributions help me prioritize working on this project over others and helps me know that there is a real demand for project development.
 
 ## Credits
-
+- Original project by [@hay-kot](https://github.com/hay-kot)
 - Logo by [@lakotelman](https://github.com/lakotelman)
