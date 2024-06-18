@@ -16,7 +16,7 @@ Custom fields are appended to the main details section of your item.
 
 ## Managing Asset IDs
 
-Homebox provides the option to auto-set asset IDs, this is the default behavior. These can be used for tracking assets with printable tags or labels. You can disable this behavior via a command line flag or ENV variable. See [configuration](../quick-start#env-variables-configuration) for more details.
+Homebox provides the option to auto-set asset IDs, this is the default behavior. These can be used for tracking assets with printable tags or labels. You can disable this behavior via a command line flag or ENV variable. See [configuration](/quick-start#env-variables-configuration) for more details.
 
 Example ID: `000-001`
 
