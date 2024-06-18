@@ -48,7 +48,7 @@ volumes:
 ```
 
 ::: info
-    If you use the `rootless` image, and instead of using named volumes you would prefer using a hostMount directly (e.g., `volumes: [ /path/to/data/folder:/data ]`) you need to `chown` the chosen directory in advance to the `65532` user (as shown in the Docker example above).
+If you use the `rootless` image, and instead of using named volumes you would prefer using a hostMount directly (e.g., `volumes: [ /path/to/data/folder:/data ]`) you need to `chown` the chosen directory in advance to the `65532` user (as shown in the Docker example above).
 :::
 
 ## Env Variables & Configuration
@@ -78,34 +78,33 @@ volumes:
 | HBOX_SWAGGER_SCHEMA                  | http                   | swagger schema to use, can be one of: http, https                                  |
 
 ::: tip "CLI Arguments"
-      If you're deploying without docker you can use command line arguments to configure the application. Run `homebox --help` for more information.
+If you're deploying without docker you can use command line arguments to configure the application. Run `homebox --help` for more information.
 
-      ```sh
-      Usage: api [options] [arguments]
+```sh
+Usage: api [options] [arguments]
 
-      OPTIONS
-        --mode/$HBOX_MODE                                                        <string>  (default: development)
-        --web-port/$HBOX_WEB_PORT                                                <string>  (default: 7745)
-        --web-host/$HBOX_WEB_HOST                                                <string>
-        --web-max-upload-size/$HBOX_WEB_MAX_UPLOAD_SIZE                          <int>     (default: 10)
-        --storage-data/$HBOX_STORAGE_DATA                                        <string>  (default: ./.data)
-        --storage-sqlite-url/$HBOX_STORAGE_SQLITE_URL                            <string>  (default: ./.data/homebox.db?_fk=1)
-        --log-level/$HBOX_LOG_LEVEL                                              <string>  (default: info)
-        --log-format/$HBOX_LOG_FORMAT                                            <string>  (default: text)
-        --mailer-host/$HBOX_MAILER_HOST                                          <string>
-        --mailer-port/$HBOX_MAILER_PORT                                          <int>
-        --mailer-username/$HBOX_MAILER_USERNAME                                  <string>
-        --mailer-password/$HBOX_MAILER_PASSWORD                                  <string>
-        --mailer-from/$HBOX_MAILER_FROM                                          <string>
-        --swagger-host/$HBOX_SWAGGER_HOST                                        <string>  (default: localhost:7745)
-        --swagger-scheme/$HBOX_SWAGGER_SCHEME                                    <string>  (default: http)
-        --demo/$HBOX_DEMO                                                        <bool>
-        --debug-enabled/$HBOX_DEBUG_ENABLED                                      <bool>    (default: false)
-        --debug-port/$HBOX_DEBUG_PORT                                            <string>  (default: 4000)
-        --options-allow-registration/$HBOX_OPTIONS_ALLOW_REGISTRATION            <bool>    (default: true)
-        --options-auto-increment-asset-id/$HBOX_OPTIONS_AUTO_INCREMENT_ASSET_ID  <bool>    (default: true)
-        --options-currency-config/$HBOX_OPTIONS_CURRENCY_CONFIG                  <string>
-        --help/-h
-        display this help message
-      ```
+OPTIONS
+--mode/$HBOX_MODE                                                        <string>  (default: development)
+--web-port/$HBOX_WEB_PORT                                                <string>  (default: 7745)
+--web-host/$HBOX_WEB_HOST                                                <string>
+--web-max-upload-size/$HBOX_WEB_MAX_UPLOAD_SIZE                          <int>     (default: 10)
+--storage-data/$HBOX_STORAGE_DATA                                        <string>  (default: ./.data)
+--storage-sqlite-url/$HBOX_STORAGE_SQLITE_URL                            <string>  (default: ./.data/homebox.db?_fk=1)
+--log-level/$HBOX_LOG_LEVEL                                              <string>  (default: info)
+--log-format/$HBOX_LOG_FORMAT                                            <string>  (default: text)
+--mailer-host/$HBOX_MAILER_HOST                                          <string>
+--mailer-port/$HBOX_MAILER_PORT                                          <int>
+--mailer-username/$HBOX_MAILER_USERNAME                                  <string>
+--mailer-password/$HBOX_MAILER_PASSWORD                                  <string>
+--mailer-from/$HBOX_MAILER_FROM                                          <string>
+--swagger-host/$HBOX_SWAGGER_HOST                                        <string>  (default: localhost:7745)
+--swagger-scheme/$HBOX_SWAGGER_SCHEME                                    <string>  (default: http)
+--demo/$HBOX_DEMO                                                        <bool>
+--debug-enabled/$HBOX_DEBUG_ENABLED                                      <bool>    (default: false)
+--debug-port/$HBOX_DEBUG_PORT                                            <string>  (default: 4000)
+--options-allow-registration/$HBOX_OPTIONS_ALLOW_REGISTRATION            <bool>    (default: true)
+--options-auto-increment-asset-id/$HBOX_OPTIONS_AUTO_INCREMENT_ASSET_ID  <bool>    (default: true)
+--options-currency-config/$HBOX_OPTIONS_CURRENCY_CONFIG                  <string>
+--help/-h    display this help message
+```
 :::
