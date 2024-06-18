@@ -3,9 +3,9 @@ package main
 import (
 	"os"
 
-	"github.com/hay-kot/homebox/backend/internal/sys/config"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 )
 
 // setupLogger initializes the zerolog config

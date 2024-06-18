@@ -8,8 +8,8 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/hay-kot/homebox/backend/internal/core/services/reporting"
-	"github.com/hay-kot/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 )
 
 var (

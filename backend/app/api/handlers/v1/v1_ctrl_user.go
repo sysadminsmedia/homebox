@@ -5,12 +5,12 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
-	"github.com/hay-kot/homebox/backend/internal/core/services"
-	"github.com/hay-kot/homebox/backend/internal/data/repo"
-	"github.com/hay-kot/homebox/backend/internal/sys/validate"
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/server"
 	"github.com/rs/zerolog/log"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
 
 // HandleUserRegistration godoc

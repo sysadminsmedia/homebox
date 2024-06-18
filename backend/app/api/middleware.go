@@ -7,11 +7,11 @@ import (
 	"net/url"
 	"strings"
 
-	v1 "github.com/hay-kot/homebox/backend/app/api/handlers/v1"
-	"github.com/hay-kot/homebox/backend/internal/core/services"
-	"github.com/hay-kot/homebox/backend/internal/data/ent"
-	"github.com/hay-kot/homebox/backend/internal/sys/validate"
 	"github.com/hay-kot/httpkit/errchain"
+	v1 "github.com/sysadminsmedia/homebox/backend/app/api/handlers/v1"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
 
 type tokenHasKey struct {

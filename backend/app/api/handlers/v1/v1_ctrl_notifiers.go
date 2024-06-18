@@ -5,10 +5,10 @@ import (
 
 	"github.com/containrrr/shoutrrr"
 	"github.com/google/uuid"
-	"github.com/hay-kot/homebox/backend/internal/core/services"
-	"github.com/hay-kot/homebox/backend/internal/data/repo"
-	"github.com/hay-kot/homebox/backend/internal/web/adapters"
 	"github.com/hay-kot/httpkit/errchain"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/web/adapters"
 )
 
 // HandleGetUserNotifiers godoc

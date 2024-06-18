@@ -4,8 +4,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/hay-kot/homebox/backend/internal/data/repo"
-	"github.com/hay-kot/homebox/backend/pkgs/hasher"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
 )
 
 type GroupService struct {

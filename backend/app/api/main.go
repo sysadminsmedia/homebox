@@ -14,21 +14,21 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
-	"github.com/hay-kot/homebox/backend/internal/core/currencies"
-	"github.com/hay-kot/homebox/backend/internal/core/services"
-	"github.com/hay-kot/homebox/backend/internal/core/services/reporting/eventbus"
-	"github.com/hay-kot/homebox/backend/internal/data/ent"
-	"github.com/hay-kot/homebox/backend/internal/data/migrations"
-	"github.com/hay-kot/homebox/backend/internal/data/repo"
-	"github.com/hay-kot/homebox/backend/internal/sys/config"
-	"github.com/hay-kot/homebox/backend/internal/web/mid"
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/graceful"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/rs/zerolog/pkgerrors"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/currencies"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/migrations"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
+	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
 
-	_ "github.com/hay-kot/homebox/backend/pkgs/cgofreesqlite"
+	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
 )
 
 var (
