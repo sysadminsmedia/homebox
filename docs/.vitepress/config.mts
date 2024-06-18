@@ -4,8 +4,16 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "HomeBox",
   description: "A simple home inventory management software",
+  lastUpdated: true,
   themeConfig: {
     logo: '/lilbox.svg',
+
+    search: {
+      provider: 'local'
+    },
+    editLink: {
+      pattern: 'https://github.com/sysadminsmedia/homebox/edit/main/docs/:path'
+    },
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
