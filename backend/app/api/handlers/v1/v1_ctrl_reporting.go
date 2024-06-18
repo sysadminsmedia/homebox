@@ -3,8 +3,8 @@ package v1
 import (
 	"net/http"
 
-	"github.com/hay-kot/homebox/backend/internal/core/services"
-	"github.com/hay-kot/httpkit/errchain"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
+	"github.com/sysadminsmedia/httpkit/errchain"
 )
 
 // HandleBillOfMaterialsExport godoc
@@ -25,7 +25,7 @@ func (ctrl *V1Controller) HandleBillOfMaterialsExport() errchain.HandlerFunc {
 		}
 
 		w.Header().Set("Content-Type", "text/tsv")
-		w.Header().Set("Content-Disposition", "attachment; filename=bill-of-materials.tsv")
+		w.Header().Set("Content-Disposition", "attachment; filename=bill-of-materials.csv")
 		_, err = w.Write(csv)
 		return err
 	}
