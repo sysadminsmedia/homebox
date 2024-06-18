@@ -20,7 +20,7 @@ jobs:
   publish-nightly:
     name: "Publish Nightly"
     if: github.event_name != 'release'
-    uses: hay-kot/homebox/.github/workflows/partial-publish.yaml@main
+    uses: sysadminsmedia/homebox/.github/workflows/partial-publish.yaml@main
     with:
       tag: nightly
     secrets:
