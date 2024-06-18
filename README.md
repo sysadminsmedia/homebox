@@ -4,7 +4,7 @@
 
 <h1 align="center" style="margin-top: -10px"> HomeBox </h1>
 <p align="center" style="width: 100;">
-   <a href="https://hay-kot.github.io/homebox/">Docs</a>
+   <a href="https://homebox.sysadminsmedia.com">Docs</a>
    |
    <a href="https://homebox.fly.dev">Demo</a>
    |
@@ -21,7 +21,7 @@ Homebox is the inventory and organization system built for the Home User! With a
 
 ## Quick Start
 
-[Configuration & Docker Compose](https://hay-kot.github.io/homebox/quick-start)
+[Configuration & Docker Compose](https://homebox.sysadminsmedia.com/quick-start.html)
 
 ```bash
 # If using the rootless image, ensure data 
@@ -34,8 +34,8 @@ docker run -d \
   --publish 3100:7745 \
   --env TZ=Europe/Bucharest \
   --volume /path/to/data/folder/:/data \
-  ghcr.io/hay-kot/homebox:latest
-# ghcr.io/hay-kot/homebox:latest-rootless
+  ghcr.io/sysadminsmedia/homebox:latest
+# ghcr.io/sysadminsmedia/homebox:latest-rootless
 ```
 
 <!-- CONTRIBUTING -->
