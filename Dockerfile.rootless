@@ -43,7 +43,7 @@ COPY --from=builder --chown=nonroot /go/bin/api /app
 COPY --from=builder --chown=nonroot /data /data
 
 LABEL Name=homebox Version=0.0.1
-LABEL org.opencontainers.image.source="https://github.com/hay-kot/homebox"
+LABEL org.opencontainers.image.source="https://github.com/sysadminsmedia/homebox"
 EXPOSE 7745
 VOLUME [ "/data" ]
 

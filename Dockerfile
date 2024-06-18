@@ -41,7 +41,7 @@ COPY --from=builder /go/bin/api /app
 RUN chmod +x /app/api
 
 LABEL Name=homebox Version=0.0.1
-LABEL org.opencontainers.image.source="https://github.com/hay-kot/homebox"
+LABEL org.opencontainers.image.source="https://github.com/sysadminsmedia/homebox"
 EXPOSE 7745
 WORKDIR /app
 VOLUME [ "/data" ]

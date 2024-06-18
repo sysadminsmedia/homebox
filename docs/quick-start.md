@@ -19,8 +19,8 @@ $ docker run -d \
   --publish 3100:7745 \
   --env TZ=Europe/Bucharest \
   --volume /path/to/data/folder/:/data \
-  ghcr.io/hay-kot/homebox:latest
-# ghcr.io/hay-kot/homebox:latest-rootless
+  ghcr.io/sysadminsmedia/homebox:latest
+# ghcr.io/sysadminsmedia/homebox:latest-rootless
 
 ```
 
@@ -29,8 +29,8 @@ $ docker run -d \
 ```yaml
 services:
   homebox:
-    image: ghcr.io/hay-kot/homebox:latest
-#   image: ghcr.io/hay-kot/homebox:latest-rootless
+    image: ghcr.io/sysadminsmedia/homebox:latest
+#   image: ghcr.io/sysadminsmedia/homebox:latest-rootless
     container_name: homebox
     restart: always
     environment:
@@ -47,8 +47,9 @@ volumes:
      driver: local
 ```
 
-!!! note
+::: info
     If you use the `rootless` image, and instead of using named volumes you would prefer using a hostMount directly (e.g., `volumes: [ /path/to/data/folder:/data ]`) you need to `chown` the chosen directory in advance to the `65532` user (as shown in the Docker example above).
+:::
 
 ## Env Variables & Configuration
 
@@ -76,7 +77,7 @@ volumes:
 | HBOX_SWAGGER_HOST                    | 7745                   | swagger host to use, if not set swagger will be disabled                           |
 | HBOX_SWAGGER_SCHEMA                  | http                   | swagger schema to use, can be one of: http, https                                  |
 
-!!! tip "CLI Arguments"
+::: tip "CLI Arguments"
       If you're deploying without docker you can use command line arguments to configure the application. Run `homebox --help` for more information.
 
       ```sh
@@ -107,3 +108,4 @@ volumes:
         --help/-h
         display this help message
       ```
+:::
