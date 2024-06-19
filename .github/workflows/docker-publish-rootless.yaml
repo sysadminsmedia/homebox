@@ -75,7 +75,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           platforms: linux/amd64,linux/arm64,linux/arm/v7
-          file: Docker.rootless
+          file: {context}/Dockerfile.rootless
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
