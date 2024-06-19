@@ -6,10 +6,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hay-kot/homebox/backend/internal/core/services/reporting/eventbus"
-	"github.com/hay-kot/homebox/backend/internal/data/ent"
-	"github.com/hay-kot/homebox/backend/pkgs/faker"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/faker"
 )
 
 var (

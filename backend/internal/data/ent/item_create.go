@@ -11,13 +11,13 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/attachment"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/group"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/item"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/itemfield"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/label"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/location"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/maintenanceentry"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemfield"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 )
 
 // ItemCreate is the builder for creating a Item entity.

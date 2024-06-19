@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/maintenanceentry"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/predicate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 )
 
 // MaintenanceEntryDelete is the builder for deleting a MaintenanceEntry entity.

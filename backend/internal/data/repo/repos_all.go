@@ -2,8 +2,8 @@
 package repo
 
 import (
-	"github.com/hay-kot/homebox/backend/internal/core/services/reporting/eventbus"
-	"github.com/hay-kot/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 )
 
 // AllRepos is a container for all the repository interfaces

@@ -7,7 +7,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
 	"github.com/google/uuid"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/schema/mixins"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
 )
 
 // Group holds the schema definition for the Group entity.

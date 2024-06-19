@@ -8,10 +8,10 @@ import (
 	"path/filepath"
 
 	"github.com/google/uuid"
-	"github.com/hay-kot/homebox/backend/internal/data/ent"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/document"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/group"
-	"github.com/hay-kot/homebox/backend/pkgs/pathlib"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/document"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/pathlib"
 )
 
 var ErrInvalidDocExtension = errors.New("invalid document extension")

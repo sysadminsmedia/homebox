@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/schema/mixins"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
 )
 
 type MaintenanceEntry struct {

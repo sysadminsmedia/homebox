@@ -2,8 +2,8 @@
 package services
 
 import (
-	"github.com/hay-kot/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/currencies"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 )
 
 type AllServices struct {

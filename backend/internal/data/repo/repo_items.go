@@ -6,16 +6,16 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/hay-kot/homebox/backend/internal/core/services/reporting/eventbus"
-	"github.com/hay-kot/homebox/backend/internal/data/ent"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/attachment"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/group"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/item"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/itemfield"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/label"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/location"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/predicate"
-	"github.com/hay-kot/homebox/backend/internal/data/types"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemfield"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 )
 
 type ItemsRepository struct {
@@ -665,7 +665,7 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, GID uuid.UUID, data
 			SetTextValue(f.TextValue).
 			SetNumberValue(f.NumberValue).
 			SetBooleanValue(f.BooleanValue)
-			// SetTimeValue(f.TimeValue)
+		// SetTimeValue(f.TimeValue)
 
 		_, err = opt.Save(ctx)
 		if err != nil {

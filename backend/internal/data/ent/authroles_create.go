@@ -10,8 +10,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/authroles"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/authtokens"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authroles"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
 )
 
 // AuthRolesCreate is the builder for creating a AuthRoles entity.

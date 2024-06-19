@@ -150,7 +150,7 @@
           <p class="ml-1 text-lg text-base-content/50">Track, Organize, and Manage your Things.</p>
         </div>
         <div class="flex mt-6 sm:mt-0 gap-4 ml-auto text-neutral-content">
-          <a class="tooltip" data-tip="Project Github" href="https://github.com/hay-kot/homebox" target="_blank">
+          <a class="tooltip" data-tip="Project Github" href="https://github.com/sysadminsmedia/homebox" target="_blank">
             <MdiGithub class="h-8 w-8" />
           </a>
           <a href="https://twitter.com/haybytes" class="tooltip" data-tip="Follow The Developer" target="_blank">

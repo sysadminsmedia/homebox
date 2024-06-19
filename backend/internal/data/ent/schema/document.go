@@ -5,7 +5,7 @@ import (
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
-	"github.com/hay-kot/homebox/backend/internal/data/ent/schema/mixins"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
 )
 
 // Document holds the schema definition for the Document entity.

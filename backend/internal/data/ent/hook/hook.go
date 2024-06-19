@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hay-kot/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 )
 
 // The AttachmentFunc type is an adapter to allow the use of ordinary
