@@ -26,6 +26,7 @@ jobs:
       packages: write
       # This is used to complete the identity challenge
       # with sigstore/fulcio when running outside of PRs.
+      attestations: write
       id-token: write
 
     steps:
@@ -92,3 +93,11 @@ jobs:
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+        
+      - name: Attest
+        uses: actions/attest-build-provenance@v1
+        id: attest
+        with:
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          subject-digest: ${{ steps.build-and-push.outputs.digest }}
+          push-to-registry: true
