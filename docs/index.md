@@ -24,7 +24,7 @@ features:
   - title: CSV Import/Export
     details: Import a CSV file to quickly get started with existing information, or export to save information
   - title: Custom Report
-    details: Export bill of mertials, or generate QR codes for items
+    details: Export bill of materials, or generate QR codes for items
   - title: Custom labeling and locations
     details: Use custom labels and locations to organize items
   - title: Multi-Tenant Support
