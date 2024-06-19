@@ -2,7 +2,7 @@ package repo
 
 import (
 	"github.com/google/uuid"
-	"github.com/hay-kot/homebox/backend/pkgs/set"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/set"
 )
 
 // HasID is an interface to entities that have an ID uuid.UUID field and a GetID() method.

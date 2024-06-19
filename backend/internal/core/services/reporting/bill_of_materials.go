@@ -2,8 +2,8 @@ package reporting
 
 import (
 	"github.com/gocarina/gocsv"
-	"github.com/hay-kot/homebox/backend/internal/data/repo"
-	"github.com/hay-kot/homebox/backend/internal/data/types"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 )
 
 // =================================================================================================

@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/hay-kot/homebox/backend/pkgs/hasher"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
 )
 
 func TestAuthTokenRepo_CreateToken(t *testing.T) {
