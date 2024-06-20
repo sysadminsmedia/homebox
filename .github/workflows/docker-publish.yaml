@@ -5,10 +5,20 @@ on:
     - cron: '00 6 * * *'
   push:
     branches: [ "main" ]
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+      - 'CONTRIBUTING.md'
+      - 'CODE_OF_CONDUCT.md'
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ "main" ]
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+      - 'CONTRIBUTING.md'
+      - 'CODE_OF_CONDUCT.md'
 
 env:
   # Use docker.io for Docker Hub if empty

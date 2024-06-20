@@ -5,6 +5,12 @@ on:
     branches:
       - main
 
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+      - 'CONTRIBUTING.md'
+      - 'CODE_OF_CONDUCT.md'
+
 jobs:
   backend-tests:
     name: "Backend Server Tests"
