@@ -5,6 +5,7 @@ type PaginationResult[T any] struct {
 	PageSize int `json:"pageSize"`
 	Total    int `json:"total"`
 	Items    []T `json:"items"`
+	TotalPrice float64 `json:"totalPrice"`
 }
 
 func calculateOffset(page, pageSize int) int {
