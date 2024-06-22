@@ -2469,6 +2469,9 @@
                 "parent": {
                     "$ref": "#/definitions/repo.LocationSummary"
                 },
+                "totalPrice": {
+                    "type": "number"
+                },
                 "updatedAt": {
                     "type": "string"
                 }
@@ -2707,6 +2710,9 @@
                 },
                 "total": {
                     "type": "integer"
+                },
+                "totalPrice": {
+                    "type": "number"
                 }
             }
         },
