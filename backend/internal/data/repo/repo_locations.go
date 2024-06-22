@@ -49,6 +49,7 @@ type (
 		Parent *LocationSummary `json:"parent,omitempty"`
 		LocationSummary
 		Children []LocationSummary `json:"children"`
+		TotalPrice float64 `json:"totalPrice"`
 	}
 )
 
