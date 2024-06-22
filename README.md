@@ -8,7 +8,7 @@
    |
    <a href="https://homebox.fly.dev">Demo</a>
    |
-   <a href="https://discord.gg/tuncmNrE4z">Discord</a>
+   <a href="https://discord.gg/aY4DCkpNA9">Discord</a>
 </p>
 
 ## What is HomeBox
