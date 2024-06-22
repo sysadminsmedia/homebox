@@ -1683,14 +1683,12 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "admin@admin.com",
                         "description": "string",
                         "name": "username",
                         "in": "formData"
                     },
                     {
                         "type": "string",
-                        "example": "admin",
                         "description": "string",
                         "name": "password",
                         "in": "formData"
@@ -2711,8 +2709,8 @@
                 "total": {
                     "type": "integer"
                 },
-                "updatedAt": {
-                    "type": "string"
+                "totalPrice": {
+                    "type": "number"
                 }
             }
         },

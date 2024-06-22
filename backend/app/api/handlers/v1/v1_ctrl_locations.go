@@ -1,10 +1,9 @@
 package v1
 
 import (
-	"net/http"
-	"fmt"
 	"context"
 	"math/big"
+	"net/http"
 
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
@@ -93,7 +92,7 @@ func (ctrl *V1Controller) GetLocationWithPrice(auth context.Context, GID uuid.UU
 	totalPrice := new(big.Int)
 	items, err := ctrl.repo.Items.QueryByGroup(auth, GID, repo.ItemQuery{LocationIDs: []uuid.UUID{ID}})
 	for _, item := range items.Items {
-		totalPrice.Add(totalPrice, big.NewInt(int64(item.PurchasePrice * 100)))
+		totalPrice.Add(totalPrice, big.NewInt(int64(item.PurchasePrice*100)))
 	}
 
 	totalPriceFloat := new(big.Float).SetInt(totalPrice)
