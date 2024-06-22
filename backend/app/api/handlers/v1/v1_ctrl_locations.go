@@ -104,7 +104,7 @@ func (ctrl *V1Controller) GetLocationWithPrice(auth context.Context, GID uuid.UU
 	for _, childLocation := range location.Children {
 		var childLocation, err = ctrl.GetLocationWithPrice(auth, GID, childLocation.ID)
 		if err != nil {
-			fmt.Println(err)
+			return repo.LocationOut{}, err
 		}
 		location.TotalPrice += childLocation.TotalPrice
 	}
