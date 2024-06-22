@@ -1,7 +1,7 @@
 <template>
   <div class="stats bg-neutral shadow rounded-md">
     <div class="stat text-neutral-content text-center space-y-1 p-3">
-      <div class="homebox-stat-title">{{ title }}</div>
+      <div class="stat-title">{{ title }}</div>
       <div class="stat-value text-2xl">
         <Currency v-if="type === 'currency'" :amount="value" />
         <template v-if="type === 'number'">{{ value }}</template>
@@ -26,3 +26,9 @@
     subtitle: undefined,
   });
 </script>
+
+<style>
+  [data-theme="homebox"] .stat-title {
+    color: hsl(0 0% 90/0.6);
+  }
+</style>
