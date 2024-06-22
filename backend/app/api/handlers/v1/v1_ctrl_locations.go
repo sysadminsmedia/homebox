@@ -2,6 +2,9 @@ package v1
 
 import (
 	"net/http"
+	"fmt"
+	"context"
+	"math/big"
 
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
@@ -83,6 +86,32 @@ func (ctrl *V1Controller) HandleLocationDelete() errchain.HandlerFunc {
 	return adapters.CommandID("id", fn, http.StatusNoContent)
 }
 
+func (ctrl *V1Controller) GetLocationWithPrice(auth context.Context, GID uuid.UUID, ID uuid.UUID) (repo.LocationOut, error) {
+	var location, err = ctrl.repo.Locations.GetOneByGroup(auth, GID, ID)
+
+	// Add direct child items price
+	totalPrice := new(big.Int)
+	items, err := ctrl.repo.Items.QueryByGroup(auth, GID, repo.ItemQuery{LocationIDs: []uuid.UUID{ID}})
+	for _, item := range items.Items {
+		totalPrice.Add(totalPrice, big.NewInt(int64(item.PurchasePrice * 100)))
+	}
+
+	totalPriceFloat := new(big.Float).SetInt(totalPrice)
+	totalPriceFloat.Quo(totalPriceFloat, big.NewFloat(100))
+	location.TotalPrice, _ = totalPriceFloat.Float64()
+
+	// Add price from child locations
+	for _, childLocation := range location.Children {
+		var childLocation, err = ctrl.GetLocationWithPrice(auth, GID, childLocation.ID)
+		if err != nil {
+			fmt.Println(err)
+		}
+		location.TotalPrice += childLocation.TotalPrice
+	}
+
+	return location, err
+}
+
 // HandleLocationGet godoc
 //
 //	@Summary  Get Location
@@ -95,7 +124,9 @@ func (ctrl *V1Controller) HandleLocationDelete() errchain.HandlerFunc {
 func (ctrl *V1Controller) HandleLocationGet() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID) (repo.LocationOut, error) {
 		auth := services.NewContext(r.Context())
-		return ctrl.repo.Locations.GetOneByGroup(auth, auth.GID, ID)
+		var location, err = ctrl.GetLocationWithPrice(auth, auth.GID, ID)
+
+		return location, err
 	}
 
 	return adapters.CommandID("id", fn, http.StatusOK)
