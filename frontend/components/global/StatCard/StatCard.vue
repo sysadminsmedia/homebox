@@ -26,3 +26,9 @@
     subtitle: undefined,
   });
 </script>
+
+<style>
+  [data-theme="homebox"] .stat-title {
+    color: hsl(0 0% 90/0.6);
+  }
+</style>
