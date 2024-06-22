@@ -5,11 +5,9 @@ on:
     branches:
       - main
 
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CONTRIBUTING.md'
-      - 'CODE_OF_CONDUCT.md'
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
 
 jobs:
   backend-tests:
