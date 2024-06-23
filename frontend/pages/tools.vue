@@ -78,7 +78,7 @@
             Resets the time value for all date time fields in your inventory to the beginning of the date. This is to
             fix a bug that was introduced early on in the development of the site that caused the time value to be
             stored with the time which caused issues with date fields displaying accurate values.
-            <a class="link" href="https://github.com/sysadminsmedia/homebox/issues/236" target="_blank">
+            <a class="link" href="https://github.com/hay-kot/homebox/issues/236" target="_blank">
               See Github Issue #236 for more details.
             </a>
           </DetailAction>
@@ -86,7 +86,7 @@
             <template #title> Set Primary Photos </template>
             In version v0.10.0 of Homebox, the primary image field was added to attachments of type photo. This action
             will set the primary image field to the first image in the attachments array in the database, if it is not
-            already set. <a class="link" href="https://github.com/sysadminsmedia/homebox/pull/576">See GitHub PR #576</a>
+            already set. <a class="link" href="https://github.com/hay-kot/homebox/pull/576">See GitHub PR #576</a>
           </DetailAction>
         </div>
       </BaseCard>
