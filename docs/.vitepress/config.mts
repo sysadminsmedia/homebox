@@ -20,6 +20,7 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
+      { text: 'API', link: 'https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/sysadminsmedia/homebox/main/docs/docs/api/openapi-2.0.json' }
     ],
 
     sidebar: [
@@ -40,7 +41,9 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/sysadminsmedia/homebox' }
+      { icon: 'discord', link: 'https://discord.gg/aY4DCkpNA9' },
+      { icon: 'github', link: 'https://github.com/sysadminsmedia/homebox' },
+      { icon: 'mastodon', link: 'https://noc.social/@sysadminszone' },
     ]
   }
 })
