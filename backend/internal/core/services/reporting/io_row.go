@@ -12,7 +12,7 @@ type ExportItemFields struct {
 	Value string
 }
 
-type ExportTSVRow struct {
+type ExportCSVRow struct {
 	ImportRef string         `csv:"HB.import_ref"`
 	Location  LocationString `csv:"HB.location"`
 	LabelStr  LabelString    `csv:"HB.labels"`

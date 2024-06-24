@@ -19,12 +19,12 @@ import (
 // items from homebox. It is used to read/write the data from/to a CSV/TSV file given
 // the standard format of the file.
 //
-// See ExportTSVRow for the format of the data in the sheet.
+// See ExportCSVRow for the format of the data in the sheet.
 type IOSheet struct {
 	headers []string
 	custom  []int
 	index   map[string]int
-	Rows    []ExportTSVRow
+	Rows    []ExportCSVRow
 }
 
 func (s *IOSheet) indexHeaders() {
@@ -70,16 +70,16 @@ func (s *IOSheet) Read(data io.Reader) error {
 	}
 
 	s.headers = sheet[0]
-	s.Rows = make([]ExportTSVRow, len(sheet)-1)
+	s.Rows = make([]ExportCSVRow, len(sheet)-1)
 
 	for i, row := range sheet[1:] {
 		if len(row) != len(s.headers) {
 			return fmt.Errorf("row has %d columns, expected %d", len(row), len(s.headers))
 		}
 
-		rowData := ExportTSVRow{}
+		rowData := ExportCSVRow{}
 
-		st := reflect.TypeOf(ExportTSVRow{})
+		st := reflect.TypeOf(ExportCSVRow{})
 
 		for i := 0; i < st.NumField(); i++ {
 			field := st.Field(i)
@@ -154,7 +154,7 @@ func (s *IOSheet) Read(data io.Reader) error {
 
 // ReadItems writes the sheet to a writer.
 func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, GID uuid.UUID, repos *repo.AllRepos) error {
-	s.Rows = make([]ExportTSVRow, len(items))
+	s.Rows = make([]ExportCSVRow, len(items))
 
 	extraHeaders := map[string]struct{}{}
 
@@ -189,7 +189,7 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, GID uuid.
 			}
 		}
 
-		s.Rows[i] = ExportTSVRow{
+		s.Rows[i] = ExportCSVRow{
 			// fill struct
 			Location: locString,
 			LabelStr: labelString,
@@ -232,7 +232,7 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, GID uuid.
 
 	sort.Strings(customHeaders)
 
-	st := reflect.TypeOf(ExportTSVRow{})
+	st := reflect.TypeOf(ExportCSVRow{})
 
 	// Write headers
 	for i := 0; i < st.NumField(); i++ {
@@ -252,8 +252,8 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, GID uuid.
 	return nil
 }
 
-// TSV writes the current sheet to a writer in TSV format.
-func (s *IOSheet) TSV() ([][]string, error) {
+// CSV writes the current sheet to a 2d array, for compatibility with TSV/CSV files.
+func (s *IOSheet) CSV() ([][]string, error) {
 	memcsv := make([][]string, len(s.Rows)+1)
 
 	memcsv[0] = s.headers

@@ -22,7 +22,7 @@
           </DetailAction>
           <DetailAction @action="getBillOfMaterials()">
             <template #title>Bill of Materials</template>
-            Generates a TSV (Tab Separated Values) file that can be imported into a spreadsheet program. This is a
+            Generates a CSV (Comma Separated Values) file that can be imported into a spreadsheet program. This is a
             summary of your inventory with basic item and pricing information.
             <template #button> Generate BOM </template>
           </DetailAction>
@@ -45,7 +45,7 @@
             Imports the standard CSV format for Homebox. This will <b>not</b> overwrite any existing items in your
             inventory. It will only add new items.
           </DetailAction>
-          <DetailAction @action="getExportTSV()">
+          <DetailAction @action="getExportCSV()">
             <template #title>Export Inventory</template>
             Exports the standard CSV format for Homebox. This will export all items in your inventory.
           </DetailAction>
@@ -123,7 +123,7 @@
     window.open(url, "_blank");
   }
 
-  function getExportTSV() {
+  function getExportCSV() {
     const url = api.items.exportURL();
     window.open(url, "_blank");
   }

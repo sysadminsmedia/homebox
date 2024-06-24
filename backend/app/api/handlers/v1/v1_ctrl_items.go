@@ -323,17 +323,17 @@ func (ctrl *V1Controller) HandleItemsExport() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		ctx := services.NewContext(r.Context())
 
-		csvData, err := ctrl.svc.Items.ExportTSV(r.Context(), ctx.GID)
+		csvData, err := ctrl.svc.Items.ExportCSV(r.Context(), ctx.GID)
 		if err != nil {
 			log.Err(err).Msg("failed to export items")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
-		w.Header().Set("Content-Type", "text/tsv")
-		w.Header().Set("Content-Disposition", "attachment;filename=homebox-items.tsv")
+		w.Header().Set("Content-Type", "text/csv")
+		w.Header().Set("Content-Disposition", "attachment;filename=homebox-items.csv")
 
 		writer := csv.NewWriter(w)
-		writer.Comma = '\t'
+		writer.Comma = ','
 		return writer.WriteAll(csvData)
 	}
 }
