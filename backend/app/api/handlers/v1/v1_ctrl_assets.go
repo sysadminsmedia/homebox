@@ -30,7 +30,7 @@ func (ctrl *V1Controller) HandleAssetGet() errchain.HandlerFunc {
 		assetIDParam := chi.URLParam(r, "id")
 		assetIDParam = strings.ReplaceAll(assetIDParam, "-", "") // Remove dashes
 		// Convert the asset ID to an int64
-		assetID, err := strconv.ParseInt(assetIDParam, 10, 32)
+		assetID, err := strconv.ParseInt(assetIDParam, 10, 64)
 		if err != nil {
 			return err
 		}
