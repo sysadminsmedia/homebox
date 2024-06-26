@@ -20,9 +20,9 @@ type BillOfMaterialsEntry struct {
 	TotalPrice   float64    `csv:"Total Price"`
 }
 
-// BillOfMaterialsTSV returns a byte slice of the Bill of Materials for a given GID in TSV format
+// BillOfMaterialsCSV returns a byte slice of the Bill of Materials for a given GID in CSV format
 // See BillOfMaterialsEntry for the format of the output
-func BillOfMaterialsTSV(entities []repo.ItemOut) ([]byte, error) {
+func BillOfMaterialsCSV(entities []repo.ItemOut) ([]byte, error) {
 	bomEntries := make([]BillOfMaterialsEntry, len(entities))
 	for i, entity := range entities {
 		bomEntries[i] = BillOfMaterialsEntry{

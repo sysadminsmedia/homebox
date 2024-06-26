@@ -329,7 +329,7 @@ func (svc *ItemService) CsvImport(ctx context.Context, GID uuid.UUID, data io.Re
 	return finished, nil
 }
 
-func (svc *ItemService) ExportTSV(ctx context.Context, GID uuid.UUID) ([][]string, error) {
+func (svc *ItemService) ExportCSV(ctx context.Context, GID uuid.UUID) ([][]string, error) {
 	items, err := svc.repo.Items.GetAll(ctx, GID)
 	if err != nil {
 		return nil, err
@@ -342,14 +342,14 @@ func (svc *ItemService) ExportTSV(ctx context.Context, GID uuid.UUID) ([][]strin
 		return nil, err
 	}
 
-	return sheet.TSV()
+	return sheet.CSV()
 }
 
-func (svc *ItemService) ExportBillOfMaterialsTSV(ctx context.Context, GID uuid.UUID) ([]byte, error) {
+func (svc *ItemService) ExportBillOfMaterialsCSV(ctx context.Context, GID uuid.UUID) ([]byte, error) {
 	items, err := svc.repo.Items.GetAll(ctx, GID)
 	if err != nil {
 		return nil, err
 	}
 
-	return reporting.BillOfMaterialsTSV(items)
+	return reporting.BillOfMaterialsCSV(items)
 }

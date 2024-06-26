@@ -27,13 +27,13 @@ func TestSheet_Read(t *testing.T) {
 	tests := []struct {
 		name    string
 		data    []byte
-		want    []ExportTSVRow
+		want    []ExportCSVRow
 		wantErr bool
 	}{
 		{
 			name: "minimal import",
 			data: minimalImportCSV,
-			want: []ExportTSVRow{
+			want: []ExportCSVRow{
 				{Location: LocationString{"loc"}, Name: "Item 1", Quantity: 1, Description: "Description 1"},
 				{Location: LocationString{"loc"}, Name: "Item 2", Quantity: 2, Description: "Description 2"},
 				{Location: LocationString{"loc"}, Name: "Item 3", Quantity: 3, Description: "Description 3"},
@@ -42,7 +42,7 @@ func TestSheet_Read(t *testing.T) {
 		{
 			name: "custom field import",
 			data: customFieldImportCSV,
-			want: []ExportTSVRow{
+			want: []ExportCSVRow{
 				{
 					Location: LocationString{"loc"}, Name: "Item 1", Quantity: 1, Description: "Description 1",
 					Fields: []ExportItemFields{
@@ -72,7 +72,7 @@ func TestSheet_Read(t *testing.T) {
 		{
 			name: "custom types import",
 			data: customTypesImportCSV,
-			want: []ExportTSVRow{
+			want: []ExportCSVRow{
 				{
 					Name:     "Item 1",
 					AssetID:  repo.AssetID(1),
