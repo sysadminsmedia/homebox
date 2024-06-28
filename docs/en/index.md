@@ -11,10 +11,10 @@ hero:
   actions:
     - theme: brand
       text: Quick Start
-      link: /quick-start
+      link: /en/quick-start
     - theme: alt
       text: Tips and Tricks
-      link: /tips-tricks
+      link: /en/tips-tricks
 
 features:
   - title: Add/Update/Delete Items

@@ -8,6 +8,14 @@ export default defineConfig({
   sitemap: {
     hostname: 'https://homebox.sysadminsmedia.com',
   },
+
+  locales: {
+    en: {
+      label: 'English',
+      lang: 'en',
+    }
+  },
+
   themeConfig: {
     logo: '/lilbox.svg',
 
@@ -23,22 +31,30 @@ export default defineConfig({
       { text: 'API', link: 'https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/sysadminsmedia/homebox/main/docs/docs/api/openapi-2.0.json' }
     ],
 
-    sidebar: [
-      {
-        text: 'Getting Started',
-        items: [
-          { text: 'Quick Start', link: '/quick-start' },
-          { text: 'Tips and Tricks', link: '/tips-tricks' }
-        ]
-      },
-      {
-        text: 'Advanced',
-        items: [
-          { text: 'Import CSV', link: '/import-csv' },
-          { text: 'Build from Source', link: '/build' }
-        ]
-      },
-    ],
+    sidebar: {
+      '/en/': [
+        {
+          text: 'Getting Started',
+          items: [
+            { text: 'Quick Start', link: '/en/quick-start' },
+            { text: 'Tips and Tricks', link: '/en/tips-tricks' }
+          ]
+        },
+        {
+          text: 'Advanced',
+          items: [
+            { text: 'Import CSV', link: '/en/import-csv' },
+          ]
+        },
+        {
+          text: 'Contributing',
+          items: [
+            { text: 'Get Started', link: '/en/contribute/get-started' },
+            { text: 'Bounty Program', link: '/en/contribute/bounty' }
+          ]
+        }
+      ]
+    },
 
     socialLinks: [
       { icon: 'discord', link: 'https://discord.gg/aY4DCkpNA9' },
