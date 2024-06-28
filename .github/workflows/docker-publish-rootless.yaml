@@ -88,7 +88,7 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             VERSION=${{ github.ref_name }}
-            COMMIT=${{ github.sha	}}
+            COMMIT=${{ github.sha }}
 
       - name: Attest
         uses: actions/attest-build-provenance@v1
