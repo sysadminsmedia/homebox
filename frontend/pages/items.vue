@@ -39,6 +39,7 @@
   const advanced = useRouteQuery("advanced", false);
   const includeArchived = useRouteQuery("archived", false);
   const fieldSelector = useRouteQuery("fieldSelector", false);
+  const negateLabels = useRouteQuery("negateLabels", false);
 
   const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
   const hasNext = computed(() => page.value * pageSize.value < total.value);
@@ -162,6 +163,12 @@
     }
   });
 
+  watch(negateLabels, (newV, oldV) => {
+    if (newV !== oldV) {
+      search();
+    }
+  });
+
   async function fetchValues(field: string): Promise<string[]> {
     if (fieldValuesCache.value[field]) {
       return fieldValuesCache.value[field];
@@ -193,6 +200,7 @@
           page: page.value,
           pageSize: pageSize.value,
           includeArchived: includeArchived.value ? "true" : "false",
+          negateLabels: negateLabels.value ? "true" : "false",
         },
       });
     }
@@ -219,6 +227,7 @@
       q: query.value || "",
       locations: locIDs.value,
       labels: labIDs.value,
+      negateLabels: negateLabels.value,
       includeArchived: includeArchived.value,
       page: page.value,
       pageSize: pageSize.value,
@@ -268,6 +277,7 @@
         advanced: "true",
         archived: includeArchived.value ? "true" : "false",
         fieldSelector: fieldSelector.value ? "true" : "false",
+        negateLabels: negateLabels.value ? "true" : "false",
         pageSize: pageSize.value,
         page: page.value,
         q: query.value,
@@ -358,6 +368,10 @@
             <label class="label cursor-pointer mr-auto">
               <input v-model="fieldSelector" type="checkbox" class="toggle toggle-sm toggle-primary" />
               <span class="label-text ml-4"> Field Selector </span>
+            </label>
+            <label class="label cursor-pointer mr-auto">
+              <input v-model="negateLabels" type="checkbox" class="toggle toggle-sm toggle-primary" />
+              <span class="label-text ml-4"> Negate selected labels </span>
             </label>
             <hr class="my-2" />
             <BaseButton class="btn-block btn-sm" @click="reset"> Reset Search</BaseButton>

@@ -36,6 +36,7 @@ type (
 		AssetID         AssetID      `json:"assetId"`
 		LocationIDs     []uuid.UUID  `json:"locationIds"`
 		LabelIDs        []uuid.UUID  `json:"labelIds"`
+		NegateLabels    bool         `json:"negateLabels"`
 		ParentItemIDs   []uuid.UUID  `json:"parentIds"`
 		SortBy          string       `json:"sortBy"`
 		IncludeArchived bool         `json:"includeArchived"`
@@ -365,10 +366,17 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 		if len(q.LabelIDs) > 0 {
 			labelPredicates := make([]predicate.Item, 0, len(q.LabelIDs))
 			for _, l := range q.LabelIDs {
-				labelPredicates = append(labelPredicates, item.HasLabelWith(label.ID(l)))
+				if !q.NegateLabels {
+					labelPredicates = append(labelPredicates, item.HasLabelWith(label.ID(l)))
+				} else {
+					labelPredicates = append(labelPredicates, item.Not(item.HasLabelWith(label.ID(l))))
+				}
 			}
-
-			andPredicates = append(andPredicates, item.Or(labelPredicates...))
+			if !q.NegateLabels {
+				andPredicates = append(andPredicates, item.Or(labelPredicates...))
+			} else {
+				andPredicates = append(andPredicates, item.And(labelPredicates...))
+			}
 		}
 
 		if len(q.LocationIDs) > 0 {
