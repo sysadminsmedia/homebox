@@ -48,7 +48,7 @@ dist
 
 .pnpm-store
 backend/app/api/app
-backend/app/api/__debug_bin
+backend/app/api/__debug_bin*
 dist/
 
 # Nuxt Publish Dir
