@@ -27,7 +27,6 @@ export default defineConfig({
     },
     // https://vitepress.dev/reference/default-theme-config
     nav: [
-      { text: 'Home', link: '/' },
       { text: 'API', link: 'https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/sysadminsmedia/homebox/main/docs/docs/api/openapi-2.0.json' }
     ],
 
