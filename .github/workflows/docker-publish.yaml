@@ -86,7 +86,7 @@ jobs:
           build-args: |
             VERSION=${{ github.ref_name }}
             COMMIT=$(git rev-parse HEAD)
-            BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+            BUILD_TIME=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
         
       - name: Attest
         uses: actions/attest-build-provenance@v1
