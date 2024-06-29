@@ -14,7 +14,7 @@
             />
             <Currency v-else-if="detail.type == 'currency'" :amount="detail.text" />
             <template v-else-if="detail.type === 'link'">
-              <div class="tooltip tooltip-primary tooltip-right" :data-tip="detail.href">
+              <div class="tooltip tooltip-primary tooltip-top" :data-tip="detail.href">
                 <a class="btn btn-primary btn-xs" :href="detail.href" target="_blank">
                   <MdiOpenInNew class="mr-2 swap-on" />
                   {{ detail.text }}
