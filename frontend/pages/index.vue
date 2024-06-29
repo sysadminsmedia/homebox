@@ -103,6 +103,7 @@
 
   const loading = ref(false);
   const loginPassword = ref("");
+  const redirectTo = useState("authRedirect");
 
   async function login() {
     loading.value = true;
@@ -116,7 +117,8 @@
 
     toast.success("Logged in successfully");
 
-    navigateTo("/home");
+    navigateTo(redirectTo.value || "/home");
+    redirectTo.value = null;
     loading.value = false;
   }
 
