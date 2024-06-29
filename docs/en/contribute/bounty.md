@@ -7,10 +7,10 @@ After digging through several platforms, we ended up settling on [boss.dev](http
 
 While it's not the perfect solution, we think it's about the best one we could find at the moment to lower the rates as much as possible to make sure everyone get's the highest payouts possible. (Some we found were as high as a combined 16%!!!)
 
-We hope that by enabling bounties on issues that people who have the means and want certain features implemented quicker can sponsor issues, and in turn everyone contributing code can potentially earn some money for their hard work.
+We hope that by enabling bounties on issues, people who have the means and want certain features implemented quicker can now sponsor issues, and in turn everyone contributing code can potentially earn some money for their hard work.
 
 ## Contributor
-As a contributor wanting to accept money from bounties you simply need to register for an account via GitHub, and attach a bank account (or debit card in the USA).
+As a contributor wanting to accept money from bounties all you need to do is simply register for an account via GitHub, and attach a bank account (or debit card in the USA).
 
 ## Sponsor
 Sign in with a GitHub account, and then attach a credit card to your account.
