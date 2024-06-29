@@ -88,7 +88,7 @@
       return [];
     }
 
-    return resp.data.items;
+    return resp.data;
   });
 </script>
 
@@ -115,8 +115,17 @@
               </div>
             </div>
             <div>
-              <h1 class="text-2xl pb-1">
+              <h1 class="text-2xl pb-1 flex items-center gap-3">
                 {{ label ? label.name : "" }}
+
+                <div
+                  v-if="items && items.totalPrice"
+                  class="text-xs bg-secondary text-secondary-content rounded-full px-2 py-1"
+                >
+                  <div>
+                    <Currency :amount="items.totalPrice" />
+                  </div>
+                </div>
               </h1>
               <div class="flex gap-1 flex-wrap text-xs">
                 <div>
@@ -144,7 +153,7 @@
         <Markdown v-if="label && label.description" class="text-base" :source="label.description"> </Markdown>
       </div>
       <section v-if="label && items">
-        <ItemViewSelectable :items="items" />
+        <ItemViewSelectable :items="items.items" />
       </section>
     </BaseContainer>
   </BaseContainer>

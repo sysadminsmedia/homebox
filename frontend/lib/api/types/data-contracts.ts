@@ -232,6 +232,7 @@ export interface LocationOut {
   id: string;
   name: string;
   parent: LocationSummary;
+  totalPrice: number;
   updatedAt: Date | string;
 }
 
@@ -329,6 +330,7 @@ export interface PaginationResultItemSummary {
   page: number;
   pageSize: number;
   total: number;
+  totalPrice: number;
 }
 
 export interface TotalsByOrganizer {

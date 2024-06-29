@@ -138,8 +138,17 @@
                   <li>{{ location.name }}</li>
                 </ul>
               </div>
-              <h1 class="text-2xl pb-1">
+              <h1 class="text-2xl pb-1 flex items-center gap-3">
                 {{ location ? location.name : "" }}
+
+                <div
+                  v-if="location && location.totalPrice"
+                  class="text-xs bg-secondary text-secondary-content rounded-full px-2 py-1"
+                >
+                  <div>
+                    <Currency :amount="location.totalPrice" />
+                  </div>
+                </div>
               </h1>
               <div class="flex gap-1 flex-wrap text-xs">
                 <div>

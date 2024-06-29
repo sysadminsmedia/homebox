@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/csv"
 	"errors"
+	"math/big"
 	"net/http"
 	"strings"
 
@@ -80,6 +81,14 @@ func (ctrl *V1Controller) HandleItemsGetAll() errchain.HandlerFunc {
 		ctx := services.NewContext(r.Context())
 
 		items, err := ctrl.repo.Items.QueryByGroup(ctx, ctx.GID, extractQuery(r))
+		totalPrice := new(big.Int)
+		for _, item := range items.Items {
+			totalPrice.Add(totalPrice, big.NewInt(int64(item.PurchasePrice*100)))
+		}
+
+		totalPriceFloat := new(big.Float).SetInt(totalPrice)
+		totalPriceFloat.Quo(totalPriceFloat, big.NewFloat(100))
+
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				return server.JSON(w, http.StatusOK, repo.PaginationResult[repo.ItemSummary]{

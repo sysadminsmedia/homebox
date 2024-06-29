@@ -1683,14 +1683,12 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "admin@admin.com",
                         "description": "string",
                         "name": "username",
                         "in": "formData"
                     },
                     {
                         "type": "string",
-                        "example": "admin",
                         "description": "string",
                         "name": "password",
                         "in": "formData"
@@ -2469,6 +2467,9 @@
                 "parent": {
                     "$ref": "#/definitions/repo.LocationSummary"
                 },
+                "totalPrice": {
+                    "type": "number"
+                },
                 "updatedAt": {
                     "type": "string"
                 }
@@ -2707,6 +2708,9 @@
                 },
                 "total": {
                     "type": "integer"
+                },
+                "totalPrice": {
+                    "type": "number"
                 }
             }
         },
