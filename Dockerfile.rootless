@@ -35,12 +35,12 @@ RUN CGO_ENABLED=0 GOOS=linux go build \
 ADD https://busybox.net/downloads/binaries/$BUSYBOX_VERSION/busybox_WGET /wget
 RUN chmod a+x /wget
 
-FROM gcr.io/distroless/java
+FROM gcr.io/distroless/java:latest
 
 COPY --from=builder /wget /usr/bin/wget
 
 # Production Stage
-FROM gcr.io/distroless/static
+FROM gcr.io/distroless/static:latest
 
 ENV HBOX_MODE=production
 ENV HBOX_STORAGE_DATA=/data/
