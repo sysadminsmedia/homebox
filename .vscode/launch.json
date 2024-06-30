@@ -25,6 +25,7 @@
                 "HBOX_STORAGE_DATA": "${workspaceRoot}/backend/.data",
                 "HBOX_STORAGE_SQLITE_URL": "${workspaceRoot}/backend/.data/homebox.db?_fk=1"
             },
+            "console": "integratedTerminal",
         },
         {
             "name": "Launch Frontend",
@@ -38,10 +39,11 @@
             "cwd": "${workspaceFolder}/frontend",
             "serverReadyAction": {
                 "action": "debugWithChrome",
-                "pattern": "Local: http://localhost:([0-9]+)",
+                "pattern": "Local: +http://localhost:([0-9]+)",
                 "uriFormat": "http://localhost:%s",
                 "webRoot": "${workspaceFolder}/frontend"
-              }
+            },
+            "console": "integratedTerminal",
         }
     ]
 }
