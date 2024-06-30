@@ -18,6 +18,18 @@
     "name": "Afghan Afghani"
   },
   {
+    "code": "XCD",
+    "local": "Eastern Carribean",
+    "symbol": "$",
+    "name": "Eastern Carribean Dollar"
+  },
+  {
+    "code": "XOF",
+    "local": "CFA Franc",
+    "symbol": "CFA",
+    "name": "CFA Franc"
+  },
+  {
     "code": "ALL",
     "local": "Albania",
     "symbol": "L",
@@ -168,10 +180,22 @@
     "name": "Congolese Franc"
   },
   {
+    "code": "XAF",
+    "local": "CFA",
+    "symbol": "FCFA",
+    "name": "CFA Franc BEAC"
+  },  
+  {
     "code": "CHF",
     "local": "Switzerland",
     "symbol": "CHF",
     "name": "Swiss Franc"
+  },
+  {
+    "code": "NZD",
+    "local": "New Zealand",
+    "symbol": "NZ$",
+    "name": "New Zealand Dollar"
   },
   {
     "code": "CLP",
