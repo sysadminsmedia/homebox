@@ -22,7 +22,7 @@ Homebox is the inventory and organization system built for the Home User! With a
 
 ## Quick Start
 
-[Configuration & Docker Compose](https://homebox.sysadminsmedia.com/quick-start.html)
+[Configuration & Docker Compose](https://homebox.sysadminsmedia.com/en/quick-start.html)
 
 ```bash
 # If using the rootless image, ensure data 
