@@ -70,7 +70,7 @@ If you have previously setup docker compose with the `HBOX_WEB_READ_TIMEOUT`, `H
 | HBOX_WEB_IDLE_TIMEOUT                | 30s                    | Idle timeout of HTTP server                                                        |
 | HBOX_STORAGE_DATA                    | /data/                 | path to the data directory, do not change this if you're using docker              |
 | HBOX_STORAGE_SQLITE_URL              | /data/homebox.db?_fk=1 | sqlite database url, if you're using docker do not change this                     |
-| HBOX_LOG_LEVEL                       | info                   | log level to use, can be one of: trace, debug, info, warn, error, critical         |
+| HBOX_LOG_LEVEL                       | info                   | log level to use, can be one of trace, debug, info, warn, error, critical         |
 | HBOX_LOG_FORMAT                      | text                   | log format to use, can be one of: text, json                                       |
 | HBOX_MAILER_HOST                     |                        | email host to use, if not set no email provider will be used                       |
 | HBOX_MAILER_PORT                     | 587                    | email port to use                                                                  |
