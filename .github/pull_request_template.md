@@ -56,17 +56,3 @@ _(fill-in or delete this section)_
 <!--
   Describe how you tested this change.
 -->
-
-## Release Notes
-
-_(REQUIRED)_
-<!--
-  If this PR makes user facing changes, please describe them here. This
-  description will be copied into the release notes/changelog, whenever the
-  next version is released. Keep this section short, and focus on high level
-  changes.
-  Put your text between the block. To omit notes, use NONE within the block.
--->
-
-```release-note
-```

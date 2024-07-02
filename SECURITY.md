@@ -6,4 +6,6 @@ Since this software is still considered beta/WIP support is always only given fo
 
 ## Reporting a Vulnerability
 
-Please open a normal public issue if you have any security related concerns.
+Please open a normal public issue for minor security issues or general security inquires.
+
+For major or critical security issues, please open a private github security issue.

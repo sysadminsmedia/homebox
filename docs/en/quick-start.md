@@ -46,9 +46,12 @@ volumes:
    homebox-data:
      driver: local
 ```
-
 ::: info
 If you use the `rootless` image, and instead of using named volumes you would prefer using a hostMount directly (e.g., `volumes: [ /path/to/data/folder:/data ]`) you need to `chown` the chosen directory in advance to the `65532` user (as shown in the Docker example above).
+:::
+
+::: warning
+If you have previously set up docker compose with the `HBOX_WEB_READ_TIMEOUT`, `HBOX_WEB_WRITE_TIMEOUT`, or `HBOX_IDLE_TIMEOUT` options, and you were previously using the hay-kot image, please note that you will have to add an `s` for seconds or `m` for minutes to the end of the integers. A dependency update removed the defaultation to seconds and it now requires an explicit duration time.
 :::
 
 ## Env Variables & Configuration
@@ -59,15 +62,15 @@ If you use the `rootless` image, and instead of using named volumes you would pr
 | HBOX_WEB_PORT                        | 7745                   | port to run the web server on, if you're using docker do not change this           |
 | HBOX_WEB_HOST                        |                        | host to run the web server on, if you're using docker do not change this           |
 | HBOX_OPTIONS_ALLOW_REGISTRATION      | true                   | allow users to register themselves                                                 |
-| HBOX_OPTIONS_AUTO_INCREMENT_ASSET_ID | true                   | auto increments the asset_id field for new items                                   |
+| HBOX_OPTIONS_AUTO_INCREMENT_ASSET_ID | true                   | auto-increments the asset_id field for new items                                   |
 | HBOX_OPTIONS_CURRENCY_CONFIG         |                        | json configuration file containing additional currencie                            |
 | HBOX_WEB_MAX_UPLOAD_SIZE             | 10                     | maximum file upload size supported in MB                                           |
-| HBOX_WEB_READ_TIMEOUT                | 10                     | Read timeout of HTTP sever                                                         |
-| HBOX_WEB_WRITE_TIMEOUT               | 10                     | Write timeout of HTTP server                                                       |
-| HBOX_WEB_IDLE_TIMEOUT                | 30                     | Idle timeout of HTTP server                                                        |
+| HBOX_WEB_READ_TIMEOUT                | 10s                    | Read timeout of HTTP sever                                                         |
+| HBOX_WEB_WRITE_TIMEOUT               | 10s                    | Write timeout of HTTP server                                                       |
+| HBOX_WEB_IDLE_TIMEOUT                | 30s                    | Idle timeout of HTTP server                                                        |
 | HBOX_STORAGE_DATA                    | /data/                 | path to the data directory, do not change this if you're using docker              |
 | HBOX_STORAGE_SQLITE_URL              | /data/homebox.db?_fk=1 | sqlite database url, if you're using docker do not change this                     |
-| HBOX_LOG_LEVEL                       | info                   | log level to use, can be one of: trace, debug, info, warn, error, critical         |
+| HBOX_LOG_LEVEL                       | info                   | log level to use, can be one of trace, debug, info, warn, error, critical         |
 | HBOX_LOG_FORMAT                      | text                   | log format to use, can be one of: text, json                                       |
 | HBOX_MAILER_HOST                     |                        | email host to use, if not set no email provider will be used                       |
 | HBOX_MAILER_PORT                     | 587                    | email port to use                                                                  |
