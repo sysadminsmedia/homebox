@@ -51,7 +51,7 @@ If you use the `rootless` image, and instead of using named volumes you would pr
 :::
 
 ::: warning
-If you have previously setup docker compose with the `HBOX_WEB_READ_TIMEOUT`, `HBOX_WEB_WRITE_TIMEOUT` or `HBOX_IDLE_TIMEOUT` options and you were previously using the hay-kot image please note that you will have to add an `s` for seconds or `m` for minutes to the end of the integers. A dependency update removed the defaultation to seconds and it now requires an explicit duration time.
+If you have previously set up docker compose with the `HBOX_WEB_READ_TIMEOUT`, `HBOX_WEB_WRITE_TIMEOUT`, or `HBOX_IDLE_TIMEOUT` options, and you were previously using the hay-kot image, please note that you will have to add an `s` for seconds or `m` for minutes to the end of the integers. A dependency update removed the defaultation to seconds and it now requires an explicit duration time.
 :::
 
 ## Env Variables & Configuration
