@@ -31,13 +31,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build \
     # create a directory so that we can copy it in the next stage
     mkdir /data
 
-# Downloading Wget
-ADD https://busybox.net/downloads/binaries/$BUSYBOX_VERSION/busybox_WGET /wget
-RUN chmod a+x /wget
-
 FROM gcr.io/distroless/java:latest
-
-COPY --from=builder /wget /usr/bin/wget
 
 # Production Stage
 FROM gcr.io/distroless/static:latest
@@ -50,7 +44,8 @@ ENV HBOX_STORAGE_SQLITE_URL=/data/homebox.db?_fk=1
 # change the ownership to the low-privileged user
 COPY --from=builder --chown=nonroot /go/bin/api /app
 COPY --from=builder --chown=nonroot /data /data
-COPY --from=builder --chown=nonroot /wget /usr/bin/wget
+
+RUN apk add --no-cache wget
 
 LABEL Name=homebox Version=0.0.1
 LABEL org.opencontainers.image.source="https://github.com/sysadminsmedia/homebox"
