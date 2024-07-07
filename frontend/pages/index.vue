@@ -158,7 +158,7 @@
           <a href="https://twitter.com/haybytes" class="tooltip" data-tip="Follow The Developer" target="_blank">
             <MdiTwitter class="h-8 w-8" />
           </a>
-          <a href="https://discord.gg/tuncmNrE4z" class="tooltip" data-tip="Join The Discord" target="_blank">
+          <a href="https://discord.gg/aY4DCkpNA9" class="tooltip" data-tip="Join The Discord" target="_blank">
             <MdiDiscord class="h-8 w-8" />
           </a>
           <a href="https://homebox.sysadminsmedia.com/en/" class="tooltip" data-tip="Read The Docs" target="_blank">
