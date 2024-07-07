@@ -8,6 +8,9 @@ on:
     paths:
       - 'backend/**'
       - 'frontend/**'
+      - 'Dockerfile'
+      - 'Dockerfile.rootless'
+      - '.dockerignore'
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   pull_request:
@@ -15,6 +18,9 @@ on:
     paths:
       - 'backend/**'
       - 'frontend/**'
+      - 'Dockerfile'
+      - 'Dockerfile.rootless'
+      - '.dockerignore'
 
 
 env:
@@ -84,8 +90,8 @@ jobs:
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           platforms: linux/amd64,linux/arm64,linux/arm/v7
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+#          cache-from: type=gha
+#          cache-to: type=gha,mode=max
           build-args: |
             VERSION=${{ github.ref_name }}
             COMMIT=${{ github.sha }}

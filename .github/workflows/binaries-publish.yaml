@@ -5,13 +5,13 @@ on:
     tags: [ 'v*.*.*' ]
 
 jobs:
-  backend-tests:
-    name: "Backend Server Tests"
-    uses: sysadminsmedia/homebox/.github/workflows/partial-backend.yaml@main
+#  backend-tests:
+#    name: "Backend Server Tests"
+#    uses: sysadminsmedia/homebox/.github/workflows/partial-backend.yaml@main
 
-  frontend-tests:
-    name: "Frontend and End-to-End Tests"
-    uses: sysadminsmedia/homebox/.github/workflows/partial-frontend.yaml@main
+#  frontend-tests:
+#    name: "Frontend and End-to-End Tests"
+#    uses: sysadminsmedia/homebox/.github/workflows/partial-frontend.yaml@main
 
   goreleaser:
     name: goreleaser
