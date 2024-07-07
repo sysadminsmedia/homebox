@@ -161,7 +161,7 @@
           <a href="https://discord.gg/tuncmNrE4z" class="tooltip" data-tip="Join The Discord" target="_blank">
             <MdiDiscord class="h-8 w-8" />
           </a>
-          <a href="https://hay-kot.github.io/homebox/" class="tooltip" data-tip="Read The Docs" target="_blank">
+          <a href="https://homebox.sysadminsmedia.com/en/" class="tooltip" data-tip="Read The Docs" target="_blank">
             <MdiFolder class="h-8 w-8" />
           </a>
         </div>
