@@ -50,7 +50,7 @@ We use [Vitepress](https://vitepress.dev/) for the web documentation of homebox.
 For documentation contributions you only need NodeJS and PNPM.
 
 ::: info Notes
-- Languages are seperated by folder (e.g `/en`, `/fr`, etc.)
+- Languages are separated by folder (e.g `/en`, `/fr`, etc.)
 - The Sidebar must be updated on a per language basis
 - Each languages files can be named independently (slugs can match the language)
 - The `public/_redirects` file is used to redirect the default to english
