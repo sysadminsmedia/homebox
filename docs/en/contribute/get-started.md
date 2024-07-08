@@ -47,11 +47,12 @@ type checking `task ui:check`
 
 ## Documentation
 We use [Vitepress](https://vitepress.dev/) for the web documentation of homebox. Anyone is welcome to contribute the documentation if they wish.
-For documentation contributions you only need NodeJS and PNPM.
+Anyone is welcome to contribute the documentation if they wish. For documentation contributions, you only need Node.js and PNPM.
 
 ::: info Notes
 - Languages are separated by folder (e.g `/en`, `/fr`, etc.)
 - The Sidebar must be updated on a per language basis
++ The Sidebar must be updated on a per-language basis
 - Each languages files can be named independently (slugs can match the language)
 - The `public/_redirects` file is used to redirect the default to english
 - Redirects can also be configured per language by adding `Language=` after the redirect code
