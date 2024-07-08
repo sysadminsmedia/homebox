@@ -51,7 +51,7 @@ HEALTHCHECK --interval=30s \
             --timeout=5s \
             --start-period=5s \
             --retries=3 \
-            CMD [ "/usr/bin/wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:7745/api/v1/status" ]
+            CMD [ "/usr/bin/wget", "--no-verbose", "--tries=1", "-O -", "http://localhost:7745/api/v1/status" ]
 VOLUME [ "/data" ]
 
 ENTRYPOINT [ "/app/api" ]
