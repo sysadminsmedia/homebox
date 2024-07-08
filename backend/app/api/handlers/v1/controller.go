@@ -87,12 +87,6 @@ type (
 	}
 )
 
-func BaseURLFunc(prefix string) func(s string) string {
-	return func(s string) string {
-		return prefix + "/v1" + s
-	}
-}
-
 func NewControllerV1(svc *services.AllServices, repos *repo.AllRepos, bus *eventbus.EventBus, options ...func(*V1Controller)) *V1Controller {
 	ctrl := &V1Controller{
 		repo:              repos,
