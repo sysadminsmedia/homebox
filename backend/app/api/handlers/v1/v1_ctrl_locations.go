@@ -99,8 +99,9 @@ func (ctrl *V1Controller) GetLocationWithPrice(auth context.Context, GID uuid.UU
 	}
 
 	for _, item := range items.Items {
-		// Include quantity in the calculation
-		itemTotal := big.NewInt(int64(item.PurchasePrice * item.Quantity * 100))
+		// Convert item.Quantity to float64 for multiplication
+		quantity := float64(item.Quantity)
+		itemTotal := big.NewInt(int64(item.PurchasePrice * quantity * 100))
 		totalPrice.Add(totalPrice, itemTotal)
 	}
 
