@@ -263,7 +263,7 @@ func mapItemOut(item *ent.Item) ItemOut {
 		Manufacturer: item.Manufacturer,
 
 		// Purchase
-		PurchaseMethod: item.PurchaseMethod
+		PurchaseMethod: item.PurchaseMethod,
 		PurchaseTime:   types.DateFromTime(item.PurchaseTime),
 		PurchaseFrom:   item.PurchaseFrom,
 
