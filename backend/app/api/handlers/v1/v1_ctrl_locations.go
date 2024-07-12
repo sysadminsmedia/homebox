@@ -87,12 +87,21 @@ func (ctrl *V1Controller) HandleLocationDelete() errchain.HandlerFunc {
 
 func (ctrl *V1Controller) GetLocationWithPrice(auth context.Context, GID uuid.UUID, ID uuid.UUID) (repo.LocationOut, error) {
 	var location, err = ctrl.repo.Locations.GetOneByGroup(auth, GID, ID)
+	if err != nil {
+		return repo.LocationOut{}, err
+	}
 
 	// Add direct child items price
 	totalPrice := new(big.Int)
 	items, err := ctrl.repo.Items.QueryByGroup(auth, GID, repo.ItemQuery{LocationIDs: []uuid.UUID{ID}})
+	if err != nil {
+		return repo.LocationOut{}, err
+	}
+
 	for _, item := range items.Items {
-		totalPrice.Add(totalPrice, big.NewInt(int64(item.PurchasePrice*100)))
+		// Include quantity in the calculation
+		itemTotal := big.NewInt(int64(item.PurchasePrice * item.Quantity * 100))
+		totalPrice.Add(totalPrice, itemTotal)
 	}
 
 	totalPriceFloat := new(big.Float).SetInt(totalPrice)
@@ -101,14 +110,15 @@ func (ctrl *V1Controller) GetLocationWithPrice(auth context.Context, GID uuid.UU
 
 	// Add price from child locations
 	for _, childLocation := range location.Children {
-		var childLocation, err = ctrl.GetLocationWithPrice(auth, GID, childLocation.ID)
+		var childLocationWithPrice repo.LocationOut
+		childLocationWithPrice, err = ctrl.GetLocationWithPrice(auth, GID, childLocation.ID)
 		if err != nil {
 			return repo.LocationOut{}, err
 		}
-		location.TotalPrice += childLocation.TotalPrice
+		location.TotalPrice += childLocationWithPrice.TotalPrice
 	}
 
-	return location, err
+	return location, nil
 }
 
 // HandleLocationGet godoc
