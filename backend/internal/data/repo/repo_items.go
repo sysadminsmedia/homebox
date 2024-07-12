@@ -91,9 +91,10 @@ type (
 		WarrantyDetails  string     `json:"warrantyDetails"`
 
 		// Purchase
-		PurchaseTime  types.Date `json:"purchaseTime"`
-		PurchaseFrom  string     `json:"purchaseFrom"`
-		PurchasePrice float64    `json:"purchasePrice,string"`
+		PurchaseMethod  string     `json:"purchaseMethod"`
+		PurchaseTime    types.Date `json:"purchaseTime"`
+		PurchaseFrom    string     `json:"purchaseFrom"`
+		PurchasePrice   float64    `json:"purchasePrice,string"`
 
 		// Sold
 		SoldTime  types.Date `json:"soldTime"`
@@ -147,8 +148,9 @@ type (
 		WarrantyDetails  string     `json:"warrantyDetails"`
 
 		// Purchase
-		PurchaseTime types.Date `json:"purchaseTime"`
-		PurchaseFrom string     `json:"purchaseFrom"`
+		PurchaseMethod string     `json:"purchaseMethod"`
+		PurchaseTime   types.Date `json:"purchaseTime"`
+		PurchaseFrom   string     `json:"purchaseFrom"`
 
 		// Sold
 		SoldTime  types.Date `json:"soldTime"`
@@ -261,8 +263,9 @@ func mapItemOut(item *ent.Item) ItemOut {
 		Manufacturer: item.Manufacturer,
 
 		// Purchase
-		PurchaseTime: types.DateFromTime(item.PurchaseTime),
-		PurchaseFrom: item.PurchaseFrom,
+		PurchaseMethod: item.PurchaseMethod
+		PurchaseTime:   types.DateFromTime(item.PurchaseTime),
+		PurchaseFrom:   item.PurchaseFrom,
 
 		// Sold
 		SoldTime:  types.DateFromTime(item.SoldTime),
@@ -594,6 +597,7 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, GID uuid.UUID, data
 		SetManufacturer(data.Manufacturer).
 		SetArchived(data.Archived).
 		SetPurchaseTime(data.PurchaseTime.Time()).
+		SetPurchaseMethod(data.PurchaseMethod).
 		SetPurchaseFrom(data.PurchaseFrom).
 		SetPurchasePrice(data.PurchasePrice).
 		SetSoldTime(data.SoldTime.Time()).

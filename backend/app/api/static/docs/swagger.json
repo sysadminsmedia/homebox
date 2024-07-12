@@ -2145,6 +2145,9 @@
                 "purchaseFrom": {
                     "type": "string"
                 },
+                "purchaseFrom": {
+                    "type": "string"
+                },
                 "purchasePrice": {
                     "type": "string",
                     "example": "0"
