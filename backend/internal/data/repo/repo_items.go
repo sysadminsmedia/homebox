@@ -596,7 +596,6 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, GID uuid.UUID, data
 		SetManufacturer(data.Manufacturer).
 		SetArchived(data.Archived).
 		SetPurchaseTime(data.PurchaseTime.Time()).
-		SetPurchaseMethod(data.PurchaseMethod).
 		SetPurchaseFrom(data.PurchaseFrom).
 		SetPurchasePrice(data.PurchasePrice).
 		SetSoldTime(data.SoldTime.Time()).
