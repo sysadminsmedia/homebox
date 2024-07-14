@@ -5,7 +5,7 @@ import os
 def fetch_currencies():
     try:
         response = requests.get('https://restcountries.com/v3.1/all')
-        response.raise_for_status()  # Raise an error for HTTP errors
+        response.raise_for_status()
     except requests.exceptions.Timeout:
         print("Request to the API timed out.")
         return []
@@ -14,7 +14,7 @@ def fetch_currencies():
         return []
 
     try:
-        countries = response.json()  # Attempt to parse the JSON response
+        countries = response.json()
     except json.JSONDecodeError:
         print("Failed to decode JSON from the response.")
         return []
@@ -36,17 +36,30 @@ def fetch_currencies():
 
 def save_currencies(currencies, file_path):
     try:
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)  # Create directories if they don't exist
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
         with open(file_path, 'w', encoding='utf-8') as f:
             json.dump(currencies, f, ensure_ascii=False, indent=4)
     except IOError as e:
         print(f"An error occurred while writing to the file: {e}")
 
+def load_existing_currencies(file_path):
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except (IOError, json.JSONDecodeError):
+        return []  # Return an empty list if file doesn't exist or is invalid
+
 def main():
-    currencies = fetch_currencies()
-    if currencies:  # Check if currencies were successfully fetched
-        save_path = 'backend/internal/core/currencies/currencies.json'
-        save_currencies(currencies, save_path)
+    save_path = 'backend/internal/core/currencies/currencies.json'
+    
+    existing_currencies = load_existing_currencies(save_path)
+    new_currencies = fetch_currencies()
+
+    if new_currencies == existing_currencies:
+        print("Currencies up-to-date with API, skipping commit.")
+    else:
+        save_currencies(new_currencies, save_path)
+        print("Currencies updated and saved.")
 
 if __name__ == "__main__":
     main()
