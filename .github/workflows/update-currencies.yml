@@ -24,7 +24,7 @@ jobs:
           pip install requests
 
       - name: Run currency fetch script
-        run: python path/to/your_script.py
+        run: python .github/scripts/update_currencies.py
 
       - name: Check for changes
         id: check_changes
