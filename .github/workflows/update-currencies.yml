@@ -42,9 +42,17 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Create a new branch
           git checkout -b update-currencies
           git add backend/internal/core/currencies/currencies.json
           git commit -m "Update currencies.json"
+
+          # Fetch the latest changes from the remote
+          git fetch origin main
+          git rebase origin/main  # Rebase your changes onto the latest main branch
+
+          # Push the new branch to the remote
           git push --set-upstream origin update-currencies
           
           # Create a pull request
