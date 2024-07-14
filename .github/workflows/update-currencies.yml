@@ -23,19 +23,36 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests
 
-      - name: Fetch and update currencies
-        run: python .github/scripts/update_currencies.py
+      - name: Run currency fetch script
+        run: python path/to/your_script.py
 
-      - name: Check for changes, commit and push changes if needed
+      - name: Check for changes
+        id: check_changes
         run: |
           if [[ $(git status --porcelain) ]]; then
-            echo "Changes detected, committing..."
-            git config --global user.name "github-actions[bot]"
-            git config --global user.email "github-actions[bot]@users.noreply.github.com"
-            git add backend/internal/core/currencies/currencies.json
-            git commit -m "Update currencies.json"
-            git push
+            echo "Changes detected."
+            echo "changes=true" >> $GITHUB_ENV
           else
-            echo "Currencies up-to-date with API, skipping commit."
-            exit 0
+            echo "No changes detected."
+            echo "changes=false" >> $GITHUB_ENV
           fi
+
+      - name: Create Pull Request
+        if: env.changes == 'true'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b update-currencies
+          git add backend/internal/core/currencies/currencies.json
+          git commit -m "Update currencies.json"
+          git push --set-upstream origin update-currencies
+          
+          # Create a pull request
+          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+               -X POST \
+               -d '{"title": "Update currencies", "head": "update-currencies", "base": "main"}' \
+               https://api.github.com/repos/${{ github.repository }}/pulls
+
+      - name: Notify no changes
+        if: env.changes == 'false'
+        run: echo "Currencies up-to-date with API, skipping commit."
