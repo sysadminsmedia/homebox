@@ -37,24 +37,58 @@ jobs:
             echo "changes=false" >> $GITHUB_ENV
           fi
 
-      - name: Create Pull Request
+      - name: Delete existing update-currencies branch
+        run: |
+          if git show-ref --verify --quiet refs/heads/update-currencies; then
+            git branch -D update-currencies
+            echo "Deleted existing update-currencies branch."
+          else
+            echo "No existing update-currencies branch to delete."
+          fi
+
+      - name: Create new update-currencies branch
         if: env.changes == 'true'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
+
           # Create a new branch
           git checkout -b update-currencies
           git add backend/internal/core/currencies/currencies.json
           git commit -m "Update currencies.json"
 
           # Fetch the latest changes from the remote
-          git fetch origin main
-          git rebase origin/main  # Rebase your changes onto the latest main branch
+          git fetch origin
+
+          # Attempt to rebase with the latest changes
+          if git show-ref --verify --quiet refs/remotes/origin/update-currencies; then
+            if ! git rebase origin/update-currencies; then
+              echo "Rebase conflicts occurred. Please resolve them manually."
+              echo "To resolve conflicts, check out the 'update-currencies' branch locally."
+              exit 1
+            fi
+          else
+            echo "No existing remote branch 'update-currencies'. Skipping rebase."
+          fi
 
           # Push the new branch to the remote
-          git push --set-upstream origin update-currencies
-          
+          if ! git push --set-upstream origin update-currencies; then
+            echo "Push failed, trying to fetch and rebase again."
+            git fetch origin
+            if git show-ref --verify --quiet refs/remotes/origin/update-currencies; then
+              if ! git rebase origin/update-currencies; then
+                echo "Second rebase failed. Please resolve manually."
+                exit 1
+              fi
+            else
+              echo "No existing remote branch 'update-currencies'. Skipping rebase."
+            fi
+            if ! git push --set-upstream origin update-currencies; then
+              echo "Second push failed. Please resolve manually."
+              exit 1
+            fi
+          fi
+
           # Create a pull request
           curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
                -X POST \
