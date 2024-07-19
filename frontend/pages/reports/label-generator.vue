@@ -181,7 +181,7 @@
     return route(`/qrcode`, { data: encodeURIComponent(data) });
   }
 
-  function getItem(n: number): LabelData {
+  function getItem(n: number, item: { value: { name: string, location: string } } | null): LabelData {
     // format n into - seperated string with leading zeros
 
     const assetID = fmtAssetID(n);
@@ -189,10 +189,20 @@
     return {
       url: getQRCodeUrl(assetID),
       assetID,
-      name: "_______________",
-      location: "_______________",
+      name: item?.value?.name ?? "_______________",
+      location: item?.value?.location ?? "_______________",
     };
   }
+
+  const { data: allFields } = useAsyncData(async () => {
+    const { data, error } = await api.items.fields.getAll();
+
+    if (error) {
+      return [];
+    }
+
+    return data;
+  });
 
   const items = computed(() => {
     if (displayProperties.assetRange > displayProperties.assetRangeMax) {
@@ -207,7 +217,7 @@
 
     const items: LabelData[] = [];
     for (let i = displayProperties.assetRange; i < displayProperties.assetRangeMax; i++) {
-      items.push(getItem(i));
+      items.push(getItem(i, allFields[i] ?? null));
     }
     return items;
   });
