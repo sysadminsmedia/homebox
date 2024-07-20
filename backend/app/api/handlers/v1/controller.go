@@ -57,6 +57,12 @@ func WithSecureCookies(secure bool) func(*V1Controller) {
 	}
 }
 
+func WithURL(url string) func(*V1Controller) {
+	return func(ctrl *V1Controller) {
+		ctrl.url = url
+	}
+}
+
 type V1Controller struct {
 	cookieSecure      bool
 	repo              *repo.AllRepos
@@ -65,6 +71,7 @@ type V1Controller struct {
 	isDemo            bool
 	allowRegistration bool
 	bus               *eventbus.EventBus
+	url               string
 }
 
 type (

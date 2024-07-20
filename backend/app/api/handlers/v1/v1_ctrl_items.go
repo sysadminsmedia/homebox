@@ -334,7 +334,7 @@ func (ctrl *V1Controller) HandleItemsExport() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		ctx := services.NewContext(r.Context())
 
-		csvData, err := ctrl.svc.Items.ExportCSV(r.Context(), ctx.GID, stripPathFromURL(r.Header.Get("Referer")))
+		csvData, err := ctrl.svc.Items.ExportCSV(r.Context(), ctx.GID, getHBURL(r.Header.Get("Referer"), ctrl.url))
 		if err != nil {
 			log.Err(err).Msg("failed to export items")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
@@ -347,6 +347,15 @@ func (ctrl *V1Controller) HandleItemsExport() errchain.HandlerFunc {
 		writer.Comma = ','
 		return writer.WriteAll(csvData)
 	}
+}
+
+func getHBURL(refererHeader, fallback string) (hbURL string) {
+	hbURL = refererHeader
+	if hbURL == "" {
+		hbURL = fallback
+	}
+
+	return stripPathFromURL(hbURL)
 }
 
 // stripPathFromURL removes the path from a URL.
