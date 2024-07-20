@@ -1,11 +1,16 @@
+# Node dependencies
+FROM node:18-alpine AS frontend-dependencies
+WORKDIR /app
+RUN npm install -g pnpm
+COPY frontend/package.json frontend/pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --shamefully-hoist
 
 # Build Nuxt
 FROM node:18-alpine AS frontend-builder
 WORKDIR  /app
 RUN npm install -g pnpm
-COPY frontend/package.json frontend/pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile --shamefully-hoist
 COPY frontend .
+COPY --from=frontend-dependencies /app/node_modules
 RUN pnpm build
 
 # Build API
