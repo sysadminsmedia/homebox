@@ -10,7 +10,7 @@ FROM node:18-alpine AS frontend-builder
 WORKDIR  /app
 RUN npm install -g pnpm
 COPY frontend .
-COPY --from=frontend-dependencies /app/node_modules
+COPY --from=frontend-dependencies /app/node_modules .
 RUN pnpm build
 
 # Build API
