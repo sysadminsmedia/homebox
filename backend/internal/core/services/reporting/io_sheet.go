@@ -153,7 +153,7 @@ func (s *IOSheet) Read(data io.Reader) error {
 }
 
 // ReadItems writes the sheet to a writer.
-func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, GID uuid.UUID, repos *repo.AllRepos) error {
+func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, GID uuid.UUID, repos *repo.AllRepos, hbURL string) error {
 	s.Rows = make([]ExportCSVRow, len(items))
 
 	extraHeaders := map[string]struct{}{}
@@ -178,6 +178,8 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, GID uuid.
 			labelString[i] = l.Name
 		}
 
+		url := generateItemURL(item, hbURL)
+
 		customFields := make([]ExportItemFields, len(item.Fields))
 
 		for i, f := range item.Fields {
@@ -201,6 +203,7 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, GID uuid.
 			Description: item.Description,
 			Insured:     item.Insured,
 			Archived:    item.Archived,
+			URL:         url,
 
 			PurchasePrice: item.PurchasePrice,
 			PurchaseFrom:  item.PurchaseFrom,
@@ -250,6 +253,14 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, GID uuid.
 	}
 
 	return nil
+}
+
+func generateItemURL(item repo.ItemOut, d string) string {
+	url := ""
+	if item.ID != uuid.Nil {
+		url = fmt.Sprintf("%s/item/%s", d, item.ID.String())
+	}
+	return url
 }
 
 // CSV writes the current sheet to a 2d array, for compatibility with TSV/CSV files.

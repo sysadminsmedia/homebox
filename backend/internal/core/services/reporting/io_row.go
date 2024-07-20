@@ -18,6 +18,7 @@ type ExportCSVRow struct {
 	LabelStr  LabelString    `csv:"HB.labels"`
 	AssetID   repo.AssetID   `csv:"HB.asset_id"`
 	Archived  bool           `csv:"HB.archived"`
+	URL       string         `csv:"HB.url"`
 
 	Name        string `csv:"HB.name"`
 	Quantity    int    `csv:"HB.quantity"`
