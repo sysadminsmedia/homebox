@@ -28,6 +28,10 @@ COPY ./backend .
 RUN go get -d -v ./...
 RUN rm -rf ./app/api/public
 COPY --from=frontend-builder /app/.output/public ./app/api/static/public
+# For some reason this can't be a seperate layer
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build \
     -ldflags "-s -w -X main.commit=$COMMIT -X main.buildTime=$BUILD_TIME -X main.version=$VERSION"  \
     -o /go/bin/api \
