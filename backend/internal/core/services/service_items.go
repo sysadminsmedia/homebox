@@ -329,7 +329,7 @@ func (svc *ItemService) CsvImport(ctx context.Context, GID uuid.UUID, data io.Re
 	return finished, nil
 }
 
-func (svc *ItemService) ExportCSV(ctx context.Context, GID uuid.UUID) ([][]string, error) {
+func (svc *ItemService) ExportCSV(ctx context.Context, GID uuid.UUID, hbURL string) ([][]string, error) {
 	items, err := svc.repo.Items.GetAll(ctx, GID)
 	if err != nil {
 		return nil, err
@@ -337,7 +337,7 @@ func (svc *ItemService) ExportCSV(ctx context.Context, GID uuid.UUID) ([][]strin
 
 	sheet := reporting.IOSheet{}
 
-	err = sheet.ReadItems(ctx, items, GID, svc.repo)
+	err = sheet.ReadItems(ctx, items, GID, svc.repo, hbURL)
 	if err != nil {
 		return nil, err
 	}
