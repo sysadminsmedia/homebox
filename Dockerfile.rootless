@@ -13,32 +13,30 @@ COPY frontend .
 COPY --from=frontend-dependencies /app/node_modules ./node_modules
 RUN pnpm build
 
+FROM golang:alpine AS builder-dependencies
+WORKDIR /go/src/app
+COPY ./backend .
+RUN go mod download
+
 # Build API
 FROM golang:alpine AS builder
 ARG BUILD_TIME
 ARG COMMIT
 ARG VERSION
-ARG BUSYBOX_VERSION=1.36.1-r31
 RUN apk update && \
     apk upgrade && \
     apk add --update git build-base gcc g++
 
 WORKDIR /go/src/app
 COPY ./backend .
-RUN go get -d -v ./...
 RUN rm -rf ./app/api/public
 COPY --from=frontend-builder /app/.output/public ./app/api/static/public
-# For some reason this can't be a seperate layer
-RUN --mount=type=cache,target=/go/pkg/mod \
-    --mount=type=cache,target=/root/.cache/go-build \
-    go mod download
-RUN CGO_ENABLED=0 GOOS=linux go build \
+COPY --from=builder-dependencies /go/pkg/mod /go/pkg/mod
+RUN --mount=type=cache,target=/root/.cache/go-build  \
+    CGO_ENABLED=0 GOOS=linux go build \
     -ldflags "-s -w -X main.commit=$COMMIT -X main.buildTime=$BUILD_TIME -X main.version=$VERSION"  \
     -o /go/bin/api \
-    -v ./app/api/*.go && \
-    chmod +x /go/bin/api && \
-    # create a directory so that we can copy it in the next stage
-    mkdir /data
+    -v ./app/api/*.go
 
 FROM gcr.io/distroless/java:latest
 
