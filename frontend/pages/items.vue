@@ -40,6 +40,7 @@
   const includeArchived = useRouteQuery("archived", false);
   const fieldSelector = useRouteQuery("fieldSelector", false);
   const negateLabels = useRouteQuery("negateLabels", false);
+  const orderBy = useRouteQuery("orderBy", "name");
 
   const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
   const hasNext = computed(() => page.value * pageSize.value < total.value);
@@ -169,6 +170,12 @@
     }
   });
 
+  watch(orderBy, (newV, oldV) => {
+    if (newV !== oldV) {
+      search();
+    }
+  });
+
   async function fetchValues(field: string): Promise<string[]> {
     if (fieldValuesCache.value[field]) {
       return fieldValuesCache.value[field];
@@ -201,6 +208,7 @@
           pageSize: pageSize.value,
           includeArchived: includeArchived.value ? "true" : "false",
           negateLabels: negateLabels.value ? "true" : "false",
+          orderBy: orderBy.value,
         },
       });
     }
@@ -231,6 +239,7 @@
       includeArchived: includeArchived.value,
       page: page.value,
       pageSize: pageSize.value,
+      orderBy: orderBy.value,
       fields,
     });
 
@@ -278,6 +287,7 @@
         archived: includeArchived.value ? "true" : "false",
         fieldSelector: fieldSelector.value ? "true" : "false",
         negateLabels: negateLabels.value ? "true" : "false",
+        orderBy: orderBy.value,
         pageSize: pageSize.value,
         page: page.value,
         q: query.value,
@@ -311,6 +321,7 @@
         fieldSelector: "false",
         pageSize: 10,
         page: 1,
+        orderBy: "name",
         q: "",
         loc: [],
         lab: [],
@@ -372,6 +383,14 @@
             <label class="label cursor-pointer mr-auto">
               <input v-model="negateLabels" type="checkbox" class="toggle toggle-sm toggle-primary" />
               <span class="label-text ml-4"> Negate selected labels </span>
+            </label>
+            <label class="label cursor-pointer mr-auto">
+              <select v-model="orderBy" class="select select-bordered select-sm">
+                <option value="name" selected>Name</option>
+                <option value="createdAt">Created At</option>
+                <option value="updatedAt">Updated At</option>
+              </select>
+              <span class="label-text ml-4"> Order By </span>
             </label>
             <hr class="my-2" />
             <BaseButton class="btn-block btn-sm" @click="reset"> Reset Search</BaseButton>

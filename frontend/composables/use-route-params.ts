@@ -32,7 +32,7 @@ export function useRouteQuery(q: string, def: any): WritableComputedRef<any> {
     case "string":
       return computed({
         get: () => {
-          const qv = route.query[q];
+          const qv = first.value;
           if (Array.isArray(qv)) {
             return qv[0];
           }
