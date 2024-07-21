@@ -92,8 +92,8 @@ jobs:
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
           platforms: linux/amd64,linux/arm64,linux/arm/v7
-#          cache-from: type=gha
-#          cache-to: type=gha,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           build-args: |
             VERSION=${{ github.ref_name }}
             COMMIT=${{ github.sha }}
