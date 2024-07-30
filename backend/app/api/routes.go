@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"errors"
+	"fmt"
 	"io"
 	"mime"
 	"net/http"
@@ -54,6 +55,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		v1.WithMaxUploadSize(a.conf.Web.MaxUploadSize),
 		v1.WithRegistration(a.conf.Options.AllowRegistration),
 		v1.WithDemoStatus(a.conf.Demo), // Disable Password Change in Demo Mode
+		v1.WithURL(fmt.Sprintf("%s:%s", a.conf.Web.Host, a.conf.Web.Port)),
 	)
 
 	r.Route(prefix+"/v1", func(r chi.Router) {

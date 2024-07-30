@@ -6,6 +6,7 @@ import (
 	"errors"
 	"math/big"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/google/uuid"
@@ -333,7 +334,7 @@ func (ctrl *V1Controller) HandleItemsExport() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		ctx := services.NewContext(r.Context())
 
-		csvData, err := ctrl.svc.Items.ExportCSV(r.Context(), ctx.GID)
+		csvData, err := ctrl.svc.Items.ExportCSV(r.Context(), ctx.GID, getHBURL(r.Header.Get("Referer"), ctrl.url))
 		if err != nil {
 			log.Err(err).Msg("failed to export items")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
@@ -346,4 +347,27 @@ func (ctrl *V1Controller) HandleItemsExport() errchain.HandlerFunc {
 		writer.Comma = ','
 		return writer.WriteAll(csvData)
 	}
+}
+
+func getHBURL(refererHeader, fallback string) (hbURL string) {
+	hbURL = refererHeader
+	if hbURL == "" {
+		hbURL = fallback
+	}
+
+	return stripPathFromURL(hbURL)
+}
+
+// stripPathFromURL removes the path from a URL.
+// ex. https://example.com/tools -> https://example.com
+func stripPathFromURL(rawURL string) string {
+	parsedURL, err := url.Parse(rawURL)
+	if err != nil {
+		log.Err(err).Msg("failed to parse URL")
+		return ""
+	}
+
+	strippedURL := url.URL{Scheme: parsedURL.Scheme, Host: parsedURL.Host}
+
+	return strippedURL.String()
 }
