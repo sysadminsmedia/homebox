@@ -47,24 +47,23 @@ type checking `task ui:check`
 
 ## Documentation
 We use [Vitepress](https://vitepress.dev/) for the web documentation of homebox. Anyone is welcome to contribute the documentation if they wish.
-Anyone is welcome to contribute the documentation if they wish. For documentation contributions, you only need Node.js and PNPM.
+For documentation contributions, you only need Node.js and PNPM.
 
 ::: info Notes
 - Languages are separated by folder (e.g `/en`, `/fr`, etc.)
 - The Sidebar must be updated on a per language basis
-+ The Sidebar must be updated on a per-language basis
-- Each languages files can be named independently (slugs can match the language)
+- Each language's files can be named independently (slugs can match the language)
 - The `public/_redirects` file is used to redirect the default to english
 - Redirects can also be configured per language by adding `Language=` after the redirect code
 :::
 
 ## Branch Flow
-We use the `main` branch as the development branch. All PRs should be made to the `main` branch form a feature branch.
+We use the `main` branch as the development branch. All PRs should be made to the `main` branch from a feature branch.
 To create a pull request you can use the following steps:
 
 1. Fork the repo and create a new branch from `main`
 2. If you added code that should be tested, add tests
-3. If you've changed APIs update the documentation
+3. If you've changed APIs, update the documentation
 4. Ensure that the test suite and linters pass
 5. Create your PR
 
