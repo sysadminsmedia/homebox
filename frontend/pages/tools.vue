@@ -105,7 +105,7 @@
     middleware: ["auth"],
   });
   useHead({
-    title: "Homebox | Profile",
+    title: "Homebox | Tools",
   });
 
   const modals = ref({
