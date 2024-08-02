@@ -21,6 +21,8 @@ Homebox provides the option to auto-set asset IDs, this is the default behavior.
 
 Example ID: `000-001`
 
+To search for an Asset ID: type `#` in the search bar followed by the ID you're searching for, e.g. `#000-001`.
+
 Asset IDs are partially managed by Homebox, but have a flexible implementation to allow for unique use cases. IDs are non-unique at the database level, so there is nothing stopping a user from manually setting duplicate IDs for various items. There are two recommended approaches to manage Asset IDs:
 
 ### 1. Auto Incrementing IDs
