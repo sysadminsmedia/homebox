@@ -170,6 +170,8 @@ definitions:
         x-omitempty: true
       purchaseFrom:
         type: string
+      purchaseMethod:
+        type: string
       purchasePrice:
         example: "0"
         type: string

@@ -2142,6 +2142,9 @@
                     "x-nullable": true,
                     "x-omitempty": true
                 },
+                "purchaseMethod": {
+                    "type": "string"
+                },
                 "purchaseFrom": {
                     "type": "string"
                 },

@@ -76,6 +76,8 @@ func (Item) Fields() []ent.Field {
 
 		// ------------------------------------
 		// item purchase
+		field.String("purchase_method").
+			Optional(),
 		field.Time("purchase_time").
 			Optional(),
 		field.String("purchase_from").

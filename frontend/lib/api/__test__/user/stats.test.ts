@@ -16,6 +16,7 @@ type ImportObj = {
   [`HB.manufacturer`]: string;
   [`HB.notes`]: string;
   [`HB.purchase_price`]: number;
+  [`HB.purchase_method`]: string;
   [`HB.purchase_from`]: string;
   [`HB.purchase_time`]: string;
   [`HB.lifetime_warranty`]: boolean;
@@ -62,6 +63,7 @@ function importFileGenerator(entries: number): ImportObj[] {
       [`HB.manufacturer`]: faker.string.alphanumeric(5),
       [`HB.notes`]: "",
       [`HB.purchase_from`]: faker.person.fullName(),
+      [`HB.purchase_method`]: faker.string.alphanumeric(5),
       [`HB.purchase_price`]: faker.number.int(100),
       [`HB.purchase_time`]: faker.date.past().toDateString(),
       [`HB.lifetime_warranty`]: half > i,

@@ -63,6 +63,7 @@ Specifying import refs also allows you to update existing items via the CSV impo
 | HB.model_number      | String        | Model of the item                             |
 | HB.manufacturer      | String        | Manufacturer of the item                      |
 | HB.notes             | String (1000) | General notes about the product               |
+| HB.purchase_method   | String        | Method of how the item was purchased          |
 | HB.purchase_from     | String        | Name of the place the item was purchased from |
 | HB.purchase_price    | Float64       |                                               |
 | HB.purchase_time     | Date          | Date the item was purchased                   |

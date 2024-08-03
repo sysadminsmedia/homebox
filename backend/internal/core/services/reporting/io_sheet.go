@@ -205,9 +205,10 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, GID uuid.
 			Archived:    item.Archived,
 			URL:         url,
 
-			PurchasePrice: item.PurchasePrice,
-			PurchaseFrom:  item.PurchaseFrom,
-			PurchaseTime:  item.PurchaseTime,
+			PurchasePrice:  item.PurchasePrice,
+			PurchaseMethod: item.PurchaseMethod,
+			PurchaseFrom:   item.PurchaseFrom,
+			PurchaseTime:   item.PurchaseTime,
 
 			Manufacturer: item.Manufacturer,
 			ModelNumber:  item.ModelNumber,

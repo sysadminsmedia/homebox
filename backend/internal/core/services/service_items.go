@@ -298,6 +298,7 @@ func (svc *ItemService) CsvImport(ctx context.Context, GID uuid.UUID, data io.Re
 			Archived:    row.Archived,
 
 			PurchasePrice: row.PurchasePrice,
+			PurchaseFrom:  row.PurchaseMethod,
 			PurchaseFrom:  row.PurchaseFrom,
 			PurchaseTime:  row.PurchaseTime,
 

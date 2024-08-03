@@ -236,6 +236,7 @@ func TestItemsRepository_Update(t *testing.T) {
 		ModelNumber:      fk.Str(10),
 		Manufacturer:     fk.Str(10),
 		PurchaseTime:     types.DateFromTime(time.Now()),
+		PurchaseMethod:     fk.Str(10),
 		PurchaseFrom:     fk.Str(10),
 		PurchasePrice:    300.99,
 		SoldTime:         types.DateFromTime(time.Now()),
@@ -262,6 +263,7 @@ func TestItemsRepository_Update(t *testing.T) {
 	assert.Equal(t, updateData.Manufacturer, got.Manufacturer)
 	// assert.Equal(t, updateData.PurchaseTime, got.PurchaseTime)
 	assert.Equal(t, updateData.PurchaseFrom, got.PurchaseFrom)
+	assert.Equal(t, updateData.PurchaseMethod, got.PurchaseMethod)
 	assert.InDelta(t, updateData.PurchasePrice, got.PurchasePrice, 0.01)
 	// assert.Equal(t, updateData.SoldTime, got.SoldTime)
 	assert.Equal(t, updateData.SoldTo, got.SoldTo)
