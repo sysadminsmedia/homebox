@@ -37,8 +37,8 @@
         "app": {
             "import_dialog": {
                 "title": "Import CSV File",
-                "description": "Import a CSV file containing your items, labels, and locations. See documentation for more information on the\n required format.",
-                "change_warning": "Behavior for imports with existing import_refs has changed. If an import_ref is present in the CSV file, the\n item will be updated with the values in the CSV file.",
+                "description": "Import a CSV file containing your items, labels, and locations. See documentation for more information on the \nrequired format.",
+                "change_warning": "Behavior for imports with existing import_refs has changed. If an import_ref is present in the CSV file, the \nitem will be updated with the values in the CSV file.",
                 "upload": "Upload"
             }
         },
