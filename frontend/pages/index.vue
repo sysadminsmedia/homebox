@@ -223,7 +223,7 @@
                       :class="loading ? 'loading' : ''"
                       :disabled="loading"
                     >
-                      Login
+                      {{ $t("index.login") }}
                     </button>
                   </div>
                 </div>
@@ -241,7 +241,7 @@
                 <MdiLogin v-else class="w-5 h-5 swap-off" />
                 <MdiArrowRight class="w-5 h-5 swap-on" />
               </template>
-              {{ registerForm ? $t("login") : $t("index.register") }}
+              {{ registerForm ? $t("index.login") : $t("index.register") }}
             </BaseButton>
             <p v-else class="text-base-content italic text-sm inline-flex items-center gap-2">
               <MdiLock class="w-4 h-4 inline-block" />
