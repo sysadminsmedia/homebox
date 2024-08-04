@@ -8,6 +8,7 @@
   import MdiLogin from "~icons/mdi/login";
   import MdiArrowRight from "~icons/mdi/arrow-right";
   import MdiLock from "~icons/mdi/lock";
+  import MdiMastodon from '~icons/mdi/mastodon';
 
   useHead({
     title: "Homebox | Organize and Tag Your Stuff",
@@ -152,16 +153,16 @@
           <p class="ml-1 text-lg text-base-content/50">{{ $t("tagline") }}</p>
         </div>
         <div class="flex mt-6 sm:mt-0 gap-4 ml-auto text-neutral-content">
-          <a class="tooltip" data-tip="Project Github" href="https://github.com/sysadminsmedia/homebox" target="_blank">
+          <a class="tooltip" :data-tip="$t('github')" href="https://github.com/sysadminsmedia/homebox" target="_blank">
             <MdiGithub class="h-8 w-8" />
           </a>
-          <a href="https://noc.social/@sysadminsmedia" class="tooltip" data-tip="Follow The Developer" target="_blank">
-            <MdiTwitter class="h-8 w-8" />
+          <a href="https://noc.social/@sysadminsmedia" class="tooltip" :data-tip="$t('follow_dev')" target="_blank">
+            <MdiMastodon class="h-8 w-8" />
           </a>
-          <a href="https://discord.gg/aY4DCkpNA9" class="tooltip" data-tip="Join The Discord" target="_blank">
+          <a href="https://discord.gg/aY4DCkpNA9" class="tooltip" :data-tip="$t('join_discord')" target="_blank">
             <MdiDiscord class="h-8 w-8" />
           </a>
-          <a href="https://homebox.sysadminsmedia.com/en/" class="tooltip" data-tip="Read The Docs" target="_blank">
+          <a href="https://homebox.sysadminsmedia.com/en/" class="tooltip" :data-tip="$t('read_docs')" target="_blank">
             <MdiFolder class="h-8 w-8" />
           </a>
         </div>
