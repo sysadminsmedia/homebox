@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import MdiGithub from "~icons/mdi/github";
-  import MdiTwitter from "~icons/mdi/twitter";
   import MdiDiscord from "~icons/mdi/discord";
   import MdiFolder from "~icons/mdi/folder";
   import MdiAccount from "~icons/mdi/account";
@@ -150,19 +149,19 @@
             <AppLogo class="w-12 -mb-4" />
             x
           </h2>
-          <p class="ml-1 text-lg text-base-content/50">{{ $t("tagline") }}</p>
+          <p class="ml-1 text-lg text-base-content/50">{{ $t("index.tagline") }}</p>
         </div>
         <div class="flex mt-6 sm:mt-0 gap-4 ml-auto text-neutral-content">
-          <a class="tooltip" :data-tip="$t('github')" href="https://github.com/sysadminsmedia/homebox" target="_blank">
+          <a class="tooltip" :data-tip="$t('global.github')" href="https://github.com/sysadminsmedia/homebox" target="_blank">
             <MdiGithub class="h-8 w-8" />
           </a>
-          <a href="https://noc.social/@sysadminsmedia" class="tooltip" :data-tip="$t('follow_dev')" target="_blank">
+          <a href="https://noc.social/@sysadminsmedia" class="tooltip" :data-tip="$t('global.follow_dev')" target="_blank">
             <MdiMastodon class="h-8 w-8" />
           </a>
-          <a href="https://discord.gg/aY4DCkpNA9" class="tooltip" :data-tip="$t('join_discord')" target="_blank">
+          <a href="https://discord.gg/aY4DCkpNA9" class="tooltip" :data-tip="$t('global.join_discord')" target="_blank">
             <MdiDiscord class="h-8 w-8" />
           </a>
-          <a href="https://homebox.sysadminsmedia.com/en/" class="tooltip" :data-tip="$t('read_docs')" target="_blank">
+          <a href="https://homebox.sysadminsmedia.com/en/" class="tooltip" :data-tip="$t('global.read_docs')" target="_blank">
             <MdiFolder class="h-8 w-8" />
           </a>
         </div>
@@ -175,17 +174,17 @@
                 <div class="card-body">
                   <h2 class="card-title text-2xl align-center">
                     <MdiAccount class="mr-1 w-7 h-7" />
-                    {{ $t("register") }}
+                    {{ $t("index.register") }}
                   </h2>
-                  <FormTextField v-model="email" :label="$t('set_email')" />
-                  <FormTextField v-model="username" :label="$t('set_name')" />
+                  <FormTextField v-model="email" :label="$t('index.set_email')" />
+                  <FormTextField v-model="username" :label="$t('index.set_name')" />
                   <div v-if="!(groupToken == '')" class="pt-4 pb-1 text-center">
-                    <p>{{ $t("joining_group") }}</p>
+                    <p>{{ $t("index.joining_group") }}</p>
                     <button type="button" class="text-xs underline" @click="groupToken = ''">
-                      {{ $t("dont_join_group") }}
+                      {{ $t("index.dont_join_group") }}
                     </button>
                   </div>
-                  <FormPassword v-model="password" :label="$t('set_password')" />
+                  <FormPassword v-model="password" :label="$t('index.set_password')" />
                   <PasswordScore v-model:valid="canRegister" :password="password" />
                   <div class="card-actions justify-end">
                     <button
@@ -194,7 +193,7 @@
                       :class="loading ? 'loading' : ''"
                       :disabled="loading || !canRegister"
                     >
-                      {{ $t("register") }}
+                      {{ $t("index.register") }}
                     </button>
                   </div>
                 </div>
@@ -205,17 +204,17 @@
                 <div class="card-body">
                   <h2 class="card-title text-2xl align-center">
                     <MdiAccount class="mr-1 w-7 h-7" />
-                    {{ $t("login") }}
+                    {{ $t("index.login") }}
                   </h2>
                   <template v-if="status && status.demo">
                     <p class="text-xs italic text-center">This is a demo instance</p>
-                    <p class="text-xs text-center"><b>{{ $t("email") }}</b> demo@example.com</p>
-                    <p class="text-xs text-center"><b>{{ $t("password") }}</b> demo</p>
+                    <p class="text-xs text-center"><b>{{ $t("global.email") }}</b> demo@example.com</p>
+                    <p class="text-xs text-center"><b>{{ $t("global.password") }}</b> demo</p>
                   </template>
-                  <FormTextField v-model="email" :label="$t('email')" />
-                  <FormPassword v-model="loginPassword" :label="$t('password')" />
+                  <FormTextField v-model="email" :label="$t('global.email')" />
+                  <FormPassword v-model="loginPassword" :label="$t('global.password')" />
                   <div class="max-w-[140px]">
-                    <FormCheckbox v-model="remember" :label="$t('remember_me')" />
+                    <FormCheckbox v-model="remember" :label="$t('index.remember_me')" />
                   </div>
                   <div class="card-actions justify-end">
                     <button
@@ -242,7 +241,7 @@
                 <MdiLogin v-else class="w-5 h-5 swap-off" />
                 <MdiArrowRight class="w-5 h-5 swap-on" />
               </template>
-              {{ registerForm ? $t("login") : $t("register") }}
+              {{ registerForm ? $t("login") : $t("index.register") }}
             </BaseButton>
             <p v-else class="text-base-content italic text-sm inline-flex items-center gap-2">
               <MdiLock class="w-4 h-4 inline-block" />
@@ -254,7 +253,8 @@
     </div>
     <footer v-if="status" class="mt-auto text-center w-full bottom-0 pb-4">
       <p class="text-center text-sm">
-        {{ $t("version", { version: status.build.version }) }} ~ {{ $t("build", { build: status.build.commit }) }}
+        {{ $t("global.version", { version: status.build.version }) }} ~
+        {{ $t("global.build", { build: status.build.commit }) }}
       </p>
     </footer>
   </div>

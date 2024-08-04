@@ -8,6 +8,7 @@ export default defineNuxtPlugin(({ vueApp }) => {
     legacy: false,
     globalInjection: true,
     locale: "en",
+    fallbackLocale: "en",
     messageCompiler,
     messages,
   });
