@@ -254,7 +254,7 @@
     </div>
     <footer v-if="status" class="mt-auto text-center w-full bottom-0 pb-4">
       <p class="text-center text-sm">
-        {{ $t("version") }}: {{ status.build.version }} ~ {{ $t("build") }}: {{ status.build.commit }}
+        {{ $t("version", { version: status.build.version }) }} ~ {{ $t("build", { build: status.build.commit }) }}
       </p>
     </footer>
   </div>

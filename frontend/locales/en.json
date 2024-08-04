@@ -1,7 +1,7 @@
 {
   "tagline": "Track, Organize, and Manage your Things.",
-  "version": "Version",
-  "build": "Build",
+  "version": "Version: { version }",
+  "build": "Build: { build }",
   "disabled_registration": "Registration Disabled",
   "login": "Login",
   "register": "Register",
