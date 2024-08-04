@@ -149,13 +149,13 @@
             <AppLogo class="w-12 -mb-4" />
             x
           </h2>
-          <p class="ml-1 text-lg text-base-content/50">Track, Organize, and Manage your Things.</p>
+          <p class="ml-1 text-lg text-base-content/50">{{ $t("tagline") }}</p>
         </div>
         <div class="flex mt-6 sm:mt-0 gap-4 ml-auto text-neutral-content">
           <a class="tooltip" data-tip="Project Github" href="https://github.com/sysadminsmedia/homebox" target="_blank">
             <MdiGithub class="h-8 w-8" />
           </a>
-          <a href="https://twitter.com/haybytes" class="tooltip" data-tip="Follow The Developer" target="_blank">
+          <a href="https://noc.social/@sysadminsmedia" class="tooltip" data-tip="Follow The Developer" target="_blank">
             <MdiTwitter class="h-8 w-8" />
           </a>
           <a href="https://discord.gg/aY4DCkpNA9" class="tooltip" data-tip="Join The Discord" target="_blank">
@@ -174,17 +174,17 @@
                 <div class="card-body">
                   <h2 class="card-title text-2xl align-center">
                     <MdiAccount class="mr-1 w-7 h-7" />
-                    Register
+                    {{ $t("register") }}
                   </h2>
-                  <FormTextField v-model="email" label="Set your email?" />
-                  <FormTextField v-model="username" label="What's your name?" />
+                  <FormTextField v-model="email" :label="$t('set_email')" />
+                  <FormTextField v-model="username" :label="$t('set_name')" />
                   <div v-if="!(groupToken == '')" class="pt-4 pb-1 text-center">
-                    <p>You're Joining an Existing Group!</p>
+                    <p>{{ $t("joining_group") }}</p>
                     <button type="button" class="text-xs underline" @click="groupToken = ''">
-                      Don't Want To Join a Group?
+                      {{ $t("dont_join_group") }}
                     </button>
                   </div>
-                  <FormPassword v-model="password" label="Set your password" />
+                  <FormPassword v-model="password" :label="$t('set_password')" />
                   <PasswordScore v-model:valid="canRegister" :password="password" />
                   <div class="card-actions justify-end">
                     <button
@@ -193,7 +193,7 @@
                       :class="loading ? 'loading' : ''"
                       :disabled="loading || !canRegister"
                     >
-                      Register
+                      {{ $t("register") }}
                     </button>
                   </div>
                 </div>
@@ -204,17 +204,17 @@
                 <div class="card-body">
                   <h2 class="card-title text-2xl align-center">
                     <MdiAccount class="mr-1 w-7 h-7" />
-                    Login
+                    {{ $t("login") }}
                   </h2>
                   <template v-if="status && status.demo">
                     <p class="text-xs italic text-center">This is a demo instance</p>
-                    <p class="text-xs text-center"><b>Email</b> demo@example.com</p>
-                    <p class="text-xs text-center"><b>Password</b> demo</p>
+                    <p class="text-xs text-center"><b>{{ $t("email") }}</b> demo@example.com</p>
+                    <p class="text-xs text-center"><b>{{ $t("password") }}</b> demo</p>
                   </template>
-                  <FormTextField v-model="email" label="Email" />
-                  <FormPassword v-model="loginPassword" label="Password" />
+                  <FormTextField v-model="email" :label="$t('email')" />
+                  <FormPassword v-model="loginPassword" :label="$t('password')" />
                   <div class="max-w-[140px]">
-                    <FormCheckbox v-model="remember" label="Remember Me" />
+                    <FormCheckbox v-model="remember" :label="$t('remember_me')" />
                   </div>
                   <div class="card-actions justify-end">
                     <button
@@ -241,18 +241,20 @@
                 <MdiLogin v-else class="w-5 h-5 swap-off" />
                 <MdiArrowRight class="w-5 h-5 swap-on" />
               </template>
-              {{ registerForm ? "Login" : "Register" }}
+              {{ registerForm ? $t("login") : $t("register") }}
             </BaseButton>
             <p v-else class="text-base-content italic text-sm inline-flex items-center gap-2">
               <MdiLock class="w-4 h-4 inline-block" />
-              Registration Disabled
+              {{ $t("disabled_registration") }}
             </p>
           </div>
         </div>
       </div>
     </div>
     <footer v-if="status" class="mt-auto text-center w-full bottom-0 pb-4">
-      <p class="text-center text-sm">Version: {{ status.build.version }} ~ Build: {{ status.build.commit }}</p>
+      <p class="text-center text-sm">
+        {{ $t("version") }}: {{ status.build.version }} ~ {{ $t("build") }}: {{ status.build.commit }}
+      </p>
     </footer>
   </div>
 </template>

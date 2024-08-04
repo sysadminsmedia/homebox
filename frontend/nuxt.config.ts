@@ -1,8 +1,21 @@
+import { resolve, dirname } from "node:path";
+import { fileURLToPath } from "url";
 import { defineNuxtConfig } from "nuxt/config";
+import VueI18nVitePlugin from "@intlify/unplugin-vue-i18n/vite";
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
   ssr: false,
+  build: {
+    transpile: ["vue-i18n"],
+  },
+  vite: {
+    plugins: [
+      VueI18nVitePlugin({
+        include: [resolve(dirname(fileURLToPath(import.meta.url)), "./locales/**")],
+      }),
+    ],
+  },
   modules: [
     "@nuxtjs/tailwindcss",
     "@pinia/nuxt",
