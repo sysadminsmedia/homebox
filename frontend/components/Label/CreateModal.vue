@@ -1,6 +1,6 @@
 <template>
   <BaseModal v-model="modal">
-    <template #title> Create Label </template>
+    <template #title>{{ $t("components.label.create_modal.title") }}</template>
     <form @submit.prevent="create()">
       <FormTextField
         ref="locationNameRef"
@@ -12,14 +12,14 @@
       <FormTextArea v-model="form.description" label="Label Description" />
       <div class="modal-action">
         <div class="flex justify-center">
-          <BaseButton class="rounded-r-none" :loading="loading" type="submit"> Create </BaseButton>
+          <BaseButton class="rounded-r-none" :loading="loading" type="submit"> {{ $t("global.create") }} </BaseButton>
           <div class="dropdown dropdown-top">
             <label tabindex="0" class="btn rounded-l-none rounded-r-xl">
               <MdiChevronDown class="h-5 w-5" />
             </label>
             <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-64 right-0">
               <li>
-                <button type="button" @click="create(false)">Create and Add Another</button>
+                <button type="button" @click="create(false)">{{ $t("global.create_and_add") }}</button>
               </li>
             </ul>
           </div>

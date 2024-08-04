@@ -7,7 +7,11 @@
         "follow_dev": "Follow the Developer",
         "read_docs": "Read the Docs",
         "password": "Password",
-        "email": "Email"
+        "email": "Email",
+        "submit": "Submit",
+        "confirm": "Confirm",
+        "create": "Create",
+        "create_and_add": "Create and Add Another"
     },
     "index": {
         "tagline": "Track, Organize, and Manage your Things.",
@@ -22,8 +26,44 @@
         "dont_join_group": "Don't want to join a group?"
     },
     "components": {
-        "password_score": {
-            "password_strength": "Password Strength"
+        "global": {
+            "password_score": {
+                "password_strength": "Password Strength"
+            },
+            "page_qr_code": {
+                "page_url": "Page URL"
+            }
+        },
+        "app": {
+            "import_dialog": {
+                "title": "Import CSV File",
+                "description": "Import a CSV file containing your items, labels, and locations. See documentation for more information on the\n required format.",
+                "change_warning": "Behavior for imports with existing import_refs has changed. If an import_ref is present in the CSV file, the\n item will be updated with the values in the CSV file.",
+                "upload": "Upload"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "title": "Create Item"
+            },
+            "view": {
+                "selectable": {
+                    "items": "Items",
+                    "card": "Card",
+                    "table": "Table",
+                    "no_items": "No Items to Display"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "title": "Create Label"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "Create Location"
+            }
         }
     }
 }

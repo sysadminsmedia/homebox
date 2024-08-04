@@ -29,7 +29,7 @@
 <template>
   <section>
     <BaseSectionHeader class="mb-2 flex justify-between items-center">
-      Items
+      {{ $t("components.item.view.selectable.items") }}
       <template #description>
         <div v-if="!viewSet" class="dropdown dropdown-hover dropdown-left">
           <label tabindex="0" class="btn btn-ghost m-1">
@@ -39,13 +39,13 @@
             <li>
               <button @click="setViewPreference('card')">
                 <MdiCardTextOutline class="h-5 w-5" />
-                Card
+                {{ $t("components.item.view.selectable.card") }}
               </button>
             </li>
             <li>
               <button @click="setViewPreference('table')">
                 <MdiTable class="h-5 w-5" />
-                Table
+                {{ $t("components.item.view.selectable.table") }}
               </button>
             </li>
           </ul>
@@ -59,7 +59,7 @@
     <template v-else>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         <ItemCard v-for="item in items" :key="item.id" :item="item" />
-        <div class="first:block hidden text-lg">No Items to Display</div>
+        <div class="first:block hidden text-lg">{{ $t("components.item.view.selectable.no_items") }}</div>
       </div>
     </template>
   </section>
