@@ -1,1 +1,69 @@
-{}
+{
+    "global": {
+        "version": "Versiyon:{ version }",
+        "password": "Şifre",
+        "create": "Oluştur",
+        "github": "GitHub projesi",
+        "join_discord": "Discord'a Katılın",
+        "follow_dev": "Geliştiriciyi takip edin",
+        "read_docs": "Dokümanları okuyun",
+        "email": "Elektronik posta",
+        "submit": "Gönder",
+        "confirm": "Onaylayın",
+        "build": "Sürüm: { build }",
+        "create_and_add": "Oluştur ve Bir Tane Daha Ekle"
+    },
+    "components": {
+        "app": {
+            "import_dialog": {
+                "change_warning": "Mevcut import_refs ile içe aktarmaların davranışı değişti. CSV dosyasında bir import_ref varsa, \nöğe CSV dosyasındaki değerlerle güncellenecektir.",
+                "title": "CSV dosyasını içeri aktar",
+                "upload": "Yükle",
+                "description": "Öğelerinizi, etiketlerinizi ve konumlarınızı içeren bir CSV dosyasını içe aktarın. Daha fazla\nbilgi için dökümanları okuyun."
+            }
+        },
+        "global": {
+            "password_score": {
+                "password_strength": "Şifre güvenlik seviyesi"
+            },
+            "page_qr_code": {
+                "page_url": "Sayfa URL'si"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "title": "Eşya Oluştur"
+            },
+            "view": {
+                "selectable": {
+                    "items": "Öğeler",
+                    "card": "Kart",
+                    "table": "Tablo",
+                    "no_items": "Görüntülecek Öge Yok"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "title": "Etiket oluştur"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "Konum oluştur"
+            }
+        }
+    },
+    "index": {
+        "remember_me": "Beni Hatırla",
+        "tagline": "Eşyalarınızı Takip Edin, Düzenleyin ve Yönetin.",
+        "disabled_registration": "Kayıt olma devre dışı",
+        "login": "Oturum Aç",
+        "register": "Kaydolun",
+        "set_email": "E-posta adresiniz nedir?",
+        "set_password": "Şifrenizi belirleyin",
+        "set_name": "Adın ne?",
+        "joining_group": "Mevcut bir gruba katılıyorsunuz!",
+        "dont_join_group": "Bir gruba katılmak istemiyor musunuz?"
+    }
+}

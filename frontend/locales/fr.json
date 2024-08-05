@@ -1,1 +1,69 @@
-{}
+{
+    "global": {
+        "email": "Courriel",
+        "read_docs": "Lire la documentation",
+        "password": "Mot de passe",
+        "github": "Projet GitHub",
+        "join_discord": "Joindre le forum Discord",
+        "follow_dev": "Suivre le développeur",
+        "version": "Version : { version }",
+        "build": "Assemblage : { build }",
+        "create": "Créer",
+        "submit": "Soumettre",
+        "create_and_add": "Créer et ajouter un autre",
+        "confirm": "Confirmer"
+    },
+    "index": {
+        "set_email": "Quel est vôtre courriel ?",
+        "set_name": "Quel est vôtre nom ?",
+        "login": "Se connecter",
+        "register": "S'enregistrer",
+        "remember_me": "Se souvenir de moi",
+        "set_password": "Définir votre mot de passe",
+        "dont_join_group": "Vous ne voulez pas joindre un groupe ?",
+        "tagline": "Gardez la trace, organisez et gérez vos affaires.",
+        "disabled_registration": "Les inscriptions sont fermées",
+        "joining_group": "Vous joignez un groupe existant !"
+    },
+    "components": {
+        "label": {
+            "create_modal": {
+                "title": "Créer une étiquette"
+            }
+        },
+        "item": {
+            "view": {
+                "selectable": {
+                    "items": "Items",
+                    "no_items": "Nb. d’items à afficher",
+                    "table": "Tableau",
+                    "card": "Carte"
+                }
+            },
+            "create_modal": {
+                "title": "Créer un item"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "Créer un emplacement"
+            }
+        },
+        "global": {
+            "password_score": {
+                "password_strength": "Solidité du mot de passe"
+            },
+            "page_qr_code": {
+                "page_url": "URL de la page"
+            }
+        },
+        "app": {
+            "import_dialog": {
+                "title": "Importer un fichier CSV",
+                "upload": "Téléverser",
+                "description": "Importer un fichier CSV contenant vos items, étiquettes, et emplacements. Voir la documentation pour plus d'informations sur le format requis.",
+                "change_warning": "Le comportement lors d’importations avec des import_ref existants a changé. Si une valeur pour import_ref est présente dans le fichier CSV, alors l'item sera mis à jour avec celle-ci."
+            }
+        }
+    }
+}

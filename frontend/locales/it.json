@@ -1,1 +1,69 @@
-{}
+{
+    "global": {
+        "build": "Versione: { build }",
+        "version": "Versione: { version }",
+        "github": "Progetto GitHub",
+        "join_discord": "Unisciti a Discord",
+        "follow_dev": "Segui lo Sviluppatore",
+        "read_docs": "Leggi la Documentazione",
+        "password": "Password",
+        "email": "Email",
+        "submit": "Invia",
+        "confirm": "Conferma",
+        "create": "Crea",
+        "create_and_add": "Crea e aggiungi un altro"
+    },
+    "index": {
+        "disabled_registration": "Registrazione Disabilitata",
+        "login": "Accedi",
+        "register": "Registrati",
+        "remember_me": "Ricordami",
+        "set_email": "Qual è la tua email?",
+        "set_password": "Imposta la tua password",
+        "set_name": "Come ti chiami?",
+        "dont_join_group": "Non vuoi unirti a un gruppo?",
+        "tagline": "Tieni traccia, Organizza e Gestisci le tue Cose.",
+        "joining_group": "Stai unendoti a un gruppo esistente!"
+    },
+    "components": {
+        "global": {
+            "password_score": {
+                "password_strength": "Complessità della Password"
+            },
+            "page_qr_code": {
+                "page_url": "URL della Pagina"
+            }
+        },
+        "app": {
+            "import_dialog": {
+                "title": "Importa File CSV",
+                "change_warning": "Il comportamento per le importazioni con import_ref esistenti è cambiato. Se un import_ref è presente nel file CSV, l'elemento verrà aggiornato con i valori presenti nel file CSV.",
+                "upload": "Carica",
+                "description": "Importa un file CSV contenente gli oggetti, le etichette e le posizioni. Vedi la documentazione per ulteriori informazioni sul formato richiesto."
+            }
+        },
+        "item": {
+            "create_modal": {
+                "title": "Crea Oggetto"
+            },
+            "view": {
+                "selectable": {
+                    "items": "Oggetti",
+                    "card": "Scheda",
+                    "table": "Tabella",
+                    "no_items": "Nessun Oggetto da Visualizzare"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "title": "Crea Etichetta"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "Crea Posizione"
+            }
+        }
+    }
+}

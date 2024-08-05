@@ -7,26 +7,62 @@
         "build": "Build: { build }",
         "email": "E-Mail",
         "confirm": "Bestätigen",
-        "create": "Erzeugen",
-        "create_and_add": "Erzeugen und weiteres hinzufügen"
+        "create": "Erstellen",
+        "create_and_add": "Erstellen und ein weiteres hinzufügen",
+        "follow_dev": "Dem Entwickler folgen",
+        "read_docs": "Lese die Dokumentation",
+        "submit": "Absenden"
     },
     "index": {
-        "login": "Anmeldung",
+        "login": "Anmelden",
         "register": "Registrieren",
-        "tagline": "Verfolge, oranisiere und verwalte deine Sachen.",
-        "disabled_registration": "Registrierung deaktiviert"
+        "tagline": "Verfolgen, Organisieren und Verwalten deiner Sachen.",
+        "disabled_registration": "Registrierung deaktiviert",
+        "joining_group": "Du trittst einer bereits bestehenden Gruppe bei!",
+        "remember_me": "Angemeldet bleiben",
+        "set_email": "Was ist deine E-Mail?",
+        "set_password": "Setze dein Passwort",
+        "set_name": "Wie heißt du?",
+        "dont_join_group": "Möchtest du nicht einer Gruppe beitreten?"
     },
     "components": {
         "global": {
             "password_score": {
                 "password_strength": "Passwortstärke"
+            },
+            "page_qr_code": {
+                "page_url": "Seiten-URL"
             }
         },
         "item": {
             "view": {
                 "selectable": {
-                    "items": "Gegenstände"
+                    "items": "Gegenstände",
+                    "card": "Karte",
+                    "table": "Tabelle",
+                    "no_items": "Keine Gegenstände anzuzeigen"
                 }
+            },
+            "create_modal": {
+                "title": "Erstelle Gegenstand"
+            }
+        },
+        "app": {
+            "import_dialog": {
+                "description": "Importiere eine CSV-Datei, die deine Gegenstände, Etiketten und Standorte enthält. Siehe Dokumentation für weitere Informationen zum erforderlichen Format.",
+                "title": "Importiere CSV-Datei",
+                "change_warning": "Das Verhalten bei Importen mit vorhandenen import_refs hat sich geändert. Wenn ein import_ref in der CSV-Datei vorhanden ist, wird der Gegenstand mit den Werten in der CSV-Datei aktualisiert.",
+                "upload": "Hochladen"
+            }
+        },
+        "label": {
+            "create_modal": {
+                "title": "Erstelle Etikette"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "Erstelle Standort"
             }
         }
     }
