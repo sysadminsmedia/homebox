@@ -1,1 +1,33 @@
-{}
+{
+    "global": {
+        "github": "GitHub Projekt",
+        "join_discord": "Discord beitreten",
+        "password": "Passwort",
+        "version": "Version: { version }",
+        "build": "Build: { build }",
+        "email": "E-Mail",
+        "confirm": "Bestätigen",
+        "create": "Erzeugen",
+        "create_and_add": "Erzeugen und weiteres hinzufügen"
+    },
+    "index": {
+        "login": "Anmeldung",
+        "register": "Registrieren",
+        "tagline": "Verfolge, oranisiere und verwalte deine Sachen.",
+        "disabled_registration": "Registrierung deaktiviert"
+    },
+    "components": {
+        "global": {
+            "password_score": {
+                "password_strength": "Passwortstärke"
+            }
+        },
+        "item": {
+            "view": {
+                "selectable": {
+                    "items": "Gegenstände"
+                }
+            }
+        }
+    }
+}
