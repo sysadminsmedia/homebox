@@ -49,9 +49,9 @@
         },
         "app": {
             "import_dialog": {
-                "description": "Importiere eine CSV-Datei, die deine Gegenstände, Etiketten und Standorte enthält. Siehe Dokumentation für weitere Informationen zum erforderlichen Format.",
+                "description": "Importiere eine CSV-Datei, die deine Gegenstände, Etiketten und Standorte enthält. Siehe Dokumentation für weitere Informationen zum \nerforderlichen Format.",
                 "title": "Importiere CSV-Datei",
-                "change_warning": "Das Verhalten bei Importen mit vorhandenen import_refs hat sich geändert. Wenn ein import_ref in der CSV-Datei vorhanden ist, wird der Gegenstand mit den Werten in der CSV-Datei aktualisiert.",
+                "change_warning": "Das Verhalten bei Importen mit vorhandenen import_refs hat sich geändert. Wenn ein import_ref in der CSV-Datei vorhanden ist, wird\n der Gegenstand mit den Werten in der CSV-Datei aktualisiert.",
                 "upload": "Hochladen"
             }
         },

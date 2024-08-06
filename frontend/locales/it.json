@@ -37,9 +37,9 @@
         "app": {
             "import_dialog": {
                 "title": "Importa File CSV",
-                "change_warning": "Il comportamento per le importazioni con import_ref esistenti è cambiato. Se un import_ref è presente nel file CSV, l'elemento verrà aggiornato con i valori presenti nel file CSV.",
+                "change_warning": "Il comportamento per le importazioni con import_ref esistenti è cambiato. Se un import_ref è presente nel file CSV,\n l'elemento verrà aggiornato con i valori presenti nel file CSV.",
                 "upload": "Carica",
-                "description": "Importa un file CSV contenente gli oggetti, le etichette e le posizioni. Vedi la documentazione per ulteriori informazioni sul formato richiesto."
+                "description": "Importa un file CSV contenente gli oggetti, le etichette e le posizioni. Vedi la documentazione per ulteriori informazioni sul \nformato richiesto."
             }
         },
         "item": {
