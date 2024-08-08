@@ -11,7 +11,10 @@
         "create": "Maken",
         "create_and_add": "Maak en voeg nog een toe",
         "password": "Wachtwoord",
-        "build": "Bouw: { build }"
+        "build": "Bouw: { build }",
+        "created": "Gemaakt",
+        "welcome": "Welkom, { username }",
+        "sign_out": "Log uit"
     },
     "index": {
         "disabled_registration": "Registratie uitgeschakeld",
@@ -65,5 +68,21 @@
                 "title": "Maak locatie"
             }
         }
+    },
+    "profile": {
+        "gen_invite": "Genereer Uitnodigingslink",
+        "notifier_modal": "{ type, selecteer, waar {Bewerk} onwaar {Creëer} overig {overig}} Notifier",
+        "change_password": "Verander Wachtwoord",
+        "current_password": "Huidig Wachtwoord",
+        "new_password": "Nieuw Wachtwoord",
+        "name": "Naam",
+        "url": "URL",
+        "enabled": "ingeschakeld",
+        "test": "Test",
+        "user_profile": "Gebruikers Profiel",
+        "user_profile_sub": "Nodig gebruikers uit, en beheer je account.",
+        "active": "Actief",
+        "inactive": "Inactief",
+        "notifiers_sub": "Krijg notificaties voor opkomende onderhouds herinneringen"
     }
 }
