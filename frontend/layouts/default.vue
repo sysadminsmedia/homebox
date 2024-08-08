@@ -29,6 +29,12 @@
         </div>
 
         <slot></slot>
+        <footer v-if="status" class="text-center w-full bottom-0 pb-4 bg-base-300 text-secondary-content">
+          <p class="text-center text-sm">
+            {{ $t("global.version", { version: status.build.version }) }} ~
+            {{ $t("global.build", { build: status.build.commit }) }}
+          </p>
+        </footer>
       </div>
 
       <!-- Sidebar -->
@@ -104,10 +110,16 @@
   import MdiAccount from "~icons/mdi/account";
   import MdiCog from "~icons/mdi/cog";
   const username = computed(() => authCtx.user?.name || "User");
+
+  const pubApi = usePublicApi();
+  const { data: status } = useAsyncData(async () => {
+    const { data } = await pubApi.status();
+
+    return data;
+  });
+
   // Preload currency format
   useFormatCurrency();
-  const locale = useState("locale").value;
-  console.log(locale);
   const modals = reactive({
     item: false,
     location: false,

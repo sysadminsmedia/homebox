@@ -89,13 +89,6 @@
     notify.success("Group updated");
   }
 
-  const pubApi = usePublicApi();
-  const { data: status } = useAsyncData(async () => {
-    const { data } = await pubApi.status();
-
-    return data;
-  });
-
   const { setTheme } = useTheme();
 
   const auth = useAuthContext();
@@ -399,11 +392,11 @@
             </div>
             <div class="flex justify-between py-1 flex-wrap text-sm">
               <p>
-                <span v-if="n.isActive" class="badge badge-success"> Active </span>
-                <span v-else class="badge badge-error"> Inactive</span>
+                <span v-if="n.isActive" class="badge badge-success"> {{ $t("profile.active") }} </span>
+                <span v-else class="badge badge-error"> {{ $t("profile.inactive") }} </span>
               </p>
               <p>
-                Created
+                {{ $t("global.created") }}
                 <DateTime format="relative" datetime-type="time" :date="n.createdAt" />
               </p>
             </div>
@@ -411,7 +404,7 @@
         </div>
 
         <div class="p-4">
-          <BaseButton size="sm" @click="openNotifierDialog"> Create </BaseButton>
+          <BaseButton size="sm" @click="openNotifierDialog"> {{ $t("global.create") }} </BaseButton>
         </div>
       </BaseCard>
 
@@ -500,9 +493,6 @@
         </div>
       </BaseCard>
     </BaseContainer>
-    <footer v-if="status" class="text-center w-full bottom-0 pb-4">
-      <p class="text-center text-sm">Version: {{ status.build.version }} ~ Build: {{ status.build.commit }}</p>
-    </footer>
   </div>
 </template>
 

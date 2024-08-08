@@ -11,6 +11,7 @@
         "submit": "Submit",
         "confirm": "Confirm",
         "create": "Create",
+        "created": "Created",
         "create_and_add": "Create and Add Another",
         "welcome": "Welcome, { username }",
         "sign_out": "Sign Out"
@@ -40,7 +41,9 @@
         "test": "Test",
         "gen_invite": "Generate Invite Link",
         "user_profile": "User Profile",
-        "user_profile_sub": "Invite users, and manage your account."
+        "user_profile_sub": "Invite users, and manage your account.",
+        "active": "Active",
+        "inactive": "Inactive"
     },
     "components": {
         "global": {
