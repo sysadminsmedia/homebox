@@ -39,7 +39,7 @@
         <div class="w-60 py-5 md:py-10 bg-base-200 flex flex-grow-1 flex-col">
           <div class="space-y-8">
             <div class="flex flex-col items-center gap-4">
-              <p>Welcome, {{ username }}</p>
+              <p>{{ $t("global.welcome", { username: username }) }}</p>
               <NuxtLink class="avatar placeholder" to="/home">
                 <div class="bg-base-300 text-neutral-content rounded-full w-24 p-4">
                   <AppLogo />
@@ -53,7 +53,7 @@
                     <span>
                       <MdiPlus class="mr-1 -ml-1" />
                     </span>
-                    Create
+                    {{ $t("global.create") }}
                   </label>
                   <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40">
                     <li v-for="btn in dropdown" :key="btn.name">
@@ -83,7 +83,9 @@
           </div>
 
           <!-- Bottom -->
-          <button class="mt-auto mx-2 hover:bg-base-300 p-3 rounded-btn" @click="logout">Sign Out</button>
+          <button class="mt-auto mx-2 hover:bg-base-300 p-3 rounded-btn" @click="logout">
+            {{ $t("global.sign_out") }}
+          </button>
         </div>
       </div>
     </div>

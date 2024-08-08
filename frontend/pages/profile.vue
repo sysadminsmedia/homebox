@@ -305,11 +305,11 @@
 <template>
   <div>
     <BaseModal v-model="passwordChange.dialog">
-      <template #title> Change Password </template>
+      <template #title> {{ $t("profile.change_password") }} </template>
 
       <form @submit.prevent="changePassword">
-        <FormPassword v-model="passwordChange.current" label="Current Password" placeholder="" />
-        <FormPassword v-model="passwordChange.new" label="New Password" placeholder="" />
+        <FormPassword v-model="passwordChange.current" :label="$t('profile.current_password')" placeholder="" />
+        <FormPassword v-model="passwordChange.new" :label="$t('profile.new_password')" placeholder="" />
         <PasswordScore v-model:valid="passwordChange.isValid" :password="passwordChange.new" />
 
         <div class="flex">
@@ -319,26 +319,26 @@
             :disabled="!passwordChange.isValid"
             type="submit"
           >
-            Submit
+            {{ $t("global.submit") }}
           </BaseButton>
         </div>
       </form>
     </BaseModal>
 
     <BaseModal v-model="notifierDialog">
-      <template #title> {{ notifier ? "Edit" : "Create" }} Notifier </template>
+      <template #title> {{ $t("profile.notifier", {type: (notifier != null)}) }} </template>
 
       <form @submit.prevent="createNotifier">
         <template v-if="notifier">
-          <FormTextField v-model="notifier.name" label="Name" />
-          <FormTextField v-model="notifier.url" label="URL" />
+          <FormTextField v-model="notifier.name" :label="$t('profile.name')" />
+          <FormTextField v-model="notifier.url" :label="$t('profile.url')" />
           <div class="max-w-[100px]">
-            <FormCheckbox v-model="notifier.isActive" label="Enabled" />
+            <FormCheckbox v-model="notifier.isActive" :label="$t('profile.enabled')" />
           </div>
         </template>
         <div class="flex gap-2 justify-between mt-4">
-          <BaseButton :disabled="!(notifier && notifier.url)" type="button" @click="testNotifier"> Test </BaseButton>
-          <BaseButton type="submit"> Submit </BaseButton>
+          <BaseButton :disabled="!(notifier && notifier.url)" type="button" @click="testNotifier"> {{ $t("profile.test") }} </BaseButton>
+          <BaseButton type="submit"> {{ $t("global.submit") }} </BaseButton>
         </div>
       </form>
     </BaseModal>
@@ -367,6 +367,22 @@
           <div v-if="token" class="pt-4 flex items-center pl-1">
             <CopyText class="mr-2 btn-primary btn btn-outline btn-square btn-sm" :text="token" />
             {{ token }}
+          </div>
+        </div>
+      </BaseCard>
+
+      <BaseCard>
+        <template #title>
+          <BaseSectionHeader>
+            <span class="text-base-600">Language</span>
+            <template #description>Change the language of the application</template>
+          </BaseSectionHeader>
+        </template>
+        <div class="p-5 pt-0">
+          <div class="form-control w-full">
+            <select id="locale-select" v-model="$i18n.locale" class="select select-bordered">
+              <option v-for="locale in $i18n.availableLocales" :key="locale" :value="locale">{{ locale }}</option>
+            </select>
           </div>
         </div>
       </BaseCard>

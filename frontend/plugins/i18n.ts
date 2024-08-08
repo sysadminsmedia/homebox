@@ -1,7 +1,6 @@
 import type { CompileError, MessageCompiler, MessageContext } from "vue-i18n";
 import { createI18n } from "vue-i18n";
-import IntlMessageFormat from "intl-messageformat";
-import messages from '@intlify/unplugin-vue-i18n/messages'
+import { IntlMessageFormat } from "intl-messageformat";
 
 export default defineNuxtPlugin(({ vueApp }) => {
   const i18n = createI18n({
@@ -10,9 +9,8 @@ export default defineNuxtPlugin(({ vueApp }) => {
     locale: "en",
     fallbackLocale: "en",
     messageCompiler,
-    messages,
+    messages: messages(),
   });
-
   vueApp.use(i18n);
 });
 
@@ -34,4 +32,14 @@ export const messageCompiler: MessageCompiler = (message, { locale, key, onError
     onError && onError(new Error("not support for AST") as CompileError);
     return () => key;
   }
+};
+
+export const messages: Object = () => {
+  let messages = {};
+  const modules = import.meta.glob('~//locales/**.json', { eager: true });
+  for (const path in modules) {
+    const key = path.slice(9, -5);
+    messages[key] = modules[path];
+  }
+  return messages;
 };
