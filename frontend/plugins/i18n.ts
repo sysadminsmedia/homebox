@@ -3,10 +3,28 @@ import { createI18n } from "vue-i18n";
 import { IntlMessageFormat } from "intl-messageformat";
 
 export default defineNuxtPlugin(({ vueApp }) => {
+  function checkDefaultLanguage() {
+    let matched = null;
+    const languages = Object.getOwnPropertyNames(messages())
+    languages.forEach(lang => {
+      if (lang === navigator.language) {
+        matched = lang;
+      }
+    });
+    if (!matched) {
+      languages.forEach(lang => {
+        const languagePartials = navigator.language.split('-')[0]
+        if (lang === languagePartials) {
+          matched = lang;
+        }
+      });
+    }
+    return matched;
+  }
   const i18n = createI18n({
     legacy: false,
     globalInjection: true,
-    locale: "en",
+    locale: checkDefaultLanguage() || "en",
     fallbackLocale: "en",
     messageCompiler,
     messages: messages(),

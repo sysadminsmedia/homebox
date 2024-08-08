@@ -103,12 +103,11 @@
   import MdiMagnify from "~icons/mdi/magnify";
   import MdiAccount from "~icons/mdi/account";
   import MdiCog from "~icons/mdi/cog";
-
   const username = computed(() => authCtx.user?.name || "User");
-
   // Preload currency format
   useFormatCurrency();
-
+  const locale = useState("locale").value;
+  console.log(locale);
   const modals = reactive({
     item: false,
     location: false,

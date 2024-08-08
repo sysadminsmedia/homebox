@@ -31,11 +31,16 @@
         "change_password": "Change Password",
         "current_password": "Current Password",
         "new_password": "New Password",
-        "notifier": "{ type, select, true {Edit} false {Create} other {Other}} Notifier",
+        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notifier",
+        "notifiers": "Notifiers",
+        "notifiers_sub": "Get notifications for up coming maintenance reminders",
         "name": "Name",
         "url": "URL",
         "enabled": "Enabled",
-        "test": "Test"
+        "test": "Test",
+        "gen_invite": "Generate Invite Link",
+        "user_profile": "User Profile",
+        "user_profile_sub": "Invite users, and manage your account."
     },
     "components": {
         "global": {

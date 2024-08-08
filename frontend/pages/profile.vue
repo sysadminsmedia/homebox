@@ -326,7 +326,7 @@
     </BaseModal>
 
     <BaseModal v-model="notifierDialog">
-      <template #title> {{ $t("profile.notifier", {type: (notifier != null)}) }} </template>
+      <template #title> {{ $t("profile.notifier_modal", {type: (notifier != null)}) }} </template>
 
       <form @submit.prevent="createNotifier">
         <template v-if="notifier">
@@ -348,8 +348,8 @@
         <template #title>
           <BaseSectionHeader>
             <MdiAccount class="mr-2 -mt-1 text-base-600" />
-            <span class="text-base-600"> User Profile </span>
-            <template #description> Invite users, and manage your account. </template>
+            <span class="text-base-600"> {{ $t("profile.user_profile") }} </span>
+            <template #description> {{ $t("profile.user_profile_sub") }} </template>
           </BaseSectionHeader>
         </template>
 
@@ -357,8 +357,8 @@
 
         <div class="p-4">
           <div class="flex gap-2">
-            <BaseButton size="sm" @click="openPassChange"> Change Password </BaseButton>
-            <BaseButton size="sm" @click="generateToken"> Generate Invite Link </BaseButton>
+            <BaseButton size="sm" @click="openPassChange"> {{ $t("profile.change_password") }} </BaseButton>
+            <BaseButton size="sm" @click="generateToken"> {{ $t("profile.gen_invite") }} </BaseButton>
           </div>
           <div v-if="token" class="pt-4 flex items-center pl-1">
             <CopyText class="mr-2 btn-primary btn btn-outline btn-square btn-sm" :text="tokenUrl" />
@@ -374,25 +374,9 @@
       <BaseCard>
         <template #title>
           <BaseSectionHeader>
-            <span class="text-base-600">Language</span>
-            <template #description>Change the language of the application</template>
-          </BaseSectionHeader>
-        </template>
-        <div class="p-5 pt-0">
-          <div class="form-control w-full">
-            <select id="locale-select" v-model="$i18n.locale" class="select select-bordered">
-              <option v-for="locale in $i18n.availableLocales" :key="locale" :value="locale">{{ locale }}</option>
-            </select>
-          </div>
-        </div>
-      </BaseCard>
-
-      <BaseCard>
-        <template #title>
-          <BaseSectionHeader>
             <MdiMegaphone class="mr-2 -mt-1 text-base-600" />
-            <span class="text-base-600"> Notifiers </span>
-            <template #description> Get notifications for up coming maintenance reminders </template>
+            <span class="text-base-600"> {{ $t("profile.notifiers") }} </span>
+            <template #description> {{ $t("profile.notifiers_sub") }} </template>
           </BaseSectionHeader>
         </template>
 
