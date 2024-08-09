@@ -34,7 +34,7 @@
         "new_password": "New Password",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notifier",
         "notifiers": "Notifiers",
-        "notifiers_sub": "Get notifications for up coming maintenance reminders",
+        "notifiers_sub": "Get notifications for upcoming maintenance reminders",
         "name": "Name",
         "url": "URL",
         "enabled": "Enabled",
