@@ -1,6 +1,6 @@
 {
     "profile": {
-        "notifier_modal": "{ skriv, välj, sant {Redigera} falskt {Skapa} annat {Annat}} Notifier",
+        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Anmälare",
         "change_password": "Ändra Lösenord",
         "current_password": "Nuvarande lösenord",
         "new_password": "Nytt lösenord",

@@ -11,7 +11,10 @@
         "create_and_add": "Erstellen und ein weiteres hinzufügen",
         "follow_dev": "Dem Entwickler folgen",
         "read_docs": "Lese die Dokumentation",
-        "submit": "Absenden"
+        "submit": "Absenden",
+        "created": "Erstellt",
+        "welcome": "Willkommen,{username}",
+        "sign_out": "Abmelden"
     },
     "index": {
         "login": "Anmelden",
@@ -65,5 +68,22 @@
                 "title": "Erstelle Standort"
             }
         }
+    },
+    "profile": {
+        "change_password": "Passwort ändern",
+        "current_password": "Aktuelles Passwort",
+        "new_password": "Neues Passwort",
+        "notifiers": "Melder",
+        "notifiers_sub": "Benachrichtigungen über anstehende Wartungserinnerungen erhalten",
+        "name": "Name",
+        "url": "URL",
+        "enabled": "Aktiviert",
+        "test": "Test",
+        "gen_invite": "Einladungslink generieren",
+        "user_profile": "Benutzerprofil",
+        "user_profile_sub": "Benutzer einladen und Ihr Konto verwalten.",
+        "active": "Aktiv",
+        "inactive": "Inaktiv",
+        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Melder"
     }
 }
