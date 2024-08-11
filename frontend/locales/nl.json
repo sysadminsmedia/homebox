@@ -83,6 +83,12 @@
         "user_profile_sub": "Nodig gebruikers uit, en beheer je account.",
         "active": "Actief",
         "inactive": "Inactief",
-        "notifiers_sub": "Krijg notificaties voor opkomende onderhouds herinneringen"
+        "notifiers_sub": "Krijg notificaties voor opkomende onderhouds herinneringen",
+        "group_settings_sub": "Gedeelde groepsinstellingen",
+        "group_settings": "Groeps Instellingen",
+        "notifiers": "Notificatie",
+        "currency_format": "Valutanotatie",
+        "update_group": "Groep bijwerken",
+        "theme_settings": "Theme instellingen"
     }
 }
