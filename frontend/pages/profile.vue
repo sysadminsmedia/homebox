@@ -323,7 +323,7 @@
 
       <form @submit.prevent="createNotifier">
         <template v-if="notifier">
-          <FormTextField v-model="notifier.name" :label="$t('profile.name')" />
+          <FormTextField v-model="notifier.name" :label="$t('global.name')" />
           <FormTextField v-model="notifier.url" :label="$t('profile.url')" />
           <div class="max-w-[100px]">
             <FormCheckbox v-model="notifier.isActive" :label="$t('profile.enabled')" />

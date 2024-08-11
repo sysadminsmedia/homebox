@@ -338,9 +338,9 @@
     <div v-if="locations && labels">
       <div class="flex flex-wrap md:flex-nowrap gap-4 items-end">
         <div class="w-full">
-          <FormTextField v-model="query" placeholder="Search" />
+          <FormTextField v-model="query" :placeholder="$t('global.search')" />
           <div v-if="byAssetId" class="text-sm pl-2 pt-2">
-            <p>Querying Asset ID Number: {{ parsedAssetId }}</p>
+            <p>{{ $t("items.query_id", { id: parsedAssetId }) }}</p>
           </div>
         </div>
         <BaseButton class="btn-block md:w-auto" @click.prevent="submit">
@@ -348,12 +348,12 @@
             <MdiLoading v-if="loading" class="animate-spin" />
             <MdiMagnify v-else />
           </template>
-          Search
+          {{ $t("global.search") }}
         </BaseButton>
       </div>
 
       <div class="flex flex-wrap md:flex-nowrap gap-2 w-full py-2">
-        <SearchFilter v-model="selectedLocations" label="Locations" :options="locationFlatTree">
+        <SearchFilter v-model="selectedLocations" :label="$t('global.locations')" :options="locationFlatTree">
           <template #display="{ item }">
             <div>
               <div class="flex w-full">
@@ -365,60 +365,60 @@
             </div>
           </template>
         </SearchFilter>
-        <SearchFilter v-model="selectedLabels" label="Labels" :options="labels" />
+        <SearchFilter v-model="selectedLabels" :label="$t('global.labels')" :options="labels" />
         <div class="dropdown">
-          <label tabindex="0" class="btn btn-xs">Options</label>
+          <label tabindex="0" class="btn btn-xs">{{ $t("items.options") }}</label>
           <div
             tabindex="0"
             class="dropdown-content mt-1 max-h-72 p-4 w-64 overflow-auto shadow bg-base-100 rounded-md -translate-x-24"
           >
             <label class="label cursor-pointer mr-auto">
               <input v-model="includeArchived" type="checkbox" class="toggle toggle-sm toggle-primary" />
-              <span class="label-text ml-4"> Include Archived Items </span>
+              <span class="label-text ml-4"> {{ $t("items.include_archive") }} </span>
             </label>
             <label class="label cursor-pointer mr-auto">
               <input v-model="fieldSelector" type="checkbox" class="toggle toggle-sm toggle-primary" />
-              <span class="label-text ml-4"> Field Selector </span>
+              <span class="label-text ml-4"> {{ $t("items.field_selector") }} </span>
             </label>
             <label class="label cursor-pointer mr-auto">
               <input v-model="negateLabels" type="checkbox" class="toggle toggle-sm toggle-primary" />
-              <span class="label-text ml-4"> Negate selected labels </span>
+              <span class="label-text ml-4"> {{ $t("items.negate_labels") }} </span>
             </label>
             <label class="label cursor-pointer mr-auto">
               <select v-model="orderBy" class="select select-bordered select-sm">
-                <option value="name" selected>Name</option>
-                <option value="createdAt">Created At</option>
-                <option value="updatedAt">Updated At</option>
+                <option value="name" selected>{{ $t("global.name") }}</option>
+                <option value="createdAt">{{ $t("items.created_at") }}</option>
+                <option value="updatedAt">{{ $t("items.updated_at") }}</option>
               </select>
-              <span class="label-text ml-4"> Order By </span>
+              <span class="label-text ml-4"> {{ $t("items.order_by") }} </span>
             </label>
             <hr class="my-2" />
-            <BaseButton class="btn-block btn-sm" @click="reset"> Reset Search</BaseButton>
+            <BaseButton class="btn-block btn-sm" @click="reset"> {{ $t("items.reset_search") }} </BaseButton>
           </div>
         </div>
         <div class="dropdown ml-auto dropdown-end">
-          <label tabindex="0" class="btn btn-xs">Tips</label>
+          <label tabindex="0" class="btn btn-xs">{{ $t("items.tips") }}</label>
           <div
             tabindex="0"
             class="dropdown-content mt-1 p-4 w-[325px] text-sm overflow-auto shadow bg-base-100 rounded-md"
           >
-            <p class="text-base">Search Tips</p>
+            <p class="text-base">{{ $t("items.tips_sub") }}</p>
             <ul class="mt-1 list-disc pl-6">
               <li>
-                Location and label filters use the 'OR' operation. If more than one is selected only one will be
-                required for a match.
+                {{ $t("items.tip_1") }}
               </li>
-              <li>Searches prefixed with '#'' will query for a asset ID (example '#000-001')</li>
               <li>
-                Field filters use the 'OR' operation. If more than one is selected only one will be required for a
-                match.
+                {{ $t("items.tip_2") }}
+              </li>
+              <li>
+                {{ $t("items.tip_3") }}
               </li>
             </ul>
           </div>
         </div>
       </div>
       <div v-if="fieldSelector" class="py-4 space-y-2">
-        <p>Custom Fields</p>
+        <p>{{ $t("items.custom_fields") }}</p>
         <div v-for="(f, idx) in fieldTuples" :key="idx" class="flex flex-wrap gap-2">
           <div class="form-control w-full max-w-xs">
             <label class="label">
@@ -435,7 +435,7 @@
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="label">
-              <span class="label-text">Field Value</span>
+              <span class="label-text">{{ $t("items.field_value") }}</span>
             </label>
             <select v-model="fieldTuples[idx][1]" class="select-bordered select" :items="fieldValuesCache[f[0]]">
               <option v-for="v in fieldValuesCache[f[0]]" :key="v" :value="v">{{ v }}</option>
@@ -449,38 +449,42 @@
             <MdiDelete class="w-5 h-5" />
           </button>
         </div>
-        <BaseButton type="button" class="btn-sm mt-2" @click="() => fieldTuples.push(['', ''])"> Add</BaseButton>
+        <BaseButton type="button" class="btn-sm mt-2" @click="() => fieldTuples.push(['', ''])">
+          {{ $t("items.add") }}
+        </BaseButton>
       </div>
     </div>
 
     <section class="mt-10">
-      <BaseSectionHeader ref="itemsTitle"> Items </BaseSectionHeader>
+      <BaseSectionHeader ref="itemsTitle"> {{ $t("global.items") }} </BaseSectionHeader>
       <p class="text-base font-medium flex items-center">
-        {{ total }} Results
-        <span class="text-base ml-auto"> Page {{ page }} of {{ totalPages }}</span>
+        {{ $t("items.results", { total: total }) }}
+        <span class="text-base ml-auto"> {{ $t("items.pages", { page: page, totalPages: totalPages }) }} </span>
       </p>
 
       <div ref="cardgrid" class="grid mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         <ItemCard v-for="item in items" :key="item.id" :item="item" />
 
-        <div class="hidden first:inline text-xl">No Items Found</div>
+        <div class="hidden first:inline text-xl">{{ $t("items.no_results") }}</div>
       </div>
       <div v-if="items.length > 0 && (hasNext || hasPrev)" class="mt-10 flex gap-2 flex-col items-center">
         <div class="flex">
           <div class="btn-group">
             <button :disabled="!hasPrev" class="btn text-no-transform" @click="prev">
               <MdiChevronLeft class="mr-1 h-6 w-6" name="mdi-chevron-left" />
-              Prev
+              {{ $t("items.prev_page") }}
             </button>
-            <button v-if="hasPrev" class="btn text-no-transform" @click="page = 1">First</button>
-            <button v-if="hasNext" class="btn text-no-transform" @click="page = totalPages">Last</button>
+            <button v-if="hasPrev" class="btn text-no-transform" @click="page = 1">{{ $t("items.first") }}</button>
+            <button v-if="hasNext" class="btn text-no-transform" @click="page = totalPages">
+              {{ $t("items.last") }}
+            </button>
             <button :disabled="!hasNext" class="btn text-no-transform" @click="next">
-              Next
+              {{ $t("items.next_page") }}
               <MdiChevronRight class="ml-1 h-6 w-6" name="mdi-chevron-right" />
             </button>
           </div>
         </div>
-        <p class="text-sm font-bold">Page {{ page }} of {{ totalPages }}</p>
+        <p class="text-sm font-bold">{{ $t("items.pages", { page: page, totalPages: totalPages }) }}</p>
       </div>
     </section>
   </BaseContainer>

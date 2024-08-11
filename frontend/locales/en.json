@@ -1,97 +1,127 @@
 {
+  "components": {
+    "app": {
+      "import_dialog": {
+        "change_warning": "Behavior for imports with existing import_refs has changed. If an import_ref is present in the CSV file, the \nitem will be updated with the values in the CSV file.",
+        "description": "Import a CSV file containing your items, labels, and locations. See documentation for more information on the \nrequired format.",
+        "title": "Import CSV File",
+        "upload": "Upload"
+      }
+    },
     "global": {
-        "build": "Build: { build }",
-        "version": "Version: { version }",
-        "github": "GitHub Project",
-        "join_discord": "Join the Discord",
-        "follow_dev": "Follow the Developer",
-        "read_docs": "Read the Docs",
-        "password": "Password",
-        "email": "Email",
-        "submit": "Submit",
-        "confirm": "Confirm",
-        "create": "Create",
-        "created": "Created",
-        "create_and_add": "Create and Add Another",
-        "welcome": "Welcome, { username }",
-        "sign_out": "Sign Out"
+      "page_qr_code": {
+        "page_url": "Page URL"
+      },
+      "password_score": {
+        "password_strength": "Password Strength"
+      }
     },
-    "index": {
-        "tagline": "Track, Organize, and Manage your Things.",
-        "disabled_registration": "Registration Disabled",
-        "login": "Login",
-        "register": "Register",
-        "remember_me": "Remember Me",
-        "set_email": "What's your email?",
-        "set_password": "Set your password",
-        "set_name": "What's your name?",
-        "joining_group": "You're Joining an Existing Group!",
-        "dont_join_group": "Don't want to join a group?"
-    },
-    "profile": {
-        "change_password": "Change Password",
-        "current_password": "Current Password",
-        "new_password": "New Password",
-        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notifier",
-        "notifiers": "Notifiers",
-        "notifiers_sub": "Get notifications for upcoming maintenance reminders",
-        "name": "Name",
-        "url": "URL",
-        "enabled": "Enabled",
-        "test": "Test",
-        "gen_invite": "Generate Invite Link",
-        "user_profile": "User Profile",
-        "user_profile_sub": "Invite users, and manage your account.",
-        "active": "Active",
-        "inactive": "Inactive",
-        "group_settings": "Group Settings",
-        "group_settings_sub": "Shared Group Settings. You may need to refresh your browser for some settings to apply.",
-        "currency_format": "Currency Format",
-        "update_group": "Update Group",
-        "theme_settings": "Theme Settings",
-        "theme_settings_sub": "Theme settings are stored in your browser's local storage. You can change the theme at any time. If you're\n having trouble setting your theme try refreshing your browser.",
-        "delete_account": "Delete Account",
-        "delete_account_sub": "Delete your account and all its associated data. This can not be undone."
-    },
-    "components": {
-        "global": {
-            "password_score": {
-                "password_strength": "Password Strength"
-            },
-            "page_qr_code": {
-                "page_url": "Page URL"
-            }
-        },
-        "app": {
-            "import_dialog": {
-                "title": "Import CSV File",
-                "description": "Import a CSV file containing your items, labels, and locations. See documentation for more information on the \nrequired format.",
-                "change_warning": "Behavior for imports with existing import_refs has changed. If an import_ref is present in the CSV file, the \nitem will be updated with the values in the CSV file.",
-                "upload": "Upload"
-            }
-        },
-        "item": {
-            "create_modal": {
-                "title": "Create Item"
-            },
-            "view": {
-                "selectable": {
-                    "items": "Items",
-                    "card": "Card",
-                    "table": "Table",
-                    "no_items": "No Items to Display"
-                }
-            }
-        },
-        "label": {
-            "create_modal": {
-                "title": "Create Label"
-            }
-        },
-        "location": {
-            "create_modal": {
-                "title": "Create Location"
-            }
+    "item": {
+      "create_modal": {
+        "title": "Create Item"
+      },
+      "view": {
+        "selectable": {
+          "card": "Card",
+          "items": "Items",
+          "no_items": "No Items to Display",
+          "table": "Table"
         }
+      }
+    },
+    "label": {
+      "create_modal": {
+        "title": "Create Label"
+      }
+    },
+    "location": {
+      "create_modal": {
+        "title": "Create Location"
+      }
     }
+  },
+  "global": {
+    "build": "Build: { build }",
+    "confirm": "Confirm",
+    "create": "Create",
+    "create_and_add": "Create and Add Another",
+    "created": "Created",
+    "email": "Email",
+    "follow_dev": "Follow the Developer",
+    "github": "GitHub Project",
+    "join_discord": "Join the Discord",
+    "labels": "Labels",
+    "locations": "Locations",
+    "name": "Name",
+    "password": "Password",
+    "read_docs": "Read the Docs",
+    "search": "Search",
+    "sign_out": "Sign Out",
+    "submit": "Submit",
+    "version": "Version: { version }",
+    "welcome": "Welcome, { username }",
+    "items": "Items"
+  },
+  "index": {
+    "disabled_registration": "Registration Disabled",
+    "dont_join_group": "Don't want to join a group?",
+    "joining_group": "You're Joining an Existing Group!",
+    "login": "Login",
+    "register": "Register",
+    "remember_me": "Remember Me",
+    "set_email": "What's your email?",
+    "set_name": "What's your name?",
+    "set_password": "Set your password",
+    "tagline": "Track, Organize, and Manage your Things."
+  },
+  "items": {
+    "created_at": "Created At",
+    "field_selector": "Field Selector",
+    "include_archive": "Include Archived Items",
+    "negate_labels": "Negate Selected Labels",
+    "options": "Options",
+    "order_by": "Order By",
+    "query_id": "Querying Asset ID Number: { id }",
+    "reset_search": "Reset Search",
+    "tip_1": "Location and label filters use the 'OR' operation. If more than one is selected only one will be\n required for a match.",
+    "tip_2": "Searches prefixed with '#'' will query for a asset ID (example '#000-001')",
+    "tip_3": "Field filters use the 'OR' operation. If more than one is selected only one will be required for a\n match.",
+    "tips": "Tips",
+    "tips_sub": "Search Tips",
+    "updated_at": "Updated At",
+    "field_value": "Field Value",
+    "custom_fields": "Custom Fields",
+    "add": "Add",
+    "results": "{ total } Results",
+    "pages": "Page { page } of { totalPages }",
+    "no_results": "No Items Found",
+    "prev_page": "Previous Page",
+    "next_page": "Next Page",
+    "first": "First",
+    "last": "Last"
+  },
+  "profile": {
+    "active": "Active",
+    "change_password": "Change Password",
+    "currency_format": "Currency Format",
+    "current_password": "Current Password",
+    "delete_account": "Delete Account",
+    "delete_account_sub": "Delete your account and all its associated data. This can not be undone.",
+    "enabled": "Enabled",
+    "gen_invite": "Generate Invite Link",
+    "group_settings": "Group Settings",
+    "group_settings_sub": "Shared Group Settings. You may need to refresh your browser for some settings to apply.",
+    "inactive": "Inactive",
+    "new_password": "New Password",
+    "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notifier",
+    "notifiers": "Notifiers",
+    "notifiers_sub": "Get notifications for upcoming maintenance reminders",
+    "test": "Test",
+    "theme_settings": "Theme Settings",
+    "theme_settings_sub": "Theme settings are stored in your browser's local storage. You can change the theme at any time. If you're\n having trouble setting your theme try refreshing your browser.",
+    "update_group": "Update Group",
+    "url": "URL",
+    "user_profile": "User Profile",
+    "user_profile_sub": "Invite users, and manage your account."
+  }
 }
