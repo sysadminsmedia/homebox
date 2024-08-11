@@ -16,6 +16,14 @@
                     "no_items": "No Items t' Display"
                 }
             }
+        },
+        "global": {
+            "password_score": {
+                "password_strength": "Yer Lock Strength"
+            }
         }
+    },
+    "global": {
+        "welcome": "Ahoy, {username}"
     }
 }

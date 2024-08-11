@@ -4,14 +4,17 @@
         "read_docs": "Lire la documentation",
         "password": "Mot de passe",
         "github": "Projet GitHub",
-        "join_discord": "Joindre le forum Discord",
+        "join_discord": "Rejoindre le Discord",
         "follow_dev": "Suivre le développeur",
         "version": "Version : { version }",
         "build": "Assemblage : { build }",
         "create": "Créer",
         "submit": "Soumettre",
-        "create_and_add": "Créer et ajouter un autre",
-        "confirm": "Confirmer"
+        "create_and_add": "Créer et en ajouter un autre",
+        "confirm": "Confirmer",
+        "sign_out": "Déconnexion",
+        "welcome": "Bienvenue,{ username }",
+        "created": "Créé"
     },
     "index": {
         "set_email": "Quel est vôtre courriel ?",
@@ -21,9 +24,9 @@
         "remember_me": "Se souvenir de moi",
         "set_password": "Définir votre mot de passe",
         "dont_join_group": "Vous ne voulez pas joindre un groupe ?",
-        "tagline": "Gardez la trace, organisez et gérez vos affaires.",
-        "disabled_registration": "Les inscriptions sont fermées",
-        "joining_group": "Vous joignez un groupe existant !"
+        "tagline": "Traquez, organisez et gérez vos affaires.",
+        "disabled_registration": "Les inscriptions sont désactivées",
+        "joining_group": "Vous rejoignez un groupe existant !"
     },
     "components": {
         "label": {
@@ -65,5 +68,21 @@
                 "change_warning": "Le comportement lors d’importations avec des import_ref existants a changé. Si une valeur pour import_ref est présente dans le fichier CSV, alors l'item sera mis à jour avec celle-ci."
             }
         }
+    },
+    "profile": {
+        "notifiers_sub": "Recevez des notifications pour vous prévenir des prochaines maintenances",
+        "active": "Actif",
+        "enabled": "Activé",
+        "test": "Test",
+        "current_password": "Mot de passe actuel",
+        "new_password": "Nouveau mot de passe",
+        "change_password": "Changer de mot de passe",
+        "inactive": "Inactif",
+        "notifiers": "Notifications",
+        "name": "Nom",
+        "gen_invite": "Générer un lien d’invitation",
+        "user_profile": "Profil Utilisateur",
+        "user_profile_sub": "Invitez des utilisateurs, et gérez votre compte.",
+        "url": "URL"
     }
 }
