@@ -412,19 +412,19 @@
         <template #title>
           <BaseSectionHeader class="pb-0">
             <MdiAccountMultiple class="mr-2 -mt-1 text-base-600" />
-            <span class="text-base-600"> Group Settings </span>
+            <span class="text-base-600"> {{ $t("profile.group_settings") }} </span>
             <template #description>
-              Shared Group Settings. You may need to refresh your browser for some settings to apply.
+              {{ $t("profile.group_settings_sub") }}
             </template>
           </BaseSectionHeader>
         </template>
 
         <div v-if="group && currencies && currencies.length > 0" class="p-5 pt-0">
-          <FormSelect v-model="currency" label="Currency Format" :items="currencies" />
+          <FormSelect v-model="currency" :label="$t('profile.currency_format')" :items="currencies" />
           <p class="m-2 text-sm">Example: {{ currencyExample }}</p>
 
           <div class="mt-4">
-            <BaseButton size="sm" @click="updateGroup"> Update Group </BaseButton>
+            <BaseButton size="sm" @click="updateGroup"> {{ $t("profile.update_group") }} </BaseButton>
           </div>
         </div>
       </BaseCard>
@@ -433,10 +433,9 @@
         <template #title>
           <BaseSectionHeader>
             <MdiFill class="mr-2 text-base-600" />
-            <span class="text-base-600"> Theme Settings </span>
+            <span class="text-base-600"> {{ $t("profile.theme_settings") }} </span>
             <template #description>
-              Theme settings are stored in your browser's local storage. You can change the theme at any time. If you're
-              having trouble setting your theme try refreshing your browser.
+              {{ $t("profile.theme_settings_sub") }}
             </template>
           </BaseSectionHeader>
         </template>
@@ -484,12 +483,12 @@
         <template #title>
           <BaseSectionHeader>
             <MdiDelete class="mr-2 -mt-1 text-base-600" />
-            <span class="text-base-600"> Delete Account</span>
-            <template #description> Delete your account and all its associated data. </template>
+            <span class="text-base-600"> {{ $t("profile.delete_account") }} </span>
+            <template #description> {{ $t("profile.delete_account_sub") }} </template>
           </BaseSectionHeader>
         </template>
         <div class="p-4 px-6 border-t-2 border-gray-300">
-          <BaseButton size="sm" class="btn-error" @click="deleteProfile"> Delete Account </BaseButton>
+          <BaseButton size="sm" class="btn-error" @click="deleteProfile"> {{ $t("profile.delete_account") }} </BaseButton>
         </div>
       </BaseCard>
     </BaseContainer>

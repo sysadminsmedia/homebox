@@ -43,7 +43,15 @@
         "user_profile": "User Profile",
         "user_profile_sub": "Invite users, and manage your account.",
         "active": "Active",
-        "inactive": "Inactive"
+        "inactive": "Inactive",
+        "group_settings": "Group Settings",
+        "group_settings_sub": "Shared Group Settings. You may need to refresh your browser for some settings to apply.",
+        "currency_format": "Currency Format",
+        "update_group": "Update Group",
+        "theme_settings": "Theme Settings",
+        "theme_settings_sub": "Theme settings are stored in your browser's local storage. You can change the theme at any time. If you're\n having trouble setting your theme try refreshing your browser.",
+        "delete_account": "Delete Account",
+        "delete_account_sub": "Delete your account and all its associated data. This can not be undone."
     },
     "components": {
         "global": {
