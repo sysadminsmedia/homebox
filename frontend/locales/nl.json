@@ -84,8 +84,11 @@
         "active": "Actief",
         "inactive": "Inactief",
         "notifiers_sub": "Krijg notificaties voor opkomende onderhouds herinneringen",
-        "group_settings_sub": "Gedeelde groeps instellingen. Het kan zijn dat je je browser moet verversen om alle instellingen te zien werken.",
+        "group_settings_sub": "Gedeelde groepsinstellingen",
         "group_settings": "Groeps Instellingen",
-        "notifiers": "Notificatie"
+        "notifiers": "Notificatie",
+        "currency_format": "Valutanotatie",
+        "update_group": "Groep bijwerken",
+        "theme_settings": "Theme instellingen"
     }
 }
