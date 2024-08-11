@@ -6,7 +6,7 @@
         "github": "Projet GitHub",
         "join_discord": "Rejoindre le Discord",
         "follow_dev": "Suivre le développeur",
-        "version": "Version : { version }",
+        "version": "Version : { version }",
         "build": "Assemblage : { build }",
         "create": "Créer",
         "submit": "Soumettre",
@@ -83,6 +83,14 @@
         "gen_invite": "Générer un lien d’invitation",
         "user_profile": "Profil Utilisateur",
         "user_profile_sub": "Invitez des utilisateurs, et gérez votre compte.",
-        "url": "URL"
+        "url": "URL",
+        "delete_account": "Effacer le compte",
+        "delete_account_sub": "Effacer le compte et toutes les données. Aucune réccupération possible.",
+        "group_settings": "Paramètres du groupe",
+        "group_settings_sub": "Paramètres partagés du groupe. Il peut être ne2cessaire de recharger la page.",
+        "currency_format": "Format de la devise",
+        "update_group": "Mettre à jour le groupe",
+        "theme_settings": "Paramètres du thème",
+        "theme_settings_sub": "Les paramètres du thème sont stockés dans le navigateur. Vous pouvez les changer à tout moment. Si vous\nrencontrez des problèmes, il est conseillé de rafraichir la page."
     }
 }

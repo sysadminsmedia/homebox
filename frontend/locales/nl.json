@@ -83,6 +83,9 @@
         "user_profile_sub": "Nodig gebruikers uit, en beheer je account.",
         "active": "Actief",
         "inactive": "Inactief",
-        "notifiers_sub": "Krijg notificaties voor opkomende onderhouds herinneringen"
+        "notifiers_sub": "Krijg notificaties voor opkomende onderhouds herinneringen",
+        "group_settings_sub": "Gedeelde groeps instellingen. Het kan zijn dat je je browser moet verversen om alle instellingen te zien werken.",
+        "group_settings": "Groeps Instellingen",
+        "notifiers": "Notificatie"
     }
 }
