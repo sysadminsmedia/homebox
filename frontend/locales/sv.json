@@ -13,7 +13,15 @@
         "active": "Aktiv",
         "inactive": "Inaktiv",
         "notifiers": "Notiser",
-        "enabled": "Aktiverad"
+        "enabled": "Aktiverad",
+        "currency_format": "",
+        "delete_account": "",
+        "delete_account_sub": "",
+        "group_settings": "",
+        "group_settings_sub": "",
+        "theme_settings": "",
+        "theme_settings_sub": "",
+        "update_group": ""
     },
     "index": {
         "set_name": "Vad heter du?",
@@ -83,6 +91,37 @@
         "welcome": "Välkommen, { username }",
         "sign_out": "Logga ut",
         "create_and_add": "Skapa och lägg till en annan",
-        "version": "Version: { version }"
+        "version": "Version: { version }",
+        "items": "",
+        "labels": "",
+        "locations": "",
+        "name": "",
+        "search": ""
+    },
+    "items": {
+        "add": "",
+        "created_at": "",
+        "custom_fields": "",
+        "field_selector": "",
+        "field_value": "",
+        "first": "",
+        "include_archive": "",
+        "last": "",
+        "negate_labels": "",
+        "next_page": "",
+        "no_results": "",
+        "options": "",
+        "order_by": "",
+        "pages": "",
+        "prev_page": "",
+        "query_id": "",
+        "reset_search": "",
+        "tip_1": "",
+        "tip_2": "",
+        "tip_3": "",
+        "tips": "",
+        "tips_sub": "",
+        "updated_at": "",
+        "results": ""
     }
 }

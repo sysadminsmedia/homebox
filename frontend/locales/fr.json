@@ -14,7 +14,12 @@
         "confirm": "Confirmer",
         "sign_out": "Déconnexion",
         "welcome": "Bienvenue,{ username }",
-        "created": "Créé"
+        "created": "Créé",
+        "labels": "",
+        "locations": "",
+        "name": "",
+        "search": "",
+        "items": ""
     },
     "index": {
         "set_email": "Quel est vôtre courriel ?",
@@ -90,6 +95,33 @@
         "currency_format": "Format de la devise",
         "update_group": "Mettre à jour le groupe",
         "theme_settings": "Paramètres du thème",
-        "theme_settings_sub": "Les paramètres du thème sont stockés dans le navigateur. Vous pouvez les changer à tout moment. Si vous\nrencontrez des problèmes, il est conseillé de rafraichir la page."
+        "theme_settings_sub": "Les paramètres du thème sont stockés dans le navigateur. Vous pouvez les changer à tout moment. Si vous\nrencontrez des problèmes, il est conseillé de rafraichir la page.",
+        "notifier_modal": ""
+    },
+    "items": {
+        "add": "",
+        "created_at": "",
+        "custom_fields": "",
+        "field_selector": "",
+        "field_value": "",
+        "first": "",
+        "include_archive": "",
+        "last": "",
+        "negate_labels": "",
+        "next_page": "",
+        "no_results": "",
+        "options": "",
+        "order_by": "",
+        "pages": "",
+        "prev_page": "",
+        "query_id": "",
+        "reset_search": "",
+        "tip_1": "",
+        "tip_2": "",
+        "tip_3": "",
+        "tips": "",
+        "tips_sub": "",
+        "updated_at": "",
+        "results": ""
     }
 }

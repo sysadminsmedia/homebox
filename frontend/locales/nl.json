@@ -14,7 +14,12 @@
         "build": "Bouw: { build }",
         "created": "Gemaakt",
         "welcome": "Welkom, { username }",
-        "sign_out": "Log uit"
+        "sign_out": "Log uit",
+        "labels": "",
+        "locations": "",
+        "name": "",
+        "items": "",
+        "search": ""
     },
     "index": {
         "disabled_registration": "Registratie uitgeschakeld",
@@ -88,6 +93,35 @@
         "notifiers": "Notificatie",
         "currency_format": "Valutanotatie",
         "update_group": "Groep bijwerken",
-        "theme_settings": "Theme instellingen"
+        "theme_settings": "Theme instellingen",
+        "theme_settings_sub": "",
+        "delete_account": "",
+        "delete_account_sub": ""
+    },
+    "items": {
+        "tip_1": "",
+        "tip_2": "",
+        "tip_3": "",
+        "tips_sub": "",
+        "updated_at": "",
+        "pages": "",
+        "prev_page": "",
+        "query_id": "",
+        "reset_search": "",
+        "tips": "",
+        "no_results": "",
+        "options": "",
+        "order_by": "",
+        "results": "",
+        "add": "",
+        "created_at": "",
+        "custom_fields": "",
+        "field_selector": "",
+        "field_value": "",
+        "first": "",
+        "include_archive": "",
+        "last": "",
+        "negate_labels": "",
+        "next_page": ""
     }
 }

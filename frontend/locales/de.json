@@ -14,7 +14,12 @@
         "submit": "Absenden",
         "created": "Erstellt",
         "welcome": "Willkommen,{username}",
-        "sign_out": "Abmelden"
+        "sign_out": "Abmelden",
+        "items": "",
+        "labels": "",
+        "locations": "",
+        "name": "",
+        "search": ""
     },
     "index": {
         "login": "Anmelden",
@@ -83,6 +88,40 @@
         "user_profile_sub": "Benutzer einladen und Ihr Konto verwalten.",
         "active": "Aktiv",
         "inactive": "Inaktiv",
-        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Melder"
+        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Melder",
+        "theme_settings": "",
+        "theme_settings_sub": "",
+        "update_group": "",
+        "currency_format": "",
+        "delete_account": "",
+        "delete_account_sub": "",
+        "group_settings": "",
+        "group_settings_sub": ""
+    },
+    "items": {
+        "results": "",
+        "add": "",
+        "created_at": "",
+        "custom_fields": "",
+        "field_selector": "",
+        "field_value": "",
+        "first": "",
+        "include_archive": "",
+        "last": "",
+        "negate_labels": "",
+        "next_page": "",
+        "no_results": "",
+        "options": "",
+        "order_by": "",
+        "pages": "",
+        "prev_page": "",
+        "query_id": "",
+        "reset_search": "",
+        "tip_1": "",
+        "tip_2": "",
+        "tip_3": "",
+        "tips": "",
+        "tips_sub": "",
+        "updated_at": ""
     }
 }
