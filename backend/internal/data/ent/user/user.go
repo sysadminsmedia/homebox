@@ -40,6 +40,8 @@ const (
 	EdgeAuthTokens = "auth_tokens"
 	// EdgeNotifiers holds the string denoting the notifiers edge name in mutations.
 	EdgeNotifiers = "notifiers"
+	// EdgeOauth holds the string denoting the oauth edge name in mutations.
+	EdgeOauth = "oauth"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// GroupTable is the table that holds the group relation/edge.
@@ -63,6 +65,13 @@ const (
 	NotifiersInverseTable = "notifiers"
 	// NotifiersColumn is the table column denoting the notifiers relation/edge.
 	NotifiersColumn = "user_id"
+	// OauthTable is the table that holds the oauth relation/edge.
+	OauthTable = "oauths"
+	// OauthInverseTable is the table name for the OAuth entity.
+	// It exists in this package in order to avoid circular dependency with the "oauth" package.
+	OauthInverseTable = "oauths"
+	// OauthColumn is the table column denoting the oauth relation/edge.
+	OauthColumn = "user_oauth"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -234,6 +243,20 @@ func ByNotifiers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newNotifiersStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByOauthCount orders the results by oauth count.
+func ByOauthCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newOauthStep(), opts...)
+	}
+}
+
+// ByOauth orders the results by oauth terms.
+func ByOauth(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOauthStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newGroupStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -253,5 +276,12 @@ func newNotifiersStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(NotifiersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, NotifiersTable, NotifiersColumn),
+	)
+}
+func newOauthStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(OauthInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, OauthTable, OauthColumn),
 	)
 }

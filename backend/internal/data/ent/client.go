@@ -28,6 +28,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/oauth"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -60,6 +61,8 @@ type Client struct {
 	MaintenanceEntry *MaintenanceEntryClient
 	// Notifier is the client for interacting with the Notifier builders.
 	Notifier *NotifierClient
+	// OAuth is the client for interacting with the OAuth builders.
+	OAuth *OAuthClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 }
@@ -85,6 +88,7 @@ func (c *Client) init() {
 	c.Location = NewLocationClient(c.config)
 	c.MaintenanceEntry = NewMaintenanceEntryClient(c.config)
 	c.Notifier = NewNotifierClient(c.config)
+	c.OAuth = NewOAuthClient(c.config)
 	c.User = NewUserClient(c.config)
 }
 
@@ -190,6 +194,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Location:             NewLocationClient(cfg),
 		MaintenanceEntry:     NewMaintenanceEntryClient(cfg),
 		Notifier:             NewNotifierClient(cfg),
+		OAuth:                NewOAuthClient(cfg),
 		User:                 NewUserClient(cfg),
 	}, nil
 }
@@ -222,6 +227,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Location:             NewLocationClient(cfg),
 		MaintenanceEntry:     NewMaintenanceEntryClient(cfg),
 		Notifier:             NewNotifierClient(cfg),
+		OAuth:                NewOAuthClient(cfg),
 		User:                 NewUserClient(cfg),
 	}, nil
 }
@@ -254,7 +260,7 @@ func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Attachment, c.AuthRoles, c.AuthTokens, c.Document, c.Group,
 		c.GroupInvitationToken, c.Item, c.ItemField, c.Label, c.Location,
-		c.MaintenanceEntry, c.Notifier, c.User,
+		c.MaintenanceEntry, c.Notifier, c.OAuth, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -266,7 +272,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Attachment, c.AuthRoles, c.AuthTokens, c.Document, c.Group,
 		c.GroupInvitationToken, c.Item, c.ItemField, c.Label, c.Location,
-		c.MaintenanceEntry, c.Notifier, c.User,
+		c.MaintenanceEntry, c.Notifier, c.OAuth, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -299,6 +305,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.MaintenanceEntry.mutate(ctx, m)
 	case *NotifierMutation:
 		return c.Notifier.mutate(ctx, m)
+	case *OAuthMutation:
+		return c.OAuth.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
 	default:
@@ -2430,6 +2438,155 @@ func (c *NotifierClient) mutate(ctx context.Context, m *NotifierMutation) (Value
 	}
 }
 
+// OAuthClient is a client for the OAuth schema.
+type OAuthClient struct {
+	config
+}
+
+// NewOAuthClient returns a client for the OAuth from the given config.
+func NewOAuthClient(c config) *OAuthClient {
+	return &OAuthClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `oauth.Hooks(f(g(h())))`.
+func (c *OAuthClient) Use(hooks ...Hook) {
+	c.hooks.OAuth = append(c.hooks.OAuth, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `oauth.Intercept(f(g(h())))`.
+func (c *OAuthClient) Intercept(interceptors ...Interceptor) {
+	c.inters.OAuth = append(c.inters.OAuth, interceptors...)
+}
+
+// Create returns a builder for creating a OAuth entity.
+func (c *OAuthClient) Create() *OAuthCreate {
+	mutation := newOAuthMutation(c.config, OpCreate)
+	return &OAuthCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of OAuth entities.
+func (c *OAuthClient) CreateBulk(builders ...*OAuthCreate) *OAuthCreateBulk {
+	return &OAuthCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *OAuthClient) MapCreateBulk(slice any, setFunc func(*OAuthCreate, int)) *OAuthCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &OAuthCreateBulk{err: fmt.Errorf("calling to OAuthClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*OAuthCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &OAuthCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for OAuth.
+func (c *OAuthClient) Update() *OAuthUpdate {
+	mutation := newOAuthMutation(c.config, OpUpdate)
+	return &OAuthUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OAuthClient) UpdateOne(o *OAuth) *OAuthUpdateOne {
+	mutation := newOAuthMutation(c.config, OpUpdateOne, withOAuth(o))
+	return &OAuthUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OAuthClient) UpdateOneID(id uuid.UUID) *OAuthUpdateOne {
+	mutation := newOAuthMutation(c.config, OpUpdateOne, withOAuthID(id))
+	return &OAuthUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for OAuth.
+func (c *OAuthClient) Delete() *OAuthDelete {
+	mutation := newOAuthMutation(c.config, OpDelete)
+	return &OAuthDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *OAuthClient) DeleteOne(o *OAuth) *OAuthDeleteOne {
+	return c.DeleteOneID(o.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *OAuthClient) DeleteOneID(id uuid.UUID) *OAuthDeleteOne {
+	builder := c.Delete().Where(oauth.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OAuthDeleteOne{builder}
+}
+
+// Query returns a query builder for OAuth.
+func (c *OAuthClient) Query() *OAuthQuery {
+	return &OAuthQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeOAuth},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a OAuth entity by its id.
+func (c *OAuthClient) Get(ctx context.Context, id uuid.UUID) (*OAuth, error) {
+	return c.Query().Where(oauth.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OAuthClient) GetX(ctx context.Context, id uuid.UUID) *OAuth {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryUser queries the user edge of a OAuth.
+func (c *OAuthClient) QueryUser(o *OAuth) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := o.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(oauth.Table, oauth.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, oauth.UserTable, oauth.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(o.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *OAuthClient) Hooks() []Hook {
+	return c.hooks.OAuth
+}
+
+// Interceptors returns the client interceptors.
+func (c *OAuthClient) Interceptors() []Interceptor {
+	return c.inters.OAuth
+}
+
+func (c *OAuthClient) mutate(ctx context.Context, m *OAuthMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&OAuthCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&OAuthUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&OAuthUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&OAuthDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown OAuth mutation op: %q", m.Op())
+	}
+}
+
 // UserClient is a client for the User schema.
 type UserClient struct {
 	config
@@ -2586,6 +2743,22 @@ func (c *UserClient) QueryNotifiers(u *User) *NotifierQuery {
 	return query
 }
 
+// QueryOauth queries the oauth edge of a User.
+func (c *UserClient) QueryOauth(u *User) *OAuthQuery {
+	query := (&OAuthClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(oauth.Table, oauth.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.OauthTable, user.OauthColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -2615,10 +2788,11 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 type (
 	hooks struct {
 		Attachment, AuthRoles, AuthTokens, Document, Group, GroupInvitationToken, Item,
-		ItemField, Label, Location, MaintenanceEntry, Notifier, User []ent.Hook
+		ItemField, Label, Location, MaintenanceEntry, Notifier, OAuth, User []ent.Hook
 	}
 	inters struct {
 		Attachment, AuthRoles, AuthTokens, Document, Group, GroupInvitationToken, Item,
-		ItemField, Label, Location, MaintenanceEntry, Notifier, User []ent.Interceptor
+		ItemField, Label, Location, MaintenanceEntry, Notifier, OAuth,
+		User []ent.Interceptor
 	}
 )

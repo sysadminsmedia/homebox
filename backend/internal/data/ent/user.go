@@ -52,9 +52,11 @@ type UserEdges struct {
 	AuthTokens []*AuthTokens `json:"auth_tokens,omitempty"`
 	// Notifiers holds the value of the notifiers edge.
 	Notifiers []*Notifier `json:"notifiers,omitempty"`
+	// Oauth holds the value of the oauth edge.
+	Oauth []*OAuth `json:"oauth,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // GroupOrErr returns the Group value or an error if the edge
@@ -86,6 +88,15 @@ func (e UserEdges) NotifiersOrErr() ([]*Notifier, error) {
 		return e.Notifiers, nil
 	}
 	return nil, &NotLoadedError{edge: "notifiers"}
+}
+
+// OauthOrErr returns the Oauth value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) OauthOrErr() ([]*OAuth, error) {
+	if e.loadedTypes[3] {
+		return e.Oauth, nil
+	}
+	return nil, &NotLoadedError{edge: "oauth"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -211,6 +222,11 @@ func (u *User) QueryAuthTokens() *AuthTokensQuery {
 // QueryNotifiers queries the "notifiers" edge of the User entity.
 func (u *User) QueryNotifiers() *NotifierQuery {
 	return NewUserClient(u.config).QueryNotifiers(u)
+}
+
+// QueryOauth queries the "oauth" edge of the User entity.
+func (u *User) QueryOauth() *OAuthQuery {
+	return NewUserClient(u.config).QueryOauth(u)
 }
 
 // Update returns a builder for updating this User.
