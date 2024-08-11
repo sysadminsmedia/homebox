@@ -398,6 +398,36 @@ var (
 			},
 		},
 	}
+	// OauthsColumns holds the columns for the "oauths" table.
+	OauthsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "provider", Type: field.TypeString},
+		{Name: "sub", Type: field.TypeString},
+		{Name: "user_oauth", Type: field.TypeUUID, Nullable: true},
+	}
+	// OauthsTable holds the schema information for the "oauths" table.
+	OauthsTable = &schema.Table{
+		Name:       "oauths",
+		Columns:    OauthsColumns,
+		PrimaryKey: []*schema.Column{OauthsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "oauths_users_oauth",
+				Columns:    []*schema.Column{OauthsColumns[5]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "oauth_provider_sub",
+				Unique:  false,
+				Columns: []*schema.Column{OauthsColumns[3], OauthsColumns[4]},
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -405,7 +435,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Size: 255},
 		{Name: "email", Type: field.TypeString, Unique: true, Size: 255},
-		{Name: "password", Type: field.TypeString, Size: 255},
+		{Name: "password", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "is_superuser", Type: field.TypeBool, Default: false},
 		{Name: "superuser", Type: field.TypeBool, Default: false},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"user", "owner"}, Default: "user"},
@@ -465,6 +495,7 @@ var (
 		LocationsTable,
 		MaintenanceEntriesTable,
 		NotifiersTable,
+		OauthsTable,
 		UsersTable,
 		LabelItemsTable,
 	}
@@ -487,6 +518,7 @@ func init() {
 	MaintenanceEntriesTable.ForeignKeys[0].RefTable = ItemsTable
 	NotifiersTable.ForeignKeys[0].RefTable = GroupsTable
 	NotifiersTable.ForeignKeys[1].RefTable = UsersTable
+	OauthsTable.ForeignKeys[0].RefTable = UsersTable
 	UsersTable.ForeignKeys[0].RefTable = GroupsTable
 	LabelItemsTable.ForeignKeys[0].RefTable = LabelsTable
 	LabelItemsTable.ForeignKeys[1].RefTable = ItemsTable
