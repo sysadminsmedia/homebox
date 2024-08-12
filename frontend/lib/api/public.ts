@@ -1,5 +1,6 @@
+import { ParsedAuth } from "ufo";
 import { BaseAPI, route } from "./base";
-import type { APISummary, LoginForm, TokenResponse, UserRegistration } from "./types/data-contracts";
+import type { APISummary, LoginForm, OAuthForm, TokenResponse, UserRegistration } from "./types/data-contracts";
 
 export type StatusResult = {
   health: boolean;
@@ -20,6 +21,17 @@ export class PublicApi extends BaseAPI {
         username,
         password,
         stayLoggedIn,
+      },
+    });
+  }
+
+  public loginOauth(provider: string, iss: string, code: string, state: string | null = null) {
+    return this.http.post<OAuthForm, TokenResponse>({
+      url: route("/users/login", { provider }),
+      body: {
+        iss,
+        code,
+        state,
       },
     });
   }

@@ -84,14 +84,19 @@ func (r *UserRepository) Create(ctx context.Context, usr UserCreate) (UserOut, e
 		role = user.RoleOwner
 	}
 
-	entUser, err := r.db.User.
+	createQuery := r.db.User.
 		Create().
 		SetName(usr.Name).
 		SetEmail(usr.Email).
-		SetPassword(usr.Password).
 		SetIsSuperuser(usr.IsSuperuser).
 		SetGroupID(usr.GroupID).
-		SetRole(role).
+		SetRole(role)
+	if usr.Password != "" {
+		createQuery = createQuery.
+			SetPassword(usr.Password)
+	}
+
+	entUser, err := createQuery.
 		Save(ctx)
 	if err != nil {
 		return UserOut{}, err

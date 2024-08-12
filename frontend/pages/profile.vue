@@ -319,7 +319,7 @@
     </BaseModal>
 
     <BaseModal v-model="notifierDialog">
-      <template #title> {{ $t("profile.notifier_modal", {type: (notifier != null)}) }} </template>
+      <template #title> {{ $t("profile.notifier_modal", { type: notifier != null }) }} </template>
 
       <form @submit.prevent="createNotifier">
         <template v-if="notifier">
@@ -330,7 +330,9 @@
           </div>
         </template>
         <div class="flex gap-2 justify-between mt-4">
-          <BaseButton :disabled="!(notifier && notifier.url)" type="button" @click="testNotifier"> {{ $t("profile.test") }} </BaseButton>
+          <BaseButton :disabled="!(notifier && notifier.url)" type="button" @click="testNotifier">
+            {{ $t("profile.test") }}
+          </BaseButton>
           <BaseButton type="submit"> {{ $t("global.submit") }} </BaseButton>
         </div>
       </form>
@@ -488,7 +490,9 @@
           </BaseSectionHeader>
         </template>
         <div class="p-4 px-6 border-t-2 border-gray-300">
-          <BaseButton size="sm" class="btn-error" @click="deleteProfile"> {{ $t("profile.delete_account") }} </BaseButton>
+          <BaseButton size="sm" class="btn-error" @click="deleteProfile">
+            {{ $t("profile.delete_account") }}
+          </BaseButton>
         </div>
       </BaseCard>
     </BaseContainer>

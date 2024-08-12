@@ -5,7 +5,7 @@ import { IntlMessageFormat } from "intl-messageformat";
 export default defineNuxtPlugin(({ vueApp }) => {
   function checkDefaultLanguage() {
     let matched = null;
-    const languages = Object.getOwnPropertyNames(messages())
+    const languages = Object.getOwnPropertyNames(messages());
     languages.forEach(lang => {
       if (lang === navigator.language) {
         matched = lang;
@@ -13,7 +13,7 @@ export default defineNuxtPlugin(({ vueApp }) => {
     });
     if (!matched) {
       languages.forEach(lang => {
-        const languagePartials = navigator.language.split('-')[0]
+        const languagePartials = navigator.language.split("-")[0];
         if (lang === languagePartials) {
           matched = lang;
         }
@@ -53,8 +53,8 @@ export const messageCompiler: MessageCompiler = (message, { locale, key, onError
 };
 
 export const messages: Object = () => {
-  let messages = {};
-  const modules = import.meta.glob('~//locales/**.json', { eager: true });
+  const messages = {};
+  const modules = import.meta.glob("~//locales/**.json", { eager: true });
   for (const path in modules) {
     const key = path.slice(9, -5);
     messages[key] = modules[path];

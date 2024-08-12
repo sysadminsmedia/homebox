@@ -7,7 +7,7 @@
   import MdiLogin from "~icons/mdi/login";
   import MdiArrowRight from "~icons/mdi/arrow-right";
   import MdiLock from "~icons/mdi/lock";
-  import MdiMastodon from '~icons/mdi/mastodon';
+  import MdiMastodon from "~icons/mdi/mastodon";
 
   useHead({
     title: "Homebox | Organize and Tag Your Stuff",
@@ -152,16 +152,31 @@
           <p class="ml-1 text-lg text-base-content/50">{{ $t("index.tagline") }}</p>
         </div>
         <div class="flex mt-6 sm:mt-0 gap-4 ml-auto text-neutral-content">
-          <a class="tooltip" :data-tip="$t('global.github')" href="https://github.com/sysadminsmedia/homebox" target="_blank">
+          <a
+            class="tooltip"
+            :data-tip="$t('global.github')"
+            href="https://github.com/sysadminsmedia/homebox"
+            target="_blank"
+          >
             <MdiGithub class="h-8 w-8" />
           </a>
-          <a href="https://noc.social/@sysadminsmedia" class="tooltip" :data-tip="$t('global.follow_dev')" target="_blank">
+          <a
+            href="https://noc.social/@sysadminsmedia"
+            class="tooltip"
+            :data-tip="$t('global.follow_dev')"
+            target="_blank"
+          >
             <MdiMastodon class="h-8 w-8" />
           </a>
           <a href="https://discord.gg/aY4DCkpNA9" class="tooltip" :data-tip="$t('global.join_discord')" target="_blank">
             <MdiDiscord class="h-8 w-8" />
           </a>
-          <a href="https://homebox.sysadminsmedia.com/en/" class="tooltip" :data-tip="$t('global.read_docs')" target="_blank">
+          <a
+            href="https://homebox.sysadminsmedia.com/en/"
+            class="tooltip"
+            :data-tip="$t('global.read_docs')"
+            target="_blank"
+          >
             <MdiFolder class="h-8 w-8" />
           </a>
         </div>
@@ -208,8 +223,12 @@
                   </h2>
                   <template v-if="status && status.demo">
                     <p class="text-xs italic text-center">This is a demo instance</p>
-                    <p class="text-xs text-center"><b>{{ $t("global.email") }}</b> demo@example.com</p>
-                    <p class="text-xs text-center"><b>{{ $t("global.password") }}</b> demo</p>
+                    <p class="text-xs text-center">
+                      <b>{{ $t("global.email") }}</b> demo@example.com
+                    </p>
+                    <p class="text-xs text-center">
+                      <b>{{ $t("global.password") }}</b> demo
+                    </p>
                   </template>
                   <FormTextField v-model="email" :label="$t('global.email')" />
                   <FormPassword v-model="loginPassword" :label="$t('global.password')" />
@@ -230,6 +249,10 @@
               </div>
             </form>
           </Transition>
+          <a
+            href="https://auth.kloenk.dev/realms/kloenk/protocol/openid-connect/auth?client_id=homebox-dev&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Foidc%2Fcallback&response_type=code&scope=openid+email+profile&response_mode=query"
+            >OIDC</a
+          >
           <div class="text-center mt-6">
             <BaseButton
               v-if="status && status.allowRegistration"
