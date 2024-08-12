@@ -96,20 +96,9 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 
 	// Create the default labels and locations for the group.
 	if creatingGroup {
-		log.Debug().Msg("creating default labels")
-		for _, label := range defaultLabels() {
-			_, err := svc.repos.Labels.Create(ctx, usr.GroupID, label)
-			if err != nil {
-				return repo.UserOut{}, err
-			}
-		}
-
-		log.Debug().Msg("creating default locations")
-		for _, location := range defaultLocations() {
-			_, err := svc.repos.Locations.Create(ctx, usr.GroupID, location)
-			if err != nil {
-				return repo.UserOut{}, err
-			}
+		err = createDefaultLabels(ctx, svc.repos, usr.GroupID)
+		if err != nil {
+			return repo.UserOut{}, err
 		}
 	}
 
