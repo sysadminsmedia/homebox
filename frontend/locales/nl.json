@@ -15,11 +15,11 @@
         "created": "Gemaakt",
         "welcome": "Welkom, { username }",
         "sign_out": "Log uit",
-        "labels": "",
-        "locations": "",
-        "name": "",
-        "items": "",
-        "search": ""
+        "labels": "etiketten",
+        "locations": "Locaties",
+        "name": "Naam",
+        "items": "artikelen",
+        "search": "Zoeken"
     },
     "index": {
         "disabled_registration": "Registratie uitgeschakeld",
@@ -76,7 +76,7 @@
     },
     "profile": {
         "gen_invite": "Genereer Uitnodigingslink",
-        "notifier_modal": "{ type, selecteer, waar {Bewerk} onwaar {Creëer} overig {overig}} Notifier",
+        "notifier_modal": "{ type, select, true {Bewerk} false {Creëer} other {overig}} Notifier",
         "change_password": "Verander Wachtwoord",
         "current_password": "Huidig Wachtwoord",
         "new_password": "Nieuw Wachtwoord",
@@ -95,8 +95,8 @@
         "update_group": "Groep bijwerken",
         "theme_settings": "Theme instellingen",
         "theme_settings_sub": "",
-        "delete_account": "",
-        "delete_account_sub": ""
+        "delete_account": "Verwijder account",
+        "delete_account_sub": "Verwijder je account en alle geassocieerde data. Deze actie kan niet ongedaan worden."
     },
     "items": {
         "tip_1": "",
@@ -113,10 +113,10 @@
         "options": "",
         "order_by": "",
         "results": "",
-        "add": "",
-        "created_at": "",
-        "custom_fields": "",
-        "field_selector": "",
+        "add": "Toevoegen",
+        "created_at": "Aangemaakt op",
+        "custom_fields": "Aangepaste velden",
+        "field_selector": "Veld selektie",
         "field_value": "",
         "first": "",
         "include_archive": "",
