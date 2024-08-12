@@ -2,7 +2,6 @@ package repo
 
 import (
 	"context"
-
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"

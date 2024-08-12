@@ -277,6 +277,10 @@ func (r *GroupRepository) GroupByID(ctx context.Context, id uuid.UUID) (Group, e
 	return r.groupMapper.MapErr(r.db.Group.Get(ctx, id))
 }
 
+func (r *GroupRepository) GroupByName(ctx context.Context, name string) (Group, error) {
+	return r.groupMapper.MapErr(r.db.Group.Query().Where(group.Name(name)).Only(ctx))
+}
+
 func (r *GroupRepository) InvitationGet(ctx context.Context, token []byte) (GroupInvitation, error) {
 	return r.invitationMapper.MapErr(r.db.GroupInvitationToken.Query().
 		Where(groupinvitationtoken.Token(token)).

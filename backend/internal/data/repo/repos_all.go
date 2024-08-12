@@ -9,6 +9,7 @@ import (
 // AllRepos is a container for all the repository interfaces
 type AllRepos struct {
 	Users       *UserRepository
+	OAuth       *OAuthRepository
 	AuthTokens  *TokenRepository
 	Groups      *GroupRepository
 	Locations   *LocationRepository
@@ -23,6 +24,7 @@ type AllRepos struct {
 func New(db *ent.Client, bus *eventbus.EventBus, root string) *AllRepos {
 	return &AllRepos{
 		Users:       &UserRepository{db},
+		OAuth:       &OAuthRepository{db},
 		AuthTokens:  &TokenRepository{db},
 		Groups:      NewGroupRepository(db),
 		Locations:   &LocationRepository{db, bus},
