@@ -4,12 +4,6 @@ import (
 	"embed"
 	"errors"
 	"fmt"
-	"io"
-	"mime"
-	"net/http"
-	"path"
-	"path/filepath"
-
 	"github.com/go-chi/chi/v5"
 	"github.com/hay-kot/httpkit/errchain"
 	httpSwagger "github.com/swaggo/http-swagger/v2" // http-swagger middleware
@@ -19,6 +13,11 @@ import (
 	_ "github.com/sysadminsmedia/homebox/backend/app/api/static/docs"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authroles"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"io"
+	"mime"
+	"net/http"
+	"path"
+	"path/filepath"
 )
 
 const prefix = "/api"

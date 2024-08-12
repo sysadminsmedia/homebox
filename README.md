@@ -49,6 +49,11 @@ Contributions are what make the open source community such an amazing place to l
 
 If you are not a coder, you can still contribute financially. Financial contributions help me prioritize working on this project over others and helps me know that there is a real demand for project development.
 
+## Help us Translate
+We want to make sure that Homebox is available in as many languages as possible. If you are interested in helping us translate Homebox, please help us via our [Weblate instance](https://translate.sysadminsmedia.com/projects/homebox/).
+
+[![Translation status](http://translate.sysadminsmedia.com/widget/homebox/multi-auto.svg)](http://translate.sysadminsmedia.com/engage/homebox/)
+
 ## Credits
 
 - Original project by [@hay-kot](https://github.com/hay-kot)

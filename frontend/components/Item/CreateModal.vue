@@ -1,6 +1,6 @@
 <template>
   <BaseModal v-model="modal">
-    <template #title> Create Item </template>
+    <template #title> {{ $t("components.item.create_modal.title") }} </template>
     <form @submit.prevent="create()">
       <LocationSelector v-model="form.location" />
       <FormTextField ref="nameInput" v-model="form.name" :trigger-focus="focused" :autofocus="true" label="Item Name" />
@@ -13,7 +13,7 @@
               <MdiPackageVariant class="swap-off h-5 w-5" />
               <MdiPackageVariantClosed class="swap-on h-5 w-5" />
             </template>
-            Create
+            {{ $t("global.create") }}
           </BaseButton>
           <div class="dropdown dropdown-top">
             <label tabindex="0" class="btn rounded-l-none rounded-r-xl">
@@ -21,7 +21,7 @@
             </label>
             <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-64 right-0">
               <li>
-                <button type="button" @click="create(false)">Create and Add Another</button>
+                <button type="button" @click="create(false)">{{ $t("global.create_and_add") }}</button>
               </li>
             </ul>
           </div>

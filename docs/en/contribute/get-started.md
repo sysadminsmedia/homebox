@@ -57,6 +57,11 @@ For documentation contributions, you only need Node.js and PNPM.
 - Redirects can also be configured per language by adding `Language=` after the redirect code
 :::
 
+## Translations
+We use our own [Weblate instance](https://translate.sysadminsmedia.com/projects/homebox/) for translations. If you would like to help translate Homebox, please visit the Weblate instance and help us translate the project.
+
+[![Translation status](http://translate.sysadminsmedia.com/widget/homebox/multi-auto.svg)](http://translate.sysadminsmedia.com/engage/homebox/)
+
 ## Branch Flow
 We use the `main` branch as the development branch. All PRs should be made to the `main` branch from a feature branch.
 To create a pull request you can use the following steps:

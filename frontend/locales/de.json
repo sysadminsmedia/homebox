@@ -1,0 +1,127 @@
+{
+    "global": {
+        "github": "GitHub Projekt",
+        "join_discord": "Discord beitreten",
+        "password": "Passwort",
+        "version": "Version: { version }",
+        "build": "Build: { build }",
+        "email": "E-Mail",
+        "confirm": "Bestätigen",
+        "create": "Erstellen",
+        "create_and_add": "Erstellen und ein weiteres hinzufügen",
+        "follow_dev": "Dem Entwickler folgen",
+        "read_docs": "Lese die Dokumentation",
+        "submit": "Absenden",
+        "created": "Erstellt",
+        "welcome": "Willkommen,{username}",
+        "sign_out": "Abmelden",
+        "items": "",
+        "labels": "",
+        "locations": "",
+        "name": "",
+        "search": ""
+    },
+    "index": {
+        "login": "Anmelden",
+        "register": "Registrieren",
+        "tagline": "Verfolgen, Organisieren und Verwalten deiner Sachen.",
+        "disabled_registration": "Registrierung deaktiviert",
+        "joining_group": "Du trittst einer bereits bestehenden Gruppe bei!",
+        "remember_me": "Angemeldet bleiben",
+        "set_email": "Was ist deine E-Mail?",
+        "set_password": "Setze dein Passwort",
+        "set_name": "Wie heißt du?",
+        "dont_join_group": "Möchtest du nicht einer Gruppe beitreten?"
+    },
+    "components": {
+        "global": {
+            "password_score": {
+                "password_strength": "Passwortstärke"
+            },
+            "page_qr_code": {
+                "page_url": "Seiten-URL"
+            }
+        },
+        "item": {
+            "view": {
+                "selectable": {
+                    "items": "Gegenstände",
+                    "card": "Karte",
+                    "table": "Tabelle",
+                    "no_items": "Keine Gegenstände anzuzeigen"
+                }
+            },
+            "create_modal": {
+                "title": "Erstelle Gegenstand"
+            }
+        },
+        "app": {
+            "import_dialog": {
+                "description": "Importiere eine CSV-Datei, die deine Gegenstände, Etiketten und Standorte enthält. Siehe Dokumentation für weitere Informationen zum \nerforderlichen Format.",
+                "title": "Importiere CSV-Datei",
+                "change_warning": "Das Verhalten bei Importen mit vorhandenen import_refs hat sich geändert. Wenn ein import_ref in der CSV-Datei vorhanden ist, wird\n der Gegenstand mit den Werten in der CSV-Datei aktualisiert.",
+                "upload": "Hochladen"
+            }
+        },
+        "label": {
+            "create_modal": {
+                "title": "Erstelle Etikette"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "Erstelle Standort"
+            }
+        }
+    },
+    "profile": {
+        "change_password": "Passwort ändern",
+        "current_password": "Aktuelles Passwort",
+        "new_password": "Neues Passwort",
+        "notifiers": "Melder",
+        "notifiers_sub": "Benachrichtigungen über anstehende Wartungserinnerungen erhalten",
+        "url": "URL",
+        "enabled": "Aktiviert",
+        "test": "Test",
+        "gen_invite": "Einladungslink generieren",
+        "user_profile": "Benutzerprofil",
+        "user_profile_sub": "Benutzer einladen und Ihr Konto verwalten.",
+        "active": "Aktiv",
+        "inactive": "Inaktiv",
+        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Melder",
+        "theme_settings": "",
+        "theme_settings_sub": "",
+        "update_group": "",
+        "currency_format": "",
+        "delete_account": "",
+        "delete_account_sub": "",
+        "group_settings": "",
+        "group_settings_sub": ""
+    },
+    "items": {
+        "results": "",
+        "add": "",
+        "created_at": "",
+        "custom_fields": "",
+        "field_selector": "",
+        "field_value": "",
+        "first": "",
+        "include_archive": "",
+        "last": "",
+        "negate_labels": "",
+        "next_page": "",
+        "no_results": "",
+        "options": "",
+        "order_by": "",
+        "pages": "",
+        "prev_page": "",
+        "query_id": "",
+        "reset_search": "",
+        "tip_1": "",
+        "tip_2": "",
+        "tip_3": "",
+        "tips": "",
+        "tips_sub": "",
+        "updated_at": ""
+    }
+}

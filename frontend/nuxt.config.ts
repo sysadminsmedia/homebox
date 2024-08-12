@@ -3,6 +3,9 @@ import { defineNuxtConfig } from "nuxt/config";
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
   ssr: false,
+  build: {
+    transpile: ["vue-i18n"],
+  },
   modules: [
     "@nuxtjs/tailwindcss",
     "@pinia/nuxt",

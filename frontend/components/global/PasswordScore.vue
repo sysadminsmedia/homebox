@@ -1,6 +1,6 @@
 <template>
   <div class="py-4">
-    <p class="text-sm">Password Strength: {{ message }}</p>
+    <p class="text-sm">{{ $t("components.global.password_score.password_strength") }}: {{ message }}</p>
     <progress
       class="progress w-full progress-bar"
       :value="score"

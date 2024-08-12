@@ -1,0 +1,127 @@
+{
+    "global": {
+        "email": "Courriel",
+        "read_docs": "Lire la documentation",
+        "password": "Mot de passe",
+        "github": "Projet GitHub",
+        "join_discord": "Rejoindre le Discord",
+        "follow_dev": "Suivre le développeur",
+        "version": "Version : { version }",
+        "build": "Assemblage : { build }",
+        "create": "Créer",
+        "submit": "Soumettre",
+        "create_and_add": "Créer et en ajouter un autre",
+        "confirm": "Confirmer",
+        "sign_out": "Déconnexion",
+        "welcome": "Bienvenue,{ username }",
+        "created": "Créé",
+        "labels": "",
+        "locations": "",
+        "name": "",
+        "search": "",
+        "items": ""
+    },
+    "index": {
+        "set_email": "Quel est vôtre courriel ?",
+        "set_name": "Quel est vôtre nom ?",
+        "login": "Se connecter",
+        "register": "S'enregistrer",
+        "remember_me": "Se souvenir de moi",
+        "set_password": "Définir votre mot de passe",
+        "dont_join_group": "Vous ne voulez pas joindre un groupe ?",
+        "tagline": "Traquez, organisez et gérez vos affaires.",
+        "disabled_registration": "Les inscriptions sont désactivées",
+        "joining_group": "Vous rejoignez un groupe existant !"
+    },
+    "components": {
+        "label": {
+            "create_modal": {
+                "title": "Créer une étiquette"
+            }
+        },
+        "item": {
+            "view": {
+                "selectable": {
+                    "items": "Items",
+                    "no_items": "Nb. d’items à afficher",
+                    "table": "Tableau",
+                    "card": "Carte"
+                }
+            },
+            "create_modal": {
+                "title": "Créer un item"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "Créer un emplacement"
+            }
+        },
+        "global": {
+            "password_score": {
+                "password_strength": "Solidité du mot de passe"
+            },
+            "page_qr_code": {
+                "page_url": "URL de la page"
+            }
+        },
+        "app": {
+            "import_dialog": {
+                "title": "Importer un fichier CSV",
+                "upload": "Téléverser",
+                "description": "Importer un fichier CSV contenant vos items, étiquettes, et emplacements. Voir la documentation pour plus d'informations sur le format requis.",
+                "change_warning": "Le comportement lors d’importations avec des import_ref existants a changé. Si une valeur pour import_ref est présente dans le fichier CSV, alors l'item sera mis à jour avec celle-ci."
+            }
+        }
+    },
+    "profile": {
+        "notifiers_sub": "Recevez des notifications pour vous prévenir des prochaines maintenances",
+        "active": "Actif",
+        "enabled": "Activé",
+        "test": "Test",
+        "current_password": "Mot de passe actuel",
+        "new_password": "Nouveau mot de passe",
+        "change_password": "Changer de mot de passe",
+        "inactive": "Inactif",
+        "notifiers": "Notifications",
+        "gen_invite": "Générer un lien d’invitation",
+        "user_profile": "Profil Utilisateur",
+        "user_profile_sub": "Invitez des utilisateurs, et gérez votre compte.",
+        "url": "URL",
+        "delete_account": "Effacer le compte",
+        "delete_account_sub": "Effacer le compte et toutes les données. Aucune réccupération possible.",
+        "group_settings": "Paramètres du groupe",
+        "group_settings_sub": "Paramètres partagés du groupe. Il peut être ne2cessaire de recharger la page.",
+        "currency_format": "Format de la devise",
+        "update_group": "Mettre à jour le groupe",
+        "theme_settings": "Paramètres du thème",
+        "theme_settings_sub": "Les paramètres du thème sont stockés dans le navigateur. Vous pouvez les changer à tout moment. Si vous\nrencontrez des problèmes, il est conseillé de rafraichir la page.",
+        "notifier_modal": ""
+    },
+    "items": {
+        "add": "",
+        "created_at": "",
+        "custom_fields": "",
+        "field_selector": "",
+        "field_value": "",
+        "first": "",
+        "include_archive": "",
+        "last": "",
+        "negate_labels": "",
+        "next_page": "",
+        "no_results": "",
+        "options": "",
+        "order_by": "",
+        "pages": "",
+        "prev_page": "",
+        "query_id": "",
+        "reset_search": "",
+        "tip_1": "",
+        "tip_2": "",
+        "tip_3": "",
+        "tips": "",
+        "tips_sub": "",
+        "updated_at": "",
+        "results": ""
+    }
+}

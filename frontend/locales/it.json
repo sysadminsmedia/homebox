@@ -1,0 +1,127 @@
+{
+    "global": {
+        "build": "Versione: { build }",
+        "version": "Versione: { version }",
+        "github": "Progetto GitHub",
+        "join_discord": "Unisciti a Discord",
+        "follow_dev": "Segui lo Sviluppatore",
+        "read_docs": "Leggi la Documentazione",
+        "password": "Password",
+        "email": "Email",
+        "submit": "Invia",
+        "confirm": "Conferma",
+        "create": "Crea",
+        "create_and_add": "Crea e aggiungi un altro",
+        "created": "",
+        "items": "",
+        "labels": "",
+        "locations": "",
+        "name": "",
+        "search": "",
+        "sign_out": "",
+        "welcome": ""
+    },
+    "index": {
+        "disabled_registration": "Registrazione Disabilitata",
+        "login": "Accedi",
+        "register": "Registrati",
+        "remember_me": "Ricordami",
+        "set_email": "Qual è la tua email?",
+        "set_password": "Imposta la tua password",
+        "set_name": "Come ti chiami?",
+        "dont_join_group": "Non vuoi unirti a un gruppo?",
+        "tagline": "Tieni traccia, Organizza e Gestisci le tue Cose.",
+        "joining_group": "Stai unendoti a un gruppo esistente!"
+    },
+    "components": {
+        "global": {
+            "password_score": {
+                "password_strength": "Complessità della Password"
+            },
+            "page_qr_code": {
+                "page_url": "URL della Pagina"
+            }
+        },
+        "app": {
+            "import_dialog": {
+                "title": "Importa File CSV",
+                "change_warning": "Il comportamento per le importazioni con import_ref esistenti è cambiato. Se un import_ref è presente nel file CSV,\n l'elemento verrà aggiornato con i valori presenti nel file CSV.",
+                "upload": "Carica",
+                "description": "Importa un file CSV contenente gli oggetti, le etichette e le posizioni. Vedi la documentazione per ulteriori informazioni sul \nformato richiesto."
+            }
+        },
+        "item": {
+            "create_modal": {
+                "title": "Crea Oggetto"
+            },
+            "view": {
+                "selectable": {
+                    "items": "Oggetti",
+                    "card": "Scheda",
+                    "table": "Tabella",
+                    "no_items": "Nessun Oggetto da Visualizzare"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "title": "Crea Etichetta"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "Crea Posizione"
+            }
+        }
+    },
+    "profile": {
+        "notifiers_sub": "",
+        "theme_settings_sub": "",
+        "url": "",
+        "user_profile": "",
+        "user_profile_sub": "",
+        "active": "",
+        "change_password": "",
+        "currency_format": "",
+        "current_password": "",
+        "delete_account": "",
+        "delete_account_sub": "",
+        "enabled": "",
+        "gen_invite": "",
+        "group_settings": "",
+        "group_settings_sub": "",
+        "inactive": "",
+        "new_password": "",
+        "notifier_modal": "",
+        "notifiers": "",
+        "test": "",
+        "theme_settings": "",
+        "update_group": ""
+    },
+    "items": {
+        "add": "",
+        "custom_fields": "",
+        "field_value": "",
+        "first": "",
+        "last": "",
+        "next_page": "",
+        "no_results": "",
+        "order_by": "",
+        "created_at": "",
+        "field_selector": "",
+        "include_archive": "",
+        "negate_labels": "",
+        "options": "",
+        "pages": "",
+        "prev_page": "",
+        "query_id": "",
+        "reset_search": "",
+        "tip_1": "",
+        "tip_2": "",
+        "tip_3": "",
+        "tips": "",
+        "tips_sub": "",
+        "updated_at": "",
+        "results": ""
+    }
+}
