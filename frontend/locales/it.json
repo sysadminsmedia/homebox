@@ -5,18 +5,18 @@
         "app": {
             "import_dialog": {
                 "change_warning": "Il comportamento per le importazioni con import_ref esistenti è cambiato. Se un import_ref è presente nel file CSV,\n l'elemento verrà aggiornato con i valori presenti nel file CSV.",
-                "description": "Importa un file CSV contenente gli oggetti, le etichette e le posizioni. Vedi la documentazione per ulteriori informazioni sul \nformato richiesto."
+                "description": "Importa un file CSV contenente gli oggetti, le etichette e le posizioni. Vedi la documentazione per ulteriori informazioni sul \nformato richiesto.",
                 "title": "Importa File CSV",
-                "upload": "Carica",
+                "upload": "Carica"
             }
         },
         "global": {
             "page_qr_code": {
                 "page_url": "URL della Pagina"
-            }
+            },
             "password_score": {
                 "password_strength": "Complessità della Password"
-            },
+            }
         },
         "item": {
             "create_modal": {
@@ -26,8 +26,8 @@
                 "selectable": {
                     "card": "Scheda",
                     "items": "Oggetti",
-                    "no_items": "Nessun Oggetto da Visualizzare"
-                    "table": "Tabella",
+                    "no_items": "Nessun Oggetto da Visualizzare",
+                    "table": "Tabella"
                 }
             }
         },
@@ -74,32 +74,32 @@
         "set_email": "Qual è la tua email?",
         "set_name": "Come ti chiami?",
         "set_password": "Imposta la tua password",
-        "tagline": "Tieni traccia, Organizza e Gestisci le tue Cose.",
+        "tagline": "Tieni traccia, Organizza e Gestisci le tue Cose."
     },
     "items": {
-        "add": "Aggiungi"
-        "created_at": "Creato Il"
-        "custom_fields": "Campi Personalizzati"
-        "field_selector": "Selettore di Campo"
-        "field_value": "Valore del Campo"
-        "first": "Primo"
-        "include_archive": "Includi Articoli Archiviati"
-        "last": "Ultimo"
-        "negate_labels": "Negare Etichette Selezionate"
-        "next_page": "Pagina Successiva"
-        "no_results": "Nessun Articolo Trovato"
-        "options": "Opzioni"
-        "order_by": "Ordina Per"
-        "pages": "Pagina { page } di { totalPages }"
-        "prev_page": "Pagina Precedente"
-        "query_id": "ID dell'Asset in Ricerca: { id }"
-        "reset_search": "Reimposta Ricerca"
-        "results": "{ total } Risultati"
-        "tip_1": "I filtri di posizione ed etichetta utilizzano l'operazione 'OR'. Se ne viene selezionato più\n di uno, ne sarà richiesto solo uno per una corrispondenza."
-        "tip_2": "Le ricerche con prefisso '#' cercheranno un ID asset (esempio '#000-001')"
-        "tip_3": "I filtri di campo utilizzano l'operazione 'OR'. Se ne viene selezionato più di uno, ne sarà\n richiesto solo uno per una corrispondenza."
-        "tips": "Suggerimenti"
-        "tips_sub": "Suggerimenti per la Ricerca"
+        "add": "Aggiungi",
+        "created_at": "Creato Il",
+        "custom_fields": "Campi Personalizzati",
+        "field_selector": "Selettore di Campo",
+        "field_value": "Valore del Campo",
+        "first": "Primo",
+        "include_archive": "Includi Articoli Archiviati",
+        "last": "Ultimo",
+        "negate_labels": "Negare Etichette Selezionate",
+        "next_page": "Pagina Successiva",
+        "no_results": "Nessun Articolo Trovato",
+        "options": "Opzioni",
+        "order_by": "Ordina Per",
+        "pages": "Pagina { page } di { totalPages }",
+        "prev_page": "Pagina Precedente",
+        "query_id": "ID dell'Asset in Ricerca: { id }",
+        "reset_search": "Reimposta Ricerca",
+        "results": "{ total } Risultati",
+        "tip_1": "I filtri di posizione ed etichetta utilizzano l'operazione 'OR'. Se ne viene selezionato più\n di uno, ne sarà richiesto solo uno per una corrispondenza.",
+        "tip_2": "Le ricerche con prefisso '#' cercheranno un ID asset (esempio '#000-001')",
+        "tip_3": "I filtri di campo utilizzano l'operazione 'OR'. Se ne viene selezionato più di uno, ne sarà\n richiesto solo uno per una corrispondenza.",
+        "tips": "Suggerimenti",
+        "tips_sub": "Suggerimenti per la Ricerca",
         "updated_at": "Aggiornato Il"
     },
     "profile": {
