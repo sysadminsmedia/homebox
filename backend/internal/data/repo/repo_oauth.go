@@ -31,6 +31,7 @@ func (r *OAuthRepository) GetUserFromToken(ctx context.Context, provider string,
 		Where(oauth.Sub(sub)).
 		WithUser().
 		QueryUser().
+		WithGroup().
 		Only(ctx)
 	if err != nil {
 		return UserOut{}, err

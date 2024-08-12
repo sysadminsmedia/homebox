@@ -21,7 +21,7 @@ type OAuthProvider struct {
 
 func NewOAuthProvider(ctx context.Context, service *services.OAuthService, name string) (*OAuthProvider, error) {
 	upperName := strings.ToUpper(name)
-	clientId := os.Getenv(fmt.Sprintf("HBOX_OAUTH_%S_ID", upperName))
+	clientId := os.Getenv(fmt.Sprintf("HBOX_OAUTH_%s_ID", upperName))
 	clientSecret := os.Getenv(fmt.Sprintf("HBOX_OAUTH_%s_SECRET", upperName))
 	redirectUri := os.Getenv(fmt.Sprintf("HBOX_OAUTH_%s_REDIRECT", upperName))
 

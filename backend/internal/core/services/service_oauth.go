@@ -50,8 +50,10 @@ func (svc *OAuthService) Login(ctx context.Context, config *OAuthConfig, data OA
 }
 
 func (svc *OAuthService) ValidateCode(ctx context.Context, config *OAuthConfig, data OAuthValidate) (repo.UserOut, error) {
+	log.Debug().Str("ClientId", config.Config.ClientID).Msg("Exchanging code")
 	token, err := config.Config.Exchange(ctx, data.Code)
 	if err != nil {
+		log.Debug().Err(err).Msg("Failed to exchange code")
 		return repo.UserOut{}, err
 	}
 
@@ -78,6 +80,11 @@ func (svc *OAuthService) LoginWithIdToken(ctx context.Context, config *OAuthConf
 	if err != nil {
 		return repo.UserOut{}, false, err
 	}
+
+	log.Debug().
+		Str("iss", idToken.Issuer).
+		Str("sub", idToken.Subject).
+		Msg("Searching for user")
 
 	user, err := svc.repos.OAuth.GetUserFromToken(ctx, idToken.Issuer, idToken.Subject)
 	if err != nil {
@@ -156,6 +163,7 @@ func (svc *OAuthService) CreateUser(ctx context.Context, registration OAuthUserR
 	}
 	usr, err := svc.repos.Users.Create(ctx, usrCreate)
 	if err != nil {
+		log.Debug().Err(err).Msg("Failed to create user")
 		return repo.UserOut{}, err
 	}
 
