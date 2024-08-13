@@ -109,9 +109,9 @@
         "query_id": "ID-nummer van object opvragen: { id }",
         "reset_search": "Reset Zoeken",
         "tips": "Tips",
-        "no_results": "",
-        "options": "",
-        "order_by": "",
+        "no_results": "Geen Items Gevonden",
+        "options": "Opties",
+        "order_by": "Sorteren op",
         "results": "{ total } Resultaten",
         "add": "Toevoegen",
         "created_at": "Aangemaakt op",
@@ -120,7 +120,7 @@
         "field_value": "Veldwaarde",
         "first": "Eerst",
         "include_archive": "Inclusief gearchiveerde items",
-        "last": "",
+        "last": "Laatste",
         "negate_labels": "Negeer Geselecteerde Etiketten",
         "next_page": "Volgende pagina"
     }
