@@ -1,0 +1,127 @@
+{
+    "items": {
+        "include_archive": "包括存檔項目",
+        "tip_1": "位置和標籤過濾器使用“OR”運算。如果選擇了多個，則一次配對\n只會使用一個。",
+        "pages": "第{ page } 頁(共{ totalPages })",
+        "tip_3": "字段過濾器使用“OR”運算。如果選擇了多個，則一次配對只需要選擇\n一個。",
+        "field_value": "欄位值",
+        "field_selector": "欄位選擇器",
+        "custom_fields": "自訂欄位",
+        "first": "第一項",
+        "add": "添加",
+        "created_at": "創建於",
+        "last": "最後一項",
+        "negate_labels": "取消選定的標籤",
+        "next_page": "下一頁",
+        "no_results": "沒有找到項目",
+        "options": "選項",
+        "order_by": "排序",
+        "prev_page": "上一頁",
+        "query_id": "查詢資產ID號碼:{ id }",
+        "reset_search": "重置搜尋",
+        "results": "{ total }結果",
+        "tips": "提示",
+        "tips_sub": "搜尋技巧",
+        "updated_at": "更新於",
+        "tip_2": "以「#」為前綴的搜尋將查詢資產 ID（例如「#000-001」）"
+    },
+    "components": {
+        "app": {
+            "import_dialog": {
+                "description": "匯入包含您的商品、標籤和位置的 CSV 檔案。有關所需格式的更多信息\n，請參閱文件。",
+                "title": "匯入CSV檔案",
+                "upload": "上傳",
+                "change_warning": "現有 import_refs 的導入行為已變更。如果 CSV 檔案中存在 import_ref，則\n項目將使用 CSV 檔案中的值進行更新。"
+            }
+        },
+        "global": {
+            "page_qr_code": {
+                "page_url": "頁面網址"
+            },
+            "password_score": {
+                "password_strength": "密碼強度"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "title": "新增項目"
+            },
+            "view": {
+                "selectable": {
+                    "card": "卡片",
+                    "items": "項目",
+                    "no_items": "沒有可顯示的項目",
+                    "table": "表格"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "title": "新增標籤"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "新增地點"
+            }
+        }
+    },
+    "global": {
+        "build": "建立{ build }",
+        "confirm": "確認",
+        "create": "新增",
+        "create_and_add": "創建並添加另一個",
+        "created": "已建立",
+        "email": "電子信箱",
+        "github": "GitHub項目",
+        "items": "項目",
+        "join_discord": "加入Discord",
+        "labels": "標籤",
+        "locations": "地點",
+        "name": "名字",
+        "password": "密碼",
+        "read_docs": "閱讀文件",
+        "search": "搜尋",
+        "sign_out": "登出",
+        "submit": "提交",
+        "version": "版本:{ version }",
+        "follow_dev": "關注開發者",
+        "welcome": "歡迎，{ username }"
+    },
+    "index": {
+        "disabled_registration": "已禁用註冊",
+        "dont_join_group": "不想加入群組？",
+        "joining_group": "您正在加入現有群組！",
+        "login": "登入",
+        "register": "註冊",
+        "remember_me": "記住帳號",
+        "set_email": "你的電子郵件是什麼？",
+        "set_name": "你叫什麼名字？",
+        "tagline": "追蹤、組織和管理您的物品。",
+        "set_password": "設定您的密碼"
+    },
+    "profile": {
+        "change_password": "變更密碼",
+        "currency_format": "貨幣格式",
+        "current_password": "當前密碼",
+        "delete_account": "刪除帳戶",
+        "enabled": "啟用",
+        "gen_invite": "產生邀請連結",
+        "group_settings": "群組設定",
+        "group_settings_sub": "共享群組設定。您可能需要刷新瀏覽器才能套用設定。",
+        "inactive": "不活躍",
+        "new_password": "新密碼",
+        "active": "活躍",
+        "delete_account_sub": "刪除您的帳戶及其所有相關資料。此操作無法撤回。",
+        "notifiers": "通知者",
+        "notifiers_sub": "獲取即將到來的維護提醒的通知",
+        "test": "測試",
+        "theme_settings": "主題設定",
+        "update_group": "更新群組",
+        "url": "網址",
+        "user_profile": "使用者資料",
+        "user_profile_sub": "邀請使用者並管理您的帳戶。",
+        "theme_settings_sub": "主題設定儲存在瀏覽器的本機儲存中。您可以隨時變更主題。如果你是\n 設定主題時遇到問題，請嘗試刷新瀏覽器。",
+        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notifier"
+    }
+}
