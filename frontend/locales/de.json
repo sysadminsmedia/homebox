@@ -113,7 +113,7 @@
         "group_settings_sub": "Geteilte Gruppeneinstellungen. Möglicherweise müssen Sie Ihren Browser aktualisieren, damit einige Einstellungen wirksam werden.",
         "inactive": "Inaktiv",
         "new_password": "Neues Passwort",
-        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Melder",
+        "notifier_modal": "{ type, select, true {Bearbeiten} false {Erstellen} other {Andere}} Melder",
         "notifiers": "Melder",
         "notifiers_sub": "Erhalten Sie Benachrichtigungen für bevorstehende Wartungserinnerungen",
         "test": "Test",
