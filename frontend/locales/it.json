@@ -113,7 +113,7 @@
         "group_settings_sub": "Impostazioni Gruppo Condivise. Potrebbe essere necessario aggiornare il browser affinché alcune impostazioni vengano applicate.",
         "inactive": "Inattivo",
         "new_password": "Nuova Password",
-        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notifier",
+        "notifier_modal": "{ type, select, true {Modifica} false {Crea} other {Altro}} Notifier",
         "notifiers": "Notifiche",
         "notifiers_sub": "Ricevi notifiche per i prossimi promemoria di manutenzione",
         "test": "Test",
