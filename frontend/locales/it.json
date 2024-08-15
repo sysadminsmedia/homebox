@@ -1,53 +1,19 @@
 {
-    "global": {
-        "build": "Versione: { build }",
-        "version": "Versione: { version }",
-        "github": "Progetto GitHub",
-        "join_discord": "Unisciti a Discord",
-        "follow_dev": "Segui lo Sviluppatore",
-        "read_docs": "Leggi la Documentazione",
-        "password": "Password",
-        "email": "Email",
-        "submit": "Invia",
-        "confirm": "Conferma",
-        "create": "Crea",
-        "create_and_add": "Crea e aggiungi un altro",
-        "created": "",
-        "items": "",
-        "labels": "",
-        "locations": "",
-        "name": "",
-        "search": "",
-        "sign_out": "",
-        "welcome": ""
-    },
-    "index": {
-        "disabled_registration": "Registrazione Disabilitata",
-        "login": "Accedi",
-        "register": "Registrati",
-        "remember_me": "Ricordami",
-        "set_email": "Qual è la tua email?",
-        "set_password": "Imposta la tua password",
-        "set_name": "Come ti chiami?",
-        "dont_join_group": "Non vuoi unirti a un gruppo?",
-        "tagline": "Tieni traccia, Organizza e Gestisci le tue Cose.",
-        "joining_group": "Stai unendoti a un gruppo esistente!"
-    },
     "components": {
-        "global": {
-            "password_score": {
-                "password_strength": "Complessità della Password"
-            },
-            "page_qr_code": {
-                "page_url": "URL della Pagina"
-            }
-        },
         "app": {
             "import_dialog": {
-                "title": "Importa File CSV",
                 "change_warning": "Il comportamento per le importazioni con import_ref esistenti è cambiato. Se un import_ref è presente nel file CSV,\n l'elemento verrà aggiornato con i valori presenti nel file CSV.",
-                "upload": "Carica",
-                "description": "Importa un file CSV contenente gli oggetti, le etichette e le posizioni. Vedi la documentazione per ulteriori informazioni sul \nformato richiesto."
+                "description": "Importa un file CSV contenente gli oggetti, le etichette e le posizioni. Vedi la documentazione per ulteriori informazioni sul \nformato richiesto.",
+                "title": "Importa File CSV",
+                "upload": "Carica"
+            }
+        },
+        "global": {
+            "page_qr_code": {
+                "page_url": "URL della Pagina"
+            },
+            "password_score": {
+                "password_strength": "Complessità della Password"
             }
         },
         "item": {
@@ -56,10 +22,10 @@
             },
             "view": {
                 "selectable": {
-                    "items": "Oggetti",
                     "card": "Scheda",
-                    "table": "Tabella",
-                    "no_items": "Nessun Oggetto da Visualizzare"
+                    "items": "Oggetti",
+                    "no_items": "Nessun Oggetto da Visualizzare",
+                    "table": "Tabella"
                 }
             }
         },
@@ -74,54 +40,88 @@
             }
         }
     },
-    "profile": {
-        "notifiers_sub": "",
-        "theme_settings_sub": "",
-        "url": "",
-        "user_profile": "",
-        "user_profile_sub": "",
-        "active": "",
-        "change_password": "",
-        "currency_format": "",
-        "current_password": "",
-        "delete_account": "",
-        "delete_account_sub": "",
-        "enabled": "",
-        "gen_invite": "",
-        "group_settings": "",
-        "group_settings_sub": "",
-        "inactive": "",
-        "new_password": "",
-        "notifier_modal": "",
-        "notifiers": "",
-        "test": "",
-        "theme_settings": "",
-        "update_group": ""
+    "global": {
+        "build": "Build: { build }",
+        "confirm": "Conferma",
+        "create": "Crea",
+        "create_and_add": "Crea e aggiungi un altro",
+        "created": "Creato",
+        "email": "Email",
+        "follow_dev": "Segui lo Sviluppatore",
+        "github": "Progetto GitHub",
+        "items": "Articoli",
+        "join_discord": "Unisciti a Discord",
+        "labels": "Etichette",
+        "locations": "Posizioni",
+        "name": "Nome",
+        "password": "Password",
+        "read_docs": "Leggi la Documentazione",
+        "search": "Cerca",
+        "sign_out": "Disconnetti",
+        "submit": "Invia",
+        "version": "Versione: { version }",
+        "welcome": "Benvenuto, { username }"
+  },
+    "index": {
+        "disabled_registration": "Registrazione Disabilitata",
+        "dont_join_group": "Non vuoi unirti a un gruppo?",
+        "joining_group": "Stai unendoti a un gruppo esistente!",
+        "login": "Accedi",
+        "register": "Registrati",
+        "remember_me": "Ricordami",
+        "set_email": "Qual è la tua email?",
+        "set_name": "Come ti chiami?",
+        "set_password": "Imposta la tua password",
+        "tagline": "Tieni traccia, Organizza e Gestisci le tue Cose."
     },
     "items": {
-        "add": "",
-        "custom_fields": "",
-        "field_value": "",
-        "first": "",
-        "last": "",
-        "next_page": "",
-        "no_results": "",
-        "order_by": "",
-        "created_at": "",
-        "field_selector": "",
-        "include_archive": "",
-        "negate_labels": "",
-        "options": "",
-        "pages": "",
-        "prev_page": "",
-        "query_id": "",
-        "reset_search": "",
-        "tip_1": "",
-        "tip_2": "",
-        "tip_3": "",
-        "tips": "",
-        "tips_sub": "",
-        "updated_at": "",
-        "results": ""
+        "add": "Aggiungi",
+        "created_at": "Creato Il",
+        "custom_fields": "Campi Personalizzati",
+        "field_selector": "Selettore di Campo",
+        "field_value": "Valore del Campo",
+        "first": "Primo",
+        "include_archive": "Includi Articoli Archiviati",
+        "last": "Ultimo",
+        "negate_labels": "Negare Etichette Selezionate",
+        "next_page": "Pagina Successiva",
+        "no_results": "Nessun Articolo Trovato",
+        "options": "Opzioni",
+        "order_by": "Ordina Per",
+        "pages": "Pagina { page } di { totalPages }",
+        "prev_page": "Pagina Precedente",
+        "query_id": "ID dell'Asset in Ricerca: { id }",
+        "reset_search": "Reimposta Ricerca",
+        "results": "{ total } Risultati",
+        "tip_1": "I filtri di posizione ed etichetta utilizzano l'operazione 'OR'. Se ne viene selezionato più\n di uno, ne sarà richiesto solo uno per una corrispondenza.",
+        "tip_2": "Le ricerche con prefisso '#' cercheranno un ID asset (esempio '#000-001')",
+        "tip_3": "I filtri di campo utilizzano l'operazione 'OR'. Se ne viene selezionato più di uno, ne sarà\n richiesto solo uno per una corrispondenza.",
+        "tips": "Suggerimenti",
+        "tips_sub": "Suggerimenti per la Ricerca",
+        "updated_at": "Aggiornato Il"
+    },
+    "profile": {
+        "active": "Attivo",
+        "change_password": "Cambia Password",
+        "currency_format": "Formato Valuta",
+        "current_password": "Password Corrente",
+        "delete_account": "Elimina Account",
+        "delete_account_sub": "Elimina il tuo account e tutti i dati associati. Questa operazione non può essere annullata.",
+        "enabled": "Abilitato",
+        "gen_invite": "Genera Link di Invito",
+        "group_settings": "Impostazioni Gruppo",
+        "group_settings_sub": "Impostazioni Gruppo Condivise. Potrebbe essere necessario aggiornare il browser affinché alcune impostazioni vengano applicate.",
+        "inactive": "Inattivo",
+        "new_password": "Nuova Password",
+        "notifier_modal": "{ type, select, true {Modifica} false {Crea} other {Altro}} Notifier",
+        "notifiers": "Notifiche",
+        "notifiers_sub": "Ricevi notifiche per i prossimi promemoria di manutenzione",
+        "test": "Test",
+        "theme_settings": "Impostazioni Tema",
+        "theme_settings_sub": "Le impostazioni del tema sono memorizzate nella memoria locale del tuo browser. Puoi cambiare il tema \nin qualsiasi momento. Se hai problemi a impostare il tuo tema, prova a ricaricare la pagina.",
+        "update_group": "Aggiorna Gruppo",
+        "url": "URL",
+        "user_profile": "Profilo Utente",
+        "user_profile_sub": "Invita utenti e gestisci il tuo account."
     }
 }
