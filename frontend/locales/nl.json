@@ -47,7 +47,7 @@
                 "title": "Importeer CSV bestand",
                 "change_warning": "Gedrag voor importeren met bestaande import_refs is veranderd. Als een import_refs reeds bestaat in het CSV bestand, het\nobject zal worden aangepast met de waardes van het CSV bestand.",
                 "upload": "Upload",
-                "description": "Importeer een CSV bestand met je objecten, labels en locaties. Zie documentatie voor meer informatie m.b.t.\n vereist formaat."
+                "description": "Importeer een CSV bestand met je objecten, labels en locaties. Zie documentatie voor meer informatie m.b.t.\n vereist format."
             }
         },
         "item": {

@@ -15,11 +15,11 @@
         "sign_out": "Déconnexion",
         "welcome": "Bienvenue,{ username }",
         "created": "Créé",
-        "labels": "",
-        "locations": "",
-        "name": "",
-        "search": "",
-        "items": ""
+        "labels": "Etiquettes",
+        "locations": "Lieux",
+        "name": "Nom",
+        "search": "Rechercher",
+        "items": "Articles"
     },
     "index": {
         "set_email": "Quel est vôtre courriel ?",
@@ -99,13 +99,13 @@
         "notifier_modal": ""
     },
     "items": {
-        "add": "",
+        "add": "Ajouter",
         "created_at": "",
-        "custom_fields": "",
-        "field_selector": "",
-        "field_value": "",
-        "first": "",
-        "include_archive": "",
+        "custom_fields": "Champs personnalisés",
+        "field_selector": "Sélecteur de champ",
+        "field_value": "Valeur du champ",
+        "first": "Premier",
+        "include_archive": "Inclure les éléments archivés",
         "last": "",
         "negate_labels": "",
         "next_page": "",
