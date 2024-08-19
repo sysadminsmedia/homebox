@@ -6,6 +6,16 @@
       <FormTextField ref="nameInput" v-model="form.name" :trigger-focus="focused" :autofocus="true" label="Item Name" />
       <FormTextArea v-model="form.description" label="Item Description" />
       <FormMultiselect v-model="form.labels" label="Labels" :items="labels ?? []" />
+
+
+      <!-- photo for item creation starts here -->
+      <div class="px-4 py-5 sm:px-6">
+        <label for="photo" class="btn">Photo 📷</label>
+        <input type="file" accept="image/*" @change="previewImage" style="visibility:hidden;" id="photo">
+      </div>
+      <!-- photo for item creation ends here -->
+
+
       <div class="modal-action">
         <div class="flex justify-center">
           <BaseButton class="rounded-r-none" :loading="loading" type="submit">
@@ -27,6 +37,20 @@
           </div>
         </div>
       </div>
+
+      <!-- photo preview area is AFTER the create button, to avoid pushing the button below the screen on small displays -->
+      <div class="border-t border-gray-300 p-4">
+          <!--<div class="border p-2 mt-3">-->
+            <!--<p>Preview Here:</p>-->
+            <template v-if="form.preview">
+              <p class="mb-0">file name: {{ form.photo.name }}</p>
+              <img :src="form.preview" class="h-[100px] w-full object-cover rounded-t shadow-sm border-gray-300" />
+              <!--<p class="mb-0">size: {{ form.photo.size/1024 }}KB</p>-->
+            </template>
+          <!--</div>-->
+      </div>
+
+
     </form>
     <p class="text-sm text-center mt-4">
       use <kbd class="kbd kbd-xs">Shift</kbd> + <kbd class="kbd kbd-xs"> Enter </kbd> to create and add another
@@ -41,6 +65,7 @@
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
   import MdiChevronDown from "~icons/mdi/chevron-down";
+  import { AttachmentTypes } from "~~/lib/api/types/non-generated";
 
   const props = defineProps({
     modelValue: {
@@ -85,9 +110,39 @@
     description: "",
     color: "", // Future!
     labels: [] as LabelOut[],
+    preview: null,
+    photo: null
   });
 
   const { shift } = useMagicKeys();
+
+  function previewImage(event) {
+    var input = event.target;
+    if (input.files) {
+      var reader = new FileReader();
+      reader.onload = (e) => {
+        form.preview = e.target.result;
+      }
+      form.photo=input.files[0];
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+
+  function uploadImage(e: Event) {
+    const files = (e.target as HTMLInputElement).files;
+    if (!files || !files.item(0)) {
+      return;
+    }
+
+    const first = files.item(0);
+    if (!first) {
+      return;
+    }
+
+    uploadAttachment([first], null);
+  }
+
 
   whenever(
     () => modal.value,
@@ -133,10 +188,25 @@
 
     toast.success("Item created");
 
+    // if the photo was provided, upload it
+    if(form.photo){
+      const { data2, error } = await api.items.attachments.add(data.id, form.photo, form.photo.name, AttachmentTypes.Photo);
+
+      if (error) {
+        toast.error("Failed to upload Photo");
+        return;
+      }
+
+      toast.success("Photo uploaded");
+    }
+
+
     // Reset
     form.name = "";
     form.description = "";
     form.color = "";
+    form.preview = null;
+    form.photo = null;
     focused.value = false;
     loading.value = false;
 
