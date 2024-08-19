@@ -8,15 +8,11 @@
       <FormMultiselect v-model="form.labels" label="Labels" :items="labels ?? []" />
 
 
-      <!-- photo for item creation starts here -->
-      <div class="px-4 py-5 sm:px-6">
-        <label for="photo" class="btn">Photo 📷</label>
-        <input type="file" accept="image/*" @change="previewImage" style="visibility:hidden;" id="photo">
-      </div>
-      <!-- photo for item creation ends here -->
-
-
       <div class="modal-action">
+        <div class="flex">
+          <label for="photo" class="btn absolute left-0">Photo 📷</label>
+          <input type="file" accept="image/*" @change="previewImage" style="visibility:hidden;" id="photo">
+        </div>
         <div class="flex justify-center">
           <BaseButton class="rounded-r-none" :loading="loading" type="submit">
             <template #icon>
@@ -37,6 +33,7 @@
           </div>
         </div>
       </div>
+
 
       <!-- photo preview area is AFTER the create button, to avoid pushing the button below the screen on small displays -->
       <div class="border-t border-gray-300 p-4">
