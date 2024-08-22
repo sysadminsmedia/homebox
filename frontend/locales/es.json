@@ -77,6 +77,10 @@
     "items": {
         "add": "Añadir",
         "created_at": "Creado El",
-        "custom_fields": "Campos personalizados"
+        "custom_fields": "Campos Personalizados",
+        "field_selector": "Selector de Campo",
+        "field_value": "Valor del Campo",
+        "first": "Primer",
+        "include_archive": "Incluir elementos archivados"
     }
 }
