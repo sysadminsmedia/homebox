@@ -83,6 +83,8 @@
         "first": "Primer",
         "include_archive": "Incluir Elementos Archivados",
         "last": "Último",
-        "negate_labels": "Negar etiquetas seleccionadas"
+        "negate_labels": "Negar Etiquetas Seleccionadas",
+        "next_page": "Siguiente Página",
+        "no_results": "No se encontraron elementos"
     }
 }
