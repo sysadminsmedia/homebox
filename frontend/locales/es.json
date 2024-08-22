@@ -13,7 +13,7 @@
                 "page_url": "URL de página"
             },
             "password_score": {
-                "password_strength": "Seguridad de contraseña"
+                "password_strength": "Seguridad de la contraseña"
             }
         },
         "item": {
@@ -72,7 +72,7 @@
         "set_name": "¿Cómo te llamas?",
         "set_password": "Establece tu contraseña",
         "tagline": "Rastrea, Organiza y Gestiona tus Cosas.",
-        "joining_group": "¡Te estás uniendo a un grupo ya existente!"
+        "joining_group": "¡Te estás uniendo a un grupo existente!"
     },
     "items": {
         "add": "Añadir",
@@ -85,6 +85,43 @@
         "last": "Último",
         "negate_labels": "Negar Etiquetas Seleccionadas",
         "next_page": "Siguiente Página",
-        "no_results": "No se encontraron elementos"
+        "no_results": "No se Encontraron Elementos",
+        "options": "Opciones",
+        "order_by": "Ordenar Por",
+        "pages": "Página { page } de { totalPages }",
+        "prev_page": "Anterior Página",
+        "query_id": "Consultar Número ID del Activo: { id }",
+        "reset_search": "Restablecer Búsqueda",
+        "results": "{ total } Resultados",
+        "tip_2": "Las búsquedas precedidas de \"#\" buscarán un ID de activo (por ejemplo, \"#000-001\")",
+        "tip_3": "Los filtros de campo utilizan el operador \"OR\". Si se selecciona más de uno, sólo se requerirá uno para una\n coincidencia.",
+        "tip_1": "Los filtros de ubicación y etiquetas utilizan el operador \"OR\". Si se selecciona más de uno, sólo uno será\n necesario para obtener una coincidencia.",
+        "tips": "Sugerencias",
+        "tips_sub": "Sugerencias de Búsqueda",
+        "updated_at": "Actualizado El"
+    },
+    "profile": {
+        "active": "Activo",
+        "change_password": "Cambiar Contraseña",
+        "currency_format": "Formato Divisa",
+        "current_password": "Contraseña Actual",
+        "delete_account": "Eliminar Cuenta",
+        "enabled": "Habilitado",
+        "gen_invite": "Generar Enlace de Invitación",
+        "group_settings": "Ajustes de Grupo",
+        "group_settings_sub": "Configuración de Grupo Compartido. Es posible que tengas que actualizar tu navegador para que se apliquen algunos ajustes.",
+        "inactive": "Inactivo",
+        "new_password": "Nueva Contraseña",
+        "notifiers": "Notificaciones",
+        "notifiers_sub": "Recibe notificaciones de los próximos recordatorios de mantenimiento",
+        "test": "Probar",
+        "theme_settings": "Ajustes de Tema",
+        "update_group": "Actualizar Grupo",
+        "url": "URL",
+        "user_profile": "Perfil de Usuario",
+        "user_profile_sub": "Invita a usuarios y gestiona tu cuenta.",
+        "delete_account_sub": "Elimina tu cuenta y todos sus datos asociados. Esto no se puede deshacer.",
+        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notificación",
+        "theme_settings_sub": "La configuración del tema se guarda en el almacenamiento local de tu navegador. Puedes cambiar el tema en cualquier momento. Si tienes\n problemas para configurar el tema, prueba a actualizar el navegador."
     }
 }
