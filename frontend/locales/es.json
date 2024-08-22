@@ -1,1 +1,82 @@
-{}
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "change_warning": "Se ha modificado el comportamiento de las importaciones con import_refs existentes. Si existe una import_ref en el archivo CSV, el \nelemento se actualizará con los valores del archivo CSV.",
+                "description": "Importa un archivo CSV que contenga tus elementos, etiquetas y ubicaciones. Consulta la documentación para obtener más información sobre el \nformato requerido.",
+                "title": "Importar Archivo CSV",
+                "upload": "Subir"
+            }
+        },
+        "global": {
+            "page_qr_code": {
+                "page_url": "URL de página"
+            },
+            "password_score": {
+                "password_strength": "Seguridad de contraseña"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "title": "Crear Elemento"
+            },
+            "view": {
+                "selectable": {
+                    "card": "Tarjeta",
+                    "items": "Elementos",
+                    "no_items": "No hay elementos para mostrar",
+                    "table": "Tabla"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "title": "Crear Etiqueta"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "Crear Ubicación"
+            }
+        }
+    },
+    "global": {
+        "build": "Compilación: { build }",
+        "confirm": "Confirmar",
+        "create": "Crear",
+        "created": "Creado",
+        "email": "Email",
+        "github": "Proyecto GitHub",
+        "items": "Elementos",
+        "join_discord": "Únete al Discord",
+        "labels": "Etiquetas",
+        "locations": "Ubicaciones",
+        "name": "Nombre",
+        "password": "Contraseña",
+        "read_docs": "Lee la Documentación",
+        "search": "Buscar",
+        "sign_out": "Cerrar Sesión",
+        "submit": "Enviar",
+        "welcome": "Bienvenido/a, { username }",
+        "create_and_add": "Crear y Añadir Otro",
+        "follow_dev": "Seguir al Desarrollador",
+        "version": "Versión: { version }"
+    },
+    "index": {
+        "disabled_registration": "Registro Desactivado",
+        "dont_join_group": "¿No quieres unirte a un grupo?",
+        "login": "Iniciar sesión",
+        "register": "Registrarse",
+        "remember_me": "Recuérdame",
+        "set_email": "¿Cuál es tu email?",
+        "set_name": "¿Cómo te llamas?",
+        "set_password": "Establece tu contraseña",
+        "tagline": "Rastrea, Organiza y Gestiona tus Cosas.",
+        "joining_group": "¡Te estás uniendo a un grupo ya existente!"
+    },
+    "items": {
+        "add": "Añadir",
+        "created_at": "Creado El",
+        "custom_fields": "Campos personalizados"
+    }
+}
