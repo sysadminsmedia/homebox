@@ -81,6 +81,8 @@
         "field_selector": "Selector de Campo",
         "field_value": "Valor del Campo",
         "first": "Primer",
-        "include_archive": "Incluir elementos archivados"
+        "include_archive": "Incluir Elementos Archivados",
+        "last": "Último",
+        "negate_labels": "Negar etiquetas seleccionadas"
     }
 }
