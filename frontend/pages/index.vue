@@ -77,6 +77,15 @@
 
   async function registerUser() {
     loading.value = true;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email.value)) {
+      toast.error("Invalid email address");
+      loading.value = false;
+      return;
+    }
+
     const { error } = await api.register({
       name: username.value,
       email: email.value,
