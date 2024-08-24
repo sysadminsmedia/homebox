@@ -1,1 +1,55 @@
-{}
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "title": "Импорт CSV файла",
+                "change_warning": "Изменено поведение для импортов с существующими import_ref. Если в CSV-файле присутствует import_ref, то элемент будет обновлен значениями из CSV-файла.",
+                "description": "Импортируйте CSV-файл, содержащий ваши предметы, этикетки и местоположения. Для получения информации о требуемом формате\nсм. документацию",
+                "upload": "Загрузить"
+            }
+        },
+        "global": {
+            "page_qr_code": {
+                "page_url": "URL-адрес страницы"
+            },
+            "password_score": {
+                "password_strength": "Сложность пароля"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "title": "Создать элемент"
+            },
+            "view": {
+                "selectable": {
+                    "items": "Элементы",
+                    "no_items": "Нет элементов для отображения",
+                    "table": "Таблица"
+                }
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "Создать локацию"
+            }
+        },
+        "label": {
+            "create_modal": {
+                "title": "Создать этикетку"
+            }
+        }
+    },
+    "global": {
+        "email": "Email",
+        "items": "Элементы",
+        "build": "Сборка: { build }",
+        "confirm": "Подтвердить",
+        "create": "Создать",
+        "create_and_add": "Создать и добавить еще",
+        "created": "Создано",
+        "follow_dev": "Следить за разработчиком",
+        "github": "Проект Github",
+        "labels": "Ярлыки",
+        "join_discord": "Присоединяйтесь к Discord"
+    }
+}
