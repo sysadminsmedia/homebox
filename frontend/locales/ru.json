@@ -49,7 +49,14 @@
         "created": "Создано",
         "follow_dev": "Следить за разработчиком",
         "github": "Проект Github",
-        "labels": "Ярлыки",
-        "join_discord": "Присоединяйтесь к Discord"
+        "labels": "Этикетки",
+        "join_discord": "Присоединяйтесь к Discord",
+        "locations": "Локации",
+        "name": "Имя",
+        "password": "Пароль",
+        "read_docs": "Прочитать документацию",
+        "search": "Поиск",
+        "sign_out": "Выйти",
+        "submit": "Подтвердить"
     }
 }
