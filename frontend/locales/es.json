@@ -1,0 +1,127 @@
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "change_warning": "Se ha modificado el comportamiento de las importaciones con import_refs existentes. Si existe una import_ref en el archivo CSV, el \nelemento se actualizará con los valores del archivo CSV.",
+                "description": "Importa un archivo CSV que contenga tus elementos, etiquetas y ubicaciones. Consulta la documentación para obtener más información sobre el \nformato requerido.",
+                "title": "Importar Archivo CSV",
+                "upload": "Subir"
+            }
+        },
+        "global": {
+            "page_qr_code": {
+                "page_url": "URL de página"
+            },
+            "password_score": {
+                "password_strength": "Seguridad de la contraseña"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "title": "Crear Elemento"
+            },
+            "view": {
+                "selectable": {
+                    "card": "Tarjeta",
+                    "items": "Elementos",
+                    "no_items": "No hay elementos para mostrar",
+                    "table": "Tabla"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "title": "Crear Etiqueta"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "Crear Ubicación"
+            }
+        }
+    },
+    "global": {
+        "build": "Compilación: { build }",
+        "confirm": "Confirmar",
+        "create": "Crear",
+        "created": "Creado",
+        "email": "Email",
+        "github": "Proyecto GitHub",
+        "items": "Elementos",
+        "join_discord": "Únete al Discord",
+        "labels": "Etiquetas",
+        "locations": "Ubicaciones",
+        "name": "Nombre",
+        "password": "Contraseña",
+        "read_docs": "Lee la Documentación",
+        "search": "Buscar",
+        "sign_out": "Cerrar Sesión",
+        "submit": "Enviar",
+        "welcome": "Bienvenido/a, { username }",
+        "create_and_add": "Crear y Añadir Otro",
+        "follow_dev": "Seguir al Desarrollador",
+        "version": "Versión: { version }"
+    },
+    "index": {
+        "disabled_registration": "Registro Desactivado",
+        "dont_join_group": "¿No quieres unirte a un grupo?",
+        "login": "Iniciar sesión",
+        "register": "Registrarse",
+        "remember_me": "Recuérdame",
+        "set_email": "¿Cuál es tu email?",
+        "set_name": "¿Cómo te llamas?",
+        "set_password": "Establece tu contraseña",
+        "tagline": "Rastrea, Organiza y Gestiona tus Cosas.",
+        "joining_group": "¡Te estás uniendo a un grupo existente!"
+    },
+    "items": {
+        "add": "Añadir",
+        "created_at": "Creado El",
+        "custom_fields": "Campos Personalizados",
+        "field_selector": "Selector de Campo",
+        "field_value": "Valor del Campo",
+        "first": "Primer",
+        "include_archive": "Incluir Elementos Archivados",
+        "last": "Último",
+        "negate_labels": "Negar Etiquetas Seleccionadas",
+        "next_page": "Siguiente Página",
+        "no_results": "No se Encontraron Elementos",
+        "options": "Opciones",
+        "order_by": "Ordenar Por",
+        "pages": "Página { page } de { totalPages }",
+        "prev_page": "Anterior Página",
+        "query_id": "Consultar Número ID del Activo: { id }",
+        "reset_search": "Restablecer Búsqueda",
+        "results": "{ total } Resultados",
+        "tip_2": "Las búsquedas precedidas de \"#\" buscarán un ID de activo (por ejemplo, \"#000-001\")",
+        "tip_3": "Los filtros de campo utilizan el operador \"OR\". Si se selecciona más de uno, sólo se requerirá uno para una\n coincidencia.",
+        "tip_1": "Los filtros de ubicación y etiquetas utilizan el operador \"OR\". Si se selecciona más de uno, sólo uno será\n necesario para obtener una coincidencia.",
+        "tips": "Sugerencias",
+        "tips_sub": "Sugerencias de Búsqueda",
+        "updated_at": "Actualizado El"
+    },
+    "profile": {
+        "active": "Activo",
+        "change_password": "Cambiar Contraseña",
+        "currency_format": "Formato Divisa",
+        "current_password": "Contraseña Actual",
+        "delete_account": "Eliminar Cuenta",
+        "enabled": "Habilitado",
+        "gen_invite": "Generar Enlace de Invitación",
+        "group_settings": "Ajustes de Grupo",
+        "group_settings_sub": "Configuración de Grupo Compartido. Es posible que tengas que actualizar tu navegador para que se apliquen algunos ajustes.",
+        "inactive": "Inactivo",
+        "new_password": "Nueva Contraseña",
+        "notifiers": "Notificaciones",
+        "notifiers_sub": "Recibe notificaciones de los próximos recordatorios de mantenimiento",
+        "test": "Probar",
+        "theme_settings": "Ajustes de Tema",
+        "update_group": "Actualizar Grupo",
+        "url": "URL",
+        "user_profile": "Perfil de Usuario",
+        "user_profile_sub": "Invita a usuarios y gestiona tu cuenta.",
+        "delete_account_sub": "Elimina tu cuenta y todos sus datos asociados. Esto no se puede deshacer.",
+        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notificación",
+        "theme_settings_sub": "La configuración del tema se guarda en el almacenamiento local de tu navegador. Puedes cambiar el tema en cualquier momento. Si tienes\n problemas para configurar el tema, prueba a actualizar el navegador."
+    }
+}
