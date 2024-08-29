@@ -18,7 +18,8 @@
     },
     "item": {
       "create_modal": {
-        "title": "Create Item"
+        "title": "Create Item",
+        "photo_button": "Photo \uD83D\uDCF7"
       },
       "view": {
         "selectable": {
