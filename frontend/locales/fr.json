@@ -13,7 +13,7 @@
         "create_and_add": "Créer et en ajouter un autre",
         "confirm": "Confirmer",
         "sign_out": "Déconnexion",
-        "welcome": "Bienvenue,{ username }",
+        "welcome": "Bienvenue, { username }",
         "created": "Créé",
         "labels": "Etiquettes",
         "locations": "Lieux",
@@ -49,7 +49,8 @@
                 }
             },
             "create_modal": {
-                "title": "Créer un item"
+                "title": "Créer un item",
+                "photo_button": "Photo 📷"
             }
         },
         "location": {
@@ -116,7 +117,7 @@
         "prev_page": "Page précédente",
         "query_id": "",
         "reset_search": "Réinitialiser la recherche",
-        "tip_1": "",
+        "tip_1": "Les filtres d'emplacement et d'étiquette utilisent l'opération « OU »",
         "tip_2": "",
         "tip_3": "",
         "tips": "",
