@@ -9,11 +9,11 @@
 
 
       <div class="modal-action">
-        <div class="flex">
-          <label for="photo" class="btn absolute left-0">Photo 📷</label>
-          <input type="file" accept="image/*" @change="previewImage" style="visibility:hidden;" id="photo">
-        </div>
         <div class="flex justify-center">
+          <div>
+            <label for="photo" class="btn">{{ $t("components.item.create_modal.photo_button") }}</label>
+            <input type="file" accept="image/*" @change="previewImage" style="visibility:hidden;" id="photo">
+          </div>
           <BaseButton class="rounded-r-none" :loading="loading" type="submit">
             <template #icon>
               <MdiPackageVariant class="swap-off h-5 w-5" />
@@ -37,14 +37,10 @@
 
       <!-- photo preview area is AFTER the create button, to avoid pushing the button below the screen on small displays -->
       <div class="border-t border-gray-300 p-4">
-          <!--<div class="border p-2 mt-3">-->
-            <!--<p>Preview Here:</p>-->
             <template v-if="form.preview">
               <p class="mb-0">file name: {{ form.photo.name }}</p>
               <img :src="form.preview" class="h-[100px] w-full object-cover rounded-t shadow-sm border-gray-300" />
-              <!--<p class="mb-0">size: {{ form.photo.size/1024 }}KB</p>-->
             </template>
-          <!--</div>-->
       </div>
 
 
