@@ -19,7 +19,7 @@
         "name": "İsim",
         "search": "Ara",
         "sign_out": "Oturumu kapat",
-        "welcome": ""
+        "welcome": "Hoşgeldin <ph id=\"mtc_1\" ctype=\"x-sprintf\" equiv-text=\"base64:JXU=\"/>sername%"
     },
     "components": {
         "app": {
@@ -40,7 +40,8 @@
         },
         "item": {
             "create_modal": {
-                "title": "Eşya Oluştur"
+                "title": "Eşya Oluştur",
+                "photo_button": "Fotoğraf 📷"
             },
             "view": {
                 "selectable": {
