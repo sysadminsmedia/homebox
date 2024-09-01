@@ -120,6 +120,7 @@
         "notifiers_sub": "获取即将到来的维护提醒通知",
         "test": "测试",
         "theme_settings": "主题设置",
-        "url": "URL"
+        "url": "网址",
+        "user_profile": "用户个人资料"
     }
 }
