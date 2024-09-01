@@ -68,8 +68,9 @@
         "joining_group": "您正在加入现有群组！",
         "login": "登录",
         "register": "注册",
-        "set_name": "你的名字？",
+        "set_name": "你的名称叫什么？",
         "remember_me": "记住我",
-        "set_email": "您的电子邮箱是什么？"
+        "set_email": "您的电子邮箱是什么？",
+        "tagline": "跟踪、整理和管理您的事物。"
     }
 }
