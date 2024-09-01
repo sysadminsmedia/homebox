@@ -75,7 +75,7 @@
         "set_password": "设置密码"
     },
     "items": {
-        "last": "最后一项",
+        "last": "最后一页",
         "negate_labels": "取消选中的标签",
         "next_page": "下一页",
         "no_results": "没有可显示的物品",
@@ -83,13 +83,17 @@
         "prev_page": "上一页",
         "add": "添加",
         "field_selector": "字段选择",
-        "first": "第一项",
+        "first": "第一页",
         "order_by": "排序方式",
         "pages": "第{page}页，共{totalPages}页",
-        "query_id": "正在查询资产ID号： {id}",
+        "query_id": "查询资产ID： {id}",
         "created_at": "创建于",
         "custom_fields": "自定义字段",
         "field_value": "字段值",
-        "include_archive": "包括已存档的项目"
+        "include_archive": "包括已存档的项目",
+        "reset_search": "重置搜索",
+        "results": "{ total } 条结果",
+        "tip_1": "位置和标签过滤器使用“或”操作。如果选择了多个位置或标签，\n则只需要任意一个匹配上即可。",
+        "tip_2": "以“#”为前缀的搜索将查询资产ID （例如“# 000-001” ）"
     }
 }
