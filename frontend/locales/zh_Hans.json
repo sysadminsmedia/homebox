@@ -121,6 +121,7 @@
         "test": "测试",
         "theme_settings": "主题设置",
         "url": "网址",
-        "user_profile": "用户个人资料"
+        "user_profile": "用户资料",
+        "user_profile_sub": "邀请用户并管理您的账号。"
     }
 }
