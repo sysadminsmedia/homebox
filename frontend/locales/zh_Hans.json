@@ -71,6 +71,25 @@
         "set_name": "你的名称叫什么？",
         "remember_me": "记住我",
         "set_email": "您的电子邮箱是什么？",
-        "tagline": "跟踪、整理和管理您的事物。"
+        "tagline": "跟踪、整理和管理您的物品。",
+        "set_password": "设置密码"
+    },
+    "items": {
+        "last": "最后一项",
+        "negate_labels": "取消选中的标签",
+        "next_page": "下一页",
+        "no_results": "没有可显示的物品",
+        "options": "选项",
+        "prev_page": "上一页",
+        "add": "添加",
+        "field_selector": "字段选择",
+        "first": "第一项",
+        "order_by": "排序方式",
+        "pages": "第{page}页，共{totalPages}页",
+        "query_id": "正在查询资产ID号： {id}",
+        "created_at": "创建于",
+        "custom_fields": "自定义字段",
+        "field_value": "字段值",
+        "include_archive": "包括已存档的项目"
     }
 }
