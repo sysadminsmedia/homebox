@@ -94,6 +94,32 @@
         "reset_search": "重置搜索",
         "results": "{ total } 条结果",
         "tip_1": "位置和标签过滤器使用“或”操作。如果选择了多个位置或标签，\n则只需要任意一个匹配上即可。",
-        "tip_2": "以“#”为前缀的搜索将查询资产ID （例如“# 000-001” ）"
+        "tip_2": "以“#”为前缀的搜索将变成查询资产ID（例如“#000-001” ）",
+        "tip_3": "字段过滤器使用“或”操作。如果选择了多个位置或标签，\n则只需要任意一个匹配上即可。",
+        "tips": "建议",
+        "tips_sub": "搜索提示",
+        "updated_at": "更新于"
+    },
+    "profile": {
+        "group_settings_sub": "共享组设置。您可能需要刷新浏览器来让某些设置生效。",
+        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notifier",
+        "active": "活跃",
+        "delete_account_sub": "删除您的帐户及其所有相关数据。这是无法撤消的。",
+        "inactive": "非活跃",
+        "theme_settings_sub": "主题设置存储在浏览器的本地存储中。您可以随时更改主题。\n如果您在设置主题时遇到问题，请尝试刷新浏览器。",
+        "update_group": "更新组",
+        "change_password": "更改密码",
+        "currency_format": "货币格式",
+        "current_password": "原密码",
+        "delete_account": "删除帐户",
+        "enabled": "已启用",
+        "gen_invite": "生成邀请链接",
+        "group_settings": "组设置",
+        "new_password": "新密码",
+        "notifiers": "通知人",
+        "notifiers_sub": "获取即将到来的维护提醒通知",
+        "test": "测试",
+        "theme_settings": "主题设置",
+        "url": "URL"
     }
 }
