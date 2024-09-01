@@ -50,6 +50,16 @@
         "created": "已创建",
         "follow_dev": "关注开发者",
         "github": "Github项目",
-        "join_discord": "加入Discord"
+        "join_discord": "加入Discord讨论",
+        "labels": "标签",
+        "sign_out": "注销",
+        "version": "版本：{version}",
+        "welcome": "欢迎，{username}！",
+        "name": "名称",
+        "password": "密码",
+        "read_docs": "读取文档",
+        "search": "搜索",
+        "submit": "提交",
+        "locations": "位置"
     }
 }
