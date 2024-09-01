@@ -54,12 +54,22 @@
         "labels": "标签",
         "sign_out": "注销",
         "version": "版本：{version}",
-        "welcome": "欢迎，{username}！",
+        "welcome": "欢迎，{username}",
         "name": "名称",
         "password": "密码",
         "read_docs": "读取文档",
         "search": "搜索",
         "submit": "提交",
         "locations": "位置"
+    },
+    "index": {
+        "disabled_registration": "已禁用注册",
+        "dont_join_group": "不想加入群组？",
+        "joining_group": "您正在加入现有群组！",
+        "login": "登录",
+        "register": "注册",
+        "set_name": "你的名字？",
+        "remember_me": "记住我",
+        "set_email": "您的电子邮箱是什么？"
     }
 }
