@@ -1,1 +1,55 @@
-{}
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "title": "导入 CSV 文件",
+                "upload": "上传",
+                "description": "导入包含项目、标签和位置的CSV文件。有关更多信息，请参阅文档\n查看所需格式。"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "title": "创建物品",
+                "photo_button": "照片 📷"
+            },
+            "view": {
+                "selectable": {
+                    "card": "卡片模式",
+                    "items": "物品模式",
+                    "no_items": "不显示物品",
+                    "table": "表格模式"
+                }
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "创建位置"
+            }
+        },
+        "global": {
+            "page_qr_code": {
+                "page_url": "页面URL"
+            },
+            "password_score": {
+                "password_strength": "密码强度"
+            }
+        },
+        "label": {
+            "create_modal": {
+                "title": "创建标签"
+            }
+        }
+    },
+    "global": {
+        "create_and_add": "保存并继续创建",
+        "email": "邮箱",
+        "items": "物品",
+        "build": "版本： {build}",
+        "confirm": "确认",
+        "create": "创建",
+        "created": "已创建",
+        "follow_dev": "关注开发者",
+        "github": "Github项目",
+        "join_discord": "加入Discord"
+    }
+}
