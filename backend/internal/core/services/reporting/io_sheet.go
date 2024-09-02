@@ -222,6 +222,7 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, GID uuid.
 			SoldPrice: item.SoldPrice,
 			SoldNotes: item.SoldNotes,
 
+			Notes:  item.Notes,
 			Fields: customFields,
 		}
 	}

@@ -6,24 +6,24 @@
         "github": "Projet GitHub",
         "join_discord": "Rejoindre le Discord",
         "follow_dev": "Suivre le développeur",
-        "version": "Version : { version }",
+        "version": "Version : { version }",
         "build": "Assemblage : { build }",
         "create": "Créer",
         "submit": "Soumettre",
         "create_and_add": "Créer et en ajouter un autre",
         "confirm": "Confirmer",
         "sign_out": "Déconnexion",
-        "welcome": "Bienvenue,{ username }",
+        "welcome": "Bienvenue, { username }",
         "created": "Créé",
-        "labels": "Etiquettes",
-        "locations": "Lieux",
+        "labels": "Étiquettes",
+        "locations": "Emplacements",
         "name": "Nom",
         "search": "Rechercher",
         "items": "Articles"
     },
     "index": {
         "set_email": "Quel est vôtre courriel ?",
-        "set_name": "Quel est vôtre nom ?",
+        "set_name": "Quel est votre nom ?",
         "login": "Se connecter",
         "register": "S'enregistrer",
         "remember_me": "Se souvenir de moi",
@@ -42,14 +42,15 @@
         "item": {
             "view": {
                 "selectable": {
-                    "items": "Items",
-                    "no_items": "Nb. d’items à afficher",
+                    "items": "Articles",
+                    "no_items": "Nb. d’articles à afficher",
                     "table": "Tableau",
                     "card": "Carte"
                 }
             },
             "create_modal": {
-                "title": "Créer un item"
+                "title": "Créer un article",
+                "photo_button": "Photo 📷"
             }
         },
         "location": {
@@ -69,13 +70,13 @@
             "import_dialog": {
                 "title": "Importer un fichier CSV",
                 "upload": "Téléverser",
-                "description": "Importer un fichier CSV contenant vos items, étiquettes, et emplacements. Voir la documentation pour plus d'informations sur le format requis.",
-                "change_warning": "Le comportement lors d’importations avec des import_ref existants a changé. Si une valeur pour import_ref est présente dans le fichier CSV, alors l'item sera mis à jour avec celle-ci."
+                "description": "Importer un fichier CSV contenant vos articles, étiquettes, et emplacements. Voir la documentation pour plus d’informations sur le format requis.",
+                "change_warning": "Le comportement lors d’importations avec des import_ref existants a changé. Si une valeur pour import_ref est présente dans le fichier CSV, alors l’élément sera mis à jour avec celle-ci."
             }
         }
     },
     "profile": {
-        "notifiers_sub": "Recevez des notifications pour vous prévenir des prochaines maintenances",
+        "notifiers_sub": "Recevez des notifications pour vous prévenir des prochaines maintenances.",
         "active": "Actif",
         "enabled": "Activé",
         "test": "Test",
@@ -85,13 +86,13 @@
         "inactive": "Inactif",
         "notifiers": "Notifications",
         "gen_invite": "Générer un lien d’invitation",
-        "user_profile": "Profil Utilisateur",
-        "user_profile_sub": "Invitez des utilisateurs, et gérez votre compte.",
+        "user_profile": "Profil utilisateur",
+        "user_profile_sub": "Gérez votre compte et invitez des utilisateurs.",
         "url": "URL",
         "delete_account": "Effacer le compte",
-        "delete_account_sub": "Effacer le compte et toutes les données. Aucune réccupération possible.",
+        "delete_account_sub": "Supprimer le compte et toutes ses données. Aucune récupération possible.",
         "group_settings": "Paramètres du groupe",
-        "group_settings_sub": "Paramètres partagés du groupe. Il peut être ne2cessaire de recharger la page.",
+        "group_settings_sub": "Paramètres du groupe partagé. Il peut être nécessaire de recharger la page pour qu’ils deviennent effectifs.",
         "currency_format": "Format de la devise",
         "update_group": "Mettre à jour le groupe",
         "theme_settings": "Paramètres du thème",
@@ -116,11 +117,11 @@
         "prev_page": "Page précédente",
         "query_id": "",
         "reset_search": "Réinitialiser la recherche",
-        "tip_1": "",
+        "tip_1": "Les filtres d’emplacement et d’étiquette utilisent l’opérateur « OU ».\nUn seul des filtres n’a besoin de correspondre pour retourner un résultat.",
         "tip_2": "",
-        "tip_3": "",
-        "tips": "",
-        "tips_sub": "",
+        "tip_3": "Les filtres de champ utilisent l’opérateur « OU ».\nUn seul des filtres n’a besoin de correspondre pour retourner un résultat.",
+        "tips": "Conseils",
+        "tips_sub": "Conseils pour la recherche",
         "updated_at": "",
         "results": "{ total } résultats"
     }

@@ -44,7 +44,8 @@
         },
         "item": {
             "create_modal": {
-                "title": "新增項目"
+                "title": "新增項目",
+                "photo_button": "相片 📷"
             },
             "view": {
                 "selectable": {
@@ -122,6 +123,6 @@
         "user_profile": "使用者資料",
         "user_profile_sub": "邀請使用者並管理您的帳戶。",
         "theme_settings_sub": "主題設定儲存在瀏覽器的本機儲存中。您可以隨時變更主題。如果你是\n 設定主題時遇到問題，請嘗試刷新瀏覽器。",
-        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notifier"
+        "notifier_modal": "通知 { type, select, true {Edit} false {Create} other {Other}}"
     }
 }

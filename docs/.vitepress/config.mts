@@ -6,7 +6,7 @@ export default defineConfig({
   description: "A simple home inventory management software",
   lastUpdated: true,
   sitemap: {
-    hostname: 'https://homebox.sysadminsmedia.com',
+    hostname: 'https://homebox.software',
   },
 
   locales: {
