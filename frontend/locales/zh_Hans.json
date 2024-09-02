@@ -4,7 +4,8 @@
             "import_dialog": {
                 "title": "导入 CSV 文件",
                 "upload": "上传",
-                "description": "导入包含项目、标签和位置的CSV文件。有关更多信息，请参阅文档\n查看所需格式。"
+                "description": "导入包含物品、标签和位置的CSV文件。更多有关信息，\n请参阅文档查看所需格式。",
+                "change_warning": "导入行为会导致现有的 import_refs 的字段被覆盖。\n如果 CSV 文件中存在 import_ref，则将使用 CSV 文件中的值更新该项。"
             }
         },
         "item": {
@@ -16,7 +17,7 @@
                 "selectable": {
                     "card": "卡片模式",
                     "items": "物品模式",
-                    "no_items": "不显示物品",
+                    "no_items": "没有物品可用展示",
                     "table": "表格模式"
                 }
             }
@@ -44,7 +45,7 @@
         "create_and_add": "保存并继续创建",
         "email": "邮箱",
         "items": "物品",
-        "build": "版本： {build}",
+        "build": "编译：{build}",
         "confirm": "确认",
         "create": "创建",
         "created": "已创建",
@@ -57,7 +58,7 @@
         "welcome": "欢迎，{username}",
         "name": "名称",
         "password": "密码",
-        "read_docs": "读取文档",
+        "read_docs": "查阅文档",
         "search": "搜索",
         "submit": "提交",
         "locations": "位置"
@@ -102,7 +103,7 @@
     },
     "profile": {
         "group_settings_sub": "共享组设置。您可能需要刷新浏览器来让某些设置生效。",
-        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notifier",
+        "notifier_modal": "通知 { type, select, true {Edit} false {Create} other {Other}}",
         "active": "活跃",
         "delete_account_sub": "删除您的帐户及其所有相关数据。这是无法撤消的。",
         "inactive": "非活跃",
@@ -116,12 +117,12 @@
         "gen_invite": "生成邀请链接",
         "group_settings": "组设置",
         "new_password": "新密码",
-        "notifiers": "通知人",
+        "notifiers": "通知",
         "notifiers_sub": "获取即将到来的维护提醒通知",
         "test": "测试",
         "theme_settings": "主题设置",
         "url": "网址",
         "user_profile": "用户资料",
-        "user_profile_sub": "邀请用户并管理您的账号。"
+        "user_profile_sub": "邀请用户共同管理您的资产。"
     }
 }
