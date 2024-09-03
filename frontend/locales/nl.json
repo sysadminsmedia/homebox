@@ -52,7 +52,8 @@
         },
         "item": {
             "create_modal": {
-                "title": "Maak object"
+                "title": "Maak object",
+                "photo_button": "Foto 📷"
             },
             "view": {
                 "selectable": {

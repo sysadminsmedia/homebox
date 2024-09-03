@@ -54,7 +54,8 @@
                 }
             },
             "create_modal": {
-                "title": "Skapa föremål"
+                "title": "Skapa föremål",
+                "photo_button": "Foto 📷"
             }
         },
         "label": {

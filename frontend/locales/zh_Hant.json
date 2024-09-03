@@ -49,7 +49,7 @@
             },
             "view": {
                 "selectable": {
-                    "card": "卡片",
+                    "card": "卡牌風",
                     "items": "項目",
                     "no_items": "沒有可顯示的項目",
                     "table": "表格"
