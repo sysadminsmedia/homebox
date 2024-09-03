@@ -183,7 +183,7 @@
     return route(`/qrcode`, { data: encodeURIComponent(data) });
   }
 
-  function getItem(n: number, item: { value: { name: string; location: string } } | null): LabelData {
+  function getItem(n: number, item: { name: string; location: { name: string } } | null): LabelData {
     // format n into - seperated string with leading zeros
 
     const assetID = fmtAssetID(n);
