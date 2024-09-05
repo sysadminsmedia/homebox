@@ -2,7 +2,7 @@
     "components": {
         "app": {
             "import_dialog": {
-                "change_warning": "Das Verhalten beim Importieren vorhandener import_refs hat sich geändert. Wenn ein import_ref in der CSV-Datei vorhanden ist, wird der Gegenstand mit den Werten in der CSV-Datei aktualisiert.",
+                "change_warning": "Das Verhalten beim Importieren vorhandener import_refs hat sich geändert. Wenn ein import_ref in der CSV-Datei vorhanden ist, \nwird der Gegenstand mit den Werten in der CSV-Datei aktualisiert.",
                 "description": "Importiere eine CSV-Datei, die deine Gegenstände, Etiketten und Standorte enthält. Siehe Dokumentation für weitere Informationen zum \nerforderlichen Format.",
                 "title": "Importiere CSV-Datei",
                 "upload": "Hochladen"
@@ -18,7 +18,8 @@
         },
         "item": {
             "create_modal": {
-                "title": "Erstelle Gegenstand"
+                "title": "Erstelle Gegenstand",
+                "photo_button": "Foto 📷"
             },
             "view": {
                 "selectable": {
@@ -51,12 +52,12 @@
         "github": "GitHub-Projekt",
         "items": "Gegenstände",
         "join_discord": "Discord beitreten",
-        "labels": "Etiketten",
-        "locations": "Standorte",
+        "labels": "Kennzeichnung",
+        "locations": "Lagerorte",
         "name": "Name",
         "password": "Passwort",
         "read_docs": "Dokumentation lesen",
-        "search": "Suchen",
+        "search": "Suche",
         "sign_out": "Abmelden",
         "submit": "Einreichen",
         "version": "Version: { version }",
@@ -81,7 +82,7 @@
         "field_selector": "Feldauswahl",
         "field_value": "Feldwert",
         "first": "Erste",
-        "include_archive": "Archivierte Elemente einbeziehen",
+        "include_archive": "Archivierte Elemente einschließen",
         "last": "Letzte",
         "negate_labels": "Ausgewählte Etiketten negieren",
         "next_page": "Nächste Seite",
@@ -113,15 +114,15 @@
         "group_settings_sub": "Geteilte Gruppeneinstellungen. Möglicherweise müssen Sie Ihren Browser aktualisieren, damit einige Einstellungen wirksam werden.",
         "inactive": "Inaktiv",
         "new_password": "Neues Passwort",
-        "notifier_modal": "{ type, select, true {Bearbeiten} false {Erstellen} other {Andere}} Melder",
+        "notifier_modal": "{ type, select, true {Bearbeiten} false {Erstellen} other {Andere}} Notifier",
         "notifiers": "Melder",
-        "notifiers_sub": "Erhalten Sie Benachrichtigungen für bevorstehende Wartungserinnerungen",
+        "notifiers_sub": "Erhalten Sie Benachrichtigungen über bevorstehende Wartungserinnerungen",
         "test": "Test",
-        "theme_settings": "Themeneinstellungen",
+        "theme_settings": "Themes",
         "theme_settings_sub": "Themeneinstellungen werden im lokalen Speicher Ihres Browsers gespeichert. Sie können das Thema jederzeit ändern. Wenn Sie Probleme haben, Ihr Thema einzustellen, versuchen Sie, Ihren Browser zu aktualisieren.",
         "update_group": "Gruppe aktualisieren",
         "url": "URL",
         "user_profile": "Benutzerprofil",
-        "user_profile_sub": "Benutzer einladen und Ihr Konto verwalten."
+        "user_profile_sub": "Laden Sie Benutzer ein und verwalten Sie Ihr Konto."
     }
 }

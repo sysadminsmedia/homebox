@@ -16,7 +16,7 @@
             "view": {
                 "selectable": {
                     "card": "卡片模式",
-                    "items": "物品模式",
+                    "items": "物品",
                     "no_items": "没有物品可用展示",
                     "table": "表格模式"
                 }
@@ -103,7 +103,7 @@
     },
     "profile": {
         "group_settings_sub": "共享组设置。您可能需要刷新浏览器来让某些设置生效。",
-        "notifier_modal": "通知 { type, select, true {Edit} false {Create} other {Other}}",
+        "notifier_modal": "{ type, select, true {编辑} false {创建} other {Other}} 通知器",
         "active": "活跃",
         "delete_account_sub": "删除您的帐户及其所有相关数据。这是无法撤消的。",
         "inactive": "非活跃",
@@ -117,7 +117,7 @@
         "gen_invite": "生成邀请链接",
         "group_settings": "组设置",
         "new_password": "新密码",
-        "notifiers": "通知",
+        "notifiers": "通知器",
         "notifiers_sub": "获取即将到来的维护提醒通知",
         "test": "测试",
         "theme_settings": "主题设置",

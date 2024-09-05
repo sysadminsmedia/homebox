@@ -1,1 +1,75 @@
-{}
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "title": "Importa un fitxer CSV",
+                "upload": "Puja",
+                "description": "Importa un fitxer CSV que contingui els articles, etiquetes i ubicacions. \nConsulteu la documentació per a més informació sobre el format requerit.",
+                "change_warning": "El comportament de les importacions amb import_refs existents ha canviat. Si hi ha un import_refs al fitxer CSV, \nl'article s'actualitzarà amb els valors del fitxer CSV."
+            }
+        },
+        "item": {
+            "create_modal": {
+                "title": "Crea un article",
+                "photo_button": "Foto 📷"
+            },
+            "view": {
+                "selectable": {
+                    "card": "Targeta",
+                    "items": "Articles",
+                    "no_items": "No hi ha articles a mostrar",
+                    "table": "Taula"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "title": "Crea una etiqueta"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "Crea una ubicació"
+            }
+        },
+        "global": {
+            "page_qr_code": {
+                "page_url": "URL de la pàgina"
+            },
+            "password_score": {
+                "password_strength": "Força de la contrasenya"
+            }
+        }
+    },
+    "global": {
+        "build": "Construcció: { build }",
+        "confirm": "Confirma",
+        "create": "Crea",
+        "create_and_add": "Crea i afegeix-ne un altre",
+        "created": "Creat",
+        "email": "Correu electrònic",
+        "follow_dev": "Segueix al desenvolupador",
+        "github": "Projecte de GitHub",
+        "items": "Articles",
+        "join_discord": "Uniu-vos a Discord",
+        "locations": "Ubicacions",
+        "name": "Nom",
+        "read_docs": "Llegiu la documentació",
+        "search": "Cerca",
+        "sign_out": "Tanca la sessió",
+        "submit": "Envia",
+        "welcome": "Us donem la benvinguda, { username }",
+        "labels": "Etiquetes",
+        "password": "Contrasenya",
+        "version": "Versió {version}"
+    },
+    "index": {
+        "joining_group": "Us uniu a un grup existent!",
+        "dont_join_group": "Voleu unir-vos al grup?",
+        "login": "Inici de sessió",
+        "disabled_registration": "Registre desactivat"
+    },
+    "items": {
+        "negate_labels": "Nega les etiquetes seleccionades"
+    }
+}

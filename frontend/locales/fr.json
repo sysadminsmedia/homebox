@@ -97,11 +97,11 @@
         "update_group": "Mettre à jour le groupe",
         "theme_settings": "Paramètres du thème",
         "theme_settings_sub": "Les paramètres du thème sont stockés dans le navigateur. Vous pouvez les changer à tout moment. Si vous\nrencontrez des problèmes, il est conseillé de rafraichir la page.",
-        "notifier_modal": ""
+        "notifier_modal": "Notifications { type, select, true {Edit} false {Create} other {Other}}"
     },
     "items": {
         "add": "Ajouter",
-        "created_at": "",
+        "created_at": "Créé à",
         "custom_fields": "Champs personnalisés",
         "field_selector": "Sélecteur de champ",
         "field_value": "Valeur du champ",
@@ -115,14 +115,14 @@
         "order_by": "Trier par",
         "pages": "Page { page } sur { totalPages }",
         "prev_page": "Page précédente",
-        "query_id": "",
+        "query_id": "Interrogation du numéro d'identification de l'actif : { id }",
         "reset_search": "Réinitialiser la recherche",
         "tip_1": "Les filtres d’emplacement et d’étiquette utilisent l’opérateur « OU ».\nUn seul des filtres n’a besoin de correspondre pour retourner un résultat.",
-        "tip_2": "",
+        "tip_2": "Les recherches préfixées par '#'' rechercheront un ID d'actif (exemple '#000-001')",
         "tip_3": "Les filtres de champ utilisent l’opérateur « OU ».\nUn seul des filtres n’a besoin de correspondre pour retourner un résultat.",
         "tips": "Conseils",
         "tips_sub": "Conseils pour la recherche",
-        "updated_at": "",
+        "updated_at": "Mis à jour le",
         "results": "{ total } résultats"
     }
 }

@@ -95,14 +95,14 @@
         "currency_format": "Valutanotatie",
         "update_group": "Groep bijwerken",
         "theme_settings": "Theme instellingen",
-        "theme_settings_sub": "",
+        "theme_settings_sub": "Thema-instellingen worden opgeslagen in de lokale opslag van uw browser. Je kan deze wijzigen op elk moment. \nAls je problemen hebt met de instellingen kun je je browser verversen.",
         "delete_account": "Verwijder account",
         "delete_account_sub": "Verwijder je account en alle geassocieerde data. Deze actie kan niet ongedaan worden."
     },
     "items": {
         "tip_1": "Locatie- en labelfilters gebruiken de 'OF' -werking. Als er meer dan een is geselecteerd,\nis er maar een nodig voor een overeenkomst.",
         "tip_2": "Zoekopdrachten voorafgegaan door '#'' zullen om een object-ID vragen (bijvoorbeeld '#000-001')",
-        "tip_3": "",
+        "tip_3": "Veldfilters gebruiken de 'OF' -bewerking. Indien meer dan 1 is geselecteerd\nzal er maar 1 nodig zijn voor een match.",
         "tips_sub": "Zoektips",
         "updated_at": "Bijgewerkt op",
         "pages": "Pagina { page } van { totalPages }",
@@ -121,7 +121,7 @@
         "field_value": "Veldwaarde",
         "first": "Eerst",
         "include_archive": "Inclusief gearchiveerde items",
-        "last": "Laatste",
+        "last": "Achternaam",
         "negate_labels": "Negeer Geselecteerde Etiketten",
         "next_page": "Volgende pagina"
     }
