@@ -18,7 +18,8 @@
         },
         "item": {
             "create_modal": {
-                "title": "Crear Elemento"
+                "title": "Crear Elemento",
+                "photo_button": "Foto 📷"
             },
             "view": {
                 "selectable": {

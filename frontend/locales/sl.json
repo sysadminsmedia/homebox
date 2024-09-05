@@ -1,1 +1,66 @@
-{}
+{
+    "global": {
+        "follow_dev": "Sledi razvijjalcu",
+        "build": "Gradnja: [ build ]",
+        "confirm": "Potrdi",
+        "create": "Ustvari",
+        "create_and_add": "Ustvari in dodaj še enega",
+        "created": "Ustvarjeno",
+        "email": "E-pošta",
+        "github": "GitHub projekt",
+        "items": "Predmeti",
+        "join_discord": "Pridruži se na Discord",
+        "labels": "Oznake",
+        "locations": "Lokacije",
+        "name": "Naziv",
+        "password": "Geslo",
+        "read_docs": "Preberite dokumentacijo",
+        "search": "Iskanje",
+        "sign_out": "Odjava",
+        "submit": "Pošlji",
+        "version": "Verzija: { version }",
+        "welcome": "Dobrodošli, { uporabniško ime }"
+    },
+    "components": {
+        "app": {
+            "import_dialog": {
+                "change_warning": "Vedenje pri uvozih z obstoječimi import_refs se je spremenilo. Če je import_ref prisoten v datoteki CSV, bo\nelement posodobljen z vrednostmi v datoteki CSV.",
+                "description": "Uvozite datoteko CSV, ki vsebuje vaše predmete, oznake in lokacije. Poglejte si dokumentacijo za več informacij o\nzahtevani obliki.",
+                "title": "Uvozi CSV datoteko",
+                "upload": "Naloži"
+            }
+        },
+        "global": {
+            "page_qr_code": {
+                "page_url": "URL strani"
+            },
+            "password_score": {
+                "password_strength": "Moč gesla"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "title": "Ustvari predmet",
+                "photo_button": "Fotografija 📷"
+            },
+            "view": {
+                "selectable": {
+                    "card": "Kartica",
+                    "items": "Predmeti",
+                    "no_items": "Ni predmetov za prikaz",
+                    "table": "Tabela"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "title": "Ustvari oznako"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "Ustvari lokacijo"
+            }
+        }
+    }
+}
