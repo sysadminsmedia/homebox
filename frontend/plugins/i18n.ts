@@ -7,7 +7,7 @@ export default defineNuxtPlugin(({ vueApp }) => {
     let matched = null;
     const languages = Object.getOwnPropertyNames(messages())
     languages.forEach(lang => {
-      if (lang === navigator.language) {
+      if (lang === navigator.language.replace('-', '_')) {
         matched = lang;
       }
     });
