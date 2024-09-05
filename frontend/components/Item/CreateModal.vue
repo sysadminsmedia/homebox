@@ -7,12 +7,11 @@
       <FormTextArea v-model="form.description" label="Item Description" />
       <FormMultiselect v-model="form.labels" label="Labels" :items="labels ?? []" />
 
-
       <div class="modal-action">
         <div class="flex justify-center">
           <div>
             <label for="photo" class="btn">{{ $t("components.item.create_modal.photo_button") }}</label>
-            <input type="file" accept="image/*" @change="previewImage" style="visibility:hidden;" id="photo">
+            <input id="photo" type="file" accept="image/*" style="visibility: hidden" @change="previewImage" />
           </div>
           <BaseButton class="rounded-r-none" :loading="loading" type="submit">
             <template #icon>
@@ -34,16 +33,17 @@
         </div>
       </div>
 
-
       <!-- photo preview area is AFTER the create button, to avoid pushing the button below the screen on small displays -->
       <div class="border-t border-gray-300 p-4">
-            <template v-if="form.preview">
-              <p class="mb-0">file name: {{ form.photo.name }}</p>
-              <img :src="form.preview" class="h-[100px] w-full object-cover rounded-t shadow-sm border-gray-300" />
-            </template>
+        <template v-if="form.preview">
+          <p class="mb-0">File name: {{ form.photo?.name }}</p>
+          <img
+            :src="form.preview"
+            class="h-[100px] w-full object-cover rounded-t shadow-sm border-gray-300"
+            alt="Uploaded Photo"
+          />
+        </template>
       </div>
-
-
     </form>
     <p class="text-sm text-center mt-4">
       use <kbd class="kbd kbd-xs">Shift</kbd> + <kbd class="kbd kbd-xs"> Enter </kbd> to create and add another
@@ -103,39 +103,24 @@
     description: "",
     color: "", // Future!
     labels: [] as LabelOut[],
-    preview: null,
-    photo: null
+    preview: null as string | null,
+    photo: null as File | null,
   });
 
   const { shift } = useMagicKeys();
 
-  function previewImage(event) {
-    var input = event.target;
-    if (input.files) {
-      var reader = new FileReader();
-      reader.onload = (e) => {
-        form.preview = e.target.result;
-      }
-      form.photo=input.files[0];
-      reader.readAsDataURL(input.files[0]);
+  function previewImage(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        form.preview = e.target?.result as string;
+      };
+      const file = input.files[0];
+      form.photo = file;
+      reader.readAsDataURL(file);
     }
   }
-
-
-  function uploadImage(e: Event) {
-    const files = (e.target as HTMLInputElement).files;
-    if (!files || !files.item(0)) {
-      return;
-    }
-
-    const first = files.item(0);
-    if (!first) {
-      return;
-    }
-
-    uploadAttachment([first], null);
-  }
-
 
   whenever(
     () => modal.value,
@@ -160,6 +145,13 @@
       return;
     }
 
+    if (loading.value) {
+      toast.error("Already creating an item");
+      return;
+    }
+
+    loading.value = true;
+
     if (shift.value) {
       close = false;
     }
@@ -175,6 +167,7 @@
     const { error, data } = await api.items.create(out);
     loading.value = false;
     if (error) {
+      loading.value = false;
       toast.error("Couldn't create item");
       return;
     }
@@ -182,17 +175,17 @@
     toast.success("Item created");
 
     // if the photo was provided, upload it
-    if(form.photo){
-      const { data2, error } = await api.items.attachments.add(data.id, form.photo, form.photo.name, AttachmentTypes.Photo);
+    if (form.photo) {
+      const { error } = await api.items.attachments.add(data.id, form.photo, form.photo.name, AttachmentTypes.Photo);
 
       if (error) {
+        loading.value = false;
         toast.error("Failed to upload Photo");
         return;
       }
 
       toast.success("Photo uploaded");
     }
-
 
     // Reset
     form.name = "";
