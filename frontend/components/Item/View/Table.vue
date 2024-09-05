@@ -63,7 +63,14 @@
         </tr>
       </tbody>
     </table>
-    <div v-if="hasPrev || hasNext" class="border-t p-3 justify-end flex">
+    <div v-if="items.length > 10" class="border-t p-3 justify-end flex gap-3">
+      <div class="flex items-center">Rows per page</div>
+      <select v-model.number="pagination.rowsPerPage" class="select select-sm select-primary">
+        <option :value="10">10</option>
+        <option :value="25">25</option>
+        <option :value="50">50</option>
+        <option :value="100">100</option>
+      </select>
       <div class="btn-group">
         <button :disabled="!hasPrev" class="btn btn-sm" @click="prev()">«</button>
         <button class="btn btn-sm">Page {{ pagination.page }}</button>
@@ -97,12 +104,21 @@
     ] as TableHeader[];
   });
 
+  const preferences = useViewPreferences();
+
   const pagination = reactive({
     descending: false,
     page: 1,
-    rowsPerPage: 10,
+    rowsPerPage: preferences.value.itemsPerTablePage,
     rowsNumber: 0,
   });
+
+  watch(
+    () => pagination.rowsPerPage,
+    newRowsPerPage => {
+      preferences.value.itemsPerTablePage = newRowsPerPage;
+    }
+  );
 
   const next = () => pagination.page++;
   const hasNext = computed<boolean>(() => {
