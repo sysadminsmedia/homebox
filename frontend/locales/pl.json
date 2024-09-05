@@ -105,7 +105,14 @@
         "change_password": "Zmiana hasła",
         "currency_format": "Format waluty",
         "delete_account": "Usuń konto",
-        "delete_account_sub": "Usuń swoje konto i wszystkie powiązane z nim dane",
-        "current_password": "Bieżące hasło"
+        "delete_account_sub": "Usuń swoje konto oraz wszystkie powiązane z nim dane. Tego nie można cofnąć.",
+        "current_password": "Bieżące hasło",
+        "group_settings_sub": "Ustawienia grupy udostępnione. Możesz potrzebować odświeżyć przeglądarkę, aby niektóre ustawienia zostały zastosowane.",
+        "inactive": "Nieaktywny",
+        "new_password": "Nowe hasło",
+        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Powiadomiony",
+        "enabled": "Włączone",
+        "gen_invite": "Wygeneruj link z zaproszeniem",
+        "group_settings": "Ustawienia grupy"
     }
 }
