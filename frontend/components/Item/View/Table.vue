@@ -1,5 +1,5 @@
 <template>
-  <BaseCard>
+  <BaseCard class="overflow-clip">
     <table class="table w-full">
       <thead>
         <tr>
@@ -189,4 +189,20 @@
   }
 </script>
 
-<style scoped></style>
+<style scoped>
+  :where(.table *:first-child) :where(*:first-child) :where(th, td):first-child {
+    border-top-left-radius: 0px;
+  }
+
+  :where(.table *:first-child) :where(*:first-child) :where(th, td):last-child {
+    border-top-right-radius: 0px;
+  }
+
+  :where(.table *:last-child) :where(*:last-child) :where(th, td):first-child {
+    border-bottom-left-radius: 0px;
+  }
+
+  :where(.table *:last-child) :where(*:last-child) :where(th, td):last-child {
+    border-bottom-right-radius: 0px;
+  }
+</style>
