@@ -9,6 +9,7 @@ export type LocationViewPreferences = {
   editorAdvancedView: boolean;
   itemDisplayView: ViewType;
   theme: DaisyTheme;
+  itemsPerTablePage: number;
 };
 
 /**
@@ -24,6 +25,7 @@ export function useViewPreferences(): Ref<LocationViewPreferences> {
       editorAdvancedView: false,
       itemDisplayView: "card",
       theme: "homebox",
+      itemsPerTablePage: 10,
     },
     { mergeDefaults: true }
   );
