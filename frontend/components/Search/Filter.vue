@@ -45,6 +45,7 @@
     options: any[];
     display?: string;
     modelValue: any[];
+    uniqueField: string;
   };
 
   const btn = ref<HTMLButtonElement>();
@@ -75,6 +76,7 @@
     label: "",
     display: "name",
     modelValue: () => [],
+    uniqueField: "id",
   });
 
   const len = computed(() => {
@@ -95,9 +97,9 @@
   const unselected = computed(() => {
     return props.options.filter(o => {
       if (searchFold.value.length > 0) {
-        return o[props.display].toLowerCase().includes(searchFold.value) && !selected.value.includes(o);
+        return o[props.display].toLowerCase().includes(searchFold.value) && selected.value.every(s => s[props.uniqueField] !== o[props.uniqueField]);
       }
-      return !selected.value.includes(o);
+      return selected.value.every(s => s[props.uniqueField] !== o[props.uniqueField]);
     });
   });
 </script>
