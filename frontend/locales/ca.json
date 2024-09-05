@@ -67,7 +67,12 @@
         "joining_group": "Us uniu a un grup existent!",
         "dont_join_group": "Voleu unir-vos al grup?",
         "login": "Inici de sessió",
-        "disabled_registration": "Registre desactivat"
+        "disabled_registration": "El registre és desactivat",
+        "register": "Registra-m'hi",
+        "remember_me": "Recorda'm",
+        "set_email": "Quin és el seu correu electrònic?",
+        "set_name": "Com us dieu?",
+        "set_password": "Definiu la contrasenya"
     },
     "items": {
         "negate_labels": "Nega les etiquetes seleccionades"

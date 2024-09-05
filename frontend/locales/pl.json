@@ -1,1 +1,111 @@
-{}
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "description": "Zaimportuj plik CSV zawierający Twoje przedmioty, etykiety i lokalizacje. Zobacz dokumentację, aby uzyskać \nwięcej informacji na temat wymaganego formatu.",
+                "title": "Zaimportuj plik CSV",
+                "upload": "Prześlij"
+            }
+        },
+        "global": {
+            "page_qr_code": {
+                "page_url": "Adres URL strony"
+            },
+            "password_score": {
+                "password_strength": "Siła hasła"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "title": "Utwórz przedmiot",
+                "photo_button": "Zdjęcie 📷"
+            },
+            "view": {
+                "selectable": {
+                    "card": "Karta",
+                    "items": "Przedmioty",
+                    "no_items": "Brak przedmiotów do wyświetlenia",
+                    "table": "Tabela"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "title": "Stwórz nową etykietę"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "Utwórz lokalizację"
+            }
+        }
+    },
+    "global": {
+        "build": "Kompilacja: {build}",
+        "follow_dev": "Śledź dewelopera",
+        "github": "Projekt na GitHubie",
+        "items": "Przedmioty",
+        "version": "Wersja:{version}",
+        "welcome": "Witaj, {username}",
+        "confirm": "Potwierdź",
+        "create": "Utwórz",
+        "create_and_add": "Utwórz i dodaj kolejny",
+        "created": "Utworzone",
+        "email": "E-mail",
+        "join_discord": "Dołącz do Discorda",
+        "labels": "Etykiety",
+        "locations": "Lokalizacje",
+        "name": "Nazwa",
+        "password": "Hasło",
+        "read_docs": "Przeczytaj dokumentację",
+        "search": "Wyszukaj",
+        "sign_out": "Wyloguj się",
+        "submit": "Wyślij"
+    },
+    "index": {
+        "set_password": "Ustaw swoje hasło",
+        "dont_join_group": "Nie chcesz dołączyć do grupy?",
+        "disabled_registration": "Rejestracja jest wyłączona",
+        "joining_group": "Dołączasz do istniejącej grupy!",
+        "login": "Zaloguj się",
+        "register": "Zarejestruj się",
+        "remember_me": "Zapamiętaj mnie",
+        "set_email": "Jaki jest Twój adres e-mail?",
+        "set_name": "Jak się nazywasz?",
+        "tagline": "Śledź, organizuj i zarządzaj swoimi rzeczami."
+    },
+    "items": {
+        "created_at": "Data utworzenia",
+        "field_selector": "Selektor pól",
+        "field_value": "Wartość pola",
+        "first": "Pierwszy",
+        "include_archive": "Uwzględnij zarchiwizowane przedmioty",
+        "negate_labels": "Neguj wybrane etykiety",
+        "no_results": "Nie znaleziono przedmiotów",
+        "query_id": "Zapytanie o numer identyfikacyjny zasobu: { id }",
+        "results": "{ total } wyniki",
+        "tip_3": "Filtry pól używają operacji 'LUB'. Jeśli wybrano więcej niż jeden, wystarczy jeden, \naby uzyskać dopasowanie.",
+        "updated_at": "Zaktualizowano",
+        "tip_1": "Filtry lokalizacji i etykiet używają operacji 'LUB'. Jeśli wybrano więcej niż jeden, wystarczy jeden, \naby uzyskać dopasowanie.",
+        "pages": "Strona {page} z {totalPages}",
+        "add": "Dodaj",
+        "custom_fields": "Pola niestandardowe",
+        "last": "Ostatni",
+        "next_page": "Następna strona",
+        "options": "Opcje",
+        "prev_page": "Poprzednia strona",
+        "reset_search": "Zresetuj wyszukiwanie",
+        "tip_2": "Wyszukiwania poprzedzone prefiksem \"#\" będą wysyłać zapytanie o identyfikator zasobu (na przykład \"#000-001\")",
+        "tips": "Wskazówki",
+        "tips_sub": "Wskazówki wyszukiwania",
+        "order_by": "Ułóż według"
+    },
+    "profile": {
+        "active": "Aktywny",
+        "change_password": "Zmiana hasła",
+        "currency_format": "Format waluty",
+        "delete_account": "Usuń konto",
+        "delete_account_sub": "Usuń swoje konto i wszystkie powiązane z nim dane",
+        "current_password": "Bieżące hasło"
+    }
+}

@@ -3,8 +3,8 @@
         "app": {
             "import_dialog": {
                 "change_warning": "Das Verhalten beim Importieren vorhandener import_refs hat sich geändert. Wenn ein import_ref in der CSV-Datei vorhanden ist, \nwird der Gegenstand mit den Werten in der CSV-Datei aktualisiert.",
-                "description": "Importiere eine CSV-Datei, die deine Gegenstände, Etiketten und Standorte enthält. Siehe Dokumentation für weitere Informationen zum \nerforderlichen Format.",
-                "title": "Importiere CSV-Datei",
+                "description": "Importiere eine CSV-Datei, die deine Gegenstände, Etiketten und Standorte enthält. Schau in die Dokumentation für weitere Informationen\nzum erforderlichen Format.",
+                "title": "CSV-Datei importieren",
                 "upload": "Hochladen"
             }
         },
@@ -18,7 +18,7 @@
         },
         "item": {
             "create_modal": {
-                "title": "Erstelle Gegenstand",
+                "title": "Gegenstand erstellen",
                 "photo_button": "Foto 📷"
             },
             "view": {
@@ -32,12 +32,12 @@
         },
         "label": {
             "create_modal": {
-                "title": "Erstelle Etikette"
+                "title": "Etikett erstellen"
             }
         },
         "location": {
             "create_modal": {
-                "title": "Erstelle Standort"
+                "title": "Standort erstellen"
             }
         }
     },
@@ -52,7 +52,7 @@
         "github": "GitHub-Projekt",
         "items": "Gegenstände",
         "join_discord": "Discord beitreten",
-        "labels": "Kennzeichnung",
+        "labels": "Etiketten",
         "locations": "Lagerorte",
         "name": "Name",
         "password": "Passwort",
@@ -107,22 +107,22 @@
         "currency_format": "Währungsformat",
         "current_password": "Aktuelles Passwort",
         "delete_account": "Konto löschen",
-        "delete_account_sub": "Löschen Sie Ihr Konto und alle zugehörigen Daten. Dies kann nicht rückgängig gemacht werden.",
+        "delete_account_sub": "Lösche dein Konto und alle zugehörigen Daten. Dies kann nicht rückgängig gemacht werden.",
         "enabled": "Aktiviert",
         "gen_invite": "Einladungslink generieren",
         "group_settings": "Gruppeneinstellungen",
-        "group_settings_sub": "Geteilte Gruppeneinstellungen. Möglicherweise müssen Sie Ihren Browser aktualisieren, damit einige Einstellungen wirksam werden.",
+        "group_settings_sub": "Geteilte Gruppeneinstellungen. Möglicherweise musst du die Seite neu laden, damit einige Einstellungen wirksam werden.",
         "inactive": "Inaktiv",
         "new_password": "Neues Passwort",
         "notifier_modal": "{ type, select, true {Bearbeiten} false {Erstellen} other {Andere}} Notifier",
         "notifiers": "Melder",
-        "notifiers_sub": "Erhalten Sie Benachrichtigungen über bevorstehende Wartungserinnerungen",
+        "notifiers_sub": "Erhalte Benachrichtigungen über bevorstehende Wartungserinnerungen",
         "test": "Test",
         "theme_settings": "Themes",
-        "theme_settings_sub": "Themeneinstellungen werden im lokalen Speicher Ihres Browsers gespeichert. Sie können das Thema jederzeit ändern. Wenn Sie Probleme haben, Ihr Thema einzustellen, versuchen Sie, Ihren Browser zu aktualisieren.",
+        "theme_settings_sub": "Theme-Einstellungen werden im lokalen Speicher deines Browsers gespeichert. Du kannst das Theme jederzeit ändern. Wenn du Probleme hast, dein Theme einzustellen, versuche, die Seite neu zu laden.",
         "update_group": "Gruppe aktualisieren",
         "url": "URL",
         "user_profile": "Benutzerprofil",
-        "user_profile_sub": "Laden Sie Benutzer ein und verwalten Sie Ihr Konto."
+        "user_profile_sub": "Lade Benutzer ein und verwalte dein Konto."
     }
 }
