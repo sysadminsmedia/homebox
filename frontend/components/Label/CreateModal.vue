@@ -71,6 +71,12 @@
   const { shift } = useMagicKeys();
 
   async function create(close = true) {
+    if (loading.value) {
+      toast.error("Already creating a label");
+      return;
+    }
+    loading.value = true;
+
     if (shift.value) {
       close = false;
     }
