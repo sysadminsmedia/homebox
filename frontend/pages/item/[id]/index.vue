@@ -441,42 +441,42 @@
 <template>
   <BaseContainer v-if="item" class="pb-8">
     <Title>{{ item.name }}</Title>
-    <dialog ref="refDialog" class="z-[999] fixed bg-transparent">
+    <dialog ref="refDialog" class="fixed z-[999] bg-transparent">
       <div ref="refDialogBody" class="relative">
-        <div class="absolute right-0 -mt-3 -mr-3 sm:-mt-4 sm:-mr-4 space-x-1">
-          <a class="btn btn-sm sm:btn-md btn-primary btn-circle" :href="dialoged.src" download>
-            <MdiDownload class="h-5 w-5" />
+        <div class="absolute right-0 -mr-3 -mt-3 space-x-1 sm:-mr-4 sm:-mt-4">
+          <a class="btn btn-circle btn-primary btn-sm sm:btn-md" :href="dialoged.src" download>
+            <MdiDownload class="size-5" />
           </a>
-          <button class="btn btn-sm sm:btn-md btn-primary btn-circle" @click="closeDialog()">
-            <MdiClose class="h-5 w-5" />
+          <button class="btn btn-circle btn-primary btn-sm sm:btn-md" @click="closeDialog()">
+            <MdiClose class="size-5" />
           </button>
         </div>
 
-        <img class="max-w-[80vw] max-h-[80vh]" :src="dialoged.src" />
+        <img class="max-h-[80vh] max-w-[80vw]" :src="dialoged.src" />
       </div>
     </dialog>
 
     <section>
-      <div class="bg-base-100 rounded p-3">
+      <div class="rounded bg-base-100 p-3">
         <header class="mb-2">
           <div class="flex flex-wrap items-end gap-2">
             <div class="avatar placeholder mb-auto">
-              <div class="bg-neutral-focus text-neutral-content rounded-full w-12">
-                <MdiPackageVariant class="h-7 w-7" />
+              <div class="w-12 rounded-full bg-neutral-focus text-neutral-content">
+                <MdiPackageVariant class="size-7" />
               </div>
             </div>
             <div>
-              <div v-if="fullpath && fullpath.length > 0" class="text-sm breadcrumbs pt-0 pb-0">
+              <div v-if="fullpath && fullpath.length > 0" class="breadcrumbs py-0 text-sm">
                 <ul class="text-base-content/70">
                   <li v-for="part in fullpath" :key="part.id">
                     <NuxtLink :to="`/${part.type}/${part.id}`"> {{ part.name }}</NuxtLink>
                   </li>
                 </ul>
               </div>
-              <h1 class="text-2xl pb-1">
+              <h1 class="pb-1 text-2xl">
                 {{ item ? item.name : "" }}
               </h1>
-              <div class="flex gap-1 flex-wrap text-xs">
+              <div class="flex flex-wrap gap-1 text-xs">
                 <div>
                   Created
                   <DateTime :date="item?.createdAt" />
@@ -491,12 +491,12 @@
           </div>
         </header>
         <div class="divider my-0 mb-1"></div>
-        <div class="p-1 prose max-w-[100%]">
+        <div class="prose max-w-full p-1">
           <Markdown v-if="item && item.description" class="text-base" :source="item.description"> </Markdown>
         </div>
       </div>
 
-      <div class="flex flex-wrap items-center justify-between mb-6 mt-3">
+      <div class="mb-6 mt-3 flex flex-wrap items-center justify-between">
         <div class="btn-group">
           <NuxtLink
             v-for="t in tabs"
@@ -516,7 +516,7 @@
         <BaseCard v-if="!hasNested" collapsable>
           <template #title> Details </template>
           <template #title-actions>
-            <div class="flex flex-wrap justify-between items-center mt-2 gap-4">
+            <div class="mt-2 flex flex-wrap items-center justify-between gap-4">
               <label class="label cursor-pointer">
                 <input v-model="preferences.showEmpty" type="checkbox" class="toggle toggle-primary" />
                 <span class="label-text ml-4"> Show Empty </span>
@@ -528,13 +528,13 @@
             <template #quantity="{ detail }">
               {{ detail.text }}
               <span
-                class="opacity-0 group-hover:opacity-100 ml-4 my-0 duration-75 transition-opacity inline-flex gap-2"
+                class="my-0 ml-4 inline-flex gap-2 opacity-0 transition-opacity duration-75 group-hover:opacity-100"
               >
                 <button class="btn btn-circle btn-xs" @click="adjustQuantity(-1)">
-                  <MdiMinus class="h-3 w-3" />
+                  <MdiMinus class="size-3" />
                 </button>
                 <button class="btn btn-circle btn-xs" @click="adjustQuantity(1)">
-                  <MdiPlus class="h-3 w-3" />
+                  <MdiPlus class="size-3" />
                 </button>
               </span>
             </template>
@@ -546,10 +546,10 @@
           <BaseCard v-if="photos && photos.length > 0">
             <template #title> Photos </template>
             <div
-              class="container border-t border-gray-300 p-4 flex flex-wrap gap-2 mx-auto max-h-[500px] overflow-y-scroll scroll-bg"
+              class="scroll-bg container mx-auto flex max-h-[500px] flex-wrap gap-2 overflow-y-scroll border-t border-gray-300 p-4"
             >
               <button v-for="(img, i) in photos" :key="i" @click="openDialog(img)">
-                <img class="rounded max-h-[200px]" :src="img.src" />
+                <img class="max-h-[200px] rounded" :src="img.src" />
               </button>
             </div>
           </BaseCard>
@@ -587,7 +587,7 @@
               </template>
             </DetailsSection>
             <div v-else>
-              <p class="text-base-content/70 px-6 pb-4">No attachments found</p>
+              <p class="px-6 pb-4 text-base-content/70">No attachments found</p>
             </div>
           </BaseCard>
 

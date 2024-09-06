@@ -121,16 +121,16 @@
     </BaseModal>
 
     <BaseContainer v-if="location">
-      <div class="bg-base-100 rounded p-3">
+      <div class="rounded bg-base-100 p-3">
         <header class="mb-2">
           <div class="flex flex-wrap items-end gap-2">
             <div class="avatar placeholder mb-auto">
-              <div class="bg-neutral-focus text-neutral-content rounded-full w-12">
-                <MdiPackageVariant name="mdi-package-variant" class="h-7 w-7" />
+              <div class="w-12 rounded-full bg-neutral-focus text-neutral-content">
+                <MdiPackageVariant name="mdi-package-variant" class="size-7" />
               </div>
             </div>
             <div>
-              <div v-if="location?.parent" class="text-sm breadcrumbs pt-0 pb-0">
+              <div v-if="location?.parent" class="breadcrumbs py-0 text-sm">
                 <ul class="text-base-content/70">
                   <li>
                     <NuxtLink :to="`/location/${location.parent.id}`"> {{ location.parent.name }}</NuxtLink>
@@ -138,19 +138,19 @@
                   <li>{{ location.name }}</li>
                 </ul>
               </div>
-              <h1 class="text-2xl pb-1 flex items-center gap-3">
+              <h1 class="flex items-center gap-3 pb-1 text-2xl">
                 {{ location ? location.name : "" }}
 
                 <div
                   v-if="location && location.totalPrice"
-                  class="text-xs bg-secondary text-secondary-content rounded-full px-2 py-1"
+                  class="rounded-full bg-secondary px-2 py-1 text-xs text-secondary-content"
                 >
                   <div>
                     <Currency :amount="location.totalPrice" />
                   </div>
                 </div>
               </h1>
-              <div class="flex gap-1 flex-wrap text-xs">
+              <div class="flex flex-wrap gap-1 text-xs">
                 <div>
                   Created
                   <DateTime :date="location?.createdAt" />
@@ -181,7 +181,7 @@
 
       <section v-if="location && location.children.length > 0" class="mt-6">
         <BaseSectionHeader class="mb-5"> Child Locations </BaseSectionHeader>
-        <div class="grid gap-2 grid-cols-1 sm:grid-cols-3">
+        <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
           <LocationCard v-for="item in location.children" :key="item.id" :location="item" />
         </div>
       </section>

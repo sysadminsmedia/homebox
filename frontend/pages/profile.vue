@@ -319,7 +319,7 @@
     </BaseModal>
 
     <BaseModal v-model="notifierDialog">
-      <template #title> {{ $t("profile.notifier_modal", {type: (notifier != null)}) }} </template>
+      <template #title> {{ $t("profile.notifier_modal", { type: notifier != null }) }} </template>
 
       <form @submit.prevent="createNotifier">
         <template v-if="notifier">
@@ -329,19 +329,21 @@
             <FormCheckbox v-model="notifier.isActive" :label="$t('profile.enabled')" />
           </div>
         </template>
-        <div class="flex gap-2 justify-between mt-4">
-          <BaseButton :disabled="!(notifier && notifier.url)" type="button" @click="testNotifier"> {{ $t("profile.test") }} </BaseButton>
+        <div class="mt-4 flex justify-between gap-2">
+          <BaseButton :disabled="!(notifier && notifier.url)" type="button" @click="testNotifier">
+            {{ $t("profile.test") }}
+          </BaseButton>
           <BaseButton type="submit"> {{ $t("global.submit") }} </BaseButton>
         </div>
       </form>
     </BaseModal>
 
-    <BaseContainer class="flex flex-col gap-4 mb-6">
+    <BaseContainer class="mb-6 flex flex-col gap-4">
       <BaseCard>
         <template #title>
           <BaseSectionHeader>
-            <MdiAccount class="mr-2 -mt-1 text-base-600" />
-            <span class="text-base-600"> {{ $t("profile.user_profile") }} </span>
+            <MdiAccount class="-mt-1 mr-2" />
+            <span> {{ $t("profile.user_profile") }} </span>
             <template #description> {{ $t("profile.user_profile_sub") }} </template>
           </BaseSectionHeader>
         </template>
@@ -353,12 +355,12 @@
             <BaseButton size="sm" @click="openPassChange"> {{ $t("profile.change_password") }} </BaseButton>
             <BaseButton size="sm" @click="generateToken"> {{ $t("profile.gen_invite") }} </BaseButton>
           </div>
-          <div v-if="token" class="pt-4 flex items-center pl-1">
-            <CopyText class="mr-2 btn-primary btn btn-outline btn-square btn-sm" :text="tokenUrl" />
+          <div v-if="token" class="flex items-center pl-1 pt-4">
+            <CopyText class="btn btn-square btn-outline btn-primary btn-sm mr-2" :text="tokenUrl" />
             {{ tokenUrl }}
           </div>
-          <div v-if="token" class="pt-4 flex items-center pl-1">
-            <CopyText class="mr-2 btn-primary btn btn-outline btn-square btn-sm" :text="token" />
+          <div v-if="token" class="flex items-center pl-1 pt-4">
+            <CopyText class="btn btn-square btn-outline btn-primary btn-sm mr-2" :text="token" />
             {{ token }}
           </div>
         </div>
@@ -367,8 +369,8 @@
       <BaseCard>
         <template #title>
           <BaseSectionHeader>
-            <MdiMegaphone class="mr-2 -mt-1 text-base-600" />
-            <span class="text-base-600"> {{ $t("profile.notifiers") }} </span>
+            <MdiMegaphone class="-mt-1 mr-2" />
+            <span class=""> {{ $t("profile.notifiers") }} </span>
             <template #description> {{ $t("profile.notifiers_sub") }} </template>
           </BaseSectionHeader>
         </template>
@@ -377,20 +379,20 @@
           <article v-for="n in notifiers.data.value" :key="n.id" class="p-2">
             <div class="flex flex-wrap items-center gap-2">
               <p class="mr-auto text-lg">{{ n.name }}</p>
-              <div class="flex gap-2 justify-end">
+              <div class="flex justify-end gap-2">
                 <div class="tooltip" data-tip="Delete">
-                  <button class="btn btn-sm btn-square" @click="deleteNotifier(n.id)">
+                  <button class="btn btn-square btn-sm" @click="deleteNotifier(n.id)">
                     <MdiDelete />
                   </button>
                 </div>
                 <div class="tooltip" data-tip="Edit">
-                  <button class="btn btn-sm btn-square" @click="openNotifierDialog(n)">
+                  <button class="btn btn-square btn-sm" @click="openNotifierDialog(n)">
                     <MdiPencil />
                   </button>
                 </div>
               </div>
             </div>
-            <div class="flex justify-between py-1 flex-wrap text-sm">
+            <div class="flex flex-wrap justify-between py-1 text-sm">
               <p>
                 <span v-if="n.isActive" class="badge badge-success"> {{ $t("profile.active") }} </span>
                 <span v-else class="badge badge-error"> {{ $t("profile.inactive") }} </span>
@@ -411,8 +413,8 @@
       <BaseCard>
         <template #title>
           <BaseSectionHeader class="pb-0">
-            <MdiAccountMultiple class="mr-2 -mt-1 text-base-600" />
-            <span class="text-base-600"> {{ $t("profile.group_settings") }} </span>
+            <MdiAccountMultiple class="-mt-1 mr-2" />
+            <span class=""> {{ $t("profile.group_settings") }} </span>
             <template #description>
               {{ $t("profile.group_settings_sub") }}
             </template>
@@ -432,8 +434,8 @@
       <BaseCard>
         <template #title>
           <BaseSectionHeader>
-            <MdiFill class="mr-2 text-base-600" />
-            <span class="text-base-600"> {{ $t("profile.theme_settings") }} </span>
+            <MdiFill class="mr-2" />
+            <span class=""> {{ $t("profile.theme_settings") }} </span>
             <template #description>
               {{ $t("profile.theme_settings_sub") }}
             </template>
@@ -445,30 +447,30 @@
             <div
               v-for="theme in themes"
               :key="theme.value"
-              class="border-base-content/20 hover:border-base-content/40 outline-base-content overflow-hidden rounded-lg border outline-2 outline-offset-2"
+              class="overflow-hidden rounded-lg border border-base-content/20 outline-2 outline-offset-2 outline-base-content hover:border-base-content/40"
               :data-theme="theme.value"
               :data-set-theme="theme.value"
               data-act-class="outline"
               @click="setTheme(theme.value)"
             >
-              <div :data-theme="theme.value" class="bg-base-100 text-base-content w-full cursor-pointer font-sans">
+              <div :data-theme="theme.value" class="w-full cursor-pointer bg-base-100 font-sans text-base-content">
                 <div class="grid grid-cols-5 grid-rows-3">
-                  <div class="bg-base-200 col-start-1 row-span-2 row-start-1"></div>
-                  <div class="bg-base-300 col-start-1 row-start-3"></div>
-                  <div class="bg-base-100 col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 p-2">
+                  <div class="col-start-1 row-span-2 row-start-1 bg-base-200"></div>
+                  <div class="col-start-1 row-start-3 bg-base-300"></div>
+                  <div class="col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 bg-base-100 p-2">
                     <div class="font-bold">{{ theme.label }}</div>
                     <div class="flex flex-wrap gap-1">
-                      <div class="bg-primary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                        <div class="text-primary-content text-sm font-bold">A</div>
+                      <div class="flex aspect-1 w-5 items-center justify-center rounded bg-primary lg:w-6">
+                        <div class="text-sm font-bold text-primary-content">A</div>
                       </div>
-                      <div class="bg-secondary flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                        <div class="text-secondary-content text-sm font-bold">A</div>
+                      <div class="flex aspect-1 w-5 items-center justify-center rounded bg-secondary lg:w-6">
+                        <div class="text-sm font-bold text-secondary-content">A</div>
                       </div>
-                      <div class="bg-accent flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                        <div class="text-accent-content text-sm font-bold">A</div>
+                      <div class="flex aspect-1 w-5 items-center justify-center rounded bg-accent lg:w-6">
+                        <div class="text-sm font-bold text-accent-content">A</div>
                       </div>
-                      <div class="bg-neutral flex aspect-square w-5 items-center justify-center rounded lg:w-6">
-                        <div class="text-neutral-content text-sm font-bold">A</div>
+                      <div class="flex aspect-1 w-5 items-center justify-center rounded bg-neutral lg:w-6">
+                        <div class="text-sm font-bold text-neutral-content">A</div>
                       </div>
                     </div>
                   </div>
@@ -482,13 +484,15 @@
       <BaseCard>
         <template #title>
           <BaseSectionHeader>
-            <MdiDelete class="mr-2 -mt-1 text-base-600" />
-            <span class="text-base-600"> {{ $t("profile.delete_account") }} </span>
+            <MdiDelete class="-mt-1 mr-2" />
+            <span class=""> {{ $t("profile.delete_account") }} </span>
             <template #description> {{ $t("profile.delete_account_sub") }} </template>
           </BaseSectionHeader>
         </template>
-        <div class="p-4 px-6 border-t-2 border-gray-300">
-          <BaseButton size="sm" class="btn-error" @click="deleteProfile"> {{ $t("profile.delete_account") }} </BaseButton>
+        <div class="border-t-2 border-gray-300 p-4 px-6">
+          <BaseButton size="sm" class="btn-error" @click="deleteProfile">
+            {{ $t("profile.delete_account") }}
+          </BaseButton>
         </div>
       </BaseCard>
     </BaseContainer>

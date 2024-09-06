@@ -4,7 +4,7 @@
       <span class="label-text">{{ label }}</span>
     </label>
     <div class="dropdown dropdown-top sm:dropdown-end">
-      <div tabindex="0" class="w-full min-h-[48px] flex gap-2 p-4 flex-wrap border border-gray-400 rounded-lg">
+      <div tabindex="0" class="flex min-h-[48px] w-full flex-wrap gap-2 rounded-lg border border-gray-400 p-4">
         <span v-for="itm in value" :key="name != '' ? itm[name] : itm" class="badge">
           {{ name != "" ? itm[name] : itm }}
         </span>
@@ -12,12 +12,12 @@
       <div
         tabindex="0"
         style="display: inline"
-        class="dropdown-content mb-1 menu w-full z-[9999] shadow border border-gray-400 rounded bg-base-100"
+        class="dropdown-content menu z-[9999] mb-1 w-full rounded border border-gray-400 bg-base-100 shadow"
       >
         <div class="m-2">
-          <input v-model="search" placeholder="Search…" class="input input-sm input-bordered w-full" />
+          <input v-model="search" placeholder="Search…" class="input input-bordered input-sm w-full" />
         </div>
-        <ul class="overflow-y-scroll max-h-60">
+        <ul class="max-h-60 overflow-y-scroll">
           <li
             v-for="(obj, idx) in filteredItems"
             :key="idx"

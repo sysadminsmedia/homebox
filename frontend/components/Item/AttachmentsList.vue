@@ -6,15 +6,15 @@
       class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
     >
       <div class="flex w-0 flex-1 items-center">
-        <MdiPaperclip class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+        <MdiPaperclip class="size-5 shrink-0 text-gray-400" aria-hidden="true" />
         <span class="ml-2 w-0 flex-1 truncate"> {{ attachment.document.title }}</span>
       </div>
-      <div class="ml-4 flex-shrink-0">
+      <div class="ml-4 shrink-0">
         <a class="tooltip mr-2" data-tip="Download" :href="attachmentURL(attachment.id)" target="_blank">
-          <MdiDownload class="h-5 w-5" />
+          <MdiDownload class="size-5" />
         </a>
         <a class="tooltip" data-tip="Open" :href="attachmentURL(attachment.id)" target="_blank">
-          <MdiOpenInNew class="h-5 w-5" />
+          <MdiOpenInNew class="size-5" />
         </a>
       </div>
     </li>

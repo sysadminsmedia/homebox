@@ -40,19 +40,19 @@
 <template>
   <div>
     <div
-      class="node flex items-center gap-1 rounded p-1"
+      class="flex items-center gap-1 rounded p-1"
       :class="{
         'cursor-pointer hover:bg-base-200': hasChildren,
       }"
       @click="openRef = !openRef"
     >
       <div
-        class="p-1/2 rounded mr-1 flex items-center justify-center"
+        class="mr-1 flex items-center justify-center rounded p-0.5"
         :class="{
           'hover:bg-base-200': hasChildren,
         }"
       >
-        <div v-if="!hasChildren" class="h-6 w-6"></div>
+        <div v-if="!hasChildren" class="size-6"></div>
         <label
           v-else
           class="swap swap-rotate"
@@ -60,13 +60,13 @@
             'swap-active': openRef,
           }"
         >
-          <MdiChevronRight name="mdi-chevron-right" class="h-6 w-6 swap-off" />
-          <MdiChevronDown name="mdi-chevron-down" class="h-6 w-6 swap-on" />
+          <MdiChevronRight name="mdi-chevron-right" class="swap-off size-6" />
+          <MdiChevronDown name="mdi-chevron-down" class="swap-on size-6" />
         </label>
       </div>
-      <MdiMapMarker v-if="item.type === 'location'" class="h-4 w-4" />
-      <MdiPackageVariant v-else class="h-4 w-4" />
-      <NuxtLink class="hover:link text-lg" :to="link" @click.stop>{{ item.name }} </NuxtLink>
+      <MdiMapMarker v-if="item.type === 'location'" class="size-4" />
+      <MdiPackageVariant v-else class="size-4" />
+      <NuxtLink class="text-lg hover:link" :to="link" @click.stop>{{ item.name }} </NuxtLink>
     </div>
     <div v-if="openRef" class="ml-4">
       <LocationTreeNode v-for="child in item.children" :key="child.id" :item="child" :tree-id="treeId" />

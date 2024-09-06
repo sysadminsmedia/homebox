@@ -1,5 +1,5 @@
 <template>
-  <div class="force-above fixed top-2 right-2 w-[300px]">
+  <div class="fixed right-2 top-2 z-[9999] w-[300px]">
     <TransitionGroup name="notify" tag="div">
       <div
         v-for="(notify, index) in notifications.slice(0, 4)"
@@ -14,14 +14,14 @@
       >
         <div class="flex gap-1">
           <template v-if="notify.type == 'success'">
-            <MdiCheckboxMarkedCircle class="h-5 w-5" />
+            <MdiCheckboxMarkedCircle class="size-5" />
           </template>
           <template v-if="notify.type == 'info'">
-            <MdiInformationSlabCircle class="h-5 w-5" />
+            <MdiInformationSlabCircle class="size-5" />
           </template>
 
           <template v-if="notify.type == 'error'">
-            <MdiAlert class="h-5 w-5" />
+            <MdiAlert class="size-5" />
           </template>
           {{ notify.message }}
         </div>
@@ -41,10 +41,6 @@
 </script>
 
 <style scoped>
-  .force-above {
-    z-index: 9999;
-  }
-
   .notify-move,
   .notify-enter-active,
   .notify-leave-active {

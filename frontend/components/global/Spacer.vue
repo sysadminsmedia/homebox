@@ -1,3 +1,3 @@
 <template>
-  <div class="grow-1 max-w-full"></div>
+  <div class="max-w-full"></div>
 </template>

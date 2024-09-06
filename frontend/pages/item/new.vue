@@ -40,9 +40,9 @@
 <template>
   <BaseContainer cmp="section">
     <BaseSectionHeader> Add an Item To Your Inventory </BaseSectionHeader>
-    <form class="max-w-3xl mx-auto my-5 space-y-6" @submit.prevent="submit">
-      <div class="divider collapse-title px-0 cursor-pointer">Required Information</div>
-      <div class="bg-base-200 card">
+    <form class="mx-auto my-5 max-w-3xl space-y-6" @submit.prevent="submit">
+      <div class="collapse-title divider cursor-pointer px-0">Required Information</div>
+      <div class="card bg-base-200">
         <div class="card-body">
           <FormTextField v-model="form.name" label="Name" />
           <FormTextArea v-model="form.description" label="Description" limit="1000" />
@@ -76,7 +76,7 @@
       </div>
       <div v-if="show.sold" class="card bg-base-200">
         <div class="card-body">
-          <div class="grid md:grid-cols-2 gap-2">
+          <div class="grid gap-2 md:grid-cols-2">
             <FormTextField v-model="form.soldTime" label="Sold Time" />
             <FormTextField v-model="form.soldPrice" label="Sold Price" />
             <FormTextField v-model="form.soldTo" label="Sold To" />

@@ -15,16 +15,16 @@
           </div>
           <BaseButton class="rounded-r-none" :loading="loading" type="submit">
             <template #icon>
-              <MdiPackageVariant class="swap-off h-5 w-5" />
-              <MdiPackageVariantClosed class="swap-on h-5 w-5" />
+              <MdiPackageVariant class="swap-off size-5" />
+              <MdiPackageVariantClosed class="swap-on size-5" />
             </template>
             {{ $t("global.create") }}
           </BaseButton>
           <div class="dropdown dropdown-top">
             <label tabindex="0" class="btn rounded-l-none rounded-r-xl">
-              <MdiChevronDown class="h-5 w-5" name="mdi-chevron-down" />
+              <MdiChevronDown class="size-5" name="mdi-chevron-down" />
             </label>
-            <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-64 right-0">
+            <ul tabindex="0" class="dropdown-content menu rounded-box right-0 w-64 bg-base-100 p-2 shadow">
               <li>
                 <button type="button" @click="create(false)">{{ $t("global.create_and_add") }}</button>
               </li>
@@ -39,13 +39,13 @@
           <p class="mb-0">File name: {{ form.photo?.name }}</p>
           <img
             :src="form.preview"
-            class="h-[100px] w-full object-cover rounded-t shadow-sm border-gray-300"
+            class="h-[100px] w-full rounded-t border-gray-300 object-cover shadow-sm"
             alt="Uploaded Photo"
           />
         </template>
       </div>
     </form>
-    <p class="text-sm text-center mt-4">
+    <p class="mt-4 text-center text-sm">
       use <kbd class="kbd kbd-xs">Shift</kbd> + <kbd class="kbd kbd-xs"> Enter </kbd> to create and add another
     </p>
   </BaseModal>

@@ -425,7 +425,7 @@
         name="text"
         :items="attachmentOpts"
       />
-      <div v-if="editState.type == 'photo'" class="flex gap-2 mt-3">
+      <div v-if="editState.type == 'photo'" class="mt-3 flex gap-2">
         <input v-model="editState.primary" type="checkbox" class="checkbox" />
         <p class="text-sm">
           <span class="font-semibold">Primary Photo</span>
@@ -439,9 +439,9 @@
     </BaseModal>
 
     <section class="relative">
-      <div class="my-4 justify-end flex gap-2 items-center sticky z-10 top-1">
-        <div class="mr-auto tooltip tooltip-right" data-tip="Show Advanced View Options">
-          <label class="label cursor-pointer mr-auto">
+      <div class="sticky top-1 z-10 my-4 flex items-center justify-end gap-2">
+        <div class="tooltip tooltip-right mr-auto" data-tip="Show Advanced View Options">
+          <label class="label mr-auto cursor-pointer">
             <input v-model="preferences.editorAdvancedView" type="checkbox" class="toggle toggle-primary" />
             <span class="label-text ml-4"> Advanced </span>
           </label>
@@ -452,7 +452,7 @@
           </template>
           Save
         </BaseButton>
-        <BaseButton class="btn btn-sm btn-error" @click="deleteItem()">
+        <BaseButton class="btn btn-error btn-sm" @click="deleteItem()">
           <MdiDelete class="mr-2" />
           Delete
         </BaseButton>
@@ -461,9 +461,9 @@
         <BaseCard class="overflow-visible">
           <template #title> Edit Details </template>
           <template #title-actions>
-            <div class="flex flex-wrap justify-between items-center mt-2 gap-4"></div>
+            <div class="mt-2 flex flex-wrap items-center justify-between gap-4"></div>
           </template>
-          <div class="px-5 pt-2 border-t mb-6 grid md:grid-cols-2 gap-4">
+          <div class="mb-6 grid gap-4 border-t px-5 pt-2 md:grid-cols-2">
             <LocationSelector v-model="item.location" />
             <FormMultiselect v-model="item.labels" label="Labels" :items="labels ?? []" />
             <Autocomplete
@@ -478,8 +478,8 @@
           </div>
 
           <div class="border-t border-gray-300 sm:p-0">
-            <div v-for="field in mainFields" :key="field.ref" class="sm:divide-y sm:divide-gray-300 grid grid-cols-1">
-              <div class="pt-2 px-4 pb-4 sm:px-6 border-b border-gray-300">
+            <div v-for="field in mainFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y sm:divide-gray-300">
+              <div class="border-b border-gray-300 px-4 pb-4 pt-2 sm:px-6">
                 <FormTextArea v-if="field.type === 'textarea'" v-model="item[field.ref]" :label="field.label" inline />
                 <FormTextField
                   v-else-if="field.type === 'text'"
@@ -513,25 +513,25 @@
 
         <BaseCard>
           <template #title> Custom Fields </template>
-          <div class="px-5 border-t divide-y divide-gray-300 space-y-4">
+          <div class="space-y-4 divide-y divide-gray-300 border-t px-5">
             <div
               v-for="(field, idx) in item.fields"
               :key="`field-${idx}`"
-              class="grid grid-cols-2 md:grid-cols-4 gap-2"
+              class="grid grid-cols-2 gap-2 md:grid-cols-4"
             >
               <!-- <FormSelect v-model:value="field.type" label="Field Type" :items="fieldTypes" value-key="value" /> -->
               <FormTextField v-model="field.name" label="Name" />
-              <div class="flex items-end col-span-3">
+              <div class="col-span-3 flex items-end">
                 <FormTextField v-model="field.textValue" label="Value" />
                 <div class="tooltip" data-tip="Delete">
-                  <button class="btn btn-sm btn-square mb-2 ml-2" @click="item.fields.splice(idx, 1)">
+                  <button class="btn btn-square btn-sm mb-2 ml-2" @click="item.fields.splice(idx, 1)">
                     <MdiDelete />
                   </button>
                 </div>
               </div>
             </div>
           </div>
-          <div class="px-5 pb-4 mt-4 flex justify-end">
+          <div class="mt-4 flex justify-end px-5 pb-4">
             <BaseButton size="sm" @click="addField"> Add </BaseButton>
           </div>
         </BaseCard>
@@ -539,7 +539,7 @@
         <div
           v-if="preferences.editorAdvancedView"
           ref="attDropZone"
-          class="overflow-visible card bg-base-100 shadow-xl sm:rounded-lg"
+          class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg"
         >
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">Attachments</h3>
@@ -555,7 +555,7 @@
             </div>
             <button
               v-else
-              class="h-24 w-full border-2 border-primary border-dashed grid place-content-center"
+              class="grid h-24 w-full place-content-center border-2 border-dashed border-primary"
               @click="clickUpload"
             >
               <input ref="refAttachmentInput" hidden type="file" @change="uploadImage" />
@@ -570,20 +570,20 @@
                 :key="attachment.id"
                 class="grid grid-cols-6 justify-between py-3 pl-3 pr-4 text-sm"
               >
-                <p class="my-auto col-span-4">
+                <p class="col-span-4 my-auto">
                   {{ attachment.document.title }}
                 </p>
                 <p class="my-auto">
                   {{ capitalize(attachment.type) }}
                 </p>
-                <div class="flex gap-2 justify-end">
+                <div class="flex justify-end gap-2">
                   <div class="tooltip" data-tip="Delete">
-                    <button class="btn btn-sm btn-square" @click="deleteAttachment(attachment.id)">
+                    <button class="btn btn-square btn-sm" @click="deleteAttachment(attachment.id)">
                       <MdiDelete />
                     </button>
                   </div>
                   <div class="tooltip" data-tip="Edit">
-                    <button class="btn btn-sm btn-square" @click="openAttachmentEditDialog(attachment)">
+                    <button class="btn btn-square btn-sm" @click="openAttachmentEditDialog(attachment)">
                       <MdiPencil />
                     </button>
                   </div>
@@ -593,7 +593,7 @@
           </div>
         </div>
 
-        <div v-if="preferences.editorAdvancedView" class="overflow-visible card bg-base-100 shadow-xl sm:rounded-lg">
+        <div v-if="preferences.editorAdvancedView" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">Purchase Details</h3>
           </div>
@@ -601,9 +601,9 @@
             <div
               v-for="field in purchaseFields"
               :key="field.ref"
-              class="sm:divide-y sm:divide-gray-300 grid grid-cols-1"
+              class="grid grid-cols-1 sm:divide-y sm:divide-gray-300"
             >
-              <div class="pt-2 px-4 pb-4 sm:px-6 border-b border-gray-300">
+              <div class="border-b border-gray-300 px-4 pb-4 pt-2 sm:px-6">
                 <FormTextArea v-if="field.type === 'textarea'" v-model="item[field.ref]" :label="field.label" inline />
                 <FormTextField
                   v-else-if="field.type === 'text'"
@@ -635,7 +635,7 @@
           </div>
         </div>
 
-        <div v-if="preferences.editorAdvancedView" class="overflow-visible card bg-base-100 shadow-xl sm:rounded-lg">
+        <div v-if="preferences.editorAdvancedView" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">Warranty Details</h3>
           </div>
@@ -643,9 +643,9 @@
             <div
               v-for="field in warrantyFields"
               :key="field.ref"
-              class="sm:divide-y sm:divide-gray-300 grid grid-cols-1"
+              class="grid grid-cols-1 sm:divide-y sm:divide-gray-300"
             >
-              <div class="pt-2 px-4 pb-4 sm:px-6 border-b border-gray-300">
+              <div class="border-b border-gray-300 px-4 pb-4 pt-2 sm:px-6">
                 <FormTextArea v-if="field.type === 'textarea'" v-model="item[field.ref]" :label="field.label" inline />
                 <FormTextField
                   v-else-if="field.type === 'text'"
@@ -677,13 +677,13 @@
           </div>
         </div>
 
-        <div v-if="preferences.editorAdvancedView" class="overflow-visible card bg-base-100 shadow-xl sm:rounded-lg">
+        <div v-if="preferences.editorAdvancedView" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">Sold Details</h3>
           </div>
           <div class="border-t border-gray-300 sm:p-0">
-            <div v-for="field in soldFields" :key="field.ref" class="sm:divide-y sm:divide-gray-300 grid grid-cols-1">
-              <div class="pt-2 pb-4 px-4 sm:px-6 border-b border-gray-300">
+            <div v-for="field in soldFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y sm:divide-gray-300">
+              <div class="border-b border-gray-300 px-4 pb-4 pt-2 sm:px-6">
                 <FormTextArea v-if="field.type === 'textarea'" v-model="item[field.ref]" :label="field.label" inline />
                 <FormTextField
                   v-else-if="field.type === 'text'"

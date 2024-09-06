@@ -2,24 +2,24 @@
   <NuxtLink
     ref="card"
     :to="`/location/${location.id}`"
-    class="card bg-base-100 text-base-content rounded-md transition duration-300 shadow-md"
+    class="card rounded-md bg-base-100 text-base-content shadow-md transition duration-300"
   >
     <div
       class="card-body"
       :class="{
         'p-4': !dense,
-        'py-2 px-3': dense,
+        'px-3 py-2': dense,
       }"
     >
       <h2 class="flex items-center justify-between gap-2">
         <label class="swap swap-rotate" :class="isActive ? 'swap-active' : ''">
-          <MdiArrowRight class="swap-on h-6 w-6" />
-          <MdiMapMarkerOutline class="swap-off h-6 w-6" />
+          <MdiArrowRight class="swap-on size-6" />
+          <MdiMapMarkerOutline class="swap-off size-6" />
         </label>
         <span class="mx-auto">
           {{ location.name }}
         </span>
-        <span class="badge badge-primary h-6 badge-lg" :class="{ 'opacity-0': !hasCount }">
+        <span class="badge badge-primary badge-lg h-6" :class="{ 'opacity-0': !hasCount }">
           {{ count }}
         </span>
       </h2>

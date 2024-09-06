@@ -5,7 +5,7 @@
         <MdiQrcode />
       </label>
     </slot>
-    <div tabindex="0" class="card compact dropdown-content shadow-lg bg-base-100 rounded-box w-64">
+    <div tabindex="0" class="card dropdown-content compact rounded-box w-64 bg-base-100 shadow-lg">
       <div class="card-body">
         <h2 class="text-center">{{ $t("components.global.page_qr_code.page_url") }}</h2>
         <img :src="getQRCodeUrl()" />
