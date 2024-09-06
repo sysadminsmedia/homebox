@@ -72,9 +72,42 @@
         "remember_me": "Recorda'm",
         "set_email": "Quin és el seu correu electrònic?",
         "set_name": "Com us dieu?",
-        "set_password": "Definiu la contrasenya"
+        "set_password": "Definiu la contrasenya",
+        "tagline": "Feu el seguiment, organitzeu i gestioneu les vostres coses."
     },
     "items": {
-        "negate_labels": "Nega les etiquetes seleccionades"
+        "negate_labels": "Nega les etiquetes seleccionades",
+        "no_results": "No s'ha trobat cap element",
+        "tip_1": "Els filtres d'ubicació i etiquetes utilitzen l'operació «O». Si se'n selecciona més d'un, \nnomés se'n requerirà un per a coincidència.",
+        "add": "Afegeix",
+        "field_selector": "Selector del camp",
+        "field_value": "Valor del camp",
+        "first": "Primer",
+        "include_archive": "Inclou els articles arxivats",
+        "last": "Últim",
+        "next_page": "Pàgina següent",
+        "options": "Opcions",
+        "order_by": "Ordena per",
+        "tip_2": "Les cerques amb el prefix «#» sol·licitaran un ID d'un actiu (per exemple, «#000-001»)",
+        "tip_3": "Els filtres de camp utilitzen l'operació «O». Si se'n selecciona més d'un, \nnomés se'n requerirà un per a coincidència.",
+        "tips": "Consells",
+        "tips_sub": "Consells de cerca",
+        "updated_at": "Actualitzat a",
+        "query_id": "S'està consultant el número d'identificació de l'actiu: { id }",
+        "pages": "Pàgina { page } de { totalPages }",
+        "prev_page": "Pàgina anterior",
+        "reset_search": "Reinicia la cerca",
+        "results": "{ total } resultats"
+    },
+    "profile": {
+        "active": "Actiu",
+        "change_password": "Canvia contrasenya",
+        "delete_account_sub": "Elimina el compte i totes les dades associades. Aquesta acció no es pot desfer.",
+        "enabled": "Habilitat",
+        "currency_format": "Format de moneda",
+        "current_password": "Contrasenya actual",
+        "delete_account": "Suprimeix el compte",
+        "gen_invite": "Genera un enllaç d'invitació",
+        "group_settings": "Ajustos del grup"
     }
 }

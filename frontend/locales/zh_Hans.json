@@ -17,7 +17,7 @@
                 "selectable": {
                     "card": "卡片模式",
                     "items": "物品",
-                    "no_items": "没有物品可用展示",
+                    "no_items": "没有可展示的物品",
                     "table": "表格模式"
                 }
             }
