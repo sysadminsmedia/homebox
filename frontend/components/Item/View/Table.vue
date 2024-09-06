@@ -1,12 +1,12 @@
 <template>
-  <BaseCard class="overflow-clip">
+  <BaseCard class="overflow-hidden">
     <table class="table w-full">
       <thead>
         <tr>
           <th
             v-for="h in headers"
             :key="h.value"
-            class="text-no-transform text-sm bg-neutral text-neutral-content cursor-pointer"
+            class="text-no-transform cursor-pointer bg-neutral text-sm text-neutral-content"
             @click="sortBy(h.value)"
           >
             <div
@@ -24,8 +24,8 @@
                 :class="`inline-flex ${sortByProperty === h.value ? '' : 'opacity-0'}`"
               >
                 <span class="swap swap-rotate" :class="{ 'swap-active': pagination.descending }">
-                  <MdiArrowDown class="swap-on h-5 w-5" />
-                  <MdiArrowUp class="swap-off h-5 w-5" />
+                  <MdiArrowDown class="swap-on size-5" />
+                  <MdiArrowUp class="swap-off size-5" />
                 </span>
               </div>
             </div>
@@ -53,8 +53,8 @@
               <Currency :amount="d.purchasePrice" />
             </template>
             <template v-else-if="cell(h) === 'cell-insured'">
-              <MdiCheck v-if="d.insured" class="text-green-500 h-5 w-5 inline" />
-              <MdiClose v-else class="text-red-500 h-5 w-5 inline" />
+              <MdiCheck v-if="d.insured" class="inline size-5 text-green-500" />
+              <MdiClose v-else class="inline size-5 text-red-500" />
             </template>
             <slot v-else :name="cell(h)" v-bind="{ item: d }">
               {{ extractValue(d, h.value) }}
@@ -63,9 +63,9 @@
         </tr>
       </tbody>
     </table>
-    <div v-if="items.length > 10" class="border-t p-3 justify-end flex gap-3">
+    <div v-if="items.length > 10" class="flex justify-end gap-3 border-t p-3">
       <div class="flex items-center">Rows per page</div>
-      <select v-model.number="pagination.rowsPerPage" class="select select-sm select-primary">
+      <select v-model.number="pagination.rowsPerPage" class="select select-primary select-sm">
         <option :value="10">10</option>
         <option :value="25">25</option>
         <option :value="50">50</option>

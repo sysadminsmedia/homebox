@@ -1,7 +1,7 @@
 <template>
   <div>
     <AppImportDialog v-model="modals.import" />
-    <BaseContainer class="flex flex-col gap-4 mb-6">
+    <BaseContainer class="mb-6 flex flex-col gap-4">
       <BaseCard>
         <template #title>
           <BaseSectionHeader>
@@ -10,7 +10,7 @@
             <template #description> Generate different reports for your inventory. </template>
           </BaseSectionHeader>
         </template>
-        <div class="border-t px-6 pb-3 border-gray-300 divide-gray-300 divide-y">
+        <div class="divide-y divide-gray-300 border-t border-gray-300 px-6 pb-3">
           <DetailAction @action="navigateTo('/reports/label-generator')">
             <template #title>Asset ID Labels</template>
             Generates a printable PDF of labels for a range of Asset ID. These are not specific to your inventory so you
@@ -39,7 +39,7 @@
             </template>
           </BaseSectionHeader>
         </template>
-        <div class="border-t px-6 pb-3 border-gray-300 divide-gray-300 divide-y">
+        <div class="divide-y divide-gray-300 border-t border-gray-300 px-6 pb-3">
           <DetailAction @action="modals.import = true">
             <template #title>Import Inventory</template>
             Imports the standard CSV format for Homebox. Without an <code>HB.import_ref</code> column, this will
@@ -62,7 +62,7 @@
             </template>
           </BaseSectionHeader>
         </template>
-        <div class="border-t px-6 pb-3 border-gray-300 divide-gray-300 divide-y">
+        <div class="divide-y divide-gray-300 border-t border-gray-300 px-6 pb-3">
           <DetailAction @action="ensureAssetIDs">
             <template #title>Ensure Asset IDs</template>
             Ensures that all items in your inventory have a valid asset_id field. This is done by finding the highest

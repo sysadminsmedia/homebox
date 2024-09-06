@@ -4,11 +4,11 @@
     <p>
       {{ $t("components.app.import_dialog.description") }}
     </p>
-    <div class="alert alert-warning shadow-lg mt-4">
+    <div class="alert alert-warning mt-4 shadow-lg">
       <div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="stroke-current flex-shrink-0 h-6 w-6 mb-auto"
+          class="mb-auto size-6 shrink-0 stroke-current"
           fill="none"
           viewBox="0 0 24 24"
         >
@@ -30,10 +30,10 @@
         <input ref="importRef" type="file" class="hidden" accept=".csv,.tsv" @change="setFile" />
 
         <BaseButton type="button" @click="uploadCsv">
-          <MdiUpload class="h-5 w-5 mr-2" />
+          <MdiUpload class="mr-2 size-5" />
           {{ $t("components.app.import_dialog.upload") }}
         </BaseButton>
-        <p class="text-center pt-4 -mb-5">
+        <p class="-mb-5 pt-4 text-center">
           {{ importCsv?.name }}
         </p>
       </div>

@@ -1,7 +1,7 @@
 <template>
   <div
     ref="el"
-    class="h-24 w-full border-2 border-primary border-dashed grid place-content-center"
+    class="grid h-24 w-full place-content-center border-2 border-dashed border-primary"
     :class="isOverDropZone ? 'bg-primary bg-opacity-10' : ''"
   >
     <slot />

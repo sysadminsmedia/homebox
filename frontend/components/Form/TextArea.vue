@@ -3,7 +3,7 @@
     <label class="label">
       <span class="label-text">{{ label }}</span>
     </label>
-    <textarea ref="el" v-model="value" class="textarea w-full textarea-bordered h-28" :placeholder="placeholder" />
+    <textarea ref="el" v-model="value" class="textarea textarea-bordered h-28 w-full" :placeholder="placeholder" />
     <label v-if="limit" class="label">
       <span class="label-text-alt"></span>
       <span class="label-text-alt"> {{ valueLen }}/{{ limit }}</span>
@@ -16,7 +16,7 @@
     <textarea
       ref="el"
       v-model="value"
-      class="textarea textarea-bordered w-full col-span-3 mt-3 h-28"
+      class="textarea textarea-bordered col-span-3 mt-3 h-28 w-full"
       auto-grow
       :placeholder="placeholder"
       auto-height

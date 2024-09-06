@@ -9,7 +9,7 @@
     <label class="label">
       <span class="label-text">{{ label }}</span>
     </label>
-    <input v-model="value" :placeholder="placeholder" class="input input-bordered col-span-3 w-full mt-2" />
+    <input v-model="value" :placeholder="placeholder" class="input input-bordered col-span-3 mt-2 w-full" />
   </div>
 </template>
 

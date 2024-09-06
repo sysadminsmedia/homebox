@@ -8,10 +8,10 @@
             v-if="selected"
             :class="['absolute inset-y-0 right-0 flex  items-center pr-4', active ? 'text-white' : 'text-primary']"
           >
-            <MdiCheck class="h-5 w-5" aria-hidden="true" />
+            <MdiCheck class="size-5" aria-hidden="true" />
           </span>
         </div>
-        <div v-if="cast(item.value).name != cast(item.value).treeString" class="text-xs mt-1">
+        <div v-if="cast(item.value).name != cast(item.value).treeString" class="mt-1 text-xs">
           {{ cast(item.value).treeString }}
         </div>
       </div>

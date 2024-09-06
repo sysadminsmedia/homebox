@@ -11,6 +11,7 @@ module.exports = {
     "@nuxtjs/eslint-config-typescript",
     "plugin:vue/vue3-recommended",
     "plugin:prettier/recommended",
+    "plugin:tailwindcss/recommended",
   ],
   parserOptions: {
     ecmaVersion: "latest",

@@ -296,7 +296,7 @@
 <template>
   <div class="print:hidden">
     <AppToast />
-    <div class="container max-w-4xl mx-auto p-4 pt-6 prose">
+    <div class="container prose mx-auto max-w-4xl p-4 pt-6">
       <h1>Homebox Label Generator</h1>
       <p>
         The Homebox Label Generator is a tool to help you print labels for your Homebox inventory. These are intended to
@@ -332,14 +332,14 @@
           </ol>
         </li>
       </ul>
-      <div class="flex gap-2 flex-wrap">
+      <div class="flex flex-wrap gap-2">
         <NuxtLink href="/tools">Tools</NuxtLink>
         <NuxtLink href="/home">Home</NuxtLink>
       </div>
     </div>
-    <div class="divider max-w-4xl mx-auto"></div>
-    <div class="container max-w-4xl mx-auto p-4">
-      <div class="grid grid-cols-2 mx-auto gap-3">
+    <div class="divider mx-auto max-w-4xl"></div>
+    <div class="container mx-auto max-w-4xl p-4">
+      <div class="mx-auto grid grid-cols-2 gap-3">
         <div v-for="(prop, i) in propertyInputs" :key="i" class="form-control w-full max-w-xs">
           <label class="label">
             <span class="label-text">{{ prop.label }}</span>
@@ -355,7 +355,7 @@
       </div>
       <div class="max-w-xs">
         <div class="form-control">
-          <label class="cursor-pointer label">
+          <label class="label cursor-pointer">
             <input v-model="bordered" type="checkbox" class="checkbox checkbox-secondary" />
             <span class="label-text">Bordered Labels</span>
           </label>
@@ -368,7 +368,7 @@
       </div>
     </div>
   </div>
-  <div class="flex flex-col items-center print-show">
+  <div class="flex flex-col items-center">
     <section
       v-for="(page, pi) in pages"
       :key="pi"

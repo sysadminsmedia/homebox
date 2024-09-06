@@ -65,9 +65,9 @@
     <BaseSectionHeader> Locations </BaseSectionHeader>
     <BaseCard>
       <div class="p-4">
-        <div class="flex justify-end mb-2">
+        <div class="mb-2 flex justify-end">
           <div class="btn-group">
-            <button class="btn btn-sm tooltip tooltip-top" data-tip="Collapse Tree" @click="closeAll">
+            <button class="btn tooltip tooltip-top btn-sm" data-tip="Collapse Tree" @click="closeAll">
               <MdiCollapseAllOutline />
             </button>
           </div>
