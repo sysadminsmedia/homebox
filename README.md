@@ -6,7 +6,7 @@
 <p align="center" style="width: 100;">
    <a href="https://homebox.sysadminsmedia.com">Docs</a>
    |
-   <a href="https://homebox.fly.dev">Demo</a>
+   <a href="https://demo.homebox.software">Demo</a>
    |
    <a href="https://discord.gg/aY4DCkpNA9">Discord</a>
 </p>
