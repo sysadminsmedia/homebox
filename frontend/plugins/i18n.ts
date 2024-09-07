@@ -1,19 +1,22 @@
 import type { CompileError, MessageCompiler, MessageContext } from "vue-i18n";
 import { createI18n } from "vue-i18n";
 import { IntlMessageFormat } from "intl-messageformat";
+import { messages } from "./messages";
 
 export default defineNuxtPlugin(({ vueApp }) => {
   function checkDefaultLanguage() {
     let matched = null;
-    const languages = Object.getOwnPropertyNames(messages())
+    const languages = Object.getOwnPropertyNames(messages());
     languages.forEach(lang => {
-      if (lang === navigator.language.replace('-', '_')) {
-        matched = lang;
-      }
+      navigator.languages.forEach(language => {
+        if (lang === language) {
+          matched = lang;
+        }
+      });
     });
     if (!matched) {
       languages.forEach(lang => {
-        const languagePartials = navigator.language.split('-')[0]
+        const languagePartials = navigator.language.split("-")[0];
         if (lang === languagePartials) {
           matched = lang;
         }
@@ -50,14 +53,4 @@ export const messageCompiler: MessageCompiler = (message, { locale, key, onError
     onError && onError(new Error("not support for AST") as CompileError);
     return () => key;
   }
-};
-
-export const messages: Object = () => {
-  let messages = {};
-  const modules = import.meta.glob('~//locales/**.json', { eager: true });
-  for (const path in modules) {
-    const key = path.slice(9, -5);
-    messages[key] = modules[path];
-  }
-  return messages;
 };
