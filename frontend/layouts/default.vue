@@ -13,7 +13,7 @@
     <div class="drawer drawer-mobile">
       <input id="my-drawer-2" v-model="drawerToggle" type="checkbox" class="drawer-toggle" />
       <div class="drawer-content justify-center bg-base-300 pt-20 lg:pt-0">
-        <AppHeaderDecor class="-mt-10 hidden lg:block" />
+        <AppHeaderDecor v-if="preferences.displayHeaderDecor" class="-mt-10 hidden lg:block" />
         <!-- Button -->
         <div class="navbar drawer-button fixed top-0 z-[99] bg-primary shadow-md lg:hidden">
           <label for="my-drawer-2" class="btn btn-square btn-ghost drawer-button text-base-100 lg:hidden">
@@ -110,6 +110,8 @@
   import MdiAccount from "~icons/mdi/account";
   import MdiCog from "~icons/mdi/cog";
   const username = computed(() => authCtx.user?.name || "User");
+
+  const preferences = useViewPreferences();
 
   const pubApi = usePublicApi();
   const { data: status } = useAsyncData(async () => {
