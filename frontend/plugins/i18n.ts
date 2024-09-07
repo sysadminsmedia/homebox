@@ -1,19 +1,15 @@
-import type { CompileError, MessageCompiler, MessageContext } from "vue-i18n";
+import type { CompileError, MessageContext } from "vue-i18n";
 import { createI18n } from "vue-i18n";
 import { IntlMessageFormat } from "intl-messageformat";
-import { messages } from "./messages";
 
 export default defineNuxtPlugin(({ vueApp }) => {
   function checkDefaultLanguage() {
     let matched = null;
     const languages = Object.getOwnPropertyNames(messages());
-    languages.forEach(lang => {
-      navigator.languages.forEach(language => {
-        if (lang === language) {
-          matched = lang;
-        }
-      });
-    });
+    const matching = navigator.languages.filter(lang => languages.includes(lang));
+    if (matching.length > 0) {
+      matched = matching[0];
+    }
     if (!matched) {
       languages.forEach(lang => {
         const languagePartials = navigator.language.split("-")[0];
@@ -25,17 +21,38 @@ export default defineNuxtPlugin(({ vueApp }) => {
     return matched;
   }
   const i18n = createI18n({
-    legacy: false,
-    globalInjection: true,
-    locale: checkDefaultLanguage() || "en",
     fallbackLocale: "en",
+    globalInjection: true,
+    legacy: false,
+    locale: checkDefaultLanguage() || "en",
     messageCompiler,
     messages: messages(),
   });
   vueApp.use(i18n);
 });
 
-export const messageCompiler: MessageCompiler = (message, { locale, key, onError }) => {
+export const messages: Object = () => {
+  const messages: Record<string, any> = {};
+  const modules = import.meta.glob("~//locales/**.json", { eager: true });
+  for (const path in modules) {
+    const key = path.slice(9, -5);
+    messages[key] = modules[path];
+  }
+  return messages;
+};
+
+export const messageCompiler: (
+  message: String | any,
+  {
+    locale,
+    key,
+    onError,
+  }: {
+    locale: any;
+    key: any;
+    onError: any;
+  }
+) => (ctx: MessageContext) => unknown = (message, { locale, key, onError }) => {
   if (typeof message === "string") {
     /**
      * You can tune your message compiler performance more with your cache strategy or also memoization at here
