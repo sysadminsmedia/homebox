@@ -8,13 +8,13 @@
         <input
           v-model="internalSearch"
           tabindex="0"
-          class="input w-full items-center flex flex-wrap border border-gray-400 rounded-lg"
+          class="input flex w-full flex-wrap items-center rounded-lg border border-gray-400"
           @keyup.enter="selectFirst"
         />
         <button
           v-if="!!modelValue && Object.keys(modelValue).length !== 0"
           style="transform: translateY(-50%)"
-          class="top-1/2 absolute right-2 btn btn-xs btn-circle no-animation"
+          class="btn btn-circle btn-xs no-animation absolute right-2 top-1/2"
           @click="clear"
         >
           x
@@ -23,7 +23,7 @@
       <ul
         tabindex="0"
         style="display: inline"
-        class="dropdown-content mb-1 menu shadow border border-gray-400 rounded bg-base-100 w-full z-[9999] max-h-60 overflow-y-scroll"
+        class="dropdown-content menu z-[9999] mb-1 max-h-60 w-full overflow-y-scroll rounded border border-gray-400 bg-base-100 shadow"
       >
         <li v-for="(obj, idx) in filtered" :key="idx">
           <div type="button" @click="select(obj)">

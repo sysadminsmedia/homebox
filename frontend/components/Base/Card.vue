@@ -2,12 +2,12 @@
   <div class="card bg-base-100 shadow-xl sm:rounded-lg">
     <div v-if="$slots.title" class="px-4 py-5 sm:px-6">
       <component :is="collapsable ? 'button' : 'div'" v-on="collapsable ? { click: toggle } : {}">
-        <h3 class="text-lg font-medium leading-6 flex items-center">
+        <h3 class="flex items-center text-lg font-medium leading-6">
           <slot name="title"></slot>
           <template v-if="collapsable">
-            <span class="ml-2 swap swap-rotate" :class="`${collapsed ? 'swap-active' : ''}`">
-              <MdiChevronRight class="h-6 w-6 swap-on" />
-              <MdiChevronDown class="h-6 w-6 swap-off" />
+            <span class="swap swap-rotate ml-2" :class="`${collapsed ? 'swap-active' : ''}`">
+              <MdiChevronRight class="swap-on size-6" />
+              <MdiChevronDown class="swap-off size-6" />
             </span>
           </template>
         </h3>

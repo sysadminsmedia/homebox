@@ -1,37 +1,37 @@
 <template>
   <div ref="el" class="dropdown" :class="{ 'dropdown-open': dropdownOpen }">
     <button ref="btn" tabindex="0" class="btn btn-xs" @click="toggle">
-      {{ label }} {{ len }} <MdiChevronDown class="h-4 w-4" />
+      {{ label }} {{ len }} <MdiChevronDown class="size-4" />
     </button>
-    <div tabindex="0" class="dropdown-content mt-1 w-64 shadow bg-base-100 rounded-md">
-      <div class="pt-4 px-4 shadow-sm mb-1">
-        <input v-model="search" type="text" placeholder="Search…" class="input input-sm input-bordered w-full mb-2" />
+    <div tabindex="0" class="dropdown-content mt-1 w-64 rounded-md bg-base-100 shadow">
+      <div class="mb-1 px-4 pt-4 shadow-sm">
+        <input v-model="search" type="text" placeholder="Search…" class="input input-bordered input-sm mb-2 w-full" />
       </div>
-      <div class="overflow-y-auto max-h-72 divide-y">
+      <div class="max-h-72 divide-y overflow-y-auto">
         <label
           v-for="v in selectedView"
           :key="v"
-          class="cursor-pointer px-4 label flex justify-between hover:bg-base-200"
+          class="label flex cursor-pointer justify-between px-4 hover:bg-base-200"
         >
           <span class="label-text mr-2">
             <slot name="display" v-bind="{ item: v }">
               {{ v[display] }}
             </slot>
           </span>
-          <input v-model="selected" type="checkbox" :value="v" class="checkbox checkbox-sm checkbox-primary" />
+          <input v-model="selected" type="checkbox" :value="v" class="checkbox checkbox-primary checkbox-sm" />
         </label>
         <hr v-if="selected.length > 0" />
         <label
           v-for="v in unselected"
           :key="v"
-          class="cursor-pointer px-4 label flex justify-between hover:bg-base-200"
+          class="label flex cursor-pointer justify-between px-4 hover:bg-base-200"
         >
           <span class="label-text mr-2">
             <slot name="display" v-bind="{ item: v }">
               {{ v[display] }}
             </slot>
           </span>
-          <input v-model="selected" type="checkbox" :value="v" class="checkbox checkbox-sm checkbox-primary" />
+          <input v-model="selected" type="checkbox" :value="v" class="checkbox checkbox-primary checkbox-sm" />
         </label>
       </div>
     </div>
@@ -97,7 +97,10 @@
   const unselected = computed(() => {
     return props.options.filter(o => {
       if (searchFold.value.length > 0) {
-        return o[props.display].toLowerCase().includes(searchFold.value) && selected.value.every(s => s[props.uniqueField] !== o[props.uniqueField]);
+        return (
+          o[props.display].toLowerCase().includes(searchFold.value) &&
+          selected.value.every(s => s[props.uniqueField] !== o[props.uniqueField])
+        );
       }
       return selected.value.every(s => s[props.uniqueField] !== o[props.uniqueField]);
     });

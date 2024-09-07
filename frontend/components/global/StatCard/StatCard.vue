@@ -1,6 +1,6 @@
 <template>
-  <div class="stats bg-neutral shadow rounded-md">
-    <div class="stat text-neutral-content text-center space-y-1 p-3">
+  <div class="stats rounded-md bg-neutral shadow">
+    <div class="stat space-y-1 p-3 text-center text-neutral-content">
       <div class="stat-title text-neutral-content">{{ title }}</div>
       <div class="stat-value text-2xl">
         <Currency v-if="type === 'currency'" :amount="value" />

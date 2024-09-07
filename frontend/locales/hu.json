@@ -1,0 +1,84 @@
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "upload": "Feltöltés",
+                "title": "CSV fájl importálása"
+            }
+        },
+        "global": {
+            "page_qr_code": {
+                "page_url": "Oldal URL"
+            },
+            "password_score": {
+                "password_strength": "Jelszó erőssége"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "title": "Tétel létrehozása",
+                "photo_button": "Fénykép 📷"
+            },
+            "view": {
+                "selectable": {
+                    "card": "Kártya",
+                    "items": "Tételek",
+                    "no_items": "Nincs megjeleníthető tétel",
+                    "table": "Táblázat"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "title": "Címke létrehozása"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "Helyszín létrehozása"
+            }
+        }
+    },
+    "global": {
+        "build": "Build: { build }",
+        "confirm": "Megerősítés",
+        "create": "Létrehozás",
+        "create_and_add": "Létrehozás és újabb hozzáadása",
+        "created": "Létrehozva",
+        "email": "Email",
+        "follow_dev": "Fejlesztő követése",
+        "github": "GitHub Projekt",
+        "items": "Tételek",
+        "join_discord": "Csatlakozás a Discordhoz",
+        "labels": "Címkék",
+        "locations": "Helyszínek",
+        "name": "Név",
+        "password": "Jelszó",
+        "read_docs": "Dokumentáció elolvasása",
+        "search": "Keresés",
+        "sign_out": "Kilépés",
+        "submit": "Elküldés",
+        "version": "Verzió: { version }",
+        "welcome": "Üdv, { username }"
+    },
+    "index": {
+        "disabled_registration": "Regisztráció kikapcsolva",
+        "dont_join_group": "Nem akarsz csoporthoz csatlakozni?",
+        "joining_group": "Egy létező csoporthoz csatlakozol!",
+        "login": "Belépés",
+        "register": "Regisztráció",
+        "remember_me": "Emlékezzen rám",
+        "set_email": "Mi az email címed?",
+        "set_name": "Mi a neved?",
+        "set_password": "Jelszó beállítása",
+        "tagline": "Kövesd, rendszerezd és igazgasd a tárgyaidat."
+    },
+    "items": {
+        "add": "Hozzáadás",
+        "created_at": "Létrehozás dátuma",
+        "field_selector": "Mezőválasztó",
+        "field_value": "Mező értéke",
+        "first": "Első",
+        "custom_fields": "Egyedi mezők"
+    }
+}

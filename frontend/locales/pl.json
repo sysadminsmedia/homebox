@@ -4,7 +4,8 @@
             "import_dialog": {
                 "description": "Zaimportuj plik CSV zawierający Twoje przedmioty, etykiety i lokalizacje. Zobacz dokumentację, aby uzyskać \nwięcej informacji na temat wymaganego formatu.",
                 "title": "Zaimportuj plik CSV",
-                "upload": "Prześlij"
+                "upload": "Prześlij",
+                "change_warning": "Zachowanie przy imporcie z istniejącymi import_ref zostało zmienione. Jeśli import_ref jest obecny w pliku CSV, \nprzedmiot zostanie zaktualizowany zgodnie z wartościami w pliku CSV."
             }
         },
         "global": {
@@ -110,9 +111,18 @@
         "group_settings_sub": "Ustawienia grupy udostępnione. Możesz potrzebować odświeżyć przeglądarkę, aby niektóre ustawienia zostały zastosowane.",
         "inactive": "Nieaktywny",
         "new_password": "Nowe hasło",
-        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Powiadomiony",
+        "notifier_modal": "{type, select, true {Edytuj} false {Utwórz} other {Inny}} Powiadomiacz",
         "enabled": "Włączone",
         "gen_invite": "Wygeneruj link z zaproszeniem",
-        "group_settings": "Ustawienia grupy"
+        "group_settings": "Ustawienia grupy",
+        "notifiers": "Powiadomiacze",
+        "notifiers_sub": "Otrzymuj powiadomienia o nadchodzących przypomnieniach o konserwacji",
+        "theme_settings_sub": "Ustawienia motywu są przechowywane w lokalnej pamięci przeglądarki. Możesz zmienić motyw w dowolnym momencie. \nJeśli masz problemy z ustawieniem motywu, spróbuj odświeżyć przeglądarkę.",
+        "test": "Test",
+        "theme_settings": "Ustawienia tematu",
+        "update_group": "Zaktualizuj grupę",
+        "url": "Adres URL",
+        "user_profile": "Profil użytkownika",
+        "user_profile_sub": "Zaproś użytkowników i zarządzaj swoim kontem."
     }
 }

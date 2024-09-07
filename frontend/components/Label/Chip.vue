@@ -29,13 +29,13 @@
     :class="{
       'badge-lg p-4': size === 'lg',
       'p-3': size !== 'sm' && size !== 'lg',
-      'p-2 badge-sm': size === 'sm',
+      'badge-sm p-2': size === 'sm',
     }"
     :to="`/label/${label.id}`"
   >
     <label class="swap swap-rotate" :class="isActive ? 'swap-active' : ''">
-      <MdiArrowRight class="mr-2 swap-on" />
-      <MdiTagOutline class="mr-2 swap-off" />
+      <MdiArrowRight class="swap-on mr-2" />
+      <MdiTagOutline class="swap-off mr-2" />
     </label>
     {{ label.name }}
   </NuxtLink>

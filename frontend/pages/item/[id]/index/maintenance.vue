@@ -188,7 +188,7 @@
         <DatePicker v-model="entry.scheduledDate" label="Scheduled Date" />
         <FormTextArea v-model="entry.description" label="Notes" />
         <FormTextField v-model="entry.cost" autofocus label="Cost" />
-        <div class="py-2 flex justify-end">
+        <div class="flex justify-end py-2">
           <BaseButton type="submit" class="ml-2 mt-2">
             <template #icon>
               <MdiPost />
@@ -200,11 +200,11 @@
     </BaseModal>
 
     <section class="space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
         <StatCard
           v-for="stat in stats"
           :key="stat.id"
-          class="stats block shadow-xl border-l-primary"
+          class="stats block border-l-primary shadow-xl"
           :title="stat.title"
           :value="stat.value"
           :type="stat.type"
@@ -228,7 +228,7 @@
       </div>
       <div class="container space-y-6">
         <BaseCard v-for="e in log.entries" :key="e.id">
-          <BaseSectionHeader class="p-6 border-b border-b-gray-300">
+          <BaseSectionHeader class="border-b border-b-gray-300 p-6">
             <span class="text-base-content">
               {{ e.name }}
             </span>
@@ -253,7 +253,7 @@
           <div class="p-6">
             <Markdown :source="e.description" />
           </div>
-          <div class="flex justify-end p-4 gap-1">
+          <div class="flex justify-end gap-1 p-4">
             <BaseButton size="sm" @click="openEditDialog(e)">
               <template #icon>
                 <MdiEdit />
@@ -274,7 +274,7 @@
             class="relative block w-full rounded-lg border-2 border-dashed border-base-content p-12 text-center"
             @click="newEntry()"
           >
-            <MdiWrenchClock class="h-16 w-16 inline" />
+            <MdiWrenchClock class="inline size-16" />
             <span class="mt-2 block text-sm font-medium text-gray-900"> Create Your First Entry </span>
           </button>
         </div>

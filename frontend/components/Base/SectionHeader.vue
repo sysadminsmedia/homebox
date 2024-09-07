@@ -1,7 +1,7 @@
 <template>
   <div class="pb-3">
     <h3
-      class="text-3xl font-bold tracking-tight flex items-center"
+      class="flex items-center text-3xl font-bold tracking-tight"
       :class="{
         'text-neutral-content': dark,
         'text-content': !dark,

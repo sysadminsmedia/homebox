@@ -40,21 +40,21 @@
         <BaseCard v-if="breakpoints.lg">
           <ItemViewTable :items="itemTable.items" />
         </BaseCard>
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2">
           <ItemCard v-for="item in itemTable.items" :key="item.id" :item="item" />
         </div>
       </section>
 
       <section>
         <Subtitle> Storage Locations </Subtitle>
-        <div class="grid grid-cols-1 sm:grid-cols-2 card md:grid-cols-3 gap-4">
+        <div class="card grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
           <LocationCard v-for="location in locations" :key="location.id" :location="location" />
         </div>
       </section>
 
       <section>
         <Subtitle> Labels </Subtitle>
-        <div class="flex gap-4 flex-wrap">
+        <div class="flex flex-wrap gap-4">
           <LabelChip v-for="label in labels" :key="label.id" size="lg" :label="label" class="shadow-md" />
         </div>
       </section>
