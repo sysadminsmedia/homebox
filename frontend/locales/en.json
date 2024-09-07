@@ -123,7 +123,8 @@
     "update_group": "Update Group",
     "url": "URL",
     "user_profile": "User Profile",
-    "user_profile_sub": "Invite users, and manage your account."
+    "user_profile_sub": "Invite users, and manage your account.",
+    "display_header": "{ currentValue, select, true {Hide Header} false {Show Header} other {Not Hit}}"
   },
   "tools": {
     "reports": "Reports",

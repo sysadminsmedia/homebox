@@ -8,6 +8,7 @@
   import MdiFill from "~icons/mdi/fill";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiAccountMultiple from "~icons/mdi/account-multiple";
+  import type {ViewType} from "~/composables/use-preferences";
 
   definePageMeta({
     middleware: ["auth"],
@@ -29,6 +30,11 @@
 
     return resp.data;
   });
+
+  const preferences = useViewPreferences();
+  function setDisplayHeader() {
+    preferences.value.displayHeaderDecor = !preferences.value.displayHeaderDecor;
+  }
 
   // Currency Selection
   const currency = ref<CurrenciesCurrency>({
@@ -443,6 +449,9 @@
         </template>
 
         <div class="px-4 pb-4">
+          <div class="mb-3">
+            <BaseButton size="sm" @click="setDisplayHeader"> {{ $t("profile.display_header", { currentValue: preferences.displayHeaderDecor }) }} </BaseButton>
+          </div>
           <div class="rounded-box grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             <div
               v-for="theme in themes"
