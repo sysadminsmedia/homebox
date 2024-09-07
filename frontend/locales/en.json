@@ -124,5 +124,43 @@
     "url": "URL",
     "user_profile": "User Profile",
     "user_profile_sub": "Invite users, and manage your account."
+  },
+  "tools": {
+    "reports": "Reports",
+    "reports_sub": "Generate different reports for your inventory.",
+    "reports_set": {
+      "asset_labels": "Asset ID Labels",
+      "asset_labels_sub": "Generates a printable PDF of labels for a range of Asset ID. These are not specific to your inventory so you are able to print labels ahead of time and apply them to your inventory when you receive them.",
+      "asset_labels_button": "Label Generator",
+      "bill_of_materials": "Bill of Materials",
+      "bill_of_materials_sub": "Generates a CSV (Comma Separated Values) file that can be imported into a spreadsheet program. This is a summary of your inventory with basic item and pricing information.",
+      "bill_of_materials_button": "Generate BOM"
+    },
+    "import_export": "Import/Export",
+    "import_export_sub": "Import and export your inventory to and from a CSV file. This is useful for migrating your inventory to a new instance of Homebox.",
+    "import_export_set": {
+      "import": "Import Inventory",
+      "import_sub": "Imports the standard CSV format for Homebox. Without an '<code>'HB.import_ref'</code>' column, this will '<b>'not'</b>' overwrite any existing items in your inventory, only add new items. Rows with an '<code>'HB.import_ref'</code>' column are merged into existing items with the same import_ref, if one exists.",
+      "import_button": "Import Inventory",
+      "export": "Export Inventory",
+      "export_sub": "Exports the standard CSV format for Homebox. This will export all items in your inventory.",
+      "export_button": "Export Inventory"
+    },
+    "actions": "Inventory Actions",
+    "actions_sub": "Apply Actions to your inventory in bulk. These are irreversible actions. '<b>'Be careful.'</b>'",
+    "actions_set": {
+      "ensure_ids": "Ensure Asset IDs",
+      "ensure_ids_sub": "Ensures that all items in your inventory have a valid asset_id field. This is done by finding the highest current asset_id field in the database and applying the next value to each item that has an unset asset_id field. This is done in order of the created_at field.",
+      "ensure_ids_button": "Ensure Asset IDs",
+      "ensure_import_refs": "Ensure Import Refs",
+      "ensure_import_refs_sub": "Ensures that all items in your inventory have a valid import_ref field. This is done by randomly generating a 8 character string for each item that has an unset import_ref field.",
+      "ensure_import_refs_button": "Ensure Import Refs",
+      "zero_datetimes": "Zero Item Date Times",
+      "zero_datetimes_sub": "Resets the time value for all date time fields in your inventory to the beginning of the date. This is to fix a bug that was introduced early on in the development of the site that caused the time value to be stored with the time which caused issues with date fields displaying accurate values. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'",
+      "zero_datetimes_button": "Zero Item Date Times",
+      "set_primary_photo": "Set Primary Photo",
+      "set_primary_photo_sub": "In version v0.10.0 of Homebox, the primary image field was added to attachments of type photo. This action will set the primary image field to the first image in the attachments array in the database, if it is not already set. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'See GitHub PR #576'</a>'",
+      "set_primary_photo_button": "Set Primary Photo"
+    }
   }
 }
