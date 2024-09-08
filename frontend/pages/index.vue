@@ -181,7 +181,7 @@
             <MdiDiscord class="size-8" />
           </a>
           <a
-            href="https://homebox.sysadminsmedia.com/en/"
+            href="https://homebox.software/en/"
             class="tooltip"
             :data-tip="$t('global.read_docs')"
             target="_blank"

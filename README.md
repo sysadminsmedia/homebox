@@ -4,7 +4,7 @@
 
 <h1 align="center" style="margin-top: -10px"> HomeBox </h1>
 <p align="center" style="width: 100;">
-   <a href="https://homebox.sysadminsmedia.com">Docs</a>
+   <a href="https://homebox.software/en/">Docs</a>
    |
    <a href="https://demo.homebox.software">Demo</a>
    |
@@ -24,7 +24,7 @@ Check out screenshots of the project [here](https://imgur.com/a/5gLWt2j).
 
 ## Quick Start
 
-[Configuration & Docker Compose](https://homebox.sysadminsmedia.com/en/quick-start.html)
+[Configuration & Docker Compose](https://homebox.software/en/quick-start.html)
 
 ```bash
 # If using the rootless image, ensure data 
