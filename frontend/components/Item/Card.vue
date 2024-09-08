@@ -15,10 +15,14 @@
     <div class="col-span-4 flex grow flex-col gap-y-1 rounded-b bg-base-100 p-4 pt-2">
       <h2 class="line-clamp-2 text-ellipsis text-lg font-bold">{{ item.name }}</h2>
       <div class="divider my-0"></div>
-      <div class="flex justify-between gap-2">
+      <div class="flex gap-2">
         <div v-if="item.insured" class="tooltip z-10" data-tip="Insured">
           <MdiShieldCheck class="size-5 text-primary" />
         </div>
+        <div v-if="item.archived" class="tooltip z-10" data-tip="Archived">
+          <MdiArchive class="size-5 text-red-700" />
+        </div>
+        <div class="grow"></div>
         <div class="tooltip" data-tip="Quantity">
           <span class="badge badge-primary badge-sm size-5 text-xs">
             {{ item.quantity }}
@@ -36,6 +40,7 @@
 <script setup lang="ts">
   import type { ItemOut, ItemSummary } from "~~/lib/api/types/data-contracts";
   import MdiShieldCheck from "~icons/mdi/shield-check";
+  import MdiArchive from "~icons/mdi/archive";
 
   const api = useUserApi();
 
