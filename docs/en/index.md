@@ -15,6 +15,9 @@ hero:
     - theme: alt
       text: Tips and Tricks
       link: /en/tips-tricks
+    - theme: alt
+      text: Try It Out
+      link: https://demo.homebox.software
 
 features:
   - title: Add/Update/Delete Items
