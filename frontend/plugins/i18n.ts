@@ -20,11 +20,12 @@ export default defineNuxtPlugin(({ vueApp }) => {
     }
     return matched;
   }
+  const preferences = useViewPreferences();
   const i18n = createI18n({
     fallbackLocale: "en",
     globalInjection: true,
     legacy: false,
-    locale: checkDefaultLanguage() || "en",
+    locale: preferences.value.language || checkDefaultLanguage() || "en",
     messageCompiler,
     messages: messages(),
   });

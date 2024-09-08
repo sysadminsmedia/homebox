@@ -11,6 +11,7 @@ export type LocationViewPreferences = {
   theme: DaisyTheme;
   itemsPerTablePage: number;
   displayHeaderDecor: boolean;
+  language?: string;
 };
 
 /**
@@ -28,6 +29,7 @@ export function useViewPreferences(): Ref<LocationViewPreferences> {
       theme: "homebox",
       itemsPerTablePage: 10,
       displayHeaderDecor: true,
+      language: null,
     },
     { mergeDefaults: true }
   );

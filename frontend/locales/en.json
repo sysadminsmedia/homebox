@@ -124,7 +124,9 @@
     "url": "URL",
     "user_profile": "User Profile",
     "user_profile_sub": "Invite users, and manage your account.",
-    "display_header": "{ currentValue, select, true {Hide Header} false {Show Header} other {Not Hit}}"
+    "display_header": "{ currentValue, select, true {Hide Header} false {Show Header} other {Not Hit}}",
+    "language": "Language",
+    "update_language": "Update Language"
   },
   "tools": {
     "reports": "Reports",
@@ -163,5 +165,25 @@
       "set_primary_photo_sub": "In version v0.10.0 of Homebox, the primary image field was added to attachments of type photo. This action will set the primary image field to the first image in the attachments array in the database, if it is not already set. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'See GitHub PR #576'</a>'",
       "set_primary_photo_button": "Set Primary Photo"
     }
+  },
+  "languages": {
+    "ca": "Catalan",
+    "de": "German",
+    "en": "English",
+    "es": "Spanish",
+    "fr": "French",
+    "hu": "Hungarian",
+    "it": "Italian",
+    "nl": "Dutch",
+    "pl": "Polish",
+    "pt-BR": "Portuguese (Brazil)",
+    "ru": "Russian",
+    "sl": "Slovenian",
+    "sv": "Swedish",
+    "tr": "Turkish",
+    "zh-CN": "Chinese (Simplified)",
+    "zh-HK": "Chinese (Hong Kong)",
+    "zh-MO": "Chinese (Macau)",
+    "zh-TW": "Chinese (Traditional)"
   }
 }

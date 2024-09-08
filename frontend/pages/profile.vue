@@ -8,7 +8,6 @@
   import MdiFill from "~icons/mdi/fill";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiAccountMultiple from "~icons/mdi/account-multiple";
-  import type {ViewType} from "~/composables/use-preferences";
 
   definePageMeta({
     middleware: ["auth"],
@@ -34,6 +33,9 @@
   const preferences = useViewPreferences();
   function setDisplayHeader() {
     preferences.value.displayHeaderDecor = !preferences.value.displayHeaderDecor;
+  }
+  function setLanguage(lang: string) {
+    preferences.value.language = lang;
   }
 
   // Currency Selection
@@ -368,6 +370,19 @@
           <div v-if="token" class="flex items-center pl-1 pt-4">
             <CopyText class="btn btn-square btn-outline btn-primary btn-sm mr-2" :text="token" />
             {{ token }}
+          </div>
+        </div>
+        <div class="p-5 pt-0 form-control w-full">
+          <label class="label">
+            <span class="label-text">{{ $t("profile.language") }}</span>
+          </label>
+          <select v-model="$i18n.locale" class="select select-bordered">
+            <option v-for="lang in $i18n.availableLocales" :key="lang" :value="lang">
+              {{ $t(`languages.${lang}`) }}
+            </option>
+          </select>
+          <div class="mt-4">
+            <BaseButton size="sm" @click="setLanguage($i18n.locale)"> {{ $t("profile.update_language") }} </BaseButton>
           </div>
         </div>
       </BaseCard>
