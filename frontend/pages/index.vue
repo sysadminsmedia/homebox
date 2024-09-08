@@ -273,7 +273,7 @@
             </BaseButton>
             <p v-else class="inline-flex items-center gap-2 text-sm italic text-base-content">
               <MdiLock class="inline-block size-4" />
-              {{ $t("disabled_registration") }}
+              {{ $t("index.disabled_registration") }}
             </p>
           </div>
         </div>
