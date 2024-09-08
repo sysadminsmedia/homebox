@@ -6,14 +6,14 @@ export default defineNuxtPlugin(({ vueApp }) => {
   function checkDefaultLanguage() {
     let matched = null;
     const languages = Object.getOwnPropertyNames(messages());
-    const matching = navigator.languages.filter(lang => languages.includes(lang));
+    const matching = navigator.languages.filter(lang => languages.some(l => l.toLowerCase() === lang.toLowerCase()));
     if (matching.length > 0) {
       matched = matching[0];
     }
     if (!matched) {
       languages.forEach(lang => {
         const languagePartials = navigator.language.split("-")[0];
-        if (lang === languagePartials) {
+        if (lang.toLowerCase() === languagePartials) {
           matched = lang;
         }
       });
