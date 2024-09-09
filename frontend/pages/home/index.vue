@@ -38,7 +38,7 @@
         <Subtitle> Recently Added </Subtitle>
 
         <BaseCard v-if="breakpoints.lg">
-          <ItemViewTable :items="itemTable.items" />
+          <ItemViewTable :items="itemTable.items" disable-controls />
         </BaseCard>
         <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2">
           <ItemCard v-for="item in itemTable.items" :key="item.id" :item="item" />
