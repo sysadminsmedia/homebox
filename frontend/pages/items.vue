@@ -158,6 +158,12 @@
     return data;
   });
 
+  watch(includeArchived, (newV, oldV) => {
+    if (newV !== oldV) {
+      search();
+    }
+  });
+
   watch(fieldSelector, (newV, oldV) => {
     if (newV === false && oldV === true) {
       fieldTuples.value = [];
