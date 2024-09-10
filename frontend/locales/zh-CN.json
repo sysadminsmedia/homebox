@@ -123,6 +123,8 @@
         "theme_settings": "主题设置",
         "url": "网址",
         "user_profile": "用户资料",
-        "user_profile_sub": "邀请用户共同管理您的资产。"
+        "user_profile_sub": "邀请用户共同管理您的资产。",
+        "update_language": "更新语言",
+        "language": "语言"
     }
 }
