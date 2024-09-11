@@ -131,18 +131,28 @@
         "import_export_set": {
             "import_button": "Inventar importieren",
             "import": "Inventar importieren",
-            "export_sub": "Exportiert das Standard-CSV-Format für Homebox. Damit werden alle Artikel in deinem Inventar exportiert."
+            "export_sub": "Exportiert das Standard-CSV-Format für Homebox. Damit werden alle Artikel in deinem Inventar exportiert.",
+            "export": "Inventar exportieren",
+            "import_sub": "Importiert das Standard-CSV-Format für Homebox. Ohne eine '<code>'HB.import_ref'</code>' Spalte werden vorhandenen Artikel in Ihrem Bestand '<b>'nicht'</b>' überschrieben, sondern nur neue Artikel hinzugefügt. Zeilen mit einer '<code>'HB.import_ref'</code>' Spalte werden mit vorhandenen Artikeln mit der gleichen import_ref zusammengeführt, sofern vorhanden."
         },
         "reports_set": {
             "bill_of_materials_button": "Stückliste generieren",
             "asset_labels_button": "Etikettengenerator",
             "bill_of_materials": "Stückliste",
             "bill_of_materials_sub": "Erzeugt eine CSV-Datei (Comma Separated Values), die in ein Tabellenkalkulationsprogramm importiert werden kann. Dies ist eine Zusammenfassung des Bestands mit grundlegenden Artikel- und Preisinformationen.",
-            "asset_labels_sub": "Erzeugt eine druckbare PDF-Datei mit Etiketten für eine Reihe von Asset-IDs. Diese sind nicht spezifisch für deine Inventargegenstände, so dass du die Etiketten im Voraus ausdrucken und bei Erhalt auf deinen Inventargegenständen anbringen kannst."
+            "asset_labels_sub": "Erzeugt eine druckbare PDF-Datei mit Etiketten für eine Reihe von Asset-IDs. Diese sind nicht spezifisch für deine Inventargegenstände, so dass du die Etiketten im Voraus ausdrucken und bei Erhalt auf deinen Inventargegenständen anbringen kannst.",
+            "asset_labels": "Asset-ID-Etiketten"
         },
         "import_export": "Import/Export",
         "reports_sub": "Erstelle verschiedene Berichte für dein Inventar.",
         "import_export_sub": "Importieren und exportieren des Inventars in und aus einer CSV-Datei. Dies ist nützlich, um das Inventar auf eine neue Instanz von Homebox zu migrieren.",
-        "reports": "Berichte"
+        "reports": "Berichte",
+        "actions": "Inventar Aktionen",
+        "actions_sub": "Aktionen in großen Mengen auf das Inventar anwenden. Diese Aktionen sind unumkehrbar. '<b>'Sei vorsichtig.'</b>'",
+        "actions_set": {
+            "ensure_ids_button": "Sicherstellen von Asset-IDs",
+            "ensure_ids": "Sicherstellen von Asset-IDs",
+            "ensure_import_refs": "Sicherstellen, dass Import-Referenzen importiert wurden"
+        }
     }
 }
