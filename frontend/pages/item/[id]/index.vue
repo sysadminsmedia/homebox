@@ -177,6 +177,10 @@
         text: item.value?.insured ? "Yes" : "No",
       },
       {
+        name: "Archived",
+        text: item.value?.archived ? "Yes" : "No",
+      },
+      {
         name: "Notes",
         type: "markdown",
         text: item.value?.notes,
