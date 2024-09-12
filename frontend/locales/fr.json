@@ -97,7 +97,9 @@
         "update_group": "Mettre à jour le groupe",
         "theme_settings": "Paramètres du thème",
         "theme_settings_sub": "Les paramètres du thème sont stockés dans le navigateur. Vous pouvez les changer à tout moment. Si vous\nrencontrez des problèmes, il est conseillé de rafraichir la page.",
-        "notifier_modal": "Notifications { type, select, true {Edit} false {Create} other {Other}}"
+        "notifier_modal": "Notifications { type, select, true {Edit} false {Create} other {Other}}",
+        "update_language": "Mettre à jour la langue",
+        "language": "Langue"
     },
     "items": {
         "add": "Ajouter",
@@ -124,5 +126,13 @@
         "tips_sub": "Conseils pour la recherche",
         "updated_at": "Mis à jour le",
         "results": "{ total } résultats"
+    },
+    "tools": {
+        "reports_set": {
+            "bill_of_materials": "Nomenclature",
+            "asset_labels_button": "Générateur d’étiquettes"
+        },
+        "reports": "Rapports",
+        "reports_sub": "Générez différents rapports pour votre inventaire."
     }
 }
