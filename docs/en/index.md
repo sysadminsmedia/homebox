@@ -31,7 +31,7 @@ features:
   - title: Custom labeling and locations
     details: Use custom labels and locations to organize items
   - title: Multi-Tenant Support
-    details: All users are in a group, and can only see what's in the group. Invite family memebers or share an instance with friends.
+    details: All users are in a group, and can only see what's in the group. Invite family members or share an instance with friends.
 ---
 
 ![HomeBox Home Screen Screenshot](images/home-screen.png)
