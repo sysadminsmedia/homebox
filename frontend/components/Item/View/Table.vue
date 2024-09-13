@@ -1,10 +1,10 @@
 <template>
-  <BaseCard class="overflow-hidden">
+  <BaseCard>
     <table class="table w-full">
       <thead>
         <tr>
           <th
-            v-for="h in headers"
+            v-for="h in headers.filter(h => h.enabled)"
             :key="h.value"
             class="text-no-transform cursor-pointer bg-neutral text-sm text-neutral-content"
             @click="sortBy(h.value)"
@@ -35,7 +35,7 @@
       <tbody>
         <tr v-for="(d, i) in data" :key="d.id" class="hover cursor-pointer" @click="navigateTo(`/item/${d.id}`)">
           <td
-            v-for="h in headers"
+            v-for="h in headers.filter(h => h.enabled)"
             :key="`${h.value}-${i}`"
             class="bg-base-100"
             :class="{
@@ -44,17 +44,25 @@
               'text-left': h.align === 'left',
             }"
           >
-            <template v-if="cell(h) === 'cell-name'">
+            <template v-if="h.type === 'name'">
               <NuxtLink class="hover" :to="`/item/${d.id}`">
                 {{ d.name }}
               </NuxtLink>
             </template>
-            <template v-else-if="cell(h) === 'cell-purchasePrice'">
+            <template v-else-if="h.type === 'price'">
               <Currency :amount="d.purchasePrice" />
             </template>
-            <template v-else-if="cell(h) === 'cell-insured'">
+            <template v-else-if="h.type === 'boolean'">
               <MdiCheck v-if="d.insured" class="inline size-5 text-green-500" />
               <MdiClose v-else class="inline size-5 text-red-500" />
+            </template>
+            <template v-else-if="h.type === 'location'">
+              <NuxtLink v-if="d.location" class="hover:link" :to="`/location/${d.location.id}`">
+                {{ d.location.name }}
+              </NuxtLink>
+            </template>
+            <template v-else-if="h.type === 'date'">
+              <DateTime :date="d[h.value]" datetime-type="date" />
             </template>
             <slot v-else :name="cell(h)" v-bind="{ item: d }">
               {{ extractValue(d, h.value) }}
@@ -63,8 +71,49 @@
         </tr>
       </tbody>
     </table>
-    <div v-if="items.length > 10" class="flex justify-end gap-3 border-t p-3">
-      <div class="flex items-center">Rows per page</div>
+    <div
+      class="flex items-center justify-end gap-3 border-t p-3"
+      :class="{
+        hidden: disableControls,
+      }"
+    >
+      <div class="dropdown dropdown-top dropdown-hover">
+        <label tabindex="0" class="btn btn-square btn-outline btn-sm m-1">
+          <MdiTableCog />
+        </label>
+        <ul tabindex="0" class="dropdown-content rounded-box flex w-64 flex-col gap-2 bg-base-100 p-2 pl-3 shadow">
+          <li>Headers:</li>
+          <li v-for="(h, i) in headers" class="flex flex-row items-center gap-1">
+            <button
+              class="btn btn-square btn-ghost btn-xs"
+              :class="{
+                'btn-disabled': i === 0,
+              }"
+              @click="moveHeader(i, i - 1)"
+            >
+              <MdiArrowUp />
+            </button>
+            <button
+              class="btn btn-square btn-ghost btn-xs"
+              :class="{
+                'btn-disabled': i === headers.length - 1,
+              }"
+              @click="moveHeader(i, i + 1)"
+            >
+              <MdiArrowDown />
+            </button>
+            <input
+              :id="h.value"
+              type="checkbox"
+              class="checkbox checkbox-primary"
+              :checked="h.enabled"
+              @change="toggleHeader(h.value)"
+            />
+            <label class="label-text" :for="h.value"> {{ h.text }} </label>
+          </li>
+        </ul>
+      </div>
+      <div class="hidden md:block">Rows per page</div>
       <select v-model.number="pagination.rowsPerPage" class="select select-primary select-sm">
         <option :value="10">10</option>
         <option :value="25">25</option>
@@ -87,24 +136,52 @@
   import MdiArrowUp from "~icons/mdi/arrow-up";
   import MdiCheck from "~icons/mdi/check";
   import MdiClose from "~icons/mdi/close";
+  import MdiTableCog from "~icons/mdi/table-cog";
 
   type Props = {
     items: ItemSummary[];
+    disableControls?: boolean;
   };
   const props = defineProps<Props>();
 
   const sortByProperty = ref<keyof ItemSummary | "">("");
 
-  const headers = computed<TableHeader[]>(() => {
-    return [
-      { text: "Name", value: "name" },
-      { text: "Quantity", value: "quantity", align: "center" },
-      { text: "Insured", value: "insured", align: "center" },
-      { text: "Price", value: "purchasePrice" },
-    ] as TableHeader[];
-  });
-
   const preferences = useViewPreferences();
+
+  const defaultHeaders = [
+    { text: "Name", value: "name", enabled: true, type: "name" },
+    { text: "Quantity", value: "quantity", align: "center", enabled: true },
+    { text: "Insured", value: "insured", align: "center", enabled: true, type: "boolean" },
+    { text: "Price", value: "purchasePrice", align: "center", enabled: true, type: "price" },
+    { text: "Location", value: "location", align: "center", enabled: false, type: "location" },
+    { text: "Archived", value: "archived", align: "center", enabled: false, type: "boolean" },
+    { text: "Created At", value: "createdAt", align: "center", enabled: false, type: "date" },
+    { text: "Updated At", value: "updatedAt", align: "center", enabled: false, type: "date" },
+  ] satisfies TableHeader[];
+
+  const headers = ref<TableHeader[]>(
+    (preferences.value.tableHeaders ?? []).concat(
+      defaultHeaders.filter(h => !preferences.value.tableHeaders?.find(h2 => h2.value === h.value))
+    )
+  );
+
+  console.log(headers.value);
+
+  const toggleHeader = (value: string) => {
+    const header = headers.value.find(h => h.value === value);
+    if (header) {
+      header.enabled = !header.enabled; // Toggle the 'enabled' state
+    }
+
+    preferences.value.tableHeaders = headers.value;
+  };
+  const moveHeader = (from: number, to: number) => {
+    const header = headers.value[from];
+    headers.value.splice(from, 1);
+    headers.value.splice(to, 0, header);
+
+    preferences.value.tableHeaders = headers.value;
+  };
 
   const pagination = reactive({
     descending: false,
@@ -207,18 +284,18 @@
 
 <style scoped>
   :where(.table *:first-child) :where(*:first-child) :where(th, td):first-child {
-    border-top-left-radius: 0px;
+    border-top-left-radius: 0.5rem;
   }
 
   :where(.table *:first-child) :where(*:first-child) :where(th, td):last-child {
-    border-top-right-radius: 0px;
+    border-top-right-radius: 0.5rem;
   }
 
   :where(.table *:last-child) :where(*:last-child) :where(th, td):first-child {
-    border-bottom-left-radius: 0px;
+    border-bottom-left-radius: 0.5rem;
   }
 
   :where(.table *:last-child) :where(*:last-child) :where(th, td):last-child {
-    border-bottom-right-radius: 0px;
+    border-bottom-right-radius: 0.5rem;
   }
 </style>
