@@ -133,7 +133,8 @@
             "import": "Inventar importieren",
             "export_sub": "Exportiert das Standard-CSV-Format für Homebox. Damit werden alle Artikel in deinem Inventar exportiert.",
             "export": "Inventar exportieren",
-            "import_sub": "Importiert das Standard-CSV-Format für Homebox. Ohne eine '<code>'HB.import_ref'</code>' Spalte werden vorhandenen Artikel in Ihrem Bestand '<b>'nicht'</b>' überschrieben, sondern nur neue Artikel hinzugefügt. Zeilen mit einer '<code>'HB.import_ref'</code>' Spalte werden mit vorhandenen Artikeln mit der gleichen import_ref zusammengeführt, sofern vorhanden."
+            "import_sub": "Importiert das Standard-CSV-Format für Homebox. Ohne eine '<code>'HB.import_ref'</code>' Spalte werden vorhandenen Artikel in Ihrem Bestand '<b>'nicht'</b>' überschrieben, sondern nur neue Artikel hinzugefügt. Zeilen mit einer '<code>'HB.import_ref'</code>' Spalte werden mit vorhandenen Artikeln mit der gleichen import_ref zusammengeführt, sofern vorhanden.",
+            "export_button": "Inventar exportieren"
         },
         "reports_set": {
             "bill_of_materials_button": "Stückliste generieren",

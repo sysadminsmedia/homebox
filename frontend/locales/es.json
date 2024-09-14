@@ -123,6 +123,45 @@
         "user_profile_sub": "Invita a usuarios y gestiona tu cuenta.",
         "delete_account_sub": "Elimina tu cuenta y todos sus datos asociados. Esto no se puede deshacer.",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notificación",
-        "theme_settings_sub": "La configuración del tema se guarda en el almacenamiento local de tu navegador. Puedes cambiar el tema en cualquier momento. Si tienes\n problemas para configurar el tema, prueba a actualizar el navegador."
+        "theme_settings_sub": "La configuración del tema se guarda en el almacenamiento local de tu navegador. Puedes cambiar el tema en cualquier momento. Si tienes\n problemas para configurar el tema, prueba a actualizar el navegador.",
+        "language": "Idioma"
+    },
+    "tools": {
+        "reports_sub": "Genera diferentes informes para tu inventario.",
+        "reports": "Informes",
+        "reports_set": {
+            "bill_of_materials_button": "Generar lista de materiales",
+            "bill_of_materials_sub": "Genera un archivo CSV (Valores Separados por Comas) que puede importarse a un programa de hojas de cálculo. Es un resumen de tu inventario con información básica sobre artículos y precios."
+        },
+        "actions_set": {
+            "ensure_ids_sub": "Garantiza que todos los elementos de tu inventario tienen un campo asset_id válido. Esto se hace encontrando el campo asset_id actual más alto en la base de datos y aplicando el siguiente valor a cada artículo que tenga un campo asset_id sin establecer. Esto se hace en orden del campo created_at.",
+            "ensure_import_refs_sub": "Garantiza que todos los artículos de tu inventario tienen un campo import_ref válido. Esto se hace generando aleatoriamente una cadena de 8 caracteres para cada artículo que tenga un campo import_ref sin establecer."
+        },
+        "import_export_sub": "Importa y exporta tu inventario a y desde un archivo CSV. Esto es útil para migrar tu inventario a una nueva instancia de Homebox.",
+        "import_export_set": {
+            "export_sub": "Exporta el formato CSV estándar para Homebox. Esto exportará todos los elementos de tu inventario."
+        },
+        "import_export": "Importar/Exportar",
+        "actions_sub": "Aplica Acciones a tu inventario de forma masiva. Estas son acciones irreversibles. '<b>'Ten Cuidado.'</b>'"
+    },
+    "languages": {
+        "ca": "Catalán",
+        "de": "Alemán",
+        "es": "Español",
+        "fr": "Francés",
+        "hu": "Húngaro",
+        "it": "Italiano",
+        "nl": "Holandés",
+        "pl": "Polaco",
+        "ru": "Ruso",
+        "sl": "Esloveno",
+        "sv": "Sueco",
+        "tr": "Turco",
+        "zh-CN": "Chino (Simplificado)",
+        "zh-HK": "Chino (Hong Kong)",
+        "zh-MO": "Chino (Macao)",
+        "zh-TW": "Chino (Tradicional)",
+        "en": "Inglés",
+        "pt-BR": "Portugués (Brasil)"
     }
 }
