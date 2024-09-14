@@ -180,12 +180,7 @@
           <a href="https://discord.gg/aY4DCkpNA9" class="tooltip" :data-tip="$t('global.join_discord')" target="_blank">
             <MdiDiscord class="size-8" />
           </a>
-          <a
-            href="https://homebox.software/en/"
-            class="tooltip"
-            :data-tip="$t('global.read_docs')"
-            target="_blank"
-          >
+          <a href="https://homebox.software/en/" class="tooltip" :data-tip="$t('global.read_docs')" target="_blank">
             <MdiFolder class="size-8" />
           </a>
         </div>
@@ -259,37 +254,38 @@
             </form>
           </Transition>
           <div class="mt-6 text-center">
-          <a
-            href="https://auth.kloenk.dev/realms/kloenk/protocol/openid-connect/auth?client_id=homebox-dev&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Foidc%2Fcallback&response_type=code&scope=openid+email+profile&response_mode=query"
-            >OIDC</a
-          >
-          <div class="text-center mt-6">
-            <BaseButton
-              v-if="status && status.allowRegistration"
-              class="btn-primary btn-wide"
-              @click="() => toggleLogin()"
+            <a
+              href="https://auth.kloenk.dev/realms/kloenk/protocol/openid-connect/auth?client_id=homebox-dev&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Foidc%2Fcallback&response_type=code&scope=openid+email+profile&response_mode=query"
+              >OIDC</a
             >
-              <template #icon>
-                <MdiAccountPlus v-if="!registerForm" class="swap-off size-5" />
-                <MdiLogin v-else class="swap-off size-5" />
-                <MdiArrowRight class="swap-on size-5" />
-              </template>
-              {{ registerForm ? $t("index.login") : $t("index.register") }}
-            </BaseButton>
-            <p v-else class="inline-flex items-center gap-2 text-sm italic text-base-content">
-              <MdiLock class="inline-block size-4" />
-              {{ $t("index.disabled_registration") }}
-            </p>
+            <div class="mt-6 text-center">
+              <BaseButton
+                v-if="status && status.allowRegistration"
+                class="btn-primary btn-wide"
+                @click="() => toggleLogin()"
+              >
+                <template #icon>
+                  <MdiAccountPlus v-if="!registerForm" class="swap-off size-5" />
+                  <MdiLogin v-else class="swap-off size-5" />
+                  <MdiArrowRight class="swap-on size-5" />
+                </template>
+                {{ registerForm ? $t("index.login") : $t("index.register") }}
+              </BaseButton>
+              <p v-else class="inline-flex items-center gap-2 text-sm italic text-base-content">
+                <MdiLock class="inline-block size-4" />
+                {{ $t("index.disabled_registration") }}
+              </p>
+            </div>
           </div>
         </div>
       </div>
+      <footer v-if="status" class="bottom-0 mt-auto w-full pb-4 text-center">
+        <p class="text-center text-sm">
+          {{ $t("global.version", { version: status.build.version }) }} ~
+          {{ $t("global.build", { build: status.build.commit }) }}
+        </p>
+      </footer>
     </div>
-    <footer v-if="status" class="bottom-0 mt-auto w-full pb-4 text-center">
-      <p class="text-center text-sm">
-        {{ $t("global.version", { version: status.build.version }) }} ~
-        {{ $t("global.build", { build: status.build.commit }) }}
-      </p>
-    </footer>
   </div>
 </template>
 
