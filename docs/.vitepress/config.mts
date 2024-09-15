@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import enMenu from "./menus/en.mjs";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -36,30 +37,7 @@ export default defineConfig({
     ],
 
     sidebar: {
-      '/en/': [
-        {
-          text: 'Getting Started',
-          items: [
-            { text: 'Quick Start', link: '/en/quick-start' },
-            { text: 'Installation', link: '/en/installation' },
-            { text: 'Configure Homebox', link: '/en/configure-homebox' },
-            { text: 'Tips and Tricks', link: '/en/tips-tricks' }
-          ]
-        },
-        {
-          text: 'Advanced',
-          items: [
-            { text: 'Import CSV', link: '/en/import-csv' },
-          ]
-        },
-        {
-          text: 'Contributing',
-          items: [
-            { text: 'Get Started', link: '/en/contribute/get-started' },
-            { text: 'Bounty Program', link: '/en/contribute/bounty' }
-          ]
-        }
-      ]
+        '/en/': enMenu,
     },
 
     socialLinks: [
