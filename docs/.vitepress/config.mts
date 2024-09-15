@@ -2,6 +2,10 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  ignoreDeadLinks: [
+    /^https?:\/\/localhost:7745/,
+  ],
+
   title: "HomeBox",
   description: "A simple home inventory management software",
   lastUpdated: true,
