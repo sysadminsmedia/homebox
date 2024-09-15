@@ -11,7 +11,7 @@
         <div class="flex justify-center">
           <div>
             <label for="photo" class="btn">{{ $t("components.item.create_modal.photo_button") }}</label>
-            <input id="photo" type="file" accept="image/*" style="visibility: hidden" @change="previewImage" />
+            <input id="photo" type="file" accept="image/png,image/jpeg,image/gif" style="visibility: hidden" @change="previewImage" />
           </div>
           <BaseButton class="rounded-r-none" :loading="loading" type="submit">
             <template #icon>
