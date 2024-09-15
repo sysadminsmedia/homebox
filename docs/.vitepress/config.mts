@@ -14,6 +14,15 @@ export default defineConfig({
     hostname: 'https://homebox.software',
   },
 
+  head: [
+    ['link', { rel: 'icon', href: '/favicon.svg' }],
+    ['meta', { name: 'theme-color', content: '#3eaf7c' }],
+    ['meta', { name: 'og:title', content: 'HomeBox' }],
+    ['meta', { name: 'og:description', content: 'A simple home inventory management software' }],
+    ['meta', { name: 'og:image', content: '/homebox-email-banner.jpg' }],
+    ['meta', { name: 'twitter:card', content: 'summary' }],
+  ],
+
   locales: {
     en: {
       label: 'English',
