@@ -129,6 +129,10 @@
     },
     "tools": {
         "reports": "Rapportages",
-        "reports_sub": "Genereer verschillende rapporten voor uw voorraad."
+        "reports_set": {
+            "asset_labels": "Labels voor item-ID",
+            "asset_labels_sub": "Genereert een afdrukbare PDF met labels voor een reeks Asset ID's"
+        },
+        "reports_sub": "Genereer verschillende rapporten van je voorraad."
     }
 }
