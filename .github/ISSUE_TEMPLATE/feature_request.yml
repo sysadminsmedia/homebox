@@ -1,7 +1,7 @@
 ---
 name: "Feature Request"
 description: "Submit a feature request for the current release"
-labels: ["enhancement"]
+labels: ["⬆️ enhancement"]
 projects: ["sysadminsmedia/2"]
 body:
   - type: textarea

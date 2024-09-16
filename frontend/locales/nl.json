@@ -1,66 +1,32 @@
 {
-    "global": {
-        "version": "Versie: { version }",
-        "github": "GitHub Project",
-        "join_discord": "Sluit je aan bij de Discord",
-        "follow_dev": "Volg de ontwikkelaar",
-        "read_docs": "Lees de documentatie",
-        "email": "E-mail",
-        "submit": "Indienen",
-        "confirm": "Bevestigen",
-        "create": "Maken",
-        "create_and_add": "Maak en voeg nog een toe",
-        "password": "Wachtwoord",
-        "build": "Bouw: { build }",
-        "created": "Gemaakt",
-        "welcome": "Welkom, { username }",
-        "sign_out": "Log uit",
-        "labels": "etiketten",
-        "locations": "Locaties",
-        "name": "Naam",
-        "items": "artikelen",
-        "search": "Zoeken"
-    },
-    "index": {
-        "disabled_registration": "Registratie uitgeschakeld",
-        "login": "Log in",
-        "register": "Registreer",
-        "remember_me": "Onthoud mij",
-        "set_email": "Wat is je mailadres?",
-        "set_password": "Stel je wachtwoord in",
-        "set_name": "Wat is je naam?",
-        "joining_group": "Je neemt deel aan een bestaande groep!",
-        "tagline": "Volg, Organiseer en beheer je dingen.",
-        "dont_join_group": "Wil je niet aan een groep deelnemen?"
-    },
     "components": {
-        "global": {
-            "password_score": {
-                "password_strength": "Wachtwoord sterkte"
-            },
-            "page_qr_code": {
-                "page_url": "Pagina URL"
-            }
-        },
         "app": {
             "import_dialog": {
-                "title": "Importeer CSV bestand",
                 "change_warning": "Gedrag voor importeren met bestaande import_refs is veranderd. Als een import_refs reeds bestaat in het CSV bestand, het\nobject zal worden aangepast met de waardes van het CSV bestand.",
-                "upload": "Upload",
-                "description": "Importeer een CSV bestand met je objecten, labels en locaties. Zie documentatie voor meer informatie m.b.t.\n vereist format."
+                "description": "Importeer een CSV bestand met je objecten, labels en locaties. Zie documentatie voor meer informatie m.b.t.\n vereist format.",
+                "title": "Importeer CSV bestand",
+                "upload": "Upload"
+            }
+        },
+        "global": {
+            "page_qr_code": {
+                "page_url": "Pagina URL"
+            },
+            "password_score": {
+                "password_strength": "Wachtwoord sterkte"
             }
         },
         "item": {
             "create_modal": {
-                "title": "Maak object",
-                "photo_button": "Foto 📷"
+                "photo_button": "Foto 📷",
+                "title": "Maak object"
             },
             "view": {
                 "selectable": {
-                    "items": "Objecten",
                     "card": "Kaart",
-                    "table": "Tabel",
-                    "no_items": "Geen objecten om te tonen"
+                    "items": "Objecten",
+                    "no_items": "Geen objecten om te tonen",
+                    "table": "Tabel"
                 }
             }
         },
@@ -75,45 +41,41 @@
             }
         }
     },
-    "profile": {
-        "gen_invite": "Genereer Uitnodigingslink",
-        "notifier_modal": "{ type, select, true {Bewerk} false {Creëer} other {overig}} Notifier",
-        "change_password": "Verander Wachtwoord",
-        "current_password": "Huidig Wachtwoord",
-        "new_password": "Nieuw Wachtwoord",
-        "url": "URL",
-        "enabled": "ingeschakeld",
-        "test": "Test",
-        "user_profile": "Gebruikers Profiel",
-        "user_profile_sub": "Nodig gebruikers uit, en beheer je account.",
-        "active": "Actief",
-        "inactive": "Inactief",
-        "notifiers_sub": "Krijg notificaties voor opkomende onderhouds herinneringen",
-        "group_settings_sub": "Gedeelde groepsinstellingen",
-        "group_settings": "Groeps Instellingen",
-        "notifiers": "Notificatie",
-        "currency_format": "Valutanotatie",
-        "update_group": "Groep bijwerken",
-        "theme_settings": "Theme instellingen",
-        "theme_settings_sub": "Thema-instellingen worden opgeslagen in de lokale opslag van uw browser. Je kan deze wijzigen op elk moment. \nAls je problemen hebt met de instellingen kun je je browser verversen.",
-        "delete_account": "Verwijder account",
-        "delete_account_sub": "Verwijder je account en alle geassocieerde data. Deze actie kan niet ongedaan worden."
+    "global": {
+        "build": "Bouw: { build }",
+        "confirm": "Bevestigen",
+        "create": "Maken",
+        "create_and_add": "Maak en voeg nog een toe",
+        "created": "Gemaakt",
+        "email": "E-mail",
+        "follow_dev": "Volg de ontwikkelaar",
+        "github": "GitHub Project",
+        "items": "artikelen",
+        "join_discord": "Sluit je aan bij de Discord",
+        "labels": "etiketten",
+        "locations": "Locaties",
+        "name": "Naam",
+        "password": "Wachtwoord",
+        "read_docs": "Lees de documentatie",
+        "search": "Zoeken",
+        "sign_out": "Log uit",
+        "submit": "Indienen",
+        "version": "Versie: { version }",
+        "welcome": "Welkom, { username }"
+    },
+    "index": {
+        "disabled_registration": "Registratie uitgeschakeld",
+        "dont_join_group": "Wil je niet aan een groep deelnemen?",
+        "joining_group": "Je neemt deel aan een bestaande groep!",
+        "login": "Log in",
+        "register": "Registreer",
+        "remember_me": "Onthoud mij",
+        "set_email": "Wat is je mailadres?",
+        "set_name": "Wat is je naam?",
+        "set_password": "Stel je wachtwoord in",
+        "tagline": "Volg, Organiseer en beheer je dingen."
     },
     "items": {
-        "tip_1": "Locatie- en labelfilters gebruiken de 'OF' -werking. Als er meer dan een is geselecteerd,\nis er maar een nodig voor een overeenkomst.",
-        "tip_2": "Zoekopdrachten voorafgegaan door '#'' zullen om een object-ID vragen (bijvoorbeeld '#000-001')",
-        "tip_3": "Veldfilters gebruiken de 'OF' -bewerking. Indien meer dan 1 is geselecteerd\nzal er maar 1 nodig zijn voor een match.",
-        "tips_sub": "Zoektips",
-        "updated_at": "Bijgewerkt op",
-        "pages": "Pagina { page } van { totalPages }",
-        "prev_page": "Vorige pagina",
-        "query_id": "ID-nummer van object opvragen: { id }",
-        "reset_search": "Reset Zoeken",
-        "tips": "Tips",
-        "no_results": "Geen Items Gevonden",
-        "options": "Opties",
-        "order_by": "Sorteren op",
-        "results": "{ total } Resultaten",
         "add": "Toevoegen",
         "created_at": "Aangemaakt op",
         "custom_fields": "Aangepaste velden",
@@ -123,6 +85,69 @@
         "include_archive": "Inclusief gearchiveerde items",
         "last": "Achternaam",
         "negate_labels": "Negeer Geselecteerde Etiketten",
-        "next_page": "Volgende pagina"
+        "next_page": "Volgende pagina",
+        "no_results": "Geen Items Gevonden",
+        "options": "Opties",
+        "order_by": "Sorteren op",
+        "pages": "Pagina { page } van { totalPages }",
+        "prev_page": "Vorige pagina",
+        "query_id": "ID-nummer van object opvragen: { id }",
+        "reset_search": "Reset Zoeken",
+        "results": "{ total } Resultaten",
+        "tip_1": "Locatie- en labelfilters gebruiken de 'OF' -werking. Als er meer dan een is geselecteerd,\nis er maar een nodig voor een overeenkomst.",
+        "tip_2": "Zoekopdrachten voorafgegaan door '#'' zullen om een object-ID vragen (bijvoorbeeld '#000-001')",
+        "tip_3": "Veldfilters gebruiken de 'OF' -bewerking. Indien meer dan 1 is geselecteerd\nzal er maar 1 nodig zijn voor een match.",
+        "tips": "Tips",
+        "tips_sub": "Zoektips",
+        "updated_at": "Bijgewerkt op"
+    },
+    "profile": {
+        "active": "Actief",
+        "change_password": "Verander Wachtwoord",
+        "currency_format": "Valutanotatie",
+        "current_password": "Huidig Wachtwoord",
+        "delete_account": "Verwijder account",
+        "delete_account_sub": "Verwijder je account en alle geassocieerde data. Deze actie kan niet ongedaan worden.",
+        "enabled": "ingeschakeld",
+        "gen_invite": "Genereer Uitnodigingslink",
+        "group_settings": "Groeps Instellingen",
+        "group_settings_sub": "Gedeelde groepsinstellingen",
+        "inactive": "Inactief",
+        "language": "Taal",
+        "new_password": "Nieuw Wachtwoord",
+        "notifier_modal": "{ type, select, true {Bewerk} false {Creëer} other {overig}} Notifier",
+        "notifiers": "Notificatie",
+        "notifiers_sub": "Krijg notificaties voor opkomende onderhouds herinneringen",
+        "test": "Test",
+        "theme_settings": "Theme instellingen",
+        "theme_settings_sub": "Thema-instellingen worden opgeslagen in de lokale opslag van uw browser. Je kan deze wijzigen op elk moment. \nAls je problemen hebt met de instellingen kun je je browser verversen.",
+        "update_group": "Groep bijwerken",
+        "update_language": "Taal bijwerken",
+        "url": "URL",
+        "user_profile": "Gebruikers Profiel",
+        "user_profile_sub": "Nodig gebruikers uit, en beheer je account."
+    },
+    "tools": {
+        "actions": "Acties inventariseren",
+        "actions_sub": "Acties bulksgewijs toepassen op je voorraad. Deze zijn onomkeerbaar '<b>'Wees voorzichtig.'</b>'",
+        "import_export": "Importeer/Exporteer",
+        "import_export_set": {
+            "export": "Export voorraad",
+            "export_button": "Export voorraad",
+            "export_sub": "Exporteert het standaard CSV-formaat voor Homebox",
+            "import": "Inventaris Importeren",
+            "import_button": "Inventaris Importeren"
+        },
+        "import_export_sub": "Importeer en exporteer je voorraad van en naar een CSV-bestand. Dit is handig voor het migreren van je voorraad naar een nieuwe HomeBox installatie.",
+        "reports": "Rapportages",
+        "reports_set": {
+            "asset_labels": "Labels voor item-ID",
+            "asset_labels_button": "Etiket Generator",
+            "asset_labels_sub": "Genereert een afdrukbare PDF met labels voor een reeks Asset ID's. Deze zijn niet specifiek voor de voorraad dus kun je deze van te voren printen en gebruiken wanneer je voorraad ontvangt.",
+            "bill_of_materials": "Materiaallijst",
+            "bill_of_materials_button": "BOM genereren",
+            "bill_of_materials_sub": "Genereert een CSV-bestand (door komma's gescheiden waarden) dat kan worden geïmporteerd in een spreadsheetprogramma. Dit is een samenvattting van je voorraad met basis item en prijs informatie."
+        },
+        "reports_sub": "Genereer verschillende rapporten van je voorraad."
     }
 }

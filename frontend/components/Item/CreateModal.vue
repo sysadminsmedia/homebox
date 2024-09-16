@@ -7,12 +7,13 @@
       <FormTextArea v-model="form.description" label="Item Description" />
       <FormMultiselect v-model="form.labels" label="Labels" :items="labels ?? []" />
 
-      <div class="modal-action">
-        <div class="flex justify-center">
-          <div>
-            <label for="photo" class="btn">{{ $t("components.item.create_modal.photo_button") }}</label>
-            <input id="photo" type="file" accept="image/png,image/jpeg,image/gif" style="visibility: hidden" @change="previewImage" />
-          </div>
+      <div class="modal-action mb-6">
+        <div>
+          <label for="photo" class="btn">{{ $t("components.item.create_modal.photo_button") }}</label>
+          <input id="photo" class="hidden" type="file" accept="image/png,image/jpeg,image/gif" @change="previewImage" />
+        </div>
+        <div class="grow"></div>
+        <div>
           <BaseButton class="rounded-r-none" :loading="loading" type="submit">
             <template #icon>
               <MdiPackageVariant class="swap-off size-5" />
