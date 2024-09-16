@@ -18,8 +18,8 @@
         },
         "item": {
             "create_modal": {
-                "title": "Crear Elemento",
-                "photo_button": "Foto 📷"
+                "photo_button": "Foto 📷",
+                "title": "Crear Elemento"
             },
             "view": {
                 "selectable": {
@@ -45,8 +45,10 @@
         "build": "Compilación: { build }",
         "confirm": "Confirmar",
         "create": "Crear",
+        "create_and_add": "Crear y Añadir Otro",
         "created": "Creado",
         "email": "Email",
+        "follow_dev": "Seguir al Desarrollador",
         "github": "Proyecto GitHub",
         "items": "Elementos",
         "join_discord": "Únete al Discord",
@@ -58,22 +60,20 @@
         "search": "Buscar",
         "sign_out": "Cerrar Sesión",
         "submit": "Enviar",
-        "welcome": "Bienvenido/a, { username }",
-        "create_and_add": "Crear y Añadir Otro",
-        "follow_dev": "Seguir al Desarrollador",
-        "version": "Versión: { version }"
+        "version": "Versión: { version }",
+        "welcome": "Bienvenido/a, { username }"
     },
     "index": {
         "disabled_registration": "Registro Desactivado",
         "dont_join_group": "¿No quieres unirte a un grupo?",
+        "joining_group": "¡Te estás uniendo a un grupo existente!",
         "login": "Iniciar sesión",
         "register": "Registrarse",
         "remember_me": "Recuérdame",
         "set_email": "¿Cuál es tu email?",
         "set_name": "¿Cómo te llamas?",
         "set_password": "Establece tu contraseña",
-        "tagline": "Rastrea, Organiza y Gestiona tus Cosas.",
-        "joining_group": "¡Te estás uniendo a un grupo existente!"
+        "tagline": "Rastrea, Organiza y Gestiona tus Cosas."
     },
     "items": {
         "add": "Añadir",
@@ -94,65 +94,24 @@
         "query_id": "Consultar Número ID del Activo: { id }",
         "reset_search": "Restablecer Búsqueda",
         "results": "{ total } Resultados",
+        "tip_1": "Los filtros de ubicación y etiquetas utilizan el operador \"OR\". Si se selecciona más de uno, sólo uno será\n necesario para obtener una coincidencia.",
         "tip_2": "Las búsquedas precedidas de \"#\" buscarán un ID de activo (por ejemplo, \"#000-001\")",
         "tip_3": "Los filtros de campo utilizan el operador \"OR\". Si se selecciona más de uno, sólo se requerirá uno para una\n coincidencia.",
-        "tip_1": "Los filtros de ubicación y etiquetas utilizan el operador \"OR\". Si se selecciona más de uno, sólo uno será\n necesario para obtener una coincidencia.",
         "tips": "Sugerencias",
         "tips_sub": "Sugerencias de Búsqueda",
         "updated_at": "Actualizado El"
     },
-    "profile": {
-        "active": "Activo",
-        "change_password": "Cambiar Contraseña",
-        "currency_format": "Formato Divisa",
-        "current_password": "Contraseña Actual",
-        "delete_account": "Eliminar Cuenta",
-        "enabled": "Habilitado",
-        "gen_invite": "Generar Enlace de Invitación",
-        "group_settings": "Ajustes de Grupo",
-        "group_settings_sub": "Configuración de Grupo Compartido. Es posible que tengas que actualizar tu navegador para que se apliquen algunos ajustes.",
-        "inactive": "Inactivo",
-        "new_password": "Nueva Contraseña",
-        "notifiers": "Notificaciones",
-        "notifiers_sub": "Recibe notificaciones de los próximos recordatorios de mantenimiento",
-        "test": "Probar",
-        "theme_settings": "Ajustes de Tema",
-        "update_group": "Actualizar Grupo",
-        "url": "URL",
-        "user_profile": "Perfil de Usuario",
-        "user_profile_sub": "Invita a usuarios y gestiona tu cuenta.",
-        "delete_account_sub": "Elimina tu cuenta y todos sus datos asociados. Esto no se puede deshacer.",
-        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notificación",
-        "theme_settings_sub": "La configuración del tema se guarda en el almacenamiento local de tu navegador. Puedes cambiar el tema en cualquier momento. Si tienes\n problemas para configurar el tema, prueba a actualizar el navegador.",
-        "language": "Idioma"
-    },
-    "tools": {
-        "reports_sub": "Genera diferentes informes para tu inventario.",
-        "reports": "Informes",
-        "reports_set": {
-            "bill_of_materials_button": "Generar lista de materiales",
-            "bill_of_materials_sub": "Genera un archivo CSV (Valores Separados por Comas) que puede importarse a un programa de hojas de cálculo. Es un resumen de tu inventario con información básica sobre artículos y precios."
-        },
-        "actions_set": {
-            "ensure_ids_sub": "Garantiza que todos los elementos de tu inventario tienen un campo asset_id válido. Esto se hace encontrando el campo asset_id actual más alto en la base de datos y aplicando el siguiente valor a cada artículo que tenga un campo asset_id sin establecer. Esto se hace en orden del campo created_at.",
-            "ensure_import_refs_sub": "Garantiza que todos los artículos de tu inventario tienen un campo import_ref válido. Esto se hace generando aleatoriamente una cadena de 8 caracteres para cada artículo que tenga un campo import_ref sin establecer."
-        },
-        "import_export_sub": "Importa y exporta tu inventario a y desde un archivo CSV. Esto es útil para migrar tu inventario a una nueva instancia de Homebox.",
-        "import_export_set": {
-            "export_sub": "Exporta el formato CSV estándar para Homebox. Esto exportará todos los elementos de tu inventario."
-        },
-        "import_export": "Importar/Exportar",
-        "actions_sub": "Aplica Acciones a tu inventario de forma masiva. Estas son acciones irreversibles. '<b>'Ten Cuidado.'</b>'"
-    },
     "languages": {
         "ca": "Catalán",
         "de": "Alemán",
+        "en": "Inglés",
         "es": "Español",
         "fr": "Francés",
         "hu": "Húngaro",
         "it": "Italiano",
         "nl": "Holandés",
         "pl": "Polaco",
+        "pt-BR": "Portugués (Brasil)",
         "ru": "Ruso",
         "sl": "Esloveno",
         "sv": "Sueco",
@@ -160,8 +119,50 @@
         "zh-CN": "Chino (Simplificado)",
         "zh-HK": "Chino (Hong Kong)",
         "zh-MO": "Chino (Macao)",
-        "zh-TW": "Chino (Tradicional)",
-        "en": "Inglés",
-        "pt-BR": "Portugués (Brasil)"
+        "zh-TW": "Chino (Tradicional)"
+    },
+    "profile": {
+        "active": "Activo",
+        "change_password": "Cambiar Contraseña",
+        "currency_format": "Formato Divisa",
+        "current_password": "Contraseña Actual",
+        "delete_account": "Eliminar Cuenta",
+        "delete_account_sub": "Elimina tu cuenta y todos sus datos asociados. Esto no se puede deshacer.",
+        "enabled": "Habilitado",
+        "gen_invite": "Generar Enlace de Invitación",
+        "group_settings": "Ajustes de Grupo",
+        "group_settings_sub": "Configuración de Grupo Compartido. Es posible que tengas que actualizar tu navegador para que se apliquen algunos ajustes.",
+        "inactive": "Inactivo",
+        "language": "Idioma",
+        "new_password": "Nueva Contraseña",
+        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notificación",
+        "notifiers": "Notificaciones",
+        "notifiers_sub": "Recibe notificaciones de los próximos recordatorios de mantenimiento",
+        "test": "Probar",
+        "theme_settings": "Ajustes de Tema",
+        "theme_settings_sub": "La configuración del tema se guarda en el almacenamiento local de tu navegador. Puedes cambiar el tema en cualquier momento. Si tienes\n problemas para configurar el tema, prueba a actualizar el navegador.",
+        "update_group": "Actualizar Grupo",
+        "update_language": "Cambiar idioma",
+        "url": "URL",
+        "user_profile": "Perfil de Usuario",
+        "user_profile_sub": "Invita a usuarios y gestiona tu cuenta."
+    },
+    "tools": {
+        "actions_set": {
+            "ensure_ids_sub": "Garantiza que todos los elementos de tu inventario tienen un campo asset_id válido. Esto se hace encontrando el campo asset_id actual más alto en la base de datos y aplicando el siguiente valor a cada artículo que tenga un campo asset_id sin establecer. Esto se hace en orden del campo created_at.",
+            "ensure_import_refs_sub": "Garantiza que todos los artículos de tu inventario tienen un campo import_ref válido. Esto se hace generando aleatoriamente una cadena de 8 caracteres para cada artículo que tenga un campo import_ref sin establecer."
+        },
+        "actions_sub": "Aplica Acciones a tu inventario de forma masiva. Estas son acciones irreversibles. '<b>'Ten Cuidado.'</b>'",
+        "import_export": "Importar/Exportar",
+        "import_export_set": {
+            "export_sub": "Exporta el formato CSV estándar para Homebox. Esto exportará todos los elementos de tu inventario."
+        },
+        "import_export_sub": "Importa y exporta tu inventario a y desde un archivo CSV. Esto es útil para migrar tu inventario a una nueva instancia de Homebox.",
+        "reports": "Informes",
+        "reports_set": {
+            "bill_of_materials_button": "Generar lista de materiales",
+            "bill_of_materials_sub": "Genera un archivo CSV (Valores Separados por Comas) que puede importarse a un programa de hojas de cálculo. Es un resumen de tu inventario con información básica sobre artículos y precios."
+        },
+        "reports_sub": "Genera diferentes informes para tu inventario."
     }
 }

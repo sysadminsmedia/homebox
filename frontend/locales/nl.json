@@ -129,7 +129,7 @@
     },
     "tools": {
         "actions": "Acties inventariseren",
-        "actions_sub": "Acties bulksgewijs toepassen op je voorraad",
+        "actions_sub": "Acties bulksgewijs toepassen op je voorraad. Deze zijn onomkeerbaar '<b>'Wees voorzichtig.'</b>'",
         "import_export": "Importeer/Exporteer",
         "import_export_set": {
             "export": "Export voorraad",
