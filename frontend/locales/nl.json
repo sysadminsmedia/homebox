@@ -128,6 +128,8 @@
         "user_profile_sub": "Nodig gebruikers uit, en beheer je account."
     },
     "tools": {
+        "actions": "Acties inventariseren",
+        "actions_sub": "Acties bulksgewijs toepassen op je voorraad",
         "import_export": "Importeer/Exporteer",
         "import_export_set": {
             "export": "Export voorraad",
