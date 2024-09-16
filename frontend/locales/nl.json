@@ -129,7 +129,14 @@
     },
     "tools": {
         "import_export": "Importeer/Exporteer",
-        "import_export_sub": "Importeer en exporteer je voorraad van en naar een CSV-bestand",
+        "import_export_set": {
+            "export": "Export voorraad",
+            "export_button": "Export voorraad",
+            "export_sub": "Exporteert het standaard CSV-formaat voor Homebox",
+            "import": "Inventaris Importeren",
+            "import_button": "Inventaris Importeren"
+        },
+        "import_export_sub": "Importeer en exporteer je voorraad van en naar een CSV-bestand. Dit is handig voor het migreren van je voorraad naar een nieuwe HomeBox installatie.",
         "reports": "Rapportages",
         "reports_set": {
             "asset_labels": "Labels voor item-ID",
