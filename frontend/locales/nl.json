@@ -128,13 +128,16 @@
         "user_profile_sub": "Nodig gebruikers uit, en beheer je account."
     },
     "tools": {
+        "import_export": "Importeer/Exporteer",
+        "import_export_sub": "Importeer en exporteer je voorraad van en naar een CSV-bestand",
         "reports": "Rapportages",
         "reports_set": {
             "asset_labels": "Labels voor item-ID",
             "asset_labels_button": "Etiket Generator",
             "asset_labels_sub": "Genereert een afdrukbare PDF met labels voor een reeks Asset ID's. Deze zijn niet specifiek voor de voorraad dus kun je deze van te voren printen en gebruiken wanneer je voorraad ontvangt.",
             "bill_of_materials": "Materiaallijst",
-            "bill_of_materials_sub": "Genereert een CSV-bestand (door komma's gescheiden waarden) dat kan worden geïmporteerd in een spreadsheetprogramma"
+            "bill_of_materials_button": "BOM genereren",
+            "bill_of_materials_sub": "Genereert een CSV-bestand (door komma's gescheiden waarden) dat kan worden geïmporteerd in een spreadsheetprogramma. Dit is een samenvattting van je voorraad met basis item en prijs informatie."
         },
         "reports_sub": "Genereer verschillende rapporten van je voorraad."
     }
