@@ -128,6 +128,7 @@
         "current_password": "Contraseña Actual",
         "delete_account": "Eliminar Cuenta",
         "delete_account_sub": "Elimina tu cuenta y todos sus datos asociados. Esto no se puede deshacer.",
+        "display_header": "{ currentValue, select, true {Ocultar encabezado} false {Mostrar encabezado} other {Desconocido}}",
         "enabled": "Habilitado",
         "gen_invite": "Generar Enlace de Invitación",
         "group_settings": "Ajustes de Grupo",
@@ -142,24 +143,44 @@
         "theme_settings": "Ajustes de Tema",
         "theme_settings_sub": "La configuración del tema se guarda en el almacenamiento local de tu navegador. Puedes cambiar el tema en cualquier momento. Si tienes\n problemas para configurar el tema, prueba a actualizar el navegador.",
         "update_group": "Actualizar Grupo",
-        "update_language": "Cambiar idioma",
+        "update_language": "Cambiar Idioma",
         "url": "URL",
         "user_profile": "Perfil de Usuario",
         "user_profile_sub": "Invita a usuarios y gestiona tu cuenta."
     },
     "tools": {
+        "actions": "Acciones de Inventario",
         "actions_set": {
+            "ensure_ids": "Garantizar IDs de Activos",
+            "ensure_ids_button": "Garantizar IDs de Activos",
             "ensure_ids_sub": "Garantiza que todos los elementos de tu inventario tienen un campo asset_id válido. Esto se hace encontrando el campo asset_id actual más alto en la base de datos y aplicando el siguiente valor a cada artículo que tenga un campo asset_id sin establecer. Esto se hace en orden del campo created_at.",
-            "ensure_import_refs_sub": "Garantiza que todos los artículos de tu inventario tienen un campo import_ref válido. Esto se hace generando aleatoriamente una cadena de 8 caracteres para cada artículo que tenga un campo import_ref sin establecer."
+            "ensure_import_refs": "Garantizar Referencias de Importación",
+            "ensure_import_refs_button": "Garantizar Referencias de Importación",
+            "ensure_import_refs_sub": "Garantiza que todos los artículos de tu inventario tienen un campo import_ref válido. Esto se hace generando aleatoriamente una cadena de 8 caracteres para cada artículo que tenga un campo import_ref sin establecer.",
+            "set_primary_photo": "Establecer Foto Principal",
+            "set_primary_photo_button": "Establecer Foto Principal",
+            "set_primary_photo_sub": "En la versión v0.10.0 de Homebox, se añadió el indicador de imagen principal a los ficheros adjuntos de tipo foto. Esta acción establecerá la primera imagen de cada artículo como su imagen principal, si no hay una imagen principal ya definida. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Ver PR #576 en GitHub'</a>'",
+            "zero_datetimes": "Cero Horas Elementos",
+            "zero_datetimes_button": "Cero Horas Elementos",
+            "zero_datetimes_sub": "Restablece el valor de la hora para todos los campos de fecha/hora en tu inventario al principio de esa fecha. Esto se hace para corregir un error que se introdujo al principio del desarrollo de la aplicación, que causó que el valor de la hora se almacenase con la fecha, lo cual produjo problemas al mostrar valores precisos del campo. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Ver el issue #236 de GitHub para más detalles.'</a>'"
         },
         "actions_sub": "Aplica Acciones a tu inventario de forma masiva. Estas son acciones irreversibles. '<b>'Ten Cuidado.'</b>'",
         "import_export": "Importar/Exportar",
         "import_export_set": {
-            "export_sub": "Exporta el formato CSV estándar para Homebox. Esto exportará todos los elementos de tu inventario."
+            "export": "Exportar Inventario",
+            "export_button": "Exportar Inventario",
+            "export_sub": "Exporta el formato CSV estándar para Homebox. Esto exportará todos los elementos de tu inventario.",
+            "import": "Importar Inventario",
+            "import_button": "Importar Inventario",
+            "import_sub": "Importa el formato CSV estándar para Homebox. Sin una columna '<code>'HB.import_ref'</code>', esto '<b>'no'</b>' sobrescribirá cualquier elemento existente en tu inventario, sólo añadirá nuevos artículos. Las filas con una columna '<code>'HB.import_ref'</code>' se fusionan con los artículos existentes con la misma import_ref, si existe."
         },
         "import_export_sub": "Importa y exporta tu inventario a y desde un archivo CSV. Esto es útil para migrar tu inventario a una nueva instancia de Homebox.",
         "reports": "Informes",
         "reports_set": {
+            "asset_labels": "Etiquetas de ID de Activo",
+            "asset_labels_button": "Generador de Etiquetas",
+            "asset_labels_sub": "Genera un PDF para impresión de etiquetas para un rango de ID de Activos. Estas etiquetas no son específicas de tu inventario, por lo que puedes imprimirlas con antelación y aplicarlas a tu inventario cuando las recibas.",
+            "bill_of_materials": "Lista de Materiales",
             "bill_of_materials_button": "Generar lista de materiales",
             "bill_of_materials_sub": "Genera un archivo CSV (Valores Separados por Comas) que puede importarse a un programa de hojas de cálculo. Es un resumen de tu inventario con información básica sobre artículos y precios."
         },
