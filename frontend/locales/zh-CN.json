@@ -108,7 +108,7 @@
         "current_password": "原密码",
         "delete_account": "删除帐户",
         "delete_account_sub": "删除您的帐户及其所有相关数据。这是无法撤消的。",
-        "display_header": "{currentValue, select, true {隐藏页眉} false {显示页眉} other {未命中}}",
+        "display_header": "{currentValue, select, true {隐藏页眉} false {显示页眉} other {未选中}}",
         "enabled": "已启用",
         "gen_invite": "生成邀请链接",
         "group_settings": "组设置",
@@ -127,5 +127,25 @@
         "url": "网址",
         "user_profile": "用户资料",
         "user_profile_sub": "邀请用户共同管理您的资产。"
+    },
+    "tools": {
+        "actions": "库存操作",
+        "actions_set": {
+            "ensure_ids": "确保资产ID"
+        },
+        "actions_sub": "将操作批量应用于您的库存。这些都是不可逆转的行动'<b> '谨慎操作。'</b>'",
+        "import_export_set": {
+            "export": "导出库存",
+            "export_button": "导出库存",
+            "export_sub": "按标准CSV格式导出Homebox。这将导出库存中的所有项目。"
+        },
+        "reports": "报告",
+        "reports_set": {
+            "asset_labels": "资产ID标签",
+            "asset_labels_button": "标签生成器",
+            "asset_labels_sub": "为资产ID标签生成可打印PDF。这些标签并不特定于您的库存，因此您可以提前打印标签，并在收到标签时将其应用于您的仓库。",
+            "bill_of_materials": "物料清单"
+        },
+        "reports_sub": "为您的库存生成其他的报告。"
     }
 }
