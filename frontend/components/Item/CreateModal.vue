@@ -10,7 +10,7 @@
       <div class="modal-action mb-6">
         <div>
           <label for="photo" class="btn">{{ $t("components.item.create_modal.photo_button") }}</label>
-          <input id="photo" class="hidden" type="file" accept="image/*" @change="previewImage" />
+          <input id="photo" class="hidden" type="file" accept="image/png,image/jpeg,image/gif" @change="previewImage" />
         </div>
         <div class="grow"></div>
         <div>
