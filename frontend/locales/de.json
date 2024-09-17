@@ -18,8 +18,8 @@
         },
         "item": {
             "create_modal": {
-                "title": "Gegenstand erstellen",
-                "photo_button": "Foto 📷"
+                "photo_button": "Foto 📷",
+                "title": "Gegenstand erstellen"
             },
             "view": {
                 "selectable": {
@@ -101,6 +101,26 @@
         "tips_sub": "Suchtipps",
         "updated_at": "Aktualisiert am"
     },
+    "languages": {
+        "ca": "Katalanisch",
+        "de": "Deutsch",
+        "en": "Englisch",
+        "es": "Spanisch",
+        "fr": "Französisch",
+        "hu": "Ungarisch",
+        "it": "Italienisch",
+        "nl": "Niederländisch",
+        "pl": "Polnisch",
+        "pt-BR": "Portugiesisch (Brasilien)",
+        "ru": "Russisch",
+        "sl": "Slowenisch",
+        "sv": "Schwedisch",
+        "tr": "Türkisch",
+        "zh-CN": "Chinesisch (einfach)",
+        "zh-HK": "Chinesisch (Hong Kong)",
+        "zh-MO": "Chinesisch (Macao)",
+        "zh-TW": "Chinesisch (Traditionell)"
+    },
     "profile": {
         "active": "Aktiv",
         "change_password": "Passwort ändern",
@@ -108,11 +128,13 @@
         "current_password": "Aktuelles Passwort",
         "delete_account": "Konto löschen",
         "delete_account_sub": "Lösche dein Konto und alle zugehörigen Daten. Dies kann nicht rückgängig gemacht werden.",
+        "display_header": "{ currentValue, select, true {Header ausblenden} false {Header anzeigen} other {Kein Treffer}}",
         "enabled": "Aktiviert",
         "gen_invite": "Einladungslink generieren",
         "group_settings": "Gruppeneinstellungen",
         "group_settings_sub": "Geteilte Gruppeneinstellungen. Möglicherweise musst du die Seite neu laden, damit einige Einstellungen wirksam werden.",
         "inactive": "Inaktiv",
+        "language": "Sprache",
         "new_password": "Neues Passwort",
         "notifier_modal": "{ type, select, true {Bearbeiten} false {Erstellen} other {Andere}} Notifier",
         "notifiers": "Melder",
@@ -121,39 +143,47 @@
         "theme_settings": "Themes",
         "theme_settings_sub": "Theme-Einstellungen werden im lokalen Speicher deines Browsers gespeichert. Du kannst das Theme jederzeit ändern. Wenn du Probleme hast, dein Theme einzustellen, versuche, die Seite neu zu laden.",
         "update_group": "Gruppe aktualisieren",
+        "update_language": "Sprache ändern",
         "url": "URL",
         "user_profile": "Benutzerprofil",
-        "user_profile_sub": "Lade Benutzer ein und verwalte dein Konto.",
-        "language": "Sprache",
-        "update_language": "Sprache ändern"
+        "user_profile_sub": "Lade Benutzer ein und verwalte dein Konto."
     },
     "tools": {
-        "import_export_set": {
-            "import_button": "Inventar importieren",
-            "import": "Inventar importieren",
-            "export_sub": "Exportiert das Standard-CSV-Format für Homebox. Damit werden alle Artikel in deinem Inventar exportiert.",
-            "export": "Inventar exportieren",
-            "import_sub": "Importiert das Standard-CSV-Format für Homebox. Ohne eine '<code>'HB.import_ref'</code>' Spalte werden vorhandenen Artikel in Ihrem Bestand '<b>'nicht'</b>' überschrieben, sondern nur neue Artikel hinzugefügt. Zeilen mit einer '<code>'HB.import_ref'</code>' Spalte werden mit vorhandenen Artikeln mit der gleichen import_ref zusammengeführt, sofern vorhanden.",
-            "export_button": "Inventar exportieren"
+        "actions": "Inventar Aktionen",
+        "actions_set": {
+            "ensure_ids": "Sicherstellen von Asset-IDs",
+            "ensure_ids_button": "Sicherstellen von Asset-IDs",
+            "ensure_ids_sub": "Es wird sichergestellt, dass alle Artikel in Ihrem Bestand ein gültiges asset_id-Feld haben. Dazu wird das Feld mit der höchsten aktuellen asset_id in der Datenbank ermittelt und der nächste Wert auf jeden Artikel mit einem nicht gesetzten asset_id-Feld angewendet. Dies geschieht in der Reihenfolge des Feldes created_at.",
+            "ensure_import_refs": "Sicherstellen, dass Import-Referenzen importiert wurden",
+            "ensure_import_refs_button": "Sicherstellen, dass Referenzen importiert werden",
+            "ensure_import_refs_sub": "Es wird sichergestellt, dass alle Gegenstände in Ihrem Inventar ein gültiges import_ref-Feld haben. Dazu wird nach dem Zufallsprinzip eine 8-stellige Zeichenkette für jeden Gegenstand mit einem ungültigen import_ref-Feld erzeugt.",
+            "set_primary_photo": "Primärfoto festlegen",
+            "set_primary_photo_button": "Primäres Foto festlegen",
+            "set_primary_photo_sub": "In version v0.10.0 von Homebox wurde das primäre Bild-Feld zu Anhängen vom Typ Foto hinzugefügt. Diese Aktion setzt das Feld für das primäre Bild auf das erste Bild im Feld für Anhänge in der Datenbank, wenn es nicht bereits gesetzt ist. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Siehe GitHub PR #576'</a>'",
+            "zero_datetimes": "Null-Punkt-Datum-Zeiten",
+            "zero_datetimes_button": "Null-Punkt-Datum-Zeiten",
+            "zero_datetimes_sub": "Setzt den Zeitwert für alle Datums-Zeit-Felder in Ihrem Inventar auf den Anfang des Datums zurück. Damit wird ein Fehler behoben, der zu Beginn der Entwicklung der Website eingeführt wurde und dazu führte, dass das Datum zusammen mit der Uhrzeit gespeichert wurde, was zu Problemen bei der Anzeige von genauen Werten in Datumsfeldern führte. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'"
         },
-        "reports_set": {
-            "bill_of_materials_button": "Stückliste generieren",
-            "asset_labels_button": "Etikettengenerator",
-            "bill_of_materials": "Stückliste",
-            "bill_of_materials_sub": "Erzeugt eine CSV-Datei (Comma Separated Values), die in ein Tabellenkalkulationsprogramm importiert werden kann. Dies ist eine Zusammenfassung des Bestands mit grundlegenden Artikel- und Preisinformationen.",
-            "asset_labels_sub": "Erzeugt eine druckbare PDF-Datei mit Etiketten für eine Reihe von Asset-IDs. Diese sind nicht spezifisch für deine Inventargegenstände, so dass du die Etiketten im Voraus ausdrucken und bei Erhalt auf deinen Inventargegenständen anbringen kannst.",
-            "asset_labels": "Asset-ID-Etiketten"
-        },
+        "actions_sub": "Aktionen in großen Mengen auf das Inventar anwenden. Diese Aktionen sind unumkehrbar. '<b>'Sei vorsichtig.'</b>'",
         "import_export": "Import/Export",
-        "reports_sub": "Erstelle verschiedene Berichte für dein Inventar.",
+        "import_export_set": {
+            "export": "Inventar exportieren",
+            "export_button": "Inventar exportieren",
+            "export_sub": "Exportiert das Standard-CSV-Format für Homebox. Damit werden alle Artikel in deinem Inventar exportiert.",
+            "import": "Inventar importieren",
+            "import_button": "Inventar importieren",
+            "import_sub": "Importiert das Standard-CSV-Format für Homebox. Ohne eine '<code>'HB.import_ref'</code>' Spalte werden vorhandenen Artikel in Ihrem Bestand '<b>'nicht'</b>' überschrieben, sondern nur neue Artikel hinzugefügt. Zeilen mit einer '<code>'HB.import_ref'</code>' Spalte werden mit vorhandenen Artikeln mit der gleichen import_ref zusammengeführt, sofern vorhanden."
+        },
         "import_export_sub": "Importieren und exportieren des Inventars in und aus einer CSV-Datei. Dies ist nützlich, um das Inventar auf eine neue Instanz von Homebox zu migrieren.",
         "reports": "Berichte",
-        "actions": "Inventar Aktionen",
-        "actions_sub": "Aktionen in großen Mengen auf das Inventar anwenden. Diese Aktionen sind unumkehrbar. '<b>'Sei vorsichtig.'</b>'",
-        "actions_set": {
-            "ensure_ids_button": "Sicherstellen von Asset-IDs",
-            "ensure_ids": "Sicherstellen von Asset-IDs",
-            "ensure_import_refs": "Sicherstellen, dass Import-Referenzen importiert wurden"
-        }
+        "reports_set": {
+            "asset_labels": "Asset-ID-Etiketten",
+            "asset_labels_button": "Etikettengenerator",
+            "asset_labels_sub": "Erzeugt eine druckbare PDF-Datei mit Etiketten für eine Reihe von Asset-IDs. Diese sind nicht spezifisch für deine Inventargegenstände, so dass du die Etiketten im Voraus ausdrucken und bei Erhalt auf deinen Inventargegenständen anbringen kannst.",
+            "bill_of_materials": "Stückliste",
+            "bill_of_materials_button": "Stückliste generieren",
+            "bill_of_materials_sub": "Erzeugt eine CSV-Datei (Comma Separated Values), die in ein Tabellenkalkulationsprogramm importiert werden kann. Dies ist eine Zusammenfassung des Bestands mit grundlegenden Artikel- und Preisinformationen."
+        },
+        "reports_sub": "Erstelle verschiedene Berichte für dein Inventar."
     }
 }

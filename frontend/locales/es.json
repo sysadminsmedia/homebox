@@ -128,7 +128,7 @@
         "current_password": "Contraseña Actual",
         "delete_account": "Eliminar Cuenta",
         "delete_account_sub": "Elimina tu cuenta y todos sus datos asociados. Esto no se puede deshacer.",
-        "display_header": "{ currentValue, select, true {Ocultar encabezado} false {Mostrar encabezado} other {Desconocido}}",
+        "display_header": "{ currentValue, select, true {Ocultar Encabezado} false {Mostrar Encabezado} other {Desconocido}}",
         "enabled": "Habilitado",
         "gen_invite": "Generar Enlace de Invitación",
         "group_settings": "Ajustes de Grupo",
