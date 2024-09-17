@@ -96,6 +96,8 @@
     label: string;
     // key of ItemOut where the value is a string
     ref: keyof OnlyString<NoUndefinedField<ItemOut>>;
+    maxLength?: number;
+    minLength?: number;
   };
 
   type NumberFormField = {
@@ -131,6 +133,8 @@
       type: "text",
       label: "Name",
       ref: "name",
+      maxLength: 255,
+      minLength: 1,
     },
     {
       type: "number",
@@ -141,26 +145,31 @@
       type: "textarea",
       label: "Description",
       ref: "description",
+      maxLength: 1000,
     },
     {
       type: "text",
       label: "Serial Number",
       ref: "serialNumber",
+      maxLength: 255,
     },
     {
       type: "text",
       label: "Model Number",
       ref: "modelNumber",
+      maxLength: 255,
     },
     {
       type: "text",
       label: "Manufacturer",
       ref: "manufacturer",
+      maxLength: 255,
     },
     {
       type: "textarea",
       label: "Notes",
       ref: "notes",
+      maxLength: 1000,
     },
     {
       type: "checkbox",
@@ -184,6 +193,7 @@
       type: "text",
       label: "Purchased From",
       ref: "purchaseFrom",
+      maxLength: 255,
     },
     {
       type: "text",
@@ -214,6 +224,7 @@
       type: "textarea",
       label: "Warranty Notes",
       ref: "warrantyDetails",
+      maxLength: 1000,
     },
   ];
 
@@ -222,6 +233,7 @@
       type: "text",
       label: "Sold To",
       ref: "soldTo",
+      maxLength: 255,
     },
     {
       type: "text",
@@ -480,12 +492,21 @@
           <div class="border-t border-gray-300 sm:p-0">
             <div v-for="field in mainFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y sm:divide-gray-300">
               <div class="border-b border-gray-300 px-4 pb-4 pt-2 sm:px-6">
-                <FormTextArea v-if="field.type === 'textarea'" v-model="item[field.ref]" :label="field.label" inline />
+                <FormTextArea
+                  v-if="field.type === 'textarea'"
+                  v-model="item[field.ref]"
+                  :label="field.label"
+                  inline
+                  :max-length="field.maxLength"
+                  :min-length="field.minLength"
+                />
                 <FormTextField
                   v-else-if="field.type === 'text'"
                   v-model="item[field.ref]"
                   :label="field.label"
                   inline
+                  :max-length="field.maxLength"
+                  :min-length="field.minLength"
                 />
                 <FormTextField
                   v-else-if="field.type === 'number'"
@@ -522,7 +543,7 @@
               <!-- <FormSelect v-model:value="field.type" label="Field Type" :items="fieldTypes" value-key="value" /> -->
               <FormTextField v-model="field.name" label="Name" />
               <div class="col-span-3 flex items-end">
-                <FormTextField v-model="field.textValue" label="Value" />
+                <FormTextField v-model="field.textValue" label="Value" :max-length="500" />
                 <div class="tooltip" data-tip="Delete">
                   <button class="btn btn-square btn-sm mb-2 ml-2" @click="item.fields.splice(idx, 1)">
                     <MdiDelete />
@@ -604,12 +625,21 @@
               class="grid grid-cols-1 sm:divide-y sm:divide-gray-300"
             >
               <div class="border-b border-gray-300 px-4 pb-4 pt-2 sm:px-6">
-                <FormTextArea v-if="field.type === 'textarea'" v-model="item[field.ref]" :label="field.label" inline />
+                <FormTextArea
+                  v-if="field.type === 'textarea'"
+                  v-model="item[field.ref]"
+                  :label="field.label"
+                  inline
+                  :max-length="field.maxLength"
+                  :min-length="field.minLength"
+                />
                 <FormTextField
                   v-else-if="field.type === 'text'"
                   v-model="item[field.ref]"
                   :label="field.label"
                   inline
+                  :max-length="field.maxLength"
+                  :min-length="field.minLength"
                 />
                 <FormTextField
                   v-else-if="field.type === 'number'"
@@ -646,12 +676,21 @@
               class="grid grid-cols-1 sm:divide-y sm:divide-gray-300"
             >
               <div class="border-b border-gray-300 px-4 pb-4 pt-2 sm:px-6">
-                <FormTextArea v-if="field.type === 'textarea'" v-model="item[field.ref]" :label="field.label" inline />
+                <FormTextArea
+                  v-if="field.type === 'textarea'"
+                  v-model="item[field.ref]"
+                  :label="field.label"
+                  inline
+                  :max-length="field.maxLength"
+                  :min-length="field.minLength"
+                />
                 <FormTextField
                   v-else-if="field.type === 'text'"
                   v-model="item[field.ref]"
                   :label="field.label"
                   inline
+                  :max-length="field.maxLength"
+                  :min-length="field.minLength"
                 />
                 <FormTextField
                   v-else-if="field.type === 'number'"
@@ -684,12 +723,21 @@
           <div class="border-t border-gray-300 sm:p-0">
             <div v-for="field in soldFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y sm:divide-gray-300">
               <div class="border-b border-gray-300 px-4 pb-4 pt-2 sm:px-6">
-                <FormTextArea v-if="field.type === 'textarea'" v-model="item[field.ref]" :label="field.label" inline />
+                <FormTextArea
+                  v-if="field.type === 'textarea'"
+                  v-model="item[field.ref]"
+                  :label="field.label"
+                  inline
+                  :max-length="field.maxLength"
+                  :min-length="field.minLength"
+                />
                 <FormTextField
                   v-else-if="field.type === 'text'"
                   v-model="item[field.ref]"
                   :label="field.label"
                   inline
+                  :max-length="field.maxLength"
+                  :min-length="field.minLength"
                 />
                 <FormTextField
                   v-else-if="field.type === 'number'"

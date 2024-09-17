@@ -183,10 +183,10 @@
         {{ entry.id ? "Edit Entry" : "New Entry" }}
       </template>
       <form @submit.prevent="dispatchFormSubmit">
-        <FormTextField v-model="entry.name" autofocus label="Entry Name" />
+        <FormTextField v-model="entry.name" autofocus label="Entry Name" :max-length="255" :min-length="1" />
         <DatePicker v-model="entry.completedDate" label="Completed Date" />
         <DatePicker v-model="entry.scheduledDate" label="Scheduled Date" />
-        <FormTextArea v-model="entry.description" label="Notes" />
+        <FormTextArea v-model="entry.description" label="Notes" :max-length="2500" />
         <FormTextField v-model="entry.cost" autofocus label="Cost" />
         <div class="flex justify-end py-2">
           <BaseButton type="submit" class="ml-2 mt-2">

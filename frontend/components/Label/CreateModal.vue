@@ -8,8 +8,10 @@
         :trigger-focus="focused"
         :autofocus="true"
         label="Label Name"
+        :max-length="255"
+        :min-length="1"
       />
-      <FormTextArea v-model="form.description" label="Label Description" />
+      <FormTextArea v-model="form.description" label="Label Description" :max-length="255" />
       <div class="modal-action">
         <div class="flex justify-center">
           <BaseButton class="rounded-r-none" :loading="loading" type="submit"> {{ $t("global.create") }} </BaseButton>
