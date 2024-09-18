@@ -90,6 +90,8 @@
         "query_id": "Eszközazonosító szám lekérdezése: { id }",
         "reset_search": "Alaphelyzet",
         "results": "{total} találat",
-        "tip_1": "A hely- és címkeszűrők a „vagy” műveletet használják"
+        "tip_1": "A hely- és címkeszűrők a „vagy” műveletet használják. Ha egynél többet választasz ki,\n bármelyik egyezése esetén megjelenik a tétel.",
+        "tip_2": "A '#' előtaggal ellátott keresések egy eszközazonosítót fognak lekérdezni (például '#000-001')",
+        "tip_3": "A mezőszűrők a „vagy” műveletet használják"
     }
 }
