@@ -1,1 +1,9 @@
-{}
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "change_warning": "O comportamento de importações com import_refs existentes foi alterado. Se houver um import_ref presente no arquivo CSV, o\nitem será atualizado com os valores presentes no arquivo CSV."
+            }
+        }
+    }
+}

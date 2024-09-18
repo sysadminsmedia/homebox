@@ -98,6 +98,11 @@
         "tips_sub": "Tippek a kereséshez",
         "updated_at": "Legutóbbi változtatás"
     },
+    "languages": {
+        "ca": "katalán",
+        "de": "német",
+        "en": "angol"
+    },
     "profile": {
         "active": "Aktív",
         "change_password": "Jelszó módosítása",
@@ -131,7 +136,15 @@
             "ensure_ids": "Eszközazonosítók meglétének biztosítása",
             "ensure_ids_button": "Eszközazonosítók generálása",
             "ensure_ids_sub": "Biztosítja, hogy a készletben lévő összes tétel rendelkezzen érvényes asset_id (eszközazonosító) mezővel. Ehhez megkeresi a legmagasabb asset_id mezőértéket az adatbázisban és minden olyan tételhez, amelynek nem beállított az asset_id mezője, rendre eggyel növelt értéket állít be. Ezt a created_at mezők értékének (a tétel létrehozásának dátuma) sorrendjében teszi.",
-            "ensure_import_refs": "Hivatkozások importálásának biztosítása"
+            "ensure_import_refs": "Importálási hivatkozások meglétének biztosítása",
+            "ensure_import_refs_button": "Hivatkozások generálása",
+            "ensure_import_refs_sub": "Biztosítja, hogy a készletben lévő összes tétel rendelkezzen érvényes import_ref mezővel. Véletlenszerűen generál egy 8 hosszúságú karakterláncot minden olyan tételhez, amelynél az import_ref mező üres.",
+            "set_primary_photo": "Elsődleges fénykép hozzárendelése",
+            "set_primary_photo_button": "Hozzárendelés",
+            "set_primary_photo_sub": "A Homebox v0.10.0 verziójában hozzáadtuk a fénykép típusú mellékletekhez az elsődleges fényképként történő megjelölés lehetőségét. Ezzel a művelettel a mellékletekben található első fényképet állítod be elsődleges fényképnek, ha ilyen a tételhez még nincs kiválasztva. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Lásd az #576 GitHub PR-t'</a>'",
+            "zero_datetimes": "Idő törlése a tételek dátummezőiből",
+            "zero_datetimes_button": "Dátummezők javítása",
+            "zero_datetimes_sub": "Visszaállítja a dátumot és időt tartalmazó mezők értékét a dátum kezdetére a teljes készletben. Ezzel javíthatsz egy olyan bugot, mely során az oldal fejlesztésének korai szakaszában az időértékek mentése a dátumok pontos megjelenítésében hibát okozott. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Lásd a #236 Github Issue-t további részletekért.'</a>'"
         },
         "actions_sub": "Műveletek tömeges alkalmazása a készletre. Ezeket a vissza nem vonható műveleteket csak '<b>'kellő körültekintés mellett használd'</b>'.",
         "import_export": "Import/Export",
