@@ -134,7 +134,7 @@
       return;
     }
 
-    const { error } = await api.items.maintenance.delete(props.item.id, id);
+    const { error } = await api.maintenances.delete(id);
 
     if (error) {
       toast.error("Failed to delete entry");
@@ -158,7 +158,7 @@
       return;
     }
 
-    const { error } = await api.items.maintenance.update(props.item.id, entry.id, {
+    const { error } = await api.maintenances.update(entry.id, {
       name: entry.name,
       completedDate: entry.completedDate ?? "null",
       scheduledDate: entry.scheduledDate ?? "null",
@@ -204,7 +204,7 @@
         <StatCard
           v-for="stat in stats"
           :key="stat.id"
-          class="stats block border-l-primary shadow-xl"
+          class="stats border-l-primary block shadow-xl"
           :title="stat.title"
           :value="stat.value"
           :type="stat.type"
@@ -271,7 +271,7 @@
         <div class="hidden first:block">
           <button
             type="button"
-            class="relative block w-full rounded-lg border-2 border-dashed border-base-content p-12 text-center"
+            class="border-base-content relative block w-full rounded-lg border-2 border-dashed p-12 text-center"
             @click="newEntry()"
           >
             <MdiWrenchClock class="inline size-16" />

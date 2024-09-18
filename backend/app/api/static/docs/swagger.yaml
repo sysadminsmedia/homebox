@@ -1230,7 +1230,7 @@ paths:
       - Bearer: []
       summary: Get Maintenance Log
       tags:
-      - Maintenance
+      - Item Maintenance
     post:
       parameters:
       - description: Entry Data
@@ -1250,39 +1250,7 @@ paths:
       - Bearer: []
       summary: Create Maintenance Entry
       tags:
-      - Maintenance
-  /v1/items/{id}/maintenance/{entry_id}:
-    delete:
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No Content
-      security:
-      - Bearer: []
-      summary: Delete Maintenance Entry
-      tags:
-      - Maintenance
-    put:
-      parameters:
-      - description: Entry Data
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/repo.MaintenanceEntryUpdate'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/repo.MaintenanceEntry'
-      security:
-      - Bearer: []
-      summary: Update Maintenance Entry
-      tags:
-      - Maintenance
+      - Item Maintenance
   /v1/items/{id}/path:
     get:
       parameters:
@@ -1583,6 +1551,61 @@ paths:
       summary: Get Locations Tree
       tags:
       - Locations
+  /v1/maintenances:
+    get:
+      parameters:
+      - description: which maintenances to retrieve
+        enum:
+        - scheduled
+        - completed
+        - both
+        in: query
+        name: filter
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.MaintenanceEntry'
+      security:
+      - Bearer: []
+      summary: Query All Maintenances
+      tags:
+      - Maintenances
+  /v1/maintenances/{id}:
+    delete:
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Delete Maintenance Entry
+      tags:
+      - Maintenances
+    put:
+      parameters:
+      - description: Entry Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.MaintenanceEntryUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.MaintenanceEntry'
+      security:
+      - Bearer: []
+      summary: Update Maintenance Entry
+      tags:
+      - Maintenances
   /v1/notifiers:
     get:
       produces:
