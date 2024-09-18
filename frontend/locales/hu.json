@@ -124,6 +124,9 @@
     },
     "tools": {
         "reports": "Jelentések",
-        "reports_sub": "Hozzon létre különböző jelentéseket a készlethez."
+        "reports_set": {
+            "asset_labels": "Tartalmielem-azonosító címkék"
+        },
+        "reports_sub": "Hozz létre különböző jelentéseket a készletedhez."
     }
 }
