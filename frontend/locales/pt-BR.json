@@ -110,6 +110,13 @@
         "enabled": "Ativado",
         "gen_invite": "Gerar link de convite",
         "group_settings": "Definições do grupo",
-        "group_settings_sub": "Configurações de Grupo Compartilhado. É possível que tenha que dar um refresh na página para que se apliquem alguns ajustes."
+        "group_settings_sub": "Configurações de Grupo Compartilhado. É possível que tenha que recarregar a página para que alguns ajustes sejam aplicados.",
+        "inactive": "Inativa",
+        "new_password": "Nova Senha",
+        "notifiers": "Notificadores",
+        "notifiers_sub": "Receba notificações para lembretes de manutenção futuros",
+        "test": "Teste",
+        "theme_settings": "Configurações do Tema",
+        "theme_settings_sub": "As configurações de tema são salvas no seu navegador atual. Você pode trocar o tema a qualquer momento. Se está\ntendo problemas com a mudança de tema, tente dar um refresh na página."
     }
 }
