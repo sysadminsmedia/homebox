@@ -2,6 +2,8 @@
     "components": {
         "app": {
             "import_dialog": {
+                "change_warning": "A meglévő import_ref-fel rendelkező tételek importálásának menete megváltozott. Ha a CSV fájlban van import_ref, \nakkor a tételt felülírják a CSV fájlban található értékek.",
+                "description": "Importáljon egy CSV-fájlt, amely tartalmazza az elemeket, címkéket és helyeket",
                 "title": "Importálás CSV-fájlból",
                 "upload": "Feltöltés"
             }
@@ -99,9 +101,24 @@
         "updated_at": "Legutóbbi változtatás"
     },
     "languages": {
-        "ca": "katalán",
-        "de": "német",
-        "en": "angol"
+        "ca": "Katalán",
+        "de": "Német",
+        "en": "Angol",
+        "es": "Spanyol",
+        "fr": "Francia",
+        "hu": "Magyar",
+        "it": "Olasz",
+        "nl": "Holland",
+        "pl": "Lengyel",
+        "pt-BR": "Portugál (brazíliai)",
+        "ru": "Orosz",
+        "sl": "Szlovén",
+        "sv": "Svéd",
+        "tr": "Török",
+        "zh-CN": "Kínai (egyszerűsített)",
+        "zh-HK": "Kínai (hongkongi)",
+        "zh-MO": "Kínai (makaói)",
+        "zh-TW": "Kínai (hagyományos)"
     },
     "profile": {
         "active": "Aktív",
