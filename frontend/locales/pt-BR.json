@@ -74,5 +74,26 @@
         "set_name": "Qual é o seu nome?",
         "set_password": "Defina a sua Senha",
         "tagline": "Rastreie, organize e gerencie suas coisas."
+    },
+    "items": {
+        "add": "Adicionar",
+        "created_at": "Criado em",
+        "custom_fields": "Campos Personalizados",
+        "field_selector": "Seletor de Campo",
+        "field_value": "Valor do Campo",
+        "first": "Primeiro",
+        "include_archive": "Incluir itens arquivados",
+        "last": "Último",
+        "negate_labels": "Negar os rótulos selecionados",
+        "next_page": "Próxima página",
+        "no_results": "Nenhum Item Encontrado",
+        "options": "Opções",
+        "order_by": "Ordenar Por",
+        "pages": "Página { page } de { totalPages }",
+        "prev_page": "Página anterior",
+        "query_id": "Consultando o número de ID do ativo: { id }",
+        "reset_search": "Reiniciar Pesquisa",
+        "results": "{ total } Resultados",
+        "tip_1": "Os filtros de localização e rótulo usam o operador \"OR\". Se você selecionar mais de um, somente um será\nnecessário para obter uma coincidência."
     }
 }
