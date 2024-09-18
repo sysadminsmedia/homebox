@@ -35,7 +35,7 @@
         },
         "location": {
             "create_modal": {
-                "title": "Új földrajzi hely létrehozása"
+                "title": "Új hely létrehozása"
             }
         }
     },
@@ -54,23 +54,23 @@
         "locations": "Helyek",
         "name": "Név",
         "password": "Jelszó",
-        "read_docs": "Dokumentáció elolvasása",
+        "read_docs": "Olvasd el a dokumentációt",
         "search": "Keresés",
-        "sign_out": "Kilépés",
+        "sign_out": "Kijelentkezés",
         "submit": "Elküldés",
         "version": "Verzió: { version }",
         "welcome": "Üdv, { username }"
     },
     "index": {
         "disabled_registration": "Regisztráció kikapcsolva",
-        "dont_join_group": "Nem akarsz csoporthoz csatlakozni?",
-        "joining_group": "Egy létező csoporthoz csatlakozol!",
-        "login": "Belépés",
+        "dont_join_group": "Nem szeretnél csatlakozni egy csoporthoz?",
+        "joining_group": "Meglévő csoporthoz csatlakozol!",
+        "login": "Bejelentkezés",
         "register": "Regisztráció",
-        "remember_me": "Emlékezzen rám",
+        "remember_me": "Emlékezzen rám!",
         "set_email": "Mi az email címed?",
         "set_name": "Mi a neved?",
-        "set_password": "Jelszó beállítása",
+        "set_password": "Állítsa be a jelszavát",
         "tagline": "Kövesd, rendszerezd és igazgasd a tárgyaidat."
     },
     "items": {
