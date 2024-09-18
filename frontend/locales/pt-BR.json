@@ -112,11 +112,25 @@
         "group_settings": "Definições do grupo",
         "group_settings_sub": "Configurações de Grupo Compartilhado. É possível que tenha que recarregar a página para que alguns ajustes sejam aplicados.",
         "inactive": "Inativa",
+        "language": "Idioma",
         "new_password": "Nova Senha",
         "notifiers": "Notificadores",
         "notifiers_sub": "Receba notificações para lembretes de manutenção futuros",
         "test": "Teste",
         "theme_settings": "Configurações do Tema",
-        "theme_settings_sub": "As configurações de tema são salvas no seu navegador atual. Você pode trocar o tema a qualquer momento. Se está\ntendo problemas com a mudança de tema, tente dar um refresh na página."
+        "theme_settings_sub": "As configurações de tema são salvas localmente em seu navegador. Você pode mudar o tema a qualquer momento. Se está\ntendo problemas com a mudança de tema, tente recarregar a pagina.",
+        "update_group": "Atualizar grupo",
+        "update_language": "Atualizar idioma",
+        "url": "URL",
+        "user_profile": "Perfil do usuário",
+        "user_profile_sub": "Convide usuários e gerencie sua conta."
+    },
+    "tools": {
+        "reports": "Relatórios",
+        "reports_set": {
+            "asset_labels": "Etiquetas de ID de ativo",
+            "asset_labels_sub": "Gera um PDF imprimível das etiquetas no intervalo de ID ativo. Essas não são específicas do seu inventário, então você pode imprimir elas antes e aplicar no seu inventário depois quando receber os items."
+        },
+        "reports_sub": "Gere relatórios diferentes para o seu inventário."
     }
 }
