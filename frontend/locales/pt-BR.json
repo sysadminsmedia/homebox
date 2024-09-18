@@ -45,6 +45,17 @@
         "build": "Compilação: { build }",
         "confirm": "Confirmar",
         "create": "Criar",
-        "create_and_add": "Criar e adicionar outro"
+        "create_and_add": "Criar e Adicionar Outro",
+        "created": "Criado",
+        "email": "Email",
+        "follow_dev": "Seguir o desenvolvedor",
+        "github": "Projeto GitHub",
+        "items": "Items",
+        "join_discord": "Junte-se ao Discord",
+        "labels": "Etiquetas",
+        "locations": "Locais",
+        "name": "Nome",
+        "password": "Senha",
+        "read_docs": "Leia a documentação"
     }
 }
