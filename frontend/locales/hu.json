@@ -70,8 +70,8 @@
         "remember_me": "Emlékezzen rám!",
         "set_email": "Mi az email címed?",
         "set_name": "Mi a neved?",
-        "set_password": "Állítsa be a jelszavát",
-        "tagline": "Kövesd, rendszerezd és igazgasd a tárgyaidat."
+        "set_password": "Állíts be egy jelszót!",
+        "tagline": "Kövesd nyomon, rendszerezd és kezeld a dolgaidat."
     },
     "items": {
         "add": "Hozzáadás",
@@ -79,6 +79,17 @@
         "custom_fields": "Egyedi mezők",
         "field_selector": "Mezőválasztó",
         "field_value": "Mező értéke",
-        "first": "Első"
+        "first": "Első",
+        "include_archive": "Archivált elemek belefoglalása",
+        "next_page": "Következő oldal",
+        "no_results": "Egy elem sem található",
+        "options": "Opciók",
+        "order_by": "Rendezés",
+        "pages": "{page}/{totalPages] oldal",
+        "prev_page": "Előző oldal",
+        "query_id": "Eszközazonosító szám lekérdezése: { id }",
+        "reset_search": "Alaphelyzet",
+        "results": "{total} találat",
+        "tip_1": "A hely- és címkeszűrők a „vagy” műveletet használják"
     }
 }
