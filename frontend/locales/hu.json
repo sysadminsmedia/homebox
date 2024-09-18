@@ -130,9 +130,10 @@
         "actions_set": {
             "ensure_ids": "Eszközazonosítók meglétének biztosítása",
             "ensure_ids_button": "Eszközazonosítók generálása",
-            "ensure_ids_sub": "Biztosítja, hogy a készletben lévő összes tétel rendelkezzen érvényes asset_id (eszközazonosító) mezővel. Ehhez megkeresi a legmagasabb asset_id mezőértéket az adatbázisban és minden olyan tételhez, amelynek nem beállított az asset_id mezője, rendre eggyel növelt értéket állít be. Ezt a created_at mezők értékének (a tétel létrehozásának dátuma) sorrendjében teszi."
+            "ensure_ids_sub": "Biztosítja, hogy a készletben lévő összes tétel rendelkezzen érvényes asset_id (eszközazonosító) mezővel. Ehhez megkeresi a legmagasabb asset_id mezőértéket az adatbázisban és minden olyan tételhez, amelynek nem beállított az asset_id mezője, rendre eggyel növelt értéket állít be. Ezt a created_at mezők értékének (a tétel létrehozásának dátuma) sorrendjében teszi.",
+            "ensure_import_refs": "Hivatkozások importálásának biztosítása"
         },
-        "actions_sub": "Műveletek tömeges alkalmazása a készletre",
+        "actions_sub": "Műveletek tömeges alkalmazása a készletre. Ezeket a vissza nem vonható műveleteket csak '<b>'kellő körültekintés mellett használd'</b>'.",
         "import_export": "Import/Export",
         "import_export_set": {
             "export": "Készlet exportálása",
