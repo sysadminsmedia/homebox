@@ -103,12 +103,13 @@
         "current_password": "Jelenlegi jelszó",
         "delete_account": "Fiók törlése",
         "delete_account_sub": "Törlöd a fiókodat és az összes kapcsolódó adatot. Ezt a műveletet nem lehet visszavonni.",
-        "display_header": "{ currentValue, select, true {Fejléc elrejtése} false {Fejléc megjelenítése} egyéb {Not Hit}}",
+        "display_header": "{ currentValue, select, true {Fejléc elrejtése} false {Fejléc megjelenítése} other{Nincs találat}}",
         "enabled": "Engedélyezve",
         "gen_invite": "Meghívó link létrehozása",
         "group_settings": "Csoport beállításai",
         "group_settings_sub": "Ezek a csoport közös beállításai. Lehet hogy frissítened kell az oldalt a böngésződben a beállítások megváltoztatása után.",
         "inactive": "Inaktív",
+        "language": "Nyelv",
         "new_password": "Új jelszó",
         "notifiers": "Értesítők",
         "notifiers_sub": "Értesítések kérése a közelgő karbantartási emlékeztetőkről",
@@ -116,8 +117,13 @@
         "theme_settings": "Téma Beállítások",
         "theme_settings_sub": "A témabeállítások a böngésző helyi tárhelyén tárolódnak. Bármikor megváltoztathatod a témát. Ha problémába\n ütközöl a téma beállításakor, próbáld meg frissíteni az oldalt a böngésződben.",
         "update_group": "Csoport módosítása",
+        "update_language": "Nyelv átállítása",
         "url": "URL",
         "user_profile": "Felhasználói profil",
         "user_profile_sub": "Hívj meg felhasználókat, és kezeld a fiókodat."
+    },
+    "tools": {
+        "reports": "Jelentések",
+        "reports_sub": "Hozzon létre különböző jelentéseket a készlethez."
     }
 }
