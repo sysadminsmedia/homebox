@@ -96,6 +96,7 @@
         "results": "{ total } Resultados",
         "tip_1": "Os filtros de local e etiqueta usam o operador \"OR\". Se você selecionar mais de um, somente um será\nnecessário para obter um resultado.",
         "tip_2": "As pesquisas comprefixo '#'' buscam um ID de ativo (exemplo '#000-001')",
+        "tip_3": "Os filtros de local e etiqueta usam o operador \"OR\". Se você selecionar mais de um, somente um será\nnecessário para obter um resultado.",
         "tips": "Dicas",
         "tips_sub": "Dicas de pesquisa",
         "updated_at": "Atualizado em"
@@ -114,6 +115,7 @@
         "inactive": "Inativa",
         "language": "Idioma",
         "new_password": "Nova Senha",
+        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notificação",
         "notifiers": "Notificadores",
         "notifiers_sub": "Receba notificações para lembretes de manutenção futuros",
         "test": "Teste",
@@ -126,10 +128,38 @@
         "user_profile_sub": "Convide usuários e gerencie sua conta."
     },
     "tools": {
+        "actions": "Ações de inventário",
+        "actions_set": {
+            "ensure_ids": "Garantir IDs de ativos",
+            "ensure_ids_button": "Garantir IDs de ativos",
+            "ensure_ids_sub": "Garante que todos os itens em seu inventário tenham um campo de asset_id válido. Isso é feito através da procura do mais alto asset_id no banco de dados e aplicando o próximo valor aos itens seguintes que não tenham valores de asset_id definidos. Isso é feito com base no campo created_at.",
+            "ensure_import_refs": "Garantir refs de importação",
+            "ensure_import_refs_button": "Garantir refs de importação",
+            "ensure_import_refs_sub": "Garante que todos os itens no seu inventário tenham um campo import_ref válido. Isso é feito gerando aleatoriamente uma sequência de 8 caracteres para cada item que não possuir um campo import_ref válido.",
+            "set_primary_photo": "Definir foto principal",
+            "set_primary_photo_button": "Definir foto principal",
+            "set_primary_photo_sub": "Na versão v0.10.0 do Homebox, o campo principal de foto foi adicionado aos anexos do tipo foto. Essa ação irá marcar o campo da imagem principal para a primeira imagem no array de anexos do banco de dados, se não estiver feito ainda.'<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Veja no GitHub PR #576'</a>'",
+            "zero_datetimes_sub": "Redefine o valor de hora de todos os itens do inventário para o início da data. Isso é para corrigir um bug que foi introduzido no início do desenvolvimento do site que causava o valor da hora ser armazenado errado, resultando em um erro na mostra da data/hora do item. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Veja o item #236 do Github para mais detalhes.'</a>'"
+        },
+        "actions_sub": "Aplicar ações ao seu inventário em massa. Essas ações são irreversíveis. '<b>'Tenha cuidado'</b>'",
+        "import_export": "Importar/Exportar",
+        "import_export_set": {
+            "export": "Exportar inventário",
+            "export_button": "Exportar inventário",
+            "export_sub": "Exporta o formato CSV padrão para o Homebox. Isso irá exportar todos os itens do seu inventário.",
+            "import": "Importar inventário",
+            "import_button": "Importar inventário",
+            "import_sub": "importa o formato CSV para o Homebox. Sem uma '<code>'HB.import_ref'</code>'  coluna, isso não vai sobrescrever nenhum item do seu inventário, apenas adicionar novos items. Linhas que tenham '<code>'HB.import_ref'</code>' colunas são mescladas em itens existentes com os mesmos import_ref, se existirem."
+        },
+        "import_export_sub": "Importar e exportar seu inventário de ou para um arquivo CSV. Isso é útil para migrar o seu inventário para uma nova instância do Homebox.",
         "reports": "Relatórios",
         "reports_set": {
             "asset_labels": "Etiquetas de ID de ativo",
-            "asset_labels_sub": "Gera um PDF imprimível das etiquetas no intervalo de ID ativo. Essas não são específicas do seu inventário, então você pode imprimir elas antes e aplicar no seu inventário depois quando receber os items."
+            "asset_labels_button": "Gerador de etiquetas",
+            "asset_labels_sub": "Gera um PDF imprimível das etiquetas no intervalo de ID de Ativo. Essas não são específicas do seu inventário, então você pode imprimir elas antes e aplicar no seu inventário depois quando receber os items.",
+            "bill_of_materials": "Lista de Materiais",
+            "bill_of_materials_button": "Gerar Lista de Materiais",
+            "bill_of_materials_sub": "Gera um arquivo CSV (Valores Separados por Vírgula) que pode ser importado para um programa de planilha. Esse é um sumário do seu inventário com informações básicas dos itens e dos preços."
         },
         "reports_sub": "Gere relatórios diferentes para o seu inventário."
     }
