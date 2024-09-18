@@ -95,6 +95,17 @@
         "reset_search": "Reiniciar Pesquisa",
         "results": "{ total } Resultados",
         "tip_1": "Os filtros de local e etiqueta usam o operador \"OR\". Se você selecionar mais de um, somente um será\nnecessário para obter um resultado.",
-        "tip_2": "As pesquisas prefixadas com '#'' consultarão um ID de ativo (exemplo '#000-001')"
+        "tip_2": "As pesquisas comprefixo '#'' buscam um ID de ativo (exemplo '#000-001')",
+        "tips": "Dicas",
+        "tips_sub": "Dicas de pesquisa",
+        "updated_at": "Atualizado em"
+    },
+    "profile": {
+        "active": "Ativo",
+        "change_password": "Alterar Senha",
+        "currency_format": "Formato da moeda",
+        "current_password": "Senha Atual",
+        "delete_account": "Excluir conta",
+        "delete_account_sub": "Exclua sua conta e todos os dados associados"
     }
 }
