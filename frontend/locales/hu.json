@@ -81,6 +81,7 @@
         "field_value": "Mező értéke",
         "first": "Első",
         "include_archive": "Archivált elemek belefoglalása",
+        "negate_labels": "Címkeválasztás negálása",
         "next_page": "Következő oldal",
         "no_results": "Egy elem sem található",
         "options": "Opciók",
@@ -94,7 +95,8 @@
         "tip_2": "A '#' előtaggal ellátott keresések egy eszközazonosítót fognak lekérdezni (például '#000-001')",
         "tip_3": "A mezőszűrők a „vagy” műveletet használják. Ha egynél többet választasz ki,\n bármelyik egyezése esetén megjelenik a tétel.",
         "tips": "Tippek",
-        "tips_sub": "Tippek a kereséshez"
+        "tips_sub": "Tippek a kereséshez",
+        "updated_at": "Legutóbbi változtatás"
     },
     "profile": {
         "active": "Aktív",
@@ -111,6 +113,7 @@
         "inactive": "Inaktív",
         "language": "Nyelv",
         "new_password": "Új jelszó",
+        "notifier_modal": "Értesítő { type, select, true {szerkesztése} false {létrehozása} other {egyéb}}",
         "notifiers": "Értesítők",
         "notifiers_sub": "Értesítések kérése a közelgő karbantartási emlékeztetőkről",
         "test": "Teszt",
@@ -123,9 +126,18 @@
         "user_profile_sub": "Hívj meg felhasználókat, és kezeld a fiókodat."
     },
     "tools": {
+        "actions_set": {
+            "ensure_ids": "Eszközazonosítók meglétének biztosítása",
+            "ensure_ids_button": "Eszközazonosítók generálása",
+            "ensure_ids_sub": "Biztosítja, hogy a készletben lévő összes tétel rendelkezzen érvényes asset_id (eszközazonosító) mezővel. Ehhez megkeresi a legmagasabb asset_id mezőértéket az adatbázisban és minden olyan tételhez, amelynek nem beállított az asset_id mezője, rendre eggyel növelt értéket állít be. Ezt a created_at mezők értékének (a tétel létrehozásának dátuma) sorrendjében teszi."
+        },
         "reports": "Jelentések",
         "reports_set": {
-            "asset_labels": "Tartalmielem-azonosító címkék"
+            "asset_labels": "Eszközazonosító címkék",
+            "asset_labels_button": "Címkegenerátor",
+            "asset_labels_sub": "Nyomtatható PDF-fájlt hoz létre, amely címkéket tartalmaz eszközazonosítók egy meghatározott tartományához. Ezek nem készletspecifikusak, így előre is kinyomtathatod a címkéket, és később felviheted a készleted beérkező tételeire.",
+            "bill_of_materials": "Anyagjegyzék",
+            "bill_of_materials_sub": "Létrehoz egy CSV (vesszővel elválasztott értékek) fájlt, amely importálható egy táblázatkezelő programba"
         },
         "reports_sub": "Hozz létre különböző jelentéseket a készletedhez."
     }
