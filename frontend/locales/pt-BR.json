@@ -64,6 +64,14 @@
         "welcome": "Bem-vindo, {username}"
     },
     "index": {
-        "disabled_registration": "Registro desativado"
+        "disabled_registration": "Registro Desativado",
+        "dont_join_group": "Não quer participar de um grupo?",
+        "joining_group": "Você está se juntando a um grupo existente!",
+        "login": "Login",
+        "register": "Registro",
+        "remember_me": "Lembrar-me",
+        "set_email": "Qual o seu e-mail?",
+        "set_name": "Qual é o seu nome?",
+        "set_password": "Defina a sua senha"
     }
 }
