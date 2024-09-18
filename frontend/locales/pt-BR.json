@@ -56,6 +56,14 @@
         "locations": "Locais",
         "name": "Nome",
         "password": "Senha",
-        "read_docs": "Leia a documentação"
+        "read_docs": "Leia a Documentação",
+        "search": "Buscar",
+        "sign_out": "Sair",
+        "submit": "Enviar",
+        "version": "Versão: { version }",
+        "welcome": "Bem-vindo, {username}"
+    },
+    "index": {
+        "disabled_registration": "Registro desativado"
     }
 }
