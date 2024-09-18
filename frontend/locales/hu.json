@@ -92,6 +92,16 @@
         "results": "{total} találat",
         "tip_1": "A hely- és címkeszűrők a „vagy” műveletet használják. Ha egynél többet választasz ki,\n bármelyik egyezése esetén megjelenik a tétel.",
         "tip_2": "A '#' előtaggal ellátott keresések egy eszközazonosítót fognak lekérdezni (például '#000-001')",
-        "tip_3": "A mezőszűrők a „vagy” műveletet használják"
+        "tip_3": "A mezőszűrők a „vagy” műveletet használják. Ha egynél többet választasz ki,\n bármelyik egyezése esetén megjelenik a tétel.",
+        "tips": "Tippek",
+        "tips_sub": "Tippek a kereséshez"
+    },
+    "profile": {
+        "active": "Aktív",
+        "change_password": "Jelszó módosítása",
+        "currency_format": "Pénz formátum",
+        "current_password": "Jelenlegi jelszó",
+        "delete_account": "Fiók törlése",
+        "delete_account_sub": "Töröld a fiókodat és az összes kapcsolódó adatot"
     }
 }
