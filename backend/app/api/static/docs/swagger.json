@@ -2710,9 +2710,6 @@
                 },
                 "total": {
                     "type": "integer"
-                },
-                "totalPrice": {
-                    "type": "number"
                 }
             }
         },

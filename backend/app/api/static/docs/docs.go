@@ -2476,6 +2476,9 @@ const docTemplate = `{
                 "parent": {
                     "$ref": "#/definitions/repo.LocationSummary"
                 },
+                "totalPrice": {
+                    "type": "number"
+                },
                 "updatedAt": {
                     "type": "string"
                 }

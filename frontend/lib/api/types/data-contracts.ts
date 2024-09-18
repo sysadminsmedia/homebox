@@ -330,7 +330,6 @@ export interface PaginationResultItemSummary {
   page: number;
   pageSize: number;
   total: number;
-  totalPrice: number;
 }
 
 export interface TotalsByOrganizer {

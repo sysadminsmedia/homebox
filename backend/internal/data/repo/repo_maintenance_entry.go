@@ -84,6 +84,23 @@ func mapMaintenanceEntry(entry *ent.MaintenanceEntry) MaintenanceEntry {
 	}
 }
 
+func (r *MaintenanceEntryRepository) GetAllMaintenances(ctx context.Context, includeCompleted bool) ([]MaintenanceEntry, error) {
+	query := r.db.MaintenanceEntry.Query()
+	if !includeCompleted {
+		query = query.Where(maintenanceentry.Or(
+			maintenanceentry.DateIsNil(),
+			maintenanceentry.DateEQ(time.Time{}),
+		))
+	}
+	entries, err := query.Order(maintenanceentry.ByScheduledDate()).All(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return mapEachMaintenanceEntry(entries), nil
+}
+
 func (r *MaintenanceEntryRepository) GetScheduled(ctx context.Context, GID uuid.UUID, dt types.Date) ([]MaintenanceEntry, error) {
 	entries, err := r.db.MaintenanceEntry.Query().
 		Where(

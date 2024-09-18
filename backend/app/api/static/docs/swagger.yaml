@@ -390,6 +390,8 @@ definitions:
         type: string
       parent:
         $ref: '#/definitions/repo.LocationSummary'
+      totalPrice:
+        type: number
       updatedAt:
         type: string
     type: object
