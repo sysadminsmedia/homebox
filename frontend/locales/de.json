@@ -159,7 +159,7 @@
             "ensure_import_refs_sub": "Es wird sichergestellt, dass alle Gegenstände in Ihrem Inventar ein gültiges import_ref-Feld haben. Dazu wird nach dem Zufallsprinzip eine 8-stellige Zeichenkette für jeden Gegenstand mit einem ungültigen import_ref-Feld erzeugt.",
             "set_primary_photo": "Primärfoto festlegen",
             "set_primary_photo_button": "Primäres Foto festlegen",
-            "set_primary_photo_sub": "In version v0.10.0 von Homebox wurde das primäre Bild-Feld zu Anhängen vom Typ Foto hinzugefügt. Diese Aktion setzt das Feld für das primäre Bild auf das erste Bild im Feld für Anhänge in der Datenbank, wenn es nicht bereits gesetzt ist. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Siehe GitHub PR #576'</a>'",
+            "set_primary_photo_sub": "In Homebox Version v0.10.0 wurde die Auswahl des Primärbilds von angehängten Bildern hinzugefügt. Mit dieser Funktion wird für jeden Artikel ohne Primärbild das erste angehängt Bild als solches definiert. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'See GitHub PR #576'</a>'",
             "zero_datetimes": "Null-Punkt-Datum-Zeiten",
             "zero_datetimes_button": "Null-Punkt-Datum-Zeiten",
             "zero_datetimes_sub": "Setzt den Zeitwert für alle Datums-Zeit-Felder in Ihrem Inventar auf den Anfang des Datums zurück. Damit wird ein Fehler behoben, der zu Beginn der Entwicklung der Website eingeführt wurde und dazu führte, dass das Datum zusammen mit der Uhrzeit gespeichert wurde, was zu Problemen bei der Anzeige von genauen Werten in Datumsfeldern führte. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'"
