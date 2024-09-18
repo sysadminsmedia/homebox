@@ -42,6 +42,7 @@
         }
     },
     "global": {
+        "build": "Build: { build }",
         "confirm": "Confirmar",
         "create": "Criar",
         "create_and_add": "Criar e adicionar outro",
@@ -95,9 +96,30 @@
         "results": "{ total } Resultados",
         "tip_1": "Os filtros de localização e etiqueta usam a operação 'OU'. Se forem selecionados vários, apenas\n um será utilizado para a pesquisa.",
         "tip_2": "As pesquisas prefixadas com '#' ' consultarão um ID de ativo (exemplo '#000-001')",
+        "tip_3": "Os filtros dos campos usal a operação 'OU'. Se mais do que um for seleccionado apenas um será necessário\npara fazer match.",
         "tips": "Dicas",
         "tips_sub": "Dicas de pesquisa",
         "updated_at": "Atualizado em"
+    },
+    "languages": {
+        "ca": "Catalão",
+        "de": "Alemão",
+        "en": "Inglês",
+        "es": "Espanhol",
+        "fr": "Francês",
+        "hu": "Húngaro",
+        "it": "Italiano",
+        "nl": "Holandês",
+        "pl": "Polaco",
+        "pt-BR": "Português do Brasil",
+        "ru": "Russo",
+        "sl": "Esloveno",
+        "sv": "Sueco",
+        "tr": "Turco",
+        "zh-CN": "Chinês (Simplificado)",
+        "zh-HK": "Chinês (Hong Kong)",
+        "zh-MO": "Chinês (Macau)",
+        "zh-TW": "Chinês (Tradicional)"
     },
     "profile": {
         "active": "Ativo",
@@ -112,7 +134,7 @@
         "group_settings": "Definições de Grupo",
         "group_settings_sub": "Definições de Grupo Partilhadas. Pode ter de atualizar a página para  algumas definições serem aplicadas.",
         "inactive": "Inativo",
-        "language": "Língua",
+        "language": "Idioma",
         "new_password": "Nova Senha",
         "notifier_modal": "{ type, select, true {Editar} false {Criar} other {Outro}} Notificador",
         "notifiers": "Notificadores",
@@ -121,8 +143,46 @@
         "theme_settings": "Definições do tema",
         "theme_settings_sub": "As configurações do tema são guardadas no armazenamento local do seu navegador. Pode alterar o tema  em qualquer altura.\nSe encontrar algum problema com  a alteração do tema, tente refrescar o browser.",
         "update_group": "Atualizar Grupo",
+        "update_language": "Atualizar Idioma",
         "url": "URL",
         "user_profile": "Perfil de Utilizador",
         "user_profile_sub": "Convide utilizadores e faça a gestão da sua conta."
+    },
+    "tools": {
+        "actions": "Ações de Inventário",
+        "actions_set": {
+            "ensure_ids": "Garantir IDs de Ativos",
+            "ensure_ids_button": "Garantir IDs de Ativos",
+            "ensure_ids_sub": "Garante que todos os items no inventário tenham um campo asset_id válido. Para tal, procuramos o valor mais alto do asset_id na base de dados e aplicamos o próximo valor a cada item que não tem um asset_id definido, ordenando pelo campo created_at.",
+            "ensure_import_refs": "Garantir Refs de Importação",
+            "ensure_import_refs_button": "Garantir Refs de Importação",
+            "ensure_import_refs_sub": "Garante que todos os itens do seu inventário tenham um campo import_ref válido",
+            "set_primary_photo": "Definir foto principal",
+            "set_primary_photo_button": "Definir foto principal",
+            "set_primary_photo_sub": "Na versão v0.10.0 do Homebox, o campo de imagem principal foi adicionado aos anexos do tipo foto. Esta acção vai definir a imagem principal para a primeira imagem na lista de anexos na base de dados, se ainda não estiver definido. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'GitHub PR #576'</a>'",
+            "zero_datetimes": "Zero Item Data e Hora",
+            "zero_datetimes_button": "Zero Data Horas do Item"
+        },
+        "actions_sub": "Aplicar Ações ao seu inventário em massa. Estas  acções são irreversíveis. '<b>'Cuidado.'</b>'",
+        "import_export": "Importar/Exportar",
+        "import_export_set": {
+            "export": "Exportar Inventário",
+            "export_button": "Exportar Inventário",
+            "export_sub": "Exporta o formato CSV padrão para o Homebox. Isto vai exportar todos os items do inventário.",
+            "import": "Importar inventário",
+            "import_button": "Importar inventário",
+            "import_sub": "Importa o formato standard do CSV para o Homebox. Sem uma coluna '<code>'HB.import_ref'</code>' , isto '<b>'não '</b>' vai escrever por cima de items existentes no inventário, apenas adiciona novos. As linhas com  uma coluna '<code>'HB.import_ref'</code>' vão ser fundidas com os items que tenham o mesmo import_ref, se existirem."
+        },
+        "import_export_sub": "Importe e exporte o seu inventário de e para um ficheiro CSV. Isto é útil para migrar o inventário para uma nova instância do Homebox.",
+        "reports": "Relatórios",
+        "reports_set": {
+            "asset_labels": "Etiquetas de ID do Ativo",
+            "asset_labels_button": "Gerador de Rótulos",
+            "asset_labels_sub": "Gera um PDF imprimível de etiquetas para um um conjunto de Activos. Estas não são específicas do seu inventário por isso pode imprimi-las com antecedência e aplicar as mesmas ao inventário quando o receber.",
+            "bill_of_materials": "Lista de materiais",
+            "bill_of_materials_button": "Gerar BOM",
+            "bill_of_materials_sub": "Gera um ficheiro CSV (Valores Separados por Vírgulas) que pode ser importado para uma folha de cálculo. Isto é um resumo do seu inventário com a informação do item e do preço."
+        },
+        "reports_sub": "Gere relatórios diferentes para o seu inventário."
     }
 }

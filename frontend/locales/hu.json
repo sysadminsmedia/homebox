@@ -2,13 +2,13 @@
     "components": {
         "app": {
             "import_dialog": {
-                "upload": "Feltöltés",
-                "title": "CSV fájl importálása"
+                "title": "Importálás CSV-fájlból",
+                "upload": "Feltöltés"
             }
         },
         "global": {
             "page_qr_code": {
-                "page_url": "Oldal URL"
+                "page_url": "Oldal URL-je"
             },
             "password_score": {
                 "password_strength": "Jelszó erőssége"
@@ -16,14 +16,14 @@
         },
         "item": {
             "create_modal": {
-                "title": "Tétel létrehozása",
-                "photo_button": "Fénykép 📷"
+                "photo_button": "Fénykép 📷",
+                "title": "Új elem létrehozása"
             },
             "view": {
                 "selectable": {
                     "card": "Kártya",
                     "items": "Tételek",
-                    "no_items": "Nincs megjeleníthető tétel",
+                    "no_items": "Nincs megjeleníthető elem",
                     "table": "Táblázat"
                 }
             }
@@ -35,7 +35,7 @@
         },
         "location": {
             "create_modal": {
-                "title": "Helyszín létrehozása"
+                "title": "Új földrajzi hely létrehozása"
             }
         }
     },
@@ -46,12 +46,12 @@
         "create_and_add": "Létrehozás és újabb hozzáadása",
         "created": "Létrehozva",
         "email": "Email",
-        "follow_dev": "Fejlesztő követése",
-        "github": "GitHub Projekt",
+        "follow_dev": "Kövesd a fejlesztőt",
+        "github": "Github projekt",
         "items": "Tételek",
-        "join_discord": "Csatlakozás a Discordhoz",
+        "join_discord": "Csatlakozz a Discordhoz",
         "labels": "Címkék",
-        "locations": "Helyszínek",
+        "locations": "Helyek",
         "name": "Név",
         "password": "Jelszó",
         "read_docs": "Dokumentáció elolvasása",
@@ -76,9 +76,9 @@
     "items": {
         "add": "Hozzáadás",
         "created_at": "Létrehozás dátuma",
+        "custom_fields": "Egyedi mezők",
         "field_selector": "Mezőválasztó",
         "field_value": "Mező értéke",
-        "first": "Első",
-        "custom_fields": "Egyedi mezők"
+        "first": "Első"
     }
 }
