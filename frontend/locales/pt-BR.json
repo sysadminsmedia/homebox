@@ -94,6 +94,7 @@
         "query_id": "Consultando o número de ID do ativo: { id }",
         "reset_search": "Reiniciar Pesquisa",
         "results": "{ total } Resultados",
-        "tip_1": "Os filtros de localização e rótulo usam o operador \"OR\". Se você selecionar mais de um, somente um será\nnecessário para obter uma coincidência."
+        "tip_1": "Os filtros de local e etiqueta usam o operador \"OR\". Se você selecionar mais de um, somente um será\nnecessário para obter um resultado.",
+        "tip_2": "As pesquisas prefixadas com '#'' consultarão um ID de ativo (exemplo '#000-001')"
     }
 }
