@@ -1,5 +1,5 @@
 import { BaseAPI, route } from "../base";
-import type { MaintenanceEntry, MaintenanceEntryUpdate } from "../types/data-contracts";
+import type { MaintenanceEntry, MaintenanceEntryWithDetails, MaintenanceEntryUpdate } from "../types/data-contracts";
 
 export enum MaintenancesFilter {
   Scheduled = "scheduled",
@@ -9,7 +9,7 @@ export enum MaintenancesFilter {
 
 export class MaintenanceAPI extends BaseAPI {
   getAll(filter: MaintenancesFilter) {
-    return this.http.get<MaintenanceEntry[]>({ url: route(`/maintenances`, { filter }) });
+    return this.http.get<MaintenanceEntryWithDetails[]>({ url: route(`/maintenances`, { filter }) });
   }
 
   delete(id: string) {

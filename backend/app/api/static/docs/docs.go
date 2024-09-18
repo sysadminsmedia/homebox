@@ -1386,7 +1386,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/repo.MaintenanceEntry"
+                            "$ref": "#/definitions/repo.MaintenanceEntryWithDetails"
                         }
                     }
                 }
@@ -2641,6 +2641,36 @@ const docTemplate = `{
                     "example": "0"
                 },
                 "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "scheduledDate": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.MaintenanceEntryWithDetails": {
+            "type": "object",
+            "properties": {
+                "completedDate": {
+                    "type": "string"
+                },
+                "cost": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "itemID": {
+                    "type": "string"
+                },
+                "itemName": {
                     "type": "string"
                 },
                 "name": {

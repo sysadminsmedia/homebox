@@ -17,13 +17,13 @@ import (
 
 // HandleMaintenancesGetAll godoc
 //
-//		@Summary  Query All Maintenances
-//		@Tags     Maintenances
-//		@Produce  json
-//		@Param    filter query    repo.MaintenancesFilter     false "which maintenances to retrieve"
-//		@Success  200       {object} repo.MaintenanceEntry
-//		@Router   /v1/maintenances [GET]
-//		@Security Bearer
+//	@Summary  Query All Maintenances
+//	@Tags     Maintenances
+//	@Produce  json
+//	@Param    filter query    repo.MaintenancesFilter     false "which maintenances to retrieve"
+//	@Success  200       {object} repo.MaintenanceEntryWithDetails
+//	@Router   /v1/maintenances [GET]
+//	@Security Bearer
 func (ctrl *V1Controller) HandleMaintenancesGetAll() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		ctx := services.NewContext(r.Context())
@@ -42,7 +42,7 @@ func (ctrl *V1Controller) HandleMaintenancesGetAll() errchain.HandlerFunc {
 
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
-				return server.JSON(w, http.StatusOK, []repo.MaintenanceEntry{})
+				return server.JSON(w, http.StatusOK, []repo.MaintenanceEntryWithDetails{})
 			}
 			log.Err(err).Msg("failed to get maintenances")
 			return validate.NewRequestError(err, http.StatusInternalServerError)

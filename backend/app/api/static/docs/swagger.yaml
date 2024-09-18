@@ -481,6 +481,26 @@ definitions:
       scheduledDate:
         type: string
     type: object
+  repo.MaintenanceEntryWithDetails:
+    properties:
+      completedDate:
+        type: string
+      cost:
+        example: "0"
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      itemID:
+        type: string
+      itemName:
+        type: string
+      name:
+        type: string
+      scheduledDate:
+        type: string
+    type: object
   repo.MaintenanceLog:
     properties:
       costAverage:
@@ -1568,7 +1588,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/repo.MaintenanceEntry'
+            $ref: '#/definitions/repo.MaintenanceEntryWithDetails'
       security:
       - Bearer: []
       summary: Query All Maintenances

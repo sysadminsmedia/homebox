@@ -910,7 +910,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Maintenance"
+                    "Item Maintenance"
                 ],
                 "summary": "Get Maintenance Log",
                 "responses": {
@@ -932,7 +932,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Maintenance"
+                    "Item Maintenance"
                 ],
                 "summary": "Create Maintenance Entry",
                 "parameters": [
@@ -1370,7 +1370,7 @@
                             "both"
                         ],
                         "type": "string",
-                        "description": "include completed",
+                        "description": "which maintenances to retrieve",
                         "name": "filter",
                         "in": "query"
                     }
@@ -1379,7 +1379,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/repo.MaintenanceEntry"
+                            "$ref": "#/definitions/repo.MaintenanceEntryWithDetails"
                         }
                     }
                 }
@@ -1396,7 +1396,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Maintenance"
+                    "Maintenances"
                 ],
                 "summary": "Update Maintenance Entry",
                 "parameters": [
@@ -1429,7 +1429,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Maintenance"
+                    "Maintenances"
                 ],
                 "summary": "Delete Maintenance Entry",
                 "responses": {
@@ -2634,6 +2634,36 @@
                     "example": "0"
                 },
                 "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "scheduledDate": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.MaintenanceEntryWithDetails": {
+            "type": "object",
+            "properties": {
+                "completedDate": {
+                    "type": "string"
+                },
+                "cost": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "itemID": {
+                    "type": "string"
+                },
+                "itemName": {
                     "type": "string"
                 },
                 "name": {
