@@ -106,6 +106,10 @@
         "currency_format": "Formato da moeda",
         "current_password": "Senha Atual",
         "delete_account": "Excluir conta",
-        "delete_account_sub": "Exclua sua conta e todos os dados associados"
+        "delete_account_sub": "Excluir sua conta e todos os dados associados. Essa ação não pode ser desfeita.",
+        "enabled": "Ativado",
+        "gen_invite": "Gerar link de convite",
+        "group_settings": "Definições do grupo",
+        "group_settings_sub": "Configurações de Grupo Compartilhado. É possível que tenha que dar um refresh na página para que se apliquem alguns ajustes."
     }
 }
