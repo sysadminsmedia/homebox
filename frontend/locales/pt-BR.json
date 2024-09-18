@@ -101,6 +101,23 @@
         "tips_sub": "Dicas de pesquisa",
         "updated_at": "Atualizado em"
     },
+    "languages": {
+        "ca": "Catalão",
+        "de": "Alemão",
+        "en": "Inglês",
+        "es": "Espanhol",
+        "fr": "Francês",
+        "hu": "Húngaro",
+        "it": "Italiano",
+        "nl": "Holandês",
+        "pl": "Polonês",
+        "pt-BR": "Português (Brasil)",
+        "ru": "Russo",
+        "sl": "Esloveno",
+        "sv": "Sueco",
+        "tr": "Turco",
+        "zh-CN": "Chinês (simplificado)"
+    },
     "profile": {
         "active": "Ativo",
         "change_password": "Alterar Senha",
@@ -139,6 +156,8 @@
             "set_primary_photo": "Definir foto principal",
             "set_primary_photo_button": "Definir foto principal",
             "set_primary_photo_sub": "Na versão v0.10.0 do Homebox, o campo principal de foto foi adicionado aos anexos do tipo foto. Essa ação irá marcar o campo da imagem principal para a primeira imagem no array de anexos do banco de dados, se não estiver feito ainda.'<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Veja no GitHub PR #576'</a>'",
+            "zero_datetimes": "Zerar Data Hora do Item",
+            "zero_datetimes_button": "Zerar Data Hora do Item",
             "zero_datetimes_sub": "Redefine o valor de hora de todos os itens do inventário para o início da data. Isso é para corrigir um bug que foi introduzido no início do desenvolvimento do site que causava o valor da hora ser armazenado errado, resultando em um erro na mostra da data/hora do item. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Veja o item #236 do Github para mais detalhes.'</a>'"
         },
         "actions_sub": "Aplicar ações ao seu inventário em massa. Essas ações são irreversíveis. '<b>'Tenha cuidado'</b>'",
@@ -149,7 +168,7 @@
             "export_sub": "Exporta o formato CSV padrão para o Homebox. Isso irá exportar todos os itens do seu inventário.",
             "import": "Importar inventário",
             "import_button": "Importar inventário",
-            "import_sub": "importa o formato CSV para o Homebox. Sem uma '<code>'HB.import_ref'</code>'  coluna, isso não vai sobrescrever nenhum item do seu inventário, apenas adicionar novos items. Linhas que tenham '<code>'HB.import_ref'</code>' colunas são mescladas em itens existentes com os mesmos import_ref, se existirem."
+            "import_sub": "Importa o formato CSV padrão para o Homebox. Sem uma coluna '<code>'HB.import_ref'</code>' , isso '<b>não</b>' vai sobrescrever nenhum item de seu inventário, apenas adicionar novos items. Linhas que tenham '<code>'HB.import_ref'</code>' colunas são mescladas em itens existentes com o mesmo import_ref, se existir."
         },
         "import_export_sub": "Importar e exportar seu inventário de ou para um arquivo CSV. Isso é útil para migrar o seu inventário para uma nova instância do Homebox.",
         "reports": "Relatórios",
