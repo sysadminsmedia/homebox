@@ -104,6 +104,15 @@
         "delete_account": "Fiók törlése",
         "delete_account_sub": "Törlöd a fiókodat és az összes kapcsolódó adatot. Ezt a műveletet nem lehet visszavonni.",
         "enabled": "Engedélyezve",
-        "gen_invite": "Meghívási link létrehozása"
+        "gen_invite": "Meghívó link létrehozása",
+        "group_settings": "Csoport beállításai",
+        "group_settings_sub": "Ezek a csoport közös beállításai. Lehet hogy frissítened kell az oldalt a böngésződben a beállítások megváltoztatása után.",
+        "inactive": "Inaktív",
+        "new_password": "Új jelszó",
+        "notifiers": "Értesítők",
+        "notifiers_sub": "Értesítések kérése a közelgő karbantartási emlékeztetőkről",
+        "test": "Teszt",
+        "theme_settings": "Téma Beállítások",
+        "theme_settings_sub": "A témabeállítások a böngésző helyi tárhelyén tárolódnak"
     }
 }
