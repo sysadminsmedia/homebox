@@ -133,8 +133,11 @@
         },
         "import_export": "Import/Export",
         "import_export_set": {
+            "export": "Készlet exportálása",
+            "export_sub": "Exportálja a Homebox szabványos CSV formátumát",
             "import": "Készlet importálása",
-            "import_sub": "Importálja a Homebox szabványos CSV formátumát"
+            "import_button": "Készlet importálása",
+            "import_sub": "Importálja a Homebox szabványos CSV formátumát. Amennyiben nem található '<code>'HB.import_ref'</code>' oszlop a fájlban, ez '<b>'nem'</b>' ír felül létező tételeket a készletedben, csak újakat ad hozzá. Azon sorok, melyeknél a '<code>'HB.import_ref'</code>' oszlop értéke megegyezik egy létező tétel import_ref mezőjének értékével, a sor tartalma beolvad a létező tételbe."
         },
         "import_export_sub": "Készlet importálása és exportálása CSV-fájlba és CSV-fájlból. Ez hasznos lehet a készleted átmozgatásához a Homebox egy új példányába.",
         "reports": "Jelentések",
