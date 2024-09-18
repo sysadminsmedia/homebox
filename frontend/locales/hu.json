@@ -3,7 +3,7 @@
         "app": {
             "import_dialog": {
                 "change_warning": "A meglévő import_ref-fel rendelkező tételek importálásának menete megváltozott. Ha a CSV fájlban van import_ref, \nakkor a tételt felülírják a CSV fájlban található értékek.",
-                "description": "Importáljon egy CSV-fájlt, amely tartalmazza az elemeket, címkéket és helyeket",
+                "description": "Importálj egy CSV fájlt, amely tartalmazza a tételeidet, címkéidet és helyeidet. A szükséges formátumról bővebben \na dokumentációban olvashatsz.",
                 "title": "Importálás CSV-fájlból",
                 "upload": "Feltöltés"
             }
@@ -83,12 +83,13 @@
         "field_value": "Mező értéke",
         "first": "Első",
         "include_archive": "Archivált elemek belefoglalása",
+        "last": "Utolsó",
         "negate_labels": "Címkeválasztás negálása",
         "next_page": "Következő oldal",
         "no_results": "Egy elem sem található",
         "options": "Opciók",
         "order_by": "Rendezés",
-        "pages": "{page}/{totalPages] oldal",
+        "pages": "{page}/{totalPages} oldal",
         "prev_page": "Előző oldal",
         "query_id": "Eszközazonosító szám lekérdezése: { id }",
         "reset_search": "Alaphelyzet",
@@ -98,7 +99,7 @@
         "tip_3": "A mezőszűrők a „vagy” műveletet használják. Ha egynél többet választasz ki,\n bármelyik egyezése esetén megjelenik a tétel.",
         "tips": "Tippek",
         "tips_sub": "Tippek a kereséshez",
-        "updated_at": "Legutóbbi változtatás"
+        "updated_at": "Változtatás dátuma"
     },
     "languages": {
         "ca": "Katalán",
