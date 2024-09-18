@@ -102,6 +102,8 @@
         "currency_format": "Pénz formátum",
         "current_password": "Jelenlegi jelszó",
         "delete_account": "Fiók törlése",
-        "delete_account_sub": "Töröld a fiókodat és az összes kapcsolódó adatot"
+        "delete_account_sub": "Törlöd a fiókodat és az összes kapcsolódó adatot. Ezt a műveletet nem lehet visszavonni.",
+        "enabled": "Engedélyezve",
+        "gen_invite": "Meghívási link létrehozása"
     }
 }
