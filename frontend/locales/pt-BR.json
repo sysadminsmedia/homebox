@@ -23,9 +23,28 @@
             },
             "view": {
                 "selectable": {
-                    "card": "Cartão"
+                    "card": "Cartão",
+                    "items": "Items",
+                    "no_items": "Nenhum item para exibir",
+                    "table": "Tabela"
                 }
             }
+        },
+        "label": {
+            "create_modal": {
+                "title": "Criar etiqueta"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "Criar Local"
+            }
         }
+    },
+    "global": {
+        "build": "Compilação: { build }",
+        "confirm": "Confirmar",
+        "create": "Criar",
+        "create_and_add": "Criar e adicionar outro"
     }
 }
