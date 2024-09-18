@@ -103,6 +103,7 @@
         "current_password": "Jelenlegi jelszó",
         "delete_account": "Fiók törlése",
         "delete_account_sub": "Törlöd a fiókodat és az összes kapcsolódó adatot. Ezt a műveletet nem lehet visszavonni.",
+        "display_header": "{ currentValue, select, true {Fejléc elrejtése} false {Fejléc megjelenítése} egyéb {Not Hit}}",
         "enabled": "Engedélyezve",
         "gen_invite": "Meghívó link létrehozása",
         "group_settings": "Csoport beállításai",
@@ -113,6 +114,10 @@
         "notifiers_sub": "Értesítések kérése a közelgő karbantartási emlékeztetőkről",
         "test": "Teszt",
         "theme_settings": "Téma Beállítások",
-        "theme_settings_sub": "A témabeállítások a böngésző helyi tárhelyén tárolódnak"
+        "theme_settings_sub": "A témabeállítások a böngésző helyi tárhelyén tárolódnak. Bármikor megváltoztathatod a témát. Ha problémába\n ütközöl a téma beállításakor, próbáld meg frissíteni az oldalt a böngésződben.",
+        "update_group": "Csoport módosítása",
+        "url": "URL",
+        "user_profile": "Felhasználói profil",
+        "user_profile_sub": "Hívj meg felhasználókat, és kezeld a fiókodat."
     }
 }
