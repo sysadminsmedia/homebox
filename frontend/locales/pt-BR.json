@@ -116,7 +116,10 @@
         "sl": "Esloveno",
         "sv": "Sueco",
         "tr": "Turco",
-        "zh-CN": "Chinês (simplificado)"
+        "zh-CN": "Chinês (Simplificado)",
+        "zh-HK": "Chinês (Hong Kong)",
+        "zh-MO": "Chinês (Macau)",
+        "zh-TW": "Chinês (tradicional)"
     },
     "profile": {
         "active": "Ativo",
