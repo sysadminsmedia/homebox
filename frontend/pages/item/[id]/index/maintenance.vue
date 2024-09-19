@@ -1,14 +1,15 @@
 <script setup lang="ts">
-  import DatePicker from "~~/components/Form/DatePicker.vue";
+  import type { ComponentExposed } from "vue-component-type-helpers";
+  import { useTemplateRef } from "vue";
   import type { StatsFormat } from "~~/components/global/StatCard/types";
   import type { ItemOut, MaintenanceEntry } from "~~/lib/api/types/data-contracts";
-  import MdiPost from "~icons/mdi/post";
   import MdiPlus from "~icons/mdi/plus";
   import MdiCheck from "~icons/mdi/check";
   import MdiDelete from "~icons/mdi/delete";
   import MdiEdit from "~icons/mdi/edit";
   import MdiCalendar from "~icons/mdi/calendar";
   import MdiWrenchClock from "~icons/mdi/wrench-clock";
+  import MaintenanceEditModal from "~~/components/Maintenance/EditModal.vue";
 
   const props = defineProps<{
     item: ItemOut;
@@ -18,6 +19,10 @@
   const toast = useNotifier();
 
   const scheduled = ref(true);
+
+  // TODO: fix line below
+  // const maintenanceEditModal = useTemplateRef<ComponentExposed<typeof MaintenanceEditModal>>(null);
+  const maintenanceEditModal = ref(null);
 
   watch(
     () => scheduled.value,
@@ -63,69 +68,6 @@
     ];
   });
 
-  const entry = reactive({
-    id: null as string | null,
-    modal: false,
-    name: "",
-    completedDate: null as Date | null,
-    scheduledDate: null as Date | null,
-    description: "",
-    cost: "",
-  });
-
-  function newEntry() {
-    entry.modal = true;
-  }
-
-  function resetEntry() {
-    console.log("Resetting entry");
-    entry.id = null;
-    entry.name = "";
-    entry.completedDate = null;
-    entry.scheduledDate = null;
-    entry.description = "";
-    entry.cost = "";
-  }
-
-  watch(
-    () => entry.modal,
-    (v, pv) => {
-      if (pv === true && v === false) {
-        resetEntry();
-      }
-    }
-  );
-
-  // Calls either edit or create depending on entry.id being set
-  async function dispatchFormSubmit() {
-    if (entry.id) {
-      await editEntry();
-      return;
-    }
-
-    await createEntry();
-  }
-
-  async function createEntry() {
-    const { error } = await api.items.maintenance.create(props.item.id, {
-      name: entry.name,
-      completedDate: entry.completedDate ?? "",
-      scheduledDate: entry.scheduledDate ?? "",
-      description: entry.description,
-      cost: parseFloat(entry.cost) ? entry.cost : "0",
-    });
-
-    if (error) {
-      toast.error("Failed to create entry");
-      return;
-    }
-
-    entry.modal = false;
-
-    refreshLog();
-    resetEntry();
-  }
-
   const confirm = useConfirm();
 
   async function deleteEntry(id: string) {
@@ -144,60 +86,17 @@
   }
 
   function openEditDialog(e: MaintenanceEntry) {
-    entry.id = e.id;
-    entry.name = e.name;
-    entry.completedDate = new Date(e.completedDate);
-    entry.scheduledDate = new Date(e.scheduledDate);
-    entry.description = e.description;
-    entry.cost = e.cost;
-    entry.modal = true;
+    maintenanceEditModal.value.openUpdateModal(e);
   }
 
-  async function editEntry() {
-    if (!entry.id) {
-      return;
-    }
-
-    const { error } = await api.maintenances.update(entry.id, {
-      name: entry.name,
-      completedDate: entry.completedDate ?? "null",
-      scheduledDate: entry.scheduledDate ?? "null",
-      description: entry.description,
-      cost: entry.cost,
-    });
-
-    if (error) {
-      toast.error("Failed to update entry");
-      return;
-    }
-
-    entry.modal = false;
-    refreshLog();
+  function newEntry() {
+    maintenanceEditModal?.value.openCreateModal(props.item.id);
   }
 </script>
 
 <template>
   <div v-if="log">
-    <BaseModal v-model="entry.modal">
-      <template #title>
-        {{ entry.id ? "Edit Entry" : "New Entry" }}
-      </template>
-      <form @submit.prevent="dispatchFormSubmit">
-        <FormTextField v-model="entry.name" autofocus label="Entry Name" />
-        <DatePicker v-model="entry.completedDate" label="Completed Date" />
-        <DatePicker v-model="entry.scheduledDate" label="Scheduled Date" />
-        <FormTextArea v-model="entry.description" label="Notes" />
-        <FormTextField v-model="entry.cost" autofocus label="Cost" />
-        <div class="flex justify-end py-2">
-          <BaseButton type="submit" class="ml-2 mt-2">
-            <template #icon>
-              <MdiPost />
-            </template>
-            {{ entry.id ? "Update" : "Create" }}
-          </BaseButton>
-        </div>
-      </form>
-    </BaseModal>
+    <MaintenanceEditModal ref="maintenanceEditModal" @changed="refreshLog"></MaintenanceEditModal>
 
     <section class="space-y-6">
       <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
