@@ -35,8 +35,8 @@ func mapMaintenanceEntryWithDetails(entry *ent.MaintenanceEntry) MaintenanceEntr
 		Name:          entry.Name,
 		Description:   entry.Description,
 		Cost:          entry.Cost,
-		ItemName:      "TODO",
-		ItemID:        uuid.UUID{},
+		ItemName:      entry.Edges.Item.Name,
+		ItemID:        entry.ItemID,
 	}
 }
 
@@ -62,7 +62,7 @@ func (r *MaintenanceEntryRepository) GetAllMaintenances(ctx context.Context, fil
 				maintenanceentry.DateEQ(time.Time{})),
 			))
 	}
-	entries, err := query.Order(maintenanceentry.ByScheduledDate()).All(ctx)
+	entries, err := query.WithItem().Order(maintenanceentry.ByScheduledDate()).All(ctx)
 
 	if err != nil {
 		return nil, err
