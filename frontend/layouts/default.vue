@@ -109,6 +109,7 @@
   import MdiMagnify from "~icons/mdi/magnify";
   import MdiAccount from "~icons/mdi/account";
   import MdiCog from "~icons/mdi/cog";
+  import MdiWrench from "~icons/mdi/wrench";
   const username = computed(() => authCtx.user?.name || "User");
 
   const preferences = useViewPreferences();
@@ -169,28 +170,35 @@
     },
     {
       icon: MdiFileTree,
-      id: 4,
+      id: 1,
       active: computed(() => route.path === "/locations"),
       name: "Locations",
       to: "/locations",
     },
     {
       icon: MdiMagnify,
-      id: 3,
+      id: 2,
       active: computed(() => route.path === "/items"),
       name: "Search",
       to: "/items",
     },
     {
+      icon: MdiWrench,
+      id: 3,
+      active: computed(() => route.path === "/maintenances"),
+      name: "Maintenances",
+      to: "/maintenances",
+    },
+    {
       icon: MdiAccount,
-      id: 1,
+      id: 4,
       active: computed(() => route.path === "/profile"),
       name: "Profile",
       to: "/profile",
     },
     {
       icon: MdiCog,
-      id: 6,
+      id: 5,
       active: computed(() => route.path === "/tools"),
       name: "Tools",
       to: "/tools",

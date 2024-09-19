@@ -1,8 +1,6 @@
 <script setup lang="ts">
-  import type { ComponentExposed } from "vue-component-type-helpers";
-  import { useTemplateRef } from "vue";
   import type { StatsFormat } from "~~/components/global/StatCard/types";
-  import type { ItemOut, MaintenanceEntry } from "~~/lib/api/types/data-contracts";
+  import type { ItemOut } from "~~/lib/api/types/data-contracts";
   import MdiPlus from "~icons/mdi/plus";
   import MdiCheck from "~icons/mdi/check";
   import MdiDelete from "~icons/mdi/delete";
@@ -20,9 +18,7 @@
 
   const scheduled = ref(true);
 
-  // TODO: fix line below
-  // const maintenanceEditModal = useTemplateRef<ComponentExposed<typeof MaintenanceEditModal>>(null);
-  const maintenanceEditModal = ref(null);
+  const maintenanceEditModal = ref<InstanceType<typeof MaintenanceEditModal>>();
 
   watch(
     () => scheduled.value,
@@ -84,14 +80,6 @@
     }
     refreshLog();
   }
-
-  function openEditDialog(e: MaintenanceEntry) {
-    maintenanceEditModal.value.openUpdateModal(e);
-  }
-
-  function newEntry() {
-    maintenanceEditModal?.value.openCreateModal(props.item.id);
-  }
 </script>
 
 <template>
@@ -118,7 +106,7 @@
             Completed
           </button>
         </div>
-        <BaseButton class="ml-auto" size="sm" @click="newEntry()">
+        <BaseButton class="ml-auto" size="sm" @click="maintenanceEditModal?.openCreateModal(props.item.id)">
           <template #icon>
             <MdiPlus />
           </template>
@@ -153,7 +141,7 @@
             <Markdown :source="e.description" />
           </div>
           <div class="flex justify-end gap-1 p-4">
-            <BaseButton size="sm" @click="openEditDialog(e)">
+            <BaseButton size="sm" @click="maintenanceEditModal?.openUpdateModal(e)">
               <template #icon>
                 <MdiEdit />
               </template>
@@ -171,7 +159,7 @@
           <button
             type="button"
             class="border-base-content relative block w-full rounded-lg border-2 border-dashed p-12 text-center"
-            @click="newEntry()"
+            @click="maintenanceEditModal?.openCreateModal(props.item.id)"
           >
             <MdiWrenchClock class="inline size-16" />
             <span class="mt-2 block text-sm font-medium text-gray-900"> Create Your First Entry </span>
