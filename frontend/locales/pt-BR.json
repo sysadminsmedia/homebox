@@ -119,7 +119,7 @@
         "zh-CN": "Chinês (Simplificado)",
         "zh-HK": "Chinês (Hong Kong)",
         "zh-MO": "Chinês (Macau)",
-        "zh-TW": "Chinês (tradicional)"
+        "zh-TW": "Chinês (Tradicional)"
     },
     "profile": {
         "active": "Ativo",
@@ -128,6 +128,7 @@
         "current_password": "Senha Atual",
         "delete_account": "Excluir conta",
         "delete_account_sub": "Excluir sua conta e todos os dados associados. Essa ação não pode ser desfeita.",
+        "display_header": "{ currentValue, select, true {Ocultar cabeçalho} false {Mostrar cabeçalho} other {Não encontrado}}",
         "enabled": "Ativado",
         "gen_invite": "Gerar link de convite",
         "group_settings": "Definições do grupo",
