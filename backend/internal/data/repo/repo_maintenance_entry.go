@@ -84,11 +84,11 @@ func mapMaintenanceEntry(entry *ent.MaintenanceEntry) MaintenanceEntry {
 	}
 }
 
-func (r *MaintenanceEntryRepository) GetScheduled(ctx context.Context, GID uuid.UUID, dt types.Date) ([]MaintenanceEntry, error) {
+func (r *MaintenanceEntryRepository) GetScheduled(ctx context.Context, gid uuid.UUID, dt types.Date) ([]MaintenanceEntry, error) {
 	entries, err := r.db.MaintenanceEntry.Query().
 		Where(
 			maintenanceentry.HasItemWith(
-				item.HasGroupWith(group.ID(GID)),
+				item.HasGroupWith(group.ID(gid)),
 			),
 			maintenanceentry.ScheduledDate(dt.Time()),
 			maintenanceentry.Or(
@@ -118,8 +118,8 @@ func (r *MaintenanceEntryRepository) Create(ctx context.Context, itemID uuid.UUI
 	return mapMaintenanceEntryErr(item, err)
 }
 
-func (r *MaintenanceEntryRepository) Update(ctx context.Context, ID uuid.UUID, input MaintenanceEntryUpdate) (MaintenanceEntry, error) {
-	item, err := r.db.MaintenanceEntry.UpdateOneID(ID).
+func (r *MaintenanceEntryRepository) Update(ctx context.Context, id uuid.UUID, input MaintenanceEntryUpdate) (MaintenanceEntry, error) {
+	item, err := r.db.MaintenanceEntry.UpdateOneID(id).
 		SetDate(input.CompletedDate.Time()).
 		SetScheduledDate(input.ScheduledDate.Time()).
 		SetName(input.Name).
@@ -202,6 +202,6 @@ FROM
 	return log, nil
 }
 
-func (r *MaintenanceEntryRepository) Delete(ctx context.Context, ID uuid.UUID) error {
-	return r.db.MaintenanceEntry.DeleteOneID(ID).Exec(ctx)
+func (r *MaintenanceEntryRepository) Delete(ctx context.Context, id uuid.UUID) error {
+	return r.db.MaintenanceEntry.DeleteOneID(id).Exec(ctx)
 }

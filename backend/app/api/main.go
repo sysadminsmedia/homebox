@@ -115,16 +115,17 @@ func run(cfg *config.Config) error {
 
 	err = c.Schema.Create(context.Background(), options...)
 	if err != nil {
-		log.Fatal().
+		log.Error().
 			Err(err).
 			Str("driver", "sqlite").
 			Str("url", cfg.Storage.SqliteURL).
 			Msg("failed creating schema resources")
+		return err
 	}
 
 	err = os.RemoveAll(temp)
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to remove temporary directory for database migrations")
+		log.Error().Err(err).Msg("failed to remove temporary directory for database migrations")
 		return err
 	}
 
@@ -139,10 +140,11 @@ func run(cfg *config.Config) error {
 
 		content, err := os.ReadFile(cfg.Options.CurrencyConfig)
 		if err != nil {
-			log.Fatal().
+			log.Error().
 				Err(err).
 				Str("path", cfg.Options.CurrencyConfig).
 				Msg("failed to read currency config file")
+			return err
 		}
 
 		collectFuncs = append(collectFuncs, currencies.CollectJSON(bytes.NewReader(content)))
@@ -150,9 +152,10 @@ func run(cfg *config.Config) error {
 
 	currencies, err := currencies.CollectionCurrencies(collectFuncs...)
 	if err != nil {
-		log.Fatal().
+		log.Error().
 			Err(err).
 			Msg("failed to collect currencies")
+		return err
 	}
 
 	app.bus = eventbus.New()
@@ -211,7 +214,10 @@ func run(cfg *config.Config) error {
 		// TODO: Remove through external API that does setup
 		if cfg.Demo {
 			log.Info().Msg("Running in demo mode, creating demo data")
-			app.SetupDemo()
+			err := app.SetupDemo()
+			if err != nil {
+				log.Fatal().Msg(err.Error())
+			}
 		}
 		return nil
 	})
