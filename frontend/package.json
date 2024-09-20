@@ -33,7 +33,7 @@
     "isomorphic-fetch": "^3.0.0",
     "nuxt": "3.6.5",
     "prettier": "^3.3.3",
-    "typescript": "^5.6.2",
+    "typescript": "^5.5.4",
     "unplugin-icons": "^0.18.5",
     "vite-plugin-eslint": "^1.8.1",
     "vitest": "^1.6.0",
@@ -61,8 +61,7 @@
     "pinia": "^2.2.2",
     "postcss": "^8.4.45",
     "tailwindcss": "^3.4.10",
-    "vue": "3.5.6",
-    "vue-component-type-helpers": "^2.1.6",
+    "vue": "3.4.8",
     "vue-router": "^4.4.3"
   }
 }
