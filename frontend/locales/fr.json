@@ -121,6 +121,50 @@
         "zh-MO": "Chinois (Macao)",
         "zh-TW": "Chinois (traditionnel)"
     },
+    "menu":{
+        "home": "Accueil",
+        "locations": "Emplacements",
+        "search": "Recherche",
+        "maintenances": "Maintenances",
+        "profile": "Profil",
+        "tools": "Outils"
+    },
+    "maintenances": {
+        "total_entries": "Nombre d'entrées",
+        "total_cost": "Coût total",
+        "monthly_average": "Moyenne mensuelle",
+        "list":
+        {
+            "new": "Ajouter",
+            "edit": "Modifier",
+            "delete": "Supprimer",
+            "create_first": "Créer votre première entrée"
+        },
+        "modal":
+        {
+            "new_title": "Nouvelle entrée",
+            "edit_title": "Modifier l'entrée",
+            "new_action": "Créer",
+            "edit_action": "Modifier",
+            "delete_confirmation": "Êtes-vous certain de vouloir supprimer cette entrée ?",
+            "entry_name": "Nom",
+            "completed_date": "Date d'achèvement",
+            "scheduled_date": "Date prévue",
+            "notes": "Notes",
+            "cost": "Coût"
+        },
+        "filter":
+        {
+            "scheduled": "Prévues",
+            "completed": "Terminées",
+            "both": "Toutes"
+        },
+        "toast":
+        {
+            "failed_to_delete": "Échec de création de l'entrée",
+            "failed_to_create": "Échec de suppression de l'entrée"
+        }
+    },
     "profile": {
         "active": "Actif",
         "change_password": "Changer de mot de passe",

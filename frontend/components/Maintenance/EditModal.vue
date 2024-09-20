@@ -1,20 +1,20 @@
 <template>
   <BaseModal v-model="visible">
     <template #title>
-      {{ entry.id ? "Edit Entry" : "New Entry" }}
+      {{ entry.id ? $t("maintenances.modal.edit_title") : $t("maintenances.modal.new_title") }}
     </template>
     <form @submit.prevent="dispatchFormSubmit">
-      <FormTextField v-model="entry.name" autofocus label="Entry Name" />
-      <DatePicker v-model="entry.completedDate" label="Completed Date" />
-      <DatePicker v-model="entry.scheduledDate" label="Scheduled Date" />
-      <FormTextArea v-model="entry.description" label="Notes" />
-      <FormTextField v-model="entry.cost" autofocus label="Cost" />
+      <FormTextField v-model="entry.name" autofocus :label="$t('maintenances.modal.entry_name')" />
+      <DatePicker v-model="entry.completedDate" :label="$t('maintenances.modal.completed_date')" />
+      <DatePicker v-model="entry.scheduledDate" :label="$t('maintenances.modal.scheduled_date')" />
+      <FormTextArea v-model="entry.description" :label="$t('maintenances.modal.notes')" />
+      <FormTextField v-model="entry.cost" autofocus :label="$t('maintenances.modal.cost')" />
       <div class="flex justify-end py-2">
         <BaseButton type="submit" class="ml-2 mt-2">
           <template #icon>
             <MdiPost />
           </template>
-          {{ entry.id ? "Update" : "Create" }}
+          {{ entry.id ? $t("maintenances.modal.edit_action") : $t("maintenances.modal.new_action") }}
         </BaseButton>
       </div>
     </form>
@@ -22,10 +22,12 @@
 </template>
 
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import type { MaintenanceEntry, MaintenanceEntryWithDetails } from "~~/lib/api/types/data-contracts";
   import MdiPost from "~icons/mdi/post";
   import DatePicker from "~~/components/Form/DatePicker.vue";
 
+  const { t } = useI18n();
   const api = useUserApi();
   const toast = useNotifier();
 
@@ -64,7 +66,7 @@
     });
 
     if (error) {
-      toast.error("Failed to create entry");
+      toast.error(t("maintenances.toast.failed_to_create"));
       return;
     }
 
@@ -103,7 +105,7 @@
     entry.cost = "";
     entry.itemId = itemId;
     visible.value = true;
-  }
+  };
 
   const openUpdateModal = (maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails) => {
     entry.id = maintenanceEntry.id;
@@ -114,7 +116,24 @@
     entry.cost = maintenanceEntry.cost;
     entry.itemId = null;
     visible.value = true;
+  };
+
+  const confirm = useConfirm();
+
+  async function deleteEntry(id: string) {
+    const result = await confirm.open(t("maintenances.modal.delete_confirmation"));
+    if (result.isCanceled) {
+      return;
+    }
+
+    const { error } = await api.maintenances.delete(id);
+
+    if (error) {
+      toast.error(t("maintenances.toast.failed_to_delete"));
+      return;
+    }
+    emit("changed");
   }
 
-  defineExpose({openCreateModal, openUpdateModal});
+  defineExpose({ openCreateModal, openUpdateModal, deleteEntry });
 </script>

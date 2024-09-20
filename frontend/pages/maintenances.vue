@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import type { StatsFormat } from "~~/components/global/StatCard/types";
   import { MaintenancesFilter } from "~~/lib/api/classes/maintenances";
   import MdiCheck from "~icons/mdi/check";
@@ -6,6 +7,8 @@
   import MdiEdit from "~icons/mdi/edit";
   import MdiCalendar from "~icons/mdi/calendar";
   import MaintenanceEditModal from "~~/components/Maintenance/EditModal.vue";
+
+  const { t } = useI18n();
 
   const api = useUserApi();
 
@@ -29,7 +32,7 @@
     return [
       {
         id: "count",
-        title: "Total Entries",
+        title: t("maintenances.total_entries"),
         value: maintenanceData.value ? maintenanceData.value.length || 0 : 0,
         type: "number" as StatsFormat,
       },
@@ -58,21 +61,21 @@
               :class="`${maintenanceFilter == MaintenancesFilter.Scheduled ? 'btn-active' : ''}`"
               @click="maintenanceFilter = MaintenancesFilter.Scheduled"
             >
-              Scheduled
+              {{ $t("maintenances.filter.scheduled") }}
             </button>
             <button
               class="btn btn-sm"
               :class="`${maintenanceFilter == MaintenancesFilter.Completed ? 'btn-active' : ''}`"
               @click="maintenanceFilter = MaintenancesFilter.Completed"
             >
-              Completed
+              {{ $t("maintenances.filter.completed") }}
             </button>
             <button
               class="btn btn-sm"
               :class="`${maintenanceFilter == MaintenancesFilter.Both ? 'btn-active' : ''}`"
               @click="maintenanceFilter = MaintenancesFilter.Both"
             >
-              Both
+              {{ $t("maintenances.filter.both") }}
             </button>
           </div>
         </div>
@@ -110,13 +113,13 @@
                 <template #icon>
                   <MdiEdit />
                 </template>
-                Edit
+                {{ $t("maintenances.list.edit") }}
               </BaseButton>
-              <BaseButton size="sm" @click="deleteEntry(e.id)">
+              <BaseButton size="sm" @click="maintenanceEditModal?.deleteEntry(e.id)">
                 <template #icon>
                   <MdiDelete />
                 </template>
-                Delete
+                {{ $t("maintenances.list.delete") }}
               </BaseButton>
             </div>
           </BaseCard>

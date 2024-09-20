@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import type { StatsFormat } from "~~/components/global/StatCard/types";
   import type { ItemOut } from "~~/lib/api/types/data-contracts";
   import MdiPlus from "~icons/mdi/plus";
@@ -9,6 +10,7 @@
   import MdiWrenchClock from "~icons/mdi/wrench-clock";
   import MaintenanceEditModal from "~~/components/Maintenance/EditModal.vue";
 
+  const { t } = useI18n();
   const props = defineProps<{
     item: ItemOut;
   }>();
@@ -45,41 +47,24 @@
     return [
       {
         id: "count",
-        title: "Total Entries",
+        title: t("maintenances.total_entries"),
         value: count.value || 0,
         type: "number" as StatsFormat,
       },
       {
         id: "total",
-        title: "Total Cost",
+        title: t("maintenances.total_cost"),
         value: log.value.costTotal || 0,
         type: "currency" as StatsFormat,
       },
       {
         id: "average",
-        title: "Monthly Average",
+        title: t("maintenances.monthly_average"),
         value: log.value.costAverage || 0,
         type: "currency" as StatsFormat,
       },
     ];
   });
-
-  const confirm = useConfirm();
-
-  async function deleteEntry(id: string) {
-    const result = await confirm.open("Are you sure you want to delete this entry?");
-    if (result.isCanceled) {
-      return;
-    }
-
-    const { error } = await api.maintenances.delete(id);
-
-    if (error) {
-      toast.error("Failed to delete entry");
-      return;
-    }
-    refreshLog();
-  }
 </script>
 
 <template>
@@ -100,17 +85,17 @@
       <div class="flex">
         <div class="btn-group">
           <button class="btn btn-sm" :class="`${scheduled ? 'btn-active' : ''}`" @click="scheduled = true">
-            Scheduled
+            {{ $t("maintenances.filter.scheduled") }}
           </button>
           <button class="btn btn-sm" :class="`${scheduled ? '' : 'btn-active'}`" @click="scheduled = false">
-            Completed
+            {{ $t("maintenances.filter.completed") }}
           </button>
         </div>
         <BaseButton class="ml-auto" size="sm" @click="maintenanceEditModal?.openCreateModal(props.item.id)">
           <template #icon>
             <MdiPlus />
           </template>
-          New
+          {{ $t("maintenances.list.new") }}
         </BaseButton>
       </div>
       <div class="container space-y-6">
@@ -145,13 +130,13 @@
               <template #icon>
                 <MdiEdit />
               </template>
-              Edit
+              {{ $t("maintenances.list.edit") }}
             </BaseButton>
-            <BaseButton size="sm" @click="deleteEntry(e.id)">
+            <BaseButton size="sm" @click="maintenanceEditModal?.deleteEntry(e.id)">
               <template #icon>
                 <MdiDelete />
               </template>
-              Delete
+              {{ $t("maintenances.list.delete") }}
             </BaseButton>
           </div>
         </BaseCard>
@@ -162,7 +147,7 @@
             @click="maintenanceEditModal?.openCreateModal(props.item.id)"
           >
             <MdiWrenchClock class="inline size-16" />
-            <span class="mt-2 block text-sm font-medium text-gray-900"> Create Your First Entry </span>
+            <span class="mt-2 block text-sm font-medium text-gray-900"> {{ $t("maintenances.list.create_first") }} </span>
           </button>
         </div>
       </div>
