@@ -445,7 +445,7 @@
 <template>
   <BaseContainer v-if="item" class="pb-8">
     <Title>{{ item.name }}</Title>
-    <dialog ref="refDialog" class="fixed z-[999] bg-transparent">
+    <dialog ref="refDialog" class="fixed z-[999] overflow-visible bg-transparent">
       <div ref="refDialogBody" class="relative">
         <div class="absolute right-0 -mr-3 -mt-3 space-x-1 sm:-mr-4 sm:-mt-4">
           <a class="btn btn-circle btn-primary btn-sm sm:btn-md" :href="dialoged.src" download>
