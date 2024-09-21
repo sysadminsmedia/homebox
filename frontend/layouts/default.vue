@@ -42,7 +42,7 @@
         <label for="my-drawer-2" class="drawer-overlay"></label>
 
         <!-- Top Section -->
-        <div class="bg-base-200 flex w-60 flex-col py-5 md:py-10">
+        <div class="bg-base-200 flex min-w-40 max-w-min flex-col py-5 md:py-10 px-5">
           <div class="space-y-8">
             <div class="flex flex-col items-center gap-4">
               <p>{{ $t("global.welcome", { username: username }) }}</p>
@@ -53,15 +53,15 @@
               </NuxtLink>
             </div>
             <div class="bg-base-200 flex flex-col">
-              <div class="mx-auto mb-6 w-40">
-                <div class="dropdown visible w-40">
+              <div class="mx-auto mb-6">
+                <div class="dropdown visible">
                   <label tabindex="0" class="text-no-transform btn btn-primary btn-block text-lg">
                     <span>
                       <MdiPlus class="-ml-1 mr-1" />
                     </span>
                     {{ $t("global.create") }}
                   </label>
-                  <ul tabindex="0" class="dropdown-content menu rounded-box bg-base-100 w-40 p-2 shadow">
+                  <ul tabindex="0" class="dropdown-content menu rounded-box bg-base-100 p-2 shadow">
                     <li v-for="btn in dropdown" :key="btn.name">
                       <button @click="btn.action">
                         {{ btn.name }}
@@ -70,7 +70,7 @@
                   </ul>
                 </div>
               </div>
-              <ul class="menu mx-auto flex w-40 flex-col gap-2">
+              <ul class="menu mx-auto flex flex-col gap-2">
                 <li v-for="n in nav" :key="n.id" class="text-xl" @click="unfocus">
                   <NuxtLink
                     v-if="n.to"
