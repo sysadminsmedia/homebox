@@ -307,6 +307,12 @@ export interface MaintenanceLog {
   itemId: string;
 }
 
+export enum MaintenancesFilterStatus {
+  MaintenancesFilterStatusScheduled = "scheduled",
+  MaintenancesFilterStatusCompleted = "completed",
+  MaintenancesFilterStatusBoth = "both",
+}
+
 export interface NotifierCreate {
   isActive: boolean;
   /**

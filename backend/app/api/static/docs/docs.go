@@ -1377,8 +1377,12 @@ const docTemplate = `{
                             "both"
                         ],
                         "type": "string",
-                        "description": "which maintenances to retrieve",
-                        "name": "filter",
+                        "x-enum-varnames": [
+                            "MaintenancesFilterStatusScheduled",
+                            "MaintenancesFilterStatusCompleted",
+                            "MaintenancesFilterStatusBoth"
+                        ],
+                        "name": "status",
                         "in": "query"
                     }
                 ],
@@ -1386,7 +1390,10 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/repo.MaintenanceEntryWithDetails"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.MaintenanceEntryWithDetails"
+                            }
                         }
                     }
                 }
@@ -2700,6 +2707,19 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "repo.MaintenancesFilterStatus": {
+            "type": "string",
+            "enum": [
+                "scheduled",
+                "completed",
+                "both"
+            ],
+            "x-enum-varnames": [
+                "MaintenancesFilterStatusScheduled",
+                "MaintenancesFilterStatusCompleted",
+                "MaintenancesFilterStatusBoth"
+            ]
         },
         "repo.NotifierCreate": {
             "type": "object",

@@ -514,6 +514,16 @@ definitions:
       itemId:
         type: string
     type: object
+  repo.MaintenancesFilterStatus:
+    enum:
+    - scheduled
+    - completed
+    - both
+    type: string
+    x-enum-varnames:
+    - MaintenancesFilterStatusScheduled
+    - MaintenancesFilterStatusCompleted
+    - MaintenancesFilterStatusBoth
   repo.NotifierCreate:
     properties:
       isActive:
@@ -1574,21 +1584,26 @@ paths:
   /v1/maintenances:
     get:
       parameters:
-      - description: which maintenances to retrieve
-        enum:
+      - enum:
         - scheduled
         - completed
         - both
         in: query
-        name: filter
+        name: status
         type: string
+        x-enum-varnames:
+        - MaintenancesFilterStatusScheduled
+        - MaintenancesFilterStatusCompleted
+        - MaintenancesFilterStatusBoth
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/repo.MaintenanceEntryWithDetails'
+            items:
+              $ref: '#/definitions/repo.MaintenanceEntryWithDetails'
+            type: array
       security:
       - Bearer: []
       summary: Query All Maintenances

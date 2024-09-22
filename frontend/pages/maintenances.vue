@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
   import type { StatsFormat } from "~~/components/global/StatCard/types";
-  import { MaintenancesFilter } from "~~/lib/api/classes/maintenances";
+  import { MaintenancesFilterStatus } from "~~/lib/api/types/data-contracts";
   import MdiCheck from "~icons/mdi/check";
   import MdiDelete from "~icons/mdi/delete";
   import MdiEdit from "~icons/mdi/edit";
@@ -12,12 +12,12 @@
 
   const api = useUserApi();
 
-  const maintenanceFilter = ref(MaintenancesFilter.Scheduled);
+  const maintenanceFilter = ref(MaintenancesFilterStatus.MaintenancesFilterStatusScheduled);
   const maintenanceEditModal = ref<InstanceType<typeof MaintenanceEditModal>>();
 
   const { data: maintenanceData, refresh: refreshList } = useAsyncData(
     async () => {
-      const { data } = await api.maintenances.getAll(maintenanceFilter.value);
+      const { data } = await api.maintenances.getAll({ status: maintenanceFilter.value });
       console.log(data);
       return data;
     },
@@ -59,22 +59,22 @@
           <div class="btn-group">
             <button
               class="btn btn-sm"
-              :class="`${maintenanceFilter == MaintenancesFilter.Scheduled ? 'btn-active' : ''}`"
-              @click="maintenanceFilter = MaintenancesFilter.Scheduled"
+              :class="`${maintenanceFilter == MaintenancesFilterStatus.MaintenancesFilterStatusScheduled ? 'btn-active' : ''}`"
+              @click="maintenanceFilter = MaintenancesFilterStatus.MaintenancesFilterStatusScheduled"
             >
               {{ $t("maintenances.filter.scheduled") }}
             </button>
             <button
               class="btn btn-sm"
-              :class="`${maintenanceFilter == MaintenancesFilter.Completed ? 'btn-active' : ''}`"
-              @click="maintenanceFilter = MaintenancesFilter.Completed"
+              :class="`${maintenanceFilter == MaintenancesFilterStatus.MaintenancesFilterStatusCompleted ? 'btn-active' : ''}`"
+              @click="maintenanceFilter = MaintenancesFilterStatus.MaintenancesFilterStatusCompleted"
             >
               {{ $t("maintenances.filter.completed") }}
             </button>
             <button
               class="btn btn-sm"
-              :class="`${maintenanceFilter == MaintenancesFilter.Both ? 'btn-active' : ''}`"
-              @click="maintenanceFilter = MaintenancesFilter.Both"
+              :class="`${maintenanceFilter == MaintenancesFilterStatus.MaintenancesFilterStatusBoth ? 'btn-active' : ''}`"
+              @click="maintenanceFilter = MaintenancesFilterStatus.MaintenancesFilterStatusBoth"
             >
               {{ $t("maintenances.filter.both") }}
             </button>

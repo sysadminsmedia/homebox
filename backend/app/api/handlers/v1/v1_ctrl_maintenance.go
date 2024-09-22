@@ -1,17 +1,12 @@
 package v1
 
 import (
-	"database/sql"
-	"errors"
 	"net/http"
 
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
-	"github.com/hay-kot/httpkit/server"
-	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/adapters"
 )
 
@@ -20,35 +15,17 @@ import (
 //	@Summary  Query All Maintenances
 //	@Tags     Maintenances
 //	@Produce  json
-//	@Param    filter query    repo.MaintenancesFilter     false "which maintenances to retrieve"
-//	@Success  200       {object} repo.MaintenanceEntryWithDetails
+//	@Param    filters query    repo.MaintenancesFilters     false "which maintenances to retrieve"
+//	@Success  200       {array} repo.MaintenanceEntryWithDetails[]
 //	@Router   /v1/maintenances [GET]
 //	@Security Bearer
 func (ctrl *V1Controller) HandleMaintenancesGetAll() errchain.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) error {
-		ctx := services.NewContext(r.Context())
-
-		params := r.URL.Query()
-
-		filterRawValue := params.Get("filter")
-		filter := repo.MaintenancesFilterScheduled
-		if filterRawValue == "completed" {
-			filter = repo.MaintenancesFilterCompleted
-		} else if filterRawValue == "both" {
-			filter = repo.MaintenancesFilterBoth
-		}
-
-		maintenances, err := ctrl.repo.MaintEntry.GetAllMaintenances(ctx, ctx.GID, filter)
-
-		if err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				return server.JSON(w, http.StatusOK, []repo.MaintenanceEntryWithDetails{})
-			}
-			log.Err(err).Msg("failed to get maintenances")
-			return validate.NewRequestError(err, http.StatusInternalServerError)
-		}
-		return server.JSON(w, http.StatusOK, maintenances)
+	fn := func(r *http.Request, filters repo.MaintenancesFilters) ([]repo.MaintenanceEntryWithDetails, error) {
+		auth := services.NewContext(r.Context())
+		return ctrl.repo.MaintEntry.GetAllMaintenances(auth, auth.GID, filters)
 	}
+
+	return adapters.Query(fn, http.StatusOK)
 }
 
 // HandleMaintenanceEntryUpdate godoc
