@@ -38,7 +38,7 @@ func (ctrl *V1Controller) HandleMaintenancesGetAll() errchain.HandlerFunc {
 			filter = repo.MaintenancesFilterBoth
 		}
 
-		maintenances, err := ctrl.repo.MaintEntry.GetAllMaintenances(ctx, filter)
+		maintenances, err := ctrl.repo.MaintEntry.GetAllMaintenances(ctx, ctx.GID, filter)
 
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {

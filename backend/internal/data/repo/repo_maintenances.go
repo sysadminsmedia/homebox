@@ -6,6 +6,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 )
@@ -48,8 +50,13 @@ const (
 	MaintenancesFilterBoth      MaintenancesFilter = "both"
 )
 
-func (r *MaintenanceEntryRepository) GetAllMaintenances(ctx context.Context, filters MaintenancesFilter) ([]MaintenanceEntryWithDetails, error) {
-	query := r.db.MaintenanceEntry.Query()
+func (r *MaintenanceEntryRepository) GetAllMaintenances(ctx context.Context, groupID uuid.UUID, filters MaintenancesFilter) ([]MaintenanceEntryWithDetails, error) {
+	query := r.db.MaintenanceEntry.Query().Where(
+		maintenanceentry.HasItemWith(
+			item.HasGroupWith(group.IDEQ(groupID)),
+		),
+	)
+
 	if filters == MaintenancesFilterScheduled {
 		query = query.Where(maintenanceentry.Or(
 			maintenanceentry.DateIsNil(),
