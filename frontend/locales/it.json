@@ -18,6 +18,7 @@
         },
         "item": {
             "create_modal": {
+                "photo_button": "Foto",
                 "title": "Crea Oggetto"
             },
             "view": {
@@ -61,7 +62,7 @@
         "submit": "Invia",
         "version": "Versione: { version }",
         "welcome": "Benvenuto, { username }"
-  },
+    },
     "index": {
         "disabled_registration": "Registrazione Disabilitata",
         "dont_join_group": "Non vuoi unirti a un gruppo?",
@@ -107,11 +108,13 @@
         "current_password": "Password Corrente",
         "delete_account": "Elimina Account",
         "delete_account_sub": "Elimina il tuo account e tutti i dati associati. Questa operazione non può essere annullata.",
+        "display_header": "{ currentValue, select, true {Nascondi intestazione} false {Mostra intestazione} other {Non colpito}}",
         "enabled": "Abilitato",
         "gen_invite": "Genera Link di Invito",
         "group_settings": "Impostazioni Gruppo",
         "group_settings_sub": "Impostazioni Gruppo Condivise. Potrebbe essere necessario aggiornare il browser affinché alcune impostazioni vengano applicate.",
         "inactive": "Inattivo",
+        "language": "Lingua",
         "new_password": "Nuova Password",
         "notifier_modal": "{ type, select, true {Modifica} false {Crea} other {Altro}} Notifier",
         "notifiers": "Notifiche",
@@ -120,8 +123,26 @@
         "theme_settings": "Impostazioni Tema",
         "theme_settings_sub": "Le impostazioni del tema sono memorizzate nella memoria locale del tuo browser. Puoi cambiare il tema \nin qualsiasi momento. Se hai problemi a impostare il tuo tema, prova a ricaricare la pagina.",
         "update_group": "Aggiorna Gruppo",
+        "update_language": "Aggiorna Lingua",
         "url": "URL",
         "user_profile": "Profilo Utente",
         "user_profile_sub": "Invita utenti e gestisci il tuo account."
+    },
+    "tools": {
+        "import_export": "Importa/Esporta",
+        "import_export_set": {
+            "import": "Importa Inventario",
+            "import_button": "Importa Inventario"
+        },
+        "import_export_sub": "Importa ed esporta il tuo inventario verso e da un file CSV. Questo è utile per migrare il tuo inventario verso una nuova istanza di Homebox.",
+        "reports_set": {
+            "asset_labels": "Etichette Per ID Risorse",
+            "asset_labels_button": "Generatore di Etichette",
+            "asset_labels_sub": "Genera una etichetta PDF stampabile per un gruppo di ID Risorsa. Le etichette non sono specifiche per il tuo inventario così puoi stamparle in anticipo ed applicarle al tuo inventario quando lo ricevi.",
+            "bill_of_materials": "Distinta base",
+            "bill_of_materials_button": "Genera BOM",
+            "bill_of_materials_sub": "Genera un file CSV (Comma Separated Values) che può essere importato in un foglio di calcolo. Questo è un sommario del tuo inventario con informazioni di base su oggetto e prezzo."
+        },
+        "reports_sub": "Genera diversi report per il tuo inventario."
     }
 }
