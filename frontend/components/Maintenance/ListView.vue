@@ -129,7 +129,7 @@
       <BaseCard v-for="e in maintenanceDataList" :key="e.id">
         <BaseSectionHeader class="border-b border-b-gray-300 p-6">
           <span class="text-base-content">
-            <span v-if="!props.currentItemId || true">
+            <span v-if="!props.currentItemId">
               <NuxtLink class="hover:underline" :to="`/item/${(e as MaintenanceEntryWithDetails).itemID}`">
                 {{ (e as MaintenanceEntryWithDetails).itemName }}
               </NuxtLink>
