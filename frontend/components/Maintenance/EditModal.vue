@@ -136,7 +136,7 @@
   }
 
   async function complete(maintenanceEntry: MaintenanceEntry) {
-    const { error } = await api.maintenances.update(maintenanceEntry.id, {
+    const { error } = await api.maintenance.update(maintenanceEntry.id, {
       name: maintenanceEntry.name,
       completedDate: new Date(Date.now()),
       scheduledDate: maintenanceEntry.scheduledDate ?? "null",
@@ -144,7 +144,7 @@
       cost: maintenanceEntry.cost,
     });
     if (error) {
-      toast.error(t("maintenances.toast.failed_to_update"));
+      toast.error(t("maintenance.toast.failed_to_update"));
     }
     emit("changed");
   }

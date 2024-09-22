@@ -15,13 +15,14 @@ import (
 //	@Summary  Get Maintenance Log
 //	@Tags     Item Maintenance
 //	@Produce  json
-//	@Success  200       {object} repo.MaintenanceLog
+//	@Param    filters query    repo.MaintenanceFilters     false "which maintenance to retrieve"
+//	@Success  200       {array} repo.MaintenanceEntryWithDetails[]
 //	@Router   /v1/items/{id}/maintenance [GET]
 //	@Security Bearer
 func (ctrl *V1Controller) HandleMaintenanceLogGet() errchain.HandlerFunc {
-	fn := func(r *http.Request, ID uuid.UUID, q repo.MaintenanceLogQuery) (repo.MaintenanceLog, error) {
+	fn := func(r *http.Request, ID uuid.UUID, filters repo.MaintenanceFilters) ([]repo.MaintenanceEntryWithDetails, error) {
 		auth := services.NewContext(r.Context())
-		return ctrl.repo.MaintEntry.GetLog(auth, auth.GID, ID, q)
+		return ctrl.repo.MaintEntry.GetMaintenanceByItemID(auth, auth.GID, ID, filters)
 	}
 
 	return adapters.QueryID("id", fn, http.StatusOK)

@@ -127,7 +127,7 @@
                 <template #icon>
                   <MdiCheck />
                 </template>
-                {{ $t("maintenances.list.complete") }}
+                {{ $t("maintenance.list.complete") }}
               </BaseButton>
               <BaseButton
                 v-if="!validDate(e.completedDate)"
@@ -137,7 +137,7 @@
                 <template #icon>
                   <MdiContentDuplicate />
                 </template>
-                {{ $t("maintenances.list.complete_and_duplicate") }}
+                {{ $t("maintenance.list.complete_and_duplicate") }}
               </BaseButton>
               <BaseButton size="sm" @click="maintenanceEditModal?.deleteEntry(e.id)">
                 <template #icon>

@@ -920,11 +920,31 @@ const docTemplate = `{
                     "Item Maintenance"
                 ],
                 "summary": "Get Maintenance Log",
+                "parameters": [
+                    {
+                        "enum": [
+                            "scheduled",
+                            "completed",
+                            "both"
+                        ],
+                        "type": "string",
+                        "x-enum-varnames": [
+                            "MaintenanceFilterStatusScheduled",
+                            "MaintenanceFilterStatusCompleted",
+                            "MaintenanceFilterStatusBoth"
+                        ],
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/repo.MaintenanceLog"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.MaintenanceEntryWithDetails"
+                            }
                         }
                     }
                 }
@@ -2700,26 +2720,6 @@ const docTemplate = `{
                 "MaintenanceFilterStatusCompleted",
                 "MaintenanceFilterStatusBoth"
             ]
-        },
-        "repo.MaintenanceLog": {
-            "type": "object",
-            "properties": {
-                "costAverage": {
-                    "type": "number"
-                },
-                "costTotal": {
-                    "type": "number"
-                },
-                "entries": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/repo.MaintenanceEntry"
-                    }
-                },
-                "itemId": {
-                    "type": "string"
-                }
-            }
         },
         "repo.NotifierCreate": {
             "type": "object",
