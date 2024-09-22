@@ -6,6 +6,7 @@
   import MdiDelete from "~icons/mdi/delete";
   import MdiEdit from "~icons/mdi/edit";
   import MdiCalendar from "~icons/mdi/calendar";
+  import MdiContentDuplicate from "~icons/mdi/content-duplicate";
   import MaintenanceEditModal from "~~/components/Maintenance/EditModal.vue";
 
   const { t } = useI18n();
@@ -121,6 +122,22 @@
                   <MdiEdit />
                 </template>
                 {{ $t("maintenance.list.edit") }}
+              </BaseButton>
+              <BaseButton v-if="!validDate(e.completedDate)" size="sm" @click="maintenanceEditModal?.complete(e)">
+                <template #icon>
+                  <MdiCheck />
+                </template>
+                {{ $t("maintenances.list.complete") }}
+              </BaseButton>
+              <BaseButton
+                v-if="!validDate(e.completedDate)"
+                size="sm"
+                @click="maintenanceEditModal?.completeAndDuplicate(e, e.itemID)"
+              >
+                <template #icon>
+                  <MdiContentDuplicate />
+                </template>
+                {{ $t("maintenances.list.complete_and_duplicate") }}
               </BaseButton>
               <BaseButton size="sm" @click="maintenanceEditModal?.deleteEntry(e.id)">
                 <template #icon>
