@@ -10,9 +10,9 @@ import type {
   ItemUpdate,
   MaintenanceEntry,
   MaintenanceEntryCreate,
-  MaintenanceLog,
 } from "../types/data-contracts";
 import type { AttachmentTypes, PaginationResult } from "../types/non-generated";
+import type { MaintenanceFilters } from "./maintenance.ts";
 import type { Requests } from "~~/lib/requests";
 
 export type ItemsQuery = {
@@ -65,14 +65,11 @@ export class FieldsAPI extends BaseAPI {
   }
 }
 
-type MaintenanceEntryQuery = {
-  scheduled?: boolean;
-  completed?: boolean;
-};
-
 export class ItemMaintenanceAPI extends BaseAPI {
-  getLog(itemId: string, q: MaintenanceEntryQuery = {}) {
-    return this.http.get<MaintenanceLog>({ url: route(`/items/${itemId}/maintenance`, q) });
+  getLog(itemId: string, filters: MaintenanceFilters = {}) {
+    return this.http.get<MaintenanceEntry[]>({
+      url: route(`/items/${itemId}/maintenance`, { status: filters.status?.toString() }),
+    });
   }
 
   create(itemId: string, data: MaintenanceEntryCreate) {
