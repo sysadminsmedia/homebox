@@ -88,7 +88,7 @@
     });
 
     if (error) {
-      toast.error("Failed to update entry");
+      toast.error(t("maintenances.toast.failed_to_update"));
       return;
     }
 

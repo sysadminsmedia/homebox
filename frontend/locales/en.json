@@ -142,7 +142,8 @@
         "toast":
         {
             "failed_to_delete": "Failed to delete entry",
-            "failed_to_create": "Failed to create entry"
+            "failed_to_create": "Failed to create entry",
+            "failed_to_update" : "Failed to update entry"
         }
     },
     "profile": {

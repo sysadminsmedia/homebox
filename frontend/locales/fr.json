@@ -162,7 +162,8 @@
         "toast":
         {
             "failed_to_delete": "Échec de création de l'entrée",
-            "failed_to_create": "Échec de suppression de l'entrée"
+            "failed_to_create": "Échec de suppression de l'entrée",
+            "failed_to_update" : "Échec de mise à jour de l'entrée"
         }
     },
     "profile": {
