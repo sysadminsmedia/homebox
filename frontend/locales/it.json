@@ -108,7 +108,7 @@
         "current_password": "Password Corrente",
         "delete_account": "Elimina Account",
         "delete_account_sub": "Elimina il tuo account e tutti i dati associati. Questa operazione non può essere annullata.",
-        "display_header": "{ currentValue, select, true {Nascondi intestazione} false {Mostra intestazione} other {Non colpito}}",
+        "display_header": "{ currentValue, select, true {Nascondi intestazione} false {Mostra intestazione} other {Sconosciuto}}",
         "enabled": "Abilitato",
         "gen_invite": "Genera Link di Invito",
         "group_settings": "Impostazioni Gruppo",
