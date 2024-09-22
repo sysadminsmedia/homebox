@@ -372,7 +372,7 @@
             {{ token }}
           </div>
         </div>
-        <div class="p-5 pt-0 form-control w-full">
+        <div class="form-control w-full p-5 pt-0">
           <label class="label">
             <span class="label-text">{{ $t("profile.language") }}</span>
           </label>
@@ -397,7 +397,10 @@
         </template>
 
         <div v-if="notifiers.data.value" class="mx-4 divide-y divide-gray-400 rounded-md border border-gray-400">
-          <article v-for="n in notifiers.data.value" :key="n.id" class="p-2">
+          <p v-if="notifiers.data.value.length === 0" class="p-2 text-center text-sm">
+            No notifiers configured. Add a new notifier using the Create option below.
+          </p>
+          <article v-for="n in notifiers.data.value" v-else :key="n.id" class="p-2">
             <div class="flex flex-wrap items-center gap-2">
               <p class="mr-auto text-lg">{{ n.name }}</p>
               <div class="flex justify-end gap-2">
@@ -465,36 +468,38 @@
 
         <div class="px-4 pb-4">
           <div class="mb-3">
-            <BaseButton size="sm" @click="setDisplayHeader"> {{ $t("profile.display_header", { currentValue: preferences.displayHeaderDecor }) }} </BaseButton>
+            <BaseButton size="sm" @click="setDisplayHeader">
+              {{ $t("profile.display_header", { currentValue: preferences.displayHeaderDecor }) }}
+            </BaseButton>
           </div>
           <div class="rounded-box grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             <div
               v-for="theme in themes"
               :key="theme.value"
-              class="overflow-hidden rounded-lg border border-base-content/20 outline-2 outline-offset-2 outline-base-content hover:border-base-content/40"
+              class="border-base-content/20 outline-base-content hover:border-base-content/40 overflow-hidden rounded-lg border outline-2 outline-offset-2"
               :data-theme="theme.value"
               :data-set-theme="theme.value"
               data-act-class="outline"
               @click="setTheme(theme.value)"
             >
-              <div :data-theme="theme.value" class="w-full cursor-pointer bg-base-100 font-sans text-base-content">
+              <div :data-theme="theme.value" class="bg-base-100 text-base-content w-full cursor-pointer font-sans">
                 <div class="grid grid-cols-5 grid-rows-3">
-                  <div class="col-start-1 row-span-2 row-start-1 bg-base-200"></div>
-                  <div class="col-start-1 row-start-3 bg-base-300"></div>
-                  <div class="col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 bg-base-100 p-2">
+                  <div class="bg-base-200 col-start-1 row-span-2 row-start-1"></div>
+                  <div class="bg-base-300 col-start-1 row-start-3"></div>
+                  <div class="bg-base-100 col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 p-2">
                     <div class="font-bold">{{ theme.label }}</div>
                     <div class="flex flex-wrap gap-1">
-                      <div class="flex aspect-1 w-5 items-center justify-center rounded bg-primary lg:w-6">
-                        <div class="text-sm font-bold text-primary-content">A</div>
+                      <div class="aspect-1 bg-primary flex w-5 items-center justify-center rounded lg:w-6">
+                        <div class="text-primary-content text-sm font-bold">A</div>
                       </div>
-                      <div class="flex aspect-1 w-5 items-center justify-center rounded bg-secondary lg:w-6">
-                        <div class="text-sm font-bold text-secondary-content">A</div>
+                      <div class="aspect-1 bg-secondary flex w-5 items-center justify-center rounded lg:w-6">
+                        <div class="text-secondary-content text-sm font-bold">A</div>
                       </div>
-                      <div class="flex aspect-1 w-5 items-center justify-center rounded bg-accent lg:w-6">
-                        <div class="text-sm font-bold text-accent-content">A</div>
+                      <div class="aspect-1 bg-accent flex w-5 items-center justify-center rounded lg:w-6">
+                        <div class="text-accent-content text-sm font-bold">A</div>
                       </div>
-                      <div class="flex aspect-1 w-5 items-center justify-center rounded bg-neutral lg:w-6">
-                        <div class="text-sm font-bold text-neutral-content">A</div>
+                      <div class="aspect-1 bg-neutral flex w-5 items-center justify-center rounded lg:w-6">
+                        <div class="text-neutral-content text-sm font-bold">A</div>
                       </div>
                     </div>
                   </div>
