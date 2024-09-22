@@ -114,7 +114,12 @@
         "pt-BR": "Portoghese (Brasile)",
         "ru": "Russo",
         "sl": "Sloveno",
-        "sv": "Swedish"
+        "sv": "Svedese",
+        "tr": "Turco",
+        "zh-CN": "Cinese (semplificato)",
+        "zh-HK": "Cinese Mandarino",
+        "zh-MO": "Cinese (Macao)",
+        "zh-TW": "Cinese (tradizionale)"
     },
     "profile": {
         "active": "Attivo",
@@ -162,18 +167,18 @@
         "actions_sub": "Applica Azioni in blocco al tuo inventario. Questo sono azioni irreversibili. '<b>'Presta attenzione.'</b>'",
         "import_export": "Importa/Esporta",
         "import_export_set": {
-            "export": "Esporta inventario",
+            "export": "Export Inventario",
             "export_button": "Esporta inventario",
             "export_sub": "Esporta il formato CSV standard per Homebox. Questo esporterà tutti gli oggetti del tuo inventario.",
             "import": "Importa Inventario",
             "import_button": "Importa Inventario",
             "import_sub": "Importa il formato CSV standard per Homebox. Senza una colonna '<code>'HB.import_ref'</code>' questo '<b>'non'</b>' sovrascriverà gli oggetti esistenti nel tuo inventario, aggiungerà solamente nuovi oggetti. Le righe con una colonna '<code>'HB.import_ref'</code>' saranno unite agli oggetti esistenti con lo stesso import_ref, se presente."
         },
-        "import_export_sub": "Importa ed esporta il tuo inventario verso e da un file CSV. Questo è utile per migrare il tuo inventario verso una nuova istanza di Homebox.",
+        "import_export_sub": "Importa ed esporta il tuo inventario da e verso un file CSV. Questo è utile per migrare il tuo inventario verso una nuova istanza di Homebox.",
         "reports": "Rapporti",
         "reports_set": {
-            "asset_labels": "Etichette Per ID Risorse",
-            "asset_labels_button": "Generatore di Etichette",
+            "asset_labels": "Etichette ID risorsa",
+            "asset_labels_button": "Generatore di etichette",
             "asset_labels_sub": "Genera una etichetta PDF stampabile per un gruppo di ID Risorsa. Le etichette non sono specifiche per il tuo inventario così puoi stamparle in anticipo ed applicarle al tuo inventario quando lo ricevi.",
             "bill_of_materials": "Distinta base",
             "bill_of_materials_button": "Genera BOM",
