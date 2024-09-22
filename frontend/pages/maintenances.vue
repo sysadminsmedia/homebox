@@ -86,7 +86,13 @@
         <div class="container space-y-6">
           <BaseCard v-for="e in maintenanceData" :key="e.id">
             <BaseSectionHeader class="border-b border-b-gray-300 p-6">
-              <span class="text-base-content"> {{ e.itemName }} - {{ e.name }} </span>
+              <span class="text-base-content">
+                <NuxtLink class="hover:underline" :to="`/item/${e.itemID}`">
+                  {{ e.itemName }}
+                </NuxtLink>
+                -
+                {{ e.name }}
+              </span>
               <template #description>
                 <div class="flex flex-wrap gap-2">
                   <div v-if="validDate(e.completedDate)" class="badge p-3">
