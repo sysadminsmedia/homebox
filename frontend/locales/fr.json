@@ -142,7 +142,7 @@
             "edit": "Modifier",
             "new": "Ajouter",
             "complete": "Terminer",
-            "complete_and_duplicate" : "Terminer et dupliquer"
+            "duplicate" : "Dupliquer"
         },
         "modal": {
             "completed_date": "Date d'achèvement",

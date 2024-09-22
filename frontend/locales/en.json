@@ -142,7 +142,7 @@
             "edit": "Edit",
             "new": "New",
             "complete": "Complete",
-            "complete_and_duplicate" : "Complete and Duplicate"
+            "duplicate" : "Duplicate"
         },
         "modal": {
             "completed_date": "Completed Date",

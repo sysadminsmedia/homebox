@@ -149,11 +149,7 @@
     emit("changed");
   }
 
-  async function completeAndDuplicate(
-    maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails,
-    itemId: string
-  ) {
-    await complete(maintenanceEntry);
+  function duplicate(maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails, itemId: string) {
     entry.id = null;
     entry.name = maintenanceEntry.name;
     entry.completedDate = null;
@@ -164,5 +160,5 @@
     visible.value = true;
   }
 
-  defineExpose({ openCreateModal, openUpdateModal, deleteEntry, complete, completeAndDuplicate });
+  defineExpose({ openCreateModal, openUpdateModal, deleteEntry, complete, duplicate });
 </script>
