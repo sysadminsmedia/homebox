@@ -47,7 +47,7 @@
     }
 
     toast.success("Location deleted");
-    navigateTo("/home");
+    navigateTo("/locations");
   }
 
   const updateModal = ref(false);
