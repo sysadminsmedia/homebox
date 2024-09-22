@@ -75,6 +75,12 @@
         "set_password": "Set your password",
         "tagline": "Track, Organize, and Manage your Things."
     },
+    "labels": {
+        "no_results": "No Labels Found"
+    },
+    "locations": {
+        "no_results": "No Locations Found"
+    },
     "items": {
         "add": "Add",
         "created_at": "Created At",

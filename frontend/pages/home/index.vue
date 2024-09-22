@@ -48,7 +48,7 @@
 
       <section>
         <Subtitle> Storage Locations </Subtitle>
-        <p v-if="locations.length === 0" class="ml-2 text-sm">No storage locations available.</p>
+        <p v-if="locations.length === 0" class="ml-2 text-sm">{{ $t("locations.no_results") }}</p>
         <div v-else class="card grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
           <LocationCard v-for="location in locations" :key="location.id" :location="location" />
         </div>
@@ -56,7 +56,7 @@
 
       <section>
         <Subtitle> Labels </Subtitle>
-        <p v-if="labels.length === 0" class="ml-2 text-sm">No labels available.</p>
+        <p v-if="labels.length === 0" class="ml-2 text-sm">{{ $t("labels.no_results") }}</p>
         <div v-else class="flex flex-wrap gap-4">
           <LabelChip v-for="label in labels" :key="label.id" size="lg" :label="label" class="shadow-md" />
         </div>
