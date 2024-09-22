@@ -398,7 +398,7 @@
 
         <div v-if="notifiers.data.value" class="mx-4 divide-y divide-gray-400 rounded-md border border-gray-400">
           <p v-if="notifiers.data.value.length === 0" class="p-2 text-center text-sm">
-            No notifiers configured. Add a new notifier using the Create option below.
+            {{ $t("profile.no_notifiers") }}
           </p>
           <article v-for="n in notifiers.data.value" v-else :key="n.id" class="p-2">
             <div class="flex flex-wrap items-center gap-2">

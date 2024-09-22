@@ -117,6 +117,7 @@
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notifier",
         "notifiers": "Notifiers",
         "notifiers_sub": "Get notifications for upcoming maintenance reminders",
+        "no_notifiers": "No notifiers configured. Add a new notifier using the Create option below",
         "test": "Test",
         "theme_settings": "Theme Settings",
         "theme_settings_sub": "Theme settings are stored in your browser's local storage. You can change the theme at any time. If you're\n having trouble setting your theme try refreshing your browser.",
