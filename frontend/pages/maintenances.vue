@@ -42,7 +42,8 @@
 
 <template>
   <div>
-    <BaseContainer class="flex flex-col gap-12 pb-16">
+    <BaseContainer class="mb-6 flex flex-col gap-8">
+      <BaseSectionHeader> {{ $t("menu.maintenances") }} </BaseSectionHeader>
       <section class="space-y-6">
         <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
           <StatCard
