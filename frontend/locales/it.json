@@ -109,7 +109,11 @@
         "fr": "Francese",
         "hu": "Ungherese",
         "it": "Italiano",
-        "nl": "Dutch"
+        "nl": "Olandese",
+        "pl": "Polacco",
+        "pt-BR": "Portoghese (Brasile)",
+        "ru": "Russo",
+        "sl": "Slovenian"
     },
     "profile": {
         "active": "Attivo",
