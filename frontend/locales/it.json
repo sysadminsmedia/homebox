@@ -167,8 +167,8 @@
         "actions_sub": "Applica Azioni in blocco al tuo inventario. Questo sono azioni irreversibili. '<b>'Presta attenzione.'</b>'",
         "import_export": "Importa/Esporta",
         "import_export_set": {
-            "export": "Export Inventario",
-            "export_button": "Esporta inventario",
+            "export": "Esporta Inventario",
+            "export_button": "Export Inventario",
             "export_sub": "Esporta il formato CSV standard per Homebox. Questo esporterà tutti gli oggetti del tuo inventario.",
             "import": "Importa Inventario",
             "import_button": "Importa Inventario",
