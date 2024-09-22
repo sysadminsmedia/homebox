@@ -158,7 +158,7 @@
         <div class="p-6">
           <Markdown :source="e.description" />
         </div>
-        <div class="flex justify-end gap-1 p-4">
+        <div class="flex flex-wrap justify-end gap-1 p-4">
           <BaseButton size="sm" @click="maintenanceEditModal?.openUpdateModal(e)">
             <template #icon>
               <MdiEdit />
