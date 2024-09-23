@@ -25,7 +25,7 @@
     },
   });
 
-  const { data: maintenanceDataList, refresh: refreshList } = useAsyncData(
+  const { data: maintenanceDataList, refresh: refreshList } = useAsyncData<MaintenanceEntryWithDetails[]>(
     async () => {
       const { data } =
         props.currentItemId !== undefined

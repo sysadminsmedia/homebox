@@ -10,6 +10,7 @@ import type {
   ItemUpdate,
   MaintenanceEntry,
   MaintenanceEntryCreate,
+  MaintenanceEntryWithDetails,
 } from "../types/data-contracts";
 import type { AttachmentTypes, PaginationResult } from "../types/non-generated";
 import type { MaintenanceFilters } from "./maintenance.ts";
@@ -67,7 +68,7 @@ export class FieldsAPI extends BaseAPI {
 
 export class ItemMaintenanceAPI extends BaseAPI {
   getLog(itemId: string, filters: MaintenanceFilters = {}) {
-    return this.http.get<MaintenanceEntry[]>({
+    return this.http.get<MaintenanceEntryWithDetails[]>({
       url: route(`/items/${itemId}/maintenance`, { status: filters.status?.toString() }),
     });
   }
