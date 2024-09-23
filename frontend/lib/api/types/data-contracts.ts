@@ -432,6 +432,13 @@ export interface LoginForm {
   username: string;
 }
 
+export interface OAuthForm {
+  provider: string;
+  iss: string;
+  code: string;
+  state: string | null;
+}
+
 export interface TokenResponse {
   attachmentToken: string;
   expiresAt: Date | string;

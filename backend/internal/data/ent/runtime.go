@@ -17,6 +17,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/oauth"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
@@ -544,6 +545,33 @@ func init() {
 	notifierDescID := notifierMixinFields0[0].Descriptor()
 	// notifier.DefaultID holds the default value on creation for the id field.
 	notifier.DefaultID = notifierDescID.Default.(func() uuid.UUID)
+	oauthMixin := schema.OAuth{}.Mixin()
+	oauthMixinFields0 := oauthMixin[0].Fields()
+	_ = oauthMixinFields0
+	oauthFields := schema.OAuth{}.Fields()
+	_ = oauthFields
+	// oauthDescCreatedAt is the schema descriptor for created_at field.
+	oauthDescCreatedAt := oauthMixinFields0[1].Descriptor()
+	// oauth.DefaultCreatedAt holds the default value on creation for the created_at field.
+	oauth.DefaultCreatedAt = oauthDescCreatedAt.Default.(func() time.Time)
+	// oauthDescUpdatedAt is the schema descriptor for updated_at field.
+	oauthDescUpdatedAt := oauthMixinFields0[2].Descriptor()
+	// oauth.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	oauth.DefaultUpdatedAt = oauthDescUpdatedAt.Default.(func() time.Time)
+	// oauth.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	oauth.UpdateDefaultUpdatedAt = oauthDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// oauthDescProvider is the schema descriptor for provider field.
+	oauthDescProvider := oauthFields[0].Descriptor()
+	// oauth.ProviderValidator is a validator for the "provider" field. It is called by the builders before save.
+	oauth.ProviderValidator = oauthDescProvider.Validators[0].(func(string) error)
+	// oauthDescSub is the schema descriptor for sub field.
+	oauthDescSub := oauthFields[1].Descriptor()
+	// oauth.SubValidator is a validator for the "sub" field. It is called by the builders before save.
+	oauth.SubValidator = oauthDescSub.Validators[0].(func(string) error)
+	// oauthDescID is the schema descriptor for id field.
+	oauthDescID := oauthMixinFields0[0].Descriptor()
+	// oauth.DefaultID holds the default value on creation for the id field.
+	oauth.DefaultID = oauthDescID.Default.(func() uuid.UUID)
 	userMixin := schema.User{}.Mixin()
 	userMixinFields0 := userMixin[0].Fields()
 	_ = userMixinFields0

@@ -8,6 +8,7 @@ import (
 
 type AllServices struct {
 	User              *UserService
+	OAuth             *OAuthService
 	Group             *GroupService
 	Items             *ItemService
 	BackgroundService *BackgroundService
@@ -54,8 +55,11 @@ func New(repos *repo.AllRepos, opts ...OptionsFunc) *AllServices {
 		opt(options)
 	}
 
+	user := &UserService{repos}
+
 	return &AllServices{
-		User:  &UserService{repos},
+		User:  user,
+		OAuth: &OAuthService{repos: repos, user: user},
 		Group: &GroupService{repos},
 		Items: &ItemService{
 			repo:                 repos,

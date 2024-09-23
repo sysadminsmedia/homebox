@@ -1,6 +1,7 @@
 import type { CookieRef } from "nuxt/app";
+import { TResponse } from "lib/requests";
 import type { PublicApi } from "~~/lib/api/public";
-import type { UserOut } from "~~/lib/api/types/data-contracts";
+import type { TokenResponse, UserOut } from "~~/lib/api/types/data-contracts";
 import type { UserClient } from "~~/lib/api/user";
 
 export interface IAuthContext {
@@ -31,6 +32,8 @@ export interface IAuthContext {
    * Logs in the user and sets the authorization context via cookies
    */
   login(api: PublicApi, email: string, password: string, stayLoggedIn: boolean): ReturnType<PublicApi["login"]>;
+
+  loginOauth(api: PublicApi, provider: string, iss: string, code: string): ReturnType<PublicApi["loginOauth"]>;
 }
 
 class AuthContext implements IAuthContext {
@@ -86,6 +89,21 @@ class AuthContext implements IAuthContext {
 
   async login(api: PublicApi, email: string, password: string, stayLoggedIn: boolean) {
     const r = await api.login(email, password, stayLoggedIn);
+
+    if (!r.error) {
+      const expiresAt = new Date(r.data.expiresAt);
+      this._token = useCookie(AuthContext.cookieTokenKey);
+      this._attachmentToken = useCookie(AuthContext.cookieAttachmentTokenKey, {
+        expires: expiresAt,
+      });
+      this._attachmentToken.value = r.data.attachmentToken;
+    }
+
+    return r;
+  }
+
+  async loginOauth(api: PublicApi, provider: string, iss: string, code: string) {
+    const r = await api.loginOauth(provider, iss, code);
 
     if (!r.error) {
       const expiresAt = new Date(r.data.expiresAt);

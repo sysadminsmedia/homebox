@@ -15,6 +15,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/oauth"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
@@ -29,6 +30,7 @@ type UserQuery struct {
 	withGroup      *GroupQuery
 	withAuthTokens *AuthTokensQuery
 	withNotifiers  *NotifierQuery
+	withOauth      *OAuthQuery
 	withFKs        bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -125,6 +127,28 @@ func (uq *UserQuery) QueryNotifiers() *NotifierQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(notifier.Table, notifier.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.NotifiersTable, user.NotifiersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryOauth chains the current query on the "oauth" edge.
+func (uq *UserQuery) QueryOauth() *OAuthQuery {
+	query := (&OAuthClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(oauth.Table, oauth.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.OauthTable, user.OauthColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -327,6 +351,7 @@ func (uq *UserQuery) Clone() *UserQuery {
 		withGroup:      uq.withGroup.Clone(),
 		withAuthTokens: uq.withAuthTokens.Clone(),
 		withNotifiers:  uq.withNotifiers.Clone(),
+		withOauth:      uq.withOauth.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -363,6 +388,17 @@ func (uq *UserQuery) WithNotifiers(opts ...func(*NotifierQuery)) *UserQuery {
 		opt(query)
 	}
 	uq.withNotifiers = query
+	return uq
+}
+
+// WithOauth tells the query-builder to eager-load the nodes that are connected to
+// the "oauth" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithOauth(opts ...func(*OAuthQuery)) *UserQuery {
+	query := (&OAuthClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withOauth = query
 	return uq
 }
 
@@ -445,10 +481,11 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		nodes       = []*User{}
 		withFKs     = uq.withFKs
 		_spec       = uq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			uq.withGroup != nil,
 			uq.withAuthTokens != nil,
 			uq.withNotifiers != nil,
+			uq.withOauth != nil,
 		}
 	)
 	if uq.withGroup != nil {
@@ -492,6 +529,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadNotifiers(ctx, query, nodes,
 			func(n *User) { n.Edges.Notifiers = []*Notifier{} },
 			func(n *User, e *Notifier) { n.Edges.Notifiers = append(n.Edges.Notifiers, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withOauth; query != nil {
+		if err := uq.loadOauth(ctx, query, nodes,
+			func(n *User) { n.Edges.Oauth = []*OAuth{} },
+			func(n *User, e *OAuth) { n.Edges.Oauth = append(n.Edges.Oauth, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -586,6 +630,37 @@ func (uq *UserQuery) loadNotifiers(ctx context.Context, query *NotifierQuery, no
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadOauth(ctx context.Context, query *OAuthQuery, nodes []*User, init func(*User), assign func(*User, *OAuth)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.OAuth(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.OauthColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.user_oauth
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_oauth" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_oauth" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
