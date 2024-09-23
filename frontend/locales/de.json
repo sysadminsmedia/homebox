@@ -121,6 +121,14 @@
         "zh-MO": "Chinesisch (Macao)",
         "zh-TW": "Chinesisch (Traditionell)"
     },
+    "maintenance": {
+        "list": {
+            "edit": "Bearbeiten",
+            "new": "Neu"
+        },
+        "monthly_average": "Monatsdurchschnitt",
+        "total_cost": "Gesamtkosten"
+    },
     "profile": {
         "active": "Aktiv",
         "change_password": "Passwort ändern",

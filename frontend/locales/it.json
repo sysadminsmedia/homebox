@@ -149,10 +149,10 @@
         "user_profile_sub": "Invita utenti e gestisci il tuo account."
     },
     "tools": {
-        "actions": "Azioni inventario",
+        "actions": "Azioni Inventario",
         "actions_set": {
-            "ensure_ids": "Verifica degli ID delle risorse",
-            "ensure_ids_button": "Verifica degli ID delle risorse",
+            "ensure_ids": "Verifica ID delle risorse",
+            "ensure_ids_button": "Verifica ID delle risorse",
             "ensure_ids_sub": "Garantisce che tutti gli articoli nel tuo inventario abbiano un campo asset_id valido. Questo viene fatto trovando il campo asset_id corrente più alto nel database e applicando il valore successivo a ogni elemento che ha un campo asset_id non impostato. Questo viene fatto per il campo created_at.",
             "ensure_import_refs": "Verifica riferimenti di importazione",
             "ensure_import_refs_button": "Verifica riferimenti di importazione",
@@ -164,11 +164,11 @@
             "zero_datetimes_button": "Azzera Date e Ora articoli",
             "zero_datetimes_sub": "Reimposta il valore dell'ora per tutti i campi data e ora dell'inventario all'inizio della data. Questo è per correggere un bug che è stato introdotto all'inizio dello sviluppo del sito che ha causato il valore di orario memorizzato con il tempo che ha causato problemi con i campi data visualizzazione dei valori esatti. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Vedi Github Issue #236 per maggiori dettagli.'</a>'"
         },
-        "actions_sub": "Applica Azioni in blocco al tuo inventario. Questo sono azioni irreversibili. '<b>'Presta attenzione.'</b>'",
+        "actions_sub": "Applica Azioni massive al tuo inventario. Questo sono azioni irreversibili. '<b>'Presta attenzione.'</b>'",
         "import_export": "Importa/Esporta",
         "import_export_set": {
             "export": "Esporta Inventario",
-            "export_button": "Export Inventario",
+            "export_button": "Esporta Inventario",
             "export_sub": "Esporta il formato CSV standard per Homebox. Questo esporterà tutti gli oggetti del tuo inventario.",
             "import": "Importa Inventario",
             "import_button": "Importa Inventario",
