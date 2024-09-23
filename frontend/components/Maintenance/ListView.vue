@@ -171,11 +171,7 @@
             </template>
             {{ $t("maintenance.list.complete") }}
           </BaseButton>
-          <BaseButton
-            v-if="!validDate(e.completedDate)"
-            size="sm"
-            @click="maintenanceEditModal?.duplicate(e, e.itemID)"
-          >
+          <BaseButton size="sm" @click="maintenanceEditModal?.duplicate(e, e.itemID)">
             <template #icon>
               <MdiContentDuplicate />
             </template>
