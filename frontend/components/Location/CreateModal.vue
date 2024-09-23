@@ -7,6 +7,7 @@
         v-model="form.name"
         :trigger-focus="focused"
         :autofocus="true"
+        :required="true"
         label="Location Name"
       />
       <FormTextArea v-model="form.description" label="Location Description" />
@@ -18,7 +19,7 @@
             <label tabindex="0" class="btn rounded-l-none rounded-r-xl">
               <MdiChevronDown class="size-5" />
             </label>
-            <ul tabindex="0" class="dropdown-content menu rounded-box right-0 w-64 bg-base-100 p-2 shadow">
+            <ul tabindex="0" class="dropdown-content menu rounded-box bg-base-100 right-0 w-64 p-2 shadow">
               <li>
                 <button type="button" @click="create(false)">{{ $t("global.create_and_add") }}</button>
               </li>
