@@ -1,20 +1,20 @@
 <template>
   <BaseModal v-model="visible">
     <template #title>
-      {{ entry.id ? $t("maintenances.modal.edit_title") : $t("maintenances.modal.new_title") }}
+      {{ entry.id ? $t("maintenance.modal.edit_title") : $t("maintenance.modal.new_title") }}
     </template>
     <form @submit.prevent="dispatchFormSubmit">
-      <FormTextField v-model="entry.name" autofocus :label="$t('maintenances.modal.entry_name')" />
-      <DatePicker v-model="entry.completedDate" :label="$t('maintenances.modal.completed_date')" />
-      <DatePicker v-model="entry.scheduledDate" :label="$t('maintenances.modal.scheduled_date')" />
-      <FormTextArea v-model="entry.description" :label="$t('maintenances.modal.notes')" />
-      <FormTextField v-model="entry.cost" autofocus :label="$t('maintenances.modal.cost')" />
+      <FormTextField v-model="entry.name" autofocus :label="$t('maintenance.modal.entry_name')" />
+      <DatePicker v-model="entry.completedDate" :label="$t('maintenance.modal.completed_date')" />
+      <DatePicker v-model="entry.scheduledDate" :label="$t('maintenance.modal.scheduled_date')" />
+      <FormTextArea v-model="entry.description" :label="$t('maintenance.modal.notes')" />
+      <FormTextField v-model="entry.cost" autofocus :label="$t('maintenance.modal.cost')" />
       <div class="flex justify-end py-2">
         <BaseButton type="submit" class="ml-2 mt-2">
           <template #icon>
             <MdiPost />
           </template>
-          {{ entry.id ? $t("maintenances.modal.edit_action") : $t("maintenances.modal.new_action") }}
+          {{ entry.id ? $t("maintenance.modal.edit_action") : $t("maintenance.modal.new_action") }}
         </BaseButton>
       </div>
     </form>
@@ -66,7 +66,7 @@
     });
 
     if (error) {
-      toast.error(t("maintenances.toast.failed_to_create"));
+      toast.error(t("maintenance.toast.failed_to_create"));
       return;
     }
 
@@ -79,7 +79,7 @@
       return;
     }
 
-    const { error } = await api.maintenances.update(entry.id, {
+    const { error } = await api.maintenance.update(entry.id, {
       name: entry.name,
       completedDate: entry.completedDate ?? "null",
       scheduledDate: entry.scheduledDate ?? "null",
@@ -88,7 +88,7 @@
     });
 
     if (error) {
-      toast.error(t("maintenances.toast.failed_to_update"));
+      toast.error(t("maintenance.toast.failed_to_update"));
       return;
     }
 
@@ -121,15 +121,15 @@
   const confirm = useConfirm();
 
   async function deleteEntry(id: string) {
-    const result = await confirm.open(t("maintenances.modal.delete_confirmation"));
+    const result = await confirm.open(t("maintenance.modal.delete_confirmation"));
     if (result.isCanceled) {
       return;
     }
 
-    const { error } = await api.maintenances.delete(id);
+    const { error } = await api.maintenance.delete(id);
 
     if (error) {
-      toast.error(t("maintenances.toast.failed_to_delete"));
+      toast.error(t("maintenance.toast.failed_to_delete"));
       return;
     }
     emit("changed");

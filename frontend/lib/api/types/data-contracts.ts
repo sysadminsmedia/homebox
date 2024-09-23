@@ -300,17 +300,17 @@ export interface MaintenanceEntryWithDetails {
   scheduledDate: Date | string;
 }
 
+export enum MaintenanceFilterStatus {
+  MaintenanceFilterStatusScheduled = "scheduled",
+  MaintenanceFilterStatusCompleted = "completed",
+  MaintenanceFilterStatusBoth = "both",
+}
+
 export interface MaintenanceLog {
   costAverage: number;
   costTotal: number;
   entries: MaintenanceEntry[];
   itemId: string;
-}
-
-export enum MaintenancesFilterStatus {
-  MaintenancesFilterStatusScheduled = "scheduled",
-  MaintenancesFilterStatusCompleted = "completed",
-  MaintenancesFilterStatusBoth = "both",
 }
 
 export interface NotifierCreate {

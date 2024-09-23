@@ -1355,7 +1355,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/maintenances": {
+        "/v1/maintenance": {
             "get": {
                 "security": [
                     {
@@ -1366,9 +1366,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Maintenances"
+                    "Maintenance"
                 ],
-                "summary": "Query All Maintenances",
+                "summary": "Query All Maintenance",
                 "parameters": [
                     {
                         "enum": [
@@ -1378,9 +1378,9 @@ const docTemplate = `{
                         ],
                         "type": "string",
                         "x-enum-varnames": [
-                            "MaintenancesFilterStatusScheduled",
-                            "MaintenancesFilterStatusCompleted",
-                            "MaintenancesFilterStatusBoth"
+                            "MaintenanceFilterStatusScheduled",
+                            "MaintenanceFilterStatusCompleted",
+                            "MaintenanceFilterStatusBoth"
                         ],
                         "name": "status",
                         "in": "query"
@@ -1399,7 +1399,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/maintenances/{id}": {
+        "/v1/maintenance/{id}": {
             "put": {
                 "security": [
                     {
@@ -1410,7 +1410,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Maintenances"
+                    "Maintenance"
                 ],
                 "summary": "Update Maintenance Entry",
                 "parameters": [
@@ -1443,7 +1443,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Maintenances"
+                    "Maintenance"
                 ],
                 "summary": "Delete Maintenance Entry",
                 "responses": {
@@ -2688,6 +2688,19 @@ const docTemplate = `{
                 }
             }
         },
+        "repo.MaintenanceFilterStatus": {
+            "type": "string",
+            "enum": [
+                "scheduled",
+                "completed",
+                "both"
+            ],
+            "x-enum-varnames": [
+                "MaintenanceFilterStatusScheduled",
+                "MaintenanceFilterStatusCompleted",
+                "MaintenanceFilterStatusBoth"
+            ]
+        },
         "repo.MaintenanceLog": {
             "type": "object",
             "properties": {
@@ -2707,19 +2720,6 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
-        },
-        "repo.MaintenancesFilterStatus": {
-            "type": "string",
-            "enum": [
-                "scheduled",
-                "completed",
-                "both"
-            ],
-            "x-enum-varnames": [
-                "MaintenancesFilterStatusScheduled",
-                "MaintenancesFilterStatusCompleted",
-                "MaintenancesFilterStatusBoth"
-            ]
         },
         "repo.NotifierCreate": {
             "type": "object",

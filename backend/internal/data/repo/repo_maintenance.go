@@ -31,31 +31,31 @@ func mapMaintenanceEntryWithDetails(entry *ent.MaintenanceEntry) MaintenanceEntr
 	}
 }
 
-type MaintenancesFilterStatus string
+type MaintenanceFilterStatus string
 
 const (
-	MaintenancesFilterStatusScheduled MaintenancesFilterStatus = "scheduled"
-	MaintenancesFilterStatusCompleted MaintenancesFilterStatus = "completed"
-	MaintenancesFilterStatusBoth      MaintenancesFilterStatus = "both"
+	MaintenanceFilterStatusScheduled MaintenanceFilterStatus = "scheduled"
+	MaintenanceFilterStatusCompleted MaintenanceFilterStatus = "completed"
+	MaintenanceFilterStatusBoth      MaintenanceFilterStatus = "both"
 )
 
-type MaintenancesFilters struct {
-	Status MaintenancesFilterStatus `json:"status" schema:"status"`
+type MaintenanceFilters struct {
+	Status MaintenanceFilterStatus `json:"status" schema:"status"`
 }
 
-func (r *MaintenanceEntryRepository) GetAllMaintenances(ctx context.Context, groupID uuid.UUID, filters MaintenancesFilters) ([]MaintenanceEntryWithDetails, error) {
+func (r *MaintenanceEntryRepository) GetAllMaintenance(ctx context.Context, groupID uuid.UUID, filters MaintenanceFilters) ([]MaintenanceEntryWithDetails, error) {
 	query := r.db.MaintenanceEntry.Query().Where(
 		maintenanceentry.HasItemWith(
 			item.HasGroupWith(group.IDEQ(groupID)),
 		),
 	)
 
-	if filters.Status == MaintenancesFilterStatusScheduled {
+	if filters.Status == MaintenanceFilterStatusScheduled {
 		query = query.Where(maintenanceentry.Or(
 			maintenanceentry.DateIsNil(),
 			maintenanceentry.DateEQ(time.Time{}),
 		))
-	} else if filters.Status == MaintenancesFilterStatusCompleted {
+	} else if filters.Status == MaintenanceFilterStatusCompleted {
 		query = query.Where(
 			maintenanceentry.Not(maintenanceentry.Or(
 				maintenanceentry.DateIsNil(),

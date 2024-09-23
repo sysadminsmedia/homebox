@@ -501,6 +501,16 @@ definitions:
       scheduledDate:
         type: string
     type: object
+  repo.MaintenanceFilterStatus:
+    enum:
+    - scheduled
+    - completed
+    - both
+    type: string
+    x-enum-varnames:
+    - MaintenanceFilterStatusScheduled
+    - MaintenanceFilterStatusCompleted
+    - MaintenanceFilterStatusBoth
   repo.MaintenanceLog:
     properties:
       costAverage:
@@ -514,16 +524,6 @@ definitions:
       itemId:
         type: string
     type: object
-  repo.MaintenancesFilterStatus:
-    enum:
-    - scheduled
-    - completed
-    - both
-    type: string
-    x-enum-varnames:
-    - MaintenancesFilterStatusScheduled
-    - MaintenancesFilterStatusCompleted
-    - MaintenancesFilterStatusBoth
   repo.NotifierCreate:
     properties:
       isActive:
@@ -1581,7 +1581,7 @@ paths:
       summary: Get Locations Tree
       tags:
       - Locations
-  /v1/maintenances:
+  /v1/maintenance:
     get:
       parameters:
       - enum:
@@ -1592,9 +1592,9 @@ paths:
         name: status
         type: string
         x-enum-varnames:
-        - MaintenancesFilterStatusScheduled
-        - MaintenancesFilterStatusCompleted
-        - MaintenancesFilterStatusBoth
+        - MaintenanceFilterStatusScheduled
+        - MaintenanceFilterStatusCompleted
+        - MaintenanceFilterStatusBoth
       produces:
       - application/json
       responses:
@@ -1606,10 +1606,10 @@ paths:
             type: array
       security:
       - Bearer: []
-      summary: Query All Maintenances
+      summary: Query All Maintenance
       tags:
-      - Maintenances
-  /v1/maintenances/{id}:
+      - Maintenance
+  /v1/maintenance/{id}:
     delete:
       produces:
       - application/json
@@ -1620,7 +1620,7 @@ paths:
       - Bearer: []
       summary: Delete Maintenance Entry
       tags:
-      - Maintenances
+      - Maintenance
     put:
       parameters:
       - description: Entry Data
@@ -1640,7 +1640,7 @@ paths:
       - Bearer: []
       summary: Update Maintenance Entry
       tags:
-      - Maintenances
+      - Maintenance
   /v1/notifiers:
     get:
       produces:

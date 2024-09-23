@@ -3,27 +3,27 @@ import type {
   MaintenanceEntry,
   MaintenanceEntryWithDetails,
   MaintenanceEntryUpdate,
-  MaintenancesFilterStatus,
+  MaintenanceFilterStatus,
 } from "../types/data-contracts";
 
-export interface MaintenancesFilters {
-  status?: MaintenancesFilterStatus;
+export interface MaintenanceFilters {
+  status?: MaintenanceFilterStatus;
 }
 
 export class MaintenanceAPI extends BaseAPI {
-  getAll(filters: MaintenancesFilters) {
+  getAll(filters: MaintenanceFilters) {
     return this.http.get<MaintenanceEntryWithDetails[]>({
-      url: route(`/maintenances`, { status: filters.status?.toString() }),
+      url: route(`/maintenance`, { status: filters.status?.toString() }),
     });
   }
 
   delete(id: string) {
-    return this.http.delete<void>({ url: route(`/maintenances/${id}`) });
+    return this.http.delete<void>({ url: route(`/maintenance/${id}`) });
   }
 
   update(id: string, data: MaintenanceEntryUpdate) {
     return this.http.put<MaintenanceEntryUpdate, MaintenanceEntry>({
-      url: route(`/maintenances/${id}`),
+      url: route(`/maintenance/${id}`),
       body: data,
     });
   }

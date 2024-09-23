@@ -188,9 +188,9 @@
     {
       icon: MdiWrench,
       id: 3,
-      active: computed(() => route.path === "/maintenances"),
-      name: t("menu.maintenances"),
-      to: "/maintenances",
+      active: computed(() => route.path === "/maintenance"),
+      name: t("menu.maintenance"),
+      to: "/maintenance",
     },
     {
       icon: MdiAccount,

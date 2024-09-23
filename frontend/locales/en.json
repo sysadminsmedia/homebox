@@ -105,11 +105,11 @@
         "home": "Home",
         "locations": "Locations",
         "search": "Search",
-        "maintenances": "Maintenances",
+        "maintenance": "Maintenance",
         "profile": "Profile",
         "tools": "Tools"
     },
-    "maintenances": {
+    "maintenance": {
         "total_entries": "Total Entries",
         "total_cost": "Total Cost",
         "monthly_average": "Monthly Average",

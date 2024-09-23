@@ -10,19 +10,19 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/web/adapters"
 )
 
-// HandleMaintenancesGetAll godoc
+// HandleMaintenanceGetAll godoc
 //
-//	@Summary  Query All Maintenances
-//	@Tags     Maintenances
+//	@Summary  Query All Maintenance
+//	@Tags     Maintenance
 //	@Produce  json
-//	@Param    filters query    repo.MaintenancesFilters     false "which maintenances to retrieve"
+//	@Param    filters query    repo.MaintenanceFilters     false "which maintenance to retrieve"
 //	@Success  200       {array} repo.MaintenanceEntryWithDetails[]
-//	@Router   /v1/maintenances [GET]
+//	@Router   /v1/maintenance [GET]
 //	@Security Bearer
-func (ctrl *V1Controller) HandleMaintenancesGetAll() errchain.HandlerFunc {
-	fn := func(r *http.Request, filters repo.MaintenancesFilters) ([]repo.MaintenanceEntryWithDetails, error) {
+func (ctrl *V1Controller) HandleMaintenanceGetAll() errchain.HandlerFunc {
+	fn := func(r *http.Request, filters repo.MaintenanceFilters) ([]repo.MaintenanceEntryWithDetails, error) {
 		auth := services.NewContext(r.Context())
-		return ctrl.repo.MaintEntry.GetAllMaintenances(auth, auth.GID, filters)
+		return ctrl.repo.MaintEntry.GetAllMaintenance(auth, auth.GID, filters)
 	}
 
 	return adapters.Query(fn, http.StatusOK)
@@ -31,11 +31,11 @@ func (ctrl *V1Controller) HandleMaintenancesGetAll() errchain.HandlerFunc {
 // HandleMaintenanceEntryUpdate godoc
 //
 //	@Summary  Update Maintenance Entry
-//	@Tags     Maintenances
+//	@Tags     Maintenance
 //	@Produce  json
 //	@Param    payload body     repo.MaintenanceEntryUpdate true "Entry Data"
 //	@Success  200     {object} repo.MaintenanceEntry
-//	@Router   /v1/maintenances/{id} [PUT]
+//	@Router   /v1/maintenance/{id} [PUT]
 //	@Security Bearer
 func (ctrl *V1Controller) HandleMaintenanceEntryUpdate() errchain.HandlerFunc {
 	fn := func(r *http.Request, entryID uuid.UUID, body repo.MaintenanceEntryUpdate) (repo.MaintenanceEntry, error) {
@@ -49,10 +49,10 @@ func (ctrl *V1Controller) HandleMaintenanceEntryUpdate() errchain.HandlerFunc {
 // HandleMaintenanceEntryDelete godoc
 //
 //	@Summary  Delete Maintenance Entry
-//	@Tags     Maintenances
+//	@Tags     Maintenance
 //	@Produce  json
 //	@Success  204
-//	@Router   /v1/maintenances/{id} [DELETE]
+//	@Router   /v1/maintenance/{id} [DELETE]
 //	@Security Bearer
 func (ctrl *V1Controller) HandleMaintenanceEntryDelete() errchain.HandlerFunc {
 	fn := func(r *http.Request, entryID uuid.UUID) (any, error) {

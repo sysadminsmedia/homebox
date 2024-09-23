@@ -125,11 +125,11 @@
         "home": "Accueil",
         "locations": "Emplacements",
         "search": "Recherche",
-        "maintenances": "Maintenances",
+        "maintenance": "Maintenance",
         "profile": "Profil",
         "tools": "Outils"
     },
-    "maintenances": {
+    "maintenance": {
         "total_entries": "Nombre d'entrées",
         "total_cost": "Coût total",
         "monthly_average": "Moyenne mensuelle",

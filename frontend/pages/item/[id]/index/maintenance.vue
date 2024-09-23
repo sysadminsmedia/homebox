@@ -47,19 +47,19 @@
     return [
       {
         id: "count",
-        title: t("maintenances.total_entries"),
+        title: t("maintenance.total_entries"),
         value: count.value || 0,
         type: "number" as StatsFormat,
       },
       {
         id: "total",
-        title: t("maintenances.total_cost"),
+        title: t("maintenance.total_cost"),
         value: log.value.costTotal || 0,
         type: "currency" as StatsFormat,
       },
       {
         id: "average",
-        title: t("maintenances.monthly_average"),
+        title: t("maintenance.monthly_average"),
         value: log.value.costAverage || 0,
         type: "currency" as StatsFormat,
       },
@@ -85,17 +85,17 @@
       <div class="flex">
         <div class="btn-group">
           <button class="btn btn-sm" :class="`${scheduled ? 'btn-active' : ''}`" @click="scheduled = true">
-            {{ $t("maintenances.filter.scheduled") }}
+            {{ $t("maintenance.filter.scheduled") }}
           </button>
           <button class="btn btn-sm" :class="`${scheduled ? '' : 'btn-active'}`" @click="scheduled = false">
-            {{ $t("maintenances.filter.completed") }}
+            {{ $t("maintenance.filter.completed") }}
           </button>
         </div>
         <BaseButton class="ml-auto" size="sm" @click="maintenanceEditModal?.openCreateModal(props.item.id)">
           <template #icon>
             <MdiPlus />
           </template>
-          {{ $t("maintenances.list.new") }}
+          {{ $t("maintenance.list.new") }}
         </BaseButton>
       </div>
       <div class="container space-y-6">
@@ -130,13 +130,13 @@
               <template #icon>
                 <MdiEdit />
               </template>
-              {{ $t("maintenances.list.edit") }}
+              {{ $t("maintenance.list.edit") }}
             </BaseButton>
             <BaseButton size="sm" @click="maintenanceEditModal?.deleteEntry(e.id)">
               <template #icon>
                 <MdiDelete />
               </template>
-              {{ $t("maintenances.list.delete") }}
+              {{ $t("maintenance.list.delete") }}
             </BaseButton>
           </div>
         </BaseCard>
@@ -147,7 +147,9 @@
             @click="maintenanceEditModal?.openCreateModal(props.item.id)"
           >
             <MdiWrenchClock class="inline size-16" />
-            <span class="mt-2 block text-sm font-medium text-gray-900"> {{ $t("maintenances.list.create_first") }} </span>
+            <span class="mt-2 block text-sm font-medium text-gray-900">
+              {{ $t("maintenance.list.create_first") }}
+            </span>
           </button>
         </div>
       </div>
