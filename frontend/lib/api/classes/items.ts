@@ -10,7 +10,6 @@ import type {
   ItemUpdate,
   MaintenanceEntry,
   MaintenanceEntryCreate,
-  MaintenanceEntryUpdate,
   MaintenanceLog,
 } from "../types/data-contracts";
 import type { AttachmentTypes, PaginationResult } from "../types/non-generated";
@@ -71,7 +70,7 @@ type MaintenanceEntryQuery = {
   completed?: boolean;
 };
 
-export class MaintenanceAPI extends BaseAPI {
+export class ItemMaintenanceAPI extends BaseAPI {
   getLog(itemId: string, q: MaintenanceEntryQuery = {}) {
     return this.http.get<MaintenanceLog>({ url: route(`/items/${itemId}/maintenance`, q) });
   }
@@ -82,29 +81,18 @@ export class MaintenanceAPI extends BaseAPI {
       body: data,
     });
   }
-
-  delete(itemId: string, entryId: string) {
-    return this.http.delete<void>({ url: route(`/items/${itemId}/maintenance/${entryId}`) });
-  }
-
-  update(itemId: string, entryId: string, data: MaintenanceEntryUpdate) {
-    return this.http.put<MaintenanceEntryUpdate, MaintenanceEntry>({
-      url: route(`/items/${itemId}/maintenance/${entryId}`),
-      body: data,
-    });
-  }
 }
 
 export class ItemsApi extends BaseAPI {
   attachments: AttachmentsAPI;
-  maintenance: MaintenanceAPI;
+  maintenance: ItemMaintenanceAPI;
   fields: FieldsAPI;
 
   constructor(http: Requests, token: string) {
     super(http, token);
     this.fields = new FieldsAPI(http);
     this.attachments = new AttachmentsAPI(http);
-    this.maintenance = new MaintenanceAPI(http);
+    this.maintenance = new ItemMaintenanceAPI(http);
   }
 
   fullpath(id: string) {

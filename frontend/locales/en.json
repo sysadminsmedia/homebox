@@ -101,6 +101,51 @@
         "tips_sub": "Search Tips",
         "updated_at": "Updated At"
     },
+    "menu":{
+        "home": "Home",
+        "locations": "Locations",
+        "search": "Search",
+        "maintenance": "Maintenance",
+        "profile": "Profile",
+        "tools": "Tools"
+    },
+    "maintenance": {
+        "total_entries": "Total Entries",
+        "total_cost": "Total Cost",
+        "monthly_average": "Monthly Average",
+        "list":
+        {
+            "new": "New",
+            "edit": "Edit",
+            "delete": "Delete",
+            "create_first": "Create Your First Entry"
+        },
+        "modal":
+        {
+            "new_title": "New Entry",
+            "edit_title": "Edit Entry",
+            "new_action": "Create",
+            "edit_action": "Update",
+            "delete_confirmation": "Are you sure you want to delete this entry?",
+            "entry_name": "Entry Name",
+            "completed_date": "Completed Date",
+            "scheduled_date": "Scheduled Date",
+            "notes": "Notes",
+            "cost": "Cost"
+        },
+        "filter":
+        {
+            "scheduled": "Scheduled",
+            "completed": "Completed",
+            "both": "Both"
+        },
+        "toast":
+        {
+            "failed_to_delete": "Failed to delete entry",
+            "failed_to_create": "Failed to create entry",
+            "failed_to_update" : "Failed to update entry"
+        }
+    },
     "profile": {
         "active": "Active",
         "change_password": "Change Password",

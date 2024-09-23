@@ -917,7 +917,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Maintenance"
+                    "Item Maintenance"
                 ],
                 "summary": "Get Maintenance Log",
                 "responses": {
@@ -939,7 +939,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Maintenance"
+                    "Item Maintenance"
                 ],
                 "summary": "Create Maintenance Entry",
                 "parameters": [
@@ -959,60 +959,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/repo.MaintenanceEntry"
                         }
-                    }
-                }
-            }
-        },
-        "/v1/items/{id}/maintenance/{entry_id}": {
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Maintenance"
-                ],
-                "summary": "Update Maintenance Entry",
-                "parameters": [
-                    {
-                        "description": "Entry Data",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/repo.MaintenanceEntryUpdate"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/repo.MaintenanceEntry"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Maintenance"
-                ],
-                "summary": "Delete Maintenance Entry",
-                "responses": {
-                    "204": {
-                        "description": "No Content"
                     }
                 }
             }
@@ -1402,6 +1348,104 @@ const docTemplate = `{
                         "required": true
                     }
                 ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/v1/maintenance": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Maintenance"
+                ],
+                "summary": "Query All Maintenance",
+                "parameters": [
+                    {
+                        "enum": [
+                            "scheduled",
+                            "completed",
+                            "both"
+                        ],
+                        "type": "string",
+                        "x-enum-varnames": [
+                            "MaintenanceFilterStatusScheduled",
+                            "MaintenanceFilterStatusCompleted",
+                            "MaintenanceFilterStatusBoth"
+                        ],
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.MaintenanceEntryWithDetails"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/maintenance/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Maintenance"
+                ],
+                "summary": "Update Maintenance Entry",
+                "parameters": [
+                    {
+                        "description": "Entry Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.MaintenanceEntryUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.MaintenanceEntry"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Maintenance"
+                ],
+                "summary": "Delete Maintenance Entry",
                 "responses": {
                     "204": {
                         "description": "No Content"
@@ -2476,6 +2520,9 @@ const docTemplate = `{
                 "parent": {
                     "$ref": "#/definitions/repo.LocationSummary"
                 },
+                "totalPrice": {
+                    "type": "number"
+                },
                 "updatedAt": {
                     "type": "string"
                 }
@@ -2610,6 +2657,49 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "repo.MaintenanceEntryWithDetails": {
+            "type": "object",
+            "properties": {
+                "completedDate": {
+                    "type": "string"
+                },
+                "cost": {
+                    "type": "string",
+                    "example": "0"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "itemID": {
+                    "type": "string"
+                },
+                "itemName": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "scheduledDate": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.MaintenanceFilterStatus": {
+            "type": "string",
+            "enum": [
+                "scheduled",
+                "completed",
+                "both"
+            ],
+            "x-enum-varnames": [
+                "MaintenanceFilterStatusScheduled",
+                "MaintenanceFilterStatusCompleted",
+                "MaintenanceFilterStatusBoth"
+            ]
         },
         "repo.MaintenanceLog": {
             "type": "object",
