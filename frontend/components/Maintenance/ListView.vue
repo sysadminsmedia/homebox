@@ -7,6 +7,8 @@
   import MdiDelete from "~icons/mdi/delete";
   import MdiEdit from "~icons/mdi/edit";
   import MdiCalendar from "~icons/mdi/calendar";
+  import MdiPlus from "~icons/mdi/plus";
+  import MdiWrenchClock from "~icons/mdi/wrench-clock";
   import MdiContentDuplicate from "~icons/mdi/content-duplicate";
   import MaintenanceEditModal from "~~/components/Maintenance/EditModal.vue";
 
@@ -86,40 +88,39 @@
     </div>
     <div class="flex">
       <div class="btn-group">
-        <button
-          class="btn btn-sm"
+        <BaseButton
+          size="sm"
           :class="`${maintenanceFilterStatus == MaintenanceFilterStatus.MaintenanceFilterStatusScheduled ? 'btn-active' : ''}`"
           @click="maintenanceFilterStatus = MaintenanceFilterStatus.MaintenanceFilterStatusScheduled"
         >
           {{ $t("maintenance.filter.scheduled") }}
-        </button>
-        <button
-          class="btn btn-sm"
+        </BaseButton>
+        <BaseButton
+          size="sm"
           :class="`${maintenanceFilterStatus == MaintenanceFilterStatus.MaintenanceFilterStatusCompleted ? 'btn-active' : ''}`"
           @click="maintenanceFilterStatus = MaintenanceFilterStatus.MaintenanceFilterStatusCompleted"
         >
           {{ $t("maintenance.filter.completed") }}
-        </button>
-        <button
-          class="btn btn-sm"
+        </BaseButton>
+        <BaseButton
+          size="sm"
           :class="`${maintenanceFilterStatus == MaintenanceFilterStatus.MaintenanceFilterStatusBoth ? 'btn-active' : ''}`"
           @click="maintenanceFilterStatus = MaintenanceFilterStatus.MaintenanceFilterStatusBoth"
         >
           {{ $t("maintenance.filter.both") }}
-        </button>
-
-        <BaseButton
-          v-if="props.currentItemId"
-          class="ml-auto"
-          size="sm"
-          @click="maintenanceEditModal?.openCreateModal(props.currentItemId)"
-        >
-          <template #icon>
-            <MdiPlus />
-          </template>
-          {{ $t("maintenance.list.new") }}
         </BaseButton>
       </div>
+      <BaseButton
+        v-if="props.currentItemId"
+        class="ml-auto"
+        size="sm"
+        @click="maintenanceEditModal?.openCreateModal(props.currentItemId)"
+      >
+        <template #icon>
+          <MdiPlus />
+        </template>
+        {{ $t("maintenance.list.new") }}
+      </BaseButton>
     </div>
   </section>
   <section>
@@ -177,7 +178,7 @@
             </template>
             {{ $t("maintenance.list.duplicate") }}
           </BaseButton>
-          <BaseButton size="sm" @click="maintenanceEditModal?.deleteEntry(e.id)">
+          <BaseButton size="sm" class="btn-error" @click="maintenanceEditModal?.deleteEntry(e.id)">
             <template #icon>
               <MdiDelete />
             </template>
