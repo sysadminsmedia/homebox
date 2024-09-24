@@ -372,7 +372,7 @@
             {{ token }}
           </div>
         </div>
-        <div class="p-5 pt-0 form-control w-full">
+        <div class="form-control w-full p-5 pt-0">
           <label class="label">
             <span class="label-text">{{ $t("profile.language") }}</span>
           </label>
@@ -397,7 +397,10 @@
         </template>
 
         <div v-if="notifiers.data.value" class="mx-4 divide-y divide-gray-400 rounded-md border border-gray-400">
-          <article v-for="n in notifiers.data.value" :key="n.id" class="p-2">
+          <p v-if="notifiers.data.value.length === 0" class="p-2 text-center text-sm">
+            {{ $t("profile.no_notifiers") }}
+          </p>
+          <article v-for="n in notifiers.data.value" v-else :key="n.id" class="p-2">
             <div class="flex flex-wrap items-center gap-2">
               <p class="mr-auto text-lg">{{ n.name }}</p>
               <div class="flex justify-end gap-2">
@@ -465,7 +468,9 @@
 
         <div class="px-4 pb-4">
           <div class="mb-3">
-            <BaseButton size="sm" @click="setDisplayHeader"> {{ $t("profile.display_header", { currentValue: preferences.displayHeaderDecor }) }} </BaseButton>
+            <BaseButton size="sm" @click="setDisplayHeader">
+              {{ $t("profile.display_header", { currentValue: preferences.displayHeaderDecor }) }}
+            </BaseButton>
           </div>
           <div class="rounded-box grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             <div

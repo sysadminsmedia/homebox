@@ -75,6 +75,12 @@
         "set_password": "Defina a sua senha",
         "tagline": "Acompanhe, organize e faça a gestão das suas coisas."
     },
+    "labels": {
+        "no_results": "Nenhuma etiqueta encontrada"
+    },
+    "locations": {
+        "no_results": "Nenhuma localização encontrada"
+    },
     "items": {
         "add": "Adicionar",
         "created_at": "Criado em",
@@ -139,6 +145,7 @@
         "notifier_modal": "{ type, select, true {Editar} false {Criar} other {Outro}} Notificador",
         "notifiers": "Notificadores",
         "notifiers_sub": "Receba notificações para os próximos lembretes de manutenção",
+        "no_notifiers": "Nenhum notificador configurado",
         "test": "Testar",
         "theme_settings": "Definições do tema",
         "theme_settings_sub": "As configurações do tema são guardadas no armazenamento local do seu navegador. Pode alterar o tema  em qualquer altura.\nSe encontrar algum problema com  a alteração do tema, tente refrescar o browser.",

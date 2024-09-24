@@ -180,12 +180,7 @@
           <a href="https://discord.gg/aY4DCkpNA9" class="tooltip" :data-tip="$t('global.join_discord')" target="_blank">
             <MdiDiscord class="size-8" />
           </a>
-          <a
-            href="https://homebox.software/en/"
-            class="tooltip"
-            :data-tip="$t('global.read_docs')"
-            target="_blank"
-          >
+          <a href="https://homebox.software/en/" class="tooltip" :data-tip="$t('global.read_docs')" target="_blank">
             <MdiFolder class="size-8" />
           </a>
         </div>

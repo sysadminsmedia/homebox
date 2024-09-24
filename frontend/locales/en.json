@@ -38,6 +38,9 @@
         "location": {
             "create_modal": {
                 "title": "Create Location"
+            },
+            "tree": {
+                "no_locations": "No locations available. Add new locations through the\n `<`span class=\"link-primary\"`>`Create`<`/span`>` button on the navigation bar."
             }
         }
     },
@@ -74,6 +77,12 @@
         "set_name": "What's your name?",
         "set_password": "Set your password",
         "tagline": "Track, Organize, and Manage your Things."
+    },
+    "labels": {
+        "no_results": "No Labels Found"
+    },
+    "locations": {
+        "no_results": "No Locations Found"
     },
     "items": {
         "add": "Add",
@@ -162,6 +171,7 @@
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notifier",
         "notifiers": "Notifiers",
         "notifiers_sub": "Get notifications for upcoming maintenance reminders",
+        "no_notifiers": "No notifiers configured",
         "test": "Test",
         "theme_settings": "Theme Settings",
         "theme_settings_sub": "Theme settings are stored in your browser's local storage. You can change the theme at any time. If you're\n having trouble setting your theme try refreshing your browser.",
