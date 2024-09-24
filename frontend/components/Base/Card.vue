@@ -1,5 +1,5 @@
 <template>
-  <div class="card bg-base-100 shadow-xl rounded-lg">
+  <div class="card rounded-lg bg-base-100 shadow-xl">
     <div v-if="$slots.title" class="px-4 py-5 sm:px-6">
       <component :is="collapsable ? 'button' : 'div'" v-on="collapsable ? { click: toggle } : {}">
         <h3 class="flex items-center text-lg font-medium leading-6">

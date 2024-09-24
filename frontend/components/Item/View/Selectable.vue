@@ -35,7 +35,7 @@
           <label tabindex="0" class="btn btn-ghost m-1">
             <MdiDotsVertical class="size-7" />
           </label>
-          <ul tabindex="0" class="dropdown-content menu rounded-box bg-base-100 w-32 p-2 shadow">
+          <ul tabindex="0" class="dropdown-content menu rounded-box w-32 bg-base-100 p-2 shadow">
             <li>
               <button @click="setViewPreference('card')">
                 <MdiCardTextOutline class="size-5" />

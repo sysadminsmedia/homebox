@@ -38,6 +38,9 @@
         "location": {
             "create_modal": {
                 "title": "Create Location"
+            },
+            "tree": {
+                "no_locations": "No locations available. Add new locations through the\n `<`span class=\"link-primary\"`>`Create`<`/span`>` button on the navigation bar."
             }
         }
     },

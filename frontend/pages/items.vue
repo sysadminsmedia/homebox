@@ -377,7 +377,7 @@
           <label tabindex="0" class="btn btn-xs">{{ $t("items.options") }}</label>
           <div
             tabindex="0"
-            class="dropdown-content bg-base-100 mt-1 max-h-72 w-64 -translate-x-24 overflow-auto rounded-md p-4 shadow"
+            class="dropdown-content mt-1 max-h-72 w-64 -translate-x-24 overflow-auto rounded-md bg-base-100 p-4 shadow"
           >
             <label class="label mr-auto cursor-pointer">
               <input v-model="includeArchived" type="checkbox" class="toggle toggle-primary toggle-sm" />
@@ -407,7 +407,7 @@
           <label tabindex="0" class="btn btn-xs">{{ $t("items.tips") }}</label>
           <div
             tabindex="0"
-            class="dropdown-content bg-base-100 mt-1 w-[325px] overflow-auto rounded-md p-4 text-sm shadow"
+            class="dropdown-content mt-1 w-[325px] overflow-auto rounded-md bg-base-100 p-4 text-sm shadow"
           >
             <p class="text-base">{{ $t("items.tips_sub") }}</p>
             <ul class="mt-1 list-disc pl-6">
