@@ -403,6 +403,7 @@ export interface APISummary {
   allowRegistration: boolean;
   build: Build;
   demo: boolean;
+  headerAuthEnabled: boolean;
   health: boolean;
   message: string;
   title: string;

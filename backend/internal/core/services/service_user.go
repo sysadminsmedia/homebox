@@ -197,6 +197,15 @@ func (svc *UserService) Login(ctx context.Context, username, password string, ex
 	return svc.createSessionToken(ctx, usr.ID, extendedSession)
 }
 
+// LoginWithExternalIDHeader returns the user matching the external id provided
+func (svc *UserService) LoginWithExternalIDHeader(ctx context.Context, id string) (UserAuthTokenDetail, error) {
+	usr, err := svc.repos.Users.GetOneExternalID(ctx, id)
+	if err != nil {
+		return UserAuthTokenDetail{}, ErrorInvalidLogin
+	}
+	return svc.createSessionToken(ctx, usr.ID, false)
+}
+
 func (svc *UserService) Logout(ctx context.Context, token string) error {
 	hash := hasher.HashToken(token)
 	err := svc.repos.AuthTokens.DeleteToken(ctx, hash)

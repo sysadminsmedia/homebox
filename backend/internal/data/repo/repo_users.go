@@ -67,6 +67,12 @@ func (r *UserRepository) GetOneID(ctx context.Context, id uuid.UUID) (UserOut, e
 		Only(ctx))
 }
 
+func (r *UserRepository) GetOneExternalID(ctx context.Context, externalId string) (UserOut, error) {
+	return mapUserOutErr(r.db.User.Query().
+		Where(user.ExternalUserID(externalId)).
+		Only(ctx))
+}
+
 func (r *UserRepository) GetOneEmail(ctx context.Context, email string) (UserOut, error) {
 	return mapUserOutErr(r.db.User.Query().
 		Where(user.EmailEqualFold(email)).

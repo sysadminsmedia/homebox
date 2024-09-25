@@ -96,6 +96,21 @@ func getQuery(r *http.Request) (string, error) {
 	return token, nil
 }
 
+func getHeader(external_user_id_header string, external_user_name_header string, user_service *services.UserService) func(r *http.Request) (string, error) {
+	return func(r *http.Request) (string, error) {
+		externalId := r.Header.Get(external_user_id_header)
+		if externalId == "" {
+			return "", errors.New("external user id header is required")
+		}
+		userToken, err := user_service.LoginWithExternalIDHeader(r.Context(), externalId)
+		if err != nil {
+			//todo create user
+			return "", errors.New("no user with provided external user id")
+		}
+		return userToken.Raw, nil
+	}
+}
+
 // mwAuthToken is a middleware that will check the database for a stateful token
 // and attach it's user to the request context, or return an appropriate error.
 // Authorization support is by token via Headers or Query Parameter
@@ -116,9 +131,12 @@ func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 		}
 
 		if requestToken == "" {
-			keyFuncs := [...]KeyFunc{
+			keyFuncs := []KeyFunc{
 				getBearer,
 				getQuery,
+			}
+			if len(a.conf.Proxy.TrustedHosts) > 0 {
+				keyFuncs = append(keyFuncs, getHeader(a.conf.Proxy.HeaderExternalUserId, a.conf.Proxy.HeaderExternalUserName, a.services.User))
 			}
 
 			for _, keyFunc := range keyFuncs {

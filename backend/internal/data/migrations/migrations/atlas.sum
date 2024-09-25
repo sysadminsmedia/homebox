@@ -1,4 +1,4 @@
-h1:sjJCTAqc9FG8BKBIzh5ZynYD/Ilz6vnLqM4XX83WQ4M=
+h1:lmkp47KpO+JAh0zsA/P4ReYYzmYPgtFwqHYuTwvfpCo=
 20220929052825_init.sql h1:ZlCqm1wzjDmofeAcSX3jE4h4VcdTNGpRg2eabztDy9Q=
 20221001210956_group_invitations.sql h1:YQKJFtE39wFOcRNbZQ/d+ZlHwrcfcsZlcv/pLEYdpjw=
 20221009173029_add_user_roles.sql h1:vWmzAfgEWQeGk0Vn70zfVPCcfEZth3E0JcvyKTjpYyU=
@@ -13,3 +13,4 @@ h1:sjJCTAqc9FG8BKBIzh5ZynYD/Ilz6vnLqM4XX83WQ4M=
 20230305065819_add_notifier_types.sql h1:r5xrgCKYQ2o9byBqYeAX1zdp94BLdaxf4vq9OmGHNl0=
 20230305071524_add_group_id_to_notifiers.sql h1:xDShqbyClcFhvJbwclOHdczgXbdffkxXNWjV61hL/t4=
 20231006213457_add_primary_attachment_flag.sql h1:J4tMSJQFa7vaj0jpnh8YKTssdyIjRyq6RXDXZIzDDu4=
+20240925103037_add_external_user_id.sql h1:gXYDh2uLMVEXpYoUOD4DSBAn9jfj25bxNlzzk9r+TOI=
