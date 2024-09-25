@@ -123,8 +123,16 @@
     },
     "maintenance": {
         "list": {
+            "create_first": "Erstellen Sie Ihren ersten Eintrag",
+            "delete": "Löschen",
             "edit": "Bearbeiten",
-            "new": "Neu"
+            "new": "Neuer"
+        },
+        "modal": {
+            "edit_action": "Aktualisieren",
+            "edit_title": "Eintrag bearbeiten",
+            "new_action": "Erstellen",
+            "new_title": "Neuer Eintrag"
         },
         "monthly_average": "Monatsdurchschnitt",
         "total_cost": "Gesamtkosten"
