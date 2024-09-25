@@ -38,6 +38,9 @@
         "location": {
             "create_modal": {
                 "title": "Új hely létrehozása"
+            },
+            "tree": {
+                "no_locations": "Nince elérhető hely. Adj hozzá új helyet a\n `<`span class=\"link-primary\"`>`Létrehozás`<`/span`>` gombbal a navigációs sávon."
             }
         }
     },
@@ -101,6 +104,9 @@
         "tips_sub": "Tippek a kereséshez",
         "updated_at": "Változtatás dátuma"
     },
+    "labels": {
+        "no_results": "Nem található címke"
+    },
     "languages": {
         "ca": "Katalán",
         "de": "Német",
@@ -121,6 +127,50 @@
         "zh-MO": "Kínai (makaói)",
         "zh-TW": "Kínai (hagyományos)"
     },
+    "locations": {
+        "no_results": "Nem található hely"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Mindkettő",
+            "completed": "Teljesítve",
+            "scheduled": "Időzítve"
+        },
+        "list": {
+            "create_first": "Hozd létre az első bejegyzést",
+            "delete": "Törlés",
+            "edit": "Szerkesztés",
+            "new": "Új"
+        },
+        "modal": {
+            "completed_date": "Teljesítés dátuma",
+            "cost": "Költség",
+            "delete_confirmation": "Biztosan törli ezt a bejegyzést?",
+            "edit_action": "Módosítás",
+            "edit_title": "Bejegyzés szerkesztése",
+            "entry_name": "Bejegyzés neve",
+            "new_action": "Létrehozás",
+            "new_title": "Új bejegyzés",
+            "notes": "Megjegyzések",
+            "scheduled_date": "Ütemezett dátum"
+        },
+        "monthly_average": "Havi átlag",
+        "toast": {
+            "failed_to_create": "Bejegyzés létrehozása sikertelen",
+            "failed_to_delete": "Bejegyzés törlése sikertelen",
+            "failed_to_update": "Bejegyzés frissítése sikertelen"
+        },
+        "total_cost": "Teljes költség",
+        "total_entries": "Összes bejegyzés"
+    },
+    "menu": {
+        "home": "Kezdőlap",
+        "locations": "Helyek",
+        "maintenance": "Karbantartás",
+        "profile": "Profil",
+        "search": "Keresés",
+        "tools": "Eszközök"
+    },
     "profile": {
         "active": "Aktív",
         "change_password": "Jelszó módosítása",
@@ -136,6 +186,7 @@
         "inactive": "Inaktív",
         "language": "Nyelv",
         "new_password": "Új jelszó",
+        "no_notifiers": "Nincs értesítő beállítva",
         "notifier_modal": "Értesítő { type, select, true {szerkesztése} false {létrehozása} other {egyéb}}",
         "notifiers": "Értesítők",
         "notifiers_sub": "Értesítések kérése a közelgő karbantartási emlékeztetőkről",

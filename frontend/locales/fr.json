@@ -38,6 +38,9 @@
         "location": {
             "create_modal": {
                 "title": "Créer un emplacement"
+            },
+            "tree": {
+                "no_locations": "Aucun emplacement disponible. Ajoutez votre premiers emplacements avec le bouton `<`span class=\"link-primary\"`>`Créer`<`/span`>` dans la barre de navigation."
             }
         }
     },
@@ -101,6 +104,9 @@
         "tips_sub": "Conseils pour la recherche",
         "updated_at": "Mis à jour le"
     },
+    "labels": {
+        "no_results": "Aucune étiquette trouvée"
+    },
     "languages": {
         "ca": "Catalan",
         "de": "Allemand",
@@ -121,50 +127,49 @@
         "zh-MO": "Chinois (Macao)",
         "zh-TW": "Chinois (traditionnel)"
     },
-    "menu":{
-        "home": "Accueil",
-        "locations": "Emplacements",
-        "search": "Recherche",
-        "maintenance": "Maintenance",
-        "profile": "Profil",
-        "tools": "Outils"
+    "locations": {
+        "no_results": "Aucun emplacement trouvé"
     },
     "maintenance": {
-        "total_entries": "Nombre d'entrées",
-        "total_cost": "Coût total",
-        "monthly_average": "Moyenne mensuelle",
-        "list":
-        {
-            "new": "Ajouter",
-            "edit": "Modifier",
-            "delete": "Supprimer",
-            "create_first": "Créer votre première entrée"
-        },
-        "modal":
-        {
-            "new_title": "Nouvelle entrée",
-            "edit_title": "Modifier l'entrée",
-            "new_action": "Créer",
-            "edit_action": "Modifier",
-            "delete_confirmation": "Êtes-vous certain de vouloir supprimer cette entrée ?",
-            "entry_name": "Nom",
-            "completed_date": "Date d'achèvement",
-            "scheduled_date": "Date prévue",
-            "notes": "Notes",
-            "cost": "Coût"
-        },
-        "filter":
-        {
-            "scheduled": "Prévues",
+        "filter": {
+            "both": "Toutes",
             "completed": "Terminées",
-            "both": "Toutes"
+            "scheduled": "Prévues"
         },
-        "toast":
-        {
-            "failed_to_delete": "Échec de création de l'entrée",
+        "list": {
+            "create_first": "Créer votre première entrée",
+            "delete": "Supprimer",
+            "edit": "Modifier",
+            "new": "Ajouter"
+        },
+        "modal": {
+            "completed_date": "Date d'achèvement",
+            "cost": "Coût",
+            "delete_confirmation": "Êtes-vous certain de vouloir supprimer cette entrée ?",
+            "edit_action": "Modifier",
+            "edit_title": "Modifier l'entrée",
+            "entry_name": "Nom",
+            "new_action": "Créer",
+            "new_title": "Nouvelle entrée",
+            "notes": "Notes",
+            "scheduled_date": "Date prévue"
+        },
+        "monthly_average": "Moyenne mensuelle",
+        "toast": {
             "failed_to_create": "Échec de suppression de l'entrée",
-            "failed_to_update" : "Échec de mise à jour de l'entrée"
-        }
+            "failed_to_delete": "Échec de création de l'entrée",
+            "failed_to_update": "Échec de mise à jour de l'entrée"
+        },
+        "total_cost": "Coût total",
+        "total_entries": "Nombre d'entrées"
+    },
+    "menu": {
+        "home": "Accueil",
+        "locations": "Emplacements",
+        "maintenance": "Maintenance",
+        "profile": "Profil",
+        "search": "Recherche",
+        "tools": "Outils"
     },
     "profile": {
         "active": "Actif",
@@ -181,6 +186,7 @@
         "inactive": "Inactif",
         "language": "Langue",
         "new_password": "Nouveau mot de passe",
+        "no_notifiers": "Aucune notification configurée",
         "notifier_modal": "Notifications { type, select, true {Edit} false {Create} other {Other}}",
         "notifiers": "Notifications",
         "notifiers_sub": "Recevez des notifications pour vous prévenir des prochaines maintenances.",
