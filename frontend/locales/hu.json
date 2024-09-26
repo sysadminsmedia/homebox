@@ -40,7 +40,7 @@
                 "title": "Új hely létrehozása"
             },
             "tree": {
-                "no_locations": "Nince elérhető hely. Adj hozzá új helyet a\n `<`span class=\"link-primary\"`>`Létrehozás`<`/span`>` gombbal a navigációs sávon."
+                "no_locations": "Nincs elérhető hely. Adj hozzá új helyet a\n `<`span class=\"link-primary\"`>`Létrehozás`<`/span`>` gombbal a navigációs sávon."
             }
         }
     },
