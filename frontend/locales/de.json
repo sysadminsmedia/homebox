@@ -38,6 +38,9 @@
         "location": {
             "create_modal": {
                 "title": "Standort erstellen"
+            },
+            "tree": {
+                "no_locations": "Keine Standorte verfügbar. Fügen Sie neue Standorte über die Schaltfläche\n `<`span class=\"link-primary\"`>`Erstellen`<`/span`>` in der Navigationsleiste hinzu."
             }
         }
     },
@@ -87,7 +90,7 @@
         "negate_labels": "Ausgewählte Etiketten negieren",
         "next_page": "Nächste Seite",
         "no_results": "Keine Elemente gefunden",
-        "options": "Optionen",
+        "options": "Optionen (Options)",
         "order_by": "Sortieren nach",
         "pages": "Seite { page } von { totalPages }",
         "prev_page": "Vorherige Seite",
@@ -100,6 +103,9 @@
         "tips": "Tipps",
         "tips_sub": "Suchtipps",
         "updated_at": "Aktualisiert am"
+    },
+    "labels": {
+        "no_results": "Keine Labels gefunden"
     },
     "languages": {
         "ca": "Katalanisch",
@@ -121,7 +127,14 @@
         "zh-MO": "Chinesisch (Macao)",
         "zh-TW": "Chinesisch (Traditionell)"
     },
+    "locations": {
+        "no_results": "Keine Standorte gefunden"
+    },
     "maintenance": {
+        "filter": {
+            "completed": "Abgeschlossen",
+            "scheduled": "Geplant"
+        },
         "list": {
             "create_first": "Erstellen Sie Ihren ersten Eintrag",
             "delete": "Löschen",
@@ -129,13 +142,28 @@
             "new": "Neuer"
         },
         "modal": {
+            "delete_confirmation": "Sind Sie sicher, dass Sie diesen Eintrag löschen wollen?",
             "edit_action": "Aktualisieren",
             "edit_title": "Eintrag bearbeiten",
             "new_action": "Erstellen",
-            "new_title": "Neuer Eintrag"
+            "new_title": "Neuer Eintrag",
+            "notes": "Anmerkungen"
         },
         "monthly_average": "Monatsdurchschnitt",
-        "total_cost": "Gesamtkosten"
+        "toast": {
+            "failed_to_create": "Eintrag konnte nicht erstellt werden",
+            "failed_to_delete": "Eintrag konnte nicht gelöscht werden",
+            "failed_to_update": "Eintrag konnte nicht aktualisiert werden"
+        },
+        "total_cost": "Gesamtkosten",
+        "total_entries": "Einträge insgesamt"
+    },
+    "menu": {
+        "home": "Home",
+        "locations": "Standorte",
+        "profile": "Profil",
+        "search": "Suche",
+        "tools": "Tools"
     },
     "profile": {
         "active": "Aktiv",
