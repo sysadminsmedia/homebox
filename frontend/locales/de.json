@@ -132,6 +132,7 @@
     },
     "maintenance": {
         "filter": {
+            "both": "Beide",
             "completed": "Abgeschlossen",
             "scheduled": "Geplant"
         },
@@ -139,28 +140,32 @@
             "create_first": "Erstellen Sie Ihren ersten Eintrag",
             "delete": "Löschen",
             "edit": "Bearbeiten",
-            "new": "Neuer"
+            "new": "Neu"
         },
         "modal": {
+            "completed_date": "Fertigstellungsdatum",
+            "cost": "Kosten",
             "delete_confirmation": "Sind Sie sicher, dass Sie diesen Eintrag löschen wollen?",
             "edit_action": "Aktualisieren",
             "edit_title": "Eintrag bearbeiten",
             "new_action": "Erstellen",
             "new_title": "Neuer Eintrag",
-            "notes": "Anmerkungen"
+            "notes": "Anmerkungen",
+            "scheduled_date": "Geplantes Datum"
         },
         "monthly_average": "Monatsdurchschnitt",
         "toast": {
             "failed_to_create": "Eintrag konnte nicht erstellt werden",
             "failed_to_delete": "Eintrag konnte nicht gelöscht werden",
-            "failed_to_update": "Eintrag konnte nicht aktualisiert werden"
+            "failed_to_update": "Fehler beim Aktualisieren des Eintrags."
         },
         "total_cost": "Gesamtkosten",
-        "total_entries": "Einträge insgesamt"
+        "total_entries": "Gesamteinträge"
     },
     "menu": {
         "home": "Home",
-        "locations": "Standorte",
+        "locations": "Lagerorte",
+        "maintenance": "Wartung",
         "profile": "Profil",
         "search": "Suche",
         "tools": "Tools"
@@ -176,10 +181,11 @@
         "enabled": "Aktiviert",
         "gen_invite": "Einladungslink generieren",
         "group_settings": "Gruppeneinstellungen",
-        "group_settings_sub": "Geteilte Gruppeneinstellungen. Möglicherweise musst du die Seite neu laden, damit einige Einstellungen wirksam werden.",
+        "group_settings_sub": "Gemeinsame Gruppeneinstellungen. Möglicherweise müssen Sie Ihren Browser aktualisieren, damit die Einstellungen wirksam werden.",
         "inactive": "Inaktiv",
         "language": "Sprache",
         "new_password": "Neues Passwort",
+        "no_notifiers": "Keine Benachrichtigungen konfiguriert",
         "notifier_modal": "{ type, select, true {Bearbeiten} false {Erstellen} other {Andere}} Notifier",
         "notifiers": "Melder",
         "notifiers_sub": "Erhalte Benachrichtigungen über bevorstehende Wartungserinnerungen",
@@ -187,7 +193,7 @@
         "theme_settings": "Themes",
         "theme_settings_sub": "Theme-Einstellungen werden im lokalen Speicher deines Browsers gespeichert. Du kannst das Theme jederzeit ändern. Wenn du Probleme hast, dein Theme einzustellen, versuche, die Seite neu zu laden.",
         "update_group": "Gruppe aktualisieren",
-        "update_language": "Sprache ändern",
+        "update_language": "Sprache aktualisieren",
         "url": "URL",
         "user_profile": "Benutzerprofil",
         "user_profile_sub": "Lade Benutzer ein und verwalte dein Konto."
@@ -218,16 +224,16 @@
             "import_button": "Inventar importieren",
             "import_sub": "Importiert das Standard-CSV-Format für Homebox. Ohne eine '<code>'HB.import_ref'</code>' Spalte werden vorhandenen Artikel in Ihrem Bestand '<b>'nicht'</b>' überschrieben, sondern nur neue Artikel hinzugefügt. Zeilen mit einer '<code>'HB.import_ref'</code>' Spalte werden mit vorhandenen Artikeln mit der gleichen import_ref zusammengeführt, sofern vorhanden."
         },
-        "import_export_sub": "Importieren und exportieren des Inventars in und aus einer CSV-Datei. Dies ist nützlich, um das Inventar auf eine neue Instanz von Homebox zu migrieren.",
+        "import_export_sub": "Importieren und exportieren Sie Ihren Lagerbestand in und aus einer CSV-Datei",
         "reports": "Berichte",
         "reports_set": {
             "asset_labels": "Asset-ID-Etiketten",
-            "asset_labels_button": "Etikettengenerator",
+            "asset_labels_button": "Etiketten-Generator",
             "asset_labels_sub": "Erzeugt eine druckbare PDF-Datei mit Etiketten für eine Reihe von Asset-IDs. Diese sind nicht spezifisch für deine Inventargegenstände, so dass du die Etiketten im Voraus ausdrucken und bei Erhalt auf deinen Inventargegenständen anbringen kannst.",
             "bill_of_materials": "Stückliste",
             "bill_of_materials_button": "Stückliste generieren",
-            "bill_of_materials_sub": "Erzeugt eine CSV-Datei (Comma Separated Values), die in ein Tabellenkalkulationsprogramm importiert werden kann. Dies ist eine Zusammenfassung des Bestands mit grundlegenden Artikel- und Preisinformationen."
+            "bill_of_materials_sub": "Generiert eine CSV-Datei (Comma Separated Values), die in ein Tabellenkalkulationsprogramm importiert werden kann"
         },
-        "reports_sub": "Erstelle verschiedene Berichte für dein Inventar."
+        "reports_sub": "Erstellen Sie verschiedene Berichte für Ihr Inventar."
     }
 }
