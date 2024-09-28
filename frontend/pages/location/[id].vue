@@ -111,8 +111,8 @@
     <BaseModal v-model="updateModal">
       <template #title> Update Location </template>
       <form v-if="location" @submit.prevent="update">
-        <FormTextField v-model="updateData.name" :autofocus="true" label="Location Name" />
-        <FormTextArea v-model="updateData.description" label="Location Description" />
+        <FormTextField v-model="updateData.name" :autofocus="true" label="Location Name" :max-length="255" :min-length="1" />
+        <FormTextArea v-model="updateData.description" label="Location Description" :max-length="1000" />
         <LocationSelector v-model="parent" />
         <div class="modal-action">
           <BaseButton type="submit" :loading="updating"> Update </BaseButton>

@@ -3,8 +3,16 @@
     <template #title> {{ $t("components.item.create_modal.title") }} </template>
     <form @submit.prevent="create()">
       <LocationSelector v-model="form.location" />
-      <FormTextField ref="nameInput" v-model="form.name" :trigger-focus="focused" :autofocus="true" label="Item Name" />
-      <FormTextArea v-model="form.description" label="Item Description" />
+      <FormTextField
+        ref="nameInput"
+        v-model="form.name"
+        :trigger-focus="focused"
+        :autofocus="true"
+        label="Item Name"
+        :max-length="255"
+        :min-length="1"
+      />
+      <FormTextArea v-model="form.description" label="Item Description" :max-length="1000" />
       <FormMultiselect v-model="form.labels" label="Labels" :items="labels ?? []" />
 
       <div class="modal-action mb-6">

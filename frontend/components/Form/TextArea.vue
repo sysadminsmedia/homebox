@@ -2,16 +2,30 @@
   <div v-if="!inline" class="form-control w-full">
     <label class="label">
       <span class="label-text">{{ label }}</span>
+      <span
+        :class="{
+          'text-red-600':
+            typeof value === 'string' &&
+            ((maxLength && value.length > maxLength) || (minLength && value.length < minLength)),
+        }"
+      >
+        {{ typeof value === "string" && (maxLength || minLength) ? `${value.length}/${maxLength}` : "" }}
+      </span>
     </label>
     <textarea ref="el" v-model="value" class="textarea textarea-bordered h-28 w-full" :placeholder="placeholder" />
-    <label v-if="limit" class="label">
-      <span class="label-text-alt"></span>
-      <span class="label-text-alt"> {{ valueLen }}/{{ limit }}</span>
-    </label>
   </div>
   <div v-else class="sm:grid sm:grid-cols-4 sm:items-start sm:gap-4">
     <label class="label">
       <span class="label-text">{{ label }}</span>
+      <span
+        :class="{
+          'text-red-600':
+            typeof value === 'string' &&
+            ((maxLength && value.length > maxLength) || (minLength && value.length < minLength)),
+        }"
+      >
+        {{ typeof value === "string" && (maxLength || minLength) ? `${value.length}/${maxLength}` : "" }}
+      </span>
     </label>
     <textarea
       ref="el"
@@ -39,10 +53,6 @@
       type: String,
       default: "text",
     },
-    limit: {
-      type: [Number, String],
-      default: null,
-    },
     placeholder: {
       type: String,
       default: "",
@@ -50,6 +60,14 @@
     inline: {
       type: Boolean,
       default: false,
+    },
+    maxLength: {
+      type: Number,
+      required: false,
+    },
+    minLength: {
+      type: Number,
+      required: false,
     },
   });
 
