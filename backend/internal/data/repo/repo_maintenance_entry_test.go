@@ -60,27 +60,14 @@ func TestMaintenanceEntryRepository_GetLog(t *testing.T) {
 	}
 
 	// Get the log for the item
-	log, err := tRepos.MaintEntry.GetLog(context.Background(), tGroup.ID, item.ID, MaintenanceLogQuery{
-		Completed: true,
-	})
+	log, err := tRepos.MaintEntry.GetMaintenanceByItemID(context.Background(), tGroup.ID, item.ID, MaintenanceFilters{Status: MaintenanceFilterStatusCompleted})
 	if err != nil {
 		t.Fatalf("failed to get maintenance log: %v", err)
 	}
 
-	assert.Equal(t, item.ID, log.ItemID)
-	assert.Len(t, log.Entries, 10)
+	assert.Len(t, log, 10)
 
-	// Calculate the average cost
-	var total float64
-
-	for _, entry := range log.Entries {
-		total += entry.Cost
-	}
-
-	assert.InDelta(t, total, log.CostTotal, .001, "total cost should be equal to the sum of all entries")
-	assert.InDelta(t, total/2, log.CostAverage, 001, "average cost should be the average of the two months")
-
-	for _, entry := range log.Entries {
+	for _, entry := range log {
 		err := tRepos.MaintEntry.Delete(context.Background(), entry.ID)
 		require.NoError(t, err)
 	}

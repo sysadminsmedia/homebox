@@ -511,19 +511,6 @@ definitions:
     - MaintenanceFilterStatusScheduled
     - MaintenanceFilterStatusCompleted
     - MaintenanceFilterStatusBoth
-  repo.MaintenanceLog:
-    properties:
-      costAverage:
-        type: number
-      costTotal:
-        type: number
-      entries:
-        items:
-          $ref: '#/definitions/repo.MaintenanceEntry'
-        type: array
-      itemId:
-        type: string
-    type: object
   repo.NotifierCreate:
     properties:
       isActive:
@@ -1249,13 +1236,27 @@ paths:
       - Items Attachments
   /v1/items/{id}/maintenance:
     get:
+      parameters:
+      - enum:
+        - scheduled
+        - completed
+        - both
+        in: query
+        name: status
+        type: string
+        x-enum-varnames:
+        - MaintenanceFilterStatusScheduled
+        - MaintenanceFilterStatusCompleted
+        - MaintenanceFilterStatusBoth
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/repo.MaintenanceLog'
+            items:
+              $ref: '#/definitions/repo.MaintenanceEntryWithDetails'
+            type: array
       security:
       - Bearer: []
       summary: Get Maintenance Log

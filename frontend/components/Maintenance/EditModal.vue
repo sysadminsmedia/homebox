@@ -135,5 +135,30 @@
     emit("changed");
   }
 
-  defineExpose({ openCreateModal, openUpdateModal, deleteEntry });
+  async function complete(maintenanceEntry: MaintenanceEntry) {
+    const { error } = await api.maintenance.update(maintenanceEntry.id, {
+      name: maintenanceEntry.name,
+      completedDate: new Date(Date.now()),
+      scheduledDate: maintenanceEntry.scheduledDate ?? "null",
+      description: maintenanceEntry.description,
+      cost: maintenanceEntry.cost,
+    });
+    if (error) {
+      toast.error(t("maintenance.toast.failed_to_update"));
+    }
+    emit("changed");
+  }
+
+  function duplicate(maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails, itemId: string) {
+    entry.id = null;
+    entry.name = maintenanceEntry.name;
+    entry.completedDate = null;
+    entry.scheduledDate = null;
+    entry.description = maintenanceEntry.description;
+    entry.cost = maintenanceEntry.cost;
+    entry.itemId = itemId;
+    visible.value = true;
+  }
+
+  defineExpose({ openCreateModal, openUpdateModal, deleteEntry, complete, duplicate });
 </script>

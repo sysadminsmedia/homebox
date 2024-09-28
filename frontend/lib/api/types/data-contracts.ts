@@ -306,13 +306,6 @@ export enum MaintenanceFilterStatus {
   MaintenanceFilterStatusBoth = "both",
 }
 
-export interface MaintenanceLog {
-  costAverage: number;
-  costTotal: number;
-  entries: MaintenanceEntry[];
-  itemId: string;
-}
-
 export interface NotifierCreate {
   isActive: boolean;
   /**

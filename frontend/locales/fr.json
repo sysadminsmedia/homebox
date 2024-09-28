@@ -140,7 +140,9 @@
             "create_first": "Créer votre première entrée",
             "delete": "Supprimer",
             "edit": "Modifier",
-            "new": "Ajouter"
+            "new": "Ajouter",
+            "complete": "Terminer",
+            "duplicate" : "Dupliquer"
         },
         "modal": {
             "completed_date": "Date d'achèvement",
