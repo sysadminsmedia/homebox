@@ -217,9 +217,9 @@
         "actions_sub": "Aktionen in großen Mengen auf das Inventar anwenden. Diese Aktionen sind unumkehrbar. '<b>'Sei vorsichtig.'</b>'",
         "import_export": "Import/Export",
         "import_export_set": {
-            "export": "Inventar exportieren",
-            "export_button": "Inventar exportieren",
-            "export_sub": "Exportiert das Standard-CSV-Format für Homebox. Damit werden alle Artikel in deinem Inventar exportiert.",
+            "export": "Gesamten Bestand exportieren",
+            "export_button": "Gesamten Bestand exportieren",
+            "export_sub": "Exportiert das Standard-CSV-Format für Homebox",
             "import": "Inventar importieren",
             "import_button": "Inventar importieren",
             "import_sub": "Importiert das Standard-CSV-Format für Homebox. Ohne eine '<code>'HB.import_ref'</code>' Spalte werden vorhandenen Artikel in Ihrem Bestand '<b>'nicht'</b>' überschrieben, sondern nur neue Artikel hinzugefügt. Zeilen mit einer '<code>'HB.import_ref'</code>' Spalte werden mit vorhandenen Artikeln mit der gleichen import_ref zusammengeführt, sofern vorhanden."
