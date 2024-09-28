@@ -288,11 +288,22 @@ export interface MaintenanceEntryUpdate {
   scheduledDate: Date | string;
 }
 
-export interface MaintenanceLog {
-  costAverage: number;
-  costTotal: number;
-  entries: MaintenanceEntry[];
-  itemId: string;
+export interface MaintenanceEntryWithDetails {
+  completedDate: Date | string;
+  /** @example "0" */
+  cost: string;
+  description: string;
+  id: string;
+  itemID: string;
+  itemName: string;
+  name: string;
+  scheduledDate: Date | string;
+}
+
+export enum MaintenanceFilterStatus {
+  MaintenanceFilterStatusScheduled = "scheduled",
+  MaintenanceFilterStatusCompleted = "completed",
+  MaintenanceFilterStatusBoth = "both",
 }
 
 export interface NotifierCreate {
@@ -330,7 +341,6 @@ export interface PaginationResultItemSummary {
   page: number;
   pageSize: number;
   total: number;
-  totalPrice: number;
 }
 
 export interface TotalsByOrganizer {

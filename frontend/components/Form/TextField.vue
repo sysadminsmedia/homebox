@@ -12,7 +12,14 @@
         {{ typeof value === "string" && (maxLength || minLength) ? `${value.length}/${maxLength}` : "" }}
       </span>
     </label>
-    <input ref="input" v-model="value" :placeholder="placeholder" :type="type" class="input input-bordered w-full" />
+    <input
+      ref="input"
+      v-model="value"
+      :placeholder="placeholder"
+      :type="type"
+      :required="required"
+      class="input input-bordered w-full"
+    />
   </div>
   <div v-else class="sm:grid sm:grid-cols-4 sm:items-start sm:gap-4">
     <label class="label">
@@ -39,6 +46,10 @@
     },
     modelValue: {
       type: [String, Number],
+      default: null,
+    },
+    required: {
+      type: [Boolean],
       default: null,
     },
     type: {

@@ -18,6 +18,7 @@
         },
         "item": {
             "create_modal": {
+                "photo_button": "Foto 📷",
                 "title": "Crea Oggetto"
             },
             "view": {
@@ -41,7 +42,7 @@
         }
     },
     "global": {
-        "build": "Build: { build }",
+        "build": "Compila: { build }",
         "confirm": "Conferma",
         "create": "Crea",
         "create_and_add": "Crea e aggiungi un altro",
@@ -61,7 +62,7 @@
         "submit": "Invia",
         "version": "Versione: { version }",
         "welcome": "Benvenuto, { username }"
-  },
+    },
     "index": {
         "disabled_registration": "Registrazione Disabilitata",
         "dont_join_group": "Non vuoi unirti a un gruppo?",
@@ -100,6 +101,26 @@
         "tips_sub": "Suggerimenti per la Ricerca",
         "updated_at": "Aggiornato Il"
     },
+    "languages": {
+        "ca": "Catalano",
+        "de": "Tedesco",
+        "en": "Inglese",
+        "es": "Spagnolo",
+        "fr": "Francese",
+        "hu": "Ungherese",
+        "it": "Italiano",
+        "nl": "Olandese",
+        "pl": "Polacco",
+        "pt-BR": "Portoghese (Brasile)",
+        "ru": "Russo",
+        "sl": "Sloveno",
+        "sv": "Svedese",
+        "tr": "Turco",
+        "zh-CN": "Cinese (semplificato)",
+        "zh-HK": "Cinese Mandarino",
+        "zh-MO": "Cinese (Macao)",
+        "zh-TW": "Cinese (tradizionale)"
+    },
     "profile": {
         "active": "Attivo",
         "change_password": "Cambia Password",
@@ -107,11 +128,13 @@
         "current_password": "Password Corrente",
         "delete_account": "Elimina Account",
         "delete_account_sub": "Elimina il tuo account e tutti i dati associati. Questa operazione non può essere annullata.",
+        "display_header": "{ currentValue, select, true {Nascondi intestazione} false {Mostra intestazione} other {Sconosciuto}}",
         "enabled": "Abilitato",
         "gen_invite": "Genera Link di Invito",
         "group_settings": "Impostazioni Gruppo",
         "group_settings_sub": "Impostazioni Gruppo Condivise. Potrebbe essere necessario aggiornare il browser affinché alcune impostazioni vengano applicate.",
         "inactive": "Inattivo",
+        "language": "Lingua",
         "new_password": "Nuova Password",
         "notifier_modal": "{ type, select, true {Modifica} false {Crea} other {Altro}} Notifier",
         "notifiers": "Notifiche",
@@ -120,8 +143,47 @@
         "theme_settings": "Impostazioni Tema",
         "theme_settings_sub": "Le impostazioni del tema sono memorizzate nella memoria locale del tuo browser. Puoi cambiare il tema \nin qualsiasi momento. Se hai problemi a impostare il tuo tema, prova a ricaricare la pagina.",
         "update_group": "Aggiorna Gruppo",
+        "update_language": "Aggiorna Lingua",
         "url": "URL",
         "user_profile": "Profilo Utente",
         "user_profile_sub": "Invita utenti e gestisci il tuo account."
+    },
+    "tools": {
+        "actions": "Azioni Inventario",
+        "actions_set": {
+            "ensure_ids": "Verifica ID delle risorse",
+            "ensure_ids_button": "Verifica ID delle risorse",
+            "ensure_ids_sub": "Garantisce che tutti gli articoli nel tuo inventario abbiano un campo asset_id valido. Questo viene fatto trovando il campo asset_id corrente più alto nel database e applicando il valore successivo a ogni elemento che ha un campo asset_id non impostato. Questo viene fatto per il campo created_at.",
+            "ensure_import_refs": "Verifica riferimenti di importazione",
+            "ensure_import_refs_button": "Verifica riferimenti di importazione",
+            "ensure_import_refs_sub": "Verifica che tutti gli articoli nel tuo inventario abbiano un campo import_ref valido. Questo viene fatto generando in modo casuale una stringa di 8 caratteri per ogni elemento che ha un campo import_ref non impostato.",
+            "set_primary_photo": "Imposta foto principale",
+            "set_primary_photo_button": "Imposta immagine principale",
+            "set_primary_photo_sub": "Nella versione v0.10.0 di Homebox, il campo immagine principale è stato aggiunto agli allegati di tipo foto. Questa azione imposterà il campo immagine principale alla prima immagine nella matrice allegati nel database, se non è già impostato. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Vedi GitHub PR #576'</a>'",
+            "zero_datetimes": "Azzera Data e Orario oggetti",
+            "zero_datetimes_button": "Azzera Date e Ora articoli",
+            "zero_datetimes_sub": "Reimposta il valore dell'ora per tutti i campi data e ora dell'inventario all'inizio della data. Questo è per correggere un bug che è stato introdotto all'inizio dello sviluppo del sito che ha causato il valore di orario memorizzato con il tempo che ha causato problemi con i campi data visualizzazione dei valori esatti. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Vedi Github Issue #236 per maggiori dettagli.'</a>'"
+        },
+        "actions_sub": "Applica Azioni massive al tuo inventario. Questo sono azioni irreversibili. '<b>'Presta attenzione.'</b>'",
+        "import_export": "Importa/Esporta",
+        "import_export_set": {
+            "export": "Esporta Inventario",
+            "export_button": "Esporta Inventario",
+            "export_sub": "Esporta il formato CSV standard per Homebox. Questo esporterà tutti gli oggetti del tuo inventario.",
+            "import": "Importa Inventario",
+            "import_button": "Importa Inventario",
+            "import_sub": "Importa il formato CSV standard per Homebox. Senza una colonna '<code>'HB.import_ref'</code>' questo '<b>'non'</b>' sovrascriverà gli oggetti esistenti nel tuo inventario, aggiungerà solamente nuovi oggetti. Le righe con una colonna '<code>'HB.import_ref'</code>' saranno unite agli oggetti esistenti con lo stesso import_ref, se presente."
+        },
+        "import_export_sub": "Importa ed esporta il tuo inventario da e verso un file CSV. Questo è utile per migrare il tuo inventario verso una nuova istanza di Homebox.",
+        "reports": "Rapporti",
+        "reports_set": {
+            "asset_labels": "Etichette ID risorsa",
+            "asset_labels_button": "Generatore di etichette",
+            "asset_labels_sub": "Genera una etichetta PDF stampabile per un gruppo di ID Risorsa. Le etichette non sono specifiche per il tuo inventario così puoi stamparle in anticipo ed applicarle al tuo inventario quando lo ricevi.",
+            "bill_of_materials": "Distinta base",
+            "bill_of_materials_button": "Genera BOM",
+            "bill_of_materials_sub": "Genera un file CSV (Comma Separated Values) che può essere importato in un foglio di calcolo. Questo è un sommario del tuo inventario con informazioni di base su oggetto e prezzo."
+        },
+        "reports_sub": "Genera diversi report per il tuo inventario."
     }
 }

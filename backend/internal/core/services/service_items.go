@@ -38,13 +38,13 @@ func (svc *ItemService) Create(ctx Context, item repo.ItemCreate) (repo.ItemOut,
 	return svc.repo.Items.Create(ctx, ctx.GID, item)
 }
 
-func (svc *ItemService) EnsureAssetID(ctx context.Context, GID uuid.UUID) (int, error) {
-	items, err := svc.repo.Items.GetAllZeroAssetID(ctx, GID)
+func (svc *ItemService) EnsureAssetID(ctx context.Context, gid uuid.UUID) (int, error) {
+	items, err := svc.repo.Items.GetAllZeroAssetID(ctx, gid)
 	if err != nil {
 		return 0, err
 	}
 
-	highest, err := svc.repo.Items.GetHighestAssetID(ctx, GID)
+	highest, err := svc.repo.Items.GetHighestAssetID(ctx, gid)
 	if err != nil {
 		return 0, err
 	}
@@ -53,7 +53,7 @@ func (svc *ItemService) EnsureAssetID(ctx context.Context, GID uuid.UUID) (int, 
 	for _, item := range items {
 		highest++
 
-		err = svc.repo.Items.SetAssetID(ctx, GID, item.ID, highest)
+		err = svc.repo.Items.SetAssetID(ctx, gid, item.ID, highest)
 		if err != nil {
 			return 0, err
 		}
@@ -64,8 +64,8 @@ func (svc *ItemService) EnsureAssetID(ctx context.Context, GID uuid.UUID) (int, 
 	return finished, nil
 }
 
-func (svc *ItemService) EnsureImportRef(ctx context.Context, GID uuid.UUID) (int, error) {
-	ids, err := svc.repo.Items.GetAllZeroImportRef(ctx, GID)
+func (svc *ItemService) EnsureImportRef(ctx context.Context, gid uuid.UUID) (int, error) {
+	ids, err := svc.repo.Items.GetAllZeroImportRef(ctx, gid)
 	if err != nil {
 		return 0, err
 	}
@@ -74,7 +74,7 @@ func (svc *ItemService) EnsureImportRef(ctx context.Context, GID uuid.UUID) (int
 	for _, itemID := range ids {
 		ref := uuid.New().String()[0:8]
 
-		err = svc.repo.Items.Patch(ctx, GID, itemID, repo.ItemPatch{ImportRef: &ref})
+		err = svc.repo.Items.Patch(ctx, gid, itemID, repo.ItemPatch{ImportRef: &ref})
 		if err != nil {
 			return 0, err
 		}
@@ -96,7 +96,7 @@ func serializeLocation[T ~[]string](location T) string {
 //  1. If the item does not exist, it is created.
 //  2. If the item has a ImportRef and it exists it is skipped
 //  3. Locations and Labels are created if they do not exist.
-func (svc *ItemService) CsvImport(ctx context.Context, GID uuid.UUID, data io.Reader) (int, error) {
+func (svc *ItemService) CsvImport(ctx context.Context, gid uuid.UUID, data io.Reader) (int, error) {
 	sheet := reporting.IOSheet{}
 
 	err := sheet.Read(data)
@@ -109,7 +109,7 @@ func (svc *ItemService) CsvImport(ctx context.Context, GID uuid.UUID, data io.Re
 
 	labelMap := make(map[string]uuid.UUID)
 	{
-		labels, err := svc.repo.Labels.GetAll(ctx, GID)
+		labels, err := svc.repo.Labels.GetAll(ctx, gid)
 		if err != nil {
 			return 0, err
 		}
@@ -124,7 +124,7 @@ func (svc *ItemService) CsvImport(ctx context.Context, GID uuid.UUID, data io.Re
 
 	locationMap := make(map[string]uuid.UUID)
 	{
-		locations, err := svc.repo.Locations.Tree(ctx, GID, repo.TreeQuery{WithItems: false})
+		locations, err := svc.repo.Locations.Tree(ctx, gid, repo.TreeQuery{WithItems: false})
 		if err != nil {
 			return 0, err
 		}
@@ -153,7 +153,7 @@ func (svc *ItemService) CsvImport(ctx context.Context, GID uuid.UUID, data io.Re
 	// Asset ID Pre-Check
 	highestAID := repo.AssetID(-1)
 	if svc.autoIncrementAssetID {
-		highestAID, err = svc.repo.Items.GetHighestAssetID(ctx, GID)
+		highestAID, err = svc.repo.Items.GetHighestAssetID(ctx, gid)
 		if err != nil {
 			return 0, err
 		}
@@ -169,7 +169,7 @@ func (svc *ItemService) CsvImport(ctx context.Context, GID uuid.UUID, data io.Re
 		// ========================================
 		// Preflight check for existing item
 		if row.ImportRef != "" {
-			exists, err := svc.repo.Items.CheckRef(ctx, GID, row.ImportRef)
+			exists, err := svc.repo.Items.CheckRef(ctx, gid, row.ImportRef)
 			if err != nil {
 				return 0, fmt.Errorf("error checking for existing item with ref %q: %w", row.ImportRef, err)
 			}
@@ -188,7 +188,7 @@ func (svc *ItemService) CsvImport(ctx context.Context, GID uuid.UUID, data io.Re
 
 			id, ok := labelMap[label]
 			if !ok {
-				newLabel, err := svc.repo.Labels.Create(ctx, GID, repo.LabelCreate{Name: label})
+				newLabel, err := svc.repo.Labels.Create(ctx, gid, repo.LabelCreate{Name: label})
 				if err != nil {
 					return 0, err
 				}
@@ -220,7 +220,7 @@ func (svc *ItemService) CsvImport(ctx context.Context, GID uuid.UUID, data io.Re
 						parentID = locationMap[parentPath]
 					}
 
-					newLocation, err := svc.repo.Locations.Create(ctx, GID, repo.LocationCreate{
+					newLocation, err := svc.repo.Locations.Create(ctx, gid, repo.LocationCreate{
 						ParentID: parentID,
 						Name:     pathElement,
 					})
@@ -261,12 +261,12 @@ func (svc *ItemService) CsvImport(ctx context.Context, GID uuid.UUID, data io.Re
 				LabelIDs:    labelIds,
 			}
 
-			item, err = svc.repo.Items.Create(ctx, GID, newItem)
+			item, err = svc.repo.Items.Create(ctx, gid, newItem)
 			if err != nil {
 				return 0, err
 			}
 		default:
-			item, err = svc.repo.Items.GetByRef(ctx, GID, row.ImportRef)
+			item, err = svc.repo.Items.GetByRef(ctx, gid, row.ImportRef)
 			if err != nil {
 				return 0, err
 			}
@@ -318,7 +318,7 @@ func (svc *ItemService) CsvImport(ctx context.Context, GID uuid.UUID, data io.Re
 			Fields: fields,
 		}
 
-		item, err = svc.repo.Items.UpdateByGroup(ctx, GID, updateItem)
+		item, err = svc.repo.Items.UpdateByGroup(ctx, gid, updateItem)
 		if err != nil {
 			return 0, err
 		}
@@ -329,15 +329,15 @@ func (svc *ItemService) CsvImport(ctx context.Context, GID uuid.UUID, data io.Re
 	return finished, nil
 }
 
-func (svc *ItemService) ExportCSV(ctx context.Context, GID uuid.UUID, hbURL string) ([][]string, error) {
-	items, err := svc.repo.Items.GetAll(ctx, GID)
+func (svc *ItemService) ExportCSV(ctx context.Context, gid uuid.UUID, hbURL string) ([][]string, error) {
+	items, err := svc.repo.Items.GetAll(ctx, gid)
 	if err != nil {
 		return nil, err
 	}
 
 	sheet := reporting.IOSheet{}
 
-	err = sheet.ReadItems(ctx, items, GID, svc.repo, hbURL)
+	err = sheet.ReadItems(ctx, items, gid, svc.repo, hbURL)
 	if err != nil {
 		return nil, err
 	}
@@ -345,8 +345,8 @@ func (svc *ItemService) ExportCSV(ctx context.Context, GID uuid.UUID, hbURL stri
 	return sheet.CSV()
 }
 
-func (svc *ItemService) ExportBillOfMaterialsCSV(ctx context.Context, GID uuid.UUID) ([]byte, error) {
-	items, err := svc.repo.Items.GetAll(ctx, GID)
+func (svc *ItemService) ExportBillOfMaterialsCSV(ctx context.Context, gid uuid.UUID) ([]byte, error) {
+	items, err := svc.repo.Items.GetAll(ctx, gid)
 	if err != nil {
 		return nil, err
 	}

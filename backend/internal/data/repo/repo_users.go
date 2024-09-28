@@ -60,9 +60,9 @@ func mapUserOut(user *ent.User) UserOut {
 	}
 }
 
-func (r *UserRepository) GetOneID(ctx context.Context, ID uuid.UUID) (UserOut, error) {
+func (r *UserRepository) GetOneID(ctx context.Context, id uuid.UUID) (UserOut, error) {
 	return mapUserOutErr(r.db.User.Query().
-		Where(user.ID(ID)).
+		Where(user.ID(id)).
 		WithGroup().
 		Only(ctx))
 }
@@ -101,9 +101,9 @@ func (r *UserRepository) Create(ctx context.Context, usr UserCreate) (UserOut, e
 	return r.GetOneID(ctx, entUser.ID)
 }
 
-func (r *UserRepository) Update(ctx context.Context, ID uuid.UUID, data UserUpdate) error {
+func (r *UserRepository) Update(ctx context.Context, id uuid.UUID, data UserUpdate) error {
 	q := r.db.User.Update().
-		Where(user.ID(ID)).
+		Where(user.ID(id)).
 		SetName(data.Name).
 		SetEmail(data.Email)
 
@@ -130,6 +130,6 @@ func (r *UserRepository) GetSuperusers(ctx context.Context) ([]*ent.User, error)
 	return users, nil
 }
 
-func (r *UserRepository) ChangePassword(ctx context.Context, UID uuid.UUID, pw string) error {
-	return r.db.User.UpdateOneID(UID).SetPassword(pw).Exec(ctx)
+func (r *UserRepository) ChangePassword(ctx context.Context, uid uuid.UUID, pw string) error {
+	return r.db.User.UpdateOneID(uid).SetPassword(pw).Exec(ctx)
 }

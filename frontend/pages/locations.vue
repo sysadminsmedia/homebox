@@ -62,7 +62,7 @@
 
 <template>
   <BaseContainer class="mb-16">
-    <BaseSectionHeader> Locations </BaseSectionHeader>
+    <BaseSectionHeader> {{ $t("menu.locations") }} </BaseSectionHeader>
     <BaseCard>
       <div class="p-4">
         <div class="mb-2 flex justify-end">

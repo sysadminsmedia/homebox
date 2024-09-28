@@ -59,7 +59,7 @@
     <template v-else>
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         <ItemCard v-for="item in items" :key="item.id" :item="item" />
-        <div class="hidden text-lg first:block">{{ $t("components.item.view.selectable.no_items") }}</div>
+        <div class="hidden first:block">{{ $t("components.item.view.selectable.no_items") }}</div>
       </div>
     </template>
   </section>

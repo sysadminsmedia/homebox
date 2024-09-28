@@ -1,26 +1,4 @@
 {
-    "global": {
-        "follow_dev": "Sledi razvijjalcu",
-        "build": "Gradnja: [ build ]",
-        "confirm": "Potrdi",
-        "create": "Ustvari",
-        "create_and_add": "Ustvari in dodaj še enega",
-        "created": "Ustvarjeno",
-        "email": "E-pošta",
-        "github": "GitHub projekt",
-        "items": "Predmeti",
-        "join_discord": "Pridruži se na Discord",
-        "labels": "Oznake",
-        "locations": "Lokacije",
-        "name": "Naziv",
-        "password": "Geslo",
-        "read_docs": "Preberite dokumentacijo",
-        "search": "Iskanje",
-        "sign_out": "Odjava",
-        "submit": "Pošlji",
-        "version": "Verzija: { version }",
-        "welcome": "Dobrodošel, { username }"
-    },
     "components": {
         "app": {
             "import_dialog": {
@@ -40,8 +18,8 @@
         },
         "item": {
             "create_modal": {
-                "title": "Ustvari predmet",
-                "photo_button": "Fotografija 📷"
+                "photo_button": "Fotografija 📷",
+                "title": "Ustvari predmet"
             },
             "view": {
                 "selectable": {
@@ -63,6 +41,28 @@
             }
         }
     },
+    "global": {
+        "build": "Gradnja: [ build ]",
+        "confirm": "Potrdi",
+        "create": "Ustvari",
+        "create_and_add": "Ustvari in dodaj še enega",
+        "created": "Ustvarjeno",
+        "email": "E-pošta",
+        "follow_dev": "Sledi razvijjalcu",
+        "github": "GitHub projekt",
+        "items": "Predmeti",
+        "join_discord": "Pridruži se na Discord",
+        "labels": "Oznake",
+        "locations": "Lokacije",
+        "name": "Naziv",
+        "password": "Geslo",
+        "read_docs": "Preberite dokumentacijo",
+        "search": "Iskanje",
+        "sign_out": "Odjava",
+        "submit": "Pošlji",
+        "version": "Verzija: { version }",
+        "welcome": "Dobrodošel, { username }"
+    },
     "index": {
         "disabled_registration": "Registracija je onemogočena",
         "dont_join_group": "Se ne želite pridružiti skupini?",
@@ -71,57 +71,78 @@
         "register": "Registriraj se",
         "remember_me": "Zapomni si me",
         "set_email": "Kakšen je vaš e-poštni naslov?",
+        "set_name": "Kako vam je ime?",
         "set_password": "Nastavite geslo",
-        "tagline": "Sledite, organizirajte in upravljajte svoje stvari.",
-        "set_name": "Kako vam je ime?"
+        "tagline": "Sledite, organizirajte in upravljajte svoje stvari."
     },
     "items": {
-        "created_at": "Ustvarjeno ob",
-        "include_archive": "Vključi arhivirane predmete",
-        "last": "Zadnji",
-        "negate_labels": "Negiraj izbrane oznake",
-        "no_results": "Ni najdenih predmetov",
-        "options": "Možnosti",
-        "pages": "Stran { page } od { totalPages }",
-        "tip_2": "Iskanja s predpono '#' bodo iskala ID sredstva (primer '#000-001')",
-        "tip_3": "Filtri polj uporabljajo operacijo 'ALI'. Če je izbranih več kot eno, bo za ujemanje dovolj samo\n eno.",
-        "tips": "Nasveti",
-        "updated_at": "Posodobljeno ob",
-        "custom_fields": "Polje po meri",
-        "results": "Rezultatov: { total }",
-        "tip_1": "Filtri lokacij in oznak uporabljajo operacijo 'ALI'. Če je izbranih več kot ena, bo izbrana samo ena\n potrebna za ujemanje.",
         "add": "Dodaj",
+        "created_at": "Ustvarjeno ob",
+        "custom_fields": "Polje po meri",
         "field_selector": "Izbirnik polj",
         "field_value": "Vrednost polja",
         "first": "Prvi",
+        "include_archive": "Vključi arhivirane predmete",
+        "last": "Zadnji",
+        "negate_labels": "Negiraj izbrane oznake",
         "next_page": "Naslednja stran",
+        "no_results": "Ni najdenih predmetov",
+        "options": "Možnosti",
+        "order_by": "Razvrsti po",
+        "pages": "Stran { page } od { totalPages }",
         "prev_page": "Prejšnja stran",
         "query_id": "Poizvedovanje po identifikacijski številki sredstva: { id }",
         "reset_search": "Ponastavi iskanje",
+        "results": "Rezultatov: { total }",
+        "tip_1": "Filtri lokacij in oznak uporabljajo operacijo 'ALI'. Če je izbranih več kot ena, bo izbrana samo ena\n potrebna za ujemanje.",
+        "tip_2": "Iskanja s predpono '#' bodo iskala ID sredstva (primer '#000-001')",
+        "tip_3": "Filtri polj uporabljajo operacijo 'ALI'. Če je izbranih več kot eno, bo za ujemanje dovolj samo\n eno.",
+        "tips": "Nasveti",
         "tips_sub": "Nasveti za iskanje",
-        "order_by": "Razvrsti po"
+        "updated_at": "Posodobljeno ob"
+    },
+    "maintenance": {
+        "list": {
+            "create_first": "Ustvarite prvi vnos",
+            "delete": "Izbriši",
+            "edit": "Uredi",
+            "new": "Nov"
+        },
+        "modal": {
+            "new_title": "Nov vnos"
+        },
+        "monthly_average": "Mesečno povprečje",
+        "total_cost": "Skupni znesek",
+        "total_entries": "Vseh predmetov"
+    },
+    "menu": {
+        "locations": "Lokacije",
+        "maintenance": "Vzdrževanje",
+        "profile": "Profil",
+        "search": "Iskanje",
+        "tools": "Orodja"
     },
     "profile": {
-        "gen_invite": "Ustvari povezavo povabila",
-        "group_settings_sub": "Nastavitve skupine v skupni rabi. Morda boste morali osvežiti brskalnik, da bodo nekatere nastavitve veljale.",
-        "notifiers": "Obveščevalci",
-        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Obveščevalec",
-        "notifiers_sub": "Prejemajte obvestila za prihajajoče opomnike o vzdrževanju",
-        "theme_settings_sub": "Nastavitve teme so shranjene v lokalni shrambi vašega brskalnika. Temo lahko kadar koli spremenite. Če\n imate težave z nastavitvijo teme, poskusite osvežiti brskalnik.",
-        "update_group": "Posodobi skupino",
-        "url": "URL",
-        "delete_account_sub": "Izbrišite svoj račun in vse z njim povezane podatke. Tega ni mogoče razveljaviti.",
         "active": "Aktivno",
         "change_password": "Sprememba gesla",
         "currency_format": "Oblika valute",
         "current_password": "Trenutno geslo",
         "delete_account": "Izbriši račun",
+        "delete_account_sub": "Izbrišite svoj račun in vse z njim povezane podatke. Tega ni mogoče razveljaviti.",
         "enabled": "Omogočeno",
+        "gen_invite": "Ustvari povezavo povabila",
         "group_settings": "Nastavitve skupine",
+        "group_settings_sub": "Nastavitve skupine v skupni rabi. Morda boste morali osvežiti brskalnik, da bodo nekatere nastavitve veljale.",
         "inactive": "Neaktivno",
         "new_password": "Novo geslo",
+        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Obveščevalec",
+        "notifiers": "Obveščevalci",
+        "notifiers_sub": "Prejemajte obvestila za prihajajoče opomnike o vzdrževanju",
         "test": "Preizkus",
         "theme_settings": "Nastavitve teme",
+        "theme_settings_sub": "Nastavitve teme so shranjene v lokalni shrambi vašega brskalnika. Temo lahko kadar koli spremenite. Če\n imate težave z nastavitvijo teme, poskusite osvežiti brskalnik.",
+        "update_group": "Posodobi skupino",
+        "url": "URL",
         "user_profile": "Profil uporabnika",
         "user_profile_sub": "Povabite uporabnike in upravljajte svoj račun."
     }
