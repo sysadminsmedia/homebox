@@ -101,6 +101,15 @@
         "tips_sub": "Nasveti za iskanje",
         "updated_at": "Posodobljeno ob"
     },
+    "labels": {
+        "no_results": "Ni najdenih oznak"
+    },
+    "languages": {
+        "ca": "Katalonščina",
+        "de": "Nemščina",
+        "en": "Angleščina",
+        "es": "Spanish"
+    },
     "maintenance": {
         "list": {
             "create_first": "Ustvarite prvi vnos",

@@ -137,8 +137,10 @@
             "scheduled": "Geplant"
         },
         "list": {
+            "complete": "Vollständig",
             "create_first": "Erstellen Sie Ihren ersten Eintrag",
             "delete": "Löschen",
+            "duplicate": "Duplizieren",
             "edit": "Bearbeiten",
             "new": "Neu"
         },
@@ -148,6 +150,7 @@
             "delete_confirmation": "Sind Sie sicher, dass Sie diesen Eintrag löschen wollen?",
             "edit_action": "Aktualisieren",
             "edit_title": "Eintrag bearbeiten",
+            "entry_name": "Eingabename",
             "new_action": "Erstellen",
             "new_title": "Neuer Eintrag",
             "notes": "Anmerkungen",
