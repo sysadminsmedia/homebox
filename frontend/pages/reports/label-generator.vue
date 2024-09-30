@@ -9,6 +9,8 @@
     title: "Homebox | Printer",
   });
 
+  const api = useUserApi();
+
   const bordered = ref(false);
 
   const displayProperties = reactive({
@@ -181,7 +183,7 @@
     return route(`/qrcode`, { data: encodeURIComponent(data) });
   }
 
-  function getItem(n: number): LabelData {
+  function getItem(n: number, item: { name: string; location: { name: string } } | null): LabelData {
     // format n into - seperated string with leading zeros
 
     const assetID = fmtAssetID(n);
@@ -189,10 +191,20 @@
     return {
       url: getQRCodeUrl(assetID),
       assetID,
-      name: "_______________",
-      location: "_______________",
+      name: item?.name ?? "_______________",
+      location: item?.location?.name ?? "_______________",
     };
   }
+
+  const { data: allFields } = await useAsyncData(async () => {
+    const { data, error } = await api.items.getAll();
+
+    if (error) {
+      return [];
+    }
+
+    return data;
+  });
 
   const items = computed(() => {
     if (displayProperties.assetRange > displayProperties.assetRangeMax) {
@@ -207,7 +219,7 @@
 
     const items: LabelData[] = [];
     for (let i = displayProperties.assetRange; i < displayProperties.assetRangeMax; i++) {
-      items.push(getItem(i));
+      items.push(getItem(i, allFields?.value?.items?.[i] ?? null));
     }
     return items;
   });
