@@ -101,6 +101,55 @@
         "tips_sub": "Zoektips",
         "updated_at": "Bijgewerkt op"
     },
+    "labels": {
+        "no_results": "Geen labels gevonden"
+    },
+    "languages": {
+        "ca": "Catalaans",
+        "de": "Duits",
+        "en": "Engels",
+        "es": "Spaans",
+        "fr": "Frans",
+        "hu": "Hongaars",
+        "it": "Italiaans",
+        "nl": "Nederlands",
+        "pl": "Pools",
+        "pt-BR": "Portugees (Brazilië)",
+        "ru": "Russisch",
+        "sl": "Sloveens",
+        "sv": "Zweeds",
+        "tr": "Turks",
+        "zh-CN": "Chinees (vereenvoudigd)",
+        "zh-HK": "Chinees (Hong Kong)",
+        "zh-MO": "Chinees (Macau)",
+        "zh-TW": "Chinees (traditioneel)"
+    },
+    "locations": {
+        "no_results": "Geen locaties gevonden"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Beide",
+            "completed": "Voltooid",
+            "scheduled": "Gepland"
+        },
+        "list": {
+            "complete": "Compleet",
+            "create_first": "Maak je eerste invoer aan",
+            "delete": "Verwijderen",
+            "duplicate": "Dubbel",
+            "edit": "Bewerken",
+            "new": "Nieuw"
+        },
+        "modal": {
+            "completed_date": "Voltooiings Datum",
+            "cost": "Kosten",
+            "delete_confirmation": "Weet u zeker dat u deze gegevens wilt verwijderen?",
+            "edit_action": "Bijwerken",
+            "edit_title": "Bewerk entry",
+            "new_action": "Maken"
+        }
+    },
     "profile": {
         "active": "Actief",
         "change_password": "Verander Wachtwoord",

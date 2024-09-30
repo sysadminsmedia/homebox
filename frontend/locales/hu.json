@@ -137,8 +137,10 @@
             "scheduled": "Időzítve"
         },
         "list": {
+            "complete": "Kész",
             "create_first": "Hozd létre az első bejegyzést",
             "delete": "Törlés",
+            "duplicate": "Másolás",
             "edit": "Szerkesztés",
             "new": "Új"
         },

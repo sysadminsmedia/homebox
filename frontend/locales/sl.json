@@ -215,7 +215,28 @@
             "set_primary_photo_sub": "V različici v0.10.0 Homeboxa je bilo primarno slikovno polje dodano prilogam tipa fotografija. To dejanje bo polje primarne slike nastavilo na prvo sliko v tabeli prilog v bazi podatkov, če še ni nastavljeno. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Glej GitHub PR #576'</a>'",
             "zero_datetimes": "Datumski časi ničelnega elementa",
             "zero_datetimes_button": "Datumski časi ničelnega elementa",
-            "zero_datetimes_sub": "Ponastavi časovno vrednost za vsa polja datuma in časa v inventarju na začetek datuma"
-        }
+            "zero_datetimes_sub": "Ponastavi časovno vrednost za vsa polja datuma in časa v vašem inventarju na začetek datuma. To je namenjeno odpravljanju napake, ki je bila predstavljena zgodaj v razvoju spletnega mesta in je povzročila, da je bila časovna vrednost shranjena s časom, kar je povzročilo težave z datumskimi polji, ki prikazujejo točne vrednosti. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Glejte številko 236 Githuba za več podrobnosti.'</a> '"
+        },
+        "actions_sub": "Uporabite dejanja v večjem obsegu za svoj inventar. To so nepovratna dejanja. '<b>'Bodite previdni.'</b>'",
+        "import_export": "Uvozi/Izvozi",
+        "import_export_set": {
+            "export": "Izvozi inventar",
+            "export_button": "Izvozi Inventar",
+            "export_sub": "Izvozi standardni format CSV za Homebox. S tem boste izvozili vse predmete v vašem inventarju.",
+            "import": "Uvozi inventar",
+            "import_button": "Uvozi inventar",
+            "import_sub": "Uvozi standardni format CSV za Homebox. Brez stolpca '<code>'HB.import_ref'</code>' to '<b>'ne'</b>' bo prepisalo vse obstoječe elemente v vašem inventarju, samo dodaja nove elemente. Vrstice s stolpcem '<code>'HB.import_ref'</code>' so združene v obstoječe elemente z istim import_ref, če le ta obstaja."
+        },
+        "import_export_sub": "Uvozite in izvozite svoj inventar v in iz datoteke CSV. To je uporabno za selitev vašega inventarja v novo namestitev Homeboxa.",
+        "reports": "Poročila",
+        "reports_set": {
+            "asset_labels": "Oznake ID-jev sredstev",
+            "asset_labels_button": "Generator etiket",
+            "asset_labels_sub": "Ustvari natisljiv PDF z nalepkami za vrsto ID-jev sredstev. Te niso specifične za vaš inventar, zato lahko nalepke natisnete vnaprej in jih uporabite v svojem inventarju, ko jih prejmete.",
+            "bill_of_materials": "Kosovnica",
+            "bill_of_materials_button": "Ustvari kosovnico",
+            "bill_of_materials_sub": "Ustvari datoteko CSV (vrednosti, ločene z vejico), ki jo je mogoče uvoziti v program za preglednice. To je povzetek vaše zaloge z osnovnimi informacijami o izdelkih in cenah."
+        },
+        "reports_sub": "Ustvari različna poročila za svoj inventar."
     }
 }

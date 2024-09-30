@@ -2,16 +2,24 @@
     "components": {
         "app": {
             "import_dialog": {
-                "title": "Importa un fitxer CSV",
-                "upload": "Puja",
+                "change_warning": "El comportament de les importacions amb import_refs existents ha canviat. Si hi ha un import_refs al fitxer CSV, \nl'article s'actualitzarà amb els valors del fitxer CSV.",
                 "description": "Importa un fitxer CSV que contingui els articles, etiquetes i ubicacions. \nConsulteu la documentació per a més informació sobre el format requerit.",
-                "change_warning": "El comportament de les importacions amb import_refs existents ha canviat. Si hi ha un import_refs al fitxer CSV, \nl'article s'actualitzarà amb els valors del fitxer CSV."
+                "title": "Importa un fitxer CSV",
+                "upload": "Puja"
+            }
+        },
+        "global": {
+            "page_qr_code": {
+                "page_url": "URL de la pàgina"
+            },
+            "password_score": {
+                "password_strength": "Força de la contrasenya"
             }
         },
         "item": {
             "create_modal": {
-                "title": "Crea un article",
-                "photo_button": "Foto 📷"
+                "photo_button": "Foto 📷",
+                "title": "Crea un article"
             },
             "view": {
                 "selectable": {
@@ -31,14 +39,6 @@
             "create_modal": {
                 "title": "Crea una ubicació"
             }
-        },
-        "global": {
-            "page_qr_code": {
-                "page_url": "URL de la pàgina"
-            },
-            "password_score": {
-                "password_strength": "Força de la contrasenya"
-            }
         }
     },
     "global": {
@@ -52,22 +52,22 @@
         "github": "Projecte de GitHub",
         "items": "Articles",
         "join_discord": "Uniu-vos a Discord",
+        "labels": "Etiquetes",
         "locations": "Ubicacions",
         "name": "Nom",
+        "password": "Contrasenya",
         "read_docs": "Llegiu la documentació",
         "search": "Cerca",
         "sign_out": "Tanca la sessió",
         "submit": "Envia",
-        "welcome": "Us donem la benvinguda, { username }",
-        "labels": "Etiquetes",
-        "password": "Contrasenya",
-        "version": "Versió {version}"
+        "version": "Versió {version}",
+        "welcome": "Us donem la benvinguda, { username }"
     },
     "index": {
-        "joining_group": "Us uniu a un grup existent!",
-        "dont_join_group": "Voleu unir-vos al grup?",
-        "login": "Inici de sessió",
         "disabled_registration": "El registre és desactivat",
+        "dont_join_group": "Voleu unir-vos al grup?",
+        "joining_group": "Us uniu a un grup existent!",
+        "login": "Inici de sessió",
         "register": "Registra-m'hi",
         "remember_me": "Recorda'm",
         "set_email": "Quin és el seu correu electrònic?",
@@ -76,53 +76,84 @@
         "tagline": "Feu el seguiment, organitzeu i gestioneu les vostres coses."
     },
     "items": {
-        "negate_labels": "Nega les etiquetes seleccionades",
-        "no_results": "No s'ha trobat cap element",
-        "tip_1": "Els filtres d'ubicació i etiquetes utilitzen l'operació «O». Si se'n selecciona més d'un, \nnomés se'n requerirà un per a coincidència.",
         "add": "Afegeix",
+        "created_at": "Creat a",
+        "custom_fields": "Camps personalitzats",
         "field_selector": "Selector del camp",
         "field_value": "Valor del camp",
         "first": "Primer",
         "include_archive": "Inclou els articles arxivats",
         "last": "Últim",
+        "negate_labels": "Nega les etiquetes seleccionades",
         "next_page": "Pàgina següent",
+        "no_results": "No s'ha trobat cap element",
         "options": "Opcions",
         "order_by": "Ordena per",
+        "pages": "Pàgina { page } de { totalPages }",
+        "prev_page": "Pàgina anterior",
+        "query_id": "S'està consultant el número d'identificació de l'actiu: { id }",
+        "reset_search": "Reinicia la cerca",
+        "results": "{ total } resultats",
+        "tip_1": "Els filtres d'ubicació i etiquetes utilitzen l'operació «O». Si se'n selecciona més d'un, \nnomés se'n requerirà un per a coincidència.",
         "tip_2": "Les cerques amb el prefix «#» sol·licitaran un ID d'un actiu (per exemple, «#000-001»)",
         "tip_3": "Els filtres de camp utilitzen l'operació «O». Si se'n selecciona més d'un, \nnomés se'n requerirà un per a coincidència.",
         "tips": "Consells",
         "tips_sub": "Consells de cerca",
-        "updated_at": "Actualitzat a",
-        "query_id": "S'està consultant el número d'identificació de l'actiu: { id }",
-        "pages": "Pàgina { page } de { totalPages }",
-        "prev_page": "Pàgina anterior",
-        "reset_search": "Reinicia la cerca",
-        "results": "{ total } resultats",
-        "created_at": "Creat a",
-        "custom_fields": "Camps personalitzats"
+        "updated_at": "Actualitzat a"
+    },
+    "labels": {
+        "no_results": "No s'han trobat etiquetes"
+    },
+    "languages": {
+        "ca": "Català",
+        "de": "Alemany",
+        "en": "Anglès",
+        "es": "Castellà",
+        "fr": "Francès",
+        "hu": "Hongarès",
+        "it": "Italià",
+        "nl": "Neerlandès",
+        "pl": "Polonès",
+        "pt-BR": "Portuguès (Brasil)",
+        "ru": "Rus",
+        "sl": "Eslovè",
+        "sv": "Suec",
+        "tr": "Turc",
+        "zh-CN": "Xinès (simplificat)",
+        "zh-HK": "Xinès (Hong Kong)",
+        "zh-MO": "Xinès (Macau)",
+        "zh-TW": "Xinès (tradicional)"
+    },
+    "locations": {
+        "no_results": "No s'han trobat ubicacions"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Ambdós"
+        }
     },
     "profile": {
         "active": "Actiu",
         "change_password": "Canvia contrasenya",
-        "delete_account_sub": "Elimina el compte i totes les dades associades. Aquesta acció no es pot desfer.",
-        "enabled": "Habilitat",
         "currency_format": "Format de moneda",
         "current_password": "Contrasenya actual",
         "delete_account": "Suprimeix el compte",
+        "delete_account_sub": "Elimina el compte i totes les dades associades. Aquesta acció no es pot desfer.",
+        "enabled": "Habilitat",
         "gen_invite": "Genera un enllaç d'invitació",
         "group_settings": "Configuració del grup",
         "group_settings_sub": "Configuració del grup compartit. És possible que hàgiu d'actualitzar la pàgina per aplicar la configuració.",
-        "theme_settings_sub": "La configuració del tema s'emmagatzema a l'emmagatzematge local del navegador. Podeu canviar el tema en qualsevol moment. \nSi teniu problemes per definir el tema, proveu d'actualitzar el navegador.",
+        "inactive": "Inactiu",
+        "new_password": "Contrasenya nova",
         "notifier_modal": "{ type, select, true {Edita} false {Crea} other {Altres}} Notificació",
+        "notifiers": "Notificadors",
         "notifiers_sub": "Rebeu notificacions per als pròxims recordatoris de manteniment",
         "test": "Prova",
         "theme_settings": "Configuracions del tema",
+        "theme_settings_sub": "La configuració del tema s'emmagatzema a l'emmagatzematge local del navegador. Podeu canviar el tema en qualsevol moment. \nSi teniu problemes per definir el tema, proveu d'actualitzar el navegador.",
         "update_group": "Actualitza el grup",
         "url": "URL",
-        "user_profile_sub": "Convida usuaris i gestiona el compte.",
-        "inactive": "Inactiu",
-        "new_password": "Contrasenya nova",
-        "notifiers": "Notificadors",
-        "user_profile": "Perfil d'usuari"
+        "user_profile": "Perfil d'usuari",
+        "user_profile_sub": "Convida usuaris i gestiona el compte."
     }
 }
