@@ -38,6 +38,9 @@
         "location": {
             "create_modal": {
                 "title": "Ustvari lokacijo"
+            },
+            "tree": {
+                "no_locations": "Ni razpoložljivih lokacij. Dodaj novo lokacije preko \n `<`span class=\"link-primary\"`>`Ustvari`<`/span`>` gumba v navigacijski vrstici."
             }
         }
     },
@@ -108,23 +111,62 @@
         "ca": "Katalonščina",
         "de": "Nemščina",
         "en": "Angleščina",
-        "es": "Spanish"
+        "es": "Španščina",
+        "fr": "Francoščina",
+        "hu": "Madžarščina",
+        "it": "Italijanščina",
+        "nl": "Nizozemščina",
+        "pl": "Polščina",
+        "pt-BR": "Portugalščina (brazilska)",
+        "ru": "Ruščina",
+        "sl": "Slovenščina",
+        "sv": "Švedščina",
+        "tr": "Turkščina",
+        "zh-CN": "Kitajščina (splošna)",
+        "zh-HK": "Kitajščina (Hong Kong)",
+        "zh-MO": "Kitajščina (Macau)",
+        "zh-TW": "Kitajsščina (tradicionalna)"
+    },
+    "locations": {
+        "no_results": "Ni najdenih lokacij"
     },
     "maintenance": {
+        "filter": {
+            "both": "Oboje",
+            "completed": "Zaključeno",
+            "scheduled": "Načrtovano"
+        },
         "list": {
+            "complete": "Končano",
             "create_first": "Ustvarite prvi vnos",
             "delete": "Izbriši",
+            "duplicate": "Podvoji",
             "edit": "Uredi",
             "new": "Nov"
         },
         "modal": {
-            "new_title": "Nov vnos"
+            "completed_date": "Datum zaključka",
+            "cost": "Stroški",
+            "delete_confirmation": "Ali ste prepričani, da želite izbrisati ta vnos?",
+            "edit_action": "Posodobi",
+            "edit_title": "Uredi vnos",
+            "entry_name": "Ime vnosa",
+            "new_action": "Ustvari",
+            "new_title": "Nov vnos",
+            "notes": "Opombe",
+            "scheduled_date": "Načrtovani datum"
         },
         "monthly_average": "Mesečno povprečje",
+        "toast": {
+            "failed_to_create": "Vnosa ni bilo mogoče ustvariti",
+            "failed_to_delete": "Vnosa ni bilo mogoče izbrisati",
+            "failed_to_update": "Vnosa ni bilo mogoče posodobiti"
+        },
         "total_cost": "Skupni znesek",
         "total_entries": "Vseh predmetov"
     },
     "menu": {
+        "home": "Domov",
         "locations": "Lokacije",
         "maintenance": "Vzdrževanje",
         "profile": "Profil",
@@ -138,12 +180,15 @@
         "current_password": "Trenutno geslo",
         "delete_account": "Izbriši račun",
         "delete_account_sub": "Izbrišite svoj račun in vse z njim povezane podatke. Tega ni mogoče razveljaviti.",
+        "display_header": "{ currentValue, select, true {Skrij glavo} false {Pokaži glavo} other {Brez zadetkov}}",
         "enabled": "Omogočeno",
         "gen_invite": "Ustvari povezavo povabila",
         "group_settings": "Nastavitve skupine",
         "group_settings_sub": "Nastavitve skupine v skupni rabi. Morda boste morali osvežiti brskalnik, da bodo nekatere nastavitve veljale.",
         "inactive": "Neaktivno",
+        "language": "Jezik",
         "new_password": "Novo geslo",
+        "no_notifiers": "Ni nastavljenih sporočanj",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Obveščevalec",
         "notifiers": "Obveščevalci",
         "notifiers_sub": "Prejemajte obvestila za prihajajoče opomnike o vzdrževanju",
@@ -151,8 +196,26 @@
         "theme_settings": "Nastavitve teme",
         "theme_settings_sub": "Nastavitve teme so shranjene v lokalni shrambi vašega brskalnika. Temo lahko kadar koli spremenite. Če\n imate težave z nastavitvijo teme, poskusite osvežiti brskalnik.",
         "update_group": "Posodobi skupino",
+        "update_language": "Posodobi jezik",
         "url": "URL",
         "user_profile": "Profil uporabnika",
         "user_profile_sub": "Povabite uporabnike in upravljajte svoj račun."
+    },
+    "tools": {
+        "actions": "Dejanja inventarja",
+        "actions_set": {
+            "ensure_ids": "Zagotovi ID-je sredstev",
+            "ensure_ids_button": "Zagotovi ID-je sredstev",
+            "ensure_ids_sub": "Zagotavlja, da imajo vsi predmeti v vašem inventarju veljavno polje asset_id. To storite tako, da poiščete najvišje trenutno polje asset_id v bazi podatkov in uporabite naslednjo vrednost za vsak element, ki ima nenastavljeno polje asset_id. To se naredi po vrstnem redu polja created_at.",
+            "ensure_import_refs": "Zagotovi uvoz referenc",
+            "ensure_import_refs_button": "Zagotovi uvoz referenc",
+            "ensure_import_refs_sub": "Zagotavlja, da imajo vsi predmeti v vašem inventarju veljavno polje import_ref. To se naredi tako, da se naključno ustvari 8-mestni niz za vsak element, ki ima nenastavljeno polje import_ref.",
+            "set_primary_photo": "Nastavi primarno fotografijo",
+            "set_primary_photo_button": "Nastavi primarno fotografijo",
+            "set_primary_photo_sub": "V različici v0.10.0 Homeboxa je bilo primarno slikovno polje dodano prilogam tipa fotografija. To dejanje bo polje primarne slike nastavilo na prvo sliko v tabeli prilog v bazi podatkov, če še ni nastavljeno. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Glej GitHub PR #576'</a>'",
+            "zero_datetimes": "Datumski časi ničelnega elementa",
+            "zero_datetimes_button": "Datumski časi ničelnega elementa",
+            "zero_datetimes_sub": "Ponastavi časovno vrednost za vsa polja datuma in časa v inventarju na začetek datuma"
+        }
     }
 }
