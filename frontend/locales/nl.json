@@ -147,8 +147,28 @@
             "delete_confirmation": "Weet u zeker dat u deze gegevens wilt verwijderen?",
             "edit_action": "Bijwerken",
             "edit_title": "Bewerk entry",
-            "new_action": "Maken"
-        }
+            "entry_name": "Ingangsnaam",
+            "new_action": "Maak",
+            "new_title": "Nieuw fragment",
+            "notes": "Opmerkingen",
+            "scheduled_date": "Gepland datum"
+        },
+        "monthly_average": "Maandelijks",
+        "toast": {
+            "failed_to_create": "Kan invoer niet maken",
+            "failed_to_delete": "Kon item niet verwijderen.",
+            "failed_to_update": "Kan invoer niet bijwerken"
+        },
+        "total_cost": "Totale kosten",
+        "total_entries": "Totaal aantal Inzendingen"
+    },
+    "menu": {
+        "home": "Home",
+        "locations": "Locaties",
+        "maintenance": "Onderhoud",
+        "profile": "Profiel",
+        "search": "Zoeken",
+        "tools": "Gereedschappen"
     },
     "profile": {
         "active": "Actief",
@@ -164,6 +184,7 @@
         "inactive": "Inactief",
         "language": "Taal",
         "new_password": "Nieuw Wachtwoord",
+        "no_notifiers": "Geen melders geconfigureerd",
         "notifier_modal": "{ type, select, true {Bewerk} false {Creëer} other {overig}} Notifier",
         "notifiers": "Notificatie",
         "notifiers_sub": "Krijg notificaties voor opkomende onderhouds herinneringen",
@@ -178,6 +199,16 @@
     },
     "tools": {
         "actions": "Acties inventariseren",
+        "actions_set": {
+            "ensure_ids": "Zorg voor item-ID's",
+            "ensure_ids_button": "Zorg voor item-ID's",
+            "ensure_import_refs": "Zorg ervoor dat Import Refs",
+            "ensure_import_refs_button": "Zorg ervoor dat Import Refs",
+            "set_primary_photo": "Hoofdfoto instellen",
+            "set_primary_photo_button": "Hoofdfoto instellen",
+            "zero_datetimes": "Nul item Datum Tijden",
+            "zero_datetimes_button": "Nul item Datum Tijden"
+        },
         "actions_sub": "Acties bulksgewijs toepassen op je voorraad. Deze zijn onomkeerbaar '<b>'Wees voorzichtig.'</b>'",
         "import_export": "Importeer/Exporteer",
         "import_export_set": {

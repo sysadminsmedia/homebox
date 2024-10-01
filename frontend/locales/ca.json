@@ -130,7 +130,17 @@
     "maintenance": {
         "filter": {
             "both": "Ambdós"
-        }
+        },
+        "total_cost": "Cost total",
+        "total_entries": "Nombre d&apos; entrades"
+    },
+    "menu": {
+        "home": "Inici",
+        "locations": "Ubicacions",
+        "maintenance": "Manteniment",
+        "profile": "Perfil",
+        "search": "Cerca",
+        "tools": "Eines"
     },
     "profile": {
         "active": "Actiu",
@@ -139,12 +149,15 @@
         "current_password": "Contrasenya actual",
         "delete_account": "Suprimeix el compte",
         "delete_account_sub": "Elimina el compte i totes les dades associades. Aquesta acció no es pot desfer.",
+        "display_header": "{ currentValue, select, true {Amaga la capçalera} false {Mostra la capçalera} other {Desconegut}}",
         "enabled": "Habilitat",
         "gen_invite": "Genera un enllaç d'invitació",
         "group_settings": "Configuració del grup",
         "group_settings_sub": "Configuració del grup compartit. És possible que hàgiu d'actualitzar la pàgina per aplicar la configuració.",
         "inactive": "Inactiu",
+        "language": "Idioma",
         "new_password": "Contrasenya nova",
+        "no_notifiers": "No hi ha notificadors configurats",
         "notifier_modal": "{ type, select, true {Edita} false {Crea} other {Altres}} Notificació",
         "notifiers": "Notificadors",
         "notifiers_sub": "Rebeu notificacions per als pròxims recordatoris de manteniment",
@@ -152,8 +165,18 @@
         "theme_settings": "Configuracions del tema",
         "theme_settings_sub": "La configuració del tema s'emmagatzema a l'emmagatzematge local del navegador. Podeu canviar el tema en qualsevol moment. \nSi teniu problemes per definir el tema, proveu d'actualitzar el navegador.",
         "update_group": "Actualitza el grup",
+        "update_language": "Actualitza l'idioma",
         "url": "URL",
         "user_profile": "Perfil d'usuari",
         "user_profile_sub": "Convida usuaris i gestiona el compte."
+    },
+    "tools": {
+        "actions": "Accions d'inventari",
+        "actions_set": {
+            "ensure_ids": "Assegura els identificadors de recursos",
+            "ensure_ids_button": "Assegura els identificadors de recursos",
+            "set_primary_photo": "Defineix la foto principal",
+            "set_primary_photo_button": "Defineix la foto principal"
+        }
     }
 }

@@ -13,7 +13,7 @@
                 "page_url": "URL de la page"
             },
             "password_score": {
-                "password_strength": "Solidité du mot de passe"
+                "password_strength": "Force du mot de passe"
             }
         },
         "item": {
@@ -25,7 +25,7 @@
                 "selectable": {
                     "card": "Carte",
                     "items": "Articles",
-                    "no_items": "Nb. d’articles à afficher",
+                    "no_items": "Pas d'articles à afficher",
                     "table": "Tableau"
                 }
             }
@@ -137,12 +137,12 @@
             "scheduled": "Prévues"
         },
         "list": {
+            "complete": "Terminer",
             "create_first": "Créer votre première entrée",
             "delete": "Supprimer",
+            "duplicate": "Dupliquer",
             "edit": "Modifier",
-            "new": "Ajouter",
-            "complete": "Terminer",
-            "duplicate" : "Dupliquer"
+            "new": "Ajouter"
         },
         "modal": {
             "completed_date": "Date d'achèvement",
@@ -178,7 +178,7 @@
         "change_password": "Changer de mot de passe",
         "currency_format": "Format de la devise",
         "current_password": "Mot de passe actuel",
-        "delete_account": "Effacer le compte",
+        "delete_account": "Supprimer le compte",
         "delete_account_sub": "Supprimer le compte et toutes ses données. Aucune récupération possible.",
         "display_header": "{ currentValue, select, true {Masquer l’en-tête} false {Afficher l’en-tête} other {Not Hit}}",
         "enabled": "Activé",

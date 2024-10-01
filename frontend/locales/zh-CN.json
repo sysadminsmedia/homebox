@@ -38,6 +38,9 @@
         "location": {
             "create_modal": {
                 "title": "创建位置"
+            },
+            "tree": {
+                "no_locations": "没有可用的位置。请添加新的位置\n `<`span class=\"link-primary\"`>`创建`<`/span`>` 按钮在导航栏上"
             }
         }
     },
@@ -101,6 +104,9 @@
         "tips_sub": "搜索提示",
         "updated_at": "更新于"
     },
+    "labels": {
+        "no_results": "未找到标签。"
+    },
     "languages": {
         "ca": "加泰罗尼亚语",
         "de": "德语",
@@ -120,6 +126,29 @@
         "zh-HK": "中文（香港）",
         "zh-MO": "中文（澳门）",
         "zh-TW": "中文（繁体）"
+    },
+    "locations": {
+        "no_results": "找不到位置"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "与",
+            "completed": "已完成",
+            "scheduled": "已预定"
+        },
+        "list": {
+            "complete": "已完成",
+            "create_first": "创建您的第一个条目",
+            "delete": "刪除",
+            "duplicate": "复制",
+            "edit": "修改",
+            "new": "创建"
+        },
+        "modal": {
+            "completed_date": "完成日期",
+            "cost": "成本",
+            "delete_confirmation": "您确定要删除此条目吗?"
+        }
     },
     "profile": {
         "active": "活跃",
