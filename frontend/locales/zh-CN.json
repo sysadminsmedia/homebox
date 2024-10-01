@@ -137,7 +137,7 @@
             "scheduled": "已预定"
         },
         "list": {
-            "complete": "已完成",
+            "complete": "标记已完成",
             "create_first": "创建您的第一个项目",
             "delete": "刪除",
             "duplicate": "复制",
@@ -149,18 +149,18 @@
             "cost": "成本",
             "delete_confirmation": "您确定要删除该项内容吗?",
             "edit_action": "更新",
-            "edit_title": "编辑条目",
+            "edit_title": "编辑项目",
             "entry_name": "项目名称",
             "new_action": "创建",
-            "new_title": "新的条目",
+            "new_title": "新的项目",
             "notes": "笔记",
             "scheduled_date": "预定日期"
         },
         "monthly_average": "统计看板",
         "toast": {
-            "failed_to_create": "创建条目失败",
-            "failed_to_delete": "删除目录失败",
-            "failed_to_update": "更新条目失败"
+            "failed_to_create": "创建项目失败",
+            "failed_to_delete": "删除项目失败",
+            "failed_to_update": "更新项目失败"
         },
         "total_cost": "总成本",
         "total_entries": "总项目"
@@ -169,7 +169,7 @@
         "home": "主页",
         "locations": "位置",
         "maintenance": "维护",
-        "profile": "简述",
+        "profile": "用户",
         "search": "搜索",
         "tools": "工具"
     },

@@ -38,6 +38,9 @@
         "location": {
             "create_modal": {
                 "title": "Criar Local"
+            },
+            "tree": {
+                "no_locations": "Não há locais disponíveis. Adicione novos locais\n através do botão \"Criar\" na barra de navegação."
             }
         }
     },
@@ -101,6 +104,9 @@
         "tips_sub": "Dicas de pesquisa",
         "updated_at": "Atualizado em"
     },
+    "labels": {
+        "no_results": "Nenhuma etiqueta encontrada"
+    },
     "languages": {
         "ca": "Catalão",
         "de": "Alemão",
@@ -120,6 +126,37 @@
         "zh-HK": "Chinês (Hong Kong)",
         "zh-MO": "Chinês (Macau)",
         "zh-TW": "Chinês (Tradicional)"
+    },
+    "locations": {
+        "no_results": "Nenhum local encontrado"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Ambos",
+            "completed": "Concluído",
+            "scheduled": "Agendado"
+        },
+        "list": {
+            "complete": "Completo",
+            "create_first": "Crie sua primeira entrada",
+            "delete": "Excluir",
+            "duplicate": "Duplicar",
+            "edit": "Editar",
+            "new": "Novo"
+        },
+        "modal": {
+            "completed_date": "Data de conclusão",
+            "cost": "Custo",
+            "delete_confirmation": "Tem certeza que deseja excluir este item?",
+            "edit_action": "Atualizar",
+            "edit_title": "Editar entrada",
+            "entry_name": "Nome de entrada",
+            "new_action": "Criar",
+            "new_title": "Nova entrada",
+            "notes": "Notas",
+            "scheduled_date": "Data agendada"
+        },
+        "monthly_average": "Média mensal"
     },
     "profile": {
         "active": "Ativo",
