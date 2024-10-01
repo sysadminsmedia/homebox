@@ -138,7 +138,7 @@
         },
         "list": {
             "complete": "已完成",
-            "create_first": "创建您的第一个条目",
+            "create_first": "创建您的第一个项目",
             "delete": "刪除",
             "duplicate": "复制",
             "edit": "修改",
@@ -147,8 +147,31 @@
         "modal": {
             "completed_date": "完成日期",
             "cost": "成本",
-            "delete_confirmation": "您确定要删除此条目吗?"
-        }
+            "delete_confirmation": "您确定要删除该项内容吗?",
+            "edit_action": "更新",
+            "edit_title": "编辑条目",
+            "entry_name": "项目名称",
+            "new_action": "创建",
+            "new_title": "新的条目",
+            "notes": "笔记",
+            "scheduled_date": "预定日期"
+        },
+        "monthly_average": "统计看板",
+        "toast": {
+            "failed_to_create": "创建条目失败",
+            "failed_to_delete": "删除目录失败",
+            "failed_to_update": "更新条目失败"
+        },
+        "total_cost": "总成本",
+        "total_entries": "总项目"
+    },
+    "menu": {
+        "home": "主页",
+        "locations": "位置",
+        "maintenance": "维护",
+        "profile": "简述",
+        "search": "搜索",
+        "tools": "工具"
     },
     "profile": {
         "active": "活跃",
@@ -165,6 +188,7 @@
         "inactive": "非活跃",
         "language": "语言",
         "new_password": "新密码",
+        "no_notifiers": "未配置通知程序",
         "notifier_modal": "{ type, select, true {编辑} false {创建} other {Other}} 通知器",
         "notifiers": "通知器",
         "notifiers_sub": "获取即将到来的维护提醒通知",
