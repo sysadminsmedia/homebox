@@ -156,7 +156,22 @@
             "notes": "Notas",
             "scheduled_date": "Data agendada"
         },
-        "monthly_average": "Média mensal"
+        "monthly_average": "Média Mensal",
+        "toast": {
+            "failed_to_create": "Falha ao criar entrada",
+            "failed_to_delete": "Falha ao excluir entrada",
+            "failed_to_update": "Falha ao atualizar entrada"
+        },
+        "total_cost": "Custo Total",
+        "total_entries": "Total de Entradas"
+    },
+    "menu": {
+        "home": "Início",
+        "locations": "Locais",
+        "maintenance": "Manutenção",
+        "profile": "Perfil",
+        "search": "Buscar",
+        "tools": "Ferramentas"
     },
     "profile": {
         "active": "Ativo",
@@ -173,6 +188,7 @@
         "inactive": "Inativa",
         "language": "Idioma",
         "new_password": "Nova Senha",
+        "no_notifiers": "Nenhum notificador configurado",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notificação",
         "notifiers": "Notificadores",
         "notifiers_sub": "Receba notificações para lembretes de manutenção futuros",
