@@ -27,7 +27,7 @@
               </ClientOnly>
             </template>
             <template v-else>
-              <span class="flex items-center">
+              <span class="flex items-center text-wrap">
                 {{ detail.text }}
                 <span
                   v-if="detail.copyable"

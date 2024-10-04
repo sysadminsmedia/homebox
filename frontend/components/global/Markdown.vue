@@ -24,7 +24,7 @@
 </script>
 
 <template>
-  <div class="markdown" v-html="raw"></div>
+  <div class="markdown text-wrap" v-html="raw"></div>
 </template>
 
 <style scoped>
