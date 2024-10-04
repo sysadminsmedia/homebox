@@ -3,7 +3,9 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"github.com/shirou/gopsutil/v4/host"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -19,6 +21,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/rs/zerolog/pkgerrors"
+	_ "github.com/shirou/gopsutil/v4/host"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/currencies"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
@@ -71,6 +74,45 @@ func main() {
 func run(cfg *config.Config) error {
 	app := new(cfg)
 	app.setupLogger()
+
+	if cfg.Options.AllowAnalytics {
+		type analyticsData struct {
+			Domain string                 `json:"domain"`
+			Name   string                 `json:"name"`
+			Url    string                 `json:"url"`
+			Props  map[string]interface{} `json:"props"`
+		}
+		hostData, _ := host.Info()
+		analytics := analyticsData{
+			Domain: "homebox.software",
+			Url:    "https://homebox.software",
+			Name:   "stats",
+			Props: map[string]interface{}{
+				"os":               hostData.OS,
+				"platform":         hostData.Platform,
+				"platform_family":  hostData.PlatformFamily,
+				"platform_version": hostData.PlatformVersion,
+				"kernel_arch":      hostData.KernelArch,
+			},
+		}
+		jsonBody, err := json.Marshal(analytics)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to marshal analytics data")
+		}
+		bodyReader := bytes.NewReader(jsonBody)
+		req, err := http.NewRequest("POST", "https://a.sysadmins.zone/api/event", bodyReader)
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36 OPR/71.0.3770.284")
+		client := &http.Client{
+			Timeout: 10 * time.Second,
+		}
+		res, err := client.Do(req)
+		if err != nil {
+			return err
+		}
+		log.Info().Msgf("Analytics Response: %v", res)
+		log.Info().Msgf("Analytics Response: %v", json.NewEncoder(os.Stdout).Encode(analytics))
+	}
 
 	// =========================================================================
 	// Initialize Database & Repos
