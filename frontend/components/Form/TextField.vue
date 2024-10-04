@@ -12,6 +12,7 @@
         {{ typeof value === "string" && (maxLength || minLength) ? `${value.length}/${maxLength}` : "" }}
       </span>
     </label>
+    {{ value }}
     <input
       ref="input"
       v-model="value"
@@ -34,7 +35,13 @@
         {{ typeof value === "string" && (maxLength || minLength) ? `${value.length}/${maxLength}` : "" }}
       </span>
     </label>
-    <input v-model="value" :placeholder="placeholder" class="input input-bordered col-span-3 mt-2 w-full" />
+    <input
+      v-model="value"
+      :placeholder="placeholder"
+      :type="type"
+      :required="required"
+      class="input input-bordered col-span-3 mt-2 w-full"
+    />
   </div>
 </template>
 

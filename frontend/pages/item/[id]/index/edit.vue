@@ -196,7 +196,7 @@
       maxLength: 255,
     },
     {
-      type: "text",
+      type: "number",
       label: "Purchase Price",
       ref: "purchasePrice",
     },
@@ -236,7 +236,7 @@
       maxLength: 255,
     },
     {
-      type: "text",
+      type: "number",
       label: "Sold Price",
       ref: "soldPrice",
     },
@@ -505,6 +505,7 @@
                   v-model="item[field.ref]"
                   :label="field.label"
                   inline
+                  type="text"
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
                 />

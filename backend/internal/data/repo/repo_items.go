@@ -70,8 +70,8 @@ type (
 		ParentID    uuid.UUID `json:"parentId"    extensions:"x-nullable,x-omitempty"`
 		ID          uuid.UUID `json:"id"`
 		AssetID     AssetID   `json:"assetId"     swaggertype:"string"`
-		Name        string    `json:"name"`
-		Description string    `json:"description"`
+		Name        string    `json:"name"        validate:"required,min=1,max=255"`
+		Description string    `json:"description" validate:"max=1000"`
 		Quantity    int       `json:"quantity"`
 		Insured     bool      `json:"insured"`
 		Archived    bool      `json:"archived"`
