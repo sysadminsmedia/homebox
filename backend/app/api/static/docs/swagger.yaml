@@ -539,6 +539,9 @@ definitions:
         type: string
       updatedAt:
         type: string
+      url:
+        description: URL field is not exposed to the client
+        type: string
       userId:
         type: string
     type: object

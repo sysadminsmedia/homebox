@@ -208,7 +208,7 @@
       targetID.value = v.id;
       notifier.value = {
         name: v.name,
-        url: "",
+        url: v.url,
         isActive: v.isActive,
       };
     } else {

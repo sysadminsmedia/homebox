@@ -2762,6 +2762,10 @@ const docTemplate = `{
                 "updatedAt": {
                     "type": "string"
                 },
+                "url": {
+                    "description": "URL field is not exposed to the client",
+                    "type": "string"
+                },
                 "userId": {
                     "type": "string"
                 }

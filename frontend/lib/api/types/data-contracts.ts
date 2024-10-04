@@ -323,6 +323,8 @@ export interface NotifierOut {
   isActive: boolean;
   name: string;
   updatedAt: Date | string;
+  /** URL field is not exposed to the client */
+  url: string;
   userId: string;
 }
 
