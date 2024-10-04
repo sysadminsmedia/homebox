@@ -12,7 +12,6 @@
         {{ typeof value === "string" && (maxLength || minLength) ? `${value.length}/${maxLength}` : "" }}
       </span>
     </label>
-    {{ value }}
     <input
       ref="input"
       v-model="value"
