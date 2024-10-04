@@ -8,6 +8,14 @@
         <span v-for="itm in value" :key="name != '' ? itm[name] : itm" class="badge">
           {{ name != "" ? itm[name] : itm }}
         </span>
+        <button
+          v-if="value.length > 0"
+          type="button"
+          class="absolute inset-y-0 right-6 flex items-center rounded-r-md px-2 focus:outline-none"
+          @click="clear"
+        >
+          <MdiClose class="size-5" />
+        </button>
       </div>
       <div
         tabindex="0"
@@ -36,6 +44,8 @@
 </template>
 
 <script lang="ts" setup>
+  import MdiClose from "~icons/mdi/close";
+
   const emit = defineEmits(["update:modelValue"]);
   const props = defineProps({
     label: {
@@ -77,6 +87,10 @@
       return item[props.name].toLowerCase().includes(search.value.toLowerCase());
     });
   });
+
+  function clear() {
+    value.value = [];
+  }
 
   const selected = computed<string[]>(() => {
     return value.value.map(itm => itm[props.uniqueField]);
