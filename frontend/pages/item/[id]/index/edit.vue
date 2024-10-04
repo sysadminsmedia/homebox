@@ -8,6 +8,7 @@
   import MdiDelete from "~icons/mdi/delete";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiContentSaveOutline from "~icons/mdi/content-save-outline";
+  import MdiContentCopy from "~icons/mdi/content-copy";
 
   definePageMeta({
     middleware: ["auth"],
@@ -58,6 +59,37 @@
   onMounted(() => {
     refresh();
   });
+
+  async function duplicateItem() {
+    const { error, data } = await api.items.create({
+      name: `${item.value.name} Copy`,
+      description: item.value.description,
+      locationId: item.value.location!.id,
+      parentId: item.value.parent?.id,
+      labelIds: item.value.labels.map(l => l.id),
+    });
+
+    if (error) {
+      toast.error("Failed to duplicate item");
+      return;
+    }
+
+    // add extra fields
+    const { error: updateError } = await api.items.update(data.id, {
+      ...item.value,
+      id: data.id,
+      labelIds: data.labels.map(l => l.id),
+      locationId: data.location!.id,
+      name: data.name,
+    });
+
+    if (updateError) {
+      toast.error("Failed to duplicate item");
+      return;
+    }
+
+    navigateTo(`/item/${data.id}`);
+  }
 
   async function saveItem() {
     if (!item.value.location?.id) {
@@ -458,6 +490,12 @@
             <span class="label-text ml-4"> Advanced </span>
           </label>
         </div>
+        <BaseButton size="sm" class="btn" @click="duplicateItem">
+          <template #icon>
+            <MdiContentCopy />
+          </template>
+          Duplicate
+        </BaseButton>
         <BaseButton size="sm" @click="saveItem">
           <template #icon>
             <MdiContentSaveOutline />
