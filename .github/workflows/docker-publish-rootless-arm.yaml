@@ -1,4 +1,4 @@
-name: Docker publish
+name: Docker publish rootless
 
 on:
   schedule:
@@ -24,6 +24,7 @@ on:
       - '.dockerignore'
       - '.github/workflows'
 
+
 env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
@@ -32,7 +33,7 @@ env:
 
 
 jobs:
-  build:
+  build-rootless:
 
     runs-on: ubuntu-latest
     permissions:
@@ -66,7 +67,7 @@ jobs:
       # Extract metadata (tags, labels) for Docker
       # https://github.com/docker/metadata-action
       - name: Extract Docker metadata
-        id: meta
+        id: metadata
         uses: docker/metadata-action@v5.0.0 # v5.0.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
@@ -77,8 +78,10 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
             type=schedule,pattern=nightly
-
-      # Build and push Docker image with Buildx (don't push on PR)
+          flavor: |
+            suffix=-rootless-arm,onlatest=true
+  
+  # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
         id: build-and-push
@@ -86,15 +89,15 @@ jobs:
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          platforms: linux/amd64
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          platforms: linux/arm64,linux/arm/v7
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
             VERSION=${{ github.ref_name }}
-            COMMIT=${{ github.sha	}}
-        
+            COMMIT=${{ github.sha }}
+
       - name: Attest
         uses: actions/attest-build-provenance@v1
         id: attest
