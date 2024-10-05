@@ -147,7 +147,9 @@
         "modal": {
             "completed_date": "Data di completamento",
             "cost": "Costo",
-            "delete_confirmation": "Eliminare questa voce?"
+            "delete_confirmation": "Sei sicuro di voler eliminare questa voce?",
+            "edit_action": "Aggiornare",
+            "edit_title": "Modifica iscrizione"
         }
     },
     "profile": {
