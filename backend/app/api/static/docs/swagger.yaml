@@ -264,6 +264,7 @@ definitions:
       assetId:
         type: string
       description:
+        maxLength: 1000
         type: string
       fields:
         items:
@@ -288,6 +289,8 @@ definitions:
       modelNumber:
         type: string
       name:
+        maxLength: 255
+        minLength: 1
         type: string
       notes:
         description: Extras
@@ -297,10 +300,10 @@ definitions:
         x-nullable: true
         x-omitempty: true
       purchaseFrom:
+        maxLength: 255
         type: string
       purchasePrice:
-        example: "0"
-        type: string
+        type: number
       purchaseTime:
         description: Purchase
         type: string
@@ -312,17 +315,19 @@ definitions:
       soldNotes:
         type: string
       soldPrice:
-        example: "0"
-        type: string
+        type: number
       soldTime:
         description: Sold
         type: string
       soldTo:
+        maxLength: 255
         type: string
       warrantyDetails:
         type: string
       warrantyExpires:
         type: string
+    required:
+    - name
     type: object
   repo.LabelCreate:
     properties:
@@ -540,7 +545,6 @@ definitions:
       updatedAt:
         type: string
       url:
-        description: URL field is not exposed to the client
         type: string
       userId:
         type: string
