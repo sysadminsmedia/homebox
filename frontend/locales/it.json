@@ -38,6 +38,9 @@
         "location": {
             "create_modal": {
                 "title": "Crea Posizione"
+            },
+            "tree": {
+                "no_locations": "Nessuna posizione disponibile. Aggiungi nuove posizioni mediante il pulsante\n`<`span class=\"link-primary\"`>`Crea`<`/span`>` nella barra di navigazione."
             }
         }
     },
@@ -101,6 +104,9 @@
         "tips_sub": "Suggerimenti per la Ricerca",
         "updated_at": "Aggiornato Il"
     },
+    "labels": {
+        "no_results": "Nessuna etichetta trovata"
+    },
     "languages": {
         "ca": "Catalano",
         "de": "Tedesco",
@@ -120,6 +126,20 @@
         "zh-HK": "Cinese Mandarino",
         "zh-MO": "Cinese (Macao)",
         "zh-TW": "Cinese (tradizionale)"
+    },
+    "locations": {
+        "no_results": "Nessuna posizione trovata"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Entrambi",
+            "completed": "Completato",
+            "scheduled": "Pianificato"
+        },
+        "list": {
+            "create_first": "Crea la tua prima voce",
+            "delete": "Eliminazione"
+        }
     },
     "profile": {
         "active": "Attivo",
