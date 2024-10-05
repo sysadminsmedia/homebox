@@ -152,8 +152,11 @@
             "edit_title": "Modifica voce",
             "entry_name": "Inserisci il Nome",
             "new_action": "Crea",
-            "new_title": "Nuova inserzione"
-        }
+            "new_title": "Nuova Voce",
+            "notes": "Note",
+            "scheduled_date": "Data programmata"
+        },
+        "monthly_average": "Media mese"
     },
     "profile": {
         "active": "Attivo",
