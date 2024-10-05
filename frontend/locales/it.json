@@ -156,7 +156,14 @@
             "notes": "Note",
             "scheduled_date": "Data programmata"
         },
-        "monthly_average": "Media mese"
+        "monthly_average": "Media mensile",
+        "toast": {
+            "failed_to_create": "Impossibile creare la voce",
+            "failed_to_delete": "Impossibile eliminare la voce",
+            "failed_to_update": "Impossibile aggiornare la voce"
+        },
+        "total_cost": "Costo totale",
+        "total_entries": "Iscrizioni totali"
     },
     "profile": {
         "active": "Attivo",
