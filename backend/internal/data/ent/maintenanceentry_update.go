@@ -209,7 +209,7 @@ func (meu *MaintenanceEntryUpdate) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "MaintenanceEntry.description": %w`, err)}
 		}
 	}
-	if _, ok := meu.mutation.ItemID(); meu.mutation.ItemCleared() && !ok {
+	if meu.mutation.ItemCleared() && len(meu.mutation.ItemIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "MaintenanceEntry.item"`)
 	}
 	return nil
@@ -498,7 +498,7 @@ func (meuo *MaintenanceEntryUpdateOne) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "MaintenanceEntry.description": %w`, err)}
 		}
 	}
-	if _, ok := meuo.mutation.ItemID(); meuo.mutation.ItemCleared() && !ok {
+	if meuo.mutation.ItemCleared() && len(meuo.mutation.ItemIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "MaintenanceEntry.item"`)
 	}
 	return nil

@@ -200,7 +200,7 @@ func (lc *LabelCreate) check() error {
 			return &ValidationError{Name: "color", err: fmt.Errorf(`ent: validator failed for field "Label.color": %w`, err)}
 		}
 	}
-	if _, ok := lc.mutation.GroupID(); !ok {
+	if len(lc.mutation.GroupIDs()) == 0 {
 		return &ValidationError{Name: "group", err: errors.New(`ent: missing required edge "Label.group"`)}
 	}
 	return nil

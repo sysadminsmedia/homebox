@@ -633,7 +633,7 @@ func (ic *ItemCreate) check() error {
 			return &ValidationError{Name: "sold_notes", err: fmt.Errorf(`ent: validator failed for field "Item.sold_notes": %w`, err)}
 		}
 	}
-	if _, ok := ic.mutation.GroupID(); !ok {
+	if len(ic.mutation.GroupIDs()) == 0 {
 		return &ValidationError{Name: "group", err: errors.New(`ent: missing required edge "Item.group"`)}
 	}
 	return nil

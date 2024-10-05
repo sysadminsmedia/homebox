@@ -182,10 +182,10 @@ func (nu *NotifierUpdate) check() error {
 			return &ValidationError{Name: "url", err: fmt.Errorf(`ent: validator failed for field "Notifier.url": %w`, err)}
 		}
 	}
-	if _, ok := nu.mutation.GroupID(); nu.mutation.GroupCleared() && !ok {
+	if nu.mutation.GroupCleared() && len(nu.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Notifier.group"`)
 	}
-	if _, ok := nu.mutation.UserID(); nu.mutation.UserCleared() && !ok {
+	if nu.mutation.UserCleared() && len(nu.mutation.UserIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Notifier.user"`)
 	}
 	return nil
@@ -457,10 +457,10 @@ func (nuo *NotifierUpdateOne) check() error {
 			return &ValidationError{Name: "url", err: fmt.Errorf(`ent: validator failed for field "Notifier.url": %w`, err)}
 		}
 	}
-	if _, ok := nuo.mutation.GroupID(); nuo.mutation.GroupCleared() && !ok {
+	if nuo.mutation.GroupCleared() && len(nuo.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Notifier.group"`)
 	}
-	if _, ok := nuo.mutation.UserID(); nuo.mutation.UserCleared() && !ok {
+	if nuo.mutation.UserCleared() && len(nuo.mutation.UserIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Notifier.user"`)
 	}
 	return nil

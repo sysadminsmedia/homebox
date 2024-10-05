@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -85,7 +86,7 @@ func (meq *MaintenanceEntryQuery) QueryItem() *ItemQuery {
 // First returns the first MaintenanceEntry entity from the query.
 // Returns a *NotFoundError when no MaintenanceEntry was found.
 func (meq *MaintenanceEntryQuery) First(ctx context.Context) (*MaintenanceEntry, error) {
-	nodes, err := meq.Limit(1).All(setContextOp(ctx, meq.ctx, "First"))
+	nodes, err := meq.Limit(1).All(setContextOp(ctx, meq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +109,7 @@ func (meq *MaintenanceEntryQuery) FirstX(ctx context.Context) *MaintenanceEntry 
 // Returns a *NotFoundError when no MaintenanceEntry ID was found.
 func (meq *MaintenanceEntryQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = meq.Limit(1).IDs(setContextOp(ctx, meq.ctx, "FirstID")); err != nil {
+	if ids, err = meq.Limit(1).IDs(setContextOp(ctx, meq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -131,7 +132,7 @@ func (meq *MaintenanceEntryQuery) FirstIDX(ctx context.Context) uuid.UUID {
 // Returns a *NotSingularError when more than one MaintenanceEntry entity is found.
 // Returns a *NotFoundError when no MaintenanceEntry entities are found.
 func (meq *MaintenanceEntryQuery) Only(ctx context.Context) (*MaintenanceEntry, error) {
-	nodes, err := meq.Limit(2).All(setContextOp(ctx, meq.ctx, "Only"))
+	nodes, err := meq.Limit(2).All(setContextOp(ctx, meq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +160,7 @@ func (meq *MaintenanceEntryQuery) OnlyX(ctx context.Context) *MaintenanceEntry {
 // Returns a *NotFoundError when no entities are found.
 func (meq *MaintenanceEntryQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = meq.Limit(2).IDs(setContextOp(ctx, meq.ctx, "OnlyID")); err != nil {
+	if ids, err = meq.Limit(2).IDs(setContextOp(ctx, meq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -184,7 +185,7 @@ func (meq *MaintenanceEntryQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 
 // All executes the query and returns a list of MaintenanceEntries.
 func (meq *MaintenanceEntryQuery) All(ctx context.Context) ([]*MaintenanceEntry, error) {
-	ctx = setContextOp(ctx, meq.ctx, "All")
+	ctx = setContextOp(ctx, meq.ctx, ent.OpQueryAll)
 	if err := meq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -206,7 +207,7 @@ func (meq *MaintenanceEntryQuery) IDs(ctx context.Context) (ids []uuid.UUID, err
 	if meq.ctx.Unique == nil && meq.path != nil {
 		meq.Unique(true)
 	}
-	ctx = setContextOp(ctx, meq.ctx, "IDs")
+	ctx = setContextOp(ctx, meq.ctx, ent.OpQueryIDs)
 	if err = meq.Select(maintenanceentry.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -224,7 +225,7 @@ func (meq *MaintenanceEntryQuery) IDsX(ctx context.Context) []uuid.UUID {
 
 // Count returns the count of the given query.
 func (meq *MaintenanceEntryQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, meq.ctx, "Count")
+	ctx = setContextOp(ctx, meq.ctx, ent.OpQueryCount)
 	if err := meq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -242,7 +243,7 @@ func (meq *MaintenanceEntryQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (meq *MaintenanceEntryQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, meq.ctx, "Exist")
+	ctx = setContextOp(ctx, meq.ctx, ent.OpQueryExist)
 	switch _, err := meq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -529,7 +530,7 @@ func (megb *MaintenanceEntryGroupBy) Aggregate(fns ...AggregateFunc) *Maintenanc
 
 // Scan applies the selector query and scans the result into the given value.
 func (megb *MaintenanceEntryGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, megb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, megb.build.ctx, ent.OpQueryGroupBy)
 	if err := megb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -577,7 +578,7 @@ func (mes *MaintenanceEntrySelect) Aggregate(fns ...AggregateFunc) *MaintenanceE
 
 // Scan applies the selector query and scans the result into the given value.
 func (mes *MaintenanceEntrySelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, mes.ctx, "Select")
+	ctx = setContextOp(ctx, mes.ctx, ent.OpQuerySelect)
 	if err := mes.prepareQuery(ctx); err != nil {
 		return err
 	}

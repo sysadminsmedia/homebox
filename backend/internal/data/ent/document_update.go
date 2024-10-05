@@ -171,7 +171,7 @@ func (du *DocumentUpdate) check() error {
 			return &ValidationError{Name: "path", err: fmt.Errorf(`ent: validator failed for field "Document.path": %w`, err)}
 		}
 	}
-	if _, ok := du.mutation.GroupID(); du.mutation.GroupCleared() && !ok {
+	if du.mutation.GroupCleared() && len(du.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Document.group"`)
 	}
 	return nil
@@ -445,7 +445,7 @@ func (duo *DocumentUpdateOne) check() error {
 			return &ValidationError{Name: "path", err: fmt.Errorf(`ent: validator failed for field "Document.path": %w`, err)}
 		}
 	}
-	if _, ok := duo.mutation.GroupID(); duo.mutation.GroupCleared() && !ok {
+	if duo.mutation.GroupCleared() && len(duo.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Document.group"`)
 	}
 	return nil

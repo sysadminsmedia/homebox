@@ -199,10 +199,10 @@ func (nc *NotifierCreate) check() error {
 	if _, ok := nc.mutation.IsActive(); !ok {
 		return &ValidationError{Name: "is_active", err: errors.New(`ent: missing required field "Notifier.is_active"`)}
 	}
-	if _, ok := nc.mutation.GroupID(); !ok {
+	if len(nc.mutation.GroupIDs()) == 0 {
 		return &ValidationError{Name: "group", err: errors.New(`ent: missing required edge "Notifier.group"`)}
 	}
-	if _, ok := nc.mutation.UserID(); !ok {
+	if len(nc.mutation.UserIDs()) == 0 {
 		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "Notifier.user"`)}
 	}
 	return nil
