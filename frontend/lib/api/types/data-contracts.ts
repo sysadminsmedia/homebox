@@ -106,15 +106,13 @@ export interface ItemOut {
   notes: string;
   parent?: ItemSummary | null;
   purchaseFrom: string;
-  /** @example "0" */
-  purchasePrice: string;
+  purchasePrice: number;
   /** Purchase */
   purchaseTime: Date | string;
   quantity: number;
   serialNumber: string;
   soldNotes: string;
-  /** @example "0" */
-  soldPrice: string;
+  soldPrice: number;
   /** Sold */
   soldTime: Date | string;
   soldTo: string;
@@ -145,8 +143,7 @@ export interface ItemSummary {
   /** Edges */
   location?: LocationSummary | null;
   name: string;
-  /** @example "0" */
-  purchasePrice: string;
+  purchasePrice: number;
   quantity: number;
   updatedAt: Date | string;
 }
@@ -181,14 +178,14 @@ export interface ItemUpdate {
   parentId?: string | null;
   /** @maxLength 255 */
   purchaseFrom: string;
-  purchasePrice: number;
+  purchasePrice?: number | null;
   /** Purchase */
   purchaseTime: Date | string;
   quantity: number;
   /** Identifications */
   serialNumber: string;
   soldNotes: string;
-  soldPrice: number;
+  soldPrice?: number | null;
   /** Sold */
   soldTime: Date | string;
   /** @maxLength 255 */

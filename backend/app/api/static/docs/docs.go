@@ -2217,8 +2217,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "purchasePrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number"
                 },
                 "purchaseTime": {
                     "description": "Purchase",
@@ -2234,8 +2233,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "soldPrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number"
                 },
                 "soldTime": {
                     "description": "Sold",
@@ -2323,8 +2321,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "purchasePrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number"
                 },
                 "quantity": {
                     "type": "integer"
@@ -2412,7 +2409,9 @@ const docTemplate = `{
                     "maxLength": 255
                 },
                 "purchasePrice": {
-                    "type": "number"
+                    "type": "number",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "purchaseTime": {
                     "description": "Purchase",
@@ -2429,7 +2428,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "soldPrice": {
-                    "type": "number"
+                    "type": "number",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "soldTime": {
                     "description": "Sold",

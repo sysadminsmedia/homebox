@@ -2210,8 +2210,7 @@
                     "type": "string"
                 },
                 "purchasePrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number"
                 },
                 "purchaseTime": {
                     "description": "Purchase",
@@ -2227,8 +2226,7 @@
                     "type": "string"
                 },
                 "soldPrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number"
                 },
                 "soldTime": {
                     "description": "Sold",
@@ -2316,8 +2314,7 @@
                     "type": "string"
                 },
                 "purchasePrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number"
                 },
                 "quantity": {
                     "type": "integer"
@@ -2340,6 +2337,9 @@
         },
         "repo.ItemUpdate": {
             "type": "object",
+            "required": [
+                "name"
+            ],
             "properties": {
                 "archived": {
                     "type": "boolean"
@@ -2348,7 +2348,8 @@
                     "type": "string"
                 },
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 1000
                 },
                 "fields": {
                     "type": "array",
@@ -2383,7 +2384,9 @@
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "notes": {
                     "description": "Extras",
@@ -2395,11 +2398,13 @@
                     "x-omitempty": true
                 },
                 "purchaseFrom": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "purchasePrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "purchaseTime": {
                     "description": "Purchase",
@@ -2416,15 +2421,17 @@
                     "type": "string"
                 },
                 "soldPrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "soldTime": {
                     "description": "Sold",
                     "type": "string"
                 },
                 "soldTo": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "warrantyDetails": {
                     "type": "string"
@@ -2756,7 +2763,6 @@
                     "type": "string"
                 },
                 "url": {
-                    "description": "URL field is not exposed to the client",
                     "type": "string"
                 },
                 "userId": {
