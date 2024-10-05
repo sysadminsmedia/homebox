@@ -140,9 +140,12 @@
             "complete": "Conferma",
             "create_first": "Crea la tua prima voce",
             "delete": "Elimina",
-            "duplicate": "Duplica",
+            "duplicate": "Duplicare",
             "edit": "Modifica",
             "new": "Nuova"
+        },
+        "modal": {
+            "completed_date": "Data Completata"
         }
     },
     "profile": {
