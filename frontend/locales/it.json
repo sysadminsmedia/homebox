@@ -149,7 +149,8 @@
             "cost": "Costo",
             "delete_confirmation": "Sei sicuro di voler eliminare questa voce?",
             "edit_action": "Aggiornare",
-            "edit_title": "Modifica iscrizione"
+            "edit_title": "Modifica voce",
+            "entry_name": "Nome iscrizione"
         }
     },
     "profile": {
