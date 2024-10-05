@@ -137,9 +137,10 @@
             "scheduled": "Pianificato"
         },
         "list": {
-            "complete": "CONFERMA",
+            "complete": "Conferma",
             "create_first": "Crea la tua prima voce",
             "delete": "Elimina",
+            "duplicate": "Duplica",
             "edit": "Modifica",
             "new": "Nuova"
         }
