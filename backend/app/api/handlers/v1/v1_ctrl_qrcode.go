@@ -20,13 +20,13 @@ var qrcodeLogo []byte
 
 // HandleGenerateQRCode godoc
 //
-//	@Summary  Create QR Code
-//	@Tags     Items
-//	@Produce  json
-//	@Param    data      query    string   false "data to be encoded into qrcode"
-//	@Success 200 {string} string "image/jpeg"
-//	@Router   /v1/qrcode [GET]
-//	@Security Bearer
+//	@Summary	Create QR Code
+//	@Tags		Items
+//	@Produce	json
+//	@Param		data	query		string	false	"data to be encoded into qrcode"
+//	@Success	200		{string}	string	"image/jpeg"
+//	@Router		/v1/qrcode [GET]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleGenerateQRCode() errchain.HandlerFunc {
 	type query struct {
 		// 4,296 characters is the maximum length of a QR code
