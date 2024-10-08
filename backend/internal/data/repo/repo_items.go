@@ -646,7 +646,7 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 		location := data.LocationID
 
 		for _, child := range children {
-			child_location, err := child.QueryLocation().First(ctx)
+			childLocation, err := child.QueryLocation().First(ctx)
 			if err != nil {
 				return ItemOut{}, err
 			}
