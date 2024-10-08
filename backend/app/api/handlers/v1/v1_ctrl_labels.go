@@ -12,12 +12,12 @@ import (
 
 // HandleLabelsGetAll godoc
 //
-//	@Summary  Get All Labels
-//	@Tags     Labels
-//	@Produce  json
-//	@Success  200 {object} []repo.LabelOut
-//	@Router   /v1/labels [GET]
-//	@Security Bearer
+//	@Summary	Get All Labels
+//	@Tags		Labels
+//	@Produce	json
+//	@Success	200	{object}	[]repo.LabelOut
+//	@Router		/v1/labels [GET]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleLabelsGetAll() errchain.HandlerFunc {
 	fn := func(r *http.Request) ([]repo.LabelSummary, error) {
 		auth := services.NewContext(r.Context())
@@ -29,13 +29,13 @@ func (ctrl *V1Controller) HandleLabelsGetAll() errchain.HandlerFunc {
 
 // HandleLabelsCreate godoc
 //
-//	@Summary  Create Label
-//	@Tags     Labels
-//	@Produce  json
-//	@Param    payload body     repo.LabelCreate true "Label Data"
-//	@Success  200     {object} repo.LabelSummary
-//	@Router   /v1/labels [POST]
-//	@Security Bearer
+//	@Summary	Create Label
+//	@Tags		Labels
+//	@Produce	json
+//	@Param		payload	body		repo.LabelCreate	true	"Label Data"
+//	@Success	200		{object}	repo.LabelSummary
+//	@Router		/v1/labels [POST]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleLabelsCreate() errchain.HandlerFunc {
 	fn := func(r *http.Request, data repo.LabelCreate) (repo.LabelOut, error) {
 		auth := services.NewContext(r.Context())
@@ -47,13 +47,13 @@ func (ctrl *V1Controller) HandleLabelsCreate() errchain.HandlerFunc {
 
 // HandleLabelDelete godocs
 //
-//	@Summary  Delete Label
-//	@Tags     Labels
-//	@Produce  json
-//	@Param    id path string true "Label ID"
-//	@Success  204
-//	@Router   /v1/labels/{id} [DELETE]
-//	@Security Bearer
+//	@Summary	Delete Label
+//	@Tags		Labels
+//	@Produce	json
+//	@Param		id	path	string	true	"Label ID"
+//	@Success	204
+//	@Router		/v1/labels/{id} [DELETE]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleLabelDelete() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID) (any, error) {
 		auth := services.NewContext(r.Context())
@@ -66,13 +66,13 @@ func (ctrl *V1Controller) HandleLabelDelete() errchain.HandlerFunc {
 
 // HandleLabelGet godocs
 //
-//	@Summary  Get Label
-//	@Tags     Labels
-//	@Produce  json
-//	@Param    id  path     string true "Label ID"
-//	@Success  200 {object} repo.LabelOut
-//	@Router   /v1/labels/{id} [GET]
-//	@Security Bearer
+//	@Summary	Get Label
+//	@Tags		Labels
+//	@Produce	json
+//	@Param		id	path		string	true	"Label ID"
+//	@Success	200	{object}	repo.LabelOut
+//	@Router		/v1/labels/{id} [GET]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleLabelGet() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID) (repo.LabelOut, error) {
 		auth := services.NewContext(r.Context())
@@ -84,13 +84,13 @@ func (ctrl *V1Controller) HandleLabelGet() errchain.HandlerFunc {
 
 // HandleLabelUpdate godocs
 //
-//	@Summary  Update Label
-//	@Tags     Labels
-//	@Produce  json
-//	@Param    id  path     string true "Label ID"
-//	@Success  200 {object} repo.LabelOut
-//	@Router   /v1/labels/{id} [PUT]
-//	@Security Bearer
+//	@Summary	Update Label
+//	@Tags		Labels
+//	@Produce	json
+//	@Param		id	path		string	true	"Label ID"
+//	@Success	200	{object}	repo.LabelOut
+//	@Router		/v1/labels/{id} [PUT]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleLabelUpdate() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID, data repo.LabelUpdate) (repo.LabelOut, error) {
 		auth := services.NewContext(r.Context())
