@@ -2242,6 +2242,9 @@ const docTemplate = `{
                 "soldTo": {
                     "type": "string"
                 },
+                "syncChildItemsLocations": {
+                    "type": "boolean"
+                },
                 "updatedAt": {
                     "type": "string"
                 },
@@ -2439,6 +2442,9 @@ const docTemplate = `{
                 "soldTo": {
                     "type": "string",
                     "maxLength": 255
+                },
+                "syncChildItemsLocations": {
+                    "type": "boolean"
                 },
                 "warrantyDetails": {
                     "type": "string"

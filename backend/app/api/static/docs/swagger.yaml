@@ -188,6 +188,8 @@ definitions:
         type: string
       soldTo:
         type: string
+      syncChildItemsLocations:
+        type: boolean
       updatedAt:
         type: string
       warrantyDetails:
@@ -323,6 +325,8 @@ definitions:
       soldTo:
         maxLength: 255
         type: string
+      syncChildItemsLocations:
+        type: boolean
       warrantyDetails:
         type: string
       warrantyExpires:

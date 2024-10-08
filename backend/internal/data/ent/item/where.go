@@ -106,6 +106,11 @@ func AssetID(v int) predicate.Item {
 	return predicate.Item(sql.FieldEQ(FieldAssetID, v))
 }
 
+// SyncChildItemsLocations applies equality check predicate on the "sync_child_items_locations" field. It's identical to SyncChildItemsLocationsEQ.
+func SyncChildItemsLocations(v bool) predicate.Item {
+	return predicate.Item(sql.FieldEQ(FieldSyncChildItemsLocations, v))
+}
+
 // SerialNumber applies equality check predicate on the "serial_number" field. It's identical to SerialNumberEQ.
 func SerialNumber(v string) predicate.Item {
 	return predicate.Item(sql.FieldEQ(FieldSerialNumber, v))
@@ -639,6 +644,16 @@ func AssetIDLT(v int) predicate.Item {
 // AssetIDLTE applies the LTE predicate on the "asset_id" field.
 func AssetIDLTE(v int) predicate.Item {
 	return predicate.Item(sql.FieldLTE(FieldAssetID, v))
+}
+
+// SyncChildItemsLocationsEQ applies the EQ predicate on the "sync_child_items_locations" field.
+func SyncChildItemsLocationsEQ(v bool) predicate.Item {
+	return predicate.Item(sql.FieldEQ(FieldSyncChildItemsLocations, v))
+}
+
+// SyncChildItemsLocationsNEQ applies the NEQ predicate on the "sync_child_items_locations" field.
+func SyncChildItemsLocationsNEQ(v bool) predicate.Item {
+	return predicate.Item(sql.FieldNEQ(FieldSyncChildItemsLocations, v))
 }
 
 // SerialNumberEQ applies the EQ predicate on the "serial_number" field.
