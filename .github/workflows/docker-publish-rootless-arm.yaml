@@ -1,4 +1,4 @@
-name: Docker publish rootless
+name: Docker publish rootless ARM
 
 on:
   schedule:
