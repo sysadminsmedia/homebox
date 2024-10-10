@@ -32,7 +32,7 @@ type Options struct {
 	AllowRegistration    bool   `yaml:"disable_registration"    conf:"default:true"`
 	AutoIncrementAssetID bool   `yaml:"auto_increment_asset_id" conf:"default:true"`
 	CurrencyConfig       string `yaml:"currencies"`
-	AllowAnalytics       bool   `yaml:"allow_analytics"         conf:"default:true"`
+	AllowAnalytics       bool   `yaml:"allow_analytics"         conf:"default:false"`
 }
 
 type DebugConf struct {
