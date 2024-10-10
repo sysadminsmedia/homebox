@@ -2217,8 +2217,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "purchasePrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number"
                 },
                 "purchaseTime": {
                     "description": "Purchase",
@@ -2234,8 +2233,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "soldPrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number"
                 },
                 "soldTime": {
                     "description": "Sold",
@@ -2323,8 +2321,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "purchasePrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number"
                 },
                 "quantity": {
                     "type": "integer"
@@ -2347,6 +2344,9 @@ const docTemplate = `{
         },
         "repo.ItemUpdate": {
             "type": "object",
+            "required": [
+                "name"
+            ],
             "properties": {
                 "archived": {
                     "type": "boolean"
@@ -2355,7 +2355,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 1000
                 },
                 "fields": {
                     "type": "array",
@@ -2390,7 +2391,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "notes": {
                     "description": "Extras",
@@ -2402,11 +2405,13 @@ const docTemplate = `{
                     "x-omitempty": true
                 },
                 "purchaseFrom": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "purchasePrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "purchaseTime": {
                     "description": "Purchase",
@@ -2423,15 +2428,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "soldPrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "soldTime": {
                     "description": "Sold",
                     "type": "string"
                 },
                 "soldTo": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "warrantyDetails": {
                     "type": "string"
@@ -2763,7 +2770,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "url": {
-                    "description": "URL field is not exposed to the client",
                     "type": "string"
                 },
                 "userId": {

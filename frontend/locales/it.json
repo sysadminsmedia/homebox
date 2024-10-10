@@ -38,6 +38,9 @@
         "location": {
             "create_modal": {
                 "title": "Crea Posizione"
+            },
+            "tree": {
+                "no_locations": "Nessuna posizione disponibile. Aggiungi nuove posizioni mediante il pulsante\n`<`span class=\"link-primary\"`>`Crea`<`/span`>` nella barra di navigazione."
             }
         }
     },
@@ -101,6 +104,9 @@
         "tips_sub": "Suggerimenti per la Ricerca",
         "updated_at": "Aggiornato Il"
     },
+    "labels": {
+        "no_results": "Nessuna etichetta trovata"
+    },
     "languages": {
         "ca": "Catalano",
         "de": "Tedesco",
@@ -120,6 +126,44 @@
         "zh-HK": "Cinese Mandarino",
         "zh-MO": "Cinese (Macao)",
         "zh-TW": "Cinese (tradizionale)"
+    },
+    "locations": {
+        "no_results": "Nessuna posizione trovata"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Entrambi",
+            "completed": "Completato",
+            "scheduled": "Pianificato"
+        },
+        "list": {
+            "complete": "Conferma",
+            "create_first": "Crea la tua prima voce",
+            "delete": "Elimina",
+            "duplicate": "Duplicare",
+            "edit": "Modifica",
+            "new": "Nuova"
+        },
+        "modal": {
+            "completed_date": "Data di completamento",
+            "cost": "Costo",
+            "delete_confirmation": "Sei sicuro di voler eliminare questa voce?",
+            "edit_action": "Aggiornare",
+            "edit_title": "Modifica voce",
+            "entry_name": "Inserisci il Nome",
+            "new_action": "Crea",
+            "new_title": "Nuova Voce",
+            "notes": "Note",
+            "scheduled_date": "Data programmata"
+        },
+        "monthly_average": "Media mensile",
+        "toast": {
+            "failed_to_create": "Impossibile creare la voce",
+            "failed_to_delete": "Impossibile eliminare la voce",
+            "failed_to_update": "Impossibile aggiornare la voce"
+        },
+        "total_cost": "Costo totale",
+        "total_entries": "Iscrizioni totali"
     },
     "profile": {
         "active": "Attivo",

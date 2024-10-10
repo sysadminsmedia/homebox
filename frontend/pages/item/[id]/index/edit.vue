@@ -65,12 +65,24 @@
       return;
     }
 
+    let purchasePrice = 0;
+    let soldPrice = 0;
+    if (item.value.purchasePrice) {
+      purchasePrice = item.value.purchasePrice;
+    }
+    if (item.value.soldPrice) {
+      soldPrice = item.value.soldPrice;
+    }
+    console.log((item.value.purchasePrice ??= 0));
+    console.log((item.value.soldPrice ??= 0));
     const payload: ItemUpdate = {
       ...item.value,
       locationId: item.value.location?.id,
       labelIds: item.value.labels.map(l => l.id),
       parentId: parent.value ? parent.value.id : null,
       assetId: item.value.assetId,
+      purchasePrice,
+      soldPrice,
     };
 
     const { error } = await api.items.update(itemId.value, payload);

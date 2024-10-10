@@ -49,12 +49,10 @@ type AuthTokensEdges struct {
 // UserOrErr returns the User value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e AuthTokensEdges) UserOrErr() (*User, error) {
-	if e.loadedTypes[0] {
-		if e.User == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: user.Label}
-		}
+	if e.User != nil {
 		return e.User, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: user.Label}
 	}
 	return nil, &NotLoadedError{edge: "user"}
 }
@@ -62,12 +60,10 @@ func (e AuthTokensEdges) UserOrErr() (*User, error) {
 // RolesOrErr returns the Roles value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e AuthTokensEdges) RolesOrErr() (*AuthRoles, error) {
-	if e.loadedTypes[1] {
-		if e.Roles == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: authroles.Label}
-		}
+	if e.Roles != nil {
 		return e.Roles, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: authroles.Label}
 	}
 	return nil, &NotLoadedError{edge: "roles"}
 }

@@ -288,7 +288,7 @@ func (uc *UserCreate) check() error {
 			return &ValidationError{Name: "role", err: fmt.Errorf(`ent: validator failed for field "User.role": %w`, err)}
 		}
 	}
-	if _, ok := uc.mutation.GroupID(); !ok {
+	if len(uc.mutation.GroupIDs()) == 0 {
 		return &ValidationError{Name: "group", err: errors.New(`ent: missing required edge "User.group"`)}
 	}
 	return nil

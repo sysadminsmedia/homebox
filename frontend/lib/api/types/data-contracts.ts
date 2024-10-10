@@ -106,15 +106,13 @@ export interface ItemOut {
   notes: string;
   parent?: ItemSummary | null;
   purchaseFrom: string;
-  /** @example "0" */
-  purchasePrice: string;
+  purchasePrice: number;
   /** Purchase */
   purchaseTime: Date | string;
   quantity: number;
   serialNumber: string;
   soldNotes: string;
-  /** @example "0" */
-  soldPrice: string;
+  soldPrice: number;
   /** Sold */
   soldTime: Date | string;
   soldTo: string;
@@ -145,8 +143,7 @@ export interface ItemSummary {
   /** Edges */
   location?: LocationSummary | null;
   name: string;
-  /** @example "0" */
-  purchasePrice: string;
+  purchasePrice: number;
   quantity: number;
   updatedAt: Date | string;
 }
@@ -159,6 +156,7 @@ export enum ItemType {
 export interface ItemUpdate {
   archived: boolean;
   assetId: string;
+  /** @maxLength 1000 */
   description: string;
   fields: ItemField[];
   id: string;
@@ -170,23 +168,27 @@ export interface ItemUpdate {
   locationId: string;
   manufacturer: string;
   modelNumber: string;
+  /**
+   * @minLength 1
+   * @maxLength 255
+   */
   name: string;
   /** Extras */
   notes: string;
   parentId?: string | null;
+  /** @maxLength 255 */
   purchaseFrom: string;
-  /** @example "0" */
-  purchasePrice: string;
+  purchasePrice?: number | null;
   /** Purchase */
   purchaseTime: Date | string;
   quantity: number;
   /** Identifications */
   serialNumber: string;
   soldNotes: string;
-  /** @example "0" */
-  soldPrice: string;
+  soldPrice?: number | null;
   /** Sold */
   soldTime: Date | string;
+  /** @maxLength 255 */
   soldTo: string;
   warrantyDetails: string;
   warrantyExpires: Date | string;
@@ -323,7 +325,6 @@ export interface NotifierOut {
   isActive: boolean;
   name: string;
   updatedAt: Date | string;
-  /** URL field is not exposed to the client */
   url: string;
   userId: string;
 }
