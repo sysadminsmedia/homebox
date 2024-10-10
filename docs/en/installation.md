@@ -29,6 +29,7 @@ $ docker run -d \
   --restart unless-stopped \
   --publish 3100:7745 \
   --env TZ=Europe/Bucharest \
+  --env HBOX_ALLOW_ANALYTICS=false \
   --volume /path/to/data/folder/:/data \
   ghcr.io/sysadminsmedia/homebox:latest
 # ghcr.io/sysadminsmedia/homebox:latest-rootless
@@ -49,6 +50,7 @@ services:
     - HBOX_LOG_LEVEL=info
     - HBOX_LOG_FORMAT=text
     - HBOX_WEB_MAX_UPLOAD_SIZE=10
+    - HBOX_ALLOW_ANALYTICS=false
     volumes:
       - homebox-data:/data/
     ports:
@@ -65,6 +67,10 @@ If you use the `rootless` image, and instead of using named volumes you would pr
 
 ::: warning
 If you have previously set up docker compose with the `HBOX_WEB_READ_TIMEOUT`, `HBOX_WEB_WRITE_TIMEOUT`, or `HBOX_IDLE_TIMEOUT` options, and you were previously using the hay-kot image, please note that you will have to add an `s` for seconds or `m` for minutes to the end of the integers. A dependency update removed the defaultation to seconds and it now requires an explicit duration time.
+:::
+
+::: info
+Please consider setting the `HBOX_ALLOW_ANALYTICS` environment variable to `true` to help us improve Homebox. It's a strictly opt-in feature, and we do not collect any personal information or sensitive information.
 :::
 
 2. While in the same folder as docker-compose.yml, start the container by running:
