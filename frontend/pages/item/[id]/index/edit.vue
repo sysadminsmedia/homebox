@@ -67,14 +67,20 @@
 
     let purchasePrice = 0;
     let soldPrice = 0;
+    let purchaseTime = null;
     if (item.value.purchasePrice) {
       purchasePrice = item.value.purchasePrice;
     }
     if (item.value.soldPrice) {
       soldPrice = item.value.soldPrice;
     }
+    if (item.value.purchaseTime) {
+      purchaseTime = new Date(item.value.purchaseTime.getTime() - item.value.purchaseTime.getTimezoneOffset() * 60000);
+    }
+
     console.log((item.value.purchasePrice ??= 0));
     console.log((item.value.soldPrice ??= 0));
+
     const payload: ItemUpdate = {
       ...item.value,
       locationId: item.value.location?.id,
@@ -83,6 +89,7 @@
       assetId: item.value.assetId,
       purchasePrice,
       soldPrice,
+      purchaseTime,
     };
 
     const { error } = await api.items.update(itemId.value, payload);
