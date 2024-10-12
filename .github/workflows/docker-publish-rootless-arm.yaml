@@ -73,9 +73,12 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=semver,pattern={{version}}  # Tag based on version
-            type=semver,pattern={{major}}.{{minor}}  # Tag based on major and minor versions
-            type=schedule,pattern=nightly  # Add nightly builds for scheduled builds
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=schedule,pattern=nightly
           flavor: |
             suffix=-rootless-arm,onlatest=true
   
