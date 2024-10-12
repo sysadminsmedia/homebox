@@ -69,9 +69,14 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
+            type=ref,event=branch
+            type=ref,event=pr
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
             type=schedule,pattern=nightly
+          flavor: |
+            suffix=-arm,onlatest=true
 
       # Step 5: Build and push the Docker image
       - name: Build and push Docker image
