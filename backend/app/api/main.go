@@ -78,13 +78,13 @@ func run(cfg *config.Config) error {
 		type analyticsData struct {
 			Domain string                 `json:"domain"`
 			Name   string                 `json:"name"`
-			Url    string                 `json:"url"`
+			URL    string                 `json:"url"`
 			Props  map[string]interface{} `json:"props"`
 		}
 		hostData, _ := host.Info()
 		analytics := analyticsData{
 			Domain: "homebox.software",
-			Url:    "https://homebox.software",
+			URL:    "https://homebox.software",
 			Name:   "stats",
 			Props: map[string]interface{}{
 				"os":               hostData.OS,
@@ -108,7 +108,11 @@ func run(cfg *config.Config) error {
 		client := &http.Client{
 			Timeout: 10 * time.Second,
 		}
-		_, err = client.Do(req)
+		res, err := client.Do(req)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to send analytics request")
+		}
+		err = res.Body.Close()
 		if err != nil {
 			log.Error().Err(err).Msg("failed to send analytics request")
 		}
