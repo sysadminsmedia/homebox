@@ -87,11 +87,13 @@ func run(cfg *config.Config) error {
 			URL:    "https://homebox.software",
 			Name:   "stats",
 			Props: map[string]interface{}{
+				"version":          version + "/" + build(),
 				"os":               hostData.OS,
 				"platform":         hostData.Platform,
 				"platform_family":  hostData.PlatformFamily,
 				"platform_version": hostData.PlatformVersion,
 				"kernel_arch":      hostData.KernelArch,
+				"virt_type":        hostData.VirtualizationSystem,
 			},
 		}
 		jsonBody, err := json.Marshal(analytics)
