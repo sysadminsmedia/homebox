@@ -18,7 +18,13 @@
       <div class="modal-action mb-6">
         <div>
           <label for="photo" class="btn">{{ $t("components.item.create_modal.photo_button") }}</label>
-          <input id="photo" class="hidden" type="file" accept="image/png,image/jpeg,image/gif" @change="previewImage" />
+          <input
+            id="photo"
+            class="hidden"
+            type="file"
+            accept="image/png,image/jpeg,image/gif,image/avif,image/webp"
+            @change="previewImage"
+          />
         </div>
         <div class="grow"></div>
         <div>
@@ -33,7 +39,7 @@
             <label tabindex="0" class="btn rounded-l-none rounded-r-xl">
               <MdiChevronDown class="size-5" name="mdi-chevron-down" />
             </label>
-            <ul tabindex="0" class="dropdown-content menu rounded-box right-0 w-64 bg-base-100 p-2 shadow">
+            <ul tabindex="0" class="dropdown-content menu rounded-box bg-base-100 right-0 w-64 p-2 shadow">
               <li>
                 <button type="button" @click="create(false)">{{ $t("global.create_and_add") }}</button>
               </li>
