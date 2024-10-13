@@ -38,6 +38,9 @@
         "location": {
             "create_modal": {
                 "title": "Maak locatie"
+            },
+            "tree": {
+                "no_locations": "Geen locaties beschikbaar. Voeg een nieuwe locatie toe\n via de `<`span class=\"link-primary\"`>`Creeer`<`/span`> knop op het navigatie menu."
             }
         }
     },

@@ -1,61 +1,33 @@
 {
-    "profile": {
-        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Anmälare",
-        "change_password": "Ändra Lösenord",
-        "current_password": "Nuvarande lösenord",
-        "new_password": "Nytt lösenord",
-        "notifiers_sub": "Få aviseringar om kommande underhållspåminnelser",
-        "url": "URL",
-        "test": "Test",
-        "gen_invite": "Skapa inbjudningslänk",
-        "user_profile": "Användarprofil",
-        "user_profile_sub": "Bjud in användare och hantera ditt konto.",
-        "active": "Aktiv",
-        "inactive": "Inaktiv",
-        "notifiers": "Notiser",
-        "enabled": "Aktiverad",
-        "currency_format": "Valuta format",
-        "delete_account": "Radera konto",
-        "delete_account_sub": "Ta bort ditt konto och alla tillhörande data. Detta kan inte ångras.",
-        "group_settings": "Grupp inställningar",
-        "group_settings_sub": "Inställningar för delad grupp. Du kan behöva uppdatera din webbläsare för att vissa inställningar ska gälla.",
-        "theme_settings": "Temainställningar",
-        "theme_settings_sub": "Temainställningar sparas i din webbläsares lokala lagring. Du kan ändra tema när du vill. Om du\nhar problem att ställa in tema, pröva att ladda om din webbläsare.",
-        "update_group": "Uppdatera grupp"
-    },
-    "index": {
-        "set_name": "Vad heter du?",
-        "joining_group": "Du går med i en befintlig grupp!",
-        "dont_join_group": "Vill du inte gå med i en grupp?",
-        "tagline": "Spåra, organisera och hantera dina saker.",
-        "disabled_registration": "Registrering avaktiverad",
-        "login": "Logga in",
-        "register": "Registrera",
-        "remember_me": "Kom ihåg mig",
-        "set_email": "Vad är din e-post?",
-        "set_password": "Ställ in ditt lösenord"
-    },
     "components": {
         "app": {
             "import_dialog": {
-                "upload": "Ladda upp",
-                "title": "Importera CSV fil",
+                "change_warning": "Beteendet för importer med befintliga import_refs har ändrats. Om en import_ref finns i CSV-filen, \nobjektet kommer att uppdateras med värdena i CSV-filen.",
                 "description": "Importera en CSV-fil som innehåller dina föremål, etiketter och platser. Se dokumentationen för mer information om \nönskat format.",
-                "change_warning": "Beteendet för importer med befintliga import_refs har ändrats. Om en import_ref finns i CSV-filen, \nobjektet kommer att uppdateras med värdena i CSV-filen."
+                "title": "Importera CSV fil",
+                "upload": "Ladda upp"
+            }
+        },
+        "global": {
+            "page_qr_code": {
+                "page_url": "Sidans URL"
+            },
+            "password_score": {
+                "password_strength": "Lösenordsstyrka"
             }
         },
         "item": {
+            "create_modal": {
+                "photo_button": "Foto 📷",
+                "title": "Skapa föremål"
+            },
             "view": {
                 "selectable": {
                     "card": "Kort",
                     "items": "Föremål",
-                    "table": "Tabell",
-                    "no_items": "Inga föremål att visa"
+                    "no_items": "Inga föremål att visa",
+                    "table": "Tabell"
                 }
-            },
-            "create_modal": {
-                "title": "Skapa föremål",
-                "photo_button": "Foto 📷"
             }
         },
         "label": {
@@ -66,38 +38,45 @@
         "location": {
             "create_modal": {
                 "title": "Skapa plats"
-            }
-        },
-        "global": {
-            "password_score": {
-                "password_strength": "Lösenordsstyrka"
             },
-            "page_qr_code": {
-                "page_url": "Sidans URL"
+            "tree": {
+                "no_locations": "Inga platser tillgängliga. Lägg till nya platser via\n `<`span class=\"link-primary\"`>`Skapa`<`/span`>`-knappen i navigationsmenyn."
             }
         }
     },
     "global": {
         "build": "Byggd: { build }",
-        "github": "GitHub Projekt",
-        "join_discord": "Gå med i Discord",
-        "follow_dev": "Följ utvecklaren",
-        "read_docs": "Läs dokumenten",
-        "password": "Lösenord",
-        "email": "Epost",
-        "submit": "Skicka",
         "confirm": "Godkänn",
         "create": "Skapa",
-        "created": "Skapad",
-        "welcome": "Välkommen, { username }",
-        "sign_out": "Logga ut",
         "create_and_add": "Skapa och lägg till en annan",
-        "version": "Version: { version }",
+        "created": "Skapad",
+        "email": "Epost",
+        "follow_dev": "Följ utvecklaren",
+        "github": "GitHub Projekt",
         "items": "Föremål",
+        "join_discord": "Gå med i Discord",
         "labels": "Etiketter",
         "locations": "Platser",
         "name": "Namn",
-        "search": "Sök"
+        "password": "Lösenord",
+        "read_docs": "Läs dokumenten",
+        "search": "Sök",
+        "sign_out": "Logga ut",
+        "submit": "Skicka",
+        "version": "Version: { version }",
+        "welcome": "Välkommen, { username }"
+    },
+    "index": {
+        "disabled_registration": "Registrering avaktiverad",
+        "dont_join_group": "Vill du inte gå med i en grupp?",
+        "joining_group": "Du går med i en befintlig grupp!",
+        "login": "Logga in",
+        "register": "Registrera",
+        "remember_me": "Kom ihåg mig",
+        "set_email": "Vad är din e-post?",
+        "set_name": "Vad heter du?",
+        "set_password": "Ställ in ditt lösenord",
+        "tagline": "Spåra, organisera och hantera dina saker."
     },
     "items": {
         "add": "Lägg till",
@@ -117,12 +96,84 @@
         "prev_page": "Föregående sida",
         "query_id": "Fråga efter tillgångs-ID-nummer: { id }",
         "reset_search": "Återställ sökning",
+        "results": "{ total } Resultat",
         "tip_1": "Platser och etiketter filter använder 'OR' funktionen. Om fler än en är valda, endast en kommer\nkrävas för en träff.",
         "tip_2": "Sökningar med prefixet '#'' kommer att fråga efter ett tillgångs-ID (exempel '#000-001')",
         "tip_3": "Fältfilter använder 'OR' funktion. Om fler än en är valda endast en kommer att bli krävande för en\nträff.",
         "tips": "Tips",
         "tips_sub": "Sök Tips",
-        "updated_at": "Uppdaterad",
-        "results": "{ total } Resultat"
+        "updated_at": "Uppdaterad"
+    },
+    "labels": {
+        "no_results": "Inga etiketter hittades"
+    },
+    "languages": {
+        "ca": "Katalanska",
+        "de": "Tyska",
+        "en": "Engelska",
+        "es": "Spanska",
+        "fr": "Franska",
+        "hu": "Ungerska",
+        "it": "Italienska",
+        "nl": "Nederländska",
+        "pl": "Polska",
+        "pt-BR": "Portugisiska (Brasilien)",
+        "ru": "Ryska",
+        "sl": "Slovenska",
+        "sv": "Svenska",
+        "tr": "Turkiska",
+        "zh-CN": "Kinesiska (förenklad)",
+        "zh-HK": "kinesiska (Hongkong)",
+        "zh-MO": "Kinesiska (Macao)",
+        "zh-TW": "Kinesiska (traditionell)"
+    },
+    "locations": {
+        "no_results": "Inga platser hittades"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Båda",
+            "completed": "Klar",
+            "scheduled": "Schemalagd"
+        },
+        "list": {
+            "complete": "Färdig",
+            "create_first": "Skapa din första post",
+            "delete": "Radera",
+            "duplicate": "Duplicera",
+            "edit": "Redigera",
+            "new": "Ny"
+        },
+        "modal": {
+            "completed_date": "Slutförd datum",
+            "cost": "Kostnad",
+            "delete_confirmation": "Är du säker på att du vill radera denna post?",
+            "edit_action": "Uppdatera",
+            "edit_title": "Redigera"
+        }
+    },
+    "profile": {
+        "active": "Aktiv",
+        "change_password": "Ändra Lösenord",
+        "currency_format": "Valuta format",
+        "current_password": "Nuvarande lösenord",
+        "delete_account": "Radera konto",
+        "delete_account_sub": "Ta bort ditt konto och alla tillhörande data. Detta kan inte ångras.",
+        "enabled": "Aktiverad",
+        "gen_invite": "Skapa inbjudningslänk",
+        "group_settings": "Grupp inställningar",
+        "group_settings_sub": "Inställningar för delad grupp. Du kan behöva uppdatera din webbläsare för att vissa inställningar ska gälla.",
+        "inactive": "Inaktiv",
+        "new_password": "Nytt lösenord",
+        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Anmälare",
+        "notifiers": "Notiser",
+        "notifiers_sub": "Få aviseringar om kommande underhållspåminnelser",
+        "test": "Test",
+        "theme_settings": "Temainställningar",
+        "theme_settings_sub": "Temainställningar sparas i din webbläsares lokala lagring. Du kan ändra tema när du vill. Om du\nhar problem att ställa in tema, pröva att ladda om din webbläsare.",
+        "update_group": "Uppdatera grupp",
+        "url": "URL",
+        "user_profile": "Användarprofil",
+        "user_profile_sub": "Bjud in användare och hantera ditt konto."
     }
 }

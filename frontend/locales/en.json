@@ -137,12 +137,12 @@
             "scheduled": "Scheduled"
         },
         "list": {
+            "complete": "Complete",
             "create_first": "Create Your First Entry",
             "delete": "Delete",
+            "duplicate": "Duplicate",
             "edit": "Edit",
-            "new": "New",
-            "complete": "Complete",
-            "duplicate" : "Duplicate"
+            "new": "New"
         },
         "modal": {
             "completed_date": "Completed Date",
