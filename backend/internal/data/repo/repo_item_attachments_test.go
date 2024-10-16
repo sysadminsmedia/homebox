@@ -133,3 +133,25 @@ func TestAttachmentRepo_Delete(t *testing.T) {
 	_, err = tRepos.Attachments.Get(context.Background(), entity.ID)
 	require.Error(t, err)
 }
+
+func TestAttachmentRepo_EnsureSinglePrimaryAttachment(t *testing.T) {
+	ctx := context.Background()
+	attachments := useAttachments(t, 2)
+
+	setAndVerifyPrimary := func(primaryAttachmentID, nonPrimaryAttachmentID uuid.UUID) {
+		primaryAttachment, err := tRepos.Attachments.Update(ctx, primaryAttachmentID, &ItemAttachmentUpdate{
+			Type:    attachment.TypePhoto.String(),
+			Primary: true,
+		})
+		require.NoError(t, err)
+
+		nonPrimaryAttachment, err := tRepos.Attachments.Get(ctx, nonPrimaryAttachmentID)
+		require.NoError(t, err)
+
+		assert.True(t, primaryAttachment.Primary)
+		assert.False(t, nonPrimaryAttachment.Primary)
+	}
+
+	setAndVerifyPrimary(attachments[0].ID, attachments[1].ID)
+	setAndVerifyPrimary(attachments[1].ID, attachments[0].ID)
+}
