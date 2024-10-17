@@ -142,6 +142,26 @@ func (uu *UserUpdate) ClearActivatedOn() *UserUpdate {
 	return uu
 }
 
+// SetExternalUserID sets the "external_user_id" field.
+func (uu *UserUpdate) SetExternalUserID(s string) *UserUpdate {
+	uu.mutation.SetExternalUserID(s)
+	return uu
+}
+
+// SetNillableExternalUserID sets the "external_user_id" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableExternalUserID(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetExternalUserID(*s)
+	}
+	return uu
+}
+
+// ClearExternalUserID clears the value of the "external_user_id" field.
+func (uu *UserUpdate) ClearExternalUserID() *UserUpdate {
+	uu.mutation.ClearExternalUserID()
+	return uu
+}
+
 // SetGroupID sets the "group" edge to the Group entity by ID.
 func (uu *UserUpdate) SetGroupID(id uuid.UUID) *UserUpdate {
 	uu.mutation.SetGroupID(id)
@@ -338,6 +358,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.ActivatedOnCleared() {
 		_spec.ClearField(user.FieldActivatedOn, field.TypeTime)
+	}
+	if value, ok := uu.mutation.ExternalUserID(); ok {
+		_spec.SetField(user.FieldExternalUserID, field.TypeString, value)
+	}
+	if uu.mutation.ExternalUserIDCleared() {
+		_spec.ClearField(user.FieldExternalUserID, field.TypeString)
 	}
 	if uu.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -588,6 +614,26 @@ func (uuo *UserUpdateOne) ClearActivatedOn() *UserUpdateOne {
 	return uuo
 }
 
+// SetExternalUserID sets the "external_user_id" field.
+func (uuo *UserUpdateOne) SetExternalUserID(s string) *UserUpdateOne {
+	uuo.mutation.SetExternalUserID(s)
+	return uuo
+}
+
+// SetNillableExternalUserID sets the "external_user_id" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableExternalUserID(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetExternalUserID(*s)
+	}
+	return uuo
+}
+
+// ClearExternalUserID clears the value of the "external_user_id" field.
+func (uuo *UserUpdateOne) ClearExternalUserID() *UserUpdateOne {
+	uuo.mutation.ClearExternalUserID()
+	return uuo
+}
+
 // SetGroupID sets the "group" edge to the Group entity by ID.
 func (uuo *UserUpdateOne) SetGroupID(id uuid.UUID) *UserUpdateOne {
 	uuo.mutation.SetGroupID(id)
@@ -814,6 +860,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.ActivatedOnCleared() {
 		_spec.ClearField(user.FieldActivatedOn, field.TypeTime)
+	}
+	if value, ok := uuo.mutation.ExternalUserID(); ok {
+		_spec.SetField(user.FieldExternalUserID, field.TypeString, value)
+	}
+	if uuo.mutation.ExternalUserIDCleared() {
+		_spec.ClearField(user.FieldExternalUserID, field.TypeString)
 	}
 	if uuo.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
