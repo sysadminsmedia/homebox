@@ -419,6 +419,7 @@
             <img
               :src="item.url"
               :style="{
+                minWidth: `${out.card.height * 0.9}in`,
                 width: `${out.card.height * 0.9}in`,
                 height: `${out.card.height * 0.9}in`,
               }"
@@ -427,8 +428,8 @@
           <div class="ml-2 flex flex-col justify-center">
             <div class="font-bold">{{ item.assetID }}</div>
             <div class="text-xs font-light italic">Homebox</div>
-            <div>{{ item.name }}</div>
-            <div>{{ item.location }}</div>
+            <div class="overflow-hidden text-wrap text-xs">{{ item.name }}</div>
+            <div class="text-xs">{{ item.location }}</div>
           </div>
         </div>
       </div>

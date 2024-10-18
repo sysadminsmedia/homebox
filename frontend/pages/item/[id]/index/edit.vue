@@ -8,6 +8,7 @@
   import MdiDelete from "~icons/mdi/delete";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiContentSaveOutline from "~icons/mdi/content-save-outline";
+  import MdiContentCopy from "~icons/mdi/content-copy";
 
   definePageMeta({
     middleware: ["auth"],
@@ -59,6 +60,37 @@
     refresh();
   });
 
+  async function duplicateItem() {
+    const { error, data } = await api.items.create({
+      name: `${item.value.name} Copy`,
+      description: item.value.description,
+      locationId: item.value.location!.id,
+      parentId: item.value.parent?.id,
+      labelIds: item.value.labels.map(l => l.id),
+    });
+
+    if (error) {
+      toast.error("Failed to duplicate item");
+      return;
+    }
+
+    // add extra fields
+    const { error: updateError } = await api.items.update(data.id, {
+      ...item.value,
+      id: data.id,
+      labelIds: data.labels.map(l => l.id),
+      locationId: data.location!.id,
+      name: data.name,
+    });
+
+    if (updateError) {
+      toast.error("Failed to duplicate item");
+      return;
+    }
+
+    navigateTo(`/item/${data.id}`);
+  }
+
   async function saveItem() {
     if (!item.value.location?.id) {
       toast.error("Failed to save item: no location selected");
@@ -67,14 +99,20 @@
 
     let purchasePrice = 0;
     let soldPrice = 0;
+    let purchaseTime = null;
     if (item.value.purchasePrice) {
       purchasePrice = item.value.purchasePrice;
     }
     if (item.value.soldPrice) {
       soldPrice = item.value.soldPrice;
     }
+    if (item.value.purchaseTime) {
+      purchaseTime = new Date(item.value.purchaseTime.getTime() - item.value.purchaseTime.getTimezoneOffset() * 60000);
+    }
+
     console.log((item.value.purchasePrice ??= 0));
     console.log((item.value.soldPrice ??= 0));
+
     const payload: ItemUpdate = {
       ...item.value,
       locationId: item.value.location?.id,
@@ -83,6 +121,7 @@
       assetId: item.value.assetId,
       purchasePrice,
       soldPrice,
+      purchaseTime,
     };
 
     const { error } = await api.items.update(itemId.value, payload);
@@ -470,6 +509,12 @@
             <span class="label-text ml-4"> Advanced </span>
           </label>
         </div>
+        <BaseButton size="sm" class="btn" @click="duplicateItem">
+          <template #icon>
+            <MdiContentCopy />
+          </template>
+          Duplicate
+        </BaseButton>
         <BaseButton size="sm" @click="saveItem">
           <template #icon>
             <MdiContentSaveOutline />

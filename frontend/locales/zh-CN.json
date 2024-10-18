@@ -61,7 +61,7 @@
         "password": "密码",
         "read_docs": "查阅文档",
         "search": "搜索",
-        "sign_out": "注销",
+        "sign_out": "登出",
         "submit": "提交",
         "version": "版本：{version}",
         "welcome": "欢迎，{username}"
@@ -132,7 +132,7 @@
     },
     "maintenance": {
         "filter": {
-            "both": "与",
+            "both": "全部",
             "completed": "已完成",
             "scheduled": "已预定"
         },
@@ -174,7 +174,7 @@
         "tools": "工具"
     },
     "profile": {
-        "active": "活跃",
+        "active": "启用",
         "change_password": "更改密码",
         "currency_format": "货币格式",
         "current_password": "原密码",
@@ -185,7 +185,7 @@
         "gen_invite": "生成邀请链接",
         "group_settings": "组设置",
         "group_settings_sub": "共享组设置。您可能需要刷新浏览器来让某些设置生效。",
-        "inactive": "非活跃",
+        "inactive": "未启用",
         "language": "语言",
         "new_password": "新密码",
         "no_notifiers": "未配置通知程序",
