@@ -185,6 +185,20 @@ func (iu *ItemUpdate) AddAssetID(i int) *ItemUpdate {
 	return iu
 }
 
+// SetSyncChildItemsLocations sets the "sync_child_items_locations" field.
+func (iu *ItemUpdate) SetSyncChildItemsLocations(b bool) *ItemUpdate {
+	iu.mutation.SetSyncChildItemsLocations(b)
+	return iu
+}
+
+// SetNillableSyncChildItemsLocations sets the "sync_child_items_locations" field if the given value is not nil.
+func (iu *ItemUpdate) SetNillableSyncChildItemsLocations(b *bool) *ItemUpdate {
+	if b != nil {
+		iu.SetSyncChildItemsLocations(*b)
+	}
+	return iu
+}
+
 // SetSerialNumber sets the "serial_number" field.
 func (iu *ItemUpdate) SetSerialNumber(s string) *ItemUpdate {
 	iu.mutation.SetSerialNumber(s)
@@ -836,6 +850,9 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := iu.mutation.AddedAssetID(); ok {
 		_spec.AddField(item.FieldAssetID, field.TypeInt, value)
 	}
+	if value, ok := iu.mutation.SyncChildItemsLocations(); ok {
+		_spec.SetField(item.FieldSyncChildItemsLocations, field.TypeBool, value)
+	}
 	if value, ok := iu.mutation.SerialNumber(); ok {
 		_spec.SetField(item.FieldSerialNumber, field.TypeString, value)
 	}
@@ -1390,6 +1407,20 @@ func (iuo *ItemUpdateOne) SetNillableAssetID(i *int) *ItemUpdateOne {
 // AddAssetID adds i to the "asset_id" field.
 func (iuo *ItemUpdateOne) AddAssetID(i int) *ItemUpdateOne {
 	iuo.mutation.AddAssetID(i)
+	return iuo
+}
+
+// SetSyncChildItemsLocations sets the "sync_child_items_locations" field.
+func (iuo *ItemUpdateOne) SetSyncChildItemsLocations(b bool) *ItemUpdateOne {
+	iuo.mutation.SetSyncChildItemsLocations(b)
+	return iuo
+}
+
+// SetNillableSyncChildItemsLocations sets the "sync_child_items_locations" field if the given value is not nil.
+func (iuo *ItemUpdateOne) SetNillableSyncChildItemsLocations(b *bool) *ItemUpdateOne {
+	if b != nil {
+		iuo.SetSyncChildItemsLocations(*b)
+	}
 	return iuo
 }
 
@@ -2073,6 +2104,9 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 	}
 	if value, ok := iuo.mutation.AddedAssetID(); ok {
 		_spec.AddField(item.FieldAssetID, field.TypeInt, value)
+	}
+	if value, ok := iuo.mutation.SyncChildItemsLocations(); ok {
+		_spec.SetField(item.FieldSyncChildItemsLocations, field.TypeBool, value)
 	}
 	if value, ok := iuo.mutation.SerialNumber(); ok {
 		_spec.SetField(item.FieldSerialNumber, field.TypeString, value)
