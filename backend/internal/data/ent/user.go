@@ -37,6 +37,8 @@ type User struct {
 	Role user.Role `json:"role,omitempty"`
 	// ActivatedOn holds the value of the "activated_on" field.
 	ActivatedOn time.Time `json:"activated_on,omitempty"`
+	// ExternalUserID holds the value of the "external_user_id" field.
+	ExternalUserID string `json:"-"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -93,7 +95,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldIsSuperuser, user.FieldSuperuser:
 			values[i] = new(sql.NullBool)
-		case user.FieldName, user.FieldEmail, user.FieldPassword, user.FieldRole:
+		case user.FieldName, user.FieldEmail, user.FieldPassword, user.FieldRole, user.FieldExternalUserID:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldActivatedOn:
 			values[i] = new(sql.NullTime)
@@ -175,6 +177,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field activated_on", values[i])
 			} else if value.Valid {
 				u.ActivatedOn = value.Time
+			}
+		case user.FieldExternalUserID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field external_user_id", values[i])
+			} else if value.Valid {
+				u.ExternalUserID = value.String
 			}
 		case user.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
@@ -259,6 +267,8 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("activated_on=")
 	builder.WriteString(u.ActivatedOn.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("external_user_id=<sensitive>")
 	builder.WriteByte(')')
 	return builder.String()
 }

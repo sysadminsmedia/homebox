@@ -45,6 +45,9 @@ func (User) Fields() []ent.Field {
 			Values("user", "owner"),
 		field.Time("activated_on").
 			Optional(),
+		field.String("external_user_id").
+			Optional().
+			Sensitive(),
 	}
 }
 
