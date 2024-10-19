@@ -45,7 +45,7 @@
             }"
           >
             <template v-if="h.type === 'name'">
-              <NuxtLink class="hover" :to="`/item/${d.id}`">
+              <NuxtLink class="hover text-wrap" :to="`/item/${d.id}`">
                 {{ d.name }}
               </NuxtLink>
             </template>

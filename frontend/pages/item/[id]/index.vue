@@ -472,15 +472,15 @@
             <div>
               <div v-if="fullpath && fullpath.length > 0" class="breadcrumbs py-0 text-sm">
                 <ul class="text-base-content/70">
-                  <li v-for="part in fullpath" :key="part.id">
+                  <li v-for="part in fullpath" :key="part.id" class="text-wrap">
                     <NuxtLink :to="`/${part.type}/${part.id}`"> {{ part.name }}</NuxtLink>
                   </li>
                 </ul>
               </div>
-              <h1 class="pb-1 text-2xl">
+              <h1 class="text-wrap pb-1 text-2xl">
                 {{ item ? item.name : "" }}
               </h1>
-              <div class="flex flex-wrap gap-1 text-xs">
+              <div class="flex flex-wrap gap-1 text-wrap text-xs">
                 <div>
                   Created
                   <DateTime :date="item?.createdAt" />
