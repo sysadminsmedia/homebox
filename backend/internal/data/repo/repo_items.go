@@ -92,12 +92,12 @@ type (
 
 		// Purchase
 		PurchaseTime  types.Date `json:"purchaseTime"`
-		PurchaseFrom  string     `json:"purchaseFrom" validate:"max=255"`
+		PurchaseFrom  string     `json:"purchaseFrom"  validate:"max=255"`
 		PurchasePrice float64    `json:"purchasePrice" extensions:"x-nullable,x-omitempty"`
 
 		// Sold
 		SoldTime  types.Date `json:"soldTime"`
-		SoldTo    string     `json:"soldTo" validate:"max=255"`
+		SoldTo    string     `json:"soldTo"    validate:"max=255"`
 		SoldPrice float64    `json:"soldPrice" extensions:"x-nullable,x-omitempty"`
 		SoldNotes string     `json:"soldNotes"`
 

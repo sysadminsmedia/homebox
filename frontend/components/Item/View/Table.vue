@@ -83,7 +83,7 @@
         </label>
         <ul tabindex="0" class="dropdown-content rounded-box flex w-64 flex-col gap-2 bg-base-100 p-2 pl-3 shadow">
           <li>Headers:</li>
-          <li v-for="(h, i) in headers" class="flex flex-row items-center gap-1">
+          <li v-for="(h, i) in headers" :key="h.value" class="flex flex-row items-center gap-1">
             <button
               class="btn btn-square btn-ghost btn-xs"
               :class="{

@@ -80,7 +80,7 @@
       <StatCard
         v-for="stat in stats"
         :key="stat.id"
-        class="stats border-l-primary block shadow-xl"
+        class="stats block border-l-primary shadow-xl"
         :title="stat.title"
         :value="stat.value"
         :type="stat.type"
@@ -189,7 +189,7 @@
       <div v-if="props.currentItemId" class="hidden first:block">
         <button
           type="button"
-          class="border-base-content relative block w-full rounded-lg border-2 border-dashed p-12 text-center"
+          class="relative block w-full rounded-lg border-2 border-dashed border-base-content p-12 text-center"
           @click="maintenanceEditModal?.openCreateModal(props.currentItemId)"
         >
           <MdiWrenchClock class="inline size-16" />

@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	atlas "ariga.io/atlas/sql/migrate"
@@ -28,6 +29,8 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
 
+	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
 )
 
@@ -80,13 +83,26 @@ func run(cfg *config.Config) error {
 		log.Fatal().Err(err).Msg("failed to create data directory")
 	}
 
-	c, err := ent.Open("sqlite3", cfg.Storage.SqliteURL)
+	// Set up the database URL based on the driver because for some reason a common URL format is not used
+	databaseURL := ""
+	switch strings.ToLower(cfg.Database.Driver) {
+	case "sqlite3":
+		databaseURL = cfg.Database.SqlitePath
+	case "mysql":
+		databaseURL = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", cfg.Database.Username, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port, cfg.Database.Database)
+	case "postgres":
+		databaseURL = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", cfg.Database.Host, cfg.Database.Port, cfg.Database.Username, cfg.Database.Password, cfg.Database.Database, cfg.Database.SslMode)
+	default:
+		log.Fatal().Str("driver", cfg.Database.Driver).Msg("unsupported database driver {driver}")
+	}
+
+	c, err := ent.Open(strings.ToLower(cfg.Database.Driver), databaseURL)
 	if err != nil {
 		log.Fatal().
 			Err(err).
-			Str("driver", "sqlite").
-			Str("url", cfg.Storage.SqliteURL).
-			Msg("failed opening connection to sqlite")
+			Str("driver", strings.ToLower(cfg.Database.Driver)).
+			Str("url", databaseURL).
+			Msg("failed opening connection to {driver} database at {url}")
 	}
 	defer func(c *ent.Client) {
 		err := c.Close()
@@ -117,8 +133,8 @@ func run(cfg *config.Config) error {
 	if err != nil {
 		log.Error().
 			Err(err).
-			Str("driver", "sqlite").
-			Str("url", cfg.Storage.SqliteURL).
+			Str("driver", cfg.Database.Driver).
+			Str("url", databaseURL).
 			Msg("failed creating schema resources")
 		return err
 	}

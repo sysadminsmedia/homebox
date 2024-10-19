@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="col-span-4 flex grow flex-col gap-y-1 rounded-b bg-base-100 p-4 pt-2">
-      <h2 class="line-clamp-2 text-ellipsis text-lg font-bold text-wrap">{{ item.name }}</h2>
+      <h2 class="line-clamp-2 text-ellipsis text-wrap text-lg font-bold">{{ item.name }}</h2>
       <div class="divider my-0"></div>
       <div class="flex gap-2">
         <div v-if="item.insured" class="tooltip z-10" data-tip="Insured">

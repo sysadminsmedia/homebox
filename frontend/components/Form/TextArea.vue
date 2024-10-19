@@ -64,10 +64,12 @@
     maxLength: {
       type: Number,
       required: false,
+      default: 0,
     },
     minLength: {
       type: Number,
       required: false,
+      default: Number.MAX_VALUE,
     },
   });
 
@@ -84,7 +86,7 @@
   });
 
   const value = useVModel(props, "modelValue", emit);
-  const valueLen = computed(() => {
+  computed(() => {
     return value.value ? value.value.length : 0;
   });
 </script>
