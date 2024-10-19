@@ -2,8 +2,8 @@
     "components": {
         "app": {
             "import_dialog": {
-                "change_warning": "Le comportement lors d’importations avec des import_ref existants a changé. Si une valeur pour import_ref est présente dans le fichier CSV, alors l’élément sera mis à jour avec celle-ci.",
-                "description": "Importer un fichier CSV contenant vos articles, étiquettes, et emplacements. Voir la documentation pour plus d’informations sur le format requis.",
+                "change_warning": "Le comportement lors d’importations avec des import_ref existants a changé. Si une valeur pour import_ref est présente dans le \nfichier CSV, alors l’élément sera mis à jour avec celle-ci.",
+                "description": "Importer un fichier CSV contenant vos articles, étiquettes, et emplacements. Voir la documentation pour plus d’informations \nsur le format requis.",
                 "title": "Importer un fichier CSV",
                 "upload": "Téléverser"
             }
@@ -40,7 +40,7 @@
                 "title": "Créer un emplacement"
             },
             "tree": {
-                "no_locations": "Aucun emplacement disponible. Ajoutez votre premiers emplacements avec le bouton `<`span class=\"link-primary\"`>`Créer`<`/span`>` dans la barre de navigation."
+                "no_locations": "Aucun emplacement disponible. Ajoutez votre premiers emplacements avec\nle bouton `<`span class=\"link-primary\"`>`Créer`<`/span`>` dans la barre de navigation."
             }
         }
     },
@@ -61,7 +61,7 @@
         "password": "Mot de passe",
         "read_docs": "Lire la documentation",
         "search": "Rechercher",
-        "sign_out": "Déconnexion",
+        "sign_out": "Se déconnecter",
         "submit": "Soumettre",
         "version": "Version : { version }",
         "welcome": "Bienvenue, { username }"
@@ -142,15 +142,15 @@
             "delete": "Supprimer",
             "duplicate": "Dupliquer",
             "edit": "Modifier",
-            "new": "Ajouter"
+            "new": "Nouveau"
         },
         "modal": {
             "completed_date": "Date d'achèvement",
             "cost": "Coût",
             "delete_confirmation": "Êtes-vous certain de vouloir supprimer cette entrée ?",
-            "edit_action": "Modifier",
+            "edit_action": "Mettre à jour",
             "edit_title": "Modifier l'entrée",
-            "entry_name": "Nom",
+            "entry_name": "Nom de l’entrée",
             "new_action": "Créer",
             "new_title": "Nouvelle entrée",
             "notes": "Notes",
@@ -191,7 +191,7 @@
         "no_notifiers": "Aucune notification configurée",
         "notifier_modal": "Notifications { type, select, true {Edit} false {Create} other {Other}}",
         "notifiers": "Notifications",
-        "notifiers_sub": "Recevez des notifications pour vous prévenir des prochaines maintenances.",
+        "notifiers_sub": "Recevez des notifications pour vous prévenir des prochaines maintenances",
         "test": "Test",
         "theme_settings": "Paramètres du thème",
         "theme_settings_sub": "Les paramètres du thème sont stockés dans le navigateur. Vous pouvez les changer à tout moment. Si vous\nrencontrez des problèmes, il est conseillé de rafraichir la page.",
@@ -214,7 +214,8 @@
             "set_primary_photo_button": "Définir la photo principale",
             "set_primary_photo_sub": "Dans la version v0.10.0 d'Homebox, le champ d'image principal à été ajouté aux pièces jointes de type photo. Cette action définira en tant qu'image principale toute première image en pièce jointe déjà présente en base de donnée, si le champ n'est pas déjà défini. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Voir GitHub PR #576'</a>'",
             "zero_datetimes": "Remettre à zéro les dates et heures",
-            "zero_datetimes_button": "Remettre à zéro les dates et heures"
+            "zero_datetimes_button": "Remettre à zéro les dates et heures",
+            "zero_datetimes_sub": "Réinitialise la valeur de tous les champs date/heure de votre inventaire à la date de début. Il s'agit de corriger une anomalie introduite au début du développement du site qui entraînait le stockage de la valeur temporelle avec l'heure, ce qui provoquait des problèmes avec les champs de date affichant des valeurs précises. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Voir le rapport 236 de Github pour plus de détails.'</a> '"
         },
         "actions_sub": "Appliquer des actions en masse à votre inventaire. Ces actions sont irréversibles. '<b>'Soyez vigilant.'</b>'",
         "import_export": "Importer/Exporter",
@@ -224,13 +225,13 @@
             "export_sub": "Exporte l'inventaire au format CSV Homebox. Cela exportera l'intégralité de votre inventaire.",
             "import": "Importer l'inventaire",
             "import_button": "Importer l'inventaire",
-            "import_sub": "Importer un fichier CSV au format Homebox. Sans la colonne '<code>'HB.import_ref'</code>' , cela '<b>'n'écrasera pas'</b>' d'éléments de votre inventaire actuel, seuls les nouveaux éléments seront importés. Les lignes contenant une colonne '<code>'HB.import_ref'</code>' seront fusionnées avec les éléments existants comportant le même '<code>'HB.import_ref'</code>', si existant."
+            "import_sub": "Importer un fichier CSV au format Homebox. Sans la colonne '<code>'HB.import_ref'</code>' , cela '<b>'n'écrasera pas'</b>' d'éléments de votre inventaire actuel, seuls les nouveaux éléments seront importés. Les lignes contenant une colonne '<code>'HB.import_ref'</code>' seront fusionnées avec les éléments existants comportant le même import_ref, si existant."
         },
-        "import_export_sub": "Importez et exportez votre inventaire vers et depuis un fichier CSV",
+        "import_export_sub": "Importez et exportez votre inventaire vers et depuis un fichier CSV. Ceci est utile pour migrer votre inventaire vers une nouvelle instance de Homebox.",
         "reports": "Rapports",
         "reports_set": {
             "asset_labels": "Étiquettes d’identifiant d’actif",
-            "asset_labels_button": "Générateur d’étiquettes",
+            "asset_labels_button": "Générateur d'étiquettes",
             "asset_labels_sub": "Génère un fichier PDF imprimable pour une plage d'identifiants d'actifs. Ils ne sont pas spécifiques à votre inventaire donc vous pouvez les imprimer en avance et les appliquer à votre inventaire par la suite.",
             "bill_of_materials": "Nomenclature",
             "bill_of_materials_button": "Générer une nomenclature",
