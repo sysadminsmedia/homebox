@@ -85,7 +85,7 @@ func run(cfg *config.Config) error {
 	// Set up the database URL based on the driver because for some reason a common URL format is not used
 	databaseURL := ""
 	switch {
-	case cfg.Database.Driver == "sqlite":
+	case cfg.Database.Driver == "sqlite3":
 		databaseURL = cfg.Database.SqlitePath
 	case cfg.Database.Driver == "mysql":
 		databaseURL = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", cfg.Database.Username, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port, cfg.Database.Database)
