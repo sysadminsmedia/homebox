@@ -111,11 +111,11 @@ func NewControllerV1(svc *services.AllServices, repos *repo.AllRepos, bus *event
 
 // HandleBase godoc
 //
-//	@Summary Application Info
-//	@Tags    Base
-//	@Produce json
-//	@Success 200 {object} APISummary
-//	@Router  /v1/status [GET]
+//	@Summary	Application Info
+//	@Tags		Base
+//	@Produce	json
+//	@Success	200	{object}	APISummary
+//	@Router		/v1/status [GET]
 func (ctrl *V1Controller) HandleBase(ready ReadyFunc, build Build) errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		return server.JSON(w, http.StatusOK, APISummary{
@@ -131,11 +131,11 @@ func (ctrl *V1Controller) HandleBase(ready ReadyFunc, build Build) errchain.Hand
 
 // HandleCurrency godoc
 //
-// @Summary Currency
-// @Tags    Base
-// @Produce json
-// @Success 200 {object} currencies.Currency
-// @Router  /v1/currency [GET]
+//	@Summary	Currency
+//	@Tags		Base
+//	@Produce	json
+//	@Success	200	{object}	currencies.Currency
+//	@Router		/v1/currency [GET]
 func (ctrl *V1Controller) HandleCurrency() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		// Set Cache for 10 Minutes
