@@ -666,6 +666,8 @@ definitions:
         $ref: '#/definitions/v1.Build'
       demo:
         type: boolean
+      headerAuthEnabled:
+        type: boolean
       health:
         type: boolean
       message:
