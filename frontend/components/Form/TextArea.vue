@@ -86,7 +86,7 @@
   });
 
   const value = useVModel(props, "modelValue", emit);
-  const valueLen = computed(() => {
+  computed(() => {
     return value.value ? value.value.length : 0;
   });
 </script>
