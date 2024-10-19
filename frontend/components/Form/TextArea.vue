@@ -64,10 +64,12 @@
     maxLength: {
       type: Number,
       required: false,
+      default: 0,
     },
     minLength: {
       type: Number,
       required: false,
+      default: Number.MAX_VALUE,
     },
   });
 
