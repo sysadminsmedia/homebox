@@ -303,7 +303,7 @@
     if (preferences.value.showEmpty) {
       return true;
     }
-    return item.value?.purchaseFrom || item.value?.purchasePrice !== "0";
+    return item.value?.purchaseFrom || item.value?.purchasePrice !== 0;
   });
 
   const purchaseDetails = computed<Details>(() => {
@@ -336,7 +336,7 @@
     if (preferences.value.showEmpty) {
       return true;
     }
-    return item.value?.soldTo || item.value?.soldPrice !== "0";
+    return item.value?.soldTo || item.value?.soldPrice !== 0;
   });
 
   const soldDetails = computed<Details>(() => {
