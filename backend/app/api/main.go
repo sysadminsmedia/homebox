@@ -28,6 +28,8 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
 
+	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
 )
 
@@ -80,13 +82,25 @@ func run(cfg *config.Config) error {
 		log.Fatal().Err(err).Msg("failed to create data directory")
 	}
 
-	c, err := ent.Open("sqlite3", cfg.Storage.SqliteURL)
+	// Set up the database URL based on the driver because for some reason a common URL format is not used
+	databaseUrl := ""
+	if cfg.Database.Driver == "sqlite" {
+		databaseUrl = cfg.Storage.SqliteURL
+	} else if cfg.Database.Driver == "mysql" {
+		databaseUrl = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", cfg.Database.Username, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port, cfg.Database.Database)
+	} else if cfg.Database.Driver == "postgres" {
+		databaseUrl = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", cfg.Database.Host, cfg.Database.Port, cfg.Database.Username, cfg.Database.Password, cfg.Database.Database, cfg.Database.SslMode)
+	} else {
+		log.Fatal().Str("driver", cfg.Database.Driver).Msg("unsupported database driver {driver}")
+	}
+
+	c, err := ent.Open(cfg.Database.Driver, databaseUrl)
 	if err != nil {
 		log.Fatal().
 			Err(err).
-			Str("driver", "sqlite").
+			Str("driver", cfg.Database.Driver).
 			Str("url", cfg.Storage.SqliteURL).
-			Msg("failed opening connection to sqlite")
+			Msg("failed opening connection to {driver} database at {url}")
 	}
 	defer func(c *ent.Client) {
 		err := c.Close()
@@ -117,8 +131,8 @@ func run(cfg *config.Config) error {
 	if err != nil {
 		log.Error().
 			Err(err).
-			Str("driver", "sqlite").
-			Str("url", cfg.Storage.SqliteURL).
+			Str("driver", cfg.Database.Driver).
+			Str("url", databaseUrl).
 			Msg("failed creating schema resources")
 		return err
 	}
