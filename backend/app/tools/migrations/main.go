@@ -6,6 +6,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/migrate"
 
@@ -24,8 +25,8 @@ func main() {
 		panic(err)
 	}
 	sqlDialect := ""
-	switch cfg.Database.Driver {
-	case "sqlite":
+	switch strings.ToLower(cfg.Database.Driver) {
+	case "sqlite3":
 		sqlDialect = dialect.SQLite
 	case "mysql":
 		sqlDialect = dialect.MySQL

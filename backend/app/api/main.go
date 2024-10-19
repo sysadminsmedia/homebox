@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	atlas "ariga.io/atlas/sql/migrate"
@@ -84,22 +85,22 @@ func run(cfg *config.Config) error {
 
 	// Set up the database URL based on the driver because for some reason a common URL format is not used
 	databaseURL := ""
-	switch {
-	case cfg.Database.Driver == "sqlite3":
+	switch strings.ToLower(cfg.Database.Driver) {
+	case "sqlite3":
 		databaseURL = cfg.Database.SqlitePath
-	case cfg.Database.Driver == "mysql":
+	case "mysql":
 		databaseURL = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", cfg.Database.Username, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port, cfg.Database.Database)
-	case cfg.Database.Driver == "postgres":
+	case "postgres":
 		databaseURL = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", cfg.Database.Host, cfg.Database.Port, cfg.Database.Username, cfg.Database.Password, cfg.Database.Database, cfg.Database.SslMode)
 	default:
 		log.Fatal().Str("driver", cfg.Database.Driver).Msg("unsupported database driver {driver}")
 	}
 
-	c, err := ent.Open(cfg.Database.Driver, databaseURL)
+	c, err := ent.Open(strings.ToLower(cfg.Database.Driver), databaseURL)
 	if err != nil {
 		log.Fatal().
 			Err(err).
-			Str("driver", cfg.Database.Driver).
+			Str("driver", strings.ToLower(cfg.Database.Driver)).
 			Str("url", databaseURL).
 			Msg("failed opening connection to {driver} database at {url}")
 	}
