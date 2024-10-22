@@ -62,9 +62,9 @@
                     {{ $t("global.create") }}
                   </label>
                   <ul tabindex="0" class="dropdown-content menu rounded-box bg-base-100 w-full p-2 shadow">
-                    <li v-for="btn in dropdown" :key="btn.name">
+                    <li v-for="btn in dropdown" :key="btn.id">
                       <button @click="btn.action">
-                        {{ btn.name }}
+                        {{ btn.name.value }}
                       </button>
                     </li>
                   </ul>
@@ -81,7 +81,7 @@
                     }"
                   >
                     <component :is="n.icon" class="mr-4 size-6" />
-                    {{ n.name }}
+                    {{ n.name.value }}
                   </NuxtLink>
                 </li>
               </ul>
@@ -135,19 +135,22 @@
 
   const dropdown = [
     {
-      name: "Item / Asset",
+      id: 0,
+      name: computed(() => t("menu.create_item")),
       action: () => {
         modals.item = true;
       },
     },
     {
-      name: "Location",
+      id: 1,
+      name: computed(() => t("menu.create_location")),
       action: () => {
         modals.location = true;
       },
     },
     {
-      name: "Label",
+      id: 2,
+      name: computed(() => t("menu.create_label")),
       action: () => {
         modals.label = true;
       },
@@ -168,42 +171,42 @@
       icon: MdiHome,
       active: computed(() => route.path === "/home"),
       id: 0,
-      name: t("menu.home"),
+      name: computed(() => t("menu.home")),
       to: "/home",
     },
     {
       icon: MdiFileTree,
       id: 1,
       active: computed(() => route.path === "/locations"),
-      name: t("menu.locations"),
+      name: computed(() => t("menu.locations")),
       to: "/locations",
     },
     {
       icon: MdiMagnify,
       id: 2,
       active: computed(() => route.path === "/items"),
-      name: t("menu.search"),
+      name: computed(() => t("menu.search")),
       to: "/items",
     },
     {
       icon: MdiWrench,
       id: 3,
       active: computed(() => route.path === "/maintenance"),
-      name: t("menu.maintenance"),
+      name: computed(() => t("menu.maintenance")),
       to: "/maintenance",
     },
     {
       icon: MdiAccount,
       id: 4,
       active: computed(() => route.path === "/profile"),
-      name: t("menu.profile"),
+      name: computed(() => t("menu.profile")),
       to: "/profile",
     },
     {
       icon: MdiCog,
       id: 5,
       active: computed(() => route.path === "/tools"),
-      name: t("menu.tools"),
+      name: computed(() => t("menu.tools")),
       to: "/tools",
     },
   ];
