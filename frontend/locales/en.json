@@ -14,6 +14,30 @@
             },
             "password_score": {
                 "password_strength": "Password Strength"
+            },
+            "date_time": {
+                "just-now": "just now",
+                "ago": "{0} ago",
+                "in": "in {0}",
+                "last-month": "last month",
+                "next-month": "next month",
+                "months": "months",
+                "last-year": "last year",
+                "next-year": "next year",
+                "years": "years",
+                "yesterday": "yesterday",
+                "tomorrow": "tomorrow",
+                "days": "days",
+                "last-week": "last week",
+                "next-week": "next week",
+                "week": "week",
+                "weeks": "weeks",
+                "hour": "hour",
+                "hours": "hours",
+                "minute": "minute",
+                "minutes": "minutes",
+                "second": "second",
+                "seconds": "seconds"
             }
         },
         "item": {
@@ -171,7 +195,8 @@
         "manual": "Manual",
         "photo": "Photo",
         "receipt": "Receipt",
-        "attachment": "Attachment"
+        "attachment": "Attachment",
+        "description": "Description"
     },
     "labels": {
         "no_results": "No Labels Found",
