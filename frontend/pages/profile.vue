@@ -381,7 +381,7 @@ import { useI18n } from "vue-i18n";
           <select v-model="$i18n.locale" @change="(event) => {setLanguage((event.target as HTMLSelectElement).value )}"
             class="select select-bordered">
             <option v-for="lang in $i18n.availableLocales" :key="lang" :value="lang">
-              {{ $t(`languages.${lang}`) }}
+              {{ $t(`languages.${lang}`) }} ({{ $t(`languages.${lang}`, 1, { locale: lang }) }})
             </option>
           </select>
         </div>
