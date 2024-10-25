@@ -8,7 +8,6 @@
   import MdiFill from "~icons/mdi/fill";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiAccountMultiple from "~icons/mdi/account-multiple";
-import { useI18n } from "vue-i18n";
 
   definePageMeta({
     middleware: ["auth"],
@@ -20,7 +19,6 @@ import { useI18n } from "vue-i18n";
   const api = useUserApi();
   const confirm = useConfirm();
   const notify = useNotifier();
-  const { t } = useI18n();
 
   const currencies = computedAsync(async () => {
     const resp = await api.group.currencies();
@@ -378,8 +376,15 @@ import { useI18n } from "vue-i18n";
           <label class="label">
             <span class="label-text">{{ $t("profile.language") }}</span>
           </label>
-          <select v-model="$i18n.locale" @change="(event) => {setLanguage((event.target as HTMLSelectElement).value )}"
-            class="select select-bordered">
+          <select
+            v-model="$i18n.locale"
+            class="select select-bordered"
+            @change="
+              event => {
+                setLanguage((event.target as HTMLSelectElement).value);
+              }
+            "
+          >
             <option v-for="lang in $i18n.availableLocales" :key="lang" :value="lang">
               {{ $t(`languages.${lang}`) }} ({{ $t(`languages.${lang}`, 1, { locale: lang }) }})
             </option>
@@ -447,7 +452,7 @@ import { useI18n } from "vue-i18n";
 
         <div v-if="group && currencies && currencies.length > 0" class="p-5 pt-0">
           <FormSelect v-model="currency" :label="$t('profile.currency_format')" :items="currencies" />
-          <p class="m-2 text-sm">{{$t("profile.example")}}: {{ currencyExample }}</p>
+          <p class="m-2 text-sm">{{ $t("profile.example") }}: {{ currencyExample }}</p>
 
           <div class="mt-4">
             <BaseButton size="sm" @click="updateGroup"> {{ $t("profile.update_group") }} </BaseButton>

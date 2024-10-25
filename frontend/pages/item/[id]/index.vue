@@ -234,7 +234,7 @@
       details.push({
         name,
         text: "",
-        slot: slot,
+        slot,
       });
     };
 
@@ -623,14 +623,5 @@
   /* Style dialog background */
   dialog::backdrop {
     background: rgba(0, 0, 0, 0.5);
-  }
-
-  .scroll-bg::-webkit-scrollbar {
-    width: 0.5rem;
-  }
-
-  .scroll-bg::-webkit-scrollbar-thumb {
-    border-radius: 0.25rem;
-    @apply bg-base-300;
   }
 </style>

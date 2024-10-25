@@ -611,7 +611,7 @@
             </div>
           </div>
           <div class="mt-4 flex justify-end px-5 pb-4">
-            <BaseButton size="sm" @click="addField"> {{$t("global.add")}} </BaseButton>
+            <BaseButton size="sm" @click="addField"> {{ $t("global.add") }} </BaseButton>
           </div>
         </BaseCard>
 
@@ -621,7 +621,7 @@
           class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg"
         >
           <div class="px-4 py-5 sm:px-6">
-            <h3 class="text-lg font-medium leading-6"> {{ $t("items.attachments") }} </h3>
+            <h3 class="text-lg font-medium leading-6">{{ $t("items.attachments") }}</h3>
             <p class="text-xs">{{ $t("items.changes_persisted_immediately") }}</p>
           </div>
           <div class="border-t border-gray-300 p-4">

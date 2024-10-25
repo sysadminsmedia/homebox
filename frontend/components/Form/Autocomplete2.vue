@@ -156,7 +156,7 @@
 
     const matches = index.value.search("*" + search.value + "*");
 
-    let resultIDs = []
+    const resultIDs = [];
     for (let i = 0; i < matches.length; i++) {
       const match = matches[i];
       const item = props.items[parseInt(match.ref)];
@@ -170,9 +170,11 @@
      * Resolve the issue of language not being supported
      */
     for (let i = 0; i < props.items.length; i++) {
-      const item = props.items[i]
-      if(resultIDs.find(item_ => item_ === item.id) != undefined){continue}
-      if(item.treeString.indexOf(search.value) > -1){
+      const item = props.items[i];
+      if (resultIDs.find(item_ => item_ === item.id) !== undefined) {
+        continue;
+      }
+      if (item.treeString.includes(search.value)) {
         const display = extractDisplay(item);
         list.push({ id: i, display, value: item });
       }

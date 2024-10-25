@@ -111,8 +111,18 @@
     <BaseModal v-model="updateModal">
       <template #title> {{ $t("locations.update_location") }} </template>
       <form v-if="location" @submit.prevent="update">
-        <FormTextField v-model="updateData.name" :autofocus="true" :label="$t('components.location.create_modal.location_name')" :max-length="255" :min-length="1" />
-        <FormTextArea v-model="updateData.description" :label="$t('components.location.create_modal.location_description')" :max-length="1000" />
+        <FormTextField
+          v-model="updateData.name"
+          :autofocus="true"
+          :label="$t('components.location.create_modal.location_name')"
+          :max-length="255"
+          :min-length="1"
+        />
+        <FormTextArea
+          v-model="updateData.description"
+          :label="$t('components.location.create_modal.location_description')"
+          :max-length="1000"
+        />
         <LocationSelector v-model="parent" />
         <div class="modal-action">
           <BaseButton type="submit" :loading="updating"> {{ $t("global.update") }} </BaseButton>

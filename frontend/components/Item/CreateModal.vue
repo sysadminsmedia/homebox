@@ -12,7 +12,11 @@
         :max-length="255"
         :min-length="1"
       />
-      <FormTextArea v-model="form.description" :label="$t('components.item.create_modal.item_description')" :max-length="1000" />
+      <FormTextArea
+        v-model="form.description"
+        :label="$t('components.item.create_modal.item_description')"
+        :max-length="1000"
+      />
       <FormMultiselect v-model="form.labels" :label="$t('global.labels')" :items="labels ?? []" />
 
       <div class="modal-action mb-6">
@@ -39,7 +43,7 @@
             <label tabindex="0" class="btn rounded-l-none rounded-r-xl">
               <MdiChevronDown class="size-5" name="mdi-chevron-down" />
             </label>
-            <ul tabindex="0" class="dropdown-content menu rounded-box bg-base-100 right-0 w-64 p-2 shadow">
+            <ul tabindex="0" class="dropdown-content menu rounded-box right-0 w-64 bg-base-100 p-2 shadow">
               <li>
                 <button type="button" @click="create(false)">{{ $t("global.create_and_add") }}</button>
               </li>
