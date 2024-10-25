@@ -190,7 +190,7 @@
       </section>
 
       <section v-if="location && location.children.length > 0" class="mt-6">
-        <BaseSectionHeader class="mb-5"> {{ t("locations.child_locations") }} </BaseSectionHeader>
+        <BaseSectionHeader class="mb-5"> {{ $t("locations.child_locations") }} </BaseSectionHeader>
         <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
           <LocationCard v-for="item in location.children" :key="item.id" :location="item" />
         </div>
