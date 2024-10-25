@@ -18,7 +18,7 @@
               }"
             >
               <template v-if="typeof h === 'string'">{{ h }}</template>
-              <template v-else>{{ h.text }}</template>
+              <template v-else>{{ $t(h.text) }}</template>
               <div
                 v-if="sortByProperty === h.value"
                 :class="`inline-flex ${sortByProperty === h.value ? '' : 'opacity-0'}`"
@@ -109,11 +109,11 @@
               :checked="h.enabled"
               @change="toggleHeader(h.value)"
             />
-            <label class="label-text" :for="h.value"> {{ h.text }} </label>
+            <label class="label-text" :for="h.value"> {{ $t(h.text) }} </label>
           </li>
         </ul>
       </div>
-      <div class="hidden md:block">Rows per page</div>
+      <div class="hidden md:block">{{ $t("components.item.view.table.rows_per_page") }}</div>
       <select v-model.number="pagination.rowsPerPage" class="select select-primary select-sm">
         <option :value="10">10</option>
         <option :value="25">25</option>
@@ -122,7 +122,7 @@
       </select>
       <div class="btn-group">
         <button :disabled="!hasPrev" class="btn btn-sm" @click="prev()">«</button>
-        <button class="btn btn-sm">Page {{ pagination.page }}</button>
+        <button class="btn btn-sm">{{ $t("components.item.view.table.page") }} {{ pagination.page }}</button>
         <button :disabled="!hasNext" class="btn btn-sm" @click="next()">»</button>
       </div>
     </div>
@@ -149,20 +149,29 @@
   const preferences = useViewPreferences();
 
   const defaultHeaders = [
-    { text: "Name", value: "name", enabled: true, type: "name" },
-    { text: "Quantity", value: "quantity", align: "center", enabled: true },
-    { text: "Insured", value: "insured", align: "center", enabled: true, type: "boolean" },
-    { text: "Price", value: "purchasePrice", align: "center", enabled: true, type: "price" },
-    { text: "Location", value: "location", align: "center", enabled: false, type: "location" },
-    { text: "Archived", value: "archived", align: "center", enabled: false, type: "boolean" },
-    { text: "Created At", value: "createdAt", align: "center", enabled: false, type: "date" },
-    { text: "Updated At", value: "updatedAt", align: "center", enabled: false, type: "date" },
+    {
+      text: "items.name", value: "name", enabled: true, type: "name"
+    },
+    { text: "items.quantity", value: "quantity", align: "center", enabled: true },
+    { text: "items.insured", value: "insured", align: "center", enabled: true, type: "boolean" },
+    { text: "items.purchase_price", value: "purchasePrice", align: "center", enabled: true, type: "price" },
+    { text: "items.location", value: "location", align: "center", enabled: false, type: "location" },
+    { text: "items.archived", value: "archived", align: "center", enabled: false, type: "boolean" },
+    { text: "items.created_at", value: "createdAt", align: "center", enabled: false, type: "date" },
+    { text: "items.updated_at", value: "updatedAt", align: "center", enabled: false, type: "date" },
   ] satisfies TableHeader[];
 
   const headers = ref<TableHeader[]>(
     (preferences.value.tableHeaders ?? []).concat(
       defaultHeaders.filter(h => !preferences.value.tableHeaders?.find(h2 => h2.value === h.value))
     )
+    // this is a hack to make sure that any changes to the defaultHeaders are reflected in the preferences
+      .map(h => (
+        {
+          ...defaultHeaders.find(h2 => h2.value === h.value) as TableHeader,
+          enabled: h.enabled
+        }
+      ))
   );
 
   console.log(headers.value);

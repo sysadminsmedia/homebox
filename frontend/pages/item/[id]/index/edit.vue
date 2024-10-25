@@ -182,59 +182,59 @@
   const mainFields: FormField[] = [
     {
       type: "text",
-      label: "Name",
+      label: "items.name",
       ref: "name",
       maxLength: 255,
       minLength: 1,
     },
     {
       type: "number",
-      label: "Quantity",
+      label: "items.quantity",
       ref: "quantity",
     },
     {
       type: "textarea",
-      label: "Description",
+      label: "items.description",
       ref: "description",
       maxLength: 1000,
     },
     {
       type: "text",
-      label: "Serial Number",
+      label: "items.serial_number",
       ref: "serialNumber",
       maxLength: 255,
     },
     {
       type: "text",
-      label: "Model Number",
+      label: "items.model_number",
       ref: "modelNumber",
       maxLength: 255,
     },
     {
       type: "text",
-      label: "Manufacturer",
+      label: "items.manufacturer",
       ref: "manufacturer",
       maxLength: 255,
     },
     {
       type: "textarea",
-      label: "Notes",
+      label: "items.notes",
       ref: "notes",
       maxLength: 1000,
     },
     {
       type: "checkbox",
-      label: "Insured",
+      label: "items.insured",
       ref: "insured",
     },
     {
       type: "checkbox",
-      label: "Archived",
+      label: "items.archived",
       ref: "archived",
     },
     {
       type: "text",
-      label: "Asset ID",
+      label: "items.asset_id",
       ref: "assetId",
     },
   ];
@@ -242,18 +242,18 @@
   const purchaseFields: FormField[] = [
     {
       type: "text",
-      label: "Purchased From",
+      label: "items.purchased_from",
       ref: "purchaseFrom",
       maxLength: 255,
     },
     {
       type: "number",
-      label: "Purchase Price",
+      label: "items.purchase_price",
       ref: "purchasePrice",
     },
     {
       type: "date",
-      label: "Purchase Date",
+      label: "items.purchase_date",
       // @ts-expect-error - we know this is a date
       ref: "purchaseTime",
     },
@@ -262,18 +262,18 @@
   const warrantyFields: FormField[] = [
     {
       type: "checkbox",
-      label: "Lifetime Warranty",
+      label: "items.lifetime_warranty",
       ref: "lifetimeWarranty",
     },
     {
       type: "date",
-      label: "Warranty Expires",
+      label: "items.warranty_expires",
       // @ts-expect-error - we know this is a date
       ref: "warrantyExpires",
     },
     {
       type: "textarea",
-      label: "Warranty Notes",
+      label: "items.warranty_details",
       ref: "warrantyDetails",
       maxLength: 1000,
     },
@@ -282,18 +282,18 @@
   const soldFields: FormField[] = [
     {
       type: "text",
-      label: "Sold To",
+      label: "items.sold_to",
       ref: "soldTo",
       maxLength: 255,
     },
     {
       type: "number",
-      label: "Sold Price",
+      label: "items.sold_price",
       ref: "soldPrice",
     },
     {
       type: "date",
-      label: "Sold At",
+      label: "items.sold_at",
       // @ts-expect-error - we know this is a date
       ref: "soldTime",
     },
@@ -503,45 +503,45 @@
 
     <section class="relative">
       <div class="sticky top-1 z-10 my-4 flex items-center justify-end gap-2">
-        <div class="tooltip tooltip-right mr-auto" data-tip="Show Advanced View Options">
+        <div class="tooltip tooltip-right mr-auto" :data-tip="$t('items.show_advanced_view_options')">
           <label class="label mr-auto cursor-pointer">
             <input v-model="preferences.editorAdvancedView" type="checkbox" class="toggle toggle-primary" />
-            <span class="label-text ml-4"> Advanced </span>
+            <span class="label-text ml-4"> {{ $t("items.advanced") }} </span>
           </label>
         </div>
         <BaseButton size="sm" class="btn" @click="duplicateItem">
           <template #icon>
             <MdiContentCopy />
           </template>
-          Duplicate
+          {{ $t("global.duplicate") }}
         </BaseButton>
         <BaseButton size="sm" @click="saveItem">
           <template #icon>
             <MdiContentSaveOutline />
           </template>
-          Save
+          {{ $t("global.save") }}
         </BaseButton>
         <BaseButton class="btn btn-error btn-sm" @click="deleteItem()">
           <MdiDelete class="mr-2" />
-          Delete
+          {{ $t("global.delete") }}
         </BaseButton>
       </div>
       <div v-if="!requestPending" class="space-y-6">
         <BaseCard class="overflow-visible">
-          <template #title> Edit Details </template>
+          <template #title> {{ $t("items.edit_details") }} </template>
           <template #title-actions>
             <div class="mt-2 flex flex-wrap items-center justify-between gap-4"></div>
           </template>
           <div class="mb-6 grid gap-4 border-t px-5 pt-2 md:grid-cols-2">
             <LocationSelector v-model="item.location" />
-            <FormMultiselect v-model="item.labels" label="Labels" :items="labels ?? []" />
+            <FormMultiselect v-model="item.labels" :label="$t('global.labels')" :items="labels ?? []" />
             <Autocomplete
               v-if="preferences.editorAdvancedView"
               v-model="parent"
               v-model:search="query"
               :items="results"
               item-text="name"
-              label="Parent Item"
+              :label="$t('items.parent_item')"
               no-results-text="Type to search..."
             />
           </div>
@@ -552,7 +552,7 @@
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -560,7 +560,7 @@
                 <FormTextField
                   v-else-if="field.type === 'text'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                   type="text"
                   :max-length="field.maxLength"
@@ -570,19 +570,19 @@
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormDatePicker
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormCheckbox
                   v-else-if="field.type === 'checkbox'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
               </div>
@@ -591,7 +591,7 @@
         </BaseCard>
 
         <BaseCard>
-          <template #title> Custom Fields </template>
+          <template #title> {{ $t("items.custom_fields") }} </template>
           <div class="space-y-4 divide-y divide-gray-300 border-t px-5">
             <div
               v-for="(field, idx) in item.fields"
@@ -599,10 +599,10 @@
               class="grid grid-cols-2 gap-2 md:grid-cols-4"
             >
               <!-- <FormSelect v-model:value="field.type" label="Field Type" :items="fieldTypes" value-key="value" /> -->
-              <FormTextField v-model="field.name" label="Name" />
+              <FormTextField v-model="field.name" :label="$t('global.name')" />
               <div class="col-span-3 flex items-end">
-                <FormTextField v-model="field.textValue" label="Value" :max-length="500" />
-                <div class="tooltip" data-tip="Delete">
+                <FormTextField v-model="field.textValue" :label="$t('global.value')" :max-length="500" />
+                <div class="tooltip" :data-tip="$t('global.delete')">
                   <button class="btn btn-square btn-sm mb-2 ml-2" @click="item.fields.splice(idx, 1)">
                     <MdiDelete />
                   </button>
@@ -611,7 +611,7 @@
             </div>
           </div>
           <div class="mt-4 flex justify-end px-5 pb-4">
-            <BaseButton size="sm" @click="addField"> Add </BaseButton>
+            <BaseButton size="sm" @click="addField"> {{$t("global.add")}} </BaseButton>
           </div>
         </BaseCard>
 
@@ -621,16 +621,16 @@
           class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg"
         >
           <div class="px-4 py-5 sm:px-6">
-            <h3 class="text-lg font-medium leading-6">Attachments</h3>
-            <p class="text-xs">Changes to attachments will be saved immediately</p>
+            <h3 class="text-lg font-medium leading-6"> {{ $t("items.attachments") }} </h3>
+            <p class="text-xs">{{ $t("items.changes_persisted_immediately") }}</p>
           </div>
           <div class="border-t border-gray-300 p-4">
             <div v-if="attDropZoneActive" class="grid grid-cols-4 gap-4">
-              <DropZone @drop="dropPhoto"> Photo </DropZone>
-              <DropZone @drop="dropWarranty"> Warranty </DropZone>
-              <DropZone @drop="dropManual"> Manual </DropZone>
-              <DropZone @drop="dropAttachment"> Attachment </DropZone>
-              <DropZone @drop="dropReceipt"> Receipt </DropZone>
+              <DropZone @drop="dropPhoto"> {{ $t("items.photos") }} </DropZone>
+              <DropZone @drop="dropWarranty"> {{ $t("items.warranty") }} </DropZone>
+              <DropZone @drop="dropManual"> {{ $t("items.manuals") }} </DropZone>
+              <DropZone @drop="dropAttachment"> {{ $t("items.attachments") }} </DropZone>
+              <DropZone @drop="dropReceipt"> {{ $t("items.receipts") }} </DropZone>
             </div>
             <button
               v-else
@@ -638,7 +638,7 @@
               @click="clickUpload"
             >
               <input ref="refAttachmentInput" hidden type="file" @change="uploadImage" />
-              <p>Drag and drop files here or click to select files</p>
+              <p>{{ $t("items.drag_and_drop") }}</p>
             </button>
           </div>
 
@@ -653,15 +653,15 @@
                   {{ attachment.document.title }}
                 </p>
                 <p class="my-auto">
-                  {{ capitalize(attachment.type) }}
+                  {{ $t(`items.${attachment.type}`) }}
                 </p>
                 <div class="flex justify-end gap-2">
-                  <div class="tooltip" data-tip="Delete">
+                  <div class="tooltip" :data-tip="$t('global.delete')">
                     <button class="btn btn-square btn-sm" @click="deleteAttachment(attachment.id)">
                       <MdiDelete />
                     </button>
                   </div>
-                  <div class="tooltip" data-tip="Edit">
+                  <div class="tooltip" :data-tip="$t('global.edit')">
                     <button class="btn btn-square btn-sm" @click="openAttachmentEditDialog(attachment)">
                       <MdiPencil />
                     </button>
@@ -674,7 +674,7 @@
 
         <div v-if="preferences.editorAdvancedView" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
-            <h3 class="text-lg font-medium leading-6">Purchase Details</h3>
+            <h3 class="text-lg font-medium leading-6">{{ $t("items.purchase_details") }}</h3>
           </div>
           <div class="border-t border-gray-300 sm:p-0">
             <div
@@ -686,7 +686,7 @@
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -694,7 +694,7 @@
                 <FormTextField
                   v-else-if="field.type === 'text'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -703,19 +703,19 @@
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormDatePicker
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormCheckbox
                   v-else-if="field.type === 'checkbox'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
               </div>
@@ -725,7 +725,7 @@
 
         <div v-if="preferences.editorAdvancedView" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
-            <h3 class="text-lg font-medium leading-6">Warranty Details</h3>
+            <h3 class="text-lg font-medium leading-6">{{ $t("items.warranty_details") }}</h3>
           </div>
           <div class="border-t border-gray-300 sm:p-0">
             <div
@@ -737,7 +737,7 @@
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -745,7 +745,7 @@
                 <FormTextField
                   v-else-if="field.type === 'text'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -754,19 +754,19 @@
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormDatePicker
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormCheckbox
                   v-else-if="field.type === 'checkbox'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
               </div>
@@ -784,7 +784,7 @@
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -792,7 +792,7 @@
                 <FormTextField
                   v-else-if="field.type === 'text'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -801,19 +801,19 @@
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormDatePicker
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormCheckbox
                   v-else-if="field.type === 'checkbox'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
               </div>

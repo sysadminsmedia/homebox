@@ -14,12 +14,38 @@
             },
             "password_score": {
                 "password_strength": "Password Strength"
+            },
+            "date_time": {
+                "just-now": "just now",
+                "ago": "{0} ago",
+                "in": "in {0}",
+                "last-month": "last month",
+                "next-month": "next month",
+                "months": "months",
+                "last-year": "last year",
+                "next-year": "next year",
+                "years": "years",
+                "yesterday": "yesterday",
+                "tomorrow": "tomorrow",
+                "days": "days",
+                "last-week": "last week",
+                "next-week": "next week",
+                "week": "week",
+                "weeks": "weeks",
+                "hour": "hour",
+                "hours": "hours",
+                "minute": "minute",
+                "minutes": "minutes",
+                "second": "second",
+                "seconds": "seconds"
             }
         },
         "item": {
             "create_modal": {
                 "photo_button": "Photo 📷",
-                "title": "Create Item"
+                "title": "Create Item",
+                "item_name": "Item Name",
+                "item_description": "Item Description"
             },
             "view": {
                 "selectable": {
@@ -27,20 +53,31 @@
                     "items": "Items",
                     "no_items": "No Items to Display",
                     "table": "Table"
+                },
+                "table": {
+                    "rows_per_page": "Rows per page",
+                    "page": "Page"
                 }
             }
         },
         "label": {
             "create_modal": {
-                "title": "Create Label"
+                "title": "Create Label",
+                "label_name": "Label Name",
+                "label_description": "Label Description"
             }
         },
         "location": {
             "create_modal": {
-                "title": "Create Location"
+                "title": "Create Location",
+                "location_name": "Location Name",
+                "location_description": "Location Description"
             },
             "tree": {
                 "no_locations": "No locations available. Add new locations through the\n `<`span class=\"link-primary\"`>`Create`<`/span`>` button on the navigation bar."
+            },
+            "selector": {
+                "parent_location": "Parent Location"
             }
         }
     },
@@ -64,7 +101,16 @@
         "sign_out": "Sign Out",
         "submit": "Submit",
         "version": "Version: { version }",
-        "welcome": "Welcome, { username }"
+        "welcome": "Welcome, { username }",
+        "edit": "Edit",
+        "delete": "Delete",
+        "update": "Update",
+        "maintenance": "Maintenance",
+        "details": "Details",
+        "duplicate": "Duplicate",
+        "save": "Save",
+        "value": "Value",
+        "add": "Add"
     },
     "index": {
         "disabled_registration": "Registration Disabled",
@@ -77,6 +123,16 @@
         "set_name": "What's your name?",
         "set_password": "Set your password",
         "tagline": "Track, Organize, and Manage your Things."
+    },
+    "home": {
+        "quick_statistics": "Quick Statistics",
+        "total_value": "Total Value",
+        "total_items": "Total Items",
+        "total_locations": "Total Locations",
+        "total_labels": "Total Labels",
+        "recently_added": "Recently Added",
+        "storage_locations": "Storage Locations",
+        "labels": "Labels"
     },
     "items": {
         "add": "Add",
@@ -102,10 +158,49 @@
         "tip_3": "Field filters use the 'OR' operation. If more than one is selected only one will be required for a\n match.",
         "tips": "Tips",
         "tips_sub": "Search Tips",
-        "updated_at": "Updated At"
+        "updated_at": "Updated At",
+        "name": "Name",
+        "quantity": "Quantity",
+        "insured": "Insured",
+        "purchase_price": "Purchase Price",
+        "purchased_from": "Purchased From",
+        "purchase_date": "Purchase Date",
+        "sold_to": "Sold To",
+        "sold_price": "Sold Price",
+        "sold_at": "Sold At",
+        "location": "Location",
+        "archived": "Archived",
+        "serial_number": "Serial Number",
+        "model_number": "Model Number",
+        "manufacturer": "Manufacturer",
+        "notes": "Notes",
+        "details": "Details",
+        "photos": "Photos",
+        "attachments": "Attachments",
+        "purchase_details": "Purchase Details",
+        "warranty_details": "Warranty Details",
+        "sold_details": "Sold Details",
+        "warranty": "Warranty",
+        "lifetime_warranty": "Lifetime Warranty",
+        "warranty_expires": "Warranty Expires",
+        "manuals": "Manuals",
+        "receipts": "Receipts",
+        "show_advanced_view_options": "Show Advanced View Options",
+        "advanced": "Advanced",
+        "edit_details": "Edit Details",
+        "parent_item": "Parent Item",
+        "asset_id": "Asset ID",
+        "changes_persisted_immediately": "Changes to attachments will be saved immediately",
+        "drag_and_drop": "Drag and drop files here or click to select files",
+        "manual": "Manual",
+        "photo": "Photo",
+        "receipt": "Receipt",
+        "attachment": "Attachment",
+        "description": "Description"
     },
     "labels": {
-        "no_results": "No Labels Found"
+        "no_results": "No Labels Found",
+        "update_label": "Update Label"
     },
     "languages": {
         "ca": "Catalan",
@@ -125,10 +220,16 @@
         "zh-CN": "Chinese (Simplified)",
         "zh-HK": "Chinese (Hong Kong)",
         "zh-MO": "Chinese (Macau)",
-        "zh-TW": "Chinese (Traditional)"
+        "zh-TW": "Chinese (Traditional)",
+        "ja-JP": "Japanese",
+        "pt-PT": "Portuguese (Portugal)",
+        "uk-UA": "Ukrainian"
     },
     "locations": {
-        "no_results": "No Locations Found"
+        "no_results": "No Locations Found",
+        "collapse_tree": "Collapse Tree",
+        "child_locations": "Child Locations",
+        "update_location": "Update Location"
     },
     "maintenance": {
         "filter": {
@@ -171,12 +272,16 @@
         "maintenance": "Maintenance",
         "profile": "Profile",
         "search": "Search",
-        "tools": "Tools"
+        "tools": "Tools",
+        "create_item": "Item / Asset",
+        "create_location": "Location",
+        "create_label": "Label"
     },
     "profile": {
         "active": "Active",
         "change_password": "Change Password",
         "currency_format": "Currency Format",
+        "example": "Example",
         "current_password": "Current Password",
         "delete_account": "Delete Account",
         "delete_account_sub": "Delete your account and all its associated data. This can not be undone.",

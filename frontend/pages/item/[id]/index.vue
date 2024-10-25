@@ -153,35 +153,35 @@
 
     const ret: Details = [
       {
-        name: "Quantity",
+        name: "items.quantity",
         text: item.value?.quantity,
         slot: "quantity",
       },
       {
-        name: "Serial Number",
+        name: "items.serial_number",
         text: item.value?.serialNumber,
         copyable: true,
       },
       {
-        name: "Model Number",
+        name: "items.model_number",
         text: item.value?.modelNumber,
         copyable: true,
       },
       {
-        name: "Manufacturer",
+        name: "items.manufacturer",
         text: item.value?.manufacturer,
         copyable: true,
       },
       {
-        name: "Insured",
+        name: "items.insured",
         text: item.value?.insured ? "Yes" : "No",
       },
       {
-        name: "Archived",
+        name: "items.archived",
         text: item.value?.archived ? "Yes" : "No",
       },
       {
-        name: "Notes",
+        name: "items.notes",
         type: "markdown",
         text: item.value?.notes,
       },
@@ -230,28 +230,28 @@
   const attachmentDetails = computed(() => {
     const details: Detail[] = [];
 
-    const push = (name: string) => {
+    const push = (name: string, slot: string) => {
       details.push({
         name,
         text: "",
-        slot: name.toLowerCase(),
+        slot: slot,
       });
     };
 
     if (attachments.value.attachments.length > 0) {
-      push("Attachments");
+      push("items.attachments", "attachments");
     }
 
     if (attachments.value.warranty.length > 0) {
-      push("Warranty");
+      push("items.warranty", "warranty");
     }
 
     if (attachments.value.manuals.length > 0) {
-      push("Manuals");
+      push("items.manuals", "manuals");
     }
 
     if (attachments.value.receipts.length > 0) {
-      push("Receipts");
+      push("items.receipts", "receipts");
     }
 
     return details;
@@ -309,16 +309,16 @@
   const purchaseDetails = computed<Details>(() => {
     const v: Details = [
       {
-        name: "Purchased From",
+        name: "items.purchased_from",
         text: item.value?.purchaseFrom || "",
       },
       {
-        name: "Purchase Price",
-        text: item.value?.purchasePrice || "",
+        name: "items.purchase_price",
+        text: String(item.value?.purchasePrice) || "",
         type: "currency",
       },
       {
-        name: "Purchase Date",
+        name: "items.purchase_date",
         text: item.value?.purchaseTime || "",
         type: "date",
         date: true,
@@ -342,16 +342,16 @@
   const soldDetails = computed<Details>(() => {
     const v: Details = [
       {
-        name: "Sold To",
+        name: "items.sold_to",
         text: item.value?.soldTo || "",
       },
       {
-        name: "Sold Price",
-        text: item.value?.soldPrice || "",
+        name: "items.sold_price",
+        text: String(item.value?.soldPrice) || "",
         type: "currency",
       },
       {
-        name: "Sold At",
+        name: "items.sold_at",
         text: item.value?.soldTime || "",
         type: "date",
         date: true,
@@ -394,17 +394,17 @@
     return [
       {
         id: "details",
-        name: "Details",
+        name: "global.details",
         to: `/item/${itemId.value}`,
       },
       {
         id: "log",
-        name: "Maintenance",
+        name: "global.maintenance",
         to: `/item/${itemId.value}/maintenance`,
       },
       {
         id: "edit",
-        name: "Edit",
+        name: "global.edit",
         to: `/item/${itemId.value}/edit`,
       },
     ];
@@ -509,7 +509,7 @@
             class="btn btn-sm"
             :class="`${t.to === currentPath ? 'btn-active' : ''}`"
           >
-            {{ t.name }}
+            {{ $t(t.name) }}
           </NuxtLink>
         </div>
       </div>
@@ -518,7 +518,7 @@
     <section>
       <div class="space-y-6">
         <BaseCard v-if="!hasNested" collapsable>
-          <template #title> Details </template>
+          <template #title> {{ $t("items.details") }} </template>
           <template #title-actions>
             <div class="mt-2 flex flex-wrap items-center justify-between gap-4">
               <label class="label cursor-pointer">
@@ -548,7 +548,7 @@
         <NuxtPage :item="item" :page-key="itemId" />
         <template v-if="!hasNested">
           <BaseCard v-if="photos && photos.length > 0">
-            <template #title> Photos </template>
+            <template #title> {{ $t("items.photos") }} </template>
             <div
               class="scroll-bg container mx-auto flex max-h-[500px] flex-wrap gap-2 overflow-y-scroll border-t border-gray-300 p-4"
             >
@@ -559,7 +559,7 @@
           </BaseCard>
 
           <BaseCard v-if="showAttachments" collapsable>
-            <template #title> Attachments </template>
+            <template #title> {{ $t("items.attachments") }} </template>
             <DetailsSection v-if="attachmentDetails.length > 0" :details="attachmentDetails">
               <template #manuals>
                 <ItemAttachmentsList
@@ -596,17 +596,17 @@
           </BaseCard>
 
           <BaseCard v-if="showPurchase" collapsable>
-            <template #title> Purchase Details </template>
+            <template #title> {{ $t("items.purchase_details") }} </template>
             <DetailsSection :details="purchaseDetails" />
           </BaseCard>
 
           <BaseCard v-if="showWarranty" collapsable>
-            <template #title> Warranty Details </template>
+            <template #title> {{ $t("items.warranty_details") }} </template>
             <DetailsSection :details="warrantyDetails" />
           </BaseCard>
 
           <BaseCard v-if="showSold" collapsable>
-            <template #title> Sold Details </template>
+            <template #title> {{ $t("items.sold_details") }} </template>
             <DetailsSection :details="soldDetails" />
           </BaseCard>
         </template>
