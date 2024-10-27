@@ -16,3 +16,11 @@ export interface PaginationResult<T> {
   pageSize: number;
   total: number;
 }
+
+export interface ItemSummaryPaginationResult<T> {
+  items: T[];
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPrice: number;
+}
