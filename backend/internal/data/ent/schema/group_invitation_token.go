@@ -23,8 +23,8 @@ func (GroupInvitationToken) Mixin() []ent.Mixin {
 // Fields of the GroupInvitationToken.
 func (GroupInvitationToken) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("token").
-			Unique().MaxLen(255),
+		field.Bytes("token").
+			Unique(),
 		field.Time("expires_at").
 			Default(func() time.Time { return time.Now().Add(time.Hour * 24 * 7) }),
 		field.Int("uses").
