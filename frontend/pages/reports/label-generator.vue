@@ -200,7 +200,9 @@
     const { data, error } = await api.items.getAll();
 
     if (error) {
-      return [] as unknown as typeof data;
+      return {
+        items: []
+      }
     }
 
     return data;
