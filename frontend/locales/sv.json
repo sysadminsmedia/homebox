@@ -3,12 +3,36 @@
         "app": {
             "import_dialog": {
                 "change_warning": "Beteendet för importer med befintliga import_refs har ändrats. Om en import_ref finns i CSV-filen, \nobjektet kommer att uppdateras med värdena i CSV-filen.",
-                "description": "Importera en CSV-fil som innehåller dina föremål, etiketter och platser. Se dokumentationen för mer information om \nönskat format.",
-                "title": "Importera CSV fil",
+                "description": "Importera en CSV-fil som innehåller dina föremål, etiketter och platser. Se dokumentationen för mer information om formatet som krävs.",
+                "title": "Importera CSV-fil",
                 "upload": "Ladda upp"
             }
         },
         "global": {
+            "date_time": {
+                "ago": "{0} sedan",
+                "days": "dagar",
+                "hour": "timme",
+                "hours": "timmar",
+                "in": "om {0}",
+                "just-now": "precis nu",
+                "last-month": "förra månaden",
+                "last-week": "förra veckan",
+                "last-year": "förra året",
+                "minute": "minut",
+                "minutes": "minuter",
+                "months": "månader",
+                "next-month": "nästa månad",
+                "next-week": "nästa vecka",
+                "next-year": "nästa år",
+                "second": "sekund",
+                "seconds": "sekunder",
+                "tomorrow": "imorgon",
+                "week": "vecka",
+                "weeks": "veckor",
+                "years": "år",
+                "yesterday": "igår"
+            },
             "page_qr_code": {
                 "page_url": "Sidans URL"
             },
@@ -18,6 +42,7 @@
         },
         "item": {
             "create_modal": {
+                "item_description": "Beskrivning av föremål",
                 "photo_button": "Foto 📷",
                 "title": "Skapa föremål"
             },
@@ -27,6 +52,10 @@
                     "items": "Föremål",
                     "no_items": "Inga föremål att visa",
                     "table": "Tabell"
+                },
+                "table": {
+                    "page": "Sida",
+                    "rows_per_page": "Rader per sida"
                 }
             }
         },
@@ -45,26 +74,39 @@
         }
     },
     "global": {
+        "add": "Lägg till",
         "build": "Byggd: { build }",
         "confirm": "Godkänn",
         "create": "Skapa",
-        "create_and_add": "Skapa och lägg till en annan",
+        "create_and_add": "Skapa och lägg till en till",
         "created": "Skapad",
+        "details": "Detaljer",
+        "duplicate": "Duplicera",
         "email": "Epost",
         "follow_dev": "Följ utvecklaren",
-        "github": "GitHub Projekt",
+        "github": "GitHub-projekt",
         "items": "Föremål",
         "join_discord": "Gå med i Discord",
         "labels": "Etiketter",
         "locations": "Platser",
+        "maintenance": "Underhåll",
         "name": "Namn",
         "password": "Lösenord",
-        "read_docs": "Läs dokumenten",
+        "read_docs": "Läs dokumentationen",
+        "save": "Spara",
         "search": "Sök",
         "sign_out": "Logga ut",
         "submit": "Skicka",
+        "update": "Uppdatera",
+        "value": "Värde",
         "version": "Version: { version }",
         "welcome": "Välkommen, { username }"
+    },
+    "home": {
+        "labels": "Etiketter",
+        "quick_statistics": "Snabb statistik",
+        "recently_added": "Nyligen tillagda",
+        "total_value": "Totalt Värde"
     },
     "index": {
         "disabled_registration": "Registrering avaktiverad",
@@ -82,27 +124,46 @@
         "add": "Lägg till",
         "created_at": "Skapat",
         "custom_fields": "Egna fält",
+        "details": "Detaljer",
         "field_selector": "Fält alternativ",
         "field_value": "Fält värde",
         "first": "Första",
         "include_archive": "Inkludera arkiverade föremål",
+        "insured": "Försäkrad",
         "last": "Sista",
+        "lifetime_warranty": "Livstidsgaranti",
+        "location": "Plats",
+        "manuals": "Manualer",
+        "manufacturer": "Tillverkare",
+        "model_number": "Modellnummer",
+        "name": "Namn",
         "negate_labels": "Negera valda etiketter",
         "next_page": "Nästa sida",
         "no_results": "Inga föremål hittades",
+        "notes": "Anteckningar",
         "options": "Alternativ",
         "order_by": "Ordning via",
         "pages": "Sida { page } av { totalPages }",
+        "photos": "Foton",
         "prev_page": "Föregående sida",
+        "purchase_date": "Inköpsdatum",
+        "purchase_price": "Inköpspris",
+        "purchased_from": "Köpt från",
+        "quantity": "Antal",
         "query_id": "Fråga efter tillgångs-ID-nummer: { id }",
+        "receipts": "Kvitton",
         "reset_search": "Återställ sökning",
         "results": "{ total } Resultat",
+        "serial_number": "Serienummer",
+        "sold_price": "Försäljningspris",
+        "sold_to": "Såld till",
         "tip_1": "Platser och etiketter filter använder 'OR' funktionen. Om fler än en är valda, endast en kommer\nkrävas för en träff.",
         "tip_2": "Sökningar med prefixet '#'' kommer att fråga efter ett tillgångs-ID (exempel '#000-001')",
         "tip_3": "Fältfilter använder 'OR' funktion. Om fler än en är valda endast en kommer att bli krävande för en\nträff.",
         "tips": "Tips",
         "tips_sub": "Sök Tips",
-        "updated_at": "Uppdaterad"
+        "updated_at": "Uppdaterad",
+        "warranty": "Garanti"
     },
     "labels": {
         "no_results": "Inga etiketter hittades"
@@ -149,8 +210,14 @@
             "cost": "Kostnad",
             "delete_confirmation": "Är du säker på att du vill radera denna post?",
             "edit_action": "Uppdatera",
-            "edit_title": "Redigera"
+            "edit_title": "Redigera",
+            "new_action": "Skapa",
+            "notes": "Anteckningar"
         }
+    },
+    "menu": {
+        "search": "Sök",
+        "tools": "Verktyg"
     },
     "profile": {
         "active": "Aktiv",
@@ -164,6 +231,7 @@
         "group_settings": "Grupp inställningar",
         "group_settings_sub": "Inställningar för delad grupp. Du kan behöva uppdatera din webbläsare för att vissa inställningar ska gälla.",
         "inactive": "Inaktiv",
+        "language": "Språk",
         "new_password": "Nytt lösenord",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Anmälare",
         "notifiers": "Notiser",
@@ -172,6 +240,7 @@
         "theme_settings": "Temainställningar",
         "theme_settings_sub": "Temainställningar sparas i din webbläsares lokala lagring. Du kan ändra tema när du vill. Om du\nhar problem att ställa in tema, pröva att ladda om din webbläsare.",
         "update_group": "Uppdatera grupp",
+        "update_language": "Uppdatera språk",
         "url": "URL",
         "user_profile": "Användarprofil",
         "user_profile_sub": "Bjud in användare och hantera ditt konto."
