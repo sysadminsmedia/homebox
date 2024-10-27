@@ -131,11 +131,11 @@ func run(cfg *config.Config) error {
 	}(c)
 
 	// Always create a random temporary directory for migrations
-	tempUuid, err := uuid.NewUUID()
+	tempUUID, err := uuid.NewUUID()
 	if err != nil {
 		return err
 	}
-	temp := filepath.Join(os.TempDir(), "homebox-", tempUuid.String())
+	temp := filepath.Join(os.TempDir(), "homebox-", tempUUID.String())
 
 	err = migrations.Write(temp, cfg.Database.Driver)
 	if err != nil {

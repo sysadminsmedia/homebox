@@ -229,17 +229,22 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 func (r *GroupRepository) StatsGroup(ctx context.Context, gid uuid.UUID) (GroupStatistics, error) {
 	q := `
 		SELECT
-			(SELECT COUNT(*) FROM users WHERE group_users = '{{ GROUP_ID }}') AS total_users,
-			(SELECT COUNT(*) FROM items WHERE group_items = '{{ GROUP_ID }}' AND items.archived = false) AS total_items,
-			(SELECT COUNT(*) FROM locations WHERE group_locations = '{{ GROUP_ID }}') AS total_locations,
-			(SELECT COUNT(*) FROM labels WHERE group_labels = '{{ GROUP_ID }}') AS total_labels,
-			(SELECT SUM(purchase_price*quantity) FROM items WHERE group_items = '{{ GROUP_ID }}' AND items.archived = false) AS total_item_price,
-			(SELECT COUNT(*)
-				FROM items
-					WHERE group_items = '{{ GROUP_ID }}'
-					AND items.archived = false
-					AND (items.lifetime_warranty = true OR items.warranty_expires > '{{ CURRENT_DATE }}')
-				) AS total_with_warranty
+    COUNT(DISTINCT u.id) as total_users,
+    COUNT(DISTINCT CASE WHEN i.archived = false THEN i.id END) as total_items,
+    COUNT(DISTINCT l.id) as total_locations,
+    COUNT(DISTINCT lb.id) as total_labels,
+    SUM(CASE WHEN i.archived = false THEN i.purchase_price * i.quantity ELSE 0 END) as total_item_price,
+    COUNT(DISTINCT CASE
+                       WHEN i.archived = false
+                           AND (i.lifetime_warranty = true OR i.warranty_expires > '{{ CURRENT_DATE }}')
+                           THEN i.id
+        END) as total_with_warranty
+FROM groups g
+         LEFT JOIN users u ON u.group_users = g.id
+         LEFT JOIN items i ON i.group_items = g.id
+         LEFT JOIN locations l ON l.group_locations = g.id
+         LEFT JOIN labels lb ON lb.group_labels = g.id
+WHERE g.id = '{{ GROUP_ID }}';
 `
 	var stats GroupStatistics
 	q = strings.ReplaceAll(q, "{{ GROUP_ID }}", gid.String())
