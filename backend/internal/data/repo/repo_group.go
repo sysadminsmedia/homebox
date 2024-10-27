@@ -163,14 +163,14 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 	SELECT
 		(SELECT Sum(purchase_price)
 			FROM   items
-			WHERE  group_items = ?
+			WHERE  group_items = '{{ GROUP_ID }}'
 				AND items.archived = false
-				AND items.created_at < ?) AS price_at_start,
+				AND items.created_at < '{{ START_PRICE }}') AS price_at_start,
 		(SELECT Sum(purchase_price)
 			FROM   items
-			WHERE  group_items = ?
+			WHERE  group_items = '{{ GROUP_ID }}'
 				AND items.archived = false
-				AND items.created_at < ?) AS price_at_end
+				AND items.created_at < '{{ END_PRICE }}') AS price_at_end
 `
 	stats := ValueOverTime{
 		Start: start,
@@ -180,7 +180,11 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 	var maybeStart *float64
 	var maybeEnd *float64
 
-	row := r.db.Sql().QueryRowContext(ctx, q, gid, sqliteDateFormat(start), gid, sqliteDateFormat(end))
+	q = strings.ReplaceAll(q, "{{ GROUP_ID }}", gid.String())
+	q = strings.Replace(q, "{{ START_PRICE }}", sqliteDateFormat(start), 1)
+	q = strings.Replace(q, "{{ END_PRICE }}", sqliteDateFormat(end), 1)
+
+	row := r.db.Sql().QueryRowContext(ctx, q)
 	err := row.Scan(&maybeStart, &maybeEnd)
 	if err != nil {
 		return nil, err
