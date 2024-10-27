@@ -121,7 +121,7 @@ func (r *LocationRepository) GetAll(ctx context.Context, gid uuid.UUID, filter L
 		FROM
 			locations
 		WHERE
-			locations.group_locations = '{{ GROUP_ID }}' {{ FILTER_CHILDREN }}
+			locations.group_locations = $1 {{ FILTER_CHILDREN }}
 		ORDER BY
 			locations.name ASC
 `
@@ -131,9 +131,8 @@ func (r *LocationRepository) GetAll(ctx context.Context, gid uuid.UUID, filter L
 	} else {
 		query = strings.Replace(query, "{{ FILTER_CHILDREN }}", "", 1)
 	}
-	query = strings.Replace(query, "{{ GROUP_ID }}", gid.String(), 1)
 
-	rows, err := r.db.Sql().QueryContext(ctx, query)
+	rows, err := r.db.Sql().QueryContext(ctx, query, gid)
 	if err != nil {
 		return nil, err
 	}
@@ -279,8 +278,8 @@ func (r *LocationRepository) PathForLoc(ctx context.Context, gid, locID uuid.UUI
 	query := `WITH RECURSIVE location_path AS (
 		SELECT id, name, location_children
 		FROM locations
-		WHERE id = '{{ ID }}' -- Replace ? with the ID of the item's location
-		AND group_locations = '{{ GROUP_ID }}' -- Replace ? with the ID of the group
+		WHERE id = $1 -- Replace ? with the ID of the item's location
+		AND group_locations = $2 -- Replace ? with the ID of the group
 
 		UNION ALL
 
@@ -292,9 +291,7 @@ func (r *LocationRepository) PathForLoc(ctx context.Context, gid, locID uuid.UUI
 	  SELECT id, name
 	  FROM location_path`
 
-	query = strings.Replace(query, "{{ ID }}", locID.String(), 1)
-	query = strings.Replace(query, "{{ GROUP_ID }}", gid.String(), 1)
-	rows, err := r.db.Sql().QueryContext(ctx, query)
+	rows, err := r.db.Sql().QueryContext(ctx, query, locID, gid)
 	if err != nil {
 		return nil, err
 	}
@@ -335,7 +332,7 @@ func (r *LocationRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQue
 					'location' AS node_type
 			FROM    locations
 			WHERE   location_children IS NULL
-			AND     group_locations = '{{ GroupID }}'
+			AND     group_locations = $1
 
 			UNION ALL
 			SELECT  c.id,
@@ -404,9 +401,7 @@ func (r *LocationRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQue
 		query = strings.ReplaceAll(query, "{{ WITH_ITEMS_FROM }}", "")
 	}
 
-	query = strings.ReplaceAll(query, "{{ GroupID }}", gid.String())
-
-	rows, err := r.db.Sql().QueryContext(ctx, query)
+	rows, err := r.db.Sql().QueryContext(ctx, query, gid)
 	if err != nil {
 		return nil, err
 	}
