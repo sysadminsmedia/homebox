@@ -8,7 +8,7 @@ import (
 	"path"
 )
 
-//go:embed all:sqlite3
+//go:embed all:sqlite3 all:postgres
 var Files embed.FS
 
 // Write writes the embedded migrations to a temporary directory.
