@@ -201,8 +201,8 @@
 
     if (error) {
       return {
-        items: []
-      }
+        items: [],
+      };
     }
 
     return data;
