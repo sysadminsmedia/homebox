@@ -23,7 +23,7 @@
         </ComboboxButton>
         <ComboboxOptions
           v-if="computedItems.length > 0"
-          class="card dropdown-content bg-base-100 absolute z-10 mt-2 max-h-60 w-full overflow-auto rounded-md border border-gray-400"
+          class="card dropdown-content absolute z-10 mt-2 max-h-60 w-full overflow-auto rounded-md border border-gray-400 bg-base-100"
         >
           <ComboboxOption
             v-for="item in computedItems"
@@ -45,7 +45,7 @@
                 <span
                   v-if="selected"
                   :class="[
-                    'text-primary absolute inset-y-0 right-0 flex items-center pr-4',
+                    'absolute inset-y-0 right-0 flex items-center pr-4 text-primary',
                     active ? 'text-primary-content' : 'bg-primary',
                   ]"
                 >

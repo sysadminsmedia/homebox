@@ -78,7 +78,7 @@
     if (!label.value) {
       return {
         items: [],
-      }
+      };
     }
 
     const resp = await api.items.getAll({
@@ -89,7 +89,7 @@
       toast.error("Failed to load items");
       return {
         items: [],
-      }
+      };
     }
 
     return resp.data;
