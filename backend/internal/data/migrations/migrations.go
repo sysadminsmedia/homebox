@@ -7,19 +7,19 @@ import (
 	"path"
 )
 
-//go:embed all:migrations
+//go:embed all:sqlite3
 var Files embed.FS
 
 // Write writes the embedded migrations to a temporary directory.
 // It returns an error and a cleanup function. The cleanup function
 // should be called when the migrations are no longer needed.
-func Write(temp string) error {
+func Write(temp string, dialect string) error {
 	err := os.MkdirAll(temp, 0o755)
 	if err != nil {
 		return err
 	}
 
-	fsDir, err := Files.ReadDir("migrations")
+	fsDir, err := Files.ReadDir(dialect)
 	if err != nil {
 		return err
 	}
@@ -29,7 +29,7 @@ func Write(temp string) error {
 			continue
 		}
 
-		b, err := Files.ReadFile(path.Join("migrations", f.Name()))
+		b, err := Files.ReadFile(path.Join(dialect, f.Name()))
 		if err != nil {
 			return err
 		}

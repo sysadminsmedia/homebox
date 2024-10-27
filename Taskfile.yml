@@ -61,6 +61,21 @@ tasks:
       - go run ./app/api/ {{ .CLI_ARGS }}
     silent: false
 
+  go:run:postgresql:
+    env:
+        HBOX_DATABASE_DRIVER: postgres
+        HBOX_DATABASE_USERNAME: homebox
+        HBOX_DATABASE_PASSWORD: homebox
+        HBOX_DATABASE_HOST: localhost
+        HBOX_DATABASE_PORT: 5432
+    desc: Starts the backend api server with postgresql (depends on generate task)
+    dir: backend
+    deps:
+      - generate
+    cmds:
+      - go run ./app/api/ {{ .CLI_ARGS }}
+    silent: false
+
   go:test:
     desc: Runs all go tests using gotestsum - supports passing gotestsum args
     dir: backend
@@ -110,6 +125,19 @@ tasks:
 
   db:migration:
     desc: Runs the database diff engine to generate a SQL migration files
+    deps:
+      - db:generate
+    cmds:
+      - cd backend && go run app/tools/migrations/main.go {{ .CLI_ARGS }}
+
+  db:migration:postgresql:
+    env:
+        HBOX_DATABASE_DRIVER: postgres
+        HBOX_DATABASE_USERNAME: homebox
+        HBOX_DATABASE_PASSWORD: homebox
+        HBOX_DATABASE_HOST: localhost
+        HBOX_DATABASE_PORT: 5432
+    desc: Runs the database diff engine to generate a SQL migration files for postgresql
     deps:
       - db:generate
     cmds:

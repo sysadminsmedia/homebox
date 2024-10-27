@@ -29,7 +29,6 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
 
-	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
 )
@@ -88,8 +87,6 @@ func run(cfg *config.Config) error {
 	switch strings.ToLower(cfg.Database.Driver) {
 	case "sqlite3":
 		databaseURL = cfg.Database.SqlitePath
-	case "mysql":
-		databaseURL = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", cfg.Database.Username, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port, cfg.Database.Database)
 	case "postgres":
 		databaseURL = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", cfg.Database.Host, cfg.Database.Port, cfg.Database.Username, cfg.Database.Password, cfg.Database.Database, cfg.Database.SslMode)
 	default:
@@ -111,9 +108,9 @@ func run(cfg *config.Config) error {
 		}
 	}(c)
 
-	temp := filepath.Join(os.TempDir(), "migrations")
+	temp := filepath.Join(os.TempDir(), "homebox-migrations")
 
-	err = migrations.Write(temp)
+	err = migrations.Write(temp, cfg.Database.Driver)
 	if err != nil {
 		return err
 	}

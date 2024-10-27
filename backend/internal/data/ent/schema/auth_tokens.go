@@ -25,8 +25,8 @@ func (AuthTokens) Mixin() []ent.Mixin {
 // Fields of the AuthTokens.
 func (AuthTokens) Fields() []ent.Field {
 	return []ent.Field{
-		field.Bytes("token").
-			Unique(),
+		field.String("token").
+			Unique().MaxLen(255),
 		field.Time("expires_at").
 			Default(func() time.Time { return time.Now().Add(time.Hour * 24 * 7) }),
 	}

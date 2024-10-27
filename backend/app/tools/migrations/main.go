@@ -14,7 +14,7 @@ import (
 	_ "ariga.io/atlas/sql/sqlite"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql/schema"
-	_ "github.com/go-sql-driver/mysql"
+
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -37,7 +37,7 @@ func main() {
 	}
 	ctx := context.Background()
 	// Create a local migration directory able to understand Atlas migration file format for replay.
-	dir, err := atlas.NewLocalDir(fmt.Sprintf("internal/data/migrations/migrations/%s", sqlDialect))
+	dir, err := atlas.NewLocalDir(fmt.Sprintf("internal/data/migrations/%s", sqlDialect))
 	if err != nil {
 		log.Fatalf("failed creating atlas migration directory: %v", err)
 	}
@@ -56,10 +56,8 @@ func main() {
 
 	databaseURL := ""
 	switch {
-	case cfg.Database.Driver == "sqlite":
+	case cfg.Database.Driver == "sqlite3":
 		databaseURL = fmt.Sprintf("sqlite://%s", cfg.Database.SqlitePath)
-	case cfg.Database.Driver == "mysql":
-		databaseURL = fmt.Sprintf("mysql://%s:%s@%s:%s/%s", cfg.Database.Username, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port, cfg.Database.Database)
 	case cfg.Database.Driver == "postgres":
 		databaseURL = fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s", cfg.Database.Username, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port, cfg.Database.Database, cfg.Database.SslMode)
 	default:
