@@ -78,6 +78,7 @@
     if (!label.value) {
       return {
         items: [],
+        totalPrice: null,
       };
     }
 
@@ -89,6 +90,7 @@
       toast.error("Failed to load items");
       return {
         items: [],
+        totalPrice: null,
       };
     }
 

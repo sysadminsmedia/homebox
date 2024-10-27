@@ -12,7 +12,7 @@ import type {
   MaintenanceEntryCreate,
   MaintenanceEntryWithDetails,
 } from "../types/data-contracts";
-import type {AttachmentTypes, ItemSummaryPaginationResult} from "../types/non-generated";
+import type { AttachmentTypes, ItemSummaryPaginationResult } from "../types/non-generated";
 import type { MaintenanceFilters } from "./maintenance.ts";
 import type { Requests } from "~~/lib/requests";
 
