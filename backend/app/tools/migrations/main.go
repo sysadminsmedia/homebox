@@ -54,6 +54,12 @@ func main() {
 		log.Fatalln("migration name is required. Use: 'go run -mod=mod ent/migrate/main.go <name>'")
 	}
 
+	if sqlDialect == dialect.Postgres {
+		if !validatePostgresSSLMode(cfg.Database.SslMode) {
+			log.Fatalf("invalid sslmode: %s", cfg.Database.SslMode)
+		}
+	}
+
 	databaseURL := ""
 	switch {
 	case cfg.Database.Driver == "sqlite3":
@@ -86,4 +92,16 @@ func build() string {
 	}
 
 	return fmt.Sprintf("%s, commit %s, built at %s", version, short, buildTime)
+}
+
+func validatePostgresSSLMode(sslMode string) bool {
+	validModes := map[string]bool{
+		"disable":     true,
+		"allow":       true,
+		"prefer":      true,
+		"require":     true,
+		"verify-ca":   true,
+		"verify-full": true,
+	}
+	return validModes[sslMode]
 }

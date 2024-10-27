@@ -48,6 +48,18 @@ func build() string {
 	return fmt.Sprintf("%s, commit %s, built at %s", version, short, buildTime)
 }
 
+func validatePostgresSSLMode(sslMode string) bool {
+	validModes := map[string]bool{
+		"disable":     true,
+		"allow":       true,
+		"prefer":      true,
+		"require":     true,
+		"verify-ca":   true,
+		"verify-full": true,
+	}
+	return validModes[sslMode]
+}
+
 // @title                      Homebox API
 // @version                    1.0
 // @description                Track, Manage, and Organize your Things.
@@ -80,6 +92,12 @@ func run(cfg *config.Config) error {
 	err := os.MkdirAll(cfg.Storage.Data, 0o755)
 	if err != nil {
 		log.Fatal().Err(err).Msg("failed to create data directory")
+	}
+
+	if strings.ToLower(cfg.Database.Driver) == "postgres" {
+		if !validatePostgresSSLMode(cfg.Database.SslMode) {
+			log.Fatal().Str("sslmode", cfg.Database.SslMode).Msg("invalid sslmode")
+		}
 	}
 
 	// Set up the database URL based on the driver because for some reason a common URL format is not used
