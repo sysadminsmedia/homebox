@@ -200,7 +200,7 @@
     const { data, error } = await api.items.getAll();
 
     if (error) {
-      return [];
+      return [] as unknown as typeof data;
     }
 
     return data;
@@ -219,7 +219,12 @@
 
     const items: LabelData[] = [];
     for (let i = displayProperties.assetRange; i < displayProperties.assetRangeMax; i++) {
-      items.push(getItem(i, allFields?.value?.items?.[i] ?? null));
+      const item = allFields?.value?.items?.[i];
+      if (item?.location) {
+        items.push(getItem(i, item as { location: { name: string }; name: string }));
+      } else {
+        items.push(getItem(i, null));
+      }
     }
     return items;
   });
@@ -308,7 +313,7 @@
 <template>
   <div class="print:hidden">
     <AppToast />
-    <div class="container prose mx-auto max-w-4xl p-4 pt-6">
+    <div class="prose container mx-auto max-w-4xl p-4 pt-6">
       <h1>Homebox Label Generator</h1>
       <p>
         The Homebox Label Generator is a tool to help you print labels for your Homebox inventory. These are intended to

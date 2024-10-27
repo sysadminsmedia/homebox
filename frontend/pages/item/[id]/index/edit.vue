@@ -106,7 +106,7 @@
     if (item.value.soldPrice) {
       soldPrice = item.value.soldPrice;
     }
-    if (item.value.purchaseTime) {
+    if (item.value.purchaseTime && typeof item.value.purchaseTime !== "string") {
       purchaseTime = new Date(item.value.purchaseTime.getTime() - item.value.purchaseTime.getTimezoneOffset() * 60000);
     }
 
@@ -121,7 +121,7 @@
       assetId: item.value.assetId,
       purchasePrice,
       soldPrice,
-      purchaseTime,
+      purchaseTime: purchaseTime as Date,
     };
 
     const { error } = await api.items.update(itemId.value, payload);

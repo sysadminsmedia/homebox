@@ -25,17 +25,17 @@
     },
   });
 
-  const { data: maintenanceDataList, refresh: refreshList } = useAsyncData<MaintenanceEntryWithDetails[]>(
+  const { data: maintenanceDataList, refresh: refreshList } = useAsyncData(
     async () => {
       const { data } =
         props.currentItemId !== undefined
           ? await api.items.maintenance.getLog(props.currentItemId, { status: maintenanceFilterStatus.value })
           : await api.maintenance.getAll({ status: maintenanceFilterStatus.value });
       console.log(data);
-      return data as MaintenanceEntryWithDetails[];
+      return data;
     },
     {
-      watch: maintenanceFilterStatus,
+      watch: [maintenanceFilterStatus],
     }
   );
 
@@ -80,7 +80,7 @@
       <StatCard
         v-for="stat in stats"
         :key="stat.id"
-        class="stats block border-l-primary shadow-xl"
+        class="stats border-l-primary block shadow-xl"
         :title="stat.title"
         :value="stat.value"
         :type="stat.type"
@@ -189,7 +189,7 @@
       <div v-if="props.currentItemId" class="hidden first:block">
         <button
           type="button"
-          class="relative block w-full rounded-lg border-2 border-dashed border-base-content p-12 text-center"
+          class="border-base-content relative block w-full rounded-lg border-2 border-dashed p-12 text-center"
           @click="maintenanceEditModal?.openCreateModal(props.currentItemId)"
         >
           <MdiWrenchClock class="inline size-16" />

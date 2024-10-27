@@ -76,7 +76,9 @@
 
   const items = computedAsync(async () => {
     if (!label.value) {
-      return [];
+      return {
+        items: [],
+      }
     }
 
     const resp = await api.items.getAll({
@@ -85,7 +87,9 @@
 
     if (resp.error) {
       toast.error("Failed to load items");
-      return [];
+      return {
+        items: [],
+      }
     }
 
     return resp.data;
