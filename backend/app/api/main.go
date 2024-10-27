@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/google/uuid"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -58,7 +59,7 @@ func validatePostgresSSLMode(sslMode string) bool {
 		"verify-ca":   true,
 		"verify-full": true,
 	}
-	return validModes[sslMode]
+	return validModes[strings.ToLower(strings.TrimSpace(sslMode))]
 }
 
 // @title                      Homebox API
@@ -117,8 +118,10 @@ func run(cfg *config.Config) error {
 		log.Fatal().
 			Err(err).
 			Str("driver", strings.ToLower(cfg.Database.Driver)).
-			Str("url", databaseURL).
-			Msg("failed opening connection to {driver} database at {url}")
+			Str("host", cfg.Database.Host).
+			Str("port", cfg.Database.Port).
+			Str("database", cfg.Database.Database).
+			Msg("failed opening connection to {driver} database at {host}:{port}/{database}")
 	}
 	defer func(c *ent.Client) {
 		err := c.Close()
@@ -127,7 +130,12 @@ func run(cfg *config.Config) error {
 		}
 	}(c)
 
-	temp := filepath.Join(os.TempDir(), "homebox-migrations")
+	// Always create a random temporary directory for migrations
+	tempUuid, err := uuid.NewUUID()
+	if err != nil {
+		return err
+	}
+	temp := filepath.Join(os.TempDir(), "homebox-", tempUuid.String())
 
 	err = migrations.Write(temp, cfg.Database.Driver)
 	if err != nil {
@@ -155,11 +163,12 @@ func run(cfg *config.Config) error {
 		return err
 	}
 
-	err = os.RemoveAll(temp)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to remove temporary directory for database migrations")
-		return err
-	}
+	defer func() {
+		err := os.RemoveAll(temp)
+		if err != nil {
+			log.Error().Err(err).Msg("failed to remove temporary directory for database migrations")
+		}
+	}()
 
 	collectFuncs := []currencies.CollectorFunc{
 		currencies.CollectDefaults(),

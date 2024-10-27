@@ -8,6 +8,7 @@ on:
     paths:
       - 'backend/**'
       - 'frontend/**'
+      - '.github/workflows/**'
 
 jobs:
   backend-tests:

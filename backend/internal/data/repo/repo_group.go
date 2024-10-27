@@ -229,20 +229,22 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 func (r *GroupRepository) StatsGroup(ctx context.Context, gid uuid.UUID) (GroupStatistics, error) {
 	q := `
 		SELECT
-			(SELECT COUNT(*) FROM users WHERE group_users = ?) AS total_users,
-			(SELECT COUNT(*) FROM items WHERE group_items = ? AND items.archived = false) AS total_items,
-			(SELECT COUNT(*) FROM locations WHERE group_locations = ?) AS total_locations,
-			(SELECT COUNT(*) FROM labels WHERE group_labels = ?) AS total_labels,
-			(SELECT SUM(purchase_price*quantity) FROM items WHERE group_items = ? AND items.archived = false) AS total_item_price,
+			(SELECT COUNT(*) FROM users WHERE group_users = '{{ GROUP_ID }}') AS total_users,
+			(SELECT COUNT(*) FROM items WHERE group_items = '{{ GROUP_ID }}' AND items.archived = false) AS total_items,
+			(SELECT COUNT(*) FROM locations WHERE group_locations = '{{ GROUP_ID }}') AS total_locations,
+			(SELECT COUNT(*) FROM labels WHERE group_labels = '{{ GROUP_ID }}') AS total_labels,
+			(SELECT SUM(purchase_price*quantity) FROM items WHERE group_items = '{{ GROUP_ID }}' AND items.archived = false) AS total_item_price,
 			(SELECT COUNT(*)
 				FROM items
-					WHERE group_items = ?
+					WHERE group_items = '{{ GROUP_ID }}'
 					AND items.archived = false
-					AND (items.lifetime_warranty = true OR items.warranty_expires > date())
+					AND (items.lifetime_warranty = true OR items.warranty_expires > '{{ CURRENT_DATE }}')
 				) AS total_with_warranty
 `
 	var stats GroupStatistics
-	row := r.db.Sql().QueryRowContext(ctx, q, gid, gid, gid, gid, gid, gid)
+	q = strings.ReplaceAll(q, "{{ GROUP_ID }}", gid.String())
+	q = strings.Replace(q, "{{ CURRENT_DATE }}", time.Now().Format("2006-01-02"), 1)
+	row := r.db.Sql().QueryRowContext(ctx, q)
 
 	var maybeTotalItemPrice *float64
 	var maybeTotalWithWarranty *int

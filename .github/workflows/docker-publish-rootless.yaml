@@ -11,7 +11,7 @@ on:
       - 'Dockerfile'
       - 'Dockerfile.rootless'
       - '.dockerignore'
-      - '.github/workflows'
+      - '.github/workflows/**'
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   pull_request:
@@ -22,7 +22,7 @@ on:
       - 'Dockerfile'
       - 'Dockerfile.rootless'
       - '.dockerignore'
-      - '.github/workflows'
+      - '.github/workflows/**'
 
 
 env:

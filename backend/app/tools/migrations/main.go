@@ -104,5 +104,5 @@ func validatePostgresSSLMode(sslMode string) bool {
 		"verify-ca":   true,
 		"verify-full": true,
 	}
-	return validModes[sslMode]
+	return validModes[strings.ToLower(strings.TrimSpace(sslMode))]
 }
