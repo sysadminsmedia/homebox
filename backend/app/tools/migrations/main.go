@@ -28,8 +28,6 @@ func main() {
 	switch strings.ToLower(cfg.Database.Driver) {
 	case "sqlite3":
 		sqlDialect = dialect.SQLite
-	case "mysql":
-		sqlDialect = dialect.MySQL
 	case "postgres":
 		sqlDialect = dialect.Postgres
 	default:
