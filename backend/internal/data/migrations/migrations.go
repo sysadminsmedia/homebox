@@ -3,6 +3,7 @@ package migrations
 
 import (
 	"embed"
+	"fmt"
 	"os"
 	"path"
 )
@@ -14,6 +15,11 @@ var Files embed.FS
 // It returns an error and a cleanup function. The cleanup function
 // should be called when the migrations are no longer needed.
 func Write(temp string, dialect string) error {
+	allowedDialects := map[string]bool{"sqlite3": true, "postgres": true}
+	if !allowedDialects[dialect] {
+		return fmt.Errorf("unsupported dialect: %s", dialect)
+	}
+
 	err := os.MkdirAll(temp, 0o755)
 	if err != nil {
 		return err

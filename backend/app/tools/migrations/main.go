@@ -6,6 +6,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/migrate"
@@ -35,7 +36,8 @@ func main() {
 	}
 	ctx := context.Background()
 	// Create a local migration directory able to understand Atlas migration file format for replay.
-	dir, err := atlas.NewLocalDir(fmt.Sprintf("internal/data/migrations/%s", sqlDialect))
+	safePath := filepath.Clean(fmt.Sprintf("internal/data/migrations/%s", sqlDialect))
+	dir, err := atlas.NewLocalDir(safePath)
 	if err != nil {
 		log.Fatalf("failed creating atlas migration directory: %v", err)
 	}
