@@ -96,6 +96,7 @@ func build() string {
 
 func validatePostgresSSLMode(sslMode string) bool {
 	validModes := map[string]bool{
+		"":            true,
 		"disable":     true,
 		"allow":       true,
 		"prefer":      true,
