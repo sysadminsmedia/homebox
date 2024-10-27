@@ -110,7 +110,7 @@ func run(cfg *config.Config) error {
 	case "postgres":
 		databaseURL = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", cfg.Database.Host, cfg.Database.Port, cfg.Database.Username, cfg.Database.Password, cfg.Database.Database, cfg.Database.SslMode)
 	default:
-		log.Fatal().Str("driver", cfg.Database.Driver).Msg("unsupported database driver {driver}")
+		log.Fatal().Str("driver", cfg.Database.Driver).Msg("unsupported database driver")
 	}
 
 	c, err := ent.Open(strings.ToLower(cfg.Database.Driver), databaseURL)
@@ -135,7 +135,7 @@ func run(cfg *config.Config) error {
 	if err != nil {
 		return err
 	}
-	temp := filepath.Join(os.TempDir(), "homebox-", tempUUID.String())
+	temp := filepath.Join(os.TempDir(), fmt.Sprintf("homebox-%s", tempUUID.String()))
 
 	err = migrations.Write(temp, cfg.Database.Driver)
 	if err != nil {
