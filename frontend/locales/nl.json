@@ -9,6 +9,30 @@
             }
         },
         "global": {
+            "date_time": {
+                "ago": "{0} geleden",
+                "days": "dagen",
+                "hour": "uur",
+                "hours": "uren",
+                "in": "in {0}",
+                "just-now": "zojuist",
+                "last-month": "afgelopen maand",
+                "last-week": "vorige week",
+                "last-year": "afgelopen jaar",
+                "minute": "minuut",
+                "minutes": "minuten",
+                "months": "maanden",
+                "next-month": "volgende maand",
+                "next-week": "volgende week",
+                "next-year": "volgend jaar",
+                "second": "seconde",
+                "seconds": "seconden",
+                "tomorrow": "morgen",
+                "week": "week",
+                "weeks": "weken",
+                "years": "jaren",
+                "yesterday": "gisteren"
+            },
             "page_qr_code": {
                 "page_url": "Pagina URL"
             },
@@ -18,6 +42,8 @@
         },
         "item": {
             "create_modal": {
+                "item_description": "Artikelomschrijving",
+                "item_name": "Artikelnaam",
                 "photo_button": "Foto 📷",
                 "title": "Maak object"
             },
@@ -27,17 +53,28 @@
                     "items": "Objecten",
                     "no_items": "Geen objecten om te tonen",
                     "table": "Tabel"
+                },
+                "table": {
+                    "page": "Pagina",
+                    "rows_per_page": "Rijen per pagina"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_description": "label beschrijving",
+                "label_name": "label naam",
                 "title": "Maak label"
             }
         },
         "location": {
             "create_modal": {
+                "location_description": "Locatie omschrijving",
+                "location_name": "Locatie",
                 "title": "Maak locatie"
+            },
+            "selector": {
+                "parent_location": "Hoofd locatie"
             },
             "tree": {
                 "no_locations": "Geen locaties beschikbaar. Voeg een nieuwe locatie toe\n via de `<`span class=\"link-primary\"`>`Creeer`<`/span`> knop op het navigatie menu."
@@ -45,11 +82,16 @@
         }
     },
     "global": {
+        "add": "Toevoegen",
         "build": "Bouw: { build }",
         "confirm": "Bevestigen",
         "create": "Maken",
         "create_and_add": "Maak en voeg nog een toe",
         "created": "Gemaakt",
+        "delete": "Verwijderen",
+        "details": "Details",
+        "duplicate": "Dubbel",
+        "edit": "Bewerk",
         "email": "E-mail",
         "follow_dev": "Volg de ontwikkelaar",
         "github": "GitHub Project",
@@ -57,14 +99,28 @@
         "join_discord": "Sluit je aan bij de Discord",
         "labels": "etiketten",
         "locations": "Locaties",
+        "maintenance": "Onderhoud",
         "name": "Naam",
         "password": "Wachtwoord",
         "read_docs": "Lees de documentatie",
+        "save": "Opslaan",
         "search": "Zoeken",
         "sign_out": "Log uit",
         "submit": "Indienen",
+        "update": "Bijwerken",
+        "value": "Waarde",
         "version": "Versie: { version }",
         "welcome": "Welkom, { username }"
+    },
+    "home": {
+        "labels": "etiketten",
+        "quick_statistics": "Snelle statistieken",
+        "recently_added": "Recent toegevoegd",
+        "storage_locations": "Verblijfplaatsen",
+        "total_items": "Totale items",
+        "total_labels": "Totaal aantal labels",
+        "total_locations": "Totaal aantal locaties",
+        "total_value": "Totale Waarde"
     },
     "index": {
         "disabled_registration": "Registratie uitgeschakeld",
@@ -80,32 +136,71 @@
     },
     "items": {
         "add": "Toevoegen",
+        "advanced": "Geavanceerd",
+        "archived": "Is gearchiveerd",
+        "asset_id": "Artikel ID",
+        "attachment": "Bijlage",
+        "attachments": "Bijlagen",
+        "changes_persisted_immediately": "Gewijzigde bijlagen worden direct opgeslagen",
         "created_at": "Aangemaakt op",
         "custom_fields": "Aangepaste velden",
+        "description": "Beschrijving",
+        "details": "Details",
+        "drag_and_drop": "Sleep bestanden hierheen en zet ze neer of klik om bestanden te selecteren",
+        "edit_details": "Details bewerken",
         "field_selector": "Veld selectie",
         "field_value": "Veldwaarde",
         "first": "Eerst",
         "include_archive": "Inclusief gearchiveerde items",
+        "insured": "Verzekerde",
         "last": "Achternaam",
+        "lifetime_warranty": "Levenslange garantie",
+        "location": "Locatie",
+        "manual": "Handmatig",
+        "manuals": "Handleidingen",
+        "manufacturer": "Fabrikant",
+        "model_number": "Modelnummer",
+        "name": "Naam",
         "negate_labels": "Negeer Geselecteerde Etiketten",
         "next_page": "Volgende pagina",
         "no_results": "Geen Items Gevonden",
+        "notes": "Opmerkingen",
         "options": "Opties",
         "order_by": "Sorteren op",
         "pages": "Pagina { page } van { totalPages }",
+        "parent_item": "Hoofd Item",
+        "photo": "Foto",
+        "photos": "Foto's",
         "prev_page": "Vorige pagina",
+        "purchase_date": "Aankoopdatum",
+        "purchase_details": "Aankoopdetails",
+        "purchase_price": "Aankoopprijs",
+        "purchased_from": "Gekocht van",
+        "quantity": "Aantal",
         "query_id": "ID-nummer van object opvragen: { id }",
+        "receipt": "Bewijs",
+        "receipts": "Bonnetjes",
         "reset_search": "Reset Zoeken",
         "results": "{ total } Resultaten",
+        "serial_number": "Serienummer",
+        "show_advanced_view_options": "geavanceerde opties weergeven",
+        "sold_at": "Verkocht bij",
+        "sold_details": "Verkochte details",
+        "sold_price": "Verkoopprijs",
+        "sold_to": "Verkocht Aan",
         "tip_1": "Locatie- en labelfilters gebruiken de 'OF' -werking. Als er meer dan een is geselecteerd,\nis er maar een nodig voor een overeenkomst.",
         "tip_2": "Zoekopdrachten voorafgegaan door '#'' zullen om een object-ID vragen (bijvoorbeeld '#000-001')",
         "tip_3": "Veldfilters gebruiken de 'OF' -bewerking. Indien meer dan 1 is geselecteerd\nzal er maar 1 nodig zijn voor een match.",
         "tips": "Tips",
         "tips_sub": "Zoektips",
-        "updated_at": "Bijgewerkt op"
+        "updated_at": "Bijgewerkt op",
+        "warranty": "Garantie",
+        "warranty_details": "Garantiedetails",
+        "warranty_expires": "Garantie vervalt"
     },
     "labels": {
-        "no_results": "Geen labels gevonden"
+        "no_results": "Geen labels gevonden",
+        "update_label": "Etiket bijwerken"
     },
     "languages": {
         "ca": "Catalaans",
@@ -115,20 +210,26 @@
         "fr": "Frans",
         "hu": "Hongaars",
         "it": "Italiaans",
+        "ja-JP": "Japans",
         "nl": "Nederlands",
         "pl": "Pools",
         "pt-BR": "Portugees (Brazilië)",
+        "pt-PT": "Portugees (Portugal)",
         "ru": "Russisch",
         "sl": "Sloveens",
         "sv": "Zweeds",
         "tr": "Turks",
+        "uk-UA": "Oekraïens",
         "zh-CN": "Chinees (vereenvoudigd)",
         "zh-HK": "Chinees (Hong Kong)",
         "zh-MO": "Chinees (Macau)",
         "zh-TW": "Chinees (traditioneel)"
     },
     "locations": {
-        "no_results": "Geen locaties gevonden"
+        "child_locations": "Kind Locaties",
+        "collapse_tree": "Structuur invouwen",
+        "no_results": "Geen locaties gevonden",
+        "update_location": "Locatie bijwerken"
     },
     "maintenance": {
         "filter": {
@@ -159,13 +260,16 @@
         "monthly_average": "Maandelijks",
         "toast": {
             "failed_to_create": "Kan invoer niet maken",
-            "failed_to_delete": "Kon item niet verwijderen.",
+            "failed_to_delete": "Kon item niet verwijderen",
             "failed_to_update": "Kan invoer niet bijwerken"
         },
         "total_cost": "Totale kosten",
         "total_entries": "Totaal aantal Inzendingen"
     },
     "menu": {
+        "create_item": "Artikel / Object",
+        "create_label": "Label",
+        "create_location": "Locatie",
         "home": "Home",
         "locations": "Locaties",
         "maintenance": "Onderhoud",
@@ -180,10 +284,12 @@
         "current_password": "Huidig Wachtwoord",
         "delete_account": "Verwijder account",
         "delete_account_sub": "Verwijder je account en alle geassocieerde data. Deze actie kan niet ongedaan worden.",
+        "display_header": "{ currentValue, select, true {Header verbergen} false {Header weergeven} other {Geen gevonden}}",
         "enabled": "ingeschakeld",
+        "example": "Voorbeeld",
         "gen_invite": "Genereer Uitnodigingslink",
         "group_settings": "Groeps Instellingen",
-        "group_settings_sub": "Gedeelde groepsinstellingen",
+        "group_settings_sub": "Gedeelde groepsinstellingen. Het kan zijn dat je je browser moet verversen om alle instellingen te zien werken.",
         "inactive": "Inactief",
         "language": "Taal",
         "new_password": "Nieuw Wachtwoord",
@@ -205,21 +311,26 @@
         "actions_set": {
             "ensure_ids": "Zorg voor item-ID's",
             "ensure_ids_button": "Zorg voor item-ID's",
+            "ensure_ids_sub": "Zorgt ervoor dat alle artikelen in je voorraad een geldig asset_id veld hebben. Dit wordt gedaan door de hoogste huidige asset_id veld in de database te vinden en de volgende waarde toe te passen op het volgende niet ingevoerde asset_id veld. Dit gebeurt op volgorde van het created_at veld.",
             "ensure_import_refs": "Zorg ervoor dat Import Refs",
             "ensure_import_refs_button": "Zorg ervoor dat Import Refs",
+            "ensure_import_refs_sub": "Zorgt ervoor dat alle artikelen in je voorraad een geldig import_ref veld hebben. Dit gebeurt door een random 8 karakter string voor elk item te maken die geen import_ref veld heeft.",
             "set_primary_photo": "Hoofdfoto instellen",
             "set_primary_photo_button": "Hoofdfoto instellen",
+            "set_primary_photo_sub": "In versie v0.10.0 van Homebox is het primaire afbeeldingsveld toegevoegd aan bijlagen van het type foto. Deze actie zet de primaire afbeelding naar de eerste afbeelding in de database, indien deze nog niet ingesteld is. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Zie GitHub PR #576'</a>'",
             "zero_datetimes": "Nul item Datum Tijden",
-            "zero_datetimes_button": "Nul item Datum Tijden"
+            "zero_datetimes_button": "Nul item Datum Tijden",
+            "zero_datetimes_sub": "Hiermee stelt u de tijdwaarde voor alle datum-/tijdvelden in uw voorraad in op het begin van de datum. Dit is een oplossing voor een fout in de applicatie geïntroduceerd in het begin van de ontwikkeling waarbij de tijd waarde verkeerd werd opgeslagen. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Zie Github Issue #236 voor alle details.'</a>'"
         },
         "actions_sub": "Acties bulksgewijs toepassen op je voorraad. Deze zijn onomkeerbaar '<b>'Wees voorzichtig.'</b>'",
         "import_export": "Importeer/Exporteer",
         "import_export_set": {
             "export": "Export voorraad",
             "export_button": "Export voorraad",
-            "export_sub": "Exporteert het standaard CSV-formaat voor Homebox",
+            "export_sub": "Exporteert het standaard CSV-formaat voor Homebox. Dit exporteert alle items in jouw inventaris.",
             "import": "Inventaris Importeren",
-            "import_button": "Inventaris Importeren"
+            "import_button": "Inventaris Importeren",
+            "import_sub": "Importeert het standaard CSV-formaat voor Homebox. Zonder een '<code>'HB.import_ref'</code>' kolom zal dit '<b>'geen'</b>' bestaande waardes overschrijven, maar enkel nieuwe items toevoegen. Rijen met een '<code>'HB.import_ref'</code>' kolom zullen samengevoegd worden met bestaande items, als die bestaan."
         },
         "import_export_sub": "Importeer en exporteer je voorraad van en naar een CSV-bestand. Dit is handig voor het migreren van je voorraad naar een nieuwe HomeBox installatie.",
         "reports": "Rapportages",

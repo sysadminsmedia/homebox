@@ -12,7 +12,11 @@
         :max-length="255"
         :min-length="1"
       />
-      <FormTextArea v-model="form.description" :label="$t('components.item.create_modal.item_description')" :max-length="1000" />
+      <FormTextArea
+        v-model="form.description"
+        :label="$t('components.item.create_modal.item_description')"
+        :max-length="1000"
+      />
       <FormMultiselect v-model="form.labels" :label="$t('global.labels')" :items="labels ?? []" />
 
       <div class="modal-action mb-6">

@@ -85,7 +85,10 @@
   type Props = {
     label: string;
     modelValue: SupportValues | null | undefined;
-    items: string[] | object[];
+    items: {
+      id: string;
+      treeString: string;
+    }[];
     display?: string;
     multiple?: boolean;
   };
@@ -171,7 +174,7 @@
      */
     for (let i = 0; i < props.items.length; i++) {
       const item = props.items[i];
-      if (resultIDs.find(item_ => item_ === item.id) === undefined) {
+      if (resultIDs.find(item_ => item_ === item.id) !== undefined) {
         continue;
       }
       if (item.treeString.includes(search.value)) {

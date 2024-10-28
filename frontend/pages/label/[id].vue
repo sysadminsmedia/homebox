@@ -76,7 +76,10 @@
 
   const items = computedAsync(async () => {
     if (!label.value) {
-      return [];
+      return {
+        items: [],
+        totalPrice: null,
+      };
     }
 
     const resp = await api.items.getAll({
@@ -85,7 +88,10 @@
 
     if (resp.error) {
       toast.error("Failed to load items");
-      return [];
+      return {
+        items: [],
+        totalPrice: null,
+      };
     }
 
     return resp.data;
@@ -104,9 +110,13 @@
           :max-length="255"
           :min-length="1"
         />
-        <FormTextArea v-model="updateData.description" :label="$t('components.label.create_modal.label_description')" :max-length="255" />
+        <FormTextArea
+          v-model="updateData.description"
+          :label="$t('components.label.create_modal.label_description')"
+          :max-length="255"
+        />
         <div class="modal-action">
-          <BaseButton type="submit" :loading="updating"> {{$t("global.update")}} </BaseButton>
+          <BaseButton type="submit" :loading="updating"> {{ $t("global.update") }} </BaseButton>
         </div>
       </form>
     </BaseModal>

@@ -25,17 +25,17 @@
     },
   });
 
-  const { data: maintenanceDataList, refresh: refreshList } = useAsyncData<MaintenanceEntryWithDetails[]>(
+  const { data: maintenanceDataList, refresh: refreshList } = useAsyncData(
     async () => {
       const { data } =
         props.currentItemId !== undefined
           ? await api.items.maintenance.getLog(props.currentItemId, { status: maintenanceFilterStatus.value })
           : await api.maintenance.getAll({ status: maintenanceFilterStatus.value });
       console.log(data);
-      return data as MaintenanceEntryWithDetails[];
+      return data;
     },
     {
-      watch: maintenanceFilterStatus,
+      watch: [maintenanceFilterStatus],
     }
   );
 

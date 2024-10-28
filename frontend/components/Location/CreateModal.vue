@@ -12,7 +12,11 @@
         :max-length="255"
         :min-length="1"
       />
-      <FormTextArea v-model="form.description" :label="$t('components.location.create_modal.location_description')" :max-length="1000" />
+      <FormTextArea
+        v-model="form.description"
+        :label="$t('components.location.create_modal.location_description')"
+        :max-length="1000"
+      />
       <LocationSelector v-model="form.parent" />
       <div class="modal-action">
         <div class="flex justify-center">

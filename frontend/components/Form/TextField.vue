@@ -6,10 +6,10 @@
         :class="{
           'text-red-600':
             typeof value === 'string' &&
-            ((maxLength && value.length > maxLength) || (minLength && value.length < minLength)),
+            ((maxLength !== -1 && value.length > maxLength) || (minLength !== -1 && value.length < minLength)),
         }"
       >
-        {{ typeof value === "string" && (maxLength || minLength) ? `${value.length}/${maxLength}` : "" }}
+        {{ typeof value === "string" && (maxLength !== -1 || minLength !== -1) ? `${value.length}/${maxLength}` : "" }}
       </span>
     </label>
     <input
@@ -28,10 +28,10 @@
         :class="{
           'text-red-600':
             typeof value === 'string' &&
-            ((maxLength && value.length > maxLength) || (minLength && value.length < minLength)),
+            ((maxLength !== -1 && value.length > maxLength) || (minLength !== -1 && value.length < minLength)),
         }"
       >
-        {{ typeof value === "string" && (maxLength || minLength) ? `${value.length}/${maxLength}` : "" }}
+        {{ typeof value === "string" && (maxLength !== -1 || minLength !== -1) ? `${value.length}/${maxLength}` : "" }}
       </span>
     </label>
     <input
@@ -76,11 +76,13 @@
     },
     maxLength: {
       type: Number,
+      default: -1,
       required: false,
       default: 0,
     },
     minLength: {
       type: Number,
+      default: -1,
       required: false,
       default: Number.MAX_VALUE,
     },

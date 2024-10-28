@@ -61,7 +61,7 @@
                     </span>
                     {{ $t("global.create") }}
                   </label>
-                  <ul tabindex="0" class="dropdown-content menu rounded-box bg-base-100 w-full p-2 shadow">
+                  <ul tabindex="0" class="dropdown-content menu rounded-box w-full bg-base-100 p-2 shadow">
                     <li v-for="btn in dropdown" :key="btn.id">
                       <button @click="btn.action">
                         {{ btn.name.value }}

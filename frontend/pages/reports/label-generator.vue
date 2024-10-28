@@ -200,7 +200,9 @@
     const { data, error } = await api.items.getAll();
 
     if (error) {
-      return [];
+      return {
+        items: [],
+      };
     }
 
     return data;
@@ -219,7 +221,12 @@
 
     const items: LabelData[] = [];
     for (let i = displayProperties.assetRange; i < displayProperties.assetRangeMax; i++) {
-      items.push(getItem(i, allFields?.value?.items?.[i] ?? null));
+      const item = allFields?.value?.items?.[i];
+      if (item?.location) {
+        items.push(getItem(i, item as { location: { name: string }; name: string }));
+      } else {
+        items.push(getItem(i, null));
+      }
     }
     return items;
   });

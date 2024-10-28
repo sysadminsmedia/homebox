@@ -1,0 +1,211 @@
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "title": "Importă fișier CSV",
+                "upload": "Încarcă"
+            }
+        },
+        "global": {
+            "page_qr_code": {
+                "page_url": "URL Pagină"
+            },
+            "password_score": {
+                "password_strength": "Complexitate Parolă"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "photo_button": "Imagine 📷",
+                "title": "Crează articol"
+            },
+            "view": {
+                "selectable": {
+                    "card": "Cartelă",
+                    "items": "Articole",
+                    "no_items": "Nu există articole pentru afișare",
+                    "table": "Tabel"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "title": "Crează Etichetă"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "Crează Locație"
+            },
+            "tree": {
+                "no_locations": "Nu există locații disponibile. Adaugă o locație nouă folosind butonul\n`<`span class=\"link-primary\"`>`Crează`<`/span`>` din bara de navigație."
+            }
+        }
+    },
+    "global": {
+        "build": "Build: { build }",
+        "confirm": "Confirmă",
+        "create": "Crează",
+        "create_and_add": "Crează și Adaugă încă un articol",
+        "created": "Creat",
+        "email": "Adresă de email",
+        "follow_dev": "Urmărește developer-ul",
+        "github": "Proiect GitHub",
+        "items": "Articole",
+        "join_discord": "Vino pe Discord",
+        "labels": "Etichete",
+        "locations": "Locații",
+        "name": "Nume",
+        "password": "Parolă",
+        "read_docs": "Citește documentația",
+        "search": "Caută",
+        "sign_out": "Ieșire",
+        "submit": "Trimite",
+        "version": "Versiune: { version }",
+        "welcome": "Bun venit, { username }"
+    },
+    "index": {
+        "disabled_registration": "Înregistrare Dezactivată",
+        "dont_join_group": "Nu vrei sa te alături unui grup?",
+        "joining_group": "Te alături unui grup existent!",
+        "login": "Autentificare",
+        "register": "Înregistrare",
+        "remember_me": "Ține-mă minte",
+        "set_email": "Care este adresa ta de email?",
+        "set_name": "Care este numele tău?",
+        "set_password": "Setează-ți parola",
+        "tagline": "Urmărește, Organizează și Gestionează lucrurile tale."
+    },
+    "items": {
+        "add": "Adaugă",
+        "created_at": "Creat la",
+        "custom_fields": "Câmpuri personalizate",
+        "field_selector": "Selector Câmp",
+        "field_value": "Valoare Câmp",
+        "first": "Primul",
+        "include_archive": "Include Articole Arhivate",
+        "last": "Ultimul",
+        "negate_labels": "Neagă Etichetele Selectate",
+        "next_page": "Următoarea Pagină",
+        "no_results": "Nu s-au găsit articole",
+        "options": "Opțiuni",
+        "order_by": "Ordonează După",
+        "pages": "Pagina { page } din { totalPages }",
+        "prev_page": "Pagina Anterioară",
+        "reset_search": "Resetează Căutare",
+        "results": "{ total } Rezultate",
+        "tip_2": "Căutările prefixate cu '#' vor efectua o căutare după ID de activ (exemplu '#000-001')",
+        "tips": "Sfaturi",
+        "tips_sub": "Sfaturi Căutare",
+        "updated_at": "Actualizat La"
+    },
+    "labels": {
+        "no_results": "Nu s-au găsit Etichete"
+    },
+    "languages": {
+        "ca": "Catalană",
+        "de": "Germană",
+        "en": "Engleză",
+        "es": "Spaniolă",
+        "fr": "Franceză",
+        "hu": "Maghiară",
+        "it": "Italiană",
+        "nl": "Olandeză",
+        "pl": "Poloneză",
+        "pt-BR": "Portugheză (Brazilia)",
+        "ru": "Rusă",
+        "sl": "Slovenă",
+        "sv": "Suedeză",
+        "tr": "Turcă",
+        "zh-CN": "Chineză (Simplificată)",
+        "zh-HK": "Chineză (Hong Kong)",
+        "zh-MO": "Chineză (Macau)",
+        "zh-TW": "Chineză (Tradițională)"
+    },
+    "locations": {
+        "no_results": "Nu s-au găsit Locații"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Ambele",
+            "completed": "Finalizat",
+            "scheduled": "Programat"
+        },
+        "list": {
+            "complete": "Finalizat",
+            "create_first": "Crează Prima ta Înregistrare",
+            "delete": "Șterge",
+            "duplicate": "Duplicat",
+            "edit": "Redactare",
+            "new": "Nou"
+        },
+        "modal": {
+            "completed_date": "Dată finalizare",
+            "cost": "Preț",
+            "delete_confirmation": "Ești sigur ca dorești ștergerea acestei înregistrări?",
+            "edit_action": "Actualizare",
+            "edit_title": "Redactare Înregistrare",
+            "entry_name": "Nume Înregistrare",
+            "new_action": "Crează",
+            "new_title": "Înregistrare Nouă",
+            "notes": "Notițe",
+            "scheduled_date": "Dată Programată"
+        },
+        "monthly_average": "Media Lunară",
+        "toast": {
+            "failed_to_create": "Nu s-a putut crea înregistrarea",
+            "failed_to_delete": "Nu s-a putut șterge înregistrarea",
+            "failed_to_update": "Nu s-a putut actualiza înregistrarea"
+        },
+        "total_cost": "Preț Total",
+        "total_entries": "Înregistrări Totale"
+    },
+    "menu": {
+        "home": "Acasă",
+        "locations": "Locații",
+        "maintenance": "Mentenanță",
+        "profile": "Profil",
+        "search": "Caută",
+        "tools": "Unelte"
+    },
+    "profile": {
+        "active": "Activ",
+        "change_password": "Schimbă Parola",
+        "currency_format": "Format monedă",
+        "current_password": "Parola Actuală",
+        "delete_account": "Șterge Cont",
+        "enabled": "Activat",
+        "gen_invite": "Generează Link Invitație",
+        "group_settings": "Setări Grup",
+        "inactive": "Inactiv",
+        "language": "Limbă",
+        "new_password": "Parolă Nouă",
+        "test": "Test",
+        "theme_settings": "Setări Temă",
+        "update_group": "Actualizare Grup",
+        "update_language": "Actualizare Limbă",
+        "url": "URL",
+        "user_profile": "Profil Utilizator"
+    },
+    "tools": {
+        "actions": "Acțiuni Inventar",
+        "actions_set": {
+            "set_primary_photo": "Setează ca Imagine Principală",
+            "set_primary_photo_button": "Setează ca Imagine Principală"
+        },
+        "import_export": "Import/Export",
+        "import_export_set": {
+            "export": "Exportă Inventar",
+            "export_button": "Exportă Inventar",
+            "import": "Importă Inventar",
+            "import_button": "Importă Inventar"
+        },
+        "reports": "Rapoarte",
+        "reports_set": {
+            "asset_labels": "Etichete de identificare a activului",
+            "asset_labels_button": "Generator de etichete",
+            "bill_of_materials": "Lista Materialelor",
+            "bill_of_materials_button": "Generează BOM"
+        }
+    }
+}
