@@ -71,7 +71,6 @@
       type: Number,
       default: -1,
       required: false,
-      default: Number.MAX_VALUE,
     },
   });
 
