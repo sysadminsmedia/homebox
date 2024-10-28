@@ -1,5 +1,5 @@
 import type { Ref } from "vue";
-import type { TableHeader } from "components/Item/View/Table.types";
+import type { TableHeader } from "~/components/Item/View/Table.types";
 import type { DaisyTheme } from "~~/lib/data/themes";
 
 export type ViewType = "table" | "card" | "tree";

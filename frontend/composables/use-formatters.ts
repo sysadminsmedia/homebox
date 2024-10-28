@@ -45,8 +45,8 @@ export function useLocaleTimeAgo(date: Date) {
 
   const I18N_MESSAGES: UseTimeAgoMessages<UseTimeAgoUnitNamesDefault> = {
     justNow: t("components.global.date_time.just-now"),
-    past: (n) => (n.match(/\d/) ? t("components.global.date_time.ago", [n]) : n),
-    future: (n) => (n.match(/\d/) ? t("components.global.date_time.in", [n]) : n),
+    past: n => (n.match(/\d/) ? t("components.global.date_time.ago", [n]) : n),
+    future: n => (n.match(/\d/) ? t("components.global.date_time.in", [n]) : n),
     month: (n, past) =>
       n === 1
         ? past
@@ -71,17 +71,9 @@ export function useLocaleTimeAgo(date: Date) {
           ? t("components.global.date_time.last-week")
           : t("components.global.date_time.next-week")
         : `${n} ${t(`components.global.date_time.weeks`)}`,
-    hour: (n) => `${n} ${
-      n === 1 ? t("components.global.date_time.hour") : t("components.global.date_time.hours")
-      }`,
-    minute: (n) => `${n} ${
-      n === 1 ? t("components.global.date_time.minute") : t("components.global.date_time.minutes")
-      }`,
-    second: (n) => `${n} ${
-      n === 1
-        ? t("components.global.date_time.second")
-        : t("components.global.date_time.seconds")
-    }`,
+    hour: n => `${n} ${n === 1 ? t("components.global.date_time.hour") : t("components.global.date_time.hours")}`,
+    minute: n => `${n} ${n === 1 ? t("components.global.date_time.minute") : t("components.global.date_time.minutes")}`,
+    second: n => `${n} ${n === 1 ? t("components.global.date_time.second") : t("components.global.date_time.seconds")}`,
     invalid: "",
   };
 
@@ -91,10 +83,7 @@ export function useLocaleTimeAgo(date: Date) {
   });
 }
 
-export function fmtDate(
-  value: string | Date,
-  fmt: DateTimeFormat = "human"
-): string {
+export function fmtDate(value: string | Date, fmt: DateTimeFormat = "human"): string {
   const months = [
     "January",
     "February",

@@ -83,7 +83,7 @@
         </label>
         <ul tabindex="0" class="dropdown-content rounded-box flex w-64 flex-col gap-2 bg-base-100 p-2 pl-3 shadow">
           <li>Headers:</li>
-          <li v-for="(h, i) in headers" class="flex flex-row items-center gap-1">
+          <li v-for="(h, i) in headers" :key="h.value" class="flex flex-row items-center gap-1">
             <button
               class="btn btn-square btn-ghost btn-xs"
               :class="{
@@ -150,7 +150,10 @@
 
   const defaultHeaders = [
     {
-      text: "items.name", value: "name", enabled: true, type: "name"
+      text: "items.name",
+      value: "name",
+      enabled: true,
+      type: "name",
     },
     { text: "items.quantity", value: "quantity", align: "center", enabled: true },
     { text: "items.insured", value: "insured", align: "center", enabled: true, type: "boolean" },
@@ -162,16 +165,13 @@
   ] satisfies TableHeader[];
 
   const headers = ref<TableHeader[]>(
-    (preferences.value.tableHeaders ?? []).concat(
-      defaultHeaders.filter(h => !preferences.value.tableHeaders?.find(h2 => h2.value === h.value))
-    )
-    // this is a hack to make sure that any changes to the defaultHeaders are reflected in the preferences
-      .map(h => (
-        {
-          ...defaultHeaders.find(h2 => h2.value === h.value) as TableHeader,
-          enabled: h.enabled
-        }
-      ))
+    (preferences.value.tableHeaders ?? [])
+      .concat(defaultHeaders.filter(h => !preferences.value.tableHeaders?.find(h2 => h2.value === h.value)))
+      // this is a hack to make sure that any changes to the defaultHeaders are reflected in the preferences
+      .map(h => ({
+        ...(defaultHeaders.find(h2 => h2.value === h.value) as TableHeader),
+        enabled: h.enabled,
+      }))
   );
 
   console.log(headers.value);

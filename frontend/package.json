@@ -8,7 +8,7 @@
     "lint": "eslint --ext \".ts,.js,.vue\" --ignore-path ../.gitignore .",
     "lint:fix": "eslint --ext \".ts,.js,.vue\" --ignore-path ../.gitignore . --fix",
     "lint:ci": "eslint --ext \".ts,.js,.vue\" --ignore-path ../.gitignore . --max-warnings 1",
-    "typecheck": "nuxi typecheck",
+    "typecheck": "pnpm dlx vue-tsc@2.1.6 --noEmit",
     "test:ci": "TEST_SHUTDOWN_API_SERVER=true vitest --run --config ./test/vitest.config.ts",
     "test:local": "TEST_SHUTDOWN_API_SERVER=false && vitest --run --config ./test/vitest.config.ts",
     "test:watch": " TEST_SHUTDOWN_API_SERVER=false vitest --config ./test/vitest.config.ts"
@@ -23,6 +23,7 @@
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "@vite-pwa/nuxt": "^0.5.0",
+    "@vue/runtime-core": "^3.5.12",
     "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",

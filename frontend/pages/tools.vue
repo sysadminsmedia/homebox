@@ -39,6 +39,7 @@
         <div class="divide-y divide-gray-300 border-t border-gray-300 px-6 pb-3">
           <DetailAction @action="modals.import = true">
             <template #title> {{ $t("tools.import_export_set.import") }} </template>
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <div v-html="$t('tools.import_export_set.import_sub')"></div>
             <template #button> {{ $t("tools.import_export_set.import_button") }} </template>
           </DetailAction>
@@ -55,6 +56,7 @@
             <MdiAlert class="mr-2" />
             <span> {{ $t("tools.actions") }} </span>
             <template #description>
+              <!-- eslint-disable-next-line vue/no-v-html -->
               <div v-html="$t('tools.actions_sub')"></div>
             </template>
           </BaseSectionHeader>
@@ -72,11 +74,13 @@
           </DetailAction>
           <DetailAction @action="resetItemDateTimes">
             <template #title> {{ $t("tools.actions_set.zero_datetimes") }} </template>
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <div v-html="$t('tools.actions_set.zero_datetimes_sub')"></div>
             <template #button> {{ $t("tools.actions_set.zero_datetimes_button") }} </template>
           </DetailAction>
           <DetailAction @action="setPrimaryPhotos">
             <template #title> {{ $t("tools.actions_set.set_primary_photo") }} </template>
+            <!-- eslint-disable-next-line vue/no-v-html -->
             <div v-html="$t('tools.actions_set.set_primary_photo_sub')"></div>
             <template #button> {{ $t("tools.actions_set.set_primary_photo_button") }} </template>
           </DetailAction>

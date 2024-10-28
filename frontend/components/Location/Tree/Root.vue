@@ -10,6 +10,7 @@
 </script>
 
 <template>
+  <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
   <div class="root border-2 p-4">
     <p v-if="locs.length === 0" class="text-center text-sm">
       {{ $t("location.tree.no_locations") }}
