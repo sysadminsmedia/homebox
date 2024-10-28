@@ -2,7 +2,7 @@
     "components": {
         "app": {
             "import_dialog": {
-                "change_warning": "Se ha modificado el comportamiento de las importaciones con import_refs existentes. Si existe una import_ref en el archivo CSV, el \nelemento se actualizará con los valores del archivo CSV.",
+                "change_warning": "Se ha modificado el comportamiento de las importaciones con import_refs existentes. Si existe una import_ref en el archivo CSV, el\nelemento se actualizará con los valores del archivo CSV.",
                 "description": "Importa un archivo CSV que contenga tus elementos, etiquetas y ubicaciones. Consulta la documentación para obtener más información sobre el \nformato requerido.",
                 "title": "Importar Archivo CSV",
                 "upload": "Subir"
@@ -38,6 +38,9 @@
         "location": {
             "create_modal": {
                 "title": "Crear Ubicación"
+            },
+            "tree": {
+                "no_locations": "No hay ubicaciones disponibles. Añade nuevas ubicaciones mediante el botón de\n`<`span class=\"link-primary\"`>`Crear`<`/span`>` en la barra de navegación."
             }
         }
     },
@@ -101,6 +104,9 @@
         "tips_sub": "Sugerencias de Búsqueda",
         "updated_at": "Actualizado El"
     },
+    "labels": {
+        "no_results": "Etiquetas No Encontradas"
+    },
     "languages": {
         "ca": "Catalán",
         "de": "Alemán",
@@ -121,6 +127,52 @@
         "zh-MO": "Chino (Macao)",
         "zh-TW": "Chino (Tradicional)"
     },
+    "locations": {
+        "no_results": "Ubicaciones No Encontradas"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Ambos",
+            "completed": "Completado",
+            "scheduled": "Programado"
+        },
+        "list": {
+            "complete": "Completar",
+            "create_first": "Crea Tu Primera Entrada",
+            "delete": "Eliminar",
+            "duplicate": "Duplicar",
+            "edit": "Editar",
+            "new": "Nuevo"
+        },
+        "modal": {
+            "completed_date": "Fecha Completado",
+            "cost": "Coste",
+            "delete_confirmation": "¿Seguro que quieres borrar esta entrada?",
+            "edit_action": "Actualizar",
+            "edit_title": "Editar Entrada",
+            "entry_name": "Nombre de Entrada",
+            "new_action": "Crear",
+            "new_title": "Nueva Entrada",
+            "notes": "Notas",
+            "scheduled_date": "Fecha Programada"
+        },
+        "monthly_average": "Promedio Mensual",
+        "toast": {
+            "failed_to_create": "Error al crear la entrada",
+            "failed_to_delete": "Error al eliminar la entrada",
+            "failed_to_update": "Error al actualizar la entrada"
+        },
+        "total_cost": "Coste Total",
+        "total_entries": "Total de Entradas"
+    },
+    "menu": {
+        "home": "Inicio",
+        "locations": "Ubicaciones",
+        "maintenance": "Mantenimiento",
+        "profile": "Perfil",
+        "search": "Buscar",
+        "tools": "Herramientas"
+    },
     "profile": {
         "active": "Activo",
         "change_password": "Cambiar Contraseña",
@@ -136,6 +188,7 @@
         "inactive": "Inactivo",
         "language": "Idioma",
         "new_password": "Nueva Contraseña",
+        "no_notifiers": "No hay notificadores configurados",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notificación",
         "notifiers": "Notificaciones",
         "notifiers_sub": "Recibe notificaciones de los próximos recordatorios de mantenimiento",

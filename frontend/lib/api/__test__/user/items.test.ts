@@ -148,9 +148,7 @@ describe("user should be able to create an item and add an attachment", () => {
     {
       const { response, data } = await api.items.maintenance.getLog(item.id);
       expect(response.status).toBe(200);
-      expect(data.entries).toHaveLength(maintenanceEntries.length);
-      expect(data.costAverage).toBeGreaterThan(0);
-      expect(data.costTotal).toBeGreaterThan(0);
+      expect(data).toHaveLength(maintenanceEntries.length);
     }
 
     cleanup();

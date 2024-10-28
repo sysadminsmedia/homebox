@@ -9,6 +9,30 @@
             }
         },
         "global": {
+            "date_time": {
+                "ago": "{0} ago",
+                "days": "days",
+                "hour": "hour",
+                "hours": "hours",
+                "in": "in {0}",
+                "just-now": "just now",
+                "last-month": "last month",
+                "last-week": "last week",
+                "last-year": "last year",
+                "minute": "minute",
+                "minutes": "minutes",
+                "months": "months",
+                "next-month": "next month",
+                "next-week": "next week",
+                "next-year": "next year",
+                "second": "second",
+                "seconds": "seconds",
+                "tomorrow": "tomorrow",
+                "week": "week",
+                "weeks": "weeks",
+                "years": "years",
+                "yesterday": "yesterday"
+            },
             "page_qr_code": {
                 "page_url": "Page URL"
             },
@@ -18,6 +42,8 @@
         },
         "item": {
             "create_modal": {
+                "item_description": "Item Description",
+                "item_name": "Item Name",
                 "photo_button": "Photo 📷",
                 "title": "Create Item"
             },
@@ -27,17 +53,28 @@
                     "items": "Items",
                     "no_items": "No Items to Display",
                     "table": "Table"
+                },
+                "table": {
+                    "page": "Page",
+                    "rows_per_page": "Rows per page"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_description": "Label Description",
+                "label_name": "Label Name",
                 "title": "Create Label"
             }
         },
         "location": {
             "create_modal": {
+                "location_description": "Location Description",
+                "location_name": "Location Name",
                 "title": "Create Location"
+            },
+            "selector": {
+                "parent_location": "Parent Location"
             },
             "tree": {
                 "no_locations": "No locations available. Add new locations through the\n `<`span class=\"link-primary\"`>`Create`<`/span`>` button on the navigation bar."
@@ -45,11 +82,16 @@
         }
     },
     "global": {
+        "add": "Add",
         "build": "Build: { build }",
         "confirm": "Confirm",
         "create": "Create",
         "create_and_add": "Create and Add Another",
         "created": "Created",
+        "delete": "Delete",
+        "details": "Details",
+        "duplicate": "Duplicate",
+        "edit": "Edit",
         "email": "Email",
         "follow_dev": "Follow the Developer",
         "github": "GitHub Project",
@@ -57,14 +99,28 @@
         "join_discord": "Join the Discord",
         "labels": "Labels",
         "locations": "Locations",
+        "maintenance": "Maintenance",
         "name": "Name",
         "password": "Password",
         "read_docs": "Read the Docs",
+        "save": "Save",
         "search": "Search",
         "sign_out": "Sign Out",
         "submit": "Submit",
+        "update": "Update",
+        "value": "Value",
         "version": "Version: { version }",
         "welcome": "Welcome, { username }"
+    },
+    "home": {
+        "labels": "Labels",
+        "quick_statistics": "Quick Statistics",
+        "recently_added": "Recently Added",
+        "storage_locations": "Storage Locations",
+        "total_items": "Total Items",
+        "total_labels": "Total Labels",
+        "total_locations": "Total Locations",
+        "total_value": "Total Value"
     },
     "index": {
         "disabled_registration": "Registration Disabled",
@@ -80,32 +136,71 @@
     },
     "items": {
         "add": "Add",
+        "advanced": "Advanced",
+        "archived": "Archived",
+        "asset_id": "Asset ID",
+        "attachment": "Attachment",
+        "attachments": "Attachments",
+        "changes_persisted_immediately": "Changes to attachments will be saved immediately",
         "created_at": "Created At",
         "custom_fields": "Custom Fields",
+        "description": "Description",
+        "details": "Details",
+        "drag_and_drop": "Drag and drop files here or click to select files",
+        "edit_details": "Edit Details",
         "field_selector": "Field Selector",
         "field_value": "Field Value",
         "first": "First",
         "include_archive": "Include Archived Items",
+        "insured": "Insured",
         "last": "Last",
+        "lifetime_warranty": "Lifetime Warranty",
+        "location": "Location",
+        "manual": "Manual",
+        "manuals": "Manuals",
+        "manufacturer": "Manufacturer",
+        "model_number": "Model Number",
+        "name": "Name",
         "negate_labels": "Negate Selected Labels",
         "next_page": "Next Page",
         "no_results": "No Items Found",
+        "notes": "Notes",
         "options": "Options",
         "order_by": "Order By",
         "pages": "Page { page } of { totalPages }",
+        "parent_item": "Parent Item",
+        "photo": "Photo",
+        "photos": "Photos",
         "prev_page": "Previous Page",
+        "purchase_date": "Purchase Date",
+        "purchase_details": "Purchase Details",
+        "purchase_price": "Purchase Price",
+        "purchased_from": "Purchased From",
+        "quantity": "Quantity",
         "query_id": "Querying Asset ID Number: { id }",
+        "receipt": "Receipt",
+        "receipts": "Receipts",
         "reset_search": "Reset Search",
         "results": "{ total } Results",
+        "serial_number": "Serial Number",
+        "show_advanced_view_options": "Show Advanced View Options",
+        "sold_at": "Sold At",
+        "sold_details": "Sold Details",
+        "sold_price": "Sold Price",
+        "sold_to": "Sold To",
         "tip_1": "Location and label filters use the 'OR' operation. If more than one is selected only one will be\n required for a match.",
         "tip_2": "Searches prefixed with '#'' will query for a asset ID (example '#000-001')",
         "tip_3": "Field filters use the 'OR' operation. If more than one is selected only one will be required for a\n match.",
         "tips": "Tips",
         "tips_sub": "Search Tips",
-        "updated_at": "Updated At"
+        "updated_at": "Updated At",
+        "warranty": "Warranty",
+        "warranty_details": "Warranty Details",
+        "warranty_expires": "Warranty Expires"
     },
     "labels": {
-        "no_results": "No Labels Found"
+        "no_results": "No Labels Found",
+        "update_label": "Update Label"
     },
     "languages": {
         "ca": "Catalan",
@@ -115,20 +210,26 @@
         "fr": "French",
         "hu": "Hungarian",
         "it": "Italian",
+        "ja-JP": "Japanese",
         "nl": "Dutch",
         "pl": "Polish",
         "pt-BR": "Portuguese (Brazil)",
+        "pt-PT": "Portuguese (Portugal)",
         "ru": "Russian",
         "sl": "Slovenian",
         "sv": "Swedish",
         "tr": "Turkish",
+        "uk-UA": "Ukrainian",
         "zh-CN": "Chinese (Simplified)",
         "zh-HK": "Chinese (Hong Kong)",
         "zh-MO": "Chinese (Macau)",
         "zh-TW": "Chinese (Traditional)"
     },
     "locations": {
-        "no_results": "No Locations Found"
+        "child_locations": "Child Locations",
+        "collapse_tree": "Collapse Tree",
+        "no_results": "No Locations Found",
+        "update_location": "Update Location"
     },
     "maintenance": {
         "filter": {
@@ -137,12 +238,12 @@
             "scheduled": "Scheduled"
         },
         "list": {
+            "complete": "Complete",
             "create_first": "Create Your First Entry",
             "delete": "Delete",
+            "duplicate": "Duplicate",
             "edit": "Edit",
-            "new": "New",
-            "complete": "Complete",
-            "duplicate" : "Duplicate"
+            "new": "New"
         },
         "modal": {
             "completed_date": "Completed Date",
@@ -166,6 +267,9 @@
         "total_entries": "Total Entries"
     },
     "menu": {
+        "create_item": "Item / Asset",
+        "create_label": "Label",
+        "create_location": "Location",
         "home": "Home",
         "locations": "Locations",
         "maintenance": "Maintenance",
@@ -182,6 +286,7 @@
         "delete_account_sub": "Delete your account and all its associated data. This can not be undone.",
         "display_header": "{ currentValue, select, true {Hide Header} false {Show Header} other {Not Hit}}",
         "enabled": "Enabled",
+        "example": "Example",
         "gen_invite": "Generate Invite Link",
         "group_settings": "Group Settings",
         "group_settings_sub": "Shared Group Settings. You may need to refresh your browser for some settings to apply.",

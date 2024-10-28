@@ -6,10 +6,10 @@
         :class="{
           'text-red-600':
             typeof value === 'string' &&
-            ((maxLength && value.length > maxLength) || (minLength && value.length < minLength)),
+            ((maxLength !== -1 && value.length > maxLength) || (minLength !== -1 && value.length < minLength)),
         }"
       >
-        {{ typeof value === "string" && (maxLength || minLength) ? `${value.length}/${maxLength}` : "" }}
+        {{ typeof value === "string" && (maxLength !== -1 || minLength !== -1) ? `${value.length}/${maxLength}` : "" }}
       </span>
     </label>
     <textarea ref="el" v-model="value" class="textarea textarea-bordered h-28 w-full" :placeholder="placeholder" />
@@ -21,10 +21,10 @@
         :class="{
           'text-red-600':
             typeof value === 'string' &&
-            ((maxLength && value.length > maxLength) || (minLength && value.length < minLength)),
+            ((maxLength !== -1 && value.length > maxLength) || (minLength !== -1 && value.length < minLength)),
         }"
       >
-        {{ typeof value === "string" && (maxLength || minLength) ? `${value.length}/${maxLength}` : "" }}
+        {{ typeof value === "string" && (maxLength !== -1 || minLength !== -1) ? `${value.length}/${maxLength}` : "" }}
       </span>
     </label>
     <textarea
@@ -63,10 +63,12 @@
     },
     maxLength: {
       type: Number,
+      default: -1,
       required: false,
     },
     minLength: {
       type: Number,
+      default: -1,
       required: false,
     },
   });
@@ -84,7 +86,4 @@
   });
 
   const value = useVModel(props, "modelValue", emit);
-  const valueLen = computed(() => {
-    return value.value ? value.value.length : 0;
-  });
 </script>

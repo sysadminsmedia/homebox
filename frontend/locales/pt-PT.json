@@ -75,12 +75,6 @@
         "set_password": "Defina a sua senha",
         "tagline": "Acompanhe, organize e faça a gestão das suas coisas."
     },
-    "labels": {
-        "no_results": "Nenhuma etiqueta encontrada"
-    },
-    "locations": {
-        "no_results": "Nenhuma localização encontrada"
-    },
     "items": {
         "add": "Adicionar",
         "created_at": "Criado em",
@@ -107,6 +101,9 @@
         "tips_sub": "Dicas de pesquisa",
         "updated_at": "Atualizado em"
     },
+    "labels": {
+        "no_results": "Nenhuma etiqueta encontrada"
+    },
     "languages": {
         "ca": "Catalão",
         "de": "Alemão",
@@ -127,6 +124,9 @@
         "zh-MO": "Chinês (Macau)",
         "zh-TW": "Chinês (Tradicional)"
     },
+    "locations": {
+        "no_results": "Nenhuma localização encontrada"
+    },
     "profile": {
         "active": "Ativo",
         "change_password": "Alterar Senha",
@@ -138,17 +138,17 @@
         "enabled": "Ativado",
         "gen_invite": "Gerar link de convite",
         "group_settings": "Definições de Grupo",
-        "group_settings_sub": "Definições de Grupo Partilhadas. Pode ter de atualizar a página para  algumas definições serem aplicadas.",
+        "group_settings_sub": "Definições de Grupo Partilhadas. Pode ter de atualizar a página para algumas definições serem aplicadas.",
         "inactive": "Inativo",
         "language": "Idioma",
         "new_password": "Nova Senha",
+        "no_notifiers": "Nenhum notificador configurado",
         "notifier_modal": "{ type, select, true {Editar} false {Criar} other {Outro}} Notificador",
         "notifiers": "Notificadores",
         "notifiers_sub": "Receba notificações para os próximos lembretes de manutenção",
-        "no_notifiers": "Nenhum notificador configurado",
         "test": "Testar",
         "theme_settings": "Definições do tema",
-        "theme_settings_sub": "As configurações do tema são guardadas no armazenamento local do seu navegador. Pode alterar o tema  em qualquer altura.\nSe encontrar algum problema com  a alteração do tema, tente refrescar o browser.",
+        "theme_settings_sub": "As configurações do tema são guardadas no armazenamento local do seu navegador. Pode alterar o tema em qualquer altura.\nSe encontrar algum problema com a alteração do tema, tente refrescar o browser.",
         "update_group": "Atualizar Grupo",
         "update_language": "Atualizar Idioma",
         "url": "URL",
@@ -170,7 +170,7 @@
             "zero_datetimes": "Zero Item Data e Hora",
             "zero_datetimes_button": "Zero Data Horas do Item"
         },
-        "actions_sub": "Aplicar Ações ao seu inventário em massa. Estas  acções são irreversíveis. '<b>'Cuidado.'</b>'",
+        "actions_sub": "Aplicar Ações ao seu inventário em massa. Estas acções são irreversíveis. '<b>'Cuidado.'</b>'",
         "import_export": "Importar/Exportar",
         "import_export_set": {
             "export": "Exportar Inventário",
@@ -178,7 +178,7 @@
             "export_sub": "Exporta o formato CSV padrão para o Homebox. Isto vai exportar todos os items do inventário.",
             "import": "Importar inventário",
             "import_button": "Importar inventário",
-            "import_sub": "Importa o formato standard do CSV para o Homebox. Sem uma coluna '<code>'HB.import_ref'</code>' , isto '<b>'não '</b>' vai escrever por cima de items existentes no inventário, apenas adiciona novos. As linhas com  uma coluna '<code>'HB.import_ref'</code>' vão ser fundidas com os items que tenham o mesmo import_ref, se existirem."
+            "import_sub": "Importa o formato standard do CSV para o Homebox. Sem uma coluna '<code>'HB.import_ref'</code>' , isto '<b>'não '</b>' vai escrever por cima de items existentes no inventário, apenas adiciona novos. As linhas com uma coluna '<code>'HB.import_ref'</code>' vão ser fundidas com os items que tenham o mesmo import_ref, se existirem."
         },
         "import_export_sub": "Importe e exporte o seu inventário de e para um ficheiro CSV. Isto é útil para migrar o inventário para uma nova instância do Homebox.",
         "reports": "Relatórios",

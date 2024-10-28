@@ -30,7 +30,6 @@ env:
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
 
-
 jobs:
   build:
 
@@ -38,36 +37,35 @@ jobs:
     permissions:
       contents: read
       packages: write
-      # This is used to complete the identity challenge
-      # with sigstore/fulcio when running outside of PRs.
       attestations: write
       id-token: write
 
     steps:
+      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Set up BuildKit Docker container builder to be able to build
-      # multi-platform images and export cache
-      # https://github.com/docker/setup-buildx-action
+      # Step 2: Set up Buildx without specifying driver
+      # Let it use default settings to avoid the 'no remote endpoint' issue
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.0.0 # v3.0.0
+        uses: docker/setup-buildx-action@v3.0.0
+        with:
+          install: true  # Ensure Buildx is installed and set up properly
+          use: true      # Use Buildx instance directly for this job
 
-      # Login against a Docker registry except on PR
-      # https://github.com/docker/login-action
+      # Step 3: Login against Docker registry except on PR
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3.0.0 # v3.0.0
+        uses: docker/login-action@v3.0.0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Extract metadata (tags, labels) for Docker
-      # https://github.com/docker/metadata-action
+      # Step 4: Extract metadata for Docker images
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@v5.0.0 # v5.0.0
+        uses: docker/metadata-action@v5.0.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
@@ -80,11 +78,10 @@ jobs:
           flavor: |
             suffix=-arm,onlatest=true
 
-      # Build and push Docker image with Buildx (don't push on PR)
-      # https://github.com/docker/build-push-action
+      # Step 5: Build and push the Docker image
       - name: Build and push Docker image
         id: build-and-push
-        uses: docker/build-push-action@v5.0.0 # v5.0.0
+        uses: docker/build-push-action@v5.0.0
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
@@ -95,8 +92,9 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             VERSION=${{ github.ref_name }}
-            COMMIT=${{ github.sha	}}
-        
+            COMMIT=${{ github.sha }}
+
+      # Step 6: Attest built image to prove build provenance
       - name: Attest
         uses: actions/attest-build-provenance@v1
         id: attest

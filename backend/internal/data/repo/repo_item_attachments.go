@@ -87,11 +87,11 @@ func (r *AttachmentRepo) Get(ctx context.Context, id uuid.UUID) (*ent.Attachment
 		Only(ctx)
 }
 
-func (r *AttachmentRepo) Update(ctx context.Context, itemID uuid.UUID, data *ItemAttachmentUpdate) (*ent.Attachment, error) {
+func (r *AttachmentRepo) Update(ctx context.Context, id uuid.UUID, data *ItemAttachmentUpdate) (*ent.Attachment, error) {
 	// TODO: execute within Tx
 	typ := attachment.Type(data.Type)
 
-	bldr := r.db.Attachment.UpdateOneID(itemID).
+	bldr := r.db.Attachment.UpdateOneID(id).
 		SetType(typ)
 
 	// Primary only applies to photos
@@ -101,7 +101,12 @@ func (r *AttachmentRepo) Update(ctx context.Context, itemID uuid.UUID, data *Ite
 		bldr = bldr.SetPrimary(false)
 	}
 
-	itm, err := bldr.Save(ctx)
+	updatedAttachment, err := bldr.Save(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	attachmentItem, err := updatedAttachment.QueryItem().Only(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -109,8 +114,8 @@ func (r *AttachmentRepo) Update(ctx context.Context, itemID uuid.UUID, data *Ite
 	// Ensure all other attachments are not primary
 	err = r.db.Attachment.Update().
 		Where(
-			attachment.HasItemWith(item.ID(itemID)),
-			attachment.IDNEQ(itm.ID),
+			attachment.HasItemWith(item.ID(attachmentItem.ID)),
+			attachment.IDNEQ(updatedAttachment.ID),
 		).
 		SetPrimary(false).
 		Exec(ctx)
@@ -118,7 +123,7 @@ func (r *AttachmentRepo) Update(ctx context.Context, itemID uuid.UUID, data *Ite
 		return nil, err
 	}
 
-	return r.Get(ctx, itm.ID)
+	return r.Get(ctx, updatedAttachment.ID)
 }
 
 func (r *AttachmentRepo) Delete(ctx context.Context, id uuid.UUID) error {
