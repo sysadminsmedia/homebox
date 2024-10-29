@@ -9,6 +9,30 @@
             }
         },
         "global": {
+            "date_time": {
+                "ago": "{0} fa",
+                "days": "giorni",
+                "hour": "ora",
+                "hours": "ore",
+                "in": "tra {0}",
+                "just-now": "Adesso",
+                "last-month": "mese scorso",
+                "last-week": "settimana precedente",
+                "last-year": "anno precedente",
+                "minute": "minuto",
+                "minutes": "minuti",
+                "months": "mesi",
+                "next-month": "prossimo mese",
+                "next-week": "settimana successiva",
+                "next-year": "anno successivo",
+                "second": "secondo",
+                "seconds": "secondi",
+                "tomorrow": "domani",
+                "week": "settimana",
+                "weeks": "settimane",
+                "years": "anni",
+                "yesterday": "ieri"
+            },
             "page_qr_code": {
                 "page_url": "URL della Pagina"
             },
@@ -18,6 +42,8 @@
         },
         "item": {
             "create_modal": {
+                "item_description": "Descrizione Articolo",
+                "item_name": "Nome articolo",
                 "photo_button": "Foto 📷",
                 "title": "Crea Articolo"
             },
@@ -27,17 +53,28 @@
                     "items": "Articoli",
                     "no_items": "Nessun Articolo da Visualizzare",
                     "table": "Tabella"
+                },
+                "table": {
+                    "page": "Pagina",
+                    "rows_per_page": "Righe per pagina"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_description": "Descrizione Etichetta",
+                "label_name": "Nome Etichetta",
                 "title": "Crea Etichetta"
             }
         },
         "location": {
             "create_modal": {
+                "location_description": "Descrizione ubicazione",
+                "location_name": "Nome ubicazione",
                 "title": "Crea Posizione"
+            },
+            "selector": {
+                "parent_location": "Ubicazione padre"
             },
             "tree": {
                 "no_locations": "Nessuna posizione disponibile. Aggiungi nuove posizioni mediante il pulsante\n`<`span class=\"link-primary\"`>`Crea`<`/span`>` nella barra di navigazione."
@@ -45,11 +82,16 @@
         }
     },
     "global": {
+        "add": "Aggiungi",
         "build": "Compila: { build }",
         "confirm": "Conferma",
         "create": "Crea",
         "create_and_add": "Crea e aggiungi un altro",
         "created": "Creato",
+        "delete": "Cancella",
+        "details": "Dettagli",
+        "duplicate": "Duplica",
+        "edit": "Modifica",
         "email": "Email",
         "follow_dev": "Segui lo Sviluppatore",
         "github": "Progetto GitHub",
@@ -57,14 +99,28 @@
         "join_discord": "Unisciti a Discord",
         "labels": "Etichette",
         "locations": "Posizioni",
+        "maintenance": "Manutenzione",
         "name": "Nome",
         "password": "Password",
         "read_docs": "Leggi la Documentazione",
+        "save": "Salva",
         "search": "Cerca",
         "sign_out": "Disconnetti",
         "submit": "Invia",
+        "update": "Aggiorna",
+        "value": "Valore",
         "version": "Versione: { version }",
         "welcome": "Benvenuto, { username }"
+    },
+    "home": {
+        "labels": "Etichette",
+        "quick_statistics": "Statistiche rapide",
+        "recently_added": "Aggiunti di recente",
+        "storage_locations": "Ubicazioni di magazzino",
+        "total_items": "Articoli totali",
+        "total_labels": "Etichette totali",
+        "total_locations": "Ubicazioni totali",
+        "total_value": "Valore totale"
     },
     "index": {
         "disabled_registration": "Registrazione Disabilitata",
@@ -80,32 +136,71 @@
     },
     "items": {
         "add": "Aggiungi",
+        "advanced": "Avanzate",
+        "archived": "Archiviato",
+        "asset_id": "ID Asset",
+        "attachment": "Allegato",
+        "attachments": "Allegati",
+        "changes_persisted_immediately": "Le modifiche agli allegati verranno salvate immediatamente",
         "created_at": "Creato Il",
         "custom_fields": "Campi Personalizzati",
+        "description": "Descrizione",
+        "details": "Dettagli",
+        "drag_and_drop": "Trascina e rilascia i file qui o fai clic per selezionare i file",
+        "edit_details": "Modifica dettagli",
         "field_selector": "Campo Selezione",
         "field_value": "Campo valore",
         "first": "Primo",
         "include_archive": "Includi Articoli Archiviati",
+        "insured": "Assicurato",
         "last": "Ultimo",
+        "lifetime_warranty": "Garanzia a vita",
+        "location": "Luogo",
+        "manual": "Manuale",
+        "manuals": "Manuali",
+        "manufacturer": "Marca",
+        "model_number": "Numero modello",
+        "name": "Nome",
         "negate_labels": "Negare Etichette Selezionate",
         "next_page": "Pagina Successiva",
         "no_results": "Nessun Articolo Trovato",
+        "notes": "Note",
         "options": "Opzioni",
         "order_by": "Ordina Per",
         "pages": "Pagina { page } di { totalPages }",
+        "parent_item": "Articolo principale",
+        "photo": "Foto",
+        "photos": "Foto",
         "prev_page": "Pagina Precedente",
+        "purchase_date": "Data di acquisto",
+        "purchase_details": "Dettagli dell'acquisto",
+        "purchase_price": "Prezzo di acquisto",
+        "purchased_from": "Acqistato da",
+        "quantity": "Quantità",
         "query_id": "ID dell'Asset in Ricerca: { id }",
+        "receipt": "Ricevuta",
+        "receipts": "Ricevute",
         "reset_search": "Reimposta Ricerca",
         "results": "{ total } Risultati",
+        "serial_number": "Numero seriale",
+        "show_advanced_view_options": "Mostra opzioni di visualizzazione avanzate",
+        "sold_at": "Venduto su",
+        "sold_details": "Dettagli di vendita",
+        "sold_price": "Prezzo di vendita",
+        "sold_to": "Venduto a",
         "tip_1": "I filtri di posizione ed etichetta utilizzano l'operazione 'OR'. Se ne viene selezionato più\n di uno, ne sarà richiesto solo uno per una corrispondenza.",
         "tip_2": "Le ricerche con prefisso '#' cercheranno un ID asset (esempio '#000-001')",
         "tip_3": "I filtri di campo utilizzano l'operazione 'OR'. Se ne viene selezionato più di uno, ne sarà\n richiesto solo uno per una corrispondenza.",
         "tips": "Suggerimenti",
         "tips_sub": "Suggerimenti per la Ricerca",
-        "updated_at": "Aggiornato Il"
+        "updated_at": "Aggiornato Il",
+        "warranty": "Garanzia",
+        "warranty_details": "Dettagli garanzia",
+        "warranty_expires": "Garanzia scaduta"
     },
     "labels": {
-        "no_results": "Nessuna etichetta trovata"
+        "no_results": "Nessuna etichetta trovata",
+        "update_label": "Aggiorna etichetta"
     },
     "languages": {
         "ca": "Catalano",
@@ -115,20 +210,26 @@
         "fr": "Francese",
         "hu": "Ungherese",
         "it": "Italiano",
+        "ja-JP": "Giapponese",
         "nl": "Olandese",
         "pl": "Polacco",
         "pt-BR": "Portoghese (Brasile)",
+        "pt-PT": "Portoghese (Portogallo)",
         "ru": "Russo",
         "sl": "Sloveno",
         "sv": "Svedese",
         "tr": "Turco",
+        "uk-UA": "Ucraino",
         "zh-CN": "Cinese (semplificato)",
         "zh-HK": "Cinese Mandarino",
         "zh-MO": "Cinese (Macao)",
         "zh-TW": "Cinese (tradizionale)"
     },
     "locations": {
-        "no_results": "Nessuna posizione trovata"
+        "child_locations": "Ubicazione figlia",
+        "collapse_tree": "Contrai albero",
+        "no_results": "Nessuna posizione trovata",
+        "update_location": "Aggiorna ubicazione"
     },
     "maintenance": {
         "filter": {
@@ -166,6 +267,9 @@
         "total_entries": "Voci totali"
     },
     "menu": {
+        "create_item": "Articolo / Asset",
+        "create_label": "Etichetta",
+        "create_location": "Ubicazione",
         "home": "Home",
         "locations": "Posizioni",
         "maintenance": "Manutenzione",
@@ -182,6 +286,7 @@
         "delete_account_sub": "Elimina il tuo account e tutti i dati associati. Questa operazione non può essere annullata.",
         "display_header": "{ currentValue, select, true {Nascondi intestazione} false {Mostra intestazione} other {Sconosciuto}}",
         "enabled": "Abilitato",
+        "example": "Esempio",
         "gen_invite": "Genera Link di Invito",
         "group_settings": "Impostazioni Gruppo",
         "group_settings_sub": "Impostazioni Gruppo Condivise. Potrebbe essere necessario aggiornare il browser affinché alcune impostazioni vengano applicate.",

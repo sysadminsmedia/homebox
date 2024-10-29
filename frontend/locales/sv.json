@@ -2,7 +2,7 @@
     "components": {
         "app": {
             "import_dialog": {
-                "change_warning": "Beteendet för importer med befintliga import_refs har ändrats. Om en import_ref finns i CSV-filen, \nobjektet kommer att uppdateras med värdena i CSV-filen.",
+                "change_warning": "Beteendet för importer med befintliga import_refs har ändrats. Om en import_ref finns i CSV-filen, kommer\nobjektet att uppdateras med värdena i CSV-filen.",
                 "description": "Importera en CSV-fil som innehåller dina föremål, etiketter och platser. Se dokumentationen för mer information om formatet som krävs.",
                 "title": "Importera CSV-fil",
                 "upload": "Ladda upp"
@@ -15,7 +15,7 @@
                 "hour": "timme",
                 "hours": "timmar",
                 "in": "om {0}",
-                "just-now": "precis nu",
+                "just-now": "nyss",
                 "last-month": "förra månaden",
                 "last-week": "förra veckan",
                 "last-year": "förra året",
@@ -42,7 +42,8 @@
         },
         "item": {
             "create_modal": {
-                "item_description": "Beskrivning av föremål",
+                "item_description": "Objektbeskrivning",
+                "item_name": "Objektnamn",
                 "photo_button": "Foto 📷",
                 "title": "Skapa föremål"
             },
@@ -61,12 +62,19 @@
         },
         "label": {
             "create_modal": {
+                "label_description": "Etikettbeskrivning",
+                "label_name": "Etikettnamm",
                 "title": "Skapa etikett"
             }
         },
         "location": {
             "create_modal": {
+                "location_description": "Platsbeskrivning",
+                "location_name": "Platsnamn",
                 "title": "Skapa plats"
+            },
+            "selector": {
+                "parent_location": "Överordnad Plats"
             },
             "tree": {
                 "no_locations": "Inga platser tillgängliga. Lägg till nya platser via\n `<`span class=\"link-primary\"`>`Skapa`<`/span`>`-knappen i navigationsmenyn."
@@ -80,8 +88,10 @@
         "create": "Skapa",
         "create_and_add": "Skapa och lägg till en till",
         "created": "Skapad",
+        "delete": "Ta bort",
         "details": "Detaljer",
         "duplicate": "Duplicera",
+        "edit": "Ändra",
         "email": "Epost",
         "follow_dev": "Följ utvecklaren",
         "github": "GitHub-projekt",
@@ -106,6 +116,10 @@
         "labels": "Etiketter",
         "quick_statistics": "Snabb statistik",
         "recently_added": "Nyligen tillagda",
+        "storage_locations": "Förvaringsplatser",
+        "total_items": "Totalt antal objekt",
+        "total_labels": "Totalt antal etiketter",
+        "total_locations": "Totalt antal platser",
         "total_value": "Totalt Värde"
     },
     "index": {
@@ -122,9 +136,17 @@
     },
     "items": {
         "add": "Lägg till",
+        "advanced": "Avancerat",
+        "archived": "Arkiverad",
+        "attachment": "Bilaga",
+        "attachments": "Bilagor",
+        "changes_persisted_immediately": "Ändringar av bilagor sparas omedelbart",
         "created_at": "Skapat",
         "custom_fields": "Egna fält",
+        "description": "Beskrivning",
         "details": "Detaljer",
+        "drag_and_drop": "Dra och släpp här eller klicka för att välja filer",
+        "edit_details": "Ändra detaljer",
         "field_selector": "Fält alternativ",
         "field_value": "Fält värde",
         "first": "Första",
@@ -133,6 +155,7 @@
         "last": "Sista",
         "lifetime_warranty": "Livstidsgaranti",
         "location": "Plats",
+        "manual": "Manual",
         "manuals": "Manualer",
         "manufacturer": "Tillverkare",
         "model_number": "Modellnummer",
@@ -144,17 +167,23 @@
         "options": "Alternativ",
         "order_by": "Ordning via",
         "pages": "Sida { page } av { totalPages }",
+        "parent_item": "Överordnat objekt",
+        "photo": "Foto",
         "photos": "Foton",
         "prev_page": "Föregående sida",
         "purchase_date": "Inköpsdatum",
+        "purchase_details": "Inköpsdetaljer",
         "purchase_price": "Inköpspris",
         "purchased_from": "Köpt från",
         "quantity": "Antal",
         "query_id": "Fråga efter tillgångs-ID-nummer: { id }",
+        "receipt": "Kvitto",
         "receipts": "Kvitton",
         "reset_search": "Återställ sökning",
         "results": "{ total } Resultat",
         "serial_number": "Serienummer",
+        "show_advanced_view_options": "Visa avancerade vyalternativ",
+        "sold_details": "Försäljningsdetaljer",
         "sold_price": "Försäljningspris",
         "sold_to": "Såld till",
         "tip_1": "Platser och etiketter filter använder 'OR' funktionen. Om fler än en är valda, endast en kommer\nkrävas för en träff.",
@@ -163,10 +192,13 @@
         "tips": "Tips",
         "tips_sub": "Sök Tips",
         "updated_at": "Uppdaterad",
-        "warranty": "Garanti"
+        "warranty": "Garanti",
+        "warranty_details": "Garantidetaljer",
+        "warranty_expires": "Garantin upphör"
     },
     "labels": {
-        "no_results": "Inga etiketter hittades"
+        "no_results": "Inga etiketter hittades",
+        "update_label": "Uppdatera etikett"
     },
     "languages": {
         "ca": "Katalanska",
@@ -176,20 +208,24 @@
         "fr": "Franska",
         "hu": "Ungerska",
         "it": "Italienska",
+        "ja-JP": "Japanska",
         "nl": "Nederländska",
         "pl": "Polska",
         "pt-BR": "Portugisiska (Brasilien)",
+        "pt-PT": "Portugisiska",
         "ru": "Ryska",
         "sl": "Slovenska",
         "sv": "Svenska",
         "tr": "Turkiska",
+        "uk-UA": "Ukrainska",
         "zh-CN": "Kinesiska (förenklad)",
         "zh-HK": "kinesiska (Hongkong)",
         "zh-MO": "Kinesiska (Macao)",
         "zh-TW": "Kinesiska (traditionell)"
     },
     "locations": {
-        "no_results": "Inga platser hittades"
+        "no_results": "Inga platser hittades",
+        "update_location": "Uppdatera plats"
     },
     "maintenance": {
         "filter": {
@@ -212,10 +248,19 @@
             "edit_action": "Uppdatera",
             "edit_title": "Redigera",
             "new_action": "Skapa",
-            "notes": "Anteckningar"
-        }
+            "notes": "Anteckningar",
+            "scheduled_date": "Schemalagt datum"
+        },
+        "monthly_average": "Månatligt medelvärde",
+        "total_cost": "Total kostnad"
     },
     "menu": {
+        "create_label": "Etikett",
+        "create_location": "Plats",
+        "home": "Hem",
+        "locations": "Platser",
+        "maintenance": "Underhåll",
+        "profile": "Profil",
         "search": "Sök",
         "tools": "Verktyg"
     },
@@ -227,12 +272,14 @@
         "delete_account": "Radera konto",
         "delete_account_sub": "Ta bort ditt konto och alla tillhörande data. Detta kan inte ångras.",
         "enabled": "Aktiverad",
+        "example": "Exempel",
         "gen_invite": "Skapa inbjudningslänk",
         "group_settings": "Grupp inställningar",
         "group_settings_sub": "Inställningar för delad grupp. Du kan behöva uppdatera din webbläsare för att vissa inställningar ska gälla.",
         "inactive": "Inaktiv",
         "language": "Språk",
         "new_password": "Nytt lösenord",
+        "no_notifiers": "Inga notifierare konfigurerade",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Anmälare",
         "notifiers": "Notiser",
         "notifiers_sub": "Få aviseringar om kommande underhållspåminnelser",
@@ -244,5 +291,14 @@
         "url": "URL",
         "user_profile": "Användarprofil",
         "user_profile_sub": "Bjud in användare och hantera ditt konto."
+    },
+    "tools": {
+        "actions_sub": "Utför åtgärder på dina objekt i bulk. Dessa är oåterkalleliga. '<b>'Var försiktig.'</b>'",
+        "import_export": "Import/Export",
+        "reports": "Rapporter",
+        "reports_set": {
+            "bill_of_materials": "Materialförteckning",
+            "bill_of_materials_button": "Skapa materialförteckning"
+        }
     }
 }
