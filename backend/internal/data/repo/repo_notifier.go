@@ -55,7 +55,7 @@ type (
 
 		Name     string `json:"name"`
 		IsActive bool   `json:"isActive"`
-		URL      string `json:"-"` // URL field is not exposed to the client
+		URL      string `json:"url"`
 	}
 )
 

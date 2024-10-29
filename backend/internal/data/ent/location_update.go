@@ -238,7 +238,7 @@ func (lu *LocationUpdate) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Location.description": %w`, err)}
 		}
 	}
-	if _, ok := lu.mutation.GroupID(); lu.mutation.GroupCleared() && !ok {
+	if lu.mutation.GroupCleared() && len(lu.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Location.group"`)
 	}
 	return nil
@@ -656,7 +656,7 @@ func (luo *LocationUpdateOne) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Location.description": %w`, err)}
 		}
 	}
-	if _, ok := luo.mutation.GroupID(); luo.mutation.GroupCleared() && !ok {
+	if luo.mutation.GroupCleared() && len(luo.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Location.group"`)
 	}
 	return nil

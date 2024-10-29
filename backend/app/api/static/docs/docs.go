@@ -920,11 +920,31 @@ const docTemplate = `{
                     "Item Maintenance"
                 ],
                 "summary": "Get Maintenance Log",
+                "parameters": [
+                    {
+                        "enum": [
+                            "scheduled",
+                            "completed",
+                            "both"
+                        ],
+                        "type": "string",
+                        "x-enum-varnames": [
+                            "MaintenanceFilterStatusScheduled",
+                            "MaintenanceFilterStatusCompleted",
+                            "MaintenanceFilterStatusBoth"
+                        ],
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/repo.MaintenanceLog"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.MaintenanceEntryWithDetails"
+                            }
                         }
                     }
                 }
@@ -2197,8 +2217,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "purchasePrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number"
                 },
                 "purchaseTime": {
                     "description": "Purchase",
@@ -2214,8 +2233,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "soldPrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number"
                 },
                 "soldTime": {
                     "description": "Sold",
@@ -2303,8 +2321,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "purchasePrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number"
                 },
                 "quantity": {
                     "type": "integer"
@@ -2327,6 +2344,9 @@ const docTemplate = `{
         },
         "repo.ItemUpdate": {
             "type": "object",
+            "required": [
+                "name"
+            ],
             "properties": {
                 "archived": {
                     "type": "boolean"
@@ -2335,7 +2355,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 1000
                 },
                 "fields": {
                     "type": "array",
@@ -2370,7 +2391,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "notes": {
                     "description": "Extras",
@@ -2382,11 +2405,13 @@ const docTemplate = `{
                     "x-omitempty": true
                 },
                 "purchaseFrom": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "purchasePrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "purchaseTime": {
                     "description": "Purchase",
@@ -2403,15 +2428,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "soldPrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "soldTime": {
                     "description": "Sold",
                     "type": "string"
                 },
                 "soldTo": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "warrantyDetails": {
                     "type": "string"
@@ -2701,26 +2728,6 @@ const docTemplate = `{
                 "MaintenanceFilterStatusBoth"
             ]
         },
-        "repo.MaintenanceLog": {
-            "type": "object",
-            "properties": {
-                "costAverage": {
-                    "type": "number"
-                },
-                "costTotal": {
-                    "type": "number"
-                },
-                "entries": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/repo.MaintenanceEntry"
-                    }
-                },
-                "itemId": {
-                    "type": "string"
-                }
-            }
-        },
         "repo.NotifierCreate": {
             "type": "object",
             "required": [
@@ -2760,6 +2767,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updatedAt": {
+                    "type": "string"
+                },
+                "url": {
                     "type": "string"
                 },
                 "userId": {

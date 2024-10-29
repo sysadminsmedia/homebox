@@ -217,7 +217,7 @@ func (mec *MaintenanceEntryCreate) check() error {
 	if _, ok := mec.mutation.Cost(); !ok {
 		return &ValidationError{Name: "cost", err: errors.New(`ent: missing required field "MaintenanceEntry.cost"`)}
 	}
-	if _, ok := mec.mutation.ItemID(); !ok {
+	if len(mec.mutation.ItemIDs()) == 0 {
 		return &ValidationError{Name: "item", err: errors.New(`ent: missing required edge "MaintenanceEntry.item"`)}
 	}
 	return nil

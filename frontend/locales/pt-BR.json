@@ -38,6 +38,9 @@
         "location": {
             "create_modal": {
                 "title": "Criar Local"
+            },
+            "tree": {
+                "no_locations": "Não há locais disponíveis. Adicione novos locais\n através do botão \"Criar\" na barra de navegação."
             }
         }
     },
@@ -101,6 +104,9 @@
         "tips_sub": "Dicas de pesquisa",
         "updated_at": "Atualizado em"
     },
+    "labels": {
+        "no_results": "Nenhuma etiqueta encontrada"
+    },
     "languages": {
         "ca": "Catalão",
         "de": "Alemão",
@@ -121,6 +127,52 @@
         "zh-MO": "Chinês (Macau)",
         "zh-TW": "Chinês (Tradicional)"
     },
+    "locations": {
+        "no_results": "Nenhum local encontrado"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Ambos",
+            "completed": "Concluído",
+            "scheduled": "Agendado"
+        },
+        "list": {
+            "complete": "Completo",
+            "create_first": "Crie sua primeira entrada",
+            "delete": "Excluir",
+            "duplicate": "Duplicar",
+            "edit": "Editar",
+            "new": "Novo"
+        },
+        "modal": {
+            "completed_date": "Data de conclusão",
+            "cost": "Custo",
+            "delete_confirmation": "Tem certeza que deseja excluir este item?",
+            "edit_action": "Atualizar",
+            "edit_title": "Editar entrada",
+            "entry_name": "Nome de entrada",
+            "new_action": "Criar",
+            "new_title": "Nova entrada",
+            "notes": "Notas",
+            "scheduled_date": "Data agendada"
+        },
+        "monthly_average": "Média Mensal",
+        "toast": {
+            "failed_to_create": "Falha ao criar entrada",
+            "failed_to_delete": "Falha ao excluir entrada",
+            "failed_to_update": "Falha ao atualizar entrada"
+        },
+        "total_cost": "Custo Total",
+        "total_entries": "Total de Entradas"
+    },
+    "menu": {
+        "home": "Início",
+        "locations": "Locais",
+        "maintenance": "Manutenção",
+        "profile": "Perfil",
+        "search": "Buscar",
+        "tools": "Ferramentas"
+    },
     "profile": {
         "active": "Ativo",
         "change_password": "Alterar Senha",
@@ -136,6 +188,7 @@
         "inactive": "Inativa",
         "language": "Idioma",
         "new_password": "Nova Senha",
+        "no_notifiers": "Nenhum notificador configurado",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notificação",
         "notifiers": "Notificadores",
         "notifiers_sub": "Receba notificações para lembretes de manutenção futuros",

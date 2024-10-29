@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -86,7 +87,7 @@ func (arq *AuthRolesQuery) QueryToken() *AuthTokensQuery {
 // First returns the first AuthRoles entity from the query.
 // Returns a *NotFoundError when no AuthRoles was found.
 func (arq *AuthRolesQuery) First(ctx context.Context) (*AuthRoles, error) {
-	nodes, err := arq.Limit(1).All(setContextOp(ctx, arq.ctx, "First"))
+	nodes, err := arq.Limit(1).All(setContextOp(ctx, arq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +110,7 @@ func (arq *AuthRolesQuery) FirstX(ctx context.Context) *AuthRoles {
 // Returns a *NotFoundError when no AuthRoles ID was found.
 func (arq *AuthRolesQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = arq.Limit(1).IDs(setContextOp(ctx, arq.ctx, "FirstID")); err != nil {
+	if ids, err = arq.Limit(1).IDs(setContextOp(ctx, arq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -132,7 +133,7 @@ func (arq *AuthRolesQuery) FirstIDX(ctx context.Context) int {
 // Returns a *NotSingularError when more than one AuthRoles entity is found.
 // Returns a *NotFoundError when no AuthRoles entities are found.
 func (arq *AuthRolesQuery) Only(ctx context.Context) (*AuthRoles, error) {
-	nodes, err := arq.Limit(2).All(setContextOp(ctx, arq.ctx, "Only"))
+	nodes, err := arq.Limit(2).All(setContextOp(ctx, arq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -160,7 +161,7 @@ func (arq *AuthRolesQuery) OnlyX(ctx context.Context) *AuthRoles {
 // Returns a *NotFoundError when no entities are found.
 func (arq *AuthRolesQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
-	if ids, err = arq.Limit(2).IDs(setContextOp(ctx, arq.ctx, "OnlyID")); err != nil {
+	if ids, err = arq.Limit(2).IDs(setContextOp(ctx, arq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -185,7 +186,7 @@ func (arq *AuthRolesQuery) OnlyIDX(ctx context.Context) int {
 
 // All executes the query and returns a list of AuthRolesSlice.
 func (arq *AuthRolesQuery) All(ctx context.Context) ([]*AuthRoles, error) {
-	ctx = setContextOp(ctx, arq.ctx, "All")
+	ctx = setContextOp(ctx, arq.ctx, ent.OpQueryAll)
 	if err := arq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -207,7 +208,7 @@ func (arq *AuthRolesQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if arq.ctx.Unique == nil && arq.path != nil {
 		arq.Unique(true)
 	}
-	ctx = setContextOp(ctx, arq.ctx, "IDs")
+	ctx = setContextOp(ctx, arq.ctx, ent.OpQueryIDs)
 	if err = arq.Select(authroles.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -225,7 +226,7 @@ func (arq *AuthRolesQuery) IDsX(ctx context.Context) []int {
 
 // Count returns the count of the given query.
 func (arq *AuthRolesQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, arq.ctx, "Count")
+	ctx = setContextOp(ctx, arq.ctx, ent.OpQueryCount)
 	if err := arq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -243,7 +244,7 @@ func (arq *AuthRolesQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (arq *AuthRolesQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, arq.ctx, "Exist")
+	ctx = setContextOp(ctx, arq.ctx, ent.OpQueryExist)
 	switch _, err := arq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -537,7 +538,7 @@ func (argb *AuthRolesGroupBy) Aggregate(fns ...AggregateFunc) *AuthRolesGroupBy 
 
 // Scan applies the selector query and scans the result into the given value.
 func (argb *AuthRolesGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, argb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, argb.build.ctx, ent.OpQueryGroupBy)
 	if err := argb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -585,7 +586,7 @@ func (ars *AuthRolesSelect) Aggregate(fns ...AggregateFunc) *AuthRolesSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (ars *AuthRolesSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ars.ctx, "Select")
+	ctx = setContextOp(ctx, ars.ctx, ent.OpQuerySelect)
 	if err := ars.prepareQuery(ctx); err != nil {
 		return err
 	}

@@ -3,7 +3,7 @@
     <dl class="sm:divide-y sm:divide-gray-300">
       <div v-for="(detail, i) in details" :key="i" class="group py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
         <dt class="text-sm font-medium text-base-content">
-          {{ detail.name }}
+          {{ $t(detail.name) }}
         </dt>
         <dd class="text-start text-sm text-base-content sm:col-span-2">
           <slot :name="detail.slot || detail.name" v-bind="{ detail }">
@@ -27,7 +27,7 @@
               </ClientOnly>
             </template>
             <template v-else>
-              <span class="flex items-center">
+              <span class="flex items-center text-wrap">
                 {{ detail.text }}
                 <span
                   v-if="detail.copyable"

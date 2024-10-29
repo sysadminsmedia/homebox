@@ -9,6 +9,8 @@
     title: "Homebox | Printer",
   });
 
+  const api = useUserApi();
+
   const bordered = ref(false);
 
   const displayProperties = reactive({
@@ -181,7 +183,7 @@
     return route(`/qrcode`, { data: encodeURIComponent(data) });
   }
 
-  function getItem(n: number): LabelData {
+  function getItem(n: number, item: { name: string; location: { name: string } } | null): LabelData {
     // format n into - seperated string with leading zeros
 
     const assetID = fmtAssetID(n);
@@ -189,10 +191,22 @@
     return {
       url: getQRCodeUrl(assetID),
       assetID,
-      name: "_______________",
-      location: "_______________",
+      name: item?.name ?? "_______________",
+      location: item?.location?.name ?? "_______________",
     };
   }
+
+  const { data: allFields } = await useAsyncData(async () => {
+    const { data, error } = await api.items.getAll();
+
+    if (error) {
+      return {
+        items: [],
+      };
+    }
+
+    return data;
+  });
 
   const items = computed(() => {
     if (displayProperties.assetRange > displayProperties.assetRangeMax) {
@@ -207,7 +221,12 @@
 
     const items: LabelData[] = [];
     for (let i = displayProperties.assetRange; i < displayProperties.assetRangeMax; i++) {
-      items.push(getItem(i));
+      const item = allFields?.value?.items?.[i];
+      if (item?.location) {
+        items.push(getItem(i, item as { location: { name: string }; name: string }));
+      } else {
+        items.push(getItem(i, null));
+      }
     }
     return items;
   });
@@ -407,6 +426,7 @@
             <img
               :src="item.url"
               :style="{
+                minWidth: `${out.card.height * 0.9}in`,
                 width: `${out.card.height * 0.9}in`,
                 height: `${out.card.height * 0.9}in`,
               }"
@@ -415,8 +435,8 @@
           <div class="ml-2 flex flex-col justify-center">
             <div class="font-bold">{{ item.assetID }}</div>
             <div class="text-xs font-light italic">Homebox</div>
-            <div>{{ item.name }}</div>
-            <div>{{ item.location }}</div>
+            <div class="overflow-hidden text-wrap text-xs">{{ item.name }}</div>
+            <div class="text-xs">{{ item.location }}</div>
           </div>
         </div>
       </div>

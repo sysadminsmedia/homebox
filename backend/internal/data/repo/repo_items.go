@@ -70,8 +70,8 @@ type (
 		ParentID    uuid.UUID `json:"parentId"    extensions:"x-nullable,x-omitempty"`
 		ID          uuid.UUID `json:"id"`
 		AssetID     AssetID   `json:"assetId"     swaggertype:"string"`
-		Name        string    `json:"name"`
-		Description string    `json:"description"`
+		Name        string    `json:"name"        validate:"required,min=1,max=255"`
+		Description string    `json:"description" validate:"max=1000"`
 		Quantity    int       `json:"quantity"`
 		Insured     bool      `json:"insured"`
 		Archived    bool      `json:"archived"`
@@ -92,13 +92,13 @@ type (
 
 		// Purchase
 		PurchaseTime  types.Date `json:"purchaseTime"`
-		PurchaseFrom  string     `json:"purchaseFrom"`
-		PurchasePrice float64    `json:"purchasePrice,string"`
+		PurchaseFrom  string     `json:"purchaseFrom" validate:"max=255"`
+		PurchasePrice float64    `json:"purchasePrice" extensions:"x-nullable,x-omitempty"`
 
 		// Sold
 		SoldTime  types.Date `json:"soldTime"`
-		SoldTo    string     `json:"soldTo"`
-		SoldPrice float64    `json:"soldPrice,string"`
+		SoldTo    string     `json:"soldTo" validate:"max=255"`
+		SoldPrice float64    `json:"soldPrice" extensions:"x-nullable,x-omitempty"`
 		SoldNotes string     `json:"soldNotes"`
 
 		// Extras
@@ -123,7 +123,7 @@ type (
 		CreatedAt   time.Time `json:"createdAt"`
 		UpdatedAt   time.Time `json:"updatedAt"`
 
-		PurchasePrice float64 `json:"purchasePrice,string"`
+		PurchasePrice float64 `json:"purchasePrice"`
 
 		// Edges
 		Location *LocationSummary `json:"location,omitempty" extensions:"x-nullable,x-omitempty"`
@@ -153,7 +153,7 @@ type (
 		// Sold
 		SoldTime  types.Date `json:"soldTime"`
 		SoldTo    string     `json:"soldTo"`
-		SoldPrice float64    `json:"soldPrice,string"`
+		SoldPrice float64    `json:"soldPrice"`
 		SoldNotes string     `json:"soldNotes"`
 
 		// Extras

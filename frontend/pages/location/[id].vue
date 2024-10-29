@@ -109,13 +109,23 @@
   <div>
     <!-- Update Dialog -->
     <BaseModal v-model="updateModal">
-      <template #title> Update Location </template>
+      <template #title> {{ $t("locations.update_location") }} </template>
       <form v-if="location" @submit.prevent="update">
-        <FormTextField v-model="updateData.name" :autofocus="true" label="Location Name" />
-        <FormTextArea v-model="updateData.description" label="Location Description" />
+        <FormTextField
+          v-model="updateData.name"
+          :autofocus="true"
+          :label="$t('components.location.create_modal.location_name')"
+          :max-length="255"
+          :min-length="1"
+        />
+        <FormTextArea
+          v-model="updateData.description"
+          :label="$t('components.location.create_modal.location_description')"
+          :max-length="1000"
+        />
         <LocationSelector v-model="parent" />
         <div class="modal-action">
-          <BaseButton type="submit" :loading="updating"> Update </BaseButton>
+          <BaseButton type="submit" :loading="updating"> {{ $t("global.update") }} </BaseButton>
         </div>
       </form>
     </BaseModal>
@@ -152,7 +162,7 @@
               </h1>
               <div class="flex flex-wrap gap-1 text-xs">
                 <div>
-                  Created
+                  {{ $t("global.created") }}
                   <DateTime :date="location?.createdAt" />
                 </div>
               </div>
@@ -162,12 +172,12 @@
                 <PageQRCode class="dropdown-left" />
                 <BaseButton size="sm" @click="openUpdate">
                   <MdiPencil class="mr-1" name="mdi-pencil" />
-                  Edit
+                  {{ $t("global.edit") }}
                 </BaseButton>
               </div>
               <BaseButton class="btn btn-sm" @click="confirmDelete()">
                 <MdiDelete name="mdi-delete" class="mr-2" />
-                Delete
+                {{ $t("global.delete") }}
               </BaseButton>
             </div>
           </div>
@@ -180,7 +190,7 @@
       </section>
 
       <section v-if="location && location.children.length > 0" class="mt-6">
-        <BaseSectionHeader class="mb-5"> Child Locations </BaseSectionHeader>
+        <BaseSectionHeader class="mb-5"> {{ $t("locations.child_locations") }} </BaseSectionHeader>
         <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
           <LocationCard v-for="item in location.children" :key="item.id" :location="item" />
         </div>

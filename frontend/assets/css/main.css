@@ -28,3 +28,61 @@
 ::-webkit-scrollbar-thumb:hover {
   background-color: #9B9B9B;
 }
+
+.scroll-bg::-webkit-scrollbar {
+  width: 0.5rem;
+}
+
+.scroll-bg::-webkit-scrollbar-thumb {
+  border-radius: 0.25rem;
+  @apply bg-base-300;
+}
+
+.markdown > :first-child {
+  margin-top: 0px !important;
+}
+
+.markdown :where(p, ul, ol, dl, blockquote, h1, h2, h3, h4, h5, h6) {
+  margin-top: var(--y-gap);
+  margin-bottom: var(--y-gap);
+}
+
+.markdown :where(ul) {
+  list-style: disc;
+  margin-left: 2rem;
+}
+
+.markdown :where(ol) {
+  list-style: decimal;
+  margin-left: 2rem;
+}
+/* Heading Styles */
+.markdown :where(h1) {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.markdown :where(h2) {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.markdown :where(h3) {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.markdown :where(h4) {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.markdown :where(h5) {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.markdown :where(h6) {
+  font-size: 0.75rem;
+  font-weight: 700;
+}

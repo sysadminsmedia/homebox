@@ -776,7 +776,7 @@ func (iu *ItemUpdate) check() error {
 			return &ValidationError{Name: "sold_notes", err: fmt.Errorf(`ent: validator failed for field "Item.sold_notes": %w`, err)}
 		}
 	}
-	if _, ok := iu.mutation.GroupID(); iu.mutation.GroupCleared() && !ok {
+	if iu.mutation.GroupCleared() && len(iu.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Item.group"`)
 	}
 	return nil
@@ -1997,7 +1997,7 @@ func (iuo *ItemUpdateOne) check() error {
 			return &ValidationError{Name: "sold_notes", err: fmt.Errorf(`ent: validator failed for field "Item.sold_notes": %w`, err)}
 		}
 	}
-	if _, ok := iuo.mutation.GroupID(); iuo.mutation.GroupCleared() && !ok {
+	if iuo.mutation.GroupCleared() && len(iuo.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Item.group"`)
 	}
 	return nil

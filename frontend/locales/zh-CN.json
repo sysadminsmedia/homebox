@@ -38,6 +38,9 @@
         "location": {
             "create_modal": {
                 "title": "创建位置"
+            },
+            "tree": {
+                "no_locations": "没有可用的位置。请添加新的位置\n `<`span class=\"link-primary\"`>`创建`<`/span`>` 按钮在导航栏上"
             }
         }
     },
@@ -58,7 +61,7 @@
         "password": "密码",
         "read_docs": "查阅文档",
         "search": "搜索",
-        "sign_out": "注销",
+        "sign_out": "登出",
         "submit": "提交",
         "version": "版本：{version}",
         "welcome": "欢迎，{username}"
@@ -101,6 +104,9 @@
         "tips_sub": "搜索提示",
         "updated_at": "更新于"
     },
+    "labels": {
+        "no_results": "未找到标签。"
+    },
     "languages": {
         "ca": "加泰罗尼亚语",
         "de": "德语",
@@ -121,8 +127,54 @@
         "zh-MO": "中文（澳门）",
         "zh-TW": "中文（繁体）"
     },
+    "locations": {
+        "no_results": "找不到位置"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "全部",
+            "completed": "已完成",
+            "scheduled": "已预定"
+        },
+        "list": {
+            "complete": "标记已完成",
+            "create_first": "创建您的第一个项目",
+            "delete": "刪除",
+            "duplicate": "复制",
+            "edit": "修改",
+            "new": "创建"
+        },
+        "modal": {
+            "completed_date": "完成日期",
+            "cost": "成本",
+            "delete_confirmation": "您确定要删除该项内容吗?",
+            "edit_action": "更新",
+            "edit_title": "编辑项目",
+            "entry_name": "项目名称",
+            "new_action": "创建",
+            "new_title": "新的项目",
+            "notes": "笔记",
+            "scheduled_date": "预定日期"
+        },
+        "monthly_average": "统计看板",
+        "toast": {
+            "failed_to_create": "创建项目失败",
+            "failed_to_delete": "删除项目失败",
+            "failed_to_update": "更新项目失败"
+        },
+        "total_cost": "总成本",
+        "total_entries": "总项目"
+    },
+    "menu": {
+        "home": "主页",
+        "locations": "位置",
+        "maintenance": "维护",
+        "profile": "用户",
+        "search": "搜索",
+        "tools": "工具"
+    },
     "profile": {
-        "active": "活跃",
+        "active": "启用",
         "change_password": "更改密码",
         "currency_format": "货币格式",
         "current_password": "原密码",
@@ -133,9 +185,10 @@
         "gen_invite": "生成邀请链接",
         "group_settings": "组设置",
         "group_settings_sub": "共享组设置。您可能需要刷新浏览器来让某些设置生效。",
-        "inactive": "非活跃",
+        "inactive": "未启用",
         "language": "语言",
         "new_password": "新密码",
+        "no_notifiers": "未配置通知程序",
         "notifier_modal": "{ type, select, true {编辑} false {创建} other {Other}} 通知器",
         "notifiers": "通知器",
         "notifiers_sub": "获取即将到来的维护提醒通知",
