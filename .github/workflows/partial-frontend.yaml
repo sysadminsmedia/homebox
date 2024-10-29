@@ -32,6 +32,18 @@ jobs:
   integration-tests:
     name: Integration Tests
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: homebox
+          POSTGRES_PASSWORD: homebox
+          POSTGRES_DB: homebox
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -62,3 +74,51 @@ jobs:
 
       - name: Run Integration Tests
         run: task test:ci
+  integration-tests-pgsql:
+    strategy:
+        matrix:
+            database_version: [17,16,15]
+    name: Integration Tests PGSQL ${{ matrix.database_version }}
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:{{ matrix.database_version }}
+        env:
+          POSTGRES_USER: homebox
+          POSTGRES_PASSWORD: homebox
+          POSTGRES_DB: homebox
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Task
+        uses: arduino/setup-task@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - uses: pnpm/action-setup@v3.0.0
+        with:
+          version: 9.12.2
+
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: frontend
+
+      - name: Run Integration Tests
+        run: task test:ci:postgresql
