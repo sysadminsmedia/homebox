@@ -9,6 +9,30 @@
             }
         },
         "global": {
+            "date_time": {
+                "ago": "vor {0}",
+                "days": "Tage",
+                "hour": "Stunde",
+                "hours": "Stunden",
+                "in": "in {0}",
+                "just-now": "gerade eben",
+                "last-month": "letzten Monat",
+                "last-week": "Letzte Woche",
+                "last-year": "letztes Jahr",
+                "minute": "Minute",
+                "minutes": "Minuten",
+                "months": "Monate",
+                "next-month": "nächster Monat",
+                "next-week": "Nächste Woche",
+                "next-year": "nächstes Jahr",
+                "second": "Sekunde",
+                "seconds": "Sekunden",
+                "tomorrow": "Morgen",
+                "week": "Woche",
+                "weeks": "Wochen",
+                "years": "Jahre",
+                "yesterday": "Gestern"
+            },
             "page_qr_code": {
                 "page_url": "Seiten-URL"
             },
@@ -18,6 +42,8 @@
         },
         "item": {
             "create_modal": {
+                "item_description": "Artikelbezeichnung",
+                "item_name": "Artikelname",
                 "photo_button": "Foto 📷",
                 "title": "Gegenstand erstellen"
             },
@@ -27,17 +53,28 @@
                     "items": "Gegenstände",
                     "no_items": "Keine Gegenstände anzuzeigen",
                     "table": "Tabelle"
+                },
+                "table": {
+                    "page": "Seite",
+                    "rows_per_page": "Zeilen pro Seite"
                 }
             }
         },
         "label": {
             "create_modal": {
-                "title": "Etikett erstellen"
+                "label_description": "Label Beschreibung",
+                "label_name": "Name Etikett",
+                "title": "Label erstellen"
             }
         },
         "location": {
             "create_modal": {
+                "location_description": "Standortbeschreibung",
+                "location_name": "Standortnamen",
                 "title": "Standort erstellen"
+            },
+            "selector": {
+                "parent_location": "Übergeordneter Standort"
             },
             "tree": {
                 "no_locations": "Keine Standorte verfügbar. Fügen Sie neue Standorte über die Schaltfläche\n `<`span class=\"link-primary\"`>`Erstellen`<`/span`>` in der Navigationsleiste hinzu."
@@ -45,11 +82,16 @@
         }
     },
     "global": {
+        "add": "Hinzufügen",
         "build": "Build: { build }",
         "confirm": "Bestätigen",
         "create": "Erstellen",
         "create_and_add": "Erstellen und weiteren hinzufügen",
         "created": "Erstellt",
+        "delete": "Löschen",
+        "details": "Details",
+        "duplicate": "Duplizieren",
+        "edit": "Bearbeiten",
         "email": "E-Mail",
         "follow_dev": "Dem Entwickler folgen",
         "github": "GitHub-Projekt",
@@ -57,14 +99,28 @@
         "join_discord": "Discord beitreten",
         "labels": "Etiketten",
         "locations": "Lagerorte",
+        "maintenance": "Wartung",
         "name": "Name",
         "password": "Passwort",
         "read_docs": "Dokumentation lesen",
+        "save": "Speichern",
         "search": "Suche",
         "sign_out": "Abmelden",
         "submit": "Einreichen",
+        "update": "Aktualisieren",
+        "value": "Wert",
         "version": "Version: { version }",
         "welcome": "Willkommen, { username }"
+    },
+    "home": {
+        "labels": "Labels",
+        "quick_statistics": "Schnelle Statistiken",
+        "recently_added": "Kürzlich hinzugefügt",
+        "storage_locations": "Lagerstandorte",
+        "total_items": "Gesamtanzahl Elemente",
+        "total_labels": "Gesamtanzahl Label",
+        "total_locations": "Gesamtanzahl Standorte",
+        "total_value": "Gesamtwert"
     },
     "index": {
         "disabled_registration": "Registrierung deaktiviert",
@@ -80,32 +136,71 @@
     },
     "items": {
         "add": "Hinzufügen",
+        "advanced": "Erweitert",
+        "archived": "Archiviert",
+        "asset_id": "Asset-ID",
+        "attachment": "Anhang",
+        "attachments": "Anhänge",
+        "changes_persisted_immediately": "Änderungen an Anhängen werden sofort gespeichert",
         "created_at": "Erstellt am",
         "custom_fields": "Benutzerdefinierte Felder",
+        "description": "Beschreibung",
+        "details": "Details",
+        "drag_and_drop": "Ziehen Sie Dateien hierher und legen Sie sie dort ab oder klicken Sie, um Dateien auszuwählen",
+        "edit_details": "Details bearbeiten",
         "field_selector": "Feldauswahl",
         "field_value": "Feldwert",
         "first": "Erste",
         "include_archive": "Archivierte Elemente einschließen",
+        "insured": "Versichert",
         "last": "Letzte",
+        "lifetime_warranty": "Lebenslange Garantie",
+        "location": "Standort",
+        "manual": "Bedienungsanleitung",
+        "manuals": "Bedienungsanleitungen",
+        "manufacturer": "Hersteller",
+        "model_number": "Modelnummer",
+        "name": "Name",
         "negate_labels": "Ausgewählte Etiketten negieren",
         "next_page": "Nächste Seite",
         "no_results": "Keine Elemente gefunden",
+        "notes": "Anmerkungen",
         "options": "Optionen (Options)",
         "order_by": "Sortieren nach",
         "pages": "Seite { page } von { totalPages }",
+        "parent_item": "Übergeordnetes Element",
+        "photo": "Foto",
+        "photos": "Fotos",
         "prev_page": "Vorherige Seite",
-        "query_id": "Abfrage Asset-ID-Nummer: { id }",
+        "purchase_date": "Einkaufsdatum",
+        "purchase_details": "Einkaufsdetails",
+        "purchase_price": "Einkaufspreis",
+        "purchased_from": "Eingekauft von",
+        "quantity": "Menge",
+        "query_id": "Abfrage der Anlagen-ID-Nummer: { id }",
+        "receipt": "Beleg",
+        "receipts": "Quittungen",
         "reset_search": "Suche zurücksetzen",
         "results": "{ total } Ergebnisse",
+        "serial_number": "Seriennummer",
+        "show_advanced_view_options": "Erweiterter Angzeigeoptionen anzeigen",
+        "sold_at": "Verkauft am",
+        "sold_details": "Verkaufsdetails",
+        "sold_price": "Verkaufspreis",
+        "sold_to": "Verkauft an",
         "tip_1": "Standort- und Etikettenfilter verwenden die 'ODER'-Operation. Wenn mehr als eines ausgewählt ist, wird\n nur eines für eine Übereinstimmung benötigt.",
         "tip_2": "Suchen, die mit '#' beginnen, fragen nach einer Asset-ID (Beispiel '#000-001')",
         "tip_3": "Feldfilter verwenden die 'ODER'-Operation. Wenn mehr als eines ausgewählt ist, wird nur eines\n für eine Übereinstimmung benötigt.",
         "tips": "Tipps",
         "tips_sub": "Suchtipps",
-        "updated_at": "Aktualisiert am"
+        "updated_at": "Aktualisiert am",
+        "warranty": "Gewährleistung",
+        "warranty_details": "Garantiedetails",
+        "warranty_expires": "Garantie läuft ab am"
     },
     "labels": {
-        "no_results": "Keine Labels gefunden"
+        "no_results": "Keine Labels gefunden",
+        "update_label": "Label aktualisieren"
     },
     "languages": {
         "ca": "Katalanisch",
@@ -115,20 +210,26 @@
         "fr": "Französisch",
         "hu": "Ungarisch",
         "it": "Italienisch",
+        "ja-JP": "Japanisch",
         "nl": "Niederländisch",
         "pl": "Polnisch",
         "pt-BR": "Portugiesisch (Brasilien)",
+        "pt-PT": "Portugiesisch (Portugal)",
         "ru": "Russisch",
         "sl": "Slowenisch",
         "sv": "Schwedisch",
         "tr": "Türkisch",
+        "uk-UA": "Ukrainisch",
         "zh-CN": "Chinesisch (einfach)",
         "zh-HK": "Chinesisch (Hong Kong)",
         "zh-MO": "Chinesisch (Macao)",
         "zh-TW": "Chinesisch (Traditionell)"
     },
     "locations": {
-        "no_results": "Keine Standorte gefunden"
+        "child_locations": "Unter-Standorte",
+        "collapse_tree": "Baum einklappen",
+        "no_results": "Keine Standorte gefunden",
+        "update_location": "Aktualisiere Standort"
     },
     "maintenance": {
         "filter": {
@@ -160,12 +261,15 @@
         "toast": {
             "failed_to_create": "Eintrag konnte nicht erstellt werden",
             "failed_to_delete": "Eintrag konnte nicht gelöscht werden",
-            "failed_to_update": "Fehler beim Aktualisieren des Eintrags."
+            "failed_to_update": "Fehler beim Aktualisieren des Eintrags"
         },
         "total_cost": "Gesamtkosten",
         "total_entries": "Gesamteinträge"
     },
     "menu": {
+        "create_item": "Artikel / Vermögenswert",
+        "create_label": "Label",
+        "create_location": "Standort",
         "home": "Home",
         "locations": "Lagerorte",
         "maintenance": "Wartung",
@@ -182,6 +286,7 @@
         "delete_account_sub": "Lösche dein Konto und alle zugehörigen Daten. Dies kann nicht rückgängig gemacht werden.",
         "display_header": "{ currentValue, select, true {Header ausblenden} false {Header anzeigen} other {Kein Treffer}}",
         "enabled": "Aktiviert",
+        "example": "Beispiel",
         "gen_invite": "Einladungslink generieren",
         "group_settings": "Gruppeneinstellungen",
         "group_settings_sub": "Gemeinsame Gruppeneinstellungen. Möglicherweise müssen Sie Ihren Browser aktualisieren, damit die Einstellungen wirksam werden.",
@@ -194,7 +299,7 @@
         "notifiers_sub": "Erhalte Benachrichtigungen über bevorstehende Wartungserinnerungen",
         "test": "Test",
         "theme_settings": "Themes",
-        "theme_settings_sub": "Theme-Einstellungen werden im lokalen Speicher deines Browsers gespeichert. Du kannst das Theme jederzeit ändern. Wenn du Probleme hast, dein Theme einzustellen, versuche, die Seite neu zu laden.",
+        "theme_settings_sub": "Theme-Einstellungen werden im lokalen Speicher deines Browsers gespeichert. Du kannst das Theme jederzeit ändern.\nWenn du Probleme hast, dein Theme einzustellen, versuche, die Seite neu zu laden.",
         "update_group": "Gruppe aktualisieren",
         "update_language": "Sprache aktualisieren",
         "url": "URL",
@@ -206,14 +311,14 @@
         "actions_set": {
             "ensure_ids": "Sicherstellen von Asset-IDs",
             "ensure_ids_button": "Sicherstellen von Asset-IDs",
-            "ensure_ids_sub": "Es wird sichergestellt, dass alle Artikel in Ihrem Bestand ein gültiges asset_id-Feld haben. Dazu wird das Feld mit der höchsten aktuellen asset_id in der Datenbank ermittelt und der nächste Wert auf jeden Artikel mit einem nicht gesetzten asset_id-Feld angewendet. Dies geschieht in der Reihenfolge des Feldes created_at.",
+            "ensure_ids_sub": "Stellt sicher, dass alle Elemente in Ihrem Inventar ein gültiges asset_id-Feld haben. Dazu wird die das höchste aktuelle asset_id-Feld in der Datenbank ermittelt und der nächste Wert auf jeden Element mit einem nicht gesetzten asset_id-Feld angewendet. Dies geschieht in der Reihenfolge des Feldes created_at.",
             "ensure_import_refs": "Sicherstellen, dass Import-Referenzen importiert wurden",
             "ensure_import_refs_button": "Sicherstellen, dass Referenzen importiert werden",
-            "ensure_import_refs_sub": "Es wird sichergestellt, dass alle Gegenstände in Ihrem Inventar ein gültiges import_ref-Feld haben. Dazu wird nach dem Zufallsprinzip eine 8-stellige Zeichenkette für jeden Gegenstand mit einem ungültigen import_ref-Feld erzeugt.",
+            "ensure_import_refs_sub": "Stellt sicher, dass alle Elemente in deinem Inventar ein gültiges import_ref-Feld haben. Dazu wird nach dem Zufallsprinzip eine 8-stellige Zeichenkette für jedes Element mit einem leeren import_ref-Feld erzeugt.",
             "set_primary_photo": "Primärfoto festlegen",
             "set_primary_photo_button": "Primäres Foto festlegen",
             "set_primary_photo_sub": "In Homebox Version v0.10.0 wurde die Auswahl des Primärbilds von angehängten Bildern hinzugefügt. Mit dieser Funktion wird für jeden Artikel ohne Primärbild das erste angehängt Bild als solches definiert. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'See GitHub PR #576'</a>'",
-            "zero_datetimes": "Null-Punkt-Datum-Zeiten",
+            "zero_datetimes": "Leeren der Datum & Zeiten der Elemente",
             "zero_datetimes_button": "Null-Punkt-Datum-Zeiten",
             "zero_datetimes_sub": "Setzt den Zeitwert für alle Datums-Zeit-Felder in Ihrem Inventar auf den Anfang des Datums zurück. Damit wird ein Fehler behoben, der zu Beginn der Entwicklung der Website eingeführt wurde und dazu führte, dass das Datum zusammen mit der Uhrzeit gespeichert wurde, was zu Problemen bei der Anzeige von genauen Werten in Datumsfeldern führte. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'"
         },
@@ -222,20 +327,20 @@
         "import_export_set": {
             "export": "Gesamten Bestand exportieren",
             "export_button": "Gesamten Bestand exportieren",
-            "export_sub": "Exportiert das Standard-CSV-Format für Homebox",
+            "export_sub": "Exportiert das Standard-CSV-Format für Homebox. Diese Aktion exportiert alle Elemente in ihrem Inventar.",
             "import": "Inventar importieren",
             "import_button": "Inventar importieren",
             "import_sub": "Importiert das Standard-CSV-Format für Homebox. Ohne eine '<code>'HB.import_ref'</code>' Spalte werden vorhandenen Artikel in Ihrem Bestand '<b>'nicht'</b>' überschrieben, sondern nur neue Artikel hinzugefügt. Zeilen mit einer '<code>'HB.import_ref'</code>' Spalte werden mit vorhandenen Artikeln mit der gleichen import_ref zusammengeführt, sofern vorhanden."
         },
-        "import_export_sub": "Importieren und exportieren Sie Ihren Lagerbestand in und aus einer CSV-Datei",
+        "import_export_sub": "Importieren und exportieren Sie Ihren Lagerbestand in und aus einer CSV-Datei. Dies ist nützlich zum migrieren ihres Inventars zu einer neuen Instanz von Homebox.",
         "reports": "Berichte",
         "reports_set": {
-            "asset_labels": "Asset-ID-Etiketten",
+            "asset_labels": "Asset-ID-Labels",
             "asset_labels_button": "Etiketten-Generator",
             "asset_labels_sub": "Erzeugt eine druckbare PDF-Datei mit Etiketten für eine Reihe von Asset-IDs. Diese sind nicht spezifisch für deine Inventargegenstände, so dass du die Etiketten im Voraus ausdrucken und bei Erhalt auf deinen Inventargegenständen anbringen kannst.",
             "bill_of_materials": "Stückliste",
             "bill_of_materials_button": "Stückliste generieren",
-            "bill_of_materials_sub": "Generiert eine CSV-Datei (Comma Separated Values), die in ein Tabellenkalkulationsprogramm importiert werden kann"
+            "bill_of_materials_sub": "Generiert eine CSV-Datei (Comma Separated Values), die in ein Tabellenkalkulationsprogramm importiert werden kann. Diese ist eine Zusammenfasung ihres Inventars mit einfachen Elementen- und Preisinformationen."
         },
         "reports_sub": "Erstellen Sie verschiedene Berichte für Ihr Inventar."
     }

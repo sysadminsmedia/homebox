@@ -9,6 +9,30 @@
             }
         },
         "global": {
+            "date_time": {
+                "ago": "{0} önce",
+                "days": "gün",
+                "hour": "saat",
+                "hours": "saat",
+                "in": "{0} içinde",
+                "just-now": "az önce",
+                "last-month": "geçen ay",
+                "last-week": "geçen hafta",
+                "last-year": "geçen yıl",
+                "minute": "dakika",
+                "minutes": "dakika",
+                "months": "ay",
+                "next-month": "gelecek ay",
+                "next-week": "gelecek hafta",
+                "next-year": "gelecek yıl",
+                "second": "saniye",
+                "seconds": "saniye",
+                "tomorrow": "yarın",
+                "week": "hafta",
+                "weeks": "hafta",
+                "years": "yıl",
+                "yesterday": "dün"
+            },
             "page_qr_code": {
                 "page_url": "Sayfa URL'si"
             },
@@ -18,6 +42,8 @@
         },
         "item": {
             "create_modal": {
+                "item_description": "Ürün Açıklaması",
+                "item_name": "Ürün Adı",
                 "photo_button": "Fotoğraf 📷",
                 "title": "Eşya Oluştur"
             },
@@ -27,17 +53,28 @@
                     "items": "Öğeler",
                     "no_items": "Görüntülecek Öge Yok",
                     "table": "Tablo"
+                },
+                "table": {
+                    "page": "Sayfa",
+                    "rows_per_page": "Sayfa başına satır sayısı"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_description": "Etiket Açıklaması",
+                "label_name": "Etiket Adı",
                 "title": "Etiket oluştur"
             }
         },
         "location": {
             "create_modal": {
+                "location_description": "Konum Açıklaması",
+                "location_name": "Konum Adı",
                 "title": "Konum oluştur"
+            },
+            "selector": {
+                "parent_location": "Üst Konum"
             },
             "tree": {
                 "no_locations": "Mevcut konum yok. Navigasyon çubuğundaki \n`<`span class=\"link-primary\"`>`Oluştur`<`/span`>` düğmesiyle yeni konumlar ekleyin."
@@ -45,11 +82,16 @@
         }
     },
     "global": {
+        "add": "Ekle",
         "build": "Sürüm: { build }",
         "confirm": "Onaylayın",
         "create": "Oluştur",
         "create_and_add": "Oluştur ve Bir Tane Daha Ekle",
         "created": "Oluşturuldu",
+        "delete": "Sil",
+        "details": "Detaylar",
+        "duplicate": "Kopyala",
+        "edit": "Düzenle",
         "email": "Elektronik posta",
         "follow_dev": "Geliştiriciyi takip edin",
         "github": "GitHub projesi",
@@ -57,14 +99,28 @@
         "join_discord": "Discord'a Katılın",
         "labels": "Etiketler",
         "locations": "Konumlar",
+        "maintenance": "Bakım",
         "name": "İsim",
         "password": "Şifre",
         "read_docs": "Dokümanları okuyun",
+        "save": "Kaydet",
         "search": "Ara",
         "sign_out": "Oturumu kapat",
         "submit": "Gönder",
+        "update": "Güncelle",
+        "value": "Değer",
         "version": "Versiyon:{ version }",
         "welcome": "Hoşgeldin, { username }"
+    },
+    "home": {
+        "labels": "Etiket",
+        "quick_statistics": "Hızlı İstatistikler",
+        "recently_added": "Yakında Eklendi",
+        "storage_locations": "Saklama Konumları",
+        "total_items": "Toplam Ürün",
+        "total_labels": "Toplam Etiket",
+        "total_locations": "Toplam Konum",
+        "total_value": "Toplam Değer"
     },
     "index": {
         "disabled_registration": "Kayıt olma devre dışı",
@@ -80,32 +136,71 @@
     },
     "items": {
         "add": "Ekle",
+        "advanced": "İleri Seviye",
+        "archived": "Arşivlendi",
+        "asset_id": "Öğe Kimliği",
+        "attachment": "Ek",
+        "attachments": "Ekler",
+        "changes_persisted_immediately": "Eklerde yapılan değişiklikler hemen kaydedilecektir",
         "created_at": "Oluşturulma",
         "custom_fields": "Özel Alanlar",
+        "description": "Açıklama",
+        "details": "Detaylar",
+        "drag_and_drop": "Dosyaları buraya sürükleyip bırakın veya dosyaları seçmek için tıklayın",
+        "edit_details": "Detayları Düzenle",
         "field_selector": "alan seçici",
         "field_value": "Alan Değeri",
         "first": "Birinci",
         "include_archive": "Arşivlenen Öğeleri Dahil Et",
+        "insured": "Sigortalı",
         "last": "Son",
+        "lifetime_warranty": "Ömür Boyu Garanti",
+        "location": "Konum",
+        "manual": "Kılavuz",
+        "manuals": "Kullanım Kılavuzları",
+        "manufacturer": "Üretici",
+        "model_number": "Model Numarası",
+        "name": "İsim",
         "negate_labels": "Seçili Etiketleri Yoksay",
         "next_page": "Sonraki Sayfa",
         "no_results": "Öğe Bulunamadı",
+        "notes": "Notlar",
         "options": "Seçenekler",
         "order_by": "Sıralama ölçütü",
         "pages": "Sayfa { page }/{ totalPages }",
+        "parent_item": "Ana Öğe",
+        "photo": "Fotoğraf",
+        "photos": "Fotoğraflar",
         "prev_page": "Önceki Sayfa",
+        "purchase_date": "Satın Alma Tarihi",
+        "purchase_details": "Satın Alma Detayları",
+        "purchase_price": "Satınalma Fiyatı",
+        "purchased_from": "Satın Alındığı Yer",
+        "quantity": "Miktar",
         "query_id": "Varlık Kimlik Numarası Sorgulanıyor: { id }",
+        "receipt": "Fatura",
+        "receipts": "Faturalar",
         "reset_search": "Aramayı Sıfırla",
         "results": "{ total } Sonuç",
+        "serial_number": "Seri Numarası",
+        "show_advanced_view_options": "Gelişmiş Seçenekleri Göster",
+        "sold_at": "Satıldığı Yer",
+        "sold_details": "Satış Detayları",
+        "sold_price": "Satış Fiyatı",
+        "sold_to": "Satılan Kişi",
         "tip_1": "Konum ve etiket filtreleri 'veya' işlemini kullanır. Eğer birden fazla seçilirse sadece biri \neşleştirme için kullanılacaktır.",
         "tip_2": "'#' ile başlayan aramalar bir varlık kimliğini sorgular (örneğin '#000-001')",
         "tip_3": "Alan filtreleri 'VEYA' işlemini kullanır. Birden fazla seçenek seçilirse, eşleşme için yalnızca birinin \nkarşılanması yeterlidir.",
         "tips": "İpuçları",
         "tips_sub": "Arama İpuçları",
-        "updated_at": "Güncellendiği Zaman"
+        "updated_at": "Güncellendiği Zaman",
+        "warranty": "Garanti",
+        "warranty_details": "Garanti Bilgileri",
+        "warranty_expires": "Garanti Bitiş Tarihi"
     },
     "labels": {
-        "no_results": "Etiket Bulunamadı"
+        "no_results": "Etiket Bulunamadı",
+        "update_label": "Etiket Güncelle"
     },
     "languages": {
         "ca": "Katalanca",
@@ -115,20 +210,26 @@
         "fr": "Fransızca",
         "hu": "Macarca",
         "it": "İtalyanca",
+        "ja-JP": "Japonca",
         "nl": "Hollandaca",
         "pl": "Lehçe",
         "pt-BR": "Brezilya Portekizcesi",
+        "pt-PT": "Portekizce (Portekiz)",
         "ru": "Rusça",
         "sl": "Slovence",
         "sv": "İsveççe",
         "tr": "Türkçe",
+        "uk-UA": "Ukraynaca",
         "zh-CN": "Basitleştirilmiş Çince",
         "zh-HK": "Çince (Hong Kong)",
         "zh-MO": "Çince (Macau)",
         "zh-TW": "Geleneksel Çince"
     },
     "locations": {
-        "no_results": "Konum bulunamadı"
+        "child_locations": "Alt konumlar",
+        "collapse_tree": "Ağacı Daralt",
+        "no_results": "Konum bulunamadı",
+        "update_location": "Konumu Güncelle"
     },
     "maintenance": {
         "filter": {
@@ -166,6 +267,9 @@
         "total_entries": "Toplam Kayıt"
     },
     "menu": {
+        "create_item": "Öğe / Varlık",
+        "create_label": "Etiket",
+        "create_location": "Konum",
         "home": "Ev",
         "locations": "Konumlar",
         "maintenance": "Bakım",
@@ -182,6 +286,7 @@
         "delete_account_sub": "Hesabınızı ve ona bağlı tüm verileri silin. Bu işlem geri alınamaz.",
         "display_header": "{ currentValue, select, true {Başlığı Gizle} false {Başlığı Göster} other {Etkilenmedi}}",
         "enabled": "Etkinleştirildi",
+        "example": "Örnek",
         "gen_invite": "Davet Bağlantısı Oluştur",
         "group_settings": "Grup Ayarları",
         "group_settings_sub": "Paylaşılan Grup Ayarları. Bazı ayarların uygulanabilmesi için tarayıcınızı yenilemeniz gerekebilir.",
