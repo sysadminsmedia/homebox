@@ -4,7 +4,6 @@
       class="flex items-center text-3xl font-bold tracking-tight"
       :class="{
         'text-neutral-content': dark,
-        'text-content': !dark,
       }"
     >
       <slot />

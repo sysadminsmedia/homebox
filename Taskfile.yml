@@ -2,7 +2,8 @@ version: "3"
 
 env:
   HBOX_LOG_LEVEL: debug
-  HBOX_STORAGE_SQLITE_URL: .data/homebox.db?_pragma=busy_timeout=1000&_pragma=journal_mode=WAL&_fk=1
+  HBOX_DATABASE_DRIVER: sqlite3
+  HBOX_DATABASE_SQLITE_PATH: .data/homebox.db?_pragma=busy_timeout=1000&_pragma=journal_mode=WAL&_fk=1
   HBOX_OPTIONS_ALLOW_REGISTRATION: true
   UNSAFE_DISABLE_PASSWORD_PROJECTION: "yes_i_am_sure"
 tasks:
@@ -55,6 +56,23 @@ tasks:
 
   go:run:
     desc: Starts the backend api server (depends on generate task)
+    dir: backend
+    deps:
+      - generate
+    cmds:
+      - go run ./app/api/ {{ .CLI_ARGS }}
+    silent: false
+
+  go:run:postgresql:
+    env:
+        HBOX_DATABASE_DRIVER: postgres
+        HBOX_DATABASE_USERNAME: homebox
+        HBOX_DATABASE_PASSWORD: homebox
+        HBOX_DATABASE_DATABASE: homebox
+        HBOX_DATABASE_HOST: localhost
+        HBOX_DATABASE_PORT: 5432
+        HBOX_DATABASE_SSL_MODE: disable
+    desc: Starts the backend api server with postgresql (depends on generate task)
     dir: backend
     deps:
       - generate
@@ -116,6 +134,21 @@ tasks:
     cmds:
       - cd backend && go run app/tools/migrations/main.go {{ .CLI_ARGS }}
 
+  db:migration:postgresql:
+    env:
+        HBOX_DATABASE_DRIVER: postgres
+        HBOX_DATABASE_USERNAME: homebox
+        HBOX_DATABASE_PASSWORD: homebox
+        HBOX_DATABASE_DATABASE: homebox
+        HBOX_DATABASE_HOST: localhost
+        HBOX_DATABASE_PORT: 5432
+        HBOX_DATABASE_SSL_MODE: disable
+    desc: Runs the database diff engine to generate a SQL migration files for postgresql
+    deps:
+      - db:generate
+    cmds:
+      - cd backend && go run app/tools/migrations/main.go {{ .CLI_ARGS }}
+
   ui:watch:
     desc: Starts the vitest test runner in watch mode
     dir: frontend
@@ -145,7 +178,24 @@ tasks:
     cmds:
       - cd backend && go build ./app/api
       - backend/api &
-      - sleep 5
+      - sleep 10
+      - cd frontend && pnpm run test:ci
+    silent: true
+
+  test:ci:postgresql:
+    env:
+      HBOX_DATABASE_DRIVER: postgres
+      HBOX_DATABASE_USERNAME: homebox
+      HBOX_DATABASE_PASSWORD: homebox
+      HBOX_DATABASE_DATABASE: homebox
+      HBOX_DATABASE_HOST: 127.0.0.1
+      HBOX_DATABASE_PORT: 5432
+      HBOX_DATABASE_SSL_MODE: disable
+    desc: Runs end-to-end test on a live server with postgresql (only for use in CI)
+    cmds:
+      - cd backend && go build ./app/api
+      - backend/api &
+      - sleep 10
       - cd frontend && pnpm run test:ci
     silent: true
 

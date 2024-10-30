@@ -4,25 +4,25 @@ on:
   schedule:
     - cron: '00 0 * * *'
   push:
-    branches: [ "main" ]
+    branches: [ "main", "vnext" ]
     paths:
       - 'backend/**'
       - 'frontend/**'
       - 'Dockerfile'
       - 'Dockerfile.rootless'
       - '.dockerignore'
-      - '.github/workflows'
+      - '.github/workflows/**'
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "vnext" ]
     paths:
       - 'backend/**'
       - 'frontend/**'
       - 'Dockerfile'
       - 'Dockerfile.rootless'
       - '.dockerignore'
-      - '.github/workflows'
+      - '.github/workflows/**'
 
 
 env:

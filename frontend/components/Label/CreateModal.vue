@@ -7,11 +7,15 @@
         v-model="form.name"
         :trigger-focus="focused"
         :autofocus="true"
-        label="Label Name"
+        :label="$t('components.label.create_modal.label_name')"
         :max-length="255"
         :min-length="1"
       />
-      <FormTextArea v-model="form.description" label="Label Description" :max-length="255" />
+      <FormTextArea
+        v-model="form.description"
+        :label="$t('components.label.create_modal.label_description')"
+        :max-length="255"
+      />
       <div class="modal-action">
         <div class="flex justify-center">
           <BaseButton class="rounded-r-none" :loading="loading" type="submit"> {{ $t("global.create") }} </BaseButton>
