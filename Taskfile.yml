@@ -69,7 +69,7 @@ tasks:
         HBOX_DATABASE_DATABASE: homebox
         HBOX_DATABASE_HOST: localhost
         HBOX_DATABASE_PORT: 5432
-        HBOX_DATABASE_SSLMODE: disable
+        HBOX_DATABASE_SSL_MODE: disable
     desc: Starts the backend api server with postgresql (depends on generate task)
     dir: backend
     deps:
@@ -140,7 +140,7 @@ tasks:
         HBOX_DATABASE_DATABASE: homebox
         HBOX_DATABASE_HOST: localhost
         HBOX_DATABASE_PORT: 5432
-        HBOX_DATABASE_SSLMODE: disable
+        HBOX_DATABASE_SSL_MODE: disable
     desc: Runs the database diff engine to generate a SQL migration files for postgresql
     deps:
       - db:generate
@@ -188,7 +188,7 @@ tasks:
       HBOX_DATABASE_DATABASE: homebox
       HBOX_DATABASE_HOST: postgres
       HBOX_DATABASE_PORT: 5432
-      HBOX_DATABASE_SSLMODE: disable
+      HBOX_DATABASE_SSL_MODE: disable
     desc: Runs end-to-end test on a live server with postgresql (only for use in CI)
     cmds:
       - cd backend && go build ./app/api
