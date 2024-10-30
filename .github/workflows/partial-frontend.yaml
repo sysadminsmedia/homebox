@@ -82,7 +82,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:{{ matrix.database_version }}
+        image: postgres:${{ matrix.database_version }}
         env:
           POSTGRES_USER: homebox
           POSTGRES_PASSWORD: homebox
