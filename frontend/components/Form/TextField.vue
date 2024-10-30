@@ -78,7 +78,6 @@
       type: Number,
       default: -1,
       required: false,
-      default: 0,
     },
     minLength: {
       type: Number,
