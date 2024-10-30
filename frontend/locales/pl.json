@@ -208,7 +208,10 @@
         "hu": "Węgierski",
         "it": "Włoski",
         "ja-JP": "Japoński",
+        "nl": "Holenderski",
         "pl": "Polski",
+        "pt-BR": "Portugalski (Brazylia)",
+        "pt-PT": "Portugalski (Portugalia)",
         "ru": "Rosyjski",
         "sl": "Słoweński",
         "sv": "Szwedzki",
@@ -216,6 +219,7 @@
         "uk-UA": "Ukraiński",
         "zh-CN": "Chiński (uproszczony)",
         "zh-HK": "Chiński (Hong Kong)",
+        "zh-MO": "Chiński (Makau)",
         "zh-TW": "Chiński (tradycyjny)"
     },
     "locations": {
@@ -246,8 +250,29 @@
             "edit_title": "Edytuj wpis",
             "entry_name": "Nazwa wpisu",
             "new_action": "Utwórz",
-            "new_title": "Nowy wpis"
-        }
+            "new_title": "Nowy wpis",
+            "notes": "Notatki",
+            "scheduled_date": "Zaplanowana data"
+        },
+        "monthly_average": "Miesięczna średnia",
+        "toast": {
+            "failed_to_create": "Nie udało się utworzyć wpisu",
+            "failed_to_delete": "Nie udało się usunąć wpisu",
+            "failed_to_update": "Nie udało się zaktualizować wpisu"
+        },
+        "total_cost": "Całkowity koszt",
+        "total_entries": "Suma wpisów"
+    },
+    "menu": {
+        "create_item": "Przedmiot / Zasób",
+        "create_label": "Etykieta",
+        "create_location": "Lokalizacja",
+        "home": "Strona główna",
+        "locations": "Lokalizacje",
+        "maintenance": "Konserwacja",
+        "profile": "Profil",
+        "search": "Wyszukaj",
+        "tools": "Narzędzia"
     },
     "profile": {
         "active": "Aktywny",
@@ -257,11 +282,14 @@
         "delete_account": "Usuń konto",
         "delete_account_sub": "Usuń swoje konto oraz wszystkie powiązane z nim dane. Tego nie można cofnąć.",
         "enabled": "Włączone",
+        "example": "Przykład",
         "gen_invite": "Wygeneruj link z zaproszeniem",
         "group_settings": "Ustawienia grupy",
         "group_settings_sub": "Ustawienia grupy udostępnione. Możesz potrzebować odświeżyć przeglądarkę, aby niektóre ustawienia zostały zastosowane.",
         "inactive": "Nieaktywny",
+        "language": "Język",
         "new_password": "Nowe hasło",
+        "no_notifiers": "Nie skonfigurowano powiadomień",
         "notifier_modal": "{type, select, true {Edytuj} false {Utwórz} other {Inny}} Powiadomiacz",
         "notifiers": "Powiadomiacze",
         "notifiers_sub": "Otrzymuj powiadomienia o nadchodzących przypomnieniach o konserwacji",
@@ -269,8 +297,20 @@
         "theme_settings": "Ustawienia tematu",
         "theme_settings_sub": "Ustawienia motywu są przechowywane w lokalnej pamięci przeglądarki. Możesz zmienić motyw w dowolnym momencie. \nJeśli masz problemy z ustawieniem motywu, spróbuj odświeżyć przeglądarkę.",
         "update_group": "Zaktualizuj grupę",
+        "update_language": "Aktualizuj język",
         "url": "Adres URL",
         "user_profile": "Profil użytkownika",
         "user_profile_sub": "Zaproś użytkowników i zarządzaj swoim kontem."
+    },
+    "tools": {
+        "actions": "Akcje na zasobach",
+        "actions_set": {
+            "ensure_ids": "Zapewnienie identyfikatorów zasobów",
+            "ensure_import_refs_sub": "Zapewnia, że wszystkie przedmioty w Twoim asortymencie mają prawidłowe pole import_ref",
+            "set_primary_photo": "Ustaw główne zdjęcie",
+            "set_primary_photo_button": "Ustaw główne zdjęcie",
+            "set_primary_photo_sub": "W wersji v0.10.0 Homebox pole głównego obrazu zostało dodane do załączników typu zdjęcie. Ta akcja ustawi pole głównego obrazu do pierwszego zdjęcia w załącznikach z bazy danych, jeżeli nie jest już ustawione. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Zobacz GitHub PR #576'</a>'"
+        },
+        "import_export": "Import/eksport"
     }
 }
