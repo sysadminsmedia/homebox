@@ -123,6 +123,4 @@ jobs:
         working-directory: frontend
 
       - name: Run Integration Tests
-        env:
-          HBOX_DATABASE_PORT: ${{ job.services.postgres.ports[5432] }}
         run: task test:ci:postgresql
