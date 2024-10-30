@@ -161,16 +161,10 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 	// Get the Totals for the Start and End of the Given Time Period
 	q := `
 	SELECT
-		(SELECT Sum(purchase_price)
-			FROM   items
-			WHERE  group_items = ?
-				AND items.archived = false
-				AND items.created_at < ?) AS price_at_start,
-		(SELECT Sum(purchase_price)
-			FROM   items
-			WHERE  group_items = ?
-				AND items.archived = false
-				AND items.created_at < ?) AS price_at_end
+		SUM(CASE WHEN created_at < $1 THEN purchase_price ELSE 0 END) AS price_at_start,
+		SUM(CASE WHEN created_at < $2 THEN purchase_price ELSE 0 END) AS price_at_end
+	FROM items
+	WHERE group_items = $3 AND archived = false
 `
 	stats := ValueOverTime{
 		Start: start,
@@ -180,7 +174,7 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 	var maybeStart *float64
 	var maybeEnd *float64
 
-	row := r.db.Sql().QueryRowContext(ctx, q, gid, sqliteDateFormat(start), gid, sqliteDateFormat(end))
+	row := r.db.Sql().QueryRowContext(ctx, q, sqliteDateFormat(start), sqliteDateFormat(end), gid)
 	err := row.Scan(&maybeStart, &maybeEnd)
 	if err != nil {
 		return nil, err
@@ -229,20 +223,25 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 func (r *GroupRepository) StatsGroup(ctx context.Context, gid uuid.UUID) (GroupStatistics, error) {
 	q := `
 		SELECT
-			(SELECT COUNT(*) FROM users WHERE group_users = ?) AS total_users,
-			(SELECT COUNT(*) FROM items WHERE group_items = ? AND items.archived = false) AS total_items,
-			(SELECT COUNT(*) FROM locations WHERE group_locations = ?) AS total_locations,
-			(SELECT COUNT(*) FROM labels WHERE group_labels = ?) AS total_labels,
-			(SELECT SUM(purchase_price*quantity) FROM items WHERE group_items = ? AND items.archived = false) AS total_item_price,
-			(SELECT COUNT(*)
-				FROM items
-					WHERE group_items = ?
-					AND items.archived = false
-					AND (items.lifetime_warranty = true OR items.warranty_expires > date())
-				) AS total_with_warranty
+    COUNT(DISTINCT u.id) as total_users,
+    COUNT(DISTINCT CASE WHEN i.archived = false THEN i.id END) as total_items,
+    COUNT(DISTINCT l.id) as total_locations,
+    COUNT(DISTINCT lb.id) as total_labels,
+    SUM(CASE WHEN i.archived = false THEN i.purchase_price * i.quantity ELSE 0 END) as total_item_price,
+    COUNT(DISTINCT CASE
+                       WHEN i.archived = false
+                           AND (i.lifetime_warranty = true OR i.warranty_expires > $1)
+                           THEN i.id
+        END) as total_with_warranty
+FROM groups g
+         LEFT JOIN users u ON u.group_users = g.id
+         LEFT JOIN items i ON i.group_items = g.id
+         LEFT JOIN locations l ON l.group_locations = g.id
+         LEFT JOIN labels lb ON lb.group_labels = g.id
+WHERE g.id = $2;
 `
 	var stats GroupStatistics
-	row := r.db.Sql().QueryRowContext(ctx, q, gid, gid, gid, gid, gid, gid)
+	row := r.db.Sql().QueryRowContext(ctx, q, sqliteDateFormat(time.Now()), gid)
 
 	var maybeTotalItemPrice *float64
 	var maybeTotalWithWarranty *int

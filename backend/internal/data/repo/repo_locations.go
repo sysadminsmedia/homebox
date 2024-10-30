@@ -121,7 +121,7 @@ func (r *LocationRepository) GetAll(ctx context.Context, gid uuid.UUID, filter L
 		FROM
 			locations
 		WHERE
-			locations.group_locations = ? {{ FILTER_CHILDREN }}
+			locations.group_locations = $1 {{ FILTER_CHILDREN }}
 		ORDER BY
 			locations.name ASC
 `
@@ -278,8 +278,8 @@ func (r *LocationRepository) PathForLoc(ctx context.Context, gid, locID uuid.UUI
 	query := `WITH RECURSIVE location_path AS (
 		SELECT id, name, location_children
 		FROM locations
-		WHERE id = ? -- Replace ? with the ID of the item's location
-		AND group_locations = ? -- Replace ? with the ID of the group
+		WHERE id = $1 -- Replace ? with the ID of the item's location
+		AND group_locations = $2 -- Replace ? with the ID of the group
 
 		UNION ALL
 
@@ -332,7 +332,7 @@ func (r *LocationRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQue
 					'location' AS node_type
 			FROM    locations
 			WHERE   location_children IS NULL
-			AND     group_locations = ?
+			AND     group_locations = $1
 
 			UNION ALL
 			SELECT  c.id,
@@ -355,9 +355,7 @@ func (r *LocationRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQue
 					SELECT  *
 					FROM    location_tree
 
-
 					{{ WITH_ITEMS_FROM }}
-
 
 				) tree
 		ORDER BY node_type DESC, -- sort locations before items
