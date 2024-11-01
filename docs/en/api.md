@@ -22,6 +22,12 @@ if (isDark.value) {
 }
 </script>
 
+<style>
+.TryItPanel {
+   display: none;
+}
+</style>
+
 <elements-api
 apiDescriptionUrl="https://cdn.jsdelivr.net/gh/sysadminsmedia/homebox@main/docs/docs/api/openapi-2.0.json"
 router="hash"
