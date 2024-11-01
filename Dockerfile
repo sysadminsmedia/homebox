@@ -66,8 +66,10 @@ ENV HBOX_STORAGE_SQLITE_URL=/data/homebox.db?_pragma=busy_timeout=2000&_pragma=j
 # Install necessary runtime dependencies
 RUN apk --no-cache add ca-certificates wget
 
-# Create application directory and copy over built Go binary
-RUN mkdir /app
+# Create application and data directories with the correct permissions
+RUN mkdir -p /app /data && chmod -R 777 /data
+
+# Copy over built Go binary
 COPY --from=builder /go/bin/api /app
 RUN chmod +x /app/api
 
