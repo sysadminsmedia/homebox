@@ -61,7 +61,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 FROM --platform=$TARGETPLATFORM alpine:latest
 ENV HBOX_MODE=production
 ENV HBOX_STORAGE_DATA=/data/
-ENV HBOX_STORAGE_SQLITE_URL=/data/homebox.db?_pragma=busy_timeout=2000&_pragma=journal_mode=WAL&_fk=1
+ENV HBOX_DATABASE_SQLITE_PATH=/data/homebox.db?_pragma=busy_timeout=2000&_pragma=journal_mode=WAL&_fk=1
 
 # Install necessary runtime dependencies
 RUN apk --no-cache add ca-certificates wget
