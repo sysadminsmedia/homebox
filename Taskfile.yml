@@ -53,6 +53,8 @@ tasks:
       - cp ./backend/app/api/static/docs/swagger.json docs/docs/api/openapi-2.0.json
 
   go:run:
+    env:
+      HBOX_DEMO: true
     desc: Starts the backend api server (depends on generate task)
     dir: backend
     deps:
@@ -63,13 +65,14 @@ tasks:
 
   go:run:postgresql:
     env:
-        HBOX_DATABASE_DRIVER: postgres
-        HBOX_DATABASE_USERNAME: homebox
-        HBOX_DATABASE_PASSWORD: homebox
-        HBOX_DATABASE_DATABASE: homebox
-        HBOX_DATABASE_HOST: localhost
-        HBOX_DATABASE_PORT: 5432
-        HBOX_DATABASE_SSL_MODE: disable
+      HBOX_DEMO: true
+      HBOX_DATABASE_DRIVER: postgres
+      HBOX_DATABASE_USERNAME: homebox
+      HBOX_DATABASE_PASSWORD: homebox
+      HBOX_DATABASE_DATABASE: homebox
+      HBOX_DATABASE_HOST: localhost
+      HBOX_DATABASE_PORT: 5432
+      HBOX_DATABASE_SSL_MODE: disable
     desc: Starts the backend api server with postgresql (depends on generate task)
     dir: backend
     deps:
