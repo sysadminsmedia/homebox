@@ -225,6 +225,10 @@
         "zh-MO": "Chinese (Macau)",
         "zh-TW": "Chinese (Traditional)"
     },
+    "languages.da-DK": "Danish",
+    "languages.fi.FI": "Finnish",
+    "languages.ro-RO": "Romanian",
+    "languages.sk-SK": "Slovak",
     "locations": {
         "child_locations": "Child Locations",
         "collapse_tree": "Collapse Tree",
