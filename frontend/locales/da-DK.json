@@ -1,6 +1,19 @@
 {
     "components": {
+        "app": {
+            "import_dialog": {
+                "title": "Importer CSV Fil",
+                "upload": "Upload"
+            }
+        },
         "global": {
+            "date_time": {
+                "just-now": "lige nu",
+                "last-month": "sidste måned"
+            },
+            "page_qr_code": {
+                "page_url": "Side URL"
+            },
             "password_score": {
                 "password_strength": "Adgangskodestyrke"
             }
@@ -16,6 +29,9 @@
                     "items": "Genstande",
                     "no_items": "Ingen genstande at vise",
                     "table": "Tabel"
+                },
+                "table": {
+                    "page": "Side"
                 }
             }
         },
@@ -38,6 +54,7 @@
         "create": "Opret",
         "create_and_add": "Opret og tilføj ny",
         "created": "Oprettet",
+        "delete": "Slet",
         "email": "Email",
         "follow_dev": "Følg udvikleren",
         "github": "GitHub projekt"

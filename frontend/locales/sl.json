@@ -225,6 +225,10 @@
         "zh-MO": "Kitajščina (Macau)",
         "zh-TW": "Kitajsščina (tradicionalna)"
     },
+    "languages.da-DK": "Danščina",
+    "languages.fi.FI": "Finščina",
+    "languages.ro-RO": "Romunščina",
+    "languages.sk-SK": "Slovaščina",
     "locations": {
         "child_locations": "Podrejene lokacije",
         "collapse_tree": "Strni drevo",
