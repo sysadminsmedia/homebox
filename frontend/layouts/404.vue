@@ -1,5 +1,5 @@
 <template>
-  <main class="grid min-h-screen w-full place-items-center bg-blue-100">
+  <main class="grid min-h-screen w-full place-items-center">
     <slot></slot>
   </main>
 </template>
