@@ -2,9 +2,10 @@ package repo
 
 import (
 	"context"
+	"crypto/md5"
 	"errors"
+	"github.com/rs/zerolog/log"
 	"io"
-	"os"
 	"path/filepath"
 
 	"github.com/google/uuid"
@@ -12,6 +13,12 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/document"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/pathlib"
+
+	"gocloud.dev/blob"
+	_ "gocloud.dev/blob/azureblob"
+	_ "gocloud.dev/blob/fileblob"
+	_ "gocloud.dev/blob/gcsblob"
+	_ "gocloud.dev/blob/s3blob"
 )
 
 var ErrInvalidDocExtension = errors.New("invalid document extension")
@@ -71,21 +78,28 @@ func (r *DocumentRepository) Create(ctx context.Context, gid uuid.UUID, doc Docu
 
 	path := r.path(gid, ext)
 
-	parent := filepath.Dir(path)
-	err := os.MkdirAll(parent, 0o755)
+	bucket, err := blob.OpenBucket(context.Background(), "")
 	if err != nil {
+		log.Err(err).Msg("failed to open bucket")
 		return DocumentOut{}, err
 	}
 
-	f, err := os.Create(path)
+	options := &blob.WriterOptions{
+		ContentType: "application/octet-stream",
+		ContentMD5:  md5.New().Sum([]byte(doc.Title)),
+	}
+	err = bucket.Upload(ctx, path, doc.Content, options)
 	if err != nil {
+		log.Err(err).Msg("failed to create new writer")
 		return DocumentOut{}, err
 	}
 
-	_, err = io.Copy(f, doc.Content)
-	if err != nil {
-		return DocumentOut{}, err
-	}
+	defer func(bucket *blob.Bucket) {
+		err := bucket.Close()
+		if err != nil {
+			log.Err(err).Msg("failed to close bucket")
+		}
+	}(bucket)
 
 	return mapDocumentOutErr(r.db.Document.Create().
 		SetGroupID(gid).
@@ -102,15 +116,29 @@ func (r *DocumentRepository) Rename(ctx context.Context, id uuid.UUID, title str
 }
 
 func (r *DocumentRepository) Delete(ctx context.Context, id uuid.UUID) error {
+
+	bucket, err := blob.OpenBucket(context.Background(), "")
+	if err != nil {
+		log.Err(err).Msg("failed to open bucket")
+		return err
+	}
+
 	doc, err := r.db.Document.Get(ctx, id)
 	if err != nil {
 		return err
 	}
 
-	err = os.Remove(doc.Path)
+	err = bucket.Delete(ctx, doc.Path)
 	if err != nil {
 		return err
 	}
+
+	defer func(bucket *blob.Bucket) {
+		err := bucket.Close()
+		if err != nil {
+			log.Err(err).Msg("failed to close bucket")
+		}
+	}(bucket)
 
 	return r.db.Document.DeleteOneID(id).Exec(ctx)
 }
