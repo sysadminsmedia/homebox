@@ -2,6 +2,7 @@ package v1
 
 import (
 	"errors"
+	"gocloud.dev/blob"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -163,7 +164,23 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
-		http.ServeFile(w, r, doc.Path)
+		bucket, err := blob.OpenBucket(ctx, "file://./.data/")
+		if err != nil {
+			log.Err(err).Msg("failed to open bucket")
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+		file, err := bucket.NewReader(ctx, doc.Path, nil)
+		if err != nil {
+			log.Err(err).Msg("failed to open file")
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+		defer func(bucket *blob.Bucket) {
+			err := bucket.Close()
+			if err != nil {
+				log.Err(err).Msg("failed to close bucket")
+			}
+		}(bucket)
+		http.ServeContent(w, r, doc.Title, doc.CreatedAt, file)
 		return nil
 
 	// Delete Attachment Handler

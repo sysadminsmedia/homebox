@@ -24,8 +24,9 @@ import (
 var ErrInvalidDocExtension = errors.New("invalid document extension")
 
 type DocumentRepository struct {
-	db  *ent.Client
-	dir string
+	db         *ent.Client
+	storePath  string
+	connString string
 }
 
 type (
@@ -55,7 +56,7 @@ var (
 )
 
 func (r *DocumentRepository) path(gid uuid.UUID, ext string) string {
-	return pathlib.Safe(filepath.Join(r.dir, gid.String(), "documents", uuid.NewString()+ext))
+	return pathlib.Safe(filepath.Join(r.storePath, gid.String(), "documents", uuid.NewString()+ext))
 }
 
 func (r *DocumentRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]DocumentOut, error) {
@@ -78,22 +79,31 @@ func (r *DocumentRepository) Create(ctx context.Context, gid uuid.UUID, doc Docu
 
 	path := r.path(gid, ext)
 
-	bucket, err := blob.OpenBucket(context.Background(), "")
+	bucket, err := blob.OpenBucket(context.Background(), r.connString)
 	if err != nil {
 		log.Err(err).Msg("failed to open bucket")
 		return DocumentOut{}, err
 	}
 
-	options := &blob.WriterOptions{
-		ContentType: "application/octet-stream",
-		ContentMD5:  md5.New().Sum([]byte(doc.Title)),
-	}
-	err = bucket.Upload(ctx, path, doc.Content, options)
+	fileData, err := io.ReadAll(doc.Content)
 	if err != nil {
-		log.Err(err).Msg("failed to create new writer")
+		log.Err(err).Msg("failed to read all from content")
 		return DocumentOut{}, err
 	}
 
+	hash := md5.New()
+	hash.Write(fileData)
+	options := &blob.WriterOptions{
+		ContentType:                 "application/octet-stream",
+		DisableContentTypeDetection: false,
+		ContentMD5:                  hash.Sum(nil),
+	}
+
+	err = bucket.WriteAll(ctx, path, fileData, options)
+	if err != nil {
+		log.Err(err).Msg("failed to write all to bucket")
+		return DocumentOut{}, err
+	}
 	defer func(bucket *blob.Bucket) {
 		err := bucket.Close()
 		if err != nil {
@@ -117,7 +127,7 @@ func (r *DocumentRepository) Rename(ctx context.Context, id uuid.UUID, title str
 
 func (r *DocumentRepository) Delete(ctx context.Context, id uuid.UUID) error {
 
-	bucket, err := blob.OpenBucket(context.Background(), "")
+	bucket, err := blob.OpenBucket(context.Background(), r.connString)
 	if err != nil {
 		log.Err(err).Msg("failed to open bucket")
 		return err

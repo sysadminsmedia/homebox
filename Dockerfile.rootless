@@ -42,7 +42,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 FROM gcr.io/distroless/static:latest
 
 ENV HBOX_MODE=production
-ENV HBOX_STORAGE_DATA=/data/
+ENV HBOX_STORAGE_DATA=file:///data/
 ENV HBOX_DATABASE_SQLITE_PATH=/data/homebox.db?_fk=1
 
 # Copy the binary and data directory, change ownership
