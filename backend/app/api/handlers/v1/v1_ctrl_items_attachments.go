@@ -174,6 +174,12 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 			log.Err(err).Msg("failed to open file")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
+		defer func(file *blob.Reader) {
+			err := file.Close()
+			if err != nil {
+				log.Err(err).Msg("failed to close file")
+			}
+		}(file)
 		defer func(bucket *blob.Bucket) {
 			err := bucket.Close()
 			if err != nil {
