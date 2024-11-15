@@ -55,7 +55,7 @@ func MainNoExit(m *testing.M) int {
 	}
 
 	tClient = client
-	tRepos = New(tClient, tbus, os.TempDir())
+	tRepos = New(tClient, tbus, "test-store", "file://"+os.TempDir())
 	defer func() { _ = client.Close() }()
 
 	bootstrap()
