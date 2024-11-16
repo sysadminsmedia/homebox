@@ -59,6 +59,10 @@ func (r *DocumentRepository) path(gid uuid.UUID, ext string) string {
 	return pathlib.Safe(filepath.Join(r.storePath, gid.String(), "documents", uuid.NewString()+ext))
 }
 
+func (r *DocumentRepository) GetConnString() string {
+	return r.connString
+}
+
 func (r *DocumentRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]DocumentOut, error) {
 	return mapDocumentOutEachErr(r.db.Document.
 		Query().
@@ -126,7 +130,6 @@ func (r *DocumentRepository) Rename(ctx context.Context, id uuid.UUID, title str
 }
 
 func (r *DocumentRepository) Delete(ctx context.Context, id uuid.UUID) error {
-
 	bucket, err := blob.OpenBucket(context.Background(), r.connString)
 	if err != nil {
 		log.Err(err).Msg("failed to open bucket")

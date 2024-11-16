@@ -73,7 +73,7 @@ func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 			ext := filepath.Ext(attachmentName)
 
 			switch strings.ToLower(ext) {
-			case ".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".tiff":
+			case ".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".avif", ".ico":
 				attachmentType = attachment.TypePhoto.String()
 			default:
 				attachmentType = attachment.TypeAttachment.String()
@@ -164,7 +164,7 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
-		bucket, err := blob.OpenBucket(ctx, "file://./.data/")
+		bucket, err := blob.OpenBucket(ctx, ctrl.repo.Docs.GetConnString())
 		if err != nil {
 			log.Err(err).Msg("failed to open bucket")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
