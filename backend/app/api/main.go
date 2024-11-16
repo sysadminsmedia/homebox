@@ -201,7 +201,7 @@ func run(cfg *config.Config) error {
 
 	app.bus = eventbus.New()
 	app.db = c
-	app.repos = repo.New(c, app.bus, cfg.Storage.Data)
+	app.repos = repo.New(c, app.bus, cfg.Storage.Data, cfg.Storage.ConnString)
 	app.services = services.New(
 		app.repos,
 		services.WithAutoIncrementAssetID(cfg.Options.AutoIncrementAssetID),
