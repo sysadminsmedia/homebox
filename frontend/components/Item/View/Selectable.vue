@@ -28,24 +28,24 @@
 
 <template>
   <section>
-    <BaseSectionHeader class="mb-2 flex justify-between items-center">
-      Items
+    <BaseSectionHeader class="mb-2 flex items-center justify-between">
+      {{ $t("components.item.view.selectable.items") }}
       <template #description>
-        <div v-if="!viewSet" class="dropdown dropdown-hover dropdown-left">
+        <div v-if="!viewSet" class="dropdown dropdown-left dropdown-hover">
           <label tabindex="0" class="btn btn-ghost m-1">
-            <MdiDotsVertical class="h-7 w-7" />
+            <MdiDotsVertical class="size-7" />
           </label>
-          <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-32">
+          <ul tabindex="0" class="dropdown-content menu rounded-box w-32 bg-base-100 p-2 shadow">
             <li>
               <button @click="setViewPreference('card')">
-                <MdiCardTextOutline class="h-5 w-5" />
-                Card
+                <MdiCardTextOutline class="size-5" />
+                {{ $t("components.item.view.selectable.card") }}
               </button>
             </li>
             <li>
               <button @click="setViewPreference('table')">
-                <MdiTable class="h-5 w-5" />
-                Table
+                <MdiTable class="size-5" />
+                {{ $t("components.item.view.selectable.table") }}
               </button>
             </li>
           </ul>
@@ -57,9 +57,9 @@
       <ItemViewTable :items="items" />
     </template>
     <template v-else>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         <ItemCard v-for="item in items" :key="item.id" :item="item" />
-        <div class="first:block hidden text-lg">No Items to Display</div>
+        <div class="hidden first:block">{{ $t("components.item.view.selectable.no_items") }}</div>
       </div>
     </template>
   </section>

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -111,7 +112,7 @@ func (atq *AuthTokensQuery) QueryRoles() *AuthRolesQuery {
 // First returns the first AuthTokens entity from the query.
 // Returns a *NotFoundError when no AuthTokens was found.
 func (atq *AuthTokensQuery) First(ctx context.Context) (*AuthTokens, error) {
-	nodes, err := atq.Limit(1).All(setContextOp(ctx, atq.ctx, "First"))
+	nodes, err := atq.Limit(1).All(setContextOp(ctx, atq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +135,7 @@ func (atq *AuthTokensQuery) FirstX(ctx context.Context) *AuthTokens {
 // Returns a *NotFoundError when no AuthTokens ID was found.
 func (atq *AuthTokensQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = atq.Limit(1).IDs(setContextOp(ctx, atq.ctx, "FirstID")); err != nil {
+	if ids, err = atq.Limit(1).IDs(setContextOp(ctx, atq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -157,7 +158,7 @@ func (atq *AuthTokensQuery) FirstIDX(ctx context.Context) uuid.UUID {
 // Returns a *NotSingularError when more than one AuthTokens entity is found.
 // Returns a *NotFoundError when no AuthTokens entities are found.
 func (atq *AuthTokensQuery) Only(ctx context.Context) (*AuthTokens, error) {
-	nodes, err := atq.Limit(2).All(setContextOp(ctx, atq.ctx, "Only"))
+	nodes, err := atq.Limit(2).All(setContextOp(ctx, atq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -185,7 +186,7 @@ func (atq *AuthTokensQuery) OnlyX(ctx context.Context) *AuthTokens {
 // Returns a *NotFoundError when no entities are found.
 func (atq *AuthTokensQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = atq.Limit(2).IDs(setContextOp(ctx, atq.ctx, "OnlyID")); err != nil {
+	if ids, err = atq.Limit(2).IDs(setContextOp(ctx, atq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -210,7 +211,7 @@ func (atq *AuthTokensQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 
 // All executes the query and returns a list of AuthTokensSlice.
 func (atq *AuthTokensQuery) All(ctx context.Context) ([]*AuthTokens, error) {
-	ctx = setContextOp(ctx, atq.ctx, "All")
+	ctx = setContextOp(ctx, atq.ctx, ent.OpQueryAll)
 	if err := atq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -232,7 +233,7 @@ func (atq *AuthTokensQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error
 	if atq.ctx.Unique == nil && atq.path != nil {
 		atq.Unique(true)
 	}
-	ctx = setContextOp(ctx, atq.ctx, "IDs")
+	ctx = setContextOp(ctx, atq.ctx, ent.OpQueryIDs)
 	if err = atq.Select(authtokens.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -250,7 +251,7 @@ func (atq *AuthTokensQuery) IDsX(ctx context.Context) []uuid.UUID {
 
 // Count returns the count of the given query.
 func (atq *AuthTokensQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, atq.ctx, "Count")
+	ctx = setContextOp(ctx, atq.ctx, ent.OpQueryCount)
 	if err := atq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -268,7 +269,7 @@ func (atq *AuthTokensQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (atq *AuthTokensQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, atq.ctx, "Exist")
+	ctx = setContextOp(ctx, atq.ctx, ent.OpQueryExist)
 	switch _, err := atq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -609,7 +610,7 @@ func (atgb *AuthTokensGroupBy) Aggregate(fns ...AggregateFunc) *AuthTokensGroupB
 
 // Scan applies the selector query and scans the result into the given value.
 func (atgb *AuthTokensGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, atgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, atgb.build.ctx, ent.OpQueryGroupBy)
 	if err := atgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -657,7 +658,7 @@ func (ats *AuthTokensSelect) Aggregate(fns ...AggregateFunc) *AuthTokensSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (ats *AuthTokensSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ats.ctx, "Select")
+	ctx = setContextOp(ctx, ats.ctx, ent.OpQuerySelect)
 	if err := ats.prepareQuery(ctx); err != nil {
 		return err
 	}

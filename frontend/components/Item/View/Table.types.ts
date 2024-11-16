@@ -5,6 +5,8 @@ export type TableHeader = {
   value: keyof ItemSummary;
   sortable?: boolean;
   align?: "left" | "center" | "right";
+  enabled: boolean;
+  type?: "price" | "boolean" | "name" | "location" | "date";
 };
 
 export type TableData = Record<string, any>;

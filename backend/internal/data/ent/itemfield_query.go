@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -86,7 +87,7 @@ func (ifq *ItemFieldQuery) QueryItem() *ItemQuery {
 // First returns the first ItemField entity from the query.
 // Returns a *NotFoundError when no ItemField was found.
 func (ifq *ItemFieldQuery) First(ctx context.Context) (*ItemField, error) {
-	nodes, err := ifq.Limit(1).All(setContextOp(ctx, ifq.ctx, "First"))
+	nodes, err := ifq.Limit(1).All(setContextOp(ctx, ifq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +110,7 @@ func (ifq *ItemFieldQuery) FirstX(ctx context.Context) *ItemField {
 // Returns a *NotFoundError when no ItemField ID was found.
 func (ifq *ItemFieldQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = ifq.Limit(1).IDs(setContextOp(ctx, ifq.ctx, "FirstID")); err != nil {
+	if ids, err = ifq.Limit(1).IDs(setContextOp(ctx, ifq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -132,7 +133,7 @@ func (ifq *ItemFieldQuery) FirstIDX(ctx context.Context) uuid.UUID {
 // Returns a *NotSingularError when more than one ItemField entity is found.
 // Returns a *NotFoundError when no ItemField entities are found.
 func (ifq *ItemFieldQuery) Only(ctx context.Context) (*ItemField, error) {
-	nodes, err := ifq.Limit(2).All(setContextOp(ctx, ifq.ctx, "Only"))
+	nodes, err := ifq.Limit(2).All(setContextOp(ctx, ifq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -160,7 +161,7 @@ func (ifq *ItemFieldQuery) OnlyX(ctx context.Context) *ItemField {
 // Returns a *NotFoundError when no entities are found.
 func (ifq *ItemFieldQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = ifq.Limit(2).IDs(setContextOp(ctx, ifq.ctx, "OnlyID")); err != nil {
+	if ids, err = ifq.Limit(2).IDs(setContextOp(ctx, ifq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -185,7 +186,7 @@ func (ifq *ItemFieldQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 
 // All executes the query and returns a list of ItemFields.
 func (ifq *ItemFieldQuery) All(ctx context.Context) ([]*ItemField, error) {
-	ctx = setContextOp(ctx, ifq.ctx, "All")
+	ctx = setContextOp(ctx, ifq.ctx, ent.OpQueryAll)
 	if err := ifq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -207,7 +208,7 @@ func (ifq *ItemFieldQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error)
 	if ifq.ctx.Unique == nil && ifq.path != nil {
 		ifq.Unique(true)
 	}
-	ctx = setContextOp(ctx, ifq.ctx, "IDs")
+	ctx = setContextOp(ctx, ifq.ctx, ent.OpQueryIDs)
 	if err = ifq.Select(itemfield.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -225,7 +226,7 @@ func (ifq *ItemFieldQuery) IDsX(ctx context.Context) []uuid.UUID {
 
 // Count returns the count of the given query.
 func (ifq *ItemFieldQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, ifq.ctx, "Count")
+	ctx = setContextOp(ctx, ifq.ctx, ent.OpQueryCount)
 	if err := ifq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -243,7 +244,7 @@ func (ifq *ItemFieldQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (ifq *ItemFieldQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, ifq.ctx, "Exist")
+	ctx = setContextOp(ctx, ifq.ctx, ent.OpQueryExist)
 	switch _, err := ifq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -537,7 +538,7 @@ func (ifgb *ItemFieldGroupBy) Aggregate(fns ...AggregateFunc) *ItemFieldGroupBy 
 
 // Scan applies the selector query and scans the result into the given value.
 func (ifgb *ItemFieldGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ifgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, ifgb.build.ctx, ent.OpQueryGroupBy)
 	if err := ifgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -585,7 +586,7 @@ func (ifs *ItemFieldSelect) Aggregate(fns ...AggregateFunc) *ItemFieldSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (ifs *ItemFieldSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ifs.ctx, "Select")
+	ctx = setContextOp(ctx, ifs.ctx, ent.OpQuerySelect)
 	if err := ifs.prepareQuery(ctx); err != nil {
 		return err
 	}

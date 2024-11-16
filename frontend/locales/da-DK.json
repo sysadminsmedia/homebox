@@ -1,0 +1,69 @@
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "title": "Importer CSV Fil",
+                "upload": "Upload"
+            }
+        },
+        "global": {
+            "date_time": {
+                "just-now": "lige nu",
+                "last-month": "sidste måned"
+            },
+            "page_qr_code": {
+                "page_url": "Side URL"
+            },
+            "password_score": {
+                "password_strength": "Adgangskodestyrke"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "photo_button": "Foto 📷",
+                "title": "Opret genstand"
+            },
+            "view": {
+                "selectable": {
+                    "card": "Kort",
+                    "items": "Genstande",
+                    "no_items": "Ingen genstande at vise",
+                    "table": "Tabel"
+                },
+                "table": {
+                    "page": "Side"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "title": "Opret label"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "Opret lokation"
+            },
+            "tree": {
+                "no_locations": "Ingen tilgængelige lokationer. Opret nye lokationer gennem\n`<`span class=\"link-primary\">`Opret`<`/span`>` knappen i navigationslinjen."
+            }
+        }
+    },
+    "global": {
+        "confirm": "Bekræft",
+        "create": "Opret",
+        "create_and_add": "Opret og tilføj ny",
+        "created": "Oprettet",
+        "delete": "Slet",
+        "email": "Email",
+        "follow_dev": "Følg udvikleren",
+        "github": "GitHub projekt"
+    },
+    "tools": {
+        "import_export": "Importer/Eksporter",
+        "reports": "Rapporter",
+        "reports_set": {
+            "bill_of_materials": "Stykliste"
+        }
+    }
+}

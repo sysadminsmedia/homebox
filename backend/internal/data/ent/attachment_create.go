@@ -191,10 +191,10 @@ func (ac *AttachmentCreate) check() error {
 	if _, ok := ac.mutation.Primary(); !ok {
 		return &ValidationError{Name: "primary", err: errors.New(`ent: missing required field "Attachment.primary"`)}
 	}
-	if _, ok := ac.mutation.ItemID(); !ok {
+	if len(ac.mutation.ItemIDs()) == 0 {
 		return &ValidationError{Name: "item", err: errors.New(`ent: missing required edge "Attachment.item"`)}
 	}
-	if _, ok := ac.mutation.DocumentID(); !ok {
+	if len(ac.mutation.DocumentIDs()) == 0 {
 		return &ValidationError{Name: "document", err: errors.New(`ent: missing required edge "Attachment.document"`)}
 	}
 	return nil

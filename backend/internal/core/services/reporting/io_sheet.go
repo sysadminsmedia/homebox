@@ -153,7 +153,7 @@ func (s *IOSheet) Read(data io.Reader) error {
 }
 
 // ReadItems writes the sheet to a writer.
-func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, GID uuid.UUID, repos *repo.AllRepos) error {
+func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, gid uuid.UUID, repos *repo.AllRepos, hbURL string) error {
 	s.Rows = make([]ExportCSVRow, len(items))
 
 	extraHeaders := map[string]struct{}{}
@@ -164,7 +164,7 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, GID uuid.
 		// TODO: Support fetching nested locations
 		locID := item.Location.ID
 
-		locPaths, err := repos.Locations.PathForLoc(context.Background(), GID, locID)
+		locPaths, err := repos.Locations.PathForLoc(context.Background(), gid, locID)
 		if err != nil {
 			log.Error().Err(err).Msg("could not get location path")
 			return err
@@ -177,6 +177,8 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, GID uuid.
 		for i, l := range item.Labels {
 			labelString[i] = l.Name
 		}
+
+		url := generateItemURL(item, hbURL)
 
 		customFields := make([]ExportItemFields, len(item.Fields))
 
@@ -201,6 +203,7 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, GID uuid.
 			Description: item.Description,
 			Insured:     item.Insured,
 			Archived:    item.Archived,
+			URL:         url,
 
 			PurchasePrice: item.PurchasePrice,
 			PurchaseFrom:  item.PurchaseFrom,
@@ -219,6 +222,7 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, GID uuid.
 			SoldPrice: item.SoldPrice,
 			SoldNotes: item.SoldNotes,
 
+			Notes:  item.Notes,
 			Fields: customFields,
 		}
 	}
@@ -250,6 +254,14 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, GID uuid.
 	}
 
 	return nil
+}
+
+func generateItemURL(item repo.ItemOut, d string) string {
+	url := ""
+	if item.ID != uuid.Nil {
+		url = fmt.Sprintf("%s/item/%s", d, item.ID.String())
+	}
+	return url
 }
 
 // CSV writes the current sheet to a 2d array, for compatibility with TSV/CSV files.

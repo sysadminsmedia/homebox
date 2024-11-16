@@ -6,7 +6,7 @@
           <th
             v-for="h in headers"
             :key="h.value"
-            class="text-no-transform text-sm bg-neutral text-neutral-content"
+            class="text-no-transform bg-neutral text-sm text-neutral-content"
             :class="{
               'text-center': h.align === 'center',
               'text-right': h.align === 'right',

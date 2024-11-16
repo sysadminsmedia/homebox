@@ -28,33 +28,36 @@
   <div>
     <BaseContainer class="flex flex-col gap-12 pb-16">
       <section>
-        <Subtitle> Quick Statistics </Subtitle>
+        <Subtitle> {{ $t("home.quick_statistics") }} </Subtitle>
         <div class="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-6">
           <StatCard v-for="(stat, i) in stats" :key="i" :title="stat.label" :value="stat.value" :type="stat.type" />
         </div>
       </section>
 
       <section>
-        <Subtitle> Recently Added </Subtitle>
+        <Subtitle> {{ $t("home.recently_added") }} </Subtitle>
 
-        <BaseCard v-if="breakpoints.lg">
-          <ItemViewTable :items="itemTable.items" />
+        <p v-if="itemTable.items.length === 0" class="ml-2 text-sm">{{ $t("items.no_results") }}</p>
+        <BaseCard v-else-if="breakpoints.lg">
+          <ItemViewTable :items="itemTable.items" disable-controls />
         </BaseCard>
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2">
           <ItemCard v-for="item in itemTable.items" :key="item.id" :item="item" />
         </div>
       </section>
 
       <section>
-        <Subtitle> Storage Locations </Subtitle>
-        <div class="grid grid-cols-1 sm:grid-cols-2 card md:grid-cols-3 gap-4">
+        <Subtitle> {{ $t("home.storage_locations") }} </Subtitle>
+        <p v-if="locations.length === 0" class="ml-2 text-sm">{{ $t("locations.no_results") }}</p>
+        <div v-else class="card grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
           <LocationCard v-for="location in locations" :key="location.id" :location="location" />
         </div>
       </section>
 
       <section>
-        <Subtitle> Labels </Subtitle>
-        <div class="flex gap-4 flex-wrap">
+        <Subtitle> {{ $t("home.labels") }} </Subtitle>
+        <p v-if="labels.length === 0" class="ml-2 text-sm">{{ $t("labels.no_results") }}</p>
+        <div v-else class="flex flex-wrap gap-4">
           <LabelChip v-for="label in labels" :key="label.id" size="lg" :label="label" class="shadow-md" />
         </div>
       </section>

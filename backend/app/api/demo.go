@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"strings"
 	"time"
 
@@ -9,7 +10,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 )
 
-func (a *app) SetupDemo() {
+func (a *app) SetupDemo() error {
 	csvText := `HB.import_ref,HB.location,HB.labels,HB.quantity,HB.name,HB.description,HB.insured,HB.serial_number,HB.model_number,HB.manufacturer,HB.notes,HB.purchase_from,HB.purchase_price,HB.purchase_time,HB.lifetime_warranty,HB.warranty_expires,HB.warranty_details,HB.sold_to,HB.sold_price,HB.sold_time,HB.sold_notes
 ,Garage,IOT;Home Assistant; Z-Wave,1,Zooz Universal Relay ZEN17,"Zooz 700 Series Z-Wave Universal Relay ZEN17 for Awnings, Garage Doors, Sprinklers, and More | 2 NO-C-NC Relays (20A, 10A) | Signal Repeater | Hub Required (Compatible with SmartThings and Hubitat)",,,ZEN17,Zooz,,Amazon,39.95,10/13/2021,,,,,,,
 ,Living Room,IOT;Home Assistant; Z-Wave,1,Zooz Motion Sensor,"Zooz Z-Wave Plus S2 Motion Sensor ZSE18 with Magnetic Mount, Works with Vera and SmartThings",,,ZSE18,Zooz,,Amazon,29.95,10/15/2021,,,,,,,
@@ -33,34 +34,34 @@ func (a *app) SetupDemo() {
 	_, err := a.services.User.Login(ctx, registration.Email, registration.Password, false)
 	if err == nil {
 		log.Info().Msg("Demo user already exists, skipping setup")
-		return
+		return nil
 	}
 
 	log.Debug().Msg("Demo user does not exist, setting up demo")
 	_, err = a.services.User.RegisterUser(ctx, registration)
 	if err != nil {
 		log.Err(err).Msg("Failed to register demo user")
-		log.Fatal().Msg("Failed to setup demo")
+		return errors.New("failed to setup demo")
 	}
 
 	token, err := a.services.User.Login(ctx, registration.Email, registration.Password, false)
 	if err != nil {
 		log.Err(err).Msg("Failed to login demo user")
-		log.Fatal().Msg("Failed to setup demo")
-		return
+		return errors.New("failed to setup demo")
 	}
 	self, err := a.services.User.GetSelf(ctx, token.Raw)
 	if err != nil {
 		log.Err(err).Msg("Failed to get self")
-		log.Fatal().Msg("Failed to setup demo")
-		return
+		return errors.New("failed to setup demo")
 	}
 
 	_, err = a.services.Items.CsvImport(ctx, self.GroupID, strings.NewReader(csvText))
 	if err != nil {
 		log.Err(err).Msg("Failed to import CSV")
-		log.Fatal().Msg("Failed to setup demo")
+		return errors.New("failed to setup demo")
 	}
 
 	log.Info().Msg("Demo setup complete")
+
+	return nil
 }

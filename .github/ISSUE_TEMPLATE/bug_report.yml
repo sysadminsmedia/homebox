@@ -1,8 +1,9 @@
 ---
 name: "Bug Report"
 description: "Submit a bug report for the current release"
-labels: ["bug"]
+labels: ["🕷️ bug"]
 projects: ["sysadminsmedia/2"]
+type: "Bug"
 body:
   - type: checkboxes
     id: checks
@@ -19,6 +20,8 @@ body:
         - label: I searched the documentation, with the integrated search.
           required: true
         - label: I already read the docs and didn't find an answer.
+          required: true
+        - label: I can replicate the issue inside the Demo install.
           required: true
   - type: input
     id: homebox-version
@@ -53,6 +56,18 @@ body:
         - Docker (Synology)
         - Unraid
         - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: arch
+    attributes:
+      label: OS Architechture
+      description: What type of processor are you running on.
+      multiple: true
+      options:
+        - x86_64 (AMD, Intel)
+        - ARM64
+        - ARM/v7
     validations:
       required: true
   - type: textarea

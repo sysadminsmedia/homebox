@@ -3,6 +3,7 @@
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
   import MdiLoading from "~icons/mdi/loading";
+  import MdiSelectSearch from "~icons/mdi/select-search";
   import MdiMagnify from "~icons/mdi/magnify";
   import MdiDelete from "~icons/mdi/delete";
   import MdiChevronRight from "~icons/mdi/chevron-right";
@@ -40,6 +41,7 @@
   const includeArchived = useRouteQuery("archived", false);
   const fieldSelector = useRouteQuery("fieldSelector", false);
   const negateLabels = useRouteQuery("negateLabels", false);
+  const orderBy = useRouteQuery("orderBy", "name");
 
   const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
   const hasNext = computed(() => page.value * pageSize.value < total.value);
@@ -157,6 +159,12 @@
     return data;
   });
 
+  watch(includeArchived, (newV, oldV) => {
+    if (newV !== oldV) {
+      search();
+    }
+  });
+
   watch(fieldSelector, (newV, oldV) => {
     if (newV === false && oldV === true) {
       fieldTuples.value = [];
@@ -164,6 +172,12 @@
   });
 
   watch(negateLabels, (newV, oldV) => {
+    if (newV !== oldV) {
+      search();
+    }
+  });
+
+  watch(orderBy, (newV, oldV) => {
     if (newV !== oldV) {
       search();
     }
@@ -201,6 +215,7 @@
           pageSize: pageSize.value,
           includeArchived: includeArchived.value ? "true" : "false",
           negateLabels: negateLabels.value ? "true" : "false",
+          orderBy: orderBy.value,
         },
       });
     }
@@ -231,6 +246,7 @@
       includeArchived: includeArchived.value,
       page: page.value,
       pageSize: pageSize.value,
+      orderBy: orderBy.value,
       fields,
     });
 
@@ -278,6 +294,7 @@
         archived: includeArchived.value ? "true" : "false",
         fieldSelector: fieldSelector.value ? "true" : "false",
         negateLabels: negateLabels.value ? "true" : "false",
+        orderBy: orderBy.value,
         pageSize: pageSize.value,
         page: page.value,
         q: query.value,
@@ -311,6 +328,7 @@
         fieldSelector: "false",
         pageSize: 10,
         page: 1,
+        orderBy: "name",
         q: "",
         loc: [],
         lab: [],
@@ -325,11 +343,11 @@
 <template>
   <BaseContainer class="mb-16">
     <div v-if="locations && labels">
-      <div class="flex flex-wrap md:flex-nowrap gap-4 items-end">
+      <div class="flex flex-wrap items-end gap-4 md:flex-nowrap">
         <div class="w-full">
-          <FormTextField v-model="query" placeholder="Search" />
-          <div v-if="byAssetId" class="text-sm pl-2 pt-2">
-            <p>Querying Asset ID Number: {{ parsedAssetId }}</p>
+          <FormTextField v-model="query" :placeholder="$t('global.search')" />
+          <div v-if="byAssetId" class="pl-2 pt-2 text-sm">
+            <p>{{ $t("items.query_id", { id: parsedAssetId }) }}</p>
           </div>
         </div>
         <BaseButton class="btn-block md:w-auto" @click.prevent="submit">
@@ -337,69 +355,77 @@
             <MdiLoading v-if="loading" class="animate-spin" />
             <MdiMagnify v-else />
           </template>
-          Search
+          {{ $t("global.search") }}
         </BaseButton>
       </div>
 
-      <div class="flex flex-wrap md:flex-nowrap gap-2 w-full py-2">
-        <SearchFilter v-model="selectedLocations" label="Locations" :options="locationFlatTree">
+      <div class="flex w-full flex-wrap gap-2 py-2 md:flex-nowrap">
+        <SearchFilter v-model="selectedLocations" :label="$t('global.locations')" :options="locationFlatTree">
           <template #display="{ item }">
             <div>
               <div class="flex w-full">
                 {{ item.name }}
               </div>
-              <div v-if="item.name != item.treeString" class="text-xs mt-1">
+              <div v-if="item.name != item.treeString" class="mt-1 text-xs">
                 {{ item.treeString }}
               </div>
             </div>
           </template>
         </SearchFilter>
-        <SearchFilter v-model="selectedLabels" label="Labels" :options="labels" />
+        <SearchFilter v-model="selectedLabels" :label="$t('global.labels')" :options="labels" />
         <div class="dropdown">
-          <label tabindex="0" class="btn btn-xs">Options</label>
+          <label tabindex="0" class="btn btn-xs">{{ $t("items.options") }}</label>
           <div
             tabindex="0"
-            class="dropdown-content mt-1 max-h-72 p-4 w-64 overflow-auto shadow bg-base-100 rounded-md -translate-x-24"
+            class="dropdown-content mt-1 max-h-72 w-64 -translate-x-24 overflow-auto rounded-md bg-base-100 p-4 shadow"
           >
-            <label class="label cursor-pointer mr-auto">
-              <input v-model="includeArchived" type="checkbox" class="toggle toggle-sm toggle-primary" />
-              <span class="label-text ml-4"> Include Archived Items </span>
+            <label class="label mr-auto cursor-pointer">
+              <input v-model="includeArchived" type="checkbox" class="toggle toggle-primary toggle-sm" />
+              <span class="label-text ml-4"> {{ $t("items.include_archive") }} </span>
             </label>
-            <label class="label cursor-pointer mr-auto">
-              <input v-model="fieldSelector" type="checkbox" class="toggle toggle-sm toggle-primary" />
-              <span class="label-text ml-4"> Field Selector </span>
+            <label class="label mr-auto cursor-pointer">
+              <input v-model="fieldSelector" type="checkbox" class="toggle toggle-primary toggle-sm" />
+              <span class="label-text ml-4"> {{ $t("items.field_selector") }} </span>
             </label>
-            <label class="label cursor-pointer mr-auto">
-              <input v-model="negateLabels" type="checkbox" class="toggle toggle-sm toggle-primary" />
-              <span class="label-text ml-4"> Negate selected labels </span>
+            <label class="label mr-auto cursor-pointer">
+              <input v-model="negateLabels" type="checkbox" class="toggle toggle-primary toggle-sm" />
+              <span class="label-text ml-4"> {{ $t("items.negate_labels") }} </span>
+            </label>
+            <label class="label mr-auto cursor-pointer">
+              <select v-model="orderBy" class="select select-bordered select-sm">
+                <option value="name" selected>{{ $t("global.name") }}</option>
+                <option value="createdAt">{{ $t("items.created_at") }}</option>
+                <option value="updatedAt">{{ $t("items.updated_at") }}</option>
+              </select>
+              <span class="label-text ml-4"> {{ $t("items.order_by") }} </span>
             </label>
             <hr class="my-2" />
-            <BaseButton class="btn-block btn-sm" @click="reset"> Reset Search</BaseButton>
+            <BaseButton class="btn-sm btn-block" @click="reset"> {{ $t("items.reset_search") }} </BaseButton>
           </div>
         </div>
-        <div class="dropdown ml-auto dropdown-end">
-          <label tabindex="0" class="btn btn-xs">Tips</label>
+        <div class="dropdown dropdown-end ml-auto">
+          <label tabindex="0" class="btn btn-xs">{{ $t("items.tips") }}</label>
           <div
             tabindex="0"
-            class="dropdown-content mt-1 p-4 w-[325px] text-sm overflow-auto shadow bg-base-100 rounded-md"
+            class="dropdown-content mt-1 w-[325px] overflow-auto rounded-md bg-base-100 p-4 text-sm shadow"
           >
-            <p class="text-base">Search Tips</p>
+            <p class="text-base">{{ $t("items.tips_sub") }}</p>
             <ul class="mt-1 list-disc pl-6">
               <li>
-                Location and label filters use the 'OR' operation. If more than one is selected only one will be
-                required for a match.
+                {{ $t("items.tip_1") }}
               </li>
-              <li>Searches prefixed with '#'' will query for a asset ID (example '#000-001')</li>
               <li>
-                Field filters use the 'OR' operation. If more than one is selected only one will be required for a
-                match.
+                {{ $t("items.tip_2") }}
+              </li>
+              <li>
+                {{ $t("items.tip_3") }}
               </li>
             </ul>
           </div>
         </div>
       </div>
-      <div v-if="fieldSelector" class="py-4 space-y-2">
-        <p>Custom Fields</p>
+      <div v-if="fieldSelector" class="space-y-2 py-4">
+        <p>{{ $t("items.custom_fields") }}</p>
         <div v-for="(f, idx) in fieldTuples" :key="idx" class="flex flex-wrap gap-2">
           <div class="form-control w-full max-w-xs">
             <label class="label">
@@ -407,7 +433,7 @@
             </label>
             <select
               v-model="fieldTuples[idx][0]"
-              class="select-bordered select"
+              class="select select-bordered"
               :items="allFields ?? []"
               @change="fetchValues(f[0])"
             >
@@ -416,52 +442,58 @@
           </div>
           <div class="form-control w-full max-w-xs">
             <label class="label">
-              <span class="label-text">Field Value</span>
+              <span class="label-text">{{ $t("items.field_value") }}</span>
             </label>
-            <select v-model="fieldTuples[idx][1]" class="select-bordered select" :items="fieldValuesCache[f[0]]">
+            <select v-model="fieldTuples[idx][1]" class="select select-bordered" :items="fieldValuesCache[f[0]]">
               <option v-for="v in fieldValuesCache[f[0]]" :key="v" :value="v">{{ v }}</option>
             </select>
           </div>
           <button
             type="button"
-            class="btn btn-square btn-sm md:ml-0 ml-auto mt-auto mb-2"
+            class="btn btn-square btn-sm mb-2 ml-auto mt-auto md:ml-0"
             @click="fieldTuples.splice(idx, 1)"
           >
-            <MdiDelete class="w-5 h-5" />
+            <MdiDelete class="size-5" />
           </button>
         </div>
-        <BaseButton type="button" class="btn-sm mt-2" @click="() => fieldTuples.push(['', ''])"> Add</BaseButton>
+        <BaseButton type="button" class="btn-sm mt-2" @click="() => fieldTuples.push(['', ''])">
+          {{ $t("items.add") }}
+        </BaseButton>
       </div>
     </div>
 
     <section class="mt-10">
-      <BaseSectionHeader ref="itemsTitle"> Items </BaseSectionHeader>
-      <p class="text-base font-medium flex items-center">
-        {{ total }} Results
-        <span class="text-base ml-auto"> Page {{ page }} of {{ totalPages }}</span>
+      <BaseSectionHeader ref="itemsTitle"> {{ $t("global.items") }} </BaseSectionHeader>
+      <p v-if="items.length > 0" class="flex items-center text-base font-medium">
+        {{ $t("items.results", { total: total }) }}
+        <span class="ml-auto text-base"> {{ $t("items.pages", { page: page, totalPages: totalPages }) }} </span>
       </p>
 
-      <div ref="cardgrid" class="grid mt-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <ItemCard v-for="item in items" :key="item.id" :item="item" />
-
-        <div class="hidden first:inline text-xl">No Items Found</div>
+      <div v-if="items.length === 0" class="flex flex-col items-center gap-2">
+        <MdiSelectSearch class="size-10" />
+        <p>{{ $t("items.no_results") }}</p>
       </div>
-      <div v-if="items.length > 0 && (hasNext || hasPrev)" class="mt-10 flex gap-2 flex-col items-center">
+      <div v-else ref="cardgrid" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+        <ItemCard v-for="item in items" :key="item.id" :item="item" />
+      </div>
+      <div v-if="items.length > 0 && (hasNext || hasPrev)" class="mt-10 flex flex-col items-center gap-2">
         <div class="flex">
           <div class="btn-group">
-            <button :disabled="!hasPrev" class="btn text-no-transform" @click="prev">
-              <MdiChevronLeft class="mr-1 h-6 w-6" name="mdi-chevron-left" />
-              Prev
+            <button :disabled="!hasPrev" class="text-no-transform btn" @click="prev">
+              <MdiChevronLeft class="mr-1 size-6" name="mdi-chevron-left" />
+              {{ $t("items.prev_page") }}
             </button>
-            <button v-if="hasPrev" class="btn text-no-transform" @click="page = 1">First</button>
-            <button v-if="hasNext" class="btn text-no-transform" @click="page = totalPages">Last</button>
-            <button :disabled="!hasNext" class="btn text-no-transform" @click="next">
-              Next
-              <MdiChevronRight class="ml-1 h-6 w-6" name="mdi-chevron-right" />
+            <button v-if="hasPrev" class="text-no-transform btn" @click="page = 1">{{ $t("items.first") }}</button>
+            <button v-if="hasNext" class="text-no-transform btn" @click="page = totalPages">
+              {{ $t("items.last") }}
+            </button>
+            <button :disabled="!hasNext" class="text-no-transform btn" @click="next">
+              {{ $t("items.next_page") }}
+              <MdiChevronRight class="ml-1 size-6" name="mdi-chevron-right" />
             </button>
           </div>
         </div>
-        <p class="text-sm font-bold">Page {{ page }} of {{ totalPages }}</p>
+        <p class="text-sm font-bold">{{ $t("items.pages", { page: page, totalPages: totalPages }) }}</p>
       </div>
     </section>
   </BaseContainer>

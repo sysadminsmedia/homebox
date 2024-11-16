@@ -48,8 +48,8 @@ type (
 	LocationOut struct {
 		Parent *LocationSummary `json:"parent,omitempty"`
 		LocationSummary
-		Children []LocationSummary `json:"children"`
-		TotalPrice float64 `json:"totalPrice"`
+		Children   []LocationSummary `json:"children"`
+		TotalPrice float64           `json:"totalPrice"`
 	}
 )
 
@@ -90,9 +90,9 @@ func mapLocationOut(location *ent.Location) LocationOut {
 	}
 }
 
-func (r *LocationRepository) publishMutationEvent(GID uuid.UUID) {
+func (r *LocationRepository) publishMutationEvent(gid uuid.UUID) {
 	if r.bus != nil {
-		r.bus.Publish(eventbus.EventLocationMutation, eventbus.GroupMutationEvent{GID: GID})
+		r.bus.Publish(eventbus.EventLocationMutation, eventbus.GroupMutationEvent{GID: gid})
 	}
 }
 
@@ -101,7 +101,7 @@ type LocationQuery struct {
 }
 
 // GetAll returns all locations with item count field populated
-func (r *LocationRepository) GetAll(ctx context.Context, GID uuid.UUID, filter LocationQuery) ([]LocationOutCount, error) {
+func (r *LocationRepository) GetAll(ctx context.Context, gid uuid.UUID, filter LocationQuery) ([]LocationOutCount, error) {
 	query := `--sql
 		SELECT
 			id,
@@ -132,7 +132,7 @@ func (r *LocationRepository) GetAll(ctx context.Context, GID uuid.UUID, filter L
 		query = strings.Replace(query, "{{ FILTER_CHILDREN }}", "", 1)
 	}
 
-	rows, err := r.db.Sql().QueryContext(ctx, query, GID)
+	rows, err := r.db.Sql().QueryContext(ctx, query, gid)
 	if err != nil {
 		return nil, err
 	}
@@ -168,19 +168,19 @@ func (r *LocationRepository) getOne(ctx context.Context, where ...predicate.Loca
 		Only(ctx))
 }
 
-func (r *LocationRepository) Get(ctx context.Context, ID uuid.UUID) (LocationOut, error) {
-	return r.getOne(ctx, location.ID(ID))
+func (r *LocationRepository) Get(ctx context.Context, id uuid.UUID) (LocationOut, error) {
+	return r.getOne(ctx, location.ID(id))
 }
 
-func (r *LocationRepository) GetOneByGroup(ctx context.Context, GID, ID uuid.UUID) (LocationOut, error) {
-	return r.getOne(ctx, location.ID(ID), location.HasGroupWith(group.ID(GID)))
+func (r *LocationRepository) GetOneByGroup(ctx context.Context, gid, id uuid.UUID) (LocationOut, error) {
+	return r.getOne(ctx, location.ID(id), location.HasGroupWith(group.ID(gid)))
 }
 
-func (r *LocationRepository) Create(ctx context.Context, GID uuid.UUID, data LocationCreate) (LocationOut, error) {
+func (r *LocationRepository) Create(ctx context.Context, gid uuid.UUID, data LocationCreate) (LocationOut, error) {
 	q := r.db.Location.Create().
 		SetName(data.Name).
 		SetDescription(data.Description).
-		SetGroupID(GID)
+		SetGroupID(gid)
 
 	if data.ParentID != uuid.Nil {
 		q.SetParentID(data.ParentID)
@@ -191,8 +191,8 @@ func (r *LocationRepository) Create(ctx context.Context, GID uuid.UUID, data Loc
 		return LocationOut{}, err
 	}
 
-	location.Edges.Group = &ent.Group{ID: GID} // bootstrap group ID
-	r.publishMutationEvent(GID)
+	location.Edges.Group = &ent.Group{ID: gid} // bootstrap group ID
+	r.publishMutationEvent(gid)
 	return mapLocationOut(location), nil
 }
 
@@ -216,28 +216,28 @@ func (r *LocationRepository) update(ctx context.Context, data LocationUpdate, wh
 	return r.Get(ctx, data.ID)
 }
 
-func (r *LocationRepository) UpdateByGroup(ctx context.Context, GID, ID uuid.UUID, data LocationUpdate) (LocationOut, error) {
-	v, err := r.update(ctx, data, location.ID(ID), location.HasGroupWith(group.ID(GID)))
+func (r *LocationRepository) UpdateByGroup(ctx context.Context, gid, id uuid.UUID, data LocationUpdate) (LocationOut, error) {
+	v, err := r.update(ctx, data, location.ID(id), location.HasGroupWith(group.ID(gid)))
 	if err != nil {
 		return LocationOut{}, err
 	}
 
-	r.publishMutationEvent(GID)
+	r.publishMutationEvent(gid)
 	return v, err
 }
 
 // delete should only be used after checking that the location is owned by the
 // group. Otherwise, use DeleteByGroup
-func (r *LocationRepository) delete(ctx context.Context, ID uuid.UUID) error {
-	return r.db.Location.DeleteOneID(ID).Exec(ctx)
+func (r *LocationRepository) delete(ctx context.Context, id uuid.UUID) error {
+	return r.db.Location.DeleteOneID(id).Exec(ctx)
 }
 
-func (r *LocationRepository) DeleteByGroup(ctx context.Context, GID, ID uuid.UUID) error {
-	_, err := r.db.Location.Delete().Where(location.ID(ID), location.HasGroupWith(group.ID(GID))).Exec(ctx)
+func (r *LocationRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID) error {
+	_, err := r.db.Location.Delete().Where(location.ID(id), location.HasGroupWith(group.ID(gid))).Exec(ctx)
 	if err != nil {
 		return err
 	}
-	r.publishMutationEvent(GID)
+	r.publishMutationEvent(gid)
 
 	return err
 }
@@ -274,7 +274,7 @@ type ItemPath struct {
 	Name string    `json:"name"`
 }
 
-func (r *LocationRepository) PathForLoc(ctx context.Context, GID, locID uuid.UUID) ([]ItemPath, error) {
+func (r *LocationRepository) PathForLoc(ctx context.Context, gid, locID uuid.UUID) ([]ItemPath, error) {
 	query := `WITH RECURSIVE location_path AS (
 		SELECT id, name, location_children
 		FROM locations
@@ -291,7 +291,7 @@ func (r *LocationRepository) PathForLoc(ctx context.Context, GID, locID uuid.UUI
 	  SELECT id, name
 	  FROM location_path`
 
-	rows, err := r.db.Sql().QueryContext(ctx, query, locID, GID)
+	rows, err := r.db.Sql().QueryContext(ctx, query, locID, gid)
 	if err != nil {
 		return nil, err
 	}
@@ -321,7 +321,7 @@ func (r *LocationRepository) PathForLoc(ctx context.Context, GID, locID uuid.UUI
 	return locations, nil
 }
 
-func (r *LocationRepository) Tree(ctx context.Context, GID uuid.UUID, tq TreeQuery) ([]TreeItem, error) {
+func (r *LocationRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery) ([]TreeItem, error) {
 	query := `
 		WITH recursive location_tree(id, NAME, parent_id, level, node_type) AS
 		(
@@ -403,7 +403,7 @@ func (r *LocationRepository) Tree(ctx context.Context, GID uuid.UUID, tq TreeQue
 		query = strings.ReplaceAll(query, "{{ WITH_ITEMS_FROM }}", "")
 	}
 
-	rows, err := r.db.Sql().QueryContext(ctx, query, GID)
+	rows, err := r.db.Sql().QueryContext(ctx, query, gid)
 	if err != nil {
 		return nil, err
 	}

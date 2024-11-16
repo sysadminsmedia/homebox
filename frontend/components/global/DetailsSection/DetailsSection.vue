@@ -1,11 +1,11 @@
 <template>
   <div class="border-t border-gray-300 px-4 py-5 sm:p-0">
     <dl class="sm:divide-y sm:divide-gray-300">
-      <div v-for="(detail, i) in details" :key="i" class="py-4 sm:grid group sm:grid-cols-3 sm:gap-4 sm:px-6">
+      <div v-for="(detail, i) in details" :key="i" class="group py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
         <dt class="text-sm font-medium text-base-content">
-          {{ detail.name }}
+          {{ $t(detail.name) }}
         </dt>
-        <dd class="text-sm text-base-content text-start sm:col-span-2">
+        <dd class="text-start text-sm text-base-content sm:col-span-2">
           <slot :name="detail.slot || detail.name" v-bind="{ detail }">
             <DateTime
               v-if="detail.type == 'date'"
@@ -14,9 +14,9 @@
             />
             <Currency v-else-if="detail.type == 'currency'" :amount="detail.text" />
             <template v-else-if="detail.type === 'link'">
-              <div class="tooltip tooltip-primary tooltip-top" :data-tip="detail.href">
+              <div class="tooltip tooltip-top tooltip-primary" :data-tip="detail.href">
                 <a class="btn btn-primary btn-xs" :href="detail.href" target="_blank">
-                  <MdiOpenInNew class="mr-2 swap-on" />
+                  <MdiOpenInNew class="swap-on mr-2" />
                   {{ detail.text }}
                 </a>
               </div>
@@ -27,17 +27,17 @@
               </ClientOnly>
             </template>
             <template v-else>
-              <span class="flex items-center">
+              <span class="flex items-center text-wrap">
                 {{ detail.text }}
                 <span
                   v-if="detail.copyable"
-                  class="opacity-0 group-hover:opacity-100 ml-4 my-0 duration-75 transition-opacity"
+                  class="my-0 ml-4 opacity-0 transition-opacity duration-75 group-hover:opacity-100"
                 >
                   <CopyText
                     v-if="detail.text.toString()"
                     :text="detail.text.toString()"
                     :icon-size="16"
-                    class="btn btn-xs btn-ghost btn-circle"
+                    class="btn btn-circle btn-ghost btn-xs"
                   />
                 </span>
               </span>

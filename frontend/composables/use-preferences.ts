@@ -1,4 +1,5 @@
 import type { Ref } from "vue";
+import type { TableHeader } from "~/components/Item/View/Table.types";
 import type { DaisyTheme } from "~~/lib/data/themes";
 
 export type ViewType = "table" | "card" | "tree";
@@ -9,6 +10,10 @@ export type LocationViewPreferences = {
   editorAdvancedView: boolean;
   itemDisplayView: ViewType;
   theme: DaisyTheme;
+  itemsPerTablePage: number;
+  tableHeaders?: TableHeader[];
+  displayHeaderDecor: boolean;
+  language?: string;
 };
 
 /**
@@ -24,6 +29,9 @@ export function useViewPreferences(): Ref<LocationViewPreferences> {
       editorAdvancedView: false,
       itemDisplayView: "card",
       theme: "homebox",
+      itemsPerTablePage: 10,
+      displayHeaderDecor: true,
+      language: null,
     },
     { mergeDefaults: true }
   );

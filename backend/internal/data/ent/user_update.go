@@ -294,7 +294,7 @@ func (uu *UserUpdate) check() error {
 			return &ValidationError{Name: "role", err: fmt.Errorf(`ent: validator failed for field "User.role": %w`, err)}
 		}
 	}
-	if _, ok := uu.mutation.GroupID(); uu.mutation.GroupCleared() && !ok {
+	if uu.mutation.GroupCleared() && len(uu.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "User.group"`)
 	}
 	return nil
@@ -753,7 +753,7 @@ func (uuo *UserUpdateOne) check() error {
 			return &ValidationError{Name: "role", err: fmt.Errorf(`ent: validator failed for field "User.role": %w`, err)}
 		}
 	}
-	if _, ok := uuo.mutation.GroupID(); uuo.mutation.GroupCleared() && !ok {
+	if uuo.mutation.GroupCleared() && len(uuo.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "User.group"`)
 	}
 	return nil

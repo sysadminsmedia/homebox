@@ -57,6 +57,12 @@ func WithSecureCookies(secure bool) func(*V1Controller) {
 	}
 }
 
+func WithURL(url string) func(*V1Controller) {
+	return func(ctrl *V1Controller) {
+		ctrl.url = url
+	}
+}
+
 type V1Controller struct {
 	cookieSecure      bool
 	repo              *repo.AllRepos
@@ -65,6 +71,7 @@ type V1Controller struct {
 	isDemo            bool
 	allowRegistration bool
 	bus               *eventbus.EventBus
+	url               string
 }
 
 type (
@@ -86,12 +93,6 @@ type (
 		AllowRegistration bool     `json:"allowRegistration"`
 	}
 )
-
-func BaseURLFunc(prefix string) func(s string) string {
-	return func(s string) string {
-		return prefix + "/v1" + s
-	}
-}
 
 func NewControllerV1(svc *services.AllServices, repos *repo.AllRepos, bus *eventbus.EventBus, options ...func(*V1Controller)) *V1Controller {
 	ctrl := &V1Controller{

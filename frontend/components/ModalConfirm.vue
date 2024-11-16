@@ -1,11 +1,11 @@
 <template>
   <BaseModal v-model="isRevealed" readonly @cancel="cancel(false)">
-    <template #title> Confirm </template>
+    <template #title> {{ $t("global.confirm") }} </template>
     <div>
       <p>{{ text }}</p>
     </div>
     <div class="modal-action">
-      <BaseButton type="submit" @click="confirm(true)"> Confirm </BaseButton>
+      <BaseButton type="submit" @click="confirm(true)"> {{ $t("global.confirm") }} </BaseButton>
     </div>
   </BaseModal>
 </template>

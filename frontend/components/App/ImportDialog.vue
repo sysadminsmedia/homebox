@@ -1,15 +1,14 @@
 <template>
   <BaseModal v-model="dialog">
-    <template #title> Import CSV File </template>
+    <template #title> {{ $t("components.app.import_dialog.title") }} </template>
     <p>
-      Import a CSV file containing your items, labels, and locations. See documentation for more information on the
-      required format.
+      {{ $t("components.app.import_dialog.description") }}
     </p>
-    <div class="alert alert-warning shadow-lg mt-4">
+    <div class="alert alert-warning mt-4 shadow-lg">
       <div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="stroke-current flex-shrink-0 h-6 w-6 mb-auto"
+          class="mb-auto size-6 shrink-0 stroke-current"
           fill="none"
           viewBox="0 0 24 24"
         >
@@ -21,8 +20,7 @@
           />
         </svg>
         <span class="text-sm">
-          Behavior for imports with existing import_refs has changed. If an import_ref is present in the CSV file, the
-          item will be updated with the values in the CSV file.
+          {{ $t("components.app.import_dialog.change_warning") }}
         </span>
       </div>
     </div>
@@ -32,16 +30,16 @@
         <input ref="importRef" type="file" class="hidden" accept=".csv,.tsv" @change="setFile" />
 
         <BaseButton type="button" @click="uploadCsv">
-          <MdiUpload class="h-5 w-5 mr-2" />
-          Upload
+          <MdiUpload class="mr-2 size-5" />
+          {{ $t("components.app.import_dialog.upload") }}
         </BaseButton>
-        <p class="text-center pt-4 -mb-5">
+        <p class="-mb-5 pt-4 text-center">
           {{ importCsv?.name }}
         </p>
       </div>
 
       <div class="modal-action">
-        <BaseButton type="submit" :disabled="!importCsv"> Submit </BaseButton>
+        <BaseButton type="submit" :disabled="!importCsv"> {{ $t("global.submit") }} </BaseButton>
       </div>
     </form>
   </BaseModal>

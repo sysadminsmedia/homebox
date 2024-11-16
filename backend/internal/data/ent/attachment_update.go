@@ -147,10 +147,10 @@ func (au *AttachmentUpdate) check() error {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Attachment.type": %w`, err)}
 		}
 	}
-	if _, ok := au.mutation.ItemID(); au.mutation.ItemCleared() && !ok {
+	if au.mutation.ItemCleared() && len(au.mutation.ItemIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Attachment.item"`)
 	}
-	if _, ok := au.mutation.DocumentID(); au.mutation.DocumentCleared() && !ok {
+	if au.mutation.DocumentCleared() && len(au.mutation.DocumentIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Attachment.document"`)
 	}
 	return nil
@@ -384,10 +384,10 @@ func (auo *AttachmentUpdateOne) check() error {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Attachment.type": %w`, err)}
 		}
 	}
-	if _, ok := auo.mutation.ItemID(); auo.mutation.ItemCleared() && !ok {
+	if auo.mutation.ItemCleared() && len(auo.mutation.ItemIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Attachment.item"`)
 	}
-	if _, ok := auo.mutation.DocumentID(); auo.mutation.DocumentCleared() && !ok {
+	if auo.mutation.DocumentCleared() && len(auo.mutation.DocumentIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Attachment.document"`)
 	}
 	return nil

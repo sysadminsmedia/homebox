@@ -9,12 +9,14 @@ import { StatsAPI } from "./classes/stats";
 import { AssetsApi } from "./classes/assets";
 import { ReportsAPI } from "./classes/reports";
 import { NotifiersAPI } from "./classes/notifiers";
+import { MaintenanceAPI } from "./classes/maintenance";
 import type { Requests } from "~~/lib/requests";
 
 export class UserClient extends BaseAPI {
   locations: LocationsApi;
   labels: LabelsApi;
   items: ItemsApi;
+  maintenance: MaintenanceAPI;
   group: GroupApi;
   user: UserApi;
   actions: ActionsAPI;
@@ -29,6 +31,7 @@ export class UserClient extends BaseAPI {
     this.locations = new LocationsApi(requests);
     this.labels = new LabelsApi(requests);
     this.items = new ItemsApi(requests, attachmentToken);
+    this.maintenance = new MaintenanceAPI(requests);
     this.group = new GroupApi(requests);
     this.user = new UserApi(requests);
     this.actions = new ActionsAPI(requests);

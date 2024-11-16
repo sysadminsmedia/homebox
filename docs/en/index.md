@@ -15,6 +15,9 @@ hero:
     - theme: alt
       text: Tips and Tricks
       link: /en/tips-tricks
+    - theme: alt
+      text: Try It Out
+      link: https://demo.homebox.software
 
 features:
   - title: Add/Update/Delete Items
@@ -28,8 +31,10 @@ features:
   - title: Custom labeling and locations
     details: Use custom labels and locations to organize items
   - title: Multi-Tenant Support
-    details: All users are in a group, and can only see what's in the group. Invite family memebers or share an instance with friends.
+    details: All users are in a group, and can only see what's in the group. Invite family members or share an instance with friends.
 ---
+
+![HomeBox Home Screen Screenshot](images/home-screen.png)
 
 Homebox is the inventory and organization system built for the Home User! With a focus on simplicity and ease of use, Homebox is the perfect solution for your home inventory, organization, and management needs. While developing this project, I've tried to keep the following principles in mind:
 

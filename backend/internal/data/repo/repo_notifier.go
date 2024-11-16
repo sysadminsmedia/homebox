@@ -55,7 +55,7 @@ type (
 
 		Name     string `json:"name"`
 		IsActive bool   `json:"isActive"`
-		URL      string `json:"-"` // URL field is not exposed to the client
+		URL      string `json:"url"`
 	}
 )
 
@@ -114,7 +114,7 @@ func (r *NotifierRepository) Update(ctx context.Context, userID uuid.UUID, id uu
 	return r.mapper.MapErr(notifier, err)
 }
 
-func (r *NotifierRepository) Delete(ctx context.Context, userID uuid.UUID, ID uuid.UUID) error {
-	_, err := r.db.Notifier.Delete().Where(notifier.UserID(userID), notifier.ID(ID)).Exec(ctx)
+func (r *NotifierRepository) Delete(ctx context.Context, userID uuid.UUID, id uuid.UUID) error {
+	_, err := r.db.Notifier.Delete().Where(notifier.UserID(userID), notifier.ID(id)).Exec(ctx)
 	return err
 }

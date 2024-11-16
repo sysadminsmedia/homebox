@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import MdiGithub from "~icons/mdi/github";
-  import MdiTwitter from "~icons/mdi/twitter";
   import MdiDiscord from "~icons/mdi/discord";
   import MdiFolder from "~icons/mdi/folder";
   import MdiAccount from "~icons/mdi/account";
@@ -8,6 +7,7 @@
   import MdiLogin from "~icons/mdi/login";
   import MdiArrowRight from "~icons/mdi/arrow-right";
   import MdiLock from "~icons/mdi/lock";
+  import MdiMastodon from "~icons/mdi/mastodon";
 
   useHead({
     title: "Homebox | Organize and Tag Your Stuff",
@@ -77,6 +77,15 @@
 
   async function registerUser() {
     loading.value = true;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email.value)) {
+      toast.error("Invalid email address");
+      loading.value = false;
+      return;
+    }
+
     const { error } = await api.register({
       name: username.value,
       email: email.value,
@@ -126,9 +135,9 @@
 </script>
 
 <template>
-  <div class="flex flex-col min-h-screen">
-    <div class="fill-primary min-w-full absolute top-0 z-[-1]">
-      <div class="bg-primary flex-col flex min-h-[20vh]" />
+  <div class="flex min-h-screen flex-col">
+    <div class="absolute top-0 z-[-1] min-w-full fill-primary">
+      <div class="flex min-h-[20vh] flex-col bg-primary" />
       <svg
         class="fill-primary drop-shadow-xl"
         xmlns="http://www.w3.org/2000/svg"
@@ -142,49 +151,59 @@
       </svg>
     </div>
     <div>
-      <header class="p-4 sm:px-6 lg:p-14 sm:py-6 sm:flex sm:items-end mx-auto">
+      <header class="mx-auto p-4 sm:flex sm:items-end sm:p-6 lg:p-14">
         <div>
-          <h2 class="mt-1 text-4xl font-bold tracking-tight text-neutral-content sm:text-5xl lg:text-6xl flex">
+          <h2 class="mt-1 flex text-4xl font-bold tracking-tight text-neutral-content sm:text-5xl lg:text-6xl">
             HomeB
-            <AppLogo class="w-12 -mb-4" />
+            <AppLogo class="-mb-4 w-12" />
             x
           </h2>
-          <p class="ml-1 text-lg text-base-content/50">Track, Organize, and Manage your Things.</p>
+          <p class="ml-1 text-lg text-base-content/50">{{ $t("index.tagline") }}</p>
         </div>
-        <div class="flex mt-6 sm:mt-0 gap-4 ml-auto text-neutral-content">
-          <a class="tooltip" data-tip="Project Github" href="https://github.com/sysadminsmedia/homebox" target="_blank">
-            <MdiGithub class="h-8 w-8" />
+        <div class="ml-auto mt-6 flex gap-4 text-neutral-content sm:mt-0">
+          <a
+            class="tooltip"
+            :data-tip="$t('global.github')"
+            href="https://github.com/sysadminsmedia/homebox"
+            target="_blank"
+          >
+            <MdiGithub class="size-8" />
           </a>
-          <a href="https://twitter.com/haybytes" class="tooltip" data-tip="Follow The Developer" target="_blank">
-            <MdiTwitter class="h-8 w-8" />
+          <a
+            href="https://noc.social/@sysadminszone"
+            class="tooltip"
+            :data-tip="$t('global.follow_dev')"
+            target="_blank"
+          >
+            <MdiMastodon class="size-8" />
           </a>
-          <a href="https://discord.gg/aY4DCkpNA9" class="tooltip" data-tip="Join The Discord" target="_blank">
-            <MdiDiscord class="h-8 w-8" />
+          <a href="https://discord.gg/aY4DCkpNA9" class="tooltip" :data-tip="$t('global.join_discord')" target="_blank">
+            <MdiDiscord class="size-8" />
           </a>
-          <a href="https://homebox.sysadminsmedia.com/en/" class="tooltip" data-tip="Read The Docs" target="_blank">
-            <MdiFolder class="h-8 w-8" />
+          <a href="https://homebox.software/en/" class="tooltip" :data-tip="$t('global.read_docs')" target="_blank">
+            <MdiFolder class="size-8" />
           </a>
         </div>
       </header>
-      <div class="grid p-6 sm:place-items-center min-h-[50vh]">
+      <div class="grid min-h-[50vh] p-6 sm:place-items-center">
         <div>
           <Transition name="slide-fade">
             <form v-if="registerForm" @submit.prevent="registerUser">
-              <div class="card w-max-[500px] md:w-[500px] bg-base-100 shadow-xl">
+              <div class="card bg-base-100 shadow-xl md:w-[500px]">
                 <div class="card-body">
-                  <h2 class="card-title text-2xl align-center">
-                    <MdiAccount class="mr-1 w-7 h-7" />
-                    Register
+                  <h2 class="card-title text-2xl">
+                    <MdiAccount class="mr-1 size-7" />
+                    {{ $t("index.register") }}
                   </h2>
-                  <FormTextField v-model="email" label="Set your email?" />
-                  <FormTextField v-model="username" label="What's your name?" />
-                  <div v-if="!(groupToken == '')" class="pt-4 pb-1 text-center">
-                    <p>You're Joining an Existing Group!</p>
+                  <FormTextField v-model="email" :label="$t('index.set_email')" />
+                  <FormTextField v-model="username" :label="$t('index.set_name')" />
+                  <div v-if="!(groupToken == '')" class="pb-1 pt-4 text-center">
+                    <p>{{ $t("index.joining_group") }}</p>
                     <button type="button" class="text-xs underline" @click="groupToken = ''">
-                      Don't Want To Join a Group?
+                      {{ $t("index.dont_join_group") }}
                     </button>
                   </div>
-                  <FormPassword v-model="password" label="Set your password" />
+                  <FormPassword v-model="password" :label="$t('index.set_password')" />
                   <PasswordScore v-model:valid="canRegister" :password="password" />
                   <div class="card-actions justify-end">
                     <button
@@ -193,28 +212,32 @@
                       :class="loading ? 'loading' : ''"
                       :disabled="loading || !canRegister"
                     >
-                      Register
+                      {{ $t("index.register") }}
                     </button>
                   </div>
                 </div>
               </div>
             </form>
             <form v-else @submit.prevent="login">
-              <div class="card w-max-[500px] md:w-[500px] bg-base-100 shadow-xl">
+              <div class="card bg-base-100 shadow-xl md:w-[500px]">
                 <div class="card-body">
-                  <h2 class="card-title text-2xl align-center">
-                    <MdiAccount class="mr-1 w-7 h-7" />
-                    Login
+                  <h2 class="card-title text-2xl">
+                    <MdiAccount class="mr-1 size-7" />
+                    {{ $t("index.login") }}
                   </h2>
                   <template v-if="status && status.demo">
-                    <p class="text-xs italic text-center">This is a demo instance</p>
-                    <p class="text-xs text-center"><b>Email</b> demo@example.com</p>
-                    <p class="text-xs text-center"><b>Password</b> demo</p>
+                    <p class="text-center text-xs italic">This is a demo instance</p>
+                    <p class="text-center text-xs">
+                      <b>{{ $t("global.email") }}</b> demo@example.com
+                    </p>
+                    <p class="text-center text-xs">
+                      <b>{{ $t("global.password") }}</b> demo
+                    </p>
                   </template>
-                  <FormTextField v-model="email" label="Email" />
-                  <FormPassword v-model="loginPassword" label="Password" />
+                  <FormTextField v-model="email" :label="$t('global.email')" />
+                  <FormPassword v-model="loginPassword" :label="$t('global.password')" />
                   <div class="max-w-[140px]">
-                    <FormCheckbox v-model="remember" label="Remember Me" />
+                    <FormCheckbox v-model="remember" :label="$t('index.remember_me')" />
                   </div>
                   <div class="card-actions justify-end">
                     <button
@@ -223,36 +246,39 @@
                       :class="loading ? 'loading' : ''"
                       :disabled="loading"
                     >
-                      Login
+                      {{ $t("index.login") }}
                     </button>
                   </div>
                 </div>
               </div>
             </form>
           </Transition>
-          <div class="text-center mt-6">
+          <div class="mt-6 text-center">
             <BaseButton
               v-if="status && status.allowRegistration"
               class="btn-primary btn-wide"
               @click="() => toggleLogin()"
             >
               <template #icon>
-                <MdiAccountPlus v-if="!registerForm" class="w-5 h-5 swap-off" />
-                <MdiLogin v-else class="w-5 h-5 swap-off" />
-                <MdiArrowRight class="w-5 h-5 swap-on" />
+                <MdiAccountPlus v-if="!registerForm" class="swap-off size-5" />
+                <MdiLogin v-else class="swap-off size-5" />
+                <MdiArrowRight class="swap-on size-5" />
               </template>
-              {{ registerForm ? "Login" : "Register" }}
+              {{ registerForm ? $t("index.login") : $t("index.register") }}
             </BaseButton>
-            <p v-else class="text-base-content italic text-sm inline-flex items-center gap-2">
-              <MdiLock class="w-4 h-4 inline-block" />
-              Registration Disabled
+            <p v-else class="inline-flex items-center gap-2 text-sm italic text-base-content">
+              <MdiLock class="inline-block size-4" />
+              {{ $t("index.disabled_registration") }}
             </p>
           </div>
         </div>
       </div>
     </div>
-    <footer v-if="status" class="mt-auto text-center w-full bottom-0 pb-4">
-      <p class="text-center text-sm">Version: {{ status.build.version }} ~ Build: {{ status.build.commit }}</p>
+    <footer v-if="status" class="bottom-0 mt-auto w-full pb-4 text-center">
+      <p class="text-center text-sm">
+        {{ $t("global.version", { version: status.build.version }) }} ~
+        {{ $t("global.build", { build: status.build.commit }) }}
+      </p>
     </footer>
   </div>
 </template>

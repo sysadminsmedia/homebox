@@ -1,0 +1,32 @@
+{
+    "languages": {
+        "pl": "Puola"
+    },
+    "maintenance": {
+        "list": {
+            "complete": "Valmis",
+            "delete": "Poista"
+        },
+        "modal": {
+            "new_action": "Luo"
+        }
+    },
+    "menu": {
+        "home": "Koti"
+    },
+    "profile": {
+        "delete_account": "Poista tili",
+        "test": "Testi"
+    },
+    "tools": {
+        "actions_set": {
+            "set_primary_photo": "Aseta oletuskuva"
+        },
+        "import_export": "Tuo/Vie",
+        "import_export_set": {
+            "export_button": "Vie varasto",
+            "import_button": "Tuo varasto"
+        },
+        "reports": "Raportit"
+    }
+}

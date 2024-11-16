@@ -47,7 +47,7 @@
     }
 
     toast.success("Location deleted");
-    navigateTo("/home");
+    navigateTo("/locations");
   }
 
   const updateModal = ref(false);
@@ -109,28 +109,38 @@
   <div>
     <!-- Update Dialog -->
     <BaseModal v-model="updateModal">
-      <template #title> Update Location </template>
+      <template #title> {{ $t("locations.update_location") }} </template>
       <form v-if="location" @submit.prevent="update">
-        <FormTextField v-model="updateData.name" :autofocus="true" label="Location Name" />
-        <FormTextArea v-model="updateData.description" label="Location Description" />
+        <FormTextField
+          v-model="updateData.name"
+          :autofocus="true"
+          :label="$t('components.location.create_modal.location_name')"
+          :max-length="255"
+          :min-length="1"
+        />
+        <FormTextArea
+          v-model="updateData.description"
+          :label="$t('components.location.create_modal.location_description')"
+          :max-length="1000"
+        />
         <LocationSelector v-model="parent" />
         <div class="modal-action">
-          <BaseButton type="submit" :loading="updating"> Update </BaseButton>
+          <BaseButton type="submit" :loading="updating"> {{ $t("global.update") }} </BaseButton>
         </div>
       </form>
     </BaseModal>
 
     <BaseContainer v-if="location">
-      <div class="bg-base-100 rounded p-3">
+      <div class="rounded bg-base-100 p-3">
         <header class="mb-2">
           <div class="flex flex-wrap items-end gap-2">
             <div class="avatar placeholder mb-auto">
-              <div class="bg-neutral-focus text-neutral-content rounded-full w-12">
-                <MdiPackageVariant name="mdi-package-variant" class="h-7 w-7" />
+              <div class="w-12 rounded-full bg-neutral-focus text-neutral-content">
+                <MdiPackageVariant name="mdi-package-variant" class="size-7" />
               </div>
             </div>
             <div>
-              <div v-if="location?.parent" class="text-sm breadcrumbs pt-0 pb-0">
+              <div v-if="location?.parent" class="breadcrumbs py-0 text-sm">
                 <ul class="text-base-content/70">
                   <li>
                     <NuxtLink :to="`/location/${location.parent.id}`"> {{ location.parent.name }}</NuxtLink>
@@ -138,21 +148,21 @@
                   <li>{{ location.name }}</li>
                 </ul>
               </div>
-              <h1 class="text-2xl pb-1 flex items-center gap-3">
+              <h1 class="flex items-center gap-3 pb-1 text-2xl">
                 {{ location ? location.name : "" }}
 
                 <div
                   v-if="location && location.totalPrice"
-                  class="text-xs bg-secondary text-secondary-content rounded-full px-2 py-1"
+                  class="rounded-full bg-secondary px-2 py-1 text-xs text-secondary-content"
                 >
                   <div>
                     <Currency :amount="location.totalPrice" />
                   </div>
                 </div>
               </h1>
-              <div class="flex gap-1 flex-wrap text-xs">
+              <div class="flex flex-wrap gap-1 text-xs">
                 <div>
-                  Created
+                  {{ $t("global.created") }}
                   <DateTime :date="location?.createdAt" />
                 </div>
               </div>
@@ -162,12 +172,12 @@
                 <PageQRCode class="dropdown-left" />
                 <BaseButton size="sm" @click="openUpdate">
                   <MdiPencil class="mr-1" name="mdi-pencil" />
-                  Edit
+                  {{ $t("global.edit") }}
                 </BaseButton>
               </div>
               <BaseButton class="btn btn-sm" @click="confirmDelete()">
                 <MdiDelete name="mdi-delete" class="mr-2" />
-                Delete
+                {{ $t("global.delete") }}
               </BaseButton>
             </div>
           </div>
@@ -180,8 +190,8 @@
       </section>
 
       <section v-if="location && location.children.length > 0" class="mt-6">
-        <BaseSectionHeader class="mb-5"> Child Locations </BaseSectionHeader>
-        <div class="grid gap-2 grid-cols-1 sm:grid-cols-3">
+        <BaseSectionHeader class="mb-5"> {{ $t("locations.child_locations") }} </BaseSectionHeader>
+        <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
           <LocationCard v-for="item in location.children" :key="item.id" :location="item" />
         </div>
       </section>

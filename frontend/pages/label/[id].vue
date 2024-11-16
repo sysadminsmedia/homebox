@@ -76,7 +76,10 @@
 
   const items = computedAsync(async () => {
     if (!label.value) {
-      return [];
+      return {
+        items: [],
+        totalPrice: null,
+      };
     }
 
     const resp = await api.items.getAll({
@@ -85,7 +88,10 @@
 
     if (resp.error) {
       toast.error("Failed to load items");
-      return [];
+      return {
+        items: [],
+        totalPrice: null,
+      };
     }
 
     return resp.data;
@@ -95,39 +101,49 @@
 <template>
   <BaseContainer>
     <BaseModal v-model="updateModal">
-      <template #title> Update Label </template>
+      <template #title> {{ $t("labels.update_label") }} </template>
       <form v-if="label" @submit.prevent="update">
-        <FormTextField v-model="updateData.name" :autofocus="true" label="Label Name" />
-        <FormTextArea v-model="updateData.description" label="Label Description" />
+        <FormTextField
+          v-model="updateData.name"
+          :autofocus="true"
+          :label="$t('components.label.create_modal.label_name')"
+          :max-length="255"
+          :min-length="1"
+        />
+        <FormTextArea
+          v-model="updateData.description"
+          :label="$t('components.label.create_modal.label_description')"
+          :max-length="255"
+        />
         <div class="modal-action">
-          <BaseButton type="submit" :loading="updating"> Update </BaseButton>
+          <BaseButton type="submit" :loading="updating"> {{ $t("global.update") }} </BaseButton>
         </div>
       </form>
     </BaseModal>
 
     <BaseContainer v-if="label">
-      <div class="bg-base-100 rounded p-3">
+      <div class="rounded bg-base-100 p-3">
         <header class="mb-2">
           <div class="flex flex-wrap items-end gap-2">
             <div class="avatar placeholder mb-auto">
-              <div class="bg-neutral-focus text-neutral-content rounded-full w-12">
-                <MdiPackageVariant class="h-7 w-7" />
+              <div class="w-12 rounded-full bg-neutral-focus text-neutral-content">
+                <MdiPackageVariant class="size-7" />
               </div>
             </div>
             <div>
-              <h1 class="text-2xl pb-1 flex items-center gap-3">
+              <h1 class="flex items-center gap-3 pb-1 text-2xl">
                 {{ label ? label.name : "" }}
 
                 <div
                   v-if="items && items.totalPrice"
-                  class="text-xs bg-secondary text-secondary-content rounded-full px-2 py-1"
+                  class="rounded-full bg-secondary px-2 py-1 text-xs text-secondary-content"
                 >
                   <div>
                     <Currency :amount="items.totalPrice" />
                   </div>
                 </div>
               </h1>
-              <div class="flex gap-1 flex-wrap text-xs">
+              <div class="flex flex-wrap gap-1 text-xs">
                 <div>
                   Created
                   <DateTime :date="label?.createdAt" />

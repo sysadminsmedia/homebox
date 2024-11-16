@@ -1,0 +1,182 @@
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "change_warning": "El comportament de les importacions amb import_refs existents ha canviat. Si hi ha un import_refs al fitxer CSV, \nl'article s'actualitzarà amb els valors del fitxer CSV.",
+                "description": "Importa un fitxer CSV que contingui els articles, etiquetes i ubicacions. \nConsulteu la documentació per a més informació sobre el format requerit.",
+                "title": "Importa un fitxer CSV",
+                "upload": "Puja"
+            }
+        },
+        "global": {
+            "page_qr_code": {
+                "page_url": "URL de la pàgina"
+            },
+            "password_score": {
+                "password_strength": "Força de la contrasenya"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "photo_button": "Foto 📷",
+                "title": "Crea un article"
+            },
+            "view": {
+                "selectable": {
+                    "card": "Targeta",
+                    "items": "Articles",
+                    "no_items": "No hi ha articles a mostrar",
+                    "table": "Taula"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "title": "Crea una etiqueta"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "title": "Crea una ubicació"
+            }
+        }
+    },
+    "global": {
+        "build": "Construcció: { build }",
+        "confirm": "Confirma",
+        "create": "Crea",
+        "create_and_add": "Crea i afegeix-ne un altre",
+        "created": "Creat",
+        "email": "Correu electrònic",
+        "follow_dev": "Segueix al desenvolupador",
+        "github": "Projecte de GitHub",
+        "items": "Articles",
+        "join_discord": "Uniu-vos a Discord",
+        "labels": "Etiquetes",
+        "locations": "Ubicacions",
+        "name": "Nom",
+        "password": "Contrasenya",
+        "read_docs": "Llegiu la documentació",
+        "search": "Cerca",
+        "sign_out": "Tanca la sessió",
+        "submit": "Envia",
+        "version": "Versió {version}",
+        "welcome": "Us donem la benvinguda, { username }"
+    },
+    "index": {
+        "disabled_registration": "El registre és desactivat",
+        "dont_join_group": "Voleu unir-vos al grup?",
+        "joining_group": "Us uniu a un grup existent!",
+        "login": "Inici de sessió",
+        "register": "Registra-m'hi",
+        "remember_me": "Recorda'm",
+        "set_email": "Quin és el seu correu electrònic?",
+        "set_name": "Com us dieu?",
+        "set_password": "Definiu la contrasenya",
+        "tagline": "Feu el seguiment, organitzeu i gestioneu les vostres coses."
+    },
+    "items": {
+        "add": "Afegeix",
+        "created_at": "Creat a",
+        "custom_fields": "Camps personalitzats",
+        "field_selector": "Selector del camp",
+        "field_value": "Valor del camp",
+        "first": "Primer",
+        "include_archive": "Inclou els articles arxivats",
+        "last": "Últim",
+        "negate_labels": "Nega les etiquetes seleccionades",
+        "next_page": "Pàgina següent",
+        "no_results": "No s'ha trobat cap element",
+        "options": "Opcions",
+        "order_by": "Ordena per",
+        "pages": "Pàgina { page } de { totalPages }",
+        "prev_page": "Pàgina anterior",
+        "query_id": "S'està consultant el número d'identificació de l'actiu: { id }",
+        "reset_search": "Reinicia la cerca",
+        "results": "{ total } resultats",
+        "tip_1": "Els filtres d'ubicació i etiquetes utilitzen l'operació «O». Si se'n selecciona més d'un, \nnomés se'n requerirà un per a coincidència.",
+        "tip_2": "Les cerques amb el prefix «#» sol·licitaran un ID d'un actiu (per exemple, «#000-001»)",
+        "tip_3": "Els filtres de camp utilitzen l'operació «O». Si se'n selecciona més d'un, \nnomés se'n requerirà un per a coincidència.",
+        "tips": "Consells",
+        "tips_sub": "Consells de cerca",
+        "updated_at": "Actualitzat a"
+    },
+    "labels": {
+        "no_results": "No s'han trobat etiquetes"
+    },
+    "languages": {
+        "ca": "Català",
+        "de": "Alemany",
+        "en": "Anglès",
+        "es": "Castellà",
+        "fr": "Francès",
+        "hu": "Hongarès",
+        "it": "Italià",
+        "nl": "Neerlandès",
+        "pl": "Polonès",
+        "pt-BR": "Portuguès (Brasil)",
+        "ru": "Rus",
+        "sl": "Eslovè",
+        "sv": "Suec",
+        "tr": "Turc",
+        "zh-CN": "Xinès (simplificat)",
+        "zh-HK": "Xinès (Hong Kong)",
+        "zh-MO": "Xinès (Macau)",
+        "zh-TW": "Xinès (tradicional)"
+    },
+    "locations": {
+        "no_results": "No s'han trobat ubicacions"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Ambdós"
+        },
+        "total_cost": "Cost total",
+        "total_entries": "Nombre d&apos; entrades"
+    },
+    "menu": {
+        "home": "Inici",
+        "locations": "Ubicacions",
+        "maintenance": "Manteniment",
+        "profile": "Perfil",
+        "search": "Cerca",
+        "tools": "Eines"
+    },
+    "profile": {
+        "active": "Actiu",
+        "change_password": "Canvia contrasenya",
+        "currency_format": "Format de moneda",
+        "current_password": "Contrasenya actual",
+        "delete_account": "Suprimeix el compte",
+        "delete_account_sub": "Elimina el compte i totes les dades associades. Aquesta acció no es pot desfer.",
+        "display_header": "{ currentValue, select, true {Amaga la capçalera} false {Mostra la capçalera} other {Desconegut}}",
+        "enabled": "Habilitat",
+        "gen_invite": "Genera un enllaç d'invitació",
+        "group_settings": "Configuració del grup",
+        "group_settings_sub": "Configuració del grup compartit. És possible que hàgiu d'actualitzar la pàgina per aplicar la configuració.",
+        "inactive": "Inactiu",
+        "language": "Idioma",
+        "new_password": "Contrasenya nova",
+        "no_notifiers": "No hi ha notificadors configurats",
+        "notifier_modal": "{ type, select, true {Edita} false {Crea} other {Altres}} Notificació",
+        "notifiers": "Notificadors",
+        "notifiers_sub": "Rebeu notificacions per als pròxims recordatoris de manteniment",
+        "test": "Prova",
+        "theme_settings": "Configuracions del tema",
+        "theme_settings_sub": "La configuració del tema s'emmagatzema a l'emmagatzematge local del navegador. Podeu canviar el tema en qualsevol moment. \nSi teniu problemes per definir el tema, proveu d'actualitzar el navegador.",
+        "update_group": "Actualitza el grup",
+        "update_language": "Actualitza l'idioma",
+        "url": "URL",
+        "user_profile": "Perfil d'usuari",
+        "user_profile_sub": "Convida usuaris i gestiona el compte."
+    },
+    "tools": {
+        "actions": "Accions d'inventari",
+        "actions_set": {
+            "ensure_ids": "Assegura els identificadors de recursos",
+            "ensure_ids_button": "Assegura els identificadors de recursos",
+            "set_primary_photo": "Defineix la foto principal",
+            "set_primary_photo_button": "Defineix la foto principal"
+        }
+    }
+}

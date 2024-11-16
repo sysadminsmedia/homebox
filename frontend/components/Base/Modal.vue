@@ -1,11 +1,11 @@
 <template>
   <div class="z-[999]">
     <input :id="modalId" v-model="modal" type="checkbox" class="modal-toggle" />
-    <div class="modal modal-bottom sm:modal-middle overflow-visible">
-      <div class="modal-box overflow-visible relative">
-        <button :for="modalId" class="btn btn-sm btn-circle absolute right-2 top-2" @click="close">✕</button>
+    <div class="modal modal-bottom overflow-visible sm:modal-middle">
+      <div class="modal-box relative overflow-auto">
+        <button :for="modalId" class="btn btn-circle btn-sm absolute right-2 top-2" @click="close">✕</button>
 
-        <h3 class="font-bold text-lg">
+        <h3 class="text-lg font-bold">
           <slot name="title"></slot>
         </h3>
         <slot> </slot>

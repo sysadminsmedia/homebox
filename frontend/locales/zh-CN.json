@@ -1,0 +1,346 @@
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "change_warning": "导入行为会导致现有的 import_refs 的字段被覆盖。\n如果 CSV 文件中存在 import_ref，则将使用 CSV 文件中的值更新该项。",
+                "description": "导入包含物品、标签和位置的CSV文件。更多有关信息，\n请参阅文档查看所需格式。",
+                "title": "导入 CSV 文件",
+                "upload": "上传"
+            }
+        },
+        "global": {
+            "date_time": {
+                "ago": "{0} 之前",
+                "days": "天",
+                "hour": "小时",
+                "hours": "小时",
+                "just-now": "现在",
+                "last-month": "上个月",
+                "last-week": "上周",
+                "last-year": "去年",
+                "minute": "分钟",
+                "minutes": "分钟",
+                "months": "个月",
+                "next-month": "下个月",
+                "next-week": "下周",
+                "next-year": "明年",
+                "second": "秒",
+                "seconds": "秒",
+                "tomorrow": "明天",
+                "week": "周",
+                "weeks": "周",
+                "years": "年",
+                "yesterday": "昨天"
+            },
+            "page_qr_code": {
+                "page_url": "页面URL"
+            },
+            "password_score": {
+                "password_strength": "密码强度"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "item_description": "物品描述",
+                "item_name": "物品名称",
+                "photo_button": "照片 📷",
+                "title": "创建物品"
+            },
+            "view": {
+                "selectable": {
+                    "card": "卡片模式",
+                    "items": "物品",
+                    "no_items": "没有可展示的物品",
+                    "table": "表格模式"
+                },
+                "table": {
+                    "page": "页",
+                    "rows_per_page": "每页行数"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "label_description": "标签说明",
+                "label_name": "标签名称",
+                "title": "创建标签"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "location_description": "位置描述",
+                "location_name": "位置名称",
+                "title": "创建位置"
+            },
+            "selector": {
+                "parent_location": "父位置"
+            },
+            "tree": {
+                "no_locations": "没有可用的位置。请添加新的位置\n `<`span class=\"link-primary\"`>`创建`<`/span`>` 按钮在导航栏上"
+            }
+        }
+    },
+    "global": {
+        "add": "添加",
+        "build": "编译：{build}",
+        "confirm": "确认",
+        "create": "创建",
+        "create_and_add": "保存并继续创建",
+        "created": "已创建",
+        "delete": "刪除",
+        "details": "详情",
+        "duplicate": "复制",
+        "edit": "修改",
+        "email": "邮箱",
+        "follow_dev": "关注开发者",
+        "github": "Github项目",
+        "items": "物品",
+        "join_discord": "加入Discord讨论",
+        "labels": "标签",
+        "locations": "位置",
+        "maintenance": "维护",
+        "name": "名称",
+        "password": "密码",
+        "read_docs": "查阅文档",
+        "save": "保存",
+        "search": "搜索",
+        "sign_out": "登出",
+        "submit": "提交",
+        "update": "更新",
+        "value": "值",
+        "version": "版本：{version}",
+        "welcome": "欢迎，{username}"
+    },
+    "home": {
+        "labels": "标签",
+        "quick_statistics": "快速统计",
+        "recently_added": "最近加入",
+        "storage_locations": "存放位置",
+        "total_items": "项目总量",
+        "total_labels": "标签总量",
+        "total_locations": "位置数量",
+        "total_value": "价值总和"
+    },
+    "index": {
+        "disabled_registration": "已禁用注册",
+        "dont_join_group": "不想加入群组？",
+        "joining_group": "您正在加入现有群组！",
+        "login": "登录",
+        "register": "注册",
+        "remember_me": "记住我",
+        "set_email": "您的电子邮箱是什么？",
+        "set_name": "你的名称叫什么？",
+        "set_password": "设置密码",
+        "tagline": "跟踪、整理和管理您的物品。"
+    },
+    "items": {
+        "add": "添加",
+        "advanced": "进阶",
+        "archived": "已归档",
+        "asset_id": "资产ID",
+        "attachment": "附件",
+        "attachments": "附件",
+        "changes_persisted_immediately": "对附件的更改将会立即保存",
+        "created_at": "创建于",
+        "custom_fields": "自定义字段",
+        "description": "说明",
+        "details": "详情",
+        "drag_and_drop": "将文件拖拽到此或点击添加文件",
+        "edit_details": "编辑详情",
+        "field_selector": "字段选择",
+        "field_value": "字段值",
+        "first": "第一页",
+        "include_archive": "包括已存档的项目",
+        "insured": "保险",
+        "last": "最后一页",
+        "lifetime_warranty": "包含终身保修",
+        "location": "位置",
+        "manufacturer": "制造商",
+        "model_number": "型号",
+        "name": "名称",
+        "negate_labels": "取消选中的标签",
+        "next_page": "下一页",
+        "no_results": "没有可显示的物品",
+        "notes": "笔记",
+        "options": "选项",
+        "order_by": "排序方式",
+        "pages": "第{page}页，共{totalPages}页",
+        "parent_item": "父项目",
+        "photo": "照片",
+        "photos": "照片",
+        "prev_page": "上一页",
+        "purchase_date": "购买日期",
+        "purchase_details": "购买详情",
+        "purchase_price": "购买价格",
+        "purchased_from": "购买地址",
+        "quantity": "数量",
+        "query_id": "查询资产ID： {id}",
+        "reset_search": "重置搜索",
+        "results": "{ total } 条结果",
+        "serial_number": "序列号",
+        "show_advanced_view_options": "显示高级选项",
+        "sold_at": "出售日期",
+        "sold_details": "售出详情",
+        "sold_price": "出售价格",
+        "sold_to": "出售对象",
+        "tip_1": "位置和标签过滤器使用“或”操作。如果选择了多个位置或标签，\n则只需要任意一个匹配上即可。",
+        "tip_2": "以“#”为前缀的搜索将变成查询资产ID（例如“#000-001” ）",
+        "tip_3": "字段过滤器使用“或”操作。如果选择了多个位置或标签，\n则只需要任意一个匹配上即可。",
+        "tips": "建议",
+        "tips_sub": "搜索提示",
+        "updated_at": "更新于",
+        "warranty": "保修",
+        "warranty_details": "保修详情",
+        "warranty_expires": "保修持续到"
+    },
+    "labels": {
+        "no_results": "未找到标签",
+        "update_label": "更新标签"
+    },
+    "languages": {
+        "ca": "加泰罗尼亚语",
+        "de": "德语",
+        "en": "英语",
+        "es": "西班牙语",
+        "fr": "法国",
+        "hu": "匈牙利语",
+        "it": "意大利语",
+        "ja-JP": "日本語",
+        "nl": "荷兰语",
+        "pl": "波兰语",
+        "pt-BR": "葡萄牙语（巴西）",
+        "pt-PT": "葡萄牙语（葡萄牙）",
+        "ru": "俄语",
+        "sl": "斯洛文尼亚语",
+        "sv": "瑞典语",
+        "tr": "土耳其语",
+        "uk-UA": "乌克兰语",
+        "zh-CN": "中文（简体）",
+        "zh-HK": "中文（香港）",
+        "zh-MO": "中文（澳门）",
+        "zh-TW": "中文（繁体）"
+    },
+    "languages.da-DK": "丹麦语",
+    "languages.fi.FI": "芬兰语",
+    "languages.ro-RO": "罗马尼亚语",
+    "languages.sk-SK": "斯洛伐克语",
+    "locations": {
+        "child_locations": "子位置",
+        "collapse_tree": "折叠树",
+        "no_results": "找不到位置",
+        "update_location": "更新位置"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "全部",
+            "completed": "已完成",
+            "scheduled": "已预定"
+        },
+        "list": {
+            "complete": "标记已完成",
+            "create_first": "创建您的第一个项目",
+            "delete": "刪除",
+            "duplicate": "复制",
+            "edit": "修改",
+            "new": "创建"
+        },
+        "modal": {
+            "completed_date": "完成日期",
+            "cost": "成本",
+            "delete_confirmation": "您确定要删除该项内容吗?",
+            "edit_action": "更新",
+            "edit_title": "编辑项目",
+            "entry_name": "项目名称",
+            "new_action": "创建",
+            "new_title": "新的项目",
+            "notes": "笔记",
+            "scheduled_date": "预定日期"
+        },
+        "monthly_average": "统计看板",
+        "toast": {
+            "failed_to_create": "创建项目失败",
+            "failed_to_delete": "删除项目失败",
+            "failed_to_update": "更新项目失败"
+        },
+        "total_cost": "总成本",
+        "total_entries": "总项目"
+    },
+    "menu": {
+        "create_item": "物品/资产",
+        "create_label": "标签",
+        "create_location": "位置",
+        "home": "主页",
+        "locations": "位置",
+        "maintenance": "维护",
+        "profile": "用户",
+        "search": "搜索",
+        "tools": "工具"
+    },
+    "profile": {
+        "active": "启用",
+        "change_password": "更改密码",
+        "currency_format": "货币格式",
+        "current_password": "原密码",
+        "delete_account": "删除帐户",
+        "delete_account_sub": "删除您的帐户及其所有相关数据。这是无法撤消的。",
+        "display_header": "{currentValue, select, true {隐藏页眉} false {显示页眉} other {未选中}}",
+        "enabled": "已启用",
+        "example": "例子",
+        "gen_invite": "生成邀请链接",
+        "group_settings": "组设置",
+        "group_settings_sub": "共享组设置。您可能需要刷新浏览器来让某些设置生效。",
+        "inactive": "未启用",
+        "language": "语言",
+        "new_password": "新密码",
+        "no_notifiers": "未配置通知程序",
+        "notifier_modal": "{ type, select, true {编辑} false {创建} other {Other}} 通知器",
+        "notifiers": "通知器",
+        "notifiers_sub": "获取即将到来的维护提醒通知",
+        "test": "测试",
+        "theme_settings": "主题设置",
+        "theme_settings_sub": "主题设置存储在浏览器的本地存储中。您可以随时更改主题。\n如果您在设置主题时遇到问题，请尝试刷新浏览器。",
+        "update_group": "更新组",
+        "update_language": "更新语言",
+        "url": "网址",
+        "user_profile": "用户资料",
+        "user_profile_sub": "邀请用户共同管理您的资产。"
+    },
+    "tools": {
+        "actions": "库存操作",
+        "actions_set": {
+            "ensure_ids": "确认资产ID",
+            "ensure_ids_button": "确认资产ID",
+            "ensure_ids_sub": "确保库存中的所有项目都有有效的asset_id字段。它会找到库中最大的asset_id字段，并将下一个值应用于还未设置asset_id字段的每个项目。未设置asset_id的项目将按created_at字段的顺序生成。",
+            "ensure_import_refs": "确认导入参考",
+            "ensure_import_refs_button": "确认导入参考",
+            "ensure_import_refs_sub": "确保库存中的所有项目都有有效的import_ref字段。这是通过为每个具有未设置的import_ref字段的项目随机生成一个8个字符的字符串来实现的。",
+            "set_primary_photo": "设置封面图片",
+            "set_primary_photo_button": "设置封面",
+            "set_primary_photo_sub": "设置封面在 Homebox v0.10.0 版本中，该列的类型为图片。如果没有设置封面，则会把附件中第一张图片作为封面。 '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'更多请参考 GitHub PR #576'</a>'",
+            "zero_datetimes": "清空时间项",
+            "zero_datetimes_button": "清空时间项",
+            "zero_datetimes_sub": "将库存中所有日期时间字段的值重置为开始日期。这是为了修复在网站开发早期出现的一个错误，该错误导致自定义时间值保存时，日期会出现偏移的问题。 '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'详细问题请参考 Github Issue #236 '</a>'"
+        },
+        "actions_sub": "将操作批量应用于您的库存。这些都是不可逆转的行动'<b> '谨慎操作。'</b>'",
+        "import_export": "导入/导出",
+        "import_export_set": {
+            "export": "导出库存",
+            "export_button": "导出库存",
+            "export_sub": "按标准CSV格式导出Homebox。这将导出库存中的所有项目。",
+            "import": "导入库存",
+            "import_button": "导入库存",
+            "import_sub": "Homebox只能导入标准的CSV格式文件。当不存在 '<code>'HB.import_ref'</code>' 列的时候，将 '<b>'不会'</b>' 覆盖现数据库存中的任何现有项目，只添加为新项目。如果与现有的 '<code>'HB.import_ref'</code>' 的项目一样，则会将新旧数据合并。"
+        },
+        "import_export_sub": "按CSV格式导入和导出您的库存。在将库存迁移到Homebox的新实例时非常有用。",
+        "reports": "报告",
+        "reports_set": {
+            "asset_labels": "资产ID标签",
+            "asset_labels_button": "标签生成器",
+            "asset_labels_sub": "为资产ID标签生成可打印PDF。这些标签并不特定于您的库存，因此您可以提前打印标签，并在收到标签时将其应用于您的仓库。",
+            "bill_of_materials": "物料清单",
+            "bill_of_materials_button": "生成物料清单",
+            "bill_of_materials_sub": "生成可以导入的CSV电子表格文件（使用逗号分隔值）。这是您的库存摘要，包括基本商品和定价信息。"
+        },
+        "reports_sub": "为您的库存生成其他的报告。"
+    }
+}

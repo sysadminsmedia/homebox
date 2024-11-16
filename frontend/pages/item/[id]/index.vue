@@ -153,31 +153,35 @@
 
     const ret: Details = [
       {
-        name: "Quantity",
+        name: "items.quantity",
         text: item.value?.quantity,
         slot: "quantity",
       },
       {
-        name: "Serial Number",
+        name: "items.serial_number",
         text: item.value?.serialNumber,
         copyable: true,
       },
       {
-        name: "Model Number",
+        name: "items.model_number",
         text: item.value?.modelNumber,
         copyable: true,
       },
       {
-        name: "Manufacturer",
+        name: "items.manufacturer",
         text: item.value?.manufacturer,
         copyable: true,
       },
       {
-        name: "Insured",
+        name: "items.insured",
         text: item.value?.insured ? "Yes" : "No",
       },
       {
-        name: "Notes",
+        name: "items.archived",
+        text: item.value?.archived ? "Yes" : "No",
+      },
+      {
+        name: "items.notes",
         type: "markdown",
         text: item.value?.notes,
       },
@@ -226,28 +230,28 @@
   const attachmentDetails = computed(() => {
     const details: Detail[] = [];
 
-    const push = (name: string) => {
+    const push = (name: string, slot: string) => {
       details.push({
         name,
         text: "",
-        slot: name.toLowerCase(),
+        slot,
       });
     };
 
     if (attachments.value.attachments.length > 0) {
-      push("Attachments");
+      push("items.attachments", "attachments");
     }
 
     if (attachments.value.warranty.length > 0) {
-      push("Warranty");
+      push("items.warranty", "warranty");
     }
 
     if (attachments.value.manuals.length > 0) {
-      push("Manuals");
+      push("items.manuals", "manuals");
     }
 
     if (attachments.value.receipts.length > 0) {
-      push("Receipts");
+      push("items.receipts", "receipts");
     }
 
     return details;
@@ -299,22 +303,22 @@
     if (preferences.value.showEmpty) {
       return true;
     }
-    return item.value?.purchaseFrom || item.value?.purchasePrice !== "0";
+    return item.value?.purchaseFrom || item.value?.purchasePrice !== 0;
   });
 
   const purchaseDetails = computed<Details>(() => {
     const v: Details = [
       {
-        name: "Purchased From",
+        name: "items.purchased_from",
         text: item.value?.purchaseFrom || "",
       },
       {
-        name: "Purchase Price",
-        text: item.value?.purchasePrice || "",
+        name: "items.purchase_price",
+        text: String(item.value?.purchasePrice) || "",
         type: "currency",
       },
       {
-        name: "Purchase Date",
+        name: "items.purchase_date",
         text: item.value?.purchaseTime || "",
         type: "date",
         date: true,
@@ -332,22 +336,22 @@
     if (preferences.value.showEmpty) {
       return true;
     }
-    return item.value?.soldTo || item.value?.soldPrice !== "0";
+    return item.value?.soldTo || item.value?.soldPrice !== 0;
   });
 
   const soldDetails = computed<Details>(() => {
     const v: Details = [
       {
-        name: "Sold To",
+        name: "items.sold_to",
         text: item.value?.soldTo || "",
       },
       {
-        name: "Sold Price",
-        text: item.value?.soldPrice || "",
+        name: "items.sold_price",
+        text: String(item.value?.soldPrice) || "",
         type: "currency",
       },
       {
-        name: "Sold At",
+        name: "items.sold_at",
         text: item.value?.soldTime || "",
         type: "date",
         date: true,
@@ -390,17 +394,17 @@
     return [
       {
         id: "details",
-        name: "Details",
+        name: "global.details",
         to: `/item/${itemId.value}`,
       },
       {
         id: "log",
-        name: "Maintenance",
+        name: "global.maintenance",
         to: `/item/${itemId.value}/maintenance`,
       },
       {
         id: "edit",
-        name: "Edit",
+        name: "global.edit",
         to: `/item/${itemId.value}/edit`,
       },
     ];
@@ -441,42 +445,42 @@
 <template>
   <BaseContainer v-if="item" class="pb-8">
     <Title>{{ item.name }}</Title>
-    <dialog ref="refDialog" class="z-[999] fixed bg-transparent">
+    <dialog ref="refDialog" class="fixed z-[999] overflow-visible bg-transparent">
       <div ref="refDialogBody" class="relative">
-        <div class="absolute right-0 -mt-3 -mr-3 sm:-mt-4 sm:-mr-4 space-x-1">
-          <a class="btn btn-sm sm:btn-md btn-primary btn-circle" :href="dialoged.src" download>
-            <MdiDownload class="h-5 w-5" />
+        <div class="absolute right-0 -mr-3 -mt-3 space-x-1 sm:-mr-4 sm:-mt-4">
+          <a class="btn btn-circle btn-primary btn-sm sm:btn-md" :href="dialoged.src" download>
+            <MdiDownload class="size-5" />
           </a>
-          <button class="btn btn-sm sm:btn-md btn-primary btn-circle" @click="closeDialog()">
-            <MdiClose class="h-5 w-5" />
+          <button class="btn btn-circle btn-primary btn-sm sm:btn-md" @click="closeDialog()">
+            <MdiClose class="size-5" />
           </button>
         </div>
 
-        <img class="max-w-[80vw] max-h-[80vh]" :src="dialoged.src" />
+        <img class="max-h-[80vh] max-w-[80vw]" :src="dialoged.src" />
       </div>
     </dialog>
 
     <section>
-      <div class="bg-base-100 rounded p-3">
+      <div class="rounded bg-base-100 p-3">
         <header class="mb-2">
           <div class="flex flex-wrap items-end gap-2">
             <div class="avatar placeholder mb-auto">
-              <div class="bg-neutral-focus text-neutral-content rounded-full w-12">
-                <MdiPackageVariant class="h-7 w-7" />
+              <div class="w-12 rounded-full bg-neutral-focus text-neutral-content">
+                <MdiPackageVariant class="size-7" />
               </div>
             </div>
             <div>
-              <div v-if="fullpath && fullpath.length > 0" class="text-sm breadcrumbs pt-0 pb-0">
+              <div v-if="fullpath && fullpath.length > 0" class="breadcrumbs py-0 text-sm">
                 <ul class="text-base-content/70">
-                  <li v-for="part in fullpath" :key="part.id">
+                  <li v-for="part in fullpath" :key="part.id" class="text-wrap">
                     <NuxtLink :to="`/${part.type}/${part.id}`"> {{ part.name }}</NuxtLink>
                   </li>
                 </ul>
               </div>
-              <h1 class="text-2xl pb-1">
+              <h1 class="text-wrap pb-1 text-2xl">
                 {{ item ? item.name : "" }}
               </h1>
-              <div class="flex gap-1 flex-wrap text-xs">
+              <div class="flex flex-wrap gap-1 text-wrap text-xs">
                 <div>
                   Created
                   <DateTime :date="item?.createdAt" />
@@ -491,12 +495,12 @@
           </div>
         </header>
         <div class="divider my-0 mb-1"></div>
-        <div class="p-1 prose max-w-[100%]">
+        <div class="prose max-w-full p-1">
           <Markdown v-if="item && item.description" class="text-base" :source="item.description"> </Markdown>
         </div>
       </div>
 
-      <div class="flex flex-wrap items-center justify-between mb-6 mt-3">
+      <div class="mb-6 mt-3 flex flex-wrap items-center justify-between">
         <div class="btn-group">
           <NuxtLink
             v-for="t in tabs"
@@ -505,7 +509,7 @@
             class="btn btn-sm"
             :class="`${t.to === currentPath ? 'btn-active' : ''}`"
           >
-            {{ t.name }}
+            {{ $t(t.name) }}
           </NuxtLink>
         </div>
       </div>
@@ -514,9 +518,9 @@
     <section>
       <div class="space-y-6">
         <BaseCard v-if="!hasNested" collapsable>
-          <template #title> Details </template>
+          <template #title> {{ $t("items.details") }} </template>
           <template #title-actions>
-            <div class="flex flex-wrap justify-between items-center mt-2 gap-4">
+            <div class="mt-2 flex flex-wrap items-center justify-between gap-4">
               <label class="label cursor-pointer">
                 <input v-model="preferences.showEmpty" type="checkbox" class="toggle toggle-primary" />
                 <span class="label-text ml-4"> Show Empty </span>
@@ -528,13 +532,13 @@
             <template #quantity="{ detail }">
               {{ detail.text }}
               <span
-                class="opacity-0 group-hover:opacity-100 ml-4 my-0 duration-75 transition-opacity inline-flex gap-2"
+                class="my-0 ml-4 inline-flex gap-2 opacity-0 transition-opacity duration-75 group-hover:opacity-100"
               >
                 <button class="btn btn-circle btn-xs" @click="adjustQuantity(-1)">
-                  <MdiMinus class="h-3 w-3" />
+                  <MdiMinus class="size-3" />
                 </button>
                 <button class="btn btn-circle btn-xs" @click="adjustQuantity(1)">
-                  <MdiPlus class="h-3 w-3" />
+                  <MdiPlus class="size-3" />
                 </button>
               </span>
             </template>
@@ -544,18 +548,18 @@
         <NuxtPage :item="item" :page-key="itemId" />
         <template v-if="!hasNested">
           <BaseCard v-if="photos && photos.length > 0">
-            <template #title> Photos </template>
+            <template #title> {{ $t("items.photos") }} </template>
             <div
-              class="container border-t border-gray-300 p-4 flex flex-wrap gap-2 mx-auto max-h-[500px] overflow-y-scroll scroll-bg"
+              class="scroll-bg container mx-auto flex max-h-[500px] flex-wrap gap-2 overflow-y-scroll border-t border-gray-300 p-4"
             >
               <button v-for="(img, i) in photos" :key="i" @click="openDialog(img)">
-                <img class="rounded max-h-[200px]" :src="img.src" />
+                <img class="max-h-[200px] rounded" :src="img.src" />
               </button>
             </div>
           </BaseCard>
 
           <BaseCard v-if="showAttachments" collapsable>
-            <template #title> Attachments </template>
+            <template #title> {{ $t("items.attachments") }} </template>
             <DetailsSection v-if="attachmentDetails.length > 0" :details="attachmentDetails">
               <template #manuals>
                 <ItemAttachmentsList
@@ -587,22 +591,22 @@
               </template>
             </DetailsSection>
             <div v-else>
-              <p class="text-base-content/70 px-6 pb-4">No attachments found</p>
+              <p class="px-6 pb-4 text-base-content/70">No attachments found</p>
             </div>
           </BaseCard>
 
           <BaseCard v-if="showPurchase" collapsable>
-            <template #title> Purchase Details </template>
+            <template #title> {{ $t("items.purchase_details") }} </template>
             <DetailsSection :details="purchaseDetails" />
           </BaseCard>
 
           <BaseCard v-if="showWarranty" collapsable>
-            <template #title> Warranty Details </template>
+            <template #title> {{ $t("items.warranty_details") }} </template>
             <DetailsSection :details="warrantyDetails" />
           </BaseCard>
 
           <BaseCard v-if="showSold" collapsable>
-            <template #title> Sold Details </template>
+            <template #title> {{ $t("items.sold_details") }} </template>
             <DetailsSection :details="soldDetails" />
           </BaseCard>
         </template>
@@ -619,14 +623,5 @@
   /* Style dialog background */
   dialog::backdrop {
     background: rgba(0, 0, 0, 0.5);
-  }
-
-  .scroll-bg::-webkit-scrollbar {
-    width: 0.5rem;
-  }
-
-  .scroll-bg::-webkit-scrollbar-thumb {
-    border-radius: 0.25rem;
-    @apply bg-base-300;
   }
 </style>

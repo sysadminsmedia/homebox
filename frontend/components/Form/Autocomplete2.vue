@@ -7,7 +7,7 @@
       <div class="relative">
         <ComboboxInput
           :display-value="i => extractDisplay(i as SupportValues)"
-          class="w-full input input-bordered"
+          class="input input-bordered w-full"
           @change="search = $event.target.value"
         />
         <button
@@ -16,14 +16,14 @@
           class="absolute inset-y-0 right-6 flex items-center rounded-r-md px-2 focus:outline-none"
           @click="clear"
         >
-          <MdiClose class="w-5 h-5" />
+          <MdiClose class="size-5" />
         </button>
         <ComboboxButton class="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
-          <MdiChevronDown class="w-5 h-5" />
+          <MdiChevronDown class="size-5" />
         </ComboboxButton>
         <ComboboxOptions
           v-if="computedItems.length > 0"
-          class="absolute dropdown-content z-10 mt-2 max-h-60 w-full overflow-auto rounded-md card bg-base-100 border border-gray-400"
+          class="card dropdown-content absolute z-10 mt-2 max-h-60 w-full overflow-auto rounded-md border border-gray-400 bg-base-100"
         >
           <ComboboxOption
             v-for="item in computedItems"
@@ -34,7 +34,7 @@
           >
             <li
               :class="[
-                'relative cursor-default select-none py-2 pl-3 pr-9 duration-75 ease-in-out transition-colors',
+                'relative cursor-default select-none py-2 pl-3 pr-9 transition-colors duration-75 ease-in-out',
                 active ? 'bg-primary text-primary-content' : 'text-base-content',
               ]"
             >
@@ -45,11 +45,11 @@
                 <span
                   v-if="selected"
                   :class="[
-                    'absolute inset-y-0 right-0 flex text-primary items-center pr-4',
+                    'absolute inset-y-0 right-0 flex items-center pr-4 text-primary',
                     active ? 'text-primary-content' : 'bg-primary',
                   ]"
                 >
-                  <MdiCheck class="h-5 w-5" aria-hidden="true" />
+                  <MdiCheck class="size-5" aria-hidden="true" />
                 </span>
               </slot>
             </li>
@@ -85,7 +85,10 @@
   type Props = {
     label: string;
     modelValue: SupportValues | null | undefined;
-    items: string[] | object[];
+    items: {
+      id: string;
+      treeString: string;
+    }[];
     display?: string;
     multiple?: boolean;
   };
@@ -156,11 +159,28 @@
 
     const matches = index.value.search("*" + search.value + "*");
 
+    const resultIDs = [];
     for (let i = 0; i < matches.length; i++) {
       const match = matches[i];
       const item = props.items[parseInt(match.ref)];
       const display = extractDisplay(item);
       list.push({ id: i, display, value: item });
+      resultIDs.push(item.id);
+    }
+
+    /**
+     * Supplementary search,
+     * Resolve the issue of language not being supported
+     */
+    for (let i = 0; i < props.items.length; i++) {
+      const item = props.items[i];
+      if (resultIDs.find(item_ => item_ === item.id) !== undefined) {
+        continue;
+      }
+      if (item.treeString.includes(search.value)) {
+        const display = extractDisplay(item);
+        list.push({ id: i, display, value: item });
+      }
     }
 
     return list;
