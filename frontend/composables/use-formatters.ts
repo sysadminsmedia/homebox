@@ -1,6 +1,6 @@
 import { useI18n } from "vue-i18n";
 import { format, formatDistance } from "date-fns";
-/*eslint import/namespace: ['error', { allowComputed: true }]*/
+/* eslint import/namespace: ['error', { allowComputed: true }] */
 import * as Locales from "date-fns/locale";
 
 const cache = {
@@ -33,9 +33,7 @@ function getLocale() {
   const localeCode = (t?.locale?.value as string) ?? "en-US";
   const lang = localeCode.length > 1 ? localeCode.substring(0, 2) : localeCode;
   const region = localeCode.length > 2 ? localeCode.substring(3) : "";
-  return (
-    Locales[(lang + region) as keyof typeof Locales] ?? Locales[lang as keyof typeof Locales] ?? Locales.enUS
-  );
+  return Locales[(lang + region) as keyof typeof Locales] ?? Locales[lang as keyof typeof Locales] ?? Locales.enUS;
 }
 
 export function useLocaleTimeAgo(date: Date) {
