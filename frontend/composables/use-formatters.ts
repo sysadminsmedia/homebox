@@ -1,4 +1,3 @@
-import { useI18n } from "vue-i18n";
 import { format, formatDistance } from "date-fns";
 /* eslint import/namespace: ['error', { allowComputed: true }] */
 import * as Locales from "date-fns/locale";
@@ -22,37 +21,43 @@ export async function useFormatCurrency() {
     }
   }
 
-  return (value: number | string) => fmtCurrency(value, cache.currency);
+  return (value: number | string) => fmtCurrency(value, cache.currency, getLocaleCode());
 }
 
 export type DateTimeFormat = "relative" | "long" | "short" | "human";
 export type DateTimeType = "date" | "time" | "datetime";
 
-function getLocale() {
-  const t = useI18n();
-  const localeCode = (t?.locale?.value as string) ?? "en-US";
+export function getLocaleCode() {
+  const { $i18nGlobal } = useNuxtApp();
+  return ($i18nGlobal?.locale?.value as string) ?? "en-US";
+}
+
+function getLocaleForDate() {
+  const localeCode = getLocaleCode();
   const lang = localeCode.length > 1 ? localeCode.substring(0, 2) : localeCode;
   const region = localeCode.length > 2 ? localeCode.substring(3) : "";
   return Locales[(lang + region) as keyof typeof Locales] ?? Locales[lang as keyof typeof Locales] ?? Locales.enUS;
 }
 
-export function useLocaleTimeAgo(date: Date) {
-  return formatDistance(date, new Date(), { locale: getLocale() });
-}
-
-export function fmtDate(value: string | Date, fmt: DateTimeFormat = "human", type: DateTimeType = "date"): string {
-  const dt = typeof value === "string" ? new Date(value) : value;
+export function fmtDate(
+  value: string | Date | number,
+  fmt: DateTimeFormat = "human",
+  type: DateTimeType = "date"
+): string {
+  const dt = typeof value === "string" || typeof value === "number" ? new Date(value) : value;
 
   if (!dt || !validDate(dt)) {
     return "";
   }
 
+  const localeOptions = { locale: getLocaleForDate() };
+
   if (fmt === "relative") {
-    return useLocaleTimeAgo(dt);
+    return `${formatDistance(dt, new Date(), { ...localeOptions, addSuffix: true })} (${fmtDate(dt, "short", "date")})`;
   }
 
   if (type === "time") {
-    return format(dt, "p", { locale: getLocale() });
+    return format(dt, "p", localeOptions);
   }
 
   let formatStr = "";
@@ -74,5 +79,5 @@ export function fmtDate(value: string | Date, fmt: DateTimeFormat = "human", typ
     formatStr += "p";
   }
 
-  return format(dt, formatStr, { locale: getLocale() });
+  return format(dt, formatStr, localeOptions);
 }

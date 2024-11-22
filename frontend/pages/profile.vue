@@ -8,6 +8,7 @@
   import MdiFill from "~icons/mdi/fill";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiAccountMultiple from "~icons/mdi/account-multiple";
+  import { getLocaleCode } from "~/composables/use-formatters";
 
   definePageMeta({
     middleware: ["auth"],
@@ -52,12 +53,11 @@
   });
 
   const currencyExample = computed(() => {
-    const formatter = new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency.value ? currency.value.code : "USD",
-    });
+    return fmtCurrency(1000, currency.value?.code ?? "USD", getLocaleCode());
+  });
 
-    return formatter.format(1000);
+  const dateExample = computed(() => {
+    return fmtDate(new Date(Date.now() - 15 * 60000), "relative");
   });
 
   const { data: group } = useAsyncData(async () => {
@@ -389,6 +389,7 @@
               {{ $t(`languages.${lang}`) }} ({{ $t(`languages.${lang}`, 1, { locale: lang }) }})
             </option>
           </select>
+          <p class="m-2 text-sm">{{ $t("profile.example") }}: {{ $t("global.created") }} {{ dateExample }}</p>
         </div>
       </BaseCard>
 
