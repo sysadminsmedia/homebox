@@ -74,7 +74,7 @@
   });
 
   const locationString = computed(() => {
-    return props.locationFlatTree.find(l => l.id === props.item.location.id)?.treeString;
+    return props.locationFlatTree.find(l => l.id === props.item.location.id)?.treeString || props.item.location.name;
   });
 </script>
 
