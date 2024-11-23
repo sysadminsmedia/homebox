@@ -474,7 +474,7 @@
         <p>{{ $t("items.no_results") }}</p>
       </div>
       <div v-else ref="cardgrid" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        <ItemCard v-for="item in items" :key="item.id" :item="item" />
+        <ItemCard v-for="item in items" :key="item.id" :item="item" :location-flat-tree="locationFlatTree" />
       </div>
       <div v-if="items.length > 0 && (hasNext || hasPrev)" class="mt-10 flex flex-col items-center gap-2">
         <div class="flex">
