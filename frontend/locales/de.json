@@ -2,7 +2,7 @@
     "components": {
         "app": {
             "import_dialog": {
-                "change_warning": "Das Verhalten beim Importieren vorhandener import_refs hat sich geändert. Wenn ein import_ref in der CSV-Datei vorhanden ist, \nwird der Gegenstand mit den Werten in der CSV-Datei aktualisiert.",
+                "change_warning": "Das Verhalten beim Importieren mit bestehenden import_refs hat sich geändert. Wenn ein import_ref in der CSV-Datei vorhanden ist, \nwird der Gegenstand mit den Werten in der CSV-Datei aktualisiert.",
                 "description": "Importiere eine CSV-Datei, die deine Gegenstände, Etiketten und Standorte enthält. Schau in die Dokumentation für weitere Informationen\nzum erforderlichen Format.",
                 "title": "CSV-Datei importieren",
                 "upload": "Hochladen"
@@ -11,7 +11,7 @@
         "global": {
             "date_time": {
                 "ago": "vor {0}",
-                "days": "Tage",
+                "days": "Tagen",
                 "hour": "Stunde",
                 "hours": "Stunden",
                 "in": "in {0}",
@@ -21,13 +21,13 @@
                 "last-year": "letztes Jahr",
                 "minute": "Minute",
                 "minutes": "Minuten",
-                "months": "Monate",
+                "months": "Monaten",
                 "next-month": "nächster Monat",
-                "next-week": "Nächste Woche",
+                "next-week": "nächste Woche",
                 "next-year": "nächstes Jahr",
                 "second": "Sekunde",
                 "seconds": "Sekunden",
-                "tomorrow": "Morgen",
+                "tomorrow": "morgen",
                 "week": "Woche",
                 "weeks": "Wochen",
                 "years": "Jahre",
@@ -42,8 +42,8 @@
         },
         "item": {
             "create_modal": {
-                "item_description": "Artikelbezeichnung",
-                "item_name": "Artikelname",
+                "item_description": "Gegenstandsbezeichnung",
+                "item_name": "Gegenstandsname",
                 "photo_button": "Foto 📷",
                 "title": "Gegenstand erstellen"
             },
@@ -62,15 +62,15 @@
         },
         "label": {
             "create_modal": {
-                "label_description": "Label Beschreibung",
-                "label_name": "Name Etikett",
+                "label_description": "Label-Beschreibung",
+                "label_name": "Label-Name",
                 "title": "Label erstellen"
             }
         },
         "location": {
             "create_modal": {
                 "location_description": "Standortbeschreibung",
-                "location_name": "Standortnamen",
+                "location_name": "Standortname",
                 "title": "Standort erstellen"
             },
             "selector": {
@@ -177,7 +177,7 @@
         "purchase_price": "Einkaufspreis",
         "purchased_from": "Eingekauft von",
         "quantity": "Menge",
-        "query_id": "Abfrage der Anlagen-ID-Nummer: { id }",
+        "query_id": "Abfrage der Asset-ID-Nummer: { id }",
         "receipt": "Beleg",
         "receipts": "Quittungen",
         "reset_search": "Suche zurücksetzen",
@@ -225,6 +225,10 @@
         "zh-MO": "Chinesisch (Macao)",
         "zh-TW": "Chinesisch (Traditionell)"
     },
+    "languages.da-DK": "Dänisch",
+    "languages.fi.FI": "Finnisch",
+    "languages.ro-RO": "Rumänisch",
+    "languages.sk-SK": "Slowakisch",
     "locations": {
         "child_locations": "Unter-Standorte",
         "collapse_tree": "Baum einklappen",
@@ -295,7 +299,7 @@
         "new_password": "Neues Passwort",
         "no_notifiers": "Keine Benachrichtigungen konfiguriert",
         "notifier_modal": "{ type, select, true {Bearbeiten} false {Erstellen} other {Andere}} Notifier",
-        "notifiers": "Melder",
+        "notifiers": "Benachrichtigungen",
         "notifiers_sub": "Erhalte Benachrichtigungen über bevorstehende Wartungserinnerungen",
         "test": "Test",
         "theme_settings": "Themes",
@@ -307,7 +311,7 @@
         "user_profile_sub": "Lade Benutzer ein und verwalte dein Konto."
     },
     "tools": {
-        "actions": "Inventar Aktionen",
+        "actions": "Inventar-Aktionen",
         "actions_set": {
             "ensure_ids": "Sicherstellen von Asset-IDs",
             "ensure_ids_button": "Sicherstellen von Asset-IDs",
@@ -319,7 +323,7 @@
             "set_primary_photo_button": "Primäres Foto festlegen",
             "set_primary_photo_sub": "In Homebox Version v0.10.0 wurde die Auswahl des Primärbilds von angehängten Bildern hinzugefügt. Mit dieser Funktion wird für jeden Artikel ohne Primärbild das erste angehängt Bild als solches definiert. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'See GitHub PR #576'</a>'",
             "zero_datetimes": "Leeren der Datum & Zeiten der Elemente",
-            "zero_datetimes_button": "Null-Punkt-Datum-Zeiten",
+            "zero_datetimes_button": "Gegenstands-Datum/Zeit zurücksetzen",
             "zero_datetimes_sub": "Setzt den Zeitwert für alle Datums-Zeit-Felder in Ihrem Inventar auf den Anfang des Datums zurück. Damit wird ein Fehler behoben, der zu Beginn der Entwicklung der Website eingeführt wurde und dazu führte, dass das Datum zusammen mit der Uhrzeit gespeichert wurde, was zu Problemen bei der Anzeige von genauen Werten in Datumsfeldern führte. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'"
         },
         "actions_sub": "Aktionen in großen Mengen auf das Inventar anwenden. Diese Aktionen sind unumkehrbar. '<b>'Sei vorsichtig.'</b>'",

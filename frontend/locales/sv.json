@@ -138,6 +138,7 @@
         "add": "Lägg till",
         "advanced": "Avancerat",
         "archived": "Arkiverad",
+        "asset_id": "Tillgångs-ID",
         "attachment": "Bilaga",
         "attachments": "Bilagor",
         "changes_persisted_immediately": "Ändringar av bilagor sparas omedelbart",
@@ -183,6 +184,7 @@
         "results": "{ total } Resultat",
         "serial_number": "Serienummer",
         "show_advanced_view_options": "Visa avancerade vyalternativ",
+        "sold_at": "Såld den",
         "sold_details": "Försäljningsdetaljer",
         "sold_price": "Försäljningspris",
         "sold_to": "Såld till",
@@ -224,6 +226,8 @@
         "zh-TW": "Kinesiska (traditionell)"
     },
     "locations": {
+        "child_locations": "Underordnade platser",
+        "collapse_tree": "Dra ihop träd",
         "no_results": "Inga platser hittades",
         "update_location": "Uppdatera plats"
     },
@@ -247,14 +251,23 @@
             "delete_confirmation": "Är du säker på att du vill radera denna post?",
             "edit_action": "Uppdatera",
             "edit_title": "Redigera",
+            "entry_name": "Startnamn",
             "new_action": "Skapa",
+            "new_title": "Skapa nytt ärende",
             "notes": "Anteckningar",
             "scheduled_date": "Schemalagt datum"
         },
         "monthly_average": "Månatligt medelvärde",
-        "total_cost": "Total kostnad"
+        "toast": {
+            "failed_to_create": "Det gick inte att skapa posten",
+            "failed_to_delete": "Det gick inte att ta bort posten",
+            "failed_to_update": "Det gick inte att uppdatera posten"
+        },
+        "total_cost": "Total kostnad",
+        "total_entries": "Totalt antal inlämningar"
     },
     "menu": {
+        "create_item": "Artikel / Tillgång",
         "create_label": "Etikett",
         "create_location": "Plats",
         "home": "Hem",
@@ -271,6 +284,7 @@
         "current_password": "Nuvarande lösenord",
         "delete_account": "Radera konto",
         "delete_account_sub": "Ta bort ditt konto och alla tillhörande data. Detta kan inte ångras.",
+        "display_header": "{ currentValue, select, true {Dölj sidhuvud} false {Visa sidhuvud} other {Inte träff}}",
         "enabled": "Aktiverad",
         "example": "Exempel",
         "gen_invite": "Skapa inbjudningslänk",
@@ -293,6 +307,17 @@
         "user_profile_sub": "Bjud in användare och hantera ditt konto."
     },
     "tools": {
+        "actions": "Lageråtgärder",
+        "actions_set": {
+            "ensure_ids": "Säkerställ tillgångs-ID",
+            "ensure_ids_button": "Säkerställ tillgångs-ID",
+            "ensure_ids_sub": "Säkerställer att alla saker i din inventering har giltiga asset_id fält. Detta är gjort genom att hitta högsta nuvarande asset_id fält i databasen och tilldela nästa värde till varje sak som inte har ett asset_id värde. Detta görs i ordning av created_at fältet.",
+            "ensure_import_refs": "Se till att importera referenser",
+            "ensure_import_refs_button": "Se till att importera referenser",
+            "ensure_import_refs_sub": "Säkerställer att alla saker i din inventering har ett korrekt import_ref fält. Detta görs genom att slumpmässigt skapa en 8 tecken sträng för varje sak som ej har import_ref fältet tilldelat.",
+            "set_primary_photo": "Ställ in primärt foto",
+            "set_primary_photo_button": "Ställ in primärt foto"
+        },
         "actions_sub": "Utför åtgärder på dina objekt i bulk. Dessa är oåterkalleliga. '<b>'Var försiktig.'</b>'",
         "import_export": "Import/Export",
         "reports": "Rapporter",

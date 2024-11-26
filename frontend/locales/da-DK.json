@@ -2,14 +2,36 @@
     "components": {
         "app": {
             "import_dialog": {
+                "change_warning": "Adfærd for imports med eksisterende import_refs har ændret sig. Hvis en import_ref er tilstede i CSV filen,\nvil genstanden blive opdateret med værdierne fra CSV filen.",
+                "description": "Importer en CSV fil som indeholder dine genstande, etiketter, og lokationer. Se dokumentation for mere information vedrørende\nden korrekte format.",
                 "title": "Importer CSV Fil",
                 "upload": "Upload"
             }
         },
         "global": {
             "date_time": {
+                "ago": "{0} siden",
+                "days": "dage",
+                "hour": "time",
+                "hours": "timer",
+                "in": "om {0}",
                 "just-now": "lige nu",
-                "last-month": "sidste måned"
+                "last-month": "sidste måned",
+                "last-week": "sidste uge",
+                "last-year": "sidste år",
+                "minute": "minut",
+                "minutes": "minutter",
+                "months": "måneder",
+                "next-month": "næste måned",
+                "next-week": "næste uge",
+                "next-year": "næste år",
+                "second": "sekund",
+                "seconds": "sekunder",
+                "tomorrow": "i morgen",
+                "week": "uge",
+                "weeks": "uger",
+                "years": "år",
+                "yesterday": "i går"
             },
             "page_qr_code": {
                 "page_url": "Side URL"
@@ -20,6 +42,8 @@
         },
         "item": {
             "create_modal": {
+                "item_description": "Genstandsbeskrivelse",
+                "item_name": "Genstandsnavn",
                 "photo_button": "Foto 📷",
                 "title": "Opret genstand"
             },
@@ -31,18 +55,26 @@
                     "table": "Tabel"
                 },
                 "table": {
-                    "page": "Side"
+                    "page": "Side",
+                    "rows_per_page": "Rækker per side"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_description": "Etiketbeskrivelse",
+                "label_name": "Etiketnavn",
                 "title": "Opret label"
             }
         },
         "location": {
             "create_modal": {
+                "location_description": "Lokationsbeskrivelse",
+                "location_name": "Lokationsnavn",
                 "title": "Opret lokation"
+            },
+            "selector": {
+                "parent_location": "Forældrelokation"
             },
             "tree": {
                 "no_locations": "Ingen tilgængelige lokationer. Opret nye lokationer gennem\n`<`span class=\"link-primary\">`Opret`<`/span`>` knappen i navigationslinjen."
@@ -50,14 +82,60 @@
         }
     },
     "global": {
+        "add": "Tilføj",
+        "build": "Build: { build }",
         "confirm": "Bekræft",
         "create": "Opret",
         "create_and_add": "Opret og tilføj ny",
         "created": "Oprettet",
         "delete": "Slet",
+        "details": "Detaljer",
+        "duplicate": "Dupliker",
+        "edit": "Rediger",
         "email": "Email",
         "follow_dev": "Følg udvikleren",
-        "github": "GitHub projekt"
+        "github": "GitHub projekt",
+        "items": "Genstande",
+        "join_discord": "Deltag i vores Discord",
+        "labels": "Etiketter",
+        "locations": "Lokationer",
+        "maintenance": "Opretholdelse",
+        "name": "Navn",
+        "password": "Adgangskode",
+        "read_docs": "Læs Docs",
+        "save": "Gem",
+        "search": "Søg",
+        "sign_out": "Log ud",
+        "submit": "Indsend",
+        "update": "Opdater",
+        "value": "Værdi",
+        "version": "Version: { version }",
+        "welcome": "Velkommen, { username }"
+    },
+    "home": {
+        "labels": "Etiketter",
+        "quick_statistics": "Hurtige Statistikker",
+        "recently_added": "Nyligt Tilføjet",
+        "storage_locations": "Opbevaringslokationer",
+        "total_items": "Totale Genstande",
+        "total_labels": "Totale Etiketter",
+        "total_locations": "Totale Lokationer",
+        "total_value": "Total Værdi"
+    },
+    "index": {
+        "disabled_registration": "Registrering slået fra",
+        "dont_join_group": "Ikke lyst til at deltage i en gruppe?",
+        "joining_group": "Du deltager i en eksisterende gruppe!",
+        "login": "Log ind",
+        "register": "Registrer",
+        "remember_me": "Husk mig",
+        "set_email": "Hvad er din E-Mail?",
+        "set_name": "Hvad hedder du?",
+        "set_password": "Opret din adgangskode",
+        "tagline": "Følg, Organiser, og Håndter dine Ting."
+    },
+    "items": {
+        "add": "Tilføj"
     },
     "tools": {
         "import_export": "Importer/Eksporter",

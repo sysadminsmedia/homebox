@@ -225,6 +225,10 @@
         "zh-MO": "Čínština (Macao)",
         "zh-TW": "Číština (tradičná)"
     },
+    "languages.da-DK": "Dánsko",
+    "languages.fi.FI": "Finsko",
+    "languages.ro-RO": "Rumunsko",
+    "languages.sk-SK": "Slovenčina",
     "locations": {
         "child_locations": "Umiestnenie dieťaťa",
         "collapse_tree": "Zbaliť strom",
