@@ -14,7 +14,7 @@
           :to="`/location/${item.location.id}`"
           loading="lazy"
         >
-          {{ item.location.name }}
+          {{ locationString }}
         </NuxtLink>
       </div>
     </div>
@@ -67,6 +67,14 @@
       type: Object as () => ItemOut | ItemSummary,
       required: true,
     },
+    locationFlatTree: {
+      type: Array as () => FlatTreeItem[],
+      required: true,
+    },
+  });
+
+  const locationString = computed(() => {
+    return props.locationFlatTree.find(l => l.id === props.item.location.id)?.treeString || props.item.location.name;
   });
 </script>
 
