@@ -13,7 +13,6 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@vueuse/nuxt",
     "@vite-pwa/nuxt",
-    // "./nuxt.proxyoverride.ts",
     "unplugin-icons/nuxt",
   ],
 
