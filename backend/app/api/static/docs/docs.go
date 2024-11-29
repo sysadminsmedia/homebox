@@ -2286,6 +2286,10 @@ const docTemplate = `{
                 "archived": {
                     "type": "boolean"
                 },
+                "assetId": {
+                    "type": "string",
+                    "example": "0"
+                },
                 "createdAt": {
                     "type": "string"
                 },
