@@ -44,7 +44,11 @@ Under both UK and US data protection laws, users have the following rights:
 * **Right to review**: Users can view the publicly accessible analytics to understand how their data contributes to Homebox.
 * **Right to withdraw consent**: Users may opt out at any time, stopping any further data collection from their device.
 
-# 6. Policy Changes
+# 6. 3rd Parties
+
+Homebox may use 3rd parties as part of providing the web services to operate. Currently this includes only Cloudflare, who handles cyber security services to our analytics endpoints and websites. You can view their privacy policy at https://www.cloudflare.com/privacypolicy/
+
+# 7. Policy Changes
 
 Any changes to this privacy policy will be communicated to users through Homebox's update channels (namely Discord or Reddit) **at a minimum** 7 full days prior to any change being conducted (unless mandated by law to do so otherwise).
 
