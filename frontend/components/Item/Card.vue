@@ -69,13 +69,14 @@
     },
     locationFlatTree: {
       type: Array as () => FlatTreeItem[],
-      required: true,
+      required: false,
+      default: () => [],
     },
   });
 
-  const locationString = computed(() => {
-    return props.locationFlatTree.find(l => l.id === props.item.location.id)?.treeString || props.item.location.name;
-  });
+  const locationString = computed(
+    () => props.locationFlatTree.find(l => l.id === props.item.location?.id)?.treeString || props.item.location?.name
+  );
 </script>
 
 <style lang="css"></style>

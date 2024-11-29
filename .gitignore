@@ -57,3 +57,4 @@ backend/app/api/static/public/*
 backend/api
 
 docs/.vitepress/cache/
+/.data/

@@ -52,6 +52,8 @@ tasks:
       - cp ./backend/app/api/static/docs/swagger.json docs/docs/api/openapi-2.0.json
 
   go:run:
+    env:
+      HBOX_DEMO: true
     desc: Starts the backend api server (depends on generate task)
     dir: backend
     deps:
