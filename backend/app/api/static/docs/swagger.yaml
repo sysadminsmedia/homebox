@@ -217,6 +217,9 @@ definitions:
     properties:
       archived:
         type: boolean
+      assetId:
+        example: "0"
+        type: string
       createdAt:
         type: string
       description:
