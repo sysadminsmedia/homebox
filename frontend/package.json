@@ -31,7 +31,7 @@
     "h3": "^1.7.1",
     "intl-messageformat": "^10.7.7",
     "isomorphic-fetch": "^3.0.0",
-    "nuxt": "3.12.4",
+    "nuxt": "3.14.1592",
     "prettier": "^3.4.1",
     "typescript": "^5.7.2",
     "unplugin-icons": "^0.18.5",
