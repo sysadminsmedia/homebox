@@ -4,11 +4,8 @@ import os
 
 def fetch_currencies():
     try:
-        response = requests.get('https://restcountries.com/v3.1/all')
+        response = requests.get('https://restcountries.com/v3.1/all?fields=name,common,currencies')
         response.raise_for_status()
-    except requests.exceptions.Timeout:
-        print("Request to the API timed out.")
-        return []
     except requests.exceptions.RequestException as e:
         print(f"An error occurred while making the request: {e}")
         return []
@@ -35,10 +32,12 @@ def fetch_currencies():
     return currencies_list
 
 def save_currencies(currencies, file_path):
+    # Sort the list by the "local" field
+    sorted_currencies = sorted(currencies, key=lambda x: x['local'].lower() if x['local'] else "")
     try:
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(currencies, f, ensure_ascii=False, indent=4)
+            json.dump(sorted_currencies, f, ensure_ascii=False, indent=4)
     except IOError as e:
         print(f"An error occurred while writing to the file: {e}")
 
