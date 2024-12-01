@@ -51,6 +51,11 @@ jobs:
       id-token: write
 
     steps:
+      - name: Prepare
+        run: |
+          platform=${{ matrix.platform }}
+          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -61,13 +66,6 @@ jobs:
         uses: docker/metadata-action@v5.0.0 # v5.0.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=semver,pattern={{major}}
-            type=schedule,pattern=nightly
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3.0.0
@@ -95,12 +93,9 @@ jobs:
         uses: docker/build-push-action@v6 # v6
         with:
           context: Dockerfile.rootless
-          push: ${{ github.event_name != 'pull_request' }}
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
           labels: ${{ steps.meta.outputs.labels }}
           platforms: ${{ matrix.platform }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
           build-args: |
             VERSION=${{ github.ref_name }}
             COMMIT=${{ github.sha }}
