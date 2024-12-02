@@ -1,0 +1,22 @@
+name: GHCR.IO Cleanup
+
+on:
+    schedule:
+        - cron: '00 0 * * *'
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    concurrency:
+      group: cleanup-images
+    steps:
+      - name: Cleanup
+        uses: dataaxiom/ghcr-cleanup-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          delete-ghost-images: true
+          delete-untagged: true
+          older-than: 30d
