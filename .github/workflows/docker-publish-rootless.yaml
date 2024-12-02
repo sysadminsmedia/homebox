@@ -65,6 +65,8 @@ jobs:
         uses: docker/metadata-action@v5.0.0 # v5.0.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3.0.0
@@ -91,8 +93,10 @@ jobs:
         id: build-and-push
         uses: docker/build-push-action@v6 # v6
         with:
+          push: ${{ github.event_name != 'pull_request' }}
           context: Dockerfile.rootless
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           platforms: ${{ matrix.platform }}
           build-args: |
