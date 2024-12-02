@@ -134,13 +134,15 @@ func (r *MaintenanceEntryRepository) GetMaintenanceByItemID(ctx context.Context,
 		query = query.Where(maintenanceentry.Or(
 			maintenanceentry.DateIsNil(),
 			maintenanceentry.DateEQ(time.Time{}),
+			maintenanceentry.DateGT(time.Now()),
 		))
 	} else if filters.Status == MaintenanceFilterStatusCompleted {
 		query = query.Where(
 			maintenanceentry.Not(maintenanceentry.Or(
 				maintenanceentry.DateIsNil(),
-				maintenanceentry.DateEQ(time.Time{})),
-			))
+				maintenanceentry.DateEQ(time.Time{}),
+				maintenanceentry.DateGT(time.Now()),
+			)))
 	}
 	entries, err := query.WithItem().Order(maintenanceentry.ByScheduledDate()).All(ctx)
 
