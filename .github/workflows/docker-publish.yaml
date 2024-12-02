@@ -96,14 +96,14 @@ jobs:
         with:
           context: .
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ghcr.io/${{ github.repository }}
           labels: ${{ steps.meta.outputs.labels }}
           platforms: ${{ matrix.platform }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
             VERSION=${{ github.ref_name }}
-            COMMIT=${{ github.sha	}}
+            COMMIT=${{ github.sha }}
 
       - name: Export digest
         run: |
