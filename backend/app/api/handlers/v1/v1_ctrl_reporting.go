@@ -8,12 +8,12 @@ import (
 
 // HandleBillOfMaterialsExport godoc
 //
-//	@Summary  Export Bill of Materials
-//	@Tags     Reporting
-//	@Produce  json
-//	@Success 200 {string} string "text/csv"
-//	@Router   /v1/reporting/bill-of-materials [GET]
-//	@Security Bearer
+//	@Summary	Export Bill of Materials
+//	@Tags		Reporting
+//	@Produce	json
+//	@Success	200	{string}	string	"text/csv"
+//	@Router		/v1/reporting/bill-of-materials [GET]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleBillOfMaterialsExport() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		actor := services.UseUserCtx(r.Context())

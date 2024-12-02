@@ -51,6 +51,8 @@ func (Item) Fields() []ent.Field {
 			Default(false),
 		field.Int("asset_id").
 			Default(0),
+		field.Bool("sync_child_items_locations").
+			Default(false),
 
 		// ------------------------------------
 		// item identification

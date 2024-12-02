@@ -35,6 +35,8 @@ const (
 	FieldArchived = "archived"
 	// FieldAssetID holds the string denoting the asset_id field in the database.
 	FieldAssetID = "asset_id"
+	// FieldSyncChildItemsLocations holds the string denoting the sync_child_items_locations field in the database.
+	FieldSyncChildItemsLocations = "sync_child_items_locations"
 	// FieldSerialNumber holds the string denoting the serial_number field in the database.
 	FieldSerialNumber = "serial_number"
 	// FieldModelNumber holds the string denoting the model_number field in the database.
@@ -142,6 +144,7 @@ var Columns = []string{
 	FieldInsured,
 	FieldArchived,
 	FieldAssetID,
+	FieldSyncChildItemsLocations,
 	FieldSerialNumber,
 	FieldModelNumber,
 	FieldManufacturer,
@@ -209,6 +212,8 @@ var (
 	DefaultArchived bool
 	// DefaultAssetID holds the default value on creation for the "asset_id" field.
 	DefaultAssetID int
+	// DefaultSyncChildItemsLocations holds the default value on creation for the "sync_child_items_locations" field.
+	DefaultSyncChildItemsLocations bool
 	// SerialNumberValidator is a validator for the "serial_number" field. It is called by the builders before save.
 	SerialNumberValidator func(string) error
 	// ModelNumberValidator is a validator for the "model_number" field. It is called by the builders before save.
@@ -285,6 +290,11 @@ func ByArchived(opts ...sql.OrderTermOption) OrderOption {
 // ByAssetID orders the results by the asset_id field.
 func ByAssetID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAssetID, opts...).ToFunc()
+}
+
+// BySyncChildItemsLocations orders the results by the sync_child_items_locations field.
+func BySyncChildItemsLocations(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSyncChildItemsLocations, opts...).ToFunc()
 }
 
 // BySerialNumber orders the results by the serial_number field.
