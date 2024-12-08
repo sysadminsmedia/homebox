@@ -28,8 +28,8 @@ type (
 	}
 
 	LoginForm struct {
-		Username     string `json:"username"`
-		Password     string `json:"password"`
+		Username     string `json:"username" example:"admin@admin.com"`
+		Password     string `json:"password" example:"admin"`
 		StayLoggedIn bool   `json:"stayLoggedIn"`
 	}
 )
@@ -83,8 +83,6 @@ type AuthProvider interface {
 //	@Tags    Authentication
 //	@Accept  x-www-form-urlencoded
 //	@Accept  application/json
-//	@Param   username formData string false "string" example(admin@admin.com)
-//	@Param   password formData string false "string" example(admin)
 //	@Param   payload body     LoginForm true "Login Data"
 //	@Param   provider    query    string   false "auth provider"
 //	@Produce json
