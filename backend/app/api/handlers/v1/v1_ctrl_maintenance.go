@@ -52,6 +52,7 @@ func (ctrl *V1Controller) HandleMaintenanceEntryUpdate() errchain.HandlerFunc {
 //	@Summary  Delete Maintenance Entry
 //	@Tags     Maintenance
 //	@Produce  json
+//	@Param    id  path     string true "Maintenance ID"
 //	@Success  204
 //	@Router   /v1/maintenance/{id} [DELETE]
 //	@Security Bearer

@@ -25,7 +25,7 @@ type (
 //
 //	@Summary  Create Item Attachment
 //	@Tags     Items Attachments
-//	@Accept multipart/form-data
+//	@Accept   multipart/form-data
 //	@Produce  json
 //	@Param    id   path     string true "Item ID"
 //	@Param    file formData file   true "File attachment"
