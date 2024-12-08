@@ -33,6 +33,7 @@ type (
 //	@Success  200  {object} repo.ItemOut
 //	@Failure  422  {object} validate.ErrorResponse
 //	@Router   /v1/items/{id}/attachments [POST]
+//	@Consumes multipart/form-data
 //	@Security Bearer
 func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
