@@ -26,6 +26,13 @@ type Config struct {
 	Demo    bool       `yaml:"demo"`
 	Debug   DebugConf  `yaml:"debug"`
 	Options Options    `yaml:"options"`
+	Proxy   Proxy      `yaml:"proxy"`
+}
+
+type Proxy struct {
+	TrustedHosts           []string `yaml:"trusted_hosts"`
+	HeaderExternalUserId   string   `yaml:"header_external_user_id"`
+	HeaderExternalUserName string   `yaml:"header_external_user_name"`
 }
 
 type Options struct {

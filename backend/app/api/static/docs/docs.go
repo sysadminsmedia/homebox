@@ -2958,6 +2958,9 @@ const docTemplate = `{
                 "demo": {
                     "type": "boolean"
                 },
+                "headerAuthEnabled": {
+                    "type": "boolean"
+                },
                 "health": {
                     "type": "boolean"
                 },
