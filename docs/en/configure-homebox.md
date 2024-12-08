@@ -32,6 +32,7 @@
 | HBOX_DATABASE_PASSWORD               |                                                                            | sets the password for a postgres connection                                            |
 | HBOX_DATABASE_DATABASE               |                                                                            | sets the database for a postgres connection                                            |
 | HBOX_DATABASE_SSL_MODE               |                                                                            | sets the sslmode for a postgres connection                                             |
+| HBOX_ALLOW_ANALYTICS                 | `false`                                                                    | Opt-In basic non-identifiable analytics to assist with optimizing Homebox.             |
 
 ::: tip "CLI Arguments"
 If you're deploying without docker you can use command line arguments to configure the application. Run `homebox --help` for more information.

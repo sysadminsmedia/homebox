@@ -22,5 +22,12 @@ export default [
             {text: 'Get Started', link: '/en/contribute/get-started'},
             {text: 'Bounty Program', link: '/en/contribute/bounty'}
         ]
+    },
+    {
+        text: 'Analytics',
+        items: [
+            {text: 'Current Analytics', link: '/en/analytics'},
+            {text: 'Privacy Policy', link: '/en/analytics/privacy'}
+        ]
     }
 ]
