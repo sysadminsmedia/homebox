@@ -9,6 +9,30 @@
             }
         },
         "global": {
+            "date_time": {
+                "ago": "Il y a {0}",
+                "days": "jours",
+                "hour": "heure",
+                "hours": "heures",
+                "in": "autour de {0}",
+                "just-now": "juste maintenant",
+                "last-month": "Le mois précédent",
+                "last-week": "la semaine dernière",
+                "last-year": "l'année dernière",
+                "minute": "minute",
+                "minutes": "minutes",
+                "months": "mois",
+                "next-month": "Le mois prochain",
+                "next-week": "la semaine prochaine",
+                "next-year": "l'année prochaine",
+                "second": "seconde",
+                "seconds": "secondes",
+                "tomorrow": "demain",
+                "week": "semaine",
+                "weeks": "semaines",
+                "years": "années",
+                "yesterday": "hier"
+            },
             "page_qr_code": {
                 "page_url": "URL de la page"
             },
@@ -18,6 +42,8 @@
         },
         "item": {
             "create_modal": {
+                "item_description": "Description de l'article",
+                "item_name": "Nom de l'article",
                 "photo_button": "Photo 📷",
                 "title": "Créer un article"
             },
@@ -27,25 +53,36 @@
                     "items": "Articles",
                     "no_items": "Pas d'articles à afficher",
                     "table": "Tableau"
+                },
+                "table": {
+                    "page": "Page",
+                    "rows_per_page": "Lignes par page"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_description": "Description de l'étiquette",
+                "label_name": "Nom de l'étiquette",
                 "title": "Créer une étiquette"
             }
         },
         "location": {
             "create_modal": {
+                "location_description": "Description de l'emplacement",
+                "location_name": "Nom de l'emplacement",
                 "title": "Créer un emplacement"
             },
+            "selector": {
+                "parent_location": "Emplacement parent"
+            },
             "tree": {
-                "no_locations": "Aucun emplacement disponible. Ajoutez votre premiers emplacements avec\nle bouton `<`span class=\"link-primary\"`>`Créer`<`/span`>` dans la barre de navigation."
+                "no_locations": "Aucun emplacement disponible. Ajoutez votre premier emplacement avec\nle bouton `<`span class=\"link-primary\"`>`Créer`<`/span`>` dans la barre de navigation."
             }
         }
     },
     "global": {
-        "build": "Assemblage : { build }",
+        "build": "Version : { build }",
         "confirm": "Confirmer",
         "create": "Créer",
         "create_and_add": "Créer et en ajouter un autre",
@@ -127,6 +164,10 @@
         "zh-MO": "Chinois (Macao)",
         "zh-TW": "Chinois (traditionnel)"
     },
+    "languages.da-DK": "Danois",
+    "languages.fi.FI": "Finnois",
+    "languages.ro-RO": "Roumain",
+    "languages.sk-SK": "Slovaque",
     "locations": {
         "no_results": "Aucun emplacement trouvé"
     },

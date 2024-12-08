@@ -9,6 +9,29 @@
             }
         },
         "global": {
+            "date_time": {
+                "ago": "{0} 之前",
+                "days": "天",
+                "hour": "小时",
+                "hours": "小时",
+                "just-now": "现在",
+                "last-month": "上个月",
+                "last-week": "上周",
+                "last-year": "去年",
+                "minute": "分钟",
+                "minutes": "分钟",
+                "months": "个月",
+                "next-month": "下个月",
+                "next-week": "下周",
+                "next-year": "明年",
+                "second": "秒",
+                "seconds": "秒",
+                "tomorrow": "明天",
+                "week": "周",
+                "weeks": "周",
+                "years": "年",
+                "yesterday": "昨天"
+            },
             "page_qr_code": {
                 "page_url": "页面URL"
             },
@@ -18,6 +41,8 @@
         },
         "item": {
             "create_modal": {
+                "item_description": "物品描述",
+                "item_name": "物品名称",
                 "photo_button": "照片 📷",
                 "title": "创建物品"
             },
@@ -27,17 +52,28 @@
                     "items": "物品",
                     "no_items": "没有可展示的物品",
                     "table": "表格模式"
+                },
+                "table": {
+                    "page": "页",
+                    "rows_per_page": "每页行数"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_description": "标签说明",
+                "label_name": "标签名称",
                 "title": "创建标签"
             }
         },
         "location": {
             "create_modal": {
+                "location_description": "位置描述",
+                "location_name": "位置名称",
                 "title": "创建位置"
+            },
+            "selector": {
+                "parent_location": "父位置"
             },
             "tree": {
                 "no_locations": "没有可用的位置。请添加新的位置\n `<`span class=\"link-primary\"`>`创建`<`/span`>` 按钮在导航栏上"
@@ -45,11 +81,16 @@
         }
     },
     "global": {
+        "add": "添加",
         "build": "编译：{build}",
         "confirm": "确认",
         "create": "创建",
         "create_and_add": "保存并继续创建",
         "created": "已创建",
+        "delete": "刪除",
+        "details": "详情",
+        "duplicate": "复制",
+        "edit": "修改",
         "email": "邮箱",
         "follow_dev": "关注开发者",
         "github": "Github项目",
@@ -57,14 +98,28 @@
         "join_discord": "加入Discord讨论",
         "labels": "标签",
         "locations": "位置",
+        "maintenance": "维护",
         "name": "名称",
         "password": "密码",
         "read_docs": "查阅文档",
+        "save": "保存",
         "search": "搜索",
         "sign_out": "登出",
         "submit": "提交",
+        "update": "更新",
+        "value": "值",
         "version": "版本：{version}",
         "welcome": "欢迎，{username}"
+    },
+    "home": {
+        "labels": "标签",
+        "quick_statistics": "快速统计",
+        "recently_added": "最近加入",
+        "storage_locations": "存放位置",
+        "total_items": "项目总量",
+        "total_labels": "标签总量",
+        "total_locations": "位置数量",
+        "total_value": "价值总和"
     },
     "index": {
         "disabled_registration": "已禁用注册",
@@ -80,32 +135,67 @@
     },
     "items": {
         "add": "添加",
+        "advanced": "进阶",
+        "archived": "已归档",
+        "asset_id": "资产ID",
+        "attachment": "附件",
+        "attachments": "附件",
+        "changes_persisted_immediately": "对附件的更改将会立即保存",
         "created_at": "创建于",
         "custom_fields": "自定义字段",
+        "description": "说明",
+        "details": "详情",
+        "drag_and_drop": "将文件拖拽到此或点击添加文件",
+        "edit_details": "编辑详情",
         "field_selector": "字段选择",
         "field_value": "字段值",
         "first": "第一页",
         "include_archive": "包括已存档的项目",
+        "insured": "保险",
         "last": "最后一页",
+        "lifetime_warranty": "包含终身保修",
+        "location": "位置",
+        "manufacturer": "制造商",
+        "model_number": "型号",
+        "name": "名称",
         "negate_labels": "取消选中的标签",
         "next_page": "下一页",
         "no_results": "没有可显示的物品",
+        "notes": "笔记",
         "options": "选项",
         "order_by": "排序方式",
         "pages": "第{page}页，共{totalPages}页",
+        "parent_item": "父项目",
+        "photo": "照片",
+        "photos": "照片",
         "prev_page": "上一页",
+        "purchase_date": "购买日期",
+        "purchase_details": "购买详情",
+        "purchase_price": "购买价格",
+        "purchased_from": "购买地址",
+        "quantity": "数量",
         "query_id": "查询资产ID： {id}",
         "reset_search": "重置搜索",
         "results": "{ total } 条结果",
+        "serial_number": "序列号",
+        "show_advanced_view_options": "显示高级选项",
+        "sold_at": "出售日期",
+        "sold_details": "售出详情",
+        "sold_price": "出售价格",
+        "sold_to": "出售对象",
         "tip_1": "位置和标签过滤器使用“或”操作。如果选择了多个位置或标签，\n则只需要任意一个匹配上即可。",
         "tip_2": "以“#”为前缀的搜索将变成查询资产ID（例如“#000-001” ）",
         "tip_3": "字段过滤器使用“或”操作。如果选择了多个位置或标签，\n则只需要任意一个匹配上即可。",
         "tips": "建议",
         "tips_sub": "搜索提示",
-        "updated_at": "更新于"
+        "updated_at": "更新于",
+        "warranty": "保修",
+        "warranty_details": "保修详情",
+        "warranty_expires": "保修持续到"
     },
     "labels": {
-        "no_results": "未找到标签。"
+        "no_results": "未找到标签",
+        "update_label": "更新标签"
     },
     "languages": {
         "ca": "加泰罗尼亚语",
@@ -115,20 +205,30 @@
         "fr": "法国",
         "hu": "匈牙利语",
         "it": "意大利语",
+        "ja-JP": "日本語",
         "nl": "荷兰语",
         "pl": "波兰语",
         "pt-BR": "葡萄牙语（巴西）",
+        "pt-PT": "葡萄牙语（葡萄牙）",
         "ru": "俄语",
         "sl": "斯洛文尼亚语",
         "sv": "瑞典语",
         "tr": "土耳其语",
+        "uk-UA": "乌克兰语",
         "zh-CN": "中文（简体）",
         "zh-HK": "中文（香港）",
         "zh-MO": "中文（澳门）",
         "zh-TW": "中文（繁体）"
     },
+    "languages.da-DK": "丹麦语",
+    "languages.fi.FI": "芬兰语",
+    "languages.ro-RO": "罗马尼亚语",
+    "languages.sk-SK": "斯洛伐克语",
     "locations": {
-        "no_results": "找不到位置"
+        "child_locations": "子位置",
+        "collapse_tree": "折叠树",
+        "no_results": "找不到位置",
+        "update_location": "更新位置"
     },
     "maintenance": {
         "filter": {
@@ -166,6 +266,9 @@
         "total_entries": "总项目"
     },
     "menu": {
+        "create_item": "物品/资产",
+        "create_label": "标签",
+        "create_location": "位置",
         "home": "主页",
         "locations": "位置",
         "maintenance": "维护",
@@ -182,6 +285,7 @@
         "delete_account_sub": "删除您的帐户及其所有相关数据。这是无法撤消的。",
         "display_header": "{currentValue, select, true {隐藏页眉} false {显示页眉} other {未选中}}",
         "enabled": "已启用",
+        "example": "例子",
         "gen_invite": "生成邀请链接",
         "group_settings": "组设置",
         "group_settings_sub": "共享组设置。您可能需要刷新浏览器来让某些设置生效。",

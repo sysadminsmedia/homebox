@@ -225,6 +225,10 @@
         "zh-MO": "Cinese (Macao)",
         "zh-TW": "Cinese (tradizionale)"
     },
+    "languages.da-DK": "Danese",
+    "languages.fi.FI": "Finlandese",
+    "languages.ro-RO": "Rumeno",
+    "languages.sk-SK": "Slovacco",
     "locations": {
         "child_locations": "Ubicazione figlia",
         "collapse_tree": "Contrai albero",

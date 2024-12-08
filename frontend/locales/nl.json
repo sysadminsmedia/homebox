@@ -70,7 +70,7 @@
         "location": {
             "create_modal": {
                 "location_description": "Locatie omschrijving",
-                "location_name": "Locatie",
+                "location_name": "Locatie Naam",
                 "title": "Maak locatie"
             },
             "selector": {
@@ -225,6 +225,10 @@
         "zh-MO": "Chinees (Macau)",
         "zh-TW": "Chinees (traditioneel)"
     },
+    "languages.da-DK": "Deens",
+    "languages.fi.FI": "Fins",
+    "languages.ro-RO": "Roemeens",
+    "languages.sk-SK": "Slowaaks",
     "locations": {
         "child_locations": "Kind Locaties",
         "collapse_tree": "Structuur invouwen",
@@ -289,7 +293,7 @@
         "example": "Voorbeeld",
         "gen_invite": "Genereer Uitnodigingslink",
         "group_settings": "Groeps Instellingen",
-        "group_settings_sub": "Gedeelde groepsinstellingen. Het kan zijn dat je je browser moet verversen om alle instellingen te zien werken.",
+        "group_settings_sub": "Gedeelde groepsinstellingen. Het kan zijn dat je de browser moet verversen om alle instellingen te zien werken.",
         "inactive": "Inactief",
         "language": "Taal",
         "new_password": "Nieuw Wachtwoord",
@@ -299,7 +303,7 @@
         "notifiers_sub": "Krijg notificaties voor opkomende onderhouds herinneringen",
         "test": "Test",
         "theme_settings": "Theme instellingen",
-        "theme_settings_sub": "Thema-instellingen worden opgeslagen in de lokale opslag van uw browser. Je kan deze wijzigen op elk moment. \nAls je problemen hebt met de instellingen kun je je browser verversen.",
+        "theme_settings_sub": "Thema-instellingen worden opgeslagen in de lokale opslag van uw browser. Je kan deze wijzigen op elk moment. \nAls je problemen hebt met de instellingen kun je de browser verversen.",
         "update_group": "Groep bijwerken",
         "update_language": "Taal bijwerken",
         "url": "URL",
