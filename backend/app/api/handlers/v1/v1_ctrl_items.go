@@ -294,6 +294,7 @@ func (ctrl *V1Controller) HandleGetAllCustomFieldValues() errchain.HandlerFunc {
 //
 //	@Summary  Import Items
 //	@Tags     Items
+//	@Accept   multipart/form-data
 //	@Produce  json
 //	@Success  204
 //	@Param    csv formData file true "Image to upload"
@@ -341,8 +342,8 @@ func (ctrl *V1Controller) HandleItemsExport() errchain.HandlerFunc {
 			log.Err(err).Msg("failed to export items")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
-		
-		timestamp := time.Now().Format("2006-01-02_15-04-05") // YYYY-MM-DD_HH-MM-SS format
+
+		timestamp := time.Now().Format("2006-01-02_15-04-05")      // YYYY-MM-DD_HH-MM-SS format
 		filename := fmt.Sprintf("homebox-items_%s.csv", timestamp) // add timestamp to filename
 
 		w.Header().Set("Content-Type", "text/csv")

@@ -86,7 +86,6 @@ func (ctrl *V1Controller) HandleUpdateNotifier() errchain.HandlerFunc {
 //	@Summary  Test Notifier
 //	@Tags     Notifiers
 //	@Produce  json
-//	@Param    id path string true "Notifier ID"
 //	@Param url query string true "URL"
 //	@Success  204
 //	@Router   /v1/notifiers/test [POST]

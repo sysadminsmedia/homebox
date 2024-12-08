@@ -15,6 +15,7 @@ import (
 //	@Summary  Get Maintenance Log
 //	@Tags     Item Maintenance
 //	@Produce  json
+//	@Param    id  path     string true "Item ID"
 //	@Param    filters query    repo.MaintenanceFilters     false "which maintenance to retrieve"
 //	@Success  200       {array} repo.MaintenanceEntryWithDetails[]
 //	@Router   /v1/items/{id}/maintenance [GET]
@@ -33,6 +34,7 @@ func (ctrl *V1Controller) HandleMaintenanceLogGet() errchain.HandlerFunc {
 //	@Summary  Create Maintenance Entry
 //	@Tags     Item Maintenance
 //	@Produce  json
+//	@Param    id  path     string true "Item ID"
 //	@Param    payload body     repo.MaintenanceEntryCreate true "Entry Data"
 //	@Success  201     {object} repo.MaintenanceEntry
 //	@Router   /v1/items/{id}/maintenance [POST]
