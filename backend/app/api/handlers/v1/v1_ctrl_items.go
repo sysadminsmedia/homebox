@@ -294,11 +294,11 @@ func (ctrl *V1Controller) HandleGetAllCustomFieldValues() errchain.HandlerFunc {
 //
 //	@Summary  Import Items
 //	@Tags     Items
+//	@Accept   multipart/form-data
 //	@Produce  json
 //	@Success  204
 //	@Param    csv formData file true "Image to upload"
 //	@Router   /v1/items/import [Post]
-//	@Consumes multipart/form-data
 //	@Security Bearer
 func (ctrl *V1Controller) HandleItemsImport() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
