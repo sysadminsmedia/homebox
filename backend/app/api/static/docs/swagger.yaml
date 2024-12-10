@@ -729,10 +729,12 @@ definitions:
   v1.LoginForm:
     properties:
       password:
+        example: admin
         type: string
       stayLoggedIn:
         type: boolean
       username:
+        example: admin@admin.com
         type: string
     type: object
   v1.TokenResponse:
@@ -1135,6 +1137,8 @@ paths:
       - Items
   /v1/items/{id}/attachments:
     post:
+      consumes:
+      - multipart/form-data
       parameters:
       - description: Item ID
         in: path
@@ -1248,6 +1252,11 @@ paths:
   /v1/items/{id}/maintenance:
     get:
       parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
       - enum:
         - scheduled
         - completed
@@ -1275,6 +1284,11 @@ paths:
       - Item Maintenance
     post:
       parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
       - description: Entry Data
         in: body
         name: payload
@@ -1361,6 +1375,8 @@ paths:
       - Items
   /v1/items/import:
     post:
+      consumes:
+      - multipart/form-data
       parameters:
       - description: Image to upload
         in: formData
@@ -1623,6 +1639,12 @@ paths:
       - Maintenance
   /v1/maintenance/{id}:
     delete:
+      parameters:
+      - description: Maintenance ID
+        in: path
+        name: id
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -1635,6 +1657,11 @@ paths:
       - Maintenance
     put:
       parameters:
+      - description: Maintenance ID
+        in: path
+        name: id
+        required: true
+        type: string
       - description: Entry Data
         in: body
         name: payload
@@ -1731,11 +1758,6 @@ paths:
   /v1/notifiers/test:
     post:
       parameters:
-      - description: Notifier ID
-        in: path
-        name: id
-        required: true
-        type: string
       - description: URL
         in: query
         name: url
@@ -1819,16 +1841,6 @@ paths:
       - application/x-www-form-urlencoded
       - application/json
       parameters:
-      - description: string
-        example: admin@admin.com
-        in: formData
-        name: username
-        type: string
-      - description: string
-        example: admin
-        in: formData
-        name: password
-        type: string
       - description: Login Data
         in: body
         name: payload
