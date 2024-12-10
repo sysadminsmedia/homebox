@@ -55,11 +55,11 @@ type (
 	}
 
 	ItemCreate struct {
-		ImportRef               string    `json:"-"`
-		ParentID                uuid.UUID `json:"parentId"    extensions:"x-nullable"`
-		Name                    string    `json:"name"        validate:"required,min=1,max=255"`
-		Description             string    `json:"description" validate:"max=1000"`
-		AssetID                 AssetID   `json:"-"`
+		ImportRef   string    `json:"-"`
+		ParentID    uuid.UUID `json:"parentId"    extensions:"x-nullable"`
+		Name        string    `json:"name"        validate:"required,min=1,max=255"`
+		Description string    `json:"description" validate:"max=1000"`
+		AssetID     AssetID   `json:"-"`
 
 		// Edges
 		LocationID uuid.UUID   `json:"locationId"`
@@ -67,11 +67,11 @@ type (
 	}
 
 	ItemUpdate struct {
-		ParentID                uuid.UUID `json:"parentId"    extensions:"x-nullable,x-omitempty"`
+		ParentID                uuid.UUID `json:"parentId"                extensions:"x-nullable,x-omitempty"`
 		ID                      uuid.UUID `json:"id"`
-		AssetID                 AssetID   `json:"assetId"     swaggertype:"string"`
-		Name                    string    `json:"name"        validate:"required,min=1,max=255"`
-		Description             string    `json:"description" validate:"max=1000"`
+		AssetID                 AssetID   `json:"assetId"                 swaggertype:"string"`
+		Name                    string    `json:"name"                    validate:"required,min=1,max=255"`
+		Description             string    `json:"description"             validate:"max=1000"`
 		Quantity                int       `json:"quantity"`
 		Insured                 bool      `json:"insured"`
 		Archived                bool      `json:"archived"`
@@ -93,12 +93,12 @@ type (
 
 		// Purchase
 		PurchaseTime  types.Date `json:"purchaseTime"`
-		PurchaseFrom  string     `json:"purchaseFrom" validate:"max=255"`
+		PurchaseFrom  string     `json:"purchaseFrom"  validate:"max=255"`
 		PurchasePrice float64    `json:"purchasePrice" extensions:"x-nullable,x-omitempty"`
 
 		// Sold
 		SoldTime  types.Date `json:"soldTime"`
-		SoldTo    string     `json:"soldTo" validate:"max=255"`
+		SoldTo    string     `json:"soldTo"    validate:"max=255"`
 		SoldPrice float64    `json:"soldPrice" extensions:"x-nullable,x-omitempty"`
 		SoldNotes string     `json:"soldNotes"`
 
@@ -651,7 +651,7 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 				return ItemOut{}, err
 			}
 
-			if location != child_location.ID {
+			if location != childLocation.ID {
 				err = child.Update().SetLocationID(location).Exec(ctx)
 				if err != nil {
 					return ItemOut{}, err

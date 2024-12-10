@@ -468,16 +468,17 @@
 
   async function maybeSyncWithParentLocation() {
     if (parent.value && parent.value.id) {
-        const { data, error } = await api.items.get(parent.value.id); 
+      const { data, error } = await api.items.get(parent.value.id);
 
-        if (error) {
-          toast.error("Something went wrong trying to load parent data");
-        } else {
-          if (data.syncChildItemsLocations) {
-            toast.info("Selected parent syncs its children's locations to its own. The location has been updated.");
-            item.value.location = data.location
-          }
-        }
+      if (error) {
+        toast.error("Something went wrong trying to load parent data");
+        return;
+      }
+
+      if (data.syncChildItemsLocations) {
+        toast.info("Selected parent syncs its children's locations to its own. The location has been updated.");
+        item.value.location = data.location;
+      }
     }
   }
 
@@ -487,6 +488,7 @@
 
       if (error) {
         toast.error("Something went wrong trying to load parent data");
+        return;
       }
 
       if (data.syncChildItemsLocations) {
@@ -500,7 +502,7 @@
       toast.error("Failed to save item: no location selected");
       return;
     }
-  
+
     const payload: ItemUpdate = {
       ...item.value,
       locationId: item.value.location?.id,
@@ -517,7 +519,7 @@
     }
 
     if (!item.value.syncChildItemsLocations) {
-      toast.success("Child items' locations will no longer be synced with this item.")
+      toast.success("Child items' locations will no longer be synced with this item.");
     } else {
       toast.success("Child items' locations have been synced with this item");
     }
@@ -592,7 +594,12 @@
           <div class="mb-6 grid gap-4 border-t px-5 pt-2 md:grid-cols-2">
             <LocationSelector v-model="item.location" @update:model-value="informAboutDesyncingLocationFromParent()" />
             <FormMultiselect v-model="item.labels" :label="$t('global.labels')" :items="labels ?? []" />
-            <FormToggle v-model="item.syncChildItemsLocations" label="Sync child items' locations" inline @update:model-value="syncChildItemsLocations()" />
+            <FormToggle
+              v-model="item.syncChildItemsLocations"
+              label="Sync child items' locations"
+              inline
+              @update:model-value="syncChildItemsLocations()"
+            />
             <Autocomplete
               v-if="preferences.editorAdvancedView"
               v-model="parent"

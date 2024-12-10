@@ -205,7 +205,7 @@ describe("user should be able to create an item and add an attachment", () => {
     });
     expect(parentResponse.status).toBe(201);
     expect(parent.id).toBeTruthy();
-    
+
     const { response: child1Response, data: child1Item } = await api.items.create({
       name: "child1-item",
       labelIds: [],
@@ -217,9 +217,9 @@ describe("user should be able to create an item and add an attachment", () => {
       parentId: parent.id,
       ...child1Item,
       locationId: child1Item.location?.id,
-      labelIds: []
+      labelIds: [],
     };
-    const { response: child1UpdatedResponse, data: child1UpdatedData } = await api.items.update(child1Item.id, child1ItemUpdate as ItemUpdate);
+    const { response: child1UpdatedResponse } = await api.items.update(child1Item.id, child1ItemUpdate as ItemUpdate);
     expect(child1UpdatedResponse.status).toBe(200);
 
     const { response: child2Response, data: child2Item } = await api.items.create({
@@ -233,9 +233,9 @@ describe("user should be able to create an item and add an attachment", () => {
       parentId: parent.id,
       ...child2Item,
       locationId: child2Item.location?.id,
-      labelIds: []
-    }
-    const { response: child2UpdatedResponse, data: child2UpdatedData } = await api.items.update(child2Item.id, child2ItemUpdate as ItemUpdate);
+      labelIds: [],
+    };
+    const { response: child2UpdatedResponse } = await api.items.update(child2Item.id, child2ItemUpdate as ItemUpdate);
     expect(child2UpdatedResponse.status).toBe(200);
 
     const itemUpdate = {
@@ -243,9 +243,9 @@ describe("user should be able to create an item and add an attachment", () => {
       ...parent,
       locationId: parentLocation.id,
       labelIds: [],
-      syncChildItemsLocations: true
+      syncChildItemsLocations: true,
     };
-    const { response: updateResponse, data: updateData } = await api.items.update(parent.id, itemUpdate)
+    const { response: updateResponse } = await api.items.update(parent.id, itemUpdate);
     expect(updateResponse.status).toBe(200);
 
     const { response: child1FinalResponse, data: child1FinalData } = await api.items.get(child1Item.id);
