@@ -162,6 +162,7 @@
         "model_number": "Número de Modelo",
         "name": "Nombre",
         "negate_labels": "Negar Etiquetas Seleccionadas",
+        "only_without_photo": "Solo artículos sin foto",
         "next_page": "Siguiente Página",
         "no_results": "No se Encontraron Elementos",
         "notes": "Notas",

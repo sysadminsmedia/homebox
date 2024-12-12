@@ -165,6 +165,7 @@
         "next_page": "Pàgina següent",
         "no_results": "No s'ha trobat cap element",
         "notes": "Notes",
+        "only_without_photo": "Només articles sense foto",
         "options": "Opcions",
         "order_by": "Ordena per",
         "pages": "Pàgina { page } de { totalPages }",
