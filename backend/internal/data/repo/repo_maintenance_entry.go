@@ -131,7 +131,8 @@ func (r *MaintenanceEntryRepository) GetMaintenanceByItemID(ctx context.Context,
 			item.HasGroupWith(group.IDEQ(groupID)),
 		),
 	)
-	if filters.Status == MaintenanceFilterStatusScheduled {
+	switch filters.Status {
+	case MaintenanceFilterStatusScheduled:
 		query = query.Where(maintenanceentry.Or(
 			maintenanceentry.DateIsNil(),
 			maintenanceentry.DateEQ(time.Time{}),
@@ -141,7 +142,7 @@ func (r *MaintenanceEntryRepository) GetMaintenanceByItemID(ctx context.Context,
 		query = query.Order(
 			maintenanceentry.ByScheduledDate(sql.OrderAsc()),
 		)
-	} else if filters.Status == MaintenanceFilterStatusCompleted {
+	case MaintenanceFilterStatusCompleted:
 		query = query.Where(
 			maintenanceentry.Not(maintenanceentry.Or(
 				maintenanceentry.DateIsNil(),
@@ -152,7 +153,7 @@ func (r *MaintenanceEntryRepository) GetMaintenanceByItemID(ctx context.Context,
 		query = query.Order(
 			maintenanceentry.ByDate(sql.OrderDesc()),
 		)
-	} else {
+	default:
 		// Sort entries by default by scheduled and maintenance date in descending order
 		query = query.Order(
 			maintenanceentry.ByScheduledDate(sql.OrderDesc()),
