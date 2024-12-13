@@ -116,6 +116,7 @@ type (
 	ItemSummary struct {
 		ImportRef   string    `json:"-"`
 		ID          uuid.UUID `json:"id"`
+		AssetID     AssetID   `json:"assetId,string"`
 		Name        string    `json:"name"`
 		Description string    `json:"description"`
 		Quantity    int       `json:"quantity"`
@@ -193,6 +194,7 @@ func mapItemSummary(item *ent.Item) ItemSummary {
 
 	return ItemSummary{
 		ID:            item.ID,
+		AssetID:       AssetID(item.AssetID),
 		Name:          item.Name,
 		Description:   item.Description,
 		ImportRef:     item.ImportRef,
@@ -426,6 +428,8 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 		qb = qb.Order(ent.Desc(item.FieldCreatedAt))
 	case "updatedAt":
 		qb = qb.Order(ent.Desc(item.FieldUpdatedAt))
+	case "assetId":
+		qb = qb.Order(ent.Asc(item.FieldAssetID))
 	default: // "name"
 		qb = qb.Order(ent.Asc(item.FieldName))
 	}

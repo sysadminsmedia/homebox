@@ -225,6 +225,10 @@
         "zh-MO": "Chinees (Macau)",
         "zh-TW": "Chinees (traditioneel)"
     },
+    "languages.da-DK": "Deens",
+    "languages.fi.FI": "Fins",
+    "languages.ro-RO": "Roemeens",
+    "languages.sk-SK": "Slowaaks",
     "locations": {
         "child_locations": "Kind Locaties",
         "collapse_tree": "Structuur invouwen",

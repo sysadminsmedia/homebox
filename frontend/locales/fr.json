@@ -82,11 +82,16 @@
         }
     },
     "global": {
+        "add": "Ajouter",
         "build": "Version : { build }",
         "confirm": "Confirmer",
         "create": "Créer",
         "create_and_add": "Créer et en ajouter un autre",
         "created": "Créé",
+        "delete": "Supprimer",
+        "details": "Détails",
+        "duplicate": "Dupliquer",
+        "edit": "Modifier",
         "email": "Courriel",
         "follow_dev": "Suivre le développeur",
         "github": "Projet GitHub",
@@ -94,9 +99,11 @@
         "join_discord": "Rejoindre le Discord",
         "labels": "Étiquettes",
         "locations": "Emplacements",
+        "maintenance": "Maintenance",
         "name": "Nom",
         "password": "Mot de passe",
         "read_docs": "Lire la documentation",
+        "save": "Lire plus tard",
         "search": "Rechercher",
         "sign_out": "Se déconnecter",
         "submit": "Soumettre",
@@ -164,6 +171,10 @@
         "zh-MO": "Chinois (Macao)",
         "zh-TW": "Chinois (traditionnel)"
     },
+    "languages.da-DK": "Danois",
+    "languages.fi.FI": "Finnois",
+    "languages.ro-RO": "Roumain",
+    "languages.sk-SK": "Slovaque",
     "locations": {
         "no_results": "Aucun emplacement trouvé"
     },
@@ -195,8 +206,8 @@
         },
         "monthly_average": "Moyenne mensuelle",
         "toast": {
-            "failed_to_create": "Échec de suppression de l'entrée",
-            "failed_to_delete": "Échec de création de l'entrée",
+            "failed_to_create": "Échec de création de l'entrée",
+            "failed_to_delete": "Échec de suppression de l'entrée",
             "failed_to_update": "Échec de mise à jour de l'entrée"
         },
         "total_cost": "Coût total",

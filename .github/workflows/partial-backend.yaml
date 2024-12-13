@@ -34,3 +34,8 @@ jobs:
 
       - name: Test
         run: task go:coverage
+
+      - name: Validate OpenAPI definition
+        uses: swaggerexpert/swagger-editor-validate@v1
+        with:
+          definition-file: backend/app/api/static/docs/swagger.json

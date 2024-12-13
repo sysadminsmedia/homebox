@@ -9,6 +9,19 @@
             }
         },
         "global": {
+            "date_time": {
+                "ago": "{0} ezelőtt",
+                "in": "{0} múlva",
+                "just-now": "épp most",
+                "last-month": "múlt hónapban",
+                "last-week": "múlt héten",
+                "last-year": "tavaly",
+                "next-month": "jövő hónapban",
+                "next-week": "jövő héten",
+                "next-year": "jövőre",
+                "tomorrow": "holnap",
+                "yesterday": "tegnap"
+            },
             "page_qr_code": {
                 "page_url": "Oldal URL-je"
             },
@@ -18,6 +31,8 @@
         },
         "item": {
             "create_modal": {
+                "item_description": "Tétel leírása",
+                "item_name": "Tétel neve",
                 "photo_button": "Fénykép 📷",
                 "title": "Új elem létrehozása"
             },
@@ -27,17 +42,28 @@
                     "items": "Tételek",
                     "no_items": "Nincs megjeleníthető elem",
                     "table": "Táblázat"
+                },
+                "table": {
+                    "page": "Oldal",
+                    "rows_per_page": "Sorok oldalanként"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_description": "Címke leírása",
+                "label_name": "Címke neve",
                 "title": "Címke létrehozása"
             }
         },
         "location": {
             "create_modal": {
+                "location_description": "Hely leírása",
+                "location_name": "Hely neve",
                 "title": "Új hely létrehozása"
+            },
+            "selector": {
+                "parent_location": "Ezt tartalmazó hely"
             },
             "tree": {
                 "no_locations": "Nincs elérhető hely. Adj hozzá új helyet a\n `<`span class=\"link-primary\"`>`Létrehozás`<`/span`>` gombbal a navigációs sávon."
@@ -45,11 +71,16 @@
         }
     },
     "global": {
+        "add": "Hozzáadás",
         "build": "Build: { build }",
         "confirm": "Megerősítés",
         "create": "Létrehozás",
         "create_and_add": "Létrehozás és újabb hozzáadása",
         "created": "Létrehozva",
+        "delete": "Törlés",
+        "details": "Részletek",
+        "duplicate": "Másolás",
+        "edit": "Szerkesztés",
         "email": "Email",
         "follow_dev": "Kövesd a fejlesztőt",
         "github": "Github projekt",
@@ -57,14 +88,28 @@
         "join_discord": "Csatlakozz a Discordhoz",
         "labels": "Címkék",
         "locations": "Helyek",
+        "maintenance": "Karbantartás",
         "name": "Név",
         "password": "Jelszó",
         "read_docs": "Olvasd el a dokumentációt",
+        "save": "Mentés",
         "search": "Keresés",
         "sign_out": "Kijelentkezés",
         "submit": "Elküldés",
+        "update": "Módosítás",
+        "value": "Érték",
         "version": "Verzió: { version }",
         "welcome": "Üdv, { username }"
+    },
+    "home": {
+        "labels": "Címkék",
+        "quick_statistics": "Gyors statisztika",
+        "recently_added": "Nemrég hozzáadott",
+        "storage_locations": "Tárolási helyek",
+        "total_items": "Összes tétel",
+        "total_labels": "Összes címke",
+        "total_locations": "Összes hely",
+        "total_value": "Teljes érték"
     },
     "index": {
         "disabled_registration": "Regisztráció kikapcsolva",
@@ -80,32 +125,71 @@
     },
     "items": {
         "add": "Hozzáadás",
+        "advanced": "Haladó",
+        "archived": "Archivált",
+        "asset_id": "Eszközazonosító",
+        "attachment": "Melléklet",
+        "attachments": "Mellékletek",
+        "changes_persisted_immediately": "A mellékletek módosításai azonnal mentésre kerülnek",
         "created_at": "Létrehozás dátuma",
         "custom_fields": "Egyedi mezők",
+        "description": "Leírás",
+        "details": "Részletek",
+        "drag_and_drop": "Húzd ide a fájlokat, vagy kattints a fájlok kiválasztásához",
+        "edit_details": "Részletek szerkesztése",
         "field_selector": "Mezőválasztó",
         "field_value": "Mező értéke",
         "first": "Első",
         "include_archive": "Archivált elemek belefoglalása",
+        "insured": "Biztosítva",
         "last": "Utolsó",
+        "lifetime_warranty": "Élettartam garancia",
+        "location": "Hely",
+        "manual": "Kézikönyv",
+        "manuals": "Kézikönyvek",
+        "manufacturer": "Gyártó",
+        "model_number": "Modellszám",
+        "name": "Név",
         "negate_labels": "Címkeválasztás negálása",
         "next_page": "Következő oldal",
         "no_results": "Egy elem sem található",
+        "notes": "Megjegyzések",
         "options": "Opciók",
         "order_by": "Rendezés",
         "pages": "{page}/{totalPages} oldal",
+        "parent_item": "Szülő tétel",
+        "photo": "Fénykép",
+        "photos": "Fényképek",
         "prev_page": "Előző oldal",
+        "purchase_date": "Vásárlás dátuma",
+        "purchase_details": "Vásárlás részletei",
+        "purchase_price": "Beszerzési ár",
+        "purchased_from": "Beszerzési hely",
+        "quantity": "Mennyiség",
         "query_id": "Eszközazonosító szám lekérdezése: { id }",
+        "receipt": "Számla",
+        "receipts": "Számlák",
         "reset_search": "Alaphelyzet",
         "results": "{total} találat",
+        "serial_number": "Sorozatszám",
+        "show_advanced_view_options": "További beállítások megjelenítése",
+        "sold_at": "Eladás dátuma",
+        "sold_details": "Eladás részletei",
+        "sold_price": "Eladási ár",
+        "sold_to": "Vevő",
         "tip_1": "A hely- és címkeszűrők a „vagy” műveletet használják. Ha egynél többet választasz ki,\n bármelyik egyezése esetén megjelenik a tétel.",
         "tip_2": "A '#' előtaggal ellátott keresések egy eszközazonosítót fognak lekérdezni (például '#000-001')",
         "tip_3": "A mezőszűrők a „vagy” műveletet használják. Ha egynél többet választasz ki,\n bármelyik egyezése esetén megjelenik a tétel.",
         "tips": "Tippek",
         "tips_sub": "Tippek a kereséshez",
-        "updated_at": "Változtatás dátuma"
+        "updated_at": "Változtatás dátuma",
+        "warranty": "Garancia",
+        "warranty_details": "Garancia részletei",
+        "warranty_expires": "Garancia vége"
     },
     "labels": {
-        "no_results": "Nem található címke"
+        "no_results": "Nem található címke",
+        "update_label": "Címke módosítása"
     },
     "languages": {
         "ca": "Katalán",
@@ -115,20 +199,30 @@
         "fr": "Francia",
         "hu": "Magyar",
         "it": "Olasz",
+        "ja-JP": "Japán",
         "nl": "Holland",
         "pl": "Lengyel",
         "pt-BR": "Portugál (brazíliai)",
+        "pt-PT": "Portugál (Portugália)",
         "ru": "Orosz",
         "sl": "Szlovén",
         "sv": "Svéd",
         "tr": "Török",
+        "uk-UA": "Ukrán",
         "zh-CN": "Kínai (egyszerűsített)",
         "zh-HK": "Kínai (hongkongi)",
         "zh-MO": "Kínai (makaói)",
         "zh-TW": "Kínai (hagyományos)"
     },
+    "languages.da-DK": "Dán",
+    "languages.fi.FI": "Finn",
+    "languages.ro-RO": "Román",
+    "languages.sk-SK": "Szlovák",
     "locations": {
-        "no_results": "Nem található hely"
+        "child_locations": "Tartalmazott helyek",
+        "collapse_tree": "Fanézet becsukása",
+        "no_results": "Nem található hely",
+        "update_location": "Hely módosítása"
     },
     "maintenance": {
         "filter": {
@@ -166,6 +260,9 @@
         "total_entries": "Összes bejegyzés"
     },
     "menu": {
+        "create_item": "Tétel / Eszköz",
+        "create_label": "Címke",
+        "create_location": "Hely",
         "home": "Kezdőlap",
         "locations": "Helyek",
         "maintenance": "Karbantartás",
@@ -182,6 +279,7 @@
         "delete_account_sub": "Törlöd a fiókodat és az összes kapcsolódó adatot. Ezt a műveletet nem lehet visszavonni.",
         "display_header": "{ currentValue, select, true {Fejléc elrejtése} false {Fejléc megjelenítése} other{Nincs találat}}",
         "enabled": "Engedélyezve",
+        "example": "Példa",
         "gen_invite": "Meghívó link létrehozása",
         "group_settings": "Csoport beállításai",
         "group_settings_sub": "Ezek a csoport közös beállításai. Lehet hogy frissítened kell az oldalt a böngésződben a beállítások megváltoztatása után.",

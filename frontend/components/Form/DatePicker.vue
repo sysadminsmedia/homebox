@@ -3,13 +3,27 @@
     <label class="label">
       <span class="label-text"> {{ label }} </span>
     </label>
-    <VueDatePicker v-model="selected" :enable-time-picker="false" clearable :dark="isDark" :teleport="true" />
+    <VueDatePicker
+      v-model="selected"
+      :enable-time-picker="false"
+      clearable
+      :dark="isDark"
+      :teleport="true"
+      :format="formatDate"
+    />
   </div>
   <div v-else class="sm:grid sm:grid-cols-4 sm:items-start sm:gap-4">
     <label class="label">
       <span class="label-text"> {{ label }} </span>
     </label>
-    <VueDatePicker v-model="selected" :enable-time-picker="false" clearable :dark="isDark" :teleport="true" />
+    <VueDatePicker
+      v-model="selected"
+      :enable-time-picker="false"
+      clearable
+      :dark="isDark"
+      :teleport="true"
+      :format="formatDate"
+    />
   </div>
 </template>
 
@@ -37,6 +51,8 @@
   });
 
   const isDark = useIsDark();
+
+  const formatDate = (date: Date | string | number) => fmtDate(date, "human", "date");
 
   const selected = computed<Date | null>({
     get() {
