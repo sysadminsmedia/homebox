@@ -116,6 +116,7 @@ export interface ItemOut {
   /** Sold */
   soldTime: Date | string;
   soldTo: string;
+  syncChildItemsLocations: boolean;
   updatedAt: Date | string;
   warrantyDetails: string;
   warrantyExpires: Date | string;
@@ -192,6 +193,7 @@ export interface ItemUpdate {
   soldTime: Date | string;
   /** @maxLength 255 */
   soldTo: string;
+  syncChildItemsLocations: boolean;
   warrantyDetails: string;
   warrantyExpires: Date | string;
 }

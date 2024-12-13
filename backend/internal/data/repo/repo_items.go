@@ -67,14 +67,15 @@ type (
 	}
 
 	ItemUpdate struct {
-		ParentID    uuid.UUID `json:"parentId"    extensions:"x-nullable,x-omitempty"`
-		ID          uuid.UUID `json:"id"`
-		AssetID     AssetID   `json:"assetId"     swaggertype:"string"`
-		Name        string    `json:"name"        validate:"required,min=1,max=255"`
-		Description string    `json:"description" validate:"max=1000"`
-		Quantity    int       `json:"quantity"`
-		Insured     bool      `json:"insured"`
-		Archived    bool      `json:"archived"`
+		ParentID                uuid.UUID `json:"parentId"                extensions:"x-nullable,x-omitempty"`
+		ID                      uuid.UUID `json:"id"`
+		AssetID                 AssetID   `json:"assetId"                 swaggertype:"string"`
+		Name                    string    `json:"name"                    validate:"required,min=1,max=255"`
+		Description             string    `json:"description"             validate:"max=1000"`
+		Quantity                int       `json:"quantity"`
+		Insured                 bool      `json:"insured"`
+		Archived                bool      `json:"archived"`
+		SyncChildItemsLocations bool      `json:"syncChildItemsLocations"`
 
 		// Edges
 		LocationID uuid.UUID   `json:"locationId"`
@@ -92,12 +93,12 @@ type (
 
 		// Purchase
 		PurchaseTime  types.Date `json:"purchaseTime"`
-		PurchaseFrom  string     `json:"purchaseFrom" validate:"max=255"`
+		PurchaseFrom  string     `json:"purchaseFrom"  validate:"max=255"`
 		PurchasePrice float64    `json:"purchasePrice" extensions:"x-nullable,x-omitempty"`
 
 		// Sold
 		SoldTime  types.Date `json:"soldTime"`
-		SoldTo    string     `json:"soldTo" validate:"max=255"`
+		SoldTo    string     `json:"soldTo"    validate:"max=255"`
 		SoldPrice float64    `json:"soldPrice" extensions:"x-nullable,x-omitempty"`
 		SoldNotes string     `json:"soldNotes"`
 
@@ -137,6 +138,8 @@ type (
 		Parent *ItemSummary `json:"parent,omitempty" extensions:"x-nullable,x-omitempty"`
 		ItemSummary
 		AssetID AssetID `json:"assetId,string"`
+
+		SyncChildItemsLocations bool `json:"syncChildItemsLocations"`
 
 		SerialNumber string `json:"serialNumber"`
 		ModelNumber  string `json:"modelNumber"`
@@ -250,12 +253,13 @@ func mapItemOut(item *ent.Item) ItemOut {
 	}
 
 	return ItemOut{
-		Parent:           parent,
-		AssetID:          AssetID(item.AssetID),
-		ItemSummary:      mapItemSummary(item),
-		LifetimeWarranty: item.LifetimeWarranty,
-		WarrantyExpires:  types.DateFromTime(item.WarrantyExpires),
-		WarrantyDetails:  item.WarrantyDetails,
+		Parent:                  parent,
+		AssetID:                 AssetID(item.AssetID),
+		ItemSummary:             mapItemSummary(item),
+		LifetimeWarranty:        item.LifetimeWarranty,
+		WarrantyExpires:         types.DateFromTime(item.WarrantyExpires),
+		WarrantyDetails:         item.WarrantyDetails,
+		SyncChildItemsLocations: item.SyncChildItemsLocations,
 
 		// Identification
 		SerialNumber: item.SerialNumber,
@@ -610,7 +614,8 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 		SetWarrantyExpires(data.WarrantyExpires.Time()).
 		SetWarrantyDetails(data.WarrantyDetails).
 		SetQuantity(data.Quantity).
-		SetAssetID(int(data.AssetID))
+		SetAssetID(int(data.AssetID)).
+		SetSyncChildItemsLocations(data.SyncChildItemsLocations)
 
 	currentLabels, err := e.db.Item.Query().Where(item.ID(data.ID)).QueryLabel().All(ctx)
 	if err != nil {
@@ -635,6 +640,28 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 		q.SetParentID(data.ParentID)
 	} else {
 		q.ClearParent()
+	}
+
+	if data.SyncChildItemsLocations {
+		children, err := e.db.Item.Query().Where(item.ID(data.ID)).QueryChildren().All(ctx)
+		if err != nil {
+			return ItemOut{}, err
+		}
+		location := data.LocationID
+
+		for _, child := range children {
+			childLocation, err := child.QueryLocation().First(ctx)
+			if err != nil {
+				return ItemOut{}, err
+			}
+
+			if location != childLocation.ID {
+				err = child.Update().SetLocationID(location).Exec(ctx)
+				if err != nil {
+					return ItemOut{}, err
+				}
+			}
+		}
 	}
 
 	err = q.Exec(ctx)
