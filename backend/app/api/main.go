@@ -39,6 +39,7 @@ var (
 
 func build() string {
 	short := commit
+	//goland:noinspection GoBoolExpressions
 	if len(short) > 7 {
 		short = short[:7]
 	}
@@ -71,6 +72,13 @@ func main() {
 func run(cfg *config.Config) error {
 	app := new(cfg)
 	app.setupLogger()
+
+	if (cfg.Proxy.HeaderExternalUserName != "" || cfg.Proxy.HeaderExternalUserId != "") && len(cfg.Proxy.TrustedHosts) == 0 {
+		panic("To use External User login, Trusted Hosts must be set")
+	}
+	if cfg.Proxy.HeaderExternalUserName != "" && cfg.Proxy.HeaderExternalUserId == "" {
+		panic("External User Name header is set but External User ID Header is not set")
+	}
 
 	// =========================================================================
 	// Initialize Database & Repos
@@ -173,13 +181,21 @@ func run(cfg *config.Config) error {
 	logger := log.With().Caller().Logger()
 
 	router := chi.NewMux()
-	router.Use(
+	var middlewares []func(handler http.Handler) http.Handler
+	if len(app.conf.Proxy.TrustedHosts) > 0 {
+		middlewares = append(middlewares,
+			mid.TrustedIps(logger, app.conf.Proxy.TrustedHosts),
+			middleware.RealIP,
+		)
+	}
+	middlewares = append(middlewares,
 		middleware.RequestID,
-		middleware.RealIP,
 		mid.Logger(logger),
 		middleware.Recoverer,
 		middleware.StripSlashes,
 	)
+
+	router.Use(middlewares...)
 
 	chain := errchain.New(mid.Errors(logger))
 
