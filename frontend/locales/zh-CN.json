@@ -159,6 +159,7 @@
         "model_number": "型号",
         "name": "名称",
         "negate_labels": "取消选中的标签",
+        "only_without_photo": "仅无照片的商品",
         "next_page": "下一页",
         "no_results": "没有可显示的物品",
         "notes": "笔记",

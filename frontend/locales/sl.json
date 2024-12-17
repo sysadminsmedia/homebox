@@ -165,6 +165,7 @@
         "next_page": "Naslednja stran",
         "no_results": "Ni najdenih predmetov",
         "notes": "Opombe",
+        "only_without_photo": "Samo izdelki brez fotografije",
         "options": "Možnosti",
         "order_by": "Razvrsti po",
         "pages": "Stran { page } od { totalPages }",

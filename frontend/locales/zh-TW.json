@@ -12,6 +12,7 @@
         "created_at": "創建於",
         "last": "最後一項",
         "negate_labels": "取消選定的標籤",
+        "only_without_photo": "僅無照片的商品",
         "next_page": "下一頁",
         "no_results": "沒有找到項目",
         "options": "選項",

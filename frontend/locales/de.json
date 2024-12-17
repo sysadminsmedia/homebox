@@ -162,6 +162,7 @@
         "model_number": "Modelnummer",
         "name": "Name",
         "negate_labels": "Ausgewählte Etiketten negieren",
+        "only_without_photo": "Nur Artikel ohne Foto",
         "next_page": "Nächste Seite",
         "no_results": "Keine Elemente gefunden",
         "notes": "Anmerkungen",

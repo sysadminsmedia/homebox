@@ -165,6 +165,7 @@
         "next_page": "Volgende pagina",
         "no_results": "Geen Items Gevonden",
         "notes": "Opmerkingen",
+        "only_without_photo": "Alleen items zonder foto",
         "options": "Opties",
         "order_by": "Sorteren op",
         "pages": "Pagina { page } van { totalPages }",
