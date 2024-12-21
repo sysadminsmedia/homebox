@@ -480,6 +480,9 @@
               <h1 class="text-wrap pb-1 text-2xl">
                 {{ item ? item.name : "" }}
               </h1>
+              <div class="flex flex-wrap gap-2 pb-1">
+                <LabelChip v-for="label in item?.labels || []" :key="label.id" :label="label" size="sm" />
+              </div>
               <div class="flex flex-wrap gap-1 text-wrap text-xs">
                 <div>
                   Created
