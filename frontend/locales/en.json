@@ -162,6 +162,7 @@
         "model_number": "Model Number",
         "name": "Name",
         "negate_labels": "Negate Selected Labels",
+        "only_without_photo": "Only items without photo",
         "next_page": "Next Page",
         "no_results": "No Items Found",
         "notes": "Notes",

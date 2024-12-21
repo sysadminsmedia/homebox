@@ -132,6 +132,7 @@
         "include_archive": "Inclure les éléments archivés",
         "last": "Dernier",
         "negate_labels": "Négliger les étiquettes sélectionnées",
+        "only_without_photo": "Seulement des articles sans photo",
         "next_page": "Page suivante",
         "no_results": "Aucun élément trouvé",
         "options": "Options",
