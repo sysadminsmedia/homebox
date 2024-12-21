@@ -54,6 +54,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		a.bus,
 		v1.WithMaxUploadSize(a.conf.Web.MaxUploadSize),
 		v1.WithRegistration(a.conf.Options.AllowRegistration),
+		v1.WithHeaderAuthEnabled(a.conf.Proxy.HeaderExternalUserId != ""),
 		v1.WithDemoStatus(a.conf.Demo), // Disable Password Change in Demo Mode
 		v1.WithURL(fmt.Sprintf("%s:%s", a.conf.Web.Host, a.conf.Web.Port)),
 	)

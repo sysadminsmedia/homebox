@@ -51,6 +51,12 @@ func WithRegistration(allowRegistration bool) func(*V1Controller) {
 	}
 }
 
+func WithHeaderAuthEnabled(headerAuthEnabled bool) func(*V1Controller) {
+	return func(ctrl *V1Controller) {
+		ctrl.headerAuthEnabled = headerAuthEnabled
+	}
+}
+
 func WithSecureCookies(secure bool) func(*V1Controller) {
 	return func(ctrl *V1Controller) {
 		ctrl.cookieSecure = secure
@@ -70,6 +76,7 @@ type V1Controller struct {
 	maxUploadSize     int64
 	isDemo            bool
 	allowRegistration bool
+	headerAuthEnabled bool
 	bus               *eventbus.EventBus
 	url               string
 }
@@ -91,6 +98,7 @@ type (
 		Build             Build    `json:"build"`
 		Demo              bool     `json:"demo"`
 		AllowRegistration bool     `json:"allowRegistration"`
+		HeaderAuthEnabled bool     `json:"headerAuthEnabled"`
 	}
 )
 
@@ -125,6 +133,7 @@ func (ctrl *V1Controller) HandleBase(ready ReadyFunc, build Build) errchain.Hand
 			Build:             build,
 			Demo:              ctrl.isDemo,
 			AllowRegistration: ctrl.allowRegistration,
+			HeaderAuthEnabled: ctrl.headerAuthEnabled,
 		})
 	}
 }
