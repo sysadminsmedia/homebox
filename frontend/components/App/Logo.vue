@@ -3,6 +3,8 @@
     viewBox="0 0 10817 9730"
     xmlns="http://www.w3.org/2000/svg"
     xml:space="preserve"
+    height="250"
+    width="250"
     style="
       fill-rule: evenodd;
       clip-rule: evenodd;
