@@ -1,5 +1,7 @@
 <template>
   <svg
+    height="250px"
+    width="250px"
     viewBox="0 0 10817 9730"
     xmlns="http://www.w3.org/2000/svg"
     xml:space="preserve"
@@ -9,8 +11,6 @@
       stroke-linecap: round;
       stroke-linejoin: round;
       stroke-miterlimit: 5.42683;
-      height: 250px; /* Set the height directly in the SVG */
-      width: 250px; /* Set the width directly in the SVG */
     "
   >
     <path
