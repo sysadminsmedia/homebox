@@ -3,7 +3,6 @@
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
-  import { capitalize } from "~~/lib/strings";
   import Autocomplete from "~~/components/Form/Autocomplete.vue";
   import MdiDelete from "~icons/mdi/delete";
   import MdiPencil from "~icons/mdi/pencil";
@@ -378,7 +377,7 @@
   });
 
   const attachmentOpts = Object.entries(AttachmentTypes).map(([key, value]) => ({
-    text: capitalize(key),
+    text: key[0].toUpperCase() + key.slice(1),
     value,
   }));
 
