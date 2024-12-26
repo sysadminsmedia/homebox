@@ -486,6 +486,7 @@
               </h1>
               <div class="flex flex-wrap gap-2 pb-1">
                 <LabelChip v-for="label in item?.labels || []" :key="label.id" :label="label" size="sm" />
+                <span v-if="(item?.labels || []).length === 0" class="text-gray-500">No labels</span>
               </div>
               <div class="flex flex-wrap gap-1 text-wrap text-xs">
                 <div>
