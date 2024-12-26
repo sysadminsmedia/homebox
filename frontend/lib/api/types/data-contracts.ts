@@ -444,10 +444,8 @@ export interface ItemAttachmentToken {
 }
 
 export interface LoginForm {
-  /** @example "admin" */
   password: string;
   stayLoggedIn: boolean;
-  /** @example "admin@admin.com" */
   username: string;
 }
 
