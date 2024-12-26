@@ -31,7 +31,7 @@ describe("factorRange", () => {
 
     // End should be 10 days from now
     expect(end).toBeInstanceOf(Date);
-    expect(end.getFullYear()).toBe(new Date().getFullYear());
+    expect(end.getFullYear()).toBe(new Date().setDate(new Date().getDate() + 10).getFullYear());
   });
 });
 
