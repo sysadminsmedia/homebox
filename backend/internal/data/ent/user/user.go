@@ -34,6 +34,8 @@ const (
 	FieldRole = "role"
 	// FieldActivatedOn holds the string denoting the activated_on field in the database.
 	FieldActivatedOn = "activated_on"
+	// FieldExternalUserID holds the string denoting the external_user_id field in the database.
+	FieldExternalUserID = "external_user_id"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
 	EdgeGroup = "group"
 	// EdgeAuthTokens holds the string denoting the auth_tokens edge name in mutations.
@@ -77,6 +79,7 @@ var Columns = []string{
 	FieldSuperuser,
 	FieldRole,
 	FieldActivatedOn,
+	FieldExternalUserID,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "users"
@@ -198,6 +201,11 @@ func ByRole(opts ...sql.OrderTermOption) OrderOption {
 // ByActivatedOn orders the results by the activated_on field.
 func ByActivatedOn(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldActivatedOn, opts...).ToFunc()
+}
+
+// ByExternalUserID orders the results by the external_user_id field.
+func ByExternalUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExternalUserID, opts...).ToFunc()
 }
 
 // ByGroupField orders the results by group field.

@@ -7,5 +7,7 @@ services:
       args:
         - COMMIT=head
         - BUILD_TIME=0001-01-01T00:00:00Z
+      extra_hosts:
+        - "host.docker.internal:host-gateway"
     ports:
       - 3100:7745

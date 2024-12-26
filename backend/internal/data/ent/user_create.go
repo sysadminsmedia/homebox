@@ -126,6 +126,20 @@ func (uc *UserCreate) SetNillableActivatedOn(t *time.Time) *UserCreate {
 	return uc
 }
 
+// SetExternalUserID sets the "external_user_id" field.
+func (uc *UserCreate) SetExternalUserID(s string) *UserCreate {
+	uc.mutation.SetExternalUserID(s)
+	return uc
+}
+
+// SetNillableExternalUserID sets the "external_user_id" field if the given value is not nil.
+func (uc *UserCreate) SetNillableExternalUserID(s *string) *UserCreate {
+	if s != nil {
+		uc.SetExternalUserID(*s)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(u uuid.UUID) *UserCreate {
 	uc.mutation.SetID(u)
@@ -361,6 +375,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.ActivatedOn(); ok {
 		_spec.SetField(user.FieldActivatedOn, field.TypeTime, value)
 		_node.ActivatedOn = value
+	}
+	if value, ok := uc.mutation.ExternalUserID(); ok {
+		_spec.SetField(user.FieldExternalUserID, field.TypeString, value)
+		_node.ExternalUserID = value
 	}
 	if nodes := uc.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
