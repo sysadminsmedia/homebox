@@ -25,18 +25,18 @@ describe("zeroTime", () => {
 describe("factorRange", () => {
   test("should return a range of dates", () => {
     const [start, end] = factorRange(10);
-    
+
     // Start should be today
     expect(start).toBeInstanceOf(Date);
     expect(start.getFullYear()).toBe(new Date().getFullYear());
 
     // End should be 10 days from now
     expect(end).toBeInstanceOf(Date);
-    
+
     // Set the future date so it works even in late December when the year changes
-    let futureDate = new Date();
-    futureDate.setDate(futureDate.getDate() + 10);  // Adds 10 days to the current date
-    
+    const futureDate = new Date();
+    futureDate.setDate(futureDate.getDate() + 10); // Adds 10 days to the current date
+
     expect(end.getFullYear()).toBe(futureDate.getFullYear());
   });
 });
