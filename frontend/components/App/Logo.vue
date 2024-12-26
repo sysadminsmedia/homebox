@@ -3,14 +3,14 @@
     viewBox="0 0 10817 9730"
     xmlns="http://www.w3.org/2000/svg"
     xml:space="preserve"
-    height="250"
-    width="250"
     style="
       fill-rule: evenodd;
       clip-rule: evenodd;
       stroke-linecap: round;
       stroke-linejoin: round;
       stroke-miterlimit: 5.42683;
+      height: 250px; /* Set the height directly in the SVG */
+      width: 250px; /* Set the width directly in the SVG */
     "
   >
     <path
