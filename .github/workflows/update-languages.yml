@@ -1,0 +1,67 @@
+name: Update Languages
+
+on:
+  pull_request:
+    paths:
+      - 'frontend/locales/en.json'
+
+jobs:
+  update-languages:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: sudo apt-get install -y jq curl
+
+      - name: Fetch languages from Weblate
+        id: fetch_languages
+        run: |
+          # Fetch the language list from the Weblate instance
+          LANGUAGES=$(curl -s https://translate.sysadminsmedia.com/languages/ | jq -r '.[] | "\"\(.code)\": \"\(.name)\""' | paste -sd, -)
+          echo "::set-output name=languages_json::{${LANGUAGES}}"
+
+      - name: Check for changes in languages
+        id: check_changes
+        run: |
+          # Extract the existing languages from the JSON file
+          EXISTING_LANGUAGES=$(jq -c '.languages' frontend/locales/en.json)
+
+          # Compare the new languages from Weblate with the existing ones
+          if [ "{${{ steps.fetch_languages.outputs.languages_json }}}" = "${EXISTING_LANGUAGES}" ]; then
+            echo "No new languages detected"
+            echo "no_changes=true" >> $GITHUB_ENV
+          else
+            echo "New languages detected"
+            echo "no_changes=false" >> $GITHUB_ENV
+          fi
+
+      - name: Update JSON file if necessary
+        if: env.no_changes == 'false'
+        run: |
+          # Backup the original file
+          cp frontend/locales/en.json frontend/locales/en.json.bak
+
+          # Update the languages section in en.json
+          jq --argjson newLanguages "{${{ steps.fetch_languages.outputs.languages_json }}}" '
+            .languages = $newLanguages
+          ' frontend/locales/en.json > frontend/locales/en.json.tmp
+
+          # Move the temporary file back to en.json
+          mv frontend/locales/en.json.tmp frontend/locales/en.json
+
+      - name: Commit and push changes
+        if: env.no_changes == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add frontend/locales/en.json
+          git commit -m "Update languages in en.json"
+          git push
+
+      - name: Output no changes detected
+        if: env.no_changes == 'true'
+        run: echo "No new languages detected"
