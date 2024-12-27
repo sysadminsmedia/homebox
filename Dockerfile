@@ -75,7 +75,7 @@ RUN chmod +x /app/api
 LABEL Name=homebox Version=0.0.1
 LABEL org.opencontainers.image.source="https://github.com/sysadminsmedia/homebox"
 
-# Expose necessary ports
+# Expose necessary ports for Homebox
 EXPOSE 7745
 WORKDIR /app
 
