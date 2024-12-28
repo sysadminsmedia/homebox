@@ -47,8 +47,9 @@ func useDocs(t *testing.T, num int) []DocumentOut {
 func TestDocumentRepository_CreateUpdateDelete(t *testing.T) {
 	temp := t.TempDir()
 	r := DocumentRepository{
-		db:  tClient,
-		dir: temp,
+		db:         tClient,
+		storePath:  temp,
+		connString: "file://" + temp,
 	}
 
 	type args struct {

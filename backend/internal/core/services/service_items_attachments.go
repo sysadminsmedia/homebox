@@ -13,23 +13,23 @@ import (
 )
 
 func (svc *ItemService) AttachmentPath(ctx context.Context, attachmentID uuid.UUID) (*ent.Document, error) {
-	attachment, err := svc.repo.Attachments.Get(ctx, attachmentID)
+	attachments, err := svc.repo.Attachments.Get(ctx, attachmentID)
 	if err != nil {
 		return nil, err
 	}
 
-	return attachment.Edges.Document, nil
+	return attachments.Edges.Document, nil
 }
 
 func (svc *ItemService) AttachmentUpdate(ctx Context, itemID uuid.UUID, data *repo.ItemAttachmentUpdate) (repo.ItemOut, error) {
 	// Update Attachment
-	attachment, err := svc.repo.Attachments.Update(ctx, data.ID, data)
+	attachments, err := svc.repo.Attachments.Update(ctx, data.ID, data)
 	if err != nil {
 		return repo.ItemOut{}, err
 	}
 
 	// Update Document
-	attDoc := attachment.Edges.Document
+	attDoc := attachments.Edges.Document
 	_, err = svc.repo.Docs.Rename(ctx, attDoc.ID, data.Title)
 	if err != nil {
 		return repo.ItemOut{}, err
@@ -72,7 +72,7 @@ func (svc *ItemService) AttachmentDelete(ctx context.Context, gid, itemID, attac
 		return err
 	}
 
-	attachment, err := svc.repo.Attachments.Get(ctx, attachmentID)
+	attachments, err := svc.repo.Attachments.Get(ctx, attachmentID)
 	if err != nil {
 		return err
 	}
@@ -84,7 +84,7 @@ func (svc *ItemService) AttachmentDelete(ctx context.Context, gid, itemID, attac
 	}
 
 	// Remove File
-	err = os.Remove(attachment.Edges.Document.Path)
+	err = os.Remove(attachments.Edges.Document.Path)
 
 	return err
 }
