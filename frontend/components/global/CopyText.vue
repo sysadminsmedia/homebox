@@ -1,5 +1,5 @@
 <template>
-  <button class="btn btn-square btn-outline btn-primary btn-sm mr-2" @click="copyText">
+  <button @click="copyText">
     <label
       class="swap swap-rotate"
       :class="{
@@ -21,28 +21,28 @@
         }"
       />
     </label>
+    <Teleport to="#app">
+      <BaseModal v-model="copyError">
+        <div class="space-y-2">
+          <p>
+            {{ $t("components.global.copy_text.failed_to_copy") }}
+            {{ isNotHttps ? $t("components.global.copy_text.https_required") : "" }}
+          </p>
+          <p class="text-sm">
+            {{ $t("components.global.copy_text.learn_more") }}
+            <a
+              href="https://homebox.software/en/tips-tricks.html#copy-to-clipboard"
+              class="text-primary hover:underline"
+              target="_blank"
+              rel="noopener"
+            >
+              {{ $t("components.global.copy_text.documentation") }}
+            </a>
+          </p>
+        </div>
+      </BaseModal></Teleport
+    >
   </button>
-  <div>
-    <BaseModal v-model="copyError">
-      <div class="space-y-2">
-        <p>
-          {{ $t("components.global.copy_text.failed_to_copy") }}
-          {{ isNotHttps ? $t("components.global.copy_text.https_required") : "" }}
-        </p>
-        <p class="text-sm">
-          {{ $t("components.global.copy_text.learn_more") }}
-          <a
-            href="https://homebox.software/en/tips-tricks.html#copy-to-clipboard"
-            class="text-primary hover:underline"
-            target="_blank"
-            rel="noopener"
-          >
-            {{ $t("components.global.copy_text.documentation") }}
-          </a>
-        </p>
-      </div>
-    </BaseModal>
-  </div>
 </template>
 
 <script setup lang="ts">
