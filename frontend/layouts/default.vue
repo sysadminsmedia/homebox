@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="app">
     <!--
     Confirmation Modal is a singleton used by all components so we render
     it here to ensure it's always available. Possibly could move this further
