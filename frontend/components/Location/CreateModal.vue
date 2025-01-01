@@ -7,9 +7,16 @@
         v-model="form.name"
         :trigger-focus="focused"
         :autofocus="true"
-        label="Location Name"
+        :required="true"
+        :label="$t('components.location.create_modal.location_name')"
+        :max-length="255"
+        :min-length="1"
       />
-      <FormTextArea v-model="form.description" label="Location Description" />
+      <FormTextArea
+        v-model="form.description"
+        :label="$t('components.location.create_modal.location_description')"
+        :max-length="1000"
+      />
       <LocationSelector v-model="form.parent" />
       <div class="modal-action">
         <div class="flex justify-center">

@@ -30,9 +30,15 @@ export default defineNuxtPlugin(({ vueApp }) => {
     messages: messages(),
   });
   vueApp.use(i18n);
+
+  return {
+    provide: {
+      i18nGlobal: i18n.global,
+    },
+  };
 });
 
-export const messages: Object = () => {
+export const messages = () => {
   const messages: Record<string, any> = {};
   const modules = import.meta.glob("~//locales/**.json", { eager: true });
   for (const path in modules) {

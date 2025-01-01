@@ -10,10 +10,10 @@ import type {
   ItemUpdate,
   MaintenanceEntry,
   MaintenanceEntryCreate,
-  MaintenanceEntryUpdate,
-  MaintenanceLog,
+  MaintenanceEntryWithDetails,
 } from "../types/data-contracts";
-import type { AttachmentTypes, PaginationResult } from "../types/non-generated";
+import type { AttachmentTypes, ItemSummaryPaginationResult } from "../types/non-generated";
+import type { MaintenanceFilters } from "./maintenance.ts";
 import type { Requests } from "~~/lib/requests";
 
 export type ItemsQuery = {
@@ -66,14 +66,11 @@ export class FieldsAPI extends BaseAPI {
   }
 }
 
-type MaintenanceEntryQuery = {
-  scheduled?: boolean;
-  completed?: boolean;
-};
-
-export class MaintenanceAPI extends BaseAPI {
-  getLog(itemId: string, q: MaintenanceEntryQuery = {}) {
-    return this.http.get<MaintenanceLog>({ url: route(`/items/${itemId}/maintenance`, q) });
+export class ItemMaintenanceAPI extends BaseAPI {
+  getLog(itemId: string, filters: MaintenanceFilters = {}) {
+    return this.http.get<MaintenanceEntryWithDetails[]>({
+      url: route(`/items/${itemId}/maintenance`, { status: filters.status?.toString() }),
+    });
   }
 
   create(itemId: string, data: MaintenanceEntryCreate) {
@@ -82,29 +79,18 @@ export class MaintenanceAPI extends BaseAPI {
       body: data,
     });
   }
-
-  delete(itemId: string, entryId: string) {
-    return this.http.delete<void>({ url: route(`/items/${itemId}/maintenance/${entryId}`) });
-  }
-
-  update(itemId: string, entryId: string, data: MaintenanceEntryUpdate) {
-    return this.http.put<MaintenanceEntryUpdate, MaintenanceEntry>({
-      url: route(`/items/${itemId}/maintenance/${entryId}`),
-      body: data,
-    });
-  }
 }
 
 export class ItemsApi extends BaseAPI {
   attachments: AttachmentsAPI;
-  maintenance: MaintenanceAPI;
+  maintenance: ItemMaintenanceAPI;
   fields: FieldsAPI;
 
   constructor(http: Requests, token: string) {
     super(http, token);
     this.fields = new FieldsAPI(http);
     this.attachments = new AttachmentsAPI(http);
-    this.maintenance = new MaintenanceAPI(http);
+    this.maintenance = new ItemMaintenanceAPI(http);
   }
 
   fullpath(id: string) {
@@ -112,7 +98,7 @@ export class ItemsApi extends BaseAPI {
   }
 
   getAll(q: ItemsQuery = {}) {
-    return this.http.get<PaginationResult<ItemSummary>>({ url: route("/items", q) });
+    return this.http.get<ItemSummaryPaginationResult<ItemSummary>>({ url: route("/items", q) });
   }
 
   create(item: ItemCreate) {

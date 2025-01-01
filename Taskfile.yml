@@ -28,7 +28,6 @@ tasks:
       - "./backend/internal/data/**"
       - "./backend/internal/core/services/**/*"
       - "./backend/app/tools/typegen/main.go"
-
   typescript-types:
     desc: Generates typescript types from swagger definition
     cmds:
@@ -52,6 +51,8 @@ tasks:
       - cp ./backend/app/api/static/docs/swagger.json docs/docs/api/openapi-2.0.json
 
   go:run:
+    env:
+      HBOX_DEMO: true
     desc: Starts the backend api server (depends on generate task)
     dir: backend
     deps:

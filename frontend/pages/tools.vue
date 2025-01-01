@@ -39,7 +39,8 @@
         <div class="divide-y divide-gray-300 border-t border-gray-300 px-6 pb-3">
           <DetailAction @action="modals.import = true">
             <template #title> {{ $t("tools.import_export_set.import") }} </template>
-            <div v-html="$t('tools.import_export_set.import_sub')"></div>
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-html="DOMPurify.sanitize($t('tools.import_export_set.import_sub'))"></div>
             <template #button> {{ $t("tools.import_export_set.import_button") }} </template>
           </DetailAction>
           <DetailAction @action="getExportCSV()">
@@ -55,7 +56,8 @@
             <MdiAlert class="mr-2" />
             <span> {{ $t("tools.actions") }} </span>
             <template #description>
-              <div v-html="$t('tools.actions_sub')"></div>
+              <!-- eslint-disable-next-line vue/no-v-html -->
+              <div v-html="DOMPurify.sanitize($t('tools.actions_sub'))"></div>
             </template>
           </BaseSectionHeader>
         </template>
@@ -72,12 +74,14 @@
           </DetailAction>
           <DetailAction @action="resetItemDateTimes">
             <template #title> {{ $t("tools.actions_set.zero_datetimes") }} </template>
-            <div v-html="$t('tools.actions_set.zero_datetimes_sub')"></div>
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-html="DOMPurify.sanitize($t('tools.actions_set.zero_datetimes_sub'))"></div>
             <template #button> {{ $t("tools.actions_set.zero_datetimes_button") }} </template>
           </DetailAction>
           <DetailAction @action="setPrimaryPhotos">
             <template #title> {{ $t("tools.actions_set.set_primary_photo") }} </template>
-            <div v-html="$t('tools.actions_set.set_primary_photo_sub')"></div>
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-html="DOMPurify.sanitize($t('tools.actions_set.set_primary_photo_sub'))"></div>
             <template #button> {{ $t("tools.actions_set.set_primary_photo_button") }} </template>
           </DetailAction>
         </div>
@@ -87,6 +91,7 @@
 </template>
 
 <script setup lang="ts">
+  import DOMPurify from "dompurify";
   import MdiFileChart from "~icons/mdi/file-chart";
   import MdiArrowRight from "~icons/mdi/arrow-right";
   import MdiDatabase from "~icons/mdi/database";

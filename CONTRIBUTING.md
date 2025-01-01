@@ -44,7 +44,7 @@ start command `task go:run`
 
 ### Frontend Development Notes
 
-start command `task: ui:dev`
+start command `task ui:dev`
 
 1. The frontend is a Vue 3 app with Nuxt.js that uses Tailwind and DaisyUI for styling.
 2. We're using Vitest for our automated testing. You can run these with `task ui:watch`.

@@ -5,6 +5,12 @@ import (
 	"embed"
 	"errors"
 	"fmt"
+	"io"
+	"mime"
+	"net/http"
+	"path"
+	"path/filepath"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/hay-kot/httpkit/errchain"
 	httpSwagger "github.com/swaggo/http-swagger/v2" // http-swagger middleware
@@ -14,12 +20,6 @@ import (
 	_ "github.com/sysadminsmedia/homebox/backend/app/api/static/docs"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authroles"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
-	"io"
-	"mime"
-	"net/http"
-	"os"
-	"path"
-	"path/filepath"
 )
 
 const prefix = "/api"
@@ -142,10 +142,13 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 
 		r.Get("/items/{id}/maintenance", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceLogGet(), userMW...))
 		r.Post("/items/{id}/maintenance", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceEntryCreate(), userMW...))
-		r.Put("/items/{id}/maintenance/{entry_id}", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceEntryUpdate(), userMW...))
-		r.Delete("/items/{id}/maintenance/{entry_id}", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceEntryDelete(), userMW...))
 
 		r.Get("/assets/{id}", chain.ToHandlerFunc(v1Ctrl.HandleAssetGet(), userMW...))
+
+		// Maintenance
+		r.Get("/maintenance", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceGetAll(), userMW...))
+		r.Put("/maintenance/{id}", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceEntryUpdate(), userMW...))
+		r.Delete("/maintenance/{id}", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceEntryDelete(), userMW...))
 
 		// Notifiers
 		r.Get("/notifiers", chain.ToHandlerFunc(v1Ctrl.HandleGetUserNotifiers(), userMW...))

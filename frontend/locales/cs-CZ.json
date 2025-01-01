@@ -1,0 +1,287 @@
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "description": "Importujte CSV soubor obashující vaše položky, štítky a lokace. Pro dodatečné informace o formátu použijte \ndokumentaci.",
+                "title": "Importovat CSV Soubor",
+                "upload": "Nahrát"
+            }
+        },
+        "global": {
+            "date_time": {
+                "ago": "Před {0}",
+                "days": "dny",
+                "hour": "Hodina",
+                "hours": "Hodinami",
+                "in": "za {0}",
+                "just-now": "Právě teď",
+                "last-month": "Minulý měsíc",
+                "last-week": "Minulý týden",
+                "last-year": "Minulý rok",
+                "minute": "minuta",
+                "minutes": "minutami",
+                "months": "měsíci",
+                "next-month": "Přiští měsíc",
+                "next-week": "příští týden",
+                "next-year": "příští rok",
+                "second": "sekunda",
+                "seconds": "sekundami",
+                "tomorrow": "zítra",
+                "week": "týden",
+                "weeks": "týdny",
+                "years": "roky",
+                "yesterday": "včera"
+            },
+            "page_qr_code": {
+                "page_url": "URL Stránky"
+            },
+            "password_score": {
+                "password_strength": "Síla Hesla"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "item_description": "Popis Položky",
+                "item_name": "Jméno Položky",
+                "photo_button": "Fotka 📷",
+                "title": "Vytvořit položku"
+            },
+            "view": {
+                "selectable": {
+                    "card": "Karta",
+                    "items": "Položky",
+                    "no_items": "Žádné položky k zobrazení",
+                    "table": "Tabulka"
+                },
+                "table": {
+                    "page": "Stránka",
+                    "rows_per_page": "Řádků na stránku"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "label_description": "Popis Popisku",
+                "label_name": "Název Popisku",
+                "title": "Vytvořit popisek"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "location_description": "Popis lokace",
+                "location_name": "Název Lokace",
+                "title": "Vytvořit Lokaci"
+            },
+            "selector": {
+                "parent_location": "Nadřazená Lokace"
+            },
+            "tree": {
+                "no_locations": "Nejsou dostupné žádné lokace. Přidejte nové lokace\npomocí talčítka `<`span class=\"link-primary\"`>`Vytvořit`<`/span`>` na navigační liště."
+            }
+        }
+    },
+    "global": {
+        "add": "Přidat",
+        "build": "Sestavení: { build }",
+        "confirm": "Potvrdit",
+        "create": "Vytvořit",
+        "create_and_add": "Vytvořit a Přidat Další",
+        "created": "Vytvořeno",
+        "delete": "Smazat",
+        "details": "Detaily",
+        "duplicate": "Duplikovat",
+        "edit": "Upravit",
+        "email": "Email",
+        "follow_dev": "Sledovat vývojáře",
+        "github": "GitHub Projekt",
+        "items": "Položky",
+        "join_discord": "Připojte se na Discors",
+        "labels": "Popisky",
+        "locations": "Lokace",
+        "maintenance": "Údržba",
+        "name": "Jméno",
+        "password": "Heslo",
+        "read_docs": "Přečtěte si Dokumentaci",
+        "save": "Uložit",
+        "search": "Vyhledávat",
+        "sign_out": "Odhlásit se",
+        "submit": "Potvrdit",
+        "update": "Aktualizovat",
+        "value": "Hodnota",
+        "version": "Verze: { version }",
+        "welcome": "Vítejte, { username }"
+    },
+    "home": {
+        "labels": "Popisky",
+        "quick_statistics": "Rychlé informace",
+        "recently_added": "Nedávno přidané",
+        "storage_locations": "Úložné lokace",
+        "total_items": "Celkových Položek",
+        "total_labels": "Celkových popisků",
+        "total_locations": "Celkových lokací",
+        "total_value": "Celková hodnota"
+    },
+    "index": {
+        "disabled_registration": "Registrace je Zakázána",
+        "dont_join_group": "Nechcete se přidat do skupiny?",
+        "joining_group": "Přidáváte se do existující skupiny!",
+        "login": "Přihlásit se",
+        "register": "Registrovat se",
+        "remember_me": "Zapamatovat si mě",
+        "set_email": "Jaký je váš email?",
+        "set_name": "Jak se jmenujete?",
+        "set_password": "Nastavte si heslo"
+    },
+    "items": {
+        "add": "Přidat",
+        "advanced": "Pokročilé",
+        "archived": "Archivované",
+        "asset_id": "ID Položky",
+        "attachment": "Přiloha",
+        "attachments": "Přilohy",
+        "changes_persisted_immediately": "Změny v přílohách budou uloženy okamžitě",
+        "created_at": "Vytvořeno",
+        "custom_fields": "Vlastní Data",
+        "description": "Popis",
+        "details": "Detaily",
+        "drag_and_drop": "Přetáhněte sem soubory nebo klikněte pro výběr",
+        "edit_details": "Upravit Detaily",
+        "field_selector": "Výběř Pole",
+        "field_value": "Hodnota Pole",
+        "first": "První",
+        "include_archive": "Zahrnout i archivované Položky",
+        "insured": "Pojištěné",
+        "last": "Poslední",
+        "lifetime_warranty": "Doživotní záruka",
+        "location": "Lokace",
+        "manual": "Návod",
+        "manuals": "Návody",
+        "manufacturer": "Výrobce",
+        "model_number": "Číslo Modelu",
+        "name": "Jméno",
+        "negate_labels": "Prohodit Vybrané Popisky",
+        "next_page": "Další Stránka",
+        "no_results": "Nebyly nalezeny žádné Položky",
+        "notes": "Poznámky",
+        "options": "Možnosti",
+        "order_by": "Seřadit Podle",
+        "pages": "Stránka { page } z { totalPages }",
+        "parent_item": "Nadřazená Položka",
+        "photo": "Fotka",
+        "photos": "Fotky",
+        "prev_page": "Předešlá strana",
+        "purchase_date": "Datum Nákupu",
+        "purchase_details": "Detaily Nákupu",
+        "purchase_price": "Nákupní cena",
+        "purchased_from": "Koupeno Od",
+        "quantity": "Množství",
+        "receipt": "Účtenka",
+        "receipts": "Účtenky",
+        "reset_search": "Obnovit Vyhledávání",
+        "results": "{ total } Výsledků",
+        "serial_number": "Seriové číslo",
+        "show_advanced_view_options": "Zobrazit Pokročilé Možnosti Zobrazení",
+        "sold_at": "Prodáno",
+        "sold_details": "Detaily Prodeje",
+        "sold_price": "Cena Prodeje",
+        "sold_to": "Prodáno Komu",
+        "tips": "Návrhy",
+        "tips_sub": "Vyhledat Návrhy",
+        "updated_at": "Aktualizováno",
+        "warranty": "Záruka",
+        "warranty_details": "Detaily Záruky",
+        "warranty_expires": "Expirace Záruky"
+    },
+    "labels": {
+        "no_results": "Žádné Popisky nebyly nalezeny",
+        "update_label": "Aktualizovat Popisek"
+    },
+    "languages": {
+        "de": "Němčina",
+        "en": "Angličtina",
+        "es": "Španělština",
+        "fr": "Francouzština",
+        "hu": "Maďarština",
+        "it": "Italština",
+        "ja-JP": "Japonština",
+        "pl": "Polština",
+        "pt-BR": "Portugalština (Brazílie)",
+        "pt-PT": "Portugalština (Portugalsko)",
+        "ru": "Ruština",
+        "sl": "Slovinština",
+        "sv": "Švédština",
+        "uk-UA": "Ukrajinština",
+        "zh-CN": "Čínština (Zjednodušená)",
+        "zh-HK": "Čínština (Hong Kong)",
+        "zh-MO": "Čínština (Macau)",
+        "zh-TW": "Čínština (Tradiční)"
+    },
+    "languages.da-DK": "Dánština",
+    "languages.fi.FI": "Finština",
+    "languages.sk-SK": "Slovenština",
+    "locations": {
+        "child_locations": "Podřazené Lokace",
+        "collapse_tree": "Zabalit Strom",
+        "no_results": "Žádné lokace nebyly nalezeny",
+        "update_location": "Aktualizovat Lokaci"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Obojí",
+            "completed": "Hotové"
+        },
+        "list": {
+            "complete": "Hotovo",
+            "create_first": "Vytvořte první záznam",
+            "delete": "Smazat",
+            "duplicate": "Duplikovat",
+            "edit": "Upravit",
+            "new": "Nové"
+        },
+        "modal": {
+            "completed_date": "Datum Dokončení",
+            "cost": "Nákaldy",
+            "delete_confirmation": "Jste si jistí že chcete tento záznam smazat?",
+            "edit_action": "Aktualizovat",
+            "edit_title": "Upravit Záznam",
+            "entry_name": "Název Záznamu",
+            "new_action": "Vytvořit",
+            "new_title": "Nový Záznam",
+            "notes": "Poznámky"
+        },
+        "monthly_average": "Průměr za měsíc",
+        "toast": {
+            "failed_to_create": "Vytváření záznamu selhalo",
+            "failed_to_delete": "Mazání záznamu selhalo",
+            "failed_to_update": "Úprava záznamu selhala"
+        },
+        "total_cost": "Celkové náklady",
+        "total_entries": "Počet záznamů"
+    },
+    "menu": {
+        "create_item": "Položka",
+        "create_label": "Popisek",
+        "create_location": "Lokace",
+        "home": "Domů",
+        "locations": "Lokace",
+        "profile": "Profil",
+        "search": "Vyhledávání",
+        "tools": "Nástroje"
+    },
+    "profile": {
+        "active": "Aktivní",
+        "change_password": "Změnit Heslo",
+        "currency_format": "Měnový Formát",
+        "current_password": "Aktuální Heslo",
+        "delete_account": "Smazat Účet",
+        "delete_account_sub": "Smaže se vás účet a všechny s ním spojená data. Z této akce se nelze navrátit.",
+        "enabled": "Povoleno",
+        "example": "Příklad",
+        "gen_invite": "Vytvořit zvací odkaz",
+        "group_settings": "Nastavení Skupiny",
+        "inactive": "Neaktivní",
+        "language": "Jazyk",
+        "new_password": "Nové Heslo",
+        "test": "Zkouška"
+    }
+}

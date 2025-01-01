@@ -39,12 +39,10 @@ type AuthRolesEdges struct {
 // TokenOrErr returns the Token value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e AuthRolesEdges) TokenOrErr() (*AuthTokens, error) {
-	if e.loadedTypes[0] {
-		if e.Token == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: authtokens.Label}
-		}
+	if e.Token != nil {
 		return e.Token, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: authtokens.Label}
 	}
 	return nil, &NotLoadedError{edge: "token"}
 }

@@ -16,3 +16,7 @@ export interface PaginationResult<T> {
   pageSize: number;
   total: number;
 }
+
+export interface ItemSummaryPaginationResult<T> extends PaginationResult<T> {
+  totalPrice: number;
+}

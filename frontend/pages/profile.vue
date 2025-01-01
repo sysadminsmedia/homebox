@@ -8,6 +8,7 @@
   import MdiFill from "~icons/mdi/fill";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiAccountMultiple from "~icons/mdi/account-multiple";
+  import { getLocaleCode } from "~/composables/use-formatters";
 
   definePageMeta({
     middleware: ["auth"],
@@ -52,12 +53,11 @@
   });
 
   const currencyExample = computed(() => {
-    const formatter = new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency.value ? currency.value.code : "USD",
-    });
+    return fmtCurrency(1000, currency.value?.code ?? "USD", getLocaleCode());
+  });
 
-    return formatter.format(1000);
+  const dateExample = computed(() => {
+    return fmtDate(new Date(Date.now() - 15 * 60000), "relative");
   });
 
   const { data: group } = useAsyncData(async () => {
@@ -105,11 +105,11 @@
     console.log(auth.user);
     return [
       {
-        name: "Name",
+        name: "global.name",
         text: auth.user?.name || "Unknown",
       },
       {
-        name: "Email",
+        name: "global.email",
         text: auth.user?.email || "Unknown",
       },
     ] as Detail[];
@@ -208,7 +208,7 @@
       targetID.value = v.id;
       notifier.value = {
         name: v.name,
-        url: "",
+        url: v.url,
         isActive: v.isActive,
       };
     } else {
@@ -372,18 +372,24 @@
             {{ token }}
           </div>
         </div>
-        <div class="p-5 pt-0 form-control w-full">
+        <div class="form-control w-full p-5 pt-0">
           <label class="label">
             <span class="label-text">{{ $t("profile.language") }}</span>
           </label>
-          <select v-model="$i18n.locale" class="select select-bordered">
+          <select
+            v-model="$i18n.locale"
+            class="select select-bordered"
+            @change="
+              event => {
+                setLanguage((event.target as HTMLSelectElement).value);
+              }
+            "
+          >
             <option v-for="lang in $i18n.availableLocales" :key="lang" :value="lang">
-              {{ $t(`languages.${lang}`) }}
+              {{ $t(`languages.${lang}`) }} ({{ $t(`languages.${lang}`, 1, { locale: lang }) }})
             </option>
           </select>
-          <div class="mt-4">
-            <BaseButton size="sm" @click="setLanguage($i18n.locale)"> {{ $t("profile.update_language") }} </BaseButton>
-          </div>
+          <p class="m-2 text-sm">{{ $t("profile.example") }}: {{ $t("global.created") }} {{ dateExample }}</p>
         </div>
       </BaseCard>
 
@@ -397,7 +403,10 @@
         </template>
 
         <div v-if="notifiers.data.value" class="mx-4 divide-y divide-gray-400 rounded-md border border-gray-400">
-          <article v-for="n in notifiers.data.value" :key="n.id" class="p-2">
+          <p v-if="notifiers.data.value.length === 0" class="p-2 text-center text-sm">
+            {{ $t("profile.no_notifiers") }}
+          </p>
+          <article v-for="n in notifiers.data.value" v-else :key="n.id" class="p-2">
             <div class="flex flex-wrap items-center gap-2">
               <p class="mr-auto text-lg">{{ n.name }}</p>
               <div class="flex justify-end gap-2">
@@ -444,7 +453,7 @@
 
         <div v-if="group && currencies && currencies.length > 0" class="p-5 pt-0">
           <FormSelect v-model="currency" :label="$t('profile.currency_format')" :items="currencies" />
-          <p class="m-2 text-sm">Example: {{ currencyExample }}</p>
+          <p class="m-2 text-sm">{{ $t("profile.example") }}: {{ currencyExample }}</p>
 
           <div class="mt-4">
             <BaseButton size="sm" @click="updateGroup"> {{ $t("profile.update_group") }} </BaseButton>
@@ -465,7 +474,9 @@
 
         <div class="px-4 pb-4">
           <div class="mb-3">
-            <BaseButton size="sm" @click="setDisplayHeader"> {{ $t("profile.display_header", { currentValue: preferences.displayHeaderDecor }) }} </BaseButton>
+            <BaseButton size="sm" @click="setDisplayHeader">
+              {{ $t("profile.display_header", { currentValue: preferences.displayHeaderDecor }) }}
+            </BaseButton>
           </div>
           <div class="rounded-box grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             <div

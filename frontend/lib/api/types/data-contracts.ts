@@ -106,18 +106,17 @@ export interface ItemOut {
   notes: string;
   parent?: ItemSummary | null;
   purchaseFrom: string;
-  /** @example "0" */
-  purchasePrice: string;
+  purchasePrice: number;
   /** Purchase */
   purchaseTime: Date | string;
   quantity: number;
   serialNumber: string;
   soldNotes: string;
-  /** @example "0" */
-  soldPrice: string;
+  soldPrice: number;
   /** Sold */
   soldTime: Date | string;
   soldTo: string;
+  syncChildItemsLocations: boolean;
   updatedAt: Date | string;
   warrantyDetails: string;
   warrantyExpires: Date | string;
@@ -136,6 +135,8 @@ export interface ItemPath {
 
 export interface ItemSummary {
   archived: boolean;
+  /** @example "0" */
+  assetId: string;
   createdAt: Date | string;
   description: string;
   id: string;
@@ -145,8 +146,7 @@ export interface ItemSummary {
   /** Edges */
   location?: LocationSummary | null;
   name: string;
-  /** @example "0" */
-  purchasePrice: string;
+  purchasePrice: number;
   quantity: number;
   updatedAt: Date | string;
 }
@@ -159,6 +159,7 @@ export enum ItemType {
 export interface ItemUpdate {
   archived: boolean;
   assetId: string;
+  /** @maxLength 1000 */
   description: string;
   fields: ItemField[];
   id: string;
@@ -170,24 +171,29 @@ export interface ItemUpdate {
   locationId: string;
   manufacturer: string;
   modelNumber: string;
+  /**
+   * @minLength 1
+   * @maxLength 255
+   */
   name: string;
   /** Extras */
   notes: string;
   parentId?: string | null;
+  /** @maxLength 255 */
   purchaseFrom: string;
-  /** @example "0" */
-  purchasePrice: string;
+  purchasePrice?: number | null;
   /** Purchase */
   purchaseTime: Date | string;
   quantity: number;
   /** Identifications */
   serialNumber: string;
   soldNotes: string;
-  /** @example "0" */
-  soldPrice: string;
+  soldPrice?: number | null;
   /** Sold */
   soldTime: Date | string;
+  /** @maxLength 255 */
   soldTo: string;
+  syncChildItemsLocations: boolean;
   warrantyDetails: string;
   warrantyExpires: Date | string;
 }
@@ -288,11 +294,22 @@ export interface MaintenanceEntryUpdate {
   scheduledDate: Date | string;
 }
 
-export interface MaintenanceLog {
-  costAverage: number;
-  costTotal: number;
-  entries: MaintenanceEntry[];
-  itemId: string;
+export interface MaintenanceEntryWithDetails {
+  completedDate: Date | string;
+  /** @example "0" */
+  cost: string;
+  description: string;
+  id: string;
+  itemID: string;
+  itemName: string;
+  name: string;
+  scheduledDate: Date | string;
+}
+
+export enum MaintenanceFilterStatus {
+  MaintenanceFilterStatusScheduled = "scheduled",
+  MaintenanceFilterStatusCompleted = "completed",
+  MaintenanceFilterStatusBoth = "both",
 }
 
 export interface NotifierCreate {
@@ -312,6 +329,7 @@ export interface NotifierOut {
   isActive: boolean;
   name: string;
   updatedAt: Date | string;
+  url: string;
   userId: string;
 }
 
@@ -330,7 +348,6 @@ export interface PaginationResultItemSummary {
   page: number;
   pageSize: number;
   total: number;
-  totalPrice: number;
 }
 
 export interface TotalsByOrganizer {
@@ -427,8 +444,10 @@ export interface ItemAttachmentToken {
 }
 
 export interface LoginForm {
+  /** @example "admin" */
   password: string;
   stayLoggedIn: boolean;
+  /** @example "admin@admin.com" */
   username: string;
 }
 

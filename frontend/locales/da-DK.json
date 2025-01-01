@@ -1,0 +1,351 @@
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "change_warning": "Adfærd for imports med eksisterende import_refs har ændret sig. Hvis en import_ref er tilstede i CSV filen,\nvil genstanden blive opdateret med værdierne fra CSV filen.",
+                "description": "Importer en CSV fil som indeholder dine genstande, etiketter, og lokationer. Se dokumentation for mere information vedrørende\nden korrekte format.",
+                "title": "Importer CSV Fil",
+                "upload": "Upload"
+            }
+        },
+        "global": {
+            "date_time": {
+                "ago": "{0} siden",
+                "days": "dage",
+                "hour": "time",
+                "hours": "timer",
+                "in": "om {0}",
+                "just-now": "lige nu",
+                "last-month": "sidste måned",
+                "last-week": "sidste uge",
+                "last-year": "sidste år",
+                "minute": "minut",
+                "minutes": "minutter",
+                "months": "måneder",
+                "next-month": "næste måned",
+                "next-week": "næste uge",
+                "next-year": "næste år",
+                "second": "sekund",
+                "seconds": "sekunder",
+                "tomorrow": "i morgen",
+                "week": "uge",
+                "weeks": "uger",
+                "years": "år",
+                "yesterday": "i går"
+            },
+            "page_qr_code": {
+                "page_url": "Side URL"
+            },
+            "password_score": {
+                "password_strength": "Adgangskodestyrke"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "item_description": "Genstandsbeskrivelse",
+                "item_name": "Genstandsnavn",
+                "photo_button": "Foto 📷",
+                "title": "Opret genstand"
+            },
+            "view": {
+                "selectable": {
+                    "card": "Kort",
+                    "items": "Genstande",
+                    "no_items": "Ingen genstande at vise",
+                    "table": "Tabel"
+                },
+                "table": {
+                    "page": "Side",
+                    "rows_per_page": "Rækker per side"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "label_description": "Etiketbeskrivelse",
+                "label_name": "Etiketnavn",
+                "title": "Opret label"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "location_description": "Lokationsbeskrivelse",
+                "location_name": "Lokationsnavn",
+                "title": "Opret lokation"
+            },
+            "selector": {
+                "parent_location": "Forældrelokation"
+            },
+            "tree": {
+                "no_locations": "Ingen tilgængelige lokationer. Opret nye lokationer gennem\n`<`span class=\"link-primary\">`Opret`<`/span`>` knappen i navigationslinjen."
+            }
+        }
+    },
+    "global": {
+        "add": "Tilføj",
+        "build": "Build: { build }",
+        "confirm": "Bekræft",
+        "create": "Opret",
+        "create_and_add": "Opret og tilføj ny",
+        "created": "Oprettet",
+        "delete": "Slet",
+        "details": "Detaljer",
+        "duplicate": "Dupliker",
+        "edit": "Rediger",
+        "email": "Email",
+        "follow_dev": "Følg udvikleren",
+        "github": "GitHub projekt",
+        "items": "Genstande",
+        "join_discord": "Deltag i vores Discord",
+        "labels": "Etiketter",
+        "locations": "Lokationer",
+        "maintenance": "Opretholdelse",
+        "name": "Navn",
+        "password": "Adgangskode",
+        "read_docs": "Læs Docs",
+        "save": "Gem",
+        "search": "Søg",
+        "sign_out": "Log ud",
+        "submit": "Indsend",
+        "update": "Opdater",
+        "value": "Værdi",
+        "version": "Version: { version }",
+        "welcome": "Velkommen, { username }"
+    },
+    "home": {
+        "labels": "Etiketter",
+        "quick_statistics": "Hurtige Statistikker",
+        "recently_added": "Nyligt Tilføjet",
+        "storage_locations": "Opbevaringslokationer",
+        "total_items": "Totale Genstande",
+        "total_labels": "Totale Etiketter",
+        "total_locations": "Totale Lokationer",
+        "total_value": "Total Værdi"
+    },
+    "index": {
+        "disabled_registration": "Registrering slået fra",
+        "dont_join_group": "Ikke lyst til at deltage i en gruppe?",
+        "joining_group": "Du deltager i en eksisterende gruppe!",
+        "login": "Log ind",
+        "register": "Registrer",
+        "remember_me": "Husk mig",
+        "set_email": "Hvad er din E-Mail?",
+        "set_name": "Hvad hedder du?",
+        "set_password": "Opret din adgangskode",
+        "tagline": "Følg, Organiser, og Håndter dine Ting."
+    },
+    "items": {
+        "add": "Tilføj",
+        "advanced": "Avanceret",
+        "archived": "Arkiveret",
+        "asset_id": "Aktiv-id",
+        "attachment": "Vedhæftning",
+        "attachments": "Vedhæftninger",
+        "changes_persisted_immediately": "Ændringer af vedhæftede filer gemmes med det samme",
+        "created_at": "Oprettet den",
+        "custom_fields": "Brugerdefinerede felter",
+        "description": "Beskrivelse",
+        "details": "Detaljer",
+        "drag_and_drop": "Træk og slip filer her, eller klik for at vælge filer",
+        "edit_details": "Rediger detaljer",
+        "field_selector": "Feltvælger",
+        "field_value": "Feltværdi",
+        "first": "Første",
+        "include_archive": "Medtag arkiverede elementer",
+        "insured": "Forsikret",
+        "last": "Sidst",
+        "lifetime_warranty": "livstidsgaranti",
+        "location": "Lokalitet",
+        "manual": "Manuel",
+        "manuals": "Manualer",
+        "manufacturer": "Producent",
+        "model_number": "Modelnummer",
+        "name": "Navn",
+        "negate_labels": "Ophæv valgte etiketter",
+        "next_page": "Næste side",
+        "no_results": "Ingen elementer fundet",
+        "notes": "Noter",
+        "options": "Indstillinger",
+        "order_by": "Sorter efter",
+        "pages": "Side { page } af { totalPages }",
+        "parent_item": "Overordnet element",
+        "photo": "Foto",
+        "photos": "Fotos",
+        "prev_page": "Forrige side",
+        "purchase_date": "Indkøbs dato",
+        "purchase_details": "Købs detaljer",
+        "purchase_price": "Indkøbspris",
+        "purchased_from": "Købt fra",
+        "quantity": "Antal",
+        "query_id": "Forespørgsler på aktiv-id-nummer: { id }",
+        "receipt": "Kvittering",
+        "receipts": "Kvitteringer",
+        "reset_search": "Nulstil Søgning",
+        "results": "Samlede resultater",
+        "serial_number": "Serienummer",
+        "show_advanced_view_options": "vis avancerede indstillinger",
+        "sold_at": "Solgt D.",
+        "sold_details": "Salgs detaljer",
+        "sold_price": "Solgt pris",
+        "sold_to": "Sold til",
+        "tip_1": "Placerings- og etiketfiltre bruger betjeningen 'ELLER'. Hvis mere end én er valgt, kræves der kun én\n til et match.",
+        "tip_2": "Søgninger med præfikset '#'' vil forespørge efter et aktiv-id (eksempel '#000-001')",
+        "tip_3": "Feltfiltre bruger handlingen 'ELLER'. Hvis mere end én er valgt, kræves der kun én til en\n kamp.",
+        "tips": "Tips",
+        "tips_sub": "Søgetips",
+        "updated_at": "Opdateret d.",
+        "warranty": "Garanti",
+        "warranty_details": "Oplysninger om garanti",
+        "warranty_expires": "Garantien udløber"
+    },
+    "labels": {
+        "no_results": "Ingen etiketter fundet",
+        "update_label": "Opdater etiket"
+    },
+    "languages": {
+        "ca": "Catalansk",
+        "de": "Tysk",
+        "en": "Engelsk",
+        "es": "Spansk",
+        "fr": "Fransk",
+        "hu": "Ungarsk",
+        "it": "Italiensk",
+        "ja-JP": "Japansk",
+        "nl": "Hollandsk",
+        "pl": "Polsk",
+        "pt-BR": "Portugisisk (Brasilien)",
+        "pt-PT": "Portugisisk (Portugal)",
+        "ru": "Russisk",
+        "sl": "Slovensk",
+        "sv": "Svensk",
+        "tr": "Tyrkisk",
+        "uk-UA": "Ukrainsk",
+        "zh-CN": "Kinesisk (simplificeret)",
+        "zh-HK": "Kinesisk (Hong Kong)",
+        "zh-MO": "Kinesisk (Macao)",
+        "zh-TW": "Kinesisk (Traditionel)"
+    },
+    "languages.da-DK": "Dansk",
+    "languages.fi.FI": "Finsk",
+    "languages.ro-RO": "Rumænsk",
+    "languages.sk-SK": "Slovakisk",
+    "locations": {
+        "child_locations": "Underordnede placeringer",
+        "collapse_tree": "Kollaps træ",
+        "no_results": "Ingen placeringer fundet.",
+        "update_location": "Opdatér sted"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Begge",
+            "completed": "Gennemført",
+            "scheduled": "Planlagt"
+        },
+        "list": {
+            "complete": "Færdig",
+            "create_first": "Opret din første post",
+            "delete": "Slet",
+            "duplicate": "Dupliker",
+            "edit": "Rediger",
+            "new": "Ny"
+        },
+        "modal": {
+            "completed_date": "Gennemført den",
+            "cost": "Omkostning",
+            "delete_confirmation": "Er du sikker på at du vil slette denne indtastning?",
+            "edit_action": "Opdater",
+            "edit_title": "Rediger posten",
+            "entry_name": "Postens navn",
+            "new_action": "Opret",
+            "new_title": "Ny indgang",
+            "notes": "Noter",
+            "scheduled_date": "Planlagt dato"
+        },
+        "monthly_average": "Månedligt gennemsnit",
+        "toast": {
+            "failed_to_create": "Kunne ikke oprette post",
+            "failed_to_delete": "Kunne ikke slette post",
+            "failed_to_update": "Kunne ikke opdatere posten"
+        },
+        "total_cost": "Samlede omkostninger",
+        "total_entries": "Total antal poster"
+    },
+    "menu": {
+        "create_item": "Vare/aktiv",
+        "create_label": "Label",
+        "create_location": "Lokalitet",
+        "home": "Hjem",
+        "locations": "Lokationer",
+        "maintenance": "Opretholdelse",
+        "profile": "Profil",
+        "search": "Søg",
+        "tools": "Værktøjer"
+    },
+    "profile": {
+        "active": "Aktiv",
+        "change_password": "Ændre adgangskode",
+        "currency_format": "Valuta format",
+        "current_password": "Aktuel adgangskode",
+        "delete_account": "Slet Konto",
+        "delete_account_sub": "Slet din konto og alle dens tilknyttede data",
+        "display_header": "{ currentValue, select, true {Skjul header} false {Vis header} andet {Not Hit}}",
+        "enabled": "Aktiveret",
+        "example": "Eksempel",
+        "gen_invite": "Generer invitationslink",
+        "group_settings": "Gruppe indstillinger",
+        "group_settings_sub": "Indstillinger for delt gruppe",
+        "inactive": "Inaktiv",
+        "language": "Sprog",
+        "new_password": "Ny Adgangskode",
+        "no_notifiers": "Ingen notifikationer konfiguret",
+        "notifier_modal": "{ type, select, true {Rediger} false {Opret} other {Andet}} Meddeler",
+        "notifiers": "Meddelere",
+        "notifiers_sub": "Få notifikationer om kommende vedligeholdelsespåmindelser",
+        "test": "Test",
+        "theme_settings": "Temaindstillinger",
+        "theme_settings_sub": "Temaindstillinger gemmes i din browsers lokale lager. Du kan til enhver tid ændre temaet. Hvis du har problemer med at indstille dit tema, kan du prøve at opdatere din browser.",
+        "update_group": "Opdatér Gruppe",
+        "update_language": "Opdater sprogfil",
+        "url": "URL",
+        "user_profile": "Brugerprofil",
+        "user_profile_sub": "Inviter brugere, og administrer din konto."
+    },
+    "tools": {
+        "actions": "Handlinger på lagerbeholdning",
+        "actions_set": {
+            "ensure_ids": "Sørg for aktiv-id'er",
+            "ensure_ids_button": "Sørg for aktiv-id'er",
+            "ensure_ids_sub": "Sikrer, at alle varer på lageret har et gyldigt asset_id felt. Dette gøres ved at finde det højeste aktuelle aktiv_id felt i databasen og anvende den næste værdi på hvert element, der har et ikke sat aktiv_id felt. Dette gøres i rækkefølge efter feltet opret_den.",
+            "ensure_import_refs": "Sørg for importreferencer",
+            "ensure_import_refs_button": "Sørg for importreferencer",
+            "ensure_import_refs_sub": "Sikrer, at alle varer på lageret har et gyldigt import_ref felt. Dette gøres ved tilfældigt at generere en streng på 8 tegn for hvert element, der har et uindstillet import_ref felt.",
+            "set_primary_photo": "Indstil primært foto",
+            "set_primary_photo_button": "Indstil primært foto",
+            "set_primary_photo_sub": "I version v0.10.0 af Homebox blev det primære billedfelt tilføjet til vedhæftede filer af typen foto. Denne handling indstiller det primære billedfelt til det første billede i matrixen for vedhæftede filer i databasen, hvis det ikke allerede er angivet. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Se GitHub PR #576'</a>'",
+            "zero_datetimes": "Nul Vare Dato Tider",
+            "zero_datetimes_button": "Nul Varedato Tider",
+            "zero_datetimes_sub": "Nulstiller klokkeslætsværdien for alle dato- og klokkeslætsfelter i lageret til begyndelsen af datoen. Dette er for at rette en fejl, der blev introduceret tidligt i udviklingen af webstedet, der forårsagede, at tidsværdien blev gemt med tiden, hvilket forårsagede problemer med datofelter, der viste nøjagtige værdier. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Se Github-udgave #236 for flere detaljer.'</a>'"
+        },
+        "actions_sub": "Anvend flere handlinger på din beholdning på én gang. Det er uigenkaldelige handlinger. '<b>'Vær forsigtig.'</b>'",
+        "import_export": "Importer/Eksporter",
+        "import_export_set": {
+            "export": "Eksporter inventar",
+            "export_button": "Eksporter inventar",
+            "export_sub": "Eksporterer standard CSV-formatet til Homebox. Dette vil eksportere alle varer i dit lager.",
+            "import": "Importeret beholdning",
+            "import_button": "Importer beholdning",
+            "import_sub": "Importerer standard CSV-formatet til Homebox. Uden en '<code>'HB.import_ref'</code>'-kolonne vil dette '<b>'ikke'</b>' overskrive eksisterende genstande i dit lager, kun tilføje nye genstande. Rækker med kolonnen \"<code>HB.import_ref\"</code> flettes ind i eksisterende elementer med samme import_ref, hvis der findes en."
+        },
+        "import_export_sub": "Importér og eksporter din lagerbeholdning til og fra en CSV-fil. Dette er nyttigt til at migrere dit lager til en ny forekomst af Homebox.",
+        "reports": "Rapporter",
+        "reports_set": {
+            "asset_labels": "Etiketter for aktiv-id",
+            "asset_labels_button": "Etiket generator",
+            "asset_labels_sub": "Genererer en PDF-fil, der kan udskrives, med etiketter til en række aktiv-id'er. Disse er ikke specifikke for din beholdning, så du er i stand til at udskrive etiketter på forhånd og anvende dem på din beholdning, når du modtager dem.",
+            "bill_of_materials": "Stykliste",
+            "bill_of_materials_button": "Generer stykliste",
+            "bill_of_materials_sub": "Genererer en CSV-fil (kommaseparerede værdier), der kan importeres til et regnearksprogram. Dette er en oversigt over din beholdning med grundlæggende vare- og prisoplysninger."
+        },
+        "reports_sub": "Generer forskellige rapporter for dit lager."
+    }
+}

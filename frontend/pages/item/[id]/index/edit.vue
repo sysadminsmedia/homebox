@@ -3,11 +3,11 @@
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
-  import { capitalize } from "~~/lib/strings";
   import Autocomplete from "~~/components/Form/Autocomplete.vue";
   import MdiDelete from "~icons/mdi/delete";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiContentSaveOutline from "~icons/mdi/content-save-outline";
+  import MdiContentCopy from "~icons/mdi/content-copy";
 
   definePageMeta({
     middleware: ["auth"],
@@ -59,11 +59,54 @@
     refresh();
   });
 
+  async function duplicateItem() {
+    const { error, data } = await api.items.create({
+      name: `${item.value.name} Copy`,
+      description: item.value.description,
+      locationId: item.value.location!.id,
+      parentId: item.value.parent?.id,
+      labelIds: item.value.labels.map(l => l.id),
+    });
+
+    if (error) {
+      toast.error("Failed to duplicate item");
+      return;
+    }
+
+    // add extra fields
+    const { error: updateError } = await api.items.update(data.id, {
+      ...item.value,
+      id: data.id,
+      labelIds: data.labels.map(l => l.id),
+      locationId: data.location!.id,
+      name: data.name,
+    });
+
+    if (updateError) {
+      toast.error("Failed to duplicate item");
+      return;
+    }
+
+    navigateTo(`/item/${data.id}`);
+  }
+
   async function saveItem() {
     if (!item.value.location?.id) {
       toast.error("Failed to save item: no location selected");
       return;
     }
+
+    let purchasePrice = 0;
+    let soldPrice = 0;
+    if (item.value.purchasePrice) {
+      purchasePrice = item.value.purchasePrice;
+    }
+    if (item.value.soldPrice) {
+      soldPrice = item.value.soldPrice;
+    }
+
+    console.log((item.value.purchasePrice ??= 0));
+    console.log((item.value.soldPrice ??= 0));
 
     const payload: ItemUpdate = {
       ...item.value,
@@ -71,6 +114,9 @@
       labelIds: item.value.labels.map(l => l.id),
       parentId: parent.value ? parent.value.id : null,
       assetId: item.value.assetId,
+      purchasePrice,
+      soldPrice,
+      purchaseTime: item.value.purchaseTime as Date,
     };
 
     const { error } = await api.items.update(itemId.value, payload);
@@ -96,6 +142,8 @@
     label: string;
     // key of ItemOut where the value is a string
     ref: keyof OnlyString<NoUndefinedField<ItemOut>>;
+    maxLength?: number;
+    minLength?: number;
   };
 
   type NumberFormField = {
@@ -129,52 +177,59 @@
   const mainFields: FormField[] = [
     {
       type: "text",
-      label: "Name",
+      label: "items.name",
       ref: "name",
+      maxLength: 255,
+      minLength: 1,
     },
     {
       type: "number",
-      label: "Quantity",
+      label: "items.quantity",
       ref: "quantity",
     },
     {
       type: "textarea",
-      label: "Description",
+      label: "items.description",
       ref: "description",
+      maxLength: 1000,
     },
     {
       type: "text",
-      label: "Serial Number",
+      label: "items.serial_number",
       ref: "serialNumber",
+      maxLength: 255,
     },
     {
       type: "text",
-      label: "Model Number",
+      label: "items.model_number",
       ref: "modelNumber",
+      maxLength: 255,
     },
     {
       type: "text",
-      label: "Manufacturer",
+      label: "items.manufacturer",
       ref: "manufacturer",
+      maxLength: 255,
     },
     {
       type: "textarea",
-      label: "Notes",
+      label: "items.notes",
       ref: "notes",
+      maxLength: 1000,
     },
     {
       type: "checkbox",
-      label: "Insured",
+      label: "items.insured",
       ref: "insured",
     },
     {
       type: "checkbox",
-      label: "Archived",
+      label: "items.archived",
       ref: "archived",
     },
     {
       type: "text",
-      label: "Asset ID",
+      label: "items.asset_id",
       ref: "assetId",
     },
   ];
@@ -182,17 +237,18 @@
   const purchaseFields: FormField[] = [
     {
       type: "text",
-      label: "Purchased From",
+      label: "items.purchased_from",
       ref: "purchaseFrom",
+      maxLength: 255,
     },
     {
-      type: "text",
-      label: "Purchase Price",
+      type: "number",
+      label: "items.purchase_price",
       ref: "purchasePrice",
     },
     {
       type: "date",
-      label: "Purchase Date",
+      label: "items.purchase_date",
       // @ts-expect-error - we know this is a date
       ref: "purchaseTime",
     },
@@ -201,36 +257,38 @@
   const warrantyFields: FormField[] = [
     {
       type: "checkbox",
-      label: "Lifetime Warranty",
+      label: "items.lifetime_warranty",
       ref: "lifetimeWarranty",
     },
     {
       type: "date",
-      label: "Warranty Expires",
+      label: "items.warranty_expires",
       // @ts-expect-error - we know this is a date
       ref: "warrantyExpires",
     },
     {
       type: "textarea",
-      label: "Warranty Notes",
+      label: "items.warranty_details",
       ref: "warrantyDetails",
+      maxLength: 1000,
     },
   ];
 
   const soldFields: FormField[] = [
     {
       type: "text",
-      label: "Sold To",
+      label: "items.sold_to",
       ref: "soldTo",
+      maxLength: 255,
     },
     {
-      type: "text",
-      label: "Sold Price",
+      type: "number",
+      label: "items.sold_price",
       ref: "soldPrice",
     },
     {
       type: "date",
-      label: "Sold At",
+      label: "items.sold_at",
       // @ts-expect-error - we know this is a date
       ref: "soldTime",
     },
@@ -319,7 +377,7 @@
   });
 
   const attachmentOpts = Object.entries(AttachmentTypes).map(([key, value]) => ({
-    text: capitalize(key),
+    text: key[0].toUpperCase() + key.slice(1),
     value,
   }));
 
@@ -403,6 +461,65 @@
     }
   }
 
+  async function maybeSyncWithParentLocation() {
+    if (parent.value && parent.value.id) {
+      const { data, error } = await api.items.get(parent.value.id);
+
+      if (error) {
+        toast.error("Something went wrong trying to load parent data");
+        return;
+      }
+
+      if (data.syncChildItemsLocations) {
+        toast.info("Selected parent syncs its children's locations to its own. The location has been updated.");
+        item.value.location = data.location;
+      }
+    }
+  }
+
+  async function informAboutDesyncingLocationFromParent() {
+    if (parent.value && parent.value.id) {
+      const { data, error } = await api.items.get(parent.value.id);
+
+      if (error) {
+        toast.error("Something went wrong trying to load parent data");
+        return;
+      }
+
+      if (data.syncChildItemsLocations) {
+        toast.info("Changing location will de-sync it from the parent's location");
+      }
+    }
+  }
+
+  async function syncChildItemsLocations() {
+    if (!item.value.location?.id) {
+      toast.error("Failed to save item: no location selected");
+      return;
+    }
+
+    const payload: ItemUpdate = {
+      ...item.value,
+      locationId: item.value.location?.id,
+      labelIds: item.value.labels.map(l => l.id),
+      parentId: parent.value ? parent.value.id : null,
+      assetId: item.value.assetId,
+    };
+
+    const { error } = await api.items.update(itemId.value, payload);
+
+    if (error) {
+      toast.error("Failed to save item");
+      return;
+    }
+
+    if (!item.value.syncChildItemsLocations) {
+      toast.success("Child items' locations will no longer be synced with this item.");
+    } else {
+      toast.success("Child items' locations have been synced with this item");
+    }
+  }
+
   onMounted(() => {
     window.addEventListener("keydown", keyboardSave);
   });
@@ -440,70 +557,93 @@
 
     <section class="relative">
       <div class="sticky top-1 z-10 my-4 flex items-center justify-end gap-2">
-        <div class="tooltip tooltip-right mr-auto" data-tip="Show Advanced View Options">
+        <div class="tooltip tooltip-right mr-auto" :data-tip="$t('items.show_advanced_view_options')">
           <label class="label mr-auto cursor-pointer">
             <input v-model="preferences.editorAdvancedView" type="checkbox" class="toggle toggle-primary" />
-            <span class="label-text ml-4"> Advanced </span>
+            <span class="label-text ml-4"> {{ $t("items.advanced") }} </span>
           </label>
         </div>
+        <BaseButton size="sm" class="btn" @click="duplicateItem">
+          <template #icon>
+            <MdiContentCopy />
+          </template>
+          {{ $t("global.duplicate") }}
+        </BaseButton>
         <BaseButton size="sm" @click="saveItem">
           <template #icon>
             <MdiContentSaveOutline />
           </template>
-          Save
+          {{ $t("global.save") }}
         </BaseButton>
         <BaseButton class="btn btn-error btn-sm" @click="deleteItem()">
           <MdiDelete class="mr-2" />
-          Delete
+          {{ $t("global.delete") }}
         </BaseButton>
       </div>
       <div v-if="!requestPending" class="space-y-6">
         <BaseCard class="overflow-visible">
-          <template #title> Edit Details </template>
+          <template #title> {{ $t("items.edit_details") }} </template>
           <template #title-actions>
             <div class="mt-2 flex flex-wrap items-center justify-between gap-4"></div>
           </template>
           <div class="mb-6 grid gap-4 border-t px-5 pt-2 md:grid-cols-2">
-            <LocationSelector v-model="item.location" />
-            <FormMultiselect v-model="item.labels" label="Labels" :items="labels ?? []" />
+            <LocationSelector v-model="item.location" @update:model-value="informAboutDesyncingLocationFromParent()" />
+            <FormMultiselect v-model="item.labels" :label="$t('global.labels')" :items="labels ?? []" />
+            <FormToggle
+              v-model="item.syncChildItemsLocations"
+              label="Sync child items' locations"
+              inline
+              @update:model-value="syncChildItemsLocations()"
+            />
             <Autocomplete
               v-if="preferences.editorAdvancedView"
               v-model="parent"
               v-model:search="query"
               :items="results"
               item-text="name"
-              label="Parent Item"
+              :label="$t('items.parent_item')"
               no-results-text="Type to search..."
+              @update:model-value="maybeSyncWithParentLocation()"
             />
           </div>
 
           <div class="border-t border-gray-300 sm:p-0">
             <div v-for="field in mainFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y sm:divide-gray-300">
               <div class="border-b border-gray-300 px-4 pb-4 pt-2 sm:px-6">
-                <FormTextArea v-if="field.type === 'textarea'" v-model="item[field.ref]" :label="field.label" inline />
+                <FormTextArea
+                  v-if="field.type === 'textarea'"
+                  v-model="item[field.ref]"
+                  :label="$t(field.label)"
+                  inline
+                  :max-length="field.maxLength"
+                  :min-length="field.minLength"
+                />
                 <FormTextField
                   v-else-if="field.type === 'text'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
+                  type="text"
+                  :max-length="field.maxLength"
+                  :min-length="field.minLength"
                 />
                 <FormTextField
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormDatePicker
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormCheckbox
                   v-else-if="field.type === 'checkbox'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
               </div>
@@ -512,7 +652,7 @@
         </BaseCard>
 
         <BaseCard>
-          <template #title> Custom Fields </template>
+          <template #title> {{ $t("items.custom_fields") }} </template>
           <div class="space-y-4 divide-y divide-gray-300 border-t px-5">
             <div
               v-for="(field, idx) in item.fields"
@@ -520,10 +660,10 @@
               class="grid grid-cols-2 gap-2 md:grid-cols-4"
             >
               <!-- <FormSelect v-model:value="field.type" label="Field Type" :items="fieldTypes" value-key="value" /> -->
-              <FormTextField v-model="field.name" label="Name" />
+              <FormTextField v-model="field.name" :label="$t('global.name')" />
               <div class="col-span-3 flex items-end">
-                <FormTextField v-model="field.textValue" label="Value" />
-                <div class="tooltip" data-tip="Delete">
+                <FormTextField v-model="field.textValue" :label="$t('global.value')" :max-length="500" />
+                <div class="tooltip" :data-tip="$t('global.delete')">
                   <button class="btn btn-square btn-sm mb-2 ml-2" @click="item.fields.splice(idx, 1)">
                     <MdiDelete />
                   </button>
@@ -532,7 +672,7 @@
             </div>
           </div>
           <div class="mt-4 flex justify-end px-5 pb-4">
-            <BaseButton size="sm" @click="addField"> Add </BaseButton>
+            <BaseButton size="sm" @click="addField"> {{ $t("global.add") }} </BaseButton>
           </div>
         </BaseCard>
 
@@ -542,16 +682,16 @@
           class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg"
         >
           <div class="px-4 py-5 sm:px-6">
-            <h3 class="text-lg font-medium leading-6">Attachments</h3>
-            <p class="text-xs">Changes to attachments will be saved immediately</p>
+            <h3 class="text-lg font-medium leading-6">{{ $t("items.attachments") }}</h3>
+            <p class="text-xs">{{ $t("items.changes_persisted_immediately") }}</p>
           </div>
           <div class="border-t border-gray-300 p-4">
             <div v-if="attDropZoneActive" class="grid grid-cols-4 gap-4">
-              <DropZone @drop="dropPhoto"> Photo </DropZone>
-              <DropZone @drop="dropWarranty"> Warranty </DropZone>
-              <DropZone @drop="dropManual"> Manual </DropZone>
-              <DropZone @drop="dropAttachment"> Attachment </DropZone>
-              <DropZone @drop="dropReceipt"> Receipt </DropZone>
+              <DropZone @drop="dropPhoto"> {{ $t("items.photos") }} </DropZone>
+              <DropZone @drop="dropWarranty"> {{ $t("items.warranty") }} </DropZone>
+              <DropZone @drop="dropManual"> {{ $t("items.manuals") }} </DropZone>
+              <DropZone @drop="dropAttachment"> {{ $t("items.attachments") }} </DropZone>
+              <DropZone @drop="dropReceipt"> {{ $t("items.receipts") }} </DropZone>
             </div>
             <button
               v-else
@@ -559,7 +699,7 @@
               @click="clickUpload"
             >
               <input ref="refAttachmentInput" hidden type="file" @change="uploadImage" />
-              <p>Drag and drop files here or click to select files</p>
+              <p>{{ $t("items.drag_and_drop") }}</p>
             </button>
           </div>
 
@@ -574,15 +714,15 @@
                   {{ attachment.document.title }}
                 </p>
                 <p class="my-auto">
-                  {{ capitalize(attachment.type) }}
+                  {{ $t(`items.${attachment.type}`) }}
                 </p>
                 <div class="flex justify-end gap-2">
-                  <div class="tooltip" data-tip="Delete">
+                  <div class="tooltip" :data-tip="$t('global.delete')">
                     <button class="btn btn-square btn-sm" @click="deleteAttachment(attachment.id)">
                       <MdiDelete />
                     </button>
                   </div>
-                  <div class="tooltip" data-tip="Edit">
+                  <div class="tooltip" :data-tip="$t('global.edit')">
                     <button class="btn btn-square btn-sm" @click="openAttachmentEditDialog(attachment)">
                       <MdiPencil />
                     </button>
@@ -595,7 +735,7 @@
 
         <div v-if="preferences.editorAdvancedView" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
-            <h3 class="text-lg font-medium leading-6">Purchase Details</h3>
+            <h3 class="text-lg font-medium leading-6">{{ $t("items.purchase_details") }}</h3>
           </div>
           <div class="border-t border-gray-300 sm:p-0">
             <div
@@ -604,30 +744,39 @@
               class="grid grid-cols-1 sm:divide-y sm:divide-gray-300"
             >
               <div class="border-b border-gray-300 px-4 pb-4 pt-2 sm:px-6">
-                <FormTextArea v-if="field.type === 'textarea'" v-model="item[field.ref]" :label="field.label" inline />
+                <FormTextArea
+                  v-if="field.type === 'textarea'"
+                  v-model="item[field.ref]"
+                  :label="$t(field.label)"
+                  inline
+                  :max-length="field.maxLength"
+                  :min-length="field.minLength"
+                />
                 <FormTextField
                   v-else-if="field.type === 'text'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
+                  :max-length="field.maxLength"
+                  :min-length="field.minLength"
                 />
                 <FormTextField
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormDatePicker
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormCheckbox
                   v-else-if="field.type === 'checkbox'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
               </div>
@@ -637,7 +786,7 @@
 
         <div v-if="preferences.editorAdvancedView" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
-            <h3 class="text-lg font-medium leading-6">Warranty Details</h3>
+            <h3 class="text-lg font-medium leading-6">{{ $t("items.warranty_details") }}</h3>
           </div>
           <div class="border-t border-gray-300 sm:p-0">
             <div
@@ -646,30 +795,39 @@
               class="grid grid-cols-1 sm:divide-y sm:divide-gray-300"
             >
               <div class="border-b border-gray-300 px-4 pb-4 pt-2 sm:px-6">
-                <FormTextArea v-if="field.type === 'textarea'" v-model="item[field.ref]" :label="field.label" inline />
+                <FormTextArea
+                  v-if="field.type === 'textarea'"
+                  v-model="item[field.ref]"
+                  :label="$t(field.label)"
+                  inline
+                  :max-length="field.maxLength"
+                  :min-length="field.minLength"
+                />
                 <FormTextField
                   v-else-if="field.type === 'text'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
+                  :max-length="field.maxLength"
+                  :min-length="field.minLength"
                 />
                 <FormTextField
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormDatePicker
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormCheckbox
                   v-else-if="field.type === 'checkbox'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
               </div>
@@ -684,30 +842,39 @@
           <div class="border-t border-gray-300 sm:p-0">
             <div v-for="field in soldFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y sm:divide-gray-300">
               <div class="border-b border-gray-300 px-4 pb-4 pt-2 sm:px-6">
-                <FormTextArea v-if="field.type === 'textarea'" v-model="item[field.ref]" :label="field.label" inline />
+                <FormTextArea
+                  v-if="field.type === 'textarea'"
+                  v-model="item[field.ref]"
+                  :label="$t(field.label)"
+                  inline
+                  :max-length="field.maxLength"
+                  :min-length="field.minLength"
+                />
                 <FormTextField
                   v-else-if="field.type === 'text'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
+                  :max-length="field.maxLength"
+                  :min-length="field.minLength"
                 />
                 <FormTextField
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormDatePicker
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormCheckbox
                   v-else-if="field.type === 'checkbox'"
                   v-model="item[field.ref]"
-                  :label="field.label"
+                  :label="$t(field.label)"
                   inline
                 />
               </div>

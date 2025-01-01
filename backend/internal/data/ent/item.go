@@ -40,6 +40,8 @@ type Item struct {
 	Archived bool `json:"archived,omitempty"`
 	// AssetID holds the value of the "asset_id" field.
 	AssetID int `json:"asset_id,omitempty"`
+	// SyncChildItemsLocations holds the value of the "sync_child_items_locations" field.
+	SyncChildItemsLocations bool `json:"sync_child_items_locations,omitempty"`
 	// SerialNumber holds the value of the "serial_number" field.
 	SerialNumber string `json:"serial_number,omitempty"`
 	// ModelNumber holds the value of the "model_number" field.
@@ -101,12 +103,10 @@ type ItemEdges struct {
 // GroupOrErr returns the Group value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e ItemEdges) GroupOrErr() (*Group, error) {
-	if e.loadedTypes[0] {
-		if e.Group == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: group.Label}
-		}
+	if e.Group != nil {
 		return e.Group, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: group.Label}
 	}
 	return nil, &NotLoadedError{edge: "group"}
 }
@@ -114,12 +114,10 @@ func (e ItemEdges) GroupOrErr() (*Group, error) {
 // ParentOrErr returns the Parent value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e ItemEdges) ParentOrErr() (*Item, error) {
-	if e.loadedTypes[1] {
-		if e.Parent == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: item.Label}
-		}
+	if e.Parent != nil {
 		return e.Parent, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: item.Label}
 	}
 	return nil, &NotLoadedError{edge: "parent"}
 }
@@ -145,12 +143,10 @@ func (e ItemEdges) LabelOrErr() ([]*Label, error) {
 // LocationOrErr returns the Location value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e ItemEdges) LocationOrErr() (*Location, error) {
-	if e.loadedTypes[4] {
-		if e.Location == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: location.Label}
-		}
+	if e.Location != nil {
 		return e.Location, nil
+	} else if e.loadedTypes[4] {
+		return nil, &NotFoundError{label: location.Label}
 	}
 	return nil, &NotLoadedError{edge: "location"}
 }
@@ -187,7 +183,7 @@ func (*Item) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case item.FieldInsured, item.FieldArchived, item.FieldLifetimeWarranty:
+		case item.FieldInsured, item.FieldArchived, item.FieldSyncChildItemsLocations, item.FieldLifetimeWarranty:
 			values[i] = new(sql.NullBool)
 		case item.FieldPurchasePrice, item.FieldSoldPrice:
 			values[i] = new(sql.NullFloat64)
@@ -285,6 +281,12 @@ func (i *Item) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field asset_id", values[j])
 			} else if value.Valid {
 				i.AssetID = int(value.Int64)
+			}
+		case item.FieldSyncChildItemsLocations:
+			if value, ok := values[j].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field sync_child_items_locations", values[j])
+			} else if value.Valid {
+				i.SyncChildItemsLocations = value.Bool
 			}
 		case item.FieldSerialNumber:
 			if value, ok := values[j].(*sql.NullString); !ok {
@@ -490,6 +492,9 @@ func (i *Item) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("asset_id=")
 	builder.WriteString(fmt.Sprintf("%v", i.AssetID))
+	builder.WriteString(", ")
+	builder.WriteString("sync_child_items_locations=")
+	builder.WriteString(fmt.Sprintf("%v", i.SyncChildItemsLocations))
 	builder.WriteString(", ")
 	builder.WriteString("serial_number=")
 	builder.WriteString(i.SerialNumber)

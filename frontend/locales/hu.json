@@ -2,13 +2,28 @@
     "components": {
         "app": {
             "import_dialog": {
-                "upload": "Feltöltés",
-                "title": "CSV fájl importálása"
+                "change_warning": "A meglévő import_ref-fel rendelkező tételek importálásának menete megváltozott. Ha a CSV fájlban van import_ref, \nakkor a tételt felülírják a CSV fájlban található értékek.",
+                "description": "Importálj egy CSV fájlt, amely tartalmazza a tételeidet, címkéidet és helyeidet. A szükséges formátumról bővebben \na dokumentációban olvashatsz.",
+                "title": "Importálás CSV-fájlból",
+                "upload": "Feltöltés"
             }
         },
         "global": {
+            "date_time": {
+                "ago": "{0} ezelőtt",
+                "in": "{0} múlva",
+                "just-now": "épp most",
+                "last-month": "múlt hónapban",
+                "last-week": "múlt héten",
+                "last-year": "tavaly",
+                "next-month": "jövő hónapban",
+                "next-week": "jövő héten",
+                "next-year": "jövőre",
+                "tomorrow": "holnap",
+                "yesterday": "tegnap"
+            },
             "page_qr_code": {
-                "page_url": "Oldal URL"
+                "page_url": "Oldal URL-je"
             },
             "password_score": {
                 "password_strength": "Jelszó erőssége"
@@ -16,69 +31,310 @@
         },
         "item": {
             "create_modal": {
-                "title": "Tétel létrehozása",
-                "photo_button": "Fénykép 📷"
+                "item_description": "Tétel leírása",
+                "item_name": "Tétel neve",
+                "photo_button": "Fénykép 📷",
+                "title": "Új elem létrehozása"
             },
             "view": {
                 "selectable": {
                     "card": "Kártya",
                     "items": "Tételek",
-                    "no_items": "Nincs megjeleníthető tétel",
+                    "no_items": "Nincs megjeleníthető elem",
                     "table": "Táblázat"
+                },
+                "table": {
+                    "page": "Oldal",
+                    "rows_per_page": "Sorok oldalanként"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_description": "Címke leírása",
+                "label_name": "Címke neve",
                 "title": "Címke létrehozása"
             }
         },
         "location": {
             "create_modal": {
-                "title": "Helyszín létrehozása"
+                "location_description": "Hely leírása",
+                "location_name": "Hely neve",
+                "title": "Új hely létrehozása"
+            },
+            "selector": {
+                "parent_location": "Ezt tartalmazó hely"
+            },
+            "tree": {
+                "no_locations": "Nincs elérhető hely. Adj hozzá új helyet a\n `<`span class=\"link-primary\"`>`Létrehozás`<`/span`>` gombbal a navigációs sávon."
             }
         }
     },
     "global": {
+        "add": "Hozzáadás",
         "build": "Build: { build }",
         "confirm": "Megerősítés",
         "create": "Létrehozás",
         "create_and_add": "Létrehozás és újabb hozzáadása",
         "created": "Létrehozva",
+        "delete": "Törlés",
+        "details": "Részletek",
+        "duplicate": "Másolás",
+        "edit": "Szerkesztés",
         "email": "Email",
-        "follow_dev": "Fejlesztő követése",
-        "github": "GitHub Projekt",
+        "follow_dev": "Kövesd a fejlesztőt",
+        "github": "Github projekt",
         "items": "Tételek",
-        "join_discord": "Csatlakozás a Discordhoz",
+        "join_discord": "Csatlakozz a Discordhoz",
         "labels": "Címkék",
-        "locations": "Helyszínek",
+        "locations": "Helyek",
+        "maintenance": "Karbantartás",
         "name": "Név",
         "password": "Jelszó",
-        "read_docs": "Dokumentáció elolvasása",
+        "read_docs": "Olvasd el a dokumentációt",
+        "save": "Mentés",
         "search": "Keresés",
-        "sign_out": "Kilépés",
+        "sign_out": "Kijelentkezés",
         "submit": "Elküldés",
+        "update": "Módosítás",
+        "value": "Érték",
         "version": "Verzió: { version }",
         "welcome": "Üdv, { username }"
     },
+    "home": {
+        "labels": "Címkék",
+        "quick_statistics": "Gyors statisztika",
+        "recently_added": "Nemrég hozzáadott",
+        "storage_locations": "Tárolási helyek",
+        "total_items": "Összes tétel",
+        "total_labels": "Összes címke",
+        "total_locations": "Összes hely",
+        "total_value": "Teljes érték"
+    },
     "index": {
         "disabled_registration": "Regisztráció kikapcsolva",
-        "dont_join_group": "Nem akarsz csoporthoz csatlakozni?",
-        "joining_group": "Egy létező csoporthoz csatlakozol!",
-        "login": "Belépés",
+        "dont_join_group": "Nem szeretnél csatlakozni egy csoporthoz?",
+        "joining_group": "Meglévő csoporthoz csatlakozol!",
+        "login": "Bejelentkezés",
         "register": "Regisztráció",
-        "remember_me": "Emlékezzen rám",
+        "remember_me": "Emlékezzen rám!",
         "set_email": "Mi az email címed?",
         "set_name": "Mi a neved?",
-        "set_password": "Jelszó beállítása",
-        "tagline": "Kövesd, rendszerezd és igazgasd a tárgyaidat."
+        "set_password": "Állíts be egy jelszót!",
+        "tagline": "Kövesd nyomon, rendszerezd és kezeld a dolgaidat."
     },
     "items": {
         "add": "Hozzáadás",
+        "advanced": "Haladó",
+        "archived": "Archivált",
+        "asset_id": "Eszközazonosító",
+        "attachment": "Melléklet",
+        "attachments": "Mellékletek",
+        "changes_persisted_immediately": "A mellékletek módosításai azonnal mentésre kerülnek",
         "created_at": "Létrehozás dátuma",
+        "custom_fields": "Egyedi mezők",
+        "description": "Leírás",
+        "details": "Részletek",
+        "drag_and_drop": "Húzd ide a fájlokat, vagy kattints a fájlok kiválasztásához",
+        "edit_details": "Részletek szerkesztése",
         "field_selector": "Mezőválasztó",
         "field_value": "Mező értéke",
         "first": "Első",
-        "custom_fields": "Egyedi mezők"
+        "include_archive": "Archivált elemek belefoglalása",
+        "insured": "Biztosítva",
+        "last": "Utolsó",
+        "lifetime_warranty": "Élettartam garancia",
+        "location": "Hely",
+        "manual": "Kézikönyv",
+        "manuals": "Kézikönyvek",
+        "manufacturer": "Gyártó",
+        "model_number": "Modellszám",
+        "name": "Név",
+        "negate_labels": "Címkeválasztás negálása",
+        "next_page": "Következő oldal",
+        "no_results": "Egy elem sem található",
+        "notes": "Megjegyzések",
+        "options": "Opciók",
+        "order_by": "Rendezés",
+        "pages": "{page}/{totalPages} oldal",
+        "parent_item": "Szülő tétel",
+        "photo": "Fénykép",
+        "photos": "Fényképek",
+        "prev_page": "Előző oldal",
+        "purchase_date": "Vásárlás dátuma",
+        "purchase_details": "Vásárlás részletei",
+        "purchase_price": "Beszerzési ár",
+        "purchased_from": "Beszerzési hely",
+        "quantity": "Mennyiség",
+        "query_id": "Eszközazonosító szám lekérdezése: { id }",
+        "receipt": "Számla",
+        "receipts": "Számlák",
+        "reset_search": "Alaphelyzet",
+        "results": "{total} találat",
+        "serial_number": "Sorozatszám",
+        "show_advanced_view_options": "További beállítások megjelenítése",
+        "sold_at": "Eladás dátuma",
+        "sold_details": "Eladás részletei",
+        "sold_price": "Eladási ár",
+        "sold_to": "Vevő",
+        "tip_1": "A hely- és címkeszűrők a „vagy” műveletet használják. Ha egynél többet választasz ki,\n bármelyik egyezése esetén megjelenik a tétel.",
+        "tip_2": "A '#' előtaggal ellátott keresések egy eszközazonosítót fognak lekérdezni (például '#000-001')",
+        "tip_3": "A mezőszűrők a „vagy” műveletet használják. Ha egynél többet választasz ki,\n bármelyik egyezése esetén megjelenik a tétel.",
+        "tips": "Tippek",
+        "tips_sub": "Tippek a kereséshez",
+        "updated_at": "Változtatás dátuma",
+        "warranty": "Garancia",
+        "warranty_details": "Garancia részletei",
+        "warranty_expires": "Garancia vége"
+    },
+    "labels": {
+        "no_results": "Nem található címke",
+        "update_label": "Címke módosítása"
+    },
+    "languages": {
+        "ca": "Katalán",
+        "de": "Német",
+        "en": "Angol",
+        "es": "Spanyol",
+        "fr": "Francia",
+        "hu": "Magyar",
+        "it": "Olasz",
+        "ja-JP": "Japán",
+        "nl": "Holland",
+        "pl": "Lengyel",
+        "pt-BR": "Portugál (brazíliai)",
+        "pt-PT": "Portugál (Portugália)",
+        "ru": "Orosz",
+        "sl": "Szlovén",
+        "sv": "Svéd",
+        "tr": "Török",
+        "uk-UA": "Ukrán",
+        "zh-CN": "Kínai (egyszerűsített)",
+        "zh-HK": "Kínai (hongkongi)",
+        "zh-MO": "Kínai (makaói)",
+        "zh-TW": "Kínai (hagyományos)"
+    },
+    "languages.da-DK": "Dán",
+    "languages.fi.FI": "Finn",
+    "languages.ro-RO": "Román",
+    "languages.sk-SK": "Szlovák",
+    "locations": {
+        "child_locations": "Tartalmazott helyek",
+        "collapse_tree": "Fanézet becsukása",
+        "no_results": "Nem található hely",
+        "update_location": "Hely módosítása"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Mindkettő",
+            "completed": "Teljesítve",
+            "scheduled": "Időzítve"
+        },
+        "list": {
+            "complete": "Kész",
+            "create_first": "Hozd létre az első bejegyzést",
+            "delete": "Törlés",
+            "duplicate": "Másolás",
+            "edit": "Szerkesztés",
+            "new": "Új"
+        },
+        "modal": {
+            "completed_date": "Teljesítés dátuma",
+            "cost": "Költség",
+            "delete_confirmation": "Biztosan törli ezt a bejegyzést?",
+            "edit_action": "Módosítás",
+            "edit_title": "Bejegyzés szerkesztése",
+            "entry_name": "Bejegyzés neve",
+            "new_action": "Létrehozás",
+            "new_title": "Új bejegyzés",
+            "notes": "Megjegyzések",
+            "scheduled_date": "Ütemezett dátum"
+        },
+        "monthly_average": "Havi átlag",
+        "toast": {
+            "failed_to_create": "Bejegyzés létrehozása sikertelen",
+            "failed_to_delete": "Bejegyzés törlése sikertelen",
+            "failed_to_update": "Bejegyzés frissítése sikertelen"
+        },
+        "total_cost": "Teljes költség",
+        "total_entries": "Összes bejegyzés"
+    },
+    "menu": {
+        "create_item": "Tétel / Eszköz",
+        "create_label": "Címke",
+        "create_location": "Hely",
+        "home": "Kezdőlap",
+        "locations": "Helyek",
+        "maintenance": "Karbantartás",
+        "profile": "Profil",
+        "search": "Keresés",
+        "tools": "Eszközök"
+    },
+    "profile": {
+        "active": "Aktív",
+        "change_password": "Jelszó módosítása",
+        "currency_format": "Pénz formátum",
+        "current_password": "Jelenlegi jelszó",
+        "delete_account": "Fiók törlése",
+        "delete_account_sub": "Törlöd a fiókodat és az összes kapcsolódó adatot. Ezt a műveletet nem lehet visszavonni.",
+        "display_header": "{ currentValue, select, true {Fejléc elrejtése} false {Fejléc megjelenítése} other{Nincs találat}}",
+        "enabled": "Engedélyezve",
+        "example": "Példa",
+        "gen_invite": "Meghívó link létrehozása",
+        "group_settings": "Csoport beállításai",
+        "group_settings_sub": "Ezek a csoport közös beállításai. Lehet hogy frissítened kell az oldalt a böngésződben a beállítások megváltoztatása után.",
+        "inactive": "Inaktív",
+        "language": "Nyelv",
+        "new_password": "Új jelszó",
+        "no_notifiers": "Nincs értesítő beállítva",
+        "notifier_modal": "Értesítő { type, select, true {szerkesztése} false {létrehozása} other {egyéb}}",
+        "notifiers": "Értesítők",
+        "notifiers_sub": "Értesítések kérése a közelgő karbantartási emlékeztetőkről",
+        "test": "Teszt",
+        "theme_settings": "Téma Beállítások",
+        "theme_settings_sub": "A témabeállítások a böngésző helyi tárhelyén tárolódnak. Bármikor megváltoztathatod a témát. Ha problémába\n ütközöl a téma beállításakor, próbáld meg frissíteni az oldalt a böngésződben.",
+        "update_group": "Csoport módosítása",
+        "update_language": "Nyelv átállítása",
+        "url": "URL",
+        "user_profile": "Felhasználói profil",
+        "user_profile_sub": "Hívj meg felhasználókat, és kezeld a fiókodat."
+    },
+    "tools": {
+        "actions": "Készletműveletek",
+        "actions_set": {
+            "ensure_ids": "Eszközazonosítók meglétének biztosítása",
+            "ensure_ids_button": "Eszközazonosítók generálása",
+            "ensure_ids_sub": "Biztosítja, hogy a készletben lévő összes tétel rendelkezzen érvényes asset_id (eszközazonosító) mezővel. Ehhez megkeresi a legmagasabb asset_id mezőértéket az adatbázisban és minden olyan tételhez, amelynek nem beállított az asset_id mezője, rendre eggyel növelt értéket állít be. Ezt a created_at mezők értékének (a tétel létrehozásának dátuma) sorrendjében teszi.",
+            "ensure_import_refs": "Importálási hivatkozások meglétének biztosítása",
+            "ensure_import_refs_button": "Hivatkozások generálása",
+            "ensure_import_refs_sub": "Biztosítja, hogy a készletben lévő összes tétel rendelkezzen érvényes import_ref mezővel. Véletlenszerűen generál egy 8 hosszúságú karakterláncot minden olyan tételhez, amelynél az import_ref mező üres.",
+            "set_primary_photo": "Elsődleges fénykép hozzárendelése",
+            "set_primary_photo_button": "Hozzárendelés",
+            "set_primary_photo_sub": "A Homebox v0.10.0 verziójában hozzáadtuk a fénykép típusú mellékletekhez az elsődleges fényképként történő megjelölés lehetőségét. Ezzel a művelettel a mellékletekben található első fényképet állítod be elsődleges fényképnek, ha ilyen a tételhez még nincs kiválasztva. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Lásd az #576 GitHub PR-t'</a>'",
+            "zero_datetimes": "Idő törlése a tételek dátummezőiből",
+            "zero_datetimes_button": "Dátummezők javítása",
+            "zero_datetimes_sub": "Visszaállítja a dátumot és időt tartalmazó mezők értékét a dátum kezdetére a teljes készletben. Ezzel javíthatsz egy olyan bugot, mely során az oldal fejlesztésének korai szakaszában az időértékek mentése a dátumok pontos megjelenítésében hibát okozott. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Lásd a #236 Github Issue-t további részletekért.'</a>'"
+        },
+        "actions_sub": "Műveletek tömeges alkalmazása a készletre. Ezeket a vissza nem vonható műveleteket csak '<b>'kellő körültekintés mellett használd'</b>'.",
+        "import_export": "Import/Export",
+        "import_export_set": {
+            "export": "Készlet exportálása",
+            "export_button": "Készlet exportálása",
+            "export_sub": "Exportálja a Homebox szabványos CSV formátumát. Ez minden készletedben található tételt exportál.",
+            "import": "Készlet importálása",
+            "import_button": "Készlet importálása",
+            "import_sub": "Importálja a Homebox szabványos CSV formátumát. Amennyiben nem található '<code>'HB.import_ref'</code>' oszlop a fájlban, ez '<b>'nem'</b>' ír felül létező tételeket a készletedben, csak újakat ad hozzá. Azon sorok, melyeknél a '<code>'HB.import_ref'</code>' oszlop értéke megegyezik egy létező tétel import_ref mezőjének értékével, a sor tartalma beolvad a létező tételbe."
+        },
+        "import_export_sub": "Készlet importálása és exportálása CSV-fájlba és CSV-fájlból. Ez hasznos lehet a készleted átmozgatásához a Homebox egy új példányába.",
+        "reports": "Jelentések",
+        "reports_set": {
+            "asset_labels": "Eszközazonosító címkék",
+            "asset_labels_button": "Címkegenerátor",
+            "asset_labels_sub": "Nyomtatható PDF-fájlt hoz létre, amely címkéket tartalmaz eszközazonosítók egy meghatározott tartományához. Ezek nem készletspecifikusak, így előre is kinyomtathatod a címkéket, és később felviheted a készleted beérkező tételeire.",
+            "bill_of_materials": "Anyagjegyzék",
+            "bill_of_materials_button": "Jegyzék létrehozása",
+            "bill_of_materials_sub": "Létrehoz egy CSV (vesszővel elválasztott értékek) fájlt, amely importálható egy táblázatkezelő programba. Ez a készleted összesítése a tételek alap és árra vonatkozó információival."
+        },
+        "reports_sub": "Hozz létre különböző jelentéseket a készletedhez."
     }
 }

@@ -559,6 +559,9 @@
                         "Bearer": []
                     }
                 ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -729,6 +732,9 @@
                     {
                         "Bearer": []
                     }
+                ],
+                "consumes": [
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -910,14 +916,41 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Maintenance"
+                    "Item Maintenance"
                 ],
                 "summary": "Get Maintenance Log",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "scheduled",
+                            "completed",
+                            "both"
+                        ],
+                        "type": "string",
+                        "x-enum-varnames": [
+                            "MaintenanceFilterStatusScheduled",
+                            "MaintenanceFilterStatusCompleted",
+                            "MaintenanceFilterStatusBoth"
+                        ],
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/repo.MaintenanceLog"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.MaintenanceEntryWithDetails"
+                            }
                         }
                     }
                 }
@@ -932,10 +965,17 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Maintenance"
+                    "Item Maintenance"
                 ],
                 "summary": "Create Maintenance Entry",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Entry Data",
                         "name": "payload",
@@ -952,60 +992,6 @@
                         "schema": {
                             "$ref": "#/definitions/repo.MaintenanceEntry"
                         }
-                    }
-                }
-            }
-        },
-        "/v1/items/{id}/maintenance/{entry_id}": {
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Maintenance"
-                ],
-                "summary": "Update Maintenance Entry",
-                "parameters": [
-                    {
-                        "description": "Entry Data",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/repo.MaintenanceEntryUpdate"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/repo.MaintenanceEntry"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Maintenance"
-                ],
-                "summary": "Delete Maintenance Entry",
-                "responses": {
-                    "204": {
-                        "description": "No Content"
                     }
                 }
             }
@@ -1402,6 +1388,120 @@
                 }
             }
         },
+        "/v1/maintenance": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Maintenance"
+                ],
+                "summary": "Query All Maintenance",
+                "parameters": [
+                    {
+                        "enum": [
+                            "scheduled",
+                            "completed",
+                            "both"
+                        ],
+                        "type": "string",
+                        "x-enum-varnames": [
+                            "MaintenanceFilterStatusScheduled",
+                            "MaintenanceFilterStatusCompleted",
+                            "MaintenanceFilterStatusBoth"
+                        ],
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.MaintenanceEntryWithDetails"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/maintenance/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Maintenance"
+                ],
+                "summary": "Update Maintenance Entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Maintenance ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Entry Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.MaintenanceEntryUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.MaintenanceEntry"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Maintenance"
+                ],
+                "summary": "Delete Maintenance Entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Maintenance ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
         "/v1/notifiers": {
             "get": {
                 "security": [
@@ -1477,13 +1577,6 @@
                 ],
                 "summary": "Test Notifier",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Notifier ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "URL",
@@ -1681,20 +1774,6 @@
                 ],
                 "summary": "User Login",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "example": "admin@admin.com",
-                        "description": "string",
-                        "name": "username",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "example": "admin",
-                        "description": "string",
-                        "name": "password",
-                        "in": "formData"
-                    },
                     {
                         "description": "Login Data",
                         "name": "payload",
@@ -2146,8 +2225,7 @@
                     "type": "string"
                 },
                 "purchasePrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number"
                 },
                 "purchaseTime": {
                     "description": "Purchase",
@@ -2163,8 +2241,7 @@
                     "type": "string"
                 },
                 "soldPrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number"
                 },
                 "soldTime": {
                     "description": "Sold",
@@ -2172,6 +2249,9 @@
                 },
                 "soldTo": {
                     "type": "string"
+                },
+                "syncChildItemsLocations": {
+                    "type": "boolean"
                 },
                 "updatedAt": {
                     "type": "string"
@@ -2217,6 +2297,10 @@
                 "archived": {
                     "type": "boolean"
                 },
+                "assetId": {
+                    "type": "string",
+                    "example": "0"
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -2252,8 +2336,7 @@
                     "type": "string"
                 },
                 "purchasePrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number"
                 },
                 "quantity": {
                     "type": "integer"
@@ -2276,6 +2359,9 @@
         },
         "repo.ItemUpdate": {
             "type": "object",
+            "required": [
+                "name"
+            ],
             "properties": {
                 "archived": {
                     "type": "boolean"
@@ -2284,7 +2370,8 @@
                     "type": "string"
                 },
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 1000
                 },
                 "fields": {
                     "type": "array",
@@ -2319,7 +2406,9 @@
                     "type": "string"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
                 },
                 "notes": {
                     "description": "Extras",
@@ -2331,11 +2420,13 @@
                     "x-omitempty": true
                 },
                 "purchaseFrom": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "purchasePrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "purchaseTime": {
                     "description": "Purchase",
@@ -2352,15 +2443,20 @@
                     "type": "string"
                 },
                 "soldPrice": {
-                    "type": "string",
-                    "example": "0"
+                    "type": "number",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "soldTime": {
                     "description": "Sold",
                     "type": "string"
                 },
                 "soldTo": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "syncChildItemsLocations": {
+                    "type": "boolean"
                 },
                 "warrantyDetails": {
                     "type": "string"
@@ -2607,25 +2703,48 @@
                 }
             }
         },
-        "repo.MaintenanceLog": {
+        "repo.MaintenanceEntryWithDetails": {
             "type": "object",
             "properties": {
-                "costAverage": {
-                    "type": "number"
+                "completedDate": {
+                    "type": "string"
                 },
-                "costTotal": {
-                    "type": "number"
+                "cost": {
+                    "type": "string",
+                    "example": "0"
                 },
-                "entries": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/repo.MaintenanceEntry"
-                    }
+                "description": {
+                    "type": "string"
                 },
-                "itemId": {
+                "id": {
+                    "type": "string"
+                },
+                "itemID": {
+                    "type": "string"
+                },
+                "itemName": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "scheduledDate": {
                     "type": "string"
                 }
             }
+        },
+        "repo.MaintenanceFilterStatus": {
+            "type": "string",
+            "enum": [
+                "scheduled",
+                "completed",
+                "both"
+            ],
+            "x-enum-varnames": [
+                "MaintenanceFilterStatusScheduled",
+                "MaintenanceFilterStatusCompleted",
+                "MaintenanceFilterStatusBoth"
+            ]
         },
         "repo.NotifierCreate": {
             "type": "object",
@@ -2666,6 +2785,9 @@
                     "type": "string"
                 },
                 "updatedAt": {
+                    "type": "string"
+                },
+                "url": {
                     "type": "string"
                 },
                 "userId": {
@@ -2710,9 +2832,6 @@
                 },
                 "total": {
                     "type": "integer"
-                },
-                "totalPrice": {
-                    "type": "number"
                 }
             }
         },
@@ -2945,13 +3064,15 @@
             "type": "object",
             "properties": {
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "admin"
                 },
                 "stayLoggedIn": {
                     "type": "boolean"
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "admin@admin.com"
                 }
             }
         },

@@ -1,19 +1,25 @@
 <template>
   <NuxtLink class="group card rounded-md border border-gray-300" :to="`/item/${item.id}`">
     <div class="relative h-[200px]">
-      <img v-if="imageUrl" class="h-[200px] w-full rounded-t border-gray-300 object-cover shadow-sm" :src="imageUrl" />
-      <div class="absolute bottom-1 left-1">
+      <img
+        v-if="imageUrl"
+        class="h-[200px] w-full rounded-t border-gray-300 object-cover shadow-sm"
+        :src="imageUrl"
+        alt=""
+      />
+      <div class="absolute bottom-1 left-1 text-wrap">
         <NuxtLink
           v-if="item.location"
           class="badge rounded-md text-sm shadow-md hover:link"
           :to="`/location/${item.location.id}`"
+          loading="lazy"
         >
-          {{ item.location.name }}
+          {{ locationString }}
         </NuxtLink>
       </div>
     </div>
     <div class="col-span-4 flex grow flex-col gap-y-1 rounded-b bg-base-100 p-4 pt-2">
-      <h2 class="line-clamp-2 text-ellipsis text-lg font-bold">{{ item.name }}</h2>
+      <h2 class="line-clamp-2 text-ellipsis text-wrap text-lg font-bold">{{ item.name }}</h2>
       <div class="divider my-0"></div>
       <div class="flex gap-2">
         <div v-if="item.insured" class="tooltip z-10" data-tip="Insured">
@@ -61,7 +67,16 @@
       type: Object as () => ItemOut | ItemSummary,
       required: true,
     },
+    locationFlatTree: {
+      type: Array as () => FlatTreeItem[],
+      required: false,
+      default: () => [],
+    },
   });
+
+  const locationString = computed(
+    () => props.locationFlatTree.find(l => l.id === props.item.location?.id)?.treeString || props.item.location?.name
+  );
 </script>
 
 <style lang="css"></style>

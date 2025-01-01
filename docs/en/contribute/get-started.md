@@ -35,7 +35,7 @@ swagger update command `task swag`
 
 ### Frontend Development Notes
 
-start command `task: ui:dev`
+start command `task ui:dev`
 
 1. The frontend is a Vue 3 app with Nuxt.js that uses Tailwind and DaisyUI for styling.
 2. We're using Vitest for our automated testing. You can run these with `task ui:watch`.
@@ -58,7 +58,12 @@ For documentation contributions, you only need Node.js and PNPM.
 :::
 
 ## Translations
-We use our own [Weblate instance](https://translate.sysadminsmedia.com/projects/homebox/) for translations. If you would like to help translate Homebox, please visit the Weblate instance and help us translate the project.
+We use our own [Weblate instance](https://translate.sysadminsmedia.com/projects/homebox/) for translations. If you would like to help translate Homebox, please visit the 
+Weblate instance and help us translate the project. We accept translations for any language.
+
+If you add a new language, please go to the English translation, press the `Add new translation string` button and then
+use `languages.<language_code>` as the key. For example, if you are adding a French translation, the key would be `languages.fr`.
+And then the string should be the name of the language in English. This is used to display the language in the language switcher.
 
 [![Translation status](http://translate.sysadminsmedia.com/widget/homebox/multi-auto.svg)](http://translate.sysadminsmedia.com/engage/homebox/)
 

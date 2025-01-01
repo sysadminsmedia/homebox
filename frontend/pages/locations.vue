@@ -62,12 +62,12 @@
 
 <template>
   <BaseContainer class="mb-16">
-    <BaseSectionHeader> Locations </BaseSectionHeader>
+    <BaseSectionHeader> {{ $t("menu.locations") }} </BaseSectionHeader>
     <BaseCard>
       <div class="p-4">
         <div class="mb-2 flex justify-end">
           <div class="btn-group">
-            <button class="btn tooltip tooltip-top btn-sm" data-tip="Collapse Tree" @click="closeAll">
+            <button class="btn tooltip tooltip-top btn-sm" :data-tip="$t('locations.collapse_tree')" @click="closeAll">
               <MdiCollapseAllOutline />
             </button>
           </div>

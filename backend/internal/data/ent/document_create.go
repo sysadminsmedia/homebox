@@ -176,7 +176,7 @@ func (dc *DocumentCreate) check() error {
 			return &ValidationError{Name: "path", err: fmt.Errorf(`ent: validator failed for field "Document.path": %w`, err)}
 		}
 	}
-	if _, ok := dc.mutation.GroupID(); !ok {
+	if len(dc.mutation.GroupIDs()) == 0 {
 		return &ValidationError{Name: "group", err: errors.New(`ent: missing required edge "Document.group"`)}
 	}
 	return nil

@@ -215,7 +215,7 @@ func (lc *LocationCreate) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Location.description": %w`, err)}
 		}
 	}
-	if _, ok := lc.mutation.GroupID(); !ok {
+	if len(lc.mutation.GroupIDs()) == 0 {
 		return &ValidationError{Name: "group", err: errors.New(`ent: missing required edge "Location.group"`)}
 	}
 	return nil

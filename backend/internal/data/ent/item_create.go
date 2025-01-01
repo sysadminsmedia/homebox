@@ -159,6 +159,20 @@ func (ic *ItemCreate) SetNillableAssetID(i *int) *ItemCreate {
 	return ic
 }
 
+// SetSyncChildItemsLocations sets the "sync_child_items_locations" field.
+func (ic *ItemCreate) SetSyncChildItemsLocations(b bool) *ItemCreate {
+	ic.mutation.SetSyncChildItemsLocations(b)
+	return ic
+}
+
+// SetNillableSyncChildItemsLocations sets the "sync_child_items_locations" field if the given value is not nil.
+func (ic *ItemCreate) SetNillableSyncChildItemsLocations(b *bool) *ItemCreate {
+	if b != nil {
+		ic.SetSyncChildItemsLocations(*b)
+	}
+	return ic
+}
+
 // SetSerialNumber sets the "serial_number" field.
 func (ic *ItemCreate) SetSerialNumber(s string) *ItemCreate {
 	ic.mutation.SetSerialNumber(s)
@@ -538,6 +552,10 @@ func (ic *ItemCreate) defaults() {
 		v := item.DefaultAssetID
 		ic.mutation.SetAssetID(v)
 	}
+	if _, ok := ic.mutation.SyncChildItemsLocations(); !ok {
+		v := item.DefaultSyncChildItemsLocations
+		ic.mutation.SetSyncChildItemsLocations(v)
+	}
 	if _, ok := ic.mutation.LifetimeWarranty(); !ok {
 		v := item.DefaultLifetimeWarranty
 		ic.mutation.SetLifetimeWarranty(v)
@@ -599,6 +617,9 @@ func (ic *ItemCreate) check() error {
 	if _, ok := ic.mutation.AssetID(); !ok {
 		return &ValidationError{Name: "asset_id", err: errors.New(`ent: missing required field "Item.asset_id"`)}
 	}
+	if _, ok := ic.mutation.SyncChildItemsLocations(); !ok {
+		return &ValidationError{Name: "sync_child_items_locations", err: errors.New(`ent: missing required field "Item.sync_child_items_locations"`)}
+	}
 	if v, ok := ic.mutation.SerialNumber(); ok {
 		if err := item.SerialNumberValidator(v); err != nil {
 			return &ValidationError{Name: "serial_number", err: fmt.Errorf(`ent: validator failed for field "Item.serial_number": %w`, err)}
@@ -633,7 +654,7 @@ func (ic *ItemCreate) check() error {
 			return &ValidationError{Name: "sold_notes", err: fmt.Errorf(`ent: validator failed for field "Item.sold_notes": %w`, err)}
 		}
 	}
-	if _, ok := ic.mutation.GroupID(); !ok {
+	if len(ic.mutation.GroupIDs()) == 0 {
 		return &ValidationError{Name: "group", err: errors.New(`ent: missing required edge "Item.group"`)}
 	}
 	return nil
@@ -710,6 +731,10 @@ func (ic *ItemCreate) createSpec() (*Item, *sqlgraph.CreateSpec) {
 	if value, ok := ic.mutation.AssetID(); ok {
 		_spec.SetField(item.FieldAssetID, field.TypeInt, value)
 		_node.AssetID = value
+	}
+	if value, ok := ic.mutation.SyncChildItemsLocations(); ok {
+		_spec.SetField(item.FieldSyncChildItemsLocations, field.TypeBool, value)
+		_node.SyncChildItemsLocations = value
 	}
 	if value, ok := ic.mutation.SerialNumber(); ok {
 		_spec.SetField(item.FieldSerialNumber, field.TypeString, value)

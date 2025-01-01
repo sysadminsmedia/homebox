@@ -1,138 +1,357 @@
 {
-    "global": {
-        "email": "Courriel",
-        "read_docs": "Lire la documentation",
-        "password": "Mot de passe",
-        "github": "Projet GitHub",
-        "join_discord": "Rejoindre le Discord",
-        "follow_dev": "Suivre le développeur",
-        "version": "Version : { version }",
-        "build": "Assemblage : { build }",
-        "create": "Créer",
-        "submit": "Soumettre",
-        "create_and_add": "Créer et en ajouter un autre",
-        "confirm": "Confirmer",
-        "sign_out": "Déconnexion",
-        "welcome": "Bienvenue, { username }",
-        "created": "Créé",
-        "labels": "Étiquettes",
-        "locations": "Emplacements",
-        "name": "Nom",
-        "search": "Rechercher",
-        "items": "Articles"
-    },
-    "index": {
-        "set_email": "Quel est vôtre courriel ?",
-        "set_name": "Quel est votre nom ?",
-        "login": "Se connecter",
-        "register": "S'enregistrer",
-        "remember_me": "Se souvenir de moi",
-        "set_password": "Définir votre mot de passe",
-        "dont_join_group": "Vous ne voulez pas joindre un groupe ?",
-        "tagline": "Répertoriez, organisez et gérez vos affaires.",
-        "disabled_registration": "Les inscriptions sont désactivées",
-        "joining_group": "Vous rejoignez un groupe existant !"
-    },
     "components": {
-        "label": {
-            "create_modal": {
-                "title": "Créer une étiquette"
+        "app": {
+            "import_dialog": {
+                "change_warning": "Le comportement lors d’importations avec des import_ref existants a changé. Si une valeur pour import_ref est présente dans le \nfichier CSV, alors l’élément sera mis à jour avec celle-ci.",
+                "description": "Importer un fichier CSV contenant vos articles, étiquettes, et emplacements. Se reporter à la documentation pour plus d’informations \nsur le format requis.",
+                "title": "Importer un fichier CSV",
+                "upload": "Téléverser"
+            }
+        },
+        "global": {
+            "copy_text": {
+                "documentation": "la documentation",
+                "failed_to_copy": "Échec de la copie du texte dans le presse-papiers",
+                "https_required": "parce que HTTPS est requis",
+                "learn_more": "Pour en savoir plus, consultez notre"
+            },
+            "date_time": {
+                "ago": "Il y a {0}",
+                "days": "jours",
+                "hour": "heure",
+                "hours": "heures",
+                "in": "autour de {0}",
+                "just-now": "À l'instant",
+                "last-month": "Le mois dernier",
+                "last-week": "la semaine dernière",
+                "last-year": "l'année dernière",
+                "minute": "minute",
+                "minutes": "minutes",
+                "months": "mois",
+                "next-month": "Le mois prochain",
+                "next-week": "la semaine prochaine",
+                "next-year": "l'année prochaine",
+                "second": "seconde",
+                "seconds": "secondes",
+                "tomorrow": "demain",
+                "week": "semaine",
+                "weeks": "semaines",
+                "years": "années",
+                "yesterday": "hier"
+            },
+            "page_qr_code": {
+                "page_url": "URL de la page"
+            },
+            "password_score": {
+                "password_strength": "Force du mot de passe"
             }
         },
         "item": {
+            "create_modal": {
+                "item_description": "Description de l'article",
+                "item_name": "Nom de l'article",
+                "photo_button": "Photo 📷",
+                "title": "Créer un article"
+            },
             "view": {
                 "selectable": {
+                    "card": "Carte",
                     "items": "Articles",
-                    "no_items": "Nb. d’articles à afficher",
-                    "table": "Tableau",
-                    "card": "Carte"
+                    "no_items": "Aucun article à afficher",
+                    "table": "Tableau"
+                },
+                "table": {
+                    "page": "Page",
+                    "rows_per_page": "Lignes par page"
                 }
-            },
+            }
+        },
+        "label": {
             "create_modal": {
-                "title": "Créer un article",
-                "photo_button": "Photo 📷"
+                "label_description": "Description de l'étiquette",
+                "label_name": "Nom de l'étiquette",
+                "title": "Créer une étiquette"
             }
         },
         "location": {
             "create_modal": {
+                "location_description": "Description de l'emplacement",
+                "location_name": "Nom de l'emplacement",
                 "title": "Créer un emplacement"
-            }
-        },
-        "global": {
-            "password_score": {
-                "password_strength": "Solidité du mot de passe"
             },
-            "page_qr_code": {
-                "page_url": "URL de la page"
-            }
-        },
-        "app": {
-            "import_dialog": {
-                "title": "Importer un fichier CSV",
-                "upload": "Téléverser",
-                "description": "Importer un fichier CSV contenant vos articles, étiquettes, et emplacements. Voir la documentation pour plus d’informations sur le format requis.",
-                "change_warning": "Le comportement lors d’importations avec des import_ref existants a changé. Si une valeur pour import_ref est présente dans le fichier CSV, alors l’élément sera mis à jour avec celle-ci."
+            "selector": {
+                "parent_location": "Emplacement parent"
+            },
+            "tree": {
+                "no_locations": "Aucun emplacement disponible. Créez votre premier emplacement avec\nle bouton `<`span class=\"link-primary\"`>`Créer`<`/span`>` dans la barre de navigation."
             }
         }
     },
-    "profile": {
-        "notifiers_sub": "Recevez des notifications pour vous prévenir des prochaines maintenances.",
-        "active": "Actif",
-        "enabled": "Activé",
-        "test": "Test",
-        "current_password": "Mot de passe actuel",
-        "new_password": "Nouveau mot de passe",
-        "change_password": "Changer de mot de passe",
-        "inactive": "Inactif",
-        "notifiers": "Notifications",
-        "gen_invite": "Générer un lien d’invitation",
-        "user_profile": "Profil utilisateur",
-        "user_profile_sub": "Gérez votre compte et invitez des utilisateurs.",
-        "url": "URL",
-        "delete_account": "Effacer le compte",
-        "delete_account_sub": "Supprimer le compte et toutes ses données. Aucune récupération possible.",
-        "group_settings": "Paramètres du groupe",
-        "group_settings_sub": "Paramètres du groupe partagé. Il peut être nécessaire de recharger la page pour qu’ils deviennent effectifs.",
-        "currency_format": "Format de la devise",
-        "update_group": "Mettre à jour le groupe",
-        "theme_settings": "Paramètres du thème",
-        "theme_settings_sub": "Les paramètres du thème sont stockés dans le navigateur. Vous pouvez les changer à tout moment. Si vous\nrencontrez des problèmes, il est conseillé de rafraichir la page.",
-        "notifier_modal": "Notifications { type, select, true {Edit} false {Create} other {Other}}",
-        "update_language": "Mettre à jour la langue",
-        "language": "Langue"
+    "global": {
+        "add": "Ajouter",
+        "build": "Version : { build }",
+        "confirm": "Confirmer",
+        "create": "Créer",
+        "create_and_add": "Créer et en ajouter un autre",
+        "created": "Créé",
+        "delete": "Supprimer",
+        "details": "Détails",
+        "duplicate": "Dupliquer",
+        "edit": "Modifier",
+        "email": "Courriel",
+        "follow_dev": "Suivre le développeur",
+        "github": "Projet GitHub",
+        "items": "Articles",
+        "join_discord": "Rejoindre le Discord",
+        "labels": "Étiquettes",
+        "locations": "Emplacements",
+        "maintenance": "Maintenance",
+        "name": "Nom",
+        "password": "Mot de passe",
+        "read_docs": "Lire la documentation",
+        "save": "Enregistrer",
+        "search": "Rechercher",
+        "sign_out": "Se déconnecter",
+        "submit": "Soumettre",
+        "update": "Mettre à jour",
+        "value": "Valeur",
+        "version": "Version : { version }",
+        "welcome": "Bienvenue, { username }"
+    },
+    "home": {
+        "labels": "Étiquettes",
+        "quick_statistics": "Statistiques rapides",
+        "recently_added": "Ajouté récemment",
+        "storage_locations": "Lieu de stockage",
+        "total_items": "Total d'objets",
+        "total_labels": "Total d'étiquettes",
+        "total_locations": "Total de lieu",
+        "total_value": "Valeur total"
+    },
+    "index": {
+        "disabled_registration": "Les inscriptions sont désactivées",
+        "dont_join_group": "Vous ne voulez pas joindre un groupe ?",
+        "joining_group": "Vous rejoignez un groupe existant !",
+        "login": "Se connecter",
+        "register": "S'enregistrer",
+        "remember_me": "Se souvenir de moi",
+        "set_email": "Quel est vôtre courriel ?",
+        "set_name": "Quel est votre nom ?",
+        "set_password": "Définir votre mot de passe",
+        "tagline": "Répertoriez, organisez et gérez vos affaires."
     },
     "items": {
         "add": "Ajouter",
+        "advanced": "Avancée",
+        "archived": "Archivé",
+        "asset_id": "ID d'élément",
+        "attachment": "Pièce jointe",
+        "attachments": "Pièces jointes",
+        "changes_persisted_immediately": "Les changements de pièces jointes vont être sauvegardés immédiatement",
         "created_at": "Créé à",
         "custom_fields": "Champs personnalisés",
+        "description": "Description",
+        "details": "Détails",
+        "drag_and_drop": "Glissez-déposez les fichiers ici ou cliquez pour choisir des fichiers",
+        "edit_details": "Éditez les détails",
         "field_selector": "Sélecteur de champ",
         "field_value": "Valeur du champ",
         "first": "Premier",
         "include_archive": "Inclure les éléments archivés",
+        "insured": "Assurée",
         "last": "Dernier",
+        "lifetime_warranty": "Garantie à vie",
+        "location": "Lieu",
+        "manual": "Mode d'emploi",
+        "manuals": "Modes d'emplois",
+        "manufacturer": "Fabricant",
+        "model_number": "Numéro de modèle",
+        "name": "Nom",
         "negate_labels": "Négliger les étiquettes sélectionnées",
         "next_page": "Page suivante",
         "no_results": "Aucun élément trouvé",
+        "notes": "Notes",
         "options": "Options",
         "order_by": "Trier par",
         "pages": "Page { page } sur { totalPages }",
+        "parent_item": "Objet parent",
+        "photo": "Photo",
+        "photos": "Photos",
         "prev_page": "Page précédente",
+        "purchase_date": "Date d'achat",
+        "purchase_details": "Détail de l'achat",
+        "purchase_price": "Prix d'achat",
+        "purchased_from": "Acheté à",
+        "quantity": "Quantité",
         "query_id": "Interrogation du numéro d'identification de l'actif : { id }",
+        "receipt": "Reçu",
+        "receipts": "Reçus",
         "reset_search": "Réinitialiser la recherche",
+        "results": "{ total } résultats",
+        "serial_number": "Numéro de série",
+        "show_advanced_view_options": "Afficher les options avancées",
+        "sold_at": "Vendu à",
+        "sold_details": "Détails de la vente",
+        "sold_price": "Prix de vente",
+        "sold_to": "Vendu pour",
         "tip_1": "Les filtres d’emplacement et d’étiquette utilisent l’opérateur « OU ».\nUn seul des filtres n’a besoin de correspondre pour retourner un résultat.",
         "tip_2": "Les recherches préfixées par '#'' rechercheront un ID d'actif (exemple '#000-001')",
         "tip_3": "Les filtres de champ utilisent l’opérateur « OU ».\nUn seul des filtres n’a besoin de correspondre pour retourner un résultat.",
         "tips": "Conseils",
         "tips_sub": "Conseils pour la recherche",
         "updated_at": "Mis à jour le",
-        "results": "{ total } résultats"
+        "warranty": "Garantie",
+        "warranty_details": "Détails de la garantie",
+        "warranty_expires": "Expiration de la garantie"
+    },
+    "labels": {
+        "no_results": "Aucune étiquette trouvée",
+        "update_label": "Mettre à jour l'étiquette"
+    },
+    "languages": {
+        "ca": "Catalan",
+        "de": "Allemand",
+        "en": "Anglais",
+        "es": "Espagnol",
+        "fr": "Français",
+        "hu": "Hongrois",
+        "it": "Italien",
+        "ja-JP": "Japonais",
+        "nl": "Néerlandais",
+        "pl": "Polonais",
+        "pt-BR": "Portugais (Brésil)",
+        "pt-PT": "Portugais (Portugal)",
+        "ru": "Russe",
+        "sl": "Slovène",
+        "sv": "Suédois",
+        "tr": "Turc",
+        "uk-UA": "Ukrainien",
+        "zh-CN": "Chinois (simplifié)",
+        "zh-HK": "Chinois (Hong Kong)",
+        "zh-MO": "Chinois (Macao)",
+        "zh-TW": "Chinois (traditionnel)"
+    },
+    "languages.da-DK": "Danois",
+    "languages.fi.FI": "Finnois",
+    "languages.ro-RO": "Roumain",
+    "languages.sk-SK": "Slovaque",
+    "locations": {
+        "child_locations": "Lieu enfant",
+        "collapse_tree": "Minimiser la liste",
+        "no_results": "Aucun emplacement trouvé",
+        "update_location": "Mettre à jour le lieu"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Toutes",
+            "completed": "Terminées",
+            "scheduled": "Prévues"
+        },
+        "list": {
+            "complete": "Terminer",
+            "create_first": "Créer votre première entrée",
+            "delete": "Supprimer",
+            "duplicate": "Dupliquer",
+            "edit": "Modifier",
+            "new": "Nouveau"
+        },
+        "modal": {
+            "completed_date": "Date d'achèvement",
+            "cost": "Coût",
+            "delete_confirmation": "Êtes-vous certain de vouloir supprimer cette entrée ?",
+            "edit_action": "Mettre à jour",
+            "edit_title": "Modifier l'entrée",
+            "entry_name": "Nom de l’entrée",
+            "new_action": "Créer",
+            "new_title": "Nouvelle entrée",
+            "notes": "Notes",
+            "scheduled_date": "Date prévue"
+        },
+        "monthly_average": "Moyenne mensuelle",
+        "toast": {
+            "failed_to_create": "Échec de création de l'entrée",
+            "failed_to_delete": "Échec de suppression de l'entrée",
+            "failed_to_update": "Échec de mise à jour de l'entrée"
+        },
+        "total_cost": "Coût total",
+        "total_entries": "Nombre d'entrées"
+    },
+    "menu": {
+        "create_item": "Objet / Ressource",
+        "create_label": "Étiquette",
+        "create_location": "Lieu",
+        "home": "Accueil",
+        "locations": "Emplacements",
+        "maintenance": "Maintenance",
+        "profile": "Profil",
+        "search": "Recherche",
+        "tools": "Outils"
+    },
+    "profile": {
+        "active": "Actif",
+        "change_password": "Changer de mot de passe",
+        "currency_format": "Format de la devise",
+        "current_password": "Mot de passe actuel",
+        "delete_account": "Supprimer le compte",
+        "delete_account_sub": "Supprimer le compte et toutes ses données. Aucune récupération possible.",
+        "display_header": "{ currentValue, select, true {Masquer l’en-tête} false {Afficher l’en-tête} other {Not Hit}}",
+        "enabled": "Activé",
+        "example": "Example",
+        "gen_invite": "Générer un lien d’invitation",
+        "group_settings": "Paramètres du groupe",
+        "group_settings_sub": "Paramètres du groupe partagé. Il peut être nécessaire de recharger la page pour qu’ils deviennent effectifs.",
+        "inactive": "Inactif",
+        "language": "Langue",
+        "new_password": "Nouveau mot de passe",
+        "no_notifiers": "Aucune notification configurée",
+        "notifier_modal": "Notifications { type, select, true {Edit} false {Create} other {Other}}",
+        "notifiers": "Notifications",
+        "notifiers_sub": "Recevez des notifications pour vous prévenir des prochaines maintenances",
+        "test": "Test",
+        "theme_settings": "Paramètres du thème",
+        "theme_settings_sub": "Les paramètres du thème sont stockés dans le navigateur. Vous pouvez les changer à tout moment. Si vous\nrencontrez des problèmes, il est conseillé de rafraichir la page.",
+        "update_group": "Mettre à jour le groupe",
+        "update_language": "Mettre à jour la langue",
+        "url": "URL",
+        "user_profile": "Profil utilisateur",
+        "user_profile_sub": "Gérez votre compte et invitez des utilisateurs."
     },
     "tools": {
-        "reports_set": {
-            "bill_of_materials": "Nomenclature",
-            "asset_labels_button": "Générateur d’étiquettes"
+        "actions": "Actions d’inventaire",
+        "actions_set": {
+            "ensure_ids": "Vérifier les identifiants d'actif",
+            "ensure_ids_button": "Vérifier les identifiants d'actifs",
+            "ensure_ids_sub": "Vérifie que tous les éléments de votre inventaire comportent un champ asset_id valide. Ceci est effectué en cherchant l’identifiant actuel le plus élevé et en appliquant les valeurs suivantes à tous les éléments sans identifiant. L'action est effectuée en suivant l'ordre du champ created_at.",
+            "ensure_import_refs": "Vérifier les références d'importation",
+            "ensure_import_refs_button": "Vérifier les références d'importation",
+            "ensure_import_refs_sub": "Vérifie que tous les éléments de votre inventaire comportent un champ import_ref valide. Ceci est effectué en générant une chaîne de 8 caractères aléatoires pour chaque élément ne comportant pas de champ import_ref.",
+            "set_primary_photo": "Définir la photo principale",
+            "set_primary_photo_button": "Définir la photo principale",
+            "set_primary_photo_sub": "Dans la version v0.10.0 d'Homebox, le champ d'image principal à été ajouté aux pièces jointes de type photo. Cette action définira en tant qu'image principale toute première image en pièce jointe déjà présente en base de donnée, si le champ n'est pas déjà défini. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Voir GitHub PR #576'</a>'",
+            "zero_datetimes": "Remettre à zéro les dates et heures",
+            "zero_datetimes_button": "Remettre à zéro les dates et heures",
+            "zero_datetimes_sub": "Réinitialise la valeur de tous les champs date/heure de votre inventaire à la date de début. Il s'agit de corriger une anomalie introduite au début du développement du site qui entraînait le stockage de la valeur temporelle avec l'heure, ce qui provoquait des problèmes avec les champs de date affichant des valeurs précises. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Voir le rapport 236 de Github pour plus de détails.'</a> '"
         },
+        "actions_sub": "Appliquer des actions en masse à votre inventaire. Ces actions sont irréversibles. '<b>'Soyez vigilant.'</b>'",
+        "import_export": "Importer/Exporter",
+        "import_export_set": {
+            "export": "Exporter l'inventaire",
+            "export_button": "Exporter l'inventaire",
+            "export_sub": "Exporte l'inventaire au format CSV Homebox. Cela exportera l'intégralité de votre inventaire.",
+            "import": "Importer l'inventaire",
+            "import_button": "Importer l'inventaire",
+            "import_sub": "Importer un fichier CSV au format Homebox. Sans la colonne '<code>'HB.import_ref'</code>' , cela '<b>'n'écrasera pas'</b>' d'éléments de votre inventaire actuel, seuls les nouveaux éléments seront importés. Les lignes contenant une colonne '<code>'HB.import_ref'</code>' seront fusionnées avec les éléments existants comportant le même import_ref, si existant."
+        },
+        "import_export_sub": "Importez et exportez votre inventaire vers et depuis un fichier CSV. Ceci est utile pour migrer votre inventaire vers une nouvelle instance de Homebox.",
         "reports": "Rapports",
+        "reports_set": {
+            "asset_labels": "Étiquettes d’identifiant d’actif",
+            "asset_labels_button": "Générateur d'étiquettes",
+            "asset_labels_sub": "Génère un fichier PDF imprimable pour une plage d'identifiants d'actifs. Ils ne sont pas spécifiques à votre inventaire donc vous pouvez les imprimer en avance et les appliquer à votre inventaire par la suite.",
+            "bill_of_materials": "Nomenclature",
+            "bill_of_materials_button": "Générer une nomenclature",
+            "bill_of_materials_sub": "Génère un fichier CSV (valeurs séparées par des virgules) qui peut être importé dans un tableur. Il s'agit d'un aperçu de votre inventaire contenant les informations essentielles."
+        },
         "reports_sub": "Générez différents rapports pour votre inventaire."
     }
 }

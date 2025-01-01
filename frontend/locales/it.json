@@ -2,13 +2,43 @@
     "components": {
         "app": {
             "import_dialog": {
-                "change_warning": "Il comportamento per le importazioni con import_ref esistenti è cambiato. Se un import_ref è presente nel file CSV,\n l'elemento verrà aggiornato con i valori presenti nel file CSV.",
-                "description": "Importa un file CSV contenente gli oggetti, le etichette e le posizioni. Vedi la documentazione per ulteriori informazioni sul \nformato richiesto.",
+                "change_warning": "Il comportamento per le importazioni con import_ref esistenti è cambiato. Se un import_ref è presente nel file CSV,\n l'articolo verrà aggiornato con i valori presenti nel file CSV.",
+                "description": "Importa un file CSV contenente gli articoli, le etichette e le posizioni. Vedi la documentazione per ulteriori informazioni sul \nformato richiesto.",
                 "title": "Importa File CSV",
                 "upload": "Carica"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "documentazione",
+                "failed_to_copy": "Impossibile copiare il testo negli appunti",
+                "https_required": "perché è richiesto HTTPS",
+                "learn_more": "Troverai ulteriori informazioni in"
+            },
+            "date_time": {
+                "ago": "{0} fa",
+                "days": "giorni",
+                "hour": "ora",
+                "hours": "ore",
+                "in": "tra {0}",
+                "just-now": "Adesso",
+                "last-month": "mese scorso",
+                "last-week": "settimana precedente",
+                "last-year": "anno precedente",
+                "minute": "minuto",
+                "minutes": "minuti",
+                "months": "mesi",
+                "next-month": "prossimo mese",
+                "next-week": "settimana successiva",
+                "next-year": "anno successivo",
+                "second": "secondo",
+                "seconds": "secondi",
+                "tomorrow": "domani",
+                "week": "settimana",
+                "weeks": "settimane",
+                "years": "anni",
+                "yesterday": "ieri"
+            },
             "page_qr_code": {
                 "page_url": "URL della Pagina"
             },
@@ -18,34 +48,56 @@
         },
         "item": {
             "create_modal": {
-                "title": "Crea Oggetto"
+                "item_description": "Descrizione Articolo",
+                "item_name": "Nome articolo",
+                "photo_button": "Foto 📷",
+                "title": "Crea Articolo"
             },
             "view": {
                 "selectable": {
                     "card": "Scheda",
-                    "items": "Oggetti",
-                    "no_items": "Nessun Oggetto da Visualizzare",
+                    "items": "Articoli",
+                    "no_items": "Nessun Articolo da Visualizzare",
                     "table": "Tabella"
+                },
+                "table": {
+                    "page": "Pagina",
+                    "rows_per_page": "Righe per pagina"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_description": "Descrizione Etichetta",
+                "label_name": "Nome Etichetta",
                 "title": "Crea Etichetta"
             }
         },
         "location": {
             "create_modal": {
+                "location_description": "Descrizione ubicazione",
+                "location_name": "Nome ubicazione",
                 "title": "Crea Posizione"
+            },
+            "selector": {
+                "parent_location": "Ubicazione padre"
+            },
+            "tree": {
+                "no_locations": "Nessuna posizione disponibile. Aggiungi nuove posizioni mediante il pulsante\n`<`span class=\"link-primary\"`>`Crea`<`/span`>` nella barra di navigazione."
             }
         }
     },
     "global": {
-        "build": "Build: { build }",
+        "add": "Aggiungi",
+        "build": "Compila: { build }",
         "confirm": "Conferma",
         "create": "Crea",
         "create_and_add": "Crea e aggiungi un altro",
         "created": "Creato",
+        "delete": "Cancella",
+        "details": "Dettagli",
+        "duplicate": "Duplica",
+        "edit": "Modifica",
         "email": "Email",
         "follow_dev": "Segui lo Sviluppatore",
         "github": "Progetto GitHub",
@@ -53,15 +105,29 @@
         "join_discord": "Unisciti a Discord",
         "labels": "Etichette",
         "locations": "Posizioni",
+        "maintenance": "Manutenzione",
         "name": "Nome",
         "password": "Password",
         "read_docs": "Leggi la Documentazione",
+        "save": "Salva",
         "search": "Cerca",
         "sign_out": "Disconnetti",
         "submit": "Invia",
+        "update": "Aggiorna",
+        "value": "Valore",
         "version": "Versione: { version }",
         "welcome": "Benvenuto, { username }"
-  },
+    },
+    "home": {
+        "labels": "Etichette",
+        "quick_statistics": "Statistiche rapide",
+        "recently_added": "Aggiunti di recente",
+        "storage_locations": "Ubicazioni di magazzino",
+        "total_items": "Articoli totali",
+        "total_labels": "Etichette totali",
+        "total_locations": "Ubicazioni totali",
+        "total_value": "Valore totale"
+    },
     "index": {
         "disabled_registration": "Registrazione Disabilitata",
         "dont_join_group": "Non vuoi unirti a un gruppo?",
@@ -76,29 +142,150 @@
     },
     "items": {
         "add": "Aggiungi",
+        "advanced": "Avanzate",
+        "archived": "Archiviato",
+        "asset_id": "ID Asset",
+        "attachment": "Allegato",
+        "attachments": "Allegati",
+        "changes_persisted_immediately": "Le modifiche agli allegati verranno salvate immediatamente",
         "created_at": "Creato Il",
         "custom_fields": "Campi Personalizzati",
-        "field_selector": "Selettore di Campo",
-        "field_value": "Valore del Campo",
+        "description": "Descrizione",
+        "details": "Dettagli",
+        "drag_and_drop": "Trascina e rilascia i file qui o fai clic per selezionare i file",
+        "edit_details": "Modifica dettagli",
+        "field_selector": "Campo Selezione",
+        "field_value": "Campo valore",
         "first": "Primo",
         "include_archive": "Includi Articoli Archiviati",
+        "insured": "Assicurato",
         "last": "Ultimo",
+        "lifetime_warranty": "Garanzia a vita",
+        "location": "Luogo",
+        "manual": "Manuale",
+        "manuals": "Manuali",
+        "manufacturer": "Marca",
+        "model_number": "Numero modello",
+        "name": "Nome",
         "negate_labels": "Negare Etichette Selezionate",
         "next_page": "Pagina Successiva",
         "no_results": "Nessun Articolo Trovato",
+        "notes": "Note",
         "options": "Opzioni",
         "order_by": "Ordina Per",
         "pages": "Pagina { page } di { totalPages }",
+        "parent_item": "Articolo principale",
+        "photo": "Foto",
+        "photos": "Foto",
         "prev_page": "Pagina Precedente",
+        "purchase_date": "Data di acquisto",
+        "purchase_details": "Dettagli dell'acquisto",
+        "purchase_price": "Prezzo di acquisto",
+        "purchased_from": "Acqistato da",
+        "quantity": "Quantità",
         "query_id": "ID dell'Asset in Ricerca: { id }",
+        "receipt": "Ricevuta",
+        "receipts": "Ricevute",
         "reset_search": "Reimposta Ricerca",
         "results": "{ total } Risultati",
+        "serial_number": "Numero seriale",
+        "show_advanced_view_options": "Mostra opzioni di visualizzazione avanzate",
+        "sold_at": "Venduto su",
+        "sold_details": "Dettagli di vendita",
+        "sold_price": "Prezzo di vendita",
+        "sold_to": "Venduto a",
         "tip_1": "I filtri di posizione ed etichetta utilizzano l'operazione 'OR'. Se ne viene selezionato più\n di uno, ne sarà richiesto solo uno per una corrispondenza.",
         "tip_2": "Le ricerche con prefisso '#' cercheranno un ID asset (esempio '#000-001')",
         "tip_3": "I filtri di campo utilizzano l'operazione 'OR'. Se ne viene selezionato più di uno, ne sarà\n richiesto solo uno per una corrispondenza.",
         "tips": "Suggerimenti",
         "tips_sub": "Suggerimenti per la Ricerca",
-        "updated_at": "Aggiornato Il"
+        "updated_at": "Aggiornato Il",
+        "warranty": "Garanzia",
+        "warranty_details": "Dettagli garanzia",
+        "warranty_expires": "Garanzia scaduta"
+    },
+    "labels": {
+        "no_results": "Nessuna etichetta trovata",
+        "update_label": "Aggiorna etichetta"
+    },
+    "languages": {
+        "ca": "Catalano",
+        "de": "Tedesco",
+        "en": "Inglese",
+        "es": "Spagnolo",
+        "fr": "Francese",
+        "hu": "Ungherese",
+        "it": "Italiano",
+        "ja-JP": "Giapponese",
+        "nl": "Olandese",
+        "pl": "Polacco",
+        "pt-BR": "Portoghese (Brasile)",
+        "pt-PT": "Portoghese (Portogallo)",
+        "ru": "Russo",
+        "sl": "Sloveno",
+        "sv": "Svedese",
+        "tr": "Turco",
+        "uk-UA": "Ucraino",
+        "zh-CN": "Cinese (semplificato)",
+        "zh-HK": "Cinese Mandarino",
+        "zh-MO": "Cinese (Macao)",
+        "zh-TW": "Cinese (tradizionale)"
+    },
+    "languages.da-DK": "Danese",
+    "languages.fi.FI": "Finlandese",
+    "languages.ro-RO": "Rumeno",
+    "languages.sk-SK": "Slovacco",
+    "locations": {
+        "child_locations": "Ubicazione figlia",
+        "collapse_tree": "Contrai albero",
+        "no_results": "Nessuna posizione trovata",
+        "update_location": "Aggiorna ubicazione"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Entrambi",
+            "completed": "Completato",
+            "scheduled": "Pianificato"
+        },
+        "list": {
+            "complete": "Completa",
+            "create_first": "Crea la tua prima voce",
+            "delete": "Elimina",
+            "duplicate": "Duplicare",
+            "edit": "Modifica",
+            "new": "Nuova"
+        },
+        "modal": {
+            "completed_date": "Data di completamento",
+            "cost": "Costo",
+            "delete_confirmation": "Sei sicuro di voler eliminare questa voce?",
+            "edit_action": "Aggiornare",
+            "edit_title": "Modifica voce",
+            "entry_name": "Inserisci il Nome",
+            "new_action": "Crea",
+            "new_title": "Nuova Voce",
+            "notes": "Note",
+            "scheduled_date": "Data programmata"
+        },
+        "monthly_average": "Media mensile",
+        "toast": {
+            "failed_to_create": "Impossibile creare la voce",
+            "failed_to_delete": "Impossibile eliminare la voce",
+            "failed_to_update": "Impossibile aggiornare la voce"
+        },
+        "total_cost": "Costo totale",
+        "total_entries": "Voci totali"
+    },
+    "menu": {
+        "create_item": "Articolo / Asset",
+        "create_label": "Etichetta",
+        "create_location": "Ubicazione",
+        "home": "Home",
+        "locations": "Posizioni",
+        "maintenance": "Manutenzione",
+        "profile": "Profilo",
+        "search": "Cerca",
+        "tools": "Strumenti"
     },
     "profile": {
         "active": "Attivo",
@@ -107,12 +294,16 @@
         "current_password": "Password Corrente",
         "delete_account": "Elimina Account",
         "delete_account_sub": "Elimina il tuo account e tutti i dati associati. Questa operazione non può essere annullata.",
+        "display_header": "{ currentValue, select, true {Nascondi intestazione} false {Mostra intestazione} other {Sconosciuto}}",
         "enabled": "Abilitato",
+        "example": "Esempio",
         "gen_invite": "Genera Link di Invito",
         "group_settings": "Impostazioni Gruppo",
         "group_settings_sub": "Impostazioni Gruppo Condivise. Potrebbe essere necessario aggiornare il browser affinché alcune impostazioni vengano applicate.",
         "inactive": "Inattivo",
+        "language": "Lingua",
         "new_password": "Nuova Password",
+        "no_notifiers": "Nessun notificatore configurato",
         "notifier_modal": "{ type, select, true {Modifica} false {Crea} other {Altro}} Notifier",
         "notifiers": "Notifiche",
         "notifiers_sub": "Ricevi notifiche per i prossimi promemoria di manutenzione",
@@ -120,8 +311,47 @@
         "theme_settings": "Impostazioni Tema",
         "theme_settings_sub": "Le impostazioni del tema sono memorizzate nella memoria locale del tuo browser. Puoi cambiare il tema \nin qualsiasi momento. Se hai problemi a impostare il tuo tema, prova a ricaricare la pagina.",
         "update_group": "Aggiorna Gruppo",
+        "update_language": "Aggiorna Lingua",
         "url": "URL",
         "user_profile": "Profilo Utente",
         "user_profile_sub": "Invita utenti e gestisci il tuo account."
+    },
+    "tools": {
+        "actions": "Azioni Inventario",
+        "actions_set": {
+            "ensure_ids": "Verifica ID delle risorse",
+            "ensure_ids_button": "Verifica ID delle risorse",
+            "ensure_ids_sub": "Garantisce che tutti gli articoli nel tuo inventario abbiano un campo asset_id valido. Questo viene fatto trovando il campo asset_id corrente più alto nel database e applicando il valore successivo a ogni articolo che ha un campo asset_id non impostato. Questo viene fatto per il campo created_at.",
+            "ensure_import_refs": "Verifica riferimenti di importazione",
+            "ensure_import_refs_button": "Verifica riferimenti di importazione",
+            "ensure_import_refs_sub": "Verifica che tutti gli articoli nel tuo inventario abbiano un campo import_ref valido. Questo viene fatto generando in modo casuale una stringa di 8 caratteri per ogni articolo che ha un campo import_ref non impostato.",
+            "set_primary_photo": "Imposta foto principale",
+            "set_primary_photo_button": "Imposta immagine principale",
+            "set_primary_photo_sub": "Nella versione v0.10.0 di Homebox, il campo immagine principale è stato aggiunto agli allegati di tipo foto. Questa azione imposterà il campo immagine principale alla prima immagine nella matrice allegati nel database, se non è già impostato. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Vedi GitHub PR #576'</a>'",
+            "zero_datetimes": "Azzera Data e Orario articolo",
+            "zero_datetimes_button": "Azzera Date e Ora articolo",
+            "zero_datetimes_sub": "Reimposta il valore dell'ora per tutti i campi data e ora dell'inventario all'inizio della data. Questo è per correggere un bug che è stato introdotto all'inizio dello sviluppo del sito che ha causato il valore di orario memorizzato con il tempo che ha causato problemi con i campi data visualizzazione dei valori esatti. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Vedi Github Issue #236 per maggiori dettagli.'</a>'"
+        },
+        "actions_sub": "Applica Azioni massive al tuo inventario. Questo sono azioni irreversibili. '<b>'Presta attenzione.'</b>'",
+        "import_export": "Importa/Esporta",
+        "import_export_set": {
+            "export": "Esporta Inventario",
+            "export_button": "Esporta Inventario",
+            "export_sub": "Esporta il formato CSV standard per Homebox. Questo esporterà tutti gli articoli del tuo inventario.",
+            "import": "Importa Inventario",
+            "import_button": "Importa Inventario",
+            "import_sub": "Importa il formato CSV standard per Homebox. Senza una colonna '<code>'HB.import_ref'</code>' questo '<b>'non'</b>' sovrascriverà gli articoli esistenti nel tuo inventario, aggiungerà solamente nuovi articoli. Le righe con una colonna '<code>'HB.import_ref'</code>' saranno unite agli articoli esistenti con lo stesso import_ref, se presente."
+        },
+        "import_export_sub": "Importa ed esporta il tuo inventario da e verso un file CSV. Questo è utile per migrare il tuo inventario verso una nuova istanza di Homebox.",
+        "reports": "Rapporti",
+        "reports_set": {
+            "asset_labels": "Etichette ID risorsa",
+            "asset_labels_button": "Generatore di etichette",
+            "asset_labels_sub": "Genera una etichetta PDF stampabile per un gruppo di ID Risorsa. Le etichette non sono specifiche per il tuo inventario così puoi stamparle in anticipo ed applicarle al tuo inventario quando lo ricevi.",
+            "bill_of_materials": "Distinta base",
+            "bill_of_materials_button": "Genera BOM",
+            "bill_of_materials_sub": "Genera un file CSV (Valori Separati dalla Virgola) che può essere importato in un foglio di calcolo. Questo è un sommario del tuo inventario con informazioni di base su articoli e prezzi."
+        },
+        "reports_sub": "Genera diversi report per il tuo inventario."
     }
 }

@@ -148,9 +148,7 @@ describe("user should be able to create an item and add an attachment", () => {
     {
       const { response, data } = await api.items.maintenance.getLog(item.id);
       expect(response.status).toBe(200);
-      expect(data.entries).toHaveLength(maintenanceEntries.length);
-      expect(data.costAverage).toBeGreaterThan(0);
-      expect(data.costTotal).toBeGreaterThan(0);
+      expect(data).toHaveLength(maintenanceEntries.length);
     }
 
     cleanup();
@@ -192,5 +190,73 @@ describe("user should be able to create an item and add an attachment", () => {
     expect(names).toEqual([...locations, item.name]);
 
     cleanup();
+  });
+
+  test("child items sync their location to their parent", async () => {
+    const api = await sharedUserClient();
+    const [parentLocation, parentCleanup] = await useLocation(api);
+    const [childsLocation, childsCleanup] = await useLocation(api);
+
+    const { response: parentResponse, data: parent } = await api.items.create({
+      name: "parent-item",
+      labelIds: [],
+      description: "test-description",
+      locationId: parentLocation.id,
+    });
+    expect(parentResponse.status).toBe(201);
+    expect(parent.id).toBeTruthy();
+
+    const { response: child1Response, data: child1Item } = await api.items.create({
+      name: "child1-item",
+      labelIds: [],
+      description: "test-description",
+      locationId: childsLocation.id,
+    });
+    expect(child1Response.status).toBe(201);
+    const child1ItemUpdate = {
+      parentId: parent.id,
+      ...child1Item,
+      locationId: child1Item.location?.id,
+      labelIds: [],
+    };
+    const { response: child1UpdatedResponse } = await api.items.update(child1Item.id, child1ItemUpdate as ItemUpdate);
+    expect(child1UpdatedResponse.status).toBe(200);
+
+    const { response: child2Response, data: child2Item } = await api.items.create({
+      name: "child2-item",
+      labelIds: [],
+      description: "test-description",
+      locationId: childsLocation.id,
+    });
+    expect(child2Response.status).toBe(201);
+    const child2ItemUpdate = {
+      parentId: parent.id,
+      ...child2Item,
+      locationId: child2Item.location?.id,
+      labelIds: [],
+    };
+    const { response: child2UpdatedResponse } = await api.items.update(child2Item.id, child2ItemUpdate as ItemUpdate);
+    expect(child2UpdatedResponse.status).toBe(200);
+
+    const itemUpdate = {
+      parentId: null,
+      ...parent,
+      locationId: parentLocation.id,
+      labelIds: [],
+      syncChildItemsLocations: true,
+    };
+    const { response: updateResponse } = await api.items.update(parent.id, itemUpdate);
+    expect(updateResponse.status).toBe(200);
+
+    const { response: child1FinalResponse, data: child1FinalData } = await api.items.get(child1Item.id);
+    expect(child1FinalResponse.status).toBe(200);
+    expect(child1FinalData.location?.id).toBe(parentLocation.id);
+
+    const { response: child2FinalResponse, data: child2FinalData } = await api.items.get(child2Item.id);
+    expect(child2FinalResponse.status).toBe(200);
+    expect(child2FinalData.location?.id).toBe(parentLocation.id);
+
+    parentCleanup();
+    childsCleanup();
   });
 });

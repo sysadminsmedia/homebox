@@ -1,3 +1,7 @@
+import { format, formatDistance } from "date-fns";
+/* eslint import/namespace: ['error', { allowComputed: true }] */
+import * as Locales from "date-fns/locale";
+
 const cache = {
   currency: "",
 };
@@ -17,62 +21,63 @@ export async function useFormatCurrency() {
     }
   }
 
-  return (value: number | string) => fmtCurrency(value, cache.currency);
+  return (value: number | string) => fmtCurrency(value, cache.currency, getLocaleCode());
 }
 
 export type DateTimeFormat = "relative" | "long" | "short" | "human";
 export type DateTimeType = "date" | "time" | "datetime";
 
-function ordinalIndicator(num: number) {
-  if (num > 3 && num < 21) return "th";
-  switch (num % 10) {
-    case 1:
-      return "st";
-    case 2:
-      return "nd";
-    case 3:
-      return "rd";
-    default:
-      return "th";
-  }
+export function getLocaleCode() {
+  const { $i18nGlobal } = useNuxtApp();
+  return ($i18nGlobal?.locale?.value as string) ?? "en-US";
 }
 
-export function fmtDate(value: string | Date, fmt: DateTimeFormat = "human"): string {
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+function getLocaleForDate() {
+  const localeCode = getLocaleCode();
+  const lang = localeCode.length > 1 ? localeCode.substring(0, 2) : localeCode;
+  const region = localeCode.length > 2 ? localeCode.substring(3) : "";
+  return Locales[(lang + region) as keyof typeof Locales] ?? Locales[lang as keyof typeof Locales] ?? Locales.enUS;
+}
 
-  const dt = typeof value === "string" ? new Date(value) : value;
-  if (!dt) {
+export function fmtDate(
+  value: string | Date | number,
+  fmt: DateTimeFormat = "human",
+  type: DateTimeType = "date"
+): string {
+  const dt = typeof value === "string" || typeof value === "number" ? new Date(value) : value;
+
+  if (!dt || !validDate(dt)) {
     return "";
   }
 
-  if (!validDate(dt)) {
-    return "";
+  const localeOptions = { locale: getLocaleForDate() };
+
+  if (fmt === "relative") {
+    return `${formatDistance(dt, new Date(), { ...localeOptions, addSuffix: true })} (${fmtDate(dt, "short", "date")})`;
   }
+
+  if (type === "time") {
+    return format(dt, "p", localeOptions);
+  }
+
+  let formatStr = "";
 
   switch (fmt) {
-    case "relative":
-      return useTimeAgo(dt).value + useDateFormat(dt, " (YYYY-MM-DD)").value;
-    case "long":
-      return useDateFormat(dt, "YYYY-MM-DD (dddd)").value;
-    case "short":
-      return useDateFormat(dt, "YYYY-MM-DD").value;
     case "human":
-      // January 1st, 2021
-      return `${months[dt.getMonth()]} ${dt.getDate()}${ordinalIndicator(dt.getDate())}, ${dt.getFullYear()}`;
+      formatStr = "PPP";
+      break;
+    case "long":
+      formatStr = "PP";
+      break;
+    case "short":
+      formatStr = "P";
+      break;
     default:
       return "";
   }
+  if (type === "datetime") {
+    formatStr += "p";
+  }
+
+  return format(dt, formatStr, localeOptions);
 }

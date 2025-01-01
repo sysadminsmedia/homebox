@@ -3,6 +3,7 @@
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
   import MdiLoading from "~icons/mdi/loading";
+  import MdiSelectSearch from "~icons/mdi/select-search";
   import MdiMagnify from "~icons/mdi/magnify";
   import MdiDelete from "~icons/mdi/delete";
   import MdiChevronRight from "~icons/mdi/chevron-right";
@@ -463,15 +464,17 @@
 
     <section class="mt-10">
       <BaseSectionHeader ref="itemsTitle"> {{ $t("global.items") }} </BaseSectionHeader>
-      <p class="flex items-center text-base font-medium">
+      <p v-if="items.length > 0" class="flex items-center text-base font-medium">
         {{ $t("items.results", { total: total }) }}
         <span class="ml-auto text-base"> {{ $t("items.pages", { page: page, totalPages: totalPages }) }} </span>
       </p>
 
-      <div ref="cardgrid" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        <ItemCard v-for="item in items" :key="item.id" :item="item" />
-
-        <div class="hidden text-xl first:inline">{{ $t("items.no_results") }}</div>
+      <div v-if="items.length === 0" class="flex flex-col items-center gap-2">
+        <MdiSelectSearch class="size-10" />
+        <p>{{ $t("items.no_results") }}</p>
+      </div>
+      <div v-else ref="cardgrid" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+        <ItemCard v-for="item in items" :key="item.id" :item="item" :location-flat-tree="locationFlatTree" />
       </div>
       <div v-if="items.length > 0 && (hasNext || hasPrev)" class="mt-10 flex flex-col items-center gap-2">
         <div class="flex">

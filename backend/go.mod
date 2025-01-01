@@ -14,7 +14,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/schema v1.4.1
 	github.com/hay-kot/httpkit v0.0.11
-	github.com/mattn/go-sqlite3 v1.14.23
+	github.com/mattn/go-sqlite3 v1.14.24
 	github.com/olahol/melody v1.2.1
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.33.0
@@ -23,8 +23,8 @@ require (
 	github.com/swaggo/swag v1.16.3
 	github.com/yeqown/go-qrcode/v2 v2.2.4
 	github.com/yeqown/go-qrcode/writer/standard v1.2.4
-	golang.org/x/crypto v0.27.0
-	golang.org/x/oauth2 v0.23.0
+	golang.org/x/crypto v0.31.0
+  golang.org/x/oauth2 v0.23.0
 	modernc.org/sqlite v1.33.1
 )
 

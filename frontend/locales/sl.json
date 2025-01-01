@@ -1,26 +1,4 @@
 {
-    "global": {
-        "follow_dev": "Sledi razvijjalcu",
-        "build": "Gradnja: [ build ]",
-        "confirm": "Potrdi",
-        "create": "Ustvari",
-        "create_and_add": "Ustvari in dodaj še enega",
-        "created": "Ustvarjeno",
-        "email": "E-pošta",
-        "github": "GitHub projekt",
-        "items": "Predmeti",
-        "join_discord": "Pridruži se na Discord",
-        "labels": "Oznake",
-        "locations": "Lokacije",
-        "name": "Naziv",
-        "password": "Geslo",
-        "read_docs": "Preberite dokumentacijo",
-        "search": "Iskanje",
-        "sign_out": "Odjava",
-        "submit": "Pošlji",
-        "version": "Verzija: { version }",
-        "welcome": "Dobrodošel, { username }"
-    },
     "components": {
         "app": {
             "import_dialog": {
@@ -31,6 +9,30 @@
             }
         },
         "global": {
+            "date_time": {
+                "ago": "pred {0}",
+                "days": "dni",
+                "hour": "ura",
+                "hours": "ure",
+                "in": "v {0}",
+                "just-now": "Pravkar",
+                "last-month": "pretekli mesec",
+                "last-week": "pretekli teden",
+                "last-year": "lansko leto",
+                "minute": "minuta",
+                "minutes": "minut",
+                "months": "mesecev",
+                "next-month": "prihodnji mesec",
+                "next-week": "prihodnji teden",
+                "next-year": "prihodnje leto",
+                "second": "sekunda",
+                "seconds": "sekund",
+                "tomorrow": "jutri",
+                "week": "teden",
+                "weeks": "tedni",
+                "years": "leta",
+                "yesterday": "včeraj"
+            },
             "page_qr_code": {
                 "page_url": "URL strani"
             },
@@ -40,8 +42,10 @@
         },
         "item": {
             "create_modal": {
-                "title": "Ustvari predmet",
-                "photo_button": "Fotografija 📷"
+                "item_description": "opis predmeta",
+                "item_name": "ime predmeta",
+                "photo_button": "Fotografija 📷",
+                "title": "Ustvari predmet"
             },
             "view": {
                 "selectable": {
@@ -49,19 +53,74 @@
                     "items": "Predmeti",
                     "no_items": "Ni predmetov za prikaz",
                     "table": "Tabela"
+                },
+                "table": {
+                    "page": "Stran",
+                    "rows_per_page": "vrstic na stran"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_description": "Opis nalepke",
+                "label_name": "Ime nalepke",
                 "title": "Ustvari oznako"
             }
         },
         "location": {
             "create_modal": {
+                "location_description": "Opis lokacije",
+                "location_name": "Naziv lokacije",
                 "title": "Ustvari lokacijo"
+            },
+            "selector": {
+                "parent_location": "Glavna lokacija"
+            },
+            "tree": {
+                "no_locations": "Ni razpoložljivih lokacij. Dodaj novo lokacije preko \n `<`span class=\"link-primary\"`>`Ustvari`<`/span`>` gumba v navigacijski vrstici."
             }
         }
+    },
+    "global": {
+        "add": "Dodaj",
+        "build": "Gradnja: { build }",
+        "confirm": "Potrdi",
+        "create": "Ustvari",
+        "create_and_add": "Ustvari in dodaj še enega",
+        "created": "Ustvarjeno",
+        "delete": "Izbriši",
+        "details": "Podrobnosti",
+        "duplicate": "Podvoji",
+        "edit": "Uredi",
+        "email": "E-pošta",
+        "follow_dev": "Sledi razvijjalcu",
+        "github": "GitHub projekt",
+        "items": "Predmeti",
+        "join_discord": "Pridruži se na Discord",
+        "labels": "Oznake",
+        "locations": "Lokacije",
+        "maintenance": "Vzdrževanje",
+        "name": "Naziv",
+        "password": "Geslo",
+        "read_docs": "Preberite dokumentacijo",
+        "save": "Shrani",
+        "search": "Iskanje",
+        "sign_out": "Odjava",
+        "submit": "Pošlji",
+        "update": "Posodobi",
+        "value": "Vrednost",
+        "version": "Verzija: { version }",
+        "welcome": "Dobrodošel, { username }"
+    },
+    "home": {
+        "labels": "Oznake",
+        "quick_statistics": "Hitra statistika",
+        "recently_added": "Nedavno dodano",
+        "storage_locations": "Lokacije shramb",
+        "total_items": "Predmetov skupaj",
+        "total_labels": "Skupaj nalepk",
+        "total_locations": "Skupaj lokacij",
+        "total_value": "Skupna vrednost"
     },
     "index": {
         "disabled_registration": "Registracija je onemogočena",
@@ -71,58 +130,222 @@
         "register": "Registriraj se",
         "remember_me": "Zapomni si me",
         "set_email": "Kakšen je vaš e-poštni naslov?",
+        "set_name": "Kako vam je ime?",
         "set_password": "Nastavite geslo",
-        "tagline": "Sledite, organizirajte in upravljajte svoje stvari.",
-        "set_name": "Kako vam je ime?"
+        "tagline": "Sledite, organizirajte in upravljajte svoje stvari."
     },
     "items": {
-        "created_at": "Ustvarjeno ob",
-        "include_archive": "Vključi arhivirane predmete",
-        "last": "Zadnji",
-        "negate_labels": "Negiraj izbrane oznake",
-        "no_results": "Ni najdenih predmetov",
-        "options": "Možnosti",
-        "pages": "Stran { page } od { totalPages }",
-        "tip_2": "Iskanja s predpono '#' bodo iskala ID sredstva (primer '#000-001')",
-        "tip_3": "Filtri polj uporabljajo operacijo 'ALI'. Če je izbranih več kot eno, bo za ujemanje dovolj samo\n eno.",
-        "tips": "Nasveti",
-        "updated_at": "Posodobljeno ob",
-        "custom_fields": "Polje po meri",
-        "results": "Rezultatov: { total }",
-        "tip_1": "Filtri lokacij in oznak uporabljajo operacijo 'ALI'. Če je izbranih več kot ena, bo izbrana samo ena\n potrebna za ujemanje.",
         "add": "Dodaj",
+        "advanced": "Napredno",
+        "archived": "Arhivirano",
+        "asset_id": "ID sredstva",
+        "attachment": "Priponka",
+        "attachments": "Priponke",
+        "changes_persisted_immediately": "Spremembe prilog bodo takoj shranjene",
+        "created_at": "Ustvarjeno ob",
+        "custom_fields": "Polje po meri",
+        "description": "Opis",
+        "details": "Podrobnosti",
+        "drag_and_drop": "Tu povlecite in spustite datoteke ali kliknite, da izberete datoteke",
+        "edit_details": "Uredi podrobnosti",
         "field_selector": "Izbirnik polj",
         "field_value": "Vrednost polja",
         "first": "Prvi",
+        "include_archive": "Vključi arhivirane predmete",
+        "insured": "Zavarovano",
+        "last": "Zadnji",
+        "lifetime_warranty": "Doživljenjska garancija",
+        "location": "Lokacija",
+        "manual": "Navodila",
+        "manuals": "Navodila za uporabo",
+        "manufacturer": "Proizvajalec",
+        "model_number": "Številka modela",
+        "name": "Naziv",
+        "negate_labels": "Negiraj izbrane oznake",
         "next_page": "Naslednja stran",
+        "no_results": "Ni najdenih predmetov",
+        "notes": "Opombe",
+        "options": "Možnosti",
+        "order_by": "Razvrsti po",
+        "pages": "Stran { page } od { totalPages }",
+        "parent_item": "Matični produkt",
+        "photo": "Fotografija",
+        "photos": "Fotografije",
         "prev_page": "Prejšnja stran",
+        "purchase_date": "Datum nabave",
+        "purchase_details": "Podrobnosti nabave",
+        "purchase_price": "Nakupna cena",
+        "purchased_from": "Kupljeno pri",
+        "quantity": "Količina",
         "query_id": "Poizvedovanje po identifikacijski številki sredstva: { id }",
+        "receipt": "Račun",
+        "receipts": "Računi",
         "reset_search": "Ponastavi iskanje",
+        "results": "Rezultatov: { total }",
+        "serial_number": "Serijska številka",
+        "show_advanced_view_options": "Pokaži napredne možnosti",
+        "sold_at": "Prodano pri",
+        "sold_details": "Podrobnosti o prodaji",
+        "sold_price": "Prodajna cena",
+        "sold_to": "Prodano k",
+        "tip_1": "Filtri lokacij in oznak uporabljajo operacijo 'ALI'. Če je izbranih več kot ena, bo izbrana samo ena\n potrebna za ujemanje.",
+        "tip_2": "Iskanja s predpono '#' bodo iskala ID sredstva (primer '#000-001')",
+        "tip_3": "Filtri polj uporabljajo operacijo 'ALI'. Če je izbranih več kot eno, bo za ujemanje dovolj samo\n eno.",
+        "tips": "Nasveti",
         "tips_sub": "Nasveti za iskanje",
-        "order_by": "Razvrsti po"
+        "updated_at": "Posodobljeno ob",
+        "warranty": "Garancija",
+        "warranty_details": "Podrobnosti o garanciji",
+        "warranty_expires": "Garancija poteče"
+    },
+    "labels": {
+        "no_results": "Ni najdenih oznak",
+        "update_label": "Posodobitev oznake"
+    },
+    "languages": {
+        "ca": "Katalonščina",
+        "de": "Nemščina",
+        "en": "Angleščina",
+        "es": "Španščina",
+        "fr": "Francoščina",
+        "hu": "Madžarščina",
+        "it": "Italijanščina",
+        "ja-JP": "Japonščina",
+        "nl": "Nizozemščina",
+        "pl": "Polščina",
+        "pt-BR": "Portugalščina (brazilska)",
+        "pt-PT": "Portugalščina (Portugalska)",
+        "ru": "Ruščina",
+        "sl": "Slovenščina",
+        "sv": "Švedščina",
+        "tr": "Turkščina",
+        "uk-UA": "Ukrajinščina",
+        "zh-CN": "Kitajščina (splošna)",
+        "zh-HK": "Kitajščina (Hong Kong)",
+        "zh-MO": "Kitajščina (Macau)",
+        "zh-TW": "Kitajsščina (tradicionalna)"
+    },
+    "languages.da-DK": "Danščina",
+    "languages.fi.FI": "Finščina",
+    "languages.ro-RO": "Romunščina",
+    "languages.sk-SK": "Slovaščina",
+    "locations": {
+        "child_locations": "Podrejene lokacije",
+        "collapse_tree": "Strni drevo",
+        "no_results": "Ni najdenih lokacij",
+        "update_location": "Posodobi lokacijo"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Oboje",
+            "completed": "Zaključeno",
+            "scheduled": "Načrtovano"
+        },
+        "list": {
+            "complete": "Končano",
+            "create_first": "Ustvarite prvi vnos",
+            "delete": "Izbriši",
+            "duplicate": "Podvoji",
+            "edit": "Uredi",
+            "new": "Nov"
+        },
+        "modal": {
+            "completed_date": "Datum zaključka",
+            "cost": "Stroški",
+            "delete_confirmation": "Ali ste prepričani, da želite izbrisati ta vnos?",
+            "edit_action": "Posodobi",
+            "edit_title": "Uredi vnos",
+            "entry_name": "Ime vnosa",
+            "new_action": "Ustvari",
+            "new_title": "Nov vnos",
+            "notes": "Opombe",
+            "scheduled_date": "Načrtovani datum"
+        },
+        "monthly_average": "Mesečno povprečje",
+        "toast": {
+            "failed_to_create": "Vnosa ni bilo mogoče ustvariti",
+            "failed_to_delete": "Vnosa ni bilo mogoče izbrisati",
+            "failed_to_update": "Vnosa ni bilo mogoče posodobiti"
+        },
+        "total_cost": "Skupni znesek",
+        "total_entries": "Vseh predmetov"
+    },
+    "menu": {
+        "create_item": "Predmet / Sredstvo",
+        "create_label": "Oznaka",
+        "create_location": "Lokacija",
+        "home": "Domov",
+        "locations": "Lokacije",
+        "maintenance": "Vzdrževanje",
+        "profile": "Profil",
+        "search": "Iskanje",
+        "tools": "Orodja"
     },
     "profile": {
-        "gen_invite": "Ustvari povezavo povabila",
-        "group_settings_sub": "Nastavitve skupine v skupni rabi. Morda boste morali osvežiti brskalnik, da bodo nekatere nastavitve veljale.",
-        "notifiers": "Obveščevalci",
-        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Obveščevalec",
-        "notifiers_sub": "Prejemajte obvestila za prihajajoče opomnike o vzdrževanju",
-        "theme_settings_sub": "Nastavitve teme so shranjene v lokalni shrambi vašega brskalnika. Temo lahko kadar koli spremenite. Če\n imate težave z nastavitvijo teme, poskusite osvežiti brskalnik.",
-        "update_group": "Posodobi skupino",
-        "url": "URL",
-        "delete_account_sub": "Izbrišite svoj račun in vse z njim povezane podatke. Tega ni mogoče razveljaviti.",
         "active": "Aktivno",
         "change_password": "Sprememba gesla",
         "currency_format": "Oblika valute",
         "current_password": "Trenutno geslo",
         "delete_account": "Izbriši račun",
+        "delete_account_sub": "Izbrišite svoj račun in vse z njim povezane podatke. Tega ni mogoče razveljaviti.",
+        "display_header": "{ currentValue, select, true {Skrij glavo} false {Pokaži glavo} other {Brez zadetkov}}",
         "enabled": "Omogočeno",
+        "example": "Primer",
+        "gen_invite": "Ustvari povezavo povabila",
         "group_settings": "Nastavitve skupine",
+        "group_settings_sub": "Nastavitve skupine v skupni rabi. Morda boste morali osvežiti brskalnik, da bodo nekatere nastavitve veljale.",
         "inactive": "Neaktivno",
+        "language": "Jezik",
         "new_password": "Novo geslo",
+        "no_notifiers": "Ni nastavljenih sporočanj",
+        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Obveščevalec",
+        "notifiers": "Obveščevalci",
+        "notifiers_sub": "Prejemajte obvestila za prihajajoče opomnike o vzdrževanju",
         "test": "Preizkus",
         "theme_settings": "Nastavitve teme",
+        "theme_settings_sub": "Nastavitve teme so shranjene v lokalni shrambi vašega brskalnika. Temo lahko kadar koli spremenite. Če\n imate težave z nastavitvijo teme, poskusite osvežiti brskalnik.",
+        "update_group": "Posodobi skupino",
+        "update_language": "Posodobi jezik",
+        "url": "URL",
         "user_profile": "Profil uporabnika",
         "user_profile_sub": "Povabite uporabnike in upravljajte svoj račun."
+    },
+    "tools": {
+        "actions": "Dejanja inventarja",
+        "actions_set": {
+            "ensure_ids": "Zagotovi ID-je sredstev",
+            "ensure_ids_button": "Zagotovi ID-je sredstev",
+            "ensure_ids_sub": "Zagotavlja, da imajo vsi predmeti v vašem inventarju veljavno polje asset_id. To storite tako, da poiščete najvišje trenutno polje asset_id v bazi podatkov in uporabite naslednjo vrednost za vsak element, ki ima nenastavljeno polje asset_id. To se naredi po vrstnem redu polja created_at.",
+            "ensure_import_refs": "Zagotovi uvoz referenc",
+            "ensure_import_refs_button": "Zagotovi uvoz referenc",
+            "ensure_import_refs_sub": "Zagotavlja, da imajo vsi predmeti v vašem inventarju veljavno polje import_ref. To se naredi tako, da se naključno ustvari 8-mestni niz za vsak element, ki ima nenastavljeno polje import_ref.",
+            "set_primary_photo": "Nastavi primarno fotografijo",
+            "set_primary_photo_button": "Nastavi primarno fotografijo",
+            "set_primary_photo_sub": "V različici v0.10.0 Homeboxa je bilo primarno slikovno polje dodano prilogam tipa fotografija. To dejanje bo polje primarne slike nastavilo na prvo sliko v tabeli prilog v bazi podatkov, če še ni nastavljeno. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Glej GitHub PR #576'</a>'",
+            "zero_datetimes": "Datumski časi ničelnega elementa",
+            "zero_datetimes_button": "Datumski časi ničelnega elementa",
+            "zero_datetimes_sub": "Ponastavi časovno vrednost za vsa polja datuma in časa v vašem inventarju na začetek datuma. To je namenjeno odpravljanju napake, ki je bila predstavljena zgodaj v razvoju spletnega mesta in je povzročila, da je bila časovna vrednost shranjena s časom, kar je povzročilo težave z datumskimi polji, ki prikazujejo točne vrednosti. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Glejte številko 236 Githuba za več podrobnosti.'</a> '"
+        },
+        "actions_sub": "Uporabite dejanja v večjem obsegu za svoj inventar. To so nepovratna dejanja. '<b>'Bodite previdni.'</b>'",
+        "import_export": "Uvozi/Izvozi",
+        "import_export_set": {
+            "export": "Izvozi inventar",
+            "export_button": "Izvozi Inventar",
+            "export_sub": "Izvozi standardni format CSV za Homebox. S tem boste izvozili vse predmete v vašem inventarju.",
+            "import": "Uvozi inventar",
+            "import_button": "Uvozi inventar",
+            "import_sub": "Uvozi standardni format CSV za Homebox. Brez stolpca '<code>'HB.import_ref'</code>' to '<b>'ne'</b>' bo prepisalo vse obstoječe elemente v vašem inventarju, samo dodaja nove elemente. Vrstice s stolpcem '<code>'HB.import_ref'</code>' so združene v obstoječe elemente z istim import_ref, če le ta obstaja."
+        },
+        "import_export_sub": "Uvozite in izvozite svoj inventar v in iz datoteke CSV. To je uporabno za selitev vašega inventarja v novo namestitev Homeboxa.",
+        "reports": "Poročila",
+        "reports_set": {
+            "asset_labels": "Oznake ID-jev sredstev",
+            "asset_labels_button": "Generator etiket",
+            "asset_labels_sub": "Ustvari natisljiv PDF z nalepkami za vrsto ID-jev sredstev. Te niso specifične za vaš inventar, zato lahko nalepke natisnete vnaprej in jih uporabite v svojem inventarju, ko jih prejmete.",
+            "bill_of_materials": "Kosovnica",
+            "bill_of_materials_button": "Ustvari kosovnico",
+            "bill_of_materials_sub": "Ustvari datoteko CSV (vrednosti, ločene z vejico), ki jo je mogoče uvoziti v program za preglednice. To je povzetek vaše zaloge z osnovnimi informacijami o izdelkih in cenah."
+        },
+        "reports_sub": "Ustvari različna poročila za svoj inventar."
     }
 }
