@@ -36,7 +36,7 @@ OPTIONS
 --mode/$HBOX_MODE                                                        <string>  (default: development)
 --web-port/$HBOX_WEB_PORT                                                <string>  (default: 7745)
 --web-host/$HBOX_WEB_HOST                                                <string>
---web-max-upload-size/$HBOX_WEB_MAX_FILE_UPLOAD                          <int>     (default: 10)
+--web-max-file-upload/$HBOX_WEB_MAX_FILE_UPLOAD                          <int>     (default: 10)
 --storage-data/$HBOX_STORAGE_DATA                                        <string>  (default: ./.data)
 --storage-sqlite-url/$HBOX_STORAGE_SQLITE_URL                            <string>  (default: ./.data/homebox.db?_fk=1)
 --log-level/$HBOX_LOG_LEVEL                                              <string>  (default: info)
