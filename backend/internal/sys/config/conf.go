@@ -32,6 +32,10 @@ type Options struct {
 	AllowRegistration    bool   `yaml:"disable_registration"    conf:"default:true"`
 	AutoIncrementAssetID bool   `yaml:"auto_increment_asset_id" conf:"default:true"`
 	CurrencyConfig       string `yaml:"currencies"`
+	OIDCClientID         string `yaml:"oidc_client_id"`
+	OIDCClientSecret     string `yaml:"oidc_client_secret"`
+	OIDCRedirectURI      string `yaml:"oidc_redirect_uri"`
+	OIDCProviderURL      string `yaml:"oidc_provider_url"`
 }
 
 type DebugConf struct {

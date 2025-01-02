@@ -8,7 +8,6 @@ import (
 	"io"
 	"mime"
 	"net/http"
-	"os"
 	"path"
 	"path/filepath"
 
@@ -72,8 +71,13 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		providerList := []v1.AuthProvider{
 			providers.NewLocalProvider(a.services.User),
 		}
-		if _, exist := os.LookupEnv("HBOX_OAUTH_OIDC_URL"); exist {
-			provider, err := providers.NewOAuthProvider(context.Background(), a.services.OAuth, "oidc")
+		options := a.conf.Options
+		if options.OIDCProviderURL != "" {
+			provider, err := providers.NewOAuthProvider(context.Background(), a.services.OAuth,
+				options.OIDCClientID,
+				options.OIDCClientSecret,
+				options.OIDCRedirectURI,
+				options.OIDCProviderURL)
 			if err != nil {
 				panic(err)
 			}
