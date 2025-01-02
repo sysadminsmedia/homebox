@@ -5,8 +5,8 @@
     </label>
     <div class="dropdown dropdown-top sm:dropdown-end">
       <div tabindex="0" class="flex min-h-[48px] w-full flex-wrap gap-2 rounded-lg border border-gray-400 p-4">
-        <span v-for="itm in value" :key="name != '' ? itm[name] : itm" class="badge">
-          {{ name != "" ? itm[name] : itm }}
+        <span v-for="itm in value" :key="itm.id" class="badge">
+          {{ itm.name }}
         </span>
         <button
           v-if="value.length > 0"
@@ -30,12 +30,15 @@
             v-for="(obj, idx) in filteredItems"
             :key="idx"
             :class="{
-              bordered: selected.includes(obj[props.uniqueField]),
+              bordered: selected.includes(obj.id),
             }"
           >
-            <button type="button" @click="toggle(obj[props.uniqueField])">
-              {{ name != "" ? obj[name] : obj }}
+            <button type="button" @click="toggle(obj.id)">
+              {{ obj.name }}
             </button>
+          </li>
+          <li v-if="!filteredItems.some(itm => itm.name === search) && search.length > 0">
+            <button type="button" @click="createAndAdd(search)">Create {{ search }}</button>
           </li>
         </ul>
       </div>
@@ -60,14 +63,6 @@
       type: Array as () => any[],
       required: true,
     },
-    name: {
-      type: String,
-      default: "name",
-    },
-    uniqueField: {
-      type: String,
-      default: "id",
-    },
     selectFirst: {
       type: Boolean,
       default: false,
@@ -84,7 +79,7 @@
     }
 
     return props.items.filter(item => {
-      return item[props.name].toLowerCase().includes(search.value.toLowerCase());
+      return item.name.toLowerCase().includes(search.value.toLowerCase());
     });
   });
 
@@ -93,15 +88,33 @@
   }
 
   const selected = computed<string[]>(() => {
-    return value.value.map(itm => itm[props.uniqueField]);
+    return value.value.map(itm => itm.id);
   });
 
   function toggle(uniqueField: string) {
-    const item = props.items.find(itm => itm[props.uniqueField] === uniqueField);
-    if (selected.value.includes(item[props.uniqueField])) {
-      value.value = value.value.filter(itm => itm[props.uniqueField] !== item[props.uniqueField]);
+    const item = props.items.find(itm => itm.id === uniqueField);
+    if (selected.value.includes(item.id)) {
+      value.value = value.value.filter(itm => itm.id !== item.id);
     } else {
       value.value = [...value.value, item];
+    }
+  }
+
+  const api = useUserApi();
+  const toast = useNotifier();
+
+  async function createAndAdd(name: string) {
+    const { error, data } = await api.labels.create({
+      name,
+      color: "", // Future!
+      description: "",
+    });
+
+    if (error) {
+      console.error(error);
+      toast.error(`Failed to create label: ${name}`);
+    } else {
+      value.value = [...value.value, data];
     }
   }
 </script>
