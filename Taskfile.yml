@@ -2,7 +2,7 @@ version: "3"
 
 env:
   HBOX_LOG_LEVEL: debug
-  HBOX_STORAGE_SQLITE_URL: .data/homebox.db?_pragma=busy_timeout=1000&_pragma=journal_mode=WAL&_fk=1
+  HBOX_STORAGE_SQLITE_URL: .data/homebox.db?_pragma=busy_timeout=1000&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite
   HBOX_OPTIONS_ALLOW_REGISTRATION: true
   UNSAFE_DISABLE_PASSWORD_PROJECTION: "yes_i_am_sure"
 tasks:
