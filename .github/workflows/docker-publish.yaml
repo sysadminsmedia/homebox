@@ -9,7 +9,6 @@ on:
       - 'backend/**'
       - 'frontend/**'
       - 'Dockerfile'
-      - 'Dockerfile.rootless'
       - '.dockerignore'
       - '.github/workflows/**'
     tags: [ 'v*.*.*' ]
@@ -19,7 +18,6 @@ on:
       - 'backend/**'
       - 'frontend/**'
       - 'Dockerfile'
-      - 'Dockerfile.rootless'
       - '.dockerignore'
       - '.github/workflows/**'
 
@@ -31,10 +29,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
-      attestations: write
-      id-token: write
+      contents: read     # Allows access to repository contents (read-only)
+      packages: write    # Allows pushing to GHCR
+      id-token: write    # Allows identity token write access for authentication
+      attestations: write  # Needed for signing and attestation (if required)
+
     strategy:
       fail-fast: false
       matrix:
@@ -42,11 +41,10 @@ jobs:
           - linux/amd64
           - linux/arm64
           - linux/arm/v7
+
     steps:
-      - name: Prepare
-        run: |
-          platform=${{ matrix.platform }}
-          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Docker meta
         id: meta
@@ -69,20 +67,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Cache Docker registry for Docker Hub
-        id: cache-dockerhub
-        uses: docker/build-push-action/cache@v2
-        with:
-          key: dockerhub-${{ github.sha }}
-          scope: ${{ env.DOCKERHUB_REPO }}
-
-      - name: Cache Docker registry for GHCR
-        id: cache-ghcr
-        uses: docker/build-push-action/cache@v2
-        with:
-          key: ghcr-${{ github.sha }}
-          scope: ${{ env.GHCR_REPO }}
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
@@ -101,8 +85,8 @@ jobs:
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,"name=${{ env.DOCKERHUB_REPO }},${{ env.GHCR_REPO }}",push-by-digest=true,name-canonical=true,push=true
-          cache-from: type=gha,scope=dockerhub-${{ github.sha }}
-          cache-to: type=gha,scope=dockerhub-${{ github.sha }},mode=max
+          cache-from: type=registry,ref=ghcr.io/sysadminsmedia/devcache:homebox
+          cache-to: type=registry,ref=ghcr.io/sysadminsmedia/devcache:homebox,mode=max
 
       - name: Export digest
         run: |
@@ -113,7 +97,7 @@ jobs:
       - name: Upload digest
         uses: actions/upload-artifact@v4
         with:
-          name: digests-${{ env.PLATFORM_PAIR }}
+          name: digests-${{ matrix.platform }}
           path: /tmp/digests/*
           if-no-files-found: error
           retention-days: 1
@@ -121,12 +105,13 @@ jobs:
   merge:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
-      attestations: write
-      id-token: write
+      contents: read     # Allows access to repository contents (read-only)
+      packages: write    # Allows pushing to GHCR
+      id-token: write    # Allows identity token write access for authentication
+      attestations: write  # Needed for signing and attestation (if required)
     needs:
       - build
+
     steps:
       - name: Download digests
         uses: actions/download-artifact@v4
