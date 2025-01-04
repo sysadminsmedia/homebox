@@ -12,7 +12,6 @@ on:
       - 'Dockerfile.rootless'
       - '.dockerignore'
       - '.github/workflows/**'
-    # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ "main" ]
@@ -34,8 +33,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      # This is used to complete the identity challenge
-      # with sigstore/fulcio when running outside of PRs.
       attestations: write
       id-token: write
     strategy:
@@ -81,14 +78,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
         with:
           driver-opts: |
-            image=ghcr.io/amitie10g/buildkit:latest
-          buildkitd-flags: "--build-arg BUILDKIT_INLINE_CACHE=1"
-
-      - name: Check for cache presence
-        id: cache_check
-        run: |
-          # Check if cache image exists, and skip pull if already present
-          docker pull ghcr.io/sysadminsmedia/devcache:homebox || echo "Cache not found, proceeding with build."
+            image=ghcr.io/amitie10g/buildkit:master
 
       - name: Build and push by digest
         id: build
@@ -99,6 +89,26 @@ jobs:
           outputs: type=image,"name=${{ env.DOCKERHUB_REPO }},${{ env.GHCR_REPO }}",push-by-digest=true,name-canonical=true,push=true
           cache-from: type=registry,ref=ghcr.io/sysadminsmedia/devcache:homebox
           cache-to: type=registry,ref=ghcr.io/sysadminsmedia/devcache:homebox,mode=max
+
+      # Debugging step: Display the build outputs
+      - name: Debug build outputs
+        run: |
+          echo "Build outputs: ${{ steps.build.outputs }}"
+          echo "DOCKERHUB_REPO: ${{ env.DOCKERHUB_REPO }}"
+          echo "GHCR_REPO: ${{ env.GHCR_REPO }}"
+
+      # Wait for the container to start before checking logs
+      - name: Wait for container to stabilize
+        run: |
+          while ! docker ps -q --filter "name=${{ steps.build.outputs.image }}"; do
+            echo "Waiting for container to start..."
+            sleep 5
+          done
+
+      # Inspect container logs for errors
+      - name: Inspect container logs
+        run: |
+          docker logs ${{ steps.build.outputs.image }} || echo "No logs available"
 
       - name: Export digest
         run: |
@@ -119,8 +129,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      # This is used to complete the identity challenge
-      # with sigstore/fulcio when running outside of PRs.
       attestations: write
       id-token: write
     needs:
