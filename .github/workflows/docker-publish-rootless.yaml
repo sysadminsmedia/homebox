@@ -83,6 +83,7 @@ jobs:
         id: build
         uses: docker/build-push-action@v6
         with:
+          context: .
           file: Dockerfile.rootless
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
