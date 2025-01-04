@@ -9,6 +9,12 @@
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "documentazione",
+                "failed_to_copy": "Impossibile copiare il testo negli appunti",
+                "https_required": "perché è richiesto HTTPS",
+                "learn_more": "Troverai ulteriori informazioni in"
+            },
             "date_time": {
                 "ago": "{0} fa",
                 "days": "giorni",

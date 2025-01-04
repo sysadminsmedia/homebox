@@ -21,6 +21,10 @@ Homebox is the inventory and organization system built for the Home User! With a
 
 # Screenshots
 Check out screenshots of the project [here](https://imgur.com/a/5gLWt2j).
+You can also try the demo instances of Homebox:
+- [Demo](https://demo.homebox.software)
+- [Nightly](https://nightly.homebox.software)
+- [VNext](https://vnext.homebox.software/)
 
 ## Quick Start
 

@@ -48,7 +48,7 @@ FROM ghcr.io/distroless/static:latest
 
 ENV HBOX_MODE=production
 ENV HBOX_STORAGE_DATA=/data/
-ENV HBOX_STORAGE_SQLITE_URL=/data/homebox.db?_fk=1
+ENV HBOX_STORAGE_SQLITE_URL=/data/homebox.db?_fk=1&_time_format=sqlite
 
 # Copy the binary and data directory, change ownership
 COPY --from=builder /go/bin/api /app

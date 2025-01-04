@@ -1,11 +1,12 @@
 <template>
-  <div>
+  <div id="app">
     <!--
     Confirmation Modal is a singleton used by all components so we render
     it here to ensure it's always available. Possibly could move this further
     up the tree
    -->
     <ModalConfirm />
+    <AppOutdatedModal v-model="modals.outdated" :current="current ?? ''" :latest="latest ?? ''" />
     <ItemCreateModal v-model="modals.item" />
     <LabelCreateModal v-model="modals.label" />
     <LocationCreateModal v-model="modals.location" />
@@ -100,10 +101,9 @@
 
 <script lang="ts" setup>
   import { useI18n } from "vue-i18n";
+  import { lt } from "semver";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
-  import MdiMenu from "~icons/mdi/menu";
-  import MdiPlus from "~icons/mdi/plus";
 
   import MdiHome from "~icons/mdi/home";
   import MdiFileTree from "~icons/mdi/file-tree";
@@ -111,6 +111,8 @@
   import MdiAccount from "~icons/mdi/account";
   import MdiCog from "~icons/mdi/cog";
   import MdiWrench from "~icons/mdi/wrench";
+  import MdiMenu from "~icons/mdi/menu";
+  import MdiPlus from "~icons/mdi/plus";
 
   const { t } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
@@ -124,6 +126,15 @@
     return data;
   });
 
+  const latest = computed(() => status.value?.latest.version);
+  const current = computed(() => status.value?.build.version);
+
+  const isDev = computed(() => import.meta.dev || !current.value?.includes("."));
+  const isOutdated = computed(() => current.value && latest.value && lt(current.value, latest.value));
+  const hasHiddenLatest = computed(() => localStorage.getItem("latestVersion") === latest.value);
+
+  const displayOutdatedWarning = computed(() => !isDev && !hasHiddenLatest.value && isOutdated.value);
+
   // Preload currency format
   useFormatCurrency();
   const modals = reactive({
@@ -131,6 +142,14 @@
     location: false,
     label: false,
     import: false,
+    outdated: displayOutdatedWarning.value,
+  });
+
+  watch(displayOutdatedWarning, () => {
+    console.log("displayOutdatedWarning", displayOutdatedWarning.value);
+    if (displayOutdatedWarning.value) {
+      modals.outdated = true;
+    }
   });
 
   const dropdown = [

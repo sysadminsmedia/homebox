@@ -61,7 +61,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 FROM public.ecr.aws/docker/library/alpine:latest
 ENV HBOX_MODE=production
 ENV HBOX_STORAGE_DATA=/data/
-ENV HBOX_STORAGE_SQLITE_URL=/data/homebox.db?_pragma=busy_timeout=2000&_pragma=journal_mode=WAL&_fk=1
+ENV HBOX_STORAGE_SQLITE_URL=/data/homebox.db?_pragma=busy_timeout=2000&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite
 
 # Install necessary runtime dependencies
 RUN apk --no-cache add ca-certificates wget
@@ -75,7 +75,7 @@ RUN chmod +x /app/api
 LABEL Name=homebox Version=0.0.1
 LABEL org.opencontainers.image.source="https://github.com/sysadminsmedia/homebox"
 
-# Expose necessary ports
+# Expose necessary ports for Homebox
 EXPOSE 7745
 WORKDIR /app
 

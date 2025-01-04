@@ -6,6 +6,13 @@
                 "description": "Import a CSV file containing your items, labels, and locations. See documentation for more information on the \nrequired format.",
                 "title": "Import CSV File",
                 "upload": "Upload"
+            },
+            "outdated": {
+                "current_version": "Current Version",
+                "latest_version": "Latest Version",
+                "new_version_available": "New Version Available",
+                "new_version_available_link": "Click here to view the release notes",
+                "dismiss": "Dismiss"
             }
         },
         "global": {
@@ -38,6 +45,12 @@
             },
             "password_score": {
                 "password_strength": "Password Strength"
+            },
+            "copy_text": {
+                "failed_to_copy": "Failed to copy text to clipboard",
+                "https_required": "because HTTPS is required",
+                "learn_more": "Learn more in our",
+                "documentation": "documentation"
             }
         },
         "item": {

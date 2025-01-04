@@ -17,6 +17,7 @@
     baseURL: window.location.origin,
     assetRange: 1,
     assetRangeMax: 91,
+    measure: "in",
     gapY: 0.25,
     columns: 3,
     cardHeight: 1,
@@ -30,6 +31,7 @@
   });
 
   type Input = {
+    measure: string;
     page: {
       height: number;
       width: number;
@@ -43,6 +45,7 @@
   };
 
   type Output = {
+    measure: string;
     cols: number;
     rows: number;
     gapY: number;
@@ -66,6 +69,9 @@
   function calculateGridData(input: Input): Output {
     const { page, cardHeight, cardWidth } = input;
 
+    const measureRegex = /in|cm|mm/;
+    const measure = measureRegex.test(input.measure) ? input.measure : "in";
+
     const availablePageWidth = page.width - page.pageLeftPadding - page.pageRightPadding;
     const availablePageHeight = page.height - page.pageTopPadding - page.pageBottomPadding;
 
@@ -80,6 +86,7 @@
     const gapY = (page.height - rows * cardHeight) / (rows - 1);
 
     return {
+      measure,
       cols,
       rows,
       gapX,
@@ -114,6 +121,11 @@
       {
         label: "Asset End",
         ref: "assetRangeMax",
+      },
+      {
+        label: "Measure Type",
+        ref: "measure",
+        type: "text",
       },
       {
         label: "Label Height",
@@ -183,21 +195,20 @@
     return route(`/qrcode`, { data: encodeURIComponent(data) });
   }
 
-  function getItem(n: number, item: { name: string; location: { name: string } } | null): LabelData {
+  function getItem(n: number, item: { assetId: string; name: string; location: { name: string } } | null): LabelData {
     // format n into - seperated string with leading zeros
-
-    const assetID = fmtAssetID(n);
+    const assetID = fmtAssetID(n + 1);
 
     return {
       url: getQRCodeUrl(assetID),
-      assetID,
+      assetID: item?.assetId ?? assetID,
       name: item?.name ?? "_______________",
       location: item?.location?.name ?? "_______________",
     };
   }
 
   const { data: allFields } = await useAsyncData(async () => {
-    const { data, error } = await api.items.getAll();
+    const { data, error } = await api.items.getAll({ orderBy: "assetId" });
 
     if (error) {
       return {
@@ -220,10 +231,10 @@
     }
 
     const items: LabelData[] = [];
-    for (let i = displayProperties.assetRange; i < displayProperties.assetRangeMax; i++) {
+    for (let i = displayProperties.assetRange - 1; i < displayProperties.assetRangeMax - 1; i++) {
       const item = allFields?.value?.items?.[i];
       if (item?.location) {
-        items.push(getItem(i, item as { location: { name: string }; name: string }));
+        items.push(getItem(i, item as { assetId: string; location: { name: string }; name: string }));
       } else {
         items.push(getItem(i, null));
       }
@@ -242,6 +253,7 @@
   const pages = ref<Page[]>([]);
 
   const out = ref({
+    measure: "in",
     cols: 0,
     rows: 0,
     gapY: 0,
@@ -263,6 +275,7 @@
   function calcPages() {
     // Set Out Dimensions
     out.value = calculateGridData({
+      measure: displayProperties.measure,
       page: {
         height: displayProperties.pageHeight,
         width: displayProperties.pageWidth,
@@ -393,11 +406,11 @@
       :key="pi"
       class="border-2 print:border-none"
       :style="{
-        paddingTop: `${out.page.pt}in`,
-        paddingBottom: `${out.page.pb}in`,
-        paddingLeft: `${out.page.pl}in`,
-        paddingRight: `${out.page.pr}in`,
-        width: `${out.page.width}in`,
+        paddingTop: `${out.page.pt}${out.measure}`,
+        paddingBottom: `${out.page.pb}${out.measure}`,
+        paddingLeft: `${out.page.pl}${out.measure}`,
+        paddingRight: `${out.page.pr}${out.measure}`,
+        width: `${out.page.width}${out.measure}`,
       }"
     >
       <div
@@ -405,8 +418,8 @@
         :key="ri"
         class="flex break-inside-avoid"
         :style="{
-          columnGap: `${out.gapX}in`,
-          rowGap: `${out.gapY}in`,
+          columnGap: `${out.gapX}${out.measure}`,
+          rowGap: `${out.gapY}${out.measure}`,
         }"
       >
         <div
@@ -418,17 +431,17 @@
             'border-transparent': !bordered,
           }"
           :style="{
-            height: `${out.card.height}in`,
-            width: `${out.card.width}in`,
+            height: `${out.card.height}${out.measure}`,
+            width: `${out.card.width}${out.measure}`,
           }"
         >
           <div class="flex items-center">
             <img
               :src="item.url"
               :style="{
-                minWidth: `${out.card.height * 0.9}in`,
-                width: `${out.card.height * 0.9}in`,
-                height: `${out.card.height * 0.9}in`,
+                minWidth: `${out.card.height * 0.9}${out.measure}`,
+                width: `${out.card.height * 0.9}${out.measure}`,
+                height: `${out.card.height * 0.9}${out.measure}`,
               }"
             />
           </div>
@@ -443,11 +456,3 @@
     </section>
   </div>
 </template>
-
-<style lang="css">
-  .letter-size {
-    width: 8.5in;
-    height: 11in;
-    padding: 0.5in;
-  }
-</style>

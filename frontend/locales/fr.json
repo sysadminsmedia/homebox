@@ -3,20 +3,26 @@
         "app": {
             "import_dialog": {
                 "change_warning": "Le comportement lors d’importations avec des import_ref existants a changé. Si une valeur pour import_ref est présente dans le \nfichier CSV, alors l’élément sera mis à jour avec celle-ci.",
-                "description": "Importer un fichier CSV contenant vos articles, étiquettes, et emplacements. Voir la documentation pour plus d’informations \nsur le format requis.",
+                "description": "Importer un fichier CSV contenant vos articles, étiquettes, et emplacements. Se reporter à la documentation pour plus d’informations \nsur le format requis.",
                 "title": "Importer un fichier CSV",
                 "upload": "Téléverser"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "la documentation",
+                "failed_to_copy": "Échec de la copie du texte dans le presse-papiers",
+                "https_required": "parce que HTTPS est requis",
+                "learn_more": "Pour en savoir plus, consultez notre"
+            },
             "date_time": {
                 "ago": "Il y a {0}",
                 "days": "jours",
                 "hour": "heure",
                 "hours": "heures",
                 "in": "autour de {0}",
-                "just-now": "juste maintenant",
-                "last-month": "Le mois précédent",
+                "just-now": "À l'instant",
+                "last-month": "Le mois dernier",
                 "last-week": "la semaine dernière",
                 "last-year": "l'année dernière",
                 "minute": "minute",
@@ -51,7 +57,7 @@
                 "selectable": {
                     "card": "Carte",
                     "items": "Articles",
-                    "no_items": "Pas d'articles à afficher",
+                    "no_items": "Aucun article à afficher",
                     "table": "Tableau"
                 },
                 "table": {
@@ -77,7 +83,7 @@
                 "parent_location": "Emplacement parent"
             },
             "tree": {
-                "no_locations": "Aucun emplacement disponible. Ajoutez votre premier emplacement avec\nle bouton `<`span class=\"link-primary\"`>`Créer`<`/span`>` dans la barre de navigation."
+                "no_locations": "Aucun emplacement disponible. Créez votre premier emplacement avec\nle bouton `<`span class=\"link-primary\"`>`Créer`<`/span`>` dans la barre de navigation."
             }
         }
     },
@@ -103,12 +109,24 @@
         "name": "Nom",
         "password": "Mot de passe",
         "read_docs": "Lire la documentation",
-        "save": "Lire plus tard",
+        "save": "Enregistrer",
         "search": "Rechercher",
         "sign_out": "Se déconnecter",
         "submit": "Soumettre",
+        "update": "Mettre à jour",
+        "value": "Valeur",
         "version": "Version : { version }",
         "welcome": "Bienvenue, { username }"
+    },
+    "home": {
+        "labels": "Étiquettes",
+        "quick_statistics": "Statistiques rapides",
+        "recently_added": "Ajouté récemment",
+        "storage_locations": "Lieu de stockage",
+        "total_items": "Total d'objets",
+        "total_labels": "Total d'étiquettes",
+        "total_locations": "Total de lieu",
+        "total_value": "Valeur total"
     },
     "index": {
         "disabled_registration": "Les inscriptions sont désactivées",
@@ -124,32 +142,71 @@
     },
     "items": {
         "add": "Ajouter",
+        "advanced": "Avancée",
+        "archived": "Archivé",
+        "asset_id": "ID d'élément",
+        "attachment": "Pièce jointe",
+        "attachments": "Pièces jointes",
+        "changes_persisted_immediately": "Les changements de pièces jointes vont être sauvegardés immédiatement",
         "created_at": "Créé à",
         "custom_fields": "Champs personnalisés",
+        "description": "Description",
+        "details": "Détails",
+        "drag_and_drop": "Glissez-déposez les fichiers ici ou cliquez pour choisir des fichiers",
+        "edit_details": "Éditez les détails",
         "field_selector": "Sélecteur de champ",
         "field_value": "Valeur du champ",
         "first": "Premier",
         "include_archive": "Inclure les éléments archivés",
+        "insured": "Assurée",
         "last": "Dernier",
+        "lifetime_warranty": "Garantie à vie",
+        "location": "Lieu",
+        "manual": "Mode d'emploi",
+        "manuals": "Modes d'emplois",
+        "manufacturer": "Fabricant",
+        "model_number": "Numéro de modèle",
+        "name": "Nom",
         "negate_labels": "Négliger les étiquettes sélectionnées",
         "next_page": "Page suivante",
         "no_results": "Aucun élément trouvé",
+        "notes": "Notes",
         "options": "Options",
         "order_by": "Trier par",
         "pages": "Page { page } sur { totalPages }",
+        "parent_item": "Objet parent",
+        "photo": "Photo",
+        "photos": "Photos",
         "prev_page": "Page précédente",
+        "purchase_date": "Date d'achat",
+        "purchase_details": "Détail de l'achat",
+        "purchase_price": "Prix d'achat",
+        "purchased_from": "Acheté à",
+        "quantity": "Quantité",
         "query_id": "Interrogation du numéro d'identification de l'actif : { id }",
+        "receipt": "Reçu",
+        "receipts": "Reçus",
         "reset_search": "Réinitialiser la recherche",
         "results": "{ total } résultats",
+        "serial_number": "Numéro de série",
+        "show_advanced_view_options": "Afficher les options avancées",
+        "sold_at": "Vendu à",
+        "sold_details": "Détails de la vente",
+        "sold_price": "Prix de vente",
+        "sold_to": "Vendu pour",
         "tip_1": "Les filtres d’emplacement et d’étiquette utilisent l’opérateur « OU ».\nUn seul des filtres n’a besoin de correspondre pour retourner un résultat.",
         "tip_2": "Les recherches préfixées par '#'' rechercheront un ID d'actif (exemple '#000-001')",
         "tip_3": "Les filtres de champ utilisent l’opérateur « OU ».\nUn seul des filtres n’a besoin de correspondre pour retourner un résultat.",
         "tips": "Conseils",
         "tips_sub": "Conseils pour la recherche",
-        "updated_at": "Mis à jour le"
+        "updated_at": "Mis à jour le",
+        "warranty": "Garantie",
+        "warranty_details": "Détails de la garantie",
+        "warranty_expires": "Expiration de la garantie"
     },
     "labels": {
-        "no_results": "Aucune étiquette trouvée"
+        "no_results": "Aucune étiquette trouvée",
+        "update_label": "Mettre à jour l'étiquette"
     },
     "languages": {
         "ca": "Catalan",
@@ -159,13 +216,16 @@
         "fr": "Français",
         "hu": "Hongrois",
         "it": "Italien",
+        "ja-JP": "Japonais",
         "nl": "Néerlandais",
         "pl": "Polonais",
         "pt-BR": "Portugais (Brésil)",
+        "pt-PT": "Portugais (Portugal)",
         "ru": "Russe",
         "sl": "Slovène",
         "sv": "Suédois",
         "tr": "Turc",
+        "uk-UA": "Ukrainien",
         "zh-CN": "Chinois (simplifié)",
         "zh-HK": "Chinois (Hong Kong)",
         "zh-MO": "Chinois (Macao)",
@@ -176,7 +236,10 @@
     "languages.ro-RO": "Roumain",
     "languages.sk-SK": "Slovaque",
     "locations": {
-        "no_results": "Aucun emplacement trouvé"
+        "child_locations": "Lieu enfant",
+        "collapse_tree": "Minimiser la liste",
+        "no_results": "Aucun emplacement trouvé",
+        "update_location": "Mettre à jour le lieu"
     },
     "maintenance": {
         "filter": {
@@ -214,6 +277,9 @@
         "total_entries": "Nombre d'entrées"
     },
     "menu": {
+        "create_item": "Objet / Ressource",
+        "create_label": "Étiquette",
+        "create_location": "Lieu",
         "home": "Accueil",
         "locations": "Emplacements",
         "maintenance": "Maintenance",
@@ -230,6 +296,7 @@
         "delete_account_sub": "Supprimer le compte et toutes ses données. Aucune récupération possible.",
         "display_header": "{ currentValue, select, true {Masquer l’en-tête} false {Afficher l’en-tête} other {Not Hit}}",
         "enabled": "Activé",
+        "example": "Example",
         "gen_invite": "Générer un lien d’invitation",
         "group_settings": "Paramètres du groupe",
         "group_settings_sub": "Paramètres du groupe partagé. Il peut être nécessaire de recharger la page pour qu’ils deviennent effectifs.",

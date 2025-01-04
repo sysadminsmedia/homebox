@@ -566,6 +566,9 @@ const docTemplate = `{
                         "Bearer": []
                     }
                 ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -736,6 +739,9 @@ const docTemplate = `{
                     {
                         "Bearer": []
                     }
+                ],
+                "consumes": [
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -922,6 +928,13 @@ const docTemplate = `{
                 "summary": "Get Maintenance Log",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "enum": [
                             "scheduled",
                             "completed",
@@ -963,6 +976,13 @@ const docTemplate = `{
                 ],
                 "summary": "Create Maintenance Entry",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Entry Data",
                         "name": "payload",
@@ -1435,6 +1455,13 @@ const docTemplate = `{
                 "summary": "Update Maintenance Entry",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Maintenance ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Entry Data",
                         "name": "payload",
                         "in": "body",
@@ -1466,6 +1493,15 @@ const docTemplate = `{
                     "Maintenance"
                 ],
                 "summary": "Delete Maintenance Entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Maintenance ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "No Content"
@@ -1548,13 +1584,6 @@ const docTemplate = `{
                 ],
                 "summary": "Test Notifier",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Notifier ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "URL",
@@ -1752,20 +1781,6 @@ const docTemplate = `{
                 ],
                 "summary": "User Login",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "example": "admin@admin.com",
-                        "description": "string",
-                        "name": "username",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "example": "admin",
-                        "description": "string",
-                        "name": "password",
-                        "in": "formData"
-                    },
                     {
                         "description": "Login Data",
                         "name": "payload",
@@ -2242,6 +2257,9 @@ const docTemplate = `{
                 "soldTo": {
                     "type": "string"
                 },
+                "syncChildItemsLocations": {
+                    "type": "boolean"
+                },
                 "updatedAt": {
                     "type": "string"
                 },
@@ -2285,6 +2303,10 @@ const docTemplate = `{
             "properties": {
                 "archived": {
                     "type": "boolean"
+                },
+                "assetId": {
+                    "type": "string",
+                    "example": "0"
                 },
                 "createdAt": {
                     "type": "string"
@@ -2439,6 +2461,9 @@ const docTemplate = `{
                 "soldTo": {
                     "type": "string",
                     "maxLength": 255
+                },
+                "syncChildItemsLocations": {
+                    "type": "boolean"
                 },
                 "warrantyDetails": {
                     "type": "string"
@@ -2925,6 +2950,17 @@ const docTemplate = `{
                 }
             }
         },
+        "services.Latest": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
         "services.UserRegistration": {
             "type": "object",
             "properties": {
@@ -2956,6 +2992,9 @@ const docTemplate = `{
                 },
                 "health": {
                     "type": "boolean"
+                },
+                "latest": {
+                    "$ref": "#/definitions/services.Latest"
                 },
                 "message": {
                     "type": "string"
@@ -3046,13 +3085,15 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "admin"
                 },
                 "stayLoggedIn": {
                     "type": "boolean"
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "admin@admin.com"
                 }
             }
         },

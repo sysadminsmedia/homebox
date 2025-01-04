@@ -9,6 +9,12 @@
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "Dokumentation",
+                "failed_to_copy": "Text konnte nicht in die Zwischenablage kopiert werden",
+                "https_required": "weil https erforderlich ist",
+                "learn_more": "Erfahren Sie mehr in unserer"
+            },
             "date_time": {
                 "ago": "vor {0}",
                 "days": "Tagen",
@@ -97,7 +103,7 @@
         "github": "GitHub-Projekt",
         "items": "Gegenstände",
         "join_discord": "Discord beitreten",
-        "labels": "Etiketten",
+        "labels": "Kennzeichnung",
         "locations": "Lagerorte",
         "maintenance": "Wartung",
         "name": "Name",
