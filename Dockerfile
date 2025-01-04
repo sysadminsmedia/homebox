@@ -1,5 +1,5 @@
 # Node dependencies stage
-FROM ghcr.io/expandigroup/node-mirror:18-alpine AS frontend-dependencies
+FROM public.ecr.aws/docker/library/node:18-alpine AS frontend-dependencies
 WORKDIR /app
 
 # Install pnpm globally (caching layer)
@@ -10,7 +10,7 @@ COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile --shamefully-hoist
 
 # Build Nuxt (frontend) stage
-FROM ghcr.io/expandigroup/node-mirror:18-alpine AS frontend-builder
+FROM public.ecr.aws/docker/library/node:18-alpine AS frontend-builder
 WORKDIR /app
 
 # Install pnpm globally again (it can reuse the cache if not changed)
@@ -22,7 +22,7 @@ COPY --from=frontend-dependencies /app/node_modules ./node_modules
 RUN pnpm build
 
 # Go dependencies stage
-FROM ghcr.io/rblaine95/golang:alpine AS builder-dependencies
+FROM public.ecr.aws/docker/library/golang:alpine AS builder-dependencies
 WORKDIR /go/src/app
 
 # Copy go.mod and go.sum for better caching
