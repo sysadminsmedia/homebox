@@ -45,6 +45,7 @@ jobs:
         platform:
           - linux/amd64
           - linux/arm64
+          - linux/arm/v7
     steps:
       - name: Prepare
         run: |
@@ -82,6 +83,7 @@ jobs:
         id: build
         uses: docker/build-push-action@v6
         with:
+          context: Dockerfile.rootless
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,"name=${{ env.DOCKERHUB_REPO }},${{ env.GHCR_REPO }}",push-by-digest=true,name-canonical=true,push=true
