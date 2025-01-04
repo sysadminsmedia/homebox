@@ -12,7 +12,6 @@ on:
       - 'Dockerfile.rootless'
       - '.dockerignore'
       - '.github/workflows/**'
-    # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ "main" ]
@@ -28,15 +27,12 @@ env:
   DOCKERHUB_REPO: sysadminsmedia/homebox
   GHCR_REPO: ghcr.io/sysadminsmedia/homebox
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-      # This is used to complete the identity challenge
-      # with sigstore/fulcio when running outside of PRs.
       attestations: write
       id-token: write
     strategy:
@@ -50,7 +46,7 @@ jobs:
       - name: Prepare
         run: |
           platform=${{ matrix.platform }}
-          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV          
+          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
 
       - name: Docker meta
         id: meta
@@ -58,7 +54,7 @@ jobs:
         with:
           images: |
             ${{ env.DOCKERHUB_REPO }}
-            ${{ env.GHCR_REPO }}            
+            ${{ env.GHCR_REPO }}
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -72,6 +68,20 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cache Docker registry for Docker Hub
+        id: cache-dockerhub
+        uses: docker/build-push-action/cache@v2
+        with:
+          key: dockerhub-${{ github.sha }}
+          scope: ${{ env.DOCKERHUB_REPO }}
+
+      - name: Cache Docker registry for GHCR
+        id: cache-ghcr
+        uses: docker/build-push-action/cache@v2
+        with:
+          key: ghcr-${{ github.sha }}
+          scope: ${{ env.GHCR_REPO }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -91,14 +101,14 @@ jobs:
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,"name=${{ env.DOCKERHUB_REPO }},${{ env.GHCR_REPO }}",push-by-digest=true,name-canonical=true,push=true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=dockerhub-${{ github.sha }}
+          cache-to: type=gha,scope=dockerhub-${{ github.sha }},mode=max
 
       - name: Export digest
         run: |
           mkdir -p /tmp/digests
           digest="${{ steps.build.outputs.digest }}"
-          touch "/tmp/digests/${digest#sha256:}"          
+          touch "/tmp/digests/${digest#sha256:}"
 
       - name: Upload digest
         uses: actions/upload-artifact@v4
@@ -113,8 +123,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      # This is used to complete the identity challenge
-      # with sigstore/fulcio when running outside of PRs.
       attestations: write
       id-token: write
     needs:
@@ -159,7 +167,7 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
-            type=schedule,pattern=nightly           
+            type=schedule,pattern=nightly
 
       - name: Create manifest list and push
         working-directory: /tmp/digests
@@ -167,7 +175,7 @@ jobs:
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf '${{ env.DOCKERHUB_REPO }}@sha256:%s ' *)
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.GHCR_REPO }}@sha256:%s ' *)          
+            $(printf '${{ env.GHCR_REPO }}@sha256:%s ' *)
 
       - name: Inspect image
         run: |
