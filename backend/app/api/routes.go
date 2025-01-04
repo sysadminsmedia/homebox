@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"errors"
 	"fmt"
@@ -67,12 +68,24 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 
 		r.Get("/currencies", chain.ToHandlerFunc(v1Ctrl.HandleCurrency()))
 
-		providers := []v1.AuthProvider{
+		providerList := []v1.AuthProvider{
 			providers.NewLocalProvider(a.services.User),
+		}
+		options := a.conf.Options
+		if options.OIDCProviderURL != "" {
+			provider, err := providers.NewOAuthProvider(context.Background(), a.services.OAuth,
+				options.OIDCClientID,
+				options.OIDCClientSecret,
+				options.OIDCRedirectURI,
+				options.OIDCProviderURL)
+			if err != nil {
+				panic(err)
+			}
+			providerList = append(providerList, provider)
 		}
 
 		r.Post("/users/register", chain.ToHandlerFunc(v1Ctrl.HandleUserRegistration()))
-		r.Post("/users/login", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(providers...)))
+		r.Post("/users/login", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(providerList...)))
 
 		userMW := []errchain.Middleware{
 			a.mwAuthToken,
