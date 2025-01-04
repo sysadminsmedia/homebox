@@ -110,7 +110,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read     # Allows access to repository contents (read-only)
-      packages: write    # Allows pushing to GHCR
+      packages: write    # Allows pushing to GHCR!
       id-token: write    # Allows identity token write access for authentication
       attestations: write  # Needed for signing and attestation (if required)
     needs:
