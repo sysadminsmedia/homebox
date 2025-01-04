@@ -18,6 +18,8 @@ jobs:
           package: homebox
           delete-ghost-images: true
           delete-orphaned-images: true
+          delete-partial-images: true
+          delete-untagged: true
           # Make sure to update this to include the latest major tags
           exclude-tags: main,vnext,latest,0.*,1.*
           older-than: 3 months
