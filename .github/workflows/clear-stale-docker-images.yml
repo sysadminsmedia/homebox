@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: dataaxiom/ghcr-cleanup-action@v1
         with:
-          dry-run: true
+          dry-run: false
           package: homebox
           delete-ghost-images: true
           delete-orphaned-images: true
