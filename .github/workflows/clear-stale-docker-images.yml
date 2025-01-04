@@ -3,6 +3,7 @@ name: Docker Cleanup
 on:
   schedule:
     - cron: '00 0 * * *'
+  workflow_dispatch:
 
 jobs:
   delete-untagged-images:
