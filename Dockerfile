@@ -30,7 +30,7 @@ COPY ./backend/go.mod ./backend/go.sum ./
 RUN go mod download
 
 # Build API stage
-FROM ghcr.io/rblaine95/golang:alpine AS builder
+FROM public.ecr.aws/docker/library/golang:alpine AS builder
 ARG BUILD_TIME
 ARG COMMIT
 ARG VERSION

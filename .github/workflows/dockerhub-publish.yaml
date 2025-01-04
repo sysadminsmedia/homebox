@@ -50,6 +50,9 @@ jobs:
       # multi-platform images and export cache
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.0.0 # v3.0.0
+        with:
+          driver-opts: |
+            image=ghcr.io/amitie10g/buildkit:master
 
       # Login against Docker Hub registry
       - name: Log into Docker Hub
