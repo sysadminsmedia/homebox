@@ -15,6 +15,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/oauth"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
@@ -77,6 +78,12 @@ func (uu *UserUpdate) SetNillablePassword(s *string) *UserUpdate {
 	if s != nil {
 		uu.SetPassword(*s)
 	}
+	return uu
+}
+
+// ClearPassword clears the value of the "password" field.
+func (uu *UserUpdate) ClearPassword() *UserUpdate {
+	uu.mutation.ClearPassword()
 	return uu
 }
 
@@ -183,6 +190,21 @@ func (uu *UserUpdate) AddNotifiers(n ...*Notifier) *UserUpdate {
 	return uu.AddNotifierIDs(ids...)
 }
 
+// AddOauthIDs adds the "oauth" edge to the OAuth entity by IDs.
+func (uu *UserUpdate) AddOauthIDs(ids ...uuid.UUID) *UserUpdate {
+	uu.mutation.AddOauthIDs(ids...)
+	return uu
+}
+
+// AddOauth adds the "oauth" edges to the OAuth entity.
+func (uu *UserUpdate) AddOauth(o ...*OAuth) *UserUpdate {
+	ids := make([]uuid.UUID, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uu.AddOauthIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -234,6 +256,27 @@ func (uu *UserUpdate) RemoveNotifiers(n ...*Notifier) *UserUpdate {
 		ids[i] = n[i].ID
 	}
 	return uu.RemoveNotifierIDs(ids...)
+}
+
+// ClearOauth clears all "oauth" edges to the OAuth entity.
+func (uu *UserUpdate) ClearOauth() *UserUpdate {
+	uu.mutation.ClearOauth()
+	return uu
+}
+
+// RemoveOauthIDs removes the "oauth" edge to OAuth entities by IDs.
+func (uu *UserUpdate) RemoveOauthIDs(ids ...uuid.UUID) *UserUpdate {
+	uu.mutation.RemoveOauthIDs(ids...)
+	return uu
+}
+
+// RemoveOauth removes "oauth" edges to OAuth entities.
+func (uu *UserUpdate) RemoveOauth(o ...*OAuth) *UserUpdate {
+	ids := make([]uuid.UUID, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uu.RemoveOauthIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -323,6 +366,9 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := uu.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
+	}
+	if uu.mutation.PasswordCleared() {
+		_spec.ClearField(user.FieldPassword, field.TypeString)
 	}
 	if value, ok := uu.mutation.IsSuperuser(); ok {
 		_spec.SetField(user.FieldIsSuperuser, field.TypeBool, value)
@@ -458,6 +504,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.OauthCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OauthTable,
+			Columns: []string{user.OauthColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(oauth.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedOauthIDs(); len(nodes) > 0 && !uu.mutation.OauthCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OauthTable,
+			Columns: []string{user.OauthColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(oauth.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.OauthIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OauthTable,
+			Columns: []string{user.OauthColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(oauth.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -523,6 +614,12 @@ func (uuo *UserUpdateOne) SetNillablePassword(s *string) *UserUpdateOne {
 	if s != nil {
 		uuo.SetPassword(*s)
 	}
+	return uuo
+}
+
+// ClearPassword clears the value of the "password" field.
+func (uuo *UserUpdateOne) ClearPassword() *UserUpdateOne {
+	uuo.mutation.ClearPassword()
 	return uuo
 }
 
@@ -629,6 +726,21 @@ func (uuo *UserUpdateOne) AddNotifiers(n ...*Notifier) *UserUpdateOne {
 	return uuo.AddNotifierIDs(ids...)
 }
 
+// AddOauthIDs adds the "oauth" edge to the OAuth entity by IDs.
+func (uuo *UserUpdateOne) AddOauthIDs(ids ...uuid.UUID) *UserUpdateOne {
+	uuo.mutation.AddOauthIDs(ids...)
+	return uuo
+}
+
+// AddOauth adds the "oauth" edges to the OAuth entity.
+func (uuo *UserUpdateOne) AddOauth(o ...*OAuth) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uuo.AddOauthIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -680,6 +792,27 @@ func (uuo *UserUpdateOne) RemoveNotifiers(n ...*Notifier) *UserUpdateOne {
 		ids[i] = n[i].ID
 	}
 	return uuo.RemoveNotifierIDs(ids...)
+}
+
+// ClearOauth clears all "oauth" edges to the OAuth entity.
+func (uuo *UserUpdateOne) ClearOauth() *UserUpdateOne {
+	uuo.mutation.ClearOauth()
+	return uuo
+}
+
+// RemoveOauthIDs removes the "oauth" edge to OAuth entities by IDs.
+func (uuo *UserUpdateOne) RemoveOauthIDs(ids ...uuid.UUID) *UserUpdateOne {
+	uuo.mutation.RemoveOauthIDs(ids...)
+	return uuo
+}
+
+// RemoveOauth removes "oauth" edges to OAuth entities.
+func (uuo *UserUpdateOne) RemoveOauth(o ...*OAuth) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(o))
+	for i := range o {
+		ids[i] = o[i].ID
+	}
+	return uuo.RemoveOauthIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -799,6 +932,9 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
+	}
+	if uuo.mutation.PasswordCleared() {
+		_spec.ClearField(user.FieldPassword, field.TypeString)
 	}
 	if value, ok := uuo.mutation.IsSuperuser(); ok {
 		_spec.SetField(user.FieldIsSuperuser, field.TypeBool, value)
@@ -927,6 +1063,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(notifier.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.OauthCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OauthTable,
+			Columns: []string{user.OauthColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(oauth.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedOauthIDs(); len(nodes) > 0 && !uuo.mutation.OauthCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OauthTable,
+			Columns: []string{user.OauthColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(oauth.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.OauthIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.OauthTable,
+			Columns: []string{user.OauthColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(oauth.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
