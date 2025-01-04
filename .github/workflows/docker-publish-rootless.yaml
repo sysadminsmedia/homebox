@@ -129,7 +129,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSOWRD }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Login to GHCR
         uses: docker/login-action@v3
