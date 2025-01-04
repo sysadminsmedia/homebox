@@ -392,6 +392,11 @@ export interface ValueOverTimeEntry {
   value: number;
 }
 
+export interface Latest {
+  date: Date | string;
+  version: string;
+}
+
 export interface UserRegistration {
   email: string;
   name: string;
@@ -404,6 +409,7 @@ export interface APISummary {
   build: Build;
   demo: boolean;
   health: boolean;
+  latest: Latest;
   message: string;
   title: string;
   versions: string[];

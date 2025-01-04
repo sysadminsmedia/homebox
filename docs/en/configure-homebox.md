@@ -25,7 +25,7 @@
 | HBOX_MAILER_FROM                     |                                            | email from address to use                                                              |
 | HBOX_SWAGGER_HOST                    | 7745                                       | swagger host to use, if not set swagger will be disabled                               |
 | HBOX_SWAGGER_SCHEMA                  | `http`                                     | swagger schema to use, can be one of: `http`, `https`                                  |
-
+| HBOX_OPTIONS_CHECK_GITHUB_RELEASE    | true                                       | check for new github releases                                                          |
 
 ::: tip "CLI Arguments"
 If you're deploying without docker you can use command line arguments to configure the application. Run `homebox --help` for more information.
@@ -55,6 +55,7 @@ OPTIONS
 --options-allow-registration/$HBOX_OPTIONS_ALLOW_REGISTRATION            <bool>    (default: true)
 --options-auto-increment-asset-id/$HBOX_OPTIONS_AUTO_INCREMENT_ASSET_ID  <bool>    (default: true)
 --options-currency-config/$HBOX_OPTIONS_CURRENCY_CONFIG                  <string>
+--options-check-github-release/$HBOX_OPTIONS_CHECK_GITHUB_RELEASE        <bool>    (default: true)
 --help/-h    display this help message
 ```
 :::

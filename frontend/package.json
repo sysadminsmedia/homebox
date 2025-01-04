@@ -61,6 +61,7 @@
     "markdown-it": "^14.1.0",
     "pinia": "^2.2.8",
     "postcss": "^8.4.49",
+    "semver": "^7.6.3",
     "tailwindcss": "^3.4.15",
     "vue": "3.4.8",
     "vue-router": "^4.5.0"

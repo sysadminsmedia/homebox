@@ -84,13 +84,14 @@ type (
 	}
 
 	APISummary struct {
-		Healthy           bool     `json:"health"`
-		Versions          []string `json:"versions"`
-		Title             string   `json:"title"`
-		Message           string   `json:"message"`
-		Build             Build    `json:"build"`
-		Demo              bool     `json:"demo"`
-		AllowRegistration bool     `json:"allowRegistration"`
+		Healthy           bool            `json:"health"`
+		Versions          []string        `json:"versions"`
+		Title             string          `json:"title"`
+		Message           string          `json:"message"`
+		Build             Build           `json:"build"`
+		Latest            services.Latest `json:"latest"`
+		Demo              bool            `json:"demo"`
+		AllowRegistration bool            `json:"allowRegistration"`
 	}
 )
 
@@ -123,6 +124,7 @@ func (ctrl *V1Controller) HandleBase(ready ReadyFunc, build Build) errchain.Hand
 			Title:             "Homebox",
 			Message:           "Track, Manage, and Organize your Things",
 			Build:             build,
+			Latest:            ctrl.svc.BackgroundService.GetLatestVersion(),
 			Demo:              ctrl.isDemo,
 			AllowRegistration: ctrl.allowRegistration,
 		})
