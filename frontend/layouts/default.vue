@@ -130,7 +130,7 @@
   const current = computed(() => status.value?.build.version);
 
   const isDev = computed(() => import.meta.dev || !current.value?.includes("."));
-  const isOutdated = computed(() => current && latest.value && lt(current, latest.value));
+  const isOutdated = computed(() => current.value && latest.value && lt(current.value, latest.value));
   const hasHiddenLatest = computed(() => localStorage.getItem("latestVersion") === latest.value);
 
   const displayOutdatedWarning = computed(() => !isDev && !hasHiddenLatest.value && isOutdated.value);

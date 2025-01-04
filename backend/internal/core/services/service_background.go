@@ -103,7 +103,12 @@ func (svc *BackgroundService) GetLatestGithubRelease(ctx context.Context) error 
 	if err != nil {
 		return fmt.Errorf("failed to make latest version request: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+			err := resp.Body.Close()
+			if err != nil {
+					log.Printf("error closing latest version response body: %v", err)
+			}
+	}()
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("latest version unexpected status code: %d", resp.StatusCode)
