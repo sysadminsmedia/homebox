@@ -75,9 +75,14 @@ jobs:
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
+        with:
+          image: ghcr.io/amitie10g/binfmt:latest
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        with:
+          driver: |
+            image=ghcr.io/amitie10g/buildkit:master
 
       - name: Build and push by digest
         id: build
