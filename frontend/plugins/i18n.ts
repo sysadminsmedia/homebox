@@ -2,10 +2,10 @@ import type { CompileError, MessageContext } from "vue-i18n";
 import { createI18n } from "vue-i18n";
 import { IntlMessageFormat } from "intl-messageformat";
 
-export default defineNuxtPlugin(({ vueApp }) => {
-  function checkDefaultLanguage() {
+export default defineNuxtPlugin(async ({ vueApp }) => {
+  async function checkDefaultLanguage() {
     let matched = null;
-    const languages = Object.getOwnPropertyNames(messages());
+    const languages = Object.getOwnPropertyNames(await messages());
     const matching = navigator.languages.filter(lang => languages.some(l => l.toLowerCase() === lang.toLowerCase()));
     if (matching.length > 0) {
       matched = matching[0];
@@ -25,20 +25,24 @@ export default defineNuxtPlugin(({ vueApp }) => {
     fallbackLocale: "en",
     globalInjection: true,
     legacy: false,
-    locale: preferences.value.language || checkDefaultLanguage() || "en",
+    locale: preferences.value.language || await checkDefaultLanguage() || "en",
     messageCompiler,
-    messages: messages(),
+    messages: await messages(),
   });
   vueApp.use(i18n);
 });
 
-export const messages = () => {
+export const messages = async () => {
   const messages: Record<string, any> = {};
-  const modules = import.meta.glob("~//locales/**.json", { eager: true });
-  for (const path in modules) {
-    const key = path.slice(9, -5);
-    messages[key] = modules[path];
-  }
+  // const modules = import.meta.glob("~//locales/**.json", { eager: true });
+  // for (const path in modules) {
+  //   const key = path.slice(9, -5);
+  //   messages[key] = modules[path];
+  // }
+  console.log('Fetching translations...');
+  const en = await (await fetch('https://raw.githubusercontent.com/sysadminsmedia/homebox/refs/heads/main/frontend/locales/en.json')).json();
+  console.log('Fetched translations.');
+  messages['en'] = en;
   return messages;
 };
 

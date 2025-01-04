@@ -254,6 +254,19 @@ func run(cfg *config.Config) error {
 		}
 	}))
 
+	// TODO: read from env var0 GOOS=linux go build
+	if true {
+		runner.AddPlugin(NewTask("locale-update", time.Duration(24)*time.Hour, func(ctx context.Context) {
+			log.Debug().Msg("running locale update")
+			err := app.services.BackgroundService.UpdateLocales(ctx)
+			if err != nil {
+				log.Error().
+					Err(err).
+					Msg("failed to update locales")
+			}
+		}))
+	}
+
 	if cfg.Debug.Enabled {
 		runner.AddFunc("debug", func(ctx context.Context) error {
 			debugserver := http.Server{

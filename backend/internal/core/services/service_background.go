@@ -79,3 +79,20 @@ func (svc *BackgroundService) SendNotifiersToday(ctx context.Context) error {
 
 	return nil
 }
+
+func (svc *BackgroundService) UpdateLocales(ctx context.Context) error {
+	log.Debug().Msg("updating locales")
+	// fetch list of locales from github
+	// is it worth checking if any changes have been made?
+	// download locales overwriting files in static/public/locales
+
+	// curl -H "Accept: application/vnd.github.v3+json" \
+  //    -H "If-Modified-Since: Thu, 31 Oct 2024 09:59:02 GMT" \
+  //    -o /dev/null -s -w "%{http_code}\n" \
+  //    https://api.github.com/repos/sysadminsmedia/homebox/contents/frontend/locales
+  // keep track of last modified date
+
+	
+
+	return nil
+}
