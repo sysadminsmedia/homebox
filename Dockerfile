@@ -1,5 +1,5 @@
 # Node dependencies stage
-FROM node:18-alpine AS frontend-dependencies
+FROM ghcr.io/docker/node:18-alpine AS frontend-dependencies
 WORKDIR /app
 
 # Install pnpm globally (caching layer)
@@ -10,7 +10,7 @@ COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile --shamefully-hoist
 
 # Build Nuxt (frontend) stage
-FROM node:18-alpine AS frontend-builder
+FROM ghcr.io/docker/node:18-alpine AS frontend-builder
 WORKDIR /app
 
 # Install pnpm globally again (it can reuse the cache if not changed)
@@ -22,7 +22,7 @@ COPY --from=frontend-dependencies /app/node_modules ./node_modules
 RUN pnpm build
 
 # Go dependencies stage
-FROM golang:alpine AS builder-dependencies
+FROM ghcr.io/docker/golang:alpine AS builder-dependencies
 WORKDIR /go/src/app
 
 # Copy go.mod and go.sum for better caching
@@ -30,7 +30,7 @@ COPY ./backend/go.mod ./backend/go.sum ./
 RUN go mod download
 
 # Build API stage
-FROM golang:alpine AS builder
+FROM ghcr.io/docker/golang:alpine AS builder
 ARG BUILD_TIME
 ARG COMMIT
 ARG VERSION
@@ -58,7 +58,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     -v ./app/api/*.go
 
 # Production stage
-FROM alpine:latest
+FROM ghcr.io/docker/alpine:latest
 ENV HBOX_MODE=production
 ENV HBOX_STORAGE_DATA=/data/
 ENV HBOX_STORAGE_SQLITE_URL=/data/homebox.db?_pragma=busy_timeout=2000&_pragma=journal_mode=WAL&_fk=1
