@@ -1,26 +1,26 @@
 # Node dependencies
-FROM ghcr.io/mirrorshub/docker/node:18-alpine AS frontend-dependencies
+FROM ghcr.io/expandigroup/node-mirror:18-alpine AS frontend-dependencies
 WORKDIR /app
 RUN npm install -g pnpm
 COPY frontend/package.json frontend/pnpm-lock.yaml ./ 
 RUN pnpm install --frozen-lockfile --shamefully-hoist
 
 # Build Nuxt
-FROM ghcr.io/mirrorshub/docker/node:18-alpine AS frontend-builder
+FROM ghcr.io/expandigroup/node-mirror:18-alpine AS frontend-builder
 WORKDIR /app
 COPY frontend ./ 
 COPY --from=frontend-dependencies /app/node_modules ./node_modules
 RUN pnpm build
 
 # Build Go dependencies
-FROM ghcr.io/mirrorshub/docker/golang:alpine AS builder-dependencies
+FROM ghcr.io/rblaine95/golang:alpine AS builder-dependencies
 WORKDIR /go/src/app
 COPY ./backend/go.mod ./backend/go.sum ./ 
 RUN apk update && apk add --no-cache git \
     && go mod download
 
 # Build API
-FROM ghcr.io/mirrorshub/docker/golang:alpine AS builder
+FROM ghcr.io/rblaine95/golang:alpine AS builder
 ARG BUILD_TIME
 ARG COMMIT
 ARG VERSION
