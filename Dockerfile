@@ -58,7 +58,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     -v ./app/api/*.go
 
 # Production stage
-FROM ghcr.io/linuxcontainers/alpine:latest
+FROM public.ecr.aws/docker/library/alpine:latest
 ENV HBOX_MODE=production
 ENV HBOX_STORAGE_DATA=/data/
 ENV HBOX_STORAGE_SQLITE_URL=/data/homebox.db?_pragma=busy_timeout=2000&_pragma=journal_mode=WAL&_fk=1
