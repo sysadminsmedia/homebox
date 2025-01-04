@@ -168,6 +168,7 @@
         "model_number": "Numéro de modèle",
         "name": "Nom",
         "negate_labels": "Négliger les étiquettes sélectionnées",
+        "only_without_photo": "Seulement des articles sans photo",
         "next_page": "Page suivante",
         "no_results": "Aucun élément trouvé",
         "notes": "Notes",

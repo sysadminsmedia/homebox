@@ -162,6 +162,7 @@
         "model_number": "Model Numarası",
         "name": "İsim",
         "negate_labels": "Seçili Etiketleri Yoksay",
+        "only_without_photo": "Fotoğrafsız ürünler",
         "next_page": "Sonraki Sayfa",
         "no_results": "Öğe Bulunamadı",
         "notes": "Notlar",

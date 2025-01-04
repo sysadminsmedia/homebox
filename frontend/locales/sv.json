@@ -162,6 +162,7 @@
         "model_number": "Modellnummer",
         "name": "Namn",
         "negate_labels": "Negera valda etiketter",
+        "only_without_photo": "Endast objekt utan foto",
         "next_page": "Nästa sida",
         "no_results": "Inga föremål hittades",
         "notes": "Anteckningar",
