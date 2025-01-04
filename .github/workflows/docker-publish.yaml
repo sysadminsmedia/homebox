@@ -85,8 +85,8 @@ jobs:
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,"name=${{ env.DOCKERHUB_REPO }},${{ env.GHCR_REPO }}",push-by-digest=true,name-canonical=true,push=true
-          cache-from: type=registry,ref=ghcr.io/sysadminsmedia/devcache:homebox
-          cache-to: type=registry,ref=ghcr.io/sysadminsmedia/devcache:homebox,mode=max
+          cache-from: type=registry,ref=ghcr.io/sysadminsmedia/devcache
+          cache-to: type=registry,ref=ghcr.io/sysadminsmedia/devcache,mode=max
 
       - name: Export digest
         run: |
