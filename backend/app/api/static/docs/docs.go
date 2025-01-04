@@ -2950,6 +2950,17 @@ const docTemplate = `{
                 }
             }
         },
+        "services.Latest": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
         "services.UserRegistration": {
             "type": "object",
             "properties": {
@@ -2981,6 +2992,9 @@ const docTemplate = `{
                 },
                 "health": {
                     "type": "boolean"
+                },
+                "latest": {
+                    "$ref": "#/definitions/services.Latest"
                 },
                 "message": {
                     "type": "string"
