@@ -45,10 +45,17 @@ jobs:
           - linux/arm/v7
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Prepare
         run: |
           platform=${{ matrix.platform }}
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
+          branch=${{ github.event.pull_request.number || github.ref }}
+          echo "BRANCH=${branch//\//-}" >> $GITHUB_ENV
+          echo ${{ env.PLATFORM_PAIR }}-${{ env.BRANCH }}-rootless
+          
 
       - name: Docker meta
         id: meta
@@ -89,7 +96,7 @@ jobs:
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,"name=${{ env.DOCKERHUB_REPO }},${{ env.GHCR_REPO }}",push-by-digest=true,name-canonical=true,push=true
-          cache-from: type=registry,ref=ghcr.io/sysadminsmedia/devcache
+          cache-from: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR }}-${{ env.BRANCH }}-rootless
           cache-to: type=registry,ref=ghcr.io/sysadminsmedia/devcache,mode=max
 
       - name: Export digest

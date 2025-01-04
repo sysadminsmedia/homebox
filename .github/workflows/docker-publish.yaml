@@ -46,6 +46,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Prepare
+        run: |
+          platform=${{ matrix.platform }}
+          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
+          branch=${{ github.event.pull_request.number || github.ref }}
+          echo "BRANCH=${branch//\//-}" >> $GITHUB_ENV
+          echo ${{ env.PLATFORM_PAIR }}-${{ env.BRANCH }}
+
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
