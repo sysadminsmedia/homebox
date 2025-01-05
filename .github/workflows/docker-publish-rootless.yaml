@@ -31,10 +31,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read     # Allows access to repository contents (read-only)
-      packages: write    # Allows pushing to GHCR
-      id-token: write    # Allows identity token write access for authentication
-      attestations: write  # Needed for signing and attestation (if required)
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
       
     strategy:
       fail-fast: false
@@ -54,7 +54,6 @@ jobs:
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
           branch=${{ github.event.pull_request.number || github.ref_name }}
           echo "BRANCH=${branch//\//-}" >> $GITHUB_ENV
-          
 
       - name: Docker meta
         id: meta
@@ -75,7 +74,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}  # The GitHub token with the necessary permissions
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -92,16 +91,16 @@ jobs:
         id: build
         uses: docker/build-push-action@v6
         with:
-          platforms: ${{ matrix.platform }}
-          context: .
+          context: ${{ github.workspace }} # Explicitly specify the build context
           file: Dockerfile.rootless # Explicitly specify the Dockerfile
+          platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,"name=${{ env.DOCKERHUB_REPO }},${{ env.GHCR_REPO }}",push-by-digest=true,name-canonical=true,push=true
           cache-from: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR }}-${{ env.BRANCH }}-rootless
-          cache-to: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR}}-${{ env.BRANCH }}-rootless,mode=max
+          cache-to: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR }}-${{ env.BRANCH }}-rootless,mode=max
           build-args: |
             VERSION=${{ github.ref_name }}
-            COMMIT=${{ github.sha	}}
+            COMMIT=${{ github.sha }}
 
       - name: Export digest
         run: |
@@ -120,10 +119,10 @@ jobs:
   merge:
     runs-on: ubuntu-latest
     permissions:
-      contents: read     # Allows access to repository contents (read-only)
-      packages: write    # Allows pushing to GHCR!
-      id-token: write    # Allows identity token write access for authentication
-      attestations: write  # Needed for signing and attestation (if required)
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
     needs:
       - build
 
