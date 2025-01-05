@@ -88,7 +88,7 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
 VOLUME [ "/data" ]
 
 # Set ownership for required directories
-RUN chown -R nonroot:nonroot /app /app/api
+RUN chown -R nonroot:nonroot /app /app/api /data
 
 # Entrypoint and CMD
 USER nonroot
