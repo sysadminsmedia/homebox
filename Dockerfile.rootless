@@ -44,16 +44,20 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 RUN chown -R nonroot:nonroot /go/bin/api /go/src/app
 
 # Production stage with distroless
-FROM gcr.io/distroless/base:latest
+FROM ghcr.io/distroless/base:latest
 
 ENV HBOX_MODE=production
 ENV HBOX_STORAGE_DATA=/data/
 ENV HBOX_STORAGE_SQLITE_URL=/data/homebox.db?_fk=1&_time_format=sqlite
 
-# Copy the binary and data directory, change ownership
+# Copy the binary and data directory
 COPY --from=builder /go/bin/api /app
 COPY --from=builder /data /data
-# Add curl instead of wget from alpine
+
+# Copy curl and its dependencies from Alpine image into distroless
+# Also copy the libraries that curl depends on (if required)
+COPY --from=public.ecr.aws/docker/library/alpine:latest /lib/libssl.so.* /lib/
+# Copy curl from alpine to the distroless image
 COPY --from=public.ecr.aws/docker/library/alpine:latest /usr/bin/curl /usr/bin/curl
 
 LABEL Name=homebox Version=0.0.1
