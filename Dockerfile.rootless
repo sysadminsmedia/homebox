@@ -15,6 +15,9 @@ RUN pnpm install --frozen-lockfile --shamefully-hoist
 FROM public.ecr.aws/docker/library/node:18-alpine AS frontend-builder
 WORKDIR /app
 
+# Install pnpm globally
+RUN npm install -g pnpm
+
 # Copy frontend and install node_modules from previous stage
 COPY frontend ./ 
 COPY --from=frontend-dependencies /app/node_modules ./node_modules
