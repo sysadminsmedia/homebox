@@ -98,6 +98,9 @@ jobs:
           outputs: type=image,"name=${{ env.DOCKERHUB_REPO }},${{ env.GHCR_REPO }}",push-by-digest=true,name-canonical=true,push=true
           cache-from: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR }}-${{ env.BRANCH }}-rootless
           cache-to: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR}}-${{ env.BRANCH }}-rootless,mode=max
+          build-args: |
+            VERSION=${{ github.ref_name }}
+            COMMIT=${{ github.sha	}}
 
       - name: Export digest
         run: |
