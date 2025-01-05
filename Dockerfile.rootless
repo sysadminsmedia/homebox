@@ -6,7 +6,7 @@ WORKDIR /app
 RUN npm install -g pnpm
 
 # Copy package.json and lockfile to leverage caching
-COPY frontend/package.json frontend/pnpm-lock.yaml ./ 
+COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile --shamefully-hoist
 
 # Build Nuxt (frontend) stage
@@ -17,7 +17,7 @@ WORKDIR /app
 RUN npm install -g pnpm
 
 # Copy over source files and node_modules from dependencies stage
-COPY frontend . 
+COPY frontend .
 COPY --from=frontend-dependencies /app/node_modules ./node_modules
 RUN pnpm build
 
@@ -26,7 +26,7 @@ FROM public.ecr.aws/docker/library/golang:alpine AS builder-dependencies
 WORKDIR /go/src/app
 
 # Copy go.mod and go.sum for better caching
-COPY ./backend/go.mod ./backend/go.sum ./ 
+COPY ./backend/go.mod ./backend/go.sum ./
 RUN go mod download
 
 # Build API stage
@@ -87,7 +87,10 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
 # Persist volume
 VOLUME [ "/data" ]
 
-# Set ownership for required directories at runtime (excluding /data)
-ENTRYPOINT ["/bin/sh", "-c", "chown -R nonroot:nonroot /app /app/api && /app/api /data/config.yml"]
+# Set ownership for required directories
+RUN chown -R nonroot:nonroot /app /app/api
+
+# Entrypoint and CMD
 USER nonroot
-CMD ["/data/config.yml"]
+ENTRYPOINT [ "/app/api" ]
+CMD [ "/data/config.yml" ]
