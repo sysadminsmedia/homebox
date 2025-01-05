@@ -52,9 +52,8 @@ jobs:
         run: |
           platform=${{ matrix.platform }}
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
-          branch=${{ github.event.pull_request.number || github.ref }}
+          branch=${{ github.event.pull_request.number || github.ref_name }}
           echo "BRANCH=${branch//\//-}" >> $GITHUB_ENV
-          echo ${{ env.PLATFORM_PAIR }}-${{ env.BRANCH }}-rootless
           
 
       - name: Docker meta
