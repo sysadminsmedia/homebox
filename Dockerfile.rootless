@@ -44,7 +44,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 RUN chown -R nonroot:nonroot /go/bin/api /go/src/app
 
 # Production stage with distroless
-FROM ghcr.io/distroless/static:latest
+FROM ghcr.io/distroless/base:latest
 
 ENV HBOX_MODE=production
 ENV HBOX_STORAGE_DATA=/data/
