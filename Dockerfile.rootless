@@ -69,11 +69,9 @@ RUN addgroup -S nonroot && adduser -S nonroot -G nonroot
 
 # Create application directory and copy over built Go binary
 RUN mkdir /app
-COPY --from=builder /go/bin/api /app
+COPY --from=builder --chown=nonroot /go/bin/api /app
+COPY --from=builder --chown=nonroot /data /data
 RUN chmod +x /app/api
-
-# Create /data directory and set ownership for required directories
-RUN mkdir /data && chown -R nonroot:nonroot /app /app/api /data
 
 # Labels and configuration for the final image
 LABEL Name=homebox Version=0.0.1
