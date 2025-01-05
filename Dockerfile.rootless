@@ -72,9 +72,6 @@ RUN mkdir /app
 COPY --from=builder /go/bin/api /app
 RUN chmod +x /app/api
 
-# Set ownership for required directories
-RUN chown -R nonroot:nonroot /app /data /app/api
-
 # Labels and configuration for the final image
 LABEL Name=homebox Version=0.0.1
 LABEL org.opencontainers.image.source="https://github.com/sysadminsmedia/homebox"
@@ -89,6 +86,9 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
 
 # Persist volume
 VOLUME [ "/data" ]
+
+# Set ownership for required directories
+RUN chown -R nonroot:nonroot /app /data /app/api
 
 # Entrypoint and CMD
 USER nonroot
