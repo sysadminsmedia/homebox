@@ -57,6 +57,8 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     -o /go/bin/api \
     -v ./app/api/*.go
 
+RUN mkdir /data
+
 # Production stage
 FROM public.ecr.aws/docker/library/alpine:latest
 ENV HBOX_MODE=production
