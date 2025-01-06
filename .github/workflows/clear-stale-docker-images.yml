@@ -12,8 +12,14 @@ jobs:
     permissions:
       packages: write
     steps:
+      - name: Fetch multi-platform package version SHAs
+        id: multi-arch-digests
+        run: |
+          package1=$(docker manifest inspect ghcr.io/sysadminsmedia/homebox | jq -r '.manifests.[] | .digest' | paste -s -d ' ' -)
+          echo "multi-arch-digests=$package1" >> $GITHUB_OUTPUT
       - uses: snok/container-retention-policy@v2.2.1
         with:
+          skip-shas: ${{ steps.multi-arch-digests.outputs.multi-arch-digests }}
           # The type of account. Can be either 'org' or 'personal'.
           account-type: org 
           # The name of the organization. Only required if the account type is 'personal'.
@@ -27,7 +33,7 @@ jobs:
           # Restrict deletions to images without specific tags. Supports Unix-shell style wildcards
           skip-tags: latest,latest-rootless,0.*,0.*-rootless,main,main-rootless,vnext,vnext-rootless,0,0-rootless # optional
           # Do not actually delete images. Print output showing what would have been deleted.
-          dry-run: false # optional, default is false
+          dry-run: true # optional, default is false
           # The token type. Can be either 'pat' or 'github-token'. If 'github-token', then image-names must the package name of repository from where this action is invoked.
           token-type: pat # optional, default is pat
 
