@@ -105,7 +105,7 @@ jobs:
           sbom: true
           annotations: ${{ steps.meta.outputs.annotations }}
           
-     - name: Export digest
+      - name: Export digest
         run: |
           mkdir -p /tmp/digests
           digest="${{ steps.build.outputs.digest }}"
