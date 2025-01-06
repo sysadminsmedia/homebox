@@ -17,7 +17,7 @@ jobs:
         run: |
           package1=$(docker manifest inspect ghcr.io/sysadminsmedia/homebox | jq -r '.manifests.[] | .digest' | paste -s -d ' ' -)
           echo "multi-arch-digests=$package1" >> $GITHUB_OUTPUT
-      - uses: snok/container-retention-policy@v2.2.1
+      - uses: snok/container-retention-policy@v3.0.0
         with:
           skip-shas: ${{ steps.multi-arch-digests.outputs.multi-arch-digests }}
           # The type of account. Can be either 'org' or 'personal'.
@@ -43,7 +43,7 @@ jobs:
     permissions:
       packages: write
     steps:
-      - uses: snok/container-retention-policy@v2.2.1
+      - uses: snok/container-retention-policy@v3.0.0
         with:
           # The type of account. Can be either 'org' or 'personal'.
           account-type: org 
