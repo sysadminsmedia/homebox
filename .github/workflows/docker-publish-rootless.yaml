@@ -101,8 +101,11 @@ jobs:
           build-args: |
             VERSION=${{ github.ref_name }}
             COMMIT=${{ github.sha }}
-
-      - name: Export digest
+          provenance: true
+          sbom: true
+          annotations: ${{ steps.meta.outputs.annotations }}
+          
+     - name: Export digest
         run: |
           mkdir -p /tmp/digests
           digest="${{ steps.build.outputs.digest }}"

@@ -97,6 +97,9 @@ jobs:
           build-args: |
             VERSION=${{ github.ref_name }}
             COMMIT=${{ github.sha	}}
+          provenance: true
+          sbom: true
+          annotations: ${{ steps.meta.outputs.annotations }}
 
       - name: Export digest
         run: |
