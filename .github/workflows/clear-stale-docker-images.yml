@@ -23,7 +23,7 @@ jobs:
           # The cut-off for which to delete images older than. For example '2 days ago UTC'. Timezone is required.
           cut-off: 90 days ago UTC
           # Personal access token with read and delete scopes.
-          token: ${{ secrets.GITHUB_CLEANUP_PAT }}
+          token: ${{ secrets.CLEANUP_PAT }}
           # Restrict deletions to images without specific tags. Supports Unix-shell style wildcards
           skip-tags: latest,latest-rootless,0.*,0.*-rootless,main,main-rootless,vnext,vnext-rootless,0,0-rootless # optional
           # Do not actually delete images. Print output showing what would have been deleted.
@@ -48,7 +48,7 @@ jobs:
           # The cut-off for which to delete images older than. For example '2 days ago UTC'. Timezone is required.
           cut-off: 90 days ago UTC
           # Personal access token with read and delete scopes.
-          token: ${{ secrets.GITHUB_CLEANUP_PAT }}
+          token: ${{ secrets.CLEANUP_PAT }}
           # Do not actually delete images. Print output showing what would have been deleted.
           dry-run: true # optional, default is false
           # The token type. Can be either 'pat' or 'github-token'. If 'github-token', then image-names must the package name of repository from where this action is invoked.
