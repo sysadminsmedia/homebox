@@ -25,7 +25,7 @@ jobs:
           # Image name to delete. Supports passing several names as a comma-separated list.
           image-names: homebox
           # The cut-off for which to delete images older than. For example '2 days ago UTC'. Timezone is required.
-          cut-off: 90 days ago UTC
+          cut-off: 90d
           # Personal access token with read and delete scopes.
           token: ${{ secrets.CLEANUP_PAT }}
           # Restrict deletions to images without specific tags. Supports Unix-shell style wildcards
@@ -45,7 +45,7 @@ jobs:
           account: sysadminsmedia 
           image-names: devcache
           # The cut-off for which to delete images older than. For example '2 days ago UTC'. Timezone is required.
-          cut-off: 90 days ago UTC
+          cut-off: 90d
           # Personal access token with read and delete scopes.
           token: ${{ secrets.CLEANUP_PAT }}
           # Do not actually delete images. Print output showing what would have been deleted.
