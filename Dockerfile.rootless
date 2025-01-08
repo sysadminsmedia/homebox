@@ -67,7 +67,8 @@ ENV HBOX_STORAGE_SQLITE_URL=/data/homebox.db?_pragma=busy_timeout=2000&_pragma=j
 
 # Install necessary runtime dependencies
 RUN apk --no-cache add ca-certificates wget
-RUN addgroup -S nonroot && adduser -S nonroot -G nonroot
+# Create a nonroot user with UID/GID 65532
+RUN addgroup -g 65532 nonroot && adduser -u 65532 -G nonroot -S nonroot
 
 # Create application directory and copy over built Go binary
 RUN mkdir /app
