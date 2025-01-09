@@ -6,20 +6,44 @@
                 "description": "Importálj egy CSV fájlt, amely tartalmazza a tételeidet, címkéidet és helyeidet. A szükséges formátumról bővebben \na dokumentációban olvashatsz.",
                 "title": "Importálás CSV-fájlból",
                 "upload": "Feltöltés"
+            },
+            "outdated": {
+                "current_version": "Jelenlegi verzió",
+                "dismiss": "Elvetés",
+                "latest_version": "Legújabb verzió",
+                "new_version_available": "Új verzió érhető el",
+                "new_version_available_link": "Kattints ide az újdonságok megtekintéséhez"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "dokumentáció",
+                "failed_to_copy": "Nem sikerült a szöveget a vágólapra másolni",
+                "https_required": "mert a HTTPS kötelező",
+                "learn_more": "Tudj meg többet itt:"
+            },
             "date_time": {
                 "ago": "{0} ezelőtt",
+                "days": "nap",
+                "hour": "óra",
+                "hours": "órák",
                 "in": "{0} múlva",
                 "just-now": "épp most",
                 "last-month": "múlt hónapban",
                 "last-week": "múlt héten",
                 "last-year": "tavaly",
+                "minute": "perc",
+                "minutes": "percek",
+                "months": "hónapok",
                 "next-month": "jövő hónapban",
                 "next-week": "jövő héten",
                 "next-year": "jövőre",
+                "second": "másodperc",
+                "seconds": "másodpercek",
                 "tomorrow": "holnap",
+                "week": "hét",
+                "weeks": "hetek",
+                "years": "évek",
                 "yesterday": "tegnap"
             },
             "page_qr_code": {

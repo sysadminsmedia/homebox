@@ -6,6 +6,13 @@
                 "description": "Importa un file CSV contenente gli articoli, le etichette e le posizioni. Vedi la documentazione per ulteriori informazioni sul \nformato richiesto.",
                 "title": "Importa File CSV",
                 "upload": "Carica"
+            },
+            "outdated": {
+                "current_version": "Versione corrente",
+                "dismiss": "Rifiuta",
+                "latest_version": "Ultima Versione",
+                "new_version_available": "Nuova versione disponibile",
+                "new_version_available_link": "Clicca qui per visualizzare le note di rilascio"
             }
         },
         "global": {

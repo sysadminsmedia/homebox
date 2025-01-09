@@ -5,10 +5,23 @@
                 "change_warning": "O comportamento de importações com import_refs existentes foi alterado. Se houver um import_ref presente no arquivo CSV, o\nitem será atualizado com os valores presentes no arquivo CSV.",
                 "description": "Importe um arquivo CSV contendo seus items, etiquetas e locais. Consulte a documentação para mais informações\nsobre a formatação aceita.",
                 "title": "Importar arquivo CSV",
-                "upload": "Enviar"
+                "upload": "Importar"
+            },
+            "outdated": {
+                "current_version": "Versão Atual",
+                "dismiss": "Dispensar",
+                "latest_version": "Última Versão",
+                "new_version_available": "Nova Versão Disponível",
+                "new_version_available_link": "Clique aqui para ver as novidades"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "documentação",
+                "failed_to_copy": "Falha ao copiar texto para a área de transferência",
+                "https_required": "porque o HTTPS é necessário",
+                "learn_more": "Saiba mais em nosso"
+            },
             "date_time": {
                 "ago": "{0} atrás",
                 "days": "dias",
@@ -105,7 +118,7 @@
         "read_docs": "Leia a Documentação",
         "save": "Salvar",
         "search": "Buscar",
-        "sign_out": "Sair",
+        "sign_out": "Encerrar sessão",
         "submit": "Enviar",
         "update": "Atualizar",
         "value": "Valor",
@@ -161,7 +174,7 @@
         "manufacturer": "Fabricante",
         "model_number": "Modelo",
         "name": "Nome",
-        "negate_labels": "Negar os rótulos selecionados",
+        "negate_labels": "Negar Rótulos Selecionados",
         "next_page": "Próxima página",
         "no_results": "Nenhum Item Encontrado",
         "notes": "Anotações",
