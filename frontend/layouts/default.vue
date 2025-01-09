@@ -79,6 +79,7 @@
                     :to="n.to"
                     :class="{
                       'bg-secondary text-secondary-content': n.active?.value,
+                      'text-nowrap': typeof locale === 'string' && locale.startsWith('zh-'),
                     }"
                   >
                     <component :is="n.icon" class="mr-4 size-6" />
@@ -114,7 +115,7 @@
   import MdiMenu from "~icons/mdi/menu";
   import MdiPlus from "~icons/mdi/plus";
 
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
 
   const preferences = useViewPreferences();
