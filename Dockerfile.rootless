@@ -88,7 +88,7 @@ WORKDIR /app
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
     CMD [ "wget", "--no-verbose", "--tries=1", "-O", "-", "http://localhost:7745/api/v1/status" ]
 
-# Persist volume
+# Persist volume for data
 VOLUME [ "/data" ]
 
 # Entrypoint and CMD
