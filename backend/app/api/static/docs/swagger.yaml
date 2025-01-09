@@ -654,6 +654,13 @@ definitions:
       value:
         type: number
     type: object
+  services.Latest:
+    properties:
+      date:
+        type: string
+      version:
+        type: string
+    type: object
   services.UserRegistration:
     properties:
       email:
@@ -675,6 +682,8 @@ definitions:
         type: boolean
       health:
         type: boolean
+      latest:
+        $ref: '#/definitions/services.Latest'
       message:
         type: string
       title:

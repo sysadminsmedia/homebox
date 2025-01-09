@@ -25,7 +25,21 @@ export default defineNuxtConfig({
   pwa: {
     workbox: {
       navigateFallbackDenylist: [/^\/api/],
+      cleanupOutdatedCaches: true,
+      runtimeCaching: [
+        {
+          urlPattern: /^\/api/,
+          handler: "NetworkFirst",
+          method: "GET",
+          options: {
+            cacheName: "api-cache",
+            cacheableResponse: { statuses: [0, 200] },
+            expiration: { maxAgeSeconds: 60 * 60 * 24 },
+          },
+        },
+      ],
     },
+    registerType: "autoUpdate",
     injectRegister: "script",
     injectManifest: {
       swSrc: "sw.js",
