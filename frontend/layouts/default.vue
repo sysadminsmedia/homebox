@@ -10,6 +10,7 @@
     <ItemCreateModal v-model="modals.item" />
     <LabelCreateModal v-model="modals.label" />
     <LocationCreateModal v-model="modals.location" />
+    <QuickMenuModal v-model="modals.quickMenu" :actions="quickMenuActions"/>
     <AppToast />
     <div class="drawer drawer-mobile">
       <input id="my-drawer-2" v-model="drawerToggle" type="checkbox" class="drawer-toggle" />
@@ -144,6 +145,7 @@
     label: false,
     import: false,
     outdated: displayOutdatedWarning.value,
+    quickMenu: false,
   });
 
   watch(displayOutdatedWarning, () => {
@@ -230,6 +232,33 @@
       to: "/tools",
     },
   ];
+
+  const { Ctrl_Backquote: quickMenuShortcut } = useMagicKeys();
+  whenever(quickMenuShortcut, () => {
+    modals.quickMenu = true;
+    modals.item = false;
+    modals.location = false;
+    modals.label = false;
+    modals.import = false;
+  })
+
+  const quickMenuActions = ref([
+    {
+      text: "Create Item",
+      action: () => modals.item = true,
+      shortcut: "1",
+    },
+    {
+      text: "Create Location",
+      action: () => modals.location = true,
+      shortcut: "2",
+    },
+    {
+      text: "Create Label",
+      action: () => modals.label = true,
+      shortcut: "3",
+    }
+  ]);
 
   const labelStore = useLabelStore();
 
