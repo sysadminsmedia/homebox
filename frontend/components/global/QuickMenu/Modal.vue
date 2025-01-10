@@ -1,25 +1,13 @@
 <template>
   <BaseModal v-model="modal" :show-close-button="false">
     <div class="relative">
+      <span class="my-2">{{ $t("components.quick_menu.shortcut_hint") }}</span>
       <QuickMenuInput
         ref="inputBox"
         v-model="selectedAction"
         :actions="props.actions || []"
         @quick-select="invokeAction"
       ></QuickMenuInput>
-      <ul v-if="false" class="menu rounded-box w-full">
-        <li v-for="(action, idx) in actions || []" :key="idx">
-          <button
-            class="rounded-btn w-full p-3 text-left transition-colors hover:bg-neutral hover:text-white"
-            @click="invokeAction(action)"
-          >
-            <b v-if="action.shortcut">{{ action.shortcut }}.</b>
-
-            {{ action.text }}
-          </button>
-        </li>
-      </ul>
-      <span class="text-base-300">Use number keys to quick select.</span>
     </div>
   </BaseModal>
 </template>

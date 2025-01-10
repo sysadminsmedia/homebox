@@ -2,10 +2,12 @@
   <Combobox v-model="selectedAction">
     <ComboboxInput
       ref="inputBox"
-      class="input input-bordered w-full"
+      class="input input-bordered my-2 w-full"
       @input="inputValue = $event.target.value"
     ></ComboboxInput>
-    <ComboboxOptions class="card dropdown-content absolute w-full rounded-lg border border-base-300 bg-base-100">
+    <ComboboxOptions
+      class="card dropdown-content absolute max-h-48 w-full overflow-y-scroll rounded-lg border border-base-300 bg-base-100"
+    >
       <ComboboxOption
         v-for="(action, idx) in filteredActions"
         :key="idx"
@@ -21,8 +23,8 @@
 
           <kbd
             v-if="action.shortcut"
-            class="ml-auto rounded-md border border-base-300 px-2 text-center"
-            :class="{ 'border-primary-content': active }"
+            class="kbd kbd-sm ml-auto"
+            :class="{ 'border-primary-content bg-primary': active }"
           >
             {{ action.shortcut }}
           </kbd>
@@ -94,11 +96,9 @@
   });
 
   const filteredActions = computed(() => {
+    const searchTerm = inputValue.value.toLowerCase();
     return (props.actions || []).filter(action => {
-      return (
-        action.text.toLowerCase().includes(inputValue.value.toLowerCase()) ||
-        action.shortcut?.includes(inputValue.value.toLowerCase())
-      );
+      return action.text.toLowerCase().includes(searchTerm) || action.shortcut?.includes(searchTerm);
     });
   });
 
