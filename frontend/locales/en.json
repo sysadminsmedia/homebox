@@ -92,6 +92,9 @@
             "tree": {
                 "no_locations": "No locations available. Add new locations through the\n `<`span class=\"link-primary\"`>`Create`<`/span`>` button on the navigation bar."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Use the number keys to quickly select an action."
         }
     },
     "global": {
@@ -114,6 +117,7 @@
         "locations": "Locations",
         "maintenance": "Maintenance",
         "name": "Name",
+        "navigate": "Navigate",
         "password": "Password",
         "read_docs": "Read the Docs",
         "save": "Save",
