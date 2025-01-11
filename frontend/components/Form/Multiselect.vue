@@ -20,7 +20,7 @@
       <div
         tabindex="0"
         style="display: inline"
-        class="dropdown-content menu bg-base-100 z-[9999] mb-1 w-full rounded border border-gray-400 shadow"
+        class="dropdown-content menu z-[9999] mb-1 w-full rounded border border-gray-400 bg-base-100 shadow"
       >
         <div class="m-2">
           <input v-model="search" placeholder="Search…" class="input input-bordered input-sm w-full" />

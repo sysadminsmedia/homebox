@@ -10,6 +10,7 @@
     <ItemCreateModal v-model="modals.item" />
     <LabelCreateModal v-model="modals.label" />
     <LocationCreateModal v-model="modals.location" />
+    <QuickMenuModal v-model="modals.quickMenu" :actions="quickMenuActions" />
     <AppToast />
     <div class="drawer drawer-mobile">
       <input id="my-drawer-2" v-model="drawerToggle" type="checkbox" class="drawer-toggle" />
@@ -55,7 +56,7 @@
             </div>
             <div class="flex flex-col bg-base-200">
               <div class="mb-6">
-                <div class="dropdown visible w-full">
+                <div class="dropdown tooltip visible w-full" data-tip="Shortcut: Ctrl+`">
                   <label tabindex="0" class="text-no-transform btn btn-primary btn-block text-lg">
                     <span>
                       <MdiPlus class="-ml-1 mr-1" />
@@ -64,8 +65,12 @@
                   </label>
                   <ul tabindex="0" class="dropdown-content menu rounded-box w-full bg-base-100 p-2 shadow">
                     <li v-for="btn in dropdown" :key="btn.id">
-                      <button @click="btn.action">
+                      <button class="group" @click="btn.action">
                         {{ btn.name.value }}
+
+                        <kbd v-if="btn.shortcut" class="ml-auto hidden text-neutral-400 group-hover:inline">{{
+                          btn.shortcut
+                        }}</kbd>
                       </button>
                     </li>
                   </ul>
@@ -91,9 +96,11 @@
           </div>
 
           <!-- Bottom -->
-          <button class="rounded-btn mx-2 mt-auto p-3 hover:bg-base-300" @click="logout">
-            {{ $t("global.sign_out") }}
-          </button>
+          <div class="mx-2 mt-auto flex flex-col">
+            <button class="rounded-btn p-3 transition-colors hover:bg-base-300" @click="logout">
+              {{ $t("global.sign_out") }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -136,6 +143,12 @@
 
   const displayOutdatedWarning = computed(() => !isDev && !hasHiddenLatest.value && isOutdated.value);
 
+  const keys = useMagicKeys({
+    aliasMap: {
+      "⌃": "control_",
+    },
+  });
+
   // Preload currency format
   useFormatCurrency();
   const modals = reactive({
@@ -144,6 +157,7 @@
     label: false,
     import: false,
     outdated: displayOutdatedWarning.value,
+    quickMenu: false,
   });
 
   watch(displayOutdatedWarning, () => {
@@ -157,6 +171,7 @@
     {
       id: 0,
       name: computed(() => t("menu.create_item")),
+      shortcut: "⌃1",
       action: () => {
         modals.item = true;
       },
@@ -164,6 +179,7 @@
     {
       id: 1,
       name: computed(() => t("menu.create_location")),
+      shortcut: "⌃2",
       action: () => {
         modals.location = true;
       },
@@ -171,11 +187,20 @@
     {
       id: 2,
       name: computed(() => t("menu.create_label")),
+      shortcut: "⌃3",
       action: () => {
         modals.label = true;
       },
     },
   ];
+
+  dropdown.forEach(option => {
+    if (option.shortcut) {
+      whenever(keys[option.shortcut], () => {
+        option.action();
+      });
+    }
+  });
 
   const route = useRoute();
 
@@ -230,6 +255,51 @@
       to: "/tools",
     },
   ];
+
+  const quickMenuShortcut = keys.control_Backquote;
+  whenever(quickMenuShortcut, () => {
+    modals.quickMenu = true;
+    modals.item = false;
+    modals.location = false;
+    modals.label = false;
+    modals.import = false;
+  });
+
+  const quickMenuActions = ref(
+    [
+      {
+        text: computed(() => `${t("global.create")}: ${t("menu.create_item")}`),
+        action: () => {
+          modals.item = true;
+        },
+        shortcut: "1",
+      },
+      {
+        text: computed(() => `${t("global.create")}: ${t("menu.create_location")}`),
+        action: () => {
+          modals.location = true;
+        },
+        shortcut: "2",
+      },
+      {
+        text: computed(() => `${t("global.create")}: ${t("menu.create_label")}`),
+        action: () => {
+          modals.label = true;
+        },
+        shortcut: "3",
+      },
+    ].concat(
+      nav.map(v => {
+        return {
+          text: computed(() => `${t("global.navigate")}: ${v.name.value}`),
+          action: () => {
+            navigateTo(v.to);
+          },
+          shortcut: "",
+        };
+      })
+    )
+  );
 
   const labelStore = useLabelStore();
 
