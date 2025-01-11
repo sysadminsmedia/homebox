@@ -1,7 +1,7 @@
 <template>
   <BaseModal v-model="modal" :show-close-button="false">
     <div class="relative">
-      <span class="my-2">{{ $t("components.quick_menu.shortcut_hint") }}</span>
+      <span class="text-neutral-400">{{ $t("components.quick_menu.shortcut_hint") }}</span>
       <QuickMenuInput
         ref="inputBox"
         v-model="selectedAction"

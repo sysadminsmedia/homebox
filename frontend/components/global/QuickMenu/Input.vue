@@ -2,7 +2,7 @@
   <Combobox v-model="selectedAction">
     <ComboboxInput
       ref="inputBox"
-      class="input input-bordered my-2 w-full"
+      class="input input-bordered mt-2 w-full"
       @input="inputValue = $event.target.value"
     ></ComboboxInput>
     <ComboboxOptions
