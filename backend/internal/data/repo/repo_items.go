@@ -110,7 +110,7 @@ type (
 	ItemPatch struct {
 		ID        uuid.UUID `json:"id"`
 		Quantity  *int      `json:"quantity,omitempty" extensions:"x-nullable,x-omitempty"`
-		LocationID uuid.UUID   `json:"locationId"`
+		LocationID *uuid.UUID   `json:"locationId"`
 		ImportRef *string   `json:"-,omitempty"        extensions:"x-nullable,x-omitempty"`
 	}
 
@@ -767,7 +767,7 @@ func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data Ite
 		q.SetQuantity(*data.Quantity)
 	}
 
-	if data.locationId != nil {
+	if data.LocationID != nil {
 		q.SetLocationID(*data.LocationID)
 	}
 
