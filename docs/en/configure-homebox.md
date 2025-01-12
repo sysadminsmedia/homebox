@@ -1,3 +1,7 @@
+---
+outline: false
+---
+
 # Configure Homebox
 
 ## Env Variables & Configuration
@@ -34,7 +38,7 @@
 | HBOX_DATABASE_SSL_MODE               |                                                                            | sets the sslmode for a postgres connection                                             |
 | HBOX_OPTIONS_CHECK_GITHUB_RELEASE    | true                                                                       | check for new github releases                                                          |
 
-::: warning "Security Considerations"
+::: warning Security Considerations
 For postgreSQL in production:
 - Do not use the default `postgres` user
 - Do not use the default `postgres` database
@@ -49,7 +53,7 @@ For SQLite in production:
 - Monitor the file size and consider using a different database for large installations
 :::
 
-::: tip "CLI Arguments"
+::: tip CLI Arguments
 If you're deploying without docker you can use command line arguments to configure the application. Run `homebox --help` for more information.
 
 ```sh
