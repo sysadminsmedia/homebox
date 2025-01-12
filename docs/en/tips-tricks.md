@@ -82,3 +82,11 @@ Homebox allows you to add additional currencies to your instance by specify a JS
   },
 ]
 ```
+
+## Copy to Clipboard
+
+The copy to clipboard functionality requires a secure context (HTTPS or localhost) to work due to browser security restrictions. If you're accessing Homebox through HTTP, the copy button will not function.
+
+To enable this feature:
+- Use HTTPS by setting up a reverse proxy (like Nginx or Caddy)
+- OR access Homebox through localhost

@@ -29,7 +29,6 @@ tasks:
       - "./backend/internal/data/**"
       - "./backend/internal/core/services/**/*"
       - "./backend/app/tools/typegen/main.go"
-
   typescript-types:
     desc: Generates typescript types from swagger definition
     cmds:

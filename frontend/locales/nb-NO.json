@@ -1,0 +1,351 @@
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "change_warning": "Oppførsel for importjobber med eksisterende import_refs har blitt endret. Hvis en import_ref eksisterer i CSV-filen,\nvil objektet oppdateres med verdiene fra CSV-filen.",
+                "description": "Importer en CSV-fil som inneholder alle objekter, merkelapper og lokasjoner. Konsulter dokumentasjonen for mer\ninformasjon om påkrevd format.",
+                "title": "Importer CSV-fil",
+                "upload": "Last opp"
+            }
+        },
+        "global": {
+            "date_time": {
+                "ago": "{0} siden",
+                "days": "dager",
+                "hour": "time",
+                "hours": "timer",
+                "in": "om {0}",
+                "just-now": "akkurat nå",
+                "last-month": "forrige måned",
+                "last-week": "forrige uke",
+                "last-year": "i fjor",
+                "minute": "minutt",
+                "minutes": "minutter",
+                "months": "måneder",
+                "next-month": "neste måned",
+                "next-week": "neste uke",
+                "next-year": "neste år",
+                "second": "sekund",
+                "seconds": "sekunder",
+                "tomorrow": "i morgen",
+                "week": "uke",
+                "weeks": "uker",
+                "years": "år",
+                "yesterday": "i går"
+            },
+            "page_qr_code": {
+                "page_url": "Side-URL"
+            },
+            "password_score": {
+                "password_strength": "Passordstyrke"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "item_description": "Objektbeskrivelse",
+                "item_name": "Objektnavn",
+                "photo_button": "Foto 📷",
+                "title": "Opprett objekt"
+            },
+            "view": {
+                "selectable": {
+                    "card": "Kort",
+                    "items": "Objekter",
+                    "no_items": "Ingenting å vise",
+                    "table": "Tabell"
+                },
+                "table": {
+                    "page": "Side",
+                    "rows_per_page": "Rader pr. Side"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "label_description": "Merkelappbeskrivelse",
+                "label_name": "Merkelappnavn",
+                "title": "Opprett merkelapp"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "location_description": "Lokasjonsbeskrivelse",
+                "location_name": "Lokasjonsnavn",
+                "title": "Opprett lokasjon"
+            },
+            "selector": {
+                "parent_location": "Overordnet lokasjon"
+            },
+            "tree": {
+                "no_locations": "Ingen tilgjengelige lokasjoner. Legg til en ny lokasjon via\n `<`span class=\"link-primary\"`>`Opprett`<`/span`>`-knappen på navigasjonslinjen."
+            }
+        }
+    },
+    "global": {
+        "add": "Legg til",
+        "build": "Byggnummer: { build }",
+        "confirm": "Bekreft",
+        "create": "Opprett",
+        "create_and_add": "Opprett og legg til ny",
+        "created": "Opprettet",
+        "delete": "Slett",
+        "details": "Detaljer",
+        "duplicate": "Dupliser",
+        "edit": "Rediger",
+        "email": "E-post",
+        "follow_dev": "Følg utvikleren",
+        "github": "GitHub-prosjekt",
+        "items": "Objekter",
+        "join_discord": "Bli med på Discord",
+        "labels": "Merkelapper",
+        "locations": "Lokasjoner",
+        "maintenance": "Vedlikehold",
+        "name": "Navn",
+        "password": "Passord",
+        "read_docs": "Les dokumentasjonen",
+        "save": "Lagre",
+        "search": "Søk",
+        "sign_out": "Logg ut",
+        "submit": "Send",
+        "update": "Oppdater",
+        "value": "Verdi",
+        "version": "Versjon: { version }",
+        "welcome": "Velkommen, { username }"
+    },
+    "home": {
+        "labels": "Merkelapper",
+        "quick_statistics": "Rask statistikk",
+        "recently_added": "Nylig lagt til",
+        "storage_locations": "Oppbevaringslokasjoner",
+        "total_items": "Antall objekter",
+        "total_labels": "Antall merkelapper",
+        "total_locations": "Antall lokasjoner",
+        "total_value": "Total verdi"
+    },
+    "index": {
+        "disabled_registration": "Registrering deaktivert",
+        "dont_join_group": "Vil du ikke bli med i en gruppe?",
+        "joining_group": "Du holder på å bli med i en eksisterende gruppe!",
+        "login": "Logg inn",
+        "register": "Registrer",
+        "remember_me": "Husk meg",
+        "set_email": "Hva er e-postadressen din?",
+        "set_name": "Hva er navnet ditt?",
+        "set_password": "Angi passord",
+        "tagline": "Spor, organiser og hold styr på tingene dine."
+    },
+    "items": {
+        "add": "Legg til",
+        "advanced": "Avansert",
+        "archived": "Arkivert",
+        "asset_id": "Asset-ID",
+        "attachment": "Vedlegg",
+        "attachments": "Vedlegg",
+        "changes_persisted_immediately": "Endringer til vedlegg blir lagret umiddelbart",
+        "created_at": "Lagt til den",
+        "custom_fields": "Egendefinerte felt",
+        "description": "Beskrivelse",
+        "details": "Detaljer",
+        "drag_and_drop": "Dra og slipp filer her, eller klikk for å bla gjennom",
+        "edit_details": "Rediger detaljer",
+        "field_selector": "Feltvelger",
+        "field_value": "Feltverdi",
+        "first": "Først",
+        "include_archive": "Inkluder arkiverte objekter",
+        "insured": "Forsikret",
+        "last": "Sist",
+        "lifetime_warranty": "Livetidsgaranti",
+        "location": "Lokasjon",
+        "manual": "Bruksanvisning",
+        "manuals": "Bruksanvisninger",
+        "manufacturer": "Produsent",
+        "model_number": "Modellnummer",
+        "name": "Navn",
+        "negate_labels": "Se bort fra valgte merkelapper",
+        "next_page": "Neste side",
+        "no_results": "Ingenting funnet",
+        "notes": "Notater",
+        "options": "Alternativer",
+        "order_by": "Sorter etter",
+        "pages": "Side { page } av { totalPages }",
+        "parent_item": "Overordnet objekt",
+        "photo": "Bilde",
+        "photos": "Bilder",
+        "prev_page": "Forrige side",
+        "purchase_date": "Innkjøpsdato",
+        "purchase_details": "Kjkøpsdetaljer",
+        "purchase_price": "Innkjøpspris",
+        "purchased_from": "Kjøpt fra",
+        "quantity": "Antall",
+        "query_id": "Spørring for Asset ID-nummer: { id }",
+        "receipt": "Kvittering",
+        "receipts": "Kvitteringer",
+        "reset_search": "Nullstill søk",
+        "results": "{ total } resultater",
+        "serial_number": "Serienummer",
+        "show_advanced_view_options": "Vis avansert Vis alternativer",
+        "sold_at": "Salgskanal",
+        "sold_details": "Salgsdetaljer",
+        "sold_price": "Salgspris",
+        "sold_to": "Solgt til",
+        "tip_1": "Lokasjon og merkelappfiltere bruker ’OR’-operand. Hvis mer enn én er valgt, er bare en\n påkrevd for å få et søketreff.",
+        "tip_2": "Søk med ’#’-prefix vil søke etter en asset-ID (f.eks. ’#000-001’)",
+        "tip_3": "Feltet filtrer med ’OR’-operand. Hvis mer enn én er valgt vil bare en være påkrevd for å få et\nsøketreff.",
+        "tips": "Tips",
+        "tips_sub": "Søketips",
+        "updated_at": "Oppdatert den",
+        "warranty": "Garanti",
+        "warranty_details": "Garantidetaljer",
+        "warranty_expires": "Garanti upløper"
+    },
+    "labels": {
+        "no_results": "Ingen merkelapper funnet",
+        "update_label": "Oppdater merkelapp"
+    },
+    "languages": {
+        "ca": "Katalansk",
+        "de": "Tysk",
+        "en": "Engelsk",
+        "es": "Spansk",
+        "fr": "Fransk",
+        "hu": "Ungarsk",
+        "it": "Italiensk",
+        "ja-JP": "Japansk",
+        "nl": "Nederlandsk",
+        "pl": "Polsk",
+        "pt-BR": "Portugisisk (Brasil)",
+        "pt-PT": "Portugisisk (Portugal)",
+        "ru": "Russisk",
+        "sl": "Slovensk",
+        "sv": "Svensk",
+        "tr": "Tyrkisk",
+        "uk-UA": "Ukrainsk",
+        "zh-CN": "Kinesisk (forenklet)",
+        "zh-HK": "Kinesisk (Hong Kong)",
+        "zh-MO": "Kinesisk (Macau)",
+        "zh-TW": "Kinesisk (tradisjonell)"
+    },
+    "languages.da-DK": "Dansk",
+    "languages.fi.FI": "Finsk",
+    "languages.ro-RO": "Rumensk",
+    "languages.sk-SK": "Slovakisk",
+    "locations": {
+        "child_locations": "Underlokasjoner",
+        "collapse_tree": "Slå sammen mappetre",
+        "no_results": "Ingen lokasjoner funnet",
+        "update_location": "Oppdater lokasjon"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Begge",
+            "completed": "Fullført",
+            "scheduled": "Planlagt"
+        },
+        "list": {
+            "complete": "Ferdig",
+            "create_first": "Opprett ditt første innlegg",
+            "delete": "Slett",
+            "duplicate": "Dupliser",
+            "edit": "Rediger",
+            "new": "Ny"
+        },
+        "modal": {
+            "completed_date": "Fullført dato",
+            "cost": "Kostnad",
+            "delete_confirmation": "Er du sikker på at du vil slette denne oppføringen?",
+            "edit_action": "Oppdater",
+            "edit_title": "Rediger oppføring",
+            "entry_name": "Oppføringsnavn",
+            "new_action": "Opprett",
+            "new_title": "Ny oppføring",
+            "notes": "Notater",
+            "scheduled_date": "Planlagt dato"
+        },
+        "monthly_average": "Månedlig gjennomsnitt",
+        "toast": {
+            "failed_to_create": "Kunne ikke opprette oppføring",
+            "failed_to_delete": "Kunne ikke slette oppføring",
+            "failed_to_update": "Kunne ikke oppdatere oppføring"
+        },
+        "total_cost": "Totalkostnad",
+        "total_entries": "Antall oppføringer"
+    },
+    "menu": {
+        "create_item": "Objekt",
+        "create_label": "Merkelapp",
+        "create_location": "Lokasjon",
+        "home": "Hjem",
+        "locations": "Lokasjoner",
+        "maintenance": "Vedlikehold",
+        "profile": "Profil",
+        "search": "Søk",
+        "tools": "Verktøy"
+    },
+    "profile": {
+        "active": "Aktiv",
+        "change_password": "Endre passord",
+        "currency_format": "Valutaformat",
+        "current_password": "Nåværende passord",
+        "delete_account": "Slett konto",
+        "delete_account_sub": "Slett kontoen din og alle data knyttet til den. Denne handlingen kan ikke angres.",
+        "display_header": "{ currentValue, select, true {Skjul overskrift} false {Vis overskrift} other {Ingen treff}}",
+        "enabled": "Aktivert",
+        "example": "Eksempel",
+        "gen_invite": "Opprett invitasjonslenke",
+        "group_settings": "Gruppeinnstillinger",
+        "group_settings_sub": "Delte gruppeinnstillinger. Du må muligens laste inn siden på nytt for at noen endringer skal aktiveres.",
+        "inactive": "Inaktiv",
+        "language": "Språk",
+        "new_password": "Nytt passord",
+        "no_notifiers": "Ingen varslingsmekanismer satt opp",
+        "notifier_modal": "{ type, select, true {Rediger} false {Opprett} other {Annen}} varsling",
+        "notifiers": "Varslingsmekanismer",
+        "notifiers_sub": "Få varslinger for kommende vedlikeholdspåminnelser",
+        "test": "Test",
+        "theme_settings": "Temainnstillinger",
+        "theme_settings_sub": "Temainnstillinger lagres i nettleseren din sin midlertidige lagring. Du kan endre temaet når som helst. Hvis du\n har problemer, last inn siden på nytt.",
+        "update_group": "Oppdater gruppe",
+        "update_language": "Oppdater språk",
+        "url": "URL",
+        "user_profile": "Brukerprofil",
+        "user_profile_sub": "Inviter brukere og behandle kontoen din."
+    },
+    "tools": {
+        "actions": "Inventarhandlinger",
+        "actions_set": {
+            "ensure_ids": "Sikre Asset IDer",
+            "ensure_ids_button": "Sikre Asset IDer",
+            "ensure_ids_sub": "Sikrer at alle objekter i inventarlisten har et gyldig asset_id-felt. Dette gjøres ved å finne den høyeste asset_iden i databasen og legge til neste tilgjengelige verdi til hvert objekt som ikke har en asset_id. Dette gjøres i rekkefølgen til verdien fra created_at-feltet.",
+            "ensure_import_refs": "Sikre import-referanser",
+            "ensure_import_refs_button": "Sikre import-referanser",
+            "ensure_import_refs_sub": "Sikrer at alle objektene i inventaret har et gyldig import_ref-felt. Dette gjøres ved å opprette en tilfeldig 8-tegns tekststreng for hvert objekt som har et tomt import_ref-felt.",
+            "set_primary_photo": "Angi primærbilde",
+            "set_primary_photo_button": "Angi primærbilde",
+            "set_primary_photo_sub": "I versjon v0.10.0 av Homebox ble det primære bildefeltet lagt til vedlegg som type foto. Denne handlingen vil sette verdien for det primære bildefeltet til det første bildet lagret i databasen, hvis det ikke allerede er angitt. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Jfr. GitHub PR #576'</a>'",
+            "zero_datetimes": "Null ut objektdatotider",
+            "zero_datetimes_button": "Null ut objektdatotider",
+            "zero_datetimes_sub": "Nullstiller tidsverdien for alle datotid-felter i inventaret til starten av datoen. Dette er for å fikse en bug som ble tidlig introdusert i utviklingen av siden, og forårsaket at tidsverdien ble lagret sammen med tidspunktet, noe som skapte problemer for datofelt som skulle vise korrekte verdier. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Jfr. Github Issue #236 for flere detaljer.'</a>'"
+        },
+        "actions_sub": "Utfør massehandlinger for inventaret ditt. Disse handlingene er irreversible. '<b>'Vær forsiktig.'</b>'",
+        "import_export": "Importer/Eksporter",
+        "import_export_set": {
+            "export": "Eksporter inventar",
+            "export_button": "Eksporter inventar",
+            "export_sub": "Eksporterer standard CSV-format for Homebox. Dette vil eksportere alle objektene i inventaret ditt.",
+            "import": "Importer inventar",
+            "import_button": "Importer inventar",
+            "import_sub": "Importerer standard CSV-format for Homebox. Uten en '<code>'HB.import_ref'</code>'-kolonne vil dette '<b>'ikke'</b>' overskrive noen eksisterende objekter i inventaret ditt, bare legge til nye. Rader med en '<code>'HB.import_ref'</code>'-kolonne slås sammen med eksisterende objekter med samme import_ref, hvis en eksisterer."
+        },
+        "import_export_sub": "Importer og eksporter inventaret ditt til og fra CSV-format. Dette er nyttig for å flytte inventaret ditt til en ny instans av Homebox.",
+        "reports": "Rapporter",
+        "reports_set": {
+            "asset_labels": "Asset-ID-merkelapper",
+            "asset_labels_button": "Merkelappgenerator",
+            "asset_labels_sub": "Genererer en utskrivbar PDF-fil for merkelapper for en serie Asset-Ider. Disse er ikke spesifikke for ditt inventar, så du kan lage og skrive ut merkelapper før de trengs og feste dem til inventaret ditt når det kommer.",
+            "bill_of_materials": "Liste over materialer",
+            "bill_of_materials_button": "Opprett liste over materialer",
+            "bill_of_materials_sub": "Genererer en CSV (kommaseparerte verdier)-fil som kan importeres til et regnearkprogram. Dette er et sammendrag av inventaret ditt med grunnleggende objekt- og prisinformasjon."
+        },
+        "reports_sub": "Genererer forskjellige rapporter for inventaret ditt."
+    }
+}

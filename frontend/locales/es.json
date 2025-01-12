@@ -9,8 +9,14 @@
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "documentación",
+                "failed_to_copy": "No se ha podido copiar el texto al portapapeles",
+                "https_required": "porque se requiere HTTPS",
+                "learn_more": "Obtener más información en nuestra"
+            },
             "date_time": {
-                "ago": "hace {0}",
+                "ago": "Hace {0}",
                 "days": "días",
                 "hour": "hora",
                 "hours": "horas",
@@ -56,25 +62,25 @@
                 },
                 "table": {
                     "page": "Página",
-                    "rows_per_page": "Renglones por página"
+                    "rows_per_page": "Filas por página"
                 }
             }
         },
         "label": {
             "create_modal": {
                 "label_description": "Descripción de la etiqueta",
-                "label_name": "Nombre de la etiqueta",
+                "label_name": "Nombre de la Etiqueta",
                 "title": "Crear Etiqueta"
             }
         },
         "location": {
             "create_modal": {
-                "location_description": "Descripción de la ubicación",
-                "location_name": "Nombre de la ubicación",
+                "location_description": "Descripción de la Ubicación",
+                "location_name": "Nombre de la Ubicación",
                 "title": "Crear Ubicación"
             },
             "selector": {
-                "parent_location": "Ubicación padre"
+                "parent_location": "Ubicación Padre"
             },
             "tree": {
                 "no_locations": "No hay ubicaciones disponibles. Añade nuevas ubicaciones mediante el botón de\n`<`span class=\"link-primary\"`>`Crear`<`/span`>` en la barra de navegación."
@@ -82,7 +88,7 @@
         }
     },
     "global": {
-        "add": "Agregar",
+        "add": "Añadir",
         "build": "Compilación: { build }",
         "confirm": "Confirmar",
         "create": "Crear",
@@ -115,12 +121,12 @@
     "home": {
         "labels": "Etiquetas",
         "quick_statistics": "Estadísticas rápidas",
-        "recently_added": "Añadidos recientemente",
+        "recently_added": "Añadidos Recientemente",
         "storage_locations": "Ubicaciones de almacenamiento",
-        "total_items": "Total artículos",
-        "total_labels": "Total étiquetas",
-        "total_locations": "Total ubicaciónes",
-        "total_value": "Valor total"
+        "total_items": "Artículos Totales",
+        "total_labels": "Etiquetas Totales",
+        "total_locations": "Ubicaciones Totales",
+        "total_value": "Valor Total"
     },
     "index": {
         "disabled_registration": "Registro Desactivado",
@@ -141,7 +147,7 @@
         "asset_id": "Activo ID",
         "attachment": "Adjunto",
         "attachments": "Adjuntos",
-        "changes_persisted_immediately": "Los cambios a los archivos adjuntos se guardaran inmediatamente",
+        "changes_persisted_immediately": "Los cambios en los archivos adjuntos se guardarán inmediatamente",
         "created_at": "Creado El",
         "custom_fields": "Campos Personalizados",
         "description": "Descripción",
@@ -154,12 +160,12 @@
         "include_archive": "Incluir Elementos Archivados",
         "insured": "Asegurado",
         "last": "Último",
-        "lifetime_warranty": "Garantia de por vida",
+        "lifetime_warranty": "Garantía Permanente",
         "location": "Ubicación",
         "manual": "Manual",
         "manuals": "Manuales",
         "manufacturer": "Fabricante",
-        "model_number": "Número de modelo",
+        "model_number": "Número de Modelo",
         "name": "Nombre",
         "negate_labels": "Negar Etiquetas Seleccionadas",
         "next_page": "Siguiente Página",
@@ -168,13 +174,13 @@
         "options": "Opciones",
         "order_by": "Ordenar Por",
         "pages": "Página { page } de { totalPages }",
-        "parent_item": "Articulo Padre",
+        "parent_item": "Artículo Padre",
         "photo": "Foto",
         "photos": "Fotos",
         "prev_page": "Anterior Página",
-        "purchase_date": "Fecha de compra",
-        "purchase_details": "Detalles de compra",
-        "purchase_price": "Precio de compra",
+        "purchase_date": "Fecha de Compra",
+        "purchase_details": "Detalles de Compra",
+        "purchase_price": "Precio de Compra",
         "purchased_from": "Comprado de",
         "quantity": "Cantidad",
         "query_id": "Consultar Número ID del Activo: { id }",
@@ -183,9 +189,9 @@
         "reset_search": "Restablecer Búsqueda",
         "results": "{ total } Resultados",
         "serial_number": "Número de serie",
-        "show_advanced_view_options": "Mostrar opciones avanzadas de vista",
+        "show_advanced_view_options": "Mostrar Opciones Avanzadas de Vista",
         "sold_at": "Vendido el",
-        "sold_details": "Detalles de venta",
+        "sold_details": "Detalles de Venta",
         "sold_price": "Precio de venta",
         "sold_to": "Vendido a",
         "tip_1": "Los filtros de ubicación y etiquetas utilizan el operador \"OR\". Si se selecciona más de uno, sólo uno será\n necesario para obtener una coincidencia.",
@@ -194,13 +200,13 @@
         "tips": "Sugerencias",
         "tips_sub": "Sugerencias de Búsqueda",
         "updated_at": "Actualizado El",
-        "warranty": "Garantia",
-        "warranty_details": "Detalles de garantía",
-        "warranty_expires": "La garantia expira"
+        "warranty": "Garantía",
+        "warranty_details": "Detalles de Garantía",
+        "warranty_expires": "Expiración Garantía"
     },
     "labels": {
         "no_results": "Etiquetas No Encontradas",
-        "update_label": "Actualizar etiqueta"
+        "update_label": "Actualizar Etiqueta"
     },
     "languages": {
         "ca": "Catalán",
@@ -210,11 +216,11 @@
         "fr": "Francés",
         "hu": "Húngaro",
         "it": "Italiano",
-        "ja-JP": "Japones",
+        "ja-JP": "Japonés",
         "nl": "Holandés",
         "pl": "Polaco",
         "pt-BR": "Portugués (Brasil)",
-        "pt-PT": "Portugués",
+        "pt-PT": "Portugués (Portugal)",
         "ru": "Ruso",
         "sl": "Esloveno",
         "sv": "Sueco",
@@ -225,11 +231,15 @@
         "zh-MO": "Chino (Macao)",
         "zh-TW": "Chino (Tradicional)"
     },
+    "languages.da-DK": "Danés",
+    "languages.fi.FI": "Finlandés",
+    "languages.ro-RO": "Rumano",
+    "languages.sk-SK": "Eslovaco",
     "locations": {
-        "child_locations": "Ubicaciones hijas",
-        "collapse_tree": "Colapsar árbol",
+        "child_locations": "Ubicaciones Hijas",
+        "collapse_tree": "Colapsar Árbol",
         "no_results": "Ubicaciones No Encontradas",
-        "update_location": "Actualizar ubicación"
+        "update_location": "Actualizar Ubicación"
     },
     "maintenance": {
         "filter": {
@@ -267,7 +277,7 @@
         "total_entries": "Total de Entradas"
     },
     "menu": {
-        "create_item": "Articulo / Activo",
+        "create_item": "Artículo / Activo",
         "create_label": "Etiqueta",
         "create_location": "Ubicación",
         "home": "Inicio",

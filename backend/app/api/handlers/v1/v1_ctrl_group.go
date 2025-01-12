@@ -26,12 +26,12 @@ type (
 
 // HandleGroupGet godoc
 //
-//	@Summary  Get Group
-//	@Tags     Group
-//	@Produce  json
-//	@Success  200 {object} repo.Group
-//	@Router   /v1/groups [Get]
-//	@Security Bearer
+//	@Summary	Get Group
+//	@Tags		Group
+//	@Produce	json
+//	@Success	200	{object}	repo.Group
+//	@Router		/v1/groups [Get]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleGroupGet() errchain.HandlerFunc {
 	fn := func(r *http.Request) (repo.Group, error) {
 		auth := services.NewContext(r.Context())
@@ -43,13 +43,13 @@ func (ctrl *V1Controller) HandleGroupGet() errchain.HandlerFunc {
 
 // HandleGroupUpdate godoc
 //
-//	@Summary  Update Group
-//	@Tags     Group
-//	@Produce  json
-//	@Param    payload body     repo.GroupUpdate true "User Data"
-//	@Success  200     {object} repo.Group
-//	@Router   /v1/groups [Put]
-//	@Security Bearer
+//	@Summary	Update Group
+//	@Tags		Group
+//	@Produce	json
+//	@Param		payload	body		repo.GroupUpdate	true	"User Data"
+//	@Success	200		{object}	repo.Group
+//	@Router		/v1/groups [Put]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleGroupUpdate() errchain.HandlerFunc {
 	fn := func(r *http.Request, body repo.GroupUpdate) (repo.Group, error) {
 		auth := services.NewContext(r.Context())
@@ -69,13 +69,13 @@ func (ctrl *V1Controller) HandleGroupUpdate() errchain.HandlerFunc {
 
 // HandleGroupInvitationsCreate godoc
 //
-//	@Summary  Create Group Invitation
-//	@Tags     Group
-//	@Produce  json
-//	@Param    payload body     GroupInvitationCreate true "User Data"
-//	@Success  200     {object} GroupInvitation
-//	@Router   /v1/groups/invitations [Post]
-//	@Security Bearer
+//	@Summary	Create Group Invitation
+//	@Tags		Group
+//	@Produce	json
+//	@Param		payload	body		GroupInvitationCreate	true	"User Data"
+//	@Success	200		{object}	GroupInvitation
+//	@Router		/v1/groups/invitations [Post]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleGroupInvitationsCreate() errchain.HandlerFunc {
 	fn := func(r *http.Request, body GroupInvitationCreate) (GroupInvitation, error) {
 		if body.ExpiresAt.IsZero() {

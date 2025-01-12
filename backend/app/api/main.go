@@ -295,6 +295,18 @@ func run(cfg *config.Config) error {
 		}
 	}))
 
+	if cfg.Options.GithubReleaseCheck {
+		runner.AddPlugin(NewTask("get-latest-github-release", time.Hour, func(ctx context.Context) {
+			log.Debug().Msg("running get latest github release")
+			err := app.services.BackgroundService.GetLatestGithubRelease(context.Background())
+			if err != nil {
+				log.Error().
+					Err(err).
+					Msg("failed to get latest github release")
+			}
+		}))
+	}
+
 	if cfg.Debug.Enabled {
 		runner.AddFunc("debug", func(ctx context.Context) error {
 			debugserver := http.Server{

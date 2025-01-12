@@ -84,13 +84,14 @@ type (
 	}
 
 	APISummary struct {
-		Healthy           bool     `json:"health"`
-		Versions          []string `json:"versions"`
-		Title             string   `json:"title"`
-		Message           string   `json:"message"`
-		Build             Build    `json:"build"`
-		Demo              bool     `json:"demo"`
-		AllowRegistration bool     `json:"allowRegistration"`
+		Healthy           bool            `json:"health"`
+		Versions          []string        `json:"versions"`
+		Title             string          `json:"title"`
+		Message           string          `json:"message"`
+		Build             Build           `json:"build"`
+		Latest            services.Latest `json:"latest"`
+		Demo              bool            `json:"demo"`
+		AllowRegistration bool            `json:"allowRegistration"`
 	}
 )
 
@@ -111,11 +112,11 @@ func NewControllerV1(svc *services.AllServices, repos *repo.AllRepos, bus *event
 
 // HandleBase godoc
 //
-//	@Summary Application Info
-//	@Tags    Base
-//	@Produce json
-//	@Success 200 {object} APISummary
-//	@Router  /v1/status [GET]
+//	@Summary	Application Info
+//	@Tags		Base
+//	@Produce	json
+//	@Success	200	{object}	APISummary
+//	@Router		/v1/status [GET]
 func (ctrl *V1Controller) HandleBase(ready ReadyFunc, build Build) errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		return server.JSON(w, http.StatusOK, APISummary{
@@ -123,6 +124,7 @@ func (ctrl *V1Controller) HandleBase(ready ReadyFunc, build Build) errchain.Hand
 			Title:             "Homebox",
 			Message:           "Track, Manage, and Organize your Things",
 			Build:             build,
+			Latest:            ctrl.svc.BackgroundService.GetLatestVersion(),
 			Demo:              ctrl.isDemo,
 			AllowRegistration: ctrl.allowRegistration,
 		})
@@ -131,11 +133,11 @@ func (ctrl *V1Controller) HandleBase(ready ReadyFunc, build Build) errchain.Hand
 
 // HandleCurrency godoc
 //
-// @Summary Currency
-// @Tags    Base
-// @Produce json
-// @Success 200 {object} currencies.Currency
-// @Router  /v1/currency [GET]
+//	@Summary	Currency
+//	@Tags		Base
+//	@Produce	json
+//	@Success	200	{object}	currencies.Currency
+//	@Router		/v1/currency [GET]
 func (ctrl *V1Controller) HandleCurrency() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		// Set Cache for 10 Minutes

@@ -164,7 +164,9 @@ func (r *LocationRepository) getOne(ctx context.Context, where ...predicate.Loca
 		Where(where...).
 		WithGroup().
 		WithParent().
-		WithChildren().
+		WithChildren(func(lq *ent.LocationQuery) {
+			lq.Order(location.ByName())
+		}).
 		Only(ctx))
 }
 

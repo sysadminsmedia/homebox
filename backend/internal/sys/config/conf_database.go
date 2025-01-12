@@ -17,5 +17,5 @@ type Database struct {
 	Port       string `yaml:"port"`
 	Database   string `yaml:"database"`
 	SslMode    string `yaml:"ssl_mode"`
-	SqlitePath string `yaml:"sqlite_path" conf:"default:./.data/homebox.db?_pragma=busy_timeout=999&_pragma=journal_mode=WAL&_fk=1"`
+	SqlitePath string `yaml:"sqlite_path" conf:"default:./.data/homebox.db?_pragma=busy_timeout=999&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite"`
 }

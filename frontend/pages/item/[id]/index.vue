@@ -386,6 +386,10 @@
     closeDialog();
   });
 
+  const currentUrl = computed(() => {
+    return window.location.href;
+  });
+
   const currentPath = computed(() => {
     return route.path;
   });
@@ -480,6 +484,9 @@
               <h1 class="text-wrap pb-1 text-2xl">
                 {{ item ? item.name : "" }}
               </h1>
+              <div class="flex flex-wrap gap-2 pb-1">
+                <LabelChip v-for="label in item?.labels || []" :key="label.id" :label="label" size="sm" />
+              </div>
               <div class="flex flex-wrap gap-1 text-wrap text-xs">
                 <div>
                   Created
@@ -525,7 +532,10 @@
                 <input v-model="preferences.showEmpty" type="checkbox" class="toggle toggle-primary" />
                 <span class="label-text ml-4"> Show Empty </span>
               </label>
-              <PageQRCode />
+              <div class="space-x-1">
+                <CopyText :text="currentUrl" :icon-size="16" class="btn btn-circle btn-ghost btn-xs" />
+                <PageQRCode />
+              </div>
             </div>
           </template>
           <DetailsSection :details="itemDetails">
