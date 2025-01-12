@@ -18,6 +18,7 @@
     "@iconify-json/mdi": "^1.2.2",
     "@intlify/unplugin-vue-i18n": "^4.0.0",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
+    "@playwright/test": "^1.49.1",
     "@types/markdown-it": "^13.0.9",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
