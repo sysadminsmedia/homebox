@@ -4,10 +4,15 @@ export default [
         items: [
             {text: 'Quick Start', link: '/en/quick-start'},
             {text: 'Installation', link: '/en/installation'},
-            {text: 'Configure Homebox', link: '/en/configure-homebox'},
-            {text: 'Upgrade', link: '/en/upgrade'},
-            {text: 'Organizing Your Items', link: '/en/organizing-items'},
-            {text: 'Tips and Tricks', link: '/en/tips-tricks'}
+            {text: 'Configure', link: '/en/configure'},
+            {text: 'Upgrade Guide', link: '/en/upgrade'},
+        ]
+    },
+    {
+        text: 'Users Guide',
+        items: [
+            {text: 'Organizing Items', link: '/en/user-guide/organizing-items'},
+            {text: 'Tips and Tricks', link: '/en/user-guide/tips-tricks'},
         ]
     },
     {

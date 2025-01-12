@@ -1,6 +1,6 @@
 # Upgrade
 
-## From v0.x.x to v1.0.0
+## From v0.17.x to v0.18+
 
 ::: danger Breaking Changes
 This upgrade process involves some potentially breaking changes, please review this documentation carefully before beginning the upgrade process, and follow it closely during your upgrade.

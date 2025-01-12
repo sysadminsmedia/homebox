@@ -5,6 +5,9 @@ There are two main ways to run the application.
 1. As a [Docker](https://www.docker.com/) container.
 2. Using the correct executable for your platform by downloading it from the [Releases](https://github.com/sysadminsmedia/homebox/releases).
 
+::: info Configuration Options
+The application can be configured using environment variables. You can find a list of all available options in the [configuration section](./configure).
+:::
 
 ## Docker
 

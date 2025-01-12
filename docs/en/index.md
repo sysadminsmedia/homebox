@@ -40,7 +40,7 @@ Homebox is the inventory and organization system built for the Home User! With a
 
 - _Simple_ - Homebox is designed to be simple and easy to use. No complicated setup or configuration required. Use either a single docker container, or deploy yourself by compiling the binary for your platform of choice.
 - _Blazingly Fast_ - Homebox is written in Go, which makes it extremely fast and requires minimal resources to deploy. In general idle memory usage is less than 50MB for the whole container.
-- _Portable_ - Homebox is designed to be portable and run on anywhere. We use SQLite and an embedded Web UI to make it easy to deploy, use, and backup.
+- _Portable_ - Homebox is designed to be portable and run on anywhere. We use SQLite and an embedded Web UI to make it easy to deploy, use, and backup. However, a Postgres backend is also supported for larger installations.
 
 ## Project Status
 
@@ -53,8 +53,8 @@ There are a lot of great inventory management systems out there, but none of the
 
 ### Spreadsheet
 
-That's a fair point. If your needs can be fulfilled by a Spreadsheet, I'd suggest using that instead. I've found spreadsheets get pretty unwieldy when you have a lot of data, and it's hard to keep track of what's where. I also wanted to be able to search and filter my data in a more robust way than a spreadsheet can provide. I also wanted to leave the door open for more advanced features in the future like maintenance logs, moving label generators, and more.
+That's a fair point. If your needs can be fulfilled by a Spreadsheet, We'd suggest using that instead. We've found spreadsheets get pretty unwieldy when you have a lot of data, and it's hard to keep track of what's where. We also wanted to be able to search and filter my data in a more robust way than a spreadsheet can provide. We also wanted to leave the door open for more advanced features in the future like maintenance logs, moving label generators, and more.
 
 ### Snipe-It?
 
-Snipe-It is the gold standard for IT management. If your use-case is to manage consumables and IT physical infrastructure, I highly suggest you look at Snipe-It over Homebox, it's just more purpose built for that use case. Homebox is, in contrast, purpose built for the home user, which means that we try to focus on keeping things simple and easy to use. Lowering the friction for creating items and managing them is a key goal of Homebox which means you lose out on some of the more advanced features. In most cases, this is a good trade-off.
+Snipe-It is the gold standard for IT management. If your use-case is to manage consumables and IT physical infrastructure, We highly suggest you look at Snipe-It over Homebox, it's just more purpose built for that use case. Homebox is, in contrast, purpose built for the home user, which means that we try to focus on keeping things simple and easy to use. Lowering the friction for creating items and managing them is a key goal of Homebox which means you lose out on some of the more advanced features. In most cases, this is a good trade-off.
