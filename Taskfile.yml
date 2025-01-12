@@ -61,6 +61,15 @@ tasks:
       - go run ./app/api/ {{ .CLI_ARGS }}
     silent: false
 
+  go:ci:
+    env:
+      HBOX_DEMO: true
+    desc: Runs all go test and lint related tasks
+    dir: backend
+    cmds:
+      - go run ./app/api/ {{ .CLI_ARGS }} &
+    silent: false
+
   go:test:
     desc: Runs all go tests using gotestsum - supports passing gotestsum args
     dir: backend
@@ -127,6 +136,12 @@ tasks:
     cmds:
       - pnpm dev
 
+  ui:ci:
+    desc: Run frontend build in CI mode
+    dir: frontend
+    cmds:
+      - pnpm dev &
+
   ui:fix:
     desc: Runs prettier and eslint on the frontend
     dir: frontend
@@ -147,6 +162,15 @@ tasks:
       - sleep 5
       - cd frontend && pnpm run test:ci
     silent: true
+
+  test:e2e:
+    desc: Runs end-to-end test on a live server
+    dir: frontend
+    cmds:
+      - task: go:ci
+      - task: ui:ci
+      - sleep 5
+      - pnpm test:e2e
 
   pr:
     desc: Runs all tasks required for a PR

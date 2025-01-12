@@ -62,3 +62,37 @@ jobs:
 
       - name: Run Integration Tests
         run: task test:ci
+
+  e2e-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Task
+        uses: arduino/setup-task@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - uses: pnpm/action-setup@v3.0.0
+        with:
+          version: 9.12.2
+
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: frontend
+
+      - name: Run E2E Tests
+        run: task test:e2e
