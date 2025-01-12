@@ -169,7 +169,7 @@ tasks:
     cmds:
       - task: go:ci
       - task: ui:ci
-      - sleep 5
+      - sleep 45
       - pnpm test:e2e
 
   pr:

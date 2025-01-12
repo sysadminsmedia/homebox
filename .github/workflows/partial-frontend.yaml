@@ -94,5 +94,8 @@ jobs:
         run: pnpm install
         working-directory: frontend
 
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
       - name: Run E2E Tests
         run: task test:e2e
