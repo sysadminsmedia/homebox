@@ -64,7 +64,7 @@ jobs:
         run: task test:ci
 
   e2e-tests:
-    name: Integration Tests
+    name: E2E Testing
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
