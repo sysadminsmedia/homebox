@@ -1,5 +1,5 @@
 <template>
-  <BaseModal v-model="modal" :show-close-button="false">
+  <BaseModal v-model="modal" :show-close-button="false" :click-outside-to-close="true">
     <div class="relative">
       <span class="text-neutral-400">{{ $t("components.quick_menu.shortcut_hint") }}</span>
       <QuickMenuInput

@@ -203,7 +203,7 @@
     if (option?.shortcut) {
       const shortcutKeycode = option.shortcut.replace(/([0-9])/, "digit$&");
       whenever(keys[shortcutKeycode], () => {
-        if (activeElement.value?.tagName === "BODY") {
+        if (activeElement.value?.tagName !== "INPUT") {
           option.action();
         }
       });

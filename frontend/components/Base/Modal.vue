@@ -41,6 +41,10 @@
       type: Boolean,
       default: true,
     },
+    clickOutsideToClose: {
+      type: Boolean,
+      default: false,
+    }
   });
 
   const modalBox = ref();
@@ -51,9 +55,11 @@
     }
   }
 
-  onClickOutside(modalBox, () => {
-    close();
-  });
+  if (props.clickOutsideToClose) {
+    onClickOutside(modalBox, () => {
+      close();
+    });
+  }
 
   function close() {
     if (props.readonly) {
