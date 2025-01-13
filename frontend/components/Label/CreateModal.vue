@@ -66,11 +66,12 @@
 
   watch(
     () => modal.value,
-    (open) => {
+    open => {
       if (open)
-        useTimeoutFn(() => { focused.value = true}, 50);
-      else
-        focused.value = false;
+        useTimeoutFn(() => {
+          focused.value = true;
+        }, 50);
+      else focused.value = false;
     }
   );
 

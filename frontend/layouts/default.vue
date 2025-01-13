@@ -68,9 +68,11 @@
                       <button class="group" @click="btn.action">
                         {{ btn.name.value }}
 
-                        <kbd v-if="btn.shortcut" class="kbd kbd-sm ml-auto hidden text-neutral-400 group-hover:inline">{{
-                          btn.shortcut
-                        }}</kbd>
+                        <kbd
+                          v-if="btn.shortcut"
+                          class="kbd kbd-sm ml-auto hidden text-neutral-400 group-hover:inline"
+                          >{{ btn.shortcut }}</kbd
+                        >
                       </button>
                     </li>
                   </ul>

@@ -61,9 +61,11 @@
 
   watch(
     () => modal.value,
-    (open) => {
+    open => {
       if (open) {
-        useTimeoutFn(() => { focused.value = true}, 50);
+        useTimeoutFn(() => {
+          focused.value = true;
+        }, 50);
 
         if (locationId.value) {
           const found = locations.value.find(l => l.id === locationId.value);

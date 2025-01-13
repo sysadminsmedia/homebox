@@ -3,7 +3,6 @@
     <template #title> {{ $t("components.item.create_modal.title") }} </template>
     <form @submit.prevent="create()">
       <LocationSelector v-model="form.location" />
-      <FormMultiselect v-model="form.labels" :label="$t('global.labels')" :items="labels ?? []" />
       <FormTextField
         ref="nameInput"
         v-model="form.name"
@@ -18,6 +17,7 @@
         :label="$t('components.item.create_modal.item_description')"
         :max-length="1000"
       />
+      <FormMultiselect v-model="form.labels" :label="$t('global.labels')" :items="labels ?? []" />
 
       <div class="modal-action mb-6">
         <div>
@@ -143,17 +143,19 @@
 
   watch(
     () => modal.value,
-    (open) => {
+    open => {
       if (open) {
-        useTimeoutFn(() => { focused.value = true }, 50);
-  
+        useTimeoutFn(() => {
+          focused.value = true;
+        }, 50);
+
         if (locationId.value) {
           const found = locations.value.find(l => l.id === locationId.value);
           if (found) {
             form.location = found;
           }
         }
-  
+
         if (labelId.value) {
           form.labels = labels.value.filter(l => l.id === labelId.value);
         }

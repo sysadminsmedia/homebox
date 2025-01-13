@@ -44,7 +44,7 @@
     clickOutsideToClose: {
       type: Boolean,
       default: false,
-    }
+    },
   });
 
   const modalBox = ref();

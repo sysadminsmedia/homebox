@@ -81,9 +81,8 @@
     unrefElement(inputBoxButton).click();
   };
 
-  watch(inputBoxFocused, () => {
-    if (inputBoxFocused.value) revealActions();
-    else inputValue.value = "";
+  watch(inputBoxFocused, val => {
+    if (!val) inputValue.value = "";
   });
 
   watch(inputValue, (val, oldVal) => {
