@@ -3,6 +3,7 @@
     <template #title> {{ $t("components.item.create_modal.title") }} </template>
     <form @submit.prevent="create()">
       <LocationSelector v-model="form.location" />
+      <FormMultiselect v-model="form.labels" :label="$t('global.labels')" :items="labels ?? []" />
       <FormTextField
         ref="nameInput"
         v-model="form.name"
@@ -17,7 +18,6 @@
         :label="$t('components.item.create_modal.item_description')"
         :max-length="1000"
       />
-      <FormMultiselect v-model="form.labels" :label="$t('global.labels')" :items="labels ?? []" />
 
       <div class="modal-action mb-6">
         <div>

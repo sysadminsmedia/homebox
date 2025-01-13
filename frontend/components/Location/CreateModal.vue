@@ -2,6 +2,7 @@
   <BaseModal v-model="modal">
     <template #title>{{ $t("components.location.create_modal.title") }}</template>
     <form @submit.prevent="create()">
+      <LocationSelector v-model="form.parent" />
       <FormTextField
         ref="locationNameRef"
         v-model="form.name"
@@ -17,7 +18,6 @@
         :label="$t('components.location.create_modal.location_description')"
         :max-length="1000"
       />
-      <LocationSelector v-model="form.parent" />
       <div class="modal-action">
         <div class="flex justify-center">
           <BaseButton class="rounded-r-none" type="submit" :loading="loading">{{ $t("global.create") }}</BaseButton>
