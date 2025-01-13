@@ -62,10 +62,18 @@
   watch(
     () => modal.value,
     (open) => {
-      if (open)
+      if (open) {
         useTimeoutFn(() => { focused.value = true}, 50);
-      else
+
+        if (locationId.value) {
+          const found = locations.value.find(l => l.id === locationId.value);
+          if (found) {
+            form.parent = found;
+          }
+        }
+      } else {
         focused.value = false;
+      }
     }
   );
 
@@ -80,7 +88,19 @@
   const api = useUserApi();
   const toast = useNotifier();
 
+  const locationsStore = useLocationStore();
+  const locations = computed(() => locationsStore.allLocations);
+
+  const route = useRoute();
+
   const { shift } = useMagicKeys();
+
+  const locationId = computed(() => {
+    if (route.fullPath.includes("/location/")) {
+      return route.params.id;
+    }
+    return null;
+  });
 
   async function create(close = true) {
     if (loading.value) {
