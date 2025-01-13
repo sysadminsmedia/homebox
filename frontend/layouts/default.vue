@@ -68,7 +68,7 @@
                       <button class="group" @click="btn.action">
                         {{ btn.name.value }}
 
-                        <kbd v-if="btn.shortcut" class="ml-auto hidden text-neutral-400 group-hover:inline">{{
+                        <kbd v-if="btn.shortcut" class="kbd kbd-sm ml-auto hidden text-neutral-400 group-hover:inline">{{
                           btn.shortcut
                         }}</kbd>
                       </button>
@@ -143,9 +143,14 @@
 
   const displayOutdatedWarning = computed(() => !isDev && !hasHiddenLatest.value && isOutdated.value);
 
+  const activeElement = useActiveElement();
   const keys = useMagicKeys({
     aliasMap: {
       "⌃": "control_",
+      "Shift+": "ShiftLeft_",
+      "!": "ShiftLeft_digit1",
+      "@": "ShiftLeft_digit2",
+      "#": "ShiftLeft_digit3",
     },
   });
 
@@ -171,7 +176,7 @@
     {
       id: 0,
       name: computed(() => t("menu.create_item")),
-      shortcut: "⌃1",
+      shortcut: "!",
       action: () => {
         modals.item = true;
       },
@@ -179,7 +184,7 @@
     {
       id: 1,
       name: computed(() => t("menu.create_location")),
-      shortcut: "⌃2",
+      shortcut: "@",
       action: () => {
         modals.location = true;
       },
@@ -187,7 +192,7 @@
     {
       id: 2,
       name: computed(() => t("menu.create_label")),
-      shortcut: "⌃3",
+      shortcut: "#",
       action: () => {
         modals.label = true;
       },
@@ -195,9 +200,12 @@
   ];
 
   dropdown.forEach(option => {
-    if (option.shortcut) {
-      whenever(keys[option.shortcut], () => {
-        option.action();
+    if (option?.shortcut) {
+      const shortcutKeycode = option.shortcut.replace(/([0-9])/, "digit$&");
+      whenever(keys[shortcutKeycode], () => {
+        if (activeElement.value?.tagName === "BODY") {
+          option.action();
+        }
       });
     }
   });
