@@ -92,6 +92,9 @@
             "tree": {
                 "no_locations": "没有可用的位置。请添加新的位置\n `<`span class=\"link-primary\"`>`创建`<`/span`>` 按钮在导航栏上"
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "使用数字键快速选择一个操作。"
         }
     },
     "global": {
@@ -114,6 +117,7 @@
         "locations": "位置",
         "maintenance": "维护",
         "name": "名称",
+        "navigate": "导航",
         "password": "密码",
         "read_docs": "查阅文档",
         "save": "保存",
