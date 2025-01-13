@@ -94,7 +94,7 @@
             }
         },
         "quick_menu": {
-            "shortcut_hint": "Használja a számgombokat egy művelet gyors kiválasztásához."
+            "shortcut_hint": "Használd a számgombokat egy művelet gyors kiválasztásához."
         }
     },
     "global": {
@@ -117,6 +117,7 @@
         "locations": "Helyek",
         "maintenance": "Karbantartás",
         "name": "Név",
+        "navigate": "Navigáció",
         "password": "Jelszó",
         "read_docs": "Olvasd el a dokumentációt",
         "save": "Mentés",

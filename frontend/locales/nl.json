@@ -92,6 +92,9 @@
             "tree": {
                 "no_locations": "Geen locaties beschikbaar. Voeg een nieuwe locatie toe\n via de `<`span class=\"link-primary\"`>`Creeer`<`/span`> knop op het navigatie menu."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Gebruik de numerieke toetsen om snel een actie te selecteren."
         }
     },
     "global": {
@@ -114,6 +117,7 @@
         "locations": "Locaties",
         "maintenance": "Onderhoud",
         "name": "Naam",
+        "navigate": "Navigeer",
         "password": "Wachtwoord",
         "read_docs": "Lees de documentatie",
         "save": "Opslaan",
