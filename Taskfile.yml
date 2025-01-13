@@ -68,7 +68,7 @@ tasks:
     dir: backend
     cmds:
       - go run ./app/api/ {{ .CLI_ARGS }} &
-    silent: false
+    silent: true
 
   go:test:
     desc: Runs all go tests using gotestsum - supports passing gotestsum args
@@ -141,6 +141,7 @@ tasks:
     dir: frontend
     cmds:
       - pnpm dev &
+    silent: true
 
   ui:fix:
     desc: Runs prettier and eslint on the frontend

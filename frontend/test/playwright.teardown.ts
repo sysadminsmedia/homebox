@@ -1,6 +1,6 @@
 import { exec } from "child_process";
 
-export function teardown() {
+function globalTeardown() {
   if (process.env.TEST_SHUTDOWN_API_SERVER) {
     const pc = exec("pkill -SIGTERM api"); // Kill background API process
     const fr = exec("pkill -SIGTERM node"); // Kill background Frontend process
@@ -12,3 +12,5 @@ export function teardown() {
     });
   }
 }
+
+export default globalTeardown;
