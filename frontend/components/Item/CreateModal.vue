@@ -141,20 +141,24 @@
     }
   }
 
-  whenever(
+  watch(
     () => modal.value,
-    () => {
-      focused.value = true;
-
-      if (locationId.value) {
-        const found = locations.value.find(l => l.id === locationId.value);
-        if (found) {
-          form.location = found;
+    (open) => {
+      if (open) {
+        useTimeoutFn(() => { focused.value = true }, 50);
+  
+        if (locationId.value) {
+          const found = locations.value.find(l => l.id === locationId.value);
+          if (found) {
+            form.location = found;
+          }
         }
-      }
-
-      if (labelId.value) {
-        form.labels = labels.value.filter(l => l.id === labelId.value);
+  
+        if (labelId.value) {
+          form.labels = labels.value.filter(l => l.id === labelId.value);
+        }
+      } else {
+        focused.value = false;
       }
     }
   );

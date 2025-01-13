@@ -59,10 +59,13 @@
     parent: null as LocationSummary | null,
   });
 
-  whenever(
+  watch(
     () => modal.value,
-    () => {
-      focused.value = true;
+    (open) => {
+      if (open)
+        useTimeoutFn(() => { focused.value = true}, 50);
+      else
+        focused.value = false;
     }
   );
 
