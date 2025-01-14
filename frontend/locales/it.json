@@ -92,6 +92,9 @@
             "tree": {
                 "no_locations": "Nessuna posizione disponibile. Aggiungi nuove posizioni mediante il pulsante\n`<`span class=\"link-primary\"`>`Crea`<`/span`>` nella barra di navigazione."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Utilizzare i tasti numerici per selezionare rapidamente un'azione."
         }
     },
     "global": {
@@ -114,6 +117,7 @@
         "locations": "Posizioni",
         "maintenance": "Manutenzione",
         "name": "Nome",
+        "navigate": "Naviga",
         "password": "Password",
         "read_docs": "Leggi la Documentazione",
         "save": "Salva",
