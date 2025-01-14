@@ -33,7 +33,7 @@
         <slot></slot>
         <footer v-if="status" class="bottom-0 w-full bg-base-300 pb-4 text-center text-secondary-content">
           <p class="text-center text-sm">
-            {{ $t("global.version", { version: status.build.version }) }} ~
+            <a href="https://github.com/sysadminsmedia/homebox/releases/tag/{{ status.build.version }}" target="_blank">{{ $t("global.version", { version: status.build.version }) }}</a> ~
             {{ $t("global.build", { build: status.build.commit }) }}
           </p>
         </footer>
