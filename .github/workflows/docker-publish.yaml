@@ -53,7 +53,7 @@ jobs:
           branch=${{ github.event.pull_request.number || github.ref_name }}
           echo "BRANCH=${branch//\//-}" >> $GITHUB_ENV
           echo "DOCKERNAMES=${{ env.DOCKERHUB_REPO }},${{ env.GHCR_REPO }}" >> $GITHUB_ENV
-          if [ ${{ github.event_name == 'pull_request' }} ]; then
+          if [ ${{ github.event_name }} = 'pull_request' ]; then
             echo "DOCKERNAMES=${{ env.GHCR_REPO }}" >> $GITHUB_ENV
           fi
               
@@ -185,10 +185,8 @@ jobs:
 
       - name: Inspect image
         run: |
-          if [ ${{ github.event_name }} = 'pull_request'  ]; then
-            docker buildx imagetools inspect ${{ env.GHCR_REPO }}:${{ steps.meta.outputs.version }}
-            else
-            docker buildx imagetools inspect ${{ env.GHCR_REPO }}:${{ steps.meta.outputs.version }}
+          if [ ${{ github.event_name }} != 'pull_request'  ]; then
             docker buildx imagetools inspect ${{ env.DOCKERHUB_REPO }}:${{ steps.meta.outputs.version }}
           fi
+          docker buildx imagetools inspect ${{ env.GHCR_REPO }}:${{ steps.meta.outputs.version }}
           
