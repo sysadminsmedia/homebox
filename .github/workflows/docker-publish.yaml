@@ -52,6 +52,11 @@ jobs:
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
           branch=${{ github.event.pull_request.number || github.ref_name }}
           echo "BRANCH=${branch//\//-}" >> $GITHUB_ENV
+          echo "DOCKERNAMES=${{ env.DOCKERHUB_REPO }},${{ env.GHCR_REPO }}" >> $GITHUB_ENV
+          if [ {{ github.event_name == 'pull_request' }} ]; then
+            echo "DOCKERNAMES=${{ env.GHCR_REPO }} >> $GITHUB_ENV
+          fi
+              
 
       - name: Docker meta
         id: meta
