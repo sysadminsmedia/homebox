@@ -94,6 +94,10 @@ jobs:
         run: pnpm install
         working-directory: frontend
 
+      - name: Install Go Dependencies
+        run: go mod download
+        working-directory: backend
+
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
