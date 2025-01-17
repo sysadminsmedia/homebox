@@ -181,7 +181,7 @@ jobs:
       - name: Create manifest list and push
         working-directory: /tmp/digests
         run: |
-          if [ ${{ github.event_name == 'pull_request' }}  ]; then
+          if [ ${{ github.event_name != 'pull_request' }}  ]; then
             docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
               $(printf '${{ env.DOCKERHUB_REPO }}@sha256:%s ' *)
           fi
