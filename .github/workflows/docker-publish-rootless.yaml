@@ -56,7 +56,7 @@ jobs:
           echo "BRANCH=${branch//\//-}" >> $GITHUB_ENV
           echo "DOCKERNAMES=${{ env.DOCKERHUB_REPO }},${{ env.GHCR_REPO }}" >> $GITHUB_ENV
           if [ ${{ github.event_name == 'pull_request' }} ]; then
-            echo "DOCKERNAMES=${{ env.GHCR_REPO }} >> $GITHUB_ENV
+            echo "DOCKERNAMES=${{ env.GHCR_REPO }}" >> $GITHUB_ENV
           fi
 
       - name: Docker meta
