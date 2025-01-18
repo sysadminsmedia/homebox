@@ -3,7 +3,7 @@
 {
 	"name": "Node.js & TypeScript",
 	"build": {
-		"dockerfile": "Dockerfile",
+		"dockerfile": "Dockerfile"
 	},
 
 	// Configure tool-specific properties.
