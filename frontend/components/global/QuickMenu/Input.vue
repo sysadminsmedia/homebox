@@ -7,6 +7,7 @@
     ></ComboboxInput>
     <ComboboxOptions
       class="card dropdown-content absolute max-h-48 w-full overflow-y-scroll rounded-lg border border-base-300 bg-base-100"
+      :unmount="false"
     >
       <ComboboxOption
         v-for="(action, idx) in filteredActions"
@@ -68,29 +69,37 @@
     },
   });
 
-  const selectedAction = useVModel(props, "modelValue");
+  const emit = defineEmits(["update:modelValue", "actionSelected"]);
+  const selectedAction = ref();
 
   const inputValue = ref("");
   const inputBox = ref();
   const inputBoxButton = ref();
   const { focused: inputBoxFocused } = useFocus(inputBox);
 
-  const emit = defineEmits(["update:modelValue", "quickSelect"]);
-
   const revealActions = () => {
     unrefElement(inputBoxButton).click();
   };
 
   watch(inputBoxFocused, val => {
-    if (!val) inputValue.value = "";
+    if (val) revealActions();
+    else inputValue.value = "";
   });
 
   watch(inputValue, (val, oldVal) => {
     if (!oldVal) {
       const action = props.actions?.find(v => v.shortcut === val);
       if (action) {
-        emit("quickSelect", action);
+        emit("actionSelected", action);
+        inputBoxFocused.value = false;
       }
+    }
+  });
+
+  watch(selectedAction, val => {
+    if (val) {
+      emit("actionSelected", val);
+      selectedAction.value = null;
     }
   });
 
