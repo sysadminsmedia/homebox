@@ -187,7 +187,7 @@ jobs:
             $(printf '${{ env.GHCR_REPO }}@sha256:%s ' *)
 
       - name: Create manifest list and push Dockerhub
-        id: push-ghcr
+        id: push-dockerhub
         working-directory: /tmp/digests
         if: github.event_name != 'pull_request'
         run: |
