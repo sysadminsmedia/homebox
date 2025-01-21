@@ -174,13 +174,18 @@ jobs:
             type=semver,pattern={{major}}
             type=schedule,pattern=nightly
 
-      - name: Create manifest list and push
+      - name: Create manifest list and push GHCR
+        id: push-ghcr
         working-directory: /tmp/digests
         run: |
-          if [ '${{ github.event_name }}' != 'pull_request' ]; then
-            docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-              $(printf '${{ env.DOCKERHUB_REPO }}@sha256:%s ' *)
-          fi
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf '${{ env.GHCR_REPO }}@sha256:%s ' *)
+
+      - name: Create manifest list and push Dockerhub
+        id: push-ghcr
+        working-directory: /tmp/digests
+        if: github.event_name != 'pull_request'
+        run: |
+          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf '${{ env.DOCKERHUB_REPO }}@sha256:%s ' *)
           
