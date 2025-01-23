@@ -20,6 +20,12 @@ export default defineNuxtConfig({
     },
   },
 
+  app: {
+    head: {
+      script: [{ src: "/set-theme.js" }],
+    },
+  },
+
   css: ["@/assets/css/main.css"],
 
   pwa: {
