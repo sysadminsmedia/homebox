@@ -71,7 +71,7 @@
                         <kbd
                           v-if="btn.shortcut"
                           class="kbd kbd-sm ml-auto hidden text-neutral-400 group-hover:inline"
-                          >{{ btn.shortcut }}</kbd
+                          >{{ btn.shortcut.replaceAll("Shift+", "⇧") }}</kbd
                         >
                       </button>
                     </li>
@@ -150,9 +150,9 @@
     aliasMap: {
       "⌃": "control_",
       "Shift+": "ShiftLeft_",
-      "!": "ShiftLeft_digit1",
-      "@": "ShiftLeft_digit2",
-      "#": "ShiftLeft_digit3",
+      "1": "digit1",
+      "2": "digit2",
+      "3": "digit3",
     },
   });
 
@@ -178,7 +178,7 @@
     {
       id: 0,
       name: computed(() => t("menu.create_item")),
-      shortcut: "!",
+      shortcut: "Shift+1",
       action: () => {
         modals.item = true;
       },
@@ -186,7 +186,7 @@
     {
       id: 1,
       name: computed(() => t("menu.create_location")),
-      shortcut: "@",
+      shortcut: "Shift+2",
       action: () => {
         modals.location = true;
       },
@@ -194,7 +194,7 @@
     {
       id: 2,
       name: computed(() => t("menu.create_label")),
-      shortcut: "#",
+      shortcut: "Shift+3",
       action: () => {
         modals.label = true;
       },

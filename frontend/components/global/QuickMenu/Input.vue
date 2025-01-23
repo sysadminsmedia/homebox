@@ -1,5 +1,5 @@
 <template>
-  <Combobox v-model="selectedAction">
+  <Combobox v-model="selectedAction" :nullable="true">
     <ComboboxInput
       ref="inputBox"
       class="input input-bordered mt-2 w-full"
@@ -70,7 +70,7 @@
   });
 
   const emit = defineEmits(["update:modelValue", "actionSelected"]);
-  const selectedAction = ref();
+  const selectedAction = ref(null);
 
   const inputValue = ref("");
   const inputBox = ref();
