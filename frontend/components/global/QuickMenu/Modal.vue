@@ -1,5 +1,11 @@
 <template>
-  <BaseModal v-model="modal" :show-close-button="false" :click-outside-to-close="true" :class="{ 'self-start': true }">
+  <BaseModal
+    v-model="modal"
+    :show-close-button="false"
+    :click-outside-to-close="true"
+    :modal-top="true"
+    :class="{ 'self-start': true }"
+  >
     <div class="relative">
       <span class="text-neutral-400">{{ $t("components.quick_menu.shortcut_hint") }}</span>
       <QuickMenuInput ref="inputBox" :actions="props.actions || []" @action-selected="invokeAction"></QuickMenuInput>

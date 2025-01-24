@@ -4,10 +4,7 @@
       <span class="label-text">{{ label }}</span>
     </label>
     <div class="dropdown dropdown-top sm:dropdown-end">
-      <div
-        tabindex="0"
-        class="flex min-h-[48px] w-full flex-wrap gap-2 rounded-lg border border-base-content/20 p-4"
-      >
+      <div tabindex="0" class="flex min-h-[48px] w-full flex-wrap gap-2 rounded-lg border border-base-content/20 p-4">
         <span v-for="itm in value" :key="itm.id" class="badge">
           {{ itm.name }}
         </span>

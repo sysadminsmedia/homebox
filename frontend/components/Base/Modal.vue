@@ -1,7 +1,11 @@
 <template>
   <div class="z-[999]">
     <input :id="modalId" v-model="modal" type="checkbox" class="modal-toggle" />
-    <div class="modal modal-bottom overflow-visible sm:modal-middle">
+    <div
+      class="modal overflow-visible sm:modal-middle"
+      :class="{ 'modal-bottom': !props.modalTop }"
+      :modal-top="props.modalTop"
+    >
       <div ref="modalBox" class="modal-box relative overflow-visible">
         <button
           v-if="props.showCloseButton"
@@ -20,6 +24,26 @@
     </div>
   </div>
 </template>
+
+<style lang="css" scoped>
+  @media (max-width: 640px) {
+    .modal[modal-top] {
+      align-items: start;
+    }
+
+    .modal[modal-top] :where(.modal-box) {
+      max-width: none;
+      --tw-translate-y: 2.5rem /* 40px */;
+      --tw-scale-x: 1;
+      --tw-scale-y: 1;
+      transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate))
+        skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+      width: 100%;
+      border-top-left-radius: 0px;
+      border-top-right-radius: 0px;
+    }
+  }
+</style>
 
 <script setup lang="ts">
   const emit = defineEmits(["cancel", "update:modelValue"]);
@@ -42,6 +66,10 @@
       default: true,
     },
     clickOutsideToClose: {
+      type: Boolean,
+      default: false,
+    },
+    modalTop: {
       type: Boolean,
       default: false,
     },
