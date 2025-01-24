@@ -132,6 +132,6 @@ module.exports = {
     animate,
     require('@tailwindcss/aspect-ratio'),
     require('@tailwindcss/typography'),
-    require('daisyui'),
+    // require('daisyui'),
   ],
 };
