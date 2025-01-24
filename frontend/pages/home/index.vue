@@ -61,6 +61,9 @@
           <LabelChip v-for="label in labels" :key="label.id" size="lg" :label="label" class="shadow-md" />
         </div>
       </section>
+
+      <Button variant="ghost">Test</Button>
+      <button class="btn-neutral btn">Test</button>
     </BaseContainer>
   </div>
 </template>

@@ -51,6 +51,7 @@
     "@tailwindcss/typography": "^0.5.15",
     "@types/lunr": "^2.3.7",
     "@vuepic/vue-datepicker": "^8.8.1",
+    "@vueuse/core": "^12.5.0",
     "@vueuse/nuxt": "^10.11.1",
     "@vueuse/router": "^10.11.1",
     "autoprefixer": "^10.4.20",
