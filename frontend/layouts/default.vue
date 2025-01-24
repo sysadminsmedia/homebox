@@ -73,8 +73,8 @@
 
         <SidebarRail />
       </Sidebar>
-      <SidebarInset>
-        <div class="justify-center bg-base-300 pt-20 lg:pt-0">
+      <SidebarInset class="min-h-screen bg-base-300">
+        <div class="justify-center pt-20 lg:pt-0">
           <!-- <AppHeaderDecor v-if="preferences.displayHeaderDecor" class="-mt-10 hidden lg:block" /> -->
           <!-- Button -->
           <div class="navbar drawer-button z-[99] bg-primary shadow-md">
