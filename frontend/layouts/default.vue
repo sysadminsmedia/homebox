@@ -143,7 +143,7 @@
   const isOutdated = computed(() => current.value && latest.value && lt(current.value, latest.value));
   const hasHiddenLatest = computed(() => localStorage.getItem("latestVersion") === latest.value);
 
-  const displayOutdatedWarning = computed(() => !isDev.value && !hasHiddenLatest.value && isOutdated.value);
+  const displayOutdatedWarning = computed(() => Boolean(!isDev.value && !hasHiddenLatest.value && isOutdated.value));
 
   const keys = useMagicKeys({
     aliasMap: {
