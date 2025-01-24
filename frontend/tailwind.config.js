@@ -1,5 +1,3 @@
-const animate = require("tailwindcss-animate");
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -128,5 +126,10 @@ module.exports = {
       "winter",
     ],
   },
-  plugins: [animate, require("@tailwindcss/aspect-ratio"), require("@tailwindcss/typography"), require("daisyui")],
+  plugins: [
+    require("@tailwindcss/aspect-ratio"),
+    require("@tailwindcss/typography"),
+    require("daisyui"),
+    require("tailwindcss-animate"),
+  ],
 };

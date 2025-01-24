@@ -94,9 +94,14 @@
           <slot></slot>
           <footer v-if="status" class="bottom-0 w-full bg-base-300 pb-4 text-center text-secondary-content">
             <p class="text-center text-sm">
-              <a href="https://github.com/sysadminsmedia/homebox/releases/tag/{{ status.build.version }}" target="_blank">
-              {{ $t("global.version", { version: status.build.version }) }} ~
-              {{ $t("global.build", { build: status.build.commit }) }}</a> ~
+              <a
+                href="https://github.com/sysadminsmedia/homebox/releases/tag/{{ status.build.version }}"
+                target="_blank"
+              >
+                {{ $t("global.version", { version: status.build.version }) }} ~
+                {{ $t("global.build", { build: status.build.commit }) }}</a
+              >
+              ~
               <a href="https://homebox.software/en/api.html" target="_blank">API</a>
             </p>
           </footer>
@@ -118,7 +123,6 @@
   import MdiAccount from "~icons/mdi/account";
   import MdiCog from "~icons/mdi/cog";
   import MdiWrench from "~icons/mdi/wrench";
-  import MdiMenu from "~icons/mdi/menu";
   import MdiPlus from "~icons/mdi/plus";
   import MdiLogout from "~icons/mdi/logout";
 
@@ -144,10 +148,10 @@
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu";
 
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
 
-  const preferences = useViewPreferences();
+  // const preferences = useViewPreferences();
 
   const pubApi = usePublicApi();
   const { data: status } = useAsyncData(async () => {
@@ -226,12 +230,12 @@
 
   const route = useRoute();
 
-  const drawerToggle = ref();
+  // const drawerToggle = ref();
 
-  function unfocus() {
-    // unfocus current element
-    drawerToggle.value = false;
-  }
+  // function unfocus() {
+  //   // unfocus current element
+  //   drawerToggle.value = false;
+  // }
 
   const nav = [
     {
