@@ -7,7 +7,7 @@
         :src="imageUrl"
         alt=""
       />
-      <div class="absolute bottom-1 left-1 right-1 text-wrap">
+      <div class="absolute inset-x-1 bottom-1 text-wrap">
         <NuxtLink
           v-if="item.location"
           class="badge h-auto rounded-md text-sm shadow-md hover:link"
