@@ -6,9 +6,22 @@
                 "description": "Importujte súbor CSV obsahujúci vaše položky, štítky a miesta. Ďalšie informácie nájdete v dokumentácii\npožadovaný formát.",
                 "title": "Importovať súbor CSV",
                 "upload": "Nahrať"
+            },
+            "outdated": {
+                "current_version": "Aktuálna verzia",
+                "dismiss": "Odmietnuť",
+                "latest_version": "Najnovšia verzia",
+                "new_version_available": "K dispozícii nová verzia",
+                "new_version_available_link": "Kliknutím sem zobrazíte poznámky k vydaniu"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "Dokumentácie",
+                "failed_to_copy": "Nepodarilo sa skopírovať text do schránky",
+                "https_required": "Pretože sa vyžaduje https",
+                "learn_more": "Viac informácií nájdete v našom"
+            },
             "date_time": {
                 "ago": "{0} pred",
                 "days": "dní",
@@ -232,7 +245,7 @@
     "locations": {
         "child_locations": "Umiestnenie dieťaťa",
         "collapse_tree": "Zbaliť strom",
-        "no_results": "Žiadne lokality neboli nájdené.",
+        "no_results": "Žiadne lokality neboli nájdené",
         "update_location": "Aktualizovať lokalitu"
     },
     "maintenance": {
@@ -247,7 +260,7 @@
             "delete": "Zmazať",
             "duplicate": "Duplikovať",
             "edit": "Upraviť",
-            "new": "New"
+            "new": "Nové"
         },
         "modal": {
             "completed_date": "Dátum dokončenia",

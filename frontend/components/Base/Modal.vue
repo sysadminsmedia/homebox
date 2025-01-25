@@ -2,8 +2,15 @@
   <div class="z-[999]">
     <input :id="modalId" v-model="modal" type="checkbox" class="modal-toggle" />
     <div class="modal modal-bottom overflow-visible sm:modal-middle">
-      <div class="modal-box relative overflow-auto">
-        <button :for="modalId" class="btn btn-circle btn-sm absolute right-2 top-2" @click="close">✕</button>
+      <div ref="modalBox" class="modal-box relative overflow-visible">
+        <button
+          v-if="props.showCloseButton"
+          :for="modalId"
+          class="btn btn-circle btn-sm absolute right-2 top-2"
+          @click="close"
+        >
+          ✕
+        </button>
 
         <h3 class="text-lg font-bold">
           <slot name="title"></slot>
@@ -30,13 +37,23 @@
       type: Boolean,
       default: false,
     },
+    showCloseButton: {
+      type: Boolean,
+      default: true,
+    },
   });
+
+  const modalBox = ref();
 
   function escClose(e: KeyboardEvent) {
     if (e.key === "Escape") {
       close();
     }
   }
+
+  onClickOutside(modalBox, () => {
+    close();
+  });
 
   function close() {
     if (props.readonly) {

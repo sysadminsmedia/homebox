@@ -6,9 +6,16 @@
                 "description": "Importer en CSV fil som indeholder dine genstande, etiketter, og lokationer. Se dokumentation for mere information vedrørende\nden korrekte format.",
                 "title": "Importer CSV Fil",
                 "upload": "Upload"
+            },
+            "outdated": {
+                "current_version": "Nuværende version",
+                "latest_version": "Nyeste version"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "Dokumentation"
+            },
             "date_time": {
                 "ago": "{0} siden",
                 "days": "dage",

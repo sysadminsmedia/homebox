@@ -6,6 +6,12 @@
                 "description": "Zaimportuj plik CSV zawierający Twoje przedmioty, etykiety i lokalizacje. Zobacz dokumentację, aby uzyskać \nwięcej informacji na temat wymaganego formatu.",
                 "title": "Zaimportuj plik CSV",
                 "upload": "Prześlij"
+            },
+            "outdated": {
+                "dismiss": "Odrzuć",
+                "latest_version": "Najnowsza wersja",
+                "new_version_available": "Dostępna jest nowa wersja",
+                "new_version_available_link": "Kliknij tutaj, aby wyświetlić informacje o wydaniu"
             }
         },
         "global": {
@@ -85,6 +91,9 @@
             "tree": {
                 "no_locations": "Brak dostępnych lokalizacji. Dodaj nowe lokalizacje poprzez przycisk\n `<`span class=\"link-primary\"`>`Utwórz`<`/span`>` na pasku nawigacyjnym."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Użyj klawiszy numerycznych, aby szybko wybrać akcję."
         }
     },
     "global": {
@@ -107,6 +116,7 @@
         "locations": "Lokalizacje",
         "maintenance": "Konserwacja",
         "name": "Nazwa",
+        "navigate": "Nawiguj",
         "password": "Hasło",
         "read_docs": "Przeczytaj dokumentację",
         "save": "Zapisz",

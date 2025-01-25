@@ -16,6 +16,12 @@
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "documentation",
+                "failed_to_copy": "Failed to copy text to clipboard",
+                "https_required": "because HTTPS is required",
+                "learn_more": "Learn more in our"
+            },
             "date_time": {
                 "ago": "{0} ago",
                 "days": "days",
@@ -45,12 +51,6 @@
             },
             "password_score": {
                 "password_strength": "Password Strength"
-            },
-            "copy_text": {
-                "failed_to_copy": "Failed to copy text to clipboard",
-                "https_required": "because HTTPS is required",
-                "learn_more": "Learn more in our",
-                "documentation": "documentation"
             }
         },
         "item": {
@@ -92,6 +92,9 @@
             "tree": {
                 "no_locations": "No locations available. Add new locations through the\n `<`span class=\"link-primary\"`>`Create`<`/span`>` button on the navigation bar."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Use the number keys to quickly select an action."
         }
     },
     "global": {
@@ -114,6 +117,7 @@
         "locations": "Locations",
         "maintenance": "Maintenance",
         "name": "Name",
+        "navigate": "Navigate",
         "password": "Password",
         "read_docs": "Read the Docs",
         "save": "Save",

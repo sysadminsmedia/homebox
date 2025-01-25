@@ -52,17 +52,23 @@ jobs:
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
           branch=${{ github.event.pull_request.number || github.ref_name }}
           echo "BRANCH=${branch//\//-}" >> $GITHUB_ENV
+          echo "DOCKERNAMES=${{ env.DOCKERHUB_REPO }},${{ env.GHCR_REPO }}" >> $GITHUB_ENV
+          if [[ "${{ github.event_name }}" != "schedule" ]] || [[ "${{ github.ref }}" != refs/tags/* ]]; then
+            echo "DOCKERNAMES=${{ env.GHCR_REPO }}" >> $GITHUB_ENV
+          fi
+              
 
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ env.DOCKERHUB_REPO }}
-            ${{ env.GHCR_REPO }}
+            name=${{ env.DOCKERHUB_REPO }},enable=${{ github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/') }}
+            name=${{ env.GHCR_REPO }}
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
+        if: github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/')
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -91,7 +97,7 @@ jobs:
         with:
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,"name=${{ env.DOCKERHUB_REPO }},${{ env.GHCR_REPO }}",push-by-digest=true,name-canonical=true,push=true
+          outputs: type=image,"name=${{ env.DOCKERNAMES }}",push-by-digest=true,name-canonical=true,push=true
           cache-from: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR }}-${{ env.BRANCH }}
           cache-to: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR}}-${{ env.BRANCH }},mode=max
           build-args: |
@@ -135,6 +141,7 @@ jobs:
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
+        if: github.event_name != 'pull_request'
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -157,8 +164,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ env.DOCKERHUB_REPO }}
-            ${{ env.GHCR_REPO }}
+            name=${{ env.DOCKERHUB_REPO }},enable=${{ github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/') }}
+            name=${{ env.GHCR_REPO }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -167,15 +174,18 @@ jobs:
             type=semver,pattern={{major}}
             type=schedule,pattern=nightly
 
-      - name: Create manifest list and push
+      - name: Create manifest list and push GHCR
+        id: push-ghcr
         working-directory: /tmp/digests
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.DOCKERHUB_REPO }}@sha256:%s ' *)
-          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf '${{ env.GHCR_REPO }}@sha256:%s ' *)
 
-      - name: Inspect image
+      - name: Create manifest list and push Dockerhub
+        id: push-dockerhub
+        working-directory: /tmp/digests
+        if: github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/')
         run: |
-          docker buildx imagetools inspect ${{ env.DOCKERHUB_REPO }}:${{ steps.meta.outputs.version }}
-          docker buildx imagetools inspect ${{ env.GHCR_REPO }}:${{ steps.meta.outputs.version }}
+          docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            $(printf '${{ env.DOCKERHUB_REPO }}@sha256:%s ' *)
+          
