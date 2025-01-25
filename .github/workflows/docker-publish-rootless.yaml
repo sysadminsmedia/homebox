@@ -45,6 +45,12 @@ jobs:
           - linux/arm/v7
 
     steps:
+      - name: Enable Debug Logs
+        run: echo "##[debug]Enabling debug logging"
+        env:
+          ACTIONS_RUNNER_DEBUG: true
+          ACTIONS_STEP_DEBUG: true
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
