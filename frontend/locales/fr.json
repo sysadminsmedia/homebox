@@ -6,12 +6,19 @@
                 "description": "Importer un fichier CSV contenant vos articles, étiquettes, et emplacements. Se reporter à la documentation pour plus d’informations \nsur le format requis.",
                 "title": "Importer un fichier CSV",
                 "upload": "Téléverser"
+            },
+            "outdated": {
+                "current_version": "Version actuelle",
+                "dismiss": "Rejeter",
+                "latest_version": "Dernière version",
+                "new_version_available": "Nouvelle version disponible",
+                "new_version_available_link": "Cliquez ici pour consulter les notes de version"
             }
         },
         "global": {
             "copy_text": {
                 "documentation": "la documentation",
-                "failed_to_copy": "Échec de la copie du texte dans le presse-papiers",
+                "failed_to_copy": "Impossible de copier le lien dans le presse-papiers",
                 "https_required": "parce que HTTPS est requis",
                 "learn_more": "Pour en savoir plus, consultez notre"
             },
@@ -85,6 +92,9 @@
             "tree": {
                 "no_locations": "Aucun emplacement disponible. Créez votre premier emplacement avec\nle bouton `<`span class=\"link-primary\"`>`Créer`<`/span`>` dans la barre de navigation."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Utilisez les touches numériques pour sélectionner rapidement une action."
         }
     },
     "global": {
@@ -107,6 +117,7 @@
         "locations": "Emplacements",
         "maintenance": "Maintenance",
         "name": "Nom",
+        "navigate": "Naviguer",
         "password": "Mot de passe",
         "read_docs": "Lire la documentation",
         "save": "Enregistrer",
@@ -121,12 +132,12 @@
     "home": {
         "labels": "Étiquettes",
         "quick_statistics": "Statistiques rapides",
-        "recently_added": "Ajouté récemment",
-        "storage_locations": "Lieu de stockage",
+        "recently_added": "Ajoutés récemment",
+        "storage_locations": "Emplacements de stockage",
         "total_items": "Total d'objets",
         "total_labels": "Total d'étiquettes",
-        "total_locations": "Total de lieu",
-        "total_value": "Valeur total"
+        "total_locations": "Total d'emplacements",
+        "total_value": "Valeur totale"
     },
     "index": {
         "disabled_registration": "Les inscriptions sont désactivées",
@@ -135,14 +146,14 @@
         "login": "Se connecter",
         "register": "S'enregistrer",
         "remember_me": "Se souvenir de moi",
-        "set_email": "Quel est vôtre courriel ?",
+        "set_email": "Quel est votre courriel ?",
         "set_name": "Quel est votre nom ?",
         "set_password": "Définir votre mot de passe",
         "tagline": "Répertoriez, organisez et gérez vos affaires."
     },
     "items": {
         "add": "Ajouter",
-        "advanced": "Avancée",
+        "advanced": "Avancé",
         "archived": "Archivé",
         "asset_id": "ID d'élément",
         "attachment": "Pièce jointe",
@@ -158,10 +169,10 @@
         "field_value": "Valeur du champ",
         "first": "Premier",
         "include_archive": "Inclure les éléments archivés",
-        "insured": "Assurée",
+        "insured": "Assuré",
         "last": "Dernier",
         "lifetime_warranty": "Garantie à vie",
-        "location": "Lieu",
+        "location": "Emplacement",
         "manual": "Mode d'emploi",
         "manuals": "Modes d'emplois",
         "manufacturer": "Fabricant",
@@ -179,7 +190,7 @@
         "photos": "Photos",
         "prev_page": "Page précédente",
         "purchase_date": "Date d'achat",
-        "purchase_details": "Détail de l'achat",
+        "purchase_details": "Détails de l'achat",
         "purchase_price": "Prix d'achat",
         "purchased_from": "Acheté à",
         "quantity": "Quantité",
@@ -189,7 +200,7 @@
         "reset_search": "Réinitialiser la recherche",
         "results": "{ total } résultats",
         "serial_number": "Numéro de série",
-        "show_advanced_view_options": "Afficher les options avancées",
+        "show_advanced_view_options": "Afficher les options d'affichage avancées",
         "sold_at": "Vendu à",
         "sold_details": "Détails de la vente",
         "sold_price": "Prix de vente",
@@ -236,10 +247,10 @@
     "languages.ro-RO": "Roumain",
     "languages.sk-SK": "Slovaque",
     "locations": {
-        "child_locations": "Lieu enfant",
+        "child_locations": "Sous-emplacements",
         "collapse_tree": "Minimiser la liste",
         "no_results": "Aucun emplacement trouvé",
-        "update_location": "Mettre à jour le lieu"
+        "update_location": "Mettre à jour l'emplacement"
     },
     "maintenance": {
         "filter": {
@@ -279,7 +290,7 @@
     "menu": {
         "create_item": "Objet / Ressource",
         "create_label": "Étiquette",
-        "create_location": "Lieu",
+        "create_location": "Emplacement",
         "home": "Accueil",
         "locations": "Emplacements",
         "maintenance": "Maintenance",
@@ -296,7 +307,7 @@
         "delete_account_sub": "Supprimer le compte et toutes ses données. Aucune récupération possible.",
         "display_header": "{ currentValue, select, true {Masquer l’en-tête} false {Afficher l’en-tête} other {Not Hit}}",
         "enabled": "Activé",
-        "example": "Example",
+        "example": "Exemple",
         "gen_invite": "Générer un lien d’invitation",
         "group_settings": "Paramètres du groupe",
         "group_settings_sub": "Paramètres du groupe partagé. Il peut être nécessaire de recharger la page pour qu’ils deviennent effectifs.",
@@ -319,7 +330,7 @@
     "tools": {
         "actions": "Actions d’inventaire",
         "actions_set": {
-            "ensure_ids": "Vérifier les identifiants d'actif",
+            "ensure_ids": "Vérifier les identifiants d'actifs",
             "ensure_ids_button": "Vérifier les identifiants d'actifs",
             "ensure_ids_sub": "Vérifie que tous les éléments de votre inventaire comportent un champ asset_id valide. Ceci est effectué en cherchant l’identifiant actuel le plus élevé et en appliquant les valeurs suivantes à tous les éléments sans identifiant. L'action est effectuée en suivant l'ordre du champ created_at.",
             "ensure_import_refs": "Vérifier les références d'importation",
