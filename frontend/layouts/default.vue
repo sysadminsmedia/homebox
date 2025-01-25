@@ -33,8 +33,10 @@
         <slot></slot>
         <footer v-if="status" class="bottom-0 w-full bg-base-300 pb-4 text-center text-secondary-content">
           <p class="text-center text-sm">
+            <a href="https://github.com/sysadminsmedia/homebox/releases/tag/{{ status.build.version }}" target="_blank">
             {{ $t("global.version", { version: status.build.version }) }} ~
-            {{ $t("global.build", { build: status.build.commit }) }}
+            {{ $t("global.build", { build: status.build.commit }) }}</a> ~
+            <a href="https://homebox.software/en/api.html" target="_blank">API</a>
           </p>
         </footer>
       </div>
@@ -141,7 +143,7 @@
   const isOutdated = computed(() => current.value && latest.value && lt(current.value, latest.value));
   const hasHiddenLatest = computed(() => localStorage.getItem("latestVersion") === latest.value);
 
-  const displayOutdatedWarning = computed(() => !isDev && !hasHiddenLatest.value && isOutdated.value);
+  const displayOutdatedWarning = computed(() => Boolean(!isDev.value && !hasHiddenLatest.value && isOutdated.value));
 
   const keys = useMagicKeys({
     aliasMap: {
