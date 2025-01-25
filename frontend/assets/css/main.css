@@ -811,7 +811,7 @@
 
 .scroll-bg::-webkit-scrollbar-thumb {
   border-radius: 0.25rem;
-  @apply bg-base-300;
+  /* @apply bg-base-300; */
   /* TODO: figure out what the relevant shadcn classes are */
 }
 

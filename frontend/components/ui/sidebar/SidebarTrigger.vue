@@ -7,14 +7,15 @@
 
   const props = defineProps<{
     class?: HTMLAttributes["class"];
+    variant?: "ghost" | "default";
   }>();
 
   const { toggleSidebar } = useSidebar();
 </script>
 
 <template>
-  <Button data-sidebar="trigger" variant="ghost" size="icon" :class="cn('h-7 w-7', props.class)" @click="toggleSidebar">
-    <MdiMenu class="size-6" />
+  <Button data-sidebar="trigger" :variant="props.variant ?? 'ghost'" size="icon" :class="cn('h-7 w-7', props.class)" @click="toggleSidebar">
+    <MdiMenu class="text-primary-foreground" />
     <span class="sr-only">Toggle Sidebar</span>
   </Button>
 </template>

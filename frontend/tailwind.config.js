@@ -1,3 +1,13 @@
+import dotenv from "dotenv";
+dotenv.config();
+
+// check if DISABLE_DAISYUI is set to true in the environment
+const isDisabled = process.env.DISABLE_DAISYUI === "true";
+
+if (isDisabled) {
+  console.log("DAISYUI DISABLED");
+}
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -126,10 +136,12 @@ module.exports = {
       "winter",
     ],
   },
-  plugins: [
-    require("@tailwindcss/aspect-ratio"),
-    require("@tailwindcss/typography"),
-    require("daisyui"),
-    require("tailwindcss-animate"),
-  ],
+  plugins: isDisabled
+    ? [require("@tailwindcss/aspect-ratio"), require("@tailwindcss/typography"), require("tailwindcss-animate")]
+    : [
+        require("@tailwindcss/aspect-ratio"),
+        require("@tailwindcss/typography"),
+        require("daisyui"),
+        require("tailwindcss-animate"),
+      ],
 };

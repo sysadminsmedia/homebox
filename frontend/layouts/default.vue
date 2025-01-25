@@ -22,18 +22,28 @@
             </div>
           </NuxtLink>
           <DropdownMenu>
-            <!--TODO: change tooltip to be shadcn -->
-            <DropdownMenuTrigger as-child>
-              <SidebarMenuButton
-                class="flex justify-center bg-primary text-primary-foreground shadow hover:bg-primary/90 group-data-[collapsible=icon]:justify-start"
-                data-tip="Shortcut: Ctrl+`"
-              >
-                <MdiPlus />
-                <span>
-                  {{ $t("global.create") }}
-                </span>
-              </SidebarMenuButton>
-            </DropdownMenuTrigger>
+            <TooltipProvider :delay-duration="0">
+              <Tooltip>
+                <!--TODO: change tooltip to be shadcn -->
+                <DropdownMenuTrigger as-child>
+                  <TooltipTrigger as-child>
+                    <SidebarMenuButton
+                      class="flex justify-center bg-primary text-primary-foreground shadow hover:bg-primary/90 group-data-[collapsible=icon]:justify-start"
+                      data-tip="Shortcut: Ctrl+`"
+                      :tooltip="$t('global.create')"
+                    >
+                      <MdiPlus />
+                      <span>
+                        {{ $t("global.create") }}
+                      </span>
+                    </SidebarMenuButton>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Shortcut: Ctrl+`</p>
+                  </TooltipContent>
+                </DropdownMenuTrigger>
+              </Tooltip>
+            </TooltipProvider>
             <DropdownMenuContent>
               <DropdownMenuItem v-for="btn in dropdown" :key="btn.id" @click="btn.action">
                 <button>
@@ -50,7 +60,11 @@
           <SidebarGroup>
             <SidebarMenu>
               <SidebarMenuItem v-for="n in nav" :key="n.id">
-                <SidebarMenuLink :href="n.to" class="hover:bg-accent hover:text-accent-foreground">
+                <SidebarMenuLink
+                  :href="n.to"
+                  class="hover:bg-accent hover:text-accent-foreground"
+                  :tooltip="n.name.value"
+                >
                   <component :is="n.icon" />
                   <span>{{ n.name.value }}</span>
                 </SidebarMenuLink>
@@ -75,13 +89,10 @@
       </Sidebar>
       <SidebarInset class="min-h-screen bg-base-300">
         <div class="justify-center pt-20 lg:pt-0">
-          <!-- <AppHeaderDecor v-if="preferences.displayHeaderDecor" class="-mt-10 hidden lg:block" /> -->
-          <!-- Button -->
-          <div class="navbar drawer-button z-[99] bg-primary shadow-md">
-            <!-- <label for="my-drawer-2" class="btn btn-square btn-ghost drawer-button text-base-100 lg:hidden">
-              <MdiMenu class="size-6" />
-            </label> -->
-            <SidebarTrigger class="-ml-1" />
+          <AppHeaderDecor v-if="preferences.displayHeaderDecor" class="-mt-10 hidden lg:block" />
+          <SidebarTrigger class="absolute left-2 top-2 hidden lg:flex" variant="default" />
+          <div class="fixed top-0 z-20 flex h-16 w-full items-center gap-2 bg-primary p-2 shadow-md lg:hidden">
+            <SidebarTrigger />
             <NuxtLink to="/home">
               <h2 class="flex text-3xl font-bold tracking-tight text-base-100">
                 HomeB
@@ -147,11 +158,12 @@
     DropdownMenuItem,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu";
+  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
   const { t } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
 
-  // const preferences = useViewPreferences();
+  const preferences = useViewPreferences();
 
   const pubApi = usePublicApi();
   const { data: status } = useAsyncData(async () => {
