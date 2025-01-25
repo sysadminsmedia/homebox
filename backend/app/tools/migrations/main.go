@@ -36,7 +36,7 @@ func main() {
 	}
 
 	// Generate migrations using Atlas support for MySQL (note the Ent dialect option passed above).
-	err = migrate.NamedDiff(ctx, "sqlite://.data/homebox.migration.db?_fk=1&_time_format=sqlite", os.Args[1], opts...)
+	err = migrate.NamedDiff(ctx, "sqlite://.data/homebox.migration.db?_fk=1", os.Args[1], opts...)
 	if err != nil {
 		log.Fatalf("failed generating migration file: %v", err)
 	}
