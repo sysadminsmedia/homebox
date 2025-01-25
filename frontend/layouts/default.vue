@@ -279,7 +279,7 @@
     modals.import = false;
   });
 
-  const quickMenuActions = ref(
+  const quickMenuActions = reactive(
     [
       {
         text: computed(() => `${t("global.create")}: ${t("menu.create_item")}`),
