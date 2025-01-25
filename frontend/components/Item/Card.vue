@@ -4,6 +4,7 @@
       <img
         v-if="imageUrl"
         class="h-[200px] w-full rounded-t border-gray-300 object-cover shadow-sm"
+        loading="lazy"
         :src="imageUrl"
         alt=""
       />
@@ -12,7 +13,6 @@
           v-if="item.location"
           class="badge rounded-md text-sm shadow-md hover:link"
           :to="`/location/${item.location.id}`"
-          loading="lazy"
         >
           {{ locationString }}
         </NuxtLink>

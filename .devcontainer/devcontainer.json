@@ -3,13 +3,7 @@
 {
 	"name": "Node.js & TypeScript",
 	"build": {
-		"dockerfile": "Dockerfile",
-		// Update 'VARIANT' to pick a Node version: 18, 16, 14.
-		// Append -bullseye or -buster to pin to an OS version.
-		// Use -bullseye variants on local on arm64/Apple Silicon.
-		"args": {
-			"VARIANT": "18-bullseye"
-		}
+		"dockerfile": "Dockerfile"
 	},
 
 	// Configure tool-specific properties.

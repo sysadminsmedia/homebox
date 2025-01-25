@@ -91,6 +91,9 @@
             "tree": {
                 "no_locations": "Brak dostępnych lokalizacji. Dodaj nowe lokalizacje poprzez przycisk\n `<`span class=\"link-primary\"`>`Utwórz`<`/span`>` na pasku nawigacyjnym."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Użyj klawiszy numerycznych, aby szybko wybrać akcję."
         }
     },
     "global": {
@@ -113,6 +116,7 @@
         "locations": "Lokalizacje",
         "maintenance": "Konserwacja",
         "name": "Nazwa",
+        "navigate": "Nawiguj",
         "password": "Hasło",
         "read_docs": "Przeczytaj dokumentację",
         "save": "Zapisz",
