@@ -25,6 +25,12 @@ env:
   DOCKERHUB_REPO: sysadminsmedia/homebox
   GHCR_REPO: ghcr.io/sysadminsmedia/homebox
 
+permissions:
+  contents: read        # Access to repository contents
+  packages: write       # Write access for pushing to GHCR
+  id-token: write       # Required for OIDC authentication (if used)
+  attestations: write   # Required for signing and attestation (if needed)
+
 jobs:
   build:
     runs-on: ubuntu-latest
