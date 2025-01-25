@@ -25,26 +25,6 @@
   </div>
 </template>
 
-<style lang="css" scoped>
-  @media (max-width: 640px) {
-    .modal[modal-top] {
-      align-items: start;
-    }
-
-    .modal[modal-top] :where(.modal-box) {
-      max-width: none;
-      --tw-translate-y: 2.5rem /* 40px */;
-      --tw-scale-x: 1;
-      --tw-scale-y: 1;
-      transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate))
-        skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-      width: 100%;
-      border-top-left-radius: 0px;
-      border-top-right-radius: 0px;
-    }
-  }
-</style>
-
 <script setup lang="ts">
   const emit = defineEmits(["cancel", "update:modelValue"]);
   const props = defineProps({
@@ -108,3 +88,23 @@
     }
   });
 </script>
+
+<style lang="css" scoped>
+  @media (max-width: 640px) {
+    .modal[modal-top] {
+      align-items: start;
+    }
+
+    .modal[modal-top] :where(.modal-box) {
+      max-width: none;
+      --tw-translate-y: 2.5rem /* 40px */;
+      --tw-scale-x: 1;
+      --tw-scale-y: 1;
+      transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate))
+        skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+      width: 100%;
+      border-top-left-radius: 0px;
+      border-top-right-radius: 0px;
+    }
+  }
+</style>
