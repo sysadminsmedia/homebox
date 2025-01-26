@@ -17,6 +17,9 @@ export function useTheme(): UseTheme {
 
     if (htmlEl) {
       htmlEl.value?.setAttribute("data-theme", newTheme);
+      // FIXME: this is a hack to remove the theme class from the html element
+      htmlEl.value?.classList.remove(...htmlEl.value.classList.values().toArray() as string[]);
+      htmlEl.value?.classList.add(newTheme);
     }
 
     themeRef.value = newTheme;
