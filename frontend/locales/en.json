@@ -9,10 +9,10 @@
             },
             "outdated": {
                 "current_version": "Current Version",
+                "dismiss": "Dismiss",
                 "latest_version": "Latest Version",
                 "new_version_available": "New Version Available",
-                "new_version_available_link": "Click here to view the release notes",
-                "dismiss": "Dismiss"
+                "new_version_available_link": "Click here to view the release notes"
             }
         },
         "global": {
