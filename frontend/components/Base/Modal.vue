@@ -91,11 +91,11 @@
 
 <style lang="css" scoped>
   @media (max-width: 640px) {
-    .modal[modal-top=true] {
+    .modal[modal-top="true"] {
       align-items: start;
     }
 
-    .modal[modal-top=true] :where(.modal-box) {
+    .modal[modal-top="true"] :where(.modal-box) {
       max-width: none;
       --tw-translate-y: 2.5rem /* 40px */;
       --tw-scale-x: 1;

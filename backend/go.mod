@@ -57,7 +57,6 @@ require (
 	github.com/ncruces/go-strftime v0.1.9 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
-	github.com/rogpeppe/go-internal v1.11.0 // indirect
 	github.com/swaggo/files/v2 v2.0.2 // indirect
 	github.com/yeqown/reedsolomon v1.0.0 // indirect
 	github.com/zclconf/go-cty v1.16.0 // indirect
