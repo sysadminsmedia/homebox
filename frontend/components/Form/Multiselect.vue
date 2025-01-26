@@ -4,7 +4,7 @@
       <span class="label-text">{{ label }}</span>
     </label>
     <div class="dropdown dropdown-top sm:dropdown-end">
-      <div tabindex="0" class="flex min-h-[48px] w-full flex-wrap gap-2 rounded-lg border border-gray-400 p-4">
+      <div tabindex="0" class="flex min-h-[48px] w-full flex-wrap gap-2 rounded-lg border border-base-content/20 p-4">
         <span v-for="itm in value" :key="itm.id" class="badge">
           {{ itm.name }}
         </span>
@@ -20,7 +20,7 @@
       <div
         tabindex="0"
         style="display: inline"
-        class="dropdown-content menu z-[9999] mb-1 w-full rounded border border-gray-400 bg-base-100 shadow"
+        class="dropdown-content menu z-[9999] mb-1 w-full rounded border border-base-content/20 bg-base-100 shadow"
       >
         <div class="m-2">
           <input v-model="search" placeholder="Search…" class="input input-bordered input-sm w-full" />

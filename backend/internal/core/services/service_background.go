@@ -19,7 +19,7 @@ type Latest struct {
 	Date    string `json:"date"`
 }
 type BackgroundService struct {
-	repos *repo.AllRepos
+	repos  *repo.AllRepos
 	latest Latest
 }
 
@@ -104,10 +104,10 @@ func (svc *BackgroundService) GetLatestGithubRelease(ctx context.Context) error 
 		return fmt.Errorf("failed to make latest version request: %w", err)
 	}
 	defer func() {
-			err := resp.Body.Close()
-			if err != nil {
-					log.Printf("error closing latest version response body: %v", err)
-			}
+		err := resp.Body.Close()
+		if err != nil {
+			log.Printf("error closing latest version response body: %v", err)
+		}
 	}()
 
 	if resp.StatusCode != http.StatusOK {
@@ -133,6 +133,6 @@ func (svc *BackgroundService) GetLatestGithubRelease(ctx context.Context) error 
 	return nil
 }
 
-func (svc *BackgroundService) GetLatestVersion() (Latest) {
+func (svc *BackgroundService) GetLatestVersion() Latest {
 	return svc.latest
 }

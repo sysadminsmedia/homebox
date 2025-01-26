@@ -46,15 +46,15 @@ func build() string {
 	return fmt.Sprintf("%s, commit %s, built at %s", version, short, buildTime)
 }
 
-//	@title						Homebox API
-//	@version					1.0
-//	@description				Track, Manage, and Organize your Things.
-//	@contact.name				Don't
-//	@BasePath					/api
-//	@securityDefinitions.apikey	Bearer
-//	@in							header
-//	@name						Authorization
-//	@description				"Type 'Bearer TOKEN' to correctly set the API Key"
+// @title						Homebox API
+// @version					1.0
+// @description				Track, Manage, and Organize your Things.
+// @contact.name				Don't
+// @BasePath					/api
+// @securityDefinitions.apikey	Bearer
+// @in							header
+// @name						Authorization
+// @description				"Type 'Bearer TOKEN' to correctly set the API Key"
 func main() {
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
 
