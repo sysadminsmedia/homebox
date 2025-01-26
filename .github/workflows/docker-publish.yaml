@@ -25,6 +25,12 @@ env:
   DOCKERHUB_REPO: sysadminsmedia/homebox
   GHCR_REPO: ghcr.io/sysadminsmedia/homebox
 
+permissions:
+  contents: read        # Access to repository contents
+  packages: write       # Write access for pushing to GHCR
+  id-token: write       # Required for OIDC authentication (if used)
+  attestations: write   # Required for signing and attestation (if needed)
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -106,6 +112,7 @@ jobs:
           provenance: true
           sbom: true
           annotations: ${{ steps.meta.outputs.annotations }}
+          push: ${{ github.event_name != 'pull_request' }}
 
       - name: Export digest
         run: |
@@ -122,6 +129,7 @@ jobs:
           retention-days: 1
 
   merge:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: read     # Allows access to repository contents (read-only)
@@ -141,7 +149,6 @@ jobs:
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
-        if: github.event_name != 'pull_request'
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}

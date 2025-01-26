@@ -23,6 +23,12 @@ on:
       - '.dockerignore'
       - '.github/workflows/**'
 
+permissions:
+  contents: read        # Access to repository contents
+  packages: write       # Write access for pushing to GHCR
+  id-token: write       # Required for OIDC authentication (if used)
+  attestations: write   # Required for signing and attestation (if needed)
+
 env:
   DOCKERHUB_REPO: sysadminsmedia/homebox
   GHCR_REPO: ghcr.io/sysadminsmedia/homebox
@@ -45,6 +51,12 @@ jobs:
           - linux/arm/v7
 
     steps:
+      - name: Enable Debug Logs
+        run: echo "##[debug]Enabling debug logging"
+        env:
+          ACTIONS_RUNNER_DEBUG: true
+          ACTIONS_STEP_DEBUG: true
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -109,6 +121,7 @@ jobs:
           provenance: true
           sbom: true
           annotations: ${{ steps.meta.outputs.annotations }}
+          push: ${{ github.event_name != 'pull_request' }}
           
       - name: Export digest
         run: |
@@ -125,6 +138,7 @@ jobs:
           retention-days: 1
 
   merge:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: read
