@@ -121,6 +121,7 @@ jobs:
           provenance: true
           sbom: true
           annotations: ${{ steps.meta.outputs.annotations }}
+          push: ${{ github.event_name != 'pull_request' }}
           
       - name: Export digest
         run: |
@@ -137,6 +138,7 @@ jobs:
           retention-days: 1
 
   merge:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: read
