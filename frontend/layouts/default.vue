@@ -34,8 +34,10 @@
         <footer v-if="status" class="bottom-0 w-full bg-base-300 pb-4 text-center text-secondary-content">
           <p class="text-center text-sm">
             <a href="https://github.com/sysadminsmedia/homebox/releases/tag/{{ status.build.version }}" target="_blank">
-            {{ $t("global.version", { version: status.build.version }) }} ~
-            {{ $t("global.build", { build: status.build.commit }) }}</a> ~
+              {{ $t("global.version", { version: status.build.version }) }} ~
+              {{ $t("global.build", { build: status.build.commit }) }}</a
+            >
+            ~
             <a href="https://homebox.software/en/api.html" target="_blank">API</a>
           </p>
         </footer>
@@ -70,9 +72,11 @@
                       <button class="group" @click="btn.action">
                         {{ btn.name.value }}
 
-                        <kbd v-if="btn.shortcut" class="ml-auto hidden text-neutral-400 group-hover:inline">{{
-                          btn.shortcut
-                        }}</kbd>
+                        <kbd
+                          v-if="btn.shortcut"
+                          class="kbd kbd-sm ml-auto hidden text-neutral-400 group-hover:inline"
+                          >{{ btn.shortcut.replaceAll("Shift+", "⇧") }}</kbd
+                        >
                       </button>
                     </li>
                   </ul>
@@ -145,9 +149,14 @@
 
   const displayOutdatedWarning = computed(() => Boolean(!isDev.value && !hasHiddenLatest.value && isOutdated.value));
 
+  const activeElement = useActiveElement();
   const keys = useMagicKeys({
     aliasMap: {
       "⌃": "control_",
+      "Shift+": "ShiftLeft_",
+      "1": "digit1",
+      "2": "digit2",
+      "3": "digit3",
     },
   });
 
@@ -173,7 +182,7 @@
     {
       id: 0,
       name: computed(() => t("menu.create_item")),
-      shortcut: "⌃1",
+      shortcut: "Shift+1",
       action: () => {
         modals.item = true;
       },
@@ -181,7 +190,7 @@
     {
       id: 1,
       name: computed(() => t("menu.create_location")),
-      shortcut: "⌃2",
+      shortcut: "Shift+2",
       action: () => {
         modals.location = true;
       },
@@ -189,7 +198,7 @@
     {
       id: 2,
       name: computed(() => t("menu.create_label")),
-      shortcut: "⌃3",
+      shortcut: "Shift+3",
       action: () => {
         modals.label = true;
       },
@@ -197,9 +206,12 @@
   ];
 
   dropdown.forEach(option => {
-    if (option.shortcut) {
-      whenever(keys[option.shortcut], () => {
-        option.action();
+    if (option?.shortcut) {
+      const shortcutKeycode = option.shortcut.replace(/([0-9])/, "digit$&");
+      whenever(keys[shortcutKeycode], () => {
+        if (activeElement.value?.tagName !== "INPUT") {
+          option.action();
+        }
       });
     }
   });
@@ -267,7 +279,7 @@
     modals.import = false;
   });
 
-  const quickMenuActions = ref(
+  const quickMenuActions = reactive(
     [
       {
         text: computed(() => `${t("global.create")}: ${t("menu.create_item")}`),
