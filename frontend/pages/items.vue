@@ -42,6 +42,7 @@
   const fieldSelector = useRouteQuery("fieldSelector", false);
   const negateLabels = useRouteQuery("negateLabels", false);
   const onlyWithoutPhoto = useRouteQuery("onlyWithoutPhoto", false);
+  const onlyWithPhoto = useRouteQuery("onlyWithPhoto", false);
   const orderBy = useRouteQuery("orderBy", "name");
 
   const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
@@ -184,6 +185,12 @@
     }
   });
 
+  watch(onlyWithPhoto, (newV, oldV) => {
+    if (newV !== oldV) {
+      search();
+    }
+  });
+
   watch(orderBy, (newV, oldV) => {
     if (newV !== oldV) {
       search();
@@ -223,6 +230,7 @@
           includeArchived: includeArchived.value ? "true" : "false",
           negateLabels: negateLabels.value ? "true" : "false",
           onlyWithoutPhoto: onlyWithoutPhoto.value ? "true" : "false",
+          onlyWithPhoto: onlyWithPhoto.value ? "true" : "false",
           orderBy: orderBy.value,
         },
       });
@@ -252,6 +260,7 @@
       labels: labIDs.value,
       negateLabels: negateLabels.value,
       onlyWithoutPhoto: onlyWithoutPhoto.value,
+      onlyWithPhoto: onlyWithPhoto.value,
       includeArchived: includeArchived.value,
       page: page.value,
       pageSize: pageSize.value,
@@ -304,6 +313,7 @@
         fieldSelector: fieldSelector.value ? "true" : "false",
         negateLabels: negateLabels.value ? "true" : "false",
         onlyWithoutPhoto: onlyWithoutPhoto.value ? "true" : "false",
+        onlyWithPhoto: onlyWithPhoto.value ? "true" : "false",
         orderBy: orderBy.value,
         pageSize: pageSize.value,
         page: page.value,
@@ -387,7 +397,7 @@
           <label tabindex="0" class="btn btn-xs">{{ $t("items.options") }}</label>
           <div
             tabindex="0"
-            class="dropdown-content mt-1 max-h-[80vh] w-72 -translate-x-24 overflow-auto rounded-md bg-base-100 p-4 shadow"
+            class="dropdown-content bg-base-100 mt-1 max-h-[80vh] w-72 -translate-x-24 overflow-auto rounded-md p-4 shadow"
           >
             <label class="label mr-auto cursor-pointer">
               <input v-model="includeArchived" type="checkbox" class="toggle toggle-primary toggle-sm" />
@@ -406,6 +416,10 @@
               <span class="label-text ml-4 text-right"> {{ $t("items.only_without_photo") }} </span>
             </label>
             <label class="label mr-auto cursor-pointer">
+              <input v-model="onlyWithPhoto" type="checkbox" class="toggle toggle-primary toggle-sm" />
+              <span class="label-text ml-4 text-right"> {{ $t("items.only_with_photo") }} </span>
+            </label>
+            <label class="label mr-auto cursor-pointer">
               <select v-model="orderBy" class="select select-bordered select-sm">
                 <option value="name" selected>{{ $t("global.name") }}</option>
                 <option value="createdAt">{{ $t("items.created_at") }}</option>
@@ -421,7 +435,7 @@
           <label tabindex="0" class="btn btn-xs">{{ $t("items.tips") }}</label>
           <div
             tabindex="0"
-            class="dropdown-content mt-1 w-[325px] overflow-auto rounded-md bg-base-100 p-4 text-sm shadow"
+            class="dropdown-content bg-base-100 mt-1 w-[325px] overflow-auto rounded-md p-4 text-sm shadow"
           >
             <p class="text-base">{{ $t("items.tips_sub") }}</p>
             <ul class="mt-1 list-disc pl-6">

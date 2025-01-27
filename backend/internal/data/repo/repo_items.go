@@ -38,6 +38,7 @@ type (
 		LabelIDs         []uuid.UUID  `json:"labelIds"`
 		NegateLabels     bool         `json:"negateLabels"`
 		OnlyWithoutPhoto bool         `json:"onlyWithoutPhoto"`
+		OnlyWithPhoto    bool         `json:"onlyWithPhoto"`
 		ParentItemIDs    []uuid.UUID  `json:"parentIds"`
 		SortBy           string       `json:"sortBy"`
 		IncludeArchived  bool         `json:"includeArchived"`
@@ -394,6 +395,16 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 						attachment.TypeEQ(attachment.TypePhoto),
 					),
 				)),
+			)
+		}
+
+		if q.OnlyWithPhoto {
+			andPredicates = append(andPredicates, item.HasAttachmentsWith(
+					attachment.And(
+						attachment.Primary(true),
+						attachment.TypeEQ(attachment.TypePhoto),
+					),
+				),
 			)
 		}
 

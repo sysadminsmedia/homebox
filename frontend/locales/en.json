@@ -180,6 +180,7 @@
         "name": "Name",
         "negate_labels": "Negate Selected Labels",
         "only_without_photo": "Only items without photo",
+        "only_with_photo": "Only items with photo",
         "next_page": "Next Page",
         "no_results": "No Items Found",
         "notes": "Notes",

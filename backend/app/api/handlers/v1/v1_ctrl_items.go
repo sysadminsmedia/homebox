@@ -63,6 +63,7 @@ func (ctrl *V1Controller) HandleItemsGetAll() errchain.HandlerFunc {
 			LabelIDs:         queryUUIDList(params, "labels"),
 			NegateLabels:     queryBool(params.Get("negateLabels")),
 			OnlyWithoutPhoto: queryBool(params.Get("onlyWithoutPhoto")),
+			OnlyWithPhoto:    queryBool(params.Get("onlyWithPhoto")),
 			ParentItemIDs:    queryUUIDList(params, "parentIds"),
 			IncludeArchived:  queryBool(params.Get("includeArchived")),
 			Fields:           filterFieldItems(params["fields"]),
