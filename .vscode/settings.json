@@ -30,5 +30,8 @@
 	"editor.quickSuggestions": {
 		"strings": true
 	},
-  "tailwindCSS.experimental.configFile": "./frontend/tailwind.config.js"
+  "tailwindCSS.experimental.configFile": "./frontend/tailwind.config.js",
+  "[go]": {
+    "editor.defaultFormatter": "golang.go"
+  },
 }
