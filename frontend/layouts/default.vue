@@ -77,6 +77,7 @@
           <SidebarMenuButton
             class="flex justify-center bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 group-data-[collapsible=icon]:justify-start"
             @click="logout"
+            :tooltip="$t('global.sign_out')"
           >
             <MdiLogout />
             <span>
