@@ -41,6 +41,7 @@
   const includeArchived = useRouteQuery("archived", false);
   const fieldSelector = useRouteQuery("fieldSelector", false);
   const negateLabels = useRouteQuery("negateLabels", false);
+  const onlyWithoutPhoto = useRouteQuery("onlyWithoutPhoto", false);
   const orderBy = useRouteQuery("orderBy", "name");
 
   const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
@@ -177,6 +178,12 @@
     }
   });
 
+  watch(onlyWithoutPhoto, (newV, oldV) => {
+    if (newV !== oldV) {
+      search();
+    }
+  });
+
   watch(orderBy, (newV, oldV) => {
     if (newV !== oldV) {
       search();
@@ -215,6 +222,7 @@
           pageSize: pageSize.value,
           includeArchived: includeArchived.value ? "true" : "false",
           negateLabels: negateLabels.value ? "true" : "false",
+          onlyWithoutPhoto: onlyWithoutPhoto.value ? "true" : "false",
           orderBy: orderBy.value,
         },
       });
@@ -243,6 +251,7 @@
       locations: locIDs.value,
       labels: labIDs.value,
       negateLabels: negateLabels.value,
+      onlyWithoutPhoto: onlyWithoutPhoto.value,
       includeArchived: includeArchived.value,
       page: page.value,
       pageSize: pageSize.value,
@@ -294,6 +303,7 @@
         archived: includeArchived.value ? "true" : "false",
         fieldSelector: fieldSelector.value ? "true" : "false",
         negateLabels: negateLabels.value ? "true" : "false",
+        onlyWithoutPhoto: onlyWithoutPhoto.value ? "true" : "false",
         orderBy: orderBy.value,
         pageSize: pageSize.value,
         page: page.value,
@@ -390,6 +400,10 @@
             <label class="label mr-auto cursor-pointer">
               <input v-model="negateLabels" type="checkbox" class="toggle toggle-primary toggle-sm" />
               <span class="label-text ml-4"> {{ $t("items.negate_labels") }} </span>
+            </label>
+            <label class="label mr-auto cursor-pointer">
+              <input v-model="onlyWithoutPhoto" type="checkbox" class="toggle toggle-primary toggle-sm" />
+              <span class="label-text ml-4"> {{ $t("items.only_without_photo") }} </span>
             </label>
             <label class="label mr-auto cursor-pointer">
               <select v-model="orderBy" class="select select-bordered select-sm">
