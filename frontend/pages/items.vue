@@ -180,12 +180,18 @@
   });
 
   watch(onlyWithoutPhoto, (newV, oldV) => {
+    if (newV && onlyWithPhoto) {
+      onlyWithPhoto.value = false;
+    }
     if (newV !== oldV) {
       search();
     }
   });
 
   watch(onlyWithPhoto, (newV, oldV) => {
+    if (newV && onlyWithoutPhoto) {
+      onlyWithoutPhoto.value = false;
+    }
     if (newV !== oldV) {
       search();
     }
