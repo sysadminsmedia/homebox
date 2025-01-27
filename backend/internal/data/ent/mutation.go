@@ -4085,6 +4085,7 @@ type ItemMutation struct {
 	archived                   *bool
 	asset_id                   *int
 	addasset_id                *int
+	sync_child_items_locations *bool
 	serial_number              *string
 	model_number               *string
 	manufacturer               *string
@@ -4668,6 +4669,42 @@ func (m *ItemMutation) AddedAssetID() (r int, exists bool) {
 func (m *ItemMutation) ResetAssetID() {
 	m.asset_id = nil
 	m.addasset_id = nil
+}
+
+// SetSyncChildItemsLocations sets the "sync_child_items_locations" field.
+func (m *ItemMutation) SetSyncChildItemsLocations(b bool) {
+	m.sync_child_items_locations = &b
+}
+
+// SyncChildItemsLocations returns the value of the "sync_child_items_locations" field in the mutation.
+func (m *ItemMutation) SyncChildItemsLocations() (r bool, exists bool) {
+	v := m.sync_child_items_locations
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSyncChildItemsLocations returns the old "sync_child_items_locations" field's value of the Item entity.
+// If the Item object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ItemMutation) OldSyncChildItemsLocations(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSyncChildItemsLocations is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSyncChildItemsLocations requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSyncChildItemsLocations: %w", err)
+	}
+	return oldValue.SyncChildItemsLocations, nil
+}
+
+// ResetSyncChildItemsLocations resets all changes to the "sync_child_items_locations" field.
+func (m *ItemMutation) ResetSyncChildItemsLocations() {
+	m.sync_child_items_locations = nil
 }
 
 // SetSerialNumber sets the "serial_number" field.
@@ -5729,7 +5766,7 @@ func (m *ItemMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ItemMutation) Fields() []string {
-	fields := make([]string, 0, 23)
+	fields := make([]string, 0, 24)
 	if m.created_at != nil {
 		fields = append(fields, item.FieldCreatedAt)
 	}
@@ -5759,6 +5796,9 @@ func (m *ItemMutation) Fields() []string {
 	}
 	if m.asset_id != nil {
 		fields = append(fields, item.FieldAssetID)
+	}
+	if m.sync_child_items_locations != nil {
+		fields = append(fields, item.FieldSyncChildItemsLocations)
 	}
 	if m.serial_number != nil {
 		fields = append(fields, item.FieldSerialNumber)
@@ -5827,6 +5867,8 @@ func (m *ItemMutation) Field(name string) (ent.Value, bool) {
 		return m.Archived()
 	case item.FieldAssetID:
 		return m.AssetID()
+	case item.FieldSyncChildItemsLocations:
+		return m.SyncChildItemsLocations()
 	case item.FieldSerialNumber:
 		return m.SerialNumber()
 	case item.FieldModelNumber:
@@ -5882,6 +5924,8 @@ func (m *ItemMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldArchived(ctx)
 	case item.FieldAssetID:
 		return m.OldAssetID(ctx)
+	case item.FieldSyncChildItemsLocations:
+		return m.OldSyncChildItemsLocations(ctx)
 	case item.FieldSerialNumber:
 		return m.OldSerialNumber(ctx)
 	case item.FieldModelNumber:
@@ -5986,6 +6030,13 @@ func (m *ItemMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAssetID(v)
+		return nil
+	case item.FieldSyncChildItemsLocations:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSyncChildItemsLocations(v)
 		return nil
 	case item.FieldSerialNumber:
 		v, ok := value.(string)
@@ -6288,6 +6339,9 @@ func (m *ItemMutation) ResetField(name string) error {
 		return nil
 	case item.FieldAssetID:
 		m.ResetAssetID()
+		return nil
+	case item.FieldSyncChildItemsLocations:
+		m.ResetSyncChildItemsLocations()
 		return nil
 	case item.FieldSerialNumber:
 		m.ResetSerialNumber()

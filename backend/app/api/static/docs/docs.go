@@ -2257,6 +2257,9 @@ const docTemplate = `{
                 "soldTo": {
                     "type": "string"
                 },
+                "syncChildItemsLocations": {
+                    "type": "boolean"
+                },
                 "updatedAt": {
                     "type": "string"
                 },
@@ -2458,6 +2461,9 @@ const docTemplate = `{
                 "soldTo": {
                     "type": "string",
                     "maxLength": 255
+                },
+                "syncChildItemsLocations": {
+                    "type": "boolean"
                 },
                 "warrantyDetails": {
                     "type": "string"
@@ -2944,6 +2950,17 @@ const docTemplate = `{
                 }
             }
         },
+        "services.Latest": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
         "services.UserRegistration": {
             "type": "object",
             "properties": {
@@ -2975,6 +2992,9 @@ const docTemplate = `{
                 },
                 "health": {
                     "type": "boolean"
+                },
+                "latest": {
+                    "$ref": "#/definitions/services.Latest"
                 },
                 "message": {
                     "type": "string"

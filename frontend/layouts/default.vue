@@ -1,14 +1,16 @@
 <template>
-  <div>
+  <div id="app">
     <!--
     Confirmation Modal is a singleton used by all components so we render
     it here to ensure it's always available. Possibly could move this further
     up the tree
    -->
     <ModalConfirm />
+    <AppOutdatedModal v-model="modals.outdated" :current="current ?? ''" :latest="latest ?? ''" />
     <ItemCreateModal v-model="modals.item" />
     <LabelCreateModal v-model="modals.label" />
     <LocationCreateModal v-model="modals.location" />
+    <QuickMenuModal v-model="modals.quickMenu" :actions="quickMenuActions" />
     <AppToast />
     <div class="drawer drawer-mobile">
       <input id="my-drawer-2" v-model="drawerToggle" type="checkbox" class="drawer-toggle" />
@@ -31,8 +33,12 @@
         <slot></slot>
         <footer v-if="status" class="bottom-0 w-full bg-base-300 pb-4 text-center text-secondary-content">
           <p class="text-center text-sm">
-            {{ $t("global.version", { version: status.build.version }) }} ~
-            {{ $t("global.build", { build: status.build.commit }) }}
+            <a href="https://github.com/sysadminsmedia/homebox/releases/tag/{{ status.build.version }}" target="_blank">
+              {{ $t("global.version", { version: status.build.version }) }} ~
+              {{ $t("global.build", { build: status.build.commit }) }}</a
+            >
+            ~
+            <a href="https://homebox.software/en/api.html" target="_blank">API</a>
           </p>
         </footer>
       </div>
@@ -54,7 +60,7 @@
             </div>
             <div class="flex flex-col bg-base-200">
               <div class="mb-6">
-                <div class="dropdown visible w-full">
+                <div class="dropdown tooltip visible w-full" data-tip="Shortcut: Ctrl+`">
                   <label tabindex="0" class="text-no-transform btn btn-primary btn-block text-lg">
                     <span>
                       <MdiPlus class="-ml-1 mr-1" />
@@ -63,8 +69,14 @@
                   </label>
                   <ul tabindex="0" class="dropdown-content menu rounded-box w-full bg-base-100 p-2 shadow">
                     <li v-for="btn in dropdown" :key="btn.id">
-                      <button @click="btn.action">
+                      <button class="group" @click="btn.action">
                         {{ btn.name.value }}
+
+                        <kbd
+                          v-if="btn.shortcut"
+                          class="kbd kbd-sm ml-auto hidden text-neutral-400 group-hover:inline"
+                          >{{ btn.shortcut.replaceAll("Shift+", "⇧") }}</kbd
+                        >
                       </button>
                     </li>
                   </ul>
@@ -78,6 +90,7 @@
                     :to="n.to"
                     :class="{
                       'bg-secondary text-secondary-content': n.active?.value,
+                      'text-nowrap': typeof locale === 'string' && locale.startsWith('zh-'),
                     }"
                   >
                     <component :is="n.icon" class="mr-4 size-6" />
@@ -89,9 +102,11 @@
           </div>
 
           <!-- Bottom -->
-          <button class="rounded-btn mx-2 mt-auto p-3 hover:bg-base-300" @click="logout">
-            {{ $t("global.sign_out") }}
-          </button>
+          <div class="mx-2 mt-auto flex flex-col">
+            <button class="rounded-btn p-3 transition-colors hover:bg-base-300" @click="logout">
+              {{ $t("global.sign_out") }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -100,10 +115,9 @@
 
 <script lang="ts" setup>
   import { useI18n } from "vue-i18n";
+  import { lt } from "semver";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
-  import MdiMenu from "~icons/mdi/menu";
-  import MdiPlus from "~icons/mdi/plus";
 
   import MdiHome from "~icons/mdi/home";
   import MdiFileTree from "~icons/mdi/file-tree";
@@ -111,8 +125,10 @@
   import MdiAccount from "~icons/mdi/account";
   import MdiCog from "~icons/mdi/cog";
   import MdiWrench from "~icons/mdi/wrench";
+  import MdiMenu from "~icons/mdi/menu";
+  import MdiPlus from "~icons/mdi/plus";
 
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
 
   const preferences = useViewPreferences();
@@ -124,6 +140,26 @@
     return data;
   });
 
+  const latest = computed(() => status.value?.latest.version);
+  const current = computed(() => status.value?.build.version);
+
+  const isDev = computed(() => import.meta.dev || !current.value?.includes("."));
+  const isOutdated = computed(() => current.value && latest.value && lt(current.value, latest.value));
+  const hasHiddenLatest = computed(() => localStorage.getItem("latestVersion") === latest.value);
+
+  const displayOutdatedWarning = computed(() => Boolean(!isDev.value && !hasHiddenLatest.value && isOutdated.value));
+
+  const activeElement = useActiveElement();
+  const keys = useMagicKeys({
+    aliasMap: {
+      "⌃": "control_",
+      "Shift+": "ShiftLeft_",
+      "1": "digit1",
+      "2": "digit2",
+      "3": "digit3",
+    },
+  });
+
   // Preload currency format
   useFormatCurrency();
   const modals = reactive({
@@ -131,12 +167,22 @@
     location: false,
     label: false,
     import: false,
+    outdated: displayOutdatedWarning.value,
+    quickMenu: false,
+  });
+
+  watch(displayOutdatedWarning, () => {
+    console.log("displayOutdatedWarning", displayOutdatedWarning.value);
+    if (displayOutdatedWarning.value) {
+      modals.outdated = true;
+    }
   });
 
   const dropdown = [
     {
       id: 0,
       name: computed(() => t("menu.create_item")),
+      shortcut: "Shift+1",
       action: () => {
         modals.item = true;
       },
@@ -144,6 +190,7 @@
     {
       id: 1,
       name: computed(() => t("menu.create_location")),
+      shortcut: "Shift+2",
       action: () => {
         modals.location = true;
       },
@@ -151,11 +198,23 @@
     {
       id: 2,
       name: computed(() => t("menu.create_label")),
+      shortcut: "Shift+3",
       action: () => {
         modals.label = true;
       },
     },
   ];
+
+  dropdown.forEach(option => {
+    if (option?.shortcut) {
+      const shortcutKeycode = option.shortcut.replace(/([0-9])/, "digit$&");
+      whenever(keys[shortcutKeycode], () => {
+        if (activeElement.value?.tagName !== "INPUT") {
+          option.action();
+        }
+      });
+    }
+  });
 
   const route = useRoute();
 
@@ -210,6 +269,51 @@
       to: "/tools",
     },
   ];
+
+  const quickMenuShortcut = keys.control_Backquote;
+  whenever(quickMenuShortcut, () => {
+    modals.quickMenu = true;
+    modals.item = false;
+    modals.location = false;
+    modals.label = false;
+    modals.import = false;
+  });
+
+  const quickMenuActions = reactive(
+    [
+      {
+        text: computed(() => `${t("global.create")}: ${t("menu.create_item")}`),
+        action: () => {
+          modals.item = true;
+        },
+        shortcut: "1",
+      },
+      {
+        text: computed(() => `${t("global.create")}: ${t("menu.create_location")}`),
+        action: () => {
+          modals.location = true;
+        },
+        shortcut: "2",
+      },
+      {
+        text: computed(() => `${t("global.create")}: ${t("menu.create_label")}`),
+        action: () => {
+          modals.label = true;
+        },
+        shortcut: "3",
+      },
+    ].concat(
+      nav.map(v => {
+        return {
+          text: computed(() => `${t("global.navigate")}: ${v.name.value}`),
+          action: () => {
+            navigateTo(v.to);
+          },
+          shortcut: "",
+        };
+      })
+    )
+  );
 
   const labelStore = useLabelStore();
 

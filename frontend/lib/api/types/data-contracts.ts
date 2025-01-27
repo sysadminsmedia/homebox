@@ -116,6 +116,7 @@ export interface ItemOut {
   /** Sold */
   soldTime: Date | string;
   soldTo: string;
+  syncChildItemsLocations: boolean;
   updatedAt: Date | string;
   warrantyDetails: string;
   warrantyExpires: Date | string;
@@ -192,6 +193,7 @@ export interface ItemUpdate {
   soldTime: Date | string;
   /** @maxLength 255 */
   soldTo: string;
+  syncChildItemsLocations: boolean;
   warrantyDetails: string;
   warrantyExpires: Date | string;
 }
@@ -390,6 +392,11 @@ export interface ValueOverTimeEntry {
   value: number;
 }
 
+export interface Latest {
+  date: Date | string;
+  version: string;
+}
+
 export interface UserRegistration {
   email: string;
   name: string;
@@ -402,6 +409,7 @@ export interface APISummary {
   build: Build;
   demo: boolean;
   health: boolean;
+  latest: Latest;
   message: string;
   title: string;
   versions: string[];
@@ -442,8 +450,10 @@ export interface ItemAttachmentToken {
 }
 
 export interface LoginForm {
+  /** @example "admin" */
   password: string;
   stayLoggedIn: boolean;
+  /** @example "admin@admin.com" */
   username: string;
 }
 

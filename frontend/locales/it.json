@@ -6,9 +6,22 @@
                 "description": "Importa un file CSV contenente gli articoli, le etichette e le posizioni. Vedi la documentazione per ulteriori informazioni sul \nformato richiesto.",
                 "title": "Importa File CSV",
                 "upload": "Carica"
+            },
+            "outdated": {
+                "current_version": "Versione corrente",
+                "dismiss": "Rifiuta",
+                "latest_version": "Ultima Versione",
+                "new_version_available": "Nuova versione disponibile",
+                "new_version_available_link": "Clicca qui per visualizzare le note di rilascio"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "documentazione",
+                "failed_to_copy": "Impossibile copiare il testo negli appunti",
+                "https_required": "perché è richiesto HTTPS",
+                "learn_more": "Troverai ulteriori informazioni in"
+            },
             "date_time": {
                 "ago": "{0} fa",
                 "days": "giorni",
@@ -79,6 +92,9 @@
             "tree": {
                 "no_locations": "Nessuna posizione disponibile. Aggiungi nuove posizioni mediante il pulsante\n`<`span class=\"link-primary\"`>`Crea`<`/span`>` nella barra di navigazione."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Utilizzare i tasti numerici per selezionare rapidamente un'azione."
         }
     },
     "global": {
@@ -101,6 +117,7 @@
         "locations": "Posizioni",
         "maintenance": "Manutenzione",
         "name": "Nome",
+        "navigate": "Naviga",
         "password": "Password",
         "read_docs": "Leggi la Documentazione",
         "save": "Salva",

@@ -9,6 +9,12 @@
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "documentación",
+                "failed_to_copy": "No se ha podido copiar el texto al portapapeles",
+                "https_required": "porque se requiere HTTPS",
+                "learn_more": "Obtener más información en nuestra"
+            },
             "date_time": {
                 "ago": "Hace {0}",
                 "days": "días",

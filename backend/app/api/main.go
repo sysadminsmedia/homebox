@@ -46,15 +46,15 @@ func build() string {
 	return fmt.Sprintf("%s, commit %s, built at %s", version, short, buildTime)
 }
 
-// @title                      Homebox API
-// @version                    1.0
-// @description                Track, Manage, and Organize your Things.
-// @contact.name               Don't
-// @BasePath                   /api
-// @securityDefinitions.apikey Bearer
-// @in                         header
-// @name                       Authorization
-// @description                "Type 'Bearer TOKEN' to correctly set the API Key"
+// @title						Homebox API
+// @version					1.0
+// @description				Track, Manage, and Organize your Things.
+// @contact.name				Don't
+// @BasePath					/api
+// @securityDefinitions.apikey	Bearer
+// @in							header
+// @name						Authorization
+// @description				"Type 'Bearer TOKEN' to correctly set the API Key"
 func main() {
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
 
@@ -253,6 +253,18 @@ func run(cfg *config.Config) error {
 			}
 		}
 	}))
+
+	if cfg.Options.GithubReleaseCheck {
+		runner.AddPlugin(NewTask("get-latest-github-release", time.Hour, func(ctx context.Context) {
+			log.Debug().Msg("running get latest github release")
+			err := app.services.BackgroundService.GetLatestGithubRelease(context.Background())
+			if err != nil {
+				log.Error().
+					Err(err).
+					Msg("failed to get latest github release")
+			}
+		}))
+	}
 
 	if cfg.Debug.Enabled {
 		runner.AddFunc("debug", func(ctx context.Context) error {

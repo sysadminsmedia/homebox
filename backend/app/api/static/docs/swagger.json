@@ -2250,6 +2250,9 @@
                 "soldTo": {
                     "type": "string"
                 },
+                "syncChildItemsLocations": {
+                    "type": "boolean"
+                },
                 "updatedAt": {
                     "type": "string"
                 },
@@ -2451,6 +2454,9 @@
                 "soldTo": {
                     "type": "string",
                     "maxLength": 255
+                },
+                "syncChildItemsLocations": {
+                    "type": "boolean"
                 },
                 "warrantyDetails": {
                     "type": "string"
@@ -2937,6 +2943,17 @@
                 }
             }
         },
+        "services.Latest": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
         "services.UserRegistration": {
             "type": "object",
             "properties": {
@@ -2968,6 +2985,9 @@
                 },
                 "health": {
                     "type": "boolean"
+                },
+                "latest": {
+                    "$ref": "#/definitions/services.Latest"
                 },
                 "message": {
                     "type": "string"

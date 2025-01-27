@@ -6,9 +6,22 @@
                 "description": "Importiere eine CSV-Datei, die deine Gegenstände, Etiketten und Standorte enthält. Schau in die Dokumentation für weitere Informationen\nzum erforderlichen Format.",
                 "title": "CSV-Datei importieren",
                 "upload": "Hochladen"
+            },
+            "outdated": {
+                "current_version": "Aktuelle Version",
+                "dismiss": "Verwerfen",
+                "latest_version": "Neuste Version",
+                "new_version_available": "Neue Version verfügbar",
+                "new_version_available_link": "Klicken Sie hier, um die Release Notes anzuzeigen"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "Dokumentation",
+                "failed_to_copy": "Text konnte nicht in die Zwischenablage kopiert werden",
+                "https_required": "weil https erforderlich ist",
+                "learn_more": "Erfahren Sie mehr in unserer"
+            },
             "date_time": {
                 "ago": "vor {0}",
                 "days": "Tagen",
@@ -97,7 +110,7 @@
         "github": "GitHub-Projekt",
         "items": "Gegenstände",
         "join_discord": "Discord beitreten",
-        "labels": "Etiketten",
+        "labels": "Kennzeichnung",
         "locations": "Lagerorte",
         "maintenance": "Wartung",
         "name": "Name",
@@ -165,7 +178,7 @@
         "next_page": "Nächste Seite",
         "no_results": "Keine Elemente gefunden",
         "notes": "Anmerkungen",
-        "options": "Optionen (Options)",
+        "options": "Optionen",
         "order_by": "Sortieren nach",
         "pages": "Seite { page } von { totalPages }",
         "parent_item": "Übergeordnetes Element",
@@ -223,7 +236,7 @@
         "zh-CN": "Chinesisch (einfach)",
         "zh-HK": "Chinesisch (Hong Kong)",
         "zh-MO": "Chinesisch (Macao)",
-        "zh-TW": "Chinesisch (Traditionell)"
+        "zh-TW": "Chinesisch (traditionell)"
     },
     "languages.da-DK": "Dänisch",
     "languages.fi.FI": "Finnisch",
@@ -342,7 +355,7 @@
             "asset_labels": "Asset-ID-Labels",
             "asset_labels_button": "Etiketten-Generator",
             "asset_labels_sub": "Erzeugt eine druckbare PDF-Datei mit Etiketten für eine Reihe von Asset-IDs. Diese sind nicht spezifisch für deine Inventargegenstände, so dass du die Etiketten im Voraus ausdrucken und bei Erhalt auf deinen Inventargegenständen anbringen kannst.",
-            "bill_of_materials": "Stückliste",
+            "bill_of_materials": "Stücklisten",
             "bill_of_materials_button": "Stückliste generieren",
             "bill_of_materials_sub": "Generiert eine CSV-Datei (Comma Separated Values), die in ein Tabellenkalkulationsprogramm importiert werden kann. Diese ist eine Zusammenfasung ihres Inventars mit einfachen Elementen- und Preisinformationen."
         },

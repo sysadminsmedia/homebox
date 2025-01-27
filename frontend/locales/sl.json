@@ -6,9 +6,22 @@
                 "description": "Uvozite datoteko CSV, ki vsebuje vaše predmete, oznake in lokacije. Poglejte si dokumentacijo za več informacij o\nzahtevani obliki.",
                 "title": "Uvozi CSV datoteko",
                 "upload": "Naloži"
+            },
+            "outdated": {
+                "current_version": "Trenutna različica",
+                "dismiss": "Opusti",
+                "latest_version": "Najnovejša različica:",
+                "new_version_available": "Nova različica je na voljo",
+                "new_version_available_link": "Kliknite tukaj za ogled opomb ob izdaji"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "dokumentacija",
+                "failed_to_copy": "Kopiranje v odložišče ni uspelo",
+                "https_required": "ker je potreben https",
+                "learn_more": "Več o tem v"
+            },
             "date_time": {
                 "ago": "pred {0}",
                 "days": "dni",
@@ -118,7 +131,7 @@
         "recently_added": "Nedavno dodano",
         "storage_locations": "Lokacije shramb",
         "total_items": "Predmetov skupaj",
-        "total_labels": "Skupaj nalepk",
+        "total_labels": "Skupaj oznak",
         "total_locations": "Skupaj lokacij",
         "total_value": "Skupna vrednost"
     },

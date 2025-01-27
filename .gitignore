@@ -33,7 +33,7 @@ go.work
 backend/.env
 build/*
 
-# Output Directory for Nuxt/Frontend during build step
+# Output Directory for Nuxt/Frontend during build steps
 backend/app/api/public/*
 !backend/app/api/public/.gitkeep
 

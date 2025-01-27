@@ -6,14 +6,28 @@
                 "description": "导入包含物品、标签和位置的CSV文件。更多有关信息，\n请参阅文档查看所需格式。",
                 "title": "导入 CSV 文件",
                 "upload": "上传"
+            },
+            "outdated": {
+                "current_version": "当前版本",
+                "dismiss": "不再提醒",
+                "latest_version": "最新版本",
+                "new_version_available": "有新版本发布了",
+                "new_version_available_link": "点击这里了解新版本更新内容"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "用户手册",
+                "failed_to_copy": "复制失败",
+                "https_required": "请在HTTPS环境下使用",
+                "learn_more": "如果想要了解详情，请访问我们的"
+            },
             "date_time": {
                 "ago": "{0} 之前",
                 "days": "天",
                 "hour": "小时",
                 "hours": "小时",
+                "in": "{0}以内",
                 "just-now": "现在",
                 "last-month": "上个月",
                 "last-week": "上周",
@@ -78,6 +92,9 @@
             "tree": {
                 "no_locations": "没有可用的位置。请添加新的位置\n `<`span class=\"link-primary\"`>`创建`<`/span`>` 按钮在导航栏上"
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "使用数字键快速选择一个操作。"
         }
     },
     "global": {
@@ -100,6 +117,7 @@
         "locations": "位置",
         "maintenance": "维护",
         "name": "名称",
+        "navigate": "导航",
         "password": "密码",
         "read_docs": "查阅文档",
         "save": "保存",
@@ -155,6 +173,8 @@
         "last": "最后一页",
         "lifetime_warranty": "包含终身保修",
         "location": "位置",
+        "manual": "说明书",
+        "manuals": "说明书",
         "manufacturer": "制造商",
         "model_number": "型号",
         "name": "名称",
@@ -175,6 +195,8 @@
         "purchased_from": "购买地址",
         "quantity": "数量",
         "query_id": "查询资产ID： {id}",
+        "receipt": "单据",
+        "receipts": "单据",
         "reset_search": "重置搜索",
         "results": "{ total } 条结果",
         "serial_number": "序列号",

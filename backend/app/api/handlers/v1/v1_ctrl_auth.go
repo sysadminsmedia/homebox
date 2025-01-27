@@ -28,8 +28,8 @@ type (
 	}
 
 	LoginForm struct {
-		Username     string `json:"username" example:"admin@admin.com"`
-		Password     string `json:"password" example:"admin"`
+		Username     string `json:"username"     example:"admin@admin.com"`
+		Password     string `json:"password"     example:"admin"`
 		StayLoggedIn bool   `json:"stayLoggedIn"`
 	}
 )
@@ -129,11 +129,11 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 
 // HandleAuthLogout godoc
 //
-//	@Summary  User Logout
-//	@Tags     Authentication
-//	@Success  204
-//	@Router   /v1/users/logout [POST]
-//	@Security Bearer
+//	@Summary	User Logout
+//	@Tags		Authentication
+//	@Success	204
+//	@Router		/v1/users/logout [POST]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleAuthLogout() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		token := services.UseTokenCtx(r.Context())
@@ -153,13 +153,13 @@ func (ctrl *V1Controller) HandleAuthLogout() errchain.HandlerFunc {
 
 // HandleAuthRefresh godoc
 //
-//	@Summary     User Token Refresh
-//	@Description handleAuthRefresh returns a handler that will issue a new token from an existing token.
-//	@Description This does not validate that the user still exists within the database.
-//	@Tags        Authentication
-//	@Success     200
-//	@Router      /v1/users/refresh [GET]
-//	@Security    Bearer
+//	@Summary		User Token Refresh
+//	@Description	handleAuthRefresh returns a handler that will issue a new token from an existing token.
+//	@Description	This does not validate that the user still exists within the database.
+//	@Tags			Authentication
+//	@Success		200
+//	@Router			/v1/users/refresh [GET]
+//	@Security		Bearer
 func (ctrl *V1Controller) HandleAuthRefresh() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		requestToken := services.UseTokenCtx(r.Context())
