@@ -28,8 +28,8 @@ type (
 	}
 
 	LoginForm struct {
-		Username     string `json:"username" example:"admin@admin.com"`
-		Password     string `json:"password" example:"admin"`
+		Username     string `json:"username"     example:"admin@admin.com"`
+		Password     string `json:"password"     example:"admin"`
 		StayLoggedIn bool   `json:"stayLoggedIn"`
 	}
 )

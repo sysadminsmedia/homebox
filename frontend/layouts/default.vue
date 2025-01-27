@@ -49,7 +49,7 @@
                 <button>
                   {{ btn.name.value }}
 
-                  <kbd v-if="btn.shortcut" class="ml-auto text-neutral-400">{{ btn.shortcut }}</kbd>
+                  <kbd v-if="btn.shortcut" class="kbd kbd-sm ml-auto hidden text-neutral-400 group-hover:inline">{{ btn.shortcut.replaceAll("Shift+", "⇧") }}</kbd>
                 </button>
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -179,11 +179,16 @@
   const isOutdated = computed(() => current.value && latest.value && lt(current.value, latest.value));
   const hasHiddenLatest = computed(() => localStorage.getItem("latestVersion") === latest.value);
 
-  const displayOutdatedWarning = computed(() => !isDev.value && !hasHiddenLatest.value && isOutdated.value);
+  const displayOutdatedWarning = computed(() => Boolean(!isDev.value && !hasHiddenLatest.value && isOutdated.value));
 
+  const activeElement = useActiveElement();
   const keys = useMagicKeys({
     aliasMap: {
       "⌃": "control_",
+      "Shift+": "ShiftLeft_",
+      "1": "digit1",
+      "2": "digit2",
+      "3": "digit3",
     },
   });
 
@@ -209,7 +214,7 @@
     {
       id: 0,
       name: computed(() => t("menu.create_item")),
-      shortcut: "⌃1",
+      shortcut: "Shift+1",
       action: () => {
         modals.item = true;
       },
@@ -217,7 +222,7 @@
     {
       id: 1,
       name: computed(() => t("menu.create_location")),
-      shortcut: "⌃2",
+      shortcut: "Shift+2",
       action: () => {
         modals.location = true;
       },
@@ -225,7 +230,7 @@
     {
       id: 2,
       name: computed(() => t("menu.create_label")),
-      shortcut: "⌃3",
+      shortcut: "Shift+3",
       action: () => {
         modals.label = true;
       },
@@ -233,9 +238,12 @@
   ];
 
   dropdown.forEach(option => {
-    if (option.shortcut) {
-      whenever(keys[option.shortcut], () => {
-        option.action();
+    if (option?.shortcut) {
+      const shortcutKeycode = option.shortcut.replace(/([0-9])/, "digit$&");
+      whenever(keys[shortcutKeycode], () => {
+        if (activeElement.value?.tagName !== "INPUT") {
+          option.action();
+        }
       });
     }
   });
@@ -303,7 +311,7 @@
     modals.import = false;
   });
 
-  const quickMenuActions = ref(
+  const quickMenuActions = reactive(
     [
       {
         text: computed(() => `${t("global.create")}: ${t("menu.create_item")}`),
