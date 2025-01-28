@@ -5,17 +5,17 @@
 @layer base {
   :root,homebox {
     /* TODO: finish converting the themes */
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 0 0% 100%; /* base 100 */
+    --foreground: 0 0% 20%; /* base content */
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 0 0% 81%; /* base 300 */
+    --muted-foreground: 0 0% 20%; /* base content */
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%; /* base 100 */
+    --popover-foreground: 0 0% 20%; /* base content */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%; /* base 100 */
+    --card-foreground: 0 0% 20%; /* base content */
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;

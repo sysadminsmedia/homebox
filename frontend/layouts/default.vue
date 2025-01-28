@@ -24,7 +24,6 @@
           <DropdownMenu>
             <TooltipProvider :delay-duration="0">
               <Tooltip>
-                <!--TODO: change tooltip to be shadcn -->
                 <DropdownMenuTrigger as-child>
                   <TooltipTrigger as-child>
                     <SidebarMenuButton
@@ -250,13 +249,6 @@
   });
 
   const route = useRoute();
-
-  // const drawerToggle = ref();
-
-  // function unfocus() {
-  //   // unfocus current element
-  //   drawerToggle.value = false;
-  // }
 
   const nav = [
     {
