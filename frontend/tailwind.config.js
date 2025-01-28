@@ -1,5 +1,5 @@
-import dotenv from "dotenv";
-dotenv.config();
+import { config } from "dotenv";
+config();
 
 // check if DISABLE_DAISYUI is set to true in the environment
 const isDisabled = process.env.DISABLE_DAISYUI === "true";
@@ -11,7 +11,41 @@ if (isDisabled) {
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
-  safelist: ["dark", "theme-aqua", "theme-black", "theme-bumblebee", "theme-cmyk", "theme-corporate", "theme-cupcake", "theme-cyberpunk", "theme-dark", "theme-dracula", "theme-emerald", "theme-fantasy", "theme-forest", "theme-garden", "theme-halloween", "theme-light", "theme-lofi", "theme-luxury", "theme-pastel", "theme-retro", "theme-synthwave", "theme-valentine", "theme-wireframe", "theme-autumn", "theme-business", "theme-acid", "theme-lemonade", "theme-night", "theme-coffee", "theme-winter", "theme-dim", "theme-nord", "theme-sunset"],
+  safelist: [
+    "dark",
+    "theme-aqua",
+    "theme-black",
+    "theme-bumblebee",
+    "theme-cmyk",
+    "theme-corporate",
+    "theme-cupcake",
+    "theme-cyberpunk",
+    "theme-dark",
+    "theme-dracula",
+    "theme-emerald",
+    "theme-fantasy",
+    "theme-forest",
+    "theme-garden",
+    "theme-halloween",
+    "theme-light",
+    "theme-lofi",
+    "theme-luxury",
+    "theme-pastel",
+    "theme-retro",
+    "theme-synthwave",
+    "theme-valentine",
+    "theme-wireframe",
+    "theme-autumn",
+    "theme-business",
+    "theme-acid",
+    "theme-lemonade",
+    "theme-night",
+    "theme-coffee",
+    "theme-winter",
+    "theme-dim",
+    "theme-nord",
+    "theme-sunset",
+  ],
   prefix: "",
 
   theme: {

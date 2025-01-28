@@ -55,6 +55,10 @@
               <SidebarMenuItem v-for="n in nav" :key="n.id">
                 <SidebarMenuLink
                   :href="n.to"
+                  :class="{
+                    'bg-secondary text-secondary-foreground': n.active?.value,
+                    'text-nowrap': typeof locale === 'string' && locale.startsWith('zh-'),
+                  }"
                   class="hover:bg-accent hover:text-accent-foreground"
                   :tooltip="n.name.value"
                 >
@@ -153,7 +157,7 @@
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu";
 
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
 
   const preferences = useViewPreferences();

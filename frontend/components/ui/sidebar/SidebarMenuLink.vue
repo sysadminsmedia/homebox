@@ -1,5 +1,4 @@
 <script setup lang="ts">
-  import { useRouter } from "vue-router";
   import { useSidebar } from "./utils";
   import SidebarMenuButton from "./SidebarMenuButton.vue";
 
