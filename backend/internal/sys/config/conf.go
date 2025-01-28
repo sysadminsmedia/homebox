@@ -18,14 +18,15 @@ const (
 
 type Config struct {
 	conf.Version
-	Mode    string     `yaml:"mode"    conf:"default:development"` // development or production
-	Web     WebConfig  `yaml:"web"`
-	Storage Storage    `yaml:"storage"`
-	Log     LoggerConf `yaml:"logger"`
-	Mailer  MailerConf `yaml:"mailer"`
-	Demo    bool       `yaml:"demo"`
-	Debug   DebugConf  `yaml:"debug"`
-	Options Options    `yaml:"options"`
+	Mode       string         `yaml:"mode"    conf:"default:development"` // development or production
+	Web        WebConfig      `yaml:"web"`
+	Storage    Storage        `yaml:"storage"`
+	Log        LoggerConf     `yaml:"logger"`
+	Mailer     MailerConf     `yaml:"mailer"`
+	Demo       bool           `yaml:"demo"`
+	Debug      DebugConf      `yaml:"debug"`
+	Options    Options        `yaml:"options"`
+	LabelMaker LabelMakerConf `yaml:"labelmaker"`
 }
 
 type Options struct {
@@ -47,6 +48,14 @@ type WebConfig struct {
 	ReadTimeout   time.Duration `yaml:"read_timeout"    conf:"default:10s"`
 	WriteTimeout  time.Duration `yaml:"write_timeout"   conf:"default:10s"`
 	IdleTimeout   time.Duration `yaml:"idle_timeout"    conf:"default:30s"`
+}
+
+type LabelMakerConf struct {
+	Width        int64   `yaml:"width"     conf:"default:526"`
+	Height       int64   `yaml:"height"    conf:"default:200"`
+	Padding      int64   `yaml:"padding"   conf:"default:8"`
+	FontSize     float64 `yaml:"font_size" conf:"default:32.0"`
+	PrintCommand *string `yaml:"string"`
 }
 
 // New parses the CLI/Config file and returns a Config struct. If the file argument is an empty string, the
