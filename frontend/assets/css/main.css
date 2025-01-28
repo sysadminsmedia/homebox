@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 @layer base {
-  :root,homebox {
+  :root,.homebox {
     /* TODO: finish converting the themes */
     --background: 0 0% 100%; /* base 100 */
     --foreground: 0 0% 20%; /* base content */
