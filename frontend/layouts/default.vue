@@ -25,7 +25,6 @@
             <DropdownMenuTrigger as-child>
               <SidebarMenuButton
                 class="flex justify-center bg-primary text-primary-foreground shadow hover:bg-primary/90 group-data-[collapsible=icon]:justify-start"
-                data-tip="Shortcut: Ctrl+`"
                 :tooltip="$t('global.create')"
                 hotkey="Shortcut: Ctrl+`"
               >
