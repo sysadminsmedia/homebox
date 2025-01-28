@@ -35,15 +35,17 @@
                 </span>
               </SidebarMenuButton>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem v-for="btn in dropdown" :key="btn.id" @click="btn.action">
-                <button>
-                  {{ btn.name.value }}
-
-                  <kbd v-if="btn.shortcut" class="kbd kbd-sm ml-auto hidden text-neutral-400 group-hover:inline">{{
-                    btn.shortcut.replaceAll("Shift+", "⇧")
-                  }}</kbd>
-                </button>
+            <DropdownMenuContent class="min-w-[var(--radix-dropdown-menu-trigger-width)]">
+              <DropdownMenuItem
+                v-for="btn in dropdown"
+                :key="btn.id"
+                class="group cursor-pointer text-lg"
+                @click="btn.action"
+              >
+                {{ btn.name.value }}
+                <kbd v-if="btn.shortcut" class="kbd kbd-sm ml-auto hidden text-primary group-hover:inline">{{
+                  btn.shortcut.replaceAll("Shift+", "⇧")
+                }}</kbd>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
