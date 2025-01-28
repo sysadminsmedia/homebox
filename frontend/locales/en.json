@@ -51,6 +51,13 @@
             },
             "password_score": {
                 "password_strength": "Password Strength"
+            },
+            "label_maker": {
+                "titles": "Labels",
+                "print": "Print Label",
+                "download": "Download Label",
+                "confirm_description": "Are you sure you want to print this label?"
+
             }
         },
         "item": {
