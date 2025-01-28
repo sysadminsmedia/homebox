@@ -59,7 +59,7 @@
   */
 
   
-  .aqua {
+  .theme-aqua {
     --border: 219 11% 89%;
     --input: 219 11% 89%;
     --ring: 219 11% 89%;
@@ -81,7 +81,7 @@
     --card-foreground: 219 11% 89%;
     --radius: 0.5rem;
   }
-  .black {
+  .theme-black {
     --border: 224 0% 84%;
     --input: 224 0% 84%;
     --ring: 224 0% 84%;
@@ -103,7 +103,7 @@
     --card-foreground: 224 0% 84%;
     --radius: 0;
   }
-  .bumblebee {
+  .theme-bumblebee {
     --border: 224 -35% 20%;
     --input: 224 -35% 20%;
     --ring: 224 -35% 20%;
@@ -125,7 +125,7 @@
     --card-foreground: 224 -35% 20%;
     --radius: 0.5rem;
   }
-  .cmyk {
+  .theme-cmyk {
     --border: 224 -35% 20%;
     --input: 224 -35% 20%;
     --ring: 224 -35% 20%;
@@ -147,7 +147,7 @@
     --card-foreground: 224 -35% 20%;
     --radius: 0.5rem;
   }
-  .corporate {
+  .theme-corporate {
     --border: 233 27% 13%;
     --input: 233 27% 13%;
     --ring: 233 27% 13%;
@@ -169,7 +169,7 @@
     --card-foreground: 233 27% 13%;
     --radius: 0.125rem;
   }
-  .cupcake {
+  .theme-cupcake {
     --border: 280 46% 14%;
     --input: 280 46% 14%;
     --ring: 280 46% 14%;
@@ -191,7 +191,7 @@
     --card-foreground: 280 46% 14%;
     --radius: 1.9rem;
   }
-  .cyberpunk {
+  .theme-cyberpunk {
     --border: 55 20% 13%;
     --input: 55 20% 13%;
     --ring: 55 20% 13%;
@@ -213,7 +213,7 @@
     --card-foreground: 55 20% 13%;
     --radius: 0;
   }
-  .dark {
+  .theme-dark {
     --border: 220 13% 69%;
     --input: 220 13% 69%;
     --ring: 220 13% 69%;
@@ -235,7 +235,7 @@
     --card-foreground: 220 13% 69%;
     --radius: 0.5rem;
   }
-  .dracula {
+  .theme-dracula {
     --border: 60 30% 96%;
     --input: 60 30% 96%;
     --ring: 60 30% 96%;
@@ -257,7 +257,7 @@
     --card-foreground: 60 30% 96%;
     --radius: 0.5rem;
   }
-  .emerald {
+  .theme-emerald {
     --border: 219 20% 25%;
     --input: 219 20% 25%;
     --ring: 219 20% 25%;
@@ -279,7 +279,7 @@
     --card-foreground: 219 20% 25%;
     --radius: 0.5rem;
   }
-  .fantasy {
+  .theme-fantasy {
     --border: 215 28% 17%;
     --input: 215 28% 17%;
     --ring: 215 28% 17%;
@@ -301,7 +301,7 @@
     --card-foreground: 215 28% 17%;
     --radius: 0.5rem;
   }
-  .forest {
+  .theme-forest {
     --border: 0 2% 82%;
     --input: 0 2% 82%;
     --ring: 0 2% 82%;
@@ -323,7 +323,7 @@
     --card-foreground: 0 2% 82%;
     --radius: 1.9rem;
   }
-  .garden {
+  .theme-garden {
     --border: 0 3% 6%;
     --input: 0 3% 6%;
     --ring: 0 3% 6%;
@@ -345,7 +345,7 @@
     --card-foreground: 0 3% 6%;
     --radius: 0.5rem;
   }
-  .halloween {
+  .theme-halloween {
     --border: 0 0% 83%;
     --input: 0 0% 83%;
     --ring: 0 0% 83%;
@@ -367,7 +367,7 @@
     --card-foreground: 0 0% 83%;
     --radius: 0.5rem;
   }
-  .light {
+  .theme-light {
     --border: 215 28% 17%;
     --input: 215 28% 17%;
     --ring: 215 28% 17%;
@@ -389,7 +389,7 @@
     --card-foreground: 215 28% 17%;
     --radius: 0.5rem;
   }
-  .lofi {
+  .theme-lofi {
     --border: 0 0% 0%;
     --input: 0 0% 0%;
     --ring: 0 0% 0%;
@@ -411,7 +411,7 @@
     --card-foreground: 0 0% 0%;
     --radius: 0.125rem;
   }
-  .luxury {
+  .theme-luxury {
     --border: 37 67% 58%;
     --input: 37 67% 58%;
     --ring: 37 67% 58%;
@@ -433,7 +433,7 @@
     --card-foreground: 37 67% 58%;
     --radius: 0.5rem;
   }
-  .pastel {
+  .theme-pastel {
     --border: 224 -35% 20%;
     --input: 224 -35% 20%;
     --ring: 224 -35% 20%;
@@ -455,7 +455,7 @@
     --card-foreground: 224 -35% 20%;
     --radius: 1.9rem;
   }
-  .retro {
+  .theme-retro {
     --border: 345 5% 15%;
     --input: 345 5% 15%;
     --ring: 345 5% 15%;
@@ -477,7 +477,7 @@
     --card-foreground: 345 5% 15%;
     --radius: 0.4rem;
   }
-  .synthwave {
+  .theme-synthwave {
     --border: 260 60% 98%;
     --input: 260 60% 98%;
     --ring: 260 60% 98%;
@@ -499,7 +499,7 @@
     --card-foreground: 260 60% 98%;
     --radius: 0.5rem;
   }
-  .valentine {
+  .theme-valentine {
     --border: 344 38% 28%;
     --input: 344 38% 28%;
     --ring: 344 38% 28%;
@@ -521,7 +521,7 @@
     --card-foreground: 344 38% 28%;
     --radius: 1.9rem;
   }
-  .wireframe {
+  .theme-wireframe {
     --border: 224 -35% 20%;
     --input: 224 -35% 20%;
     --ring: 224 -35% 20%;
@@ -543,7 +543,7 @@
     --card-foreground: 224 -35% 20%;
     --radius: 0.2rem;
   }
-  .autumn {
+  .theme-autumn {
     --border: 0 0% 19%;
     --input: 0 0% 19%;
     --ring: 0 0% 19%;
@@ -565,7 +565,7 @@
     --card-foreground: 0 0% 19%;
     --radius: 0.5rem;
   }
-  .business {
+  .theme-business {
     --border: 0 0% 83%;
     --input: 0 0% 83%;
     --ring: 0 0% 83%;
@@ -587,7 +587,7 @@
     --card-foreground: 0 0% 83%;
     --radius: 0.125rem;
   }
-  .acid {
+  .theme-acid {
     --border: 0 0% 20%;
     --input: 0 0% 20%;
     --ring: 0 0% 20%;
@@ -609,7 +609,7 @@
     --card-foreground: 0 0% 20%;
     --radius: 1rem;
   }
-  .lemonade {
+  .theme-lemonade {
     --border: 83 16% 19%;
     --input: 83 16% 19%;
     --ring: 83 16% 19%;
@@ -631,7 +631,7 @@
     --card-foreground: 83 16% 19%;
     --radius: 0.5rem;
   }
-  .night {
+  .theme-night {
     --border: 222 9% 82%;
     --input: 222 9% 82%;
     --ring: 222 9% 82%;
@@ -653,7 +653,7 @@
     --card-foreground: 222 9% 82%;
     --radius: 0.5rem;
   }
-  .coffee {
+  .theme-coffee {
     --border: 37 47% 57%;
     --input: 37 47% 57%;
     --ring: 37 47% 57%;
@@ -675,7 +675,7 @@
     --card-foreground: 37 47% 57%;
     --radius: 0.5rem;
   }
-  .winter {
+  .theme-winter {
     --border: 214 30% 32%;
     --input: 214 30% 32%;
     --ring: 214 30% 32%;
@@ -697,7 +697,7 @@
     --card-foreground: 214 30% 32%;
     --radius: 0.5rem;
   }
-  .dim {
+  .theme-dim {
     --border: 197 31% 77%;
     --input: 197 31% 77%;
     --ring: 197 31% 77%;
@@ -719,7 +719,7 @@
     --card-foreground: 197 31% 77%;
     --radius: 0.5rem;
   }
-  .nord {
+  .theme-nord {
     --border: 220 16% 22%;
     --input: 220 16% 22%;
     --ring: 220 16% 22%;
@@ -741,7 +741,7 @@
     --card-foreground: 220 16% 22%;
     --radius: 0.2rem;
   }
-  .sunset {
+  .theme-sunset {
     --border: 208 34% 72%;
     --input: 208 34% 72%;
     --ring: 208 34% 72%;
