@@ -56,16 +56,18 @@ func (ctrl *V1Controller) HandleItemsGetAll() errchain.HandlerFunc {
 		}
 
 		v := repo.ItemQuery{
-			Page:            queryIntOrNegativeOne(params.Get("page")),
-			PageSize:        queryIntOrNegativeOne(params.Get("pageSize")),
-			Search:          params.Get("q"),
-			LocationIDs:     queryUUIDList(params, "locations"),
-			LabelIDs:        queryUUIDList(params, "labels"),
-			NegateLabels:    queryBool(params.Get("negateLabels")),
-			ParentItemIDs:   queryUUIDList(params, "parentIds"),
-			IncludeArchived: queryBool(params.Get("includeArchived")),
-			Fields:          filterFieldItems(params["fields"]),
-			OrderBy:         params.Get("orderBy"),
+			Page:             queryIntOrNegativeOne(params.Get("page")),
+			PageSize:         queryIntOrNegativeOne(params.Get("pageSize")),
+			Search:           params.Get("q"),
+			LocationIDs:      queryUUIDList(params, "locations"),
+			LabelIDs:         queryUUIDList(params, "labels"),
+			NegateLabels:     queryBool(params.Get("negateLabels")),
+			OnlyWithoutPhoto: queryBool(params.Get("onlyWithoutPhoto")),
+			OnlyWithPhoto:    queryBool(params.Get("onlyWithPhoto")),
+			ParentItemIDs:    queryUUIDList(params, "parentIds"),
+			IncludeArchived:  queryBool(params.Get("includeArchived")),
+			Fields:           filterFieldItems(params["fields"]),
+			OrderBy:          params.Get("orderBy"),
 		}
 
 		if strings.HasPrefix(v.Search, "#") {
