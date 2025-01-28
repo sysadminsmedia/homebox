@@ -18,7 +18,7 @@ export function useTheme(): UseTheme {
     if (htmlEl) {
       htmlEl.value?.setAttribute("data-theme", newTheme);
       // FIXME: this is a hack to remove the theme class from the html element
-      htmlEl.value?.classList.remove(...(htmlEl.value.classList.values().toArray() as string[]));
+      htmlEl.value?.classList.remove(...themes);
       htmlEl.value?.classList.add("theme-" + newTheme);
     }
 
@@ -65,3 +65,39 @@ export function useIsDark() {
     return darkthemes.includes(theme.theme.value);
   });
 }
+
+export const themes = [
+  "dark",
+  "theme-aqua",
+  "theme-black",
+  "theme-bumblebee",
+  "theme-cmyk",
+  "theme-corporate",
+  "theme-cupcake",
+  "theme-cyberpunk",
+  "theme-dark",
+  "theme-dracula",
+  "theme-emerald",
+  "theme-fantasy",
+  "theme-forest",
+  "theme-garden",
+  "theme-halloween",
+  "theme-light",
+  "theme-lofi",
+  "theme-luxury",
+  "theme-pastel",
+  "theme-retro",
+  "theme-synthwave",
+  "theme-valentine",
+  "theme-wireframe",
+  "theme-autumn",
+  "theme-business",
+  "theme-acid",
+  "theme-lemonade",
+  "theme-night",
+  "theme-coffee",
+  "theme-winter",
+  "theme-dim",
+  "theme-nord",
+  "theme-sunset",
+];

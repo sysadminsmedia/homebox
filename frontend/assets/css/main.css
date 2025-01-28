@@ -4,7 +4,6 @@
 
 @layer base {
   :root,.homebox {
-    /* TODO: finish converting the themes */
     --background: 0 0% 100%; /* base 100 */
     --foreground: 0 0% 20%; /* base content */
 
@@ -26,8 +25,8 @@
     --secondary: 97 37% 93%;                /* secondary */
     --secondary-foreground: 97 31% 19%;     /* secondary text */
 
-    --accent: 77 8% 17%;                    /* neutral */
-    --accent-foreground: 76 18% 83%;        /* neutral text */
+    --accent: 47 100% 67%;                    /* accent */
+    --accent-foreground: 47 100% 13%;        /* accent text */
 
     --destructive: 0 84.2% 60.2%;           /* error */
     --destructive-foreground: 210 40% 98%;  /* error text */
@@ -38,7 +37,6 @@
 
 
 
-    /* TODO: make background darker/lighter? */
     --sidebar-background: var(--background);
     --sidebar-foreground: var(--foreground);
     --sidebar-primary: var(--primary);
