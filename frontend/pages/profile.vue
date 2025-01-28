@@ -481,8 +481,8 @@
           <div class="homebox rounded-box grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             <div
               v-for="theme in themes"
-              :class="theme.value"
               :key="theme.value"
+              :class="theme.value"
               class="overflow-hidden rounded-lg border border-base-content/20 outline-2 outline-offset-2 outline-base-content hover:border-base-content/40"
               :data-theme="theme.value"
               :data-set-theme="theme.value"

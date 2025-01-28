@@ -22,33 +22,27 @@
             </div>
           </NuxtLink>
           <DropdownMenu>
-            <TooltipProvider :delay-duration="0">
-              <Tooltip>
-                <DropdownMenuTrigger as-child>
-                  <TooltipTrigger as-child>
-                    <SidebarMenuButton
-                      class="flex justify-center bg-primary text-primary-foreground shadow hover:bg-primary/90 group-data-[collapsible=icon]:justify-start"
-                      data-tip="Shortcut: Ctrl+`"
-                      :tooltip="$t('global.create')"
-                    >
-                      <MdiPlus />
-                      <span>
-                        {{ $t("global.create") }}
-                      </span>
-                    </SidebarMenuButton>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Shortcut: Ctrl+`</p>
-                  </TooltipContent>
-                </DropdownMenuTrigger>
-              </Tooltip>
-            </TooltipProvider>
+            <DropdownMenuTrigger as-child>
+              <SidebarMenuButton
+                class="flex justify-center bg-primary text-primary-foreground shadow hover:bg-primary/90 group-data-[collapsible=icon]:justify-start"
+                data-tip="Shortcut: Ctrl+`"
+                :tooltip="$t('global.create')"
+                hotkey="Shortcut: Ctrl+`"
+              >
+                <MdiPlus />
+                <span>
+                  {{ $t("global.create") }}
+                </span>
+              </SidebarMenuButton>
+            </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem v-for="btn in dropdown" :key="btn.id" @click="btn.action">
                 <button>
                   {{ btn.name.value }}
 
-                  <kbd v-if="btn.shortcut" class="kbd kbd-sm ml-auto hidden text-neutral-400 group-hover:inline">{{ btn.shortcut.replaceAll("Shift+", "⇧") }}</kbd>
+                  <kbd v-if="btn.shortcut" class="kbd kbd-sm ml-auto hidden text-neutral-400 group-hover:inline">{{
+                    btn.shortcut.replaceAll("Shift+", "⇧")
+                  }}</kbd>
                 </button>
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -75,8 +69,8 @@
         <SidebarFooter class="bg-base-200">
           <SidebarMenuButton
             class="flex justify-center bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 group-data-[collapsible=icon]:justify-start"
-            @click="logout"
             :tooltip="$t('global.sign_out')"
+            @click="logout"
           >
             <MdiLogout />
             <span>
@@ -158,7 +152,6 @@
     DropdownMenuItem,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu";
-  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
   const { t } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");

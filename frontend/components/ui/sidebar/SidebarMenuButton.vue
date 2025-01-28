@@ -12,6 +12,7 @@
     defineProps<
       SidebarMenuButtonProps & {
         tooltip?: string | Component;
+        hotkey?: string;
       }
     >(),
     {
@@ -24,7 +25,7 @@
   const { isMobile, state } = useSidebar();
 
   const delegatedProps = computed(() => {
-    const { tooltip, ...delegated } = props;
+    const { tooltip, hotkey, ...delegated } = props;
     return delegated;
   });
 </script>
@@ -45,6 +46,9 @@
         {{ tooltip }}
       </template>
       <component :is="tooltip" v-else />
+    </TooltipContent>
+    <TooltipContent v-if="hotkey" :hidden="isMobile">
+      {{ hotkey }}
     </TooltipContent>
   </Tooltip>
 </template>
