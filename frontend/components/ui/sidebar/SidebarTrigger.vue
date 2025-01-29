@@ -14,7 +14,7 @@
 </script>
 
 <template>
-  <Button data-sidebar="trigger" :variant="props.variant ?? 'ghost'" size="icon" :class="cn('h-7 w-7', props.class)" @click="toggleSidebar">
+  <Button data-sidebar="trigger" :variant="props.variant ?? 'ghost'" size="icon" :class="cn('size-9 [&_svg]:size-6', props.class)" @click="toggleSidebar">
     <MdiMenu class="text-primary-foreground" />
     <span class="sr-only">Toggle Sidebar</span>
   </Button>
