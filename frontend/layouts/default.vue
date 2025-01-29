@@ -59,8 +59,8 @@
                   :class="{
                     'bg-secondary text-secondary-foreground': n.active?.value,
                     'text-nowrap': typeof locale === 'string' && locale.startsWith('zh-'),
+                    'hover:bg-base-300': !n.active?.value,
                   }"
-                  class="hover:bg-accent hover:text-accent-foreground"
                   :tooltip="n.name.value"
                 >
                   <component :is="n.icon" />
@@ -73,7 +73,7 @@
 
         <SidebarFooter class="bg-base-200">
           <SidebarMenuButton
-            class="flex justify-center bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90 group-data-[collapsible=icon]:justify-start"
+            class="flex justify-center hover:bg-base-300 group-data-[collapsible=icon]:justify-start group-data-[collapsible=icon]:bg-destructive group-data-[collapsible=icon]:text-destructive-foreground group-data-[collapsible=icon]:shadow-sm group-data-[collapsible=icon]:hover:bg-destructive/90"
             :tooltip="$t('global.sign_out')"
             @click="logout"
           >
