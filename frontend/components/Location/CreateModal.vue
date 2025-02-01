@@ -2,6 +2,7 @@
   <BaseModal v-model="modal">
     <template #title>{{ $t("components.location.create_modal.title") }}</template>
     <form @submit.prevent="create()">
+      <LocationSelector v-model="form.parent" />
       <FormTextField
         ref="locationNameRef"
         v-model="form.name"
@@ -17,7 +18,6 @@
         :label="$t('components.location.create_modal.location_description')"
         :max-length="1000"
       />
-      <LocationSelector v-model="form.parent" />
       <div class="modal-action">
         <div class="flex justify-center">
           <BaseButton class="rounded-r-none" type="submit" :loading="loading">{{ $t("global.create") }}</BaseButton>
@@ -59,10 +59,23 @@
     parent: null as LocationSummary | null,
   });
 
-  whenever(
+  watch(
     () => modal.value,
-    () => {
-      focused.value = true;
+    open => {
+      if (open) {
+        useTimeoutFn(() => {
+          focused.value = true;
+        }, 50);
+
+        if (locationId.value) {
+          const found = locations.value.find(l => l.id === locationId.value);
+          if (found) {
+            form.parent = found;
+          }
+        }
+      } else {
+        focused.value = false;
+      }
     }
   );
 
@@ -77,7 +90,19 @@
   const api = useUserApi();
   const toast = useNotifier();
 
+  const locationsStore = useLocationStore();
+  const locations = computed(() => locationsStore.allLocations);
+
+  const route = useRoute();
+
   const { shift } = useMagicKeys();
+
+  const locationId = computed(() => {
+    if (route.fullPath.includes("/location/")) {
+      return route.params.id;
+    }
+    return null;
+  });
 
   async function create(close = true) {
     if (loading.value) {
