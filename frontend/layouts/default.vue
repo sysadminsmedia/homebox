@@ -42,9 +42,7 @@
                 @click="btn.action"
               >
                 {{ btn.name.value }}
-                <kbd v-if="btn.shortcut" class="kbd kbd-sm ml-auto hidden text-primary group-hover:inline">{{
-                  btn.shortcut.replaceAll("Shift+", "⇧")
-                }}</kbd>
+                <Shortcut v-if="btn.shortcut" class="ml-auto hidden group-hover:inline" :keys="btn.keys"></Shortcut>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -158,6 +156,7 @@
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu";
   import { Toaster } from "~/components/ui/sonner";
+  import { Shortcut } from "~/components/ui/shortcut";
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
@@ -213,6 +212,7 @@
     {
       id: 0,
       name: computed(() => t("menu.create_item")),
+      keys: ["⇧", "1"],
       shortcut: "Shift+1",
       action: () => {
         modals.item = true;
@@ -221,6 +221,7 @@
     {
       id: 1,
       name: computed(() => t("menu.create_location")),
+      keys: ["⇧", "2"],
       shortcut: "Shift+2",
       action: () => {
         modals.location = true;
@@ -229,6 +230,7 @@
     {
       id: 2,
       name: computed(() => t("menu.create_label")),
+      keys: ["⇧", "3"],
       shortcut: "Shift+3",
       action: () => {
         modals.label = true;
