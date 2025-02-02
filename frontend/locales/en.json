@@ -9,13 +9,19 @@
             },
             "outdated": {
                 "current_version": "Current Version",
+                "dismiss": "Dismiss",
                 "latest_version": "Latest Version",
                 "new_version_available": "New Version Available",
-                "new_version_available_link": "Click here to view the release notes",
-                "dismiss": "Dismiss"
+                "new_version_available_link": "Click here to view the release notes"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "documentation",
+                "failed_to_copy": "Failed to copy text to clipboard",
+                "https_required": "because HTTPS is required",
+                "learn_more": "Learn more in our"
+            },
             "date_time": {
                 "ago": "{0} ago",
                 "days": "days",
@@ -45,12 +51,6 @@
             },
             "password_score": {
                 "password_strength": "Password Strength"
-            },
-            "copy_text": {
-                "failed_to_copy": "Failed to copy text to clipboard",
-                "https_required": "because HTTPS is required",
-                "learn_more": "Learn more in our",
-                "documentation": "documentation"
             }
         },
         "item": {
@@ -179,6 +179,8 @@
         "model_number": "Model Number",
         "name": "Name",
         "negate_labels": "Negate Selected Labels",
+        "only_without_photo": "Only items without photo",
+        "only_with_photo": "Only items with photo",
         "next_page": "Next Page",
         "no_results": "No Items Found",
         "notes": "Notes",

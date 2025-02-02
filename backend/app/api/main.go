@@ -71,6 +71,7 @@ func validatePostgresSSLMode(sslMode string) bool {
 // @in                         header
 // @name                       Authorization
 // @description                "Type 'Bearer TOKEN' to correctly set the API Key"
+
 func main() {
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
 

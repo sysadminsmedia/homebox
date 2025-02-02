@@ -1,13 +1,14 @@
 <template>
-  <BaseModal v-model="modal" :show-close-button="false">
+  <BaseModal
+    v-model="modal"
+    :show-close-button="false"
+    :click-outside-to-close="true"
+    :modal-top="true"
+    :class="{ 'self-start': true }"
+  >
     <div class="relative">
       <span class="text-neutral-400">{{ $t("components.quick_menu.shortcut_hint") }}</span>
-      <QuickMenuInput
-        ref="inputBox"
-        v-model="selectedAction"
-        :actions="props.actions || []"
-        @quick-select="invokeAction"
-      ></QuickMenuInput>
+      <QuickMenuInput ref="inputBox" :actions="props.actions || []" @action-selected="invokeAction"></QuickMenuInput>
     </div>
   </BaseModal>
 </template>
@@ -28,7 +29,6 @@
   });
 
   const modal = useVModel(props, "modelValue");
-  const selectedAction = ref<QuickMenuAction>();
 
   const inputBox = ref<QuickMenuInputData>({ focused: false, revealActions: () => {} });
 
@@ -37,7 +37,6 @@
   }, 50).start;
 
   const onModalClose = () => {
-    selectedAction.value = undefined;
     inputBox.value.focused = false;
   };
 
@@ -51,8 +50,4 @@
     modal.value = false;
     useTimeoutFn(action.action, 100).start();
   }
-
-  watch(selectedAction, action => {
-    if (action) invokeAction(action);
-  });
 </script>

@@ -8,7 +8,14 @@ export default defineNuxtConfig({
     transpile: ["vue-i18n"],
   },
 
-  modules: ["@nuxtjs/tailwindcss", "@pinia/nuxt", "@vueuse/nuxt", "@vite-pwa/nuxt", "unplugin-icons/nuxt"],
+  modules: [
+    "@nuxtjs/tailwindcss",
+    "@pinia/nuxt",
+    "@vueuse/nuxt",
+    "@vite-pwa/nuxt",
+    "unplugin-icons/nuxt",
+    "shadcn-nuxt",
+  ],
 
   nitro: {
     devProxy: {
@@ -17,6 +24,12 @@ export default defineNuxtConfig({
         ws: true,
         changeOrigin: true,
       },
+    },
+  },
+
+  app: {
+    head: {
+      script: [{ src: "/set-theme.js" }],
     },
   },
 

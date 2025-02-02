@@ -12,98 +12,112 @@
     <LocationCreateModal v-model="modals.location" />
     <QuickMenuModal v-model="modals.quickMenu" :actions="quickMenuActions" />
     <AppToast />
-    <div class="drawer drawer-mobile">
-      <input id="my-drawer-2" v-model="drawerToggle" type="checkbox" class="drawer-toggle" />
-      <div class="drawer-content justify-center bg-base-300 pt-20 lg:pt-0">
-        <AppHeaderDecor v-if="preferences.displayHeaderDecor" class="-mt-10 hidden lg:block" />
-        <!-- Button -->
-        <div class="navbar drawer-button fixed top-0 z-[99] bg-primary shadow-md lg:hidden">
-          <label for="my-drawer-2" class="btn btn-square btn-ghost drawer-button text-base-100 lg:hidden">
-            <MdiMenu class="size-6" />
-          </label>
-          <NuxtLink to="/home">
-            <h2 class="flex text-3xl font-bold tracking-tight text-base-100">
-              HomeB
-              <AppLogo class="-mb-3 w-8" />
-              x
-            </h2>
+    <SidebarProvider>
+      <Sidebar collapsible="icon">
+        <SidebarHeader class="items-center bg-base-200">
+          <SidebarGroupLabel class="text-base">{{ $t("global.welcome", { username: username }) }}</SidebarGroupLabel>
+          <NuxtLink class="avatar placeholder group-data-[collapsible=icon]:hidden" to="/home">
+            <div class="w-24 rounded-full bg-base-300 p-4 text-neutral-content">
+              <AppLogo />
+            </div>
           </NuxtLink>
-        </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger as-child>
+              <SidebarMenuButton
+                class="flex justify-center bg-primary text-primary-foreground shadow hover:bg-primary/90 group-data-[collapsible=icon]:justify-start"
+                :tooltip="$t('global.create')"
+                hotkey="Shortcut: Ctrl+`"
+              >
+                <MdiPlus />
+                <span>
+                  {{ $t("global.create") }}
+                </span>
+              </SidebarMenuButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent class="min-w-[var(--radix-dropdown-menu-trigger-width)]">
+              <DropdownMenuItem
+                v-for="btn in dropdown"
+                :key="btn.id"
+                class="group cursor-pointer text-lg"
+                @click="btn.action"
+              >
+                {{ btn.name.value }}
+                <kbd v-if="btn.shortcut" class="kbd kbd-sm ml-auto hidden text-primary group-hover:inline">{{
+                  btn.shortcut.replaceAll("Shift+", "⇧")
+                }}</kbd>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </SidebarHeader>
 
-        <slot></slot>
-        <footer v-if="status" class="bottom-0 w-full bg-base-300 pb-4 text-center text-secondary-content">
-          <p class="text-center text-sm">
-            {{ $t("global.version", { version: status.build.version }) }} ~
-            {{ $t("global.build", { build: status.build.commit }) }}
-          </p>
-        </footer>
-      </div>
+        <SidebarContent class="bg-base-200">
+          <SidebarGroup>
+            <SidebarMenu>
+              <SidebarMenuItem v-for="n in nav" :key="n.id">
+                <SidebarMenuLink
+                  :href="n.to"
+                  :class="{
+                    'bg-secondary text-secondary-foreground': n.active?.value,
+                    'text-nowrap': typeof locale === 'string' && locale.startsWith('zh-'),
+                    'hover:bg-base-300': !n.active?.value,
+                  }"
+                  :tooltip="n.name.value"
+                >
+                  <component :is="n.icon" />
+                  <span>{{ n.name.value }}</span>
+                </SidebarMenuLink>
+              </SidebarMenuItem>
+            </SidebarMenu></SidebarGroup
+          >
+        </SidebarContent>
 
-      <!-- Sidebar -->
-      <div class="drawer-side shadow-lg">
-        <label for="my-drawer-2" class="drawer-overlay"></label>
-
-        <!-- Top Section -->
-        <div class="flex min-w-40 max-w-min flex-col bg-base-200 p-5 md:py-10">
-          <div class="space-y-8">
-            <div class="flex flex-col items-center gap-4">
-              <p>{{ $t("global.welcome", { username: username }) }}</p>
-              <NuxtLink class="avatar placeholder" to="/home">
-                <div class="w-24 rounded-full bg-base-300 p-4 text-neutral-content">
-                  <AppLogo />
-                </div>
-              </NuxtLink>
-            </div>
-            <div class="flex flex-col bg-base-200">
-              <div class="mb-6">
-                <div class="dropdown tooltip visible w-full" data-tip="Shortcut: Ctrl+`">
-                  <label tabindex="0" class="text-no-transform btn btn-primary btn-block text-lg">
-                    <span>
-                      <MdiPlus class="-ml-1 mr-1" />
-                    </span>
-                    {{ $t("global.create") }}
-                  </label>
-                  <ul tabindex="0" class="dropdown-content menu rounded-box w-full bg-base-100 p-2 shadow">
-                    <li v-for="btn in dropdown" :key="btn.id">
-                      <button class="group" @click="btn.action">
-                        {{ btn.name.value }}
-
-                        <kbd v-if="btn.shortcut" class="ml-auto hidden text-neutral-400 group-hover:inline">{{
-                          btn.shortcut
-                        }}</kbd>
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <ul class="menu mx-auto flex flex-col gap-2">
-                <li v-for="n in nav" :key="n.id" class="text-xl" @click="unfocus">
-                  <NuxtLink
-                    v-if="n.to"
-                    class="rounded-btn"
-                    :to="n.to"
-                    :class="{
-                      'bg-secondary text-secondary-content': n.active?.value,
-                      'text-nowrap': typeof locale === 'string' && locale.startsWith('zh-'),
-                    }"
-                  >
-                    <component :is="n.icon" class="mr-4 size-6" />
-                    {{ n.name.value }}
-                  </NuxtLink>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- Bottom -->
-          <div class="mx-2 mt-auto flex flex-col">
-            <button class="rounded-btn p-3 transition-colors hover:bg-base-300" @click="logout">
+        <SidebarFooter class="bg-base-200">
+          <SidebarMenuButton
+            class="flex justify-center hover:bg-base-300 group-data-[collapsible=icon]:justify-start group-data-[collapsible=icon]:bg-destructive group-data-[collapsible=icon]:text-destructive-foreground group-data-[collapsible=icon]:shadow-sm group-data-[collapsible=icon]:hover:bg-destructive/90"
+            :tooltip="$t('global.sign_out')"
+            @click="logout"
+          >
+            <MdiLogout />
+            <span>
               {{ $t("global.sign_out") }}
-            </button>
+            </span>
+          </SidebarMenuButton>
+        </SidebarFooter>
+
+        <SidebarRail />
+      </Sidebar>
+      <SidebarInset class="min-h-screen bg-base-300">
+        <div class="justify-center pt-20 lg:pt-0">
+          <AppHeaderDecor v-if="preferences.displayHeaderDecor" class="-mt-10 hidden lg:block" />
+          <SidebarTrigger class="absolute left-2 top-2 hidden lg:flex" variant="default" />
+          <div class="fixed top-0 z-20 flex h-16 w-full items-center gap-2 bg-primary p-2 shadow-md lg:hidden">
+            <SidebarTrigger />
+            <NuxtLink to="/home">
+              <h2 class="flex text-3xl font-bold tracking-tight text-base-100">
+                HomeB
+                <AppLogo class="-mb-3 w-8" />
+                x
+              </h2>
+            </NuxtLink>
           </div>
+
+          <slot></slot>
+          <footer v-if="status" class="bottom-0 w-full bg-base-300 pb-4 text-center text-secondary-content">
+            <p class="text-center text-sm">
+              <a
+                href="https://github.com/sysadminsmedia/homebox/releases/tag/{{ status.build.version }}"
+                target="_blank"
+              >
+                {{ $t("global.version", { version: status.build.version }) }} ~
+                {{ $t("global.build", { build: status.build.commit }) }}</a
+              >
+              ~
+              <a href="https://homebox.software/en/api.html" target="_blank">API</a>
+            </p>
+          </footer>
         </div>
-      </div>
-    </div>
+      </SidebarInset>
+    </SidebarProvider>
   </div>
 </template>
 
@@ -119,8 +133,30 @@
   import MdiAccount from "~icons/mdi/account";
   import MdiCog from "~icons/mdi/cog";
   import MdiWrench from "~icons/mdi/wrench";
-  import MdiMenu from "~icons/mdi/menu";
   import MdiPlus from "~icons/mdi/plus";
+  import MdiLogout from "~icons/mdi/logout";
+
+  import {
+    Sidebar,
+    SidebarContent,
+    SidebarFooter,
+    SidebarHeader,
+    SidebarInset,
+    SidebarRail,
+    SidebarTrigger,
+    SidebarGroup,
+    SidebarGroupLabel,
+    SidebarMenu,
+    SidebarMenuItem,
+    SidebarMenuButton,
+    SidebarMenuLink,
+  } from "@/components/ui/sidebar";
+  import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+  } from "@/components/ui/dropdown-menu";
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
@@ -141,11 +177,16 @@
   const isOutdated = computed(() => current.value && latest.value && lt(current.value, latest.value));
   const hasHiddenLatest = computed(() => localStorage.getItem("latestVersion") === latest.value);
 
-  const displayOutdatedWarning = computed(() => !isDev && !hasHiddenLatest.value && isOutdated.value);
+  const displayOutdatedWarning = computed(() => Boolean(!isDev.value && !hasHiddenLatest.value && isOutdated.value));
 
+  const activeElement = useActiveElement();
   const keys = useMagicKeys({
     aliasMap: {
       "⌃": "control_",
+      "Shift+": "ShiftLeft_",
+      "1": "digit1",
+      "2": "digit2",
+      "3": "digit3",
     },
   });
 
@@ -171,7 +212,7 @@
     {
       id: 0,
       name: computed(() => t("menu.create_item")),
-      shortcut: "⌃1",
+      shortcut: "Shift+1",
       action: () => {
         modals.item = true;
       },
@@ -179,7 +220,7 @@
     {
       id: 1,
       name: computed(() => t("menu.create_location")),
-      shortcut: "⌃2",
+      shortcut: "Shift+2",
       action: () => {
         modals.location = true;
       },
@@ -187,7 +228,7 @@
     {
       id: 2,
       name: computed(() => t("menu.create_label")),
-      shortcut: "⌃3",
+      shortcut: "Shift+3",
       action: () => {
         modals.label = true;
       },
@@ -195,21 +236,17 @@
   ];
 
   dropdown.forEach(option => {
-    if (option.shortcut) {
-      whenever(keys[option.shortcut], () => {
-        option.action();
+    if (option?.shortcut) {
+      const shortcutKeycode = option.shortcut.replace(/([0-9])/, "digit$&");
+      whenever(keys[shortcutKeycode], () => {
+        if (activeElement.value?.tagName !== "INPUT") {
+          option.action();
+        }
       });
     }
   });
 
   const route = useRoute();
-
-  const drawerToggle = ref();
-
-  function unfocus() {
-    // unfocus current element
-    drawerToggle.value = false;
-  }
 
   const nav = [
     {
@@ -265,7 +302,7 @@
     modals.import = false;
   });
 
-  const quickMenuActions = ref(
+  const quickMenuActions = reactive(
     [
       {
         text: computed(() => `${t("global.create")}: ${t("menu.create_item")}`),
