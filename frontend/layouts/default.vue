@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <Toaster />
     <!--
     Confirmation Modal is a singleton used by all components so we render
     it here to ensure it's always available. Possibly could move this further
@@ -11,7 +12,6 @@
     <LabelCreateModal v-model="modals.label" />
     <LocationCreateModal v-model="modals.location" />
     <QuickMenuModal v-model="modals.quickMenu" :actions="quickMenuActions" />
-    <AppToast />
     <SidebarProvider>
       <Sidebar collapsible="icon">
         <SidebarHeader class="items-center bg-base-200">
@@ -157,6 +157,7 @@
     DropdownMenuItem,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu";
+  import { Toaster } from "~/components/ui/sonner";
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
