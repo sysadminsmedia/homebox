@@ -44,7 +44,7 @@
 <template>
   <CommandDialog :open="open" @update:open="handleOpenChange">
     <CommandInput
-      :placeholder="t('global.search')"
+      :placeholder="t('components.quick_menu.shortcut_hint')"
       @keydown="
         (e: KeyboardEvent) => {
           const action = props.actions.filter(item => 'shortcut' in item).find(item => item.shortcut === e.key);
@@ -56,7 +56,7 @@
       "
     />
     <CommandList>
-      <CommandEmpty>No results found.</CommandEmpty>
+      <CommandEmpty>{{ t("components.quick_menu.no_results") }}</CommandEmpty>
       <CommandGroup :heading="t('global.create')">
         <CommandItem
           v-for="(create, i) in props.actions.filter(item => item.type === 'create')"

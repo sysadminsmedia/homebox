@@ -14,17 +14,17 @@
     <QuickMenuModal :actions="quickMenuActions" />
     <SidebarProvider>
       <Sidebar collapsible="icon">
-        <SidebarHeader class="bg-base-200 items-center">
+        <SidebarHeader class="items-center bg-base-200">
           <SidebarGroupLabel class="text-base">{{ $t("global.welcome", { username: username }) }}</SidebarGroupLabel>
           <NuxtLink class="avatar placeholder group-data-[collapsible=icon]:hidden" to="/home">
-            <div class="bg-base-300 text-neutral-content w-24 rounded-full p-4">
+            <div class="w-24 rounded-full bg-base-300 p-4 text-neutral-content">
               <AppLogo />
             </div>
           </NuxtLink>
           <DropdownMenu>
             <DropdownMenuTrigger as-child>
               <SidebarMenuButton
-                class="bg-primary text-primary-foreground hover:bg-primary/90 flex justify-center shadow group-data-[collapsible=icon]:justify-start"
+                class="flex justify-center bg-primary text-primary-foreground shadow hover:bg-primary/90 group-data-[collapsible=icon]:justify-start"
                 :tooltip="$t('global.create')"
                 hotkey="Shortcut: Ctrl+`"
               >
@@ -71,7 +71,7 @@
 
         <SidebarFooter class="bg-base-200">
           <SidebarMenuButton
-            class="hover:bg-base-300 group-data-[collapsible=icon]:bg-destructive group-data-[collapsible=icon]:text-destructive-foreground group-data-[collapsible=icon]:hover:bg-destructive/90 flex justify-center group-data-[collapsible=icon]:justify-start group-data-[collapsible=icon]:shadow-sm"
+            class="flex justify-center hover:bg-base-300 group-data-[collapsible=icon]:justify-start group-data-[collapsible=icon]:bg-destructive group-data-[collapsible=icon]:text-destructive-foreground group-data-[collapsible=icon]:shadow-sm group-data-[collapsible=icon]:hover:bg-destructive/90"
             :tooltip="$t('global.sign_out')"
             @click="logout"
           >
@@ -84,14 +84,14 @@
 
         <SidebarRail />
       </Sidebar>
-      <SidebarInset class="bg-base-300 min-h-screen">
+      <SidebarInset class="min-h-screen bg-base-300">
         <div class="justify-center pt-20 lg:pt-0">
           <AppHeaderDecor v-if="preferences.displayHeaderDecor" class="-mt-10 hidden lg:block" />
           <SidebarTrigger class="absolute left-2 top-2 hidden lg:flex" variant="default" />
-          <div class="bg-primary fixed top-0 z-20 flex h-16 w-full items-center gap-2 p-2 shadow-md lg:hidden">
+          <div class="fixed top-0 z-20 flex h-16 w-full items-center gap-2 bg-primary p-2 shadow-md lg:hidden">
             <SidebarTrigger />
             <NuxtLink to="/home">
-              <h2 class="text-base-100 flex text-3xl font-bold tracking-tight">
+              <h2 class="flex text-3xl font-bold tracking-tight text-base-100">
                 HomeB
                 <AppLogo class="-mb-3 w-8" />
                 x
@@ -100,7 +100,7 @@
           </div>
 
           <slot></slot>
-          <footer v-if="status" class="bg-base-300 text-secondary-content bottom-0 w-full pb-4 text-center">
+          <footer v-if="status" class="bottom-0 w-full bg-base-300 pb-4 text-center text-secondary-content">
             <p class="text-center text-sm">
               <a
                 href="https://github.com/sysadminsmedia/homebox/releases/tag/{{ status.build.version }}"

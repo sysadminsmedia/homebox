@@ -94,7 +94,8 @@
             }
         },
         "quick_menu": {
-            "shortcut_hint": "Use the number keys to quickly select an action."
+            "shortcut_hint": "Use the number keys to quickly select an action.",
+            "no_results": "No results found."
         }
     },
     "global": {
