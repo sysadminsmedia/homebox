@@ -5,17 +5,18 @@ const props = defineProps<ToasterProps>()
 </script>
 
 <template>
+  <!-- TODO: once daisyui is removed, remove shadcn- prefix -->
   <Sonner
-    class="toaster group"
+    class="shadcn-toaster group"
     v-bind="props"
     :toast-options="{
       classes: {
-        toast: 'group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg',
-        description: 'group-[.toast]:text-muted-foreground',
+        toast: 'group shadcn-toast group-[.shadcn-toaster]:bg-background group-[.shadcn-toaster]:text-foreground group-[.shadcn-toaster]:border-border group-[.shadcn-toaster]:shadow-lg',
+        description: 'group-[.shadcn-toast]:text-muted-foreground',
         actionButton:
-          'group-[.toast]:bg-primary group-[.toast]:text-primary-foreground',
+          'group-[.shadcn-toast]:bg-primary group-[.shadcn-toast]:text-primary-foreground',
         cancelButton:
-          'group-[.toast]:bg-muted group-[.toast]:text-muted-foreground',
+          'group-[.shadcn-toast]:bg-muted group-[.shadcn-toast]:text-muted-foreground',
       },
     }"
   />

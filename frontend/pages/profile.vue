@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { toast } from "vue-sonner";
   import type { Detail } from "~~/components/global/DetailsSection/types";
   import { themes } from "~~/lib/data/themes";
   import type { CurrenciesCurrency, NotifierCreate, NotifierOut } from "~~/lib/api/types/data-contracts";
@@ -19,12 +20,11 @@
 
   const api = useUserApi();
   const confirm = useConfirm();
-  const notify = useNotifier();
 
   const currencies = computedAsync(async () => {
     const resp = await api.group.currencies();
     if (resp.error) {
-      notify.error("Failed to get currencies");
+      toast.error("Failed to get currencies");
       return [];
     }
 
@@ -89,12 +89,12 @@
     });
 
     if (error) {
-      notify.error("Failed to update group");
+      toast.error("Failed to update group");
       return;
     }
 
     group.value = data;
-    notify.success("Group updated");
+    toast.success("Group updated");
   }
 
   const { setTheme } = useTheme();
@@ -127,12 +127,12 @@
     const { response } = await api.user.delete();
 
     if (response?.status === 204) {
-      notify.success("Your account has been deleted.");
+      toast.success("Your account has been deleted.");
       auth.logout(api);
       navigateTo("/");
     }
 
-    notify.error("Failed to delete your account.");
+    toast.error("Failed to delete your account.");
   }
 
   const token = ref("");
@@ -178,12 +178,12 @@
     const { error } = await api.user.changePassword(passwordChange.current, passwordChange.new);
 
     if (error) {
-      notify.error("Failed to change password.");
+      toast.error("Failed to change password.");
       passwordChange.loading = false;
       return;
     }
 
-    notify.success("Password changed successfully.");
+    toast.success("Password changed successfully.");
     passwordChange.dialog = false;
     passwordChange.new = "";
     passwordChange.current = "";
@@ -239,7 +239,7 @@
     });
 
     if (result.error) {
-      notify.error("Failed to create notifier.");
+      toast.error("Failed to create notifier.");
     }
 
     notifier.value = null;
@@ -260,7 +260,7 @@
     });
 
     if (result.error) {
-      notify.error("Failed to update notifier.");
+      toast.error("Failed to update notifier.");
     }
 
     notifier.value = null;
@@ -280,7 +280,7 @@
     const { error } = await api.notifiers.delete(id);
 
     if (error) {
-      notify.error("Failed to delete notifier.");
+      toast.error("Failed to delete notifier.");
       return;
     }
 
@@ -295,11 +295,11 @@
     const { error } = await api.notifiers.test(notifier.value.url);
 
     if (error) {
-      notify.error("Failed to test notifier.");
+      toast.error("Failed to test notifier.");
       return;
     }
 
-    notify.success("Notifier test successful.");
+    toast.success("Notifier test successful.");
   }
 </script>
 

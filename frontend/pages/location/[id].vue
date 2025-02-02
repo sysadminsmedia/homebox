@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { toast } from "vue-sonner";
   import type { LocationSummary, LocationUpdate } from "~~/lib/api/types/data-contracts";
   import { useLocationStore } from "~~/stores/locations";
   import MdiPackageVariant from "~icons/mdi/package-variant";
@@ -11,7 +12,6 @@
 
   const route = useRoute();
   const api = useUserApi();
-  const toast = useNotifier();
 
   const locationId = computed<string>(() => route.params.id as string);
 

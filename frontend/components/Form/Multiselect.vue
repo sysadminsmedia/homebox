@@ -47,6 +47,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { toast } from "vue-sonner";
   import MdiClose from "~icons/mdi/close";
 
   const emit = defineEmits(["update:modelValue"]);
@@ -101,7 +102,6 @@
   }
 
   const api = useUserApi();
-  const toast = useNotifier();
 
   async function createAndAdd(name: string) {
     const { error, data } = await api.labels.create({

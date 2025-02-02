@@ -71,6 +71,7 @@
 </template>
 
 <script setup lang="ts">
+  import { toast } from "vue-sonner";
   import type { ItemCreate, LabelOut, LocationOut } from "~~/lib/api/types/data-contracts";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
@@ -87,7 +88,6 @@
   });
 
   const api = useUserApi();
-  const toast = useNotifier();
 
   const locationsStore = useLocationStore();
   const locations = computed(() => locationsStore.allLocations);

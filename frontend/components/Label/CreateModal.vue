@@ -39,6 +39,7 @@
 </template>
 
 <script setup lang="ts">
+  import { toast } from "vue-sonner";
   import MdiChevronDown from "~icons/mdi/chevron-down";
   const props = defineProps({
     modelValue: {
@@ -76,7 +77,6 @@
   );
 
   const api = useUserApi();
-  const toast = useNotifier();
 
   const { shift } = useMagicKeys();
 

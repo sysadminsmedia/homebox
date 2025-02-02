@@ -41,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+  import { toast } from "vue-sonner";
   import type { LocationSummary } from "~~/lib/api/types/data-contracts";
   import MdiChevronDown from "~icons/mdi/chevron-down";
   const props = defineProps({
@@ -88,7 +89,6 @@
   }
 
   const api = useUserApi();
-  const toast = useNotifier();
 
   const locationsStore = useLocationStore();
   const locations = computed(() => locationsStore.allLocations);

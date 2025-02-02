@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { toast } from "vue-sonner";
   import type { ItemSummary, LabelSummary, LocationOutCount } from "~~/lib/api/types/data-contracts";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
@@ -257,8 +258,6 @@
         fields.push(`${t[0]}=${t[1]}`);
       }
     }
-
-    const toast = useNotifier();
 
     const { data, error } = await api.items.getAll({
       q: query.value || "",
