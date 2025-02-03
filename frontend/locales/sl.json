@@ -92,6 +92,9 @@
             "tree": {
                 "no_locations": "Ni razpoložljivih lokacij. Dodaj novo lokacije preko \n `<`span class=\"link-primary\"`>`Ustvari`<`/span`>` gumba v navigacijski vrstici."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "S številskimi tipkami hitro izberite dejanje."
         }
     },
     "global": {
@@ -114,6 +117,7 @@
         "locations": "Lokacije",
         "maintenance": "Vzdrževanje",
         "name": "Naziv",
+        "navigate": "Krmari",
         "password": "Geslo",
         "read_docs": "Preberite dokumentacijo",
         "save": "Shrani",
@@ -178,6 +182,8 @@
         "next_page": "Naslednja stran",
         "no_results": "Ni najdenih predmetov",
         "notes": "Opombe",
+        "only_with_photo": "Samo predmeti s sliko",
+        "only_without_photo": "Samo predmeti brez slike",
         "options": "Možnosti",
         "order_by": "Razvrsti po",
         "pages": "Stran { page } od { totalPages }",
