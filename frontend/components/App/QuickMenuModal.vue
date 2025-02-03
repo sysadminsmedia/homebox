@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { useMagicKeys } from "@vueuse/core";
 
-  import { ref, watch } from "vue";
+  import { watch } from "vue";
   import { useI18n } from "vue-i18n";
   import {
     CommandDialog,
@@ -13,10 +13,11 @@
     CommandSeparator,
   } from "~/components/ui/command";
   import { Shortcut } from "~/components/ui/shortcut";
+  import { useDialog } from "~/components/ui/dialog-provider";
 
   export type QuickMenuAction =
-    | { text: string; action: () => void; type: "navigate" }
-    | { text: string; action: () => void; shortcut: string; type: "create" };
+    | { text: string; href: string; type: "navigate" }
+    | { text: string; dialogId: string; shortcut: string; type: "create" };
 
   const props = defineProps({
     actions: {
@@ -26,31 +27,26 @@
     },
   });
 
-  const open = ref(false);
   const { t } = useI18n();
+  const { closeDialog, openDialog } = useDialog();
 
   const keys = useMagicKeys();
   const CtrlBackquote = keys.control_Backquote;
 
-  function handleOpenChange() {
-    open.value = !open.value;
-  }
-
   watch(CtrlBackquote, v => {
-    if (v) handleOpenChange();
+    if (v) openDialog("quick-menu");
   });
 </script>
 
 <template>
-  <CommandDialog :open="open" @update:open="handleOpenChange">
+  <CommandDialog dialog-id="quick-menu">
     <CommandInput
       :placeholder="t('components.quick_menu.shortcut_hint')"
       @keydown="
         (e: KeyboardEvent) => {
-          const action = props.actions.filter(item => 'shortcut' in item).find(item => item.shortcut === e.key);
-          if (action) {
-            open = false;
-            action.action();
+          const item = props.actions.filter(item => 'shortcut' in item).find(item => item.shortcut === e.key);
+          if (item) {
+            openDialog(item.dialogId);
           }
         }
       "
@@ -64,8 +60,7 @@
           :value="create.text"
           @select="
             () => {
-              open = false;
-              create.action();
+              openDialog(create.dialogId);
             }
           "
         >
@@ -81,8 +76,8 @@
           :value="`global.navigate_${i + 1}`"
           @select="
             () => {
-              open = false;
-              navigate.action();
+              closeDialog('quick-menu');
+              navigateTo(navigate.href);
             }
           "
         >

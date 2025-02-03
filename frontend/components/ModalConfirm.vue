@@ -19,11 +19,4 @@
 
 <script setup lang="ts">
   const { text, isRevealed, confirm, cancel } = useConfirm();
-
-  watch(
-    () => isRevealed.value,
-    open => {
-      console.log("isRevealed", open);
-    }
-  );
 </script>

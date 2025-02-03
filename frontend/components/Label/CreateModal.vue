@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model:open="modal">
+  <Dialog dialog-id="create-label">
     <DialogContent>
       <DialogHeader>
         <DialogTitle>{{ $t("components.label.create_modal.title") }}</DialogTitle>
@@ -47,16 +47,10 @@
 <script setup lang="ts">
   import { toast } from "vue-sonner";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-
   import MdiChevronDown from "~icons/mdi/chevron-down";
-  const props = defineProps({
-    modelValue: {
-      type: Boolean,
-      required: true,
-    },
-  });
+  import { useDialog } from "~/components/ui/dialog-provider";
+  const { closeDialog } = useDialog();
 
-  const modal = useVModel(props, "modelValue");
   const loading = ref(false);
   const focused = ref(false);
   const form = reactive({
@@ -110,7 +104,7 @@
     reset();
 
     if (close) {
-      modal.value = false;
+      closeDialog("create-label");
       navigateTo(`/label/${data.id}`);
     }
   }

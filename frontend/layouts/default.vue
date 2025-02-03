@@ -8,9 +8,9 @@
     -->
     <ModalConfirm />
     <AppOutdatedModal v-if="status" :status="status" />
-    <ItemCreateModal v-model="modals.item" />
-    <LabelCreateModal v-model="modals.label" />
-    <LocationCreateModal v-model="modals.location" />
+    <ItemCreateModal />
+    <LabelCreateModal />
+    <LocationCreateModal />
     <AppQuickMenuModal :actions="quickMenuActions" />
     <SidebarProvider>
       <Sidebar collapsible="icon">
@@ -39,10 +39,14 @@
                 v-for="btn in dropdown"
                 :key="btn.id"
                 class="group cursor-pointer text-lg"
-                @click="btn.action"
+                @click="openDialog(btn.dialogId)"
               >
                 {{ btn.name.value }}
-                <Shortcut v-if="btn.shortcut" class="ml-auto hidden group-hover:inline" :keys="btn.keys" />
+                <Shortcut
+                  v-if="btn.shortcut"
+                  class="ml-auto hidden group-hover:inline"
+                  :keys="btn.shortcut.replace('Ctrl', '⇧').split('+')"
+                />
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -156,9 +160,12 @@
   } from "@/components/ui/dropdown-menu";
   import { Toaster } from "~/components/ui/sonner";
   import { Shortcut } from "~/components/ui/shortcut";
+  import { useDialog } from "~/components/ui/dialog-provider";
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
+
+  const { openDialog } = useDialog();
 
   const preferences = useViewPreferences();
 
@@ -182,41 +189,25 @@
 
   // Preload currency format
   useFormatCurrency();
-  const modals = reactive({
-    item: false,
-    location: false,
-    label: false,
-    import: false,
-    quickMenu: false,
-  });
 
   const dropdown = [
     {
       id: 0,
       name: computed(() => t("menu.create_item")),
-      keys: ["⇧", "1"],
       shortcut: "Shift+1",
-      action: () => {
-        modals.item = true;
-      },
+      dialogId: "create-item",
     },
     {
       id: 1,
       name: computed(() => t("menu.create_location")),
-      keys: ["⇧", "2"],
       shortcut: "Shift+2",
-      action: () => {
-        modals.location = true;
-      },
+      dialogId: "create-location",
     },
     {
       id: 2,
       name: computed(() => t("menu.create_label")),
-      keys: ["⇧", "3"],
       shortcut: "Shift+3",
-      action: () => {
-        modals.label = true;
-      },
+      dialogId: "create-label",
     },
   ];
 
@@ -225,7 +216,7 @@
       const shortcutKeycode = option.shortcut.replace(/([0-9])/, "digit$&");
       whenever(keys[shortcutKeycode], () => {
         if (activeElement.value?.tagName !== "INPUT") {
-          option.action();
+          openDialog(option.dialogId);
         }
       });
     }
@@ -279,37 +270,15 @@
   ];
 
   const quickMenuActions = reactive([
-    ...[
-      {
-        text: computed(() => t("menu.create_item")),
-        action: () => {
-          modals.item = true;
-        },
-        shortcut: "1",
-        type: "create" as const,
-      },
-      {
-        text: computed(() => t("menu.create_location")),
-        action: () => {
-          modals.location = true;
-        },
-        shortcut: "2",
-        type: "create" as const,
-      },
-      {
-        text: computed(() => t("menu.create_label")),
-        action: () => {
-          modals.label = true;
-        },
-        shortcut: "3",
-        type: "create" as const,
-      },
-    ],
+    ...dropdown.map(v => ({
+      text: computed(() => v.name.value),
+      dialogId: v.dialogId,
+      shortcut: v.shortcut.split("+")[1],
+      type: "create" as const,
+    })),
     ...nav.map(v => ({
       text: computed(() => v.name.value),
-      action: () => {
-        navigateTo(v.to);
-      },
+      href: v.to,
       type: "navigate" as const,
     })),
   ]);

@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model:open="modal">
+  <Dialog dialog-id="create-location">
     <DialogContent>
       <DialogHeader>
         <DialogTitle>{{ $t("components.location.create_modal.title") }}</DialogTitle>
@@ -50,14 +50,9 @@
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import type { LocationSummary } from "~~/lib/api/types/data-contracts";
   import MdiChevronDown from "~icons/mdi/chevron-down";
-  const props = defineProps({
-    modelValue: {
-      type: Boolean,
-      required: true,
-    },
-  });
+  import { useDialog } from "~/components/ui/dialog-provider";
+  const { activeDialog, closeDialog } = useDialog();
 
-  const modal = useVModel(props, "modelValue");
   const loading = ref(false);
   const focused = ref(false);
   const form = reactive({
@@ -67,9 +62,9 @@
   });
 
   watch(
-    () => modal.value,
-    open => {
-      if (open) {
+    () => activeDialog.value,
+    active => {
+      if (active === "create-location") {
         // useTimeoutFn(() => {
         //   focused.value = true;
         // }, 50);
@@ -138,7 +133,7 @@
     reset();
 
     if (close) {
-      modal.value = false;
+      closeDialog("create-location");
       navigateTo(`/location/${data.id}`);
     }
   }

@@ -1,5 +1,5 @@
 <template>
-  <Dialog v-model:open="modal">
+  <Dialog dialog-id="create-item">
     <DialogContent>
       <DialogHeader>
         <DialogTitle>{{ $t("components.item.create_modal.title") }}</DialogTitle>
@@ -88,13 +88,9 @@
   import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
   import MdiChevronDown from "~icons/mdi/chevron-down";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
+  import { useDialog } from "~/components/ui/dialog-provider";
 
-  const props = defineProps({
-    modelValue: {
-      type: Boolean,
-      required: true,
-    },
-  });
+  const { activeDialog, closeDialog } = useDialog();
 
   const api = useUserApi();
 
@@ -122,7 +118,6 @@
 
   const nameInput = ref<HTMLInputElement | null>(null);
 
-  const modal = useVModel(props, "modelValue");
   const loading = ref(false);
   const focused = ref(false);
   const form = reactive({
@@ -151,9 +146,9 @@
   }
 
   watch(
-    () => modal.value,
-    open => {
-      if (open) {
+    () => activeDialog.value,
+    active => {
+      if (active === "create-item") {
         // useTimeoutFn(() => {
         //   focused.value = true;
         // }, 50);
@@ -231,7 +226,7 @@
     loading.value = false;
 
     if (close) {
-      modal.value = false;
+      closeDialog("create-item");
       navigateTo(`/item/${data.id}`);
     }
   }
