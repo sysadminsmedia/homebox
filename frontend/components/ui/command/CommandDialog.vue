@@ -4,7 +4,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { useForwardPropsEmits } from 'radix-vue'
 import Command from './Command.vue'
 
-const props = defineProps<DialogRootProps>()
+const props = defineProps<DialogRootProps & { dialogId: string }>();
 const emits = defineEmits<DialogRootEmits>()
 
 const forwarded = useForwardPropsEmits(props, emits)

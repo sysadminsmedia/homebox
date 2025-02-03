@@ -69,8 +69,8 @@
                   <span>{{ n.name.value }}</span>
                 </SidebarMenuLink>
               </SidebarMenuItem>
-            </SidebarMenu></SidebarGroup
-          >
+            </SidebarMenu>
+          </SidebarGroup>
         </SidebarContent>
 
         <SidebarFooter class="bg-base-200">
