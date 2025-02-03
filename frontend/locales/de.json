@@ -92,6 +92,9 @@
             "tree": {
                 "no_locations": "Keine Standorte verfügbar. Fügen Sie neue Standorte über die Schaltfläche\n `<`span class=\"link-primary\"`>`Erstellen`<`/span`>` in der Navigationsleiste hinzu."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Verwenden Sie die Zifferntasten, um schnell eine Aktion auszuwählen."
         }
     },
     "global": {
@@ -114,6 +117,7 @@
         "locations": "Lagerorte",
         "maintenance": "Wartung",
         "name": "Name",
+        "navigate": "Navigieren",
         "password": "Passwort",
         "read_docs": "Dokumentation lesen",
         "save": "Speichern",
@@ -178,6 +182,8 @@
         "next_page": "Nächste Seite",
         "no_results": "Keine Elemente gefunden",
         "notes": "Anmerkungen",
+        "only_with_photo": "Nur Artikel mit Foto",
+        "only_without_photo": "Nur Artikel ohne Foto",
         "options": "Optionen",
         "order_by": "Sortieren nach",
         "pages": "Seite { page } von { totalPages }",
@@ -188,7 +194,7 @@
         "purchase_date": "Einkaufsdatum",
         "purchase_details": "Einkaufsdetails",
         "purchase_price": "Einkaufspreis",
-        "purchased_from": "Eingekauft von",
+        "purchased_from": "Gekauft bei",
         "quantity": "Menge",
         "query_id": "Abfrage der Asset-ID-Nummer: { id }",
         "receipt": "Beleg",
