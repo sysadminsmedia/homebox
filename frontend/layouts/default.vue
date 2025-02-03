@@ -5,13 +5,13 @@
     Confirmation Modal is a singleton used by all components so we render
     it here to ensure it's always available. Possibly could move this further
     up the tree
-   -->
+    -->
     <ModalConfirm />
-    <AppOutdatedModal v-model="modals.outdated" :current="current ?? ''" :latest="latest ?? ''" />
+    <AppOutdatedModal v-if="status" :status="status" />
     <ItemCreateModal v-model="modals.item" />
     <LabelCreateModal v-model="modals.label" />
     <LocationCreateModal v-model="modals.location" />
-    <QuickMenuModal :actions="quickMenuActions" />
+    <AppQuickMenuModal :actions="quickMenuActions" />
     <SidebarProvider>
       <Sidebar collapsible="icon">
         <SidebarHeader class="items-center bg-base-200">
@@ -121,7 +121,6 @@
 
 <script lang="ts" setup>
   import { useI18n } from "vue-i18n";
-  import { lt } from "semver";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
 
@@ -170,15 +169,6 @@
     return data;
   });
 
-  const latest = computed(() => status.value?.latest.version);
-  const current = computed(() => status.value?.build.version);
-
-  const isDev = computed(() => import.meta.dev || !current.value?.includes("."));
-  const isOutdated = computed(() => current.value && latest.value && lt(current.value, latest.value));
-  const hasHiddenLatest = computed(() => localStorage.getItem("latestVersion") === latest.value);
-
-  const displayOutdatedWarning = computed(() => Boolean(!isDev.value && !hasHiddenLatest.value && isOutdated.value));
-
   const activeElement = useActiveElement();
   const keys = useMagicKeys({
     aliasMap: {
@@ -197,15 +187,7 @@
     location: false,
     label: false,
     import: false,
-    outdated: displayOutdatedWarning.value,
     quickMenu: false,
-  });
-
-  watch(displayOutdatedWarning, () => {
-    console.log("displayOutdatedWarning", displayOutdatedWarning.value);
-    if (displayOutdatedWarning.value) {
-      modals.outdated = true;
-    }
   });
 
   const dropdown = [

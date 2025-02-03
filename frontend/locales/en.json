@@ -101,6 +101,7 @@
     "global": {
         "add": "Add",
         "build": "Build: { build }",
+        "cancel": "Cancel",
         "confirm": "Confirm",
         "create": "Create",
         "create_and_add": "Create and Add Another",

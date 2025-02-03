@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { toast } from "vue-sonner";
-  import Button from "~/components/ui/button/Button.vue";
+  import { Button, Group } from "~/components/ui/button";
 </script>
 
 <template>
@@ -14,4 +14,9 @@
     "
     >Create Toast</Button
   >
+  <Group>
+    <Button variant="outline">Button 1</Button>
+    <Button variant="destructive">Button 2</Button>
+    <Button>Button 3</Button>
+  </Group>
 </template>
