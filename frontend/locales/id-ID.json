@@ -2,8 +2,11 @@
     "components": {
         "app": {
             "outdated": {
-                "latest_version": "Versi terbaru",
-                "new_version_available": "Tersedia versi terbaru"
+                "current_version": "Versi saat ini",
+                "dismiss": "Tutup",
+                "latest_version": "Versi Terbaru",
+                "new_version_available": "Tersedia versi terbaru",
+                "new_version_available_link": "Klik di sini untuk melihat informasi rilis"
             }
         },
         "global": {
@@ -144,6 +147,9 @@
         "changes_persisted_immediately": "Perubahan lampiran akan segera disimpan",
         "created_at": "Dibuat Pada",
         "custom_fields": "Informasi Tambahan",
-        "description": "Deskripsi"
+        "description": "Deskripsi",
+        "details": "Detail",
+        "drag_and_drop": "Seret dan lepas file di sini atau klik untuk memilih file",
+        "edit_details": "Edit Detail"
     }
 }
