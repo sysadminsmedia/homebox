@@ -13,6 +13,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 
 	"github.com/olahol/melody"
 )
@@ -72,6 +73,7 @@ type V1Controller struct {
 	allowRegistration bool
 	bus               *eventbus.EventBus
 	url               string
+	config            *config.Config
 }
 
 type (
@@ -92,15 +94,17 @@ type (
 		Latest            services.Latest `json:"latest"`
 		Demo              bool            `json:"demo"`
 		AllowRegistration bool            `json:"allowRegistration"`
+		LabelPrinting     bool            `json:"labelPrinting"`
 	}
 )
 
-func NewControllerV1(svc *services.AllServices, repos *repo.AllRepos, bus *eventbus.EventBus, options ...func(*V1Controller)) *V1Controller {
+func NewControllerV1(svc *services.AllServices, repos *repo.AllRepos, bus *eventbus.EventBus, config *config.Config, options ...func(*V1Controller)) *V1Controller {
 	ctrl := &V1Controller{
 		repo:              repos,
 		svc:               svc,
 		allowRegistration: true,
 		bus:               bus,
+		config:            config,
 	}
 
 	for _, opt := range options {
@@ -127,6 +131,7 @@ func (ctrl *V1Controller) HandleBase(ready ReadyFunc, build Build) errchain.Hand
 			Latest:            ctrl.svc.BackgroundService.GetLatestVersion(),
 			Demo:              ctrl.isDemo,
 			AllowRegistration: ctrl.allowRegistration,
+			LabelPrinting:     ctrl.config.LabelMaker.PrintCommand != nil,
 		})
 	}
 }
