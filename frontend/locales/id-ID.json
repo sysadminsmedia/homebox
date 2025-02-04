@@ -321,6 +321,22 @@
         "notifiers": "Notifier",
         "notifiers_sub": "Dapatkan pemberitahuan untuk pengingat pemeliharaan mendatang",
         "test": "Pengujian",
-        "theme_settings": "Pengaturan Theme"
+        "theme_settings": "Pengaturan Tampilan",
+        "theme_settings_sub": "Pengaturan tema disimpan di penyimpanan lokal browser Anda. Anda dapat mengubah tema kapan saja. Jika Anda\nmengalami masalah dalam mengatur tema, coba refresh browser Anda.",
+        "update_group": "Perbarui Grup",
+        "update_language": "Perbarui Bahasa",
+        "url": "URL",
+        "user_profile": "Profil Pengguna",
+        "user_profile_sub": "Undang pengguna, dan kelola akun Anda."
+    },
+    "tools": {
+        "actions": "Kelola Inventaris",
+        "actions_set": {
+            "ensure_ids": "Pastikan ID Aset",
+            "ensure_ids_button": "Pastikan ID Aset",
+            "ensure_ids_sub": "Memastikan semua item dalam inventaris Anda memiliki kolom asset_id yang valid. Hal ini dilakukan dengan mencari nilai asset_id tertinggi saat ini dalam database dan menerapkan nilai berikutnya ke setiap item yang kolom asset_id-nya belum diatur. Proses ini diurutkan berdasarkan kolom created_at.",
+            "ensure_import_refs": "Pastikan Ref Impor",
+            "ensure_import_refs_button": "Pastikan Ref Impor"
+        }
     }
 }
