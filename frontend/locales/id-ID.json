@@ -336,7 +336,21 @@
             "ensure_ids_button": "Pastikan ID Aset",
             "ensure_ids_sub": "Memastikan semua item dalam inventaris Anda memiliki kolom asset_id yang valid. Hal ini dilakukan dengan mencari nilai asset_id tertinggi saat ini dalam database dan menerapkan nilai berikutnya ke setiap item yang kolom asset_id-nya belum diatur. Proses ini diurutkan berdasarkan kolom created_at.",
             "ensure_import_refs": "Pastikan Ref Impor",
-            "ensure_import_refs_button": "Pastikan Ref Impor"
+            "ensure_import_refs_button": "Pastikan Ref Impor",
+            "ensure_import_refs_sub": "Memastikan semua item dalam inventaris Anda memiliki kolom import_ref yang valid. Hal ini dilakukan dengan membuat string 8 karakter acak untuk setiap item yang kolom import_ref-nya belum diatur.",
+            "set_primary_photo": "Atur Foto Utama",
+            "set_primary_photo_button": "Atur Foto Utama",
+            "set_primary_photo_sub": "Pada Homebox versi 0.10.0, kolom gambar utama ditambahkan ke lampiran bertipe foto. Ini akan mengatur kolom gambar utama ke gambar pertama dalam lampiran di database, jika belum diatur. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'See GitHub PR #576'</a>'",
+            "zero_datetimes": "Format Waktu Kosong",
+            "zero_datetimes_button": "Format Waktu Kosong",
+            "zero_datetimes_sub": "Mengatur ulang nilai waktu untuk semua bidang tanggal dan waktu di inventaris Anda ke awal tanggal. Ini untuk memperbaiki bug yang muncul di awal pengembangan situs yang menyebabkan nilai waktu disimpan bersama waktu, yang mengakibatkan masalah pada tampilan nilai tanggal yang akurat. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'"
+        },
+        "actions_sub": "Terapkan tindakan ke inventaris Anda secara massal. Tindakan ini tidak dapat diurungkan. <b>Hati-hati.</b>",
+        "import_export": "Impor/Ekspor",
+        "import_export_set": {
+            "export": "Ekspor Inventaris",
+            "export_button": "Ekspor Inventaris",
+            "export_sub": "Mengekspor format CSV standar untuk Homebox"
         }
     }
 }

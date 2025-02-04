@@ -11,10 +11,17 @@
                 "current_version": "Текущая версия",
                 "dismiss": "Отклонить",
                 "latest_version": "Последняя версия",
-                "new_version_available": "Доступна новая версия"
+                "new_version_available": "Доступна новая версия",
+                "new_version_available_link": "Показать комментарии к версии"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "документация",
+                "failed_to_copy": "Не удалось скопировать текст в буфер обмена",
+                "https_required": "поскольку использование HTTPS обязательно",
+                "learn_more": "Узнать больше"
+            },
             "date_time": {
                 "ago": "{0} назад",
                 "days": "дней",
@@ -123,7 +130,7 @@
         "quick_statistics": "Быстрая статистика",
         "recently_added": "Недавно добавлено",
         "storage_locations": "Места хранения",
-        "total_items": "Всего элементов",
+        "total_items": "Всего вещей",
         "total_labels": "Всего меток",
         "total_locations": "Общее количество местоположений",
         "total_value": "Общая стоимость"
