@@ -305,7 +305,8 @@
         "maintenance": "Maintenance",
         "profile": "Profile",
         "search": "Search",
-        "tools": "Tools"
+        "tools": "Tools",
+        "scanner": "Scanner"
     },
     "profile": {
         "active": "Active",
@@ -373,5 +374,11 @@
             "bill_of_materials_sub": "Generates a CSV (Comma Separated Values) file that can be imported into a spreadsheet program. This is a summary of your inventory with basic item and pricing information."
         },
         "reports_sub": "Generate different reports for your inventory."
+    },
+    "scanner": {
+        "select_video_source": "Pick a video source",
+        "unsupported": "Media Stream API is not supported",
+        "error": "An error occurred while scanning",
+        "no_sources": "No video sources available"
     }
 }
