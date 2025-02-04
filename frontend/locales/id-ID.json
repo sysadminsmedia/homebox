@@ -350,7 +350,21 @@
         "import_export_set": {
             "export": "Ekspor Inventaris",
             "export_button": "Ekspor Inventaris",
-            "export_sub": "Mengekspor format CSV standar untuk Homebox"
-        }
+            "export_sub": "Mengekspor semua item ke file CSV dengan format standar Homebox.",
+            "import": "Impor Inventaris",
+            "import_button": "Impor Inventaris",
+            "import_sub": "Mengimpor CSV dengan format standar Homebox. Tanpa kolom '<code>HB.import_ref</code>', impor ini <b>tidak</b> akan menimpa item yang sudah ada di inventaris Anda, hanya menambahkan item baru. Baris dengan kolom '<code>HB.import_ref</code>' akan digabungkan ke item yang sudah ada dengan import_ref yang sama, jika ada."
+        },
+        "import_export_sub": "Impor dan ekspor inventaris Anda ke dan dari file CSV. Ini berguna untuk memigrasikan inventaris Anda ke instance Homebox yang baru.",
+        "reports": "Laporan",
+        "reports_set": {
+            "asset_labels": "Label ID Aset",
+            "asset_labels_button": "Generator Label",
+            "asset_labels_sub": "Menghasilkan label dalam PDF yang dapat dicetak untuk ID Aset. Label ini tidak spesifik untuk inventaris Anda, jadi Anda dapat mencetaknya terlebih dahulu dan menempelkannya ke inventaris Anda saat Anda menerimanya.",
+            "bill_of_materials": "Bill of Materials",
+            "bill_of_materials_button": "Buat bom",
+            "bill_of_materials_sub": "Menghasilkan file CSV (Comma Separated Values) yang dapat diimpor ke program spreadsheet. Ini adalah ringkasan inventaris Anda dengan info dasar beserta harganya."
+        },
+        "reports_sub": "Buat laporan yang berbeda untuk inventaris Anda."
     }
 }

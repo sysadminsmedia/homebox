@@ -82,8 +82,8 @@
         },
         "location": {
             "create_modal": {
-                "location_description": "Описание локации",
-                "location_name": "Название локации",
+                "location_description": "Описание места хранения",
+                "location_name": "Название места хранения",
                 "title": "Создать локацию"
             },
             "selector": {
@@ -111,7 +111,7 @@
         "items": "Элементы",
         "join_discord": "Присоединяйтесь к Discord",
         "labels": "Метки",
-        "locations": "Локации",
+        "locations": "Места хранения",
         "maintenance": "Техническое обслуживание и ремонт",
         "name": "Имя",
         "password": "Пароль",
