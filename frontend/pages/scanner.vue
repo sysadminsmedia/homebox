@@ -47,6 +47,9 @@
     }
   });
 
+  // stop the code reader when navigating away
+  onBeforeUnmount(() => codeReader.reset());
+
   watch(selectedSource, async newSource => {
     codeReader.reset();
 
