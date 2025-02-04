@@ -85,8 +85,14 @@ func (ctrl *V1Controller) HandleGetItemLabel() errchain.HandlerFunc {
 			return err
 		}
 
+		description := ""
+
+		if item.Location != nil {
+			description += fmt.Sprintf("\nLocation: %s", item.Location.Name)
+		}
+
 		hbUrl := GetHBURL(r.Header.Get("Referer"), ctrl.url)
-		return generateOrPrint(ctrl, w, r, item.Name, "Homebox Item", fmt.Sprintf("%s/item/%s", hbUrl, item.ID))
+		return generateOrPrint(ctrl, w, r, item.Name, description, fmt.Sprintf("%s/item/%s", hbUrl, item.ID))
 	}
 }
 
@@ -119,7 +125,13 @@ func (ctrl *V1Controller) HandleGetAssetLabel() errchain.HandlerFunc {
 			return validate.NewRequestError(fmt.Errorf("failed to find asset id"), http.StatusNotFound)
 		}
 
+		description := item.Items[0].Name
+
+		if item.Items[0].Location != nil {
+			description += fmt.Sprintf("\nLocation: %s", item.Items[0].Location.Name)
+		}
+
 		hbUrl := GetHBURL(r.Header.Get("Referer"), ctrl.url)
-		return generateOrPrint(ctrl, w, r, item.Items[0].AssetID.String(), fmt.Sprintf("%s\nHomebox Asset", item.Items[0].Name), fmt.Sprintf("%s/a/%s", hbUrl, item.Items[0].AssetID.String()))
+		return generateOrPrint(ctrl, w, r, item.Items[0].AssetID.String(), description, fmt.Sprintf("%s/a/%s", hbUrl, item.Items[0].AssetID.String()))
 	}
 }
