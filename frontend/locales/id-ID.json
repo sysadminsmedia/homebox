@@ -1,1 +1,149 @@
-{}
+{
+    "components": {
+        "app": {
+            "outdated": {
+                "latest_version": "Versi terbaru",
+                "new_version_available": "Tersedia versi terbaru"
+            }
+        },
+        "global": {
+            "copy_text": {
+                "documentation": "dokumentasi",
+                "failed_to_copy": "Gagal menyalin teks",
+                "learn_more": "Pelajari lebih lanjut di"
+            },
+            "date_time": {
+                "ago": "{0} lalu",
+                "days": "hari",
+                "hour": "jam",
+                "hours": "jam",
+                "in": "dalam {0}",
+                "just-now": "saat ini",
+                "last-month": "bulan lalu",
+                "last-week": "pekan lalu",
+                "last-year": "tahun lalu",
+                "minute": "menit",
+                "minutes": "menit",
+                "months": "bulan",
+                "next-month": "bulan depan",
+                "next-week": "pekan depan",
+                "next-year": "tahun depan",
+                "second": "detik",
+                "seconds": "detik",
+                "tomorrow": "besok",
+                "week": "pekan",
+                "weeks": "pekan",
+                "years": "tahun",
+                "yesterday": "kemaren"
+            },
+            "password_score": {
+                "password_strength": "Kompleksitas kata sandi"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "item_description": "Deskripsi item",
+                "item_name": "Nama item",
+                "photo_button": "Foto",
+                "title": "Buat item"
+            },
+            "view": {
+                "selectable": {
+                    "card": "Kartu",
+                    "items": "Barang-barang",
+                    "no_items": "Tidak ada barang untuk dimunculkan",
+                    "table": "Tabel"
+                },
+                "table": {
+                    "page": "Halaman",
+                    "rows_per_page": "Baris per halaman"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "label_description": "Keterangan/Deskripsi",
+                "label_name": "Nama",
+                "title": "Buat label"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "location_description": "Deskripsi lokasi",
+                "location_name": "Nama lokasi",
+                "title": "Tambah Lokasi"
+            },
+            "tree": {
+                "no_locations": "Tidak ada lokasi yang tersedia. Tambahkan lokasi melalui tombol\n`<`span class=\"link-primary\"`>`Buat`<`/span`>` menu navigasi."
+            }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Gunakan tombol angka untuk memilih."
+        }
+    },
+    "global": {
+        "add": "Tambah",
+        "confirm": "Konfirmasi",
+        "create": "Buat",
+        "create_and_add": "Buat dan Tambah Baru",
+        "created": "Behasil dibuat",
+        "delete": "Hapus",
+        "details": "Detail",
+        "duplicate": "Duplikat",
+        "edit": "Sunting",
+        "email": "Email",
+        "follow_dev": "Ikuti Pengembang",
+        "github": "Github project",
+        "items": "Barang",
+        "join_discord": "Bergabunglah dengan Discord",
+        "labels": "Label",
+        "locations": "Lokasi",
+        "maintenance": "Perbaikan",
+        "name": "Nama",
+        "navigate": "Navigasi",
+        "password": "Kata Sandi",
+        "read_docs": "Baca Dokumen",
+        "save": "Simpan",
+        "search": "Cari",
+        "sign_out": "Keluar",
+        "submit": "Kirim",
+        "update": "Perbaharui",
+        "value": "Nilai",
+        "version": "Versi:{ version }",
+        "welcome": "Selamay datang, { username }"
+    },
+    "home": {
+        "labels": "Label",
+        "quick_statistics": "Ikhtisar Statistik",
+        "recently_added": "Baru Ditambahkan",
+        "storage_locations": "Lokasi Penyimpanan",
+        "total_items": "Jumlah Item",
+        "total_labels": "Total Label",
+        "total_locations": "Total Lokasi",
+        "total_value": "Total Nilai"
+    },
+    "index": {
+        "disabled_registration": "Registrasi Dinonaktifkan",
+        "dont_join_group": "Tidak ingin bergabung dengan grup?",
+        "joining_group": "Anda Bergabung dengan Grup yang Ada!",
+        "login": "Masuk",
+        "register": "Daftar Baru",
+        "remember_me": "Ingat Saya",
+        "set_email": "Apa email Anda?",
+        "set_name": "Apa nama anda?",
+        "set_password": "Password Anda",
+        "tagline": "Lacak, Atur, dan Kelola Barang-barangmu."
+    },
+    "items": {
+        "add": "Tambah",
+        "advanced": "Tingkat Lanjut",
+        "archived": "Diarsipkan",
+        "asset_id": "ID Aset",
+        "attachment": "Lampiran",
+        "attachments": "Lampiran",
+        "changes_persisted_immediately": "Perubahan lampiran akan segera disimpan",
+        "created_at": "Dibuat Pada",
+        "custom_fields": "Informasi Tambahan",
+        "description": "Deskripsi"
+    }
+}
