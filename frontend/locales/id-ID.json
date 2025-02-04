@@ -1,8 +1,14 @@
 {
     "components": {
         "app": {
+            "import_dialog": {
+                "change_warning": "Ada perubahan pada logika impor untuk data dengan import_ref yang sudah ada.  Jika sebuah import_ref ditemukan di file CSV,\ndata tersebut akan diperbarui menggunakan nilai-nilai yang ada di file CSV.",
+                "description": "Impor file CSV yang berisi item, label, dan lokasi Anda. Lihat dokumentasi untuk informasi lebih lanjut mengenai\nformat yang diperlukan.",
+                "title": "Impor CSV",
+                "upload": "Unggah"
+            },
             "outdated": {
-                "current_version": "Versi saat ini",
+                "current_version": "Versi Terkini",
                 "dismiss": "Tutup",
                 "latest_version": "Versi Terbaru",
                 "new_version_available": "Tersedia versi terbaru",
@@ -13,6 +19,7 @@
             "copy_text": {
                 "documentation": "dokumentasi",
                 "failed_to_copy": "Gagal menyalin teks",
+                "https_required": "karena wajib menggunakan HTTPS",
                 "learn_more": "Pelajari lebih lanjut di"
             },
             "date_time": {
