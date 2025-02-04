@@ -127,6 +127,7 @@
   import MdiWrench from "~icons/mdi/wrench";
   import MdiMenu from "~icons/mdi/menu";
   import MdiPlus from "~icons/mdi/plus";
+  import MdiQrcodeScan from "~icons/mdi/qrcode-scan";
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
@@ -246,6 +247,13 @@
       active: computed(() => route.path === "/items"),
       name: computed(() => t("menu.search")),
       to: "/items",
+    },
+    {
+      icon: MdiQrcodeScan,
+      id: 3,
+      active: computed(() => route.path === "/scanner"),
+      name: computed(() => t("menu.scanner")),
+      to: "/scanner",
     },
     {
       icon: MdiWrench,

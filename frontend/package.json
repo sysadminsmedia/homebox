@@ -51,6 +51,7 @@
     "@vuepic/vue-datepicker": "^8.8.1",
     "@vueuse/nuxt": "^10.11.1",
     "@vueuse/router": "^10.11.1",
+    "@zxing/library": "^0.21.3",
     "autoprefixer": "^10.4.20",
     "daisyui": "^2.52.0",
     "date-fns": "^3.6.0",

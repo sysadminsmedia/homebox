@@ -85,6 +85,27 @@ func wrapText(text string, face font.Face, maxWidth int, ctx *freetype.Context) 
 		wrappedLines = append(wrappedLines, currentLine)
 	}
 
+	// Handle lines that are too long and have no spaces
+	for i, line := range wrappedLines {
+		width := measureString(line, face, ctx)
+		if width > maxWidth {
+			var splitLines []string
+			currentLine := ""
+			for _, r := range line {
+				testLine := currentLine + string(r)
+				width := measureString(testLine, face, ctx)
+				if width <= maxWidth {
+					currentLine = testLine
+				} else {
+					splitLines = append(splitLines, currentLine)
+					currentLine = string(r)
+				}
+			}
+			splitLines = append(splitLines, currentLine)
+			wrappedLines = append(wrappedLines[:i], append(splitLines, wrappedLines[i+1:]...)...)
+		}
+	}
+
 	return wrappedLines
 }
 
