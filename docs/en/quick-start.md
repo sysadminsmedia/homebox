@@ -1,6 +1,6 @@
 # Quick Start
 
-1. Install Homebox either by using [the latest Docker image](https://ghcr.io/sysadminsmedia/homebox:latest), or by downloading the correct executable for your Operating System from the [Releases](https://github.com/sysadminsmedia/homebox/releases). (See [Installation](./installation) for more details)
+1. Install Homebox either by using [the latest Docker image](./installation#docker), or by downloading the correct executable for your Operating System from the [Releases](https://github.com/sysadminsmedia/homebox/releases). (See [Installation](./installation) for more details)
 
 2. Browse to `http://SERVER_IP:3100` (if Using Docker) or `http://SERVER_IP:7745` (if installed locally) to access the included web User Interface.
 
