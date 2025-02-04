@@ -317,6 +317,10 @@
         "language": "Bahasa",
         "new_password": "Kata Sandi Baru",
         "no_notifiers": "Tidak ada notifier yang dikonfigurasi",
-        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notifier"
+        "notifier_modal": "{ type, select, true {Ubah} false {Buat} other {Lainnya}} Notifier",
+        "notifiers": "Notifier",
+        "notifiers_sub": "Dapatkan pemberitahuan untuk pengingat pemeliharaan mendatang",
+        "test": "Pengujian",
+        "theme_settings": "Pengaturan Theme"
     }
 }
