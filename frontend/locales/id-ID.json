@@ -46,6 +46,9 @@
                 "years": "tahun",
                 "yesterday": "kemaren"
             },
+            "page_qr_code": {
+                "page_url": "Halaman URL"
+            },
             "password_score": {
                 "password_strength": "Kompleksitas kata sandi"
             }
@@ -83,6 +86,9 @@
                 "location_name": "Nama lokasi",
                 "title": "Tambah Lokasi"
             },
+            "selector": {
+                "parent_location": "Lokasi Induk"
+            },
             "tree": {
                 "no_locations": "Tidak ada lokasi yang tersedia. Tambahkan lokasi melalui tombol\n`<`span class=\"link-primary\"`>`Buat`<`/span`>` menu navigasi."
             }
@@ -93,6 +99,7 @@
     },
     "global": {
         "add": "Tambah",
+        "build": "Kompilasi: { build }",
         "confirm": "Konfirmasi",
         "create": "Buat",
         "create_and_add": "Buat dan Tambah Baru",
@@ -157,6 +164,159 @@
         "description": "Deskripsi",
         "details": "Detail",
         "drag_and_drop": "Seret dan lepas file di sini atau klik untuk memilih file",
-        "edit_details": "Edit Detail"
+        "edit_details": "Edit Detail",
+        "field_selector": "Selektor",
+        "field_value": "Nilai",
+        "first": "Pertama",
+        "include_archive": "Sertakan Item yang Diarsipkan",
+        "insured": "Diasuransikan",
+        "last": "﻿Terakhir",
+        "lifetime_warranty": "Garansi seumur hidup",
+        "location": "Lokasi",
+        "manual": "Panduan",
+        "manuals": "Panduan",
+        "manufacturer": "Pabrikan/Produsen",
+        "model_number": "Nomor Model",
+        "name": "Nama",
+        "negate_labels": "Negasikan Label yang Dipilih",
+        "next_page": "Halaman Berikutnya",
+        "no_results": "Item tidak ditemukan",
+        "notes": "Catatan",
+        "only_with_photo": "Hanya item dengan foto",
+        "only_without_photo": "Hanya item tanpa foto",
+        "options": "Opsi",
+        "order_by": "Urutan",
+        "pages": "Halaman { page } dari { totalPages }",
+        "parent_item": "Item Induk",
+        "photo": "Foto",
+        "photos": "Foto",
+        "prev_page": "Halaman Sebelumnya",
+        "purchase_date": "Tanggal Pembelian",
+        "purchase_details": "Detail Pembelian",
+        "purchase_price": "Harga Pembelian",
+        "purchased_from": "Dibeli Dari",
+        "quantity": "Jumlah",
+        "query_id": "Meminta Nomor ID Aset: { id }",
+        "receipt": "Resi",
+        "receipts": "Resi",
+        "reset_search": "Reset Pencarian",
+        "results": "{ total } Hasil",
+        "serial_number": "Nomor Seri",
+        "show_advanced_view_options": "Tampilkan opsi lanjutan",
+        "sold_at": "Dijual Pada",
+        "sold_details": "Detail Penjualan",
+        "sold_price": "Harga Jual",
+        "sold_to": "Dijual Kepada",
+        "tip_1": "Filter untuk lokasi dan label bekerja dengan operasi 'OR'. Artinya, jika Anda memilih lebih dari satu filter, hanya satu\nfilter yang harus cocok agar data ditampilkan.",
+        "tip_2": "Pencarian yang diawali dengan '#'' akan meminta ID aset (contoh '#000 -001 ')",
+        "tip_3": "Filter untuk lokasi dan label bekerja dengan operasi 'OR'. Artinya, jika Anda memilih lebih dari satu filter, hanya satu\nfilter yang harus cocok agar data ditampilkan.",
+        "tips": "Anjuran",
+        "tips_sub": "Tips Pencarian",
+        "updated_at": "Diperbarui pada",
+        "warranty": "Garansi",
+        "warranty_details": "Rincian Garansi",
+        "warranty_expires": "Garansi Kedaluwarsa"
+    },
+    "labels": {
+        "no_results": "Tidak Ditemukan Label",
+        "update_label": "Perbarui Label"
+    },
+    "languages": {
+        "ca": "Catalan",
+        "de": "Jerman",
+        "en": "Bahasa Inggris",
+        "es": "Spanyol",
+        "fr": "Prancis",
+        "hu": "Hungaria",
+        "it": "Italia",
+        "ja-JP": "Jepang",
+        "nl": "Belanda",
+        "pl": "Polandia",
+        "pt-BR": "Portugis (Brasil)",
+        "pt-PT": "Bahasa Portugis (Portugal)",
+        "ru": "Rusia",
+        "sl": "Bahasa Slovenia",
+        "sv": "Swedia",
+        "tr": "Turki",
+        "uk-UA": "Ukraina",
+        "zh-CN": "Mandarin (Disederhanakan)",
+        "zh-HK": "Tionghoa (Hong Kong)",
+        "zh-MO": "Tionghoa (Makau)",
+        "zh-TW": "Mandarin (Tradisional)"
+    },
+    "languages.da-DK": "Denmark",
+    "languages.fi.FI": "Bahasa Finlandia",
+    "languages.ro-RO": "Romania",
+    "languages.sk-SK": "Slovakia",
+    "locations": {
+        "child_locations": "Lokasi Turunan",
+        "collapse_tree": "Ciutkan",
+        "no_results": "Lokasi tidak ditemukan",
+        "update_location": "Perbarui Lokasi"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Keduanya",
+            "completed": "Selesai",
+            "scheduled": "Terjadwalkan"
+        },
+        "list": {
+            "complete": "Selesai",
+            "create_first": "Buat Entri Pertama Anda",
+            "delete": "Hapus",
+            "duplicate": "Gandakan",
+            "edit": "Sunting",
+            "new": "Baru"
+        },
+        "modal": {
+            "completed_date": "Tanggal Selesai",
+            "cost": "Biaya",
+            "delete_confirmation": "Apa Anda yakin ingin menghapus ini?",
+            "edit_action": "Perbaharui",
+            "edit_title": "Sunting entri",
+            "entry_name": "Nama Entri",
+            "new_action": "Buat",
+            "new_title": "Entri Baru",
+            "notes": "Catatan",
+            "scheduled_date": "Tanggal Terjadwal"
+        },
+        "monthly_average": "Rata-rata Bulanan",
+        "toast": {
+            "failed_to_create": "Gagal membuat entri",
+            "failed_to_delete": "Gagal menghapus data",
+            "failed_to_update": "Gagal memperbarui entri"
+        },
+        "total_cost": "Total biaya",
+        "total_entries": "Total Entri"
+    },
+    "menu": {
+        "create_item": "Item / Aset",
+        "create_label": "Label",
+        "create_location": "Lokasi",
+        "home": "Beranda",
+        "locations": "Lokasi",
+        "maintenance": "Pemeliharaan",
+        "profile": "Profil",
+        "search": "Cari",
+        "tools": "Tools"
+    },
+    "profile": {
+        "active": "Aktif",
+        "change_password": "Ganti Kata Sandi",
+        "currency_format": "Format Mata uang",
+        "current_password": "Kata sandi saat ini",
+        "delete_account": "Hapus Akun",
+        "delete_account_sub": "Hapus akun Anda dan semua data terkait.",
+        "display_header": "{ currentValue, select, true {Sembunyikan Header} false {Tampilkan Header} other {Not Hit}}",
+        "enabled": "Tersedia",
+        "example": "Contoh",
+        "gen_invite": "Buat Tautan Undangan",
+        "group_settings": "Pengaturan Grup",
+        "group_settings_sub": "Pengaturan Grup Bersama. Anda mungkin perlu me-refresh browser Anda agar beberapa pengaturan diterapkan.",
+        "inactive": "Tidak Aktif",
+        "language": "Bahasa",
+        "new_password": "Kata Sandi Baru",
+        "no_notifiers": "Tidak ada notifier yang dikonfigurasi",
+        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notifier"
     }
 }
