@@ -361,8 +361,8 @@
             "asset_labels": "Label ID Aset",
             "asset_labels_button": "Generator Label",
             "asset_labels_sub": "Menghasilkan label dalam PDF yang dapat dicetak untuk ID Aset. Label ini tidak spesifik untuk inventaris Anda, jadi Anda dapat mencetaknya terlebih dahulu dan menempelkannya ke inventaris Anda saat Anda menerimanya.",
-            "bill_of_materials": "Bill of Materials",
-            "bill_of_materials_button": "Buat bom",
+            "bill_of_materials": "Daftar Komponen",
+            "bill_of_materials_button": "Download Daftar Inventaris",
             "bill_of_materials_sub": "Menghasilkan file CSV (Comma Separated Values) yang dapat diimpor ke program spreadsheet. Ini adalah ringkasan inventaris Anda dengan info dasar beserta harganya."
         },
         "reports_sub": "Buat laporan yang berbeda untuk inventaris Anda."
