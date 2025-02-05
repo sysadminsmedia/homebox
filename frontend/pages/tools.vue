@@ -91,6 +91,7 @@
 </template>
 
 <script setup lang="ts">
+  import { toast } from "vue-sonner";
   import DOMPurify from "dompurify";
   import MdiFileChart from "~icons/mdi/file-chart";
   import MdiArrowRight from "~icons/mdi/arrow-right";
@@ -113,7 +114,6 @@
 
   const api = useUserApi();
   const confirm = useConfirm();
-  const notify = useNotifier();
 
   function getBillOfMaterials() {
     const url = api.reports.billOfMaterialsURL();
@@ -137,11 +137,11 @@
     const result = await api.actions.ensureAssetIDs();
 
     if (result.error) {
-      notify.error("Failed to ensure asset IDs.");
+      toast.error("Failed to ensure asset IDs.");
       return;
     }
 
-    notify.success(`${result.data.completed} assets have been updated.`);
+    toast.success(`${result.data.completed} assets have been updated.`);
   }
 
   async function ensureImportRefs() {
@@ -156,11 +156,11 @@
     const result = await api.actions.ensureImportRefs();
 
     if (result.error) {
-      notify.error("Failed to ensure import refs.");
+      toast.error("Failed to ensure import refs.");
       return;
     }
 
-    notify.success(`${result.data.completed} assets have been updated.`);
+    toast.success(`${result.data.completed} assets have been updated.`);
   }
 
   async function resetItemDateTimes() {
@@ -175,11 +175,11 @@
     const result = await api.actions.resetItemDateTimes();
 
     if (result.error) {
-      notify.error("Failed to reset date and time values.");
+      toast.error("Failed to reset date and time values.");
       return;
     }
 
-    notify.success(`${result.data.completed} assets have been updated.`);
+    toast.success(`${result.data.completed} assets have been updated.`);
   }
 
   async function setPrimaryPhotos() {
@@ -194,11 +194,11 @@
     const result = await api.actions.setPrimaryPhotos();
 
     if (result.error) {
-      notify.error("Failed to set primary photos.");
+      toast.error("Failed to set primary photos.");
       return;
     }
 
-    notify.success(`${result.data.completed} assets have been updated.`);
+    toast.success(`${result.data.completed} assets have been updated.`);
   }
 </script>
 

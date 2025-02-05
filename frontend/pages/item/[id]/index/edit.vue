@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { toast } from "vue-sonner";
   import type { ItemAttachment, ItemField, ItemOut, ItemUpdate } from "~~/lib/api/types/data-contracts";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useLabelStore } from "~~/stores/labels";
@@ -15,7 +16,6 @@
 
   const route = useRoute();
   const api = useUserApi();
-  const toast = useNotifier();
   const preferences = useViewPreferences();
 
   const itemId = computed<string>(() => route.params.id as string);

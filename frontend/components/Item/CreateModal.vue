@@ -1,76 +1,86 @@
 <template>
-  <BaseModal v-model="modal">
-    <template #title> {{ $t("components.item.create_modal.title") }} </template>
-    <form @submit.prevent="create()">
-      <LocationSelector v-model="form.location" />
-      <FormTextField
-        ref="nameInput"
-        v-model="form.name"
-        :trigger-focus="focused"
-        :autofocus="true"
-        :label="$t('components.item.create_modal.item_name')"
-        :max-length="255"
-        :min-length="1"
-      />
-      <FormTextArea
-        v-model="form.description"
-        :label="$t('components.item.create_modal.item_description')"
-        :max-length="1000"
-      />
-      <FormMultiselect v-model="form.labels" :label="$t('global.labels')" :items="labels ?? []" />
+  <Dialog dialog-id="create-item">
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>{{ $t("components.item.create_modal.title") }}</DialogTitle>
+      </DialogHeader>
+      <form @submit.prevent="create()">
+        <LocationSelector v-model="form.location" />
+        <FormTextField
+          ref="nameInput"
+          v-model="form.name"
+          :trigger-focus="focused"
+          :autofocus="true"
+          :label="$t('components.item.create_modal.item_name')"
+          :max-length="255"
+          :min-length="1"
+        />
+        <FormTextArea
+          v-model="form.description"
+          :label="$t('components.item.create_modal.item_description')"
+          :max-length="1000"
+        />
+        <FormMultiselect v-model="form.labels" :label="$t('global.labels')" :items="labels ?? []" />
 
-      <div class="modal-action mb-6">
-        <div>
-          <label for="photo" class="btn">{{ $t("components.item.create_modal.photo_button") }}</label>
-          <input
-            id="photo"
-            class="hidden"
-            type="file"
-            accept="image/png,image/jpeg,image/gif,image/avif,image/webp"
-            @change="previewImage"
-          />
-        </div>
-        <div class="grow"></div>
-        <div>
-          <BaseButton class="rounded-r-none" :loading="loading" type="submit">
-            <template #icon>
-              <MdiPackageVariant class="swap-off size-5" />
-              <MdiPackageVariantClosed class="swap-on size-5" />
-            </template>
-            {{ $t("global.create") }}
-          </BaseButton>
-          <div class="dropdown dropdown-top">
-            <label tabindex="0" class="btn rounded-l-none rounded-r-xl">
-              <MdiChevronDown class="size-5" name="mdi-chevron-down" />
-            </label>
-            <ul tabindex="0" class="dropdown-content menu rounded-box right-0 w-64 bg-base-100 p-2 shadow">
-              <li>
-                <button type="button" @click="create(false)">{{ $t("global.create_and_add") }}</button>
-              </li>
-            </ul>
+        <div class="mt-4 flex">
+          <div>
+            <label for="photo" class="btn">{{ $t("components.item.create_modal.photo_button") }}</label>
+            <input
+              id="photo"
+              class="hidden"
+              type="file"
+              accept="image/png,image/jpeg,image/gif,image/avif,image/webp"
+              @change="previewImage"
+            />
+          </div>
+          <div class="grow"></div>
+          <div>
+            <BaseButton class="rounded-r-none" :loading="loading" type="submit">
+              <template #icon>
+                <MdiPackageVariant class="swap-off size-5" />
+                <MdiPackageVariantClosed class="swap-on size-5" />
+              </template>
+              {{ $t("global.create") }}
+            </BaseButton>
+            <div class="dropdown dropdown-top">
+              <label tabindex="0" class="btn rounded-l-none rounded-r-xl">
+                <MdiChevronDown class="size-5" name="mdi-chevron-down" />
+              </label>
+              <ul tabindex="0" class="dropdown-content menu rounded-box right-0 w-64 bg-base-100 p-2 shadow">
+                <li>
+                  <button type="button" @click="create(false)">{{ $t("global.create_and_add") }}</button>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- photo preview area is AFTER the create button, to avoid pushing the button below the screen on small displays -->
-      <div class="border-t border-gray-300 p-4">
-        <template v-if="form.preview">
+        <!-- photo preview area is AFTER the create button, to avoid pushing the button below the screen on small displays -->
+        <div v-if="form.preview" class="mt-4 border-t border-gray-300 p-4">
           <p class="mb-0">File name: {{ form.photo?.name }}</p>
           <img
             :src="form.preview"
             class="h-[100px] w-full rounded-t border-gray-300 object-cover shadow-sm"
             alt="Uploaded Photo"
           />
-        </template>
-      </div>
-    </form>
-    <p class="mt-4 text-center text-sm">
-      use <kbd class="kbd kbd-xs">Shift</kbd> + <kbd class="kbd kbd-xs"> Enter </kbd> to create and add another
-    </p>
-  </BaseModal>
+        </div>
+      </form>
+
+      <DialogFooter>
+        <!-- TODO: sort this text not being aligned properly -->
+        <span class="flex items-center gap-1 text-center">
+          Use <Shortcut size="sm" :keys="['Shift']" /> + <Shortcut size="sm" :keys="['Enter']" /> to create and add
+          another.
+        </span>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
+  import { toast } from "vue-sonner";
+  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import { Shortcut } from "@/components/ui/shortcut";
   import type { ItemCreate, LabelOut, LocationOut } from "~~/lib/api/types/data-contracts";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
@@ -78,16 +88,11 @@
   import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
   import MdiChevronDown from "~icons/mdi/chevron-down";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
+  import { useDialog } from "~/components/ui/dialog-provider";
 
-  const props = defineProps({
-    modelValue: {
-      type: Boolean,
-      required: true,
-    },
-  });
+  const { activeDialog, closeDialog } = useDialog();
 
   const api = useUserApi();
-  const toast = useNotifier();
 
   const locationsStore = useLocationStore();
   const locations = computed(() => locationsStore.allLocations);
@@ -113,7 +118,6 @@
 
   const nameInput = ref<HTMLInputElement | null>(null);
 
-  const modal = useVModel(props, "modelValue");
   const loading = ref(false);
   const focused = ref(false);
   const form = reactive({
@@ -142,12 +146,12 @@
   }
 
   watch(
-    () => modal.value,
-    open => {
-      if (open) {
-        useTimeoutFn(() => {
-          focused.value = true;
-        }, 50);
+    () => activeDialog.value,
+    active => {
+      if (active === "create-item") {
+        // useTimeoutFn(() => {
+        //   focused.value = true;
+        // }, 50);
 
         if (locationId.value) {
           const found = locations.value.find(l => l.id === locationId.value);
@@ -160,7 +164,7 @@
           form.labels = labels.value.filter(l => l.id === labelId.value);
         }
       } else {
-        focused.value = false;
+        // focused.value = false;
       }
     }
   );
@@ -222,7 +226,7 @@
     loading.value = false;
 
     if (close) {
-      modal.value = false;
+      closeDialog("create-item");
       navigateTo(`/item/${data.id}`);
     }
   }

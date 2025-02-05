@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { toast } from "vue-sonner";
   import { route } from "../../lib/api/base";
 
   definePageMeta({
@@ -64,8 +65,6 @@
     };
   };
 
-  const notifier = useNotifier();
-
   function calculateGridData(input: Input): Output {
     const { page, cardHeight, cardWidth } = input;
 
@@ -76,7 +75,7 @@
     const availablePageHeight = page.height - page.pageTopPadding - page.pageBottomPadding;
 
     if (availablePageWidth < cardWidth || availablePageHeight < cardHeight) {
-      notifier.error("Page size is too small for the card size");
+      toast.error("Page size is too small for the card size");
       return out.value;
     }
 

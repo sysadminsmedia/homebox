@@ -22,6 +22,7 @@
 </template>
 
 <script setup lang="ts">
+  import { toast } from "vue-sonner";
   import { useI18n } from "vue-i18n";
   import type { MaintenanceEntry, MaintenanceEntryWithDetails } from "~~/lib/api/types/data-contracts";
   import MdiPost from "~icons/mdi/post";
@@ -29,7 +30,6 @@
 
   const { t } = useI18n();
   const api = useUserApi();
-  const toast = useNotifier();
 
   const emit = defineEmits(["changed"]);
 
