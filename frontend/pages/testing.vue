@@ -19,4 +19,5 @@
     <Button variant="destructive">Button 2</Button>
     <Button>Button 3</Button>
   </Group>
+  <LabelSelector />
 </template>

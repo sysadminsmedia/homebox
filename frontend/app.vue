@@ -16,8 +16,6 @@
   import { useI18n } from "vue-i18n";
   import { DialogProvider } from "./components/ui/dialog-provider";
 
-  console.log("running in app");
-
   const { theme } = useTheme();
 
   const { locale } = useI18n();

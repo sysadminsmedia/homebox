@@ -20,7 +20,7 @@
           :label="$t('components.item.create_modal.item_description')"
           :max-length="1000"
         />
-        <FormMultiselect v-model="form.labels" :label="$t('global.labels')" :items="labels ?? []" />
+        <LabelSelector v-model="form.labels" :label="$t('global.labels')" :items="labels ?? []" />
 
         <div class="mt-4 flex">
           <div>
@@ -89,6 +89,7 @@
   import MdiChevronDown from "~icons/mdi/chevron-down";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useDialog } from "~/components/ui/dialog-provider";
+  import LabelSelector from "~/components/Label/Selector.vue";
 
   const { activeDialog, closeDialog } = useDialog();
 

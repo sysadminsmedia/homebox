@@ -45,7 +45,7 @@
                 <Shortcut
                   v-if="btn.shortcut"
                   class="ml-auto hidden group-hover:inline"
-                  :keys="btn.shortcut.replace('Ctrl', '⇧').split('+')"
+                  :keys="btn.shortcut.replace('Shift', '⇧').split('+')"
                 />
               </DropdownMenuItem>
             </DropdownMenuContent>
