@@ -19,7 +19,7 @@
             "copy_text": {
                 "documentation": "documentação",
                 "failed_to_copy": "Falha ao copiar texto para a área de transferência",
-                "https_required": "porque o HTTPS é necessário",
+                "https_required": "porque HTTPS é necessário",
                 "learn_more": "Saiba mais em nosso"
             },
             "date_time": {
