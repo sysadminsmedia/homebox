@@ -657,7 +657,7 @@
             <div
               v-for="(field, idx) in item.fields"
               :key="`field-${idx}`"
-              class="grid grid-cols-2 gap-2 md:grid-cols-4"
+              class="grid grid-cols-2 gap-2 md:grid-cols-4 pt-4"
             >
               <!-- <FormSelect v-model:value="field.type" label="Field Type" :items="fieldTypes" value-key="value" /> -->
               <FormTextField v-model="field.name" :label="$t('global.name')" />
