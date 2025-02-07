@@ -10,6 +10,7 @@
     "lint:ci": "eslint --ext \".ts,.js,.vue\" --ignore-path ../.gitignore --ignore-pattern \"components/ui\" . --max-warnings 1",
     "typecheck": "pnpm vue-tsc --noEmit",
     "test:ci": "TEST_SHUTDOWN_API_SERVER=true vitest --run --config ./test/vitest.config.ts",
+    "test:e2e": "TEST_SHUTDOWN_API_SERVER=true playwright test -c ./test/playwright.config.ts",
     "test:local": "TEST_SHUTDOWN_API_SERVER=false && vitest --run --config ./test/vitest.config.ts",
     "test:watch": " TEST_SHUTDOWN_API_SERVER=false vitest --config ./test/vitest.config.ts"
   },
@@ -18,6 +19,7 @@
     "@iconify-json/mdi": "^1.2.2",
     "@intlify/unplugin-vue-i18n": "^4.0.0",
     "@nuxtjs/eslint-config-typescript": "^12.1.0",
+    "@playwright/test": "^1.49.1",
     "@types/markdown-it": "^13.0.9",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
