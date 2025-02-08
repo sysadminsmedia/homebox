@@ -141,6 +141,7 @@ func GenerateLabel(w io.Writer, params *GenerateParameters) error {
 	if err != nil {
 		return err
 	}
+	qr.DisableBorder = true
 	qrImage := qr.Image(params.QrSize)
 
 	// Create a new white background image
@@ -191,7 +192,7 @@ func GenerateLabel(w io.Writer, params *GenerateParameters) error {
 	maxWidth := params.Width - (params.Margin * 2) - params.QrSize - params.ComponentPadding
 	lineSpacing := int(boldContext.PointToFixed(params.TitleFontSize).Round())
 	textX := params.Margin + params.ComponentPadding + params.QrSize
-	textY := params.Margin + (lineSpacing / 2)
+	textY := params.Margin - 8
 
 	titleLines := wrapText(params.TitleText, boldFace, maxWidth, boldContext)
 	for _, line := range titleLines {
@@ -203,8 +204,8 @@ func GenerateLabel(w io.Writer, params *GenerateParameters) error {
 		textY += lineSpacing
 	}
 
+	textY += params.ComponentPadding / 4
 	lineSpacing = int(regularContext.PointToFixed(params.DescriptionFontSize).Round())
-	textY += lineSpacing / 2
 
 	descriptionLines := wrapText(params.DescriptionText, regularFace, maxWidth, regularContext)
 	for _, line := range descriptionLines {
