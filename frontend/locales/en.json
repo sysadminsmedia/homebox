@@ -56,7 +56,7 @@
                 "titles": "Labels",
                 "print": "Print Label",
                 "download": "Download Label",
-                "confirm_description": "Are you sure you want to print this label?"
+                "confirm_description": "Are you sure you want to print this label? The print command will be executed on the server."
 
             }
         },
@@ -379,6 +379,8 @@
         "select_video_source": "Pick a video source",
         "unsupported": "Media Stream API is not supported",
         "error": "An error occurred while scanning",
-        "no_sources": "No video sources available"
+        "no_sources": "No video sources available",
+        "permission_denied": "Camera permission was denied",
+        "invalid_url": "Invalid barcode URL"
     }
 }

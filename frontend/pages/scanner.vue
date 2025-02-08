@@ -20,14 +20,21 @@
   const errorMessage = ref<string | null>(null);
 
   const handleError = (error: unknown) => {
-    let msg = error;
-    if (error instanceof Error) {
-      msg = error.message;
-    }
-    errorMessage.value = `${t("scanner.error")}: ${msg}`;
+    console.error("Scanner error:", error);
+    errorMessage.value = t("scanner.error");
   };
 
   onMounted(async () => {
+    try {
+      const permission = await navigator.permissions.query({ name: "camera" });
+      if (permission.state === "denied") {
+        errorMessage.value = t("scanner.permission_denied");
+        return;
+      }
+    } catch (err) {
+      handleError(err);
+    }
+
     if (!(navigator && navigator.mediaDevices && "enumerateDevices" in navigator.mediaDevices)) {
       errorMessage.value = t("scanner.unsupported");
       return;
@@ -59,7 +66,11 @@
           loading.value = true;
           try {
             const url = new URL(result.getText());
-            navigateTo(url.pathname);
+            if (!url.pathname.startsWith("/")) {
+              throw new Error(t("scanner.invalid_url"));
+            }
+            const sanitizedPath = url.pathname.replace(/[^a-zA-Z0-9-_/]/g, "");
+            navigateTo(sanitizedPath);
           } catch (err) {
             loading.value = false;
             handleError(err);

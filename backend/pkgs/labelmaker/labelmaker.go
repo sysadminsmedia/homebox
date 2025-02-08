@@ -1,3 +1,4 @@
+// labelmaker package provides functionality for generating and printing labels for items, locations and assets stored in Homebox
 package labelmaker
 
 import (
@@ -7,10 +8,13 @@ import (
 	"image/draw"
 	"image/png"
 	"io"
+	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"text/template"
+	"time"
 
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
@@ -25,27 +29,45 @@ type GenerateParameters struct {
 	Width               int
 	Height              int
 	QrSize              int
-	Padding             int
+	Margin              int
+	ComponentPadding    int
 	TitleText           string
 	TitleFontSize       float64
 	DescriptionText     string
 	DescriptionFontSize float64
 	Dpi                 float64
-	Url                 string
+	URL                 string
 }
 
-func NewGenerateParams(width int, height int, padding int, fontSize float64, title string, description string, url string) GenerateParameters {
+func (p *GenerateParameters) Validate() error {
+	if p.Width <= 0 {
+		return fmt.Errorf("invalid width")
+	}
+	if p.Height <= 0 {
+		return fmt.Errorf("invalid height")
+	}
+	if p.Margin < 0 {
+		return fmt.Errorf("invalid margin")
+	}
+	if p.ComponentPadding < 0 {
+		return fmt.Errorf("invalid component padding")
+	}
+	return nil
+}
+
+func NewGenerateParams(width int, height int, margin int, padding int, fontSize float64, title string, description string, url string) GenerateParameters {
 	return GenerateParameters{
 		Width:               width,
 		Height:              height,
 		QrSize:              height - (padding * 2),
-		Padding:             padding,
+		Margin:              margin,
+		ComponentPadding:    padding,
 		TitleText:           title,
 		DescriptionText:     description,
 		TitleFontSize:       fontSize,
 		DescriptionFontSize: fontSize * 0.8,
 		Dpi:                 72,
-		Url:                 url,
+		URL:                 url,
 	}
 }
 
@@ -110,8 +132,12 @@ func wrapText(text string, face font.Face, maxWidth int, ctx *freetype.Context) 
 }
 
 func GenerateLabel(w io.Writer, params *GenerateParameters) error {
+	if err := params.Validate(); err != nil {
+		return err
+	}
+
 	// Create QR code
-	qr, err := qrcode.New(params.Url, qrcode.Medium)
+	qr, err := qrcode.New(params.URL, qrcode.Medium)
 	if err != nil {
 		return err
 	}
@@ -124,7 +150,7 @@ func GenerateLabel(w io.Writer, params *GenerateParameters) error {
 
 	// Draw QR code onto the image
 	draw.Draw(img,
-		image.Rect(params.Padding, params.Padding, params.QrSize+params.Padding, params.QrSize+params.Padding), // Position QR code at (50,50)
+		image.Rect(params.Margin, params.Margin, params.QrSize+params.Margin, params.QrSize+params.Margin),
 		qrImage,
 		image.Point{},
 		draw.Over)
@@ -162,10 +188,10 @@ func GenerateLabel(w io.Writer, params *GenerateParameters) error {
 	boldContext := createContext(boldFont, params.TitleFontSize)
 	regularContext := createContext(regularFont, params.DescriptionFontSize)
 
-	maxWidth := params.Width - (params.Padding * 3) - params.QrSize
+	maxWidth := params.Width - (params.Margin * 2) - params.QrSize - params.ComponentPadding
 	lineSpacing := int(boldContext.PointToFixed(params.TitleFontSize).Round())
-	textX := (params.Padding * 2) + params.QrSize
-	textY := params.Padding + (lineSpacing / 2)
+	textX := params.Margin + params.ComponentPadding + params.QrSize
+	textY := params.Margin + (lineSpacing / 2)
 
 	titleLines := wrapText(params.TitleText, boldFace, maxWidth, boldContext)
 	for _, line := range titleLines {
@@ -199,13 +225,16 @@ func GenerateLabel(w io.Writer, params *GenerateParameters) error {
 }
 
 func PrintLabel(cfg *config.Config, params *GenerateParameters) error {
-	f, err := os.CreateTemp("", "label-*.jpg")
+	tmpFile := filepath.Join(os.TempDir(), fmt.Sprintf("label-%d.png", time.Now().UnixNano()))
+	f, err := os.OpenFile(tmpFile, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
 	if err != nil {
 		return err
 	}
 	defer func() {
 		_ = f.Close()
-		_ = os.Remove(f.Name())
+		if err := os.Remove(f.Name()); err != nil {
+			log.Printf("failed to remove temporary label file: %v", err)
+		}
 	}()
 
 	err = GenerateLabel(f, params)
