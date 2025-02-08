@@ -54,5 +54,11 @@ export default defineConfig({
       { icon: 'github', link: 'https://git.homebox.software' },
       { icon: 'mastodon', link: 'https://noc.social/@sysadminszone' },
     ]
+  },
+
+  markdown: {
+    image: {
+      lazyLoading: true
+    }
   }
 })

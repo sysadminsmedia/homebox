@@ -9,9 +9,10 @@ on:
       - 'backend/**'
       - 'frontend/**'
       - 'Dockerfile'
-      - 'Dockerfile.rootless'
       - '.dockerignore'
-      - '.github/workflows/**'
+      - '.github/workflows/docker-publish-rootless.yaml'
+    ignore:
+      - 'docs/**'
     tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ "main" ]
@@ -19,9 +20,10 @@ on:
       - 'backend/**'
       - 'frontend/**'
       - 'Dockerfile'
-      - 'Dockerfile.rootless'
       - '.dockerignore'
-      - '.github/workflows/**'
+      - '.github/workflows/docker-publish-rootless.yaml'
+    ignore:
+      - 'docs/**'
 
 permissions:
   contents: read        # Access to repository contents
