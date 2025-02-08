@@ -31,7 +31,7 @@
 | HBOX_LABEL_MAKER_PADDING             | 8                                          | space between elements on label                                                        |
 | HBOX_LABEL_MAKER_MARGIN              | 8                                          | space between the label content and edges of the label                                 |
 | HBOX_LABEL_MAKER_FONT_SIZE           | 32.0                                       | the size of the labels font                                                            |
-| HBOX_LABEL_MAKER_PRINT_COMMAND       |                                            | the command to use for printing labels. if empty, label printing is disabled. `{{.FileName}}` in the command will be replaced with the jpg filename of the label |
+| HBOX_LABEL_MAKER_PRINT_COMMAND       |                                            | the command to use for printing labels. if empty, label printing is disabled. `{{.FileName}}` in the command will be replaced with the png filename of the label |
 
 ::: tip "CLI Arguments"
 If you're deploying without docker you can use command line arguments to configure the application. Run `homebox --help` for more information.
