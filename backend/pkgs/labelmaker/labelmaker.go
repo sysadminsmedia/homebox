@@ -22,7 +22,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/gofont/gobold"
-	"golang.org/x/image/font/gofont/goregular"
+	"golang.org/x/image/font/gofont/gomedium"
 )
 
 type GenerateParameters struct {
@@ -156,7 +156,7 @@ func GenerateLabel(w io.Writer, params *GenerateParameters) error {
 		image.Point{},
 		draw.Over)
 
-	regularFont, err := truetype.Parse(goregular.TTF)
+	regularFont, err := truetype.Parse(gomedium.TTF)
 	if err != nil {
 		return err
 	}
