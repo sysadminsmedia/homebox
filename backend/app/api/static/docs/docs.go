@@ -1070,7 +1070,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "image/jpeg",
+                        "description": "image/png",
                         "schema": {
                             "type": "string"
                         }
@@ -1109,7 +1109,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "image/jpeg",
+                        "description": "image/png",
                         "schema": {
                             "type": "string"
                         }
@@ -1148,7 +1148,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "image/jpeg",
+                        "description": "image/png",
                         "schema": {
                             "type": "string"
                         }
@@ -3108,6 +3108,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "health": {
+                    "type": "boolean"
+                },
+                "labelPrinting": {
                     "type": "boolean"
                 },
                 "latest": {

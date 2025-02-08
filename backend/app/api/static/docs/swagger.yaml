@@ -682,6 +682,8 @@ definitions:
         type: boolean
       health:
         type: boolean
+      labelPrinting:
+        type: boolean
       latest:
         $ref: '#/definitions/services.Latest'
       message:
@@ -1422,7 +1424,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: image/jpeg
+          description: image/png
           schema:
             type: string
       security:
@@ -1446,7 +1448,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: image/jpeg
+          description: image/png
           schema:
             type: string
       security:
@@ -1470,7 +1472,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: image/jpeg
+          description: image/png
           schema:
             type: string
       security:
