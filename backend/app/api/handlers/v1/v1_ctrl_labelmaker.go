@@ -41,7 +41,7 @@ func generateOrPrint(ctrl *V1Controller, w http.ResponseWriter, r *http.Request,
 //	@Produce  json
 //	@Param    id	path	string	true	"Location ID"
 //	@Param		print	query	bool	false	"Print this label, defaults to false"
-//	@Success  200  {string}  string  "image/jpeg"
+//	@Success  200  {string}  string  "image/png"
 //	@Router   /v1/labelmaker/location/{id} [GET]
 //	@Security Bearer
 func (ctrl *V1Controller) HandleGetLocationLabel() errchain.HandlerFunc {
@@ -69,7 +69,7 @@ func (ctrl *V1Controller) HandleGetLocationLabel() errchain.HandlerFunc {
 //	@Produce  json
 //	@Param    id  path  string  true  "Item ID"
 //	@Param		print	query	bool	false	"Print this label, defaults to false"
-//	@Success  200  {string}  string  "image/jpeg"
+//	@Success  200  {string}  string  "image/png"
 //	@Router   /v1/labelmaker/item/{id} [GET]
 //	@Security Bearer
 func (ctrl *V1Controller) HandleGetItemLabel() errchain.HandlerFunc {
@@ -103,7 +103,7 @@ func (ctrl *V1Controller) HandleGetItemLabel() errchain.HandlerFunc {
 //	@Produce  json
 //	@Param    id  path  string  true  "Asset ID"
 //	@Param		print	query	bool	false	"Print this label, defaults to false"
-//	@Success  200  {string}  string  "image/jpeg"
+//	@Success  200  {string}  string  "image/png"
 //	@Router   /v1/labelmaker/assets/{id} [GET]
 //	@Security Bearer
 func (ctrl *V1Controller) HandleGetAssetLabel() errchain.HandlerFunc {

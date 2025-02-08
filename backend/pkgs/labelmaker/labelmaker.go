@@ -5,7 +5,7 @@ import (
 	"image"
 	"image/color"
 	"image/draw"
-	"image/jpeg"
+	"image/png"
 	"io"
 	"os"
 	"os/exec"
@@ -190,7 +190,7 @@ func GenerateLabel(w io.Writer, params *GenerateParameters) error {
 		textY += lineSpacing
 	}
 
-	err = jpeg.Encode(w, img, nil)
+	err = png.Encode(w, img)
 	if err != nil {
 		return err
 	}

@@ -45,7 +45,7 @@
 
   function downloadLabel() {
     const link = document.createElement("a");
-    link.download = `label-${props.id}.jpg`;
+    link.download = `label-${props.id}.png`;
     link.href = getLabelUrl(false);
     document.body.appendChild(link);
     link.click();
