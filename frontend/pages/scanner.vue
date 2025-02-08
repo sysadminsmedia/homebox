@@ -88,38 +88,36 @@
 </script>
 
 <template>
-  <div>
-    <BaseContainer class="flex flex-col gap-12 pb-16">
-      <section>
-        <div class="centered">
-          <div class="max-w-screen-md">
-            <div v-if="errorMessage" role="alert" class="alert alert-error mb-5 shadow-lg">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="size-6 shrink-0 stroke-current"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span class="text-sm">{{ errorMessage }}</span>
-            </div>
-            <video ref="video" class="rounded-box shadow-lg" poster="data:image/gif,AAAA"></video>
-            <select v-model="selectedSource" class="select mt-4 w-full shadow-lg">
-              <option disabled selected :value="null">{{ t("scanner.select_video_source") }}</option>
-              <option v-for="source in sources" :key="source.deviceId" :value="source.deviceId">
-                {{ source.label }}
-              </option>
-            </select>
+  <div class="flex flex-col gap-12 pb-16">
+    <section>
+      <div class="centered">
+        <div class="max-w-screen-md">
+          <div v-if="errorMessage" role="alert" class="alert alert-error mb-5 shadow-lg">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="size-6 shrink-0 stroke-current"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span class="text-sm">{{ errorMessage }}</span>
           </div>
+          <video ref="video" class="rounded-box shadow-lg" poster="data:image/gif,AAAA"></video>
+          <select v-model="selectedSource" class="select mt-4 w-full shadow-lg">
+            <option disabled selected :value="null">{{ t("scanner.select_video_source") }}</option>
+            <option v-for="source in sources" :key="source.deviceId" :value="source.deviceId">
+              {{ source.label }}
+            </option>
+          </select>
         </div>
-      </section>
-    </BaseContainer>
+      </div>
+    </section>
   </div>
 </template>
 
