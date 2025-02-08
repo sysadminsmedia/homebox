@@ -22,25 +22,36 @@
   });
 
   const printModal = ref(false);
-  const printing = ref(false);
+  const serverPrinting = ref(false);
 
   function openPrint() {
     printModal.value = true;
   }
 
-  async function print() {
-    printing.value = true;
-    const { error } = await fetch(getLabelUrl(true));
+  function browserPrint() {
+    const printWindow = window.open(getLabelUrl(false), "popup=true");
 
-    if (error) {
-      printing.value = false;
+    if (printWindow !== null) {
+      printWindow.onload = () => {
+        printWindow.print();
+      };
+    }
+  }
+
+  async function serverPrint() {
+    serverPrinting.value = true;
+    try {
+      await fetch(getLabelUrl(true));
+    } catch (err) {
+      console.error("Failed to print labels:", err);
+      serverPrinting.value = false;
       toast.error("Failed to print label");
       return;
     }
 
     toast.success("Label printed");
     printModal.value = false;
-    printing.value = false;
+    serverPrinting.value = false;
   }
 
   function downloadLabel() {
@@ -76,8 +87,15 @@
       </p>
       <img :src="getLabelUrl(false)" />
       <div class="modal-action">
-        <BaseButton type="submit" :loading="printing" @click="print">{{
-          $t("components.global.label_maker.print")
+        <BaseButton
+          v-if="status?.labelPrinting || false"
+          type="submit"
+          :loading="serverPrinting"
+          @click="serverPrint"
+          >{{ $t("components.global.label_maker.server_print") }}</BaseButton
+        >
+        <BaseButton type="submit" @click="browserPrint">{{
+          $t("components.global.label_maker.browser_print")
         }}</BaseButton>
       </div>
     </BaseModal>
@@ -89,7 +107,7 @@
         </label>
       </slot>
       <ul class="menu dropdown-content compact rounded-box bg-base-100 w-52 shadow-lg">
-        <li v-if="status?.labelPrinting || false">
+        <li>
           <button @click="openPrint">
             <MdiPrinterPos name="mdi-printer-pos" class="mr-2" />
             {{ $t("components.global.label_maker.print") }}

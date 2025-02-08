@@ -54,10 +54,11 @@
             },
             "label_maker": {
                 "titles": "Labels",
-                "print": "Print Label",
+                "server_print": "Print on Server",
+                "browser_print": "Print from Browser",
+                "print": "Print label",
                 "download": "Download Label",
-                "confirm_description": "Are you sure you want to print this label? The print command will be executed on the server."
-
+                "confirm_description": "Are you sure you want to print this label?"
             }
         },
         "item": {
