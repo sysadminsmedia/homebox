@@ -106,7 +106,7 @@
           {{ $t("components.global.label_maker.titles") }}
         </label>
       </slot>
-      <ul class="menu dropdown-content compact rounded-box bg-base-100 w-52 shadow-lg">
+      <ul class="dropdown-content menu compact rounded-box w-52 bg-base-100 shadow-lg">
         <li>
           <button @click="openPrint">
             <MdiPrinterPos name="mdi-printer-pos" class="mr-2" />

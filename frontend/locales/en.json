@@ -381,7 +381,6 @@
         "unsupported": "Media Stream API is not supported",
         "error": "An error occurred while scanning",
         "no_sources": "No video sources available",
-        "permission_denied": "Camera permission was denied",
         "invalid_url": "Invalid barcode URL"
     }
 }

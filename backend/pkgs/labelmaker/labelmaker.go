@@ -1,4 +1,4 @@
-// labelmaker package provides functionality for generating and printing labels for items, locations and assets stored in Homebox
+// Package labelmaker provides functionality for generating and printing labels for items, locations and assets stored in Homebox
 package labelmaker
 
 import (
@@ -77,7 +77,7 @@ func measureString(text string, face font.Face, ctx *freetype.Context) int {
 		awidth, _ := face.GlyphAdvance(r)
 		width += awidth.Round()
 	}
-	return int(ctx.PointToFixed(float64(width)).Round())
+	return ctx.PointToFixed(float64(width)).Round()
 }
 
 // wrapText breaks text into lines that fit within maxWidth
@@ -190,7 +190,7 @@ func GenerateLabel(w io.Writer, params *GenerateParameters) error {
 	regularContext := createContext(regularFont, params.DescriptionFontSize)
 
 	maxWidth := params.Width - (params.Margin * 2) - params.QrSize - params.ComponentPadding
-	lineSpacing := int(boldContext.PointToFixed(params.TitleFontSize).Round())
+	lineSpacing := boldContext.PointToFixed(params.TitleFontSize).Round()
 	textX := params.Margin + params.ComponentPadding + params.QrSize
 	textY := params.Margin - 8
 
@@ -205,7 +205,7 @@ func GenerateLabel(w io.Writer, params *GenerateParameters) error {
 	}
 
 	textY += params.ComponentPadding / 4
-	lineSpacing = int(regularContext.PointToFixed(params.DescriptionFontSize).Round())
+	lineSpacing = regularContext.PointToFixed(params.DescriptionFontSize).Round()
 
 	descriptionLines := wrapText(params.DescriptionText, regularFace, maxWidth, regularContext)
 	for _, line := range descriptionLines {

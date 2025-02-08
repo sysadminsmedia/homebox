@@ -131,11 +131,11 @@
     </BaseModal>
 
     <BaseContainer v-if="location">
-      <div class="bg-base-100 rounded p-3">
+      <div class="rounded bg-base-100 p-3">
         <header class="mb-2">
           <div class="flex flex-wrap items-end gap-2">
             <div class="avatar placeholder mb-auto">
-              <div class="bg-neutral-focus text-neutral-content w-12 rounded-full">
+              <div class="w-12 rounded-full bg-neutral-focus text-neutral-content">
                 <MdiPackageVariant name="mdi-package-variant" class="size-7" />
               </div>
             </div>
@@ -153,7 +153,7 @@
 
                 <div
                   v-if="location && location.totalPrice"
-                  class="bg-secondary text-secondary-content rounded-full px-2 py-1 text-xs"
+                  class="rounded-full bg-secondary px-2 py-1 text-xs text-secondary-content"
                 >
                   <div>
                     <Currency :amount="location.totalPrice" />

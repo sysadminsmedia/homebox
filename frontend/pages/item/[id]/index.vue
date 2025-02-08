@@ -465,11 +465,11 @@
     </dialog>
 
     <section>
-      <div class="bg-base-100 rounded p-3">
+      <div class="rounded bg-base-100 p-3">
         <header class="mb-2">
           <div class="flex flex-wrap items-end gap-2">
             <div class="avatar placeholder mb-auto">
-              <div class="bg-neutral-focus text-neutral-content w-12 rounded-full">
+              <div class="w-12 rounded-full bg-neutral-focus text-neutral-content">
                 <MdiPackageVariant class="size-7" />
               </div>
             </div>
@@ -604,7 +604,7 @@
               </template>
             </DetailsSection>
             <div v-else>
-              <p class="text-base-content/70 px-6 pb-4">No attachments found</p>
+              <p class="px-6 pb-4 text-base-content/70">No attachments found</p>
             </div>
           </BaseCard>
 

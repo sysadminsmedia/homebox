@@ -26,12 +26,11 @@ func generateOrPrint(ctrl *V1Controller, w http.ResponseWriter, r *http.Request,
 			return err
 		}
 
-		w.Write([]byte("Printed!"))
+		_, err = w.Write([]byte("Printed!"))
+		return err
 	} else {
 		return labelmaker.GenerateLabel(w, &params)
 	}
-
-	return nil
 }
 
 // HandleGetLocationLabel godoc
@@ -57,8 +56,8 @@ func (ctrl *V1Controller) HandleGetLocationLabel() errchain.HandlerFunc {
 			return err
 		}
 
-		hbUrl := GetHBURL(r.Header.Get("Referer"), ctrl.url)
-		return generateOrPrint(ctrl, w, r, location.Name, "Homebox Location", fmt.Sprintf("%s/location/%s", hbUrl, location.ID))
+		hbURL := GetHBURL(r.Header.Get("Referer"), ctrl.url)
+		return generateOrPrint(ctrl, w, r, location.Name, "Homebox Location", fmt.Sprintf("%s/location/%s", hbURL, location.ID))
 	}
 }
 
@@ -91,8 +90,8 @@ func (ctrl *V1Controller) HandleGetItemLabel() errchain.HandlerFunc {
 			description += fmt.Sprintf("\nLocation: %s", item.Location.Name)
 		}
 
-		hbUrl := GetHBURL(r.Header.Get("Referer"), ctrl.url)
-		return generateOrPrint(ctrl, w, r, item.Name, description, fmt.Sprintf("%s/item/%s", hbUrl, item.ID))
+		hbURL := GetHBURL(r.Header.Get("Referer"), ctrl.url)
+		return generateOrPrint(ctrl, w, r, item.Name, description, fmt.Sprintf("%s/item/%s", hbURL, item.ID))
 	}
 }
 
@@ -131,7 +130,7 @@ func (ctrl *V1Controller) HandleGetAssetLabel() errchain.HandlerFunc {
 			description += fmt.Sprintf("\nLocation: %s", item.Items[0].Location.Name)
 		}
 
-		hbUrl := GetHBURL(r.Header.Get("Referer"), ctrl.url)
-		return generateOrPrint(ctrl, w, r, item.Items[0].AssetID.String(), description, fmt.Sprintf("%s/a/%s", hbUrl, item.Items[0].AssetID.String()))
+		hbURL := GetHBURL(r.Header.Get("Referer"), ctrl.url)
+		return generateOrPrint(ctrl, w, r, item.Items[0].AssetID.String(), description, fmt.Sprintf("%s/a/%s", hbURL, item.Items[0].AssetID.String()))
 	}
 }

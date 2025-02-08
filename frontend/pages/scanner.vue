@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import { BrowserMultiFormatReader, NotFoundException } from "@zxing/library";
   import { useI18n } from "vue-i18n";
-  import { BaseContainer } from "#components";
 
   definePageMeta({
     middleware: ["auth"],
@@ -25,16 +24,6 @@
   };
 
   onMounted(async () => {
-    try {
-      const permission = await navigator.permissions.query({ name: "camera" });
-      if (permission.state === "denied") {
-        errorMessage.value = t("scanner.permission_denied");
-        return;
-      }
-    } catch (err) {
-      handleError(err);
-    }
-
     if (!(navigator && navigator.mediaDevices && "enumerateDevices" in navigator.mediaDevices)) {
       errorMessage.value = t("scanner.unsupported");
       return;
@@ -90,7 +79,7 @@
 <template>
   <div class="flex flex-col gap-12 pb-16">
     <section>
-      <div class="centered">
+      <div class="mx-auto">
         <div class="max-w-screen-md">
           <div v-if="errorMessage" role="alert" class="alert alert-error mb-5 shadow-lg">
             <svg
@@ -122,11 +111,6 @@
 </template>
 
 <style lang="css" scoped>
-  .centered > div {
-    margin-left: auto;
-    margin-right: auto;
-  }
-
   video {
     width: 100%;
     object-fit: cover;

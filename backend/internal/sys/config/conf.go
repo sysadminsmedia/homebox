@@ -18,7 +18,7 @@ const (
 
 type Config struct {
 	conf.Version
-	Mode       string         `yaml:"mode"    conf:"default:development"` // development or production
+	Mode       string         `yaml:"mode"       conf:"default:development"` // development or production
 	Web        WebConfig      `yaml:"web"`
 	Storage    Storage        `yaml:"storage"`
 	Log        LoggerConf     `yaml:"logger"`
