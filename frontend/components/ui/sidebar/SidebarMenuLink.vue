@@ -11,7 +11,7 @@
 
 <template>
   <SidebarMenuButton as-child>
-    <NuxtLink :to="props.href" @click.prevent="setOpenMobile(false)">
+    <NuxtLink :to="props.href" @click="setOpenMobile(false)">
       <slot />
     </NuxtLink>
   </SidebarMenuButton>
