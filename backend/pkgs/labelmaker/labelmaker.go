@@ -167,11 +167,11 @@ func GenerateLabel(w io.Writer, params *GenerateParameters) error {
 	}
 
 	regularFace := truetype.NewFace(regularFont, &truetype.Options{
-		Size: params.TitleFontSize,
+		Size: params.DescriptionFontSize,
 		DPI:  params.Dpi,
 	})
 	boldFace := truetype.NewFace(boldFont, &truetype.Options{
-		Size: params.DescriptionFontSize,
+		Size: params.TitleFontSize,
 		DPI:  params.Dpi,
 	})
 
