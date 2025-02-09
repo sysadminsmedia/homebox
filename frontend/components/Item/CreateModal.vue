@@ -21,38 +21,33 @@
           :max-length="1000"
         />
         <LabelSelector v-model="form.labels" :label="$t('global.labels')" :items="labels ?? []" />
-
-        <div class="mt-4 flex">
-          <div>
-            <label for="photo" class="btn">{{ $t("components.item.create_modal.photo_button") }}</label>
-            <input
-              id="photo"
-              class="hidden"
+<div class="flex w-full flex-col gap-1.5">
+            <Label for="image-create-photo" class="flex w-full px-1">{{ $t("components.item.create_modal.item_photo") }}</Label>
+            <Input
+              id="image-create-photo"
+              class="w-full"
               type="file"
               accept="image/png,image/jpeg,image/gif,image/avif,image/webp"
               @change="previewImage"
-            />
+            >gay</Input>
           </div>
-          <div class="grow"></div>
-          <div>
-            <BaseButton class="rounded-r-none" :loading="loading" type="submit">
-              <template #icon>
-                <MdiPackageVariant class="swap-off size-5" />
-                <MdiPackageVariantClosed class="swap-on size-5" />
-              </template>
+        <div class="mt-4 flex flex-row-reverse">
+          <ButtonGroup>
+            <Button :disabled="loading" type="submit" class="group">
+              <div class="relative mx-2">
+                <div
+                  class="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:rotate-[360deg]"
+                >
+                  <MdiPackageVariant class="size-5 group-hover:hidden" />
+                  <MdiPackageVariantClosed class="hidden size-5 group-hover:block" />
+                </div>
+              </div>
               {{ $t("global.create") }}
-            </BaseButton>
-            <div class="dropdown dropdown-top">
-              <label tabindex="0" class="btn rounded-l-none rounded-r-xl">
-                <MdiChevronDown class="size-5" name="mdi-chevron-down" />
-              </label>
-              <ul tabindex="0" class="dropdown-content menu rounded-box right-0 w-64 bg-base-100 p-2 shadow">
-                <li>
-                  <button type="button" @click="create(false)">{{ $t("global.create_and_add") }}</button>
-                </li>
-              </ul>
-            </div>
-          </div>
+              </Button>
+                                      <Button variant="outline" :disabled="loading" type="button" @click="create(false)"
+              >{{ $t("global.create_and_add") }}</Button
+            >
+          </ButtonGroup>
         </div>
 
         <!-- photo preview area is AFTER the create button, to avoid pushing the button below the screen on small displays -->
@@ -78,14 +73,16 @@
 
 <script setup lang="ts">
   import { toast } from "vue-sonner";
+  import { Button, ButtonGroup } from "~/components/ui/button";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import { Label } from "@/components/ui/label";
+  import { Input } from "@/components/ui/input";
   import { Shortcut } from "@/components/ui/shortcut";
   import type { ItemCreate, LabelOut, LocationOut } from "~~/lib/api/types/data-contracts";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
-  import MdiChevronDown from "~icons/mdi/chevron-down";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
   import LabelSelector from "~/components/Label/Selector.vue";

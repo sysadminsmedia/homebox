@@ -21,20 +21,11 @@
           :label="$t('components.location.create_modal.location_description')"
           :max-length="1000"
         />
-        <div class="modal-action">
-          <div class="flex justify-center">
-            <BaseButton class="rounded-r-none" type="submit" :loading="loading">{{ $t("global.create") }}</BaseButton>
-            <div class="dropdown dropdown-top">
-              <label tabindex="0" class="btn rounded-l-none rounded-r-xl">
-                <MdiChevronDown class="size-5" />
-              </label>
-              <ul tabindex="0" class="dropdown-content menu rounded-box right-0 w-64 bg-base-100 p-2 shadow">
-                <li>
-                  <button type="button" @click="create(false)">{{ $t("global.create_and_add") }}</button>
-                </li>
-              </ul>
-            </div>
-          </div>
+        <div class="mt-4 flex flex-row-reverse">
+          <ButtonGroup>
+            <Button  :disabled="loading" type="submit">{{ $t("global.create") }}</Button>
+            <Button variant="outline" :disabled="loading" type="button" @click="create(false)">{{ $t("global.create_and_add") }}</Button>
+          </ButtonGroup>
         </div>
       </form>
 
@@ -50,7 +41,8 @@
 
 <script setup lang="ts">
   import { toast } from "vue-sonner";
-  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import { Button, ButtonGroup } from "~/components/ui/button";
+  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
   import type { LocationSummary } from "~~/lib/api/types/data-contracts";
   import MdiChevronDown from "~icons/mdi/chevron-down";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";

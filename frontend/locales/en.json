@@ -65,7 +65,7 @@
             "create_modal": {
                 "item_description": "Item Description",
                 "item_name": "Item Name",
-                "photo_button": "Photo 📷",
+                "item_photo": "Item Photo 📷",
                 "title": "Create Item"
             },
             "view": {

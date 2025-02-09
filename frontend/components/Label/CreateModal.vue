@@ -20,20 +20,11 @@
           :label="$t('components.label.create_modal.label_description')"
           :max-length="255"
         />
-        <div class="modal-action">
-          <div class="flex justify-center">
-            <BaseButton class="rounded-r-none" :loading="loading" type="submit"> {{ $t("global.create") }} </BaseButton>
-            <div class="dropdown dropdown-top">
-              <label tabindex="0" class="btn rounded-l-none rounded-r-xl">
-                <MdiChevronDown class="size-5" />
-              </label>
-              <ul tabindex="0" class="dropdown-content menu rounded-box right-0 w-64 bg-base-100 p-2 shadow">
-                <li>
-                  <button type="button" @click="create(false)">{{ $t("global.create_and_add") }}</button>
-                </li>
-              </ul>
-            </div>
-          </div>
+                <div class="mt-4 flex flex-row-reverse">
+          <ButtonGroup>
+            <Button  :disabled="loading" type="submit">{{ $t("global.create") }}</Button>
+            <Button variant="outline" :disabled="loading" type="button" @click="create(false)">{{ $t("global.create_and_add") }}</Button>
+          </ButtonGroup>
         </div>
       </form>
 

@@ -1,7 +1,9 @@
 <script setup lang="ts">
   import { toast } from "vue-sonner";
-  import { Button, Group } from "~/components/ui/button";
+  import { Button, ButtonGroup } from "~/components/ui/button";
   import { Shortcut } from "~/components/ui/shortcut";
+  import MdiPackageVariant from "~icons/mdi/package-variant";
+  import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
 </script>
 
 <template>
@@ -15,14 +17,22 @@
     "
     >Create Toast</Button
   >
-  <Group>
+  <ButtonGroup>
     <Button variant="outline">Button 1</Button>
     <Button variant="destructive">Button 2</Button>
     <Button>Button 3</Button>
-  </Group>
+  </ButtonGroup>
   <LabelSelector />
   <span class="flex items-center gap-1 text-sm">
     Use
     <Shortcut size="sm" :keys="['Shift']" /> + <Shortcut size="sm" :keys="['Enter']" /> to create and add another.
   </span>
+  <div class="group relative size-12">
+    <div
+      class="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:rotate-180"
+    >
+      <MdiPackageVariant class="size-5 group-hover:hidden" />
+      <MdiPackageVariantClosed class="hidden size-5 group-hover:block" />
+    </div>
+  </div>
 </template>
