@@ -400,11 +400,11 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 
 		if q.OnlyWithPhoto {
 			andPredicates = append(andPredicates, item.HasAttachmentsWith(
-					attachment.And(
-						attachment.Primary(true),
-						attachment.TypeEQ(attachment.TypePhoto),
-					),
+				attachment.And(
+					attachment.Primary(true),
+					attachment.TypeEQ(attachment.TypePhoto),
 				),
+			),
 			)
 		}
 

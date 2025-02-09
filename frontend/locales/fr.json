@@ -182,6 +182,8 @@
         "next_page": "Page suivante",
         "no_results": "Aucun élément trouvé",
         "notes": "Notes",
+        "only_with_photo": "Uniquement les articles avec photo",
+        "only_without_photo": "Uniquement les articles sans photo",
         "options": "Options",
         "order_by": "Trier par",
         "pages": "Page { page } sur { totalPages }",

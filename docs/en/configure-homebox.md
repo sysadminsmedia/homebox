@@ -26,6 +26,12 @@
 | HBOX_SWAGGER_HOST                    | 7745                                       | swagger host to use, if not set swagger will be disabled                               |
 | HBOX_SWAGGER_SCHEMA                  | `http`                                     | swagger schema to use, can be one of: `http`, `https`                                  |
 | HBOX_OPTIONS_CHECK_GITHUB_RELEASE    | true                                       | check for new github releases                                                          |
+| HBOX_LABEL_MAKER_WIDTH               | 526                                        | width for generated labels in pixels                                                   |
+| HBOX_LABEL_MAKER_HEIGHT              | 200                                        | height for generated labels in pixels                                                  |
+| HBOX_LABEL_MAKER_PADDING             | 8                                          | space between elements on label                                                        |
+| HBOX_LABEL_MAKER_MARGIN              | 8                                          | space between the label content and edges of the label                                 |
+| HBOX_LABEL_MAKER_FONT_SIZE           | 32.0                                       | the size of the labels font                                                            |
+| HBOX_LABEL_MAKER_PRINT_COMMAND       |                                            | the command to use for printing labels. if empty, label printing is disabled. `{{.FileName}}` in the command will be replaced with the png filename of the label |
 
 ::: tip "CLI Arguments"
 If you're deploying without docker you can use command line arguments to configure the application. Run `homebox --help` for more information.
@@ -56,6 +62,12 @@ OPTIONS
 --options-auto-increment-asset-id/$HBOX_OPTIONS_AUTO_INCREMENT_ASSET_ID  <bool>    (default: true)
 --options-currency-config/$HBOX_OPTIONS_CURRENCY_CONFIG                  <string>
 --options-check-github-release/$HBOX_OPTIONS_CHECK_GITHUB_RELEASE        <bool>    (default: true)
+--label-maker-width/$HBOX_LABEL_MAKER_WIDTH                              <int>     (default: 526)
+--label-maker-height/$HBOX_LABEL_MAKER_HEIGHT                            <int>     (default: 200)
+--label-maker-padding/$HBOX_LABEL_MAKER_PADDING                          <int>     (default: 8)
+--label-maker-margin/$HBOX_LABEL_MAKER_MARGIN                            <int>       (default: 8)
+--label-maker-font-size/$HBOX_LABEL_MAKER_FONT_SIZE                      <float>   (default: 32.0)
+--label-maker-print-command/$HBOX_LABEL_MAKER_PRINT_COMMAND              <string>
 --help/-h    display this help message
 ```
 :::

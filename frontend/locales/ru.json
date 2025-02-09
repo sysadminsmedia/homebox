@@ -6,9 +6,22 @@
                 "description": "Импортируйте CSV-файл, содержащий ваши предметы, ярлыки и местоположения. Для получения информации о требуемом формате \nсм. документацию.",
                 "title": "Импорт CSV файла",
                 "upload": "Загрузить"
+            },
+            "outdated": {
+                "current_version": "Текущая версия",
+                "dismiss": "Отклонить",
+                "latest_version": "Последняя версия",
+                "new_version_available": "Доступна новая версия",
+                "new_version_available_link": "Показать комментарии к версии"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "документация",
+                "failed_to_copy": "Не удалось скопировать текст в буфер обмена",
+                "https_required": "поскольку использование HTTPS обязательно",
+                "learn_more": "Узнать больше"
+            },
             "date_time": {
                 "ago": "{0} назад",
                 "days": "дней",
@@ -69,8 +82,8 @@
         },
         "location": {
             "create_modal": {
-                "location_description": "Описание локации",
-                "location_name": "Название локации",
+                "location_description": "Описание места хранения",
+                "location_name": "Название места хранения",
                 "title": "Создать локацию"
             },
             "selector": {
@@ -79,6 +92,9 @@
             "tree": {
                 "no_locations": "Нет доступных локаций. Добавьте новую локацию, \nнажав на кнопку `<`span class=\"link-primary\"`>`Создать`<`/span`>` в навигационном меню."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Используйте цифровые клавиши, чтобы быстро выбрать действие."
         }
     },
     "global": {
@@ -98,7 +114,7 @@
         "items": "Элементы",
         "join_discord": "Присоединяйтесь к Discord",
         "labels": "Метки",
-        "locations": "Локации",
+        "locations": "Места",
         "maintenance": "Техническое обслуживание и ремонт",
         "name": "Имя",
         "password": "Пароль",
@@ -117,7 +133,7 @@
         "quick_statistics": "Быстрая статистика",
         "recently_added": "Недавно добавлено",
         "storage_locations": "Места хранения",
-        "total_items": "Всего элементов",
+        "total_items": "Всего вещей",
         "total_labels": "Всего меток",
         "total_locations": "Общее количество местоположений",
         "total_value": "Общая стоимость"
@@ -165,6 +181,8 @@
         "next_page": "Следующая страница",
         "no_results": "Элементы не найдены",
         "notes": "Заметки",
+        "only_with_photo": "Только элементы с фото",
+        "only_without_photo": "Только элементы без фото",
         "options": "Параметры",
         "order_by": "Сортировка по",
         "pages": "Страница {page} из {totalPages}",
@@ -255,7 +273,7 @@
             "delete_confirmation": "Вы уверены, что хотите удалить эту запись?",
             "edit_action": "Обновить",
             "edit_title": "Изменить запись",
-            "entry_name": "Название",
+            "entry_name": "Название записи",
             "new_action": "Создать",
             "new_title": "Новая запись",
             "notes": "Заметки",

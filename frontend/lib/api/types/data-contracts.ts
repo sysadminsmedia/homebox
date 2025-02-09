@@ -409,6 +409,7 @@ export interface APISummary {
   build: Build;
   demo: boolean;
   health: boolean;
+  labelPrinting: boolean;
   latest: Latest;
   message: string;
   title: string;

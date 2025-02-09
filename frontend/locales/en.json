@@ -51,6 +51,14 @@
             },
             "password_score": {
                 "password_strength": "Password Strength"
+            },
+            "label_maker": {
+                "titles": "Labels",
+                "server_print": "Print on Server",
+                "browser_print": "Print from Browser",
+                "print": "Print label",
+                "download": "Download Label",
+                "confirm_description": "Are you sure you want to print this label?"
             }
         },
         "item": {
@@ -184,11 +192,11 @@
         "model_number": "Model Number",
         "name": "Name",
         "negate_labels": "Negate Selected Labels",
-        "only_without_photo": "Only items without photo",
-        "only_with_photo": "Only items with photo",
         "next_page": "Next Page",
         "no_results": "No Items Found",
         "notes": "Notes",
+        "only_with_photo": "Only items with photo",
+        "only_without_photo": "Only items without photo",
         "options": "Options",
         "order_by": "Order By",
         "pages": "Page { page } of { totalPages }",
@@ -303,7 +311,8 @@
         "maintenance": "Maintenance",
         "profile": "Profile",
         "search": "Search",
-        "tools": "Tools"
+        "tools": "Tools",
+        "scanner": "Scanner"
     },
     "profile": {
         "active": "Active",
@@ -371,5 +380,12 @@
             "bill_of_materials_sub": "Generates a CSV (Comma Separated Values) file that can be imported into a spreadsheet program. This is a summary of your inventory with basic item and pricing information."
         },
         "reports_sub": "Generate different reports for your inventory."
+    },
+    "scanner": {
+        "select_video_source": "Pick a video source",
+        "unsupported": "Media Stream API is not supported",
+        "error": "An error occurred while scanning",
+        "no_sources": "No video sources available",
+        "invalid_url": "Invalid barcode URL"
     }
 }

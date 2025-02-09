@@ -682,6 +682,8 @@ definitions:
         type: boolean
       health:
         type: boolean
+      labelPrinting:
+        type: boolean
       latest:
         $ref: '#/definitions/services.Latest'
       message:
@@ -1406,6 +1408,78 @@ paths:
       summary: Import Items
       tags:
       - Items
+  /v1/labelmaker/assets/{id}:
+    get:
+      parameters:
+      - description: Asset ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Print this label, defaults to false
+        in: query
+        name: print
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: image/png
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get Asset label
+      tags:
+      - Items
+  /v1/labelmaker/item/{id}:
+    get:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Print this label, defaults to false
+        in: query
+        name: print
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: image/png
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get Item label
+      tags:
+      - Items
+  /v1/labelmaker/location/{id}:
+    get:
+      parameters:
+      - description: Location ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Print this label, defaults to false
+        in: query
+        name: print
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: image/png
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Get Location label
+      tags:
+      - Locations
   /v1/labels:
     get:
       produces:
