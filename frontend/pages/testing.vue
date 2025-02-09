@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { toast } from 'vue-sonner';
-import { Button, Group } from '~/components/ui/button';
-import { Shortcut } from '~/components/ui/shortcut';
+  import { toast } from "vue-sonner";
+  import { Button, Group } from "~/components/ui/button";
+  import { Shortcut } from "~/components/ui/shortcut";
 </script>
 
 <template>
@@ -23,7 +23,6 @@ import { Shortcut } from '~/components/ui/shortcut';
   <LabelSelector />
   <span class="flex items-center gap-1 text-sm">
     Use
-    <Shortcut size="sm" :keys="['Shift']" /> +
-    <Shortcut size="sm" :keys="['Enter']" /> to create and add another.
+    <Shortcut size="sm" :keys="['Shift']" /> + <Shortcut size="sm" :keys="['Enter']" /> to create and add another.
   </span>
 </template>

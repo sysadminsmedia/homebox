@@ -4,8 +4,11 @@ import { useMagicKeys, useActiveElement } from "@vueuse/core";
 
 export const [useDialog, provideDialogContext] = createContext<{
   activeDialog: ComputedRef<string | null>;
+  activeAlerts: ComputedRef<string[]>;
   openDialog: (dialogId: string) => void;
   closeDialog: (dialogId?: string) => void;
+  addAlert: (alertId: string) => void;
+  removeAlert: (alertId: string) => void;
 }>("DialogProvider");
 
 export const useDialogHotkey = (

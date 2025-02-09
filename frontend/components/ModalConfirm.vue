@@ -18,5 +18,20 @@
 </template>
 
 <script setup lang="ts">
+  import { useDialog } from "./ui/dialog-provider";
+
   const { text, isRevealed, confirm, cancel } = useConfirm();
+  const { addAlert, removeAlert } = useDialog();
+
+  watch(
+    isRevealed,
+    val => {
+      if (val) {
+        addAlert("confirm-modal");
+      } else {
+        removeAlert("confirm-modal");
+      }
+    },
+    { immediate: true }
+  );
 </script>

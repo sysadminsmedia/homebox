@@ -31,6 +31,7 @@
     AlertDialogFooter,
     AlertDialogAction,
   } from "~/components/ui/alert-dialog";
+  import { useDialog } from "~/components/ui/dialog-provider";
 
   const props = defineProps<{
     status: {
@@ -57,7 +58,6 @@
   watch(
     displayOutdatedWarning,
     displayOutdatedWarning => {
-      console.log("displayOutdatedWarning", displayOutdatedWarning);
       if (displayOutdatedWarning) {
         open.value = true;
       }
@@ -69,4 +69,18 @@
     open.value = false;
     localStorage.setItem("latestVersion", latest.value);
   };
+
+  const { addAlert, removeAlert } = useDialog();
+
+  watch(
+    open,
+    val => {
+      if (val) {
+        addAlert("new-version-modal");
+      } else {
+        removeAlert("new-version-modal");
+      }
+    },
+    { immediate: true }
+  );
 </script>
