@@ -21,12 +21,15 @@
     }
   };
 
-const addAlert = (alertId: string) => {
-  activeAlerts.push(alertId);
+  const addAlert = (alertId: string) => {
+    activeAlerts.push(alertId);
   };
 
   const removeAlert = (alertId: string) => {
-    activeAlerts.splice(activeAlerts.indexOf(alertId), 1);
+    const index = activeAlerts.indexOf(alertId);
+    if (index !== -1) {
+      activeAlerts.splice(index, 1);
+    }
   };
 
   // Provide context to child components
