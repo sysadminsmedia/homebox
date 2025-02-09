@@ -27,7 +27,7 @@ const sizeClasses = computed(() => {
     <span
       v-for="(key, index) in keys"
       :key="index"
-      class="font-medium text-muted-foreground"
+      class="font-medium text-muted-foreground font-sans"
     >
       {{ key }}
     </span>

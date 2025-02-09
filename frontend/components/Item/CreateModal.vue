@@ -67,8 +67,7 @@
       </form>
 
       <DialogFooter>
-        <!-- TODO: sort this text not being aligned properly -->
-        <span class="flex items-center gap-1 text-center">
+        <span class="flex items-center gap-1 text-sm">
           Use <Shortcut size="sm" :keys="['Shift']" /> + <Shortcut size="sm" :keys="['Enter']" /> to create and add
           another.
         </span>

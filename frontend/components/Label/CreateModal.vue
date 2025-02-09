@@ -38,7 +38,10 @@
       </form>
 
       <DialogFooter>
-        use <kbd class="kbd kbd-xs">Shift</kbd> + <kbd class="kbd kbd-xs"> Enter </kbd> to create and add another
+        <span class="flex items-center gap-1 text-sm">
+          Use <Shortcut size="sm" :keys="['Shift']" /> + <Shortcut size="sm" :keys="['Enter']" /> to create and add
+          another.
+        </span>
       </DialogFooter>
     </DialogContent>
   </Dialog>
