@@ -54,6 +54,7 @@
     "@vueuse/core": "^12.5.0",
     "@vueuse/nuxt": "^10.11.1",
     "@vueuse/router": "^10.11.1",
+    "@zxing/library": "^0.21.3",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
