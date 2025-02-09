@@ -23,12 +23,14 @@
   const searchTerm = ref("");
 
   const filteredFrameworks = computed(() => [
-    // ...frameworks.filter(i => !modelValue.value.includes(i.label)),
+    ...frameworks.filter(i => {
+      return i.label.toLocaleLowerCase().includes(searchTerm.value.toLocaleLowerCase());
+    }),
     { value: "create-item", label: `Create ${searchTerm.value}` },
   ]);
-  // const filterFunction = (list: string[], search: string) => {
-  //   return list;
-  // };
+  const filterFunction = (list: string[], search: string) => {
+    return list;
+  };
   // :filter-function="filterFunction"
 
   // TODO: when radix-vue 2 is release use hook to set cursor to end when label is added with click
@@ -44,7 +46,7 @@
       </TagsInputItem>
     </div>
 
-    <ComboboxRoot v-model="modelValue" v-model:open="open" v-model:search-term="searchTerm" class="w-full">
+    <ComboboxRoot v-model="modelValue" v-model:open="open" v-model:search-term="searchTerm" class="w-full" :filter-function="filterFunction">
       <ComboboxAnchor as-child>
         <ComboboxInput placeholder="Framework..." as-child>
           <TagsInputInput class="w-full px-3" :class="modelValue.length > 0 ? 'mt-2' : ''" @focus="open = true" />
@@ -62,7 +64,7 @@
               <CommandItem
                 v-for="framework in filteredFrameworks"
                 :key="framework.value"
-                :value="framework.label"
+                :value="framework.value"
                 @select.prevent="
                   ev => {
                     if (typeof ev.detail.value === 'string') {
