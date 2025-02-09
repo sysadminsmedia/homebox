@@ -50,8 +50,11 @@
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import type { LocationSummary } from "~~/lib/api/types/data-contracts";
   import MdiChevronDown from "~icons/mdi/chevron-down";
-  import { useDialog } from "~/components/ui/dialog-provider";
+  import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
+
   const { activeDialog, closeDialog } = useDialog();
+
+  useDialogHotkey("create-location", { code: "Digit3", shift: true });
 
   const loading = ref(false);
   const focused = ref(false);

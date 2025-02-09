@@ -176,17 +176,6 @@
     return data;
   });
 
-  const activeElement = useActiveElement();
-  const keys = useMagicKeys({
-    aliasMap: {
-      "⌃": "control_",
-      "Shift+": "ShiftLeft_",
-      "1": "digit1",
-      "2": "digit2",
-      "3": "digit3",
-    },
-  });
-
   // Preload currency format
   useFormatCurrency();
 
@@ -210,17 +199,6 @@
       dialogId: "create-label",
     },
   ];
-
-  dropdown.forEach(option => {
-    if (option?.shortcut) {
-      const shortcutKeycode = option.shortcut.replace(/([0-9])/, "digit$&");
-      whenever(keys[shortcutKeycode], () => {
-        if (activeElement.value?.tagName !== "INPUT") {
-          openDialog(option.dialogId);
-        }
-      });
-    }
-  });
 
   const route = useRoute();
 

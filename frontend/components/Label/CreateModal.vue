@@ -27,7 +27,7 @@
               <label tabindex="0" class="btn rounded-l-none rounded-r-xl">
                 <MdiChevronDown class="size-5" />
               </label>
-              <ul tabindex="0" class="dropdown-content menu rounded-box right-0 w-64 bg-base-100 p-2 shadow">
+              <ul tabindex="0" class="dropdown-content menu rounded-box bg-base-100 right-0 w-64 p-2 shadow">
                 <li>
                   <button type="button" @click="create(false)">{{ $t("global.create_and_add") }}</button>
                 </li>
@@ -48,8 +48,11 @@
   import { toast } from "vue-sonner";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import MdiChevronDown from "~icons/mdi/chevron-down";
-  import { useDialog } from "~/components/ui/dialog-provider";
+  import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
+
   const { closeDialog } = useDialog();
+
+  useDialogHotkey("create-label", { code: "Digit2", shift: true });
 
   const loading = ref(false);
   const focused = ref(false);

@@ -88,10 +88,12 @@
   import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
   import MdiChevronDown from "~icons/mdi/chevron-down";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
-  import { useDialog } from "~/components/ui/dialog-provider";
+  import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
   import LabelSelector from "~/components/Label/Selector.vue";
 
   const { activeDialog, closeDialog } = useDialog();
+
+  useDialogHotkey("create-item", { code: "Digit1", shift: true });
 
   const api = useUserApi();
 

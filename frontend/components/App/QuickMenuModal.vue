@@ -1,7 +1,4 @@
 <script setup lang="ts">
-  import { useMagicKeys } from "@vueuse/core";
-
-  import { watch } from "vue";
   import { useI18n } from "vue-i18n";
   import {
     CommandDialog,
@@ -13,7 +10,7 @@
     CommandSeparator,
   } from "~/components/ui/command";
   import { Shortcut } from "~/components/ui/shortcut";
-  import { useDialog } from "~/components/ui/dialog-provider";
+  import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
 
   export type QuickMenuAction =
     | { text: string; href: string; type: "navigate" }
@@ -30,12 +27,7 @@
   const { t } = useI18n();
   const { closeDialog, openDialog } = useDialog();
 
-  const keys = useMagicKeys();
-  const CtrlBackquote = keys.control_Backquote;
-
-  watch(CtrlBackquote, v => {
-    if (v) openDialog("quick-menu");
-  });
+  useDialogHotkey("quick-menu", { code: "Backquote", ctrl: true });
 </script>
 
 <template>
