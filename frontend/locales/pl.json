@@ -8,6 +8,7 @@
                 "upload": "Prześlij"
             },
             "outdated": {
+                "current_version": "Bieżąca wersja",
                 "dismiss": "Odrzuć",
                 "latest_version": "Najnowsza wersja",
                 "new_version_available": "Dostępna jest nowa wersja",
@@ -181,6 +182,8 @@
         "next_page": "Następna strona",
         "no_results": "Nie znaleziono przedmiotów",
         "notes": "Notatki",
+        "only_with_photo": "Tylko przedmioty ze zdjęciem",
+        "only_without_photo": "Tylko przedmioty bez zdjęcia",
         "options": "Opcje",
         "order_by": "Ułóż według",
         "pages": "Strona {page} z {totalPages}",
