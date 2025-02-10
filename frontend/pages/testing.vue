@@ -22,7 +22,6 @@
     <Button variant="destructive">Button 2</Button>
     <Button>Button 3</Button>
   </ButtonGroup>
-  <LabelSelector />
   <span class="flex items-center gap-1 text-sm">
     Use
     <Shortcut size="sm" :keys="['Shift']" /> + <Shortcut size="sm" :keys="['Enter']" /> to create and add another.

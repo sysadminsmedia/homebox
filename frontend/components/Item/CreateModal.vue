@@ -20,7 +20,7 @@
           :label="$t('components.item.create_modal.item_description')"
           :max-length="1000"
         />
-        <LabelSelector v-model="form.labels" :label="$t('global.labels')" :items="labels ?? []" />
+        <LabelSelector v-model="form.labels" :labels="labels ?? []" />
         <div class="flex w-full flex-col gap-1.5">
           <Label for="image-create-photo" class="flex w-full px-1">{{
             $t("components.item.create_modal.item_photo")
@@ -31,7 +31,7 @@
             type="file"
             accept="image/png,image/jpeg,image/gif,image/avif,image/webp"
             @change="previewImage"
-            />
+          />
         </div>
         <div class="mt-4 flex flex-row-reverse">
           <ButtonGroup>
@@ -126,7 +126,7 @@
     name: "",
     description: "",
     color: "", // Future!
-    labels: [] as LabelOut[],
+    labels: [] as string[],
     preview: null as string | null,
     photo: null as File | null,
   });
@@ -162,7 +162,7 @@
         }
 
         if (labelId.value) {
-          form.labels = labels.value.filter(l => l.id === labelId.value);
+          form.labels = labels.value.filter(l => l.id === labelId.value).map(l => l.id);
         }
       } else {
         // focused.value = false;
@@ -191,7 +191,7 @@
       name: form.name,
       description: form.description,
       locationId: form.location.id as string,
-      labelIds: form.labels.map(l => l.id) as string[],
+      labelIds: form.labels,
     };
 
     const { error, data } = await api.items.create(out);
