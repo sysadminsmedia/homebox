@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { ComboboxAnchor, ComboboxContent, ComboboxInput, ComboboxPortal, ComboboxRoot } from "radix-vue";
   import { computed, ref } from "vue";
-  import { CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
+  import { CommandEmpty, CommandGroup, CommandItem, CommandList } from "~/components/ui/command";
   import {
     TagsInput,
     TagsInputInput,
@@ -22,16 +22,20 @@
   const open = ref(false);
   const searchTerm = ref("");
 
-  const filteredFrameworks = computed(() => [
-    ...frameworks.filter(i => {
+  const filteredFrameworks = computed(() => {
+    const filtered = frameworks.filter(i => {
       return i.label.toLocaleLowerCase().includes(searchTerm.value.toLocaleLowerCase());
-    }),
-    { value: "create-item", label: `Create ${searchTerm.value}` },
-  ]);
-  const filterFunction = (list: string[], search: string) => {
+    });
+
+    if (searchTerm.value.trim() !== "") {
+      filtered.push({ value: "create-item", label: `Create ${searchTerm.value}` });
+    }
+
+    return filtered;
+  });
+  const filterFunction = (list: string[]) => {
     return list;
   };
-  // :filter-function="filterFunction"
 
   // TODO: when radix-vue 2 is release use hook to set cursor to end when label is added with click
   // TODO: get rid of no item found text, replace framework... placeholder
@@ -46,7 +50,13 @@
       </TagsInputItem>
     </div>
 
-    <ComboboxRoot v-model="modelValue" v-model:open="open" v-model:search-term="searchTerm" class="w-full" :filter-function="filterFunction">
+    <ComboboxRoot
+      v-model="modelValue"
+      v-model:open="open"
+      v-model:search-term="searchTerm"
+      class="w-full"
+      :filter-function="filterFunction"
+    >
       <ComboboxAnchor as-child>
         <ComboboxInput placeholder="Framework..." as-child>
           <TagsInputInput class="w-full px-3" :class="modelValue.length > 0 ? 'mt-2' : ''" @focus="open = true" />

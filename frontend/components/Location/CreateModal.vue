@@ -23,8 +23,10 @@
         />
         <div class="mt-4 flex flex-row-reverse">
           <ButtonGroup>
-            <Button  :disabled="loading" type="submit">{{ $t("global.create") }}</Button>
-            <Button variant="outline" :disabled="loading" type="button" @click="create(false)">{{ $t("global.create_and_add") }}</Button>
+            <Button :disabled="loading" type="submit">{{ $t("global.create") }}</Button>
+            <Button variant="outline" :disabled="loading" type="button" @click="create(false)">{{
+              $t("global.create_and_add")
+            }}</Button>
           </ButtonGroup>
         </div>
       </form>
@@ -44,7 +46,6 @@
   import { Button, ButtonGroup } from "~/components/ui/button";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
   import type { LocationSummary } from "~~/lib/api/types/data-contracts";
-  import MdiChevronDown from "~icons/mdi/chevron-down";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
 
   const { activeDialog, closeDialog } = useDialog();

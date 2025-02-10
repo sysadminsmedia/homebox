@@ -21,16 +21,19 @@
           :max-length="1000"
         />
         <LabelSelector v-model="form.labels" :label="$t('global.labels')" :items="labels ?? []" />
-<div class="flex w-full flex-col gap-1.5">
-            <Label for="image-create-photo" class="flex w-full px-1">{{ $t("components.item.create_modal.item_photo") }}</Label>
-            <Input
-              id="image-create-photo"
-              class="w-full"
-              type="file"
-              accept="image/png,image/jpeg,image/gif,image/avif,image/webp"
-              @change="previewImage"
-            >gay</Input>
-          </div>
+        <div class="flex w-full flex-col gap-1.5">
+          <Label for="image-create-photo" class="flex w-full px-1">{{
+            $t("components.item.create_modal.item_photo")
+          }}</Label>
+          <Input
+            id="image-create-photo"
+            class="w-full"
+            type="file"
+            accept="image/png,image/jpeg,image/gif,image/avif,image/webp"
+            @change="previewImage"
+            >gay</Input
+          >
+        </div>
         <div class="mt-4 flex flex-row-reverse">
           <ButtonGroup>
             <Button :disabled="loading" type="submit" class="group">
@@ -43,10 +46,10 @@
                 </div>
               </div>
               {{ $t("global.create") }}
-              </Button>
-                                      <Button variant="outline" :disabled="loading" type="button" @click="create(false)"
-              >{{ $t("global.create_and_add") }}</Button
-            >
+            </Button>
+            <Button variant="outline" :disabled="loading" type="button" @click="create(false)">{{
+              $t("global.create_and_add")
+            }}</Button>
           </ButtonGroup>
         </div>
 

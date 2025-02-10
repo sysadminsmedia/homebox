@@ -20,10 +20,12 @@
           :label="$t('components.label.create_modal.label_description')"
           :max-length="255"
         />
-                <div class="mt-4 flex flex-row-reverse">
+        <div class="mt-4 flex flex-row-reverse">
           <ButtonGroup>
-            <Button  :disabled="loading" type="submit">{{ $t("global.create") }}</Button>
-            <Button variant="outline" :disabled="loading" type="button" @click="create(false)">{{ $t("global.create_and_add") }}</Button>
+            <Button :disabled="loading" type="submit">{{ $t("global.create") }}</Button>
+            <Button variant="outline" :disabled="loading" type="button" @click="create(false)">{{
+              $t("global.create_and_add")
+            }}</Button>
           </ButtonGroup>
         </div>
       </form>
@@ -41,7 +43,6 @@
 <script setup lang="ts">
   import { toast } from "vue-sonner";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-  import MdiChevronDown from "~icons/mdi/chevron-down";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
 
   const { closeDialog } = useDialog();

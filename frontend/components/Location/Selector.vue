@@ -71,7 +71,7 @@
     <Popover v-model:open="open">
       <PopoverTrigger as-child>
         <Button :id="id" variant="outline" role="combobox" :aria-expanded="open" class="w-full justify-between">
-          {{ value ? value.name : $t("components.location.selector.select_location") }}
+          {{ value && value.name ? value.name : $t("components.location.selector.select_location") }}
           <ChevronsUpDown class="ml-2 size-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
