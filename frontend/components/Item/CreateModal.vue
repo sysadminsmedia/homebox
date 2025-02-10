@@ -31,8 +31,7 @@
             type="file"
             accept="image/png,image/jpeg,image/gif,image/avif,image/webp"
             @change="previewImage"
-            >gay</Input
-          >
+            />
         </div>
         <div class="mt-4 flex flex-row-reverse">
           <ButtonGroup>
