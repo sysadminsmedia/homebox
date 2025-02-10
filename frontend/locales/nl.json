@@ -46,6 +46,12 @@
                 "years": "jaren",
                 "yesterday": "gisteren"
             },
+            "label_maker": {
+                "browser_print": "Print vanuit de browser",
+                "print": "Print label",
+                "server_print": "Afdrukken op server",
+                "titles": "Labels"
+            },
             "page_qr_code": {
                 "page_url": "Pagina URL"
             },
