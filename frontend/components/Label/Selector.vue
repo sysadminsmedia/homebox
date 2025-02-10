@@ -10,6 +10,8 @@
     TagsInputItemText,
   } from "@/components/ui/tags-input";
 
+  const id = useId();
+
   const frameworks = [
     { value: "next.js", label: "Next.js" },
     { value: "sveltekit", label: "SvelteKit" },
@@ -25,7 +27,7 @@
   const filteredFrameworks = computed(() => {
     const filtered = frameworks.filter(i => {
       return i.label.toLocaleLowerCase().includes(searchTerm.value.toLocaleLowerCase());
-    });
+    }).filter(i => !modelValue.value.includes(i.value));
 
     if (searchTerm.value.trim() !== "") {
       filtered.push({ value: "create-item", label: `Create ${searchTerm.value}` });
@@ -42,7 +44,12 @@
 </script>
 
 <template>
-  <TagsInput v-model="modelValue" class="w-80 gap-0 px-0">
+    <div class="flex flex-col gap-1">
+    <Label :for="id" class="px-1">
+      {{ $t("global.labels") }}
+    </Label>
+
+  <TagsInput v-model="modelValue" class="w-full gap-0 px-0">
     <div class="flex flex-wrap items-center gap-2 px-3">
       <TagsInputItem v-for="item in modelValue" :key="item" :value="item">
         <TagsInputItemText />
@@ -58,13 +65,13 @@
       :filter-function="filterFunction"
     >
       <ComboboxAnchor as-child>
-        <ComboboxInput placeholder="Framework..." as-child>
-          <TagsInputInput class="w-full px-3" :class="modelValue.length > 0 ? 'mt-2' : ''" @focus="open = true" />
+        <ComboboxInput :placeholder="$t('components.label.selector.select_labels')" as-child>
+          <TagsInputInput class="w-full px-3" :class="modelValue.length > 0 ? 'mt-2' : ''" @focus="open = true" :id="id" />
         </ComboboxInput>
       </ComboboxAnchor>
 
       <ComboboxPortal>
-        <ComboboxContent>
+        <ComboboxContent :side-offset="4" position="popper" class="z-50">
           <CommandList
             position="popper"
             class="mt-2 w-[--radix-popper-anchor-width] rounded-md border bg-popover text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
@@ -92,4 +99,5 @@
       </ComboboxPortal>
     </ComboboxRoot>
   </TagsInput>
+  </div>
 </template>
