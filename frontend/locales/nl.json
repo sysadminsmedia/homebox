@@ -46,6 +46,14 @@
                 "years": "jaren",
                 "yesterday": "gisteren"
             },
+            "label_maker": {
+                "browser_print": "Print vanuit de browser",
+                "confirm_description": "Weet u zeker dat u dit label wilt afdrukken?",
+                "download": "Download Label",
+                "print": "Print verzendlabel",
+                "server_print": "Afdrukken op server",
+                "titles": "Labels"
+            },
             "page_qr_code": {
                 "page_url": "Pagina URL"
             },
@@ -297,6 +305,7 @@
         "locations": "Locaties",
         "maintenance": "Onderhoud",
         "profile": "Profiel",
+        "scanner": "Scanner",
         "search": "Zoeken",
         "tools": "Hulpmiddelen"
     },
@@ -328,6 +337,13 @@
         "url": "URL",
         "user_profile": "Gebruikersprofiel",
         "user_profile_sub": "Nodig gebruikers uit, en beheer je account."
+    },
+    "scanner": {
+        "error": "Tijdens het scannen is er een fout opgetreden.",
+        "invalid_url": "Ongeldige streepjescode",
+        "no_sources": "Geen videobronnen beschikbaar",
+        "select_video_source": "Kies een videobron",
+        "unsupported": "Mediastream-API wordt niet ondersteund"
     },
     "tools": {
         "actions": "Acties inventariseren",

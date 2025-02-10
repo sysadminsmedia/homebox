@@ -26,17 +26,19 @@ import (
 )
 
 type GenerateParameters struct {
-	Width               int
-	Height              int
-	QrSize              int
-	Margin              int
-	ComponentPadding    int
-	TitleText           string
-	TitleFontSize       float64
-	DescriptionText     string
-	DescriptionFontSize float64
-	Dpi                 float64
-	URL                 string
+	Width                 int
+	Height                int
+	QrSize                int
+	Margin                int
+	ComponentPadding      int
+	TitleText             string
+	TitleFontSize         float64
+	DescriptionText       string
+	DescriptionFontSize   float64
+	AdditionalInformation *string
+	Dpi                   float64
+	URL                   string
+	DynamicLength         bool
 }
 
 func (p *GenerateParameters) Validate() error {
@@ -55,19 +57,21 @@ func (p *GenerateParameters) Validate() error {
 	return nil
 }
 
-func NewGenerateParams(width int, height int, margin int, padding int, fontSize float64, title string, description string, url string) GenerateParameters {
+func NewGenerateParams(width int, height int, margin int, padding int, fontSize float64, title string, description string, url string, dynamicLength bool, additionalInformation *string) GenerateParameters {
 	return GenerateParameters{
-		Width:               width,
-		Height:              height,
-		QrSize:              height - (padding * 2),
-		Margin:              margin,
-		ComponentPadding:    padding,
-		TitleText:           title,
-		DescriptionText:     description,
-		TitleFontSize:       fontSize,
-		DescriptionFontSize: fontSize * 0.8,
-		Dpi:                 72,
-		URL:                 url,
+		Width:                 width,
+		Height:                height,
+		QrSize:                height - (padding * 2),
+		Margin:                margin,
+		ComponentPadding:      padding,
+		TitleText:             title,
+		DescriptionText:       description,
+		TitleFontSize:         fontSize,
+		DescriptionFontSize:   fontSize * 0.8,
+		Dpi:                   72,
+		URL:                   url,
+		AdditionalInformation: additionalInformation,
+		DynamicLength:         dynamicLength,
 	}
 }
 
@@ -80,15 +84,24 @@ func measureString(text string, face font.Face, ctx *freetype.Context) int {
 	return ctx.PointToFixed(float64(width)).Round()
 }
 
-// wrapText breaks text into lines that fit within maxWidth
-func wrapText(text string, face font.Face, maxWidth int, ctx *freetype.Context) []string {
+func wrapText(text string, face font.Face, maxWidth int, maxHeight int, lineHeight int, ctx *freetype.Context) ([]string, string) {
 	lines := strings.Split(text, "\n")
+	unlimitedHeight := maxHeight == -1
 	var wrappedLines []string
+	currentHeight := 0
+	processedChars := 0
 
 	for _, line := range lines {
 		words := strings.Fields(line)
 		if len(words) == 0 {
 			wrappedLines = append(wrappedLines, "")
+			processedChars += 1
+			if !unlimitedHeight {
+				currentHeight += lineHeight
+				if currentHeight > maxHeight {
+					return wrappedLines[:len(wrappedLines)-1], text[processedChars:]
+				}
+			}
 			continue
 		}
 
@@ -101,39 +114,38 @@ func wrapText(text string, face font.Face, maxWidth int, ctx *freetype.Context) 
 				currentLine = testLine
 			} else {
 				wrappedLines = append(wrappedLines, currentLine)
+				processedChars += len(currentLine) + 1
+				if !unlimitedHeight {
+					currentHeight += lineHeight
+					if currentHeight > maxHeight {
+						return wrappedLines[:len(wrappedLines)-1], text[processedChars-len(currentLine)-1:]
+					}
+				}
 				currentLine = word
 			}
 		}
-		wrappedLines = append(wrappedLines, currentLine)
-	}
 
-	// Handle lines that are too long and have no spaces
-	for i, line := range wrappedLines {
-		width := measureString(line, face, ctx)
-		if width > maxWidth {
-			var splitLines []string
-			currentLine := ""
-			for _, r := range line {
-				testLine := currentLine + string(r)
-				width := measureString(testLine, face, ctx)
-				if width <= maxWidth {
-					currentLine = testLine
-				} else {
-					splitLines = append(splitLines, currentLine)
-					currentLine = string(r)
-				}
+		wrappedLines = append(wrappedLines, currentLine)
+		processedChars += len(currentLine) + 1
+		if !unlimitedHeight {
+			currentHeight += lineHeight
+			if currentHeight > maxHeight {
+				return wrappedLines[:len(wrappedLines)-1], text[processedChars-len(currentLine)-1:]
 			}
-			splitLines = append(splitLines, currentLine)
-			wrappedLines = append(wrappedLines[:i], append(splitLines, wrappedLines[i+1:]...)...)
 		}
 	}
 
-	return wrappedLines
+	return wrappedLines, ""
 }
 
 func GenerateLabel(w io.Writer, params *GenerateParameters) error {
 	if err := params.Validate(); err != nil {
 		return err
+	}
+
+	bodyText := params.DescriptionText
+	if params.AdditionalInformation != nil {
+		bodyText = bodyText + "\n" + *params.AdditionalInformation
 	}
 
 	// Create QR code
@@ -143,18 +155,6 @@ func GenerateLabel(w io.Writer, params *GenerateParameters) error {
 	}
 	qr.DisableBorder = true
 	qrImage := qr.Image(params.QrSize)
-
-	// Create a new white background image
-	bounds := image.Rect(0, 0, params.Width, params.Height)
-	img := image.NewRGBA(bounds)
-	draw.Draw(img, bounds, &image.Uniform{color.White}, image.Point{}, draw.Src)
-
-	// Draw QR code onto the image
-	draw.Draw(img,
-		image.Rect(params.Margin, params.Margin, params.QrSize+params.Margin, params.QrSize+params.Margin),
-		qrImage,
-		image.Point{},
-		draw.Over)
 
 	regularFont, err := truetype.Parse(gomedium.TTF)
 	if err != nil {
@@ -167,62 +167,116 @@ func GenerateLabel(w io.Writer, params *GenerateParameters) error {
 	}
 
 	regularFace := truetype.NewFace(regularFont, &truetype.Options{
-		Size: params.TitleFontSize,
-		DPI:  params.Dpi,
-	})
-	boldFace := truetype.NewFace(boldFont, &truetype.Options{
 		Size: params.DescriptionFontSize,
 		DPI:  params.Dpi,
 	})
+	boldFace := truetype.NewFace(boldFont, &truetype.Options{
+		Size: params.TitleFontSize,
+		DPI:  params.Dpi,
+	})
 
-	createContext := func(font *truetype.Font, size float64) *freetype.Context {
-		c := freetype.NewContext()
-		c.SetDPI(params.Dpi)
-		c.SetFont(font)
-		c.SetFontSize(size)
-		c.SetClip(img.Bounds())
-		c.SetDst(img)
-		c.SetSrc(image.NewUniform(color.Black))
-		return c
+	// Calculate text area dimensions
+	maxWidth := params.Width - (params.Margin * 2) - params.ComponentPadding
+
+	// Create temporary contexts for text measurement
+	tmpImg := image.NewRGBA(image.Rect(0, 0, 1, 1))
+	boldContext := createContext(boldFont, params.TitleFontSize, tmpImg, params.Dpi)
+	regularContext := createContext(regularFont, params.DescriptionFontSize, tmpImg, params.Dpi)
+
+	// Calculate total height needed
+	totalHeight := params.Margin
+	titleLineSpacing := boldContext.PointToFixed(params.TitleFontSize).Round()
+
+	titleLines, _ := wrapText(params.TitleText, boldFace, maxWidth-params.QrSize, -1, titleLineSpacing, boldContext)
+	titleHeight := titleLineSpacing * len(titleLines)
+	totalHeight += titleHeight
+
+	totalHeight += params.ComponentPadding / 4
+
+	regularLineSpacing := regularContext.PointToFixed(params.DescriptionFontSize).Round()
+	descriptionLinesRight, descriptionRemaining := wrapText(bodyText, regularFace, maxWidth-params.QrSize, params.QrSize-titleHeight, regularLineSpacing, regularContext)
+	totalHeight += regularLineSpacing * len(descriptionLinesRight)
+
+	var textYBottomText int
+	var descriptionLinesBottom []string
+	hasBottomText := descriptionRemaining != ""
+	if hasBottomText {
+		totalHeight = max(params.Margin+params.QrSize+params.ComponentPadding/2, totalHeight)
+		textYBottomText = totalHeight
+		descriptionLinesBottom, _ = wrapText(descriptionRemaining, regularFace, maxWidth, -1, regularLineSpacing, regularContext)
+		totalHeight += regularLineSpacing * len(descriptionLinesBottom)
+		totalHeight += params.Margin
 	}
 
-	boldContext := createContext(boldFont, params.TitleFontSize)
-	regularContext := createContext(regularFont, params.DescriptionFontSize)
+	var requiredHeight int
+	if params.DynamicLength {
+		requiredHeight = max(totalHeight, params.QrSize+(params.Margin*2))
+	} else {
+		requiredHeight = params.Height
+	}
 
-	maxWidth := params.Width - (params.Margin * 2) - params.QrSize - params.ComponentPadding
-	lineSpacing := boldContext.PointToFixed(params.TitleFontSize).Round()
-	textX := params.Margin + params.ComponentPadding + params.QrSize
+	// Create the actual image with calculated height
+	bounds := image.Rect(0, 0, params.Width, requiredHeight)
+	img := image.NewRGBA(bounds)
+	draw.Draw(img, bounds, &image.Uniform{color.White}, image.Point{}, draw.Src)
+
+	// Draw QR code onto the image
+	draw.Draw(img,
+		image.Rect(params.Margin, params.Margin, params.QrSize+params.Margin, params.QrSize+params.Margin),
+		qrImage,
+		image.Point{},
+		draw.Over)
+
+	// Create final drawing contexts
+	boldContext = createContext(boldFont, params.TitleFontSize, img, params.Dpi)
+	regularContext = createContext(regularFont, params.DescriptionFontSize, img, params.Dpi)
+
+	textXRight := params.Margin + params.ComponentPadding + params.QrSize
 	textY := params.Margin - 8
 
-	titleLines := wrapText(params.TitleText, boldFace, maxWidth, boldContext)
+	// Draw title
 	for _, line := range titleLines {
-		pt := freetype.Pt(textX, textY+lineSpacing)
-		_, err = boldContext.DrawString(line, pt)
-		if err != nil {
+		pt := freetype.Pt(textXRight, textY+titleLineSpacing)
+		if _, err = boldContext.DrawString(line, pt); err != nil {
 			return err
 		}
-		textY += lineSpacing
+		textY += titleLineSpacing
 	}
 
+	// Draw description right from QR Code
 	textY += params.ComponentPadding / 4
-	lineSpacing = regularContext.PointToFixed(params.DescriptionFontSize).Round()
-
-	descriptionLines := wrapText(params.DescriptionText, regularFace, maxWidth, regularContext)
-	for _, line := range descriptionLines {
-		pt := freetype.Pt(textX, textY+lineSpacing)
-		_, err = regularContext.DrawString(line, pt)
-		if err != nil {
+	for _, line := range descriptionLinesRight {
+		pt := freetype.Pt(textXRight, textY+regularLineSpacing)
+		if _, err = regularContext.DrawString(line, pt); err != nil {
 			return err
 		}
-		textY += lineSpacing
+		textY += regularLineSpacing
 	}
 
-	err = png.Encode(w, img)
-	if err != nil {
-		return err
+	// Draw description below QR Code
+	if hasBottomText {
+		for _, line := range descriptionLinesBottom {
+			pt := freetype.Pt(params.Margin, textYBottomText+regularLineSpacing)
+			if _, err = regularContext.DrawString(line, pt); err != nil {
+				return err
+			}
+			textYBottomText += regularLineSpacing
+		}
 	}
 
-	return nil
+	return png.Encode(w, img)
+}
+
+// Helper function to create freetype context
+func createContext(font *truetype.Font, size float64, img *image.RGBA, dpi float64) *freetype.Context {
+	c := freetype.NewContext()
+	c.SetDPI(dpi)
+	c.SetFont(font)
+	c.SetFontSize(size)
+	c.SetClip(img.Bounds())
+	c.SetDst(img)
+	c.SetSrc(image.NewUniform(color.Black))
+	return c
 }
 
 func PrintLabel(cfg *config.Config, params *GenerateParameters) error {

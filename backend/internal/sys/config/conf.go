@@ -51,12 +51,14 @@ type WebConfig struct {
 }
 
 type LabelMakerConf struct {
-	Width        int64   `yaml:"width"     conf:"default:526"`
-	Height       int64   `yaml:"height"    conf:"default:200"`
-	Padding      int64   `yaml:"padding"   conf:"default:32"`
-	Margin       int64   `yaml:"margin"    conf:"default:32"`
-	FontSize     float64 `yaml:"font_size" conf:"default:32.0"`
-	PrintCommand *string `yaml:"string"`
+	Width                 int64   `yaml:"width"     conf:"default:526"`
+	Height                int64   `yaml:"height"    conf:"default:200"`
+	Padding               int64   `yaml:"padding"   conf:"default:32"`
+	Margin                int64   `yaml:"margin"    conf:"default:32"`
+	FontSize              float64 `yaml:"font_size" conf:"default:32.0"`
+	PrintCommand          *string `yaml:"string"`
+	AdditionalInformation *string `yaml:"string"`
+	DynamicLength         bool    `yaml:"bool"     conf:"default:true"`
 }
 
 // New parses the CLI/Config file and returns a Config struct. If the file argument is an empty string, the
