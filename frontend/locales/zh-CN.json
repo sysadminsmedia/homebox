@@ -46,6 +46,14 @@
                 "years": "年",
                 "yesterday": "昨天"
             },
+            "label_maker": {
+                "browser_print": "在浏览器内打印",
+                "confirm_description": "确定要打印这个标签吗？",
+                "download": "下载标签",
+                "print": "打印标签",
+                "server_print": "在服务器上打印",
+                "titles": "标签"
+            },
             "page_qr_code": {
                 "page_url": "页面URL"
             },
