@@ -46,6 +46,14 @@
                 "years": "Jahre",
                 "yesterday": "Gestern"
             },
+            "label_maker": {
+                "browser_print": "Aus dem Browser drucken",
+                "confirm_description": "Möchten Sie dieses Etikett wirklich drucken?",
+                "download": "Etikett herunterladen",
+                "print": "Etikett drucken",
+                "server_print": "Auf Server drucken",
+                "titles": "Labels"
+            },
             "page_qr_code": {
                 "page_url": "Seiten-URL"
             },
@@ -297,6 +305,7 @@
         "locations": "Lagerorte",
         "maintenance": "Wartung",
         "profile": "Profil",
+        "scanner": "Scanner",
         "search": "Suche",
         "tools": "Tools"
     },
@@ -328,6 +337,13 @@
         "url": "URL",
         "user_profile": "Benutzerprofil",
         "user_profile_sub": "Lade Benutzer ein und verwalte dein Konto."
+    },
+    "scanner": {
+        "error": "Beim Scannen ist ein Fehler aufgetreten",
+        "invalid_url": "Ungültige Barcode",
+        "no_sources": "Keine Videoquellen verfügbar",
+        "select_video_source": "Wählen Sie eine Videoquelle",
+        "unsupported": "Media Stream API wird nicht unterstützt"
     },
     "tools": {
         "actions": "Inventar-Aktionen",
