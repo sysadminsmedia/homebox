@@ -8,6 +8,7 @@
                 "upload": "Prześlij"
             },
             "outdated": {
+                "current_version": "Bieżąca wersja",
                 "dismiss": "Odrzuć",
                 "latest_version": "Najnowsza wersja",
                 "new_version_available": "Dostępna jest nowa wersja",
@@ -44,6 +45,14 @@
                 "weeks": "tygodnie",
                 "years": "lata",
                 "yesterday": "wczoraj"
+            },
+            "label_maker": {
+                "browser_print": "Drukuj z przeglądarki",
+                "confirm_description": "Czy jesteś pewien, że chcesz wydrukować tę etykietę?",
+                "download": "Pobierz etykietę",
+                "print": "Drukuj etykietę",
+                "server_print": "Drukuj na serwerze",
+                "titles": "Etykiety"
             },
             "page_qr_code": {
                 "page_url": "Adres URL strony"
@@ -181,6 +190,8 @@
         "next_page": "Następna strona",
         "no_results": "Nie znaleziono przedmiotów",
         "notes": "Notatki",
+        "only_with_photo": "Tylko przedmioty ze zdjęciem",
+        "only_without_photo": "Tylko przedmioty bez zdjęcia",
         "options": "Opcje",
         "order_by": "Ułóż według",
         "pages": "Strona {page} z {totalPages}",
@@ -294,6 +305,7 @@
         "locations": "Lokalizacje",
         "maintenance": "Konserwacja",
         "profile": "Profil",
+        "scanner": "Skaner",
         "search": "Wyszukaj",
         "tools": "Narzędzia"
     },
@@ -325,6 +337,13 @@
         "url": "Adres URL",
         "user_profile": "Profil użytkownika",
         "user_profile_sub": "Zaproś użytkowników i zarządzaj swoim kontem."
+    },
+    "scanner": {
+        "error": "Wystąpił błąd podczas skanowania",
+        "invalid_url": "Nieprawidłowy URL kodu kreskowego",
+        "no_sources": "Brak dostępnych źródeł wideo",
+        "select_video_source": "Wybierz źródło wideo",
+        "unsupported": "Media Stream API nie jest obsługiwane"
     },
     "tools": {
         "actions": "Akcje na zasobach",

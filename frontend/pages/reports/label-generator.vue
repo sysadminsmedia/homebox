@@ -197,7 +197,7 @@
 
   function getItem(n: number, item: { assetId: string; name: string; location: { name: string } } | null): LabelData {
     // format n into - seperated string with leading zeros
-    const assetID = fmtAssetID(n + 1);
+    const assetID = fmtAssetID(item?.assetId ?? n + 1);
 
     return {
       url: getQRCodeUrl(assetID),
