@@ -46,6 +46,13 @@
                 "years": "anni",
                 "yesterday": "ieri"
             },
+            "label_maker": {
+                "browser_print": "Stampa dal Browser",
+                "download": "Scaricare l'etichetta",
+                "print": "Stampa etichetta",
+                "server_print": "Stampa sul server",
+                "titles": "Etichette"
+            },
             "page_qr_code": {
                 "page_url": "URL della Pagina"
             },
