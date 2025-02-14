@@ -6,9 +6,18 @@
                 "description": "Importera en CSV-fil som innehåller dina föremål, etiketter och platser. Se dokumentationen för mer information om formatet som krävs.",
                 "title": "Importera CSV-fil",
                 "upload": "Ladda upp"
+            },
+            "outdated": {
+                "current_version": "Nuvarande version",
+                "dismiss": "Avvisa",
+                "latest_version": "Senaste version",
+                "new_version_available": "Ny Version Tillgänglig"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "dokumentation"
+            },
             "date_time": {
                 "ago": "{0} sedan",
                 "days": "dagar",
