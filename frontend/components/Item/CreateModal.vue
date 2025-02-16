@@ -29,7 +29,7 @@
             id="image-create-photo"
             class="w-full"
             type="file"
-            accept="image/png,image/jpeg,image/gif,image/avif,image/webp"
+            accept="image/png,image/jpeg,image/gif,image/avif,image/webp;capture=camera"
             @change="previewImage"
           />
         </div>
