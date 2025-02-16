@@ -46,6 +46,9 @@
                 "years": "anos",
                 "yesterday": "ontem"
             },
+            "label_maker": {
+                "titles": "Etiquetas"
+            },
             "page_qr_code": {
                 "page_url": "URL da página"
             },

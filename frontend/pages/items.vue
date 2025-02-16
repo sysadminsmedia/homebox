@@ -36,7 +36,7 @@
     },
   });
 
-  const pageSize = useRouteQuery("pageSize", 21);
+  const pageSize = useRouteQuery("pageSize", 30);
   const query = useRouteQuery("q", "");
   const advanced = useRouteQuery("advanced", false);
   const includeArchived = useRouteQuery("archived", false);
@@ -506,7 +506,7 @@
         <MdiSelectSearch class="size-10" />
         <p>{{ $t("items.no_results") }}</p>
       </div>
-      <div v-else ref="cardgrid" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+      <div v-else ref="cardgrid" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
         <ItemCard v-for="item in items" :key="item.id" :item="item" :location-flat-tree="locationFlatTree" />
       </div>
       <div v-if="items.length > 0 && (hasNext || hasPrev)" class="mt-10 flex flex-col items-center gap-2">
