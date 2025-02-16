@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { toast } from "vue-sonner";
+  import { Input } from "~/components/ui/input";
   import type { ItemSummary, LabelSummary, LocationOutCount } from "~~/lib/api/types/data-contracts";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
@@ -370,7 +371,7 @@
     <div v-if="locations && labels">
       <div class="flex flex-wrap items-end gap-4 md:flex-nowrap">
         <div class="w-full">
-          <FormTextField v-model="query" :placeholder="$t('global.search')" />
+          <Input v-model="query" :placeholder="$t('global.search')" class="h-12" />
           <div v-if="byAssetId" class="pl-2 pt-2 text-sm">
             <p>{{ $t("items.query_id", { id: parsedAssetId }) }}</p>
           </div>

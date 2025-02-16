@@ -102,7 +102,7 @@
   <BaseContainer>
     <BaseModal v-model="updateModal">
       <template #title> {{ $t("labels.update_label") }} </template>
-      <form v-if="label" @submit.prevent="update">
+      <form class="flex flex-col gap-2" v-if="label" @submit.prevent="update">
         <FormTextField
           v-model="updateData.name"
           :autofocus="true"

@@ -309,7 +309,7 @@
       <template #title> {{ $t("profile.change_password") }} </template>
 
       <form @submit.prevent="changePassword">
-        <FormPassword v-model="passwordChange.current" :label="$t('profile.current_password')" placeholder="" />
+        <FormPassword v-model="passwordChange.current" :label="$t('profile.current_password')" placeholder="" class="mb-2" />
         <FormPassword v-model="passwordChange.new" :label="$t('profile.new_password')" placeholder="" />
         <PasswordScore v-model:valid="passwordChange.isValid" :password="passwordChange.new" />
 
@@ -331,7 +331,7 @@
 
       <form @submit.prevent="createNotifier">
         <template v-if="notifier">
-          <FormTextField v-model="notifier.name" :label="$t('global.name')" />
+          <FormTextField v-model="notifier.name" :label="$t('global.name')" class="mb-2" />
           <FormTextField v-model="notifier.url" :label="$t('profile.url')" />
           <div class="max-w-[100px]">
             <FormCheckbox v-model="notifier.isActive" :label="$t('profile.enabled')" />

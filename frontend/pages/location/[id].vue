@@ -110,7 +110,7 @@
     <!-- Update Dialog -->
     <BaseModal v-model="updateModal">
       <template #title> {{ $t("locations.update_location") }} </template>
-      <form v-if="location" @submit.prevent="update">
+      <form class="flex flex-col gap-2" v-if="location" @submit.prevent="update">
         <FormTextField
           v-model="updateData.name"
           :autofocus="true"

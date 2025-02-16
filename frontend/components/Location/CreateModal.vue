@@ -4,7 +4,7 @@
       <DialogHeader>
         <DialogTitle>{{ $t("components.location.create_modal.title") }}</DialogTitle>
       </DialogHeader>
-      <form @submit.prevent="create()">
+      <form class="flex flex-col gap-2" @submit.prevent="create()">
         <LocationSelector v-model="form.parent" />
         <FormTextField
           ref="locationNameRef"
