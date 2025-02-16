@@ -6,7 +6,7 @@
       :class="{ 'modal-bottom': !props.modalTop }"
       :modal-top="props.modalTop"
     >
-      <div ref="modalBox" class="modal-box relative overflow-visible">
+      <div ref="modalBox" class="modal-box relative overflow-y-scroll overflow-x-hidden">
         <button
           v-if="props.showCloseButton"
           :for="modalId"
