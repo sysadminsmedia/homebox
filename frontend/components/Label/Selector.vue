@@ -75,12 +75,15 @@
 
 <template>
   <div class="flex flex-col gap-1">
-    {{ modelValue }}
     <Label :for="id" class="px-1">
       {{ $t("global.labels") }}
     </Label>
 
-    <TagsInput v-model="modelValue" class="w-full gap-0 px-0">
+    <TagsInput
+      v-model="modelValue"
+      class="w-full gap-0 px-0"
+      :display-value="v => props.labels.find(l => l.id === v)!.name"
+    >
       <div class="flex flex-wrap items-center gap-2 px-3">
         <TagsInputItem v-for="item in modelValue" :key="item" :value="item">
           <TagsInputItemText />
@@ -110,7 +113,7 @@
           <ComboboxContent :side-offset="4" position="popper" class="z-50">
             <CommandList
               position="popper"
-              class="mt-2 w-[--radix-popper-anchor-width] rounded-md border bg-popover text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
+              class="bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 mt-2 w-[--radix-popper-anchor-width] rounded-md border shadow-md outline-none"
             >
               <CommandEmpty />
               <CommandGroup>
@@ -119,10 +122,12 @@
                   :key="label.value"
                   :value="label.value"
                   @select.prevent="
-                    async ev => {
+                    ev => {
+                      console.log(ev);
                       if (typeof ev.detail.value === 'string') {
+                        // TODO: this breaks everything, fix create-item
                         if (ev.detail.value === 'create-item') {
-                          await createAndAdd(searchTerm);
+                          void createAndAdd(searchTerm);
                         } else {
                           modelValue.push(ev.detail.value);
                         }
