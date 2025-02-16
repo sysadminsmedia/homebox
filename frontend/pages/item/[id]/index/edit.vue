@@ -587,7 +587,7 @@
             <div class="mt-2 flex flex-wrap items-center justify-between gap-4"></div>
           </template>
           <div class="mb-6 grid gap-4 border-t px-5 pt-2 md:grid-cols-2">
-            <LocationSelector v-model="item.location" @update:model-value="informAboutDesyncingLocationFromParent()" />
+            <LocationLegacySelector v-model="item.location" @update:model-value="informAboutDesyncingLocationFromParent()" />
             <FormMultiselect v-model="item.labels" :label="$t('global.labels')" :items="labels ?? []" />
             <FormToggle
               v-model="item.syncChildItemsLocations"
