@@ -55,11 +55,11 @@ In version 0.8.0 We've added a custom label generation. On the tools page, there
 
 :label: v0.9.0
 
-Homebox uses [shoutrrr](https://containrrr.dev/shoutrrr/v0.8/) to send notifications. This allows you to send notifications to a variety of services including Discord, Slack, IFTTT, generic webhooks, and SMTP-based email. 
+Homebox uses [shoutrrr](https://containrrr.dev/shoutrrr/) to send notifications. This allows you to send notifications to a variety of services including Discord, Slack, IFTTT, generic webhooks, and SMTP-based email. 
 
 On your profile page, you can create a new **Notifier** using a supported shoutrrr notification URL to send notifications when a maintenance event is scheduled. 
 
-For the full list of services and how to configure the service URL, refer to the [Services Overview](https://containrrr.dev/shoutrrr/v0.8/services/overview/) in shoutrrr's documentation. 
+For the full list of services and how to configure the service URL, refer to the [Services Overview](https://containrrr.dev/shoutrrr/services/overview/) in shoutrrr's documentation. 
 
 **Notifications are sent on the day the maintenance is scheduled at or around 8am.**
 
