@@ -1,75 +1,3 @@
-<script setup lang="ts">
-  import { ComboboxAnchor, ComboboxContent, ComboboxInput, ComboboxPortal, ComboboxRoot } from "radix-vue";
-  import { computed, ref } from "vue";
-  import { toast } from "vue-sonner";
-  import { CommandEmpty, CommandGroup, CommandItem, CommandList } from "~/components/ui/command";
-  import {
-    TagsInput,
-    TagsInputInput,
-    TagsInputItem,
-    TagsInputItemDelete,
-    TagsInputItemText,
-  } from "@/components/ui/tags-input";
-  import type { LabelOut } from "~/lib/api/types/data-contracts";
-
-  const id = useId();
-
-  const api = useUserApi();
-
-  const emit = defineEmits(["update:modelValue"]);
-  const props = defineProps({
-    modelValue: {
-      type: Array as () => string[],
-      default: null,
-    },
-    labels: {
-      type: Array as () => LabelOut[],
-      required: true,
-    },
-  });
-
-  const modelValue = useVModel(props, "modelValue", emit);
-
-  const open = ref(false);
-  const searchTerm = ref("");
-
-  const filteredLabels = computed(() => {
-    const filtered = props.labels
-      .map(l => ({
-        value: l.id,
-        label: l.name,
-      }))
-      .filter(i => {
-        return i.label.toLocaleLowerCase().includes(searchTerm.value.toLocaleLowerCase());
-      })
-      .filter(i => !modelValue.value.includes(i.value));
-
-    if (searchTerm.value.trim() !== "") {
-      filtered.push({ value: "create-item", label: `Create ${searchTerm.value}` });
-    }
-
-    return filtered;
-  });
-
-  const createAndAdd = async (name: string) => {
-    const { error, data } = await api.labels.create({
-      name,
-      color: "", // Future!
-      description: "",
-    });
-
-    if (error) {
-      toast.error("Couldn't create label");
-      return;
-    }
-
-    toast.success("Label created");
-    modelValue.value.push(data.id);
-  };
-
-  // TODO: when radix-vue 2 is release use hook to set cursor to end when label is added with click
-</script>
-
 <template>
   <div class="flex flex-col gap-1">
     <Label :for="id" class="px-1">
@@ -143,3 +71,73 @@
     </TagsInput>
   </div>
 </template>
+<script setup lang="ts">
+  import { ComboboxAnchor, ComboboxContent, ComboboxInput, ComboboxPortal, ComboboxRoot } from "radix-vue";
+  import { computed, ref } from "vue";
+  import { toast } from "vue-sonner";
+  import fuzzysort from "fuzzysort";
+  import { CommandEmpty, CommandGroup, CommandItem, CommandList } from "~/components/ui/command";
+  import {
+    TagsInput,
+    TagsInputInput,
+    TagsInputItem,
+    TagsInputItemDelete,
+    TagsInputItemText,
+  } from "@/components/ui/tags-input";
+  import type { LabelOut } from "~/lib/api/types/data-contracts";
+
+  const id = useId();
+
+  const api = useUserApi();
+
+  const emit = defineEmits(["update:modelValue"]);
+  const props = defineProps({
+    modelValue: {
+      type: Array as () => string[],
+      default: null,
+    },
+    labels: {
+      type: Array as () => LabelOut[],
+      required: true,
+    },
+  });
+
+  const modelValue = useVModel(props, "modelValue", emit);
+
+  const open = ref(false);
+  const searchTerm = ref("");
+
+  const filteredLabels = computed(() => {
+    const filtered = fuzzysort
+      .go(searchTerm.value, props.labels, { key: "name", all: true })
+      .map(l => ({
+        value: l.obj.id,
+        label: l.obj.name,
+      }))
+      .filter(i => !modelValue.value.includes(i.value));
+
+    if (searchTerm.value.trim() !== "") {
+      filtered.push({ value: "create-item", label: `Create ${searchTerm.value}` });
+    }
+
+    return filtered;
+  });
+
+  const createAndAdd = async (name: string) => {
+    const { error, data } = await api.labels.create({
+      name,
+      color: "", // Future!
+      description: "",
+    });
+
+    if (error) {
+      toast.error("Couldn't create label");
+      return;
+    }
+
+    toast.success("Label created");
+    modelValue.value.push(data.id);
+  };
+
+  // TODO: when radix-vue 2 is release use hook to set cursor to end when label is added with click
+</script>

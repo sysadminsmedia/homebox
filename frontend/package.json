@@ -61,6 +61,7 @@
     "daisyui": "^2.52.0",
     "date-fns": "^3.6.0",
     "dompurify": "^3.2.3",
+    "fuzzysort": "^3.1.0",
     "h3": "^1.13.0",
     "http-proxy": "^1.18.1",
     "lucide-vue-next": "^0.474.0",

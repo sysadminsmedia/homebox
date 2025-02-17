@@ -43,6 +43,7 @@
 
 <script setup lang="ts">
   import { Check, ChevronsUpDown } from "lucide-vue-next";
+  import fuzzysort from "fuzzysort";
   import { Button } from "~/components/ui/button";
   import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "~/components/ui/command";
   import { Label } from "~/components/ui/label";
@@ -74,9 +75,7 @@
   }
 
   const filteredLocations = computed(() => {
-    const filtered = locations.value.filter(i => {
-      return i.name.toLocaleLowerCase().includes(search.value.toLocaleLowerCase());
-    });
+    const filtered = fuzzysort.go(search.value, locations.value, { key: "name", all: true }).map(i => i.obj);
 
     return filtered;
   });
