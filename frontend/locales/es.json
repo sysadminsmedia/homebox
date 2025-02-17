@@ -46,6 +46,11 @@
                 "years": "años",
                 "yesterday": "ayer"
             },
+            "label_maker": {
+                "browser_print": "Imprimir desde el navegador",
+                "server_print": "Imprimir en el servidor",
+                "titles": "Etiquetas"
+            },
             "page_qr_code": {
                 "page_url": "URL de página"
             },
