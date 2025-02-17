@@ -12,7 +12,7 @@
           :trigger-focus="focused"
           :autofocus="true"
           :label="$t('components.label.create_modal.label_name')"
-          :max-length="255"
+          :max-length="50"
           :min-length="1"
         />
         <FormTextArea
@@ -85,6 +85,11 @@
       toast.error("Already creating a label");
       return;
     }
+    if (form.name.length > 50) {
+      toast.error("Label name must not be longer than 50 characters");
+      return;
+    }
+
     loading.value = true;
 
     if (shift.value) {

@@ -124,6 +124,10 @@
   });
 
   const createAndAdd = async (name: string) => {
+    if (name.length > 50) {
+      toast.error("Label name must not be longer than 50 characters");
+      return;
+    }
     const { error, data } = await api.labels.create({
       name,
       color: "", // Future!
