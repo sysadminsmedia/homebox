@@ -50,9 +50,6 @@
 
     return filtered;
   });
-  const filterFunction = (list: string[]) => {
-    return list;
-  };
 
   const createAndAdd = async (name: string) => {
     const { error, data } = await api.labels.create({
@@ -96,7 +93,7 @@
         v-model:open="open"
         v-model:search-term="searchTerm"
         class="w-full"
-        :filter-function="filterFunction"
+        :filter-function="l => l"
       >
         <ComboboxAnchor as-child>
           <ComboboxInput :placeholder="$t('components.label.selector.select_labels')" as-child>

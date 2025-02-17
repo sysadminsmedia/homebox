@@ -12,15 +12,15 @@
         </Button>
       </PopoverTrigger>
       <PopoverContent class="w-[--radix-popper-anchor-width] p-0">
-        <Command v-model="search">
+        <Command v-model:search-term="search" :display-value="_ => ''" :filter-function="l => l">
           <CommandInput :placeholder="$t('components.location.selector.search_location')" />
           <CommandEmpty>{{ $t("components.location.selector.no_location_found") }}</CommandEmpty>
           <CommandList>
             <CommandGroup>
               <CommandItem
-                v-for="location in locations"
+                v-for="location in filteredLocations"
                 :key="location.id"
-                :value="location.name"
+                :value="location.id"
                 @select="selectLocation(location as unknown as LocationSummary)"
               >
                 <Check :class="cn('mr-2 h-4 w-4', value?.id === location.id ? 'opacity-100' : 'opacity-0')" />
@@ -28,7 +28,7 @@
                   <div class="flex w-full">
                     {{ location.name }}
                   </div>
-                  <div v-if="location.name !== location.treeString" class="mt-1 text-xs text-muted-foreground">
+                  <div v-if="location.name !== location.treeString" class="text-muted-foreground mt-1 text-xs">
                     {{ location.treeString }}
                   </div>
                 </div>
@@ -72,6 +72,14 @@
     }
     open.value = false;
   }
+
+  const filteredLocations = computed(() => {
+    const filtered = locations.value.filter(i => {
+      return i.name.toLocaleLowerCase().includes(search.value.toLocaleLowerCase());
+    });
+
+    return filtered;
+  });
 
   // Reset search when value is cleared
   watch(
