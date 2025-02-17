@@ -1,3 +1,8 @@
+---
+outline: false
+aside: false
+---
+
 # Configure Homebox
 
 ## Env Variables & Configuration
