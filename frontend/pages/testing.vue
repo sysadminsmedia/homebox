@@ -18,8 +18,10 @@
     >Create Toast</Button
   >
   <ButtonGroup>
-    <Button variant="outline">Button 1</Button>
-    <Button variant="destructive">Button 2</Button>
+    <Button @click="toast.success('Success')">Success</Button>
+    <Button variant="outline" @click="toast.info('Info')">Info</Button>
+    <Button variant="destructive" @click="toast.warning('Warning')">Warning</Button>
+    <Button variant="destructive" @click="toast.error('Error')">Error</Button>
     <Button>Button 3</Button>
   </ButtonGroup>
   <span class="flex items-center gap-1 text-sm">

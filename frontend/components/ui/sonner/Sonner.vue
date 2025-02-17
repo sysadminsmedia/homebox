@@ -9,6 +9,7 @@ const props = defineProps<ToasterProps>()
   <Sonner
     class="shadcn-toaster group"
     v-bind="props"
+    rich-colors
     :toast-options="{
       classes: {
         toast: 'group shadcn-toast group-[.shadcn-toaster]:bg-background group-[.shadcn-toaster]:text-foreground group-[.shadcn-toaster]:border-border group-[.shadcn-toaster]:shadow-lg',
