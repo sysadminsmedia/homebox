@@ -47,8 +47,11 @@
                 "yesterday": "ayer"
             },
             "label_maker": {
-                "browser_print": "Imprimir desde el navegador",
-                "server_print": "Imprimir en el servidor",
+                "browser_print": "Imprimir desde el Navegador",
+                "confirm_description": "¿Seguro de que deseas imprimir esta etiqueta?",
+                "download": "Descargar Etiqueta",
+                "print": "Imprimir etiqueta",
+                "server_print": "Imprimir en el Servidor",
                 "titles": "Etiquetas"
             },
             "page_qr_code": {
@@ -302,6 +305,7 @@
         "locations": "Ubicaciones",
         "maintenance": "Mantenimiento",
         "profile": "Perfil",
+        "scanner": "Escáner",
         "search": "Buscar",
         "tools": "Herramientas"
     },
@@ -333,6 +337,13 @@
         "url": "URL",
         "user_profile": "Perfil de Usuario",
         "user_profile_sub": "Invita a usuarios y gestiona tu cuenta."
+    },
+    "scanner": {
+        "error": "Se ha producido un error mientras se escaneaba",
+        "invalid_url": "URL de código de barras inválido",
+        "no_sources": "No hay fuentes de vídeo disponibles",
+        "select_video_source": "Elige una fuente de vídeo",
+        "unsupported": "La API Media Stream no es compatible"
     },
     "tools": {
         "actions": "Acciones de Inventario",
