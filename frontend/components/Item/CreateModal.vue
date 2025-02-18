@@ -55,14 +55,14 @@
 
       <!-- photo preview area is AFTER the create button, to avoid pushing the button below the screen on small displays -->
       <div class="border-t border-gray-300 p-4">
-        <template v-for="photo in form.photos" :key="photo">
-          <p class="mb-0" style="overflow-wrap:anywhere">File name: {{ photo.photoName }}</p>
+        <div v-for="(photo, index) in form.photos" :key="index">
+          <p :key="photo" class="mb-0" style="overflow-wrap: anywhere">File name: {{ photo.photoName }}</p>
           <img
             :src="photo.fileBase64"
             class="w-full rounded-t border-gray-300 object-fill shadow-sm"
             alt="Uploaded Photo"
           />
-        </template>
+        </div>
       </div>
     </form>
     <p class="mt-4 text-center text-sm">
@@ -136,7 +136,7 @@
       for (const file of input.files) {
         const reader = new FileReader();
         reader.onload = e => {
-          form.photos.push({photoName: file.name, fileBase64: e.target?.result as string, file: file,});
+          form.photos.push({ photoName: file.name, fileBase64: e.target?.result as string, file });
         };
 
         reader.readAsDataURL(file);
