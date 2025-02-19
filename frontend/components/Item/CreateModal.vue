@@ -56,7 +56,7 @@
       <!-- photo preview area is AFTER the create button, to avoid pushing the button below the screen on small displays -->
       <div class="border-t border-gray-300 p-4">
         <div v-for="(photo, index) in form.photos" :key="index">
-          <p :key="photo" class="mb-0" style="overflow-wrap: anywhere">File name: {{ photo.photoName }}</p>
+          <p class="mb-0" style="overflow-wrap: anywhere">File name: {{ photo.photoName }}</p>
           <img
             :src="photo.fileBase64"
             class="w-full rounded-t border-gray-300 object-fill shadow-sm"
