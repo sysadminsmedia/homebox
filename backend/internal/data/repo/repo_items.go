@@ -3,9 +3,11 @@ package repo
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/lithammer/fuzzysearch/fuzzy"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
@@ -338,16 +340,103 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 	}
 
 	if q.Search != "" {
-		qb.Where(
-			item.Or(
-				item.NameContainsFold(q.Search),
-				item.DescriptionContainsFold(q.Search),
-				item.SerialNumberContainsFold(q.Search),
-				item.ModelNumberContainsFold(q.Search),
-				item.ManufacturerContainsFold(q.Search),
-				item.NotesContainsFold(q.Search),
-			),
-		)
+		// First get all items that could potentially match
+		potentialMatches, err := qb.Clone().
+			Select(
+				item.FieldName,
+				item.FieldDescription,
+				item.FieldSerialNumber,
+				item.FieldModelNumber,
+				item.FieldManufacturer,
+				item.FieldNotes,
+				item.FieldID,
+			).All(ctx)
+		if err != nil {
+			return PaginationResult[ItemSummary]{}, err
+		}
+
+		// Create search candidates for fuzzy matching
+		type searchCandidate struct {
+			id    uuid.UUID
+			texts []string
+		}
+		candidates := make([]searchCandidate, len(potentialMatches))
+		for i, match := range potentialMatches {
+			candidates[i] = searchCandidate{
+				id: match.ID,
+				texts: []string{
+					match.Name,
+					match.Description,
+					match.SerialNumber,
+					match.ModelNumber,
+					match.Manufacturer,
+					match.Notes,
+				},
+			}
+		}
+
+		// Perform fuzzy search
+		var matchedIDs []uuid.UUID
+		searchQuery := strings.ToLower(q.Search)
+
+		// Search through each field of each item
+		for _, candidate := range candidates {
+			for _, text := range candidate.texts {
+				if text == "" {
+					continue
+				}
+				// Try exact substring match first (case-insensitive)
+				if strings.Contains(strings.ToLower(text), searchQuery) {
+					matchedIDs = append(matchedIDs, candidate.id)
+					break
+				}
+
+				// Try fuzzy match if no exact match found
+				if fuzzy.LevenshteinDistance(searchQuery, strings.ToLower(text)) <= 2 {
+					matchedIDs = append(matchedIDs, candidate.id)
+					break
+				}
+
+				// Try matching individual words for multi-word queries
+				queryWords := strings.Fields(searchQuery)
+				if len(queryWords) > 1 {
+					textWords := strings.Fields(strings.ToLower(text))
+					matchCount := 0
+
+					for _, qWord := range queryWords {
+						for _, tWord := range textWords {
+							if fuzzy.LevenshteinDistance(qWord, tWord) <= 2 {
+								matchCount++
+								break
+							}
+						}
+					}
+
+					// If we matched all query words, add this as a result
+					if matchCount == len(queryWords) {
+						matchedIDs = append(matchedIDs, candidate.id)
+						break
+					}
+				}
+			}
+		}
+
+		// If we found any fuzzy matches, filter to only those items
+		if len(matchedIDs) > 0 {
+			qb = qb.Where(item.IDIn(matchedIDs...))
+		} else {
+			// Fallback to the original contains logic if no fuzzy matches
+			qb = qb.Where(
+				item.Or(
+					item.NameContainsFold(q.Search),
+					item.DescriptionContainsFold(q.Search),
+					item.SerialNumberContainsFold(q.Search),
+					item.ModelNumberContainsFold(q.Search),
+					item.ManufacturerContainsFold(q.Search),
+					item.NotesContainsFold(q.Search),
+				),
+			)
+		}
 	}
 
 	if !q.AssetID.Nil() {

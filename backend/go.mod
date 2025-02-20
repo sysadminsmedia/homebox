@@ -15,10 +15,12 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/schema v1.4.1
 	github.com/hay-kot/httpkit v0.0.9
+	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/olahol/melody v1.1.4
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.32.0
+	github.com/sergi/go-diff v1.0.0
 	github.com/stretchr/testify v1.8.4
 	github.com/swaggo/http-swagger/v2 v2.0.2
 	github.com/swaggo/swag v1.16.3
@@ -55,6 +57,8 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
+	github.com/mozillazg/go-slugify v0.2.0 // indirect
+	github.com/mozillazg/go-unidecode v0.2.0 // indirect
 	github.com/ncruces/go-strftime v0.1.9 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
