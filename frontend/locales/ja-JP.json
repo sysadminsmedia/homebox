@@ -93,7 +93,11 @@
         "quantity": "数量",
         "query_id": "識別ID { id } の情報を取得しています",
         "receipt": "領収書・レシート",
-        "receipts": "納品書 兼 領収書"
+        "receipts": "レシート(領収書)",
+        "results": "検索結果: { total } 件",
+        "serial_number": "シリアル番号(S/N)",
+        "show_advanced_view_options": "高度なオプションを表示",
+        "sold_at": "販売価格"
     },
     "languages": {
         "en": "英語",
