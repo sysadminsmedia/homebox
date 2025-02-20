@@ -33,7 +33,7 @@
         },
         "location": {
             "create_modal": {
-                "title": "場所の項目を追加する"
+                "title": "場所の追加"
             }
         }
     },
@@ -177,7 +177,10 @@
         "total_entries": "合計項目数"
     },
     "menu": {
-        "create_label": "ラベル"
+        "create_label": "ラベル",
+        "locations": "ロケーション",
+        "maintenance": "メンテナンス情報",
+        "profile": "ユーザー設定"
     },
     "profile": {
         "language": "言語",
