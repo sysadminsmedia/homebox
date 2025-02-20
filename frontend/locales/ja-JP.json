@@ -183,7 +183,14 @@
         "profile": "ユーザー設定"
     },
     "profile": {
+        "change_password": "パスワードを変更",
+        "currency_format": "通貨の種類",
+        "current_password": "現在のパスワード",
+        "delete_account": "アカウントの削除 (永久的です！)",
+        "delete_account_sub": "アカウントと関連するデータをすべて削除します。元に戻すことはできません。\n元に戻すことはできないので、よく熟考したうえで実行してください。",
+        "gen_invite": "招待リンクの生成",
         "language": "言語",
+        "new_password": "新しいパスワード",
         "test": "テスト",
         "url": "URL"
     },
