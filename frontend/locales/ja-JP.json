@@ -81,7 +81,8 @@
         "next_page": "次の ページ",
         "no_results": "一致する項目はありません",
         "notes": "背景情報等",
-        "only_with_photo": "写真付きの商品のみ",
+        "only_with_photo": "写真付きの製品のみ",
+        "only_without_photo": "写真のない商品のみ",
         "prev_page": "先のページ"
     },
     "languages": {
