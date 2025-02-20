@@ -33,7 +33,7 @@
         },
         "location": {
             "create_modal": {
-                "title": "ロケーションを生産する"
+                "title": "場所の項目を追加する"
             }
         }
     },
@@ -43,19 +43,28 @@
         "github": "GitHub プロジェクト",
         "items": "アイテム",
         "labels": "ラベル",
-        "locations": "ロケーション",
+        "locations": "設置場所",
         "name": "名前",
         "password": "パスワード",
         "read_docs": "ドキュメントを読む",
-        "search": "サーチ"
+        "search": "検索"
     },
     "index": {
         "login": "ログイン",
-        "set_email": "メールは何ですか？",
-        "set_name": "お名前は何ですか？"
+        "remember_me": "ログインしたままにする",
+        "set_email": "メールアドレスを入力してください",
+        "set_name": "お名前は何ですか？",
+        "set_password": "パスワードを入力してください"
     },
     "items": {
         "add": "足す",
+        "advanced": "詳細項目の表示",
+        "archived": "現在は使用していない",
+        "asset_id": "識別ID",
+        "attachment": "添付ファイル",
+        "attachments": "添付ファイル",
+        "created_at": "追加してから",
+        "custom_fields": "追加項目",
         "next_page": "次の ページ",
         "prev_page": "先のページ"
     },
