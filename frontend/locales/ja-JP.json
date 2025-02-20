@@ -80,7 +80,7 @@
         "negate_labels": "選択されたラベルを除外",
         "next_page": "次の ページ",
         "no_results": "一致する項目はありません",
-        "notes": "背景情報等",
+        "notes": "備考",
         "only_with_photo": "写真付きの製品のみ",
         "only_without_photo": "写真のない製品のみ",
         "order_by": "並べ替え",
@@ -149,11 +149,35 @@
     "maintenance": {
         "filter": {
             "both": "すべて",
-            "completed": "完了"
+            "completed": "完了した項目",
+            "scheduled": "予定されている項目"
+        },
+        "list": {
+            "complete": "完了",
+            "create_first": "修理・メンテナンスに関する情報はありません\nクリックすると追加できます",
+            "delete": "削除",
+            "duplicate": "複製",
+            "edit": "編集",
+            "new": "新規作成"
         },
         "modal": {
-            "notes": "ノート"
-        }
+            "completed_date": "作業を完了した日付",
+            "cost": "費用",
+            "delete_confirmation": "この項目を削除しますがよろしいですか？",
+            "edit_action": "変更の確定",
+            "edit_title": "修理・メンテナンス情報の編集",
+            "entry_name": "項目の名称",
+            "new_action": "入力を確定し追加する",
+            "new_title": "修理・メンテナンス情報の追加",
+            "notes": "備考",
+            "scheduled_date": "予定されている日付"
+        },
+        "monthly_average": "月平均",
+        "total_cost": "合計金額",
+        "total_entries": "合計項目数"
+    },
+    "menu": {
+        "create_label": "ラベル"
     },
     "profile": {
         "language": "言語",
