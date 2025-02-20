@@ -188,11 +188,14 @@
         "current_password": "現在のパスワード",
         "delete_account": "アカウントの削除 (永久的です！)",
         "delete_account_sub": "アカウントと関連するデータをすべて削除します。元に戻すことはできません。\n元に戻すことはできないので、よく熟考したうえで実行してください。",
-        "gen_invite": "招待リンクの生成",
+        "gen_invite": "招待リンクの作成",
         "language": "言語",
         "new_password": "新しいパスワード",
+        "notifiers": "通知",
         "test": "テスト",
-        "url": "URL"
+        "theme_settings": "テーマ設定",
+        "url": "URL",
+        "user_profile": "ユーザー情報"
     },
     "tools": {
         "reports": "レポート",
