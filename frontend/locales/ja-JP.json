@@ -129,11 +129,27 @@
         "ru": "ロシア語",
         "sl": "スロベニア語",
         "sv": "スウェーデン語",
-        "tr": "トルコ語"
+        "tr": "トルコ語",
+        "uk-UA": "ウクライナ語",
+        "zh-CN": "中国語 (簡体字)",
+        "zh-HK": "中国語 (香港)",
+        "zh-MO": "中国語 (マカオ)",
+        "zh-TW": "中国語 (繁体字)"
+    },
+    "languages.da-DK": "デンマーク語",
+    "languages.fi.FI": "フィンランド語",
+    "languages.ro-RO": "ルーマニア語",
+    "languages.sk-SK": "スロバキア語",
+    "locations": {
+        "child_locations": "下位に位置する場所",
+        "collapse_tree": "ツリーを折りたたむ",
+        "no_results": "指定された場所は見つかりません",
+        "update_location": "場所情報の変更"
     },
     "maintenance": {
         "filter": {
-            "both": "両方"
+            "both": "すべて",
+            "completed": "完了"
         },
         "modal": {
             "notes": "ノート"
