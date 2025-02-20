@@ -82,8 +82,18 @@
         "no_results": "一致する項目はありません",
         "notes": "背景情報等",
         "only_with_photo": "写真付きの製品のみ",
-        "only_without_photo": "写真のない商品のみ",
-        "prev_page": "先のページ"
+        "only_without_photo": "写真のない製品のみ",
+        "order_by": "並べ替え",
+        "pages": "{ page } / { totalPages } ページ",
+        "prev_page": "前のページ",
+        "purchase_date": "購入日",
+        "purchase_details": "購入時の情報",
+        "purchase_price": "購入価格",
+        "purchased_from": "購入場所",
+        "quantity": "数量",
+        "query_id": "識別ID { id } の情報を取得しています",
+        "receipt": "領収書・レシート",
+        "receipts": "納品書 兼 領収書"
     },
     "languages": {
         "en": "英語",
