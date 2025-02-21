@@ -135,12 +135,16 @@
         "total_value": "合計金額"
     },
     "index": {
-        "disabled_registration": "新規登録は無効化されています",
+        "disabled_registration": "アカウントの新規登録は無効化されています",
+        "dont_join_group": "グループに参加せず新規登録はこちら",
+        "joining_group": "既存のグループの招待を受け取りました！",
         "login": "ログイン",
+        "register": "新規登録",
         "remember_me": "ログインしたままにする",
         "set_email": "メールアドレスを入力してください",
         "set_name": "お名前は何ですか？",
-        "set_password": "パスワードを入力してください"
+        "set_password": "パスワードを入力してください",
+        "tagline": "Track, Organize, and Manage your Things."
     },
     "items": {
         "add": "足す",
@@ -149,13 +153,15 @@
         "asset_id": "識別ID",
         "attachment": "添付ファイル",
         "attachments": "添付ファイル",
-        "created_at": "追加してから",
+        "changes_persisted_immediately": "添付ファイルの保存は自動で行われます",
+        "created_at": "作成日",
         "custom_fields": "追加項目",
-        "description": "詳細情報",
+        "description": "説明",
         "details": "この製品の情報",
         "drag_and_drop": "添付ファイルはドラッグ＆ドロップ、もしくはクリックで追加できます",
         "edit_details": "基本的な情報の編集",
         "field_selector": "追加項目で絞り込む",
+        "field_value": "フィールド値（任意入力）",
         "include_archive": "「現在は使用していない」にチェックを入れた項目を検索に含める",
         "insured": "保険適用",
         "lifetime_warranty": "無期限保証",
