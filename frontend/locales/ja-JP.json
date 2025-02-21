@@ -121,7 +121,12 @@
         "submit": "送信",
         "update": "アップデート",
         "value": "値",
-        "version": "バージョン：{version}"
+        "version": "現在のバージョン: { version }",
+        "welcome": "{ username } でログイン中"
+    },
+    "home": {
+        "labels": "ラベル",
+        "quick_statistics": "クイック統計"
     },
     "index": {
         "login": "ログイン",
