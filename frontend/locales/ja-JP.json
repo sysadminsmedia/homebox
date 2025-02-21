@@ -115,8 +115,9 @@
         "name": "名前",
         "password": "パスワード",
         "read_docs": "ドキュメントを読む",
-        "save": "保存する",
-        "search": "検索"
+        "save": "保存",
+        "search": "検索",
+        "sign_out": "サインアウト"
     },
     "index": {
         "login": "ログイン",
