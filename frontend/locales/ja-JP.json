@@ -129,7 +129,10 @@
         "quick_statistics": "統計",
         "recently_added": "最近の追加",
         "storage_locations": "ロケーション",
-        "total_items": "アイテム総数"
+        "total_items": "アイテム数",
+        "total_labels": "合計ラベル数",
+        "total_locations": "合計ロケーション数",
+        "total_value": "合計価値"
     },
     "index": {
         "login": "ログイン",
