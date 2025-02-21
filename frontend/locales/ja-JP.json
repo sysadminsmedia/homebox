@@ -127,7 +127,9 @@
     "home": {
         "labels": "ラベル",
         "quick_statistics": "統計",
-        "recently_added": "最近追加"
+        "recently_added": "最近の追加",
+        "storage_locations": "ロケーション",
+        "total_items": "アイテム数"
     },
     "index": {
         "login": "ログイン",
