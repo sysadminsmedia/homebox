@@ -8,6 +8,7 @@
                 "upload": "ファイルを選択"
             },
             "outdated": {
+                "current_version": "現在のバージョン",
                 "latest_version": "最新バージョン",
                 "new_version_available": "利用可能な更新があります",
                 "new_version_available_link": "クリックしてリリースノートを表示"
@@ -42,6 +43,13 @@
                 "weeks": "週",
                 "years": "年",
                 "yesterday": "昨日"
+            },
+            "label_maker": {
+                "browser_print": "印刷画面を開く",
+                "confirm_description": "この管理ラベルを印刷しますか？",
+                "download": "画像として保存",
+                "print": "プリンターで印刷",
+                "titles": "管理ラベルの出力"
             },
             "page_qr_code": {
                 "page_url": "ページ URL"
@@ -81,7 +89,7 @@
             "create_modal": {
                 "location_description": "場所の詳細",
                 "location_name": "名称",
-                "title": "場所の追加"
+                "title": "ロケーション(場所)の追加"
             },
             "selector": {
                 "parent_location": "親項目 (選択された項目の下位にネスト)"
@@ -136,26 +144,26 @@
     },
     "index": {
         "disabled_registration": "アカウントの新規登録は無効化されています",
-        "dont_join_group": "グループに参加せず新規登録はこちら",
+        "dont_join_group": "グループに参加せずに新規登録をする",
         "joining_group": "既存のグループの招待を受け取りました！",
         "login": "ログイン",
         "register": "新規登録",
-        "remember_me": "ログインしたままにする",
+        "remember_me": "ログインを維持する",
         "set_email": "メールアドレスを入力してください",
         "set_name": "お名前は何ですか？",
         "set_password": "パスワードを入力してください",
         "tagline": "Track, Organize, and Manage your Things."
     },
     "items": {
-        "add": "足す",
+        "add": "項目を追加",
         "advanced": "詳細項目の表示",
-        "archived": "現在は使用していない",
-        "asset_id": "識別ID",
+        "archived": "アーカイブ<small>(現在は使用していない)</small>",
+        "asset_id": "Asset ID",
         "attachment": "添付ファイル",
         "attachments": "添付ファイル",
         "changes_persisted_immediately": "添付ファイルの保存は自動で行われます",
         "created_at": "作成日",
-        "custom_fields": "追加項目",
+        "custom_fields": "カスタム項目",
         "description": "説明",
         "details": "この製品の情報",
         "drag_and_drop": "添付ファイルはドラッグ＆ドロップ、もしくはクリックで追加できます",
@@ -177,8 +185,8 @@
         "next_page": "次の ページ",
         "no_results": "一致する項目はありません",
         "notes": "備考",
-        "only_with_photo": "写真付きの製品のみ",
-        "only_without_photo": "写真のない製品のみ",
+        "only_with_photo": "写真付きのアイテムのみ",
+        "only_without_photo": "写真のないアイテムのみ",
         "options": "オプション",
         "order_by": "並べ替え",
         "pages": "{ page } / { totalPages } ページ",
@@ -201,9 +209,9 @@
         "sold_details": "売却時の情報",
         "sold_price": "売却価格",
         "sold_to": "売却先",
-        "tip_1": "フィルター条件の場所とラベルの項目を複数選択した場合は、\n選択された項目のうち一つ以上該当している項目すべてをフィルター条件に一致しているとみなされます。\n(例: ラベル「ケーブル」「PC」が選択されていた場合、「ケーブル」と「PC」の両方以外にどちらかのみのラベルを持つアイテムも含め一致してるとみなされます。",
-        "tip_2": "「#」で始まる文字列は識別ID(Asset ID)を検索します (例: '#000-001')",
-        "tip_3": "カスタム値絞り込み(Field Selector)は、\n複数選択された場合にどれかが該当するアイテムすべてを一致しているとみなしします",
+        "tip_1": "フィルター条件を複数選択した場合、いずれかに該当している項目すべてをフィルター条件に一致しているとみなします。<br>\n<small>(例: ラベル「ケーブル」「PC」が選択されていた場合、どちらかのみのラベルを持つアイテムも含め一致してるとみなされます)</small>",
+        "tip_2": "Asset IDで検索する場合は「#」を先頭に入力してください (例: '#000-001')",
+        "tip_3": "カスタム値絞り込み(Field Selector)は、\n複数選択された場合にどれかが該当するアイテムすべてを一致しているとみなしします。",
         "tips": "ヒント",
         "tips_sub": "検索に関するヒント",
         "updated_at": "更新日",
@@ -243,7 +251,7 @@
     "languages.ro-RO": "ルーマニア語",
     "languages.sk-SK": "スロバキア語",
     "locations": {
-        "child_locations": "下位に位置する場所",
+        "child_locations": "属しているその他のロケーション",
         "collapse_tree": "ツリーを折りたたむ",
         "no_results": "指定された場所は見つかりません",
         "update_location": "場所情報の変更"
@@ -256,7 +264,7 @@
         },
         "list": {
             "complete": "完了",
-            "create_first": "修理・メンテナンスに関する情報はありません\nクリックすると追加できます",
+            "create_first": "修理・メンテナンスに関する情報はありません<br>クリックすると追加できます",
             "delete": "削除",
             "duplicate": "複製",
             "edit": "編集",
@@ -291,6 +299,7 @@
         "locations": "ロケーション",
         "maintenance": "メンテナンス情報",
         "profile": "ユーザー設定",
+        "scanner": "スキャナー",
         "search": "検索",
         "tools": "ツール"
     },
@@ -300,8 +309,8 @@
         "currency_format": "通貨の種類",
         "current_password": "現在のパスワード",
         "delete_account": "アカウントの削除 (永久的です！)",
-        "delete_account_sub": "アカウントと関連するデータをすべて削除します。元に戻すことはできません。\n元に戻すことはできないので、よく熟考したうえで実行してください。",
-        "enabled": "有効化",
+        "delete_account_sub": "アカウントと関連するデータをすべて削除します。元に戻すことはできません。<br>よく熟考したうえで実行してください。",
+        "enabled": "有効",
         "example": "例",
         "gen_invite": "招待リンクの作成",
         "group_settings": "グループ設定",
@@ -319,15 +328,47 @@
         "update_language": "言語更新",
         "url": "URL",
         "user_profile": "ユーザー情報",
-        "user_profile_sub": "ユーザーを招待し、アカウントを管理します。"
+        "user_profile_sub": "アカウントの管理やユーザーの招待など"
+    },
+    "scanner": {
+        "invalid_url": "バーコードが無効です"
     },
     "tools": {
+        "actions": "全てのアイテムに対する変更",
+        "actions_set": {
+            "ensure_ids": "アイテムのAsset IDの確認",
+            "ensure_ids_button": "確認の実行",
+            "ensure_ids_sub": "全てのアイテムに、有効なAsset IDが存在することを確認します。<br>もし存在しないアイテムがあった場合は、登録された日付が古い順にAsset IDの登録を行います。",
+            "ensure_import_refs": "Import Refsの確認",
+            "ensure_import_refs_button": "確認の実行",
+            "ensure_import_refs_sub": "全てのアイテムに、有効な import_refに対応する値 が設定されていることを確認します。<br>設定されていない場合は、ランダムな8文字の文字列を設定します。",
+            "set_primary_photo": "アイテムの見出し画像の自動設定",
+            "set_primary_photo_button": "操作を実行",
+            "set_primary_photo_sub": "Homebox v0.10.0にて、画像の添付ファイルのうち1枚を見出し画像(Primary Photo)として設定できるようになりました。<br>未設定のアイテムは、この機能を利用して自動で設定できます。<br>この機能は、見出し画像が未設定のアイテムと関連付けられている中で最も古い画像ファイルを自動的にアイテムの見出し画像として設定します。<br>詳しくは、<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">このページをご覧ください (GitHub PR #576)</a>",
+            "zero_datetimes": "アイテムに設定された日時を消去",
+            "zero_datetimes_button": "操作を実行",
+            "zero_datetimes_sub": "全てのアイテムの日付時刻の値のうち、<b>時刻の値をリセットします</b>。<br>これは、開発の初期に発生したバグの修正に必要です。時刻の値が不適切に保存され、日付が適切に表示されなくなるといった問題が発生している場合に限り、実行してください。<br><b>バグが発生していない場合は実行は不要です</b>。<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">詳しくはこちらをご覧ください (GitHub Issue #236)</a>"
+        },
+        "actions_sub": "以下の機能は、すべてのアイテムのデータに影響を与えます。<b>これらの操作を元に戻すことはできません。</b>",
+        "import_export": "インポート / エクスポート (CSV形式)",
+        "import_export_set": {
+            "export": "エクスポート (出力)",
+            "export_button": "エクスポートの実行",
+            "export_sub": "Homeboxで利用可能なCSV形式のファイルをエクスポートします。<br>すべてのアイテムが対象です。一部のアイテムを選択してエクスポートすることはできません。",
+            "import": "インポート (CSVの取り込み)",
+            "import_button": "CSVファイルを選択",
+            "import_sub": "Homeboxで利用可能なCSVファイルをインポートします。<br><code>HB.import_ref</code>が存在しないアイテムに重複がある場合は上書きされません。<br><code>HB.import_ref</code>が存在するアイテムに重複がある場合は、同じ<code>HB.import_ref</code>を持つアイテムのデータが上書きされます。<br>どちらも、重複していない場合は関係なく追加されます。"
+        },
+        "import_export_sub": "登録されたアイテムをCSVファイルにインポートおよびエクスポートします。Homeboxのソフトウェアを切り替える場合などに便利です。",
         "reports": "レポート",
         "reports_set": {
-            "asset_labels": "アセット ID ラベル",
-            "asset_labels_button": "レベルを生成する",
+            "asset_labels": "【Beta】アイテム管理シールの作成",
+            "asset_labels_button": "【BETA】作成ページに移動",
+            "asset_labels_sub": "アイテムの管理などに使用できるラベルシールを印刷可能なPDFファイル形式で出力する機能です。<br>まだ使用されていないAsset IDと対応するQRコードのみを印刷し、新しいものを買ったときなどに手書きして使用することも可能です。<br>これらはまだ開発の初期段階にあり、正常に機能しないまたは全く機能しないなど致命的な不具合が残っている可能性があります。",
             "bill_of_materials": "部品表",
-            "bill_of_materials_button": "部品表を生成する"
-        }
+            "bill_of_materials_button": "部品表(BOM)を生成する",
+            "bill_of_materials_sub": "CSV形式のファイルを出力します。基本的なアイテム情報と価格情報を含むアイテムの概要が含まれています。<br>UTF-8形式で出力されるため、Microsoft OfficeのExcelで開くと文字化けする恐れがあります。"
+        },
+        "reports_sub": "アイテムに関するデータの含まれたファイルを作成できます。"
     }
 }
