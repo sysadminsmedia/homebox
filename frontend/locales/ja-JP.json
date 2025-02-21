@@ -5,7 +5,7 @@
                 "change_warning": "【注意】インポート時の動作が変更されました<br>\n選択されたCSVファイルにimport_refsの値が存在する場合、該当するアイテムはCSVファイルの値で上書きされます。",
                 "description": "アイテム、ラベル、ロケーション情報を含む CSV ファイルをインポートします。\nデータの形式など詳細については、ドキュメントを参照してください。",
                 "title": ".csvファイルのインポート",
-                "upload": "インポート"
+                "upload": "ファイルを選択"
             },
             "outdated": {
                 "latest_version": "最新バージョン",
@@ -61,24 +61,44 @@
                 "selectable": {
                     "card": "カード",
                     "items": "アイテム",
-                    "no_items": "表示する項目がありません。",
+                    "no_items": "ここにアイテムはありません",
                     "table": "テーブル"
+                },
+                "table": {
+                    "page": "ページ",
+                    "rows_per_page": "表示件数"
                 }
             }
         },
         "label": {
             "create_modal": {
-                "title": "ラベルを作成"
+                "label_description": "ラベルの説明",
+                "label_name": "ラベル名",
+                "title": "ラベルの追加"
             }
         },
         "location": {
             "create_modal": {
+                "location_description": "場所の詳細",
+                "location_name": "名称",
                 "title": "場所の追加"
+            },
+            "selector": {
+                "parent_location": "親項目 (選択された項目の下位にネスト)"
+            },
+            "tree": {
+                "no_locations": "場所の項目は存在しません。\nナビゲーションバー上部の\"Create\"から追加してください。"
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "数字キーを入力することで対応する操作を実行できます"
         }
     },
     "global": {
-        "build": "ビルド: { build }",
+        "add": "追加",
+        "build": "ビルド番号: { build }",
+        "confirm": "確認が必要です",
+        "create": "作成する",
         "email": "メール",
         "github": "GitHub プロジェクト",
         "items": "アイテム",
