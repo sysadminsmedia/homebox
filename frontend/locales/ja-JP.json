@@ -13,7 +13,8 @@
         },
         "global": {
             "copy_text": {
-                "failed_to_copy": "テキストをクリップボードにコピーできませんでした。"
+                "failed_to_copy": "テキストをクリップボードにコピーできませんでした",
+                "https_required": "hTTPSが必要なため"
             },
             "page_qr_code": {
                 "page_url": "ページ URL"
