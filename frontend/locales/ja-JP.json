@@ -315,9 +315,11 @@
         "test": "テスト",
         "theme_settings": "テーマ設定",
         "theme_settings_sub": "テーマ設定はブラウザに保存されます。いつでも変更できます。\nテーマ設定によって問題が発生した場合は、再読み込みを行ってください。",
-        "update_group": "グループを更新",
+        "update_group": "グループ設定を更新",
+        "update_language": "言語更新",
         "url": "URL",
-        "user_profile": "ユーザー情報"
+        "user_profile": "ユーザー情報",
+        "user_profile_sub": "ユーザーを招待し、アカウントを管理します。"
     },
     "tools": {
         "reports": "レポート",
