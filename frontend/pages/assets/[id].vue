@@ -1,11 +1,12 @@
 <script setup lang="ts">
+  import { toast } from "vue-sonner";
+
   definePageMeta({
     middleware: ["auth"],
   });
 
   const route = useRoute();
   const api = useUserApi();
-  const toast = useNotifier();
 
   const assetId = computed<string>(() => route.params.id as string);
 

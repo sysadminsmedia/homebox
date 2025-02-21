@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { toast } from "vue-sonner";
   import { route } from "../../lib/api/base";
   import MdiPrinterPos from "~icons/mdi/printer-pos";
   import MdiFileDownload from "~icons/mdi/file-download";
@@ -9,7 +10,6 @@
   }>();
 
   const pubApi = usePublicApi();
-  const toast = useNotifier();
 
   const { data: status } = useAsyncData(async () => {
     const { data, error } = await pubApi.status();

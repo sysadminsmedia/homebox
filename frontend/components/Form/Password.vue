@@ -3,7 +3,7 @@
     <FormTextField v-model="value" placeholder="Password" :label="label" :type="inputType"> </FormTextField>
     <button
       type="button"
-      class="tooltip absolute right-3 top-11 mb-3 ml-1 mt-auto inline-flex justify-center p-1"
+      class="tooltip absolute right-3 top-6 mb-3 ml-1 mt-auto inline-flex justify-center p-1"
       data-tip="Toggle Password Show"
       @click="toggle()"
     >
