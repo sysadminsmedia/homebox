@@ -126,7 +126,8 @@
     },
     "home": {
         "labels": "ラベル",
-        "quick_statistics": "クイック統計"
+        "quick_statistics": "統計",
+        "recently_added": "最近追加"
     },
     "index": {
         "login": "ログイン",
