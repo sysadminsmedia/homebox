@@ -1,24 +1,22 @@
 module github.com/sysadminsmedia/homebox/backend
 
-go 1.22
-
-toolchain go1.22.0
+go 1.23.0
 
 require (
-	ariga.io/atlas v0.19.1
-	entgo.io/ent v0.12.5
-	github.com/ardanlabs/conf/v3 v3.1.7
+	ariga.io/atlas v0.29.1
+	entgo.io/ent v0.14.1
+	github.com/ardanlabs/conf/v3 v3.2.0
 	github.com/containrrr/shoutrrr v0.8.0
-	github.com/go-chi/chi/v5 v5.0.12
-	github.com/go-playground/validator/v10 v10.18.0
-	github.com/gocarina/gocsv v0.0.0-20231116093920-b87c2d0e983a
+	github.com/go-chi/chi/v5 v5.2.0
+	github.com/go-playground/validator/v10 v10.23.0
+	github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/schema v1.4.1
-	github.com/hay-kot/httpkit v0.0.9
+	github.com/hay-kot/httpkit v0.0.11
 	github.com/lithammer/fuzzysearch v1.1.8
-	github.com/mattn/go-sqlite3 v1.14.22
+	github.com/mattn/go-sqlite3 v1.14.24
 	github.com/mozillazg/go-slugify v0.2.0
-	github.com/olahol/melody v1.1.4
+	github.com/olahol/melody v1.2.1
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.32.0
 	github.com/stretchr/testify v1.8.4
