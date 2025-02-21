@@ -4,6 +4,9 @@
             "import_dialog": {
                 "change_warning": "既存のimport_refsを使用したインポートの動作が変更されました",
                 "upload": "アップロード"
+            },
+            "outdated": {
+                "latest_version": "最新のバージョン"
             }
         },
         "global": {
