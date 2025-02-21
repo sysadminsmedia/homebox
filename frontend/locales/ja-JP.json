@@ -2,7 +2,8 @@
     "components": {
         "app": {
             "import_dialog": {
-                "change_warning": "既存のimport_refsを使用したインポートの動作が変更されました",
+                "change_warning": "【注意】インポート時の動作が変更されました<br>\n選択されたCSVファイルにimport_refsの値が存在する場合、該当するアイテムはCSVファイルの値で上書きされます。",
+                "description": "アイテム、ラベル、ロケーション情報を含む CSV ファイルをインポートします。\nデータの形式など詳細については、ドキュメントを参照してください。",
                 "upload": "アップロード"
             },
             "outdated": {
@@ -13,8 +14,33 @@
         },
         "global": {
             "copy_text": {
+                "documentation": "ドキュメント",
                 "failed_to_copy": "テキストをクリップボードにコピーできませんでした",
-                "https_required": "hTTPSが必要なため"
+                "https_required": "( HTTPSに非対応なため )",
+                "learn_more": "詳しくはこちら"
+            },
+            "date_time": {
+                "ago": "{0} 前",
+                "days": "日",
+                "hour": "時間",
+                "hours": "時間",
+                "just-now": "たった今",
+                "last-month": "先月",
+                "last-week": "先週",
+                "last-year": "去年",
+                "minute": "分",
+                "minutes": "分",
+                "months": "か月",
+                "next-month": "来月",
+                "next-week": "来週",
+                "next-year": "来年",
+                "second": "秒",
+                "seconds": "秒",
+                "tomorrow": "明日",
+                "week": "週",
+                "weeks": "週",
+                "years": "年",
+                "yesterday": "昨日"
             },
             "page_qr_code": {
                 "page_url": "ページ URL"
