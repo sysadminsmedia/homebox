@@ -6,10 +6,15 @@
                 "upload": "アップロード"
             },
             "outdated": {
-                "latest_version": "最新のバージョン"
+                "latest_version": "最新バージョン",
+                "new_version_available": "利用可能な更新があります",
+                "new_version_available_link": "クリックしてリリースノートを表示"
             }
         },
         "global": {
+            "copy_text": {
+                "failed_to_copy": "テキストをクリップボードにコピーできませんでした。"
+            },
             "page_qr_code": {
                 "page_url": "ページ URL"
             },
