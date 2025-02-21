@@ -132,9 +132,10 @@
         "total_items": "アイテム数",
         "total_labels": "合計ラベル数",
         "total_locations": "合計ロケーション数",
-        "total_value": "合計価値"
+        "total_value": "合計金額"
     },
     "index": {
+        "disabled_registration": "新規登録は無効化されています",
         "login": "ログイン",
         "remember_me": "ログインしたままにする",
         "set_email": "メールアドレスを入力してください",
