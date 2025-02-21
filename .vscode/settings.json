@@ -30,5 +30,6 @@
 	"editor.quickSuggestions": {
 		"strings": true
 	},
-  "tailwindCSS.experimental.configFile": "./frontend/tailwind.config.js"
+  "tailwindCSS.experimental.configFile": "./frontend/tailwind.config.js",
+  "window.title": "${dirty}${activeEditorShort}${separator}${rootName}${separator}${profileName}${separator}${appName}${separator}[Branch: fuzzy-search-logic]"
 }
