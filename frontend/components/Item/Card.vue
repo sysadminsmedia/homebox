@@ -30,7 +30,7 @@
         </div>
         <div class="grow"></div>
         <div class="tooltip" data-tip="Quantity">
-          <span class="badge badge-primary badge-sm size-5 text-xs">
+          <span class="badge badge-primary badge-sm h-5 text-xs">
             {{ item.quantity }}
           </span>
         </div>
