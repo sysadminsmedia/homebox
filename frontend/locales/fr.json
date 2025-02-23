@@ -46,6 +46,14 @@
                 "years": "années",
                 "yesterday": "hier"
             },
+            "label_maker": {
+                "browser_print": "Imprimer à partir du navigateur",
+                "confirm_description": "Êtes-vous certain de vouloir imprimer cette étiquette ?",
+                "download": "Télécharger l’étiquette",
+                "print": "Imprimer l’étiquette",
+                "server_print": "Imprimer sur le serveur",
+                "titles": "Étiquettes"
+            },
             "page_qr_code": {
                 "page_url": "URL de la page"
             },
@@ -328,6 +336,11 @@
         "url": "URL",
         "user_profile": "Profil utilisateur",
         "user_profile_sub": "Gérez votre compte et invitez des utilisateurs."
+    },
+    "scanner": {
+        "no_sources": "Aucune source vidéo disponible",
+        "select_video_source": "Choisir une source vidéo",
+        "unsupported": "L'API Media Stream n'est pas prise en charge"
     },
     "tools": {
         "actions": "Actions d’inventaire",
