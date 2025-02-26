@@ -46,6 +46,9 @@
                 "years": "tahun",
                 "yesterday": "kemaren"
             },
+            "label_maker": {
+                "download": "Unduh Label"
+            },
             "page_qr_code": {
                 "page_url": "Halaman URL"
             },
