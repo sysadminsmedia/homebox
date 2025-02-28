@@ -2,7 +2,7 @@
     "components": {
         "app": {
             "import_dialog": {
-                "change_warning": "【注意】インポート時の動作が変更されました<br>\n選択されたCSVファイルにimport_refsの値が存在する場合、該当するアイテムはCSVファイルの値で上書きされます。",
+                "change_warning": "【注意】インポート時の動作が変更されました'<br>'\n選択されたCSVファイルにimport_refsの値が存在する場合、該当するアイテムはCSVファイルの値で上書きされます。",
                 "description": "アイテム、ラベル、ロケーション情報を含む CSV ファイルをインポートします。\nデータの形式など詳細については、ドキュメントを参照してください。",
                 "title": ".csvファイルのインポート",
                 "upload": "ファイルを選択"
@@ -264,7 +264,7 @@
         },
         "list": {
             "complete": "完了",
-            "create_first": "修理・メンテナンスに関する情報はありません<br>クリックすると追加できます",
+            "create_first": "修理・メンテナンスに関する情報はありません'<br>'クリックすると追加できます",
             "delete": "削除",
             "duplicate": "複製",
             "edit": "編集",
@@ -309,7 +309,7 @@
         "currency_format": "通貨の種類",
         "current_password": "現在のパスワード",
         "delete_account": "アカウントの削除 (永久的です！)",
-        "delete_account_sub": "アカウントと関連するデータをすべて削除します。元に戻すことはできません。<br>よく熟考したうえで実行してください。",
+        "delete_account_sub": "アカウントと関連するデータをすべて削除します。元に戻すことはできません。",
         "enabled": "有効",
         "example": "例",
         "gen_invite": "招待リンクの作成",
@@ -338,36 +338,36 @@
         "actions_set": {
             "ensure_ids": "アイテムのAsset IDの確認",
             "ensure_ids_button": "確認の実行",
-            "ensure_ids_sub": "全てのアイテムに、有効なAsset IDが存在することを確認します。<br>もし存在しないアイテムがあった場合は、登録された日付が古い順にAsset IDの登録を行います。",
+            "ensure_ids_sub": "全てのアイテムに、有効なAsset IDが存在することを確認します。'<br>'もし存在しないアイテムがあった場合は、登録された日付が古い順にAsset IDの登録を行います。",
             "ensure_import_refs": "Import Refsの確認",
             "ensure_import_refs_button": "確認の実行",
-            "ensure_import_refs_sub": "全てのアイテムに、有効な import_refに対応する値 が設定されていることを確認します。<br>設定されていない場合は、ランダムな8文字の文字列を設定します。",
+            "ensure_import_refs_sub": "全てのアイテムに、有効な import_refに対応する値 が設定されていることを確認します。'<br>'設定されていない場合は、ランダムな8文字の文字列を設定します。",
             "set_primary_photo": "アイテムの見出し画像の自動設定",
             "set_primary_photo_button": "操作を実行",
-            "set_primary_photo_sub": "Homebox v0.10.0にて、画像の添付ファイルのうち1枚を見出し画像(Primary Photo)として設定できるようになりました。<br>未設定のアイテムは、この機能を利用して自動で設定できます。<br>この機能は、見出し画像が未設定のアイテムと関連付けられている中で最も古い画像ファイルを自動的にアイテムの見出し画像として設定します。<br>詳しくは、<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">このページをご覧ください (GitHub PR #576)</a>",
+            "set_primary_photo_sub": "Homebox v0.10.0にて、画像の添付ファイルのうち1枚を見出し画像(Primary Photo)として設定できるようになりました。'<br>'未設定のアイテムは、この機能を利用して自動で設定できます。'<br>'この機能は、見出し画像が未設定のアイテムと関連付けられている中で最も古い画像ファイルを自動的にアイテムの見出し画像として設定します。'<br>'詳しくは、'<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'このページをご覧ください (GitHub PR #576)'</a>'",
             "zero_datetimes": "アイテムに設定された日時を消去",
             "zero_datetimes_button": "操作を実行",
-            "zero_datetimes_sub": "全てのアイテムの日付時刻の値のうち、'<b>'時刻の値をリセットします'</b>'。'<br>'これは、開発の初期に発生したバグの修正に必要です。時刻の値が不適切に保存され、日付が適切に表示されなくなるといった問題が発生している場合に限り、実行してください。'<br>'バグが発生していない場合は実行は不要です。'<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'詳しくはこちらをご覧ください (GitHub Issue #236)'</a>'"
+            "zero_datetimes_sub": "全てのアイテムの'<b>'日付をリセット'</b>'します。'<br>'これは、初期(v0.8.0 / 2023-02-18以前)に発生したバグの修正に必要です。日付が適切に表示されなくなるといった問題が発生している場合に限り、実行してください。'<br>'バグが発生していない場合は実行は不要です。'<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'詳しくはこちらをご覧ください (GitHub Issue #236)'</a>'"
         },
-        "actions_sub": "以下の機能は、すべてのアイテムのデータに影響を与えます。'<b>'これらの操作を元に戻すことはできません。'</b>'",
+        "actions_sub": "以下の機能は、すべてのアイテムのデータに影響を与えます。'<br>''<b>'これらの操作を元に戻すことはできません。'</b>'",
         "import_export": "インポート / エクスポート (CSV形式)",
         "import_export_set": {
             "export": "エクスポート (出力)",
             "export_button": "エクスポートの実行",
-            "export_sub": "Homeboxで利用可能なCSV形式のファイルをエクスポートします。<br>すべてのアイテムが対象です。一部のアイテムを選択してエクスポートすることはできません。",
+            "export_sub": "Homeboxで利用可能なCSV形式のファイルをエクスポートします。'<br>'すべてのアイテムが対象です。一部のアイテムを選択してエクスポートすることはできません。",
             "import": "インポート (CSVの取り込み)",
             "import_button": "CSVファイルを選択",
-            "import_sub": "Homeboxで利用可能なCSVファイルをインポートします。<br><code>HB.import_ref</code>が存在しないアイテムに重複がある場合は上書きされません。<br><code>HB.import_ref</code>が存在するアイテムに重複がある場合は、同じ<code>HB.import_ref</code>を持つアイテムのデータが上書きされます。<br>どちらも、重複していない場合は関係なく追加されます。"
+            "import_sub": "Homeboxで利用可能なCSVファイルをインポートします。'<br>''<code>'HB.import_ref'</code>'が存在しないアイテムに重複がある場合は上書きされません。'<br>''<code>'HB.import_ref'</code>'が存在するアイテムに重複がある場合は、同じ'<code>'HB.import_ref'</code>'を持つアイテムのデータが上書きされます。'<br>'どちらも、重複していない場合は関係なく追加されます。"
         },
         "import_export_sub": "登録されたアイテムをCSVファイルにインポートおよびエクスポートします。Homeboxのソフトウェアを切り替える場合などに便利です。",
         "reports": "レポート",
         "reports_set": {
             "asset_labels": "【Beta】アイテム管理シールの作成",
             "asset_labels_button": "【BETA】作成ページに移動",
-            "asset_labels_sub": "アイテムの管理などに使用できるラベルシールを印刷可能なPDFファイル形式で出力する機能です。<br>まだ使用されていないAsset IDと対応するQRコードのみを印刷し、新しいものを買ったときなどに手書きして使用することも可能です。<br>これらはまだ開発の初期段階にあり、正常に機能しないまたは全く機能しないなど致命的な不具合が残っている可能性があります。",
+            "asset_labels_sub": "アイテムの管理などに使用できるラベルシールを印刷可能なPDFファイル形式で出力する機能です。'<br>'まだ使用されていないAsset IDと対応するQRコードのみを印刷し、新しいものを買ったときなどに手書きして使用することも可能です。'<br>'これらはまだ開発の初期段階にあり、正常に機能しないまたは全く機能しないなど致命的な不具合が残っている可能性があります。",
             "bill_of_materials": "部品表",
             "bill_of_materials_button": "部品表(BOM)を生成する",
-            "bill_of_materials_sub": "CSV形式のファイルを出力します。基本的なアイテム情報と価格情報を含むアイテムの概要が含まれています。<br>UTF-8形式で出力されるため、Microsoft OfficeのExcelで開くと文字化けする恐れがあります。"
+            "bill_of_materials_sub": "CSV形式のファイルを出力します。基本的なアイテム情報と価格情報を含むアイテムの概要が含まれています。'<br>'UTF-8形式で出力されるため、Microsoft OfficeのExcelで開くと文字化けする恐れがあります。"
         },
         "reports_sub": "アイテムに関するデータの含まれたファイルを作成できます。"
     }
