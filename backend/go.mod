@@ -2,6 +2,8 @@ module github.com/sysadminsmedia/homebox/backend
 
 go 1.23.0
 
+toolchain go1.23.5
+
 require (
 	ariga.io/atlas v0.29.1
 	entgo.io/ent v0.14.1
