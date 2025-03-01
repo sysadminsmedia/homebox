@@ -6,6 +6,7 @@ homebox.db
 .DS_Store
 test-mailer.json
 node_modules
+.vscode/
 
 *.venv
 # If you prefer the allow list template instead of the deny list, see community template:
