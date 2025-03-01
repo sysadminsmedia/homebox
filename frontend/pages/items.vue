@@ -8,6 +8,7 @@
   import MdiDelete from "~icons/mdi/delete";
   import MdiChevronRight from "~icons/mdi/chevron-right";
   import MdiChevronLeft from "~icons/mdi/chevron-left";
+  import MdiBarcode from "~icons/mdi/barcode";
 
   definePageMeta({
     middleware: ["auth"],
@@ -44,6 +45,7 @@
   const onlyWithoutPhoto = useRouteQuery("onlyWithoutPhoto", false);
   const onlyWithPhoto = useRouteQuery("onlyWithPhoto", false);
   const orderBy = useRouteQuery("orderBy", "name");
+  const searchByAssetId = useRouteQuery("searchByAssetId", false);
 
   const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
   const hasNext = computed(() => page.value * pageSize.value < total.value);
@@ -136,10 +138,11 @@
 
   const byAssetId = computed(() => query.value?.startsWith("#") || false);
   const parsedAssetId = computed(() => {
-    if (!byAssetId.value) {
+    if (!byAssetId.value && !searchByAssetId.value) {
       return "";
     } else {
-      const [aid, valid] = parseAssetIDString(query.value.replace("#", ""));
+      const queryValue = searchByAssetId.value ? query.value : query.value.replace("#", "");
+      const [aid, valid] = parseAssetIDString(queryValue);
       if (!valid) {
         return "Invalid Asset ID";
       } else {
@@ -249,6 +252,21 @@
     }
 
     loading.value = true;
+    searchLocked.value = true;
+
+    if (!queryParamsInitialized.value) {
+      searchLocked.value = false;
+      loading.value = false;
+      return;
+    }
+
+    const toast = useNotifier();
+
+    // If searching by asset ID, add the # prefix if not already present
+    let searchQuery = query.value || "";
+    if (searchByAssetId.value && searchQuery && !searchQuery.startsWith("#")) {
+      searchQuery = "#" + searchQuery;
+    }
 
     const fields = [];
 
@@ -258,20 +276,18 @@
       }
     }
 
-    const toast = useNotifier();
-
     const { data, error } = await api.items.getAll({
-      q: query.value || "",
+      q: searchQuery,
       locations: locIDs.value,
       labels: labIDs.value,
       negateLabels: negateLabels.value,
+      fields,
+      includeArchived: includeArchived.value,
       onlyWithoutPhoto: onlyWithoutPhoto.value,
       onlyWithPhoto: onlyWithPhoto.value,
-      includeArchived: includeArchived.value,
-      page: page.value,
-      pageSize: pageSize.value,
       orderBy: orderBy.value,
-      fields,
+      page: page.value,
+      limit: pageSize.value,
     });
 
     function resetItems() {
@@ -371,9 +387,17 @@
     <div v-if="locations && labels">
       <div class="flex flex-wrap items-end gap-4 md:flex-nowrap">
         <div class="w-full">
-          <FormTextField v-model="query" :placeholder="$t('global.search')" />
-          <div v-if="byAssetId" class="pl-2 pt-2 text-sm">
-            <p>{{ $t("items.query_id", { id: parsedAssetId }) }}</p>
+          <div class="flex items-center mb-2">
+            <div class="form-control">
+              <label class="label cursor-pointer">
+                <span class="label-text mr-2">Search by Asset ID</span>
+                <input type="checkbox" v-model="searchByAssetId" class="toggle toggle-primary" />
+              </label>
+            </div>
+          </div>
+          <FormTextField v-model="query" :placeholder="searchByAssetId ? 'Enter Asset ID Number' : $t('global.search')" />
+          <div v-if="byAssetId || (searchByAssetId && query)" class="pl-2 pt-2 text-sm">
+            <p>Querying Asset ID Number: {{ parsedAssetId }}</p>
           </div>
         </div>
         <BaseButton class="btn-block md:w-auto" @click.prevent="submit">
@@ -498,7 +522,19 @@
 
     <section class="mt-10">
       <BaseSectionHeader ref="itemsTitle"> {{ $t("global.items") }} </BaseSectionHeader>
-      <p v-if="items.length > 0" class="flex items-center text-base font-medium">
+      <div
+        v-if="items.length === 0 && !loading"
+        class="mt-4 rounded-lg border border-base-content/20 bg-base-200 p-4"
+      >
+        <p class="text-base">Search Tips</p>
+        <ul class="mt-1 list-disc pl-6">
+          <li>Use the "Search by Asset ID" toggle to quickly search by asset ID numbers</li>
+          <li>Searches prefixed with '#' will query for an asset ID (example '#000-001')</li>
+          <li>You can filter by location and labels using the dropdowns</li>
+          <li>Use the advanced search for more options</li>
+        </ul>
+      </div>
+      <p v-else-if="items.length > 0" class="flex items-center text-base font-medium">
         {{ $t("items.results", { total: total }) }}
         <span class="ml-auto text-base"> {{ $t("items.pages", { page: page, totalPages: totalPages }) }} </span>
       </p>
