@@ -7,6 +7,7 @@
   import MdiDelete from "~icons/mdi/delete";
   import MdiChevronRight from "~icons/mdi/chevron-right";
   import MdiChevronLeft from "~icons/mdi/chevron-left";
+  import MdiBarcode from "~icons/mdi/barcode";
 
   definePageMeta({
     middleware: ["auth"],
@@ -19,6 +20,7 @@
   const searchLocked = ref(false);
   const queryParamsInitialized = ref(false);
   const initialSearch = ref(true);
+  const searchByAssetId = useRouteQuery("searchByAssetId", false);
 
   const api = useUserApi();
   const loading = useMinLoader(500);
@@ -133,10 +135,11 @@
 
   const byAssetId = computed(() => query.value?.startsWith("#") || false);
   const parsedAssetId = computed(() => {
-    if (!byAssetId.value) {
+    if (!byAssetId.value && !searchByAssetId.value) {
       return "";
     } else {
-      const [aid, valid] = parseAssetIDString(query.value.replace("#", ""));
+      const queryValue = searchByAssetId.value ? query.value : query.value.replace("#", "");
+      const [aid, valid] = parseAssetIDString(queryValue);
       if (!valid) {
         return "Invalid Asset ID";
       } else {
@@ -231,8 +234,14 @@
 
     const toast = useNotifier();
 
+    // If searching by asset ID, add the # prefix if not already present
+    let searchQuery = query.value || "";
+    if (searchByAssetId.value && searchQuery && !searchQuery.startsWith("#")) {
+      searchQuery = "#" + searchQuery;
+    }
+
     const { data, error } = await api.items.getAll({
-      q: query.value || "",
+      q: searchQuery,
       locations: locIDs.value,
       labels: labIDs.value,
       negateLabels: negateLabels.value,
@@ -338,8 +347,16 @@
     <div v-if="locations && labels">
       <div class="flex flex-wrap md:flex-nowrap gap-4 items-end">
         <div class="w-full">
-          <FormTextField v-model="query" placeholder="Search" />
-          <div v-if="byAssetId" class="text-sm pl-2 pt-2">
+          <div class="flex items-center mb-2">
+            <div class="form-control">
+              <label class="label cursor-pointer">
+                <span class="label-text mr-2">Search by Asset ID</span>
+                <input type="checkbox" v-model="searchByAssetId" class="toggle toggle-primary" />
+              </label>
+            </div>
+          </div>
+          <FormTextField v-model="query" :placeholder="searchByAssetId ? 'Enter Asset ID Number' : 'Search'" />
+          <div v-if="byAssetId || (searchByAssetId && query)" class="text-sm pl-2 pt-2">
             <p>Querying Asset ID Number: {{ parsedAssetId }}</p>
           </div>
         </div>
@@ -404,15 +421,10 @@
           >
             <p class="text-base">Search Tips</p>
             <ul class="mt-1 list-disc pl-6">
-              <li>
-                Location and label filters use the 'OR' operation. If more than one is selected only one will be
-                required for a match.
-              </li>
-              <li>Searches prefixed with '#'' will query for a asset ID (example '#000-001')</li>
-              <li>
-                Field filters use the 'OR' operation. If more than one is selected only one will be required for a
-                match.
-              </li>
+              <li>Use the "Search by Asset ID" toggle to quickly search by asset ID numbers</li>
+              <li>Searches prefixed with '#' will query for an asset ID (example '#000-001')</li>
+              <li>You can filter by location and labels using the dropdowns</li>
+              <li>Use the advanced search for more options</li>
             </ul>
           </div>
         </div>
