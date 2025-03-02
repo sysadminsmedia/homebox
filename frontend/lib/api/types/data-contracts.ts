@@ -472,3 +472,9 @@ export interface ValidateErrorResponse {
   error: string;
   fields: string;
 }
+
+export interface PhotoPreview {
+  photoName: string;
+  file: File;
+  fileBase64: string,
+}

@@ -27,6 +27,7 @@
             class="hidden"
             type="file"
             accept="image/png,image/jpeg,image/gif,image/avif,image/webp"
+            multiple
             @change="previewImage"
           />
         </div>
@@ -54,14 +55,14 @@
 
       <!-- photo preview area is AFTER the create button, to avoid pushing the button below the screen on small displays -->
       <div class="border-t border-gray-300 p-4">
-        <template v-if="form.preview">
-          <p class="mb-0">File name: {{ form.photo?.name }}</p>
+        <div v-for="(photo, index) in form.photos" :key="index">
+          <p class="mb-0" style="overflow-wrap: anywhere">File name: {{ photo.photoName }}</p>
           <img
-            :src="form.preview"
-            class="h-[100px] w-full rounded-t border-gray-300 object-cover shadow-sm"
+            :src="photo.fileBase64"
+            class="w-full rounded-t border-gray-300 object-fill shadow-sm"
             alt="Uploaded Photo"
           />
-        </template>
+        </div>
       </div>
     </form>
     <p class="mt-4 text-center text-sm">
@@ -71,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { ItemCreate, LabelOut, LocationOut } from "~~/lib/api/types/data-contracts";
+  import type { ItemCreate, LabelOut, LocationOut, PhotoPreview } from "~~/lib/api/types/data-contracts";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
   import MdiPackageVariant from "~icons/mdi/package-variant";
@@ -122,22 +123,24 @@
     description: "",
     color: "", // Future!
     labels: [] as LabelOut[],
-    preview: null as string | null,
-    photo: null as File | null,
+    photos: [] as PhotoPreview[],
   });
 
   const { shift } = useMagicKeys();
 
   function previewImage(event: Event) {
     const input = event.target as HTMLInputElement;
+
+    // We support uploading multiple files at once, so build up the list of files to preview and upload
     if (input.files && input.files.length > 0) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        form.preview = e.target?.result as string;
-      };
-      const file = input.files[0];
-      form.photo = file;
-      reader.readAsDataURL(file);
+      for (const file of input.files) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          form.photos.push({ photoName: file.name, fileBase64: e.target?.result as string, file });
+        };
+
+        reader.readAsDataURL(file);
+      }
     }
   }
 
@@ -199,13 +202,14 @@
 
     toast.success("Item created");
 
-    // if the photo was provided, upload it
-    if (form.photo) {
-      const { error } = await api.items.attachments.add(data.id, form.photo, form.photo.name, AttachmentTypes.Photo);
+    // If the photo was provided, upload it
+    // NOTE: This is not transactional. It's entirely possible for some of the photos to successfully upload and the rest to fail, which will result in missing photos
+    for (const photo of form.photos) {
+      const { error } = await api.items.attachments.add(data.id, photo.file, photo.photoName, AttachmentTypes.Photo);
 
       if (error) {
         loading.value = false;
-        toast.error("Failed to upload Photo");
+        toast.error("Failed to upload Photo " + photo.photoName);
         return;
       }
 
@@ -216,8 +220,7 @@
     form.name = "";
     form.description = "";
     form.color = "";
-    form.preview = null;
-    form.photo = null;
+    form.photos = [];
     focused.value = false;
     loading.value = false;
 
