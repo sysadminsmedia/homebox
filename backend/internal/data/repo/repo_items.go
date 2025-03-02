@@ -2,10 +2,15 @@ package repo
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
+	"math/big"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
@@ -33,6 +38,7 @@ type (
 		Page             int
 		PageSize         int
 		Search           string       `json:"search"`
+		FuzzySearch      bool         `json:"fuzzySearch"`
 		AssetID          AssetID      `json:"assetId"`
 		LocationIDs      []uuid.UUID  `json:"locationIds"`
 		LabelIDs         []uuid.UUID  `json:"labelIds"`
@@ -346,16 +352,58 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 	}
 
 	if q.Search != "" {
-		qb.Where(
-			item.Or(
-				item.NameContainsFold(q.Search),
-				item.DescriptionContainsFold(q.Search),
-				item.SerialNumberContainsFold(q.Search),
-				item.ModelNumberContainsFold(q.Search),
-				item.ManufacturerContainsFold(q.Search),
-				item.NotesContainsFold(q.Search),
-			),
-		)
+		if q.FuzzySearch {
+			// For fuzzy search, we need to fetch all items and filter them manually
+			// since Ent doesn't support custom fuzzy matching directly
+			fuzzyItems, err := e.db.Item.Query().
+				Where(
+					item.HasGroupWith(group.ID(gid)),
+				).
+				All(ctx)
+			
+			if err != nil {
+				return PaginationResult[ItemSummary]{}, err
+			}
+			
+			// Filter items using fuzzy matching
+			var fuzzyPredicates []predicate.Item
+			const fuzzyThreshold = 0.7 // Adjust threshold as needed (0.0 to 1.0)
+			
+			for _, i := range fuzzyItems {
+				if FuzzyMatch(i.Name, q.Search, fuzzyThreshold) ||
+				   FuzzyMatch(i.Description, q.Search, fuzzyThreshold) ||
+				   FuzzyMatch(i.SerialNumber, q.Search, fuzzyThreshold) ||
+				   FuzzyMatch(i.ModelNumber, q.Search, fuzzyThreshold) ||
+				   FuzzyMatch(i.Manufacturer, q.Search, fuzzyThreshold) ||
+				   FuzzyMatch(i.Notes, q.Search, fuzzyThreshold) {
+					fuzzyPredicates = append(fuzzyPredicates, item.ID(i.ID))
+				}
+			}
+			
+			if len(fuzzyPredicates) > 0 {
+				qb = qb.Where(item.Or(fuzzyPredicates...))
+			} else {
+				// If no fuzzy matches, return empty result
+				return PaginationResult[ItemSummary]{
+					Page:     q.Page,
+					PageSize: q.PageSize,
+					Total:    0,
+					Items:    []ItemSummary{},
+				}, nil
+			}
+		} else {
+			// Standard search using contains
+			qb = qb.Where(
+				item.Or(
+					item.NameContainsFold(q.Search),
+					item.DescriptionContainsFold(q.Search),
+					item.SerialNumberContainsFold(q.Search),
+					item.ModelNumberContainsFold(q.Search),
+					item.ManufacturerContainsFold(q.Search),
+					item.NotesContainsFold(q.Search),
+				),
+			)
+		}
 	}
 
 	if !q.AssetID.Nil() {

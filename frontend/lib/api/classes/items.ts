@@ -28,6 +28,7 @@ export type ItemsQuery = {
   onlyWithPhoto?: boolean;
   parentIds?: string[];
   q?: string;
+  fuzzySearch?: boolean;
   fields?: string[];
 };
 
