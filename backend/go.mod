@@ -3,12 +3,12 @@ module github.com/sysadminsmedia/homebox/backend
 go 1.23.0
 
 require (
-	ariga.io/atlas v0.30.0
-	entgo.io/ent v0.14.1
-	github.com/ardanlabs/conf/v3 v3.2.0
+	ariga.io/atlas v0.31.1-0.20250212144724-069be8033e83
+	entgo.io/ent v0.14.3
+	github.com/ardanlabs/conf/v3 v3.4.0
 	github.com/containrrr/shoutrrr v0.8.0
-	github.com/go-chi/chi/v5 v5.2.0
-	github.com/go-playground/validator/v10 v10.23.0
+	github.com/go-chi/chi/v5 v5.2.1
+	github.com/go-playground/validator/v10 v10.25.0
 	github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/schema v1.4.1
@@ -21,10 +21,10 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/swaggo/http-swagger/v2 v2.0.2
 	github.com/swaggo/swag v1.16.4
-	github.com/yeqown/go-qrcode/v2 v2.2.4
-	github.com/yeqown/go-qrcode/writer/standard v1.2.4
-	golang.org/x/crypto v0.32.0
-	modernc.org/sqlite v1.34.4
+	github.com/yeqown/go-qrcode/v2 v2.2.5
+	github.com/yeqown/go-qrcode/writer/standard v1.2.5
+	golang.org/x/crypto v0.35.0
+	modernc.org/sqlite v1.36.0
 )
 
 require (
@@ -62,20 +62,18 @@ require (
 	github.com/yeqown/reedsolomon v1.0.0 // indirect
 	github.com/zclconf/go-cty v1.16.0 // indirect
 	golang.org/x/exp v0.0.0-20250106191152-7588d65b2ba8 // indirect
-	golang.org/x/image v0.23.0 // indirect
-	golang.org/x/exp v0.0.0-20250103183323-7d7fa50e5329 // indirect
 	golang.org/x/image v0.23.0
-	golang.org/x/mod v0.22.0 // indirect
-	golang.org/x/net v0.34.0 // indirect
-	golang.org/x/sync v0.10.0 // indirect
-	golang.org/x/sys v0.29.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
-	golang.org/x/tools v0.29.0 // indirect
+	golang.org/x/mod v0.23.0 // indirect
+	golang.org/x/net v0.35.0 // indirect
+	golang.org/x/sync v0.11.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/text v0.22.0 // indirect
+	golang.org/x/tools v0.30.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	modernc.org/gc/v3 v3.0.0-20250105121824-520be1a3aee6 // indirect
-	modernc.org/libc v1.61.7 // indirect
+	modernc.org/libc v1.61.13 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
-	modernc.org/memory v1.8.1 // indirect
+	modernc.org/memory v1.8.2 // indirect
 	modernc.org/strutil v1.2.1 // indirect
 	modernc.org/token v1.1.0 // indirect
 )
