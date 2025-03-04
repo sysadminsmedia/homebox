@@ -60,6 +60,7 @@ export default defineConfig({
       copyright: '&copy; <a href="https://sysadminsmedia.com/">Sysadmins Media</a>, 2025',
     }
   },
+
   markdown: {
       image: {
           lazyLoading: true
