@@ -1,4 +1,11 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+  definePageMeta({
+    middleware: ["auth"],
+  });
+  useHead({
+    title: "Homebox | Maintenance",
+  });
+</script>
 
 <template>
   <div>

@@ -53,12 +53,16 @@ export default defineConfig({
       { icon: 'discord', link: 'https://discord.homebox.software' },
       { icon: 'github', link: 'https://git.homebox.software' },
       { icon: 'mastodon', link: 'https://noc.social/@sysadminszone' },
-    ]
-  },
+    ],
 
-  markdown: {
-    image: {
-      lazyLoading: true
+    footer: {
+      message: 'HomeBox is an open-source project under the <a href="https://github.com/sysadminsmedia/homebox/blob/main/LICENSE">MIT license</a>',
+      copyright: '&copy; <a href="https://sysadminsmedia.com/">Sysadmins Media</a>, 2025',
     }
+  },
+  markdown: {
+      image: {
+          lazyLoading: true
+      }
   }
 })

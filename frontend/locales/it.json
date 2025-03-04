@@ -46,6 +46,14 @@
                 "years": "anni",
                 "yesterday": "ieri"
             },
+            "label_maker": {
+                "browser_print": "Stampa dal Browser",
+                "confirm_description": "Sei sicuro di voler stampare questa etichetta?",
+                "download": "Scarica l'etichetta",
+                "print": "Stampa etichetta",
+                "server_print": "Stampa sul server",
+                "titles": "Etichette"
+            },
             "page_qr_code": {
                 "page_url": "URL della Pagina"
             },
@@ -182,6 +190,8 @@
         "next_page": "Pagina Successiva",
         "no_results": "Nessun Articolo Trovato",
         "notes": "Note",
+        "only_with_photo": "Solo articoli con foto",
+        "only_without_photo": "Solo articoli senza foto",
         "options": "Opzioni",
         "order_by": "Ordina Per",
         "pages": "Pagina { page } di { totalPages }",
@@ -295,6 +305,7 @@
         "locations": "Posizioni",
         "maintenance": "Manutenzione",
         "profile": "Profilo",
+        "scanner": "Scanner",
         "search": "Cerca",
         "tools": "Strumenti"
     },
@@ -326,6 +337,13 @@
         "url": "URL",
         "user_profile": "Profilo Utente",
         "user_profile_sub": "Invita utenti e gestisci il tuo account."
+    },
+    "scanner": {
+        "error": "Errore nella funzione di decodifica della chiave di protezione\nCodice errore: <ph id=\"mtc_1\" ctype=\"x-sprintf\" equiv-text=\"base64:JXM=\"/>",
+        "invalid_url": "URL del codice a barre non valido",
+        "no_sources": "Nessuna sorgente video disponibile",
+        "select_video_source": "Scegli una fonte video",
+        "unsupported": "L'API del flusso multimediale non è supportata"
     },
     "tools": {
         "actions": "Azioni Inventario",

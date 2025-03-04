@@ -19,7 +19,7 @@
             "copy_text": {
                 "documentation": "documentação",
                 "failed_to_copy": "Falha ao copiar texto para a área de transferência",
-                "https_required": "porque o HTTPS é necessário",
+                "https_required": "porque HTTPS é necessário",
                 "learn_more": "Saiba mais em nosso"
             },
             "date_time": {
@@ -45,6 +45,9 @@
                 "weeks": "semanas",
                 "years": "anos",
                 "yesterday": "ontem"
+            },
+            "label_maker": {
+                "titles": "Etiquetas"
             },
             "page_qr_code": {
                 "page_url": "URL da página"
@@ -92,6 +95,9 @@
             "tree": {
                 "no_locations": "Não há locais disponíveis. Adicione novos locais\n através do botão \"Criar\" na barra de navegação."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Use as teclas numéricas para selecionar uma ação rapidamente."
         }
     },
     "global": {
@@ -114,6 +120,7 @@
         "locations": "Locais",
         "maintenance": "Manutenção",
         "name": "Nome",
+        "navigate": "Navegar",
         "password": "Senha",
         "read_docs": "Leia a Documentação",
         "save": "Salvar",
@@ -178,6 +185,8 @@
         "next_page": "Próxima página",
         "no_results": "Nenhum Item Encontrado",
         "notes": "Anotações",
+        "only_with_photo": "Somente itens com foto",
+        "only_without_photo": "Somente itens sem foto",
         "options": "Opções",
         "order_by": "Ordenar Por",
         "pages": "Página { page } de { totalPages }",

@@ -519,6 +519,9 @@
             {{ $t(t.name) }}
           </NuxtLink>
         </div>
+
+        <LabelMaker v-if="typeof item.assetId === 'string' && item.assetId != ''" :id="item.assetId" type="asset" />
+        <LabelMaker v-else :id="item.id" type="item" />
       </div>
     </section>
 

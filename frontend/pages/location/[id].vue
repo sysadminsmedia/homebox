@@ -175,6 +175,7 @@
                   {{ $t("global.edit") }}
                 </BaseButton>
               </div>
+              <LabelMaker :id="location.id" type="location" />
               <BaseButton class="btn btn-sm" @click="confirmDelete()">
                 <MdiDelete name="mdi-delete" class="mr-2" />
                 {{ $t("global.delete") }}

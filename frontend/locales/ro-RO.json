@@ -6,9 +6,22 @@
                 "description": "Importă un fișier CSV care conține toate obiectele, etichetele și locațiile tale. \nCitește documentația pentru mai multe informații privind format-ul necesar.",
                 "title": "Importă fișier CSV",
                 "upload": "Încarcă"
+            },
+            "outdated": {
+                "current_version": "Versiune Curentă",
+                "dismiss": "Revocă",
+                "latest_version": "Ultima Versiune",
+                "new_version_available": "Nouă versiune disponibilă",
+                "new_version_available_link": "Dă click aici pentru a vedea notele de lansare"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "documentație",
+                "failed_to_copy": "Nu s-a copiat textul în clipboard",
+                "https_required": "pentru că HTTPS este necesar",
+                "learn_more": "Învață mai multe în noastră"
+            },
             "date_time": {
                 "ago": "{0} în urmă",
                 "days": "zile",

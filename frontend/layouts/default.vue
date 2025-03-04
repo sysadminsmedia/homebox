@@ -130,6 +130,7 @@
   import MdiHome from "~icons/mdi/home";
   import MdiFileTree from "~icons/mdi/file-tree";
   import MdiMagnify from "~icons/mdi/magnify";
+  import MdiQrcodeScan from "~icons/mdi/qrcode-scan";
   import MdiAccount from "~icons/mdi/account";
   import MdiCog from "~icons/mdi/cog";
   import MdiWrench from "~icons/mdi/wrench";
@@ -269,6 +270,13 @@
       active: computed(() => route.path === "/items"),
       name: computed(() => t("menu.search")),
       to: "/items",
+    },
+    {
+      icon: MdiQrcodeScan,
+      id: 3,
+      active: computed(() => route.path === "/scanner"),
+      name: computed(() => t("menu.scanner")),
+      to: "/scanner",
     },
     {
       icon: MdiWrench,

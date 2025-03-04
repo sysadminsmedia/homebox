@@ -27,6 +27,7 @@ type Config struct {
 	Demo     bool       `yaml:"demo"`
 	Debug    DebugConf  `yaml:"debug"`
 	Options  Options    `yaml:"options"`
+	LabelMaker LabelMakerConf `yaml:"labelmaker"`
 }
 
 type Options struct {
