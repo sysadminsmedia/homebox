@@ -46,19 +46,19 @@
                 "years": "years",
                 "yesterday": "yesterday"
             },
+            "label_maker": {
+                "browser_print": "Print from Browser",
+                "confirm_description": "Are you sure you want to print this label?",
+                "download": "Download Label",
+                "print": "Print label",
+                "server_print": "Print on Server",
+                "titles": "Labels"
+            },
             "page_qr_code": {
                 "page_url": "Page URL"
             },
             "password_score": {
                 "password_strength": "Password Strength"
-            },
-            "label_maker": {
-                "titles": "Labels",
-                "server_print": "Print on Server",
-                "browser_print": "Print from Browser",
-                "print": "Print label",
-                "download": "Download Label",
-                "confirm_description": "Are you sure you want to print this label?"
             }
         },
         "item": {
@@ -252,6 +252,7 @@
         "zh-MO": "Chinese (Macau)",
         "zh-TW": "Chinese (Traditional)"
     },
+    "languages.": "Czech",
     "languages.da-DK": "Danish",
     "languages.fi.FI": "Finnish",
     "languages.ro-RO": "Romanian",
@@ -305,9 +306,9 @@
         "locations": "Locations",
         "maintenance": "Maintenance",
         "profile": "Profile",
+        "scanner": "Scanner",
         "search": "Search",
-        "tools": "Tools",
-        "scanner": "Scanner"
+        "tools": "Tools"
     },
     "profile": {
         "active": "Active",
@@ -337,6 +338,13 @@
         "url": "URL",
         "user_profile": "User Profile",
         "user_profile_sub": "Invite users, and manage your account."
+    },
+    "scanner": {
+        "error": "An error occurred while scanning",
+        "invalid_url": "Invalid barcode URL",
+        "no_sources": "No video sources available",
+        "select_video_source": "Pick a video source",
+        "unsupported": "Media Stream API is not supported"
     },
     "tools": {
         "actions": "Inventory Actions",
@@ -375,12 +383,5 @@
             "bill_of_materials_sub": "Generates a CSV (Comma Separated Values) file that can be imported into a spreadsheet program. This is a summary of your inventory with basic item and pricing information."
         },
         "reports_sub": "Generate different reports for your inventory."
-    },
-    "scanner": {
-        "select_video_source": "Pick a video source",
-        "unsupported": "Media Stream API is not supported",
-        "error": "An error occurred while scanning",
-        "no_sources": "No video sources available",
-        "invalid_url": "Invalid barcode URL"
     }
 }
