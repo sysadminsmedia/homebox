@@ -400,11 +400,11 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 
 		if q.OnlyWithPhoto {
 			andPredicates = append(andPredicates, item.HasAttachmentsWith(
-					attachment.And(
-						attachment.Primary(true),
-						attachment.TypeEQ(attachment.TypePhoto),
-					),
+				attachment.And(
+					attachment.Primary(true),
+					attachment.TypeEQ(attachment.TypePhoto),
 				),
+			),
 			)
 		}
 
@@ -972,5 +972,47 @@ func (e *ItemsRepository) SetPrimaryPhotos(ctx context.Context, gid uuid.UUID) (
 		updated++
 	}
 
+	return updated, nil
+}
+
+func (e *ItemsRepository) FixTimestamps(ctx context.Context, gid uuid.UUID) (int, error) {
+	q := e.db.Item.Query().Where(
+		item.HasGroupWith(group.ID(gid)),
+	)
+
+	items, err := q.All(ctx)
+	if err != nil {
+		return -1, fmt.Errorf("FixTimestamps -> failed to get items: %w", err)
+	}
+	updated := 0
+	for _, i := range items {
+		updateQ := e.db.Item.Update().Where(item.ID(i.ID))
+
+		updateQ.SetUpdatedAt(i.UpdatedAt)
+
+		if !i.PurchaseTime.IsZero() {
+			updateQ.SetPurchaseTime(i.PurchaseTime)
+		} else {
+			updateQ.ClearPurchaseTime()
+		}
+
+		if !i.SoldTime.IsZero() {
+			updateQ.SetSoldTime(i.SoldTime)
+		} else {
+			updateQ.ClearSoldTime()
+		}
+
+		if !i.WarrantyExpires.IsZero() {
+			updateQ.SetWarrantyExpires(i.WarrantyExpires)
+		} else {
+			updateQ.ClearWarrantyExpires()
+		}
+
+		_, err = updateQ.Save(ctx)
+		if err != nil {
+			return -1, fmt.Errorf("FixTimestamps -> failed to update item: %w", err)
+		}
+		updated++
+	}
 	return updated, nil
 }

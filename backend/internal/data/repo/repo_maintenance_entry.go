@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -171,4 +172,40 @@ func (r *MaintenanceEntryRepository) GetMaintenanceByItemID(ctx context.Context,
 
 func (r *MaintenanceEntryRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	return r.db.MaintenanceEntry.DeleteOneID(id).Exec(ctx)
+}
+
+func (r *MaintenanceEntryRepository) FixTimestamps(ctx context.Context) (int, error) {
+	q := r.db.MaintenanceEntry.Query()
+
+	entries, err := q.All(ctx)
+	if err != nil {
+		return -1, fmt.Errorf("FixTimestamps -> failed to get maintenance entry: %w", err)
+	}
+	updated := 0
+
+	for _, i := range entries {
+		updateQ := r.db.MaintenanceEntry.Update().Where(maintenanceentry.ID(i.ID))
+
+		updateQ.SetUpdatedAt(i.UpdatedAt)
+
+		if !i.Date.IsZero() {
+			updateQ.SetDate(i.Date)
+		} else {
+			updateQ.ClearDate()
+		}
+
+		if !i.ScheduledDate.IsZero() {
+			updateQ.SetScheduledDate(i.ScheduledDate)
+		} else {
+			updateQ.ClearScheduledDate()
+		}
+
+		_, err = updateQ.Save(ctx)
+		if err != nil {
+			return -1, fmt.Errorf("FixTimestamps -> failed to update maintenance entry: %w", err)
+		}
+		updated++
+	}
+
+	return updated, nil
 }

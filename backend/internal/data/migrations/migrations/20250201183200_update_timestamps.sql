@@ -9,7 +9,8 @@ SET
         || substr(date, 21, 3)
         || ':'
         || substr(date, 24, 2)
-WHERE date OR scheduled_date LIKE '____-__-__ __:__:__ +____ %';
+WHERE (date LIKE '____-__-__ __:__:__ +____ %' or date LIKE '____-__-__ __:__:__ -____ %')
+    OR (scheduled_date LIKE '____-__-__ __:__:__ +____ %' or scheduled_date LIKE '____-__-__ __:__:__ -____ %');
 
 UPDATE items
 SET
@@ -25,7 +26,9 @@ SET
         || substr(warranty_expires, 21, 3)
         || ':'
         || substr(warranty_expires, 24, 2)
-WHERE sold_time OR purchase_time OR warranty_expires LIKE '____-__-__ __:__:__ +____ %';
+WHERE (sold_time LIKE '____-__-__ __:__:__ +____%' or sold_time LIKE '____-__-__ __:__:__ -____%')
+    OR (purchase_time LIKE '____-__-__ __:__:__ +____%' or purchase_time LIKE '____-__-__ __:__:__ -____%')
+    OR (warranty_expires LIKE '____-__-__ __:__:__ +____%' or warranty_expires LIKE '____-__-__ __:__:__ -____%');
 
 
 -- This migration updates all of the old golang style timestamps to the new ISO8601 format.
@@ -41,8 +44,8 @@ SET
         || substr(updated_at, 31, 3)
         || ':'
         || substr(updated_at, 34, 2)
-WHERE (created_at LIKE '____-__-__ __:__:__.% -__:__%' OR created_at LIKE '____-__-__ __:__:__.% +__:__%')
-   OR (updated_at LIKE '____-__-__ __:__:__.% -__:__%' OR updated_at LIKE '____-__-__ __:__:__.% +__:__%');
+WHERE (created_at LIKE '____-__-__ __:__:__.% -____%' OR created_at LIKE '____-__-__ __:__:__.% +____%')
+   OR (updated_at LIKE '____-__-__ __:__:__.% -____%' OR updated_at LIKE '____-__-__ __:__:__.% +____%');
 
 UPDATE auth_tokens
 SET
@@ -61,9 +64,9 @@ SET
         || substr(expires_at, 31, 3)
         || ':'
         || substr(expires_at, 34, 2)
-WHERE (created_at LIKE '____-__-__ __:__:__.% -__:__%' OR created_at LIKE '____-__-__ __:__:__.% +__:__%')
-   OR (updated_at LIKE '____-__-__ __:__:__.% -__:__%' OR updated_at LIKE '____-__-__ __:__:__.% +__:__%')
-   OR (expires_at LIKE '____-__-__ __:__:__.% -__:__%' OR expires_at LIKE '____-__-__ __:__:__.% +__:__%');
+WHERE (created_at LIKE '____-__-__ __:__:__.% -____%' OR created_at LIKE '____-__-__ __:__:__.% +____%')
+   OR (updated_at LIKE '____-__-__ __:__:__.% -____%' OR updated_at LIKE '____-__-__ __:__:__.% +____%')
+   OR (expires_at LIKE '____-__-__ __:__:__.% -____%' OR expires_at LIKE '____-__-__ __:__:__.% +____%');
 
 UPDATE documents
 SET
@@ -77,8 +80,8 @@ SET
         || substr(updated_at, 31, 3)
         || ':'
         || substr(updated_at, 34, 2)
-WHERE (created_at LIKE '____-__-__ __:__:__.% -__:__%' OR created_at LIKE '____-__-__ __:__:__.% +__:__%')
-   OR (updated_at LIKE '____-__-__ __:__:__.% -__:__%' OR updated_at LIKE '____-__-__ __:__:__.% +__:__%');
+WHERE (created_at LIKE '____-__-__ __:__:__.% -____%' OR created_at LIKE '____-__-__ __:__:__.% +____%')
+   OR (updated_at LIKE '____-__-__ __:__:__.% -____%' OR updated_at LIKE '____-__-__ __:__:__.% +____%');
 
 UPDATE group_invitation_tokens
 SET
@@ -97,9 +100,9 @@ SET
         || substr(expires_at, 31, 3)
         || ':'
         || substr(expires_at, 34, 2)
-WHERE (created_at LIKE '____-__-__ __:__:__.% -__:__%' OR created_at LIKE '____-__-__ __:__:__.% +__:__%')
-   OR (updated_at LIKE '____-__-__ __:__:__.% -__:__%' OR updated_at LIKE '____-__-__ __:__:__.% +__:__%')
-   OR (expires_at LIKE '____-__-__ __:__:__.% -__:__%' OR expires_at LIKE '____-__-__ __:__:__.% +__:__%');
+WHERE (created_at LIKE '____-__-__ __:__:__.% -____%' OR created_at LIKE '____-__-__ __:__:__.% +____%')
+   OR (updated_at LIKE '____-__-__ __:__:__.% -____%' OR updated_at LIKE '____-__-__ __:__:__.% +____%')
+   OR (expires_at LIKE '____-__-__ __:__:__.% -____%' OR expires_at LIKE '____-__-__ __:__:__.% +____%');
 
 UPDATE groups
 SET
@@ -113,8 +116,8 @@ SET
         || substr(updated_at, 31, 3)
         || ':'
         || substr(updated_at, 34, 2)
-WHERE (created_at LIKE '____-__-__ __:__:__.% -__:__%' OR created_at LIKE '____-__-__ __:__:__.% +__:__%')
-   OR (updated_at LIKE '____-__-__ __:__:__.% -__:__%' OR updated_at LIKE '____-__-__ __:__:__.% +__:__%');
+WHERE (created_at LIKE '____-__-__ __:__:__.% -____%' OR created_at LIKE '____-__-__ __:__:__.% +____%')
+   OR (updated_at LIKE '____-__-__ __:__:__.% -____%' OR updated_at LIKE '____-__-__ __:__:__.% +____%');
 
 UPDATE item_fields
 SET
@@ -133,9 +136,9 @@ SET
         || substr(time_value, 31, 3)
         || ':'
         || substr(time_value, 34, 2)
-WHERE (created_at LIKE '____-__-__ __:__:__.% -__:__%' OR created_at LIKE '____-__-__ __:__:__.% +__:__%')
-   OR (updated_at LIKE '____-__-__ __:__:__.% -__:__%' OR updated_at LIKE '____-__-__ __:__:__.% +__:__%')
-   OR (time_value LIKE '____-__-__ __:__:__.% -__:__%' OR time_value LIKE '____-__-__ __:__:__.% +__:__%');
+WHERE (created_at LIKE '____-__-__ __:__:__.% -____%' OR created_at LIKE '____-__-__ __:__:__.% +____%')
+   OR (updated_at LIKE '____-__-__ __:__:__.% -____%' OR updated_at LIKE '____-__-__ __:__:__.% +____%')
+   OR (time_value LIKE '____-__-__ __:__:__.% -____%' OR time_value LIKE '____-__-__ __:__:__.% +____%');
 
 UPDATE items
 SET
@@ -164,11 +167,11 @@ SET
         || substr(warranty_expires, 31, 3)
         || ':'
         || substr(warranty_expires, 34, 2)
-WHERE (created_at LIKE '____-__-__ __:__:__.% -__:__%' OR created_at LIKE '____-__-__ __:__:__.% +__:__%')
-   OR (updated_at LIKE '____-__-__ __:__:__.% -__:__%' OR updated_at LIKE '____-__-__ __:__:__.% +__:__%')
-   OR (sold_time LIKE '____-__-__ __:__:__.% -__:__%' OR sold_time LIKE '____-__-__ __:__:__.% +__:__%')
-   OR (purchase_time LIKE '____-__-__ __:__:__.% -__:__%' OR purchase_time LIKE '____-__-__ __:__:__.% +__:__%')
-   OR (warranty_expires LIKE '____-__-__ __:__:__.% -__:__%' OR warranty_expires LIKE '____-__-__ __:__:__.% +__:__%');
+WHERE (created_at LIKE '____-__-__ __:__:__.% -____%' OR created_at LIKE '____-__-__ __:__:__.% +____%')
+   OR (updated_at LIKE '____-__-__ __:__:__.% -____%' OR updated_at LIKE '____-__-__ __:__:__.% +____%')
+   OR (sold_time LIKE '____-__-__ __:__:__.% -____%' OR sold_time LIKE '____-__-__ __:__:__.% +____%')
+   OR (purchase_time LIKE '____-__-__ __:__:__.% -____%' OR purchase_time LIKE '____-__-__ __:__:__.% +____%')
+   OR (warranty_expires LIKE '____-__-__ __:__:__.% -____%' OR warranty_expires LIKE '____-__-__ __:__:__.% +____%');
 
 UPDATE labels
 SET
@@ -182,8 +185,8 @@ SET
         || substr(updated_at, 31, 3)
         || ':'
         || substr(updated_at, 34, 2)
-WHERE (created_at LIKE '____-__-__ __:__:__.% -__:__%' OR created_at LIKE '____-__-__ __:__:__.% +__:__%')
-   OR (updated_at LIKE '____-__-__ __:__:__.% -__:__%' OR updated_at LIKE '____-__-__ __:__:__.% +__:__%');
+WHERE (created_at LIKE '____-__-__ __:__:__.% -____%' OR created_at LIKE '____-__-__ __:__:__.% +____%')
+   OR (updated_at LIKE '____-__-__ __:__:__.% -____%' OR updated_at LIKE '____-__-__ __:__:__.% +____%');
 
 UPDATE locations
 SET
@@ -197,8 +200,8 @@ SET
         || substr(updated_at, 31, 3)
         || ':'
         || substr(updated_at, 34, 2)
-WHERE (created_at LIKE '____-__-__ __:__:__.% -__:__%' OR created_at LIKE '____-__-__ __:__:__.% +__:__%')
-   OR (updated_at LIKE '____-__-__ __:__:__.% -__:__%' OR updated_at LIKE '____-__-__ __:__:__.% +__:__%');
+WHERE (created_at LIKE '____-__-__ __:__:__.% -____%' OR created_at LIKE '____-__-__ __:__:__.% +____%')
+   OR (updated_at LIKE '____-__-__ __:__:__.% -____%' OR updated_at LIKE '____-__-__ __:__:__.% +____%');
 
 UPDATE maintenance_entries
 SET
@@ -222,8 +225,8 @@ SET
         || substr(scheduled_date, 31, 3)
         || ':'
         || substr(scheduled_date, 34, 2)
-WHERE (created_at LIKE '____-__-__ __:__:__.% -__:__%' OR created_at LIKE '____-__-__ __:__:__.% +__:__%')
-   OR (updated_at LIKE '____-__-__ __:__:__.% -__:__%' OR updated_at LIKE '____-__-__ __:__:__.% +__:__%');
+WHERE (created_at LIKE '____-__-__ __:__:__.% -____%' OR created_at LIKE '____-__-__ __:__:__.% +____%')
+   OR (updated_at LIKE '____-__-__ __:__:__.% -____%' OR updated_at LIKE '____-__-__ __:__:__.% +____%');
 
 UPDATE notifiers
 SET
@@ -237,8 +240,8 @@ SET
         || substr(updated_at, 31, 3)
         || ':'
         || substr(updated_at, 34, 2)
-WHERE (created_at LIKE '____-__-__ __:__:__.% -__:__%' OR created_at LIKE '____-__-__ __:__:__.% +__:__%')
-   OR (updated_at LIKE '____-__-__ __:__:__.% -__:__%' OR updated_at LIKE '____-__-__ __:__:__.% +__:__%');
+WHERE (created_at LIKE '____-__-__ __:__:__.% -____%' OR created_at LIKE '____-__-__ __:__:__.% +____%')
+   OR (updated_at LIKE '____-__-__ __:__:__.% -____%' OR updated_at LIKE '____-__-__ __:__:__.% +____%');
 
 UPDATE users
 SET
@@ -257,6 +260,6 @@ SET
         || substr(activated_on, 31, 3)
         || ':'
         || substr(activated_on, 34, 2)
-WHERE (created_at LIKE '____-__-__ __:__:__.% -__:__%' OR created_at LIKE '____-__-__ __:__:__.% +__:__%')
-   OR (updated_at LIKE '____-__-__ __:__:__.% -__:__%' OR updated_at LIKE '____-__-__ __:__:__.% +__:__%')
-   OR (activated_on LIKE '____-__-__ __:__:__.% -__:__%' OR activated_on LIKE '____-__-__ __:__:__.% +__:__%');
+WHERE (created_at LIKE '____-__-__ __:__:__.% -____%' OR created_at LIKE '____-__-__ __:__:__.% +____%')
+   OR (updated_at LIKE '____-__-__ __:__:__.% -____%' OR updated_at LIKE '____-__-__ __:__:__.% +____%')
+   OR (activated_on LIKE '____-__-__ __:__:__.% -____%' OR activated_on LIKE '____-__-__ __:__:__.% +____%');
