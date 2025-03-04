@@ -81,3 +81,16 @@ func (ctrl *V1Controller) HandleItemDateZeroOut() errchain.HandlerFunc {
 func (ctrl *V1Controller) HandleSetPrimaryPhotos() errchain.HandlerFunc {
 	return actionHandlerFactory("ensure asset IDs", ctrl.repo.Items.SetPrimaryPhotos)
 }
+
+// HandleFixTimestamps godoc
+// @Summary Fix Timestamps
+// @Description Fixes timestamps for all items in the database
+// @Tags Actions
+// @Produce json
+// @Success 200 {object} ActionAmountResult
+// @Router /v1/actions/fix-timestamps [Post]
+// @Security Bearer
+func (ctr *V1Controller) HandleFixTimestamps() errchain.HandlerFunc {
+	_ = ctr.repo.MaintEntry.FixTimestamps
+	return actionHandlerFactory("fix timestamps", ctr.repo.Items.FixTimestamps)
+}
