@@ -21,6 +21,7 @@ type Config struct {
 	Mode       string         `yaml:"mode"       conf:"default:development"` // development or production
 	Web        WebConfig      `yaml:"web"`
 	Storage    Storage        `yaml:"storage"`
+	Database   Database       `yaml:"database"`
 	Log        LoggerConf     `yaml:"logger"`
 	Mailer     MailerConf     `yaml:"mailer"`
 	Demo       bool           `yaml:"demo"`
@@ -58,7 +59,7 @@ type LabelMakerConf struct {
 	FontSize              float64 `yaml:"font_size" conf:"default:32.0"`
 	PrintCommand          *string `yaml:"string"`
 	AdditionalInformation *string `yaml:"string"`
-	DynamicLength         bool    `yaml:"bool"     conf:"default:true"`
+	DynamicLength         bool    `yaml:"bool"      conf:"default:true"`
 }
 
 // New parses the CLI/Config file and returns a Config struct. If the file argument is an empty string, the
