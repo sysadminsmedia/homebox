@@ -176,6 +176,7 @@
         "field_selector": "Field Selector",
         "field_value": "Field Value",
         "first": "First",
+        "fuzzy_search": "Fuzzy Search (find similar matches)",
         "include_archive": "Include Archived Items",
         "insured": "Insured",
         "last": "Last",
