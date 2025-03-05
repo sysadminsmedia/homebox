@@ -14,7 +14,7 @@ hero:
       link: /en/quick-start
     - theme: alt
       text: Tips and Tricks
-      link: /en/tips-tricks
+      link: /en/user-guide/tips-tricks
     - theme: alt
       text: Try It Out
       link: https://demo.homebox.software
