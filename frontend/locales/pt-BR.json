@@ -47,6 +47,7 @@
                 "yesterday": "ontem"
             },
             "label_maker": {
+                "print": "Imprimir etiqueta",
                 "titles": "Etiquetas"
             },
             "page_qr_code": {
@@ -231,8 +232,10 @@
         "es": "Espanhol",
         "fr": "Francês",
         "hu": "Húngaro",
+        "id-ID": "Indonésio(a)",
         "it": "Italiano",
         "ja-JP": "Japonês",
+        "ko-KR": "Coreano",
         "nl": "Holandês",
         "pl": "Polonês",
         "pt-BR": "Português (Brasil)",
@@ -330,6 +333,10 @@
         "url": "URL",
         "user_profile": "Perfil do usuário",
         "user_profile_sub": "Convide usuários e gerencie sua conta."
+    },
+    "scanner": {
+        "error": "Ocorreu um erro durante a digitalização",
+        "invalid_url": "Código de barras iválido"
     },
     "tools": {
         "actions": "Ações de inventário",
