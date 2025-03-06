@@ -47,6 +47,8 @@
                 "yesterday": "ontem"
             },
             "label_maker": {
+                "confirm_description": "Tem certeza de que deseja imprimir esta etiqueta?",
+                "download": "Baixar Rótulo",
                 "print": "Imprimir etiqueta",
                 "titles": "Etiquetas"
             },
@@ -54,7 +56,7 @@
                 "page_url": "URL da página"
             },
             "password_score": {
-                "password_strength": "Segurança da Senha"
+                "password_strength": "Força da Senha"
             }
         },
         "item": {
@@ -230,6 +232,7 @@
         "de": "Alemão",
         "en": "Inglês",
         "es": "Espanhol",
+        "fi-FI": "Finlandês",
         "fr": "Francês",
         "hu": "Húngaro",
         "id-ID": "Indonésio(a)",
@@ -243,6 +246,7 @@
         "ru": "Russo",
         "sl": "Esloveno",
         "sv": "Sueco",
+        "th-TH": "Tailandês",
         "tr": "Turco",
         "uk-UA": "Ucraniano",
         "zh-CN": "Chinês (Simplificado)",
@@ -322,7 +326,7 @@
         "language": "Idioma",
         "new_password": "Nova Senha",
         "no_notifiers": "Nenhum notificador configurado",
-        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notificação",
+        "notifier_modal": "{ type, select, true {Editar} false {Criar} other {Outro}} Notificação",
         "notifiers": "Notificadores",
         "notifiers_sub": "Receba notificações para lembretes de manutenção futuros",
         "test": "Teste",
@@ -336,7 +340,7 @@
     },
     "scanner": {
         "error": "Ocorreu um erro durante a digitalização",
-        "invalid_url": "Código de barras iválido"
+        "invalid_url": "Código de barras inválido"
     },
     "tools": {
         "actions": "Ações de inventário",
