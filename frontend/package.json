@@ -38,7 +38,7 @@
     "unplugin-icons": "^0.18.5",
     "vite-plugin-eslint": "^1.8.1",
     "vitest": "^1.6.1",
-    "vue-i18n": "^9.14.2",
+    "vue-i18n": "^9.14.3",
     "vue-tsc": "2.1.6"
   },
   "dependencies": {
