@@ -231,13 +231,17 @@
     },
     "languages": {
         "ca": "加泰罗尼亚语",
+        "cs-CZ": "捷克语",
         "de": "德语",
         "en": "英语",
         "es": "西班牙语",
+        "fi-FI": "芬兰语",
         "fr": "法国",
         "hu": "匈牙利语",
+        "id-ID": "印尼语",
         "it": "意大利语",
         "ja-JP": "日本語",
+        "ko-KR": "韩语",
         "nl": "荷兰语",
         "pl": "波兰语",
         "pt-BR": "葡萄牙语（巴西）",
@@ -245,6 +249,7 @@
         "ru": "俄语",
         "sl": "斯洛文尼亚语",
         "sv": "瑞典语",
+        "th-TH": "泰语",
         "tr": "土耳其语",
         "uk-UA": "乌克兰语",
         "zh-CN": "中文（简体）",
@@ -253,7 +258,6 @@
         "zh-TW": "中文（繁体）"
     },
     "languages.da-DK": "丹麦语",
-    "languages.fi.FI": "芬兰语",
     "languages.ro-RO": "罗马尼亚语",
     "languages.sk-SK": "斯洛伐克语",
     "locations": {
@@ -305,6 +309,7 @@
         "locations": "位置",
         "maintenance": "维护",
         "profile": "用户",
+        "scanner": "扫描仪",
         "search": "搜索",
         "tools": "工具"
     },
@@ -336,6 +341,12 @@
         "url": "网址",
         "user_profile": "用户资料",
         "user_profile_sub": "邀请用户共同管理您的资产。"
+    },
+    "scanner": {
+        "error": "扫描遇到问题",
+        "invalid_url": "非法的条形码地址",
+        "no_sources": "没有可用的摄像头资源",
+        "select_video_source": "选择摄像头"
     },
     "tools": {
         "actions": "库存操作",
