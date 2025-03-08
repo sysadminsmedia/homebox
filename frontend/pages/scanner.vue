@@ -34,7 +34,14 @@
       sources.value = devices;
 
       if (devices.length > 0) {
-        selectedSource.value = devices[0].deviceId;
+        for (let i = 0; i < devices.length; i++) {
+          if (devices[i].label.toLowerCase().includes("back")) {
+            selectedSource.value = devices[i].deviceId;
+          }
+        }
+        if (!selectedSource.value) {
+          selectedSource.value = devices[0].deviceId;
+        }
       } else {
         errorMessage.value = t("scanner.no_sources");
       }
