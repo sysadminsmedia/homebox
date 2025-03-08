@@ -27,6 +27,10 @@
       parent.value = locations.value.find(l => l.id === data.parent.id);
     }
 
+    if (parent.value === undefined) {
+      parent.value = data.parent;
+    }
+
     return data;
   });
 
