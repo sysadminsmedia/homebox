@@ -242,7 +242,7 @@
         "it": "Olasz",
         "ja-JP": "Japán",
         "ko-KR": "Koreai",
-        "nb-NO": "Norwegian",
+        "nb-NO": "Norvég (bokmål)",
         "nl": "Holland",
         "pl": "Lengyel",
         "pt-BR": "Portugál (brazíliai)",
@@ -250,6 +250,8 @@
         "ru": "Orosz",
         "sl": "Szlovén",
         "sv": "Svéd",
+        "ta-IN": "Tamil",
+        "th-TH": "Thai",
         "tr": "Török",
         "uk-UA": "Ukrán",
         "zh-CN": "Kínai (egyszerűsített)",
@@ -309,6 +311,7 @@
         "locations": "Helyek",
         "maintenance": "Karbantartás",
         "profile": "Profil",
+        "scanner": "Szkenner",
         "search": "Keresés",
         "tools": "Eszközök"
     },
@@ -340,6 +343,9 @@
         "url": "URL",
         "user_profile": "Felhasználói profil",
         "user_profile_sub": "Hívj meg felhasználókat, és kezeld a fiókodat."
+    },
+    "scanner": {
+        "error": "Hiba történt a lapolvasás közben."
     },
     "tools": {
         "actions": "Készletműveletek",
