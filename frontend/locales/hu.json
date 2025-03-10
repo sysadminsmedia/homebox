@@ -345,7 +345,11 @@
         "user_profile_sub": "Hívj meg felhasználókat, és kezeld a fiókodat."
     },
     "scanner": {
-        "error": "Hiba történt a lapolvasás közben."
+        "error": "Hiba történt a szkennelés közben",
+        "invalid_url": "Érvénytelen vonalkód URL",
+        "no_sources": "Nincs elérhető videóforrás",
+        "select_video_source": "Videóforrás kiválasztása",
+        "unsupported": "A Media Stream API nem támogatott"
     },
     "tools": {
         "actions": "Készletműveletek",
