@@ -48,7 +48,10 @@
             },
             "label_maker": {
                 "browser_print": "Nyomtatás böngészőből",
-                "confirm_description": "Biztosan ki szeretné nyomtatni ezt a címkét?"
+                "confirm_description": "Biztosan ki szeretnéd nyomtatni ezt a címkét?",
+                "download": "Címke letöltése",
+                "print": "Címke nyomtatása",
+                "server_print": "Nyomtatás a kiszolgálón"
             },
             "page_qr_code": {
                 "page_url": "Oldal URL-je"
