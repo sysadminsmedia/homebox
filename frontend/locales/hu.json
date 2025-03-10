@@ -51,7 +51,8 @@
                 "confirm_description": "Biztosan ki szeretnéd nyomtatni ezt a címkét?",
                 "download": "Címke letöltése",
                 "print": "Címke nyomtatása",
-                "server_print": "Nyomtatás a kiszolgálón"
+                "server_print": "Nyomtatás a szerveren",
+                "titles": "Címkék"
             },
             "page_qr_code": {
                 "page_url": "Oldal URL-je"
@@ -189,6 +190,8 @@
         "next_page": "Következő oldal",
         "no_results": "Egy elem sem található",
         "notes": "Megjegyzések",
+        "only_with_photo": "Csak fényképes tételek",
+        "only_without_photo": "Csak fénykép nélküli tételek",
         "options": "Opciók",
         "order_by": "Rendezés",
         "pages": "{page}/{totalPages} oldal",
@@ -228,6 +231,7 @@
     },
     "languages": {
         "ca": "Katalán",
+        "cs-CZ": "Czech",
         "de": "Német",
         "en": "Angol",
         "es": "Spanyol",
