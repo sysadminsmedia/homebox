@@ -46,6 +46,10 @@
                 "years": "évek",
                 "yesterday": "tegnap"
             },
+            "label_maker": {
+                "browser_print": "Nyomtatás böngészőből",
+                "confirm_description": "Biztosan ki szeretné nyomtatni ezt a címkét?"
+            },
             "page_qr_code": {
                 "page_url": "Oldal URL-je"
             },
