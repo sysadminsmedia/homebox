@@ -2,14 +2,12 @@ package services
 
 import (
 	"context"
-	"io"
-	"os"
-
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"io"
 )
 
 func (svc *ItemService) AttachmentPath(ctx context.Context, attachmentID uuid.UUID) (*ent.Document, error) {
@@ -77,14 +75,19 @@ func (svc *ItemService) AttachmentDelete(ctx context.Context, gid, itemID, attac
 		return err
 	}
 
+	documentID := attachment.Edges.Document.GetID()
+
 	// Delete the attachment
 	err = svc.repo.Attachments.Delete(ctx, attachmentID)
 	if err != nil {
 		return err
 	}
 
-	// Remove File
-	err = os.Remove(attachment.Edges.Document.Path)
+	// Delete the document, this function also removes the file
+	err = svc.repo.Docs.Delete(ctx, documentID)
+	if err != nil {
+		return err
+	}
 
 	return err
 }
