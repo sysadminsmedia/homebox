@@ -9,7 +9,9 @@
             },
             "outdated": {
                 "current_version": "Version i Tanishëm:",
-                "dismiss": "Largo"
+                "dismiss": "Largoje",
+                "latest_version": "Versioni me i fundit",
+                "new_version_available": "Version i ri i vlefshëm."
             }
         }
     }
