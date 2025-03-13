@@ -8,7 +8,8 @@
                 "upload": "Ngarko"
             },
             "outdated": {
-                "current_version": "Verzion i Tanishëm:"
+                "current_version": "Version i Tanishëm:",
+                "dismiss": "Largo"
             }
         }
     }
