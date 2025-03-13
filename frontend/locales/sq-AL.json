@@ -43,9 +43,106 @@
                 "tomorrow": "nesër",
                 "week": "java",
                 "weeks": "javë",
-                "years": "vjet",
+                "years": "vite",
                 "yesterday": "dje"
+            },
+            "label_maker": {
+                "browser_print": "Printo nga shfletuesi",
+                "confirm_description": "Je i sigurt që dëshiron ta printosh këtë etiketë?",
+                "download": "Shkarko etiketën",
+                "print": "Printo etiketën",
+                "server_print": "Printo në server",
+                "titles": "Etiketat"
+            },
+            "page_qr_code": {
+                "page_url": "URL e faqes"
+            },
+            "password_score": {
+                "password_strength": "Siguria e Fjalëkalimit"
             }
+        },
+        "item": {
+            "create_modal": {
+                "item_description": "Përshkrimi i Artikullit",
+                "item_name": "Emri i Artikullit",
+                "photo_button": "Fotografia 📷",
+                "title": "Krijo artikullin"
+            },
+            "view": {
+                "selectable": {
+                    "card": "Kartë",
+                    "items": "Artikujt",
+                    "no_items": "Nuk ka artikuj për t 'u shfaqur",
+                    "table": "Tabela"
+                },
+                "table": {
+                    "page": "Faqe",
+                    "rows_per_page": "Rreshta për faqe"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "label_description": "Përshkrimi i etiketës",
+                "label_name": "Emri i etiketës",
+                "title": "Krijo etiketë"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "location_description": "Përshkrimi i vendndodhjes",
+                "location_name": "Emri i vendndodhjes",
+                "title": "Krijoni një vendndodhje të re"
+            },
+            "selector": {
+                "parent_location": "Vendndodhja e prindit"
+            },
+            "tree": {
+                "no_locations": "Asnjë vendndodhje në dispozicion. Shto vendndodhje të reja përmes\n butonit  `< `span class=\"link-primary\" `> `Krijo `< `/span `> ` në shiritin e navigimit."
+            }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Përdor tastet e numrave për të zgjedhur shpejt një veprim."
         }
+    },
+    "global": {
+        "add": "Shto",
+        "build": "Ndërto: { build }",
+        "confirm": "Konfirmo",
+        "create": "Krijo",
+        "create_and_add": "Krijo dhe shto një tjetër",
+        "created": "U Krijua",
+        "delete": "Fshi",
+        "details": "Detaje",
+        "duplicate": "Dubliko",
+        "edit": "Modifiko",
+        "email": "Email",
+        "follow_dev": "Ndiq Zhvilluesin",
+        "github": "Projekt Github",
+        "items": "Artikuj",
+        "join_discord": "Bashkoju Discord",
+        "labels": "Etiketa",
+        "locations": "Vendndodhjet",
+        "maintenance": "Mirëmbajtja",
+        "name": "Emri",
+        "navigate": "Drejto.",
+        "password": "Fjalëkalimi",
+        "read_docs": "Lexo dokumentet",
+        "save": "Ruaj",
+        "search": "Kërko",
+        "sign_out": "Dil",
+        "submit": "Dërgo",
+        "update": "Përditëso",
+        "value": "Vlerë",
+        "version": "Versioni: { version }",
+        "welcome": "Mirë se erdhe, { username }"
+    },
+    "home": {
+        "labels": "Etiketa",
+        "quick_statistics": "Statistika të shpejta",
+        "recently_added": "U shtua së fundmi",
+        "storage_locations": "Vendndodhjet e magazinimit",
+        "total_items": "Totali i Artikujve",
+        "total_labels": "Totali i etiketave"
     }
 }
