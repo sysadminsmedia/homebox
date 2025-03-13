@@ -10,8 +10,41 @@
             "outdated": {
                 "current_version": "Version i Tanishëm:",
                 "dismiss": "Largoje",
-                "latest_version": "Versioni me i fundit",
-                "new_version_available": "Version i ri i vlefshëm."
+                "latest_version": "Versioni më i fundit",
+                "new_version_available": "Një version i ri është i disponueshëm",
+                "new_version_available_link": "Kliko këtu për të lexuar detajet e versionit të ri"
+            }
+        },
+        "global": {
+            "copy_text": {
+                "documentation": "Dokumentacioni",
+                "failed_to_copy": "Kopjimi i tekstit në memorien e përkohshme dështoi",
+                "https_required": "sepse kërkohet HTTPS",
+                "learn_more": "Mëso më shumë në"
+            },
+            "date_time": {
+                "ago": "{0} më parë",
+                "days": "ditët",
+                "hour": "orë",
+                "hours": "orët",
+                "in": "në {0}",
+                "just-now": "tani sapo",
+                "last-month": "muaji i fundit",
+                "last-week": "Javën e kaluar",
+                "last-year": "vjet",
+                "minute": "minutë",
+                "minutes": "minuta",
+                "months": "muaj",
+                "next-month": "muajin tjetër",
+                "next-week": "javën tjetër",
+                "next-year": "vitin tjetër",
+                "second": "sekondë",
+                "seconds": "sekonda",
+                "tomorrow": "nesër",
+                "week": "java",
+                "weeks": "javë",
+                "years": "vjet",
+                "yesterday": "dje"
             }
         }
     }
