@@ -1,3 +1,7 @@
+---
+aside: false
+---
+
 # Homebox Privacy Policy
 
 ## Introduction
