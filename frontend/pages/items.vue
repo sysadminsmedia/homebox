@@ -36,7 +36,8 @@
   });
 
   const pageSize = useRouteQuery("pageSize", 30);
-  const query = useRouteQuery("q", "");
+  const query = ref("");
+  const fuzzySearch = ref(false);
   const advanced = useRouteQuery("advanced", false);
   const includeArchived = useRouteQuery("archived", false);
   const fieldSelector = useRouteQuery("fieldSelector", false);
@@ -71,6 +72,16 @@
       }
     }
     searchLocked.value = true;
+    
+    // Handle query parameters from URL
+    if (route.query.q) {
+      query.value = route.query.q as string;
+    }
+    
+    if (route.query.fuzzySearch) {
+      fuzzySearch.value = (route.query.fuzzySearch === 'true');
+    }
+    
     const qLoc = route.query.loc as string[];
     if (qLoc) {
       selectedLocations.value = locations.value.filter(l => qLoc.includes(l.id));
@@ -262,6 +273,7 @@
 
     const { data, error } = await api.items.getAll({
       q: query.value || "",
+      fuzzySearch: fuzzySearch.value,
       locations: locIDs.value,
       labels: labIDs.value,
       negateLabels: negateLabels.value,
@@ -299,7 +311,7 @@
     initialSearch.value = false;
   }
 
-  watchDebounced([page, pageSize, query, selectedLabels, selectedLocations], search, { debounce: 250, maxWait: 1000 });
+  watchDebounced([page, pageSize, query, fuzzySearch, selectedLabels, selectedLocations], search, { debounce: 250, maxWait: 1000 });
 
   async function submit() {
     // Set URL Params
@@ -310,59 +322,43 @@
       }
     }
 
-    // Push non-reactive query fields
     await router.push({
       query: {
-        // Reactive
-        advanced: "true",
-        archived: includeArchived.value ? "true" : "false",
-        fieldSelector: fieldSelector.value ? "true" : "false",
-        negateLabels: negateLabels.value ? "true" : "false",
-        onlyWithoutPhoto: onlyWithoutPhoto.value ? "true" : "false",
-        onlyWithPhoto: onlyWithPhoto.value ? "true" : "false",
+        archived: includeArchived.value.toString(),
+        advanced: advanced.value.toString(),
+        fieldSelector: fieldSelector.value.toString(),
+        pageSize: pageSize.value.toString(),
+        page: page.value.toString(),
         orderBy: orderBy.value,
-        pageSize: pageSize.value,
-        page: page.value,
         q: query.value,
-
-        // Non-reactive
+        fuzzySearch: fuzzySearch.value.toString(),
         loc: locIDs.value,
         lab: labIDs.value,
         fields,
       },
     });
 
-    // Reset Pagination
-    page.value = 1;
-
-    // Perform Search
     await search();
   }
 
   async function reset() {
-    // Set URL Params
-    const fields = [];
-    for (const t of fieldTuples.value) {
-      if (t[0] && t[1]) {
-        fields.push(`${t[0]}=${t[1]}`);
-      }
-    }
+    // Reset all the filters
+    query.value = "";
+    fuzzySearch.value = false;
+    selectedLabels.value = [];
+    selectedLocations.value = [];
+    negateLabels.value = false;
+    onlyWithoutPhoto.value = false;
+    onlyWithPhoto.value = false;
+    includeArchived.value = false;
+    advanced.value = false;
+    fieldSelector.value = false;
+    orderBy.value = "name";
+    fieldTuples.value = [["", ""]];
+    page.value = 1;
 
-    await router.push({
-      query: {
-        archived: "false",
-        fieldSelector: "false",
-        pageSize: 10,
-        page: 1,
-        orderBy: "name",
-        q: "",
-        loc: [],
-        lab: [],
-        fields,
-      },
-    });
-
-    await search();
+    // Trigger a search with the reset values
+    search();
   }
 </script>
 
@@ -424,6 +420,10 @@
             <label class="label mr-auto cursor-pointer">
               <input v-model="onlyWithPhoto" type="checkbox" class="toggle toggle-primary toggle-sm" />
               <span class="label-text ml-4 text-right"> {{ $t("items.only_with_photo") }} </span>
+            </label>
+            <label class="label mr-auto cursor-pointer">
+              <input v-model="fuzzySearch" type="checkbox" class="toggle toggle-primary toggle-sm" />
+              <span class="label-text ml-4 text-right"> {{ $t("items.fuzzy_search") }} </span>
             </label>
             <label class="label mr-auto cursor-pointer">
               <select v-model="orderBy" class="select select-bordered select-sm">
