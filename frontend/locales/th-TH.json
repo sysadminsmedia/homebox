@@ -1,0 +1,58 @@
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "title": "นำเข้า CSV",
+                "upload": "อัปโหลด"
+            },
+            "outdated": {
+                "current_version": "เวอร์ชั่นปัจจุบัน",
+                "dismiss": "ยกเลิก",
+                "latest_version": "เวอร์ชั่นล่าสุด",
+                "new_version_available": "มีเวอร์ชั่นพร้อมใช้งาน",
+                "new_version_available_link": "กดที่นี่เพื่อดู Release notes"
+            }
+        },
+        "global": {
+            "copy_text": {
+                "documentation": "คู่มือการใช้งาน",
+                "failed_to_copy": "เกิดข้อผิดพลาดในการคัดลอกข้อความ",
+                "https_required": "เพราะ HTTPS นั้นจำเป็น",
+                "learn_more": "เรียนรู้เพิ่มเติมใน"
+            },
+            "date_time": {
+                "ago": "{0} ที่แล้ว",
+                "days": "วัน",
+                "hour": "ชั่วโมง",
+                "hours": "ชั่วโมง",
+                "in": "ภายใน {0}",
+                "just-now": "เมื่อสักครู่",
+                "last-month": "เดือนที่แล้ว",
+                "last-week": "สัปดาห์ที่แล้ว",
+                "last-year": "ปีที่แล้ว",
+                "minute": "นาที",
+                "minutes": "นาที",
+                "months": "เดือน",
+                "next-month": "เดือนหน้า",
+                "next-week": "สัปดาห์หน้า",
+                "next-year": "ปีหน้า",
+                "second": "วินาที",
+                "seconds": "วินาที",
+                "tomorrow": "พรุ่งนี้",
+                "week": "สัปดาห์",
+                "weeks": "สัปดาห์",
+                "years": "ปี",
+                "yesterday": "เมื่อวาน"
+            },
+            "password_score": {
+                "password_strength": "ความแข็งแกร่งของรหัสผ่าน"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "item_description": "รายละเอียดรายการ",
+                "item_name": "ชื่อรายการ"
+            }
+        }
+    }
+}

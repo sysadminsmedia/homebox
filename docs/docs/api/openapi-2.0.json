@@ -559,6 +559,9 @@
                         "Bearer": []
                     }
                 ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -729,6 +732,9 @@
                     {
                         "Bearer": []
                     }
+                ],
+                "consumes": [
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
@@ -915,6 +921,13 @@
                 "summary": "Get Maintenance Log",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "enum": [
                             "scheduled",
                             "completed",
@@ -956,6 +969,13 @@
                 ],
                 "summary": "Create Maintenance Entry",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Entry Data",
                         "name": "payload",
@@ -1007,6 +1027,123 @@
                             "items": {
                                 "$ref": "#/definitions/repo.ItemPath"
                             }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/labelmaker/assets/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Items"
+                ],
+                "summary": "Get Asset label",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Asset ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Print this label, defaults to false",
+                        "name": "print",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "image/png",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/labelmaker/item/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Items"
+                ],
+                "summary": "Get Item label",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Print this label, defaults to false",
+                        "name": "print",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "image/png",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/labelmaker/location/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Locations"
+                ],
+                "summary": "Get Location label",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Location ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Print this label, defaults to false",
+                        "name": "print",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "image/png",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -1428,6 +1565,13 @@
                 "summary": "Update Maintenance Entry",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Maintenance ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
                         "description": "Entry Data",
                         "name": "payload",
                         "in": "body",
@@ -1459,6 +1603,15 @@
                     "Maintenance"
                 ],
                 "summary": "Delete Maintenance Entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Maintenance ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "204": {
                         "description": "No Content"
@@ -1541,13 +1694,6 @@
                 ],
                 "summary": "Test Notifier",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Notifier ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "URL",
@@ -1745,20 +1891,6 @@
                 ],
                 "summary": "User Login",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "example": "admin@admin.com",
-                        "description": "string",
-                        "name": "username",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "example": "admin",
-                        "description": "string",
-                        "name": "password",
-                        "in": "formData"
-                    },
                     {
                         "description": "Login Data",
                         "name": "payload",
@@ -2235,6 +2367,9 @@
                 "soldTo": {
                     "type": "string"
                 },
+                "syncChildItemsLocations": {
+                    "type": "boolean"
+                },
                 "updatedAt": {
                     "type": "string"
                 },
@@ -2278,6 +2413,10 @@
             "properties": {
                 "archived": {
                     "type": "boolean"
+                },
+                "assetId": {
+                    "type": "string",
+                    "example": "0"
                 },
                 "createdAt": {
                     "type": "string"
@@ -2432,6 +2571,9 @@
                 "soldTo": {
                     "type": "string",
                     "maxLength": 255
+                },
+                "syncChildItemsLocations": {
+                    "type": "boolean"
                 },
                 "warrantyDetails": {
                     "type": "string"
@@ -2918,6 +3060,17 @@
                 }
             }
         },
+        "services.Latest": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
         "services.UserRegistration": {
             "type": "object",
             "properties": {
@@ -2949,6 +3102,12 @@
                 },
                 "health": {
                     "type": "boolean"
+                },
+                "labelPrinting": {
+                    "type": "boolean"
+                },
+                "latest": {
+                    "$ref": "#/definitions/services.Latest"
                 },
                 "message": {
                     "type": "string"
@@ -3039,13 +3198,15 @@
             "type": "object",
             "properties": {
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "admin"
                 },
                 "stayLoggedIn": {
                     "type": "boolean"
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "admin@admin.com"
                 }
             }
         },

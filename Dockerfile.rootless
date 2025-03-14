@@ -1,73 +1,97 @@
-# Node dependencies
-FROM node:18-alpine AS frontend-dependencies
+# Node dependencies stage
+FROM public.ecr.aws/docker/library/node:18-alpine AS frontend-dependencies
 WORKDIR /app
+
+# Install pnpm globally (caching layer)
 RUN npm install -g pnpm
+
+# Copy package.json and lockfile to leverage caching
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile --shamefully-hoist
 
-# Build Nuxt
-FROM node:18-alpine AS frontend-builder
+# Build Nuxt (frontend) stage
+FROM public.ecr.aws/docker/library/node:18-alpine AS frontend-builder
 WORKDIR /app
-COPY frontend ./
+
+# Install pnpm globally again (it can reuse the cache if not changed)
+RUN npm install -g pnpm
+
+# Copy over source files and node_modules from dependencies stage
+COPY frontend .
 COPY --from=frontend-dependencies /app/node_modules ./node_modules
 RUN pnpm build
 
-# Build Go dependencies
-FROM golang:alpine AS builder-dependencies
+# Go dependencies stage
+FROM public.ecr.aws/docker/library/golang:alpine AS builder-dependencies
 WORKDIR /go/src/app
+
+# Copy go.mod and go.sum for better caching
 COPY ./backend/go.mod ./backend/go.sum ./
 RUN go mod download
 
-# Build API
-FROM golang:alpine AS builder
+# Build API stage
+FROM public.ecr.aws/docker/library/golang:alpine AS builder
 ARG BUILD_TIME
 ARG COMMIT
 ARG VERSION
 
-RUN apk update && apk upgrade && apk add --no-cache git build-base gcc g++
+# Install necessary build tools
+RUN apk update && \
+    apk upgrade && \
+    apk add --no-cache git build-base gcc g++
 
 WORKDIR /go/src/app
+
+# Copy Go modules (from dependencies stage) and source code
+COPY --from=builder-dependencies /go/pkg/mod /go/pkg/mod
 COPY ./backend .
+
+# Clear old public files and copy new ones from frontend build
 RUN rm -rf ./app/api/public
 COPY --from=frontend-builder /app/.output/public ./app/api/static/public
-COPY --from=builder-dependencies /go/pkg/mod /go/pkg/mod
 
-# Use cache for Go build
+# Use cache for Go build artifacts
 RUN --mount=type=cache,target=/root/.cache/go-build \
     CGO_ENABLED=0 GOOS=linux go build \
     -ldflags "-s -w -X main.commit=$COMMIT -X main.buildTime=$BUILD_TIME -X main.version=$VERSION" \
-    -o /go/bin/api ./app/api/*.go
+    -o /go/bin/api \
+    -v ./app/api/*.go
 
-# Production stage with distroless
-FROM gcr.io/distroless/static:latest
+RUN mkdir /data
 
+# Production stage
+FROM public.ecr.aws/docker/library/alpine:latest
 ENV HBOX_MODE=production
 ENV HBOX_STORAGE_DATA=/data/
-ENV HBOX_DATABASE_SQLITE_PATH=/data/homebox.db?_fk=1
+ENV HBOX_DATABASE_SQLITE_PATH=/data/homebox.db?_pragma=busy_timeout=2000&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite
 
-# Copy the binary and data directory, change ownership
+# Install necessary runtime dependencies
+RUN apk --no-cache add ca-certificates wget
+# Create a nonroot user with UID/GID 65532
+RUN addgroup -g 65532 nonroot && adduser -u 65532 -G nonroot -S nonroot
+
+# Create application directory and copy over built Go binary
+RUN mkdir /app
 COPY --from=builder --chown=nonroot /go/bin/api /app
 COPY --from=builder --chown=nonroot /data /data
+RUN chmod +x /app/api
 
-# Add wget to the image
-# Note: If using distroless, this may not be applicable
-# as distroless images do not include package managers.
-# This line may be omitted if you're relying on another way to handle healthchecks.
-COPY --from=alpine:latest /bin/wget /usr/bin/wget
-
+# Labels and configuration for the final image
 LABEL Name=homebox Version=0.0.1
 LABEL org.opencontainers.image.source="https://github.com/sysadminsmedia/homebox"
+
+# Expose necessary ports for Homebox
 EXPOSE 7745
+WORKDIR /app
 
-HEALTHCHECK --interval=30s \
-            --timeout=5s \
-            --start-period=5s \
-            --retries=3 \
-            CMD ["/usr/bin/wget", "--no-verbose", "--tries=1", "-O", "-", "http://localhost:7745/api/v1/status"]
+# Healthcheck configuration
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+    CMD [ "wget", "--no-verbose", "--tries=1", "-O", "-", "http://localhost:7745/api/v1/status" ]
 
-VOLUME ["/data"]
+# Persist volume for data
+VOLUME [ "/data" ]
 
-# Drop root and run as a low-privileged user
+# Entrypoint and CMD
 USER nonroot
-ENTRYPOINT ["/app"]
-CMD ["/data/config.yml"]
+ENTRYPOINT [ "/app/api" ]
+CMD [ "/data/config.yml" ]

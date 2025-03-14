@@ -116,6 +116,7 @@ export interface ItemOut {
   /** Sold */
   soldTime: Date | string;
   soldTo: string;
+  syncChildItemsLocations: boolean;
   updatedAt: Date | string;
   warrantyDetails: string;
   warrantyExpires: Date | string;
@@ -134,6 +135,8 @@ export interface ItemPath {
 
 export interface ItemSummary {
   archived: boolean;
+  /** @example "0" */
+  assetId: string;
   createdAt: Date | string;
   description: string;
   id: string;
@@ -190,6 +193,7 @@ export interface ItemUpdate {
   soldTime: Date | string;
   /** @maxLength 255 */
   soldTo: string;
+  syncChildItemsLocations: boolean;
   warrantyDetails: string;
   warrantyExpires: Date | string;
 }
@@ -388,6 +392,11 @@ export interface ValueOverTimeEntry {
   value: number;
 }
 
+export interface Latest {
+  date: Date | string;
+  version: string;
+}
+
 export interface UserRegistration {
   email: string;
   name: string;
@@ -400,6 +409,8 @@ export interface APISummary {
   build: Build;
   demo: boolean;
   health: boolean;
+  labelPrinting: boolean;
+  latest: Latest;
   message: string;
   title: string;
   versions: string[];
@@ -440,8 +451,10 @@ export interface ItemAttachmentToken {
 }
 
 export interface LoginForm {
+  /** @example "admin" */
   password: string;
   stayLoggedIn: boolean;
+  /** @example "admin@admin.com" */
   username: string;
 }
 
@@ -458,4 +471,10 @@ export interface Wrapped {
 export interface ValidateErrorResponse {
   error: string;
   fields: string;
+}
+
+export interface PhotoPreview {
+  photoName: string;
+  file: File;
+  fileBase64: string,
 }

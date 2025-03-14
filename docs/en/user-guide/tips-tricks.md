@@ -49,17 +49,29 @@ However, the API endpoint is available for generating QR codes on the fly for an
 
 In version 0.8.0 We've added a custom label generation. On the tools page, there is now a link to the label-generator page where you can generate labels based on Asset ID for your inventory. These are still in early development, so please provide feedback. There's also more information on the implementation on the label generator page.
 
-[Demo](https://homebox.fly.dev/reports/label-generator)
+[Demo](https://demo.homebox.software/reports/label-generator)
+
+:label: v0.18.0
+
+Homebox has a built-in QR code reader that can be used to scan QR codes for your items. This is useful for tracking items with a mobile device.
+
+:label: v0.18.0
+
+Homebox also has a built-in one off label generator for those with proper label makers. This can be accessed via the "Labels" button on the right hand side under the main details on the item page. Locations can also be printed in the same way, although the labels button is located next to the edit icon.
 
 ## Scheduled Maintenance Notifications
 
 :label: v0.9.0
 
-Homebox uses [shoutrrr](https://containrrr.dev/shoutrrr/0.7/) to send notifications. This allows you to send notifications to a variety of services. On your profile page, you can add notification URLs to your profile which will be used to send notifications when a maintenance event is scheduled.
+Homebox uses [shoutrrr](https://containrrr.dev/shoutrrr/) to send notifications. This allows you to send notifications to a variety of services including Discord, Slack, IFTTT, generic webhooks, and SMTP-based email. 
+
+On your profile page, you can create a new **Notifier** using a supported shoutrrr notification URL to send notifications when a maintenance event is scheduled. 
+
+For the full list of services and how to configure the service URL, refer to the [Services Overview](https://containrrr.dev/shoutrrr/services/overview/) in shoutrrr's documentation. 
 
 **Notifications are sent on the day the maintenance is scheduled at or around 8am.**
 
-As of `v0.9.0` we have limited support for complex scheduling of maintenance events. If you have requests for extended functionality, please open an issue on GitHub or reach out on Discord. We're still gauging the demand for this feature.
+As of `v0.9.0`, there is limited support for complex scheduling of maintenance events. If you have requests for extended functionality, please [open an issue on GitHub](https://github.com/sysadminsmedia/homebox/issues/new?template=feature_request.yml) or reach out on Discord. We're still gauging the demand for this feature.
 
 
 ## Custom Currencies
@@ -82,3 +94,11 @@ Homebox allows you to add additional currencies to your instance by specify a JS
   },
 ]
 ```
+
+## Copy to Clipboard
+
+The copy to clipboard functionality requires a secure context (HTTPS or localhost) to work due to browser security restrictions. If you're accessing Homebox through HTTP, the copy button will not function.
+
+To enable this feature:
+- Use HTTPS by setting up a reverse proxy (like Nginx or Caddy)
+- OR access Homebox through localhost

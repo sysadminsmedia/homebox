@@ -32,8 +32,8 @@ func getPrevMonth(now time.Time) time.Time {
 func TestMaintenanceEntryRepository_GetLog(t *testing.T) {
 	item := useItems(t, 1)[0]
 
-	// Create 10 maintenance entries for the item
-	created := make([]MaintenanceEntryCreate, 10)
+	// Create 11 maintenance entries for the item
+	created := make([]MaintenanceEntryCreate, 11)
 
 	thisMonth := time.Now()
 	lastMonth := getPrevMonth(thisMonth)
@@ -50,6 +50,14 @@ func TestMaintenanceEntryRepository_GetLog(t *testing.T) {
 			Description:   "Maintenance description",
 			Cost:          10,
 		}
+	}
+
+	// Add an entry completed in the future
+	created[10] = MaintenanceEntryCreate{
+		CompletedDate: types.DateFromTime(time.Now().AddDate(0, 0, 1)),
+		Name:          "Maintenance",
+		Description:   "Maintenance description",
+		Cost:          10,
 	}
 
 	for _, entry := range created {

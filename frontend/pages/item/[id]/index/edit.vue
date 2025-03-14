@@ -3,7 +3,6 @@
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
-  import { capitalize } from "~~/lib/strings";
   import Autocomplete from "~~/components/Form/Autocomplete.vue";
   import MdiDelete from "~icons/mdi/delete";
   import MdiPencil from "~icons/mdi/pencil";
@@ -99,15 +98,11 @@
 
     let purchasePrice = 0;
     let soldPrice = 0;
-    let purchaseTime = null;
     if (item.value.purchasePrice) {
       purchasePrice = item.value.purchasePrice;
     }
     if (item.value.soldPrice) {
       soldPrice = item.value.soldPrice;
-    }
-    if (item.value.purchaseTime && typeof item.value.purchaseTime !== "string") {
-      purchaseTime = new Date(item.value.purchaseTime.getTime() - item.value.purchaseTime.getTimezoneOffset() * 60000);
     }
 
     console.log((item.value.purchasePrice ??= 0));
@@ -121,7 +116,7 @@
       assetId: item.value.assetId,
       purchasePrice,
       soldPrice,
-      purchaseTime: purchaseTime as Date,
+      purchaseTime: item.value.purchaseTime as Date,
     };
 
     const { error } = await api.items.update(itemId.value, payload);
@@ -382,7 +377,7 @@
   });
 
   const attachmentOpts = Object.entries(AttachmentTypes).map(([key, value]) => ({
-    text: capitalize(key),
+    text: key[0].toUpperCase() + key.slice(1),
     value,
   }));
 
@@ -466,6 +461,65 @@
     }
   }
 
+  async function maybeSyncWithParentLocation() {
+    if (parent.value && parent.value.id) {
+      const { data, error } = await api.items.get(parent.value.id);
+
+      if (error) {
+        toast.error("Something went wrong trying to load parent data");
+        return;
+      }
+
+      if (data.syncChildItemsLocations) {
+        toast.info("Selected parent syncs its children's locations to its own. The location has been updated.");
+        item.value.location = data.location;
+      }
+    }
+  }
+
+  async function informAboutDesyncingLocationFromParent() {
+    if (parent.value && parent.value.id) {
+      const { data, error } = await api.items.get(parent.value.id);
+
+      if (error) {
+        toast.error("Something went wrong trying to load parent data");
+        return;
+      }
+
+      if (data.syncChildItemsLocations) {
+        toast.info("Changing location will de-sync it from the parent's location");
+      }
+    }
+  }
+
+  async function syncChildItemsLocations() {
+    if (!item.value.location?.id) {
+      toast.error("Failed to save item: no location selected");
+      return;
+    }
+
+    const payload: ItemUpdate = {
+      ...item.value,
+      locationId: item.value.location?.id,
+      labelIds: item.value.labels.map(l => l.id),
+      parentId: parent.value ? parent.value.id : null,
+      assetId: item.value.assetId,
+    };
+
+    const { error } = await api.items.update(itemId.value, payload);
+
+    if (error) {
+      toast.error("Failed to save item");
+      return;
+    }
+
+    if (!item.value.syncChildItemsLocations) {
+      toast.success("Child items' locations will no longer be synced with this item.");
+    } else {
+      toast.success("Child items' locations have been synced with this item");
+    }
+  }
+
   onMounted(() => {
     window.addEventListener("keydown", keyboardSave);
   });
@@ -533,8 +587,14 @@
             <div class="mt-2 flex flex-wrap items-center justify-between gap-4"></div>
           </template>
           <div class="mb-6 grid gap-4 border-t px-5 pt-2 md:grid-cols-2">
-            <LocationSelector v-model="item.location" />
+            <LocationSelector v-model="item.location" @update:model-value="informAboutDesyncingLocationFromParent()" />
             <FormMultiselect v-model="item.labels" :label="$t('global.labels')" :items="labels ?? []" />
+            <FormToggle
+              v-model="item.syncChildItemsLocations"
+              label="Sync child items' locations"
+              inline
+              @update:model-value="syncChildItemsLocations()"
+            />
             <Autocomplete
               v-if="preferences.editorAdvancedView"
               v-model="parent"
@@ -543,6 +603,7 @@
               item-text="name"
               :label="$t('items.parent_item')"
               no-results-text="Type to search..."
+              @update:model-value="maybeSyncWithParentLocation()"
             />
           </div>
 

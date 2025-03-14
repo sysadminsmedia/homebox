@@ -3,7 +3,7 @@ version: "3"
 env:
   HBOX_LOG_LEVEL: debug
   HBOX_DATABASE_DRIVER: sqlite3
-  HBOX_DATABASE_SQLITE_PATH: .data/homebox.db?_pragma=busy_timeout=1000&_pragma=journal_mode=WAL&_fk=1
+  HBOX_DATABASE_SQLITE_PATH: .data/homebox.db?_pragma=busy_timeout=1000&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite
   HBOX_OPTIONS_ALLOW_REGISTRATION: true
   UNSAFE_DISABLE_PASSWORD_PROJECTION: "yes_i_am_sure"
 tasks:
@@ -11,8 +11,6 @@ tasks:
     desc: Install development dependencies
     cmds:
       - go install github.com/swaggo/swag/cmd/swag@latest
-      - go install gotest.tools/gotestsum@latest
-      - go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
       - cd backend && go mod tidy
       - cd frontend && pnpm install --shamefully-hoist
 
@@ -31,7 +29,6 @@ tasks:
       - "./backend/internal/data/**"
       - "./backend/internal/core/services/**/*"
       - "./backend/app/tools/typegen/main.go"
-
   typescript-types:
     desc: Generates typescript types from swagger definition
     cmds:

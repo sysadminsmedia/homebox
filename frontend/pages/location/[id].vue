@@ -27,6 +27,10 @@
       parent.value = locations.value.find(l => l.id === data.parent.id);
     }
 
+    if (parent.value === undefined) {
+      parent.value = data.parent;
+    }
+
     return data;
   });
 
@@ -142,10 +146,10 @@
             <div>
               <div v-if="location?.parent" class="breadcrumbs py-0 text-sm">
                 <ul class="text-base-content/70">
-                  <li>
+                  <li class="text-wrap">
                     <NuxtLink :to="`/location/${location.parent.id}`"> {{ location.parent.name }}</NuxtLink>
                   </li>
-                  <li>{{ location.name }}</li>
+                  <li class="text-wrap">{{ location.name }}</li>
                 </ul>
               </div>
               <h1 class="flex items-center gap-3 pb-1 text-2xl">
@@ -175,6 +179,7 @@
                   {{ $t("global.edit") }}
                 </BaseButton>
               </div>
+              <LabelMaker :id="location.id" type="location" />
               <BaseButton class="btn btn-sm" @click="confirmDelete()">
                 <MdiDelete name="mdi-delete" class="mr-2" />
                 {{ $t("global.delete") }}

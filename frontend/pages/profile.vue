@@ -8,6 +8,7 @@
   import MdiFill from "~icons/mdi/fill";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiAccountMultiple from "~icons/mdi/account-multiple";
+  import { getLocaleCode } from "~/composables/use-formatters";
 
   definePageMeta({
     middleware: ["auth"],
@@ -52,12 +53,11 @@
   });
 
   const currencyExample = computed(() => {
-    const formatter = new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency.value ? currency.value.code : "USD",
-    });
+    return fmtCurrency(1000, currency.value?.code ?? "USD", getLocaleCode());
+  });
 
-    return formatter.format(1000);
+  const dateExample = computed(() => {
+    return fmtDate(new Date(Date.now() - 15 * 60000), "relative");
   });
 
   const { data: group } = useAsyncData(async () => {
@@ -389,6 +389,7 @@
               {{ $t(`languages.${lang}`) }} ({{ $t(`languages.${lang}`, 1, { locale: lang }) }})
             </option>
           </select>
+          <p class="m-2 text-sm">{{ $t("profile.example") }}: {{ $t("global.created") }} {{ dateExample }}</p>
         </div>
       </BaseCard>
 
@@ -477,10 +478,11 @@
               {{ $t("profile.display_header", { currentValue: preferences.displayHeaderDecor }) }}
             </BaseButton>
           </div>
-          <div class="rounded-box grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          <div class="homebox rounded-box grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             <div
               v-for="theme in themes"
               :key="theme.value"
+              :class="'theme-' + theme.value"
               class="overflow-hidden rounded-lg border border-base-content/20 outline-2 outline-offset-2 outline-base-content hover:border-base-content/40"
               :data-theme="theme.value"
               :data-set-theme="theme.value"

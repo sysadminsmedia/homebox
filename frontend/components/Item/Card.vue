@@ -4,17 +4,17 @@
       <img
         v-if="imageUrl"
         class="h-[200px] w-full rounded-t border-gray-300 object-cover shadow-sm"
+        loading="lazy"
         :src="imageUrl"
         alt=""
       />
-      <div class="absolute bottom-1 left-1 text-wrap">
+      <div class="absolute inset-x-1 bottom-1 text-wrap">
         <NuxtLink
           v-if="item.location"
-          class="badge rounded-md text-sm shadow-md hover:link"
+          class="badge h-auto rounded-md text-sm shadow-md hover:link"
           :to="`/location/${item.location.id}`"
-          loading="lazy"
         >
-          {{ item.location.name }}
+          {{ locationString }}
         </NuxtLink>
       </div>
     </div>
@@ -30,7 +30,7 @@
         </div>
         <div class="grow"></div>
         <div class="tooltip" data-tip="Quantity">
-          <span class="badge badge-primary badge-sm size-5 text-xs">
+          <span class="badge badge-primary badge-sm h-5 text-xs">
             {{ item.quantity }}
           </span>
         </div>
@@ -67,7 +67,16 @@
       type: Object as () => ItemOut | ItemSummary,
       required: true,
     },
+    locationFlatTree: {
+      type: Array as () => FlatTreeItem[],
+      required: false,
+      default: () => [],
+    },
   });
+
+  const locationString = computed(
+    () => props.locationFlatTree.find(l => l.id === props.item.location?.id)?.treeString || props.item.location?.name
+  );
 </script>
 
 <style lang="css"></style>

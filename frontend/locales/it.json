@@ -6,9 +6,22 @@
                 "description": "Importa un file CSV contenente gli articoli, le etichette e le posizioni. Vedi la documentazione per ulteriori informazioni sul \nformato richiesto.",
                 "title": "Importa File CSV",
                 "upload": "Carica"
+            },
+            "outdated": {
+                "current_version": "Versione corrente",
+                "dismiss": "Rifiuta",
+                "latest_version": "Ultima Versione",
+                "new_version_available": "Nuova versione disponibile",
+                "new_version_available_link": "Clicca qui per visualizzare le note di rilascio"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "documentazione",
+                "failed_to_copy": "Impossibile copiare il testo negli appunti",
+                "https_required": "perché è richiesto HTTPS",
+                "learn_more": "Troverai ulteriori informazioni in"
+            },
             "date_time": {
                 "ago": "{0} fa",
                 "days": "giorni",
@@ -32,6 +45,14 @@
                 "weeks": "settimane",
                 "years": "anni",
                 "yesterday": "ieri"
+            },
+            "label_maker": {
+                "browser_print": "Stampa dal Browser",
+                "confirm_description": "Sei sicuro di voler stampare questa etichetta?",
+                "download": "Scarica l'etichetta",
+                "print": "Stampa etichetta",
+                "server_print": "Stampa sul server",
+                "titles": "Etichette"
             },
             "page_qr_code": {
                 "page_url": "URL della Pagina"
@@ -79,6 +100,9 @@
             "tree": {
                 "no_locations": "Nessuna posizione disponibile. Aggiungi nuove posizioni mediante il pulsante\n`<`span class=\"link-primary\"`>`Crea`<`/span`>` nella barra di navigazione."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Utilizzare i tasti numerici per selezionare rapidamente un'azione."
         }
     },
     "global": {
@@ -101,6 +125,7 @@
         "locations": "Posizioni",
         "maintenance": "Manutenzione",
         "name": "Nome",
+        "navigate": "Naviga",
         "password": "Password",
         "read_docs": "Leggi la Documentazione",
         "save": "Salva",
@@ -165,6 +190,8 @@
         "next_page": "Pagina Successiva",
         "no_results": "Nessun Articolo Trovato",
         "notes": "Note",
+        "only_with_photo": "Solo articoli con foto",
+        "only_without_photo": "Solo articoli senza foto",
         "options": "Opzioni",
         "order_by": "Ordina Per",
         "pages": "Pagina { page } di { totalPages }",
@@ -204,13 +231,18 @@
     },
     "languages": {
         "ca": "Catalano",
+        "cs-CZ": "Ceco",
         "de": "Tedesco",
         "en": "Inglese",
         "es": "Spagnolo",
+        "fi-FI": "Finlandese",
         "fr": "Francese",
         "hu": "Ungherese",
+        "id-ID": "Indonesiano",
         "it": "Italiano",
         "ja-JP": "Giapponese",
+        "ko-KR": "Coreano",
+        "nb-NO": "Norvegese",
         "nl": "Olandese",
         "pl": "Polacco",
         "pt-BR": "Portoghese (Brasile)",
@@ -218,6 +250,8 @@
         "ru": "Russo",
         "sl": "Sloveno",
         "sv": "Svedese",
+        "ta-IN": "Tamil",
+        "th-TH": "Tailandese",
         "tr": "Turco",
         "uk-UA": "Ucraino",
         "zh-CN": "Cinese (semplificato)",
@@ -226,7 +260,6 @@
         "zh-TW": "Cinese (tradizionale)"
     },
     "languages.da-DK": "Danese",
-    "languages.fi.FI": "Finlandese",
     "languages.ro-RO": "Rumeno",
     "languages.sk-SK": "Slovacco",
     "locations": {
@@ -278,6 +311,7 @@
         "locations": "Posizioni",
         "maintenance": "Manutenzione",
         "profile": "Profilo",
+        "scanner": "Scanner",
         "search": "Cerca",
         "tools": "Strumenti"
     },
@@ -309,6 +343,13 @@
         "url": "URL",
         "user_profile": "Profilo Utente",
         "user_profile_sub": "Invita utenti e gestisci il tuo account."
+    },
+    "scanner": {
+        "error": "Errore nella funzione di decodifica della chiave di protezione\nCodice errore: <ph id=\"mtc_1\" ctype=\"x-sprintf\" equiv-text=\"base64:JXM=\"/>",
+        "invalid_url": "URL del codice a barre non valido",
+        "no_sources": "Nessuna sorgente video disponibile",
+        "select_video_source": "Scegli una fonte video",
+        "unsupported": "L'API del flusso multimediale non è supportata"
     },
     "tools": {
         "actions": "Azioni Inventario",

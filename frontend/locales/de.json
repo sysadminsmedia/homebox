@@ -2,16 +2,29 @@
     "components": {
         "app": {
             "import_dialog": {
-                "change_warning": "Das Verhalten beim Importieren vorhandener import_refs hat sich geändert. Wenn ein import_ref in der CSV-Datei vorhanden ist, \nwird der Gegenstand mit den Werten in der CSV-Datei aktualisiert.",
+                "change_warning": "Das Verhalten beim Importieren mit bestehenden import_refs hat sich geändert. Wenn ein import_ref in der CSV-Datei vorhanden ist, \nwird der Gegenstand mit den Werten in der CSV-Datei aktualisiert.",
                 "description": "Importiere eine CSV-Datei, die deine Gegenstände, Etiketten und Standorte enthält. Schau in die Dokumentation für weitere Informationen\nzum erforderlichen Format.",
                 "title": "CSV-Datei importieren",
                 "upload": "Hochladen"
+            },
+            "outdated": {
+                "current_version": "Aktuelle Version",
+                "dismiss": "Verwerfen",
+                "latest_version": "Neuste Version",
+                "new_version_available": "Neue Version verfügbar",
+                "new_version_available_link": "Klicken Sie hier, um die Release Notes anzuzeigen"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "Dokumentation",
+                "failed_to_copy": "Text konnte nicht in die Zwischenablage kopiert werden",
+                "https_required": "weil https erforderlich ist",
+                "learn_more": "Erfahren Sie mehr in unserer"
+            },
             "date_time": {
                 "ago": "vor {0}",
-                "days": "Tage",
+                "days": "Tagen",
                 "hour": "Stunde",
                 "hours": "Stunden",
                 "in": "in {0}",
@@ -21,17 +34,25 @@
                 "last-year": "letztes Jahr",
                 "minute": "Minute",
                 "minutes": "Minuten",
-                "months": "Monate",
+                "months": "Monaten",
                 "next-month": "nächster Monat",
-                "next-week": "Nächste Woche",
+                "next-week": "nächste Woche",
                 "next-year": "nächstes Jahr",
                 "second": "Sekunde",
                 "seconds": "Sekunden",
-                "tomorrow": "Morgen",
+                "tomorrow": "morgen",
                 "week": "Woche",
                 "weeks": "Wochen",
                 "years": "Jahre",
                 "yesterday": "Gestern"
+            },
+            "label_maker": {
+                "browser_print": "Aus dem Browser drucken",
+                "confirm_description": "Möchten Sie dieses Etikett wirklich drucken?",
+                "download": "Etikett herunterladen",
+                "print": "Etikett drucken",
+                "server_print": "Auf Server drucken",
+                "titles": "Labels"
             },
             "page_qr_code": {
                 "page_url": "Seiten-URL"
@@ -42,8 +63,8 @@
         },
         "item": {
             "create_modal": {
-                "item_description": "Artikelbezeichnung",
-                "item_name": "Artikelname",
+                "item_description": "Gegenstandsbezeichnung",
+                "item_name": "Gegenstandsname",
                 "photo_button": "Foto 📷",
                 "title": "Gegenstand erstellen"
             },
@@ -62,15 +83,15 @@
         },
         "label": {
             "create_modal": {
-                "label_description": "Label Beschreibung",
-                "label_name": "Name Etikett",
+                "label_description": "Label-Beschreibung",
+                "label_name": "Label-Name",
                 "title": "Label erstellen"
             }
         },
         "location": {
             "create_modal": {
                 "location_description": "Standortbeschreibung",
-                "location_name": "Standortnamen",
+                "location_name": "Standortname",
                 "title": "Standort erstellen"
             },
             "selector": {
@@ -79,6 +100,9 @@
             "tree": {
                 "no_locations": "Keine Standorte verfügbar. Fügen Sie neue Standorte über die Schaltfläche\n `<`span class=\"link-primary\"`>`Erstellen`<`/span`>` in der Navigationsleiste hinzu."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Verwenden Sie die Zifferntasten, um schnell eine Aktion auszuwählen."
         }
     },
     "global": {
@@ -97,10 +121,11 @@
         "github": "GitHub-Projekt",
         "items": "Gegenstände",
         "join_discord": "Discord beitreten",
-        "labels": "Etiketten",
+        "labels": "Kennzeichnung",
         "locations": "Lagerorte",
         "maintenance": "Wartung",
         "name": "Name",
+        "navigate": "Navigieren",
         "password": "Passwort",
         "read_docs": "Dokumentation lesen",
         "save": "Speichern",
@@ -165,25 +190,27 @@
         "next_page": "Nächste Seite",
         "no_results": "Keine Elemente gefunden",
         "notes": "Anmerkungen",
-        "options": "Optionen (Options)",
+        "only_with_photo": "Nur Artikel mit Foto",
+        "only_without_photo": "Nur Artikel ohne Foto",
+        "options": "Optionen",
         "order_by": "Sortieren nach",
         "pages": "Seite { page } von { totalPages }",
         "parent_item": "Übergeordnetes Element",
         "photo": "Foto",
         "photos": "Fotos",
         "prev_page": "Vorherige Seite",
-        "purchase_date": "Einkaufsdatum",
-        "purchase_details": "Einkaufsdetails",
-        "purchase_price": "Einkaufspreis",
-        "purchased_from": "Eingekauft von",
+        "purchase_date": "Kaufdatum",
+        "purchase_details": "Kaufdetails",
+        "purchase_price": "Kaufpreis",
+        "purchased_from": "Gekauft bei",
         "quantity": "Menge",
-        "query_id": "Abfrage der Anlagen-ID-Nummer: { id }",
-        "receipt": "Beleg",
+        "query_id": "Abfrage der Asset-ID-Nummer: { id }",
+        "receipt": "Quittung",
         "receipts": "Quittungen",
         "reset_search": "Suche zurücksetzen",
         "results": "{ total } Ergebnisse",
         "serial_number": "Seriennummer",
-        "show_advanced_view_options": "Erweiterter Angzeigeoptionen anzeigen",
+        "show_advanced_view_options": "Erweiterte Angzeigeoptionen anzeigen",
         "sold_at": "Verkauft am",
         "sold_details": "Verkaufsdetails",
         "sold_price": "Verkaufspreis",
@@ -223,8 +250,11 @@
         "zh-CN": "Chinesisch (einfach)",
         "zh-HK": "Chinesisch (Hong Kong)",
         "zh-MO": "Chinesisch (Macao)",
-        "zh-TW": "Chinesisch (Traditionell)"
+        "zh-TW": "Chinesisch (traditionell)"
     },
+    "languages.da-DK": "Dänisch",
+    "languages.ro-RO": "Rumänisch",
+    "languages.sk-SK": "Slowakisch",
     "locations": {
         "child_locations": "Unter-Standorte",
         "collapse_tree": "Baum einklappen",
@@ -274,6 +304,7 @@
         "locations": "Lagerorte",
         "maintenance": "Wartung",
         "profile": "Profil",
+        "scanner": "Scanner",
         "search": "Suche",
         "tools": "Tools"
     },
@@ -295,7 +326,7 @@
         "new_password": "Neues Passwort",
         "no_notifiers": "Keine Benachrichtigungen konfiguriert",
         "notifier_modal": "{ type, select, true {Bearbeiten} false {Erstellen} other {Andere}} Notifier",
-        "notifiers": "Melder",
+        "notifiers": "Benachrichtigungen",
         "notifiers_sub": "Erhalte Benachrichtigungen über bevorstehende Wartungserinnerungen",
         "test": "Test",
         "theme_settings": "Themes",
@@ -306,8 +337,15 @@
         "user_profile": "Benutzerprofil",
         "user_profile_sub": "Lade Benutzer ein und verwalte dein Konto."
     },
+    "scanner": {
+        "error": "Beim Scannen ist ein Fehler aufgetreten",
+        "invalid_url": "Ungültige Barcode-URL",
+        "no_sources": "Keine Videoquellen verfügbar",
+        "select_video_source": "Wählen Sie eine Videoquelle",
+        "unsupported": "Media Stream API wird nicht unterstützt"
+    },
     "tools": {
-        "actions": "Inventar Aktionen",
+        "actions": "Inventar-Aktionen",
         "actions_set": {
             "ensure_ids": "Sicherstellen von Asset-IDs",
             "ensure_ids_button": "Sicherstellen von Asset-IDs",
@@ -319,7 +357,7 @@
             "set_primary_photo_button": "Primäres Foto festlegen",
             "set_primary_photo_sub": "In Homebox Version v0.10.0 wurde die Auswahl des Primärbilds von angehängten Bildern hinzugefügt. Mit dieser Funktion wird für jeden Artikel ohne Primärbild das erste angehängt Bild als solches definiert. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'See GitHub PR #576'</a>'",
             "zero_datetimes": "Leeren der Datum & Zeiten der Elemente",
-            "zero_datetimes_button": "Null-Punkt-Datum-Zeiten",
+            "zero_datetimes_button": "Gegenstands-Datum/Zeit zurücksetzen",
             "zero_datetimes_sub": "Setzt den Zeitwert für alle Datums-Zeit-Felder in Ihrem Inventar auf den Anfang des Datums zurück. Damit wird ein Fehler behoben, der zu Beginn der Entwicklung der Website eingeführt wurde und dazu führte, dass das Datum zusammen mit der Uhrzeit gespeichert wurde, was zu Problemen bei der Anzeige von genauen Werten in Datumsfeldern führte. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'"
         },
         "actions_sub": "Aktionen in großen Mengen auf das Inventar anwenden. Diese Aktionen sind unumkehrbar. '<b>'Sei vorsichtig.'</b>'",
@@ -338,7 +376,7 @@
             "asset_labels": "Asset-ID-Labels",
             "asset_labels_button": "Etiketten-Generator",
             "asset_labels_sub": "Erzeugt eine druckbare PDF-Datei mit Etiketten für eine Reihe von Asset-IDs. Diese sind nicht spezifisch für deine Inventargegenstände, so dass du die Etiketten im Voraus ausdrucken und bei Erhalt auf deinen Inventargegenständen anbringen kannst.",
-            "bill_of_materials": "Stückliste",
+            "bill_of_materials": "Stücklisten",
             "bill_of_materials_button": "Stückliste generieren",
             "bill_of_materials_sub": "Generiert eine CSV-Datei (Comma Separated Values), die in ein Tabellenkalkulationsprogramm importiert werden kann. Diese ist eine Zusammenfasung ihres Inventars mit einfachen Elementen- und Preisinformationen."
         },

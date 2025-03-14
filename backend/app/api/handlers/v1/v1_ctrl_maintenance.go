@@ -12,13 +12,13 @@ import (
 
 // HandleMaintenanceGetAll godoc
 //
-//	@Summary  Query All Maintenance
-//	@Tags     Maintenance
-//	@Produce  json
-//	@Param    filters query    repo.MaintenanceFilters     false "which maintenance to retrieve"
-//	@Success  200       {array} repo.MaintenanceEntryWithDetails[]
-//	@Router   /v1/maintenance [GET]
-//	@Security Bearer
+//	@Summary	Query All Maintenance
+//	@Tags		Maintenance
+//	@Produce	json
+//	@Param		filters	query	repo.MaintenanceFilters	false	"which maintenance to retrieve"
+//	@Success	200		{array}	repo.MaintenanceEntryWithDetails[]
+//	@Router		/v1/maintenance [GET]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleMaintenanceGetAll() errchain.HandlerFunc {
 	fn := func(r *http.Request, filters repo.MaintenanceFilters) ([]repo.MaintenanceEntryWithDetails, error) {
 		auth := services.NewContext(r.Context())
@@ -33,6 +33,7 @@ func (ctrl *V1Controller) HandleMaintenanceGetAll() errchain.HandlerFunc {
 //	@Summary  Update Maintenance Entry
 //	@Tags     Maintenance
 //	@Produce  json
+//	@Param    id  path     string true "Maintenance ID"
 //	@Param    payload body     repo.MaintenanceEntryUpdate true "Entry Data"
 //	@Success  200     {object} repo.MaintenanceEntry
 //	@Router   /v1/maintenance/{id} [PUT]
@@ -51,6 +52,7 @@ func (ctrl *V1Controller) HandleMaintenanceEntryUpdate() errchain.HandlerFunc {
 //	@Summary  Delete Maintenance Entry
 //	@Tags     Maintenance
 //	@Produce  json
+//	@Param    id  path     string true "Maintenance ID"
 //	@Success  204
 //	@Router   /v1/maintenance/{id} [DELETE]
 //	@Security Bearer
