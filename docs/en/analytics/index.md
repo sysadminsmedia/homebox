@@ -1,3 +1,7 @@
+---
+aside: false
+---
+
 ## What is This?
 We collect non-identifying information from users of Homebox that have opted in to analytics collection. By default users do not send us anything, however once opted in that data gets sent to our own Plausibe instance and the data below is live from that instance.
 

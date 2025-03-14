@@ -32,6 +32,7 @@ $ docker run -d \
   --restart unless-stopped \
   --publish 3100:7745 \
   --env TZ=Europe/Bucharest \
+  --env HBOX_OPTIONS_ALLOW_ANALYTICS=false \
   --volume /path/to/data/folder/:/data \
   ghcr.io/sysadminsmedia/homebox:latest
 # ghcr.io/sysadminsmedia/homebox:latest-rootless
@@ -52,6 +53,8 @@ services:
     - HBOX_LOG_LEVEL=info
     - HBOX_LOG_FORMAT=text
     - HBOX_WEB_MAX_FILE_UPLOAD=10
+    # Please consider allowing analytics to help us improve Homebox (basic computer information, no personal data)
+    - HBOX_OPTIONS_ALLOW_ANALYTICS=false
     volumes:
       - homebox-data:/data/
     ports:
