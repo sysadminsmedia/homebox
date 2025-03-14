@@ -101,7 +101,7 @@ func run(cfg *config.Config) error {
 		hostData, _ := host.Info()
 		analytics := analyticsData{
 			Domain: "homebox.software",
-			URL:    "https://homebox.software",
+			URL:    "https://homebox.software/stats",
 			Name:   "stats",
 			Props: map[string]interface{}{
 				"version":          version + "/" + build(),
