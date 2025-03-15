@@ -242,7 +242,7 @@
         "it": "意大利语",
         "ja-JP": "日本語",
         "ko-KR": "韩语",
-        "nb-NO": "",
+        "nb-NO": "挪威语",
         "nl": "荷兰语",
         "pl": "波兰语",
         "pt-BR": "葡萄牙语（巴西）",
@@ -250,6 +250,7 @@
         "ru": "俄语",
         "sl": "斯洛文尼亚语",
         "sv": "瑞典语",
+        "ta-IN": "泰米尔语",
         "th-TH": "泰语",
         "tr": "土耳其语",
         "uk-UA": "乌克兰语",
@@ -347,7 +348,8 @@
         "error": "扫描遇到问题",
         "invalid_url": "非法的条形码地址",
         "no_sources": "没有可用的摄像头资源",
-        "select_video_source": "选择摄像头"
+        "select_video_source": "选择摄像头",
+        "unsupported": "不支持实时媒体API"
     },
     "tools": {
         "actions": "库存操作",
@@ -361,8 +363,8 @@
             "set_primary_photo": "设置封面图片",
             "set_primary_photo_button": "设置封面",
             "set_primary_photo_sub": "设置封面在 Homebox v0.10.0 版本中，该列的类型为图片。如果没有设置封面，则会把附件中第一张图片作为封面。 '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'更多请参考 GitHub PR #576'</a>'",
-            "zero_datetimes": "清空时间项",
-            "zero_datetimes_button": "清空时间项",
+            "zero_datetimes": "零项目日期",
+            "zero_datetimes_button": "零项目日期",
             "zero_datetimes_sub": "将库存中所有日期时间字段的值重置为开始日期。这是为了修复在网站开发早期出现的一个错误，该错误导致自定义时间值保存时，日期会出现偏移的问题。 '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'详细问题请参考 Github Issue #236 '</a>'"
         },
         "actions_sub": "将操作批量应用于您的库存。这些都是不可逆转的行动'<b> '谨慎操作。'</b>'",
