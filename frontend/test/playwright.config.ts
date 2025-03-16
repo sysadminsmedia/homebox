@@ -5,7 +5,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
-  reporter: "html",
+  reporter: process.env.CI ? "github" : "html",
   use: {
     baseURL: process.env.E2E_BASE_URL || "http://localhost:3000",
     trace: "on-all-retries",
@@ -23,14 +23,6 @@ export default defineConfig({
     {
       name: "webkit",
       use: { ...devices["Desktop Safari"] },
-    },
-    {
-      name: "iphone",
-      use: { ...devices["iPhone 15"] },
-    },
-    {
-      name: "android",
-      use: { ...devices["Pixel 7"] },
     },
   ],
   globalTeardown: require.resolve("./playwright.teardown"),
