@@ -1,5 +1,5 @@
 # Node dependencies stage
-FROM public.ecr.aws/docker/library/node:18-alpine AS frontend-dependencies
+FROM public.ecr.aws/docker/library/node:lts-alpine AS frontend-dependencies
 WORKDIR /app
 
 # Install pnpm globally (caching layer)
@@ -10,7 +10,7 @@ COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile --shamefully-hoist
 
 # Build Nuxt (frontend) stage
-FROM public.ecr.aws/docker/library/node:18-alpine AS frontend-builder
+FROM public.ecr.aws/docker/library/node:lts-alpine AS frontend-builder
 WORKDIR /app
 
 # Install pnpm globally again (it can reuse the cache if not changed)
