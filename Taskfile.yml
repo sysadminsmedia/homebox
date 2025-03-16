@@ -223,8 +223,8 @@ tasks:
       - task: ui:ci
       - pnpm exec playwright install-deps
       - pnpm exec playwright install
-      - sleep 45
-      - pnpm test:e2e
+      - sleep 30
+      - TEST_SHUTDOWN_API_SERVER=true playwright test -c ./test/playwright.config.ts {{ .CLI_ARGS }}
 
   pr:
     desc: Runs all tasks required for a PR
