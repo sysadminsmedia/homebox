@@ -11,7 +11,7 @@ jobs:
       matrix:
         shardIndex: [1,2,3,4]
         shardTotal: [4]
-    name: E2E Playwright Testing {{ matrix.shardIndex }}/{{ matrix.shardTotal }}
+    name: E2E Playwright Testing ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -31,7 +31,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: lts/*
 
       - uses: pnpm/action-setup@v3.0.0
         with:
