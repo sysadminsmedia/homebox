@@ -15,6 +15,7 @@ aside: false
 | HBOX_OPTIONS_ALLOW_REGISTRATION         | true                                                                       | allow users to register themselves                                                                                                                                                        |
 | HBOX_OPTIONS_AUTO_INCREMENT_ASSET_ID    | true                                                                       | auto-increments the asset_id field for new items                                                                                                                                          |
 | HBOX_OPTIONS_CURRENCY_CONFIG            |                                                                            | json configuration file containing additional currencie                                                                                                                                   |
+| HBOX_OPTIONS_ALLOW_ANALYTICS            | false                                                                      | Allows the homebox team to view extremely basic information about the system that your running on. This helps make decisions regarding builds and other general decisions.                |
 | HBOX_WEB_MAX_UPLOAD                     | 10                                                                         | maximum file upload size supported in MB                                                                                                                                                  |
 | HBOX_WEB_READ_TIMEOUT                   | 10s                                                                        | Read timeout of HTTP sever                                                                                                                                                                |
 | HBOX_WEB_WRITE_TIMEOUT                  | 10s                                                                        | Write timeout of HTTP server                                                                                                                                                              |
@@ -98,6 +99,7 @@ OPTIONS
 --options-auto-increment-asset-id/$HBOX_OPTIONS_AUTO_INCREMENT_ASSET_ID       <bool>    (default: true)
 --options-currency-config/$HBOX_OPTIONS_CURRENCY_CONFIG                       <string>
 --options-check-github-release/$HBOX_OPTIONS_CHECK_GITHUB_RELEASE             <bool>    (default: true)
+--options-allow-analytics/$HBOX_OPTIONS_ALLOW_ANALYTICS                       <bool>    (default: false)
 --label-maker-width/$HBOX_LABEL_MAKER_WIDTH                                   <int>     (default: 526)
 --label-maker-height/$HBOX_LABEL_MAKER_HEIGHT                                 <int>     (default: 200)
 --label-maker-padding/$HBOX_LABEL_MAKER_PADDING                               <int>     (default: 32)
