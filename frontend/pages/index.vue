@@ -136,7 +136,7 @@
 
 <template>
   <div class="flex min-h-screen flex-col">
-    <div class="absolute top-0 z-[-1] min-w-full fill-primary">
+    <div class="absolute top-0 min-w-full fill-primary">
       <div class="flex min-h-[20vh] flex-col bg-primary" />
       <svg
         class="fill-primary drop-shadow-xl"
@@ -152,7 +152,7 @@
     </div>
     <div>
       <header class="mx-auto p-4 sm:flex sm:items-end sm:p-6 lg:p-14">
-        <div>
+        <div class="z-10">
           <h2 class="mt-1 flex text-4xl font-bold tracking-tight text-neutral-content sm:text-5xl lg:text-6xl">
             HomeB
             <AppLogo class="-mb-4 w-12" />

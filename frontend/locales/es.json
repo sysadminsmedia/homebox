@@ -6,6 +6,13 @@
                 "description": "Importa un archivo CSV que contenga tus elementos, etiquetas y ubicaciones. Consulta la documentación para obtener más información sobre el \nformato requerido.",
                 "title": "Importar Archivo CSV",
                 "upload": "Subir"
+            },
+            "outdated": {
+                "current_version": "Versión actual",
+                "dismiss": "Ignorar",
+                "latest_version": "Última versión",
+                "new_version_available": "Nueva versión disponible",
+                "new_version_available_link": "Haz click aquí para ver las notas de la versión"
             }
         },
         "global": {
@@ -38,6 +45,14 @@
                 "weeks": "semanas",
                 "years": "años",
                 "yesterday": "ayer"
+            },
+            "label_maker": {
+                "browser_print": "Imprimir desde el Navegador",
+                "confirm_description": "¿Seguro de que deseas imprimir esta etiqueta?",
+                "download": "Descargar Etiqueta",
+                "print": "Imprimir etiqueta",
+                "server_print": "Imprimir en el Servidor",
+                "titles": "Etiquetas"
             },
             "page_qr_code": {
                 "page_url": "URL de página"
@@ -85,6 +100,9 @@
             "tree": {
                 "no_locations": "No hay ubicaciones disponibles. Añade nuevas ubicaciones mediante el botón de\n`<`span class=\"link-primary\"`>`Crear`<`/span`>` en la barra de navegación."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Usa las teclas numéricas para seleccionar rápidamente una acción."
         }
     },
     "global": {
@@ -107,6 +125,7 @@
         "locations": "Ubicaciones",
         "maintenance": "Mantenimiento",
         "name": "Nombre",
+        "navigate": "Navegar",
         "password": "Contraseña",
         "read_docs": "Lee la Documentación",
         "save": "Guardar",
@@ -171,6 +190,8 @@
         "next_page": "Siguiente Página",
         "no_results": "No se Encontraron Elementos",
         "notes": "Notas",
+        "only_with_photo": "Solo artículos con foto",
+        "only_without_photo": "Solo artículos sin foto",
         "options": "Opciones",
         "order_by": "Ordenar Por",
         "pages": "Página { page } de { totalPages }",
@@ -232,7 +253,6 @@
         "zh-TW": "Chino (Tradicional)"
     },
     "languages.da-DK": "Danés",
-    "languages.fi.FI": "Finlandés",
     "languages.ro-RO": "Rumano",
     "languages.sk-SK": "Eslovaco",
     "locations": {
@@ -284,6 +304,7 @@
         "locations": "Ubicaciones",
         "maintenance": "Mantenimiento",
         "profile": "Perfil",
+        "scanner": "Escáner",
         "search": "Buscar",
         "tools": "Herramientas"
     },
@@ -315,6 +336,13 @@
         "url": "URL",
         "user_profile": "Perfil de Usuario",
         "user_profile_sub": "Invita a usuarios y gestiona tu cuenta."
+    },
+    "scanner": {
+        "error": "Se ha producido un error mientras se escaneaba",
+        "invalid_url": "URL de código de barras inválido",
+        "no_sources": "No hay fuentes de vídeo disponibles",
+        "select_video_source": "Elige una fuente de vídeo",
+        "unsupported": "La API Media Stream no es compatible"
     },
     "tools": {
         "actions": "Acciones de Inventario",

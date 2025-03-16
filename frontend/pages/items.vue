@@ -35,12 +35,14 @@
     },
   });
 
-  const pageSize = useRouteQuery("pageSize", 21);
+  const pageSize = useRouteQuery("pageSize", 30);
   const query = useRouteQuery("q", "");
   const advanced = useRouteQuery("advanced", false);
   const includeArchived = useRouteQuery("archived", false);
   const fieldSelector = useRouteQuery("fieldSelector", false);
   const negateLabels = useRouteQuery("negateLabels", false);
+  const onlyWithoutPhoto = useRouteQuery("onlyWithoutPhoto", false);
+  const onlyWithPhoto = useRouteQuery("onlyWithPhoto", false);
   const orderBy = useRouteQuery("orderBy", "name");
 
   const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
@@ -177,6 +179,24 @@
     }
   });
 
+  watch(onlyWithoutPhoto, (newV, oldV) => {
+    if (newV && onlyWithPhoto) {
+      onlyWithPhoto.value = false;
+    }
+    if (newV !== oldV) {
+      search();
+    }
+  });
+
+  watch(onlyWithPhoto, (newV, oldV) => {
+    if (newV && onlyWithoutPhoto) {
+      onlyWithoutPhoto.value = false;
+    }
+    if (newV !== oldV) {
+      search();
+    }
+  });
+
   watch(orderBy, (newV, oldV) => {
     if (newV !== oldV) {
       search();
@@ -215,6 +235,8 @@
           pageSize: pageSize.value,
           includeArchived: includeArchived.value ? "true" : "false",
           negateLabels: negateLabels.value ? "true" : "false",
+          onlyWithoutPhoto: onlyWithoutPhoto.value ? "true" : "false",
+          onlyWithPhoto: onlyWithPhoto.value ? "true" : "false",
           orderBy: orderBy.value,
         },
       });
@@ -243,6 +265,8 @@
       locations: locIDs.value,
       labels: labIDs.value,
       negateLabels: negateLabels.value,
+      onlyWithoutPhoto: onlyWithoutPhoto.value,
+      onlyWithPhoto: onlyWithPhoto.value,
       includeArchived: includeArchived.value,
       page: page.value,
       pageSize: pageSize.value,
@@ -294,6 +318,8 @@
         archived: includeArchived.value ? "true" : "false",
         fieldSelector: fieldSelector.value ? "true" : "false",
         negateLabels: negateLabels.value ? "true" : "false",
+        onlyWithoutPhoto: onlyWithoutPhoto.value ? "true" : "false",
+        onlyWithPhoto: onlyWithPhoto.value ? "true" : "false",
         orderBy: orderBy.value,
         pageSize: pageSize.value,
         page: page.value,
@@ -377,19 +403,27 @@
           <label tabindex="0" class="btn btn-xs">{{ $t("items.options") }}</label>
           <div
             tabindex="0"
-            class="dropdown-content mt-1 max-h-72 w-64 -translate-x-24 overflow-auto rounded-md bg-base-100 p-4 shadow"
+            class="dropdown-content mt-1 w-72 -translate-x-24 overflow-auto rounded-md bg-base-100 p-4 shadow"
           >
             <label class="label mr-auto cursor-pointer">
               <input v-model="includeArchived" type="checkbox" class="toggle toggle-primary toggle-sm" />
-              <span class="label-text ml-4"> {{ $t("items.include_archive") }} </span>
+              <span class="label-text ml-4 text-right"> {{ $t("items.include_archive") }} </span>
             </label>
             <label class="label mr-auto cursor-pointer">
               <input v-model="fieldSelector" type="checkbox" class="toggle toggle-primary toggle-sm" />
-              <span class="label-text ml-4"> {{ $t("items.field_selector") }} </span>
+              <span class="label-text ml-4 text-right"> {{ $t("items.field_selector") }} </span>
             </label>
             <label class="label mr-auto cursor-pointer">
               <input v-model="negateLabels" type="checkbox" class="toggle toggle-primary toggle-sm" />
-              <span class="label-text ml-4"> {{ $t("items.negate_labels") }} </span>
+              <span class="label-text ml-4 text-right"> {{ $t("items.negate_labels") }} </span>
+            </label>
+            <label class="label mr-auto cursor-pointer">
+              <input v-model="onlyWithoutPhoto" type="checkbox" class="toggle toggle-primary toggle-sm" />
+              <span class="label-text ml-4 text-right"> {{ $t("items.only_without_photo") }} </span>
+            </label>
+            <label class="label mr-auto cursor-pointer">
+              <input v-model="onlyWithPhoto" type="checkbox" class="toggle toggle-primary toggle-sm" />
+              <span class="label-text ml-4 text-right"> {{ $t("items.only_with_photo") }} </span>
             </label>
             <label class="label mr-auto cursor-pointer">
               <select v-model="orderBy" class="select select-bordered select-sm">
@@ -397,7 +431,7 @@
                 <option value="createdAt">{{ $t("items.created_at") }}</option>
                 <option value="updatedAt">{{ $t("items.updated_at") }}</option>
               </select>
-              <span class="label-text ml-4"> {{ $t("items.order_by") }} </span>
+              <span class="label-text ml-4 text-right"> {{ $t("items.order_by") }} </span>
             </label>
             <hr class="my-2" />
             <BaseButton class="btn-sm btn-block" @click="reset"> {{ $t("items.reset_search") }} </BaseButton>
@@ -473,7 +507,7 @@
         <MdiSelectSearch class="size-10" />
         <p>{{ $t("items.no_results") }}</p>
       </div>
-      <div v-else ref="cardgrid" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+      <div v-else ref="cardgrid" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
         <ItemCard v-for="item in items" :key="item.id" :item="item" :location-flat-tree="locationFlatTree" />
       </div>
       <div v-if="items.length > 0 && (hasNext || hasPrev)" class="mt-10 flex flex-col items-center gap-2">

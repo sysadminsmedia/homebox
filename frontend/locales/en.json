@@ -46,6 +46,14 @@
                 "years": "years",
                 "yesterday": "yesterday"
             },
+            "label_maker": {
+                "browser_print": "Print from Browser",
+                "confirm_description": "Are you sure you want to print this label?",
+                "download": "Download Label",
+                "print": "Print label",
+                "server_print": "Print on Server",
+                "titles": "Labels"
+            },
             "page_qr_code": {
                 "page_url": "Page URL"
             },
@@ -182,6 +190,8 @@
         "next_page": "Next Page",
         "no_results": "No Items Found",
         "notes": "Notes",
+        "only_with_photo": "Only items with photo",
+        "only_without_photo": "Only items without photo",
         "options": "Options",
         "order_by": "Order By",
         "pages": "Page { page } of { totalPages }",
@@ -221,20 +231,30 @@
     },
     "languages": {
         "ca": "Catalan",
+        "cs-CZ": "Czech",
+        "da-DK": "Danish",
         "de": "German",
         "en": "English",
         "es": "Spanish",
+        "fi-FI": "Finnish",
         "fr": "French",
         "hu": "Hungarian",
+        "id-ID": "Indonesian",
         "it": "Italian",
         "ja-JP": "Japanese",
+        "ko-KR": "Korean",
+        "nb-NO": "Norwegian Bokmål",
         "nl": "Dutch",
         "pl": "Polish",
         "pt-BR": "Portuguese (Brazil)",
         "pt-PT": "Portuguese (Portugal)",
+        "ro-RO": "Romanian",
         "ru": "Russian",
+        "sk-SK": "Slovak",
         "sl": "Slovenian",
         "sv": "Swedish",
+        "ta-IN": "Tamil",
+        "th-TH": "Thai",
         "tr": "Turkish",
         "uk-UA": "Ukrainian",
         "zh-CN": "Chinese (Simplified)",
@@ -242,10 +262,6 @@
         "zh-MO": "Chinese (Macau)",
         "zh-TW": "Chinese (Traditional)"
     },
-    "languages.da-DK": "Danish",
-    "languages.fi.FI": "Finnish",
-    "languages.ro-RO": "Romanian",
-    "languages.sk-SK": "Slovak",
     "locations": {
         "child_locations": "Child Locations",
         "collapse_tree": "Collapse Tree",
@@ -295,6 +311,7 @@
         "locations": "Locations",
         "maintenance": "Maintenance",
         "profile": "Profile",
+        "scanner": "Scanner",
         "search": "Search",
         "tools": "Tools"
     },
@@ -326,6 +343,13 @@
         "url": "URL",
         "user_profile": "User Profile",
         "user_profile_sub": "Invite users, and manage your account."
+    },
+    "scanner": {
+        "error": "An error occurred while scanning",
+        "invalid_url": "Invalid barcode URL",
+        "no_sources": "No video sources available",
+        "select_video_source": "Pick a video source",
+        "unsupported": "Media Stream API is not supported"
     },
     "tools": {
         "actions": "Inventory Actions",

@@ -409,6 +409,7 @@ export interface APISummary {
   build: Build;
   demo: boolean;
   health: boolean;
+  labelPrinting: boolean;
   latest: Latest;
   message: string;
   title: string;
@@ -470,4 +471,10 @@ export interface Wrapped {
 export interface ValidateErrorResponse {
   error: string;
   fields: string;
+}
+
+export interface PhotoPreview {
+  photoName: string;
+  file: File;
+  fileBase64: string,
 }

@@ -6,9 +6,22 @@
                 "description": "Importera en CSV-fil som innehåller dina föremål, etiketter och platser. Se dokumentationen för mer information om formatet som krävs.",
                 "title": "Importera CSV-fil",
                 "upload": "Ladda upp"
+            },
+            "outdated": {
+                "current_version": "Nuvarande version",
+                "dismiss": "Avvisa",
+                "latest_version": "Senaste version",
+                "new_version_available": "Ny Version Tillgänglig",
+                "new_version_available_link": "Klicka här för att visa versionsanteckningarna"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "dokumentation",
+                "failed_to_copy": "Misslyckades med att kopiera text till urklipp",
+                "https_required": "eftersom https krävs",
+                "learn_more": "Läs mer i vår"
+            },
             "date_time": {
                 "ago": "{0} sedan",
                 "days": "dagar",
@@ -226,7 +239,6 @@
         "zh-TW": "Kinesiska (traditionell)"
     },
     "languages.da-DK": "Danska",
-    "languages.fi.FI": "Finska",
     "languages.ro-RO": "Rumänska",
     "languages.sk-SK": "Slovakiska",
     "locations": {

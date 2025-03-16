@@ -30,18 +30,20 @@ type (
 	}
 
 	ItemQuery struct {
-		Page            int
-		PageSize        int
-		Search          string       `json:"search"`
-		AssetID         AssetID      `json:"assetId"`
-		LocationIDs     []uuid.UUID  `json:"locationIds"`
-		LabelIDs        []uuid.UUID  `json:"labelIds"`
-		NegateLabels    bool         `json:"negateLabels"`
-		ParentItemIDs   []uuid.UUID  `json:"parentIds"`
-		SortBy          string       `json:"sortBy"`
-		IncludeArchived bool         `json:"includeArchived"`
-		Fields          []FieldQuery `json:"fields"`
-		OrderBy         string       `json:"orderBy"`
+		Page             int
+		PageSize         int
+		Search           string       `json:"search"`
+		AssetID          AssetID      `json:"assetId"`
+		LocationIDs      []uuid.UUID  `json:"locationIds"`
+		LabelIDs         []uuid.UUID  `json:"labelIds"`
+		NegateLabels     bool         `json:"negateLabels"`
+		OnlyWithoutPhoto bool         `json:"onlyWithoutPhoto"`
+		OnlyWithPhoto    bool         `json:"onlyWithPhoto"`
+		ParentItemIDs    []uuid.UUID  `json:"parentIds"`
+		SortBy           string       `json:"sortBy"`
+		IncludeArchived  bool         `json:"includeArchived"`
+		Fields           []FieldQuery `json:"fields"`
+		OrderBy          string       `json:"orderBy"`
 	}
 
 	ItemField struct {
@@ -383,6 +385,27 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 			} else {
 				andPredicates = append(andPredicates, item.And(labelPredicates...))
 			}
+		}
+
+		if q.OnlyWithoutPhoto {
+			andPredicates = append(andPredicates, item.Not(
+				item.HasAttachmentsWith(
+					attachment.And(
+						attachment.Primary(true),
+						attachment.TypeEQ(attachment.TypePhoto),
+					),
+				)),
+			)
+		}
+
+		if q.OnlyWithPhoto {
+			andPredicates = append(andPredicates, item.HasAttachmentsWith(
+				attachment.And(
+					attachment.Primary(true),
+					attachment.TypeEQ(attachment.TypePhoto),
+				),
+			),
+			)
 		}
 
 		if len(q.LocationIDs) > 0 {

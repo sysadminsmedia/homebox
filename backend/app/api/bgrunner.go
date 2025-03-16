@@ -24,7 +24,7 @@ func NewTask(name string, interval time.Duration, fn func(context.Context)) *Bac
 
 func (tsk *BackgroundTask) Start(ctx context.Context) error {
 	tsk.Fn(ctx)
-	
+
 	timer := time.NewTimer(tsk.Interval)
 	for {
 		select {

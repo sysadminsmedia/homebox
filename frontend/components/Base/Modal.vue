@@ -6,7 +6,7 @@
       :class="{ 'modal-bottom': !props.modalTop }"
       :modal-top="props.modalTop"
     >
-      <div ref="modalBox" class="modal-box relative overflow-visible">
+      <div ref="modalBox" class="modal-box relative overflow-x-hidden overflow-y-scroll">
         <button
           v-if="props.showCloseButton"
           :for="modalId"
@@ -91,11 +91,11 @@
 
 <style lang="css" scoped>
   @media (max-width: 640px) {
-    .modal[modal-top=true] {
+    .modal[modal-top="true"] {
       align-items: start;
     }
 
-    .modal[modal-top=true] :where(.modal-box) {
+    .modal[modal-top="true"] :where(.modal-box) {
       max-width: none;
       --tw-translate-y: 2.5rem /* 40px */;
       --tw-scale-x: 1;

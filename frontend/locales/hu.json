@@ -46,6 +46,14 @@
                 "years": "évek",
                 "yesterday": "tegnap"
             },
+            "label_maker": {
+                "browser_print": "Nyomtatás böngészőből",
+                "confirm_description": "Biztosan ki szeretnéd nyomtatni ezt a címkét?",
+                "download": "Címke letöltése",
+                "print": "Címke nyomtatása",
+                "server_print": "Nyomtatás a szerveren",
+                "titles": "Címkék"
+            },
             "page_qr_code": {
                 "page_url": "Oldal URL-je"
             },
@@ -182,6 +190,8 @@
         "next_page": "Következő oldal",
         "no_results": "Egy elem sem található",
         "notes": "Megjegyzések",
+        "only_with_photo": "Csak fényképes tételek",
+        "only_without_photo": "Csak fénykép nélküli tételek",
         "options": "Opciók",
         "order_by": "Rendezés",
         "pages": "{page}/{totalPages} oldal",
@@ -221,13 +231,18 @@
     },
     "languages": {
         "ca": "Katalán",
+        "cs-CZ": "Cseh",
         "de": "Német",
         "en": "Angol",
         "es": "Spanyol",
+        "fi-FI": "Finn",
         "fr": "Francia",
         "hu": "Magyar",
+        "id-ID": "Indonéz",
         "it": "Olasz",
         "ja-JP": "Japán",
+        "ko-KR": "Koreai",
+        "nb-NO": "Norvég (bokmål)",
         "nl": "Holland",
         "pl": "Lengyel",
         "pt-BR": "Portugál (brazíliai)",
@@ -235,6 +250,8 @@
         "ru": "Orosz",
         "sl": "Szlovén",
         "sv": "Svéd",
+        "ta-IN": "Tamil",
+        "th-TH": "Thai",
         "tr": "Török",
         "uk-UA": "Ukrán",
         "zh-CN": "Kínai (egyszerűsített)",
@@ -243,7 +260,6 @@
         "zh-TW": "Kínai (hagyományos)"
     },
     "languages.da-DK": "Dán",
-    "languages.fi.FI": "Finn",
     "languages.ro-RO": "Román",
     "languages.sk-SK": "Szlovák",
     "locations": {
@@ -295,6 +311,7 @@
         "locations": "Helyek",
         "maintenance": "Karbantartás",
         "profile": "Profil",
+        "scanner": "Szkenner",
         "search": "Keresés",
         "tools": "Eszközök"
     },
@@ -326,6 +343,13 @@
         "url": "URL",
         "user_profile": "Felhasználói profil",
         "user_profile_sub": "Hívj meg felhasználókat, és kezeld a fiókodat."
+    },
+    "scanner": {
+        "error": "Hiba történt a szkennelés közben",
+        "invalid_url": "Érvénytelen vonalkód URL",
+        "no_sources": "Nincs elérhető videóforrás",
+        "select_video_source": "Videóforrás kiválasztása",
+        "unsupported": "A Media Stream API nem támogatott"
     },
     "tools": {
         "actions": "Készletműveletek",

@@ -9,9 +9,10 @@ on:
       - 'backend/**'
       - 'frontend/**'
       - 'Dockerfile'
-      - 'Dockerfile.rootless'
       - '.dockerignore'
-      - '.github/workflows/**'
+      - '.github/workflows/docker-publish-rootless.yaml'
+    ignore:
+      - 'docs/**'
     tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ "main" ]
@@ -19,9 +20,10 @@ on:
       - 'backend/**'
       - 'frontend/**'
       - 'Dockerfile'
-      - 'Dockerfile.rootless'
       - '.dockerignore'
-      - '.github/workflows/**'
+      - '.github/workflows/docker-publish-rootless.yaml'
+    ignore:
+      - 'docs/**'
 
 permissions:
   contents: read        # Access to repository contents
@@ -112,16 +114,15 @@ jobs:
           file: ./Dockerfile.rootless # Explicitly specify the Dockerfile
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,"name=${{ env.DOCKERNAMES }}",push-by-digest=true,name-canonical=true,push=true
+          outputs: type=image,"name=${{ env.DOCKERNAMES }}",push-by-digest=true,name-canonical=true,push=${{ github.event_name != 'pull_request' }}
           cache-from: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR }}-${{ env.BRANCH }}-rootless
-          cache-to: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR }}-${{ env.BRANCH }}-rootless,mode=max
+          cache-to: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR }}-${{ env.BRANCH }}-rootless,mode=max,ignore-error=true
           build-args: |
             VERSION=${{ github.ref_name }}
             COMMIT=${{ github.sha }}
           provenance: true
           sbom: true
           annotations: ${{ steps.meta.outputs.annotations }}
-          push: ${{ github.event_name != 'pull_request' }}
           
       - name: Export digest
         run: |

@@ -17,7 +17,42 @@
         },
         "global": {
             "copy_text": {
-                "documentation": "文件"
+                "documentation": "文件",
+                "failed_to_copy": "未能成功拷贝",
+                "https_required": "因为HTTPS协议是必要的",
+                "learn_more": "了解我们"
+            },
+            "date_time": {
+                "ago": "以前",
+                "days": "日",
+                "hour": "小时",
+                "hours": "小时",
+                "in": "在",
+                "just-now": "刚刚",
+                "last-month": "上个月",
+                "last-week": "上周",
+                "last-year": "去年",
+                "minute": "分钟",
+                "minutes": "分钟",
+                "months": "月",
+                "next-month": "下个月",
+                "next-week": "下周",
+                "next-year": "明年",
+                "second": "秒",
+                "seconds": "秒",
+                "tomorrow": "明天",
+                "week": "周",
+                "weeks": "周",
+                "years": "年",
+                "yesterday": "昨天"
+            },
+            "label_maker": {
+                "browser_print": "从浏览器打印",
+                "confirm_description": "请确认您是否要打印该标签？",
+                "download": "下载标签",
+                "print": "打印标签",
+                "server_print": "在服务器上打印",
+                "titles": "标签"
             },
             "page_qr_code": {
                 "page_url": "頁面網址"
@@ -28,6 +63,8 @@
         },
         "item": {
             "create_modal": {
+                "item_description": "项目说明",
+                "item_name": "项目名称",
                 "photo_button": "相片 📷",
                 "title": "新增項目"
             },
@@ -37,26 +74,45 @@
                     "items": "項目",
                     "no_items": "沒有可顯示的項目",
                     "table": "表格"
+                },
+                "table": {
+                    "page": "页面",
+                    "rows_per_page": "每页行数"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_description": "标签详情",
+                "label_name": "标签名",
                 "title": "新增標籤"
             }
         },
         "location": {
             "create_modal": {
+                "location_description": "位置描述",
+                "location_name": "位置描述",
                 "title": "新增地點"
+            },
+            "selector": {
+                "parent_location": "父页面"
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "用数字键以快速选择操作。"
         }
     },
     "global": {
+        "add": "添加",
         "build": "建立{ build }",
         "confirm": "確認",
         "create": "新增",
         "create_and_add": "創建並添加另一個",
         "created": "已建立",
+        "delete": "删除",
+        "details": "详情",
+        "duplicate": "复制",
+        "edit": "编辑",
         "email": "電子信箱",
         "follow_dev": "關注開發者",
         "github": "GitHub項目",
@@ -64,14 +120,28 @@
         "join_discord": "加入Discord",
         "labels": "標籤",
         "locations": "地點",
+        "maintenance": "维护",
         "name": "名字",
+        "navigate": "导航",
         "password": "密碼",
         "read_docs": "閱讀文件",
+        "save": "保存",
         "search": "搜尋",
         "sign_out": "登出",
         "submit": "提交",
+        "update": "更新",
+        "value": "值",
         "version": "版本:{ version }",
         "welcome": "歡迎，{ username }"
+    },
+    "home": {
+        "labels": "标签",
+        "quick_statistics": "快速统计",
+        "recently_added": "最近添加",
+        "storage_locations": "存储地址",
+        "total_items": "目标数量",
+        "total_labels": "标签总数",
+        "total_locations": "位置总数"
     },
     "index": {
         "disabled_registration": "已禁用註冊",
@@ -87,23 +157,54 @@
     },
     "items": {
         "add": "添加",
+        "advanced": "高级",
+        "archived": "已封存",
+        "asset_id": "组件 ID",
+        "attachment": "附件",
+        "attachments": "附件",
+        "changes_persisted_immediately": "对附件的更改会被立刻保存",
         "created_at": "創建於",
         "custom_fields": "自訂欄位",
+        "description": "描述",
+        "details": "详情",
+        "drag_and_drop": "拖拽或者点击以选择文件",
+        "edit_details": "编辑详情",
         "field_selector": "欄位選擇器",
         "field_value": "欄位值",
         "first": "第一項",
         "include_archive": "包括存檔項目",
+        "insured": "确保的",
         "last": "最後一項",
+        "location": "地址",
+        "manual": "手动",
+        "manuals": "手册",
+        "manufacturer": "制造商",
+        "model_number": "模型序号",
+        "name": "名字",
         "negate_labels": "取消選定的標籤",
         "next_page": "下一頁",
         "no_results": "沒有找到項目",
+        "notes": "笔记",
+        "only_with_photo": "仅限附带图片的目标",
+        "only_without_photo": "仅限无图片的目标",
         "options": "選項",
         "order_by": "排序",
         "pages": "第{ page } 頁(共{ totalPages })",
+        "parent_item": "父项目",
+        "photo": "照片",
+        "photos": "图片",
         "prev_page": "上一頁",
+        "purchase_date": "购买日期",
+        "purchase_details": "购买详情",
+        "purchase_price": "购买价格",
+        "purchased_from": "买自",
+        "quantity": "数量",
         "query_id": "查詢資產ID號碼:{ id }",
+        "receipt": "收据",
+        "receipts": "收据",
         "reset_search": "重置搜尋",
         "results": "{ total }結果",
+        "serial_number": "序列号",
         "tip_1": "位置和標籤過濾器使用“OR”運算。如果選擇了多個，則一次配對\n只會使用一個。",
         "tip_2": "以「#」為前綴的搜尋將查詢資產 ID（例如「#000-001」）",
         "tip_3": "字段過濾器使用“OR”運算。如果選擇了多個，則一次配對只需要選擇\n一個。",

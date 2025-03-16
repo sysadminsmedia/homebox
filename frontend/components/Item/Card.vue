@@ -8,10 +8,10 @@
         :src="imageUrl"
         alt=""
       />
-      <div class="absolute bottom-1 left-1 text-wrap">
+      <div class="absolute inset-x-1 bottom-1 text-wrap">
         <NuxtLink
           v-if="item.location"
-          class="badge rounded-md text-sm shadow-md hover:link"
+          class="badge h-auto rounded-md text-sm shadow-md hover:link"
           :to="`/location/${item.location.id}`"
         >
           {{ locationString }}
@@ -30,7 +30,7 @@
         </div>
         <div class="grow"></div>
         <div class="tooltip" data-tip="Quantity">
-          <span class="badge badge-primary badge-sm size-5 text-xs">
+          <span class="badge badge-primary badge-sm h-5 text-xs">
             {{ item.quantity }}
           </span>
         </div>

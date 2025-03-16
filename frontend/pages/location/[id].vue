@@ -27,6 +27,10 @@
       parent.value = locations.value.find(l => l.id === data.parent.id);
     }
 
+    if (parent.value === undefined) {
+      parent.value = data.parent;
+    }
+
     return data;
   });
 
@@ -175,6 +179,7 @@
                   {{ $t("global.edit") }}
                 </BaseButton>
               </div>
+              <LabelMaker :id="location.id" type="location" />
               <BaseButton class="btn btn-sm" @click="confirmDelete()">
                 <MdiDelete name="mdi-delete" class="mr-2" />
                 {{ $t("global.delete") }}

@@ -46,6 +46,14 @@
                 "years": "rokov",
                 "yesterday": "včera"
             },
+            "label_maker": {
+                "browser_print": "Tlač z prehliadača",
+                "confirm_description": "Naozaj chcete vytlačiť tento štítok?",
+                "download": "Stiahnuť štítok",
+                "print": "Vytlačte štítok",
+                "server_print": "Tlač na serveri",
+                "titles": "Štítky"
+            },
             "page_qr_code": {
                 "page_url": "URL stránka"
             },
@@ -92,6 +100,9 @@
             "tree": {
                 "no_locations": "Nie sú k dispozícii žiadne miesta. Pridajte nové miesta cez\n `<`span class=\"link-primary\"`>`Vytvoriť`<`/span`>` na navigačnom paneli."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Pomocou číselných tlačidiel rýchlo vyberte akciu."
         }
     },
     "global": {
@@ -114,6 +125,7 @@
         "locations": "Miesta",
         "maintenance": "Údržba",
         "name": "Meno",
+        "navigate": "Navigovať",
         "password": "heslo",
         "read_docs": "Prečítajte si Dokumenty",
         "save": "Uložiť",
@@ -178,6 +190,8 @@
         "next_page": "Ďalšia strana",
         "no_results": "Nenašli sa žiadne položky",
         "notes": "Poznámky",
+        "only_with_photo": "Iba položky s fotografiou",
+        "only_without_photo": "Iba položky bez fotografie",
         "options": "Možnosti",
         "order_by": "Objednať podľa",
         "pages": "Strana { page } z { totalPages }",
@@ -217,13 +231,18 @@
     },
     "languages": {
         "ca": "Katalánsky",
+        "cs-CZ": "Čeština",
         "de": "Nemecky",
         "en": "Anglicky",
         "es": "Španielsky",
+        "fi-FI": "Fínština",
         "fr": "Francúzsky",
         "hu": "Maďarsky",
+        "id-ID": "Indonézsky",
         "it": "Taliančina",
         "ja-JP": "Japonsky",
+        "ko-KR": "Korejsky",
+        "nb-NO": "Nórsky",
         "nl": "Holandsky",
         "pl": "Poľsky",
         "pt-BR": "Portugalsky (Brazília)",
@@ -231,6 +250,8 @@
         "ru": "Ruština",
         "sl": "Slovinsky",
         "sv": "Švédčina",
+        "ta-IN": "Tamilčina",
+        "th-TH": "Thaičina",
         "tr": "Turečtina",
         "uk-UA": "Ukrajinsky",
         "zh-CN": "Čínština (zjednodušená)",
@@ -239,7 +260,6 @@
         "zh-TW": "Číština (tradičná)"
     },
     "languages.da-DK": "Dánsko",
-    "languages.fi.FI": "Finsko",
     "languages.ro-RO": "Rumunsko",
     "languages.sk-SK": "Slovenčina",
     "locations": {
@@ -291,6 +311,7 @@
         "locations": "Miesta",
         "maintenance": "Údržba",
         "profile": "Profil",
+        "scanner": "Skener",
         "search": "Hľadať",
         "tools": "Nástroje"
     },
@@ -322,6 +343,13 @@
         "url": "URL",
         "user_profile": "Profil používateľa",
         "user_profile_sub": "Pozvite používateľov a spravujte svoj účet."
+    },
+    "scanner": {
+        "error": "Počas skenovania sa vyskytla chyba",
+        "invalid_url": "Neplatná adresa URL čiarového kódu",
+        "no_sources": "Nie sú k dispozícii žiadne zdroje videa",
+        "select_video_source": "Vyberte zdroj videa",
+        "unsupported": "Media Stream API nie je podporované"
     },
     "tools": {
         "actions": "Akcie inventára",
