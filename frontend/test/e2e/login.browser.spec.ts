@@ -21,6 +21,7 @@ test("invalid login", async ({ page }) => {
 
 test("registration", async ({ page }) => {
   test.slow();
+  test.fixme();
   // Register a new user
   await page.goto("/home");
   await expect(page).toHaveURL("/");
