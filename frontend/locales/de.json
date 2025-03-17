@@ -52,7 +52,7 @@
                 "download": "Etikett herunterladen",
                 "print": "Etikett drucken",
                 "server_print": "Auf Server drucken",
-                "titles": "Labels"
+                "titles": "Etiketten"
             },
             "page_qr_code": {
                 "page_url": "Seiten-URL"
@@ -121,7 +121,7 @@
         "github": "GitHub-Projekt",
         "items": "Gegenstände",
         "join_discord": "Discord beitreten",
-        "labels": "Kennzeichnung",
+        "labels": "Labels",
         "locations": "Lagerorte",
         "maintenance": "Wartung",
         "name": "Name",
@@ -231,13 +231,18 @@
     },
     "languages": {
         "ca": "Katalanisch",
+        "cs-CZ": "Tschechisch",
         "de": "Deutsch",
         "en": "Englisch",
         "es": "Spanisch",
+        "fi-FI": "Finnisch",
         "fr": "Französisch",
         "hu": "Ungarisch",
+        "id-ID": "Indonesisch",
         "it": "Italienisch",
         "ja-JP": "Japanisch",
+        "ko-KR": "Koreanisch",
+        "nb-NO": "Norwegisch",
         "nl": "Niederländisch",
         "pl": "Polnisch",
         "pt-BR": "Portugiesisch (Brasilien)",
@@ -245,6 +250,7 @@
         "ru": "Russisch",
         "sl": "Slowenisch",
         "sv": "Schwedisch",
+        "th-TH": "Thailändisch",
         "tr": "Türkisch",
         "uk-UA": "Ukrainisch",
         "zh-CN": "Chinesisch (einfach)",
