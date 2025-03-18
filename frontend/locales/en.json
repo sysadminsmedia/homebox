@@ -350,7 +350,7 @@
         "invalid_url": "Invalid barcode URL",
         "no_sources": "No video sources available",
         "select_video_source": "Pick a video source",
-        "unsupported": "Media Stream API is not supported"
+        "unsupported": "Media Stream API is not supported without HTTPS"
     },
     "tools": {
         "actions": "Inventory Actions",
