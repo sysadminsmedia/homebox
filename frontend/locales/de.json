@@ -350,7 +350,7 @@
         "invalid_url": "Ungültige Barcode-URL",
         "no_sources": "Keine Videoquellen verfügbar",
         "select_video_source": "Wählen Sie eine Videoquelle",
-        "unsupported": "Media Stream API wird nicht unterstützt"
+        "unsupported": "Media Stream API wird nicht unterstützt ohne HTTPS/SSL"
     },
     "tools": {
         "actions": "Inventar-Aktionen",
