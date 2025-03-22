@@ -55,6 +55,6 @@ document.head.appendChild(elementStyle);
     layout="responsive"
     hideSchemas="true"
     :data-theme="theme"
-    :tryItBaseUrl="BaseUrl"
+    :tryItBaseUrl="BaseURL"
   />
 </client-only>
