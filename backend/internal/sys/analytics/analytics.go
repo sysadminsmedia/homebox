@@ -1,3 +1,4 @@
+// Package analytics provides analytics function that sends data to a remote server.
 package analytics
 
 import (
