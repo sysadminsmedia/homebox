@@ -6,9 +6,22 @@
                 "description": "Importera en CSV-fil som innehåller dina föremål, etiketter och platser. Se dokumentationen för mer information om formatet som krävs.",
                 "title": "Importera CSV-fil",
                 "upload": "Ladda upp"
+            },
+            "outdated": {
+                "current_version": "Nuvarande version",
+                "dismiss": "Avvisa",
+                "latest_version": "Senaste version",
+                "new_version_available": "Ny Version Tillgänglig",
+                "new_version_available_link": "Klicka här för att visa versionsanteckningarna"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "dokumentation",
+                "failed_to_copy": "Misslyckades med att kopiera text till urklipp",
+                "https_required": "eftersom https krävs",
+                "learn_more": "Läs mer i vår"
+            },
             "date_time": {
                 "ago": "{0} sedan",
                 "days": "dagar",
@@ -138,6 +151,7 @@
         "add": "Lägg till",
         "advanced": "Avancerat",
         "archived": "Arkiverad",
+        "asset_id": "Tillgångs-ID",
         "attachment": "Bilaga",
         "attachments": "Bilagor",
         "changes_persisted_immediately": "Ändringar av bilagor sparas omedelbart",
@@ -183,6 +197,7 @@
         "results": "{ total } Resultat",
         "serial_number": "Serienummer",
         "show_advanced_view_options": "Visa avancerade vyalternativ",
+        "sold_at": "Såld den",
         "sold_details": "Försäljningsdetaljer",
         "sold_price": "Försäljningspris",
         "sold_to": "Såld till",
@@ -223,7 +238,12 @@
         "zh-MO": "Kinesiska (Macao)",
         "zh-TW": "Kinesiska (traditionell)"
     },
+    "languages.da-DK": "Danska",
+    "languages.ro-RO": "Rumänska",
+    "languages.sk-SK": "Slovakiska",
     "locations": {
+        "child_locations": "Underordnade platser",
+        "collapse_tree": "Dra ihop träd",
         "no_results": "Inga platser hittades",
         "update_location": "Uppdatera plats"
     },
@@ -247,14 +267,23 @@
             "delete_confirmation": "Är du säker på att du vill radera denna post?",
             "edit_action": "Uppdatera",
             "edit_title": "Redigera",
+            "entry_name": "Startnamn",
             "new_action": "Skapa",
+            "new_title": "Skapa nytt ärende",
             "notes": "Anteckningar",
             "scheduled_date": "Schemalagt datum"
         },
         "monthly_average": "Månatligt medelvärde",
-        "total_cost": "Total kostnad"
+        "toast": {
+            "failed_to_create": "Det gick inte att skapa posten",
+            "failed_to_delete": "Det gick inte att ta bort posten",
+            "failed_to_update": "Det gick inte att uppdatera posten"
+        },
+        "total_cost": "Total kostnad",
+        "total_entries": "Totalt antal inlämningar"
     },
     "menu": {
+        "create_item": "Artikel / Tillgång",
         "create_label": "Etikett",
         "create_location": "Plats",
         "home": "Hem",
@@ -271,6 +300,7 @@
         "current_password": "Nuvarande lösenord",
         "delete_account": "Radera konto",
         "delete_account_sub": "Ta bort ditt konto och alla tillhörande data. Detta kan inte ångras.",
+        "display_header": "{ currentValue, select, true {Dölj sidhuvud} false {Visa sidhuvud} other {Inte träff}}",
         "enabled": "Aktiverad",
         "example": "Exempel",
         "gen_invite": "Skapa inbjudningslänk",
@@ -293,12 +323,41 @@
         "user_profile_sub": "Bjud in användare och hantera ditt konto."
     },
     "tools": {
+        "actions": "Lageråtgärder",
+        "actions_set": {
+            "ensure_ids": "Säkerställ tillgångs-ID",
+            "ensure_ids_button": "Säkerställ tillgångs-ID",
+            "ensure_ids_sub": "Säkerställer att alla saker i din inventering har giltiga asset_id fält. Detta är gjort genom att hitta högsta nuvarande asset_id fält i databasen och tilldela nästa värde till varje sak som inte har ett asset_id värde. Detta görs i ordning av created_at fältet.",
+            "ensure_import_refs": "Se till att importera referenser",
+            "ensure_import_refs_button": "Se till att importera referenser",
+            "ensure_import_refs_sub": "Säkerställer att alla saker i din inventering har ett korrekt import_ref fält. Detta görs genom att slumpmässigt skapa en 8 tecken sträng för varje sak som ej har import_ref fältet tilldelat.",
+            "set_primary_photo": "Ställ in primärt foto",
+            "set_primary_photo_button": "Ställ in primärt foto",
+            "set_primary_photo_sub": "I version v0.10.0 av Homebox lades det primära bildfältet till i bilagor av typen foto. Denna åtgärd kommer att sätta primära bild fältet till den första bilden i bifigade filer listan i databasen, om inte det redan är åtgärdat. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Se GitHub PR #576'</a>'",
+            "zero_datetimes": "Noll objekt datumtider",
+            "zero_datetimes_button": "Noll objekt datumtider",
+            "zero_datetimes_sub": "Återstället tidsvärdet för alla datumtidsfält i ditt lager till början av datumet. Detta är för att fixa en bugg som upptäcktes tidigare i utvecklingen på sidan som orsakade tidsvärden att bli sparade med tid, vilket orsakade problem med datum fält att visa korrekta värden. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Se Github Issue #236 för mer information.'</a>'"
+        },
         "actions_sub": "Utför åtgärder på dina objekt i bulk. Dessa är oåterkalleliga. '<b>'Var försiktig.'</b>'",
         "import_export": "Import/Export",
+        "import_export_set": {
+            "export": "Exportera varulager",
+            "export_button": "Exportera varulager",
+            "export_sub": "Exporterar standard CSV format för Homebox. Detta kommer exportera alla saker i ditt lager.",
+            "import": "Importera lager",
+            "import_button": "Importera Lager",
+            "import_sub": "Importerar standard CSV format för Homebox. Utan en '<code>'HB.import_ref'</code>' kolumn, detta kommer '<b>'inte'</b>' att skriva över existerande saker i ditt lager, endast lägga till nya. Rader med en '<code>'HB.import_ref'</code>' kolumn blir sammanfogade i existerande saker med samma import_ref, om det existerar."
+        },
+        "import_export_sub": "Importera och exportera ditt lager till och från en CSV-fil. Detta är användbart för att migrera din inventering till en ny instans av Homebox.",
         "reports": "Rapporter",
         "reports_set": {
+            "asset_labels": "Tillgångs-ID-etiketter",
+            "asset_labels_button": "Etikett Generator",
+            "asset_labels_sub": "Genererar en utskrivbar PDF med etiketter för en rad tillgångs-ID. Dessa är inte specifik till ditt lager så du kan skriva ut dessa i förväg och lägga till dom till ditt lager när du får dom.",
             "bill_of_materials": "Materialförteckning",
-            "bill_of_materials_button": "Skapa materialförteckning"
-        }
+            "bill_of_materials_button": "Skapa materialförteckning",
+            "bill_of_materials_sub": "Genererar en CSV-fil (kommaseparerade värden) som kan importeras till ett kalkylprogram. Detta är en summering av ditt lager med grund saker och pris information."
+        },
+        "reports_sub": "Generera olika rapporter för ditt lager."
     }
 }

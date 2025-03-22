@@ -5,19 +5,64 @@
                 "change_warning": "O comportamento de importações com import_refs existentes foi alterado. Se houver um import_ref presente no arquivo CSV, o\nitem será atualizado com os valores presentes no arquivo CSV.",
                 "description": "Importe um arquivo CSV contendo seus items, etiquetas e locais. Consulte a documentação para mais informações\nsobre a formatação aceita.",
                 "title": "Importar arquivo CSV",
-                "upload": "Enviar"
+                "upload": "Importar"
+            },
+            "outdated": {
+                "current_version": "Versão Atual",
+                "dismiss": "Dispensar",
+                "latest_version": "Última Versão",
+                "new_version_available": "Nova Versão Disponível",
+                "new_version_available_link": "Clique aqui para ver as novidades"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "documentação",
+                "failed_to_copy": "Falha ao copiar texto para a área de transferência",
+                "https_required": "porque HTTPS é necessário",
+                "learn_more": "Saiba mais em nosso"
+            },
+            "date_time": {
+                "ago": "{0} atrás",
+                "days": "dias",
+                "hour": "hora",
+                "hours": "horas",
+                "in": "em {0}",
+                "just-now": "neste momento",
+                "last-month": "último mês",
+                "last-week": "última semana",
+                "last-year": "último ano",
+                "minute": "minuto",
+                "minutes": "minutos",
+                "months": "meses",
+                "next-month": "próximo mês",
+                "next-week": "próxima semana",
+                "next-year": "próximo ano",
+                "second": "segundo",
+                "seconds": "segundos",
+                "tomorrow": "amanhã",
+                "week": "semana",
+                "weeks": "semanas",
+                "years": "anos",
+                "yesterday": "ontem"
+            },
+            "label_maker": {
+                "confirm_description": "Tem certeza de que deseja imprimir esta etiqueta?",
+                "download": "Baixar Rótulo",
+                "print": "Imprimir etiqueta",
+                "titles": "Etiquetas"
+            },
             "page_qr_code": {
                 "page_url": "URL da página"
             },
             "password_score": {
-                "password_strength": "Segurança da Senha"
+                "password_strength": "Força da Senha"
             }
         },
         "item": {
             "create_modal": {
+                "item_description": "Descrição do Item",
+                "item_name": "Nome do Item",
                 "photo_button": "Foto📷",
                 "title": "Criar Item"
             },
@@ -27,29 +72,48 @@
                     "items": "Items",
                     "no_items": "Nenhum item para exibir",
                     "table": "Tabela"
+                },
+                "table": {
+                    "page": "Página",
+                    "rows_per_page": "Linhas por página"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_description": "Descrição da Etiqueta",
+                "label_name": "Nome da Etiqueta",
                 "title": "Criar etiqueta"
             }
         },
         "location": {
             "create_modal": {
+                "location_description": "Descrição do Local",
+                "location_name": "Nome do Local",
                 "title": "Criar Local"
+            },
+            "selector": {
+                "parent_location": "Local Pai"
             },
             "tree": {
                 "no_locations": "Não há locais disponíveis. Adicione novos locais\n através do botão \"Criar\" na barra de navegação."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Use as teclas numéricas para selecionar uma ação rapidamente."
         }
     },
     "global": {
+        "add": "Adicionar",
         "build": "Compilação: { build }",
         "confirm": "Confirmar",
         "create": "Criar",
         "create_and_add": "Criar e Adicionar Outro",
         "created": "Criado",
+        "delete": "Excluir",
+        "details": "Detalhes",
+        "duplicate": "Duplicar",
+        "edit": "Editar",
         "email": "Email",
         "follow_dev": "Seguir o desenvolvedor",
         "github": "Projeto GitHub",
@@ -57,14 +121,29 @@
         "join_discord": "Junte-se ao Discord",
         "labels": "Etiquetas",
         "locations": "Locais",
+        "maintenance": "Manutenção",
         "name": "Nome",
+        "navigate": "Navegar",
         "password": "Senha",
         "read_docs": "Leia a Documentação",
+        "save": "Salvar",
         "search": "Buscar",
-        "sign_out": "Sair",
+        "sign_out": "Encerrar sessão",
         "submit": "Enviar",
+        "update": "Atualizar",
+        "value": "Valor",
         "version": "Versão: { version }",
         "welcome": "Bem-vindo, {username}"
+    },
+    "home": {
+        "labels": "Etiquetas",
+        "quick_statistics": "Estatísticas Rápidas",
+        "recently_added": "Adicionados Recentemente",
+        "storage_locations": "Locais de Armazenamento",
+        "total_items": "Itens Totais",
+        "total_labels": "Etiquetas Totais",
+        "total_locations": "Locais Totais",
+        "total_value": "Valor Total"
     },
     "index": {
         "disabled_registration": "Registro Desativado",
@@ -80,55 +159,109 @@
     },
     "items": {
         "add": "Adicionar",
+        "advanced": "Avançada",
+        "archived": "Arquivado",
+        "asset_id": "ID do Ativo",
+        "attachment": "Anexo",
+        "attachments": "Anexos",
+        "changes_persisted_immediately": "Alterações nos anexos serão salvas imediatamente",
         "created_at": "Criado em",
         "custom_fields": "Campos Personalizados",
+        "description": "Descrição",
+        "details": "Detalhes",
+        "drag_and_drop": "Arraste e solte os arquivos aqui ou clique para selecionar os arquivos",
+        "edit_details": "Detalhes da Edição",
         "field_selector": "Seletor de Campo",
         "field_value": "Valor do Campo",
-        "first": "Primeiro",
+        "first": "Primeira",
         "include_archive": "Incluir itens arquivados",
-        "last": "Último",
-        "negate_labels": "Negar os rótulos selecionados",
+        "insured": "Segurado",
+        "last": "Última",
+        "lifetime_warranty": "Garantia Vitalícia",
+        "location": "Local",
+        "manual": "Manual",
+        "manuals": "Manuais",
+        "manufacturer": "Fabricante",
+        "model_number": "Modelo",
+        "name": "Nome",
+        "negate_labels": "Negar Rótulos Selecionados",
         "next_page": "Próxima página",
         "no_results": "Nenhum Item Encontrado",
+        "notes": "Anotações",
+        "only_with_photo": "Somente itens com foto",
+        "only_without_photo": "Somente itens sem foto",
         "options": "Opções",
         "order_by": "Ordenar Por",
         "pages": "Página { page } de { totalPages }",
+        "parent_item": "Item Pai",
+        "photo": "Foto",
+        "photos": "Fotos",
         "prev_page": "Página anterior",
+        "purchase_date": "Comprado Em",
+        "purchase_details": "Detalhes da Compra",
+        "purchase_price": "Preço da Compra",
+        "purchased_from": "Comprado De",
+        "quantity": "Quantidade",
         "query_id": "Consultando o número de ID do ativo: { id }",
+        "receipt": "Recibo",
+        "receipts": "Recibos",
         "reset_search": "Reiniciar Pesquisa",
         "results": "{ total } Resultados",
+        "serial_number": "Número Serial",
+        "show_advanced_view_options": "Exibir Opções de Visualização Avançada",
+        "sold_at": "Vendido Em",
+        "sold_details": "Detalhes da Venda",
+        "sold_price": "Preço da Venda",
+        "sold_to": "Vendido Para",
         "tip_1": "Os filtros de local e etiqueta usam o operador \"OR\". Se você selecionar mais de um, somente um será\nnecessário para obter um resultado.",
         "tip_2": "As pesquisas comprefixo '#'' buscam um ID de ativo (exemplo '#000-001')",
         "tip_3": "Os filtros de local e etiqueta usam o operador \"OR\". Se você selecionar mais de um, somente um será\nnecessário para obter um resultado.",
         "tips": "Dicas",
         "tips_sub": "Dicas de pesquisa",
-        "updated_at": "Atualizado em"
+        "updated_at": "Atualizado em",
+        "warranty": "Garantia",
+        "warranty_details": "Detalhes da Garantia",
+        "warranty_expires": "Garantia Expira Em"
     },
     "labels": {
-        "no_results": "Nenhuma etiqueta encontrada"
+        "no_results": "Nenhuma etiqueta encontrada",
+        "update_label": "Atualizar Etiqueta"
     },
     "languages": {
         "ca": "Catalão",
         "de": "Alemão",
         "en": "Inglês",
         "es": "Espanhol",
+        "fi-FI": "Finlandês",
         "fr": "Francês",
         "hu": "Húngaro",
+        "id-ID": "Indonésio(a)",
         "it": "Italiano",
+        "ja-JP": "Japonês",
+        "ko-KR": "Coreano",
         "nl": "Holandês",
         "pl": "Polonês",
         "pt-BR": "Português (Brasil)",
+        "pt-PT": "Português (Portugal)",
         "ru": "Russo",
         "sl": "Esloveno",
         "sv": "Sueco",
+        "th-TH": "Tailandês",
         "tr": "Turco",
+        "uk-UA": "Ucraniano",
         "zh-CN": "Chinês (Simplificado)",
         "zh-HK": "Chinês (Hong Kong)",
         "zh-MO": "Chinês (Macau)",
         "zh-TW": "Chinês (Tradicional)"
     },
+    "languages.da-DK": "Dinamarquês",
+    "languages.ro-RO": "Romeno",
+    "languages.sk-SK": "Eslovaco",
     "locations": {
-        "no_results": "Nenhum local encontrado"
+        "child_locations": "Locais Filhos",
+        "collapse_tree": "Ocultar Árvore",
+        "no_results": "Nenhum local encontrado",
+        "update_location": "Atualizar Local"
     },
     "maintenance": {
         "filter": {
@@ -166,6 +299,9 @@
         "total_entries": "Total de Entradas"
     },
     "menu": {
+        "create_item": "Item / Ativo",
+        "create_label": "Etiqueta",
+        "create_location": "Local",
         "home": "Início",
         "locations": "Locais",
         "maintenance": "Manutenção",
@@ -182,6 +318,7 @@
         "delete_account_sub": "Excluir sua conta e todos os dados associados. Essa ação não pode ser desfeita.",
         "display_header": "{ currentValue, select, true {Ocultar cabeçalho} false {Mostrar cabeçalho} other {Não encontrado}}",
         "enabled": "Ativado",
+        "example": "Exemplo",
         "gen_invite": "Gerar link de convite",
         "group_settings": "Definições do grupo",
         "group_settings_sub": "Configurações de Grupo Compartilhado. É possível que tenha que recarregar a página para que alguns ajustes sejam aplicados.",
@@ -189,7 +326,7 @@
         "language": "Idioma",
         "new_password": "Nova Senha",
         "no_notifiers": "Nenhum notificador configurado",
-        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notificação",
+        "notifier_modal": "{ type, select, true {Editar} false {Criar} other {Outro}} Notificação",
         "notifiers": "Notificadores",
         "notifiers_sub": "Receba notificações para lembretes de manutenção futuros",
         "test": "Teste",
@@ -200,6 +337,10 @@
         "url": "URL",
         "user_profile": "Perfil do usuário",
         "user_profile_sub": "Convide usuários e gerencie sua conta."
+    },
+    "scanner": {
+        "error": "Ocorreu um erro durante a digitalização",
+        "invalid_url": "Código de barras inválido"
     },
     "tools": {
         "actions": "Ações de inventário",

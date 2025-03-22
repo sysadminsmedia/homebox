@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
@@ -130,19 +131,36 @@ func (r *MaintenanceEntryRepository) GetMaintenanceByItemID(ctx context.Context,
 			item.HasGroupWith(group.IDEQ(groupID)),
 		),
 	)
-	if filters.Status == MaintenanceFilterStatusScheduled {
+	switch filters.Status {
+	case MaintenanceFilterStatusScheduled:
 		query = query.Where(maintenanceentry.Or(
 			maintenanceentry.DateIsNil(),
 			maintenanceentry.DateEQ(time.Time{}),
+			maintenanceentry.DateGT(time.Now()),
 		))
-	} else if filters.Status == MaintenanceFilterStatusCompleted {
+		// Sort scheduled entries by ascending scheduled date
+		query = query.Order(
+			maintenanceentry.ByScheduledDate(sql.OrderAsc()),
+		)
+	case MaintenanceFilterStatusCompleted:
 		query = query.Where(
 			maintenanceentry.Not(maintenanceentry.Or(
 				maintenanceentry.DateIsNil(),
-				maintenanceentry.DateEQ(time.Time{})),
-			))
+				maintenanceentry.DateEQ(time.Time{}),
+				maintenanceentry.DateGT(time.Now()),
+			)))
+		// Sort completed entries by descending completion date
+		query = query.Order(
+			maintenanceentry.ByDate(sql.OrderDesc()),
+		)
+	default:
+		// Sort entries by default by scheduled and maintenance date in descending order
+		query = query.Order(
+			maintenanceentry.ByScheduledDate(sql.OrderDesc()),
+			maintenanceentry.ByDate(sql.OrderDesc()),
+		)
 	}
-	entries, err := query.WithItem().Order(maintenanceentry.ByScheduledDate()).All(ctx)
+	entries, err := query.WithItem().All(ctx)
 
 	if err != nil {
 		return []MaintenanceEntryWithDetails{}, err

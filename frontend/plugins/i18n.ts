@@ -30,6 +30,12 @@ export default defineNuxtPlugin(({ vueApp }) => {
     messages: messages(),
   });
   vueApp.use(i18n);
+
+  return {
+    provide: {
+      i18nGlobal: i18n.global,
+    },
+  };
 });
 
 export const messages = () => {

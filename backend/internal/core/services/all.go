@@ -61,7 +61,7 @@ func New(repos *repo.AllRepos, opts ...OptionsFunc) *AllServices {
 			repo:                 repos,
 			autoIncrementAssetID: options.autoIncrementAssetID,
 		},
-		BackgroundService: &BackgroundService{repos},
+		BackgroundService: &BackgroundService{repos, Latest{}},
 		Currencies:        currencies.NewCurrencyService(options.currencies),
 	}
 }

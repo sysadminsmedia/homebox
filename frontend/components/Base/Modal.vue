@@ -1,9 +1,20 @@
 <template>
   <div class="z-[999]">
     <input :id="modalId" v-model="modal" type="checkbox" class="modal-toggle" />
-    <div class="modal modal-bottom overflow-visible sm:modal-middle">
-      <div class="modal-box relative overflow-auto">
-        <button :for="modalId" class="btn btn-circle btn-sm absolute right-2 top-2" @click="close">✕</button>
+    <div
+      class="modal overflow-visible sm:modal-middle"
+      :class="{ 'modal-bottom': !props.modalTop }"
+      :modal-top="props.modalTop"
+    >
+      <div ref="modalBox" class="modal-box relative overflow-x-hidden overflow-y-scroll">
+        <button
+          v-if="props.showCloseButton"
+          :for="modalId"
+          class="btn btn-circle btn-sm absolute right-2 top-2"
+          @click="close"
+        >
+          ✕
+        </button>
 
         <h3 class="text-lg font-bold">
           <slot name="title"></slot>
@@ -30,12 +41,32 @@
       type: Boolean,
       default: false,
     },
+    showCloseButton: {
+      type: Boolean,
+      default: true,
+    },
+    clickOutsideToClose: {
+      type: Boolean,
+      default: false,
+    },
+    modalTop: {
+      type: Boolean,
+      default: false,
+    },
   });
+
+  const modalBox = ref();
 
   function escClose(e: KeyboardEvent) {
     if (e.key === "Escape") {
       close();
     }
+  }
+
+  if (props.clickOutsideToClose) {
+    onClickOutside(modalBox, () => {
+      close();
+    });
   }
 
   function close() {
@@ -57,3 +88,23 @@
     }
   });
 </script>
+
+<style lang="css" scoped>
+  @media (max-width: 640px) {
+    .modal[modal-top="true"] {
+      align-items: start;
+    }
+
+    .modal[modal-top="true"] :where(.modal-box) {
+      max-width: none;
+      --tw-translate-y: 2.5rem /* 40px */;
+      --tw-scale-x: 1;
+      --tw-scale-y: 1;
+      transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate))
+        skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+      width: 100%;
+      border-top-left-radius: 0px;
+      border-top-right-radius: 0px;
+    }
+  }
+</style>

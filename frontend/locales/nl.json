@@ -6,9 +6,22 @@
                 "description": "Importeer een CSV bestand met je objecten, labels en locaties. Zie documentatie voor meer informatie m.b.t.\n vereist format.",
                 "title": "Importeer CSV bestand",
                 "upload": "Upload"
+            },
+            "outdated": {
+                "current_version": "Huidige versie",
+                "dismiss": "Afwijzen",
+                "latest_version": "Nieuwste versie",
+                "new_version_available": "Nieuwe Versie Beschikbaar",
+                "new_version_available_link": "Klik hier om de release notes te bekijken"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "documentatie",
+                "failed_to_copy": "Kopiëren van tekst naar klembord mislukt",
+                "https_required": "omdat https vereist is",
+                "learn_more": "Leer meer in onze"
+            },
             "date_time": {
                 "ago": "{0} geleden",
                 "days": "dagen",
@@ -32,6 +45,14 @@
                 "weeks": "weken",
                 "years": "jaren",
                 "yesterday": "gisteren"
+            },
+            "label_maker": {
+                "browser_print": "Print vanuit de browser",
+                "confirm_description": "Weet u zeker dat u dit label wilt afdrukken?",
+                "download": "Download Label",
+                "print": "Print verzendlabel",
+                "server_print": "Afdrukken op server",
+                "titles": "Labels"
             },
             "page_qr_code": {
                 "page_url": "Pagina URL"
@@ -79,6 +100,9 @@
             "tree": {
                 "no_locations": "Geen locaties beschikbaar. Voeg een nieuwe locatie toe\n via de `<`span class=\"link-primary\"`>`Creeer`<`/span`> knop op het navigatie menu."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Gebruik de numerieke toetsen om snel een actie te selecteren."
         }
     },
     "global": {
@@ -90,17 +114,18 @@
         "created": "Gemaakt",
         "delete": "Verwijderen",
         "details": "Details",
-        "duplicate": "Dubbel",
+        "duplicate": "Dupliceren",
         "edit": "Bewerk",
         "email": "E-mail",
         "follow_dev": "Volg de ontwikkelaar",
         "github": "GitHub Project",
         "items": "artikelen",
         "join_discord": "Sluit je aan bij de Discord",
-        "labels": "etiketten",
+        "labels": "Labels",
         "locations": "Locaties",
         "maintenance": "Onderhoud",
         "name": "Naam",
+        "navigate": "Navigeer",
         "password": "Wachtwoord",
         "read_docs": "Lees de documentatie",
         "save": "Opslaan",
@@ -113,10 +138,10 @@
         "welcome": "Welkom, { username }"
     },
     "home": {
-        "labels": "etiketten",
+        "labels": "Labels",
         "quick_statistics": "Snelle statistieken",
         "recently_added": "Recent toegevoegd",
-        "storage_locations": "Verblijfplaatsen",
+        "storage_locations": "Opslaglocaties",
         "total_items": "Totale items",
         "total_labels": "Totaal aantal labels",
         "total_locations": "Totaal aantal locaties",
@@ -124,8 +149,8 @@
     },
     "index": {
         "disabled_registration": "Registratie uitgeschakeld",
-        "dont_join_group": "Wil je niet aan een groep deelnemen?",
-        "joining_group": "Je neemt deel aan een bestaande groep!",
+        "dont_join_group": "Wil je je niet bij een groep aansluiten?",
+        "joining_group": "Je sluit je aan bij een bestaande groep!",
         "login": "Log in",
         "register": "Registreer",
         "remember_me": "Onthoud mij",
@@ -152,19 +177,21 @@
         "field_value": "Veldwaarde",
         "first": "Eerst",
         "include_archive": "Inclusief gearchiveerde items",
-        "insured": "Verzekerde",
+        "insured": "Verzekerd",
         "last": "Achternaam",
         "lifetime_warranty": "Levenslange garantie",
         "location": "Locatie",
-        "manual": "Handmatig",
+        "manual": "Handleiding",
         "manuals": "Handleidingen",
         "manufacturer": "Fabrikant",
         "model_number": "Modelnummer",
         "name": "Naam",
-        "negate_labels": "Negeer Geselecteerde Etiketten",
+        "negate_labels": "Negeer Geselecteerde Labels",
         "next_page": "Volgende pagina",
         "no_results": "Geen Items Gevonden",
         "notes": "Opmerkingen",
+        "only_with_photo": "Alleen items met foto",
+        "only_without_photo": "Alleen items zonder foto",
         "options": "Opties",
         "order_by": "Sorteren op",
         "pages": "Pagina { page } van { totalPages }",
@@ -178,12 +205,12 @@
         "purchased_from": "Gekocht van",
         "quantity": "Aantal",
         "query_id": "ID-nummer van object opvragen: { id }",
-        "receipt": "Bewijs",
-        "receipts": "Bonnetjes",
+        "receipt": "Factuur",
+        "receipts": "Facturen",
         "reset_search": "Reset Zoeken",
         "results": "{ total } Resultaten",
         "serial_number": "Serienummer",
-        "show_advanced_view_options": "geavanceerde opties weergeven",
+        "show_advanced_view_options": "Geavanceerde Opties Weergeven",
         "sold_at": "Verkocht bij",
         "sold_details": "Verkochte details",
         "sold_price": "Verkoopprijs",
@@ -204,13 +231,18 @@
     },
     "languages": {
         "ca": "Catalaans",
+        "cs-CZ": "Tsjechisch",
         "de": "Duits",
         "en": "Engels",
         "es": "Spaans",
+        "fi-FI": "Fins",
         "fr": "Frans",
         "hu": "Hongaars",
+        "id-ID": "Indonesisch",
         "it": "Italiaans",
         "ja-JP": "Japans",
+        "ko-KR": "Koreaans",
+        "nb-NO": "Noors",
         "nl": "Nederlands",
         "pl": "Pools",
         "pt-BR": "Portugees (Brazilië)",
@@ -218,6 +250,8 @@
         "ru": "Russisch",
         "sl": "Sloveens",
         "sv": "Zweeds",
+        "ta-IN": "Tamil",
+        "th-TH": "Thais",
         "tr": "Turks",
         "uk-UA": "Oekraïens",
         "zh-CN": "Chinees (vereenvoudigd)",
@@ -226,11 +260,10 @@
         "zh-TW": "Chinees (traditioneel)"
     },
     "languages.da-DK": "Deens",
-    "languages.fi.FI": "Fins",
     "languages.ro-RO": "Roemeens",
     "languages.sk-SK": "Slowaaks",
     "locations": {
-        "child_locations": "Kind Locaties",
+        "child_locations": "Sublocaties",
         "collapse_tree": "Structuur invouwen",
         "no_results": "Geen locaties gevonden",
         "update_location": "Locatie bijwerken"
@@ -245,30 +278,30 @@
             "complete": "Compleet",
             "create_first": "Maak je eerste invoer aan",
             "delete": "Verwijderen",
-            "duplicate": "Dubbel",
+            "duplicate": "Dupliceren",
             "edit": "Bewerken",
             "new": "Nieuw"
         },
         "modal": {
-            "completed_date": "Voltooiings Datum",
+            "completed_date": "Datum Voltooid",
             "cost": "Kosten",
             "delete_confirmation": "Weet u zeker dat u deze gegevens wilt verwijderen?",
             "edit_action": "Bijwerken",
-            "edit_title": "Bewerk entry",
-            "entry_name": "Ingangsnaam",
+            "edit_title": "Invoer bewerken",
+            "entry_name": "Invoernaam",
             "new_action": "Maak",
-            "new_title": "Nieuw fragment",
+            "new_title": "Nieuwe invoer",
             "notes": "Opmerkingen",
-            "scheduled_date": "Gepland datum"
+            "scheduled_date": "Geplande datum"
         },
         "monthly_average": "Maandelijks",
         "toast": {
             "failed_to_create": "Kan invoer niet maken",
-            "failed_to_delete": "Kon item niet verwijderen",
+            "failed_to_delete": "Kan invoer niet verwijderen",
             "failed_to_update": "Kan invoer niet bijwerken"
         },
         "total_cost": "Totale kosten",
-        "total_entries": "Totaal aantal Inzendingen"
+        "total_entries": "Totaal aantal invoeren"
     },
     "menu": {
         "create_item": "Artikel / Object",
@@ -278,8 +311,9 @@
         "locations": "Locaties",
         "maintenance": "Onderhoud",
         "profile": "Profiel",
+        "scanner": "Scanner",
         "search": "Zoeken",
-        "tools": "Gereedschappen"
+        "tools": "Hulpmiddelen"
     },
     "profile": {
         "active": "Actief",
@@ -287,28 +321,35 @@
         "currency_format": "Valutanotatie",
         "current_password": "Huidig Wachtwoord",
         "delete_account": "Verwijder account",
-        "delete_account_sub": "Verwijder je account en alle geassocieerde data. Deze actie kan niet ongedaan worden.",
+        "delete_account_sub": "Verwijder je account en alle bijhorende data. Deze actie kan niet ongedaan worden.",
         "display_header": "{ currentValue, select, true {Header verbergen} false {Header weergeven} other {Geen gevonden}}",
-        "enabled": "ingeschakeld",
+        "enabled": "Ingeschakeld",
         "example": "Voorbeeld",
         "gen_invite": "Genereer Uitnodigingslink",
-        "group_settings": "Groeps Instellingen",
-        "group_settings_sub": "Gedeelde groepsinstellingen. Het kan zijn dat je de browser moet verversen om alle instellingen te zien werken.",
+        "group_settings": "Groepsinstellingen",
+        "group_settings_sub": "Gedeelde groepsinstellingen. Mogelijk moet u uw browser vernieuwen om sommige instellingen toe te passen.",
         "inactive": "Inactief",
         "language": "Taal",
         "new_password": "Nieuw Wachtwoord",
         "no_notifiers": "Geen melders geconfigureerd",
         "notifier_modal": "{ type, select, true {Bewerk} false {Creëer} other {overig}} Notifier",
         "notifiers": "Notificatie",
-        "notifiers_sub": "Krijg notificaties voor opkomende onderhouds herinneringen",
+        "notifiers_sub": "Ontvang meldingen voor komende onderhoudsherinneringen",
         "test": "Test",
-        "theme_settings": "Theme instellingen",
+        "theme_settings": "Thema-instellingen",
         "theme_settings_sub": "Thema-instellingen worden opgeslagen in de lokale opslag van uw browser. Je kan deze wijzigen op elk moment. \nAls je problemen hebt met de instellingen kun je de browser verversen.",
         "update_group": "Groep bijwerken",
         "update_language": "Taal bijwerken",
         "url": "URL",
-        "user_profile": "Gebruikers Profiel",
+        "user_profile": "Gebruikersprofiel",
         "user_profile_sub": "Nodig gebruikers uit, en beheer je account."
+    },
+    "scanner": {
+        "error": "Tijdens het scannen is er een fout opgetreden",
+        "invalid_url": "Ongeldige streepjescode",
+        "no_sources": "Geen videobronnen beschikbaar",
+        "select_video_source": "Kies een videobron",
+        "unsupported": "Mediastream-API wordt niet ondersteund"
     },
     "tools": {
         "actions": "Acties inventariseren",
@@ -316,8 +357,8 @@
             "ensure_ids": "Zorg voor item-ID's",
             "ensure_ids_button": "Zorg voor item-ID's",
             "ensure_ids_sub": "Zorgt ervoor dat alle artikelen in je voorraad een geldig asset_id veld hebben. Dit wordt gedaan door de hoogste huidige asset_id veld in de database te vinden en de volgende waarde toe te passen op het volgende niet ingevoerde asset_id veld. Dit gebeurt op volgorde van het created_at veld.",
-            "ensure_import_refs": "Zorg ervoor dat Import Refs",
-            "ensure_import_refs_button": "Zorg ervoor dat Import Refs",
+            "ensure_import_refs": "Zorg voor Import Refs",
+            "ensure_import_refs_button": "Zorg voor Import Refs",
             "ensure_import_refs_sub": "Zorgt ervoor dat alle artikelen in je voorraad een geldig import_ref veld hebben. Dit gebeurt door een random 8 karakter string voor elk item te maken die geen import_ref veld heeft.",
             "set_primary_photo": "Hoofdfoto instellen",
             "set_primary_photo_button": "Hoofdfoto instellen",
@@ -326,11 +367,11 @@
             "zero_datetimes_button": "Nul item Datum Tijden",
             "zero_datetimes_sub": "Hiermee stelt u de tijdwaarde voor alle datum-/tijdvelden in uw voorraad in op het begin van de datum. Dit is een oplossing voor een fout in de applicatie geïntroduceerd in het begin van de ontwikkeling waarbij de tijd waarde verkeerd werd opgeslagen. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Zie Github Issue #236 voor alle details.'</a>'"
         },
-        "actions_sub": "Acties bulksgewijs toepassen op je voorraad. Deze zijn onomkeerbaar '<b>'Wees voorzichtig.'</b>'",
+        "actions_sub": "Acties in bulk toepassen op je inventaris. Deze zijn onomkeerbaar '<b>'Wees voorzichtig.'</b>'",
         "import_export": "Importeer/Exporteer",
         "import_export_set": {
-            "export": "Export voorraad",
-            "export_button": "Export voorraad",
+            "export": "Exporteer voorraad",
+            "export_button": "Exporteer voorraad",
             "export_sub": "Exporteert het standaard CSV-formaat voor Homebox. Dit exporteert alle items in jouw inventaris.",
             "import": "Inventaris Importeren",
             "import_button": "Inventaris Importeren",

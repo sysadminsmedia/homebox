@@ -13,12 +13,12 @@ import (
 
 // HandleGetUserNotifiers godoc
 //
-//	@Summary  Get Notifiers
-//	@Tags     Notifiers
-//	@Produce  json
-//	@Success  200 {object} []repo.NotifierOut
-//	@Router   /v1/notifiers [GET]
-//	@Security Bearer
+//	@Summary	Get Notifiers
+//	@Tags		Notifiers
+//	@Produce	json
+//	@Success	200	{object}	[]repo.NotifierOut
+//	@Router		/v1/notifiers [GET]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleGetUserNotifiers() errchain.HandlerFunc {
 	fn := func(r *http.Request, _ struct{}) ([]repo.NotifierOut, error) {
 		user := services.UseUserCtx(r.Context())
@@ -30,13 +30,13 @@ func (ctrl *V1Controller) HandleGetUserNotifiers() errchain.HandlerFunc {
 
 // HandleCreateNotifier godoc
 //
-//	@Summary  Create Notifier
-//	@Tags     Notifiers
-//	@Produce  json
-//	@Param    payload body     repo.NotifierCreate true "Notifier Data"
-//	@Success  200     {object} repo.NotifierOut
-//	@Router   /v1/notifiers [POST]
-//	@Security Bearer
+//	@Summary	Create Notifier
+//	@Tags		Notifiers
+//	@Produce	json
+//	@Param		payload	body		repo.NotifierCreate	true	"Notifier Data"
+//	@Success	200		{object}	repo.NotifierOut
+//	@Router		/v1/notifiers [POST]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleCreateNotifier() errchain.HandlerFunc {
 	fn := func(r *http.Request, in repo.NotifierCreate) (repo.NotifierOut, error) {
 		auth := services.NewContext(r.Context())
@@ -48,12 +48,12 @@ func (ctrl *V1Controller) HandleCreateNotifier() errchain.HandlerFunc {
 
 // HandleDeleteNotifier godocs
 //
-//	@Summary Delete a Notifier
-//	@Tags    Notifiers
-//	@Param   id path string true "Notifier ID"
-//	@Success 204
-//	@Router  /v1/notifiers/{id} [DELETE]
-//	@Security Bearer
+//	@Summary	Delete a Notifier
+//	@Tags		Notifiers
+//	@Param		id	path	string	true	"Notifier ID"
+//	@Success	204
+//	@Router		/v1/notifiers/{id} [DELETE]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleDeleteNotifier() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID) (any, error) {
 		auth := services.NewContext(r.Context())
@@ -65,13 +65,13 @@ func (ctrl *V1Controller) HandleDeleteNotifier() errchain.HandlerFunc {
 
 // HandleUpdateNotifier godocs
 //
-//	@Summary Update Notifier
-//	@Tags    Notifiers
-//	@Param   id path string true "Notifier ID"
-//	@Param   payload body repo.NotifierUpdate true "Notifier Data"
-//	@Success 200 {object} repo.NotifierOut
-//	@Router  /v1/notifiers/{id} [PUT]
-//	@Security Bearer
+//	@Summary	Update Notifier
+//	@Tags		Notifiers
+//	@Param		id		path		string				true	"Notifier ID"
+//	@Param		payload	body		repo.NotifierUpdate	true	"Notifier Data"
+//	@Success	200		{object}	repo.NotifierOut
+//	@Router		/v1/notifiers/{id} [PUT]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleUpdateNotifier() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID, in repo.NotifierUpdate) (repo.NotifierOut, error) {
 		auth := services.NewContext(r.Context())
@@ -86,7 +86,6 @@ func (ctrl *V1Controller) HandleUpdateNotifier() errchain.HandlerFunc {
 //	@Summary  Test Notifier
 //	@Tags     Notifiers
 //	@Produce  json
-//	@Param    id path string true "Notifier ID"
 //	@Param url query string true "URL"
 //	@Success  204
 //	@Router   /v1/notifiers/test [POST]

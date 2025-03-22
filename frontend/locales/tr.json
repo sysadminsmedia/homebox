@@ -6,9 +6,22 @@
                 "description": "Öğelerinizi, etiketlerinizi ve konumlarınızı içeren bir CSV dosyasını içe aktarın. Daha fazla\nbilgi için dökümanları okuyun.",
                 "title": "CSV dosyasını içeri aktar",
                 "upload": "Yükle"
+            },
+            "outdated": {
+                "current_version": "Güncel Sürüm",
+                "dismiss": "Yok say",
+                "latest_version": "Son Sürüm",
+                "new_version_available": "Yeni sürüm mevcut",
+                "new_version_available_link": "Sürüm notlarını görüntülemek için buraya tıklayın"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "dokümantasyon",
+                "failed_to_copy": "Metin panoya kopyalanamadı",
+                "https_required": "çünkü HTTPS gereklidir",
+                "learn_more": "Daha fazla"
+            },
             "date_time": {
                 "ago": "{0} önce",
                 "days": "gün",
@@ -79,6 +92,9 @@
             "tree": {
                 "no_locations": "Mevcut konum yok. Navigasyon çubuğundaki \n`<`span class=\"link-primary\"`>`Oluştur`<`/span`>` düğmesiyle yeni konumlar ekleyin."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Bir eylemi hızlı bir şekilde seçmek için sayı tuşlarını kullanın."
         }
     },
     "global": {
@@ -101,6 +117,7 @@
         "locations": "Konumlar",
         "maintenance": "Bakım",
         "name": "İsim",
+        "navigate": "Gezin",
         "password": "Şifre",
         "read_docs": "Dokümanları okuyun",
         "save": "Kaydet",
@@ -225,6 +242,9 @@
         "zh-MO": "Çince (Macau)",
         "zh-TW": "Geleneksel Çince"
     },
+    "languages.da-DK": "Danca",
+    "languages.ro-RO": "Romence",
+    "languages.sk-SK": "Slovakça",
     "locations": {
         "child_locations": "Alt konumlar",
         "collapse_tree": "Ağacı Daralt",
