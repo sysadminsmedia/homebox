@@ -9,8 +9,8 @@
         },
         "version": "1.0"
     },
-    "host": "demo.homebox.software",
-    "basePath": "/api",
+    "Host": "demo.homebox.software",
+    "BasePath": "/api",
     "paths": {
         "/v1/actions/ensure-asset-ids": {
             "post": {
