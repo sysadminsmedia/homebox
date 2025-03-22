@@ -197,6 +197,21 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 			log.Err(err).Msg("failed to delete attachment")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
+		bucket, err := blob.OpenBucket(ctx, ctrl.repo.Docs.GetConnString())
+		if err != nil {
+			log.Err(err).Msg("failed to open bucket")
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+		doc, err := ctrl.svc.Items.AttachmentPath(r.Context(), attachmentID)
+		if err != nil {
+			log.Err(err).Msg("failed to get attachment path")
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+		err = bucket.Delete(ctx, doc.Path)
+		if err != nil {
+			log.Err(err).Msg("failed to delete file")
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
 
 		return server.JSON(w, http.StatusNoContent, nil)
 
@@ -212,7 +227,7 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 		attachment.ID = attachmentID
 		val, err := ctrl.svc.Items.AttachmentUpdate(ctx, ID, &attachment)
 		if err != nil {
-			log.Err(err).Msg("failed to delete attachment")
+			log.Err(err).Msg("failed to update attachment")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 

@@ -75,7 +75,7 @@ func (svc *ItemService) AttachmentDelete(ctx context.Context, gid, itemID, attac
 		return err
 	}
 
-	documentID := attachment.Edges.Document.GetID()
+	documentID := attachments.Edges.Document.GetID()
 
 	// Delete the attachment
 	err = svc.repo.Attachments.Delete(ctx, attachmentID)
@@ -83,8 +83,6 @@ func (svc *ItemService) AttachmentDelete(ctx context.Context, gid, itemID, attac
 		return err
 	}
 
-	// Remove File
-	err = os.Remove(attachments.Edges.Document.Path)
 	// Delete the document, this function also removes the file
 	err = svc.repo.Docs.Delete(ctx, documentID)
 	if err != nil {
