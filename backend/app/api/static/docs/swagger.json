@@ -4,10 +4,12 @@
         "description": "Track, Manage, and Organize your Things.",
         "title": "Homebox API",
         "contact": {
-            "name": "Don't"
+            "name": "Homebox Team",
+            "url": "https://discord.homebox.software"
         },
         "version": "1.0"
     },
+    "host": "demo.homebox.software",
     "basePath": "/api",
     "paths": {
         "/v1/actions/ensure-asset-ids": {

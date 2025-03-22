@@ -5,22 +5,6 @@ sidebar: false
 
 <script setup lang="ts">
 import { useData } from 'vitepress';
-import { ref, onMounted, onBeforeUnmount } from 'vue';
-
-// Create a key ref to force re-render of the elements-api component
-const componentKey = ref(0);
-
-// Use a native event listener to intercept hash changes
-const handleHashChange = () => {
-  componentKey.value++;
-};
-
-onMounted(() => {
-  window.addEventListener('hashchange', handleHashChange);
-});
-onBeforeUnmount(() => {
-  window.removeEventListener('hashchange', handleHashChange);
-});
 
 const elementScript = document.createElement('script');
 elementScript.src = 'https://unpkg.com/@stoplight/elements/web-components.min.js';
@@ -37,12 +21,6 @@ if (isDark.value) {
   theme = 'dark';
 }
 </script>
-
-<style>
-.TryItPanel {
-  display: none;
-}
-</style>
 
 <client-only>
   <elements-api
