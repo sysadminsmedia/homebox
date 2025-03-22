@@ -46,5 +46,6 @@ if (isDark.value) {
     layout="responsive"
     hideSchemas="true"
     :data-theme="theme"
+    tryItBaseUrl="https://demo.homebox.software/api"
   />
 </client-only>
