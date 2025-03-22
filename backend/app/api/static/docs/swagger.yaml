@@ -772,9 +772,11 @@ definitions:
       fields:
         type: string
     type: object
+host: demo.homebox.software
 info:
   contact:
-    name: Don't
+    name: Homebox Team
+    url: https://discord.homebox.software
   description: Track, Manage, and Organize your Things.
   title: Homebox API
   version: "1.0"

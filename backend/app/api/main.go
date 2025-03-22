@@ -66,7 +66,9 @@ func validatePostgresSSLMode(sslMode string) bool {
 // @title                      Homebox API
 // @version                    1.0
 // @description                Track, Manage, and Organize your Things.
-// @contact.name               Don't
+// @contact.name               Homebox Team
+// @contact.url                https://discord.homebox.software
+// @host                       demo.homebox.software
 // @BasePath                   /api
 // @securityDefinitions.apikey Bearer
 // @in                         header

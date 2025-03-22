@@ -38,12 +38,6 @@ if (isDark.value) {
 }
 </script>
 
-<style>
-.TryItPanel {
-  display: none;
-}
-</style>
-
 <client-only>
   <elements-api
     :key="componentKey"
