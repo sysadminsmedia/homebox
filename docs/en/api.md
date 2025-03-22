@@ -13,7 +13,7 @@ const stoplightLoaded = ref(false);
 const componentKey = ref(0);
 const demoBaseUrl = "https://demo.homebox.software/api";
 
-// Fetch and patch the OpenAPI spec
+// Function to fetch and patch the OpenAPI spec
 async function fetchSpec() {
   try {
     const res = await fetch('https://cdn.jsdelivr.net/gh/sysadminsmedia/homebox@main/docs/docs/api/openapi-2.0.json');
@@ -27,54 +27,54 @@ async function fetchSpec() {
   }
 }
 
-// Load the Stoplight Elements script and wait for it to load
+// Function to load the Stoplight Elements script
 function loadStoplightScript() {
   return new Promise<void>((resolve, reject) => {
-    // Only load if not already loaded
-    if (document.querySelector('script[src="https://unpkg.com/@stoplight/elements/web-components.min.js"]')) {
+    // Check if the script is already loaded
+    if (window.customElements && window.customElements.get('elements-api')) {
       resolve();
       return;
     }
     const script = document.createElement('script');
     script.src = 'https://unpkg.com/@stoplight/elements/web-components.min.js';
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error('Failed to load Stoplight Elements script.'));
+    script.onload = () => {
+      resolve();
+    };
+    script.onerror = (err) => {
+      reject(err);
+    };
     document.head.appendChild(script);
-  });
-}
 
-// Load the stylesheet (we can append it without waiting if desired)
-function loadStoplightStyles() {
-  if (!document.querySelector('link[href="https://unpkg.com/@stoplight/elements/styles.min.css"]')) {
+    // Also load the stylesheet
     const link = document.createElement('link');
     link.rel = 'stylesheet';
     link.href = 'https://unpkg.com/@stoplight/elements/styles.min.css';
     document.head.appendChild(link);
-  }
+  });
 }
 
-// Refresh on hash change
+// Listen for hash changes to force re-render
 const handleHashChange = () => {
   componentKey.value++;
 };
 
-onMounted(async () => {
+onMounted(() => {
   window.addEventListener('hashchange', handleHashChange);
-  loadStoplightStyles();
-  try {
-    await loadStoplightScript();
-    stoplightLoaded.value = true;
-  } catch (error) {
-    console.error(error);
-  }
-  await fetchSpec();
+  fetchSpec();
+  loadStoplightScript()
+    .then(() => {
+      stoplightLoaded.value = true;
+    })
+    .catch((err) => {
+      console.error("Error loading Stoplight script:", err);
+    });
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener('hashchange', handleHashChange);
 });
 
-// Watch for dark mode changes to force a re-render
+// Watch for dark mode changes to force re-render
 const { isDark } = useData();
 const theme = ref(isDark.value ? 'dark' : 'light');
 watch(isDark, (newVal) => {
@@ -85,11 +85,7 @@ watch(isDark, (newVal) => {
 
 <template>
   <client-only>
-    <!-- Wait until both the API spec and Stoplight Elements are loaded -->
-    <div v-if="!apiSpec || !stoplightLoaded">
-      Loading API Documentation...
-    </div>
-    <div v-else>
+    <div v-if="apiSpec && stoplightLoaded">
       <elements-api
         :key="componentKey"
         :apiDescription="apiSpec"
@@ -99,6 +95,9 @@ watch(isDark, (newVal) => {
         :data-theme="theme"
         tryItBaseUrl="https://demo.homebox.software/api"
       />
+    </div>
+    <div v-else>
+      Loading API Spec and Stoplight...
     </div>
   </client-only>
 </template>
