@@ -2,6 +2,7 @@ package v1
 
 import (
 	"errors"
+	"fmt"
 	"gocloud.dev/blob"
 	"net/http"
 	"path/filepath"
@@ -187,6 +188,7 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 				log.Err(err).Msg("failed to close bucket")
 			}
 		}(bucket)
+		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", doc.Title))
 		http.ServeContent(w, r, doc.Title, doc.CreatedAt, file)
 		return nil
 
