@@ -6,7 +6,7 @@ const (
 
 type Storage struct {
 	// Data is the path to the root directory
-	ConnString string `yaml:"conn_string" conf:"default:file://./.data"`
+	ConnString string `yaml:"conn_string" conf:"default:file://./"`
 	Data       string `yaml:"data"        conf:"default:./.data"`
 }
 
