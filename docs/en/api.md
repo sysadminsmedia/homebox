@@ -50,7 +50,7 @@ document.head.appendChild(elementStyle);
 <client-only>
   <elements-api
     :key="componentKey"
-    apiDescriptionUrl="https://cdn.jsdelivr.net/gh/sysadminsmedia/homebox@main/docs/docs/api/openapi-2.0.yaml"
+    apiDescriptionUrl="https://cdn.jsdelivr.net/gh/sysadminsmedia/homebox@main/docs/docs/api/openapi-2.0.json"
     router="hash"
     layout="responsive"
     hideSchemas="true"
