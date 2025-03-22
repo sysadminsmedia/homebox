@@ -4,13 +4,24 @@ sidebar: false
 ---
 
 <script setup lang="ts">
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
 import { useData } from 'vitepress';
-import { ref, onMounted, onBeforeUnmount } from 'vue';
 
-// Create a key ref to force re-render of the elements-api component
+// Reactive key for re-rendering the elements-api component
 const componentKey = ref(0);
 
-// Use a native event listener to intercept hash changes
+// Access dark mode setting from VitePress
+const { isDark } = useData();
+const theme = ref(isDark.value ? 'dark' : 'light');
+
+// Watch for changes to the dark mode value and force a re-render when it changes
+watch(isDark, (newVal) => {
+  theme.value = newVal ? 'dark' : 'light';
+  // Increment key to force a refresh of the Stoplight component and its CSS
+  componentKey.value++;
+});
+
+// Use a native hashchange listener (as before) to refresh on navigation changes
 const handleHashChange = () => {
   componentKey.value++;
 };
@@ -22,6 +33,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('hashchange', handleHashChange);
 });
 
+// Append the Stoplight Elements script and stylesheet
 const elementScript = document.createElement('script');
 elementScript.src = 'https://unpkg.com/@stoplight/elements/web-components.min.js';
 document.head.appendChild(elementScript);
@@ -30,12 +42,6 @@ const elementStyle = document.createElement('link');
 elementStyle.rel = 'stylesheet';
 elementStyle.href = 'https://unpkg.com/@stoplight/elements/styles.min.css';
 document.head.appendChild(elementStyle);
-
-const { isDark } = useData();
-let theme = 'light';
-if (isDark.value) {
-  theme = 'dark';
-}
 </script>
 
 <client-only>
@@ -46,6 +52,6 @@ if (isDark.value) {
     layout="responsive"
     hideSchemas="true"
     :data-theme="theme"
-    host="https://demo.homebox.software/api"
+    tryItBaseUrl="https://demo.homebox.software/api"
   />
 </client-only>
