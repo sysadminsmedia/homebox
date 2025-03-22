@@ -2,6 +2,8 @@ package v1
 
 import (
 	"errors"
+	"fmt"
+	"gocloud.dev/blob"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -73,7 +75,7 @@ func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 			ext := filepath.Ext(attachmentName)
 
 			switch strings.ToLower(ext) {
-			case ".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".tiff":
+			case ".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".avif", ".ico":
 				attachmentType = attachment.TypePhoto.String()
 			default:
 				attachmentType = attachment.TypeAttachment.String()
@@ -164,7 +166,30 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
-		http.ServeFile(w, r, doc.Path)
+		bucket, err := blob.OpenBucket(ctx, ctrl.repo.Docs.GetConnString())
+		if err != nil {
+			log.Err(err).Msg("failed to open bucket")
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+		file, err := bucket.NewReader(ctx, doc.Path, nil)
+		if err != nil {
+			log.Err(err).Msg("failed to open file")
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+		defer func(file *blob.Reader) {
+			err := file.Close()
+			if err != nil {
+				log.Err(err).Msg("failed to close file")
+			}
+		}(file)
+		defer func(bucket *blob.Bucket) {
+			err := bucket.Close()
+			if err != nil {
+				log.Err(err).Msg("failed to close bucket")
+			}
+		}(bucket)
+		w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", doc.Title))
+		http.ServeContent(w, r, doc.Title, doc.CreatedAt, file)
 		return nil
 
 	// Delete Attachment Handler
@@ -172,6 +197,21 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 		err = ctrl.svc.Items.AttachmentDelete(r.Context(), ctx.GID, ID, attachmentID)
 		if err != nil {
 			log.Err(err).Msg("failed to delete attachment")
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+		bucket, err := blob.OpenBucket(ctx, ctrl.repo.Docs.GetConnString())
+		if err != nil {
+			log.Err(err).Msg("failed to open bucket")
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+		doc, err := ctrl.svc.Items.AttachmentPath(r.Context(), attachmentID)
+		if err != nil {
+			log.Err(err).Msg("failed to get attachment path")
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+		err = bucket.Delete(ctx, doc.Path)
+		if err != nil {
+			log.Err(err).Msg("failed to delete file")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
@@ -189,7 +229,7 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 		attachment.ID = attachmentID
 		val, err := ctrl.svc.Items.AttachmentUpdate(ctx, ID, &attachment)
 		if err != nil {
-			log.Err(err).Msg("failed to delete attachment")
+			log.Err(err).Msg("failed to update attachment")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 

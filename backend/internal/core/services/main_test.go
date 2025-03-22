@@ -61,7 +61,7 @@ func MainNoExit(m *testing.M) int {
 	}
 
 	tClient = client
-	tRepos = repo.New(tClient, tbus, os.TempDir()+"/homebox")
+	tRepos = repo.New(tClient, tbus, "/homebox", "file://"+os.TempDir())
 
 	defaults, _ := currencies.CollectionCurrencies(
 		currencies.CollectDefaults(),

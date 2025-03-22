@@ -20,7 +20,7 @@ type AllRepos struct {
 	Notifiers   *NotifierRepository
 }
 
-func New(db *ent.Client, bus *eventbus.EventBus, root string) *AllRepos {
+func New(db *ent.Client, bus *eventbus.EventBus, root string, connString string) *AllRepos {
 	return &AllRepos{
 		Users:       &UserRepository{db},
 		AuthTokens:  &TokenRepository{db},
@@ -28,7 +28,7 @@ func New(db *ent.Client, bus *eventbus.EventBus, root string) *AllRepos {
 		Locations:   &LocationRepository{db, bus},
 		Labels:      &LabelRepository{db, bus},
 		Items:       &ItemsRepository{db, bus},
-		Docs:        &DocumentRepository{db, root},
+		Docs:        &DocumentRepository{db, root, connString},
 		Attachments: &AttachmentRepo{db},
 		MaintEntry:  &MaintenanceEntryRepository{db},
 		Notifiers:   NewNotifierRepository(db),
