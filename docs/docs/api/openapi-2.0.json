@@ -1566,7 +1566,7 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Maintenance ID",
+                        "description": "Maintenance ID ",
                         "name": "id",
                         "in": "path",
                         "required": true
