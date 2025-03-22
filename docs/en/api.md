@@ -10,6 +10,9 @@ import { useData } from 'vitepress';
 // Reactive key for re-rendering the elements-api component
 const componentKey = ref(0);
 
+// Set BaseURL
+const BaseURL = "https://demo.homebox.software/api";
+
 // Access dark mode setting from VitePress
 const { isDark } = useData();
 const theme = ref(isDark.value ? 'dark' : 'light');
@@ -52,6 +55,6 @@ document.head.appendChild(elementStyle);
     layout="responsive"
     hideSchemas="true"
     :data-theme="theme"
-    tryItBaseUrl="https://demo.homebox.software/api"
+    :tryItBaseUrl="demoBaseUrl"
   />
 </client-only>
