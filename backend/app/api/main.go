@@ -76,6 +76,12 @@ func validatePostgresSSLMode(sslMode string) bool {
 // @description                "Type 'Bearer TOKEN' to correctly set the API Key"
 
 func main() {
+
+	// Override Swagger info to point to demo API
+    docs.SwaggerInfo.Host = "demo.homebox.software"
+    docs.SwaggerInfo.BasePath = "/api/v1"  // set basepath
+    docs.SwaggerInfo.Schemes = []string{"https"}
+
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
 
 	cfg, err := config.New(build(), "Homebox inventory management system")
