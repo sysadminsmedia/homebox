@@ -1,5 +1,8 @@
 {
     "swagger": "2.0",
+    "host": "demo.homebox.software",
+    "basePath": "/api",
+    "schemes": ["https"],
     "info": {
         "description": "Track, Manage, and Organize your Things.",
         "title": "Homebox API",
@@ -8,7 +11,6 @@
         },
         "version": "1.0"
     },
-    "basePath": "/api",
     "paths": {
         "/v1/actions/ensure-asset-ids": {
             "post": {
