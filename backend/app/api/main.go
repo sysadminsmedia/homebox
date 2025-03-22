@@ -69,11 +69,13 @@ func validatePostgresSSLMode(sslMode string) bool {
 // @contact.name               Homebox Team
 // @contact.url                https://discord.homebox.software
 // @host                       demo.homebox.software
+// @schemes                    https http
 // @BasePath                   /api
 // @securityDefinitions.apikey Bearer
 // @in                         header
 // @name                       Authorization
 // @description                "Type 'Bearer TOKEN' to correctly set the API Key"
+// @externalDocs.url 		   https://homebox.software/en/api
 
 func main() {
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack

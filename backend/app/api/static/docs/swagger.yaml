@@ -2045,6 +2045,9 @@ paths:
       summary: Update Account
       tags:
       - User
+schemes:
+- https
+- http
 securityDefinitions:
   Bearer:
     description: '"Type ''Bearer TOKEN'' to correctly set the API Key"'

@@ -1,4 +1,8 @@
 {
+    "schemes": [
+        "https",
+        "http"
+    ],
     "swagger": "2.0",
     "info": {
         "description": "Track, Manage, and Organize your Things.",

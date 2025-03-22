@@ -3265,7 +3265,7 @@ var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "demo.homebox.software",
 	BasePath:         "/api",
-	Schemes:          []string{},
+	Schemes:          []string{"https", "http"},
 	Title:            "Homebox API",
 	Description:      "Track, Manage, and Organize your Things.",
 	InfoInstanceName: "swagger",
