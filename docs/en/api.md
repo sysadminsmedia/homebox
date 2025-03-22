@@ -4,10 +4,12 @@ sidebar: false
 ---
 
 <script setup lang="ts">
-import { ref, onMounted, watch, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { useData } from 'vitepress';
 
+// Reactive flags
 const apiSpec = ref(null);
+const stoplightLoaded = ref(false);
 const componentKey = ref(0);
 const demoBaseUrl = "https://demo.homebox.software/api";
 
@@ -25,31 +27,54 @@ async function fetchSpec() {
   }
 }
 
-// Handle hash change to force re-render
+// Load the Stoplight Elements script and wait for it to load
+function loadStoplightScript() {
+  return new Promise<void>((resolve, reject) => {
+    // Only load if not already loaded
+    if (document.querySelector('script[src="https://unpkg.com/@stoplight/elements/web-components.min.js"]')) {
+      resolve();
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/@stoplight/elements/web-components.min.js';
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Failed to load Stoplight Elements script.'));
+    document.head.appendChild(script);
+  });
+}
+
+// Load the stylesheet (we can append it without waiting if desired)
+function loadStoplightStyles() {
+  if (!document.querySelector('link[href="https://unpkg.com/@stoplight/elements/styles.min.css"]')) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://unpkg.com/@stoplight/elements/styles.min.css';
+    document.head.appendChild(link);
+  }
+}
+
+// Refresh on hash change
 const handleHashChange = () => {
   componentKey.value++;
 };
 
-onMounted(() => {
+onMounted(async () => {
   window.addEventListener('hashchange', handleHashChange);
-  fetchSpec();
-
-  // Append external Stoplight Elements script and stylesheet
-  const elementScript = document.createElement('script');
-  elementScript.src = 'https://unpkg.com/@stoplight/elements/web-components.min.js';
-  document.head.appendChild(elementScript);
-
-  const elementStyle = document.createElement('link');
-  elementStyle.rel = 'stylesheet';
-  elementStyle.href = 'https://unpkg.com/@stoplight/elements/styles.min.css';
-  document.head.appendChild(elementStyle);
+  loadStoplightStyles();
+  try {
+    await loadStoplightScript();
+    stoplightLoaded.value = true;
+  } catch (error) {
+    console.error(error);
+  }
+  await fetchSpec();
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener('hashchange', handleHashChange);
 });
 
-// Handle dark mode changes
+// Watch for dark mode changes to force a re-render
 const { isDark } = useData();
 const theme = ref(isDark.value ? 'dark' : 'light');
 watch(isDark, (newVal) => {
@@ -60,7 +85,11 @@ watch(isDark, (newVal) => {
 
 <template>
   <client-only>
-    <div v-if="apiSpec">
+    <!-- Wait until both the API spec and Stoplight Elements are loaded -->
+    <div v-if="!apiSpec || !stoplightLoaded">
+      Loading API Documentation...
+    </div>
+    <div v-else>
       <elements-api
         :key="componentKey"
         :apiDescription="apiSpec"
@@ -70,9 +99,6 @@ watch(isDark, (newVal) => {
         :data-theme="theme"
         tryItBaseUrl="https://demo.homebox.software/api"
       />
-    </div>
-    <div v-else>
-      Loading API Spec...
     </div>
   </client-only>
 </template>
