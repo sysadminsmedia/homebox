@@ -30,7 +30,7 @@ aside: false
 | HBOX_MAILER_FROM                        |                                                                            | email from address to use                                                                                                                                                                 |
 | HBOX_SWAGGER_HOST                       | 7745                                                                       | swagger host to use, if not set swagger will be disabled                                                                                                                                  |
 | HBOX_SWAGGER_SCHEMA                     | `http`                                                                     | swagger schema to use, can be one of: `http`, `https`                                                                                                                                     |
-| HBOX_DATABASE_TYPE                      | sqlite3                                                                    | sets the correct database type (`sqlite3` or `postgres`)                                                                                                                                  |
+| HBOX_DATABASE_DRIVER                    | sqlite3                                                                    | sets the correct database type (`sqlite3` or `postgres`)                                                                                                                                  |
 | HBOX_DATABASE_SQLITE_PATH               | ./.data/homebox.db?_pragma=busy_timeout=999&_pragma=journal_mode=WAL&_fk=1 | sets the directory path for Sqlite                                                                                                                                                        |
 | HBOX_DATABASE_HOST                      |                                                                            | sets the hostname for a postgres database                                                                                                                                                 |
 | HBOX_DATABASE_PORT                      |                                                                            | sets the port for a postgres database                                                                                                                                                     |
@@ -87,7 +87,7 @@ OPTIONS
 --demo/$HBOX_DEMO                                                             <bool>
 --debug-enabled/$HBOX_DEBUG_ENABLED                                           <bool>    (default: false)
 --debug-port/$HBOX_DEBUG_PORT                                                 <string>  (default: 4000)
---database-type/$HBOX_DATABASE_TYPE                                           <string>  (default: sqlite3)
+--database-driver/$HBOX_DATABASE_DRIVER                                       <string>  (default: sqlite3)
 --database-sqlite-path/$HBOX_DATABASE_SQLITE_PATH                             <string>  (default: ./.data/homebox.db?_pragma=busy_timeout=999&_pragma=journal_mode=WAL&_fk=1)
 --database-host/$HBOX_DATABASE_HOST                                           <string>
 --database-port/$HBOX_DATABASE_PORT                                           <string>

@@ -33,7 +33,7 @@ tasks:
     desc: Generates typescript types from swagger definition
     cmds:
       - |
-        npx swagger-typescript-api \
+        pnpm dlx swagger-typescript-api generate \
           --no-client \
           --modular \
           --path ./backend/app/api/static/docs/swagger.json \
