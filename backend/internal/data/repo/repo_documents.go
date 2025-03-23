@@ -139,11 +139,13 @@ func (r *DocumentRepository) Delete(ctx context.Context, id uuid.UUID) error {
 
 	doc, err := r.db.Document.Get(ctx, id)
 	if err != nil {
+		log.Err(err).Msg("failed to get document")
 		return err
 	}
 
 	err = bucket.Delete(ctx, doc.Path)
 	if err != nil {
+		log.Err(err).Msg("failed to delete from bucket")
 		return err
 	}
 

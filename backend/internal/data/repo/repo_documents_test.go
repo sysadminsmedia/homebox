@@ -49,7 +49,7 @@ func TestDocumentRepository_CreateUpdateDelete(t *testing.T) {
 	r := DocumentRepository{
 		db:         tClient,
 		storePath:  temp,
-		connString: "file://" + temp,
+		connString: "file:///",
 	}
 
 	type args struct {
