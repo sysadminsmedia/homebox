@@ -33,7 +33,7 @@ tasks:
     desc: Generates typescript types from swagger definition
     cmds:
       - |
-        npx swagger-typescript-api \
+        pnpm dlx swagger-typescript-api generate \
           --no-client \
           --modular \
           --path ./backend/app/api/static/docs/swagger.json \
@@ -49,7 +49,8 @@ tasks:
     cmds:
       - task: swag
       - task: typescript-types
-      - cp ./backend/app/api/static/docs/swagger.json docs/docs/api/openapi-2.0.json
+      - cp ./backend/app/api/static/docs/swagger.json docs/en/api/openapi-2.0.json
+      - cp ./backend/app/api/static/docs/swagger.yaml docs/en/api/openapi-2.0.yaml
 
   go:run:
     env:

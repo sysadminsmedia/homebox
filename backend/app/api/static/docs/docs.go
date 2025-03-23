@@ -10,7 +10,8 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {
-            "name": "Don't"
+            "name": "Homebox Team",
+            "url": "https://discord.homebox.software"
         },
         "version": "{{.Version}}"
     },
@@ -3262,9 +3263,9 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "",
+	Host:             "demo.homebox.software",
 	BasePath:         "/api",
-	Schemes:          []string{},
+	Schemes:          []string{"https", "http"},
 	Title:            "Homebox API",
 	Description:      "Track, Manage, and Organize your Things.",
 	InfoInstanceName: "swagger",

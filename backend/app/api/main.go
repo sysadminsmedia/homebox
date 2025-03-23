@@ -3,10 +3,9 @@ package main
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/shirou/gopsutil/v4/host"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -67,12 +66,16 @@ func validatePostgresSSLMode(sslMode string) bool {
 // @title                      Homebox API
 // @version                    1.0
 // @description                Track, Manage, and Organize your Things.
-// @contact.name               Don't
+// @contact.name               Homebox Team
+// @contact.url                https://discord.homebox.software
+// @host                       demo.homebox.software
+// @schemes                    https http
 // @BasePath                   /api
 // @securityDefinitions.apikey Bearer
 // @in                         header
 // @name                       Authorization
 // @description                "Type 'Bearer TOKEN' to correctly set the API Key"
+// @externalDocs.url 		   https://homebox.software/en/api
 
 func main() {
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
@@ -92,49 +95,7 @@ func run(cfg *config.Config) error {
 	app.setupLogger()
 
 	if cfg.Options.AllowAnalytics {
-		type analyticsData struct {
-			Domain string                 `json:"domain"`
-			Name   string                 `json:"name"`
-			URL    string                 `json:"url"`
-			Props  map[string]interface{} `json:"props"`
-		}
-		hostData, _ := host.Info()
-		analytics := analyticsData{
-			Domain: "homebox.software",
-			URL:    "https://homebox.software/stats",
-			Name:   "stats",
-			Props: map[string]interface{}{
-				"version":          version + "/" + build(),
-				"os":               hostData.OS,
-				"platform":         hostData.Platform,
-				"platform_family":  hostData.PlatformFamily,
-				"platform_version": hostData.PlatformVersion,
-				"kernel_arch":      hostData.KernelArch,
-				"virt_type":        hostData.VirtualizationSystem,
-			},
-		}
-		jsonBody, err := json.Marshal(analytics)
-		if err != nil {
-			log.Error().Err(err).Msg("failed to marshal analytics data")
-		}
-		bodyReader := bytes.NewReader(jsonBody)
-		req, err := http.NewRequest("POST", "https://a.sysadmins.zone/api/event", bodyReader)
-		if err != nil {
-			log.Error().Err(err).Msg("failed to create analytics request")
-		}
-		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("User-Agent", "Homebox/"+version+"/"+build()+" (https://homebox.software)")
-		client := &http.Client{
-			Timeout: 10 * time.Second,
-		}
-		res, err := client.Do(req)
-		if err != nil {
-			log.Error().Err(err).Msg("failed to send analytics request")
-		}
-		err = res.Body.Close()
-		if err != nil {
-			log.Error().Err(err).Msg("failed to send analytics request")
-		}
+		analytics.Send(version, build())
 	}
 
 	// =========================================================================

@@ -56,7 +56,7 @@ export default defineConfig({
     ],
 
     footer: {
-      message: 'HomeBox is an open-source project under the <a href="https://github.com/sysadminsmedia/homebox/blob/main/LICENSE">MIT license</a>',
+      message: 'HomeBox is an open-source project under the <a href="https://github.com/sysadminsmedia/homebox/blob/main/LICENSE">AGPL License</a>',
       copyright: '&copy; <a href="https://sysadminsmedia.com/">Sysadmins Media</a>, 2025',
     }
   },
