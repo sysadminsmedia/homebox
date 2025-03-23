@@ -134,6 +134,9 @@ type (
 		Labels   []LabelSummary   `json:"labels"`
 
 		ImageID *uuid.UUID `json:"imageId,omitempty"`
+
+		// Sale details
+		SoldTime time.Time `json:"soldTime"`
 	}
 
 	ItemOut struct {
