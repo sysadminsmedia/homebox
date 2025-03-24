@@ -340,7 +340,7 @@
         "invalid_url": "URL de code-barres non valide",
         "no_sources": "Aucune source vidéo disponible",
         "select_video_source": "Choisir une source vidéo",
-        "unsupported": "L’API <i>Media Stream</i> n’est pas prise en charge"
+        "unsupported": "L’API <i>Media Stream</i> n’est pas prise en charge sans HTTPS"
     },
     "tools": {
         "actions": "Actions d’inventaire",

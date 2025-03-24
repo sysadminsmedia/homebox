@@ -262,6 +262,7 @@
     "languages.da-DK": "Deens",
     "languages.ro-RO": "Roemeens",
     "languages.sk-SK": "Slowaaks",
+    "languages.sq-AL": "Albanees",
     "locations": {
         "child_locations": "Sublocaties",
         "collapse_tree": "Structuur invouwen",
@@ -349,7 +350,7 @@
         "invalid_url": "Ongeldige streepjescode",
         "no_sources": "Geen videobronnen beschikbaar",
         "select_video_source": "Kies een videobron",
-        "unsupported": "Mediastream-API wordt niet ondersteund"
+        "unsupported": "Mediastream-API wordt niet ondersteund zonder HTTPS"
     },
     "tools": {
         "actions": "Acties inventariseren",
