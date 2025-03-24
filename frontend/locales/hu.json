@@ -262,6 +262,7 @@
     "languages.da-DK": "Dán",
     "languages.ro-RO": "Román",
     "languages.sk-SK": "Szlovák",
+    "languages.sq-AL": "albán",
     "locations": {
         "child_locations": "Tartalmazott helyek",
         "collapse_tree": "Fanézet becsukása",
@@ -349,7 +350,7 @@
         "invalid_url": "Érvénytelen vonalkód URL",
         "no_sources": "Nincs elérhető videóforrás",
         "select_video_source": "Videóforrás kiválasztása",
-        "unsupported": "A Media Stream API nem támogatott"
+        "unsupported": "A Media Stream API nem támogatott HTTPS nélkül"
     },
     "tools": {
         "actions": "Készletműveletek",
