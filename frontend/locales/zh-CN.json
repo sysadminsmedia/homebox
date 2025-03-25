@@ -349,7 +349,7 @@
         "invalid_url": "非法的条形码地址",
         "no_sources": "没有可用的摄像头资源",
         "select_video_source": "选择摄像头",
-        "unsupported": "不支持实时媒体API"
+        "unsupported": "媒体流API只在HTTPS环境下支持"
     },
     "tools": {
         "actions": "库存操作",
