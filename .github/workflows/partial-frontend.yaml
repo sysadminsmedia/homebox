@@ -1,4 +1,4 @@
-name: Frontend / E2E
+name: Frontend
 
 on:
   workflow_call:
@@ -114,7 +114,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: lts/*
 
       - uses: pnpm/action-setup@v3.0.0
         with:
