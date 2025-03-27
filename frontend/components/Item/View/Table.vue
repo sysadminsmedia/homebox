@@ -249,13 +249,17 @@
       return 0;
     }
 
-    const aLower = extractSortable(a, sortByProperty.value);
-    const bLower = extractSortable(b, sortByProperty.value);
+    const aVal = extractSortable(a, sortByProperty.value);
+    const bVal = extractSortable(b, sortByProperty.value);
 
-    if (aLower < bLower) {
+    if (typeof aVal === "string" && typeof bVal === "string") {
+      return aVal.localeCompare(bVal, undefined, { numeric: true, sensitivity: "base" });
+    }
+
+    if (aVal < bVal) {
       return -1;
     }
-    if (aLower > bLower) {
+    if (aVal > bVal) {
       return 1;
     }
     return 0;
