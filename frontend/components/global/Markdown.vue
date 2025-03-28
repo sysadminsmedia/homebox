@@ -31,5 +31,6 @@
 <style scoped>
   * {
     --y-gap: 0.65rem;
+    word-wrap: break-word; // Fix for long words going out of emelent bounds and issue #407
   }
 </style>
