@@ -67,7 +67,7 @@
             class="w-full rounded-t border-gray-300 object-fill shadow-sm"
             alt="Uploaded Photo"
           />
-          <p class="mt-2" style="overflow-wrap: anywhere">File name: {{ photo.photoName }}</p>
+          <p class="mt-1" style="overflow-wrap: anywhere">File name: {{ photo.photoName }}</p>
         </div>
       </div>
     </form>
