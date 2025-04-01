@@ -60,6 +60,7 @@ type (
 		ImportRef   string    `json:"-"`
 		ParentID    uuid.UUID `json:"parentId"    extensions:"x-nullable"`
 		Name        string    `json:"name"        validate:"required,min=1,max=255"`
+		Quantity    int       `json:"quantity"`
 		Description string    `json:"description" validate:"max=1000"`
 		AssetID     AssetID   `json:"-"`
 
@@ -575,6 +576,7 @@ func (e *ItemsRepository) Create(ctx context.Context, gid uuid.UUID, data ItemCr
 	q := e.db.Item.Create().
 		SetImportRef(data.ImportRef).
 		SetName(data.Name).
+		SetQuantity(data.Quantity).
 		SetDescription(data.Description).
 		SetGroupID(gid).
 		SetLocationID(data.LocationID).
