@@ -44,7 +44,7 @@
             <label tabindex="0" class="btn rounded-l-none rounded-r-xl">
               <MdiChevronDown class="size-5" name="mdi-chevron-down" />
             </label>
-            <ul tabindex="0" class="dropdown-content menu rounded-box right-0 w-64 bg-base-100 p-2 shadow">
+            <ul tabindex="0" class="dropdown-content menu rounded-box bg-base-100 right-0 w-64 p-2 shadow">
               <li>
                 <button type="button" @click="create(false)">{{ $t("global.create_and_add") }}</button>
               </li>
@@ -54,14 +54,20 @@
       </div>
 
       <!-- photo preview area is AFTER the create button, to avoid pushing the button below the screen on small displays -->
-      <div class="border-t border-gray-300 p-4">
-        <div v-for="(photo, index) in form.photos" :key="index">
-          <p class="mb-0" style="overflow-wrap: anywhere">File name: {{ photo.photoName }}</p>
+      <div class="border-t border-gray-300 px-4 pb-4">
+        <div v-for="(photo, index) in form.photos" :key="index" class="pt-4">
+          <div class="flex justify-end py-1">
+            <button type="button" class="btn btn-circle btn-primary btn-sm sm:btn-md" @click="deleteImage(index)">
+              <MdiDelete class="size-5" />
+            </button>
+          </div>
+
           <img
             :src="photo.fileBase64"
             class="w-full rounded-t border-gray-300 object-fill shadow-sm"
             alt="Uploaded Photo"
           />
+          <p class="mt-2" style="overflow-wrap: anywhere">File name: {{ photo.photoName }}</p>
         </div>
       </div>
     </form>
@@ -78,6 +84,7 @@
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
   import MdiChevronDown from "~icons/mdi/chevron-down";
+  import MdiDelete from "~icons/mdi/delete";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
 
   const props = defineProps({
@@ -127,6 +134,10 @@
   });
 
   const { shift } = useMagicKeys();
+
+  function deleteImage(index: number) {
+    form.photos.splice(index, 1);
+  }
 
   function previewImage(event: Event) {
     const input = event.target as HTMLInputElement;
