@@ -30,6 +30,7 @@
             class="w-full"
             type="file"
             accept="image/png,image/jpeg,image/gif,image/avif,image/webp;capture=camera"
+            multiple
             @change="previewImage"
           />
         </div>
@@ -53,13 +54,15 @@
         </div>
 
         <!-- photo preview area is AFTER the create button, to avoid pushing the button below the screen on small displays -->
-        <div v-if="form.preview" class="mt-4 border-t border-gray-300 p-4">
-          <p class="mb-0">File name: {{ form.photo?.name }}</p>
-          <img
-            :src="form.preview"
-            class="h-[100px] w-full rounded-t border-gray-300 object-cover shadow-sm"
-            alt="Uploaded Photo"
-          />
+        <div v-if="form.photos.length > 0" class="mt-4 border-t border-gray-300 p-4">
+          <div v-for="(photo, index) in form.photos" :key="index" class="mb-2">
+            <p class="mb-0" style="overflow-wrap: anywhere">File name: {{ photo.photoName }}</p>
+            <img
+              :src="photo.fileBase64"
+              class="w-full rounded-t border-gray-300 object-fill shadow-sm"
+              alt="Uploaded Photo"
+            />
+          </div>
         </div>
       </form>
 
@@ -80,7 +83,7 @@
   import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
   import { Shortcut } from "@/components/ui/shortcut";
-  import type { ItemCreate, LocationOut } from "~~/lib/api/types/data-contracts";
+  import type { ItemCreate, LocationOut, LabelOut, PhotoPreview } from "~~/lib/api/types/data-contracts";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
   import MdiPackageVariant from "~icons/mdi/package-variant";
@@ -99,7 +102,7 @@
   const locations = computed(() => locationsStore.allLocations);
 
   const labelStore = useLabelStore();
-  const labels = computed(() => labelStore.labels);
+  const labels = computed(() => labelStore.labels); // Assuming LabelSelector needs LabelOut[]
 
   const route = useRoute();
 
@@ -127,22 +130,24 @@
     description: "",
     color: "", // Future!
     labels: [] as string[],
-    preview: null as string | null,
-    photo: null as File | null,
+    photos: [] as PhotoPreview[],
   });
 
   const { shift } = useMagicKeys();
 
   function previewImage(event: Event) {
     const input = event.target as HTMLInputElement;
+
+    // We support uploading multiple files at once, so build up the list of files to preview and upload
     if (input.files && input.files.length > 0) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        form.preview = e.target?.result as string;
-      };
-      const file = input.files[0];
-      form.photo = file;
-      reader.readAsDataURL(file);
+      for (const file of input.files) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          form.photos.push({ photoName: file.name, fileBase64: e.target?.result as string, file });
+        };
+
+        reader.readAsDataURL(file);
+      }
     }
   }
 
@@ -171,7 +176,8 @@
   );
 
   async function create(close = true) {
-    if (!form.location) {
+    if (!form.location?.id) {
+      toast.error("Please select a location.");
       return;
     }
 
@@ -195,7 +201,7 @@
     };
 
     const { error, data } = await api.items.create(out);
-    loading.value = false;
+
     if (error) {
       loading.value = false;
       toast.error("Couldn't create item");
@@ -204,31 +210,52 @@
 
     toast.success("Item created");
 
-    // if the photo was provided, upload it
-    if (form.photo) {
-      const { error } = await api.items.attachments.add(data.id, form.photo, form.photo.name, AttachmentTypes.Photo);
+    // If photos were provided, upload them
+    // NOTE: This is not transactional. It's entirely possible for some of the photos to successfully upload and the rest to fail, which will result in missing photos
+    if (form.photos.length > 0) {
+      toast.info(`Uploading ${form.photos.length} photo(s)...`);
+      let uploadError = false;
+      for (const photo of form.photos) {
+        const { error: attachError } = await api.items.attachments.add(
+          data.id,
+          photo.file,
+          photo.photoName,
+          AttachmentTypes.Photo
+        );
 
-      if (error) {
-        loading.value = false;
-        toast.error("Failed to upload Photo");
-        return;
+        if (attachError) {
+          uploadError = true;
+          toast.error(`Failed to upload Photo: ${photo.photoName}`);
+          // Decide if you want to stop on the first error or try uploading others
+          // break; // Uncomment to stop on first error
+        } else {
+          toast.success(`Photo uploaded: ${photo.photoName}`);
+        }
       }
-
-      toast.success("Photo uploaded");
+      if (uploadError) {
+        toast.warning("Some photos failed to upload.");
+      } else {
+        toast.success("All photos uploaded successfully.");
+      }
     }
 
     // Reset
     form.name = "";
     form.description = "";
     form.color = "";
-    form.preview = null;
-    form.photo = null;
+    form.photos = [];
+    form.labels = [];
     focused.value = false;
     loading.value = false;
 
     if (close) {
       closeDialog("create-item");
       navigateTo(`/item/${data.id}`);
+    } else {
+      // If not closing, maybe focus the name input again?
+      // useTimeoutFn(() => {
+      //   focused.value = true;
+      // }, 50);
     }
   }
 </script>

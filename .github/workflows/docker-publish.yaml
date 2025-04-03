@@ -10,7 +10,9 @@ on:
       - 'frontend/**'
       - 'Dockerfile'
       - '.dockerignore'
-      - '.github/workflows/**'
+      - '.github/workflows/docker-publish.yaml'
+    ignore:
+      - 'docs/**'
     tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ "main" ]
@@ -19,7 +21,9 @@ on:
       - 'frontend/**'
       - 'Dockerfile'
       - '.dockerignore'
-      - '.github/workflows/**'
+      - '.github/workflows/docker-publish.yaml'
+    ignore:
+      - 'docs/**'
 
 env:
   DOCKERHUB_REPO: sysadminsmedia/homebox

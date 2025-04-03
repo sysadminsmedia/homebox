@@ -2,12 +2,26 @@
     "components": {
         "app": {
             "import_dialog": {
+                "change_warning": "Změnilo se chování importů s existujícími import_refs. Pokud je v souboru CSV přítomen import_ref, bude \n položka aktualizována hodnotami ze souboru CSV.",
                 "description": "Importujte CSV soubor obashující vaše položky, štítky a lokace. Pro dodatečné informace o formátu použijte \ndokumentaci.",
                 "title": "Importovat CSV Soubor",
                 "upload": "Nahrát"
+            },
+            "outdated": {
+                "current_version": "Aktuální verze",
+                "dismiss": "Zamítnout",
+                "latest_version": "Poslední verze",
+                "new_version_available": "Nová verze k dispozici",
+                "new_version_available_link": "Kliknutím sem zobrazíte poznámky k verzi"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "Dokumentace",
+                "failed_to_copy": "Kopírování textu do schránky se nezdařilo",
+                "https_required": "protože je vyžadován protokol HTTPS",
+                "learn_more": "Víc se dozvíš v našem"
+            },
             "date_time": {
                 "ago": "Před {0}",
                 "days": "dny",
@@ -31,6 +45,14 @@
                 "weeks": "týdny",
                 "years": "roky",
                 "yesterday": "včera"
+            },
+            "label_maker": {
+                "browser_print": "Tisk z prohlížeče",
+                "confirm_description": "Opravdu chcete tento štítek vytisknout?",
+                "download": "Stáhnout štítek",
+                "print": "Vytisknout štítek",
+                "server_print": "Tisk na serveru",
+                "titles": "Popisky"
             },
             "page_qr_code": {
                 "page_url": "URL Stránky"
@@ -78,6 +100,9 @@
             "tree": {
                 "no_locations": "Nejsou dostupné žádné lokace. Přidejte nové lokace\npomocí talčítka `<`span class=\"link-primary\"`>`Vytvořit`<`/span`>` na navigační liště."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Pomocí číselných tlačítek rychle vyberte akci."
         }
     },
     "global": {
@@ -97,9 +122,10 @@
         "items": "Položky",
         "join_discord": "Připojte se na Discors",
         "labels": "Popisky",
-        "locations": "Lokace",
+        "locations": "Lokality",
         "maintenance": "Údržba",
         "name": "Jméno",
+        "navigate": "Navigovat",
         "password": "Heslo",
         "read_docs": "Přečtěte si Dokumentaci",
         "save": "Uložit",
@@ -130,7 +156,8 @@
         "remember_me": "Zapamatovat si mě",
         "set_email": "Jaký je váš email?",
         "set_name": "Jak se jmenujete?",
-        "set_password": "Nastavte si heslo"
+        "set_password": "Nastavte si heslo",
+        "tagline": "Sledujte, organizujte a spravujte své věci."
     },
     "items": {
         "add": "Přidat",
@@ -140,7 +167,7 @@
         "attachment": "Přiloha",
         "attachments": "Přilohy",
         "changes_persisted_immediately": "Změny v přílohách budou uloženy okamžitě",
-        "created_at": "Vytvořeno",
+        "created_at": "Vytvořeno v",
         "custom_fields": "Vlastní Data",
         "description": "Popis",
         "details": "Detaily",
@@ -153,7 +180,7 @@
         "insured": "Pojištěné",
         "last": "Poslední",
         "lifetime_warranty": "Doživotní záruka",
-        "location": "Lokace",
+        "location": "Lokalita",
         "manual": "Návod",
         "manuals": "Návody",
         "manufacturer": "Výrobce",
@@ -163,6 +190,8 @@
         "next_page": "Další Stránka",
         "no_results": "Nebyly nalezeny žádné Položky",
         "notes": "Poznámky",
+        "only_with_photo": "Pouze položky s fotografií",
+        "only_without_photo": "Pouze položky bez fotografie",
         "options": "Možnosti",
         "order_by": "Seřadit Podle",
         "pages": "Stránka { page } z { totalPages }",
@@ -175,6 +204,7 @@
         "purchase_price": "Nákupní cena",
         "purchased_from": "Koupeno Od",
         "quantity": "Množství",
+        "query_id": "Dotaz na ID číslo majetku:{ id }",
         "receipt": "Účtenka",
         "receipts": "Účtenky",
         "reset_search": "Obnovit Vyhledávání",
@@ -185,6 +215,9 @@
         "sold_details": "Detaily Prodeje",
         "sold_price": "Cena Prodeje",
         "sold_to": "Prodáno Komu",
+        "tip_1": "Filtry umístění a štítků používají operaci „OR“. Pokud je vybráno více než jeden, bude pro shodu\n vyžadován pouze jeden z nich.",
+        "tip_2": "Vyhledávání s předponou '#'' se dotazuje na ID datového zdroje (například '#000-001')",
+        "tip_3": "Filtry polí používají operaci „NEBO“. Pokud je vybráno více než jedno, bude pro shodu vyžadováno\n pouze jedno.",
         "tips": "Návrhy",
         "tips_sub": "Vyhledat Návrhy",
         "updated_at": "Aktualizováno",
@@ -197,19 +230,29 @@
         "update_label": "Aktualizovat Popisek"
     },
     "languages": {
+        "ca": "Katalánština",
+        "cs-CZ": "Čeština",
         "de": "Němčina",
         "en": "Angličtina",
         "es": "Španělština",
+        "fi-FI": "Finština",
         "fr": "Francouzština",
         "hu": "Maďarština",
+        "id-ID": "Indonéština",
         "it": "Italština",
         "ja-JP": "Japonština",
+        "ko-KR": "Korejština",
+        "nb-NO": "Norština (Bokmål)",
+        "nl": "Holandština",
         "pl": "Polština",
         "pt-BR": "Portugalština (Brazílie)",
         "pt-PT": "Portugalština (Portugalsko)",
         "ru": "Ruština",
         "sl": "Slovinština",
         "sv": "Švédština",
+        "ta-IN": "Tamilština",
+        "th-TH": "Thajština",
+        "tr": "Turečtina",
         "uk-UA": "Ukrajinština",
         "zh-CN": "Čínština (Zjednodušená)",
         "zh-HK": "Čínština (Hong Kong)",
@@ -217,8 +260,9 @@
         "zh-TW": "Čínština (Tradiční)"
     },
     "languages.da-DK": "Dánština",
-    "languages.fi.FI": "Finština",
+    "languages.ro-RO": "Rumunština",
     "languages.sk-SK": "Slovenština",
+    "languages.sq-AL": "Albánština",
     "locations": {
         "child_locations": "Podřazené Lokace",
         "collapse_tree": "Zabalit Strom",
@@ -228,7 +272,8 @@
     "maintenance": {
         "filter": {
             "both": "Obojí",
-            "completed": "Hotové"
+            "completed": "Hotové",
+            "scheduled": "Plánovaný"
         },
         "list": {
             "complete": "Hotovo",
@@ -247,7 +292,8 @@
             "entry_name": "Název Záznamu",
             "new_action": "Vytvořit",
             "new_title": "Nový Záznam",
-            "notes": "Poznámky"
+            "notes": "Poznámky",
+            "scheduled_date": "Plánované datum"
         },
         "monthly_average": "Průměr za měsíc",
         "toast": {
@@ -263,8 +309,10 @@
         "create_label": "Popisek",
         "create_location": "Lokace",
         "home": "Domů",
-        "locations": "Lokace",
+        "locations": "Lokality",
+        "maintenance": "Údržba",
         "profile": "Profil",
+        "scanner": "Skener",
         "search": "Vyhledávání",
         "tools": "Nástroje"
     },
@@ -275,13 +323,71 @@
         "current_password": "Aktuální Heslo",
         "delete_account": "Smazat Účet",
         "delete_account_sub": "Smaže se vás účet a všechny s ním spojená data. Z této akce se nelze navrátit.",
+        "display_header": "{ currentValue, select, true {Hide Header} false {Show Header} other {Not Hit}}",
         "enabled": "Povoleno",
         "example": "Příklad",
         "gen_invite": "Vytvořit zvací odkaz",
         "group_settings": "Nastavení Skupiny",
+        "group_settings_sub": "Nastavení sdílené skupiny. Je možné, že bude nutné obnovit prohlížeč, aby se některá nastavení použila.",
         "inactive": "Neaktivní",
         "language": "Jazyk",
         "new_password": "Nové Heslo",
-        "test": "Zkouška"
+        "no_notifiers": "Nejsou nakonfigurovány žádné oznamovače",
+        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Oznamovatel",
+        "notifiers": "Oznamovatelé",
+        "notifiers_sub": "Dostávejte oznámení o nadcházejících připomenutích údržby",
+        "test": "Zkouška",
+        "theme_settings": "Nastavení motivu",
+        "theme_settings_sub": "Nastavení motivu jsou uložena v místním úložišti prohlížeče. Motiv můžete kdykoli změnit. Pokud máte s \n nastavením motivu potíže, zkuste obnovit prohlížeč.",
+        "update_group": "Aktualizovat skupinu",
+        "update_language": "Aktualizovat jazyk",
+        "url": "URL",
+        "user_profile": "Uživatelský profil",
+        "user_profile_sub": "Pozvěte uživatele a spravujte svůj účet."
+    },
+    "scanner": {
+        "error": "Při skenování došlo k chybě",
+        "invalid_url": "Neplatná adresa URL čárového kódu",
+        "no_sources": "Nejsou k dispozici žádné zdroje videa",
+        "select_video_source": "Vybrat zdroj videa",
+        "unsupported": "Rozhraní Media Stream API není podporováno bez protokolu HTTPS"
+    },
+    "tools": {
+        "actions": "Inventurní akce",
+        "actions_set": {
+            "ensure_ids": "Zajištění ID majetku",
+            "ensure_ids_button": "Zajištění ID majetku",
+            "ensure_ids_sub": "Zajistí, aby všechny položky v inventáři měly platné pole asset_id. To se provádí tak, že se v databázi zjistí nejvyšší aktuální pole asset_id a na každou položku, která má nenastavené pole asset_id, se použije další hodnota. To se provádí v pořadí podle pole created_at.",
+            "ensure_import_refs": "Zajištění importu referencí",
+            "ensure_import_refs_button": "Zajistit import referencí",
+            "ensure_import_refs_sub": "Zajistí, aby všechny položky v inventáři měly platné pole import_ref. To se provádí náhodným generováním osmiznakového řetězce pro každou položku, která má nenastavené pole import_ref.",
+            "set_primary_photo": "Nastavit primární fotografii",
+            "set_primary_photo_button": "Nastavit primární fotografii",
+            "set_primary_photo_sub": "Ve verzi Homeboxu v0.10.0 bylo do příloh typu fotografie přidáno pole primárního obrázku. Tato akce nastaví pole primárního obrázku na první obrázek v poli příloh v databázi, pokud ještě není nastaven. <a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">Viz GitHub PR #576</a>",
+            "zero_datetimes": "Nulové datum položky Časy",
+            "zero_datetimes_button": "Nulové datum položky Časy",
+            "zero_datetimes_sub": "Obnoví hodnotu času pro všechna pole s časem v inventáři na začátek data. Jedná se o opravu chyby, která byla zavedena na začátku vývoje webu a která způsobovala, že hodnota času byla uložena spolu s časem, což způsobovalo problémy se zobrazováním přesných hodnot v polích s datem. Další podrobnosti naleznete v <a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">Issue #236 na Githubu.</a>"
+        },
+        "actions_sub": "Hromadně aplikujte akce na majetek. Jedná se o nevratné akce.<b> Buďte opatrní.</b>",
+        "import_export": "Import/Export",
+        "import_export_set": {
+            "export": "Export inventáře",
+            "export_button": "Export inventáře",
+            "export_sub": "Exportuje standardní formát CSV pro Homebox. Tím se vyexportují všechny položky v inventáři.",
+            "import": "Importovat inventář",
+            "import_button": "Importovat inventář",
+            "import_sub": "Importuje standardní formát CSV pro Homebox. Bez sloupce <code>HB.import_ref</code> <b>nepřepisuje</b> žádné existující položky v inventáři, pouze přidává nové položky. Řádky se sloupcem <code>HB.import_ref</code> se sloučí do existujících položek se stejným import_ref, pokud nějaká existuje."
+        },
+        "import_export_sub": "Import a export inventáře do souboru CSV a ze souboru CSV. To je užitečné při migraci inventáře do nové instance Homeboxu.",
+        "reports": "Zprávy",
+        "reports_set": {
+            "asset_labels": "Identifikační štítky majetku",
+            "asset_labels_button": "Generátor štítků",
+            "asset_labels_sub": "Generuje tisknutelné PDF štítky pro řadu ID majetku. Ty nejsou specifické pro váš inventář, takže si můžete štítky vytisknout dopředu a použít je na inventář, až je obdržíte.",
+            "bill_of_materials": "Soupis materiálů",
+            "bill_of_materials_button": "Generovat kusovník",
+            "bill_of_materials_sub": "Vytvoří soubor CSV (Comma Separated Values), který lze importovat do tabulkového procesoru. Jedná se o souhrn vašich zásob se základními informacemi o položkách a cenách."
+        },
+        "reports_sub": "Generování různých přehledů o zásobách."
     }
 }

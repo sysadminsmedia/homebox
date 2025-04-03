@@ -99,6 +99,11 @@ func (ctrl *V1Controller) GetLocationWithPrice(auth context.Context, gid uuid.UU
 	}
 
 	for _, item := range items.Items {
+		// Skip items with a non-zero SoldTime
+		if !item.SoldTime.IsZero() {
+			continue
+		}
+
 		// Convert item.Quantity to float64 for multiplication
 		quantity := float64(item.Quantity)
 		itemTotal := big.NewInt(int64(item.PurchasePrice * quantity * 100))

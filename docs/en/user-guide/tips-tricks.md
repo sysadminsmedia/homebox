@@ -49,7 +49,15 @@ However, the API endpoint is available for generating QR codes on the fly for an
 
 In version 0.8.0 We've added a custom label generation. On the tools page, there is now a link to the label-generator page where you can generate labels based on Asset ID for your inventory. These are still in early development, so please provide feedback. There's also more information on the implementation on the label generator page.
 
-[Demo](https://homebox.fly.dev/reports/label-generator)
+[Demo](https://demo.homebox.software/reports/label-generator)
+
+:label: v0.18.0
+
+Homebox has a built-in QR code reader that can be used to scan QR codes for your items. This is useful for tracking items with a mobile device.
+
+:label: v0.18.0
+
+Homebox also has a built-in one off label generator for those with proper label makers. This can be accessed via the "Labels" button on the right hand side under the main details on the item page. Locations can also be printed in the same way, although the labels button is located next to the edit icon.
 
 ## Scheduled Maintenance Notifications
 

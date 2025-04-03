@@ -231,13 +231,18 @@
     },
     "languages": {
         "ca": "Catalano",
+        "cs-CZ": "Ceco",
         "de": "Tedesco",
         "en": "Inglese",
         "es": "Spagnolo",
+        "fi-FI": "Finlandese",
         "fr": "Francese",
         "hu": "Ungherese",
+        "id-ID": "Indonesiano",
         "it": "Italiano",
         "ja-JP": "Giapponese",
+        "ko-KR": "Coreano",
+        "nb-NO": "Norvegese",
         "nl": "Olandese",
         "pl": "Polacco",
         "pt-BR": "Portoghese (Brasile)",
@@ -245,6 +250,8 @@
         "ru": "Russo",
         "sl": "Sloveno",
         "sv": "Svedese",
+        "ta-IN": "Tamil",
+        "th-TH": "Tailandese",
         "tr": "Turco",
         "uk-UA": "Ucraino",
         "zh-CN": "Cinese (semplificato)",
@@ -253,9 +260,9 @@
         "zh-TW": "Cinese (tradizionale)"
     },
     "languages.da-DK": "Danese",
-    "languages.fi.FI": "Finlandese",
     "languages.ro-RO": "Rumeno",
     "languages.sk-SK": "Slovacco",
+    "languages.sq-AL": "Albanese",
     "locations": {
         "child_locations": "Ubicazione figlia",
         "collapse_tree": "Contrai albero",
@@ -343,7 +350,7 @@
         "invalid_url": "URL del codice a barre non valido",
         "no_sources": "Nessuna sorgente video disponibile",
         "select_video_source": "Scegli una fonte video",
-        "unsupported": "L'API del flusso multimediale non è supportata"
+        "unsupported": "L'API del flusso multimediale non è supportata senza HTTPS"
     },
     "tools": {
         "actions": "Azioni Inventario",

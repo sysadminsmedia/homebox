@@ -31,7 +31,7 @@
           <p class="text-sm">
             {{ $t("components.global.copy_text.learn_more") }}
             <a
-              href="https://homebox.software/en/tips-tricks.html#copy-to-clipboard"
+              href="https://homebox.software/en/user-guide/tips-tricks.html#copy-to-clipboard"
               class="text-primary hover:underline"
               target="_blank"
               rel="noopener"

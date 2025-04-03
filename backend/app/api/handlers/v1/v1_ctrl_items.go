@@ -88,6 +88,9 @@ func (ctrl *V1Controller) HandleItemsGetAll() errchain.HandlerFunc {
 		items, err := ctrl.repo.Items.QueryByGroup(ctx, ctx.GID, extractQuery(r))
 		totalPrice := new(big.Int)
 		for _, item := range items.Items {
+			if !item.SoldTime.IsZero() { // Skip items with a non-null SoldDate
+				continue
+			}
 			totalPrice.Add(totalPrice, big.NewInt(int64(item.PurchasePrice*100)))
 		}
 

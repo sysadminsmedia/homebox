@@ -5,6 +5,9 @@ There are two main ways to run the application.
 1. As a [Docker](https://www.docker.com/) container.
 2. Using the correct executable for your platform by downloading it from the [Releases](https://github.com/sysadminsmedia/homebox/releases).
 
+::: info Configuration Options
+The application can be configured using environment variables. You can find a list of all available options in the [configuration section](./configure).
+:::
 
 ## Docker
 
@@ -29,6 +32,7 @@ $ docker run -d \
   --restart unless-stopped \
   --publish 3100:7745 \
   --env TZ=Europe/Bucharest \
+  --env HBOX_OPTIONS_ALLOW_ANALYTICS=false \
   --volume /path/to/data/folder/:/data \
   ghcr.io/sysadminsmedia/homebox:latest
 # ghcr.io/sysadminsmedia/homebox:latest-rootless
@@ -49,6 +53,8 @@ services:
     - HBOX_LOG_LEVEL=info
     - HBOX_LOG_FORMAT=text
     - HBOX_WEB_MAX_FILE_UPLOAD=10
+    # Please consider allowing analytics to help us improve Homebox (basic computer information, no personal data)
+    - HBOX_OPTIONS_ALLOW_ANALYTICS=false
     volumes:
       - homebox-data:/data/
     ports:
