@@ -55,19 +55,21 @@
 
       <!-- photo preview area is AFTER the create button, to avoid pushing the button below the screen on small displays -->
       <div class="border-t border-gray-300 px-4 pb-4">
-        <div v-for="(photo, index) in form.photos" :key="index" class="pt-4">
-          <div class="flex justify-end py-1">
-            <button type="button" class="btn btn-circle btn-primary btn-sm sm:btn-md" @click="deleteImage(index)">
-              <MdiDelete class="size-5" />
-            </button>
-          </div>
+        <div v-for="(photo, index) in form.photos" :key="index">
+          <div class="indicator mt-8 w-auto">
+            <div class="indicator-item right-2 top-2">
+              <button type="button" class="btn btn-circle btn-primary btn-md" @click="deleteImage(index)">
+                <MdiDelete class="size-5" />
+              </button>
+            </div>
 
-          <img
-            :src="photo.fileBase64"
-            class="w-full rounded-t border-gray-300 object-fill shadow-sm"
-            alt="Uploaded Photo"
-          />
-          <p class="mt-1" style="overflow-wrap: anywhere">File name: {{ photo.photoName }}</p>
+            <img
+              :src="photo.fileBase64"
+              class="w-full rounded-t border-gray-300 object-fill shadow-sm"
+              alt="Uploaded Photo"
+            />
+          </div>
+          <p class="mt-1 text-sm" style="overflow-wrap: anywhere">File name: {{ photo.photoName }}</p>
         </div>
       </div>
     </form>
