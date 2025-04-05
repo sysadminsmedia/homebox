@@ -229,7 +229,7 @@
     "languages.ro-RO": "Romanès",
     "languages.sk-SK": "Eslovac",
     "locations": {
-        "child_locations": "Ubicacions infantils",
+        "child_locations": "Ubicacions filles",
         "collapse_tree": "Col·lapsa l'arbre",
         "no_results": "No s'han trobat ubicacions",
         "update_location": "Actualitza ubicació"
