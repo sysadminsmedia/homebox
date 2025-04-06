@@ -2,6 +2,8 @@ package repo
 
 import (
 	"context"
+	"io"
+	"os"
 	"time"
 
 	"github.com/google/uuid"
@@ -11,21 +13,20 @@ import (
 )
 
 // AttachmentRepo is a repository for Attachments table that links Items to Documents
-// While also specifying the type of the attachment. This _ONLY_ provides basic Create Update
-// And Delete operations. For accessing the actual documents, use the Items repository since it
-// provides the attachments with the documents.
+// While also specifying the type of the attachment.
 type AttachmentRepo struct {
 	db *ent.Client
 }
 
 type (
 	ItemAttachment struct {
-		ID        uuid.UUID   `json:"id"`
-		CreatedAt time.Time   `json:"createdAt"`
-		UpdatedAt time.Time   `json:"updatedAt"`
-		Type      string      `json:"type"`
-		Document  DocumentOut `json:"document"`
-		Primary   bool        `json:"primary"`
+		ID        uuid.UUID `json:"id"`
+		CreatedAt time.Time `json:"createdAt"`
+		UpdatedAt time.Time `json:"updatedAt"`
+		Type      string    `json:"type"`
+		Primary   bool      `json:"primary"`
+		Path      string    `json:"path"`
+		Title     string    `json:"title"`
 	}
 
 	ItemAttachmentUpdate struct {
@@ -33,6 +34,11 @@ type (
 		Type    string    `json:"type"`
 		Title   string    `json:"title"`
 		Primary bool      `json:"primary"`
+	}
+
+	ItemCreateAttachment struct {
+		Title   string    `json:"title"`
+		Content io.Reader `json:"content"`
 	}
 )
 
@@ -43,18 +49,14 @@ func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
 		UpdatedAt: attachment.UpdatedAt,
 		Type:      attachment.Type.String(),
 		Primary:   attachment.Primary,
-		Document: DocumentOut{
-			ID:    attachment.Edges.Document.ID,
-			Title: attachment.Edges.Document.Title,
-			Path:  attachment.Edges.Document.Path,
-		},
+		Path:      attachment.Path,
+		Title:     attachment.Title,
 	}
 }
 
-func (r *AttachmentRepo) Create(ctx context.Context, itemID, docID uuid.UUID, typ attachment.Type) (*ent.Attachment, error) {
+func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemCreateAttachment, typ attachment.Type) (*ent.Attachment, error) {
 	bldr := r.db.Attachment.Create().
 		SetType(typ).
-		SetDocumentID(docID).
 		SetItemID(itemID)
 
 	// Autoset primary to true if this is the first attachment
@@ -83,7 +85,6 @@ func (r *AttachmentRepo) Get(ctx context.Context, id uuid.UUID) (*ent.Attachment
 		Query().
 		Where(attachment.ID(id)).
 		WithItem().
-		WithDocument().
 		Only(ctx)
 }
 
@@ -127,5 +128,14 @@ func (r *AttachmentRepo) Update(ctx context.Context, id uuid.UUID, data *ItemAtt
 }
 
 func (r *AttachmentRepo) Delete(ctx context.Context, id uuid.UUID) error {
+	doc, error := r.db.Attachment.Get(ctx, id)
+	if error != nil {
+		return error
+	}
+
+	err := os.Remove(doc.Path)
+	if err != nil {
+		return err
+	}
 	return r.db.Attachment.DeleteOneID(id).Exec(ctx)
 }
