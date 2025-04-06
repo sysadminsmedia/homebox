@@ -14,7 +14,6 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
-	"github.com/sysadminsmedia/homebox/backend/pkgs/pathlib"
 )
 
 // AttachmentRepo is a repository for Attachments table that links Items to their
@@ -61,7 +60,7 @@ func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
 }
 
 func (r *AttachmentRepo) path(gid uuid.UUID, hash string) string {
-	return pathlib.Safe(filepath.Join(r.dir, gid.String(), "documents", hash))
+	return filepath.Join(r.dir, gid.String(), "documents", hash)
 }
 
 func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemCreateAttachment, typ attachment.Type) (*ent.Attachment, error) {
@@ -124,15 +123,16 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 
 	// Prepare for the hashing of the file contents
 	hashOut := make([]byte, 16)
-	fileContents := make([]byte, 0)
-	_, err = io.ReadFull(doc.Content, fileContents)
+
+	buf, err := io.ReadAll(doc.Content)
 	if err != nil {
 		return nil, err
 	}
+
 	// We use blake3 to generate a hash of the file contents, the group ID is used as context to ensure unique hashes
 	// for the same file across different groups to reduce the chance of collisions
 	// additionally, the hash can be used to validate the file contents if needed
-	blake3.DeriveKey(itemGroup.ID.String(), fileContents, hashOut)
+	blake3.DeriveKey(itemGroup.ID.String(), buf, hashOut)
 
 	// Create the file itself
 	path := r.path(itemGroup.ID, fmt.Sprintf("%x", hashOut))
@@ -147,24 +147,26 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 		return nil, err
 	}
 
-	file, err := os.Create(path)
-	if err != nil {
-		log.Err(err).Msg("failed to create file")
-		err := tx.Rollback()
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		file, err := os.Create(path)
 		if err != nil {
+			log.Err(err).Msg("failed to create file")
+			err := tx.Rollback()
+			if err != nil {
+				return nil, err
+			}
 			return nil, err
 		}
-		return nil, err
-	}
 
-	_, err = io.Copy(file, doc.Content)
-	if err != nil {
-		log.Err(err).Msg("failed to copy file contents")
-		err := tx.Rollback()
+		_, err = io.Copy(file, doc.Content)
 		if err != nil {
+			log.Err(err).Msg("failed to copy file contents")
+			err := tx.Rollback()
+			if err != nil {
+				return nil, err
+			}
 			return nil, err
 		}
-		return nil, err
 	}
 
 	bldr = bldr.SetPath(path)
