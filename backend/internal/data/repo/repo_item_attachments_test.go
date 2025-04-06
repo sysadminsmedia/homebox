@@ -24,7 +24,6 @@ func TestAttachmentRepo_Create(t *testing.T) {
 	type args struct {
 		ctx    context.Context
 		itemID uuid.UUID
-		docID  uuid.UUID
 		typ    attachment.Type
 	}
 	tests := []struct {
