@@ -28,7 +28,7 @@ func (svc *ItemService) AttachmentUpdate(ctx Context, itemID uuid.UUID, data *re
 
 	// Update Document
 	attDoc := attachment
-	_, err = svc.repo.Docs.Rename(ctx, attDoc.ID, data.Title)
+	_, err = svc.repo.Attachments.Rename(ctx, attDoc.ID, data.Title)
 	if err != nil {
 		return repo.ItemOut{}, err
 	}
@@ -46,17 +46,10 @@ func (svc *ItemService) AttachmentAdd(ctx Context, itemID uuid.UUID, filename st
 		return repo.ItemOut{}, err
 	}
 
-	// Create the document
-	doc, err := svc.repo.Docs.Create(ctx, ctx.GID, repo.DocumentCreate{Title: filename, Content: file})
+	// Create the attachment
+	_, err = svc.repo.Attachments.Create(ctx, ctx.GID, repo.ItemCreateAttachment{Title: filename, Content: file}, attachmentType)
 	if err != nil {
 		log.Err(err).Msg("failed to create document")
-		return repo.ItemOut{}, err
-	}
-
-	// Create the attachment
-	_, err = svc.repo.Attachments.Create(ctx, itemID, doc.ID, attachmentType)
-	if err != nil {
-		log.Err(err).Msg("failed to create attachment")
 		return repo.ItemOut{}, err
 	}
 
@@ -64,27 +57,8 @@ func (svc *ItemService) AttachmentAdd(ctx Context, itemID uuid.UUID, filename st
 }
 
 func (svc *ItemService) AttachmentDelete(ctx context.Context, gid, itemID, attachmentID uuid.UUID) error {
-	// Get the Item
-	_, err := svc.repo.Items.GetOneByGroup(ctx, gid, itemID)
-	if err != nil {
-		return err
-	}
-
-	attachment, err := svc.repo.Attachments.Get(ctx, attachmentID)
-	if err != nil {
-		return err
-	}
-
-	documentID := attachment.Edges.Document.GetID()
-
 	// Delete the attachment
-	err = svc.repo.Attachments.Delete(ctx, attachmentID)
-	if err != nil {
-		return err
-	}
-
-	// Delete the document, this function also removes the file
-	err = svc.repo.Docs.Delete(ctx, documentID)
+	err := svc.repo.Attachments.Delete(ctx, attachmentID)
 	if err != nil {
 		return err
 	}

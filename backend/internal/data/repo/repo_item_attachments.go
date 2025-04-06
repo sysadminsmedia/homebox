@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"io"
 	"os"
 	"time"
@@ -138,4 +139,8 @@ func (r *AttachmentRepo) Delete(ctx context.Context, id uuid.UUID) error {
 		return err
 	}
 	return r.db.Attachment.DeleteOneID(id).Exec(ctx)
+}
+
+func (r *AttachmentRepo) Rename(ctx services.Context, id uuid.UUID, title string) (interface{}, error) {
+	return r.db.Attachment.UpdateOneID(id).SetTitle(title).Save(ctx)
 }
