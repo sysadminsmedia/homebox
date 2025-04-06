@@ -31,8 +31,6 @@ const (
 	EdgeItems = "items"
 	// EdgeLabels holds the string denoting the labels edge name in mutations.
 	EdgeLabels = "labels"
-	// EdgeDocuments holds the string denoting the documents edge name in mutations.
-	EdgeDocuments = "documents"
 	// EdgeInvitationTokens holds the string denoting the invitation_tokens edge name in mutations.
 	EdgeInvitationTokens = "invitation_tokens"
 	// EdgeNotifiers holds the string denoting the notifiers edge name in mutations.
@@ -67,13 +65,6 @@ const (
 	LabelsInverseTable = "labels"
 	// LabelsColumn is the table column denoting the labels relation/edge.
 	LabelsColumn = "group_labels"
-	// DocumentsTable is the table that holds the documents relation/edge.
-	DocumentsTable = "documents"
-	// DocumentsInverseTable is the table name for the Document entity.
-	// It exists in this package in order to avoid circular dependency with the "document" package.
-	DocumentsInverseTable = "documents"
-	// DocumentsColumn is the table column denoting the documents relation/edge.
-	DocumentsColumn = "group_documents"
 	// InvitationTokensTable is the table that holds the invitation_tokens relation/edge.
 	InvitationTokensTable = "group_invitation_tokens"
 	// InvitationTokensInverseTable is the table name for the GroupInvitationToken entity.
@@ -208,20 +199,6 @@ func ByLabels(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByDocumentsCount orders the results by documents count.
-func ByDocumentsCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newDocumentsStep(), opts...)
-	}
-}
-
-// ByDocuments orders the results by documents terms.
-func ByDocuments(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newDocumentsStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
 // ByInvitationTokensCount orders the results by invitation_tokens count.
 func ByInvitationTokensCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -275,13 +252,6 @@ func newLabelsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(LabelsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, LabelsTable, LabelsColumn),
-	)
-}
-func newDocumentsStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(DocumentsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, DocumentsTable, DocumentsColumn),
 	)
 }
 func newInvitationTokensStep() *sqlgraph.Step {
