@@ -171,9 +171,6 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 
 	attachment, err := bldr.Save(ctx)
 	if err != nil {
-		if err != nil {
-			return nil, err
-		}
 		log.Err(err).Msg("failed to save attachment to database")
 		err = tx.Rollback()
 		if err != nil {

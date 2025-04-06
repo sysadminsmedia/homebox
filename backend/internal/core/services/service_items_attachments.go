@@ -47,7 +47,7 @@ func (svc *ItemService) AttachmentAdd(ctx Context, itemID uuid.UUID, filename st
 	}
 
 	// Create the attachment
-	_, err = svc.repo.Attachments.Create(ctx, ctx.GID, repo.ItemCreateAttachment{Title: filename, Content: file}, attachmentType)
+	_, err = svc.repo.Attachments.Create(ctx, itemID, repo.ItemCreateAttachment{Title: filename, Content: file}, attachmentType)
 	if err != nil {
 		log.Err(err).Msg("failed to create document")
 		return repo.ItemOut{}, err
