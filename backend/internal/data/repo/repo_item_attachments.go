@@ -3,16 +3,18 @@ package repo
 import (
 	"context"
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
-	"github.com/sysadminsmedia/homebox/backend/pkgs/pathlib"
+	"github.com/rs/zerolog/log"
 	"github.com/zeebo/blake3"
 	"io"
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/pathlib"
 )
 
 // AttachmentRepo is a repository for Attachments table that links Items to their
@@ -79,6 +81,9 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 	}()
 
 	bldr := tx.Attachment.Create().
+		SetID(uuid.New()).
+		SetCreatedAt(time.Now()).
+		SetUpdatedAt(time.Now()).
 		SetType(typ).
 		SetItemID(itemID).
 		SetTitle(doc.Title)
@@ -93,6 +98,7 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 			).
 			Count(ctx)
 		if err != nil {
+			log.Err(err).Msg("failed to count attachments")
 			err := tx.Rollback()
 			if err != nil {
 				return nil, err
@@ -106,8 +112,9 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 	}
 
 	// Get the group ID for the item the attachment is being created for
-	itemGroup, err := r.db.Item.GetX(ctx, itemID).QueryGroup().First(ctx)
+	itemGroup, err := tx.Item.Query().QueryGroup().Only(ctx)
 	if err != nil {
+		log.Err(err).Msg("failed to get item group")
 		err := tx.Rollback()
 		if err != nil {
 			return nil, err
@@ -130,8 +137,9 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 	// Create the file itself
 	path := r.path(itemGroup.ID, fmt.Sprintf("%x", hashOut))
 	parent := filepath.Dir(path)
-	err = os.Mkdir(parent, 0755)
+	err = os.MkdirAll(parent, 0755)
 	if err != nil {
+		log.Err(err).Msg("failed to create parent directory")
 		err := tx.Rollback()
 		if err != nil {
 			return nil, err
@@ -141,6 +149,7 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 
 	file, err := os.Create(path)
 	if err != nil {
+		log.Err(err).Msg("failed to create file")
 		err := tx.Rollback()
 		if err != nil {
 			return nil, err
@@ -150,6 +159,7 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 
 	_, err = io.Copy(file, doc.Content)
 	if err != nil {
+		log.Err(err).Msg("failed to copy file contents")
 		err := tx.Rollback()
 		if err != nil {
 			return nil, err
@@ -157,11 +167,15 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 		return nil, err
 	}
 
-	bldr.SetPath(path)
+	bldr = bldr.SetPath(path)
 
 	attachment, err := bldr.Save(ctx)
 	if err != nil {
-		err := tx.Rollback()
+		if err != nil {
+			return nil, err
+		}
+		log.Err(err).Msg("failed to save attachment to database")
+		err = tx.Rollback()
 		if err != nil {
 			return nil, err
 		}
@@ -169,6 +183,7 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 	}
 
 	if err := tx.Commit(); err != nil {
+		log.Err(err).Msg("failed to commit transaction")
 		return nil, err
 	}
 	return attachment, nil
