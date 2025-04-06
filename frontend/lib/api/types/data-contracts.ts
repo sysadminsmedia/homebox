@@ -18,12 +18,6 @@ export interface CurrenciesCurrency {
   symbol: string;
 }
 
-export interface DocumentOut {
-  id: string;
-  path: string;
-  title: string;
-}
-
 export interface Group {
   createdAt: Date | string;
   currency: string;
@@ -48,9 +42,10 @@ export interface GroupUpdate {
 
 export interface ItemAttachment {
   createdAt: Date | string;
-  document: DocumentOut;
   id: string;
+  path: string;
   primary: boolean;
+  title: string;
   type: string;
   updatedAt: Date | string;
 }
@@ -149,6 +144,8 @@ export interface ItemSummary {
   name: string;
   purchasePrice: number;
   quantity: number;
+  /** Sale details */
+  soldTime: Date | string;
   updatedAt: Date | string;
 }
 
