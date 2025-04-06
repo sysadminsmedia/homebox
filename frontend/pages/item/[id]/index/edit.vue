@@ -383,7 +383,7 @@
 
   function openAttachmentEditDialog(attachment: ItemAttachment) {
     editState.id = attachment.id;
-    editState.title = attachment.document.title;
+    editState.title = attachment.title;
     editState.type = attachment.type;
     editState.primary = attachment.primary;
     editState.modal = true;
@@ -711,7 +711,7 @@
                 class="grid grid-cols-6 justify-between py-3 pl-3 pr-4 text-sm"
               >
                 <p class="col-span-4 my-auto">
-                  {{ attachment.document.title }}
+                  {{ attachment.title }}
                 </p>
                 <p class="my-auto">
                   {{ $t(`items.${attachment.type}`) }}
