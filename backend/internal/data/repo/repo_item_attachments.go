@@ -2,20 +2,24 @@ package repo
 
 import (
 	"context"
-	"io"
-	"os"
-	"time"
-
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/pathlib"
+	"github.com/zeebo/blake3"
+	"io"
+	"os"
+	"path/filepath"
+	"time"
 )
 
-// AttachmentRepo is a repository for Attachments table that links Items to Documents
-// While also specifying the type of the attachment.
+// AttachmentRepo is a repository for Attachments table that links Items to their
+// associated files while also specifying the type of the attachment.
 type AttachmentRepo struct {
-	db *ent.Client
+	db  *ent.Client
+	dir string
 }
 
 type (
@@ -54,8 +58,27 @@ func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
 	}
 }
 
+func (r *AttachmentRepo) path(gid uuid.UUID, hash string) string {
+	return pathlib.Safe(filepath.Join(r.dir, gid.String(), "documents", hash))
+}
+
 func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemCreateAttachment, typ attachment.Type) (*ent.Attachment, error) {
-	bldr := r.db.Attachment.Create().
+	tx, err := r.db.Tx(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	// If there is an error during file creation rollback the database
+	defer func() {
+		if v := recover(); v != nil {
+			err := tx.Rollback()
+			if err != nil {
+				return
+			}
+		}
+	}()
+
+	bldr := tx.Attachment.Create().
 		SetType(typ).
 		SetItemID(itemID).
 		SetTitle(doc.Title)
@@ -63,13 +86,17 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 	// Autoset primary to true if this is the first attachment
 	// that is of type photo
 	if typ == attachment.TypePhoto {
-		cnt, err := r.db.Attachment.Query().
+		cnt, err := tx.Attachment.Query().
 			Where(
 				attachment.HasItemWith(item.ID(itemID)),
 				attachment.TypeEQ(typ),
 			).
 			Count(ctx)
 		if err != nil {
+			err := tx.Rollback()
+			if err != nil {
+				return nil, err
+			}
 			return nil, err
 		}
 
@@ -78,7 +105,73 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 		}
 	}
 
-	return bldr.Save(ctx)
+	// Get the group ID for the item the attachment is being created for
+	itemGroup, err := r.db.Item.GetX(ctx, itemID).QueryGroup().First(ctx)
+	if err != nil {
+		err := tx.Rollback()
+		if err != nil {
+			return nil, err
+		}
+		return nil, err
+	}
+
+	// Prepare for the hashing of the file contents
+	hashOut := make([]byte, 16)
+	fileContents := make([]byte, 0)
+	_, err = io.ReadFull(doc.Content, fileContents)
+	if err != nil {
+		return nil, err
+	}
+	// We use blake3 to generate a hash of the file contents, the group ID is used as context to ensure unique hashes
+	// for the same file across different groups to reduce the chance of collisions
+	// additionally, the hash can be used to validate the file contents if needed
+	blake3.DeriveKey(itemGroup.ID.String(), fileContents, hashOut)
+
+	// Create the file itself
+	path := r.path(itemGroup.ID, fmt.Sprintf("%x", hashOut))
+	parent := filepath.Dir(path)
+	err = os.Mkdir(parent, 0755)
+	if err != nil {
+		err := tx.Rollback()
+		if err != nil {
+			return nil, err
+		}
+		return nil, err
+	}
+
+	file, err := os.Create(path)
+	if err != nil {
+		err := tx.Rollback()
+		if err != nil {
+			return nil, err
+		}
+		return nil, err
+	}
+
+	_, err = io.Copy(file, doc.Content)
+	if err != nil {
+		err := tx.Rollback()
+		if err != nil {
+			return nil, err
+		}
+		return nil, err
+	}
+
+	bldr.SetPath(path)
+
+	attachment, err := bldr.Save(ctx)
+	if err != nil {
+		err := tx.Rollback()
+		if err != nil {
+			return nil, err
+		}
+		return nil, err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return nil, err
+	}
+	return attachment, nil
 }
 
 func (r *AttachmentRepo) Get(ctx context.Context, id uuid.UUID) (*ent.Attachment, error) {
@@ -141,6 +234,6 @@ func (r *AttachmentRepo) Delete(ctx context.Context, id uuid.UUID) error {
 	return r.db.Attachment.DeleteOneID(id).Exec(ctx)
 }
 
-func (r *AttachmentRepo) Rename(ctx context.Context, id uuid.UUID, title string) (interface{}, error) {
+func (r *AttachmentRepo) Rename(ctx context.Context, id uuid.UUID, title string) (*ent.Attachment, error) {
 	return r.db.Attachment.UpdateOneID(id).SetTitle(title).Save(ctx)
 }

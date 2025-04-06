@@ -163,7 +163,7 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 			log.Err(err).Msg("failed to get attachment path")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
-
+		w.Header().Set("Content-Disposition", "attachment; filename="+doc.Title)
 		http.ServeFile(w, r, doc.Path)
 		return nil
 

@@ -12,10 +12,9 @@ import (
 )
 
 func TestAttachmentRepo_Create(t *testing.T) {
-	doc := useDocs(t, 1)[0]
 	item := useItems(t, 1)[0]
 
-	ids := []uuid.UUID{doc.ID, item.ID}
+	ids := []uuid.UUID{item.ID}
 	t.Cleanup(func() {
 		for _, id := range ids {
 			_ = tRepos.Attachments.Delete(context.Background(), id)
@@ -39,7 +38,6 @@ func TestAttachmentRepo_Create(t *testing.T) {
 			args: args{
 				ctx:    context.Background(),
 				itemID: item.ID,
-				docID:  doc.ID,
 				typ:    attachment.TypePhoto,
 			},
 			want: &ent.Attachment{
@@ -51,7 +49,6 @@ func TestAttachmentRepo_Create(t *testing.T) {
 			args: args{
 				ctx:    context.Background(),
 				itemID: uuid.New(),
-				docID:  doc.ID,
 				typ:    "blarg",
 			},
 			wantErr: true,
@@ -59,7 +56,7 @@ func TestAttachmentRepo_Create(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tRepos.Attachments.Create(tt.args.ctx, tt.args.itemID, tt.args.docID, tt.args.typ)
+			got, err := tRepos.Attachments.Create(tt.args.ctx, tt.args.itemID, ItemCreateAttachment{Title: "Test"}, tt.args.typ)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("AttachmentRepo.Create() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -74,7 +71,6 @@ func TestAttachmentRepo_Create(t *testing.T) {
 			withItems, err := tRepos.Attachments.Get(tt.args.ctx, got.ID)
 			require.NoError(t, err)
 			assert.Equal(t, tt.args.itemID, withItems.Edges.Item.ID)
-			assert.Equal(t, tt.args.docID, withItems.Edges.Document.ID)
 
 			ids = append(ids, got.ID)
 		})
@@ -84,7 +80,6 @@ func TestAttachmentRepo_Create(t *testing.T) {
 func useAttachments(t *testing.T, n int) []*ent.Attachment {
 	t.Helper()
 
-	doc := useDocs(t, 1)[0]
 	item := useItems(t, 1)[0]
 
 	ids := make([]uuid.UUID, 0, n)
@@ -96,7 +91,7 @@ func useAttachments(t *testing.T, n int) []*ent.Attachment {
 
 	attachments := make([]*ent.Attachment, n)
 	for i := 0; i < n; i++ {
-		attachment, err := tRepos.Attachments.Create(context.Background(), item.ID, doc.ID, attachment.TypePhoto)
+		attachment, err := tRepos.Attachments.Create(context.Background(), item.ID, ItemCreateAttachment{Title: "Test"}, attachment.TypePhoto)
 		require.NoError(t, err)
 		attachments[i] = attachment
 
