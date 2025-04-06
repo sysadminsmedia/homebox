@@ -14,7 +14,6 @@ type AllRepos struct {
 	Locations   *LocationRepository
 	Labels      *LabelRepository
 	Items       *ItemsRepository
-	Docs        *DocumentRepository
 	Attachments *AttachmentRepo
 	MaintEntry  *MaintenanceEntryRepository
 	Notifiers   *NotifierRepository
@@ -28,7 +27,6 @@ func New(db *ent.Client, bus *eventbus.EventBus, root string) *AllRepos {
 		Locations:   &LocationRepository{db, bus},
 		Labels:      &LabelRepository{db, bus},
 		Items:       &ItemsRepository{db, bus},
-		Docs:        &DocumentRepository{db, root},
 		Attachments: &AttachmentRepo{db},
 		MaintEntry:  &MaintenanceEntryRepository{db},
 		Notifiers:   NewNotifierRepository(db),

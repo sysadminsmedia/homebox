@@ -10,13 +10,13 @@ import (
 	"io"
 )
 
-func (svc *ItemService) AttachmentPath(ctx context.Context, attachmentID uuid.UUID) (*ent.Document, error) {
+func (svc *ItemService) AttachmentPath(ctx context.Context, attachmentID uuid.UUID) (*ent.Attachment, error) {
 	attachment, err := svc.repo.Attachments.Get(ctx, attachmentID)
 	if err != nil {
 		return nil, err
 	}
 
-	return attachment.Edges.Document, nil
+	return attachment, nil
 }
 
 func (svc *ItemService) AttachmentUpdate(ctx Context, itemID uuid.UUID, data *repo.ItemAttachmentUpdate) (repo.ItemOut, error) {
@@ -27,7 +27,7 @@ func (svc *ItemService) AttachmentUpdate(ctx Context, itemID uuid.UUID, data *re
 	}
 
 	// Update Document
-	attDoc := attachment.Edges.Document
+	attDoc := attachment
 	_, err = svc.repo.Docs.Rename(ctx, attDoc.ID, data.Title)
 	if err != nil {
 		return repo.ItemOut{}, err
