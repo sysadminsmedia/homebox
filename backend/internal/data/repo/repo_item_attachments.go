@@ -2,7 +2,6 @@ package repo
 
 import (
 	"context"
-	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"io"
 	"os"
 	"time"
@@ -58,7 +57,8 @@ func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
 func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemCreateAttachment, typ attachment.Type) (*ent.Attachment, error) {
 	bldr := r.db.Attachment.Create().
 		SetType(typ).
-		SetItemID(itemID)
+		SetItemID(itemID).
+		SetTitle(doc.Title)
 
 	// Autoset primary to true if this is the first attachment
 	// that is of type photo
@@ -141,6 +141,6 @@ func (r *AttachmentRepo) Delete(ctx context.Context, id uuid.UUID) error {
 	return r.db.Attachment.DeleteOneID(id).Exec(ctx)
 }
 
-func (r *AttachmentRepo) Rename(ctx services.Context, id uuid.UUID, title string) (interface{}, error) {
+func (r *AttachmentRepo) Rename(ctx context.Context, id uuid.UUID, title string) (interface{}, error) {
 	return r.db.Attachment.UpdateOneID(id).SetTitle(title).Save(ctx)
 }
