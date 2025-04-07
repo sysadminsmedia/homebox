@@ -63,9 +63,14 @@
             <Button size="icon" type="button" variant="destructive" @click="deleteImage(index)">
               <MdiDelete />
             </Button>
-            <!-- TODO: show in color and fill when set as primary and when clicked set as primary if not already -->
-            <Button size="icon" type="button" variant="outline" @click="console.log('TODO: find way to set primary')">
-              <MdiStarOutline />
+            <Button
+              size="icon"
+              type="button"
+              :variant="photo.primary ? 'default' : 'outline'"
+              @click="setPrimary(index)"
+            >
+              <MdiStar v-if="photo.primary" />
+              <MdiStarOutline v-else />
             </Button>
             <p class="mt-1 text-sm" style="overflow-wrap: anywhere">File name: {{ photo.photoName }}</p>
           </div>
@@ -97,6 +102,7 @@
     photoName: string;
     file: File;
     fileBase64: string;
+    primary: boolean;
   }
 
   const { activeDialog, closeDialog } = useDialog();
@@ -146,6 +152,17 @@
     form.photos.splice(index, 1);
   }
 
+  // TODO: actually set the primary when adding item
+
+  function setPrimary(index: number) {
+    const primary = form.photos.findIndex(p => p.primary);
+
+    if (primary !== -1) form.photos[primary].primary = false;
+    if (primary !== index) form.photos[index].primary = true;
+
+    toast.error("Currently this does not do anything, the first photo will always be primary");
+  }
+
   function previewImage(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
@@ -156,6 +173,7 @@
             photoName: file.name,
             fileBase64: e.target?.result as string,
             file,
+            primary: form.photos.length === 0,
           });
         };
         reader.readAsDataURL(file);
