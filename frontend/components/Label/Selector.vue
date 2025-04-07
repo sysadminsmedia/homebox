@@ -107,28 +107,21 @@
   const open = ref(false);
   const searchTerm = ref("");
 
-  const filteredLabels = computed(
-    () => {
-      const filtered = fuzzysort
-        .go(searchTerm.value, props.labels, { key: "name", all: true })
-        .map(l => ({
-          value: l.obj.id,
-          label: l.obj.name,
-        }))
-        .filter(i => !modelValue.value.includes(i.value));
+  const filteredLabels = computed(() => {
+    const filtered = fuzzysort
+      .go(searchTerm.value, props.labels, { key: "name", all: true })
+      .map(l => ({
+        value: l.obj.id,
+        label: l.obj.name,
+      }))
+      .filter(i => !modelValue.value.includes(i.value));
 
-      if (searchTerm.value.trim() !== "") {
-        filtered.push({ value: "create-item", label: `Create ${searchTerm.value}` });
-      }
-
-      return filtered;
-    },
-    {
-      onTrigger: () => {
-        console.log("trigger");
-      },
+    if (searchTerm.value.trim() !== "") {
+      filtered.push({ value: "create-item", label: `Create ${searchTerm.value}` });
     }
-  );
+
+    return filtered;
+  });
 
   const createAndAdd = async (name: string) => {
     if (name.length > 50) {
