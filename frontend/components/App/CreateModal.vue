@@ -1,5 +1,5 @@
 <template>
-  <Dialog :dialog-id="dialogId">
+  <Dialog v-if="isDesktop" :dialog-id="dialogId">
     <DialogContent class="max-h-screen overflow-y-auto">
       <DialogHeader>
         <DialogTitle>{{ title }}</DialogTitle>
@@ -15,10 +15,26 @@
       </DialogFooter>
     </DialogContent>
   </Dialog>
+
+  <Drawer v-else :dialog-id="dialogId">
+    <DrawerContent class="max-h-[80%]">
+      <DrawerHeader>
+        <DrawerTitle>{{ title }}</DrawerTitle>
+      </DrawerHeader>
+
+      <div class="overflow-y-auto m-2">
+        <slot />
+      </div>
+    </DrawerContent>
+  </Drawer>
 </template>
 
 <script setup lang="ts">
+  import { useMediaQuery } from "@vueuse/core";
+  import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   defineProps<{
     dialogId: string;
