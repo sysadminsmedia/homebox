@@ -1,95 +1,83 @@
 <template>
-  <Dialog dialog-id="create-item">
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>{{ $t("components.item.create_modal.title") }}</DialogTitle>
-      </DialogHeader>
-      <form class="flex flex-col gap-2" @submit.prevent="create()">
-        <LocationSelector v-model="form.location" />
-        <FormTextField
-          ref="nameInput"
-          v-model="form.name"
-          :trigger-focus="focused"
-          :autofocus="true"
-          :label="$t('components.item.create_modal.item_name')"
-          :max-length="255"
-          :min-length="1"
+  <BaseModal dialog-id="create-item" :title="$t('components.item.create_modal.title')">
+    <form class="flex flex-col gap-2" @submit.prevent="create()">
+      <LocationSelector v-model="form.location" />
+      <FormTextField
+        ref="nameInput"
+        v-model="form.name"
+        :trigger-focus="focused"
+        :autofocus="true"
+        :label="$t('components.item.create_modal.item_name')"
+        :max-length="255"
+        :min-length="1"
+      />
+      <FormTextArea
+        v-model="form.description"
+        :label="$t('components.item.create_modal.item_description')"
+        :max-length="1000"
+      />
+      <LabelSelector v-model="form.labels" :labels="labels ?? []" />
+      <div class="flex w-full flex-col gap-1.5">
+        <Label for="image-create-photo" class="flex w-full px-1">
+          {{ $t("components.item.create_modal.item_photo") }}
+        </Label>
+        <Input
+          id="image-create-photo"
+          class="w-full"
+          type="file"
+          accept="image/png,image/jpeg,image/gif,image/avif,image/webp;capture=camera"
+          multiple
+          @change="previewImage"
         />
-        <FormTextArea
-          v-model="form.description"
-          :label="$t('components.item.create_modal.item_description')"
-          :max-length="1000"
-        />
-        <LabelSelector v-model="form.labels" :labels="labels ?? []" />
-        <div class="flex w-full flex-col gap-1.5">
-          <Label for="image-create-photo" class="flex w-full px-1">
-            {{ $t("components.item.create_modal.item_photo") }}
-          </Label>
-          <Input
-            id="image-create-photo"
-            class="w-full"
-            type="file"
-            accept="image/png,image/jpeg,image/gif,image/avif,image/webp;capture=camera"
-            multiple
-            @change="previewImage"
-          />
-        </div>
-        <div class="mt-4 flex flex-row-reverse">
-          <ButtonGroup>
-            <Button :disabled="loading" type="submit" class="group">
-              <div class="relative mx-2">
-                <div
-                  class="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:rotate-[360deg]"
-                >
-                  <MdiPackageVariant class="size-5 group-hover:hidden" />
-                  <MdiPackageVariantClosed class="hidden size-5 group-hover:block" />
-                </div>
+      </div>
+      <div class="mt-4 flex flex-row-reverse">
+        <ButtonGroup>
+          <Button :disabled="loading" type="submit" class="group">
+            <div class="relative mx-2">
+              <div
+                class="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:rotate-[360deg]"
+              >
+                <MdiPackageVariant class="size-5 group-hover:hidden" />
+                <MdiPackageVariantClosed class="hidden size-5 group-hover:block" />
               </div>
-              {{ $t("global.create") }}
-            </Button>
-            <Button variant="outline" :disabled="loading" type="button" @click="create(false)">
-              {{ $t("global.create_and_add") }}
-            </Button>
-          </ButtonGroup>
-        </div>
-
-        <!-- photo preview area is AFTER the create button, to avoid pushing the button below the screen on small displays -->
-        <div v-if="form.photos.length > 0" class="mt-4 border-t border-gray-300 px-4 pb-4">
-          <div v-for="(photo, index) in form.photos" :key="index">
-            <div class="indicator mt-8 w-auto">
-              <div class="indicator-item right-2 top-2">
-                <button type="button" class="btn btn-circle btn-primary btn-md" @click="deleteImage(index)">
-                  <MdiDelete class="size-5" />
-                </button>
-              </div>
-              <img
-                :src="photo.fileBase64"
-                class="w-full rounded-t border-gray-300 object-fill shadow-sm"
-                alt="Uploaded Photo"
-              />
             </div>
-            <p class="mt-1 text-sm" style="overflow-wrap: anywhere">File name: {{ photo.photoName }}</p>
-          </div>
-        </div>
-      </form>
+            {{ $t("global.create") }}
+          </Button>
+          <Button variant="outline" :disabled="loading" type="button" @click="create(false)">
+            {{ $t("global.create_and_add") }}
+          </Button>
+        </ButtonGroup>
+      </div>
 
-      <DialogFooter>
-        <span class="flex items-center gap-1 text-sm">
-          Use <Shortcut size="sm" :keys="['Shift']" /> + <Shortcut size="sm" :keys="['Enter']" /> to create and add
-          another.
-        </span>
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
+      <!-- photo preview area is AFTER the create button, to avoid pushing the button below the screen on small displays -->
+      <div v-if="form.photos.length > 0" class="mt-4 border-t border-gray-300 px-4 pb-4">
+        <div v-for="(photo, index) in form.photos" :key="index">
+          <!-- TODO: remove the indicator, and btn classes from daisyui -->
+          <div class="indicator mt-8 w-auto">
+            <div class="indicator-item right-2 top-2">
+              <button type="button" class="btn btn-circle btn-primary btn-md" @click="deleteImage(index)">
+                <MdiDelete class="size-5" />
+              </button>
+            </div>
+            <img
+              :src="photo.fileBase64"
+              class="w-full rounded-t border-gray-300 object-fill shadow-sm"
+              alt="Uploaded Photo"
+            />
+          </div>
+          <p class="mt-1 text-sm" style="overflow-wrap: anywhere">File name: {{ photo.photoName }}</p>
+        </div>
+      </div>
+    </form>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
   import { toast } from "vue-sonner";
   import { Button, ButtonGroup } from "~/components/ui/button";
-  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import BaseModal from "@/components/App/CreateModal.vue";
   import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
-  import { Shortcut } from "@/components/ui/shortcut";
   import type { ItemCreate, LocationOut } from "~~/lib/api/types/data-contracts";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
@@ -200,9 +188,7 @@
 
     loading.value = true;
 
-    if (shift.value) {
-      close = false;
-    }
+    if (shift.value) close = false;
 
     const out: ItemCreate = {
       parentId: null,
