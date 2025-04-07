@@ -66,6 +66,7 @@
                 "item_description": "Item Description",
                 "item_name": "Item Name",
                 "item_photo": "Item Photo 📷",
+                "upload_photos": "Upload Photos",
                 "title": "Create Item"
             },
             "view": {

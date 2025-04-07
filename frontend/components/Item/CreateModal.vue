@@ -21,14 +21,20 @@
         <Label for="image-create-photo" class="flex w-full px-1">
           {{ $t("components.item.create_modal.item_photo") }}
         </Label>
-        <Input
-          id="image-create-photo"
-          class="w-full"
-          type="file"
-          accept="image/png,image/jpeg,image/gif,image/avif,image/webp;capture=camera"
-          multiple
-          @change="previewImage"
-        />
+        <div class="relative inline-block">
+          <Button type="button" variant="outline" class="w-full" @click.prevent="">
+            {{ $t("components.item.create_modal.upload_photos") }}
+          </Button>
+          <Input
+            id="image-create-photo"
+            ref="fileInput"
+            class="absolute left-0 top-0 size-full cursor-pointer opacity-0"
+            type="file"
+            accept="image/png,image/jpeg,image/gif,image/avif,image/webp;capture=camera"
+            multiple
+            @change="previewImage"
+          />
+        </div>
       </div>
       <div class="mt-4 flex flex-row-reverse">
         <ButtonGroup>
