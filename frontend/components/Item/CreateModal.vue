@@ -54,14 +54,22 @@
       </div>
 
       <!-- photo preview area is AFTER the create button, to avoid pushing the button below the screen on small displays -->
-      <div class="border-t border-gray-300 p-4">
+      <div class="border-t border-gray-300 px-4 pb-4">
         <div v-for="(photo, index) in form.photos" :key="index">
-          <p class="mb-0" style="overflow-wrap: anywhere">File name: {{ photo.photoName }}</p>
-          <img
-            :src="photo.fileBase64"
-            class="w-full rounded-t border-gray-300 object-fill shadow-sm"
-            alt="Uploaded Photo"
-          />
+          <div class="indicator mt-8 w-auto">
+            <div class="indicator-item right-2 top-2">
+              <button type="button" class="btn btn-circle btn-primary btn-md" @click="deleteImage(index)">
+                <MdiDelete class="size-5" />
+              </button>
+            </div>
+
+            <img
+              :src="photo.fileBase64"
+              class="w-full rounded-t border-gray-300 object-fill shadow-sm"
+              alt="Uploaded Photo"
+            />
+          </div>
+          <p class="mt-1 text-sm" style="overflow-wrap: anywhere">File name: {{ photo.photoName }}</p>
         </div>
       </div>
     </form>
@@ -72,13 +80,20 @@
 </template>
 
 <script setup lang="ts">
-  import type { ItemCreate, LabelOut, LocationOut, PhotoPreview } from "~~/lib/api/types/data-contracts";
+  import type { ItemCreate, LabelOut, LocationOut } from "~~/lib/api/types/data-contracts";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
   import MdiChevronDown from "~icons/mdi/chevron-down";
+  import MdiDelete from "~icons/mdi/delete";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
+
+  interface PhotoPreview {
+    photoName: string;
+    file: File;
+    fileBase64: string;
+  }
 
   const props = defineProps({
     modelValue: {
@@ -127,6 +142,10 @@
   });
 
   const { shift } = useMagicKeys();
+
+  function deleteImage(index: number) {
+    form.photos.splice(index, 1);
+  }
 
   function previewImage(event: Event) {
     const input = event.target as HTMLInputElement;
