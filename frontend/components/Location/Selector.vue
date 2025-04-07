@@ -28,7 +28,7 @@
                   <div class="flex w-full">
                     {{ location.name }}
                   </div>
-                  <div v-if="location.name !== location.treeString" class="text-muted-foreground mt-1 text-xs">
+                  <div v-if="location.name !== location.treeString" class="mt-1 text-xs text-muted-foreground">
                     {{ location.treeString }}
                   </div>
                 </div>
