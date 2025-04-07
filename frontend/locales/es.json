@@ -231,13 +231,18 @@
     },
     "languages": {
         "ca": "Catalán",
+        "cs-CZ": "Checo",
         "de": "Alemán",
         "en": "Inglés",
         "es": "Español",
+        "fi-FI": "Finés",
         "fr": "Francés",
         "hu": "Húngaro",
+        "id-ID": "Indonesio",
         "it": "Italiano",
         "ja-JP": "Japonés",
+        "ko-KR": "Coreano",
+        "nb-NO": "Noruego Bokmål",
         "nl": "Holandés",
         "pl": "Polaco",
         "pt-BR": "Portugués (Brasil)",
@@ -245,6 +250,8 @@
         "ru": "Ruso",
         "sl": "Esloveno",
         "sv": "Sueco",
+        "ta-IN": "Tamil",
+        "th-TH": "Tailandés",
         "tr": "Turco",
         "uk-UA": "Ucraniano",
         "zh-CN": "Chino (Simplificado)",
@@ -255,6 +262,7 @@
     "languages.da-DK": "Danés",
     "languages.ro-RO": "Rumano",
     "languages.sk-SK": "Eslovaco",
+    "languages.sq-AL": "Albano",
     "locations": {
         "child_locations": "Ubicaciones Hijas",
         "collapse_tree": "Colapsar Árbol",
@@ -342,7 +350,7 @@
         "invalid_url": "URL de código de barras inválido",
         "no_sources": "No hay fuentes de vídeo disponibles",
         "select_video_source": "Elige una fuente de vídeo",
-        "unsupported": "La API Media Stream no es compatible"
+        "unsupported": "La API Media Stream no se puede utilizar sin HTTPS"
     },
     "tools": {
         "actions": "Acciones de Inventario",
