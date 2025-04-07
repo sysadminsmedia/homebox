@@ -80,6 +80,7 @@
       labelIds: data.labels.map(l => l.id),
       locationId: data.location!.id,
       name: data.name,
+      assetId: data.assetId,
     });
 
     if (updateError) {

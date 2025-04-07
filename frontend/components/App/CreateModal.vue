@@ -22,7 +22,7 @@
         <DrawerTitle>{{ title }}</DrawerTitle>
       </DrawerHeader>
 
-      <div class="overflow-y-auto m-2">
+      <div class="m-2 overflow-y-auto">
         <slot />
       </div>
     </DrawerContent>
