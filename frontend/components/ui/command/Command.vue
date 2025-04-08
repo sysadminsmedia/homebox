@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { ComboboxRootEmits, ComboboxRootProps } from 'radix-vue'
+import type { ComboboxRootEmits, ComboboxRootProps } from 'reka-ui'
 import { cn } from '@/lib/utils'
-import { ComboboxRoot, useForwardPropsEmits } from 'radix-vue'
+import { ComboboxRoot, useForwardPropsEmits } from 'reka-ui'
 import { computed, type HTMLAttributes } from 'vue'
 
 const props = withDefaults(defineProps<ComboboxRootProps & { class?: HTMLAttributes['class'] }>(), {

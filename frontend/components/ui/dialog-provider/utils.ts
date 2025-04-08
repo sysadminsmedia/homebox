@@ -1,5 +1,5 @@
 import type { ComputedRef } from "vue";
-import { createContext } from "radix-vue";
+import { createContext } from "reka-ui";
 import { useMagicKeys, useActiveElement } from "@vueuse/core";
 
 export const [useDialog, provideDialogContext] = createContext<{

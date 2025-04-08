@@ -69,7 +69,6 @@
     "markdown-it": "^14.1.0",
     "pinia": "^2.3.1",
     "postcss": "^8.5.3",
-    "radix-vue": "^1.9.17",
     "reka-ui": "^2.2.0",
     "semver": "^7.7.1",
     "tailwind-merge": "^2.6.0",

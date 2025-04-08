@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { DialogDescription, type DialogDescriptionProps } from "radix-vue";
+  import { DialogDescription, type DialogDescriptionProps } from "reka-ui";
   import { computed, type HTMLAttributes } from "vue";
   import { cn } from "@/lib/utils";
 

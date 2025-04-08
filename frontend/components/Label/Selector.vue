@@ -19,12 +19,11 @@
       <ComboboxRoot
         v-model="modelValue"
         v-model:open="open"
-        v-model:search-term="searchTerm"
         class="w-full"
-        :filter-function="l => l"
+        :ignore-filter="true"
       >
         <ComboboxAnchor as-child>
-          <ComboboxInput :placeholder="$t('components.label.selector.select_labels')" as-child>
+          <ComboboxInput :placeholder="$t('components.label.selector.select_labels')" as-child v-model="searchTerm">
             <TagsInputInput
               :id="id"
               class="w-full px-3"
@@ -38,7 +37,7 @@
           <ComboboxContent :side-offset="4" position="popper" class="z-50">
             <CommandList
               position="popper"
-              class="mt-2 w-[--radix-popper-anchor-width] rounded-md border bg-popover text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
+              class="bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 mt-2 w-[--reka-popper-anchor-width] rounded-md border shadow-md outline-none"
             >
               <CommandEmpty />
               <CommandGroup>
@@ -72,7 +71,7 @@
   </div>
 </template>
 <script setup lang="ts">
-  import { ComboboxAnchor, ComboboxContent, ComboboxInput, ComboboxPortal, ComboboxRoot } from "radix-vue";
+  import { ComboboxAnchor, ComboboxContent, ComboboxInput, ComboboxPortal, ComboboxRoot } from "reka-ui";
   import { computed, ref } from "vue";
   import { toast } from "vue-sonner";
   import fuzzysort from "fuzzysort";
@@ -151,5 +150,5 @@
     modelValue.value = [...modelValue.value, data.id];
   };
 
-  // TODO: when radix-vue 2 is release use hook to set cursor to end when label is added with click
+  // TODO: when reka-ui 2 is release use hook to set cursor to end when label is added with click
 </script>

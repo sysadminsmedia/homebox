@@ -11,9 +11,13 @@
           <ChevronsUpDown class="ml-2 size-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent class="w-[--radix-popper-anchor-width] p-0">
-        <Command v-model:search-term="search" :display-value="_ => ''" :filter-function="l => l">
-          <CommandInput :placeholder="$t('components.location.selector.search_location')" />
+      <PopoverContent class="w-[--reka-popper-anchor-width] p-0">
+        <Command :ignore-filter="true">
+          <CommandInput
+            v-model="search"
+            :placeholder="$t('components.location.selector.search_location')"
+            :display-value="_ => ''"
+          />
           <CommandEmpty>{{ $t("components.location.selector.no_location_found") }}</CommandEmpty>
           <CommandList>
             <CommandGroup>
@@ -28,7 +32,7 @@
                   <div class="flex w-full">
                     {{ location.name }}
                   </div>
-                  <div v-if="location.name !== location.treeString" class="mt-1 text-xs text-muted-foreground">
+                  <div v-if="location.name !== location.treeString" class="text-muted-foreground mt-1 text-xs">
                     {{ location.treeString }}
                   </div>
                 </div>

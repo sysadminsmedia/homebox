@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { DialogRoot, type DialogRootEmits, type DialogRootProps, useForwardPropsEmits } from "radix-vue";
+  import { DialogRoot, type DialogRootEmits, type DialogRootProps, useForwardPropsEmits } from "reka-ui";
   import { useDialog } from "../dialog-provider/utils";
 
   const props = defineProps<DialogRootProps & { dialogId: string }>();
