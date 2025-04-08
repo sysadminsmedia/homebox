@@ -52,9 +52,9 @@ When modifying components, follow these best practices:
 During the migration process, you can test without DaisyUI using these commands:
 
 ```bash
-DISABLE_DAISYUI=true; task ui:dev
+export DISABLE_DAISYUI=true; task ui:dev
 ```
 or
 ```bash
-DISABLE_DAISYUI=true; task ui:fix
+export DISABLE_DAISYUI=true; task ui:fix
 ```
