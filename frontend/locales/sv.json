@@ -48,10 +48,10 @@
             },
             "label_maker": {
                 "browser_print": "Skriv ut från webbläsare",
-                "confirm_description": "Är du säker på att du vill skriva ut denna etikett?",
+                "confirm_description": "Är du säker på att du vill skriva ut den här etiketten?",
                 "download": "Ladda ner etikett",
                 "print": "Skriv ut etikett",
-                "server_print": "Skriv ut på servern",
+                "server_print": "Skriv ut på server",
                 "titles": "Etiketter"
             },
             "page_qr_code": {
@@ -350,7 +350,7 @@
         "invalid_url": "Ogiltig streckkods-URL",
         "no_sources": "Inga videokällor tillgängliga",
         "select_video_source": "Välj en videokälla",
-        "unsupported": "Media Stream API stöds inte utan https"
+        "unsupported": "Media Stream API stöds inte utan HTTPS"
     },
     "tools": {
         "actions": "Lageråtgärder",
