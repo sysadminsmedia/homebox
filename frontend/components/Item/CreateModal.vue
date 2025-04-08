@@ -22,7 +22,7 @@
           {{ $t("components.item.create_modal.item_photo") }}
         </Label>
         <div class="relative inline-block">
-          <Button type="button" variant="outline" class="w-full" @click.prevent="">
+          <Button type="button" variant="outline" class="w-full" aria-hidden="true" @click.prevent="">
             {{ $t("components.item.create_modal.upload_photos") }}
           </Button>
           <Input
@@ -68,6 +68,7 @@
           <div class="mt-2 flex items-center gap-2">
             <Button size="icon" type="button" variant="destructive" @click="deleteImage(index)">
               <MdiDelete />
+              <div class="sr-only">Delete photo</div>
             </Button>
             <Button
               size="icon"
@@ -77,6 +78,8 @@
             >
               <MdiStar v-if="photo.primary" />
               <MdiStarOutline v-else />
+              <div v-if="photo.primary" class="sr-only">Set as non primary photo</div>
+              <div v-else class="sr-only">Set as primary photo</div>
             </Button>
             <p class="mt-1 text-sm" style="overflow-wrap: anywhere">File name: {{ photo.photoName }}</p>
           </div>
