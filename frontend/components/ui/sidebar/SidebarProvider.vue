@@ -2,7 +2,6 @@
   import { useEventListener, useMediaQuery, useVModel } from "@vueuse/core";
   import { TooltipProvider } from "reka-ui";
   import { computed, type HTMLAttributes, type Ref, ref } from "vue";
-  import { useDialog } from "../dialog-provider";
   import {
     provideSidebarContext,
     SIDEBAR_COOKIE_MAX_AGE,
@@ -12,8 +11,6 @@
     SIDEBAR_WIDTH_ICON,
   } from "./utils";
   import { cn } from "@/lib/utils";
-
-  const { activeDialog } = useDialog();
 
   const props = withDefaults(
     defineProps<{
@@ -47,7 +44,6 @@
   }
 
   function setOpenMobile(value: boolean) {
-    // if (activeDialog.value) return;
     openMobile.value = value;
   }
 

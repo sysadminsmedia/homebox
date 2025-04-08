@@ -7,7 +7,7 @@
   const activeAlerts = reactive<string[]>([]);
 
   const openDialog = (dialogId: string) => {
-    if (activeAlerts.length > 0) return
+    if (activeAlerts.length > 0) return;
     activeDialog.value = dialogId;
   };
 
