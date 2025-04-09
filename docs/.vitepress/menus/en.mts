@@ -6,6 +6,7 @@ export default [
             {text: 'Installation', link: '/en/installation'},
             {text: 'Configure', link: '/en/configure'},
             {text: 'Upgrade Guide', link: '/en/upgrade'},
+            {text: 'Migration Guide', link: '/en/migration'},
         ]
     },
     {
