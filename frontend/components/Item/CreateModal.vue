@@ -70,7 +70,8 @@
               <MdiDelete />
               <div class="sr-only">Delete photo</div>
             </Button>
-            <Button
+            <!-- TODO: re-enable when we have a way to set primary photos -->
+            <!-- <Button
               size="icon"
               type="button"
               :variant="photo.primary ? 'default' : 'outline'"
@@ -80,7 +81,7 @@
               <MdiStarOutline v-else />
               <div v-if="photo.primary" class="sr-only">Set as non primary photo</div>
               <div v-else class="sr-only">Set as primary photo</div>
-            </Button>
+            </Button> -->
             <p class="mt-1 text-sm" style="overflow-wrap: anywhere">File name: {{ photo.photoName }}</p>
           </div>
         </div>

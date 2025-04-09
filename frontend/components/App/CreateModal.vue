@@ -1,6 +1,6 @@
 <template>
   <Dialog v-if="isDesktop" :dialog-id="dialogId">
-    <DialogContent class="max-h-screen overflow-y-auto">
+    <DialogScrollContent>
       <DialogHeader>
         <DialogTitle>{{ title }}</DialogTitle>
       </DialogHeader>
@@ -13,7 +13,7 @@
           another.
         </span>
       </DialogFooter>
-    </DialogContent>
+    </DialogScrollContent>
   </Dialog>
 
   <Drawer v-else :dialog-id="dialogId">
@@ -32,7 +32,7 @@
 <script setup lang="ts">
   import { useMediaQuery } from "@vueuse/core";
   import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
-  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import { Dialog, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
 

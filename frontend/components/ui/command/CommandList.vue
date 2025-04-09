@@ -4,9 +4,7 @@ import { cn } from '@/lib/utils'
 import { ComboboxContent, useForwardPropsEmits } from 'reka-ui'
 import { computed, type HTMLAttributes } from 'vue'
 
-const props = withDefaults(defineProps<ComboboxContentProps & { class?: HTMLAttributes['class'] }>(), {
-  dismissable: false,
-})
+const props = defineProps<ComboboxContentProps & { class?: HTMLAttributes['class'] }>()
 const emits = defineEmits<ComboboxContentEmits>()
 
 const delegatedProps = computed(() => {
