@@ -104,7 +104,7 @@
   const shortenedLabels = computed(() => {
     return props.labels.map(l => ({
       ...l,
-      name: l.name.length > 20 ? `${l.name.substring(0, 30)}...` : l.name,
+      name: l.name.length > 20 ? `${l.name.substring(0, 20)}...` : l.name,
     }));
   });
 
