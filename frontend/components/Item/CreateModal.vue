@@ -66,23 +66,38 @@
             />
           </div>
           <div class="mt-2 flex items-center gap-2">
-            <Button size="icon" type="button" variant="destructive" @click="deleteImage(index)">
-              <MdiDelete />
-              <div class="sr-only">Delete photo</div>
-            </Button>
-            <!-- TODO: re-enable when we have a way to set primary photos -->
-            <!-- <Button
-              size="icon"
-              type="button"
-              :variant="photo.primary ? 'default' : 'outline'"
-              @click="setPrimary(index)"
-            >
-              <MdiStar v-if="photo.primary" />
-              <MdiStarOutline v-else />
-              <div v-if="photo.primary" class="sr-only">Set as non primary photo</div>
-              <div v-else class="sr-only">Set as primary photo</div>
-            </Button> -->
-            <p class="mt-1 text-sm" style="overflow-wrap: anywhere">File name: {{ photo.photoName }}</p>
+            <TooltipProvider class="flex gap-2" :delay-duration="0">
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button size="icon" type="button" variant="destructive" @click.prevent="deleteImage(index)">
+                    <MdiDelete />
+                    <div class="sr-only">Delete photo</div>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Delete photo</p>
+                </TooltipContent>
+              </Tooltip>
+              <!-- TODO: re-enable when we have a way to set primary photos -->
+              <!-- <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    size="icon"
+                    type="button"
+                    :variant="photo.primary ? 'default' : 'outline'"
+                    @click.prevent="setPrimary(index)"
+                  >
+                    <MdiStar v-if="photo.primary" />
+                    <MdiStarOutline v-else />
+                    <div class="sr-only">Set as {{ photo.primary ? "non" : "" }} primary photo</div>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Set as {{ photo.primary ? "non" : "" }} primary photo</p>
+                </TooltipContent>
+              </Tooltip> -->
+            </TooltipProvider>
+            <p class="mt-1 text-sm" style="overflow-wrap: anywhere">{{ photo.photoName }}</p>
           </div>
         </div>
       </div>
@@ -102,8 +117,8 @@
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
   import MdiDelete from "~icons/mdi/delete";
-  import MdiStarOutline from "~icons/mdi/star-outline";
-  import MdiStar from "~icons/mdi/star";
+  // import MdiStarOutline from "~icons/mdi/star-outline";
+  // import MdiStar from "~icons/mdi/star";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
   import LabelSelector from "~/components/Label/Selector.vue";
@@ -164,14 +179,14 @@
 
   // TODO: actually set the primary when adding item
 
-  function setPrimary(index: number) {
-    const primary = form.photos.findIndex(p => p.primary);
+  // function setPrimary(index: number) {
+  //   const primary = form.photos.findIndex(p => p.primary);
 
-    if (primary !== -1) form.photos[primary].primary = false;
-    if (primary !== index) form.photos[index].primary = true;
+  //   if (primary !== -1) form.photos[primary].primary = false;
+  //   if (primary !== index) form.photos[index].primary = true;
 
-    toast.error("Currently this does not do anything, the first photo will always be primary");
-  }
+  //   toast.error("Currently this does not do anything, the first photo will always be primary");
+  // }
 
   function previewImage(event: Event) {
     const input = event.target as HTMLInputElement;
