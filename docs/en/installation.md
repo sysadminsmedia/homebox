@@ -42,28 +42,7 @@ $ docker run -d \
 
 1. Create a `docker-compose.yml` file.
 
-```yaml
-services:
-  homebox:
-    image: ghcr.io/sysadminsmedia/homebox:latest
-#   image: ghcr.io/sysadminsmedia/homebox:latest-rootless
-    container_name: homebox
-    restart: always
-    environment:
-    - HBOX_LOG_LEVEL=info
-    - HBOX_LOG_FORMAT=text
-    - HBOX_WEB_MAX_FILE_UPLOAD=10
-    # Please consider allowing analytics to help us improve Homebox (basic computer information, no personal data)
-    - HBOX_OPTIONS_ALLOW_ANALYTICS=false
-    volumes:
-      - homebox-data:/data/
-    ports:
-      - 3100:7745
-
-volumes:
-   homebox-data:
-     driver: local
-```
+<iframe src="https://v0-homebox-config-editor.vercel.app/" width="100%" height="800px"></iframe>
 
 ::: info
 If you use the `rootless` image, and instead of using named volumes you would prefer using a hostMount directly (e.g., `volumes: [ /path/to/data/folder:/data ]`) you need to `chown` the chosen directory in advance to the `65532` user (as shown in the Docker example above).
