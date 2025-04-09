@@ -91,8 +91,8 @@
 </template>
 
 <script setup lang="ts">
-  import { toast } from "@/components/ui/sonner";
   import DOMPurify from "dompurify";
+  import { toast } from "@/components/ui/sonner";
   import MdiFileChart from "~icons/mdi/file-chart";
   import MdiArrowRight from "~icons/mdi/arrow-right";
   import MdiDatabase from "~icons/mdi/database";

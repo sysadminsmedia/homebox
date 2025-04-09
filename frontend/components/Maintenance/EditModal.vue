@@ -22,8 +22,8 @@
 </template>
 
 <script setup lang="ts">
-  import { toast } from "@/components/ui/sonner";
   import { useI18n } from "vue-i18n";
+  import { toast } from "@/components/ui/sonner";
   import type { MaintenanceEntry, MaintenanceEntryWithDetails } from "~~/lib/api/types/data-contracts";
   import MdiPost from "~icons/mdi/post";
   import DatePicker from "~~/components/Form/DatePicker.vue";

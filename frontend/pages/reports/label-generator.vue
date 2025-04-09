@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { toast } from "@/components/ui/sonner";
   import { route } from "../../lib/api/base";
+  import { toast } from "@/components/ui/sonner";
 
   definePageMeta({
     middleware: ["auth"],

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import { toast } from "@/components/ui/sonner";
   import { route } from "../../lib/api/base";
+  import { toast } from "@/components/ui/sonner";
   import MdiPrinterPos from "~icons/mdi/printer-pos";
   import MdiFileDownload from "~icons/mdi/file-download";
 
