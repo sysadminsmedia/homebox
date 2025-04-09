@@ -1,54 +1,74 @@
 # Migration Guide
 
-This guide will help you migrate from the original version of Homebox ([https://github.com/hay-kot/homebox](https://github.com/hay-kot/homebox)) to our fork.
+This guide will help you migrate from the original version of Homebox ([https://github.com/hay-kot/homebox](https://github.com/hay-kot/homebox)) to our actively maintained fork.
 
 ## Why Migrate?
 
-- The original version of Homebox has been archived and is no longer maintained.
-- Our fork receives regular updates and bug fixes.
-- We offer helpful support on our [Discord server](https://discord.homebox.software) and [GitHub](https://git.homebox.software).
+Migrating to our fork ensures you benefit from:
+
+- **Active Development**: The original Homebox has been archived and is no longer maintained, while our fork receives regular updates and bug fixes.
+- **Community Support**: Get help and advice on our [Discord server](https://discord.homebox.software) or [GitHub](https://git.homebox.software).
+- **Improved Features**: Enjoy enhancements and optimizations that make Homebox even better.
 
 ## Prerequisites
 
+Before starting the migration, ensure you have:
+
 - A working installation of `hay-kot/homebox`.
-- Docker and Docker Compose installed on your server (this guide assumes you are using Docker).
+- Docker and Docker Compose installed on your server (this guide assumes Docker is being used).
 
 ## Migration Steps
 
-### 1. Stop the original version of Homebox
+### 1. Stop the Original Homebox Instance
 
-Make sure your `hay-kot/homebox` instance is completely shut down to avoid any conflicts during the migration.
+To avoid conflicts during migration, shut down your existing `hay-kot/homebox` instance:
 
 ```bash
 docker compose down
 ```
 
-### 2. Backup your data!
+### 2. Backup Your Data
 
-Before you start, make sure you have a backup of your data.
+**This step is critical!** Before proceeding, create a backup of your data to ensure nothing is lost.
 
-> [!WARNING]
-> Seriously, this is the most important step. We don't want you to lose anything.
+> [!WARNING]  
+> **Don't skip this step!** Backing up your data is the most important part of the migration process.
 
-Copy the contents of the `data` folder to a safe location on your server.
+Locate the `data` folder used by your current Homebox installation and copy its contents to a safe location on your server. If you are a volume for data follow the [instructions on dockers website](https://docs.docker.com/engine/storage/volumes/#back-up-restore-or-migrate-data-volumes).
 
-### 3. Update the Docker Compose file
+### 3. Update the Docker Compose File
 
-Open the `docker-compose.yml` file in your text editor and replace `ghcr.io/hay-kot/homebox:latest` with `ghcr.io/sysadminsmedia/homebox:latest`.
-If you are using the rootless image, replace `ghcr.io/hay-kot/homebox:latest-rootless` with `ghcr.io/sysadminsmedia/homebox:latest-rootless`.
+Modify your `docker-compose.yml` file to point to the new Homebox fork:
 
-### 4. Start the new version of Homebox
+- Replace:  
+  `ghcr.io/hay-kot/homebox:latest`  
+  **With:**  
+  `ghcr.io/sysadminsmedia/homebox:latest`
 
-Start the new version of Homebox by running the following command:
+- If you're using the rootless image, replace:  
+  `ghcr.io/hay-kot/homebox:latest-rootless`  
+  **With:**  
+  `ghcr.io/sysadminsmedia/homebox:latest-rootless`
+
+- Update the environment variable:  
+  If you're using `HBOX_STORAGE_SQLITE_URL`, change it to `HBOX_DATABASE_SQLITE_PATH`.
+
+### 4. Start the New Homebox Instance
+
+Launch the new version of Homebox with the following command:
 
 ```bash
 docker compose up -d
 ```
 
-You should now be able to access the web interface!
+Once the service is running, access the web interface and verify:
 
-Check that all your data is present and you are good to go!
+- All your data has been successfully migrated.
+- The service is functioning as expected.
 
 ## Troubleshooting
 
-If you encounter any issues during the migration process, please ask for help on our [Discord server](https://discord.homebox.software) or [GitHub](https://git.homebox.software).
+If you run into any issues during the migration process, don't hesitate to reach out for help:
+
+- **Discord**: [Join our community](https://discord.homebox.software) for real-time support.  
+- **GitHub**: [Open an issue or discussion](https://git.homebox.software) for technical assistance.
