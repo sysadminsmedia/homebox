@@ -34,8 +34,7 @@ docker compose down
 > [!WARNING]  
 > **Don't skip this step!** Backing up your data is the most important part of the migration process.
 
-Locate the `data` folder used by your current Homebox installation and copy its contents to a safe location on your server. If you are a volume for data follow the [instructions on dockers website](https://docs.docker.com/engine/storage/volumes/#back-up-restore-or-migrate-data-volumes).
-
+Locate the `data` folder used by your current Homebox installation and copy its contents to a safe location on your server. If you are using a data volume, follow the [instructions on Docker's website](https://docs.docker.com/engine/storage/volumes/#back-up-restore-or-migrate-data-volumes).
 ### 3. Update the Docker Compose File
 
 Modify your `docker-compose.yml` file to point to the new Homebox fork:
