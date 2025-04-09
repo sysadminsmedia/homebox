@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-  import { toast } from "vue-sonner";
+  import { toast } from "@/components/ui/sonner";
   import { Button, ButtonGroup } from "~/components/ui/button";
   import BaseModal from "@/components/App/CreateModal.vue";
   import type { LocationSummary } from "~~/lib/api/types/data-contracts";

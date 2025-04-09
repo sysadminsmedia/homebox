@@ -1,5 +1,9 @@
 <template>
   <DialogProvider>
+    <ClientOnly>
+      <Toaster class="pointer-events-auto" />
+    </ClientOnly>
+
     <NuxtLayout>
       <Html :lang="locale" :data-theme="theme || 'homebox'" />
       <Link rel="icon" type="image/svg" href="/favicon.svg"></Link>
@@ -14,7 +18,8 @@
 
 <script lang="ts" setup>
   import { useI18n } from "vue-i18n";
-  import { DialogProvider } from "./components/ui/dialog-provider";
+  import { DialogProvider } from "@/components/ui/dialog-provider";
+  import { Toaster } from "@/components/ui/sonner";
 
   const { theme } = useTheme();
 

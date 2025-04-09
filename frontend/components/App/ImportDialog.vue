@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-  import { toast } from "vue-sonner";
+  import { toast } from "@/components/ui/sonner";
   import MdiUpload from "~icons/mdi/upload";
   type Props = {
     modelValue: boolean;

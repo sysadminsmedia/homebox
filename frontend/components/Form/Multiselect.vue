@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { toast } from "vue-sonner";
+  import { toast } from "@/components/ui/sonner";
   import MdiClose from "~icons/mdi/close";
 
   const emit = defineEmits(["update:modelValue"]);

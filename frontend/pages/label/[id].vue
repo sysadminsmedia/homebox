@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { toast } from "vue-sonner";
+  import { toast } from "@/components/ui/sonner";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiDelete from "~icons/mdi/delete";

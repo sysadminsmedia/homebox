@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { toast } from "vue-sonner";
+  import { toast } from "@/components/ui/sonner";
   import type { LocationSummary, LocationUpdate } from "~~/lib/api/types/data-contracts";
   import { useLocationStore } from "~~/stores/locations";
   import MdiPackageVariant from "~icons/mdi/package-variant";

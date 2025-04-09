@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { toast } from "vue-sonner";
+  import { toast } from "@/components/ui/sonner";
   import { Button, ButtonGroup } from "~/components/ui/button";
   import { Shortcut } from "~/components/ui/shortcut";
   import MdiPackageVariant from "~icons/mdi/package-variant";

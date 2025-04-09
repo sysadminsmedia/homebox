@@ -91,7 +91,7 @@
 </template>
 
 <script setup lang="ts">
-  import { toast } from "vue-sonner";
+  import { toast } from "@/components/ui/sonner";
   import DOMPurify from "dompurify";
   import MdiFileChart from "~icons/mdi/file-chart";
   import MdiArrowRight from "~icons/mdi/arrow-right";

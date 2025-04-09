@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <Toaster />
     <!--
     Confirmation Modal is a singleton used by all components so we render
     it here to ensure it's always available. Possibly could move this further
@@ -159,7 +158,6 @@
     DropdownMenuItem,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu";
-  import { Toaster } from "~/components/ui/sonner";
   import { Shortcut } from "~/components/ui/shortcut";
   import { useDialog } from "~/components/ui/dialog-provider";
 

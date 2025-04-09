@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-  import { toast } from "vue-sonner";
+  import { toast } from "@/components/ui/sonner";
   import BaseModal from "@/components/App/CreateModal.vue";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
 

@@ -90,7 +90,7 @@
 </template>
 
 <script setup lang="ts">
-  import { toast } from "vue-sonner";
+  import { toast } from "@/components/ui/sonner";
   import { Button, ButtonGroup } from "~/components/ui/button";
   import BaseModal from "@/components/App/CreateModal.vue";
   import { Label } from "@/components/ui/label";
@@ -255,8 +255,7 @@
         if (attachError) {
           uploadError = true;
           toast.error(`Failed to upload Photo: ${photo.photoName}`);
-        } else {
-          toast.success(`Photo uploaded: ${photo.photoName}`);
+          console.error(attachError);
         }
       }
       if (uploadError) {

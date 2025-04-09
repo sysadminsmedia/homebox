@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { toast } from "vue-sonner";
+  import { toast } from "@/components/ui/sonner";
   import MdiGithub from "~icons/mdi/github";
   import MdiDiscord from "~icons/mdi/discord";
   import MdiFolder from "~icons/mdi/folder";
