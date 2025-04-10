@@ -42,7 +42,7 @@ $ docker run -d \
 
 1. Create a `docker-compose.yml` file.
 
-<iframe src="https://v0-homebox-config-editor.vercel.app/" width="100%" height="800px"></iframe>
+<ConfigEditor />
 
 ::: info
 If you use the `rootless` image, and instead of using named volumes you would prefer using a hostMount directly (e.g., `volumes: [ /path/to/data/folder:/data ]`) you need to `chown` the chosen directory in advance to the `65532` user (as shown in the Docker example above).
@@ -82,3 +82,7 @@ You can learn more about Docker by [reading the official Docker documentation.](
 2. Extract the archive.
 3. Run the `homebox` executable.
 4. The web interface will be accessible on port 7745 by default. Access the page by navigating to `http://local.ip.address:7745/` (replace with the right ip address)
+
+<script setup>
+  import ConfigEditor from '../.vitepress/components/ConfigEditor.vue'
+</script>
