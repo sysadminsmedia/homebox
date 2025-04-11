@@ -26,6 +26,7 @@ export default [
         text: 'Contributing',
         items: [
             {text: 'Get Started', link: '/en/contribute/get-started'},
+            {text: 'Switching to Shadcn-vue', link: '/en/contribute/shadcn'},
             {text: 'Bounty Program', link: '/en/contribute/bounty'}
         ]
     },

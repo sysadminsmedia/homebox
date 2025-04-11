@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { toast } from "@/components/ui/sonner";
   import type { AnyDetail, Detail, Details } from "~~/components/global/DetailsSection/types";
   import { filterZeroValues } from "~~/components/global/DetailsSection/types";
   import type { ItemAttachment } from "~~/lib/api/types/data-contracts";
@@ -14,7 +15,6 @@
 
   const route = useRoute();
   const api = useUserApi();
-  const toast = useNotifier();
 
   const itemId = computed<string>(() => route.params.id as string);
   const preferences = useViewPreferences();

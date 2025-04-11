@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { toast } from "@/components/ui/sonner";
   import type { ItemAttachment, ItemField, ItemOut, ItemUpdate } from "~~/lib/api/types/data-contracts";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useLabelStore } from "~~/stores/labels";
@@ -15,7 +16,6 @@
 
   const route = useRoute();
   const api = useUserApi();
-  const toast = useNotifier();
   const preferences = useViewPreferences();
 
   const itemId = computed<string>(() => route.params.id as string);
@@ -80,6 +80,7 @@
       labelIds: data.labels.map(l => l.id),
       locationId: data.location!.id,
       name: data.name,
+      assetId: data.assetId,
     });
 
     if (updateError) {
@@ -587,7 +588,10 @@
             <div class="mt-2 flex flex-wrap items-center justify-between gap-4"></div>
           </template>
           <div class="mb-6 grid gap-4 border-t px-5 pt-2 md:grid-cols-2">
-            <LocationSelector v-model="item.location" @update:model-value="informAboutDesyncingLocationFromParent()" />
+            <LocationLegacySelector
+              v-model="item.location"
+              @update:model-value="informAboutDesyncingLocationFromParent()"
+            />
             <FormMultiselect v-model="item.labels" :label="$t('global.labels')" :items="labels ?? []" />
             <FormToggle
               v-model="item.syncChildItemsLocations"
@@ -657,7 +661,7 @@
             <div
               v-for="(field, idx) in item.fields"
               :key="`field-${idx}`"
-              class="grid grid-cols-2 gap-2 md:grid-cols-4"
+              class="grid grid-cols-2 gap-2 pt-4 md:grid-cols-4"
             >
               <!-- <FormSelect v-model:value="field.type" label="Field Type" :items="fieldTypes" value-key="value" /> -->
               <FormTextField v-model="field.name" :label="$t('global.name')" />

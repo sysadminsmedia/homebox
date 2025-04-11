@@ -46,6 +46,7 @@
 </template>
 
 <script setup lang="ts">
+  import { toast } from "@/components/ui/sonner";
   import MdiUpload from "~icons/mdi/upload";
   type Props = {
     modelValue: boolean;
@@ -60,7 +61,6 @@
   const dialog = useVModel(props, "modelValue", emit);
 
   const api = useUserApi();
-  const toast = useNotifier();
 
   const importCsv = ref<File | null>(null);
   const importLoading = ref(false);
