@@ -25,11 +25,18 @@
 
 <template>
   <!-- eslint-disable-next-line vue/no-v-html -->
-  <div class="markdown text-wrap" v-html="raw"></div>
+  <div class="markdown text-wrap break-words" v-html="raw"></div>
 </template>
 
 <style scoped>
   * {
     --y-gap: 0.65rem;
+    word-wrap: break-word; /*Fix for long words going out of emelent bounds and issue #407 */
+    overflow-wrap: break-word; /*Fix for long words going out of emelent bounds and issue #407 */
+    white-space: pre-wrap; /*Fix for long words going out of emelent bounds and issue #407 */
+  }
+  .markdown {
+    max-width: 100%;
+    overflow: hidden; /*Fix for long words going out of emelent bounds and issue #407 */
   }
 </style>
