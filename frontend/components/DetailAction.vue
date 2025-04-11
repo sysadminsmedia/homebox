@@ -8,10 +8,28 @@
         <slot></slot>
       </p>
     </div>
-    <BaseButton class="btn-primary mt-auto" @click="$emit('action')">
-      <slot name="button">
-        <slot name="title"></slot>
-      </slot>
-    </BaseButton>
+    <template v-if="href">
+      <a class="mt-auto" :href="href" :class="buttonVariants({ size: 'lg' })">
+        <slot name="button">
+          <slot name="title"></slot>
+        </slot>
+      </a>
+    </template>
+    <template v-else>
+      <Button class="mt-auto" size="lg" @click="$emit('action')">
+        <slot name="button">
+          <slot name="title"></slot>
+        </slot>
+      </Button>
+    </template>
   </div>
 </template>
+
+<script setup lang="ts">
+  import { defineProps } from "vue";
+  import { Button, buttonVariants } from "@/components/ui/button";
+
+  defineProps<{
+    href?: string;
+  }>();
+</script>

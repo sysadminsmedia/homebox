@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Behavior for imports with existing import_refs has changed. If an import_ref is present in the CSV file, the \nitem will be updated with the values in the CSV file.",
                 "description": "Import a CSV file containing your items, labels, and locations. See documentation for more information on the \nrequired format.",
-                "title": "Import CSV File",
-                "upload": "Upload"
+                "title": "Import CSV File"
             },
             "outdated": {
                 "current_version": "Current Version",

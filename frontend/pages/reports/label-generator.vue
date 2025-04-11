@@ -1,6 +1,11 @@
 <script setup lang="ts">
   import { route } from "../../lib/api/base";
-  import { toast } from "@/components/ui/sonner";
+  import { toast, Toaster } from "@/components/ui/sonner";
+  import { Separator } from "@/components/ui/separator";
+  import { Button } from "@/components/ui/button";
+  import { Label } from "@/components/ui/label";
+  import { Input } from "@/components/ui/input";
+  import { Checkbox } from "@/components/ui/checkbox";
 
   definePageMeta({
     middleware: ["auth"],
@@ -326,8 +331,8 @@
 
 <template>
   <div class="print:hidden">
-    <AppToast />
-    <div class="container prose mx-auto max-w-4xl p-4 pt-6">
+    <Toaster />
+    <div class="prose container mx-auto max-w-4xl p-4 pt-6">
       <h1>Homebox Label Generator</h1>
       <p>
         The Homebox Label Generator is a tool to help you print labels for your Homebox inventory. These are intended to
@@ -368,34 +373,33 @@
         <NuxtLink href="/home">Home</NuxtLink>
       </div>
     </div>
-    <div class="divider mx-auto max-w-4xl"></div>
+    <Separator class="mx-auto max-w-4xl" />
     <div class="container mx-auto max-w-4xl p-4">
       <div class="mx-auto grid grid-cols-2 gap-3">
         <div v-for="(prop, i) in propertyInputs" :key="i" class="form-control w-full max-w-xs">
-          <label class="label">
-            <span class="label-text">{{ prop.label }}</span>
-          </label>
-          <input
+          <Label :for="`input-${prop.ref}`">
+            {{ prop.label }}
+          </Label>
+          <Input
+            :id="`input-${prop.ref}`"
             v-model="displayProperties[prop.ref]"
             :type="prop.type ? prop.type : 'number'"
             step="0.01"
             placeholder="Type here"
-            class="input input-bordered w-full max-w-xs"
+            class="w-full max-w-xs"
           />
         </div>
       </div>
       <div class="max-w-xs">
-        <div class="form-control">
-          <label class="label cursor-pointer">
-            <input v-model="bordered" type="checkbox" class="checkbox checkbox-secondary" />
-            <span class="label-text">Bordered Labels</span>
-          </label>
+        <div class="flex items-center gap-2 py-4">
+          <Checkbox id="borderedLabels" v-model="bordered" />
+          <Label class="cursor-pointer" for="borderedLabels"> Bordered Labels </Label>
         </div>
       </div>
 
       <div>
         <p>QR Code Example {{ displayProperties.baseURL }}/a/{asset_id}</p>
-        <BaseButton class="btn-block my-4" @click="calcPages"> Generate Page </BaseButton>
+        <Button size="lg" class="my-4 w-full" @click="calcPages"> Generate Page </Button>
       </div>
     </div>
   </div>
