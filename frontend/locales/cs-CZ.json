@@ -65,7 +65,9 @@
             "create_modal": {
                 "item_description": "Popis Položky",
                 "item_name": "Jméno Položky",
-                "title": "Vytvořit položku"
+                "item_photo": "Fotografie položky 📷",
+                "title": "Vytvořit položku",
+                "upload_photos": "Nahrát fotografie"
             },
             "view": {
                 "selectable": {
@@ -85,6 +87,9 @@
                 "label_description": "Popis Popisku",
                 "label_name": "Název Popisku",
                 "title": "Vytvořit popisek"
+            },
+            "selector": {
+                "select_labels": "Vybrat štítky"
             }
         },
         "location": {
@@ -94,19 +99,24 @@
                 "title": "Vytvořit Lokaci"
             },
             "selector": {
-                "parent_location": "Nadřazená Lokace"
+                "no_location_found": "Nenalezena lokace",
+                "parent_location": "Nadřazená Lokace",
+                "search_location": "Hledat lokace",
+                "select_location": "Vybrat lokaci"
             },
             "tree": {
                 "no_locations": "Nejsou dostupné žádné lokace. Přidejte nové lokace\npomocí talčítka `<`span class=\"link-primary\"`>`Vytvořit`<`/span`>` na navigační liště."
             }
         },
         "quick_menu": {
+            "no_results": "Nebyly nalezeny žádné výsledky.",
             "shortcut_hint": "Pomocí číselných tlačítek rychle vyberte akci."
         }
     },
     "global": {
         "add": "Přidat",
         "build": "Sestavení: { build }",
+        "cancel": "Zrušit",
         "confirm": "Potvrdit",
         "create": "Vytvořit",
         "create_and_add": "Vytvořit a Přidat Další",
