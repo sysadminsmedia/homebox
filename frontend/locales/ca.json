@@ -44,7 +44,6 @@
             "create_modal": {
                 "item_description": "Descripció de l'article",
                 "item_name": "Nom de l'article",
-                "photo_button": "Foto 📷",
                 "title": "Crea un article"
             },
             "view": {

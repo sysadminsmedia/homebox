@@ -65,7 +65,6 @@
             "create_modal": {
                 "item_description": "Popis Položky",
                 "item_name": "Jméno Položky",
-                "photo_button": "Fotka 📷",
                 "title": "Vytvořit položku"
             },
             "view": {

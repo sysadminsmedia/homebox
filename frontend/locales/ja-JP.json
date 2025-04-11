@@ -62,7 +62,6 @@
             "create_modal": {
                 "item_description": "説明",
                 "item_name": "名称",
-                "photo_button": "画像の追加",
                 "title": "アイテム情報の追加"
             },
             "view": {
