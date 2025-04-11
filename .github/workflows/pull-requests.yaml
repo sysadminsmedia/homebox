@@ -17,5 +17,9 @@ jobs:
     uses: ./.github/workflows/partial-backend.yaml
 
   frontend-tests:
-    name: "Frontend and End-to-End Tests"
+    name: "Frontend Tests"
     uses: ./.github/workflows/partial-frontend.yaml
+
+  e2e-tests:
+    name: "End-to-End Playwright Tests"
+    uses: ./.github/workflows/e2e-partial.yaml
