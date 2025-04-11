@@ -6,7 +6,7 @@
         <DialogDescription> {{ $t("components.app.import_dialog.description") }} </DialogDescription>
       </DialogHeader>
 
-      <div class="bg-destructive text-destructive-foreground flex gap-2 rounded p-2 shadow-lg">
+      <div class="flex gap-2 rounded bg-destructive p-2 text-destructive-foreground shadow-lg">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="mb-auto size-6 shrink-0 stroke-current"

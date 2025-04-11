@@ -32,4 +32,6 @@
   defineProps<{
     href?: string;
   }>();
+
+  defineEmits(["action"]);
 </script>
