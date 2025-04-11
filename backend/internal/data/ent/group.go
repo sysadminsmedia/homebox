@@ -42,15 +42,13 @@ type GroupEdges struct {
 	Items []*Item `json:"items,omitempty"`
 	// Labels holds the value of the labels edge.
 	Labels []*Label `json:"labels,omitempty"`
-	// Documents holds the value of the documents edge.
-	Documents []*Document `json:"documents,omitempty"`
 	// InvitationTokens holds the value of the invitation_tokens edge.
 	InvitationTokens []*GroupInvitationToken `json:"invitation_tokens,omitempty"`
 	// Notifiers holds the value of the notifiers edge.
 	Notifiers []*Notifier `json:"notifiers,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [7]bool
+	loadedTypes [6]bool
 }
 
 // UsersOrErr returns the Users value or an error if the edge
@@ -89,19 +87,10 @@ func (e GroupEdges) LabelsOrErr() ([]*Label, error) {
 	return nil, &NotLoadedError{edge: "labels"}
 }
 
-// DocumentsOrErr returns the Documents value or an error if the edge
-// was not loaded in eager-loading.
-func (e GroupEdges) DocumentsOrErr() ([]*Document, error) {
-	if e.loadedTypes[4] {
-		return e.Documents, nil
-	}
-	return nil, &NotLoadedError{edge: "documents"}
-}
-
 // InvitationTokensOrErr returns the InvitationTokens value or an error if the edge
 // was not loaded in eager-loading.
 func (e GroupEdges) InvitationTokensOrErr() ([]*GroupInvitationToken, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[4] {
 		return e.InvitationTokens, nil
 	}
 	return nil, &NotLoadedError{edge: "invitation_tokens"}
@@ -110,7 +99,7 @@ func (e GroupEdges) InvitationTokensOrErr() ([]*GroupInvitationToken, error) {
 // NotifiersOrErr returns the Notifiers value or an error if the edge
 // was not loaded in eager-loading.
 func (e GroupEdges) NotifiersOrErr() ([]*Notifier, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[5] {
 		return e.Notifiers, nil
 	}
 	return nil, &NotLoadedError{edge: "notifiers"}
@@ -203,11 +192,6 @@ func (gr *Group) QueryItems() *ItemQuery {
 // QueryLabels queries the "labels" edge of the Group entity.
 func (gr *Group) QueryLabels() *LabelQuery {
 	return NewGroupClient(gr.config).QueryLabels(gr)
-}
-
-// QueryDocuments queries the "documents" edge of the Group entity.
-func (gr *Group) QueryDocuments() *DocumentQuery {
-	return NewGroupClient(gr.config).QueryDocuments(gr)
 }
 
 // QueryInvitationTokens queries the "invitation_tokens" edge of the Group entity.

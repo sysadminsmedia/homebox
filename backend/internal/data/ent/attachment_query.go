@@ -13,7 +13,6 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/document"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 )
@@ -21,13 +20,12 @@ import (
 // AttachmentQuery is the builder for querying Attachment entities.
 type AttachmentQuery struct {
 	config
-	ctx          *QueryContext
-	order        []attachment.OrderOption
-	inters       []Interceptor
-	predicates   []predicate.Attachment
-	withItem     *ItemQuery
-	withDocument *DocumentQuery
-	withFKs      bool
+	ctx        *QueryContext
+	order      []attachment.OrderOption
+	inters     []Interceptor
+	predicates []predicate.Attachment
+	withItem   *ItemQuery
+	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -79,28 +77,6 @@ func (aq *AttachmentQuery) QueryItem() *ItemQuery {
 			sqlgraph.From(attachment.Table, attachment.FieldID, selector),
 			sqlgraph.To(item.Table, item.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, attachment.ItemTable, attachment.ItemColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryDocument chains the current query on the "document" edge.
-func (aq *AttachmentQuery) QueryDocument() *DocumentQuery {
-	query := (&DocumentClient{config: aq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := aq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := aq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(attachment.Table, attachment.FieldID, selector),
-			sqlgraph.To(document.Table, document.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, attachment.DocumentTable, attachment.DocumentColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
 		return fromU, nil
@@ -295,13 +271,12 @@ func (aq *AttachmentQuery) Clone() *AttachmentQuery {
 		return nil
 	}
 	return &AttachmentQuery{
-		config:       aq.config,
-		ctx:          aq.ctx.Clone(),
-		order:        append([]attachment.OrderOption{}, aq.order...),
-		inters:       append([]Interceptor{}, aq.inters...),
-		predicates:   append([]predicate.Attachment{}, aq.predicates...),
-		withItem:     aq.withItem.Clone(),
-		withDocument: aq.withDocument.Clone(),
+		config:     aq.config,
+		ctx:        aq.ctx.Clone(),
+		order:      append([]attachment.OrderOption{}, aq.order...),
+		inters:     append([]Interceptor{}, aq.inters...),
+		predicates: append([]predicate.Attachment{}, aq.predicates...),
+		withItem:   aq.withItem.Clone(),
 		// clone intermediate query.
 		sql:  aq.sql.Clone(),
 		path: aq.path,
@@ -316,17 +291,6 @@ func (aq *AttachmentQuery) WithItem(opts ...func(*ItemQuery)) *AttachmentQuery {
 		opt(query)
 	}
 	aq.withItem = query
-	return aq
-}
-
-// WithDocument tells the query-builder to eager-load the nodes that are connected to
-// the "document" edge. The optional arguments are used to configure the query builder of the edge.
-func (aq *AttachmentQuery) WithDocument(opts ...func(*DocumentQuery)) *AttachmentQuery {
-	query := (&DocumentClient{config: aq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	aq.withDocument = query
 	return aq
 }
 
@@ -409,12 +373,11 @@ func (aq *AttachmentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*A
 		nodes       = []*Attachment{}
 		withFKs     = aq.withFKs
 		_spec       = aq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [1]bool{
 			aq.withItem != nil,
-			aq.withDocument != nil,
 		}
 	)
-	if aq.withItem != nil || aq.withDocument != nil {
+	if aq.withItem != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -441,12 +404,6 @@ func (aq *AttachmentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*A
 	if query := aq.withItem; query != nil {
 		if err := aq.loadItem(ctx, query, nodes, nil,
 			func(n *Attachment, e *Item) { n.Edges.Item = e }); err != nil {
-			return nil, err
-		}
-	}
-	if query := aq.withDocument; query != nil {
-		if err := aq.loadDocument(ctx, query, nodes, nil,
-			func(n *Attachment, e *Document) { n.Edges.Document = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -478,38 +435,6 @@ func (aq *AttachmentQuery) loadItem(ctx context.Context, query *ItemQuery, nodes
 		nodes, ok := nodeids[n.ID]
 		if !ok {
 			return fmt.Errorf(`unexpected foreign-key "item_attachments" returned %v`, n.ID)
-		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
-	}
-	return nil
-}
-func (aq *AttachmentQuery) loadDocument(ctx context.Context, query *DocumentQuery, nodes []*Attachment, init func(*Attachment), assign func(*Attachment, *Document)) error {
-	ids := make([]uuid.UUID, 0, len(nodes))
-	nodeids := make(map[uuid.UUID][]*Attachment)
-	for i := range nodes {
-		if nodes[i].document_attachments == nil {
-			continue
-		}
-		fk := *nodes[i].document_attachments
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
-	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(document.IDIn(ids...))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "document_attachments" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)

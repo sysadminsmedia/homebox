@@ -24,10 +24,12 @@ const (
 	FieldType = "type"
 	// FieldPrimary holds the string denoting the primary field in the database.
 	FieldPrimary = "primary"
+	// FieldTitle holds the string denoting the title field in the database.
+	FieldTitle = "title"
+	// FieldPath holds the string denoting the path field in the database.
+	FieldPath = "path"
 	// EdgeItem holds the string denoting the item edge name in mutations.
 	EdgeItem = "item"
-	// EdgeDocument holds the string denoting the document edge name in mutations.
-	EdgeDocument = "document"
 	// Table holds the table name of the attachment in the database.
 	Table = "attachments"
 	// ItemTable is the table that holds the item relation/edge.
@@ -37,13 +39,6 @@ const (
 	ItemInverseTable = "items"
 	// ItemColumn is the table column denoting the item relation/edge.
 	ItemColumn = "item_attachments"
-	// DocumentTable is the table that holds the document relation/edge.
-	DocumentTable = "attachments"
-	// DocumentInverseTable is the table name for the Document entity.
-	// It exists in this package in order to avoid circular dependency with the "document" package.
-	DocumentInverseTable = "documents"
-	// DocumentColumn is the table column denoting the document relation/edge.
-	DocumentColumn = "document_attachments"
 )
 
 // Columns holds all SQL columns for attachment fields.
@@ -53,12 +48,13 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldType,
 	FieldPrimary,
+	FieldTitle,
+	FieldPath,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "attachments"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"document_attachments",
 	"item_attachments",
 }
 
@@ -86,6 +82,10 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultPrimary holds the default value on creation for the "primary" field.
 	DefaultPrimary bool
+	// DefaultTitle holds the default value on creation for the "title" field.
+	DefaultTitle string
+	// DefaultPath holds the default value on creation for the "path" field.
+	DefaultPath string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
@@ -147,17 +147,20 @@ func ByPrimary(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPrimary, opts...).ToFunc()
 }
 
+// ByTitle orders the results by the title field.
+func ByTitle(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTitle, opts...).ToFunc()
+}
+
+// ByPath orders the results by the path field.
+func ByPath(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPath, opts...).ToFunc()
+}
+
 // ByItemField orders the results by item field.
 func ByItemField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newItemStep(), sql.OrderByField(field, opts...))
-	}
-}
-
-// ByDocumentField orders the results by document field.
-func ByDocumentField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newDocumentStep(), sql.OrderByField(field, opts...))
 	}
 }
 func newItemStep() *sqlgraph.Step {
@@ -165,12 +168,5 @@ func newItemStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ItemInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, ItemTable, ItemColumn),
-	)
-}
-func newDocumentStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(DocumentInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, DocumentTable, DocumentColumn),
 	)
 }

@@ -13,7 +13,6 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/document"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
@@ -35,7 +34,6 @@ type GroupQuery struct {
 	withLocations        *LocationQuery
 	withItems            *ItemQuery
 	withLabels           *LabelQuery
-	withDocuments        *DocumentQuery
 	withInvitationTokens *GroupInvitationTokenQuery
 	withNotifiers        *NotifierQuery
 	// intermediate query (i.e. traversal path).
@@ -155,28 +153,6 @@ func (gq *GroupQuery) QueryLabels() *LabelQuery {
 			sqlgraph.From(group.Table, group.FieldID, selector),
 			sqlgraph.To(label.Table, label.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, group.LabelsTable, group.LabelsColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryDocuments chains the current query on the "documents" edge.
-func (gq *GroupQuery) QueryDocuments() *DocumentQuery {
-	query := (&DocumentClient{config: gq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := gq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := gq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(group.Table, group.FieldID, selector),
-			sqlgraph.To(document.Table, document.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, group.DocumentsTable, group.DocumentsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
 		return fromU, nil
@@ -424,7 +400,6 @@ func (gq *GroupQuery) Clone() *GroupQuery {
 		withLocations:        gq.withLocations.Clone(),
 		withItems:            gq.withItems.Clone(),
 		withLabels:           gq.withLabels.Clone(),
-		withDocuments:        gq.withDocuments.Clone(),
 		withInvitationTokens: gq.withInvitationTokens.Clone(),
 		withNotifiers:        gq.withNotifiers.Clone(),
 		// clone intermediate query.
@@ -474,17 +449,6 @@ func (gq *GroupQuery) WithLabels(opts ...func(*LabelQuery)) *GroupQuery {
 		opt(query)
 	}
 	gq.withLabels = query
-	return gq
-}
-
-// WithDocuments tells the query-builder to eager-load the nodes that are connected to
-// the "documents" edge. The optional arguments are used to configure the query builder of the edge.
-func (gq *GroupQuery) WithDocuments(opts ...func(*DocumentQuery)) *GroupQuery {
-	query := (&DocumentClient{config: gq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	gq.withDocuments = query
 	return gq
 }
 
@@ -588,12 +552,11 @@ func (gq *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 	var (
 		nodes       = []*Group{}
 		_spec       = gq.querySpec()
-		loadedTypes = [7]bool{
+		loadedTypes = [6]bool{
 			gq.withUsers != nil,
 			gq.withLocations != nil,
 			gq.withItems != nil,
 			gq.withLabels != nil,
-			gq.withDocuments != nil,
 			gq.withInvitationTokens != nil,
 			gq.withNotifiers != nil,
 		}
@@ -641,13 +604,6 @@ func (gq *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 		if err := gq.loadLabels(ctx, query, nodes,
 			func(n *Group) { n.Edges.Labels = []*Label{} },
 			func(n *Group, e *Label) { n.Edges.Labels = append(n.Edges.Labels, e) }); err != nil {
-			return nil, err
-		}
-	}
-	if query := gq.withDocuments; query != nil {
-		if err := gq.loadDocuments(ctx, query, nodes,
-			func(n *Group) { n.Edges.Documents = []*Document{} },
-			func(n *Group, e *Document) { n.Edges.Documents = append(n.Edges.Documents, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -789,37 +745,6 @@ func (gq *GroupQuery) loadLabels(ctx context.Context, query *LabelQuery, nodes [
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "group_labels" returned %v for node %v`, *fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
-func (gq *GroupQuery) loadDocuments(ctx context.Context, query *DocumentQuery, nodes []*Group, init func(*Group), assign func(*Group, *Document)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uuid.UUID]*Group)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	query.withFKs = true
-	query.Where(predicate.Document(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(group.DocumentsColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.group_documents
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "group_documents" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "group_documents" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

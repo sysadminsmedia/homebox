@@ -2108,20 +2108,6 @@ const docTemplate = `{
                 }
             }
         },
-        "repo.DocumentOut": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
         "repo.Group": {
             "type": "object",
             "properties": {
@@ -2182,14 +2168,17 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
-                "document": {
-                    "$ref": "#/definitions/repo.DocumentOut"
-                },
                 "id": {
+                    "type": "string"
+                },
+                "path": {
                     "type": "string"
                 },
                 "primary": {
                     "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
                 },
                 "type": {
                     "type": "string"
@@ -2465,6 +2454,10 @@ const docTemplate = `{
                 },
                 "quantity": {
                     "type": "integer"
+                },
+                "soldTime": {
+                    "description": "Sale details",
+                    "type": "string"
                 },
                 "updatedAt": {
                     "type": "string"

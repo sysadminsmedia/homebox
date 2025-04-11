@@ -50,7 +50,7 @@ func TestItemService_AddAttachment(t *testing.T) {
 	assert.NotNil(t, afterAttachment)
 
 	// Check that the file exists
-	storedPath := afterAttachment.Attachments[0].Document.Path
+	storedPath := afterAttachment.Attachments[0].Path
 
 	// {root}/{group}/{item}/{attachment}
 	assert.Equal(t, path.Join(temp, "homebox", tGroup.ID.String(), "documents"), path.Dir(storedPath))
