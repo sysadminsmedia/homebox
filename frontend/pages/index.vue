@@ -9,6 +9,8 @@
   import MdiArrowRight from "~icons/mdi/arrow-right";
   import MdiLock from "~icons/mdi/lock";
   import MdiMastodon from "~icons/mdi/mastodon";
+  import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+  import { Button } from "@/components/ui/button";
 
   useHead({
     title: "Homebox | Organize and Tag Your Stuff",
@@ -136,7 +138,7 @@
 
 <template>
   <div class="flex min-h-screen flex-col">
-    <div class="absolute top-0 min-w-full fill-primary">
+    <div class="absolute top-0 -z-10 min-w-full fill-primary">
       <div class="flex min-h-[20vh] flex-col bg-primary" />
       <svg
         class="fill-primary drop-shadow-xl"
@@ -189,12 +191,14 @@
         <div>
           <Transition name="slide-fade">
             <form v-if="registerForm" @submit.prevent="registerUser">
-              <div class="card bg-base-100 shadow-xl md:w-[500px]">
-                <div class="card-body">
-                  <h2 class="card-title text-2xl">
+              <Card class="md:w-[500px]">
+                <CardHeader>
+                  <CardTitle class="flex items-center gap-2">
                     <MdiAccount class="mr-1 size-7" />
                     {{ $t("index.register") }}
-                  </h2>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent class="flex flex-col gap-2">
                   <FormTextField v-model="email" :label="$t('index.set_email')" />
                   <FormTextField v-model="username" :label="$t('index.set_name')" />
                   <div v-if="!(groupToken == '')" class="pb-1 pt-4 text-center">
@@ -205,26 +209,30 @@
                   </div>
                   <FormPassword v-model="password" :label="$t('index.set_password')" />
                   <PasswordScore v-model:valid="canRegister" :password="password" />
+                </CardContent>
+                <CardFooter>
                   <div class="card-actions justify-end">
-                    <button
+                    <Button
+                      class="w-full"
                       type="submit"
-                      class="btn btn-primary mt-2"
                       :class="loading ? 'loading' : ''"
                       :disabled="loading || !canRegister"
                     >
                       {{ $t("index.register") }}
-                    </button>
+                    </Button>
                   </div>
-                </div>
-              </div>
+                </CardFooter>
+              </Card>
             </form>
             <form v-else @submit.prevent="login">
-              <div class="card bg-base-100 shadow-xl md:w-[500px]">
-                <div class="card-body">
-                  <h2 class="card-title text-2xl">
+              <Card class="md:w-[500px]">
+                <CardHeader>
+                  <CardTitle class="flex items-center gap-2">
                     <MdiAccount class="mr-1 size-7" />
                     {{ $t("index.login") }}
-                  </h2>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent class="flex flex-col gap-2">
                   <template v-if="status && status.demo">
                     <p class="text-center text-xs italic">This is a demo instance</p>
                     <p class="text-center text-xs">
@@ -239,33 +247,28 @@
                   <div class="max-w-[140px]">
                     <FormCheckbox v-model="remember" :label="$t('index.remember_me')" />
                   </div>
-                  <div class="card-actions justify-end">
-                    <button
-                      type="submit"
-                      class="btn btn-primary btn-block"
-                      :class="loading ? 'loading' : ''"
-                      :disabled="loading"
-                    >
-                      {{ $t("index.login") }}
-                    </button>
-                  </div>
-                </div>
-              </div>
+                </CardContent>
+                <CardFooter>
+                  <Button class="w-full" type="submit" :class="loading ? 'loading' : ''" :disabled="loading">
+                    {{ $t("index.login") }}
+                  </Button>
+                </CardFooter>
+              </Card>
             </form>
           </Transition>
           <div class="mt-6 text-center">
-            <BaseButton
-              v-if="status && status.allowRegistration"
-              class="btn-primary btn-wide"
-              @click="() => toggleLogin()"
-            >
-              <template #icon>
-                <MdiAccountPlus v-if="!registerForm" class="swap-off size-5" />
-                <MdiLogin v-else class="swap-off size-5" />
-                <MdiArrowRight class="swap-on size-5" />
-              </template>
+            <Button v-if="status && status.allowRegistration" class="group" variant="link" @click="() => toggleLogin()">
+              <div class="relative mx-2">
+                <div
+                  class="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:rotate-[360deg]"
+                >
+                  <MdiAccountPlus v-if="!registerForm" class="size-5 group-hover:hidden" />
+                  <MdiLogin v-else class="size-5 group-hover:hidden" />
+                  <MdiArrowRight class="hidden size-5 group-hover:block" />
+                </div>
+              </div>
               {{ registerForm ? $t("index.login") : $t("index.register") }}
-            </BaseButton>
+            </Button>
             <p v-else class="inline-flex items-center gap-2 text-sm italic text-base-content">
               <MdiLock class="inline-block size-4" />
               {{ $t("index.disabled_registration") }}
