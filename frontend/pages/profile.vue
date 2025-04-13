@@ -16,6 +16,7 @@
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import { Label } from "@/components/ui/label";
   import { badgeVariants } from "@/components/ui/badge";
+  import LanguageSelector from "~/components/App/LanguageSelector.vue";
 
   definePageMeta({
     middleware: ["auth"],
@@ -43,9 +44,6 @@
   function setDisplayHeader() {
     preferences.value.displayHeaderDecor = !preferences.value.displayHeaderDecor;
   }
-  function setLanguage(lang: string) {
-    preferences.value.language = lang;
-  }
 
   // Currency Selection
   const currency = ref<CurrenciesCurrency>({
@@ -62,10 +60,6 @@
 
   const currencyExample = computed(() => {
     return fmtCurrency(1000, currency.value?.code ?? "USD", getLocaleCode());
-  });
-
-  const dateExample = computed(() => {
-    return fmtDate(new Date(Date.now() - 15 * 60000), "relative");
   });
 
   const { data: group } = useAsyncData(async () => {
@@ -387,28 +381,7 @@
             {{ token }}
           </div>
         </div>
-        <div class="form-control w-full p-5 pt-0">
-          <Label for="language"> {{ $t("profile.language") }} </Label>
-          <Select
-            id="language"
-            v-model="$i18n.locale"
-            @update:model-value="
-              event => {
-                setLanguage(event as string);
-              }
-            "
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem v-for="lang in $i18n.availableLocales" :key="lang" :value="lang">
-                {{ $t(`languages.${lang}`) }} ({{ $t(`languages.${lang}`, 1, { locale: lang }) }})
-              </SelectItem>
-            </SelectContent>
-          </Select>
-          <p class="m-2 text-sm">{{ $t("profile.example") }}: {{ $t("global.created") }} {{ dateExample }}</p>
-        </div>
+        <LanguageSelector />
       </BaseCard>
 
       <BaseCard>

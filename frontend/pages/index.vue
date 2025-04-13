@@ -11,6 +11,7 @@
   import MdiMastodon from "~icons/mdi/mastodon";
   import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
   import { Button } from "@/components/ui/button";
+  import LanguageSelector from "~/components/App/LanguageSelector.vue";
 
   useHead({
     title: "Homebox | Organize and Tag Your Stuff",
@@ -163,7 +164,7 @@
           </h2>
           <p class="ml-1 text-lg text-base-content/50">{{ $t("index.tagline") }}</p>
         </div>
-        <div class="ml-auto mt-6 flex gap-4 text-neutral-content sm:mt-0">
+        <div class="ml-auto mt-6 flex items-center gap-4 text-neutral-content sm:mt-0">
           <a
             class="tooltip"
             :data-tip="$t('global.github')"
@@ -186,6 +187,7 @@
           <a href="https://homebox.software/en/" class="tooltip" :data-tip="$t('global.read_docs')" target="_blank">
             <MdiFolder class="size-8" />
           </a>
+          <LanguageSelector class="z-10 text-primary" :include-text="false" />
         </div>
       </header>
       <div class="grid min-h-[50vh] p-6 sm:place-items-center">
