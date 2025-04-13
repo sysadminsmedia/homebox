@@ -138,7 +138,8 @@
 
 <template>
   <div class="flex min-h-screen flex-col">
-    <div class="absolute top-0 -z-10 min-w-full fill-primary">
+    <!-- TODO: when daisyui is removed then add -z-10 -->
+    <div class="absolute top-0 min-w-full fill-primary">
       <div class="flex min-h-[20vh] flex-col bg-primary" />
       <svg
         class="fill-primary drop-shadow-xl"
@@ -188,7 +189,8 @@
         </div>
       </header>
       <div class="grid min-h-[50vh] p-6 sm:place-items-center">
-        <div>
+        <!-- TODO: when daisyui is removed then remove z-10 -->
+        <div class="z-10">
           <Transition name="slide-fade">
             <form v-if="registerForm" @submit.prevent="registerUser">
               <Card class="md:w-[500px]">
