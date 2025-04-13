@@ -76,6 +76,7 @@
     "tailwindcss-animate": "^1.0.7",
     "vaul-vue": "^0.4.1",
     "vue": "3.4.8",
+    "vue-advanced-cropper": "^2.8.9",
     "vue-router": "^4.5.0",
     "vue-sonner": "^1.3.0"
   }
