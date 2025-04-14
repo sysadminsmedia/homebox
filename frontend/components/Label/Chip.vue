@@ -18,7 +18,7 @@
 
 <template>
   <NuxtLink
-    class="bg-secondary text-secondary-foreground hover:bg-secondary/70 group/label-chip flex gap-2 rounded-full shadow transition duration-300"
+    class="group/label-chip flex gap-2 rounded-full bg-secondary text-secondary-foreground shadow transition duration-300 hover:bg-secondary/70"
     :class="{
       'p-4 py-1 text-base': size === 'lg',
       'p-3 py-1 text-sm': size !== 'sm' && size !== 'lg',

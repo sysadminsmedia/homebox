@@ -41,7 +41,7 @@
     <div
       class="flex items-center gap-1 rounded p-1"
       :class="{
-        'hover:bg-base-200 cursor-pointer': hasChildren,
+        'cursor-pointer hover:bg-base-200': hasChildren,
       }"
       @click="openRef = !openRef"
     >
@@ -62,7 +62,7 @@
       </div>
       <MdiMapMarker v-if="item.type === 'location'" class="size-4" />
       <MdiPackageVariant v-else class="size-4" />
-      <NuxtLink class="hover:link text-lg" :to="link" @click.stop>{{ item.name }} </NuxtLink>
+      <NuxtLink class="text-lg hover:link" :to="link" @click.stop>{{ item.name }} </NuxtLink>
     </div>
     <div v-if="openRef" class="ml-4">
       <LocationTreeNode v-for="child in item.children" :key="child.id" :item="child" :tree-id="treeId" />
