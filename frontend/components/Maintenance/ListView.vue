@@ -182,7 +182,7 @@
       <div v-if="props.currentItemId" class="hidden first:block">
         <button
           type="button"
-          class="border-base-content relative block w-full rounded-lg border-2 border-dashed p-12 text-center"
+          class="relative block w-full rounded-lg border-2 border-dashed border-base-content p-12 text-center"
           @click="maintenanceEditModal?.openCreateModal(props.currentItemId)"
         >
           <MdiWrenchClock class="inline size-16" />

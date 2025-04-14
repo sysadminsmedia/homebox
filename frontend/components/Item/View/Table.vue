@@ -6,7 +6,7 @@
           <TableHead
             v-for="h in headers.filter(h => h.enabled)"
             :key="h.value"
-            class="text-no-transform bg-neutral hover:bg-neutral/90 text-neutral-content cursor-pointer text-sm"
+            class="text-no-transform cursor-pointer bg-neutral text-sm text-neutral-content hover:bg-neutral/90"
             @click="sortBy(h.value)"
           >
             <div
@@ -78,7 +78,7 @@
         <label tabindex="0" class="btn btn-square btn-outline btn-sm m-1">
           <MdiTableCog />
         </label>
-        <ul tabindex="0" class="dropdown-content rounded-box bg-base-100 flex w-64 flex-col gap-2 p-2 pl-3 shadow">
+        <ul tabindex="0" class="dropdown-content rounded-box flex w-64 flex-col gap-2 bg-base-100 p-2 pl-3 shadow">
           <li>Headers:</li>
           <li v-for="(h, i) in headers" :key="h.value" class="flex flex-row items-center gap-1">
             <button

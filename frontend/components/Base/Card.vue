@@ -25,7 +25,7 @@
         'max-h-[9000px]': collapsable && !collapsed,
         'max-h-0 overflow-hidden': collapsed,
       }"
-      class="transition-[max-height] duration-200 p-0"
+      class="p-0 transition-[max-height] duration-200"
     >
       <slot />
     </CardContent>
