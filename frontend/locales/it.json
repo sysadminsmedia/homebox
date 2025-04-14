@@ -65,7 +65,9 @@
             "create_modal": {
                 "item_description": "Descrizione Articolo",
                 "item_name": "Nome articolo",
-                "title": "Crea Articolo"
+                "item_photo": "Foto dell'articolo 📷",
+                "title": "Crea Articolo",
+                "upload_photos": "Carica Foto"
             },
             "view": {
                 "selectable": {
@@ -85,6 +87,9 @@
                 "label_description": "Descrizione Etichetta",
                 "label_name": "Nome Etichetta",
                 "title": "Crea Etichetta"
+            },
+            "selector": {
+                "select_labels": "Seleziona etichette"
             }
         },
         "location": {
@@ -94,19 +99,24 @@
                 "title": "Crea Posizione"
             },
             "selector": {
-                "parent_location": "Ubicazione padre"
+                "no_location_found": "Nessusa posizione trovata",
+                "parent_location": "Ubicazione padre",
+                "search_location": "Cerca posizioni",
+                "select_location": "Seleziona una posizione"
             },
             "tree": {
                 "no_locations": "Nessuna posizione disponibile. Aggiungi nuove posizioni mediante il pulsante\n`<`span class=\"link-primary\"`>`Crea`<`/span`>` nella barra di navigazione."
             }
         },
         "quick_menu": {
+            "no_results": "Non sono stati trovati risultati.",
             "shortcut_hint": "Utilizzare i tasti numerici per selezionare rapidamente un'azione."
         }
     },
     "global": {
         "add": "Aggiungi",
         "build": "Compila: { build }",
+        "cancel": "Ignora",
         "confirm": "Conferma",
         "create": "Crea",
         "create_and_add": "Crea e aggiungi un altro",
