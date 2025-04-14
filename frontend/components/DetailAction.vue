@@ -8,12 +8,12 @@
         <slot></slot>
       </p>
     </div>
-    <template v-if="href">
-      <a class="mt-auto" :href="href" :class="buttonVariants({ size: 'lg' })">
+    <template v-if="to">
+      <NuxtLink class="mt-auto" :to="to" :class="buttonVariants({ size: 'lg' })">
         <slot name="button">
           <slot name="title"></slot>
         </slot>
-      </a>
+      </NuxtLink>
     </template>
     <template v-else>
       <Button class="mt-auto" size="lg" @click="$emit('action')">
@@ -30,7 +30,7 @@
   import { Button, buttonVariants } from "@/components/ui/button";
 
   defineProps<{
-    href?: string;
+    to?: string;
   }>();
 
   defineEmits(["action"]);

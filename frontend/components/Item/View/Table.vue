@@ -1,12 +1,12 @@
 <template>
   <BaseCard>
-    <table class="table w-full">
-      <thead>
-        <tr>
-          <th
+    <Table class="w-full">
+      <TableHeader>
+        <TableRow>
+          <TableHead
             v-for="h in headers.filter(h => h.enabled)"
             :key="h.value"
-            class="text-no-transform cursor-pointer bg-neutral text-sm text-neutral-content"
+            class="text-no-transform bg-neutral hover:bg-neutral/90 text-neutral-content cursor-pointer text-sm"
             @click="sortBy(h.value)"
           >
             <div
@@ -20,24 +20,21 @@
               <template v-if="typeof h === 'string'">{{ h }}</template>
               <template v-else>{{ $t(h.text) }}</template>
               <div
-                v-if="sortByProperty === h.value"
-                :class="`inline-flex ${sortByProperty === h.value ? '' : 'opacity-0'}`"
+                :data-swap="pagination.descending"
+                :class="{ 'opacity-0': sortByProperty !== h.value }"
+                class="transition-transform duration-300 data-[swap=true]:rotate-180"
               >
-                <span class="swap swap-rotate" :class="{ 'swap-active': pagination.descending }">
-                  <MdiArrowDown class="swap-on size-5" />
-                  <MdiArrowUp class="swap-off size-5" />
-                </span>
+                <MdiArrowUp class="size-5" />
               </div>
             </div>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(d, i) in data" :key="d.id" class="hover cursor-pointer" @click="navigateTo(`/item/${d.id}`)">
-          <td
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow v-for="(d, i) in data" :key="d.id" class="hover cursor-pointer" @click="navigateTo(`/item/${d.id}`)">
+          <TableCell
             v-for="h in headers.filter(h => h.enabled)"
             :key="`${h.value}-${i}`"
-            class="bg-base-100"
             :class="{
               'text-center': h.align === 'center',
               'text-right': h.align === 'right',
@@ -67,10 +64,10 @@
             <slot v-else :name="cell(h)" v-bind="{ item: d }">
               {{ extractValue(d, h.value) }}
             </slot>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
     <div
       class="flex items-center justify-end gap-3 border-t p-3"
       :class="{
@@ -81,7 +78,7 @@
         <label tabindex="0" class="btn btn-square btn-outline btn-sm m-1">
           <MdiTableCog />
         </label>
-        <ul tabindex="0" class="dropdown-content rounded-box flex w-64 flex-col gap-2 bg-base-100 p-2 pl-3 shadow">
+        <ul tabindex="0" class="dropdown-content rounded-box bg-base-100 flex w-64 flex-col gap-2 p-2 pl-3 shadow">
           <li>Headers:</li>
           <li v-for="(h, i) in headers" :key="h.value" class="flex flex-row items-center gap-1">
             <button
@@ -130,13 +127,14 @@
 </template>
 
 <script setup lang="ts">
-  import type { TableData, TableHeader } from "./Table.types";
+  import type { TableData, TableHeaderType } from "./Table.types";
   import type { ItemSummary } from "~~/lib/api/types/data-contracts";
   import MdiArrowDown from "~icons/mdi/arrow-down";
   import MdiArrowUp from "~icons/mdi/arrow-up";
   import MdiCheck from "~icons/mdi/check";
   import MdiClose from "~icons/mdi/close";
   import MdiTableCog from "~icons/mdi/table-cog";
+  import { Table, TableBody, TableHeader, TableCell, TableHead, TableRow } from "@/components/ui/table";
 
   type Props = {
     items: ItemSummary[];
@@ -162,14 +160,14 @@
     { text: "items.archived", value: "archived", align: "center", enabled: false, type: "boolean" },
     { text: "items.created_at", value: "createdAt", align: "center", enabled: false, type: "date" },
     { text: "items.updated_at", value: "updatedAt", align: "center", enabled: false, type: "date" },
-  ] satisfies TableHeader[];
+  ] satisfies TableHeaderType[];
 
-  const headers = ref<TableHeader[]>(
+  const headers = ref<TableHeaderType[]>(
     (preferences.value.tableHeaders ?? [])
       .concat(defaultHeaders.filter(h => !preferences.value.tableHeaders?.find(h2 => h2.value === h.value)))
       // this is a hack to make sure that any changes to the defaultHeaders are reflected in the preferences
       .map(h => ({
-        ...(defaultHeaders.find(h2 => h2.value === h.value) as TableHeader),
+        ...(defaultHeaders.find(h2 => h2.value === h.value) as TableHeaderType),
         enabled: h.enabled,
       }))
   );
@@ -290,25 +288,7 @@
     return current;
   }
 
-  function cell(h: TableHeader) {
+  function cell(h: TableHeaderType) {
     return `cell-${h.value.replace(".", "_")}`;
   }
 </script>
-
-<style scoped>
-  :where(.table *:first-child) :where(*:first-child) :where(th, td):first-child {
-    border-top-left-radius: 0.5rem;
-  }
-
-  :where(.table *:first-child) :where(*:first-child) :where(th, td):last-child {
-    border-top-right-radius: 0.5rem;
-  }
-
-  :where(.table *:last-child) :where(*:last-child) :where(th, td):first-child {
-    border-bottom-left-radius: 0.5rem;
-  }
-
-  :where(.table *:last-child) :where(*:last-child) :where(th, td):last-child {
-    border-bottom-right-radius: 0.5rem;
-  }
-</style>

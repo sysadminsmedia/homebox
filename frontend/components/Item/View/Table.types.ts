@@ -1,6 +1,6 @@
 import type { ItemSummary } from "~~/lib/api/types/data-contracts";
 
-export type TableHeader = {
+export type TableHeaderType = {
   text: string;
   value: keyof ItemSummary;
   sortable?: boolean;
