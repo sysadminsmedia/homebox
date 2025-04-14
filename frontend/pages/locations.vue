@@ -1,6 +1,13 @@
 <script setup lang="ts">
   import { useTreeState } from "~~/components/Location/Tree/tree-state";
   import MdiCollapseAllOutline from "~icons/mdi/collapse-all-outline";
+  import MdiExpandAllOutline from "~icons/mdi/expand-all-outline";
+
+  import { ButtonGroup, Button } from "@/components/ui/button";
+  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+  import type { TreeItem } from "~/lib/api/types/data-contracts";
+
+  // TODO: eventually move to https://reka-ui.com/docs/components/tree#draggable-sortable-tree
 
   definePageMeta({
     middleware: ["auth"],
@@ -58,6 +65,21 @@
       treeState.value[key] = false;
     }
   }
+
+  function openItemChildren(items: TreeItem[]) {
+    for (const item of items) {
+      if (item.children.length > 0) {
+        treeState.value[item.id.replace(/-/g, "").substring(0, 8)] = true;
+        openItemChildren(item.children);
+      }
+    }
+  }
+
+  function openAll() {
+    if (!tree.value) return;
+
+    openItemChildren(tree.value);
+  }
 </script>
 
 <template>
@@ -66,11 +88,30 @@
     <BaseCard>
       <div class="p-4">
         <div class="mb-2 flex justify-end">
-          <div class="btn-group">
-            <button class="btn tooltip tooltip-top btn-sm" :data-tip="$t('locations.collapse_tree')" @click="closeAll">
-              <MdiCollapseAllOutline />
-            </button>
-          </div>
+          <TooltipProvider :delay-duration="0">
+            <ButtonGroup>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button size="icon" variant="outline" data-pos="start" @click="openAll">
+                    <MdiExpandAllOutline />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{{ $t("locations.expand_tree") }}</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button size="icon" variant="outline" data-pos="end" @click="closeAll">
+                    <MdiCollapseAllOutline />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{{ $t("locations.collapse_tree") }}</p>
+                </TooltipContent>
+              </Tooltip>
+            </ButtonGroup>
+          </TooltipProvider>
         </div>
         <LocationTreeRoot v-if="tree" :locs="tree" :tree-id="locationTreeId" />
       </div>

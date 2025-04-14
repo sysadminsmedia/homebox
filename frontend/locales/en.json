@@ -274,6 +274,7 @@
     "locations": {
         "child_locations": "Child Locations",
         "collapse_tree": "Collapse Tree",
+        "expand_tree": "Expand Tree",
         "no_results": "No Locations Found",
         "update_location": "Update Location"
     },
