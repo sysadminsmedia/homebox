@@ -1,18 +1,19 @@
 <template>
-  <div class="stats rounded-md bg-neutral shadow">
-    <div class="stat space-y-1 p-3 text-center text-neutral-content">
-      <div class="stat-title text-neutral-content">{{ title }}</div>
-      <div class="stat-value text-2xl">
-        <Currency v-if="type === 'currency'" :amount="value" />
-        <template v-if="type === 'number'">{{ value }}</template>
-      </div>
-      <div v-if="subtitle" class="stat-desc">{{ subtitle }}</div>
-    </div>
-  </div>
+  <Card class="bg-neutral text-neutral-content border-neutral flex flex-col items-center p-3 shadow">
+    <CardHeader class="p-0">
+      <CardTitle class="text-sm font-medium">{{ title }}</CardTitle>
+    </CardHeader>
+    <CardContent class="p-0 text-2xl font-bold">
+      <Currency v-if="type === 'currency'" :amount="value" />
+      <template v-if="type === 'number'">{{ value }}</template>
+    </CardContent>
+    <CardFooter v-if="subtitle">{{ subtitle }}</CardFooter>
+  </Card>
 </template>
 
 <script setup lang="ts">
   import type { StatsFormat } from "./types";
+  import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
   type Props = {
     title: string;

@@ -77,14 +77,7 @@
 <template>
   <section class="space-y-6">
     <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-      <StatCard
-        v-for="stat in stats"
-        :key="stat.id"
-        class="stats block border-l-primary shadow-xl"
-        :title="stat.title"
-        :value="stat.value"
-        :type="stat.type"
-      />
+      <StatCard v-for="stat in stats" :key="stat.id" :title="stat.title" :value="stat.value" :type="stat.type" />
     </div>
     <div class="flex">
       <div class="btn-group">
@@ -189,7 +182,7 @@
       <div v-if="props.currentItemId" class="hidden first:block">
         <button
           type="button"
-          class="relative block w-full rounded-lg border-2 border-dashed border-base-content p-12 text-center"
+          class="border-base-content relative block w-full rounded-lg border-2 border-dashed p-12 text-center"
           @click="maintenanceEditModal?.openCreateModal(props.currentItemId)"
         >
           <MdiWrenchClock class="inline size-16" />
