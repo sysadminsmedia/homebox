@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import type { LabelOut, LabelSummary } from "~~/lib/api/types/data-contracts";
-  import MdiArrowRight from "~icons/mdi/arrow-right";
+  import MdiArrowUp from "~icons/mdi/arrow-up";
   import MdiTagOutline from "~icons/mdi/tag-outline";
 
   export type sizes = "sm" | "md" | "lg" | "xl";
@@ -14,29 +14,28 @@
       default: "md",
     },
   });
-
-  const badge = ref(null);
-  const isHover = useElementHover(badge);
-  const { focused } = useFocus(badge);
-
-  const isActive = computed(() => isHover.value || focused.value);
 </script>
 
 <template>
   <NuxtLink
-    ref="badge"
-    class="badge badge-secondary text-secondary-content"
+    class="bg-secondary text-secondary-foreground hover:bg-secondary/70 group/label-chip flex gap-2 rounded-full shadow transition duration-300"
     :class="{
-      'badge-lg p-4': size === 'lg',
-      'p-3': size !== 'sm' && size !== 'lg',
-      'badge-sm p-2': size === 'sm',
+      'p-4 py-1 text-base': size === 'lg',
+      'p-3 py-1 text-sm': size !== 'sm' && size !== 'lg',
+      'p-2 py-0.5 text-xs': size === 'sm',
     }"
     :to="`/label/${label.id}`"
   >
-    <label class="swap swap-rotate" :class="isActive ? 'swap-active' : ''">
-      <MdiArrowRight class="swap-on mr-2" />
-      <MdiTagOutline class="swap-off mr-2" />
-    </label>
+    <div class="relative">
+      <MdiTagOutline class="invisible" /><!-- hack to ensure the size is correct -->
+
+      <div
+        class="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover/label-chip:rotate-90"
+      >
+        <MdiTagOutline class="group-hover/label-chip:hidden" />
+        <MdiArrowUp class="hidden group-hover/label-chip:block" />
+      </div>
+    </div>
     {{ label.name.length > 20 ? `${label.name.substring(0, 20)}...` : label.name }}
   </NuxtLink>
 </template>
