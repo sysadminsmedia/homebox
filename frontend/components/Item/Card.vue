@@ -3,22 +3,22 @@
     <NuxtLink :to="`/item/${item.id}`">
       <div class="relative h-[200px]">
         <img v-if="imageUrl" class="h-[200px] w-full object-cover shadow-md" loading="lazy" :src="imageUrl" alt="" />
-        <Badge
-          class="bg-neutral text-neutral-content hover:bg-neutral/90 hover:link absolute inset-x-1 bottom-1 w-min text-wrap"
-        >
-          <NuxtLink v-if="item.location" :to="`/location/${item.location.id}`">
-            {{ locationString }}
-          </NuxtLink>
-        </Badge>
+        <div class="absolute inset-x-1 bottom-1">
+          <Badge class="text-wrap bg-neutral text-neutral-content hover:link hover:bg-neutral/90">
+            <NuxtLink v-if="item.location" :to="`/location/${item.location.id}`">
+              {{ locationString }}
+            </NuxtLink>
+          </Badge>
+        </div>
       </div>
-      <div class="bg-base-100 col-span-4 flex grow flex-col gap-y-1 p-4 pt-2">
+      <div class="col-span-4 flex grow flex-col gap-y-1 bg-base-100 p-4 pt-2">
         <h2 class="line-clamp-2 text-ellipsis text-wrap text-lg font-bold">{{ item.name }}</h2>
         <Separator class="mb-1" />
         <TooltipProvider :delay-duration="0">
           <div class="flex items-center gap-2">
             <Tooltip v-if="item.insured">
               <TooltipTrigger>
-                <MdiShieldCheck class="text-primary size-5" />
+                <MdiShieldCheck class="size-5 text-primary" />
               </TooltipTrigger>
               <TooltipContent>
                 {{ $t("global.insured") }}
