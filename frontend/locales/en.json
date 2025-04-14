@@ -143,7 +143,10 @@
         "update": "Update",
         "value": "Value",
         "version": "Version: { version }",
-        "welcome": "Welcome, { username }"
+        "welcome": "Welcome, { username }",
+        "insured": "Insured",
+        "archived": "Archived",
+        "quantity": "Quantity"
     },
     "home": {
         "labels": "Labels",

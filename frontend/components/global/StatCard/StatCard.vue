@@ -1,5 +1,5 @@
 <template>
-  <Card class="flex flex-col items-center border-neutral bg-neutral p-3 text-neutral-content shadow">
+  <Card class="flex flex-col items-center bg-neutral p-3 text-neutral-content shadow">
     <CardHeader class="p-0">
       <CardTitle class="text-sm font-medium">{{ title }}</CardTitle>
     </CardHeader>
