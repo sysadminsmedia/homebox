@@ -15,7 +15,7 @@
     BreadcrumbList,
     BreadcrumbSeparator,
   } from "@/components/ui/breadcrumb";
-  import { Button, ButtonGroup } from "@/components/ui/button";
+  import { Button } from "@/components/ui/button";
   import { Badge } from "@/components/ui/badge";
   import { Separator } from "@/components/ui/separator";
 
@@ -158,7 +158,7 @@
         <header class="mb-2">
           <div class="flex flex-wrap items-end gap-2">
             <div
-              class="bg-neutral-focus text-neutral-content mb-auto flex size-12 items-center justify-center rounded-full"
+              class="mb-auto flex size-12 items-center justify-center rounded-full bg-neutral-focus text-neutral-content"
             >
               <MdiPackageVariant name="mdi-package-variant" class="size-7" />
             </div>

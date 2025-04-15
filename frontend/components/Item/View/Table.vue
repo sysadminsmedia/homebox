@@ -1,49 +1,4 @@
 <template>
-  <!-- <div class="dropdown dropdown-top dropdown-hover">
-        <label tabindex="0" class="btn btn-square btn-outline btn-sm m-1">
-          <MdiTableCog />
-        </label>
-        <ul tabindex="0" class="dropdown-content rounded-box bg-base-100 flex w-64 flex-col gap-2 p-2 pl-3 shadow">
-          <li>Headers:</li>
-          <li v-for="(h, i) in headers" :key="h.value" class="flex flex-row items-center gap-1">
-            <button
-              class="btn btn-square btn-ghost btn-xs"
-              :class="{
-                'btn-disabled': i === 0,
-              }"
-              @click="moveHeader(i, i - 1)"
-            >
-              <MdiArrowUp />
-            </button>
-            <button
-              class="btn btn-square btn-ghost btn-xs"
-              :class="{
-                'btn-disabled': i === headers.length - 1,
-              }"
-              @click="moveHeader(i, i + 1)"
-            >
-              <MdiArrowDown />
-            </button>
-            <input
-              :id="h.value"
-              type="checkbox"
-              class="checkbox checkbox-primary"
-              :checked="h.enabled"
-              @change="toggleHeader(h.value)"
-            />
-            <label class="label-text" :for="h.value"> {{ $t(h.text) }} </label>
-          </li>
-        </ul>
-      </div>
-      <div class="hidden md:block">{{ $t("components.item.view.table.rows_per_page") }}</div>
-      on change calculate what page we should be on
-      <select v-model.number="pagination.rowsPerPage" class="select select-primary select-sm">
-        <option :value="10">10</option>
-        <option :value="25">25</option>
-        <option :value="50">50</option>
-        <option :value="100">100</option>
-      </select> -->
-
   <Dialog dialog-id="item-table-settings">
     <DialogContent>
       <DialogHeader>
@@ -94,7 +49,7 @@
           <TableHead
             v-for="h in headers.filter(h => h.enabled)"
             :key="h.value"
-            class="text-no-transform bg-neutral text-neutral-content hover:bg-neutral/90 cursor-pointer text-sm"
+            class="text-no-transform cursor-pointer bg-neutral text-sm text-neutral-content hover:bg-neutral/90"
             @click="sortBy(h.value)"
           >
             <div
@@ -172,9 +127,9 @@
         :sibling-count="2"
         @update:page="pagination.page = $event"
       >
-        <PaginationList v-slot="{ items }" class="flex items-center gap-1">
+        <PaginationList v-slot="{ pageItems }" class="flex items-center gap-1">
           <PaginationFirst />
-          <template v-for="(item, index) in items">
+          <template v-for="(item, index) in pageItems">
             <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
               <Button class="size-10 p-0" :variant="item.value === page ? 'default' : 'outline'">
                 {{ item.value }}
@@ -283,16 +238,6 @@
       preferences.value.itemsPerTablePage = newRowsPerPage;
     }
   );
-
-  const next = () => pagination.page++;
-  const hasNext = computed<boolean>(() => {
-    return pagination.page * pagination.rowsPerPage < props.items.length;
-  });
-
-  const prev = () => pagination.page--;
-  const hasPrev = computed<boolean>(() => {
-    return pagination.page > 1;
-  });
 
   function sortBy(property: keyof ItemSummary) {
     if (sortByProperty.value === property) {

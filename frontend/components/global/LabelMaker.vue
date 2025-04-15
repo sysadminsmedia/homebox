@@ -37,10 +37,6 @@
 
   const serverPrinting = ref(false);
 
-  function openPrint() {
-    openDialog("print-label");
-  }
-
   function browserPrint() {
     const printWindow = window.open(getLabelUrl(false), "popup=true");
 
