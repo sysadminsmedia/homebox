@@ -8,6 +8,17 @@
   import MdiPlus from "~icons/mdi/plus";
   import MdiMinus from "~icons/mdi/minus";
   import MdiDownload from "~icons/mdi/download";
+  import MdiContentCopy from "~icons/mdi/content-copy";
+  import MdiDelete from "~icons/mdi/delete";
+  import { Separator } from "@/components/ui/separator";
+  import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbSeparator,
+  } from "@/components/ui/breadcrumb";
+  import { Button, ButtonGroup } from "@/components/ui/button";
 
   definePageMeta({
     middleware: ["auth"],
@@ -444,11 +455,68 @@
 
     return resp.data.items;
   });
+
+  async function duplicateItem() {
+    if (!item.value) {
+      return;
+    }
+
+    const { error, data } = await api.items.create({
+      name: `${item.value.name} Copy`,
+      description: item.value.description,
+      locationId: item.value.location!.id,
+      parentId: item.value.parent?.id,
+      labelIds: item.value.labels.map(l => l.id),
+    });
+
+    if (error) {
+      toast.error("Failed to duplicate item");
+      return;
+    }
+
+    // add extra fields
+    const { error: updateError } = await api.items.update(data.id, {
+      ...item.value,
+      id: data.id,
+      labelIds: data.labels.map(l => l.id),
+      locationId: data.location!.id,
+      name: data.name,
+      assetId: data.assetId,
+    });
+
+    if (updateError) {
+      toast.error("Failed to duplicate item");
+      return;
+    }
+
+    navigateTo(`/item/${data.id}`);
+  }
+
+  const confirm = useConfirm();
+
+  async function deleteItem() {
+    const confirmed = await confirm.open("Are you sure you want to delete this item?");
+
+    if (!confirmed.data) {
+      return;
+    }
+
+    const { error } = await api.items.delete(itemId.value);
+    if (error) {
+      toast.error("Failed to delete item");
+      return;
+    }
+    toast.success("Item deleted");
+    navigateTo("/home");
+  }
 </script>
 
 <template>
   <BaseContainer v-if="item" class="pb-8">
+    <!-- set page title -->
     <Title>{{ item.name }}</Title>
+
+    <!-- image dialog -->
     <dialog ref="refDialog" class="fixed z-[999] overflow-visible bg-transparent">
       <div ref="refDialogBody" class="relative">
         <div class="absolute right-0 -mr-3 -mt-3 space-x-1 sm:-mr-4 sm:-mt-4">
@@ -465,22 +533,34 @@
     </dialog>
 
     <section>
-      <div class="rounded bg-base-100 p-3">
-        <header class="mb-2">
+      <div class="bg-base-100 rounded p-3">
+        <header :class="{ 'mb-2': item.description }">
           <div class="flex flex-wrap items-end gap-2">
-            <div class="avatar placeholder mb-auto">
-              <div class="w-12 rounded-full bg-neutral-focus text-neutral-content">
-                <MdiPackageVariant class="size-7" />
-              </div>
+            <div
+              class="bg-neutral-focus text-neutral-content mb-auto flex size-12 items-center justify-center rounded-full"
+            >
+              <MdiPackageVariant class="size-7" />
             </div>
             <div>
-              <div v-if="fullpath && fullpath.length > 0" class="breadcrumbs py-0 text-sm">
-                <ul class="text-base-content/70">
-                  <li v-for="part in fullpath" :key="part.id" class="text-wrap">
-                    <NuxtLink :to="`/${part.type}/${part.id}`"> {{ part.name }}</NuxtLink>
-                  </li>
-                </ul>
-              </div>
+              <Breadcrumb v-if="fullpath && fullpath.length > 0">
+                <BreadcrumbList>
+                  <BreadcrumbItem v-for="(part, idx) in fullpath" :key="part.id">
+                    <BreadcrumbLink
+                      v-if="idx < fullpath.length - 1"
+                      as-child
+                      class="text-base-content/70 hover:underline"
+                    >
+                      <NuxtLink :to="`/${part.type}/${part.id}`">
+                        {{ part.name }}
+                      </NuxtLink>
+                    </BreadcrumbLink>
+                    <template v-else>
+                      {{ part.name }}
+                    </template>
+                    <BreadcrumbSeparator v-if="idx < fullpath.length - 1" :key="`sep-${part.id}`" />
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
               <h1 class="text-wrap pb-1 text-2xl">
                 {{ item ? item.name : "" }}
               </h1>
@@ -489,39 +569,48 @@
               </div>
               <div class="flex flex-wrap gap-1 text-wrap text-xs">
                 <div>
-                  Created
+                  {{ $t("items.created_at") }}
                   <DateTime :date="item?.createdAt" />
                 </div>
                 -
                 <div>
-                  Updated
+                  {{ $t("items.updated_at") }}
                   <DateTime :date="item?.updatedAt" />
                 </div>
               </div>
             </div>
+            <div class="ml-auto mt-2 flex flex-wrap items-center justify-between gap-3">
+              <LabelMaker
+                v-if="typeof item.assetId === 'string' && item.assetId != ''"
+                :id="item.assetId"
+                type="asset"
+              />
+              <LabelMaker v-else :id="item.id" type="item" />
+              <Button @click="duplicateItem"><MdiContentCopy />{{ $t("global.duplicate") }}</Button>
+              <Button variant="destructive" @click="deleteItem"><MdiDelete />{{ $t("global.delete") }}</Button>
+            </div>
           </div>
         </header>
-        <div class="divider my-0 mb-1"></div>
-        <div class="prose max-w-full p-1">
-          <Markdown v-if="item && item.description" class="text-base" :source="item.description"> </Markdown>
+        <Separator v-if="item.description" />
+        <div v-if="item.description" class="prose max-w-full p-1">
+          <Markdown class="text-base" :source="item.description"> </Markdown>
         </div>
       </div>
 
       <div class="mb-6 mt-3 flex flex-wrap items-center justify-between">
-        <div class="btn-group">
-          <NuxtLink
+        <ButtonGroup>
+          <Button
             v-for="t in tabs"
             :key="t.id"
-            :to="t.to"
-            class="btn btn-sm"
-            :class="`${t.to === currentPath ? 'btn-active' : ''}`"
+            as-child
+            :variant="t.to === currentPath ? 'default' : 'outline'"
+            size="sm"
           >
-            {{ $t(t.name) }}
-          </NuxtLink>
-        </div>
-
-        <LabelMaker v-if="typeof item.assetId === 'string' && item.assetId != ''" :id="item.assetId" type="asset" />
-        <LabelMaker v-else :id="item.id" type="item" />
+            <NuxtLink :to="t.to">
+              {{ $t(t.name) }}
+            </NuxtLink>
+          </Button>
+        </ButtonGroup>
       </div>
     </section>
 
@@ -557,7 +646,10 @@
           </DetailsSection>
         </BaseCard>
 
+        <!-- this renders the other pages content -->
         <NuxtPage :item="item" :page-key="itemId" />
+
+        <!-- anything in this is not rendered if on another page -->
         <template v-if="!hasNested">
           <BaseCard v-if="photos && photos.length > 0">
             <template #title> {{ $t("items.photos") }} </template>
@@ -603,7 +695,7 @@
               </template>
             </DetailsSection>
             <div v-else>
-              <p class="px-6 pb-4 text-base-content/70">No attachments found</p>
+              <p class="text-base-content/70 px-6 pb-4">No attachments found</p>
             </div>
           </BaseCard>
 

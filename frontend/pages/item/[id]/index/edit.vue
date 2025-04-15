@@ -8,7 +8,6 @@
   import MdiDelete from "~icons/mdi/delete";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiContentSaveOutline from "~icons/mdi/content-save-outline";
-  import MdiContentCopy from "~icons/mdi/content-copy";
 
   definePageMeta({
     middleware: ["auth"],
@@ -58,38 +57,6 @@
   onMounted(() => {
     refresh();
   });
-
-  async function duplicateItem() {
-    const { error, data } = await api.items.create({
-      name: `${item.value.name} Copy`,
-      description: item.value.description,
-      locationId: item.value.location!.id,
-      parentId: item.value.parent?.id,
-      labelIds: item.value.labels.map(l => l.id),
-    });
-
-    if (error) {
-      toast.error("Failed to duplicate item");
-      return;
-    }
-
-    // add extra fields
-    const { error: updateError } = await api.items.update(data.id, {
-      ...item.value,
-      id: data.id,
-      labelIds: data.labels.map(l => l.id),
-      locationId: data.location!.id,
-      name: data.name,
-      assetId: data.assetId,
-    });
-
-    if (updateError) {
-      toast.error("Failed to duplicate item");
-      return;
-    }
-
-    navigateTo(`/item/${data.id}`);
-  }
 
   async function saveItem() {
     if (!item.value.location?.id) {
@@ -432,22 +399,6 @@
   const { query, results } = useItemSearch(api, { immediate: false });
   const parent = ref();
 
-  async function deleteItem() {
-    const confirmed = await confirm.open("Are you sure you want to delete this item?");
-
-    if (!confirmed.data) {
-      return;
-    }
-
-    const { error } = await api.items.delete(itemId.value);
-    if (error) {
-      toast.error("Failed to delete item");
-      return;
-    }
-    toast.success("Item deleted");
-    navigateTo("/home");
-  }
-
   async function keyboardSave(e: KeyboardEvent) {
     // Cmd + S
     if (e.metaKey && e.key === "s") {
@@ -564,21 +515,11 @@
             <span class="label-text ml-4"> {{ $t("items.advanced") }} </span>
           </label>
         </div>
-        <BaseButton size="sm" class="btn" @click="duplicateItem">
-          <template #icon>
-            <MdiContentCopy />
-          </template>
-          {{ $t("global.duplicate") }}
-        </BaseButton>
         <BaseButton size="sm" @click="saveItem">
           <template #icon>
             <MdiContentSaveOutline />
           </template>
           {{ $t("global.save") }}
-        </BaseButton>
-        <BaseButton class="btn btn-error btn-sm" @click="deleteItem()">
-          <MdiDelete class="mr-2" />
-          {{ $t("global.delete") }}
         </BaseButton>
       </div>
       <div v-if="!requestPending" class="space-y-6">
