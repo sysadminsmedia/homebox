@@ -65,7 +65,9 @@
             "create_modal": {
                 "item_description": "Artikelomschrijving",
                 "item_name": "Artikelnaam",
-                "title": "Maak object"
+                "item_photo": "Artikel Foto",
+                "title": "Maak object",
+                "upload_photos": "Upload Fotos"
             },
             "view": {
                 "selectable": {
@@ -82,9 +84,12 @@
         },
         "label": {
             "create_modal": {
-                "label_description": "label beschrijving",
-                "label_name": "label naam",
+                "label_description": "Label beschrijving",
+                "label_name": "Label naam",
                 "title": "Maak label"
+            },
+            "selector": {
+                "select_labels": "Selecteer Labels"
             }
         },
         "location": {
@@ -94,19 +99,24 @@
                 "title": "Maak locatie"
             },
             "selector": {
-                "parent_location": "Hoofd locatie"
+                "no_location_found": "Geen locatie gevonden",
+                "parent_location": "Hoofd locatie",
+                "search_location": "Zoek locaties",
+                "select_location": "Selecteer een locatie"
             },
             "tree": {
                 "no_locations": "Geen locaties beschikbaar. Voeg een nieuwe locatie toe\n via de `<`span class=\"link-primary\"`>`Creeer`<`/span`> knop op het navigatie menu."
             }
         },
         "quick_menu": {
+            "no_results": "Geen resultaat gevonden.",
             "shortcut_hint": "Gebruik de numerieke toetsen om snel een actie te selecteren."
         }
     },
     "global": {
         "add": "Toevoegen",
         "build": "Bouw: { build }",
+        "cancel": "Annuleer",
         "confirm": "Bevestigen",
         "create": "Maken",
         "create_and_add": "Maak en voeg nog een toe",
