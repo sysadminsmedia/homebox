@@ -155,7 +155,7 @@
 
     <BaseContainer v-if="location">
       <Card class="p-3">
-        <header class="mb-2">
+        <header :class="{ 'mb-2': location?.parent }">
           <div class="flex flex-wrap items-end gap-2">
             <div
               class="mb-auto flex size-12 items-center justify-center rounded-full bg-neutral-focus text-neutral-content"
