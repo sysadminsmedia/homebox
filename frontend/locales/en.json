@@ -54,7 +54,8 @@
                 "titles": "Labels"
             },
             "page_qr_code": {
-                "page_url": "Page URL"
+                "page_url": "Page URL",
+                "qr_tooltip": "Show QR Code"
             },
             "password_score": {
                 "password_strength": "Password Strength"

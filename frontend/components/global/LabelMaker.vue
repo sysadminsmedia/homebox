@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import { route } from "../../lib/api/base";
+  import PageQRCode from "./PageQRCode.vue";
   import { toast } from "@/components/ui/sonner";
   import MdiPrinterPos from "~icons/mdi/printer-pos";
   import MdiFileDownload from "~icons/mdi/file-download";
-  import MdiQrcode from "~icons/mdi/qrcode";
 
   import {
     Dialog,
@@ -15,6 +15,7 @@
   } from "@/components/ui/dialog";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { Button, ButtonGroup } from "@/components/ui/button";
+  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
   const { openDialog, closeDialog } = useDialog();
 
@@ -85,12 +86,6 @@
       throw new Error(`Unexpected labelmaker type ${props.type}`);
     }
   }
-
-  function getQRCodeUrl(): string {
-    const currentURL = window.location.href;
-
-    return route(`/qrcode`, { data: encodeURIComponent(currentURL) });
-  }
 </script>
 
 <template>
@@ -98,46 +93,57 @@
     <Dialog dialog-id="print-label">
       <DialogContent>
         <DialogHeader>
-          <DialogTitle> {{ $t("components.global.label_maker.print") }} </DialogTitle>
-          <DialogDescription> {{ $t("components.global.label_maker.confirm_description") }} </DialogDescription>
+          <DialogTitle>
+            {{ $t("components.global.label_maker.print") }}
+          </DialogTitle>
+          <DialogDescription>
+            {{ $t("components.global.label_maker.confirm_description") }}
+          </DialogDescription>
         </DialogHeader>
-
         <img :src="getLabelUrl(false)" />
-
         <DialogFooter>
           <ButtonGroup>
-            <Button v-if="status?.labelPrinting || false" type="submit" :loading="serverPrinting" @click="serverPrint"
-              >{{ $t("components.global.label_maker.server_print") }}
+            <Button v-if="status?.labelPrinting || false" type="submit" :loading="serverPrinting" @click="serverPrint">
+              {{ $t("components.global.label_maker.server_print") }}
             </Button>
-            <Button type="submit" @click="browserPrint">{{ $t("components.global.label_maker.browser_print") }}</Button>
+            <Button type="submit" @click="browserPrint">
+              {{ $t("components.global.label_maker.browser_print") }}
+            </Button>
           </ButtonGroup>
         </DialogFooter>
       </DialogContent>
     </Dialog>
 
-    <Dialog dialog-id="qr-code">
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle> {{ $t("components.global.page_qr_code.page_url") }} </DialogTitle>
-        </DialogHeader>
+    <TooltipProvider :delay-duration="0">
+      <ButtonGroup>
+        <Button variant="outline" disabled class="disabled:opacity-100">
+          {{ $t("components.global.label_maker.titles") }}
+        </Button>
 
-        <img :src="getQRCodeUrl()" />
-      </DialogContent>
-    </Dialog>
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <Button size="icon" @click="downloadLabel">
+              <MdiFileDownload name="mdi-file-download" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            {{ $t("components.global.label_maker.download") }}
+          </TooltipContent>
+        </Tooltip>
 
-    <ButtonGroup>
-      <Button variant="outline" disabled class="disabled:opacity-100">
-        {{ $t("components.global.label_maker.titles") }}
-      </Button>
-      <Button size="icon" @click="downloadLabel">
-        <MdiFileDownload name="mdi-file-download" />
-      </Button>
-      <Button size="icon" @click="openDialog('print-label')">
-        <MdiPrinterPos name="mdi-printer-pos" />
-      </Button>
-      <Button size="icon" @click="openDialog('qr-code')">
-        <MdiQrcode name="mdi-qrcode" />
-      </Button>
-    </ButtonGroup>
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <Button size="icon" @click="openDialog('print-label')">
+              <MdiPrinterPos name="mdi-printer-pos" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            {{ $t("components.global.label_maker.browser_print") }}
+          </TooltipContent>
+        </Tooltip>
+
+        <PageQRCode />
+      </ButtonGroup>
+    </TooltipProvider>
   </div>
 </template>

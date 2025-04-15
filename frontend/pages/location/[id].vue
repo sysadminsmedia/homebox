@@ -155,12 +155,12 @@
 
     <BaseContainer v-if="location">
       <Card class="p-3">
-        <header :class="{ 'mb-2': location?.parent }">
+        <header :class="{ 'mb-2': location?.description }">
           <div class="flex flex-wrap items-end gap-2">
             <div
               class="mb-auto flex size-12 items-center justify-center rounded-full bg-neutral-focus text-neutral-content"
             >
-              <MdiPackageVariant name="mdi-package-variant" class="size-7" />
+              <MdiPackageVariant class="size-7" />
             </div>
             <div>
               <Breadcrumb v-if="location?.parent">
@@ -204,7 +204,8 @@
           </div>
         </header>
         <Separator v-if="location && location.description" />
-        <Markdown v-if="location && location.description" class="text-base" :source="location.description"> </Markdown>
+        <Markdown v-if="location && location.description" class="mt-3 text-base" :source="location.description">
+        </Markdown>
       </Card>
       <section v-if="location && items">
         <ItemViewSelectable :items="items" />
