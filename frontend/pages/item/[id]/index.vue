@@ -537,7 +537,6 @@
               </label>
               <div class="space-x-1">
                 <CopyText :text="currentUrl" :icon-size="16" class="btn btn-circle btn-ghost btn-xs" />
-                <PageQRCode />
               </div>
             </div>
           </template>

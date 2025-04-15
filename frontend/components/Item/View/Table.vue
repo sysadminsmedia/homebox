@@ -1,4 +1,92 @@
 <template>
+  <!-- <div class="dropdown dropdown-top dropdown-hover">
+        <label tabindex="0" class="btn btn-square btn-outline btn-sm m-1">
+          <MdiTableCog />
+        </label>
+        <ul tabindex="0" class="dropdown-content rounded-box bg-base-100 flex w-64 flex-col gap-2 p-2 pl-3 shadow">
+          <li>Headers:</li>
+          <li v-for="(h, i) in headers" :key="h.value" class="flex flex-row items-center gap-1">
+            <button
+              class="btn btn-square btn-ghost btn-xs"
+              :class="{
+                'btn-disabled': i === 0,
+              }"
+              @click="moveHeader(i, i - 1)"
+            >
+              <MdiArrowUp />
+            </button>
+            <button
+              class="btn btn-square btn-ghost btn-xs"
+              :class="{
+                'btn-disabled': i === headers.length - 1,
+              }"
+              @click="moveHeader(i, i + 1)"
+            >
+              <MdiArrowDown />
+            </button>
+            <input
+              :id="h.value"
+              type="checkbox"
+              class="checkbox checkbox-primary"
+              :checked="h.enabled"
+              @change="toggleHeader(h.value)"
+            />
+            <label class="label-text" :for="h.value"> {{ $t(h.text) }} </label>
+          </li>
+        </ul>
+      </div>
+      <div class="hidden md:block">{{ $t("components.item.view.table.rows_per_page") }}</div>
+      on change calculate what page we should be on
+      <select v-model.number="pagination.rowsPerPage" class="select select-primary select-sm">
+        <option :value="10">10</option>
+        <option :value="25">25</option>
+        <option :value="50">50</option>
+        <option :value="100">100</option>
+      </select> -->
+
+  <Dialog dialog-id="item-table-settings">
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>{{ $t("components.item.view.table.table_settings") }}</DialogTitle>
+      </DialogHeader>
+
+      <div>{{ $t("components.item.view.table.headers") }}</div>
+      <div class="flex flex-col">
+        <div v-for="(h, i) in headers" :key="h.value" class="flex flex-row items-center gap-1">
+          <Button size="icon" class="size-6" variant="ghost" :disabled="i === 0" @click="moveHeader(i, i - 1)">
+            <MdiArrowUp />
+          </Button>
+          <Button
+            size="icon"
+            class="size-6"
+            variant="ghost"
+            :disabled="i === headers.length - 1"
+            @click="moveHeader(i, i + 1)"
+          >
+            <MdiArrowDown />
+          </Button>
+          <Checkbox :id="h.value" :model-value="h.enabled" @update:model-value="toggleHeader(h.value)" />
+          <label class="label-text" :for="h.value"> {{ $t(h.text) }} </label>
+        </div>
+      </div>
+
+      <Select :model-value="pagination.rowsPerPage" @update:model-value="pagination.rowsPerPage = Number($event)">
+        <SelectTrigger>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem :value="10">10</SelectItem>
+          <SelectItem :value="25">25</SelectItem>
+          <SelectItem :value="50">50</SelectItem>
+          <SelectItem :value="100">100</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <DialogFooter>
+        <Button @click="closeDialog('item-table-settings')"> {{ $t("global.save") }} </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
   <BaseCard>
     <Table class="w-full">
       <TableHeader>
@@ -6,7 +94,7 @@
           <TableHead
             v-for="h in headers.filter(h => h.enabled)"
             :key="h.value"
-            class="text-no-transform cursor-pointer bg-neutral text-sm text-neutral-content hover:bg-neutral/90"
+            class="text-no-transform bg-neutral text-neutral-content hover:bg-neutral/90 cursor-pointer text-sm"
             @click="sortBy(h.value)"
           >
             <div
@@ -69,59 +157,37 @@
       </TableBody>
     </Table>
     <div
-      class="flex items-center justify-end gap-3 border-t p-3"
+      class="flex items-center justify-between gap-2 border-t p-3"
       :class="{
         hidden: disableControls,
       }"
     >
-      <div class="dropdown dropdown-top dropdown-hover">
-        <label tabindex="0" class="btn btn-square btn-outline btn-sm m-1">
-          <MdiTableCog />
-        </label>
-        <ul tabindex="0" class="dropdown-content rounded-box flex w-64 flex-col gap-2 bg-base-100 p-2 pl-3 shadow">
-          <li>Headers:</li>
-          <li v-for="(h, i) in headers" :key="h.value" class="flex flex-row items-center gap-1">
-            <button
-              class="btn btn-square btn-ghost btn-xs"
-              :class="{
-                'btn-disabled': i === 0,
-              }"
-              @click="moveHeader(i, i - 1)"
-            >
-              <MdiArrowUp />
-            </button>
-            <button
-              class="btn btn-square btn-ghost btn-xs"
-              :class="{
-                'btn-disabled': i === headers.length - 1,
-              }"
-              @click="moveHeader(i, i + 1)"
-            >
-              <MdiArrowDown />
-            </button>
-            <input
-              :id="h.value"
-              type="checkbox"
-              class="checkbox checkbox-primary"
-              :checked="h.enabled"
-              @change="toggleHeader(h.value)"
-            />
-            <label class="label-text" :for="h.value"> {{ $t(h.text) }} </label>
-          </li>
-        </ul>
-      </div>
-      <div class="hidden md:block">{{ $t("components.item.view.table.rows_per_page") }}</div>
-      <select v-model.number="pagination.rowsPerPage" class="select select-primary select-sm">
-        <option :value="10">10</option>
-        <option :value="25">25</option>
-        <option :value="50">50</option>
-        <option :value="100">100</option>
-      </select>
-      <div class="btn-group">
-        <button :disabled="!hasPrev" class="btn btn-sm" @click="prev()">«</button>
-        <button class="btn btn-sm">{{ $t("components.item.view.table.page") }} {{ pagination.page }}</button>
-        <button :disabled="!hasNext" class="btn btn-sm" @click="next()">»</button>
-      </div>
+      <Button class="size-10 p-0" variant="outline" @click="openDialog('item-table-settings')">
+        <MdiTableCog />
+      </Button>
+      <Pagination
+        v-slot="{ page }"
+        :items-per-page="pagination.rowsPerPage"
+        :total="props.items.length"
+        :sibling-count="2"
+        @update:page="pagination.page = $event"
+      >
+        <PaginationList v-slot="{ items }" class="flex items-center gap-1">
+          <PaginationFirst />
+          <template v-for="(item, index) in items">
+            <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
+              <Button class="size-10 p-0" :variant="item.value === page ? 'default' : 'outline'">
+                {{ item.value }}
+              </Button>
+            </PaginationListItem>
+            <PaginationEllipsis v-else :key="item.type" :index="index" />
+          </template>
+          <PaginationLast />
+        </PaginationList>
+      </Pagination>
+      <Button class="invisible hidden size-10 p-0 md:block">
+        <!-- properly centre the pagination buttons -->
+      </Button>
     </div>
   </BaseCard>
 </template>
@@ -134,7 +200,21 @@
   import MdiCheck from "~icons/mdi/check";
   import MdiClose from "~icons/mdi/close";
   import MdiTableCog from "~icons/mdi/table-cog";
+  import { Checkbox } from "@/components/ui/checkbox";
   import { Table, TableBody, TableHeader, TableCell, TableHead, TableRow } from "@/components/ui/table";
+  import {
+    Pagination,
+    PaginationEllipsis,
+    PaginationFirst,
+    PaginationLast,
+    PaginationList,
+    PaginationListItem,
+  } from "@/components/ui/pagination";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import { useDialog } from "@/components/ui/dialog-provider";
+
+  const { openDialog, closeDialog } = useDialog();
 
   type Props = {
     items: ItemSummary[];

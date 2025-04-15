@@ -3,6 +3,20 @@
   import { toast } from "@/components/ui/sonner";
   import MdiPrinterPos from "~icons/mdi/printer-pos";
   import MdiFileDownload from "~icons/mdi/file-download";
+  import MdiQrcode from "~icons/mdi/qrcode";
+
+  import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+  } from "@/components/ui/dialog";
+  import { useDialog } from "@/components/ui/dialog-provider";
+  import { Button, ButtonGroup } from "@/components/ui/button";
+
+  const { openDialog, closeDialog } = useDialog();
 
   const props = defineProps<{
     type: string;
@@ -21,11 +35,10 @@
     return data;
   });
 
-  const printModal = ref(false);
   const serverPrinting = ref(false);
 
   function openPrint() {
-    printModal.value = true;
+    openDialog("print-label");
   }
 
   function browserPrint() {
@@ -50,7 +63,7 @@
     }
 
     toast.success("Label printed");
-    printModal.value = false;
+    closeDialog("print-label");
     serverPrinting.value = false;
   }
 
@@ -76,50 +89,59 @@
       throw new Error(`Unexpected labelmaker type ${props.type}`);
     }
   }
+
+  function getQRCodeUrl(): string {
+    const currentURL = window.location.href;
+
+    return route(`/qrcode`, { data: encodeURIComponent(currentURL) });
+  }
 </script>
 
 <template>
   <div>
-    <BaseModal v-model="printModal">
-      <template #title>{{ $t("components.global.label_maker.print") }}</template>
-      <p>
-        {{ $t("components.global.label_maker.confirm_description") }}
-      </p>
-      <img :src="getLabelUrl(false)" />
-      <div class="modal-action">
-        <BaseButton
-          v-if="status?.labelPrinting || false"
-          type="submit"
-          :loading="serverPrinting"
-          @click="serverPrint"
-          >{{ $t("components.global.label_maker.server_print") }}</BaseButton
-        >
-        <BaseButton type="submit" @click="browserPrint">{{
-          $t("components.global.label_maker.browser_print")
-        }}</BaseButton>
-      </div>
-    </BaseModal>
+    <Dialog dialog-id="print-label">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle> {{ $t("components.global.label_maker.print") }} </DialogTitle>
+          <DialogDescription> {{ $t("components.global.label_maker.confirm_description") }} </DialogDescription>
+        </DialogHeader>
 
-    <div class="dropdown dropdown-left">
-      <slot>
-        <label tabindex="0" class="btn btn-sm">
-          {{ $t("components.global.label_maker.titles") }}
-        </label>
-      </slot>
-      <ul class="dropdown-content menu compact rounded-box w-52 bg-base-100 shadow-lg">
-        <li>
-          <button @click="openPrint">
-            <MdiPrinterPos name="mdi-printer-pos" class="mr-2" />
-            {{ $t("components.global.label_maker.print") }}
-          </button>
-        </li>
-        <li>
-          <button @click="downloadLabel">
-            <MdiFileDownload name="mdi-file-download" class="mr-2" />
-            {{ $t("components.global.label_maker.download") }}
-          </button>
-        </li>
-      </ul>
-    </div>
+        <img :src="getLabelUrl(false)" />
+
+        <DialogFooter>
+          <ButtonGroup>
+            <Button v-if="status?.labelPrinting || false" type="submit" :loading="serverPrinting" @click="serverPrint"
+              >{{ $t("components.global.label_maker.server_print") }}
+            </Button>
+            <Button type="submit" @click="browserPrint">{{ $t("components.global.label_maker.browser_print") }}</Button>
+          </ButtonGroup>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    <Dialog dialog-id="qr-code">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle> {{ $t("components.global.page_qr_code.page_url") }} </DialogTitle>
+        </DialogHeader>
+
+        <img :src="getQRCodeUrl()" />
+      </DialogContent>
+    </Dialog>
+
+    <ButtonGroup>
+      <Button variant="outline" disabled class="disabled:opacity-100">
+        {{ $t("components.global.label_maker.titles") }}
+      </Button>
+      <Button size="icon" @click="downloadLabel">
+        <MdiFileDownload name="mdi-file-download" />
+      </Button>
+      <Button size="icon" @click="openDialog('print-label')">
+        <MdiPrinterPos name="mdi-printer-pos" />
+      </Button>
+      <Button size="icon" @click="openDialog('qr-code')">
+        <MdiQrcode name="mdi-qrcode" />
+      </Button>
+    </ButtonGroup>
   </div>
 </template>

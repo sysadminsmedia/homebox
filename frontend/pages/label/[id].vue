@@ -152,7 +152,6 @@
             </div>
             <div class="ml-auto mt-2 flex flex-wrap items-center justify-between gap-3">
               <div class="btn-group">
-                <PageQRCode class="dropdown-left" />
                 <BaseButton size="sm" @click="openUpdate">
                   <MdiPencil class="mr-1" />
                   Edit

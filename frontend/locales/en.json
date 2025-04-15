@@ -77,7 +77,9 @@
                 },
                 "table": {
                     "page": "Page",
-                    "rows_per_page": "Rows per page"
+                    "rows_per_page": "Rows per page",
+                    "table_settings": "Table Settings",
+                    "headers": "Headers"
                 }
             }
         },
