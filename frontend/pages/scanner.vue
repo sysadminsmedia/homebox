@@ -1,6 +1,9 @@
 <script setup lang="ts">
   import { BrowserMultiFormatReader, NotFoundException } from "@zxing/library";
   import { useI18n } from "vue-i18n";
+  import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+  import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+  import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";
 
   definePageMeta({
     middleware: ["auth"],
@@ -84,44 +87,38 @@
 </script>
 
 <template>
-  <div class="flex flex-col gap-12 pb-16">
-    <section>
-      <div class="mx-auto">
-        <div class="max-w-screen-md">
-          <div v-if="errorMessage" role="alert" class="alert alert-error mb-5 shadow-lg">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="size-6 shrink-0 stroke-current"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span class="text-sm">{{ errorMessage }}</span>
-          </div>
-          <video ref="video" class="rounded-box shadow-lg" poster="data:image/gif,AAAA"></video>
-          <select v-model="selectedSource" class="select mt-4 w-full shadow-lg">
-            <option disabled selected :value="null">{{ t("scanner.select_video_source") }}</option>
-            <option v-for="source in sources" :key="source.deviceId" :value="source.deviceId">
-              {{ source.label }}
-            </option>
-          </select>
-        </div>
+  <Card class="mx-auto w-full max-w-screen-md">
+    <CardHeader>
+      <CardTitle>{{ t("scanner.title") }}</CardTitle>
+    </CardHeader>
+    <CardContent>
+      <div
+        v-if="errorMessage"
+        class="border-destructive bg-destructive/10 text-destructive mb-5 flex items-center gap-2 rounded-md border p-4"
+        role="alert"
+      >
+        <MdiAlertCircleOutline class="text-destructive" />
+        <span class="text-sm font-medium">{{ errorMessage }}</span>
       </div>
-    </section>
-  </div>
+      <video ref="video" class="bg-muted aspect-video w-full rounded-lg shadow" poster="data:image/gif,AAAA"></video>
+      <div class="mt-4">
+        <Select v-model="selectedSource">
+          <SelectTrigger class="w-full">
+            <SelectValue :placeholder="t('scanner.select_video_source')" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem v-for="source in sources" :key="source.deviceId" :value="source.deviceId">
+              {{ source.label }}
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+    </CardContent>
+  </Card>
 </template>
 
-<style lang="css" scoped>
+<style scoped>
   video {
-    width: 100%;
     object-fit: cover;
-    margin-left: auto;
-    margin-right: auto;
   }
 </style>

@@ -361,6 +361,7 @@
         "user_profile_sub": "Invite users, and manage your account."
     },
     "scanner": {
+        "title": "Scanner",
         "error": "An error occurred while scanning",
         "invalid_url": "Invalid barcode URL",
         "no_sources": "No video sources available",
