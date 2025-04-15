@@ -1,7 +1,8 @@
 <template>
-  <div v-if="!inline" class="form-control w-full">
-    <label class="label">
-      <span class="label-text">{{ label }}</span>
+  <div v-if="!inline" class="flex w-full flex-col gap-1.5">
+    <Label :for="id" class="flex w-full px-1">
+      <span>{{ label }}</span>
+      <span class="grow"></span>
       <span
         :class="{
           'text-red-600':
@@ -11,12 +12,13 @@
       >
         {{ typeof value === "string" && (maxLength !== -1 || minLength !== -1) ? `${value.length}/${maxLength}` : "" }}
       </span>
-    </label>
-    <textarea ref="el" v-model="value" class="textarea textarea-bordered h-28 w-full" :placeholder="placeholder" />
+    </Label>
+    <Textarea :id="id" v-model="value" :placeholder="placeholder" class="min-h-[112px] w-full resize-none" />
   </div>
   <div v-else class="sm:grid sm:grid-cols-4 sm:items-start sm:gap-4">
-    <label class="label">
-      <span class="label-text">{{ label }}</span>
+    <Label :for="id" class="flex w-full px-1 py-2">
+      <span>{{ label }}</span>
+      <span class="grow"></span>
       <span
         :class="{
           'text-red-600':
@@ -26,32 +28,23 @@
       >
         {{ typeof value === "string" && (maxLength !== -1 || minLength !== -1) ? `${value.length}/${maxLength}` : "" }}
       </span>
-    </label>
-    <textarea
-      ref="el"
-      v-model="value"
-      class="textarea textarea-bordered col-span-3 mt-3 h-28 w-full"
-      auto-grow
-      :placeholder="placeholder"
-      auto-height
-    />
+    </Label>
+    <Textarea :id="id" v-model="value" autosize :placeholder="placeholder" class="col-span-3 mt-2 w-full resize-none" />
   </div>
 </template>
 
 <script lang="ts" setup>
-  const emit = defineEmits(["update:modelValue"]);
+  import { Label } from "~/components/ui/label";
+  import { Textarea } from "~/components/ui/textarea";
+
   const props = defineProps({
-    modelValue: {
-      type: [String],
-      required: true,
-    },
     label: {
       type: String,
       required: true,
     },
-    type: {
+    modelValue: {
       type: String,
-      default: "text",
+      required: true,
     },
     placeholder: {
       type: String,
@@ -73,17 +66,6 @@
     },
   });
 
-  const el = ref();
-  function setHeight() {
-    el.value.style.height = "auto";
-    el.value.style.height = el.value.scrollHeight + 5 + "px";
-  }
-
-  onUpdated(() => {
-    if (props.inline) {
-      setHeight();
-    }
-  });
-
-  const value = useVModel(props, "modelValue", emit);
+  const id = useId();
+  const value = useVModel(props, "modelValue");
 </script>

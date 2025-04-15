@@ -18,7 +18,6 @@
         },
         "item": {
             "create_modal": {
-                "photo_button": "Foto 📷",
                 "title": "Criar Item"
             },
             "view": {

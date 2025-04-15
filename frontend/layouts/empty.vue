@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 <template>
   <div>
-    <AppToast />
+    <Toaster />
     <slot />
   </div>
 </template>

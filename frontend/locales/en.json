@@ -65,7 +65,8 @@
             "create_modal": {
                 "item_description": "Item Description",
                 "item_name": "Item Name",
-                "photo_button": "Photo 📷",
+                "item_photo": "Item Photo 📷",
+                "upload_photos": "Upload Photos",
                 "title": "Create Item"
             },
             "view": {
@@ -86,6 +87,9 @@
                 "label_description": "Label Description",
                 "label_name": "Label Name",
                 "title": "Create Label"
+            },
+            "selector": {
+                "select_labels": "Select Labels"
             }
         },
         "location": {
@@ -95,19 +99,24 @@
                 "title": "Create Location"
             },
             "selector": {
-                "parent_location": "Parent Location"
+                "parent_location": "Parent Location",
+                "no_location_found": "No location found",
+                "search_location": "Search Locations",
+                "select_location": "Select a Location"
             },
             "tree": {
                 "no_locations": "No locations available. Add new locations through the\n `<`span class=\"link-primary\"`>`Create`<`/span`>` button on the navigation bar."
             }
         },
         "quick_menu": {
-            "shortcut_hint": "Use the number keys to quickly select an action."
+            "shortcut_hint": "Use the number keys to quickly select an action.",
+            "no_results": "No results found."
         }
     },
     "global": {
         "add": "Add",
         "build": "Build: { build }",
+        "cancel": "Cancel",
         "confirm": "Confirm",
         "create": "Create",
         "create_and_add": "Create and Add Another",

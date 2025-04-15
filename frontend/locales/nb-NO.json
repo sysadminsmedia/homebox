@@ -57,7 +57,6 @@
             "create_modal": {
                 "item_description": "Objektbeskrivelse",
                 "item_name": "Objektnavn",
-                "photo_button": "Foto 📷",
                 "title": "Opprett objekt"
             },
             "view": {

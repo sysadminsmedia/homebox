@@ -46,6 +46,14 @@
                 "years": "år",
                 "yesterday": "igår"
             },
+            "label_maker": {
+                "browser_print": "Skriv ut från webbläsare",
+                "confirm_description": "Är du säker på att du vill skriva ut den här etiketten?",
+                "download": "Ladda ner etikett",
+                "print": "Skriv ut etikett",
+                "server_print": "Skriv ut på server",
+                "titles": "Etiketter"
+            },
             "page_qr_code": {
                 "page_url": "Sidans URL"
             },
@@ -57,7 +65,6 @@
             "create_modal": {
                 "item_description": "Objektbeskrivning",
                 "item_name": "Objektnamn",
-                "photo_button": "Foto 📷",
                 "title": "Skapa föremål"
             },
             "view": {
@@ -92,6 +99,9 @@
             "tree": {
                 "no_locations": "Inga platser tillgängliga. Lägg till nya platser via\n `<`span class=\"link-primary\"`>`Skapa`<`/span`>`-knappen i navigationsmenyn."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Använd siffertangenterna för att snabbt välja en åtgärd."
         }
     },
     "global": {
@@ -114,6 +124,7 @@
         "locations": "Platser",
         "maintenance": "Underhåll",
         "name": "Namn",
+        "navigate": "Navigera",
         "password": "Lösenord",
         "read_docs": "Läs dokumentationen",
         "save": "Spara",
@@ -178,6 +189,8 @@
         "next_page": "Nästa sida",
         "no_results": "Inga föremål hittades",
         "notes": "Anteckningar",
+        "only_with_photo": "Endast artiklar med foto",
+        "only_without_photo": "Endast artiklar utan foto",
         "options": "Alternativ",
         "order_by": "Ordning via",
         "pages": "Sida { page } av { totalPages }",
@@ -217,13 +230,18 @@
     },
     "languages": {
         "ca": "Katalanska",
+        "cs-CZ": "Tjeckiska",
         "de": "Tyska",
         "en": "Engelska",
         "es": "Spanska",
+        "fi-FI": "Finska",
         "fr": "Franska",
         "hu": "Ungerska",
+        "id-ID": "Indonesiska",
         "it": "Italienska",
         "ja-JP": "Japanska",
+        "ko-KR": "Koreanska",
+        "nb-NO": "Norska bokmål",
         "nl": "Nederländska",
         "pl": "Polska",
         "pt-BR": "Portugisiska (Brasilien)",
@@ -231,6 +249,8 @@
         "ru": "Ryska",
         "sl": "Slovenska",
         "sv": "Svenska",
+        "ta-IN": "Tamil",
+        "th-TH": "Thai",
         "tr": "Turkiska",
         "uk-UA": "Ukrainska",
         "zh-CN": "Kinesiska (förenklad)",
@@ -241,6 +261,7 @@
     "languages.da-DK": "Danska",
     "languages.ro-RO": "Rumänska",
     "languages.sk-SK": "Slovakiska",
+    "languages.sq-AL": "Albanska",
     "locations": {
         "child_locations": "Underordnade platser",
         "collapse_tree": "Dra ihop träd",
@@ -290,6 +311,7 @@
         "locations": "Platser",
         "maintenance": "Underhåll",
         "profile": "Profil",
+        "scanner": "Skanner",
         "search": "Sök",
         "tools": "Verktyg"
     },
@@ -321,6 +343,13 @@
         "url": "URL",
         "user_profile": "Användarprofil",
         "user_profile_sub": "Bjud in användare och hantera ditt konto."
+    },
+    "scanner": {
+        "error": "Ett fel uppstod vid skanning",
+        "invalid_url": "Ogiltig streckkods-URL",
+        "no_sources": "Inga videokällor tillgängliga",
+        "select_video_source": "Välj en videokälla",
+        "unsupported": "Media Stream API stöds inte utan HTTPS"
     },
     "tools": {
         "actions": "Lageråtgärder",

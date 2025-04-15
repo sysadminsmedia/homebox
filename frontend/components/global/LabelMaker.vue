@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { route } from "../../lib/api/base";
+  import { toast } from "@/components/ui/sonner";
   import MdiPrinterPos from "~icons/mdi/printer-pos";
   import MdiFileDownload from "~icons/mdi/file-download";
 
@@ -9,7 +10,6 @@
   }>();
 
   const pubApi = usePublicApi();
-  const toast = useNotifier();
 
   const { data: status } = useAsyncData(async () => {
     const { data, error } = await pubApi.status();

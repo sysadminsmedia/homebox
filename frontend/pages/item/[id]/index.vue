@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { toast } from "@/components/ui/sonner";
   import type { AnyDetail, Detail, Details } from "~~/components/global/DetailsSection/types";
   import { filterZeroValues } from "~~/components/global/DetailsSection/types";
   import type { ItemAttachment } from "~~/lib/api/types/data-contracts";
@@ -14,7 +15,6 @@
 
   const route = useRoute();
   const api = useUserApi();
-  const toast = useNotifier();
 
   const itemId = computed<string>(() => route.params.id as string);
   const preferences = useViewPreferences();
@@ -140,7 +140,7 @@
 
     return [
       {
-        name: "Asset ID",
+        name: "items.asset_id",
         text: item.value?.assetId,
       },
     ];
@@ -267,19 +267,19 @@
   const warrantyDetails = computed(() => {
     const details: Details = [
       {
-        name: "Lifetime Warranty",
+        name: "items.lifetime_warranty",
         text: item.value?.lifetimeWarranty ? "Yes" : "No",
       },
     ];
 
     if (item.value?.lifetimeWarranty) {
       details.push({
-        name: "Warranty Expires",
+        name: "items.warranty_expires",
         text: "N/A",
       });
     } else {
       details.push({
-        name: "Warranty Expires",
+        name: "items.warranty_expires",
         text: item.value?.warrantyExpires || "",
         type: "date",
         date: true,
@@ -287,7 +287,7 @@
     }
 
     details.push({
-      name: "Warranty Details",
+      name: "items.warranty_details",
       type: "markdown",
       text: item.value?.warrantyDetails || "",
     });

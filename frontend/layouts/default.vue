@@ -4,15 +4,14 @@
     Confirmation Modal is a singleton used by all components so we render
     it here to ensure it's always available. Possibly could move this further
     up the tree
-   -->
+    -->
     <ModalConfirm />
-    <AppOutdatedModal v-model="modals.outdated" :current="current ?? ''" :latest="latest ?? ''" />
-    <ItemCreateModal v-model="modals.item" />
-    <LabelCreateModal v-model="modals.label" />
-    <LocationCreateModal v-model="modals.location" />
-    <QuickMenuModal v-model="modals.quickMenu" :actions="quickMenuActions" />
-    <AppToast />
-    <SidebarProvider>
+    <AppOutdatedModal v-if="status" :status="status" />
+    <ItemCreateModal />
+    <LabelCreateModal />
+    <LocationCreateModal />
+    <AppQuickMenuModal :actions="quickMenuActions" />
+    <SidebarProvider :default-open="sidebarState">
       <Sidebar collapsible="icon">
         <SidebarHeader class="items-center bg-base-200">
           <SidebarGroupLabel class="text-base">{{ $t("global.welcome", { username: username }) }}</SidebarGroupLabel>
@@ -34,17 +33,19 @@
                 </span>
               </SidebarMenuButton>
             </DropdownMenuTrigger>
-            <DropdownMenuContent class="min-w-[var(--radix-dropdown-menu-trigger-width)]">
+            <DropdownMenuContent class="min-w-[var(--reka-dropdown-menu-trigger-width)]">
               <DropdownMenuItem
                 v-for="btn in dropdown"
                 :key="btn.id"
                 class="group cursor-pointer text-lg"
-                @click="btn.action"
+                @click="openDialog(btn.dialogId)"
               >
                 {{ btn.name.value }}
-                <kbd v-if="btn.shortcut" class="kbd kbd-sm ml-auto hidden text-primary group-hover:inline">{{
-                  btn.shortcut.replaceAll("Shift+", "⇧")
-                }}</kbd>
+                <Shortcut
+                  v-if="btn.shortcut"
+                  class="ml-auto hidden group-hover:inline"
+                  :keys="btn.shortcut.replace('Shift', '⇧').split('+')"
+                />
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -67,8 +68,8 @@
                   <span>{{ n.name.value }}</span>
                 </SidebarMenuLink>
               </SidebarMenuItem>
-            </SidebarMenu></SidebarGroup
-          >
+            </SidebarMenu>
+          </SidebarGroup>
         </SidebarContent>
 
         <SidebarFooter class="bg-base-200">
@@ -123,7 +124,6 @@
 
 <script lang="ts" setup>
   import { useI18n } from "vue-i18n";
-  import { lt } from "semver";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
 
@@ -158,11 +158,21 @@
     DropdownMenuItem,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu";
+  import { Shortcut } from "~/components/ui/shortcut";
+  import { useDialog } from "~/components/ui/dialog-provider";
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
 
+  const { openDialog } = useDialog();
+
   const preferences = useViewPreferences();
+
+  // get sidebar state from cookies
+  const sidebarState = useCookie("sidebar:state", {
+    readonly: true,
+    decode: value => value !== "false",
+  });
 
   const pubApi = usePublicApi();
   const { data: status } = useAsyncData(async () => {
@@ -171,81 +181,29 @@
     return data;
   });
 
-  const latest = computed(() => status.value?.latest.version);
-  const current = computed(() => status.value?.build.version);
-
-  const isDev = computed(() => import.meta.dev || !current.value?.includes("."));
-  const isOutdated = computed(() => current.value && latest.value && lt(current.value, latest.value));
-  const hasHiddenLatest = computed(() => localStorage.getItem("latestVersion") === latest.value);
-
-  const displayOutdatedWarning = computed(() => Boolean(!isDev.value && !hasHiddenLatest.value && isOutdated.value));
-
-  const activeElement = useActiveElement();
-  const keys = useMagicKeys({
-    aliasMap: {
-      "⌃": "control_",
-      "Shift+": "ShiftLeft_",
-      "1": "digit1",
-      "2": "digit2",
-      "3": "digit3",
-    },
-  });
-
   // Preload currency format
   useFormatCurrency();
-  const modals = reactive({
-    item: false,
-    location: false,
-    label: false,
-    import: false,
-    outdated: displayOutdatedWarning.value,
-    quickMenu: false,
-  });
-
-  watch(displayOutdatedWarning, () => {
-    console.log("displayOutdatedWarning", displayOutdatedWarning.value);
-    if (displayOutdatedWarning.value) {
-      modals.outdated = true;
-    }
-  });
 
   const dropdown = [
     {
       id: 0,
       name: computed(() => t("menu.create_item")),
       shortcut: "Shift+1",
-      action: () => {
-        modals.item = true;
-      },
+      dialogId: "create-item",
     },
     {
       id: 1,
       name: computed(() => t("menu.create_location")),
       shortcut: "Shift+2",
-      action: () => {
-        modals.location = true;
-      },
+      dialogId: "create-location",
     },
     {
       id: 2,
       name: computed(() => t("menu.create_label")),
       shortcut: "Shift+3",
-      action: () => {
-        modals.label = true;
-      },
+      dialogId: "create-label",
     },
   ];
-
-  dropdown.forEach(option => {
-    if (option?.shortcut) {
-      const shortcutKeycode = option.shortcut.replace(/([0-9])/, "digit$&");
-      whenever(keys[shortcutKeycode], () => {
-        if (activeElement.value?.tagName !== "INPUT") {
-          option.action();
-        }
-      });
-    }
-  });
 
   const route = useRoute();
 
@@ -280,71 +238,40 @@
     },
     {
       icon: MdiWrench,
-      id: 3,
+      id: 4,
       active: computed(() => route.path === "/maintenance"),
       name: computed(() => t("menu.maintenance")),
       to: "/maintenance",
     },
     {
       icon: MdiAccount,
-      id: 4,
+      id: 5,
       active: computed(() => route.path === "/profile"),
       name: computed(() => t("menu.profile")),
       to: "/profile",
     },
     {
       icon: MdiCog,
-      id: 5,
+      id: 6,
       active: computed(() => route.path === "/tools"),
       name: computed(() => t("menu.tools")),
       to: "/tools",
     },
   ];
 
-  const quickMenuShortcut = keys.control_Backquote;
-  whenever(quickMenuShortcut, () => {
-    modals.quickMenu = true;
-    modals.item = false;
-    modals.location = false;
-    modals.label = false;
-    modals.import = false;
-  });
-
-  const quickMenuActions = reactive(
-    [
-      {
-        text: computed(() => `${t("global.create")}: ${t("menu.create_item")}`),
-        action: () => {
-          modals.item = true;
-        },
-        shortcut: "1",
-      },
-      {
-        text: computed(() => `${t("global.create")}: ${t("menu.create_location")}`),
-        action: () => {
-          modals.location = true;
-        },
-        shortcut: "2",
-      },
-      {
-        text: computed(() => `${t("global.create")}: ${t("menu.create_label")}`),
-        action: () => {
-          modals.label = true;
-        },
-        shortcut: "3",
-      },
-    ].concat(
-      nav.map(v => {
-        return {
-          text: computed(() => `${t("global.navigate")}: ${v.name.value}`),
-          action: () => {
-            navigateTo(v.to);
-          },
-          shortcut: "",
-        };
-      })
-    )
-  );
+  const quickMenuActions = reactive([
+    ...dropdown.map(v => ({
+      text: computed(() => v.name.value),
+      dialogId: v.dialogId,
+      shortcut: v.shortcut.split("+")[1],
+      type: "create" as const,
+    })),
+    ...nav.map(v => ({
+      text: computed(() => v.name.value),
+      href: v.to,
+      type: "navigate" as const,
+    })),
+  ]);
 
   const labelStore = useLabelStore();
 

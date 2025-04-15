@@ -1,4 +1,6 @@
 <script setup lang="ts">
+  import { toast } from "@/components/ui/sonner";
+  import { Input } from "~/components/ui/input";
   import type { ItemSummary, LabelSummary, LocationOutCount } from "~~/lib/api/types/data-contracts";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
@@ -258,8 +260,6 @@
       }
     }
 
-    const toast = useNotifier();
-
     const { data, error } = await api.items.getAll({
       q: query.value || "",
       locations: locIDs.value,
@@ -371,7 +371,7 @@
     <div v-if="locations && labels">
       <div class="flex flex-wrap items-end gap-4 md:flex-nowrap">
         <div class="w-full">
-          <FormTextField v-model="query" :placeholder="$t('global.search')" />
+          <Input v-model="query" :placeholder="$t('global.search')" class="h-12" />
           <div v-if="byAssetId" class="pl-2 pt-2 text-sm">
             <p>{{ $t("items.query_id", { id: parsedAssetId }) }}</p>
           </div>
@@ -507,7 +507,11 @@
         <MdiSelectSearch class="size-10" />
         <p>{{ $t("items.no_results") }}</p>
       </div>
-      <div v-else ref="cardgrid" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+      <div
+        v-else
+        ref="cardgrid"
+        class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5"
+      >
         <ItemCard v-for="item in items" :key="item.id" :item="item" :location-flat-tree="locationFlatTree" />
       </div>
       <div v-if="items.length > 0 && (hasNext || hasPrev)" class="mt-10 flex flex-col items-center gap-2">
