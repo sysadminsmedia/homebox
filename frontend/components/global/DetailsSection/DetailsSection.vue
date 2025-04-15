@@ -2,10 +2,10 @@
   <div class="border-t border-gray-300 px-4 py-5 sm:p-0">
     <dl class="sm:divide-y sm:divide-gray-300">
       <div v-for="(detail, i) in details" :key="i" class="group py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-        <dt class="text-base-content text-sm font-medium">
+        <dt class="text-sm font-medium text-base-content">
           {{ $t(detail.name) }}
         </dt>
-        <dd class="text-base-content text-start text-sm sm:col-span-2">
+        <dd class="text-start text-sm text-base-content sm:col-span-2">
           <slot :name="detail.slot || detail.name" v-bind="{ detail }">
             <DateTime
               v-if="detail.type == 'date'"
