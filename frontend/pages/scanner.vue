@@ -94,13 +94,13 @@
     <CardContent>
       <div
         v-if="errorMessage"
-        class="border-destructive bg-destructive/10 text-destructive mb-5 flex items-center gap-2 rounded-md border p-4"
+        class="mb-5 flex items-center gap-2 rounded-md border border-destructive bg-destructive/10 p-4 text-destructive"
         role="alert"
       >
         <MdiAlertCircleOutline class="text-destructive" />
         <span class="text-sm font-medium">{{ errorMessage }}</span>
       </div>
-      <video ref="video" class="bg-muted aspect-video w-full rounded-lg shadow" poster="data:image/gif,AAAA"></video>
+      <video ref="video" class="aspect-video w-full rounded-lg bg-muted shadow" poster="data:image/gif,AAAA"></video>
       <div class="mt-4">
         <Select v-model="selectedSource">
           <SelectTrigger class="w-full">
