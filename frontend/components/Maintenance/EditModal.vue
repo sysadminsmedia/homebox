@@ -1,24 +1,28 @@
 <template>
-  <BaseModal v-model="visible">
-    <template #title>
-      {{ entry.id ? $t("maintenance.modal.edit_title") : $t("maintenance.modal.new_title") }}
-    </template>
-    <form @submit.prevent="dispatchFormSubmit">
-      <FormTextField v-model="entry.name" autofocus :label="$t('maintenance.modal.entry_name')" />
-      <DatePicker v-model="entry.completedDate" :label="$t('maintenance.modal.completed_date')" />
-      <DatePicker v-model="entry.scheduledDate" :label="$t('maintenance.modal.scheduled_date')" />
-      <FormTextArea v-model="entry.description" :label="$t('maintenance.modal.notes')" class="pt-2" />
-      <FormTextField v-model="entry.cost" autofocus :label="$t('maintenance.modal.cost')" class="pt-2" />
-      <div class="flex justify-end py-2">
-        <BaseButton type="submit" class="ml-2 mt-2">
-          <template #icon>
+  <Dialog dialog-id="edit-maintenance">
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>
+          {{ entry.id ? $t("maintenance.modal.edit_title") : $t("maintenance.modal.new_title") }}
+        </DialogTitle>
+      </DialogHeader>
+
+      <form class="flex flex-col gap-2" @submit.prevent="dispatchFormSubmit">
+        <FormTextField v-model="entry.name" autofocus :label="$t('maintenance.modal.entry_name')" />
+        <DatePicker v-model="entry.completedDate" :label="$t('maintenance.modal.completed_date')" />
+        <DatePicker v-model="entry.scheduledDate" :label="$t('maintenance.modal.scheduled_date')" />
+        <FormTextArea v-model="entry.description" :label="$t('maintenance.modal.notes')" />
+        <FormTextField v-model="entry.cost" autofocus :label="$t('maintenance.modal.cost')" />
+
+        <DialogFooter>
+          <Button type="submit">
             <MdiPost />
-          </template>
-          {{ entry.id ? $t("maintenance.modal.edit_action") : $t("maintenance.modal.new_action") }}
-        </BaseButton>
-      </div>
-    </form>
-  </BaseModal>
+            {{ entry.id ? $t("maintenance.modal.edit_action") : $t("maintenance.modal.new_action") }}
+          </Button>
+        </DialogFooter>
+      </form>
+    </DialogContent>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
@@ -27,13 +31,16 @@
   import type { MaintenanceEntry, MaintenanceEntryWithDetails } from "~~/lib/api/types/data-contracts";
   import MdiPost from "~icons/mdi/post";
   import DatePicker from "~~/components/Form/DatePicker.vue";
+  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import { useDialog } from "@/components/ui/dialog-provider";
+
+  const { openDialog, closeDialog } = useDialog();
 
   const { t } = useI18n();
   const api = useUserApi();
 
   const emit = defineEmits(["changed"]);
 
-  const visible = ref(false);
   const entry = reactive({
     id: null as string | null,
     name: "",
@@ -70,7 +77,7 @@
       return;
     }
 
-    visible.value = false;
+    closeDialog("edit-maintenance");
     emit("changed");
   }
 
@@ -92,7 +99,7 @@
       return;
     }
 
-    visible.value = false;
+    closeDialog("edit-maintenance");
     emit("changed");
   }
 
@@ -104,7 +111,7 @@
     entry.description = "";
     entry.cost = "";
     entry.itemId = itemId;
-    visible.value = true;
+    openDialog("edit-maintenance");
   };
 
   const openUpdateModal = (maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails) => {
@@ -115,7 +122,7 @@
     entry.description = maintenanceEntry.description;
     entry.cost = maintenanceEntry.cost;
     entry.itemId = null;
-    visible.value = true;
+    openDialog("edit-maintenance");
   };
 
   const confirm = useConfirm();
@@ -157,7 +164,7 @@
     entry.description = maintenanceEntry.description;
     entry.cost = maintenanceEntry.cost;
     entry.itemId = itemId;
-    visible.value = true;
+    openDialog("edit-maintenance");
   }
 
   defineExpose({ openCreateModal, openUpdateModal, deleteEntry, complete, duplicate });

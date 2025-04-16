@@ -11,6 +11,9 @@
   import MdiWrenchClock from "~icons/mdi/wrench-clock";
   import MdiContentDuplicate from "~icons/mdi/content-duplicate";
   import MaintenanceEditModal from "~~/components/Maintenance/EditModal.vue";
+  import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+  import { Badge } from "@/components/ui/badge";
+  import { ButtonGroup, Button } from "@/components/ui/button";
 
   const maintenanceFilterStatus = ref(MaintenanceFilterStatus.MaintenanceFilterStatusScheduled);
   const maintenanceEditModal = ref<InstanceType<typeof MaintenanceEditModal>>();
@@ -80,40 +83,44 @@
       <StatCard v-for="stat in stats" :key="stat.id" :title="stat.title" :value="stat.value" :type="stat.type" />
     </div>
     <div class="flex">
-      <div class="btn-group">
-        <BaseButton
+      <ButtonGroup>
+        <Button
           size="sm"
-          :class="`${maintenanceFilterStatus == MaintenanceFilterStatus.MaintenanceFilterStatusScheduled ? 'btn-active' : ''}`"
+          :variant="
+            maintenanceFilterStatus == MaintenanceFilterStatus.MaintenanceFilterStatusScheduled ? 'default' : 'outline'
+          "
           @click="maintenanceFilterStatus = MaintenanceFilterStatus.MaintenanceFilterStatusScheduled"
         >
           {{ $t("maintenance.filter.scheduled") }}
-        </BaseButton>
-        <BaseButton
+        </Button>
+        <Button
           size="sm"
-          :class="`${maintenanceFilterStatus == MaintenanceFilterStatus.MaintenanceFilterStatusCompleted ? 'btn-active' : ''}`"
+          :variant="
+            maintenanceFilterStatus == MaintenanceFilterStatus.MaintenanceFilterStatusCompleted ? 'default' : 'outline'
+          "
           @click="maintenanceFilterStatus = MaintenanceFilterStatus.MaintenanceFilterStatusCompleted"
         >
           {{ $t("maintenance.filter.completed") }}
-        </BaseButton>
-        <BaseButton
+        </Button>
+        <Button
           size="sm"
-          :class="`${maintenanceFilterStatus == MaintenanceFilterStatus.MaintenanceFilterStatusBoth ? 'btn-active' : ''}`"
+          :variant="
+            maintenanceFilterStatus == MaintenanceFilterStatus.MaintenanceFilterStatusBoth ? 'default' : 'outline'
+          "
           @click="maintenanceFilterStatus = MaintenanceFilterStatus.MaintenanceFilterStatusBoth"
         >
           {{ $t("maintenance.filter.both") }}
-        </BaseButton>
-      </div>
-      <BaseButton
+        </Button>
+      </ButtonGroup>
+      <Button
         v-if="props.currentItemId"
         class="ml-auto"
         size="sm"
         @click="maintenanceEditModal?.openCreateModal(props.currentItemId)"
       >
-        <template #icon>
-          <MdiPlus />
-        </template>
+        <MdiPlus />
         {{ $t("maintenance.list.new") }}
-      </BaseButton>
+      </Button>
     </div>
   </section>
   <section>
@@ -122,7 +129,7 @@
     <div class="container space-y-6">
       <BaseCard v-for="e in maintenanceDataList" :key="e.id">
         <BaseSectionHeader class="border-b border-b-gray-300 p-6">
-          <span class="text-base-content">
+          <span class="text-base-content mb-2">
             <span v-if="!props.currentItemId">
               <NuxtLink class="hover:underline" :to="`/item/${(e as MaintenanceEntryWithDetails).itemID}/maintenance`">
                 {{ (e as MaintenanceEntryWithDetails).itemName }}
@@ -133,56 +140,56 @@
           </span>
           <template #description>
             <div class="flex flex-wrap gap-2">
-              <div v-if="validDate(e.completedDate)" class="badge p-3">
+              <Badge v-if="validDate(e.completedDate)" variant="outline">
                 <MdiCheck class="mr-2" />
                 <DateTime :date="e.completedDate" format="human" datetime-type="date" />
-              </div>
-              <div v-else-if="validDate(e.scheduledDate)" class="badge p-3">
+              </Badge>
+              <Badge v-else-if="validDate(e.scheduledDate)" variant="outline">
                 <MdiCalendar class="mr-2" />
                 <DateTime :date="e.scheduledDate" format="human" datetime-type="date" />
-              </div>
-              <div class="tooltip tooltip-primary" data-tip="Cost">
-                <div class="badge badge-primary p-3">
-                  <Currency :amount="e.cost" />
-                </div>
-              </div>
+              </Badge>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Badge>
+                    <Currency :amount="e.cost" />
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent> Cost </TooltipContent>
+              </Tooltip>
             </div>
           </template>
         </BaseSectionHeader>
-        <div class="p-6">
+        <div :class="{ 'p-6': e.description }">
           <Markdown :source="e.description" />
         </div>
-        <div class="flex flex-wrap justify-end gap-1 p-4">
-          <BaseButton size="sm" @click="maintenanceEditModal?.openUpdateModal(e)">
-            <template #icon>
-              <MdiEdit />
-            </template>
+        <ButtonGroup class="flex flex-wrap justify-end p-4">
+          <Button size="sm" @click="maintenanceEditModal?.openUpdateModal(e)">
+            <MdiEdit />
             {{ $t("maintenance.list.edit") }}
-          </BaseButton>
-          <BaseButton v-if="!validDate(e.completedDate)" size="sm" @click="maintenanceEditModal?.complete(e)">
-            <template #icon>
-              <MdiCheck />
-            </template>
+          </Button>
+          <Button
+            v-if="!validDate(e.completedDate)"
+            size="sm"
+            variant="outline"
+            @click="maintenanceEditModal?.complete(e)"
+          >
+            <MdiCheck />
             {{ $t("maintenance.list.complete") }}
-          </BaseButton>
-          <BaseButton size="sm" @click="maintenanceEditModal?.duplicate(e, e.itemID)">
-            <template #icon>
-              <MdiContentDuplicate />
-            </template>
+          </Button>
+          <Button size="sm" variant="outline" @click="maintenanceEditModal?.duplicate(e, e.itemID)">
+            <MdiContentDuplicate />
             {{ $t("maintenance.list.duplicate") }}
-          </BaseButton>
-          <BaseButton size="sm" class="btn-error" @click="maintenanceEditModal?.deleteEntry(e.id)">
-            <template #icon>
-              <MdiDelete />
-            </template>
+          </Button>
+          <Button size="sm" variant="destructive" @click="maintenanceEditModal?.deleteEntry(e.id)">
+            <MdiDelete />
             {{ $t("maintenance.list.delete") }}
-          </BaseButton>
-        </div>
+          </Button>
+        </ButtonGroup>
       </BaseCard>
       <div v-if="props.currentItemId" class="hidden first:block">
         <button
           type="button"
-          class="relative block w-full rounded-lg border-2 border-dashed border-base-content p-12 text-center"
+          class="border-base-content relative block w-full rounded-lg border-2 border-dashed p-12 text-center"
           @click="maintenanceEditModal?.openCreateModal(props.currentItemId)"
         >
           <MdiWrenchClock class="inline size-16" />

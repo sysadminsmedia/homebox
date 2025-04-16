@@ -616,6 +616,10 @@
 
     <section>
       <div class="space-y-6">
+        <!-- this renders the other pages content -->
+        <NuxtPage :item="item" :page-key="itemId" />
+
+        <!-- anything in this is not rendered if on another page -->
         <BaseCard v-if="!hasNested" collapsable>
           <template #title> {{ $t("items.details") }} </template>
           <template #title-actions>
@@ -645,9 +649,6 @@
             </template>
           </DetailsSection>
         </BaseCard>
-
-        <!-- this renders the other pages content -->
-        <NuxtPage :item="item" :page-key="itemId" />
 
         <!-- anything in this is not rendered if on another page -->
         <template v-if="!hasNested">
