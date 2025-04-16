@@ -66,8 +66,8 @@
                 "item_description": "Item Description",
                 "item_name": "Item Name",
                 "item_photo": "Item Photo 📷",
-                "upload_photos": "Upload Photos",
-                "title": "Create Item"
+                "title": "Create Item",
+                "upload_photos": "Upload Photos"
             },
             "view": {
                 "selectable": {
@@ -99,8 +99,8 @@
                 "title": "Create Location"
             },
             "selector": {
-                "parent_location": "Parent Location",
                 "no_location_found": "No location found",
+                "parent_location": "Parent Location",
                 "search_location": "Search Locations",
                 "select_location": "Select a Location"
             },
@@ -109,8 +109,8 @@
             }
         },
         "quick_menu": {
-            "shortcut_hint": "Use the number keys to quickly select an action.",
-            "no_results": "No results found."
+            "no_results": "No results found.",
+            "shortcut_hint": "Use the number keys to quickly select an action."
         }
     },
     "global": {
@@ -127,6 +127,10 @@
         "edit": "Edit",
         "email": "Email",
         "follow_dev": "Follow the Developer",
+        "footer": {
+            "api_link": "`<`a href=\"https://homebox.software/en/api/\" target=\"_blank\"`>`API`<`/a`>`",
+            "version_link": "`<`a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"`>` Version: { version } Build: { build } `<`/a`>`"
+        },
         "github": "GitHub Project",
         "items": "Items",
         "join_discord": "Join the Discord",
@@ -144,11 +148,7 @@
         "update": "Update",
         "value": "Value",
         "version": "Version: { version }",
-        "welcome": "Welcome, { username }",
-        "footer": { 
-            "version_link": "`<`a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"`>` Version: { version } Build: { build } `<`/a`>`",
-            "api_link": "`<`a href=\"https://homebox.software/en/api/\" target=\"_blank\"`>`API`<`/a`>`"
-        }
+        "welcome": "Welcome, { username }"
     },
     "home": {
         "labels": "Labels",
