@@ -144,7 +144,11 @@
         "update": "Update",
         "value": "Value",
         "version": "Version: { version }",
-        "welcome": "Welcome, { username }"
+        "welcome": "Welcome, { username }",
+        "footer": { 
+            "version_link": "`<`a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"`>` Version: { version } Build: { build } `<`/a`>`",
+            "api_link": "`<`a href=\"https://homebox.software/en/api/\" target=\"_blank\"`>`API`<`/a`>`"
+        }
     },
     "home": {
         "labels": "Labels",
