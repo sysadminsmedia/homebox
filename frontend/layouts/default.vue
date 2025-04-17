@@ -33,7 +33,7 @@
                 </span>
               </SidebarMenuButton>
             </DropdownMenuTrigger>
-            <DropdownMenuContent class="min-w-[var(--reka-dropdown-menu-trigger-width)]">
+            <DropdownMenuContent class="min-w-[var(--reka-dropdown-menu-trigger-width)] z-40">
               <DropdownMenuItem
                 v-for="btn in dropdown"
                 :key="btn.id"

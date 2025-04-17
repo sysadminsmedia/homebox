@@ -28,6 +28,19 @@
   const { closeDialog, openDialog } = useDialog();
 
   useDialogHotkey("quick-menu", { code: "Backquote", ctrl: true });
+
+  // https://github.com/unovue/reka-ui/issues/1743
+  const stopPropagation = (event: Event) => {
+    event.stopImmediatePropagation();
+  };
+
+  onBeforeMount(() => {
+    document.addEventListener("focusin", stopPropagation);
+  });
+
+  onUnmounted(() => {
+    document.removeEventListener("focusin", stopPropagation);
+  });
 </script>
 
 <template>
@@ -38,12 +51,19 @@
         (e: KeyboardEvent) => {
           const item = props.actions.filter(item => 'shortcut' in item).find(item => item.shortcut === e.key);
           if (item) {
+            e.preventDefault();
             openDialog(item.dialogId);
+          }
+          // if esc is pressed, close the dialog
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            closeDialog('quick-menu');
           }
         }
       "
     />
     <CommandList>
+      <CommandSeparator />
       <CommandEmpty>{{ t("components.quick_menu.no_results") }}</CommandEmpty>
       <CommandGroup :heading="t('global.create')">
         <CommandItem
@@ -51,7 +71,8 @@
           :key="`$global.create_${i + 1}`"
           :value="create.text"
           @select="
-            () => {
+            e => {
+              e.preventDefault();
               openDialog(create.dialogId);
             }
           "
