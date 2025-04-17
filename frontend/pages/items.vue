@@ -8,8 +8,16 @@
   import MdiSelectSearch from "~icons/mdi/select-search";
   import MdiMagnify from "~icons/mdi/magnify";
   import MdiDelete from "~icons/mdi/delete";
-  import MdiChevronRight from "~icons/mdi/chevron-right";
-  import MdiChevronLeft from "~icons/mdi/chevron-left";
+  import { Button } from "@/components/ui/button";
+
+  import {
+    Pagination,
+    PaginationEllipsis,
+    PaginationFirst,
+    PaginationLast,
+    PaginationList,
+    PaginationListItem,
+  } from "@/components/ui/pagination";
 
   definePageMeta({
     middleware: ["auth"],
@@ -48,16 +56,6 @@
   const orderBy = useRouteQuery("orderBy", "name");
 
   const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
-  const hasNext = computed(() => page.value * pageSize.value < total.value);
-  const hasPrev = computed(() => page.value > 1);
-
-  function prev() {
-    page.value = Math.max(1, page.value - 1);
-  }
-
-  function next() {
-    page.value = Math.min(Math.ceil(total.value / pageSize.value), page.value + 1);
-  }
 
   const route = useRoute();
   const router = useRouter();
@@ -376,13 +374,11 @@
             <p>{{ $t("items.query_id", { id: parsedAssetId }) }}</p>
           </div>
         </div>
-        <BaseButton class="btn-block md:w-auto" @click.prevent="submit">
-          <template #icon>
-            <MdiLoading v-if="loading" class="animate-spin" />
-            <MdiMagnify v-else />
-          </template>
+        <Button class="mb-auto h-12 w-full md:w-auto" @click.prevent="submit">
+          <MdiLoading v-if="loading" class="animate-spin" />
+          <MdiMagnify v-else />
           {{ $t("global.search") }}
-        </BaseButton>
+        </Button>
       </div>
 
       <div class="flex w-full flex-wrap gap-2 py-2 md:flex-nowrap">
@@ -403,7 +399,7 @@
           <label tabindex="0" class="btn btn-xs">{{ $t("items.options") }}</label>
           <div
             tabindex="0"
-            class="dropdown-content mt-1 w-72 -translate-x-24 overflow-auto rounded-md bg-base-100 p-4 shadow"
+            class="dropdown-content bg-base-100 mt-1 w-72 -translate-x-24 overflow-auto rounded-md p-4 shadow"
           >
             <label class="label mr-auto cursor-pointer">
               <input v-model="includeArchived" type="checkbox" class="toggle toggle-primary toggle-sm" />
@@ -441,7 +437,7 @@
           <label tabindex="0" class="btn btn-xs">{{ $t("items.tips") }}</label>
           <div
             tabindex="0"
-            class="dropdown-content mt-1 w-[325px] overflow-auto rounded-md bg-base-100 p-4 text-sm shadow"
+            class="dropdown-content bg-base-100 mt-1 w-[325px] overflow-auto rounded-md p-4 text-sm shadow"
           >
             <p class="text-base">{{ $t("items.tips_sub") }}</p>
             <ul class="mt-1 list-disc pl-6">
@@ -496,7 +492,7 @@
       </div>
     </div>
 
-    <section class="mt-10">
+    <section>
       <BaseSectionHeader ref="itemsTitle"> {{ $t("global.items") }} </BaseSectionHeader>
       <p v-if="items.length > 0" class="flex items-center text-base font-medium">
         {{ $t("items.results", { total: total }) }}
@@ -514,25 +510,28 @@
       >
         <ItemCard v-for="item in items" :key="item.id" :item="item" :location-flat-tree="locationFlatTree" />
       </div>
-      <div v-if="items.length > 0 && (hasNext || hasPrev)" class="mt-10 flex flex-col items-center gap-2">
-        <div class="flex">
-          <div class="btn-group">
-            <button :disabled="!hasPrev" class="text-no-transform btn" @click="prev">
-              <MdiChevronLeft class="mr-1 size-6" name="mdi-chevron-left" />
-              {{ $t("items.prev_page") }}
-            </button>
-            <button v-if="hasPrev" class="text-no-transform btn" @click="page = 1">{{ $t("items.first") }}</button>
-            <button v-if="hasNext" class="text-no-transform btn" @click="page = totalPages">
-              {{ $t("items.last") }}
-            </button>
-            <button :disabled="!hasNext" class="text-no-transform btn" @click="next">
-              {{ $t("items.next_page") }}
-              <MdiChevronRight class="ml-1 size-6" name="mdi-chevron-right" />
-            </button>
-          </div>
-        </div>
-        <p class="text-sm font-bold">{{ $t("items.pages", { page: page, totalPages: totalPages }) }}</p>
-      </div>
+      <Pagination
+        v-slot="{ page: currentPage }"
+        :items-per-page="pageSize"
+        :total="total"
+        :sibling-count="2"
+        :default-page="1"
+        class="flex justify-center p-2"
+        @update:page="page = $event"
+      >
+        <PaginationList v-slot="{ items: pageItems }" class="flex items-center gap-1">
+          <PaginationFirst />
+          <template v-for="(item, index) in pageItems">
+            <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
+              <Button class="size-10 p-0" :variant="item.value === currentPage ? 'default' : 'outline'">
+                {{ item.value }}
+              </Button>
+            </PaginationListItem>
+            <PaginationEllipsis v-else :key="item.type" :index="index" />
+          </template>
+          <PaginationLast />
+        </PaginationList>
+      </Pagination>
     </section>
   </BaseContainer>
 </template>
