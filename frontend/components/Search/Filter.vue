@@ -14,7 +14,7 @@
         <Label
           v-for="v in selectedView"
           :key="v.id"
-          class="hover:bg-base-200 flex cursor-pointer justify-between px-4 py-2 text-sm"
+          class="flex cursor-pointer justify-between px-4 py-2 text-sm hover:bg-base-200"
         >
           <div>
             <span>{{ v.name }}</span>
@@ -26,7 +26,7 @@
         <Label
           v-for="v in unselected"
           :key="v.id"
-          class="hover:bg-base-200 flex cursor-pointer justify-between px-4 py-2 text-sm"
+          class="flex cursor-pointer justify-between px-4 py-2 text-sm hover:bg-base-200"
         >
           <div>
             <div>{{ v.name }}</div>

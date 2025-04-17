@@ -533,11 +533,11 @@
     </dialog>
 
     <section>
-      <div class="bg-base-100 rounded p-3">
+      <div class="rounded bg-base-100 p-3">
         <header :class="{ 'mb-2': item.description }">
           <div class="flex flex-wrap items-end gap-2">
             <div
-              class="bg-neutral-focus text-neutral-content mb-auto flex size-12 items-center justify-center rounded-full"
+              class="mb-auto flex size-12 items-center justify-center rounded-full bg-neutral-focus text-neutral-content"
             >
               <MdiPackageVariant class="size-7" />
             </div>
@@ -696,7 +696,7 @@
               </template>
             </DetailsSection>
             <div v-else>
-              <p class="text-base-content/70 px-6 pb-4">No attachments found</p>
+              <p class="px-6 pb-4 text-base-content/70">No attachments found</p>
             </div>
           </BaseCard>
 
