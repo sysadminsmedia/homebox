@@ -11,7 +11,7 @@
   import MdiWrenchClock from "~icons/mdi/wrench-clock";
   import MdiContentDuplicate from "~icons/mdi/content-duplicate";
   import MaintenanceEditModal from "~~/components/Maintenance/EditModal.vue";
-  import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
   import { Badge } from "@/components/ui/badge";
   import { ButtonGroup, Button } from "@/components/ui/button";
 
@@ -148,14 +148,16 @@
                 <MdiCalendar class="mr-2" />
                 <DateTime :date="e.scheduledDate" format="human" datetime-type="date" />
               </Badge>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Badge>
-                    <Currency :amount="e.cost" />
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent> Cost </TooltipContent>
-              </Tooltip>
+              <TooltipProvider :delay-duration="0">
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Badge>
+                      <Currency :amount="e.cost" />
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent> Cost </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </template>
         </BaseSectionHeader>

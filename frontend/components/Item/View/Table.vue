@@ -21,21 +21,24 @@
             <MdiArrowDown />
           </Button>
           <Checkbox :id="h.value" :model-value="h.enabled" @update:model-value="toggleHeader(h.value)" />
-          <label class="label-text" :for="h.value"> {{ $t(h.text) }} </label>
+          <label class="text-sm" :for="h.value"> {{ $t(h.text) }} </label>
         </div>
       </div>
 
-      <Select :model-value="pagination.rowsPerPage" @update:model-value="pagination.rowsPerPage = Number($event)">
-        <SelectTrigger>
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem :value="10">10</SelectItem>
-          <SelectItem :value="25">25</SelectItem>
-          <SelectItem :value="50">50</SelectItem>
-          <SelectItem :value="100">100</SelectItem>
-        </SelectContent>
-      </Select>
+      <div class="flex flex-col gap-2">
+        <Label> {{ $t("components.item.view.table.rows_per_page") }} </Label>
+        <Select :model-value="pagination.rowsPerPage" @update:model-value="pagination.rowsPerPage = Number($event)">
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem :value="10">10</SelectItem>
+            <SelectItem :value="25">25</SelectItem>
+            <SelectItem :value="50">50</SelectItem>
+            <SelectItem :value="100">100</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
       <DialogFooter>
         <Button @click="closeDialog('item-table-settings')"> {{ $t("global.save") }} </Button>
@@ -74,7 +77,7 @@
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow v-for="(d, i) in data" :key="d.id" class="hover cursor-pointer" @click="navigateTo(`/item/${d.id}`)">
+        <TableRow v-for="(d, i) in data" :key="d.id" class="cursor-pointer" @click="navigateTo(`/item/${d.id}`)">
           <TableCell
             v-for="h in headers.filter(h => h.enabled)"
             :key="`${h.value}-${i}`"
@@ -85,7 +88,7 @@
             }"
           >
             <template v-if="h.type === 'name'">
-              <NuxtLink class="hover text-wrap" :to="`/item/${d.id}`">
+              <NuxtLink class="text-wrap" :to="`/item/${d.id}`">
                 {{ d.name }}
               </NuxtLink>
             </template>
@@ -97,7 +100,7 @@
               <MdiClose v-else class="inline size-5 text-red-500" />
             </template>
             <template v-else-if="h.type === 'location'">
-              <NuxtLink v-if="d.location" class="hover:link" :to="`/location/${d.location.id}`">
+              <NuxtLink v-if="d.location" class="hover:underline" :to="`/location/${d.location.id}`">
                 {{ d.location.name }}
               </NuxtLink>
             </template>

@@ -14,17 +14,19 @@
             />
             <Currency v-else-if="detail.type == 'currency'" :amount="detail.text" />
             <template v-else-if="detail.type === 'link'">
-              <Tooltip>
-                <TooltipTrigger as-child>
-                  <a :href="detail.href" target="_blank" :class="badgeVariants()" class="gap-1">
-                    <MdiOpenInNew />
-                    {{ detail.text }}
-                  </a>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {{ detail.href }}
-                </TooltipContent>
-              </Tooltip>
+              <TooltipProvider :delay-duration="0">
+                <Tooltip>
+                  <TooltipTrigger as-child>
+                    <a :href="detail.href" target="_blank" :class="badgeVariants()" class="gap-1">
+                      <MdiOpenInNew />
+                      {{ detail.text }}
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {{ detail.href }}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </template>
             <template v-else-if="detail.type === 'markdown'">
               <ClientOnly>
@@ -57,7 +59,7 @@
   import type { AnyDetail, Detail } from "./types";
   import MdiOpenInNew from "~icons/mdi/open-in-new";
   import { badgeVariants } from "~/components/ui/badge";
-  import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
   defineProps({
     details: {

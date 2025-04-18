@@ -12,7 +12,7 @@
   import { useDialog } from "@/components/ui/dialog-provider";
   import { Checkbox } from "@/components/ui/checkbox";
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-  import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
   import { Switch } from "@/components/ui/switch";
   import { Label } from "@/components/ui/label";
 
@@ -539,15 +539,17 @@
 
     <section class="relative">
       <div class="sticky top-1 z-10 my-4 flex items-center justify-between gap-2">
-        <Tooltip>
-          <TooltipTrigger as-child>
-            <Label class="flex cursor-pointer items-center gap-2 backdrop-blur-sm">
-              <Switch v-model="preferences.editorAdvancedView" />
-              {{ $t("items.advanced") }}
-            </Label>
-          </TooltipTrigger>
-          <TooltipContent>{{ $t("items.show_advanced_view_options") }}</TooltipContent>
-        </Tooltip>
+        <TooltipProvider :delay-duration="0">
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <Label class="flex cursor-pointer items-center gap-2 backdrop-blur-sm">
+                <Switch v-model="preferences.editorAdvancedView" />
+                {{ $t("items.advanced") }}
+              </Label>
+            </TooltipTrigger>
+            <TooltipContent>{{ $t("items.show_advanced_view_options") }}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
         <Button class="" size="sm" @click="saveItem">
           <MdiContentSaveOutline />
           {{ $t("global.save") }}
@@ -558,13 +560,7 @@
           <template #title> {{ $t("items.edit_details") }} </template>
           <div class="mb-6 grid gap-4 border-t px-5 pt-2 md:grid-cols-2">
             <LocationSelector v-model="item.location" @update:model-value="informAboutDesyncingLocationFromParent()" />
-            <LabelSelector v-model="item.labelIds" :labels="labels" />
-            <div class="flex flex-col gap-2">
-              <Label class="px-1">Sync child items' locations</Label>
-              <Switch v-model="item.syncChildItemsLocations" @update:model-value="syncChildItemsLocations()" />
-            </div>
             <ItemSelector
-              v-if="preferences.editorAdvancedView"
               v-model="parent"
               v-model:search="query"
               :items="results"
@@ -573,6 +569,11 @@
               no-results-text="Type to search..."
               @update:model-value="maybeSyncWithParentLocation()"
             />
+            <div class="flex flex-col gap-2">
+              <Label class="px-1">Sync child items' locations</Label>
+              <Switch v-model="item.syncChildItemsLocations" @update:model-value="syncChildItemsLocations()" />
+            </div>
+            <LabelSelector v-model="item.labelIds" :labels="labels" />
           </div>
 
           <div class="border-t border-gray-300 sm:p-0">
@@ -619,7 +620,7 @@
           </div>
         </BaseCard>
 
-        <BaseCard>
+        <BaseCard v-if="preferences.editorAdvancedView">
           <template #title> {{ $t("items.custom_fields") }} </template>
           <div class="space-y-4 divide-y divide-gray-300 border-t px-5">
             <div
@@ -647,7 +648,7 @@
           </div>
         </BaseCard>
 
-        <div ref="attDropZone" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
+        <div ref="attDropZone" class="overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">{{ $t("items.attachments") }}</h3>
             <p class="text-xs">{{ $t("items.changes_persisted_immediately") }}</p>
@@ -706,7 +707,7 @@
           </div>
         </div>
 
-        <div v-if="preferences.editorAdvancedView" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
+        <div v-if="preferences.editorAdvancedView" class="overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">{{ $t("items.purchase_details") }}</h3>
           </div>
@@ -757,7 +758,7 @@
           </div>
         </div>
 
-        <div v-if="preferences.editorAdvancedView" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
+        <div v-if="preferences.editorAdvancedView" class="overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">{{ $t("items.warranty_details") }}</h3>
           </div>
@@ -808,7 +809,7 @@
           </div>
         </div>
 
-        <div v-if="preferences.editorAdvancedView" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
+        <div v-if="preferences.editorAdvancedView" class="overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">Sold Details</h3>
           </div>

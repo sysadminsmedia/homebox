@@ -461,7 +461,7 @@
       <div v-if="fieldSelector" class="flex flex-col gap-2 pb-2">
         <p>{{ $t("items.custom_fields") }}</p>
         <div v-for="(f, idx) in fieldTuples" :key="idx" class="flex flex-wrap gap-2">
-          <div class="form-control w-full gap-1 md:w-auto md:grow">
+          <div class="flex w-full flex-col gap-1 md:w-auto md:grow">
             <Label> Field </Label>
             <Select v-model="fieldTuples[idx][0]" @update:model-value="fetchValues(f[0])">
               <SelectTrigger>
@@ -472,7 +472,7 @@
               </SelectContent>
             </Select>
           </div>
-          <div class="form-control w-full gap-1 md:w-auto md:grow">
+          <div class="flex w-full flex-col gap-1 md:w-auto md:grow">
             <Label> {{ $t("items.field_value") }} </Label>
             <Select v-model="fieldTuples[idx][1]">
               <SelectTrigger>
@@ -489,7 +489,7 @@
             <MdiDelete />
           </Button>
         </div>
-        <Button type="button" class="btn-sm mt-2" @click="() => fieldTuples.push(['', ''])">
+        <Button type="button" size="sm" class="mt-2" @click="() => fieldTuples.push(['', ''])">
           {{ $t("items.add") }}
         </Button>
       </div>

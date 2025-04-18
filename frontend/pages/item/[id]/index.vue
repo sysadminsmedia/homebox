@@ -624,7 +624,7 @@
           <template #title> {{ $t("items.details") }} </template>
           <template #title-actions>
             <div class="mt-2 flex flex-wrap items-center justify-between gap-4">
-              <Label class="label flex cursor-pointer items-center gap-2">
+              <Label class="flex cursor-pointer items-center gap-2">
                 <Switch v-model="preferences.showEmpty" />
                 Show Empty
               </Label>

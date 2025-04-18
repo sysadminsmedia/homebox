@@ -12,6 +12,7 @@
   import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
   import { Button } from "@/components/ui/button";
   import LanguageSelector from "~/components/App/LanguageSelector.vue";
+  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
   useHead({
     title: "Homebox | Organize and Tag Your Stuff",
@@ -164,31 +165,47 @@
           </h2>
           <p class="ml-1 text-lg text-base-content/50">{{ $t("index.tagline") }}</p>
         </div>
-        <div class="ml-auto mt-6 flex items-center gap-4 text-neutral-content sm:mt-0">
-          <a
-            class="tooltip"
-            :data-tip="$t('global.github')"
-            href="https://github.com/sysadminsmedia/homebox"
-            target="_blank"
-          >
-            <MdiGithub class="size-8" />
-          </a>
-          <a
-            href="https://noc.social/@sysadminszone"
-            class="tooltip"
-            :data-tip="$t('global.follow_dev')"
-            target="_blank"
-          >
-            <MdiMastodon class="size-8" />
-          </a>
-          <a href="https://discord.gg/aY4DCkpNA9" class="tooltip" :data-tip="$t('global.join_discord')" target="_blank">
-            <MdiDiscord class="size-8" />
-          </a>
-          <a href="https://homebox.software/en/" class="tooltip" :data-tip="$t('global.read_docs')" target="_blank">
-            <MdiFolder class="size-8" />
-          </a>
-          <LanguageSelector class="z-10 text-primary" :include-text="false" />
-        </div>
+        <TooltipProvider :delay-duration="0">
+          <div class="z-10 ml-auto mt-6 flex items-center gap-4 text-neutral-content sm:mt-0">
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <a href="https://github.com/sysadminsmedia/homebox" target="_blank">
+                  <MdiGithub class="size-8" />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent>{{ $t("global.github") }}</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <a href="https://noc.social/@sysadminszone" target="_blank">
+                  <MdiMastodon class="size-8" />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent>{{ $t("global.follow_dev") }}</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <a href="https://discord.gg/aY4DCkpNA9" target="_blank">
+                  <MdiDiscord class="size-8" />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent>{{ $t("global.join_discord") }}</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <a href="https://homebox.software/en/" target="_blank">
+                  <MdiFolder class="size-8" />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent>{{ $t("global.read_docs") }}</TooltipContent>
+            </Tooltip>
+
+            <LanguageSelector class="z-10 text-primary" :include-text="false" />
+          </div>
+        </TooltipProvider>
       </header>
       <div class="grid min-h-[50vh] p-6 sm:place-items-center">
         <!-- TODO: when daisyui is removed then remove z-10 -->
@@ -215,16 +232,14 @@
                   <PasswordScore v-model:valid="canRegister" :password="password" />
                 </CardContent>
                 <CardFooter>
-                  <div class="card-actions justify-end">
-                    <Button
-                      class="w-full"
-                      type="submit"
-                      :class="loading ? 'loading' : ''"
-                      :disabled="loading || !canRegister"
-                    >
-                      {{ $t("index.register") }}
-                    </Button>
-                  </div>
+                  <Button
+                    class="w-full"
+                    type="submit"
+                    :class="loading ? 'loading' : ''"
+                    :disabled="loading || !canRegister"
+                  >
+                    {{ $t("index.register") }}
+                  </Button>
                 </CardFooter>
               </Card>
             </form>

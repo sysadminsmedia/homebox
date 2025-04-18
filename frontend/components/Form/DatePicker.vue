@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!inline" class="form-control w-full">
+  <div v-if="!inline" class="flex w-full flex-col">
     <Label class="cursor-pointer"> {{ label }} </Label>
     <VueDatePicker v-model="selected" :enable-time-picker="false" clearable :dark="isDark" :format="formatDate" />
   </div>

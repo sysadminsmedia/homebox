@@ -7,7 +7,12 @@
           <p>{{ $t("components.app.outdated.current_version") }}: {{ current }}</p>
           <p>{{ $t("components.app.outdated.latest_version") }}: {{ latest }}</p>
           <p>
-            <a href="https://github.com/sysadminsmedia/homebox/releases" target="_blank" rel="noopener" class="link">
+            <a
+              href="https://github.com/sysadminsmedia/homebox/releases"
+              target="_blank"
+              rel="noopener"
+              class="underline hover:text-primary"
+            >
               {{ $t("components.app.outdated.new_version_available_link") }}
             </a>
           </p>
@@ -30,8 +35,8 @@
     AlertDialogDescription,
     AlertDialogFooter,
     AlertDialogAction,
-  } from "~/components/ui/alert-dialog";
-  import { useDialog } from "~/components/ui/dialog-provider";
+  } from "@/components/ui/alert-dialog";
+  import { useDialog } from "@/components/ui/dialog-provider";
 
   const props = defineProps<{
     status: {

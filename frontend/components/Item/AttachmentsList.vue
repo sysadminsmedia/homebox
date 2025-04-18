@@ -10,26 +10,28 @@
         <span class="ml-2 w-0 flex-1 truncate"> {{ attachment.document.title }}</span>
       </div>
       <div class="ml-4 flex shrink-0 gap-2">
-        <Tooltip>
-          <TooltipTrigger as-child>
-            <a
-              :class="buttonVariants({ size: 'icon' })"
-              :href="attachmentURL(attachment.id)"
-              :download="attachment.document.title"
-            >
-              <MdiDownload />
-            </a>
-          </TooltipTrigger>
-          <TooltipContent> Download </TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger as-child>
-            <a :class="buttonVariants({ size: 'icon' })" :href="attachmentURL(attachment.id)" target="_blank">
-              <MdiOpenInNew />
-            </a>
-          </TooltipTrigger>
-          <TooltipContent> Open in new tab </TooltipContent>
-        </Tooltip>
+        <TooltipProvider :delay-duration="0">
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <a
+                :class="buttonVariants({ size: 'icon' })"
+                :href="attachmentURL(attachment.id)"
+                :download="attachment.document.title"
+              >
+                <MdiDownload />
+              </a>
+            </TooltipTrigger>
+            <TooltipContent> Download </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <a :class="buttonVariants({ size: 'icon' })" :href="attachmentURL(attachment.id)" target="_blank">
+                <MdiOpenInNew />
+              </a>
+            </TooltipTrigger>
+            <TooltipContent> Open in new tab </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </li>
   </ul>
@@ -41,7 +43,7 @@
   import MdiDownload from "~icons/mdi/download";
   import MdiOpenInNew from "~icons/mdi/open-in-new";
   import { buttonVariants } from "@/components/ui/button";
-  import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
   const props = defineProps({
     attachments: {

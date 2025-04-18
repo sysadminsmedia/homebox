@@ -15,8 +15,8 @@
       <Sidebar collapsible="icon">
         <SidebarHeader class="items-center bg-base-200">
           <SidebarGroupLabel class="text-base">{{ $t("global.welcome", { username: username }) }}</SidebarGroupLabel>
-          <NuxtLink class="avatar placeholder group-data-[collapsible=icon]:hidden" to="/home">
-            <div class="w-24 rounded-full bg-base-300 p-4 text-neutral-content">
+          <NuxtLink class="group-data-[collapsible=icon]:hidden" to="/home">
+            <div class="flex size-24 items-center justify-center rounded-full bg-base-300 p-4 text-neutral-content">
               <AppLogo />
             </div>
           </NuxtLink>

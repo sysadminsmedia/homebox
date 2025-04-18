@@ -17,6 +17,7 @@
   import { Label } from "@/components/ui/label";
   import { badgeVariants } from "@/components/ui/badge";
   import LanguageSelector from "~/components/App/LanguageSelector.vue";
+  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
   definePageMeta({
     middleware: ["auth"],
@@ -400,18 +401,24 @@
           <article v-for="n in notifiers.data.value" v-else :key="n.id" class="p-2">
             <div class="flex flex-wrap items-center gap-2">
               <p class="mr-auto text-lg">{{ n.name }}</p>
-              <div class="flex justify-end gap-2">
-                <div class="tooltip" data-tip="Delete">
-                  <Button variant="destructive" size="icon" @click="deleteNotifier(n.id)">
-                    <MdiDelete />
-                  </Button>
-                </div>
-                <div class="tooltip" data-tip="Edit">
-                  <Button variant="outline" size="icon" @click="openNotifierDialog(n)">
-                    <MdiPencil />
-                  </Button>
-                </div>
-              </div>
+              <TooltipProvider :delay-duration="0" class="flex justify-end gap-2">
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant="destructive" size="icon" @click="deleteNotifier(n.id)">
+                      <MdiDelete />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent> Delete </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant="outline" size="icon" @click="openNotifierDialog(n)">
+                      <MdiPencil />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent> Edit </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             <div class="flex flex-wrap justify-between py-1 text-sm">
               <p>
@@ -490,7 +497,7 @@
               {{ $t("profile.display_header", { currentValue: preferences.displayHeaderDecor }) }}
             </Button>
           </div>
-          <div class="homebox rounded-box grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          <div class="homebox grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             <div
               v-for="theme in themes"
               :key="theme.value"

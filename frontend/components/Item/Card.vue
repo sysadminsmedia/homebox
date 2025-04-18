@@ -4,7 +4,7 @@
       <div class="relative h-[200px]">
         <img v-if="imageUrl" class="h-[200px] w-full object-cover shadow-md" loading="lazy" :src="imageUrl" alt="" />
         <div class="absolute inset-x-1 bottom-1">
-          <Badge class="text-wrap bg-neutral text-neutral-content hover:link hover:bg-neutral/90">
+          <Badge class="text-wrap bg-neutral text-neutral-content hover:bg-neutral/90 hover:underline">
             <NuxtLink v-if="item.location" :to="`/location/${item.location.id}`">
               {{ locationString }}
             </NuxtLink>

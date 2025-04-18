@@ -376,7 +376,7 @@
     <Separator class="mx-auto max-w-4xl" />
     <div class="container mx-auto max-w-4xl p-4">
       <div class="mx-auto grid grid-cols-2 gap-3">
-        <div v-for="(prop, i) in propertyInputs" :key="i" class="form-control w-full max-w-xs">
+        <div v-for="(prop, i) in propertyInputs" :key="i" class="flex w-full max-w-xs flex-col">
           <Label :for="`input-${prop.ref}`">
             {{ prop.label }}
           </Label>
