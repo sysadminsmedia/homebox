@@ -533,11 +533,11 @@
     </dialog>
 
     <section>
-      <div class="rounded bg-base-100 p-3">
+      <div class="bg-base-100 rounded p-3">
         <header :class="{ 'mb-2': item.description }">
           <div class="flex flex-wrap items-end gap-2">
             <div
-              class="mb-auto flex size-12 items-center justify-center rounded-full bg-neutral-focus text-neutral-content"
+              class="bg-neutral-focus text-neutral-content mb-auto flex size-12 items-center justify-center rounded-full"
             >
               <MdiPackageVariant class="size-7" />
             </div>
@@ -586,8 +586,12 @@
                 type="asset"
               />
               <LabelMaker v-else :id="item.id" type="item" />
-              <Button @click="duplicateItem"><MdiContentCopy />{{ $t("global.duplicate") }}</Button>
-              <Button variant="destructive" @click="deleteItem"><MdiDelete />{{ $t("global.delete") }}</Button>
+              <Button @click="duplicateItem"
+                ><MdiContentCopy /><span class="hidden md:inline">{{ $t("global.duplicate") }}</span></Button
+              >
+              <Button variant="destructive" @click="deleteItem"
+                ><MdiDelete /><span class="hidden md:inline">{{ $t("global.delete") }}</span></Button
+              >
             </div>
           </div>
         </header>
@@ -696,7 +700,7 @@
               </template>
             </DetailsSection>
             <div v-else>
-              <p class="px-6 pb-4 text-base-content/70">No attachments found</p>
+              <p class="text-base-content/70 px-6 pb-4">No attachments found</p>
             </div>
           </BaseCard>
 
