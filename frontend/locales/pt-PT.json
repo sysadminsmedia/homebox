@@ -9,6 +9,7 @@
             },
             "outdated": {
                 "current_version": "Versão Atual",
+                "dismiss": "Dispensar",
                 "latest_version": "Versão mais recente",
                 "new_version_available": "Nova Versão Disponível",
                 "new_version_available_link": "Carregue aqui para ver as notas desta versão"
@@ -22,9 +23,11 @@
                 "learn_more": "Saiba mais na nossa"
             },
             "date_time": {
+                "ago": "{0} atrás",
                 "days": "dias",
                 "hour": "hora",
                 "hours": "horas",
+                "in": "em {0}",
                 "just-now": "neste momento",
                 "last-month": "mês passado",
                 "last-week": "semana passada",
@@ -97,6 +100,7 @@
             },
             "selector": {
                 "no_location_found": "Nenhum Local Encontrado",
+                "parent_location": "Localização ascendente",
                 "search_location": "Pesquisar Localizações",
                 "select_location": "Selecione uma localização"
             }
