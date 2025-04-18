@@ -31,7 +31,8 @@
 
   // https://github.com/unovue/reka-ui/issues/1743
   const stopPropagation = (event: Event) => {
-    event.stopImmediatePropagation();
+    if (event.target instanceof HTMLElement && event.target.getAttribute("role") === "dialog")
+      event.stopImmediatePropagation();
   };
 
   onBeforeMount(() => {
