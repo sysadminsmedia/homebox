@@ -28,20 +28,6 @@
   const { closeDialog, openDialog } = useDialog();
 
   useDialogHotkey("quick-menu", { code: "Backquote", ctrl: true });
-
-  // https://github.com/unovue/reka-ui/issues/1743
-  const stopPropagation = (event: Event) => {
-    if (event.target instanceof HTMLElement && event.target.getAttribute("role") === "dialog")
-      event.stopImmediatePropagation();
-  };
-
-  onBeforeMount(() => {
-    document.addEventListener("focusin", stopPropagation);
-  });
-
-  onUnmounted(() => {
-    document.removeEventListener("focusin", stopPropagation);
-  });
 </script>
 
 <template>
