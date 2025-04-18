@@ -62,7 +62,7 @@
   function openUpdate() {
     updateData.name = label.value?.name || "";
     updateData.description = label.value?.description || "";
-    updateData.color = label.value?.color || "";
+    updateData.color = "";
     openDialog("update-label");
   }
 
