@@ -18,7 +18,13 @@
     BreadcrumbList,
     BreadcrumbSeparator,
   } from "@/components/ui/breadcrumb";
-  import { Button, ButtonGroup } from "@/components/ui/button";
+  import { Button, ButtonGroup, buttonVariants } from "@/components/ui/button";
+  import { Dialog, DialogContent } from "@/components/ui/dialog";
+  import { useDialog } from "@/components/ui/dialog-provider";
+  import { Label } from "@/components/ui/label";
+  import { Switch } from "@/components/ui/switch";
+
+  const { openDialog, closeDialog } = useDialog();
 
   definePageMeta({
     middleware: ["auth"],
@@ -376,26 +382,18 @@
     return v;
   });
 
-  const refDialog = ref<HTMLDialogElement>();
   const dialoged = reactive({
     src: "",
   });
 
-  function openDialog(img: Photo) {
-    // @ts-ignore - I don't know why this is happening
-    refDialog.value?.showModal();
+  function openImageDialog(img: Photo) {
     dialoged.src = img.src;
+    openDialog("item-image");
   }
 
-  function closeDialog() {
-    // @ts-ignore - I don't know why this is happening
-    refDialog.value?.close();
+  function closeImageDialog() {
+    closeDialog("item-image");
   }
-
-  const refDialogBody = ref<HTMLDivElement>();
-  onClickOutside(refDialogBody, () => {
-    closeDialog();
-  });
 
   const currentUrl = computed(() => {
     return window.location.href;
@@ -516,28 +514,24 @@
     <!-- set page title -->
     <Title>{{ item.name }}</Title>
 
-    <!-- image dialog -->
-    <dialog ref="refDialog" class="fixed z-[999] overflow-visible bg-transparent">
-      <div ref="refDialogBody" class="relative">
-        <div class="absolute right-0 -mr-3 -mt-3 space-x-1 sm:-mr-4 sm:-mt-4">
-          <a class="btn btn-circle btn-primary btn-sm sm:btn-md" :href="dialoged.src" download>
-            <MdiDownload class="size-5" />
-          </a>
-          <button class="btn btn-circle btn-primary btn-sm sm:btn-md" @click="closeDialog()">
-            <MdiClose class="size-5" />
-          </button>
-        </div>
-
-        <img class="max-h-[80vh] max-w-[80vw]" :src="dialoged.src" />
-      </div>
-    </dialog>
+    <Dialog dialog-id="item-image">
+      <DialogContent class="w-auto border-transparent bg-transparent p-0" disable-close>
+        <img :src="dialoged.src" />
+        <a :class="buttonVariants({ size: 'icon' })" :href="dialoged.src" download class="absolute right-11 top-1">
+          <MdiDownload />
+        </a>
+        <Button size="icon" class="absolute right-1 top-1" @click="closeImageDialog">
+          <MdiClose />
+        </Button>
+      </DialogContent>
+    </Dialog>
 
     <section>
-      <div class="bg-base-100 rounded p-3">
+      <div class="rounded bg-base-100 p-3">
         <header :class="{ 'mb-2': item.description }">
           <div class="flex flex-wrap items-end gap-2">
             <div
-              class="bg-neutral-focus text-neutral-content mb-auto flex size-12 items-center justify-center rounded-full"
+              class="mb-auto flex size-12 items-center justify-center rounded-full bg-neutral-focus text-neutral-content"
             >
               <MdiPackageVariant class="size-7" />
             </div>
@@ -586,12 +580,14 @@
                 type="asset"
               />
               <LabelMaker v-else :id="item.id" type="item" />
-              <Button @click="duplicateItem"
-                ><MdiContentCopy /><span class="hidden md:inline">{{ $t("global.duplicate") }}</span></Button
-              >
-              <Button variant="destructive" @click="deleteItem"
-                ><MdiDelete /><span class="hidden md:inline">{{ $t("global.delete") }}</span></Button
-              >
+              <Button class="w-9 md:w-auto" @click="duplicateItem">
+                <MdiContentCopy />
+                <span class="hidden md:inline">{{ $t("global.duplicate") }}</span>
+              </Button>
+              <Button variant="destructive" class="w-9 md:w-auto" @click="deleteItem">
+                <MdiDelete />
+                <span class="hidden md:inline">{{ $t("global.delete") }}</span>
+              </Button>
             </div>
           </div>
         </header>
@@ -628,28 +624,30 @@
           <template #title> {{ $t("items.details") }} </template>
           <template #title-actions>
             <div class="mt-2 flex flex-wrap items-center justify-between gap-4">
-              <label class="label cursor-pointer">
-                <input v-model="preferences.showEmpty" type="checkbox" class="toggle toggle-primary" />
-                <span class="label-text ml-4"> Show Empty </span>
-              </label>
+              <Label class="label flex cursor-pointer items-center gap-2">
+                <Switch v-model="preferences.showEmpty" />
+                Show Empty
+              </Label>
               <div class="space-x-1">
-                <CopyText :text="currentUrl" :icon-size="16" class="btn btn-circle btn-ghost btn-xs" />
+                <CopyText :text="currentUrl" :icon-size="16" />
               </div>
             </div>
           </template>
           <DetailsSection :details="itemDetails">
             <template #quantity="{ detail }">
-              {{ detail.text }}
-              <span
-                class="my-0 ml-4 inline-flex gap-2 opacity-0 transition-opacity duration-75 group-hover:opacity-100"
-              >
-                <button class="btn btn-circle btn-xs" @click="adjustQuantity(-1)">
-                  <MdiMinus class="size-3" />
-                </button>
-                <button class="btn btn-circle btn-xs" @click="adjustQuantity(1)">
-                  <MdiPlus class="size-3" />
-                </button>
-              </span>
+              <div class="flex items-center">
+                {{ detail.text }}
+                <span
+                  class="my-0 ml-4 inline-flex gap-2 opacity-10 transition-opacity duration-75 group-hover:opacity-100"
+                >
+                  <Button size="icon" variant="outline" class="size-8 rounded-full" @click="adjustQuantity(-1)">
+                    <MdiMinus class="size-3" />
+                  </Button>
+                  <Button size="icon" variant="outline" class="size-8 rounded-full" @click="adjustQuantity(1)">
+                    <MdiPlus class="size-3" />
+                  </Button>
+                </span>
+              </div>
             </template>
           </DetailsSection>
         </BaseCard>
@@ -661,7 +659,7 @@
             <div
               class="scroll-bg container mx-auto flex max-h-[500px] flex-wrap gap-2 overflow-y-scroll border-t border-gray-300 p-4"
             >
-              <button v-for="(img, i) in photos" :key="i" @click="openDialog(img)">
+              <button v-for="(img, i) in photos" :key="i" @click="openImageDialog(img)">
                 <img class="max-h-[200px] rounded" :src="img.src" />
               </button>
             </div>
@@ -700,7 +698,7 @@
               </template>
             </DetailsSection>
             <div v-else>
-              <p class="text-base-content/70 px-6 pb-4">No attachments found</p>
+              <p class="px-6 pb-4 text-base-content/70">No attachments found</p>
             </div>
           </BaseCard>
 

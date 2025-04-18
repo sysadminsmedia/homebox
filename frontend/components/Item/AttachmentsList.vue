@@ -9,13 +9,27 @@
         <MdiPaperclip class="size-5 shrink-0 text-gray-400" aria-hidden="true" />
         <span class="ml-2 w-0 flex-1 truncate"> {{ attachment.document.title }}</span>
       </div>
-      <div class="ml-4 shrink-0">
-        <a class="tooltip mr-2" data-tip="Download" :href="attachmentURL(attachment.id)" target="_blank">
-          <MdiDownload class="size-5" />
-        </a>
-        <a class="tooltip" data-tip="Open" :href="attachmentURL(attachment.id)" target="_blank">
-          <MdiOpenInNew class="size-5" />
-        </a>
+      <div class="ml-4 flex shrink-0 gap-2">
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <a
+              :class="buttonVariants({ size: 'icon' })"
+              :href="attachmentURL(attachment.id)"
+              :download="attachment.document.title"
+            >
+              <MdiDownload />
+            </a>
+          </TooltipTrigger>
+          <TooltipContent> Download </TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <a :class="buttonVariants({ size: 'icon' })" :href="attachmentURL(attachment.id)" target="_blank">
+              <MdiOpenInNew />
+            </a>
+          </TooltipTrigger>
+          <TooltipContent> Open in new tab </TooltipContent>
+        </Tooltip>
       </div>
     </li>
   </ul>
@@ -26,6 +40,8 @@
   import MdiPaperclip from "~icons/mdi/paperclip";
   import MdiDownload from "~icons/mdi/download";
   import MdiOpenInNew from "~icons/mdi/open-in-new";
+  import { buttonVariants } from "@/components/ui/button";
+  import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
   const props = defineProps({
     attachments: {

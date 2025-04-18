@@ -647,7 +647,7 @@
           </div>
         </BaseCard>
 
-        <div ref="attDropZone" class="card bg-base-100 overflow-visible shadow-xl sm:rounded-lg">
+        <div ref="attDropZone" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">{{ $t("items.attachments") }}</h3>
             <p class="text-xs">{{ $t("items.changes_persisted_immediately") }}</p>
@@ -662,7 +662,7 @@
             </div>
             <button
               v-else
-              class="border-primary grid h-24 w-full place-content-center border-2 border-dashed"
+              class="grid h-24 w-full place-content-center border-2 border-dashed border-primary"
               @click="clickUpload"
             >
               <input ref="refAttachmentInput" hidden type="file" @change="uploadImage" />
@@ -706,7 +706,7 @@
           </div>
         </div>
 
-        <div v-if="preferences.editorAdvancedView" class="card bg-base-100 overflow-visible shadow-xl sm:rounded-lg">
+        <div v-if="preferences.editorAdvancedView" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">{{ $t("items.purchase_details") }}</h3>
           </div>
@@ -757,7 +757,7 @@
           </div>
         </div>
 
-        <div v-if="preferences.editorAdvancedView" class="card bg-base-100 overflow-visible shadow-xl sm:rounded-lg">
+        <div v-if="preferences.editorAdvancedView" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">{{ $t("items.warranty_details") }}</h3>
           </div>
@@ -808,7 +808,7 @@
           </div>
         </div>
 
-        <div v-if="preferences.editorAdvancedView" class="card bg-base-100 overflow-visible shadow-xl sm:rounded-lg">
+        <div v-if="preferences.editorAdvancedView" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">Sold Details</h3>
           </div>
