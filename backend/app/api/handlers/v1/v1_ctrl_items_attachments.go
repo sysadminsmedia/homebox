@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/hay-kot/httpkit/errchain"
@@ -30,6 +31,7 @@ type (
 //	@Param    id   path     string true "Item ID"
 //	@Param    file formData file   true "File attachment"
 //	@Param    type formData string true "Type of file"
+//	@Param    primary formData bool false "Is this the primary attachment"
 //	@Param    name formData string true "name of the file including extension"
 //	@Success  200  {object} repo.ItemOut
 //	@Failure  422  {object} validate.ErrorResponse
@@ -80,6 +82,12 @@ func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 			}
 		}
 
+		primary, err := strconv.ParseBool(r.FormValue("primary"))
+		if err != nil {
+			log.Debug().Msg("failed to parse primary from form")
+			primary = false
+		}
+
 		id, err := ctrl.routeID(r)
 		if err != nil {
 			return err
@@ -92,6 +100,7 @@ func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 			id,
 			attachmentName,
 			attachment.Type(attachmentType),
+			primary,
 			file,
 		)
 		if err != nil {
@@ -163,7 +172,7 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 			log.Err(err).Msg("failed to get attachment path")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
-		w.Header().Set("Content-Disposition", "attachment; filename="+doc.Title)
+		//w.Header().Set("Content-Disposition", "attachment; filename="+doc.Title)
 		http.ServeFile(w, r, doc.Path)
 		return nil
 

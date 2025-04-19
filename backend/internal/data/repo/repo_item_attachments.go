@@ -63,7 +63,7 @@ func (r *AttachmentRepo) path(gid uuid.UUID, hash string) string {
 	return filepath.Join(r.dir, gid.String(), "documents", hash)
 }
 
-func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemCreateAttachment, typ attachment.Type) (*ent.Attachment, error) {
+func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemCreateAttachment, typ attachment.Type, primary bool) (*ent.Attachment, error) {
 	tx, err := r.db.Tx(ctx)
 	if err != nil {
 		return nil, err
@@ -79,8 +79,10 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 		}
 	}()
 
+	bldrId := uuid.New()
+
 	bldr := tx.Attachment.Create().
-		SetID(uuid.New()).
+		SetID(bldrId).
 		SetCreatedAt(time.Now()).
 		SetUpdatedAt(time.Now()).
 		SetType(typ).
@@ -108,6 +110,23 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 		if cnt == 0 {
 			bldr = bldr.SetPrimary(true)
 		}
+	} else if typ == attachment.TypePhoto && primary {
+		bldr = bldr.SetPrimary(true)
+		err := r.db.Attachment.Update().
+			Where(
+				attachment.HasItemWith(item.ID(itemID)),
+				attachment.IDNEQ(bldrId),
+			).
+			SetPrimary(false).
+			Exec(ctx)
+		if err != nil {
+			log.Err(err).Msg("failed to remove primary from other attachments")
+			err := tx.Rollback()
+			if err != nil {
+				return nil, err
+			}
+			return nil, err
+		}
 	}
 
 	// Get the group ID for the item the attachment is being created for
@@ -122,8 +141,7 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 	}
 
 	// Prepare for the hashing of the file contents
-	hashOut := make([]byte, 16)
-
+	hashOut := make([]byte, 32)
 	buf, err := io.ReadAll(doc.Content)
 	if err != nil {
 		return nil, err
