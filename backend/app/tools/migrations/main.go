@@ -61,10 +61,10 @@ func main() {
 	}
 
 	databaseURL := ""
-	switch {
-	case cfg.Database.Driver == "sqlite3":
+	switch cfg.Database.Driver {
+	case "sqlite3":
 		databaseURL = fmt.Sprintf("sqlite://%s", cfg.Database.SqlitePath)
-	case cfg.Database.Driver == "postgres":
+	case "postgres":
 		databaseURL = fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s", cfg.Database.Username, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port, cfg.Database.Database, cfg.Database.SslMode)
 	default:
 		log.Fatalf("unsupported database driver: %s", cfg.Database.Driver)

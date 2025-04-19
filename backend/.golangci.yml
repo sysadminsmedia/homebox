@@ -1,49 +1,34 @@
 version: "2"
-lint:
-  timeout: 10m
-  linters:
-    enable:
-      - asciicheck
-      - bodyclose
-      - depguard
-      - dogsled
-      - errcheck
-      - errorlint
-      - exhaustive
-      - copyloopvar
-      - gochecknoinits
-      - goconst
-      - gocritic
-      - gocyclo
-      - gofmt
-      - goprintffuncname
-      - gosimple
-      - govet
-      - ineffassign
-      - misspell
-      - nakedret
-      - revive
-      - staticcheck
-      - stylecheck
-      - tagalign
-      - testifylint
-      - typecheck
-      - unconvert
-      - unused
-      - whitespace
-      - zerologlint
-      - sqlclosecheck
-    disable-all: false
-  linters-settings:
-    goconst:
-      min-len: 5
-      min-occurrences: 5
-    exhaustive:
-      default-signifies-exhaustive: true
-    revive:
-      ignore-generated-header: false
-      severity: warning
-      confidence: 3
+linters:
+  default: none
+  enable:
+    - asciicheck
+    - bodyclose
+    - copyloopvar
+    - depguard
+    - dogsled
+    - errcheck
+    - errorlint
+    - exhaustive
+    - gochecknoinits
+    - goconst
+    - gocritic
+    - gocyclo
+    - goprintffuncname
+    - govet
+    - ineffassign
+    - misspell
+    - nakedret
+    - revive
+    - sqlclosecheck
+    - staticcheck
+    - tagalign
+    - testifylint
+    - unconvert
+    - unused
+    - whitespace
+    - zerologlint
+  settings:
     depguard:
       rules:
         main:
@@ -54,11 +39,17 @@ lint:
                 package io or package os, and those implementations should be
                 preferred in new code. See the specific function documentation for
                 details.
+    exhaustive:
+      default-signifies-exhaustive: true
+    goconst:
+      min-len: 5
+      min-occurrences: 5
     gocritic:
       enabled-checks:
         - ruleguard
-    testifylint:
-      enable-all: true
+    revive:
+      confidence: 3
+      severity: warning
     tagalign:
       order:
         - json
@@ -67,8 +58,24 @@ lint:
         - yml
         - toml
         - validate
+    testifylint:
+      enable-all: true
+  exclusions:
+    generated: lax
+    paths:
+      - internal/data/ent.*
+      - third_party$
+      - builtin$
+      - examples$
 issues:
-  exclude-use-default: false
-  exclude-dirs:
-    - internal/data/ent.*
   fix: true
+formatters:
+  enable:
+    - gofmt
+  exclusions:
+    generated: lax
+    paths:
+      - internal/data/ent.*
+      - third_party$
+      - builtin$
+      - examples$

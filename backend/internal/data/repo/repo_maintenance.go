@@ -50,12 +50,13 @@ func (r *MaintenanceEntryRepository) GetAllMaintenance(ctx context.Context, grou
 		),
 	)
 
-	if filters.Status == MaintenanceFilterStatusScheduled {
+	switch filters.Status {
+	case MaintenanceFilterStatusScheduled:
 		query = query.Where(maintenanceentry.Or(
 			maintenanceentry.DateIsNil(),
 			maintenanceentry.DateEQ(time.Time{}),
 		))
-	} else if filters.Status == MaintenanceFilterStatusCompleted {
+	case MaintenanceFilterStatusCompleted:
 		query = query.Where(
 			maintenanceentry.Not(maintenanceentry.Or(
 				maintenanceentry.DateIsNil(),
