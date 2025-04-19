@@ -56,9 +56,9 @@ func TestAttachmentRepo_Create(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tRepos.Attachments.Create(tt.args.ctx, tt.args.itemID, ItemCreateAttachment{Title: "Test", Content: strings.NewReader("This is a test")}, tt.args.typ, false)
+			got, _ := tRepos.Attachments.Create(tt.args.ctx, tt.args.itemID, ItemCreateAttachment{Title: "Test", Content: strings.NewReader("This is a test")}, tt.args.typ, false)
 			// TODO: Figure out how this works and fix the test later
-			//if (err != nil) != tt.wantErr {
+			// if (err != nil) != tt.wantErr {
 			//	t.Errorf("AttachmentRepo.Create() error = %v, wantErr %v", err, tt.wantErr)
 			//	return
 			//}
