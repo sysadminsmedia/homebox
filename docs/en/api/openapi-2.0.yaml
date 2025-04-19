@@ -1168,6 +1168,10 @@ paths:
         name: type
         required: true
         type: string
+      - description: Is this the primary attachment
+        in: formData
+        name: primary
+        type: boolean
       - description: name of the file including extension
         in: formData
         name: name

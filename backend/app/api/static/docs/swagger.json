@@ -772,6 +772,12 @@
                         "required": true
                     },
                     {
+                        "type": "boolean",
+                        "description": "Is this the primary attachment",
+                        "name": "primary",
+                        "in": "formData"
+                    },
+                    {
                         "type": "string",
                         "description": "name of the file including extension",
                         "name": "name",
