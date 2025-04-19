@@ -146,11 +146,12 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 
 	buf := &bytes.Buffer{}
 	tee := io.TeeReader(doc.Content, buf)
+	test := buf.Bytes()
 
 	// We use blake3 to generate a hash of the file contents, the group ID is used as context to ensure unique hashes
 	// for the same file across different groups to reduce the chance of collisions
 	// additionally, the hash can be used to validate the file contents if needed
-	blake3.DeriveKey(itemGroup.ID.String(), buf.Bytes(), hashOut)
+	blake3.DeriveKey(itemGroup.ID.String(), test, hashOut)
 
 	// Create the file itself
 	path := r.path(itemGroup.ID, fmt.Sprintf("%x", hashOut))
@@ -259,10 +260,19 @@ func (r *AttachmentRepo) Delete(ctx context.Context, id uuid.UUID) error {
 		return error
 	}
 
-	err := os.Remove(doc.Path)
+	all, err := r.db.Attachment.Query().Where(attachment.Path(doc.Path)).All(ctx)
 	if err != nil {
 		return err
 	}
+
+	// If this is the last attachment for this path, delete the file
+	if len(all) == 1 {
+		err := os.Remove(doc.Path)
+		if err != nil {
+			return err
+		}
+	}
+
 	return r.db.Attachment.DeleteOneID(id).Exec(ctx)
 }
 
