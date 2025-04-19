@@ -55,7 +55,7 @@ func TestAttachmentRepo_Create(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := tRepos.Attachments.Create(tt.args.ctx, tt.args.itemID, ItemCreateAttachment{Title: "Test"}, tt.args.typ)
+			got, err := tRepos.Attachments.Create(tt.args.ctx, tt.args.itemID, ItemCreateAttachment{Title: "Test"}, tt.args.typ, false)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("AttachmentRepo.Create() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -90,7 +90,7 @@ func useAttachments(t *testing.T, n int) []*ent.Attachment {
 
 	attachments := make([]*ent.Attachment, n)
 	for i := 0; i < n; i++ {
-		attachment, err := tRepos.Attachments.Create(context.Background(), item.ID, ItemCreateAttachment{Title: "Test"}, attachment.TypePhoto)
+		attachment, err := tRepos.Attachments.Create(context.Background(), item.ID, ItemCreateAttachment{Title: "Test"}, attachment.TypePhoto, true)
 		require.NoError(t, err)
 		attachments[i] = attachment
 

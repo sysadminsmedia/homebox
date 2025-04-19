@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/rs/zerolog/log"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/zeebo/blake3"
 	"io"
 	"os"
@@ -131,7 +132,7 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 	}
 
 	// Get the group ID for the item the attachment is being created for
-	itemGroup, err := tx.Item.Query().QueryGroup().Only(ctx)
+	itemGroup, err := tx.Item.Query().QueryGroup().Where(group.HasItemsWith(item.ID(itemID))).First(ctx)
 	if err != nil {
 		log.Err(err).Msg("failed to get item group")
 		err := tx.Rollback()
@@ -210,7 +211,7 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 
 	bldr = bldr.SetPath(path)
 
-	attachment, err := bldr.Save(ctx)
+	attachmentDb, err := bldr.Save(ctx)
 	if err != nil {
 		log.Err(err).Msg("failed to save attachment to database")
 		err = tx.Rollback()
@@ -224,7 +225,7 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 		log.Err(err).Msg("failed to commit transaction")
 		return nil, err
 	}
-	return attachment, nil
+	return attachmentDb, nil
 }
 
 func (r *AttachmentRepo) Get(ctx context.Context, id uuid.UUID) (*ent.Attachment, error) {
