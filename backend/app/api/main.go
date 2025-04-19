@@ -161,6 +161,9 @@ func run(cfg *config.Config) error {
 		schema.WithDir(dir),
 		schema.WithDropColumn(true),
 		schema.WithDropIndex(true),
+		schema.WithDialect(strings.ToLower(cfg.Database.Driver)),
+		schema.WithForeignKeys(true),
+		schema.WithMigrationMode(schema.ModeReplay),
 	}
 
 	err = c.Schema.Create(context.Background(), options...)
