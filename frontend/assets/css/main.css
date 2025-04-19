@@ -777,14 +777,6 @@
     text-transform: none !important;
 }
 
-.btn {
-    text-transform: none !important;
-}
-
-.tooltip {
-  overflow-wrap: break-word;
-}
-
 /* transparent subtle scrollbar */
 ::-webkit-scrollbar {
   width: 0.2em;

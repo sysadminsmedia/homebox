@@ -29,7 +29,7 @@ module.exports = {
     "vue/no-v-html": 0,
     "@typescript-eslint/consistent-type-imports": "error",
     "@typescript-eslint/ban-ts-comment": 0,
-    "tailwindcss/no-custom-classname": 0,
+    "tailwindcss/no-custom-classname": "warn",
     "@typescript-eslint/no-unused-vars": [
       "error",
       {

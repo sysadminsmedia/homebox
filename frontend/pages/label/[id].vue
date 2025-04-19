@@ -3,10 +3,18 @@
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiDelete from "~icons/mdi/delete";
+  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import { useDialog } from "@/components/ui/dialog-provider";
+  import { Card } from "@/components/ui/card";
+  import { Button } from "@/components/ui/button";
+  import { Badge } from "@/components/ui/badge";
+  import { Separator } from "@/components/ui/separator";
 
   definePageMeta({
     middleware: ["auth"],
   });
+
+  const { openDialog, closeDialog } = useDialog();
 
   const route = useRoute();
   const api = useUserApi();
@@ -44,7 +52,6 @@
     navigateTo("/home");
   }
 
-  const updateModal = ref(false);
   const updating = ref(false);
   const updateData = reactive({
     name: "",
@@ -55,7 +62,8 @@
   function openUpdate() {
     updateData.name = label.value?.name || "";
     updateData.description = label.value?.description || "";
-    updateModal.value = true;
+    updateData.color = "";
+    openDialog("update-label");
   }
 
   async function update() {
@@ -70,7 +78,7 @@
 
     toast.success("Label updated");
     label.value = data;
-    updateModal.value = false;
+    closeDialog("update-label");
     updating.value = false;
   }
 
@@ -99,9 +107,13 @@
 </script>
 
 <template>
-  <BaseContainer>
-    <BaseModal v-model="updateModal">
-      <template #title> {{ $t("labels.update_label") }} </template>
+  <!-- Update Dialog -->
+  <Dialog dialog-id="update-label">
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle> {{ $t("labels.update_label") }} </DialogTitle>
+      </DialogHeader>
+
       <form v-if="label" class="flex flex-col gap-2" @submit.prevent="update">
         <FormTextField
           v-model="updateData.name"
@@ -115,62 +127,55 @@
           :label="$t('components.label.create_modal.label_description')"
           :max-length="255"
         />
-        <div class="modal-action">
-          <BaseButton type="submit" :loading="updating"> {{ $t("global.update") }} </BaseButton>
-        </div>
+        <!-- TODO: color  -->
+        <DialogFooter>
+          <Button type="submit" :loading="updating"> {{ $t("global.update") }} </Button>
+        </DialogFooter>
       </form>
-    </BaseModal>
+    </DialogContent>
+  </Dialog>
 
-    <BaseContainer v-if="label">
-      <div class="rounded bg-base-100 p-3">
-        <header class="mb-2">
-          <div class="flex flex-wrap items-end gap-2">
-            <div class="avatar placeholder mb-auto">
-              <div class="w-12 rounded-full bg-neutral-focus text-neutral-content">
-                <MdiPackageVariant class="size-7" />
+  <BaseContainer v-if="label">
+    <Card class="p-3">
+      <header :class="{ 'mb-2': label.description }">
+        <div class="flex flex-wrap items-end gap-2">
+          <div
+            class="mb-auto flex size-12 items-center justify-center rounded-full bg-neutral-focus text-neutral-content"
+          >
+            <MdiPackageVariant class="size-7" />
+          </div>
+          <div>
+            <h1 class="flex items-center gap-3 pb-1 text-2xl">
+              {{ label ? label.name : "" }}
+              <Badge v-if="items && items.totalPrice" variant="secondary" class="ml-2">
+                <Currency :amount="items.totalPrice" />
+              </Badge>
+            </h1>
+            <div class="flex flex-wrap gap-1 text-xs">
+              <div>
+                {{ $t("global.created") }}
+                <DateTime :date="label?.createdAt" />
               </div>
-            </div>
-            <div>
-              <h1 class="flex items-center gap-3 pb-1 text-2xl">
-                {{ label ? label.name : "" }}
-
-                <div
-                  v-if="items && items.totalPrice"
-                  class="rounded-full bg-secondary px-2 py-1 text-xs text-secondary-content"
-                >
-                  <div>
-                    <Currency :amount="items.totalPrice" />
-                  </div>
-                </div>
-              </h1>
-              <div class="flex flex-wrap gap-1 text-xs">
-                <div>
-                  Created
-                  <DateTime :date="label?.createdAt" />
-                </div>
-              </div>
-            </div>
-            <div class="ml-auto mt-2 flex flex-wrap items-center justify-between gap-3">
-              <div class="btn-group">
-                <PageQRCode class="dropdown-left" />
-                <BaseButton size="sm" @click="openUpdate">
-                  <MdiPencil class="mr-1" />
-                  Edit
-                </BaseButton>
-              </div>
-              <BaseButton class="btn btn-sm" @click="confirmDelete()">
-                <MdiDelete class="mr-2" />
-                Delete
-              </BaseButton>
             </div>
           </div>
-        </header>
-        <div class="divider my-0 mb-1"></div>
-        <Markdown v-if="label && label.description" class="text-base" :source="label.description"> </Markdown>
-      </div>
-      <section v-if="label && items">
-        <ItemViewSelectable :items="items.items" />
-      </section>
-    </BaseContainer>
+          <div class="ml-auto mt-2 flex flex-wrap items-center justify-between gap-3">
+            <PageQRCode />
+            <Button @click="openUpdate">
+              <MdiPencil />
+              {{ $t("global.edit") }}
+            </Button>
+            <Button variant="destructive" @click="confirmDelete()">
+              <MdiDelete />
+              {{ $t("global.delete") }}
+            </Button>
+          </div>
+        </div>
+      </header>
+      <Separator v-if="label && label.description" />
+      <Markdown v-if="label && label.description" class="mt-3 text-base" :source="label.description" />
+    </Card>
+    <section v-if="label && items">
+      <ItemViewSelectable :items="items.items" />
+    </section>
   </BaseContainer>
 </template>

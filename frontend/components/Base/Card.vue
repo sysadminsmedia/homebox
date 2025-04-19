@@ -1,13 +1,12 @@
 <template>
-  <div class="card rounded-lg bg-base-100 shadow-xl">
-    <div v-if="$slots.title" class="px-4 py-5 sm:px-6">
+  <Card class="overflow-hidden shadow-xl">
+    <CardHeader v-if="$slots.title" class="px-4 py-5 sm:px-6">
       <component :is="collapsable ? 'button' : 'div'" v-on="collapsable ? { click: toggle } : {}">
         <h3 class="flex items-center text-lg font-medium leading-6">
           <slot name="title"></slot>
           <template v-if="collapsable">
-            <span class="swap swap-rotate ml-2" :class="`${collapsed ? 'swap-active' : ''}`">
-              <MdiChevronRight class="swap-on size-6" />
-              <MdiChevronDown class="swap-off size-6" />
+            <span class="ml-2 transition-transform" :class="{ 'rotate-180': collapsed }">
+              <MdiChevronDown class="size-6" />
             </span>
           </template>
         </h3>
@@ -20,22 +19,22 @@
           <slot name="title-actions"></slot>
         </template>
       </div>
-    </div>
-    <div
+    </CardHeader>
+    <CardContent
       :class="{
         'max-h-[9000px]': collapsable && !collapsed,
         'max-h-0 overflow-hidden': collapsed,
       }"
-      class="transition-[max-height] duration-200"
+      class="p-0 transition-[max-height] duration-200"
     >
       <slot />
-    </div>
-  </div>
+    </CardContent>
+  </Card>
 </template>
 
 <script setup lang="ts">
   import MdiChevronDown from "~icons/mdi/chevron-down";
-  import MdiChevronRight from "~icons/mdi/chevron-right";
+  import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
   defineProps<{
     collapsable?: boolean;

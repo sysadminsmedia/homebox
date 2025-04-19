@@ -1,12 +1,58 @@
 <template>
+  <Dialog dialog-id="item-table-settings">
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>{{ $t("components.item.view.table.table_settings") }}</DialogTitle>
+      </DialogHeader>
+
+      <div>{{ $t("components.item.view.table.headers") }}</div>
+      <div class="flex flex-col">
+        <div v-for="(h, i) in headers" :key="h.value" class="flex flex-row items-center gap-1">
+          <Button size="icon" class="size-6" variant="ghost" :disabled="i === 0" @click="moveHeader(i, i - 1)">
+            <MdiArrowUp />
+          </Button>
+          <Button
+            size="icon"
+            class="size-6"
+            variant="ghost"
+            :disabled="i === headers.length - 1"
+            @click="moveHeader(i, i + 1)"
+          >
+            <MdiArrowDown />
+          </Button>
+          <Checkbox :id="h.value" :model-value="h.enabled" @update:model-value="toggleHeader(h.value)" />
+          <label class="text-sm" :for="h.value"> {{ $t(h.text) }} </label>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <Label> {{ $t("components.item.view.table.rows_per_page") }} </Label>
+        <Select :model-value="pagination.rowsPerPage" @update:model-value="pagination.rowsPerPage = Number($event)">
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem :value="10">10</SelectItem>
+            <SelectItem :value="25">25</SelectItem>
+            <SelectItem :value="50">50</SelectItem>
+            <SelectItem :value="100">100</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <DialogFooter>
+        <Button @click="closeDialog('item-table-settings')"> {{ $t("global.save") }} </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
   <BaseCard>
-    <table class="table w-full">
-      <thead>
-        <tr>
-          <th
+    <Table class="w-full">
+      <TableHeader>
+        <TableRow>
+          <TableHead
             v-for="h in headers.filter(h => h.enabled)"
             :key="h.value"
-            class="text-no-transform cursor-pointer bg-neutral text-sm text-neutral-content"
+            class="text-no-transform cursor-pointer bg-neutral text-sm text-neutral-content hover:bg-neutral/90"
             @click="sortBy(h.value)"
           >
             <div
@@ -20,24 +66,21 @@
               <template v-if="typeof h === 'string'">{{ h }}</template>
               <template v-else>{{ $t(h.text) }}</template>
               <div
-                v-if="sortByProperty === h.value"
-                :class="`inline-flex ${sortByProperty === h.value ? '' : 'opacity-0'}`"
+                :data-swap="pagination.descending"
+                :class="{ 'opacity-0': sortByProperty !== h.value }"
+                class="transition-transform duration-300 data-[swap=true]:rotate-180"
               >
-                <span class="swap swap-rotate" :class="{ 'swap-active': pagination.descending }">
-                  <MdiArrowDown class="swap-on size-5" />
-                  <MdiArrowUp class="swap-off size-5" />
-                </span>
+                <MdiArrowUp class="size-5" />
               </div>
             </div>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(d, i) in data" :key="d.id" class="hover cursor-pointer" @click="navigateTo(`/item/${d.id}`)">
-          <td
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow v-for="(d, i) in data" :key="d.id" class="cursor-pointer" @click="navigateTo(`/item/${d.id}`)">
+          <TableCell
             v-for="h in headers.filter(h => h.enabled)"
             :key="`${h.value}-${i}`"
-            class="bg-base-100"
             :class="{
               'text-center': h.align === 'center',
               'text-right': h.align === 'right',
@@ -45,7 +88,7 @@
             }"
           >
             <template v-if="h.type === 'name'">
-              <NuxtLink class="hover text-wrap" :to="`/item/${d.id}`">
+              <NuxtLink class="text-wrap" :to="`/item/${d.id}`">
                 {{ d.name }}
               </NuxtLink>
             </template>
@@ -57,7 +100,7 @@
               <MdiClose v-else class="inline size-5 text-red-500" />
             </template>
             <template v-else-if="h.type === 'location'">
-              <NuxtLink v-if="d.location" class="hover:link" :to="`/location/${d.location.id}`">
+              <NuxtLink v-if="d.location" class="hover:underline" :to="`/location/${d.location.id}`">
                 {{ d.location.name }}
               </NuxtLink>
             </template>
@@ -67,76 +110,69 @@
             <slot v-else :name="cell(h)" v-bind="{ item: d }">
               {{ extractValue(d, h.value) }}
             </slot>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
     <div
-      class="flex items-center justify-end gap-3 border-t p-3"
+      class="flex items-center justify-between gap-2 border-t p-3"
       :class="{
         hidden: disableControls,
       }"
     >
-      <div class="dropdown dropdown-top dropdown-hover">
-        <label tabindex="0" class="btn btn-square btn-outline btn-sm m-1">
-          <MdiTableCog />
-        </label>
-        <ul tabindex="0" class="dropdown-content rounded-box flex w-64 flex-col gap-2 bg-base-100 p-2 pl-3 shadow">
-          <li>Headers:</li>
-          <li v-for="(h, i) in headers" :key="h.value" class="flex flex-row items-center gap-1">
-            <button
-              class="btn btn-square btn-ghost btn-xs"
-              :class="{
-                'btn-disabled': i === 0,
-              }"
-              @click="moveHeader(i, i - 1)"
-            >
-              <MdiArrowUp />
-            </button>
-            <button
-              class="btn btn-square btn-ghost btn-xs"
-              :class="{
-                'btn-disabled': i === headers.length - 1,
-              }"
-              @click="moveHeader(i, i + 1)"
-            >
-              <MdiArrowDown />
-            </button>
-            <input
-              :id="h.value"
-              type="checkbox"
-              class="checkbox checkbox-primary"
-              :checked="h.enabled"
-              @change="toggleHeader(h.value)"
-            />
-            <label class="label-text" :for="h.value"> {{ $t(h.text) }} </label>
-          </li>
-        </ul>
-      </div>
-      <div class="hidden md:block">{{ $t("components.item.view.table.rows_per_page") }}</div>
-      <select v-model.number="pagination.rowsPerPage" class="select select-primary select-sm">
-        <option :value="10">10</option>
-        <option :value="25">25</option>
-        <option :value="50">50</option>
-        <option :value="100">100</option>
-      </select>
-      <div class="btn-group">
-        <button :disabled="!hasPrev" class="btn btn-sm" @click="prev()">«</button>
-        <button class="btn btn-sm">{{ $t("components.item.view.table.page") }} {{ pagination.page }}</button>
-        <button :disabled="!hasNext" class="btn btn-sm" @click="next()">»</button>
-      </div>
+      <Button class="size-10 p-0" variant="outline" @click="openDialog('item-table-settings')">
+        <MdiTableCog />
+      </Button>
+      <Pagination
+        v-slot="{ page }"
+        :items-per-page="pagination.rowsPerPage"
+        :total="props.items.length"
+        :sibling-count="2"
+        @update:page="pagination.page = $event"
+      >
+        <PaginationList v-slot="{ pageItems }" class="flex items-center gap-1">
+          <PaginationFirst />
+          <template v-for="(item, index) in pageItems">
+            <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
+              <Button class="size-10 p-0" :variant="item.value === page ? 'default' : 'outline'">
+                {{ item.value }}
+              </Button>
+            </PaginationListItem>
+            <PaginationEllipsis v-else :key="item.type" :index="index" />
+          </template>
+          <PaginationLast />
+        </PaginationList>
+      </Pagination>
+      <Button class="invisible hidden size-10 p-0 md:block">
+        <!-- properly centre the pagination buttons -->
+      </Button>
     </div>
   </BaseCard>
 </template>
 
 <script setup lang="ts">
-  import type { TableData, TableHeader } from "./Table.types";
+  import type { TableData, TableHeaderType } from "./Table.types";
   import type { ItemSummary } from "~~/lib/api/types/data-contracts";
   import MdiArrowDown from "~icons/mdi/arrow-down";
   import MdiArrowUp from "~icons/mdi/arrow-up";
   import MdiCheck from "~icons/mdi/check";
   import MdiClose from "~icons/mdi/close";
   import MdiTableCog from "~icons/mdi/table-cog";
+  import { Checkbox } from "@/components/ui/checkbox";
+  import { Table, TableBody, TableHeader, TableCell, TableHead, TableRow } from "@/components/ui/table";
+  import {
+    Pagination,
+    PaginationEllipsis,
+    PaginationFirst,
+    PaginationLast,
+    PaginationList,
+    PaginationListItem,
+  } from "@/components/ui/pagination";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import { useDialog } from "@/components/ui/dialog-provider";
+
+  const { openDialog, closeDialog } = useDialog();
 
   type Props = {
     items: ItemSummary[];
@@ -162,14 +198,14 @@
     { text: "items.archived", value: "archived", align: "center", enabled: false, type: "boolean" },
     { text: "items.created_at", value: "createdAt", align: "center", enabled: false, type: "date" },
     { text: "items.updated_at", value: "updatedAt", align: "center", enabled: false, type: "date" },
-  ] satisfies TableHeader[];
+  ] satisfies TableHeaderType[];
 
-  const headers = ref<TableHeader[]>(
+  const headers = ref<TableHeaderType[]>(
     (preferences.value.tableHeaders ?? [])
       .concat(defaultHeaders.filter(h => !preferences.value.tableHeaders?.find(h2 => h2.value === h.value)))
       // this is a hack to make sure that any changes to the defaultHeaders are reflected in the preferences
       .map(h => ({
-        ...(defaultHeaders.find(h2 => h2.value === h.value) as TableHeader),
+        ...(defaultHeaders.find(h2 => h2.value === h.value) as TableHeaderType),
         enabled: h.enabled,
       }))
   );
@@ -205,16 +241,6 @@
       preferences.value.itemsPerTablePage = newRowsPerPage;
     }
   );
-
-  const next = () => pagination.page++;
-  const hasNext = computed<boolean>(() => {
-    return pagination.page * pagination.rowsPerPage < props.items.length;
-  });
-
-  const prev = () => pagination.page--;
-  const hasPrev = computed<boolean>(() => {
-    return pagination.page > 1;
-  });
 
   function sortBy(property: keyof ItemSummary) {
     if (sortByProperty.value === property) {
@@ -290,25 +316,7 @@
     return current;
   }
 
-  function cell(h: TableHeader) {
+  function cell(h: TableHeaderType) {
     return `cell-${h.value.replace(".", "_")}`;
   }
 </script>
-
-<style scoped>
-  :where(.table *:first-child) :where(*:first-child) :where(th, td):first-child {
-    border-top-left-radius: 0.5rem;
-  }
-
-  :where(.table *:first-child) :where(*:first-child) :where(th, td):last-child {
-    border-top-right-radius: 0.5rem;
-  }
-
-  :where(.table *:last-child) :where(*:last-child) :where(th, td):first-child {
-    border-bottom-left-radius: 0.5rem;
-  }
-
-  :where(.table *:last-child) :where(*:last-child) :where(th, td):last-child {
-    border-bottom-right-radius: 0.5rem;
-  }
-</style>

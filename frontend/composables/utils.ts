@@ -64,7 +64,7 @@ export function maybeUrl(str: string): MaybeUrlResult {
     }
   } else {
     result.url = str;
-    result.text = "Link";
+    result.text = str;
   }
 
   return result;

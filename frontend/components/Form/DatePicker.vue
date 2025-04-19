@@ -1,29 +1,11 @@
 <template>
-  <div v-if="!inline" class="form-control w-full">
-    <label class="label">
-      <span class="label-text"> {{ label }} </span>
-    </label>
-    <VueDatePicker
-      v-model="selected"
-      :enable-time-picker="false"
-      clearable
-      :dark="isDark"
-      :teleport="true"
-      :format="formatDate"
-    />
+  <div v-if="!inline" class="flex w-full flex-col">
+    <Label class="cursor-pointer"> {{ label }} </Label>
+    <VueDatePicker v-model="selected" :enable-time-picker="false" clearable :dark="isDark" :format="formatDate" />
   </div>
-  <div v-else class="sm:grid sm:grid-cols-4 sm:items-start sm:gap-4">
-    <label class="label">
-      <span class="label-text"> {{ label }} </span>
-    </label>
-    <VueDatePicker
-      v-model="selected"
-      :enable-time-picker="false"
-      clearable
-      :dark="isDark"
-      :teleport="true"
-      :format="formatDate"
-    />
+  <div v-else class="sm:flex sm:items-start sm:gap-4">
+    <Label class="flex w-full cursor-pointer px-1 py-2"> {{ label }} </Label>
+    <VueDatePicker v-model="selected" :enable-time-picker="false" clearable :dark="isDark" :format="formatDate" />
   </div>
 </template>
 
@@ -32,6 +14,8 @@
   import VueDatePicker from "@vuepic/vue-datepicker";
   import "@vuepic/vue-datepicker/dist/main.css";
   import * as datelib from "~/lib/datelib/datelib";
+  import { Label } from "@/components/ui/label";
+
   const emit = defineEmits(["update:modelValue", "update:text"]);
 
   const props = defineProps({

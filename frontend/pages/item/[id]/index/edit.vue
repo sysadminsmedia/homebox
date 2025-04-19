@@ -4,11 +4,19 @@
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
-  import Autocomplete from "~~/components/Form/Autocomplete.vue";
   import MdiDelete from "~icons/mdi/delete";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiContentSaveOutline from "~icons/mdi/content-save-outline";
-  import MdiContentCopy from "~icons/mdi/content-copy";
+  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import { Button } from "@/components/ui/button";
+  import { useDialog } from "@/components/ui/dialog-provider";
+  import { Checkbox } from "@/components/ui/checkbox";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+  import { Switch } from "@/components/ui/switch";
+  import { Label } from "@/components/ui/label";
+
+  const { openDialog, closeDialog } = useDialog();
 
   definePageMeta({
     middleware: ["auth"],
@@ -53,43 +61,22 @@
     return data;
   });
 
-  const item = computed<ItemOut>(() => nullableItem.value as ItemOut);
+  const item = ref<ItemOut & { labelIds: string[] }>(null as any);
+
+  watchEffect(() => {
+    if (nullableItem.value) {
+      item.value = {
+        ...nullableItem.value,
+        labelIds: nullableItem.value.labels.map(l => l.id) ?? [],
+      };
+    }
+  });
+
+  // const item = computed(() => nullableItem.value as ItemOut);
 
   onMounted(() => {
     refresh();
   });
-
-  async function duplicateItem() {
-    const { error, data } = await api.items.create({
-      name: `${item.value.name} Copy`,
-      description: item.value.description,
-      locationId: item.value.location!.id,
-      parentId: item.value.parent?.id,
-      labelIds: item.value.labels.map(l => l.id),
-    });
-
-    if (error) {
-      toast.error("Failed to duplicate item");
-      return;
-    }
-
-    // add extra fields
-    const { error: updateError } = await api.items.update(data.id, {
-      ...item.value,
-      id: data.id,
-      labelIds: data.labels.map(l => l.id),
-      locationId: data.location!.id,
-      name: data.name,
-      assetId: data.assetId,
-    });
-
-    if (updateError) {
-      toast.error("Failed to duplicate item");
-      return;
-    }
-
-    navigateTo(`/item/${data.id}`);
-  }
 
   async function saveItem() {
     if (!item.value.location?.id) {
@@ -112,7 +99,7 @@
     const payload: ItemUpdate = {
       ...item.value,
       locationId: item.value.location?.id,
-      labelIds: item.value.labels.map(l => l.id),
+      labelIds: item.value.labelIds,
       parentId: parent.value ? parent.value.id : null,
       assetId: item.value.assetId,
       purchasePrice,
@@ -366,7 +353,6 @@
   }
 
   const editState = reactive({
-    modal: false,
     loading: false,
 
     // Values
@@ -387,7 +373,7 @@
     editState.title = attachment.document.title;
     editState.type = attachment.type;
     editState.primary = attachment.primary;
-    editState.modal = true;
+    openDialog("attachment-edit");
 
     editState.obj = attachmentOpts.find(o => o.value === attachment.type) || attachmentOpts[0];
   }
@@ -408,7 +394,7 @@
     item.value.attachments = data.attachments;
 
     editState.loading = false;
-    editState.modal = false;
+    closeDialog("attachment-edit");
 
     editState.id = "";
     editState.title = "";
@@ -431,22 +417,6 @@
 
   const { query, results } = useItemSearch(api, { immediate: false });
   const parent = ref();
-
-  async function deleteItem() {
-    const confirmed = await confirm.open("Are you sure you want to delete this item?");
-
-    if (!confirmed.data) {
-      return;
-    }
-
-    const { error } = await api.items.delete(itemId.value);
-    if (error) {
-      toast.error("Failed to delete item");
-      return;
-    }
-    toast.success("Item deleted");
-    navigateTo("/home");
-  }
 
   async function keyboardSave(e: KeyboardEvent) {
     // Cmd + S
@@ -502,7 +472,7 @@
     const payload: ItemUpdate = {
       ...item.value,
       locationId: item.value.location?.id,
-      labelIds: item.value.labels.map(l => l.id),
+      labelIds: item.value.labelIds,
       parentId: parent.value ? parent.value.id : null,
       assetId: item.value.assetId,
     };
@@ -532,75 +502,65 @@
 
 <template>
   <div v-if="item" class="pb-8">
-    <BaseModal v-model="editState.modal">
-      <template #title> Attachment Edit </template>
+    <Dialog dialog-id="attachment-edit">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Attachment Edit</DialogTitle>
+        </DialogHeader>
 
-      <FormTextField v-model="editState.title" label="Attachment Title" />
-      <FormSelect
-        v-model:value="editState.type"
-        label="Attachment Type"
-        value-key="value"
-        name="text"
-        :items="attachmentOpts"
-      />
-      <div v-if="editState.type == 'photo'" class="mt-3 flex gap-2">
-        <input v-model="editState.primary" type="checkbox" class="checkbox" />
-        <p class="text-sm">
-          <span class="font-semibold">Primary Photo</span>
-          This options is only available for photos. Only one photo can be primary. If you select this option, the
-          current primary photo, if any will be unselected.
-        </p>
-      </div>
-      <div class="modal-action">
-        <BaseButton :loading="editState.loading" @click="updateAttachment"> Update </BaseButton>
-      </div>
-    </BaseModal>
-
-    <section class="relative">
-      <div class="sticky top-1 z-10 my-4 flex items-center justify-end gap-2">
-        <div class="tooltip tooltip-right mr-auto" :data-tip="$t('items.show_advanced_view_options')">
-          <label class="label mr-auto cursor-pointer">
-            <input v-model="preferences.editorAdvancedView" type="checkbox" class="toggle toggle-primary" />
-            <span class="label-text ml-4"> {{ $t("items.advanced") }} </span>
+        <FormTextField v-model="editState.title" label="Attachment Title" />
+        <div>
+          <Label for="attachment-type"> Attachment Type </Label>
+          <Select id="attachment-type" v-model:model-value="editState.type">
+            <SelectTrigger>
+              <SelectValue placeholder="Select a type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem v-for="opt in attachmentOpts" :key="opt.value" :value="opt.value">
+                {{ opt.text }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div v-if="editState.type == 'photo'" class="mt-3 flex items-center gap-2">
+          <Checkbox id="primary" v-model="editState.primary" label="Primary Photo" />
+          <label class="cursor-pointer text-sm" for="primary">
+            <span class="font-semibold">Primary Photo</span>
+            This options is only available for photos. Only one photo can be primary. If you select this option, the
+            current primary photo, if any will be unselected.
           </label>
         </div>
-        <BaseButton size="sm" class="btn" @click="duplicateItem">
-          <template #icon>
-            <MdiContentCopy />
-          </template>
-          {{ $t("global.duplicate") }}
-        </BaseButton>
-        <BaseButton size="sm" @click="saveItem">
-          <template #icon>
-            <MdiContentSaveOutline />
-          </template>
+
+        <DialogFooter>
+          <Button :loading="editState.loading" @click="updateAttachment"> Update </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    <section class="relative">
+      <div class="sticky top-1 z-10 my-4 flex items-center justify-between gap-2">
+        <TooltipProvider :delay-duration="0">
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <Label class="flex cursor-pointer items-center gap-2 backdrop-blur-sm">
+                <Switch v-model="preferences.editorAdvancedView" />
+                {{ $t("items.advanced") }}
+              </Label>
+            </TooltipTrigger>
+            <TooltipContent>{{ $t("items.show_advanced_view_options") }}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <Button class="" size="sm" @click="saveItem">
+          <MdiContentSaveOutline />
           {{ $t("global.save") }}
-        </BaseButton>
-        <BaseButton class="btn btn-error btn-sm" @click="deleteItem()">
-          <MdiDelete class="mr-2" />
-          {{ $t("global.delete") }}
-        </BaseButton>
+        </Button>
       </div>
       <div v-if="!requestPending" class="space-y-6">
         <BaseCard class="overflow-visible">
           <template #title> {{ $t("items.edit_details") }} </template>
-          <template #title-actions>
-            <div class="mt-2 flex flex-wrap items-center justify-between gap-4"></div>
-          </template>
           <div class="mb-6 grid gap-4 border-t px-5 pt-2 md:grid-cols-2">
-            <LocationLegacySelector
-              v-model="item.location"
-              @update:model-value="informAboutDesyncingLocationFromParent()"
-            />
-            <FormMultiselect v-model="item.labels" :label="$t('global.labels')" :items="labels ?? []" />
-            <FormToggle
-              v-model="item.syncChildItemsLocations"
-              label="Sync child items' locations"
-              inline
-              @update:model-value="syncChildItemsLocations()"
-            />
-            <Autocomplete
-              v-if="preferences.editorAdvancedView"
+            <LocationSelector v-model="item.location" @update:model-value="informAboutDesyncingLocationFromParent()" />
+            <ItemSelector
               v-model="parent"
               v-model:search="query"
               :items="results"
@@ -609,6 +569,11 @@
               no-results-text="Type to search..."
               @update:model-value="maybeSyncWithParentLocation()"
             />
+            <div class="flex flex-col gap-2">
+              <Label class="px-1">Sync child items' locations</Label>
+              <Switch v-model="item.syncChildItemsLocations" @update:model-value="syncChildItemsLocations()" />
+            </div>
+            <LabelSelector v-model="item.labelIds" :labels="labels" />
           </div>
 
           <div class="border-t border-gray-300 sm:p-0">
@@ -655,7 +620,7 @@
           </div>
         </BaseCard>
 
-        <BaseCard>
+        <BaseCard v-if="preferences.editorAdvancedView">
           <template #title> {{ $t("items.custom_fields") }} </template>
           <div class="space-y-4 divide-y divide-gray-300 border-t px-5">
             <div
@@ -667,24 +632,23 @@
               <FormTextField v-model="field.name" :label="$t('global.name')" />
               <div class="col-span-3 flex items-end">
                 <FormTextField v-model="field.textValue" :label="$t('global.value')" :max-length="500" />
-                <div class="tooltip" :data-tip="$t('global.delete')">
-                  <button class="btn btn-square btn-sm mb-2 ml-2" @click="item.fields.splice(idx, 1)">
-                    <MdiDelete />
-                  </button>
-                </div>
+                <Tooltip>
+                  <TooltipTrigger as-child>
+                    <Button size="icon" variant="destructive" class="ml-2" @click="item.fields.splice(idx, 1)">
+                      <MdiDelete />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>{{ $t("global.delete") }}</TooltipContent>
+                </Tooltip>
               </div>
             </div>
           </div>
           <div class="mt-4 flex justify-end px-5 pb-4">
-            <BaseButton size="sm" @click="addField"> {{ $t("global.add") }} </BaseButton>
+            <Button size="sm" @click="addField"> {{ $t("global.add") }} </Button>
           </div>
         </BaseCard>
 
-        <div
-          v-if="preferences.editorAdvancedView"
-          ref="attDropZone"
-          class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg"
-        >
+        <div ref="attDropZone" class="overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">{{ $t("items.attachments") }}</h3>
             <p class="text-xs">{{ $t("items.changes_persisted_immediately") }}</p>
@@ -721,23 +685,29 @@
                   {{ $t(`items.${attachment.type}`) }}
                 </p>
                 <div class="flex justify-end gap-2">
-                  <div class="tooltip" :data-tip="$t('global.delete')">
-                    <button class="btn btn-square btn-sm" @click="deleteAttachment(attachment.id)">
-                      <MdiDelete />
-                    </button>
-                  </div>
-                  <div class="tooltip" :data-tip="$t('global.edit')">
-                    <button class="btn btn-square btn-sm" @click="openAttachmentEditDialog(attachment)">
-                      <MdiPencil />
-                    </button>
-                  </div>
+                  <Tooltip>
+                    <TooltipTrigger as-child>
+                      <Button variant="destructive" size="icon" @click="deleteAttachment(attachment.id)">
+                        <MdiDelete />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{{ $t("global.delete") }}</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger as-child>
+                      <Button size="icon" @click="openAttachmentEditDialog(attachment)">
+                        <MdiPencil />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{{ $t("global.edit") }}</TooltipContent>
+                  </Tooltip>
                 </div>
               </li>
             </ul>
           </div>
         </div>
 
-        <div v-if="preferences.editorAdvancedView" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
+        <div v-if="preferences.editorAdvancedView" class="overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">{{ $t("items.purchase_details") }}</h3>
           </div>
@@ -788,7 +758,7 @@
           </div>
         </div>
 
-        <div v-if="preferences.editorAdvancedView" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
+        <div v-if="preferences.editorAdvancedView" class="overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">{{ $t("items.warranty_details") }}</h3>
           </div>
@@ -839,7 +809,7 @@
           </div>
         </div>
 
-        <div v-if="preferences.editorAdvancedView" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
+        <div v-if="preferences.editorAdvancedView" class="overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">Sold Details</h3>
           </div>
