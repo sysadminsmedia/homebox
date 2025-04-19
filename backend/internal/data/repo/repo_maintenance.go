@@ -62,6 +62,8 @@ func (r *MaintenanceEntryRepository) GetAllMaintenance(ctx context.Context, grou
 				maintenanceentry.DateIsNil(),
 				maintenanceentry.DateEQ(time.Time{})),
 			))
+	case MaintenanceFilterStatusBoth:
+		// No additional filters needed
 	}
 	entries, err := query.WithItem().Order(maintenanceentry.ByScheduledDate()).All(ctx)
 
