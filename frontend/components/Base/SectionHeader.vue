@@ -1,11 +1,6 @@
 <template>
   <div class="pb-3">
-    <CardTitle
-      class="flex items-center"
-      :class="{
-        'text-neutral-content': dark,
-      }"
-    >
+    <CardTitle class="flex items-center">
       <slot />
     </CardTitle>
     <CardDescription v-if="$slots.description">
@@ -19,11 +14,4 @@
 
 <script lang="ts" setup>
   import { CardDescription, CardTitle } from "@/components/ui/card";
-
-  defineProps({
-    dark: {
-      type: Boolean,
-      default: false,
-    },
-  });
 </script>

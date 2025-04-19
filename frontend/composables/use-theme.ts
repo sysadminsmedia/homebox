@@ -75,7 +75,6 @@ export const themes = [
   "theme-corporate",
   "theme-cupcake",
   "theme-cyberpunk",
-  "theme-dark",
   "theme-dracula",
   "theme-emerald",
   "theme-fantasy",
@@ -97,7 +96,4 @@ export const themes = [
   "theme-night",
   "theme-coffee",
   "theme-winter",
-  "theme-dim",
-  "theme-nord",
-  "theme-sunset",
 ];

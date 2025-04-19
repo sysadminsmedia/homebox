@@ -42,7 +42,6 @@
     "vue-tsc": "2.1.6"
   },
   "dependencies": {
-    "@headlessui/vue": "^1.7.23",
     "@nuxtjs/color-mode": "^3.5.2",
     "@nuxtjs/tailwindcss": "^6.13.1",
     "@pinia/nuxt": "^0.5.5",
@@ -58,7 +57,6 @@
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "daisyui": "^2.52.0",
     "date-fns": "^3.6.0",
     "dompurify": "^3.2.4",
     "fuzzysort": "^3.1.0",

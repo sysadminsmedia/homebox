@@ -10,7 +10,7 @@
             <template #description> {{ $t("tools.reports_sub") }} </template>
           </BaseSectionHeader>
         </template>
-        <div class="divide-y divide-gray-300 border-t border-gray-300 px-6 pb-3">
+        <div class="divide-y border-t p-4">
           <DetailAction to="/reports/label-generator">
             <template #title>{{ $t("tools.reports_set.asset_labels") }}</template>
             {{ $t("tools.reports_set.asset_labels_sub") }}
@@ -36,7 +36,7 @@
             </template>
           </BaseSectionHeader>
         </template>
-        <div class="divide-y divide-gray-300 border-t border-gray-300 px-6 pb-3">
+        <div class="divide-y border-t px-6 pb-3">
           <DetailAction @action="openDialog('import')">
             <template #title> {{ $t("tools.import_export_set.import") }} </template>
             <!-- eslint-disable-next-line vue/no-v-html -->
@@ -61,7 +61,7 @@
             </template>
           </BaseSectionHeader>
         </template>
-        <div class="divide-y divide-gray-300 border-t border-gray-300 px-6 pb-3">
+        <div class="divide-y border-t px-6 pb-3">
           <DetailAction @action="ensureAssetIDs">
             <template #title>{{ $t("tools.actions_set.ensure_ids") }}</template>
             {{ $t("tools.actions_set.ensure_ids_sub") }}

@@ -14,7 +14,7 @@
         <Label
           v-for="v in selectedView"
           :key="v.id"
-          class="flex cursor-pointer justify-between px-4 py-2 text-sm hover:bg-base-200"
+          class="flex cursor-pointer justify-between px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
         >
           <div>
             <span>{{ v.name }}</span>
@@ -26,11 +26,13 @@
         <Label
           v-for="v in unselected"
           :key="v.id"
-          class="flex cursor-pointer justify-between px-4 py-2 text-sm hover:bg-base-200"
+          class="flex cursor-pointer justify-between px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
         >
           <div>
             <div>{{ v.name }}</div>
-            <div v-if="v.treeString && v.treeString !== v.name" class="ml-auto text-xs">{{ v.treeString }}</div>
+            <div v-if="v.treeString && v.treeString !== v.name" class="ml-auto text-xs">
+              {{ v.treeString }}
+            </div>
           </div>
           <Checkbox :model-value="false" @update:model-value="_ => (selected = [...selected, v])" />
         </Label>

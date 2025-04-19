@@ -140,8 +140,7 @@
 
 <template>
   <div class="flex min-h-screen flex-col">
-    <!-- TODO: when daisyui is removed then add -z-10 -->
-    <div class="absolute top-0 min-w-full fill-primary">
+    <div class="absolute top-0 -z-10 min-w-full fill-primary">
       <div class="flex min-h-[20vh] flex-col bg-primary" />
       <svg
         class="fill-primary drop-shadow-xl"
@@ -156,17 +155,17 @@
       </svg>
     </div>
     <div>
-      <header class="mx-auto p-4 sm:flex sm:items-end sm:p-6 lg:p-14">
+      <header class="mx-auto p-4 text-accent sm:flex sm:items-end sm:p-6 lg:p-14">
         <div class="z-10">
-          <h2 class="mt-1 flex text-4xl font-bold tracking-tight text-neutral-content sm:text-5xl lg:text-6xl">
+          <h2 class="mt-1 flex text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
             HomeB
             <AppLogo class="-mb-4 w-12" />
             x
           </h2>
-          <p class="ml-1 text-lg text-base-content/50">{{ $t("index.tagline") }}</p>
+          <p class="ml-1 text-lg text-foreground">{{ $t("index.tagline") }}</p>
         </div>
         <TooltipProvider :delay-duration="0">
-          <div class="z-10 ml-auto mt-6 flex items-center gap-4 text-neutral-content sm:mt-0">
+          <div class="z-10 ml-auto mt-6 flex items-center gap-4 sm:mt-0">
             <Tooltip>
               <TooltipTrigger as-child>
                 <a href="https://github.com/sysadminsmedia/homebox" target="_blank">
@@ -208,8 +207,7 @@
         </TooltipProvider>
       </header>
       <div class="grid min-h-[50vh] p-6 sm:place-items-center">
-        <!-- TODO: when daisyui is removed then remove z-10 -->
-        <div class="z-10">
+        <div>
           <Transition name="slide-fade">
             <form v-if="registerForm" @submit.prevent="registerUser">
               <Card class="md:w-[500px]">
@@ -288,7 +286,7 @@
               </div>
               {{ registerForm ? $t("index.login") : $t("index.register") }}
             </Button>
-            <p v-else class="inline-flex items-center gap-2 text-sm italic text-base-content">
+            <p v-else class="inline-flex items-center gap-2 text-sm italic">
               <MdiLock class="inline-block size-4" />
               {{ $t("index.disabled_registration") }}
             </p>
