@@ -57,7 +57,6 @@
             "create_modal": {
                 "item_description": "Descriere articol",
                 "item_name": "Denumire articol",
-                "photo_button": "Imagine 📷",
                 "title": "Crează articol"
             },
             "view": {

@@ -7,8 +7,8 @@
       <FormTextField v-model="entry.name" autofocus :label="$t('maintenance.modal.entry_name')" />
       <DatePicker v-model="entry.completedDate" :label="$t('maintenance.modal.completed_date')" />
       <DatePicker v-model="entry.scheduledDate" :label="$t('maintenance.modal.scheduled_date')" />
-      <FormTextArea v-model="entry.description" :label="$t('maintenance.modal.notes')" />
-      <FormTextField v-model="entry.cost" autofocus :label="$t('maintenance.modal.cost')" />
+      <FormTextArea v-model="entry.description" :label="$t('maintenance.modal.notes')" class="pt-2" />
+      <FormTextField v-model="entry.cost" autofocus :label="$t('maintenance.modal.cost')" class="pt-2" />
       <div class="flex justify-end py-2">
         <BaseButton type="submit" class="ml-2 mt-2">
           <template #icon>
@@ -23,13 +23,13 @@
 
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
+  import { toast } from "@/components/ui/sonner";
   import type { MaintenanceEntry, MaintenanceEntryWithDetails } from "~~/lib/api/types/data-contracts";
   import MdiPost from "~icons/mdi/post";
   import DatePicker from "~~/components/Form/DatePicker.vue";
 
   const { t } = useI18n();
   const api = useUserApi();
-  const toast = useNotifier();
 
   const emit = defineEmits(["changed"]);
 

@@ -65,8 +65,9 @@
             "create_modal": {
                 "item_description": "Item Description",
                 "item_name": "Item Name",
-                "photo_button": "Photo 📷",
-                "title": "Create Item"
+                "item_photo": "Item Photo 📷",
+                "title": "Create Item",
+                "upload_photos": "Upload Photos"
             },
             "view": {
                 "selectable": {
@@ -86,6 +87,9 @@
                 "label_description": "Label Description",
                 "label_name": "Label Name",
                 "title": "Create Label"
+            },
+            "selector": {
+                "select_labels": "Select Labels"
             }
         },
         "location": {
@@ -95,19 +99,24 @@
                 "title": "Create Location"
             },
             "selector": {
-                "parent_location": "Parent Location"
+                "no_location_found": "No location found",
+                "parent_location": "Parent Location",
+                "search_location": "Search Locations",
+                "select_location": "Select a Location"
             },
             "tree": {
                 "no_locations": "No locations available. Add new locations through the\n `<`span class=\"link-primary\"`>`Create`<`/span`>` button on the navigation bar."
             }
         },
         "quick_menu": {
+            "no_results": "No results found.",
             "shortcut_hint": "Use the number keys to quickly select an action."
         }
     },
     "global": {
         "add": "Add",
         "build": "Build: { build }",
+        "cancel": "Cancel",
         "confirm": "Confirm",
         "create": "Create",
         "create_and_add": "Create and Add Another",
@@ -118,6 +127,10 @@
         "edit": "Edit",
         "email": "Email",
         "follow_dev": "Follow the Developer",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Version: { version } Build: { build } '</a>'"
+        },
         "github": "GitHub Project",
         "items": "Items",
         "join_discord": "Join the Discord",

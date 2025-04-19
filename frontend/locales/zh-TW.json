@@ -39,7 +39,6 @@
         },
         "item": {
             "create_modal": {
-                "photo_button": "相片 📷",
                 "title": "新增項目"
             },
             "view": {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { toast } from "@/components/ui/sonner";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiDelete from "~icons/mdi/delete";
@@ -9,7 +10,6 @@
 
   const route = useRoute();
   const api = useUserApi();
-  const toast = useNotifier();
 
   const labelId = computed<string>(() => route.params.id as string);
 
@@ -102,7 +102,7 @@
   <BaseContainer>
     <BaseModal v-model="updateModal">
       <template #title> {{ $t("labels.update_label") }} </template>
-      <form v-if="label" @submit.prevent="update">
+      <form v-if="label" class="flex flex-col gap-2" @submit.prevent="update">
         <FormTextField
           v-model="updateData.name"
           :autofocus="true"
