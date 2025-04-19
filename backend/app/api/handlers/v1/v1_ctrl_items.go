@@ -31,6 +31,7 @@ import (
 //	@Param		labels		query		[]string	false	"label Ids"		collectionFormat(multi)
 //	@Param		locations	query		[]string	false	"location Ids"	collectionFormat(multi)
 //	@Param		parentIds	query		[]string	false	"parent Ids"	collectionFormat(multi)
+//	@Param		fuzzySearch	query		bool		false	"fuzzy search"
 //	@Success	200			{object}	repo.PaginationResult[repo.ItemSummary]{}
 //	@Router		/v1/items [GET]
 //	@Security	Bearer
@@ -58,6 +59,7 @@ func (ctrl *V1Controller) HandleItemsGetAll() errchain.HandlerFunc {
 			Page:             queryIntOrNegativeOne(params.Get("page")),
 			PageSize:         queryIntOrNegativeOne(params.Get("pageSize")),
 			Search:           params.Get("q"),
+			FuzzySearch:      queryBool(params.Get("fuzzySearch")),
 			LocationIDs:      queryUUIDList(params, "locations"),
 			LabelIDs:         queryUUIDList(params, "labels"),
 			NegateLabels:     queryBool(params.Get("negateLabels")),
