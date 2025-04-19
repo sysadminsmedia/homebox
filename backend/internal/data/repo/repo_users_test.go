@@ -78,7 +78,7 @@ func TestUserRepo_GetAll(t *testing.T) {
 	allUsers, err := tRepos.Users.GetAll(ctx)
 
 	require.NoError(t, err)
-	assert.Equal(t, len(created), len(allUsers))
+	assert.Len(t, allUsers, len(created))
 
 	for _, usr := range created {
 		for _, usr2 := range allUsers {

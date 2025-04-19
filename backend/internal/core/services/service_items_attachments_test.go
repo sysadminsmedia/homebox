@@ -45,12 +45,12 @@ func TestItemService_AddAttachment(t *testing.T) {
 	reader := strings.NewReader(contents)
 
 	// Setup
-	afterAttachment, err := svc.AttachmentAdd(tCtx, itm.ID, "testfile.txt", "attachment", reader)
+	afterAttachment, err := svc.AttachmentAdd(tCtx, itm.ID, "testfile.txt", "attachment", false, reader)
 	require.NoError(t, err)
 	assert.NotNil(t, afterAttachment)
 
 	// Check that the file exists
-	storedPath := afterAttachment.Attachments[0].Document.Path
+	storedPath := afterAttachment.Attachments[0].Path
 
 	// {root}/{group}/{item}/{attachment}
 	assert.Equal(t, path.Join(temp, "homebox", tGroup.ID.String(), "documents"), path.Dir(storedPath))

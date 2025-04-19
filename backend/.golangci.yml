@@ -1,74 +1,81 @@
-run:
-  timeout: 10m
-linters-settings:
-  goconst:
-    min-len: 5
-    min-occurrences: 5
-  exhaustive:
-    default-signifies-exhaustive: true
-  revive:
-    ignore-generated-header: false
-    severity: warning
-    confidence: 3
-  depguard:
-    rules:
-      main:
-        deny:
-          - pkg: io/util
-            desc: |
-              Deprecated: As of Go 1.16, the same functionality is now provided by
-              package io or package os, and those implementations should be
-              preferred in new code. See the specific function documentation for
-              details.
-  gocritic:
-    enabled-checks:
-      - ruleguard
-  testifylint:
-    enable-all: true
-  tagalign:
-    order:
-      - json
-      - schema
-      - yaml
-      - yml
-      - toml
-      - validate
+version: "2"
 linters:
-  disable-all: true
+  default: none
   enable:
     - asciicheck
     - bodyclose
+    - copyloopvar
     - depguard
     - dogsled
     - errcheck
     - errorlint
     - exhaustive
-    - copyloopvar
     - gochecknoinits
     - goconst
     - gocritic
     - gocyclo
-    - gofmt
     - goprintffuncname
-    - gosimple
     - govet
     - ineffassign
     - misspell
     - nakedret
     - revive
+    - sqlclosecheck
     - staticcheck
-    - stylecheck
     - tagalign
     - testifylint
-    - typecheck
-    - typecheck
     - unconvert
     - unused
     - whitespace
     - zerologlint
-    - sqlclosecheck
+  settings:
+    depguard:
+      rules:
+        main:
+          deny:
+            - pkg: io/util
+              desc: |
+                Deprecated: As of Go 1.16, the same functionality is now provided by
+                package io or package os, and those implementations should be
+                preferred in new code. See the specific function documentation for
+                details.
+    exhaustive:
+      default-signifies-exhaustive: true
+    goconst:
+      min-len: 5
+      min-occurrences: 5
+    gocritic:
+      enabled-checks:
+        - ruleguard
+    revive:
+      confidence: 3
+      severity: warning
+    tagalign:
+      order:
+        - json
+        - schema
+        - yaml
+        - yml
+        - toml
+        - validate
+    testifylint:
+      enable-all: true
+  exclusions:
+    generated: lax
+    paths:
+      - internal/data/ent.*
+      - third_party$
+      - builtin$
+      - examples$
 issues:
-  exclude-use-default: false
-  exclude-dirs:
-    - internal/data/ent.*
   fix: true
+formatters:
+  enable:
+    - gofmt
+  exclusions:
+    generated: lax
+    paths:
+      - internal/data/ent.*
+      - third_party$
+      - builtin$
+      - examples$
