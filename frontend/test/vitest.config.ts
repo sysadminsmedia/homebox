@@ -5,6 +5,7 @@ export default defineConfig({
   // @ts-ignore
   test: {
     globalSetup: "./test/setup.ts",
+    include: ["**/*.test.ts"],
   },
   resolve: {
     alias: {
