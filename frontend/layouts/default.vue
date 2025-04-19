@@ -105,7 +105,13 @@
           <slot></slot>
           <footer v-if="status" class="bottom-0 w-full bg-base-300 pb-4 text-center text-secondary-content">
             <p class="text-center text-sm">
-              <span v-html="DOMPurify.sanitize($t('global.footer.version_link', { version: status.build.version, build: status.build.commit }))"></span>
+              <span
+                v-html="
+                  DOMPurify.sanitize(
+                    $t('global.footer.version_link', { version: status.build.version, build: status.build.commit })
+                  )
+                "
+              ></span>
               ~
               <span v-html="DOMPurify.sanitize($t('global.footer.api_link'))"></span>
             </p>
@@ -118,6 +124,7 @@
 
 <script lang="ts" setup>
   import { useI18n } from "vue-i18n";
+  import DOMPurify from "dompurify";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
 
@@ -154,7 +161,6 @@
   } from "@/components/ui/dropdown-menu";
   import { Shortcut } from "~/components/ui/shortcut";
   import { useDialog } from "~/components/ui/dialog-provider";
-  import DOMPurify from "dompurify";
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
