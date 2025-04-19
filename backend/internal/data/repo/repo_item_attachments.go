@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"github.com/rs/zerolog/log"
@@ -142,15 +143,14 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 
 	// Prepare for the hashing of the file contents
 	hashOut := make([]byte, 32)
-	buf, err := io.ReadAll(doc.Content)
-	if err != nil {
-		return nil, err
-	}
+
+	buf := &bytes.Buffer{}
+	tee := io.TeeReader(doc.Content, buf)
 
 	// We use blake3 to generate a hash of the file contents, the group ID is used as context to ensure unique hashes
 	// for the same file across different groups to reduce the chance of collisions
 	// additionally, the hash can be used to validate the file contents if needed
-	blake3.DeriveKey(itemGroup.ID.String(), buf, hashOut)
+	blake3.DeriveKey(itemGroup.ID.String(), buf.Bytes(), hashOut)
 
 	// Create the file itself
 	path := r.path(itemGroup.ID, fmt.Sprintf("%x", hashOut))
@@ -176,7 +176,7 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 			return nil, err
 		}
 
-		_, err = io.Copy(file, doc.Content)
+		_, err = io.Copy(file, tee)
 		if err != nil {
 			log.Err(err).Msg("failed to copy file contents")
 			err := tx.Rollback()
