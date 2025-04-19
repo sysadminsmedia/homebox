@@ -92,7 +92,7 @@ func useAttachments(t *testing.T, n int) []*ent.Attachment {
 
 	attachments := make([]*ent.Attachment, n)
 	for i := 0; i < n; i++ {
-		attachment, err := tRepos.Attachments.Create(context.Background(), item.ID, ItemCreateAttachment{Title: "Test"}, attachment.TypePhoto, true)
+		attachment, err := tRepos.Attachments.Create(context.Background(), item.ID, ItemCreateAttachment{Title: "Test", Content: strings.NewReader("Test String")}, attachment.TypePhoto, true)
 		require.NoError(t, err)
 		attachments[i] = attachment
 
