@@ -97,7 +97,7 @@
             </template>
             <template v-else-if="h.type === 'boolean'">
               <MdiCheck v-if="d.insured" class="inline size-5 text-green-500" />
-              <MdiClose v-else class="inline size-5 text-red-500" />
+              <MdiClose v-else class="inline size-5 text-destructive" />
             </template>
             <template v-else-if="h.type === 'location'">
               <NuxtLink v-if="d.location" class="hover:underline" :to="`/location/${d.location.id}`">
