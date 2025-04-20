@@ -54,7 +54,8 @@
                 "titles": "Popisky"
             },
             "page_qr_code": {
-                "page_url": "URL Stránky"
+                "page_url": "URL Stránky",
+                "qr_tooltip": "Zobrazit kód QR"
             },
             "password_score": {
                 "password_strength": "Síla Hesla"
