@@ -1,6 +1,6 @@
 # Shadcn-Vue
 
-[Shadcn-Vue](https://www.shadcn-vue.com/) is a collection of Vue components based on [shadcn/ui](https://ui.shadcn.com/). We are currently in the process of migrating from DaisyUI to Shadcn-Vue for our component system.
+[Shadcn-Vue](https://www.shadcn-vue.com/) is a collection of Vue components based on [shadcn/ui](https://ui.shadcn.com/). We use Shadcn-Vue for our component system.
 
 ## What is shadcn-vue?
 
@@ -46,15 +46,3 @@ When modifying components, follow these best practices:
 2. When making global changes:
    - Modify the component in the `components/ui` directory
    - Document any significant changes in comments
-
-## Testing without DaisyUI
-
-During the migration process, you can test without DaisyUI using these commands:
-
-```bash
-export DISABLE_DAISYUI=true; task ui:dev
-```
-or
-```bash
-export DISABLE_DAISYUI=true; task ui:fix
-```
