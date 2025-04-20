@@ -1,16 +1,16 @@
 <template>
   <div class="pb-3">
-    <h3
-      class="flex items-center text-3xl font-bold tracking-tight"
+    <CardTitle
+      class="flex items-center"
       :class="{
         'text-neutral-content': dark,
       }"
     >
       <slot />
-    </h3>
-    <p v-if="$slots.description" class="mt-2 max-w-4xl text-sm text-base-content">
+    </CardTitle>
+    <CardDescription v-if="$slots.description">
       <slot name="description" />
-    </p>
+    </CardDescription>
     <div v-if="$slots.after">
       <slot name="after" />
     </div>
@@ -18,6 +18,8 @@
 </template>
 
 <script lang="ts" setup>
+  import { CardDescription, CardTitle } from "@/components/ui/card";
+
   defineProps({
     dark: {
       type: Boolean,

@@ -8,10 +8,30 @@
         <slot></slot>
       </p>
     </div>
-    <BaseButton class="btn-primary mt-auto" @click="$emit('action')">
-      <slot name="button">
-        <slot name="title"></slot>
-      </slot>
-    </BaseButton>
+    <template v-if="to">
+      <NuxtLink class="mt-auto" :to="to" :class="buttonVariants({ size: 'lg' })">
+        <slot name="button">
+          <slot name="title"></slot>
+        </slot>
+      </NuxtLink>
+    </template>
+    <template v-else>
+      <Button class="mt-auto" size="lg" @click="$emit('action')">
+        <slot name="button">
+          <slot name="title"></slot>
+        </slot>
+      </Button>
+    </template>
   </div>
 </template>
+
+<script setup lang="ts">
+  import { defineProps } from "vue";
+  import { Button, buttonVariants } from "@/components/ui/button";
+
+  defineProps<{
+    to?: string;
+  }>();
+
+  defineEmits(["action"]);
+</script>

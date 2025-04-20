@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import type { ViewType } from "~~/composables/use-preferences";
   import type { ItemSummary } from "~~/lib/api/types/data-contracts";
-  import MdiDotsVertical from "~icons/mdi/dots-vertical";
   import MdiCardTextOutline from "~icons/mdi/card-text-outline";
   import MdiTable from "~icons/mdi/table";
+  import { Button, ButtonGroup } from "@/components/ui/button";
 
   type Props = {
     view?: ViewType;
@@ -28,27 +28,24 @@
 
 <template>
   <section>
-    <BaseSectionHeader class="mb-2 flex items-center justify-between">
+    <BaseSectionHeader class="mb-2 mt-4 flex items-center justify-between">
       {{ $t("components.item.view.selectable.items") }}
       <template #description>
-        <div v-if="!viewSet" class="dropdown dropdown-left dropdown-hover">
-          <label tabindex="0" class="btn btn-ghost m-1">
-            <MdiDotsVertical class="size-7" />
-          </label>
-          <ul tabindex="0" class="dropdown-content menu rounded-box w-32 bg-base-100 p-2 shadow">
-            <li>
-              <button @click="setViewPreference('card')">
-                <MdiCardTextOutline class="size-5" />
-                {{ $t("components.item.view.selectable.card") }}
-              </button>
-            </li>
-            <li>
-              <button @click="setViewPreference('table')">
-                <MdiTable class="size-5" />
-                {{ $t("components.item.view.selectable.table") }}
-              </button>
-            </li>
-          </ul>
+        <div v-if="!viewSet">
+          <ButtonGroup>
+            <Button size="sm" :variant="itemView === 'card' ? 'default' : 'outline'" @click="setViewPreference('card')">
+              <MdiCardTextOutline class="size-5" />
+              {{ $t("components.item.view.selectable.card") }}
+            </Button>
+            <Button
+              size="sm"
+              :variant="itemView === 'table' ? 'default' : 'outline'"
+              @click="setViewPreference('table')"
+            >
+              <MdiTable class="size-5" />
+              {{ $t("components.item.view.selectable.table") }}
+            </Button>
+          </ButtonGroup>
         </div>
       </template>
     </BaseSectionHeader>
