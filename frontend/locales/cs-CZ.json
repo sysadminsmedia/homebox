@@ -55,7 +55,7 @@
             },
             "page_qr_code": {
                 "page_url": "URL Stránky",
-                "qr_tooltip": "Zobrazit kód QR"
+                "qr_tooltip": "Zobrazit QR kód"
             },
             "password_score": {
                 "password_strength": "Síla Hesla"
@@ -77,8 +77,10 @@
                     "table": "Tabulka"
                 },
                 "table": {
+                    "headers": "Záhlaví",
                     "page": "Stránka",
-                    "rows_per_page": "Řádků na stránku"
+                    "rows_per_page": "Řádků na stránku",
+                    "table_settings": "Nastavení tabulky"
                 }
             }
         },
@@ -115,6 +117,7 @@
     },
     "global": {
         "add": "Přidat",
+        "archived": "Archivované",
         "build": "Sestavení: { build }",
         "cancel": "Zrušit",
         "confirm": "Potvrdit",
@@ -127,7 +130,12 @@
         "edit": "Upravit",
         "email": "Email",
         "follow_dev": "Sledovat vývojáře",
+        "footer": {
+            "api_link": "`<` a href=\"https://homebox.software/en/api/\" target=\"_blank\"`>`API`<`/a`>`",
+            "version_link": "`<` a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"`>` Verze: { version } Build: { build } `<`/a`>`"
+        },
         "github": "GitHub Projekt",
+        "insured": "Pojištěné",
         "items": "Položky",
         "join_discord": "Připojte se na Discors",
         "labels": "Popisky",
@@ -136,6 +144,7 @@
         "name": "Jméno",
         "navigate": "Navigovat",
         "password": "Heslo",
+        "quantity": "Množství",
         "read_docs": "Přečtěte si Dokumentaci",
         "save": "Uložit",
         "search": "Vyhledávat",
@@ -275,6 +284,7 @@
     "locations": {
         "child_locations": "Podřazené Lokace",
         "collapse_tree": "Zabalit Strom",
+        "expand_tree": "Rozbalit strom",
         "no_results": "Žádné lokace nebyly nalezeny",
         "update_location": "Aktualizovat Lokaci"
     },
@@ -359,6 +369,7 @@
         "invalid_url": "Neplatná adresa URL čárového kódu",
         "no_sources": "Nejsou k dispozici žádné zdroje videa",
         "select_video_source": "Vybrat zdroj videa",
+        "title": "Skener",
         "unsupported": "Rozhraní Media Stream API není podporováno bez protokolu HTTPS"
     },
     "tools": {
