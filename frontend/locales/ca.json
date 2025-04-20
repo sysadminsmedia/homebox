@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "El comportament de les importacions amb import_refs existents ha canviat. Si hi ha un import_refs al fitxer CSV, \nl'article s'actualitzarà amb els valors del fitxer CSV.",
                 "description": "Importa un fitxer CSV que contingui els articles, etiquetes i ubicacions. \nConsulteu la documentació per a més informació sobre el format requerit.",
-                "title": "Importa un fitxer CSV",
-                "upload": "Puja"
+                "title": "Importa un fitxer CSV"
             }
         },
         "global": {

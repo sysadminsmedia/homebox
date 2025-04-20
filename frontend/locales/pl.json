@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Zachowanie podczas importu z istniejącymi import_ref zostało zmienione. Jeśli import_ref jest obecny w pliku CSV, \nprzedmiot zostanie zaktualizowany wartościami z pliku CSV.",
                 "description": "Zaimportuj plik CSV zawierający Twoje przedmioty, etykiety i lokalizacje. Zobacz dokumentację, aby uzyskać \nwięcej informacji na temat wymaganego formatu.",
-                "title": "Zaimportuj plik CSV",
-                "upload": "Prześlij"
+                "title": "Zaimportuj plik CSV"
             },
             "outdated": {
                 "current_version": "Bieżąca wersja",

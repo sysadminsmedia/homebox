@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Oppførsel for importjobber med eksisterende import_refs har blitt endret. Hvis en import_ref eksisterer i CSV-filen,\nvil objektet oppdateres med verdiene fra CSV-filen.",
                 "description": "Importer en CSV-fil som inneholder alle objekter, merkelapper og lokasjoner. Konsulter dokumentasjonen for mer\ninformasjon om påkrevd format.",
-                "title": "Importer CSV-fil",
-                "upload": "Last opp"
+                "title": "Importer CSV-fil"
             },
             "outdated": {
                 "current_version": "Nåværende versjon",

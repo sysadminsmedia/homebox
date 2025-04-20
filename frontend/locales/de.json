@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Das Verhalten beim Importieren mit bestehenden import_refs hat sich geändert. Wenn ein import_ref in der CSV-Datei vorhanden ist, \nwird der Gegenstand mit den Werten in der CSV-Datei aktualisiert.",
                 "description": "Importiere eine CSV-Datei, die deine Gegenstände, Etiketten und Standorte enthält. Schau in die Dokumentation für weitere Informationen\nzum erforderlichen Format.",
-                "title": "CSV-Datei importieren",
-                "upload": "Hochladen"
+                "title": "CSV-Datei importieren"
             },
             "outdated": {
                 "current_version": "Aktuelle Version",

@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Změnilo se chování importů s existujícími import_refs. Pokud je v souboru CSV přítomen import_ref, bude \n položka aktualizována hodnotami ze souboru CSV.",
                 "description": "Importujte CSV soubor obashující vaše položky, štítky a lokace. Pro dodatečné informace o formátu použijte \ndokumentaci.",
-                "title": "Importovat CSV Soubor",
-                "upload": "Nahrát"
+                "title": "Importovat CSV Soubor"
             },
             "outdated": {
                 "current_version": "Aktuální verze",

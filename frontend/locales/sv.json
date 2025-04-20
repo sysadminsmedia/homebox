@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Beteendet för importer med befintliga import_refs har ändrats. Om en import_ref finns i CSV-filen, kommer\nobjektet att uppdateras med värdena i CSV-filen.",
                 "description": "Importera en CSV-fil som innehåller dina föremål, etiketter och platser. Se dokumentationen för mer information om formatet som krävs.",
-                "title": "Importera CSV-fil",
-                "upload": "Ladda upp"
+                "title": "Importera CSV-fil"
             },
             "outdated": {
                 "current_version": "Nuvarande version",

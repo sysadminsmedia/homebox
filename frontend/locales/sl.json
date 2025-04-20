@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Vedenje pri uvozih z obstoječimi import_refs se je spremenilo. Če je import_ref prisoten v datoteki CSV, bo\nelement posodobljen z vrednostmi v datoteki CSV.",
                 "description": "Uvozite datoteko CSV, ki vsebuje vaše predmete, oznake in lokacije. Poglejte si dokumentacijo za več informacij o\nzahtevani obliki.",
-                "title": "Uvozi CSV datoteko",
-                "upload": "Naloži"
+                "title": "Uvozi CSV datoteko"
             },
             "outdated": {
                 "current_version": "Trenutna različica",

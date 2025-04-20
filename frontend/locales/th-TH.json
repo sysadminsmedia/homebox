@@ -2,8 +2,7 @@
     "components": {
         "app": {
             "import_dialog": {
-                "title": "นำเข้า CSV",
-                "upload": "อัปโหลด"
+                "title": "นำเข้า CSV"
             },
             "outdated": {
                 "current_version": "เวอร์ชั่นปัจจุบัน",

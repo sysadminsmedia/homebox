@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Se ha modificado el comportamiento de las importaciones con import_refs existentes. Si existe una import_ref en el archivo CSV, el\nelemento se actualizará con los valores del archivo CSV.",
                 "description": "Importa un archivo CSV que contenga tus elementos, etiquetas y ubicaciones. Consulta la documentación para obtener más información sobre el \nformato requerido.",
-                "title": "Importar Archivo CSV",
-                "upload": "Subir"
+                "title": "Importar Archivo CSV"
             },
             "outdated": {
                 "current_version": "Versión actual",

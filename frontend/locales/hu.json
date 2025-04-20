@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "A meglévő import_ref-fel rendelkező tételek importálásának menete megváltozott. Ha a CSV fájlban van import_ref, \nakkor a tételt felülírják a CSV fájlban található értékek.",
                 "description": "Importálj egy CSV fájlt, amely tartalmazza a tételeidet, címkéidet és helyeidet. A szükséges formátumról bővebben \na dokumentációban olvashatsz.",
-                "title": "Importálás CSV-fájlból",
-                "upload": "Feltöltés"
+                "title": "Importálás CSV-fájlból"
             },
             "outdated": {
                 "current_version": "Jelenlegi verzió",

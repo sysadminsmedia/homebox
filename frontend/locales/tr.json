@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Mevcut import_refs ile içe aktarmaların davranışı değişti. CSV dosyasında bir import_ref varsa, \nöğe CSV dosyasındaki değerlerle güncellenecektir.",
                 "description": "Öğelerinizi, etiketlerinizi ve konumlarınızı içeren bir CSV dosyasını içe aktarın. Daha fazla\nbilgi için dökümanları okuyun.",
-                "title": "CSV dosyasını içeri aktar",
-                "upload": "Yükle"
+                "title": "CSV dosyasını içeri aktar"
             },
             "outdated": {
                 "current_version": "Güncel Sürüm",

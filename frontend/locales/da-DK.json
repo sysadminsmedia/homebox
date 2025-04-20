@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Adfærd for imports med eksisterende import_refs har ændret sig. Hvis en import_ref er tilstede i CSV filen,\nvil genstanden blive opdateret med værdierne fra CSV filen.",
                 "description": "Importer en CSV fil som indeholder dine genstande, etiketter, og lokationer. Se dokumentation for mere information vedrørende\nden korrekte format.",
-                "title": "Importer CSV Fil",
-                "upload": "Upload"
+                "title": "Importer CSV Fil"
             },
             "outdated": {
                 "current_version": "Nuværende version",

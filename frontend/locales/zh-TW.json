@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "現有 import_refs 的導入行為已變更。如果 CSV 檔案中存在 import_ref，則\n項目將使用 CSV 檔案中的值進行更新。",
                 "description": "匯入包含您的商品、標籤和位置的 CSV 檔案。有關所需格式的更多信息\n，請參閱文件。",
-                "title": "匯入CSV檔案",
-                "upload": "上傳"
+                "title": "匯入CSV檔案"
             },
             "outdated": {
                 "current_version": "當前版本",

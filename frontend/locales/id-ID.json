@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Ada perubahan pada logika impor untuk data dengan import_ref yang sudah ada.  Jika sebuah import_ref ditemukan di file CSV,\ndata tersebut akan diperbarui menggunakan nilai-nilai yang ada di file CSV.",
                 "description": "Impor file CSV yang berisi item, label, dan lokasi Anda. Lihat dokumentasi untuk informasi lebih lanjut mengenai\nformat yang diperlukan.",
-                "title": "Impor CSV",
-                "upload": "Unggah"
+                "title": "Impor CSV"
             },
             "outdated": {
                 "current_version": "Versi Terkini",

@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Gedrag voor importeren met bestaande import_refs is veranderd. Als een import_refs reeds bestaat in het CSV bestand, het\nobject zal worden aangepast met de waardes van het CSV bestand.",
                 "description": "Importeer een CSV bestand met je objecten, labels en locaties. Zie documentatie voor meer informatie m.b.t.\n vereist format.",
-                "title": "Importeer CSV bestand",
-                "upload": "Upload"
+                "title": "Importeer CSV bestand"
             },
             "outdated": {
                 "current_version": "Huidige versie",

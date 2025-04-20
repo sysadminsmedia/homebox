@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Le comportement lors d’importations avec des import_ref existants a changé. Si une valeur pour import_ref est présente dans le \nfichier CSV, alors l’élément sera mis à jour avec celle-ci.",
                 "description": "Importer un fichier CSV contenant vos articles, étiquettes, et emplacements. Se reporter à la documentation pour plus d’informations \nsur le format requis.",
-                "title": "Importer un fichier CSV",
-                "upload": "Téléverser"
+                "title": "Importer un fichier CSV"
             },
             "outdated": {
                 "current_version": "Version actuelle",
