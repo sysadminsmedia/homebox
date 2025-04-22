@@ -103,19 +103,23 @@
             "selector": {
                 "no_location_found": "Nem található hely",
                 "parent_location": "Ezt tartalmazó hely",
-                "search_location": "Helyszínek keresése"
+                "search_location": "Helyek keresése",
+                "select_location": "Válassz egy helyet"
             },
             "tree": {
                 "no_locations": "Nincs elérhető hely. Adj hozzá új helyet a\n `<`span class=\"link-primary\"`>`Létrehozás`<`/span`>` gombbal a navigációs sávon."
             }
         },
         "quick_menu": {
+            "no_results": "Nincs találat.",
             "shortcut_hint": "Használd a számgombokat egy művelet gyors kiválasztásához."
         }
     },
     "global": {
         "add": "Hozzáadás",
+        "archived": "Archivált",
         "build": "Build: { build }",
+        "cancel": "Mégse",
         "confirm": "Megerősítés",
         "create": "Létrehozás",
         "create_and_add": "Létrehozás és újabb hozzáadása",
@@ -126,7 +130,12 @@
         "edit": "Szerkesztés",
         "email": "Email",
         "follow_dev": "Kövesd a fejlesztőt",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Verzió: { version } Build: { build } '</a>'"
+        },
         "github": "Github projekt",
+        "insured": "Biztosítva",
         "items": "Tételek",
         "join_discord": "Csatlakozz a Discordhoz",
         "labels": "Címkék",
@@ -135,6 +144,7 @@
         "name": "Név",
         "navigate": "Navigáció",
         "password": "Jelszó",
+        "quantity": "Mennyiség",
         "read_docs": "Olvasd el a dokumentációt",
         "save": "Mentés",
         "search": "Keresés",
@@ -274,6 +284,7 @@
     "locations": {
         "child_locations": "Tartalmazott helyek",
         "collapse_tree": "Fanézet becsukása",
+        "expand_tree": "A fa kibontása",
         "no_results": "Nem található hely",
         "update_location": "Hely módosítása"
     },
