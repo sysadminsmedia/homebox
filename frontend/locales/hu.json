@@ -284,7 +284,7 @@
     "locations": {
         "child_locations": "Tartalmazott helyek",
         "collapse_tree": "Fanézet becsukása",
-        "expand_tree": "A fa kibontása",
+        "expand_tree": "Fa kibontása",
         "no_results": "Nem található hely",
         "update_location": "Hely módosítása"
     },
@@ -369,6 +369,7 @@
         "invalid_url": "Érvénytelen vonalkód URL",
         "no_sources": "Nincs elérhető videóforrás",
         "select_video_source": "Videóforrás kiválasztása",
+        "title": "Szkenner",
         "unsupported": "A Media Stream API nem támogatott HTTPS nélkül"
     },
     "tools": {
