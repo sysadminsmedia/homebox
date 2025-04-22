@@ -206,7 +206,7 @@ func run(cfg *config.Config) error {
 
 	currencies, err := currencies.CollectionCurrencies(collectFuncs...)
 	if err != nil {
-		log.Error().
+		go log.Error().
 			Err(err).
 			Msg("failed to collect currencies")
 		return err

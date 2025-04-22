@@ -65,7 +65,6 @@
             "create_modal": {
                 "item_description": "项目说明",
                 "item_name": "项目名称",
-                "photo_button": "相片 📷",
                 "title": "新增項目"
             },
             "view": {

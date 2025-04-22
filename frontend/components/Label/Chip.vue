@@ -37,6 +37,6 @@
       <MdiArrowRight class="swap-on mr-2" />
       <MdiTagOutline class="swap-off mr-2" />
     </label>
-    {{ label.name }}
+    {{ label.name.length > 20 ? `${label.name.substring(0, 20)}...` : label.name }}
   </NuxtLink>
 </template>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { toast } from "@/components/ui/sonner";
   import MdiGithub from "~icons/mdi/github";
   import MdiDiscord from "~icons/mdi/discord";
   import MdiFolder from "~icons/mdi/folder";
@@ -28,7 +29,6 @@
   const ctx = useAuthContext();
 
   const api = usePublicApi();
-  const toast = useNotifier();
 
   const { data: status } = useAsyncData(async () => {
     const { data } = await api.status();

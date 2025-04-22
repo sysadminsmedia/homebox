@@ -65,8 +65,9 @@
             "create_modal": {
                 "item_description": "Description de l'article",
                 "item_name": "Nom de l'article",
-                "photo_button": "Photo 📷",
-                "title": "Créer un article"
+                "item_photo": "Photo de l'objet 📷",
+                "title": "Créer un article",
+                "upload_photos": "Transférer des photos"
             },
             "view": {
                 "selectable": {
@@ -86,6 +87,9 @@
                 "label_description": "Description de l'étiquette",
                 "label_name": "Nom de l'étiquette",
                 "title": "Créer une étiquette"
+            },
+            "selector": {
+                "select_labels": "Sélectionner les étiquettes"
             }
         },
         "location": {
@@ -95,19 +99,24 @@
                 "title": "Créer un emplacement"
             },
             "selector": {
-                "parent_location": "Emplacement parent"
+                "no_location_found": "Aucun emplacement trouvé",
+                "parent_location": "Emplacement parent",
+                "search_location": "Rechercher des emplacements",
+                "select_location": "Choisir un emplacement"
             },
             "tree": {
                 "no_locations": "Aucun emplacement disponible. Créez votre premier emplacement avec\nle bouton `<`span class=\"link-primary\"`>`Créer`<`/span`>` dans la barre de navigation."
             }
         },
         "quick_menu": {
+            "no_results": "Aucun résultat trouvé.",
             "shortcut_hint": "Utilisez les touches numériques pour sélectionner rapidement une action."
         }
     },
     "global": {
         "add": "Ajouter",
         "build": "Version : { build }",
+        "cancel": "Annuler",
         "confirm": "Confirmer",
         "create": "Créer",
         "create_and_add": "Créer et en ajouter un autre",
@@ -231,13 +240,18 @@
     },
     "languages": {
         "ca": "Catalan",
+        "cs-CZ": "Tchèque",
         "de": "Allemand",
         "en": "Anglais",
         "es": "Espagnol",
+        "fi-FI": "Finnois",
         "fr": "Français",
         "hu": "Hongrois",
+        "id-ID": "Indonésien",
         "it": "Italien",
         "ja-JP": "Japonais",
+        "ko-KR": "Coréen",
+        "nb-NO": "Bokmål norvégien",
         "nl": "Néerlandais",
         "pl": "Polonais",
         "pt-BR": "Portugais (Brésil)",
@@ -245,6 +259,8 @@
         "ru": "Russe",
         "sl": "Slovène",
         "sv": "Suédois",
+        "ta-IN": "Tamoul",
+        "th-TH": "Thaï",
         "tr": "Turc",
         "uk-UA": "Ukrainien",
         "zh-CN": "Chinois (simplifié)",
@@ -255,6 +271,7 @@
     "languages.da-DK": "Danois",
     "languages.ro-RO": "Roumain",
     "languages.sk-SK": "Slovaque",
+    "languages.sq-AL": "Albanais",
     "locations": {
         "child_locations": "Sous-emplacements",
         "collapse_tree": "Minimiser la liste",
@@ -304,6 +321,7 @@
         "locations": "Emplacements",
         "maintenance": "Maintenance",
         "profile": "Profil",
+        "scanner": "Scanner",
         "search": "Recherche",
         "tools": "Outils"
     },
@@ -337,6 +355,7 @@
         "user_profile_sub": "Gérez votre compte et invitez des utilisateurs."
     },
     "scanner": {
+        "error": "Une erreur s'est produite lors du scan",
         "invalid_url": "URL de code-barres non valide",
         "no_sources": "Aucune source vidéo disponible",
         "select_video_source": "Choisir une source vidéo",

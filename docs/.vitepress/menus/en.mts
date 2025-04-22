@@ -6,6 +6,7 @@ export default [
             {text: 'Installation', link: '/en/installation'},
             {text: 'Configure', link: '/en/configure'},
             {text: 'Upgrade Guide', link: '/en/upgrade'},
+            {text: 'Migration Guide', link: '/en/migration'},
         ]
     },
     {
@@ -25,6 +26,7 @@ export default [
         text: 'Contributing',
         items: [
             {text: 'Get Started', link: '/en/contribute/get-started'},
+            {text: 'Switching to Shadcn-vue', link: '/en/contribute/shadcn'},
             {text: 'Bounty Program', link: '/en/contribute/bounty'}
         ]
     },

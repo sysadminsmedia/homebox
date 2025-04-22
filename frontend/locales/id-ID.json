@@ -60,7 +60,6 @@
             "create_modal": {
                 "item_description": "Deskripsi item",
                 "item_name": "Nama item",
-                "photo_button": "Foto",
                 "title": "Buat item"
             },
             "view": {

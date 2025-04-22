@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { toast } from "@/components/ui/sonner";
   import type { LocationSummary, LocationUpdate } from "~~/lib/api/types/data-contracts";
   import { useLocationStore } from "~~/stores/locations";
   import MdiPackageVariant from "~icons/mdi/package-variant";
@@ -11,7 +12,6 @@
 
   const route = useRoute();
   const api = useUserApi();
-  const toast = useNotifier();
 
   const locationId = computed<string>(() => route.params.id as string);
 
@@ -114,7 +114,7 @@
     <!-- Update Dialog -->
     <BaseModal v-model="updateModal">
       <template #title> {{ $t("locations.update_location") }} </template>
-      <form v-if="location" @submit.prevent="update">
+      <form v-if="location" class="flex flex-col gap-2" @submit.prevent="update">
         <FormTextField
           v-model="updateData.name"
           :autofocus="true"
