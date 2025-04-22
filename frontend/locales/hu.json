@@ -54,7 +54,8 @@
                 "titles": "Címkék"
             },
             "page_qr_code": {
-                "page_url": "Oldal URL-je"
+                "page_url": "Oldal URL-je",
+                "qr_tooltip": "QR-kód megjelenítése"
             },
             "password_score": {
                 "password_strength": "Jelszó erőssége"
@@ -64,7 +65,9 @@
             "create_modal": {
                 "item_description": "Tétel leírása",
                 "item_name": "Tétel neve",
-                "title": "Új elem létrehozása"
+                "item_photo": "Tétel fényképe 📷",
+                "title": "Új elem létrehozása",
+                "upload_photos": "Fotók feltöltése"
             },
             "view": {
                 "selectable": {
@@ -74,8 +77,10 @@
                     "table": "Táblázat"
                 },
                 "table": {
+                    "headers": "Fejlécek",
                     "page": "Oldal",
-                    "rows_per_page": "Sorok oldalanként"
+                    "rows_per_page": "Sorok oldalanként",
+                    "table_settings": "Táblázatbeállítások"
                 }
             }
         },
@@ -84,6 +89,9 @@
                 "label_description": "Címke leírása",
                 "label_name": "Címke neve",
                 "title": "Címke létrehozása"
+            },
+            "selector": {
+                "select_labels": "Címkék kiválasztása"
             }
         },
         "location": {
@@ -93,7 +101,9 @@
                 "title": "Új hely létrehozása"
             },
             "selector": {
-                "parent_location": "Ezt tartalmazó hely"
+                "no_location_found": "Nem található hely",
+                "parent_location": "Ezt tartalmazó hely",
+                "search_location": "Helyszínek keresése"
             },
             "tree": {
                 "no_locations": "Nincs elérhető hely. Adj hozzá új helyet a\n `<`span class=\"link-primary\"`>`Létrehozás`<`/span`>` gombbal a navigációs sávon."
