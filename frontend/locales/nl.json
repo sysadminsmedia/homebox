@@ -55,7 +55,7 @@
             },
             "page_qr_code": {
                 "page_url": "Pagina URL",
-                "qr_tooltip": "QR Code tonen"
+                "qr_tooltip": "QR-code weergeven"
             },
             "password_score": {
                 "password_strength": "Wachtwoord sterkte"
