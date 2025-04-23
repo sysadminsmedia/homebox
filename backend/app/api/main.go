@@ -3,17 +3,16 @@ package main
 import (
 	"bytes"
 	"context"
+	"embed"
 	"fmt"
-	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
-	atlas "ariga.io/atlas/sql/migrate"
-	"entgo.io/ent/dialect/sql/schema"
+	"github.com/pressly/goose/v3"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
@@ -26,7 +25,6 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/migrations"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
@@ -62,6 +60,12 @@ func validatePostgresSSLMode(sslMode string) bool {
 	}
 	return validModes[strings.ToLower(strings.TrimSpace(sslMode))]
 }
+
+//go:embed ../../internal/data/migrations/sqlite3/*.sql
+var sqlite3Migrations embed.FS
+
+//go:embed ../../internal/data/migrations/postgres/*.sql
+var postgresMigrations embed.FS
 
 // @title                      Homebox API
 // @version                    1.0
@@ -140,45 +144,30 @@ func run(cfg *config.Config) error {
 		}
 	}(c)
 
-	// Always create a random temporary directory for migrations
-	tempUUID, err := uuid.NewUUID()
-	if err != nil {
-		return err
-	}
-	temp := filepath.Join(os.TempDir(), fmt.Sprintf("homebox-%s", tempUUID.String()))
-
-	err = migrations.Write(temp, cfg.Database.Driver)
-	if err != nil {
-		return err
-	}
-
-	dir, err := atlas.NewLocalDir(temp)
-	if err != nil {
-		return err
-	}
-
-	options := []schema.MigrateOption{
-		schema.WithDir(dir),
-		schema.WithDropColumn(true),
-		schema.WithDropIndex(true),
-	}
-
-	err = c.Schema.Create(context.Background(), options...)
-	if err != nil {
-		log.Error().
-			Err(err).
-			Str("driver", cfg.Database.Driver).
-			Str("url", databaseURL).
-			Msg("failed creating schema resources")
-		return err
-	}
-
-	defer func() {
-		err := os.RemoveAll(temp)
+	switch cfg.Database.Driver {
+	case "sqlite3":
+		goose.SetBaseFS(sqlite3Migrations)
+		err := goose.SetDialect(string(goose.DialectSQLite3))
 		if err != nil {
-			log.Error().Err(err).Msg("failed to remove temporary directory for database migrations")
+			return err
 		}
-	}()
+		break
+	case "postgres":
+		goose.SetBaseFS(postgresMigrations)
+		err := goose.SetDialect(string(goose.DialectPostgres))
+		if err != nil {
+			return err
+		}
+		break
+	default:
+		log.Fatal().Str("driver", cfg.Database.Driver).Msg("unsupported database driver")
+		return fmt.Errorf("unsupported database driver: %s", cfg.Database.Driver)
+	}
+	err = goose.Up(c.Sql(), "migrations")
+	if err != nil {
+		log.Error().Err(err).Msg("failed to migrate database")
+		return err
+	}
 
 	collectFuncs := []currencies.CollectorFunc{
 		currencies.CollectDefaults(),
