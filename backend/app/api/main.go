@@ -3,8 +3,8 @@ package main
 import (
 	"bytes"
 	"context"
-	"embed"
 	"fmt"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/migrations"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"net/http"
 	"os"
@@ -60,12 +60,6 @@ func validatePostgresSSLMode(sslMode string) bool {
 	}
 	return validModes[strings.ToLower(strings.TrimSpace(sslMode))]
 }
-
-//go:embed ../../internal/data/migrations/sqlite3/*.sql
-var sqlite3Migrations embed.FS
-
-//go:embed ../../internal/data/migrations/postgres/*.sql
-var postgresMigrations embed.FS
 
 // @title                      Homebox API
 // @version                    1.0
@@ -144,22 +138,9 @@ func run(cfg *config.Config) error {
 		}
 	}(c)
 
-	switch cfg.Database.Driver {
-	case "sqlite3":
-		goose.SetBaseFS(sqlite3Migrations)
-		err := goose.SetDialect(string(goose.DialectSQLite3))
-		if err != nil {
-			return err
-		}
-		break
-	case "postgres":
-		goose.SetBaseFS(postgresMigrations)
-		err := goose.SetDialect(string(goose.DialectPostgres))
-		if err != nil {
-			return err
-		}
-		break
-	default:
+	goose.SetBaseFS(migrations.Migrations(cfg.Database.Driver))
+	err = goose.SetDialect(cfg.Database.Driver)
+	if err != nil {
 		log.Fatal().Str("driver", cfg.Database.Driver).Msg("unsupported database driver")
 		return fmt.Errorf("unsupported database driver: %s", cfg.Database.Driver)
 	}
