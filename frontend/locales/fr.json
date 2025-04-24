@@ -54,7 +54,8 @@
                 "titles": "Étiquettes"
             },
             "page_qr_code": {
-                "page_url": "URL de la page"
+                "page_url": "URL de la page",
+                "qr_tooltip": "Afficher le QR code"
             },
             "password_score": {
                 "password_strength": "Force du mot de passe"
@@ -76,8 +77,10 @@
                     "table": "Tableau"
                 },
                 "table": {
+                    "headers": "En-têtes",
                     "page": "Page",
-                    "rows_per_page": "Lignes par page"
+                    "rows_per_page": "Lignes par page",
+                    "table_settings": "Paramètres du Tableau"
                 }
             }
         },
@@ -114,7 +117,8 @@
     },
     "global": {
         "add": "Ajouter",
-        "build": "Version : { build }",
+        "archived": "Archivé",
+        "build": "Commit : { build }",
         "cancel": "Annuler",
         "confirm": "Confirmer",
         "create": "Créer",
@@ -126,7 +130,12 @@
         "edit": "Modifier",
         "email": "Courriel",
         "follow_dev": "Suivre le développeur",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Version : { version } Commit : { build } '</a>'"
+        },
         "github": "Projet GitHub",
+        "insured": "Assuré",
         "items": "Articles",
         "join_discord": "Rejoindre le Discord",
         "labels": "Étiquettes",
@@ -135,6 +144,7 @@
         "name": "Nom",
         "navigate": "Naviguer",
         "password": "Mot de passe",
+        "quantity": "Quantité",
         "read_docs": "Lire la documentation",
         "save": "Enregistrer",
         "search": "Rechercher",
@@ -274,7 +284,8 @@
     "locations": {
         "child_locations": "Sous-emplacements",
         "collapse_tree": "Minimiser la liste",
-        "no_results": "Aucun emplacement trouvé",
+        "expand_tree": "Ouvrir l’arborescence",
+        "no_results": "Aucun emplacement",
         "update_location": "Mettre à jour l'emplacement"
     },
     "maintenance": {
@@ -358,6 +369,7 @@
         "invalid_url": "URL de code-barres non valide",
         "no_sources": "Aucune source vidéo disponible",
         "select_video_source": "Choisir une source vidéo",
+        "title": "Scanner",
         "unsupported": "L’API <i>Media Stream</i> n’est pas prise en charge sans HTTPS"
     },
     "tools": {
