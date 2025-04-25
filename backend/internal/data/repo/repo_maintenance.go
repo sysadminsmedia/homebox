@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -64,6 +65,8 @@ func (r *MaintenanceEntryRepository) GetAllMaintenance(ctx context.Context, grou
 			))
 	case MaintenanceFilterStatusBoth:
 		// No additional filters needed
+	default:
+		return nil, fmt.Errorf("unknown status %s", filters.Status)
 	}
 	entries, err := query.WithItem().Order(maintenanceentry.ByScheduledDate()).All(ctx)
 
