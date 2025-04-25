@@ -3,7 +3,6 @@ module github.com/sysadminsmedia/homebox/backend
 go 1.23.0
 
 require (
-	ariga.io/atlas v0.32.0
 	entgo.io/ent v0.14.4
 	github.com/ardanlabs/conf/v3 v3.7.2
 	github.com/containrrr/shoutrrr v0.8.0
@@ -31,6 +30,7 @@ require (
 )
 
 require (
+	ariga.io/atlas v0.32.0 // indirect
 	github.com/ebitengine/purego v0.8.2 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/lufia/plan9stats v0.0.0-20250317134145-8bc96cf8fc35 // indirect
