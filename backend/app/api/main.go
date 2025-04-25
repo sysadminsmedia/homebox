@@ -138,13 +138,13 @@ func run(cfg *config.Config) error {
 		}
 	}(c)
 
-	goose.SetBaseFS(migrations.Migrations(cfg.Database.Driver))
-	err = goose.SetDialect(cfg.Database.Driver)
+	goose.SetBaseFS(migrations.Migrations(strings.ToLower(cfg.Database.Driver)))
+	err = goose.SetDialect(strings.ToLower(cfg.Database.Driver))
 	if err != nil {
 		log.Fatal().Str("driver", cfg.Database.Driver).Msg("unsupported database driver")
 		return fmt.Errorf("unsupported database driver: %s", cfg.Database.Driver)
 	}
-	err = goose.Up(c.Sql(), "migrations")
+	err = goose.Up(c.Sql(), strings.ToLower(cfg.Database.Driver))
 	if err != nil {
 		log.Error().Err(err).Msg("failed to migrate database")
 		return err
