@@ -6,7 +6,7 @@
 
 There is a devcontainer available for this project. If you are using VSCode, you can use the devcontainer to get started. If you are not using VSCode, you need to ensure that you have the following tools installed:
 
-- [Go 1.19+](https://golang.org/doc/install)
+- [Go 1.23+](https://golang.org/doc/install)
 - [Swaggo](https://github.com/swaggo/swag)
 - [Node.js 16+](https://nodejs.org/en/download/)
 - [pnpm](https://pnpm.io/installation)
