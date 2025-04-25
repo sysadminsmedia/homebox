@@ -1,3 +1,4 @@
+-- +goose Up
 -- Disable the enforcement of foreign-keys constraints
 PRAGMA foreign_keys = off;
 -- Create "new_items" table

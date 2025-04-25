@@ -1,41 +1,289 @@
 -- +goose Up
--- create "attachments" table
-CREATE TABLE IF NOT EXISTS `attachments` (`id` uuid NOT NULL, `created_at` datetime NOT NULL, `updated_at` datetime NOT NULL, `type` text NOT NULL DEFAULT 'attachment', `document_attachments` uuid NOT NULL, `item_attachments` uuid NOT NULL, PRIMARY KEY (`id`), CONSTRAINT `attachments_documents_attachments` FOREIGN KEY (`document_attachments`) REFERENCES `documents` (`id`) ON DELETE CASCADE, CONSTRAINT `attachments_items_attachments` FOREIGN KEY (`item_attachments`) REFERENCES `items` (`id`) ON DELETE CASCADE);
--- create "auth_tokens" table
-CREATE TABLE IF NOT EXISTS `auth_tokens` (`id` uuid NOT NULL, `created_at` datetime NOT NULL, `updated_at` datetime NOT NULL, `token` blob NOT NULL, `expires_at` datetime NOT NULL, `user_auth_tokens` uuid NULL, PRIMARY KEY (`id`), CONSTRAINT `auth_tokens_users_auth_tokens` FOREIGN KEY (`user_auth_tokens`) REFERENCES `users` (`id`) ON DELETE CASCADE);
--- create index "auth_tokens_token_key" to table: "auth_tokens"
-CREATE UNIQUE INDEX IF NOT EXISTS `auth_tokens_token_key` ON `auth_tokens` (`token`);
--- create index "authtokens_token" to table: "auth_tokens"
-CREATE INDEX IF NOT EXISTS `authtokens_token` ON `auth_tokens` (`token`);
--- create "documents" table
-CREATE TABLE IF NOT EXISTS `documents` (`id` uuid NOT NULL, `created_at` datetime NOT NULL, `updated_at` datetime NOT NULL, `title` text NOT NULL, `path` text NOT NULL, `group_documents` uuid NOT NULL, PRIMARY KEY (`id`), CONSTRAINT `documents_groups_documents` FOREIGN KEY (`group_documents`) REFERENCES `groups` (`id`) ON DELETE CASCADE);
--- create "document_tokens" table
-CREATE TABLE IF NOT EXISTS `document_tokens` (`id` uuid NOT NULL, `created_at` datetime NOT NULL, `updated_at` datetime NOT NULL, `token` blob NOT NULL, `uses` integer NOT NULL DEFAULT 1, `expires_at` datetime NOT NULL, `document_document_tokens` uuid NULL, PRIMARY KEY (`id`), CONSTRAINT `document_tokens_documents_document_tokens` FOREIGN KEY (`document_document_tokens`) REFERENCES `documents` (`id`) ON DELETE CASCADE);
--- create index "document_tokens_token_key" to table: "document_tokens"
-CREATE UNIQUE INDEX IF NOT EXISTS `document_tokens_token_key` ON `document_tokens` (`token`);
--- create index "documenttoken_token" to table: "document_tokens"
-CREATE INDEX IF NOT EXISTS `documenttoken_token` ON `document_tokens` (`token`);
--- create "groups" table
-CREATE TABLE IF NOT EXISTS `groups` (`id` uuid NOT NULL, `created_at` datetime NOT NULL, `updated_at` datetime NOT NULL, `name` text NOT NULL, `currency` text NOT NULL DEFAULT 'usd', PRIMARY KEY (`id`));
--- create "items" table
-CREATE TABLE IF NOT EXISTS `items` (`id` uuid NOT NULL, `created_at` datetime NOT NULL, `updated_at` datetime NOT NULL, `name` text NOT NULL, `description` text NULL, `import_ref` text NULL, `notes` text NULL, `quantity` integer NOT NULL DEFAULT 1, `insured` bool NOT NULL DEFAULT false, `serial_number` text NULL, `model_number` text NULL, `manufacturer` text NULL, `lifetime_warranty` bool NOT NULL DEFAULT false, `warranty_expires` datetime NULL, `warranty_details` text NULL, `purchase_time` datetime NULL, `purchase_from` text NULL, `purchase_price` real NOT NULL DEFAULT 0, `sold_time` datetime NULL, `sold_to` text NULL, `sold_price` real NOT NULL DEFAULT 0, `sold_notes` text NULL, `group_items` uuid NOT NULL, `location_items` uuid NULL, PRIMARY KEY (`id`), CONSTRAINT `items_groups_items` FOREIGN KEY (`group_items`) REFERENCES `groups` (`id`) ON DELETE CASCADE, CONSTRAINT `items_locations_items` FOREIGN KEY (`location_items`) REFERENCES `locations` (`id`) ON DELETE CASCADE);
--- create index "item_name" to table: "items"
-CREATE INDEX IF NOT EXISTS `item_name` ON `items` (`name`);
--- create index "item_manufacturer" to table: "items"
-CREATE INDEX IF NOT EXISTS `item_manufacturer` ON `items` (`manufacturer`);
--- create index "item_model_number" to table: "items"
-CREATE INDEX IF NOT EXISTS `item_model_number` ON `items` (`model_number`);
--- create index "item_serial_number" to table: "items"
-CREATE INDEX IF NOT EXISTS `item_serial_number` ON `items` (`serial_number`);
--- create "item_fields" table
-CREATE TABLE IF NOT EXISTS `item_fields` (`id` uuid NOT NULL, `created_at` datetime NOT NULL, `updated_at` datetime NOT NULL, `name` text NOT NULL, `description` text NULL, `type` text NOT NULL, `text_value` text NULL, `number_value` integer NULL, `boolean_value` bool NOT NULL DEFAULT false, `time_value` datetime NOT NULL, `item_fields` uuid NULL, PRIMARY KEY (`id`), CONSTRAINT `item_fields_items_fields` FOREIGN KEY (`item_fields`) REFERENCES `items` (`id`) ON DELETE CASCADE);
--- create "labels" table
-CREATE TABLE IF NOT EXISTS `labels` (`id` uuid NOT NULL, `created_at` datetime NOT NULL, `updated_at` datetime NOT NULL, `name` text NOT NULL, `description` text NULL, `color` text NULL, `group_labels` uuid NOT NULL, PRIMARY KEY (`id`), CONSTRAINT `labels_groups_labels` FOREIGN KEY (`group_labels`) REFERENCES `groups` (`id`) ON DELETE CASCADE);
--- create "locations" table
-CREATE TABLE IF NOT EXISTS `locations` (`id` uuid NOT NULL, `created_at` datetime NOT NULL, `updated_at` datetime NOT NULL, `name` text NOT NULL, `description` text NULL, `group_locations` uuid NOT NULL, PRIMARY KEY (`id`), CONSTRAINT `locations_groups_locations` FOREIGN KEY (`group_locations`) REFERENCES `groups` (`id`) ON DELETE CASCADE);
--- create "users" table
-CREATE TABLE IF NOT EXISTS `users` (`id` uuid NOT NULL, `created_at` datetime NOT NULL, `updated_at` datetime NOT NULL, `name` text NOT NULL, `email` text NOT NULL, `password` text NOT NULL, `is_superuser` bool NOT NULL DEFAULT false, `group_users` uuid NOT NULL, PRIMARY KEY (`id`), CONSTRAINT `users_groups_users` FOREIGN KEY (`group_users`) REFERENCES `groups` (`id`) ON DELETE CASCADE);
--- create index "users_email_key" to table: "users"
-CREATE UNIQUE INDEX IF NOT EXISTS `users_email_key` ON `users` (`email`);
--- create "label_items" table
-CREATE TABLE IF NOT EXISTS `label_items` (`label_id` uuid NOT NULL, `item_id` uuid NOT NULL, PRIMARY KEY (`label_id`, `item_id`), CONSTRAINT `label_items_label_id` FOREIGN KEY (`label_id`) REFERENCES `labels` (`id`) ON DELETE CASCADE, CONSTRAINT `label_items_item_id` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE);
+create table if not exists groups
+(
+    id         uuid               not null
+        primary key,
+    created_at datetime           not null,
+    updated_at datetime           not null,
+    name       text               not null,
+    currency   text default 'usd' not null
+);
+
+create table if not exists documents
+(
+    id              uuid     not null
+        primary key,
+    created_at      datetime not null,
+    updated_at      datetime not null,
+    title           text     not null,
+    path            text     not null,
+    group_documents uuid     not null
+        constraint documents_groups_documents
+            references groups
+            on delete cascade
+);
+
+create table if not exists group_invitation_tokens
+(
+    id                      uuid              not null
+        primary key,
+    created_at              datetime          not null,
+    updated_at              datetime          not null,
+    token                   blob              not null,
+    expires_at              datetime          not null,
+    uses                    integer default 0 not null,
+    group_invitation_tokens uuid
+        constraint group_invitation_tokens_groups_invitation_tokens
+            references groups
+            on delete cascade
+);
+
+create unique index if not exists group_invitation_tokens_token_key
+    on group_invitation_tokens (token);
+
+create table if not exists labels
+(
+    id           uuid     not null
+        primary key,
+    created_at   datetime not null,
+    updated_at   datetime not null,
+    name         text     not null,
+    description  text,
+    color        text,
+    group_labels uuid     not null
+        constraint labels_groups_labels
+            references groups
+            on delete cascade
+);
+
+create table if not exists locations
+(
+    id                uuid     not null
+        primary key,
+    created_at        datetime not null,
+    updated_at        datetime not null,
+    name              text     not null,
+    description       text,
+    group_locations   uuid     not null
+        constraint locations_groups_locations
+            references groups
+            on delete cascade,
+    location_children uuid
+        constraint locations_locations_children
+            references locations
+            on delete set null
+);
+
+create table if not exists items
+(
+    id                uuid                  not null
+        primary key,
+    created_at        datetime              not null,
+    updated_at        datetime              not null,
+    name              text                  not null,
+    description       text,
+    import_ref        text,
+    notes             text,
+    quantity          integer default 1     not null,
+    insured           bool    default false not null,
+    archived          bool    default false not null,
+    asset_id          integer default 0     not null,
+    serial_number     text,
+    model_number      text,
+    manufacturer      text,
+    lifetime_warranty bool    default false not null,
+    warranty_expires  datetime,
+    warranty_details  text,
+    purchase_time     datetime,
+    purchase_from     text,
+    purchase_price    real    default 0     not null,
+    sold_time         datetime,
+    sold_to           text,
+    sold_price        real    default 0     not null,
+    sold_notes        text,
+    group_items       uuid                  not null
+        constraint items_groups_items
+            references groups
+            on delete cascade,
+    item_children     uuid
+        constraint items_items_children
+            references items
+            on delete set null,
+    location_items    uuid
+        constraint items_locations_items
+            references locations
+            on delete cascade
+);
+
+create table if not exists attachments
+(
+    id                   uuid                      not null
+        primary key,
+    created_at           datetime                  not null,
+    updated_at           datetime                  not null,
+    type                 text default 'attachment' not null,
+    "primary"            bool default false        not null,
+    document_attachments uuid                      not null
+        constraint attachments_documents_attachments
+            references documents
+            on delete cascade,
+    item_attachments     uuid                      not null
+        constraint attachments_items_attachments
+            references items
+            on delete cascade
+);
+
+create table if not exists item_fields
+(
+    id            uuid               not null
+        primary key,
+    created_at    datetime           not null,
+    updated_at    datetime           not null,
+    name          text               not null,
+    description   text,
+    type          text               not null,
+    text_value    text,
+    number_value  integer,
+    boolean_value bool default false not null,
+    time_value    datetime           not null,
+    item_fields   uuid
+        constraint item_fields_items_fields
+            references items
+            on delete cascade
+);
+
+create index if not exists item_archived
+    on items (archived);
+
+create index if not exists item_asset_id
+    on items (asset_id);
+
+create index if not exists item_manufacturer
+    on items (manufacturer);
+
+create index if not exists item_model_number
+    on items (model_number);
+
+create index if not exists item_name
+    on items (name);
+
+create index if not exists item_serial_number
+    on items (serial_number);
+
+create table if not exists label_items
+(
+    label_id uuid not null
+        constraint label_items_label_id
+            references labels
+            on delete cascade,
+    item_id  uuid not null
+        constraint label_items_item_id
+            references items
+            on delete cascade,
+    primary key (label_id, item_id)
+);
+
+create table if not exists maintenance_entries
+(
+    id             uuid           not null
+        primary key,
+    created_at     datetime       not null,
+    updated_at     datetime       not null,
+    date           datetime,
+    scheduled_date datetime,
+    name           text           not null,
+    description    text,
+    cost           real default 0 not null,
+    item_id        uuid           not null
+        constraint maintenance_entries_items_maintenance_entries
+            references items
+            on delete cascade
+);
+
+create table if not exists users
+(
+    id           uuid                not null
+        primary key,
+    created_at   datetime            not null,
+    updated_at   datetime            not null,
+    name         text                not null,
+    email        text                not null,
+    password     text                not null,
+    is_superuser bool default false  not null,
+    superuser    bool default false  not null,
+    role         text default 'user' not null,
+    activated_on datetime,
+    group_users  uuid                not null
+        constraint users_groups_users
+            references groups
+            on delete cascade
+);
+
+create table if not exists auth_tokens
+(
+    id               uuid     not null
+        primary key,
+    created_at       datetime not null,
+    updated_at       datetime not null,
+    token            blob     not null,
+    expires_at       datetime not null,
+    user_auth_tokens uuid
+        constraint auth_tokens_users_auth_tokens
+            references users
+            on delete cascade
+);
+
+create table if not exists auth_roles
+(
+    id                integer             not null
+        primary key autoincrement,
+    role              text default 'user' not null,
+    auth_tokens_roles uuid
+        constraint auth_roles_auth_tokens_roles
+            references auth_tokens
+            on delete cascade
+);
+
+create unique index if not exists auth_roles_auth_tokens_roles_key
+    on auth_roles (auth_tokens_roles);
+
+create unique index if not exists auth_tokens_token_key
+    on auth_tokens (token);
+
+create index if not exists authtokens_token
+    on auth_tokens (token);
+
+create table if not exists notifiers
+(
+    id         uuid              not null
+        primary key,
+    created_at datetime          not null,
+    updated_at datetime          not null,
+    name       text              not null,
+    url        text              not null,
+    is_active  bool default true not null,
+    group_id   uuid              not null
+        constraint notifiers_groups_notifiers
+            references groups
+            on delete cascade,
+    user_id    uuid              not null
+        constraint notifiers_users_notifiers
+            references users
+            on delete cascade
+);
+
+create index if not exists notifier_group_id
+    on notifiers (group_id);
+
+create index if not exists notifier_group_id_is_active
+    on notifiers (group_id, is_active);
+
+create index if not exists notifier_user_id
+    on notifiers (user_id);
+
+create index if not exists notifier_user_id_is_active
+    on notifiers (user_id, is_active);
+
+create unique index if not exists users_email_key
+    on users (email);
+
