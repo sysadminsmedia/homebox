@@ -2,8 +2,8 @@
     "components": {
         "app": {
             "import_dialog": {
-                "change_warning": "Le comportement lors d’importations avec des import_ref existants a changé. Si une valeur pour import_ref est présente dans le \nfichier CSV, alors l’élément sera mis à jour avec celle-ci.",
-                "description": "Importer un fichier CSV contenant vos articles, étiquettes, et emplacements. Se reporter à la documentation pour plus d’informations \nsur le format requis.",
+                "change_warning": "Le comportement lors d’importations avec des import_ref existants a changé. Si une valeur pour import_ref\n est présente dans le fichier CSV, alors l’élément sera mis à jour avec celle-ci.",
+                "description": "Importer un fichier CSV contenant vos articles, étiquettes, et emplacements. Se reporter à la documentation\n pour plus d’informations sur le format requis.",
                 "title": "Importer un fichier CSV"
             },
             "outdated": {
@@ -65,7 +65,7 @@
             "create_modal": {
                 "item_description": "Description de l'article",
                 "item_name": "Nom de l'article",
-                "item_photo": "Photo de l'objet 📷",
+                "item_photo": "Photo de l'article 📷",
                 "title": "Créer un article",
                 "upload_photos": "Transférer des photos"
             },
@@ -91,7 +91,7 @@
                 "title": "Créer une étiquette"
             },
             "selector": {
-                "select_labels": "Sélectionner les étiquettes"
+                "select_labels": "Sélectionnez les étiquettes"
             }
         },
         "location": {
@@ -229,10 +229,10 @@
         "results": "{ total } résultats",
         "serial_number": "Numéro de série",
         "show_advanced_view_options": "Afficher les options d'affichage avancées",
-        "sold_at": "Vendu à",
+        "sold_at": "Vendu le",
         "sold_details": "Détails de la vente",
         "sold_price": "Prix de vente",
-        "sold_to": "Vendu pour",
+        "sold_to": "Vendu à",
         "tip_1": "Les filtres d’emplacement et d’étiquette utilisent l’opérateur « OU ».\nUn seul des filtres n’a besoin de correspondre pour retourner un résultat.",
         "tip_2": "Les recherches préfixées par '#'' rechercheront un ID d'actif (exemple '#000-001')",
         "tip_3": "Les filtres de champ utilisent l’opérateur « OU ».\nUn seul des filtres n’a besoin de correspondre pour retourner un résultat.",
@@ -331,7 +331,7 @@
         "locations": "Emplacements",
         "maintenance": "Maintenance",
         "profile": "Profil",
-        "scanner": "Scanner",
+        "scanner": "Numériser",
         "search": "Recherche",
         "tools": "Outils"
     },
@@ -369,7 +369,7 @@
         "invalid_url": "URL de code-barres non valide",
         "no_sources": "Aucune source vidéo disponible",
         "select_video_source": "Choisir une source vidéo",
-        "title": "Scanner",
+        "title": "Numériser",
         "unsupported": "L’API <i>Media Stream</i> n’est pas prise en charge sans HTTPS"
     },
     "tools": {
