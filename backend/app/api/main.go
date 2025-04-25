@@ -131,12 +131,6 @@ func run(cfg *config.Config) error {
 			Str("database", cfg.Database.Database).
 			Msg("failed opening connection to {driver} database at {host}:{port}/{database}")
 	}
-	defer func(c *ent.Client) {
-		err := c.Close()
-		if err != nil {
-			log.Fatal().Err(err).Msg("failed to close database connection")
-		}
-	}(c)
 
 	goose.SetBaseFS(migrations.Migrations(strings.ToLower(cfg.Database.Driver)))
 	err = goose.SetDialect(strings.ToLower(cfg.Database.Driver))
@@ -173,9 +167,7 @@ func run(cfg *config.Config) error {
 
 	currencies, err := currencies.CollectionCurrencies(collectFuncs...)
 	if err != nil {
-		go log.Error().
-			Err(err).
-			Msg("failed to collect currencies")
+		log.Error().Err(err).Msg("failed to collect currencies")
 		return err
 	}
 
