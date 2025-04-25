@@ -203,7 +203,7 @@
               <TooltipContent>{{ $t("global.read_docs") }}</TooltipContent>
             </Tooltip>
 
-            <LanguageSelector class="z-10 text-primary" :include-text="false" />
+            <LanguageSelector class="z-10 text-primary" :expanded="false" />
           </div>
         </TooltipProvider>
       </header>

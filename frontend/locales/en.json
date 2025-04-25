@@ -278,9 +278,9 @@
         "zh-CN": "Chinese (Simplified)",
         "zh-HK": "Chinese (Hong Kong)",
         "zh-MO": "Chinese (Macau)",
-        "zh-TW": "Chinese (Traditional)"
+        "zh-TW": "Chinese (Traditional)",
+        "sq-AL": "Albanian"
     },
-    "languages.sq-AL": "Albanian",
     "locations": {
         "child_locations": "Child Locations",
         "collapse_tree": "Collapse Tree",
@@ -350,6 +350,8 @@
         "group_settings_sub": "Shared Group Settings. You may need to refresh your browser for some settings to apply.",
         "inactive": "Inactive",
         "language": "Language",
+        "override_locale": "Override Date and Currency Language",
+        "no_override": "No override",
         "new_password": "New Password",
         "no_notifiers": "No notifiers configured",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notifier",

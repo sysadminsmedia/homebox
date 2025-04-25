@@ -29,6 +29,11 @@ export type DateTimeType = "date" | "time" | "datetime";
 
 export function getLocaleCode() {
   const { $i18nGlobal } = useNuxtApp();
+  const preferences = useViewPreferences();
+  // TODO: make reactive
+  if (preferences.value.overrideFormatLocale) {
+    return preferences.value.overrideFormatLocale;
+  }
   return ($i18nGlobal?.locale?.value as string) ?? "en-US";
 }
 
