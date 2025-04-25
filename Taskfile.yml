@@ -11,7 +11,7 @@ tasks:
     desc: Install development dependencies
     cmds:
       - go install github.com/swaggo/swag/cmd/swag@latest
-      - go install github.com/pressly/goose/v3/cmd/goose@latest
+      - go install github.com/pressly/goose/v3/cmd/goose@v3.8.0
       - cd backend && go mod tidy
       - cd frontend && pnpm install --shamefully-hoist
 
