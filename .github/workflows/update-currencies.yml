@@ -20,6 +20,7 @@ jobs:
         with:
           python-version: '3.8'
           cache: 'pip'
+          cache-dependency-path: .github/workflows/update-currencies/requirements.txt
 
       - name: Install dependencies
         run: |
