@@ -1,64 +1,106 @@
-import requests
+#!/usr/bin/env python3
 import json
-import os
+import logging
+import sys
+from pathlib import Path
+
+import requests
+from requests.adapters import HTTPAdapter, Retry
+
+API_URL    = 'https://restcountries.com/v3.1/all?fields=name,common,currencies'
+SAVE_PATH  = Path('backend/internal/core/currencies/currencies.json')
+TIMEOUT    = 10  # seconds
+
+
+def setup_logging():
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s %(levelname)s: %(message)s'
+    )
+
 
 def fetch_currencies():
+    session = requests.Session()
+    retries = Retry(
+        total=3,
+        backoff_factor=1,
+        status_forcelist=[429, 500, 502, 503, 504],
+        allowed_methods=frozenset(['GET'])
+    )
+    session.mount('https://', HTTPAdapter(max_retries=retries))
+
     try:
-        response = requests.get('https://restcountries.com/v3.1/all?fields=name,common,currencies')
-        response.raise_for_status()
+        resp = session.get(API_URL, timeout=TIMEOUT)
+        resp.raise_for_status()
     except requests.exceptions.RequestException as e:
-        print(f"An error occurred while making the request: {e}")
-        return []
+        logging.error("API request failed: %s", e)
+        return None  # signal fatal
 
     try:
-        countries = response.json()
-    except json.JSONDecodeError:
-        print("Failed to decode JSON from the response.")
-        return []
+        countries = resp.json()
+    except ValueError as e:
+        logging.error("Failed to parse JSON response: %s", e)
+        return None  # signal fatal
 
-    currencies_list = []
+    results = []
     for country in countries:
-        country_name = country.get('name', {}).get('common')
-        country_currencies = country.get('currencies', {})
-        for currency_code, currency_info in country_currencies.items():
-            symbol = currency_info.get('symbol', '')
-            currencies_list.append({
-                'code': currency_code,
-                'local': country_name,
-                'symbol': symbol,
-                'name': currency_info.get('name')
+        country_name = country.get('name', {}).get('common') or "Unknown"
+        for code, info in country.get('currencies', {}).items():
+            results.append({
+                'code':   code,
+                'local':  country_name,
+                'symbol': info.get('symbol', ''),
+                'name':   info.get('name', '')
             })
 
-    return currencies_list
+    # sort by country name for consistency
+    return sorted(results, key=lambda x: x['local'].lower())
 
-def save_currencies(currencies, file_path):
-    # Sort the list by the "local" field
-    sorted_currencies = sorted(currencies, key=lambda x: x['local'].lower() if x['local'] else "")
-    try:
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
-        with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(sorted_currencies, f, ensure_ascii=False, indent=4)
-    except IOError as e:
-        print(f"An error occurred while writing to the file: {e}")
 
-def load_existing_currencies(file_path):
+def load_existing(path: Path):
+    if not path.exists():
+        return []
     try:
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with path.open('r', encoding='utf-8') as f:
             return json.load(f)
-    except (IOError, json.JSONDecodeError):
-        return []  # Return an empty list if file doesn't exist or is invalid
+    except (IOError, ValueError) as e:
+        logging.warning("Could not load existing file (%s): %s", path, e)
+        return []
+
+
+def save_currencies(data, path: Path):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open('w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+    logging.info("Wrote %d entries to %s", len(data), path)
+
 
 def main():
-    save_path = 'backend/internal/core/currencies/currencies.json'
-    
-    existing_currencies = load_existing_currencies(save_path)
-    new_currencies = fetch_currencies()
+    setup_logging()
+    logging.info("🔄 Starting currency update")
 
-    if new_currencies == existing_currencies:
-        print("Currencies up-to-date with API, skipping commit.")
-    else:
-        save_currencies(new_currencies, save_path)
-        print("Currencies updated and saved.")
+    existing = load_existing(SAVE_PATH)
+    new = fetch_currencies()
+
+    # Fatal API / parse error → exit non-zero so the workflow will fail
+    if new is None:
+        logging.error("Aborting: failed to fetch or parse API data.")
+        sys.exit(1)
+
+    # Empty array → log & exit zero (no file change)
+    if not new:
+        logging.warning("API returned empty list; skipping write.")
+        sys.exit(0)
+
+    # Identical to existing → nothing to do
+    if new == existing:
+        logging.info("Up-to-date; skipping write.")
+        sys.exit(0)
+
+    # Otherwise actually overwrite
+    save_currencies(new, SAVE_PATH)
+    logging.info("✅ Currency file updated.")
+
 
 if __name__ == "__main__":
     main()
