@@ -23,6 +23,7 @@
   import { useDialog } from "@/components/ui/dialog-provider";
   import { Label } from "@/components/ui/label";
   import { Switch } from "@/components/ui/switch";
+  import { Card } from "@/components/ui/card";
 
   const { openDialog, closeDialog } = useDialog();
 
@@ -527,11 +528,11 @@
     </Dialog>
 
     <section>
-      <div class="rounded bg-base-100 p-3">
+      <Card class="p-3">
         <header :class="{ 'mb-2': item.description }">
           <div class="flex flex-wrap items-end gap-2">
             <div
-              class="mb-auto flex size-12 items-center justify-center rounded-full bg-neutral-focus text-neutral-content"
+              class="mb-auto flex size-12 items-center justify-center rounded-full bg-secondary text-secondary-foreground"
             >
               <MdiPackageVariant class="size-7" />
             </div>
@@ -542,7 +543,7 @@
                     <BreadcrumbLink
                       v-if="idx < fullpath.length - 1"
                       as-child
-                      class="text-base-content/70 hover:underline"
+                      class="text-foreground/70 hover:underline"
                     >
                       <NuxtLink :to="`/${part.type}/${part.id}`">
                         {{ part.name }}
@@ -595,7 +596,7 @@
         <div v-if="item.description" class="prose max-w-full p-1">
           <Markdown class="text-base" :source="item.description"> </Markdown>
         </div>
-      </div>
+      </Card>
 
       <div class="mb-6 mt-3 flex flex-wrap items-center justify-between">
         <ButtonGroup>
@@ -656,9 +657,7 @@
         <template v-if="!hasNested">
           <BaseCard v-if="photos && photos.length > 0">
             <template #title> {{ $t("items.photos") }} </template>
-            <div
-              class="scroll-bg container mx-auto flex max-h-[500px] flex-wrap gap-2 overflow-y-scroll border-t border-gray-300 p-4"
-            >
+            <div class="scroll-bg container mx-auto flex max-h-[500px] flex-wrap gap-2 overflow-y-scroll border-t p-4">
               <button v-for="(img, i) in photos" :key="i" @click="openImageDialog(img)">
                 <img class="max-h-[200px] rounded" :src="img.src" />
               </button>
@@ -698,7 +697,7 @@
               </template>
             </DetailsSection>
             <div v-else>
-              <p class="px-6 pb-4 text-base-content/70">No attachments found</p>
+              <p class="px-6 pb-4 text-foreground/70">No attachments found</p>
             </div>
           </BaseCard>
 

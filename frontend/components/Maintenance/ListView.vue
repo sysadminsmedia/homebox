@@ -128,8 +128,8 @@
     <MaintenanceEditModal ref="maintenanceEditModal" @changed="refreshList"></MaintenanceEditModal>
     <div class="container space-y-6">
       <BaseCard v-for="e in maintenanceDataList" :key="e.id">
-        <BaseSectionHeader class="border-b border-b-gray-300 p-6">
-          <span class="mb-2 text-base-content">
+        <BaseSectionHeader class="border-b p-6">
+          <span class="mb-2">
             <span v-if="!props.currentItemId">
               <NuxtLink class="hover:underline" :to="`/item/${(e as MaintenanceEntryWithDetails).itemID}/maintenance`">
                 {{ (e as MaintenanceEntryWithDetails).itemName }}
@@ -191,7 +191,7 @@
       <div v-if="props.currentItemId" class="hidden first:block">
         <button
           type="button"
-          class="relative block w-full rounded-lg border-2 border-dashed border-base-content p-12 text-center"
+          class="relative block w-full rounded-lg border-2 border-dashed p-12 text-center"
           @click="maintenanceEditModal?.openCreateModal(props.currentItemId)"
         >
           <MdiWrenchClock class="inline size-16" />

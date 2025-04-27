@@ -52,7 +52,7 @@
           <TableHead
             v-for="h in headers.filter(h => h.enabled)"
             :key="h.value"
-            class="text-no-transform cursor-pointer bg-neutral text-sm text-neutral-content hover:bg-neutral/90"
+            class="text-no-transform cursor-pointer bg-secondary text-sm text-secondary-foreground hover:bg-secondary/90"
             @click="sortBy(h.value)"
           >
             <div
@@ -97,7 +97,7 @@
             </template>
             <template v-else-if="h.type === 'boolean'">
               <MdiCheck v-if="d.insured" class="inline size-5 text-green-500" />
-              <MdiClose v-else class="inline size-5 text-red-500" />
+              <MdiClose v-else class="inline size-5 text-destructive" />
             </template>
             <template v-else-if="h.type === 'location'">
               <NuxtLink v-if="d.location" class="hover:underline" :to="`/location/${d.location.id}`">

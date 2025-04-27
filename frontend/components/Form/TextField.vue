@@ -5,7 +5,7 @@
       <span class="grow"></span>
       <span
         :class="{
-          'text-red-600':
+          'text-destructive':
             typeof value === 'string' &&
             ((maxLength !== -1 && value.length > maxLength) || (minLength !== -1 && value.length < minLength)),
         }"
@@ -29,7 +29,7 @@
       <span class="grow"></span>
       <span
         :class="{
-          'text-red-600':
+          'text-destructive':
             typeof value === 'string' &&
             ((maxLength !== -1 && value.length > maxLength) || (minLength !== -1 && value.length < minLength)),
         }"
