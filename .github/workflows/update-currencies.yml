@@ -2,8 +2,7 @@ name: Update Currencies
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -11,14 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1) Pull down code
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      # 2) Install Python + cache dependencies
-      - name: Set up Python 3.8
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.8'
@@ -29,46 +26,29 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests
 
-      # 3) Run your update script
-      - name: Fetch & write currencies.json
+      - name: Run currency update script
         run: python .github/scripts/update_currencies.py
 
-      # 4) Detect both “any changes” and “is it an empty array?”
-      - name: Check for meaningful updates
-        id: detect
+      - name: Check for file changes
+        id: changes
         run: |
-          # any git-tracked changes?
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "changes=true" >> $GITHUB_OUTPUT
+          if git diff --quiet; then
+            echo "changed=false" >> $GITHUB_ENV
           else
-            echo "changes=false" >> $GITHUB_OUTPUT
+            echo "changed=true"  >> $GITHUB_ENV
           fi
 
-          # are we looking at an empty JSON array?
-          empty=$(python - << 'PYCODE'
-import json
-data = json.load(open('backend/internal/core/currencies/currencies.json'))
-print("true" if not data else "false")
-PYCODE
-)
-          echo "empty=$empty" >> $GITHUB_OUTPUT
-
-      # 5) Only if we have changes AND the file isn’t just `[]`, open a PR
-      - name: Create or update Pull Request
-        if: steps.detect.outputs.changes == 'true' && steps.detect.outputs.empty == 'false'
+      - name: Create Pull Request
+        if: env.changed == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: update-currencies
           base: main
           title: "Update currencies.json"
-          body: |
-            This PR was opened automatically by our GitHub Action.
           commit-message: "chore: update currencies.json"
           path: backend/internal/core/currencies/currencies.json
-          committer: GitHub Actions <actions@github.com>
 
-      # 6) Otherwise, just log and exit
-      - name: No update required
-        if: steps.detect.outputs.changes == 'false' || steps.detect.outputs.empty == 'true'
-        run: echo "No meaningful currency updates found (either no changes or got an empty array). Skipping PR."
+      - name: No updates needed
+        if: env.changed == 'false'
+        run: echo "✅ currencies.json is already up-to-date"
