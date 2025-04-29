@@ -23,7 +23,7 @@ func Up20235011220230202(ctx context.Context, tx *sql.Tx) error {
 	if err != nil {
 		// Column does not exist, proceed with migration
 		_, err = tx.ExecContext(ctx, `
-			ALTER TABLE "items" ADD COLUMN"sync_child_items_locations" boolean NOT NULL DEFAULT false;
+			ALTER TABLE "items" ADD COLUMN "sync_child_items_locations" boolean NOT NULL DEFAULT false;
 		`)
 		if err != nil {
 			return fmt.Errorf("failed to execute migration: %w", err)
