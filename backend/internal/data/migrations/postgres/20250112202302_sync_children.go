@@ -12,7 +12,7 @@ func init() {
 	goose.AddMigrationContext(Up20250112202302, Down20250112202302)
 }
 
-func Up20235011220230202(ctx context.Context, tx *sql.Tx) error {
+func Up20250112202302(ctx context.Context, tx *sql.Tx) error {
 	columnName := "sync_child_items_locations"
 	query := `
 		SELECT column_name 
@@ -32,7 +32,7 @@ func Up20235011220230202(ctx context.Context, tx *sql.Tx) error {
 	return nil
 }
 
-func Down20235011220230202(ctx context.Context, tx *sql.Tx) error {
+func Down20250112202302(ctx context.Context, tx *sql.Tx) error {
 	// This migration is a no-op for Postgres.
 	return nil
 }
