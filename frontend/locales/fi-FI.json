@@ -29,6 +29,7 @@
                 "last-week": "viime viikolla",
                 "last-year": "viime vuonna",
                 "minute": "minuutti",
+                "months": "kuukausi",
                 "next-month": "ensi kuussa",
                 "next-week": "ensi viikolla",
                 "next-year": "ensi vuonna",
@@ -73,6 +74,7 @@
                 },
                 "table": {
                     "headers": "Otsikko",
+                    "page": "Sivu",
                     "rows_per_page": "Rivejä sivua kohti",
                     "table_settings": "Taulukon Asetukset"
                 }
@@ -81,12 +83,115 @@
         "label": {
             "create_modal": {
                 "label_description": "Etiketin Kuvaus",
-                "label_name": "Etiketin Nimi"
+                "label_name": "Etiketin Nimi",
+                "title": "Luo Tarra"
+            },
+            "selector": {
+                "select_labels": "Valitse Tarrat"
             }
+        },
+        "location": {
+            "create_modal": {
+                "location_description": "Sijainnin Kuvaus",
+                "location_name": "Sijainnin Nimi",
+                "title": "Luo Sijainti"
+            },
+            "selector": {
+                "no_location_found": "Sijaintia ei löytynyt",
+                "parent_location": "Vanhemman Sijainti",
+                "search_location": "Etsi Sijainnit",
+                "select_location": "Valitse sijainti"
+            },
+            "tree": {
+                "no_locations": "Sijainteja ei ole saatavilla. Lisää uusia sijainteja\n '<'span class=\" link-primary \"`>`Luo`<`/span`> ' - painike navigointipalkissa."
+            }
+        },
+        "quick_menu": {
+            "no_results": "Tuloksia ei löytynyt.",
+            "shortcut_hint": "Valitse toiminto nopeasti numeronäppäimillä."
         }
     },
+    "global": {
+        "add": "Lisätä",
+        "archived": "Arkistoitu",
+        "build": "Koontikansio: { build }",
+        "cancel": "Peruuttaa",
+        "confirm": "Vahvistaa",
+        "create": "Luoda",
+        "create_and_add": "Luo ja lisää toinen",
+        "created": "Luotu",
+        "delete": "Poistaa",
+        "details": "Tiedot",
+        "duplicate": "Kaksoiskappale",
+        "edit": "Muokkaa",
+        "email": "Sähköposti",
+        "insured": "Vakuuttaa",
+        "items": "Erä",
+        "labels": "Tarra",
+        "locations": "Sijainti",
+        "maintenance": "Huolto",
+        "name": "Nimi",
+        "navigate": "Navigoida",
+        "password": "Salasana",
+        "quantity": "Määrä",
+        "read_docs": "Lue dokumentit",
+        "save": "Tallentaa",
+        "search": "Etsiä",
+        "sign_out": "Kirjaudu Ulos",
+        "submit": "Lähettää",
+        "update": "Päivitys",
+        "value": "Arvo"
+    },
+    "home": {
+        "labels": "Tarra",
+        "quick_statistics": "Nopeat Tilastot",
+        "recently_added": "Äskettäin Lisätty",
+        "total_items": "Erät Yhteensä",
+        "total_labels": "Tarrat Yhteensä",
+        "total_locations": "Toimipaikat Yhteensä"
+    },
+    "index": {
+        "disabled_registration": "Rekisteröinti Poistettu Käytöstä"
+    },
+    "items": {
+        "add": "Lisätä",
+        "advanced": "Edistyksellinen",
+        "archived": "Arkistoitu",
+        "attachment": "Liite",
+        "attachments": "Liitteet",
+        "manual": "Käsikirja",
+        "manuals": "Käsikirjat",
+        "manufacturer": "Valmistaja",
+        "tip_1": "Sijainti-ja etikettisuodattimet käyttävät \" tai \" - toimintoa. Jos valitaan useampi kuin yksi, vain yksi on\n tarvitaan ottelu.",
+        "tip_2": "\"#\"- Etuliitteellä tehdyt haut kyselevät omaisuuserän tunnusta (esimerkki \"#000-001\")",
+        "tip_3": "Kenttäsuodattimet käyttävät \" tai \" - toimintoa. Jos valitaan useampi kuin yksi, tarvitaan vain yksi\n ottelu.",
+        "tips": "Vihje",
+        "tips_sub": "Etsi Vinkkejä",
+        "warranty": "Takuu",
+        "warranty_details": "Takuun Tiedot",
+        "warranty_expires": "Takuu Päättyy"
+    },
+    "labels": {
+        "no_results": "Tarroja Ei Löytynyt",
+        "update_label": "Päivitä Nimiö"
+    },
     "languages": {
-        "pl": "Puola"
+        "ca": "Katalaani",
+        "cs-CZ": "Tšekki",
+        "pl": "Puola",
+        "pt-BR": "Portugali (Brasilia)",
+        "pt-PT": "Portugali (Portugali)",
+        "ro-RO": "Romania",
+        "ru": "Venäjä",
+        "sk-SK": "Slovakia",
+        "sl": "Sloveenin",
+        "sv": "Ruotsalainen",
+        "ta-IN": "Tamili",
+        "tr": "Turkkilainen",
+        "uk-UA": "Ukraina",
+        "zh-CN": "Kiina (Yksinkertaistettu)",
+        "zh-HK": "Kiina (Hongkong)",
+        "zh-MO": "Kiina (Macao)"
     },
     "maintenance": {
         "list": {
