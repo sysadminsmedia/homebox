@@ -9,7 +9,7 @@ import (
 
 //nolint:gochecknoinits
 func init() {
-	goose.AddMigrationContext(Up20235011220230202, Down20235011220230202)
+	goose.AddMigrationContext(Up20250112202302, Down20250112202302)
 }
 
 func Up20235011220230202(ctx context.Context, tx *sql.Tx) error {
