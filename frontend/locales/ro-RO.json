@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Comportamentul pentru importuri cu import_refs existente s-a schimbat. Dacă un import_ref este prezent în fișierul CSV,\nobiectul v-a fi actualizat cu valorile din fișierul CSV.",
                 "description": "Importă un fișier CSV care conține toate obiectele, etichetele și locațiile tale. \nCitește documentația pentru mai multe informații privind format-ul necesar.",
-                "title": "Importă fișier CSV",
-                "upload": "Încarcă"
+                "title": "Importă fișier CSV"
             },
             "outdated": {
                 "current_version": "Versiune Curentă",
@@ -57,7 +56,6 @@
             "create_modal": {
                 "item_description": "Descriere articol",
                 "item_name": "Denumire articol",
-                "photo_button": "Imagine 📷",
                 "title": "Crează articol"
             },
             "view": {

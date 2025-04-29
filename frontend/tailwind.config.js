@@ -1,13 +1,6 @@
 import { config } from "dotenv";
 config();
 
-// check if DISABLE_DAISYUI is set to true in the environment
-const isDisabled = process.env.DISABLE_DAISYUI === "true";
-
-if (isDisabled) {
-  console.log("DAISYUI DISABLED");
-}
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -20,7 +13,6 @@ module.exports = {
     "theme-corporate",
     "theme-cupcake",
     "theme-cyberpunk",
-    "theme-dark",
     "theme-dracula",
     "theme-emerald",
     "theme-fantasy",
@@ -42,9 +34,6 @@ module.exports = {
     "theme-night",
     "theme-coffee",
     "theme-winter",
-    "theme-dim",
-    "theme-nord",
-    "theme-sunset",
   ],
   prefix: "",
 
@@ -62,6 +51,7 @@ module.exports = {
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
+        "background-accent": "hsl(var(--background-accent))",
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
@@ -91,6 +81,20 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-background))",
+          foreground: "hsl(var(--sidebar-foreground))",
+        },
+        "sidebar-primary": {
+          DEFAULT: "hsl(var(--sidebar-primary))",
+          foreground: "hsl(var(--sidebar-primary-foreground))",
+        },
+        "sidebar-accent": {
+          DEFAULT: "hsl(var(--sidebar-accent))",
+          foreground: "hsl(var(--sidebar-accent-foreground))",
+        },
+        "sidebar-border": "hsl(var(--sidebar-border))",
+        "sidebar-ring": "hsl(var(--sidebar-ring))",
       },
       borderRadius: {
         xl: "calc(var(--radius) + 4px)",
@@ -101,18 +105,18 @@ module.exports = {
       keyframes: {
         "accordion-down": {
           from: { height: 0 },
-          to: { height: "var(--radix-accordion-content-height)" },
+          to: { height: "var(--reka-accordion-content-height)" },
         },
         "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
+          from: { height: "var(--reka-accordion-content-height)" },
           to: { height: 0 },
         },
         "collapsible-down": {
           from: { height: 0 },
-          to: { height: "var(--radix-collapsible-content-height)" },
+          to: { height: "var(--reka-collapsible-content-height)" },
         },
         "collapsible-up": {
-          from: { height: "var(--radix-collapsible-content-height)" },
+          from: { height: "var(--reka-collapsible-content-height)" },
           to: { height: 0 },
         },
       },
@@ -124,58 +128,5 @@ module.exports = {
       },
     },
   },
-  daisyui: {
-    themes: [
-      {
-        homebox: {
-          primary: "#5C7F67",
-          secondary: "#ECF4E7",
-          accent: "#FFDA56",
-          neutral: "#2C2E27",
-          "base-100": "#FFFFFF",
-          info: "#3ABFF8",
-          success: "#36D399",
-          warning: "#FBBD23",
-          error: "#F87272",
-        },
-      },
-      "light",
-      "dark",
-      "cupcake",
-      "bumblebee",
-      "emerald",
-      "corporate",
-      "synthwave",
-      "retro",
-      "cyberpunk",
-      "valentine",
-      "halloween",
-      "garden",
-      "forest",
-      "aqua",
-      "lofi",
-      "pastel",
-      "fantasy",
-      "wireframe",
-      "black",
-      "luxury",
-      "dracula",
-      "cmyk",
-      "autumn",
-      "business",
-      "acid",
-      "lemonade",
-      "night",
-      "coffee",
-      "winter",
-    ],
-  },
-  plugins: isDisabled
-    ? [require("@tailwindcss/aspect-ratio"), require("@tailwindcss/typography"), require("tailwindcss-animate")]
-    : [
-        require("@tailwindcss/aspect-ratio"),
-        require("@tailwindcss/typography"),
-        require("daisyui"),
-        require("tailwindcss-animate"),
-      ],
+  plugins: [require("@tailwindcss/aspect-ratio"), require("@tailwindcss/typography"), require("tailwindcss-animate")],
 };

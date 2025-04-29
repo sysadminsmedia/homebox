@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "O comportamento de importações com import_refs existentes foi alterado. Se houver um import_ref presente no arquivo CSV, o\nitem será atualizado com os valores presentes no arquivo CSV.",
                 "description": "Importe um arquivo CSV contendo seus items, etiquetas e locais. Consulte a documentação para mais informações\nsobre a formatação aceita.",
-                "title": "Importar arquivo CSV",
-                "upload": "Importar"
+                "title": "Importar arquivo CSV"
             },
             "outdated": {
                 "current_version": "Versão Atual",
@@ -63,7 +62,6 @@
             "create_modal": {
                 "item_description": "Descrição do Item",
                 "item_name": "Nome do Item",
-                "photo_button": "Foto📷",
                 "title": "Criar Item"
             },
             "view": {

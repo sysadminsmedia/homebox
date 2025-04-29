@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Správanie pre importy s existujúcimi import_refs sa zmenilo. Ak sa v súbore CSV nachádza import_ref,\npoložka bude aktualizovaná hodnotami v súbore CSV.",
                 "description": "Importujte súbor CSV obsahujúci vaše položky, štítky a miesta. Ďalšie informácie nájdete v dokumentácii\npožadovaný formát.",
-                "title": "Importovať súbor CSV",
-                "upload": "Nahrať"
+                "title": "Importovať súbor CSV"
             },
             "outdated": {
                 "current_version": "Aktuálna verzia",
@@ -65,7 +64,6 @@
             "create_modal": {
                 "item_description": "Popis položky",
                 "item_name": "Názov položky",
-                "photo_button": "Foto 📷",
                 "title": "Vytvoriť položku"
             },
             "view": {

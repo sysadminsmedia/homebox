@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { DialogTitle, type DialogTitleProps } from "radix-vue";
+  import { DialogTitle, type DialogTitleProps } from "reka-ui";
   import { computed, type HTMLAttributes } from "vue";
   import { cn } from "@/lib/utils";
 

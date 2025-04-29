@@ -1,11 +1,12 @@
 <template>
-  <BaseModal v-model="dialog">
-    <template #title> {{ $t("components.app.import_dialog.title") }} </template>
-    <p>
-      {{ $t("components.app.import_dialog.description") }}
-    </p>
-    <div class="alert alert-warning mt-4 shadow-lg">
-      <div>
+  <Dialog dialog-id="import">
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>{{ $t("components.app.import_dialog.title") }}</DialogTitle>
+        <DialogDescription> {{ $t("components.app.import_dialog.description") }} </DialogDescription>
+      </DialogHeader>
+
+      <div class="flex gap-2 rounded bg-destructive p-2 text-destructive-foreground shadow-lg">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="mb-auto size-6 shrink-0 stroke-current"
@@ -23,30 +24,30 @@
           {{ $t("components.app.import_dialog.change_warning") }}
         </span>
       </div>
-    </div>
 
-    <form @submit.prevent="submitCsvFile">
-      <div class="flex flex-col gap-2 py-6">
-        <input ref="importRef" type="file" class="hidden" accept=".csv,.tsv" @change="setFile" />
+      <form class="flex flex-col gap-4" @submit.prevent="submitCsvFile">
+        <Input ref="importRef" type="file" accept=".csv,.tsv" @change="setFile" />
 
-        <BaseButton type="button" @click="uploadCsv">
-          <MdiUpload class="mr-2 size-5" />
-          {{ $t("components.app.import_dialog.upload") }}
-        </BaseButton>
-        <p class="-mb-5 pt-4 text-center">
-          {{ importCsv?.name }}
-        </p>
-      </div>
-
-      <div class="modal-action">
-        <BaseButton type="submit" :disabled="!importCsv"> {{ $t("global.submit") }} </BaseButton>
-      </div>
-    </form>
-  </BaseModal>
+        <DialogFooter>
+          <Button type="submit" :disabled="!importCsv"> {{ $t("global.submit") }} </Button>
+        </DialogFooter>
+      </form>
+    </DialogContent>
+  </Dialog>
 </template>
 
 <script setup lang="ts">
-  import MdiUpload from "~icons/mdi/upload";
+  import { toast } from "@/components/ui/sonner";
+  import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+  } from "@/components/ui/dialog";
+  import { Button } from "@/components/ui/button";
+  import { Input } from "@/components/ui/input";
   type Props = {
     modelValue: boolean;
   };
@@ -60,7 +61,6 @@
   const dialog = useVModel(props, "modelValue", emit);
 
   const api = useUserApi();
-  const toast = useNotifier();
 
   const importCsv = ref<File | null>(null);
   const importLoading = ref(false);
@@ -79,10 +79,6 @@
     }
 
     importCsv.value = result.files[0];
-  }
-
-  function uploadCsv() {
-    importRef.value?.click();
   }
 
   async function submitCsvFile() {

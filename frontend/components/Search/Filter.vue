@@ -1,82 +1,75 @@
 <template>
-  <div ref="el" class="dropdown" :class="{ 'dropdown-open': dropdownOpen }">
-    <button ref="btn" tabindex="0" class="btn btn-xs" @click="toggle">
-      {{ label }} {{ len }} <MdiChevronDown class="size-4" />
-    </button>
-    <div tabindex="0" class="dropdown-content mt-1 w-64 rounded-md bg-base-100 shadow">
-      <div class="mb-1 px-4 pt-4 shadow-sm">
-        <input v-model="search" type="text" placeholder="Search…" class="input input-bordered input-sm mb-2 w-full" />
+  <Popover>
+    <PopoverTrigger as-child>
+      <Button size="sm" variant="outline" class="group/filter">
+        {{ label }} {{ len }}
+        <MdiChevronDown class="transition-transform group-data-[state=open]/filter:rotate-180" />
+      </Button>
+    </PopoverTrigger>
+    <PopoverContent class="z-40 p-0">
+      <div class="p-4 shadow-sm">
+        <Input v-model="search" type="text" placeholder="Search…" />
       </div>
       <div class="max-h-72 divide-y overflow-y-auto">
-        <label
+        <Label
           v-for="v in selectedView"
-          :key="v"
-          class="label flex cursor-pointer justify-between px-4 hover:bg-base-200"
+          :key="v.id"
+          class="flex cursor-pointer justify-between px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
         >
-          <span class="label-text mr-2">
-            <slot name="display" v-bind="{ item: v }">
-              {{ v[display] }}
-            </slot>
-          </span>
-          <input v-model="selected" type="checkbox" :value="v" class="checkbox checkbox-primary checkbox-sm" />
-        </label>
+          <div>
+            <span>{{ v.name }}</span>
+            <span v-if="v.treeString && v.treeString !== v.name" class="ml-auto text-xs">{{ v.treeString }}</span>
+          </div>
+          <Checkbox :model-value="true" @update:model-value="_ => (selected = selected.filter(s => s.id !== v.id))" />
+        </Label>
         <hr v-if="selected.length > 0" />
-        <label
+        <Label
           v-for="v in unselected"
-          :key="v"
-          class="label flex cursor-pointer justify-between px-4 hover:bg-base-200"
+          :key="v.id"
+          class="flex cursor-pointer justify-between px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground"
         >
-          <span class="label-text mr-2">
-            <slot name="display" v-bind="{ item: v }">
-              {{ v[display] }}
-            </slot>
-          </span>
-          <input v-model="selected" type="checkbox" :value="v" class="checkbox checkbox-primary checkbox-sm" />
-        </label>
+          <div>
+            <div>{{ v.name }}</div>
+            <div v-if="v.treeString && v.treeString !== v.name" class="ml-auto text-xs">
+              {{ v.treeString }}
+            </div>
+          </div>
+          <Checkbox :model-value="false" @update:model-value="_ => (selected = [...selected, v])" />
+        </Label>
       </div>
-    </div>
-  </div>
+    </PopoverContent>
+  </Popover>
 </template>
 
 <script setup lang="ts">
   import MdiChevronDown from "~icons/mdi/chevron-down";
+  import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+  import { Button } from "@/components/ui/button";
+  import { Checkbox } from "@/components/ui/checkbox";
+  import { Input } from "@/components/ui/input";
+  import { Label } from "@/components/ui/label";
+
   type Props = {
     label: string;
-    options: any[];
-    display?: string;
-    modelValue: any[];
-    uniqueField: string;
+    options: {
+      name: string;
+      id: string;
+      treeString?: string;
+    }[];
+    modelValue: {
+      name: string;
+      id: string;
+      treeString?: string;
+    }[];
   };
-
-  const btn = ref<HTMLButtonElement>();
 
   const search = ref("");
   const searchFold = computed(() => search.value.toLowerCase());
-  const dropdownOpen = ref(false);
-  const el = ref();
-
-  function toggle() {
-    dropdownOpen.value = !dropdownOpen.value;
-
-    if (!dropdownOpen.value) {
-      btn.value?.blur();
-    }
-  }
-
-  onClickOutside(el, () => {
-    dropdownOpen.value = false;
-  });
-
-  watch(dropdownOpen, val => {
-    console.log(val);
-  });
 
   const emit = defineEmits(["update:modelValue"]);
   const props = withDefaults(defineProps<Props>(), {
     label: "",
-    display: "name",
     modelValue: () => [],
-    uniqueField: "id",
   });
 
   const len = computed(() => {
@@ -86,7 +79,7 @@
   const selectedView = computed(() => {
     return selected.value.filter(o => {
       if (searchFold.value.length > 0) {
-        return o[props.display].toLowerCase().includes(searchFold.value);
+        return o.name.toLowerCase().includes(searchFold.value);
       }
       return true;
     });
@@ -97,14 +90,9 @@
   const unselected = computed(() => {
     return props.options.filter(o => {
       if (searchFold.value.length > 0) {
-        return (
-          o[props.display].toLowerCase().includes(searchFold.value) &&
-          selected.value.every(s => s[props.uniqueField] !== o[props.uniqueField])
-        );
+        return o.name.toLowerCase().includes(searchFold.value) && selected.value.every(s => s.id !== o.id);
       }
-      return selected.value.every(s => s[props.uniqueField] !== o[props.uniqueField]);
+      return selected.value.every(s => s.id !== o.id);
     });
   });
 </script>
-
-<style scoped></style>

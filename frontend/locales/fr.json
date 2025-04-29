@@ -2,10 +2,9 @@
     "components": {
         "app": {
             "import_dialog": {
-                "change_warning": "Le comportement lors d’importations avec des import_ref existants a changé. Si une valeur pour import_ref est présente dans le \nfichier CSV, alors l’élément sera mis à jour avec celle-ci.",
-                "description": "Importer un fichier CSV contenant vos articles, étiquettes, et emplacements. Se reporter à la documentation pour plus d’informations \nsur le format requis.",
-                "title": "Importer un fichier CSV",
-                "upload": "Téléverser"
+                "change_warning": "Le comportement lors d’importations avec des import_ref existants a changé. Si une valeur pour import_ref\n est présente dans le fichier CSV, alors l’élément sera mis à jour avec celle-ci.",
+                "description": "Importer un fichier CSV contenant vos articles, étiquettes, et emplacements. Se reporter à la documentation\n pour plus d’informations sur le format requis.",
+                "title": "Importer un fichier CSV"
             },
             "outdated": {
                 "current_version": "Version actuelle",
@@ -55,7 +54,8 @@
                 "titles": "Étiquettes"
             },
             "page_qr_code": {
-                "page_url": "URL de la page"
+                "page_url": "URL de la page",
+                "qr_tooltip": "Afficher le QR code"
             },
             "password_score": {
                 "password_strength": "Force du mot de passe"
@@ -65,8 +65,9 @@
             "create_modal": {
                 "item_description": "Description de l'article",
                 "item_name": "Nom de l'article",
-                "photo_button": "Photo 📷",
-                "title": "Créer un article"
+                "item_photo": "Photo de l'article 📷",
+                "title": "Créer un article",
+                "upload_photos": "Transférer des photos"
             },
             "view": {
                 "selectable": {
@@ -76,8 +77,10 @@
                     "table": "Tableau"
                 },
                 "table": {
+                    "headers": "En-têtes",
                     "page": "Page",
-                    "rows_per_page": "Lignes par page"
+                    "rows_per_page": "Lignes par page",
+                    "table_settings": "Paramètres du Tableau"
                 }
             }
         },
@@ -86,6 +89,9 @@
                 "label_description": "Description de l'étiquette",
                 "label_name": "Nom de l'étiquette",
                 "title": "Créer une étiquette"
+            },
+            "selector": {
+                "select_labels": "Sélectionnez les étiquettes"
             }
         },
         "location": {
@@ -95,19 +101,25 @@
                 "title": "Créer un emplacement"
             },
             "selector": {
-                "parent_location": "Emplacement parent"
+                "no_location_found": "Aucun emplacement trouvé",
+                "parent_location": "Emplacement parent",
+                "search_location": "Rechercher des emplacements",
+                "select_location": "Choisir un emplacement"
             },
             "tree": {
                 "no_locations": "Aucun emplacement disponible. Créez votre premier emplacement avec\nle bouton `<`span class=\"link-primary\"`>`Créer`<`/span`>` dans la barre de navigation."
             }
         },
         "quick_menu": {
+            "no_results": "Aucun résultat trouvé.",
             "shortcut_hint": "Utilisez les touches numériques pour sélectionner rapidement une action."
         }
     },
     "global": {
         "add": "Ajouter",
-        "build": "Version : { build }",
+        "archived": "Archivé",
+        "build": "Commit : { build }",
+        "cancel": "Annuler",
         "confirm": "Confirmer",
         "create": "Créer",
         "create_and_add": "Créer et en ajouter un autre",
@@ -118,7 +130,12 @@
         "edit": "Modifier",
         "email": "Courriel",
         "follow_dev": "Suivre le développeur",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Version : { version } Commit : { build } '</a>'"
+        },
         "github": "Projet GitHub",
+        "insured": "Assuré",
         "items": "Articles",
         "join_discord": "Rejoindre le Discord",
         "labels": "Étiquettes",
@@ -127,6 +144,7 @@
         "name": "Nom",
         "navigate": "Naviguer",
         "password": "Mot de passe",
+        "quantity": "Quantité",
         "read_docs": "Lire la documentation",
         "save": "Enregistrer",
         "search": "Rechercher",
@@ -211,10 +229,10 @@
         "results": "{ total } résultats",
         "serial_number": "Numéro de série",
         "show_advanced_view_options": "Afficher les options d'affichage avancées",
-        "sold_at": "Vendu à",
+        "sold_at": "Vendu le",
         "sold_details": "Détails de la vente",
         "sold_price": "Prix de vente",
-        "sold_to": "Vendu pour",
+        "sold_to": "Vendu à",
         "tip_1": "Les filtres d’emplacement et d’étiquette utilisent l’opérateur « OU ».\nUn seul des filtres n’a besoin de correspondre pour retourner un résultat.",
         "tip_2": "Les recherches préfixées par '#'' rechercheront un ID d'actif (exemple '#000-001')",
         "tip_3": "Les filtres de champ utilisent l’opérateur « OU ».\nUn seul des filtres n’a besoin de correspondre pour retourner un résultat.",
@@ -231,13 +249,18 @@
     },
     "languages": {
         "ca": "Catalan",
+        "cs-CZ": "Tchèque",
         "de": "Allemand",
         "en": "Anglais",
         "es": "Espagnol",
+        "fi-FI": "Finnois",
         "fr": "Français",
         "hu": "Hongrois",
+        "id-ID": "Indonésien",
         "it": "Italien",
         "ja-JP": "Japonais",
+        "ko-KR": "Coréen",
+        "nb-NO": "Bokmål norvégien",
         "nl": "Néerlandais",
         "pl": "Polonais",
         "pt-BR": "Portugais (Brésil)",
@@ -245,6 +268,8 @@
         "ru": "Russe",
         "sl": "Slovène",
         "sv": "Suédois",
+        "ta-IN": "Tamoul",
+        "th-TH": "Thaï",
         "tr": "Turc",
         "uk-UA": "Ukrainien",
         "zh-CN": "Chinois (simplifié)",
@@ -255,10 +280,12 @@
     "languages.da-DK": "Danois",
     "languages.ro-RO": "Roumain",
     "languages.sk-SK": "Slovaque",
+    "languages.sq-AL": "Albanais",
     "locations": {
         "child_locations": "Sous-emplacements",
         "collapse_tree": "Minimiser la liste",
-        "no_results": "Aucun emplacement trouvé",
+        "expand_tree": "Ouvrir l’arborescence",
+        "no_results": "Aucun emplacement",
         "update_location": "Mettre à jour l'emplacement"
     },
     "maintenance": {
@@ -304,6 +331,7 @@
         "locations": "Emplacements",
         "maintenance": "Maintenance",
         "profile": "Profil",
+        "scanner": "Numériser",
         "search": "Recherche",
         "tools": "Outils"
     },
@@ -337,9 +365,11 @@
         "user_profile_sub": "Gérez votre compte et invitez des utilisateurs."
     },
     "scanner": {
+        "error": "Une erreur s'est produite lors du scan",
         "invalid_url": "URL de code-barres non valide",
         "no_sources": "Aucune source vidéo disponible",
         "select_video_source": "Choisir une source vidéo",
+        "title": "Numériser",
         "unsupported": "L’API <i>Media Stream</i> n’est pas prise en charge sans HTTPS"
     },
     "tools": {

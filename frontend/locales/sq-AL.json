@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Sjellja për importet me import_refs ekzistues ka ndryshuar. Nëse një import_ref është i pranishëm në skedarin CSV,\n artikulli do të përditësohet me vlerat në skedarin CSV.",
                 "description": "Importoni një skedar CSV që përmban artikujt, etiketat dhe vendndodhjet tuaja. Shikoni dokumentacionin për më shumë informacion mbi\nformatin e kërkuar.",
-                "title": "Importo skedarin CSV",
-                "upload": "Ngarko"
+                "title": "Importo skedarin CSV"
             },
             "outdated": {
                 "current_version": "Version i Tanishëm:",
@@ -65,7 +64,6 @@
             "create_modal": {
                 "item_description": "Përshkrimi i Artikullit",
                 "item_name": "Emri i Artikullit",
-                "photo_button": "Fotografia 📷",
                 "title": "Krijo artikullin"
             },
             "view": {

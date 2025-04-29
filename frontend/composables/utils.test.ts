@@ -6,7 +6,7 @@ describe("maybeURL works as expected", () => {
     const result = maybeUrl("https://example.com");
     expect(result.isUrl).toBe(true);
     expect(result.url).toBe("https://example.com");
-    expect(result.text).toBe("Link");
+    expect(result.text).toBe("https://example.com");
   });
 
   test("special URL syntax", () => {

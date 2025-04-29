@@ -1,20 +1,13 @@
 <template>
   <div class="py-4">
     <p class="text-sm">{{ $t("components.global.password_score.password_strength") }}: {{ message }}</p>
-    <progress
-      class="progress w-full"
-      :value="score"
-      max="100"
-      :class="{
-        'progress-success': score > 50,
-        'progress-warning': score > 25 && score < 50,
-        'progress-error': score < 25,
-      }"
-    />
+    <Progress class="w-full" :model-value="score" />
   </div>
 </template>
 
 <script setup lang="ts">
+  import { Progress } from "@/components/ui/progress";
+
   const props = defineProps({
     password: {
       type: String,

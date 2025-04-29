@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "A meglévő import_ref-fel rendelkező tételek importálásának menete megváltozott. Ha a CSV fájlban van import_ref, \nakkor a tételt felülírják a CSV fájlban található értékek.",
                 "description": "Importálj egy CSV fájlt, amely tartalmazza a tételeidet, címkéidet és helyeidet. A szükséges formátumról bővebben \na dokumentációban olvashatsz.",
-                "title": "Importálás CSV-fájlból",
-                "upload": "Feltöltés"
+                "title": "Importálás CSV-fájlból"
             },
             "outdated": {
                 "current_version": "Jelenlegi verzió",
@@ -55,7 +54,8 @@
                 "titles": "Címkék"
             },
             "page_qr_code": {
-                "page_url": "Oldal URL-je"
+                "page_url": "Oldal URL-je",
+                "qr_tooltip": "QR-kód megjelenítése"
             },
             "password_score": {
                 "password_strength": "Jelszó erőssége"
@@ -65,8 +65,9 @@
             "create_modal": {
                 "item_description": "Tétel leírása",
                 "item_name": "Tétel neve",
-                "photo_button": "Fénykép 📷",
-                "title": "Új elem létrehozása"
+                "item_photo": "Tétel fényképe 📷",
+                "title": "Új elem létrehozása",
+                "upload_photos": "Fotók feltöltése"
             },
             "view": {
                 "selectable": {
@@ -76,8 +77,10 @@
                     "table": "Táblázat"
                 },
                 "table": {
+                    "headers": "Fejlécek",
                     "page": "Oldal",
-                    "rows_per_page": "Sorok oldalanként"
+                    "rows_per_page": "Sorok oldalanként",
+                    "table_settings": "Táblázatbeállítások"
                 }
             }
         },
@@ -86,6 +89,9 @@
                 "label_description": "Címke leírása",
                 "label_name": "Címke neve",
                 "title": "Címke létrehozása"
+            },
+            "selector": {
+                "select_labels": "Címkék kiválasztása"
             }
         },
         "location": {
@@ -95,19 +101,25 @@
                 "title": "Új hely létrehozása"
             },
             "selector": {
-                "parent_location": "Ezt tartalmazó hely"
+                "no_location_found": "Nem található hely",
+                "parent_location": "Ezt tartalmazó hely",
+                "search_location": "Helyek keresése",
+                "select_location": "Válassz egy helyet"
             },
             "tree": {
                 "no_locations": "Nincs elérhető hely. Adj hozzá új helyet a\n `<`span class=\"link-primary\"`>`Létrehozás`<`/span`>` gombbal a navigációs sávon."
             }
         },
         "quick_menu": {
+            "no_results": "Nincs találat.",
             "shortcut_hint": "Használd a számgombokat egy művelet gyors kiválasztásához."
         }
     },
     "global": {
         "add": "Hozzáadás",
+        "archived": "Archivált",
         "build": "Build: { build }",
+        "cancel": "Mégse",
         "confirm": "Megerősítés",
         "create": "Létrehozás",
         "create_and_add": "Létrehozás és újabb hozzáadása",
@@ -118,7 +130,12 @@
         "edit": "Szerkesztés",
         "email": "Email",
         "follow_dev": "Kövesd a fejlesztőt",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Verzió: { version } Build: { build } '</a>'"
+        },
         "github": "Github projekt",
+        "insured": "Biztosítva",
         "items": "Tételek",
         "join_discord": "Csatlakozz a Discordhoz",
         "labels": "Címkék",
@@ -127,6 +144,7 @@
         "name": "Név",
         "navigate": "Navigáció",
         "password": "Jelszó",
+        "quantity": "Mennyiség",
         "read_docs": "Olvasd el a dokumentációt",
         "save": "Mentés",
         "search": "Keresés",
@@ -266,6 +284,7 @@
     "locations": {
         "child_locations": "Tartalmazott helyek",
         "collapse_tree": "Fanézet becsukása",
+        "expand_tree": "Fa kibontása",
         "no_results": "Nem található hely",
         "update_location": "Hely módosítása"
     },
@@ -350,6 +369,7 @@
         "invalid_url": "Érvénytelen vonalkód URL",
         "no_sources": "Nincs elérhető videóforrás",
         "select_video_source": "Videóforrás kiválasztása",
+        "title": "Szkenner",
         "unsupported": "A Media Stream API nem támogatott HTTPS nélkül"
     },
     "tools": {

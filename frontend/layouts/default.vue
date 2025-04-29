@@ -4,20 +4,21 @@
     Confirmation Modal is a singleton used by all components so we render
     it here to ensure it's always available. Possibly could move this further
     up the tree
-   -->
+    -->
     <ModalConfirm />
-    <AppOutdatedModal v-model="modals.outdated" :current="current ?? ''" :latest="latest ?? ''" />
-    <ItemCreateModal v-model="modals.item" />
-    <LabelCreateModal v-model="modals.label" />
-    <LocationCreateModal v-model="modals.location" />
-    <QuickMenuModal v-model="modals.quickMenu" :actions="quickMenuActions" />
-    <AppToast />
-    <SidebarProvider>
+    <AppOutdatedModal v-if="status" :status="status" />
+    <ItemCreateModal />
+    <LabelCreateModal />
+    <LocationCreateModal />
+    <AppQuickMenuModal :actions="quickMenuActions" />
+    <SidebarProvider :default-open="sidebarState">
       <Sidebar collapsible="icon">
-        <SidebarHeader class="items-center bg-base-200">
-          <SidebarGroupLabel class="text-base">{{ $t("global.welcome", { username: username }) }}</SidebarGroupLabel>
-          <NuxtLink class="avatar placeholder group-data-[collapsible=icon]:hidden" to="/home">
-            <div class="w-24 rounded-full bg-base-300 p-4 text-neutral-content">
+        <SidebarHeader class="items-center">
+          <SidebarGroupLabel class="text-base group-data-[collapsible=icon]:hidden">{{
+            $t("global.welcome", { username: username })
+          }}</SidebarGroupLabel>
+          <NuxtLink class="group-data-[collapsible=icon]:hidden" to="/home">
+            <div class="flex size-24 items-center justify-center rounded-full bg-background-accent p-4">
               <AppLogo />
             </div>
           </NuxtLink>
@@ -34,32 +35,33 @@
                 </span>
               </SidebarMenuButton>
             </DropdownMenuTrigger>
-            <DropdownMenuContent class="min-w-[var(--radix-dropdown-menu-trigger-width)]">
+            <DropdownMenuContent class="z-40 min-w-[var(--reka-dropdown-menu-trigger-width)]">
               <DropdownMenuItem
                 v-for="btn in dropdown"
                 :key="btn.id"
                 class="group cursor-pointer text-lg"
-                @click="btn.action"
+                @click="openDialog(btn.dialogId)"
               >
                 {{ btn.name.value }}
-                <kbd v-if="btn.shortcut" class="kbd kbd-sm ml-auto hidden text-primary group-hover:inline">{{
-                  btn.shortcut.replaceAll("Shift+", "⇧")
-                }}</kbd>
+                <Shortcut
+                  v-if="btn.shortcut"
+                  class="ml-auto hidden group-hover:inline"
+                  :keys="btn.shortcut.replace('Shift', '⇧').split('+')"
+                />
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </SidebarHeader>
 
-        <SidebarContent class="bg-base-200">
+        <SidebarContent>
           <SidebarGroup>
             <SidebarMenu>
               <SidebarMenuItem v-for="n in nav" :key="n.id">
                 <SidebarMenuLink
                   :href="n.to"
                   :class="{
-                    'bg-secondary text-secondary-foreground': n.active?.value,
+                    'bg-accent text-accent-foreground': n.active?.value,
                     'text-nowrap': typeof locale === 'string' && locale.startsWith('zh-'),
-                    'hover:bg-base-300': !n.active?.value,
                   }"
                   :tooltip="n.name.value"
                 >
@@ -67,13 +69,13 @@
                   <span>{{ n.name.value }}</span>
                 </SidebarMenuLink>
               </SidebarMenuItem>
-            </SidebarMenu></SidebarGroup
-          >
+            </SidebarMenu>
+          </SidebarGroup>
         </SidebarContent>
 
-        <SidebarFooter class="bg-base-200">
+        <SidebarFooter>
           <SidebarMenuButton
-            class="flex justify-center hover:bg-base-300 group-data-[collapsible=icon]:justify-start group-data-[collapsible=icon]:bg-destructive group-data-[collapsible=icon]:text-destructive-foreground group-data-[collapsible=icon]:shadow-sm group-data-[collapsible=icon]:hover:bg-destructive/90"
+            class="flex justify-center group-data-[collapsible=icon]:justify-start group-data-[collapsible=icon]:bg-destructive group-data-[collapsible=icon]:text-destructive-foreground group-data-[collapsible=icon]:shadow-sm group-data-[collapsible=icon]:hover:bg-destructive/90"
             :tooltip="$t('global.sign_out')"
             @click="logout"
           >
@@ -86,14 +88,14 @@
 
         <SidebarRail />
       </Sidebar>
-      <SidebarInset class="min-h-screen bg-base-300">
+      <SidebarInset class="min-h-screen bg-background-accent">
         <div class="justify-center pt-20 lg:pt-0">
           <AppHeaderDecor v-if="preferences.displayHeaderDecor" class="-mt-10 hidden lg:block" />
           <SidebarTrigger class="absolute left-2 top-2 hidden lg:flex" variant="default" />
           <div class="fixed top-0 z-20 flex h-16 w-full items-center gap-2 bg-primary p-2 shadow-md lg:hidden">
-            <SidebarTrigger />
+            <SidebarTrigger class="hover:bg-foreground" />
             <NuxtLink to="/home">
-              <h2 class="flex text-3xl font-bold tracking-tight text-base-100">
+              <h2 class="flex text-3xl font-bold tracking-tight text-primary-foreground">
                 HomeB
                 <AppLogo class="-mb-3 w-8" />
                 x
@@ -102,17 +104,18 @@
           </div>
 
           <slot></slot>
-          <footer v-if="status" class="bottom-0 w-full bg-base-300 pb-4 text-center text-secondary-content">
+
+          <footer v-if="status" class="bottom-0 w-full pb-4 text-center">
             <p class="text-center text-sm">
-              <a
-                href="https://github.com/sysadminsmedia/homebox/releases/tag/{{ status.build.version }}"
-                target="_blank"
-              >
-                {{ $t("global.version", { version: status.build.version }) }} ~
-                {{ $t("global.build", { build: status.build.commit }) }}</a
-              >
+              <span
+                v-html="
+                  DOMPurify.sanitize(
+                    $t('global.footer.version_link', { version: status.build.version, build: status.build.commit })
+                  )
+                "
+              ></span>
               ~
-              <a href="https://homebox.software/en/api.html" target="_blank">API</a>
+              <span v-html="DOMPurify.sanitize($t('global.footer.api_link'))"></span>
             </p>
           </footer>
         </div>
@@ -123,7 +126,7 @@
 
 <script lang="ts" setup>
   import { useI18n } from "vue-i18n";
-  import { lt } from "semver";
+  import DOMPurify from "dompurify";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
 
@@ -158,11 +161,21 @@
     DropdownMenuItem,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu";
+  import { Shortcut } from "~/components/ui/shortcut";
+  import { useDialog } from "~/components/ui/dialog-provider";
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
 
+  const { openDialog } = useDialog();
+
   const preferences = useViewPreferences();
+
+  // get sidebar state from cookies
+  const sidebarState = useCookie("sidebar:state", {
+    readonly: true,
+    decode: value => value !== "false",
+  });
 
   const pubApi = usePublicApi();
   const { data: status } = useAsyncData(async () => {
@@ -171,81 +184,29 @@
     return data;
   });
 
-  const latest = computed(() => status.value?.latest.version);
-  const current = computed(() => status.value?.build.version);
-
-  const isDev = computed(() => import.meta.dev || !current.value?.includes("."));
-  const isOutdated = computed(() => current.value && latest.value && lt(current.value, latest.value));
-  const hasHiddenLatest = computed(() => localStorage.getItem("latestVersion") === latest.value);
-
-  const displayOutdatedWarning = computed(() => Boolean(!isDev.value && !hasHiddenLatest.value && isOutdated.value));
-
-  const activeElement = useActiveElement();
-  const keys = useMagicKeys({
-    aliasMap: {
-      "⌃": "control_",
-      "Shift+": "ShiftLeft_",
-      "1": "digit1",
-      "2": "digit2",
-      "3": "digit3",
-    },
-  });
-
   // Preload currency format
   useFormatCurrency();
-  const modals = reactive({
-    item: false,
-    location: false,
-    label: false,
-    import: false,
-    outdated: displayOutdatedWarning.value,
-    quickMenu: false,
-  });
-
-  watch(displayOutdatedWarning, () => {
-    console.log("displayOutdatedWarning", displayOutdatedWarning.value);
-    if (displayOutdatedWarning.value) {
-      modals.outdated = true;
-    }
-  });
 
   const dropdown = [
     {
       id: 0,
       name: computed(() => t("menu.create_item")),
       shortcut: "Shift+1",
-      action: () => {
-        modals.item = true;
-      },
+      dialogId: "create-item",
     },
     {
       id: 1,
       name: computed(() => t("menu.create_location")),
       shortcut: "Shift+2",
-      action: () => {
-        modals.location = true;
-      },
+      dialogId: "create-location",
     },
     {
       id: 2,
       name: computed(() => t("menu.create_label")),
       shortcut: "Shift+3",
-      action: () => {
-        modals.label = true;
-      },
+      dialogId: "create-label",
     },
   ];
-
-  dropdown.forEach(option => {
-    if (option?.shortcut) {
-      const shortcutKeycode = option.shortcut.replace(/([0-9])/, "digit$&");
-      whenever(keys[shortcutKeycode], () => {
-        if (activeElement.value?.tagName !== "INPUT") {
-          option.action();
-        }
-      });
-    }
-  });
 
   const route = useRoute();
 
@@ -280,71 +241,40 @@
     },
     {
       icon: MdiWrench,
-      id: 3,
+      id: 4,
       active: computed(() => route.path === "/maintenance"),
       name: computed(() => t("menu.maintenance")),
       to: "/maintenance",
     },
     {
       icon: MdiAccount,
-      id: 4,
+      id: 5,
       active: computed(() => route.path === "/profile"),
       name: computed(() => t("menu.profile")),
       to: "/profile",
     },
     {
       icon: MdiCog,
-      id: 5,
+      id: 6,
       active: computed(() => route.path === "/tools"),
       name: computed(() => t("menu.tools")),
       to: "/tools",
     },
   ];
 
-  const quickMenuShortcut = keys.control_Backquote;
-  whenever(quickMenuShortcut, () => {
-    modals.quickMenu = true;
-    modals.item = false;
-    modals.location = false;
-    modals.label = false;
-    modals.import = false;
-  });
-
-  const quickMenuActions = reactive(
-    [
-      {
-        text: computed(() => `${t("global.create")}: ${t("menu.create_item")}`),
-        action: () => {
-          modals.item = true;
-        },
-        shortcut: "1",
-      },
-      {
-        text: computed(() => `${t("global.create")}: ${t("menu.create_location")}`),
-        action: () => {
-          modals.location = true;
-        },
-        shortcut: "2",
-      },
-      {
-        text: computed(() => `${t("global.create")}: ${t("menu.create_label")}`),
-        action: () => {
-          modals.label = true;
-        },
-        shortcut: "3",
-      },
-    ].concat(
-      nav.map(v => {
-        return {
-          text: computed(() => `${t("global.navigate")}: ${v.name.value}`),
-          action: () => {
-            navigateTo(v.to);
-          },
-          shortcut: "",
-        };
-      })
-    )
-  );
+  const quickMenuActions = reactive([
+    ...dropdown.map(v => ({
+      text: computed(() => v.name.value),
+      dialogId: v.dialogId,
+      shortcut: v.shortcut.split("+")[1],
+      type: "create" as const,
+    })),
+    ...nav.map(v => ({
+      text: computed(() => v.name.value),
+      href: v.to,
+      type: "navigate" as const,
+    })),
+  ]);
 
   const labelStore = useLabelStore();
 

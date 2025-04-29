@@ -1,4 +1,90 @@
 {
+    "components": {
+        "app": {
+            "import_dialog": {
+                "change_warning": "Olemassa olevien import_refs-tiedostojen tuonnin käyttäytyminen on muuttunut. Jos CSV-tiedostossa on import_ref, \nkohde päivitetään CSV-tiedoston arvoilla.",
+                "description": "Tuo CSV-tiedosto, joka sisältää kohteesi, tarrasi ja sijaintisi. Katso lisätietoja dokumentaatiosta \nvaadittu muoto.",
+                "title": "Tuo CSV-tiedosto"
+            },
+            "outdated": {
+                "current_version": "Nykyinen versio",
+                "dismiss": "Hylätä",
+                "latest_version": "Uusin versio",
+                "new_version_available": "Uusi Versio Saatavilla",
+                "new_version_available_link": "Klikkaa tästä nähdäksesi julkaisutiedot"
+            }
+        },
+        "global": {
+            "copy_text": {
+                "documentation": "dokumentointi",
+                "failed_to_copy": "Tekstiä ei voitu kopioida leikepöydälle",
+                "https_required": "koska HTTPS vaaditaan"
+            },
+            "date_time": {
+                "days": "päivä",
+                "hour": "tunti",
+                "hours": "tuntia",
+                "just-now": "juuri nyt",
+                "last-month": "viime kuussa",
+                "last-week": "viime viikolla",
+                "last-year": "viime vuonna",
+                "minute": "minuutti",
+                "next-month": "ensi kuussa",
+                "next-week": "ensi viikolla",
+                "next-year": "ensi vuonna",
+                "second": "sekunti",
+                "seconds": "sekuntia",
+                "tomorrow": "huominen",
+                "week": "viikko",
+                "weeks": "viikkoa",
+                "years": "vuotiaat",
+                "yesterday": "eilen"
+            },
+            "label_maker": {
+                "browser_print": "Tulosta selaimesta",
+                "confirm_description": "Haluatko varmasti tulostaa tämän tarran?",
+                "download": "Lataa Tarra",
+                "print": "Tulosta tarra",
+                "server_print": "Tulosta palvelimella",
+                "titles": "Tarra"
+            },
+            "page_qr_code": {
+                "page_url": "Sivun URL",
+                "qr_tooltip": "Näytä QR-koodi"
+            },
+            "password_score": {
+                "password_strength": "Salasanan Vahvuus"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "item_description": "Kohteen Kuvaus",
+                "item_name": "Tuotteen Nimi",
+                "item_photo": "Kohteen Kuva 📷",
+                "title": "Luo Kohde",
+                "upload_photos": "Lataa Valokuvia"
+            },
+            "view": {
+                "selectable": {
+                    "card": "Kortti",
+                    "items": "Erä",
+                    "no_items": "Ei näytettäviä kohteita",
+                    "table": "Taulukko"
+                },
+                "table": {
+                    "headers": "Otsikko",
+                    "rows_per_page": "Rivejä sivua kohti",
+                    "table_settings": "Taulukon Asetukset"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "label_description": "Etiketin Kuvaus",
+                "label_name": "Etiketin Nimi"
+            }
+        }
+    },
     "languages": {
         "pl": "Puola"
     },
