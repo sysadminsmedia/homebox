@@ -30,6 +30,8 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
 
 	_ "github.com/lib/pq"
+	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/postgres"
+	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/sqlite3"
 	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
 )
 
@@ -138,6 +140,7 @@ func run(cfg *config.Config) error {
 		log.Fatal().Str("driver", cfg.Database.Driver).Msg("unsupported database driver")
 		return fmt.Errorf("unsupported database driver: %s", cfg.Database.Driver)
 	}
+
 	err = goose.Up(c.Sql(), strings.ToLower(cfg.Database.Driver))
 	if err != nil {
 		log.Error().Err(err).Msg("failed to migrate database")
