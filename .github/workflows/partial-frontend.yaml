@@ -18,7 +18,7 @@ jobs:
           version: 9.12.2
 
       - name: Install dependencies
-        run: pnpm install --shamefully-hoist
+        run: pnpm install
         working-directory: frontend
 
       - name: Run Lint

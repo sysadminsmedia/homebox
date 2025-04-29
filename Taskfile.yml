@@ -12,7 +12,7 @@ tasks:
     cmds:
       - go install github.com/swaggo/swag/cmd/swag@latest
       - cd backend && go mod tidy
-      - cd frontend && pnpm install --shamefully-hoist
+      - cd frontend && pnpm install
 
   swag:
     desc: Generate swagger docs

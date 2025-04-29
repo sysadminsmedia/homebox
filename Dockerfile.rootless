@@ -7,7 +7,7 @@ RUN npm install -g pnpm
 
 # Copy package.json and lockfile to leverage caching
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile --shamefully-hoist
+RUN pnpm install --frozen-lockfile
 
 # Build Nuxt (frontend) stage
 FROM public.ecr.aws/docker/library/node:lts-alpine AS frontend-builder
