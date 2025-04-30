@@ -11,6 +11,7 @@
         :max-length="255"
         :min-length="1"
       />
+      <FormTextField v-model="form.quantity" :label="$t('components.item.create_modal.item_quantity')" type="number" />
       <FormTextArea
         v-model="form.description"
         :label="$t('components.item.create_modal.item_description')"
@@ -161,6 +162,7 @@
   const form = reactive({
     location: locations.value && locations.value.length > 0 ? locations.value[0] : ({} as LocationOut),
     name: "",
+    quantity: 1,
     description: "",
     color: "",
     labels: [] as string[],
@@ -238,6 +240,7 @@
     const out: ItemCreate = {
       parentId: null,
       name: form.name,
+      quantity: form.quantity,
       description: form.description,
       locationId: form.location.id as string,
       labelIds: form.labels,
@@ -278,6 +281,7 @@
     }
 
     form.name = "";
+    form.quantity = 1;
     form.description = "";
     form.color = "";
     form.photos = [];

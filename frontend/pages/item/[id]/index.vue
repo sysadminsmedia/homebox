@@ -463,6 +463,7 @@
     const { error, data } = await api.items.create({
       name: `${item.value.name} Copy`,
       description: item.value.description,
+      quantity: item.value.quantity,
       locationId: item.value.location!.id,
       parentId: item.value.parent?.id,
       labelIds: item.value.labels.map(l => l.id),

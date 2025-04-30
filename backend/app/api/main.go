@@ -4,13 +4,14 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 
 	atlas "ariga.io/atlas/sql/migrate"
 	"entgo.io/ent/dialect/sql/schema"
@@ -203,7 +204,7 @@ func run(cfg *config.Config) error {
 
 	currencies, err := currencies.CollectionCurrencies(collectFuncs...)
 	if err != nil {
-		go log.Error().
+		log.Error().
 			Err(err).
 			Msg("failed to collect currencies")
 		return err
