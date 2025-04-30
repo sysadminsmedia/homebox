@@ -463,6 +463,7 @@
     const { error, data } = await api.items.create({
       name: `${item.value.name} Copy`,
       description: item.value.description,
+      quantity: item.value.quantity,
       locationId: item.value.location!.id,
       parentId: item.value.parent?.id,
       labelIds: item.value.labels.map(l => l.id),
@@ -532,7 +533,7 @@
         <header :class="{ 'mb-2': item.description }">
           <div class="flex flex-wrap items-end gap-2">
             <div
-              class="mb-auto flex size-12 items-center justify-center rounded-full bg-secondary text-secondary-foreground"
+              class="bg-secondary text-secondary-foreground mb-auto flex size-12 items-center justify-center rounded-full"
             >
               <MdiPackageVariant class="size-7" />
             </div>
@@ -697,7 +698,7 @@
               </template>
             </DetailsSection>
             <div v-else>
-              <p class="px-6 pb-4 text-foreground/70">No attachments found</p>
+              <p class="text-foreground/70 px-6 pb-4">No attachments found</p>
             </div>
           </BaseCard>
 
