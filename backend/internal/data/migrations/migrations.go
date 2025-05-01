@@ -1,50 +1,31 @@
-// Package migrations provides a way to embed the migrations into the binary.
+// Package migrations
 package migrations
 
 import (
 	"embed"
-	"fmt"
-	"os"
-	"path"
+	"github.com/rs/zerolog/log"
 )
 
-//go:embed all:sqlite3 all:postgres
-var Files embed.FS
+//go:embed all:postgres
+var postgresFiles embed.FS
 
-// Write writes the embedded migrations to a temporary directory.
-// It returns an error and a cleanup function. The cleanup function
-// should be called when the migrations are no longer needed.
-func Write(temp string, dialect string) error {
-	allowedDialects := map[string]bool{"sqlite3": true, "postgres": true}
-	if !allowedDialects[dialect] {
-		return fmt.Errorf("unsupported dialect: %s", dialect)
+//go:embed all:sqlite3
+var sqliteFiles embed.FS
+
+// Migrations returns the embedded file system containing the SQL migration files
+// for the specified SQL dialect. It uses the "embed" package to include the
+// migration files in the binary at build time. The function takes a string
+// parameter "dialect" which specifies the SQL dialect to use. It returns an
+// embedded file system containing the migration files for the specified dialect.
+func Migrations(dialect string) embed.FS {
+	switch dialect {
+	case "postgres":
+		return postgresFiles
+	case "sqlite3":
+		return sqliteFiles
+	default:
+		log.Fatal().Str("dialect", dialect).Msg("unknown sql dialect")
 	}
-
-	err := os.MkdirAll(temp, 0o755)
-	if err != nil {
-		return err
-	}
-
-	fsDir, err := Files.ReadDir(dialect)
-	if err != nil {
-		return err
-	}
-
-	for _, f := range fsDir {
-		if f.IsDir() {
-			continue
-		}
-
-		b, err := Files.ReadFile(path.Join(dialect, f.Name()))
-		if err != nil {
-			return err
-		}
-
-		err = os.WriteFile(path.Join(temp, f.Name()), b, 0o644)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+	// This should never get hit, but just in case
+	return sqliteFiles
 }

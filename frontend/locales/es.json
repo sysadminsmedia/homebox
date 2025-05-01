@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Se ha modificado el comportamiento de las importaciones con import_refs existentes. Si existe una import_ref en el archivo CSV, el\nelemento se actualizará con los valores del archivo CSV.",
                 "description": "Importa un archivo CSV que contenga tus elementos, etiquetas y ubicaciones. Consulta la documentación para obtener más información sobre el \nformato requerido.",
-                "title": "Importar Archivo CSV",
-                "upload": "Subir"
+                "title": "Importar Archivo CSV"
             },
             "outdated": {
                 "current_version": "Versión actual",
@@ -55,7 +54,8 @@
                 "titles": "Etiquetas"
             },
             "page_qr_code": {
-                "page_url": "URL de página"
+                "page_url": "URL de página",
+                "qr_tooltip": "Mostrar QR"
             },
             "password_score": {
                 "password_strength": "Seguridad de la contraseña"
@@ -65,7 +65,9 @@
             "create_modal": {
                 "item_description": "Descripción del artículo",
                 "item_name": "Nombre del artículo",
-                "title": "Crear Elemento"
+                "item_photo": "Foto del artículo 📷",
+                "title": "Crear Elemento",
+                "upload_photos": "Fotos Subidas"
             },
             "view": {
                 "selectable": {
@@ -75,8 +77,10 @@
                     "table": "Tabla"
                 },
                 "table": {
+                    "headers": "Encabezados",
                     "page": "Página",
-                    "rows_per_page": "Filas por página"
+                    "rows_per_page": "Filas por página",
+                    "table_settings": "Configuración de Tabla"
                 }
             }
         },
@@ -85,6 +89,9 @@
                 "label_description": "Descripción de la etiqueta",
                 "label_name": "Nombre de la Etiqueta",
                 "title": "Crear Etiqueta"
+            },
+            "selector": {
+                "select_labels": "Seleccionar Etiquetas"
             }
         },
         "location": {
@@ -94,19 +101,25 @@
                 "title": "Crear Ubicación"
             },
             "selector": {
-                "parent_location": "Ubicación Padre"
+                "no_location_found": "Ubicación no encontrada",
+                "parent_location": "Ubicación Padre",
+                "search_location": "Buscar Ubicaciones",
+                "select_location": "Elegir una Ubicación"
             },
             "tree": {
                 "no_locations": "No hay ubicaciones disponibles. Añade nuevas ubicaciones mediante el botón de\n`<`span class=\"link-primary\"`>`Crear`<`/span`>` en la barra de navegación."
             }
         },
         "quick_menu": {
+            "no_results": "Sin resultados.",
             "shortcut_hint": "Usa las teclas numéricas para seleccionar rápidamente una acción."
         }
     },
     "global": {
         "add": "Añadir",
+        "archived": "Archivado",
         "build": "Compilación: { build }",
+        "cancel": "Cancelar",
         "confirm": "Confirmar",
         "create": "Crear",
         "create_and_add": "Crear y Añadir Otro",
@@ -117,7 +130,12 @@
         "edit": "Editar",
         "email": "Email",
         "follow_dev": "Seguir al Desarrollador",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Versión: { version } Compilación: { build } '</a>'"
+        },
         "github": "Proyecto GitHub",
+        "insured": "Asegurado",
         "items": "Elementos",
         "join_discord": "Únete al Discord",
         "labels": "Etiquetas",
@@ -126,6 +144,7 @@
         "name": "Nombre",
         "navigate": "Navegar",
         "password": "Contraseña",
+        "quantity": "Cantidad",
         "read_docs": "Lee la Documentación",
         "save": "Guardar",
         "search": "Buscar",
@@ -265,6 +284,7 @@
     "locations": {
         "child_locations": "Ubicaciones Hijas",
         "collapse_tree": "Colapsar Árbol",
+        "expand_tree": "Expandir Árbol",
         "no_results": "Ubicaciones No Encontradas",
         "update_location": "Actualizar Ubicación"
     },
@@ -349,6 +369,7 @@
         "invalid_url": "URL de código de barras inválido",
         "no_sources": "No hay fuentes de vídeo disponibles",
         "select_video_source": "Elige una fuente de vídeo",
+        "title": "Escaner",
         "unsupported": "La API Media Stream no se puede utilizar sin HTTPS"
     },
     "tools": {

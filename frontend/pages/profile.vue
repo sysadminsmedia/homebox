@@ -10,6 +10,14 @@
   import MdiPencil from "~icons/mdi/pencil";
   import MdiAccountMultiple from "~icons/mdi/account-multiple";
   import { getLocaleCode } from "~/composables/use-formatters";
+  import { Button } from "@/components/ui/button";
+  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import { useDialog } from "@/components/ui/dialog-provider";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import { Label } from "@/components/ui/label";
+  import { badgeVariants } from "@/components/ui/badge";
+  import LanguageSelector from "~/components/App/LanguageSelector.vue";
+  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
   definePageMeta({
     middleware: ["auth"],
@@ -20,6 +28,8 @@
 
   const api = useUserApi();
   const confirm = useConfirm();
+
+  const { openDialog, closeDialog } = useDialog();
 
   const currencies = computedAsync(async () => {
     const resp = await api.group.currencies();
@@ -34,9 +44,6 @@
   const preferences = useViewPreferences();
   function setDisplayHeader() {
     preferences.value.displayHeaderDecor = !preferences.value.displayHeaderDecor;
-  }
-  function setLanguage(lang: string) {
-    preferences.value.language = lang;
   }
 
   // Currency Selection
@@ -54,10 +61,6 @@
 
   const currencyExample = computed(() => {
     return fmtCurrency(1000, currency.value?.code ?? "USD", getLocaleCode());
-  });
-
-  const dateExample = computed(() => {
-    return fmtDate(new Date(Date.now() - 15 * 60000), "relative");
   });
 
   const { data: group } = useAsyncData(async () => {
@@ -159,15 +162,10 @@
 
   const passwordChange = reactive({
     loading: false,
-    dialog: false,
     current: "",
     new: "",
     isValid: false,
   });
-
-  function openPassChange() {
-    passwordChange.dialog = true;
-  }
 
   async function changePassword() {
     passwordChange.loading = true;
@@ -184,7 +182,7 @@
     }
 
     toast.success("Password changed successfully.");
-    passwordChange.dialog = false;
+    closeDialog("change-password");
     passwordChange.new = "";
     passwordChange.current = "";
     passwordChange.loading = false;
@@ -201,7 +199,6 @@
 
   const targetID = ref("");
   const notifier = ref<NotifierCreate | null>(null);
-  const notifierDialog = ref(false);
 
   function openNotifierDialog(v: NotifierOut | null) {
     if (v) {
@@ -219,7 +216,7 @@
       };
     }
 
-    notifierDialog.value = true;
+    openDialog("create-notifier");
   }
 
   async function createNotifier() {
@@ -243,7 +240,7 @@
     }
 
     notifier.value = null;
-    notifierDialog.value = false;
+    closeDialog("create-notifier");
 
     await notifiers.refresh();
   }
@@ -264,7 +261,7 @@
     }
 
     notifier.value = null;
-    notifierDialog.value = false;
+    closeDialog("create-notifier");
     targetID.value = "";
 
     await notifiers.refresh();
@@ -305,10 +302,12 @@
 
 <template>
   <div>
-    <BaseModal v-model="passwordChange.dialog">
-      <template #title> {{ $t("profile.change_password") }} </template>
+    <Dialog dialog-id="changePassword">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle> {{ $t("profile.change_password") }} </DialogTitle>
+        </DialogHeader>
 
-      <form @submit.prevent="changePassword">
         <FormPassword
           v-model="passwordChange.current"
           :label="$t('profile.current_password')"
@@ -318,38 +317,42 @@
         <FormPassword v-model="passwordChange.new" :label="$t('profile.new_password')" placeholder="" />
         <PasswordScore v-model:valid="passwordChange.isValid" :password="passwordChange.new" />
 
-        <div class="flex">
-          <BaseButton
-            class="ml-auto"
-            :loading="passwordChange.loading"
-            :disabled="!passwordChange.isValid"
-            type="submit"
-          >
-            {{ $t("global.submit") }}
-          </BaseButton>
-        </div>
-      </form>
-    </BaseModal>
+        <form @submit.prevent="changePassword">
+          <DialogFooter>
+            <Button :loading="passwordChange.loading" :disabled="!passwordChange.isValid" type="submit">
+              {{ $t("global.submit") }}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
 
-    <BaseModal v-model="notifierDialog">
-      <template #title> {{ $t("profile.notifier_modal", { type: notifier != null }) }} </template>
+    <Dialog dialog-id="create-notifier">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle> {{ $t("profile.notifier_modal", { type: notifier != null }) }} </DialogTitle>
+        </DialogHeader>
 
-      <form @submit.prevent="createNotifier">
-        <template v-if="notifier">
-          <FormTextField v-model="notifier.name" :label="$t('global.name')" class="mb-2" />
-          <FormTextField v-model="notifier.url" :label="$t('profile.url')" />
-          <div class="max-w-[100px]">
-            <FormCheckbox v-model="notifier.isActive" :label="$t('profile.enabled')" />
+        <form @submit.prevent="createNotifier">
+          <template v-if="notifier">
+            <FormTextField v-model="notifier.name" :label="$t('global.name')" class="mb-2" />
+            <FormTextField v-model="notifier.url" :label="$t('profile.url')" class="mb-2" />
+            <div class="max-w-[100px]">
+              <FormCheckbox v-model="notifier.isActive" :label="$t('profile.enabled')" />
+            </div>
+          </template>
+          <div class="mt-4 flex justify-between gap-2">
+            <DialogFooter class="flex w-full">
+              <Button variant="secondary" :disabled="!(notifier && notifier.url)" type="button" @click="testNotifier">
+                {{ $t("profile.test") }}
+              </Button>
+              <div class="grow"></div>
+              <Button type="submit"> {{ $t("global.submit") }} </Button>
+            </DialogFooter>
           </div>
-        </template>
-        <div class="mt-4 flex justify-between gap-2">
-          <BaseButton :disabled="!(notifier && notifier.url)" type="button" @click="testNotifier">
-            {{ $t("profile.test") }}
-          </BaseButton>
-          <BaseButton type="submit"> {{ $t("global.submit") }} </BaseButton>
-        </div>
-      </form>
-    </BaseModal>
+        </form>
+      </DialogContent>
+    </Dialog>
 
     <BaseContainer class="mb-6 flex flex-col gap-4">
       <BaseCard>
@@ -365,37 +368,21 @@
 
         <div class="p-4">
           <div class="flex gap-2">
-            <BaseButton size="sm" @click="openPassChange"> {{ $t("profile.change_password") }} </BaseButton>
-            <BaseButton size="sm" @click="generateToken"> {{ $t("profile.gen_invite") }} </BaseButton>
+            <Button variant="secondary" size="sm" @click="openDialog('changePassword')">
+              {{ $t("profile.change_password") }}
+            </Button>
+            <Button variant="secondary" size="sm" @click="generateToken"> {{ $t("profile.gen_invite") }} </Button>
           </div>
-          <div v-if="token" class="flex items-center pl-1 pt-4">
-            <CopyText class="btn btn-square btn-outline btn-primary btn-sm mr-2" :text="tokenUrl" />
+          <div v-if="token" class="flex items-center gap-2 pl-1 pt-4">
+            <CopyText :text="tokenUrl" />
             {{ tokenUrl }}
           </div>
-          <div v-if="token" class="flex items-center pl-1 pt-4">
-            <CopyText class="btn btn-square btn-outline btn-primary btn-sm mr-2" :text="token" />
+          <div v-if="token" class="flex items-center gap-2 pl-1 pt-4">
+            <CopyText :text="token" />
             {{ token }}
           </div>
         </div>
-        <div class="form-control w-full p-5 pt-0">
-          <label class="label">
-            <span class="label-text">{{ $t("profile.language") }}</span>
-          </label>
-          <select
-            v-model="$i18n.locale"
-            class="select select-bordered"
-            @change="
-              event => {
-                setLanguage((event.target as HTMLSelectElement).value);
-              }
-            "
-          >
-            <option v-for="lang in $i18n.availableLocales" :key="lang" :value="lang">
-              {{ $t(`languages.${lang}`) }} ({{ $t(`languages.${lang}`, 1, { locale: lang }) }})
-            </option>
-          </select>
-          <p class="m-2 text-sm">{{ $t("profile.example") }}: {{ $t("global.created") }} {{ dateExample }}</p>
-        </div>
+        <LanguageSelector />
       </BaseCard>
 
       <BaseCard>
@@ -407,30 +394,36 @@
           </BaseSectionHeader>
         </template>
 
-        <div v-if="notifiers.data.value" class="mx-4 divide-y divide-gray-400 rounded-md border border-gray-400">
+        <div v-if="notifiers.data.value" class="mx-4 divide-y rounded-md border">
           <p v-if="notifiers.data.value.length === 0" class="p-2 text-center text-sm">
             {{ $t("profile.no_notifiers") }}
           </p>
           <article v-for="n in notifiers.data.value" v-else :key="n.id" class="p-2">
             <div class="flex flex-wrap items-center gap-2">
               <p class="mr-auto text-lg">{{ n.name }}</p>
-              <div class="flex justify-end gap-2">
-                <div class="tooltip" data-tip="Delete">
-                  <button class="btn btn-square btn-sm" @click="deleteNotifier(n.id)">
-                    <MdiDelete />
-                  </button>
-                </div>
-                <div class="tooltip" data-tip="Edit">
-                  <button class="btn btn-square btn-sm" @click="openNotifierDialog(n)">
-                    <MdiPencil />
-                  </button>
-                </div>
-              </div>
+              <TooltipProvider :delay-duration="0" class="flex justify-end gap-2">
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant="destructive" size="icon" @click="deleteNotifier(n.id)">
+                      <MdiDelete />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent> Delete </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant="outline" size="icon" @click="openNotifierDialog(n)">
+                      <MdiPencil />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent> Edit </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             <div class="flex flex-wrap justify-between py-1 text-sm">
               <p>
-                <span v-if="n.isActive" class="badge badge-success"> {{ $t("profile.active") }} </span>
-                <span v-else class="badge badge-error"> {{ $t("profile.inactive") }} </span>
+                <span v-if="n.isActive" :class="badgeVariants()"> {{ $t("profile.active") }} </span>
+                <span v-else :class="badgeVariants({ variant: 'destructive' })"> {{ $t("profile.inactive") }} </span>
               </p>
               <p>
                 {{ $t("global.created") }}
@@ -441,7 +434,7 @@
         </div>
 
         <div class="p-4">
-          <BaseButton size="sm" @click="openNotifierDialog"> {{ $t("global.create") }} </BaseButton>
+          <Button variant="secondary" size="sm" @click="openNotifierDialog"> {{ $t("global.create") }} </Button>
         </div>
       </BaseCard>
 
@@ -457,11 +450,32 @@
         </template>
 
         <div v-if="group && currencies && currencies.length > 0" class="p-5 pt-0">
-          <FormSelect v-model="currency" :label="$t('profile.currency_format')" :items="currencies" />
+          <Label for="currency"> {{ $t("profile.currency_format") }} </Label>
+          <Select
+            id="currency"
+            :model-value="currency.code"
+            @update:model-value="
+              event => {
+                const newCurrency = currencies?.find(c => c.code === event);
+                if (newCurrency) {
+                  currency = newCurrency;
+                }
+              }
+            "
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem v-for="c in currencies" :key="c.code" :value="c.code">
+                {{ c.name }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
           <p class="m-2 text-sm">{{ $t("profile.example") }}: {{ currencyExample }}</p>
 
           <div class="mt-4">
-            <BaseButton size="sm" @click="updateGroup"> {{ $t("profile.update_group") }} </BaseButton>
+            <Button variant="secondary" size="sm" @click="updateGroup"> {{ $t("profile.update_group") }} </Button>
           </div>
         </div>
       </BaseCard>
@@ -479,39 +493,37 @@
 
         <div class="px-4 pb-4">
           <div class="mb-3">
-            <BaseButton size="sm" @click="setDisplayHeader">
+            <Button variant="secondary" size="sm" @click="setDisplayHeader">
               {{ $t("profile.display_header", { currentValue: preferences.displayHeaderDecor }) }}
-            </BaseButton>
+            </Button>
           </div>
-          <div class="homebox rounded-box grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          <div class="homebox grid grid-cols-1 gap-4 font-sans sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             <div
               v-for="theme in themes"
               :key="theme.value"
               :class="'theme-' + theme.value"
-              class="overflow-hidden rounded-lg border border-base-content/20 outline-2 outline-offset-2 outline-base-content hover:border-base-content/40"
+              class="overflow-hidden rounded-lg border outline-2 outline-offset-2"
               :data-theme="theme.value"
               :data-set-theme="theme.value"
               data-act-class="outline"
               @click="setTheme(theme.value)"
             >
-              <div :data-theme="theme.value" class="w-full cursor-pointer bg-base-100 font-sans text-base-content">
+              <div :data-theme="theme.value" class="w-full cursor-pointer bg-background-accent text-foreground">
                 <div class="grid grid-cols-5 grid-rows-3">
-                  <div class="col-start-1 row-span-2 row-start-1 bg-base-200"></div>
-                  <div class="col-start-1 row-start-3 bg-base-300"></div>
-                  <div class="col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 bg-base-100 p-2">
+                  <div class="col-start-1 row-start-1 bg-background"></div>
+                  <div class="col-start-1 row-start-2 bg-sidebar"></div>
+                  <div class="col-start-1 row-start-3 bg-background-accent"></div>
+                  <div class="col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 bg-background p-2">
                     <div class="font-bold">{{ theme.label }}</div>
                     <div class="flex flex-wrap gap-1">
-                      <div class="flex aspect-1 w-5 items-center justify-center rounded bg-primary lg:w-6">
-                        <div class="text-sm font-bold text-primary-content">A</div>
+                      <div class="flex size-5 items-center justify-center rounded bg-primary lg:size-6">
+                        <div class="text-sm font-bold text-primary-foreground">A</div>
                       </div>
-                      <div class="flex aspect-1 w-5 items-center justify-center rounded bg-secondary lg:w-6">
-                        <div class="text-sm font-bold text-secondary-content">A</div>
+                      <div class="flex size-5 items-center justify-center rounded bg-secondary lg:size-6">
+                        <div class="text-sm font-bold text-secondary-foreground">A</div>
                       </div>
-                      <div class="flex aspect-1 w-5 items-center justify-center rounded bg-accent lg:w-6">
-                        <div class="text-sm font-bold text-accent-content">A</div>
-                      </div>
-                      <div class="flex aspect-1 w-5 items-center justify-center rounded bg-neutral lg:w-6">
-                        <div class="text-sm font-bold text-neutral-content">A</div>
+                      <div class="flex size-5 items-center justify-center rounded bg-accent lg:size-6">
+                        <div class="text-sm font-bold text-accent-foreground">A</div>
                       </div>
                     </div>
                   </div>
@@ -530,10 +542,10 @@
             <template #description> {{ $t("profile.delete_account_sub") }} </template>
           </BaseSectionHeader>
         </template>
-        <div class="border-t-2 border-gray-300 p-4 px-6">
-          <BaseButton size="sm" class="btn-error" @click="deleteProfile">
+        <div class="border-t-2 p-4 px-6">
+          <Button size="sm" variant="destructive" @click="deleteProfile">
             {{ $t("profile.delete_account") }}
-          </BaseButton>
+          </Button>
         </div>
       </BaseCard>
     </BaseContainer>

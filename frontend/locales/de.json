@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Das Verhalten beim Importieren mit bestehenden import_refs hat sich geändert. Wenn ein import_ref in der CSV-Datei vorhanden ist, \nwird der Gegenstand mit den Werten in der CSV-Datei aktualisiert.",
                 "description": "Importiere eine CSV-Datei, die deine Gegenstände, Etiketten und Standorte enthält. Schau in die Dokumentation für weitere Informationen\nzum erforderlichen Format.",
-                "title": "CSV-Datei importieren",
-                "upload": "Hochladen"
+                "title": "CSV-Datei importieren"
             },
             "outdated": {
                 "current_version": "Aktuelle Version",
@@ -55,7 +54,8 @@
                 "titles": "Etiketten"
             },
             "page_qr_code": {
-                "page_url": "Seiten-URL"
+                "page_url": "Seiten-URL",
+                "qr_tooltip": "QR Code anzeigen"
             },
             "password_score": {
                 "password_strength": "Passwortstärke"
@@ -65,7 +65,9 @@
             "create_modal": {
                 "item_description": "Gegenstandsbezeichnung",
                 "item_name": "Gegenstandsname",
-                "title": "Gegenstand erstellen"
+                "item_photo": "Artikel Bild",
+                "title": "Gegenstand erstellen",
+                "upload_photos": "Upload Bilder"
             },
             "view": {
                 "selectable": {
@@ -75,8 +77,10 @@
                     "table": "Tabelle"
                 },
                 "table": {
+                    "headers": "Kopfzeilen",
                     "page": "Seite",
-                    "rows_per_page": "Zeilen pro Seite"
+                    "rows_per_page": "Zeilen pro Seite",
+                    "table_settings": "Tabellen Einstellungen"
                 }
             }
         },
@@ -85,6 +89,9 @@
                 "label_description": "Label-Beschreibung",
                 "label_name": "Label-Name",
                 "title": "Label erstellen"
+            },
+            "selector": {
+                "select_labels": "Labels auswählen"
             }
         },
         "location": {
@@ -94,19 +101,25 @@
                 "title": "Standort erstellen"
             },
             "selector": {
-                "parent_location": "Übergeordneter Standort"
+                "no_location_found": "Keine Standorte gefunden",
+                "parent_location": "Übergeordneter Standort",
+                "search_location": "Suchen",
+                "select_location": "Standort wählen"
             },
             "tree": {
                 "no_locations": "Keine Standorte verfügbar. Fügen Sie neue Standorte über die Schaltfläche\n `<`span class=\"link-primary\"`>`Erstellen`<`/span`>` in der Navigationsleiste hinzu."
             }
         },
         "quick_menu": {
+            "no_results": "Keine Ergebnisse gefunden.",
             "shortcut_hint": "Verwenden Sie die Zifferntasten, um schnell eine Aktion auszuwählen."
         }
     },
     "global": {
         "add": "Hinzufügen",
+        "archived": "Archiviert",
         "build": "Build: { build }",
+        "cancel": "Abbrechen",
         "confirm": "Bestätigen",
         "create": "Erstellen",
         "create_and_add": "Erstellen und weiteren hinzufügen",
@@ -118,6 +131,7 @@
         "email": "E-Mail",
         "follow_dev": "Dem Entwickler folgen",
         "github": "GitHub-Projekt",
+        "insured": "Versichert",
         "items": "Gegenstände",
         "join_discord": "Discord beitreten",
         "labels": "Labels",
@@ -126,6 +140,7 @@
         "name": "Name",
         "navigate": "Navigieren",
         "password": "Passwort",
+        "quantity": "Menge",
         "read_docs": "Dokumentation lesen",
         "save": "Speichern",
         "search": "Suche",
@@ -265,6 +280,7 @@
     "locations": {
         "child_locations": "Unter-Standorte",
         "collapse_tree": "Baum einklappen",
+        "expand_tree": "Baum ausklappen",
         "no_results": "Keine Standorte gefunden",
         "update_location": "Aktualisiere Standort"
     },
@@ -349,6 +365,7 @@
         "invalid_url": "Ungültige Barcode-URL",
         "no_sources": "Keine Videoquellen verfügbar",
         "select_video_source": "Wählen Sie eine Videoquelle",
+        "title": "Scanner",
         "unsupported": "Media Stream API wird nicht unterstützt ohne HTTPS/SSL"
     },
     "tools": {

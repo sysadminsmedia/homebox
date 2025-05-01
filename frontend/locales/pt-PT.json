@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "O comportamento para ficheiros importados com import_refs foi alterado. Se um import_ref está presente no ficheiro CSV, \no item vai ser atualizado com os valores no ficheiro CSV.",
                 "description": "Importe um ficheiro CSV com artigos, rótulos e localizações. Consulte a documentação para mais informações\nacerca do formato necessário.",
-                "title": "Importar ficheiro CSV",
-                "upload": "UploadUploadCarregar"
+                "title": "Importar ficheiro CSV"
             },
             "outdated": {
                 "current_version": "Versão Atual",

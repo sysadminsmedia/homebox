@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "导入行为会导致现有的 import_refs 的字段被覆盖。\n如果 CSV 文件中存在 import_ref，则将使用 CSV 文件中的值更新该项。",
                 "description": "导入包含物品、标签和位置的CSV文件。更多有关信息，\n请参阅文档查看所需格式。",
-                "title": "导入 CSV 文件",
-                "upload": "上传"
+                "title": "导入 CSV 文件"
             },
             "outdated": {
                 "current_version": "当前版本",

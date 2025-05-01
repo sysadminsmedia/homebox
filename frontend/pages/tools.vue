@@ -1,6 +1,6 @@
 <template>
   <div>
-    <AppImportDialog v-model="modals.import" />
+    <AppImportDialog />
     <BaseContainer class="mb-6 flex flex-col gap-4">
       <BaseCard>
         <template #title>
@@ -10,8 +10,8 @@
             <template #description> {{ $t("tools.reports_sub") }} </template>
           </BaseSectionHeader>
         </template>
-        <div class="divide-y divide-gray-300 border-t border-gray-300 px-6 pb-3">
-          <DetailAction @action="navigateTo('/reports/label-generator')">
+        <div class="divide-y border-t p-4">
+          <DetailAction to="/reports/label-generator">
             <template #title>{{ $t("tools.reports_set.asset_labels") }}</template>
             {{ $t("tools.reports_set.asset_labels_sub") }}
             <template #button>
@@ -36,8 +36,8 @@
             </template>
           </BaseSectionHeader>
         </template>
-        <div class="divide-y divide-gray-300 border-t border-gray-300 px-6 pb-3">
-          <DetailAction @action="modals.import = true">
+        <div class="divide-y border-t px-6 pb-3">
+          <DetailAction @action="openDialog('import')">
             <template #title> {{ $t("tools.import_export_set.import") }} </template>
             <!-- eslint-disable-next-line vue/no-v-html -->
             <div v-html="DOMPurify.sanitize($t('tools.import_export_set.import_sub'))"></div>
@@ -61,7 +61,7 @@
             </template>
           </BaseSectionHeader>
         </template>
-        <div class="divide-y divide-gray-300 border-t border-gray-300 px-6 pb-3">
+        <div class="divide-y border-t px-6 pb-3">
           <DetailAction @action="ensureAssetIDs">
             <template #title>{{ $t("tools.actions_set.ensure_ids") }}</template>
             {{ $t("tools.actions_set.ensure_ids_sub") }}
@@ -97,6 +97,7 @@
   import MdiArrowRight from "~icons/mdi/arrow-right";
   import MdiDatabase from "~icons/mdi/database";
   import MdiAlert from "~icons/mdi/alert";
+  import { useDialog } from "~/components/ui/dialog-provider";
 
   definePageMeta({
     middleware: ["auth"],
@@ -105,12 +106,7 @@
     title: "Homebox | Tools",
   });
 
-  const modals = ref({
-    item: false,
-    location: false,
-    label: false,
-    import: false,
-  });
+  const { openDialog } = useDialog();
 
   const api = useUserApi();
   const confirm = useConfirm();

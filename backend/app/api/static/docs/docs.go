@@ -2236,6 +2236,9 @@ const docTemplate = `{
                 "parentId": {
                     "type": "string",
                     "x-nullable": true
+                },
+                "quantity": {
+                    "type": "integer"
                 }
             }
         },

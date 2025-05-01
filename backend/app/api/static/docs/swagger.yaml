@@ -91,6 +91,8 @@ definitions:
       parentId:
         type: string
         x-nullable: true
+      quantity:
+        type: integer
     required:
     - name
     type: object

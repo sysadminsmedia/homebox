@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Il comportamento per le importazioni con import_ref esistenti è cambiato. Se un import_ref è presente nel file CSV,\n l'articolo verrà aggiornato con i valori presenti nel file CSV.",
                 "description": "Importa un file CSV contenente gli articoli, le etichette e le posizioni. Vedi la documentazione per ulteriori informazioni sul \nformato richiesto.",
-                "title": "Importa File CSV",
-                "upload": "Carica"
+                "title": "Importa File CSV"
             },
             "outdated": {
                 "current_version": "Versione corrente",
@@ -55,7 +54,8 @@
                 "titles": "Etichette"
             },
             "page_qr_code": {
-                "page_url": "URL della Pagina"
+                "page_url": "URL della Pagina",
+                "qr_tooltip": "Mostra codice QR"
             },
             "password_score": {
                 "password_strength": "Complessità della Password"
@@ -77,8 +77,10 @@
                     "table": "Tabella"
                 },
                 "table": {
+                    "headers": "Intestazioni",
                     "page": "Pagina",
-                    "rows_per_page": "Righe per pagina"
+                    "rows_per_page": "Righe per pagina",
+                    "table_settings": "Impostazioni Tabella"
                 }
             }
         },
@@ -115,6 +117,7 @@
     },
     "global": {
         "add": "Aggiungi",
+        "archived": "Archiviato",
         "build": "Compila: { build }",
         "cancel": "Ignora",
         "confirm": "Conferma",
@@ -127,7 +130,12 @@
         "edit": "Modifica",
         "email": "Email",
         "follow_dev": "Segui lo Sviluppatore",
+        "footer": {
+            "api_link": "`<` a href=\"https://homebox.software/en/api/\" target=\"_blank\"`>`API`<`/a`>`",
+            "version_link": "`<` a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"`>` Versione: { version } Build: { build } `<`/a`>`"
+        },
         "github": "Progetto GitHub",
+        "insured": "Assicurato",
         "items": "Articoli",
         "join_discord": "Unisciti a Discord",
         "labels": "Etichette",
@@ -136,6 +144,7 @@
         "name": "Nome",
         "navigate": "Naviga",
         "password": "Password",
+        "quantity": "Quantità",
         "read_docs": "Leggi la Documentazione",
         "save": "Salva",
         "search": "Cerca",
@@ -275,6 +284,7 @@
     "locations": {
         "child_locations": "Ubicazione figlia",
         "collapse_tree": "Contrai albero",
+        "expand_tree": "Espandi albero",
         "no_results": "Nessuna posizione trovata",
         "update_location": "Aggiorna ubicazione"
     },
@@ -359,6 +369,7 @@
         "invalid_url": "URL del codice a barre non valido",
         "no_sources": "Nessuna sorgente video disponibile",
         "select_video_source": "Scegli una fonte video",
+        "title": "Scanner",
         "unsupported": "L'API del flusso multimediale non è supportata senza HTTPS"
     },
     "tools": {

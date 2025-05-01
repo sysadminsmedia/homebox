@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Behavior for imports with existing import_refs has changed. If an import_ref is present in the CSV file, the \nitem will be updated with the values in the CSV file.",
                 "description": "Import a CSV file containing your items, labels, and locations. See documentation for more information on the \nrequired format.",
-                "title": "Import CSV File",
-                "upload": "Upload"
+                "title": "Import CSV File"
             },
             "outdated": {
                 "current_version": "Current Version",
@@ -55,7 +54,8 @@
                 "titles": "Labels"
             },
             "page_qr_code": {
-                "page_url": "Page URL"
+                "page_url": "Page URL",
+                "qr_tooltip": "Show QR Code"
             },
             "password_score": {
                 "password_strength": "Password Strength"
@@ -65,6 +65,7 @@
             "create_modal": {
                 "item_description": "Item Description",
                 "item_name": "Item Name",
+                "item_quantity": "Item Quantity",                
                 "item_photo": "Item Photo 📷",
                 "title": "Create Item",
                 "upload_photos": "Upload Photos"
@@ -78,7 +79,9 @@
                 },
                 "table": {
                     "page": "Page",
-                    "rows_per_page": "Rows per page"
+                    "rows_per_page": "Rows per page",
+                    "table_settings": "Table Settings",
+                    "headers": "Headers"
                 }
             }
         },
@@ -148,7 +151,10 @@
         "update": "Update",
         "value": "Value",
         "version": "Version: { version }",
-        "welcome": "Welcome, { username }"
+        "welcome": "Welcome, { username }",
+        "insured": "Insured",
+        "archived": "Archived",
+        "quantity": "Quantity"
     },
     "home": {
         "labels": "Labels",
@@ -279,6 +285,7 @@
     "locations": {
         "child_locations": "Child Locations",
         "collapse_tree": "Collapse Tree",
+        "expand_tree": "Expand Tree",
         "no_results": "No Locations Found",
         "update_location": "Update Location"
     },
@@ -359,6 +366,7 @@
         "user_profile_sub": "Invite users, and manage your account."
     },
     "scanner": {
+        "title": "Scanner",
         "error": "An error occurred while scanning",
         "invalid_url": "Invalid barcode URL",
         "no_sources": "No video sources available",
