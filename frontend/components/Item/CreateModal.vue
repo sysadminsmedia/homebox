@@ -11,6 +11,7 @@
         :max-length="255"
         :min-length="1"
       />
+      <FormTextField v-model="form.quantity" :label="$t('components.item.create_modal.item_quantity')" type="number" />
       <FormTextArea
         v-model="form.description"
         :label="$t('components.item.create_modal.item_description')"
@@ -56,14 +57,10 @@
       </div>
 
       <!-- photo preview area is AFTER the create button, to avoid pushing the button below the screen on small displays -->
-      <div v-if="form.photos.length > 0" class="mt-4 border-t border-gray-300 px-4 pb-4">
+      <div v-if="form.photos.length > 0" class="mt-4 border-t px-4 pb-4">
         <div v-for="(photo, index) in form.photos" :key="index">
           <div class="mt-8 w-full">
-            <img
-              :src="photo.fileBase64"
-              class="w-full rounded border-gray-300 object-fill shadow-sm"
-              alt="Uploaded Photo"
-            />
+            <img :src="photo.fileBase64" class="w-full rounded object-fill shadow-sm" alt="Uploaded Photo" />
           </div>
           <div class="mt-2 flex items-center gap-2">
             <TooltipProvider class="flex gap-2" :delay-duration="0">
@@ -165,6 +162,7 @@
   const form = reactive({
     location: locations.value && locations.value.length > 0 ? locations.value[0] : ({} as LocationOut),
     name: "",
+    quantity: 1,
     description: "",
     color: "",
     labels: [] as string[],
@@ -242,6 +240,7 @@
     const out: ItemCreate = {
       parentId: null,
       name: form.name,
+      quantity: form.quantity,
       description: form.description,
       locationId: form.location.id as string,
       labelIds: form.labels,
@@ -282,6 +281,7 @@
     }
 
     form.name = "";
+    form.quantity = 1;
     form.description = "";
     form.color = "";
     form.photos = [];

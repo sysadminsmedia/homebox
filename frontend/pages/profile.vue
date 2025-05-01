@@ -343,7 +343,7 @@
           </template>
           <div class="mt-4 flex justify-between gap-2">
             <DialogFooter class="flex w-full">
-              <Button :disabled="!(notifier && notifier.url)" type="button" @click="testNotifier">
+              <Button variant="secondary" :disabled="!(notifier && notifier.url)" type="button" @click="testNotifier">
                 {{ $t("profile.test") }}
               </Button>
               <div class="grow"></div>
@@ -368,10 +368,10 @@
 
         <div class="p-4">
           <div class="flex gap-2">
-            <Button size="sm" @click="openDialog('changePassword')">
+            <Button variant="secondary" size="sm" @click="openDialog('changePassword')">
               {{ $t("profile.change_password") }}
             </Button>
-            <Button size="sm" @click="generateToken"> {{ $t("profile.gen_invite") }} </Button>
+            <Button variant="secondary" size="sm" @click="generateToken"> {{ $t("profile.gen_invite") }} </Button>
           </div>
           <div v-if="token" class="flex items-center gap-2 pl-1 pt-4">
             <CopyText :text="tokenUrl" />
@@ -394,7 +394,7 @@
           </BaseSectionHeader>
         </template>
 
-        <div v-if="notifiers.data.value" class="mx-4 divide-y divide-gray-400 rounded-md border border-gray-400">
+        <div v-if="notifiers.data.value" class="mx-4 divide-y rounded-md border">
           <p v-if="notifiers.data.value.length === 0" class="p-2 text-center text-sm">
             {{ $t("profile.no_notifiers") }}
           </p>
@@ -434,7 +434,7 @@
         </div>
 
         <div class="p-4">
-          <Button size="sm" @click="openNotifierDialog"> {{ $t("global.create") }} </Button>
+          <Button variant="secondary" size="sm" @click="openNotifierDialog"> {{ $t("global.create") }} </Button>
         </div>
       </BaseCard>
 
@@ -475,7 +475,7 @@
           <p class="m-2 text-sm">{{ $t("profile.example") }}: {{ currencyExample }}</p>
 
           <div class="mt-4">
-            <Button size="sm" @click="updateGroup"> {{ $t("profile.update_group") }} </Button>
+            <Button variant="secondary" size="sm" @click="updateGroup"> {{ $t("profile.update_group") }} </Button>
           </div>
         </div>
       </BaseCard>
@@ -493,39 +493,37 @@
 
         <div class="px-4 pb-4">
           <div class="mb-3">
-            <Button variant="outline" size="sm" @click="setDisplayHeader">
+            <Button variant="secondary" size="sm" @click="setDisplayHeader">
               {{ $t("profile.display_header", { currentValue: preferences.displayHeaderDecor }) }}
             </Button>
           </div>
-          <div class="homebox grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          <div class="homebox grid grid-cols-1 gap-4 font-sans sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             <div
               v-for="theme in themes"
               :key="theme.value"
               :class="'theme-' + theme.value"
-              class="overflow-hidden rounded-lg border border-base-content/20 outline-2 outline-offset-2 outline-base-content hover:border-base-content/40"
+              class="overflow-hidden rounded-lg border outline-2 outline-offset-2"
               :data-theme="theme.value"
               :data-set-theme="theme.value"
               data-act-class="outline"
               @click="setTheme(theme.value)"
             >
-              <div :data-theme="theme.value" class="w-full cursor-pointer bg-base-100 font-sans text-base-content">
+              <div :data-theme="theme.value" class="w-full cursor-pointer bg-background-accent text-foreground">
                 <div class="grid grid-cols-5 grid-rows-3">
-                  <div class="col-start-1 row-span-2 row-start-1 bg-base-200"></div>
-                  <div class="col-start-1 row-start-3 bg-base-300"></div>
-                  <div class="col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 bg-base-100 p-2">
+                  <div class="col-start-1 row-start-1 bg-background"></div>
+                  <div class="col-start-1 row-start-2 bg-sidebar"></div>
+                  <div class="col-start-1 row-start-3 bg-background-accent"></div>
+                  <div class="col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 bg-background p-2">
                     <div class="font-bold">{{ theme.label }}</div>
                     <div class="flex flex-wrap gap-1">
-                      <div class="flex aspect-1 w-5 items-center justify-center rounded bg-primary lg:w-6">
-                        <div class="text-sm font-bold text-primary-content">A</div>
+                      <div class="flex size-5 items-center justify-center rounded bg-primary lg:size-6">
+                        <div class="text-sm font-bold text-primary-foreground">A</div>
                       </div>
-                      <div class="flex aspect-1 w-5 items-center justify-center rounded bg-secondary lg:w-6">
-                        <div class="text-sm font-bold text-secondary-content">A</div>
+                      <div class="flex size-5 items-center justify-center rounded bg-secondary lg:size-6">
+                        <div class="text-sm font-bold text-secondary-foreground">A</div>
                       </div>
-                      <div class="flex aspect-1 w-5 items-center justify-center rounded bg-accent lg:w-6">
-                        <div class="text-sm font-bold text-accent-content">A</div>
-                      </div>
-                      <div class="flex aspect-1 w-5 items-center justify-center rounded bg-neutral lg:w-6">
-                        <div class="text-sm font-bold text-neutral-content">A</div>
+                      <div class="flex size-5 items-center justify-center rounded bg-accent lg:size-6">
+                        <div class="text-sm font-bold text-accent-foreground">A</div>
                       </div>
                     </div>
                   </div>
@@ -544,7 +542,7 @@
             <template #description> {{ $t("profile.delete_account_sub") }} </template>
           </BaseSectionHeader>
         </template>
-        <div class="border-t-2 border-gray-300 p-4 px-6">
+        <div class="border-t-2 p-4 px-6">
           <Button size="sm" variant="destructive" @click="deleteProfile">
             {{ $t("profile.delete_account") }}
           </Button>

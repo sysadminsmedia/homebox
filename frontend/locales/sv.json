@@ -54,7 +54,8 @@
                 "titles": "Etiketter"
             },
             "page_qr_code": {
-                "page_url": "Sidans URL"
+                "page_url": "Sidans URL",
+                "qr_tooltip": "Visa QR-kod"
             },
             "password_score": {
                 "password_strength": "Lösenordsstyrka"
@@ -64,7 +65,9 @@
             "create_modal": {
                 "item_description": "Objektbeskrivning",
                 "item_name": "Objektnamn",
-                "title": "Skapa föremål"
+                "item_photo": "Artikelfoto 📷",
+                "title": "Skapa föremål",
+                "upload_photos": "Ladda upp bilder"
             },
             "view": {
                 "selectable": {
@@ -74,8 +77,10 @@
                     "table": "Tabell"
                 },
                 "table": {
+                    "headers": "Rubriker",
                     "page": "Sida",
-                    "rows_per_page": "Rader per sida"
+                    "rows_per_page": "Rader per sida",
+                    "table_settings": "Bordsinställningar"
                 }
             }
         },
@@ -84,6 +89,9 @@
                 "label_description": "Etikettbeskrivning",
                 "label_name": "Etikettnamm",
                 "title": "Skapa etikett"
+            },
+            "selector": {
+                "select_labels": "Välj etiketter"
             }
         },
         "location": {
@@ -93,19 +101,25 @@
                 "title": "Skapa plats"
             },
             "selector": {
-                "parent_location": "Överordnad Plats"
+                "no_location_found": "Ingen plats hittades",
+                "parent_location": "Överordnad Plats",
+                "search_location": "Sök Platser",
+                "select_location": "Välj en plats"
             },
             "tree": {
                 "no_locations": "Inga platser tillgängliga. Lägg till nya platser via\n `<`span class=\"link-primary\"`>`Skapa`<`/span`>`-knappen i navigationsmenyn."
             }
         },
         "quick_menu": {
+            "no_results": "Inga resultat hittades.",
             "shortcut_hint": "Använd siffertangenterna för att snabbt välja en åtgärd."
         }
     },
     "global": {
         "add": "Lägg till",
+        "archived": "Arkiverad",
         "build": "Byggd: { build }",
+        "cancel": "Avbryta",
         "confirm": "Godkänn",
         "create": "Skapa",
         "create_and_add": "Skapa och lägg till en till",
@@ -116,7 +130,12 @@
         "edit": "Ändra",
         "email": "Epost",
         "follow_dev": "Följ utvecklaren",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Version: { version } Build: { build } '</a>'"
+        },
         "github": "GitHub-projekt",
+        "insured": "Försäkrad",
         "items": "Föremål",
         "join_discord": "Gå med i Discord",
         "labels": "Etiketter",
@@ -125,6 +144,7 @@
         "name": "Namn",
         "navigate": "Navigera",
         "password": "Lösenord",
+        "quantity": "Kvantitet",
         "read_docs": "Läs dokumentationen",
         "save": "Spara",
         "search": "Sök",
@@ -264,6 +284,7 @@
     "locations": {
         "child_locations": "Underordnade platser",
         "collapse_tree": "Dra ihop träd",
+        "expand_tree": "Expandera Träd",
         "no_results": "Inga platser hittades",
         "update_location": "Uppdatera plats"
     },
@@ -348,6 +369,7 @@
         "invalid_url": "Ogiltig streckkods-URL",
         "no_sources": "Inga videokällor tillgängliga",
         "select_video_source": "Välj en videokälla",
+        "title": "Skanner",
         "unsupported": "Media Stream API stöds inte utan HTTPS"
     },
     "tools": {

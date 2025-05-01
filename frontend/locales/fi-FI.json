@@ -1,32 +1,414 @@
 {
-    "languages": {
-        "pl": "Puola"
-    },
-    "maintenance": {
-        "list": {
-            "complete": "Valmis",
-            "delete": "Poista"
+    "components": {
+        "app": {
+            "import_dialog": {
+                "change_warning": "Olemassa olevien import_refs-tiedostojen tuonnin käyttäytyminen on muuttunut. Jos CSV-tiedostossa on import_ref, \nkohde päivitetään CSV-tiedoston arvoilla.",
+                "description": "Tuo CSV-tiedosto, joka sisältää kohteesi, tarrasi ja sijaintisi. Katso lisätietoja dokumentaatiosta \nvaadittu muoto.",
+                "title": "Tuo CSV-tiedosto"
+            },
+            "outdated": {
+                "current_version": "Nykyinen versio",
+                "dismiss": "Hylätä",
+                "latest_version": "Uusin versio",
+                "new_version_available": "Uusi Versio Saatavilla",
+                "new_version_available_link": "Klikkaa tästä nähdäksesi julkaisutiedot"
+            }
         },
-        "modal": {
-            "new_action": "Luo"
+        "global": {
+            "copy_text": {
+                "documentation": "dokumentointi",
+                "failed_to_copy": "Tekstiä ei voitu kopioida leikepöydälle",
+                "https_required": "koska HTTPS vaaditaan",
+                "learn_more": "Lue lisää"
+            },
+            "date_time": {
+                "ago": "{0} sitten",
+                "days": "päivä",
+                "hour": "tunti",
+                "hours": "tuntia",
+                "in": "vuonna {0}",
+                "just-now": "juuri nyt",
+                "last-month": "viime kuussa",
+                "last-week": "viime viikolla",
+                "last-year": "viime vuonna",
+                "minute": "minuutti",
+                "minutes": "minuuttia",
+                "months": "kuukausi",
+                "next-month": "ensi kuussa",
+                "next-week": "ensi viikolla",
+                "next-year": "ensi vuonna",
+                "second": "sekunti",
+                "seconds": "sekuntia",
+                "tomorrow": "huominen",
+                "week": "viikko",
+                "weeks": "viikkoa",
+                "years": "vuotiaat",
+                "yesterday": "eilen"
+            },
+            "label_maker": {
+                "browser_print": "Tulosta selaimesta",
+                "confirm_description": "Haluatko varmasti tulostaa tämän tarran?",
+                "download": "Lataa Tarra",
+                "print": "Tulosta tarra",
+                "server_print": "Tulosta palvelimella",
+                "titles": "Tarra"
+            },
+            "page_qr_code": {
+                "page_url": "Sivun URL",
+                "qr_tooltip": "Näytä QR-koodi"
+            },
+            "password_score": {
+                "password_strength": "Salasanan Vahvuus"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "item_description": "Kohteen Kuvaus",
+                "item_name": "Tuotteen Nimi",
+                "item_photo": "Kohteen Kuva 📷",
+                "item_quantity": "Tuotteen Määrä",
+                "title": "Luo Kohde",
+                "upload_photos": "Lataa Valokuvia"
+            },
+            "view": {
+                "selectable": {
+                    "card": "Kortti",
+                    "items": "Erä",
+                    "no_items": "Ei näytettäviä kohteita",
+                    "table": "Taulukko"
+                },
+                "table": {
+                    "headers": "Otsikko",
+                    "page": "Sivu",
+                    "rows_per_page": "Rivejä sivua kohti",
+                    "table_settings": "Taulukon Asetukset"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "label_description": "Etiketin Kuvaus",
+                "label_name": "Etiketin Nimi",
+                "title": "Luo Tarra"
+            },
+            "selector": {
+                "select_labels": "Valitse Tarrat"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "location_description": "Sijainnin Kuvaus",
+                "location_name": "Sijainnin Nimi",
+                "title": "Luo Sijainti"
+            },
+            "selector": {
+                "no_location_found": "Sijaintia ei löytynyt",
+                "parent_location": "Vanhemman Sijainti",
+                "search_location": "Etsi Sijainnit",
+                "select_location": "Valitse sijainti"
+            },
+            "tree": {
+                "no_locations": "Sijainteja ei ole saatavilla. Lisää uusia sijainteja\n '<'span class=\" link-primary \"`>`Luo`<`/span`> ' - painike navigointipalkissa."
+            }
+        },
+        "quick_menu": {
+            "no_results": "Tuloksia ei löytynyt.",
+            "shortcut_hint": "Valitse toiminto nopeasti numeronäppäimillä."
         }
     },
+    "global": {
+        "add": "Lisätä",
+        "archived": "Arkistoitu",
+        "build": "Koontikansio: { build }",
+        "cancel": "Peruuttaa",
+        "confirm": "Vahvistaa",
+        "create": "Luoda",
+        "create_and_add": "Luo ja lisää toinen",
+        "created": "Luotu",
+        "delete": "Poistaa",
+        "details": "Tiedot",
+        "duplicate": "Kaksoiskappale",
+        "edit": "Muokkaa",
+        "email": "Sähköposti",
+        "follow_dev": "Seuraa kehittäjää",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Versio: { version } Rakenna: { build } '</a>'"
+        },
+        "github": "GitHub Projekti",
+        "insured": "Vakuuttaa",
+        "items": "Erä",
+        "join_discord": "Liity Discord",
+        "labels": "Tarra",
+        "locations": "Sijainti",
+        "maintenance": "Huolto",
+        "name": "Nimi",
+        "navigate": "Navigoida",
+        "password": "Salasana",
+        "quantity": "Määrä",
+        "read_docs": "Lue dokumentit",
+        "save": "Tallentaa",
+        "search": "Etsiä",
+        "sign_out": "Kirjaudu Ulos",
+        "submit": "Lähettää",
+        "update": "Päivitys",
+        "value": "Arvo",
+        "version": "Versio: { version }",
+        "welcome": "Tervetuloa, { username }"
+    },
+    "home": {
+        "labels": "Tarra",
+        "quick_statistics": "Nopeat Tilastot",
+        "recently_added": "Äskettäin Lisätty",
+        "storage_locations": "Varastointipaikat",
+        "total_items": "Erät Yhteensä",
+        "total_labels": "Tarrat Yhteensä",
+        "total_locations": "Toimipaikat Yhteensä",
+        "total_value": "Kokonaisarvo"
+    },
+    "index": {
+        "disabled_registration": "Rekisteröinti Poistettu Käytöstä",
+        "dont_join_group": "Etkö halua liittyä ryhmään?",
+        "joining_group": "Liityt olemassa olevaan ryhmään!",
+        "login": "Kirjautuminen",
+        "register": "Rekisteröidä",
+        "remember_me": "Muista Minut",
+        "set_email": "Mikä on sähköpostisi?",
+        "set_name": "Mikä sinun nimesi on?",
+        "set_password": "Aseta salasana",
+        "tagline": "Seuraa, Järjestä ja hallitse asioitasi."
+    },
+    "items": {
+        "add": "Lisätä",
+        "advanced": "Edistyksellinen",
+        "archived": "Arkistoitu",
+        "asset_id": "Omaisuuserän ID",
+        "attachment": "Liite",
+        "attachments": "Liitteet",
+        "changes_persisted_immediately": "Liitteiden muutokset tallennetaan välittömästi",
+        "created_at": "Luotu Osoitteessa",
+        "custom_fields": "Mukautetut Kentät",
+        "description": "Kuvaus",
+        "details": "Tiedot",
+        "drag_and_drop": "Vedä ja pudota tiedostoja tähän tai valitse tiedostot napsauttamalla",
+        "edit_details": "Muokkaa Tietoja",
+        "field_selector": "Kentän Valitsin",
+        "field_value": "Kentän Arvo",
+        "first": "Ensimmäinen",
+        "include_archive": "Sisällytä Arkistoidut Kohteet",
+        "insured": "Vakuuttaa",
+        "last": "Viimeinen",
+        "lifetime_warranty": "Elinikäinen Takuu",
+        "location": "Paikka",
+        "manual": "Käsikirja",
+        "manuals": "Käsikirjat",
+        "manufacturer": "Valmistaja",
+        "model_number": "Mallinumero",
+        "name": "Nimi",
+        "negate_labels": "Poista Valitut Nimilaput",
+        "next_page": "Seuraava Sivu",
+        "no_results": "Kohteita Ei Löytynyt",
+        "notes": "Huomautus",
+        "only_with_photo": "Vain tuotteet, joissa on valokuva",
+        "only_without_photo": "Vain tuotteet ilman valokuvaa",
+        "options": "Vaihtoehto",
+        "order_by": "Tilaa mukaan",
+        "pages": "Sivu { page } of { totalPages }",
+        "parent_item": "Vanhempi kohde",
+        "photo": "Valokuva",
+        "photos": "Kuvat",
+        "prev_page": "Edellinen Sivu",
+        "purchase_date": "Ostopäivämäärä",
+        "purchase_details": "Osto tiedot",
+        "purchase_price": "Ostohinta",
+        "purchased_from": "Ostettu osoitteesta",
+        "quantity": "Määrä",
+        "query_id": "Kysyvän kohteen tunnusnumero: { id }",
+        "receipt": "Kuitti",
+        "receipts": "Kuitin",
+        "reset_search": "Haku nollataan",
+        "results": "{ total } Tulokset",
+        "serial_number": "Sarjanumero",
+        "show_advanced_view_options": "Näytä näkymän lisäasetukset",
+        "sold_at": "Myyty klo",
+        "sold_details": "Myydyt Tiedot",
+        "sold_price": "Myyty Hinta",
+        "sold_to": "Myyty",
+        "tip_1": "Sijainti-ja etikettisuodattimet käyttävät \" tai \" - toimintoa. Jos valitaan useampi kuin yksi, vain yksi on\n tarvitaan ottelu.",
+        "tip_2": "\"#\"- Etuliitteellä tehdyt haut kyselevät omaisuuserän tunnusta (esimerkki \"#000-001\")",
+        "tip_3": "Kenttäsuodattimet käyttävät \" tai \" - toimintoa. Jos valitaan useampi kuin yksi, tarvitaan vain yksi\n ottelu.",
+        "tips": "Vihje",
+        "tips_sub": "Etsi Vinkkejä",
+        "updated_at": "Päivitetty Osoitteessa",
+        "warranty": "Takuu",
+        "warranty_details": "Takuun Tiedot",
+        "warranty_expires": "Takuu Päättyy"
+    },
+    "labels": {
+        "no_results": "Tarroja Ei Löytynyt",
+        "update_label": "Päivitä Nimiö"
+    },
+    "languages": {
+        "ca": "Katalaani",
+        "cs-CZ": "Tšekki",
+        "da-DK": "Tanska",
+        "de": "Saksa",
+        "en": "Englanti",
+        "es": "Espanjan",
+        "fi-FI": "Suomalainen",
+        "fr": "Ranska",
+        "hu": "Unkari",
+        "id-ID": "Indonesia",
+        "it": "Italia",
+        "ja-JP": "Japani",
+        "ko-KR": "Korea",
+        "nb-NO": "Norjalainen Bokmål",
+        "nl": "Hollanti",
+        "pl": "Puola",
+        "pt-BR": "Portugali (Brasilia)",
+        "pt-PT": "Portugali (Portugali)",
+        "ro-RO": "Romania",
+        "ru": "Venäjä",
+        "sk-SK": "Slovakia",
+        "sl": "Sloveenin",
+        "sv": "Ruotsalainen",
+        "ta-IN": "Tamili",
+        "th-TH": "Thai",
+        "tr": "Turkkilainen",
+        "uk-UA": "Ukraina",
+        "zh-CN": "Kiina (Yksinkertaistettu)",
+        "zh-HK": "Kiina (Hongkong)",
+        "zh-MO": "Kiina (Macao)",
+        "zh-TW": "Kiina (Perinteinen)"
+    },
+    "languages.sq-AL": "Albania",
+    "locations": {
+        "child_locations": "Lasten Sijainnit",
+        "collapse_tree": "Romahdus Puu",
+        "expand_tree": "Laajenna Puu",
+        "no_results": "Sijainteja Ei Löytynyt",
+        "update_location": "Päivitä Sijainti"
+    },
+    "maintenance": {
+        "filter": {
+            "both": "Sekä",
+            "completed": "Täydellinen",
+            "scheduled": "Ajoittaa"
+        },
+        "list": {
+            "complete": "Valmis",
+            "create_first": "Luo Ensimmäinen Merkintä",
+            "delete": "Poista",
+            "duplicate": "Kaksoiskappale",
+            "edit": "Muokkaa",
+            "new": "Uusi"
+        },
+        "modal": {
+            "completed_date": "Valmistunut Päiväys",
+            "cost": "Kustannus",
+            "delete_confirmation": "Haluatko varmasti poistaa tämän merkinnän?",
+            "edit_action": "Päivitys",
+            "edit_title": "Muokkaa Tietuetta",
+            "entry_name": "Tietueen Nimi",
+            "new_action": "Luo",
+            "new_title": "Uusi Merkintä",
+            "notes": "Huomautus",
+            "scheduled_date": "Aikataulutettu Päivämäärä"
+        },
+        "monthly_average": "Kuukausikeskiarvo",
+        "toast": {
+            "failed_to_create": "Tietueen luominen epäonnistui",
+            "failed_to_delete": "Tietueen poisto epäonnistui",
+            "failed_to_update": "Merkintää ei voitu päivittää"
+        },
+        "total_cost": "Kustannukset yhteensä",
+        "total_entries": "Merkinnät Yhteensä"
+    },
     "menu": {
-        "home": "Koti"
+        "create_item": "Erä / Saamiset",
+        "create_label": "Etiketti",
+        "create_location": "Paikka",
+        "home": "Koti",
+        "locations": "Paikat",
+        "maintenance": "Kunnossapito",
+        "profile": "Profiili",
+        "scanner": "Skanneri",
+        "search": "Etsi",
+        "tools": "Työkalu"
     },
     "profile": {
+        "active": "Aktiiviset",
+        "change_password": "Vaihda Salasana",
+        "currency_format": "Valuutan Muoto",
+        "current_password": "Nykyinen Salasana",
         "delete_account": "Poista tili",
-        "test": "Testi"
+        "delete_account_sub": "Poista tilisi ja kaikki siihen liittyvät tiedot. Tätä ei voi perua.",
+        "display_header": "{ currentValue, select, true {Näytä Otsikko} false {Näytä Otsikko} other {Ei Osunut}}",
+        "enabled": "Käyttöön",
+        "example": "Esimerkiksi",
+        "gen_invite": "Luo Kutsulinkki",
+        "group_settings": "Ryhmän Asetukset",
+        "group_settings_sub": "Jaetun Ryhmän Asetukset. Sinun on ehkä päivitettävä selaimesi, jotta joitain asetuksia voidaan soveltaa.",
+        "inactive": "Aktiivinen",
+        "language": "Kieli",
+        "new_password": "Uusi Salasana",
+        "no_notifiers": "Ilmoittajia ei ole määritetty",
+        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Ilmoittaja",
+        "notifiers": "Ilmoittaja",
+        "notifiers_sub": "Saat ilmoituksia tulevista huoltomuistutuksista",
+        "test": "Testi",
+        "theme_settings": "Teeman Asetukset",
+        "theme_settings_sub": "Teeman asetukset tallennetaan selaimesi paikalliseen tallennustilaan. Voit vaihtaa teemaa milloin tahansa. Jos olet\n jos sinulla on ongelmia teeman asettamisessa, yritä päivittää selaimesi.",
+        "update_group": "Päivitä Ryhmä",
+        "update_language": "Päivitä Kieli",
+        "url": "URL",
+        "user_profile": "käyttäjäprofiili",
+        "user_profile_sub": "Kutsu käyttäjiä ja Hallitse tiliäsi."
+    },
+    "scanner": {
+        "error": "Skannattaessa tapahtui virhe",
+        "invalid_url": "Virheellinen viivakoodin URL",
+        "no_sources": "Videolähteitä ei ole saatavilla",
+        "select_video_source": "Valitse videolähde",
+        "title": "Skanneri",
+        "unsupported": "Media Stream API ei ole tuettu ilman HTTPS"
     },
     "tools": {
+        "actions": "Inventaariotoimet",
         "actions_set": {
-            "set_primary_photo": "Aseta oletuskuva"
+            "ensure_ids": "Varmistetaan, että omaisuuserät ID:t",
+            "ensure_ids_button": "Varmistetaan omaisuuserät ID:t",
+            "ensure_ids_sub": "Varmistaa, että kaikilla varastossasi olevilla kohteilla on voimassa oleva asset_id-kenttä. Tämä tehdään etsimällä tietokannan korkein nykyinen asset_id-kenttä ja soveltamalla seuraavaa arvoa jokaiselle kohteelle, jolla on unset asset_id-kenttä. Tämä tehdään created_at-kentän järjestyksessä.",
+            "ensure_import_refs": "Varmista Tuonnin Viitteet",
+            "ensure_import_refs_button": "Varmista Tuonnin Viitteet",
+            "ensure_import_refs_sub": "Varmistaa, että kaikilla varastossasi olevilla kohteilla on voimassa oleva import_ref-kenttä. Tämä tehdään luomalla satunnaisesti 8 merkin merkkijono jokaiselle kohteelle, jolla on unset import_ref-kenttä.",
+            "set_primary_photo": "Aseta oletuskuva",
+            "set_primary_photo_button": "Aseta Ensisijainen Kuva",
+            "set_primary_photo_sub": "Homebox versiossa v0.10.0 ensisijainen kuvakenttä lisättiin tyypin kuva liitteisiin. Tämä toiminto asettaa ensisijaiseksi kuvakentäksi tietokannan liitteet-taulukon ensimmäisen kuvan, jos sitä ei ole jo asetettu. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Katso GitHub PR #576\" </a>\"",
+            "zero_datetimes": "Nolla Kohteen Päivämääräajat",
+            "zero_datetimes_button": "Nolla Kohteen Päivämääräajat",
+            "zero_datetimes_sub": "Palauttaa varastosi kaikkien päivämääräkenttien aika-arvon päivämäärän alkuun. Tämän tarkoituksena on korjata virhe, joka otettiin käyttöön varhaisessa vaiheessa sivuston kehitystä, joka aiheutti aika-arvon tallentamisen ajan kanssa, joka aiheutti ongelmia päivämääräkentissä, jotka näyttävät tarkkoja arvoja. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Katso Github Ongelma #236 lisää yksityiskohtia.'</a>'"
         },
+        "actions_sub": "Käytä toimintoja varastoon irtotavarana. Nämä ovat peruuttamattomia toimia. '<b>'Ole varovainen.</b>'",
         "import_export": "Tuo/Vie",
         "import_export_set": {
+            "export": "Vie Varasto",
             "export_button": "Vie varasto",
-            "import_button": "Tuo varasto"
+            "export_sub": "Vie Homebox CSV-standardin. Tämä vie kaikki varastossasi olevat tuotteet.",
+            "import": "Tuo Varasto",
+            "import_button": "Tuo varasto",
+            "import_sub": "Tuo CSV-standardimuodon Homebox. Ilman ‘<code>'HB.import_ref’</code>‘ kolumni, tämä tulee ’<b>‘not’</b>' korvaa inventaariossasi olevia esineitä, vaan lisää vain uusia esineitä. Rivit, joissa on ‘<code>'HB.import_ref’</code>' sarakkeen tiedot yhdistetään olemassa oleviin kohteisiin, joilla on sama import_ref, jos sellainen on olemassa."
         },
-        "reports": "Raportit"
+        "import_export_sub": "Tuo ja vie varastosi CSV-tiedostoon ja siitä. Tämä on hyödyllistä siirrettäessä varastosi uuteen Homebox ilmentymään.",
+        "reports": "Raportit",
+        "reports_set": {
+            "asset_labels": "Omaisuuserien ID-tarrat",
+            "asset_labels_button": "Etikettigeneraattori",
+            "asset_labels_sub": "Luo tulostettavan PDF-tiedoston etiketeistä tietyille omaisuuserätunnisteille. Tarrat eivät koske vain omaisuusluetteloasi, joten voit tulostaa tarrat etukäteen ja kiinnittää ne omaisuusluetteloosi, kun saat ne.",
+            "bill_of_materials": "Materiaaliluettelo",
+            "bill_of_materials_button": "Luo BOM",
+            "bill_of_materials_sub": "Luo CSV-tiedoston (pilkulla erotetut arvot), joka voidaan tuoda taulukkolaskentaohjelmaan. Tämä on yhteenveto varastostasi, jossa on perustuotteet ja hintatiedot."
+        },
+        "reports_sub": "Luo erilaisia raportteja varastollesi."
     }
 }

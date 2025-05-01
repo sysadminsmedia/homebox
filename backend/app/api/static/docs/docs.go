@@ -2241,6 +2241,9 @@ const docTemplate = `{
                 "parentId": {
                     "type": "string",
                     "x-nullable": true
+                },
+                "quantity": {
+                    "type": "integer"
                 }
             }
         },
@@ -2465,6 +2468,10 @@ const docTemplate = `{
                 },
                 "quantity": {
                     "type": "integer"
+                },
+                "soldTime": {
+                    "description": "Sale details",
+                    "type": "string"
                 },
                 "updatedAt": {
                     "type": "string"

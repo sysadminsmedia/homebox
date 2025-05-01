@@ -158,7 +158,7 @@
         <header :class="{ 'mb-2': location?.description }">
           <div class="flex flex-wrap items-end gap-2">
             <div
-              class="mb-auto flex size-12 items-center justify-center rounded-full bg-neutral-focus text-neutral-content"
+              class="mb-auto flex size-12 items-center justify-center rounded-full bg-secondary text-secondary-foreground"
             >
               <MdiPackageVariant class="size-7" />
             </div>
@@ -166,7 +166,7 @@
               <Breadcrumb v-if="location?.parent">
                 <BreadcrumbList>
                   <BreadcrumbItem>
-                    <BreadcrumbLink as-child class="text-base-content/70 hover:underline">
+                    <BreadcrumbLink as-child class="text-foreground/70 hover:underline">
                       <NuxtLink :to="`/location/${location.parent.id}`">
                         {{ location.parent.name }}
                       </NuxtLink>

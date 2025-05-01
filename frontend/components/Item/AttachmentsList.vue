@@ -1,5 +1,5 @@
 <template>
-  <ul role="list" class="divide-y divide-gray-400 rounded-md border border-gray-400">
+  <ul role="list" class="divide-y rounded-md border">
     <li
       v-for="attachment in attachments"
       :key="attachment.id"

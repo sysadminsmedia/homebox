@@ -58,9 +58,10 @@ func TestLocationRepositoryGetAllWithCount(t *testing.T) {
 	ctx := context.Background()
 	result := useLocations(t, 1)[0]
 
-	_, err := tRepos.Items.Create(ctx, tGroup.ID, ItemCreate{
+	item, err := tRepos.Items.Create(ctx, tGroup.ID, ItemCreate{
 		Name:        fk.Str(10),
 		Description: fk.Str(100),
+		Quantity:    fk.Num(1, 10),
 		LocationID:  result.ID,
 	})
 
@@ -71,7 +72,7 @@ func TestLocationRepositoryGetAllWithCount(t *testing.T) {
 
 	for _, loc := range results {
 		if loc.ID == result.ID {
-			assert.Equal(t, 1, loc.ItemCount)
+			assert.Equal(t, item.Quantity, loc.ItemCount)
 		}
 	}
 }
