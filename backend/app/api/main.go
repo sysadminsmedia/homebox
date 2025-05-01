@@ -11,8 +11,6 @@ import (
   
 	"github.com/pressly/goose/v3"
 
-	"github.com/google/uuid"
-
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
@@ -25,9 +23,9 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
-  "github.com/sysadminsmedia/homebox/backend/internal/data/migrations"
+  	"github.com/sysadminsmedia/homebox/backend/internal/data/migrations"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
-  "github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
+  	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
 
