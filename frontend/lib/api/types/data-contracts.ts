@@ -1,6 +1,7 @@
 /* post-processed by ./scripts/process-types.go */
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -9,6 +10,17 @@
  * ## SOURCE: https://github.com/acacode/swagger-typescript-api ##
  * ---------------------------------------------------------------
  */
+
+export enum MaintenanceFilterStatus {
+  MaintenanceFilterStatusScheduled = "scheduled",
+  MaintenanceFilterStatusCompleted = "completed",
+  MaintenanceFilterStatusBoth = "both",
+}
+
+export enum ItemType {
+  ItemTypeLocation = "location",
+  ItemTypeItem = "item",
+}
 
 export interface CurrenciesCurrency {
   code: string;
@@ -147,11 +159,6 @@ export interface ItemSummary {
   /** Sale details */
   soldTime: Date | string;
   updatedAt: Date | string;
-}
-
-export enum ItemType {
-  ItemTypeLocation = "location",
-  ItemTypeItem = "item",
 }
 
 export interface ItemUpdate {
@@ -302,12 +309,6 @@ export interface MaintenanceEntryWithDetails {
   itemName: string;
   name: string;
   scheduledDate: Date | string;
-}
-
-export enum MaintenanceFilterStatus {
-  MaintenanceFilterStatusScheduled = "scheduled",
-  MaintenanceFilterStatusCompleted = "completed",
-  MaintenanceFilterStatusBoth = "both",
 }
 
 export interface NotifierCreate {

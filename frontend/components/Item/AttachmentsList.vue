@@ -16,7 +16,7 @@
               <a
                 :class="buttonVariants({ size: 'icon' })"
                 :href="attachmentURL(attachment.id)"
-                :download="attachment.document.title"
+                :download="attachment.title"
               >
                 <MdiDownload />
               </a>
