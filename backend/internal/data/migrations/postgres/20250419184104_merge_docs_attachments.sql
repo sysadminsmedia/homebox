@@ -1,3 +1,5 @@
+-- +goose Up
+
 -- Step 1: Modify "attachments" table to add new columns
 ALTER TABLE "attachments" ADD COLUMN "title" character varying NOT NULL DEFAULT '', ADD COLUMN "path" character varying NOT NULL DEFAULT '';
 

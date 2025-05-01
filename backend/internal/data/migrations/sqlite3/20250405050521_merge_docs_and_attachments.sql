@@ -1,3 +1,4 @@
+-- +goose Up
 -- Add new columns to attachments and merge documents into attachments
 ALTER TABLE attachments ADD COLUMN path TEXT DEFAULT '' NOT NULL;
 ALTER TABLE attachments ADD COLUMN title TEXT DEFAULT '' NOT NULL;
