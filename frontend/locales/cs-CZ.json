@@ -66,6 +66,7 @@
                 "item_description": "Popis Položky",
                 "item_name": "Jméno Položky",
                 "item_photo": "Fotografie položky 📷",
+                "item_quantity": "Množství položek",
                 "title": "Vytvořit položku",
                 "upload_photos": "Nahrát fotografie"
             },
