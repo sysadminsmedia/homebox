@@ -81,7 +81,11 @@
                     size="icon"
                     type="button"
                     variant="default"
-                    @click.prevent="rotateBase64Image90Deg(photo.fileBase64, index)"
+                    @click.prevent="
+                      async () => {
+                        await rotateBase64Image90Deg(photo.fileBase64, index);
+                      }
+                    "
                   >
                     <MdiRotateClockwise />
                     <div class="sr-only">Rotate photo</div>
@@ -313,25 +317,54 @@
   }
 
   function dataURLtoFile(dataURL: string, fileName: string) {
-    const arr = dataURL.split(",");
-    const mime = arr[0].match(/:(.*?);/)[1];
-    const bstr = atob(arr[arr.length - 1]);
-    let n = bstr.length;
-    const u8arr = new Uint8Array(n);
-    while (n--) {
-      u8arr[n] = bstr.charCodeAt(n);
+    try {
+      const arr = dataURL.split(",");
+      const mimeMatch = arr[0].match(/:(.*?);/);
+      if (!mimeMatch || !mimeMatch[1]) {
+        throw new Error("Invalid data URL format");
+      }
+      const mime = mimeMatch[1];
+
+      // Validate mime type is an image
+      if (!mime.startsWith("image/")) {
+        throw new Error("Invalid mime type, expected image");
+      }
+
+      const bstr = atob(arr[arr.length - 1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new File([u8arr], fileName, { type: mime });
+    } catch (error) {
+      console.error("Error converting data URL to file:", error);
+      // Return a fallback or rethrow based on your error handling strategy
+      throw error;
     }
-    return new File([u8arr], fileName, { type: mime });
   }
 
-  function rotateBase64Image90Deg(base64Image: string, index: number) {
+  async function rotateBase64Image90Deg(base64Image: string, index: number) {
     // Create an off-screen canvas
     const offScreenCanvas = document.createElement("canvas");
     const offScreenCanvasCtx = offScreenCanvas.getContext("2d");
 
+    if (!offScreenCanvasCtx) {
+      toast.error("Your browser doesn't support canvas operations");
+      return;
+    }
+
     // Create an image
     const img = new Image();
-    img.src = base64Image;
+
+    // Create a promise to handle the image loading
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error("Failed to load image"));
+      img.src = base64Image;
+    }).catch(error => {
+      toast.error("Failed to rotate image: " + error.message);
+    });
 
     // Set its dimensions to rotated size
     offScreenCanvas.height = img.width;
@@ -342,10 +375,19 @@
     offScreenCanvasCtx.translate(0, -offScreenCanvas.width);
     offScreenCanvasCtx.drawImage(img, 0, 0);
 
-    const imageType = base64Image.match(/^data:(.+);base64/)?.[1];
+    const imageType = base64Image.match(/^data:(.+);base64/)?.[1] || "image/jpeg";
 
     // Encode image to data-uri with base64
-    form.photos[index].fileBase64 = offScreenCanvas.toDataURL(imageType, 100);
-    form.photos[index].file = dataURLtoFile(form.photos[index].fileBase64, form.photos[index].photoName);
+    try {
+      form.photos[index].fileBase64 = offScreenCanvas.toDataURL(imageType, 100);
+      form.photos[index].file = dataURLtoFile(form.photos[index].fileBase64, form.photos[index].photoName);
+    } catch (error) {
+      toast.error("Failed to process rotated image");
+      console.error(error);
+    } finally {
+      // Clean up resources
+      offScreenCanvas.width = 0;
+      offScreenCanvas.height = 0;
+    }
   }
 </script>
