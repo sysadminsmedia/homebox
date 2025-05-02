@@ -75,6 +75,22 @@
                   <p>Delete photo</p>
                 </TooltipContent>
               </Tooltip>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    size="icon"
+                    type="button"
+                    variant="default"
+                    @click.prevent="rotateBase64Image90Deg(photo.fileBase64, index)"
+                  >
+                    <MdiRotateClockwise />
+                    <div class="sr-only">Rotate photo</div>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Rotate photo</p>
+                </TooltipContent>
+              </Tooltip>
               <!-- TODO: re-enable when we have a way to set primary photos -->
               <!-- <Tooltip>
                 <TooltipTrigger>
@@ -114,6 +130,7 @@
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
   import MdiDelete from "~icons/mdi/delete";
+  import MdiRotateClockwise from "~icons/mdi/rotate-clockwise";
   // import MdiStarOutline from "~icons/mdi/star-outline";
   // import MdiStar from "~icons/mdi/star";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
@@ -293,5 +310,42 @@
       closeDialog("create-item");
       navigateTo(`/item/${data.id}`);
     }
+  }
+
+  function dataURLtoFile(dataURL: string, fileName: string) {
+    const arr = dataURL.split(",");
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[arr.length - 1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], fileName, { type: mime });
+  }
+
+  function rotateBase64Image90Deg(base64Image: string, index: number) {
+    // Create an off-screen canvas
+    const offScreenCanvas = document.createElement("canvas");
+    const offScreenCanvasCtx = offScreenCanvas.getContext("2d");
+
+    // Create an image
+    const img = new Image();
+    img.src = base64Image;
+
+    // Set its dimensions to rotated size
+    offScreenCanvas.height = img.width;
+    offScreenCanvas.width = img.height;
+
+    // Rotate and draw source image into the off-screen canvas
+    offScreenCanvasCtx.rotate((90 * Math.PI) / 180);
+    offScreenCanvasCtx.translate(0, -offScreenCanvas.width);
+    offScreenCanvasCtx.drawImage(img, 0, 0);
+
+    const imageType = base64Image.match(/^data:(.+);base64/)?.[1];
+
+    // Encode image to data-uri with base64
+    form.photos[index].fileBase64 = offScreenCanvas.toDataURL(imageType, 100);
+    form.photos[index].file = dataURLtoFile(form.photos[index].fileBase64, form.photos[index].photoName);
   }
 </script>
