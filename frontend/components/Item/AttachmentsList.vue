@@ -7,7 +7,7 @@
     >
       <div class="flex w-0 flex-1 items-center">
         <MdiPaperclip class="size-5 shrink-0 text-gray-400" aria-hidden="true" />
-        <span class="ml-2 w-0 flex-1 truncate"> {{ attachment.document.title }}</span>
+        <span class="ml-2 w-0 flex-1 truncate"> {{ attachment.title }}</span>
       </div>
       <div class="ml-4 flex shrink-0 gap-2">
         <TooltipProvider :delay-duration="0">
@@ -16,7 +16,7 @@
               <a
                 :class="buttonVariants({ size: 'icon' })"
                 :href="attachmentURL(attachment.id)"
-                :download="attachment.document.title"
+                :download="attachment.title"
               >
                 <MdiDownload />
               </a>

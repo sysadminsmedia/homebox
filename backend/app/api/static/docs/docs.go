@@ -774,6 +774,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "boolean",
+                        "description": "Is this the primary attachment",
+                        "name": "primary",
+                        "in": "formData"
+                    },
+                    {
                         "type": "string",
                         "description": "name of the file including extension",
                         "name": "name",
@@ -2108,20 +2114,6 @@ const docTemplate = `{
                 }
             }
         },
-        "repo.DocumentOut": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
         "repo.Group": {
             "type": "object",
             "properties": {
@@ -2182,14 +2174,17 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
-                "document": {
-                    "$ref": "#/definitions/repo.DocumentOut"
-                },
                 "id": {
+                    "type": "string"
+                },
+                "path": {
                     "type": "string"
                 },
                 "primary": {
                     "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
                 },
                 "type": {
                     "type": "string"

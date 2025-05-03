@@ -15,7 +15,8 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "type", Type: field.TypeEnum, Enums: []string{"photo", "manual", "warranty", "attachment", "receipt"}, Default: "attachment"},
 		{Name: "primary", Type: field.TypeBool, Default: false},
-		{Name: "document_attachments", Type: field.TypeUUID},
+		{Name: "title", Type: field.TypeString, Default: ""},
+		{Name: "path", Type: field.TypeString, Default: ""},
 		{Name: "item_attachments", Type: field.TypeUUID},
 	}
 	// AttachmentsTable holds the schema information for the "attachments" table.
@@ -25,14 +26,8 @@ var (
 		PrimaryKey: []*schema.Column{AttachmentsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "attachments_documents_attachments",
-				Columns:    []*schema.Column{AttachmentsColumns[5]},
-				RefColumns: []*schema.Column{DocumentsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
 				Symbol:     "attachments_items_attachments",
-				Columns:    []*schema.Column{AttachmentsColumns[6]},
+				Columns:    []*schema.Column{AttachmentsColumns[7]},
 				RefColumns: []*schema.Column{ItemsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -85,29 +80,6 @@ var (
 				Name:    "authtokens_token",
 				Unique:  false,
 				Columns: []*schema.Column{AuthTokensColumns[3]},
-			},
-		},
-	}
-	// DocumentsColumns holds the columns for the "documents" table.
-	DocumentsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "title", Type: field.TypeString, Size: 255},
-		{Name: "path", Type: field.TypeString, Size: 500},
-		{Name: "group_documents", Type: field.TypeUUID},
-	}
-	// DocumentsTable holds the schema information for the "documents" table.
-	DocumentsTable = &schema.Table{
-		Name:       "documents",
-		Columns:    DocumentsColumns,
-		PrimaryKey: []*schema.Column{DocumentsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "documents_groups_documents",
-				Columns:    []*schema.Column{DocumentsColumns[5]},
-				RefColumns: []*schema.Column{GroupsColumns[0]},
-				OnDelete:   schema.Cascade,
 			},
 		},
 	}
@@ -457,7 +429,6 @@ var (
 		AttachmentsTable,
 		AuthRolesTable,
 		AuthTokensTable,
-		DocumentsTable,
 		GroupsTable,
 		GroupInvitationTokensTable,
 		ItemsTable,
@@ -472,11 +443,9 @@ var (
 )
 
 func init() {
-	AttachmentsTable.ForeignKeys[0].RefTable = DocumentsTable
-	AttachmentsTable.ForeignKeys[1].RefTable = ItemsTable
+	AttachmentsTable.ForeignKeys[0].RefTable = ItemsTable
 	AuthRolesTable.ForeignKeys[0].RefTable = AuthTokensTable
 	AuthTokensTable.ForeignKeys[0].RefTable = UsersTable
-	DocumentsTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupInvitationTokensTable.ForeignKeys[0].RefTable = GroupsTable
 	ItemsTable.ForeignKeys[0].RefTable = GroupsTable
 	ItemsTable.ForeignKeys[1].RefTable = ItemsTable

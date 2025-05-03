@@ -11,15 +11,6 @@ definitions:
       symbol:
         type: string
     type: object
-  repo.DocumentOut:
-    properties:
-      id:
-        type: string
-      path:
-        type: string
-      title:
-        type: string
-    type: object
   repo.Group:
     properties:
       createdAt:
@@ -59,12 +50,14 @@ definitions:
     properties:
       createdAt:
         type: string
-      document:
-        $ref: '#/definitions/repo.DocumentOut'
       id:
+        type: string
+      path:
         type: string
       primary:
         type: boolean
+      title:
+        type: string
       type:
         type: string
       updatedAt:
@@ -1177,6 +1170,10 @@ paths:
         name: type
         required: true
         type: string
+      - description: Is this the primary attachment
+        in: formData
+        name: primary
+        type: boolean
       - description: name of the file including extension
         in: formData
         name: name

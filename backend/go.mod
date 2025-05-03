@@ -25,6 +25,7 @@ require (
 	github.com/swaggo/swag v1.16.4
 	github.com/yeqown/go-qrcode/v2 v2.2.5
 	github.com/yeqown/go-qrcode/writer/standard v1.2.5
+	github.com/zeebo/blake3 v0.2.4
 	golang.org/x/crypto v0.37.0
 	modernc.org/sqlite v1.37.0
 )
@@ -33,6 +34,7 @@ require (
 	ariga.io/atlas v0.32.0 // indirect
 	github.com/ebitengine/purego v0.8.2 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
+	github.com/klauspost/cpuid/v2 v2.0.12 // indirect
 	github.com/lufia/plan9stats v0.0.0-20250317134145-8bc96cf8fc35 // indirect
 	github.com/mfridman/interpolate v0.0.2 // indirect
 	github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 // indirect
