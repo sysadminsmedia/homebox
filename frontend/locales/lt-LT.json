@@ -61,7 +61,23 @@
         },
         "item": {
             "create_modal": {
-                "item_description": "Prekės Aprašymas"
+                "item_description": "Prekės Aprašymas",
+                "item_name": "Prekės Pavadinimas",
+                "item_photo": "Prekės Nuotrauka 📷",
+                "item_quantity": "Prekės Kiekis",
+                "title": "Sukurti Elementą",
+                "upload_photos": "Įkelti Nuotraukas"
+            },
+            "view": {
+                "selectable": {
+                    "card": "Kortelė",
+                    "items": "Elementas",
+                    "no_items": "Nėra rodomų elementų",
+                    "table": "Lentelė"
+                },
+                "table": {
+                    "page": "Puslapis"
+                }
             }
         }
     }
