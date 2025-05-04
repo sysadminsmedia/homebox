@@ -83,11 +83,9 @@ func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 		}
 
 		primary, err := strconv.ParseBool(r.FormValue("primary"))
-		autoPrimary := false
 		if err != nil {
 			log.Debug().Msg("failed to parse primary from form")
 			primary = false
-			autoPrimary = true
 		}
 
 		id, err := ctrl.routeID(r)
@@ -103,7 +101,6 @@ func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 			attachmentName,
 			attachment.Type(attachmentType),
 			primary,
-			autoPrimary,
 			file,
 		)
 		if err != nil {
