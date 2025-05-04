@@ -39,7 +39,7 @@ func (svc *ItemService) AttachmentUpdate(ctx Context, itemID uuid.UUID, data *re
 // AttachmentAdd adds an attachment to an item by creating an entry in the Documents table and linking it to the Attachment
 // Table and Items table. The file provided via the reader is stored on the file system based on the provided
 // relative path during construction of the service.
-func (svc *ItemService) AttachmentAdd(ctx Context, itemID uuid.UUID, filename string, attachmentType attachment.Type, primary bool, file io.Reader) (repo.ItemOut, error) {
+func (svc *ItemService) AttachmentAdd(ctx Context, itemID uuid.UUID, filename string, attachmentType attachment.Type, primary bool, autoPrimary bool, file io.Reader) (repo.ItemOut, error) {
 	// Get the Item
 	_, err := svc.repo.Items.GetOneByGroup(ctx, ctx.GID, itemID)
 	if err != nil {
@@ -47,7 +47,7 @@ func (svc *ItemService) AttachmentAdd(ctx Context, itemID uuid.UUID, filename st
 	}
 
 	// Create the attachment
-	_, err = svc.repo.Attachments.Create(ctx, itemID, repo.ItemCreateAttachment{Title: filename, Content: file}, attachmentType, primary)
+	_, err = svc.repo.Attachments.Create(ctx, itemID, repo.ItemCreateAttachment{Title: filename, Content: file}, attachmentType, primary, autoPrimary)
 	if err != nil {
 		log.Err(err).Msg("failed to create attachment")
 	}

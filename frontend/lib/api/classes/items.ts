@@ -32,13 +32,14 @@ export type ItemsQuery = {
 };
 
 export class AttachmentsAPI extends BaseAPI {
-  add(id: string, file: File | Blob, filename: string, type: AttachmentTypes | null = null) {
+  add(id: string, file: File | Blob, filename: string, type: AttachmentTypes | null = null, primary: boolean = false) {
     const formData = new FormData();
     formData.append("file", file);
     if (type) {
       formData.append("type", type);
     }
     formData.append("name", filename);
+    formData.append("primary", primary.toString());
 
     return this.http.post<FormData, ItemOut>({
       url: route(`/items/${id}/attachments`),

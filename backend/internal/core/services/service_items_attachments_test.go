@@ -45,7 +45,7 @@ func TestItemService_AddAttachment(t *testing.T) {
 	reader := strings.NewReader(contents)
 
 	// Setup
-	afterAttachment, err := svc.AttachmentAdd(tCtx, itm.ID, "testfile.txt", "attachment", false, reader)
+	afterAttachment, err := svc.AttachmentAdd(tCtx, itm.ID, "testfile.txt", "attachment", false, false, reader)
 	require.NoError(t, err)
 	assert.NotNil(t, afterAttachment)
 
