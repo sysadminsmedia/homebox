@@ -2,16 +2,22 @@
     "components": {
         "app": {
             "import_dialog": {
-                "change_warning": "Le comportement lors d’importations avec des import_ref existants a changé. Si une valeur pour import_ref est présente dans le \nfichier CSV, alors l’élément sera mis à jour avec celle-ci.",
-                "description": "Importer un fichier CSV contenant vos articles, étiquettes, et emplacements. Se reporter à la documentation pour plus d’informations \nsur le format requis.",
-                "title": "Importer un fichier CSV",
-                "upload": "Téléverser"
+                "change_warning": "Le comportement lors d’importations avec des import_ref existants a changé. Si une valeur pour import_ref\n est présente dans le fichier CSV, alors l’élément sera mis à jour avec celle-ci.",
+                "description": "Importer un fichier CSV contenant vos articles, étiquettes, et emplacements. Se reporter à la documentation\n pour plus d’informations sur le format requis.",
+                "title": "Importer un fichier CSV"
+            },
+            "outdated": {
+                "current_version": "Version actuelle",
+                "dismiss": "Rejeter",
+                "latest_version": "Dernière version",
+                "new_version_available": "Nouvelle version disponible",
+                "new_version_available_link": "Cliquez ici pour consulter les notes de version"
             }
         },
         "global": {
             "copy_text": {
                 "documentation": "la documentation",
-                "failed_to_copy": "Échec de la copie du texte dans le presse-papiers",
+                "failed_to_copy": "Impossible de copier le lien dans le presse-papiers",
                 "https_required": "parce que HTTPS est requis",
                 "learn_more": "Pour en savoir plus, consultez notre"
             },
@@ -39,8 +45,17 @@
                 "years": "années",
                 "yesterday": "hier"
             },
+            "label_maker": {
+                "browser_print": "Imprimer à partir du navigateur",
+                "confirm_description": "Êtes-vous certain de vouloir imprimer cette étiquette ?",
+                "download": "Télécharger l’étiquette",
+                "print": "Imprimer l’étiquette",
+                "server_print": "Imprimer sur le serveur",
+                "titles": "Étiquettes"
+            },
             "page_qr_code": {
-                "page_url": "URL de la page"
+                "page_url": "URL de la page",
+                "qr_tooltip": "Afficher le QR code"
             },
             "password_score": {
                 "password_strength": "Force du mot de passe"
@@ -50,8 +65,9 @@
             "create_modal": {
                 "item_description": "Description de l'article",
                 "item_name": "Nom de l'article",
-                "photo_button": "Photo 📷",
-                "title": "Créer un article"
+                "item_photo": "Photo de l'article 📷",
+                "title": "Créer un article",
+                "upload_photos": "Transférer des photos"
             },
             "view": {
                 "selectable": {
@@ -61,8 +77,10 @@
                     "table": "Tableau"
                 },
                 "table": {
+                    "headers": "En-têtes",
                     "page": "Page",
-                    "rows_per_page": "Lignes par page"
+                    "rows_per_page": "Lignes par page",
+                    "table_settings": "Paramètres du Tableau"
                 }
             }
         },
@@ -71,6 +89,9 @@
                 "label_description": "Description de l'étiquette",
                 "label_name": "Nom de l'étiquette",
                 "title": "Créer une étiquette"
+            },
+            "selector": {
+                "select_labels": "Sélectionnez les étiquettes"
             }
         },
         "location": {
@@ -80,16 +101,25 @@
                 "title": "Créer un emplacement"
             },
             "selector": {
-                "parent_location": "Emplacement parent"
+                "no_location_found": "Aucun emplacement trouvé",
+                "parent_location": "Emplacement parent",
+                "search_location": "Rechercher des emplacements",
+                "select_location": "Choisir un emplacement"
             },
             "tree": {
                 "no_locations": "Aucun emplacement disponible. Créez votre premier emplacement avec\nle bouton `<`span class=\"link-primary\"`>`Créer`<`/span`>` dans la barre de navigation."
             }
+        },
+        "quick_menu": {
+            "no_results": "Aucun résultat trouvé.",
+            "shortcut_hint": "Utilisez les touches numériques pour sélectionner rapidement une action."
         }
     },
     "global": {
         "add": "Ajouter",
-        "build": "Version : { build }",
+        "archived": "Archivé",
+        "build": "Commit : { build }",
+        "cancel": "Annuler",
         "confirm": "Confirmer",
         "create": "Créer",
         "create_and_add": "Créer et en ajouter un autre",
@@ -100,14 +130,21 @@
         "edit": "Modifier",
         "email": "Courriel",
         "follow_dev": "Suivre le développeur",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Version : { version } Commit : { build } '</a>'"
+        },
         "github": "Projet GitHub",
+        "insured": "Assuré",
         "items": "Articles",
         "join_discord": "Rejoindre le Discord",
         "labels": "Étiquettes",
         "locations": "Emplacements",
         "maintenance": "Maintenance",
         "name": "Nom",
+        "navigate": "Naviguer",
         "password": "Mot de passe",
+        "quantity": "Quantité",
         "read_docs": "Lire la documentation",
         "save": "Enregistrer",
         "search": "Rechercher",
@@ -121,12 +158,12 @@
     "home": {
         "labels": "Étiquettes",
         "quick_statistics": "Statistiques rapides",
-        "recently_added": "Ajouté récemment",
-        "storage_locations": "Lieu de stockage",
+        "recently_added": "Ajoutés récemment",
+        "storage_locations": "Emplacements de stockage",
         "total_items": "Total d'objets",
         "total_labels": "Total d'étiquettes",
-        "total_locations": "Total de lieu",
-        "total_value": "Valeur total"
+        "total_locations": "Total d'emplacements",
+        "total_value": "Valeur totale"
     },
     "index": {
         "disabled_registration": "Les inscriptions sont désactivées",
@@ -135,14 +172,14 @@
         "login": "Se connecter",
         "register": "S'enregistrer",
         "remember_me": "Se souvenir de moi",
-        "set_email": "Quel est vôtre courriel ?",
+        "set_email": "Quel est votre courriel ?",
         "set_name": "Quel est votre nom ?",
         "set_password": "Définir votre mot de passe",
         "tagline": "Répertoriez, organisez et gérez vos affaires."
     },
     "items": {
         "add": "Ajouter",
-        "advanced": "Avancée",
+        "advanced": "Avancé",
         "archived": "Archivé",
         "asset_id": "ID d'élément",
         "attachment": "Pièce jointe",
@@ -158,10 +195,10 @@
         "field_value": "Valeur du champ",
         "first": "Premier",
         "include_archive": "Inclure les éléments archivés",
-        "insured": "Assurée",
+        "insured": "Assuré",
         "last": "Dernier",
         "lifetime_warranty": "Garantie à vie",
-        "location": "Lieu",
+        "location": "Emplacement",
         "manual": "Mode d'emploi",
         "manuals": "Modes d'emplois",
         "manufacturer": "Fabricant",
@@ -171,6 +208,8 @@
         "next_page": "Page suivante",
         "no_results": "Aucun élément trouvé",
         "notes": "Notes",
+        "only_with_photo": "Uniquement les articles avec photo",
+        "only_without_photo": "Uniquement les articles sans photo",
         "options": "Options",
         "order_by": "Trier par",
         "pages": "Page { page } sur { totalPages }",
@@ -179,7 +218,7 @@
         "photos": "Photos",
         "prev_page": "Page précédente",
         "purchase_date": "Date d'achat",
-        "purchase_details": "Détail de l'achat",
+        "purchase_details": "Détails de l'achat",
         "purchase_price": "Prix d'achat",
         "purchased_from": "Acheté à",
         "quantity": "Quantité",
@@ -189,11 +228,11 @@
         "reset_search": "Réinitialiser la recherche",
         "results": "{ total } résultats",
         "serial_number": "Numéro de série",
-        "show_advanced_view_options": "Afficher les options avancées",
-        "sold_at": "Vendu à",
+        "show_advanced_view_options": "Afficher les options d'affichage avancées",
+        "sold_at": "Vendu le",
         "sold_details": "Détails de la vente",
         "sold_price": "Prix de vente",
-        "sold_to": "Vendu pour",
+        "sold_to": "Vendu à",
         "tip_1": "Les filtres d’emplacement et d’étiquette utilisent l’opérateur « OU ».\nUn seul des filtres n’a besoin de correspondre pour retourner un résultat.",
         "tip_2": "Les recherches préfixées par '#'' rechercheront un ID d'actif (exemple '#000-001')",
         "tip_3": "Les filtres de champ utilisent l’opérateur « OU ».\nUn seul des filtres n’a besoin de correspondre pour retourner un résultat.",
@@ -210,13 +249,18 @@
     },
     "languages": {
         "ca": "Catalan",
+        "cs-CZ": "Tchèque",
         "de": "Allemand",
         "en": "Anglais",
         "es": "Espagnol",
+        "fi-FI": "Finnois",
         "fr": "Français",
         "hu": "Hongrois",
+        "id-ID": "Indonésien",
         "it": "Italien",
         "ja-JP": "Japonais",
+        "ko-KR": "Coréen",
+        "nb-NO": "Bokmål norvégien",
         "nl": "Néerlandais",
         "pl": "Polonais",
         "pt-BR": "Portugais (Brésil)",
@@ -224,6 +268,8 @@
         "ru": "Russe",
         "sl": "Slovène",
         "sv": "Suédois",
+        "ta-IN": "Tamoul",
+        "th-TH": "Thaï",
         "tr": "Turc",
         "uk-UA": "Ukrainien",
         "zh-CN": "Chinois (simplifié)",
@@ -232,14 +278,15 @@
         "zh-TW": "Chinois (traditionnel)"
     },
     "languages.da-DK": "Danois",
-    "languages.fi.FI": "Finnois",
     "languages.ro-RO": "Roumain",
     "languages.sk-SK": "Slovaque",
+    "languages.sq-AL": "Albanais",
     "locations": {
-        "child_locations": "Lieu enfant",
+        "child_locations": "Sous-emplacements",
         "collapse_tree": "Minimiser la liste",
-        "no_results": "Aucun emplacement trouvé",
-        "update_location": "Mettre à jour le lieu"
+        "expand_tree": "Ouvrir l’arborescence",
+        "no_results": "Aucun emplacement",
+        "update_location": "Mettre à jour l'emplacement"
     },
     "maintenance": {
         "filter": {
@@ -279,11 +326,12 @@
     "menu": {
         "create_item": "Objet / Ressource",
         "create_label": "Étiquette",
-        "create_location": "Lieu",
+        "create_location": "Emplacement",
         "home": "Accueil",
         "locations": "Emplacements",
         "maintenance": "Maintenance",
         "profile": "Profil",
+        "scanner": "Numériser",
         "search": "Recherche",
         "tools": "Outils"
     },
@@ -296,7 +344,7 @@
         "delete_account_sub": "Supprimer le compte et toutes ses données. Aucune récupération possible.",
         "display_header": "{ currentValue, select, true {Masquer l’en-tête} false {Afficher l’en-tête} other {Not Hit}}",
         "enabled": "Activé",
-        "example": "Example",
+        "example": "Exemple",
         "gen_invite": "Générer un lien d’invitation",
         "group_settings": "Paramètres du groupe",
         "group_settings_sub": "Paramètres du groupe partagé. Il peut être nécessaire de recharger la page pour qu’ils deviennent effectifs.",
@@ -316,10 +364,18 @@
         "user_profile": "Profil utilisateur",
         "user_profile_sub": "Gérez votre compte et invitez des utilisateurs."
     },
+    "scanner": {
+        "error": "Une erreur s'est produite lors du scan",
+        "invalid_url": "URL de code-barres non valide",
+        "no_sources": "Aucune source vidéo disponible",
+        "select_video_source": "Choisir une source vidéo",
+        "title": "Numériser",
+        "unsupported": "L’API <i>Media Stream</i> n’est pas prise en charge sans HTTPS"
+    },
     "tools": {
         "actions": "Actions d’inventaire",
         "actions_set": {
-            "ensure_ids": "Vérifier les identifiants d'actif",
+            "ensure_ids": "Vérifier les identifiants d'actifs",
             "ensure_ids_button": "Vérifier les identifiants d'actifs",
             "ensure_ids_sub": "Vérifie que tous les éléments de votre inventaire comportent un champ asset_id valide. Ceci est effectué en cherchant l’identifiant actuel le plus élevé et en appliquant les valeurs suivantes à tous les éléments sans identifiant. L'action est effectuée en suivant l'ordre du champ created_at.",
             "ensure_import_refs": "Vérifier les références d'importation",

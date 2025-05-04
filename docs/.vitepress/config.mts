@@ -53,6 +53,19 @@ export default defineConfig({
       { icon: 'discord', link: 'https://discord.homebox.software' },
       { icon: 'github', link: 'https://git.homebox.software' },
       { icon: 'mastodon', link: 'https://noc.social/@sysadminszone' },
-    ]
+      { icon: 'lemmy', link: 'https://lemmy.world/c/homebox' },
+      { icon: 'reddit', link: 'https://www.reddit.com/r/homebox/' },
+    ],
+
+    footer: {
+      message: 'HomeBox is an open-source project under the <a href="https://github.com/sysadminsmedia/homebox/blob/main/LICENSE">AGPL License</a>',
+      copyright: '&copy; <a href="https://sysadminsmedia.com/">Sysadmins Media</a>, 2025',
+    }
+  },
+
+  markdown: {
+      image: {
+          lazyLoading: true
+      }
   }
 })

@@ -4,8 +4,14 @@
             "import_dialog": {
                 "change_warning": "Das Verhalten beim Importieren mit bestehenden import_refs hat sich geändert. Wenn ein import_ref in der CSV-Datei vorhanden ist, \nwird der Gegenstand mit den Werten in der CSV-Datei aktualisiert.",
                 "description": "Importiere eine CSV-Datei, die deine Gegenstände, Etiketten und Standorte enthält. Schau in die Dokumentation für weitere Informationen\nzum erforderlichen Format.",
-                "title": "CSV-Datei importieren",
-                "upload": "Hochladen"
+                "title": "CSV-Datei importieren"
+            },
+            "outdated": {
+                "current_version": "Aktuelle Version",
+                "dismiss": "Verwerfen",
+                "latest_version": "Neuste Version",
+                "new_version_available": "Neue Version verfügbar",
+                "new_version_available_link": "Klicken Sie hier, um die Release Notes anzuzeigen"
             }
         },
         "global": {
@@ -39,8 +45,17 @@
                 "years": "Jahre",
                 "yesterday": "Gestern"
             },
+            "label_maker": {
+                "browser_print": "Aus dem Browser drucken",
+                "confirm_description": "Möchten Sie dieses Etikett wirklich drucken?",
+                "download": "Etikett herunterladen",
+                "print": "Etikett drucken",
+                "server_print": "Auf Server drucken",
+                "titles": "Etiketten"
+            },
             "page_qr_code": {
-                "page_url": "Seiten-URL"
+                "page_url": "Seiten-URL",
+                "qr_tooltip": "QR Code anzeigen"
             },
             "password_score": {
                 "password_strength": "Passwortstärke"
@@ -50,8 +65,9 @@
             "create_modal": {
                 "item_description": "Gegenstandsbezeichnung",
                 "item_name": "Gegenstandsname",
-                "photo_button": "Foto 📷",
-                "title": "Gegenstand erstellen"
+                "item_photo": "Artikel Bild",
+                "title": "Gegenstand erstellen",
+                "upload_photos": "Upload Bilder"
             },
             "view": {
                 "selectable": {
@@ -61,8 +77,10 @@
                     "table": "Tabelle"
                 },
                 "table": {
+                    "headers": "Kopfzeilen",
                     "page": "Seite",
-                    "rows_per_page": "Zeilen pro Seite"
+                    "rows_per_page": "Zeilen pro Seite",
+                    "table_settings": "Tabellen Einstellungen"
                 }
             }
         },
@@ -71,6 +89,9 @@
                 "label_description": "Label-Beschreibung",
                 "label_name": "Label-Name",
                 "title": "Label erstellen"
+            },
+            "selector": {
+                "select_labels": "Labels auswählen"
             }
         },
         "location": {
@@ -80,16 +101,25 @@
                 "title": "Standort erstellen"
             },
             "selector": {
-                "parent_location": "Übergeordneter Standort"
+                "no_location_found": "Keine Standorte gefunden",
+                "parent_location": "Übergeordneter Standort",
+                "search_location": "Suchen",
+                "select_location": "Standort wählen"
             },
             "tree": {
                 "no_locations": "Keine Standorte verfügbar. Fügen Sie neue Standorte über die Schaltfläche\n `<`span class=\"link-primary\"`>`Erstellen`<`/span`>` in der Navigationsleiste hinzu."
             }
+        },
+        "quick_menu": {
+            "no_results": "Keine Ergebnisse gefunden.",
+            "shortcut_hint": "Verwenden Sie die Zifferntasten, um schnell eine Aktion auszuwählen."
         }
     },
     "global": {
         "add": "Hinzufügen",
+        "archived": "Archiviert",
         "build": "Build: { build }",
+        "cancel": "Abbrechen",
         "confirm": "Bestätigen",
         "create": "Erstellen",
         "create_and_add": "Erstellen und weiteren hinzufügen",
@@ -101,13 +131,16 @@
         "email": "E-Mail",
         "follow_dev": "Dem Entwickler folgen",
         "github": "GitHub-Projekt",
+        "insured": "Versichert",
         "items": "Gegenstände",
         "join_discord": "Discord beitreten",
-        "labels": "Kennzeichnung",
+        "labels": "Labels",
         "locations": "Lagerorte",
         "maintenance": "Wartung",
         "name": "Name",
+        "navigate": "Navigieren",
         "password": "Passwort",
+        "quantity": "Menge",
         "read_docs": "Dokumentation lesen",
         "save": "Speichern",
         "search": "Suche",
@@ -148,7 +181,7 @@
         "attachment": "Anhang",
         "attachments": "Anhänge",
         "changes_persisted_immediately": "Änderungen an Anhängen werden sofort gespeichert",
-        "created_at": "Erstellt am",
+        "created_at": "Erstellt um",
         "custom_fields": "Benutzerdefinierte Felder",
         "description": "Beschreibung",
         "details": "Details",
@@ -171,25 +204,27 @@
         "next_page": "Nächste Seite",
         "no_results": "Keine Elemente gefunden",
         "notes": "Anmerkungen",
-        "options": "Optionen (Options)",
+        "only_with_photo": "Nur Artikel mit Foto",
+        "only_without_photo": "Nur Artikel ohne Foto",
+        "options": "Optionen",
         "order_by": "Sortieren nach",
         "pages": "Seite { page } von { totalPages }",
         "parent_item": "Übergeordnetes Element",
         "photo": "Foto",
         "photos": "Fotos",
         "prev_page": "Vorherige Seite",
-        "purchase_date": "Einkaufsdatum",
-        "purchase_details": "Einkaufsdetails",
-        "purchase_price": "Einkaufspreis",
-        "purchased_from": "Eingekauft von",
+        "purchase_date": "Kaufdatum",
+        "purchase_details": "Kaufdetails",
+        "purchase_price": "Kaufpreis",
+        "purchased_from": "Gekauft bei",
         "quantity": "Menge",
         "query_id": "Abfrage der Asset-ID-Nummer: { id }",
-        "receipt": "Beleg",
+        "receipt": "Quittung",
         "receipts": "Quittungen",
         "reset_search": "Suche zurücksetzen",
         "results": "{ total } Ergebnisse",
         "serial_number": "Seriennummer",
-        "show_advanced_view_options": "Erweiterter Angzeigeoptionen anzeigen",
+        "show_advanced_view_options": "Erweiterte Angzeigeoptionen anzeigen",
         "sold_at": "Verkauft am",
         "sold_details": "Verkaufsdetails",
         "sold_price": "Verkaufspreis",
@@ -210,13 +245,18 @@
     },
     "languages": {
         "ca": "Katalanisch",
+        "cs-CZ": "Tschechisch",
         "de": "Deutsch",
         "en": "Englisch",
         "es": "Spanisch",
+        "fi-FI": "Finnisch",
         "fr": "Französisch",
         "hu": "Ungarisch",
+        "id-ID": "Indonesisch",
         "it": "Italienisch",
         "ja-JP": "Japanisch",
+        "ko-KR": "Koreanisch",
+        "nb-NO": "Norwegisch Bokmål",
         "nl": "Niederländisch",
         "pl": "Polnisch",
         "pt-BR": "Portugiesisch (Brasilien)",
@@ -224,20 +264,23 @@
         "ru": "Russisch",
         "sl": "Slowenisch",
         "sv": "Schwedisch",
+        "ta-IN": "Tamilisch",
+        "th-TH": "Thailändisch",
         "tr": "Türkisch",
         "uk-UA": "Ukrainisch",
         "zh-CN": "Chinesisch (einfach)",
         "zh-HK": "Chinesisch (Hong Kong)",
         "zh-MO": "Chinesisch (Macao)",
-        "zh-TW": "Chinesisch (Traditionell)"
+        "zh-TW": "Chinesisch (traditionell)"
     },
     "languages.da-DK": "Dänisch",
-    "languages.fi.FI": "Finnisch",
     "languages.ro-RO": "Rumänisch",
     "languages.sk-SK": "Slowakisch",
+    "languages.sq-AL": "Albanisch",
     "locations": {
         "child_locations": "Unter-Standorte",
         "collapse_tree": "Baum einklappen",
+        "expand_tree": "Baum ausklappen",
         "no_results": "Keine Standorte gefunden",
         "update_location": "Aktualisiere Standort"
     },
@@ -284,6 +327,7 @@
         "locations": "Lagerorte",
         "maintenance": "Wartung",
         "profile": "Profil",
+        "scanner": "Scanner",
         "search": "Suche",
         "tools": "Tools"
     },
@@ -316,12 +360,20 @@
         "user_profile": "Benutzerprofil",
         "user_profile_sub": "Lade Benutzer ein und verwalte dein Konto."
     },
+    "scanner": {
+        "error": "Beim Scannen ist ein Fehler aufgetreten",
+        "invalid_url": "Ungültige Barcode-URL",
+        "no_sources": "Keine Videoquellen verfügbar",
+        "select_video_source": "Wählen Sie eine Videoquelle",
+        "title": "Scanner",
+        "unsupported": "Media Stream API wird nicht unterstützt ohne HTTPS/SSL"
+    },
     "tools": {
         "actions": "Inventar-Aktionen",
         "actions_set": {
             "ensure_ids": "Sicherstellen von Asset-IDs",
             "ensure_ids_button": "Sicherstellen von Asset-IDs",
-            "ensure_ids_sub": "Stellt sicher, dass alle Elemente in Ihrem Inventar ein gültiges asset_id-Feld haben. Dazu wird die das höchste aktuelle asset_id-Feld in der Datenbank ermittelt und der nächste Wert auf jeden Element mit einem nicht gesetzten asset_id-Feld angewendet. Dies geschieht in der Reihenfolge des Feldes created_at.",
+            "ensure_ids_sub": "Stellt sicher, dass alle Artikel eine gültige asset_id haben. Dazu wird die höchste aktuelle asset_id in der Datenbank ermittelt und der nächste Wert auf jeden Artikel mit einer nicht gesetzten asset_id angewendet. Dies geschieht in der Reihenfolge des Feldes created_at.",
             "ensure_import_refs": "Sicherstellen, dass Import-Referenzen importiert wurden",
             "ensure_import_refs_button": "Sicherstellen, dass Referenzen importiert werden",
             "ensure_import_refs_sub": "Stellt sicher, dass alle Elemente in deinem Inventar ein gültiges import_ref-Feld haben. Dazu wird nach dem Zufallsprinzip eine 8-stellige Zeichenkette für jedes Element mit einem leeren import_ref-Feld erzeugt.",
@@ -345,10 +397,10 @@
         "import_export_sub": "Importieren und exportieren Sie Ihren Lagerbestand in und aus einer CSV-Datei. Dies ist nützlich zum migrieren ihres Inventars zu einer neuen Instanz von Homebox.",
         "reports": "Berichte",
         "reports_set": {
-            "asset_labels": "Asset-ID-Labels",
+            "asset_labels": "Inventar-ID-Etiketten",
             "asset_labels_button": "Etiketten-Generator",
             "asset_labels_sub": "Erzeugt eine druckbare PDF-Datei mit Etiketten für eine Reihe von Asset-IDs. Diese sind nicht spezifisch für deine Inventargegenstände, so dass du die Etiketten im Voraus ausdrucken und bei Erhalt auf deinen Inventargegenständen anbringen kannst.",
-            "bill_of_materials": "Stückliste",
+            "bill_of_materials": "Stücklisten",
             "bill_of_materials_button": "Stückliste generieren",
             "bill_of_materials_sub": "Generiert eine CSV-Datei (Comma Separated Values), die in ein Tabellenkalkulationsprogramm importiert werden kann. Diese ist eine Zusammenfasung ihres Inventars mit einfachen Elementen- und Preisinformationen."
         },

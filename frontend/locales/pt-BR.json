@@ -4,11 +4,23 @@
             "import_dialog": {
                 "change_warning": "O comportamento de importações com import_refs existentes foi alterado. Se houver um import_ref presente no arquivo CSV, o\nitem será atualizado com os valores presentes no arquivo CSV.",
                 "description": "Importe um arquivo CSV contendo seus items, etiquetas e locais. Consulte a documentação para mais informações\nsobre a formatação aceita.",
-                "title": "Importar arquivo CSV",
-                "upload": "Enviar"
+                "title": "Importar arquivo CSV"
+            },
+            "outdated": {
+                "current_version": "Versão Atual",
+                "dismiss": "Dispensar",
+                "latest_version": "Última Versão",
+                "new_version_available": "Nova Versão Disponível",
+                "new_version_available_link": "Clique aqui para ver as novidades"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "documentação",
+                "failed_to_copy": "Falha ao copiar texto para a área de transferência",
+                "https_required": "porque HTTPS é necessário",
+                "learn_more": "Saiba mais em nosso"
+            },
             "date_time": {
                 "ago": "{0} atrás",
                 "days": "dias",
@@ -33,18 +45,23 @@
                 "years": "anos",
                 "yesterday": "ontem"
             },
+            "label_maker": {
+                "confirm_description": "Tem certeza de que deseja imprimir esta etiqueta?",
+                "download": "Baixar Rótulo",
+                "print": "Imprimir etiqueta",
+                "titles": "Etiquetas"
+            },
             "page_qr_code": {
                 "page_url": "URL da página"
             },
             "password_score": {
-                "password_strength": "Segurança da Senha"
+                "password_strength": "Força da Senha"
             }
         },
         "item": {
             "create_modal": {
                 "item_description": "Descrição do Item",
                 "item_name": "Nome do Item",
-                "photo_button": "Foto📷",
                 "title": "Criar Item"
             },
             "view": {
@@ -79,6 +96,9 @@
             "tree": {
                 "no_locations": "Não há locais disponíveis. Adicione novos locais\n através do botão \"Criar\" na barra de navegação."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Use as teclas numéricas para selecionar uma ação rapidamente."
         }
     },
     "global": {
@@ -101,11 +121,12 @@
         "locations": "Locais",
         "maintenance": "Manutenção",
         "name": "Nome",
+        "navigate": "Navegar",
         "password": "Senha",
         "read_docs": "Leia a Documentação",
         "save": "Salvar",
         "search": "Buscar",
-        "sign_out": "Sair",
+        "sign_out": "Encerrar sessão",
         "submit": "Enviar",
         "update": "Atualizar",
         "value": "Valor",
@@ -161,10 +182,12 @@
         "manufacturer": "Fabricante",
         "model_number": "Modelo",
         "name": "Nome",
-        "negate_labels": "Negar os rótulos selecionados",
+        "negate_labels": "Negar Rótulos Selecionados",
         "next_page": "Próxima página",
         "no_results": "Nenhum Item Encontrado",
         "notes": "Anotações",
+        "only_with_photo": "Somente itens com foto",
+        "only_without_photo": "Somente itens sem foto",
         "options": "Opções",
         "order_by": "Ordenar Por",
         "pages": "Página { page } de { totalPages }",
@@ -207,10 +230,13 @@
         "de": "Alemão",
         "en": "Inglês",
         "es": "Espanhol",
+        "fi-FI": "Finlandês",
         "fr": "Francês",
         "hu": "Húngaro",
+        "id-ID": "Indonésio(a)",
         "it": "Italiano",
         "ja-JP": "Japonês",
+        "ko-KR": "Coreano",
         "nl": "Holandês",
         "pl": "Polonês",
         "pt-BR": "Português (Brasil)",
@@ -218,6 +244,7 @@
         "ru": "Russo",
         "sl": "Esloveno",
         "sv": "Sueco",
+        "th-TH": "Tailandês",
         "tr": "Turco",
         "uk-UA": "Ucraniano",
         "zh-CN": "Chinês (Simplificado)",
@@ -226,7 +253,6 @@
         "zh-TW": "Chinês (Tradicional)"
     },
     "languages.da-DK": "Dinamarquês",
-    "languages.fi.FI": "Finlandês",
     "languages.ro-RO": "Romeno",
     "languages.sk-SK": "Eslovaco",
     "locations": {
@@ -298,7 +324,7 @@
         "language": "Idioma",
         "new_password": "Nova Senha",
         "no_notifiers": "Nenhum notificador configurado",
-        "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notificação",
+        "notifier_modal": "{ type, select, true {Editar} false {Criar} other {Outro}} Notificação",
         "notifiers": "Notificadores",
         "notifiers_sub": "Receba notificações para lembretes de manutenção futuros",
         "test": "Teste",
@@ -309,6 +335,10 @@
         "url": "URL",
         "user_profile": "Perfil do usuário",
         "user_profile_sub": "Convide usuários e gerencie sua conta."
+    },
+    "scanner": {
+        "error": "Ocorreu um erro durante a digitalização",
+        "invalid_url": "Código de barras inválido"
     },
     "tools": {
         "actions": "Ações de inventário",

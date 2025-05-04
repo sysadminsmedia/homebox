@@ -16,10 +16,6 @@ func (at *AuthTokens) GetID() uuid.UUID {
 	return at.ID
 }
 
-func (d *Document) GetID() uuid.UUID {
-	return d.ID
-}
-
 func (gr *Group) GetID() uuid.UUID {
 	return gr.ID
 }

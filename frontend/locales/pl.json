@@ -4,8 +4,14 @@
             "import_dialog": {
                 "change_warning": "Zachowanie podczas importu z istniejącymi import_ref zostało zmienione. Jeśli import_ref jest obecny w pliku CSV, \nprzedmiot zostanie zaktualizowany wartościami z pliku CSV.",
                 "description": "Zaimportuj plik CSV zawierający Twoje przedmioty, etykiety i lokalizacje. Zobacz dokumentację, aby uzyskać \nwięcej informacji na temat wymaganego formatu.",
-                "title": "Zaimportuj plik CSV",
-                "upload": "Prześlij"
+                "title": "Zaimportuj plik CSV"
+            },
+            "outdated": {
+                "current_version": "Bieżąca wersja",
+                "dismiss": "Odrzuć",
+                "latest_version": "Najnowsza wersja",
+                "new_version_available": "Dostępna jest nowa wersja",
+                "new_version_available_link": "Kliknij tutaj, aby wyświetlić informacje o wydaniu"
             }
         },
         "global": {
@@ -39,8 +45,17 @@
                 "years": "lata",
                 "yesterday": "wczoraj"
             },
+            "label_maker": {
+                "browser_print": "Drukuj z przeglądarki",
+                "confirm_description": "Czy jesteś pewien, że chcesz wydrukować tę etykietę?",
+                "download": "Pobierz etykietę",
+                "print": "Drukuj etykietę",
+                "server_print": "Drukuj na serwerze",
+                "titles": "Etykiety"
+            },
             "page_qr_code": {
-                "page_url": "Adres URL strony"
+                "page_url": "Adres URL strony",
+                "qr_tooltip": "Pokaż kod QR"
             },
             "password_score": {
                 "password_strength": "Siła hasła"
@@ -50,8 +65,9 @@
             "create_modal": {
                 "item_description": "Opis przedmiotu",
                 "item_name": "Nazwa przedmiotu",
-                "photo_button": "Zdjęcie 📷",
-                "title": "Utwórz przedmiot"
+                "item_photo": "Zdjęcie Przedmiotu 📷",
+                "title": "Utwórz przedmiot",
+                "upload_photos": "Prześlij Zdjęcia"
             },
             "view": {
                 "selectable": {
@@ -61,8 +77,10 @@
                     "table": "Tabela"
                 },
                 "table": {
+                    "headers": "Nagłówki",
                     "page": "Strona",
-                    "rows_per_page": "Ilość wierszy na stronę"
+                    "rows_per_page": "Ilość wierszy na stronę",
+                    "table_settings": "Ustawienia Tabeli"
                 }
             }
         },
@@ -71,6 +89,9 @@
                 "label_description": "Opis etykiety",
                 "label_name": "Nazwa etykiety",
                 "title": "Stwórz nową etykietę"
+            },
+            "selector": {
+                "select_labels": "Wybierz Etykiety"
             }
         },
         "location": {
@@ -80,16 +101,25 @@
                 "title": "Utwórz lokalizację"
             },
             "selector": {
-                "parent_location": "Nadrzędna lokalizacja"
+                "no_location_found": "Nie znaleziono żadnej lokalizacji",
+                "parent_location": "Nadrzędna lokalizacja",
+                "search_location": "Szukaj Lokalizacji",
+                "select_location": "Wybierz lokalizację"
             },
             "tree": {
                 "no_locations": "Brak dostępnych lokalizacji. Dodaj nowe lokalizacje poprzez przycisk\n `<`span class=\"link-primary\"`>`Utwórz`<`/span`>` na pasku nawigacyjnym."
             }
+        },
+        "quick_menu": {
+            "no_results": "Nie znaleziono wyników.",
+            "shortcut_hint": "Użyj klawiszy numerycznych, aby szybko wybrać akcję."
         }
     },
     "global": {
         "add": "Dodaj",
+        "archived": "Zarchiwizowane",
         "build": "Kompilacja: {build}",
+        "cancel": "Anuluj",
         "confirm": "Potwierdź",
         "create": "Utwórz",
         "create_and_add": "Utwórz i dodaj kolejny",
@@ -100,14 +130,21 @@
         "edit": "Edytuj",
         "email": "E-mail",
         "follow_dev": "Śledź dewelopera",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Wersja: { version } Build: { build } '</a>'"
+        },
         "github": "Projekt na GitHubie",
+        "insured": "Ubezpieczony",
         "items": "Przedmioty",
         "join_discord": "Dołącz do Discorda",
         "labels": "Etykiety",
         "locations": "Lokalizacje",
         "maintenance": "Konserwacja",
         "name": "Nazwa",
+        "navigate": "Nawiguj",
         "password": "Hasło",
+        "quantity": "Ilość",
         "read_docs": "Przeczytaj dokumentację",
         "save": "Zapisz",
         "search": "Wyszukaj",
@@ -171,6 +208,8 @@
         "next_page": "Następna strona",
         "no_results": "Nie znaleziono przedmiotów",
         "notes": "Notatki",
+        "only_with_photo": "Tylko przedmioty ze zdjęciem",
+        "only_without_photo": "Tylko przedmioty bez zdjęcia",
         "options": "Opcje",
         "order_by": "Ułóż według",
         "pages": "Strona {page} z {totalPages}",
@@ -210,13 +249,18 @@
     },
     "languages": {
         "ca": "kataloński",
+        "cs-CZ": "Czeski",
         "de": "niemiecki",
         "en": "angielski",
         "es": "hiszpański",
+        "fi-FI": "Fiński",
         "fr": "francuski",
         "hu": "węgierski",
+        "id-ID": "Indonezyjski",
         "it": "włoski",
         "ja-JP": "japoński",
+        "ko-KR": "Koreański",
+        "nb-NO": "Norweski Bokmål",
         "nl": "holenderski",
         "pl": "polski",
         "pt-BR": "portugalski (Brazylia)",
@@ -224,6 +268,8 @@
         "ru": "rosyjski",
         "sl": "słoweński",
         "sv": "szwedzki",
+        "ta-IN": "Tamilski",
+        "th-TH": "Tajski",
         "tr": "turecki",
         "uk-UA": "ukraiński",
         "zh-CN": "chiński (uproszczony)",
@@ -232,12 +278,13 @@
         "zh-TW": "chiński (tradycyjny)"
     },
     "languages.da-DK": "duńska",
-    "languages.fi.FI": "fińska",
     "languages.ro-RO": "rumuńska",
     "languages.sk-SK": "słowacka",
+    "languages.sq-AL": "Albański",
     "locations": {
         "child_locations": "Podlokalizacje",
         "collapse_tree": "Zwiń drzewo",
+        "expand_tree": "Rozwiń Drzewo",
         "no_results": "Nie znaleziono lokalizacji",
         "update_location": "Zaktualizuj lokalizację"
     },
@@ -284,6 +331,7 @@
         "locations": "Lokalizacje",
         "maintenance": "Konserwacja",
         "profile": "Profil",
+        "scanner": "Skaner",
         "search": "Wyszukaj",
         "tools": "Narzędzia"
     },
@@ -315,6 +363,14 @@
         "url": "Adres URL",
         "user_profile": "Profil użytkownika",
         "user_profile_sub": "Zaproś użytkowników i zarządzaj swoim kontem."
+    },
+    "scanner": {
+        "error": "Wystąpił błąd podczas skanowania",
+        "invalid_url": "Nieprawidłowy URL kodu kreskowego",
+        "no_sources": "Brak dostępnych źródeł wideo",
+        "select_video_source": "Wybierz źródło wideo",
+        "title": "Skaner",
+        "unsupported": "Media Stream API nie jest obsługiwany bez HTTPS"
     },
     "tools": {
         "actions": "Akcje na zasobach",

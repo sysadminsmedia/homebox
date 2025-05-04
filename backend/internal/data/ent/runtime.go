@@ -8,7 +8,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/document"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
@@ -45,6 +44,14 @@ func init() {
 	attachmentDescPrimary := attachmentFields[1].Descriptor()
 	// attachment.DefaultPrimary holds the default value on creation for the primary field.
 	attachment.DefaultPrimary = attachmentDescPrimary.Default.(bool)
+	// attachmentDescTitle is the schema descriptor for title field.
+	attachmentDescTitle := attachmentFields[2].Descriptor()
+	// attachment.DefaultTitle holds the default value on creation for the title field.
+	attachment.DefaultTitle = attachmentDescTitle.Default.(string)
+	// attachmentDescPath is the schema descriptor for path field.
+	attachmentDescPath := attachmentFields[3].Descriptor()
+	// attachment.DefaultPath holds the default value on creation for the path field.
+	attachment.DefaultPath = attachmentDescPath.Default.(string)
 	// attachmentDescID is the schema descriptor for id field.
 	attachmentDescID := attachmentMixinFields0[0].Descriptor()
 	// attachment.DefaultID holds the default value on creation for the id field.
@@ -74,61 +81,6 @@ func init() {
 	authtokensDescID := authtokensMixinFields0[0].Descriptor()
 	// authtokens.DefaultID holds the default value on creation for the id field.
 	authtokens.DefaultID = authtokensDescID.Default.(func() uuid.UUID)
-	documentMixin := schema.Document{}.Mixin()
-	documentMixinFields0 := documentMixin[0].Fields()
-	_ = documentMixinFields0
-	documentFields := schema.Document{}.Fields()
-	_ = documentFields
-	// documentDescCreatedAt is the schema descriptor for created_at field.
-	documentDescCreatedAt := documentMixinFields0[1].Descriptor()
-	// document.DefaultCreatedAt holds the default value on creation for the created_at field.
-	document.DefaultCreatedAt = documentDescCreatedAt.Default.(func() time.Time)
-	// documentDescUpdatedAt is the schema descriptor for updated_at field.
-	documentDescUpdatedAt := documentMixinFields0[2].Descriptor()
-	// document.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	document.DefaultUpdatedAt = documentDescUpdatedAt.Default.(func() time.Time)
-	// document.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	document.UpdateDefaultUpdatedAt = documentDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// documentDescTitle is the schema descriptor for title field.
-	documentDescTitle := documentFields[0].Descriptor()
-	// document.TitleValidator is a validator for the "title" field. It is called by the builders before save.
-	document.TitleValidator = func() func(string) error {
-		validators := documentDescTitle.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(title string) error {
-			for _, fn := range fns {
-				if err := fn(title); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
-	// documentDescPath is the schema descriptor for path field.
-	documentDescPath := documentFields[1].Descriptor()
-	// document.PathValidator is a validator for the "path" field. It is called by the builders before save.
-	document.PathValidator = func() func(string) error {
-		validators := documentDescPath.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(_path string) error {
-			for _, fn := range fns {
-				if err := fn(_path); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
-	// documentDescID is the schema descriptor for id field.
-	documentDescID := documentMixinFields0[0].Descriptor()
-	// document.DefaultID holds the default value on creation for the id field.
-	document.DefaultID = documentDescID.Default.(func() uuid.UUID)
 	groupMixin := schema.Group{}.Mixin()
 	groupMixinFields0 := groupMixin[0].Fields()
 	_ = groupMixinFields0

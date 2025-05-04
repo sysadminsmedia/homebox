@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { toast } from "@/components/ui/sonner";
   import MdiGithub from "~icons/mdi/github";
   import MdiDiscord from "~icons/mdi/discord";
   import MdiFolder from "~icons/mdi/folder";
@@ -8,6 +9,10 @@
   import MdiArrowRight from "~icons/mdi/arrow-right";
   import MdiLock from "~icons/mdi/lock";
   import MdiMastodon from "~icons/mdi/mastodon";
+  import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+  import { Button } from "@/components/ui/button";
+  import LanguageSelector from "~/components/App/LanguageSelector.vue";
+  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
   useHead({
     title: "Homebox | Organize and Tag Your Stuff",
@@ -28,7 +33,6 @@
   const ctx = useAuthContext();
 
   const api = usePublicApi();
-  const toast = useNotifier();
 
   const { data: status } = useAsyncData(async () => {
     const { data } = await api.status();
@@ -136,7 +140,7 @@
 
 <template>
   <div class="flex min-h-screen flex-col">
-    <div class="absolute top-0 z-[-1] min-w-full fill-primary">
+    <div class="absolute top-0 -z-10 min-w-full fill-primary">
       <div class="flex min-h-[20vh] flex-col bg-primary" />
       <svg
         class="fill-primary drop-shadow-xl"
@@ -151,50 +155,69 @@
       </svg>
     </div>
     <div>
-      <header class="mx-auto p-4 sm:flex sm:items-end sm:p-6 lg:p-14">
-        <div>
-          <h2 class="mt-1 flex text-4xl font-bold tracking-tight text-neutral-content sm:text-5xl lg:text-6xl">
+      <header class="mx-auto p-4 text-accent sm:flex sm:items-end sm:p-6 lg:p-14">
+        <div class="z-10">
+          <h2 class="mt-1 flex text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
             HomeB
             <AppLogo class="-mb-4 w-12" />
             x
           </h2>
-          <p class="ml-1 text-lg text-base-content/50">{{ $t("index.tagline") }}</p>
+          <p class="ml-1 text-lg text-foreground">{{ $t("index.tagline") }}</p>
         </div>
-        <div class="ml-auto mt-6 flex gap-4 text-neutral-content sm:mt-0">
-          <a
-            class="tooltip"
-            :data-tip="$t('global.github')"
-            href="https://github.com/sysadminsmedia/homebox"
-            target="_blank"
-          >
-            <MdiGithub class="size-8" />
-          </a>
-          <a
-            href="https://noc.social/@sysadminszone"
-            class="tooltip"
-            :data-tip="$t('global.follow_dev')"
-            target="_blank"
-          >
-            <MdiMastodon class="size-8" />
-          </a>
-          <a href="https://discord.gg/aY4DCkpNA9" class="tooltip" :data-tip="$t('global.join_discord')" target="_blank">
-            <MdiDiscord class="size-8" />
-          </a>
-          <a href="https://homebox.software/en/" class="tooltip" :data-tip="$t('global.read_docs')" target="_blank">
-            <MdiFolder class="size-8" />
-          </a>
-        </div>
+        <TooltipProvider :delay-duration="0">
+          <div class="z-10 ml-auto mt-6 flex items-center gap-4 sm:mt-0">
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <a href="https://github.com/sysadminsmedia/homebox" target="_blank">
+                  <MdiGithub class="size-8" />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent>{{ $t("global.github") }}</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <a href="https://noc.social/@sysadminszone" target="_blank">
+                  <MdiMastodon class="size-8" />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent>{{ $t("global.follow_dev") }}</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <a href="https://discord.gg/aY4DCkpNA9" target="_blank">
+                  <MdiDiscord class="size-8" />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent>{{ $t("global.join_discord") }}</TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger as-child>
+                <a href="https://homebox.software/en/" target="_blank">
+                  <MdiFolder class="size-8" />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent>{{ $t("global.read_docs") }}</TooltipContent>
+            </Tooltip>
+
+            <LanguageSelector class="z-10 text-primary" :include-text="false" />
+          </div>
+        </TooltipProvider>
       </header>
       <div class="grid min-h-[50vh] p-6 sm:place-items-center">
         <div>
           <Transition name="slide-fade">
             <form v-if="registerForm" @submit.prevent="registerUser">
-              <div class="card bg-base-100 shadow-xl md:w-[500px]">
-                <div class="card-body">
-                  <h2 class="card-title text-2xl">
+              <Card class="md:w-[500px]">
+                <CardHeader>
+                  <CardTitle class="flex items-center gap-2">
                     <MdiAccount class="mr-1 size-7" />
                     {{ $t("index.register") }}
-                  </h2>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent class="flex flex-col gap-2">
                   <FormTextField v-model="email" :label="$t('index.set_email')" />
                   <FormTextField v-model="username" :label="$t('index.set_name')" />
                   <div v-if="!(groupToken == '')" class="pb-1 pt-4 text-center">
@@ -205,26 +228,28 @@
                   </div>
                   <FormPassword v-model="password" :label="$t('index.set_password')" />
                   <PasswordScore v-model:valid="canRegister" :password="password" />
-                  <div class="card-actions justify-end">
-                    <button
-                      type="submit"
-                      class="btn btn-primary mt-2"
-                      :class="loading ? 'loading' : ''"
-                      :disabled="loading || !canRegister"
-                    >
-                      {{ $t("index.register") }}
-                    </button>
-                  </div>
-                </div>
-              </div>
+                </CardContent>
+                <CardFooter>
+                  <Button
+                    class="w-full"
+                    type="submit"
+                    :class="loading ? 'loading' : ''"
+                    :disabled="loading || !canRegister"
+                  >
+                    {{ $t("index.register") }}
+                  </Button>
+                </CardFooter>
+              </Card>
             </form>
             <form v-else @submit.prevent="login">
-              <div class="card bg-base-100 shadow-xl md:w-[500px]">
-                <div class="card-body">
-                  <h2 class="card-title text-2xl">
+              <Card class="md:w-[500px]">
+                <CardHeader>
+                  <CardTitle class="flex items-center gap-2">
                     <MdiAccount class="mr-1 size-7" />
                     {{ $t("index.login") }}
-                  </h2>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent class="flex flex-col gap-2">
                   <template v-if="status && status.demo">
                     <p class="text-center text-xs italic">This is a demo instance</p>
                     <p class="text-center text-xs">
@@ -239,18 +264,13 @@
                   <div class="max-w-[140px]">
                     <FormCheckbox v-model="remember" :label="$t('index.remember_me')" />
                   </div>
-                  <div class="card-actions justify-end">
-                    <button
-                      type="submit"
-                      class="btn btn-primary btn-block"
-                      :class="loading ? 'loading' : ''"
-                      :disabled="loading"
-                    >
-                      {{ $t("index.login") }}
-                    </button>
-                  </div>
-                </div>
-              </div>
+                </CardContent>
+                <CardFooter>
+                  <Button class="w-full" type="submit" :class="loading ? 'loading' : ''" :disabled="loading">
+                    {{ $t("index.login") }}
+                  </Button>
+                </CardFooter>
+              </Card>
             </form>
           </Transition>
           <div class="mt-6 text-center">
@@ -258,34 +278,32 @@
               href="https://auth.kloenk.dev/realms/kloenk/protocol/openid-connect/auth?client_id=homebox-dev&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Foidc%2Fcallback&response_type=code&scope=openid+email+profile&response_mode=query"
               >OIDC</a
             >
-            <div class="mt-6 text-center">
-              <BaseButton
-                v-if="status && status.allowRegistration"
-                class="btn-primary btn-wide"
-                @click="() => toggleLogin()"
-              >
-                <template #icon>
-                  <MdiAccountPlus v-if="!registerForm" class="swap-off size-5" />
-                  <MdiLogin v-else class="swap-off size-5" />
-                  <MdiArrowRight class="swap-on size-5" />
-                </template>
-                {{ registerForm ? $t("index.login") : $t("index.register") }}
-              </BaseButton>
-              <p v-else class="inline-flex items-center gap-2 text-sm italic text-base-content">
-                <MdiLock class="inline-block size-4" />
-                {{ $t("index.disabled_registration") }}
-              </p>
-            </div>
+            <Button v-if="status && status.allowRegistration" class="group" variant="link" @click="() => toggleLogin()">
+              <div class="relative mx-2">
+                <div
+                  class="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:rotate-[360deg]"
+                >
+                  <MdiAccountPlus v-if="!registerForm" class="size-5 group-hover:hidden" />
+                  <MdiLogin v-else class="size-5 group-hover:hidden" />
+                  <MdiArrowRight class="hidden size-5 group-hover:block" />
+                </div>
+              </div>
+              {{ registerForm ? $t("index.login") : $t("index.register") }}
+            </Button>
+            <p v-else class="inline-flex items-center gap-2 text-sm italic">
+              <MdiLock class="inline-block size-4" />
+              {{ $t("index.disabled_registration") }}
+            </p>
           </div>
         </div>
       </div>
-      <footer v-if="status" class="bottom-0 mt-auto w-full pb-4 text-center">
-        <p class="text-center text-sm">
-          {{ $t("global.version", { version: status.build.version }) }} ~
-          {{ $t("global.build", { build: status.build.commit }) }}
-        </p>
-      </footer>
     </div>
+    <footer v-if="status" class="bottom-0 mt-auto w-full pb-4 text-center">
+      <p class="text-center text-sm">
+        {{ $t("global.version", { version: status.build.version }) }} ~
+        {{ $t("global.build", { build: status.build.commit }) }}
+      </p>
+    </footer>
   </div>
 </template>
 

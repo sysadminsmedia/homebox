@@ -1,5 +1,11 @@
 <script setup lang="ts">
   import { route } from "../../lib/api/base";
+  import { toast, Toaster } from "@/components/ui/sonner";
+  import { Separator } from "@/components/ui/separator";
+  import { Button } from "@/components/ui/button";
+  import { Label } from "@/components/ui/label";
+  import { Input } from "@/components/ui/input";
+  import { Checkbox } from "@/components/ui/checkbox";
 
   definePageMeta({
     middleware: ["auth"],
@@ -17,6 +23,7 @@
     baseURL: window.location.origin,
     assetRange: 1,
     assetRangeMax: 91,
+    measure: "in",
     gapY: 0.25,
     columns: 3,
     cardHeight: 1,
@@ -29,7 +36,8 @@
     pageRightPadding: 0.1,
   });
 
-  type Input = {
+  type LabelOptionInput = {
+    measure: string;
     page: {
       height: number;
       width: number;
@@ -43,6 +51,7 @@
   };
 
   type Output = {
+    measure: string;
     cols: number;
     rows: number;
     gapY: number;
@@ -61,16 +70,17 @@
     };
   };
 
-  const notifier = useNotifier();
-
-  function calculateGridData(input: Input): Output {
+  function calculateGridData(input: LabelOptionInput): Output {
     const { page, cardHeight, cardWidth } = input;
+
+    const measureRegex = /in|cm|mm/;
+    const measure = measureRegex.test(input.measure) ? input.measure : "in";
 
     const availablePageWidth = page.width - page.pageLeftPadding - page.pageRightPadding;
     const availablePageHeight = page.height - page.pageTopPadding - page.pageBottomPadding;
 
     if (availablePageWidth < cardWidth || availablePageHeight < cardHeight) {
-      notifier.error("Page size is too small for the card size");
+      toast.error("Page size is too small for the card size");
       return out.value;
     }
 
@@ -80,6 +90,7 @@
     const gapY = (page.height - rows * cardHeight) / (rows - 1);
 
     return {
+      measure,
       cols,
       rows,
       gapX,
@@ -114,6 +125,11 @@
       {
         label: "Asset End",
         ref: "assetRangeMax",
+      },
+      {
+        label: "Measure Type",
+        ref: "measure",
+        type: "text",
       },
       {
         label: "Label Height",
@@ -185,7 +201,7 @@
 
   function getItem(n: number, item: { assetId: string; name: string; location: { name: string } } | null): LabelData {
     // format n into - seperated string with leading zeros
-    const assetID = fmtAssetID(n + 1);
+    const assetID = fmtAssetID(item?.assetId ?? n + 1);
 
     return {
       url: getQRCodeUrl(assetID),
@@ -241,6 +257,7 @@
   const pages = ref<Page[]>([]);
 
   const out = ref({
+    measure: "in",
     cols: 0,
     rows: 0,
     gapY: 0,
@@ -262,6 +279,7 @@
   function calcPages() {
     // Set Out Dimensions
     out.value = calculateGridData({
+      measure: displayProperties.measure,
       page: {
         height: displayProperties.pageHeight,
         width: displayProperties.pageWidth,
@@ -313,7 +331,7 @@
 
 <template>
   <div class="print:hidden">
-    <AppToast />
+    <Toaster />
     <div class="container prose mx-auto max-w-4xl p-4 pt-6">
       <h1>Homebox Label Generator</h1>
       <p>
@@ -355,34 +373,33 @@
         <NuxtLink href="/home">Home</NuxtLink>
       </div>
     </div>
-    <div class="divider mx-auto max-w-4xl"></div>
+    <Separator class="mx-auto max-w-4xl" />
     <div class="container mx-auto max-w-4xl p-4">
       <div class="mx-auto grid grid-cols-2 gap-3">
-        <div v-for="(prop, i) in propertyInputs" :key="i" class="form-control w-full max-w-xs">
-          <label class="label">
-            <span class="label-text">{{ prop.label }}</span>
-          </label>
-          <input
+        <div v-for="(prop, i) in propertyInputs" :key="i" class="flex w-full max-w-xs flex-col">
+          <Label :for="`input-${prop.ref}`">
+            {{ prop.label }}
+          </Label>
+          <Input
+            :id="`input-${prop.ref}`"
             v-model="displayProperties[prop.ref]"
             :type="prop.type ? prop.type : 'number'"
             step="0.01"
             placeholder="Type here"
-            class="input input-bordered w-full max-w-xs"
+            class="w-full max-w-xs"
           />
         </div>
       </div>
       <div class="max-w-xs">
-        <div class="form-control">
-          <label class="label cursor-pointer">
-            <input v-model="bordered" type="checkbox" class="checkbox checkbox-secondary" />
-            <span class="label-text">Bordered Labels</span>
-          </label>
+        <div class="flex items-center gap-2 py-4">
+          <Checkbox id="borderedLabels" v-model="bordered" />
+          <Label class="cursor-pointer" for="borderedLabels"> Bordered Labels </Label>
         </div>
       </div>
 
       <div>
         <p>QR Code Example {{ displayProperties.baseURL }}/a/{asset_id}</p>
-        <BaseButton class="btn-block my-4" @click="calcPages"> Generate Page </BaseButton>
+        <Button size="lg" class="my-4 w-full" @click="calcPages"> Generate Page </Button>
       </div>
     </div>
   </div>
@@ -392,11 +409,11 @@
       :key="pi"
       class="border-2 print:border-none"
       :style="{
-        paddingTop: `${out.page.pt}in`,
-        paddingBottom: `${out.page.pb}in`,
-        paddingLeft: `${out.page.pl}in`,
-        paddingRight: `${out.page.pr}in`,
-        width: `${out.page.width}in`,
+        paddingTop: `${out.page.pt}${out.measure}`,
+        paddingBottom: `${out.page.pb}${out.measure}`,
+        paddingLeft: `${out.page.pl}${out.measure}`,
+        paddingRight: `${out.page.pr}${out.measure}`,
+        width: `${out.page.width}${out.measure}`,
       }"
     >
       <div
@@ -404,8 +421,8 @@
         :key="ri"
         class="flex break-inside-avoid"
         :style="{
-          columnGap: `${out.gapX}in`,
-          rowGap: `${out.gapY}in`,
+          columnGap: `${out.gapX}${out.measure}`,
+          rowGap: `${out.gapY}${out.measure}`,
         }"
       >
         <div
@@ -417,17 +434,17 @@
             'border-transparent': !bordered,
           }"
           :style="{
-            height: `${out.card.height}in`,
-            width: `${out.card.width}in`,
+            height: `${out.card.height}${out.measure}`,
+            width: `${out.card.width}${out.measure}`,
           }"
         >
           <div class="flex items-center">
             <img
               :src="item.url"
               :style="{
-                minWidth: `${out.card.height * 0.9}in`,
-                width: `${out.card.height * 0.9}in`,
-                height: `${out.card.height * 0.9}in`,
+                minWidth: `${out.card.height * 0.9}${out.measure}`,
+                width: `${out.card.height * 0.9}${out.measure}`,
+                height: `${out.card.height * 0.9}${out.measure}`,
               }"
             />
           </div>
@@ -442,11 +459,3 @@
     </section>
   </div>
 </template>
-
-<style lang="css">
-  .letter-size {
-    width: 8.5in;
-    height: 11in;
-    padding: 0.5in;
-  }
-</style>

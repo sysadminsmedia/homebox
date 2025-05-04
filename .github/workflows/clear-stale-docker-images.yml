@@ -1,0 +1,52 @@
+name: Docker Cleanup
+
+on:
+  schedule:
+    - cron: '00 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  delete-old-images-main:
+    name: Delete Untagged Images
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - name: Fetch multi-platform package version SHAs
+        id: multi-arch-digests
+        run: |
+          package1=$(docker manifest inspect ghcr.io/sysadminsmedia/homebox | jq -r '.manifests.[] | .digest' | paste -s -d ' ' -)
+          echo "multi-arch-digests=$package1" >> $GITHUB_OUTPUT
+      - uses: snok/container-retention-policy@v3.0.0
+        with:
+          skip-shas: ${{ steps.multi-arch-digests.outputs.multi-arch-digests }}
+          # The type of account. Can be either 'org' or 'personal'.
+          account: sysadminsmedia 
+          # Image name to delete. Supports passing several names as a comma-separated list.
+          image-names: homebox
+          # The cut-off for which to delete images older than. For example '2 days ago UTC'. Timezone is required.
+          cut-off: 90d
+          # Personal access token with read and delete scopes.
+          token: ${{ secrets.CLEANUP_PAT }}
+          # Restrict deletions to images without specific tags. Supports Unix-shell style wildcards
+          skip-tags: "!latest,!latest-rootless,!0.*,!0.*-rootless,!main,!main-rootless,!vnext,!vnext-rootless,!0,!0-rootless" # optional
+          # Do not actually delete images. Print output showing what would have been deleted.
+          dry-run: true # optional, default is false
+
+  delete-old-images-devcache:
+    name: Delete Cache Old Images
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - uses: snok/container-retention-policy@v3.0.0
+        with:
+          # The type of account. Can be either 'org' or 'personal'.
+          account: sysadminsmedia 
+          image-names: devcache
+          # The cut-off for which to delete images older than. For example '2 days ago UTC'. Timezone is required.
+          cut-off: 90d
+          # Personal access token with read and delete scopes.
+          token: ${{ secrets.CLEANUP_PAT }}
+          # Do not actually delete images. Print output showing what would have been deleted.
+          dry-run: true # optional, default is false

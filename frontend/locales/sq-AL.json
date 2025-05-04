@@ -1,0 +1,146 @@
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "change_warning": "Sjellja për importet me import_refs ekzistues ka ndryshuar. Nëse një import_ref është i pranishëm në skedarin CSV,\n artikulli do të përditësohet me vlerat në skedarin CSV.",
+                "description": "Importoni një skedar CSV që përmban artikujt, etiketat dhe vendndodhjet tuaja. Shikoni dokumentacionin për më shumë informacion mbi\nformatin e kërkuar.",
+                "title": "Importo skedarin CSV"
+            },
+            "outdated": {
+                "current_version": "Version i Tanishëm:",
+                "dismiss": "Largoje",
+                "latest_version": "Versioni më i fundit",
+                "new_version_available": "Një version i ri është i disponueshëm",
+                "new_version_available_link": "Kliko këtu për të lexuar detajet e versionit të ri"
+            }
+        },
+        "global": {
+            "copy_text": {
+                "documentation": "Dokumentacioni",
+                "failed_to_copy": "Kopjimi i tekstit në memorien e përkohshme dështoi",
+                "https_required": "sepse kërkohet HTTPS",
+                "learn_more": "Mëso më shumë në"
+            },
+            "date_time": {
+                "ago": "{0} më parë",
+                "days": "ditët",
+                "hour": "orë",
+                "hours": "orët",
+                "in": "në {0}",
+                "just-now": "tani sapo",
+                "last-month": "muaji i fundit",
+                "last-week": "Javën e kaluar",
+                "last-year": "vjet",
+                "minute": "minutë",
+                "minutes": "minuta",
+                "months": "muaj",
+                "next-month": "muajin tjetër",
+                "next-week": "javën tjetër",
+                "next-year": "vitin tjetër",
+                "second": "sekondë",
+                "seconds": "sekonda",
+                "tomorrow": "nesër",
+                "week": "java",
+                "weeks": "javë",
+                "years": "vite",
+                "yesterday": "dje"
+            },
+            "label_maker": {
+                "browser_print": "Printo nga shfletuesi",
+                "confirm_description": "Je i sigurt që dëshiron ta printosh këtë etiketë?",
+                "download": "Shkarko etiketën",
+                "print": "Printo etiketën",
+                "server_print": "Printo në server",
+                "titles": "Etiketat"
+            },
+            "page_qr_code": {
+                "page_url": "URL e faqes"
+            },
+            "password_score": {
+                "password_strength": "Siguria e Fjalëkalimit"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "item_description": "Përshkrimi i Artikullit",
+                "item_name": "Emri i Artikullit",
+                "title": "Krijo artikullin"
+            },
+            "view": {
+                "selectable": {
+                    "card": "Kartë",
+                    "items": "Artikujt",
+                    "no_items": "Nuk ka artikuj për t 'u shfaqur",
+                    "table": "Tabela"
+                },
+                "table": {
+                    "page": "Faqe",
+                    "rows_per_page": "Rreshta për faqe"
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "label_description": "Përshkrimi i etiketës",
+                "label_name": "Emri i etiketës",
+                "title": "Krijo etiketë"
+            }
+        },
+        "location": {
+            "create_modal": {
+                "location_description": "Përshkrimi i vendndodhjes",
+                "location_name": "Emri i vendndodhjes",
+                "title": "Krijoni një vendndodhje të re"
+            },
+            "selector": {
+                "parent_location": "Vendndodhja e prindit"
+            },
+            "tree": {
+                "no_locations": "Asnjë vendndodhje në dispozicion. Shto vendndodhje të reja përmes\n butonit  `< `span class=\"link-primary\" `> `Krijo `< `/span `> ` në shiritin e navigimit."
+            }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Përdor tastet e numrave për të zgjedhur shpejt një veprim."
+        }
+    },
+    "global": {
+        "add": "Shto",
+        "build": "Ndërto: { build }",
+        "confirm": "Konfirmo",
+        "create": "Krijo",
+        "create_and_add": "Krijo dhe shto një tjetër",
+        "created": "U Krijua",
+        "delete": "Fshi",
+        "details": "Detaje",
+        "duplicate": "Dubliko",
+        "edit": "Modifiko",
+        "email": "Email",
+        "follow_dev": "Ndiq Zhvilluesin",
+        "github": "Projekt Github",
+        "items": "Artikuj",
+        "join_discord": "Bashkoju Discord",
+        "labels": "Etiketa",
+        "locations": "Vendndodhjet",
+        "maintenance": "Mirëmbajtja",
+        "name": "Emri",
+        "navigate": "Drejto.",
+        "password": "Fjalëkalimi",
+        "read_docs": "Lexo dokumentet",
+        "save": "Ruaj",
+        "search": "Kërko",
+        "sign_out": "Dil",
+        "submit": "Dërgo",
+        "update": "Përditëso",
+        "value": "Vlerë",
+        "version": "Versioni: { version }",
+        "welcome": "Mirë se erdhe, { username }"
+    },
+    "home": {
+        "labels": "Etiketa",
+        "quick_statistics": "Statistika të shpejta",
+        "recently_added": "U shtua së fundmi",
+        "storage_locations": "Vendndodhjet e magazinimit",
+        "total_items": "Totali i Artikujve",
+        "total_labels": "Totali i etiketave"
+    }
+}

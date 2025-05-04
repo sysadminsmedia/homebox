@@ -8,7 +8,14 @@ export default defineNuxtConfig({
     transpile: ["vue-i18n"],
   },
 
-  modules: ["@nuxtjs/tailwindcss", "@pinia/nuxt", "@vueuse/nuxt", "@vite-pwa/nuxt", "unplugin-icons/nuxt"],
+  modules: [
+    "@nuxtjs/tailwindcss",
+    "@pinia/nuxt",
+    "@vueuse/nuxt",
+    "@vite-pwa/nuxt",
+    "unplugin-icons/nuxt",
+    "shadcn-nuxt",
+  ],
 
   nitro: {
     devProxy: {
@@ -20,12 +27,32 @@ export default defineNuxtConfig({
     },
   },
 
+  app: {
+    head: {
+      script: [{ src: "/set-theme.js" }],
+    },
+  },
+
   css: ["@/assets/css/main.css"],
 
   pwa: {
     workbox: {
       navigateFallbackDenylist: [/^\/api/],
+      cleanupOutdatedCaches: true,
+      runtimeCaching: [
+        {
+          urlPattern: /^\/api/,
+          handler: "NetworkFirst",
+          method: "GET",
+          options: {
+            cacheName: "api-cache",
+            cacheableResponse: { statuses: [0, 200] },
+            expiration: { maxAgeSeconds: 60 * 60 * 24 },
+          },
+        },
+      ],
     },
+    registerType: "autoUpdate",
     injectRegister: "script",
     injectManifest: {
       swSrc: "sw.js",

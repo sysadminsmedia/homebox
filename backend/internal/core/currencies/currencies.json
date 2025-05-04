@@ -1272,10 +1272,10 @@
         "name": "Seychellois rupee"
     },
     {
-        "code": "SLL",
+        "code": "SLE",
         "local": "Sierra Leone",
         "symbol": "Le",
-        "name": "Sierra Leonean leone"
+        "name": "Leone"
     },
     {
         "code": "SGD",
@@ -1320,10 +1320,10 @@
         "name": "South African rand"
     },
     {
-        "code": "SHP",
+        "code": "GBP",
         "local": "South Georgia",
         "symbol": "£",
-        "name": "Saint Helena pound"
+        "name": "British pound"
     },
     {
         "code": "KRW",

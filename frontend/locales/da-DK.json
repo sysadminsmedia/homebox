@@ -4,11 +4,23 @@
             "import_dialog": {
                 "change_warning": "Adfærd for imports med eksisterende import_refs har ændret sig. Hvis en import_ref er tilstede i CSV filen,\nvil genstanden blive opdateret med værdierne fra CSV filen.",
                 "description": "Importer en CSV fil som indeholder dine genstande, etiketter, og lokationer. Se dokumentation for mere information vedrørende\nden korrekte format.",
-                "title": "Importer CSV Fil",
-                "upload": "Upload"
+                "title": "Importer CSV Fil"
+            },
+            "outdated": {
+                "current_version": "Nuværende version",
+                "dismiss": "Afvis",
+                "latest_version": "Nyeste version",
+                "new_version_available": "Ny version tilgængelig",
+                "new_version_available_link": "Klik her for at læse udgivelsesnoterne"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "Dokumentation",
+                "failed_to_copy": "Kunne ikke kopiere tekst til Udklipsholder",
+                "https_required": "fordi HTTPS er nødvendig",
+                "learn_more": "Lær mere i vores"
+            },
             "date_time": {
                 "ago": "{0} siden",
                 "days": "dage",
@@ -33,8 +45,17 @@
                 "years": "år",
                 "yesterday": "i går"
             },
+            "label_maker": {
+                "browser_print": "Print fra Browser",
+                "confirm_description": "Er du sikker på du vil printe denne label?",
+                "download": "Hent label",
+                "print": "Print label",
+                "server_print": "Print på Server",
+                "titles": "Labels"
+            },
             "page_qr_code": {
-                "page_url": "Side URL"
+                "page_url": "Side URL",
+                "qr_tooltip": "Vis kr-kode"
             },
             "password_score": {
                 "password_strength": "Adgangskodestyrke"
@@ -44,8 +65,9 @@
             "create_modal": {
                 "item_description": "Genstandsbeskrivelse",
                 "item_name": "Genstandsnavn",
-                "photo_button": "Foto 📷",
-                "title": "Opret genstand"
+                "item_photo": "Vare Foto 📷",
+                "title": "Opret genstand",
+                "upload_photos": "Upload Billeder"
             },
             "view": {
                 "selectable": {
@@ -56,7 +78,8 @@
                 },
                 "table": {
                     "page": "Side",
-                    "rows_per_page": "Rækker per side"
+                    "rows_per_page": "Rækker per side",
+                    "table_settings": "Tabel Indstillinger"
                 }
             }
         },
@@ -65,6 +88,9 @@
                 "label_description": "Etiketbeskrivelse",
                 "label_name": "Etiketnavn",
                 "title": "Opret label"
+            },
+            "selector": {
+                "select_labels": "Vælg Etiketter"
             }
         },
         "location": {
@@ -79,6 +105,9 @@
             "tree": {
                 "no_locations": "Ingen tilgængelige lokationer. Opret nye lokationer gennem\n`<`span class=\"link-primary\">`Opret`<`/span`>` knappen i navigationslinjen."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Brug de numeriske taster til hurtigt at vælge en handling."
         }
     },
     "global": {
@@ -101,6 +130,7 @@
         "locations": "Lokationer",
         "maintenance": "Opretholdelse",
         "name": "Navn",
+        "navigate": "Naviger",
         "password": "Adgangskode",
         "read_docs": "Læs Docs",
         "save": "Gem",
@@ -165,6 +195,8 @@
         "next_page": "Næste side",
         "no_results": "Ingen elementer fundet",
         "notes": "Noter",
+        "only_with_photo": "Kun elementer med foto",
+        "only_without_photo": "Kun elementer uden foto",
         "options": "Indstillinger",
         "order_by": "Sorter efter",
         "pages": "Side { page } af { totalPages }",
@@ -181,7 +213,7 @@
         "receipt": "Kvittering",
         "receipts": "Kvitteringer",
         "reset_search": "Nulstil Søgning",
-        "results": "Samlede resultater",
+        "results": "{ total } Wyniki",
         "serial_number": "Serienummer",
         "show_advanced_view_options": "vis avancerede indstillinger",
         "sold_at": "Solgt D.",
@@ -211,6 +243,7 @@
         "hu": "Ungarsk",
         "it": "Italiensk",
         "ja-JP": "Japansk",
+        "nb-NO": "Norsk",
         "nl": "Hollandsk",
         "pl": "Polsk",
         "pt-BR": "Portugisisk (Brasilien)",
@@ -218,6 +251,8 @@
         "ru": "Russisk",
         "sl": "Slovensk",
         "sv": "Svensk",
+        "ta-IN": "Tamilsk",
+        "th-TH": "Thailandsk",
         "tr": "Tyrkisk",
         "uk-UA": "Ukrainsk",
         "zh-CN": "Kinesisk (simplificeret)",
@@ -226,13 +261,12 @@
         "zh-TW": "Kinesisk (Traditionel)"
     },
     "languages.da-DK": "Dansk",
-    "languages.fi.FI": "Finsk",
     "languages.ro-RO": "Rumænsk",
     "languages.sk-SK": "Slovakisk",
     "locations": {
         "child_locations": "Underordnede placeringer",
         "collapse_tree": "Kollaps træ",
-        "no_results": "Ingen placeringer fundet.",
+        "no_results": "Ingen placeringer fundet",
         "update_location": "Opdatér sted"
     },
     "maintenance": {
@@ -278,6 +312,7 @@
         "locations": "Lokationer",
         "maintenance": "Opretholdelse",
         "profile": "Profil",
+        "scanner": "Skanner",
         "search": "Søg",
         "tools": "Værktøjer"
     },
@@ -287,13 +322,13 @@
         "currency_format": "Valuta format",
         "current_password": "Aktuel adgangskode",
         "delete_account": "Slet Konto",
-        "delete_account_sub": "Slet din konto og alle dens tilknyttede data",
-        "display_header": "{ currentValue, select, true {Skjul header} false {Vis header} andet {Not Hit}}",
+        "delete_account_sub": "Slet din konto og alle dens tilknyttede data. Dette kan ikke laves om.",
+        "display_header": "{ currentValue, select, true {Hide Header} false {Show Header} other {Not Hit}}",
         "enabled": "Aktiveret",
         "example": "Eksempel",
         "gen_invite": "Generer invitationslink",
         "group_settings": "Gruppe indstillinger",
-        "group_settings_sub": "Indstillinger for delt gruppe",
+        "group_settings_sub": "Indstillinger for delt gruppe. Det kan være nødvendigt at genindlæse din browser før nogle indstillinger træder i kraft.",
         "inactive": "Inaktiv",
         "language": "Sprog",
         "new_password": "Ny Adgangskode",
@@ -303,12 +338,19 @@
         "notifiers_sub": "Få notifikationer om kommende vedligeholdelsespåmindelser",
         "test": "Test",
         "theme_settings": "Temaindstillinger",
-        "theme_settings_sub": "Temaindstillinger gemmes i din browsers lokale lager. Du kan til enhver tid ændre temaet. Hvis du har problemer med at indstille dit tema, kan du prøve at opdatere din browser.",
+        "theme_settings_sub": "Temaindstillinger gemmes i din browsers lokale lager. Du kan til enhver tid ændre temaet. Hvis du har\n problemer med at indstille dit tema, kan du prøve at opdatere din browser.",
         "update_group": "Opdatér Gruppe",
         "update_language": "Opdater sprogfil",
         "url": "URL",
         "user_profile": "Brugerprofil",
         "user_profile_sub": "Inviter brugere, og administrer din konto."
+    },
+    "scanner": {
+        "error": "Der skete en fejl under skanningen",
+        "invalid_url": "Ugyldig stregkode-URL",
+        "no_sources": "Ingen videokilder er tilgængelig",
+        "select_video_source": "Vælg en videokilde",
+        "unsupported": "Media Stream API understøttes ikke uden HTTPS"
     },
     "tools": {
         "actions": "Handlinger på lagerbeholdning",

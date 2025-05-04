@@ -4,11 +4,23 @@
             "import_dialog": {
                 "change_warning": "Comportamentul pentru importuri cu import_refs existente s-a schimbat. Dacă un import_ref este prezent în fișierul CSV,\nobiectul v-a fi actualizat cu valorile din fișierul CSV.",
                 "description": "Importă un fișier CSV care conține toate obiectele, etichetele și locațiile tale. \nCitește documentația pentru mai multe informații privind format-ul necesar.",
-                "title": "Importă fișier CSV",
-                "upload": "Încarcă"
+                "title": "Importă fișier CSV"
+            },
+            "outdated": {
+                "current_version": "Versiune Curentă",
+                "dismiss": "Revocă",
+                "latest_version": "Ultima Versiune",
+                "new_version_available": "Nouă versiune disponibilă",
+                "new_version_available_link": "Dă click aici pentru a vedea notele de lansare"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "documentație",
+                "failed_to_copy": "Nu s-a copiat textul în clipboard",
+                "https_required": "pentru că HTTPS este necesar",
+                "learn_more": "Învață mai multe în noastră"
+            },
             "date_time": {
                 "ago": "{0} în urmă",
                 "days": "zile",
@@ -44,7 +56,6 @@
             "create_modal": {
                 "item_description": "Descriere articol",
                 "item_name": "Denumire articol",
-                "photo_button": "Imagine 📷",
                 "title": "Crează articol"
             },
             "view": {
@@ -226,7 +237,6 @@
         "zh-TW": "Chineză (Tradițională)"
     },
     "languages.da-DK": "Daneză",
-    "languages.fi.FI": "Finlandeză",
     "languages.ro-RO": "Română",
     "languages.sk-SK": "Slovacă",
     "locations": {
@@ -334,7 +344,7 @@
             "export_sub": "Exportă formatul CSV standard pentru Homebox. Această acțiune ca exporta toate articolele din inventar.",
             "import": "Importă Inventar",
             "import_button": "Importă Inventar",
-            "import_sub": "Importă formatul CSV standard pentru Homebox. Fără o coloana  '<code>'HB.import_ref'</code>', '<b>'nu'</b>' se vor suprascrie articole existente în inventar, doar se vor adăuga articole noi. Câmpurile ce au o coloană '<code>'HB.import_ref'</code>' vor fi contopite cu articole existente care au același import_ref, în cazul în care acesta există."
+            "import_sub": "Importă formatul standard CSV pentru Homebox. Fără un '<code> ' HB.import_ref' </code> 'coloană, aceasta va'<b>'nu' < / b> ' suprascrie orice elemente existente în inventarul dvs., adăugați doar elemente noi. Rânduri cu' < code> ' HB.import_ref' < / code> ' coloana sunt îmbinate în elementele existente cu același import_ref, dacă există unul."
         },
         "import_export_sub": "Importați și exportați inventarul într-un fișier CSV. Acest lucru este util atunci când se migrează inventarul către o instanță nouă de Homebox.",
         "reports": "Rapoarte",

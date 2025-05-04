@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"path/filepath"
+	"strings"
 	"time"
 
-	atlas "ariga.io/atlas/sql/migrate"
-	"entgo.io/ent/dialect/sql/schema"
+	"github.com/pressly/goose/v3"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
@@ -25,9 +25,13 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/migrations"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
 
+	_ "github.com/lib/pq"
+	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/postgres"
+	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/sqlite3"
 	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
 )
 
@@ -46,15 +50,33 @@ func build() string {
 	return fmt.Sprintf("%s, commit %s, built at %s", version, short, buildTime)
 }
 
-//	@title						Homebox API
-//	@version					1.0
-//	@description				Track, Manage, and Organize your Things.
-//	@contact.name				Don't
-//	@BasePath					/api
-//	@securityDefinitions.apikey	Bearer
-//	@in							header
-//	@name						Authorization
-//	@description				"Type 'Bearer TOKEN' to correctly set the API Key"
+func validatePostgresSSLMode(sslMode string) bool {
+	validModes := map[string]bool{
+		"":            true,
+		"disable":     true,
+		"allow":       true,
+		"prefer":      true,
+		"require":     true,
+		"verify-ca":   true,
+		"verify-full": true,
+	}
+	return validModes[strings.ToLower(strings.TrimSpace(sslMode))]
+}
+
+// @title                      Homebox API
+// @version                    1.0
+// @description                Track, Manage, and Organize your Things.
+// @contact.name               Homebox Team
+// @contact.url                https://discord.homebox.software
+// @host                       demo.homebox.software
+// @schemes                    https http
+// @BasePath                   /api
+// @securityDefinitions.apikey Bearer
+// @in                         header
+// @name                       Authorization
+// @description                "Type 'Bearer TOKEN' to correctly set the API Key"
+// @externalDocs.url 		   https://homebox.software/en/api
+
 func main() {
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
 
@@ -72,6 +94,10 @@ func run(cfg *config.Config) error {
 	app := new(cfg)
 	app.setupLogger()
 
+	if cfg.Options.AllowAnalytics {
+		analytics.Send(version, build())
+	}
+
 	// =========================================================================
 	// Initialize Database & Repos
 
@@ -80,52 +106,44 @@ func run(cfg *config.Config) error {
 		log.Fatal().Err(err).Msg("failed to create data directory")
 	}
 
-	c, err := ent.Open("sqlite3", cfg.Storage.SqliteURL)
+	if strings.ToLower(cfg.Database.Driver) == "postgres" {
+		if !validatePostgresSSLMode(cfg.Database.SslMode) {
+			log.Fatal().Str("sslmode", cfg.Database.SslMode).Msg("invalid sslmode")
+		}
+	}
+
+	// Set up the database URL based on the driver because for some reason a common URL format is not used
+	databaseURL := ""
+	switch strings.ToLower(cfg.Database.Driver) {
+	case "sqlite3":
+		databaseURL = cfg.Database.SqlitePath
+	case "postgres":
+		databaseURL = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", cfg.Database.Host, cfg.Database.Port, cfg.Database.Username, cfg.Database.Password, cfg.Database.Database, cfg.Database.SslMode)
+	default:
+		log.Fatal().Str("driver", cfg.Database.Driver).Msg("unsupported database driver")
+	}
+
+	c, err := ent.Open(strings.ToLower(cfg.Database.Driver), databaseURL)
 	if err != nil {
 		log.Fatal().
 			Err(err).
-			Str("driver", "sqlite").
-			Str("url", cfg.Storage.SqliteURL).
-			Msg("failed opening connection to sqlite")
+			Str("driver", strings.ToLower(cfg.Database.Driver)).
+			Str("host", cfg.Database.Host).
+			Str("port", cfg.Database.Port).
+			Str("database", cfg.Database.Database).
+			Msg("failed opening connection to {driver} database at {host}:{port}/{database}")
 	}
-	defer func(c *ent.Client) {
-		err := c.Close()
-		if err != nil {
-			log.Fatal().Err(err).Msg("failed to close database connection")
-		}
-	}(c)
 
-	temp := filepath.Join(os.TempDir(), "migrations")
-
-	err = migrations.Write(temp)
+	goose.SetBaseFS(migrations.Migrations(strings.ToLower(cfg.Database.Driver)))
+	err = goose.SetDialect(strings.ToLower(cfg.Database.Driver))
 	if err != nil {
-		return err
+		log.Fatal().Str("driver", cfg.Database.Driver).Msg("unsupported database driver")
+		return fmt.Errorf("unsupported database driver: %s", cfg.Database.Driver)
 	}
 
-	dir, err := atlas.NewLocalDir(temp)
+	err = goose.Up(c.Sql(), strings.ToLower(cfg.Database.Driver))
 	if err != nil {
-		return err
-	}
-
-	options := []schema.MigrateOption{
-		schema.WithDir(dir),
-		schema.WithDropColumn(true),
-		schema.WithDropIndex(true),
-	}
-
-	err = c.Schema.Create(context.Background(), options...)
-	if err != nil {
-		log.Error().
-			Err(err).
-			Str("driver", "sqlite").
-			Str("url", cfg.Storage.SqliteURL).
-			Msg("failed creating schema resources")
-		return err
-	}
-
-	err = os.RemoveAll(temp)
-	if err != nil {
-		log.Error().Err(err).Msg("failed to remove temporary directory for database migrations")
+		log.Error().Err(err).Msg("failed to migrate database")
 		return err
 	}
 
@@ -253,6 +271,18 @@ func run(cfg *config.Config) error {
 			}
 		}
 	}))
+
+	if cfg.Options.GithubReleaseCheck {
+		runner.AddPlugin(NewTask("get-latest-github-release", time.Hour, func(ctx context.Context) {
+			log.Debug().Msg("running get latest github release")
+			err := app.services.BackgroundService.GetLatestGithubRelease(context.Background())
+			if err != nil {
+				log.Error().
+					Err(err).
+					Msg("failed to get latest github release")
+			}
+		}))
+	}
 
 	if cfg.Debug.Enabled {
 		runner.AddFunc("debug", func(ctx context.Context) error {

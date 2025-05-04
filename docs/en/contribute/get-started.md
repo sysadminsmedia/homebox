@@ -6,7 +6,7 @@
 
 There is a devcontainer available for this project. If you are using VSCode, you can use the devcontainer to get started. If you are not using VSCode, you need to ensure that you have the following tools installed:
 
-- [Go 1.19+](https://golang.org/doc/install)
+- [Go 1.23+](https://golang.org/doc/install)
 - [Swaggo](https://github.com/swaggo/swag)
 - [Node.js 16+](https://nodejs.org/en/download/)
 - [pnpm](https://pnpm.io/installation)
@@ -37,7 +37,7 @@ swagger update command `task swag`
 
 start command `task ui:dev`
 
-1. The frontend is a Vue 3 app with Nuxt.js that uses Tailwind and DaisyUI for styling.
+1. The frontend is a Vue 3 app with Nuxt.js that uses Tailwind and Shadcn-vue for styling.
 2. We're using Vitest for our automated testing. You can run these with `task ui:watch`.
 3. Tests require the API server to be running, and in some cases the first run will fail due to a race condition. If this happens, just run the tests again and they should pass.
 

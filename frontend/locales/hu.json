@@ -4,26 +4,58 @@
             "import_dialog": {
                 "change_warning": "A meglévő import_ref-fel rendelkező tételek importálásának menete megváltozott. Ha a CSV fájlban van import_ref, \nakkor a tételt felülírják a CSV fájlban található értékek.",
                 "description": "Importálj egy CSV fájlt, amely tartalmazza a tételeidet, címkéidet és helyeidet. A szükséges formátumról bővebben \na dokumentációban olvashatsz.",
-                "title": "Importálás CSV-fájlból",
-                "upload": "Feltöltés"
+                "title": "Importálás CSV-fájlból"
+            },
+            "outdated": {
+                "current_version": "Jelenlegi verzió",
+                "dismiss": "Elvetés",
+                "latest_version": "Legújabb verzió",
+                "new_version_available": "Új verzió érhető el",
+                "new_version_available_link": "Kattints ide az újdonságok megtekintéséhez"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "dokumentáció",
+                "failed_to_copy": "Nem sikerült a szöveget a vágólapra másolni",
+                "https_required": "mert a HTTPS kötelező",
+                "learn_more": "Tudj meg többet itt:"
+            },
             "date_time": {
                 "ago": "{0} ezelőtt",
+                "days": "nap",
+                "hour": "óra",
+                "hours": "órák",
                 "in": "{0} múlva",
                 "just-now": "épp most",
                 "last-month": "múlt hónapban",
                 "last-week": "múlt héten",
                 "last-year": "tavaly",
+                "minute": "perc",
+                "minutes": "percek",
+                "months": "hónapok",
                 "next-month": "jövő hónapban",
                 "next-week": "jövő héten",
                 "next-year": "jövőre",
+                "second": "másodperc",
+                "seconds": "másodpercek",
                 "tomorrow": "holnap",
+                "week": "hét",
+                "weeks": "hetek",
+                "years": "évek",
                 "yesterday": "tegnap"
             },
+            "label_maker": {
+                "browser_print": "Nyomtatás böngészőből",
+                "confirm_description": "Biztosan ki szeretnéd nyomtatni ezt a címkét?",
+                "download": "Címke letöltése",
+                "print": "Címke nyomtatása",
+                "server_print": "Nyomtatás a szerveren",
+                "titles": "Címkék"
+            },
             "page_qr_code": {
-                "page_url": "Oldal URL-je"
+                "page_url": "Oldal URL-je",
+                "qr_tooltip": "QR-kód megjelenítése"
             },
             "password_score": {
                 "password_strength": "Jelszó erőssége"
@@ -33,8 +65,9 @@
             "create_modal": {
                 "item_description": "Tétel leírása",
                 "item_name": "Tétel neve",
-                "photo_button": "Fénykép 📷",
-                "title": "Új elem létrehozása"
+                "item_photo": "Tétel fényképe 📷",
+                "title": "Új elem létrehozása",
+                "upload_photos": "Fotók feltöltése"
             },
             "view": {
                 "selectable": {
@@ -44,8 +77,10 @@
                     "table": "Táblázat"
                 },
                 "table": {
+                    "headers": "Fejlécek",
                     "page": "Oldal",
-                    "rows_per_page": "Sorok oldalanként"
+                    "rows_per_page": "Sorok oldalanként",
+                    "table_settings": "Táblázatbeállítások"
                 }
             }
         },
@@ -54,6 +89,9 @@
                 "label_description": "Címke leírása",
                 "label_name": "Címke neve",
                 "title": "Címke létrehozása"
+            },
+            "selector": {
+                "select_labels": "Címkék kiválasztása"
             }
         },
         "location": {
@@ -63,16 +101,25 @@
                 "title": "Új hely létrehozása"
             },
             "selector": {
-                "parent_location": "Ezt tartalmazó hely"
+                "no_location_found": "Nem található hely",
+                "parent_location": "Ezt tartalmazó hely",
+                "search_location": "Helyek keresése",
+                "select_location": "Válassz egy helyet"
             },
             "tree": {
                 "no_locations": "Nincs elérhető hely. Adj hozzá új helyet a\n `<`span class=\"link-primary\"`>`Létrehozás`<`/span`>` gombbal a navigációs sávon."
             }
+        },
+        "quick_menu": {
+            "no_results": "Nincs találat.",
+            "shortcut_hint": "Használd a számgombokat egy művelet gyors kiválasztásához."
         }
     },
     "global": {
         "add": "Hozzáadás",
+        "archived": "Archivált",
         "build": "Build: { build }",
+        "cancel": "Mégse",
         "confirm": "Megerősítés",
         "create": "Létrehozás",
         "create_and_add": "Létrehozás és újabb hozzáadása",
@@ -83,14 +130,21 @@
         "edit": "Szerkesztés",
         "email": "Email",
         "follow_dev": "Kövesd a fejlesztőt",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Verzió: { version } Build: { build } '</a>'"
+        },
         "github": "Github projekt",
+        "insured": "Biztosítva",
         "items": "Tételek",
         "join_discord": "Csatlakozz a Discordhoz",
         "labels": "Címkék",
         "locations": "Helyek",
         "maintenance": "Karbantartás",
         "name": "Név",
+        "navigate": "Navigáció",
         "password": "Jelszó",
+        "quantity": "Mennyiség",
         "read_docs": "Olvasd el a dokumentációt",
         "save": "Mentés",
         "search": "Keresés",
@@ -154,6 +208,8 @@
         "next_page": "Következő oldal",
         "no_results": "Egy elem sem található",
         "notes": "Megjegyzések",
+        "only_with_photo": "Csak fényképes tételek",
+        "only_without_photo": "Csak fénykép nélküli tételek",
         "options": "Opciók",
         "order_by": "Rendezés",
         "pages": "{page}/{totalPages} oldal",
@@ -193,13 +249,18 @@
     },
     "languages": {
         "ca": "Katalán",
+        "cs-CZ": "Cseh",
         "de": "Német",
         "en": "Angol",
         "es": "Spanyol",
+        "fi-FI": "Finn",
         "fr": "Francia",
         "hu": "Magyar",
+        "id-ID": "Indonéz",
         "it": "Olasz",
         "ja-JP": "Japán",
+        "ko-KR": "Koreai",
+        "nb-NO": "Norvég (bokmål)",
         "nl": "Holland",
         "pl": "Lengyel",
         "pt-BR": "Portugál (brazíliai)",
@@ -207,6 +268,8 @@
         "ru": "Orosz",
         "sl": "Szlovén",
         "sv": "Svéd",
+        "ta-IN": "Tamil",
+        "th-TH": "Thai",
         "tr": "Török",
         "uk-UA": "Ukrán",
         "zh-CN": "Kínai (egyszerűsített)",
@@ -215,12 +278,13 @@
         "zh-TW": "Kínai (hagyományos)"
     },
     "languages.da-DK": "Dán",
-    "languages.fi.FI": "Finn",
     "languages.ro-RO": "Román",
     "languages.sk-SK": "Szlovák",
+    "languages.sq-AL": "Albán",
     "locations": {
         "child_locations": "Tartalmazott helyek",
         "collapse_tree": "Fanézet becsukása",
+        "expand_tree": "Fa kibontása",
         "no_results": "Nem található hely",
         "update_location": "Hely módosítása"
     },
@@ -267,6 +331,7 @@
         "locations": "Helyek",
         "maintenance": "Karbantartás",
         "profile": "Profil",
+        "scanner": "Szkenner",
         "search": "Keresés",
         "tools": "Eszközök"
     },
@@ -298,6 +363,14 @@
         "url": "URL",
         "user_profile": "Felhasználói profil",
         "user_profile_sub": "Hívj meg felhasználókat, és kezeld a fiókodat."
+    },
+    "scanner": {
+        "error": "Hiba történt a szkennelés közben",
+        "invalid_url": "Érvénytelen vonalkód URL",
+        "no_sources": "Nincs elérhető videóforrás",
+        "select_video_source": "Videóforrás kiválasztása",
+        "title": "Szkenner",
+        "unsupported": "A Media Stream API nem támogatott HTTPS nélkül"
     },
     "tools": {
         "actions": "Készletműveletek",

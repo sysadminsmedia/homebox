@@ -30,18 +30,20 @@ type (
 	}
 
 	ItemQuery struct {
-		Page            int
-		PageSize        int
-		Search          string       `json:"search"`
-		AssetID         AssetID      `json:"assetId"`
-		LocationIDs     []uuid.UUID  `json:"locationIds"`
-		LabelIDs        []uuid.UUID  `json:"labelIds"`
-		NegateLabels    bool         `json:"negateLabels"`
-		ParentItemIDs   []uuid.UUID  `json:"parentIds"`
-		SortBy          string       `json:"sortBy"`
-		IncludeArchived bool         `json:"includeArchived"`
-		Fields          []FieldQuery `json:"fields"`
-		OrderBy         string       `json:"orderBy"`
+		Page             int
+		PageSize         int
+		Search           string       `json:"search"`
+		AssetID          AssetID      `json:"assetId"`
+		LocationIDs      []uuid.UUID  `json:"locationIds"`
+		LabelIDs         []uuid.UUID  `json:"labelIds"`
+		NegateLabels     bool         `json:"negateLabels"`
+		OnlyWithoutPhoto bool         `json:"onlyWithoutPhoto"`
+		OnlyWithPhoto    bool         `json:"onlyWithPhoto"`
+		ParentItemIDs    []uuid.UUID  `json:"parentIds"`
+		SortBy           string       `json:"sortBy"`
+		IncludeArchived  bool         `json:"includeArchived"`
+		Fields           []FieldQuery `json:"fields"`
+		OrderBy          string       `json:"orderBy"`
 	}
 
 	ItemField struct {
@@ -58,6 +60,7 @@ type (
 		ImportRef   string    `json:"-"`
 		ParentID    uuid.UUID `json:"parentId"    extensions:"x-nullable"`
 		Name        string    `json:"name"        validate:"required,min=1,max=255"`
+		Quantity    int       `json:"quantity"`
 		Description string    `json:"description" validate:"max=1000"`
 		AssetID     AssetID   `json:"-"`
 
@@ -132,6 +135,9 @@ type (
 		Labels   []LabelSummary   `json:"labels"`
 
 		ImageID *uuid.UUID `json:"imageId,omitempty"`
+
+		// Sale details
+		SoldTime time.Time `json:"soldTime"`
 	}
 
 	ItemOut struct {
@@ -185,7 +191,7 @@ func mapItemSummary(item *ent.Item) ItemSummary {
 	var imageID *uuid.UUID
 	if item.Edges.Attachments != nil {
 		for _, a := range item.Edges.Attachments {
-			if a.Primary && a.Edges.Document != nil {
+			if a.Primary && a.Type == attachment.TypePhoto {
 				imageID = &a.ID
 				break
 			}
@@ -298,9 +304,7 @@ func (e *ItemsRepository) getOne(ctx context.Context, where ...predicate.Item) (
 		WithLocation().
 		WithGroup().
 		WithParent().
-		WithAttachments(func(aq *ent.AttachmentQuery) {
-			aq.WithDocument()
-		}).
+		WithAttachments().
 		Only(ctx),
 	)
 }
@@ -385,6 +389,27 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 			}
 		}
 
+		if q.OnlyWithoutPhoto {
+			andPredicates = append(andPredicates, item.Not(
+				item.HasAttachmentsWith(
+					attachment.And(
+						attachment.Primary(true),
+						attachment.TypeEQ(attachment.TypePhoto),
+					),
+				)),
+			)
+		}
+
+		if q.OnlyWithPhoto {
+			andPredicates = append(andPredicates, item.HasAttachmentsWith(
+				attachment.And(
+					attachment.Primary(true),
+					attachment.TypeEQ(attachment.TypePhoto),
+				),
+			),
+			)
+		}
+
 		if len(q.LocationIDs) > 0 {
 			locationPredicates := make([]predicate.Item, 0, len(q.LocationIDs))
 			for _, l := range q.LocationIDs {
@@ -440,8 +465,7 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 		WithAttachments(func(aq *ent.AttachmentQuery) {
 			aq.Where(
 				attachment.Primary(true),
-			).
-				WithDocument()
+			)
 		})
 
 	if q.Page != -1 || q.PageSize != -1 {
@@ -549,6 +573,7 @@ func (e *ItemsRepository) Create(ctx context.Context, gid uuid.UUID, data ItemCr
 	q := e.db.Item.Create().
 		SetImportRef(data.ImportRef).
 		SetName(data.Name).
+		SetQuantity(data.Quantity).
 		SetDescription(data.Description).
 		SetGroupID(gid).
 		SetLocationID(data.LocationID).

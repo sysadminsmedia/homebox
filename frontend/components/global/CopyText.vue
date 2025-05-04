@@ -1,53 +1,64 @@
 <template>
-  <button @click="copyText">
-    <label
-      class="swap swap-rotate"
-      :class="{
-        'swap-active': copied,
-      }"
+  <Button size="icon" variant="outline" class="relative" @click="copyText">
+    <div
+      :data-copied="copied"
+      class="group absolute inset-0 flex items-center justify-center transition-transform duration-300 data-[copied=true]:rotate-[360deg]"
     >
       <MdiContentCopy
-        class="swap-off"
+        class="group-data-[copied=true]:hidden"
         :style="{
           height: `${iconSize}px`,
           width: `${iconSize}px`,
         }"
       />
       <MdiClipboard
-        class="swap-on"
+        class="hidden group-data-[copied=true]:block"
         :style="{
           height: `${iconSize}px`,
           width: `${iconSize}px`,
         }"
       />
-    </label>
-    <Teleport to="#app">
-      <BaseModal v-model="copyError">
-        <div class="space-y-2">
-          <p>
-            {{ $t("components.global.copy_text.failed_to_copy") }}
-            {{ isNotHttps ? $t("components.global.copy_text.https_required") : "" }}
-          </p>
-          <p class="text-sm">
-            {{ $t("components.global.copy_text.learn_more") }}
-            <a
-              href="https://homebox.software/en/tips-tricks.html#copy-to-clipboard"
-              class="text-primary hover:underline"
-              target="_blank"
-              rel="noopener"
-            >
-              {{ $t("components.global.copy_text.documentation") }}
-            </a>
-          </p>
-        </div>
-      </BaseModal></Teleport
-    >
-  </button>
+    </div>
+  </Button>
+
+  <AlertDialog v-model:open="copyError">
+    <AlertDialogContent>
+      <AlertDialogHeader>
+        <AlertDialogTitle class="space-y-2">
+          {{ $t("components.global.copy_text.failed_to_copy") }}
+          {{ isNotHttps ? $t("components.global.copy_text.https_required") : "" }}
+        </AlertDialogTitle>
+        <AlertDialogDescription class="text-sm">
+          {{ $t("components.global.copy_text.learn_more") }}
+          <a
+            href="https://homebox.software/en/user-guide/tips-tricks.html#copy-to-clipboard"
+            class="text-primary hover:underline"
+            target="_blank"
+            rel="noopener"
+          >
+            {{ $t("components.global.copy_text.documentation") }}
+          </a>
+        </AlertDialogDescription>
+      </AlertDialogHeader>
+      <AlertDialogFooter>
+        <AlertDialogAction>Continue</AlertDialogAction>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
 </template>
 
 <script setup lang="ts">
   import MdiContentCopy from "~icons/mdi/content-copy";
   import MdiClipboard from "~icons/mdi/clipboard";
+  import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+  } from "@/components/ui/alert-dialog";
 
   const props = defineProps({
     text: {

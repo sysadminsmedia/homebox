@@ -4,11 +4,23 @@
             "import_dialog": {
                 "change_warning": "Oppførsel for importjobber med eksisterende import_refs har blitt endret. Hvis en import_ref eksisterer i CSV-filen,\nvil objektet oppdateres med verdiene fra CSV-filen.",
                 "description": "Importer en CSV-fil som inneholder alle objekter, merkelapper og lokasjoner. Konsulter dokumentasjonen for mer\ninformasjon om påkrevd format.",
-                "title": "Importer CSV-fil",
-                "upload": "Last opp"
+                "title": "Importer CSV-fil"
+            },
+            "outdated": {
+                "current_version": "Nåværende versjon",
+                "dismiss": "Avvis",
+                "latest_version": "Siste versjon",
+                "new_version_available": "Ny versjon tilgjengelig",
+                "new_version_available_link": "Klikk her for å se utgivelsesnotatene"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "dokumentasjon",
+                "failed_to_copy": "Kunne ikke kopiere tekst til utklippstavle",
+                "https_required": "fordi HTTPS er påkrevd",
+                "learn_more": "Lær mer i vår"
+            },
             "date_time": {
                 "ago": "{0} siden",
                 "days": "dager",
@@ -44,7 +56,6 @@
             "create_modal": {
                 "item_description": "Objektbeskrivelse",
                 "item_name": "Objektnavn",
-                "photo_button": "Foto 📷",
                 "title": "Opprett objekt"
             },
             "view": {
@@ -79,6 +90,9 @@
             "tree": {
                 "no_locations": "Ingen tilgjengelige lokasjoner. Legg til en ny lokasjon via\n `<`span class=\"link-primary\"`>`Opprett`<`/span`>`-knappen på navigasjonslinjen."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "Bruk nummertastene for å raskt velge en handling."
         }
     },
     "global": {
@@ -101,6 +115,7 @@
         "locations": "Lokasjoner",
         "maintenance": "Vedlikehold",
         "name": "Navn",
+        "navigate": "Naviger",
         "password": "Passord",
         "read_docs": "Les dokumentasjonen",
         "save": "Lagre",
@@ -165,6 +180,8 @@
         "next_page": "Neste side",
         "no_results": "Ingenting funnet",
         "notes": "Notater",
+        "only_with_photo": "Kun objekter med bilde",
+        "only_without_photo": "Kun objekter uten bilde",
         "options": "Alternativer",
         "order_by": "Sorter etter",
         "pages": "Side { page } av { totalPages }",
@@ -226,7 +243,6 @@
         "zh-TW": "Kinesisk (tradisjonell)"
     },
     "languages.da-DK": "Dansk",
-    "languages.fi.FI": "Finsk",
     "languages.ro-RO": "Rumensk",
     "languages.sk-SK": "Slovakisk",
     "locations": {

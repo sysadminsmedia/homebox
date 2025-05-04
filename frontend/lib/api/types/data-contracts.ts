@@ -1,6 +1,7 @@
 /* post-processed by ./scripts/process-types.go */
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -10,17 +11,22 @@
  * ---------------------------------------------------------------
  */
 
+export enum MaintenanceFilterStatus {
+  MaintenanceFilterStatusScheduled = "scheduled",
+  MaintenanceFilterStatusCompleted = "completed",
+  MaintenanceFilterStatusBoth = "both",
+}
+
+export enum ItemType {
+  ItemTypeLocation = "location",
+  ItemTypeItem = "item",
+}
+
 export interface CurrenciesCurrency {
   code: string;
   local: string;
   name: string;
   symbol: string;
-}
-
-export interface DocumentOut {
-  id: string;
-  path: string;
-  title: string;
 }
 
 export interface Group {
@@ -47,9 +53,10 @@ export interface GroupUpdate {
 
 export interface ItemAttachment {
   createdAt: Date | string;
-  document: DocumentOut;
   id: string;
+  path: string;
   primary: boolean;
+  title: string;
   type: string;
   updatedAt: Date | string;
 }
@@ -72,6 +79,7 @@ export interface ItemCreate {
    */
   name: string;
   parentId?: string | null;
+  quantity: number;
 }
 
 export interface ItemField {
@@ -148,12 +156,9 @@ export interface ItemSummary {
   name: string;
   purchasePrice: number;
   quantity: number;
+  /** Sale details */
+  soldTime: Date | string;
   updatedAt: Date | string;
-}
-
-export enum ItemType {
-  ItemTypeLocation = "location",
-  ItemTypeItem = "item",
 }
 
 export interface ItemUpdate {
@@ -306,12 +311,6 @@ export interface MaintenanceEntryWithDetails {
   scheduledDate: Date | string;
 }
 
-export enum MaintenanceFilterStatus {
-  MaintenanceFilterStatusScheduled = "scheduled",
-  MaintenanceFilterStatusCompleted = "completed",
-  MaintenanceFilterStatusBoth = "both",
-}
-
 export interface NotifierCreate {
   isActive: boolean;
   /**
@@ -392,6 +391,11 @@ export interface ValueOverTimeEntry {
   value: number;
 }
 
+export interface Latest {
+  date: Date | string;
+  version: string;
+}
+
 export interface UserRegistration {
   email: string;
   name: string;
@@ -404,6 +408,8 @@ export interface APISummary {
   build: Build;
   demo: boolean;
   health: boolean;
+  labelPrinting: boolean;
+  latest: Latest;
   message: string;
   title: string;
   versions: string[];

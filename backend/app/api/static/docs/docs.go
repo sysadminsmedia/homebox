@@ -10,7 +10,8 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {
-            "name": "Don't"
+            "name": "Homebox Team",
+            "url": "https://discord.homebox.software"
         },
         "version": "{{.Version}}"
     },
@@ -773,6 +774,12 @@ const docTemplate = `{
                         "required": true
                     },
                     {
+                        "type": "boolean",
+                        "description": "Is this the primary attachment",
+                        "name": "primary",
+                        "in": "formData"
+                    },
+                    {
                         "type": "string",
                         "description": "name of the file including extension",
                         "name": "name",
@@ -1034,6 +1041,123 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/repo.ItemPath"
                             }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/labelmaker/assets/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Items"
+                ],
+                "summary": "Get Asset label",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Asset ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Print this label, defaults to false",
+                        "name": "print",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "image/png",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/labelmaker/item/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Items"
+                ],
+                "summary": "Get Item label",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Print this label, defaults to false",
+                        "name": "print",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "image/png",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/labelmaker/location/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Locations"
+                ],
+                "summary": "Get Location label",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Location ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Print this label, defaults to false",
+                        "name": "print",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "image/png",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -1990,20 +2114,6 @@ const docTemplate = `{
                 }
             }
         },
-        "repo.DocumentOut": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
         "repo.Group": {
             "type": "object",
             "properties": {
@@ -2064,14 +2174,17 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
-                "document": {
-                    "$ref": "#/definitions/repo.DocumentOut"
-                },
                 "id": {
+                    "type": "string"
+                },
+                "path": {
                     "type": "string"
                 },
                 "primary": {
                     "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
                 },
                 "type": {
                     "type": "string"
@@ -2123,6 +2236,9 @@ const docTemplate = `{
                 "parentId": {
                     "type": "string",
                     "x-nullable": true
+                },
+                "quantity": {
+                    "type": "integer"
                 }
             }
         },
@@ -2347,6 +2463,10 @@ const docTemplate = `{
                 },
                 "quantity": {
                     "type": "integer"
+                },
+                "soldTime": {
+                    "description": "Sale details",
+                    "type": "string"
                 },
                 "updatedAt": {
                     "type": "string"
@@ -2950,6 +3070,17 @@ const docTemplate = `{
                 }
             }
         },
+        "services.Latest": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
         "services.UserRegistration": {
             "type": "object",
             "properties": {
@@ -2981,6 +3112,12 @@ const docTemplate = `{
                 },
                 "health": {
                     "type": "boolean"
+                },
+                "labelPrinting": {
+                    "type": "boolean"
+                },
+                "latest": {
+                    "$ref": "#/definitions/services.Latest"
                 },
                 "message": {
                     "type": "string"
@@ -3128,9 +3265,9 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "",
+	Host:             "demo.homebox.software",
 	BasePath:         "/api",
-	Schemes:          []string{},
+	Schemes:          []string{"https", "http"},
 	Title:            "Homebox API",
 	Description:      "Track, Manage, and Organize your Things.",
 	InfoInstanceName: "swagger",

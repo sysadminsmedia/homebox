@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"math/big"
 	"net/http"
-	"net/url"
 	"strings"
 	"time"
 
@@ -56,16 +55,18 @@ func (ctrl *V1Controller) HandleItemsGetAll() errchain.HandlerFunc {
 		}
 
 		v := repo.ItemQuery{
-			Page:            queryIntOrNegativeOne(params.Get("page")),
-			PageSize:        queryIntOrNegativeOne(params.Get("pageSize")),
-			Search:          params.Get("q"),
-			LocationIDs:     queryUUIDList(params, "locations"),
-			LabelIDs:        queryUUIDList(params, "labels"),
-			NegateLabels:    queryBool(params.Get("negateLabels")),
-			ParentItemIDs:   queryUUIDList(params, "parentIds"),
-			IncludeArchived: queryBool(params.Get("includeArchived")),
-			Fields:          filterFieldItems(params["fields"]),
-			OrderBy:         params.Get("orderBy"),
+			Page:             queryIntOrNegativeOne(params.Get("page")),
+			PageSize:         queryIntOrNegativeOne(params.Get("pageSize")),
+			Search:           params.Get("q"),
+			LocationIDs:      queryUUIDList(params, "locations"),
+			LabelIDs:         queryUUIDList(params, "labels"),
+			NegateLabels:     queryBool(params.Get("negateLabels")),
+			OnlyWithoutPhoto: queryBool(params.Get("onlyWithoutPhoto")),
+			OnlyWithPhoto:    queryBool(params.Get("onlyWithPhoto")),
+			ParentItemIDs:    queryUUIDList(params, "parentIds"),
+			IncludeArchived:  queryBool(params.Get("includeArchived")),
+			Fields:           filterFieldItems(params["fields"]),
+			OrderBy:          params.Get("orderBy"),
 		}
 
 		if strings.HasPrefix(v.Search, "#") {
@@ -87,6 +88,9 @@ func (ctrl *V1Controller) HandleItemsGetAll() errchain.HandlerFunc {
 		items, err := ctrl.repo.Items.QueryByGroup(ctx, ctx.GID, extractQuery(r))
 		totalPrice := new(big.Int)
 		for _, item := range items.Items {
+			if !item.SoldTime.IsZero() { // Skip items with a non-null SoldDate
+				continue
+			}
 			totalPrice.Add(totalPrice, big.NewInt(int64(item.PurchasePrice*100)))
 		}
 
@@ -337,7 +341,7 @@ func (ctrl *V1Controller) HandleItemsExport() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		ctx := services.NewContext(r.Context())
 
-		csvData, err := ctrl.svc.Items.ExportCSV(r.Context(), ctx.GID, getHBURL(r.Header.Get("Referer"), ctrl.url))
+		csvData, err := ctrl.svc.Items.ExportCSV(r.Context(), ctx.GID, GetHBURL(r.Header.Get("Referer"), ctrl.url))
 		if err != nil {
 			log.Err(err).Msg("failed to export items")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
@@ -353,27 +357,4 @@ func (ctrl *V1Controller) HandleItemsExport() errchain.HandlerFunc {
 		writer.Comma = ','
 		return writer.WriteAll(csvData)
 	}
-}
-
-func getHBURL(refererHeader, fallback string) (hbURL string) {
-	hbURL = refererHeader
-	if hbURL == "" {
-		hbURL = fallback
-	}
-
-	return stripPathFromURL(hbURL)
-}
-
-// stripPathFromURL removes the path from a URL.
-// ex. https://example.com/tools -> https://example.com
-func stripPathFromURL(rawURL string) string {
-	parsedURL, err := url.Parse(rawURL)
-	if err != nil {
-		log.Err(err).Msg("failed to parse URL")
-		return ""
-	}
-
-	strippedURL := url.URL{Scheme: parsedURL.Scheme, Host: parsedURL.Host}
-
-	return strippedURL.String()
 }

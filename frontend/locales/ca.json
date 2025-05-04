@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "El comportament de les importacions amb import_refs existents ha canviat. Si hi ha un import_refs al fitxer CSV, \nl'article s'actualitzarà amb els valors del fitxer CSV.",
                 "description": "Importa un fitxer CSV que contingui els articles, etiquetes i ubicacions. \nConsulteu la documentació per a més informació sobre el format requerit.",
-                "title": "Importa un fitxer CSV",
-                "upload": "Puja"
+                "title": "Importa un fitxer CSV"
             }
         },
         "global": {
@@ -44,7 +43,6 @@
             "create_modal": {
                 "item_description": "Descripció de l'article",
                 "item_name": "Nom de l'article",
-                "photo_button": "Foto 📷",
                 "title": "Crea un article"
             },
             "view": {
@@ -226,11 +224,10 @@
         "zh-TW": "Xinès (tradicional)"
     },
     "languages.da-DK": "Danès",
-    "languages.fi.FI": "Finès",
     "languages.ro-RO": "Romanès",
     "languages.sk-SK": "Eslovac",
     "locations": {
-        "child_locations": "Ubicacions infantils",
+        "child_locations": "Ubicacions filles",
         "collapse_tree": "Col·lapsa l'arbre",
         "no_results": "No s'han trobat ubicacions",
         "update_location": "Actualitza ubicació"

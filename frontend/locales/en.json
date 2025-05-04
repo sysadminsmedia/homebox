@@ -4,11 +4,23 @@
             "import_dialog": {
                 "change_warning": "Behavior for imports with existing import_refs has changed. If an import_ref is present in the CSV file, the \nitem will be updated with the values in the CSV file.",
                 "description": "Import a CSV file containing your items, labels, and locations. See documentation for more information on the \nrequired format.",
-                "title": "Import CSV File",
-                "upload": "Upload"
+                "title": "Import CSV File"
+            },
+            "outdated": {
+                "current_version": "Current Version",
+                "dismiss": "Dismiss",
+                "latest_version": "Latest Version",
+                "new_version_available": "New Version Available",
+                "new_version_available_link": "Click here to view the release notes"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "documentation",
+                "failed_to_copy": "Failed to copy text to clipboard",
+                "https_required": "because HTTPS is required",
+                "learn_more": "Learn more in our"
+            },
             "date_time": {
                 "ago": "{0} ago",
                 "days": "days",
@@ -33,25 +45,30 @@
                 "years": "years",
                 "yesterday": "yesterday"
             },
+            "label_maker": {
+                "browser_print": "Print from Browser",
+                "confirm_description": "Are you sure you want to print this label?",
+                "download": "Download Label",
+                "print": "Print label",
+                "server_print": "Print on Server",
+                "titles": "Labels"
+            },
             "page_qr_code": {
-                "page_url": "Page URL"
+                "page_url": "Page URL",
+                "qr_tooltip": "Show QR Code"
             },
             "password_score": {
                 "password_strength": "Password Strength"
-            },
-            "copy_text": {
-                "failed_to_copy": "Failed to copy text to clipboard",
-                "https_required": "because HTTPS is required",
-                "learn_more": "Learn more in our",
-                "documentation": "documentation"
             }
         },
         "item": {
             "create_modal": {
                 "item_description": "Item Description",
                 "item_name": "Item Name",
-                "photo_button": "Photo 📷",
-                "title": "Create Item"
+                "item_quantity": "Item Quantity",                
+                "item_photo": "Item Photo 📷",
+                "title": "Create Item",
+                "upload_photos": "Upload Photos"
             },
             "view": {
                 "selectable": {
@@ -62,7 +79,9 @@
                 },
                 "table": {
                     "page": "Page",
-                    "rows_per_page": "Rows per page"
+                    "rows_per_page": "Rows per page",
+                    "table_settings": "Table Settings",
+                    "headers": "Headers"
                 }
             }
         },
@@ -71,6 +90,9 @@
                 "label_description": "Label Description",
                 "label_name": "Label Name",
                 "title": "Create Label"
+            },
+            "selector": {
+                "select_labels": "Select Labels"
             }
         },
         "location": {
@@ -80,16 +102,24 @@
                 "title": "Create Location"
             },
             "selector": {
-                "parent_location": "Parent Location"
+                "no_location_found": "No location found",
+                "parent_location": "Parent Location",
+                "search_location": "Search Locations",
+                "select_location": "Select a Location"
             },
             "tree": {
                 "no_locations": "No locations available. Add new locations through the\n `<`span class=\"link-primary\"`>`Create`<`/span`>` button on the navigation bar."
             }
+        },
+        "quick_menu": {
+            "no_results": "No results found.",
+            "shortcut_hint": "Use the number keys to quickly select an action."
         }
     },
     "global": {
         "add": "Add",
         "build": "Build: { build }",
+        "cancel": "Cancel",
         "confirm": "Confirm",
         "create": "Create",
         "create_and_add": "Create and Add Another",
@@ -100,6 +130,10 @@
         "edit": "Edit",
         "email": "Email",
         "follow_dev": "Follow the Developer",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Version: { version } Build: { build } '</a>'"
+        },
         "github": "GitHub Project",
         "items": "Items",
         "join_discord": "Join the Discord",
@@ -107,6 +141,7 @@
         "locations": "Locations",
         "maintenance": "Maintenance",
         "name": "Name",
+        "navigate": "Navigate",
         "password": "Password",
         "read_docs": "Read the Docs",
         "save": "Save",
@@ -116,7 +151,10 @@
         "update": "Update",
         "value": "Value",
         "version": "Version: { version }",
-        "welcome": "Welcome, { username }"
+        "welcome": "Welcome, { username }",
+        "insured": "Insured",
+        "archived": "Archived",
+        "quantity": "Quantity"
     },
     "home": {
         "labels": "Labels",
@@ -171,6 +209,8 @@
         "next_page": "Next Page",
         "no_results": "No Items Found",
         "notes": "Notes",
+        "only_with_photo": "Only items with photo",
+        "only_without_photo": "Only items without photo",
         "options": "Options",
         "order_by": "Order By",
         "pages": "Page { page } of { totalPages }",
@@ -210,20 +250,30 @@
     },
     "languages": {
         "ca": "Catalan",
+        "cs-CZ": "Czech",
+        "da-DK": "Danish",
         "de": "German",
         "en": "English",
         "es": "Spanish",
+        "fi-FI": "Finnish",
         "fr": "French",
         "hu": "Hungarian",
+        "id-ID": "Indonesian",
         "it": "Italian",
         "ja-JP": "Japanese",
+        "ko-KR": "Korean",
+        "nb-NO": "Norwegian Bokmål",
         "nl": "Dutch",
         "pl": "Polish",
         "pt-BR": "Portuguese (Brazil)",
         "pt-PT": "Portuguese (Portugal)",
+        "ro-RO": "Romanian",
         "ru": "Russian",
+        "sk-SK": "Slovak",
         "sl": "Slovenian",
         "sv": "Swedish",
+        "ta-IN": "Tamil",
+        "th-TH": "Thai",
         "tr": "Turkish",
         "uk-UA": "Ukrainian",
         "zh-CN": "Chinese (Simplified)",
@@ -231,13 +281,11 @@
         "zh-MO": "Chinese (Macau)",
         "zh-TW": "Chinese (Traditional)"
     },
-    "languages.da-DK": "Danish",
-    "languages.fi.FI": "Finnish",
-    "languages.ro-RO": "Romanian",
-    "languages.sk-SK": "Slovak",
+    "languages.sq-AL": "Albanian",
     "locations": {
         "child_locations": "Child Locations",
         "collapse_tree": "Collapse Tree",
+        "expand_tree": "Expand Tree",
         "no_results": "No Locations Found",
         "update_location": "Update Location"
     },
@@ -284,6 +332,7 @@
         "locations": "Locations",
         "maintenance": "Maintenance",
         "profile": "Profile",
+        "scanner": "Scanner",
         "search": "Search",
         "tools": "Tools"
     },
@@ -315,6 +364,14 @@
         "url": "URL",
         "user_profile": "User Profile",
         "user_profile_sub": "Invite users, and manage your account."
+    },
+    "scanner": {
+        "title": "Scanner",
+        "error": "An error occurred while scanning",
+        "invalid_url": "Invalid barcode URL",
+        "no_sources": "No video sources available",
+        "select_video_source": "Pick a video source",
+        "unsupported": "Media Stream API is not supported without HTTPS"
     },
     "tools": {
         "actions": "Inventory Actions",

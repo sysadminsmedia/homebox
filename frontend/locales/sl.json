@@ -4,11 +4,23 @@
             "import_dialog": {
                 "change_warning": "Vedenje pri uvozih z obstoječimi import_refs se je spremenilo. Če je import_ref prisoten v datoteki CSV, bo\nelement posodobljen z vrednostmi v datoteki CSV.",
                 "description": "Uvozite datoteko CSV, ki vsebuje vaše predmete, oznake in lokacije. Poglejte si dokumentacijo za več informacij o\nzahtevani obliki.",
-                "title": "Uvozi CSV datoteko",
-                "upload": "Naloži"
+                "title": "Uvozi CSV datoteko"
+            },
+            "outdated": {
+                "current_version": "Trenutna različica",
+                "dismiss": "Opusti",
+                "latest_version": "Najnovejša različica:",
+                "new_version_available": "Nova različica je na voljo",
+                "new_version_available_link": "Kliknite tukaj za ogled opomb ob izdaji"
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "dokumentacija",
+                "failed_to_copy": "Kopiranje v odložišče ni uspelo",
+                "https_required": "ker je potreben https",
+                "learn_more": "Več o tem v"
+            },
             "date_time": {
                 "ago": "pred {0}",
                 "days": "dni",
@@ -44,7 +56,6 @@
             "create_modal": {
                 "item_description": "opis predmeta",
                 "item_name": "ime predmeta",
-                "photo_button": "Fotografija 📷",
                 "title": "Ustvari predmet"
             },
             "view": {
@@ -79,6 +90,9 @@
             "tree": {
                 "no_locations": "Ni razpoložljivih lokacij. Dodaj novo lokacije preko \n `<`span class=\"link-primary\"`>`Ustvari`<`/span`>` gumba v navigacijski vrstici."
             }
+        },
+        "quick_menu": {
+            "shortcut_hint": "S številskimi tipkami hitro izberite dejanje."
         }
     },
     "global": {
@@ -101,6 +115,7 @@
         "locations": "Lokacije",
         "maintenance": "Vzdrževanje",
         "name": "Naziv",
+        "navigate": "Krmari",
         "password": "Geslo",
         "read_docs": "Preberite dokumentacijo",
         "save": "Shrani",
@@ -118,7 +133,7 @@
         "recently_added": "Nedavno dodano",
         "storage_locations": "Lokacije shramb",
         "total_items": "Predmetov skupaj",
-        "total_labels": "Skupaj nalepk",
+        "total_labels": "Skupaj oznak",
         "total_locations": "Skupaj lokacij",
         "total_value": "Skupna vrednost"
     },
@@ -165,6 +180,8 @@
         "next_page": "Naslednja stran",
         "no_results": "Ni najdenih predmetov",
         "notes": "Opombe",
+        "only_with_photo": "Samo elementi s fotografijo",
+        "only_without_photo": "Samo predmeti brez fotografije",
         "options": "Možnosti",
         "order_by": "Razvrsti po",
         "pages": "Stran { page } od { totalPages }",
@@ -226,7 +243,6 @@
         "zh-TW": "Kitajsščina (tradicionalna)"
     },
     "languages.da-DK": "Danščina",
-    "languages.fi.FI": "Finščina",
     "languages.ro-RO": "Romunščina",
     "languages.sk-SK": "Slovaščina",
     "locations": {
