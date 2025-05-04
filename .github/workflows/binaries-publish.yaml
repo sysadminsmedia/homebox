@@ -32,7 +32,7 @@ jobs:
       - name: Build Frontend and Copy to Backend
         working-directory: frontend
         run: |
-          pnpm install --shamefully-hoist
+          pnpm install
           pnpm run build
           cp -r ./.output/public ../backend/app/api/static/
 
