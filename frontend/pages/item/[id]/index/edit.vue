@@ -370,7 +370,7 @@
 
   function openAttachmentEditDialog(attachment: ItemAttachment) {
     editState.id = attachment.id;
-    editState.title = attachment.document.title;
+    editState.title = attachment.title;
     editState.type = attachment.type;
     editState.primary = attachment.primary;
     openDialog("attachment-edit");
@@ -576,9 +576,9 @@
             <LabelSelector v-model="item.labelIds" :labels="labels" />
           </div>
 
-          <div class="border-t border-gray-300 sm:p-0">
-            <div v-for="field in mainFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y sm:divide-gray-300">
-              <div class="border-b border-gray-300 px-4 pb-4 pt-2 sm:px-6">
+          <div class="border-t sm:p-0">
+            <div v-for="field in mainFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y">
+              <div class="border-b px-4 pb-4 pt-2 sm:px-6">
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
@@ -622,7 +622,7 @@
 
         <BaseCard v-if="preferences.editorAdvancedView">
           <template #title> {{ $t("items.custom_fields") }} </template>
-          <div class="space-y-4 divide-y divide-gray-300 border-t px-5">
+          <div class="space-y-4 divide-y border-t px-5">
             <div
               v-for="(field, idx) in item.fields"
               :key="`field-${idx}`"
@@ -648,12 +648,12 @@
           </div>
         </BaseCard>
 
-        <div ref="attDropZone" class="overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
+        <Card ref="attDropZone" class="overflow-visible shadow-xl">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">{{ $t("items.attachments") }}</h3>
             <p class="text-xs">{{ $t("items.changes_persisted_immediately") }}</p>
           </div>
-          <div class="border-t border-gray-300 p-4">
+          <div class="border-t p-4">
             <div v-if="attDropZoneActive" class="grid grid-cols-4 gap-4">
               <DropZone @drop="dropPhoto"> {{ $t("items.photos") }} </DropZone>
               <DropZone @drop="dropWarranty"> {{ $t("items.warranty") }} </DropZone>
@@ -671,15 +671,15 @@
             </button>
           </div>
 
-          <div class="border-t border-gray-300 p-4">
-            <ul role="list" class="divide-y divide-gray-400 rounded-md border border-gray-400">
+          <div class="border-t p-4">
+            <ul role="list" class="divide-y rounded-md border">
               <li
                 v-for="attachment in item.attachments"
                 :key="attachment.id"
                 class="grid grid-cols-6 justify-between py-3 pl-3 pr-4 text-sm"
               >
                 <p class="col-span-4 my-auto">
-                  {{ attachment.document.title }}
+                  {{ attachment.title }}
                 </p>
                 <p class="my-auto">
                   {{ $t(`items.${attachment.type}`) }}
@@ -705,19 +705,15 @@
               </li>
             </ul>
           </div>
-        </div>
+        </Card>
 
-        <div v-if="preferences.editorAdvancedView" class="overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
+        <Card v-if="preferences.editorAdvancedView" class="overflow-visible shadow-xl">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">{{ $t("items.purchase_details") }}</h3>
           </div>
-          <div class="border-t border-gray-300 sm:p-0">
-            <div
-              v-for="field in purchaseFields"
-              :key="field.ref"
-              class="grid grid-cols-1 sm:divide-y sm:divide-gray-300"
-            >
-              <div class="border-b border-gray-300 px-4 pb-4 pt-2 sm:px-6">
+          <div class="border-t sm:p-0">
+            <div v-for="field in purchaseFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y">
+              <div class="border-b px-4 pb-4 pt-2 sm:px-6">
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
@@ -756,19 +752,15 @@
               </div>
             </div>
           </div>
-        </div>
+        </Card>
 
-        <div v-if="preferences.editorAdvancedView" class="overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
+        <Card v-if="preferences.editorAdvancedView" class="overflow-visible shadow-xl">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">{{ $t("items.warranty_details") }}</h3>
           </div>
-          <div class="border-t border-gray-300 sm:p-0">
-            <div
-              v-for="field in warrantyFields"
-              :key="field.ref"
-              class="grid grid-cols-1 sm:divide-y sm:divide-gray-300"
-            >
-              <div class="border-b border-gray-300 px-4 pb-4 pt-2 sm:px-6">
+          <div class="border-t sm:p-0">
+            <div v-for="field in warrantyFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y">
+              <div class="border-b px-4 pb-4 pt-2 sm:px-6">
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
@@ -807,15 +799,15 @@
               </div>
             </div>
           </div>
-        </div>
+        </Card>
 
-        <div v-if="preferences.editorAdvancedView" class="overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
+        <Card v-if="preferences.editorAdvancedView" class="overflow-visible shadow-xl">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">Sold Details</h3>
           </div>
-          <div class="border-t border-gray-300 sm:p-0">
-            <div v-for="field in soldFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y sm:divide-gray-300">
-              <div class="border-b border-gray-300 px-4 pb-4 pt-2 sm:px-6">
+          <div class="border-t sm:p-0">
+            <div v-for="field in soldFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y">
+              <div class="border-b px-4 pb-4 pt-2 sm:px-6">
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
@@ -854,7 +846,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     </section>
   </div>

@@ -65,6 +65,7 @@
             "create_modal": {
                 "item_description": "Item Description",
                 "item_name": "Item Name",
+                "item_quantity": "Item Quantity",                
                 "item_photo": "Item Photo 📷",
                 "title": "Create Item",
                 "upload_photos": "Upload Photos"

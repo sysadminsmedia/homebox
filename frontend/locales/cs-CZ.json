@@ -19,7 +19,7 @@
                 "documentation": "Dokumentace",
                 "failed_to_copy": "Kopírování textu do schránky se nezdařilo",
                 "https_required": "protože je vyžadován protokol HTTPS",
-                "learn_more": "Víc se dozvíš v našem"
+                "learn_more": "Víc se dozvíte v našem"
             },
             "date_time": {
                 "ago": "Před {0}",
@@ -66,6 +66,7 @@
                 "item_description": "Popis Položky",
                 "item_name": "Jméno Položky",
                 "item_photo": "Fotografie položky 📷",
+                "item_quantity": "Množství položek",
                 "title": "Vytvořit položku",
                 "upload_photos": "Nahrát fotografie"
             },
@@ -86,9 +87,9 @@
         },
         "label": {
             "create_modal": {
-                "label_description": "Popis Popisku",
-                "label_name": "Název Popisku",
-                "title": "Vytvořit popisek"
+                "label_description": "Popis Štítku",
+                "label_name": "Název Štítku",
+                "title": "Vytvořit štítek"
             },
             "selector": {
                 "select_labels": "Vybrat štítky"
@@ -131,13 +132,13 @@
         "email": "Email",
         "follow_dev": "Sledovat vývojáře",
         "footer": {
-            "api_link": "`<` a href=\"https://homebox.software/en/api/\" target=\"_blank\"`>`API`<`/a`>`",
-            "version_link": "`<` a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"`>` Verze: { version } Build: { build } `<`/a`>`"
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Verze: { version } Sestavení: { build } '</a>'"
         },
         "github": "GitHub Projekt",
         "insured": "Pojištěné",
         "items": "Položky",
-        "join_discord": "Připojte se na Discors",
+        "join_discord": "Připojte se na Discord",
         "labels": "Popisky",
         "locations": "Lokality",
         "maintenance": "Údržba",
@@ -156,12 +157,12 @@
         "welcome": "Vítejte, { username }"
     },
     "home": {
-        "labels": "Popisky",
+        "labels": "Štítky",
         "quick_statistics": "Rychlé informace",
         "recently_added": "Nedávno přidané",
         "storage_locations": "Úložné lokace",
         "total_items": "Celkových Položek",
-        "total_labels": "Celkových popisků",
+        "total_labels": "Celkových štítků",
         "total_locations": "Celkových lokací",
         "total_value": "Celková hodnota"
     },
@@ -182,8 +183,8 @@
         "advanced": "Pokročilé",
         "archived": "Archivované",
         "asset_id": "ID Položky",
-        "attachment": "Přiloha",
-        "attachments": "Přilohy",
+        "attachment": "Příloha",
+        "attachments": "Přílohy",
         "changes_persisted_immediately": "Změny v přílohách budou uloženy okamžitě",
         "created_at": "Vytvořeno v",
         "custom_fields": "Vlastní Data",
@@ -191,7 +192,7 @@
         "details": "Detaily",
         "drag_and_drop": "Přetáhněte sem soubory nebo klikněte pro výběr",
         "edit_details": "Upravit Detaily",
-        "field_selector": "Výběř Pole",
+        "field_selector": "Výběr Pole",
         "field_value": "Hodnota Pole",
         "first": "První",
         "include_archive": "Zahrnout i archivované Položky",
@@ -203,8 +204,8 @@
         "manuals": "Návody",
         "manufacturer": "Výrobce",
         "model_number": "Číslo Modelu",
-        "name": "Jméno",
-        "negate_labels": "Prohodit Vybrané Popisky",
+        "name": "Název",
+        "negate_labels": "Prohodit Vybrané Štítky",
         "next_page": "Další Stránka",
         "no_results": "Nebyly nalezeny žádné Položky",
         "notes": "Poznámky",
@@ -227,7 +228,7 @@
         "receipts": "Účtenky",
         "reset_search": "Obnovit Vyhledávání",
         "results": "{ total } Výsledků",
-        "serial_number": "Seriové číslo",
+        "serial_number": "Sériové číslo",
         "show_advanced_view_options": "Zobrazit Pokročilé Možnosti Zobrazení",
         "sold_at": "Prodáno",
         "sold_details": "Detaily Prodeje",
@@ -244,8 +245,8 @@
         "warranty_expires": "Expirace Záruky"
     },
     "labels": {
-        "no_results": "Žádné Popisky nebyly nalezeny",
-        "update_label": "Aktualizovat Popisek"
+        "no_results": "Žádné Štítky nebyly nalezeny",
+        "update_label": "Aktualizovat Štítek"
     },
     "languages": {
         "ca": "Katalánština",
@@ -283,7 +284,7 @@
     "languages.sq-AL": "Albánština",
     "locations": {
         "child_locations": "Podřazené Lokace",
-        "collapse_tree": "Zabalit Strom",
+        "collapse_tree": "Zabalit strom",
         "expand_tree": "Rozbalit strom",
         "no_results": "Žádné lokace nebyly nalezeny",
         "update_location": "Aktualizovat Lokaci"
@@ -304,7 +305,7 @@
         },
         "modal": {
             "completed_date": "Datum Dokončení",
-            "cost": "Nákaldy",
+            "cost": "Náklady",
             "delete_confirmation": "Jste si jistí že chcete tento záznam smazat?",
             "edit_action": "Aktualizovat",
             "edit_title": "Upravit Záznam",
@@ -325,7 +326,7 @@
     },
     "menu": {
         "create_item": "Položka",
-        "create_label": "Popisek",
+        "create_label": "Štítek",
         "create_location": "Lokace",
         "home": "Domů",
         "locations": "Lokality",
@@ -341,11 +342,11 @@
         "currency_format": "Měnový Formát",
         "current_password": "Aktuální Heslo",
         "delete_account": "Smazat Účet",
-        "delete_account_sub": "Smaže se vás účet a všechny s ním spojená data. Z této akce se nelze navrátit.",
+        "delete_account_sub": "Smaže se Váš účet a všechny s ním spojená data. Z této akce se nelze navrátit.",
         "display_header": "{ currentValue, select, true {Hide Header} false {Show Header} other {Not Hit}}",
         "enabled": "Povoleno",
         "example": "Příklad",
-        "gen_invite": "Vytvořit zvací odkaz",
+        "gen_invite": "Vytvořit odkaz pozvánky",
         "group_settings": "Nastavení Skupiny",
         "group_settings_sub": "Nastavení sdílené skupiny. Je možné, že bude nutné obnovit prohlížeč, aby se některá nastavení použila.",
         "inactive": "Neaktivní",
@@ -377,10 +378,10 @@
         "actions_set": {
             "ensure_ids": "Zajištění ID majetku",
             "ensure_ids_button": "Zajištění ID majetku",
-            "ensure_ids_sub": "Zajistí, aby všechny položky v inventáři měly platné pole asset_id. To se provádí tak, že se v databázi zjistí nejvyšší aktuální pole asset_id a na každou položku, která má nenastavené pole asset_id, se použije další hodnota. To se provádí v pořadí podle pole created_at.",
+            "ensure_ids_sub": "Zajistí, aby všechny položky v inventáři měly platné pole asset_id. To se provádí tak, že se v databázi zjistí nejvyšší aktuální pole asset_id a na každou položku, která nemá nastavené pole asset_id, se použije další hodnota. To se provádí v pořadí podle pole created_at.",
             "ensure_import_refs": "Zajištění importu referencí",
             "ensure_import_refs_button": "Zajistit import referencí",
-            "ensure_import_refs_sub": "Zajistí, aby všechny položky v inventáři měly platné pole import_ref. To se provádí náhodným generováním osmiznakového řetězce pro každou položku, která má nenastavené pole import_ref.",
+            "ensure_import_refs_sub": "Zajistí, aby všechny položky v inventáři měly platné pole import_ref. To se provádí náhodným generováním osmiznakového řetězce pro každou položku, která nemá nastavené pole import_ref.",
             "set_primary_photo": "Nastavit primární fotografii",
             "set_primary_photo_button": "Nastavit primární fotografii",
             "set_primary_photo_sub": "Ve verzi Homeboxu v0.10.0 bylo do příloh typu fotografie přidáno pole primárního obrázku. Tato akce nastaví pole primárního obrázku na první obrázek v poli příloh v databázi, pokud ještě není nastaven. <a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">Viz GitHub PR #576</a>",
@@ -403,7 +404,7 @@
         "reports_set": {
             "asset_labels": "Identifikační štítky majetku",
             "asset_labels_button": "Generátor štítků",
-            "asset_labels_sub": "Generuje tisknutelné PDF štítky pro řadu ID majetku. Ty nejsou specifické pro váš inventář, takže si můžete štítky vytisknout dopředu a použít je na inventář, až je obdržíte.",
+            "asset_labels_sub": "Generuje tisknutelné PDF štítky pro řadu ID majetku. Ty nejsou specifické pro Váš inventář, takže si můžete štítky vytisknout dopředu a použít je na inventář, až je obdržíte.",
             "bill_of_materials": "Soupis materiálů",
             "bill_of_materials_button": "Generovat kusovník",
             "bill_of_materials_sub": "Vytvoří soubor CSV (Comma Separated Values), který lze importovat do tabulkového procesoru. Jedná se o souhrn vašich zásob se základními informacemi o položkách a cenách."

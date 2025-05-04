@@ -4,16 +4,13 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
-	atlas "ariga.io/atlas/sql/migrate"
-	"entgo.io/ent/dialect/sql/schema"
+	"github.com/pressly/goose/v3"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
@@ -28,10 +25,13 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/migrations"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
 
 	_ "github.com/lib/pq"
+	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/postgres"
+	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/sqlite3"
 	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
 )
 
@@ -133,52 +133,19 @@ func run(cfg *config.Config) error {
 			Str("database", cfg.Database.Database).
 			Msg("failed opening connection to {driver} database at {host}:{port}/{database}")
 	}
-	defer func(c *ent.Client) {
-		err := c.Close()
-		if err != nil {
-			log.Fatal().Err(err).Msg("failed to close database connection")
-		}
-	}(c)
 
-	// Always create a random temporary directory for migrations
-	tempUUID, err := uuid.NewUUID()
+	goose.SetBaseFS(migrations.Migrations(strings.ToLower(cfg.Database.Driver)))
+	err = goose.SetDialect(strings.ToLower(cfg.Database.Driver))
 	if err != nil {
+		log.Fatal().Str("driver", cfg.Database.Driver).Msg("unsupported database driver")
+		return fmt.Errorf("unsupported database driver: %s", cfg.Database.Driver)
+	}
+
+	err = goose.Up(c.Sql(), strings.ToLower(cfg.Database.Driver))
+	if err != nil {
+		log.Error().Err(err).Msg("failed to migrate database")
 		return err
 	}
-	temp := filepath.Join(os.TempDir(), fmt.Sprintf("homebox-%s", tempUUID.String()))
-
-	err = migrations.Write(temp, cfg.Database.Driver)
-	if err != nil {
-		return err
-	}
-
-	dir, err := atlas.NewLocalDir(temp)
-	if err != nil {
-		return err
-	}
-
-	options := []schema.MigrateOption{
-		schema.WithDir(dir),
-		schema.WithDropColumn(true),
-		schema.WithDropIndex(true),
-	}
-
-	err = c.Schema.Create(context.Background(), options...)
-	if err != nil {
-		log.Error().
-			Err(err).
-			Str("driver", cfg.Database.Driver).
-			Str("url", databaseURL).
-			Msg("failed creating schema resources")
-		return err
-	}
-
-	defer func() {
-		err := os.RemoveAll(temp)
-		if err != nil {
-			log.Error().Err(err).Msg("failed to remove temporary directory for database migrations")
-		}
-	}()
 
 	collectFuncs := []currencies.CollectorFunc{
 		currencies.CollectDefaults(),
@@ -203,7 +170,7 @@ func run(cfg *config.Config) error {
 
 	currencies, err := currencies.CollectionCurrencies(collectFuncs...)
 	if err != nil {
-		go log.Error().
+		log.Error().
 			Err(err).
 			Msg("failed to collect currencies")
 		return err

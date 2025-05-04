@@ -13,10 +13,12 @@
     <AppQuickMenuModal :actions="quickMenuActions" />
     <SidebarProvider :default-open="sidebarState">
       <Sidebar collapsible="icon">
-        <SidebarHeader class="items-center bg-base-200">
-          <SidebarGroupLabel class="text-base">{{ $t("global.welcome", { username: username }) }}</SidebarGroupLabel>
+        <SidebarHeader class="items-center">
+          <SidebarGroupLabel class="text-base group-data-[collapsible=icon]:hidden">{{
+            $t("global.welcome", { username: username })
+          }}</SidebarGroupLabel>
           <NuxtLink class="group-data-[collapsible=icon]:hidden" to="/home">
-            <div class="flex size-24 items-center justify-center rounded-full bg-base-300 p-4 text-neutral-content">
+            <div class="flex size-24 items-center justify-center rounded-full bg-background-accent p-4">
               <AppLogo />
             </div>
           </NuxtLink>
@@ -51,16 +53,15 @@
           </DropdownMenu>
         </SidebarHeader>
 
-        <SidebarContent class="bg-base-200">
+        <SidebarContent>
           <SidebarGroup>
             <SidebarMenu>
               <SidebarMenuItem v-for="n in nav" :key="n.id">
                 <SidebarMenuLink
                   :href="n.to"
                   :class="{
-                    'bg-secondary text-secondary-foreground': n.active?.value,
+                    'bg-accent text-accent-foreground': n.active?.value,
                     'text-nowrap': typeof locale === 'string' && locale.startsWith('zh-'),
-                    'hover:bg-base-300': !n.active?.value,
                   }"
                   :tooltip="n.name.value"
                 >
@@ -72,9 +73,9 @@
           </SidebarGroup>
         </SidebarContent>
 
-        <SidebarFooter class="bg-base-200">
+        <SidebarFooter>
           <SidebarMenuButton
-            class="flex justify-center hover:bg-base-300 group-data-[collapsible=icon]:justify-start group-data-[collapsible=icon]:bg-destructive group-data-[collapsible=icon]:text-destructive-foreground group-data-[collapsible=icon]:shadow-sm group-data-[collapsible=icon]:hover:bg-destructive/90"
+            class="flex justify-center group-data-[collapsible=icon]:justify-start group-data-[collapsible=icon]:bg-destructive group-data-[collapsible=icon]:text-destructive-foreground group-data-[collapsible=icon]:shadow-sm group-data-[collapsible=icon]:hover:bg-destructive/90"
             :tooltip="$t('global.sign_out')"
             @click="logout"
           >
@@ -87,14 +88,14 @@
 
         <SidebarRail />
       </Sidebar>
-      <SidebarInset class="min-h-screen bg-base-300">
+      <SidebarInset class="min-h-screen bg-background-accent">
         <div class="justify-center pt-20 lg:pt-0">
           <AppHeaderDecor v-if="preferences.displayHeaderDecor" class="-mt-10 hidden lg:block" />
           <SidebarTrigger class="absolute left-2 top-2 hidden lg:flex" variant="default" />
           <div class="fixed top-0 z-20 flex h-16 w-full items-center gap-2 bg-primary p-2 shadow-md lg:hidden">
-            <SidebarTrigger />
+            <SidebarTrigger class="hover:bg-foreground" />
             <NuxtLink to="/home">
-              <h2 class="flex text-3xl font-bold tracking-tight text-base-100">
+              <h2 class="flex text-3xl font-bold tracking-tight text-primary-foreground">
                 HomeB
                 <AppLogo class="-mb-3 w-8" />
                 x
@@ -103,7 +104,8 @@
           </div>
 
           <slot></slot>
-          <footer v-if="status" class="bottom-0 w-full bg-base-300 pb-4 text-center text-secondary-content">
+
+          <footer v-if="status" class="bottom-0 w-full pb-4 text-center">
             <p class="text-center text-sm">
               <span
                 v-html="

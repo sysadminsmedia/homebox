@@ -344,7 +344,7 @@
             "export_sub": "Exportă formatul CSV standard pentru Homebox. Această acțiune ca exporta toate articolele din inventar.",
             "import": "Importă Inventar",
             "import_button": "Importă Inventar",
-            "import_sub": "Importă formatul CSV standard pentru Homebox. Fără o coloana  '<code>'HB.import_ref'</code>', '<b>'nu'</b>' se vor suprascrie articole existente în inventar, doar se vor adăuga articole noi. Câmpurile ce au o coloană '<code>'HB.import_ref'</code>' vor fi contopite cu articole existente care au același import_ref, în cazul în care acesta există."
+            "import_sub": "Importă formatul standard CSV pentru Homebox. Fără un '<code> ' HB.import_ref' </code> 'coloană, aceasta va'<b>'nu' < / b> ' suprascrie orice elemente existente în inventarul dvs., adăugați doar elemente noi. Rânduri cu' < code> ' HB.import_ref' < / code> ' coloana sunt îmbinate în elementele existente cu același import_ref, dacă există unul."
         },
         "import_export_sub": "Importați și exportați inventarul într-un fișier CSV. Acest lucru este util atunci când se migrează inventarul către o instanță nouă de Homebox.",
         "reports": "Rapoarte",

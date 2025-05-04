@@ -1,2 +1,0 @@
--- create "maintenance_entries" table
-CREATE TABLE `maintenance_entries` (`id` uuid NOT NULL, `created_at` datetime NOT NULL, `updated_at` datetime NOT NULL, `date` datetime NOT NULL, `name` text NOT NULL, `description` text NULL, `cost` real NOT NULL DEFAULT 0, `item_id` uuid NOT NULL, PRIMARY KEY (`id`), CONSTRAINT `maintenance_entries_items_maintenance_entries` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`) ON DELETE CASCADE);

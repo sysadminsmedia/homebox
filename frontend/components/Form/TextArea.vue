@@ -3,7 +3,7 @@
     <Label :for="id" class="flex w-full px-1">
       <span>{{ label }}</span>
       <span class="grow"></span>
-      <span :class="{ 'text-red-600': isLengthInvalid }">
+      <span :class="{ 'text-destructive': isLengthInvalid }">
         {{ lengthIndicator }}
       </span>
     </Label>
@@ -19,7 +19,7 @@
     <Label :for="id" class="flex w-full px-1 py-2">
       <span>{{ label }}</span>
       <span class="grow"></span>
-      <span :class="{ 'text-red-600': isLengthInvalid }">
+      <span :class="{ 'text-destructive': isLengthInvalid }">
         {{ lengthIndicator }}
       </span>
     </Label>

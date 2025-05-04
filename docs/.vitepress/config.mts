@@ -53,6 +53,8 @@ export default defineConfig({
       { icon: 'discord', link: 'https://discord.homebox.software' },
       { icon: 'github', link: 'https://git.homebox.software' },
       { icon: 'mastodon', link: 'https://noc.social/@sysadminszone' },
+      { icon: 'lemmy', link: 'https://lemmy.world/c/homebox' },
+      { icon: 'reddit', link: 'https://www.reddit.com/r/homebox/' },
     ],
 
     footer: {

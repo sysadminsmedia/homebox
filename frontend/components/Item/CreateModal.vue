@@ -11,6 +11,7 @@
         :max-length="255"
         :min-length="1"
       />
+      <FormTextField v-model="form.quantity" :label="$t('components.item.create_modal.item_quantity')" type="number" />
       <FormTextArea
         v-model="form.description"
         :label="$t('components.item.create_modal.item_description')"
@@ -56,14 +57,10 @@
       </div>
 
       <!-- photo preview area is AFTER the create button, to avoid pushing the button below the screen on small displays -->
-      <div v-if="form.photos.length > 0" class="mt-4 border-t border-gray-300 px-4 pb-4">
+      <div v-if="form.photos.length > 0" class="mt-4 border-t px-4 pb-4">
         <div v-for="(photo, index) in form.photos" :key="index">
           <div class="mt-8 w-full">
-            <img
-              :src="photo.fileBase64"
-              class="w-full rounded border-gray-300 object-fill shadow-sm"
-              alt="Uploaded Photo"
-            />
+            <img :src="photo.fileBase64" class="w-full rounded object-fill shadow-sm" alt="Uploaded Photo" />
           </div>
           <div class="mt-2 flex items-center gap-2">
             <TooltipProvider class="flex gap-2" :delay-duration="0">
@@ -76,6 +73,26 @@
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Delete photo</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    size="icon"
+                    type="button"
+                    variant="default"
+                    @click.prevent="
+                      async () => {
+                        await rotateBase64Image90Deg(photo.fileBase64, index);
+                      }
+                    "
+                  >
+                    <MdiRotateClockwise />
+                    <div class="sr-only">Rotate photo</div>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Rotate photo</p>
                 </TooltipContent>
               </Tooltip>
               <!-- TODO: re-enable when we have a way to set primary photos -->
@@ -117,6 +134,7 @@
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
   import MdiDelete from "~icons/mdi/delete";
+  import MdiRotateClockwise from "~icons/mdi/rotate-clockwise";
   // import MdiStarOutline from "~icons/mdi/star-outline";
   // import MdiStar from "~icons/mdi/star";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
@@ -165,6 +183,7 @@
   const form = reactive({
     location: locations.value && locations.value.length > 0 ? locations.value[0] : ({} as LocationOut),
     name: "",
+    quantity: 1,
     description: "",
     color: "",
     labels: [] as string[],
@@ -242,6 +261,7 @@
     const out: ItemCreate = {
       parentId: null,
       name: form.name,
+      quantity: form.quantity,
       description: form.description,
       locationId: form.location.id as string,
       labelIds: form.labels,
@@ -282,6 +302,7 @@
     }
 
     form.name = "";
+    form.quantity = 1;
     form.description = "";
     form.color = "";
     form.photos = [];
@@ -292,6 +313,81 @@
     if (close) {
       closeDialog("create-item");
       navigateTo(`/item/${data.id}`);
+    }
+  }
+
+  function dataURLtoFile(dataURL: string, fileName: string) {
+    try {
+      const arr = dataURL.split(",");
+      const mimeMatch = arr[0].match(/:(.*?);/);
+      if (!mimeMatch || !mimeMatch[1]) {
+        throw new Error("Invalid data URL format");
+      }
+      const mime = mimeMatch[1];
+
+      // Validate mime type is an image
+      if (!mime.startsWith("image/")) {
+        throw new Error("Invalid mime type, expected image");
+      }
+
+      const bstr = atob(arr[arr.length - 1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new File([u8arr], fileName, { type: mime });
+    } catch (error) {
+      console.error("Error converting data URL to file:", error);
+      // Return a fallback or rethrow based on your error handling strategy
+      throw error;
+    }
+  }
+
+  async function rotateBase64Image90Deg(base64Image: string, index: number) {
+    // Create an off-screen canvas
+    const offScreenCanvas = document.createElement("canvas");
+    const offScreenCanvasCtx = offScreenCanvas.getContext("2d");
+
+    if (!offScreenCanvasCtx) {
+      toast.error("Your browser doesn't support canvas operations");
+      return;
+    }
+
+    // Create an image
+    const img = new Image();
+
+    // Create a promise to handle the image loading
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error("Failed to load image"));
+      img.src = base64Image;
+    }).catch(error => {
+      toast.error("Failed to rotate image: " + error.message);
+    });
+
+    // Set its dimensions to rotated size
+    offScreenCanvas.height = img.width;
+    offScreenCanvas.width = img.height;
+
+    // Rotate and draw source image into the off-screen canvas
+    offScreenCanvasCtx.rotate((90 * Math.PI) / 180);
+    offScreenCanvasCtx.translate(0, -offScreenCanvas.width);
+    offScreenCanvasCtx.drawImage(img, 0, 0);
+
+    const imageType = base64Image.match(/^data:(.+);base64/)?.[1] || "image/jpeg";
+
+    // Encode image to data-uri with base64
+    try {
+      form.photos[index].fileBase64 = offScreenCanvas.toDataURL(imageType, 100);
+      form.photos[index].file = dataURLtoFile(form.photos[index].fileBase64, form.photos[index].photoName);
+    } catch (error) {
+      toast.error("Failed to process rotated image");
+      console.error(error);
+    } finally {
+      // Clean up resources
+      offScreenCanvas.width = 0;
+      offScreenCanvas.height = 0;
     }
   }
 </script>

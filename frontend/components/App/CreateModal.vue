@@ -17,12 +17,12 @@
   </Dialog>
 
   <Drawer v-else :dialog-id="dialogId">
-    <DrawerContent class="max-h-[80%]">
+    <DrawerContent class="max-h-[90%]">
       <DrawerHeader>
         <DrawerTitle>{{ title }}</DrawerTitle>
       </DrawerHeader>
 
-      <div class="m-2 overflow-y-auto">
+      <div class="m-2 overflow-y-auto p-2">
         <slot />
       </div>
     </DrawerContent>

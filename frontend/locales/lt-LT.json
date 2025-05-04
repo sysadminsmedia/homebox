@@ -1,0 +1,84 @@
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "change_warning": "Pasikeitė importo su esamais import_refs elgesys. Jei CSV faile yra import_ref, \nelementas bus atnaujintas su CSV failo reikšmėmis.",
+                "description": "Importuokite CSV failą, kuriame yra jūsų elementai, etiketės ir vietos. Daugiau informacijos apie \nreikalingas formatas.",
+                "title": "Importuoti CSV failą"
+            },
+            "outdated": {
+                "current_version": "Dabartinė Versija",
+                "dismiss": "Atmesti",
+                "new_version_available": "Galima Nauja Versija",
+                "new_version_available_link": "Spauskite čia Norėdami peržiūrėti išleidimo pastabas"
+            }
+        },
+        "global": {
+            "copy_text": {
+                "documentation": "dokumentas",
+                "failed_to_copy": "Nepavyko nukopijuoti teksto į mainų sritį",
+                "https_required": "kadangi reikalingas HTTPS",
+                "learn_more": "Sužinokite daugiau mūsų"
+            },
+            "date_time": {
+                "ago": "{0} prieš",
+                "days": "dieną",
+                "hour": "valanda",
+                "hours": "valandos",
+                "in": "į {0}",
+                "just-now": "tik dabar",
+                "last-month": "praėjusį mėnesį",
+                "last-week": "praėjusią savaitę",
+                "last-year": "praėjusiais metais",
+                "minute": "minutė",
+                "minutes": "protokolas",
+                "months": "mėnesių",
+                "next-month": "kitą mėnesį",
+                "next-week": "kitą savaitę",
+                "next-year": "kitąmet",
+                "second": "antras",
+                "seconds": "sekundės",
+                "tomorrow": "rytoj",
+                "weeks": "savaičių",
+                "years": "metai",
+                "yesterday": "vakar"
+            },
+            "label_maker": {
+                "browser_print": "Spausdinti iš naršyklės",
+                "confirm_description": "Ar tikrai norite atspausdinti šią etiketę?",
+                "download": "Atsisiųsti Etiketę",
+                "print": "Spausdinti etiketę",
+                "server_print": "Spausdinti serveryje",
+                "titles": "Etiketė"
+            },
+            "page_qr_code": {
+                "page_url": "Puslapio URL",
+                "qr_tooltip": "Rodyti KR kodą"
+            },
+            "password_score": {
+                "password_strength": "Slaptažodžio Stiprumas"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "item_description": "Prekės Aprašymas",
+                "item_name": "Prekės Pavadinimas",
+                "item_photo": "Prekės Nuotrauka 📷",
+                "item_quantity": "Prekės Kiekis",
+                "title": "Sukurti Elementą",
+                "upload_photos": "Įkelti Nuotraukas"
+            },
+            "view": {
+                "selectable": {
+                    "card": "Kortelė",
+                    "items": "Elementas",
+                    "no_items": "Nėra rodomų elementų",
+                    "table": "Lentelė"
+                },
+                "table": {
+                    "page": "Puslapis"
+                }
+            }
+        }
+    }
+}

@@ -284,6 +284,7 @@
     "locations": {
         "child_locations": "Sublocaties",
         "collapse_tree": "Structuur invouwen",
+        "expand_tree": "Boomstructuur uitvouwen",
         "no_results": "Geen locaties gevonden",
         "update_location": "Locatie bijwerken"
     },

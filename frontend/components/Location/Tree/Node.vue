@@ -41,14 +41,14 @@
     <div
       class="flex items-center gap-1 rounded p-1"
       :class="{
-        'cursor-pointer hover:bg-base-200': hasChildren,
+        'cursor-pointer hover:bg-accent hover:text-accent-foreground': hasChildren,
       }"
       @click="openRef = !openRef"
     >
       <div
         class="mr-1 flex items-center justify-center rounded p-0.5"
         :class="{
-          'hover:bg-base-200': hasChildren,
+          'hover:bg-accent hover:text-accent-foreground': hasChildren,
         }"
       >
         <div v-if="!hasChildren" class="size-6"></div>

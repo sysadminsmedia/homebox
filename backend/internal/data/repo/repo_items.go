@@ -60,6 +60,7 @@ type (
 		ImportRef   string    `json:"-"`
 		ParentID    uuid.UUID `json:"parentId"    extensions:"x-nullable"`
 		Name        string    `json:"name"        validate:"required,min=1,max=255"`
+		Quantity    int       `json:"quantity"`
 		Description string    `json:"description" validate:"max=1000"`
 		AssetID     AssetID   `json:"-"`
 
@@ -190,7 +191,7 @@ func mapItemSummary(item *ent.Item) ItemSummary {
 	var imageID *uuid.UUID
 	if item.Edges.Attachments != nil {
 		for _, a := range item.Edges.Attachments {
-			if a.Primary && a.Edges.Document != nil {
+			if a.Primary && a.Type == attachment.TypePhoto {
 				imageID = &a.ID
 				break
 			}
@@ -303,9 +304,7 @@ func (e *ItemsRepository) getOne(ctx context.Context, where ...predicate.Item) (
 		WithLocation().
 		WithGroup().
 		WithParent().
-		WithAttachments(func(aq *ent.AttachmentQuery) {
-			aq.WithDocument()
-		}).
+		WithAttachments().
 		Only(ctx),
 	)
 }
@@ -466,8 +465,7 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 		WithAttachments(func(aq *ent.AttachmentQuery) {
 			aq.Where(
 				attachment.Primary(true),
-			).
-				WithDocument()
+			)
 		})
 
 	if q.Page != -1 || q.PageSize != -1 {
@@ -575,6 +573,7 @@ func (e *ItemsRepository) Create(ctx context.Context, gid uuid.UUID, data ItemCr
 	q := e.db.Item.Create().
 		SetImportRef(data.ImportRef).
 		SetName(data.Name).
+		SetQuantity(data.Quantity).
 		SetDescription(data.Description).
 		SetGroupID(gid).
 		SetLocationID(data.LocationID).
