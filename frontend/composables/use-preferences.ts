@@ -14,6 +14,7 @@ export type LocationViewPreferences = {
   tableHeaders?: TableHeaderType[];
   displayHeaderDecor: boolean;
   language?: string;
+  overrideFormatLocale?: string;
 };
 
 /**
@@ -32,6 +33,7 @@ export function useViewPreferences(): Ref<LocationViewPreferences> {
       itemsPerTablePage: 10,
       displayHeaderDecor: true,
       language: null,
+      overrideFormatLocale: null,
     },
     { mergeDefaults: true }
   );
