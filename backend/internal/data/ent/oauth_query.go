@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -86,7 +87,7 @@ func (oq *OAuthQuery) QueryUser() *UserQuery {
 // First returns the first OAuth entity from the query.
 // Returns a *NotFoundError when no OAuth was found.
 func (oq *OAuthQuery) First(ctx context.Context) (*OAuth, error) {
-	nodes, err := oq.Limit(1).All(setContextOp(ctx, oq.ctx, "First"))
+	nodes, err := oq.Limit(1).All(setContextOp(ctx, oq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +110,7 @@ func (oq *OAuthQuery) FirstX(ctx context.Context) *OAuth {
 // Returns a *NotFoundError when no OAuth ID was found.
 func (oq *OAuthQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = oq.Limit(1).IDs(setContextOp(ctx, oq.ctx, "FirstID")); err != nil {
+	if ids, err = oq.Limit(1).IDs(setContextOp(ctx, oq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -132,7 +133,7 @@ func (oq *OAuthQuery) FirstIDX(ctx context.Context) uuid.UUID {
 // Returns a *NotSingularError when more than one OAuth entity is found.
 // Returns a *NotFoundError when no OAuth entities are found.
 func (oq *OAuthQuery) Only(ctx context.Context) (*OAuth, error) {
-	nodes, err := oq.Limit(2).All(setContextOp(ctx, oq.ctx, "Only"))
+	nodes, err := oq.Limit(2).All(setContextOp(ctx, oq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -160,7 +161,7 @@ func (oq *OAuthQuery) OnlyX(ctx context.Context) *OAuth {
 // Returns a *NotFoundError when no entities are found.
 func (oq *OAuthQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = oq.Limit(2).IDs(setContextOp(ctx, oq.ctx, "OnlyID")); err != nil {
+	if ids, err = oq.Limit(2).IDs(setContextOp(ctx, oq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -185,7 +186,7 @@ func (oq *OAuthQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 
 // All executes the query and returns a list of OAuths.
 func (oq *OAuthQuery) All(ctx context.Context) ([]*OAuth, error) {
-	ctx = setContextOp(ctx, oq.ctx, "All")
+	ctx = setContextOp(ctx, oq.ctx, ent.OpQueryAll)
 	if err := oq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -207,7 +208,7 @@ func (oq *OAuthQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
 	if oq.ctx.Unique == nil && oq.path != nil {
 		oq.Unique(true)
 	}
-	ctx = setContextOp(ctx, oq.ctx, "IDs")
+	ctx = setContextOp(ctx, oq.ctx, ent.OpQueryIDs)
 	if err = oq.Select(oauth.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -225,7 +226,7 @@ func (oq *OAuthQuery) IDsX(ctx context.Context) []uuid.UUID {
 
 // Count returns the count of the given query.
 func (oq *OAuthQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, oq.ctx, "Count")
+	ctx = setContextOp(ctx, oq.ctx, ent.OpQueryCount)
 	if err := oq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -243,7 +244,7 @@ func (oq *OAuthQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (oq *OAuthQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, oq.ctx, "Exist")
+	ctx = setContextOp(ctx, oq.ctx, ent.OpQueryExist)
 	switch _, err := oq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -537,7 +538,7 @@ func (ogb *OAuthGroupBy) Aggregate(fns ...AggregateFunc) *OAuthGroupBy {
 
 // Scan applies the selector query and scans the result into the given value.
 func (ogb *OAuthGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ogb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, ogb.build.ctx, ent.OpQueryGroupBy)
 	if err := ogb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -585,7 +586,7 @@ func (os *OAuthSelect) Aggregate(fns ...AggregateFunc) *OAuthSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (os *OAuthSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, os.ctx, "Select")
+	ctx = setContextOp(ctx, os.ctx, ent.OpQuerySelect)
 	if err := os.prepareQuery(ctx); err != nil {
 		return err
 	}
