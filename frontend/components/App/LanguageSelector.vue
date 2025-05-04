@@ -36,6 +36,9 @@
   }
 
   const dateExample = computed(() => {
+    // hack to force vue to update
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const locale = preferences.value.overrideFormatLocale;
     return fmtDate(new Date(Date.now() - 15 * 60000), "relative");
   });
 </script>
