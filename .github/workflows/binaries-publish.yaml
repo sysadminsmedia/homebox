@@ -5,14 +5,6 @@ on:
     tags: [ 'v*.*.*' ]
 
 jobs:
-#  backend-tests:
-#    name: "Backend Server Tests"
-#    uses: sysadminsmedia/homebox/.github/workflows/partial-backend.yaml@main
-
-#  frontend-tests:
-#    name: "Frontend and End-to-End Tests"
-#    uses: sysadminsmedia/homebox/.github/workflows/partial-frontend.yaml@main
-
   goreleaser:
     name: goreleaser
     runs-on: ubuntu-latest
@@ -27,7 +19,7 @@ jobs:
 
       - uses: pnpm/action-setup@v2
         with:
-          version: 7.30.1
+          version: 9.15.3
 
       - name: Build Frontend and Copy to Backend
         working-directory: frontend
@@ -35,6 +27,11 @@ jobs:
           pnpm install
           pnpm run build
           cp -r ./.output/public ../backend/app/api/static/
+
+      - name: Install CoSign
+        working-direcotry: backend
+        run: |
+          go install github.com/sigstore/cosign/cmd/cosign@latest
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
