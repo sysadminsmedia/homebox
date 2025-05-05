@@ -66,6 +66,7 @@
                 "item_description": "Artikelomschrijving",
                 "item_name": "Artikelnaam",
                 "item_photo": "Artikel Foto",
+                "item_quantity": "Item hoeveelheid",
                 "title": "Maak object",
                 "upload_photos": "Upload Fotos"
             },
@@ -355,6 +356,7 @@
         "notifier_modal": "{ type, select, true {Bewerk} false {Creëer} other {overig}} Notifier",
         "notifiers": "Notificatie",
         "notifiers_sub": "Ontvang meldingen voor komende onderhoudsherinneringen",
+        "override_locale": "Negeer Datum en Valuta Taal",
         "test": "Test",
         "theme_settings": "Thema-instellingen",
         "theme_settings_sub": "Thema-instellingen worden opgeslagen in de lokale opslag van uw browser. Je kan deze wijzigen op elk moment. \nAls je problemen hebt met de instellingen kun je de browser verversen.",
