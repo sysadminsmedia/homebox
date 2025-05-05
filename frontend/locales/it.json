@@ -66,7 +66,7 @@
                 "item_description": "Descrizione Articolo",
                 "item_name": "Nome articolo",
                 "item_photo": "Foto dell'articolo 📷",
-                "item_quantity": "Quantità Prodotto",
+                "item_quantity": "Quantità Articoli",
                 "title": "Crea Articolo",
                 "upload_photos": "Carica Foto"
             },
@@ -356,6 +356,7 @@
         "notifier_modal": "{ type, select, true {Modifica} false {Crea} other {Altro}} Notifier",
         "notifiers": "Notifiche",
         "notifiers_sub": "Ricevi notifiche per i prossimi promemoria di manutenzione",
+        "override_locale": "Sovrascrivi la data e la lingua della valuta",
         "test": "Test",
         "theme_settings": "Impostazioni Tema",
         "theme_settings_sub": "Le impostazioni del tema sono memorizzate nella memoria locale del tuo browser. Puoi cambiare il tema \nin qualsiasi momento. Se hai problemi a impostare il tuo tema, prova a ricaricare la pagina.",
