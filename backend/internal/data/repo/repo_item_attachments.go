@@ -91,9 +91,26 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 		SetItemID(itemID).
 		SetTitle(doc.Title)
 
-	// Autoset primary to true if this is the first attachment
-	// that is of type photo
-	if typ == attachment.TypePhoto {
+	if typ == attachment.TypePhoto && primary {
+		bldr = bldr.SetPrimary(true)
+		err := r.db.Attachment.Update().
+			Where(
+				attachment.HasItemWith(item.ID(itemID)),
+				attachment.IDNEQ(bldrId),
+			).
+			SetPrimary(false).
+			Exec(ctx)
+		if err != nil {
+			log.Err(err).Msg("failed to remove primary from other attachments")
+			err := tx.Rollback()
+			if err != nil {
+				return nil, err
+			}
+			return nil, err
+		}
+	} else if typ == attachment.TypePhoto {
+		// Autoset primary to true if this is the first attachment
+		// that is of type photo
 		cnt, err := tx.Attachment.Query().
 			Where(
 				attachment.HasItemWith(item.ID(itemID)),
@@ -111,23 +128,6 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 
 		if cnt == 0 {
 			bldr = bldr.SetPrimary(true)
-		}
-	} else if typ == attachment.TypePhoto && primary {
-		bldr = bldr.SetPrimary(true)
-		err := r.db.Attachment.Update().
-			Where(
-				attachment.HasItemWith(item.ID(itemID)),
-				attachment.IDNEQ(bldrId),
-			).
-			SetPrimary(false).
-			Exec(ctx)
-		if err != nil {
-			log.Err(err).Msg("failed to remove primary from other attachments")
-			err := tx.Rollback()
-			if err != nil {
-				return nil, err
-			}
-			return nil, err
 		}
 	}
 

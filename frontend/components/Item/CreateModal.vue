@@ -95,8 +95,7 @@
                   <p>Rotate photo</p>
                 </TooltipContent>
               </Tooltip>
-              <!-- TODO: re-enable when we have a way to set primary photos -->
-              <!-- <Tooltip>
+              <Tooltip>
                 <TooltipTrigger>
                   <Button
                     size="icon"
@@ -112,7 +111,7 @@
                 <TooltipContent>
                   <p>Set as {{ photo.primary ? "non" : "" }} primary photo</p>
                 </TooltipContent>
-              </Tooltip> -->
+              </Tooltip>
             </TooltipProvider>
             <p class="mt-1 text-sm" style="overflow-wrap: anywhere">{{ photo.photoName }}</p>
           </div>
@@ -135,8 +134,8 @@
   import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
   import MdiDelete from "~icons/mdi/delete";
   import MdiRotateClockwise from "~icons/mdi/rotate-clockwise";
-  // import MdiStarOutline from "~icons/mdi/star-outline";
-  // import MdiStar from "~icons/mdi/star";
+  import MdiStarOutline from "~icons/mdi/star-outline";
+  import MdiStar from "~icons/mdi/star";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
   import LabelSelector from "~/components/Label/Selector.vue";
@@ -196,16 +195,12 @@
     form.photos.splice(index, 1);
   }
 
-  // TODO: actually set the primary when adding item
+  function setPrimary(index: number) {
+    const primary = form.photos.findIndex(p => p.primary);
 
-  // function setPrimary(index: number) {
-  //   const primary = form.photos.findIndex(p => p.primary);
-
-  //   if (primary !== -1) form.photos[primary].primary = false;
-  //   if (primary !== index) form.photos[index].primary = true;
-
-  //   toast.error("Currently this does not do anything, the first photo will always be primary");
-  // }
+    if (primary !== -1) form.photos[primary].primary = false;
+    if (primary !== index) form.photos[index].primary = true;
+  }
 
   function previewImage(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -285,7 +280,8 @@
           data.id,
           photo.file,
           photo.photoName,
-          AttachmentTypes.Photo
+          AttachmentTypes.Photo,
+          photo.primary
         );
 
         if (attachError) {
