@@ -353,7 +353,7 @@
         "language": "Lingua",
         "new_password": "Nuova Password",
         "no_notifiers": "Nessun notificatore configurato",
-        "no_override": "Nessun override",
+        "no_override": "Non sostituire",
         "notifier_modal": "{ type, select, true {Modifica} false {Crea} other {Altro}} Notifier",
         "notifiers": "Notifiche",
         "notifiers_sub": "Ricevi notifiche per i prossimi promemoria di manutenzione",

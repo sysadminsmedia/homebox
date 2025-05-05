@@ -65,8 +65,8 @@
             "create_modal": {
                 "item_description": "Item Description",
                 "item_name": "Item Name",
-                "item_quantity": "Item Quantity",                
                 "item_photo": "Item Photo 📷",
+                "item_quantity": "Item Quantity",
                 "title": "Create Item",
                 "upload_photos": "Upload Photos"
             },
@@ -78,10 +78,10 @@
                     "table": "Table"
                 },
                 "table": {
+                    "headers": "Headers",
                     "page": "Page",
                     "rows_per_page": "Rows per page",
-                    "table_settings": "Table Settings",
-                    "headers": "Headers"
+                    "table_settings": "Table Settings"
                 }
             }
         },
@@ -118,6 +118,7 @@
     },
     "global": {
         "add": "Add",
+        "archived": "Archived",
         "build": "Build: { build }",
         "cancel": "Cancel",
         "confirm": "Confirm",
@@ -135,6 +136,7 @@
             "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Version: { version } Build: { build } '</a>'"
         },
         "github": "GitHub Project",
+        "insured": "Insured",
         "items": "Items",
         "join_discord": "Join the Discord",
         "labels": "Labels",
@@ -143,6 +145,7 @@
         "name": "Name",
         "navigate": "Navigate",
         "password": "Password",
+        "quantity": "Quantity",
         "read_docs": "Read the Docs",
         "save": "Save",
         "search": "Search",
@@ -151,10 +154,7 @@
         "update": "Update",
         "value": "Value",
         "version": "Version: { version }",
-        "welcome": "Welcome, { username }",
-        "insured": "Insured",
-        "archived": "Archived",
-        "quantity": "Quantity"
+        "welcome": "Welcome, { username }"
     },
     "home": {
         "labels": "Labels",
@@ -271,6 +271,7 @@
         "ru": "Russian",
         "sk-SK": "Slovak",
         "sl": "Slovenian",
+        "sq-AL": "Albanian",
         "sv": "Swedish",
         "ta-IN": "Tamil",
         "th-TH": "Thai",
@@ -279,8 +280,7 @@
         "zh-CN": "Chinese (Simplified)",
         "zh-HK": "Chinese (Hong Kong)",
         "zh-MO": "Chinese (Macau)",
-        "zh-TW": "Chinese (Traditional)",
-        "sq-AL": "Albanian"
+        "zh-TW": "Chinese (Traditional)"
     },
     "locations": {
         "child_locations": "Child Locations",
@@ -351,13 +351,13 @@
         "group_settings_sub": "Shared Group Settings. You may need to refresh your browser for some settings to apply.",
         "inactive": "Inactive",
         "language": "Language",
-        "override_locale": "Override Date and Currency Language",
-        "no_override": "No override",
         "new_password": "New Password",
         "no_notifiers": "No notifiers configured",
+        "no_override": "No override",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Notifier",
         "notifiers": "Notifiers",
         "notifiers_sub": "Get notifications for upcoming maintenance reminders",
+        "override_locale": "Override Date and Currency Language",
         "test": "Test",
         "theme_settings": "Theme Settings",
         "theme_settings_sub": "Theme settings are stored in your browser's local storage. You can change the theme at any time. If you're\n having trouble setting your theme try refreshing your browser.",
@@ -368,11 +368,11 @@
         "user_profile_sub": "Invite users, and manage your account."
     },
     "scanner": {
-        "title": "Scanner",
         "error": "An error occurred while scanning",
         "invalid_url": "Invalid barcode URL",
         "no_sources": "No video sources available",
         "select_video_source": "Pick a video source",
+        "title": "Scanner",
         "unsupported": "Media Stream API is not supported without HTTPS"
     },
     "tools": {

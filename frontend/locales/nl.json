@@ -353,6 +353,7 @@
         "language": "Taal",
         "new_password": "Nieuw Wachtwoord",
         "no_notifiers": "Geen melders geconfigureerd",
+        "no_override": "Niet overschrijven",
         "notifier_modal": "{ type, select, true {Bewerk} false {Creëer} other {overig}} Notifier",
         "notifiers": "Notificatie",
         "notifiers_sub": "Ontvang meldingen voor komende onderhoudsherinneringen",
