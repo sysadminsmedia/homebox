@@ -66,6 +66,7 @@
                 "item_description": "Descrizione Articolo",
                 "item_name": "Nome articolo",
                 "item_photo": "Foto dell'articolo 📷",
+                "item_quantity": "Quantità Prodotto",
                 "title": "Crea Articolo",
                 "upload_photos": "Carica Foto"
             },
