@@ -66,9 +66,9 @@
                 "item_description": "Artikelomschrijving",
                 "item_name": "Artikelnaam",
                 "item_photo": "Artikel Foto",
-                "item_quantity": "Item hoeveelheid",
+                "item_quantity": "Item aantal",
                 "title": "Maak object",
-                "upload_photos": "Upload Fotos"
+                "upload_photos": "Foto’s toevoegen"
             },
             "view": {
                 "selectable": {
@@ -78,7 +78,7 @@
                     "table": "Tabel"
                 },
                 "table": {
-                    "headers": "Tabelkoppen",
+                    "headers": "Kopteksten",
                     "page": "Pagina",
                     "rows_per_page": "Rijen per pagina",
                     "table_settings": "Tabel instellingen"
@@ -92,7 +92,7 @@
                 "title": "Maak label"
             },
             "selector": {
-                "select_labels": "Selecteer Labels"
+                "select_labels": "Labels selecteren"
             }
         },
         "location": {
@@ -112,7 +112,7 @@
             }
         },
         "quick_menu": {
-            "no_results": "Geen resultaat gevonden.",
+            "no_results": "Geen resultaten gevonden.",
             "shortcut_hint": "Gebruik de numerieke toetsen om snel een actie te selecteren."
         }
     },
@@ -120,7 +120,7 @@
         "add": "Toevoegen",
         "archived": "Gearchiveerd",
         "build": "Bouw: { build }",
-        "cancel": "Annuleer",
+        "cancel": "Annuleren",
         "confirm": "Bevestigen",
         "create": "Maken",
         "create_and_add": "Maak en voeg nog een toe",
@@ -145,7 +145,7 @@
         "name": "Naam",
         "navigate": "Navigeer",
         "password": "Wachtwoord",
-        "quantity": "Hoeveelheid",
+        "quantity": "Aantal",
         "read_docs": "Lees de documentatie",
         "save": "Opslaan",
         "search": "Zoeken",
@@ -357,7 +357,7 @@
         "notifier_modal": "{ type, select, true {Bewerk} false {Creëer} other {overig}} Notifier",
         "notifiers": "Notificatie",
         "notifiers_sub": "Ontvang meldingen voor komende onderhoudsherinneringen",
-        "override_locale": "Negeer Datum en Valuta Taal",
+        "override_locale": "Datum en valutataal overschrijven",
         "test": "Test",
         "theme_settings": "Thema-instellingen",
         "theme_settings_sub": "Thema-instellingen worden opgeslagen in de lokale opslag van uw browser. Je kan deze wijzigen op elk moment. \nAls je problemen hebt met de instellingen kun je de browser verversen.",
