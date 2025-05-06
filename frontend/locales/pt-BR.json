@@ -46,13 +46,16 @@
                 "yesterday": "ontem"
             },
             "label_maker": {
+                "browser_print": "Imprimir a partir do Navegador",
                 "confirm_description": "Tem certeza de que deseja imprimir esta etiqueta?",
                 "download": "Baixar Rótulo",
                 "print": "Imprimir etiqueta",
+                "server_print": "Imprimir no Servidor",
                 "titles": "Etiquetas"
             },
             "page_qr_code": {
-                "page_url": "URL da página"
+                "page_url": "URL da página",
+                "qr_tooltip": "Exibir o Código QR"
             },
             "password_score": {
                 "password_strength": "Força da Senha"
@@ -62,7 +65,10 @@
             "create_modal": {
                 "item_description": "Descrição do Item",
                 "item_name": "Nome do Item",
-                "title": "Criar Item"
+                "item_photo": "Foto do Item 📷",
+                "item_quantity": "Quantidade de Itens",
+                "title": "Criar Item",
+                "upload_photos": "Carregar Fotos"
             },
             "view": {
                 "selectable": {
@@ -72,8 +78,10 @@
                     "table": "Tabela"
                 },
                 "table": {
+                    "headers": "Cabeçalhos",
                     "page": "Página",
-                    "rows_per_page": "Linhas por página"
+                    "rows_per_page": "Linhas por página",
+                    "table_settings": "Configurações da Tabela"
                 }
             }
         },
@@ -82,6 +90,9 @@
                 "label_description": "Descrição da Etiqueta",
                 "label_name": "Nome da Etiqueta",
                 "title": "Criar etiqueta"
+            },
+            "selector": {
+                "select_labels": "Selecionar Etiquetas"
             }
         },
         "location": {
@@ -91,19 +102,25 @@
                 "title": "Criar Local"
             },
             "selector": {
-                "parent_location": "Local Pai"
+                "no_location_found": "Nenhum local encontrado",
+                "parent_location": "Local Pai",
+                "search_location": "Procurar Locais",
+                "select_location": "Selecionar um Local"
             },
             "tree": {
                 "no_locations": "Não há locais disponíveis. Adicione novos locais\n através do botão \"Criar\" na barra de navegação."
             }
         },
         "quick_menu": {
+            "no_results": "Nenhum resultado encontrado.",
             "shortcut_hint": "Use as teclas numéricas para selecionar uma ação rapidamente."
         }
     },
     "global": {
         "add": "Adicionar",
+        "archived": "Arquivado",
         "build": "Compilação: { build }",
+        "cancel": "Cancelar",
         "confirm": "Confirmar",
         "create": "Criar",
         "create_and_add": "Criar e Adicionar Outro",
@@ -114,7 +131,12 @@
         "edit": "Editar",
         "email": "Email",
         "follow_dev": "Seguir o desenvolvedor",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Versão: { version } Compilação: { build } '</a>'"
+        },
         "github": "Projeto GitHub",
+        "insured": "Segurado",
         "items": "Items",
         "join_discord": "Junte-se ao Discord",
         "labels": "Etiquetas",
@@ -123,6 +145,7 @@
         "name": "Nome",
         "navigate": "Navegar",
         "password": "Senha",
+        "quantity": "Quantidade",
         "read_docs": "Leia a Documentação",
         "save": "Salvar",
         "search": "Buscar",
@@ -227,6 +250,7 @@
     },
     "languages": {
         "ca": "Catalão",
+        "cs-CZ": "Tcheco",
         "de": "Alemão",
         "en": "Inglês",
         "es": "Espanhol",
@@ -237,13 +261,16 @@
         "it": "Italiano",
         "ja-JP": "Japonês",
         "ko-KR": "Coreano",
+        "nb-NO": "Danonorueguês",
         "nl": "Holandês",
         "pl": "Polonês",
         "pt-BR": "Português (Brasil)",
         "pt-PT": "Português (Portugal)",
         "ru": "Russo",
         "sl": "Esloveno",
+        "sq-AL": "Albanês",
         "sv": "Sueco",
+        "ta-IN": "Tâmil",
         "th-TH": "Tailandês",
         "tr": "Turco",
         "uk-UA": "Ucraniano",
@@ -258,6 +285,7 @@
     "locations": {
         "child_locations": "Locais Filhos",
         "collapse_tree": "Ocultar Árvore",
+        "expand_tree": "Expandir Árvore",
         "no_results": "Nenhum local encontrado",
         "update_location": "Atualizar Local"
     },
@@ -304,6 +332,7 @@
         "locations": "Locais",
         "maintenance": "Manutenção",
         "profile": "Perfil",
+        "scanner": "Scanner",
         "search": "Buscar",
         "tools": "Ferramentas"
     },
@@ -324,9 +353,11 @@
         "language": "Idioma",
         "new_password": "Nova Senha",
         "no_notifiers": "Nenhum notificador configurado",
+        "no_override": "Não sobrepor",
         "notifier_modal": "{ type, select, true {Editar} false {Criar} other {Outro}} Notificação",
         "notifiers": "Notificadores",
         "notifiers_sub": "Receba notificações para lembretes de manutenção futuros",
+        "override_locale": "Sobrepor Linguagem da Data e Moeda",
         "test": "Teste",
         "theme_settings": "Configurações do Tema",
         "theme_settings_sub": "As configurações de tema são salvas localmente em seu navegador. Você pode mudar o tema a qualquer momento. Se está\ntendo problemas com a mudança de tema, tente recarregar a pagina.",
@@ -338,7 +369,11 @@
     },
     "scanner": {
         "error": "Ocorreu um erro durante a digitalização",
-        "invalid_url": "Código de barras inválido"
+        "invalid_url": "Código de barras inválido",
+        "no_sources": "Nenhuma fonte de vídeo disponível",
+        "select_video_source": "Escolha uma fonte de vídeo",
+        "title": "Scanner",
+        "unsupported": "A API do Fluxo de Mídia não é suportada sem o protocolo HTTPS"
     },
     "tools": {
         "actions": "Ações de inventário",
