@@ -29,7 +29,7 @@ jobs:
           cp -r ./.output/public ../backend/app/api/static/
 
       - name: Install CoSign
-        working-direcotry: backend
+        working-directory: backend
         run: |
           go install github.com/sigstore/cosign/cmd/cosign@latest
 
