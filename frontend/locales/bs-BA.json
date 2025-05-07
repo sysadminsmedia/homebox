@@ -1,1 +1,44 @@
-{}
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "change_warning": "Način unosa podataka s postojećim import_refs se promjenio. Ako je import_ref prisutan u CSV fajlu,\npredmet će se ažurirati s vrijednostima iz CSV fajla.",
+                "title": "Importuj CSV fajl"
+            },
+            "outdated": {
+                "current_version": "Trenutna verzija",
+                "dismiss": "Odbaci",
+                "latest_version": "Najnovija verzija",
+                "new_version_available": "Dostupna nova verzija",
+                "new_version_available_link": "Klikni ovdje za pregled bilješke o izdanju"
+            }
+        },
+        "global": {
+            "copy_text": {
+                "documentation": "dokumentacija",
+                "failed_to_copy": "Kopiranje teksta u clipboard nije uspjelo",
+                "https_required": "jer je HTTPS obavezan",
+                "learn_more": "Saznaj više u našoj"
+            },
+            "date_time": {
+                "ago": "prije {0}",
+                "days": "dana",
+                "hour": "sat",
+                "hours": "sati",
+                "in": "u {0}",
+                "just-now": "upravo sada",
+                "last-month": "prošlog mjeseca",
+                "last-week": "prošle sedmice",
+                "last-year": "prošle godine",
+                "minute": "minuta"
+            }
+        }
+    },
+    "tools": {
+        "reports": "Izvještaji",
+        "reports_set": {
+            "bill_of_materials": "Popis materijala",
+            "bill_of_materials_button": "Generiši popis materijala"
+        }
+    }
+}
