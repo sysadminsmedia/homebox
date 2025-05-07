@@ -13,6 +13,18 @@
           <MdiAlertCircleOutline class="text-destructive" />
           <span class="text-sm font-medium">{{ errorMessage }}</span>
         </div>
+        <div
+          v-if="detectedBarcode"
+          class="border-destructive bg-destructive/10 text-destructive mb-5 flex items-center gap-2 rounded-md border p-4"
+          role="alert"
+        >
+          <MdiAlertCircleOutline class="text-default" />
+          <span class="text-sm font-medium">Product barcode detected: {{ detectedBarcode }}</span>
+
+          <ButtonGroup>
+            <Button :disabled="loading" type="submit" @click="handleButtonClick">Fetchdata and create</Button>
+          </ButtonGroup>
+        </div>
         <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
         <video ref="video" class="aspect-video w-full rounded-lg bg-muted shadow" poster="data:image/gif,AAAA"></video>
         <div class="mt-4">
@@ -33,13 +45,15 @@
 </template>
 
 <script setup lang="ts">
-  import { BrowserMultiFormatReader, NotFoundException } from "@zxing/library";
-  import { computed, ref, watch } from "vue";
+  import { ref, watch, computed } from "vue";
+  import { BrowserMultiFormatReader, NotFoundException, BarcodeFormat } from "@zxing/library";
   import { useI18n } from "vue-i18n";
-  import { Dialog, DialogHeader, DialogScrollContent, DialogTitle } from "@/components/ui/dialog";
-  import { useDialog } from "@/components/ui/dialog-provider";
-  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import { Dialog, DialogHeader, DialogTitle, DialogScrollContent } from "@/components/ui/dialog";
+  import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+  import { Button } from "@/components/ui/button";
   import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";
+  import { useDialog } from "@/components/ui/dialog-provider";
+  
 
   const { t } = useI18n();
   const { activeDialog, closeDialog } = useDialog();
@@ -51,6 +65,7 @@
   const video = ref<HTMLVideoElement>();
   const codeReader = new BrowserMultiFormatReader();
   const errorMessage = ref<string | null>(null);
+  const detectedBarcode = ref<string>("");
 
   const handleError = (error: unknown) => {
     console.error("Scanner error:", error);
@@ -66,6 +81,10 @@
         return true;
       }
     }
+  };
+
+  const handleButtonClick = () => {
+    console.log("Button clicked!");
   };
 
   const startScanner = async () => {
@@ -132,6 +151,17 @@
             closeDialog("scanner");
             navigateTo(sanitizedPath);
           } catch (err) {
+            // Check if it's a barcode for a new element
+            switch (result.getBarcodeFormat()) {
+              case BarcodeFormat.EAN_13:
+              case BarcodeFormat.UPC_A:
+              case BarcodeFormat.UPC_E:
+              case BarcodeFormat.UPC_EAN_EXTENSION:
+                console.info("Barcode detected");
+                detectedBarcode.value = result.getText();
+                break;
+            }
+
             loading.value = false;
             handleError(err);
           }
@@ -151,8 +181,3 @@
   });
 </script>
 
-<style scoped>
-  video {
-    object-fit: cover;
-  }
-</style>
