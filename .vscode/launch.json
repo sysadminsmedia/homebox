@@ -34,7 +34,8 @@
             "runtimeExecutable": "pnpm",
             "runtimeArgs": [
                 "run",
-                "dev"
+                "dev",
+                "--host"
             ],
             "cwd": "${workspaceFolder}/frontend",
             "serverReadyAction": {

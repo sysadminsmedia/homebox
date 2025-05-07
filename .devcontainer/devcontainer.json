@@ -17,6 +17,9 @@
 		}
 	},
 
+	// LP: for SELinux issues on Fedora
+	"securityOpt": ["label=disable", "seccomp=unconfined"],
+
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [
 		7745,
@@ -27,7 +30,8 @@
 	"postCreateCommand": "go install github.com/go-task/task/v3/cmd/task@latest && npm install -g pnpm && task setup",
 
 	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-	"remoteUser": "node",
+	"remoteUser": "root",
+	"containerUser": "node",
 	"features": {
 		"ghcr.io/devcontainers/features/go:1": "1.21"
 	}
