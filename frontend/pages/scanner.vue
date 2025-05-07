@@ -1,8 +1,9 @@
 <script setup lang="ts">
-  import { BrowserMultiFormatReader, NotFoundException } from "@zxing/library";
+  import { BrowserMultiFormatReader, NotFoundException, BarcodeFormat } from "@zxing/library";
   import { useI18n } from "vue-i18n";
   import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
   import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+  import { Button } from "@/components/ui/button";
   import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";
 
   definePageMeta({
@@ -20,10 +21,15 @@
   const video = ref<HTMLVideoElement>();
   const codeReader = new BrowserMultiFormatReader();
   const errorMessage = ref<string | null>(null);
+  const detectedBarcode = ref<string | null>(null);
 
   const handleError = (error: unknown) => {
     console.error("Scanner error:", error);
     errorMessage.value = t("scanner.error");
+  };
+
+  const handleButtonClick = () => {
+    console.log("Button clicked!");
   };
 
   onMounted(async () => {
@@ -71,6 +77,14 @@
             const sanitizedPath = url.pathname.replace(/[^a-zA-Z0-9-_/]/g, "");
             navigateTo(sanitizedPath);
           } catch (err) {
+            // Check if it's a barcode for a new element
+            switch (result.getBarcodeFormat()) {
+              case BarcodeFormat.EAN_13:
+                console.info("Barcode detected");
+                detectedBarcode.value = result.getText();
+                break;
+            }
+
             loading.value = false;
             handleError(err);
           }
@@ -94,14 +108,27 @@
     <CardContent>
       <div
         v-if="errorMessage"
-        class="mb-5 flex items-center gap-2 rounded-md border border-destructive bg-destructive/10 p-4 text-destructive"
+        class="border-destructive bg-destructive/10 text-destructive mb-5 flex items-center gap-2 rounded-md border p-4"
         role="alert"
       >
         <MdiAlertCircleOutline class="text-destructive" />
         <span class="text-sm font-medium">{{ errorMessage }}</span>
       </div>
+      <div
+        v-if="detectedBarcode"
+        class="border-destructive bg-destructive/10 text-destructive mb-5 flex items-center gap-2 rounded-md border p-4"
+        role="alert"
+      >
+        <MdiAlertCircleOutline class="text-default" />
+        <span class="text-sm font-medium">Product barcode detected: {{ detectedBarcode }}</span>
+
+        <ButtonGroup>
+          <Button :disabled="loading" type="submit" @click="handleButtonClick">Fetchdata and create</Button>
+        </ButtonGroup>
+      </div>
+
       <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
-      <video ref="video" class="aspect-video w-full rounded-lg bg-muted shadow" poster="data:image/gif,AAAA"></video>
+      <video ref="video" class="bg-muted aspect-video w-full rounded-lg shadow" poster="data:image/gif,AAAA"></video>
       <div class="mt-4">
         <Select v-model="selectedSource">
           <SelectTrigger class="w-full">
