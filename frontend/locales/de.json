@@ -66,6 +66,7 @@
                 "item_description": "Gegenstandsbezeichnung",
                 "item_name": "Gegenstandsname",
                 "item_photo": "Artikel Bild",
+                "item_quantity": "Artikel Menge",
                 "title": "Gegenstand erstellen",
                 "upload_photos": "Upload Bilder"
             },
@@ -101,7 +102,7 @@
                 "title": "Standort erstellen"
             },
             "selector": {
-                "no_location_found": "Keine Standorte gefunden",
+                "no_location_found": "Kein Ort gefunden",
                 "parent_location": "Übergeordneter Standort",
                 "search_location": "Suchen",
                 "select_location": "Standort wählen"
@@ -118,7 +119,7 @@
     "global": {
         "add": "Hinzufügen",
         "archived": "Archiviert",
-        "build": "Build: { build }",
+        "build": "Erstellt: { build }",
         "cancel": "Abbrechen",
         "confirm": "Bestätigen",
         "create": "Erstellen",
@@ -130,6 +131,10 @@
         "edit": "Bearbeiten",
         "email": "E-Mail",
         "follow_dev": "Dem Entwickler folgen",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Version: { version } Erstellt: { build } '</a>'"
+        },
         "github": "GitHub-Projekt",
         "insured": "Versichert",
         "items": "Gegenstände",
@@ -256,6 +261,8 @@
         "it": "Italienisch",
         "ja-JP": "Japanisch",
         "ko-KR": "Koreanisch",
+        "lb-LU": "Luxembourgish (Luxemburgisch)",
+        "lt-LT": "Litauisch (Litauen)",
         "nb-NO": "Norwegisch Bokmål",
         "nl": "Niederländisch",
         "pl": "Polnisch",
@@ -281,7 +288,7 @@
         "child_locations": "Unter-Standorte",
         "collapse_tree": "Baum einklappen",
         "expand_tree": "Baum ausklappen",
-        "no_results": "Keine Standorte gefunden",
+        "no_results": "Keine Orte gefunden",
         "update_location": "Aktualisiere Standort"
     },
     "maintenance": {
@@ -327,9 +334,9 @@
         "locations": "Lagerorte",
         "maintenance": "Wartung",
         "profile": "Profil",
-        "scanner": "Scanner",
+        "scanner": "Der Scanner",
         "search": "Suche",
-        "tools": "Tools"
+        "tools": "Extras"
     },
     "profile": {
         "active": "Aktiv",
@@ -348,9 +355,11 @@
         "language": "Sprache",
         "new_password": "Neues Passwort",
         "no_notifiers": "Keine Benachrichtigungen konfiguriert",
+        "no_override": "Kein Überschreiben",
         "notifier_modal": "{ type, select, true {Bearbeiten} false {Erstellen} other {Andere}} Notifier",
         "notifiers": "Benachrichtigungen",
         "notifiers_sub": "Erhalte Benachrichtigungen über bevorstehende Wartungserinnerungen",
+        "override_locale": "Datum und Währungssprache überschreiben",
         "test": "Test",
         "theme_settings": "Themes",
         "theme_settings_sub": "Theme-Einstellungen werden im lokalen Speicher deines Browsers gespeichert. Du kannst das Theme jederzeit ändern.\nWenn du Probleme hast, dein Theme einzustellen, versuche, die Seite neu zu laden.",
@@ -365,7 +374,7 @@
         "invalid_url": "Ungültige Barcode-URL",
         "no_sources": "Keine Videoquellen verfügbar",
         "select_video_source": "Wählen Sie eine Videoquelle",
-        "title": "Scanner",
+        "title": "Der Scanner",
         "unsupported": "Media Stream API wird nicht unterstützt ohne HTTPS/SSL"
     },
     "tools": {
