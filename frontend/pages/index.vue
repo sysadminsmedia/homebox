@@ -98,7 +98,11 @@
     });
 
     if (error) {
-      toast.error("Problem registering user");
+      toast.error("Problem registering user", {
+        classes: {
+          title: "login-error",
+        },
+      });
       return;
     }
 
@@ -123,7 +127,11 @@
     const { error } = await ctx.login(api, email.value, loginPassword.value, remember.value);
 
     if (error) {
-      toast.error("Invalid email or password");
+      toast.error("Invalid email or password", {
+        classes: {
+          title: "login-error",
+        },
+      });
       loading.value = false;
       return;
     }
@@ -218,19 +226,20 @@
                   </CardTitle>
                 </CardHeader>
                 <CardContent class="flex flex-col gap-2">
-                  <FormTextField v-model="email" :label="$t('index.set_email')" />
-                  <FormTextField v-model="username" :label="$t('index.set_name')" />
+                  <FormTextField v-model="email" :label="$t('index.set_email')" data-testid="email-input" />
+                  <FormTextField v-model="username" :label="$t('index.set_name')" data-testid="name-input" />
                   <div v-if="!(groupToken == '')" class="pb-1 pt-4 text-center">
                     <p>{{ $t("index.joining_group") }}</p>
                     <button type="button" class="text-xs underline" @click="groupToken = ''">
                       {{ $t("index.dont_join_group") }}
                     </button>
                   </div>
-                  <FormPassword v-model="password" :label="$t('index.set_password')" />
+                  <FormPassword v-model="password" :label="$t('index.set_password')" data-testid="password-input" />
                   <PasswordScore v-model:valid="canRegister" :password="password" />
                 </CardContent>
                 <CardFooter>
                   <Button
+                    data-testid="confirm-register-button"
                     class="w-full"
                     type="submit"
                     :class="loading ? 'loading' : ''"
@@ -274,7 +283,13 @@
             </form>
           </Transition>
           <div class="mt-6 text-center">
-            <Button v-if="status && status.allowRegistration" class="group" variant="link" @click="() => toggleLogin()">
+            <Button
+              v-if="status && status.allowRegistration"
+              class="group"
+              variant="link"
+              data-testid="register-button"
+              @click="() => toggleLogin()"
+            >
               <div class="relative mx-2">
                 <div
                   class="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:rotate-[360deg]"
