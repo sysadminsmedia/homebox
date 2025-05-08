@@ -45,7 +45,7 @@ describe("user should be able to create an item and add an attachment", () => {
 
     // Add attachment
     {
-      const testFile = new Blob(["test"], { type: "text/plain" });
+      const testFile = new File(["test"], "test.txt", { type: "text/plain" });
       const { response } = await api.items.attachments.add(item.id, testFile, "test.txt", AttachmentTypes.Attachment);
       expect(response.status).toBe(201);
     }
