@@ -38,7 +38,7 @@ jobs:
         with:
           workdir: "backend"
           distribution: goreleaser
-          version: latest
+          version: "~> v2"
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
