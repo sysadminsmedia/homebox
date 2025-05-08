@@ -39,7 +39,7 @@ export class AttachmentsAPI extends BaseAPI {
       formData.append("type", type);
     }
     formData.append("name", filename);
-    if (primary) {
+    if (primary !== undefined) {
       formData.append("primary", primary.toString());
     }
 
