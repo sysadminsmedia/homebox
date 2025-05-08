@@ -26,9 +26,6 @@ importers:
       '@tailwindcss/typography':
         specifier: ^0.5.16
         version: 0.5.16(tailwindcss@3.4.17)
-      '@types/lunr':
-        specifier: ^2.3.7
-        version: 2.3.7
       '@vuepic/vue-datepicker':
         specifier: ^8.8.1
         version: 8.8.1(vue@3.4.8(typescript@5.6.2))
@@ -71,9 +68,6 @@ importers:
       lucide-vue-next:
         specifier: ^0.474.0
         version: 0.474.0(vue@3.4.8(typescript@5.6.2))
-      lunr:
-        specifier: ^2.3.9
-        version: 2.3.9
       markdown-it:
         specifier: ^14.1.0
         version: 14.1.0
@@ -129,6 +123,9 @@ importers:
       '@types/markdown-it':
         specifier: ^13.0.9
         version: 13.0.9
+      '@types/semver':
+        specifier: ^7.7.0
+        version: 7.7.0
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.21.0
         version: 6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.1)(typescript@5.6.2))(eslint@8.57.1)(typescript@5.6.2)
@@ -2053,9 +2050,6 @@ packages:
 
   '@types/linkify-it@3.0.5':
     resolution: {integrity: sha512-yg6E+u0/+Zjva+buc3EIb+29XEg4wltq7cSmd4Uc2EE/1nUVmxyzpX6gUXD0V8jIrG0r7YeOGVIbYRkxeooCtw==}
-
-  '@types/lunr@2.3.7':
-    resolution: {integrity: sha512-Tb/kUm38e8gmjahQzdCKhbdsvQ9/ppzHFfsJ0dMs3ckqQsRj+P5IkSAwFTBrBxdyr3E/LoMUUrZngjDYAjiE3A==}
 
   '@types/markdown-it@13.0.9':
     resolution: {integrity: sha512-1XPwR0+MgXLWfTn9gCsZ55AHOKW1WN+P9vr0PaQh5aerR9LLQXUbjfEAFhjmEmyoYFWAyuN2Mqkn40MZ4ukjBw==}
@@ -4569,9 +4563,6 @@ packages:
     resolution: {integrity: sha512-bQaSBjfJ33xiPQCxCf4JD3rcUgZFgWZzxSY8SScNa4Mcq2vWGlbvQx6icTL1UXRqsxzfoT13RXawePSmgg4iWw==}
     peerDependencies:
       vue: '>=3.0.1'
-
-  lunr@2.3.9:
-    resolution: {integrity: sha512-zTU3DaZaF3Rt9rhN3uBMGQD3dD2/vFQqnvZCDv4dl5iOzq2IZQqTxu90r4E5J+nP70J3ilqVCrbho2eWaeW8Ow==}
 
   luxon@3.6.1:
     resolution: {integrity: sha512-tJLxrKJhO2ukZ5z0gyjY1zPh3Rh88Ej9P7jNrZiHMUXHae1yvI2imgOZtL1TO8TW6biMMKfTtAOoEJANgtWBMQ==}
@@ -8913,8 +8904,6 @@ snapshots:
 
   '@types/linkify-it@3.0.5': {}
 
-  '@types/lunr@2.3.7': {}
-
   '@types/markdown-it@13.0.9':
     dependencies:
       '@types/linkify-it': 3.0.5
@@ -11858,8 +11847,6 @@ snapshots:
   lucide-vue-next@0.474.0(vue@3.4.8(typescript@5.6.2)):
     dependencies:
       vue: 3.4.8(typescript@5.6.2)
-
-  lunr@2.3.9: {}
 
   luxon@3.6.1: {}
 
