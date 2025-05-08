@@ -15,6 +15,7 @@ test("invalid login", async ({ page }) => {
   await page.fill("input[type='text']", "dummy@example.com");
   await page.fill("input[type='password']", "dummy");
   await page.click("button[type='submit']");
+  await page.waitForTimeout(500);
   await expect(page.locator("div[class*='login-error']")).toHaveText("Invalid email or password");
   await expect(page).toHaveURL("/");
 });
@@ -42,5 +43,6 @@ test("registration", async ({ page }) => {
   await page.fill("input[type='password']", "ThisIsAStrongDemoPass");
   await page.getByTestId("confirm-register-button").click();
   await expect(page).toHaveURL("/");
+  await page.waitForTimeout(500);
   await expect(page.locator("div[class*='login-error']")).toHaveText("Problem registering user");
 });
