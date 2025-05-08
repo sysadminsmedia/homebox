@@ -8,7 +8,7 @@
     "lint": "eslint --ext \".ts,.js,.vue\" --ignore-path ../.gitignore --ignore-pattern \"components/ui\" .",
     "lint:fix": "eslint --ext \".ts,.js,.vue\" --ignore-path ../.gitignore --ignore-pattern \"components/ui\" . --fix",
     "lint:ci": "eslint --ext \".ts,.js,.vue\" --ignore-path ../.gitignore --ignore-pattern \"components/ui\" . --max-warnings 1",
-    "typecheck": "pnpm vue-tsc --noEmit",
+    "typecheck": "pnpm dlx vue-tsc@2.1.6 --noEmit",
     "test:ci": "TEST_SHUTDOWN_API_SERVER=true vitest --run --config ./test/vitest.config.ts",
     "test:local": "TEST_SHUTDOWN_API_SERVER=false && vitest --run --config ./test/vitest.config.ts",
     "test:watch": " TEST_SHUTDOWN_API_SERVER=false vitest --config ./test/vitest.config.ts"
