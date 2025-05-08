@@ -274,6 +274,10 @@
             </form>
           </Transition>
           <div class="mt-6 text-center">
+            <a
+              href="https://auth.kloenk.dev/realms/kloenk/protocol/openid-connect/auth?client_id=homebox-dev&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Foidc%2Fcallback&response_type=code&scope=openid+email+profile&response_mode=query"
+              >OIDC</a
+            >
             <Button v-if="status && status.allowRegistration" class="group" variant="link" @click="() => toggleLogin()">
               <div class="relative mx-2">
                 <div

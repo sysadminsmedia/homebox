@@ -48,6 +48,10 @@ func (n *Notifier) GetID() uuid.UUID {
 	return n.ID
 }
 
+func (o *OAuth) GetID() uuid.UUID {
+	return o.ID
+}
+
 func (u *User) GetID() uuid.UUID {
 	return u.ID
 }

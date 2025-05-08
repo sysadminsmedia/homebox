@@ -34,6 +34,8 @@ type Tx struct {
 	MaintenanceEntry *MaintenanceEntryClient
 	// Notifier is the client for interacting with the Notifier builders.
 	Notifier *NotifierClient
+	// OAuth is the client for interacting with the OAuth builders.
+	OAuth *OAuthClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -178,6 +180,7 @@ func (tx *Tx) init() {
 	tx.Location = NewLocationClient(tx.config)
 	tx.MaintenanceEntry = NewMaintenanceEntryClient(tx.config)
 	tx.Notifier = NewNotifierClient(tx.config)
+	tx.OAuth = NewOAuthClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 

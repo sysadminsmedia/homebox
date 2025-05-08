@@ -36,6 +36,10 @@ type Options struct {
 	CurrencyConfig       string `yaml:"currencies"`
 	GithubReleaseCheck   bool   `yaml:"check_github_release"    conf:"default:true"`
 	AllowAnalytics       bool   `yaml:"allow_analytics"         conf:"default:false"`
+	OIDCClientID         string `yaml:"oidc_client_id"`
+	OIDCClientSecret     string `yaml:"oidc_client_secret"`
+	OIDCRedirectURI      string `yaml:"oidc_redirect_uri"`
+	OIDCProviderURL      string `yaml:"oidc_provider_url"`
 }
 
 type DebugConf struct {

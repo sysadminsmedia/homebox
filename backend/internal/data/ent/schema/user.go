@@ -35,7 +35,8 @@ func (User) Fields() []ent.Field {
 		field.String("password").
 			MaxLen(255).
 			NotEmpty().
-			Sensitive(),
+			Sensitive().
+			Optional(),
 		field.Bool("is_superuser").
 			Default(false),
 		field.Bool("superuser").
@@ -56,6 +57,10 @@ func (User) Edges() []ent.Edge {
 				OnDelete: entsql.Cascade,
 			}),
 		edge.To("notifiers", Notifier.Type).
+			Annotations(entsql.Annotation{
+				OnDelete: entsql.Cascade,
+			}),
+		edge.To("oauth", OAuth.Type).
 			Annotations(entsql.Annotation{
 				OnDelete: entsql.Cascade,
 			}),
