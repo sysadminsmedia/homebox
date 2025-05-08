@@ -9,20 +9,35 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
 )
 
-// Item holds the schema definition for the Item entity.
-type Item struct {
+type EntityType string
+
+const (
+	LocationType EntityType = "location"
+	ItemType     EntityType = "item"
+)
+
+func (EntityType) Values() (kinds []string) {
+	for _, s := range []EntityType{LocationType, ItemType} {
+		kinds = append(kinds, string(s))
+	}
+	return
+}
+
+type Entity struct {
 	ent.Schema
 }
 
-func (Item) Mixin() []ent.Mixin {
+// Mixin for the Entity.
+func (Entity) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixins.BaseMixin{},
 		mixins.DetailsMixin{},
-		GroupMixin{ref: "items"},
+		GroupMixin{ref: "entities"},
 	}
 }
 
-func (Item) Indexes() []ent.Index {
+// Indexes of the Entity.
+func (Entity) Indexes() []ent.Index {
 	return []ent.Index{
 		// Unique index on the "title" field.
 		index.Fields("name"),
@@ -34,9 +49,14 @@ func (Item) Indexes() []ent.Index {
 	}
 }
 
-// Fields of the Item.
-func (Item) Fields() []ent.Field {
+// Fields of the Entity.
+func (Entity) Fields() []ent.Field {
 	return []ent.Field{
+		field.Enum("type").
+			Values("location", "item").
+			Default("item"),
+
+		// General details
 		field.String("import_ref").
 			Optional().
 			MaxLen(100),
@@ -51,11 +71,11 @@ func (Item) Fields() []ent.Field {
 			Default(false),
 		field.Int("asset_id").
 			Default(0),
-		field.Bool("sync_child_items_locations").
+		field.Bool("sync_child_entities_locations").
 			Default(false),
 
 		// ------------------------------------
-		// item identification
+		// entity identification
 		field.String("serial_number").
 			MaxLen(255).
 			Optional(),
@@ -67,7 +87,7 @@ func (Item) Fields() []ent.Field {
 			Optional(),
 
 		// ------------------------------------
-		// Item Warranty
+		// entity Warranty
 		field.Bool("lifetime_warranty").
 			Default(false),
 		field.Time("warranty_expires").
@@ -77,7 +97,7 @@ func (Item) Fields() []ent.Field {
 			Optional(),
 
 		// ------------------------------------
-		// item purchase
+		// entity purchase
 		field.Time("purchase_time").
 			Optional(),
 		field.String("purchase_from").
@@ -99,8 +119,8 @@ func (Item) Fields() []ent.Field {
 	}
 }
 
-// Edges of the Item.
-func (Item) Edges() []ent.Edge {
+// Edges of the Entity.
+func (Entity) Edges() []ent.Edge {
 	owned := func(s string, t any) ent.Edge {
 		return edge.To(s, t).
 			Annotations(entsql.Annotation{
@@ -109,15 +129,12 @@ func (Item) Edges() []ent.Edge {
 	}
 
 	return []ent.Edge{
-		edge.To("children", Item.Type).
+		edge.To("children", Entity.Type).
 			From("parent").
 			Unique(),
 		edge.From("label", Label.Type).
-			Ref("items"),
-		edge.From("location", Location.Type).
-			Ref("items").
-			Unique(),
-		owned("fields", ItemField.Type),
+			Ref("entities"),
+		owned("fields", EntityField.Type),
 		owned("maintenance_entries", MaintenanceEntry.Type),
 		owned("attachments", Attachment.Type),
 	}

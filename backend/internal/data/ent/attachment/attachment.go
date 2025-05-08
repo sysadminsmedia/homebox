@@ -28,17 +28,17 @@ const (
 	FieldTitle = "title"
 	// FieldPath holds the string denoting the path field in the database.
 	FieldPath = "path"
-	// EdgeItem holds the string denoting the item edge name in mutations.
-	EdgeItem = "item"
+	// EdgeEntity holds the string denoting the entity edge name in mutations.
+	EdgeEntity = "entity"
 	// Table holds the table name of the attachment in the database.
 	Table = "attachments"
-	// ItemTable is the table that holds the item relation/edge.
-	ItemTable = "attachments"
-	// ItemInverseTable is the table name for the Item entity.
-	// It exists in this package in order to avoid circular dependency with the "item" package.
-	ItemInverseTable = "items"
-	// ItemColumn is the table column denoting the item relation/edge.
-	ItemColumn = "item_attachments"
+	// EntityTable is the table that holds the entity relation/edge.
+	EntityTable = "attachments"
+	// EntityInverseTable is the table name for the Entity entity.
+	// It exists in this package in order to avoid circular dependency with the "entity" package.
+	EntityInverseTable = "entities"
+	// EntityColumn is the table column denoting the entity relation/edge.
+	EntityColumn = "entity_attachments"
 )
 
 // Columns holds all SQL columns for attachment fields.
@@ -55,7 +55,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "attachments"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"item_attachments",
+	"entity_attachments",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -157,16 +157,16 @@ func ByPath(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPath, opts...).ToFunc()
 }
 
-// ByItemField orders the results by item field.
-func ByItemField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByEntityField orders the results by entity field.
+func ByEntityField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newItemStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newEntityStep(), sql.OrderByField(field, opts...))
 	}
 }
-func newItemStep() *sqlgraph.Step {
+func newEntityStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(ItemInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, ItemTable, ItemColumn),
+		sqlgraph.To(EntityInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, EntityTable, EntityColumn),
 	)
 }

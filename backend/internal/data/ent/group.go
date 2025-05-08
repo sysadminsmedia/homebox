@@ -36,10 +36,8 @@ type Group struct {
 type GroupEdges struct {
 	// Users holds the value of the users edge.
 	Users []*User `json:"users,omitempty"`
-	// Locations holds the value of the locations edge.
-	Locations []*Location `json:"locations,omitempty"`
-	// Items holds the value of the items edge.
-	Items []*Item `json:"items,omitempty"`
+	// Entities holds the value of the entities edge.
+	Entities []*Entity `json:"entities,omitempty"`
 	// Labels holds the value of the labels edge.
 	Labels []*Label `json:"labels,omitempty"`
 	// InvitationTokens holds the value of the invitation_tokens edge.
@@ -48,7 +46,7 @@ type GroupEdges struct {
 	Notifiers []*Notifier `json:"notifiers,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [6]bool
+	loadedTypes [5]bool
 }
 
 // UsersOrErr returns the Users value or an error if the edge
@@ -60,28 +58,19 @@ func (e GroupEdges) UsersOrErr() ([]*User, error) {
 	return nil, &NotLoadedError{edge: "users"}
 }
 
-// LocationsOrErr returns the Locations value or an error if the edge
+// EntitiesOrErr returns the Entities value or an error if the edge
 // was not loaded in eager-loading.
-func (e GroupEdges) LocationsOrErr() ([]*Location, error) {
+func (e GroupEdges) EntitiesOrErr() ([]*Entity, error) {
 	if e.loadedTypes[1] {
-		return e.Locations, nil
+		return e.Entities, nil
 	}
-	return nil, &NotLoadedError{edge: "locations"}
-}
-
-// ItemsOrErr returns the Items value or an error if the edge
-// was not loaded in eager-loading.
-func (e GroupEdges) ItemsOrErr() ([]*Item, error) {
-	if e.loadedTypes[2] {
-		return e.Items, nil
-	}
-	return nil, &NotLoadedError{edge: "items"}
+	return nil, &NotLoadedError{edge: "entities"}
 }
 
 // LabelsOrErr returns the Labels value or an error if the edge
 // was not loaded in eager-loading.
 func (e GroupEdges) LabelsOrErr() ([]*Label, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[2] {
 		return e.Labels, nil
 	}
 	return nil, &NotLoadedError{edge: "labels"}
@@ -90,7 +79,7 @@ func (e GroupEdges) LabelsOrErr() ([]*Label, error) {
 // InvitationTokensOrErr returns the InvitationTokens value or an error if the edge
 // was not loaded in eager-loading.
 func (e GroupEdges) InvitationTokensOrErr() ([]*GroupInvitationToken, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[3] {
 		return e.InvitationTokens, nil
 	}
 	return nil, &NotLoadedError{edge: "invitation_tokens"}
@@ -99,7 +88,7 @@ func (e GroupEdges) InvitationTokensOrErr() ([]*GroupInvitationToken, error) {
 // NotifiersOrErr returns the Notifiers value or an error if the edge
 // was not loaded in eager-loading.
 func (e GroupEdges) NotifiersOrErr() ([]*Notifier, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[4] {
 		return e.Notifiers, nil
 	}
 	return nil, &NotLoadedError{edge: "notifiers"}
@@ -179,14 +168,9 @@ func (gr *Group) QueryUsers() *UserQuery {
 	return NewGroupClient(gr.config).QueryUsers(gr)
 }
 
-// QueryLocations queries the "locations" edge of the Group entity.
-func (gr *Group) QueryLocations() *LocationQuery {
-	return NewGroupClient(gr.config).QueryLocations(gr)
-}
-
-// QueryItems queries the "items" edge of the Group entity.
-func (gr *Group) QueryItems() *ItemQuery {
-	return NewGroupClient(gr.config).QueryItems(gr)
+// QueryEntities queries the "entities" edge of the Group entity.
+func (gr *Group) QueryEntities() *EntityQuery {
+	return NewGroupClient(gr.config).QueryEntities(gr)
 }
 
 // QueryLabels queries the "labels" edge of the Group entity.

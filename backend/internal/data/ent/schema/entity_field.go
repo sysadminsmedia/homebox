@@ -9,20 +9,20 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
 )
 
-// ItemField holds the schema definition for the ItemField entity.
-type ItemField struct {
+// EntityField holds the schema definition for the EntityField entity.
+type EntityField struct {
 	ent.Schema
 }
 
-func (ItemField) Mixin() []ent.Mixin {
+func (EntityField) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixins.BaseMixin{},
 		mixins.DetailsMixin{},
 	}
 }
 
-// Fields of the ItemField.
-func (ItemField) Fields() []ent.Field {
+// Fields of the EntityField.
+func (EntityField) Fields() []ent.Field {
 	return []ent.Field{
 		field.Enum("type").
 			Values("text", "number", "boolean", "time"),
@@ -38,10 +38,10 @@ func (ItemField) Fields() []ent.Field {
 	}
 }
 
-// Edges of the ItemField.
-func (ItemField) Edges() []ent.Edge {
+// Edges of the EntityField.
+func (EntityField) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("item", Item.Type).
+		edge.From("entity", Entity.Type).
 			Ref("fields").
 			Unique(),
 	}

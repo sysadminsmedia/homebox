@@ -19,8 +19,8 @@ const (
 	FieldCreatedAt = "created_at"
 	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
 	FieldUpdatedAt = "updated_at"
-	// FieldItemID holds the string denoting the item_id field in the database.
-	FieldItemID = "item_id"
+	// FieldEntityID holds the string denoting the entity_id field in the database.
+	FieldEntityID = "entity_id"
 	// FieldDate holds the string denoting the date field in the database.
 	FieldDate = "date"
 	// FieldScheduledDate holds the string denoting the scheduled_date field in the database.
@@ -31,17 +31,17 @@ const (
 	FieldDescription = "description"
 	// FieldCost holds the string denoting the cost field in the database.
 	FieldCost = "cost"
-	// EdgeItem holds the string denoting the item edge name in mutations.
-	EdgeItem = "item"
+	// EdgeEntity holds the string denoting the entity edge name in mutations.
+	EdgeEntity = "entity"
 	// Table holds the table name of the maintenanceentry in the database.
 	Table = "maintenance_entries"
-	// ItemTable is the table that holds the item relation/edge.
-	ItemTable = "maintenance_entries"
-	// ItemInverseTable is the table name for the Item entity.
-	// It exists in this package in order to avoid circular dependency with the "item" package.
-	ItemInverseTable = "items"
-	// ItemColumn is the table column denoting the item relation/edge.
-	ItemColumn = "item_id"
+	// EntityTable is the table that holds the entity relation/edge.
+	EntityTable = "maintenance_entries"
+	// EntityInverseTable is the table name for the Entity entity.
+	// It exists in this package in order to avoid circular dependency with the "entity" package.
+	EntityInverseTable = "entities"
+	// EntityColumn is the table column denoting the entity relation/edge.
+	EntityColumn = "entity_id"
 )
 
 // Columns holds all SQL columns for maintenanceentry fields.
@@ -49,7 +49,7 @@ var Columns = []string{
 	FieldID,
 	FieldCreatedAt,
 	FieldUpdatedAt,
-	FieldItemID,
+	FieldEntityID,
 	FieldDate,
 	FieldScheduledDate,
 	FieldName,
@@ -102,9 +102,9 @@ func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
 }
 
-// ByItemID orders the results by the item_id field.
-func ByItemID(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldItemID, opts...).ToFunc()
+// ByEntityID orders the results by the entity_id field.
+func ByEntityID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldEntityID, opts...).ToFunc()
 }
 
 // ByDate orders the results by the date field.
@@ -132,16 +132,16 @@ func ByCost(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCost, opts...).ToFunc()
 }
 
-// ByItemField orders the results by item field.
-func ByItemField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByEntityField orders the results by entity field.
+func ByEntityField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newItemStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newEntityStep(), sql.OrderByField(field, opts...))
 	}
 }
-func newItemStep() *sqlgraph.Step {
+func newEntityStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(ItemInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, ItemTable, ItemColumn),
+		sqlgraph.To(EntityInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, EntityTable, EntityColumn),
 	)
 }

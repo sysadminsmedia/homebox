@@ -32,6 +32,6 @@ func (Label) Fields() []ent.Field {
 // Edges of the Label.
 func (Label) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("items", Item.Type),
+		edge.To("entities", Entity.Type),
 	}
 }

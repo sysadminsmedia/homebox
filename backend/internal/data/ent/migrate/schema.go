@@ -17,7 +17,7 @@ var (
 		{Name: "primary", Type: field.TypeBool, Default: false},
 		{Name: "title", Type: field.TypeString, Default: ""},
 		{Name: "path", Type: field.TypeString, Default: ""},
-		{Name: "item_attachments", Type: field.TypeUUID},
+		{Name: "entity_attachments", Type: field.TypeUUID},
 	}
 	// AttachmentsTable holds the schema information for the "attachments" table.
 	AttachmentsTable = &schema.Table{
@@ -26,9 +26,9 @@ var (
 		PrimaryKey: []*schema.Column{AttachmentsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "attachments_items_attachments",
+				Symbol:     "attachments_entities_attachments",
 				Columns:    []*schema.Column{AttachmentsColumns[7]},
-				RefColumns: []*schema.Column{ItemsColumns[0]},
+				RefColumns: []*schema.Column{EntitiesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
@@ -83,6 +83,117 @@ var (
 			},
 		},
 	}
+	// EntitiesColumns holds the columns for the "entities" table.
+	EntitiesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 255},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"location", "item"}, Default: "item"},
+		{Name: "import_ref", Type: field.TypeString, Nullable: true, Size: 100},
+		{Name: "notes", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "quantity", Type: field.TypeInt, Default: 1},
+		{Name: "insured", Type: field.TypeBool, Default: false},
+		{Name: "archived", Type: field.TypeBool, Default: false},
+		{Name: "asset_id", Type: field.TypeInt, Default: 0},
+		{Name: "sync_child_entities_locations", Type: field.TypeBool, Default: false},
+		{Name: "serial_number", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "model_number", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "manufacturer", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "lifetime_warranty", Type: field.TypeBool, Default: false},
+		{Name: "warranty_expires", Type: field.TypeTime, Nullable: true},
+		{Name: "warranty_details", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "purchase_time", Type: field.TypeTime, Nullable: true},
+		{Name: "purchase_from", Type: field.TypeString, Nullable: true},
+		{Name: "purchase_price", Type: field.TypeFloat64, Default: 0},
+		{Name: "sold_time", Type: field.TypeTime, Nullable: true},
+		{Name: "sold_to", Type: field.TypeString, Nullable: true},
+		{Name: "sold_price", Type: field.TypeFloat64, Default: 0},
+		{Name: "sold_notes", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "entity_children", Type: field.TypeUUID, Nullable: true},
+		{Name: "group_entities", Type: field.TypeUUID},
+	}
+	// EntitiesTable holds the schema information for the "entities" table.
+	EntitiesTable = &schema.Table{
+		Name:       "entities",
+		Columns:    EntitiesColumns,
+		PrimaryKey: []*schema.Column{EntitiesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "entities_entities_children",
+				Columns:    []*schema.Column{EntitiesColumns[26]},
+				RefColumns: []*schema.Column{EntitiesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "entities_groups_entities",
+				Columns:    []*schema.Column{EntitiesColumns[27]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "entity_name",
+				Unique:  false,
+				Columns: []*schema.Column{EntitiesColumns[3]},
+			},
+			{
+				Name:    "entity_manufacturer",
+				Unique:  false,
+				Columns: []*schema.Column{EntitiesColumns[15]},
+			},
+			{
+				Name:    "entity_model_number",
+				Unique:  false,
+				Columns: []*schema.Column{EntitiesColumns[14]},
+			},
+			{
+				Name:    "entity_serial_number",
+				Unique:  false,
+				Columns: []*schema.Column{EntitiesColumns[13]},
+			},
+			{
+				Name:    "entity_archived",
+				Unique:  false,
+				Columns: []*schema.Column{EntitiesColumns[10]},
+			},
+			{
+				Name:    "entity_asset_id",
+				Unique:  false,
+				Columns: []*schema.Column{EntitiesColumns[11]},
+			},
+		},
+	}
+	// EntityFieldsColumns holds the columns for the "entity_fields" table.
+	EntityFieldsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 255},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"text", "number", "boolean", "time"}},
+		{Name: "text_value", Type: field.TypeString, Nullable: true, Size: 500},
+		{Name: "number_value", Type: field.TypeInt, Nullable: true},
+		{Name: "boolean_value", Type: field.TypeBool, Default: false},
+		{Name: "time_value", Type: field.TypeTime},
+		{Name: "entity_fields", Type: field.TypeUUID, Nullable: true},
+	}
+	// EntityFieldsTable holds the schema information for the "entity_fields" table.
+	EntityFieldsTable = &schema.Table{
+		Name:       "entity_fields",
+		Columns:    EntityFieldsColumns,
+		PrimaryKey: []*schema.Column{EntityFieldsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "entity_fields_entities_fields",
+				Columns:    []*schema.Column{EntityFieldsColumns[10]},
+				RefColumns: []*schema.Column{EntitiesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// GroupsColumns holds the columns for the "groups" table.
 	GroupsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -121,123 +232,6 @@ var (
 			},
 		},
 	}
-	// ItemsColumns holds the columns for the "items" table.
-	ItemsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString, Size: 255},
-		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
-		{Name: "import_ref", Type: field.TypeString, Nullable: true, Size: 100},
-		{Name: "notes", Type: field.TypeString, Nullable: true, Size: 1000},
-		{Name: "quantity", Type: field.TypeInt, Default: 1},
-		{Name: "insured", Type: field.TypeBool, Default: false},
-		{Name: "archived", Type: field.TypeBool, Default: false},
-		{Name: "asset_id", Type: field.TypeInt, Default: 0},
-		{Name: "sync_child_items_locations", Type: field.TypeBool, Default: false},
-		{Name: "serial_number", Type: field.TypeString, Nullable: true, Size: 255},
-		{Name: "model_number", Type: field.TypeString, Nullable: true, Size: 255},
-		{Name: "manufacturer", Type: field.TypeString, Nullable: true, Size: 255},
-		{Name: "lifetime_warranty", Type: field.TypeBool, Default: false},
-		{Name: "warranty_expires", Type: field.TypeTime, Nullable: true},
-		{Name: "warranty_details", Type: field.TypeString, Nullable: true, Size: 1000},
-		{Name: "purchase_time", Type: field.TypeTime, Nullable: true},
-		{Name: "purchase_from", Type: field.TypeString, Nullable: true},
-		{Name: "purchase_price", Type: field.TypeFloat64, Default: 0},
-		{Name: "sold_time", Type: field.TypeTime, Nullable: true},
-		{Name: "sold_to", Type: field.TypeString, Nullable: true},
-		{Name: "sold_price", Type: field.TypeFloat64, Default: 0},
-		{Name: "sold_notes", Type: field.TypeString, Nullable: true, Size: 1000},
-		{Name: "group_items", Type: field.TypeUUID},
-		{Name: "item_children", Type: field.TypeUUID, Nullable: true},
-		{Name: "location_items", Type: field.TypeUUID, Nullable: true},
-	}
-	// ItemsTable holds the schema information for the "items" table.
-	ItemsTable = &schema.Table{
-		Name:       "items",
-		Columns:    ItemsColumns,
-		PrimaryKey: []*schema.Column{ItemsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "items_groups_items",
-				Columns:    []*schema.Column{ItemsColumns[25]},
-				RefColumns: []*schema.Column{GroupsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "items_items_children",
-				Columns:    []*schema.Column{ItemsColumns[26]},
-				RefColumns: []*schema.Column{ItemsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
-				Symbol:     "items_locations_items",
-				Columns:    []*schema.Column{ItemsColumns[27]},
-				RefColumns: []*schema.Column{LocationsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-		Indexes: []*schema.Index{
-			{
-				Name:    "item_name",
-				Unique:  false,
-				Columns: []*schema.Column{ItemsColumns[3]},
-			},
-			{
-				Name:    "item_manufacturer",
-				Unique:  false,
-				Columns: []*schema.Column{ItemsColumns[14]},
-			},
-			{
-				Name:    "item_model_number",
-				Unique:  false,
-				Columns: []*schema.Column{ItemsColumns[13]},
-			},
-			{
-				Name:    "item_serial_number",
-				Unique:  false,
-				Columns: []*schema.Column{ItemsColumns[12]},
-			},
-			{
-				Name:    "item_archived",
-				Unique:  false,
-				Columns: []*schema.Column{ItemsColumns[9]},
-			},
-			{
-				Name:    "item_asset_id",
-				Unique:  false,
-				Columns: []*schema.Column{ItemsColumns[10]},
-			},
-		},
-	}
-	// ItemFieldsColumns holds the columns for the "item_fields" table.
-	ItemFieldsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString, Size: 255},
-		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"text", "number", "boolean", "time"}},
-		{Name: "text_value", Type: field.TypeString, Nullable: true, Size: 500},
-		{Name: "number_value", Type: field.TypeInt, Nullable: true},
-		{Name: "boolean_value", Type: field.TypeBool, Default: false},
-		{Name: "time_value", Type: field.TypeTime},
-		{Name: "item_fields", Type: field.TypeUUID, Nullable: true},
-	}
-	// ItemFieldsTable holds the schema information for the "item_fields" table.
-	ItemFieldsTable = &schema.Table{
-		Name:       "item_fields",
-		Columns:    ItemFieldsColumns,
-		PrimaryKey: []*schema.Column{ItemFieldsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "item_fields_items_fields",
-				Columns:    []*schema.Column{ItemFieldsColumns[10]},
-				RefColumns: []*schema.Column{ItemsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
 	// LabelsColumns holds the columns for the "labels" table.
 	LabelsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -262,36 +256,6 @@ var (
 			},
 		},
 	}
-	// LocationsColumns holds the columns for the "locations" table.
-	LocationsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString, Size: 255},
-		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
-		{Name: "group_locations", Type: field.TypeUUID},
-		{Name: "location_children", Type: field.TypeUUID, Nullable: true},
-	}
-	// LocationsTable holds the schema information for the "locations" table.
-	LocationsTable = &schema.Table{
-		Name:       "locations",
-		Columns:    LocationsColumns,
-		PrimaryKey: []*schema.Column{LocationsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "locations_groups_locations",
-				Columns:    []*schema.Column{LocationsColumns[5]},
-				RefColumns: []*schema.Column{GroupsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-			{
-				Symbol:     "locations_locations_children",
-				Columns:    []*schema.Column{LocationsColumns[6]},
-				RefColumns: []*schema.Column{LocationsColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
-	}
 	// MaintenanceEntriesColumns holds the columns for the "maintenance_entries" table.
 	MaintenanceEntriesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -302,7 +266,7 @@ var (
 		{Name: "name", Type: field.TypeString, Size: 255},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 2500},
 		{Name: "cost", Type: field.TypeFloat64, Default: 0},
-		{Name: "item_id", Type: field.TypeUUID},
+		{Name: "entity_id", Type: field.TypeUUID},
 	}
 	// MaintenanceEntriesTable holds the schema information for the "maintenance_entries" table.
 	MaintenanceEntriesTable = &schema.Table{
@@ -311,9 +275,9 @@ var (
 		PrimaryKey: []*schema.Column{MaintenanceEntriesColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "maintenance_entries_items_maintenance_entries",
+				Symbol:     "maintenance_entries_entities_maintenance_entries",
 				Columns:    []*schema.Column{MaintenanceEntriesColumns[8]},
-				RefColumns: []*schema.Column{ItemsColumns[0]},
+				RefColumns: []*schema.Column{EntitiesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
@@ -399,27 +363,27 @@ var (
 			},
 		},
 	}
-	// LabelItemsColumns holds the columns for the "label_items" table.
-	LabelItemsColumns = []*schema.Column{
+	// LabelEntitiesColumns holds the columns for the "label_entities" table.
+	LabelEntitiesColumns = []*schema.Column{
 		{Name: "label_id", Type: field.TypeUUID},
-		{Name: "item_id", Type: field.TypeUUID},
+		{Name: "entity_id", Type: field.TypeUUID},
 	}
-	// LabelItemsTable holds the schema information for the "label_items" table.
-	LabelItemsTable = &schema.Table{
-		Name:       "label_items",
-		Columns:    LabelItemsColumns,
-		PrimaryKey: []*schema.Column{LabelItemsColumns[0], LabelItemsColumns[1]},
+	// LabelEntitiesTable holds the schema information for the "label_entities" table.
+	LabelEntitiesTable = &schema.Table{
+		Name:       "label_entities",
+		Columns:    LabelEntitiesColumns,
+		PrimaryKey: []*schema.Column{LabelEntitiesColumns[0], LabelEntitiesColumns[1]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "label_items_label_id",
-				Columns:    []*schema.Column{LabelItemsColumns[0]},
+				Symbol:     "label_entities_label_id",
+				Columns:    []*schema.Column{LabelEntitiesColumns[0]},
 				RefColumns: []*schema.Column{LabelsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
-				Symbol:     "label_items_item_id",
-				Columns:    []*schema.Column{LabelItemsColumns[1]},
-				RefColumns: []*schema.Column{ItemsColumns[0]},
+				Symbol:     "label_entities_entity_id",
+				Columns:    []*schema.Column{LabelEntitiesColumns[1]},
+				RefColumns: []*schema.Column{EntitiesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
@@ -429,35 +393,31 @@ var (
 		AttachmentsTable,
 		AuthRolesTable,
 		AuthTokensTable,
+		EntitiesTable,
+		EntityFieldsTable,
 		GroupsTable,
 		GroupInvitationTokensTable,
-		ItemsTable,
-		ItemFieldsTable,
 		LabelsTable,
-		LocationsTable,
 		MaintenanceEntriesTable,
 		NotifiersTable,
 		UsersTable,
-		LabelItemsTable,
+		LabelEntitiesTable,
 	}
 )
 
 func init() {
-	AttachmentsTable.ForeignKeys[0].RefTable = ItemsTable
+	AttachmentsTable.ForeignKeys[0].RefTable = EntitiesTable
 	AuthRolesTable.ForeignKeys[0].RefTable = AuthTokensTable
 	AuthTokensTable.ForeignKeys[0].RefTable = UsersTable
+	EntitiesTable.ForeignKeys[0].RefTable = EntitiesTable
+	EntitiesTable.ForeignKeys[1].RefTable = GroupsTable
+	EntityFieldsTable.ForeignKeys[0].RefTable = EntitiesTable
 	GroupInvitationTokensTable.ForeignKeys[0].RefTable = GroupsTable
-	ItemsTable.ForeignKeys[0].RefTable = GroupsTable
-	ItemsTable.ForeignKeys[1].RefTable = ItemsTable
-	ItemsTable.ForeignKeys[2].RefTable = LocationsTable
-	ItemFieldsTable.ForeignKeys[0].RefTable = ItemsTable
 	LabelsTable.ForeignKeys[0].RefTable = GroupsTable
-	LocationsTable.ForeignKeys[0].RefTable = GroupsTable
-	LocationsTable.ForeignKeys[1].RefTable = LocationsTable
-	MaintenanceEntriesTable.ForeignKeys[0].RefTable = ItemsTable
+	MaintenanceEntriesTable.ForeignKeys[0].RefTable = EntitiesTable
 	NotifiersTable.ForeignKeys[0].RefTable = GroupsTable
 	NotifiersTable.ForeignKeys[1].RefTable = UsersTable
 	UsersTable.ForeignKeys[0].RefTable = GroupsTable
-	LabelItemsTable.ForeignKeys[0].RefTable = LabelsTable
-	LabelItemsTable.ForeignKeys[1].RefTable = ItemsTable
+	LabelEntitiesTable.ForeignKeys[0].RefTable = LabelsTable
+	LabelEntitiesTable.ForeignKeys[1].RefTable = EntitiesTable
 }

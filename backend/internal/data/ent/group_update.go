@@ -12,11 +12,10 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
@@ -84,34 +83,19 @@ func (gu *GroupUpdate) AddUsers(u ...*User) *GroupUpdate {
 	return gu.AddUserIDs(ids...)
 }
 
-// AddLocationIDs adds the "locations" edge to the Location entity by IDs.
-func (gu *GroupUpdate) AddLocationIDs(ids ...uuid.UUID) *GroupUpdate {
-	gu.mutation.AddLocationIDs(ids...)
+// AddEntityIDs adds the "entities" edge to the Entity entity by IDs.
+func (gu *GroupUpdate) AddEntityIDs(ids ...uuid.UUID) *GroupUpdate {
+	gu.mutation.AddEntityIDs(ids...)
 	return gu
 }
 
-// AddLocations adds the "locations" edges to the Location entity.
-func (gu *GroupUpdate) AddLocations(l ...*Location) *GroupUpdate {
-	ids := make([]uuid.UUID, len(l))
-	for i := range l {
-		ids[i] = l[i].ID
+// AddEntities adds the "entities" edges to the Entity entity.
+func (gu *GroupUpdate) AddEntities(e ...*Entity) *GroupUpdate {
+	ids := make([]uuid.UUID, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
 	}
-	return gu.AddLocationIDs(ids...)
-}
-
-// AddItemIDs adds the "items" edge to the Item entity by IDs.
-func (gu *GroupUpdate) AddItemIDs(ids ...uuid.UUID) *GroupUpdate {
-	gu.mutation.AddItemIDs(ids...)
-	return gu
-}
-
-// AddItems adds the "items" edges to the Item entity.
-func (gu *GroupUpdate) AddItems(i ...*Item) *GroupUpdate {
-	ids := make([]uuid.UUID, len(i))
-	for j := range i {
-		ids[j] = i[j].ID
-	}
-	return gu.AddItemIDs(ids...)
+	return gu.AddEntityIDs(ids...)
 }
 
 // AddLabelIDs adds the "labels" edge to the Label entity by IDs.
@@ -185,46 +169,25 @@ func (gu *GroupUpdate) RemoveUsers(u ...*User) *GroupUpdate {
 	return gu.RemoveUserIDs(ids...)
 }
 
-// ClearLocations clears all "locations" edges to the Location entity.
-func (gu *GroupUpdate) ClearLocations() *GroupUpdate {
-	gu.mutation.ClearLocations()
+// ClearEntities clears all "entities" edges to the Entity entity.
+func (gu *GroupUpdate) ClearEntities() *GroupUpdate {
+	gu.mutation.ClearEntities()
 	return gu
 }
 
-// RemoveLocationIDs removes the "locations" edge to Location entities by IDs.
-func (gu *GroupUpdate) RemoveLocationIDs(ids ...uuid.UUID) *GroupUpdate {
-	gu.mutation.RemoveLocationIDs(ids...)
+// RemoveEntityIDs removes the "entities" edge to Entity entities by IDs.
+func (gu *GroupUpdate) RemoveEntityIDs(ids ...uuid.UUID) *GroupUpdate {
+	gu.mutation.RemoveEntityIDs(ids...)
 	return gu
 }
 
-// RemoveLocations removes "locations" edges to Location entities.
-func (gu *GroupUpdate) RemoveLocations(l ...*Location) *GroupUpdate {
-	ids := make([]uuid.UUID, len(l))
-	for i := range l {
-		ids[i] = l[i].ID
+// RemoveEntities removes "entities" edges to Entity entities.
+func (gu *GroupUpdate) RemoveEntities(e ...*Entity) *GroupUpdate {
+	ids := make([]uuid.UUID, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
 	}
-	return gu.RemoveLocationIDs(ids...)
-}
-
-// ClearItems clears all "items" edges to the Item entity.
-func (gu *GroupUpdate) ClearItems() *GroupUpdate {
-	gu.mutation.ClearItems()
-	return gu
-}
-
-// RemoveItemIDs removes the "items" edge to Item entities by IDs.
-func (gu *GroupUpdate) RemoveItemIDs(ids ...uuid.UUID) *GroupUpdate {
-	gu.mutation.RemoveItemIDs(ids...)
-	return gu
-}
-
-// RemoveItems removes "items" edges to Item entities.
-func (gu *GroupUpdate) RemoveItems(i ...*Item) *GroupUpdate {
-	ids := make([]uuid.UUID, len(i))
-	for j := range i {
-		ids[j] = i[j].ID
-	}
-	return gu.RemoveItemIDs(ids...)
+	return gu.RemoveEntityIDs(ids...)
 }
 
 // ClearLabels clears all "labels" edges to the Label entity.
@@ -402,28 +365,28 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if gu.mutation.LocationsCleared() {
+	if gu.mutation.EntitiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   group.LocationsTable,
-			Columns: []string{group.LocationsColumn},
+			Table:   group.EntitiesTable,
+			Columns: []string{group.EntitiesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(location.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := gu.mutation.RemovedLocationsIDs(); len(nodes) > 0 && !gu.mutation.LocationsCleared() {
+	if nodes := gu.mutation.RemovedEntitiesIDs(); len(nodes) > 0 && !gu.mutation.EntitiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   group.LocationsTable,
-			Columns: []string{group.LocationsColumn},
+			Table:   group.EntitiesTable,
+			Columns: []string{group.EntitiesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(location.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -431,60 +394,15 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := gu.mutation.LocationsIDs(); len(nodes) > 0 {
+	if nodes := gu.mutation.EntitiesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   group.LocationsTable,
-			Columns: []string{group.LocationsColumn},
+			Table:   group.EntitiesTable,
+			Columns: []string{group.EntitiesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(location.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if gu.mutation.ItemsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.ItemsTable,
-			Columns: []string{group.ItemsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := gu.mutation.RemovedItemsIDs(); len(nodes) > 0 && !gu.mutation.ItemsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.ItemsTable,
-			Columns: []string{group.ItemsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := gu.mutation.ItemsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.ItemsTable,
-			Columns: []string{group.ItemsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -696,34 +614,19 @@ func (guo *GroupUpdateOne) AddUsers(u ...*User) *GroupUpdateOne {
 	return guo.AddUserIDs(ids...)
 }
 
-// AddLocationIDs adds the "locations" edge to the Location entity by IDs.
-func (guo *GroupUpdateOne) AddLocationIDs(ids ...uuid.UUID) *GroupUpdateOne {
-	guo.mutation.AddLocationIDs(ids...)
+// AddEntityIDs adds the "entities" edge to the Entity entity by IDs.
+func (guo *GroupUpdateOne) AddEntityIDs(ids ...uuid.UUID) *GroupUpdateOne {
+	guo.mutation.AddEntityIDs(ids...)
 	return guo
 }
 
-// AddLocations adds the "locations" edges to the Location entity.
-func (guo *GroupUpdateOne) AddLocations(l ...*Location) *GroupUpdateOne {
-	ids := make([]uuid.UUID, len(l))
-	for i := range l {
-		ids[i] = l[i].ID
+// AddEntities adds the "entities" edges to the Entity entity.
+func (guo *GroupUpdateOne) AddEntities(e ...*Entity) *GroupUpdateOne {
+	ids := make([]uuid.UUID, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
 	}
-	return guo.AddLocationIDs(ids...)
-}
-
-// AddItemIDs adds the "items" edge to the Item entity by IDs.
-func (guo *GroupUpdateOne) AddItemIDs(ids ...uuid.UUID) *GroupUpdateOne {
-	guo.mutation.AddItemIDs(ids...)
-	return guo
-}
-
-// AddItems adds the "items" edges to the Item entity.
-func (guo *GroupUpdateOne) AddItems(i ...*Item) *GroupUpdateOne {
-	ids := make([]uuid.UUID, len(i))
-	for j := range i {
-		ids[j] = i[j].ID
-	}
-	return guo.AddItemIDs(ids...)
+	return guo.AddEntityIDs(ids...)
 }
 
 // AddLabelIDs adds the "labels" edge to the Label entity by IDs.
@@ -797,46 +700,25 @@ func (guo *GroupUpdateOne) RemoveUsers(u ...*User) *GroupUpdateOne {
 	return guo.RemoveUserIDs(ids...)
 }
 
-// ClearLocations clears all "locations" edges to the Location entity.
-func (guo *GroupUpdateOne) ClearLocations() *GroupUpdateOne {
-	guo.mutation.ClearLocations()
+// ClearEntities clears all "entities" edges to the Entity entity.
+func (guo *GroupUpdateOne) ClearEntities() *GroupUpdateOne {
+	guo.mutation.ClearEntities()
 	return guo
 }
 
-// RemoveLocationIDs removes the "locations" edge to Location entities by IDs.
-func (guo *GroupUpdateOne) RemoveLocationIDs(ids ...uuid.UUID) *GroupUpdateOne {
-	guo.mutation.RemoveLocationIDs(ids...)
+// RemoveEntityIDs removes the "entities" edge to Entity entities by IDs.
+func (guo *GroupUpdateOne) RemoveEntityIDs(ids ...uuid.UUID) *GroupUpdateOne {
+	guo.mutation.RemoveEntityIDs(ids...)
 	return guo
 }
 
-// RemoveLocations removes "locations" edges to Location entities.
-func (guo *GroupUpdateOne) RemoveLocations(l ...*Location) *GroupUpdateOne {
-	ids := make([]uuid.UUID, len(l))
-	for i := range l {
-		ids[i] = l[i].ID
+// RemoveEntities removes "entities" edges to Entity entities.
+func (guo *GroupUpdateOne) RemoveEntities(e ...*Entity) *GroupUpdateOne {
+	ids := make([]uuid.UUID, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
 	}
-	return guo.RemoveLocationIDs(ids...)
-}
-
-// ClearItems clears all "items" edges to the Item entity.
-func (guo *GroupUpdateOne) ClearItems() *GroupUpdateOne {
-	guo.mutation.ClearItems()
-	return guo
-}
-
-// RemoveItemIDs removes the "items" edge to Item entities by IDs.
-func (guo *GroupUpdateOne) RemoveItemIDs(ids ...uuid.UUID) *GroupUpdateOne {
-	guo.mutation.RemoveItemIDs(ids...)
-	return guo
-}
-
-// RemoveItems removes "items" edges to Item entities.
-func (guo *GroupUpdateOne) RemoveItems(i ...*Item) *GroupUpdateOne {
-	ids := make([]uuid.UUID, len(i))
-	for j := range i {
-		ids[j] = i[j].ID
-	}
-	return guo.RemoveItemIDs(ids...)
+	return guo.RemoveEntityIDs(ids...)
 }
 
 // ClearLabels clears all "labels" edges to the Label entity.
@@ -1044,28 +926,28 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if guo.mutation.LocationsCleared() {
+	if guo.mutation.EntitiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   group.LocationsTable,
-			Columns: []string{group.LocationsColumn},
+			Table:   group.EntitiesTable,
+			Columns: []string{group.EntitiesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(location.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := guo.mutation.RemovedLocationsIDs(); len(nodes) > 0 && !guo.mutation.LocationsCleared() {
+	if nodes := guo.mutation.RemovedEntitiesIDs(); len(nodes) > 0 && !guo.mutation.EntitiesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   group.LocationsTable,
-			Columns: []string{group.LocationsColumn},
+			Table:   group.EntitiesTable,
+			Columns: []string{group.EntitiesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(location.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -1073,60 +955,15 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := guo.mutation.LocationsIDs(); len(nodes) > 0 {
+	if nodes := guo.mutation.EntitiesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
-			Table:   group.LocationsTable,
-			Columns: []string{group.LocationsColumn},
+			Table:   group.EntitiesTable,
+			Columns: []string{group.EntitiesColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(location.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if guo.mutation.ItemsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.ItemsTable,
-			Columns: []string{group.ItemsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := guo.mutation.RemovedItemsIDs(); len(nodes) > 0 && !guo.mutation.ItemsCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.ItemsTable,
-			Columns: []string{group.ItemsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := guo.mutation.ItemsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.ItemsTable,
-			Columns: []string{group.ItemsColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

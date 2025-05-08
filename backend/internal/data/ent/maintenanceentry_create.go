@@ -11,7 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 )
 
@@ -50,9 +50,9 @@ func (mec *MaintenanceEntryCreate) SetNillableUpdatedAt(t *time.Time) *Maintenan
 	return mec
 }
 
-// SetItemID sets the "item_id" field.
-func (mec *MaintenanceEntryCreate) SetItemID(u uuid.UUID) *MaintenanceEntryCreate {
-	mec.mutation.SetItemID(u)
+// SetEntityID sets the "entity_id" field.
+func (mec *MaintenanceEntryCreate) SetEntityID(u uuid.UUID) *MaintenanceEntryCreate {
+	mec.mutation.SetEntityID(u)
 	return mec
 }
 
@@ -132,9 +132,9 @@ func (mec *MaintenanceEntryCreate) SetNillableID(u *uuid.UUID) *MaintenanceEntry
 	return mec
 }
 
-// SetItem sets the "item" edge to the Item entity.
-func (mec *MaintenanceEntryCreate) SetItem(i *Item) *MaintenanceEntryCreate {
-	return mec.SetItemID(i.ID)
+// SetEntity sets the "entity" edge to the Entity entity.
+func (mec *MaintenanceEntryCreate) SetEntity(e *Entity) *MaintenanceEntryCreate {
+	return mec.SetEntityID(e.ID)
 }
 
 // Mutation returns the MaintenanceEntryMutation object of the builder.
@@ -198,8 +198,8 @@ func (mec *MaintenanceEntryCreate) check() error {
 	if _, ok := mec.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "MaintenanceEntry.updated_at"`)}
 	}
-	if _, ok := mec.mutation.ItemID(); !ok {
-		return &ValidationError{Name: "item_id", err: errors.New(`ent: missing required field "MaintenanceEntry.item_id"`)}
+	if _, ok := mec.mutation.EntityID(); !ok {
+		return &ValidationError{Name: "entity_id", err: errors.New(`ent: missing required field "MaintenanceEntry.entity_id"`)}
 	}
 	if _, ok := mec.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "MaintenanceEntry.name"`)}
@@ -217,8 +217,8 @@ func (mec *MaintenanceEntryCreate) check() error {
 	if _, ok := mec.mutation.Cost(); !ok {
 		return &ValidationError{Name: "cost", err: errors.New(`ent: missing required field "MaintenanceEntry.cost"`)}
 	}
-	if len(mec.mutation.ItemIDs()) == 0 {
-		return &ValidationError{Name: "item", err: errors.New(`ent: missing required edge "MaintenanceEntry.item"`)}
+	if len(mec.mutation.EntityIDs()) == 0 {
+		return &ValidationError{Name: "entity", err: errors.New(`ent: missing required edge "MaintenanceEntry.entity"`)}
 	}
 	return nil
 }
@@ -283,21 +283,21 @@ func (mec *MaintenanceEntryCreate) createSpec() (*MaintenanceEntry, *sqlgraph.Cr
 		_spec.SetField(maintenanceentry.FieldCost, field.TypeFloat64, value)
 		_node.Cost = value
 	}
-	if nodes := mec.mutation.ItemIDs(); len(nodes) > 0 {
+	if nodes := mec.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   maintenanceentry.ItemTable,
-			Columns: []string{maintenanceentry.ItemColumn},
+			Table:   maintenanceentry.EntityTable,
+			Columns: []string{maintenanceentry.EntityColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.ItemID = nodes[0]
+		_node.EntityID = nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

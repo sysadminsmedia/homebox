@@ -309,44 +309,21 @@ func HasUsersWith(preds ...predicate.User) predicate.Group {
 	})
 }
 
-// HasLocations applies the HasEdge predicate on the "locations" edge.
-func HasLocations() predicate.Group {
+// HasEntities applies the HasEdge predicate on the "entities" edge.
+func HasEntities() predicate.Group {
 	return predicate.Group(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, LocationsTable, LocationsColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, EntitiesTable, EntitiesColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasLocationsWith applies the HasEdge predicate on the "locations" edge with a given conditions (other predicates).
-func HasLocationsWith(preds ...predicate.Location) predicate.Group {
+// HasEntitiesWith applies the HasEdge predicate on the "entities" edge with a given conditions (other predicates).
+func HasEntitiesWith(preds ...predicate.Entity) predicate.Group {
 	return predicate.Group(func(s *sql.Selector) {
-		step := newLocationsStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasItems applies the HasEdge predicate on the "items" edge.
-func HasItems() predicate.Group {
-	return predicate.Group(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ItemsTable, ItemsColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasItemsWith applies the HasEdge predicate on the "items" edge with a given conditions (other predicates).
-func HasItemsWith(preds ...predicate.Item) predicate.Group {
-	return predicate.Group(func(s *sql.Selector) {
-		step := newItemsStep()
+		step := newEntitiesStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

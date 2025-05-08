@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 )
@@ -36,16 +36,16 @@ func (meu *MaintenanceEntryUpdate) SetUpdatedAt(t time.Time) *MaintenanceEntryUp
 	return meu
 }
 
-// SetItemID sets the "item_id" field.
-func (meu *MaintenanceEntryUpdate) SetItemID(u uuid.UUID) *MaintenanceEntryUpdate {
-	meu.mutation.SetItemID(u)
+// SetEntityID sets the "entity_id" field.
+func (meu *MaintenanceEntryUpdate) SetEntityID(u uuid.UUID) *MaintenanceEntryUpdate {
+	meu.mutation.SetEntityID(u)
 	return meu
 }
 
-// SetNillableItemID sets the "item_id" field if the given value is not nil.
-func (meu *MaintenanceEntryUpdate) SetNillableItemID(u *uuid.UUID) *MaintenanceEntryUpdate {
+// SetNillableEntityID sets the "entity_id" field if the given value is not nil.
+func (meu *MaintenanceEntryUpdate) SetNillableEntityID(u *uuid.UUID) *MaintenanceEntryUpdate {
 	if u != nil {
-		meu.SetItemID(*u)
+		meu.SetEntityID(*u)
 	}
 	return meu
 }
@@ -145,9 +145,9 @@ func (meu *MaintenanceEntryUpdate) AddCost(f float64) *MaintenanceEntryUpdate {
 	return meu
 }
 
-// SetItem sets the "item" edge to the Item entity.
-func (meu *MaintenanceEntryUpdate) SetItem(i *Item) *MaintenanceEntryUpdate {
-	return meu.SetItemID(i.ID)
+// SetEntity sets the "entity" edge to the Entity entity.
+func (meu *MaintenanceEntryUpdate) SetEntity(e *Entity) *MaintenanceEntryUpdate {
+	return meu.SetEntityID(e.ID)
 }
 
 // Mutation returns the MaintenanceEntryMutation object of the builder.
@@ -155,9 +155,9 @@ func (meu *MaintenanceEntryUpdate) Mutation() *MaintenanceEntryMutation {
 	return meu.mutation
 }
 
-// ClearItem clears the "item" edge to the Item entity.
-func (meu *MaintenanceEntryUpdate) ClearItem() *MaintenanceEntryUpdate {
-	meu.mutation.ClearItem()
+// ClearEntity clears the "entity" edge to the Entity entity.
+func (meu *MaintenanceEntryUpdate) ClearEntity() *MaintenanceEntryUpdate {
+	meu.mutation.ClearEntity()
 	return meu
 }
 
@@ -209,8 +209,8 @@ func (meu *MaintenanceEntryUpdate) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "MaintenanceEntry.description": %w`, err)}
 		}
 	}
-	if meu.mutation.ItemCleared() && len(meu.mutation.ItemIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "MaintenanceEntry.item"`)
+	if meu.mutation.EntityCleared() && len(meu.mutation.EntityIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "MaintenanceEntry.entity"`)
 	}
 	return nil
 }
@@ -257,28 +257,28 @@ func (meu *MaintenanceEntryUpdate) sqlSave(ctx context.Context) (n int, err erro
 	if value, ok := meu.mutation.AddedCost(); ok {
 		_spec.AddField(maintenanceentry.FieldCost, field.TypeFloat64, value)
 	}
-	if meu.mutation.ItemCleared() {
+	if meu.mutation.EntityCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   maintenanceentry.ItemTable,
-			Columns: []string{maintenanceentry.ItemColumn},
+			Table:   maintenanceentry.EntityTable,
+			Columns: []string{maintenanceentry.EntityColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := meu.mutation.ItemIDs(); len(nodes) > 0 {
+	if nodes := meu.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   maintenanceentry.ItemTable,
-			Columns: []string{maintenanceentry.ItemColumn},
+			Table:   maintenanceentry.EntityTable,
+			Columns: []string{maintenanceentry.EntityColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -312,16 +312,16 @@ func (meuo *MaintenanceEntryUpdateOne) SetUpdatedAt(t time.Time) *MaintenanceEnt
 	return meuo
 }
 
-// SetItemID sets the "item_id" field.
-func (meuo *MaintenanceEntryUpdateOne) SetItemID(u uuid.UUID) *MaintenanceEntryUpdateOne {
-	meuo.mutation.SetItemID(u)
+// SetEntityID sets the "entity_id" field.
+func (meuo *MaintenanceEntryUpdateOne) SetEntityID(u uuid.UUID) *MaintenanceEntryUpdateOne {
+	meuo.mutation.SetEntityID(u)
 	return meuo
 }
 
-// SetNillableItemID sets the "item_id" field if the given value is not nil.
-func (meuo *MaintenanceEntryUpdateOne) SetNillableItemID(u *uuid.UUID) *MaintenanceEntryUpdateOne {
+// SetNillableEntityID sets the "entity_id" field if the given value is not nil.
+func (meuo *MaintenanceEntryUpdateOne) SetNillableEntityID(u *uuid.UUID) *MaintenanceEntryUpdateOne {
 	if u != nil {
-		meuo.SetItemID(*u)
+		meuo.SetEntityID(*u)
 	}
 	return meuo
 }
@@ -421,9 +421,9 @@ func (meuo *MaintenanceEntryUpdateOne) AddCost(f float64) *MaintenanceEntryUpdat
 	return meuo
 }
 
-// SetItem sets the "item" edge to the Item entity.
-func (meuo *MaintenanceEntryUpdateOne) SetItem(i *Item) *MaintenanceEntryUpdateOne {
-	return meuo.SetItemID(i.ID)
+// SetEntity sets the "entity" edge to the Entity entity.
+func (meuo *MaintenanceEntryUpdateOne) SetEntity(e *Entity) *MaintenanceEntryUpdateOne {
+	return meuo.SetEntityID(e.ID)
 }
 
 // Mutation returns the MaintenanceEntryMutation object of the builder.
@@ -431,9 +431,9 @@ func (meuo *MaintenanceEntryUpdateOne) Mutation() *MaintenanceEntryMutation {
 	return meuo.mutation
 }
 
-// ClearItem clears the "item" edge to the Item entity.
-func (meuo *MaintenanceEntryUpdateOne) ClearItem() *MaintenanceEntryUpdateOne {
-	meuo.mutation.ClearItem()
+// ClearEntity clears the "entity" edge to the Entity entity.
+func (meuo *MaintenanceEntryUpdateOne) ClearEntity() *MaintenanceEntryUpdateOne {
+	meuo.mutation.ClearEntity()
 	return meuo
 }
 
@@ -498,8 +498,8 @@ func (meuo *MaintenanceEntryUpdateOne) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "MaintenanceEntry.description": %w`, err)}
 		}
 	}
-	if meuo.mutation.ItemCleared() && len(meuo.mutation.ItemIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "MaintenanceEntry.item"`)
+	if meuo.mutation.EntityCleared() && len(meuo.mutation.EntityIDs()) > 0 {
+		return errors.New(`ent: clearing a required unique edge "MaintenanceEntry.entity"`)
 	}
 	return nil
 }
@@ -563,28 +563,28 @@ func (meuo *MaintenanceEntryUpdateOne) sqlSave(ctx context.Context) (_node *Main
 	if value, ok := meuo.mutation.AddedCost(); ok {
 		_spec.AddField(maintenanceentry.FieldCost, field.TypeFloat64, value)
 	}
-	if meuo.mutation.ItemCleared() {
+	if meuo.mutation.EntityCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   maintenanceentry.ItemTable,
-			Columns: []string{maintenanceentry.ItemColumn},
+			Table:   maintenanceentry.EntityTable,
+			Columns: []string{maintenanceentry.EntityColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := meuo.mutation.ItemIDs(); len(nodes) > 0 {
+	if nodes := meuo.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   maintenanceentry.ItemTable,
-			Columns: []string{maintenanceentry.ItemColumn},
+			Table:   maintenanceentry.EntityTable,
+			Columns: []string{maintenanceentry.EntityColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
