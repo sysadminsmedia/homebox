@@ -234,7 +234,7 @@
                       {{ $t("index.dont_join_group") }}
                     </button>
                   </div>
-                  <FormPassword v-model="password" :label="$t('index.set_password')" />
+                  <FormPassword v-model="password" :label="$t('index.set_password')" data-testid="password-input" />
                   <PasswordScore v-model:valid="canRegister" :password="password" />
                 </CardContent>
                 <CardFooter>
