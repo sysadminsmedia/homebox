@@ -54,7 +54,8 @@
                 "titles": "标签"
             },
             "page_qr_code": {
-                "page_url": "页面URL"
+                "page_url": "页面URL",
+                "qr_tooltip": "显示二维码"
             },
             "password_score": {
                 "password_strength": "密码强度"
@@ -64,7 +65,10 @@
             "create_modal": {
                 "item_description": "物品描述",
                 "item_name": "物品名称",
-                "title": "创建物品"
+                "item_photo": "物品照片📷",
+                "item_quantity": "物品数量",
+                "title": "创建物品",
+                "upload_photos": "上传照片"
             },
             "view": {
                 "selectable": {
@@ -74,8 +78,10 @@
                     "table": "表格模式"
                 },
                 "table": {
+                    "headers": "页眉",
                     "page": "页",
-                    "rows_per_page": "每页行数"
+                    "rows_per_page": "每页行数",
+                    "table_settings": "表格设置"
                 }
             }
         },
@@ -84,6 +90,9 @@
                 "label_description": "标签说明",
                 "label_name": "标签名称",
                 "title": "创建标签"
+            },
+            "selector": {
+                "select_labels": "选择标签"
             }
         },
         "location": {
@@ -93,19 +102,25 @@
                 "title": "创建位置"
             },
             "selector": {
-                "parent_location": "父位置"
+                "no_location_found": "未找到位置",
+                "parent_location": "父位置",
+                "search_location": "搜索位置",
+                "select_location": "选择一个位置"
             },
             "tree": {
                 "no_locations": "没有可用的位置。请添加新的位置\n `<`span class=\"link-primary\"`>`创建`<`/span`>` 按钮在导航栏上"
             }
         },
         "quick_menu": {
+            "no_results": "未找到结果。",
             "shortcut_hint": "使用数字键快速选择一个操作。"
         }
     },
     "global": {
         "add": "添加",
+        "archived": "归档",
         "build": "编译：{build}",
+        "cancel": "取消",
         "confirm": "确认",
         "create": "创建",
         "create_and_add": "保存并继续创建",
@@ -125,6 +140,7 @@
         "name": "名称",
         "navigate": "导航",
         "password": "密码",
+        "quantity": "数量",
         "read_docs": "查阅文档",
         "save": "保存",
         "search": "搜索",
@@ -240,6 +256,8 @@
         "it": "意大利语",
         "ja-JP": "日本語",
         "ko-KR": "韩语",
+        "lb-LU": "卢森堡语（卢森堡）",
+        "lt-LT": "立陶宛语（立陶宛）",
         "nb-NO": "挪威语",
         "nl": "荷兰语",
         "pl": "波兰语",
@@ -247,6 +265,7 @@
         "pt-PT": "葡萄牙语（葡萄牙）",
         "ru": "俄语",
         "sl": "斯洛文尼亚语",
+        "sq-AL": "阿尔巴尼亚语",
         "sv": "瑞典语",
         "ta-IN": "泰米尔语",
         "th-TH": "泰语",
@@ -263,6 +282,7 @@
     "locations": {
         "child_locations": "子位置",
         "collapse_tree": "折叠树",
+        "expand_tree": "展开树",
         "no_results": "找不到位置",
         "update_location": "更新位置"
     },
@@ -330,9 +350,11 @@
         "language": "语言",
         "new_password": "新密码",
         "no_notifiers": "未配置通知程序",
+        "no_override": "没有预算",
         "notifier_modal": "{ type, select, true {编辑} false {创建} other {Other}} 通知器",
         "notifiers": "通知器",
         "notifiers_sub": "获取即将到来的维护提醒通知",
+        "override_locale": "覆盖日期和货币语言",
         "test": "测试",
         "theme_settings": "主题设置",
         "theme_settings_sub": "主题设置存储在浏览器的本地存储中。您可以随时更改主题。\n如果您在设置主题时遇到问题，请尝试刷新浏览器。",
@@ -347,6 +369,7 @@
         "invalid_url": "非法的条形码地址",
         "no_sources": "没有可用的摄像头资源",
         "select_video_source": "选择摄像头",
+        "title": "扫描仪",
         "unsupported": "媒体流API只在HTTPS环境下支持"
     },
     "tools": {
