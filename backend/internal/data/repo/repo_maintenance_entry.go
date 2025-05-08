@@ -8,8 +8,8 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 )
@@ -81,8 +81,8 @@ func mapMaintenanceEntry(entry *ent.MaintenanceEntry) MaintenanceEntry {
 func (r *MaintenanceEntryRepository) GetScheduled(ctx context.Context, gid uuid.UUID, dt types.Date) ([]MaintenanceEntry, error) {
 	entries, err := r.db.MaintenanceEntry.Query().
 		Where(
-			maintenanceentry.HasItemWith(
-				item.HasGroupWith(group.ID(gid)),
+			maintenanceentry.HasEntityWith(
+				entity.HasGroupWith(group.ID(gid)),
 			),
 			maintenanceentry.ScheduledDate(dt.Time()),
 			maintenanceentry.Or(
@@ -101,7 +101,7 @@ func (r *MaintenanceEntryRepository) GetScheduled(ctx context.Context, gid uuid.
 
 func (r *MaintenanceEntryRepository) Create(ctx context.Context, itemID uuid.UUID, input MaintenanceEntryCreate) (MaintenanceEntry, error) {
 	item, err := r.db.MaintenanceEntry.Create().
-		SetItemID(itemID).
+		SetEntityID(itemID).
 		SetDate(input.CompletedDate.Time()).
 		SetScheduledDate(input.ScheduledDate.Time()).
 		SetName(input.Name).
@@ -126,9 +126,9 @@ func (r *MaintenanceEntryRepository) Update(ctx context.Context, id uuid.UUID, i
 
 func (r *MaintenanceEntryRepository) GetMaintenanceByItemID(ctx context.Context, groupID, itemID uuid.UUID, filters MaintenanceFilters) ([]MaintenanceEntryWithDetails, error) {
 	query := r.db.MaintenanceEntry.Query().Where(
-		maintenanceentry.ItemID(itemID),
-		maintenanceentry.HasItemWith(
-			item.HasGroupWith(group.IDEQ(groupID)),
+		maintenanceentry.EntityID(itemID),
+		maintenanceentry.HasEntityWith(
+			entity.HasGroupWith(group.IDEQ(groupID)),
 		),
 	)
 	switch filters.Status {
@@ -160,7 +160,7 @@ func (r *MaintenanceEntryRepository) GetMaintenanceByItemID(ctx context.Context,
 			maintenanceentry.ByDate(sql.OrderDesc()),
 		)
 	}
-	entries, err := query.WithItem().All(ctx)
+	entries, err := query.WithEntity().All(ctx)
 
 	if err != nil {
 		return []MaintenanceEntryWithDetails{}, err

@@ -3,14 +3,14 @@ package repo
 import (
 	"context"
 	"fmt"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
