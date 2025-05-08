@@ -73,6 +73,7 @@ type Entity struct {
 	// The values are being populated by the EntityQuery when eager-loading is set.
 	Edges           EntityEdges `json:"edges"`
 	entity_children *uuid.UUID
+	entity_location *uuid.UUID
 	group_entities  *uuid.UUID
 	selectValues    sql.SelectValues
 }
@@ -85,6 +86,10 @@ type EntityEdges struct {
 	Parent *Entity `json:"parent,omitempty"`
 	// Children holds the value of the children edge.
 	Children []*Entity `json:"children,omitempty"`
+	// Entity holds the value of the entity edge.
+	Entity *Entity `json:"entity,omitempty"`
+	// Location holds the value of the location edge.
+	Location *Entity `json:"location,omitempty"`
 	// Label holds the value of the label edge.
 	Label []*Label `json:"label,omitempty"`
 	// Fields holds the value of the fields edge.
@@ -95,7 +100,7 @@ type EntityEdges struct {
 	Attachments []*Attachment `json:"attachments,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [7]bool
+	loadedTypes [9]bool
 }
 
 // GroupOrErr returns the Group value or an error if the edge
@@ -129,10 +134,32 @@ func (e EntityEdges) ChildrenOrErr() ([]*Entity, error) {
 	return nil, &NotLoadedError{edge: "children"}
 }
 
+// EntityOrErr returns the Entity value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EntityEdges) EntityOrErr() (*Entity, error) {
+	if e.Entity != nil {
+		return e.Entity, nil
+	} else if e.loadedTypes[3] {
+		return nil, &NotFoundError{label: entity.Label}
+	}
+	return nil, &NotLoadedError{edge: "entity"}
+}
+
+// LocationOrErr returns the Location value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EntityEdges) LocationOrErr() (*Entity, error) {
+	if e.Location != nil {
+		return e.Location, nil
+	} else if e.loadedTypes[4] {
+		return nil, &NotFoundError{label: entity.Label}
+	}
+	return nil, &NotLoadedError{edge: "location"}
+}
+
 // LabelOrErr returns the Label value or an error if the edge
 // was not loaded in eager-loading.
 func (e EntityEdges) LabelOrErr() ([]*Label, error) {
-	if e.loadedTypes[3] {
+	if e.loadedTypes[5] {
 		return e.Label, nil
 	}
 	return nil, &NotLoadedError{edge: "label"}
@@ -141,7 +168,7 @@ func (e EntityEdges) LabelOrErr() ([]*Label, error) {
 // FieldsOrErr returns the Fields value or an error if the edge
 // was not loaded in eager-loading.
 func (e EntityEdges) FieldsOrErr() ([]*EntityField, error) {
-	if e.loadedTypes[4] {
+	if e.loadedTypes[6] {
 		return e.Fields, nil
 	}
 	return nil, &NotLoadedError{edge: "fields"}
@@ -150,7 +177,7 @@ func (e EntityEdges) FieldsOrErr() ([]*EntityField, error) {
 // MaintenanceEntriesOrErr returns the MaintenanceEntries value or an error if the edge
 // was not loaded in eager-loading.
 func (e EntityEdges) MaintenanceEntriesOrErr() ([]*MaintenanceEntry, error) {
-	if e.loadedTypes[5] {
+	if e.loadedTypes[7] {
 		return e.MaintenanceEntries, nil
 	}
 	return nil, &NotLoadedError{edge: "maintenance_entries"}
@@ -159,7 +186,7 @@ func (e EntityEdges) MaintenanceEntriesOrErr() ([]*MaintenanceEntry, error) {
 // AttachmentsOrErr returns the Attachments value or an error if the edge
 // was not loaded in eager-loading.
 func (e EntityEdges) AttachmentsOrErr() ([]*Attachment, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[8] {
 		return e.Attachments, nil
 	}
 	return nil, &NotLoadedError{edge: "attachments"}
@@ -184,7 +211,9 @@ func (*Entity) scanValues(columns []string) ([]any, error) {
 			values[i] = new(uuid.UUID)
 		case entity.ForeignKeys[0]: // entity_children
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
-		case entity.ForeignKeys[1]: // group_entities
+		case entity.ForeignKeys[1]: // entity_location
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
+		case entity.ForeignKeys[2]: // group_entities
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
@@ -366,6 +395,13 @@ func (e *Entity) assignValues(columns []string, values []any) error {
 			}
 		case entity.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field entity_location", values[i])
+			} else if value.Valid {
+				e.entity_location = new(uuid.UUID)
+				*e.entity_location = *value.S.(*uuid.UUID)
+			}
+		case entity.ForeignKeys[2]:
+			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field group_entities", values[i])
 			} else if value.Valid {
 				e.group_entities = new(uuid.UUID)
@@ -397,6 +433,16 @@ func (e *Entity) QueryParent() *EntityQuery {
 // QueryChildren queries the "children" edge of the Entity entity.
 func (e *Entity) QueryChildren() *EntityQuery {
 	return NewEntityClient(e.config).QueryChildren(e)
+}
+
+// QueryEntity queries the "entity" edge of the Entity entity.
+func (e *Entity) QueryEntity() *EntityQuery {
+	return NewEntityClient(e.config).QueryEntity(e)
+}
+
+// QueryLocation queries the "location" edge of the Entity entity.
+func (e *Entity) QueryLocation() *EntityQuery {
+	return NewEntityClient(e.config).QueryLocation(e)
 }
 
 // QueryLabel queries the "label" edge of the Entity entity.

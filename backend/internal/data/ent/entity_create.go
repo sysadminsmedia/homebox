@@ -427,6 +427,44 @@ func (ec *EntityCreate) AddChildren(e ...*Entity) *EntityCreate {
 	return ec.AddChildIDs(ids...)
 }
 
+// SetEntityID sets the "entity" edge to the Entity entity by ID.
+func (ec *EntityCreate) SetEntityID(id uuid.UUID) *EntityCreate {
+	ec.mutation.SetEntityID(id)
+	return ec
+}
+
+// SetNillableEntityID sets the "entity" edge to the Entity entity by ID if the given value is not nil.
+func (ec *EntityCreate) SetNillableEntityID(id *uuid.UUID) *EntityCreate {
+	if id != nil {
+		ec = ec.SetEntityID(*id)
+	}
+	return ec
+}
+
+// SetEntity sets the "entity" edge to the Entity entity.
+func (ec *EntityCreate) SetEntity(e *Entity) *EntityCreate {
+	return ec.SetEntityID(e.ID)
+}
+
+// SetLocationID sets the "location" edge to the Entity entity by ID.
+func (ec *EntityCreate) SetLocationID(id uuid.UUID) *EntityCreate {
+	ec.mutation.SetLocationID(id)
+	return ec
+}
+
+// SetNillableLocationID sets the "location" edge to the Entity entity by ID if the given value is not nil.
+func (ec *EntityCreate) SetNillableLocationID(id *uuid.UUID) *EntityCreate {
+	if id != nil {
+		ec = ec.SetLocationID(*id)
+	}
+	return ec
+}
+
+// SetLocation sets the "location" edge to the Entity entity.
+func (ec *EntityCreate) SetLocation(e *Entity) *EntityCreate {
+	return ec.SetLocationID(e.ID)
+}
+
 // AddLabelIDs adds the "label" edge to the Label entity by IDs.
 func (ec *EntityCreate) AddLabelIDs(ids ...uuid.UUID) *EntityCreate {
 	ec.mutation.AddLabelIDs(ids...)
@@ -838,6 +876,39 @@ func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 			Inverse: false,
 			Table:   entity.ChildrenTable,
 			Columns: []string{entity.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ec.mutation.EntityIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   entity.EntityTable,
+			Columns: []string{entity.EntityColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.entity_location = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ec.mutation.LocationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   entity.LocationTable,
+			Columns: []string{entity.LocationColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),

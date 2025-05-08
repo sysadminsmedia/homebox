@@ -1510,6 +1510,52 @@ func HasChildrenWith(preds ...predicate.Entity) predicate.Entity {
 	})
 }
 
+// HasEntity applies the HasEdge predicate on the "entity" edge.
+func HasEntity() predicate.Entity {
+	return predicate.Entity(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, true, EntityTable, EntityColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasEntityWith applies the HasEdge predicate on the "entity" edge with a given conditions (other predicates).
+func HasEntityWith(preds ...predicate.Entity) predicate.Entity {
+	return predicate.Entity(func(s *sql.Selector) {
+		step := newEntityStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasLocation applies the HasEdge predicate on the "location" edge.
+func HasLocation() predicate.Entity {
+	return predicate.Entity(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, LocationTable, LocationColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasLocationWith applies the HasEdge predicate on the "location" edge with a given conditions (other predicates).
+func HasLocationWith(preds ...predicate.Entity) predicate.Entity {
+	return predicate.Entity(func(s *sql.Selector) {
+		step := newLocationStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasLabel applies the HasEdge predicate on the "label" edge.
 func HasLabel() predicate.Entity {
 	return predicate.Entity(func(s *sql.Selector) {

@@ -112,6 +112,7 @@ var (
 		{Name: "sold_price", Type: field.TypeFloat64, Default: 0},
 		{Name: "sold_notes", Type: field.TypeString, Nullable: true, Size: 1000},
 		{Name: "entity_children", Type: field.TypeUUID, Nullable: true},
+		{Name: "entity_location", Type: field.TypeUUID, Unique: true, Nullable: true},
 		{Name: "group_entities", Type: field.TypeUUID},
 	}
 	// EntitiesTable holds the schema information for the "entities" table.
@@ -127,8 +128,14 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 			{
-				Symbol:     "entities_groups_entities",
+				Symbol:     "entities_entities_location",
 				Columns:    []*schema.Column{EntitiesColumns[27]},
+				RefColumns: []*schema.Column{EntitiesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "entities_groups_entities",
+				Columns:    []*schema.Column{EntitiesColumns[28]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -410,7 +417,8 @@ func init() {
 	AuthRolesTable.ForeignKeys[0].RefTable = AuthTokensTable
 	AuthTokensTable.ForeignKeys[0].RefTable = UsersTable
 	EntitiesTable.ForeignKeys[0].RefTable = EntitiesTable
-	EntitiesTable.ForeignKeys[1].RefTable = GroupsTable
+	EntitiesTable.ForeignKeys[1].RefTable = EntitiesTable
+	EntitiesTable.ForeignKeys[2].RefTable = GroupsTable
 	EntityFieldsTable.ForeignKeys[0].RefTable = EntitiesTable
 	GroupInvitationTokensTable.ForeignKeys[0].RefTable = GroupsTable
 	LabelsTable.ForeignKeys[0].RefTable = GroupsTable

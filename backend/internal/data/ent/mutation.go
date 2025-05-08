@@ -1773,6 +1773,10 @@ type EntityMutation struct {
 	children                      map[uuid.UUID]struct{}
 	removedchildren               map[uuid.UUID]struct{}
 	clearedchildren               bool
+	entity                        *uuid.UUID
+	clearedentity                 bool
+	location                      *uuid.UUID
+	clearedlocation               bool
 	label                         map[uuid.UUID]struct{}
 	removedlabel                  map[uuid.UUID]struct{}
 	clearedlabel                  bool
@@ -3175,6 +3179,84 @@ func (m *EntityMutation) ResetChildren() {
 	m.removedchildren = nil
 }
 
+// SetEntityID sets the "entity" edge to the Entity entity by id.
+func (m *EntityMutation) SetEntityID(id uuid.UUID) {
+	m.entity = &id
+}
+
+// ClearEntity clears the "entity" edge to the Entity entity.
+func (m *EntityMutation) ClearEntity() {
+	m.clearedentity = true
+}
+
+// EntityCleared reports if the "entity" edge to the Entity entity was cleared.
+func (m *EntityMutation) EntityCleared() bool {
+	return m.clearedentity
+}
+
+// EntityID returns the "entity" edge ID in the mutation.
+func (m *EntityMutation) EntityID() (id uuid.UUID, exists bool) {
+	if m.entity != nil {
+		return *m.entity, true
+	}
+	return
+}
+
+// EntityIDs returns the "entity" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// EntityID instead. It exists only for internal usage by the builders.
+func (m *EntityMutation) EntityIDs() (ids []uuid.UUID) {
+	if id := m.entity; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetEntity resets all changes to the "entity" edge.
+func (m *EntityMutation) ResetEntity() {
+	m.entity = nil
+	m.clearedentity = false
+}
+
+// SetLocationID sets the "location" edge to the Entity entity by id.
+func (m *EntityMutation) SetLocationID(id uuid.UUID) {
+	m.location = &id
+}
+
+// ClearLocation clears the "location" edge to the Entity entity.
+func (m *EntityMutation) ClearLocation() {
+	m.clearedlocation = true
+}
+
+// LocationCleared reports if the "location" edge to the Entity entity was cleared.
+func (m *EntityMutation) LocationCleared() bool {
+	return m.clearedlocation
+}
+
+// LocationID returns the "location" edge ID in the mutation.
+func (m *EntityMutation) LocationID() (id uuid.UUID, exists bool) {
+	if m.location != nil {
+		return *m.location, true
+	}
+	return
+}
+
+// LocationIDs returns the "location" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// LocationID instead. It exists only for internal usage by the builders.
+func (m *EntityMutation) LocationIDs() (ids []uuid.UUID) {
+	if id := m.location; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetLocation resets all changes to the "location" edge.
+func (m *EntityMutation) ResetLocation() {
+	m.location = nil
+	m.clearedlocation = false
+}
+
 // AddLabelIDs adds the "label" edge to the Label entity by ids.
 func (m *EntityMutation) AddLabelIDs(ids ...uuid.UUID) {
 	if m.label == nil {
@@ -4064,7 +4146,7 @@ func (m *EntityMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *EntityMutation) AddedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 9)
 	if m.group != nil {
 		edges = append(edges, entity.EdgeGroup)
 	}
@@ -4073,6 +4155,12 @@ func (m *EntityMutation) AddedEdges() []string {
 	}
 	if m.children != nil {
 		edges = append(edges, entity.EdgeChildren)
+	}
+	if m.entity != nil {
+		edges = append(edges, entity.EdgeEntity)
+	}
+	if m.location != nil {
+		edges = append(edges, entity.EdgeLocation)
 	}
 	if m.label != nil {
 		edges = append(edges, entity.EdgeLabel)
@@ -4107,6 +4195,14 @@ func (m *EntityMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case entity.EdgeEntity:
+		if id := m.entity; id != nil {
+			return []ent.Value{*id}
+		}
+	case entity.EdgeLocation:
+		if id := m.location; id != nil {
+			return []ent.Value{*id}
+		}
 	case entity.EdgeLabel:
 		ids := make([]ent.Value, 0, len(m.label))
 		for id := range m.label {
@@ -4137,7 +4233,7 @@ func (m *EntityMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *EntityMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 9)
 	if m.removedchildren != nil {
 		edges = append(edges, entity.EdgeChildren)
 	}
@@ -4196,7 +4292,7 @@ func (m *EntityMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *EntityMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 9)
 	if m.clearedgroup {
 		edges = append(edges, entity.EdgeGroup)
 	}
@@ -4205,6 +4301,12 @@ func (m *EntityMutation) ClearedEdges() []string {
 	}
 	if m.clearedchildren {
 		edges = append(edges, entity.EdgeChildren)
+	}
+	if m.clearedentity {
+		edges = append(edges, entity.EdgeEntity)
+	}
+	if m.clearedlocation {
+		edges = append(edges, entity.EdgeLocation)
 	}
 	if m.clearedlabel {
 		edges = append(edges, entity.EdgeLabel)
@@ -4231,6 +4333,10 @@ func (m *EntityMutation) EdgeCleared(name string) bool {
 		return m.clearedparent
 	case entity.EdgeChildren:
 		return m.clearedchildren
+	case entity.EdgeEntity:
+		return m.clearedentity
+	case entity.EdgeLocation:
+		return m.clearedlocation
 	case entity.EdgeLabel:
 		return m.clearedlabel
 	case entity.EdgeFields:
@@ -4253,6 +4359,12 @@ func (m *EntityMutation) ClearEdge(name string) error {
 	case entity.EdgeParent:
 		m.ClearParent()
 		return nil
+	case entity.EdgeEntity:
+		m.ClearEntity()
+		return nil
+	case entity.EdgeLocation:
+		m.ClearLocation()
+		return nil
 	}
 	return fmt.Errorf("unknown Entity unique edge %s", name)
 }
@@ -4269,6 +4381,12 @@ func (m *EntityMutation) ResetEdge(name string) error {
 		return nil
 	case entity.EdgeChildren:
 		m.ResetChildren()
+		return nil
+	case entity.EdgeEntity:
+		m.ResetEntity()
+		return nil
+	case entity.EdgeLocation:
+		m.ResetLocation()
 		return nil
 	case entity.EdgeLabel:
 		m.ResetLabel()
