@@ -35,8 +35,6 @@ test("registration", async ({ page }) => {
   await page.getByTestId("confirm-register-button").click();
   await expect(page).toHaveURL("/");
 
-  await page.getByTestId("logout-button").click();
-
   // Try to register the same user again (it should fail)
   await page.goto("/home");
   await expect(page).toHaveURL("/");
