@@ -16,6 +16,14 @@ func (at *AuthTokens) GetID() uuid.UUID {
 	return at.ID
 }
 
+func (e *Entity) GetID() uuid.UUID {
+	return e.ID
+}
+
+func (ef *EntityField) GetID() uuid.UUID {
+	return ef.ID
+}
+
 func (gr *Group) GetID() uuid.UUID {
 	return gr.ID
 }
@@ -24,19 +32,7 @@ func (git *GroupInvitationToken) GetID() uuid.UUID {
 	return git.ID
 }
 
-func (i *Item) GetID() uuid.UUID {
-	return i.ID
-}
-
-func (_if *ItemField) GetID() uuid.UUID {
-	return _if.ID
-}
-
 func (l *Label) GetID() uuid.UUID {
-	return l.ID
-}
-
-func (l *Location) GetID() uuid.UUID {
 	return l.ID
 }
 

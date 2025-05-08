@@ -13,8 +13,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 )
@@ -22,13 +22,13 @@ import (
 // LabelQuery is the builder for querying Label entities.
 type LabelQuery struct {
 	config
-	ctx        *QueryContext
-	order      []label.OrderOption
-	inters     []Interceptor
-	predicates []predicate.Label
-	withGroup  *GroupQuery
-	withItems  *ItemQuery
-	withFKs    bool
+	ctx          *QueryContext
+	order        []label.OrderOption
+	inters       []Interceptor
+	predicates   []predicate.Label
+	withGroup    *GroupQuery
+	withEntities *EntityQuery
+	withFKs      bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -87,9 +87,9 @@ func (lq *LabelQuery) QueryGroup() *GroupQuery {
 	return query
 }
 
-// QueryItems chains the current query on the "items" edge.
-func (lq *LabelQuery) QueryItems() *ItemQuery {
-	query := (&ItemClient{config: lq.config}).Query()
+// QueryEntities chains the current query on the "entities" edge.
+func (lq *LabelQuery) QueryEntities() *EntityQuery {
+	query := (&EntityClient{config: lq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := lq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -100,8 +100,8 @@ func (lq *LabelQuery) QueryItems() *ItemQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(label.Table, label.FieldID, selector),
-			sqlgraph.To(item.Table, item.FieldID),
-			sqlgraph.Edge(sqlgraph.M2M, false, label.ItemsTable, label.ItemsPrimaryKey...),
+			sqlgraph.To(entity.Table, entity.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, label.EntitiesTable, label.EntitiesPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(lq.driver.Dialect(), step)
 		return fromU, nil
@@ -296,13 +296,13 @@ func (lq *LabelQuery) Clone() *LabelQuery {
 		return nil
 	}
 	return &LabelQuery{
-		config:     lq.config,
-		ctx:        lq.ctx.Clone(),
-		order:      append([]label.OrderOption{}, lq.order...),
-		inters:     append([]Interceptor{}, lq.inters...),
-		predicates: append([]predicate.Label{}, lq.predicates...),
-		withGroup:  lq.withGroup.Clone(),
-		withItems:  lq.withItems.Clone(),
+		config:       lq.config,
+		ctx:          lq.ctx.Clone(),
+		order:        append([]label.OrderOption{}, lq.order...),
+		inters:       append([]Interceptor{}, lq.inters...),
+		predicates:   append([]predicate.Label{}, lq.predicates...),
+		withGroup:    lq.withGroup.Clone(),
+		withEntities: lq.withEntities.Clone(),
 		// clone intermediate query.
 		sql:  lq.sql.Clone(),
 		path: lq.path,
@@ -320,14 +320,14 @@ func (lq *LabelQuery) WithGroup(opts ...func(*GroupQuery)) *LabelQuery {
 	return lq
 }
 
-// WithItems tells the query-builder to eager-load the nodes that are connected to
-// the "items" edge. The optional arguments are used to configure the query builder of the edge.
-func (lq *LabelQuery) WithItems(opts ...func(*ItemQuery)) *LabelQuery {
-	query := (&ItemClient{config: lq.config}).Query()
+// WithEntities tells the query-builder to eager-load the nodes that are connected to
+// the "entities" edge. The optional arguments are used to configure the query builder of the edge.
+func (lq *LabelQuery) WithEntities(opts ...func(*EntityQuery)) *LabelQuery {
+	query := (&EntityClient{config: lq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	lq.withItems = query
+	lq.withEntities = query
 	return lq
 }
 
@@ -412,7 +412,7 @@ func (lq *LabelQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Label,
 		_spec       = lq.querySpec()
 		loadedTypes = [2]bool{
 			lq.withGroup != nil,
-			lq.withItems != nil,
+			lq.withEntities != nil,
 		}
 	)
 	if lq.withGroup != nil {
@@ -445,10 +445,10 @@ func (lq *LabelQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Label,
 			return nil, err
 		}
 	}
-	if query := lq.withItems; query != nil {
-		if err := lq.loadItems(ctx, query, nodes,
-			func(n *Label) { n.Edges.Items = []*Item{} },
-			func(n *Label, e *Item) { n.Edges.Items = append(n.Edges.Items, e) }); err != nil {
+	if query := lq.withEntities; query != nil {
+		if err := lq.loadEntities(ctx, query, nodes,
+			func(n *Label) { n.Edges.Entities = []*Entity{} },
+			func(n *Label, e *Entity) { n.Edges.Entities = append(n.Edges.Entities, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -487,7 +487,7 @@ func (lq *LabelQuery) loadGroup(ctx context.Context, query *GroupQuery, nodes []
 	}
 	return nil
 }
-func (lq *LabelQuery) loadItems(ctx context.Context, query *ItemQuery, nodes []*Label, init func(*Label), assign func(*Label, *Item)) error {
+func (lq *LabelQuery) loadEntities(ctx context.Context, query *EntityQuery, nodes []*Label, init func(*Label), assign func(*Label, *Entity)) error {
 	edgeIDs := make([]driver.Value, len(nodes))
 	byID := make(map[uuid.UUID]*Label)
 	nids := make(map[uuid.UUID]map[*Label]struct{})
@@ -499,11 +499,11 @@ func (lq *LabelQuery) loadItems(ctx context.Context, query *ItemQuery, nodes []*
 		}
 	}
 	query.Where(func(s *sql.Selector) {
-		joinT := sql.Table(label.ItemsTable)
-		s.Join(joinT).On(s.C(item.FieldID), joinT.C(label.ItemsPrimaryKey[1]))
-		s.Where(sql.InValues(joinT.C(label.ItemsPrimaryKey[0]), edgeIDs...))
+		joinT := sql.Table(label.EntitiesTable)
+		s.Join(joinT).On(s.C(entity.FieldID), joinT.C(label.EntitiesPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(label.EntitiesPrimaryKey[0]), edgeIDs...))
 		columns := s.SelectedColumns()
-		s.Select(joinT.C(label.ItemsPrimaryKey[0]))
+		s.Select(joinT.C(label.EntitiesPrimaryKey[0]))
 		s.AppendSelect(columns...)
 		s.SetDistinct(false)
 	})
@@ -533,14 +533,14 @@ func (lq *LabelQuery) loadItems(ctx context.Context, query *ItemQuery, nodes []*
 			}
 		})
 	})
-	neighbors, err := withInterceptors[[]*Item](ctx, query, qr, query.inters)
+	neighbors, err := withInterceptors[[]*Entity](ctx, query, qr, query.inters)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
 		nodes, ok := nids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected "items" node returned %v`, n.ID)
+			return fmt.Errorf(`unexpected "entities" node returned %v`, n.ID)
 		}
 		for kn := range nodes {
 			assign(kn, n)
