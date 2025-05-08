@@ -26,6 +26,9 @@ test("registration", async ({ page }) => {
   await page.goto("/home");
   await expect(page).toHaveURL("/");
   await page.getByTestId("register-button").click();
+
+  await page.waitForTimeout(1000);
+
   await page.getByTestId("email-input").locator("input").fill("test@example.com");
   await page.getByTestId("name-input").locator("input").fill("Test User");
   await page.fill("input[type='password']", "ThisIsAStrongDemoPass");
