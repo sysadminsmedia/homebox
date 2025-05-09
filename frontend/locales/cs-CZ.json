@@ -3,8 +3,8 @@
         "app": {
             "import_dialog": {
                 "change_warning": "Změnilo se chování importů s existujícími import_refs. Pokud je v souboru CSV přítomen import_ref, bude \n položka aktualizována hodnotami ze souboru CSV.",
-                "description": "Importujte CSV soubor obashující vaše položky, štítky a lokace. Pro dodatečné informace o formátu použijte \ndokumentaci.",
-                "title": "Importovat CSV Soubor"
+                "description": "Importujte CSV soubor obsahující vaše položky, štítky a lokace. Pro dodatečné informace o formátu použijte dokumentaci.",
+                "title": "Importovat CSV soubor"
             },
             "outdated": {
                 "current_version": "Aktuální verze",
@@ -24,17 +24,17 @@
             "date_time": {
                 "ago": "Před {0}",
                 "days": "dny",
-                "hour": "Hodina",
-                "hours": "Hodinami",
+                "hour": "hodina",
+                "hours": "hodinami",
                 "in": "za {0}",
-                "just-now": "Právě teď",
-                "last-month": "Minulý měsíc",
-                "last-week": "Minulý týden",
-                "last-year": "Minulý rok",
+                "just-now": "právě teď",
+                "last-month": "minulý měsíc",
+                "last-week": "minulý týden",
+                "last-year": "minulý rok",
                 "minute": "minuta",
                 "minutes": "minutami",
                 "months": "měsíci",
-                "next-month": "Přiští měsíc",
+                "next-month": "příští měsíc",
                 "next-week": "příští týden",
                 "next-year": "příští rok",
                 "second": "sekunda",
@@ -46,25 +46,25 @@
                 "yesterday": "včera"
             },
             "label_maker": {
-                "browser_print": "Tisk z prohlížeče",
+                "browser_print": "Tisknout z prohlížeče",
                 "confirm_description": "Opravdu chcete tento štítek vytisknout?",
                 "download": "Stáhnout štítek",
                 "print": "Vytisknout štítek",
                 "server_print": "Tisk na serveru",
-                "titles": "Popisky"
+                "titles": "Štítky"
             },
             "page_qr_code": {
-                "page_url": "URL Stránky",
+                "page_url": "URL stránky",
                 "qr_tooltip": "Zobrazit QR kód"
             },
             "password_score": {
-                "password_strength": "Síla Hesla"
+                "password_strength": "Síla hesla"
             }
         },
         "item": {
             "create_modal": {
-                "item_description": "Popis Položky",
-                "item_name": "Jméno Položky",
+                "item_description": "Popis položky",
+                "item_name": "Jméno položky",
                 "item_photo": "Fotografie položky 📷",
                 "item_quantity": "Množství položek",
                 "title": "Vytvořit položku",
@@ -87,8 +87,8 @@
         },
         "label": {
             "create_modal": {
-                "label_description": "Popis Štítku",
-                "label_name": "Název Štítku",
+                "label_description": "Popis štítku",
+                "label_name": "Název štítku",
                 "title": "Vytvořit štítek"
             },
             "selector": {
@@ -98,17 +98,17 @@
         "location": {
             "create_modal": {
                 "location_description": "Popis lokace",
-                "location_name": "Název Lokace",
-                "title": "Vytvořit Lokaci"
+                "location_name": "Název lokace",
+                "title": "Vytvořit lokaci"
             },
             "selector": {
-                "no_location_found": "Nenalezena lokace",
-                "parent_location": "Nadřazená Lokace",
+                "no_location_found": "Lokace nebyla nalezena",
+                "parent_location": "Nadřazená lokace",
                 "search_location": "Hledat lokace",
                 "select_location": "Vybrat lokaci"
             },
             "tree": {
-                "no_locations": "Nejsou dostupné žádné lokace. Přidejte nové lokace\npomocí talčítka `<`span class=\"link-primary\"`>`Vytvořit`<`/span`>` na navigační liště."
+                "no_locations": "Nejsou dostupné žádné lokace. Přidejte nové lokace\npomocí tlačítka `<`span class=\"link-primary\"`>`Vytvořit`<`/span`>` na navigační liště."
             }
         },
         "quick_menu": {
@@ -123,7 +123,7 @@
         "cancel": "Zrušit",
         "confirm": "Potvrdit",
         "create": "Vytvořit",
-        "create_and_add": "Vytvořit a Přidat Další",
+        "create_and_add": "Vytvořit a přidat další",
         "created": "Vytvořeno",
         "delete": "Smazat",
         "details": "Detaily",
@@ -135,20 +135,20 @@
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
             "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Verze: { version } Sestavení: { build } '</a>'"
         },
-        "github": "GitHub Projekt",
+        "github": "GitHub projekt",
         "insured": "Pojištěné",
         "items": "Položky",
         "join_discord": "Připojte se na Discord",
-        "labels": "Popisky",
+        "labels": "Štítky",
         "locations": "Lokality",
         "maintenance": "Údržba",
         "name": "Jméno",
         "navigate": "Navigovat",
         "password": "Heslo",
         "quantity": "Množství",
-        "read_docs": "Přečtěte si Dokumentaci",
+        "read_docs": "Přečtěte si dokumentaci",
         "save": "Uložit",
-        "search": "Vyhledávat",
+        "search": "Hledat",
         "sign_out": "Odhlásit se",
         "submit": "Potvrdit",
         "update": "Aktualizovat",
@@ -161,13 +161,13 @@
         "quick_statistics": "Rychlé informace",
         "recently_added": "Nedávno přidané",
         "storage_locations": "Úložné lokace",
-        "total_items": "Celkových Položek",
+        "total_items": "Celkových položek",
         "total_labels": "Celkových štítků",
         "total_locations": "Celkových lokací",
         "total_value": "Celková hodnota"
     },
     "index": {
-        "disabled_registration": "Registrace je Zakázána",
+        "disabled_registration": "Registrace je zakázána",
         "dont_join_group": "Nechcete se přidat do skupiny?",
         "joining_group": "Přidáváte se do existující skupiny!",
         "login": "Přihlásit se",
@@ -182,71 +182,71 @@
         "add": "Přidat",
         "advanced": "Pokročilé",
         "archived": "Archivované",
-        "asset_id": "ID Položky",
+        "asset_id": "ID položky",
         "attachment": "Příloha",
         "attachments": "Přílohy",
         "changes_persisted_immediately": "Změny v přílohách budou uloženy okamžitě",
-        "created_at": "Vytvořeno v",
-        "custom_fields": "Vlastní Data",
+        "created_at": "Vytvořeno",
+        "custom_fields": "Vlastní pole",
         "description": "Popis",
         "details": "Detaily",
         "drag_and_drop": "Přetáhněte sem soubory nebo klikněte pro výběr",
-        "edit_details": "Upravit Detaily",
-        "field_selector": "Výběr Pole",
-        "field_value": "Hodnota Pole",
+        "edit_details": "Upravit detaily",
+        "field_selector": "Výběr pole",
+        "field_value": "Hodnota pole",
         "first": "První",
-        "include_archive": "Zahrnout i archivované Položky",
+        "include_archive": "Zahrnout i archivované položky",
         "insured": "Pojištěné",
         "last": "Poslední",
         "lifetime_warranty": "Doživotní záruka",
-        "location": "Lokalita",
+        "location": "Lokace",
         "manual": "Návod",
         "manuals": "Návody",
         "manufacturer": "Výrobce",
-        "model_number": "Číslo Modelu",
+        "model_number": "Číslo modelu",
         "name": "Název",
-        "negate_labels": "Prohodit Vybrané Štítky",
-        "next_page": "Další Stránka",
-        "no_results": "Nebyly nalezeny žádné Položky",
+        "negate_labels": "Prohodit vybrané štítky",
+        "next_page": "Další stránka",
+        "no_results": "Nebyly nalezeny žádné položky",
         "notes": "Poznámky",
         "only_with_photo": "Pouze položky s fotografií",
         "only_without_photo": "Pouze položky bez fotografie",
         "options": "Možnosti",
-        "order_by": "Seřadit Podle",
+        "order_by": "Seřadit podle",
         "pages": "Stránka { page } z { totalPages }",
-        "parent_item": "Nadřazená Položka",
+        "parent_item": "Nadřazená položka",
         "photo": "Fotka",
         "photos": "Fotky",
         "prev_page": "Předešlá strana",
-        "purchase_date": "Datum Nákupu",
-        "purchase_details": "Detaily Nákupu",
+        "purchase_date": "Datum nákupu",
+        "purchase_details": "Detaily nákupu",
         "purchase_price": "Nákupní cena",
-        "purchased_from": "Koupeno Od",
+        "purchased_from": "Prodejce",
         "quantity": "Množství",
-        "query_id": "Dotaz na ID číslo majetku:{ id }",
+        "query_id": "Dotazování na ID majetku: { id }",
         "receipt": "Účtenka",
         "receipts": "Účtenky",
-        "reset_search": "Obnovit Vyhledávání",
-        "results": "{ total } Výsledků",
+        "reset_search": "Obnovit vyhledávání",
+        "results": "{ total } výsledků",
         "serial_number": "Sériové číslo",
-        "show_advanced_view_options": "Zobrazit Pokročilé Možnosti Zobrazení",
+        "show_advanced_view_options": "Zobrazit pokročilé možnosti zobrazení",
         "sold_at": "Prodáno",
-        "sold_details": "Detaily Prodeje",
-        "sold_price": "Cena Prodeje",
-        "sold_to": "Prodáno Komu",
+        "sold_details": "Detaily prodeje",
+        "sold_price": "Cena prodeje",
+        "sold_to": "Prodáno komu",
         "tip_1": "Filtry umístění a štítků používají operaci „OR“. Pokud je vybráno více než jeden, bude pro shodu\n vyžadován pouze jeden z nich.",
         "tip_2": "Vyhledávání s předponou '#'' se dotazuje na ID datového zdroje (například '#000-001')",
         "tip_3": "Filtry polí používají operaci „NEBO“. Pokud je vybráno více než jedno, bude pro shodu vyžadováno\n pouze jedno.",
-        "tips": "Návrhy",
-        "tips_sub": "Vyhledat Návrhy",
+        "tips": "Nápověda",
+        "tips_sub": "Nápověda vyhledávání",
         "updated_at": "Aktualizováno",
         "warranty": "Záruka",
-        "warranty_details": "Detaily Záruky",
-        "warranty_expires": "Expirace Záruky"
+        "warranty_details": "Detaily záruky",
+        "warranty_expires": "Expirace záruky"
     },
     "labels": {
-        "no_results": "Žádné Štítky nebyly nalezeny",
-        "update_label": "Aktualizovat Štítek"
+        "no_results": "Žádné štítky nebyly nalezeny",
+        "update_label": "Aktualizovat štítek"
     },
     "languages": {
         "ca": "Katalánština",
@@ -285,17 +285,17 @@
     "languages.sk-SK": "Slovenština",
     "languages.sq-AL": "Albánština",
     "locations": {
-        "child_locations": "Podřazené Lokace",
+        "child_locations": "Podřazené lokace",
         "collapse_tree": "Zabalit strom",
         "expand_tree": "Rozbalit strom",
         "no_results": "Žádné lokace nebyly nalezeny",
-        "update_location": "Aktualizovat Lokaci"
+        "update_location": "Aktualizovat lokaci"
     },
     "maintenance": {
         "filter": {
             "both": "Obojí",
             "completed": "Hotové",
-            "scheduled": "Plánovaný"
+            "scheduled": "Plánované"
         },
         "list": {
             "complete": "Hotovo",
@@ -303,17 +303,17 @@
             "delete": "Smazat",
             "duplicate": "Duplikovat",
             "edit": "Upravit",
-            "new": "Nové"
+            "new": "Nová"
         },
         "modal": {
-            "completed_date": "Datum Dokončení",
+            "completed_date": "Datum dokončení",
             "cost": "Náklady",
             "delete_confirmation": "Jste si jistí že chcete tento záznam smazat?",
             "edit_action": "Aktualizovat",
-            "edit_title": "Upravit Záznam",
-            "entry_name": "Název Záznamu",
+            "edit_title": "Upravit záznam",
+            "entry_name": "Název záznamu",
             "new_action": "Vytvořit",
-            "new_title": "Nový Záznam",
+            "new_title": "Nový záznam",
             "notes": "Poznámky",
             "scheduled_date": "Plánované datum"
         },
@@ -340,25 +340,25 @@
     },
     "profile": {
         "active": "Aktivní",
-        "change_password": "Změnit Heslo",
-        "currency_format": "Měnový Formát",
-        "current_password": "Aktuální Heslo",
-        "delete_account": "Smazat Účet",
-        "delete_account_sub": "Smaže se Váš účet a všechny s ním spojená data. Z této akce se nelze navrátit.",
+        "change_password": "Změnit heslo",
+        "currency_format": "Měnový formát",
+        "current_password": "Aktuální heslo",
+        "delete_account": "Smazat účet",
+        "delete_account_sub": "Smaže se Váš účet a všechny s ním spojená data. Tuto akci nelze vrátit!",
         "display_header": "{ currentValue, select, true {Hide Header} false {Show Header} other {Not Hit}}",
         "enabled": "Povoleno",
         "example": "Příklad",
         "gen_invite": "Vytvořit odkaz pozvánky",
-        "group_settings": "Nastavení Skupiny",
+        "group_settings": "Nastavení skupiny",
         "group_settings_sub": "Nastavení sdílené skupiny. Je možné, že bude nutné obnovit prohlížeč, aby se některá nastavení použila.",
         "inactive": "Neaktivní",
         "language": "Jazyk",
-        "new_password": "Nové Heslo",
-        "no_notifiers": "Nejsou nakonfigurovány žádné oznamovače",
+        "new_password": "Nové heslo",
+        "no_notifiers": "Nejsou nakonfigurováni žádní oznamovatelé",
         "no_override": "Žádné přepsání",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Oznamovatel",
         "notifiers": "Oznamovatelé",
-        "notifiers_sub": "Dostávejte oznámení o nadcházejících připomenutích údržby",
+        "notifiers_sub": "Dostávejte oznámení o nadcházejících údržbách",
         "override_locale": "Přepsat datum a jazyk měny",
         "test": "Zkouška",
         "theme_settings": "Nastavení motivu",
