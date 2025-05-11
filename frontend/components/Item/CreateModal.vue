@@ -268,12 +268,20 @@
         if (subItemCreate.value && itemId.value) {
           const itemIdRead = typeof itemId.value === "string" ? (itemId.value as string) : itemId.value[0];
           const { data, error } = await api.items.get(itemIdRead);
-          if (error) {
+          if (error || !data) {
             toast.error("Failed to load parent item - please select manually");
+            console.error("Parent item fetch error:", error);
+          }
+          
+          if (data){
+            parent.value = data;
           }
 
-          parentItemLocationId = data.location!.id;
-          parent.value = data;
+          if (data.location){
+            const { location } = data;
+            parentItemLocationId = location.id;
+          }
+          
           // clear URL Parameter (subItemCreate) since intention was communicated and received
           const currentQuery = { ...route.query };
           delete currentQuery.subItemCreate;
