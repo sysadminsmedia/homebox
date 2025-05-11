@@ -997,6 +997,7 @@ paths:
       - Statistics
   /v1/items:
     get:
+      deprecated: true
       parameters:
       - description: search string
         in: query
@@ -1040,10 +1041,11 @@ paths:
             $ref: '#/definitions/repo.PaginationResult-repo_ItemSummary'
       security:
       - Bearer: []
-      summary: Query All Items
+      summary: (Deprecated) Query All Items
       tags:
       - Items
     post:
+      deprecated: true
       parameters:
       - description: Item Data
         in: body
@@ -1060,11 +1062,12 @@ paths:
             $ref: '#/definitions/repo.ItemSummary'
       security:
       - Bearer: []
-      summary: Create Item
+      summary: (Deprecated) Create Item
       tags:
       - Items
   /v1/items/{id}:
     delete:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -1078,10 +1081,11 @@ paths:
           description: No Content
       security:
       - Bearer: []
-      summary: Delete Item
+      summary: (Deprecated) Delete Item
       tags:
       - Items
     get:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -1097,10 +1101,11 @@ paths:
             $ref: '#/definitions/repo.ItemOut'
       security:
       - Bearer: []
-      summary: Get Item
+      summary: (Deprecated) Get Item
       tags:
       - Items
     patch:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -1122,10 +1127,11 @@ paths:
             $ref: '#/definitions/repo.ItemOut'
       security:
       - Bearer: []
-      summary: Update Item
+      summary: (Deprecated) Update Item
       tags:
       - Items
     put:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -1147,7 +1153,7 @@ paths:
             $ref: '#/definitions/repo.ItemOut'
       security:
       - Bearer: []
-      summary: Update Item
+      summary: (Deprecated) Update Item
       tags:
       - Items
   /v1/items/{id}/attachments:
@@ -1328,6 +1334,7 @@ paths:
       - Item Maintenance
   /v1/items/{id}/path:
     get:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -1345,11 +1352,12 @@ paths:
             type: array
       security:
       - Bearer: []
-      summary: Get the full path of an item
+      summary: (Deprecated) Get the full path of an item
       tags:
       - Items
   /v1/items/export:
     get:
+      deprecated: true
       responses:
         "200":
           description: text/csv
@@ -1357,11 +1365,12 @@ paths:
             type: string
       security:
       - Bearer: []
-      summary: Export Items
+      summary: (Deprecated) Export Items
       tags:
       - Items
   /v1/items/fields:
     get:
+      deprecated: true
       produces:
       - application/json
       responses:
@@ -1373,11 +1382,12 @@ paths:
             type: array
       security:
       - Bearer: []
-      summary: Get All Custom Field Names
+      summary: (Deprecated) Get All Custom Field Names
       tags:
       - Items
   /v1/items/fields/values:
     get:
+      deprecated: true
       produces:
       - application/json
       responses:
@@ -1389,13 +1399,14 @@ paths:
             type: array
       security:
       - Bearer: []
-      summary: Get All Custom Field Values
+      summary: (Deprecated) Get All Custom Field Values
       tags:
       - Items
   /v1/items/import:
     post:
       consumes:
       - multipart/form-data
+      deprecated: true
       parameters:
       - description: Image to upload
         in: formData
@@ -1409,7 +1420,7 @@ paths:
           description: No Content
       security:
       - Bearer: []
-      summary: Import Items
+      summary: (Deprecated) Import Items
       tags:
       - Items
   /v1/labelmaker/assets/{id}:
@@ -1578,6 +1589,7 @@ paths:
       - Labels
   /v1/locations:
     get:
+      deprecated: true
       parameters:
       - description: Filter locations with parents
         in: query
@@ -1594,10 +1606,11 @@ paths:
             type: array
       security:
       - Bearer: []
-      summary: Get All Locations
+      summary: (Deprecated) Get All Locations
       tags:
       - Locations
     post:
+      deprecated: true
       parameters:
       - description: Location Data
         in: body
@@ -1614,11 +1627,12 @@ paths:
             $ref: '#/definitions/repo.LocationSummary'
       security:
       - Bearer: []
-      summary: Create Location
+      summary: (Deprecated) Create Location
       tags:
       - Locations
   /v1/locations/{id}:
     delete:
+      deprecated: true
       parameters:
       - description: Location ID
         in: path
@@ -1632,10 +1646,11 @@ paths:
           description: No Content
       security:
       - Bearer: []
-      summary: Delete Location
+      summary: (Deprecated) Delete Location
       tags:
       - Locations
     get:
+      deprecated: true
       parameters:
       - description: Location ID
         in: path
@@ -1651,10 +1666,11 @@ paths:
             $ref: '#/definitions/repo.LocationOut'
       security:
       - Bearer: []
-      summary: Get Location
+      summary: (Deprecated) Get Location
       tags:
       - Locations
     put:
+      deprecated: true
       parameters:
       - description: Location ID
         in: path
@@ -1676,11 +1692,12 @@ paths:
             $ref: '#/definitions/repo.LocationOut'
       security:
       - Bearer: []
-      summary: Update Location
+      summary: (Deprecated) Update Location
       tags:
       - Locations
   /v1/locations/tree:
     get:
+      deprecated: true
       parameters:
       - description: include items in response tree
         in: query
@@ -1697,7 +1714,7 @@ paths:
             type: array
       security:
       - Bearer: []
-      summary: Get Locations Tree
+      summary: (Deprecated) Get Locations Tree
       tags:
       - Locations
   /v1/maintenance:
