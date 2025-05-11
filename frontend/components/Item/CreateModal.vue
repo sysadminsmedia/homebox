@@ -263,8 +263,10 @@
           parentItemLocationId = data.location!.id;
           parent.value = data;
           form.parentId = data.id;
+          // clear URL Parameter (subItemCreate) since intention was communicated and received
           await router.push({ query: {} });
         } else {
+          // since Input is hidden in this case, make sure no accidental parent information is sent out
           parent.value = {};
           form.parentId = null;
         }
