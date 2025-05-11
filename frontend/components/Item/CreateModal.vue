@@ -275,7 +275,9 @@
           parentItemLocationId = data.location!.id;
           parent.value = data;
           // clear URL Parameter (subItemCreate) since intention was communicated and received
-          await router.push({ query: {} });
+          const currentQuery = { ...route.query };
+          delete currentQuery.subItemCreate;
+          await router.push({query: currentQuery})
         } else {
           // since Input is hidden in this case, make sure no accidental parent information is sent out
           parent.value = {};
