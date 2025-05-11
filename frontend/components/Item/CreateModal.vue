@@ -249,12 +249,12 @@
     () => activeDialog.value,
     async active => {
       if (active === "create-item") {
-        //needed since URL will be cleared in the next step => ParentId Selection should stay though
+        // needed since URL will be cleared in the next step => ParentId Selection should stay though
         subItemCreate.value = subItemCreateParam.value === "y";
         let parentItemLocationId = null;
-        
+
         if (subItemCreate.value && itemId.value) {
-          const itemIdRead = typeof itemId.value === 'string' ? (itemId.value as string) : itemId.value[0];
+          const itemIdRead = typeof itemId.value === "string" ? (itemId.value as string) : itemId.value[0];
           const { data, error } = await api.items.get(itemIdRead);
           if (error) {
             toast.error("Failed to load parent item - please select manually");
