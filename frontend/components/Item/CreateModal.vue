@@ -2,6 +2,15 @@
   <BaseModal dialog-id="create-item" :title="$t('components.item.create_modal.title')">
     <form class="flex flex-col gap-2" @submit.prevent="create()">
       <LocationSelector v-model="form.location" />
+      <ItemSelector
+        v-if="subItemCreate"
+        v-model="parent"
+        v-model:search="query"
+        :label="$t('components.item.create_modal.parent_item')"
+        :items="results"
+        item-text="name"
+        no-results-text="Type to search..."
+      />
       <FormTextField
         ref="nameInput"
         v-model="form.name"
@@ -139,6 +148,7 @@
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
   import LabelSelector from "~/components/Label/Selector.vue";
+  import ItemSelector from "~/components/Item/Selector.vue";
 
   interface PhotoPreview {
     photoName: string;
@@ -160,6 +170,12 @@
   const labels = computed(() => labelStore.labels);
 
   const route = useRoute();
+  const router = useRouter();
+
+  const parent = ref();
+  const { query, results } = useItemSearch(api, { immediate: false });
+  const subItemCreateParam = useRouteQuery("subItemCreate", "n");
+  const subItemCreate = ref();
 
   const labelId = computed(() => {
     if (route.fullPath.includes("/label/")) {
@@ -175,12 +191,20 @@
     return null;
   });
 
+  const itemId = computed(() => {
+    if (route.fullPath.includes("/item/")) {
+      return route.params.id;
+    }
+    return null;
+  });
+
   const nameInput = ref<HTMLInputElement | null>(null);
 
   const loading = ref(false);
   const focused = ref(false);
   const form = reactive({
     location: locations.value && locations.value.length > 0 ? locations.value[0] : ({} as LocationOut),
+    parentId: null,
     name: "",
     quantity: 1,
     description: "",
@@ -188,6 +212,18 @@
     labels: [] as string[],
     photos: [] as PhotoPreview[],
   });
+
+  watch(
+    parent,
+    newParent => {
+      if (newParent && newParent.id && subItemCreate.value) {
+        form.parentId = newParent.id;
+      } else {
+        form.parentId = null;
+      }
+    },
+    { immediate: true }
+  );
 
   const { shift } = useMagicKeys();
 
@@ -223,10 +259,43 @@
 
   watch(
     () => activeDialog.value,
-    active => {
+    async active => {
       if (active === "create-item") {
-        if (locationId.value) {
-          const found = locations.value.find(l => l.id === locationId.value);
+        // needed since URL will be cleared in the next step => ParentId Selection should stay though
+        subItemCreate.value = subItemCreateParam.value === "y";
+        let parentItemLocationId = null;
+
+        if (subItemCreate.value && itemId.value) {
+          const itemIdRead = typeof itemId.value === "string" ? (itemId.value as string) : itemId.value[0];
+          const { data, error } = await api.items.get(itemIdRead);
+          if (error || !data) {
+            toast.error("Failed to load parent item - please select manually");
+            console.error("Parent item fetch error:", error);
+          }
+
+          if (data) {
+            parent.value = data;
+          }
+
+          if (data.location) {
+            const { location } = data;
+            parentItemLocationId = location.id;
+          }
+
+          // clear URL Parameter (subItemCreate) since intention was communicated and received
+          const currentQuery = { ...route.query };
+          delete currentQuery.subItemCreate;
+          await router.push({ query: currentQuery });
+        } else {
+          // since Input is hidden in this case, make sure no accidental parent information is sent out
+          parent.value = {};
+          form.parentId = null;
+        }
+
+        const locId = locationId.value ? locationId.value : parentItemLocationId;
+
+        if (locId) {
+          const found = locations.value.find(l => l.id === locId);
           if (found) {
             form.location = found;
           }
@@ -254,7 +323,7 @@
     if (shift.value) close = false;
 
     const out: ItemCreate = {
-      parentId: null,
+      parentId: form.parentId,
       name: form.name,
       quantity: form.quantity,
       description: form.description,
