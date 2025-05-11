@@ -252,7 +252,7 @@
       if (active === "create-item") {
         subItemCreate.value = subItemCreateParam.value;
         let parentItemLocationId = null;
-        
+
         if (subItemCreate.value && itemId.value){
           const { data, error } = await api.items.get(itemId.value);
           if (error) {
@@ -263,6 +263,9 @@
           parent.value = data; 
           form.parentId = data.id;
           await router.push({query: {},});
+        }else{
+          parent.value = {}; 
+          form.parentId = null;
         }
         
         const locId = locationId.value ? locationId.value : parentItemLocationId;
