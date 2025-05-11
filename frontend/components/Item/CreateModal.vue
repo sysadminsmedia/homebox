@@ -272,20 +272,20 @@
             toast.error("Failed to load parent item - please select manually");
             console.error("Parent item fetch error:", error);
           }
-          
-          if (data){
+
+          if (data) {
             parent.value = data;
           }
 
-          if (data.location){
+          if (data.location) {
             const { location } = data;
             parentItemLocationId = location.id;
           }
-          
+
           // clear URL Parameter (subItemCreate) since intention was communicated and received
           const currentQuery = { ...route.query };
           delete currentQuery.subItemCreate;
-          await router.push({query: currentQuery})
+          await router.push({ query: currentQuery });
         } else {
           // since Input is hidden in this case, make sure no accidental parent information is sent out
           parent.value = {};
