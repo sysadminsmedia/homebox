@@ -577,7 +577,8 @@ func (e *ItemsRepository) Create(ctx context.Context, gid uuid.UUID, data ItemCr
 		SetDescription(data.Description).
 		SetGroupID(gid).
 		SetLocationID(data.LocationID).
-		SetAssetID(int(data.AssetID))
+		SetAssetID(int(data.AssetID)).
+		SetParentID(data.ParentID)
 
 	if len(data.LabelIDs) > 0 {
 		q.AddLabelIDs(data.LabelIDs...)
