@@ -9,7 +9,7 @@
             "outdated": {
                 "current_version": "Trenutna različica",
                 "dismiss": "Opusti",
-                "latest_version": "Najnovejša različica:",
+                "latest_version": "Najnovejša različica",
                 "new_version_available": "Nova različica je na voljo",
                 "new_version_available_link": "Kliknite tukaj za ogled opomb ob izdaji"
             }
@@ -44,6 +44,9 @@
                 "weeks": "tedni",
                 "years": "leta",
                 "yesterday": "včeraj"
+            },
+            "label_maker": {
+                "browser_print": "Tiskanje iz brskalnika"
             },
             "page_qr_code": {
                 "page_url": "URL strani"
