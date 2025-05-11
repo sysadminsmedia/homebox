@@ -1,16 +1,16 @@
 <template>
-  <BaseModal dialog-id="create-item" :title="$t('components.item.create_modal.title')" >
+  <BaseModal dialog-id="create-item" :title="$t('components.item.create_modal.title')">
     <form class="flex flex-col gap-2" @submit.prevent="create()">
       <LocationSelector v-model="form.location" />
-      <ItemSelector 
-              :label="$t('components.item.create_modal.parent_item')" 
-              v-model="parent" 
-              v-if="subItemCreate"
-              v-model:search="query"
-              :items="results"
-              item-text="name"
-              no-results-text="Type to search..."
-             />
+      <ItemSelector
+        v-if="subItemCreate"
+        v-model="parent"
+        v-model:search="query"
+        :label="$t('components.item.create_modal.parent_item')"
+        :items="results"
+        item-text="name"
+        no-results-text="Type to search..."
+      />
       <FormTextField
         ref="nameInput"
         v-model="form.name"
@@ -136,7 +136,7 @@
   import BaseModal from "@/components/App/CreateModal.vue";
   import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
-  import type { ItemCreate, LocationOut, ItemOut } from "~~/lib/api/types/data-contracts";
+  import type { ItemCreate, LocationOut } from "~~/lib/api/types/data-contracts";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
   import MdiPackageVariant from "~icons/mdi/package-variant";
@@ -176,7 +176,6 @@
   const { query, results } = useItemSearch(api, { immediate: false });
   const subItemCreateParam = useRouteQuery("subItemCreate", false);
   const subItemCreate = ref();
-  
 
   const labelId = computed(() => {
     if (route.fullPath.includes("/label/")) {
@@ -253,21 +252,22 @@
         subItemCreate.value = subItemCreateParam.value;
         let parentItemLocationId = null;
 
-        if (subItemCreate.value && itemId.value){
-          const { data, error } = await api.items.get(itemId.value);
+        if (subItemCreate.value && itemId.value) {
+          const itemIdRead = itemId.value.length > 0 ? itemId.value[0] : (itemId.value as string);
+          const { data, error } = await api.items.get(itemIdRead);
           if (error) {
             toast.error("Failed to load parent item - please select manually");
           }
-          
-          parentItemLocationId = data.location.id;
-          parent.value = data; 
+
+          parentItemLocationId = data.location!.id;
+          parent.value = data;
           form.parentId = data.id;
-          await router.push({query: {},});
-        }else{
-          parent.value = {}; 
+          await router.push({ query: {} });
+        } else {
+          parent.value = {};
           form.parentId = null;
         }
-        
+
         const locId = locationId.value ? locationId.value : parentItemLocationId;
 
         if (locId) {

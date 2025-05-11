@@ -33,7 +33,6 @@
 
   const route = useRoute();
   const router = useRouter();
-  const subItemCreate = useRouteQuery("subItemCreate", false);
   const api = useUserApi();
 
   const itemId = computed<string>(() => route.params.id as string);
@@ -512,12 +511,12 @@
     navigateTo("/home");
   }
 
-  async function createSubitem(){
+  async function createSubitem() {
     await router.push({
-        query: {
-          subItemCreate: true
-        },
-      });
+      query: {
+        subItemCreate: "y",
+      },
+    });
 
     openDialog("create-item");
   }
@@ -595,7 +594,7 @@
               />
               <LabelMaker v-else :id="item.id" type="item" />
               <Button class="w-9 md:w-auto" @click="createSubitem">
-                <MdiPlus/>
+                <MdiPlus />
                 <span class="hidden md:inline">{{ $t("global.create_subitem") }}</span>
               </Button>
               <Button class="w-9 md:w-auto" @click="duplicateItem">
