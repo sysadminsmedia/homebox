@@ -21,6 +21,7 @@ import (
 //	@Success	200			{object}	[]repo.TreeItem
 //	@Router		/v1/locations/tree [GET]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleLocationTreeQuery() errchain.HandlerFunc {
 	fn := func(r *http.Request, query repo.TreeQuery) ([]repo.TreeItem, error) {
 		auth := services.NewContext(r.Context())
@@ -32,13 +33,14 @@ func (ctrl *V1Controller) HandleLocationTreeQuery() errchain.HandlerFunc {
 
 // HandleLocationGetAll godoc
 //
-//	@Summary	Get All Locations
-//	@Tags		Locations
-//	@Produce	json
-//	@Param		filterChildren	query		bool	false	"Filter locations with parents"
-//	@Success	200				{object}	[]repo.LocationOutCount
-//	@Router		/v1/locations [GET]
-//	@Security	Bearer
+//	 @Summary	Get All Locations
+//	 @Tags		Locations
+//		@Produce	json
+//		@Param		filterChildren	query		bool	false	"Filter locations with parents"
+//		@Success	200				{object}	[]repo.LocationOutCount
+//		@Router		/v1/locations [GET]
+//		@Security	Bearer
+//	 @Deprecated
 func (ctrl *V1Controller) HandleLocationGetAll() errchain.HandlerFunc {
 	fn := func(r *http.Request, q repo.LocationQuery) ([]repo.LocationOutCount, error) {
 		auth := services.NewContext(r.Context())
@@ -57,6 +59,7 @@ func (ctrl *V1Controller) HandleLocationGetAll() errchain.HandlerFunc {
 //	@Success	200		{object}	repo.LocationSummary
 //	@Router		/v1/locations [POST]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleLocationCreate() errchain.HandlerFunc {
 	fn := func(r *http.Request, createData repo.LocationCreate) (repo.LocationOut, error) {
 		auth := services.NewContext(r.Context())
@@ -75,6 +78,7 @@ func (ctrl *V1Controller) HandleLocationCreate() errchain.HandlerFunc {
 //	@Success	204
 //	@Router		/v1/locations/{id} [DELETE]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleLocationDelete() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID) (any, error) {
 		auth := services.NewContext(r.Context())
@@ -136,6 +140,7 @@ func (ctrl *V1Controller) GetLocationWithPrice(auth context.Context, gid uuid.UU
 //	@Success	200	{object}	repo.LocationOut
 //	@Router		/v1/locations/{id} [GET]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleLocationGet() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID) (repo.LocationOut, error) {
 		auth := services.NewContext(r.Context())
@@ -157,6 +162,7 @@ func (ctrl *V1Controller) HandleLocationGet() errchain.HandlerFunc {
 //	@Success	200		{object}	repo.LocationOut
 //	@Router		/v1/locations/{id} [PUT]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleLocationUpdate() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID, body repo.LocationUpdate) (repo.LocationOut, error) {
 		auth := services.NewContext(r.Context())

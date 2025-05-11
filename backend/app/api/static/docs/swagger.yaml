@@ -997,6 +997,7 @@ paths:
       - Statistics
   /v1/items:
     get:
+      deprecated: true
       parameters:
       - description: search string
         in: query
@@ -1044,6 +1045,7 @@ paths:
       tags:
       - Items
     post:
+      deprecated: true
       parameters:
       - description: Item Data
         in: body
@@ -1065,6 +1067,7 @@ paths:
       - Items
   /v1/items/{id}:
     delete:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -1082,6 +1085,7 @@ paths:
       tags:
       - Items
     get:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -1101,6 +1105,7 @@ paths:
       tags:
       - Items
     patch:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -1126,6 +1131,7 @@ paths:
       tags:
       - Items
     put:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -1328,6 +1334,7 @@ paths:
       - Item Maintenance
   /v1/items/{id}/path:
     get:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -1350,6 +1357,7 @@ paths:
       - Items
   /v1/items/export:
     get:
+      deprecated: true
       responses:
         "200":
           description: text/csv
@@ -1362,6 +1370,7 @@ paths:
       - Items
   /v1/items/fields:
     get:
+      deprecated: true
       produces:
       - application/json
       responses:
@@ -1378,6 +1387,7 @@ paths:
       - Items
   /v1/items/fields/values:
     get:
+      deprecated: true
       produces:
       - application/json
       responses:
@@ -1396,6 +1406,7 @@ paths:
     post:
       consumes:
       - multipart/form-data
+      deprecated: true
       parameters:
       - description: Image to upload
         in: formData
@@ -1578,6 +1589,7 @@ paths:
       - Labels
   /v1/locations:
     get:
+      deprecated: true
       parameters:
       - description: Filter locations with parents
         in: query
@@ -1598,6 +1610,7 @@ paths:
       tags:
       - Locations
     post:
+      deprecated: true
       parameters:
       - description: Location Data
         in: body
@@ -1619,6 +1632,7 @@ paths:
       - Locations
   /v1/locations/{id}:
     delete:
+      deprecated: true
       parameters:
       - description: Location ID
         in: path
@@ -1636,6 +1650,7 @@ paths:
       tags:
       - Locations
     get:
+      deprecated: true
       parameters:
       - description: Location ID
         in: path
@@ -1655,6 +1670,7 @@ paths:
       tags:
       - Locations
     put:
+      deprecated: true
       parameters:
       - description: Location ID
         in: path
@@ -1681,6 +1697,7 @@ paths:
       - Locations
   /v1/locations/tree:
     get:
+      deprecated: true
       parameters:
       - description: include items in response tree
         in: query

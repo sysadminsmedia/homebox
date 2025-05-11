@@ -392,6 +392,7 @@ const docTemplate = `{
                     "Items"
                 ],
                 "summary": "Query All Items",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -464,6 +465,7 @@ const docTemplate = `{
                     "Items"
                 ],
                 "summary": "Create Item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Item Data",
@@ -496,6 +498,7 @@ const docTemplate = `{
                     "Items"
                 ],
                 "summary": "Export Items",
+                "deprecated": true,
                 "responses": {
                     "200": {
                         "description": "text/csv",
@@ -520,6 +523,7 @@ const docTemplate = `{
                     "Items"
                 ],
                 "summary": "Get All Custom Field Names",
+                "deprecated": true,
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -547,6 +551,7 @@ const docTemplate = `{
                     "Items"
                 ],
                 "summary": "Get All Custom Field Values",
+                "deprecated": true,
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -577,6 +582,7 @@ const docTemplate = `{
                     "Items"
                 ],
                 "summary": "Import Items",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "file",
@@ -607,6 +613,7 @@ const docTemplate = `{
                     "Items"
                 ],
                 "summary": "Get Item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -638,6 +645,7 @@ const docTemplate = `{
                     "Items"
                 ],
                 "summary": "Update Item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -678,6 +686,7 @@ const docTemplate = `{
                     "Items"
                 ],
                 "summary": "Delete Item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -706,6 +715,7 @@ const docTemplate = `{
                     "Items"
                 ],
                 "summary": "Update Item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -1024,6 +1034,7 @@ const docTemplate = `{
                     "Items"
                 ],
                 "summary": "Get the full path of an item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -1329,6 +1340,7 @@ const docTemplate = `{
                     "Locations"
                 ],
                 "summary": "Get All Locations",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "boolean",
@@ -1362,6 +1374,7 @@ const docTemplate = `{
                     "Locations"
                 ],
                 "summary": "Create Location",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Location Data",
@@ -1397,6 +1410,7 @@ const docTemplate = `{
                     "Locations"
                 ],
                 "summary": "Get Locations Tree",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "boolean",
@@ -1432,6 +1446,7 @@ const docTemplate = `{
                     "Locations"
                 ],
                 "summary": "Get Location",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -1463,6 +1478,7 @@ const docTemplate = `{
                     "Locations"
                 ],
                 "summary": "Update Location",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -1503,6 +1519,7 @@ const docTemplate = `{
                     "Locations"
                 ],
                 "summary": "Delete Location",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
