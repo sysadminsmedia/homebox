@@ -46,10 +46,16 @@
                 "yesterday": "včeraj"
             },
             "label_maker": {
-                "browser_print": "Tiskanje iz brskalnika"
+                "browser_print": "Tiskanje iz brskalnika",
+                "confirm_description": "Ali ste prepričani, da želite natisniti to etiketo?",
+                "download": "Prenesi etiketo",
+                "print": "Natisni etiketo",
+                "server_print": "Natisni na strežniku",
+                "titles": "Etikete"
             },
             "page_qr_code": {
-                "page_url": "URL strani"
+                "page_url": "URL strani",
+                "qr_tooltip": "Prikaži kodo QR"
             },
             "password_score": {
                 "password_strength": "Moč gesla"
@@ -59,7 +65,10 @@
             "create_modal": {
                 "item_description": "opis predmeta",
                 "item_name": "ime predmeta",
-                "title": "Ustvari predmet"
+                "item_photo": "fotografija predmeta 📷",
+                "item_quantity": "količina",
+                "title": "Ustvari predmet",
+                "upload_photos": "Naloži fotografije"
             },
             "view": {
                 "selectable": {
@@ -69,8 +78,10 @@
                     "table": "Tabela"
                 },
                 "table": {
+                    "headers": "Stolpci",
                     "page": "Stran",
-                    "rows_per_page": "vrstic na stran"
+                    "rows_per_page": "vrstic na stran",
+                    "table_settings": "Nastavitve tabele"
                 }
             }
         },
@@ -79,6 +90,9 @@
                 "label_description": "Opis nalepke",
                 "label_name": "Ime nalepke",
                 "title": "Ustvari oznako"
+            },
+            "selector": {
+                "select_labels": "Izberi oznake"
             }
         },
         "location": {
@@ -88,19 +102,25 @@
                 "title": "Ustvari lokacijo"
             },
             "selector": {
-                "parent_location": "Glavna lokacija"
+                "no_location_found": "Nobena lokacija ni bila najdena",
+                "parent_location": "Glavna lokacija",
+                "search_location": "Iskanje po lokacijah",
+                "select_location": "Izberite lokacijo"
             },
             "tree": {
                 "no_locations": "Ni razpoložljivih lokacij. Dodaj novo lokacije preko \n `<`span class=\"link-primary\"`>`Ustvari`<`/span`>` gumba v navigacijski vrstici."
             }
         },
         "quick_menu": {
+            "no_results": "Ni resultatov.",
             "shortcut_hint": "S številskimi tipkami hitro izberite dejanje."
         }
     },
     "global": {
         "add": "Dodaj",
+        "archived": "Arhivirano",
         "build": "Gradnja: { build }",
+        "cancel": "Prekliči",
         "confirm": "Potrdi",
         "create": "Ustvari",
         "create_and_add": "Ustvari in dodaj še enega",
@@ -111,7 +131,12 @@
         "edit": "Uredi",
         "email": "E-pošta",
         "follow_dev": "Sledi razvijjalcu",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Verzija: { version } Gradnja: { build } '</a>'"
+        },
         "github": "GitHub projekt",
+        "insured": "Zavarovano",
         "items": "Predmeti",
         "join_discord": "Pridruži se na Discord",
         "labels": "Oznake",
@@ -120,6 +145,7 @@
         "name": "Naziv",
         "navigate": "Krmari",
         "password": "Geslo",
+        "quantity": "Količina",
         "read_docs": "Preberite dokumentacijo",
         "save": "Shrani",
         "search": "Iskanje",
@@ -223,34 +249,45 @@
         "update_label": "Posodobitev oznake"
     },
     "languages": {
-        "ca": "Katalonščina",
-        "de": "Nemščina",
-        "en": "Angleščina",
-        "es": "Španščina",
-        "fr": "Francoščina",
-        "hu": "Madžarščina",
-        "it": "Italijanščina",
-        "ja-JP": "Japonščina",
-        "nl": "Nizozemščina",
-        "pl": "Polščina",
-        "pt-BR": "Portugalščina (brazilska)",
-        "pt-PT": "Portugalščina (Portugalska)",
-        "ru": "Ruščina",
-        "sl": "Slovenščina",
-        "sv": "Švedščina",
-        "tr": "Turkščina",
-        "uk-UA": "Ukrajinščina",
-        "zh-CN": "Kitajščina (splošna)",
-        "zh-HK": "Kitajščina (Hong Kong)",
-        "zh-MO": "Kitajščina (Macau)",
-        "zh-TW": "Kitajsščina (tradicionalna)"
+        "ca": "katalonščina",
+        "cs-CZ": "češčina",
+        "de": "nemščina",
+        "en": "angleščina",
+        "es": "španščina",
+        "fi-FI": "finščina",
+        "fr": "francoščina",
+        "hu": "madžarščina",
+        "id-ID": "indonezijščina",
+        "it": "italijanščina",
+        "ja-JP": "japonščina",
+        "ko-KR": "korejščina",
+        "lb-LU": "luksemburščina (Luksemburg)",
+        "lt-LT": "litovščina (Litva)",
+        "nb-NO": "norveški bokmål",
+        "nl": "nizozemščina",
+        "pl": "polščina",
+        "pt-BR": "portugalščina (Brazilija)",
+        "pt-PT": "portugalščina (Portugalska)",
+        "ru": "ruščina",
+        "sl": "slovenščina",
+        "sq-AL": "albanščina",
+        "sv": "švedščina",
+        "ta-IN": "tamilščina",
+        "th-TH": "tajščina",
+        "tr": "turščina",
+        "uk-UA": "ukrajinščina",
+        "zh-CN": "kitajščina (poenostavljena)",
+        "zh-HK": "kitajščina (Hongkong)",
+        "zh-MO": "kitajščina (Makav)",
+        "zh-TW": "kitajščina (tradicionalna)"
     },
-    "languages.da-DK": "Danščina",
-    "languages.ro-RO": "Romunščina",
-    "languages.sk-SK": "Slovaščina",
+    "languages.da-DK": "danščina",
+    "languages.ro-RO": "romunščina",
+    "languages.sk-SK": "slovaščina",
     "locations": {
         "child_locations": "Podrejene lokacije",
         "collapse_tree": "Strni drevo",
+        "expand_tree": "Razširi drevo",
         "no_results": "Ni najdenih lokacij",
         "update_location": "Posodobi lokacijo"
     },
@@ -297,6 +334,7 @@
         "locations": "Lokacije",
         "maintenance": "Vzdrževanje",
         "profile": "Profil",
+        "scanner": "Optični bralnik",
         "search": "Iskanje",
         "tools": "Orodja"
     },
@@ -317,9 +355,11 @@
         "language": "Jezik",
         "new_password": "Novo geslo",
         "no_notifiers": "Ni nastavljenih sporočanj",
+        "no_override": "Brez spremembe",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Obveščevalec",
         "notifiers": "Obveščevalci",
         "notifiers_sub": "Prejemajte obvestila za prihajajoče opomnike o vzdrževanju",
+        "override_locale": "Spremeni jezik datuma in valute",
         "test": "Preizkus",
         "theme_settings": "Nastavitve teme",
         "theme_settings_sub": "Nastavitve teme so shranjene v lokalni shrambi vašega brskalnika. Temo lahko kadar koli spremenite. Če\n imate težave z nastavitvijo teme, poskusite osvežiti brskalnik.",
@@ -328,6 +368,14 @@
         "url": "URL",
         "user_profile": "Profil uporabnika",
         "user_profile_sub": "Povabite uporabnike in upravljajte svoj račun."
+    },
+    "scanner": {
+        "error": "Med optičnim branjem je prišlo do napake",
+        "invalid_url": "Neveljaven URL naslov v črtni kodi",
+        "no_sources": "Ni kamer / video virov",
+        "select_video_source": "Izberi kamero / video vir",
+        "title": "Optični bralnik",
+        "unsupported": "API za pretok medijev ni na voljo brez HTTPS"
     },
     "tools": {
         "actions": "Dejanja inventarja",
