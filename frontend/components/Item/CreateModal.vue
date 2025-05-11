@@ -174,7 +174,7 @@
 
   const parent = ref();
   const { query, results } = useItemSearch(api, { immediate: false });
-  const subItemCreateParam = useRouteQuery("subItemCreate", false);
+  const subItemCreateParam = useRouteQuery("subItemCreate", "n");
   const subItemCreate = ref();
 
   const labelId = computed(() => {
@@ -249,11 +249,12 @@
     () => activeDialog.value,
     async active => {
       if (active === "create-item") {
-        subItemCreate.value = subItemCreateParam.value;
+        //needed since URL will be cleared in the next step => ParentId Selection should stay though
+        subItemCreate.value = subItemCreateParam.value === "y";
         let parentItemLocationId = null;
-
+        
         if (subItemCreate.value && itemId.value) {
-          const itemIdRead = itemId.value.length > 0 ? itemId.value[0] : (itemId.value as string);
+          const itemIdRead = typeof itemId.value === 'string' ? (itemId.value as string) : itemId.value[0];
           const { data, error } = await api.items.get(itemIdRead);
           if (error) {
             toast.error("Failed to load parent item - please select manually");
