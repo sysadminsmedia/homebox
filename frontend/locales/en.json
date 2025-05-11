@@ -67,6 +67,7 @@
                 "item_name": "Item Name",
                 "item_photo": "Item Photo 📷",
                 "item_quantity": "Item Quantity",
+                "parent_item" :"Parent Item",
                 "title": "Create Item",
                 "upload_photos": "Upload Photos"
             },
@@ -125,6 +126,7 @@
         "create": "Create",
         "create_and_add": "Create and Add Another",
         "created": "Created",
+        "create_subitem": "Create Subitem",
         "delete": "Delete",
         "details": "Details",
         "duplicate": "Duplicate",
