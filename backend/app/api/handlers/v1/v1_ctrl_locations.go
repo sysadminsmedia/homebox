@@ -14,7 +14,7 @@ import (
 
 // HandleLocationTreeQuery godoc
 //
-//	@Summary	Get Locations Tree
+//	@Summary	(Deprecated) Get Locations Tree
 //	@Tags		Locations
 //	@Produce	json
 //	@Param		withItems	query		bool	false	"include items in response tree"
@@ -33,7 +33,7 @@ func (ctrl *V1Controller) HandleLocationTreeQuery() errchain.HandlerFunc {
 
 // HandleLocationGetAll godoc
 //
-//	 @Summary	Get All Locations
+//	 @Summary	(Deprecated) Get All Locations
 //	 @Tags		Locations
 //		@Produce	json
 //		@Param		filterChildren	query		bool	false	"Filter locations with parents"
@@ -52,7 +52,7 @@ func (ctrl *V1Controller) HandleLocationGetAll() errchain.HandlerFunc {
 
 // HandleLocationCreate godoc
 //
-//	@Summary	Create Location
+//	@Summary	(Deprecated) Create Location
 //	@Tags		Locations
 //	@Produce	json
 //	@Param		payload	body		repo.LocationCreate	true	"Location Data"
@@ -71,7 +71,7 @@ func (ctrl *V1Controller) HandleLocationCreate() errchain.HandlerFunc {
 
 // HandleLocationDelete godoc
 //
-//	@Summary	Delete Location
+//	@Summary	(Deprecated) Delete Location
 //	@Tags		Locations
 //	@Produce	json
 //	@Param		id	path	string	true	"Location ID"
@@ -133,7 +133,7 @@ func (ctrl *V1Controller) GetLocationWithPrice(auth context.Context, gid uuid.UU
 
 // HandleLocationGet godoc
 //
-//	@Summary	Get Location
+//	@Summary	(Deprecated) Get Location
 //	@Tags		Locations
 //	@Produce	json
 //	@Param		id	path		string	true	"Location ID"
@@ -154,7 +154,7 @@ func (ctrl *V1Controller) HandleLocationGet() errchain.HandlerFunc {
 
 // HandleLocationUpdate godoc
 //
-//	@Summary	Update Location
+//	@Summary	(Deprecated) Update Location
 //	@Tags		Locations
 //	@Produce	json
 //	@Param		id		path		string				true	"Location ID"

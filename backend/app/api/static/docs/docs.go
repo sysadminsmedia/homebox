@@ -391,7 +391,7 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Query All Items",
+                "summary": "(Deprecated) Query All Items",
                 "deprecated": true,
                 "parameters": [
                     {
@@ -464,7 +464,7 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Create Item",
+                "summary": "(Deprecated) Create Item",
                 "deprecated": true,
                 "parameters": [
                     {
@@ -497,7 +497,7 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Export Items",
+                "summary": "(Deprecated) Export Items",
                 "deprecated": true,
                 "responses": {
                     "200": {
@@ -522,7 +522,7 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Get All Custom Field Names",
+                "summary": "(Deprecated) Get All Custom Field Names",
                 "deprecated": true,
                 "responses": {
                     "200": {
@@ -550,7 +550,7 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Get All Custom Field Values",
+                "summary": "(Deprecated) Get All Custom Field Values",
                 "deprecated": true,
                 "responses": {
                     "200": {
@@ -581,7 +581,7 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Import Items",
+                "summary": "(Deprecated) Import Items",
                 "deprecated": true,
                 "parameters": [
                     {
@@ -612,7 +612,7 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Get Item",
+                "summary": "(Deprecated) Get Item",
                 "deprecated": true,
                 "parameters": [
                     {
@@ -644,7 +644,7 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Update Item",
+                "summary": "(Deprecated) Update Item",
                 "deprecated": true,
                 "parameters": [
                     {
@@ -685,7 +685,7 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Delete Item",
+                "summary": "(Deprecated) Delete Item",
                 "deprecated": true,
                 "parameters": [
                     {
@@ -714,7 +714,7 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Update Item",
+                "summary": "(Deprecated) Update Item",
                 "deprecated": true,
                 "parameters": [
                     {
@@ -1033,7 +1033,7 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Get the full path of an item",
+                "summary": "(Deprecated) Get the full path of an item",
                 "deprecated": true,
                 "parameters": [
                     {
@@ -1339,7 +1339,7 @@ const docTemplate = `{
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Get All Locations",
+                "summary": "(Deprecated) Get All Locations",
                 "deprecated": true,
                 "parameters": [
                     {
@@ -1373,7 +1373,7 @@ const docTemplate = `{
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Create Location",
+                "summary": "(Deprecated) Create Location",
                 "deprecated": true,
                 "parameters": [
                     {
@@ -1409,7 +1409,7 @@ const docTemplate = `{
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Get Locations Tree",
+                "summary": "(Deprecated) Get Locations Tree",
                 "deprecated": true,
                 "parameters": [
                     {
@@ -1445,7 +1445,7 @@ const docTemplate = `{
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Get Location",
+                "summary": "(Deprecated) Get Location",
                 "deprecated": true,
                 "parameters": [
                     {
@@ -1477,7 +1477,7 @@ const docTemplate = `{
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Update Location",
+                "summary": "(Deprecated) Update Location",
                 "deprecated": true,
                 "parameters": [
                     {
@@ -1518,7 +1518,7 @@ const docTemplate = `{
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Delete Location",
+                "summary": "(Deprecated) Delete Location",
                 "deprecated": true,
                 "parameters": [
                     {

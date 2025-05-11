@@ -22,7 +22,7 @@ import (
 
 // HandleItemsGetAll godoc
 //
-//	@Summary	Query All Items
+//	@Summary	(Deprecated) Query All Items
 //	@Tags		Items
 //	@Produce	json
 //	@Param		q			query		string		false	"search string"
@@ -113,7 +113,7 @@ func (ctrl *V1Controller) HandleItemsGetAll() errchain.HandlerFunc {
 
 // HandleItemFullPath godoc
 //
-//	@Summary	Get the full path of an item
+//	@Summary	(Deprecated) Get the full path of an item
 //	@Tags		Items
 //	@Produce	json
 //	@Param		id	path		string	true	"Item ID"
@@ -156,7 +156,7 @@ func (ctrl *V1Controller) HandleItemFullPath() errchain.HandlerFunc {
 
 // HandleItemsCreate godoc
 //
-//	@Summary	Create Item
+//	@Summary	(Deprecated) Create Item
 //	@Tags		Items
 //	@Produce	json
 //	@Param		payload	body		repo.ItemCreate	true	"Item Data"
@@ -174,7 +174,7 @@ func (ctrl *V1Controller) HandleItemsCreate() errchain.HandlerFunc {
 
 // HandleItemGet godocs
 //
-//	@Summary	Get Item
+//	@Summary	(Deprecated) Get Item
 //	@Tags		Items
 //	@Produce	json
 //	@Param		id	path		string	true	"Item ID"
@@ -194,7 +194,7 @@ func (ctrl *V1Controller) HandleItemGet() errchain.HandlerFunc {
 
 // HandleItemDelete godocs
 //
-//	@Summary	Delete Item
+//	@Summary	(Deprecated) Delete Item
 //	@Tags		Items
 //	@Produce	json
 //	@Param		id	path	string	true	"Item ID"
@@ -214,7 +214,7 @@ func (ctrl *V1Controller) HandleItemDelete() errchain.HandlerFunc {
 
 // HandleItemUpdate godocs
 //
-//	@Summary	Update Item
+//	@Summary	(Deprecated) Update Item
 //	@Tags		Items
 //	@Produce	json
 //	@Param		id		path		string			true	"Item ID"
@@ -236,7 +236,7 @@ func (ctrl *V1Controller) HandleItemUpdate() errchain.HandlerFunc {
 
 // HandleItemPatch godocs
 //
-//	@Summary	Update Item
+//	@Summary	(Deprecated) Update Item
 //	@Tags		Items
 //	@Produce	json
 //	@Param		id		path		string			true	"Item ID"
@@ -263,7 +263,7 @@ func (ctrl *V1Controller) HandleItemPatch() errchain.HandlerFunc {
 
 // HandleGetAllCustomFieldNames godocs
 //
-//	@Summary	Get All Custom Field Names
+//	@Summary	(Deprecated) Get All Custom Field Names
 //	@Tags		Items
 //	@Produce	json
 //	@Success	200
@@ -282,7 +282,7 @@ func (ctrl *V1Controller) HandleGetAllCustomFieldNames() errchain.HandlerFunc {
 
 // HandleGetAllCustomFieldValues godocs
 //
-//	@Summary	Get All Custom Field Values
+//	@Summary	(Deprecated) Get All Custom Field Values
 //	@Tags		Items
 //	@Produce	json
 //	@Success	200
@@ -305,7 +305,7 @@ func (ctrl *V1Controller) HandleGetAllCustomFieldValues() errchain.HandlerFunc {
 
 // HandleItemsImport godocs
 //
-//	@Summary  Import Items
+//	@Summary  (Deprecated) Import Items
 //	@Tags     Items
 //	@Accept   multipart/form-data
 //	@Produce  json
@@ -342,7 +342,7 @@ func (ctrl *V1Controller) HandleItemsImport() errchain.HandlerFunc {
 
 // HandleItemsExport godocs
 //
-//	@Summary	Export Items
+//	@Summary	(Deprecated) Export Items
 //	@Tags		Items
 //	@Success	200	{string}	string	"text/csv"
 //	@Router		/v1/items/export [GET]

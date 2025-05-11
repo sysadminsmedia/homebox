@@ -1041,7 +1041,7 @@ paths:
             $ref: '#/definitions/repo.PaginationResult-repo_ItemSummary'
       security:
       - Bearer: []
-      summary: Query All Items
+      summary: (Deprecated) Query All Items
       tags:
       - Items
     post:
@@ -1062,7 +1062,7 @@ paths:
             $ref: '#/definitions/repo.ItemSummary'
       security:
       - Bearer: []
-      summary: Create Item
+      summary: (Deprecated) Create Item
       tags:
       - Items
   /v1/items/{id}:
@@ -1081,7 +1081,7 @@ paths:
           description: No Content
       security:
       - Bearer: []
-      summary: Delete Item
+      summary: (Deprecated) Delete Item
       tags:
       - Items
     get:
@@ -1101,7 +1101,7 @@ paths:
             $ref: '#/definitions/repo.ItemOut'
       security:
       - Bearer: []
-      summary: Get Item
+      summary: (Deprecated) Get Item
       tags:
       - Items
     patch:
@@ -1127,7 +1127,7 @@ paths:
             $ref: '#/definitions/repo.ItemOut'
       security:
       - Bearer: []
-      summary: Update Item
+      summary: (Deprecated) Update Item
       tags:
       - Items
     put:
@@ -1153,7 +1153,7 @@ paths:
             $ref: '#/definitions/repo.ItemOut'
       security:
       - Bearer: []
-      summary: Update Item
+      summary: (Deprecated) Update Item
       tags:
       - Items
   /v1/items/{id}/attachments:
@@ -1352,7 +1352,7 @@ paths:
             type: array
       security:
       - Bearer: []
-      summary: Get the full path of an item
+      summary: (Deprecated) Get the full path of an item
       tags:
       - Items
   /v1/items/export:
@@ -1365,7 +1365,7 @@ paths:
             type: string
       security:
       - Bearer: []
-      summary: Export Items
+      summary: (Deprecated) Export Items
       tags:
       - Items
   /v1/items/fields:
@@ -1382,7 +1382,7 @@ paths:
             type: array
       security:
       - Bearer: []
-      summary: Get All Custom Field Names
+      summary: (Deprecated) Get All Custom Field Names
       tags:
       - Items
   /v1/items/fields/values:
@@ -1399,7 +1399,7 @@ paths:
             type: array
       security:
       - Bearer: []
-      summary: Get All Custom Field Values
+      summary: (Deprecated) Get All Custom Field Values
       tags:
       - Items
   /v1/items/import:
@@ -1420,7 +1420,7 @@ paths:
           description: No Content
       security:
       - Bearer: []
-      summary: Import Items
+      summary: (Deprecated) Import Items
       tags:
       - Items
   /v1/labelmaker/assets/{id}:
@@ -1606,7 +1606,7 @@ paths:
             type: array
       security:
       - Bearer: []
-      summary: Get All Locations
+      summary: (Deprecated) Get All Locations
       tags:
       - Locations
     post:
@@ -1627,7 +1627,7 @@ paths:
             $ref: '#/definitions/repo.LocationSummary'
       security:
       - Bearer: []
-      summary: Create Location
+      summary: (Deprecated) Create Location
       tags:
       - Locations
   /v1/locations/{id}:
@@ -1646,7 +1646,7 @@ paths:
           description: No Content
       security:
       - Bearer: []
-      summary: Delete Location
+      summary: (Deprecated) Delete Location
       tags:
       - Locations
     get:
@@ -1666,7 +1666,7 @@ paths:
             $ref: '#/definitions/repo.LocationOut'
       security:
       - Bearer: []
-      summary: Get Location
+      summary: (Deprecated) Get Location
       tags:
       - Locations
     put:
@@ -1692,7 +1692,7 @@ paths:
             $ref: '#/definitions/repo.LocationOut'
       security:
       - Bearer: []
-      summary: Update Location
+      summary: (Deprecated) Update Location
       tags:
       - Locations
   /v1/locations/tree:
@@ -1714,7 +1714,7 @@ paths:
             type: array
       security:
       - Bearer: []
-      summary: Get Locations Tree
+      summary: (Deprecated) Get Locations Tree
       tags:
       - Locations
   /v1/maintenance:
