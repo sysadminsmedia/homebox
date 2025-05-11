@@ -204,7 +204,7 @@
   const focused = ref(false);
   const form = reactive({
     location: locations.value && locations.value.length > 0 ? locations.value[0] : ({} as LocationOut),
-    parentId: parent.value && parent.value.id && subItemCreate.value ? parent.value.id : null,
+    parentId: null,
     name: "",
     quantity: 1,
     description: "",
@@ -212,6 +212,18 @@
     labels: [] as string[],
     photos: [] as PhotoPreview[],
   });
+
+  watch(
+    parent,
+    newParent => {
+      if (newParent && newParent.id && subItemCreate.value) {
+        form.parentId = newParent.id;
+      } else {
+        form.parentId = null;
+      }
+    },
+    { immediate: true }
+  );
 
   const { shift } = useMagicKeys();
 
@@ -262,7 +274,6 @@
 
           parentItemLocationId = data.location!.id;
           parent.value = data;
-          form.parentId = data.id;
           // clear URL Parameter (subItemCreate) since intention was communicated and received
           await router.push({ query: {} });
         } else {
