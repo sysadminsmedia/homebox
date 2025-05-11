@@ -594,15 +594,15 @@
                 type="asset"
               />
               <LabelMaker v-else :id="item.id" type="item" />
-              <Button class="w-9 md:w-auto" @click="createSubitem">
+              <Button class="w-9 md:w-auto" :aria-label="$t('global.create_subitem')" @click="createSubitem">
                 <MdiPlus />
                 <span class="hidden md:inline">{{ $t("global.create_subitem") }}</span>
               </Button>
-              <Button class="w-9 md:w-auto" @click="duplicateItem">
+              <Button class="w-9 md:w-auto" :aria-label="$t('global.duplicate')" @click="duplicateItem">
                 <MdiContentCopy />
                 <span class="hidden md:inline">{{ $t("global.duplicate") }}</span>
               </Button>
-              <Button variant="destructive" class="w-9 md:w-auto" @click="deleteItem">
+              <Button variant="destructive" class="w-9 md:w-auto" :aria-label="$t('global.delete')" @click="deleteItem">
                 <MdiDelete />
                 <span class="hidden md:inline">{{ $t("global.delete") }}</span>
               </Button>
