@@ -66,7 +66,8 @@
                 "item_description": "Tétel leírása",
                 "item_name": "Tétel neve",
                 "item_photo": "Tétel fényképe 📷",
-                "item_quantity": "Cikk mennyisége",
+                "item_quantity": "Tételek mennyisége",
+                "parent_item": "Szülő tétel",
                 "title": "Új elem létrehozása",
                 "upload_photos": "Fotók feltöltése"
             },
@@ -262,6 +263,8 @@
         "it": "Olasz",
         "ja-JP": "Japán",
         "ko-KR": "Koreai",
+        "lb-LU": "Luxemburgi (Luxemburg)",
+        "lt-LT": "litván$Litvánia",
         "nb-NO": "Norvég (bokmål)",
         "nl": "Holland",
         "pl": "Lengyel",
