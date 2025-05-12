@@ -19,7 +19,7 @@
                 "documentation": "dokümantasyon",
                 "failed_to_copy": "Metin panoya kopyalanamadı",
                 "https_required": "çünkü HTTPS gereklidir",
-                "learn_more": "Daha fazla"
+                "learn_more": "Daha fazla bilgi edinmek için"
             },
             "date_time": {
                 "ago": "{0} önce",
@@ -45,8 +45,17 @@
                 "years": "yıl",
                 "yesterday": "dün"
             },
+            "label_maker": {
+                "browser_print": "Tarayıcıdan Yazdır",
+                "confirm_description": "Bu etiketi yazdırmak istediğinizden emin misiniz?",
+                "download": "Etiketi İndir",
+                "print": "Etiketi yazdır",
+                "server_print": "Sunucuda yazdır",
+                "titles": "Etiketler"
+            },
             "page_qr_code": {
-                "page_url": "Sayfa URL'si"
+                "page_url": "Sayfa URL'si",
+                "qr_tooltip": "QR Kodu Göster"
             },
             "password_score": {
                 "password_strength": "Şifre güvenlik seviyesi"
@@ -56,6 +65,7 @@
             "create_modal": {
                 "item_description": "Ürün Açıklaması",
                 "item_name": "Ürün Adı",
+                "item_photo": "Öğe Fotoğrafı 📷",
                 "title": "Eşya Oluştur"
             },
             "view": {

@@ -67,6 +67,7 @@
                 "item_name": "ime predmeta",
                 "item_photo": "fotografija predmeta 📷",
                 "item_quantity": "količina",
+                "parent_item": "Nadrejeni predmet",
                 "title": "Ustvari predmet",
                 "upload_photos": "Naloži fotografije"
             },
@@ -124,6 +125,7 @@
         "confirm": "Potrdi",
         "create": "Ustvari",
         "create_and_add": "Ustvari in dodaj še enega",
+        "create_subitem": "Ustvari podrejeni predmet",
         "created": "Ustvarjeno",
         "delete": "Izbriši",
         "details": "Podrobnosti",
