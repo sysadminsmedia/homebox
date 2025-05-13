@@ -67,6 +67,7 @@
                 "item_name": "Nome articolo",
                 "item_photo": "Foto dell'articolo 📷",
                 "item_quantity": "Quantità Articoli",
+                "parent_item": "Articolo principale",
                 "title": "Crea Articolo",
                 "upload_photos": "Carica Foto"
             },
@@ -124,6 +125,7 @@
         "confirm": "Conferma",
         "create": "Crea",
         "create_and_add": "Crea e aggiungi un altro",
+        "create_subitem": "Crea sotto-elemento",
         "created": "Creato",
         "delete": "Cancella",
         "details": "Dettagli",
@@ -133,7 +135,7 @@
         "follow_dev": "Segui lo Sviluppatore",
         "footer": {
             "api_link": "`<` a href=\"https://homebox.software/en/api/\" target=\"_blank\"`>`API`<`/a`>`",
-            "version_link": "`<` a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"`>` Versione: { version } Build: { build } `<`/a`>`"
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Versione: { version } Build: { build } '</a>'"
         },
         "github": "Progetto GitHub",
         "insured": "Assicurato",
@@ -261,6 +263,8 @@
         "it": "Italiano",
         "ja-JP": "Giapponese",
         "ko-KR": "Coreano",
+        "lb-LU": "Lussemburghese",
+        "lt-LT": "Lituano (Lituania)",
         "nb-NO": "Norvegese",
         "nl": "Olandese",
         "pl": "Polacco",
@@ -368,7 +372,7 @@
         "user_profile_sub": "Invita utenti e gestisci il tuo account."
     },
     "scanner": {
-        "error": "Errore nella funzione di decodifica della chiave di protezione\nCodice errore: <ph id=\"mtc_1\" ctype=\"x-sprintf\" equiv-text=\"base64:JXM=\"/>",
+        "error": "Si è verificato un errore durante la scansione",
         "invalid_url": "URL del codice a barre non valido",
         "no_sources": "Nessuna sorgente video disponibile",
         "select_video_source": "Scegli una fonte video",
