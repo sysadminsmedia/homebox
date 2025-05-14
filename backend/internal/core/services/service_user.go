@@ -197,15 +197,15 @@ func (svc *UserService) Login(ctx context.Context, username, password string, ex
 	}
 
 	if rehash {
-		repository := repo.UserRepository{}
 		hash, err := hasher.HashPassword(password)
 		if err != nil {
 			log.Err(err).Msg("Failed to hash password")
 			return UserAuthTokenDetail{}, err
 		}
-		err = repository.ChangePassword(ctx, usr.ID, hash)
+		err = svc.repos.Users.ChangePassword(ctx, usr.ID, hash)
 		if err != nil {
 			return UserAuthTokenDetail{}, err
+		}
 		}
 	}
 	return svc.createSessionToken(ctx, usr.ID, extendedSession)
