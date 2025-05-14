@@ -75,8 +75,8 @@ func CheckPasswordHash(password, hash string) (bool, bool) {
 
 	// Compare Argon2id hash first
 	match, err := comparePasswordAndHash(password, hash)
-	if err != nil {
-		// If argon2id hash fails, try bcrypt
+	if err != nil || !match {
+		// If argon2id hash fails or doesn't match, try bcrypt
 		err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 		if err == nil {
 			// If bcrypt hash matches, return true and indicate rehashing
