@@ -396,26 +396,6 @@ func DescriptionContainsFold(v string) predicate.Entity {
 	return predicate.Entity(sql.FieldContainsFold(FieldDescription, v))
 }
 
-// TypeEQ applies the EQ predicate on the "type" field.
-func TypeEQ(v Type) predicate.Entity {
-	return predicate.Entity(sql.FieldEQ(FieldType, v))
-}
-
-// TypeNEQ applies the NEQ predicate on the "type" field.
-func TypeNEQ(v Type) predicate.Entity {
-	return predicate.Entity(sql.FieldNEQ(FieldType, v))
-}
-
-// TypeIn applies the In predicate on the "type" field.
-func TypeIn(vs ...Type) predicate.Entity {
-	return predicate.Entity(sql.FieldIn(FieldType, vs...))
-}
-
-// TypeNotIn applies the NotIn predicate on the "type" field.
-func TypeNotIn(vs ...Type) predicate.Entity {
-	return predicate.Entity(sql.FieldNotIn(FieldType, vs...))
-}
-
 // ImportRefEQ applies the EQ predicate on the "import_ref" field.
 func ImportRefEQ(v string) predicate.Entity {
 	return predicate.Entity(sql.FieldEQ(FieldImportRef, v))
@@ -1515,7 +1495,7 @@ func HasEntity() predicate.Entity {
 	return predicate.Entity(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, EntityTable, EntityColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, EntityTable, EntityColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -1538,7 +1518,7 @@ func HasLocation() predicate.Entity {
 	return predicate.Entity(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, LocationTable, LocationColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, LocationTable, LocationColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -1571,6 +1551,29 @@ func HasLabel() predicate.Entity {
 func HasLabelWith(preds ...predicate.Label) predicate.Entity {
 	return predicate.Entity(func(s *sql.Selector) {
 		step := newLabelStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasType applies the HasEdge predicate on the "type" edge.
+func HasType() predicate.Entity {
+	return predicate.Entity(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, TypeTable, TypeColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasTypeWith applies the HasEdge predicate on the "type" edge with a given conditions (other predicates).
+func HasTypeWith(preds ...predicate.EntityType) predicate.Entity {
+	return predicate.Entity(func(s *sql.Selector) {
+		step := newTypeStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

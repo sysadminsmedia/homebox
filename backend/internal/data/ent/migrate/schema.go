@@ -90,7 +90,6 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Size: 255},
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"location", "item"}, Default: "item"},
 		{Name: "import_ref", Type: field.TypeString, Nullable: true, Size: 100},
 		{Name: "notes", Type: field.TypeString, Nullable: true, Size: 1000},
 		{Name: "quantity", Type: field.TypeInt, Default: 1},
@@ -112,7 +111,8 @@ var (
 		{Name: "sold_price", Type: field.TypeFloat64, Default: 0},
 		{Name: "sold_notes", Type: field.TypeString, Nullable: true, Size: 1000},
 		{Name: "entity_children", Type: field.TypeUUID, Nullable: true},
-		{Name: "entity_location", Type: field.TypeUUID, Unique: true, Nullable: true},
+		{Name: "entity_location", Type: field.TypeUUID, Nullable: true},
+		{Name: "entity_type_entities", Type: field.TypeUUID, Nullable: true},
 		{Name: "group_entities", Type: field.TypeUUID},
 	}
 	// EntitiesTable holds the schema information for the "entities" table.
@@ -123,14 +123,20 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "entities_entities_children",
-				Columns:    []*schema.Column{EntitiesColumns[26]},
+				Columns:    []*schema.Column{EntitiesColumns[25]},
 				RefColumns: []*schema.Column{EntitiesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "entities_entities_location",
-				Columns:    []*schema.Column{EntitiesColumns[27]},
+				Columns:    []*schema.Column{EntitiesColumns[26]},
 				RefColumns: []*schema.Column{EntitiesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "entities_entity_types_entities",
+				Columns:    []*schema.Column{EntitiesColumns[27]},
+				RefColumns: []*schema.Column{EntityTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
@@ -149,27 +155,27 @@ var (
 			{
 				Name:    "entity_manufacturer",
 				Unique:  false,
-				Columns: []*schema.Column{EntitiesColumns[15]},
+				Columns: []*schema.Column{EntitiesColumns[14]},
 			},
 			{
 				Name:    "entity_model_number",
 				Unique:  false,
-				Columns: []*schema.Column{EntitiesColumns[14]},
+				Columns: []*schema.Column{EntitiesColumns[13]},
 			},
 			{
 				Name:    "entity_serial_number",
 				Unique:  false,
-				Columns: []*schema.Column{EntitiesColumns[13]},
+				Columns: []*schema.Column{EntitiesColumns[12]},
 			},
 			{
 				Name:    "entity_archived",
 				Unique:  false,
-				Columns: []*schema.Column{EntitiesColumns[10]},
+				Columns: []*schema.Column{EntitiesColumns[9]},
 			},
 			{
 				Name:    "entity_asset_id",
 				Unique:  false,
-				Columns: []*schema.Column{EntitiesColumns[11]},
+				Columns: []*schema.Column{EntitiesColumns[10]},
 			},
 		},
 	}
@@ -198,6 +204,44 @@ var (
 				Columns:    []*schema.Column{EntityFieldsColumns[10]},
 				RefColumns: []*schema.Column{EntitiesColumns[0]},
 				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// EntityTypesColumns holds the columns for the "entity_types" table.
+	EntityTypesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 255},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "icon", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "color", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "location_type", Type: field.TypeBool, Default: false},
+		{Name: "group_entity_types", Type: field.TypeUUID},
+	}
+	// EntityTypesTable holds the schema information for the "entity_types" table.
+	EntityTypesTable = &schema.Table{
+		Name:       "entity_types",
+		Columns:    EntityTypesColumns,
+		PrimaryKey: []*schema.Column{EntityTypesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "entity_types_groups_entity_types",
+				Columns:    []*schema.Column{EntityTypesColumns[8]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "entitytype_name",
+				Unique:  false,
+				Columns: []*schema.Column{EntityTypesColumns[3]},
+			},
+			{
+				Name:    "entitytype_location_type",
+				Unique:  false,
+				Columns: []*schema.Column{EntityTypesColumns[7]},
 			},
 		},
 	}
@@ -402,6 +446,7 @@ var (
 		AuthTokensTable,
 		EntitiesTable,
 		EntityFieldsTable,
+		EntityTypesTable,
 		GroupsTable,
 		GroupInvitationTokensTable,
 		LabelsTable,
@@ -418,8 +463,10 @@ func init() {
 	AuthTokensTable.ForeignKeys[0].RefTable = UsersTable
 	EntitiesTable.ForeignKeys[0].RefTable = EntitiesTable
 	EntitiesTable.ForeignKeys[1].RefTable = EntitiesTable
-	EntitiesTable.ForeignKeys[2].RefTable = GroupsTable
+	EntitiesTable.ForeignKeys[2].RefTable = EntityTypesTable
+	EntitiesTable.ForeignKeys[3].RefTable = GroupsTable
 	EntityFieldsTable.ForeignKeys[0].RefTable = EntitiesTable
+	EntityTypesTable.ForeignKeys[0].RefTable = GroupsTable
 	GroupInvitationTokensTable.ForeignKeys[0].RefTable = GroupsTable
 	LabelsTable.ForeignKeys[0].RefTable = GroupsTable
 	MaintenanceEntriesTable.ForeignKeys[0].RefTable = EntitiesTable

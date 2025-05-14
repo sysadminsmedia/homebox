@@ -14,6 +14,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
@@ -34,6 +35,7 @@ type GroupQuery struct {
 	withLabels           *LabelQuery
 	withInvitationTokens *GroupInvitationTokenQuery
 	withNotifiers        *NotifierQuery
+	withEntityTypes      *EntityTypeQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -173,6 +175,28 @@ func (gq *GroupQuery) QueryNotifiers() *NotifierQuery {
 			sqlgraph.From(group.Table, group.FieldID, selector),
 			sqlgraph.To(notifier.Table, notifier.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, group.NotifiersTable, group.NotifiersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryEntityTypes chains the current query on the "entity_types" edge.
+func (gq *GroupQuery) QueryEntityTypes() *EntityTypeQuery {
+	query := (&EntityTypeClient{config: gq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := gq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := gq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, selector),
+			sqlgraph.To(entitytype.Table, entitytype.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.EntityTypesTable, group.EntityTypesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(gq.driver.Dialect(), step)
 		return fromU, nil
@@ -377,6 +401,7 @@ func (gq *GroupQuery) Clone() *GroupQuery {
 		withLabels:           gq.withLabels.Clone(),
 		withInvitationTokens: gq.withInvitationTokens.Clone(),
 		withNotifiers:        gq.withNotifiers.Clone(),
+		withEntityTypes:      gq.withEntityTypes.Clone(),
 		// clone intermediate query.
 		sql:  gq.sql.Clone(),
 		path: gq.path,
@@ -435,6 +460,17 @@ func (gq *GroupQuery) WithNotifiers(opts ...func(*NotifierQuery)) *GroupQuery {
 		opt(query)
 	}
 	gq.withNotifiers = query
+	return gq
+}
+
+// WithEntityTypes tells the query-builder to eager-load the nodes that are connected to
+// the "entity_types" edge. The optional arguments are used to configure the query builder of the edge.
+func (gq *GroupQuery) WithEntityTypes(opts ...func(*EntityTypeQuery)) *GroupQuery {
+	query := (&EntityTypeClient{config: gq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	gq.withEntityTypes = query
 	return gq
 }
 
@@ -516,12 +552,13 @@ func (gq *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 	var (
 		nodes       = []*Group{}
 		_spec       = gq.querySpec()
-		loadedTypes = [5]bool{
+		loadedTypes = [6]bool{
 			gq.withUsers != nil,
 			gq.withEntities != nil,
 			gq.withLabels != nil,
 			gq.withInvitationTokens != nil,
 			gq.withNotifiers != nil,
+			gq.withEntityTypes != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -576,6 +613,13 @@ func (gq *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 		if err := gq.loadNotifiers(ctx, query, nodes,
 			func(n *Group) { n.Edges.Notifiers = []*Notifier{} },
 			func(n *Group, e *Notifier) { n.Edges.Notifiers = append(n.Edges.Notifiers, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := gq.withEntityTypes; query != nil {
+		if err := gq.loadEntityTypes(ctx, query, nodes,
+			func(n *Group) { n.Edges.EntityTypes = []*EntityType{} },
+			func(n *Group, e *EntityType) { n.Edges.EntityTypes = append(n.Edges.EntityTypes, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -731,6 +775,37 @@ func (gq *GroupQuery) loadNotifiers(ctx context.Context, query *NotifierQuery, n
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "group_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (gq *GroupQuery) loadEntityTypes(ctx context.Context, query *EntityTypeQuery, nodes []*Group, init func(*Group), assign func(*Group, *EntityType)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Group)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.EntityType(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(group.EntityTypesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.group_entity_types
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "group_entity_types" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "group_entity_types" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

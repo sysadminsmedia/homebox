@@ -21,6 +21,9 @@ type Entity func(*sql.Selector)
 // EntityField is the predicate function for entityfield builders.
 type EntityField func(*sql.Selector)
 
+// EntityType is the predicate function for entitytype builders.
+type EntityType func(*sql.Selector)
+
 // Group is the predicate function for group builders.
 type Group func(*sql.Selector)
 

@@ -14,6 +14,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
@@ -70,20 +71,6 @@ func (ec *EntityCreate) SetDescription(s string) *EntityCreate {
 func (ec *EntityCreate) SetNillableDescription(s *string) *EntityCreate {
 	if s != nil {
 		ec.SetDescription(*s)
-	}
-	return ec
-}
-
-// SetType sets the "type" field.
-func (ec *EntityCreate) SetType(e entity.Type) *EntityCreate {
-	ec.mutation.SetType(e)
-	return ec
-}
-
-// SetNillableType sets the "type" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableType(e *entity.Type) *EntityCreate {
-	if e != nil {
-		ec.SetType(*e)
 	}
 	return ec
 }
@@ -446,23 +433,19 @@ func (ec *EntityCreate) SetEntity(e *Entity) *EntityCreate {
 	return ec.SetEntityID(e.ID)
 }
 
-// SetLocationID sets the "location" edge to the Entity entity by ID.
-func (ec *EntityCreate) SetLocationID(id uuid.UUID) *EntityCreate {
-	ec.mutation.SetLocationID(id)
+// AddLocationIDs adds the "location" edge to the Entity entity by IDs.
+func (ec *EntityCreate) AddLocationIDs(ids ...uuid.UUID) *EntityCreate {
+	ec.mutation.AddLocationIDs(ids...)
 	return ec
 }
 
-// SetNillableLocationID sets the "location" edge to the Entity entity by ID if the given value is not nil.
-func (ec *EntityCreate) SetNillableLocationID(id *uuid.UUID) *EntityCreate {
-	if id != nil {
-		ec = ec.SetLocationID(*id)
+// AddLocation adds the "location" edges to the Entity entity.
+func (ec *EntityCreate) AddLocation(e ...*Entity) *EntityCreate {
+	ids := make([]uuid.UUID, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
 	}
-	return ec
-}
-
-// SetLocation sets the "location" edge to the Entity entity.
-func (ec *EntityCreate) SetLocation(e *Entity) *EntityCreate {
-	return ec.SetLocationID(e.ID)
+	return ec.AddLocationIDs(ids...)
 }
 
 // AddLabelIDs adds the "label" edge to the Label entity by IDs.
@@ -478,6 +461,25 @@ func (ec *EntityCreate) AddLabel(l ...*Label) *EntityCreate {
 		ids[i] = l[i].ID
 	}
 	return ec.AddLabelIDs(ids...)
+}
+
+// SetTypeID sets the "type" edge to the EntityType entity by ID.
+func (ec *EntityCreate) SetTypeID(id uuid.UUID) *EntityCreate {
+	ec.mutation.SetTypeID(id)
+	return ec
+}
+
+// SetNillableTypeID sets the "type" edge to the EntityType entity by ID if the given value is not nil.
+func (ec *EntityCreate) SetNillableTypeID(id *uuid.UUID) *EntityCreate {
+	if id != nil {
+		ec = ec.SetTypeID(*id)
+	}
+	return ec
+}
+
+// SetType sets the "type" edge to the EntityType entity.
+func (ec *EntityCreate) SetType(e *EntityType) *EntityCreate {
+	return ec.SetTypeID(e.ID)
 }
 
 // AddFieldIDs adds the "fields" edge to the EntityField entity by IDs.
@@ -568,10 +570,6 @@ func (ec *EntityCreate) defaults() {
 		v := entity.DefaultUpdatedAt()
 		ec.mutation.SetUpdatedAt(v)
 	}
-	if _, ok := ec.mutation.GetType(); !ok {
-		v := entity.DefaultType
-		ec.mutation.SetType(v)
-	}
 	if _, ok := ec.mutation.Quantity(); !ok {
 		v := entity.DefaultQuantity
 		ec.mutation.SetQuantity(v)
@@ -629,14 +627,6 @@ func (ec *EntityCreate) check() error {
 	if v, ok := ec.mutation.Description(); ok {
 		if err := entity.DescriptionValidator(v); err != nil {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Entity.description": %w`, err)}
-		}
-	}
-	if _, ok := ec.mutation.GetType(); !ok {
-		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "Entity.type"`)}
-	}
-	if v, ok := ec.mutation.GetType(); ok {
-		if err := entity.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Entity.type": %w`, err)}
 		}
 	}
 	if v, ok := ec.mutation.ImportRef(); ok {
@@ -751,10 +741,6 @@ func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 	if value, ok := ec.mutation.Description(); ok {
 		_spec.SetField(entity.FieldDescription, field.TypeString, value)
 		_node.Description = value
-	}
-	if value, ok := ec.mutation.GetType(); ok {
-		_spec.SetField(entity.FieldType, field.TypeEnum, value)
-		_node.Type = value
 	}
 	if value, ok := ec.mutation.ImportRef(); ok {
 		_spec.SetField(entity.FieldImportRef, field.TypeString, value)
@@ -888,7 +874,7 @@ func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 	}
 	if nodes := ec.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   entity.EntityTable,
 			Columns: []string{entity.EntityColumn},
@@ -905,7 +891,7 @@ func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 	}
 	if nodes := ec.mutation.LocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   entity.LocationTable,
 			Columns: []string{entity.LocationColumn},
@@ -933,6 +919,23 @@ func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ec.mutation.TypeIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   entity.TypeTable,
+			Columns: []string{entity.TypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.entity_type_entities = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := ec.mutation.FieldsIDs(); len(nodes) > 0 {

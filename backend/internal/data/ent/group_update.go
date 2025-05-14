@@ -13,6 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
@@ -143,6 +144,21 @@ func (gu *GroupUpdate) AddNotifiers(n ...*Notifier) *GroupUpdate {
 	return gu.AddNotifierIDs(ids...)
 }
 
+// AddEntityTypeIDs adds the "entity_types" edge to the EntityType entity by IDs.
+func (gu *GroupUpdate) AddEntityTypeIDs(ids ...uuid.UUID) *GroupUpdate {
+	gu.mutation.AddEntityTypeIDs(ids...)
+	return gu
+}
+
+// AddEntityTypes adds the "entity_types" edges to the EntityType entity.
+func (gu *GroupUpdate) AddEntityTypes(e ...*EntityType) *GroupUpdate {
+	ids := make([]uuid.UUID, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return gu.AddEntityTypeIDs(ids...)
+}
+
 // Mutation returns the GroupMutation object of the builder.
 func (gu *GroupUpdate) Mutation() *GroupMutation {
 	return gu.mutation
@@ -251,6 +267,27 @@ func (gu *GroupUpdate) RemoveNotifiers(n ...*Notifier) *GroupUpdate {
 		ids[i] = n[i].ID
 	}
 	return gu.RemoveNotifierIDs(ids...)
+}
+
+// ClearEntityTypes clears all "entity_types" edges to the EntityType entity.
+func (gu *GroupUpdate) ClearEntityTypes() *GroupUpdate {
+	gu.mutation.ClearEntityTypes()
+	return gu
+}
+
+// RemoveEntityTypeIDs removes the "entity_types" edge to EntityType entities by IDs.
+func (gu *GroupUpdate) RemoveEntityTypeIDs(ids ...uuid.UUID) *GroupUpdate {
+	gu.mutation.RemoveEntityTypeIDs(ids...)
+	return gu
+}
+
+// RemoveEntityTypes removes "entity_types" edges to EntityType entities.
+func (gu *GroupUpdate) RemoveEntityTypes(e ...*EntityType) *GroupUpdate {
+	ids := make([]uuid.UUID, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return gu.RemoveEntityTypeIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -545,6 +582,51 @@ func (gu *GroupUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if gu.mutation.EntityTypesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.EntityTypesTable,
+			Columns: []string{group.EntityTypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gu.mutation.RemovedEntityTypesIDs(); len(nodes) > 0 && !gu.mutation.EntityTypesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.EntityTypesTable,
+			Columns: []string{group.EntityTypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := gu.mutation.EntityTypesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.EntityTypesTable,
+			Columns: []string{group.EntityTypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, gu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{group.Label}
@@ -674,6 +756,21 @@ func (guo *GroupUpdateOne) AddNotifiers(n ...*Notifier) *GroupUpdateOne {
 	return guo.AddNotifierIDs(ids...)
 }
 
+// AddEntityTypeIDs adds the "entity_types" edge to the EntityType entity by IDs.
+func (guo *GroupUpdateOne) AddEntityTypeIDs(ids ...uuid.UUID) *GroupUpdateOne {
+	guo.mutation.AddEntityTypeIDs(ids...)
+	return guo
+}
+
+// AddEntityTypes adds the "entity_types" edges to the EntityType entity.
+func (guo *GroupUpdateOne) AddEntityTypes(e ...*EntityType) *GroupUpdateOne {
+	ids := make([]uuid.UUID, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return guo.AddEntityTypeIDs(ids...)
+}
+
 // Mutation returns the GroupMutation object of the builder.
 func (guo *GroupUpdateOne) Mutation() *GroupMutation {
 	return guo.mutation
@@ -782,6 +879,27 @@ func (guo *GroupUpdateOne) RemoveNotifiers(n ...*Notifier) *GroupUpdateOne {
 		ids[i] = n[i].ID
 	}
 	return guo.RemoveNotifierIDs(ids...)
+}
+
+// ClearEntityTypes clears all "entity_types" edges to the EntityType entity.
+func (guo *GroupUpdateOne) ClearEntityTypes() *GroupUpdateOne {
+	guo.mutation.ClearEntityTypes()
+	return guo
+}
+
+// RemoveEntityTypeIDs removes the "entity_types" edge to EntityType entities by IDs.
+func (guo *GroupUpdateOne) RemoveEntityTypeIDs(ids ...uuid.UUID) *GroupUpdateOne {
+	guo.mutation.RemoveEntityTypeIDs(ids...)
+	return guo
+}
+
+// RemoveEntityTypes removes "entity_types" edges to EntityType entities.
+func (guo *GroupUpdateOne) RemoveEntityTypes(e ...*EntityType) *GroupUpdateOne {
+	ids := make([]uuid.UUID, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return guo.RemoveEntityTypeIDs(ids...)
 }
 
 // Where appends a list predicates to the GroupUpdate builder.
@@ -1099,6 +1217,51 @@ func (guo *GroupUpdateOne) sqlSave(ctx context.Context) (_node *Group, err error
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(notifier.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if guo.mutation.EntityTypesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.EntityTypesTable,
+			Columns: []string{group.EntityTypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := guo.mutation.RemovedEntityTypesIDs(); len(nodes) > 0 && !guo.mutation.EntityTypesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.EntityTypesTable,
+			Columns: []string{group.EntityTypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := guo.mutation.EntityTypesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.EntityTypesTable,
+			Columns: []string{group.EntityTypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

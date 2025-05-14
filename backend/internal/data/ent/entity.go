@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 )
 
@@ -27,8 +28,6 @@ type Entity struct {
 	Name string `json:"name,omitempty"`
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
-	// Type holds the value of the "type" field.
-	Type entity.Type `json:"type,omitempty"`
 	// ImportRef holds the value of the "import_ref" field.
 	ImportRef string `json:"import_ref,omitempty"`
 	// Notes holds the value of the "notes" field.
@@ -71,11 +70,12 @@ type Entity struct {
 	SoldNotes string `json:"sold_notes,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the EntityQuery when eager-loading is set.
-	Edges           EntityEdges `json:"edges"`
-	entity_children *uuid.UUID
-	entity_location *uuid.UUID
-	group_entities  *uuid.UUID
-	selectValues    sql.SelectValues
+	Edges                EntityEdges `json:"edges"`
+	entity_children      *uuid.UUID
+	entity_location      *uuid.UUID
+	entity_type_entities *uuid.UUID
+	group_entities       *uuid.UUID
+	selectValues         sql.SelectValues
 }
 
 // EntityEdges holds the relations/edges for other nodes in the graph.
@@ -89,9 +89,11 @@ type EntityEdges struct {
 	// Entity holds the value of the entity edge.
 	Entity *Entity `json:"entity,omitempty"`
 	// Location holds the value of the location edge.
-	Location *Entity `json:"location,omitempty"`
+	Location []*Entity `json:"location,omitempty"`
 	// Label holds the value of the label edge.
 	Label []*Label `json:"label,omitempty"`
+	// Type holds the value of the type edge.
+	Type *EntityType `json:"type,omitempty"`
 	// Fields holds the value of the fields edge.
 	Fields []*EntityField `json:"fields,omitempty"`
 	// MaintenanceEntries holds the value of the maintenance_entries edge.
@@ -100,7 +102,7 @@ type EntityEdges struct {
 	Attachments []*Attachment `json:"attachments,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [9]bool
+	loadedTypes [10]bool
 }
 
 // GroupOrErr returns the Group value or an error if the edge
@@ -146,12 +148,10 @@ func (e EntityEdges) EntityOrErr() (*Entity, error) {
 }
 
 // LocationOrErr returns the Location value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e EntityEdges) LocationOrErr() (*Entity, error) {
-	if e.Location != nil {
+// was not loaded in eager-loading.
+func (e EntityEdges) LocationOrErr() ([]*Entity, error) {
+	if e.loadedTypes[4] {
 		return e.Location, nil
-	} else if e.loadedTypes[4] {
-		return nil, &NotFoundError{label: entity.Label}
 	}
 	return nil, &NotLoadedError{edge: "location"}
 }
@@ -165,10 +165,21 @@ func (e EntityEdges) LabelOrErr() ([]*Label, error) {
 	return nil, &NotLoadedError{edge: "label"}
 }
 
+// TypeOrErr returns the Type value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EntityEdges) TypeOrErr() (*EntityType, error) {
+	if e.Type != nil {
+		return e.Type, nil
+	} else if e.loadedTypes[6] {
+		return nil, &NotFoundError{label: entitytype.Label}
+	}
+	return nil, &NotLoadedError{edge: "type"}
+}
+
 // FieldsOrErr returns the Fields value or an error if the edge
 // was not loaded in eager-loading.
 func (e EntityEdges) FieldsOrErr() ([]*EntityField, error) {
-	if e.loadedTypes[6] {
+	if e.loadedTypes[7] {
 		return e.Fields, nil
 	}
 	return nil, &NotLoadedError{edge: "fields"}
@@ -177,7 +188,7 @@ func (e EntityEdges) FieldsOrErr() ([]*EntityField, error) {
 // MaintenanceEntriesOrErr returns the MaintenanceEntries value or an error if the edge
 // was not loaded in eager-loading.
 func (e EntityEdges) MaintenanceEntriesOrErr() ([]*MaintenanceEntry, error) {
-	if e.loadedTypes[7] {
+	if e.loadedTypes[8] {
 		return e.MaintenanceEntries, nil
 	}
 	return nil, &NotLoadedError{edge: "maintenance_entries"}
@@ -186,7 +197,7 @@ func (e EntityEdges) MaintenanceEntriesOrErr() ([]*MaintenanceEntry, error) {
 // AttachmentsOrErr returns the Attachments value or an error if the edge
 // was not loaded in eager-loading.
 func (e EntityEdges) AttachmentsOrErr() ([]*Attachment, error) {
-	if e.loadedTypes[8] {
+	if e.loadedTypes[9] {
 		return e.Attachments, nil
 	}
 	return nil, &NotLoadedError{edge: "attachments"}
@@ -203,7 +214,7 @@ func (*Entity) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case entity.FieldQuantity, entity.FieldAssetID:
 			values[i] = new(sql.NullInt64)
-		case entity.FieldName, entity.FieldDescription, entity.FieldType, entity.FieldImportRef, entity.FieldNotes, entity.FieldSerialNumber, entity.FieldModelNumber, entity.FieldManufacturer, entity.FieldWarrantyDetails, entity.FieldPurchaseFrom, entity.FieldSoldTo, entity.FieldSoldNotes:
+		case entity.FieldName, entity.FieldDescription, entity.FieldImportRef, entity.FieldNotes, entity.FieldSerialNumber, entity.FieldModelNumber, entity.FieldManufacturer, entity.FieldWarrantyDetails, entity.FieldPurchaseFrom, entity.FieldSoldTo, entity.FieldSoldNotes:
 			values[i] = new(sql.NullString)
 		case entity.FieldCreatedAt, entity.FieldUpdatedAt, entity.FieldWarrantyExpires, entity.FieldPurchaseTime, entity.FieldSoldTime:
 			values[i] = new(sql.NullTime)
@@ -213,7 +224,9 @@ func (*Entity) scanValues(columns []string) ([]any, error) {
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		case entity.ForeignKeys[1]: // entity_location
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
-		case entity.ForeignKeys[2]: // group_entities
+		case entity.ForeignKeys[2]: // entity_type_entities
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
+		case entity.ForeignKeys[3]: // group_entities
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
@@ -259,12 +272,6 @@ func (e *Entity) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
 				e.Description = value.String
-			}
-		case entity.FieldType:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field type", values[i])
-			} else if value.Valid {
-				e.Type = entity.Type(value.String)
 			}
 		case entity.FieldImportRef:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -402,6 +409,13 @@ func (e *Entity) assignValues(columns []string, values []any) error {
 			}
 		case entity.ForeignKeys[2]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field entity_type_entities", values[i])
+			} else if value.Valid {
+				e.entity_type_entities = new(uuid.UUID)
+				*e.entity_type_entities = *value.S.(*uuid.UUID)
+			}
+		case entity.ForeignKeys[3]:
+			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field group_entities", values[i])
 			} else if value.Valid {
 				e.group_entities = new(uuid.UUID)
@@ -448,6 +462,11 @@ func (e *Entity) QueryLocation() *EntityQuery {
 // QueryLabel queries the "label" edge of the Entity entity.
 func (e *Entity) QueryLabel() *LabelQuery {
 	return NewEntityClient(e.config).QueryLabel(e)
+}
+
+// QueryType queries the "type" edge of the Entity entity.
+func (e *Entity) QueryType() *EntityTypeQuery {
+	return NewEntityClient(e.config).QueryType(e)
 }
 
 // QueryFields queries the "fields" edge of the Entity entity.
@@ -499,9 +518,6 @@ func (e *Entity) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("description=")
 	builder.WriteString(e.Description)
-	builder.WriteString(", ")
-	builder.WriteString("type=")
-	builder.WriteString(fmt.Sprintf("%v", e.Type))
 	builder.WriteString(", ")
 	builder.WriteString("import_ref=")
 	builder.WriteString(e.ImportRef)

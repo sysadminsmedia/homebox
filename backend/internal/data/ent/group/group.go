@@ -33,6 +33,8 @@ const (
 	EdgeInvitationTokens = "invitation_tokens"
 	// EdgeNotifiers holds the string denoting the notifiers edge name in mutations.
 	EdgeNotifiers = "notifiers"
+	// EdgeEntityTypes holds the string denoting the entity_types edge name in mutations.
+	EdgeEntityTypes = "entity_types"
 	// Table holds the table name of the group in the database.
 	Table = "groups"
 	// UsersTable is the table that holds the users relation/edge.
@@ -70,6 +72,13 @@ const (
 	NotifiersInverseTable = "notifiers"
 	// NotifiersColumn is the table column denoting the notifiers relation/edge.
 	NotifiersColumn = "group_id"
+	// EntityTypesTable is the table that holds the entity_types relation/edge.
+	EntityTypesTable = "entity_types"
+	// EntityTypesInverseTable is the table name for the EntityType entity.
+	// It exists in this package in order to avoid circular dependency with the "entitytype" package.
+	EntityTypesInverseTable = "entity_types"
+	// EntityTypesColumn is the table column denoting the entity_types relation/edge.
+	EntityTypesColumn = "group_entity_types"
 )
 
 // Columns holds all SQL columns for group fields.
@@ -203,6 +212,20 @@ func ByNotifiers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newNotifiersStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByEntityTypesCount orders the results by entity_types count.
+func ByEntityTypesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newEntityTypesStep(), opts...)
+	}
+}
+
+// ByEntityTypes orders the results by entity_types terms.
+func ByEntityTypes(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEntityTypesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUsersStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -236,5 +259,12 @@ func newNotifiersStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(NotifiersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, NotifiersTable, NotifiersColumn),
+	)
+}
+func newEntityTypesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(EntityTypesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, EntityTypesTable, EntityTypesColumn),
 	)
 }

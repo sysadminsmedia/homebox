@@ -44,9 +44,11 @@ type GroupEdges struct {
 	InvitationTokens []*GroupInvitationToken `json:"invitation_tokens,omitempty"`
 	// Notifiers holds the value of the notifiers edge.
 	Notifiers []*Notifier `json:"notifiers,omitempty"`
+	// EntityTypes holds the value of the entity_types edge.
+	EntityTypes []*EntityType `json:"entity_types,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [5]bool
+	loadedTypes [6]bool
 }
 
 // UsersOrErr returns the Users value or an error if the edge
@@ -92,6 +94,15 @@ func (e GroupEdges) NotifiersOrErr() ([]*Notifier, error) {
 		return e.Notifiers, nil
 	}
 	return nil, &NotLoadedError{edge: "notifiers"}
+}
+
+// EntityTypesOrErr returns the EntityTypes value or an error if the edge
+// was not loaded in eager-loading.
+func (e GroupEdges) EntityTypesOrErr() ([]*EntityType, error) {
+	if e.loadedTypes[5] {
+		return e.EntityTypes, nil
+	}
+	return nil, &NotLoadedError{edge: "entity_types"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -186,6 +197,11 @@ func (gr *Group) QueryInvitationTokens() *GroupInvitationTokenQuery {
 // QueryNotifiers queries the "notifiers" edge of the Group entity.
 func (gr *Group) QueryNotifiers() *NotifierQuery {
 	return NewGroupClient(gr.config).QueryNotifiers(gr)
+}
+
+// QueryEntityTypes queries the "entity_types" edge of the Group entity.
+func (gr *Group) QueryEntityTypes() *EntityTypeQuery {
+	return NewGroupClient(gr.config).QueryEntityTypes(gr)
 }
 
 // Update returns a builder for updating this Group.

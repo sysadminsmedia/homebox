@@ -9,20 +9,6 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
 )
 
-type EntityType string
-
-const (
-	LocationType EntityType = "location"
-	ItemType     EntityType = "item"
-)
-
-func (EntityType) Values() (kinds []string) {
-	for _, s := range []EntityType{LocationType, ItemType} {
-		kinds = append(kinds, string(s))
-	}
-	return
-}
-
 type Entity struct {
 	ent.Schema
 }
@@ -52,10 +38,6 @@ func (Entity) Indexes() []ent.Index {
 // Fields of the Entity.
 func (Entity) Fields() []ent.Field {
 	return []ent.Field{
-		field.Enum("type").
-			Values("location", "item").
-			Default("item"),
-
 		// General details
 		field.String("import_ref").
 			Optional().
@@ -133,11 +115,13 @@ func (Entity) Edges() []ent.Edge {
 			From("parent").
 			Unique(),
 		edge.To("location", Entity.Type).
-			Unique().
 			From("entity").
 			Unique(),
 		edge.From("label", Label.Type).
 			Ref("entities"),
+		edge.From("type", EntityType.Type).
+			Ref("entities").
+			Unique(),
 		owned("fields", EntityField.Type),
 		owned("maintenance_entries", MaintenanceEntry.Type),
 		owned("attachments", Attachment.Type),

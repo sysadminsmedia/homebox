@@ -16,6 +16,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
@@ -35,6 +36,7 @@ type EntityQuery struct {
 	withEntity             *EntityQuery
 	withLocation           *EntityQuery
 	withLabel              *LabelQuery
+	withType               *EntityTypeQuery
 	withFields             *EntityFieldQuery
 	withMaintenanceEntries *MaintenanceEntryQuery
 	withAttachments        *AttachmentQuery
@@ -155,7 +157,7 @@ func (eq *EntityQuery) QueryEntity() *EntityQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(entity.Table, entity.FieldID, selector),
 			sqlgraph.To(entity.Table, entity.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, entity.EntityTable, entity.EntityColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, entity.EntityTable, entity.EntityColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
 		return fromU, nil
@@ -177,7 +179,7 @@ func (eq *EntityQuery) QueryLocation() *EntityQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(entity.Table, entity.FieldID, selector),
 			sqlgraph.To(entity.Table, entity.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, entity.LocationTable, entity.LocationColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, entity.LocationTable, entity.LocationColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
 		return fromU, nil
@@ -200,6 +202,28 @@ func (eq *EntityQuery) QueryLabel() *LabelQuery {
 			sqlgraph.From(entity.Table, entity.FieldID, selector),
 			sqlgraph.To(label.Table, label.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, entity.LabelTable, entity.LabelPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryType chains the current query on the "type" edge.
+func (eq *EntityQuery) QueryType() *EntityTypeQuery {
+	query := (&EntityTypeClient{config: eq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := eq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := eq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entity.Table, entity.FieldID, selector),
+			sqlgraph.To(entitytype.Table, entitytype.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, entity.TypeTable, entity.TypeColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
 		return fromU, nil
@@ -471,6 +495,7 @@ func (eq *EntityQuery) Clone() *EntityQuery {
 		withEntity:             eq.withEntity.Clone(),
 		withLocation:           eq.withLocation.Clone(),
 		withLabel:              eq.withLabel.Clone(),
+		withType:               eq.withType.Clone(),
 		withFields:             eq.withFields.Clone(),
 		withMaintenanceEntries: eq.withMaintenanceEntries.Clone(),
 		withAttachments:        eq.withAttachments.Clone(),
@@ -543,6 +568,17 @@ func (eq *EntityQuery) WithLabel(opts ...func(*LabelQuery)) *EntityQuery {
 		opt(query)
 	}
 	eq.withLabel = query
+	return eq
+}
+
+// WithType tells the query-builder to eager-load the nodes that are connected to
+// the "type" edge. The optional arguments are used to configure the query builder of the edge.
+func (eq *EntityQuery) WithType(opts ...func(*EntityTypeQuery)) *EntityQuery {
+	query := (&EntityTypeClient{config: eq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	eq.withType = query
 	return eq
 }
 
@@ -658,19 +694,20 @@ func (eq *EntityQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Entit
 		nodes       = []*Entity{}
 		withFKs     = eq.withFKs
 		_spec       = eq.querySpec()
-		loadedTypes = [9]bool{
+		loadedTypes = [10]bool{
 			eq.withGroup != nil,
 			eq.withParent != nil,
 			eq.withChildren != nil,
 			eq.withEntity != nil,
 			eq.withLocation != nil,
 			eq.withLabel != nil,
+			eq.withType != nil,
 			eq.withFields != nil,
 			eq.withMaintenanceEntries != nil,
 			eq.withAttachments != nil,
 		}
 	)
-	if eq.withGroup != nil || eq.withParent != nil || eq.withEntity != nil {
+	if eq.withGroup != nil || eq.withParent != nil || eq.withEntity != nil || eq.withType != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -720,8 +757,9 @@ func (eq *EntityQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Entit
 		}
 	}
 	if query := eq.withLocation; query != nil {
-		if err := eq.loadLocation(ctx, query, nodes, nil,
-			func(n *Entity, e *Entity) { n.Edges.Location = e }); err != nil {
+		if err := eq.loadLocation(ctx, query, nodes,
+			func(n *Entity) { n.Edges.Location = []*Entity{} },
+			func(n *Entity, e *Entity) { n.Edges.Location = append(n.Edges.Location, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -729,6 +767,12 @@ func (eq *EntityQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Entit
 		if err := eq.loadLabel(ctx, query, nodes,
 			func(n *Entity) { n.Edges.Label = []*Label{} },
 			func(n *Entity, e *Label) { n.Edges.Label = append(n.Edges.Label, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := eq.withType; query != nil {
+		if err := eq.loadType(ctx, query, nodes, nil,
+			func(n *Entity, e *EntityType) { n.Edges.Type = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -891,6 +935,9 @@ func (eq *EntityQuery) loadLocation(ctx context.Context, query *EntityQuery, nod
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
 	}
 	query.withFKs = true
 	query.Where(predicate.Entity(func(s *sql.Selector) {
@@ -970,6 +1017,38 @@ func (eq *EntityQuery) loadLabel(ctx context.Context, query *LabelQuery, nodes [
 		}
 		for kn := range nodes {
 			assign(kn, n)
+		}
+	}
+	return nil
+}
+func (eq *EntityQuery) loadType(ctx context.Context, query *EntityTypeQuery, nodes []*Entity, init func(*Entity), assign func(*Entity, *EntityType)) error {
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*Entity)
+	for i := range nodes {
+		if nodes[i].entity_type_entities == nil {
+			continue
+		}
+		fk := *nodes[i].entity_type_entities
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(entitytype.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "entity_type_entities" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
 		}
 	}
 	return nil

@@ -22,6 +22,8 @@ type Tx struct {
 	Entity *EntityClient
 	// EntityField is the client for interacting with the EntityField builders.
 	EntityField *EntityFieldClient
+	// EntityType is the client for interacting with the EntityType builders.
+	EntityType *EntityTypeClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// GroupInvitationToken is the client for interacting with the GroupInvitationToken builders.
@@ -170,6 +172,7 @@ func (tx *Tx) init() {
 	tx.AuthTokens = NewAuthTokensClient(tx.config)
 	tx.Entity = NewEntityClient(tx.config)
 	tx.EntityField = NewEntityFieldClient(tx.config)
+	tx.EntityType = NewEntityTypeClient(tx.config)
 	tx.Group = NewGroupClient(tx.config)
 	tx.GroupInvitationToken = NewGroupInvitationTokenClient(tx.config)
 	tx.Label = NewLabelClient(tx.config)

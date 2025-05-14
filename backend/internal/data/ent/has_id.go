@@ -24,6 +24,10 @@ func (ef *EntityField) GetID() uuid.UUID {
 	return ef.ID
 }
 
+func (et *EntityType) GetID() uuid.UUID {
+	return et.ID
+}
+
 func (gr *Group) GetID() uuid.UUID {
 	return gr.ID
 }

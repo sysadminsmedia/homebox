@@ -21,6 +21,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
@@ -44,6 +45,8 @@ type Client struct {
 	Entity *EntityClient
 	// EntityField is the client for interacting with the EntityField builders.
 	EntityField *EntityFieldClient
+	// EntityType is the client for interacting with the EntityType builders.
+	EntityType *EntityTypeClient
 	// Group is the client for interacting with the Group builders.
 	Group *GroupClient
 	// GroupInvitationToken is the client for interacting with the GroupInvitationToken builders.
@@ -72,6 +75,7 @@ func (c *Client) init() {
 	c.AuthTokens = NewAuthTokensClient(c.config)
 	c.Entity = NewEntityClient(c.config)
 	c.EntityField = NewEntityFieldClient(c.config)
+	c.EntityType = NewEntityTypeClient(c.config)
 	c.Group = NewGroupClient(c.config)
 	c.GroupInvitationToken = NewGroupInvitationTokenClient(c.config)
 	c.Label = NewLabelClient(c.config)
@@ -175,6 +179,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		AuthTokens:           NewAuthTokensClient(cfg),
 		Entity:               NewEntityClient(cfg),
 		EntityField:          NewEntityFieldClient(cfg),
+		EntityType:           NewEntityTypeClient(cfg),
 		Group:                NewGroupClient(cfg),
 		GroupInvitationToken: NewGroupInvitationTokenClient(cfg),
 		Label:                NewLabelClient(cfg),
@@ -205,6 +210,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		AuthTokens:           NewAuthTokensClient(cfg),
 		Entity:               NewEntityClient(cfg),
 		EntityField:          NewEntityFieldClient(cfg),
+		EntityType:           NewEntityTypeClient(cfg),
 		Group:                NewGroupClient(cfg),
 		GroupInvitationToken: NewGroupInvitationTokenClient(cfg),
 		Label:                NewLabelClient(cfg),
@@ -240,8 +246,9 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Attachment, c.AuthRoles, c.AuthTokens, c.Entity, c.EntityField, c.Group,
-		c.GroupInvitationToken, c.Label, c.MaintenanceEntry, c.Notifier, c.User,
+		c.Attachment, c.AuthRoles, c.AuthTokens, c.Entity, c.EntityField, c.EntityType,
+		c.Group, c.GroupInvitationToken, c.Label, c.MaintenanceEntry, c.Notifier,
+		c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -251,8 +258,9 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Attachment, c.AuthRoles, c.AuthTokens, c.Entity, c.EntityField, c.Group,
-		c.GroupInvitationToken, c.Label, c.MaintenanceEntry, c.Notifier, c.User,
+		c.Attachment, c.AuthRoles, c.AuthTokens, c.Entity, c.EntityField, c.EntityType,
+		c.Group, c.GroupInvitationToken, c.Label, c.MaintenanceEntry, c.Notifier,
+		c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -271,6 +279,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Entity.mutate(ctx, m)
 	case *EntityFieldMutation:
 		return c.EntityField.mutate(ctx, m)
+	case *EntityTypeMutation:
+		return c.EntityType.mutate(ctx, m)
 	case *GroupMutation:
 		return c.Group.mutate(ctx, m)
 	case *GroupInvitationTokenMutation:
@@ -915,7 +925,7 @@ func (c *EntityClient) QueryEntity(e *Entity) *EntityQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(entity.Table, entity.FieldID, id),
 			sqlgraph.To(entity.Table, entity.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, entity.EntityTable, entity.EntityColumn),
+			sqlgraph.Edge(sqlgraph.M2O, true, entity.EntityTable, entity.EntityColumn),
 		)
 		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
 		return fromV, nil
@@ -931,7 +941,7 @@ func (c *EntityClient) QueryLocation(e *Entity) *EntityQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(entity.Table, entity.FieldID, id),
 			sqlgraph.To(entity.Table, entity.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, entity.LocationTable, entity.LocationColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, entity.LocationTable, entity.LocationColumn),
 		)
 		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
 		return fromV, nil
@@ -948,6 +958,22 @@ func (c *EntityClient) QueryLabel(e *Entity) *LabelQuery {
 			sqlgraph.From(entity.Table, entity.FieldID, id),
 			sqlgraph.To(label.Table, label.FieldID),
 			sqlgraph.Edge(sqlgraph.M2M, true, entity.LabelTable, entity.LabelPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryType queries the type edge of a Entity.
+func (c *EntityClient) QueryType(e *Entity) *EntityTypeQuery {
+	query := (&EntityTypeClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := e.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entity.Table, entity.FieldID, id),
+			sqlgraph.To(entitytype.Table, entitytype.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, entity.TypeTable, entity.TypeColumn),
 		)
 		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
 		return fromV, nil
@@ -1177,6 +1203,171 @@ func (c *EntityFieldClient) mutate(ctx context.Context, m *EntityFieldMutation) 
 	}
 }
 
+// EntityTypeClient is a client for the EntityType schema.
+type EntityTypeClient struct {
+	config
+}
+
+// NewEntityTypeClient returns a client for the EntityType from the given config.
+func NewEntityTypeClient(c config) *EntityTypeClient {
+	return &EntityTypeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `entitytype.Hooks(f(g(h())))`.
+func (c *EntityTypeClient) Use(hooks ...Hook) {
+	c.hooks.EntityType = append(c.hooks.EntityType, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `entitytype.Intercept(f(g(h())))`.
+func (c *EntityTypeClient) Intercept(interceptors ...Interceptor) {
+	c.inters.EntityType = append(c.inters.EntityType, interceptors...)
+}
+
+// Create returns a builder for creating a EntityType entity.
+func (c *EntityTypeClient) Create() *EntityTypeCreate {
+	mutation := newEntityTypeMutation(c.config, OpCreate)
+	return &EntityTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of EntityType entities.
+func (c *EntityTypeClient) CreateBulk(builders ...*EntityTypeCreate) *EntityTypeCreateBulk {
+	return &EntityTypeCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *EntityTypeClient) MapCreateBulk(slice any, setFunc func(*EntityTypeCreate, int)) *EntityTypeCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &EntityTypeCreateBulk{err: fmt.Errorf("calling to EntityTypeClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*EntityTypeCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &EntityTypeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for EntityType.
+func (c *EntityTypeClient) Update() *EntityTypeUpdate {
+	mutation := newEntityTypeMutation(c.config, OpUpdate)
+	return &EntityTypeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *EntityTypeClient) UpdateOne(et *EntityType) *EntityTypeUpdateOne {
+	mutation := newEntityTypeMutation(c.config, OpUpdateOne, withEntityType(et))
+	return &EntityTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *EntityTypeClient) UpdateOneID(id uuid.UUID) *EntityTypeUpdateOne {
+	mutation := newEntityTypeMutation(c.config, OpUpdateOne, withEntityTypeID(id))
+	return &EntityTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for EntityType.
+func (c *EntityTypeClient) Delete() *EntityTypeDelete {
+	mutation := newEntityTypeMutation(c.config, OpDelete)
+	return &EntityTypeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *EntityTypeClient) DeleteOne(et *EntityType) *EntityTypeDeleteOne {
+	return c.DeleteOneID(et.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *EntityTypeClient) DeleteOneID(id uuid.UUID) *EntityTypeDeleteOne {
+	builder := c.Delete().Where(entitytype.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &EntityTypeDeleteOne{builder}
+}
+
+// Query returns a query builder for EntityType.
+func (c *EntityTypeClient) Query() *EntityTypeQuery {
+	return &EntityTypeQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeEntityType},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a EntityType entity by its id.
+func (c *EntityTypeClient) Get(ctx context.Context, id uuid.UUID) (*EntityType, error) {
+	return c.Query().Where(entitytype.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *EntityTypeClient) GetX(ctx context.Context, id uuid.UUID) *EntityType {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryGroup queries the group edge of a EntityType.
+func (c *EntityTypeClient) QueryGroup(et *EntityType) *GroupQuery {
+	query := (&GroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := et.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entitytype.Table, entitytype.FieldID, id),
+			sqlgraph.To(group.Table, group.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, entitytype.GroupTable, entitytype.GroupColumn),
+		)
+		fromV = sqlgraph.Neighbors(et.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEntities queries the entities edge of a EntityType.
+func (c *EntityTypeClient) QueryEntities(et *EntityType) *EntityQuery {
+	query := (&EntityClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := et.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entitytype.Table, entitytype.FieldID, id),
+			sqlgraph.To(entity.Table, entity.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, entitytype.EntitiesTable, entitytype.EntitiesColumn),
+		)
+		fromV = sqlgraph.Neighbors(et.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *EntityTypeClient) Hooks() []Hook {
+	return c.hooks.EntityType
+}
+
+// Interceptors returns the client interceptors.
+func (c *EntityTypeClient) Interceptors() []Interceptor {
+	return c.inters.EntityType
+}
+
+func (c *EntityTypeClient) mutate(ctx context.Context, m *EntityTypeMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&EntityTypeCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&EntityTypeUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&EntityTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&EntityTypeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown EntityType mutation op: %q", m.Op())
+	}
+}
+
 // GroupClient is a client for the Group schema.
 type GroupClient struct {
 	config
@@ -1358,6 +1549,22 @@ func (c *GroupClient) QueryNotifiers(gr *Group) *NotifierQuery {
 			sqlgraph.From(group.Table, group.FieldID, id),
 			sqlgraph.To(notifier.Table, notifier.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, group.NotifiersTable, group.NotifiersColumn),
+		)
+		fromV = sqlgraph.Neighbors(gr.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryEntityTypes queries the entity_types edge of a Group.
+func (c *GroupClient) QueryEntityTypes(gr *Group) *EntityTypeQuery {
+	query := (&EntityTypeClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := gr.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, id),
+			sqlgraph.To(entitytype.Table, entitytype.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.EntityTypesTable, group.EntityTypesColumn),
 		)
 		fromV = sqlgraph.Neighbors(gr.driver.Dialect(), step)
 		return fromV, nil
@@ -2202,11 +2409,11 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Attachment, AuthRoles, AuthTokens, Entity, EntityField, Group,
+		Attachment, AuthRoles, AuthTokens, Entity, EntityField, EntityType, Group,
 		GroupInvitationToken, Label, MaintenanceEntry, Notifier, User []ent.Hook
 	}
 	inters struct {
-		Attachment, AuthRoles, AuthTokens, Entity, EntityField, Group,
+		Attachment, AuthRoles, AuthTokens, Entity, EntityField, EntityType, Group,
 		GroupInvitationToken, Label, MaintenanceEntry, Notifier, User []ent.Interceptor
 	}
 )

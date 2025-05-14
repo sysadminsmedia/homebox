@@ -15,6 +15,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
@@ -71,20 +72,6 @@ func (eu *EntityUpdate) SetNillableDescription(s *string) *EntityUpdate {
 // ClearDescription clears the value of the "description" field.
 func (eu *EntityUpdate) ClearDescription() *EntityUpdate {
 	eu.mutation.ClearDescription()
-	return eu
-}
-
-// SetType sets the "type" field.
-func (eu *EntityUpdate) SetType(e entity.Type) *EntityUpdate {
-	eu.mutation.SetType(e)
-	return eu
-}
-
-// SetNillableType sets the "type" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableType(e *entity.Type) *EntityUpdate {
-	if e != nil {
-		eu.SetType(*e)
-	}
 	return eu
 }
 
@@ -532,23 +519,19 @@ func (eu *EntityUpdate) SetEntity(e *Entity) *EntityUpdate {
 	return eu.SetEntityID(e.ID)
 }
 
-// SetLocationID sets the "location" edge to the Entity entity by ID.
-func (eu *EntityUpdate) SetLocationID(id uuid.UUID) *EntityUpdate {
-	eu.mutation.SetLocationID(id)
+// AddLocationIDs adds the "location" edge to the Entity entity by IDs.
+func (eu *EntityUpdate) AddLocationIDs(ids ...uuid.UUID) *EntityUpdate {
+	eu.mutation.AddLocationIDs(ids...)
 	return eu
 }
 
-// SetNillableLocationID sets the "location" edge to the Entity entity by ID if the given value is not nil.
-func (eu *EntityUpdate) SetNillableLocationID(id *uuid.UUID) *EntityUpdate {
-	if id != nil {
-		eu = eu.SetLocationID(*id)
+// AddLocation adds the "location" edges to the Entity entity.
+func (eu *EntityUpdate) AddLocation(e ...*Entity) *EntityUpdate {
+	ids := make([]uuid.UUID, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
 	}
-	return eu
-}
-
-// SetLocation sets the "location" edge to the Entity entity.
-func (eu *EntityUpdate) SetLocation(e *Entity) *EntityUpdate {
-	return eu.SetLocationID(e.ID)
+	return eu.AddLocationIDs(ids...)
 }
 
 // AddLabelIDs adds the "label" edge to the Label entity by IDs.
@@ -564,6 +547,25 @@ func (eu *EntityUpdate) AddLabel(l ...*Label) *EntityUpdate {
 		ids[i] = l[i].ID
 	}
 	return eu.AddLabelIDs(ids...)
+}
+
+// SetTypeID sets the "type" edge to the EntityType entity by ID.
+func (eu *EntityUpdate) SetTypeID(id uuid.UUID) *EntityUpdate {
+	eu.mutation.SetTypeID(id)
+	return eu
+}
+
+// SetNillableTypeID sets the "type" edge to the EntityType entity by ID if the given value is not nil.
+func (eu *EntityUpdate) SetNillableTypeID(id *uuid.UUID) *EntityUpdate {
+	if id != nil {
+		eu = eu.SetTypeID(*id)
+	}
+	return eu
+}
+
+// SetType sets the "type" edge to the EntityType entity.
+func (eu *EntityUpdate) SetType(e *EntityType) *EntityUpdate {
+	return eu.SetTypeID(e.ID)
 }
 
 // AddFieldIDs adds the "fields" edge to the EntityField entity by IDs.
@@ -655,10 +657,25 @@ func (eu *EntityUpdate) ClearEntity() *EntityUpdate {
 	return eu
 }
 
-// ClearLocation clears the "location" edge to the Entity entity.
+// ClearLocation clears all "location" edges to the Entity entity.
 func (eu *EntityUpdate) ClearLocation() *EntityUpdate {
 	eu.mutation.ClearLocation()
 	return eu
+}
+
+// RemoveLocationIDs removes the "location" edge to Entity entities by IDs.
+func (eu *EntityUpdate) RemoveLocationIDs(ids ...uuid.UUID) *EntityUpdate {
+	eu.mutation.RemoveLocationIDs(ids...)
+	return eu
+}
+
+// RemoveLocation removes "location" edges to Entity entities.
+func (eu *EntityUpdate) RemoveLocation(e ...*Entity) *EntityUpdate {
+	ids := make([]uuid.UUID, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return eu.RemoveLocationIDs(ids...)
 }
 
 // ClearLabel clears all "label" edges to the Label entity.
@@ -680,6 +697,12 @@ func (eu *EntityUpdate) RemoveLabel(l ...*Label) *EntityUpdate {
 		ids[i] = l[i].ID
 	}
 	return eu.RemoveLabelIDs(ids...)
+}
+
+// ClearType clears the "type" edge to the EntityType entity.
+func (eu *EntityUpdate) ClearType() *EntityUpdate {
+	eu.mutation.ClearType()
+	return eu
 }
 
 // ClearFields clears all "fields" edges to the EntityField entity.
@@ -793,11 +816,6 @@ func (eu *EntityUpdate) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Entity.description": %w`, err)}
 		}
 	}
-	if v, ok := eu.mutation.GetType(); ok {
-		if err := entity.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Entity.type": %w`, err)}
-		}
-	}
 	if v, ok := eu.mutation.ImportRef(); ok {
 		if err := entity.ImportRefValidator(v); err != nil {
 			return &ValidationError{Name: "import_ref", err: fmt.Errorf(`ent: validator failed for field "Entity.import_ref": %w`, err)}
@@ -862,9 +880,6 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if eu.mutation.DescriptionCleared() {
 		_spec.ClearField(entity.FieldDescription, field.TypeString)
-	}
-	if value, ok := eu.mutation.GetType(); ok {
-		_spec.SetField(entity.FieldType, field.TypeEnum, value)
 	}
 	if value, ok := eu.mutation.ImportRef(); ok {
 		_spec.SetField(entity.FieldImportRef, field.TypeString, value)
@@ -1079,7 +1094,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if eu.mutation.EntityCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   entity.EntityTable,
 			Columns: []string{entity.EntityColumn},
@@ -1092,7 +1107,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if nodes := eu.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   entity.EntityTable,
 			Columns: []string{entity.EntityColumn},
@@ -1108,7 +1123,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if eu.mutation.LocationCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   entity.LocationTable,
 			Columns: []string{entity.LocationColumn},
@@ -1119,9 +1134,25 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
+	if nodes := eu.mutation.RemovedLocationIDs(); len(nodes) > 0 && !eu.mutation.LocationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.LocationTable,
+			Columns: []string{entity.LocationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
 	if nodes := eu.mutation.LocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   entity.LocationTable,
 			Columns: []string{entity.LocationColumn},
@@ -1173,6 +1204,35 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if eu.mutation.TypeCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   entity.TypeTable,
+			Columns: []string{entity.TypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := eu.mutation.TypeIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   entity.TypeTable,
+			Columns: []string{entity.TypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -1372,20 +1432,6 @@ func (euo *EntityUpdateOne) SetNillableDescription(s *string) *EntityUpdateOne {
 // ClearDescription clears the value of the "description" field.
 func (euo *EntityUpdateOne) ClearDescription() *EntityUpdateOne {
 	euo.mutation.ClearDescription()
-	return euo
-}
-
-// SetType sets the "type" field.
-func (euo *EntityUpdateOne) SetType(e entity.Type) *EntityUpdateOne {
-	euo.mutation.SetType(e)
-	return euo
-}
-
-// SetNillableType sets the "type" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableType(e *entity.Type) *EntityUpdateOne {
-	if e != nil {
-		euo.SetType(*e)
-	}
 	return euo
 }
 
@@ -1833,23 +1879,19 @@ func (euo *EntityUpdateOne) SetEntity(e *Entity) *EntityUpdateOne {
 	return euo.SetEntityID(e.ID)
 }
 
-// SetLocationID sets the "location" edge to the Entity entity by ID.
-func (euo *EntityUpdateOne) SetLocationID(id uuid.UUID) *EntityUpdateOne {
-	euo.mutation.SetLocationID(id)
+// AddLocationIDs adds the "location" edge to the Entity entity by IDs.
+func (euo *EntityUpdateOne) AddLocationIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	euo.mutation.AddLocationIDs(ids...)
 	return euo
 }
 
-// SetNillableLocationID sets the "location" edge to the Entity entity by ID if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableLocationID(id *uuid.UUID) *EntityUpdateOne {
-	if id != nil {
-		euo = euo.SetLocationID(*id)
+// AddLocation adds the "location" edges to the Entity entity.
+func (euo *EntityUpdateOne) AddLocation(e ...*Entity) *EntityUpdateOne {
+	ids := make([]uuid.UUID, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
 	}
-	return euo
-}
-
-// SetLocation sets the "location" edge to the Entity entity.
-func (euo *EntityUpdateOne) SetLocation(e *Entity) *EntityUpdateOne {
-	return euo.SetLocationID(e.ID)
+	return euo.AddLocationIDs(ids...)
 }
 
 // AddLabelIDs adds the "label" edge to the Label entity by IDs.
@@ -1865,6 +1907,25 @@ func (euo *EntityUpdateOne) AddLabel(l ...*Label) *EntityUpdateOne {
 		ids[i] = l[i].ID
 	}
 	return euo.AddLabelIDs(ids...)
+}
+
+// SetTypeID sets the "type" edge to the EntityType entity by ID.
+func (euo *EntityUpdateOne) SetTypeID(id uuid.UUID) *EntityUpdateOne {
+	euo.mutation.SetTypeID(id)
+	return euo
+}
+
+// SetNillableTypeID sets the "type" edge to the EntityType entity by ID if the given value is not nil.
+func (euo *EntityUpdateOne) SetNillableTypeID(id *uuid.UUID) *EntityUpdateOne {
+	if id != nil {
+		euo = euo.SetTypeID(*id)
+	}
+	return euo
+}
+
+// SetType sets the "type" edge to the EntityType entity.
+func (euo *EntityUpdateOne) SetType(e *EntityType) *EntityUpdateOne {
+	return euo.SetTypeID(e.ID)
 }
 
 // AddFieldIDs adds the "fields" edge to the EntityField entity by IDs.
@@ -1956,10 +2017,25 @@ func (euo *EntityUpdateOne) ClearEntity() *EntityUpdateOne {
 	return euo
 }
 
-// ClearLocation clears the "location" edge to the Entity entity.
+// ClearLocation clears all "location" edges to the Entity entity.
 func (euo *EntityUpdateOne) ClearLocation() *EntityUpdateOne {
 	euo.mutation.ClearLocation()
 	return euo
+}
+
+// RemoveLocationIDs removes the "location" edge to Entity entities by IDs.
+func (euo *EntityUpdateOne) RemoveLocationIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	euo.mutation.RemoveLocationIDs(ids...)
+	return euo
+}
+
+// RemoveLocation removes "location" edges to Entity entities.
+func (euo *EntityUpdateOne) RemoveLocation(e ...*Entity) *EntityUpdateOne {
+	ids := make([]uuid.UUID, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return euo.RemoveLocationIDs(ids...)
 }
 
 // ClearLabel clears all "label" edges to the Label entity.
@@ -1981,6 +2057,12 @@ func (euo *EntityUpdateOne) RemoveLabel(l ...*Label) *EntityUpdateOne {
 		ids[i] = l[i].ID
 	}
 	return euo.RemoveLabelIDs(ids...)
+}
+
+// ClearType clears the "type" edge to the EntityType entity.
+func (euo *EntityUpdateOne) ClearType() *EntityUpdateOne {
+	euo.mutation.ClearType()
+	return euo
 }
 
 // ClearFields clears all "fields" edges to the EntityField entity.
@@ -2107,11 +2189,6 @@ func (euo *EntityUpdateOne) check() error {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Entity.description": %w`, err)}
 		}
 	}
-	if v, ok := euo.mutation.GetType(); ok {
-		if err := entity.TypeValidator(v); err != nil {
-			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Entity.type": %w`, err)}
-		}
-	}
 	if v, ok := euo.mutation.ImportRef(); ok {
 		if err := entity.ImportRefValidator(v); err != nil {
 			return &ValidationError{Name: "import_ref", err: fmt.Errorf(`ent: validator failed for field "Entity.import_ref": %w`, err)}
@@ -2193,9 +2270,6 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 	}
 	if euo.mutation.DescriptionCleared() {
 		_spec.ClearField(entity.FieldDescription, field.TypeString)
-	}
-	if value, ok := euo.mutation.GetType(); ok {
-		_spec.SetField(entity.FieldType, field.TypeEnum, value)
 	}
 	if value, ok := euo.mutation.ImportRef(); ok {
 		_spec.SetField(entity.FieldImportRef, field.TypeString, value)
@@ -2410,7 +2484,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 	}
 	if euo.mutation.EntityCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   entity.EntityTable,
 			Columns: []string{entity.EntityColumn},
@@ -2423,7 +2497,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 	}
 	if nodes := euo.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: true,
 			Table:   entity.EntityTable,
 			Columns: []string{entity.EntityColumn},
@@ -2439,7 +2513,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 	}
 	if euo.mutation.LocationCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   entity.LocationTable,
 			Columns: []string{entity.LocationColumn},
@@ -2450,9 +2524,25 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
+	if nodes := euo.mutation.RemovedLocationIDs(); len(nodes) > 0 && !euo.mutation.LocationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   entity.LocationTable,
+			Columns: []string{entity.LocationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
 	if nodes := euo.mutation.LocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: false,
 			Table:   entity.LocationTable,
 			Columns: []string{entity.LocationColumn},
@@ -2504,6 +2594,35 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if euo.mutation.TypeCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   entity.TypeTable,
+			Columns: []string{entity.TypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := euo.mutation.TypeIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   entity.TypeTable,
+			Columns: []string{entity.TypeColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

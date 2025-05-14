@@ -12,6 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
@@ -161,6 +162,21 @@ func (gc *GroupCreate) AddNotifiers(n ...*Notifier) *GroupCreate {
 		ids[i] = n[i].ID
 	}
 	return gc.AddNotifierIDs(ids...)
+}
+
+// AddEntityTypeIDs adds the "entity_types" edge to the EntityType entity by IDs.
+func (gc *GroupCreate) AddEntityTypeIDs(ids ...uuid.UUID) *GroupCreate {
+	gc.mutation.AddEntityTypeIDs(ids...)
+	return gc
+}
+
+// AddEntityTypes adds the "entity_types" edges to the EntityType entity.
+func (gc *GroupCreate) AddEntityTypes(e ...*EntityType) *GroupCreate {
+	ids := make([]uuid.UUID, len(e))
+	for i := range e {
+		ids[i] = e[i].ID
+	}
+	return gc.AddEntityTypeIDs(ids...)
 }
 
 // Mutation returns the GroupMutation object of the builder.
@@ -359,6 +375,22 @@ func (gc *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(notifier.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := gc.mutation.EntityTypesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   group.EntityTypesTable,
+			Columns: []string{group.EntityTypesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

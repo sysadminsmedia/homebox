@@ -17,6 +17,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
@@ -88,6 +89,7 @@ func checkColumn(table, column string) error {
 			authtokens.Table:           authtokens.ValidColumn,
 			entity.Table:               entity.ValidColumn,
 			entityfield.Table:          entityfield.ValidColumn,
+			entitytype.Table:           entitytype.ValidColumn,
 			group.Table:                group.ValidColumn,
 			groupinvitationtoken.Table: groupinvitationtoken.ValidColumn,
 			label.Table:                label.ValidColumn,

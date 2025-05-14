@@ -3,7 +3,6 @@
 package entity
 
 import (
-	"fmt"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -24,8 +23,6 @@ const (
 	FieldName = "name"
 	// FieldDescription holds the string denoting the description field in the database.
 	FieldDescription = "description"
-	// FieldType holds the string denoting the type field in the database.
-	FieldType = "type"
 	// FieldImportRef holds the string denoting the import_ref field in the database.
 	FieldImportRef = "import_ref"
 	// FieldNotes holds the string denoting the notes field in the database.
@@ -78,6 +75,8 @@ const (
 	EdgeLocation = "location"
 	// EdgeLabel holds the string denoting the label edge name in mutations.
 	EdgeLabel = "label"
+	// EdgeType holds the string denoting the type edge name in mutations.
+	EdgeType = "type"
 	// EdgeFields holds the string denoting the fields edge name in mutations.
 	EdgeFields = "fields"
 	// EdgeMaintenanceEntries holds the string denoting the maintenance_entries edge name in mutations.
@@ -114,6 +113,13 @@ const (
 	// LabelInverseTable is the table name for the Label entity.
 	// It exists in this package in order to avoid circular dependency with the "label" package.
 	LabelInverseTable = "labels"
+	// TypeTable is the table that holds the type relation/edge.
+	TypeTable = "entities"
+	// TypeInverseTable is the table name for the EntityType entity.
+	// It exists in this package in order to avoid circular dependency with the "entitytype" package.
+	TypeInverseTable = "entity_types"
+	// TypeColumn is the table column denoting the type relation/edge.
+	TypeColumn = "entity_type_entities"
 	// FieldsTable is the table that holds the fields relation/edge.
 	FieldsTable = "entity_fields"
 	// FieldsInverseTable is the table name for the EntityField entity.
@@ -144,7 +150,6 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldName,
 	FieldDescription,
-	FieldType,
 	FieldImportRef,
 	FieldNotes,
 	FieldQuantity,
@@ -172,6 +177,7 @@ var Columns = []string{
 var ForeignKeys = []string{
 	"entity_children",
 	"entity_location",
+	"entity_type_entities",
 	"group_entities",
 }
 
@@ -241,32 +247,6 @@ var (
 	DefaultID func() uuid.UUID
 )
 
-// Type defines the type for the "type" enum field.
-type Type string
-
-// TypeItem is the default value of the Type enum.
-const DefaultType = TypeItem
-
-// Type values.
-const (
-	TypeLocation Type = "location"
-	TypeItem     Type = "item"
-)
-
-func (_type Type) String() string {
-	return string(_type)
-}
-
-// TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
-func TypeValidator(_type Type) error {
-	switch _type {
-	case TypeLocation, TypeItem:
-		return nil
-	default:
-		return fmt.Errorf("entity: invalid enum value for type field: %q", _type)
-	}
-}
-
 // OrderOption defines the ordering options for the Entity queries.
 type OrderOption func(*sql.Selector)
 
@@ -293,11 +273,6 @@ func ByName(opts ...sql.OrderTermOption) OrderOption {
 // ByDescription orders the results by the description field.
 func ByDescription(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDescription, opts...).ToFunc()
-}
-
-// ByType orders the results by the type field.
-func ByType(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldType, opts...).ToFunc()
 }
 
 // ByImportRef orders the results by the import_ref field.
@@ -435,10 +410,17 @@ func ByEntityField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByLocationField orders the results by location field.
-func ByLocationField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByLocationCount orders the results by location count.
+func ByLocationCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newLocationStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborsCount(s, newLocationStep(), opts...)
+	}
+}
+
+// ByLocation orders the results by location terms.
+func ByLocation(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newLocationStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -453,6 +435,13 @@ func ByLabelCount(opts ...sql.OrderTermOption) OrderOption {
 func ByLabel(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newLabelStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByTypeField orders the results by type field.
+func ByTypeField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTypeStep(), sql.OrderByField(field, opts...))
 	}
 }
 
@@ -522,14 +511,14 @@ func newEntityStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, true, EntityTable, EntityColumn),
+		sqlgraph.Edge(sqlgraph.M2O, true, EntityTable, EntityColumn),
 	)
 }
 func newLocationStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, false, LocationTable, LocationColumn),
+		sqlgraph.Edge(sqlgraph.O2M, false, LocationTable, LocationColumn),
 	)
 }
 func newLabelStep() *sqlgraph.Step {
@@ -537,6 +526,13 @@ func newLabelStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(LabelInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2M, true, LabelTable, LabelPrimaryKey...),
+	)
+}
+func newTypeStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TypeInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, TypeTable, TypeColumn),
 	)
 }
 func newFieldsStep() *sqlgraph.Step {
