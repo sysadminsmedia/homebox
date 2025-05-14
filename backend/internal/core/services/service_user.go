@@ -190,10 +190,24 @@ func (svc *UserService) Login(ctx context.Context, username, password string, ex
 		return UserAuthTokenDetail{}, ErrorInvalidLogin
 	}
 
-	if !hasher.CheckPasswordHash(password, usr.PasswordHash) {
+	check, rehash := hasher.CheckPasswordHash(password, usr.PasswordHash)
+
+	if !check {
 		return UserAuthTokenDetail{}, ErrorInvalidLogin
 	}
 
+	if rehash {
+		repository := repo.UserRepository{}
+		hash, err := hasher.HashPassword(password)
+		if err != nil {
+			log.Err(err).Msg("Failed to hash password")
+			return UserAuthTokenDetail{}, err
+		}
+		err = repository.ChangePassword(ctx, usr.ID, hash)
+		if err != nil {
+			return UserAuthTokenDetail{}, err
+		}
+	}
 	return svc.createSessionToken(ctx, usr.ID, extendedSession)
 }
 
@@ -227,7 +241,8 @@ func (svc *UserService) ChangePassword(ctx Context, current string, new string) 
 		return false
 	}
 
-	if !hasher.CheckPasswordHash(current, usr.PasswordHash) {
+	match, _ := hasher.CheckPasswordHash(current, usr.PasswordHash)
+	if match {
 		log.Err(errors.New("current password is incorrect")).Msg("Failed to change password")
 		return false
 	}
