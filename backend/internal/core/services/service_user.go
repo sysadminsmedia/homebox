@@ -206,7 +206,6 @@ func (svc *UserService) Login(ctx context.Context, username, password string, ex
 		if err != nil {
 			return UserAuthTokenDetail{}, err
 		}
-		}
 	}
 	return svc.createSessionToken(ctx, usr.ID, extendedSession)
 }
@@ -241,11 +240,11 @@ func (svc *UserService) ChangePassword(ctx Context, current string, new string) 
 		return false
 	}
 
-match, _ := hasher.CheckPasswordHash(current, usr.PasswordHash)
-if !match {
-    log.Err(errors.New("current password is incorrect")).Msg("Failed to change password")
-    return false
-}
+	match, _ := hasher.CheckPasswordHash(current, usr.PasswordHash)
+	if !match {
+		log.Err(errors.New("current password is incorrect")).Msg("Failed to change password")
+		return false
+	}
 
 	hashed, err := hasher.HashPassword(new)
 	if err != nil {

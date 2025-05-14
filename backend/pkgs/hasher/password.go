@@ -59,8 +59,8 @@ func HashPassword(password string) (string, error) {
 	}
 	hash := argon2.IDKey([]byte(password), salt, p.iterations, p.memory, p.parallelism, p.keyLength)
 
-	b64Salt := base64.StdEncoding.EncodeToString(salt)
-	b64Hash := base64.StdEncoding.EncodeToString(hash)
+	b64Salt := base64.RawStdEncoding.EncodeToString(salt)
+	b64Hash := base64.RawStdEncoding.EncodeToString(hash)
 
 	encodedHash := fmt.Sprintf("$argon2id$v=%d$m=%d,t=%d,p=%d$%s$%s", argon2.Version, 64*1024, 3, 2, b64Salt, b64Hash)
 	return encodedHash, err
