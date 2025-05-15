@@ -54,7 +54,8 @@
                 "titles": "Štítky"
             },
             "page_qr_code": {
-                "page_url": "URL stránka"
+                "page_url": "URL stránka",
+                "qr_tooltip": "Zobraz QR kód"
             },
             "password_score": {
                 "password_strength": "Sila hesla"
@@ -64,7 +65,10 @@
             "create_modal": {
                 "item_description": "Popis položky",
                 "item_name": "Názov položky",
-                "title": "Vytvoriť položku"
+                "item_photo": "Obrázok predmetu 📷",
+                "item_quantity": "Počet predmetov",
+                "title": "Vytvoriť položku",
+                "upload_photos": "Nahraj fotky"
             },
             "view": {
                 "selectable": {
@@ -74,8 +78,10 @@
                     "table": "Tabuľka"
                 },
                 "table": {
+                    "headers": "Hlavička",
                     "page": "Stránka",
-                    "rows_per_page": "Počet riadkov na stránku"
+                    "rows_per_page": "Počet riadkov na stránku",
+                    "table_settings": "Nastavenie tabuľky"
                 }
             }
         },
@@ -84,6 +90,9 @@
                 "label_description": "Popis štítku",
                 "label_name": "Názov štítku",
                 "title": "Vytvoriť štítok"
+            },
+            "selector": {
+                "select_labels": "Výber značiek"
             }
         },
         "location": {
@@ -93,6 +102,7 @@
                 "title": "Vytvoriť polohu"
             },
             "selector": {
+                "no_location_found": "Poloha nenájdená",
                 "parent_location": "Poloha rodiča"
             },
             "tree": {
