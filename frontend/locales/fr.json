@@ -67,6 +67,7 @@
                 "item_name": "Nom de l'article",
                 "item_photo": "Photo de l'article 📷",
                 "item_quantity": "Quantité d'éléments",
+                "parent_item": "Article parent",
                 "title": "Créer un article",
                 "upload_photos": "Transférer des photos"
             },
@@ -124,6 +125,7 @@
         "confirm": "Confirmer",
         "create": "Créer",
         "create_and_add": "Créer et en ajouter un autre",
+        "create_subitem": "Créer un sous-élément",
         "created": "Créé",
         "delete": "Supprimer",
         "details": "Détails",
