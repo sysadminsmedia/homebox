@@ -8,8 +8,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 )
 
@@ -53,7 +53,7 @@ type (
 	}
 )
 
-func mapLocationSummary(location *ent.Location) LocationSummary {
+func mapLocationSummary(location *ent.Entity) LocationSummary {
 	return LocationSummary{
 		ID:          location.ID,
 		Name:        location.Name,
@@ -65,16 +65,18 @@ func mapLocationSummary(location *ent.Location) LocationSummary {
 
 var mapLocationOutErr = mapTErrFunc(mapLocationOut)
 
-func mapLocationOut(location *ent.Location) LocationOut {
+func mapLocationOut(location *ent.Entity) LocationOut {
 	var parent *LocationSummary
-	if location.Edges.Parent != nil {
+	if location.Edges.Parent != nil && location.Type == entity.TypeLocation {
 		p := mapLocationSummary(location.Edges.Parent)
 		parent = &p
 	}
 
 	children := make([]LocationSummary, 0, len(location.Edges.Children))
 	for _, c := range location.Edges.Children {
-		children = append(children, mapLocationSummary(c))
+		if c.Type != entity.TypeLocation {
+			children = append(children, mapLocationSummary(c))
+		}
 	}
 
 	return LocationOut{
@@ -111,9 +113,9 @@ func (r *LocationRepository) GetAll(ctx context.Context, gid uuid.UUID, filter L
 			updated_at,
 			(
 				SELECT
-					SUM(items.quantity)
+					SUM(entities.quantity)
 				FROM
-					items
+					entities
 				WHERE
 					items.location_items = locations.id
 					AND items.archived = false
@@ -159,27 +161,28 @@ func (r *LocationRepository) GetAll(ctx context.Context, gid uuid.UUID, filter L
 	return list, err
 }
 
-func (r *LocationRepository) getOne(ctx context.Context, where ...predicate.Location) (LocationOut, error) {
-	return mapLocationOutErr(r.db.Location.Query().
+func (r *LocationRepository) getOne(ctx context.Context, where ...predicate.Entity) (LocationOut, error) {
+	return mapLocationOutErr(r.db.Entity.Query().
 		Where(where...).
+		Where(entity.TypeEQ("location")).
 		WithGroup().
 		WithParent().
-		WithChildren(func(lq *ent.LocationQuery) {
-			lq.Order(location.ByName())
+		WithChildren(func(lq *ent.EntityQuery) {
+			lq.Order(entity.ByName())
 		}).
 		Only(ctx))
 }
 
 func (r *LocationRepository) Get(ctx context.Context, id uuid.UUID) (LocationOut, error) {
-	return r.getOne(ctx, location.ID(id))
+	return r.getOne(ctx, entity.ID(id))
 }
 
 func (r *LocationRepository) GetOneByGroup(ctx context.Context, gid, id uuid.UUID) (LocationOut, error) {
-	return r.getOne(ctx, location.ID(id), location.HasGroupWith(group.ID(gid)))
+	return r.getOne(ctx, entity.ID(id), entity.HasGroupWith(group.ID(gid)))
 }
 
 func (r *LocationRepository) Create(ctx context.Context, gid uuid.UUID, data LocationCreate) (LocationOut, error) {
-	q := r.db.Location.Create().
+	q := r.db.Entity.Create().
 		SetName(data.Name).
 		SetDescription(data.Description).
 		SetGroupID(gid)
@@ -198,8 +201,8 @@ func (r *LocationRepository) Create(ctx context.Context, gid uuid.UUID, data Loc
 	return mapLocationOut(location), nil
 }
 
-func (r *LocationRepository) update(ctx context.Context, data LocationUpdate, where ...predicate.Location) (LocationOut, error) {
-	q := r.db.Location.Update().
+func (r *LocationRepository) update(ctx context.Context, data LocationUpdate, where ...predicate.Entity) (LocationOut, error) {
+	q := r.db.Entity.Update().
 		Where(where...).
 		SetName(data.Name).
 		SetDescription(data.Description)
@@ -219,7 +222,7 @@ func (r *LocationRepository) update(ctx context.Context, data LocationUpdate, wh
 }
 
 func (r *LocationRepository) UpdateByGroup(ctx context.Context, gid, id uuid.UUID, data LocationUpdate) (LocationOut, error) {
-	v, err := r.update(ctx, data, location.ID(id), location.HasGroupWith(group.ID(gid)))
+	v, err := r.update(ctx, data, entity.ID(id), entity.HasGroupWith(group.ID(gid)))
 	if err != nil {
 		return LocationOut{}, err
 	}
@@ -231,11 +234,11 @@ func (r *LocationRepository) UpdateByGroup(ctx context.Context, gid, id uuid.UUI
 // delete should only be used after checking that the location is owned by the
 // group. Otherwise, use DeleteByGroup
 func (r *LocationRepository) delete(ctx context.Context, id uuid.UUID) error {
-	return r.db.Location.DeleteOneID(id).Exec(ctx)
+	return r.db.Entity.DeleteOneID(id).Exec(ctx)
 }
 
 func (r *LocationRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID) error {
-	_, err := r.db.Location.Delete().Where(location.ID(id), location.HasGroupWith(group.ID(gid))).Exec(ctx)
+	_, err := r.db.Entity.Delete().Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).Exec(ctx)
 	if err != nil {
 		return err
 	}

@@ -8,11 +8,10 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 )
 
 type GroupRepository struct {
@@ -112,16 +111,17 @@ func (r *GroupRepository) GetAllGroups(ctx context.Context) ([]Group, error) {
 func (r *GroupRepository) StatsLocationsByPurchasePrice(ctx context.Context, gid uuid.UUID) ([]TotalsByOrganizer, error) {
 	var v []TotalsByOrganizer
 
-	err := r.db.Location.Query().
+	err := r.db.Entity.Query().
 		Where(
-			location.HasGroupWith(group.ID(gid)),
+			entity.HasGroupWith(group.ID(gid)),
+			entity.TypeEQ("location"),
 		).
-		GroupBy(location.FieldID, location.FieldName).
+		GroupBy(entity.FieldID, entity.FieldName).
 		Aggregate(func(sq *sql.Selector) string {
-			t := sql.Table(item.Table)
-			sq.Join(t).On(sq.C(location.FieldID), t.C(item.LocationColumn))
+			t := sql.Table(entity.Table)
+			sq.Join(t).On(sq.C(entity.FieldID), t.C(entity.LocationColumn))
 
-			return sql.As(sql.Sum(t.C(item.FieldPurchasePrice)), "total")
+			return sql.As(sql.Sum(t.C(entity.FieldPurchasePrice)), "total")
 		}).
 		Scan(ctx, &v)
 	if err != nil {
@@ -140,14 +140,14 @@ func (r *GroupRepository) StatsLabelsByPurchasePrice(ctx context.Context, gid uu
 		).
 		GroupBy(label.FieldID, label.FieldName).
 		Aggregate(func(sq *sql.Selector) string {
-			itemTable := sql.Table(item.Table)
+			itemTable := sql.Table(entity.Table)
 
-			jt := sql.Table(label.ItemsTable)
+			jt := sql.Table(label.EntitiesTable)
 
-			sq.Join(jt).On(sq.C(label.FieldID), jt.C(label.ItemsPrimaryKey[0]))
-			sq.Join(itemTable).On(jt.C(label.ItemsPrimaryKey[1]), itemTable.C(item.FieldID))
+			sq.Join(jt).On(sq.C(label.FieldID), jt.C(label.EntitiesPrimaryKey[0]))
+			sq.Join(itemTable).On(jt.C(label.EntitiesPrimaryKey[1]), itemTable.C(entity.FieldID))
 
-			return sql.As(sql.Sum(itemTable.C(item.FieldPurchasePrice)), "total")
+			return sql.As(sql.Sum(itemTable.C(entity.FieldPurchasePrice)), "total")
 		}).
 		Scan(ctx, &v)
 	if err != nil {
@@ -190,17 +190,17 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 	}
 
 	// Get Created Date and Price of all items between start and end
-	err = r.db.Item.Query().
+	err = r.db.Entity.Query().
 		Where(
-			item.HasGroupWith(group.ID(gid)),
-			item.CreatedAtGTE(start),
-			item.CreatedAtLTE(end),
-			item.Archived(false),
+			entity.HasGroupWith(group.ID(gid)),
+			entity.CreatedAtGTE(start),
+			entity.CreatedAtLTE(end),
+			entity.Archived(false),
 		).
 		Select(
-			item.FieldName,
-			item.FieldCreatedAt,
-			item.FieldPurchasePrice,
+			entity.FieldName,
+			entity.FieldCreatedAt,
+			entity.FieldPurchasePrice,
 		).
 		Scan(ctx, &v)
 
