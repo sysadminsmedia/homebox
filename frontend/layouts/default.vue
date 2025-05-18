@@ -198,13 +198,13 @@
     {
       id: 1,
       name: computed(() => t("menu.create_location")),
-      shortcut: "Shift+2",
+      shortcut: "Shift+3",
       dialogId: "create-location",
     },
     {
       id: 2,
       name: computed(() => t("menu.create_label")),
-      shortcut: "Shift+3",
+      shortcut: "Shift+2",
       dialogId: "create-label",
     },
   ];
