@@ -3,9 +3,9 @@ contact_links:
   - name: GitHub Community Support
     url: https://github.com/sysadminsmedia/homebox/discussions/categories/support
     about: Get support for issues here
-  - name: Feature Requests
-    url: https://github.com/sysadminsmedia/homebox/discussions/categories/ideas
-    about: Have an idea for Homebox? Share it in our discussions forum. If we decide to take it on we will create an issue for it.
+  #- name: Feature Requests
+  #  url: https://github.com/sysadminsmedia/homebox/discussions/categories/ideas
+  #  about: Have an idea for Homebox? Share it in our discussions forum. If we decide to take it on we will create an issue for it.
   - name: Translate
     url: https://translate.sysadminsmedia.com
     about: Help us translate Homebox! All contributions and all languages welcome!
