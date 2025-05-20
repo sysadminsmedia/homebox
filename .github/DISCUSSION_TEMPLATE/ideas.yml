@@ -1,5 +1,3 @@
-title: [FR]
-labels:
 body:
   - type: textarea
     id: problem-statement
