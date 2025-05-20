@@ -1,0 +1,31 @@
+title: [FR]
+labels:
+body:
+  - type: textarea
+    id: problem-statement
+    attributes:
+      label: What is the problem you are trying to solve with this feature?
+      placeholder: A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+  - type: textarea
+    id: feature-solution
+    attributes:
+      label: What is the solution you are proposing?
+      placeholder: A clear and concise description of what you want to happen.
+  - type: textarea
+    id: feature-alternatives
+    attributes:
+      label: What alternatives have you considered?
+      placeholder: A clear and concise description of any alternative solutions or features you've considered.
+  - type: textarea
+    id: feature-details
+    attributes:
+      label: Additional context
+      placeholder: Add any other context or screenshots about the feature request here.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Contributions
+      description: Please confirm the following
+      options:
+        - label: I have searched through existing ideas in the discussions to check if this is a duplicate
+          required: true
