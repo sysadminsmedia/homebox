@@ -67,6 +67,7 @@
                 "item_name": "Jméno položky",
                 "item_photo": "Fotografie položky 📷",
                 "item_quantity": "Množství položek",
+                "parent_item": "Nadřazená položka",
                 "title": "Vytvořit položku",
                 "upload_photos": "Nahrát fotografie"
             },
@@ -124,6 +125,7 @@
         "confirm": "Potvrdit",
         "create": "Vytvořit",
         "create_and_add": "Vytvořit a přidat další",
+        "create_subitem": "Vytvořit podpoložku",
         "created": "Vytvořeno",
         "delete": "Smazat",
         "details": "Detaily",
@@ -401,7 +403,7 @@
             "export_sub": "Exportuje standardní formát CSV pro Homebox. Tím se vyexportují všechny položky v inventáři.",
             "import": "Importovat inventář",
             "import_button": "Importovat inventář",
-            "import_sub": "Importuje standardní formát CSV pro Homebox. Bez sloupce '<code>'HB.import_ref'</code>' '<b>'nepřepisuje'</b>' žádné existující položky v inventáři, pouze přidává nové položky. Řádky se sloupcem' <code>'HB.import_ref'</code>' se sloučí do existujících položek se stejným import_ref, pokud nějaká existuje."
+            "import_sub": "Importuje standardní formát CSV pro Homebox. Bez sloupce '<code>'HB.import_ref'</code>' '<b>'nepřepisuje'</b>' žádné existující položky v inventáři, pouze přidává nové položky. Řádky se sloupcem '<code>'HB.import_ref'</code>' se sloučí do existujících položek se stejným import_ref, pokud nějaká existuje."
         },
         "import_export_sub": "Import a export inventáře do souboru CSV a ze souboru CSV. To je užitečné při migraci inventáře do nové instance Homeboxu.",
         "reports": "Zprávy",

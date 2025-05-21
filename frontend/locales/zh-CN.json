@@ -67,6 +67,7 @@
                 "item_name": "物品名称",
                 "item_photo": "物品照片📷",
                 "item_quantity": "物品数量",
+                "parent_item": "父项目",
                 "title": "创建物品",
                 "upload_photos": "上传照片"
             },
@@ -124,6 +125,7 @@
         "confirm": "确认",
         "create": "创建",
         "create_and_add": "保存并继续创建",
+        "create_subitem": "创建子项目",
         "created": "已创建",
         "delete": "刪除",
         "details": "详情",
