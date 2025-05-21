@@ -67,6 +67,7 @@
                 "item_name": "Jméno položky",
                 "item_photo": "Fotografie položky 📷",
                 "item_quantity": "Množství položek",
+                "parent_item": "Nadřazená položka",
                 "title": "Vytvořit položku",
                 "upload_photos": "Nahrát fotografie"
             },
@@ -124,6 +125,7 @@
         "confirm": "Potvrdit",
         "create": "Vytvořit",
         "create_and_add": "Vytvořit a přidat další",
+        "create_subitem": "Vytvořit podpoložku",
         "created": "Vytvořeno",
         "delete": "Smazat",
         "details": "Detaily",
