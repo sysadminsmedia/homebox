@@ -414,6 +414,8 @@
         paddingLeft: `${out.page.pl}${out.measure}`,
         paddingRight: `${out.page.pr}${out.measure}`,
         width: `${out.page.width}${out.measure}`,
+        background: `white`,
+        color: `black`,
       }"
     >
       <div
