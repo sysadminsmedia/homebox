@@ -123,7 +123,7 @@ module.exports = {
         "collapsible-down": "collapsible-down 0.2s ease-in-out",
         "collapsible-up": "collapsible-up 0.2s ease-in-out",
       },
-            typography: {
+      typography: {
         DEFAULT: {
           css: {
             color: 'hsl(var(--foreground))',
