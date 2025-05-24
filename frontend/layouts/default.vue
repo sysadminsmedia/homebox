@@ -236,7 +236,7 @@
       console.log(`/items?q=${encodeURIComponent(search.value)}`);
       search.value = "";
       // remove focus from input
-      if (document.activeElement && 'blur' in document.activeElement) {
+      if (document.activeElement && "blur" in document.activeElement) {
         (document.activeElement as HTMLElement).blur();
       }
     }
