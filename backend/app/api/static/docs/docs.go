@@ -391,7 +391,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Query All Items",
+                "summary": "(Deprecated) Query All Items",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -463,7 +464,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Create Item",
+                "summary": "(Deprecated) Create Item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Item Data",
@@ -495,7 +497,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Export Items",
+                "summary": "(Deprecated) Export Items",
+                "deprecated": true,
                 "responses": {
                     "200": {
                         "description": "text/csv",
@@ -519,7 +522,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Get All Custom Field Names",
+                "summary": "(Deprecated) Get All Custom Field Names",
+                "deprecated": true,
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -546,7 +550,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Get All Custom Field Values",
+                "summary": "(Deprecated) Get All Custom Field Values",
+                "deprecated": true,
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -576,7 +581,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Import Items",
+                "summary": "(Deprecated) Import Items",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "file",
@@ -606,7 +612,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Get Item",
+                "summary": "(Deprecated) Get Item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -637,7 +644,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Update Item",
+                "summary": "(Deprecated) Update Item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -677,7 +685,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Delete Item",
+                "summary": "(Deprecated) Delete Item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -705,7 +714,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Update Item",
+                "summary": "(Deprecated) Update Item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -1023,7 +1033,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Get the full path of an item",
+                "summary": "(Deprecated) Get the full path of an item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -1328,7 +1339,8 @@ const docTemplate = `{
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Get All Locations",
+                "summary": "(Deprecated) Get All Locations",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "boolean",
@@ -1361,7 +1373,8 @@ const docTemplate = `{
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Create Location",
+                "summary": "(Deprecated) Create Location",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Location Data",
@@ -1396,7 +1409,8 @@ const docTemplate = `{
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Get Locations Tree",
+                "summary": "(Deprecated) Get Locations Tree",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "boolean",
@@ -1431,7 +1445,8 @@ const docTemplate = `{
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Get Location",
+                "summary": "(Deprecated) Get Location",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -1462,7 +1477,8 @@ const docTemplate = `{
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Update Location",
+                "summary": "(Deprecated) Update Location",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -1502,7 +1518,8 @@ const docTemplate = `{
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Delete Location",
+                "summary": "(Deprecated) Delete Location",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
