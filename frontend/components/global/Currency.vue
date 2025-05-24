@@ -19,7 +19,11 @@
 
   const props = defineProps<Props>();
 
-  const fmt = ref(null);
+  type AsyncReturnType<T extends (...args: any) => Promise<any>> = T extends (...args: any) => Promise<infer R>
+    ? R
+    : any;
+
+  const fmt = ref<AsyncReturnType<typeof useFormatCurrency> | null>(null);
 
   const loadFormatter = async () => {
     fmt.value = await useFormatCurrency();
