@@ -1,7 +1,7 @@
 <template>
   <div>
     <AppImportDialog />
-    <BaseContainer class="mb-6 flex flex-col gap-4">
+    <BaseContainer class="flex flex-col gap-4">
       <BaseCard>
         <template #title>
           <BaseSectionHeader>

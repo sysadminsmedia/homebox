@@ -524,7 +524,7 @@
 </script>
 
 <template>
-  <BaseContainer v-if="item" class="pb-8">
+  <BaseContainer v-if="item">
     <!-- set page title -->
     <Title>{{ item.name }}</Title>
 
@@ -736,7 +736,7 @@
       </div>
     </section>
 
-    <section v-if="items && items.length > 0" class="my-6">
+    <section v-if="items && items.length > 0" class="mt-6">
       <ItemViewSelectable :items="items" />
     </section>
   </BaseContainer>

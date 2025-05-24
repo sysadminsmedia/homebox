@@ -9,7 +9,7 @@
 
 <template>
   <div>
-    <BaseContainer class="mb-6 flex flex-col gap-8">
+    <BaseContainer class="flex flex-col gap-4">
       <BaseSectionHeader> {{ $t("menu.maintenance") }} </BaseSectionHeader>
       <MaintenanceListView></MaintenanceListView>
     </BaseContainer>

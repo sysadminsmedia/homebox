@@ -369,11 +369,11 @@
 </script>
 
 <template>
-  <BaseContainer class="mb-16">
+  <BaseContainer>
     <div v-if="locations && labels">
       <div class="flex flex-wrap items-end gap-4 md:flex-nowrap">
         <div class="w-full">
-          <Input v-model="query" :placeholder="$t('global.search')" class="h-12" />
+          <Input v-model:model-value="query" :placeholder="$t('global.search')" class="h-12" />
           <div v-if="byAssetId" class="pl-2 pt-2 text-sm">
             <p>{{ $t("items.query_id", { id: parsedAssetId }) }}</p>
           </div>

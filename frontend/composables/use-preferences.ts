@@ -12,7 +12,7 @@ export type LocationViewPreferences = {
   theme: DaisyTheme;
   itemsPerTablePage: number;
   tableHeaders?: TableHeaderType[];
-  displayHeaderDecor: boolean;
+  displayLegacyHeader: boolean;
   language?: string;
   overrideFormatLocale?: string;
 };
@@ -31,7 +31,7 @@ export function useViewPreferences(): Ref<LocationViewPreferences> {
       itemDisplayView: "card",
       theme: "homebox",
       itemsPerTablePage: 10,
-      displayHeaderDecor: true,
+      displayLegacyHeader: false,
       language: null,
       overrideFormatLocale: null,
     },
