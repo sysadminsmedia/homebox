@@ -126,18 +126,18 @@ module.exports = {
       typography: {
         DEFAULT: {
           css: {
-            color: 'hsl(var(--foreground))',
+            color: "hsl(var(--foreground))",
             a: {
-              color: 'hsl(var(--primary))',
-              '&:hover': {
-                color: 'hsl(var(--primary) / 0.8)',
+              color: "hsl(var(--primary))",
+              "&:hover": {
+                color: "hsl(var(--primary) / 0.8)",
               },
             },
             h1: {
-              color: 'hsl(var(--foreground))',
+              color: "hsl(var(--foreground))",
             },
             h2: {
-              color: 'hsl(var(--foreground))',
+              color: "hsl(var(--foreground))",
             },
           },
         },
