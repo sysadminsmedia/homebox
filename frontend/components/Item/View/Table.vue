@@ -210,8 +210,6 @@
       }))
   );
 
-  console.log(headers.value);
-
   const toggleHeader = (value: string) => {
     const header = headers.value.find(h => h.value === value);
     if (header) {

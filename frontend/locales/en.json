@@ -156,7 +156,8 @@
         "update": "Update",
         "value": "Value",
         "version": "Version: { version }",
-        "welcome": "Welcome, { username }"
+        "welcome": "Welcome, { username }",
+        "loading": "Loading..."
     },
     "home": {
         "labels": "Labels",
