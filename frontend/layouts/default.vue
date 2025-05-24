@@ -111,7 +111,7 @@
             <SidebarTrigger class="absolute left-2 top-2 hidden lg:flex" variant="default" />
           </div>
           <div
-            class="sticky top-0 z-20 flex h-28 flex-col bg-secondary p-2 shadow-md sm:h-16 sm:flex-row"
+            class="sticky top-0 z-20 flex h-28 translate-y-[-0.5px] flex-col bg-secondary p-2 shadow-md sm:h-16 sm:flex-row"
             :class="{
               'lg:hidden': preferences.displayLegacyHeader,
             }"
