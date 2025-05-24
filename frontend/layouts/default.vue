@@ -100,9 +100,15 @@
             </div>
             <div class="sm:grow"></div>
             <div class="flex h-1/2 grow items-center justify-end gap-2 sm:h-auto">
-              <Input class="h-9 grow sm:max-w-sm" placeholder="Search" type="search" />
+              <Input
+                v-model:model-value="search"
+                class="h-9 grow sm:max-w-sm"
+                :placeholder="$t('global.search')"
+                type="search"
+                @keyup.enter="triggerSearch"
+              />
               <div>
-                <Button size="icon">
+                <Button size="icon" @click="triggerSearch">
                   <MdiMagnify />
                 </Button>
               </div>
@@ -197,6 +203,20 @@
 
     return data;
   });
+
+  const search = ref("");
+
+  const triggerSearch = () => {
+    if (search.value) {
+      navigateTo(`/items?q=${encodeURIComponent(search.value)}`);
+      console.log(`/items?q=${encodeURIComponent(search.value)}`);
+      search.value = "";
+      // remove focus from input
+      if (document.activeElement) {
+        document.activeElement.blur();
+      }
+    }
+  };
 
   // Preload currency format
   useFormatCurrency();
