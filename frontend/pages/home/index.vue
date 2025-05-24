@@ -26,7 +26,7 @@
 
 <template>
   <div>
-    <BaseContainer class="flex flex-col gap-12 pb-16">
+    <BaseContainer class="flex flex-col gap-4">
       <section>
         <Subtitle> {{ $t("home.quick_statistics") }} </Subtitle>
         <div class="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-6">

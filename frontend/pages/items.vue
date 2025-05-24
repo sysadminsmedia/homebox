@@ -369,7 +369,7 @@
 </script>
 
 <template>
-  <BaseContainer class="mb-16">
+  <BaseContainer>
     <div v-if="locations && labels">
       <div class="flex flex-wrap items-end gap-4 md:flex-nowrap">
         <div class="w-full">
