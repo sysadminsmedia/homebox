@@ -11,6 +11,7 @@
     <LabelCreateModal />
     <LocationCreateModal />
     <AppQuickMenuModal :actions="quickMenuActions" />
+    <AppScannerModal />
     <SidebarProvider :default-open="sidebarState">
       <Sidebar collapsible="icon">
         <SidebarHeader class="items-center">
@@ -113,7 +114,7 @@
                 </Button>
               </div>
               <div>
-                <Button size="icon">
+                <Button size="icon" @click="openDialog('scanner')">
                   <MdiQrcodeScan />
                 </Button>
               </div>
