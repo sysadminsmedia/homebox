@@ -129,6 +129,10 @@
       handleError(err);
     }
   });
+
+  onUnmounted(() => {
+    stopScanner();
+  });
 </script>
 
 <style scoped>

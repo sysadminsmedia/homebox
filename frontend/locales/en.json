@@ -347,7 +347,7 @@
         "current_password": "Current Password",
         "delete_account": "Delete Account",
         "delete_account_sub": "Delete your account and all its associated data. This can not be undone.",
-        "display_header": "{ currentValue, select, true {Hide Header} false {Show Header} other {Not Hit}}",
+        "display_legacy_header": "{ currentValue, select, true {Disable Legacy Header} false {Enable Legacy Header} other {Not Hit}}",
         "enabled": "Enabled",
         "example": "Example",
         "gen_invite": "Generate Invite Link",

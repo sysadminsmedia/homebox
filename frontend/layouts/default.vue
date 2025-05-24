@@ -70,6 +70,21 @@
                   <span>{{ n.name.value }}</span>
                 </SidebarMenuLink>
               </SidebarMenuItem>
+
+              <!-- makes scanner accessible easily if using legacy header -->
+              <SidebarMenuItem v-if="preferences.displayLegacyHeader">
+                <SidebarMenuLink
+                  class="cursor-pointer"
+                  :class="{
+                    'text-nowrap': typeof locale === 'string' && locale.startsWith('zh-'),
+                  }"
+                  :tooltip="$t('menu.scanner')"
+                  @click="openDialog('scanner')"
+                >
+                  <MdiQrcodeScan />
+                  <span>{{ $t("menu.scanner") }}</span>
+                </SidebarMenuLink>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>
@@ -92,7 +107,16 @@
       </Sidebar>
       <SidebarInset class="min-h-screen bg-background-accent">
         <div class="relative flex h-full flex-col justify-center">
-          <div class="sticky top-0 z-20 flex h-28 flex-col bg-secondary p-2 shadow-md sm:h-16 sm:flex-row">
+          <div v-if="preferences.displayLegacyHeader">
+            <AppHeaderDecor class="-mt-10 hidden lg:block" />
+            <SidebarTrigger class="absolute left-2 top-2 hidden lg:flex" variant="default" />
+          </div>
+          <div
+            class="sticky top-0 z-20 flex h-28 flex-col bg-secondary p-2 shadow-md sm:h-16 sm:flex-row"
+            :class="{
+              'lg:hidden': preferences.displayLegacyHeader,
+            }"
+          >
             <div class="flex h-1/2 items-center gap-2 sm:h-auto">
               <SidebarTrigger variant="default" />
               <NuxtLink to="/home">
@@ -267,13 +291,6 @@
       name: computed(() => t("menu.search")),
       to: "/items",
     },
-    // {
-    //   icon: MdiQrcodeScan,
-    //   id: 3,
-    //   active: computed(() => route.path === "/scanner"),
-    //   name: computed(() => t("menu.scanner")),
-    //   to: "/scanner",
-    // },
     {
       icon: MdiWrench,
       id: 4,

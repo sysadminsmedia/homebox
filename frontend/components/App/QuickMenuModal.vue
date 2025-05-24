@@ -83,6 +83,17 @@
         >
           {{ navigate.text }}
         </CommandItem>
+        <CommandItem
+          value="scanner"
+          @select="
+            () => {
+              closeDialog('quick-menu');
+              openDialog('scanner');
+            }
+          "
+        >
+          {{ t("menu.scanner") }}
+        </CommandItem>
       </CommandGroup>
     </CommandList>
   </CommandDialog>
