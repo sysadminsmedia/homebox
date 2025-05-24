@@ -73,17 +73,16 @@
 
               <!-- makes scanner accessible easily if using legacy header -->
               <SidebarMenuItem v-if="preferences.displayLegacyHeader">
-                <SidebarMenuLink
-                  class="cursor-pointer"
+                <SidebarMenuButton
                   :class="{
                     'text-nowrap': typeof locale === 'string' && locale.startsWith('zh-'),
                   }"
                   :tooltip="$t('menu.scanner')"
-                  @click="openDialog('scanner')"
+                  @click.prevent="openDialog('scanner')"
                 >
                   <MdiQrcodeScan />
                   <span>{{ $t("menu.scanner") }}</span>
-                </SidebarMenuLink>
+                </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroup>
@@ -237,8 +236,8 @@
       console.log(`/items?q=${encodeURIComponent(search.value)}`);
       search.value = "";
       // remove focus from input
-      if (document.activeElement) {
-        document.activeElement.blur();
+      if (document.activeElement && 'blur' in document.activeElement) {
+        (document.activeElement as HTMLElement).blur();
       }
     }
   };
