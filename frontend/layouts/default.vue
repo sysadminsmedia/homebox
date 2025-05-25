@@ -11,6 +11,7 @@
     <LabelCreateModal />
     <LocationCreateModal />
     <AppQuickMenuModal :actions="quickMenuActions" />
+    <AppScannerModal />
     <SidebarProvider :default-open="sidebarState">
       <Sidebar collapsible="icon">
         <SidebarHeader class="items-center">
@@ -69,6 +70,20 @@
                   <span>{{ n.name.value }}</span>
                 </SidebarMenuLink>
               </SidebarMenuItem>
+
+              <!-- makes scanner accessible easily if using legacy header -->
+              <SidebarMenuItem v-if="preferences.displayLegacyHeader">
+                <SidebarMenuButton
+                  :class="{
+                    'text-nowrap': typeof locale === 'string' && locale.startsWith('zh-'),
+                  }"
+                  :tooltip="$t('menu.scanner')"
+                  @click.prevent="openDialog('scanner')"
+                >
+                  <MdiQrcodeScan />
+                  <span>{{ $t("menu.scanner") }}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>
@@ -90,21 +105,47 @@
         <SidebarRail />
       </Sidebar>
       <SidebarInset class="min-h-screen bg-background-accent">
-        <div class="justify-center pt-20 lg:pt-0">
-          <AppHeaderDecor v-if="preferences.displayHeaderDecor" class="-mt-10 hidden lg:block" />
-          <SidebarTrigger class="absolute left-2 top-2 hidden lg:flex" variant="default" />
-          <div class="fixed top-0 z-20 flex h-16 w-full items-center gap-2 bg-primary p-2 shadow-md lg:hidden">
-            <SidebarTrigger class="hover:bg-foreground" />
-            <NuxtLink to="/home">
-              <h2 class="flex text-3xl font-bold tracking-tight text-primary-foreground">
-                HomeB
-                <AppLogo class="-mb-3 w-8" />
-                x
-              </h2>
-            </NuxtLink>
+        <div class="relative flex h-full flex-col justify-center">
+          <div v-if="preferences.displayLegacyHeader">
+            <AppHeaderDecor class="-mt-10 hidden lg:block" />
+            <SidebarTrigger class="absolute left-2 top-2 hidden lg:flex" variant="default" />
+          </div>
+          <div
+            class="sticky top-0 z-20 flex h-28 translate-y-[-0.5px] flex-col bg-secondary p-2 shadow-md sm:h-16 sm:flex-row"
+            :class="{
+              'lg:hidden': preferences.displayLegacyHeader,
+            }"
+          >
+            <div class="flex h-1/2 items-center gap-2 sm:h-auto">
+              <SidebarTrigger variant="default" />
+              <NuxtLink to="/home">
+                <AppHeaderText class="h-6" />
+              </NuxtLink>
+            </div>
+            <div class="sm:grow"></div>
+            <div class="flex h-1/2 grow items-center justify-end gap-2 sm:h-auto">
+              <Input
+                v-model:model-value="search"
+                class="h-9 grow sm:max-w-sm"
+                :placeholder="$t('global.search')"
+                type="search"
+                @keyup.enter="triggerSearch"
+              />
+              <div>
+                <Button size="icon" @click="triggerSearch">
+                  <MdiMagnify />
+                </Button>
+              </div>
+              <div>
+                <Button size="icon" @click="openDialog('scanner')">
+                  <MdiQrcodeScan />
+                </Button>
+              </div>
+            </div>
           </div>
 
           <slot></slot>
+          <div class="grow"></div>
 
           <footer v-if="status" class="bottom-0 w-full pb-4 text-center">
             <p class="text-center text-sm">
@@ -164,6 +205,8 @@
   } from "@/components/ui/dropdown-menu";
   import { Shortcut } from "~/components/ui/shortcut";
   import { useDialog } from "~/components/ui/dialog-provider";
+  import { Input } from "~/components/ui/input";
+  import { Button } from "~/components/ui/button";
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
@@ -184,6 +227,19 @@
 
     return data;
   });
+
+  const search = ref("");
+
+  const triggerSearch = () => {
+    if (search.value) {
+      navigateTo(`/items?q=${encodeURIComponent(search.value)}`);
+      search.value = "";
+      // remove focus from input
+      if (document.activeElement && "blur" in document.activeElement) {
+        (document.activeElement as HTMLElement).blur();
+      }
+    }
+  };
 
   // Preload currency format
   useFormatCurrency();
@@ -232,13 +288,6 @@
       active: computed(() => route.path === "/items"),
       name: computed(() => t("menu.search")),
       to: "/items",
-    },
-    {
-      icon: MdiQrcodeScan,
-      id: 3,
-      active: computed(() => route.path === "/scanner"),
-      name: computed(() => t("menu.scanner")),
-      to: "/scanner",
     },
     {
       icon: MdiWrench,

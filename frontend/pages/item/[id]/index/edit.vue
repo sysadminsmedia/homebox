@@ -550,7 +550,7 @@
             <TooltipContent>{{ $t("items.show_advanced_view_options") }}</TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <Button class="" size="sm" @click="saveItem">
+        <Button size="sm" @click="saveItem">
           <MdiContentSaveOutline />
           {{ $t("global.save") }}
         </Button>

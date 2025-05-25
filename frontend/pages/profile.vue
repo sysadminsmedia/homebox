@@ -43,7 +43,7 @@
 
   const preferences = useViewPreferences();
   function setDisplayHeader() {
-    preferences.value.displayHeaderDecor = !preferences.value.displayHeaderDecor;
+    preferences.value.displayLegacyHeader = !preferences.value.displayLegacyHeader;
   }
 
   // Currency Selection
@@ -354,7 +354,7 @@
       </DialogContent>
     </Dialog>
 
-    <BaseContainer class="mb-6 flex flex-col gap-4">
+    <BaseContainer class="flex flex-col gap-4">
       <BaseCard>
         <template #title>
           <BaseSectionHeader>
@@ -389,7 +389,7 @@
         <template #title>
           <BaseSectionHeader>
             <MdiMegaphone class="-mt-1 mr-2" />
-            <span class=""> {{ $t("profile.notifiers") }} </span>
+            <span> {{ $t("profile.notifiers") }} </span>
             <template #description> {{ $t("profile.notifiers_sub") }} </template>
           </BaseSectionHeader>
         </template>
@@ -442,7 +442,7 @@
         <template #title>
           <BaseSectionHeader class="pb-0">
             <MdiAccountMultiple class="-mt-1 mr-2" />
-            <span class=""> {{ $t("profile.group_settings") }} </span>
+            <span> {{ $t("profile.group_settings") }} </span>
             <template #description>
               {{ $t("profile.group_settings_sub") }}
             </template>
@@ -484,7 +484,7 @@
         <template #title>
           <BaseSectionHeader>
             <MdiFill class="mr-2" />
-            <span class=""> {{ $t("profile.theme_settings") }} </span>
+            <span> {{ $t("profile.theme_settings") }} </span>
             <template #description>
               {{ $t("profile.theme_settings_sub") }}
             </template>
@@ -494,7 +494,7 @@
         <div class="px-4 pb-4">
           <div class="mb-3">
             <Button variant="secondary" size="sm" @click="setDisplayHeader">
-              {{ $t("profile.display_header", { currentValue: preferences.displayHeaderDecor }) }}
+              {{ $t("profile.display_legacy_header", { currentValue: preferences.displayLegacyHeader }) }}
             </Button>
           </div>
           <div class="homebox grid grid-cols-1 gap-4 font-sans sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
@@ -538,7 +538,7 @@
         <template #title>
           <BaseSectionHeader>
             <MdiDelete class="-mt-1 mr-2" />
-            <span class=""> {{ $t("profile.delete_account") }} </span>
+            <span> {{ $t("profile.delete_account") }} </span>
             <template #description> {{ $t("profile.delete_account_sub") }} </template>
           </BaseSectionHeader>
         </template>

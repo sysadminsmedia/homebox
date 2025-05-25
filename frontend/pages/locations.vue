@@ -83,36 +83,38 @@
 </script>
 
 <template>
-  <BaseContainer class="mb-16">
-    <BaseSectionHeader> {{ $t("menu.locations") }} </BaseSectionHeader>
+  <BaseContainer>
+    <div class="mb-2 flex justify-between">
+      <BaseSectionHeader> {{ $t("menu.locations") }} </BaseSectionHeader>
+      <div>
+        <TooltipProvider :delay-duration="0">
+          <ButtonGroup>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button size="icon" variant="outline" data-pos="start" @click="openAll">
+                  <MdiExpandAllOutline />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{{ $t("locations.expand_tree") }}</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button size="icon" variant="outline" data-pos="end" @click="closeAll">
+                  <MdiCollapseAllOutline />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{{ $t("locations.collapse_tree") }}</p>
+              </TooltipContent>
+            </Tooltip>
+          </ButtonGroup>
+        </TooltipProvider>
+      </div>
+    </div>
     <BaseCard>
-      <div class="p-4">
-        <div class="mb-2 flex justify-end">
-          <TooltipProvider :delay-duration="0">
-            <ButtonGroup>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button size="icon" variant="outline" data-pos="start" @click="openAll">
-                    <MdiExpandAllOutline />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{{ $t("locations.expand_tree") }}</p>
-                </TooltipContent>
-              </Tooltip>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button size="icon" variant="outline" data-pos="end" @click="closeAll">
-                    <MdiCollapseAllOutline />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{{ $t("locations.collapse_tree") }}</p>
-                </TooltipContent>
-              </Tooltip>
-            </ButtonGroup>
-          </TooltipProvider>
-        </div>
+      <div class="p-2">
         <LocationTreeRoot v-if="tree" :locs="tree" :tree-id="locationTreeId" />
       </div>
     </BaseCard>
