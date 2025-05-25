@@ -86,7 +86,7 @@
   <BaseContainer>
     <div class="mb-2 flex justify-between">
       <BaseSectionHeader> {{ $t("menu.locations") }} </BaseSectionHeader>
-      <div class="">
+      <div>
         <TooltipProvider :delay-duration="0">
           <ButtonGroup>
             <Tooltip>

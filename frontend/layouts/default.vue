@@ -233,7 +233,6 @@
   const triggerSearch = () => {
     if (search.value) {
       navigateTo(`/items?q=${encodeURIComponent(search.value)}`);
-      console.log(`/items?q=${encodeURIComponent(search.value)}`);
       search.value = "";
       // remove focus from input
       if (document.activeElement && "blur" in document.activeElement) {

@@ -389,7 +389,7 @@
         <template #title>
           <BaseSectionHeader>
             <MdiMegaphone class="-mt-1 mr-2" />
-            <span class=""> {{ $t("profile.notifiers") }} </span>
+            <span> {{ $t("profile.notifiers") }} </span>
             <template #description> {{ $t("profile.notifiers_sub") }} </template>
           </BaseSectionHeader>
         </template>
@@ -442,7 +442,7 @@
         <template #title>
           <BaseSectionHeader class="pb-0">
             <MdiAccountMultiple class="-mt-1 mr-2" />
-            <span class=""> {{ $t("profile.group_settings") }} </span>
+            <span> {{ $t("profile.group_settings") }} </span>
             <template #description>
               {{ $t("profile.group_settings_sub") }}
             </template>
@@ -484,7 +484,7 @@
         <template #title>
           <BaseSectionHeader>
             <MdiFill class="mr-2" />
-            <span class=""> {{ $t("profile.theme_settings") }} </span>
+            <span> {{ $t("profile.theme_settings") }} </span>
             <template #description>
               {{ $t("profile.theme_settings_sub") }}
             </template>
@@ -538,7 +538,7 @@
         <template #title>
           <BaseSectionHeader>
             <MdiDelete class="-mt-1 mr-2" />
-            <span class=""> {{ $t("profile.delete_account") }} </span>
+            <span> {{ $t("profile.delete_account") }} </span>
             <template #description> {{ $t("profile.delete_account_sub") }} </template>
           </BaseSectionHeader>
         </template>
