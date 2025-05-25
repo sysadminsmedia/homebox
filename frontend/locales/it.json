@@ -347,7 +347,6 @@
         "current_password": "Password Corrente",
         "delete_account": "Elimina Account",
         "delete_account_sub": "Elimina il tuo account e tutti i dati associati. Questa operazione non può essere annullata.",
-        "display_header": "{ currentValue, select, true {Nascondi intestazione} false {Mostra intestazione} other {Sconosciuto}}",
         "enabled": "Abilitato",
         "example": "Esempio",
         "gen_invite": "Genera Link di Invito",

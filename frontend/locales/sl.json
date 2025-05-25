@@ -347,7 +347,6 @@
         "current_password": "Trenutno geslo",
         "delete_account": "Izbriši račun",
         "delete_account_sub": "Izbrišite svoj račun in vse z njim povezane podatke. Tega ni mogoče razveljaviti.",
-        "display_header": "{ currentValue, select, true {Skrij glavo} false {Pokaži glavo} other {Brez zadetkov}}",
         "enabled": "Omogočeno",
         "example": "Primer",
         "gen_invite": "Ustvari povezavo povabila",

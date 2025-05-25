@@ -330,7 +330,6 @@
         "current_password": "Aktuálne heslo",
         "delete_account": "Odstrániť účet",
         "delete_account_sub": "Odstráňte svoj účet a všetky súvisiace údaje. Toto nie je možné vrátiť späť.",
-        "display_header": "{ currentValue, select, true {Skryť hlavičku} false {Zobraziť hlavičku} other {Nie Hit}}",
         "enabled": "Povolené",
         "example": "Príklad",
         "gen_invite": "Vygenerovať odkaz na pozvánku",

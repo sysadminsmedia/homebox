@@ -343,7 +343,6 @@
         "current_password": "Senha Atual",
         "delete_account": "Excluir conta",
         "delete_account_sub": "Excluir sua conta e todos os dados associados. Essa ação não pode ser desfeita.",
-        "display_header": "{ currentValue, select, true {Ocultar cabeçalho} false {Mostrar cabeçalho} other {Não encontrado}}",
         "enabled": "Ativado",
         "example": "Exemplo",
         "gen_invite": "Gerar link de convite",

@@ -343,7 +343,6 @@
         "current_password": "Nykyinen Salasana",
         "delete_account": "Poista tili",
         "delete_account_sub": "Poista tilisi ja kaikki siihen liittyvät tiedot. Tätä ei voi perua.",
-        "display_header": "{ currentValue, select, true {Näytä Otsikko} false {Näytä Otsikko} other {Ei Osunut}}",
         "enabled": "Käyttöön",
         "example": "Esimerkiksi",
         "gen_invite": "Luo Kutsulinkki",

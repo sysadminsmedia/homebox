@@ -342,7 +342,6 @@
         "current_password": "原密码",
         "delete_account": "删除帐户",
         "delete_account_sub": "删除您的帐户及其所有相关数据。这是无法撤消的。",
-        "display_header": "{currentValue, select, true {隐藏页眉} false {显示页眉} other {未选中}}",
         "enabled": "已启用",
         "example": "例子",
         "gen_invite": "生成邀请链接",

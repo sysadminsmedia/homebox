@@ -347,7 +347,6 @@
         "current_password": "Mot de passe actuel",
         "delete_account": "Supprimer le compte",
         "delete_account_sub": "Supprimer le compte et toutes ses données. Aucune récupération possible.",
-        "display_header": "{ currentValue, select, true {Masquer l’en-tête} false {Afficher l’en-tête} other {Not Hit}}",
         "enabled": "Activé",
         "example": "Exemple",
         "gen_invite": "Générer un lien d’invitation",

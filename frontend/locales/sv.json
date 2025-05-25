@@ -342,7 +342,6 @@
         "current_password": "Nuvarande lösenord",
         "delete_account": "Radera konto",
         "delete_account_sub": "Ta bort ditt konto och alla tillhörande data. Detta kan inte ångras.",
-        "display_header": "{ currentValue, select, true {Dölj sidhuvud} false {Visa sidhuvud} other {Inte träff}}",
         "enabled": "Aktiverad",
         "example": "Exempel",
         "gen_invite": "Skapa inbjudningslänk",

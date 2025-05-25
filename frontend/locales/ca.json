@@ -285,7 +285,6 @@
         "current_password": "Contrasenya actual",
         "delete_account": "Suprimeix el compte",
         "delete_account_sub": "Elimina el compte i totes les dades associades. Aquesta acció no es pot desfer.",
-        "display_header": "{ currentValue, select, true {Amaga la capçalera} false {Mostra la capçalera} other {Desconegut}}",
         "enabled": "Habilitat",
         "example": "Exemple",
         "gen_invite": "Genera un enllaç d'invitació",

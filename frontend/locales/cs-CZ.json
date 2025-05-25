@@ -348,7 +348,6 @@
         "current_password": "Aktuální heslo",
         "delete_account": "Smazat účet",
         "delete_account_sub": "Smaže se Váš účet a všechny s ním spojená data. Tuto akci nelze vrátit!",
-        "display_header": "{ currentValue, select, true {Hide Header} false {Show Header} other {Not Hit}}",
         "enabled": "Povoleno",
         "example": "Příklad",
         "gen_invite": "Vytvořit odkaz pozvánky",

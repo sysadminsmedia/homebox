@@ -307,7 +307,6 @@
         "current_password": "Kata sandi saat ini",
         "delete_account": "Hapus Akun",
         "delete_account_sub": "Hapus akun Anda dan semua data terkait.",
-        "display_header": "{ currentValue, select, true {Sembunyikan Header} false {Tampilkan Header} other {Not Hit}}",
         "enabled": "Tersedia",
         "example": "Contoh",
         "gen_invite": "Buat Tautan Undangan",

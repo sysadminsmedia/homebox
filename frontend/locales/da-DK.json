@@ -323,7 +323,6 @@
         "current_password": "Aktuel adgangskode",
         "delete_account": "Slet Konto",
         "delete_account_sub": "Slet din konto og alle dens tilknyttede data. Dette kan ikke laves om.",
-        "display_header": "{ currentValue, select, true {Hide Header} false {Show Header} other {Not Hit}}",
         "enabled": "Aktiveret",
         "example": "Eksempel",
         "gen_invite": "Generer invitationslink",

@@ -343,7 +343,6 @@
         "current_password": "Поточний пароль",
         "delete_account": "Видалити обліковий запис",
         "delete_account_sub": "Видалити акаунт і всі пов'язані дані. Це невідворотна дія.",
-        "display_header": "{ currentValue, select, true {Приховати заголовок} false {Показати заголовок} other {Відсутнє}}",
         "enabled": "Включено",
         "example": "Приклад",
         "gen_invite": "Створити посилання для запрошення",

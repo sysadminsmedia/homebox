@@ -342,7 +342,6 @@
         "current_password": "Bieżące hasło",
         "delete_account": "Usuń konto",
         "delete_account_sub": "Usuń swoje konto oraz wszystkie powiązane z nim dane. Tego nie można cofnąć.",
-        "display_header": "{currentValue, select, true {Ukryj nagłówek} false {Pokaż nagłówek} other {Nie dotyczy}}",
         "enabled": "Włączone",
         "example": "Przykład",
         "gen_invite": "Wygeneruj link z zaproszeniem",

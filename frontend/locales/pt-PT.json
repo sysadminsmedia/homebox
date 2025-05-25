@@ -269,7 +269,6 @@
         "current_password": "Senha Atual",
         "delete_account": "Eliminar Conta",
         "delete_account_sub": "Eliminar a sua conta e todos os dados associados. Esta ação não pode ser revertida.",
-        "display_header": "{ currentValue, select, true {Ocultar cabeçalho} false {Mostrar cabeçalho} other {Não atingido}}",
         "enabled": "Ativado",
         "gen_invite": "Gerar link de convite",
         "group_settings": "Definições de Grupo",

@@ -304,7 +304,6 @@
         "current_password": "Nåværende passord",
         "delete_account": "Slett konto",
         "delete_account_sub": "Slett kontoen din og alle data knyttet til den. Denne handlingen kan ikke angres.",
-        "display_header": "{ currentValue, select, true {Skjul overskrift} false {Vis overskrift} other {Ingen treff}}",
         "enabled": "Aktivert",
         "example": "Eksempel",
         "gen_invite": "Opprett invitasjonslenke",

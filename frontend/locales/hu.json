@@ -347,7 +347,6 @@
         "current_password": "Jelenlegi jelszó",
         "delete_account": "Fiók törlése",
         "delete_account_sub": "Törlöd a fiókodat és az összes kapcsolódó adatot. Ezt a műveletet nem lehet visszavonni.",
-        "display_header": "{ currentValue, select, true {Fejléc elrejtése} false {Fejléc megjelenítése} other{Nincs találat}}",
         "enabled": "Engedélyezve",
         "example": "Példa",
         "gen_invite": "Meghívó link létrehozása",

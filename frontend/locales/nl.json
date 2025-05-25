@@ -347,7 +347,6 @@
         "current_password": "Huidig Wachtwoord",
         "delete_account": "Verwijder account",
         "delete_account_sub": "Verwijder je account en alle bijhorende data. Deze actie kan niet ongedaan worden.",
-        "display_header": "{ currentValue, select, true {Header verbergen} false {Header weergeven} other {Geen gevonden}}",
         "enabled": "Ingeschakeld",
         "example": "Voorbeeld",
         "gen_invite": "Genereer Uitnodigingslink",

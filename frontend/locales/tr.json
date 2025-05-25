@@ -312,7 +312,6 @@
         "current_password": "Mevcut Şifre",
         "delete_account": "Hesabı Sil",
         "delete_account_sub": "Hesabınızı ve ona bağlı tüm verileri silin. Bu işlem geri alınamaz.",
-        "display_header": "{ currentValue, select, true {Başlığı Gizle} false {Başlığı Göster} other {Etkilenmedi}}",
         "enabled": "Etkinleştirildi",
         "example": "Örnek",
         "gen_invite": "Davet Bağlantısı Oluştur",
