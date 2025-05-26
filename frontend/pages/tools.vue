@@ -98,12 +98,15 @@
   import MdiDatabase from "~icons/mdi/database";
   import MdiAlert from "~icons/mdi/alert";
   import { useDialog } from "~/components/ui/dialog-provider";
+  import { useI18n } from "vue-i18n";
+
+  const { t } = useI18n();
 
   definePageMeta({
     middleware: ["auth"],
   });
   useHead({
-    title: "Homebox | Tools",
+    title: "HomeBox | " + t("menu.tools"),
   });
 
   const { openDialog } = useDialog();

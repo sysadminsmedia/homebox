@@ -9,8 +9,7 @@
 
       <DialogFooter>
         <span class="flex items-center gap-1 text-sm">
-          Use <Shortcut size="sm" :keys="['Shift']" /> + <Shortcut size="sm" :keys="['Enter']" /> to create and add
-          another.
+          {{ $t("components.app.create_modal.use")}} <Shortcut size="sm" :keys="['Shift']" /> + <Shortcut size="sm" :keys="['Enter']" /> {{ $t("components.app.create_modal.create_and_add")}}
         </span>
       </DialogFooter>
     </DialogScrollContent>

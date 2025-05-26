@@ -47,6 +47,9 @@
   import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
   import { cn } from "~/lib/utils";
   import { useId } from "#imports";
+  import { useI18n } from "vue-i18n";
+
+  const { t } = useI18n();
 
   type ItemsObject = {
     [key: string]: unknown;
@@ -81,6 +84,10 @@
   const open = ref(false);
   const search = ref(props.search);
   const value = useVModel(props, "modelValue", emit);
+
+  const localizedSearchPlaceholder = computed(() => props.searchPlaceholder ?? t('components.item.selector.search_placeholder'));
+  const localizedNoResultsText = computed(() => props.noResultsText ?? t('components.item.selector.no_results'));
+  const localizedPlaceholder = computed(() => props.placeholder ?? t('components.item.selector.placeholder'));
 
   watch(
     () => props.search,

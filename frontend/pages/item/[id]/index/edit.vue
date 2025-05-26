@@ -505,15 +505,15 @@
     <Dialog dialog-id="attachment-edit">
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Attachment Edit</DialogTitle>
+          <DialogTitle>{{ $t("items.edit.edit_attachment_dialog.title") }}</DialogTitle>
         </DialogHeader>
 
-        <FormTextField v-model="editState.title" label="Attachment Title" />
+        <FormTextField v-model="editState.title" :label="$t('items.edit.edit_attachment_dialog.attachment_title')" />
         <div>
-          <Label for="attachment-type"> Attachment Type </Label>
+          <Label for="attachment-type"> {{ $t("items.edit.edit_attachment_dialog.attachment_type") }} </Label>
           <Select id="attachment-type" v-model:model-value="editState.type">
             <SelectTrigger>
-              <SelectValue placeholder="Select a type" />
+              <SelectValue :placeholder="$t('items.edit.edit_attachment_dialog.select_type')" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem v-for="opt in attachmentOpts" :key="opt.value" :value="opt.value">
@@ -523,16 +523,15 @@
           </Select>
         </div>
         <div v-if="editState.type == 'photo'" class="mt-3 flex items-center gap-2">
-          <Checkbox id="primary" v-model="editState.primary" label="Primary Photo" />
+          <Checkbox id="primary" v-model="editState.primary" :label="$t('items.edit.edit_attachment_dialog.primary_photo')" />
           <label class="cursor-pointer text-sm" for="primary">
-            <span class="font-semibold">Primary Photo</span>
-            This options is only available for photos. Only one photo can be primary. If you select this option, the
-            current primary photo, if any will be unselected.
+            <span class="font-semibold">{{ $t('items.edit.edit_attachment_dialog.primary_photo') }}</span>
+            {{ $t('items.edit.edit_attachment_dialog.primary_photo_sub') }}
           </label>
         </div>
 
         <DialogFooter>
-          <Button :loading="editState.loading" @click="updateAttachment"> Update </Button>
+          <Button :loading="editState.loading" @click="updateAttachment"> {{ $t("global.update") }} </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -570,7 +569,7 @@
               @update:model-value="maybeSyncWithParentLocation()"
             />
             <div class="flex flex-col gap-2">
-              <Label class="px-1">Sync child items' locations</Label>
+              <Label class="px-1">{{ $t("items.sync_child_locations") }}</Label>
               <Switch v-model="item.syncChildItemsLocations" @update:model-value="syncChildItemsLocations()" />
             </div>
             <LabelSelector v-model="item.labelIds" :labels="labels" />
@@ -803,7 +802,7 @@
 
         <Card v-if="preferences.editorAdvancedView" class="overflow-visible shadow-xl">
           <div class="px-4 py-5 sm:px-6">
-            <h3 class="text-lg font-medium leading-6">Sold Details</h3>
+            <h3 class="text-lg font-medium leading-6">{{ $t("items.sold_details") }}</h3>
           </div>
           <div class="border-t sm:p-0">
             <div v-for="field in soldFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y">

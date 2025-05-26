@@ -12,6 +12,10 @@
                 "latest_version": "Latest Version",
                 "new_version_available": "New Version Available",
                 "new_version_available_link": "Click here to view the release notes"
+            },
+            "create_modal": {
+                "create_and_add": "to create and add another.",
+                "use": "Use"
             }
         },
         "global": {
@@ -62,14 +66,28 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "Download",
+                "open_new_tab": "Open in new tab"
+            },
             "create_modal": {
+                "delete_photo": "Delete photo",
                 "item_description": "Item Description",
                 "item_name": "Item Name",
                 "item_photo": "Item Photo 📷",
                 "item_quantity": "Item Quantity",
                 "parent_item" :"Parent Item",
+                "primary_photo": "primary photo",
+                "rotate_photo": "Rotate photo",
+                "set_as": "Set as",
                 "title": "Create Item",
-                "upload_photos": "Upload Photos"
+                "upload_photos": "Upload Photos",
+                "uploaded": "Uploaded Photo"
+            },
+            "selector": {
+                "no_results": "No Results Found",
+                "placeholder": "Select...",
+                "search_placeholder": "Type to search..."
             },
             "view": {
                 "selectable": {
@@ -128,6 +146,7 @@
         "created": "Created",
         "create_subitem": "Create Subitem",
         "delete": "Delete",
+        "demo_instance": "This is a demo instance",
         "details": "Details",
         "duplicate": "Duplicate",
         "edit": "Edit",
@@ -149,11 +168,13 @@
         "password": "Password",
         "quantity": "Quantity",
         "read_docs": "Read the Docs",
+        "return_home": "Return Home",
         "save": "Save",
         "search": "Search",
         "sign_out": "Sign Out",
         "submit": "Submit",
         "update": "Update",
+        "updating": "Updating",
         "value": "Value",
         "version": "Version: { version }",
         "welcome": "Welcome, { username }",
@@ -179,13 +200,15 @@
         "set_email": "What's your email?",
         "set_name": "What's your name?",
         "set_password": "Set your password",
-        "tagline": "Track, Organize, and Manage your Things."
+        "tagline": "Track, Organize, and Manage your Things.",
+        "title": "Organize and Tag Your Stuff"
     },
     "items": {
         "add": "Add",
         "advanced": "Advanced",
         "archived": "Archived",
         "asset_id": "Asset ID",
+        "associated_with_multiple": "This Asset Id is associated with multiple items",
         "attachment": "Attachment",
         "attachments": "Attachments",
         "changes_persisted_immediately": "Changes to attachments will be saved immediately",
@@ -194,6 +217,16 @@
         "description": "Description",
         "details": "Details",
         "drag_and_drop": "Drag and drop files here or click to select files",
+        "edit": {
+            "edit_attachment_dialog": {
+                "title": "Attachment Edit",
+                "attachment_title": "Attachment Title",
+                "attachment_type": "Attachment Type",
+                "select_type": "Select a type",
+                "primary_photo": "Primary Photo",
+                "primary_photo_sub": "This option is only available for photos. Only one photo can be primary. If you select this option, the current primary photo, if any will be unselected."
+            }
+        },
         "edit_details": "Edit Details",
         "field_selector": "Field Selector",
         "field_value": "Field Value",
@@ -210,6 +243,7 @@
         "name": "Name",
         "negate_labels": "Negate Selected Labels",
         "next_page": "Next Page",
+        "no_attachments": "No attachments found",
         "no_results": "No Items Found",
         "notes": "Notes",
         "only_with_photo": "Only items with photo",
@@ -237,6 +271,7 @@
         "sold_details": "Sold Details",
         "sold_price": "Sold Price",
         "sold_to": "Sold To",
+        "sync_child_locations": "Sync child items' locations",
         "tip_1": "Location and label filters use the 'OR' operation. If more than one is selected only one will be\n required for a match.",
         "tip_2": "Searches prefixed with '#'' will query for a asset ID (example '#000-001')",
         "tip_3": "Field filters use the 'OR' operation. If more than one is selected only one will be required for a\n match.",
@@ -371,6 +406,33 @@
         "url": "URL",
         "user_profile": "User Profile",
         "user_profile_sub": "Invite users, and manage your account."
+    },
+    "reports": {
+        "label_generator": {
+            "bordered_labels": "Bordered Labels",
+            "title": "Label Generator",
+            "asset_start": "Asset Start",
+            "asset_end": "Asset End",
+            "measure_type": "Measure Type",
+            "label_height": "Label Height",
+            "label_width": "Label Width",
+            "page_width": "Page Width",
+            "page_height": "Page Height",
+            "page_top_padding": "Page Top Padding",
+            "page_bottom_padding": "Page Bottom Padding",
+            "page_left_padding": "Page Left Padding",
+            "page_right_padding": "Page Right Padding",
+            "base_url": "Base URL",
+            "input_placeholder": "Type here",
+            "instruction_1": "The Homebox Label Generator is a tool to help you print labels for your Homebox inventory. These are intended to\n be print-ahead labels so you can print many labels and have them ready to apply",
+            "instruction_2": "As such, these labels work by printing a URL QR Code and AssetID information on a label. If you've disabled\n AssetID's in your Homebox settings, you can still use this tool, but the AssetID's won't reference any item",
+            "instruction_3": "This feature is in early development stages and may change in future releases, if you have feedback please\n provide it in the '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub Discussion'</a>'",
+            "tip_1": "The defaults here are setup for the\n '<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 label sheets'</a>'. If you're using a different sheet,\n you'll need to adjust the settings to match your sheet.",
+            "tip_2": "If you're customizing your sheet the dimensions are in inches. When building the 5260 sheet, I found that the\n dimensions used in their template, did not match what was needed to print within the boxes.\n '<b>'Be prepared for some trial and error.'</b>'",
+            "tip_3": "When printing be sure to:\n '<ol><li>'Set the margins to 0 or None'</li><li>'Set the scaling to 100%'</li><li>'Disable double-sided printing'</li><li>'Print a test page before printing multiple pages'</li></ol>'",
+            "tips": "Tips",
+            "qr_code_example": "QR Code Example"
+        }   
     },
     "scanner": {
         "error": "An error occurred while scanning",

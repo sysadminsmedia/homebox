@@ -22,13 +22,16 @@
     PaginationList,
     PaginationListItem,
   } from "@/components/ui/pagination";
+  import { useI18n } from "vue-i18n";
+
+  const { t } = useI18n();
 
   definePageMeta({
     middleware: ["auth"],
   });
 
   useHead({
-    title: "Homebox | Items",
+    title: "HomeBox | " + t("global.items"),
   });
 
   const searchLocked = ref(false);

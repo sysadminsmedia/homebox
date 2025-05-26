@@ -18,12 +18,15 @@
   import { badgeVariants } from "@/components/ui/badge";
   import LanguageSelector from "~/components/App/LanguageSelector.vue";
   import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+  import { useI18n } from "vue-i18n";
+
+  const { t } = useI18n();
 
   definePageMeta({
     middleware: ["auth"],
   });
   useHead({
-    title: "Homebox | Profile",
+    title: "HomeBox | " + t("menu.profile"),
   });
 
   const api = useUserApi();

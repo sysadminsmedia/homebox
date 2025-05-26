@@ -6,6 +6,9 @@
   import { ButtonGroup, Button } from "@/components/ui/button";
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
   import type { TreeItem } from "~/lib/api/types/data-contracts";
+  import { useI18n } from "vue-i18n";
+
+  const { t } = useI18n();
 
   // TODO: eventually move to https://reka-ui.com/docs/components/tree#draggable-sortable-tree
 
@@ -14,7 +17,7 @@
   });
 
   useHead({
-    title: "Homebox | Items",
+    title: "HomeBox | " + t("menu.locations"),
   });
 
   const api = useUserApi();

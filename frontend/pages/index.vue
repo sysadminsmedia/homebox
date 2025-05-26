@@ -13,9 +13,12 @@
   import { Button } from "@/components/ui/button";
   import LanguageSelector from "~/components/App/LanguageSelector.vue";
   import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+  import { useI18n } from "vue-i18n";
+
+  const { t } = useI18n();
 
   useHead({
-    title: "Homebox | Organize and Tag Your Stuff",
+    title: "HomeBox | " + t("index.title"),
   });
 
   definePageMeta({
@@ -260,7 +263,7 @@
                 </CardHeader>
                 <CardContent class="flex flex-col gap-2">
                   <template v-if="status && status.demo">
-                    <p class="text-center text-xs italic">This is a demo instance</p>
+                    <p class="text-center text-xs italic">{{ $t("global.demo_instance") }}</p>
                     <p class="text-center text-xs">
                       <b>{{ $t("global.email") }}</b> demo@example.com
                     </p>

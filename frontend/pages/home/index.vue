@@ -3,12 +3,15 @@
   import { itemsTable } from "./table";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
+  import { useI18n } from "vue-i18n";
+
+  const { t } = useI18n();
 
   definePageMeta({
     middleware: ["auth"],
   });
   useHead({
-    title: "Homebox | Home",
+    title: "HomeBox | " + t("menu.home"),
   });
 
   const api = useUserApi();

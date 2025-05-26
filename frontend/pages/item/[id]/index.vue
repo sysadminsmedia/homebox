@@ -714,7 +714,7 @@
               </template>
             </DetailsSection>
             <div v-else>
-              <p class="px-6 pb-4 text-foreground/70">No attachments found</p>
+              <p class="px-6 pb-4 text-foreground/70">{{ $t("items.no_attachments") }}</p>
             </div>
           </BaseCard>
 
