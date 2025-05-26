@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: dataaxiom/ghcr-cleanup-action@v1
         with:
-          dry-run: true
+          dry-run: false
           delete-untagged: true
           token: '${{ github.token }}'
           package: devcache
