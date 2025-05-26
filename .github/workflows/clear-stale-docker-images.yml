@@ -18,6 +18,7 @@ jobs:
           delete-ghost-images: true
           delete-partial-images: true
           delete-orphaned-images: true
+          delete-untagged: true
           validate: true
           token: '${{ github.token }}'
           owner: 'sysadminsmedia'
