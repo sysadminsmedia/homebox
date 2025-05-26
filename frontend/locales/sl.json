@@ -142,6 +142,7 @@
         "items": "Predmeti",
         "join_discord": "Pridruži se na Discord",
         "labels": "Oznake",
+        "loading": "Nalaganje...",
         "locations": "Lokacije",
         "maintenance": "Vzdrževanje",
         "name": "Naziv",
@@ -347,6 +348,7 @@
         "current_password": "Trenutno geslo",
         "delete_account": "Izbriši račun",
         "delete_account_sub": "Izbrišite svoj račun in vse z njim povezane podatke. Tega ni mogoče razveljaviti.",
+        "display_legacy_header": "{ currentValue, select, true {Onemogoči staro glavo strani} false {Omogoči staro glavo strani} other {Ni pritisnjeno}}",
         "enabled": "Omogočeno",
         "example": "Primer",
         "gen_invite": "Ustvari povezavo povabila",
@@ -374,6 +376,7 @@
         "error": "Med optičnim branjem je prišlo do napake",
         "invalid_url": "Neveljaven URL naslov v črtni kodi",
         "no_sources": "Ni kamer / video virov",
+        "permission_denied": "Dovoljenje za kamero je zavrnjeno. Dovolite dostop do kamere v nastavitvah brskalnika",
         "select_video_source": "Izberi kamero / video vir",
         "title": "Optični bralnik",
         "unsupported": "API za pretok medijev ni na voljo brez HTTPS"
