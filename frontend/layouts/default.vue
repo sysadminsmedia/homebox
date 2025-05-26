@@ -137,7 +137,7 @@
                 </Button>
               </div>
               <div>
-                <Button size="icon" @click="openDialog('scanner')">
+                <Button size="icon" @click="openScanner">
                   <MdiQrcodeScan />
                 </Button>
               </div>
@@ -207,6 +207,7 @@
   import { useDialog } from "~/components/ui/dialog-provider";
   import { Input } from "~/components/ui/input";
   import { Button } from "~/components/ui/button";
+  import { toast } from "@/components/ui/sonner";
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
@@ -238,6 +239,23 @@
       if (document.activeElement && "blur" in document.activeElement) {
         (document.activeElement as HTMLElement).blur();
       }
+    }
+  };
+
+  const openScanner = () => {
+    // request permission
+    if (navigator.mediaDevices) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then(() => {
+          openDialog("scanner");
+        })
+        .catch(err => {
+          console.error(err);
+          toast.error(t("scanner.permission_denied"));
+        });
+    } else {
+      toast.error(t("scanner.unsupported"));
     }
   };
 

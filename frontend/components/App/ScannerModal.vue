@@ -57,10 +57,25 @@
     errorMessage.value = t("scanner.error");
   };
 
+  const checkPermissionsError = async () => {
+    if (navigator.permissions) {
+      const permissionStatus = await navigator.permissions.query({ name: "camera" as PermissionName });
+      if (permissionStatus.state === "denied") {
+        errorMessage.value = t("scanner.permission_denied");
+        console.error("Camera permission denied");
+        return true;
+      }
+    }
+  };
+
   const startScanner = async () => {
     errorMessage.value = null;
     if (!(navigator && navigator.mediaDevices && "enumerateDevices" in navigator.mediaDevices)) {
       errorMessage.value = t("scanner.unsupported");
+      return;
+    }
+
+    if (await checkPermissionsError()) {
       return;
     }
 

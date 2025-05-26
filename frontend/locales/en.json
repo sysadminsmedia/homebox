@@ -440,7 +440,8 @@
         "no_sources": "No video sources available",
         "select_video_source": "Pick a video source",
         "title": "Scanner",
-        "unsupported": "Media Stream API is not supported without HTTPS"
+        "unsupported": "Media Stream API is not supported without HTTPS",
+        "permission_denied": "Camera permission denied, please allow access to the camera in your browser settings"
     },
     "tools": {
         "actions": "Inventory Actions",
