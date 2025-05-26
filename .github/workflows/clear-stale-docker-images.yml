@@ -7,7 +7,7 @@ on:
 
 jobs:
   delete-old-images-main:
-    name: Delete Untagged Images
+    name: Delete Old Images for Main Repo
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -21,15 +21,13 @@ jobs:
           delete-untagged: true
           validate: true
           token: '${{ github.token }}'
-          owner: 'sysadminsmedia'
-          repository: 'homebox'
-          package: 'homebox'
+          package: homebox
           use-regex: true
           exclude-tags: latest,latest-rootless,main,main-rootless,nightly,nightly-rootless,*.*.*,0.*,0,*.*.*-rootless,0.*-rootless,0-rootless
           older-than: 180 days
 
   delete-old-images-devcache:
-    name: Delete Untagged Images
+    name: Delete Old Devcache Images
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -39,7 +37,5 @@ jobs:
           dry-run: true
           delete-untagged: true
           token: '${{ github.token }}'
-          owner: 'sysadminsmedia'
-          repository: 'homebox'
-          package: 'devcache'
+          package: devcache
           older-than: 90 days
