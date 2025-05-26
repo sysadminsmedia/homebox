@@ -1,6 +1,9 @@
 package hasher
 
-import "testing"
+import (
+	"golang.org/x/crypto/bcrypt"
+	"testing"
+)
 
 func TestHashPassword(t *testing.T) {
 	t.Parallel()
@@ -68,7 +71,6 @@ func TestHashPasswordWithLegacyBcrypt(t *testing.T) {
 	t.Parallel()
 	type args struct {
 		password      string
-		legacyHash    string
 		invalidInputs []string
 	}
 	tests := []struct {
@@ -79,17 +81,17 @@ func TestHashPasswordWithLegacyBcrypt(t *testing.T) {
 			name: "bcrypt_legacy_password",
 			args: args{
 				password:      "legacyPassword123",
-				legacyHash:    "$2a$12$FkuCD7nl.FHHAEVv2W2Uaeq7HMTGQMRNl4NChzWMHgQkRfV.p2d2a",
 				invalidInputs: []string{"wrongPassword", "123456", "anotherWrongPassword"},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			legacyHash, _ := bcrypt.GenerateFromPassword([]byte(tt.args.password), bcrypt.DefaultCost)
 			// Validate correct password against legacy bcrypt hash
-			check, rehash := CheckPasswordHash(tt.args.password, tt.args.legacyHash)
+			check, rehash := CheckPasswordHash(tt.args.password, string(legacyHash))
 			if !check {
-				t.Errorf("CheckPasswordHash() failed to validate legacy bcrypt password=%v against hash=%v", tt.args.password, tt.args.legacyHash)
+				t.Errorf("CheckPasswordHash() failed to validate legacy bcrypt password=%v against hash=%v", tt.args.password, string(legacyHash))
 			}
 			if !rehash {
 				t.Errorf("CheckPasswordHash() did not indicate rehashing for legacy bcrypt password=%v", tt.args.password)
@@ -97,9 +99,9 @@ func TestHashPasswordWithLegacyBcrypt(t *testing.T) {
 
 			// Validate incorrect passwords against legacy bcrypt hash
 			for _, invalid := range tt.args.invalidInputs {
-				check, _ := CheckPasswordHash(invalid, tt.args.legacyHash)
+				check, _ := CheckPasswordHash(invalid, string(legacyHash))
 				if check {
-					t.Errorf("CheckPasswordHash() improperly validated invalid password=%v against legacy hash=%v", invalid, tt.args.legacyHash)
+					t.Errorf("CheckPasswordHash() improperly validated invalid password=%v against legacy hash=%v", invalid, string(legacyHash))
 				}
 			}
 		})
