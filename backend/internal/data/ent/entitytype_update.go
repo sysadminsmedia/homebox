@@ -111,16 +111,16 @@ func (etu *EntityTypeUpdate) ClearColor() *EntityTypeUpdate {
 	return etu
 }
 
-// SetLocationType sets the "location_type" field.
-func (etu *EntityTypeUpdate) SetLocationType(b bool) *EntityTypeUpdate {
-	etu.mutation.SetLocationType(b)
+// SetIsLocation sets the "is_location" field.
+func (etu *EntityTypeUpdate) SetIsLocation(b bool) *EntityTypeUpdate {
+	etu.mutation.SetIsLocation(b)
 	return etu
 }
 
-// SetNillableLocationType sets the "location_type" field if the given value is not nil.
-func (etu *EntityTypeUpdate) SetNillableLocationType(b *bool) *EntityTypeUpdate {
+// SetNillableIsLocation sets the "is_location" field if the given value is not nil.
+func (etu *EntityTypeUpdate) SetNillableIsLocation(b *bool) *EntityTypeUpdate {
 	if b != nil {
-		etu.SetLocationType(*b)
+		etu.SetIsLocation(*b)
 	}
 	return etu
 }
@@ -283,8 +283,8 @@ func (etu *EntityTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if etu.mutation.ColorCleared() {
 		_spec.ClearField(entitytype.FieldColor, field.TypeString)
 	}
-	if value, ok := etu.mutation.LocationType(); ok {
-		_spec.SetField(entitytype.FieldLocationType, field.TypeBool, value)
+	if value, ok := etu.mutation.IsLocation(); ok {
+		_spec.SetField(entitytype.FieldIsLocation, field.TypeBool, value)
 	}
 	if etu.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -460,16 +460,16 @@ func (etuo *EntityTypeUpdateOne) ClearColor() *EntityTypeUpdateOne {
 	return etuo
 }
 
-// SetLocationType sets the "location_type" field.
-func (etuo *EntityTypeUpdateOne) SetLocationType(b bool) *EntityTypeUpdateOne {
-	etuo.mutation.SetLocationType(b)
+// SetIsLocation sets the "is_location" field.
+func (etuo *EntityTypeUpdateOne) SetIsLocation(b bool) *EntityTypeUpdateOne {
+	etuo.mutation.SetIsLocation(b)
 	return etuo
 }
 
-// SetNillableLocationType sets the "location_type" field if the given value is not nil.
-func (etuo *EntityTypeUpdateOne) SetNillableLocationType(b *bool) *EntityTypeUpdateOne {
+// SetNillableIsLocation sets the "is_location" field if the given value is not nil.
+func (etuo *EntityTypeUpdateOne) SetNillableIsLocation(b *bool) *EntityTypeUpdateOne {
 	if b != nil {
-		etuo.SetLocationType(*b)
+		etuo.SetIsLocation(*b)
 	}
 	return etuo
 }
@@ -662,8 +662,8 @@ func (etuo *EntityTypeUpdateOne) sqlSave(ctx context.Context) (_node *EntityType
 	if etuo.mutation.ColorCleared() {
 		_spec.ClearField(entitytype.FieldColor, field.TypeString)
 	}
-	if value, ok := etuo.mutation.LocationType(); ok {
-		_spec.SetField(entitytype.FieldLocationType, field.TypeBool, value)
+	if value, ok := etuo.mutation.IsLocation(); ok {
+		_spec.SetField(entitytype.FieldIsLocation, field.TypeBool, value)
 	}
 	if etuo.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{

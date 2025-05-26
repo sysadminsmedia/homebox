@@ -28,7 +28,7 @@ func (EntityType) Fields() []ent.Field {
 		field.String("color").
 			MaxLen(255).
 			Optional(),
-		field.Bool("location_type").
+		field.Bool("is_location").
 			Default(false),
 	}
 }
@@ -37,7 +37,7 @@ func (EntityType) Indexes() []ent.Index {
 	return []ent.Index{
 		// Unique index on the "title" field.
 		index.Fields("name"),
-		index.Fields("location_type"),
+		index.Fields("is_location"),
 	}
 }
 

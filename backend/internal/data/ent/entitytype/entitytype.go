@@ -27,8 +27,8 @@ const (
 	FieldIcon = "icon"
 	// FieldColor holds the string denoting the color field in the database.
 	FieldColor = "color"
-	// FieldLocationType holds the string denoting the location_type field in the database.
-	FieldLocationType = "location_type"
+	// FieldIsLocation holds the string denoting the is_location field in the database.
+	FieldIsLocation = "is_location"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
 	EdgeGroup = "group"
 	// EdgeEntities holds the string denoting the entities edge name in mutations.
@@ -60,7 +60,7 @@ var Columns = []string{
 	FieldDescription,
 	FieldIcon,
 	FieldColor,
-	FieldLocationType,
+	FieldIsLocation,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "entity_types"
@@ -99,8 +99,8 @@ var (
 	IconValidator func(string) error
 	// ColorValidator is a validator for the "color" field. It is called by the builders before save.
 	ColorValidator func(string) error
-	// DefaultLocationType holds the default value on creation for the "location_type" field.
-	DefaultLocationType bool
+	// DefaultIsLocation holds the default value on creation for the "is_location" field.
+	DefaultIsLocation bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
@@ -143,9 +143,9 @@ func ByColor(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldColor, opts...).ToFunc()
 }
 
-// ByLocationType orders the results by the location_type field.
-func ByLocationType(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldLocationType, opts...).ToFunc()
+// ByIsLocation orders the results by the is_location field.
+func ByIsLocation(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldIsLocation, opts...).ToFunc()
 }
 
 // ByGroupField orders the results by group field.

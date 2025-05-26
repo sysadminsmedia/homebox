@@ -86,9 +86,9 @@ func Color(v string) predicate.EntityType {
 	return predicate.EntityType(sql.FieldEQ(FieldColor, v))
 }
 
-// LocationType applies equality check predicate on the "location_type" field. It's identical to LocationTypeEQ.
-func LocationType(v bool) predicate.EntityType {
-	return predicate.EntityType(sql.FieldEQ(FieldLocationType, v))
+// IsLocation applies equality check predicate on the "is_location" field. It's identical to IsLocationEQ.
+func IsLocation(v bool) predicate.EntityType {
+	return predicate.EntityType(sql.FieldEQ(FieldIsLocation, v))
 }
 
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
@@ -461,14 +461,14 @@ func ColorContainsFold(v string) predicate.EntityType {
 	return predicate.EntityType(sql.FieldContainsFold(FieldColor, v))
 }
 
-// LocationTypeEQ applies the EQ predicate on the "location_type" field.
-func LocationTypeEQ(v bool) predicate.EntityType {
-	return predicate.EntityType(sql.FieldEQ(FieldLocationType, v))
+// IsLocationEQ applies the EQ predicate on the "is_location" field.
+func IsLocationEQ(v bool) predicate.EntityType {
+	return predicate.EntityType(sql.FieldEQ(FieldIsLocation, v))
 }
 
-// LocationTypeNEQ applies the NEQ predicate on the "location_type" field.
-func LocationTypeNEQ(v bool) predicate.EntityType {
-	return predicate.EntityType(sql.FieldNEQ(FieldLocationType, v))
+// IsLocationNEQ applies the NEQ predicate on the "is_location" field.
+func IsLocationNEQ(v bool) predicate.EntityType {
+	return predicate.EntityType(sql.FieldNEQ(FieldIsLocation, v))
 }
 
 // HasGroup applies the HasEdge predicate on the "group" edge.

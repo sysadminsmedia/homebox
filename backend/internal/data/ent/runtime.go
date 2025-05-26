@@ -285,10 +285,10 @@ func init() {
 	entitytypeDescColor := entitytypeFields[1].Descriptor()
 	// entitytype.ColorValidator is a validator for the "color" field. It is called by the builders before save.
 	entitytype.ColorValidator = entitytypeDescColor.Validators[0].(func(string) error)
-	// entitytypeDescLocationType is the schema descriptor for location_type field.
-	entitytypeDescLocationType := entitytypeFields[2].Descriptor()
-	// entitytype.DefaultLocationType holds the default value on creation for the location_type field.
-	entitytype.DefaultLocationType = entitytypeDescLocationType.Default.(bool)
+	// entitytypeDescIsLocation is the schema descriptor for is_location field.
+	entitytypeDescIsLocation := entitytypeFields[2].Descriptor()
+	// entitytype.DefaultIsLocation holds the default value on creation for the is_location field.
+	entitytype.DefaultIsLocation = entitytypeDescIsLocation.Default.(bool)
 	// entitytypeDescID is the schema descriptor for id field.
 	entitytypeDescID := entitytypeMixinFields0[0].Descriptor()
 	// entitytype.DefaultID holds the default value on creation for the id field.

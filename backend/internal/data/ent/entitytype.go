@@ -31,8 +31,8 @@ type EntityType struct {
 	Icon string `json:"icon,omitempty"`
 	// Color holds the value of the "color" field.
 	Color string `json:"color,omitempty"`
-	// LocationType holds the value of the "location_type" field.
-	LocationType bool `json:"location_type,omitempty"`
+	// IsLocation holds the value of the "is_location" field.
+	IsLocation bool `json:"is_location,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the EntityTypeQuery when eager-loading is set.
 	Edges              EntityTypeEdges `json:"edges"`
@@ -76,7 +76,7 @@ func (*EntityType) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case entitytype.FieldLocationType:
+		case entitytype.FieldIsLocation:
 			values[i] = new(sql.NullBool)
 		case entitytype.FieldName, entitytype.FieldDescription, entitytype.FieldIcon, entitytype.FieldColor:
 			values[i] = new(sql.NullString)
@@ -143,11 +143,11 @@ func (et *EntityType) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				et.Color = value.String
 			}
-		case entitytype.FieldLocationType:
+		case entitytype.FieldIsLocation:
 			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field location_type", values[i])
+				return fmt.Errorf("unexpected type %T for field is_location", values[i])
 			} else if value.Valid {
-				et.LocationType = value.Bool
+				et.IsLocation = value.Bool
 			}
 		case entitytype.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
@@ -220,8 +220,8 @@ func (et *EntityType) String() string {
 	builder.WriteString("color=")
 	builder.WriteString(et.Color)
 	builder.WriteString(", ")
-	builder.WriteString("location_type=")
-	builder.WriteString(fmt.Sprintf("%v", et.LocationType))
+	builder.WriteString("is_location=")
+	builder.WriteString(fmt.Sprintf("%v", et.IsLocation))
 	builder.WriteByte(')')
 	return builder.String()
 }

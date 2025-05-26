@@ -99,16 +99,16 @@ func (etc *EntityTypeCreate) SetNillableColor(s *string) *EntityTypeCreate {
 	return etc
 }
 
-// SetLocationType sets the "location_type" field.
-func (etc *EntityTypeCreate) SetLocationType(b bool) *EntityTypeCreate {
-	etc.mutation.SetLocationType(b)
+// SetIsLocation sets the "is_location" field.
+func (etc *EntityTypeCreate) SetIsLocation(b bool) *EntityTypeCreate {
+	etc.mutation.SetIsLocation(b)
 	return etc
 }
 
-// SetNillableLocationType sets the "location_type" field if the given value is not nil.
-func (etc *EntityTypeCreate) SetNillableLocationType(b *bool) *EntityTypeCreate {
+// SetNillableIsLocation sets the "is_location" field if the given value is not nil.
+func (etc *EntityTypeCreate) SetNillableIsLocation(b *bool) *EntityTypeCreate {
 	if b != nil {
-		etc.SetLocationType(*b)
+		etc.SetIsLocation(*b)
 	}
 	return etc
 }
@@ -196,9 +196,9 @@ func (etc *EntityTypeCreate) defaults() {
 		v := entitytype.DefaultUpdatedAt()
 		etc.mutation.SetUpdatedAt(v)
 	}
-	if _, ok := etc.mutation.LocationType(); !ok {
-		v := entitytype.DefaultLocationType
-		etc.mutation.SetLocationType(v)
+	if _, ok := etc.mutation.IsLocation(); !ok {
+		v := entitytype.DefaultIsLocation
+		etc.mutation.SetIsLocation(v)
 	}
 	if _, ok := etc.mutation.ID(); !ok {
 		v := entitytype.DefaultID()
@@ -237,8 +237,8 @@ func (etc *EntityTypeCreate) check() error {
 			return &ValidationError{Name: "color", err: fmt.Errorf(`ent: validator failed for field "EntityType.color": %w`, err)}
 		}
 	}
-	if _, ok := etc.mutation.LocationType(); !ok {
-		return &ValidationError{Name: "location_type", err: errors.New(`ent: missing required field "EntityType.location_type"`)}
+	if _, ok := etc.mutation.IsLocation(); !ok {
+		return &ValidationError{Name: "is_location", err: errors.New(`ent: missing required field "EntityType.is_location"`)}
 	}
 	if len(etc.mutation.GroupIDs()) == 0 {
 		return &ValidationError{Name: "group", err: errors.New(`ent: missing required edge "EntityType.group"`)}
@@ -302,9 +302,9 @@ func (etc *EntityTypeCreate) createSpec() (*EntityType, *sqlgraph.CreateSpec) {
 		_spec.SetField(entitytype.FieldColor, field.TypeString, value)
 		_node.Color = value
 	}
-	if value, ok := etc.mutation.LocationType(); ok {
-		_spec.SetField(entitytype.FieldLocationType, field.TypeBool, value)
-		_node.LocationType = value
+	if value, ok := etc.mutation.IsLocation(); ok {
+		_spec.SetField(entitytype.FieldIsLocation, field.TypeBool, value)
+		_node.IsLocation = value
 	}
 	if nodes := etc.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

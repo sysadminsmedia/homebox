@@ -5375,7 +5375,7 @@ type EntityTypeMutation struct {
 	description     *string
 	icon            *string
 	color           *string
-	location_type   *bool
+	is_location     *bool
 	clearedFields   map[string]struct{}
 	group           *uuid.UUID
 	clearedgroup    bool
@@ -5746,40 +5746,40 @@ func (m *EntityTypeMutation) ResetColor() {
 	delete(m.clearedFields, entitytype.FieldColor)
 }
 
-// SetLocationType sets the "location_type" field.
-func (m *EntityTypeMutation) SetLocationType(b bool) {
-	m.location_type = &b
+// SetIsLocation sets the "is_location" field.
+func (m *EntityTypeMutation) SetIsLocation(b bool) {
+	m.is_location = &b
 }
 
-// LocationType returns the value of the "location_type" field in the mutation.
-func (m *EntityTypeMutation) LocationType() (r bool, exists bool) {
-	v := m.location_type
+// IsLocation returns the value of the "is_location" field in the mutation.
+func (m *EntityTypeMutation) IsLocation() (r bool, exists bool) {
+	v := m.is_location
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldLocationType returns the old "location_type" field's value of the EntityType entity.
+// OldIsLocation returns the old "is_location" field's value of the EntityType entity.
 // If the EntityType object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *EntityTypeMutation) OldLocationType(ctx context.Context) (v bool, err error) {
+func (m *EntityTypeMutation) OldIsLocation(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldLocationType is only allowed on UpdateOne operations")
+		return v, errors.New("OldIsLocation is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldLocationType requires an ID field in the mutation")
+		return v, errors.New("OldIsLocation requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldLocationType: %w", err)
+		return v, fmt.Errorf("querying old value for OldIsLocation: %w", err)
 	}
-	return oldValue.LocationType, nil
+	return oldValue.IsLocation, nil
 }
 
-// ResetLocationType resets all changes to the "location_type" field.
-func (m *EntityTypeMutation) ResetLocationType() {
-	m.location_type = nil
+// ResetIsLocation resets all changes to the "is_location" field.
+func (m *EntityTypeMutation) ResetIsLocation() {
+	m.is_location = nil
 }
 
 // SetGroupID sets the "group" edge to the Group entity by id.
@@ -5928,8 +5928,8 @@ func (m *EntityTypeMutation) Fields() []string {
 	if m.color != nil {
 		fields = append(fields, entitytype.FieldColor)
 	}
-	if m.location_type != nil {
-		fields = append(fields, entitytype.FieldLocationType)
+	if m.is_location != nil {
+		fields = append(fields, entitytype.FieldIsLocation)
 	}
 	return fields
 }
@@ -5951,8 +5951,8 @@ func (m *EntityTypeMutation) Field(name string) (ent.Value, bool) {
 		return m.Icon()
 	case entitytype.FieldColor:
 		return m.Color()
-	case entitytype.FieldLocationType:
-		return m.LocationType()
+	case entitytype.FieldIsLocation:
+		return m.IsLocation()
 	}
 	return nil, false
 }
@@ -5974,8 +5974,8 @@ func (m *EntityTypeMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldIcon(ctx)
 	case entitytype.FieldColor:
 		return m.OldColor(ctx)
-	case entitytype.FieldLocationType:
-		return m.OldLocationType(ctx)
+	case entitytype.FieldIsLocation:
+		return m.OldIsLocation(ctx)
 	}
 	return nil, fmt.Errorf("unknown EntityType field %s", name)
 }
@@ -6027,12 +6027,12 @@ func (m *EntityTypeMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetColor(v)
 		return nil
-	case entitytype.FieldLocationType:
+	case entitytype.FieldIsLocation:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetLocationType(v)
+		m.SetIsLocation(v)
 		return nil
 	}
 	return fmt.Errorf("unknown EntityType field %s", name)
@@ -6122,8 +6122,8 @@ func (m *EntityTypeMutation) ResetField(name string) error {
 	case entitytype.FieldColor:
 		m.ResetColor()
 		return nil
-	case entitytype.FieldLocationType:
-		m.ResetLocationType()
+	case entitytype.FieldIsLocation:
+		m.ResetIsLocation()
 		return nil
 	}
 	return fmt.Errorf("unknown EntityType field %s", name)

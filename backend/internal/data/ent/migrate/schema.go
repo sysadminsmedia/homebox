@@ -216,7 +216,7 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
 		{Name: "icon", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "color", Type: field.TypeString, Nullable: true, Size: 255},
-		{Name: "location_type", Type: field.TypeBool, Default: false},
+		{Name: "is_location", Type: field.TypeBool, Default: false},
 		{Name: "group_entity_types", Type: field.TypeUUID},
 	}
 	// EntityTypesTable holds the schema information for the "entity_types" table.
@@ -239,7 +239,7 @@ var (
 				Columns: []*schema.Column{EntityTypesColumns[3]},
 			},
 			{
-				Name:    "entitytype_location_type",
+				Name:    "entitytype_is_location",
 				Unique:  false,
 				Columns: []*schema.Column{EntityTypesColumns[7]},
 			},
