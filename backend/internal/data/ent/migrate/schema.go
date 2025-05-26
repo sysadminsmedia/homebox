@@ -111,7 +111,7 @@ var (
 		{Name: "sold_price", Type: field.TypeFloat64, Default: 0},
 		{Name: "sold_notes", Type: field.TypeString, Nullable: true, Size: 1000},
 		{Name: "entity_children", Type: field.TypeUUID, Nullable: true},
-		{Name: "entity_location", Type: field.TypeUUID, Nullable: true},
+		{Name: "entity_location", Type: field.TypeUUID, Unique: true, Nullable: true},
 		{Name: "entity_type_entities", Type: field.TypeUUID, Nullable: true},
 		{Name: "group_entities", Type: field.TypeUUID},
 	}

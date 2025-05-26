@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"fmt"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"time"
 
 	"github.com/google/uuid"
@@ -178,7 +179,7 @@ var mapItemsSummaryErr = mapTEachErrFunc(mapItemSummary)
 func mapItemSummary(item *ent.Entity) ItemSummary {
 	var location *LocationSummary
 	if item.Edges.Location != nil {
-		loc := mapLocationSummary(item.Edges.Location)
+		loc := mapLocationSummary(item.QueryLocation().Where(entity.HasTypeWith(entitytype.IsLocationEQ(true))).FirstX(context.Background()))
 		location = &loc
 	}
 
@@ -295,7 +296,7 @@ func (e *ItemsRepository) publishMutationEvent(gid uuid.UUID) {
 }
 
 func (e *ItemsRepository) getOne(ctx context.Context, where ...predicate.Entity) (ItemOut, error) {
-	q := e.db.Entity.Query().Where(where...).Where(entity.TypeEQ("item"))
+	q := e.db.Entity.Query().Where(where...).Where(entity.HasTypeWith(entitytype.IsLocationEQ(false)))
 
 	return mapItemOutErr(q.
 		WithFields().
@@ -315,25 +316,25 @@ func (e *ItemsRepository) GetOne(ctx context.Context, id uuid.UUID) (ItemOut, er
 }
 
 func (e *ItemsRepository) CheckRef(ctx context.Context, gid uuid.UUID, ref string) (bool, error) {
-	q := e.db.Entity.Query().Where(entity.HasGroupWith(group.ID(gid)), entity.TypeEQ("item"))
+	q := e.db.Entity.Query().Where(entity.HasGroupWith(group.ID(gid)), entity.HasTypeWith(entitytype.IsLocationEQ(false)))
 	return q.Where(entity.ImportRef(ref)).Exist(ctx)
 }
 
 func (e *ItemsRepository) GetByRef(ctx context.Context, gid uuid.UUID, ref string) (ItemOut, error) {
-	return e.getOne(ctx, entity.ImportRef(ref), entity.HasGroupWith(group.ID(gid)), entity.TypeEQ("item"))
+	return e.getOne(ctx, entity.ImportRef(ref), entity.HasGroupWith(group.ID(gid)), entity.HasTypeWith(entitytype.IsLocationEQ(false)))
 }
 
 // GetOneByGroup returns a single item by ID. If the item does not exist, an error is returned.
 // GetOneByGroup ensures that the item belongs to a specific group.
 func (e *ItemsRepository) GetOneByGroup(ctx context.Context, gid, id uuid.UUID) (ItemOut, error) {
-	return e.getOne(ctx, entity.ID(id), entity.HasGroupWith(group.ID(gid)), entity.TypeEQ("item"))
+	return e.getOne(ctx, entity.ID(id), entity.HasGroupWith(group.ID(gid)), entity.HasTypeWith(entitytype.IsLocationEQ(false)))
 }
 
 // QueryByGroup returns a list of items that belong to a specific group based on the provided query.
 func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q ItemQuery) (PaginationResult[ItemSummary], error) {
 	qb := e.db.Entity.Query().Where(
 		entity.HasGroupWith(group.ID(gid)),
-		entity.TypeEQ("item"),
+		entity.HasTypeWith(entitytype.IsLocationEQ(false)),
 	)
 
 	if q.IncludeArchived {
@@ -413,7 +414,7 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 		if len(q.LocationIDs) > 0 {
 			locationPredicates := make([]predicate.Entity, 0, len(q.LocationIDs))
 			for _, l := range q.LocationIDs {
-				locationPredicates = append(locationPredicates, entity.HasLocationWith(entity.ID(l), entity.TypeEQ("location")))
+				locationPredicates = append(locationPredicates, entity.HasLocationWith(entity.ID(l), entity.HasTypeWith(entitytype.IsLocationEQ(false))))
 			}
 
 			andPredicates = append(andPredicates, entity.Or(locationPredicates...))
@@ -492,7 +493,7 @@ func (e *ItemsRepository) QueryByAssetID(ctx context.Context, gid uuid.UUID, ass
 	qb := e.db.Entity.Query().Where(
 		entity.HasGroupWith(group.ID(gid)),
 		entity.AssetID(int(assetID)),
-		entity.TypeEQ("item"),
+		entity.HasTypeWith(entitytype.IsLocationEQ(false)),
 	)
 
 	if page != -1 || pageSize != -1 {
@@ -524,7 +525,7 @@ func (e *ItemsRepository) QueryByAssetID(ctx context.Context, gid uuid.UUID, ass
 // GetAll returns all the items in the database with the Labels and Locations eager loaded.
 func (e *ItemsRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]ItemOut, error) {
 	return mapItemsOutErr(e.db.Entity.Query().
-		Where(entity.HasGroupWith(group.ID(gid)), entity.TypeEQ("item")).
+		Where(entity.HasGroupWith(group.ID(gid)), entity.HasTypeWith(entitytype.IsLocationEQ(false))).
 		WithLabel().
 		WithLocation().
 		WithFields().
@@ -577,8 +578,8 @@ func (e *ItemsRepository) Create(ctx context.Context, gid uuid.UUID, data ItemCr
 		SetQuantity(data.Quantity).
 		SetDescription(data.Description).
 		SetGroupID(gid).
-		SetLocationID(data.LocationID).
-		SetAssetID(int(data.AssetID))
+		SetAssetID(int(data.AssetID)).
+		SetLocationID(data.LocationID)
 
 	if len(data.LabelIDs) > 0 {
 		q.AddLabelIDs(data.LabelIDs...)
@@ -643,7 +644,7 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 		SetAssetID(int(data.AssetID)).
 		SetSyncChildEntitiesLocations(data.SyncChildItemsLocations)
 
-	currentLabels, err := e.db.Entity.Query().Where(entity.ID(data.ID), entity.TypeEQ("item")).QueryLabel().All(ctx)
+	currentLabels, err := e.db.Entity.Query().Where(entity.ID(data.ID), entity.HasTypeWith(entitytype.IsLocationEQ(false))).QueryLabel().All(ctx)
 	if err != nil {
 		return ItemOut{}, err
 	}
@@ -669,7 +670,7 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 	}
 
 	if data.SyncChildItemsLocations {
-		children, err := e.db.Entity.Query().Where(entity.ID(data.ID), entity.TypeEQ("item")).QueryChildren().All(ctx)
+		children, err := e.db.Entity.Query().Where(entity.ID(data.ID), entity.HasTypeWith(entitytype.IsLocationEQ(false))).QueryChildren().All(ctx)
 		if err != nil {
 			return ItemOut{}, err
 		}
@@ -695,7 +696,7 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 		return ItemOut{}, err
 	}
 
-	fields, err := e.db.EntityField.Query().Where(entityfield.HasEntityWith(entity.ID(data.ID), entity.TypeEQ("item"))).All(ctx)
+	fields, err := e.db.EntityField.Query().Where(entityfield.HasEntityWith(entity.ID(data.ID), entity.HasTypeWith(entitytype.IsLocationEQ(false)))).All(ctx)
 	if err != nil {
 		return ItemOut{}, err
 	}
@@ -723,7 +724,7 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 		opt := e.db.EntityField.Update().
 			Where(
 				entityfield.ID(f.ID),
-				entityfield.HasEntityWith(entity.ID(data.ID), entity.TypeEQ("item")),
+				entityfield.HasEntityWith(entity.ID(data.ID), entity.HasTypeWith(entitytype.IsLocationEQ(false))),
 			).
 			SetType(entityfield.Type(f.Type)).
 			SetName(f.Name).
@@ -746,7 +747,7 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 		_, err = e.db.EntityField.Delete().
 			Where(
 				entityfield.IDIn(fieldIds.Slice()...),
-				entityfield.HasEntityWith(entity.ID(data.ID), entity.TypeEQ("item")),
+				entityfield.HasEntityWith(entity.ID(data.ID), entity.HasTypeWith(entitytype.IsLocationEQ(false))),
 			).Exec(ctx)
 		if err != nil {
 			return ItemOut{}, err
@@ -763,7 +764,7 @@ func (e *ItemsRepository) GetAllZeroImportRef(ctx context.Context, gid uuid.UUID
 	err := e.db.Entity.Query().
 		Where(
 			entity.HasGroupWith(group.ID(gid)),
-			entity.TypeEQ("item"),
+			entity.HasTypeWith(entitytype.IsLocationEQ(false)),
 			entity.Or(
 				entity.ImportRefEQ(""),
 				entity.ImportRefIsNil(),
@@ -783,7 +784,7 @@ func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data Ite
 		Where(
 			entity.ID(id),
 			entity.HasGroupWith(group.ID(gid)),
-			entity.TypeEQ("item"),
+			entity.HasTypeWith(entitytype.IsLocationEQ(false)),
 		)
 
 	if data.ImportRef != nil {
@@ -837,7 +838,7 @@ func (e *ItemsRepository) GetAllCustomFieldNames(ctx context.Context, gid uuid.U
 
 	err := e.db.Entity.Query().
 		Where(
-			entity.TypeEQ("item"),
+			entity.HasTypeWith(entitytype.IsLocationEQ(false)),
 			entity.HasGroupWith(group.ID(gid)),
 		).
 		QueryFields().
@@ -865,7 +866,7 @@ func (e *ItemsRepository) GetAllCustomFieldNames(ctx context.Context, gid uuid.U
 func (e *ItemsRepository) ZeroOutTimeFields(ctx context.Context, gid uuid.UUID) (int, error) {
 	q := e.db.Entity.Query().Where(
 		entity.HasGroupWith(group.ID(gid)),
-		entity.TypeEQ("item"),
+		entity.HasTypeWith(entitytype.IsLocationEQ(false)),
 		entity.Or(
 			entity.PurchaseTimeNotNil(),
 			entity.PurchaseFromLT("0002-01-01"),
@@ -888,7 +889,7 @@ func (e *ItemsRepository) ZeroOutTimeFields(ctx context.Context, gid uuid.UUID) 
 	updated := 0
 
 	for _, i := range items {
-		updateQ := e.db.Entity.Update().Where(entity.ID(i.ID), entity.TypeEQ("item"))
+		updateQ := e.db.Entity.Update().Where(entity.ID(i.ID), entity.HasTypeWith(entitytype.IsLocationEQ(false)))
 
 		if !i.PurchaseTime.IsZero() {
 			switch {
@@ -939,7 +940,7 @@ func (e *ItemsRepository) SetPrimaryPhotos(ctx context.Context, gid uuid.UUID) (
 	itemIDs, err := e.db.Entity.Query().
 		Where(
 			entity.HasGroupWith(group.ID(gid)),
-			entity.TypeEQ("item"),
+			entity.HasTypeWith(entitytype.IsLocationEQ(false)),
 			entity.HasAttachmentsWith(
 				attachment.TypeEQ(attachment.TypePhoto),
 				attachment.Not(
@@ -960,7 +961,7 @@ func (e *ItemsRepository) SetPrimaryPhotos(ctx context.Context, gid uuid.UUID) (
 		// Find the first photo attachment
 		a, err := e.db.Attachment.Query().
 			Where(
-				attachment.HasEntityWith(entity.ID(id), entity.TypeEQ("item")),
+				attachment.HasEntityWith(entity.ID(id), entity.HasTypeWith(entitytype.IsLocationEQ(false))),
 				attachment.TypeEQ(attachment.TypePhoto),
 				attachment.Primary(false),
 			).

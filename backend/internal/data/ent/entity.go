@@ -89,7 +89,7 @@ type EntityEdges struct {
 	// Entity holds the value of the entity edge.
 	Entity *Entity `json:"entity,omitempty"`
 	// Location holds the value of the location edge.
-	Location []*Entity `json:"location,omitempty"`
+	Location *Entity `json:"location,omitempty"`
 	// Label holds the value of the label edge.
 	Label []*Label `json:"label,omitempty"`
 	// Type holds the value of the type edge.
@@ -148,10 +148,12 @@ func (e EntityEdges) EntityOrErr() (*Entity, error) {
 }
 
 // LocationOrErr returns the Location value or an error if the edge
-// was not loaded in eager-loading.
-func (e EntityEdges) LocationOrErr() ([]*Entity, error) {
-	if e.loadedTypes[4] {
+// was not loaded in eager-loading, or loaded but was not found.
+func (e EntityEdges) LocationOrErr() (*Entity, error) {
+	if e.Location != nil {
 		return e.Location, nil
+	} else if e.loadedTypes[4] {
+		return nil, &NotFoundError{label: entity.Label}
 	}
 	return nil, &NotLoadedError{edge: "location"}
 }

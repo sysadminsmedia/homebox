@@ -925,7 +925,7 @@ func (c *EntityClient) QueryEntity(e *Entity) *EntityQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(entity.Table, entity.FieldID, id),
 			sqlgraph.To(entity.Table, entity.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, entity.EntityTable, entity.EntityColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, entity.EntityTable, entity.EntityColumn),
 		)
 		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
 		return fromV, nil
@@ -941,7 +941,7 @@ func (c *EntityClient) QueryLocation(e *Entity) *EntityQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(entity.Table, entity.FieldID, id),
 			sqlgraph.To(entity.Table, entity.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, entity.LocationTable, entity.LocationColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, entity.LocationTable, entity.LocationColumn),
 		)
 		fromV = sqlgraph.Neighbors(e.driver.Dialect(), step)
 		return fromV, nil

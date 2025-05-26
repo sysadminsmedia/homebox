@@ -410,17 +410,10 @@ func ByEntityField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByLocationCount orders the results by location count.
-func ByLocationCount(opts ...sql.OrderTermOption) OrderOption {
+// ByLocationField orders the results by location field.
+func ByLocationField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newLocationStep(), opts...)
-	}
-}
-
-// ByLocation orders the results by location terms.
-func ByLocation(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newLocationStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newLocationStep(), sql.OrderByField(field, opts...))
 	}
 }
 
@@ -511,14 +504,14 @@ func newEntityStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, EntityTable, EntityColumn),
+		sqlgraph.Edge(sqlgraph.O2O, true, EntityTable, EntityColumn),
 	)
 }
 func newLocationStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, LocationTable, LocationColumn),
+		sqlgraph.Edge(sqlgraph.O2O, false, LocationTable, LocationColumn),
 	)
 }
 func newLabelStep() *sqlgraph.Step {

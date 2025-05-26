@@ -157,7 +157,7 @@ func (eq *EntityQuery) QueryEntity() *EntityQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(entity.Table, entity.FieldID, selector),
 			sqlgraph.To(entity.Table, entity.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, entity.EntityTable, entity.EntityColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, entity.EntityTable, entity.EntityColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
 		return fromU, nil
@@ -179,7 +179,7 @@ func (eq *EntityQuery) QueryLocation() *EntityQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(entity.Table, entity.FieldID, selector),
 			sqlgraph.To(entity.Table, entity.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, entity.LocationTable, entity.LocationColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, entity.LocationTable, entity.LocationColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(eq.driver.Dialect(), step)
 		return fromU, nil
@@ -757,9 +757,8 @@ func (eq *EntityQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Entit
 		}
 	}
 	if query := eq.withLocation; query != nil {
-		if err := eq.loadLocation(ctx, query, nodes,
-			func(n *Entity) { n.Edges.Location = []*Entity{} },
-			func(n *Entity, e *Entity) { n.Edges.Location = append(n.Edges.Location, e) }); err != nil {
+		if err := eq.loadLocation(ctx, query, nodes, nil,
+			func(n *Entity, e *Entity) { n.Edges.Location = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -935,9 +934,6 @@ func (eq *EntityQuery) loadLocation(ctx context.Context, query *EntityQuery, nod
 	for i := range nodes {
 		fks = append(fks, nodes[i].ID)
 		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
 	}
 	query.withFKs = true
 	query.Where(predicate.Entity(func(s *sql.Selector) {

@@ -1776,8 +1776,7 @@ type EntityMutation struct {
 	clearedchildren               bool
 	entity                        *uuid.UUID
 	clearedentity                 bool
-	location                      map[uuid.UUID]struct{}
-	removedlocation               map[uuid.UUID]struct{}
+	location                      *uuid.UUID
 	clearedlocation               bool
 	label                         map[uuid.UUID]struct{}
 	removedlabel                  map[uuid.UUID]struct{}
@@ -3186,14 +3185,9 @@ func (m *EntityMutation) ResetEntity() {
 	m.clearedentity = false
 }
 
-// AddLocationIDs adds the "location" edge to the Entity entity by ids.
-func (m *EntityMutation) AddLocationIDs(ids ...uuid.UUID) {
-	if m.location == nil {
-		m.location = make(map[uuid.UUID]struct{})
-	}
-	for i := range ids {
-		m.location[ids[i]] = struct{}{}
-	}
+// SetLocationID sets the "location" edge to the Entity entity by id.
+func (m *EntityMutation) SetLocationID(id uuid.UUID) {
+	m.location = &id
 }
 
 // ClearLocation clears the "location" edge to the Entity entity.
@@ -3206,29 +3200,20 @@ func (m *EntityMutation) LocationCleared() bool {
 	return m.clearedlocation
 }
 
-// RemoveLocationIDs removes the "location" edge to the Entity entity by IDs.
-func (m *EntityMutation) RemoveLocationIDs(ids ...uuid.UUID) {
-	if m.removedlocation == nil {
-		m.removedlocation = make(map[uuid.UUID]struct{})
-	}
-	for i := range ids {
-		delete(m.location, ids[i])
-		m.removedlocation[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedLocation returns the removed IDs of the "location" edge to the Entity entity.
-func (m *EntityMutation) RemovedLocationIDs() (ids []uuid.UUID) {
-	for id := range m.removedlocation {
-		ids = append(ids, id)
+// LocationID returns the "location" edge ID in the mutation.
+func (m *EntityMutation) LocationID() (id uuid.UUID, exists bool) {
+	if m.location != nil {
+		return *m.location, true
 	}
 	return
 }
 
 // LocationIDs returns the "location" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// LocationID instead. It exists only for internal usage by the builders.
 func (m *EntityMutation) LocationIDs() (ids []uuid.UUID) {
-	for id := range m.location {
-		ids = append(ids, id)
+	if id := m.location; id != nil {
+		ids = append(ids, *id)
 	}
 	return
 }
@@ -3237,7 +3222,6 @@ func (m *EntityMutation) LocationIDs() (ids []uuid.UUID) {
 func (m *EntityMutation) ResetLocation() {
 	m.location = nil
 	m.clearedlocation = false
-	m.removedlocation = nil
 }
 
 // AddLabelIDs adds the "label" edge to the Label entity by ids.
@@ -4208,11 +4192,9 @@ func (m *EntityMutation) AddedIDs(name string) []ent.Value {
 			return []ent.Value{*id}
 		}
 	case entity.EdgeLocation:
-		ids := make([]ent.Value, 0, len(m.location))
-		for id := range m.location {
-			ids = append(ids, id)
+		if id := m.location; id != nil {
+			return []ent.Value{*id}
 		}
-		return ids
 	case entity.EdgeLabel:
 		ids := make([]ent.Value, 0, len(m.label))
 		for id := range m.label {
@@ -4251,9 +4233,6 @@ func (m *EntityMutation) RemovedEdges() []string {
 	if m.removedchildren != nil {
 		edges = append(edges, entity.EdgeChildren)
 	}
-	if m.removedlocation != nil {
-		edges = append(edges, entity.EdgeLocation)
-	}
 	if m.removedlabel != nil {
 		edges = append(edges, entity.EdgeLabel)
 	}
@@ -4276,12 +4255,6 @@ func (m *EntityMutation) RemovedIDs(name string) []ent.Value {
 	case entity.EdgeChildren:
 		ids := make([]ent.Value, 0, len(m.removedchildren))
 		for id := range m.removedchildren {
-			ids = append(ids, id)
-		}
-		return ids
-	case entity.EdgeLocation:
-		ids := make([]ent.Value, 0, len(m.removedlocation))
-		for id := range m.removedlocation {
 			ids = append(ids, id)
 		}
 		return ids
@@ -4389,6 +4362,9 @@ func (m *EntityMutation) ClearEdge(name string) error {
 		return nil
 	case entity.EdgeEntity:
 		m.ClearEntity()
+		return nil
+	case entity.EdgeLocation:
+		m.ClearLocation()
 		return nil
 	case entity.EdgeType:
 		m.ClearType()

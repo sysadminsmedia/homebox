@@ -1495,7 +1495,7 @@ func HasEntity() predicate.Entity {
 	return predicate.Entity(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, EntityTable, EntityColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, EntityTable, EntityColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -1518,7 +1518,7 @@ func HasLocation() predicate.Entity {
 	return predicate.Entity(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, LocationTable, LocationColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, LocationTable, LocationColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})

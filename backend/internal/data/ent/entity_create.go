@@ -433,19 +433,23 @@ func (ec *EntityCreate) SetEntity(e *Entity) *EntityCreate {
 	return ec.SetEntityID(e.ID)
 }
 
-// AddLocationIDs adds the "location" edge to the Entity entity by IDs.
-func (ec *EntityCreate) AddLocationIDs(ids ...uuid.UUID) *EntityCreate {
-	ec.mutation.AddLocationIDs(ids...)
+// SetLocationID sets the "location" edge to the Entity entity by ID.
+func (ec *EntityCreate) SetLocationID(id uuid.UUID) *EntityCreate {
+	ec.mutation.SetLocationID(id)
 	return ec
 }
 
-// AddLocation adds the "location" edges to the Entity entity.
-func (ec *EntityCreate) AddLocation(e ...*Entity) *EntityCreate {
-	ids := make([]uuid.UUID, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// SetNillableLocationID sets the "location" edge to the Entity entity by ID if the given value is not nil.
+func (ec *EntityCreate) SetNillableLocationID(id *uuid.UUID) *EntityCreate {
+	if id != nil {
+		ec = ec.SetLocationID(*id)
 	}
-	return ec.AddLocationIDs(ids...)
+	return ec
+}
+
+// SetLocation sets the "location" edge to the Entity entity.
+func (ec *EntityCreate) SetLocation(e *Entity) *EntityCreate {
+	return ec.SetLocationID(e.ID)
 }
 
 // AddLabelIDs adds the "label" edge to the Label entity by IDs.
@@ -874,7 +878,7 @@ func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 	}
 	if nodes := ec.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   entity.EntityTable,
 			Columns: []string{entity.EntityColumn},
@@ -891,7 +895,7 @@ func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 	}
 	if nodes := ec.mutation.LocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   entity.LocationTable,
 			Columns: []string{entity.LocationColumn},

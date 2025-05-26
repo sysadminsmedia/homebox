@@ -115,6 +115,7 @@ func (Entity) Edges() []ent.Edge {
 			From("parent").
 			Unique(),
 		edge.To("location", Entity.Type).
+			Unique().
 			From("entity").
 			Unique(),
 		edge.From("label", Label.Type).

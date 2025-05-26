@@ -519,19 +519,23 @@ func (eu *EntityUpdate) SetEntity(e *Entity) *EntityUpdate {
 	return eu.SetEntityID(e.ID)
 }
 
-// AddLocationIDs adds the "location" edge to the Entity entity by IDs.
-func (eu *EntityUpdate) AddLocationIDs(ids ...uuid.UUID) *EntityUpdate {
-	eu.mutation.AddLocationIDs(ids...)
+// SetLocationID sets the "location" edge to the Entity entity by ID.
+func (eu *EntityUpdate) SetLocationID(id uuid.UUID) *EntityUpdate {
+	eu.mutation.SetLocationID(id)
 	return eu
 }
 
-// AddLocation adds the "location" edges to the Entity entity.
-func (eu *EntityUpdate) AddLocation(e ...*Entity) *EntityUpdate {
-	ids := make([]uuid.UUID, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// SetNillableLocationID sets the "location" edge to the Entity entity by ID if the given value is not nil.
+func (eu *EntityUpdate) SetNillableLocationID(id *uuid.UUID) *EntityUpdate {
+	if id != nil {
+		eu = eu.SetLocationID(*id)
 	}
-	return eu.AddLocationIDs(ids...)
+	return eu
+}
+
+// SetLocation sets the "location" edge to the Entity entity.
+func (eu *EntityUpdate) SetLocation(e *Entity) *EntityUpdate {
+	return eu.SetLocationID(e.ID)
 }
 
 // AddLabelIDs adds the "label" edge to the Label entity by IDs.
@@ -657,25 +661,10 @@ func (eu *EntityUpdate) ClearEntity() *EntityUpdate {
 	return eu
 }
 
-// ClearLocation clears all "location" edges to the Entity entity.
+// ClearLocation clears the "location" edge to the Entity entity.
 func (eu *EntityUpdate) ClearLocation() *EntityUpdate {
 	eu.mutation.ClearLocation()
 	return eu
-}
-
-// RemoveLocationIDs removes the "location" edge to Entity entities by IDs.
-func (eu *EntityUpdate) RemoveLocationIDs(ids ...uuid.UUID) *EntityUpdate {
-	eu.mutation.RemoveLocationIDs(ids...)
-	return eu
-}
-
-// RemoveLocation removes "location" edges to Entity entities.
-func (eu *EntityUpdate) RemoveLocation(e ...*Entity) *EntityUpdate {
-	ids := make([]uuid.UUID, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
-	}
-	return eu.RemoveLocationIDs(ids...)
 }
 
 // ClearLabel clears all "label" edges to the Label entity.
@@ -1094,7 +1083,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if eu.mutation.EntityCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   entity.EntityTable,
 			Columns: []string{entity.EntityColumn},
@@ -1107,7 +1096,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if nodes := eu.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   entity.EntityTable,
 			Columns: []string{entity.EntityColumn},
@@ -1123,7 +1112,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if eu.mutation.LocationCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   entity.LocationTable,
 			Columns: []string{entity.LocationColumn},
@@ -1131,28 +1120,12 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := eu.mutation.RemovedLocationIDs(); len(nodes) > 0 && !eu.mutation.LocationCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   entity.LocationTable,
-			Columns: []string{entity.LocationColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := eu.mutation.LocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   entity.LocationTable,
 			Columns: []string{entity.LocationColumn},
@@ -1879,19 +1852,23 @@ func (euo *EntityUpdateOne) SetEntity(e *Entity) *EntityUpdateOne {
 	return euo.SetEntityID(e.ID)
 }
 
-// AddLocationIDs adds the "location" edge to the Entity entity by IDs.
-func (euo *EntityUpdateOne) AddLocationIDs(ids ...uuid.UUID) *EntityUpdateOne {
-	euo.mutation.AddLocationIDs(ids...)
+// SetLocationID sets the "location" edge to the Entity entity by ID.
+func (euo *EntityUpdateOne) SetLocationID(id uuid.UUID) *EntityUpdateOne {
+	euo.mutation.SetLocationID(id)
 	return euo
 }
 
-// AddLocation adds the "location" edges to the Entity entity.
-func (euo *EntityUpdateOne) AddLocation(e ...*Entity) *EntityUpdateOne {
-	ids := make([]uuid.UUID, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+// SetNillableLocationID sets the "location" edge to the Entity entity by ID if the given value is not nil.
+func (euo *EntityUpdateOne) SetNillableLocationID(id *uuid.UUID) *EntityUpdateOne {
+	if id != nil {
+		euo = euo.SetLocationID(*id)
 	}
-	return euo.AddLocationIDs(ids...)
+	return euo
+}
+
+// SetLocation sets the "location" edge to the Entity entity.
+func (euo *EntityUpdateOne) SetLocation(e *Entity) *EntityUpdateOne {
+	return euo.SetLocationID(e.ID)
 }
 
 // AddLabelIDs adds the "label" edge to the Label entity by IDs.
@@ -2017,25 +1994,10 @@ func (euo *EntityUpdateOne) ClearEntity() *EntityUpdateOne {
 	return euo
 }
 
-// ClearLocation clears all "location" edges to the Entity entity.
+// ClearLocation clears the "location" edge to the Entity entity.
 func (euo *EntityUpdateOne) ClearLocation() *EntityUpdateOne {
 	euo.mutation.ClearLocation()
 	return euo
-}
-
-// RemoveLocationIDs removes the "location" edge to Entity entities by IDs.
-func (euo *EntityUpdateOne) RemoveLocationIDs(ids ...uuid.UUID) *EntityUpdateOne {
-	euo.mutation.RemoveLocationIDs(ids...)
-	return euo
-}
-
-// RemoveLocation removes "location" edges to Entity entities.
-func (euo *EntityUpdateOne) RemoveLocation(e ...*Entity) *EntityUpdateOne {
-	ids := make([]uuid.UUID, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
-	}
-	return euo.RemoveLocationIDs(ids...)
 }
 
 // ClearLabel clears all "label" edges to the Label entity.
@@ -2484,7 +2446,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 	}
 	if euo.mutation.EntityCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   entity.EntityTable,
 			Columns: []string{entity.EntityColumn},
@@ -2497,7 +2459,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 	}
 	if nodes := euo.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
+			Rel:     sqlgraph.O2O,
 			Inverse: true,
 			Table:   entity.EntityTable,
 			Columns: []string{entity.EntityColumn},
@@ -2513,7 +2475,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 	}
 	if euo.mutation.LocationCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   entity.LocationTable,
 			Columns: []string{entity.LocationColumn},
@@ -2521,28 +2483,12 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := euo.mutation.RemovedLocationIDs(); len(nodes) > 0 && !euo.mutation.LocationCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   entity.LocationTable,
-			Columns: []string{entity.LocationColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
 	if nodes := euo.mutation.LocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
+			Rel:     sqlgraph.O2O,
 			Inverse: false,
 			Table:   entity.LocationTable,
 			Columns: []string{entity.LocationColumn},
