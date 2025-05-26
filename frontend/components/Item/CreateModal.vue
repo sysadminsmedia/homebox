@@ -69,7 +69,11 @@
       <div v-if="form.photos.length > 0" class="mt-4 border-t px-4 pb-4">
         <div v-for="(photo, index) in form.photos" :key="index">
           <div class="mt-8 w-full">
-            <img :src="photo.fileBase64" class="w-full rounded object-fill shadow-sm" :alt="$t('components.item.create_modal.uploaded')" />
+            <img
+              :src="photo.fileBase64"
+              class="w-full rounded object-fill shadow-sm"
+              :alt="$t('components.item.create_modal.uploaded')"
+            />
           </div>
           <div class="mt-2 flex items-center gap-2">
             <TooltipProvider class="flex gap-2" :delay-duration="0">
@@ -77,7 +81,7 @@
                 <TooltipTrigger>
                   <Button size="icon" type="button" variant="destructive" @click.prevent="deleteImage(index)">
                     <MdiDelete />
-                    <div class="sr-only"> {{ $t("components.item.create_modal.delete_photo") }} </div>
+                    <div class="sr-only">{{ $t("components.item.create_modal.delete_photo") }}</div>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -97,7 +101,7 @@
                     "
                   >
                     <MdiRotateClockwise />
-                    <div class="sr-only"> {{ $t("components.item.create_modal.rotate_photo") }} </div>
+                    <div class="sr-only">{{ $t("components.item.create_modal.rotate_photo") }}</div>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -114,11 +118,17 @@
                   >
                     <MdiStar v-if="photo.primary" />
                     <MdiStarOutline v-else />
-                    <div class="sr-only">{{ $t('components.item.create_modal.set_as') }} {{ photo.primary ? "non" : "" }} {{ $t("components.item.create_modal.primary_photo") }}</div>
+                    <div class="sr-only">
+                      {{ $t("components.item.create_modal.set_as") }} {{ photo.primary ? "non" : "" }}
+                      {{ $t("components.item.create_modal.primary_photo") }}
+                    </div>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>{{ $t('components.item.create_modal.set_as') }} {{ photo.primary ? "non" : "" }} {{ $t("components.item.create_modal.primary_photo") }}</p>
+                  <p>
+                    {{ $t("components.item.create_modal.set_as") }} {{ photo.primary ? "non" : "" }}
+                    {{ $t("components.item.create_modal.primary_photo") }}
+                  </p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

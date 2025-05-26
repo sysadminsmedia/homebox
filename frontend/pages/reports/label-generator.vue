@@ -1,4 +1,6 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
+  import DOMPurify from "dompurify";
   import { route } from "../../lib/api/base";
   import { toast, Toaster } from "@/components/ui/sonner";
   import { Separator } from "@/components/ui/separator";
@@ -6,9 +8,7 @@
   import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
   import { Checkbox } from "@/components/ui/checkbox";
-  import { useI18n } from "vue-i18n";
-  import DOMPurify from "dompurify";
-  
+
   const { t } = useI18n();
 
   definePageMeta({
@@ -344,16 +344,12 @@
       <p>
         {{ $t("reports.label_generator.instruction_2") }}
       </p>
-      <p v-html="DOMPurify.sanitize($t('reports.label_generator.instruction_3'))">
-      </p>
+      <p v-html="DOMPurify.sanitize($t('reports.label_generator.instruction_3'))"></p>
       <h2>{{ $t("reports.label_generator.tips") }}</h2>
       <ul>
-        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_1'))">
-        </li>
-        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_2'))">
-        </li>
-        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_3'))">
-        </li>
+        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_1'))"></li>
+        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_2'))"></li>
+        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_3'))"></li>
       </ul>
       <div class="flex flex-wrap gap-2">
         <NuxtLink href="/tools">{{ $t("menu.tools") }}</NuxtLink>
@@ -380,7 +376,9 @@
       <div class="max-w-xs">
         <div class="flex items-center gap-2 py-4">
           <Checkbox id="borderedLabels" v-model="bordered" />
-          <Label class="cursor-pointer" for="borderedLabels"> {{ $t("reports.label_generator.bordered_labels") }} </Label>
+          <Label class="cursor-pointer" for="borderedLabels">
+            {{ $t("reports.label_generator.bordered_labels") }}
+          </Label>
         </div>
       </div>
 

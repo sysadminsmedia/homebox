@@ -75,9 +75,9 @@
     itemText: "text",
     itemValue: "value",
     search: "",
-    searchPlaceholder: "Type to search...",
-    noResultsText: "No Results Found",
-    placeholder: "Select...",
+    searchPlaceholder: undefined,
+    noResultsText: undefined,
+    placeholder: undefined,
   });
 
   const id = useId();

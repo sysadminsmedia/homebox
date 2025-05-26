@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import { Input } from "~/components/ui/input";
   import type { ItemSummary, LabelSummary, LocationOutCount } from "~~/lib/api/types/data-contracts";
@@ -22,7 +23,6 @@
     PaginationList,
     PaginationListItem,
   } from "@/components/ui/pagination";
-  import { useI18n } from "vue-i18n";
 
   const { t } = useI18n();
 

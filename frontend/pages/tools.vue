@@ -92,13 +92,13 @@
 
 <script setup lang="ts">
   import DOMPurify from "dompurify";
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import MdiFileChart from "~icons/mdi/file-chart";
   import MdiArrowRight from "~icons/mdi/arrow-right";
   import MdiDatabase from "~icons/mdi/database";
   import MdiAlert from "~icons/mdi/alert";
   import { useDialog } from "~/components/ui/dialog-provider";
-  import { useI18n } from "vue-i18n";
 
   const { t } = useI18n();
 

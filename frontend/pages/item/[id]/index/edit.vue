@@ -523,10 +523,14 @@
           </Select>
         </div>
         <div v-if="editState.type == 'photo'" class="mt-3 flex items-center gap-2">
-          <Checkbox id="primary" v-model="editState.primary" :label="$t('items.edit.edit_attachment_dialog.primary_photo')" />
+          <Checkbox
+            id="primary"
+            v-model="editState.primary"
+            :label="$t('items.edit.edit_attachment_dialog.primary_photo')"
+          />
           <label class="cursor-pointer text-sm" for="primary">
-            <span class="font-semibold">{{ $t('items.edit.edit_attachment_dialog.primary_photo') }}</span>
-            {{ $t('items.edit.edit_attachment_dialog.primary_photo_sub') }}
+            <span class="font-semibold">{{ $t("items.edit.edit_attachment_dialog.primary_photo") }}</span>
+            {{ $t("items.edit.edit_attachment_dialog.primary_photo_sub") }}
           </label>
         </div>
 
