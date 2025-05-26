@@ -24,5 +24,5 @@ jobs:
           repository: 'homebox'
           package: 'homebox,devcache'
           use-regex: true
-          exclude-tags: latest,main,*.*.*,0.*,0
+          exclude-tags: latest,latest-rootless,main,main-rootless,nightly,nightly-rootless,*.*.*,0.*,0,*.*.*-rootless,0.*-rootless,0-rootless
           older-than: 180 days
