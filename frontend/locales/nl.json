@@ -135,13 +135,14 @@
         "follow_dev": "Volg de ontwikkelaar",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Version: { version } Build: { build } '</a>'"
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Versie: { version } Build: { build } '</a>'"
         },
         "github": "GitHub Project",
         "insured": "Verzekerd",
         "items": "artikelen",
         "join_discord": "Sluit je aan bij de Discord",
         "labels": "Labels",
+        "loading": "Bezig met laden...",
         "locations": "Locaties",
         "maintenance": "Onderhoud",
         "name": "Naam",
@@ -374,6 +375,7 @@
         "error": "Tijdens het scannen is er een fout opgetreden",
         "invalid_url": "Ongeldige streepjescode",
         "no_sources": "Geen videobronnen beschikbaar",
+        "permission_denied": "Cameratoestemming geweigerd, geef toegang tot de camera in uw browserinstellingen",
         "select_video_source": "Kies een videobron",
         "title": "Scanner",
         "unsupported": "Mediastream-API wordt niet ondersteund zonder HTTPS"
