@@ -142,6 +142,7 @@
         "items": "Articoli",
         "join_discord": "Unisciti a Discord",
         "labels": "Etichette",
+        "loading": "Caricamento...",
         "locations": "Posizioni",
         "maintenance": "Manutenzione",
         "name": "Nome",
@@ -347,6 +348,7 @@
         "current_password": "Password Corrente",
         "delete_account": "Elimina Account",
         "delete_account_sub": "Elimina il tuo account e tutti i dati associati. Questa operazione non può essere annullata.",
+        "display_legacy_header": "{ currentValue, select, true {Disable Legacy Header} false {Enable Legacy Header} other {Not Hit}}",
         "enabled": "Abilitato",
         "example": "Esempio",
         "gen_invite": "Genera Link di Invito",
@@ -374,6 +376,7 @@
         "error": "Si è verificato un errore durante la scansione",
         "invalid_url": "URL del codice a barre non valido",
         "no_sources": "Nessuna sorgente video disponibile",
+        "permission_denied": "Autorizzazione della fotocamera negata, consenti l'accesso alla fotocamera nelle impostazioni del browser",
         "select_video_source": "Scegli una fonte video",
         "title": "Scanner",
         "unsupported": "L'API del flusso multimediale non è supportata senza HTTPS"

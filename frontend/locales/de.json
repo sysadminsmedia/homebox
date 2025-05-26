@@ -142,6 +142,7 @@
         "items": "Gegenstände",
         "join_discord": "Discord beitreten",
         "labels": "Labels",
+        "loading": "Wird geladen …",
         "locations": "Lagerorte",
         "maintenance": "Wartung",
         "name": "Name",
@@ -347,6 +348,7 @@
         "current_password": "Aktuelles Passwort",
         "delete_account": "Konto löschen",
         "delete_account_sub": "Lösche dein Konto und alle zugehörigen Daten. Dies kann nicht rückgängig gemacht werden.",
+        "display_legacy_header": "{ currentValue, select, true {Legacy-Header deaktivieren} false {Legacy-Header aktivieren} other {Nicht getroffen}}",
         "enabled": "Aktiviert",
         "example": "Beispiel",
         "gen_invite": "Einladungslink generieren",
@@ -374,6 +376,7 @@
         "error": "Beim Scannen ist ein Fehler aufgetreten",
         "invalid_url": "Ungültige Barcode-URL",
         "no_sources": "Keine Videoquellen verfügbar",
+        "permission_denied": "Kameraberechtigung verweigert, bitte erlauben Sie den Zugriff auf die Kamera in Ihren Browsereinstellungen",
         "select_video_source": "Wählen Sie eine Videoquelle",
         "title": "Der Scanner",
         "unsupported": "Media Stream API wird nicht unterstützt ohne HTTPS/SSL"
