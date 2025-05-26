@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"strings"
 	"time"
 
@@ -114,7 +115,7 @@ func (r *GroupRepository) StatsLocationsByPurchasePrice(ctx context.Context, gid
 	err := r.db.Entity.Query().
 		Where(
 			entity.HasGroupWith(group.ID(gid)),
-			entity.TypeEQ("location"),
+			entity.HasTypeWith(entitytype.IsLocationEQ(true)),
 		).
 		GroupBy(entity.FieldID, entity.FieldName).
 		Aggregate(func(sq *sql.Selector) string {
@@ -164,7 +165,7 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 		SUM(CASE WHEN created_at < $1 THEN purchase_price ELSE 0 END) AS price_at_start,
 		SUM(CASE WHEN created_at < $2 THEN purchase_price ELSE 0 END) AS price_at_end
 	FROM items
-	WHERE group_items = $3 AND archived = false
+	WHERE group_entities = $3 AND archived = false
 `
 	stats := ValueOverTime{
 		Start: start,
@@ -224,15 +225,15 @@ func (r *GroupRepository) StatsGroup(ctx context.Context, gid uuid.UUID) (GroupS
 	q := `
 		SELECT
             (SELECT COUNT(*) FROM users WHERE group_users = $2) AS total_users,
-            (SELECT COUNT(*) FROM items WHERE group_items = $2 AND items.archived = false) AS total_items,
-            (SELECT COUNT(*) FROM locations WHERE group_locations = $2) AS total_locations,
+            (SELECT COUNT(*) FROM entities WHERE group_entities = $2 AND entities.archived = false) AS total_items,
+            (SELECT COUNT(*) FROM entities WHERE group_entities = $2) AS total_locations,
             (SELECT COUNT(*) FROM labels WHERE group_labels = $2) AS total_labels,
-            (SELECT SUM(purchase_price*quantity) FROM items WHERE group_items = $2 AND items.archived = false) AS total_item_price,
+            (SELECT SUM(purchase_price*quantity) FROM entities WHERE group_entities = $2 AND entities.archived = false) AS total_item_price,
             (SELECT COUNT(*)
-                FROM items
-                    WHERE group_items = $2
-                    AND items.archived = false
-                    AND (items.lifetime_warranty = true OR items.warranty_expires > $1)
+                FROM entities
+                    WHERE group_entities = $2
+                    AND entities.archived = false
+                    AND (entities.lifetime_warranty = true OR entities.warranty_expires > $1)
                 ) AS total_with_warranty;
 `
 	var stats GroupStatistics

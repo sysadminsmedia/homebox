@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"strings"
 	"time"
 
@@ -67,16 +68,15 @@ var mapLocationOutErr = mapTErrFunc(mapLocationOut)
 
 func mapLocationOut(location *ent.Entity) LocationOut {
 	var parent *LocationSummary
-	if location.Edges.Parent != nil && location.Type == entity.TypeLocation {
+	var isParentLocation = location.QueryParent().Where(entity.HasTypeWith(entitytype.IsLocationEQ(true))).ExistX(context.Background())
+	if location.Edges.Parent != nil && isParentLocation {
 		p := mapLocationSummary(location.Edges.Parent)
 		parent = &p
 	}
 
 	children := make([]LocationSummary, 0, len(location.Edges.Children))
 	for _, c := range location.Edges.Children {
-		if c.Type != entity.TypeLocation {
-			children = append(children, mapLocationSummary(c))
-		}
+		children = append(children, mapLocationSummary(c.QueryChildren().Where(entity.HasTypeWith(entitytype.IsLocationEQ(true))).OnlyX(context.Background())))
 	}
 
 	return LocationOut{
@@ -117,8 +117,8 @@ func (r *LocationRepository) GetAll(ctx context.Context, gid uuid.UUID, filter L
 				FROM
 					entities
 				WHERE
-					items.location_items = locations.id
-					AND items.archived = false
+				    entities.location_entities = entities.id
+					AND entities.archived = false
 			) as item_count
 		FROM
 			locations
@@ -164,7 +164,7 @@ func (r *LocationRepository) GetAll(ctx context.Context, gid uuid.UUID, filter L
 func (r *LocationRepository) getOne(ctx context.Context, where ...predicate.Entity) (LocationOut, error) {
 	return mapLocationOutErr(r.db.Entity.Query().
 		Where(where...).
-		Where(entity.TypeEQ("location")).
+		Where(entity.HasTypeWith(entitytype.IsLocationEQ(true))).
 		WithGroup().
 		WithParent().
 		WithChildren(func(lq *ent.EntityQuery) {
