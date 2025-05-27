@@ -390,12 +390,12 @@
             "ensure_import_refs_sub": "Zajistí, aby všechny položky v inventáři měly platné pole import_ref. To se provádí náhodným generováním osmiznakového řetězce pro každou položku, která nemá nastavené pole import_ref.",
             "set_primary_photo": "Nastavit primární fotografii",
             "set_primary_photo_button": "Nastavit primární fotografii",
-            "set_primary_photo_sub": "Ve verzi Homeboxu v0.10.0 bylo do příloh typu fotografie přidáno pole primárního obrázku. Tato akce nastaví pole primárního obrázku na první obrázek v poli příloh v databázi, pokud ještě není nastaven. <a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">Viz GitHub PR #576</a>",
+            "set_primary_photo_sub": "Ve verzi Homeboxu v0.10.0 bylo do příloh typu fotografie přidáno pole primárního obrázku. Tato akce nastaví pole primárního obrázku na první obrázek v poli příloh v databázi, pokud ještě není nastaven. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Viz GitHub PR #576'</a>'",
             "zero_datetimes": "Nulové datum položky Časy",
             "zero_datetimes_button": "Nulové datum položky Časy",
-            "zero_datetimes_sub": "Obnoví hodnotu času pro všechna pole s časem v inventáři na začátek data. Jedná se o opravu chyby, která byla zavedena na začátku vývoje webu a která způsobovala, že hodnota času byla uložena spolu s časem, což způsobovalo problémy se zobrazováním přesných hodnot v polích s datem. Další podrobnosti naleznete v <a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">Issue #236 na Githubu.</a>"
+            "zero_datetimes_sub": "Obnoví hodnotu času pro všechna pole s časem v inventáři na začátek data. Jedná se o opravu chyby, která byla zavedena na začátku vývoje webu a která způsobovala, že hodnota času byla uložena spolu s časem, což způsobovalo problémy se zobrazováním přesných hodnot v polích s datem. Další podrobnosti naleznete v '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Issue #236 na Githubu.'</a>'"
         },
-        "actions_sub": "Hromadně aplikujte akce na majetek. Jedná se o nevratné akce.<b> Buďte opatrní.</b>",
+        "actions_sub": "Hromadně aplikujte akce na majetek. Jedná se o nevratné akce.'<b>' Buďte opatrní.'</b>'",
         "import_export": "Import/Export",
         "import_export_set": {
             "export": "Export inventáře",

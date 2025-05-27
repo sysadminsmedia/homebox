@@ -142,6 +142,7 @@
         "items": "Articles",
         "join_discord": "Rejoindre le Discord",
         "labels": "Étiquettes",
+        "loading": "Chargement...",
         "locations": "Emplacements",
         "maintenance": "Maintenance",
         "name": "Nom",
@@ -374,6 +375,7 @@
         "error": "Une erreur s'est produite lors du scan",
         "invalid_url": "URL de code-barres non valide",
         "no_sources": "Aucune source vidéo disponible",
+        "permission_denied": "Autorisation de la caméra refusée, veuillez autoriser l'accès à la caméra dans les paramètres de votre navigateur",
         "select_video_source": "Choisir une source vidéo",
         "title": "Numériser",
         "unsupported": "L’API <i>Media Stream</i> n’est pas prise en charge sans HTTPS"
