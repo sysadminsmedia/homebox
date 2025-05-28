@@ -31,10 +31,7 @@
     label: string;
   };
 
-  const props = withDefaults(defineProps<Props>(), {
-    placeholder: undefined,
-    label: undefined,
-  });
+  const props = defineProps<Props>();
 
   const [hide, toggle] = useToggle(true);
 
