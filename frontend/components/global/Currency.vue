@@ -3,7 +3,7 @@
     <template #default>
       {{ formattedValue }}
     </template>
-    <template #fallback> Loading... </template>
+    <template #fallback> {{ $t("global.loading") }} </template>
   </Suspense>
 </template>
 

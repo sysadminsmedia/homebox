@@ -1,5 +1,8 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
+
+  const { t } = useI18n();
 
   definePageMeta({
     middleware: ["auth"],
@@ -13,13 +16,13 @@
   const { pending, data: items } = useLazyAsyncData(`asset/${assetId.value}`, async () => {
     const { data, error } = await api.assets.get(assetId.value);
     if (error) {
-      toast.error("Failed to load asset");
+      toast.error(t("items.toast.failed_to_load_asset"));
       navigateTo("/home");
       return;
     }
     switch (data.total) {
       case 0:
-        toast.error("Asset not found");
+        toast.error(t("items.toast.asset_not_found"));
         navigateTo("/home");
         break;
       case 1:

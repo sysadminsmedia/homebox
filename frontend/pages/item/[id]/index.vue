@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import type { AnyDetail, Detail, Details } from "~~/components/global/DetailsSection/types";
   import { filterZeroValues } from "~~/components/global/DetailsSection/types";
@@ -25,6 +26,8 @@
   import { Switch } from "@/components/ui/switch";
   import { Card } from "@/components/ui/card";
 
+  const { t } = useI18n();
+
   const { openDialog, closeDialog } = useDialog();
 
   definePageMeta({
@@ -45,7 +48,7 @@
   const { data: item, refresh } = useAsyncData(itemId.value, async () => {
     const { data, error } = await api.items.get(itemId.value);
     if (error) {
-      toast.error("Failed to load item");
+      toast.error(t("items.toast.failed_load_item"));
       navigateTo("/home");
       return;
     }
@@ -71,7 +74,7 @@
 
     const newQuantity = item.value.quantity + amount;
     if (newQuantity < 0) {
-      toast.error("Quantity cannot be negative");
+      toast.error(t("items.toast.quantity_cannot_negative"));
       return;
     }
 
@@ -81,7 +84,7 @@
     });
 
     if (resp.error) {
-      toast.error("Failed to adjust quantity");
+      toast.error(t("items.toast.failed_adjust_quantity"));
       return;
     }
 
@@ -432,7 +435,7 @@
 
     const resp = await api.items.fullpath(item.value.id);
     if (resp.error) {
-      toast.error("Failed to load item");
+      toast.error(t("items.toast.failed_load_item"));
       return [];
     }
 
@@ -449,7 +452,7 @@
     });
 
     if (resp.error) {
-      toast.error("Failed to load items");
+      toast.error(t("items.toast.failed_load_items"));
       return [];
     }
 
@@ -471,7 +474,7 @@
     });
 
     if (error) {
-      toast.error("Failed to duplicate item");
+      toast.error(t("items.toast.failed_duplicate_item"));
       return;
     }
 
@@ -486,7 +489,7 @@
     });
 
     if (updateError) {
-      toast.error("Failed to duplicate item");
+      toast.error(t("items.toast.failed_duplicate_item"));
       return;
     }
 
@@ -496,7 +499,7 @@
   const confirm = useConfirm();
 
   async function deleteItem() {
-    const confirmed = await confirm.open("Are you sure you want to delete this item?");
+    const confirmed = await confirm.open(t("items.delete_item_confirm"));
 
     if (!confirmed.data) {
       return;
@@ -504,10 +507,10 @@
 
     const { error } = await api.items.delete(itemId.value);
     if (error) {
-      toast.error("Failed to delete item");
+      toast.error(t("items.toast.failed_delete_item"));
       return;
     }
-    toast.success("Item deleted");
+    toast.success(t("items.toast.item_deleted"));
     navigateTo("/home");
   }
 

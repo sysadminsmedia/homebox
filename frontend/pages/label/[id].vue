@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPencil from "~icons/mdi/pencil";
@@ -14,6 +15,8 @@
     middleware: ["auth"],
   });
 
+  const { t } = useI18n();
+
   const { openDialog, closeDialog } = useDialog();
 
   const route = useRoute();
@@ -24,7 +27,7 @@
   const { data: label } = useAsyncData(labelId.value, async () => {
     const { data, error } = await api.labels.get(labelId.value);
     if (error) {
-      toast.error("Failed to load label");
+      toast.error(t("labels.toast.failed_load_label"));
       navigateTo("/home");
       return;
     }
@@ -34,9 +37,7 @@
   const confirm = useConfirm();
 
   async function confirmDelete() {
-    const { isCanceled } = await confirm.open(
-      "Are you sure you want to delete this label? This action cannot be undone."
-    );
+    const { isCanceled } = await confirm.open(t("labels.label_delete_confirm"));
 
     if (isCanceled) {
       return;
@@ -45,10 +46,10 @@
     const { error } = await api.labels.delete(labelId.value);
 
     if (error) {
-      toast.error("Failed to delete label");
+      toast.error(t("labels.toast.failed_delete_label"));
       return;
     }
-    toast.success("Label deleted");
+    toast.success(t("labels.toast.label_deleted"));
     navigateTo("/home");
   }
 
@@ -72,11 +73,11 @@
 
     if (error) {
       updating.value = false;
-      toast.error("Failed to update label");
+      toast.error(t("labels.toast.failed_update_label"));
       return;
     }
 
-    toast.success("Label updated");
+    toast.success(t("labels.toast.label_updated"));
     label.value = data;
     closeDialog("update-label");
     updating.value = false;
@@ -95,7 +96,7 @@
     });
 
     if (resp.error) {
-      toast.error("Failed to load items");
+      toast.error(t("items.toast.failed_load_items"));
       return {
         items: [],
         totalPrice: null,

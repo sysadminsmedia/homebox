@@ -30,11 +30,14 @@
 </template>
 
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import { Button, ButtonGroup } from "~/components/ui/button";
   import BaseModal from "@/components/App/CreateModal.vue";
   import type { LocationSummary } from "~~/lib/api/types/data-contracts";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
+
+  const { t } = useI18n();
 
   const { activeDialog, closeDialog } = useDialog();
 
@@ -94,7 +97,7 @@
 
   async function create(close = true) {
     if (loading.value) {
-      toast.error("Already creating a location");
+      toast.error(t("components.location.create_modal.toast.already_creating"));
       return;
     }
     loading.value = true;
@@ -109,11 +112,11 @@
 
     if (error) {
       loading.value = false;
-      toast.error("Couldn't create location");
+      toast.error(t("components.location.create_modal.toast.create_failed"));
     }
 
     if (data) {
-      toast.success("Location created");
+      toast.success(t("components.location.create_modal.toast.create_success"));
     }
     reset();
 

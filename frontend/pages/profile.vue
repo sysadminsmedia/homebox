@@ -37,7 +37,7 @@
   const currencies = computedAsync(async () => {
     const resp = await api.group.currencies();
     if (resp.error) {
-      toast.error("Failed to get currencies");
+      toast.error(t("profile.toast.failed_get_currencies"));
       return [];
     }
 
@@ -95,12 +95,12 @@
     });
 
     if (error) {
-      toast.error("Failed to update group");
+      toast.error(t("profile.toast.failed_update_group"));
       return;
     }
 
     group.value = data;
-    toast.success("Group updated");
+    toast.success(t("profile.toast.group_updated"));
   }
 
   const { setTheme } = useTheme();
@@ -112,19 +112,17 @@
     return [
       {
         name: "global.name",
-        text: auth.user?.name || "Unknown",
+        text: auth.user?.name || t("global.unknown"),
       },
       {
         name: "global.email",
-        text: auth.user?.email || "Unknown",
+        text: auth.user?.email || t("global.unknown"),
       },
     ] as Detail[];
   });
 
   async function deleteProfile() {
-    const result = await confirm.open(
-      "Are you sure you want to delete your account? If you are the last member in your group all your data will be deleted. This action cannot be undone."
-    );
+    const result = await confirm.open(t("profile.delete_account_confirm"));
 
     if (result.isCanceled) {
       return;
@@ -133,12 +131,12 @@
     const { response } = await api.user.delete();
 
     if (response?.status === 204) {
-      toast.success("Your account has been deleted.");
+      toast.success(t("profile.toast.account_deleted"));
       auth.logout(api);
       navigateTo("/");
     }
 
-    toast.error("Failed to delete your account.");
+    toast.error(t("profile.toast.failed_delete_account"));
   }
 
   const token = ref("");
@@ -179,12 +177,12 @@
     const { error } = await api.user.changePassword(passwordChange.current, passwordChange.new);
 
     if (error) {
-      toast.error("Failed to change password.");
+      toast.error(t("profile.toast.failed_change_password"));
       passwordChange.loading = false;
       return;
     }
 
-    toast.success("Password changed successfully.");
+    toast.success(t("profile.toast.password_changed"));
     closeDialog("change-password");
     passwordChange.new = "";
     passwordChange.current = "";
@@ -239,7 +237,7 @@
     });
 
     if (result.error) {
-      toast.error("Failed to create notifier.");
+      toast.error(t("profile.toast.failed_create_notifier"));
     }
 
     notifier.value = null;
@@ -260,7 +258,7 @@
     });
 
     if (result.error) {
-      toast.error("Failed to update notifier.");
+      toast.error(t("profile.toast.failed_update_notifier"));
     }
 
     notifier.value = null;
@@ -271,7 +269,7 @@
   }
 
   async function deleteNotifier(id: string) {
-    const result = await confirm.open("Are you sure you want to delete this notifier?");
+    const result = await confirm.open(t("profile.delete_notifier_confirm"));
 
     if (result.isCanceled) {
       return;
@@ -280,7 +278,7 @@
     const { error } = await api.notifiers.delete(id);
 
     if (error) {
-      toast.error("Failed to delete notifier.");
+      toast.error(t("profile.toast.failed_delete_notifier"));
       return;
     }
 
@@ -295,11 +293,11 @@
     const { error } = await api.notifiers.test(notifier.value.url);
 
     if (error) {
-      toast.error("Failed to test notifier.");
+      toast.error(t("profile.toast.failed_test_notifier"));
       return;
     }
 
-    toast.success("Notifier test successful.");
+    toast.success(t("profile.toast.notifier_test_success"));
   }
 </script>
 
@@ -411,7 +409,7 @@
                       <MdiDelete />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent> Delete </TooltipContent>
+                  <TooltipContent> {{ $t("global.delete") }} </TooltipContent>
                 </Tooltip>
                 <Tooltip>
                   <TooltipTrigger>
@@ -419,7 +417,7 @@
                       <MdiPencil />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent> Edit </TooltipContent>
+                  <TooltipContent> {{ $t("global.edit") }} </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </div>

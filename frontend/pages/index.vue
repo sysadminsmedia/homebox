@@ -88,7 +88,7 @@
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(email.value)) {
-      toast.error("Invalid email address");
+      toast.error(t("index.toast.invalid_email"));
       loading.value = false;
       return;
     }
@@ -101,7 +101,7 @@
     });
 
     if (error) {
-      toast.error("Problem registering user", {
+      toast.error(t("index.toast.problem_registering"), {
         classes: {
           title: "login-error",
         },
@@ -109,7 +109,7 @@
       return;
     }
 
-    toast.success("User registered");
+    toast.success(t("index.toast.user_registered"));
 
     loading.value = false;
     registerForm.value = false;
@@ -130,7 +130,7 @@
     const { error } = await ctx.login(api, email.value, loginPassword.value, remember.value);
 
     if (error) {
-      toast.error("Invalid email or password", {
+      toast.error(t("index.toast.invalid_email_password"), {
         classes: {
           title: "login-error",
         },
@@ -139,7 +139,7 @@
       return;
     }
 
-    toast.success("Logged in successfully");
+    toast.success(t("index.toast.login_success"));
 
     navigateTo(redirectTo.value || "/home");
     redirectTo.value = null;

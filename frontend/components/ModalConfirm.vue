@@ -3,7 +3,7 @@
     <AlertDialogContent>
       <AlertDialogHeader>
         <AlertDialogTitle>{{ $t("global.confirm") }}</AlertDialogTitle>
-        <AlertDialogDescription> {{ text }} </AlertDialogDescription>
+        <AlertDialogDescription> {{ text || $t("global.delete_confirm") }} </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
         <AlertDialogCancel @click="cancel(false)">

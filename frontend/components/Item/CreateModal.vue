@@ -141,6 +141,7 @@
 </template>
 
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import { Button, ButtonGroup } from "~/components/ui/button";
   import BaseModal from "@/components/App/CreateModal.vue";
@@ -167,6 +168,7 @@
     primary: boolean;
   }
 
+  const { t } = useI18n();
   const { activeDialog, closeDialog } = useDialog();
 
   useDialogHotkey("create-item", { code: "Digit1", shift: true });
@@ -279,7 +281,7 @@
           const itemIdRead = typeof itemId.value === "string" ? (itemId.value as string) : itemId.value[0];
           const { data, error } = await api.items.get(itemIdRead);
           if (error || !data) {
-            toast.error("Failed to load parent item - please select manually");
+            toast.error(t("components.item.create_modal.toast.failed_load_parent"));
             console.error("Parent item fetch error:", error);
           }
 
@@ -319,12 +321,12 @@
 
   async function create(close = true) {
     if (!form.location?.id) {
-      toast.error("Please select a location.");
+      toast.error(t("components.item.create_modal.toast.please_select_location"));
       return;
     }
 
     if (loading.value) {
-      toast.error("Already creating an item");
+      toast.error(t("components.item.create_modal.toast.already_creating"));
       return;
     }
 
@@ -345,14 +347,14 @@
 
     if (error) {
       loading.value = false;
-      toast.error("Couldn't create item");
+      toast.error(t("components.item.create_modal.toast.create_failed"));
       return;
     }
 
-    toast.success("Item created");
+    toast.success(t("components.item.create_modal.toast.create_success"));
 
     if (form.photos.length > 0) {
-      toast.info(`Uploading ${form.photos.length} photo(s)...`);
+      toast.info(t("components.item.create_modal.toast.uploading_photos", { numPhotos: form.photos.length }));
       let uploadError = false;
       for (const photo of form.photos) {
         const { error: attachError } = await api.items.attachments.add(
@@ -365,14 +367,14 @@
 
         if (attachError) {
           uploadError = true;
-          toast.error(`Failed to upload Photo: ${photo.photoName}`);
+          toast.error(t("components.item.create_modal.toast.upload_failed", { photoName: photo.photoName }));
           console.error(attachError);
         }
       }
       if (uploadError) {
-        toast.warning("Some photos failed to upload.");
+        toast.warning(t("components.item.create_modal.toast.some_photos_failed"));
       } else {
-        toast.success("All photos uploaded successfully.");
+        toast.success(t("components.item.create_modal.toast.upload_success"));
       }
     }
 
@@ -425,7 +427,7 @@
     const offScreenCanvasCtx = offScreenCanvas.getContext("2d");
 
     if (!offScreenCanvasCtx) {
-      toast.error("Your browser doesn't support canvas operations");
+      toast.error(t("components.item.create_modal.toast.no_canvas_support"));
       return;
     }
 
@@ -438,7 +440,7 @@
       img.onerror = () => reject(new Error("Failed to load image"));
       img.src = base64Image;
     }).catch(error => {
-      toast.error("Failed to rotate image: " + error.message);
+      toast.error(t("components.item.create_modal.toast.rotate_failed", { error: error.message }));
     });
 
     // Set its dimensions to rotated size
@@ -457,7 +459,7 @@
       form.photos[index].fileBase64 = offScreenCanvas.toDataURL(imageType, 100);
       form.photos[index].file = dataURLtoFile(form.photos[index].fileBase64, form.photos[index].photoName);
     } catch (error) {
-      toast.error("Failed to process rotated image");
+      toast.error(t("components.item.create_modal.toast.rotate_process_failed"));
       console.error(error);
     } finally {
       // Clean up resources

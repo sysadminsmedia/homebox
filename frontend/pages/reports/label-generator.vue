@@ -84,7 +84,7 @@
     const availablePageHeight = page.height - page.pageTopPadding - page.pageBottomPadding;
 
     if (availablePageWidth < cardWidth || availablePageHeight < cardHeight) {
-      toast.error("Page size is too small for the card size");
+      toast.error(t("reports.label_generator.toast.page_too_small_card"));
       return out.value;
     }
 
@@ -384,7 +384,9 @@
 
       <div>
         <p>{{ $t("reports.label_generator.qr_code_example") }} {{ displayProperties.baseURL }}/a/{asset_id}</p>
-        <Button size="lg" class="my-4 w-full" @click="calcPages"> Generate Page </Button>
+        <Button size="lg" class="my-4 w-full" @click="calcPages">
+          {{ $t("reports.label_generator.generate_page") }}
+        </Button>
       </div>
     </div>
   </div>

@@ -37,6 +37,7 @@
 </template>
 
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import {
     Dialog,
@@ -51,6 +52,8 @@
   type Props = {
     modelValue: boolean;
   };
+
+  const { t } = useI18n();
 
   const props = withDefaults(defineProps<Props>(), {
     modelValue: false,
@@ -83,7 +86,7 @@
 
   async function submitCsvFile() {
     if (!importCsv.value) {
-      toast.error("Please select a file to import.");
+      toast.error(t("components.app.import_dialog.toast.please_select_file"));
       return;
     }
 
@@ -92,7 +95,7 @@
     const { error } = await api.items.import(importCsv.value);
 
     if (error) {
-      toast.error("Import failed. Please try again later.");
+      toast.error(t("components.app.import_dialog.toast.import_failed"));
     }
 
     // Reset
@@ -104,6 +107,6 @@
       importRef.value.value = "";
     }
 
-    toast.success("Import successful!");
+    toast.success(t("components.app.import_dialog.toast.import_success"));
   }
 </script>

@@ -148,7 +148,7 @@
     } else {
       const [aid, valid] = parseAssetIDString(query.value.replace("#", ""));
       if (!valid) {
-        return "Invalid Asset ID";
+        return t("items.invalid_asset_id");
       } else {
         return aid;
       }
@@ -288,7 +288,7 @@
 
     if (error) {
       resetItems();
-      toast.error("Failed to search items");
+      toast.error(t("items.toast.failed_search_items"));
       return;
     }
 
@@ -468,7 +468,7 @@
             <Label> Field </Label>
             <Select v-model="fieldTuples[idx][0]" @update:model-value="fetchValues(f[0])">
               <SelectTrigger>
-                <SelectValue placeholder="Select a field" />
+                <SelectValue :placeholder="$t('items.select_field')" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem v-for="field in allFields" :key="field" :value="field"> {{ field }} </SelectItem>
