@@ -19,8 +19,9 @@
                 "new_version_available_link": "Click here to view the release notes"
             },
             "create_modal": {
-                "create_and_add": "to create and add another.",
-                "use": "Use"
+                "createAndAddAnother": "Use {shiftKey} + {enterKey} to create and add another.",
+                "enter": "Enter",
+                "shift": "Shift"
             }
         },
         "form": {
@@ -92,9 +93,8 @@
                 "item_photo": "Item Photo 📷",
                 "item_quantity": "Item Quantity",
                 "parent_item" :"Parent Item",
-                "primary_photo": "primary photo",
                 "rotate_photo": "Rotate photo",
-                "set_as": "Set as",
+                "set_as_primary_photo": "Set as { isPrimary, select, true {non-} false {} other {}}primary photo",
                 "title": "Create Item",
                 "toast": {
                     "already_creating": "Already creating an item",
@@ -105,10 +105,10 @@
                     "please_select_location": "Please select a location.",
                     "rotate_failed": "Failed to rotate image: { error }",
                     "rotate_process_failed": "Failed to process rotated image",
-                    "some_photos_failed": "Some photos failed to upload.",
-                    "upload_failed": "Failed to upload Photo: { photoName }",
-                    "upload_success": "All photos uploaded successfully.",
-                    "uploading_photos": "Uploading { num } photo(s)..."
+                    "some_photos_failed": "{count, plural, =0 {No photos to upload.} =1 {1 photo failed to upload.} other {Some photos failed to upload.}}",
+                    "upload_failed": "Failed to upload photo: { photoName }",
+                    "upload_success": "{count, plural, =0 {No photos uploaded.} =1 {Photo uploaded successfully.} other {All photos uploaded successfully.}}",
+                    "uploading_photos": "{count, plural, =0 {No photos to upload} =1 {Uploading 1 photo...} other {Uploading {count} photos...}}"
                 },
                 "upload_photos": "Upload Photos",
                 "uploaded": "Uploaded Photo"

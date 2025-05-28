@@ -119,15 +119,13 @@
                     <MdiStar v-if="photo.primary" />
                     <MdiStarOutline v-else />
                     <div class="sr-only">
-                      {{ $t("components.item.create_modal.set_as") }} {{ photo.primary ? "non" : "" }}
-                      {{ $t("components.item.create_modal.primary_photo") }}
+                      {{ $t("components.item.create_modal.set_as_primary_photo", { isPrimary: photo.primary }) }}
                     </div>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>
-                    {{ $t("components.item.create_modal.set_as") }} {{ photo.primary ? "non" : "" }}
-                    {{ $t("components.item.create_modal.primary_photo") }}
+                    {{ $t("components.item.create_modal.set_as_primary_photo", { isPrimary: photo.primary }) }}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -354,7 +352,7 @@
     toast.success(t("components.item.create_modal.toast.create_success"));
 
     if (form.photos.length > 0) {
-      toast.info(t("components.item.create_modal.toast.uploading_photos", { numPhotos: form.photos.length }));
+      toast.info(t("components.item.create_modal.toast.uploading_photos", { count: form.photos.length }));
       let uploadError = false;
       for (const photo of form.photos) {
         const { error: attachError } = await api.items.attachments.add(
@@ -372,9 +370,9 @@
         }
       }
       if (uploadError) {
-        toast.warning(t("components.item.create_modal.toast.some_photos_failed"));
+        toast.warning(t("components.item.create_modal.toast.some_photos_failed", { count: form.photos.length }));
       } else {
-        toast.success(t("components.item.create_modal.toast.upload_success"));
+        toast.success(t("components.item.create_modal.toast.upload_success", { count: form.photos.length }));
       }
     }
 
