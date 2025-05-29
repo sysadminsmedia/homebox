@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import MdiGithub from "~icons/mdi/github";
   import MdiDiscord from "~icons/mdi/discord";
@@ -14,8 +15,10 @@
   import LanguageSelector from "~/components/App/LanguageSelector.vue";
   import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
+  const { t } = useI18n();
+
   useHead({
-    title: "Homebox | Organize and Tag Your Stuff",
+    title: "HomeBox | " + t("index.title"),
   });
 
   definePageMeta({
@@ -85,7 +88,7 @@
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(email.value)) {
-      toast.error("Invalid email address");
+      toast.error(t("index.toast.invalid_email"));
       loading.value = false;
       return;
     }
@@ -98,7 +101,7 @@
     });
 
     if (error) {
-      toast.error("Problem registering user", {
+      toast.error(t("index.toast.problem_registering"), {
         classes: {
           title: "login-error",
         },
@@ -106,7 +109,7 @@
       return;
     }
 
-    toast.success("User registered");
+    toast.success(t("index.toast.user_registered"));
 
     loading.value = false;
     registerForm.value = false;
@@ -127,7 +130,7 @@
     const { error } = await ctx.login(api, email.value, loginPassword.value, remember.value);
 
     if (error) {
-      toast.error("Invalid email or password", {
+      toast.error(t("index.toast.invalid_email_password"), {
         classes: {
           title: "login-error",
         },
@@ -136,7 +139,7 @@
       return;
     }
 
-    toast.success("Logged in successfully");
+    toast.success(t("index.toast.login_success"));
 
     navigateTo(redirectTo.value || "/home");
     redirectTo.value = null;
@@ -260,7 +263,7 @@
                 </CardHeader>
                 <CardContent class="flex flex-col gap-2">
                   <template v-if="status && status.demo">
-                    <p class="text-center text-xs italic">This is a demo instance</p>
+                    <p class="text-center text-xs italic">{{ $t("global.demo_instance") }}</p>
                     <p class="text-center text-xs">
                       <b>{{ $t("global.email") }}</b> demo@example.com
                     </p>

@@ -8,7 +8,7 @@
         <Button :id="id" variant="outline" role="combobox" :aria-expanded="open" class="w-full justify-between">
           <span>
             <slot name="display" v-bind="{ item: value }">
-              {{ displayValue(value) || placeholder }}
+              {{ displayValue(value) || localizedPlaceholder }}
             </slot>
           </span>
           <ChevronsUpDown class="ml-2 size-4 shrink-0 opacity-50" />
@@ -16,9 +16,9 @@
       </PopoverTrigger>
       <PopoverContent class="w-[--reka-popper-anchor-width] p-0">
         <Command :ignore-filter="true">
-          <CommandInput v-model="search" :placeholder="searchPlaceholder" :display-value="_ => ''" />
+          <CommandInput v-model="search" :placeholder="localizedSearchPlaceholder" :display-value="_ => ''" />
           <CommandEmpty>
-            {{ noResultsText }}
+            {{ localizedNoResultsText }}
           </CommandEmpty>
           <CommandList>
             <CommandGroup>
@@ -41,12 +41,15 @@
   import { Check, ChevronsUpDown } from "lucide-vue-next";
   import fuzzysort from "fuzzysort";
   import { useVModel } from "@vueuse/core";
+  import { useI18n } from "vue-i18n";
   import { Button } from "~/components/ui/button";
   import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "~/components/ui/command";
   import { Label } from "~/components/ui/label";
   import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
   import { cn } from "~/lib/utils";
   import { useId } from "#imports";
+
+  const { t } = useI18n();
 
   type ItemsObject = {
     [key: string]: unknown;
@@ -72,15 +75,21 @@
     itemText: "text",
     itemValue: "value",
     search: "",
-    searchPlaceholder: "Type to search...",
-    noResultsText: "No Results Found",
-    placeholder: "Select...",
+    searchPlaceholder: undefined,
+    noResultsText: undefined,
+    placeholder: undefined,
   });
 
   const id = useId();
   const open = ref(false);
   const search = ref(props.search);
   const value = useVModel(props, "modelValue", emit);
+
+  const localizedSearchPlaceholder = computed(
+    () => props.searchPlaceholder ?? t("components.item.selector.search_placeholder")
+  );
+  const localizedNoResultsText = computed(() => props.noResultsText ?? t("components.item.selector.no_results"));
+  const localizedPlaceholder = computed(() => props.placeholder ?? t("components.item.selector.placeholder"));
 
   watch(
     () => props.search,

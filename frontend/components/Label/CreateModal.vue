@@ -27,9 +27,12 @@
 </template>
 
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import BaseModal from "@/components/App/CreateModal.vue";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
+
+  const { t } = useI18n();
 
   const { closeDialog } = useDialog();
 
@@ -56,11 +59,11 @@
 
   async function create(close = true) {
     if (loading.value) {
-      toast.error("Already creating a label");
+      toast.error(t("components.label.create_modal.toast.already_creating"));
       return;
     }
     if (form.name.length > 50) {
-      toast.error("Label name must not be longer than 50 characters");
+      toast.error(t("components.label.create_modal.toast.label_name_too_long"));
       return;
     }
 
@@ -71,12 +74,12 @@
     const { error, data } = await api.labels.create(form);
 
     if (error) {
-      toast.error("Couldn't create label");
+      toast.error(t("components.label.create_modal.toast.create_failed"));
       loading.value = false;
       return;
     }
 
-    toast.success("Label created");
+    toast.success(t("components.label.create_modal.toast.create_success"));
     reset();
 
     if (close) {

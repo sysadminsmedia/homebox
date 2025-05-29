@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { useTreeState } from "~~/components/Location/Tree/tree-state";
   import MdiCollapseAllOutline from "~icons/mdi/collapse-all-outline";
   import MdiExpandAllOutline from "~icons/mdi/expand-all-outline";
@@ -7,6 +8,8 @@
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
   import type { TreeItem } from "~/lib/api/types/data-contracts";
 
+  const { t } = useI18n();
+
   // TODO: eventually move to https://reka-ui.com/docs/components/tree#draggable-sortable-tree
 
   definePageMeta({
@@ -14,7 +17,7 @@
   });
 
   useHead({
-    title: "Homebox | Items",
+    title: "HomeBox | " + t("menu.locations"),
   });
 
   const api = useUserApi();

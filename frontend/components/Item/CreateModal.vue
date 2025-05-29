@@ -69,7 +69,11 @@
       <div v-if="form.photos.length > 0" class="mt-4 border-t px-4 pb-4">
         <div v-for="(photo, index) in form.photos" :key="index">
           <div class="mt-8 w-full">
-            <img :src="photo.fileBase64" class="w-full rounded object-fill shadow-sm" alt="Uploaded Photo" />
+            <img
+              :src="photo.fileBase64"
+              class="w-full rounded object-fill shadow-sm"
+              :alt="$t('components.item.create_modal.uploaded')"
+            />
           </div>
           <div class="mt-2 flex items-center gap-2">
             <TooltipProvider class="flex gap-2" :delay-duration="0">
@@ -77,11 +81,11 @@
                 <TooltipTrigger>
                   <Button size="icon" type="button" variant="destructive" @click.prevent="deleteImage(index)">
                     <MdiDelete />
-                    <div class="sr-only">Delete photo</div>
+                    <div class="sr-only">{{ $t("components.item.create_modal.delete_photo") }}</div>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Delete photo</p>
+                  <p>{{ $t("components.item.create_modal.delete_photo") }}</p>
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
@@ -97,11 +101,11 @@
                     "
                   >
                     <MdiRotateClockwise />
-                    <div class="sr-only">Rotate photo</div>
+                    <div class="sr-only">{{ $t("components.item.create_modal.rotate_photo") }}</div>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Rotate photo</p>
+                  <p>{{ $t("components.item.create_modal.rotate_photo") }}</p>
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
@@ -114,11 +118,15 @@
                   >
                     <MdiStar v-if="photo.primary" />
                     <MdiStarOutline v-else />
-                    <div class="sr-only">Set as {{ photo.primary ? "non" : "" }} primary photo</div>
+                    <div class="sr-only">
+                      {{ $t("components.item.create_modal.set_as_primary_photo", { isPrimary: photo.primary }) }}
+                    </div>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Set as {{ photo.primary ? "non" : "" }} primary photo</p>
+                  <p>
+                    {{ $t("components.item.create_modal.set_as_primary_photo", { isPrimary: photo.primary }) }}
+                  </p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -131,6 +139,7 @@
 </template>
 
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import { Button, ButtonGroup } from "~/components/ui/button";
   import BaseModal from "@/components/App/CreateModal.vue";
@@ -157,6 +166,7 @@
     primary: boolean;
   }
 
+  const { t } = useI18n();
   const { activeDialog, closeDialog } = useDialog();
 
   useDialogHotkey("create-item", { code: "Digit1", shift: true });
@@ -269,7 +279,7 @@
           const itemIdRead = typeof itemId.value === "string" ? (itemId.value as string) : itemId.value[0];
           const { data, error } = await api.items.get(itemIdRead);
           if (error || !data) {
-            toast.error("Failed to load parent item - please select manually");
+            toast.error(t("components.item.create_modal.toast.failed_load_parent"));
             console.error("Parent item fetch error:", error);
           }
 
@@ -309,12 +319,12 @@
 
   async function create(close = true) {
     if (!form.location?.id) {
-      toast.error("Please select a location.");
+      toast.error(t("components.item.create_modal.toast.please_select_location"));
       return;
     }
 
     if (loading.value) {
-      toast.error("Already creating an item");
+      toast.error(t("components.item.create_modal.toast.already_creating"));
       return;
     }
 
@@ -335,14 +345,14 @@
 
     if (error) {
       loading.value = false;
-      toast.error("Couldn't create item");
+      toast.error(t("components.item.create_modal.toast.create_failed"));
       return;
     }
 
-    toast.success("Item created");
+    toast.success(t("components.item.create_modal.toast.create_success"));
 
     if (form.photos.length > 0) {
-      toast.info(`Uploading ${form.photos.length} photo(s)...`);
+      toast.info(t("components.item.create_modal.toast.uploading_photos", { count: form.photos.length }));
       let uploadError = false;
       for (const photo of form.photos) {
         const { error: attachError } = await api.items.attachments.add(
@@ -355,14 +365,14 @@
 
         if (attachError) {
           uploadError = true;
-          toast.error(`Failed to upload Photo: ${photo.photoName}`);
+          toast.error(t("components.item.create_modal.toast.upload_failed", { photoName: photo.photoName }));
           console.error(attachError);
         }
       }
       if (uploadError) {
-        toast.warning("Some photos failed to upload.");
+        toast.warning(t("components.item.create_modal.toast.some_photos_failed", { count: form.photos.length }));
       } else {
-        toast.success("All photos uploaded successfully.");
+        toast.success(t("components.item.create_modal.toast.upload_success", { count: form.photos.length }));
       }
     }
 
@@ -415,7 +425,7 @@
     const offScreenCanvasCtx = offScreenCanvas.getContext("2d");
 
     if (!offScreenCanvasCtx) {
-      toast.error("Your browser doesn't support canvas operations");
+      toast.error(t("components.item.create_modal.toast.no_canvas_support"));
       return;
     }
 
@@ -428,7 +438,7 @@
       img.onerror = () => reject(new Error("Failed to load image"));
       img.src = base64Image;
     }).catch(error => {
-      toast.error("Failed to rotate image: " + error.message);
+      toast.error(t("components.item.create_modal.toast.rotate_failed", { error: error.message }));
     });
 
     // Set its dimensions to rotated size
@@ -447,7 +457,7 @@
       form.photos[index].fileBase64 = offScreenCanvas.toDataURL(imageType, 100);
       form.photos[index].file = dataURLtoFile(form.photos[index].fileBase64, form.photos[index].photoName);
     } catch (error) {
-      toast.error("Failed to process rotated image");
+      toast.error(t("components.item.create_modal.toast.rotate_process_failed"));
       console.error(error);
     } finally {
       // Clean up resources

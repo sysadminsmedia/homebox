@@ -66,6 +66,7 @@
   </div>
 </template>
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { ComboboxAnchor, ComboboxContent, ComboboxInput, ComboboxPortal, ComboboxRoot } from "reka-ui";
   import { computed, ref } from "vue";
   import fuzzysort from "fuzzysort";
@@ -79,6 +80,8 @@
     TagsInputItemText,
   } from "@/components/ui/tags-input";
   import type { LabelOut } from "~/lib/api/types/data-contracts";
+
+  const { t } = useI18n();
 
   const id = useId();
 
@@ -118,7 +121,7 @@
       .filter(i => !modelValue.value.includes(i.value));
 
     if (searchTerm.value.trim() !== "") {
-      filtered.push({ value: "create-item", label: `Create ${searchTerm.value}` });
+      filtered.push({ value: "create-item", label: `${t("global.create")} ${searchTerm.value}` });
     }
 
     return filtered;
@@ -126,7 +129,7 @@
 
   const createAndAdd = async (name: string) => {
     if (name.length > 50) {
-      toast.error("Label name must not be longer than 50 characters");
+      toast.error(t("components.label.create_modal.toast.label_name_too_long"));
       return;
     }
     const { error, data } = await api.labels.create({
@@ -136,11 +139,11 @@
     });
 
     if (error) {
-      toast.error("Couldn't create label");
+      toast.error(t("components.label.create_modal.toast.create_failed"));
       return;
     }
 
-    toast.success("Label created");
+    toast.success(t("components.label.create_modal.toast.create_success"));
 
     modelValue.value = [...modelValue.value, data.id];
   };

@@ -8,10 +8,18 @@
       <slot />
 
       <DialogFooter>
-        <span class="flex items-center gap-1 text-sm">
-          Use <Shortcut size="sm" :keys="['Shift']" /> + <Shortcut size="sm" :keys="['Enter']" /> to create and add
-          another.
-        </span>
+        <i18n-t
+          keypath="components.app.create_modal.createAndAddAnother"
+          tag="span"
+          class="flex items-center gap-1 text-sm"
+        >
+          <template #shiftKey>
+            <Shortcut size="sm" :keys="[$t('components.app.create_modal.shift')]" />
+          </template>
+          <template #enterKey>
+            <Shortcut size="sm" :keys="[$t('components.app.create_modal.enter')]" />
+          </template>
+        </i18n-t>
       </DialogFooter>
     </DialogScrollContent>
   </Dialog>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { route } from "../../lib/api/base";
   import PageQRCode from "./PageQRCode.vue";
   import { toast } from "@/components/ui/sonner";
@@ -17,6 +18,7 @@
   import { Button, ButtonGroup } from "@/components/ui/button";
   import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
+  const { t } = useI18n();
   const { openDialog, closeDialog } = useDialog();
 
   const props = defineProps<{
@@ -29,7 +31,7 @@
   const { data: status } = useAsyncData(async () => {
     const { data, error } = await pubApi.status();
     if (error) {
-      toast.error("Failed to load status");
+      toast.error(t("components.global.label_maker.toast.load_status_failed"));
       return;
     }
 
@@ -55,11 +57,11 @@
     } catch (err) {
       console.error("Failed to print labels:", err);
       serverPrinting.value = false;
-      toast.error("Failed to print label");
+      toast.error(t("components.global.label_maker.toast.print_failed"));
       return;
     }
 
-    toast.success("Label printed");
+    toast.success(t("components.global.label_maker.toast.print_success"));
     closeDialog("print-label");
     serverPrinting.value = false;
   }
