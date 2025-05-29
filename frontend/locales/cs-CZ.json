@@ -66,7 +66,12 @@
                 "download": "Stáhnout štítek",
                 "print": "Vytisknout štítek",
                 "server_print": "Tisk na serveru",
-                "titles": "Štítky"
+                "titles": "Štítky",
+                "toast": {
+                    "load_status_failed": "Nepodařilo se načíst stav",
+                    "print_failed": "Nepodařilo se vytisknout štítek",
+                    "print_success": "Štítek vytištěn"
+                }
             },
             "page_qr_code": {
                 "page_url": "URL stránky",
@@ -77,14 +82,39 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "Stáhnout",
+                "open_new_tab": "Otevřít na nové kartě"
+            },
             "create_modal": {
+                "delete_photo": "Smazat fotku",
                 "item_description": "Popis položky",
                 "item_name": "Jméno položky",
                 "item_photo": "Fotografie položky 📷",
                 "item_quantity": "Množství položek",
                 "parent_item": "Nadřazená položka",
+                "rotate_photo": "Otočit fotku",
+                "set_as_primary_photo": "Nastavit jako { isPrimary, select, true {non-} false {} other {}}primární fotku",
                 "title": "Vytvořit položku",
-                "upload_photos": "Nahrát fotografie"
+                "toast": {
+                    "already_creating": "Již vytváříte položku",
+                    "create_failed": "Nepodařilo se vytvořit položku",
+                    "create_success": "Položka vytvořena",
+                    "failed_load_parent": "Nepodařilo se načíst nadřazenou položku - vyberte prosím ručně",
+                    "no_canvas_support": "Váš prohlížeč nepodporuje operace s obrazem",
+                    "please_select_location": "Vyberte prosím lokalitu.",
+                    "rotate_failed": "Nepodařilo se otočit obrázek: { error }",
+                    "rotate_process_failed": "Nepodařilo se zpracovat otočený obrázek",
+                    "some_photos_failed": "{count, plural, =0 {Žádná fotka k nahrání.} =1 {Nepodařilo se nahrát 1 fotografii.} other {Některé fotografie se nepodařilo nahrát.}}",
+                    "upload_failed": "Nepodařilo se nahrát fotku: { photoName }",
+                    "upload_success": "{count, plural, =0 {Nejsou nahrané žádné fotky.} =1 {Fotka byla úspěšně nahrána.} other {Všechny fotky byly úspěšně nahrány.}}",
+                    "uploading_photos": "{count, plural, =0 {Žádné fotky k nahrání} =1 {Nahrávání 1 fotky...} other {Nahrávání {count} fotek...}}"
+                },
+                "upload_photos": "Nahrát fotografie",
+                "uploaded": "Fotka byla nahrána"
+            },
+            "selector": {
+                "no_results": "Nebyly nalezeny žádné výsledky."
             },
             "view": {
                 "selectable": {
