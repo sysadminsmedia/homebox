@@ -1,10 +1,20 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "Verwenden Sie {Umschalttaste} + {EingabeTaste}, um eine weitere zu erstellen und hinzuzufügen.",
+                "enter": "Eingabe",
+                "shift": "Shift"
+            },
             "import_dialog": {
                 "change_warning": "Das Verhalten beim Importieren mit bestehenden import_refs hat sich geändert. Wenn ein import_ref in der CSV-Datei vorhanden ist, \nwird der Gegenstand mit den Werten in der CSV-Datei aktualisiert.",
                 "description": "Importiere eine CSV-Datei, die deine Gegenstände, Etiketten und Standorte enthält. Schau in die Dokumentation für weitere Informationen\nzum erforderlichen Format.",
-                "title": "CSV-Datei importieren"
+                "title": "CSV-Datei importieren",
+                "toast": {
+                    "import_failed": "Import fehlgeschlagen. Bitte später erneut versuchen.",
+                    "import_success": "Import erfolgreich!",
+                    "please_select_file": "Bitte eine Datei zum importieren wählen."
+                }
             },
             "outdated": {
                 "current_version": "Aktuelle Version",
@@ -12,6 +22,11 @@
                 "latest_version": "Neuste Version",
                 "new_version_available": "Neue Version verfügbar",
                 "new_version_available_link": "Klicken Sie hier, um die Release Notes anzuzeigen"
+            }
+        },
+        "form": {
+            "password": {
+                "toggle_show": "Passwort anzeigen"
             }
         },
         "global": {
@@ -51,7 +66,10 @@
                 "download": "Etikett herunterladen",
                 "print": "Etikett drucken",
                 "server_print": "Auf Server drucken",
-                "titles": "Etiketten"
+                "titles": "Etiketten",
+                "toast": {
+                    "load_status_failed": "Laden des Status fehlgeschlagen"
+                }
             },
             "page_qr_code": {
                 "page_url": "Seiten-URL",
@@ -62,14 +80,35 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "Herunterladen",
+                "open_new_tab": "In einem neuen Tab öffnen"
+            },
             "create_modal": {
+                "delete_photo": "Photo löschen",
                 "item_description": "Gegenstandsbezeichnung",
                 "item_name": "Gegenstandsname",
                 "item_photo": "Artikel Bild",
                 "item_quantity": "Artikel Menge",
                 "parent_item": "Übergeordneter Gegenstand",
+                "rotate_photo": "Photo drehen",
                 "title": "Gegenstand erstellen",
-                "upload_photos": "Upload Bilder"
+                "toast": {
+                    "already_creating": "Item wird bereits erstellt",
+                    "create_failed": "Item konnte nicht erstellt werden",
+                    "create_success": "Item erstellt",
+                    "no_canvas_support": "Ihr Browser unterstützt Canvas-Operationen nicht",
+                    "please_select_location": "Bitte einen Ort auswählen",
+                    "rotate_failed": "Drehen des Bildes fehlgeschlagen: {error}",
+                    "upload_failed": "Hochladen des Bildes Fehlgeschlagen: { photoName }"
+                },
+                "upload_photos": "Upload Bilder",
+                "uploaded": "Bild hochgeladen"
+            },
+            "selector": {
+                "no_results": "Keine Ergebnisse gefunden",
+                "placeholder": "Auswählen...",
+                "search_placeholder": "Für Suche tippen..."
             },
             "view": {
                 "selectable": {
@@ -90,7 +129,13 @@
             "create_modal": {
                 "label_description": "Label-Beschreibung",
                 "label_name": "Label-Name",
-                "title": "Label erstellen"
+                "title": "Label erstellen",
+                "toast": {
+                    "already_creating": "Label wird bereits erstellt",
+                    "create_failed": "Label konnte nicht erstellt werden",
+                    "create_success": "Label erstellt",
+                    "label_name_too_long": "Name des Labels darf nicht länger als 50 Zeichen sein"
+                }
             },
             "selector": {
                 "select_labels": "Labels auswählen"
@@ -100,7 +145,12 @@
             "create_modal": {
                 "location_description": "Standortbeschreibung",
                 "location_name": "Standortname",
-                "title": "Standort erstellen"
+                "title": "Standort erstellen",
+                "toast": {
+                    "already_creating": "Ort wird bereits erstellt",
+                    "create_failed": "Ort konnte nicht erstellt werden",
+                    "create_success": "Ort erstellt"
+                }
             },
             "selector": {
                 "no_location_found": "Kein Ort gefunden",
@@ -128,6 +178,8 @@
         "create_subitem": "Sub-Gegenstand erstellen",
         "created": "Erstellt",
         "delete": "Löschen",
+        "delete_confirm": "Sind Sie sicher, dass Sie das Item löschen möchten? ",
+        "demo_instance": "Das ist eine Demo-Instanz",
         "details": "Details",
         "duplicate": "Duplizieren",
         "edit": "Bearbeiten",
@@ -154,7 +206,9 @@
         "search": "Suche",
         "sign_out": "Abmelden",
         "submit": "Einreichen",
+        "unknown": "Unbekannt",
         "update": "Aktualisieren",
+        "updating": "Aktualisiere",
         "value": "Wert",
         "version": "Version: { version }",
         "welcome": "Willkommen, { username }"
@@ -179,18 +233,29 @@
         "set_email": "Was ist deine E-Mail?",
         "set_name": "Wie heißt du?",
         "set_password": "Setze dein Passwort",
-        "tagline": "Verfolgen, Organisieren und Verwalten deiner Sachen."
+        "tagline": "Verfolgen, Organisieren und Verwalten deiner Sachen.",
+        "title": "Organisieren und markieren Sie Ihre Sachen",
+        "toast": {
+            "invalid_email": "Ungültige Email-Adresse",
+            "invalid_email_password": "Ungültige Email oder Passwort",
+            "login_success": "Erfolgreich eingeloggt",
+            "problem_registering": "Problem bei der Benutzerregistrierung",
+            "user_registered": "Benutzer registriert"
+        }
     },
     "items": {
         "add": "Hinzufügen",
         "advanced": "Erweitert",
         "archived": "Archiviert",
         "asset_id": "Asset-ID",
+        "associated_with_multiple": "Diese Asset-ID ist mit mehreren Elementen verknüpft",
         "attachment": "Anhang",
         "attachments": "Anhänge",
         "changes_persisted_immediately": "Änderungen an Anhängen werden sofort gespeichert",
         "created_at": "Erstellt um",
         "custom_fields": "Benutzerdefinierte Felder",
+        "delete_attachment_confirm": "Sind Sie sicher, dass Sie diesen Anhang löschen möchten?",
+        "delete_item_confirm": "Sind Sie sicher, dass Sie diesen Artikel löschen möchten?",
         "description": "Beschreibung",
         "details": "Details",
         "drag_and_drop": "Ziehen Sie Dateien hierher und legen Sie sie dort ab oder klicken Sie, um Dateien auszuwählen",
