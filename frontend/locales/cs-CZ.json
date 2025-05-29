@@ -1,10 +1,20 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "Použijte {shiftKey} + {enterKey} pro vytvoření a přidání dalšího.",
+                "enter": "Potvrdit",
+                "shift": "Posunout"
+            },
             "import_dialog": {
                 "change_warning": "Změnilo se chování importů s existujícími import_refs. Pokud je v souboru CSV přítomen import_ref, bude \n položka aktualizována hodnotami ze souboru CSV.",
                 "description": "Importujte CSV soubor obsahující vaše položky, štítky a lokace. Pro dodatečné informace o formátu použijte dokumentaci.",
-                "title": "Importovat CSV soubor"
+                "title": "Importovat CSV soubor",
+                "toast": {
+                    "import_failed": "Import se nezdařil. Zkuste to prosím později.",
+                    "import_success": "Import proběhl úspěšně!",
+                    "please_select_file": "Vyberte soubor, který chcete importovat."
+                }
             },
             "outdated": {
                 "current_version": "Aktuální verze",
@@ -12,6 +22,11 @@
                 "latest_version": "Poslední verze",
                 "new_version_available": "Nová verze k dispozici",
                 "new_version_available_link": "Kliknutím sem zobrazíte poznámky k verzi"
+            }
+        },
+        "form": {
+            "password": {
+                "toggle_show": "Přepnout zobrazení hesla"
             }
         },
         "global": {
