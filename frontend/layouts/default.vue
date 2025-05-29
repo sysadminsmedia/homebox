@@ -104,7 +104,7 @@
 
         <SidebarRail />
       </Sidebar>
-      <SidebarInset class="min-h-screen bg-background-accent">
+      <SidebarInset class="min-h-dvh bg-background-accent">
         <div class="relative flex h-full flex-col justify-center">
           <div v-if="preferences.displayLegacyHeader">
             <AppHeaderDecor class="-mt-10 hidden lg:block" />
