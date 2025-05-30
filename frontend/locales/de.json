@@ -347,7 +347,14 @@
             "failed_load_item": "Laden des Artikels ist fehlgeschlagen",
             "failed_load_items": "Laden der Artikel ist fehlgeschlagen",
             "failed_save": "Speichern des Artikels ist fehlgeschlagen",
-            "failed_save_no_location": "Speichern des Artikels ist fehlgeschlagen: Es wurde kein Ort ausgewählt"
+            "failed_save_no_location": "Speichern des Artikels ist fehlgeschlagen: Es wurde kein Ort ausgewählt",
+            "failed_search_items": "Das Suchen der Artikel ist fehlgeschlagen",
+            "failed_update_attachment": "Aktualisieren des Anhangs ist fehlgeschlagen",
+            "failed_upload_attachment": "Hochladen des Anhangs ist fehlgeschlagen",
+            "item_deleted": "Artikel gelöscht",
+            "item_saved": "Artikel gespeichert",
+            "quantity_cannot_negative": "Die Anzahl darf nicht negativ sein",
+            "sync_child_location": "Das ausgewählte übergeordnete Element synchronisiert die Speicherorte seiner untergeordneten Elemente mit seinen eigenen. Der Standort wurde aktualisiert."
         },
         "updated_at": "Aktualisiert am",
         "warranty": "Gewährleistung",
@@ -355,7 +362,15 @@
         "warranty_expires": "Garantie läuft ab am"
     },
     "labels": {
+        "label_delete_confirm": "Sind Sie sicher, dass Sie das Label löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
         "no_results": "Keine Labels gefunden",
+        "toast": {
+            "failed_delete_label": "Löschen des Labels ist fehlgeschlagen",
+            "failed_load_label": "Laden des Labels ist fehlgeschlagen",
+            "failed_update_label": "Aktualisieren des Labels ist fehlgeschlagen",
+            "label_deleted": "Label wurde gelöscht",
+            "label_updated": "Label wurde aktualisiert"
+        },
         "update_label": "Label aktualisieren"
     },
     "languages": {
@@ -398,7 +413,14 @@
         "child_locations": "Unter-Standorte",
         "collapse_tree": "Baum einklappen",
         "expand_tree": "Baum ausklappen",
+        "location_items_delete_confirm": "Möchten Sie diesen Standort und alle darin enthaltenen Elemente wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
         "no_results": "Keine Orte gefunden",
+        "toast": {
+            "failed_delete_location": "Standort konnte nicht gelöscht werden",
+            "failed_load_location": "Standort konnte nicht geladen werden",
+            "failed_update_location": "Standort konnte nicht aktualisiert werden",
+            "location_deleted": "Standort konnte nicht aktualisiert werden"
+        },
         "update_location": "Aktualisiere Standort"
     },
     "maintenance": {
