@@ -27,10 +27,33 @@
                 "hour": "小時hour",
                 "hours": "小時hours",
                 "in": "鎖定{0}",
-                "just-now": "現在"
+                "just-now": "現在",
+                "last-month": "上個月",
+                "last-week": "上週",
+                "last-year": "去年",
+                "minute": "分鐘",
+                "minutes": "分鐘",
+                "months": "月",
+                "next-month": "下個月",
+                "next-week": "下週",
+                "next-year": "明年",
+                "second": "秒",
+                "seconds": "秒",
+                "tomorrow": "明天",
+                "week": "周",
+                "weeks": "周",
+                "years": "年",
+                "yesterday": "昨天"
+            },
+            "label_maker": {
+                "browser_print": "從瀏覽器列印",
+                "confirm_description": "您確定要列印此標籤嗎？",
+                "download": "下載標籤",
+                "titles": "標籤"
             },
             "page_qr_code": {
-                "page_url": "頁面網址"
+                "page_url": "頁面網址",
+                "qr_tooltip": "顯示二維修碼"
             },
             "password_score": {
                 "password_strength": "密碼強度"
