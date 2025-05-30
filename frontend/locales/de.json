@@ -419,7 +419,7 @@
             "failed_delete_location": "Standort konnte nicht gelöscht werden",
             "failed_load_location": "Standort konnte nicht geladen werden",
             "failed_update_location": "Standort konnte nicht aktualisiert werden",
-            "location_deleted": "Standort konnte nicht aktualisiert werden"
+            "location_deleted": "Standort gelöscht"
         },
         "update_location": "Aktualisiere Standort"
     },
