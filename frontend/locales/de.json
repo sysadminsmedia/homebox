@@ -2,7 +2,7 @@
     "components": {
         "app": {
             "create_modal": {
-                "createAndAddAnother": "Verwenden Sie {Umschalttaste} + {EingabeTaste}, um eine weitere zu erstellen und hinzuzufügen.",
+                "createAndAddAnother": "Verwenden Sie {Umschalttaste} + {Eingabetaste}, um eine weitere zu erstellen und hinzuzufügen.",
                 "enter": "Eingabe",
                 "shift": "Shift"
             },
@@ -11,7 +11,7 @@
                 "description": "Importiere eine CSV-Datei, die deine Gegenstände, Etiketten und Standorte enthält. Schau in die Dokumentation für weitere Informationen\nzum erforderlichen Format.",
                 "title": "CSV-Datei importieren",
                 "toast": {
-                    "import_failed": "Import fehlgeschlagen. Bitte später erneut versuchen.",
+                    "import_failed": "Import fehlgeschlagen. Bitte versuchen Sie es später erneut.",
                     "import_success": "Import erfolgreich!",
                     "please_select_file": "Bitte eine Datei zum importieren wählen."
                 }
@@ -68,7 +68,9 @@
                 "server_print": "Auf Server drucken",
                 "titles": "Etiketten",
                 "toast": {
-                    "load_status_failed": "Laden des Status fehlgeschlagen"
+                    "load_status_failed": "Laden des Status fehlgeschlagen",
+                    "print_failed": "Etikett konnte nicht gedruckt werden",
+                    "print_success": "Etikett gedruckt"
                 }
             },
             "page_qr_code": {
@@ -89,18 +91,24 @@
                 "item_description": "Gegenstandsbezeichnung",
                 "item_name": "Gegenstandsname",
                 "item_photo": "Artikel Bild",
-                "item_quantity": "Artikel Menge",
+                "item_quantity": "Anzahl der Artikel",
                 "parent_item": "Übergeordneter Gegenstand",
                 "rotate_photo": "Photo drehen",
+                "set_as_primary_photo": "Festlegen als { isPrimary, select, true {non-} false {} other {}}primäres Foto",
                 "title": "Gegenstand erstellen",
                 "toast": {
                     "already_creating": "Item wird bereits erstellt",
                     "create_failed": "Item konnte nicht erstellt werden",
                     "create_success": "Item erstellt",
+                    "failed_load_parent": "Übergeordnetes Element konnte nicht geladen werden - Bitte manuell auswählen",
                     "no_canvas_support": "Ihr Browser unterstützt Canvas-Operationen nicht",
-                    "please_select_location": "Bitte einen Ort auswählen",
+                    "please_select_location": "Bitte einen Ort auswählen.",
                     "rotate_failed": "Drehen des Bildes fehlgeschlagen: {error}",
-                    "upload_failed": "Hochladen des Bildes Fehlgeschlagen: { photoName }"
+                    "rotate_process_failed": "Das gedrehte Bild konnte nicht verarbeitet werden",
+                    "some_photos_failed": "{Anzahl, Plural, =0 {Keine Fotos zum Hochladen.} =1 {1 Foto konnte nicht hochgeladen werden.} andere {Einige Fotos konnten nicht hochgeladen werden.}}",
+                    "upload_failed": "Hochladen des Bildes Fehlgeschlagen: { photoName }",
+                    "upload_success": "{Anzahl, Plural, =0 {Keine Fotos hochgeladen.} =1 {Foto erfolgreich hochgeladen.} andere {Alle Fotos erfolgreich hochgeladen.}}",
+                    "uploading_photos": "{Anzahl, Plural, =0 {Keine Fotos zum Hochladen} =1 {1 Foto wird hochgeladen...} andere {{Anzahl} Fotos werden hochgeladen...}}"
                 },
                 "upload_photos": "Upload Bilder",
                 "uploaded": "Bild hochgeladen"
@@ -202,6 +210,7 @@
         "password": "Passwort",
         "quantity": "Menge",
         "read_docs": "Dokumentation lesen",
+        "return_home": "Startbildschirm",
         "save": "Speichern",
         "search": "Suche",
         "sign_out": "Abmelden",
@@ -259,12 +268,23 @@
         "description": "Beschreibung",
         "details": "Details",
         "drag_and_drop": "Ziehen Sie Dateien hierher und legen Sie sie dort ab oder klicken Sie, um Dateien auszuwählen",
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "Anhang Überschrift",
+                "attachment_type": "Anhangstyp",
+                "primary_photo": "Primäres Bild",
+                "primary_photo_sub": "Diese Option ist nur für Bilder verfügbar. Nur ein Bild kann das primäre Bild sein. Wenn Sie diese Option auswählen, wird das aktuelle primär Bild, wenn eins ausgewählt ist, abgewählt.",
+                "select_type": "Wählen Sie einen Typ aus",
+                "title": "Anhang bearbeiten"
+            }
+        },
         "edit_details": "Details bearbeiten",
         "field_selector": "Feldauswahl",
         "field_value": "Feldwert",
         "first": "Erste",
         "include_archive": "Archivierte Elemente einschließen",
         "insured": "Versichert",
+        "invalid_asset_id": "Ungültige Asset-ID",
         "last": "Letzte",
         "lifetime_warranty": "Lebenslange Garantie",
         "location": "Standort",
@@ -275,6 +295,7 @@
         "name": "Name",
         "negate_labels": "Ausgewählte Etiketten negieren",
         "next_page": "Nächste Seite",
+        "no_attachments": "Kein Anhang gefunden",
         "no_results": "Keine Elemente gefunden",
         "notes": "Anmerkungen",
         "only_with_photo": "Nur Artikel mit Foto",
@@ -296,17 +317,38 @@
         "receipts": "Quittungen",
         "reset_search": "Suche zurücksetzen",
         "results": "{ total } Ergebnisse",
+        "select_field": "Ein Feld auswählen",
         "serial_number": "Seriennummer",
         "show_advanced_view_options": "Erweiterte Angzeigeoptionen anzeigen",
         "sold_at": "Verkauft am",
         "sold_details": "Verkaufsdetails",
         "sold_price": "Verkaufspreis",
         "sold_to": "Verkauft an",
+        "sync_child_locations": "Speicherorte von untergeordneten Elementen synchronisieren",
         "tip_1": "Standort- und Etikettenfilter verwenden die 'ODER'-Operation. Wenn mehr als eines ausgewählt ist, wird\n nur eines für eine Übereinstimmung benötigt.",
         "tip_2": "Suchen, die mit '#' beginnen, fragen nach einer Asset-ID (Beispiel '#000-001')",
         "tip_3": "Feldfilter verwenden die 'ODER'-Operation. Wenn mehr als eines ausgewählt ist, wird nur eines\n für eine Übereinstimmung benötigt.",
         "tips": "Tipps",
         "tips_sub": "Suchtipps",
+        "toast": {
+            "asset_not_found": "Wertgegenstand nicht gefunden",
+            "attachment_deleted": "Anhang gelöscht",
+            "attachment_updated": "Anhang aktualisiert",
+            "attachment_uploaded": "Anhang hochgeladen",
+            "child_items_location_no_longer_synced": "Die Speicherorte von untergeordneten Elementen werden nicht mehr mit diesem Element synchronisiert.",
+            "child_items_location_synced": "Die Speicherorte von untergeordneten Elementen wurden mit diesem Element synchronisiert",
+            "child_location_desync": "Änderung des Speicherortes hat eine Desynchronisation mit dem übergeordneten Speicherort zur Folge",
+            "error_loading_parent_data": "Beim Versuch, übergeordnete Daten zu laden, ist etwas schief gelaufen",
+            "failed_adjust_quantity": "Anpassen der Menge ist fehlgeschlagen",
+            "failed_delete_attachment": "Löschen des Anhangs ist fehlgeschlagen",
+            "failed_delete_item": "Löschen des Artikels ist fehlgeschlagen",
+            "failed_duplicate_item": "Das Duplizieren des Artikels ist fehlgeschlagen",
+            "failed_load_asset": "Laden des Wertgegenstandes ist fehlgeschlagen",
+            "failed_load_item": "Laden des Artikels ist fehlgeschlagen",
+            "failed_load_items": "Laden der Artikel ist fehlgeschlagen",
+            "failed_save": "Speichern des Artikels ist fehlgeschlagen",
+            "failed_save_no_location": "Speichern des Artikels ist fehlgeschlagen: Es wurde kein Ort ausgewählt"
+        },
         "updated_at": "Aktualisiert am",
         "warranty": "Gewährleistung",
         "warranty_details": "Garantiedetails",
@@ -329,7 +371,7 @@
         "it": "Italienisch",
         "ja-JP": "Japanisch",
         "ko-KR": "Koreanisch",
-        "lb-LU": "Luxembourgish (Luxemburgisch)",
+        "lb-LU": "Luxemburgisch (Luxemburg)",
         "lt-LT": "Litauisch (Litauen)",
         "nb-NO": "Norwegisch Bokmål",
         "nl": "Niederländisch",
@@ -436,6 +478,12 @@
         "url": "URL",
         "user_profile": "Benutzerprofil",
         "user_profile_sub": "Lade Benutzer ein und verwalte dein Konto."
+    },
+    "reports": {
+        "label_generator": {
+            "tips": "Tipps",
+            "title": "Etikettengenerator"
+        }
     },
     "scanner": {
         "error": "Beim Scannen ist ein Fehler aufgetreten",
