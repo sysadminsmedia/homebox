@@ -48,6 +48,13 @@
                 "years": "anys",
                 "yesterday": "ahir"
             },
+            "label_maker": {
+                "server_print": "Imprimeix al servidor",
+                "titles": "Etiquetes",
+                "toast": {
+                    "load_status_failed": "Fallat en carregar l'estat"
+                }
+            },
             "page_qr_code": {
                 "page_url": "URL de la pàgina"
             },
