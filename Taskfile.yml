@@ -95,7 +95,7 @@ tasks:
     desc: Runs all go tests using gotestsum - supports passing gotestsum args
     dir: backend
     cmds:
-      - gotestsum {{ .CLI_ARGS }} ./...
+      - go test {{ .CLI_ARGS }} ./...
 
   go:coverage:
     desc: Runs all go tests with -race flag and generates a coverage report
