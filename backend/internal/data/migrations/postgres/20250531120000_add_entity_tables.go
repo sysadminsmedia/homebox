@@ -77,28 +77,6 @@ func Up20250531120000(ctx context.Context, tx *sql.Tx) error {
 		return fmt.Errorf("failed to create entities table: %w", err)
 	}
 
-	// Create entity_fields table
-	_, err = tx.ExecContext(ctx, `
-		CREATE TABLE IF NOT EXISTS "entity_fields" (
-			"id" uuid NOT NULL,
-			"created_at" timestamptz NOT NULL,
-			"updated_at" timestamptz NOT NULL,
-			"name" character varying NOT NULL,
-			"description" character varying NULL,
-			"type" character varying NOT NULL,
-			"text_value" character varying NULL,
-			"number_value" bigint NULL,
-			"boolean_value" boolean NOT NULL DEFAULT false,
-			"time_value" timestamptz NULL,
-			"entity_fields" uuid NULL,
-			PRIMARY KEY ("id"),
-			CONSTRAINT "entity_fields_entities_fields" FOREIGN KEY ("entity_fields") REFERENCES "entities" ("id") ON UPDATE NO ACTION ON DELETE CASCADE
-		);
-	`)
-	if err != nil {
-		return fmt.Errorf("failed to create entity_fields table: %w", err)
-	}
-
 	// Fetch all groups to create default entity types for each group
 	groups, err := tx.QueryContext(ctx, `SELECT id FROM "groups"`)
 	if err != nil {
@@ -181,17 +159,71 @@ func Up20250531120000(ctx context.Context, tx *sql.Tx) error {
 	}
 
 	_, err = tx.ExecContext(ctx, `
-    	INSERT INTO "entity_fields" (
-    		"id", "created_at", "updated_at", "name", "description",
-    		"type", "text_value", "number_value", "boolean_value", "time_value", "entity_fields"
-		)
-		SELECT
-    		"id", "created_at", "updated_at", "name", "description",
-    		"type", "text_value", "number_value", "boolean_value", "time_value", "item_fields"
-		FROM "item_fields";
+    	ALTER TABLE "item_fields" ADD COLUMN "entity_fields" uuid NULL;
+		UPDATE "item_fields" SET "entity_fields" = "item_fields";
+		ALTER TABLE "item_fields" DROP CONSTRAINT "item_fields_items_fields";
+		ALTER TABLE "item_fields" RENAME TO "entity_fields";
+		ALTER TABLE "entity_fields" ADD CONSTRAINT "entity_fields_entities_fields"
+			FOREIGN KEY ("entity_fields") REFERENCES "entities" ("id")
+				ON UPDATE NO ACTION ON DELETE CASCADE;
+		ALTER TABLE "entity_fields" DROP COLUMN "item_fields";
 	`)
 	if err != nil {
 		return fmt.Errorf("failed to migrate item_fields to entity_fields: %w", err)
+	}
+
+	_, err = tx.ExecContext(ctx, `
+    	ALTER TABLE "maintenance_entries" ADD COLUMN "entity_id" uuid NULL;
+		UPDATE "maintenance_entries" SET "entity_id" = "item_id";
+		ALTER TABLE "maintenance_entries" DROP CONSTRAINT "maintenance_entries_items_maintenance_entries";
+		ALTER TABLE "maintenance_entries"
+			ADD CONSTRAINT "maintenance_entries_entities_maintenance_entries"
+				FOREIGN KEY ("entity_id") REFERENCES "entities" ("id")
+					ON UPDATE NO ACTION ON DELETE CASCADE;
+		ALTER TABLE "maintenance_entries" DROP COLUMN "item_id";
+	`)
+	if err != nil {
+		return fmt.Errorf("failed to migrate maintence_entries to use entities: %w", err)
+	}
+
+	_, err = tx.ExecContext(ctx, `
+		ALTER TABLE "attachments" ADD COLUMN "entity_attachments" uuid NULL;
+		UPDATE "attachments" SET "entity_attachments" = "item_attachments";
+		ALTER TABLE "attachments" DROP CONSTRAINT "attachments_items_attachments";
+		ALTER TABLE "attachments"
+    		ADD CONSTRAINT "attachments_entities_attachments"
+        		FOREIGN KEY ("entity_attachments") REFERENCES "entities" ("id")
+            		ON UPDATE NO ACTION ON DELETE CASCADE;
+		ALTER TABLE "attachments" DROP COLUMN "item_attachments";
+	`)
+	if err != nil {
+		return fmt.Errorf("failed to migrate attachments to use entities: %w", err)
+	}
+
+	_, err = tx.ExecContext(ctx, `
+		CREATE TABLE IF NOT EXISTS "label_entities"
+		(
+    		"label_id"  uuid NOT NULL,
+    		"entity_id" uuid NOT NULL,
+    		PRIMARY KEY ("label_id", "entity_id"),
+    		CONSTRAINT "label_entities_entity_id" FOREIGN KEY ("entity_id") REFERENCES "entities" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
+    		CONSTRAINT "label_entities_label_id" FOREIGN KEY ("label_id") REFERENCES "labels" ("id") ON UPDATE NO ACTION ON DELETE CASCADE
+		);
+		INSERT INTO "label_entities" ("label_id", "entity_id")
+		SELECT "label_id", "item_id" FROM "label_items";
+	`)
+	if err != nil {
+		return fmt.Errorf("failed to create label_entities table and migrate data: %w", err)
+	}
+
+	_, err = tx.ExecContext(ctx, `
+		DROP TABLE IF EXISTS "label_items";
+		DROP TABLE IF EXISTS "item_fields";
+		DROP TABLE IF EXISTS "items";
+		DROP TABLE IF EXISTS "locations";
+	`)
+	if err != nil {
+		return fmt.Errorf("failed to drop old tables: %w", err)
 	}
 
 	return nil
