@@ -11,10 +11,10 @@ import (
 
 //nolint:gochecknoinits
 func init() {
-	goose.AddMigrationContext(Up20250531120000, Down20250531120000)
+	goose.AddMigrationContext(Up20250531120023, Down20250531120023)
 }
 
-func Up20250531120000(ctx context.Context, tx *sql.Tx) error {
+func Up20250531120023(ctx context.Context, tx *sql.Tx) error {
 	// Create entity_types table
 	_, err := tx.ExecContext(ctx, `
 		CREATE TABLE IF NOT EXISTS "entity_types" (
@@ -154,7 +154,7 @@ func Up20250531120000(ctx context.Context, tx *sql.Tx) error {
 	return nil
 }
 
-func Down20250531120000(ctx context.Context, tx *sql.Tx) error {
+func Down20250531120023(ctx context.Context, tx *sql.Tx) error {
 	// Drop tables in reverse order to avoid foreign key constraints
 	_, err := tx.ExecContext(ctx, `DROP TABLE IF EXISTS "entity_fields";`)
 	if err != nil {
