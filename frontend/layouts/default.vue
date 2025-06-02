@@ -23,6 +23,7 @@
               <AppLogo />
             </div>
           </NuxtLink>
+          <!-- <AppOrgSelector v-model:model-value="selectedOrg" /> -->
           <DropdownMenu>
             <DropdownMenuTrigger as-child>
               <SidebarMenuButton
@@ -84,7 +85,20 @@
                   <span>{{ $t("menu.scanner") }}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            </SidebarMenu>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  :class="{
+                    'text-nowrap': typeof locale === 'string' && locale.startsWith('zh-'),
+                  }"
+                  :tooltip="$t('menu.scanner')"
+                  @click.prevent="openDialog('scanner')"
+                >
+                  <MdiAccount />
+                  <span>Collection Settings</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>            
           </SidebarGroup>
         </SidebarContent>
 
@@ -111,18 +125,29 @@
             <SidebarTrigger class="absolute left-2 top-2 hidden lg:flex" variant="default" />
           </div>
           <div
-            class="sticky top-0 z-20 flex h-28 translate-y-[-0.5px] flex-col bg-secondary p-2 shadow-md sm:h-16 sm:flex-row"
+            class="sticky top-0 z-20 flex h-28 translate-y-[-0.5px] flex-col bg-secondary p-2 shadow-md sm:h-16 sm:flex-row justify-between"
             :class="{
               'lg:hidden': preferences.displayLegacyHeader,
             }"
           >
             <div class="flex h-1/2 items-center gap-2 sm:h-auto">
+              <div>
               <SidebarTrigger variant="default" />
+              </div>
+              <!-- <div>
+              <Button size="icon">
+                <AppLogo class="size-8" />
+              </Button>
+              </div> -->
               <NuxtLink to="/home">
                 <AppHeaderText class="h-6" />
               </NuxtLink>
+              <!-- <AppOrgSelector v-model:model-value="selectedOrg" /> -->
+
             </div>
-            <div class="sm:grow"></div>
+            <!-- <div class="flex items-center">
+              <AppOrgSelector v-model:model-value="selectedOrg" />
+            </div> -->
             <div class="flex h-1/2 grow items-center justify-end gap-2 sm:h-auto">
               <Input
                 v-model:model-value="search"
@@ -208,6 +233,8 @@
   import { Input } from "~/components/ui/input";
   import { Button } from "~/components/ui/button";
   import { toast } from "@/components/ui/sonner";
+
+  const selectedOrg = ref<any>();
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
@@ -314,13 +341,13 @@
       name: computed(() => t("menu.maintenance")),
       to: "/maintenance",
     },
-    {
-      icon: MdiAccount,
-      id: 5,
-      active: computed(() => route.path === "/profile"),
-      name: computed(() => t("menu.profile")),
-      to: "/profile",
-    },
+    // {
+    //   icon: MdiAccount,
+    //   id: 5,
+    //   active: computed(() => route.path === "/profile"),
+    //   name: computed(() => t("menu.profile")),
+    //   to: "/profile",
+    // },
     {
       icon: MdiCog,
       id: 6,
@@ -367,6 +394,36 @@
 
   const authCtx = useAuthContext();
   const api = useUserApi();
+
+const checkAuth = async () => {
+    try {
+      // await api.user.self();
+    } catch (err) {
+      console.log(err);
+      // if (!authCtx.isAuthorized()) {
+      //   console.log("Not authorised, redirecting to login");
+      //   await navigateTo("/");
+      // }
+    }
+  };
+
+  onMounted(() => {
+    checkAuth();
+  });
+
+  onMounted(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        checkAuth();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    onUnmounted(() => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    });
+  });
 
   async function logout() {
     await authCtx.logout(api);
