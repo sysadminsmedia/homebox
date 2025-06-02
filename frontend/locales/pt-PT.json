@@ -1,10 +1,18 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "Usa {shiftKey} + {enterKey} para criar e adicionar outro.",
+                "enter": "Enter",
+                "shift": "Shift"
+            },
             "import_dialog": {
                 "change_warning": "O comportamento para ficheiros importados com import_refs foi alterado. Se um import_ref está presente no ficheiro CSV, \no item vai ser atualizado com os valores no ficheiro CSV.",
                 "description": "Importe um ficheiro CSV com artigos, rótulos e localizações. Consulte a documentação para mais informações\nacerca do formato necessário.",
-                "title": "Importar ficheiro CSV"
+                "title": "Importar ficheiro CSV",
+                "toast": {
+                    "import_success": "Importação com sucesso!"
+                }
             },
             "outdated": {
                 "current_version": "Versão Atual",
@@ -51,10 +59,16 @@
                 "download": "Transferir Etiqueta",
                 "print": "Imprimir etiqueta",
                 "server_print": "Imprimir no Servidor",
-                "titles": "Etiquetas"
+                "titles": "Etiquetas",
+                "toast": {
+                    "load_status_failed": "Falha a carregar o estado",
+                    "print_failed": "Falha a criar a etiqueta",
+                    "print_success": "Etiqueta impressa"
+                }
             },
             "page_qr_code": {
-                "page_url": "Endereço da página"
+                "page_url": "Endereço da página",
+                "qr_tooltip": "Mostrar o QR Code"
             },
             "password_score": {
                 "password_strength": "Força da Senha"
