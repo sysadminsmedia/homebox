@@ -185,7 +185,8 @@ func (r *LocationRepository) Create(ctx context.Context, gid uuid.UUID, data Loc
 	q := r.db.Entity.Create().
 		SetName(data.Name).
 		SetDescription(data.Description).
-		SetGroupID(gid)
+		SetGroupID(gid).
+		SetType(r.db.EntityType.Query().Where(entitytype.IsLocationEQ(true)).FirstX(ctx))
 
 	if data.ParentID != uuid.Nil {
 		q.SetParentID(data.ParentID)
@@ -338,7 +339,6 @@ func (r *LocationRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQue
 			FROM    locations
 			WHERE   location_children IS NULL
 			AND     group_locations = $1
-
 			UNION ALL
 			SELECT  c.id,
 					c.NAME,

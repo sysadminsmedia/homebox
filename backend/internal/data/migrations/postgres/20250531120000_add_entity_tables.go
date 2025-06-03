@@ -11,10 +11,10 @@ import (
 
 //nolint:gochecknoinits
 func init() {
-	goose.AddMigrationContext(Up20250531120000, Down20250531120000)
+	goose.AddMigrationNoTxContext(Up20250531120000, Down20250531120000)
 }
 
-func Up20250531120000(ctx context.Context, tx *sql.Tx) error {
+func Up20250531120000(ctx context.Context, tx *sql.DB) error {
 	// Create entity_types table
 	_, err := tx.ExecContext(ctx, `
 		CREATE TABLE IF NOT EXISTS "entity_types" (
@@ -64,13 +64,11 @@ func Up20250531120000(ctx context.Context, tx *sql.Tx) error {
 			"sold_notes" character varying NULL,
 			"group_entities" uuid NOT NULL,
 			"entity_children" uuid NULL,
-			"entity_parent" uuid NULL,
 			"entity_type" uuid NOT NULL,
 			"sync_child_entities_locations" boolean NOT NULL DEFAULT false,
 			PRIMARY KEY ("id"),
 			CONSTRAINT "entities_groups_entities" FOREIGN KEY ("group_entities") REFERENCES "groups" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
 			CONSTRAINT "entities_entities_children" FOREIGN KEY ("entity_children") REFERENCES "entities" ("id") ON UPDATE NO ACTION ON DELETE SET NULL,
-			CONSTRAINT "entities_entities_parent" FOREIGN KEY ("entity_parent") REFERENCES "entities" ("id") ON UPDATE NO ACTION ON DELETE SET NULL,
 			CONSTRAINT "entities_entity_types" FOREIGN KEY ("entity_type") REFERENCES "entity_types" ("id") ON UPDATE NO ACTION ON DELETE CASCADE
 		);
 	`)
@@ -143,7 +141,7 @@ func Up20250531120000(ctx context.Context, tx *sql.Tx) error {
 			    "lifetime_warranty", "warranty_expires", "warranty_details", "purchase_time",
 				"purchase_from", "purchase_price", "sold_time", "sold_to",
 				"sold_price", "sold_notes", "group_entities", "entity_children", "sync_child_entities_locations",
-				"entity_parent", "entity_type")
+				"entity_type")
 			SELECT
 			    i."id", i."created_at", i."updated_at", i."name", i."description",
 			    i."import_ref", i."notes", i."quantity", i."insured", i."archived",
@@ -151,7 +149,7 @@ func Up20250531120000(ctx context.Context, tx *sql.Tx) error {
 			    i."lifetime_warranty", i."warranty_expires", i."warranty_details", i."purchase_time",
 			    i."purchase_from", i."purchase_price", i."sold_time", i."sold_to",
 			    i."sold_price", i."sold_notes", i."group_items", i."item_children", i."sync_child_items_locations",
-			    i."item_parent", $1
+			    $1
 			FROM "items" i WHERE i."group_items" = $2
 		`, itemTypeID, groupID)
 		if err != nil {
@@ -206,12 +204,12 @@ func Up20250531120000(ctx context.Context, tx *sql.Tx) error {
 		(
     		"label_id"  uuid NOT NULL,
     		"entity_id" uuid NOT NULL,
-    		PRIMARY KEY ("label_id", "entity_id"),
-    		CONSTRAINT "label_entities_entity_id" FOREIGN KEY ("entity_id") REFERENCES "entities" ("id") ON UPDATE NO ACTION ON DELETE CASCADE,
-    		CONSTRAINT "label_entities_label_id" FOREIGN KEY ("label_id") REFERENCES "labels" ("id") ON UPDATE NO ACTION ON DELETE CASCADE
+    		PRIMARY KEY ("label_id", "entity_id")
 		);
 		INSERT INTO "label_entities" ("label_id", "entity_id")
 		SELECT "label_id", "item_id" FROM "label_items";
+		ALTER TABLE "label_entities" ADD CONSTRAINT "label_entities_entity_id" FOREIGN KEY ("entity_id") REFERENCES "entities" ("id") ON UPDATE NO ACTION ON DELETE CASCADE;
+        ALTER TABLE "label_entities" ADD CONSTRAINT "label_entities_label_id" FOREIGN KEY ("label_id") REFERENCES "labels" ("id") ON UPDATE NO ACTION ON DELETE CASCADE;
 	`)
 	if err != nil {
 		return fmt.Errorf("failed to create label_entities table and migrate data: %w", err)
@@ -230,6 +228,6 @@ func Up20250531120000(ctx context.Context, tx *sql.Tx) error {
 	return nil
 }
 
-func Down20250531120000(ctx context.Context, tx *sql.Tx) error {
+func Down20250531120000(ctx context.Context, tx *sql.DB) error {
 	return nil
 }
