@@ -35,7 +35,27 @@ function flatTree(tree: TreeItem[]): FlatTreeItem[] {
   return v;
 }
 
-export function useFlatLocations(): Ref<FlatTreeItem[]> {
+function filterOutSubtree(tree: TreeItem[], excludeId: string): TreeItem[] {
+  // Recursively filters out a subtree starting from excludeId
+  const result: TreeItem[] = [];
+
+  for (const item of tree) {
+    if (item.id === excludeId) {
+      continue;
+    }
+
+    const newItem = { ...item };
+    if (item.children) {
+      newItem.children = filterOutSubtree(item.children, excludeId);
+    }
+
+    result.push(newItem);
+  }
+
+  return result;
+}
+
+export function useFlatLocations(excludeSubtreeForId?: string): Ref<FlatTreeItem[]> {
   const locations = useLocationStore();
 
   if (locations.tree === null) {
@@ -47,6 +67,10 @@ export function useFlatLocations(): Ref<FlatTreeItem[]> {
       return [];
     }
 
-    return flatTree(locations.tree);
+    const filteredTree = excludeSubtreeForId
+      ? filterOutSubtree(locations.tree, excludeSubtreeForId)
+      : locations.tree;
+
+    return flatTree(filteredTree);
   });
 }
