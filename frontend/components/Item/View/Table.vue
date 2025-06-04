@@ -185,6 +185,7 @@
   const preferences = useViewPreferences();
 
   const defaultHeaders = [
+    { text: "items.asset_id", value: "assetId", enabled: false },
     {
       text: "items.name",
       value: "name",
