@@ -1,11 +1,14 @@
 package hasher
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestHashPassword(t *testing.T) {
 	t.Parallel()
 	type args struct {
-		password string
+		password      string
+		invalidInputs []string
 	}
 	tests := []struct {
 		name    string
@@ -15,13 +18,29 @@ func TestHashPassword(t *testing.T) {
 		{
 			name: "letters_and_numbers",
 			args: args{
-				password: "password123456788",
+				password:      "password123456788",
+				invalidInputs: []string{"testPassword", "AnotherBadPassword", "ThisShouldNeverWork", "1234567890"},
 			},
 		},
 		{
 			name: "letters_number_and_special",
 			args: args{
-				password: "!2afj3214pofajip3142j;fa",
+				password:      "!2afj3214pofajip3142j;fa",
+				invalidInputs: []string{"testPassword", "AnotherBadPassword", "ThisShouldNeverWork", "1234567890"},
+			},
+		},
+		{
+			name: "extra_long_password",
+			args: args{
+				password:      "this_is_a_very_long_password_that_should_be_hashed_properly_and_still_work_with_the_check_function",
+				invalidInputs: []string{"testPassword", "AnotherBadPassword", "ThisShouldNeverWork", "1234567890"},
+			},
+		},
+		{
+			name: "empty_password",
+			args: args{
+				password:      "",
+				invalidInputs: []string{"testPassword", "AnotherBadPassword", "ThisShouldNeverWork", "1234567890"},
 			},
 		},
 	}
@@ -32,8 +51,16 @@ func TestHashPassword(t *testing.T) {
 				t.Errorf("HashPassword() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !CheckPasswordHash(tt.args.password, got) {
+			check, _ := CheckPasswordHash(tt.args.password, got)
+			if !check {
 				t.Errorf("CheckPasswordHash() failed to validate password=%v against hash=%v", tt.args.password, got)
+			}
+
+			for _, invalid := range tt.args.invalidInputs {
+				check, _ := CheckPasswordHash(invalid, got)
+				if check {
+					t.Errorf("CheckPasswordHash() improperly validated password=%v against hash=%v", invalid, got)
+				}
 			}
 		})
 	}
