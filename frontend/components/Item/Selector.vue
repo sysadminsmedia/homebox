@@ -65,6 +65,7 @@
     searchPlaceholder?: string;
     noResultsText?: string;
     placeholder?: string;
+    excludeId?: string | null;
   }
 
   const emit = defineEmits(["update:modelValue", "update:search"]);
@@ -78,6 +79,7 @@
     searchPlaceholder: undefined,
     noResultsText: undefined,
     placeholder: undefined,
+    excludeId: null,
   });
 
   const id = useId();
@@ -137,12 +139,18 @@
   }
 
   const filtered = computed(() => {
-    if (!search.value) return props.items;
-    if (isStrings(props.items)) {
-      return props.items.filter(item => item.toLowerCase().includes(search.value.toLowerCase()));
+    let baseItems = props.items;
+
+    if (!isStrings(baseItems) && props.excludeId) {
+      baseItems = baseItems.filter(item => item.id != props.excludeId);
+    }
+    if (!search.value) return baseItems;
+
+    if (isStrings(baseItems)) {
+      return baseItems.filter(item => item.toLowerCase().includes(search.value.toLowerCase()));
     } else {
       // Fuzzy search on itemText
-      return fuzzysort.go(search.value, props.items, { key: props.itemText, all: true }).map(i => i.obj);
+      return fuzzysort.go(search.value, baseItems, { key: props.itemText, all: true }).map(i => i.obj);
     }
   });
 </script>
