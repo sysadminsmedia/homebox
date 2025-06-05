@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 )
 
 // AttachmentCreate is the builder for creating a Attachment entity.
@@ -120,15 +120,15 @@ func (ac *AttachmentCreate) SetNillableID(u *uuid.UUID) *AttachmentCreate {
 	return ac
 }
 
-// SetItemID sets the "item" edge to the Item entity by ID.
-func (ac *AttachmentCreate) SetItemID(id uuid.UUID) *AttachmentCreate {
-	ac.mutation.SetItemID(id)
+// SetEntityID sets the "entity" edge to the Entity entity by ID.
+func (ac *AttachmentCreate) SetEntityID(id uuid.UUID) *AttachmentCreate {
+	ac.mutation.SetEntityID(id)
 	return ac
 }
 
-// SetItem sets the "item" edge to the Item entity.
-func (ac *AttachmentCreate) SetItem(i *Item) *AttachmentCreate {
-	return ac.SetItemID(i.ID)
+// SetEntity sets the "entity" edge to the Entity entity.
+func (ac *AttachmentCreate) SetEntity(e *Entity) *AttachmentCreate {
+	return ac.SetEntityID(e.ID)
 }
 
 // Mutation returns the AttachmentMutation object of the builder.
@@ -221,8 +221,8 @@ func (ac *AttachmentCreate) check() error {
 	if _, ok := ac.mutation.Path(); !ok {
 		return &ValidationError{Name: "path", err: errors.New(`ent: missing required field "Attachment.path"`)}
 	}
-	if len(ac.mutation.ItemIDs()) == 0 {
-		return &ValidationError{Name: "item", err: errors.New(`ent: missing required edge "Attachment.item"`)}
+	if len(ac.mutation.EntityIDs()) == 0 {
+		return &ValidationError{Name: "entity", err: errors.New(`ent: missing required edge "Attachment.entity"`)}
 	}
 	return nil
 }
@@ -283,21 +283,21 @@ func (ac *AttachmentCreate) createSpec() (*Attachment, *sqlgraph.CreateSpec) {
 		_spec.SetField(attachment.FieldPath, field.TypeString, value)
 		_node.Path = value
 	}
-	if nodes := ac.mutation.ItemIDs(); len(nodes) > 0 {
+	if nodes := ac.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   attachment.ItemTable,
-			Columns: []string{attachment.ItemColumn},
+			Table:   attachment.EntityTable,
+			Columns: []string{attachment.EntityColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.item_attachments = &nodes[0]
+		_node.entity_attachments = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
