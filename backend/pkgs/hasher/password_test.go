@@ -1,7 +1,6 @@
 package hasher
 
 import (
-	"golang.org/x/crypto/bcrypt"
 	"testing"
 )
 
