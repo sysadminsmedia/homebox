@@ -107,7 +107,7 @@ func run(cfg *config.Config) error {
 		if err != nil {
 			log.Fatal().Err(err).Msg("failed to get absolute path for storage connection string")
 		}
-		err = os.MkdirAll(dir+cfg.Storage.PrefixPath, 0o755)
+		err = os.MkdirAll(filepath.Join(dir, cfg.Storage.PrefixPath), 0o755)
 		if err != nil {
 			log.Fatal().Err(err).Msg("failed to create data directory")
 		}
