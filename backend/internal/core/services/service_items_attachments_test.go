@@ -53,10 +53,10 @@ func TestItemService_AddAttachment(t *testing.T) {
 	storedPath := afterAttachment.Attachments[0].Path
 
 	// {root}/{group}/{item}/{attachment}
-	assert.Equal(t, path.Join(temp, "homebox", tGroup.ID.String(), "documents"), path.Dir(storedPath))
+	assert.Equal(t, path.Join("/", tGroup.ID.String(), "documents"), path.Dir(storedPath))
 
 	// Check that the file contents are correct
-	bts, err := os.ReadFile(storedPath)
+	bts, err := os.ReadFile(path.Join(os.TempDir(), storedPath))
 	require.NoError(t, err)
 	assert.Equal(t, contents, string(bts))
 }
