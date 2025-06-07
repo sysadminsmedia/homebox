@@ -142,7 +142,7 @@
     let baseItems = props.items;
 
     if (!isStrings(baseItems) && props.excludeItems) {
-      let excludeIds = props.excludeItems.map(i => i.id);
+      const excludeIds = props.excludeItems.map(i => i.id);
       baseItems = baseItems.filter(item => !excludeIds?.includes(item.id));
     }
     if (!search.value) return baseItems;

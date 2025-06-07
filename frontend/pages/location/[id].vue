@@ -146,7 +146,7 @@
             :label="$t('components.location.create_modal.location_description')"
             :max-length="1000"
           />
-          <LocationSelector v-model="parent" :currentLocation="location" />
+          <LocationSelector v-model="parent" :current-location="location" />
           <DialogFooter>
             <Button type="submit" :loading="updating"> {{ $t("global.update") }} </Button>
           </DialogFooter>
