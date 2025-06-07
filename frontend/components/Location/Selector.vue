@@ -58,7 +58,7 @@
 
   type Props = {
     modelValue?: LocationSummary | null;
-    currentLocationId?: string | undefined;
+    currentLocation?: LocationSummary;
   };
 
   const props = defineProps<Props>();
@@ -67,7 +67,7 @@
   const open = ref(false);
   const search = ref("");
   const id = useId();
-  const locations = useFlatLocations(props.currentLocationId);
+  const locations = useFlatLocations(props.currentLocation);
   const value = useVModel(props, "modelValue", emit);
 
   function selectLocation(location: LocationSummary) {
@@ -80,7 +80,7 @@
   }
 
   const filteredLocations = computed(() => {
-    const filtered = fuzzysort.go(search.value, locations.value, { key: "name", all: true }).map(i => i.obj).filter(loc => loc.id !== props.currentLocationId);
+    const filtered = fuzzysort.go(search.value, locations.value, { key: "name", all: true }).map(i => i.obj);
 
     return filtered;
   });
