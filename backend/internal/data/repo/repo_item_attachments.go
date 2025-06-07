@@ -3,35 +3,26 @@ package repo
 import (
 	"bytes"
 	"context"
-	"crypto/md5"
 	"fmt"
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/zeebo/blake3"
 	"io"
+	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
-
-	"gocloud.dev/blob"
-	_ "gocloud.dev/blob/azureblob"
-	_ "gocloud.dev/blob/fileblob"
-	_ "gocloud.dev/blob/gcsblob"
-	_ "gocloud.dev/blob/memblob"
-	_ "gocloud.dev/blob/s3blob"
 )
 
 // AttachmentRepo is a repository for Attachments table that links Items to their
 // associated files while also specifying the type of the attachment.
 type AttachmentRepo struct {
-	db      *ent.Client
-	storage config.Storage
+	db  *ent.Client
+	dir string
 }
 
 type (
@@ -71,19 +62,7 @@ func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
 }
 
 func (r *AttachmentRepo) path(gid uuid.UUID, hash string) string {
-	return filepath.Join(r.storage.PrefixPath, gid.String(), "documents", hash)
-}
-
-func (r *AttachmentRepo) GetConnString() string {
-	if strings.HasPrefix(r.storage.ConnString, "file:///./") {
-		dir, err := filepath.Abs(strings.TrimPrefix(r.storage.ConnString, "file:///./"))
-		if err != nil {
-			log.Err(err).Msg("failed to get absolute path for attachment directory")
-			return r.storage.ConnString
-		}
-		return fmt.Sprintf("file://%x?no_tmp_dir=true", dir+r.storage.PrefixPath)
-	}
-	return r.storage.ConnString + r.storage.PrefixPath
+	return filepath.Join(r.dir, gid.String(), "documents", hash)
 }
 
 func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemCreateAttachment, typ attachment.Type, primary bool) (*ent.Attachment, error) {
@@ -184,50 +163,50 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 	// additionally, the hash can be used to validate the file contents if needed
 	blake3.DeriveKey(itemGroup.ID.String(), contentBytes, hashOut)
 
-	// Write the file to the blob storage bucket which might be a local file system or cloud storage
-	bucket, err := blob.OpenBucket(ctx, r.GetConnString())
+	// Create the file itself
+	path := r.path(itemGroup.ID, fmt.Sprintf("%x", hashOut))
+	parent := filepath.Dir(path)
+	err = os.MkdirAll(parent, 0755)
 	if err != nil {
-		log.Err(err).Msg("failed to open bucket")
+		log.Err(err).Msg("failed to create parent directory")
 		err := tx.Rollback()
 		if err != nil {
 			return nil, err
 		}
 		return nil, err
 	}
-	defer func(bucket *blob.Bucket) {
-		err := bucket.Close()
+
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		file, err := os.Create(path)
 		if err != nil {
-			log.Err(err).Msg("failed to close bucket")
+			log.Err(err).Msg("failed to create file")
 			err := tx.Rollback()
 			if err != nil {
+				return nil, err
+			}
+			return nil, err
+		}
+
+		defer func(file *os.File) {
+			err := file.Close()
+			if err != nil {
+				log.Err(err).Msg("failed to close file")
+				err := tx.Rollback()
+				if err != nil {
+					return
+				}
 				return
 			}
-		}
-	}(bucket)
-	md5hash := md5.New()
-	_, err = md5hash.Write(contentBytes)
-	if err != nil {
-		log.Err(err).Msg("failed to generate MD5 hash for storage")
-		err = tx.Rollback()
+		}(file)
+		_, err = file.Write(contentBytes)
 		if err != nil {
+			log.Err(err).Msg("failed to copy file contents")
+			err := tx.Rollback()
+			if err != nil {
+				return nil, err
+			}
 			return nil, err
 		}
-		return nil, err
-	}
-	options := &blob.WriterOptions{
-		ContentType:                 "application/octet-stream",
-		DisableContentTypeDetection: false,
-		ContentMD5:                  md5hash.Sum(nil),
-	}
-	path := r.path(itemGroup.ID, fmt.Sprintf("%x", hashOut))
-	err = bucket.WriteAll(ctx, path, contentBytes, options)
-	if err != nil {
-		log.Err(err).Msg("failed to write file to bucket")
-		err = tx.Rollback()
-		if err != nil {
-			return nil, err
-		}
-		return nil, err
 	}
 
 	bldr = bldr.SetPath(path)
@@ -306,20 +285,10 @@ func (r *AttachmentRepo) Delete(ctx context.Context, id uuid.UUID) error {
 	if err != nil {
 		return err
 	}
+
 	// If this is the last attachment for this path, delete the file
 	if len(all) == 1 {
-		bucket, err := blob.OpenBucket(ctx, r.GetConnString())
-		if err != nil {
-			log.Err(err).Msg("failed to open bucket")
-			return err
-		}
-		defer func(bucket *blob.Bucket) {
-			err := bucket.Close()
-			if err != nil {
-				log.Err(err).Msg("failed to close bucket")
-			}
-		}(bucket)
-		err = bucket.Delete(ctx, doc.Path)
+		err := os.Remove(doc.Path)
 		if err != nil {
 			return err
 		}

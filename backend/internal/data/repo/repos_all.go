@@ -4,7 +4,6 @@ package repo
 import (
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 )
 
 // AllRepos is a container for all the repository interfaces
@@ -20,7 +19,7 @@ type AllRepos struct {
 	Notifiers   *NotifierRepository
 }
 
-func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage) *AllRepos {
+func New(db *ent.Client, bus *eventbus.EventBus, root string) *AllRepos {
 	return &AllRepos{
 		Users:       &UserRepository{db},
 		AuthTokens:  &TokenRepository{db},
@@ -28,7 +27,7 @@ func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage) *AllRep
 		Locations:   &LocationRepository{db, bus},
 		Labels:      &LabelRepository{db, bus},
 		Items:       &ItemsRepository{db, bus},
-		Attachments: &AttachmentRepo{db, storage},
+		Attachments: &AttachmentRepo{db, root},
 		MaintEntry:  &MaintenanceEntryRepository{db},
 		Notifiers:   NewNotifierRepository(db),
 	}
