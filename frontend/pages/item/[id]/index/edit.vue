@@ -573,7 +573,7 @@
               item-text="name"
               :label="$t('items.parent_item')"
               no-results-text="Type to search..."
-              :exclude-id="item.id"
+              :exclude-items="[item]"
               @update:model-value="maybeSyncWithParentLocation()"
             />
             <div class="flex flex-col gap-2">

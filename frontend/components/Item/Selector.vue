@@ -65,7 +65,7 @@
     searchPlaceholder?: string;
     noResultsText?: string;
     placeholder?: string;
-    excludeId?: string | null;
+    excludeItems?: ItemsObject[];
   }
 
   const emit = defineEmits(["update:modelValue", "update:search"]);
@@ -79,7 +79,7 @@
     searchPlaceholder: undefined,
     noResultsText: undefined,
     placeholder: undefined,
-    excludeId: null,
+    excludeItems: undefined,
   });
 
   const id = useId();
@@ -141,8 +141,9 @@
   const filtered = computed(() => {
     let baseItems = props.items;
 
-    if (!isStrings(baseItems) && props.excludeId) {
-      baseItems = baseItems.filter(item => item.id != props.excludeId);
+    if (!isStrings(baseItems) && props.excludeItems) {
+      let excludeIds = props.excludeItems.map(i => i.id);
+      baseItems = baseItems.filter(item => !excludeIds?.includes(item.id));
     }
     if (!search.value) return baseItems;
 
