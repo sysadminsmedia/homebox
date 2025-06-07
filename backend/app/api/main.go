@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -101,9 +102,12 @@ func run(cfg *config.Config) error {
 	// =========================================================================
 	// Initialize Database & Repos
 
-	err := os.MkdirAll(cfg.Storage.Data, 0o755)
-	if err != nil {
-		log.Fatal().Err(err).Msg("failed to create data directory")
+	if strings.HasPrefix(cfg.Storage.ConnString, "file:///./") {
+		dir, err := filepath.Abs(strings.TrimPrefix(cfg.Storage.ConnString, "file:///./"))
+		err = os.MkdirAll(dir+cfg.Storage.PrefixPath, 0o755)
+		if err != nil {
+			log.Fatal().Err(err).Msg("failed to create data directory")
+		}
 	}
 
 	if strings.ToLower(cfg.Database.Driver) == "postgres" {
@@ -178,7 +182,7 @@ func run(cfg *config.Config) error {
 
 	app.bus = eventbus.New()
 	app.db = c
-	app.repos = repo.New(c, app.bus, cfg.Storage.Data)
+	app.repos = repo.New(c, app.bus, cfg.Storage)
 	app.services = services.New(
 		app.repos,
 		services.WithAutoIncrementAssetID(cfg.Options.AutoIncrementAssetID),
