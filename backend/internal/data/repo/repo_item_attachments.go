@@ -81,7 +81,7 @@ func (r *AttachmentRepo) GetConnString() string {
 			log.Err(err).Msg("failed to get absolute path for attachment directory")
 			return r.storage.ConnString
 		}
-		return fmt.Sprintf("file://%x?no_tmp_dir=true", dir+r.storage.PrefixPath)
+		return fmt.Sprintf("file://%s?no_tmp_dir=true", filepath.Join(dir, r.storage.PrefixPath))
 	}
 	return r.storage.ConnString + r.storage.PrefixPath
 }
