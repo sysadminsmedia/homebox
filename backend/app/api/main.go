@@ -121,6 +121,13 @@ func run(cfg *config.Config) error {
 	switch strings.ToLower(cfg.Database.Driver) {
 	case "sqlite3":
 		databaseURL = cfg.Database.SqlitePath
+
+		// Create directory for SQLite database if it doesn't exist
+		dbFilePath := strings.Split(cfg.Database.SqlitePath, "?")[0] // Remove query parameters
+		dbDir := filepath.Dir(dbFilePath)
+		if err := os.MkdirAll(dbDir, 0o755); err != nil {
+			log.Fatal().Err(err).Str("path", dbDir).Msg("failed to create SQLite database directory")
+		}
 	case "postgres":
 		databaseURL = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", cfg.Database.Host, cfg.Database.Port, cfg.Database.Username, cfg.Database.Password, cfg.Database.Database, cfg.Database.SslMode)
 	default:
