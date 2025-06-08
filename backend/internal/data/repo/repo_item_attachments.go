@@ -200,7 +200,7 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 			log.Err(err).Msg("failed to close bucket")
 			err := tx.Rollback()
 			if err != nil {
-				return
+				log.Err(err).Msg("failed to rollback transaction after closing bucket")
 			}
 		}
 	}(bucket)
