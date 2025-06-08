@@ -37,7 +37,7 @@ type (
 //	@Produce  json
 //	@Param    id   path     string true "Item ID"
 //	@Param    file formData file   true "File attachment"
-//	@Param    type formData string true "Type of file"
+//	@Param    type formData string false "Type of file"
 //	@Param    primary formData bool false "Is this the primary attachment"
 //	@Param    name formData string true "name of the file including extension"
 //	@Success  200  {object} repo.ItemOut
