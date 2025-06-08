@@ -10,6 +10,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/zeebo/blake3"
 	"io"
+	"net/http"
 	"path/filepath"
 	"strings"
 	"time"
@@ -81,9 +82,9 @@ func (r *AttachmentRepo) GetConnString() string {
 			log.Err(err).Msg("failed to get absolute path for attachment directory")
 			return r.storage.ConnString
 		}
-		return fmt.Sprintf("file://%s?no_tmp_dir=true", filepath.Join(dir, r.storage.PrefixPath))
+		return fmt.Sprintf("file://%s?no_tmp_dir=true", dir)
 	}
-	return r.storage.ConnString + r.storage.PrefixPath
+	return r.storage.ConnString
 }
 
 func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemCreateAttachment, typ attachment.Type, primary bool) (*ent.Attachment, error) {
@@ -214,10 +215,10 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 		}
 		return nil, err
 	}
+	contentType := http.DetectContentType(contentBytes[:min(512, len(contentBytes))])
 	options := &blob.WriterOptions{
-		ContentType:                 "application/octet-stream",
-		DisableContentTypeDetection: false,
-		ContentMD5:                  md5hash.Sum(nil),
+		ContentType: contentType,
+		ContentMD5:  md5hash.Sum(nil),
 	}
 	path := r.path(itemGroup.ID, fmt.Sprintf("%x", hashOut))
 	err = bucket.WriteAll(ctx, path, contentBytes, options)
