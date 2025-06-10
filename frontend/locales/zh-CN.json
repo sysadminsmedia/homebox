@@ -1,10 +1,20 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "使用{shiftKey}+{enterKey}来创建并添加另一个。",
+                "enter": "Enter",
+                "shift": "Shift"
+            },
             "import_dialog": {
                 "change_warning": "导入行为会导致现有的 import_refs 的字段被覆盖。\n如果 CSV 文件中存在 import_ref，则将使用 CSV 文件中的值更新该项。",
                 "description": "导入包含物品、标签和位置的CSV文件。更多有关信息，\n请参阅文档查看所需格式。",
-                "title": "导入 CSV 文件"
+                "title": "导入 CSV 文件",
+                "toast": {
+                    "import_failed": "导入失败。请重新尝试。",
+                    "import_success": "导入成功！",
+                    "please_select_file": "请选择需要导入的文件。"
+                }
             },
             "outdated": {
                 "current_version": "当前版本",
@@ -12,6 +22,11 @@
                 "latest_version": "最新版本",
                 "new_version_available": "有新版本发布了",
                 "new_version_available_link": "点击这里了解新版本更新内容"
+            }
+        },
+        "form": {
+            "password": {
+                "toggle_show": "切换密码显示"
             }
         },
         "global": {
@@ -51,7 +66,12 @@
                 "download": "下载标签",
                 "print": "打印标签",
                 "server_print": "在服务器上打印",
-                "titles": "标签"
+                "titles": "标签",
+                "toast": {
+                    "load_status_failed": "加载状态失败",
+                    "print_failed": "打印标签失败",
+                    "print_success": "标签已打印"
+                }
             },
             "page_qr_code": {
                 "page_url": "页面URL",
@@ -62,12 +82,19 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "下载",
+                "open_new_tab": "在新标签页中打开"
+            },
             "create_modal": {
+                "delete_photo": "删除照片",
                 "item_description": "物品描述",
                 "item_name": "物品名称",
                 "item_photo": "物品照片📷",
                 "item_quantity": "物品数量",
                 "parent_item": "父项目",
+                "rotate_photo": "旋转照片",
+                "set_as_primary_photo": "设置为{isPrimary, select, true {非} false {} other {}}主照片",
                 "title": "创建物品",
                 "upload_photos": "上传照片"
             },
