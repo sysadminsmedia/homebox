@@ -246,7 +246,9 @@
         "title": "Organisez et Étiquetez Vos Affaires",
         "toast": {
             "invalid_email": "Adresse e-mail non valide",
-            "invalid_email_password": "E-mail ou mot de passe non valide"
+            "invalid_email_password": "E-mail ou mot de passe invalide",
+            "login_success": "Connexion réussie",
+            "problem_registering": "Problème d'enregistrement de l'utilisateur"
         }
     },
     "items": {
