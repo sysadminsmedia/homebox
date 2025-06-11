@@ -91,17 +91,32 @@
                 "item_description": "Description de l'article",
                 "item_name": "Nom de l'article",
                 "item_photo": "Photo de l'article 📷",
-                "item_quantity": "Quantité d'éléments",
+                "item_quantity": "Quantité d'articles",
                 "parent_item": "Article parent",
                 "rotate_photo": "Faire pivoter la photo",
                 "set_as_primary_photo": "Définir comme photo { isPrimary, select, true {non-} false {} other {}}principale",
                 "title": "Créer un article",
                 "toast": {
                     "already_creating": "Déjà en train de créer un article",
-                    "create_failed": "Impossible de créer l'élément",
-                    "create_success": "Article créé"
+                    "create_failed": "Impossible de créer l'article",
+                    "create_success": "Article créé",
+                    "failed_load_parent": "Échec du chargement de l'article parent - veuillez sélectionner manuellement",
+                    "no_canvas_support": "Votre navigateur ne supporte les opérations «canvas»",
+                    "please_select_location": "Veuillez sélectionner un emplacement.",
+                    "rotate_failed": "Impossible de faire pivoter l'image : { error }",
+                    "rotate_process_failed": "Échec du traitement de l'image pivotée",
+                    "some_photos_failed": "{count, plural, =0 {Aucune photo à téléverser.} =1 {1 photo n'a pas pu être téléversée.} other {Certaines photos n'ont pas pu être téléversées.}}",
+                    "upload_failed": "Échec du téléversement de la photo : { photoName }",
+                    "upload_success": "{count, plural, =0 {Aucune photo téléversée.} =1 {Photo téléversée avec succès.} other {Toutes les photos téléversées avec succès.}}",
+                    "uploading_photos": "{count, plural, =0 {Aucune photo à téléverser} =1 {Téléversement d'1 photo...} other {Téléversement de {count} photos...}}"
                 },
-                "upload_photos": "Transférer des photos"
+                "upload_photos": "Transférer des photos",
+                "uploaded": "Photo téléversée"
+            },
+            "selector": {
+                "no_results": "Aucun résultat trouvé",
+                "placeholder": "Sélectionner...",
+                "search_placeholder": "Tapez pour rechercher..."
             },
             "view": {
                 "selectable": {
@@ -122,7 +137,13 @@
             "create_modal": {
                 "label_description": "Description de l'étiquette",
                 "label_name": "Nom de l'étiquette",
-                "title": "Créer une étiquette"
+                "title": "Créer une étiquette",
+                "toast": {
+                    "already_creating": "Déjà en train de créer une étiquette",
+                    "create_failed": "Impossible de créer l'étiquette",
+                    "create_success": "Étiquette créée",
+                    "label_name_too_long": "Le nom de l'étiquette ne peut pas dépasser 50 caractères"
+                }
             },
             "selector": {
                 "select_labels": "Sélectionnez les étiquettes"
@@ -132,7 +153,12 @@
             "create_modal": {
                 "location_description": "Description de l'emplacement",
                 "location_name": "Nom de l'emplacement",
-                "title": "Créer un emplacement"
+                "title": "Créer un emplacement",
+                "toast": {
+                    "already_creating": "Déjà en train de créer un emplacement",
+                    "create_failed": "Impossible de créer l'emplacement",
+                    "create_success": "Emplacement créé"
+                }
             },
             "selector": {
                 "no_location_found": "Aucun emplacement trouvé",
@@ -160,6 +186,8 @@
         "create_subitem": "Créer un sous-élément",
         "created": "Créé",
         "delete": "Supprimer",
+        "delete_confirm": "Êtes-vous certain de supprimer cet article ? ",
+        "demo_instance": "Ceci est une instance démo",
         "details": "Détails",
         "duplicate": "Dupliquer",
         "edit": "Modifier",
@@ -182,11 +210,14 @@
         "password": "Mot de passe",
         "quantity": "Quantité",
         "read_docs": "Lire la documentation",
+        "return_home": "Retour à l'accueil",
         "save": "Enregistrer",
         "search": "Rechercher",
         "sign_out": "Se déconnecter",
         "submit": "Soumettre",
+        "unknown": "Inconnu",
         "update": "Mettre à jour",
+        "updating": "Mise à jour en cours",
         "value": "Valeur",
         "version": "Version : { version }",
         "welcome": "Bienvenue, { username }"
@@ -211,7 +242,12 @@
         "set_email": "Quel est votre courriel ?",
         "set_name": "Quel est votre nom ?",
         "set_password": "Définir votre mot de passe",
-        "tagline": "Répertoriez, organisez et gérez vos affaires."
+        "tagline": "Répertoriez, Organisez et Gérez vos Affaires.",
+        "title": "Organisez et Étiquetez Vos Affaires",
+        "toast": {
+            "invalid_email": "Adresse e-mail non valide",
+            "invalid_email_password": "E-mail ou mot de passe non valide"
+        }
     },
     "items": {
         "add": "Ajouter",
