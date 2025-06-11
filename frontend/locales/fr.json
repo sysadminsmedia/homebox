@@ -418,7 +418,9 @@
         "toast": {
             "failed_delete_location": "Échec de la suppression de l'emplacement",
             "failed_load_location": "Échec du chargement de l'emplacement",
-            "failed_update_location": "Échec de la mise à jour de l’emplacement des widgets."
+            "failed_update_location": "Échec de la mise à jour de l’emplacement",
+            "location_deleted": "Emplacement supprimé",
+            "location_updated": "Emplacement mis à jour"
         },
         "update_location": "Mettre à jour l'emplacement"
     },
@@ -475,7 +477,9 @@
         "currency_format": "Format de la devise",
         "current_password": "Mot de passe actuel",
         "delete_account": "Supprimer le compte",
+        "delete_account_confirm": "Êtes-vous certain de vouloir supprimer votre compte ? Si vous êtes le dernier membre de votre groupe, toutes vos données seront supprimées. Cette action est irréversible.",
         "delete_account_sub": "Supprimer le compte et toutes ses données. Aucune récupération possible.",
+        "delete_notifier_confirm": "Êtes-vous certain de vouloir supprimer ce notificateur ?",
         "enabled": "Activé",
         "example": "Exemple",
         "gen_invite": "Générer un lien d’invitation",
@@ -484,20 +488,49 @@
         "inactive": "Inactif",
         "language": "Langue",
         "new_password": "Nouveau mot de passe",
-        "no_notifiers": "Aucune notification configurée",
+        "no_notifiers": "Aucun notificateur configuré",
         "no_override": "Aucun remplacement",
-        "notifier_modal": "Notifications { type, select, true {Edit} false {Create} other {Other}}",
-        "notifiers": "Notifications",
+        "notifier_modal": "{ type, select, true {Modifier} false {Créer} other {Autre}} Notificateur",
+        "notifiers": "Notificateurs",
         "notifiers_sub": "Recevez des notifications pour vous prévenir des prochaines maintenances",
         "override_locale": "Remplacer la date et la langue de la devise",
         "test": "Test",
         "theme_settings": "Paramètres du thème",
         "theme_settings_sub": "Les paramètres du thème sont stockés dans le navigateur. Vous pouvez les changer à tout moment. Si vous\nrencontrez des problèmes, il est conseillé de rafraichir la page.",
+        "toast": {
+            "account_deleted": "Votre compte a été supprimé.",
+            "failed_change_password": "Échec de la modification du mot de passe.",
+            "failed_create_notifier": "Échec de la création du notificateur.",
+            "failed_delete_account": "Échec de la suppression de votre compte.",
+            "failed_delete_notifier": "Échec de la suppression du notificateur.",
+            "failed_get_currencies": "Échec de l'obtention des devises",
+            "failed_test_notifier": "Échec du test du notificateur.",
+            "failed_update_group": "Échec de la mise à jour du groupe",
+            "failed_update_notifier": "Échec de la mise à jour du notificateur.",
+            "group_updated": "Groupe mis à jour.",
+            "notifier_test_success": "Test du notificateur réussi.",
+            "password_changed": "Mot de passe changé avec succès."
+        },
         "update_group": "Mettre à jour le groupe",
         "update_language": "Mettre à jour la langue",
         "url": "URL",
         "user_profile": "Profil utilisateur",
         "user_profile_sub": "Gérez votre compte et invitez des utilisateurs."
+    },
+    "reports": {
+        "label_generator": {
+            "base_url": "URL de base",
+            "bordered_labels": "Étiquettes avec bords",
+            "generate_page": "Générer page",
+            "input_placeholder": "Tapez ici",
+            "instruction_1": "Le générateur d'étiquettes Homebox est un outil pour vous aider à imprimer des étiquettes pour votre inventaire Homebox. Celles-ci sont destinées à\n être des étiquettes pré-imprimées vous permettant d'en imprimer beaucoup à l'avance et de les avoir prêtes à être appliquées",
+            "instruction_2": "En tant que telles, ces étiquettes fonctionnent en imprimant un code QR d'URL et des informations d'ID de Ressource sur une étiquette. Si vous avez désactivé\n les ID de Ressource dans vos paramètres Homebox, vous pouvez quand même utiliser cet outil, mais les ID de Ressource ne référenceront aucun article",
+            "instruction_3": "Cette fonctionnalité en est aux premiers stades de développement et peut changer dans les versions futures, si vous avez du feedback, veuillez\n le fournir dans la '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\"> 'Discussion GitHub'</a>'",
+            "label_height": "Hauteur de l'étiquette",
+            "label_width": "Largeur de l’étiquette",
+            "measure_type": "Type de mesure",
+            "page_bottom_padding": "Marge du bas de page"
+        }
     },
     "scanner": {
         "error": "Une erreur s'est produite lors du scan",
