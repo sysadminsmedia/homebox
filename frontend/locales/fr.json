@@ -1,10 +1,20 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "Utilisez {shiftKey} + {enterKey} pour en créer et en ajouter un autre.",
+                "enter": "Entrer",
+                "shift": "Maj"
+            },
             "import_dialog": {
                 "change_warning": "Le comportement lors d’importations avec des import_ref existants a changé. Si une valeur pour import_ref\n est présente dans le fichier CSV, alors l’élément sera mis à jour avec celle-ci.",
                 "description": "Importer un fichier CSV contenant vos articles, étiquettes, et emplacements. Se reporter à la documentation\n pour plus d’informations sur le format requis.",
-                "title": "Importer un fichier CSV"
+                "title": "Importer un fichier CSV",
+                "toast": {
+                    "import_failed": "Échec de l'importation. Veuillez réessayer plus tard.",
+                    "import_success": "Importation réussie !",
+                    "please_select_file": "Veuillez sélectionner un fichier à importer."
+                }
             },
             "outdated": {
                 "current_version": "Version actuelle",
@@ -12,6 +22,11 @@
                 "latest_version": "Dernière version",
                 "new_version_available": "Nouvelle version disponible",
                 "new_version_available_link": "Cliquez ici pour consulter les notes de version"
+            }
+        },
+        "form": {
+            "password": {
+                "toggle_show": "Activer/désactiver l'affichage du mot de passe"
             }
         },
         "global": {
@@ -51,7 +66,12 @@
                 "download": "Télécharger l’étiquette",
                 "print": "Imprimer l’étiquette",
                 "server_print": "Imprimer sur le serveur",
-                "titles": "Étiquettes"
+                "titles": "Étiquettes",
+                "toast": {
+                    "load_status_failed": "Échec du chargement du statut",
+                    "print_failed": "Échec de l'impression de l'étiquette",
+                    "print_success": "Étiquette imprimée"
+                }
             },
             "page_qr_code": {
                 "page_url": "URL de la page",
@@ -62,13 +82,25 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "Télécharger",
+                "open_new_tab": "Ouvrir dans un nouvel onglet"
+            },
             "create_modal": {
+                "delete_photo": "Supprimer la photo",
                 "item_description": "Description de l'article",
                 "item_name": "Nom de l'article",
                 "item_photo": "Photo de l'article 📷",
                 "item_quantity": "Quantité d'éléments",
                 "parent_item": "Article parent",
+                "rotate_photo": "Faire pivoter la photo",
+                "set_as_primary_photo": "Définir comme photo { isPrimary, select, true {non-} false {} other {}}principale",
                 "title": "Créer un article",
+                "toast": {
+                    "already_creating": "Déjà en train de créer un article",
+                    "create_failed": "Impossible de créer l'élément",
+                    "create_success": "Article créé"
+                },
                 "upload_photos": "Transférer des photos"
             },
             "view": {
