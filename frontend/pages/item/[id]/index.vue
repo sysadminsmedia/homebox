@@ -621,14 +621,14 @@
       <div class="mb-6 mt-3 flex flex-wrap items-center justify-between">
         <ButtonGroup>
           <Button
-            v-for="t in tabs"
-            :key="t.id"
+            v-for="tab in tabs"
+            :key="tab.id"
             as-child
-            :variant="t.to === currentPath ? 'default' : 'outline'"
+            :variant="tab.to === currentPath ? 'default' : 'outline'"
             size="sm"
           >
-            <NuxtLink :to="t.to">
-              {{ $t(t.name) }}
+            <NuxtLink :to="tab.to">
+              {{ $t(tab.name) }}
             </NuxtLink>
           </Button>
         </ButtonGroup>
