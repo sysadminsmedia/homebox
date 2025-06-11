@@ -353,7 +353,8 @@
             "failed_upload_attachment": "Échec du téléversement de la pièce jointe",
             "item_deleted": "Article supprimé",
             "item_saved": "Article enregistré",
-            "quantity_cannot_negative": "La quantité ne peut être négative"
+            "quantity_cannot_negative": "La quantité ne peut pas être négative",
+            "sync_child_location": "Le parent sélectionné synchronise les emplacements de ses enfants vers le sien. L'emplacement a été mis à jour."
         },
         "updated_at": "Mis à jour le",
         "warranty": "Garantie",
@@ -361,7 +362,15 @@
         "warranty_expires": "Expiration de la garantie"
     },
     "labels": {
+        "label_delete_confirm": "Êtes-vous certain de vouloir supprimer cette étiquette ? Cette action ne peut pas être annulée.",
         "no_results": "Aucune étiquette trouvée",
+        "toast": {
+            "failed_delete_label": "Échec de la suppression de l'étiquette",
+            "failed_load_label": "Échec du chargement de l'étiquette",
+            "failed_update_label": "Échec de la mise à jour de l'étiquette",
+            "label_deleted": "Étiquette supprimée",
+            "label_updated": "Étiquette mise à jour"
+        },
         "update_label": "Mettre à jour l'étiquette"
     },
     "languages": {
@@ -404,7 +413,13 @@
         "child_locations": "Sous-emplacements",
         "collapse_tree": "Minimiser la liste",
         "expand_tree": "Ouvrir l’arborescence",
+        "location_items_delete_confirm": "Êtes-vous certain de vouloir supprimer cet emplacement et tous ses articles ? Cette action est irréversible.",
         "no_results": "Aucun emplacement",
+        "toast": {
+            "failed_delete_location": "Échec de la suppression de l'emplacement",
+            "failed_load_location": "Échec du chargement de l'emplacement",
+            "failed_update_location": "Échec de la mise à jour de l’emplacement des widgets."
+        },
         "update_location": "Mettre à jour l'emplacement"
     },
     "maintenance": {
