@@ -248,7 +248,8 @@
             "invalid_email": "Adresse e-mail non valide",
             "invalid_email_password": "E-mail ou mot de passe invalide",
             "login_success": "Connexion réussie",
-            "problem_registering": "Problème d'enregistrement de l'utilisateur"
+            "problem_registering": "Problème d'enregistrement d'utilisateur",
+            "user_registered": "Utilisateur enregistré"
         }
     },
     "items": {
@@ -261,6 +262,7 @@
         "changes_persisted_immediately": "Les changements de pièces jointes vont être sauvegardés immédiatement",
         "created_at": "Créé à",
         "custom_fields": "Champs personnalisés",
+        "delete_attachment_confirm": "Confirmez vous vouloir supprimer cette pièce jointe ?",
         "description": "Description",
         "details": "Détails",
         "drag_and_drop": "Glissez-déposez les fichiers ici ou cliquez pour choisir des fichiers",
