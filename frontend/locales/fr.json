@@ -3,7 +3,7 @@
         "app": {
             "create_modal": {
                 "createAndAddAnother": "Utilisez {shiftKey} + {enterKey} pour en créer et en ajouter un autre.",
-                "enter": "Entrer",
+                "enter": "Entrée",
                 "shift": "Maj"
             },
             "import_dialog": {
@@ -480,6 +480,7 @@
         "delete_account_confirm": "Êtes-vous certain de vouloir supprimer votre compte ? Si vous êtes le dernier membre de votre groupe, toutes vos données seront supprimées. Cette action est irréversible.",
         "delete_account_sub": "Supprimer le compte et toutes ses données. Aucune récupération possible.",
         "delete_notifier_confirm": "Êtes-vous certain de vouloir supprimer ce notificateur ?",
+        "display_legacy_header": "{ currentValue, select, true {Désactiver le \"Legacy Header\"} false {Activer le \"Legacy Header\"} other {Not Hit}}",
         "enabled": "Activé",
         "example": "Exemple",
         "gen_invite": "Générer un lien d’invitation",
@@ -507,7 +508,7 @@
             "failed_test_notifier": "Échec du test du notificateur.",
             "failed_update_group": "Échec de la mise à jour du groupe",
             "failed_update_notifier": "Échec de la mise à jour du notificateur.",
-            "group_updated": "Groupe mis à jour.",
+            "group_updated": "Groupe mis à jour",
             "notifier_test_success": "Test du notificateur réussi.",
             "password_changed": "Mot de passe changé avec succès."
         },
@@ -519,6 +520,8 @@
     },
     "reports": {
         "label_generator": {
+            "asset_end": "Fin de la ressource",
+            "asset_start": "Début de la ressource",
             "base_url": "URL de base",
             "bordered_labels": "Étiquettes avec bords",
             "generate_page": "Générer page",
@@ -536,7 +539,14 @@
             "page_top_padding": "Marge du haut de la page",
             "page_width": "Largeur de la page",
             "qr_code_example": "Exemple de QR code",
-            "title": "Générateur d'étiquettes"
+            "tip_1": "Ces valeurs par défaut sont configurées pour les\n '<a href=\"https://www.avery.com/templates/5260\">' étiquettes Avery 5260 '</a>'. Si vous utilisez des étiquettes différentes,\n vous devrez ajuster les paramètres correspondre à vos étiquettes.",
+            "tip_2": "Si vous personnalisez votre étiquette, les dimensions sont en pouces. Lors de la conception des étiquettes 5260, j'ai remarqué que les\n dimensions utilisées dans leur template ne correspondaient pas à ce qui était nécessaire pour imprimer à l'intérieur des boîtes.\n '<b>'Soyez prêts à faire de l'essai-erreur.'</b>'",
+            "tip_3": "Lors de l'impression, assurez-vous de:\n '<ol><li>'Définir les marges à 0 ou Aucune'</li><li>'Définir la mise à l'échelle à 100%'</li><li>'Désactiver l'impression recto-verso'</li><li>'Imprimer une page de test avant d'imprimer plusieurs pages'</li></ol>'",
+            "tips": "Conseils",
+            "title": "Générateur d'étiquettes",
+            "toast": {
+                "page_too_small_card": "La taille de la page est trop petite pour la taille de la carte"
+            }
         }
     },
     "scanner": {
@@ -553,15 +563,18 @@
         "actions_set": {
             "ensure_ids": "Vérifier les ID de ressources",
             "ensure_ids_button": "Vérifier les ID de ressources",
+            "ensure_ids_confirm": "Êtes-vous certain de vous assurer que toutes les ressources ont une ID ? Cela peut prendre du temps et est irréversible.",
             "ensure_ids_sub": "Vérifie que tous les articles de votre inventaire comportent un champ asset_id valide. Ceci est effectué en cherchant l'asset_id actuel le plus élevé et en appliquant les valeurs suivantes à tous les articles sans asset_id. Ceci est effectué dans l'ordre du champ created_at.",
             "ensure_import_refs": "Vérifier les références d'importation",
             "ensure_import_refs_button": "Vérifier les références d'importation",
             "ensure_import_refs_sub": "Vérifie que tous les éléments de votre inventaire comportent un champ import_ref valide. Ceci est effectué en générant une chaîne de 8 caractères aléatoires pour chaque élément ne comportant pas de champ import_ref.",
             "set_primary_photo": "Définir la photo principale",
             "set_primary_photo_button": "Définir la photo principale",
+            "set_primary_photo_confirm": "Êtes-vous certain de vouloir définir les photos principales ? Cela peut prendre du temps et est irréversible.",
             "set_primary_photo_sub": "Dans la version v0.10.0 d'Homebox, le champ d'image principal à été ajouté aux pièces jointes de type photo. Cette action définira en tant qu'image principale toute première image en pièce jointe déjà présente en base de donnée, si le champ n'est pas déjà défini. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Voir GitHub PR #576'</a>'",
             "zero_datetimes": "Remettre à zéro les dates et heures",
             "zero_datetimes_button": "Remettre à zéro les dates et heures",
+            "zero_datetimes_confirm": "Êtes-vous certain de vouloir réinitialiser toutes les valeurs de date et d'heure ? Cela peut prendre du temps et est irréversible.",
             "zero_datetimes_sub": "Réinitialise la valeur de tous les champs date/heure de votre inventaire à la date de début. Il s'agit de corriger une anomalie introduite au début du développement du site qui entraînait le stockage de la valeur temporelle avec l'heure, ce qui provoquait des problèmes avec les champs de date affichant des valeurs précises. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Voir le rapport 236 de Github pour plus de détails.'</a> '"
         },
         "actions_sub": "Appliquer des actions en masse à votre inventaire. Ces actions sont irréversibles. '<b>'Soyez vigilant.'</b>'",
@@ -572,6 +585,7 @@
             "export_sub": "Exporte l'inventaire au format CSV Homebox. Cela exportera l'intégralité de votre inventaire.",
             "import": "Importer l'inventaire",
             "import_button": "Importer l'inventaire",
+            "import_ref_confirm": "Êtes-vous certain de vouloir vérifier que toutes les ressources ont un import_ref ? Cela peut prendre du temps et est irréversible.",
             "import_sub": "Importer un fichier CSV au format Homebox. Sans la colonne '<code>'HB.import_ref'</code>' , cela '<b>'n'écrasera pas'</b>' d'éléments de votre inventaire actuel, seuls les nouveaux éléments seront importés. Les lignes contenant une colonne '<code>'HB.import_ref'</code>' seront fusionnées avec les éléments existants comportant le même import_ref, si existant."
         },
         "import_export_sub": "Importez et exportez votre inventaire vers et depuis un fichier CSV. Ceci est utile pour migrer votre inventaire vers une nouvelle instance de Homebox.",
@@ -584,6 +598,13 @@
             "bill_of_materials_button": "Générer une nomenclature",
             "bill_of_materials_sub": "Génère un fichier CSV (valeurs séparées par des virgules) qui peut être importé dans un tableur. Il s'agit d'un aperçu de votre inventaire contenant les informations essentielles."
         },
-        "reports_sub": "Générez différents rapports pour votre inventaire."
+        "reports_sub": "Générez différents rapports pour votre inventaire.",
+        "toast": {
+            "asset_success": "{ results } ressources ont été mises à jour.",
+            "failed_ensure_ids": "Échec de la vérification des ID de ressources.",
+            "failed_ensure_import_refs": "Échec de la vérifications des références d'importation.",
+            "failed_set_primary_photos": "Échec de la définition des photos principales.",
+            "failed_zero_datetimes": "Échec de la réinitialisation des valeurs de date et d'heure."
+        }
     }
 }
