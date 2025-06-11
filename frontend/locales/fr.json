@@ -529,7 +529,14 @@
             "label_height": "Hauteur de l'étiquette",
             "label_width": "Largeur de l’étiquette",
             "measure_type": "Type de mesure",
-            "page_bottom_padding": "Marge du bas de page"
+            "page_bottom_padding": "Marge du bas de la page",
+            "page_height": "Hauteur de la page",
+            "page_left_padding": "Marge gauche de la page",
+            "page_right_padding": "Marge droite de la page",
+            "page_top_padding": "Marge du haut de la page",
+            "page_width": "Largeur de la page",
+            "qr_code_example": "Exemple de QR code",
+            "title": "Générateur d'étiquettes"
         }
     },
     "scanner": {
