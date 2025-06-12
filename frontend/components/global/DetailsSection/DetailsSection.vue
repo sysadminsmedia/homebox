@@ -46,8 +46,8 @@
               <!-- Fixed version with improved overflow handling -->
               <span class="flex w-full items-center break-words">
                 <a
-                  v-if="maybeUrl(detail.text).isUrl"
-                  :href="maybeUrl(detail.text).url"
+                  v-if="maybeUrl(detail.text.toString()).isUrl"
+                  :href="maybeUrl(detail.text.toString()).url"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="overflow-hidden break-all text-primary underline hover:text-primary/80"
