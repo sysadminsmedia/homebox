@@ -17,7 +17,13 @@
               <TooltipProvider :delay-duration="0">
                 <Tooltip>
                   <TooltipTrigger as-child>
-                    <a :href="detail.href" target="_blank" :class="badgeVariants()" class="gap-1">
+                    <a
+                      :href="detail.href"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      :class="badgeVariants()"
+                      class="gap-1"
+                    >
                       <MdiOpenInNew />
                       {{ detail.text }}
                     </a>
@@ -39,7 +45,15 @@
             <template v-else>
               <!-- Fixed version with improved overflow handling -->
               <span class="flex w-full items-center break-words">
-                <span class="overflow-hidden break-all">{{ detail.text }}</span>
+                <a
+                  v-if="maybeUrl(detail.text).isUrl"
+                  :href="maybeUrl(detail.text).url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="overflow-hidden break-all text-primary underline hover:text-primary/80"
+                  >{{ detail.text }}</a
+                >
+                <span v-else class="overflow-hidden break-all">{{ detail.text }}</span>
                 <span
                   v-if="detail.copyable"
                   class="my-0 ml-4 shrink-0 opacity-0 transition-opacity duration-75 group-hover:opacity-100"
