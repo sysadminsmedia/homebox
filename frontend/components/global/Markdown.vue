@@ -17,7 +17,7 @@
   });
 
   const raw = computed(() => {
-    const html = md.render(props.source || "").slice(0, -1); // remove trailing newline
+    const html = md.render(props.source || "").replace(/\n$/, ""); // remove trailing newline
     return DOMPurify.sanitize(html);
   });
 </script>
