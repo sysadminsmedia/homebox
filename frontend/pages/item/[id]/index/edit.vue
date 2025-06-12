@@ -544,7 +544,8 @@
     </Dialog>
 
     <section class="relative">
-      <div class="sticky top-1 z-10 my-4 flex items-center justify-between gap-2">
+      <!-- IMPORTANT: this is based on the height of the topbar + 0.25rem -->
+      <div class="sticky top-[7.25rem] z-10 my-4 flex items-center justify-between gap-2 sm:top-[4.25rem]">
         <TooltipProvider :delay-duration="0">
           <Tooltip>
             <TooltipTrigger as-child>
