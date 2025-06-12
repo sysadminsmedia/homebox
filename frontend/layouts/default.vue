@@ -349,6 +349,13 @@
 
   const locationStore = useLocationStore();
 
+  onMounted(() => {
+    labelStore.refresh();
+    locationStore.refreshChildren();
+    locationStore.refreshParents();
+    locationStore.refreshTree();
+  });
+
   onServerEvent(ServerEvent.LabelMutation, () => {
     labelStore.refresh();
   });
