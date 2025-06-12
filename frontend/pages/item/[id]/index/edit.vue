@@ -5,6 +5,7 @@
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
+  import MdiLoading from "~icons/mdi/loading";
   import MdiDelete from "~icons/mdi/delete";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiContentSaveOutline from "~icons/mdi/content-save-outline";
@@ -81,11 +82,15 @@
     refresh();
   });
 
+  const saving = ref(false);
+
   async function saveItem() {
     if (!item.value.location?.id) {
       toast.error(t("items.toast.failed_save_no_location"));
       return;
     }
+
+    saving.value = true;
 
     let purchasePrice = 0;
     let soldPrice = 0;
@@ -111,6 +116,8 @@
     };
 
     const { error } = await api.items.update(itemId.value, payload);
+
+    saving.value = false;
 
     if (error) {
       toast.error(t("items.toast.failed_save"));
@@ -538,7 +545,10 @@
         </div>
 
         <DialogFooter>
-          <Button :loading="editState.loading" @click="updateAttachment"> {{ $t("global.update") }} </Button>
+          <Button :disabled="editState.loading" @click="updateAttachment">
+            <MdiLoading v-if="editState.loading" class="animate-spin" />
+            {{ $t("global.update") }}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -563,8 +573,9 @@
             <TooltipContent>{{ $t("items.show_advanced_view_options") }}</TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <Button size="sm" @click="saveItem">
-          <MdiContentSaveOutline />
+        <Button size="sm" :disabled="saving" @click="saveItem">
+          <MdiLoading v-if="saving" class="animate-spin" />
+          <MdiContentSaveOutline v-else />
           {{ $t("global.save") }}
         </Button>
       </div>
