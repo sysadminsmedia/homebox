@@ -1042,3 +1042,8 @@
   font-size: 0.75rem;
   font-weight: 700;
 }
+
+:root {
+  --header-height: 4rem;
+  --header-height-mobile: 7rem;
+}

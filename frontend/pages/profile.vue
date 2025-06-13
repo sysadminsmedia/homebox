@@ -4,6 +4,7 @@
   import type { Detail } from "~~/components/global/DetailsSection/types";
   import { themes } from "~~/lib/data/themes";
   import type { CurrenciesCurrency, NotifierCreate, NotifierOut } from "~~/lib/api/types/data-contracts";
+  import MdiLoading from "~icons/mdi/loading";
   import MdiAccount from "~icons/mdi/account";
   import MdiMegaphone from "~icons/mdi/megaphone";
   import MdiDelete from "~icons/mdi/delete";
@@ -320,7 +321,8 @@
 
         <form @submit.prevent="changePassword">
           <DialogFooter>
-            <Button :loading="passwordChange.loading" :disabled="!passwordChange.isValid" type="submit">
+            <Button :disabled="!passwordChange.isValid || passwordChange.loading" type="submit">
+              <MdiLoading v-if="passwordChange.loading" class="animate-spin" />
               {{ $t("global.submit") }}
             </Button>
           </DialogFooter>

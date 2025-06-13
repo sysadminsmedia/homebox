@@ -179,7 +179,7 @@
           <div class="z-10 ml-auto mt-6 flex items-center gap-4 sm:mt-0">
             <Tooltip>
               <TooltipTrigger as-child>
-                <a href="https://github.com/sysadminsmedia/homebox" target="_blank">
+                <a href="https://github.com/sysadminsmedia/homebox" target="_blank" rel="noopener noreferrer">
                   <MdiGithub class="size-8" />
                 </a>
               </TooltipTrigger>
@@ -188,7 +188,7 @@
 
             <Tooltip>
               <TooltipTrigger as-child>
-                <a href="https://noc.social/@sysadminszone" target="_blank">
+                <a href="https://noc.social/@sysadminszone" target="_blank" rel="noopener noreferrer">
                   <MdiMastodon class="size-8" />
                 </a>
               </TooltipTrigger>
@@ -197,7 +197,7 @@
 
             <Tooltip>
               <TooltipTrigger as-child>
-                <a href="https://discord.gg/aY4DCkpNA9" target="_blank">
+                <a href="https://discord.gg/aY4DCkpNA9" target="_blank" rel="noopener noreferrer">
                   <MdiDiscord class="size-8" />
                 </a>
               </TooltipTrigger>
@@ -206,7 +206,7 @@
 
             <Tooltip>
               <TooltipTrigger as-child>
-                <a href="https://homebox.software/en/" target="_blank">
+                <a href="https://homebox.software/en/" target="_blank" rel="noopener noreferrer">
                   <MdiFolder class="size-8" />
                 </a>
               </TooltipTrigger>

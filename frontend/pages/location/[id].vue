@@ -3,6 +3,7 @@
   import { toast } from "@/components/ui/sonner";
   import type { LocationSummary, LocationUpdate } from "~~/lib/api/types/data-contracts";
   import { useLocationStore } from "~~/stores/locations";
+  import MdiLoading from "~icons/mdi/loading";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiDelete from "~icons/mdi/delete";
@@ -148,7 +149,10 @@
           />
           <LocationSelector v-model="parent" />
           <DialogFooter>
-            <Button type="submit" :loading="updating"> {{ $t("global.update") }} </Button>
+            <Button type="submit" :disabled="updating">
+              <MdiLoading v-if="updating" class="animate-spin" />
+              {{ $t("global.update") }}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
