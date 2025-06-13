@@ -1,10 +1,19 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "enter": "Intro",
+                "shift": "Mayús"
+            },
             "import_dialog": {
                 "change_warning": "Se ha modificado el comportamiento de las importaciones con import_refs existentes. Si existe una import_ref en el archivo CSV, el\nelemento se actualizará con los valores del archivo CSV.",
                 "description": "Importa un archivo CSV que contenga tus elementos, etiquetas y ubicaciones. Consulta la documentación para obtener más información sobre el \nformato requerido.",
-                "title": "Importar Archivo CSV"
+                "title": "Importar Archivo CSV",
+                "toast": {
+                    "import_failed": "La importación no se pudo completar. Inténtalo nuevamente más tarde.",
+                    "import_success": "¡Importación exitosa!",
+                    "please_select_file": "Por favor, selecciona un archivo para importar."
+                }
             },
             "outdated": {
                 "current_version": "Versión actual",
@@ -12,6 +21,11 @@
                 "latest_version": "Última versión",
                 "new_version_available": "Nueva versión disponible",
                 "new_version_available_link": "Haz click aquí para ver las notas de la versión"
+            }
+        },
+        "form": {
+            "password": {
+                "toggle_show": "Alternar visibilidad de la contraseña"
             }
         },
         "global": {
@@ -51,7 +65,12 @@
                 "download": "Descargar Etiqueta",
                 "print": "Imprimir etiqueta",
                 "server_print": "Imprimir en el Servidor",
-                "titles": "Etiquetas"
+                "titles": "Etiquetas",
+                "toast": {
+                    "load_status_failed": "No se pudo cargar el estado",
+                    "print_failed": "No se pudo imprimir la etiqueta",
+                    "print_success": "Etiqueta impresa"
+                }
             },
             "page_qr_code": {
                 "page_url": "URL de página",
@@ -62,11 +81,19 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "Descargar",
+                "open_new_tab": "Abrir en nueva pestaña"
+            },
             "create_modal": {
+                "delete_photo": "Borrar foto",
                 "item_description": "Descripción del artículo",
                 "item_name": "Nombre del artículo",
                 "item_photo": "Foto del artículo 📷",
                 "item_quantity": "Cantidad de Elementos",
+                "parent_item": "Elemento padre",
+                "rotate_photo": "Girar fotografía",
+                "set_as_primary_photo": "Establecer como { isPrimary, select, true {non-} false {} other {}} foto principal",
                 "title": "Crear Elemento",
                 "upload_photos": "Fotos Subidas"
             },
