@@ -93,10 +93,10 @@
                 "item_quantity": "Cantidad de Elementos",
                 "parent_item": "Elemento padre",
                 "rotate_photo": "Girar fotografía",
-                "set_as_primary_photo": "Establecer como foto { isPrimary, select, true {no } false {} other {}}principal",
+                "set_as_primary_photo": "Establecer como { isPrimary, select, true {non-} false {} other {}} foto principal",
                 "title": "Crear Elemento",
                 "toast": {
-                    "already_creating": "Ya se está creando un artículo"
+                    "already_creating": "Ya se está creando un elemento"
                 },
                 "upload_photos": "Fotos Subidas"
             },
