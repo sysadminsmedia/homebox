@@ -129,7 +129,8 @@
                     "headers": "Záhlaví",
                     "page": "Stránka",
                     "rows_per_page": "Řádků na stránku",
-                    "table_settings": "Nastavení tabulky"
+                    "table_settings": "Nastavení tabulky",
+                    "view_item": "Zobrazit položku"
                 }
             }
         },
