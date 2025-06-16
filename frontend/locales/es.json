@@ -586,7 +586,7 @@
             "export_sub": "Exporta el formato CSV estándar para Homebox. Esto exportará todos los elementos de tu inventario.",
             "import": "Importar Inventario",
             "import_button": "Importar Inventario",
-            "import_ref_confirm": "¿Está seguro de que desea asegurarse de que todos los activos tengan un import_ref? Esto puede tardar un tiempo y no se puede deshacer.",
+            "import_ref_confirm": "¿Estás seguro de que deseas asegurarse de que todos los activos tengan un import_ref? Esto puede tardar un tiempo y no se puede deshacer.",
             "import_sub": "Importa el formato CSV estándar para Homebox. Sin una columna '<code>'HB.import_ref'</code>', esto '<b>'no'</b>' sobrescribirá cualquier elemento existente en tu inventario, sólo añadirá nuevos artículos. Las filas con una columna '<code>'HB.import_ref'</code>' se fusionan con los artículos existentes con la misma import_ref, si existe."
         },
         "import_export_sub": "Importa y exporta tu inventario a y desde un archivo CSV. Esto es útil para migrar tu inventario a una nueva instancia de Homebox.",
@@ -601,6 +601,7 @@
         },
         "reports_sub": "Genera diferentes informes para tu inventario.",
         "toast": {
+            "asset_success": "Se han actualizado { results } activos.",
             "failed_ensure_ids": "Error al asegurar los ID de los activos."
         }
     }
