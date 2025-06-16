@@ -575,7 +575,7 @@
             "set_primary_photo_sub": "En la versión v0.10.0 de Homebox, se añadió el indicador de imagen principal a los ficheros adjuntos de tipo foto. Esta acción establecerá la primera imagen de cada artículo como su imagen principal, si no hay una imagen principal ya definida. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Ver PR #576 en GitHub'</a>'",
             "zero_datetimes": "Cero Horas Elementos",
             "zero_datetimes_button": "Cero Horas Elementos",
-            "zero_datetimes_confirm": "¿Está seguro de que desea restablecer todos los valores de fecha y hora? Esto puede tardar un tiempo y no se puede deshacer.",
+            "zero_datetimes_confirm": "¿Estás seguro de que deseas restablecer todos los valores de fecha y hora? Esto puede tardar un tiempo y no se puede deshacer.",
             "zero_datetimes_sub": "Restablece el valor de la hora para todos los campos de fecha/hora en tu inventario al principio de esa fecha. Esto se hace para corregir un error que se introdujo al principio del desarrollo de la aplicación, que causó que el valor de la hora se almacenase con la fecha, lo cual produjo problemas al mostrar valores precisos del campo. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Ver el issue #236 de GitHub para más detalles.'</a>'"
         },
         "actions_sub": "Aplica Acciones a tu inventario de forma masiva. Estas son acciones irreversibles. '<b>'Ten Cuidado.'</b>'",
@@ -586,6 +586,7 @@
             "export_sub": "Exporta el formato CSV estándar para Homebox. Esto exportará todos los elementos de tu inventario.",
             "import": "Importar Inventario",
             "import_button": "Importar Inventario",
+            "import_ref_confirm": "¿Está seguro de que desea asegurarse de que todos los activos tengan un import_ref? Esto puede tardar un tiempo y no se puede deshacer.",
             "import_sub": "Importa el formato CSV estándar para Homebox. Sin una columna '<code>'HB.import_ref'</code>', esto '<b>'no'</b>' sobrescribirá cualquier elemento existente en tu inventario, sólo añadirá nuevos artículos. Las filas con una columna '<code>'HB.import_ref'</code>' se fusionan con los artículos existentes con la misma import_ref, si existe."
         },
         "import_export_sub": "Importa y exporta tu inventario a y desde un archivo CSV. Esto es útil para migrar tu inventario a una nueva instancia de Homebox.",
