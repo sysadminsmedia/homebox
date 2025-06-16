@@ -350,7 +350,8 @@
             "failed_save": "Error al guardar el elemento",
             "failed_save_no_location": "Error al guardar el elemento: no se ha seleccionado ninguna ubicación",
             "failed_search_items": "No se han podido buscar los elementos",
-            "failed_update_attachment": "Error al actualizar el archivo adjunto"
+            "failed_update_attachment": "Error al actualizar el adjunto",
+            "failed_upload_attachment": "Error al cargar el archivo adjunto"
         },
         "updated_at": "Actualizado El",
         "warranty": "Garantía",
