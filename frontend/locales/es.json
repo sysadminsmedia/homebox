@@ -419,7 +419,9 @@
         "toast": {
             "failed_delete_location": "Error al eliminar la ubicación",
             "failed_load_location": "Error al cargar la ubicación",
-            "failed_update_location": "Error al actualizar la ubicación de los widgets."
+            "failed_update_location": "Error al actualizar la ubicación",
+            "location_deleted": "Ubicación eliminada",
+            "location_updated": "Ubicación actualizada"
         },
         "update_location": "Actualizar Ubicación"
     },
@@ -476,6 +478,7 @@
         "currency_format": "Formato Divisa",
         "current_password": "Contraseña Actual",
         "delete_account": "Eliminar Cuenta",
+        "delete_account_confirm": "¿Seguro que quieres eliminar tu cuenta? Si eres el último miembro de tu grupo, se eliminarán todos tus datos",
         "delete_account_sub": "Elimina tu cuenta y todos sus datos asociados. Esto no se puede deshacer.",
         "enabled": "Habilitado",
         "example": "Ejemplo",
