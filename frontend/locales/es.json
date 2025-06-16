@@ -370,7 +370,7 @@
             "failed_load_label": "Error al cargar la etiqueta",
             "failed_update_label": "Error al actualizar la etiqueta",
             "label_deleted": "Etiqueta eliminada",
-            "label_updated": "Etiqueta actualizada."
+            "label_updated": "Etiqueta actualizada"
         },
         "update_label": "Actualizar Etiqueta"
     },
@@ -414,6 +414,7 @@
         "child_locations": "Ubicaciones Hijas",
         "collapse_tree": "Colapsar Árbol",
         "expand_tree": "Expandir Árbol",
+        "location_items_delete_confirm": "¿Está seguro de que desea eliminar esta ubicación y todos sus elementos? Esta acción no se puede deshacer.",
         "no_results": "Ubicaciones No Encontradas",
         "update_location": "Actualizar Ubicación"
     },
