@@ -542,7 +542,12 @@
             "qr_code_example": "Ejemplo de Código QR",
             "tip_1": "Los valores predeterminados están configurados para\n '<a href=\"https://www.avery.com/templates/5260\">'hojas de etiquetas Avery 5260'</a>'. Si utilizas un tipo de hoja diferente,\n tendrás que ajustar la configuración para que coincida con tu hoja.",
             "tip_2": "Si estás personalizando tu hoja las dimensiones están en pulgadas. Cuando estaba creando la hoja de etiquetas 5260, descubrí que\n las dimensiones usadas en su plantilla no coincidían con las necesarias para imprimir dentro de las casillas.\n '<b>'Prepárate para algo de prueba y error.'</b>'",
-            "tip_3": "Al imprimir, asegúrese de:\n '<ol><li>'Establecer los márgenes en 0 o ninguno'</li><li>'Establecer la escala al 100%'</li><li>'Desactivar impresión a doble cara'</li><li>'Imprimir una página de prueba antes de imprimir varias páginas'</li></ol>'"
+            "tip_3": "Al imprimir, asegúrate de:\n '<ol><li>'Establecer los márgenes en 0 o Ninguno'</li><li>'Establecer la escala al 100%'</li><li>'Desactivar impresión a doble cara'</li><li>'Imprimir una página de prueba antes de imprimir varias páginas'</li></ol>'",
+            "tips": "Sugerencias",
+            "title": "Generador de Etiquetas",
+            "toast": {
+                "page_too_small_card": "El tamaño de la página es demasiado pequeño para el tamaño de la tarjeta"
+            }
         }
     },
     "scanner": {
