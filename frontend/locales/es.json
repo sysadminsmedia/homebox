@@ -247,7 +247,10 @@
         "title": "Organiza y Etiqueta Tus Cosas",
         "toast": {
             "invalid_email": "Dirección de correo electrónico no válida",
-            "invalid_email_password": "E-mail y/o contraseña no válida"
+            "invalid_email_password": "E-mail y/o contraseña no válido",
+            "login_success": "Sesión iniciada correctamente",
+            "problem_registering": "Problema al registrar al usuario",
+            "user_registered": "Usuario registrado"
         }
     },
     "items": {
@@ -453,6 +456,7 @@
         "actions_set": {
             "ensure_ids": "Garantizar IDs de Activos",
             "ensure_ids_button": "Garantizar IDs de Activos",
+            "ensure_ids_confirm": "¿Está seguro de que desea asegurarse de que todos los activos tengan una identificación? Esto puede tardar un tiempo y no se puede deshacer.",
             "ensure_ids_sub": "Garantiza que todos los elementos de tu inventario tienen un campo asset_id válido. Esto se hace encontrando el campo asset_id actual más alto en la base de datos y aplicando el siguiente valor a cada artículo que tenga un campo asset_id sin establecer. Esto se hace en orden del campo created_at.",
             "ensure_import_refs": "Garantizar Referencias de Importación",
             "ensure_import_refs_button": "Garantizar Referencias de Importación",
