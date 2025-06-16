@@ -510,7 +510,8 @@
             "failed_update_group": "Error al actualizar el grupo",
             "failed_update_notifier": "Error al actualizar el notificador.",
             "group_updated": "Grupo actualizado",
-            "notifier_test_success": "Prueba del notificador realizada correctamente."
+            "notifier_test_success": "Prueba del notificador correcta.",
+            "password_changed": "Contraseña cambiada."
         },
         "update_group": "Actualizar Grupo",
         "update_language": "Cambiar Idioma",
