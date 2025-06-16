@@ -156,7 +156,9 @@
                 "location_name": "Nombre de la Ubicación",
                 "title": "Crear Ubicación",
                 "toast": {
-                    "already_creating": "Ya estamos creando una ubicación"
+                    "already_creating": "Ya se está creando una ubicación",
+                    "create_failed": "No se ha podido crear la ubicación",
+                    "create_success": "Ubicación Creada"
                 }
             },
             "selector": {
