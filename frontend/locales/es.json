@@ -511,13 +511,22 @@
             "failed_update_notifier": "Error al actualizar el notificador.",
             "group_updated": "Grupo actualizado",
             "notifier_test_success": "Prueba del notificador correcta.",
-            "password_changed": "Contraseña cambiada."
+            "password_changed": "Contraseña cambiada correctamente."
         },
         "update_group": "Actualizar Grupo",
         "update_language": "Cambiar Idioma",
         "url": "URL",
         "user_profile": "Perfil de Usuario",
         "user_profile_sub": "Invita a usuarios y gestiona tu cuenta."
+    },
+    "reports": {
+        "label_generator": {
+            "asset_end": "Activo Final",
+            "asset_start": "Activo Inicial",
+            "base_url": "URL Base",
+            "bordered_labels": "Etiquetas con Bordes",
+            "generate_page": "Generar página"
+        }
     },
     "scanner": {
         "error": "Se ha producido un error mientras se escaneaba",
