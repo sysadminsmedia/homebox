@@ -211,12 +211,14 @@
         "password": "Contraseña",
         "quantity": "Cantidad",
         "read_docs": "Lee la Documentación",
-        "return_home": "Regresar al inicio",
+        "return_home": "Regresar a Inicio",
         "save": "Guardar",
         "search": "Buscar",
         "sign_out": "Cerrar Sesión",
         "submit": "Enviar",
+        "unknown": "Desconocido",
         "update": "Actualizar",
+        "updating": "Actualizando",
         "value": "Valor",
         "version": "Versión: { version }",
         "welcome": "Bienvenido/a, { username }"
@@ -241,7 +243,8 @@
         "set_email": "¿Cuál es tu email?",
         "set_name": "¿Cómo te llamas?",
         "set_password": "Establece tu contraseña",
-        "tagline": "Rastrea, Organiza y Gestiona tus Cosas."
+        "tagline": "Rastrea, Organiza y Gestiona tus Cosas.",
+        "title": "Organiza y etiqueta tus cosas"
     },
     "items": {
         "add": "Añadir",
