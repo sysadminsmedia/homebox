@@ -602,7 +602,8 @@
         "reports_sub": "Genera diferentes informes para tu inventario.",
         "toast": {
             "asset_success": "Se han actualizado { results } activos.",
-            "failed_ensure_ids": "Error al asegurar los ID de los activos."
+            "failed_ensure_ids": "Error al asegurar los ID de los activos.",
+            "failed_ensure_import_refs": "Error al garantizar las ref. de importación."
         }
     }
 }
