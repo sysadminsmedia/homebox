@@ -414,8 +414,13 @@
         "child_locations": "Ubicaciones Hijas",
         "collapse_tree": "Colapsar Árbol",
         "expand_tree": "Expandir Árbol",
-        "location_items_delete_confirm": "¿Está seguro de que desea eliminar esta ubicación y todos sus elementos? Esta acción no se puede deshacer.",
+        "location_items_delete_confirm": "¿Estás seguro de que deseas eliminar esta ubicación y todos sus elementos? Esta acción no se puede deshacer.",
         "no_results": "Ubicaciones No Encontradas",
+        "toast": {
+            "failed_delete_location": "Error al eliminar la ubicación",
+            "failed_load_location": "Error al cargar la ubicación",
+            "failed_update_location": "Error al actualizar la ubicación de los widgets."
+        },
         "update_location": "Actualizar Ubicación"
     },
     "maintenance": {
