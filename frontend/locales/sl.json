@@ -529,24 +529,24 @@
             "input_placeholder": "Vnesite tukaj",
             "instruction_1": "Homebox Generator Nalepk je orodje za pomoč pri tiskanju nalepk za vaš Homebox inventar. Te so namenjene za\n tisk vnaprej, da imate več nalepk pripravljenih za uporabo",
             "instruction_2": "Te nalepke delujejo z uporabo URL naslovne QR kode in ID sredstva na nalepki. Če ste onemogočili\nIDje sredstev v vaših Homebox nastavitvah lahko to orodje še vedno uporabljate, vendar se IDji sredstev ne bodo nanašali na noben predmet",
-            "instruction_3": "",
-            "label_height": "",
-            "label_width": "",
-            "measure_type": "",
-            "page_bottom_padding": "",
-            "page_height": "",
-            "page_left_padding": "",
-            "page_right_padding": "",
-            "page_top_padding": "",
-            "page_width": "",
-            "qr_code_example": "",
-            "tip_1": "",
-            "tip_2": "",
-            "tip_3": "",
-            "tips": "",
-            "title": "",
+            "instruction_3": "Ta funkcija je v zgodnjih stopnjah razvoja in se lahko spremeni v prihodnjih verzijah. Če želite podati mnenje \nga prosimo podajte v '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub razpravah'</a>'",
+            "label_height": "Višina nalepke",
+            "label_width": "Širina nalepke",
+            "measure_type": "Merska enota",
+            "page_bottom_padding": "Spodnja obroba strani",
+            "page_height": "Višina strani",
+            "page_left_padding": "Leva obroba strani",
+            "page_right_padding": "Desna obroba strani",
+            "page_top_padding": "Zgornja obroba strani",
+            "page_width": "Širina strani",
+            "qr_code_example": "Primer QR kode",
+            "tip_1": "Standardni vnosi so za \n '<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 nalepke'</a>'. Če uporabljate drug papir,\nboste morali prilagoditi nastavitve.",
+            "tip_2": "Privzete dimenzije so v inčih. Podane dimenzije za standardne 5260 nalepke se\nne ujemajo točno z morebitnimi nastavitvami za vaš tiskalnik.\n '<b>'Pripravljeni bodite na nekaj eksperimentiranja.'</b>'",
+            "tip_3": "Pri tisku preverite da:\n '<ol><li>'Obrobe so nastavljene na 0 ali Brez'</li><li>'Velikost strani je nastavljena na 100%'</li><li>'Onemogočen je duplex/dvostranski tisk'</li><li>'Natisnite testno stran pred tiskom več strani'</li></ol>",
+            "tips": "Nasveti",
+            "title": "Generator Nalepk",
             "toast": {
-                "page_too_small_card": ""
+                "page_too_small_card": "Stran je premajhna za velikost nalepke"
             }
         }
     },
@@ -564,18 +564,18 @@
         "actions_set": {
             "ensure_ids": "Zagotovi ID-je sredstev",
             "ensure_ids_button": "Zagotovi ID-je sredstev",
-            "ensure_ids_confirm": "",
+            "ensure_ids_confirm": "Ali ste prepričani, da želite zagotoviti, da imajo vsi predmeti ID? To lahko traja nekaj časa in ni možno razveljaviti.",
             "ensure_ids_sub": "Zagotavlja, da imajo vsi predmeti v vašem inventarju veljavno polje asset_id. To storite tako, da poiščete najvišje trenutno polje asset_id v bazi podatkov in uporabite naslednjo vrednost za vsak element, ki ima nenastavljeno polje asset_id. To se naredi po vrstnem redu polja created_at.",
             "ensure_import_refs": "Zagotovi uvoz referenc",
             "ensure_import_refs_button": "Zagotovi uvoz referenc",
             "ensure_import_refs_sub": "Zagotavlja, da imajo vsi predmeti v vašem inventarju veljavno polje import_ref. To se naredi tako, da se naključno ustvari 8-mestni niz za vsak element, ki ima nenastavljeno polje import_ref.",
             "set_primary_photo": "Nastavi primarno fotografijo",
             "set_primary_photo_button": "Nastavi primarno fotografijo",
-            "set_primary_photo_confirm": "",
+            "set_primary_photo_confirm": "Ali ste prepričani, da želite nastaviti glavne fotografije? To lahko traja nekaj časa in ni možno razveljaviti.",
             "set_primary_photo_sub": "V različici v0.10.0 Homeboxa je bilo primarno slikovno polje dodano prilogam tipa fotografija. To dejanje bo polje primarne slike nastavilo na prvo sliko v tabeli prilog v bazi podatkov, če še ni nastavljeno. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Glej GitHub PR #576'</a>'",
             "zero_datetimes": "Datumski časi ničelnega elementa",
             "zero_datetimes_button": "Datumski časi ničelnega elementa",
-            "zero_datetimes_confirm": "",
+            "zero_datetimes_confirm": "Ali ste prepričani, da želite ponastaviti vse vnose datuma in časa? To lahko traja nekaj časa in ni možno razveljaviti.",
             "zero_datetimes_sub": "Ponastavi časovno vrednost za vsa polja datuma in časa v vašem inventarju na začetek datuma. To je namenjeno odpravljanju napake, ki je bila predstavljena zgodaj v razvoju spletnega mesta in je povzročila, da je bila časovna vrednost shranjena s časom, kar je povzročilo težave z datumskimi polji, ki prikazujejo točne vrednosti. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Glejte številko 236 Githuba za več podrobnosti.'</a> '"
         },
         "actions_sub": "Uporabite dejanja v večjem obsegu za svoj inventar. To so nepovratna dejanja. '<b>'Bodite previdni.'</b>'",
@@ -586,7 +586,7 @@
             "export_sub": "Izvozi standardni format CSV za Homebox. S tem boste izvozili vse predmete v vašem inventarju.",
             "import": "Uvozi inventar",
             "import_button": "Uvozi inventar",
-            "import_ref_confirm": "",
+            "import_ref_confirm": "Ali ste prepričani, da želite zagotoviti, da imajo vsa sredstva določen import_ref? To lahko traja nekaj časa in ni možno razveljaviti.",
             "import_sub": "Uvozi standardni format CSV za Homebox. Brez stolpca '<code>'HB.import_ref'</code>' to '<b>'ne'</b>' bo prepisalo vse obstoječe elemente v vašem inventarju, samo dodaja nove elemente. Vrstice s stolpcem '<code>'HB.import_ref'</code>' so združene v obstoječe elemente z istim import_ref, če le ta obstaja."
         },
         "import_export_sub": "Uvozite in izvozite svoj inventar v in iz datoteke CSV. To je uporabno za selitev vašega inventarja v novo namestitev Homeboxa.",
@@ -601,11 +601,11 @@
         },
         "reports_sub": "Ustvari različna poročila za svoj inventar.",
         "toast": {
-            "asset_success": "",
-            "failed_ensure_ids": "",
-            "failed_ensure_import_refs": "",
-            "failed_set_primary_photos": "",
-            "failed_zero_datetimes": ""
+            "asset_success": "{ results } predmetov je bilo posodobljenih.",
+            "failed_ensure_ids": "Zagotavljanje IDjev predmetov ni uspelo.",
+            "failed_ensure_import_refs": "Zagotavljanje import_ref ni uspelo.",
+            "failed_set_primary_photos": "Nastavljanje primarnih fotografij ni uspelo.",
+            "failed_zero_datetimes": "Ponastavitev vnosov datuma in časa ni uspelo."
         }
     }
 }
