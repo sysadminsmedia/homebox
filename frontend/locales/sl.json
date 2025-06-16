@@ -414,14 +414,14 @@
         "child_locations": "Podrejene lokacije",
         "collapse_tree": "Strni drevo",
         "expand_tree": "Razširi drevo",
-        "location_items_delete_confirm": "Ali ste prepričani, da želite izbrisati to lokacijo in vse njene elemente? Tega dejanja ni mogoče razveljaviti.",
+        "location_items_delete_confirm": "Ali ste prepričani, da želite izbrisati to lokacijo in vse njene predmete? Tega dejanja ni mogoče razveljaviti.",
         "no_results": "Ni najdenih lokacij",
         "toast": {
-            "failed_delete_location": "",
-            "failed_load_location": "",
-            "failed_update_location": "",
-            "location_deleted": "",
-            "location_updated": ""
+            "failed_delete_location": "Brisanje lokacije ni uspelo",
+            "failed_load_location": "Nalaganje lokacije ni uspelo",
+            "failed_update_location": "Posodobitev lokacije ni uspela",
+            "location_deleted": "Lokacija izbrisana",
+            "location_updated": "Lokacija posodobljena"
         },
         "update_location": "Posodobi lokacijo"
     },
@@ -478,7 +478,7 @@
         "currency_format": "Oblika valute",
         "current_password": "Trenutno geslo",
         "delete_account": "Izbriši račun",
-        "delete_account_confirm": "",
+        "delete_account_confirm": "Ste prepričani, da želite izbrisati račun? Če ste zadnji član v svoji skupini, bodo vsi vaši podatki izbrisani",
         "delete_account_sub": "Izbrišite svoj račun in vse z njim povezane podatke. Tega ni mogoče razveljaviti.",
         "delete_notifier_confirm": "",
         "display_legacy_header": "{ currentValue, select, true {Onemogoči staro glavo strani} false {Omogoči staro glavo strani} other {Ni pritisnjeno}}",
