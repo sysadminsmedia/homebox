@@ -2,7 +2,7 @@
     "components": {
         "app": {
             "create_modal": {
-                "createAndAddAnother": "",
+                "createAndAddAnother": "Gebruik {shiftKey} + {enterKey} om er nog een te maken en toe te voegen.",
                 "enter": "",
                 "shift": ""
             },
