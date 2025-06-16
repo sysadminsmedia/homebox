@@ -341,7 +341,14 @@
             "child_location_desync": "Cambiar la ubicación lo desincronizará de la ubicación de los padres",
             "error_loading_parent_data": "Se ha producido un error al intentar cargar los datos padre",
             "failed_adjust_quantity": "Error al ajustar la cantidad",
-            "failed_delete_attachment": "Error al eliminar el archivo adjunto"
+            "failed_delete_attachment": "Error al eliminar el adjunto",
+            "failed_delete_item": "Error al eliminar el elemento.",
+            "failed_duplicate_item": "Error al duplicar el elemento",
+            "failed_load_asset": "No se ha podido cargar el activo",
+            "failed_load_item": "No se ha podido cargar el elemento",
+            "failed_load_items": "No se han podido cargar los elementos",
+            "failed_save": "Error al guardar el elemento",
+            "failed_save_no_location": "Error al guardar el artículo: no se ha seleccionado ninguna ubicación"
         },
         "updated_at": "Actualizado El",
         "warranty": "Garantía",
