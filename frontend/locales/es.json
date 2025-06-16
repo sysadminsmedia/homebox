@@ -105,9 +105,13 @@
                     "please_select_location": "Por favor, selecciona una ubicación.",
                     "rotate_failed": "Error al girar la imagen: { error }",
                     "rotate_process_failed": "Error al procesar la imagen girada",
-                    "some_photos_failed": "{count, plural, =0 {No hay fotos para subir.} =1 {1 foto no se pudo subir.} other {Algunas fotos no se pudieron subir.}}"
+                    "some_photos_failed": "{count, plural, =0 {No hay fotos para subir.} =1 {1 foto no se ha podido subir.} other {Algunas fotos no se han podido subir.}}",
+                    "upload_failed": "Error al subir la foto: { photoName }",
+                    "upload_success": "{count, plural, =0 {No hay fotos subidas.} =1 {Foto subida con éxito.} other {Todas las fotos subidas con éxito.}}",
+                    "uploading_photos": "{count, plural, =0 {No hay fotos para subir} =1 {Subiendo 1 foto...} other {Subiendo {count} fotos...}}"
                 },
-                "upload_photos": "Fotos Subidas"
+                "upload_photos": "Fotos Subidas",
+                "uploaded": "Foto subida"
             },
             "view": {
                 "selectable": {
