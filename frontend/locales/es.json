@@ -258,11 +258,13 @@
         "advanced": "Avanzado",
         "archived": "Archivado",
         "asset_id": "Activo ID",
+        "associated_with_multiple": "Este Id de Activo está asociado con múltiples elementos",
         "attachment": "Adjunto",
         "attachments": "Adjuntos",
         "changes_persisted_immediately": "Los cambios en los archivos adjuntos se guardarán inmediatamente",
         "created_at": "Creado El",
         "custom_fields": "Campos Personalizados",
+        "delete_attachment_confirm": "¿Está seguro de que desea eliminar este archivo adjunto?",
         "description": "Descripción",
         "details": "Detalles",
         "drag_and_drop": "Arrastra y suelta los archivos aquí o selecciona los archivos",
@@ -490,7 +492,7 @@
         },
         "reports_sub": "Genera diferentes informes para tu inventario.",
         "toast": {
-            "failed_ensure_ids": "No se han podido garantizar los ID de los activos."
+            "failed_ensure_ids": "Error al asegurar los ID de los activos."
         }
     }
 }
