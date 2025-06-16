@@ -129,7 +129,8 @@
                     "headers": "En-têtes",
                     "page": "Page",
                     "rows_per_page": "Lignes par page",
-                    "table_settings": "Paramètres du Tableau"
+                    "table_settings": "Paramètres du Tableau",
+                    "view_item": ""
                 }
             }
         },

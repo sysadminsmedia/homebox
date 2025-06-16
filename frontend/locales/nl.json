@@ -1,10 +1,20 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "",
+                "enter": "",
+                "shift": ""
+            },
             "import_dialog": {
                 "change_warning": "Gedrag voor importeren met bestaande import_refs is veranderd. Als een import_refs reeds bestaat in het CSV bestand, het\nobject zal worden aangepast met de waardes van het CSV bestand.",
                 "description": "Importeer een CSV bestand met je objecten, labels en locaties. Zie documentatie voor meer informatie m.b.t.\n vereist format.",
-                "title": "Importeer CSV bestand"
+                "title": "Importeer CSV bestand",
+                "toast": {
+                    "import_failed": "",
+                    "import_success": "",
+                    "please_select_file": ""
+                }
             },
             "outdated": {
                 "current_version": "Huidige versie",
@@ -12,6 +22,11 @@
                 "latest_version": "Nieuwste versie",
                 "new_version_available": "Nieuwe Versie Beschikbaar",
                 "new_version_available_link": "Klik hier om de release notes te bekijken"
+            }
+        },
+        "form": {
+            "password": {
+                "toggle_show": ""
             }
         },
         "global": {
@@ -51,7 +66,12 @@
                 "download": "Download Label",
                 "print": "Print verzendlabel",
                 "server_print": "Afdrukken op server",
-                "titles": "Labels"
+                "titles": "Labels",
+                "toast": {
+                    "load_status_failed": "",
+                    "print_failed": "",
+                    "print_success": ""
+                }
             },
             "page_qr_code": {
                 "page_url": "Pagina URL",
@@ -62,14 +82,41 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "",
+                "open_new_tab": ""
+            },
             "create_modal": {
+                "delete_photo": "",
                 "item_description": "Artikelomschrijving",
                 "item_name": "Artikelnaam",
                 "item_photo": "Artikel Foto",
                 "item_quantity": "Item aantal",
                 "parent_item": "Hoofd Item",
+                "rotate_photo": "",
+                "set_as_primary_photo": "",
                 "title": "Maak object",
-                "upload_photos": "Foto’s toevoegen"
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": "",
+                    "failed_load_parent": "",
+                    "no_canvas_support": "",
+                    "please_select_location": "",
+                    "rotate_failed": "",
+                    "rotate_process_failed": "",
+                    "some_photos_failed": "",
+                    "upload_failed": "",
+                    "upload_success": "",
+                    "uploading_photos": ""
+                },
+                "upload_photos": "Foto’s toevoegen",
+                "uploaded": ""
+            },
+            "selector": {
+                "no_results": "",
+                "placeholder": "",
+                "search_placeholder": ""
             },
             "view": {
                 "selectable": {
@@ -82,7 +129,8 @@
                     "headers": "Kopteksten",
                     "page": "Pagina",
                     "rows_per_page": "Rijen per pagina",
-                    "table_settings": "Tabel instellingen"
+                    "table_settings": "Tabel instellingen",
+                    "view_item": ""
                 }
             }
         },
@@ -90,7 +138,13 @@
             "create_modal": {
                 "label_description": "Label beschrijving",
                 "label_name": "Label naam",
-                "title": "Maak label"
+                "title": "Maak label",
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": "",
+                    "label_name_too_long": ""
+                }
             },
             "selector": {
                 "select_labels": "Labels selecteren"
@@ -100,7 +154,12 @@
             "create_modal": {
                 "location_description": "Locatie omschrijving",
                 "location_name": "Locatie Naam",
-                "title": "Maak locatie"
+                "title": "Maak locatie",
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": ""
+                }
             },
             "selector": {
                 "no_location_found": "Geen locatie gevonden",
@@ -128,6 +187,8 @@
         "create_subitem": "Subitem aanmaken",
         "created": "Gemaakt",
         "delete": "Verwijderen",
+        "delete_confirm": "",
+        "demo_instance": "",
         "details": "Details",
         "duplicate": "Dupliceren",
         "edit": "Bewerk",
@@ -150,11 +211,14 @@
         "password": "Wachtwoord",
         "quantity": "Aantal",
         "read_docs": "Lees de documentatie",
+        "return_home": "",
         "save": "Opslaan",
         "search": "Zoeken",
         "sign_out": "Log uit",
         "submit": "Indienen",
+        "unknown": "",
         "update": "Bijwerken",
+        "updating": "",
         "value": "Waarde",
         "version": "Versie: { version }",
         "welcome": "Welkom, { username }"
@@ -179,27 +243,49 @@
         "set_email": "Wat is je mailadres?",
         "set_name": "Wat is je naam?",
         "set_password": "Stel je wachtwoord in",
-        "tagline": "Volg, Organiseer en beheer je dingen."
+        "tagline": "Volg, Organiseer en beheer je dingen.",
+        "title": "",
+        "toast": {
+            "invalid_email": "",
+            "invalid_email_password": "",
+            "login_success": "",
+            "problem_registering": "",
+            "user_registered": ""
+        }
     },
     "items": {
         "add": "Toevoegen",
         "advanced": "Geavanceerd",
         "archived": "Is gearchiveerd",
         "asset_id": "Artikel ID",
+        "associated_with_multiple": "",
         "attachment": "Bijlage",
         "attachments": "Bijlagen",
         "changes_persisted_immediately": "Gewijzigde bijlagen worden direct opgeslagen",
         "created_at": "Aangemaakt op",
         "custom_fields": "Aangepaste velden",
+        "delete_attachment_confirm": "",
+        "delete_item_confirm": "",
         "description": "Beschrijving",
         "details": "Details",
         "drag_and_drop": "Sleep bestanden hierheen en zet ze neer of klik om bestanden te selecteren",
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "",
+                "attachment_type": "",
+                "primary_photo": "",
+                "primary_photo_sub": "",
+                "select_type": "",
+                "title": ""
+            }
+        },
         "edit_details": "Details bewerken",
         "field_selector": "Veld selectie",
         "field_value": "Veldwaarde",
         "first": "Eerst",
         "include_archive": "Inclusief gearchiveerde items",
         "insured": "Verzekerd",
+        "invalid_asset_id": "",
         "last": "Achternaam",
         "lifetime_warranty": "Levenslange garantie",
         "location": "Locatie",
@@ -210,6 +296,7 @@
         "name": "Naam",
         "negate_labels": "Negeer Geselecteerde Labels",
         "next_page": "Volgende pagina",
+        "no_attachments": "",
         "no_results": "Geen Items Gevonden",
         "notes": "Opmerkingen",
         "only_with_photo": "Alleen items met foto",
@@ -231,24 +318,60 @@
         "receipts": "Facturen",
         "reset_search": "Reset Zoeken",
         "results": "{ total } Resultaten",
+        "select_field": "",
         "serial_number": "Serienummer",
         "show_advanced_view_options": "Geavanceerde Opties Weergeven",
         "sold_at": "Verkocht bij",
         "sold_details": "Verkochte details",
         "sold_price": "Verkoopprijs",
         "sold_to": "Verkocht Aan",
+        "sync_child_locations": "",
         "tip_1": "Locatie- en labelfilters gebruiken de 'OF' -werking. Als er meer dan een is geselecteerd,\nis er maar een nodig voor een overeenkomst.",
         "tip_2": "Zoekopdrachten voorafgegaan door '#'' zullen om een object-ID vragen (bijvoorbeeld '#000-001')",
         "tip_3": "Veldfilters gebruiken de 'OF' -bewerking. Indien meer dan 1 is geselecteerd\nzal er maar 1 nodig zijn voor een match.",
         "tips": "Tips",
         "tips_sub": "Zoektips",
+        "toast": {
+            "asset_not_found": "",
+            "attachment_deleted": "",
+            "attachment_updated": "",
+            "attachment_uploaded": "",
+            "child_items_location_no_longer_synced": "",
+            "child_items_location_synced": "",
+            "child_location_desync": "",
+            "error_loading_parent_data": "",
+            "failed_adjust_quantity": "",
+            "failed_delete_attachment": "",
+            "failed_delete_item": "",
+            "failed_duplicate_item": "",
+            "failed_load_asset": "",
+            "failed_load_item": "",
+            "failed_load_items": "",
+            "failed_save": "",
+            "failed_save_no_location": "",
+            "failed_search_items": "",
+            "failed_update_attachment": "",
+            "failed_upload_attachment": "",
+            "item_deleted": "",
+            "item_saved": "",
+            "quantity_cannot_negative": "",
+            "sync_child_location": ""
+        },
         "updated_at": "Bijgewerkt op",
         "warranty": "Garantie",
         "warranty_details": "Garantiedetails",
         "warranty_expires": "Garantie vervalt"
     },
     "labels": {
+        "label_delete_confirm": "",
         "no_results": "Geen labels gevonden",
+        "toast": {
+            "failed_delete_label": "",
+            "failed_load_label": "",
+            "failed_update_label": "",
+            "label_deleted": "",
+            "label_updated": ""
+        },
         "update_label": "Etiket bijwerken"
     },
     "languages": {
@@ -291,7 +414,15 @@
         "child_locations": "Sublocaties",
         "collapse_tree": "Structuur invouwen",
         "expand_tree": "Boomstructuur uitvouwen",
+        "location_items_delete_confirm": "",
         "no_results": "Geen locaties gevonden",
+        "toast": {
+            "failed_delete_location": "",
+            "failed_load_location": "",
+            "failed_update_location": "",
+            "location_deleted": "",
+            "location_updated": ""
+        },
         "update_location": "Locatie bijwerken"
     },
     "maintenance": {
@@ -347,7 +478,9 @@
         "currency_format": "Valutanotatie",
         "current_password": "Huidig Wachtwoord",
         "delete_account": "Verwijder account",
+        "delete_account_confirm": "",
         "delete_account_sub": "Verwijder je account en alle bijhorende data. Deze actie kan niet ongedaan worden.",
+        "delete_notifier_confirm": "",
         "display_legacy_header": "{ currentValue, select, true {Legacy Header uitschakelen} false {Legacy Header inschakelen} other {Overig}}",
         "enabled": "Ingeschakeld",
         "example": "Voorbeeld",
@@ -366,11 +499,56 @@
         "test": "Test",
         "theme_settings": "Thema-instellingen",
         "theme_settings_sub": "Thema-instellingen worden opgeslagen in de lokale opslag van uw browser. Je kan deze wijzigen op elk moment. \nAls je problemen hebt met de instellingen kun je de browser verversen.",
+        "toast": {
+            "account_deleted": "",
+            "failed_change_password": "",
+            "failed_create_notifier": "",
+            "failed_delete_account": "",
+            "failed_delete_notifier": "",
+            "failed_get_currencies": "",
+            "failed_test_notifier": "",
+            "failed_update_group": "",
+            "failed_update_notifier": "",
+            "group_updated": "",
+            "notifier_test_success": "",
+            "password_changed": ""
+        },
         "update_group": "Groep bijwerken",
         "update_language": "Taal bijwerken",
         "url": "URL",
         "user_profile": "Gebruikersprofiel",
         "user_profile_sub": "Nodig gebruikers uit, en beheer je account."
+    },
+    "reports": {
+        "label_generator": {
+            "asset_end": "",
+            "asset_start": "",
+            "base_url": "",
+            "bordered_labels": "",
+            "generate_page": "",
+            "input_placeholder": "",
+            "instruction_1": "",
+            "instruction_2": "",
+            "instruction_3": "",
+            "label_height": "",
+            "label_width": "",
+            "measure_type": "",
+            "page_bottom_padding": "",
+            "page_height": "",
+            "page_left_padding": "",
+            "page_right_padding": "",
+            "page_top_padding": "",
+            "page_width": "",
+            "qr_code_example": "",
+            "tip_1": "",
+            "tip_2": "",
+            "tip_3": "",
+            "tips": "",
+            "title": "",
+            "toast": {
+                "page_too_small_card": ""
+            }
+        }
     },
     "scanner": {
         "error": "Tijdens het scannen is er een fout opgetreden",
@@ -386,15 +564,18 @@
         "actions_set": {
             "ensure_ids": "Zorg voor item-ID's",
             "ensure_ids_button": "Zorg voor item-ID's",
+            "ensure_ids_confirm": "",
             "ensure_ids_sub": "Zorgt ervoor dat alle artikelen in je voorraad een geldig asset_id veld hebben. Dit wordt gedaan door de hoogste huidige asset_id veld in de database te vinden en de volgende waarde toe te passen op het volgende niet ingevoerde asset_id veld. Dit gebeurt op volgorde van het created_at veld.",
             "ensure_import_refs": "Zorg voor Import Refs",
             "ensure_import_refs_button": "Zorg voor Import Refs",
             "ensure_import_refs_sub": "Zorgt ervoor dat alle artikelen in je voorraad een geldig import_ref veld hebben. Dit gebeurt door een random 8 karakter string voor elk item te maken die geen import_ref veld heeft.",
             "set_primary_photo": "Hoofdfoto instellen",
             "set_primary_photo_button": "Hoofdfoto instellen",
+            "set_primary_photo_confirm": "",
             "set_primary_photo_sub": "In versie v0.10.0 van Homebox is het primaire afbeeldingsveld toegevoegd aan bijlagen van het type foto. Deze actie zet de primaire afbeelding naar de eerste afbeelding in de database, indien deze nog niet ingesteld is. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Zie GitHub PR #576'</a>'",
             "zero_datetimes": "Nul item Datum Tijden",
             "zero_datetimes_button": "Nul item Datum Tijden",
+            "zero_datetimes_confirm": "",
             "zero_datetimes_sub": "Hiermee stelt u de tijdwaarde voor alle datum-/tijdvelden in uw voorraad in op het begin van de datum. Dit is een oplossing voor een fout in de applicatie geïntroduceerd in het begin van de ontwikkeling waarbij de tijd waarde verkeerd werd opgeslagen. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Zie Github Issue #236 voor alle details.'</a>'"
         },
         "actions_sub": "Acties in bulk toepassen op je inventaris. Deze zijn onomkeerbaar '<b>'Wees voorzichtig.'</b>'",
@@ -405,6 +586,7 @@
             "export_sub": "Exporteert het standaard CSV-formaat voor Homebox. Dit exporteert alle items in jouw inventaris.",
             "import": "Inventaris Importeren",
             "import_button": "Inventaris Importeren",
+            "import_ref_confirm": "",
             "import_sub": "Importeert het standaard CSV-formaat voor Homebox. Zonder een '<code>'HB.import_ref'</code>' kolom zal dit '<b>'geen'</b>' bestaande waardes overschrijven, maar enkel nieuwe items toevoegen. Rijen met een '<code>'HB.import_ref'</code>' kolom zullen samengevoegd worden met bestaande items, als die bestaan."
         },
         "import_export_sub": "Importeer en exporteer je voorraad van en naar een CSV-bestand. Dit is handig voor het migreren van je voorraad naar een nieuwe HomeBox installatie.",
@@ -417,6 +599,13 @@
             "bill_of_materials_button": "BOM genereren",
             "bill_of_materials_sub": "Genereert een CSV-bestand (door komma's gescheiden waarden) dat kan worden geïmporteerd in een spreadsheetprogramma. Dit is een samenvattting van je voorraad met basis item en prijs informatie."
         },
-        "reports_sub": "Genereer verschillende rapporten van je voorraad."
+        "reports_sub": "Genereer verschillende rapporten van je voorraad.",
+        "toast": {
+            "asset_success": "",
+            "failed_ensure_ids": "",
+            "failed_ensure_import_refs": "",
+            "failed_set_primary_photos": "",
+            "failed_zero_datetimes": ""
+        }
     }
 }
