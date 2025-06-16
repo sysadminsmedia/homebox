@@ -481,7 +481,7 @@
         "delete_account_confirm": "¿Seguro que quieres eliminar tu cuenta? Si eres el último miembro de tu grupo, se eliminarán todos tus datos. Esta acción no se puede deshacer.",
         "delete_account_sub": "Elimina tu cuenta y todos sus datos asociados. Esto no se puede deshacer.",
         "delete_notifier_confirm": "¿Estás seguro de que deseas eliminar este notificador?",
-        "display_legacy_header": "{ currentValue, select, true {Desactivar encabezado heredado} false {Activar encabezado heredado} other {Not Hit}}",
+        "display_legacy_header": "{ currentValue, select, true {Desactivar Encabezado Heredado} false {Activar Encabezado Heredado} other {Not Hit}}",
         "enabled": "Habilitado",
         "example": "Ejemplo",
         "gen_invite": "Generar Enlace de Invitación",
@@ -499,6 +499,12 @@
         "test": "Probar",
         "theme_settings": "Ajustes de Tema",
         "theme_settings_sub": "La configuración del tema se guarda en el almacenamiento local de tu navegador. Puedes cambiar el tema en cualquier momento. Si tienes\n problemas para configurar el tema, prueba a actualizar el navegador.",
+        "toast": {
+            "account_deleted": "Tu cuenta ha sido eliminada.",
+            "failed_change_password": "Error al cambiar la contraseña.",
+            "failed_create_notifier": "Error al crear el notificador.",
+            "failed_delete_account": "Error al eliminar cuenta"
+        },
         "update_group": "Actualizar Grupo",
         "update_language": "Cambiar Idioma",
         "url": "URL",
