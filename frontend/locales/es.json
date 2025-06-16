@@ -116,7 +116,7 @@
             "selector": {
                 "no_results": "Resultados No Encontrados",
                 "placeholder": "Seleccionar...",
-                "search_placeholder": "Escriba para buscar..."
+                "search_placeholder": "Escribe para buscar..."
             },
             "view": {
                 "selectable": {
@@ -129,7 +129,8 @@
                     "headers": "Encabezados",
                     "page": "Página",
                     "rows_per_page": "Filas por página",
-                    "table_settings": "Configuración de Tabla"
+                    "table_settings": "Configuración de Tabla",
+                    "view_item": "Ver elemento"
                 }
             }
         },
