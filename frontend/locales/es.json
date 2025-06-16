@@ -354,7 +354,8 @@
             "failed_upload_attachment": "Error al cargar el adjunto",
             "item_deleted": "Elemento eliminado",
             "item_saved": "Elemento guardado",
-            "quantity_cannot_negative": "La cantidad no puede ser negativa."
+            "quantity_cannot_negative": "La cantidad no puede ser negativa",
+            "sync_child_location": "El padre seleccionado sincroniza las ubicaciones de sus hijos con las suyas"
         },
         "updated_at": "Actualizado El",
         "warranty": "Garantía",
