@@ -143,7 +143,7 @@
                     "already_creating": "Ya se está creando una etiqueta",
                     "create_failed": "No se ha podido crear la etiqueta",
                     "create_success": "Etiqueta creada",
-                    "label_name_too_long": "El nombre no debe tener más de 50 caracteres"
+                    "label_name_too_long": "El nombre de la etiqueta no debe tener más de 50 caracteres"
                 }
             },
             "selector": {
@@ -154,7 +154,10 @@
             "create_modal": {
                 "location_description": "Descripción de la Ubicación",
                 "location_name": "Nombre de la Ubicación",
-                "title": "Crear Ubicación"
+                "title": "Crear Ubicación",
+                "toast": {
+                    "already_creating": "Ya estamos creando una ubicación"
+                }
             },
             "selector": {
                 "no_location_found": "Ubicación no encontrada",
