@@ -2,18 +2,18 @@
     "components": {
         "app": {
             "create_modal": {
-                "createAndAddAnother": "",
-                "enter": "",
-                "shift": ""
+                "createAndAddAnother": "Uporabite {shiftKey} + {enterKey}, da ustvarite vnos in dodate še enega.",
+                "enter": "Enter",
+                "shift": "Shift"
             },
             "import_dialog": {
-                "change_warning": "Vedenje pri uvozih z obstoječimi import_refs se je spremenilo. Če je import_ref prisoten v datoteki CSV, bo\nelement posodobljen z vrednostmi v datoteki CSV.",
+                "change_warning": "Delovanje pri uvozih z obstoječimi import_refs se je spremenilo. Če je import_ref prisoten v datoteki CSV, bo\nelement posodobljen z vrednostmi v datoteki CSV.",
                 "description": "Uvozite datoteko CSV, ki vsebuje vaše predmete, oznake in lokacije. Poglejte si dokumentacijo za več informacij o\nzahtevani obliki.",
                 "title": "Uvozi CSV datoteko",
                 "toast": {
-                    "import_failed": "",
-                    "import_success": "",
-                    "please_select_file": ""
+                    "import_failed": "Uvoz ni uspel. Poskusite pozneje.",
+                    "import_success": "Uvoz uspešen!",
+                    "please_select_file": "Izberite datoteko za uvoz."
                 }
             },
             "outdated": {
@@ -26,7 +26,7 @@
         },
         "form": {
             "password": {
-                "toggle_show": ""
+                "toggle_show": "Preklopi prikaz gesla"
             }
         },
         "global": {
@@ -63,14 +63,14 @@
             "label_maker": {
                 "browser_print": "Tiskanje iz brskalnika",
                 "confirm_description": "Ali ste prepričani, da želite natisniti to etiketo?",
-                "download": "Prenesi etiketo",
-                "print": "Natisni etiketo",
+                "download": "Prenesi nalepko",
+                "print": "Natisni nalepko",
                 "server_print": "Natisni na strežniku",
-                "titles": "Etikete",
+                "titles": "Nalepke",
                 "toast": {
-                    "load_status_failed": "",
-                    "print_failed": "",
-                    "print_success": ""
+                    "load_status_failed": "Stanja ni bilo mogoče naložiti",
+                    "print_failed": "Nalepke ni bilo mogoče natisniti",
+                    "print_success": "Nalepka natisnjena"
                 }
             },
             "page_qr_code": {
@@ -83,18 +83,18 @@
         },
         "item": {
             "attachments_list": {
-                "download": "",
-                "open_new_tab": ""
+                "download": "Prenesi",
+                "open_new_tab": "Odpri v novem zavihku"
             },
             "create_modal": {
-                "delete_photo": "",
+                "delete_photo": "Izbrišite fotografijo",
                 "item_description": "opis predmeta",
                 "item_name": "ime predmeta",
                 "item_photo": "fotografija predmeta 📷",
                 "item_quantity": "količina",
                 "parent_item": "Nadrejeni predmet",
-                "rotate_photo": "",
-                "set_as_primary_photo": "",
+                "rotate_photo": "Zasukaj fotografijo",
+                "set_as_primary_photo": "Nastavi kot { isPrimary, select, true {non-} false {} other {}}primarna fotografija",
                 "title": "Ustvari predmet",
                 "toast": {
                     "already_creating": "",
@@ -130,7 +130,7 @@
                     "page": "Stran",
                     "rows_per_page": "vrstic na stran",
                     "table_settings": "Nastavitve tabele",
-                    "view_item": ""
+                    "view_item": "Ogled predmeta"
                 }
             }
         },
