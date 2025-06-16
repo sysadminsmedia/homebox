@@ -532,7 +532,9 @@
             "instruction_3": "Esta función se encuentra en las primeras etapas de desarrollo y puede cambiar en futuras versiones. Si tienes algún comentario, indícalo\n en la<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\"> «Discusión de GitHub»</a>.",
             "label_height": "Altura de la Etiqueta",
             "label_width": "Ancho de la Etiqueta",
-            "measure_type": "Tipo de medida"
+            "measure_type": "Tipo de Medida",
+            "page_bottom_padding": "Relleno Inferior de Página",
+            "page_height": "Altura de la página"
         }
     },
     "scanner": {
