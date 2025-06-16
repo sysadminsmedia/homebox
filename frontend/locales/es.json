@@ -11,7 +11,7 @@
                 "description": "Importa un archivo CSV que contenga tus elementos, etiquetas y ubicaciones. Consulta la documentación para obtener más información sobre el \nformato requerido.",
                 "title": "Importar Archivo CSV",
                 "toast": {
-                    "import_failed": "La importación no se pudo completar. Inténtalo nuevamente más tarde.",
+                    "import_failed": "Importación fallida. Por favor, inténtalo de nuevo más tarde.",
                     "import_success": "¡Importación exitosa!",
                     "please_select_file": "Por favor, selecciona un archivo para importar."
                 }
@@ -26,7 +26,7 @@
         },
         "form": {
             "password": {
-                "toggle_show": "Alternar visibilidad de la contraseña"
+                "toggle_show": "Alternar Visibilidad de la Contraseña"
             }
         },
         "global": {
@@ -87,18 +87,18 @@
                 "open_new_tab": "Abrir en nueva pestaña"
             },
             "create_modal": {
-                "delete_photo": "Borrar foto",
+                "delete_photo": "Eliminar foto",
                 "item_description": "Descripción del artículo",
                 "item_name": "Nombre del artículo",
                 "item_photo": "Foto del artículo 📷",
                 "item_quantity": "Cantidad de Elementos",
-                "parent_item": "Elemento padre",
-                "rotate_photo": "Girar fotografía",
+                "parent_item": "Elemento Padre",
+                "rotate_photo": "Girar foto",
                 "set_as_primary_photo": "Establecer como { isPrimary, select, true {non-} false {} other {}} foto principal",
                 "title": "Crear Elemento",
                 "toast": {
                     "already_creating": "Ya se está creando un elemento",
-                    "create_failed": "No se ha podido crear el elemento",
+                    "create_failed": "No se pudo crear el elemento",
                     "create_success": "Elemento creado",
                     "failed_load_parent": "No se ha podido cargar el elemento padre - por favor, selecciónalo manualmente",
                     "no_canvas_support": "Tu navegador no soporta operaciones de lienzo",
@@ -342,7 +342,7 @@
             "error_loading_parent_data": "Se ha producido un error al intentar cargar los datos padre",
             "failed_adjust_quantity": "Error al ajustar la cantidad",
             "failed_delete_attachment": "Error al eliminar el adjunto",
-            "failed_delete_item": "Error al eliminar el elemento.",
+            "failed_delete_item": "Error al eliminar el elemento",
             "failed_duplicate_item": "Error al duplicar el elemento",
             "failed_load_asset": "No se ha podido cargar el activo",
             "failed_load_item": "No se ha podido cargar el elemento",
@@ -503,7 +503,7 @@
             "account_deleted": "Tu cuenta ha sido eliminada.",
             "failed_change_password": "Error al cambiar la contraseña.",
             "failed_create_notifier": "Error al crear el notificador.",
-            "failed_delete_account": "Error al eliminar tu cuenta",
+            "failed_delete_account": "Error al eliminar tu cuenta.",
             "failed_delete_notifier": "Error al eliminar el notificador.",
             "failed_get_currencies": "No se han podido obtener las divisas",
             "failed_test_notifier": "No se ha podido probar el notificador.",
@@ -524,12 +524,12 @@
             "asset_end": "Activo Final",
             "asset_start": "Activo Inicial",
             "base_url": "URL Base",
-            "bordered_labels": "Etiquetas con Bordes",
+            "bordered_labels": "Etiquetas con bordes",
             "generate_page": "Generar Página",
             "input_placeholder": "Escribe aquí",
             "instruction_1": "El Generador de Etiquetas Homebox es una herramienta que para ayudarte a imprimir etiquetas para tu inventario Homebox. Están pensadas para\n ser etiquetas de impresión anticipada para que puedas imprimir muchas etiquetas y tenerlas listas para usarlas",
             "instruction_2": "Como tal, estas etiquetas funcionan imprimiendo un código QR de URL e información ID de Activo en una etiqueta. Si has desactivadod\n ID de Activo en la configuración de tu Homebox, puedes seguir utilizando esta herramienta, pero los IDs de Activo no harán referencia a ningún elemento",
-            "instruction_3": "Esta función se encuentra en las primeras etapas de desarrollo y puede cambiar en futuras versiones. Si tienes algún comentario, indícalo\n en la<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\"> «Discusión de GitHub»</a>.",
+            "instruction_3": "Esta función se encuentra en las primeras etapas de desarrollo y puede cambiar en futuras versiones. Si tienes algún comentario, indícalo\n en la<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\"> «Discusión de GitHub»</a>",
             "label_height": "Altura de la Etiqueta",
             "label_width": "Ancho de la Etiqueta",
             "measure_type": "Tipo de Medida",
@@ -562,11 +562,11 @@
     "tools": {
         "actions": "Acciones de Inventario",
         "actions_set": {
-            "ensure_ids": "Garantizar IDs de Activos",
-            "ensure_ids_button": "Garantizar IDs de Activos",
+            "ensure_ids": "Asegurar IDs de Activos",
+            "ensure_ids_button": "Asegurar IDs de Activos",
             "ensure_ids_confirm": "¿Estás seguro de que quieres asegurarte de que todos los activos tengan un ID? Esto puede tardar un tiempo y no puede deshacerse.",
             "ensure_ids_sub": "Asegura que todos los elementos de tu inventario tienen un campo asset_id válido. Esto se hace encontrando el campo asset_id actual más alto en la base de datos y aplicando el siguiente valor a cada artículo que tenga un campo asset_id sin establecer. Esto se hace en orden del campo created_at.",
-            "ensure_import_refs": "Garantizar Referencias de Importación",
+            "ensure_import_refs": "Asegurar Referencias de Importación",
             "ensure_import_refs_button": "Garantizar Referencias de Importación",
             "ensure_import_refs_sub": "Garantiza que todos los artículos de tu inventario tienen un campo import_ref válido. Esto se hace generando aleatoriamente una cadena de 8 caracteres para cada artículo que tenga un campo import_ref sin establecer.",
             "set_primary_photo": "Establecer Foto Principal",
@@ -603,7 +603,9 @@
         "toast": {
             "asset_success": "Se han actualizado { results } activos.",
             "failed_ensure_ids": "Error al asegurar los ID de los activos.",
-            "failed_ensure_import_refs": "Error al garantizar las ref. de importación."
+            "failed_ensure_import_refs": "Error al asegurar las ref. de importación.",
+            "failed_set_primary_photos": "No se han podido establecer las fotos principales.",
+            "failed_zero_datetimes": "Error al restablecer los valores de fecha y hora."
         }
     }
 }
