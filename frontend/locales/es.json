@@ -529,7 +529,8 @@
             "input_placeholder": "Escribe aquí",
             "instruction_1": "El Generador de Etiquetas Homebox es una herramienta que para ayudarte a imprimir etiquetas para tu inventario Homebox. Están pensadas para\n ser etiquetas de impresión anticipada para que puedas imprimir muchas etiquetas y tenerlas listas para usarlas",
             "instruction_2": "Como tal, estas etiquetas funcionan imprimiendo un código QR de URL e información ID de Activo en una etiqueta. Si has desactivadod\n ID de Activo en la configuración de tu Homebox, puedes seguir utilizando esta herramienta, pero los IDs de Activo no harán referencia a ningún elemento",
-            "instruction_3": "Esta función se encuentra en las primeras etapas de desarrollo y puede cambiar en futuras versiones. Si tiene algún comentario, indíquelo\n en la<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\"> «Discusión de GitHub»</a>."
+            "instruction_3": "Esta función se encuentra en las primeras etapas de desarrollo y puede cambiar en futuras versiones. Si tienes algún comentario, indícalo\n en la<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\"> «Discusión de GitHub»</a>.",
+            "label_height": "Altura de la etiqueta"
         }
     },
     "scanner": {
