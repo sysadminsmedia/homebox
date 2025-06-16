@@ -571,10 +571,11 @@
             "ensure_import_refs_sub": "Garantiza que todos los artículos de tu inventario tienen un campo import_ref válido. Esto se hace generando aleatoriamente una cadena de 8 caracteres para cada artículo que tenga un campo import_ref sin establecer.",
             "set_primary_photo": "Establecer Foto Principal",
             "set_primary_photo_button": "Establecer Foto Principal",
-            "set_primary_photo_confirm": "¿Seguro que quieres configurar las fotos principales? Esto puede tardar un tiempo y no se puede deshacer.",
+            "set_primary_photo_confirm": "¿Estás seguro de que quieres configurar las fotos principales? Esto puede tardar un tiempo y no se puede deshacer.",
             "set_primary_photo_sub": "En la versión v0.10.0 de Homebox, se añadió el indicador de imagen principal a los ficheros adjuntos de tipo foto. Esta acción establecerá la primera imagen de cada artículo como su imagen principal, si no hay una imagen principal ya definida. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Ver PR #576 en GitHub'</a>'",
             "zero_datetimes": "Cero Horas Elementos",
             "zero_datetimes_button": "Cero Horas Elementos",
+            "zero_datetimes_confirm": "¿Está seguro de que desea restablecer todos los valores de fecha y hora? Esto puede tardar un tiempo y no se puede deshacer.",
             "zero_datetimes_sub": "Restablece el valor de la hora para todos los campos de fecha/hora en tu inventario al principio de esa fecha. Esto se hace para corregir un error que se introdujo al principio del desarrollo de la aplicación, que causó que el valor de la hora se almacenase con la fecha, lo cual produjo problemas al mostrar valores precisos del campo. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Ver el issue #236 de GitHub para más detalles.'</a>'"
         },
         "actions_sub": "Aplica Acciones a tu inventario de forma masiva. Estas son acciones irreversibles. '<b>'Ten Cuidado.'</b>'",
