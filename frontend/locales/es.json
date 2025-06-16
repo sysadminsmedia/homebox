@@ -158,7 +158,7 @@
                 "toast": {
                     "already_creating": "Ya se está creando una ubicación",
                     "create_failed": "No se ha podido crear la ubicación",
-                    "create_success": "Ubicación Creada"
+                    "create_success": "Ubicación creada"
                 }
             },
             "selector": {
@@ -184,6 +184,7 @@
         "confirm": "Confirmar",
         "create": "Crear",
         "create_and_add": "Crear y Añadir Otro",
+        "create_subitem": "Crear subelemento",
         "created": "Creado",
         "delete": "Eliminar",
         "details": "Detalles",
