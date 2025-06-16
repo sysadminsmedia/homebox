@@ -363,8 +363,15 @@
         "warranty_expires": "Expiración Garantía"
     },
     "labels": {
-        "label_delete_confirm": "¿Estás seguro de que quieres eliminar este paso? Esta acción no se puede deshacer.",
+        "label_delete_confirm": "¿Estás seguro de que quieres eliminar esta etiqueta? Esta acción no se puede deshacer.",
         "no_results": "Etiquetas No Encontradas",
+        "toast": {
+            "failed_delete_label": "Error al eliminar la etiqueta",
+            "failed_load_label": "Error al cargar la etiqueta",
+            "failed_update_label": "Error al actualizar la etiqueta",
+            "label_deleted": "Etiqueta eliminada",
+            "label_updated": "Etiqueta actualizada."
+        },
         "update_label": "Actualizar Etiqueta"
     },
     "languages": {
