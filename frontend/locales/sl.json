@@ -363,14 +363,14 @@
         "warranty_expires": "Garancija poteče"
     },
     "labels": {
-        "label_delete_confirm": "Ali ste prepričani, da želite izbrisati to vrstico? Tega ni mogoče razveljaviti.",
+        "label_delete_confirm": "Ali ste prepričani, da želite izbrisati to oznako? Tega ni mogoče razveljaviti.",
         "no_results": "Ni najdenih oznak",
         "toast": {
-            "failed_delete_label": "",
-            "failed_load_label": "",
-            "failed_update_label": "",
-            "label_deleted": "",
-            "label_updated": ""
+            "failed_delete_label": "Brisanje oznake ni uspelo",
+            "failed_load_label": "Oznake ni bilo mogoče naložiti",
+            "failed_update_label": "Oznake ni bilo mogoče posodobiti",
+            "label_deleted": "Oznaka izbrisana",
+            "label_updated": "Oznaka posodobljena"
         },
         "update_label": "Posodobitev oznake"
     },
@@ -414,7 +414,7 @@
         "child_locations": "Podrejene lokacije",
         "collapse_tree": "Strni drevo",
         "expand_tree": "Razširi drevo",
-        "location_items_delete_confirm": "",
+        "location_items_delete_confirm": "Ali ste prepričani, da želite izbrisati to lokacijo in vse njene elemente? Tega dejanja ni mogoče razveljaviti.",
         "no_results": "Ni najdenih lokacij",
         "toast": {
             "failed_delete_location": "",
