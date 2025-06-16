@@ -339,7 +339,9 @@
             "child_items_location_no_longer_synced": "Las ubicaciones de los elementos hijos ya no se sincronizarán con este elemento.",
             "child_items_location_synced": "Las ubicaciones de los elementos hijos se han sincronizado con este elemento",
             "child_location_desync": "Cambiar la ubicación lo desincronizará de la ubicación de los padres",
-            "error_loading_parent_data": "Se ha producido un error al intentar cargar los datos principales"
+            "error_loading_parent_data": "Se ha producido un error al intentar cargar los datos padre",
+            "failed_adjust_quantity": "Error al ajustar la cantidad",
+            "failed_delete_attachment": "Error al eliminar el archivo adjunto"
         },
         "updated_at": "Actualizado El",
         "warranty": "Garantía",
