@@ -130,7 +130,7 @@
                     "page": "Página",
                     "rows_per_page": "Filas por página",
                     "table_settings": "Configuración de Tabla",
-                    "view_item": "Ver elemento"
+                    "view_item": "Ver Elemento"
                 }
             }
         },
@@ -138,7 +138,13 @@
             "create_modal": {
                 "label_description": "Descripción de la etiqueta",
                 "label_name": "Nombre de la Etiqueta",
-                "title": "Crear Etiqueta"
+                "title": "Crear Etiqueta",
+                "toast": {
+                    "already_creating": "Ya se está creando una etiqueta",
+                    "create_failed": "No se ha podido crear la etiqueta",
+                    "create_success": "Etiqueta creada",
+                    "label_name_too_long": "El nombre no debe tener más de 50 caracteres"
+                }
             },
             "selector": {
                 "select_labels": "Seleccionar Etiquetas"
