@@ -265,10 +265,20 @@
         "created_at": "Creado El",
         "custom_fields": "Campos Personalizados",
         "delete_attachment_confirm": "¿Estás seguro de que deseas eliminar este adjunto?",
-        "delete_item_confirm": "¿Está seguro de que desea eliminar este elemento?",
+        "delete_item_confirm": "¿Estás seguro de que deseas eliminar este elemento?",
         "description": "Descripción",
         "details": "Detalles",
         "drag_and_drop": "Arrastra y suelta los archivos aquí o selecciona los archivos",
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "Título del Adjunto",
+                "attachment_type": "Tipo de Adjunto",
+                "primary_photo": "Foto Principal",
+                "primary_photo_sub": "Esta opción sólo está disponible para las fotos. Sólo puede haber una foto principal. Si seleccionas esta opción, la foto principal actual, si existe, se deseleccionará.",
+                "select_type": "Seleccionar un tipo",
+                "title": "Editar archivo adjunto"
+            }
+        },
         "edit_details": "Editar detalles",
         "field_selector": "Selector de Campo",
         "field_value": "Valor del Campo",
