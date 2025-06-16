@@ -355,7 +355,7 @@
             "item_deleted": "Elemento eliminado",
             "item_saved": "Elemento guardado",
             "quantity_cannot_negative": "La cantidad no puede ser negativa",
-            "sync_child_location": "El padre seleccionado sincroniza las ubicaciones de sus hijos con las suyas"
+            "sync_child_location": "El padre seleccionado sincroniza las ubicaciones de sus hijos con la suya. La ubicación ha sido actualizada."
         },
         "updated_at": "Actualizado El",
         "warranty": "Garantía",
@@ -363,6 +363,7 @@
         "warranty_expires": "Expiración Garantía"
     },
     "labels": {
+        "label_delete_confirm": "¿Estás seguro de que quieres eliminar este paso? Esta acción no se puede deshacer.",
         "no_results": "Etiquetas No Encontradas",
         "update_label": "Actualizar Etiqueta"
     },
