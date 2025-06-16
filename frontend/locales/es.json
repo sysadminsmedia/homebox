@@ -533,8 +533,16 @@
             "label_height": "Altura de la Etiqueta",
             "label_width": "Ancho de la Etiqueta",
             "measure_type": "Tipo de Medida",
-            "page_bottom_padding": "Relleno Inferior de Página",
-            "page_height": "Altura de la página"
+            "page_bottom_padding": "Margen Inferior de Página",
+            "page_height": "Altura de la Página",
+            "page_left_padding": "Margen Izquierdo de Página",
+            "page_right_padding": "Margen Derecho de Página",
+            "page_top_padding": "Margen Superior de Página",
+            "page_width": "Ancho de Página",
+            "qr_code_example": "Ejemplo de Código QR",
+            "tip_1": "Los valores predeterminados están configurados para\n '<a href=\"https://www.avery.com/templates/5260\">'hojas de etiquetas Avery 5260'</a>'. Si utilizas un tipo de hoja diferente,\n tendrás que ajustar la configuración para que coincida con tu hoja.",
+            "tip_2": "Si estás personalizando tu hoja las dimensiones están en pulgadas. Cuando estaba creando la hoja de etiquetas 5260, descubrí que\n las dimensiones usadas en su plantilla no coincidían con las necesarias para imprimir dentro de las casillas.\n '<b>'Prepárate para algo de prueba y error.'</b>'",
+            "tip_3": "Al imprimir, asegúrese de:\n '<ol><li>'Establecer los márgenes en 0 o ninguno'</li><li>'Establecer la escala al 100%'</li><li>'Desactivar impresión a doble cara'</li><li>'Imprimir una página de prueba antes de imprimir varias páginas'</li></ol>'"
         }
     },
     "scanner": {
