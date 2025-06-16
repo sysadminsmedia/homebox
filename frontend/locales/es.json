@@ -554,7 +554,7 @@
         "error": "Se ha producido un error mientras se escaneaba",
         "invalid_url": "URL de código de barras inválido",
         "no_sources": "No hay fuentes de vídeo disponibles",
-        "permission_denied": "Permiso de cámara denegado, permite el acceso a la cámara en la configuración de tu navegador",
+        "permission_denied": "Permiso de cámara denegado, por favor, permite el acceso a la cámara en la configuración de tu navegador",
         "select_video_source": "Elige una fuente de vídeo",
         "title": "Escaner",
         "unsupported": "La API Media Stream no se puede utilizar sin HTTPS"
@@ -571,6 +571,7 @@
             "ensure_import_refs_sub": "Garantiza que todos los artículos de tu inventario tienen un campo import_ref válido. Esto se hace generando aleatoriamente una cadena de 8 caracteres para cada artículo que tenga un campo import_ref sin establecer.",
             "set_primary_photo": "Establecer Foto Principal",
             "set_primary_photo_button": "Establecer Foto Principal",
+            "set_primary_photo_confirm": "¿Seguro que quieres configurar las fotos principales? Esto puede tardar un tiempo y no se puede deshacer.",
             "set_primary_photo_sub": "En la versión v0.10.0 de Homebox, se añadió el indicador de imagen principal a los ficheros adjuntos de tipo foto. Esta acción establecerá la primera imagen de cada artículo como su imagen principal, si no hay una imagen principal ya definida. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Ver PR #576 en GitHub'</a>'",
             "zero_datetimes": "Cero Horas Elementos",
             "zero_datetimes_button": "Cero Horas Elementos",
