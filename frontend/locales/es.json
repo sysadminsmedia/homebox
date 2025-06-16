@@ -351,7 +351,10 @@
             "failed_save_no_location": "Error al guardar el elemento: no se ha seleccionado ninguna ubicación",
             "failed_search_items": "No se han podido buscar los elementos",
             "failed_update_attachment": "Error al actualizar el adjunto",
-            "failed_upload_attachment": "Error al cargar el archivo adjunto"
+            "failed_upload_attachment": "Error al cargar el adjunto",
+            "item_deleted": "Elemento eliminado",
+            "item_saved": "Elemento guardado",
+            "quantity_cannot_negative": "La cantidad no puede ser negativa."
         },
         "updated_at": "Actualizado El",
         "warranty": "Garantía",
