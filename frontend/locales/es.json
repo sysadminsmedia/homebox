@@ -336,7 +336,8 @@
             "attachment_deleted": "Adjunto eliminado",
             "attachment_updated": "Adjunto actualizado",
             "attachment_uploaded": "Adjunto subido",
-            "child_items_location_no_longer_synced": "Las ubicaciones de los artículos secundarios ya no se sincronizarán con este artículo."
+            "child_items_location_no_longer_synced": "Las ubicaciones de los elementos hijos ya no se sincronizarán con este elemento.",
+            "child_items_location_synced": "Las ubicaciones de los artículos secundarios se han sincronizado con este artículo"
         },
         "updated_at": "Actualizado El",
         "warranty": "Garantía",
