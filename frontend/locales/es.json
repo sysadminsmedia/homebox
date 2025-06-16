@@ -503,7 +503,14 @@
             "account_deleted": "Tu cuenta ha sido eliminada.",
             "failed_change_password": "Error al cambiar la contraseña.",
             "failed_create_notifier": "Error al crear el notificador.",
-            "failed_delete_account": "Error al eliminar cuenta"
+            "failed_delete_account": "Error al eliminar tu cuenta",
+            "failed_delete_notifier": "Error al eliminar el notificador.",
+            "failed_get_currencies": "No se han podido obtener las divisas",
+            "failed_test_notifier": "No se ha podido probar el notificador.",
+            "failed_update_group": "Error al actualizar el grupo",
+            "failed_update_notifier": "Error al actualizar el notificador.",
+            "group_updated": "Grupo actualizado",
+            "notifier_test_success": "Prueba del notificador realizada correctamente."
         },
         "update_group": "Actualizar Grupo",
         "update_language": "Cambiar Idioma",
