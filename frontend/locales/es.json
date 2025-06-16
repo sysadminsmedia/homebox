@@ -554,6 +554,7 @@
         "error": "Se ha producido un error mientras se escaneaba",
         "invalid_url": "URL de código de barras inválido",
         "no_sources": "No hay fuentes de vídeo disponibles",
+        "permission_denied": "Permiso de cámara denegado, permite el acceso a la cámara en la configuración de tu navegador",
         "select_video_source": "Elige una fuente de vídeo",
         "title": "Escaner",
         "unsupported": "La API Media Stream no se puede utilizar sin HTTPS"
