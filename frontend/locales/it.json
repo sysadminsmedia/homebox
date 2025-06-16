@@ -1,10 +1,20 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "Usa {shiftKey} + {enterKey} per crearne e aggiungerne un altro.",
+                "enter": "Invio",
+                "shift": "Shift"
+            },
             "import_dialog": {
                 "change_warning": "Il comportamento per le importazioni con import_ref esistenti è cambiato. Se un import_ref è presente nel file CSV,\n l'articolo verrà aggiornato con i valori presenti nel file CSV.",
                 "description": "Importa un file CSV contenente gli articoli, le etichette e le posizioni. Vedi la documentazione per ulteriori informazioni sul \nformato richiesto.",
-                "title": "Importa File CSV"
+                "title": "Importa File CSV",
+                "toast": {
+                    "import_failed": "Importazione non riuscita. Per favore riprova più tardi.",
+                    "import_success": "Importazione riuscita!",
+                    "please_select_file": "Selezionare un file da importare."
+                }
             },
             "outdated": {
                 "current_version": "Versione corrente",
@@ -12,6 +22,11 @@
                 "latest_version": "Ultima Versione",
                 "new_version_available": "Nuova versione disponibile",
                 "new_version_available_link": "Clicca qui per visualizzare le note di rilascio"
+            }
+        },
+        "form": {
+            "password": {
+                "toggle_show": "Attiva/disattiva visualizzazione password"
             }
         },
         "global": {
@@ -51,7 +66,12 @@
                 "download": "Scarica l'etichetta",
                 "print": "Stampa etichetta",
                 "server_print": "Stampa sul server",
-                "titles": "Etichette"
+                "titles": "Etichette",
+                "toast": {
+                    "load_status_failed": "Impossibile caricare lo stato",
+                    "print_failed": "Impossibile stampare l'etichetta",
+                    "print_success": "Etichetta stampata"
+                }
             },
             "page_qr_code": {
                 "page_url": "URL della Pagina",
@@ -62,14 +82,41 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "Download",
+                "open_new_tab": "Apri in una nuova scheda"
+            },
             "create_modal": {
+                "delete_photo": "Elimina foto",
                 "item_description": "Descrizione Articolo",
                 "item_name": "Nome articolo",
                 "item_photo": "Foto dell'articolo 📷",
                 "item_quantity": "Quantità Articoli",
                 "parent_item": "Articolo principale",
+                "rotate_photo": "Ruota foto",
+                "set_as_primary_photo": "Imposta come { isPrimary, select, true {non} false {} other {}} foto principale",
                 "title": "Crea Articolo",
-                "upload_photos": "Carica Foto"
+                "toast": {
+                    "already_creating": "Stai già creando un articolo",
+                    "create_failed": "Impossibile creare l'articolo",
+                    "create_success": "Articolo creato",
+                    "failed_load_parent": "Impossibile caricare l'elemento principale - seleziona manualmente",
+                    "no_canvas_support": "Il tuo browser non supporta le operazioni canvas",
+                    "please_select_location": "Per favore seleziona un luogo.",
+                    "rotate_failed": "Impossibile ruotare l'immagine: { error }",
+                    "rotate_process_failed": "Impossibile elaborare l'immagine ruotata",
+                    "some_photos_failed": "{count, plural, =0 {Nessuna foto da caricare.} =1 {1 foto non caricata.} other {Alcune foto non caricate.}}",
+                    "upload_failed": "Impossibile caricare la foto: { photoName }",
+                    "upload_success": "{count, plural, =0 {Nessuna foto caricata.} =1 {Foto caricata correttamente.} other {Tutte le foto caricate correttamente.}}",
+                    "uploading_photos": "{count, plural, =0 {Nessuna foto da caricare} =1 {Caricamento di 1 foto...} other {Caricamento di {count} foto...}}"
+                },
+                "upload_photos": "Carica Foto",
+                "uploaded": "Foto caricata"
+            },
+            "selector": {
+                "no_results": "Nessun risultato trovato",
+                "placeholder": "Seleziona...",
+                "search_placeholder": "Digita per cercare"
             },
             "view": {
                 "selectable": {
@@ -82,7 +129,8 @@
                     "headers": "Intestazioni",
                     "page": "Pagina",
                     "rows_per_page": "Righe per pagina",
-                    "table_settings": "Impostazioni Tabella"
+                    "table_settings": "Impostazioni Tabella",
+                    "view_item": "Visualizzare articolo"
                 }
             }
         },
@@ -90,7 +138,13 @@
             "create_modal": {
                 "label_description": "Descrizione Etichetta",
                 "label_name": "Nome Etichetta",
-                "title": "Crea Etichetta"
+                "title": "Crea Etichetta",
+                "toast": {
+                    "already_creating": "Creazione di un'etichetta già in corso",
+                    "create_failed": "Impossibile creare l'etichetta",
+                    "create_success": "Etichetta creata",
+                    "label_name_too_long": "Il nome non deve contenere più di 50 caratteri"
+                }
             },
             "selector": {
                 "select_labels": "Seleziona etichette"
@@ -100,7 +154,12 @@
             "create_modal": {
                 "location_description": "Descrizione ubicazione",
                 "location_name": "Nome ubicazione",
-                "title": "Crea Posizione"
+                "title": "Crea Posizione",
+                "toast": {
+                    "already_creating": "Già in fase di creazione di una posizione",
+                    "create_failed": "Impossibile creare la posizione",
+                    "create_success": "Posizione creata"
+                }
             },
             "selector": {
                 "no_location_found": "Nessusa posizione trovata",
@@ -128,6 +187,8 @@
         "create_subitem": "Crea sotto-elemento",
         "created": "Creato",
         "delete": "Cancella",
+        "delete_confirm": "Sei sicuro di voler eliminare questo articolo? ",
+        "demo_instance": "Questa è un'istanza demo",
         "details": "Dettagli",
         "duplicate": "Duplica",
         "edit": "Modifica",
@@ -150,11 +211,14 @@
         "password": "Password",
         "quantity": "Quantità",
         "read_docs": "Leggi la Documentazione",
+        "return_home": "Ritorna alla Home",
         "save": "Salva",
         "search": "Cerca",
         "sign_out": "Disconnetti",
         "submit": "Invia",
+        "unknown": "Sconosciuto",
         "update": "Aggiorna",
+        "updating": "Aggiornamento",
         "value": "Valore",
         "version": "Versione: { version }",
         "welcome": "Benvenuto, { username }"
@@ -179,27 +243,49 @@
         "set_email": "Qual è la tua email?",
         "set_name": "Come ti chiami?",
         "set_password": "Imposta la tua password",
-        "tagline": "Tieni traccia, Organizza e Gestisci le tue Cose."
+        "tagline": "Tieni traccia, Organizza e Gestisci le tue Cose.",
+        "title": "Organizza e tagga le tue cose",
+        "toast": {
+            "invalid_email": "Indirizzo e-mail non valido",
+            "invalid_email_password": "Email o password non valida",
+            "login_success": "Loggato con successo",
+            "problem_registering": "Problema durante la registrazione dell'utente",
+            "user_registered": "Utente registrato"
+        }
     },
     "items": {
         "add": "Aggiungi",
         "advanced": "Avanzate",
         "archived": "Archiviato",
         "asset_id": "ID Asset",
+        "associated_with_multiple": "Questo ID asset è associato a più articoli",
         "attachment": "Allegato",
         "attachments": "Allegati",
         "changes_persisted_immediately": "Le modifiche agli allegati verranno salvate immediatamente",
         "created_at": "Creato Il",
         "custom_fields": "Campi Personalizzati",
+        "delete_attachment_confirm": "Eliminare l'allegato?",
+        "delete_item_confirm": "Sei sicuro di voler eliminare questo articolo?",
         "description": "Descrizione",
         "details": "Dettagli",
         "drag_and_drop": "Trascina e rilascia i file qui o fai clic per selezionare i file",
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "Titolo allegato",
+                "attachment_type": "Tipo di allegato",
+                "primary_photo": "Foto principale",
+                "primary_photo_sub": "Questa opzione è disponibile solo per le foto. Solo una foto può essere principale. Se selezioni questa opzione, l'attuale foto principale, se presente, sarà deselezionata.",
+                "select_type": "Seleziona un tipo",
+                "title": "Modifica allegato"
+            }
+        },
         "edit_details": "Modifica dettagli",
         "field_selector": "Campo Selezione",
         "field_value": "Campo valore",
         "first": "Primo",
         "include_archive": "Includi Articoli Archiviati",
         "insured": "Assicurato",
+        "invalid_asset_id": "ID dell'asset non valido.",
         "last": "Ultimo",
         "lifetime_warranty": "Garanzia a vita",
         "location": "Luogo",
@@ -210,6 +296,7 @@
         "name": "Nome",
         "negate_labels": "Negare Etichette Selezionate",
         "next_page": "Pagina Successiva",
+        "no_attachments": "Nessun allegato trovato",
         "no_results": "Nessun Articolo Trovato",
         "notes": "Note",
         "only_with_photo": "Solo articoli con foto",
@@ -231,12 +318,14 @@
         "receipts": "Ricevute",
         "reset_search": "Reimposta Ricerca",
         "results": "{ total } Risultati",
+        "select_field": "Seleziona un campo",
         "serial_number": "Numero seriale",
         "show_advanced_view_options": "Mostra opzioni di visualizzazione avanzate",
         "sold_at": "Venduto su",
         "sold_details": "Dettagli di vendita",
         "sold_price": "Prezzo di vendita",
         "sold_to": "Venduto a",
+        "sync_child_locations": "Sincronizza le posizioni degli elementi figlio",
         "tip_1": "I filtri di posizione ed etichetta utilizzano l'operazione 'OR'. Se ne viene selezionato più\n di uno, ne sarà richiesto solo uno per una corrispondenza.",
         "tip_2": "Le ricerche con prefisso '#' cercheranno un ID asset (esempio '#000-001')",
         "tip_3": "I filtri di campo utilizzano l'operazione 'OR'. Se ne viene selezionato più di uno, ne sarà\n richiesto solo uno per una corrispondenza.",
@@ -371,6 +460,17 @@
         "url": "URL",
         "user_profile": "Profilo Utente",
         "user_profile_sub": "Invita utenti e gestisci il tuo account."
+    },
+    "reports": {
+        "label_generator": {
+            "page_height": "Altezza della pagina",
+            "page_left_padding": "Spaziatura Sinistra",
+            "page_right_padding": "Spaziatura Destra",
+            "page_top_padding": "Spaziatura in alto",
+            "page_width": "Larghezza pagina",
+            "qr_code_example": "Esempio di codice QR",
+            "tip_1": "Le impostazioni predefinite qui sono configurate per i\n\n '<a href=\"https://www.avery.com/templates/5260\">'fogli di etichette ''Avery 5260 '</a>'. Se stai utilizzando un foglio differente,\n\n devi modificare le impostazioni affinchè corrispondano al tuo foglio."
+        }
     },
     "scanner": {
         "error": "Si è verificato un errore durante la scansione",

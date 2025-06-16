@@ -2,6 +2,7 @@
     "components": {
         "app": {
             "create_modal": {
+                "createAndAddAnother": "Usa {shiftKey} + {enterKey} para crear y añadir otro.",
                 "enter": "Intro",
                 "shift": "Mayús"
             },
@@ -96,7 +97,13 @@
                 "set_as_primary_photo": "Establecer como { isPrimary, select, true {non-} false {} other {}} foto principal",
                 "title": "Crear Elemento",
                 "toast": {
-                    "already_creating": "Ya se está creando un elemento"
+                    "already_creating": "Ya se está creando un elemento",
+                    "create_failed": "No se ha podido crear el elemento",
+                    "create_success": "Elemento creado",
+                    "failed_load_parent": "No se ha podido cargar el elemento padre - por favor, selecciónalo manualmente",
+                    "no_canvas_support": "Tu navegador no soporta operaciones de lienzo",
+                    "please_select_location": "Por favor, selecciona una ubicación.",
+                    "rotate_failed": "Error al rotar la imagen: { error }"
                 },
                 "upload_photos": "Fotos Subidas"
             },
