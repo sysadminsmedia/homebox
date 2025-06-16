@@ -244,7 +244,11 @@
         "set_name": "¿Cómo te llamas?",
         "set_password": "Establece tu contraseña",
         "tagline": "Rastrea, Organiza y Gestiona tus Cosas.",
-        "title": "Organiza y etiqueta tus cosas"
+        "title": "Organiza y Etiqueta Tus Cosas",
+        "toast": {
+            "invalid_email": "Dirección de correo electrónico no válida",
+            "invalid_email_password": "E-mail y/o contraseña no válida"
+        }
     },
     "items": {
         "add": "Añadir",
