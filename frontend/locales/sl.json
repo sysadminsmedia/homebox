@@ -105,10 +105,10 @@
                     "please_select_location": "Prosimo izberite lokacijo.",
                     "rotate_failed": "Slike ni bilo mogoče zavrteti: { error }",
                     "rotate_process_failed": "Obdelava zasukane slike ni uspela",
-                    "some_photos_failed": "{count, plural, =0 {Ni fotografij za nalaganje.} =1 {1 fotografija ni bila naložena.} drugo {Nekatere fotografije niso bile naložene.}}",
-                    "upload_failed": "Nalaganje fotografije: {photoName} ni uspelo",
-                    "upload_success": "",
-                    "uploading_photos": ""
+                    "some_photos_failed": "{count, plural, =0 {Ni fotografij za nalaganje.} =1 {1 fotografija ni bila naložena.} other {Nekatere fotografije niso bile naložene.}}",
+                    "upload_failed": "Ni uspelo nalaganje fotografije: {photoName}",
+                    "upload_success": "{count, plural, =0 {Ni naloženih fotografij.} =1 {Fotografija je bila uspešno naložena.} drugo {Vse fotografije so bile uspešno naložene.}}",
+                    "uploading_photos": "{count, plural, =0 {Ni fotografij za nalaganje} =1 {Nalaganje 1 fotografije...} drugo {Nalaganje {count} fotografij...}}"
                 },
                 "upload_photos": "Naloži fotografije",
                 "uploaded": ""
