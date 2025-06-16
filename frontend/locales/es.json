@@ -338,7 +338,8 @@
             "attachment_uploaded": "Adjunto subido",
             "child_items_location_no_longer_synced": "Las ubicaciones de los elementos hijos ya no se sincronizarán con este elemento.",
             "child_items_location_synced": "Las ubicaciones de los elementos hijos se han sincronizado con este elemento",
-            "child_location_desync": "Cambiar la ubicación lo desincronizará de la ubicación de los padres"
+            "child_location_desync": "Cambiar la ubicación lo desincronizará de la ubicación de los padres",
+            "error_loading_parent_data": "Se ha producido un error al intentar cargar los datos principales"
         },
         "updated_at": "Actualizado El",
         "warranty": "Garantía",
