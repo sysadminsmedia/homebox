@@ -276,7 +276,7 @@
                 "primary_photo": "Foto Principal",
                 "primary_photo_sub": "Esta opción sólo está disponible para las fotos. Sólo puede haber una foto principal. Si seleccionas esta opción, la foto principal actual, si existe, se deseleccionará.",
                 "select_type": "Seleccionar un tipo",
-                "title": "Editar archivo adjunto"
+                "title": "Editar Adjunto"
             }
         },
         "edit_details": "Editar detalles",
@@ -285,6 +285,7 @@
         "first": "Primer",
         "include_archive": "Incluir Elementos Archivados",
         "insured": "Asegurado",
+        "invalid_asset_id": "ID de activo no válido",
         "last": "Último",
         "lifetime_warranty": "Garantía Permanente",
         "location": "Ubicación",
