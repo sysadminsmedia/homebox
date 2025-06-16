@@ -111,7 +111,12 @@
                     "uploading_photos": "{count, plural, =0 {No hay fotos para subir} =1 {Subiendo 1 foto...} other {Subiendo {count} fotos...}}"
                 },
                 "upload_photos": "Fotos Subidas",
-                "uploaded": "Foto subida"
+                "uploaded": "Foto Subida"
+            },
+            "selector": {
+                "no_results": "Resultados No Encontrados",
+                "placeholder": "Seleccionar...",
+                "search_placeholder": "Escriba para buscar..."
             },
             "view": {
                 "selectable": {
