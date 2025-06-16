@@ -345,17 +345,17 @@
             "failed_delete_item": "Brisanje predmeta ni uspelo",
             "failed_duplicate_item": "Podvajanje predmeta ni uspelo",
             "failed_load_asset": "Nalaganje sredstva ni uspelo",
-            "failed_load_item": "Artikla ni bilo mogoče naložiti",
-            "failed_load_items": "",
-            "failed_save": "",
-            "failed_save_no_location": "",
-            "failed_search_items": "",
-            "failed_update_attachment": "",
-            "failed_upload_attachment": "",
-            "item_deleted": "",
-            "item_saved": "",
-            "quantity_cannot_negative": "",
-            "sync_child_location": ""
+            "failed_load_item": "Nalaganje predmeta ni uspelo",
+            "failed_load_items": "Nalaganje predmetov ni uspelo",
+            "failed_save": "Shranjevanje predmeta ni uspelo",
+            "failed_save_no_location": "Shranjevanje predmeta ni uspelo: lokacija ni izbrana",
+            "failed_search_items": "Iskanje predmetov ni uspelo",
+            "failed_update_attachment": "Posodobitev priloge ni uspela",
+            "failed_upload_attachment": "Nalaganje priloge ni uspelo",
+            "item_deleted": "Predmet izbrisan",
+            "item_saved": "Predmet shranjen",
+            "quantity_cannot_negative": "Količina ne more biti negativna",
+            "sync_child_location": "Izbran nadrejen predmet sinhronizira lokacijo podrejenih predmetov s svojo. Lokacija je bila posodobljena."
         },
         "updated_at": "Posodobljeno ob",
         "warranty": "Garancija",
@@ -363,7 +363,7 @@
         "warranty_expires": "Garancija poteče"
     },
     "labels": {
-        "label_delete_confirm": "",
+        "label_delete_confirm": "Ali ste prepričani, da želite izbrisati to vrstico? Tega ni mogoče razveljaviti.",
         "no_results": "Ni najdenih oznak",
         "toast": {
             "failed_delete_label": "",
