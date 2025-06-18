@@ -2,18 +2,18 @@
     "components": {
         "app": {
             "create_modal": {
-                "createAndAddAnother": "",
-                "enter": "",
-                "shift": ""
+                "createAndAddAnother": "Använd {shiftKey} + {enterKey} för att spara och skapa en ny.",
+                "enter": "Retur",
+                "shift": "Skift"
             },
             "import_dialog": {
                 "change_warning": "Beteendet för importer med befintliga import_refs har ändrats. Om en import_ref finns i CSV-filen, kommer\nobjektet att uppdateras med värdena i CSV-filen.",
-                "description": "Importera en CSV-fil som innehåller dina föremål, etiketter och platser. Se dokumentationen för mer information om formatet som krävs.",
+                "description": "Importera en CSV-fil som innehåller dina föremål, etiketter och platser. Se dokumentationen för mer information om förväntat format.",
                 "title": "Importera CSV-fil",
                 "toast": {
-                    "import_failed": "",
-                    "import_success": "",
-                    "please_select_file": ""
+                    "import_failed": "Import misslyckades. Försök igen senare.",
+                    "import_success": "Importen lyckades!",
+                    "please_select_file": "Välj en fil för import."
                 }
             },
             "outdated": {
@@ -26,7 +26,7 @@
         },
         "form": {
             "password": {
-                "toggle_show": ""
+                "toggle_show": "Visa/dölj lösenord"
             }
         },
         "global": {
