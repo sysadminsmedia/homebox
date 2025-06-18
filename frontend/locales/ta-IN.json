@@ -1,15 +1,611 @@
 {
     "components": {
+        "app": {
+            "create_modal": {
+                "createAndAddAnother": "",
+                "enter": "",
+                "shift": ""
+            },
+            "import_dialog": {
+                "change_warning": "",
+                "description": "",
+                "title": "",
+                "toast": {
+                    "import_failed": "",
+                    "import_success": "",
+                    "please_select_file": ""
+                }
+            },
+            "outdated": {
+                "current_version": "",
+                "dismiss": "",
+                "latest_version": "",
+                "new_version_available": "",
+                "new_version_available_link": ""
+            }
+        },
+        "form": {
+            "password": {
+                "toggle_show": ""
+            }
+        },
         "global": {
+            "copy_text": {
+                "documentation": "",
+                "failed_to_copy": "",
+                "https_required": "",
+                "learn_more": ""
+            },
             "date_time": {
+                "ago": "",
                 "days": "நாட்கள்",
                 "hour": "மணி",
                 "hours": "மணிகள்",
                 "in": "{0} இல்",
                 "just-now": "இப்பொழுது",
                 "last-month": "கடந்த மாதம்",
-                "last-week": "கடந்த வாரம்"
+                "last-week": "கடந்த வாரம்",
+                "last-year": "",
+                "minute": "",
+                "minutes": "",
+                "months": "",
+                "next-month": "",
+                "next-week": "",
+                "next-year": "",
+                "second": "",
+                "seconds": "",
+                "tomorrow": "",
+                "week": "",
+                "weeks": "",
+                "years": "",
+                "yesterday": ""
+            },
+            "label_maker": {
+                "browser_print": "",
+                "confirm_description": "",
+                "download": "",
+                "print": "",
+                "server_print": "",
+                "titles": "",
+                "toast": {
+                    "load_status_failed": "",
+                    "print_failed": "",
+                    "print_success": ""
+                }
+            },
+            "page_qr_code": {
+                "page_url": "",
+                "qr_tooltip": ""
+            },
+            "password_score": {
+                "password_strength": ""
             }
+        },
+        "item": {
+            "attachments_list": {
+                "download": "",
+                "open_new_tab": ""
+            },
+            "create_modal": {
+                "delete_photo": "",
+                "item_description": "",
+                "item_name": "",
+                "item_photo": "",
+                "item_quantity": "",
+                "parent_item": "",
+                "rotate_photo": "",
+                "set_as_primary_photo": "",
+                "title": "",
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": "",
+                    "failed_load_parent": "",
+                    "no_canvas_support": "",
+                    "please_select_location": "",
+                    "rotate_failed": "",
+                    "rotate_process_failed": "",
+                    "some_photos_failed": "",
+                    "upload_failed": "",
+                    "upload_success": "",
+                    "uploading_photos": ""
+                },
+                "upload_photos": "",
+                "uploaded": ""
+            },
+            "selector": {
+                "no_results": "",
+                "placeholder": "",
+                "search_placeholder": ""
+            },
+            "view": {
+                "selectable": {
+                    "card": "",
+                    "items": "",
+                    "no_items": "",
+                    "table": ""
+                },
+                "table": {
+                    "headers": "",
+                    "page": "",
+                    "rows_per_page": "",
+                    "table_settings": "",
+                    "view_item": ""
+                }
+            }
+        },
+        "label": {
+            "create_modal": {
+                "label_description": "",
+                "label_name": "",
+                "title": "",
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": "",
+                    "label_name_too_long": ""
+                }
+            },
+            "selector": {
+                "select_labels": ""
+            }
+        },
+        "location": {
+            "create_modal": {
+                "location_description": "",
+                "location_name": "",
+                "title": "",
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": ""
+                }
+            },
+            "selector": {
+                "no_location_found": "",
+                "parent_location": "",
+                "search_location": "",
+                "select_location": ""
+            },
+            "tree": {
+                "no_locations": ""
+            }
+        },
+        "quick_menu": {
+            "no_results": "",
+            "shortcut_hint": ""
+        }
+    },
+    "global": {
+        "add": "",
+        "archived": "",
+        "build": "",
+        "cancel": "",
+        "confirm": "",
+        "create": "",
+        "create_and_add": "",
+        "create_subitem": "",
+        "created": "",
+        "delete": "",
+        "delete_confirm": "",
+        "demo_instance": "",
+        "details": "",
+        "duplicate": "",
+        "edit": "",
+        "email": "",
+        "follow_dev": "",
+        "footer": {
+            "api_link": "",
+            "version_link": ""
+        },
+        "github": "",
+        "insured": "",
+        "items": "",
+        "join_discord": "",
+        "labels": "",
+        "loading": "",
+        "locations": "",
+        "maintenance": "",
+        "name": "",
+        "navigate": "",
+        "password": "",
+        "quantity": "",
+        "read_docs": "",
+        "return_home": "",
+        "save": "",
+        "search": "",
+        "sign_out": "",
+        "submit": "",
+        "unknown": "",
+        "update": "",
+        "updating": "",
+        "value": "",
+        "version": "",
+        "welcome": ""
+    },
+    "home": {
+        "labels": "",
+        "quick_statistics": "",
+        "recently_added": "",
+        "storage_locations": "",
+        "total_items": "",
+        "total_labels": "",
+        "total_locations": "",
+        "total_value": ""
+    },
+    "index": {
+        "disabled_registration": "",
+        "dont_join_group": "",
+        "joining_group": "",
+        "login": "",
+        "register": "",
+        "remember_me": "",
+        "set_email": "",
+        "set_name": "",
+        "set_password": "",
+        "tagline": "",
+        "title": "",
+        "toast": {
+            "invalid_email": "",
+            "invalid_email_password": "",
+            "login_success": "",
+            "problem_registering": "",
+            "user_registered": ""
+        }
+    },
+    "items": {
+        "add": "",
+        "advanced": "",
+        "archived": "",
+        "asset_id": "",
+        "associated_with_multiple": "",
+        "attachment": "",
+        "attachments": "",
+        "changes_persisted_immediately": "",
+        "created_at": "",
+        "custom_fields": "",
+        "delete_attachment_confirm": "",
+        "delete_item_confirm": "",
+        "description": "",
+        "details": "",
+        "drag_and_drop": "",
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "",
+                "attachment_type": "",
+                "primary_photo": "",
+                "primary_photo_sub": "",
+                "select_type": "",
+                "title": ""
+            }
+        },
+        "edit_details": "",
+        "field_selector": "",
+        "field_value": "",
+        "first": "",
+        "include_archive": "",
+        "insured": "",
+        "invalid_asset_id": "",
+        "last": "",
+        "lifetime_warranty": "",
+        "location": "",
+        "manual": "",
+        "manuals": "",
+        "manufacturer": "",
+        "model_number": "",
+        "name": "",
+        "negate_labels": "",
+        "next_page": "",
+        "no_attachments": "",
+        "no_results": "",
+        "notes": "",
+        "only_with_photo": "",
+        "only_without_photo": "",
+        "options": "",
+        "order_by": "",
+        "pages": "",
+        "parent_item": "",
+        "photo": "",
+        "photos": "",
+        "prev_page": "",
+        "purchase_date": "",
+        "purchase_details": "",
+        "purchase_price": "",
+        "purchased_from": "",
+        "quantity": "",
+        "query_id": "",
+        "receipt": "",
+        "receipts": "",
+        "reset_search": "",
+        "results": "",
+        "select_field": "",
+        "serial_number": "",
+        "show_advanced_view_options": "",
+        "sold_at": "",
+        "sold_details": "",
+        "sold_price": "",
+        "sold_to": "",
+        "sync_child_locations": "",
+        "tip_1": "",
+        "tip_2": "",
+        "tip_3": "",
+        "tips": "",
+        "tips_sub": "",
+        "toast": {
+            "asset_not_found": "",
+            "attachment_deleted": "",
+            "attachment_updated": "",
+            "attachment_uploaded": "",
+            "child_items_location_no_longer_synced": "",
+            "child_items_location_synced": "",
+            "child_location_desync": "",
+            "error_loading_parent_data": "",
+            "failed_adjust_quantity": "",
+            "failed_delete_attachment": "",
+            "failed_delete_item": "",
+            "failed_duplicate_item": "",
+            "failed_load_asset": "",
+            "failed_load_item": "",
+            "failed_load_items": "",
+            "failed_save": "",
+            "failed_save_no_location": "",
+            "failed_search_items": "",
+            "failed_update_attachment": "",
+            "failed_upload_attachment": "",
+            "item_deleted": "",
+            "item_saved": "",
+            "quantity_cannot_negative": "",
+            "sync_child_location": ""
+        },
+        "updated_at": "",
+        "warranty": "",
+        "warranty_details": "",
+        "warranty_expires": ""
+    },
+    "labels": {
+        "label_delete_confirm": "",
+        "no_results": "",
+        "toast": {
+            "failed_delete_label": "",
+            "failed_load_label": "",
+            "failed_update_label": "",
+            "label_deleted": "",
+            "label_updated": ""
+        },
+        "update_label": ""
+    },
+    "languages": {
+        "ca": "",
+        "cs-CZ": "",
+        "da-DK": "",
+        "de": "",
+        "en": "",
+        "es": "",
+        "fi-FI": "",
+        "fr": "",
+        "hu": "",
+        "id-ID": "",
+        "it": "",
+        "ja-JP": "",
+        "ko-KR": "",
+        "lb-LU": "",
+        "lt-LT": "",
+        "nb-NO": "",
+        "nl": "",
+        "pl": "",
+        "pt-BR": "",
+        "pt-PT": "",
+        "ro-RO": "",
+        "ru": "",
+        "sk-SK": "",
+        "sl": "",
+        "sq-AL": "",
+        "sv": "",
+        "ta-IN": "",
+        "th-TH": "",
+        "tr": "",
+        "uk-UA": "",
+        "zh-CN": "",
+        "zh-HK": "",
+        "zh-MO": "",
+        "zh-TW": ""
+    },
+    "locations": {
+        "child_locations": "",
+        "collapse_tree": "",
+        "expand_tree": "",
+        "location_items_delete_confirm": "",
+        "no_results": "",
+        "toast": {
+            "failed_delete_location": "",
+            "failed_load_location": "",
+            "failed_update_location": "",
+            "location_deleted": "",
+            "location_updated": ""
+        },
+        "update_location": ""
+    },
+    "maintenance": {
+        "filter": {
+            "both": "",
+            "completed": "",
+            "scheduled": ""
+        },
+        "list": {
+            "complete": "",
+            "create_first": "",
+            "delete": "",
+            "duplicate": "",
+            "edit": "",
+            "new": ""
+        },
+        "modal": {
+            "completed_date": "",
+            "cost": "",
+            "delete_confirmation": "",
+            "edit_action": "",
+            "edit_title": "",
+            "entry_name": "",
+            "new_action": "",
+            "new_title": "",
+            "notes": "",
+            "scheduled_date": ""
+        },
+        "monthly_average": "",
+        "toast": {
+            "failed_to_create": "",
+            "failed_to_delete": "",
+            "failed_to_update": ""
+        },
+        "total_cost": "",
+        "total_entries": ""
+    },
+    "menu": {
+        "create_item": "",
+        "create_label": "",
+        "create_location": "",
+        "home": "",
+        "locations": "",
+        "maintenance": "",
+        "profile": "",
+        "scanner": "",
+        "search": "",
+        "tools": ""
+    },
+    "profile": {
+        "active": "",
+        "change_password": "",
+        "currency_format": "",
+        "current_password": "",
+        "delete_account": "",
+        "delete_account_confirm": "",
+        "delete_account_sub": "",
+        "delete_notifier_confirm": "",
+        "display_legacy_header": "",
+        "enabled": "",
+        "example": "",
+        "gen_invite": "",
+        "group_settings": "",
+        "group_settings_sub": "",
+        "inactive": "",
+        "language": "",
+        "new_password": "",
+        "no_notifiers": "",
+        "no_override": "",
+        "notifier_modal": "",
+        "notifiers": "",
+        "notifiers_sub": "",
+        "override_locale": "",
+        "test": "",
+        "theme_settings": "",
+        "theme_settings_sub": "",
+        "toast": {
+            "account_deleted": "",
+            "failed_change_password": "",
+            "failed_create_notifier": "",
+            "failed_delete_account": "",
+            "failed_delete_notifier": "",
+            "failed_get_currencies": "",
+            "failed_test_notifier": "",
+            "failed_update_group": "",
+            "failed_update_notifier": "",
+            "group_updated": "",
+            "notifier_test_success": "",
+            "password_changed": ""
+        },
+        "update_group": "",
+        "update_language": "",
+        "url": "",
+        "user_profile": "",
+        "user_profile_sub": ""
+    },
+    "reports": {
+        "label_generator": {
+            "asset_end": "",
+            "asset_start": "",
+            "base_url": "",
+            "bordered_labels": "",
+            "generate_page": "",
+            "input_placeholder": "",
+            "instruction_1": "",
+            "instruction_2": "",
+            "instruction_3": "",
+            "label_height": "",
+            "label_width": "",
+            "measure_type": "",
+            "page_bottom_padding": "",
+            "page_height": "",
+            "page_left_padding": "",
+            "page_right_padding": "",
+            "page_top_padding": "",
+            "page_width": "",
+            "qr_code_example": "",
+            "tip_1": "",
+            "tip_2": "",
+            "tip_3": "",
+            "tips": "",
+            "title": "",
+            "toast": {
+                "page_too_small_card": ""
+            }
+        }
+    },
+    "scanner": {
+        "error": "",
+        "invalid_url": "",
+        "no_sources": "",
+        "permission_denied": "",
+        "select_video_source": "",
+        "title": "",
+        "unsupported": ""
+    },
+    "tools": {
+        "actions": "",
+        "actions_set": {
+            "ensure_ids": "",
+            "ensure_ids_button": "",
+            "ensure_ids_confirm": "",
+            "ensure_ids_sub": "",
+            "ensure_import_refs": "",
+            "ensure_import_refs_button": "",
+            "ensure_import_refs_sub": "",
+            "set_primary_photo": "",
+            "set_primary_photo_button": "",
+            "set_primary_photo_confirm": "",
+            "set_primary_photo_sub": "",
+            "zero_datetimes": "",
+            "zero_datetimes_button": "",
+            "zero_datetimes_confirm": "",
+            "zero_datetimes_sub": ""
+        },
+        "actions_sub": "",
+        "import_export": "",
+        "import_export_set": {
+            "export": "",
+            "export_button": "",
+            "export_sub": "",
+            "import": "",
+            "import_button": "",
+            "import_ref_confirm": "",
+            "import_sub": ""
+        },
+        "import_export_sub": "",
+        "reports": "",
+        "reports_set": {
+            "asset_labels": "",
+            "asset_labels_button": "",
+            "asset_labels_sub": "",
+            "bill_of_materials": "",
+            "bill_of_materials_button": "",
+            "bill_of_materials_sub": ""
+        },
+        "reports_sub": "",
+        "toast": {
+            "asset_success": "",
+            "failed_ensure_ids": "",
+            "failed_ensure_import_refs": "",
+            "failed_set_primary_photos": "",
+            "failed_zero_datetimes": ""
         }
     }
 }

@@ -129,7 +129,8 @@
                     "headers": "Cabeçalhos",
                     "page": "Página",
                     "rows_per_page": "Linhas por página",
-                    "table_settings": "Definições da Tabela"
+                    "table_settings": "Definições da Tabela",
+                    "view_item": ""
                 }
             }
         },

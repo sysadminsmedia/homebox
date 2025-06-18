@@ -129,7 +129,8 @@
                     "headers": "Kopfzeilen",
                     "page": "Seite",
                     "rows_per_page": "Zeilen pro Seite",
-                    "table_settings": "Tabellen Einstellungen"
+                    "table_settings": "Tabellen Einstellungen",
+                    "view_item": ""
                 }
             }
         },

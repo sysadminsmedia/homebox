@@ -521,7 +521,7 @@
         :items-per-page="pageSize"
         :total="total"
         :sibling-count="2"
-        :default-page="1"
+        :default-page="page"
         class="flex justify-center p-2"
         @update:page="page = $event"
       >

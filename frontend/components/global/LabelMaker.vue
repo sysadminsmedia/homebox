@@ -3,6 +3,7 @@
   import { route } from "../../lib/api/base";
   import PageQRCode from "./PageQRCode.vue";
   import { toast } from "@/components/ui/sonner";
+  import MdiLoading from "~icons/mdi/loading";
   import MdiPrinterPos from "~icons/mdi/printer-pos";
   import MdiFileDownload from "~icons/mdi/file-download";
 
@@ -105,7 +106,8 @@
         <img :src="getLabelUrl(false)" />
         <DialogFooter>
           <ButtonGroup>
-            <Button v-if="status?.labelPrinting || false" type="submit" :loading="serverPrinting" @click="serverPrint">
+            <Button v-if="status?.labelPrinting || false" type="submit" :disabled="serverPrinting" @click="serverPrint">
+              <MdiLoading v-if="serverPrinting" class="animate-spin" />
               {{ $t("components.global.label_maker.server_print") }}
             </Button>
             <Button type="submit" @click="browserPrint">

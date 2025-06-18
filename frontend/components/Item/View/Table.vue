@@ -77,7 +77,7 @@
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow v-for="(d, i) in data" :key="d.id" class="cursor-pointer" @click="navigateTo(`/item/${d.id}`)">
+        <TableRow v-for="(d, i) in data" :key="d.id" class="relative cursor-pointer">
           <TableCell
             v-for="h in headers.filter(h => h.enabled)"
             :key="`${h.value}-${i}`"
@@ -88,9 +88,7 @@
             }"
           >
             <template v-if="h.type === 'name'">
-              <NuxtLink class="text-wrap" :to="`/item/${d.id}`">
-                {{ d.name }}
-              </NuxtLink>
+              {{ d.name }}
             </template>
             <template v-else-if="h.type === 'price'">
               <Currency :amount="d.purchasePrice" />
@@ -110,6 +108,11 @@
             <slot v-else :name="cell(h)" v-bind="{ item: d }">
               {{ extractValue(d, h.value) }}
             </slot>
+          </TableCell>
+          <TableCell class="absolute inset-0">
+            <NuxtLink :to="`/item/${d.id}`" class="absolute inset-0">
+              <span class="sr-only">{{ $t("components.item.view.table.view_item") }}</span>
+            </NuxtLink>
           </TableCell>
         </TableRow>
       </TableBody>

@@ -1,10 +1,20 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "",
+                "enter": "",
+                "shift": ""
+            },
             "import_dialog": {
                 "change_warning": "Ada perubahan pada logika impor untuk data dengan import_ref yang sudah ada.  Jika sebuah import_ref ditemukan di file CSV,\ndata tersebut akan diperbarui menggunakan nilai-nilai yang ada di file CSV.",
                 "description": "Impor file CSV yang berisi item, label, dan lokasi Anda. Lihat dokumentasi untuk informasi lebih lanjut mengenai\nformat yang diperlukan.",
-                "title": "Impor CSV"
+                "title": "Impor CSV",
+                "toast": {
+                    "import_failed": "",
+                    "import_success": "",
+                    "please_select_file": ""
+                }
             },
             "outdated": {
                 "current_version": "Versi Terkini",
@@ -12,6 +22,11 @@
                 "latest_version": "Versi Terbaru",
                 "new_version_available": "Tersedia versi terbaru",
                 "new_version_available_link": "Klik di sini untuk melihat informasi rilis"
+            }
+        },
+        "form": {
+            "password": {
+                "toggle_show": ""
             }
         },
         "global": {
@@ -46,20 +61,62 @@
                 "yesterday": "kemaren"
             },
             "label_maker": {
-                "download": "Unduh Label"
+                "browser_print": "",
+                "confirm_description": "",
+                "download": "Unduh Label",
+                "print": "",
+                "server_print": "",
+                "titles": "",
+                "toast": {
+                    "load_status_failed": "",
+                    "print_failed": "",
+                    "print_success": ""
+                }
             },
             "page_qr_code": {
-                "page_url": "Halaman URL"
+                "page_url": "Halaman URL",
+                "qr_tooltip": ""
             },
             "password_score": {
                 "password_strength": "Kompleksitas kata sandi"
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "",
+                "open_new_tab": ""
+            },
             "create_modal": {
+                "delete_photo": "",
                 "item_description": "Deskripsi item",
                 "item_name": "Nama item",
-                "title": "Buat item"
+                "item_photo": "",
+                "item_quantity": "",
+                "parent_item": "",
+                "rotate_photo": "",
+                "set_as_primary_photo": "",
+                "title": "Buat item",
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": "",
+                    "failed_load_parent": "",
+                    "no_canvas_support": "",
+                    "please_select_location": "",
+                    "rotate_failed": "",
+                    "rotate_process_failed": "",
+                    "some_photos_failed": "",
+                    "upload_failed": "",
+                    "upload_success": "",
+                    "uploading_photos": ""
+                },
+                "upload_photos": "",
+                "uploaded": ""
+            },
+            "selector": {
+                "no_results": "",
+                "placeholder": "",
+                "search_placeholder": ""
             },
             "view": {
                 "selectable": {
@@ -69,8 +126,11 @@
                     "table": "Tabel"
                 },
                 "table": {
+                    "headers": "",
                     "page": "Halaman",
-                    "rows_per_page": "Baris per halaman"
+                    "rows_per_page": "Baris per halaman",
+                    "table_settings": "",
+                    "view_item": ""
                 }
             }
         },
@@ -78,54 +138,87 @@
             "create_modal": {
                 "label_description": "Keterangan/Deskripsi",
                 "label_name": "Nama",
-                "title": "Buat label"
+                "title": "Buat label",
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": "",
+                    "label_name_too_long": ""
+                }
+            },
+            "selector": {
+                "select_labels": ""
             }
         },
         "location": {
             "create_modal": {
                 "location_description": "Deskripsi lokasi",
                 "location_name": "Nama lokasi",
-                "title": "Tambah Lokasi"
+                "title": "Tambah Lokasi",
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": ""
+                }
             },
             "selector": {
-                "parent_location": "Lokasi Induk"
+                "no_location_found": "",
+                "parent_location": "Lokasi Induk",
+                "search_location": "",
+                "select_location": ""
             },
             "tree": {
                 "no_locations": "Tidak ada lokasi yang tersedia. Tambahkan lokasi melalui tombol\n`<`span class=\"link-primary\"`>`Buat`<`/span`>` menu navigasi."
             }
         },
         "quick_menu": {
+            "no_results": "",
             "shortcut_hint": "Gunakan tombol angka untuk memilih."
         }
     },
     "global": {
         "add": "Tambah",
+        "archived": "",
         "build": "Kompilasi: { build }",
+        "cancel": "",
         "confirm": "Konfirmasi",
         "create": "Buat",
         "create_and_add": "Buat dan Tambah Baru",
+        "create_subitem": "",
         "created": "Behasil dibuat",
         "delete": "Hapus",
+        "delete_confirm": "",
+        "demo_instance": "",
         "details": "Detail",
         "duplicate": "Duplikat",
         "edit": "Sunting",
         "email": "Email",
         "follow_dev": "Ikuti Pengembang",
+        "footer": {
+            "api_link": "",
+            "version_link": ""
+        },
         "github": "Github project",
+        "insured": "",
         "items": "Barang",
         "join_discord": "Bergabunglah dengan Discord",
         "labels": "Label",
+        "loading": "",
         "locations": "Lokasi",
         "maintenance": "Perbaikan",
         "name": "Nama",
         "navigate": "Navigasi",
         "password": "Kata Sandi",
+        "quantity": "",
         "read_docs": "Baca Dokumen",
+        "return_home": "",
         "save": "Simpan",
         "search": "Cari",
         "sign_out": "Keluar",
         "submit": "Kirim",
+        "unknown": "",
         "update": "Perbaharui",
+        "updating": "",
         "value": "Nilai",
         "version": "Versi:{ version }",
         "welcome": "Selamay datang, { username }"
@@ -150,27 +243,49 @@
         "set_email": "Apa email Anda?",
         "set_name": "Apa nama anda?",
         "set_password": "Password Anda",
-        "tagline": "Lacak, Atur, dan Kelola Barang-barangmu."
+        "tagline": "Lacak, Atur, dan Kelola Barang-barangmu.",
+        "title": "",
+        "toast": {
+            "invalid_email": "",
+            "invalid_email_password": "",
+            "login_success": "",
+            "problem_registering": "",
+            "user_registered": ""
+        }
     },
     "items": {
         "add": "Tambah",
         "advanced": "Tingkat Lanjut",
         "archived": "Diarsipkan",
         "asset_id": "ID Aset",
+        "associated_with_multiple": "",
         "attachment": "Lampiran",
         "attachments": "Lampiran",
         "changes_persisted_immediately": "Perubahan lampiran akan segera disimpan",
         "created_at": "Dibuat Pada",
         "custom_fields": "Informasi Tambahan",
+        "delete_attachment_confirm": "",
+        "delete_item_confirm": "",
         "description": "Deskripsi",
         "details": "Detail",
         "drag_and_drop": "Seret dan lepas file di sini atau klik untuk memilih file",
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "",
+                "attachment_type": "",
+                "primary_photo": "",
+                "primary_photo_sub": "",
+                "select_type": "",
+                "title": ""
+            }
+        },
         "edit_details": "Edit Detail",
         "field_selector": "Selektor",
         "field_value": "Nilai",
         "first": "Pertama",
         "include_archive": "Sertakan Item yang Diarsipkan",
         "insured": "Diasuransikan",
+        "invalid_asset_id": "",
         "last": "﻿Terakhir",
         "lifetime_warranty": "Garansi seumur hidup",
         "location": "Lokasi",
@@ -181,6 +296,7 @@
         "name": "Nama",
         "negate_labels": "Negasikan Label yang Dipilih",
         "next_page": "Halaman Berikutnya",
+        "no_attachments": "",
         "no_results": "Item tidak ditemukan",
         "notes": "Catatan",
         "only_with_photo": "Hanya item dengan foto",
@@ -202,42 +318,88 @@
         "receipts": "Resi",
         "reset_search": "Reset Pencarian",
         "results": "{ total } Hasil",
+        "select_field": "",
         "serial_number": "Nomor Seri",
         "show_advanced_view_options": "Tampilkan opsi lanjutan",
         "sold_at": "Dijual Pada",
         "sold_details": "Detail Penjualan",
         "sold_price": "Harga Jual",
         "sold_to": "Dijual Kepada",
+        "sync_child_locations": "",
         "tip_1": "Filter untuk lokasi dan label bekerja dengan operasi 'OR'. Artinya, jika Anda memilih lebih dari satu filter, hanya satu\nfilter yang harus cocok agar data ditampilkan.",
         "tip_2": "Pencarian yang diawali dengan '#'' akan meminta ID aset (contoh '#000 -001 ')",
         "tip_3": "Filter untuk lokasi dan label bekerja dengan operasi 'OR'. Artinya, jika Anda memilih lebih dari satu filter, hanya satu\nfilter yang harus cocok agar data ditampilkan.",
         "tips": "Anjuran",
         "tips_sub": "Tips Pencarian",
+        "toast": {
+            "asset_not_found": "",
+            "attachment_deleted": "",
+            "attachment_updated": "",
+            "attachment_uploaded": "",
+            "child_items_location_no_longer_synced": "",
+            "child_items_location_synced": "",
+            "child_location_desync": "",
+            "error_loading_parent_data": "",
+            "failed_adjust_quantity": "",
+            "failed_delete_attachment": "",
+            "failed_delete_item": "",
+            "failed_duplicate_item": "",
+            "failed_load_asset": "",
+            "failed_load_item": "",
+            "failed_load_items": "",
+            "failed_save": "",
+            "failed_save_no_location": "",
+            "failed_search_items": "",
+            "failed_update_attachment": "",
+            "failed_upload_attachment": "",
+            "item_deleted": "",
+            "item_saved": "",
+            "quantity_cannot_negative": "",
+            "sync_child_location": ""
+        },
         "updated_at": "Diperbarui pada",
         "warranty": "Garansi",
         "warranty_details": "Rincian Garansi",
         "warranty_expires": "Garansi Kedaluwarsa"
     },
     "labels": {
+        "label_delete_confirm": "",
         "no_results": "Tidak Ditemukan Label",
+        "toast": {
+            "failed_delete_label": "",
+            "failed_load_label": "",
+            "failed_update_label": "",
+            "label_deleted": "",
+            "label_updated": ""
+        },
         "update_label": "Perbarui Label"
     },
     "languages": {
         "ca": "Catalan",
+        "cs-CZ": "",
         "de": "Jerman",
         "en": "Bahasa Inggris",
         "es": "Spanyol",
+        "fi-FI": "",
         "fr": "Prancis",
         "hu": "Hungaria",
+        "id-ID": "",
         "it": "Italia",
         "ja-JP": "Jepang",
+        "ko-KR": "",
+        "lb-LU": "",
+        "lt-LT": "",
+        "nb-NO": "",
         "nl": "Belanda",
         "pl": "Polandia",
         "pt-BR": "Portugis (Brasil)",
         "pt-PT": "Bahasa Portugis (Portugal)",
         "ru": "Rusia",
         "sl": "Bahasa Slovenia",
+        "sq-AL": "",
         "sv": "Swedia",
+        "ta-IN": "",
+        "th-TH": "",
         "tr": "Turki",
         "uk-UA": "Ukraina",
         "zh-CN": "Mandarin (Disederhanakan)",
@@ -251,7 +413,16 @@
     "locations": {
         "child_locations": "Lokasi Turunan",
         "collapse_tree": "Ciutkan",
+        "expand_tree": "",
+        "location_items_delete_confirm": "",
         "no_results": "Lokasi tidak ditemukan",
+        "toast": {
+            "failed_delete_location": "",
+            "failed_load_location": "",
+            "failed_update_location": "",
+            "location_deleted": "",
+            "location_updated": ""
+        },
         "update_location": "Perbarui Lokasi"
     },
     "maintenance": {
@@ -297,6 +468,7 @@
         "locations": "Lokasi",
         "maintenance": "Pemeliharaan",
         "profile": "Profil",
+        "scanner": "",
         "search": "Cari",
         "tools": "Tools"
     },
@@ -306,7 +478,10 @@
         "currency_format": "Format Mata uang",
         "current_password": "Kata sandi saat ini",
         "delete_account": "Hapus Akun",
+        "delete_account_confirm": "",
         "delete_account_sub": "Hapus akun Anda dan semua data terkait.",
+        "delete_notifier_confirm": "",
+        "display_legacy_header": "",
         "enabled": "Tersedia",
         "example": "Contoh",
         "gen_invite": "Buat Tautan Undangan",
@@ -316,32 +491,91 @@
         "language": "Bahasa",
         "new_password": "Kata Sandi Baru",
         "no_notifiers": "Tidak ada notifier yang dikonfigurasi",
+        "no_override": "",
         "notifier_modal": "{ type, select, true {Ubah} false {Buat} other {Lainnya}} Notifier",
         "notifiers": "Notifier",
         "notifiers_sub": "Dapatkan pemberitahuan untuk pengingat pemeliharaan mendatang",
+        "override_locale": "",
         "test": "Pengujian",
         "theme_settings": "Pengaturan Tampilan",
         "theme_settings_sub": "Pengaturan tema disimpan di penyimpanan lokal browser Anda. Anda dapat mengubah tema kapan saja. Jika Anda\nmengalami masalah dalam mengatur tema, coba refresh browser Anda.",
+        "toast": {
+            "account_deleted": "",
+            "failed_change_password": "",
+            "failed_create_notifier": "",
+            "failed_delete_account": "",
+            "failed_delete_notifier": "",
+            "failed_get_currencies": "",
+            "failed_test_notifier": "",
+            "failed_update_group": "",
+            "failed_update_notifier": "",
+            "group_updated": "",
+            "notifier_test_success": "",
+            "password_changed": ""
+        },
         "update_group": "Perbarui Grup",
         "update_language": "Perbarui Bahasa",
         "url": "URL",
         "user_profile": "Profil Pengguna",
         "user_profile_sub": "Undang pengguna, dan kelola akun Anda."
     },
+    "reports": {
+        "label_generator": {
+            "asset_end": "",
+            "asset_start": "",
+            "base_url": "",
+            "bordered_labels": "",
+            "generate_page": "",
+            "input_placeholder": "",
+            "instruction_1": "",
+            "instruction_2": "",
+            "instruction_3": "",
+            "label_height": "",
+            "label_width": "",
+            "measure_type": "",
+            "page_bottom_padding": "",
+            "page_height": "",
+            "page_left_padding": "",
+            "page_right_padding": "",
+            "page_top_padding": "",
+            "page_width": "",
+            "qr_code_example": "",
+            "tip_1": "",
+            "tip_2": "",
+            "tip_3": "",
+            "tips": "",
+            "title": "",
+            "toast": {
+                "page_too_small_card": ""
+            }
+        }
+    },
+    "scanner": {
+        "error": "",
+        "invalid_url": "",
+        "no_sources": "",
+        "permission_denied": "",
+        "select_video_source": "",
+        "title": "",
+        "unsupported": ""
+    },
     "tools": {
         "actions": "Kelola Inventaris",
         "actions_set": {
             "ensure_ids": "Pastikan ID Aset",
             "ensure_ids_button": "Pastikan ID Aset",
+            "ensure_ids_confirm": "",
             "ensure_ids_sub": "Memastikan semua item dalam inventaris Anda memiliki kolom asset_id yang valid. Hal ini dilakukan dengan mencari nilai asset_id tertinggi saat ini dalam database dan menerapkan nilai berikutnya ke setiap item yang kolom asset_id-nya belum diatur. Proses ini diurutkan berdasarkan kolom created_at.",
             "ensure_import_refs": "Pastikan Ref Impor",
             "ensure_import_refs_button": "Pastikan Ref Impor",
             "ensure_import_refs_sub": "Memastikan semua item dalam inventaris Anda memiliki kolom import_ref yang valid. Hal ini dilakukan dengan membuat string 8 karakter acak untuk setiap item yang kolom import_ref-nya belum diatur.",
             "set_primary_photo": "Atur Foto Utama",
             "set_primary_photo_button": "Atur Foto Utama",
+            "set_primary_photo_confirm": "",
             "set_primary_photo_sub": "Pada Homebox versi 0.10.0, kolom gambar utama ditambahkan ke lampiran bertipe foto. Ini akan mengatur kolom gambar utama ke gambar pertama dalam lampiran di database, jika belum diatur. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'See GitHub PR #576'</a>'",
             "zero_datetimes": "Format Waktu Kosong",
             "zero_datetimes_button": "Format Waktu Kosong",
+            "zero_datetimes_confirm": "",
             "zero_datetimes_sub": "Mengatur ulang nilai waktu untuk semua bidang tanggal dan waktu di inventaris Anda ke awal tanggal. Ini untuk memperbaiki bug yang muncul di awal pengembangan situs yang menyebabkan nilai waktu disimpan bersama waktu, yang mengakibatkan masalah pada tampilan nilai tanggal yang akurat. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'"
         },
         "actions_sub": "Terapkan tindakan ke inventaris Anda secara massal. Tindakan ini tidak dapat diurungkan. <b>Hati-hati.</b>",
@@ -352,6 +586,7 @@
             "export_sub": "Mengekspor semua item ke file CSV dengan format standar Homebox.",
             "import": "Impor Inventaris",
             "import_button": "Impor Inventaris",
+            "import_ref_confirm": "",
             "import_sub": "Mengimpor CSV dengan format standar Homebox. Tanpa kolom '<code>HB.import_ref</code>', impor ini <b>tidak</b> akan menimpa item yang sudah ada di inventaris Anda, hanya menambahkan item baru. Baris dengan kolom '<code>HB.import_ref</code>' akan digabungkan ke item yang sudah ada dengan import_ref yang sama, jika ada."
         },
         "import_export_sub": "Impor dan ekspor inventaris Anda ke dan dari file CSV. Ini berguna untuk memigrasikan inventaris Anda ke instance Homebox yang baru.",
@@ -364,6 +599,13 @@
             "bill_of_materials_button": "Download Daftar Inventaris",
             "bill_of_materials_sub": "Menghasilkan file CSV (Comma Separated Values) yang dapat diimpor ke program spreadsheet. Ini adalah ringkasan inventaris Anda dengan info dasar beserta harganya."
         },
-        "reports_sub": "Buat laporan yang berbeda untuk inventaris Anda."
+        "reports_sub": "Buat laporan yang berbeda untuk inventaris Anda.",
+        "toast": {
+            "asset_success": "",
+            "failed_ensure_ids": "",
+            "failed_ensure_import_refs": "",
+            "failed_set_primary_photos": "",
+            "failed_zero_datetimes": ""
+        }
     }
 }

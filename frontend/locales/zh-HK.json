@@ -1,23 +1,122 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "",
+                "enter": "",
+                "shift": ""
+            },
             "import_dialog": {
                 "change_warning": "現有 import_refs 的導入行為已變更。如果 CSV 檔案中存在 import_ref，則\n項目將使用 CSV 檔案中的值進行更新。",
                 "description": "匯入包含您的商品、標籤和位置的 CSV 檔案。有關所需格式的更多信息\n，請參閱文件。",
-                "title": "匯入CSV檔案"
+                "title": "匯入CSV檔案",
+                "toast": {
+                    "import_failed": "",
+                    "import_success": "",
+                    "please_select_file": ""
+                }
+            },
+            "outdated": {
+                "current_version": "",
+                "dismiss": "",
+                "latest_version": "",
+                "new_version_available": "",
+                "new_version_available_link": ""
+            }
+        },
+        "form": {
+            "password": {
+                "toggle_show": ""
             }
         },
         "global": {
+            "copy_text": {
+                "documentation": "",
+                "failed_to_copy": "",
+                "https_required": "",
+                "learn_more": ""
+            },
+            "date_time": {
+                "ago": "",
+                "days": "",
+                "hour": "",
+                "hours": "",
+                "in": "",
+                "just-now": "",
+                "last-month": "",
+                "last-week": "",
+                "last-year": "",
+                "minute": "",
+                "minutes": "",
+                "months": "",
+                "next-month": "",
+                "next-week": "",
+                "next-year": "",
+                "second": "",
+                "seconds": "",
+                "tomorrow": "",
+                "week": "",
+                "weeks": "",
+                "years": "",
+                "yesterday": ""
+            },
+            "label_maker": {
+                "browser_print": "",
+                "confirm_description": "",
+                "download": "",
+                "print": "",
+                "server_print": "",
+                "titles": "",
+                "toast": {
+                    "load_status_failed": "",
+                    "print_failed": "",
+                    "print_success": ""
+                }
+            },
             "page_qr_code": {
-                "page_url": "頁面網址"
+                "page_url": "頁面網址",
+                "qr_tooltip": ""
             },
             "password_score": {
                 "password_strength": "密碼強度"
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "",
+                "open_new_tab": ""
+            },
             "create_modal": {
-                "title": "新增項目"
+                "delete_photo": "",
+                "item_description": "",
+                "item_name": "",
+                "item_photo": "",
+                "item_quantity": "",
+                "parent_item": "",
+                "rotate_photo": "",
+                "set_as_primary_photo": "",
+                "title": "新增項目",
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": "",
+                    "failed_load_parent": "",
+                    "no_canvas_support": "",
+                    "please_select_location": "",
+                    "rotate_failed": "",
+                    "rotate_process_failed": "",
+                    "some_photos_failed": "",
+                    "upload_failed": "",
+                    "upload_success": "",
+                    "uploading_photos": ""
+                },
+                "upload_photos": "",
+                "uploaded": ""
+            },
+            "selector": {
+                "no_results": "",
+                "placeholder": "",
+                "search_placeholder": ""
             },
             "view": {
                 "selectable": {
@@ -25,41 +124,114 @@
                     "items": "項目",
                     "no_items": "沒有可顯示的項目",
                     "table": "表格"
+                },
+                "table": {
+                    "headers": "",
+                    "page": "",
+                    "rows_per_page": "",
+                    "table_settings": "",
+                    "view_item": ""
                 }
             }
         },
         "label": {
             "create_modal": {
-                "title": "新增標籤"
+                "label_description": "",
+                "label_name": "",
+                "title": "新增標籤",
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": "",
+                    "label_name_too_long": ""
+                }
+            },
+            "selector": {
+                "select_labels": ""
             }
         },
         "location": {
             "create_modal": {
-                "title": "新增地點"
+                "location_description": "",
+                "location_name": "",
+                "title": "新增地點",
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": ""
+                }
+            },
+            "selector": {
+                "no_location_found": "",
+                "parent_location": "",
+                "search_location": "",
+                "select_location": ""
+            },
+            "tree": {
+                "no_locations": ""
             }
+        },
+        "quick_menu": {
+            "no_results": "",
+            "shortcut_hint": ""
         }
     },
     "global": {
+        "add": "",
+        "archived": "",
         "build": "建立{ build }",
+        "cancel": "",
         "confirm": "確認",
         "create": "新增",
         "create_and_add": "創建並添加另一個",
+        "create_subitem": "",
         "created": "已建立",
+        "delete": "",
+        "delete_confirm": "",
+        "demo_instance": "",
+        "details": "",
+        "duplicate": "",
+        "edit": "",
         "email": "電子信箱",
         "follow_dev": "關注開發者",
+        "footer": {
+            "api_link": "",
+            "version_link": ""
+        },
         "github": "GitHub項目",
+        "insured": "",
         "items": "項目",
         "join_discord": "加入Discord",
         "labels": "標籤",
+        "loading": "",
         "locations": "地點",
+        "maintenance": "",
         "name": "名字",
+        "navigate": "",
         "password": "密碼",
+        "quantity": "",
         "read_docs": "閱讀文件",
+        "return_home": "",
+        "save": "",
         "search": "搜尋",
         "sign_out": "登出",
         "submit": "提交",
+        "unknown": "",
+        "update": "",
+        "updating": "",
+        "value": "",
         "version": "版本:{ version }",
         "welcome": "歡迎，{ username }"
+    },
+    "home": {
+        "labels": "",
+        "quick_statistics": "",
+        "recently_added": "",
+        "storage_locations": "",
+        "total_items": "",
+        "total_labels": "",
+        "total_locations": "",
+        "total_value": ""
     },
     "index": {
         "disabled_registration": "已禁用註冊",
@@ -71,33 +243,234 @@
         "set_email": "你的電子郵件是什麼？",
         "set_name": "你叫什麼名字？",
         "set_password": "設定您的密碼",
-        "tagline": "追蹤、組織和管理您的物品。"
+        "tagline": "追蹤、組織和管理您的物品。",
+        "title": "",
+        "toast": {
+            "invalid_email": "",
+            "invalid_email_password": "",
+            "login_success": "",
+            "problem_registering": "",
+            "user_registered": ""
+        }
     },
     "items": {
         "add": "添加",
+        "advanced": "",
+        "archived": "",
+        "asset_id": "",
+        "associated_with_multiple": "",
+        "attachment": "",
+        "attachments": "",
+        "changes_persisted_immediately": "",
         "created_at": "創建於",
         "custom_fields": "自訂欄位",
+        "delete_attachment_confirm": "",
+        "delete_item_confirm": "",
+        "description": "",
+        "details": "",
+        "drag_and_drop": "",
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "",
+                "attachment_type": "",
+                "primary_photo": "",
+                "primary_photo_sub": "",
+                "select_type": "",
+                "title": ""
+            }
+        },
+        "edit_details": "",
         "field_selector": "欄位選擇器",
         "field_value": "欄位值",
         "first": "第一項",
         "include_archive": "包括存檔項目",
+        "insured": "",
+        "invalid_asset_id": "",
         "last": "最後一項",
+        "lifetime_warranty": "",
+        "location": "",
+        "manual": "",
+        "manuals": "",
+        "manufacturer": "",
+        "model_number": "",
+        "name": "",
         "negate_labels": "取消選定的標籤",
         "next_page": "下一頁",
+        "no_attachments": "",
         "no_results": "沒有找到項目",
+        "notes": "",
+        "only_with_photo": "",
+        "only_without_photo": "",
         "options": "選項",
         "order_by": "排序",
         "pages": "第{ page } 頁(共{ totalPages })",
+        "parent_item": "",
+        "photo": "",
+        "photos": "",
         "prev_page": "上一頁",
+        "purchase_date": "",
+        "purchase_details": "",
+        "purchase_price": "",
+        "purchased_from": "",
+        "quantity": "",
         "query_id": "查詢資產ID號碼:{ id }",
+        "receipt": "",
+        "receipts": "",
         "reset_search": "重置搜尋",
         "results": "{ total }結果",
+        "select_field": "",
+        "serial_number": "",
+        "show_advanced_view_options": "",
+        "sold_at": "",
+        "sold_details": "",
+        "sold_price": "",
+        "sold_to": "",
+        "sync_child_locations": "",
         "tip_1": "位置和標籤過濾器使用“OR”運算。如果選擇了多個，則一次配對\n只會使用一個。",
         "tip_2": "以「#」為前綴的搜尋將查詢資產 ID（例如「#000-001」）",
         "tip_3": "字段過濾器使用“OR”運算。如果選擇了多個，則一次配對只需要選擇\n一個。",
         "tips": "提示",
         "tips_sub": "搜尋技巧",
-        "updated_at": "更新於"
+        "toast": {
+            "asset_not_found": "",
+            "attachment_deleted": "",
+            "attachment_updated": "",
+            "attachment_uploaded": "",
+            "child_items_location_no_longer_synced": "",
+            "child_items_location_synced": "",
+            "child_location_desync": "",
+            "error_loading_parent_data": "",
+            "failed_adjust_quantity": "",
+            "failed_delete_attachment": "",
+            "failed_delete_item": "",
+            "failed_duplicate_item": "",
+            "failed_load_asset": "",
+            "failed_load_item": "",
+            "failed_load_items": "",
+            "failed_save": "",
+            "failed_save_no_location": "",
+            "failed_search_items": "",
+            "failed_update_attachment": "",
+            "failed_upload_attachment": "",
+            "item_deleted": "",
+            "item_saved": "",
+            "quantity_cannot_negative": "",
+            "sync_child_location": ""
+        },
+        "updated_at": "更新於",
+        "warranty": "",
+        "warranty_details": "",
+        "warranty_expires": ""
+    },
+    "labels": {
+        "label_delete_confirm": "",
+        "no_results": "",
+        "toast": {
+            "failed_delete_label": "",
+            "failed_load_label": "",
+            "failed_update_label": "",
+            "label_deleted": "",
+            "label_updated": ""
+        },
+        "update_label": ""
+    },
+    "languages": {
+        "ca": "",
+        "cs-CZ": "",
+        "da-DK": "",
+        "de": "",
+        "en": "",
+        "es": "",
+        "fi-FI": "",
+        "fr": "",
+        "hu": "",
+        "id-ID": "",
+        "it": "",
+        "ja-JP": "",
+        "ko-KR": "",
+        "lb-LU": "",
+        "lt-LT": "",
+        "nb-NO": "",
+        "nl": "",
+        "pl": "",
+        "pt-BR": "",
+        "pt-PT": "",
+        "ro-RO": "",
+        "ru": "",
+        "sk-SK": "",
+        "sl": "",
+        "sq-AL": "",
+        "sv": "",
+        "ta-IN": "",
+        "th-TH": "",
+        "tr": "",
+        "uk-UA": "",
+        "zh-CN": "",
+        "zh-HK": "",
+        "zh-MO": "",
+        "zh-TW": ""
+    },
+    "locations": {
+        "child_locations": "",
+        "collapse_tree": "",
+        "expand_tree": "",
+        "location_items_delete_confirm": "",
+        "no_results": "",
+        "toast": {
+            "failed_delete_location": "",
+            "failed_load_location": "",
+            "failed_update_location": "",
+            "location_deleted": "",
+            "location_updated": ""
+        },
+        "update_location": ""
+    },
+    "maintenance": {
+        "filter": {
+            "both": "",
+            "completed": "",
+            "scheduled": ""
+        },
+        "list": {
+            "complete": "",
+            "create_first": "",
+            "delete": "",
+            "duplicate": "",
+            "edit": "",
+            "new": ""
+        },
+        "modal": {
+            "completed_date": "",
+            "cost": "",
+            "delete_confirmation": "",
+            "edit_action": "",
+            "edit_title": "",
+            "entry_name": "",
+            "new_action": "",
+            "new_title": "",
+            "notes": "",
+            "scheduled_date": ""
+        },
+        "monthly_average": "",
+        "toast": {
+            "failed_to_create": "",
+            "failed_to_delete": "",
+            "failed_to_update": ""
+        },
+        "total_cost": "",
+        "total_entries": ""
+    },
+    "menu": {
+        "create_item": "",
+        "create_label": "",
+        "create_location": "",
+        "home": "",
+        "locations": "",
+        "maintenance": "",
+        "profile": "",
+        "scanner": "",
+        "search": "",
+        "tools": ""
     },
     "profile": {
         "active": "活躍",
@@ -105,22 +478,134 @@
         "currency_format": "貨幣格式",
         "current_password": "當前密碼",
         "delete_account": "刪除帳戶",
+        "delete_account_confirm": "",
         "delete_account_sub": "刪除您的帳戶及其所有相關資料。此操作無法撤回。",
+        "delete_notifier_confirm": "",
+        "display_legacy_header": "",
         "enabled": "啟用",
+        "example": "",
         "gen_invite": "產生邀請連結",
         "group_settings": "群組設定",
         "group_settings_sub": "共享群組設定。您可能需要刷新瀏覽器才能套用設定。",
         "inactive": "不活躍",
+        "language": "",
         "new_password": "新密碼",
+        "no_notifiers": "",
+        "no_override": "",
         "notifier_modal": "通知 { type, select, true {Edit} false {Create} other {Other}}",
         "notifiers": "通知者",
         "notifiers_sub": "獲取即將到來的維護提醒的通知",
+        "override_locale": "",
         "test": "測試",
         "theme_settings": "主題設定",
         "theme_settings_sub": "主題設定儲存在瀏覽器的本機儲存中。您可以隨時變更主題。如果你是\n 設定主題時遇到問題，請嘗試刷新瀏覽器。",
+        "toast": {
+            "account_deleted": "",
+            "failed_change_password": "",
+            "failed_create_notifier": "",
+            "failed_delete_account": "",
+            "failed_delete_notifier": "",
+            "failed_get_currencies": "",
+            "failed_test_notifier": "",
+            "failed_update_group": "",
+            "failed_update_notifier": "",
+            "group_updated": "",
+            "notifier_test_success": "",
+            "password_changed": ""
+        },
         "update_group": "更新群組",
+        "update_language": "",
         "url": "網址",
         "user_profile": "使用者資料",
         "user_profile_sub": "邀請使用者並管理您的帳戶。"
+    },
+    "reports": {
+        "label_generator": {
+            "asset_end": "",
+            "asset_start": "",
+            "base_url": "",
+            "bordered_labels": "",
+            "generate_page": "",
+            "input_placeholder": "",
+            "instruction_1": "",
+            "instruction_2": "",
+            "instruction_3": "",
+            "label_height": "",
+            "label_width": "",
+            "measure_type": "",
+            "page_bottom_padding": "",
+            "page_height": "",
+            "page_left_padding": "",
+            "page_right_padding": "",
+            "page_top_padding": "",
+            "page_width": "",
+            "qr_code_example": "",
+            "tip_1": "",
+            "tip_2": "",
+            "tip_3": "",
+            "tips": "",
+            "title": "",
+            "toast": {
+                "page_too_small_card": ""
+            }
+        }
+    },
+    "scanner": {
+        "error": "",
+        "invalid_url": "",
+        "no_sources": "",
+        "permission_denied": "",
+        "select_video_source": "",
+        "title": "",
+        "unsupported": ""
+    },
+    "tools": {
+        "actions": "",
+        "actions_set": {
+            "ensure_ids": "",
+            "ensure_ids_button": "",
+            "ensure_ids_confirm": "",
+            "ensure_ids_sub": "",
+            "ensure_import_refs": "",
+            "ensure_import_refs_button": "",
+            "ensure_import_refs_sub": "",
+            "set_primary_photo": "",
+            "set_primary_photo_button": "",
+            "set_primary_photo_confirm": "",
+            "set_primary_photo_sub": "",
+            "zero_datetimes": "",
+            "zero_datetimes_button": "",
+            "zero_datetimes_confirm": "",
+            "zero_datetimes_sub": ""
+        },
+        "actions_sub": "",
+        "import_export": "",
+        "import_export_set": {
+            "export": "",
+            "export_button": "",
+            "export_sub": "",
+            "import": "",
+            "import_button": "",
+            "import_ref_confirm": "",
+            "import_sub": ""
+        },
+        "import_export_sub": "",
+        "reports": "",
+        "reports_set": {
+            "asset_labels": "",
+            "asset_labels_button": "",
+            "asset_labels_sub": "",
+            "bill_of_materials": "",
+            "bill_of_materials_button": "",
+            "bill_of_materials_sub": ""
+        },
+        "reports_sub": "",
+        "toast": {
+            "asset_success": "",
+            "failed_ensure_ids": "",
+            "failed_ensure_import_refs": "",
+            "failed_set_primary_photos": "",
+            "failed_zero_datetimes": ""
+        }
     }
 }

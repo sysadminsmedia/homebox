@@ -1,10 +1,20 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "使用{shiftKey}+{enterKey}来创建并添加另一个。",
+                "enter": "Enter",
+                "shift": "Shift"
+            },
             "import_dialog": {
                 "change_warning": "导入行为会导致现有的 import_refs 的字段被覆盖。\n如果 CSV 文件中存在 import_ref，则将使用 CSV 文件中的值更新该项。",
                 "description": "导入包含物品、标签和位置的CSV文件。更多有关信息，\n请参阅文档查看所需格式。",
-                "title": "导入 CSV 文件"
+                "title": "导入 CSV 文件",
+                "toast": {
+                    "import_failed": "导入失败。请重新尝试。",
+                    "import_success": "导入成功！",
+                    "please_select_file": "请选择需要导入的文件。"
+                }
             },
             "outdated": {
                 "current_version": "当前版本",
@@ -12,6 +22,11 @@
                 "latest_version": "最新版本",
                 "new_version_available": "有新版本发布了",
                 "new_version_available_link": "点击这里了解新版本更新内容"
+            }
+        },
+        "form": {
+            "password": {
+                "toggle_show": "切换密码显示"
             }
         },
         "global": {
@@ -51,7 +66,12 @@
                 "download": "下载标签",
                 "print": "打印标签",
                 "server_print": "在服务器上打印",
-                "titles": "标签"
+                "titles": "标签",
+                "toast": {
+                    "load_status_failed": "加载状态失败",
+                    "print_failed": "打印标签失败",
+                    "print_success": "标签已打印"
+                }
             },
             "page_qr_code": {
                 "page_url": "页面URL",
@@ -62,14 +82,41 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "下载",
+                "open_new_tab": "在新标签页中打开"
+            },
             "create_modal": {
+                "delete_photo": "删除照片",
                 "item_description": "物品描述",
                 "item_name": "物品名称",
                 "item_photo": "物品照片📷",
                 "item_quantity": "物品数量",
                 "parent_item": "父项目",
+                "rotate_photo": "旋转照片",
+                "set_as_primary_photo": "设置为{isPrimary, select, true {非} false {} other {}}主照片",
                 "title": "创建物品",
-                "upload_photos": "上传照片"
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": "",
+                    "failed_load_parent": "",
+                    "no_canvas_support": "",
+                    "please_select_location": "",
+                    "rotate_failed": "",
+                    "rotate_process_failed": "",
+                    "some_photos_failed": "",
+                    "upload_failed": "",
+                    "upload_success": "",
+                    "uploading_photos": ""
+                },
+                "upload_photos": "上传照片",
+                "uploaded": ""
+            },
+            "selector": {
+                "no_results": "",
+                "placeholder": "",
+                "search_placeholder": ""
             },
             "view": {
                 "selectable": {
@@ -82,7 +129,8 @@
                     "headers": "页眉",
                     "page": "页",
                     "rows_per_page": "每页行数",
-                    "table_settings": "表格设置"
+                    "table_settings": "表格设置",
+                    "view_item": ""
                 }
             }
         },
@@ -90,7 +138,13 @@
             "create_modal": {
                 "label_description": "标签说明",
                 "label_name": "标签名称",
-                "title": "创建标签"
+                "title": "创建标签",
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": "",
+                    "label_name_too_long": ""
+                }
             },
             "selector": {
                 "select_labels": "选择标签"
@@ -100,7 +154,12 @@
             "create_modal": {
                 "location_description": "位置描述",
                 "location_name": "位置名称",
-                "title": "创建位置"
+                "title": "创建位置",
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": ""
+                }
             },
             "selector": {
                 "no_location_found": "未找到位置",
@@ -128,15 +187,23 @@
         "create_subitem": "创建子项目",
         "created": "已创建",
         "delete": "刪除",
+        "delete_confirm": "",
+        "demo_instance": "",
         "details": "详情",
         "duplicate": "复制",
         "edit": "修改",
         "email": "邮箱",
         "follow_dev": "关注开发者",
+        "footer": {
+            "api_link": "",
+            "version_link": ""
+        },
         "github": "Github项目",
+        "insured": "",
         "items": "物品",
         "join_discord": "加入Discord讨论",
         "labels": "标签",
+        "loading": "",
         "locations": "位置",
         "maintenance": "维护",
         "name": "名称",
@@ -144,11 +211,14 @@
         "password": "密码",
         "quantity": "数量",
         "read_docs": "查阅文档",
+        "return_home": "",
         "save": "保存",
         "search": "搜索",
         "sign_out": "登出",
         "submit": "提交",
+        "unknown": "",
         "update": "更新",
+        "updating": "",
         "value": "值",
         "version": "版本：{version}",
         "welcome": "欢迎，{username}"
@@ -173,27 +243,49 @@
         "set_email": "您的电子邮箱是什么？",
         "set_name": "你的名称叫什么？",
         "set_password": "设置密码",
-        "tagline": "跟踪、整理和管理您的物品。"
+        "tagline": "跟踪、整理和管理您的物品。",
+        "title": "",
+        "toast": {
+            "invalid_email": "",
+            "invalid_email_password": "",
+            "login_success": "",
+            "problem_registering": "",
+            "user_registered": ""
+        }
     },
     "items": {
         "add": "添加",
         "advanced": "进阶",
         "archived": "已归档",
         "asset_id": "资产ID",
+        "associated_with_multiple": "",
         "attachment": "附件",
         "attachments": "附件",
         "changes_persisted_immediately": "对附件的更改将会立即保存",
         "created_at": "创建于",
         "custom_fields": "自定义字段",
+        "delete_attachment_confirm": "",
+        "delete_item_confirm": "",
         "description": "说明",
         "details": "详情",
         "drag_and_drop": "将文件拖拽到此或点击添加文件",
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "",
+                "attachment_type": "",
+                "primary_photo": "",
+                "primary_photo_sub": "",
+                "select_type": "",
+                "title": ""
+            }
+        },
         "edit_details": "编辑详情",
         "field_selector": "字段选择",
         "field_value": "字段值",
         "first": "第一页",
         "include_archive": "包括已存档的项目",
         "insured": "保险",
+        "invalid_asset_id": "",
         "last": "最后一页",
         "lifetime_warranty": "包含终身保修",
         "location": "位置",
@@ -204,6 +296,7 @@
         "name": "名称",
         "negate_labels": "取消选中的标签",
         "next_page": "下一页",
+        "no_attachments": "",
         "no_results": "没有可显示的物品",
         "notes": "笔记",
         "only_with_photo": "只包含带有照片的物品",
@@ -225,24 +318,60 @@
         "receipts": "单据",
         "reset_search": "重置搜索",
         "results": "{ total } 条结果",
+        "select_field": "",
         "serial_number": "序列号",
         "show_advanced_view_options": "显示高级选项",
         "sold_at": "出售日期",
         "sold_details": "售出详情",
         "sold_price": "出售价格",
         "sold_to": "出售对象",
+        "sync_child_locations": "",
         "tip_1": "位置和标签过滤器使用“或”操作。如果选择了多个位置或标签，\n则只需要任意一个匹配上即可。",
         "tip_2": "以“#”为前缀的搜索将变成查询资产ID（例如“#000-001” ）",
         "tip_3": "字段过滤器使用“或”操作。如果选择了多个位置或标签，\n则只需要任意一个匹配上即可。",
         "tips": "建议",
         "tips_sub": "搜索提示",
+        "toast": {
+            "asset_not_found": "",
+            "attachment_deleted": "",
+            "attachment_updated": "",
+            "attachment_uploaded": "",
+            "child_items_location_no_longer_synced": "",
+            "child_items_location_synced": "",
+            "child_location_desync": "",
+            "error_loading_parent_data": "",
+            "failed_adjust_quantity": "",
+            "failed_delete_attachment": "",
+            "failed_delete_item": "",
+            "failed_duplicate_item": "",
+            "failed_load_asset": "",
+            "failed_load_item": "",
+            "failed_load_items": "",
+            "failed_save": "",
+            "failed_save_no_location": "",
+            "failed_search_items": "",
+            "failed_update_attachment": "",
+            "failed_upload_attachment": "",
+            "item_deleted": "",
+            "item_saved": "",
+            "quantity_cannot_negative": "",
+            "sync_child_location": ""
+        },
         "updated_at": "更新于",
         "warranty": "保修",
         "warranty_details": "保修详情",
         "warranty_expires": "保修持续到"
     },
     "labels": {
+        "label_delete_confirm": "",
         "no_results": "未找到标签",
+        "toast": {
+            "failed_delete_label": "",
+            "failed_load_label": "",
+            "failed_update_label": "",
+            "label_deleted": "",
+            "label_updated": ""
+        },
         "update_label": "更新标签"
     },
     "languages": {
@@ -285,7 +414,15 @@
         "child_locations": "子位置",
         "collapse_tree": "折叠树",
         "expand_tree": "展开树",
+        "location_items_delete_confirm": "",
         "no_results": "找不到位置",
+        "toast": {
+            "failed_delete_location": "",
+            "failed_load_location": "",
+            "failed_update_location": "",
+            "location_deleted": "",
+            "location_updated": ""
+        },
         "update_location": "更新位置"
     },
     "maintenance": {
@@ -341,7 +478,10 @@
         "currency_format": "货币格式",
         "current_password": "原密码",
         "delete_account": "删除帐户",
+        "delete_account_confirm": "",
         "delete_account_sub": "删除您的帐户及其所有相关数据。这是无法撤消的。",
+        "delete_notifier_confirm": "",
+        "display_legacy_header": "",
         "enabled": "已启用",
         "example": "例子",
         "gen_invite": "生成邀请链接",
@@ -359,16 +499,62 @@
         "test": "测试",
         "theme_settings": "主题设置",
         "theme_settings_sub": "主题设置存储在浏览器的本地存储中。您可以随时更改主题。\n如果您在设置主题时遇到问题，请尝试刷新浏览器。",
+        "toast": {
+            "account_deleted": "",
+            "failed_change_password": "",
+            "failed_create_notifier": "",
+            "failed_delete_account": "",
+            "failed_delete_notifier": "",
+            "failed_get_currencies": "",
+            "failed_test_notifier": "",
+            "failed_update_group": "",
+            "failed_update_notifier": "",
+            "group_updated": "",
+            "notifier_test_success": "",
+            "password_changed": ""
+        },
         "update_group": "更新组",
         "update_language": "更新语言",
         "url": "网址",
         "user_profile": "用户资料",
         "user_profile_sub": "邀请用户共同管理您的资产。"
     },
+    "reports": {
+        "label_generator": {
+            "asset_end": "",
+            "asset_start": "",
+            "base_url": "",
+            "bordered_labels": "",
+            "generate_page": "",
+            "input_placeholder": "",
+            "instruction_1": "",
+            "instruction_2": "",
+            "instruction_3": "",
+            "label_height": "",
+            "label_width": "",
+            "measure_type": "",
+            "page_bottom_padding": "",
+            "page_height": "",
+            "page_left_padding": "",
+            "page_right_padding": "",
+            "page_top_padding": "",
+            "page_width": "",
+            "qr_code_example": "",
+            "tip_1": "",
+            "tip_2": "",
+            "tip_3": "",
+            "tips": "",
+            "title": "",
+            "toast": {
+                "page_too_small_card": ""
+            }
+        }
+    },
     "scanner": {
         "error": "扫描遇到问题",
         "invalid_url": "非法的条形码地址",
         "no_sources": "没有可用的摄像头资源",
+        "permission_denied": "",
         "select_video_source": "选择摄像头",
         "title": "扫描仪",
         "unsupported": "媒体流API只在HTTPS环境下支持"
@@ -378,15 +564,18 @@
         "actions_set": {
             "ensure_ids": "确认资产ID",
             "ensure_ids_button": "确认资产ID",
+            "ensure_ids_confirm": "",
             "ensure_ids_sub": "确保库存中的所有项目都有有效的asset_id字段。它会找到库中最大的asset_id字段，并将下一个值应用于还未设置asset_id字段的每个项目。未设置asset_id的项目将按created_at字段的顺序生成。",
             "ensure_import_refs": "确认导入参考",
             "ensure_import_refs_button": "确认导入参考",
             "ensure_import_refs_sub": "确保库存中的所有项目都有有效的import_ref字段。这是通过为每个具有未设置的import_ref字段的项目随机生成一个8个字符的字符串来实现的。",
             "set_primary_photo": "设置封面图片",
             "set_primary_photo_button": "设置封面",
+            "set_primary_photo_confirm": "",
             "set_primary_photo_sub": "设置封面在 Homebox v0.10.0 版本中，该列的类型为图片。如果没有设置封面，则会把附件中第一张图片作为封面。 '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'更多请参考 GitHub PR #576'</a>'",
             "zero_datetimes": "零项目日期",
             "zero_datetimes_button": "零项目日期",
+            "zero_datetimes_confirm": "",
             "zero_datetimes_sub": "将库存中所有日期时间字段的值重置为开始日期。这是为了修复在网站开发早期出现的一个错误，该错误导致自定义时间值保存时，日期会出现偏移的问题。 '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'详细问题请参考 Github Issue #236 '</a>'"
         },
         "actions_sub": "将操作批量应用于您的库存。这些都是不可逆转的行动'<b> '谨慎操作。'</b>'",
@@ -397,6 +586,7 @@
             "export_sub": "按标准CSV格式导出Homebox。这将导出库存中的所有项目。",
             "import": "导入库存",
             "import_button": "导入库存",
+            "import_ref_confirm": "",
             "import_sub": "Homebox只能导入标准的CSV格式文件。当不存在 '<code>'HB.import_ref'</code>' 列的时候，将 '<b>'不会'</b>' 覆盖现数据库存中的任何现有项目，只添加为新项目。如果与现有的 '<code>'HB.import_ref'</code>' 的项目一样，则会将新旧数据合并。"
         },
         "import_export_sub": "按CSV格式导入和导出您的库存。在将库存迁移到Homebox的新实例时非常有用。",
@@ -409,6 +599,13 @@
             "bill_of_materials_button": "生成物料清单",
             "bill_of_materials_sub": "生成可以导入的CSV电子表格文件（使用逗号分隔值）。这是您的库存摘要，包括基本商品和定价信息。"
         },
-        "reports_sub": "为您的库存生成其他的报告。"
+        "reports_sub": "为您的库存生成其他的报告。",
+        "toast": {
+            "asset_success": "",
+            "failed_ensure_ids": "",
+            "failed_ensure_import_refs": "",
+            "failed_set_primary_photos": "",
+            "failed_zero_datetimes": ""
+        }
     }
 }

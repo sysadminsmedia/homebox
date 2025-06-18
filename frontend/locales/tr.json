@@ -1,10 +1,20 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "",
+                "enter": "",
+                "shift": ""
+            },
             "import_dialog": {
                 "change_warning": "Mevcut import_refs ile içe aktarmaların davranışı değişti. CSV dosyasında bir import_ref varsa, \nöğe CSV dosyasındaki değerlerle güncellenecektir.",
                 "description": "Öğelerinizi, etiketlerinizi ve konumlarınızı içeren bir CSV dosyasını içe aktarın. Daha fazla\nbilgi için dökümanları okuyun.",
-                "title": "CSV dosyasını içeri aktar"
+                "title": "CSV dosyasını içeri aktar",
+                "toast": {
+                    "import_failed": "",
+                    "import_success": "",
+                    "please_select_file": ""
+                }
             },
             "outdated": {
                 "current_version": "Güncel Sürüm",
@@ -12,6 +22,11 @@
                 "latest_version": "Son Sürüm",
                 "new_version_available": "Yeni sürüm mevcut",
                 "new_version_available_link": "Sürüm notlarını görüntülemek için buraya tıklayın"
+            }
+        },
+        "form": {
+            "password": {
+                "toggle_show": ""
             }
         },
         "global": {
@@ -51,7 +66,12 @@
                 "download": "Etiketi İndir",
                 "print": "Etiketi yazdır",
                 "server_print": "Sunucuda yazdır",
-                "titles": "Etiketler"
+                "titles": "Etiketler",
+                "toast": {
+                    "load_status_failed": "",
+                    "print_failed": "",
+                    "print_success": ""
+                }
             },
             "page_qr_code": {
                 "page_url": "Sayfa URL'si",
@@ -62,14 +82,41 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "",
+                "open_new_tab": ""
+            },
             "create_modal": {
+                "delete_photo": "",
                 "item_description": "Ürün Açıklaması",
                 "item_name": "Ürün Adı",
                 "item_photo": "Öğe Fotoğrafı 📷",
                 "item_quantity": "Öğe Miktarı",
                 "parent_item": "Ana Öğe",
+                "rotate_photo": "",
+                "set_as_primary_photo": "",
                 "title": "Eşya Oluştur",
-                "upload_photos": "Fotoğrafları Yükle"
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": "",
+                    "failed_load_parent": "",
+                    "no_canvas_support": "",
+                    "please_select_location": "",
+                    "rotate_failed": "",
+                    "rotate_process_failed": "",
+                    "some_photos_failed": "",
+                    "upload_failed": "",
+                    "upload_success": "",
+                    "uploading_photos": ""
+                },
+                "upload_photos": "Fotoğrafları Yükle",
+                "uploaded": ""
+            },
+            "selector": {
+                "no_results": "",
+                "placeholder": "",
+                "search_placeholder": ""
             },
             "view": {
                 "selectable": {
@@ -82,7 +129,8 @@
                     "headers": "Başlıklar",
                     "page": "Sayfa",
                     "rows_per_page": "Sayfa başına satır sayısı",
-                    "table_settings": "Tablo Ayarları"
+                    "table_settings": "Tablo Ayarları",
+                    "view_item": ""
                 }
             }
         },
@@ -90,7 +138,13 @@
             "create_modal": {
                 "label_description": "Etiket Açıklaması",
                 "label_name": "Etiket Adı",
-                "title": "Etiket oluştur"
+                "title": "Etiket oluştur",
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": "",
+                    "label_name_too_long": ""
+                }
             },
             "selector": {
                 "select_labels": "Etiketleri seçin"
@@ -100,7 +154,12 @@
             "create_modal": {
                 "location_description": "Konum Açıklaması",
                 "location_name": "Konum Adı",
-                "title": "Konum oluştur"
+                "title": "Konum oluştur",
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": ""
+                }
             },
             "selector": {
                 "no_location_found": "Konum bulunamadı",
@@ -128,6 +187,8 @@
         "create_subitem": "Alt Öğe Oluştur",
         "created": "Oluşturuldu",
         "delete": "Sil",
+        "delete_confirm": "",
+        "demo_instance": "",
         "details": "Detaylar",
         "duplicate": "Kopyala",
         "edit": "Düzenle",
@@ -142,6 +203,7 @@
         "items": "Öğeler",
         "join_discord": "Discord'a Katılın",
         "labels": "Etiketler",
+        "loading": "",
         "locations": "Konumlar",
         "maintenance": "Bakım",
         "name": "İsim",
@@ -149,11 +211,14 @@
         "password": "Şifre",
         "quantity": "Miktar",
         "read_docs": "Dokümanları okuyun",
+        "return_home": "",
         "save": "Kaydet",
         "search": "Ara",
         "sign_out": "Oturumu kapat",
         "submit": "Gönder",
+        "unknown": "",
         "update": "Güncelle",
+        "updating": "",
         "value": "Değer",
         "version": "Versiyon:{ version }",
         "welcome": "Hoşgeldin, { username }"
@@ -178,27 +243,49 @@
         "set_email": "E-posta adresiniz nedir?",
         "set_name": "Adın ne?",
         "set_password": "Şifrenizi belirleyin",
-        "tagline": "Eşyalarınızı Takip Edin, Düzenleyin ve Yönetin."
+        "tagline": "Eşyalarınızı Takip Edin, Düzenleyin ve Yönetin.",
+        "title": "",
+        "toast": {
+            "invalid_email": "",
+            "invalid_email_password": "",
+            "login_success": "",
+            "problem_registering": "",
+            "user_registered": ""
+        }
     },
     "items": {
         "add": "Ekle",
         "advanced": "İleri Seviye",
         "archived": "Arşivlendi",
         "asset_id": "Öğe Kimliği",
+        "associated_with_multiple": "",
         "attachment": "Ek",
         "attachments": "Ekler",
         "changes_persisted_immediately": "Eklerde yapılan değişiklikler hemen kaydedilecektir",
         "created_at": "Oluşturulma",
         "custom_fields": "Özel Alanlar",
+        "delete_attachment_confirm": "",
+        "delete_item_confirm": "",
         "description": "Açıklama",
         "details": "Detaylar",
         "drag_and_drop": "Dosyaları buraya sürükleyip bırakın veya dosyaları seçmek için tıklayın",
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "",
+                "attachment_type": "",
+                "primary_photo": "",
+                "primary_photo_sub": "",
+                "select_type": "",
+                "title": ""
+            }
+        },
         "edit_details": "Detayları Düzenle",
         "field_selector": "alan seçici",
         "field_value": "Alan Değeri",
         "first": "Birinci",
         "include_archive": "Arşivlenen Öğeleri Dahil Et",
         "insured": "Sigortalı",
+        "invalid_asset_id": "",
         "last": "Son",
         "lifetime_warranty": "Ömür Boyu Garanti",
         "location": "Konum",
@@ -209,8 +296,11 @@
         "name": "İsim",
         "negate_labels": "Seçili Etiketleri Yoksay",
         "next_page": "Sonraki Sayfa",
+        "no_attachments": "",
         "no_results": "Öğe Bulunamadı",
         "notes": "Notlar",
+        "only_with_photo": "",
+        "only_without_photo": "",
         "options": "Seçenekler",
         "order_by": "Sıralama ölçütü",
         "pages": "Sayfa { page }/{ totalPages }",
@@ -228,42 +318,88 @@
         "receipts": "Faturalar",
         "reset_search": "Aramayı Sıfırla",
         "results": "{ total } Sonuç",
+        "select_field": "",
         "serial_number": "Seri Numarası",
         "show_advanced_view_options": "Gelişmiş Seçenekleri Göster",
         "sold_at": "Satıldığı Yer",
         "sold_details": "Satış Detayları",
         "sold_price": "Satış Fiyatı",
         "sold_to": "Satılan Kişi",
+        "sync_child_locations": "",
         "tip_1": "Konum ve etiket filtreleri 'veya' işlemini kullanır. Eğer birden fazla seçilirse sadece biri \neşleştirme için kullanılacaktır.",
         "tip_2": "'#' ile başlayan aramalar bir varlık kimliğini sorgular (örneğin '#000-001')",
         "tip_3": "Alan filtreleri 'VEYA' işlemini kullanır. Birden fazla seçenek seçilirse, eşleşme için yalnızca birinin \nkarşılanması yeterlidir.",
         "tips": "İpuçları",
         "tips_sub": "Arama İpuçları",
+        "toast": {
+            "asset_not_found": "",
+            "attachment_deleted": "",
+            "attachment_updated": "",
+            "attachment_uploaded": "",
+            "child_items_location_no_longer_synced": "",
+            "child_items_location_synced": "",
+            "child_location_desync": "",
+            "error_loading_parent_data": "",
+            "failed_adjust_quantity": "",
+            "failed_delete_attachment": "",
+            "failed_delete_item": "",
+            "failed_duplicate_item": "",
+            "failed_load_asset": "",
+            "failed_load_item": "",
+            "failed_load_items": "",
+            "failed_save": "",
+            "failed_save_no_location": "",
+            "failed_search_items": "",
+            "failed_update_attachment": "",
+            "failed_upload_attachment": "",
+            "item_deleted": "",
+            "item_saved": "",
+            "quantity_cannot_negative": "",
+            "sync_child_location": ""
+        },
         "updated_at": "Güncellendiği Zaman",
         "warranty": "Garanti",
         "warranty_details": "Garanti Bilgileri",
         "warranty_expires": "Garanti Bitiş Tarihi"
     },
     "labels": {
+        "label_delete_confirm": "",
         "no_results": "Etiket Bulunamadı",
+        "toast": {
+            "failed_delete_label": "",
+            "failed_load_label": "",
+            "failed_update_label": "",
+            "label_deleted": "",
+            "label_updated": ""
+        },
         "update_label": "Etiket Güncelle"
     },
     "languages": {
         "ca": "Katalanca",
+        "cs-CZ": "",
         "de": "Almanca",
         "en": "İngilizce",
         "es": "İspanyolca",
+        "fi-FI": "",
         "fr": "Fransızca",
         "hu": "Macarca",
+        "id-ID": "",
         "it": "İtalyanca",
         "ja-JP": "Japonca",
+        "ko-KR": "",
+        "lb-LU": "",
+        "lt-LT": "",
+        "nb-NO": "",
         "nl": "Hollandaca",
         "pl": "Lehçe",
         "pt-BR": "Brezilya Portekizcesi",
         "pt-PT": "Portekizce (Portekiz)",
         "ru": "Rusça",
         "sl": "Slovence",
+        "sq-AL": "",
         "sv": "İsveççe",
+        "ta-IN": "",
+        "th-TH": "",
         "tr": "Türkçe",
         "uk-UA": "Ukraynaca",
         "zh-CN": "Basitleştirilmiş Çince",
@@ -277,7 +413,16 @@
     "locations": {
         "child_locations": "Alt konumlar",
         "collapse_tree": "Ağacı Daralt",
+        "expand_tree": "",
+        "location_items_delete_confirm": "",
         "no_results": "Konum bulunamadı",
+        "toast": {
+            "failed_delete_location": "",
+            "failed_load_location": "",
+            "failed_update_location": "",
+            "location_deleted": "",
+            "location_updated": ""
+        },
         "update_location": "Konumu Güncelle"
     },
     "maintenance": {
@@ -323,6 +468,7 @@
         "locations": "Konumlar",
         "maintenance": "Bakım",
         "profile": "Profil",
+        "scanner": "",
         "search": "Ara",
         "tools": "Araçlar"
     },
@@ -332,7 +478,10 @@
         "currency_format": "Para Birimi Biçimi",
         "current_password": "Mevcut Şifre",
         "delete_account": "Hesabı Sil",
+        "delete_account_confirm": "",
         "delete_account_sub": "Hesabınızı ve ona bağlı tüm verileri silin. Bu işlem geri alınamaz.",
+        "delete_notifier_confirm": "",
+        "display_legacy_header": "",
         "enabled": "Etkinleştirildi",
         "example": "Örnek",
         "gen_invite": "Davet Bağlantısı Oluştur",
@@ -342,35 +491,91 @@
         "language": "Dil",
         "new_password": "Yeni Şifre",
         "no_notifiers": "Yapılandırılmış bildirimci yok",
+        "no_override": "",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Bildirici",
         "notifiers": "Bildirimde Bulunanlar",
         "notifiers_sub": "Yaklaşan bakım hatırlatmaları için bildirimler alın",
+        "override_locale": "",
         "test": "Test",
         "theme_settings": "Tema Ayarları",
         "theme_settings_sub": "Tema ayarları tarayıcınızın yerel depolama alanında saklanır. Temayı istediğiniz zaman değiştirebilirsiniz. \nTemanızı ayarlamakta sorun yaşıyorsanız, tarayıcınızı yenilemeyi deneyin.",
+        "toast": {
+            "account_deleted": "",
+            "failed_change_password": "",
+            "failed_create_notifier": "",
+            "failed_delete_account": "",
+            "failed_delete_notifier": "",
+            "failed_get_currencies": "",
+            "failed_test_notifier": "",
+            "failed_update_group": "",
+            "failed_update_notifier": "",
+            "group_updated": "",
+            "notifier_test_success": "",
+            "password_changed": ""
+        },
         "update_group": "Grubu Güncelle",
         "update_language": "Dili Güncelle",
         "url": "URL",
         "user_profile": "Kullanıcı Profili",
         "user_profile_sub": "Kullanıcıları davet edin ve hesabınızı yönetin."
     },
+    "reports": {
+        "label_generator": {
+            "asset_end": "",
+            "asset_start": "",
+            "base_url": "",
+            "bordered_labels": "",
+            "generate_page": "",
+            "input_placeholder": "",
+            "instruction_1": "",
+            "instruction_2": "",
+            "instruction_3": "",
+            "label_height": "",
+            "label_width": "",
+            "measure_type": "",
+            "page_bottom_padding": "",
+            "page_height": "",
+            "page_left_padding": "",
+            "page_right_padding": "",
+            "page_top_padding": "",
+            "page_width": "",
+            "qr_code_example": "",
+            "tip_1": "",
+            "tip_2": "",
+            "tip_3": "",
+            "tips": "",
+            "title": "",
+            "toast": {
+                "page_too_small_card": ""
+            }
+        }
+    },
     "scanner": {
-        "permission_denied": "Kamera izni reddedildi, lütfen tarayıcı ayarlarınızda kameraya erişime izin verin"
+        "error": "",
+        "invalid_url": "",
+        "no_sources": "",
+        "permission_denied": "Kamera izni reddedildi, lütfen tarayıcı ayarlarınızda kameraya erişime izin verin",
+        "select_video_source": "",
+        "title": "",
+        "unsupported": ""
     },
     "tools": {
         "actions": "Envanter İşlemleri",
         "actions_set": {
             "ensure_ids": "Varlık Kimliklerini Sağlayın",
             "ensure_ids_button": "Varlık Kimliklerini Sağlayın",
+            "ensure_ids_confirm": "",
             "ensure_ids_sub": "Envanterinizdeki tüm öğelerin geçerli bir asset_id alanına sahip olmasını sağlar. Bu, veritabanındaki en yüksek mevcut asset_id alanını bulup, ayarlanmamış asset_id alanına sahip her öğeye bir sonraki değeri uygulayarak yapılır. Bu işlem, created_at alanına göre sıralanarak gerçekleştirilir.",
             "ensure_import_refs": "İçe Aktarma Referanslarını Sağlayın",
             "ensure_import_refs_button": "İçe Aktarma Referanslarını Sağlayın",
             "ensure_import_refs_sub": "Envanterinizdeki tüm öğelerin geçerli bir import_ref alanına sahip olmasını sağlar. Bu, ayarlanmamış import_ref alanına sahip her öğe için rastgele 8 karakterli bir dize oluşturarak yapılır.",
             "set_primary_photo": "Ana Fotoğrafı Ayarla",
             "set_primary_photo_button": "Ana Fotoğrafı Ayarla",
+            "set_primary_photo_confirm": "",
             "set_primary_photo_sub": "Homebox'un v0.10.0 sürümünde, fotoğraf türündeki ekler için birincil görüntü alanı eklendi. Bu işlem, veritabanındaki ekler dizisindeki ilk görüntüyü, eğer zaten ayarlanmamışsa, birincil görüntü alanı olarak ayarlayacaktır. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'GitHub #576'yı Gör'</a>",
             "zero_datetimes": "Sıfır Öğesi Tarih Saatleri",
             "zero_datetimes_button": "Sıfır Öğe Tarih Saatleri",
+            "zero_datetimes_confirm": "",
             "zero_datetimes_sub": "Tarih saat alanlarındaki tüm zaman değerlerini en baştaki tarihe sıfırlar. Bu, sitenin geliştirilmesi sırasında erken aşamalarda ortaya çıkan ve zaman değerinin saklanmasına neden olan bir hatayı düzeltmek içindir; bu da tarih alanlarının doğru değerler göstermesinde sorunlara yol açıyordu. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Daha fazla bilgi için Github Sorunu #236'ya Bakın.'</a>'"
         },
         "actions_sub": "Envanterinize toplu olarak işlemler uygulayın. Bu işlemler geri alınamaz. '<b>'Dikkatli olun.'</b>",
@@ -381,6 +586,7 @@
             "export_sub": "Homebox için standart CSV formatını dışa aktarır. Bu, envanterinizdeki tüm öğeleri dışa aktaracaktır.",
             "import": "Envanteri İçe Aktar",
             "import_button": "Envanteri İçe Aktar",
+            "import_ref_confirm": "",
             "import_sub": "Homebox için standart CSV formatını içe aktarır. '<code>'HB.import_ref'</code>' sütunu olmadan, bu mevcut envanterinizdeki herhangi bir öğeyi '<b>'üzerine yazmaz'</b>', yalnızca yeni öğeler ekler. '<code>'HB.import_ref'</code>' sütununa sahip satırlar, varsa aynı import_ref'e sahip mevcut öğelerle birleştirilir."
         },
         "import_export_sub": "Envanterinizi bir CSV dosyasına içe ve dışa aktarın. Bu, envanterinizi yeni bir Homebox örneğine taşımak için faydalıdır.",
@@ -393,6 +599,13 @@
             "bill_of_materials_button": "Malzeme Listesi Oluştur",
             "bill_of_materials_sub": "Bir elektronik tablo programına içe aktarılabilen bir CSV (Virgülle Ayrılmış Değerler) dosyası oluşturur. Bu, envanterinizin temel öğe ve fiyat bilgileriyle birlikte bir özetidir."
         },
-        "reports_sub": "Envanteriniz için farklı raporlar oluşturun."
+        "reports_sub": "Envanteriniz için farklı raporlar oluşturun.",
+        "toast": {
+            "asset_success": "",
+            "failed_ensure_ids": "",
+            "failed_ensure_import_refs": "",
+            "failed_set_primary_photos": "",
+            "failed_zero_datetimes": ""
+        }
     }
 }

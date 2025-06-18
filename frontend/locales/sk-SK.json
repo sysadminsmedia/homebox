@@ -1,10 +1,20 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "",
+                "enter": "",
+                "shift": ""
+            },
             "import_dialog": {
                 "change_warning": "Správanie pre importy s existujúcimi import_refs sa zmenilo. Ak sa v súbore CSV nachádza import_ref,\npoložka bude aktualizovaná hodnotami v súbore CSV.",
                 "description": "Importujte súbor CSV obsahujúci vaše položky, štítky a miesta. Ďalšie informácie nájdete v dokumentácii\npožadovaný formát.",
-                "title": "Importovať súbor CSV"
+                "title": "Importovať súbor CSV",
+                "toast": {
+                    "import_failed": "",
+                    "import_success": "",
+                    "please_select_file": ""
+                }
             },
             "outdated": {
                 "current_version": "Aktuálna verzia",
@@ -12,6 +22,11 @@
                 "latest_version": "Najnovšia verzia",
                 "new_version_available": "K dispozícii nová verzia",
                 "new_version_available_link": "Kliknutím sem zobrazíte poznámky k vydaniu"
+            }
+        },
+        "form": {
+            "password": {
+                "toggle_show": ""
             }
         },
         "global": {
@@ -51,7 +66,12 @@
                 "download": "Stiahnuť štítok",
                 "print": "Vytlačte štítok",
                 "server_print": "Tlač na serveri",
-                "titles": "Štítky"
+                "titles": "Štítky",
+                "toast": {
+                    "load_status_failed": "",
+                    "print_failed": "",
+                    "print_success": ""
+                }
             },
             "page_qr_code": {
                 "page_url": "URL stránka",
@@ -62,13 +82,41 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "",
+                "open_new_tab": ""
+            },
             "create_modal": {
+                "delete_photo": "",
                 "item_description": "Popis položky",
                 "item_name": "Názov položky",
                 "item_photo": "Obrázok predmetu 📷",
                 "item_quantity": "Počet predmetov",
+                "parent_item": "",
+                "rotate_photo": "",
+                "set_as_primary_photo": "",
                 "title": "Vytvoriť položku",
-                "upload_photos": "Nahraj fotky"
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": "",
+                    "failed_load_parent": "",
+                    "no_canvas_support": "",
+                    "please_select_location": "",
+                    "rotate_failed": "",
+                    "rotate_process_failed": "",
+                    "some_photos_failed": "",
+                    "upload_failed": "",
+                    "upload_success": "",
+                    "uploading_photos": ""
+                },
+                "upload_photos": "Nahraj fotky",
+                "uploaded": ""
+            },
+            "selector": {
+                "no_results": "",
+                "placeholder": "",
+                "search_placeholder": ""
             },
             "view": {
                 "selectable": {
@@ -81,7 +129,8 @@
                     "headers": "Hlavička",
                     "page": "Stránka",
                     "rows_per_page": "Počet riadkov na stránku",
-                    "table_settings": "Nastavenie tabuľky"
+                    "table_settings": "Nastavenie tabuľky",
+                    "view_item": ""
                 }
             }
         },
@@ -89,7 +138,13 @@
             "create_modal": {
                 "label_description": "Popis štítku",
                 "label_name": "Názov štítku",
-                "title": "Vytvoriť štítok"
+                "title": "Vytvoriť štítok",
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": "",
+                    "label_name_too_long": ""
+                }
             },
             "selector": {
                 "select_labels": "Výber značiek"
@@ -99,48 +154,71 @@
             "create_modal": {
                 "location_description": "Popis miesta",
                 "location_name": "Názov miesta",
-                "title": "Vytvoriť polohu"
+                "title": "Vytvoriť polohu",
+                "toast": {
+                    "already_creating": "",
+                    "create_failed": "",
+                    "create_success": ""
+                }
             },
             "selector": {
                 "no_location_found": "Poloha nenájdená",
-                "parent_location": "Poloha rodiča"
+                "parent_location": "Poloha rodiča",
+                "search_location": "",
+                "select_location": ""
             },
             "tree": {
                 "no_locations": "Nie sú k dispozícii žiadne miesta. Pridajte nové miesta cez\n `<`span class=\"link-primary\"`>`Vytvoriť`<`/span`>` na navigačnom paneli."
             }
         },
         "quick_menu": {
+            "no_results": "",
             "shortcut_hint": "Pomocou číselných tlačidiel rýchlo vyberte akciu."
         }
     },
     "global": {
         "add": "Pridať",
+        "archived": "",
         "build": "Zostava: { build }",
+        "cancel": "",
         "confirm": "Potvrďte",
         "create": "Vytvorte",
         "create_and_add": "Vytvoriť a pridať ďalšie",
+        "create_subitem": "",
         "created": "Vytvorené",
         "delete": "Odstrániť",
+        "delete_confirm": "",
+        "demo_instance": "",
         "details": "Podrobnosti",
         "duplicate": "Duplicitné",
         "edit": "Upraviť",
         "email": "Email",
         "follow_dev": "Sledujte vývojára",
+        "footer": {
+            "api_link": "",
+            "version_link": ""
+        },
         "github": "Projekt GitHub",
+        "insured": "",
         "items": "Položky",
         "join_discord": "Pripojte sa k Discordu",
         "labels": "Štítky",
+        "loading": "",
         "locations": "Miesta",
         "maintenance": "Údržba",
         "name": "Meno",
         "navigate": "Navigovať",
         "password": "heslo",
+        "quantity": "",
         "read_docs": "Prečítajte si Dokumenty",
+        "return_home": "",
         "save": "Uložiť",
         "search": "Hľadať",
         "sign_out": "Odhlásiť sa",
         "submit": "Odoslať",
+        "unknown": "",
         "update": "Aktualizovať",
+        "updating": "",
         "value": "Hodnota",
         "version": "Verzia: { version }",
         "welcome": "Vitajte, { username }"
@@ -165,27 +243,49 @@
         "set_email": "Aký je váš e-mail?",
         "set_name": "Ako sa voláte?",
         "set_password": "Nastavte si heslo",
-        "tagline": "Sledujte, organizujte a spravujte svoje veci."
+        "tagline": "Sledujte, organizujte a spravujte svoje veci.",
+        "title": "",
+        "toast": {
+            "invalid_email": "",
+            "invalid_email_password": "",
+            "login_success": "",
+            "problem_registering": "",
+            "user_registered": ""
+        }
     },
     "items": {
         "add": "Pridať",
         "advanced": "Pokročilé",
         "archived": "Archivované",
         "asset_id": "ID majetku",
+        "associated_with_multiple": "",
         "attachment": "Príloha",
         "attachments": "Prílohy",
         "changes_persisted_immediately": "Zmeny príloh sa okamžite uložia",
         "created_at": "Vytvoril v",
         "custom_fields": "Vlastné polia",
+        "delete_attachment_confirm": "",
+        "delete_item_confirm": "",
         "description": "Popis",
         "details": "Podrobnosti",
         "drag_and_drop": "Presuňte súbory sem alebo kliknutím vyberte súbory",
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "",
+                "attachment_type": "",
+                "primary_photo": "",
+                "primary_photo_sub": "",
+                "select_type": "",
+                "title": ""
+            }
+        },
         "edit_details": "Upraviť podrobnosti",
         "field_selector": "Výber poľa",
         "field_value": "Hodnota poľa",
         "first": "Prvý",
         "include_archive": "Zahrnúť archivované položky",
         "insured": "Poistený",
+        "invalid_asset_id": "",
         "last": "Posledný",
         "lifetime_warranty": "Doživotná záruka",
         "location": "Poloha",
@@ -196,6 +296,7 @@
         "name": "Meno",
         "negate_labels": "Negovať vybrané označenia",
         "next_page": "Ďalšia strana",
+        "no_attachments": "",
         "no_results": "Nenašli sa žiadne položky",
         "notes": "Poznámky",
         "only_with_photo": "Iba položky s fotografiou",
@@ -217,24 +318,60 @@
         "receipts": "Účtenky",
         "reset_search": "Obnoviť vyhľadávanie",
         "results": "{ total } Výsledky",
+        "select_field": "",
         "serial_number": "Sériové číslo",
         "show_advanced_view_options": "Zobraziť rozšírené možnosti zobrazenia",
         "sold_at": "Predané v",
         "sold_details": "Podrobnosti o predaji",
         "sold_price": "Predajná cena",
         "sold_to": "Predané Komu",
+        "sync_child_locations": "",
         "tip_1": "Filtre umiestnení a štítkov používajú operáciu 'OR'. Ak je vybratých viac ako jeden,\n bude vybraný iba jeden potrebné na zápas.",
         "tip_2": "Vyhľadávania s predponou # budú dotazovať na identifikátor diela (napríklad #000-001)",
         "tip_3": "Filtre poľa používajú operáciu 'OR' . Ak je vybratých viac ako jeden, bude potrebný iba jeden pre a\n zápas.",
         "tips": "Tipy",
         "tips_sub": "Tipy na vyhľadávanie",
+        "toast": {
+            "asset_not_found": "",
+            "attachment_deleted": "",
+            "attachment_updated": "",
+            "attachment_uploaded": "",
+            "child_items_location_no_longer_synced": "",
+            "child_items_location_synced": "",
+            "child_location_desync": "",
+            "error_loading_parent_data": "",
+            "failed_adjust_quantity": "",
+            "failed_delete_attachment": "",
+            "failed_delete_item": "",
+            "failed_duplicate_item": "",
+            "failed_load_asset": "",
+            "failed_load_item": "",
+            "failed_load_items": "",
+            "failed_save": "",
+            "failed_save_no_location": "",
+            "failed_search_items": "",
+            "failed_update_attachment": "",
+            "failed_upload_attachment": "",
+            "item_deleted": "",
+            "item_saved": "",
+            "quantity_cannot_negative": "",
+            "sync_child_location": ""
+        },
         "updated_at": "Čas aktualizácie",
         "warranty": "Záruka",
         "warranty_details": "Podrobnosti o záruke",
         "warranty_expires": "Záruka vyprší"
     },
     "labels": {
+        "label_delete_confirm": "",
         "no_results": "Nenašli sa žiadne štítky",
+        "toast": {
+            "failed_delete_label": "",
+            "failed_load_label": "",
+            "failed_update_label": "",
+            "label_deleted": "",
+            "label_updated": ""
+        },
         "update_label": "Aktualizovať štítok"
     },
     "languages": {
@@ -250,6 +387,8 @@
         "it": "Taliančina",
         "ja-JP": "Japonsky",
         "ko-KR": "Korejsky",
+        "lb-LU": "",
+        "lt-LT": "",
         "nb-NO": "Nórsky",
         "nl": "Holandsky",
         "pl": "Poľsky",
@@ -257,6 +396,7 @@
         "pt-PT": "Portugalsky (Portugalsko)",
         "ru": "Ruština",
         "sl": "Slovinsky",
+        "sq-AL": "",
         "sv": "Švédčina",
         "ta-IN": "Tamilčina",
         "th-TH": "Thaičina",
@@ -273,7 +413,16 @@
     "locations": {
         "child_locations": "Umiestnenie dieťaťa",
         "collapse_tree": "Zbaliť strom",
+        "expand_tree": "",
+        "location_items_delete_confirm": "",
         "no_results": "Žiadne lokality neboli nájdené",
+        "toast": {
+            "failed_delete_location": "",
+            "failed_load_location": "",
+            "failed_update_location": "",
+            "location_deleted": "",
+            "location_updated": ""
+        },
         "update_location": "Aktualizovať lokalitu"
     },
     "maintenance": {
@@ -329,7 +478,10 @@
         "currency_format": "Formát meny",
         "current_password": "Aktuálne heslo",
         "delete_account": "Odstrániť účet",
+        "delete_account_confirm": "",
         "delete_account_sub": "Odstráňte svoj účet a všetky súvisiace údaje. Toto nie je možné vrátiť späť.",
+        "delete_notifier_confirm": "",
+        "display_legacy_header": "",
         "enabled": "Povolené",
         "example": "Príklad",
         "gen_invite": "Vygenerovať odkaz na pozvánku",
@@ -339,23 +491,72 @@
         "language": "Jazyk",
         "new_password": "Nové heslo",
         "no_notifiers": "Nie sú nakonfigurovaní žiadni upozorňovatelia",
+        "no_override": "",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Oznamovateľ",
         "notifiers": "Oznamovatelia",
         "notifiers_sub": "Dostávajte upozornenia na nadchádzajúce pripomenutia údržby",
+        "override_locale": "",
         "test": "Test",
         "theme_settings": "Nastavenie motívu",
         "theme_settings_sub": "Nastavenia motívu sú uložené v lokálnom úložisku vášho prehliadača. Tému môžete kedykoľvek zmeniť. Ak mate\n problémy s nastavením motívu, skúste obnoviť prehliadač.",
+        "toast": {
+            "account_deleted": "",
+            "failed_change_password": "",
+            "failed_create_notifier": "",
+            "failed_delete_account": "",
+            "failed_delete_notifier": "",
+            "failed_get_currencies": "",
+            "failed_test_notifier": "",
+            "failed_update_group": "",
+            "failed_update_notifier": "",
+            "group_updated": "",
+            "notifier_test_success": "",
+            "password_changed": ""
+        },
         "update_group": "aktualizačná skupina",
         "update_language": "Aktualizovať súbor jazyka",
         "url": "URL",
         "user_profile": "Profil používateľa",
         "user_profile_sub": "Pozvite používateľov a spravujte svoj účet."
     },
+    "reports": {
+        "label_generator": {
+            "asset_end": "",
+            "asset_start": "",
+            "base_url": "",
+            "bordered_labels": "",
+            "generate_page": "",
+            "input_placeholder": "",
+            "instruction_1": "",
+            "instruction_2": "",
+            "instruction_3": "",
+            "label_height": "",
+            "label_width": "",
+            "measure_type": "",
+            "page_bottom_padding": "",
+            "page_height": "",
+            "page_left_padding": "",
+            "page_right_padding": "",
+            "page_top_padding": "",
+            "page_width": "",
+            "qr_code_example": "",
+            "tip_1": "",
+            "tip_2": "",
+            "tip_3": "",
+            "tips": "",
+            "title": "",
+            "toast": {
+                "page_too_small_card": ""
+            }
+        }
+    },
     "scanner": {
         "error": "Počas skenovania sa vyskytla chyba",
         "invalid_url": "Neplatná adresa URL čiarového kódu",
         "no_sources": "Nie sú k dispozícii žiadne zdroje videa",
+        "permission_denied": "",
         "select_video_source": "Vyberte zdroj videa",
+        "title": "",
         "unsupported": "Media Stream API nie je podporované"
     },
     "tools": {
@@ -363,15 +564,18 @@
         "actions_set": {
             "ensure_ids": "Zabezpečenie identifikátorov aktív",
             "ensure_ids_button": "Zabezpečenie identifikátorov aktív",
+            "ensure_ids_confirm": "",
             "ensure_ids_sub": "Zabezpečuje, že všetky položky vo vašom inventári majú platné pole asset_id. To sa dosiahne nájdením najvyššieho aktuálneho poľa asset_id v databáze a aplikáciou ďalšej hodnoty na každú položku, ktorá má pole asset_id nenastavené. Toto sa vykonáva v poradí podľa poľa created_at.",
             "ensure_import_refs": "Zabezpečte import referencií",
             "ensure_import_refs_button": "Zabezpečte import referencií",
             "ensure_import_refs_sub": "Zabezpečuje, že všetky položky vo vašom inventári majú platné pole import_ref. To sa dosiahne náhodným vygenerovaním 8-znakového reťazca pre každú položku, ktorá má nenastavené pole import_ref.",
             "set_primary_photo": "Nastaviť primárnu fotografiu",
             "set_primary_photo_button": "Nastaviť primárnu fotografiu",
+            "set_primary_photo_confirm": "",
             "set_primary_photo_sub": "Vo verzii v0.10.0 Homeboxu bolo k prílohám typu fotografia pridané pole primárneho obrázka. Táto akcia nastaví pole primárneho obrázka na prvý obrázok v poli príloh v databáze, ak ešte nie je nastavený. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'See GitHub PR #576'</a>'",
             "zero_datetimes": "Dátum nulovej položky Časy",
             "zero_datetimes_button": "Dátum nulovej položky Časy",
+            "zero_datetimes_confirm": "",
             "zero_datetimes_sub": "Obnoví hodnotu času pre všetky polia dátumu a času vo vašom inventári na začiatok dátumu. Ide o opravu chyby, ktorá bola zavedená na začiatku vývoja stránky a ktorá spôsobila, že sa hodnota času uložila s časom, čo spôsobilo problémy s poliami dátumu zobrazujúcimi presné hodnoty. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'"
         },
         "actions_sub": "Hromadne použite akcie na svoj inventár. Toto sú nezvratné akcie. '<b>'Buďte opatrní.'</b>'",
@@ -382,6 +586,7 @@
             "export_sub": "Exportuje štandardný formát CSV pre Homebox. Týmto sa exportujú všetky položky vo vašom inventári.",
             "import": "Importovať inventár",
             "import_button": "Importovať inventár",
+            "import_ref_confirm": "",
             "import_sub": "Importuje štandardný formát CSV pre Homebox. Bez '<code>'HB.import_ref'</code>' stĺpca to bude '<b>'nie'</b>' prepísať všetky existujúce položky vo vašom inventári, iba pridať nové položky. Riadky so '<code>'HB.import_ref'</code>' stĺpcom sa zlúčia do existujúcich položiek s rovnakým import_ref, ak taký existuje."
         },
         "import_export_sub": "Importujte a exportujte svoj inventár do a zo súboru CSV. Je to užitočné pri migrácii inventára do novej inštancie Homeboxu.",
@@ -394,6 +599,13 @@
             "bill_of_materials_button": "Generovať kusovník",
             "bill_of_materials_sub": "Vygeneruje súbor CSV (Comma Separated Values), ktorý možno importovať do tabuľkového procesora. Toto je súhrn vášho inventára so základnými informáciami o položkách a cenách."
         },
-        "reports_sub": "Generujte rôzne prehľady pre svoj inventár."
+        "reports_sub": "Generujte rôzne prehľady pre svoj inventár.",
+        "toast": {
+            "asset_success": "",
+            "failed_ensure_ids": "",
+            "failed_ensure_import_refs": "",
+            "failed_set_primary_photos": "",
+            "failed_zero_datetimes": ""
+        }
     }
 }

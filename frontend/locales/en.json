@@ -129,7 +129,8 @@
                     "headers": "Headers",
                     "page": "Page",
                     "rows_per_page": "Rows per page",
-                    "table_settings": "Table Settings"
+                    "table_settings": "Table Settings",
+                    "view_item": "View Item"
                 }
             }
         },
