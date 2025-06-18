@@ -2,7 +2,7 @@
 
 ## Local Storage
 By default, homebox uses local storage at the `./data` relative path to the binary, or `/data` in the docker container.
-You can change the storage path by setting the `HBOX_STORAGE_CONN_STRING` to `file://path/you/want`. The `HBOX_STORAGE_PATH_PREFIX`
+You can change the storage path by setting the `HBOX_STORAGE_CONN_STRING` to `file://path/you/want`. The `HBOX_STORAGE_PREFIX_PATH`
 can be used to set a "prefix" for the storage. This "prefix" comes after the path in the connection string.
 
 ::: warning
@@ -16,10 +16,10 @@ To authenticate with S3, you will need to set the `AWS_ACCESS_KEY_ID` and `AWS_S
 ### AWS S3
 You can use S3 storage by setting the `HBOX_STORAGE_CONN_STRING` to `s3://my-bucket?region=region-name&awssdk=v2`.
 
-In this case, the `HBOX_STORAGE_PATH_PREFIX` can be used to set a "prefix" for the storage. This "prefix" comes after the bucket name in the connection string.
+In this case, the `HBOX_STORAGE_PREFIX_PATH` can be used to set a "prefix" for the storage. This "prefix" comes after the bucket name in the connection string.
 
 ### S3-Compatible Storage
-You can also use S3-compatible storage by setting the `HBOX_STORAGE_CONN_STRING` to `s3://my-bucket?awssdk=v2&endpoint=my-s3-compatible-endpoint.com&disableSSL=true&s3ForcePathStyle=true`.
+You can also use S3-compatible storage by setting the `HBOX_STORAGE_CONN_STRING` to `s3://my-bucket?awssdk=v2&endpoint=http://my-s3-compatible-endpoint.tld&disableSSL=true&s3ForcePathStyle=true`.
 
 This allows you to connect to S3-compatible services like MinIO, DigitalOcean Spaces, or any other service that supports the S3 API. Configure the `disableSSL`, `s3ForcePathStyle`, and `endpoint` parameters as needed for your specific service.
 
@@ -37,7 +37,7 @@ Additionally, the parameters in the URL can be used to configure specific S3 set
 - `accelerate`: Whether to use S3 Transfer Acceleration (set to `true` or `false`).
 
 
-## Google Cloud Storage
+## Google Cloud Storaget
 
 ### Authentication
 To authenticate with Google Cloud Storage, you will need to set the `GOOGLE_APPLICATION_CREDENTIALS` environment variable to the path of your service account key file.
