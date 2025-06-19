@@ -770,8 +770,7 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Type of file",
                         "name": "type",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
                     },
                     {
                         "type": "boolean",

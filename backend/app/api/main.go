@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -101,9 +102,26 @@ func run(cfg *config.Config) error {
 	// =========================================================================
 	// Initialize Database & Repos
 
-	err := os.MkdirAll(cfg.Storage.Data, 0o755)
-	if err != nil {
-		log.Fatal().Err(err).Msg("failed to create data directory")
+	if strings.HasPrefix(cfg.Storage.ConnString, "file:///./") {
+		raw := strings.TrimPrefix(cfg.Storage.ConnString, "file:///./")
+		clean := filepath.Clean(raw)
+		absBase, err := filepath.Abs(clean)
+		if err != nil {
+			log.Fatal().Err(err).Msg("failed to get absolute path for storage connection string")
+		}
+		// Construct and validate the full storage path
+		storageDir := filepath.Join(absBase, cfg.Storage.PrefixPath)
+		if !strings.HasPrefix(storageDir, absBase+string(os.PathSeparator)) && storageDir != absBase {
+			log.Fatal().
+				Str("path", storageDir).
+				Msg("invalid storage path: you tried to use a prefix that is not a subdirectory of the base path")
+		}
+		// Create with more restrictive permissions
+		if err := os.MkdirAll(storageDir, 0o750); err != nil {
+			log.Fatal().
+				Err(err).
+				Msg("failed to create data directory")
+		}
 	}
 
 	if strings.ToLower(cfg.Database.Driver) == "postgres" {
@@ -117,6 +135,13 @@ func run(cfg *config.Config) error {
 	switch strings.ToLower(cfg.Database.Driver) {
 	case "sqlite3":
 		databaseURL = cfg.Database.SqlitePath
+
+		// Create directory for SQLite database if it doesn't exist
+		dbFilePath := strings.Split(cfg.Database.SqlitePath, "?")[0] // Remove query parameters
+		dbDir := filepath.Dir(dbFilePath)
+		if err := os.MkdirAll(dbDir, 0o755); err != nil {
+			log.Fatal().Err(err).Str("path", dbDir).Msg("failed to create SQLite database directory")
+		}
 	case "postgres":
 		databaseURL = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", cfg.Database.Host, cfg.Database.Port, cfg.Database.Username, cfg.Database.Password, cfg.Database.Database, cfg.Database.SslMode)
 	default:
@@ -178,7 +203,7 @@ func run(cfg *config.Config) error {
 
 	app.bus = eventbus.New()
 	app.db = c
-	app.repos = repo.New(c, app.bus, cfg.Storage.Data)
+	app.repos = repo.New(c, app.bus, cfg.Storage)
 	app.services = services.New(
 		app.repos,
 		services.WithAutoIncrementAssetID(cfg.Options.AutoIncrementAssetID),

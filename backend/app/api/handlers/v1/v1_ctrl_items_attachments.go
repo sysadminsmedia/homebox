@@ -14,6 +14,13 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
+
+	"gocloud.dev/blob"
+	_ "gocloud.dev/blob/azureblob"
+	_ "gocloud.dev/blob/fileblob"
+	_ "gocloud.dev/blob/gcsblob"
+	_ "gocloud.dev/blob/memblob"
+	_ "gocloud.dev/blob/s3blob"
 )
 
 type (
@@ -30,7 +37,7 @@ type (
 //	@Produce  json
 //	@Param    id   path     string true "Item ID"
 //	@Param    file formData file   true "File attachment"
-//	@Param    type formData string true "Type of file"
+//	@Param    type formData string false "Type of file"
 //	@Param    primary formData bool false "Is this the primary attachment"
 //	@Param    name formData string true "name of the file including extension"
 //	@Success  200  {object} repo.ItemOut
@@ -75,7 +82,7 @@ func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 			ext := filepath.Ext(attachmentName)
 
 			switch strings.ToLower(ext) {
-			case ".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".tiff":
+			case ".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".tiff", ".avif", ".ico":
 				attachmentType = attachment.TypePhoto.String()
 			default:
 				attachmentType = attachment.TypeAttachment.String()
@@ -172,8 +179,32 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 			log.Err(err).Msg("failed to get attachment path")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
-		// w.Header().Set("Content-Disposition", "attachment; filename="+doc.Title)
-		http.ServeFile(w, r, doc.Path)
+
+		bucket, err := blob.OpenBucket(ctx, ctrl.repo.Attachments.GetConnString())
+		if err != nil {
+			log.Err(err).Msg("failed to open bucket")
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+		file, err := bucket.NewReader(ctx, doc.Path, nil)
+		if err != nil {
+			log.Err(err).Msg("failed to open file")
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+		defer func(file *blob.Reader) {
+			err := file.Close()
+			if err != nil {
+				log.Err(err).Msg("failed to close file")
+			}
+		}(file)
+		defer func(bucket *blob.Bucket) {
+			err := bucket.Close()
+			if err != nil {
+				log.Err(err).Msg("failed to close bucket")
+			}
+		}(bucket)
+
+		w.Header().Set("Content-Disposition", "attachment; filename="+doc.Title)
+		http.ServeContent(w, r, doc.Title, doc.CreatedAt, file)
 		return nil
 
 	// Delete Attachment Handler

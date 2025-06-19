@@ -20,7 +20,8 @@ aside: false
 | HBOX_WEB_READ_TIMEOUT                   | 10s                                                                        | Read timeout of HTTP sever                                                                                                                                                                |
 | HBOX_WEB_WRITE_TIMEOUT                  | 10s                                                                        | Write timeout of HTTP server                                                                                                                                                              |
 | HBOX_WEB_IDLE_TIMEOUT                   | 30s                                                                        | Idle timeout of HTTP server                                                                                                                                                               |
-| HBOX_STORAGE_DATA                       | /data/                                                                     | path to the data directory, do not change this if you're using docker                                                                                                                     |
+| HBOX_STORAGE_CONN_STRING                | file://./                                                                  | path to the data directory, do not change this if you're using docker                                                                                                                     |
+| HBOX_STORAGE_PREFIX_PATH                | .data                                                                      | prefix path for the storage, if not set the storage will be used as is                                                                                                                    |
 | HBOX_LOG_LEVEL                          | `info`                                                                     | log level to use, can be one of `trace`, `debug`, `info`, `warn`, `error`, `critical`                                                                                                     |
 | HBOX_LOG_FORMAT                         | `text`                                                                     | log format to use, can be one of: `text`, `json`                                                                                                                                          |
 | HBOX_MAILER_HOST                        |                                                                            | email host to use, if not set no email provider will be used                                                                                                                              |
@@ -47,9 +48,9 @@ aside: false
 | HBOX_LABEL_MAKER_DYNAMIC_LENGTH         | true                                                                       | allow label generation with open length. `HBOX_LABEL_MAKER_HEIGHT` is still used for layout and minimal height. If not used, long text may be cut off, but all labels have the same size. |
 | HBOX_LABEL_MAKER_ADDITIONAL_INFORMATION |                                                                            | Additional information added to the label like name or phone number                                                                                                                       |
 
-
 ::: warning Security Considerations
 For postgreSQL in production:
+
 - Do not use the default `postgres` user
 - Do not use the default `postgres` database
 - Always use a strong unique password
@@ -57,14 +58,16 @@ For postgreSQL in production:
 - Consider using a connection pooler like `pgbouncer`
 
 For SQLite in production:
+
 - Secure file permissions for the database file (e.g. `chmod 600`)
 - Use a secure directory for the database file
 - Use a secure backup strategy
 - Monitor the file size and consider using a different database for large installations
-:::
+  :::
 
 ::: tip CLI Arguments
-If you're deploying without docker you can use command line arguments to configure the application. Run `homebox --help` for more information.
+If you're deploying without docker you can use command line arguments to configure the application. Run `homebox --help`
+for more information.
 
 ```sh
 Usage: api [options] [arguments]
@@ -74,7 +77,8 @@ OPTIONS
 --web-port/$HBOX_WEB_PORT                                                     <string>  (default: 7745)
 --web-host/$HBOX_WEB_HOST                                                     <string>
 --web-max-file-upload/$HBOX_WEB_MAX_FILE_UPLOAD                               <int>     (default: 10)
---storage-data/$HBOX_STORAGE_DATA                                             <string>  (default: ./.data)
+--storage-conn-string/$HBOX_STORAGE_CONN_STRING                               <string>  (default: file://./)
+--storage-prefix-path/$HBOX_STORAGE_PREFIX_PATH                               <string>  (default: .data)
 --log-level/$HBOX_LOG_LEVEL                                                   <string>  (default: info)
 --log-format/$HBOX_LOG_FORMAT                                                 <string>  (default: text)
 --mailer-host/$HBOX_MAILER_HOST                                               <string>
@@ -110,4 +114,5 @@ OPTIONS
 --label-maker-additional-information/$HBOX_LABEL_MAKER_ADDITIONAL_INFORMATION <string>
 --help/-h    display this help message
 ```
+
 :::

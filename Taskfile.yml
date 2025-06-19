@@ -25,6 +25,8 @@ tasks:
     cmds:
       - swag fmt --dir={{ .API }}
       - swag init --dir={{ .API }},{{ .INTERNAL }}/core/services,{{ .INTERNAL }}/data/repo --parseDependency
+      - cp -r ./docs/swagger.json ../../../../docs/en/api/openapi-2.0.json
+      - cp -r ./docs/swagger.yaml ../../../../docs/en/api/openapi-2.0.yaml
     sources:
       - "./backend/app/api/**/*"
       - "./backend/internal/data/**"
