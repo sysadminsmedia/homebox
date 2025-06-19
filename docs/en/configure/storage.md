@@ -37,7 +37,7 @@ Additionally, the parameters in the URL can be used to configure specific S3 set
 - `accelerate`: Whether to use S3 Transfer Acceleration (set to `true` or `false`).
 
 
-## Google Cloud Storaget
+## Google Cloud Storage
 
 ### Authentication
 To authenticate with Google Cloud Storage, you will need to set the `GOOGLE_APPLICATION_CREDENTIALS` environment variable to the path of your service account key file.
