@@ -139,25 +139,6 @@ func (ac *AttachmentCreate) SetItem(i *Item) *AttachmentCreate {
 	return ac.SetItemID(i.ID)
 }
 
-// SetOriginalID sets the "original" edge to the Attachment entity by ID.
-func (ac *AttachmentCreate) SetOriginalID(id uuid.UUID) *AttachmentCreate {
-	ac.mutation.SetOriginalID(id)
-	return ac
-}
-
-// SetNillableOriginalID sets the "original" edge to the Attachment entity by ID if the given value is not nil.
-func (ac *AttachmentCreate) SetNillableOriginalID(id *uuid.UUID) *AttachmentCreate {
-	if id != nil {
-		ac = ac.SetOriginalID(*id)
-	}
-	return ac
-}
-
-// SetOriginal sets the "original" edge to the Attachment entity.
-func (ac *AttachmentCreate) SetOriginal(a *Attachment) *AttachmentCreate {
-	return ac.SetOriginalID(a.ID)
-}
-
 // SetThumbnailID sets the "thumbnail" edge to the Attachment entity by ID.
 func (ac *AttachmentCreate) SetThumbnailID(id uuid.UUID) *AttachmentCreate {
 	ac.mutation.SetThumbnailID(id)
@@ -175,6 +156,25 @@ func (ac *AttachmentCreate) SetNillableThumbnailID(id *uuid.UUID) *AttachmentCre
 // SetThumbnail sets the "thumbnail" edge to the Attachment entity.
 func (ac *AttachmentCreate) SetThumbnail(a *Attachment) *AttachmentCreate {
 	return ac.SetThumbnailID(a.ID)
+}
+
+// SetOriginalID sets the "original" edge to the Attachment entity by ID.
+func (ac *AttachmentCreate) SetOriginalID(id uuid.UUID) *AttachmentCreate {
+	ac.mutation.SetOriginalID(id)
+	return ac
+}
+
+// SetNillableOriginalID sets the "original" edge to the Attachment entity by ID if the given value is not nil.
+func (ac *AttachmentCreate) SetNillableOriginalID(id *uuid.UUID) *AttachmentCreate {
+	if id != nil {
+		ac = ac.SetOriginalID(*id)
+	}
+	return ac
+}
+
+// SetOriginal sets the "original" edge to the Attachment entity.
+func (ac *AttachmentCreate) SetOriginal(a *Attachment) *AttachmentCreate {
+	return ac.SetOriginalID(a.ID)
 }
 
 // Mutation returns the AttachmentMutation object of the builder.
@@ -343,12 +343,12 @@ func (ac *AttachmentCreate) createSpec() (*Attachment, *sqlgraph.CreateSpec) {
 		_node.item_attachments = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ac.mutation.OriginalIDs(); len(nodes) > 0 {
+	if nodes := ac.mutation.ThumbnailIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
-			Table:   attachment.OriginalTable,
-			Columns: []string{attachment.OriginalColumn},
+			Table:   attachment.ThumbnailTable,
+			Columns: []string{attachment.ThumbnailColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(attachment.FieldID, field.TypeUUID),
@@ -357,15 +357,15 @@ func (ac *AttachmentCreate) createSpec() (*Attachment, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.attachment_thumbnail = &nodes[0]
+		_node.attachment_original = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ac.mutation.ThumbnailIDs(); len(nodes) > 0 {
+	if nodes := ac.mutation.OriginalIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
-			Table:   attachment.ThumbnailTable,
-			Columns: []string{attachment.ThumbnailColumn},
+			Table:   attachment.OriginalTable,
+			Columns: []string{attachment.OriginalColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(attachment.FieldID, field.TypeUUID),

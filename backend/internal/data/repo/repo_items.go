@@ -474,6 +474,7 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 			aq.Where(
 				attachment.Primary(true),
 			)
+			aq.WithThumbnail()
 		})
 
 	if q.Page != -1 || q.PageSize != -1 {

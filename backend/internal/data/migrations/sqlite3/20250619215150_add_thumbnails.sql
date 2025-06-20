@@ -13,7 +13,7 @@ create table attachments_dg_tmp
         constraint attachments_items_attachments
             references items
             on delete cascade,
-    attachment_thumbnail uuid
+    attachment_original uuid
         constraint attachments_original_thumbnail
             references attachments
             on delete cascade
