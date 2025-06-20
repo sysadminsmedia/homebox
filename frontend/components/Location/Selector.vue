@@ -58,6 +58,7 @@
 
   type Props = {
     modelValue?: LocationSummary | null;
+    currentLocation?: LocationSummary;
   };
 
   const props = defineProps<Props>();
@@ -66,7 +67,7 @@
   const open = ref(false);
   const search = ref("");
   const id = useId();
-  const locations = useFlatLocations();
+  const locations = useFlatLocations(props.currentLocation);
   const value = useVModel(props, "modelValue", emit);
 
   function selectLocation(location: LocationSummary) {

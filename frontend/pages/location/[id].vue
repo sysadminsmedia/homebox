@@ -147,7 +147,7 @@
             :label="$t('components.location.create_modal.location_description')"
             :max-length="1000"
           />
-          <LocationSelector v-model="parent" />
+          <LocationSelector v-model="parent" :current-location="location" />
           <DialogFooter>
             <Button type="submit" :disabled="updating">
               <MdiLoading v-if="updating" class="animate-spin" />
