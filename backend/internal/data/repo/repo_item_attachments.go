@@ -337,22 +337,38 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	bucket, err := blob.OpenBucket(ctx, r.GetConnString())
 	if err != nil {
 		log.Err(err).Msg("failed to open bucket")
+		err := tx.Rollback()
+		if err != nil {
+			return err
+		}
 		return err
 	}
 	defer func(bucket *blob.Bucket) {
 		err := bucket.Close()
 		if err != nil {
+			err := tx.Rollback()
+			if err != nil {
+				return
+			}
 			log.Err(err).Msg("failed to close bucket")
 		}
 	}(bucket)
 
 	origFile, err := bucket.Open(path)
 	if err != nil {
+		err := tx.Rollback()
+		if err != nil {
+			return err
+		}
 		return err
 	}
 	defer func(file fs.File) {
 		err := file.Close()
 		if err != nil {
+			err := tx.Rollback()
+			if err != nil {
+				return
+			}
 			log.Err(err).Msg("failed to close file")
 		}
 	}(origFile)
@@ -361,6 +377,10 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 
 		img, _, err := image.Decode(origFile)
 		if err != nil {
+			err := tx.Rollback()
+			if err != nil {
+				return err
+			}
 			return err
 		}
 
@@ -378,6 +398,10 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		buf := new(bytes.Buffer)
 		err = png.Encode(buf, croppedImg)
 		if err != nil {
+			err := tx.Rollback()
+			if err != nil {
+				return err
+			}
 			return err
 		}
 
@@ -386,28 +410,52 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			Title:   fmt.Sprintf("%s-thumb", title),
 			Content: bytes.NewReader(contentBytes),
 		})
+		if err != nil {
+			log.Err(err).Msg("failed to upload thumbnail file")
+			err := tx.Rollback()
+			if err != nil {
+				return err
+			}
+			return err
+		}
 
 		att.SetPath(thumbnailFile)
 	} else if isDocumentFile(path) && r.thumbnail.NonImageEnabled {
 		fitz.FzVersion = r.thumbnail.MuPDFVersion
 		doc, err := fitz.NewFromReader(origFile)
 		if err != nil {
+			err := tx.Rollback()
+			if err != nil {
+				return err
+			}
 			return err
 		}
 		defer func(doc *fitz.Document) {
 			err := doc.Close()
 			if err != nil {
+				err := tx.Rollback()
+				if err != nil {
+					return
+				}
 				log.Err(err).Msg("failed to close document")
 			}
 		}(doc)
 
 		img, err := doc.Image(0)
 		if err != nil {
+			err := tx.Rollback()
+			if err != nil {
+				return err
+			}
 			return err
 		}
 
 		buf := new(bytes.Buffer)
 		if err := png.Encode(buf, img); err != nil {
+			err := tx.Rollback()
+			if err != nil {
+				return err
+			}
 			return err
 		}
 
@@ -416,12 +464,20 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			Content: bytes.NewReader(buf.Bytes()),
 		})
 		if err != nil {
+			err := tx.Rollback()
+			if err != nil {
+				return err
+			}
 			log.Err(err).Msg("failed to upload thumbnail file")
 			return err
 		}
 		att.SetPath(thumbnailFile)
 	} else {
 		return fmt.Errorf("unsupported file type for thumbnail generation")
+	}
+	_, err = att.Save(ctx)
+	if err != nil {
+		return err
 	}
 	return nil
 }
