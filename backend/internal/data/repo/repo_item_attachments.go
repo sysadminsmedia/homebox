@@ -45,13 +45,14 @@ type AttachmentRepo struct {
 
 type (
 	ItemAttachment struct {
-		ID        uuid.UUID `json:"id"`
-		CreatedAt time.Time `json:"createdAt"`
-		UpdatedAt time.Time `json:"updatedAt"`
-		Type      string    `json:"type"`
-		Primary   bool      `json:"primary"`
-		Path      string    `json:"path"`
-		Title     string    `json:"title"`
+		ID        uuid.UUID       `json:"id"`
+		CreatedAt time.Time       `json:"createdAt"`
+		UpdatedAt time.Time       `json:"updatedAt"`
+		Type      string          `json:"type"`
+		Primary   bool            `json:"primary"`
+		Path      string          `json:"path"`
+		Title     string          `json:"title"`
+		Thumbnail *ent.Attachment `json:"thumbnail,omitempty"`
 	}
 
 	ItemAttachmentUpdate struct {
@@ -234,6 +235,7 @@ func (r *AttachmentRepo) Get(ctx context.Context, id uuid.UUID) (*ent.Attachment
 		Query().
 		Where(attachment.ID(id)).
 		WithItem().
+		WithThumbnail().
 		Only(ctx)
 }
 
@@ -480,6 +482,32 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		return err
 	}
 	return nil
+}
+
+func (r *AttachmentRepo) CreateMissingThumbnails(ctx context.Context, groupId uuid.UUID) (int, error) {
+	attachments, err := r.db.Attachment.Query().
+		Where(
+			attachment.HasItemWith(item.HasGroupWith(group.ID(groupId))),
+			attachment.TypeNEQ("thumbnail"),
+		).
+		All(ctx)
+	if err != nil {
+		return 0, err
+	}
+
+	count := 0
+	for _, attachment := range attachments {
+		if !attachment.QueryThumbnail().ExistX(ctx) {
+			err = r.CreateThumbnail(ctx, groupId, attachment.ID, attachment.Title, attachment.Path)
+			if err != nil {
+				log.Err(err).Msg("failed to create thumbnail")
+				continue
+			}
+			count++
+		}
+	}
+
+	return count, nil
 }
 
 func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, doc ItemCreateAttachment) (string, error) {

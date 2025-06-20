@@ -134,7 +134,8 @@ type (
 		Location *LocationSummary `json:"location,omitempty" extensions:"x-nullable,x-omitempty"`
 		Labels   []LabelSummary   `json:"labels"`
 
-		ImageID *uuid.UUID `json:"imageId,omitempty"`
+		ImageID     *uuid.UUID `json:"imageId,omitempty"`
+		ThumbnailId *uuid.UUID `json:"thumbnailId,omitempty"`
 
 		// Sale details
 		SoldTime time.Time `json:"soldTime"`
@@ -189,10 +190,16 @@ func mapItemSummary(item *ent.Item) ItemSummary {
 	}
 
 	var imageID *uuid.UUID
+	var thumbnailID *uuid.UUID
 	if item.Edges.Attachments != nil {
 		for _, a := range item.Edges.Attachments {
 			if a.Primary && a.Type == attachment.TypePhoto {
 				imageID = &a.ID
+				if a.Edges.Thumbnail != nil {
+					thumbnailID = &a.Edges.Thumbnail.ID
+				} else {
+					thumbnailID = nil
+				}
 				break
 			}
 		}
@@ -215,8 +222,9 @@ func mapItemSummary(item *ent.Item) ItemSummary {
 		Labels:   labels,
 
 		// Warranty
-		Insured: item.Insured,
-		ImageID: imageID,
+		Insured:     item.Insured,
+		ImageID:     imageID,
+		ThumbnailId: thumbnailID,
 	}
 }
 
