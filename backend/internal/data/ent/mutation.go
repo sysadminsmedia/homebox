@@ -65,10 +65,10 @@ type AttachmentMutation struct {
 	clearedFields    map[string]struct{}
 	item             *uuid.UUID
 	cleareditem      bool
-	thumbnail        *uuid.UUID
-	clearedthumbnail bool
 	original         *uuid.UUID
 	clearedoriginal  bool
+	thumbnail        *uuid.UUID
+	clearedthumbnail bool
 	done             bool
 	oldValue         func(context.Context) (*Attachment, error)
 	predicates       []predicate.Attachment
@@ -433,45 +433,6 @@ func (m *AttachmentMutation) ResetItem() {
 	m.cleareditem = false
 }
 
-// SetThumbnailID sets the "thumbnail" edge to the Attachment entity by id.
-func (m *AttachmentMutation) SetThumbnailID(id uuid.UUID) {
-	m.thumbnail = &id
-}
-
-// ClearThumbnail clears the "thumbnail" edge to the Attachment entity.
-func (m *AttachmentMutation) ClearThumbnail() {
-	m.clearedthumbnail = true
-}
-
-// ThumbnailCleared reports if the "thumbnail" edge to the Attachment entity was cleared.
-func (m *AttachmentMutation) ThumbnailCleared() bool {
-	return m.clearedthumbnail
-}
-
-// ThumbnailID returns the "thumbnail" edge ID in the mutation.
-func (m *AttachmentMutation) ThumbnailID() (id uuid.UUID, exists bool) {
-	if m.thumbnail != nil {
-		return *m.thumbnail, true
-	}
-	return
-}
-
-// ThumbnailIDs returns the "thumbnail" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// ThumbnailID instead. It exists only for internal usage by the builders.
-func (m *AttachmentMutation) ThumbnailIDs() (ids []uuid.UUID) {
-	if id := m.thumbnail; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetThumbnail resets all changes to the "thumbnail" edge.
-func (m *AttachmentMutation) ResetThumbnail() {
-	m.thumbnail = nil
-	m.clearedthumbnail = false
-}
-
 // SetOriginalID sets the "original" edge to the Attachment entity by id.
 func (m *AttachmentMutation) SetOriginalID(id uuid.UUID) {
 	m.original = &id
@@ -509,6 +470,45 @@ func (m *AttachmentMutation) OriginalIDs() (ids []uuid.UUID) {
 func (m *AttachmentMutation) ResetOriginal() {
 	m.original = nil
 	m.clearedoriginal = false
+}
+
+// SetThumbnailID sets the "thumbnail" edge to the Attachment entity by id.
+func (m *AttachmentMutation) SetThumbnailID(id uuid.UUID) {
+	m.thumbnail = &id
+}
+
+// ClearThumbnail clears the "thumbnail" edge to the Attachment entity.
+func (m *AttachmentMutation) ClearThumbnail() {
+	m.clearedthumbnail = true
+}
+
+// ThumbnailCleared reports if the "thumbnail" edge to the Attachment entity was cleared.
+func (m *AttachmentMutation) ThumbnailCleared() bool {
+	return m.clearedthumbnail
+}
+
+// ThumbnailID returns the "thumbnail" edge ID in the mutation.
+func (m *AttachmentMutation) ThumbnailID() (id uuid.UUID, exists bool) {
+	if m.thumbnail != nil {
+		return *m.thumbnail, true
+	}
+	return
+}
+
+// ThumbnailIDs returns the "thumbnail" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ThumbnailID instead. It exists only for internal usage by the builders.
+func (m *AttachmentMutation) ThumbnailIDs() (ids []uuid.UUID) {
+	if id := m.thumbnail; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetThumbnail resets all changes to the "thumbnail" edge.
+func (m *AttachmentMutation) ResetThumbnail() {
+	m.thumbnail = nil
+	m.clearedthumbnail = false
 }
 
 // Where appends a list predicates to the AttachmentMutation builder.
@@ -733,11 +733,11 @@ func (m *AttachmentMutation) AddedEdges() []string {
 	if m.item != nil {
 		edges = append(edges, attachment.EdgeItem)
 	}
-	if m.thumbnail != nil {
-		edges = append(edges, attachment.EdgeThumbnail)
-	}
 	if m.original != nil {
 		edges = append(edges, attachment.EdgeOriginal)
+	}
+	if m.thumbnail != nil {
+		edges = append(edges, attachment.EdgeThumbnail)
 	}
 	return edges
 }
@@ -750,12 +750,12 @@ func (m *AttachmentMutation) AddedIDs(name string) []ent.Value {
 		if id := m.item; id != nil {
 			return []ent.Value{*id}
 		}
-	case attachment.EdgeThumbnail:
-		if id := m.thumbnail; id != nil {
-			return []ent.Value{*id}
-		}
 	case attachment.EdgeOriginal:
 		if id := m.original; id != nil {
+			return []ent.Value{*id}
+		}
+	case attachment.EdgeThumbnail:
+		if id := m.thumbnail; id != nil {
 			return []ent.Value{*id}
 		}
 	}
@@ -780,11 +780,11 @@ func (m *AttachmentMutation) ClearedEdges() []string {
 	if m.cleareditem {
 		edges = append(edges, attachment.EdgeItem)
 	}
-	if m.clearedthumbnail {
-		edges = append(edges, attachment.EdgeThumbnail)
-	}
 	if m.clearedoriginal {
 		edges = append(edges, attachment.EdgeOriginal)
+	}
+	if m.clearedthumbnail {
+		edges = append(edges, attachment.EdgeThumbnail)
 	}
 	return edges
 }
@@ -795,10 +795,10 @@ func (m *AttachmentMutation) EdgeCleared(name string) bool {
 	switch name {
 	case attachment.EdgeItem:
 		return m.cleareditem
-	case attachment.EdgeThumbnail:
-		return m.clearedthumbnail
 	case attachment.EdgeOriginal:
 		return m.clearedoriginal
+	case attachment.EdgeThumbnail:
+		return m.clearedthumbnail
 	}
 	return false
 }
@@ -810,11 +810,11 @@ func (m *AttachmentMutation) ClearEdge(name string) error {
 	case attachment.EdgeItem:
 		m.ClearItem()
 		return nil
-	case attachment.EdgeThumbnail:
-		m.ClearThumbnail()
-		return nil
 	case attachment.EdgeOriginal:
 		m.ClearOriginal()
+		return nil
+	case attachment.EdgeThumbnail:
+		m.ClearThumbnail()
 		return nil
 	}
 	return fmt.Errorf("unknown Attachment unique edge %s", name)
@@ -827,11 +827,11 @@ func (m *AttachmentMutation) ResetEdge(name string) error {
 	case attachment.EdgeItem:
 		m.ResetItem()
 		return nil
-	case attachment.EdgeThumbnail:
-		m.ResetThumbnail()
-		return nil
 	case attachment.EdgeOriginal:
 		m.ResetOriginal()
+		return nil
+	case attachment.EdgeThumbnail:
+		m.ResetThumbnail()
 		return nil
 	}
 	return fmt.Errorf("unknown Attachment edge %s", name)

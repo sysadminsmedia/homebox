@@ -26,8 +26,8 @@ type AttachmentQuery struct {
 	inters        []Interceptor
 	predicates    []predicate.Attachment
 	withItem      *ItemQuery
-	withThumbnail *AttachmentQuery
 	withOriginal  *AttachmentQuery
+	withThumbnail *AttachmentQuery
 	withFKs       bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -87,28 +87,6 @@ func (aq *AttachmentQuery) QueryItem() *ItemQuery {
 	return query
 }
 
-// QueryThumbnail chains the current query on the "thumbnail" edge.
-func (aq *AttachmentQuery) QueryThumbnail() *AttachmentQuery {
-	query := (&AttachmentClient{config: aq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := aq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := aq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(attachment.Table, attachment.FieldID, selector),
-			sqlgraph.To(attachment.Table, attachment.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, attachment.ThumbnailTable, attachment.ThumbnailColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
 // QueryOriginal chains the current query on the "original" edge.
 func (aq *AttachmentQuery) QueryOriginal() *AttachmentQuery {
 	query := (&AttachmentClient{config: aq.config}).Query()
@@ -123,7 +101,29 @@ func (aq *AttachmentQuery) QueryOriginal() *AttachmentQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(attachment.Table, attachment.FieldID, selector),
 			sqlgraph.To(attachment.Table, attachment.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, attachment.OriginalTable, attachment.OriginalColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, attachment.OriginalTable, attachment.OriginalColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryThumbnail chains the current query on the "thumbnail" edge.
+func (aq *AttachmentQuery) QueryThumbnail() *AttachmentQuery {
+	query := (&AttachmentClient{config: aq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := aq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := aq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(attachment.Table, attachment.FieldID, selector),
+			sqlgraph.To(attachment.Table, attachment.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, attachment.ThumbnailTable, attachment.ThumbnailColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
 		return fromU, nil
@@ -324,8 +324,8 @@ func (aq *AttachmentQuery) Clone() *AttachmentQuery {
 		inters:        append([]Interceptor{}, aq.inters...),
 		predicates:    append([]predicate.Attachment{}, aq.predicates...),
 		withItem:      aq.withItem.Clone(),
-		withThumbnail: aq.withThumbnail.Clone(),
 		withOriginal:  aq.withOriginal.Clone(),
+		withThumbnail: aq.withThumbnail.Clone(),
 		// clone intermediate query.
 		sql:  aq.sql.Clone(),
 		path: aq.path,
@@ -343,17 +343,6 @@ func (aq *AttachmentQuery) WithItem(opts ...func(*ItemQuery)) *AttachmentQuery {
 	return aq
 }
 
-// WithThumbnail tells the query-builder to eager-load the nodes that are connected to
-// the "thumbnail" edge. The optional arguments are used to configure the query builder of the edge.
-func (aq *AttachmentQuery) WithThumbnail(opts ...func(*AttachmentQuery)) *AttachmentQuery {
-	query := (&AttachmentClient{config: aq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	aq.withThumbnail = query
-	return aq
-}
-
 // WithOriginal tells the query-builder to eager-load the nodes that are connected to
 // the "original" edge. The optional arguments are used to configure the query builder of the edge.
 func (aq *AttachmentQuery) WithOriginal(opts ...func(*AttachmentQuery)) *AttachmentQuery {
@@ -362,6 +351,17 @@ func (aq *AttachmentQuery) WithOriginal(opts ...func(*AttachmentQuery)) *Attachm
 		opt(query)
 	}
 	aq.withOriginal = query
+	return aq
+}
+
+// WithThumbnail tells the query-builder to eager-load the nodes that are connected to
+// the "thumbnail" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AttachmentQuery) WithThumbnail(opts ...func(*AttachmentQuery)) *AttachmentQuery {
+	query := (&AttachmentClient{config: aq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	aq.withThumbnail = query
 	return aq
 }
 
@@ -446,11 +446,11 @@ func (aq *AttachmentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*A
 		_spec       = aq.querySpec()
 		loadedTypes = [3]bool{
 			aq.withItem != nil,
-			aq.withThumbnail != nil,
 			aq.withOriginal != nil,
+			aq.withThumbnail != nil,
 		}
 	)
-	if aq.withItem != nil || aq.withThumbnail != nil {
+	if aq.withItem != nil || aq.withOriginal != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -480,15 +480,15 @@ func (aq *AttachmentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*A
 			return nil, err
 		}
 	}
-	if query := aq.withThumbnail; query != nil {
-		if err := aq.loadThumbnail(ctx, query, nodes, nil,
-			func(n *Attachment, e *Attachment) { n.Edges.Thumbnail = e }); err != nil {
-			return nil, err
-		}
-	}
 	if query := aq.withOriginal; query != nil {
 		if err := aq.loadOriginal(ctx, query, nodes, nil,
 			func(n *Attachment, e *Attachment) { n.Edges.Original = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := aq.withThumbnail; query != nil {
+		if err := aq.loadThumbnail(ctx, query, nodes, nil,
+			func(n *Attachment, e *Attachment) { n.Edges.Thumbnail = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -527,14 +527,14 @@ func (aq *AttachmentQuery) loadItem(ctx context.Context, query *ItemQuery, nodes
 	}
 	return nil
 }
-func (aq *AttachmentQuery) loadThumbnail(ctx context.Context, query *AttachmentQuery, nodes []*Attachment, init func(*Attachment), assign func(*Attachment, *Attachment)) error {
+func (aq *AttachmentQuery) loadOriginal(ctx context.Context, query *AttachmentQuery, nodes []*Attachment, init func(*Attachment), assign func(*Attachment, *Attachment)) error {
 	ids := make([]uuid.UUID, 0, len(nodes))
 	nodeids := make(map[uuid.UUID][]*Attachment)
 	for i := range nodes {
-		if nodes[i].attachment_original == nil {
+		if nodes[i].attachment_thumbnail == nil {
 			continue
 		}
-		fk := *nodes[i].attachment_original
+		fk := *nodes[i].attachment_thumbnail
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -551,7 +551,7 @@ func (aq *AttachmentQuery) loadThumbnail(ctx context.Context, query *AttachmentQ
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "attachment_original" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "attachment_thumbnail" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -559,7 +559,7 @@ func (aq *AttachmentQuery) loadThumbnail(ctx context.Context, query *AttachmentQ
 	}
 	return nil
 }
-func (aq *AttachmentQuery) loadOriginal(ctx context.Context, query *AttachmentQuery, nodes []*Attachment, init func(*Attachment), assign func(*Attachment, *Attachment)) error {
+func (aq *AttachmentQuery) loadThumbnail(ctx context.Context, query *AttachmentQuery, nodes []*Attachment, init func(*Attachment), assign func(*Attachment, *Attachment)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[uuid.UUID]*Attachment)
 	for i := range nodes {
@@ -568,20 +568,20 @@ func (aq *AttachmentQuery) loadOriginal(ctx context.Context, query *AttachmentQu
 	}
 	query.withFKs = true
 	query.Where(predicate.Attachment(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(attachment.OriginalColumn), fks...))
+		s.Where(sql.InValues(s.C(attachment.ThumbnailColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.attachment_original
+		fk := n.attachment_thumbnail
 		if fk == nil {
-			return fmt.Errorf(`foreign-key "attachment_original" is nil for node %v`, n.ID)
+			return fmt.Errorf(`foreign-key "attachment_thumbnail" is nil for node %v`, n.ID)
 		}
 		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "attachment_original" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "attachment_thumbnail" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
