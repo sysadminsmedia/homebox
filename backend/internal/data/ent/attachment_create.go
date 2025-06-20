@@ -126,9 +126,55 @@ func (ac *AttachmentCreate) SetItemID(id uuid.UUID) *AttachmentCreate {
 	return ac
 }
 
+// SetNillableItemID sets the "item" edge to the Item entity by ID if the given value is not nil.
+func (ac *AttachmentCreate) SetNillableItemID(id *uuid.UUID) *AttachmentCreate {
+	if id != nil {
+		ac = ac.SetItemID(*id)
+	}
+	return ac
+}
+
 // SetItem sets the "item" edge to the Item entity.
 func (ac *AttachmentCreate) SetItem(i *Item) *AttachmentCreate {
 	return ac.SetItemID(i.ID)
+}
+
+// SetThumbnailID sets the "thumbnail" edge to the Attachment entity by ID.
+func (ac *AttachmentCreate) SetThumbnailID(id uuid.UUID) *AttachmentCreate {
+	ac.mutation.SetThumbnailID(id)
+	return ac
+}
+
+// SetNillableThumbnailID sets the "thumbnail" edge to the Attachment entity by ID if the given value is not nil.
+func (ac *AttachmentCreate) SetNillableThumbnailID(id *uuid.UUID) *AttachmentCreate {
+	if id != nil {
+		ac = ac.SetThumbnailID(*id)
+	}
+	return ac
+}
+
+// SetThumbnail sets the "thumbnail" edge to the Attachment entity.
+func (ac *AttachmentCreate) SetThumbnail(a *Attachment) *AttachmentCreate {
+	return ac.SetThumbnailID(a.ID)
+}
+
+// SetOriginalID sets the "original" edge to the Attachment entity by ID.
+func (ac *AttachmentCreate) SetOriginalID(id uuid.UUID) *AttachmentCreate {
+	ac.mutation.SetOriginalID(id)
+	return ac
+}
+
+// SetNillableOriginalID sets the "original" edge to the Attachment entity by ID if the given value is not nil.
+func (ac *AttachmentCreate) SetNillableOriginalID(id *uuid.UUID) *AttachmentCreate {
+	if id != nil {
+		ac = ac.SetOriginalID(*id)
+	}
+	return ac
+}
+
+// SetOriginal sets the "original" edge to the Attachment entity.
+func (ac *AttachmentCreate) SetOriginal(a *Attachment) *AttachmentCreate {
+	return ac.SetOriginalID(a.ID)
 }
 
 // Mutation returns the AttachmentMutation object of the builder.
@@ -221,9 +267,6 @@ func (ac *AttachmentCreate) check() error {
 	if _, ok := ac.mutation.Path(); !ok {
 		return &ValidationError{Name: "path", err: errors.New(`ent: missing required field "Attachment.path"`)}
 	}
-	if len(ac.mutation.ItemIDs()) == 0 {
-		return &ValidationError{Name: "item", err: errors.New(`ent: missing required edge "Attachment.item"`)}
-	}
 	return nil
 }
 
@@ -298,6 +341,39 @@ func (ac *AttachmentCreate) createSpec() (*Attachment, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.item_attachments = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ac.mutation.ThumbnailIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
+			Table:   attachment.ThumbnailTable,
+			Columns: []string{attachment.ThumbnailColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attachment.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.attachment_original = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ac.mutation.OriginalIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   attachment.OriginalTable,
+			Columns: []string{attachment.OriginalColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attachment.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

@@ -30,6 +30,10 @@ const (
 	FieldPath = "path"
 	// EdgeItem holds the string denoting the item edge name in mutations.
 	EdgeItem = "item"
+	// EdgeThumbnail holds the string denoting the thumbnail edge name in mutations.
+	EdgeThumbnail = "thumbnail"
+	// EdgeOriginal holds the string denoting the original edge name in mutations.
+	EdgeOriginal = "original"
 	// Table holds the table name of the attachment in the database.
 	Table = "attachments"
 	// ItemTable is the table that holds the item relation/edge.
@@ -39,6 +43,14 @@ const (
 	ItemInverseTable = "items"
 	// ItemColumn is the table column denoting the item relation/edge.
 	ItemColumn = "item_attachments"
+	// ThumbnailTable is the table that holds the thumbnail relation/edge.
+	ThumbnailTable = "attachments"
+	// ThumbnailColumn is the table column denoting the thumbnail relation/edge.
+	ThumbnailColumn = "attachment_original"
+	// OriginalTable is the table that holds the original relation/edge.
+	OriginalTable = "attachments"
+	// OriginalColumn is the table column denoting the original relation/edge.
+	OriginalColumn = "attachment_original"
 )
 
 // Columns holds all SQL columns for attachment fields.
@@ -55,6 +67,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "attachments"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
+	"attachment_original",
 	"item_attachments",
 }
 
@@ -163,10 +176,38 @@ func ByItemField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newItemStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByThumbnailField orders the results by thumbnail field.
+func ByThumbnailField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newThumbnailStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByOriginalField orders the results by original field.
+func ByOriginalField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newOriginalStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newItemStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ItemInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, ItemTable, ItemColumn),
+	)
+}
+func newThumbnailStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, true, ThumbnailTable, ThumbnailColumn),
+	)
+}
+func newOriginalStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, OriginalTable, OriginalColumn),
 	)
 }

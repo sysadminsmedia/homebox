@@ -5,14 +5,19 @@ import (
 	"context"
 	"crypto/md5"
 	"fmt"
+	"github.com/gen2brain/go-fitz"
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
 	"github.com/zeebo/blake3"
 	"gocloud.dev/pubsub"
+	"image"
+	"image/png"
 	"io"
+	"io/fs"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -168,67 +173,10 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 		return nil, err
 	}
 
-	// Prepare for the hashing of the file contents
-	hashOut := make([]byte, 32)
-
-	// Read all content into a buffer
-	buf := new(bytes.Buffer)
-	_, err = io.Copy(buf, doc.Content)
+	// Upload the file to the storage bucket
+	path, err := r.UploadFile(ctx, itemGroup, doc)
 	if err != nil {
-		log.Err(err).Msg("failed to read file content")
-		if rbErr := tx.Rollback(); rbErr != nil {
-			return nil, rbErr
-		}
-		return nil, err
-	}
-	// Now the buffer contains all the data, use it for hashing
-	contentBytes := buf.Bytes()
-
-	// We use blake3 to generate a hash of the file contents, the group ID is used as context to ensure unique hashes
-	// for the same file across different groups to reduce the chance of collisions
-	// additionally, the hash can be used to validate the file contents if needed
-	blake3.DeriveKey(itemGroup.ID.String(), contentBytes, hashOut)
-
-	// Write the file to the blob storage bucket which might be a local file system or cloud storage
-	bucket, err := blob.OpenBucket(ctx, r.GetConnString())
-	if err != nil {
-		log.Err(err).Msg("failed to open bucket")
 		err := tx.Rollback()
-		if err != nil {
-			return nil, err
-		}
-		return nil, err
-	}
-	defer func(bucket *blob.Bucket) {
-		err := bucket.Close()
-		if err != nil {
-			log.Err(err).Msg("failed to close bucket")
-			err := tx.Rollback()
-			if err != nil {
-				log.Err(err).Msg("failed to rollback transaction after closing bucket")
-			}
-		}
-	}(bucket)
-	md5hash := md5.New()
-	_, err = md5hash.Write(contentBytes)
-	if err != nil {
-		log.Err(err).Msg("failed to generate MD5 hash for storage")
-		err = tx.Rollback()
-		if err != nil {
-			return nil, err
-		}
-		return nil, err
-	}
-	contentType := http.DetectContentType(contentBytes[:min(512, len(contentBytes))])
-	options := &blob.WriterOptions{
-		ContentType: contentType,
-		ContentMD5:  md5hash.Sum(nil),
-	}
-	path := r.path(itemGroup.ID, fmt.Sprintf("%x", hashOut))
-	err = bucket.WriteAll(ctx, path, contentBytes, options)
-	if err != nil {
-		log.Err(err).Msg("failed to write file to bucket")
-		err = tx.Rollback()
 		if err != nil {
 			return nil, err
 		}
@@ -270,8 +218,6 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 			Metadata: map[string]string{
 				"attachment_id": attachmentDb.ID.String(),
 				"title":         doc.Title,
-				"type":          typ.String(),
-				"primary":       fmt.Sprintf("%t", primary),
 				"path":          attachmentDb.Path,
 			},
 		})
@@ -365,4 +311,181 @@ func (r *AttachmentRepo) Delete(ctx context.Context, id uuid.UUID) error {
 
 func (r *AttachmentRepo) Rename(ctx context.Context, id uuid.UUID, title string) (*ent.Attachment, error) {
 	return r.db.Attachment.UpdateOneID(id).SetTitle(title).Save(ctx)
+}
+
+func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmentId uuid.UUID, title string, path string) error {
+	tx, err := r.db.Tx(ctx)
+	if err != nil {
+		return nil
+	}
+	// If there is an error during file creation rollback the database
+	defer func() {
+		if v := recover(); v != nil {
+			err := tx.Rollback()
+			if err != nil {
+				return
+			}
+		}
+	}()
+
+	att := tx.Attachment.Create().
+		SetID(uuid.New()).
+		SetOriginalID(attachmentId).
+		SetTitle(fmt.Sprintf("%s-thumb", title)).
+		SetType("thumbnail")
+	orig := tx.Attachment.GetX(ctx, attachmentId)
+
+	bucket, err := blob.OpenBucket(ctx, r.GetConnString())
+	if err != nil {
+		log.Err(err).Msg("failed to open bucket")
+		return err
+	}
+	defer func(bucket *blob.Bucket) {
+		err := bucket.Close()
+		if err != nil {
+			log.Err(err).Msg("failed to close bucket")
+		}
+	}(bucket)
+
+	if isImageFile(path) {
+		origFile, err := bucket.Open(path)
+		if err != nil {
+			return err
+		}
+		defer func(file fs.File) {
+			err := file.Close()
+			if err != nil {
+				log.Err(err).Msg("failed to close file")
+			}
+		}(origFile)
+
+		img, _, err := image.Decode(origFile)
+		if err != nil {
+			return err
+		}
+
+		bounds := img.Bounds()
+		cropRect := image.Rect(
+			bounds.Min.X,
+			bounds.Min.Y,
+			bounds.Min.X+r.thumbnail.Width,
+			bounds.Min.Y+r.thumbnail.Height,
+		)
+		croppedImg := img.(interface {
+			SubImage(r image.Rectangle) image.Image
+		}).SubImage(cropRect)
+
+		buf := new(bytes.Buffer)
+		err = png.Encode(buf, croppedImg)
+		if err != nil {
+			return err
+		}
+
+		contentBytes := buf.Bytes()
+		thumbnailFile, err := r.UploadFile(ctx, orig.Edges.Item.QueryGroup().FirstX(ctx), ItemCreateAttachment{
+			Title:   fmt.Sprintf("%s-thumb", title),
+			Content: bytes.NewReader(contentBytes),
+		})
+
+		att.SetPath(thumbnailFile)
+	} else if isDocumentFile(path) && r.thumbnail.NonImageEnabled {
+		thumbnailPath := fmt.Sprintf("%s-thumb.png", path)
+		doc, err := fitz.New(path)
+		if err != nil {
+			return err
+		}
+		defer func(doc *fitz.Document) {
+			err := doc.Close()
+			if err != nil {
+				log.Err(err).Msg("failed to close document")
+			}
+		}(doc)
+
+		img, err := doc.Image(0)
+		if err != nil {
+			return err
+		}
+
+		thumbnailFile, err := os.Create(thumbnailPath)
+		if err != nil {
+			return err
+		}
+		defer func(thumbnailFile *os.File) {
+			err := thumbnailFile.Close()
+			if err != nil {
+				log.Err(err).Msg("failed to close thumbnail file")
+			}
+		}(thumbnailFile)
+
+		if err := png.Encode(thumbnailFile, img); err != nil {
+			return err
+		}
+		att.SetPath(thumbnailPath)
+	} else {
+		return fmt.Errorf("unsupported file type for thumbnail generation")
+	}
+
+	return nil
+}
+
+func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, doc ItemCreateAttachment) (string, error) {
+	// Prepare for the hashing of the file contents
+	hashOut := make([]byte, 32)
+
+	// Read all content into a buffer
+	buf := new(bytes.Buffer)
+	_, err := io.Copy(buf, doc.Content)
+	if err != nil {
+		log.Err(err).Msg("failed to read file content")
+		return "", err
+	}
+	// Now the buffer contains all the data, use it for hashing
+	contentBytes := buf.Bytes()
+
+	// We use blake3 to generate a hash of the file contents, the group ID is used as context to ensure unique hashes
+	// for the same file across different groups to reduce the chance of collisions
+	// additionally, the hash can be used to validate the file contents if needed
+	blake3.DeriveKey(itemGroup.ID.String(), contentBytes, hashOut)
+
+	// Write the file to the blob storage bucket which might be a local file system or cloud storage
+	bucket, err := blob.OpenBucket(ctx, r.GetConnString())
+	if err != nil {
+		log.Err(err).Msg("failed to open bucket")
+		return "", err
+	}
+	defer func(bucket *blob.Bucket) {
+		err := bucket.Close()
+		if err != nil {
+			log.Err(err).Msg("failed to close bucket")
+		}
+	}(bucket)
+	md5hash := md5.New()
+	_, err = md5hash.Write(contentBytes)
+	if err != nil {
+		log.Err(err).Msg("failed to generate MD5 hash for storage")
+		return "", err
+	}
+	contentType := http.DetectContentType(contentBytes[:min(512, len(contentBytes))])
+	options := &blob.WriterOptions{
+		ContentType: contentType,
+		ContentMD5:  md5hash.Sum(nil),
+	}
+	path := r.path(itemGroup.ID, fmt.Sprintf("%x", hashOut))
+	err = bucket.WriteAll(ctx, path, contentBytes, options)
+	if err != nil {
+		log.Err(err).Msg("failed to write file to bucket")
+		return "", err
+	}
+
+	return path, nil
+}
+
+func isImageFile(path string) bool {
+	// Check file extension for image types
+	return strings.HasSuffix(path, ".jpg") || strings.HasSuffix(path, ".jpeg") || strings.HasSuffix(path, ".png")
+}
+
+func isDocumentFile(path string) bool {
+	// Check file extension for document types
+	return strings.HasSuffix(path, ".pdf") || strings.HasSuffix(path, ".epub") || strings.HasSuffix(path, ".mobi") || strings.HasSuffix(path, ".docx") || strings.HasSuffix(path, ".xlsx") || strings.HasSuffix(path, ".pptx") || strings.HasSuffix(path, ".txt") || strings.HasSuffix(path, ".html")
 }

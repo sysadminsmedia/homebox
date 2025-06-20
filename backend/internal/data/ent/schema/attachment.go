@@ -33,7 +33,10 @@ func (Attachment) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("item", Item.Type).
 			Ref("attachments").
-			Required().
+			Unique(),
+		edge.To("original", Attachment.Type).
+			Unique().
+			From("thumbnail").
 			Unique(),
 	}
 }

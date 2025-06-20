@@ -8,6 +8,7 @@ require (
 	entgo.io/ent v0.14.4
 	github.com/ardanlabs/conf/v3 v3.8.0
 	github.com/containrrr/shoutrrr v0.8.0
+	github.com/gen2brain/go-fitz v1.24.15
 	github.com/go-chi/chi/v5 v5.2.1
 	github.com/go-playground/validator/v10 v10.26.0
 	github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1
@@ -112,6 +113,7 @@ require (
 	github.com/hashicorp/hcl/v2 v2.13.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
+	github.com/jupiterrider/ffi v0.5.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.12 // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
