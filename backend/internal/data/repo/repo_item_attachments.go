@@ -209,7 +209,7 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 		defer func(topic *pubsub.Topic, ctx context.Context) {
 			err := topic.Shutdown(ctx)
 			if err != nil {
-				log.Err(err).Msg("failed to shutdown pubsub topic")
+				log.Err(err).Msg("failtask ed to shutdown pubsub topic")
 			}
 		}(topic, ctx)
 
@@ -375,7 +375,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		}
 	}(origFile)
 
-	if isImageFile(path) {
+	if isImageFile(title) {
 
 		img, _, err := image.Decode(origFile)
 		if err != nil {
@@ -408,7 +408,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		}
 
 		contentBytes := buf.Bytes()
-		thumbnailFile, err := r.UploadFile(ctx, orig.Edges.Item.QueryGroup().FirstX(ctx), ItemCreateAttachment{
+		thumbnailFile, err := r.UploadFile(ctx, tx.Group.GetX(ctx, groupId), ItemCreateAttachment{
 			Title:   fmt.Sprintf("%s-thumb", title),
 			Content: bytes.NewReader(contentBytes),
 		})
@@ -422,7 +422,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		}
 
 		att.SetPath(thumbnailFile)
-	} else if isDocumentFile(path) && r.thumbnail.NonImageEnabled {
+	} else if isDocumentFile(title) && r.thumbnail.NonImageEnabled {
 		fitz.FzVersion = r.thumbnail.MuPDFVersion
 		doc, err := fitz.NewFromReader(origFile)
 		if err != nil {
@@ -480,6 +480,11 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	_, err = att.Save(ctx)
 	if err != nil {
 		return err
+	}
+
+	if err := tx.Commit(); err != nil {
+		log.Err(err).Msg("failed to commit transaction")
+		return nil
 	}
 	return nil
 }
@@ -562,12 +567,12 @@ func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, d
 	return path, nil
 }
 
-func isImageFile(path string) bool {
+func isImageFile(title string) bool {
 	// Check file extension for image types
-	return strings.HasSuffix(path, ".jpg") || strings.HasSuffix(path, ".jpeg") || strings.HasSuffix(path, ".png")
+	return strings.HasSuffix(title, ".jpg") || strings.HasSuffix(title, ".jpeg") || strings.HasSuffix(title, ".png")
 }
 
-func isDocumentFile(path string) bool {
+func isDocumentFile(title string) bool {
 	// Check file extension for document types
-	return strings.HasSuffix(path, ".pdf") || strings.HasSuffix(path, ".epub") || strings.HasSuffix(path, ".mobi") || strings.HasSuffix(path, ".docx") || strings.HasSuffix(path, ".xlsx") || strings.HasSuffix(path, ".pptx") || strings.HasSuffix(path, ".txt") || strings.HasSuffix(path, ".html")
+	return strings.HasSuffix(title, ".pdf") || strings.HasSuffix(title, ".epub") || strings.HasSuffix(title, ".mobi") || strings.HasSuffix(title, ".docx") || strings.HasSuffix(title, ".xlsx") || strings.HasSuffix(title, ".pptx") || strings.HasSuffix(title, ".txt") || strings.HasSuffix(title, ".html")
 }

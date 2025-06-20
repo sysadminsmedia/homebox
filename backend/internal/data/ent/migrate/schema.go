@@ -13,7 +13,7 @@ var (
 		{Name: "id", Type: field.TypeUUID},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"photo", "manual", "warranty", "attachment", "receipt"}, Default: "attachment"},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"photo", "manual", "warranty", "attachment", "receipt", "thumbnail"}, Default: "attachment"},
 		{Name: "primary", Type: field.TypeBool, Default: false},
 		{Name: "title", Type: field.TypeString, Default: ""},
 		{Name: "path", Type: field.TypeString, Default: ""},

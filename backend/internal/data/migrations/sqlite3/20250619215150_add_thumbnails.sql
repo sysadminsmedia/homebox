@@ -9,7 +9,7 @@ create table attachments_dg_tmp
     "primary"            bool default false        not null,
     path                 text                      not null,
     title                text                      not null,
-    item_attachments     uuid                      not null
+    item_attachments     uuid
         constraint attachments_items_attachments
             references items
             on delete cascade,
