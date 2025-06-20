@@ -28,6 +28,7 @@ type Config struct {
 	Debug      DebugConf      `yaml:"debug"`
 	Options    Options        `yaml:"options"`
 	LabelMaker LabelMakerConf `yaml:"labelmaker"`
+	Thumbnail  Thumbnail      `yaml:"thumbnail"`
 }
 
 type Options struct {
@@ -36,6 +37,14 @@ type Options struct {
 	CurrencyConfig       string `yaml:"currencies"`
 	GithubReleaseCheck   bool   `yaml:"check_github_release"    conf:"default:true"`
 	AllowAnalytics       bool   `yaml:"allow_analytics"         conf:"default:false"`
+}
+
+type Thumbnail struct {
+	Enabled         bool   `yaml:"enabled" conf:"default:true"`
+	Width           int64  `yaml:"width"  conf:"default:500"`
+	Height          int64  `yaml:"height" conf:"default:500"`
+	NonImageEnabled bool   `yaml:"non_image_enabled" conf:"default:false"`
+	MuPDFVersion    string `yaml:"mupdf_version" conf:"default:1.26.2"`
 }
 
 type DebugConf struct {

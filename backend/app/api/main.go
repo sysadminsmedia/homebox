@@ -203,7 +203,7 @@ func run(cfg *config.Config) error {
 
 	app.bus = eventbus.New()
 	app.db = c
-	app.repos = repo.New(c, app.bus, cfg.Storage)
+	app.repos = repo.New(c, app.bus, cfg.Storage, cfg.Database.PubSubConnString, cfg.Thumbnail)
 	app.services = services.New(
 		app.repos,
 		services.WithAutoIncrementAssetID(cfg.Options.AutoIncrementAssetID),
@@ -327,6 +327,8 @@ func run(cfg *config.Config) error {
 			log.Info().Msgf("Debug server is running on %s:%s", cfg.Web.Host, cfg.Debug.Port)
 			return debugserver.ListenAndServe()
 		})
+		// Print the configuration to the console
+		cfg.Print()
 	}
 
 	return runner.Start(context.Background())

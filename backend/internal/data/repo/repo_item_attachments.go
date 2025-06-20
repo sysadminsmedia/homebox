@@ -8,7 +8,9 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
 	"github.com/zeebo/blake3"
+	"gocloud.dev/pubsub"
 	"io"
 	"net/http"
 	"path/filepath"
@@ -31,8 +33,10 @@ import (
 // AttachmentRepo is a repository for Attachments table that links Items to their
 // associated files while also specifying the type of the attachment.
 type AttachmentRepo struct {
-	db      *ent.Client
-	storage config.Storage
+	db         *ent.Client
+	storage    config.Storage
+	pubSubConn string
+	thumbnail  config.Thumbnail
 }
 
 type (
@@ -247,6 +251,36 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 		log.Err(err).Msg("failed to commit transaction")
 		return nil, err
 	}
+
+	if r.thumbnail.Enabled {
+		topic, err := pubsub.OpenTopic(ctx, utils.GenerateSubPubConn(r.pubSubConn, "thumbnails"))
+		if err != nil {
+			log.Err(err).Msg("failed to open pubsub topic")
+			return nil, err
+		}
+		defer func(topic *pubsub.Topic, ctx context.Context) {
+			err := topic.Shutdown(ctx)
+			if err != nil {
+				log.Err(err).Msg("failed to shutdown pubsub topic")
+			}
+		}(topic, ctx)
+
+		err = topic.Send(ctx, &pubsub.Message{
+			Body: []byte(fmt.Sprintf("attachment_created:%s", attachmentDb.ID.String())),
+			Metadata: map[string]string{
+				"attachment_id": attachmentDb.ID.String(),
+				"title":         doc.Title,
+				"type":          typ.String(),
+				"primary":       fmt.Sprintf("%t", primary),
+				"path":          attachmentDb.Path,
+			},
+		})
+		if err != nil {
+			log.Err(err).Msg("failed to send message to topic")
+			return nil, err
+		}
+	}
+
 	return attachmentDb, nil
 }
 

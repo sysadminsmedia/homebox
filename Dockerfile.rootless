@@ -38,7 +38,7 @@ ARG VERSION
 # Install necessary build tools
 RUN apk update && \
     apk upgrade && \
-    apk add --no-cache git build-base gcc g++
+    apk add --no-cache git build-base gcc g++ libffi mupdf-libs
 
 WORKDIR /go/src/app
 
@@ -65,6 +65,7 @@ ENV HBOX_MODE=production
 ENV HBOX_STORAGE_CONN_STRING=file:///
 ENV HBOX_STORAGE_PREFIX_PATH=data
 ENV HBOX_DATABASE_SQLITE_PATH=/data/homebox.db?_pragma=busy_timeout=2000&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite
+ENV HBOX_THUMBNAIL_NON_IMAGE_ENABLED=true
 
 # Install necessary runtime dependencies
 RUN apk --no-cache add ca-certificates wget
