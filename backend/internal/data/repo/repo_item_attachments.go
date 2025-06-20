@@ -17,7 +17,6 @@ import (
 	"io"
 	"io/fs"
 	"net/http"
-	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -347,17 +346,18 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		}
 	}(bucket)
 
-	if isImageFile(path) {
-		origFile, err := bucket.Open(path)
+	origFile, err := bucket.Open(path)
+	if err != nil {
+		return err
+	}
+	defer func(file fs.File) {
+		err := file.Close()
 		if err != nil {
-			return err
+			log.Err(err).Msg("failed to close file")
 		}
-		defer func(file fs.File) {
-			err := file.Close()
-			if err != nil {
-				log.Err(err).Msg("failed to close file")
-			}
-		}(origFile)
+	}(origFile)
+
+	if isImageFile(path) {
 
 		img, _, err := image.Decode(origFile)
 		if err != nil {
@@ -389,8 +389,8 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 
 		att.SetPath(thumbnailFile)
 	} else if isDocumentFile(path) && r.thumbnail.NonImageEnabled {
-		thumbnailPath := fmt.Sprintf("%s-thumb.png", path)
-		doc, err := fitz.New(path)
+		fitz.FzVersion = r.thumbnail.MuPDFVersion
+		doc, err := fitz.NewFromReader(origFile)
 		if err != nil {
 			return err
 		}
@@ -406,25 +406,23 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			return err
 		}
 
-		thumbnailFile, err := os.Create(thumbnailPath)
-		if err != nil {
+		buf := new(bytes.Buffer)
+		if err := png.Encode(buf, img); err != nil {
 			return err
 		}
-		defer func(thumbnailFile *os.File) {
-			err := thumbnailFile.Close()
-			if err != nil {
-				log.Err(err).Msg("failed to close thumbnail file")
-			}
-		}(thumbnailFile)
 
-		if err := png.Encode(thumbnailFile, img); err != nil {
+		thumbnailFile, err := r.UploadFile(ctx, orig.Edges.Item.QueryGroup().FirstX(ctx), ItemCreateAttachment{
+			Title:   fmt.Sprintf("%s-thumb", title),
+			Content: bytes.NewReader(buf.Bytes()),
+		})
+		if err != nil {
+			log.Err(err).Msg("failed to upload thumbnail file")
 			return err
 		}
-		att.SetPath(thumbnailPath)
+		att.SetPath(thumbnailFile)
 	} else {
 		return fmt.Errorf("unsupported file type for thumbnail generation")
 	}
-
 	return nil
 }
 
