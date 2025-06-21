@@ -220,12 +220,6 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 			log.Err(err).Msg("failed to open pubsub topic")
 			return nil, err
 		}
-		defer func(topic *pubsub.Topic, ctx context.Context) {
-			err := topic.Shutdown(ctx)
-			if err != nil {
-				log.Err(err).Msg("failtask ed to shutdown pubsub topic")
-			}
-		}(topic, ctx)
 
 		err = topic.Send(ctx, &pubsub.Message{
 			Body: []byte(fmt.Sprintf("attachment_created:%s", attachmentDb.ID.String())),
@@ -331,9 +325,7 @@ func (r *AttachmentRepo) Rename(ctx context.Context, id uuid.UUID, title string)
 
 //nolint:gocyclo
 func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmentId uuid.UUID, title string, path string) error {
-	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
-	defer cancel()
-
+	log.Debug().Msg("starting thumbnail creation")
 	tx, err := r.db.Tx(ctx)
 	if err != nil {
 		return nil
@@ -348,12 +340,14 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		}
 	}()
 
+	log.Debug().Msg("set initial database transaction")
 	att := tx.Attachment.Create().
 		SetID(uuid.New()).
 		SetOriginalID(attachmentId).
 		SetTitle(fmt.Sprintf("%s-thumb", title)).
 		SetType("thumbnail")
 
+	log.Debug().Msg("opening original file")
 	bucket, err := blob.OpenBucket(ctx, r.GetConnString())
 	if err != nil {
 		log.Err(err).Msg("failed to open bucket")
@@ -393,6 +387,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		}
 	}(origFile)
 
+	log.Debug().Msg("stat original file for file size")
 	stats, err := origFile.Stat()
 	if err != nil {
 		err := tx.Rollback()
@@ -407,6 +402,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		return fmt.Errorf("original file %s is too large to create a thumbnail", title)
 	}
 
+	log.Debug().Msg("reading original file content")
 	contentBytes, err := io.ReadAll(origFile)
 	if err != nil {
 		err := tx.Rollback()
@@ -417,14 +413,18 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		return err
 	}
 
+	log.Debug().Msg("detecting content type of original file")
 	contentType := http.DetectContentType(contentBytes[:min(512, len(contentBytes))])
 
 	switch {
 	case isImageFile(contentType):
-		img, _, err := image.Decode(origFile)
+		log.Debug().Msg("creating thumbnail for image file")
+		img, _, err := image.Decode(bytes.NewReader(contentBytes))
 		if err != nil {
+			log.Err(err).Msg("failed to decode image file")
 			err := tx.Rollback()
 			if err != nil {
+				log.Err(err).Msg("failed to rollback transaction")
 				return err
 			}
 			return err
@@ -441,6 +441,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			return err
 		}
 		contentBytes := buf.Bytes()
+		log.Debug().Msg("uploading thumbnail file")
 		thumbnailFile, err := r.UploadFile(ctx, tx.Group.GetX(ctx, groupId), ItemCreateAttachment{
 			Title:   fmt.Sprintf("%s-thumb", title),
 			Content: bytes.NewReader(contentBytes),
@@ -453,15 +454,19 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
+		log.Debug().Msg("setting thumbnail file path in attachment")
 		att.SetPath(thumbnailFile)
 	default:
 		return fmt.Errorf("file type %s is not supported for thumbnail creation or document thumnails disabled", title)
 	}
+
+	log.Debug().Msg("saving thumbnail attachment to database")
 	_, err = att.Save(ctx)
 	if err != nil {
 		return err
 	}
 
+	log.Debug().Msg("finishing thumbnail creation transaction")
 	if err := tx.Commit(); err != nil {
 		log.Err(err).Msg("failed to commit transaction")
 		return nil
@@ -488,12 +493,6 @@ func (r *AttachmentRepo) CreateMissingThumbnails(ctx context.Context, groupId uu
 	if err != nil {
 		log.Err(err).Msg("failed to open pubsub topic")
 	}
-	defer func(topic *pubsub.Topic, ctx context.Context) {
-		err := topic.Shutdown(ctx)
-		if err != nil {
-			log.Err(err).Msg("failed to shutdown pubsub topic")
-		}
-	}(topic, ctx)
 
 	count := 0
 	for _, attachment := range attachments {

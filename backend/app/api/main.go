@@ -344,6 +344,7 @@ func run(cfg *config.Config) error {
 				return ctx.Err()
 			default:
 				msg, err := subscription.Receive(ctx)
+				log.Debug().Msg("received thumbnail generation request from pubsub topic")
 				if err != nil {
 					log.Err(err).Msg("failed to receive message from pubsub topic")
 					return err
@@ -369,6 +370,7 @@ func run(cfg *config.Config) error {
 				err = app.repos.Attachments.CreateThumbnail(ctx, groupId, attachmentId, msg.Metadata["title"], msg.Metadata["path"])
 				if err != nil {
 					msg.Nack()
+					log.Err(err).Msg("failed to create thumbnail")
 					return err
 				}
 				msg.Ack()
