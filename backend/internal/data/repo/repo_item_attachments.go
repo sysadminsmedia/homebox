@@ -11,8 +11,8 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
 	"github.com/zeebo/blake3"
 
-	"github.com/chai2010/webp"
 	"github.com/gen2brain/avif"
+	"github.com/gen2brain/webp"
 	"golang.org/x/image/draw"
 	"image"
 	"io"
@@ -433,7 +433,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		dst := image.NewRGBA(image.Rect(0, 0, r.thumbnail.Width, r.thumbnail.Height))
 		draw.ApproxBiLinear.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
 		buf := new(bytes.Buffer)
-		err = webp.Encode(buf, dst, &webp.Options{Lossless: false, Quality: 80})
+		err = webp.Encode(buf, dst, webp.Options{Quality: 80, Lossless: false})
 		if err != nil {
 			err := tx.Rollback()
 			if err != nil {
@@ -471,7 +471,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		dst := image.NewRGBA(image.Rect(0, 0, r.thumbnail.Width, r.thumbnail.Height))
 		draw.ApproxBiLinear.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
 		buf := new(bytes.Buffer)
-		err = webp.Encode(buf, dst, &webp.Options{Lossless: false, Quality: 80})
+		err = webp.Encode(buf, dst, webp.Options{Quality: 80, Lossless: false})
 		if err != nil {
 			err := tx.Rollback()
 			if err != nil {
@@ -509,7 +509,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		dst := image.NewRGBA(image.Rect(0, 0, r.thumbnail.Width, r.thumbnail.Height))
 		draw.ApproxBiLinear.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
 		buf := new(bytes.Buffer)
-		err = webp.Encode(buf, dst, &webp.Options{Lossless: false, Quality: 80})
+		err = webp.Encode(buf, dst, webp.Options{Quality: 80, Lossless: false})
 		if err != nil {
 			err := tx.Rollback()
 			if err != nil {
