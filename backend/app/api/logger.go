@@ -18,7 +18,7 @@ func (a *app) setupLogger() {
 	}
 
 	level, err := zerolog.ParseLevel(a.conf.Log.Level)
-	if err == nil {
+	if err != nil {
 		zerolog.SetGlobalLevel(level)
 	}
 }

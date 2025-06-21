@@ -25,4 +25,10 @@ export class ActionsAPI extends BaseAPI {
       url: route("/actions/set-primary-photos"),
     });
   }
+
+  createMissingThumbnails() {
+    return this.http.post<void, ActionAmountResult>({
+      url: route("/actions/create-missing-thumbnails"),
+    });
+  }
 }

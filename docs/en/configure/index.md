@@ -47,6 +47,9 @@ aside: false
 | HBOX_LABEL_MAKER_PRINT_COMMAND          |                                                                            | the command to use for printing labels. if empty, label printing is disabled. <span v-pre>`{{.FileName}}`</span> in the command will be replaced with the png filename of the label       |
 | HBOX_LABEL_MAKER_DYNAMIC_LENGTH         | true                                                                       | allow label generation with open length. `HBOX_LABEL_MAKER_HEIGHT` is still used for layout and minimal height. If not used, long text may be cut off, but all labels have the same size. |
 | HBOX_LABEL_MAKER_ADDITIONAL_INFORMATION |                                                                            | Additional information added to the label like name or phone number                                                                                                                       |
+| HBOX_THUMBNAIL_ENABLED                  | true                                                                       | enable thumbnail generation for images, supports PNG, JPEG, AVIF, WEBP, GIF file types                                                                                                    |
+| HBOX_THUMBNAIL_WIDTH                    | 500                                                                        | width for generated thumbnails in pixels                                                                                                                                                  |
+| HBOX_THUMBNAIL_HEIGHT                   | 500                                                                        | height for generated thumbnails in pixels                                                                                                                                                 |
 
 ::: warning Security Considerations
 For postgreSQL in production:
@@ -112,6 +115,9 @@ OPTIONS
 --label-maker-print-command/$HBOX_LABEL_MAKER_PRINT_COMMAND                   <string>
 --label-maker-additional-information/$HBOX_LABEL_MAKER_DYNAMIC_LENGTH         <string>  (default: true) 
 --label-maker-additional-information/$HBOX_LABEL_MAKER_ADDITIONAL_INFORMATION <string>
+--thumbnail-enabled/$HBOX_THUMBNAIL_ENABLED                                   <bool>    (default: true)
+--thumbnail-width/$HBOX_THUMBNAIL_WIDTH                                       <int>     (default: 500)
+--thumbnail-height/$HBOX_THUMBNAIL_HEIGHT                                     <int>     (default: 500)
 --help/-h    display this help message
 ```
 

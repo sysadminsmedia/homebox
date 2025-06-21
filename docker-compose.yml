@@ -7,5 +7,8 @@ services:
       args:
         - COMMIT=head
         - BUILD_TIME=0001-01-01T00:00:00Z
+    environment:
+      - HBOX_DEBUG=true
+      - HBOX_LOGGER_LEVEL=-1
     ports:
       - 3100:7745

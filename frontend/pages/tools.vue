@@ -84,6 +84,12 @@
             <div v-html="DOMPurify.sanitize($t('tools.actions_set.set_primary_photo_sub'))"></div>
             <template #button> {{ $t("tools.actions_set.set_primary_photo_button") }} </template>
           </DetailAction>
+          <DetailAction @action="createMissingThumbnails">
+            <template #title> {{ $t("tools.actions_set.create_missing_thumbnails") }} </template>
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-html="DOMPurify.sanitize($t('tools.actions_set.create_missing_thumbnails_sub'))"></div>
+            <template #button> {{ $t("tools.actions_set.create_missing_thumbnails_button") }} </template>
+          </DetailAction>
         </div>
       </BaseCard>
     </BaseContainer>
@@ -135,6 +141,23 @@
 
     if (result.error) {
       toast.error(t("tools.toast.failed_ensure_ids"));
+      return;
+    }
+
+    toast.success(t("tools.toast.asset_success", { results: result.data.completed }));
+  }
+
+  async function createMissingThumbnails() {
+    const { isCanceled } = await confirm.open(t("tools.actions_set.create_missing_thumbnails_confirm"));
+
+    if (isCanceled) {
+      return;
+    }
+
+    const result = await api.actions.createMissingThumbnails();
+
+    if (result.error) {
+      toast.error(t("tools.toast.failed_create_missing_thumbnails"));
       return;
     }
 
