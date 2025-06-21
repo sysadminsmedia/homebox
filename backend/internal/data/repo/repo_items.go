@@ -134,8 +134,8 @@ type (
 		Location *LocationSummary `json:"location,omitempty" extensions:"x-nullable,x-omitempty"`
 		Labels   []LabelSummary   `json:"labels"`
 
-		ImageID     *uuid.UUID `json:"imageId,omitempty"`
-		ThumbnailId *uuid.UUID `json:"thumbnailId,omitempty"`
+		ImageID     *uuid.UUID `json:"imageId,omitempty"     extensions:"x-nullable,x-omitempty"`
+		ThumbnailId *uuid.UUID `json:"thumbnailId,omitempty" extensions:"x-nullable,x-omitempty"`
 
 		// Sale details
 		SoldTime time.Time `json:"soldTime"`

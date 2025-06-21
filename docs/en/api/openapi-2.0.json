@@ -3251,7 +3251,9 @@
                     "type": "string"
                 },
                 "imageId": {
-                    "type": "string"
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "insured": {
                     "type": "boolean"
@@ -3331,7 +3333,9 @@
                     "type": "boolean"
                 },
                 "thumbnailId": {
-                    "type": "string"
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "updatedAt": {
                     "type": "string"
@@ -3391,7 +3395,9 @@
                     "type": "string"
                 },
                 "imageId": {
-                    "type": "string"
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "insured": {
                     "type": "boolean"
@@ -3426,7 +3432,9 @@
                     "type": "string"
                 },
                 "thumbnailId": {
-                    "type": "string"
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "updatedAt": {
                     "type": "string"

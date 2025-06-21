@@ -3253,7 +3253,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "imageId": {
-                    "type": "string"
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "insured": {
                     "type": "boolean"
@@ -3333,7 +3335,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "thumbnailId": {
-                    "type": "string"
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "updatedAt": {
                     "type": "string"
@@ -3393,7 +3397,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "imageId": {
-                    "type": "string"
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "insured": {
                     "type": "boolean"
@@ -3428,7 +3434,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "thumbnailId": {
-                    "type": "string"
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "updatedAt": {
                     "type": "string"

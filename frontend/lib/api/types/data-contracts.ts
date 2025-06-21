@@ -523,7 +523,7 @@ export interface ItemOut {
   description: string;
   fields: ItemField[];
   id: string;
-  imageId: string;
+  imageId?: string | null;
   insured: boolean;
   labels: LabelSummary[];
   /** Warranty */
@@ -548,7 +548,7 @@ export interface ItemOut {
   soldTime: Date | string;
   soldTo: string;
   syncChildItemsLocations: boolean;
-  thumbnailId: string;
+  thumbnailId?: string | null;
   updatedAt: Date | string;
   warrantyDetails: string;
   warrantyExpires: Date | string;
@@ -572,7 +572,7 @@ export interface ItemSummary {
   createdAt: Date | string;
   description: string;
   id: string;
-  imageId: string;
+  imageId?: string | null;
   insured: boolean;
   labels: LabelSummary[];
   /** Edges */
@@ -582,7 +582,7 @@ export interface ItemSummary {
   quantity: number;
   /** Sale details */
   soldTime: Date | string;
-  thumbnailId: string;
+  thumbnailId?: string | null;
   updatedAt: Date | string;
 }
 

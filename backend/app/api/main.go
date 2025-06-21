@@ -75,19 +75,19 @@ func validatePostgresSSLMode(sslMode string) bool {
 	return validModes[strings.ToLower(strings.TrimSpace(sslMode))]
 }
 
-// @title                      Homebox API
-// @version                    1.0
-// @description                Track, Manage, and Organize your Things.
-// @contact.name               Homebox Team
-// @contact.url                https://discord.homebox.software
-// @host                       demo.homebox.software
-// @schemes                    https http
-// @BasePath                   /api
-// @securityDefinitions.apikey Bearer
-// @in                         header
-// @name                       Authorization
-// @description                "Type 'Bearer TOKEN' to correctly set the API Key"
-// @externalDocs.url 		   https://homebox.software/en/api
+//	@title						Homebox API
+//	@version					1.0
+//	@description				Track, Manage, and Organize your Things.
+//	@contact.name				Homebox Team
+//	@contact.url				https://discord.homebox.software
+//	@host						demo.homebox.software
+//	@schemes					https http
+//	@BasePath					/api
+//	@securityDefinitions.apikey	Bearer
+//	@in							header
+//	@name						Authorization
+//	@description				"Type 'Bearer TOKEN' to correctly set the API Key"
+//	@externalDocs.url			https://homebox.software/en/api
 
 func main() {
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack

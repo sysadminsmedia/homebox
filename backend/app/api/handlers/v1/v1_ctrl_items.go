@@ -296,14 +296,14 @@ func (ctrl *V1Controller) HandleGetAllCustomFieldValues() errchain.HandlerFunc {
 
 // HandleItemsImport godocs
 //
-//	@Summary  Import Items
-//	@Tags     Items
-//	@Accept   multipart/form-data
-//	@Produce  json
-//	@Success  204
-//	@Param    csv formData file true "Image to upload"
-//	@Router   /v1/items/import [Post]
-//	@Security Bearer
+//	@Summary	Import Items
+//	@Tags		Items
+//	@Accept		multipart/form-data
+//	@Produce	json
+//	@Success	204
+//	@Param		csv	formData	file	true	"Image to upload"
+//	@Router		/v1/items/import [Post]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleItemsImport() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		err := r.ParseMultipartForm(ctrl.maxUploadSize << 20)

@@ -772,6 +772,8 @@ definitions:
         type: string
       imageId:
         type: string
+        x-nullable: true
+        x-omitempty: true
       insured:
         type: boolean
       labels:
@@ -825,6 +827,8 @@ definitions:
         type: boolean
       thumbnailId:
         type: string
+        x-nullable: true
+        x-omitempty: true
       updatedAt:
         type: string
       warrantyDetails:
@@ -865,6 +869,8 @@ definitions:
         type: string
       imageId:
         type: string
+        x-nullable: true
+        x-omitempty: true
       insured:
         type: boolean
       labels:
@@ -888,6 +894,8 @@ definitions:
         type: string
       thumbnailId:
         type: string
+        x-nullable: true
+        x-omitempty: true
       updatedAt:
         type: string
     type: object
