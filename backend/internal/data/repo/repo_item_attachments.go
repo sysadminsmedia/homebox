@@ -11,9 +11,10 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
 	"github.com/zeebo/blake3"
 
+	"github.com/chai2010/webp"
+	"github.com/gen2brain/avif"
 	"golang.org/x/image/draw"
 	"image"
-	"image/png"
 	"io"
 	"io/fs"
 	"net/http"
@@ -432,7 +433,83 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		dst := image.NewRGBA(image.Rect(0, 0, r.thumbnail.Width, r.thumbnail.Height))
 		draw.ApproxBiLinear.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
 		buf := new(bytes.Buffer)
-		err = png.Encode(buf, dst)
+		err = webp.Encode(buf, dst, &webp.Options{Lossless: false, Quality: 80})
+		if err != nil {
+			err := tx.Rollback()
+			if err != nil {
+				return err
+			}
+			return err
+		}
+		contentBytes := buf.Bytes()
+		log.Debug().Msg("uploading thumbnail file")
+		thumbnailFile, err := r.UploadFile(ctx, tx.Group.GetX(ctx, groupId), ItemCreateAttachment{
+			Title:   fmt.Sprintf("%s-thumb", title),
+			Content: bytes.NewReader(contentBytes),
+		})
+		if err != nil {
+			log.Err(err).Msg("failed to upload thumbnail file")
+			err := tx.Rollback()
+			if err != nil {
+				return err
+			}
+			return err
+		}
+		log.Debug().Msg("setting thumbnail file path in attachment")
+		att.SetPath(thumbnailFile)
+	case contentType == "image/webp":
+		log.Debug().Msg("creating thumbnail for webp file")
+		img, err := webp.Decode(bytes.NewReader(contentBytes))
+		if err != nil {
+			log.Err(err).Msg("failed to decode webp image")
+			err := tx.Rollback()
+			if err != nil {
+				return err
+			}
+			return err
+		}
+		dst := image.NewRGBA(image.Rect(0, 0, r.thumbnail.Width, r.thumbnail.Height))
+		draw.ApproxBiLinear.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
+		buf := new(bytes.Buffer)
+		err = webp.Encode(buf, dst, &webp.Options{Lossless: false, Quality: 80})
+		if err != nil {
+			err := tx.Rollback()
+			if err != nil {
+				return err
+			}
+			return err
+		}
+		contentBytes := buf.Bytes()
+		log.Debug().Msg("uploading thumbnail file")
+		thumbnailFile, err := r.UploadFile(ctx, tx.Group.GetX(ctx, groupId), ItemCreateAttachment{
+			Title:   fmt.Sprintf("%s-thumb", title),
+			Content: bytes.NewReader(contentBytes),
+		})
+		if err != nil {
+			log.Err(err).Msg("failed to upload thumbnail file")
+			err := tx.Rollback()
+			if err != nil {
+				return err
+			}
+			return err
+		}
+		log.Debug().Msg("setting thumbnail file path in attachment")
+		att.SetPath(thumbnailFile)
+	case contentType == "image/avif":
+		log.Debug().Msg("creating thumbnail for avif file")
+		img, err := avif.Decode(bytes.NewReader(contentBytes))
+		if err != nil {
+			log.Err(err).Msg("failed to decode avif image")
+			err := tx.Rollback()
+			if err != nil {
+				return err
+			}
+			return err
+		}
+		dst := image.NewRGBA(image.Rect(0, 0, r.thumbnail.Width, r.thumbnail.Height))
+		draw.ApproxBiLinear.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
+		buf := new(bytes.Buffer)
+		err = webp.Encode(buf, dst, &webp.Options{Lossless: false, Quality: 80})
 		if err != nil {
 			err := tx.Rollback()
 			if err != nil {
@@ -578,16 +655,4 @@ func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, d
 func isImageFile(mimetype string) bool {
 	// Check file extension for image types
 	return strings.Contains(mimetype, "image/jpeg") || strings.Contains(mimetype, "image/png") || strings.Contains(mimetype, "image/gif")
-}
-
-func isDocumentFile(mimetype string) bool {
-	// Check file extension for document types
-	return strings.Contains(mimetype, "application/pdf") ||
-		strings.Contains(mimetype, "application/epub+zip") ||
-		strings.Contains(mimetype, "application/x-mobipocket-ebook") ||
-		strings.Contains(mimetype, "application/vnd.openxmlformats-officedocument.wordprocessingml.document") ||
-		strings.Contains(mimetype, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") ||
-		strings.Contains(mimetype, "application/vnd.openxmlformats-officedocument.presentationml.presentation") ||
-		strings.Contains(mimetype, "text/plain") ||
-		strings.Contains(mimetype, "text/html")
 }
