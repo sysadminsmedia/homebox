@@ -5,7 +5,6 @@ import (
 	"context"
 	"crypto/md5"
 	"fmt"
-	"github.com/gen2brain/go-fitz"
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
@@ -354,7 +353,6 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		SetOriginalID(attachmentId).
 		SetTitle(fmt.Sprintf("%s-thumb", title)).
 		SetType("thumbnail")
-	orig := tx.Attachment.GetX(ctx, attachmentId)
 
 	bucket, err := blob.OpenBucket(ctx, r.GetConnString())
 	if err != nil {
@@ -453,57 +451,6 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			if err != nil {
 				return err
 			}
-			return err
-		}
-		att.SetPath(thumbnailFile)
-	case isDocumentFile(contentType) && r.thumbnail.NonImageEnabled:
-		fitz.FzVersion = r.thumbnail.MuPDFVersion
-		doc, err := fitz.NewFromReader(origFile)
-		if err != nil {
-			err := tx.Rollback()
-			if err != nil {
-				return err
-			}
-			return err
-		}
-		defer func(doc *fitz.Document) {
-			err := doc.Close()
-			if err != nil {
-				err := tx.Rollback()
-				if err != nil {
-					return
-				}
-				log.Err(err).Msg("failed to close document")
-			}
-		}(doc)
-		img, err := doc.Image(0)
-		if err != nil {
-			err := tx.Rollback()
-			if err != nil {
-				return err
-			}
-			return err
-		}
-		dst := image.NewRGBA(image.Rect(0, 0, r.thumbnail.Width, r.thumbnail.Height))
-		draw.ApproxBiLinear.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
-		buf := new(bytes.Buffer)
-		if err := png.Encode(buf, dst); err != nil {
-			err := tx.Rollback()
-			if err != nil {
-				return err
-			}
-			return err
-		}
-		thumbnailFile, err := r.UploadFile(ctx, orig.Edges.Item.QueryGroup().FirstX(ctx), ItemCreateAttachment{
-			Title:   fmt.Sprintf("%s-thumb", title),
-			Content: bytes.NewReader(buf.Bytes()),
-		})
-		if err != nil {
-			err := tx.Rollback()
-			if err != nil {
-				return err
-			}
-			log.Err(err).Msg("failed to upload thumbnail file")
 			return err
 		}
 		att.SetPath(thumbnailFile)
