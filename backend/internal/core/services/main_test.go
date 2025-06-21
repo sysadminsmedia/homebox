@@ -66,11 +66,9 @@ func MainNoExit(m *testing.M) int {
 		PrefixPath: "/",
 		ConnString: "file://" + os.TempDir(),
 	}, "mem://{{ .Topic }}", config.Thumbnail{
-		Enabled:         false,
-		Width:           0,
-		Height:          0,
-		NonImageEnabled: false,
-		MuPDFVersion:    "",
+		Enabled: false,
+		Width:   0,
+		Height:  0,
 	})
 
 	err = os.MkdirAll(os.TempDir()+"/homebox", 0o755)
