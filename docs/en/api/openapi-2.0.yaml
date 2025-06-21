@@ -8,6 +8,7 @@ definitions:
     - warranty
     - attachment
     - receipt
+    - thumbnail
     type: string
     x-enum-varnames:
     - DefaultType
@@ -16,6 +17,7 @@ definitions:
     - TypeWarranty
     - TypeAttachment
     - TypeReceipt
+    - TypeThumbnail
   authroles.Role:
     enum:
     - user

@@ -2129,7 +2129,8 @@ const docTemplate = `{
                 "manual",
                 "warranty",
                 "attachment",
-                "receipt"
+                "receipt",
+                "thumbnail"
             ],
             "x-enum-varnames": [
                 "DefaultType",
@@ -2137,7 +2138,8 @@ const docTemplate = `{
                 "TypeManual",
                 "TypeWarranty",
                 "TypeAttachment",
-                "TypeReceipt"
+                "TypeReceipt",
+                "TypeThumbnail"
             ]
         },
         "authroles.Role": {

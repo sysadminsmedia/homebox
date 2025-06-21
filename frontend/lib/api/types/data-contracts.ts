@@ -49,6 +49,7 @@ export enum AttachmentType {
   TypeWarranty = "warranty",
   TypeAttachment = "attachment",
   TypeReceipt = "receipt",
+  TypeThumbnail = "thumbnail",
 }
 
 export interface CurrenciesCurrency {

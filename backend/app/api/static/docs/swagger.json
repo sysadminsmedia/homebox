@@ -2127,7 +2127,8 @@
                 "manual",
                 "warranty",
                 "attachment",
-                "receipt"
+                "receipt",
+                "thumbnail"
             ],
             "x-enum-varnames": [
                 "DefaultType",
@@ -2135,7 +2136,8 @@
                 "TypeManual",
                 "TypeWarranty",
                 "TypeAttachment",
-                "TypeReceipt"
+                "TypeReceipt",
+                "TypeThumbnail"
             ]
         },
         "authroles.Role": {
