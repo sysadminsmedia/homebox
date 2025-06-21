@@ -40,11 +40,11 @@ type Options struct {
 }
 
 type Thumbnail struct {
-	Enabled         bool   `yaml:"enabled" conf:"default:true"`
-	Width           int    `yaml:"width"  conf:"default:500"`
-	Height          int    `yaml:"height" conf:"default:500"`
+	Enabled         bool   `yaml:"enabled"           conf:"default:true"`
+	Width           int    `yaml:"width"             conf:"default:500"`
+	Height          int    `yaml:"height"            conf:"default:500"`
 	NonImageEnabled bool   `yaml:"non_image_enabled" conf:"default:false"`
-	MuPDFVersion    string `yaml:"mupdf_version" conf:"default:1.26.2"`
+	MuPDFVersion    string `yaml:"mupdf_version"     conf:"default:1.26.2"`
 }
 
 type DebugConf struct {

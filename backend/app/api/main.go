@@ -102,6 +102,7 @@ func main() {
 	}
 }
 
+//nolint:gocyclo
 func run(cfg *config.Config) error {
 	app := new(cfg)
 	app.setupLogger()
@@ -309,7 +310,12 @@ func run(cfg *config.Config) error {
 	}))
 
 	runner.AddFunc("create-thumbnails-subscription", func(ctx context.Context) error {
-		topic, err := pubsub.OpenTopic(ctx, utils.GenerateSubPubConn(cfg.Database.PubSubConnString, "thumbnails"))
+		pubsubString, err := utils.GenerateSubPubConn(cfg.Database.PubSubConnString, "thumbnails")
+		if err != nil {
+			log.Error().Err(err).Msg("failed to generate pubsub connection string")
+			return err
+		}
+		topic, err := pubsub.OpenTopic(ctx, pubsubString)
 		if err != nil {
 			return err
 		}
@@ -320,7 +326,7 @@ func run(cfg *config.Config) error {
 			}
 		}(topic, ctx)
 
-		subscription, err := pubsub.OpenSubscription(ctx, utils.GenerateSubPubConn(cfg.Database.PubSubConnString, "thumbnails"))
+		subscription, err := pubsub.OpenSubscription(ctx, pubsubString)
 		if err != nil {
 			log.Err(err).Msg("failed to open pubsub topic")
 			return err
@@ -332,36 +338,42 @@ func run(cfg *config.Config) error {
 			}
 		}(subscription, ctx)
 
-		msg, err := subscription.Receive(ctx)
-		if err != nil {
-			log.Err(err).Msg("failed to receive message from pubsub topic")
-			return err
+		for {
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			default:
+				msg, err := subscription.Receive(ctx)
+				if err != nil {
+					log.Err(err).Msg("failed to receive message from pubsub topic")
+					return err
+				}
+				groupId, err := uuid.Parse(msg.Metadata["group_id"])
+				if err != nil {
+					log.Error().
+						Err(err).
+						Str("group_id", msg.Metadata["group_id"]).
+						Msg("failed to parse group ID from message metadata")
+					msg.Nack()
+					return err
+				}
+				attachmentId, err := uuid.Parse(msg.Metadata["attachment_id"])
+				if err != nil {
+					log.Error().
+						Err(err).
+						Str("attachment_id", msg.Metadata["attachment_id"]).
+						Msg("failed to parse attachment ID from message metadata")
+					msg.Nack()
+					return err
+				}
+				err = app.repos.Attachments.CreateThumbnail(ctx, groupId, attachmentId, msg.Metadata["title"], msg.Metadata["path"])
+				if err != nil {
+					msg.Nack()
+					return err
+				}
+				msg.Ack()
+			}
 		}
-		groupId, err := uuid.Parse(msg.Metadata["group_id"])
-		if err != nil {
-			log.Error().
-				Err(err).
-				Str("group_id", msg.Metadata["group_id"]).
-				Msg("failed to parse group ID from message metadata")
-			msg.Nack()
-			return err
-		}
-		attachmentId, err := uuid.Parse(msg.Metadata["attachment_id"])
-		if err != nil {
-			log.Error().
-				Err(err).
-				Str("attachment_id", msg.Metadata["attachment_id"]).
-				Msg("failed to parse attachment ID from message metadata")
-			msg.Nack()
-			return err
-		}
-		err = app.repos.Attachments.CreateThumbnail(ctx, groupId, attachmentId, msg.Metadata["title"], msg.Metadata["path"])
-		if err != nil {
-			msg.Nack()
-			return err
-		}
-		msg.Ack()
-		return nil
 	})
 
 	if cfg.Options.GithubReleaseCheck {

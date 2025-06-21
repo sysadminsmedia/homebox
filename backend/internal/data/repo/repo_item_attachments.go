@@ -211,7 +211,12 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 	}
 
 	if r.thumbnail.Enabled {
-		topic, err := pubsub.OpenTopic(ctx, utils.GenerateSubPubConn(r.pubSubConn, "thumbnails"))
+		pubsubString, err := utils.GenerateSubPubConn(r.pubSubConn, "thumbnails")
+		if err != nil {
+			log.Err(err).Msg("failed to generate pubsub connection string")
+			return nil, err
+		}
+		topic, err := pubsub.OpenTopic(ctx, pubsubString)
 		if err != nil {
 			log.Err(err).Msg("failed to open pubsub topic")
 			return nil, err
@@ -325,7 +330,11 @@ func (r *AttachmentRepo) Rename(ctx context.Context, id uuid.UUID, title string)
 	return r.db.Attachment.UpdateOneID(id).SetTitle(title).Save(ctx)
 }
 
+//nolint:gocyclo
 func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmentId uuid.UUID, title string, path string) error {
+	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
+	defer cancel()
+
 	tx, err := r.db.Tx(ctx)
 	if err != nil {
 		return nil
@@ -386,8 +395,26 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		}
 	}(origFile)
 
-	if isImageFile(title) {
+	stats, err := origFile.Stat()
+	if err != nil {
+		err := tx.Rollback()
+		if err != nil {
+			return err
+		}
+		log.Err(err).Msg("failed to stat original file")
+		return err
+	}
 
+	if stats.Size() > 100*1024*1024 {
+		return fmt.Errorf("original file %s is too large to create a thumbnail", title)
+	}
+
+	contentBytes, err := io.ReadAll(origFile)
+
+	contentType := http.DetectContentType(contentBytes[:min(512, len(contentBytes))])
+
+	switch {
+	case isImageFile(contentType):
 		img, _, err := image.Decode(origFile)
 		if err != nil {
 			err := tx.Rollback()
@@ -396,11 +423,8 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
-
-		// We shrink the image to the thumbnail size, not cropping
 		dst := image.NewRGBA(image.Rect(0, 0, r.thumbnail.Width, r.thumbnail.Height))
 		draw.ApproxBiLinear.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
-
 		buf := new(bytes.Buffer)
 		err = png.Encode(buf, dst)
 		if err != nil {
@@ -410,7 +434,6 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
-
 		contentBytes := buf.Bytes()
 		thumbnailFile, err := r.UploadFile(ctx, tx.Group.GetX(ctx, groupId), ItemCreateAttachment{
 			Title:   fmt.Sprintf("%s-thumb", title),
@@ -424,9 +447,8 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
-
 		att.SetPath(thumbnailFile)
-	} else if isDocumentFile(title) && r.thumbnail.NonImageEnabled {
+	case isDocumentFile(contentType) && r.thumbnail.NonImageEnabled:
 		fitz.FzVersion = r.thumbnail.MuPDFVersion
 		doc, err := fitz.NewFromReader(origFile)
 		if err != nil {
@@ -446,7 +468,6 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 				log.Err(err).Msg("failed to close document")
 			}
 		}(doc)
-
 		img, err := doc.Image(0)
 		if err != nil {
 			err := tx.Rollback()
@@ -455,11 +476,8 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
-
-		// We shrink the image to the thumbnail size, not cropping
 		dst := image.NewRGBA(image.Rect(0, 0, r.thumbnail.Width, r.thumbnail.Height))
 		draw.ApproxBiLinear.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
-
 		buf := new(bytes.Buffer)
 		if err := png.Encode(buf, dst); err != nil {
 			err := tx.Rollback()
@@ -468,7 +486,6 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
-
 		thumbnailFile, err := r.UploadFile(ctx, orig.Edges.Item.QueryGroup().FirstX(ctx), ItemCreateAttachment{
 			Title:   fmt.Sprintf("%s-thumb", title),
 			Content: bytes.NewReader(buf.Bytes()),
@@ -482,7 +499,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			return err
 		}
 		att.SetPath(thumbnailFile)
-	} else {
+	default:
 		return fmt.Errorf("file type %s is not supported for thumbnail creation or document thumnails disabled", title)
 	}
 	_, err = att.Save(ctx)
@@ -508,21 +525,28 @@ func (r *AttachmentRepo) CreateMissingThumbnails(ctx context.Context, groupId uu
 		return 0, err
 	}
 
+	pubsubString, err := utils.GenerateSubPubConn(r.pubSubConn, "thumbnails")
+	if err != nil {
+		log.Err(err).Msg("failed to generate pubsub connection string")
+	}
+	topic, err := pubsub.OpenTopic(ctx, pubsubString)
+	if err != nil {
+		log.Err(err).Msg("failed to open pubsub topic")
+	}
+	defer func(topic *pubsub.Topic, ctx context.Context) {
+		err := topic.Shutdown(ctx)
+		if err != nil {
+			log.Err(err).Msg("failed to shutdown pubsub topic")
+		}
+	}(topic, ctx)
+
 	count := 0
 	for _, attachment := range attachments {
 		if r.thumbnail.Enabled {
 			if !attachment.QueryThumbnail().ExistX(ctx) {
-				topic, err := pubsub.OpenTopic(ctx, utils.GenerateSubPubConn(r.pubSubConn, "thumbnails"))
-				if err != nil {
-					log.Err(err).Msg("failed to open pubsub topic")
+				if count > 0 && count%100 == 0 {
+					time.Sleep(2 * time.Second)
 				}
-				defer func(topic *pubsub.Topic, ctx context.Context) {
-					err := topic.Shutdown(ctx)
-					if err != nil {
-						log.Err(err).Msg("failed to shutdown pubsub topic")
-					}
-				}(topic, ctx)
-
 				err = topic.Send(ctx, &pubsub.Message{
 					Body: []byte(fmt.Sprintf("attachment_created:%s", attachment.ID.String())),
 					Metadata: map[string]string{
@@ -597,12 +621,19 @@ func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, d
 	return path, nil
 }
 
-func isImageFile(title string) bool {
+func isImageFile(mimetype string) bool {
 	// Check file extension for image types
-	return strings.HasSuffix(title, ".jpg") || strings.HasSuffix(title, ".jpeg") || strings.HasSuffix(title, ".png")
+	return strings.Contains(mimetype, "image/jpeg") || strings.Contains(mimetype, "image/png") || strings.Contains(mimetype, "image/gif")
 }
 
-func isDocumentFile(title string) bool {
+func isDocumentFile(mimetype string) bool {
 	// Check file extension for document types
-	return strings.HasSuffix(title, ".pdf") || strings.HasSuffix(title, ".epub") || strings.HasSuffix(title, ".mobi") || strings.HasSuffix(title, ".docx") || strings.HasSuffix(title, ".xlsx") || strings.HasSuffix(title, ".pptx") || strings.HasSuffix(title, ".txt") || strings.HasSuffix(title, ".html")
+	return strings.Contains(mimetype, "application/pdf") ||
+		strings.Contains(mimetype, "application/epub+zip") ||
+		strings.Contains(mimetype, "application/x-mobipocket-ebook") ||
+		strings.Contains(mimetype, "application/vnd.openxmlformats-officedocument.wordprocessingml.document") ||
+		strings.Contains(mimetype, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") ||
+		strings.Contains(mimetype, "application/vnd.openxmlformats-officedocument.presentationml.presentation") ||
+		strings.Contains(mimetype, "text/plain") ||
+		strings.Contains(mimetype, "text/html")
 }

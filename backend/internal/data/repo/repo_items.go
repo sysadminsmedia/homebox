@@ -196,7 +196,11 @@ func mapItemSummary(item *ent.Item) ItemSummary {
 			if a.Primary && a.Type == attachment.TypePhoto {
 				imageID = &a.ID
 				if a.Edges.Thumbnail != nil {
-					thumbnailID = &a.Edges.Thumbnail.ID
+					if a.Edges.Thumbnail.ID != uuid.Nil {
+						thumbnailID = &a.Edges.Thumbnail.ID
+					} else {
+						thumbnailID = nil
+					}
 				} else {
 					thumbnailID = nil
 				}
