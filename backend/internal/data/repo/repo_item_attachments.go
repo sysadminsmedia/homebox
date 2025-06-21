@@ -12,6 +12,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
 	"github.com/zeebo/blake3"
 	"gocloud.dev/pubsub"
+	"golang.org/x/image/draw"
 	"image"
 	"image/png"
 	"io"
@@ -386,19 +387,12 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			return err
 		}
 
-		bounds := img.Bounds()
-		cropRect := image.Rect(
-			bounds.Min.X,
-			bounds.Min.Y,
-			bounds.Min.X+r.thumbnail.Width,
-			bounds.Min.Y+r.thumbnail.Height,
-		)
-		croppedImg := img.(interface {
-			SubImage(r image.Rectangle) image.Image
-		}).SubImage(cropRect)
+		// We shrink the image to the thumbnail size, not cropping
+		dst := image.NewRGBA(image.Rect(0, 0, r.thumbnail.Width, r.thumbnail.Height))
+		draw.ApproxBiLinear.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
 
 		buf := new(bytes.Buffer)
-		err = png.Encode(buf, croppedImg)
+		err = png.Encode(buf, dst)
 		if err != nil {
 			err := tx.Rollback()
 			if err != nil {
@@ -452,8 +446,12 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			return err
 		}
 
+		// We shrink the image to the thumbnail size, not cropping
+		dst := image.NewRGBA(image.Rect(0, 0, r.thumbnail.Width, r.thumbnail.Height))
+		draw.ApproxBiLinear.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
+
 		buf := new(bytes.Buffer)
-		if err := png.Encode(buf, img); err != nil {
+		if err := png.Encode(buf, dst); err != nil {
 			err := tx.Rollback()
 			if err != nil {
 				return err
@@ -475,7 +473,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		}
 		att.SetPath(thumbnailFile)
 	} else {
-		return fmt.Errorf("unsupported file type for thumbnail generation")
+		return fmt.Errorf("file type %s is not supported for thumbnail creation or document thumnails disabled", title)
 	}
 	_, err = att.Save(ctx)
 	if err != nil {
