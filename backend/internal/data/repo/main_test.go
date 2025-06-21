@@ -59,6 +59,12 @@ func MainNoExit(m *testing.M) int {
 	tRepos = New(tClient, tbus, config.Storage{
 		PrefixPath: "/",
 		ConnString: "file://" + os.TempDir(),
+	}, "mem://{{ .Topic }}", config.Thumbnail{
+		Enabled:         false,
+		Width:           0,
+		Height:          0,
+		NonImageEnabled: false,
+		MuPDFVersion:    "",
 	})
 	err = os.MkdirAll(os.TempDir()+"/homebox", 0o755)
 	if err != nil {
