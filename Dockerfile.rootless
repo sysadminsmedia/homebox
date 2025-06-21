@@ -67,7 +67,7 @@ ENV HBOX_STORAGE_PREFIX_PATH=data
 ENV HBOX_DATABASE_SQLITE_PATH=/data/homebox.db?_pragma=busy_timeout=2000&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite
 
 # Install necessary runtime dependencies
-RUN apk --no-cache add ca-certificates wget
+RUN apk --no-cache add ca-certificates wget libwebp
 # Create a nonroot user with UID/GID 65532
 RUN addgroup -g 65532 nonroot && adduser -u 65532 -G nonroot -S nonroot
 
