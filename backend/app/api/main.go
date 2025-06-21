@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -34,6 +36,15 @@ import (
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/postgres"
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/sqlite3"
 	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
+
+	"gocloud.dev/pubsub"
+	_ "gocloud.dev/pubsub/awssnssqs"
+	_ "gocloud.dev/pubsub/azuresb"
+	_ "gocloud.dev/pubsub/gcppubsub"
+	_ "gocloud.dev/pubsub/kafkapubsub"
+	_ "gocloud.dev/pubsub/mempubsub"
+	_ "gocloud.dev/pubsub/natspubsub"
+	_ "gocloud.dev/pubsub/rabbitpubsub"
 )
 
 var (
@@ -296,6 +307,62 @@ func run(cfg *config.Config) error {
 			}
 		}
 	}))
+
+	runner.AddFunc("create-thumbnails-subscription", func(ctx context.Context) error {
+		topic, err := pubsub.OpenTopic(ctx, utils.GenerateSubPubConn(cfg.Database.PubSubConnString, "thumbnails"))
+		if err != nil {
+			return err
+		}
+		defer func(topic *pubsub.Topic, ctx context.Context) {
+			err := topic.Shutdown(ctx)
+			if err != nil {
+				log.Err(err).Msg("fail to shutdown pubsub topic")
+			}
+		}(topic, ctx)
+
+		subscription, err := pubsub.OpenSubscription(ctx, utils.GenerateSubPubConn(cfg.Database.PubSubConnString, "thumbnails"))
+		if err != nil {
+			log.Err(err).Msg("failed to open pubsub topic")
+			return err
+		}
+		defer func(topic *pubsub.Subscription, ctx context.Context) {
+			err := topic.Shutdown(ctx)
+			if err != nil {
+				log.Err(err).Msg("fail to shutdown pubsub topic")
+			}
+		}(subscription, ctx)
+
+		msg, err := subscription.Receive(ctx)
+		if err != nil {
+			log.Err(err).Msg("failed to receive message from pubsub topic")
+			return err
+		}
+		groupId, err := uuid.Parse(msg.Metadata["group_id"])
+		if err != nil {
+			log.Error().
+				Err(err).
+				Str("group_id", msg.Metadata["group_id"]).
+				Msg("failed to parse group ID from message metadata")
+			msg.Nack()
+			return err
+		}
+		attachmentId, err := uuid.Parse(msg.Metadata["attachment_id"])
+		if err != nil {
+			log.Error().
+				Err(err).
+				Str("attachment_id", msg.Metadata["attachment_id"]).
+				Msg("failed to parse attachment ID from message metadata")
+			msg.Nack()
+			return err
+		}
+		err = app.repos.Attachments.CreateThumbnail(ctx, groupId, attachmentId, msg.Metadata["title"], msg.Metadata["path"])
+		if err != nil {
+			msg.Nack()
+			return err
+		}
+		msg.Ack()
+		return nil
+	})
 
 	if cfg.Options.GithubReleaseCheck {
 		runner.AddPlugin(NewTask("get-latest-github-release", time.Hour, func(ctx context.Context) {

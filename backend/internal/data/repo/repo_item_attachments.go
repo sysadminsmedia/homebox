@@ -11,7 +11,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
 	"github.com/zeebo/blake3"
-	"gocloud.dev/pubsub"
+
 	"golang.org/x/image/draw"
 	"image"
 	"image/png"
@@ -33,6 +33,15 @@ import (
 	_ "gocloud.dev/blob/gcsblob"
 	_ "gocloud.dev/blob/memblob"
 	_ "gocloud.dev/blob/s3blob"
+
+	"gocloud.dev/pubsub"
+	_ "gocloud.dev/pubsub/awssnssqs"
+	_ "gocloud.dev/pubsub/azuresb"
+	_ "gocloud.dev/pubsub/gcppubsub"
+	_ "gocloud.dev/pubsub/kafkapubsub"
+	_ "gocloud.dev/pubsub/mempubsub"
+	_ "gocloud.dev/pubsub/natspubsub"
+	_ "gocloud.dev/pubsub/rabbitpubsub"
 )
 
 // AttachmentRepo is a repository for Attachments table that links Items to their
@@ -217,6 +226,7 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 		err = topic.Send(ctx, &pubsub.Message{
 			Body: []byte(fmt.Sprintf("attachment_created:%s", attachmentDb.ID.String())),
 			Metadata: map[string]string{
+				"group_id":      itemGroup.ID.String(),
 				"attachment_id": attachmentDb.ID.String(),
 				"title":         doc.Title,
 				"path":          attachmentDb.Path,
@@ -500,13 +510,35 @@ func (r *AttachmentRepo) CreateMissingThumbnails(ctx context.Context, groupId uu
 
 	count := 0
 	for _, attachment := range attachments {
-		if !attachment.QueryThumbnail().ExistX(ctx) {
-			err = r.CreateThumbnail(ctx, groupId, attachment.ID, attachment.Title, attachment.Path)
-			if err != nil {
-				log.Err(err).Msg("failed to create thumbnail")
-				continue
+		if r.thumbnail.Enabled {
+			if !attachment.QueryThumbnail().ExistX(ctx) {
+				topic, err := pubsub.OpenTopic(ctx, utils.GenerateSubPubConn(r.pubSubConn, "thumbnails"))
+				if err != nil {
+					log.Err(err).Msg("failed to open pubsub topic")
+				}
+				defer func(topic *pubsub.Topic, ctx context.Context) {
+					err := topic.Shutdown(ctx)
+					if err != nil {
+						log.Err(err).Msg("failed to shutdown pubsub topic")
+					}
+				}(topic, ctx)
+
+				err = topic.Send(ctx, &pubsub.Message{
+					Body: []byte(fmt.Sprintf("attachment_created:%s", attachment.ID.String())),
+					Metadata: map[string]string{
+						"group_id":      groupId.String(),
+						"attachment_id": attachment.ID.String(),
+						"title":         attachment.Title,
+						"path":          attachment.Path,
+					},
+				})
+				if err != nil {
+					log.Err(err).Msg("failed to send message to topic")
+					continue
+				} else {
+					count++
+				}
 			}
-			count++
 		}
 	}
 
