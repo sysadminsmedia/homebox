@@ -410,6 +410,14 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	}
 
 	contentBytes, err := io.ReadAll(origFile)
+	if err != nil {
+		err := tx.Rollback()
+		if err != nil {
+			return err
+		}
+		log.Err(err).Msg("failed to read original file content")
+		return err
+	}
 
 	contentType := http.DetectContentType(contentBytes[:min(512, len(contentBytes))])
 
