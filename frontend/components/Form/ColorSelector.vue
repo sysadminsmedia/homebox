@@ -12,7 +12,7 @@
     modelValue: {
       type: String,
       required: true,
-      default: null,
+      default: "",
     },
     label: {
       type: String,
@@ -48,15 +48,15 @@
 
   const value = useVModel(props, "modelValue", emits);
 
-  // Initialize with starting color if provided and current value is empty or null
+  // Initialize with starting color if provided and current value is empty
   onMounted(() => {
-    if (props.startingColor && (!value.value || value.value === null)) {
+    if (props.startingColor && (!value.value || value.value === "")) {
       value.value = props.startingColor;
     }
   });
 
   function clearColor() {
-    value.value = null;
+    value.value = "";
   }
 
   function randomizeColor() {

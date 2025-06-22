@@ -137,7 +137,7 @@
     return filtered;
   });
 
-  const createAndAdd = async (name: string, color = null) => {
+  const createAndAdd = async (name: string, color = "") => {
     if (name.length > 50) {
       toast.error(t("components.label.create_modal.toast.label_name_too_long"));
       return;
