@@ -215,6 +215,7 @@ export interface LabelCreate {
 }
 
 export interface LabelOut {
+  color: string;
   createdAt: Date | string;
   description: string;
   id: string;
@@ -223,6 +224,7 @@ export interface LabelOut {
 }
 
 export interface LabelSummary {
+  color: string;
   createdAt: Date | string;
   description: string;
   id: string;

@@ -2615,6 +2615,9 @@ const docTemplate = `{
         "repo.LabelOut": {
             "type": "object",
             "properties": {
+                "color": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -2635,6 +2638,9 @@ const docTemplate = `{
         "repo.LabelSummary": {
             "type": "object",
             "properties": {
+                "color": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },

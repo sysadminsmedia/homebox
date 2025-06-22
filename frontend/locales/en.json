@@ -144,7 +144,8 @@
                     "create_failed": "Couldn't create label",
                     "create_success": "Label created",
                     "label_name_too_long": "Label name must not be longer than 50 characters"
-                }
+                },
+                "label_color": "Label Color"
             },
             "selector": {
                 "select_labels": "Select Labels"

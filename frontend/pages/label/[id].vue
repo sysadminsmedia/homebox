@@ -128,7 +128,11 @@
           :label="$t('components.label.create_modal.label_description')"
           :max-length="255"
         />
-        <!-- TODO: color  -->
+        <FormTextField
+          v-model="updateData.color"
+          :label="$t('components.label.create_modal.label_color')"
+          type="color"
+        />
         <DialogFooter>
           <Button type="submit" :loading="updating"> {{ $t("global.update") }} </Button>
         </DialogFooter>
