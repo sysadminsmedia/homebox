@@ -149,7 +149,11 @@
         <div class="flex flex-wrap items-end gap-2">
           <div
             class="mb-auto flex size-12 items-center justify-center rounded-full"
-            :style="label.color ? { backgroundColor: label.color, color: getContrastTextColor(label.color) } : { backgroundColor: 'hsl(var(--secondary))', color: 'hsl(var(--secondary-foreground))' }"
+            :style="
+              label.color
+                ? { backgroundColor: label.color, color: getContrastTextColor(label.color) }
+                : { backgroundColor: 'hsl(var(--secondary))', color: 'hsl(var(--secondary-foreground))' }
+            "
           >
             <MdiPackageVariant class="size-7" />
           </div>

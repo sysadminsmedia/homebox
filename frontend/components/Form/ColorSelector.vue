@@ -75,20 +75,36 @@
       <span>{{ label }}</span>
     </Label>
     <div class="flex items-center gap-2">
-      <span :style="swatchStyle"
-        class="cursor-pointer rounded-full border inline-block ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+      <span
+        :style="swatchStyle"
+        class="inline-block cursor-pointer rounded-full border ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
         :aria-label="`${t('components.color_selector.color')}: ${modelValue || t('components.color_selector.no_color_selected')}`"
-        role="button" tabindex="0" @click="$refs.colorInput.click()" />
+        role="button"
+        tabindex="0"
+        @click="$refs.colorInput.click()"
+      />
       <span v-if="showHex" class="font-mono text-xs text-muted-foreground">{{
         modelValue || t("components.color_selector.no_color")
-        }}</span>
+      }}</span>
       <div class="flex gap-1">
-        <Button type="button" variant="outline" size="sm" class="size-6 p-0"
-          :aria-label="t('components.color_selector.randomize')" @click="randomizeColor">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          class="size-6 p-0"
+          :aria-label="t('components.color_selector.randomize')"
+          @click="randomizeColor"
+        >
           <MdiDiceMultiple class="size-3" />
         </Button>
-        <Button type="button" variant="outline" size="sm" class="size-6 p-0"
-          :aria-label="t('components.color_selector.clear')" @click="clearColor">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          class="size-6 p-0"
+          :aria-label="t('components.color_selector.clear')"
+          @click="clearColor"
+        >
           <MdiClose class="size-3" />
         </Button>
       </div>
@@ -100,20 +116,36 @@
       <span>{{ label }}</span>
     </Label>
     <div class="col-span-3 mt-2 flex items-center gap-2">
-      <span :style="swatchStyle"
-        class="cursor-pointer rounded-full border inline-block focus:outline-primary ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+      <span
+        :style="swatchStyle"
+        class="inline-block cursor-pointer rounded-full border ring-offset-background focus:outline-none focus:outline-primary focus:ring-2 focus:ring-ring focus:ring-offset-2"
         :aria-label="`${t('components.color_selector.color')}: ${modelValue || t('components.color_selector.no_color_selected')}`"
-        role="button" tabindex="0" @click="$refs.colorInput.click()" />
+        role="button"
+        tabindex="0"
+        @click="$refs.colorInput.click()"
+      />
       <span v-if="showHex" class="font-mono text-xs text-muted-foreground">{{
         modelValue || t("components.color_selector.no_color")
-        }}</span>
+      }}</span>
       <div class="flex gap-1">
-        <Button type="button" variant="outline" size="sm" class="size-6 p-0"
-          :aria-label="t('components.color_selector.randomize')" @click="randomizeColor">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          class="size-6 p-0"
+          :aria-label="t('components.color_selector.randomize')"
+          @click="randomizeColor"
+        >
           <MdiDiceMultiple class="size-3" />
         </Button>
-        <Button type="button" variant="outline" size="sm" class="size-6 p-0"
-          :aria-label="t('components.color_selector.clear')" @click="clearColor">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          class="size-6 p-0"
+          :aria-label="t('components.color_selector.clear')"
+          @click="clearColor"
+        >
           <MdiClose class="size-3" />
         </Button>
       </div>
@@ -121,4 +153,3 @@
     </div>
   </div>
 </template>
-
