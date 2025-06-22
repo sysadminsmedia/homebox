@@ -14,7 +14,7 @@
         :label="$t('components.label.create_modal.label_description')"
         :max-length="255"
       />
-      <FormTextField v-model="form.color" :label="$t('components.label.create_modal.label_color')" type="color" />
+      <ColorSelector v-model="form.color" :label="$t('components.label.create_modal.label_color')" :show-hex="true" />
       <div class="mt-4 flex flex-row-reverse">
         <ButtonGroup>
           <Button :disabled="loading" type="submit">{{ $t("global.create") }}</Button>
@@ -32,6 +32,7 @@
   import { toast } from "@/components/ui/sonner";
   import BaseModal from "@/components/App/CreateModal.vue";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
+  import ColorSelector from "@/components/Form/ColorSelector.vue";
 
   const { t } = useI18n();
 

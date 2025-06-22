@@ -24,6 +24,13 @@
                 "new_version_available_link": "Click here to view the release notes"
             }
         },
+        "color_selector": {
+            "color": "Color",
+            "clear": "Clear color",
+            "no_color": "No color",
+            "no_color_selected": "No color selected",
+            "randomize": "Randomize color"
+        },
         "form": {
             "password": {
                 "toggle_show": "Toggle Password Show"
