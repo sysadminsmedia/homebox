@@ -159,6 +159,9 @@
     </Dialog>
 
     <BaseContainer v-if="location">
+      <!-- set page title -->
+      <Title>{{ location.name }}</Title>
+
       <Card class="p-3">
         <header :class="{ 'mb-2': location?.description }">
           <div class="flex flex-wrap items-end gap-2">
