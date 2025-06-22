@@ -25,7 +25,11 @@
       'p-3 py-1 text-sm': size !== 'sm' && size !== 'lg',
       'p-2 py-0.5 text-xs': size === 'sm',
     }"
-    :style="label.color ? { backgroundColor: label.color, color: getContrastTextColor(label.color) } : { backgroundColor: 'hsl(var(--accent))' }"
+    :style="
+      label.color
+        ? { backgroundColor: label.color, color: getContrastTextColor(label.color) }
+        : { backgroundColor: 'hsl(var(--accent))' }
+    "
     :to="`/label/${label.id}`"
   >
     <div class="relative">

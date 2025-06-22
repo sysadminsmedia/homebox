@@ -14,11 +14,7 @@
         :label="$t('components.label.create_modal.label_description')"
         :max-length="255"
       />
-      <FormTextField
-        v-model="form.color"
-        :label="$t('components.label.create_modal.label_color')"
-        type="color"
-      />
+      <FormTextField v-model="form.color" :label="$t('components.label.create_modal.label_color')" type="color" />
       <div class="mt-4 flex flex-row-reverse">
         <ButtonGroup>
           <Button :disabled="loading" type="submit">{{ $t("global.create") }}</Button>

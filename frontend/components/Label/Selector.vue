@@ -4,13 +4,18 @@
       {{ $t("global.labels") }}
     </Label>
 
-    <TagsInput v-model="modelValue" class="w-full gap-0 px-0"
-      :display-value="v => shortenedLabels.find(l => l.id === v)?.name ?? 'Loading...'">
+    <TagsInput
+      v-model="modelValue"
+      class="w-full gap-0 px-0"
+      :display-value="v => shortenedLabels.find(l => l.id === v)?.name ?? 'Loading...'"
+    >
       <div class="flex flex-wrap items-center gap-2 px-3">
         <TagsInputItem v-for="item in modelValue" :key="item" :value="item">
-          <span v-if="shortenedLabels.find(l => l.id === item)?.color"
-            class="inline-block size-4 rounded-full ml-2"
-            :style="{ backgroundColor: shortenedLabels.find(l => l.id === item)?.color }" />
+          <span
+            v-if="shortenedLabels.find(l => l.id === item)?.color"
+            class="ml-2 inline-block size-4 rounded-full"
+            :style="{ backgroundColor: shortenedLabels.find(l => l.id === item)?.color }"
+          />
           <TagsInputItemText />
           <TagsInputItemDelete />
         </TagsInputItem>
@@ -19,18 +24,28 @@
       <ComboboxRoot v-model="modelValue" v-model:open="open" class="w-full" :ignore-filter="true">
         <ComboboxAnchor as-child>
           <ComboboxInput v-model="searchTerm" :placeholder="$t('components.label.selector.select_labels')" as-child>
-            <TagsInputInput :id="id" class="w-full px-3" :class="modelValue.length > 0 ? 'mt-2' : ''"
-              @focus="open = true" />
+            <TagsInputInput
+              :id="id"
+              class="w-full px-3"
+              :class="modelValue.length > 0 ? 'mt-2' : ''"
+              @focus="open = true"
+            />
           </ComboboxInput>
         </ComboboxAnchor>
 
         <ComboboxPortal>
           <ComboboxContent :side-offset="4" position="popper" class="z-50">
-            <CommandList position="popper"
-              class="mt-2 w-[--reka-popper-anchor-width] rounded-md border bg-popover text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2">
+            <CommandList
+              position="popper"
+              class="mt-2 w-[--reka-popper-anchor-width] rounded-md border bg-popover text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
+            >
               <CommandEmpty />
               <CommandGroup>
-                <CommandItem v-for="label in filteredLabels" :key="label.value" :value="label.value" @select.prevent="
+                <CommandItem
+                  v-for="label in filteredLabels"
+                  :key="label.value"
+                  :value="label.value"
+                  @select.prevent="
                     ev => {
                       if (typeof ev.detail.value === 'string') {
                         if (ev.detail.value === 'create-item') {
@@ -43,12 +58,13 @@
                         searchTerm = '';
                       }
                     }
-                  ">
+                  "
+                >
                   <span
-                    class="inline-block size-4 rounded-full mr-2 align-middle"
-                    :class="{'border': shortenedLabels.find(l => l.id === label.value)?.color}"
+                    class="mr-2 inline-block size-4 rounded-full align-middle"
+                    :class="{ border: shortenedLabels.find(l => l.id === label.value)?.color }"
                     :style="{ backgroundColor: shortenedLabels.find(l => l.id === label.value)?.color }"
-                    />
+                  />
                   {{ label.label }}
                 </CommandItem>
               </CommandGroup>
@@ -121,7 +137,7 @@
     return filtered;
   });
 
-  const createAndAdd = async (name: string, color = '#1976d2') => {
+  const createAndAdd = async (name: string, color = "#1976d2") => {
     if (name.length > 50) {
       toast.error(t("components.label.create_modal.toast.label_name_too_long"));
       return;
