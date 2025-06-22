@@ -73,7 +73,7 @@ ENV HBOX_DATABASE_SQLITE_PATH=/data/homebox.db?_pragma=busy_timeout=2000&_pragma
 
 # Install necessary runtime dependencies
 RUN apk --no-cache add ca-certificates wget && \
-    if [ "$TARGETARCH" != "arm" ] || [ "$TARGETARCH" != "riscv64"]; then apk --no-cache add libwebp libavif; fi
+    if [ "$TARGETARCH" != "arm" ] || [ "$TARGETARCH" != "riscv64" ]; then apk --no-cache add libwebp libavif; fi
 
 # Create application directory and copy over built Go binary
 RUN mkdir /app
