@@ -256,8 +256,8 @@
   function extractSortable(item: ItemSummary, property: keyof ItemSummary): string | number | boolean {
     const value = item[property];
     if (typeof value === "string") {
-      // Try parse float
-      const parsed = parseFloat(value);
+      // Try to parse number
+      const parsed = Number(value);
       if (!isNaN(parsed)) {
         return parsed;
       }
