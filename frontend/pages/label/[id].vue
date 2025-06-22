@@ -137,6 +137,9 @@
   </Dialog>
 
   <BaseContainer v-if="label">
+    <!-- set page title -->
+    <Title>{{ label.name }}</Title>
+
     <Card class="p-3">
       <header :class="{ 'mb-2': label.description }">
         <div class="flex flex-wrap items-end gap-2">
