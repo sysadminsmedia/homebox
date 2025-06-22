@@ -344,7 +344,6 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	log.Debug().Msg("set initial database transaction")
 	att := tx.Attachment.Create().
 		SetID(uuid.New()).
-		SetOriginalID(attachmentId).
 		SetTitle(fmt.Sprintf("%s-thumb", title)).
 		SetType("thumbnail")
 
@@ -538,7 +537,12 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	}
 
 	log.Debug().Msg("saving thumbnail attachment to database")
-	_, err = att.Save(ctx)
+	thumbnail, err := att.Save(ctx)
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Attachment.UpdateOneID(attachmentId).SetThumbnail(thumbnail).Save(ctx)
 	if err != nil {
 		return err
 	}

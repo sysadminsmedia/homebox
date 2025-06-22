@@ -2230,14 +2230,6 @@ const docTemplate = `{
                         }
                     ]
                 },
-                "original": {
-                    "description": "Original holds the value of the original edge.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.Attachment"
-                        }
-                    ]
-                },
                 "thumbnail": {
                     "description": "Thumbnail holds the value of the thumbnail edge.",
                     "allOf": [

@@ -34,9 +34,7 @@ func (Attachment) Edges() []ent.Edge {
 		edge.From("item", Item.Type).
 			Ref("attachments").
 			Unique(),
-		edge.To("original", Attachment.Type).
-			Unique().
-			From("thumbnail").
+		edge.To("thumbnail", Attachment.Type).
 			Unique(),
 	}
 }

@@ -78,10 +78,6 @@ definitions:
         allOf:
         - $ref: '#/definitions/ent.Item'
         description: Item holds the value of the item edge.
-      original:
-        allOf:
-        - $ref: '#/definitions/ent.Attachment'
-        description: Original holds the value of the original edge.
       thumbnail:
         allOf:
         - $ref: '#/definitions/ent.Attachment'

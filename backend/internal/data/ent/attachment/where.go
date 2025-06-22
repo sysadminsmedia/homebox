@@ -349,7 +349,7 @@ func HasThumbnail() predicate.Attachment {
 	return predicate.Attachment(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, ThumbnailTable, ThumbnailColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, ThumbnailTable, ThumbnailColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -359,29 +359,6 @@ func HasThumbnail() predicate.Attachment {
 func HasThumbnailWith(preds ...predicate.Attachment) predicate.Attachment {
 	return predicate.Attachment(func(s *sql.Selector) {
 		step := newThumbnailStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasOriginal applies the HasEdge predicate on the "original" edge.
-func HasOriginal() predicate.Attachment {
-	return predicate.Attachment(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, OriginalTable, OriginalColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasOriginalWith applies the HasEdge predicate on the "original" edge with a given conditions (other predicates).
-func HasOriginalWith(preds ...predicate.Attachment) predicate.Attachment {
-	return predicate.Attachment(func(s *sql.Selector) {
-		step := newOriginalStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

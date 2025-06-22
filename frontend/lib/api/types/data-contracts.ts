@@ -84,8 +84,6 @@ export interface EntAttachment {
 export interface EntAttachmentEdges {
   /** Item holds the value of the item edge. */
   item: EntItem;
-  /** Original holds the value of the original edge. */
-  original: EntAttachment;
   /** Thumbnail holds the value of the thumbnail edge. */
   thumbnail: EntAttachment;
 }

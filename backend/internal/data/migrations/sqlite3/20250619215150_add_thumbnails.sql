@@ -13,10 +13,9 @@ create table attachments_dg_tmp
         constraint attachments_items_attachments
             references items
             on delete cascade,
-    attachment_original uuid
-        constraint attachments_original_thumbnail
+    attachment_thumbnail uuid
+        constraint attachments_attachments_thumbnail
             references attachments
-            on delete cascade
 );
 
 insert into attachments_dg_tmp(id, created_at, updated_at, type, "primary", path, title, item_attachments)

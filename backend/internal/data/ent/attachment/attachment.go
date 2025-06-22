@@ -32,8 +32,6 @@ const (
 	EdgeItem = "item"
 	// EdgeThumbnail holds the string denoting the thumbnail edge name in mutations.
 	EdgeThumbnail = "thumbnail"
-	// EdgeOriginal holds the string denoting the original edge name in mutations.
-	EdgeOriginal = "original"
 	// Table holds the table name of the attachment in the database.
 	Table = "attachments"
 	// ItemTable is the table that holds the item relation/edge.
@@ -46,11 +44,7 @@ const (
 	// ThumbnailTable is the table that holds the thumbnail relation/edge.
 	ThumbnailTable = "attachments"
 	// ThumbnailColumn is the table column denoting the thumbnail relation/edge.
-	ThumbnailColumn = "attachment_original"
-	// OriginalTable is the table that holds the original relation/edge.
-	OriginalTable = "attachments"
-	// OriginalColumn is the table column denoting the original relation/edge.
-	OriginalColumn = "attachment_original"
+	ThumbnailColumn = "attachment_thumbnail"
 )
 
 // Columns holds all SQL columns for attachment fields.
@@ -67,7 +61,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "attachments"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"attachment_original",
+	"attachment_thumbnail",
 	"item_attachments",
 }
 
@@ -184,13 +178,6 @@ func ByThumbnailField(field string, opts ...sql.OrderTermOption) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newThumbnailStep(), sql.OrderByField(field, opts...))
 	}
 }
-
-// ByOriginalField orders the results by original field.
-func ByOriginalField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newOriginalStep(), sql.OrderByField(field, opts...))
-	}
-}
 func newItemStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -202,13 +189,6 @@ func newThumbnailStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, true, ThumbnailTable, ThumbnailColumn),
-	)
-}
-func newOriginalStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(Table, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, false, OriginalTable, OriginalColumn),
+		sqlgraph.Edge(sqlgraph.O2O, false, ThumbnailTable, ThumbnailColumn),
 	)
 }
