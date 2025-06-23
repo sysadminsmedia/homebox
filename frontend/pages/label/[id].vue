@@ -10,6 +10,8 @@
   import { Button } from "@/components/ui/button";
   import { Badge } from "@/components/ui/badge";
   import { Separator } from "@/components/ui/separator";
+  import ColorSelector from "@/components/Form/ColorSelector.vue";
+  import { getContrastTextColor } from "~/lib/utils";
 
   definePageMeta({
     middleware: ["auth"],
@@ -128,7 +130,12 @@
           :label="$t('components.label.create_modal.label_description')"
           :max-length="255"
         />
-        <!-- TODO: color  -->
+        <ColorSelector
+          v-model="updateData.color"
+          :label="$t('components.label.create_modal.label_color')"
+          :show-hex="true"
+          :starting-color="label.color"
+        />
         <DialogFooter>
           <Button type="submit" :loading="updating"> {{ $t("global.update") }} </Button>
         </DialogFooter>
@@ -144,7 +151,12 @@
       <header :class="{ 'mb-2': label.description }">
         <div class="flex flex-wrap items-end gap-2">
           <div
-            class="mb-auto flex size-12 items-center justify-center rounded-full bg-secondary text-secondary-foreground"
+            class="mb-auto flex size-12 items-center justify-center rounded-full"
+            :style="
+              label.color
+                ? { backgroundColor: label.color, color: getContrastTextColor(label.color) }
+                : { backgroundColor: 'hsl(var(--secondary))', color: 'hsl(var(--secondary-foreground))' }
+            "
           >
             <MdiPackageVariant class="size-7" />
           </div>

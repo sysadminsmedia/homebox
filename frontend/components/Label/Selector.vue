@@ -11,6 +11,11 @@
     >
       <div class="flex flex-wrap items-center gap-2 px-3">
         <TagsInputItem v-for="item in modelValue" :key="item" :value="item">
+          <span
+            v-if="shortenedLabels.find(l => l.id === item)?.color"
+            class="ml-2 inline-block size-4 rounded-full"
+            :style="{ backgroundColor: shortenedLabels.find(l => l.id === item)?.color }"
+          />
           <TagsInputItemText />
           <TagsInputItemDelete />
         </TagsInputItem>
@@ -55,6 +60,11 @@
                     }
                   "
                 >
+                  <span
+                    class="mr-2 inline-block size-4 rounded-full align-middle"
+                    :class="{ border: shortenedLabels.find(l => l.id === label.value)?.color }"
+                    :style="{ backgroundColor: shortenedLabels.find(l => l.id === label.value)?.color }"
+                  />
                   {{ label.label }}
                 </CommandItem>
               </CommandGroup>
@@ -127,14 +137,14 @@
     return filtered;
   });
 
-  const createAndAdd = async (name: string) => {
+  const createAndAdd = async (name: string, color = "") => {
     if (name.length > 50) {
       toast.error(t("components.label.create_modal.toast.label_name_too_long"));
       return;
     }
     const { error, data } = await api.labels.create({
       name,
-      color: "", // Future!
+      color,
       description: "",
     });
 

@@ -3576,6 +3576,9 @@
         "repo.LabelOut": {
             "type": "object",
             "properties": {
+                "color": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -3596,6 +3599,9 @@
         "repo.LabelSummary": {
             "type": "object",
             "properties": {
+                "color": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },

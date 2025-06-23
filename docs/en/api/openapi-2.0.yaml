@@ -997,6 +997,8 @@ definitions:
     type: object
   repo.LabelOut:
     properties:
+      color:
+        type: string
       createdAt:
         type: string
       description:
@@ -1010,6 +1012,8 @@ definitions:
     type: object
   repo.LabelSummary:
     properties:
+      color:
+        type: string
       createdAt:
         type: string
       description:
