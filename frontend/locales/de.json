@@ -130,7 +130,7 @@
                     "page": "Seite",
                     "rows_per_page": "Zeilen pro Seite",
                     "table_settings": "Tabellen Einstellungen",
-                    "view_item": ""
+                    "view_item": "Artikel anzeigen"
                 }
             }
         },
@@ -562,6 +562,10 @@
     "tools": {
         "actions": "Inventar-Aktionen",
         "actions_set": {
+            "create_missing_thumbnails": "Fehlende Miniaturansichten erstellen",
+            "create_missing_thumbnails_button": "Miniaturansichten erstellen",
+            "create_missing_thumbnails_confirm": "Sind Sie sicher, dass Sie fehlende Miniaturansichten erstellen möchten? Dies kann eine Weile dauern und kann nicht unterbrochen werden.",
+            "create_missing_thumbnails_sub": "Erstellt Miniaturansichten für alle Anhänge, die von der aktuellen Konfiguration unterstützt werden. Dies ist nützlich für Anhänge, die zu Homebox vor der Version v0.20.0 hochgeladen wurden. Es werden keine Miniaturansichten überschrieben, nur für Anhänge, die aktuell keine Miniaturansicht besitzen.",
             "ensure_ids": "Sicherstellen von Asset-IDs",
             "ensure_ids_button": "Sicherstellen von Asset-IDs",
             "ensure_ids_confirm": "Möchten Sie wirklich sicherstellen, dass alle Assets eine ID haben? Dies kann eine Weile dauern und kann nicht rückgängig gemacht werden.",
@@ -602,6 +606,7 @@
         "reports_sub": "Erstellen Sie verschiedene Berichte für Ihr Inventar.",
         "toast": {
             "asset_success": "{ results } Assets wurden aktualisiert.",
+            "failed_create_missing_thumbnails": "Fehlende Miniaturbilder konnten nicht erstellt werden.",
             "failed_ensure_ids": "Fehler beim sichern von Asset-IDs.",
             "failed_ensure_import_refs": "Fehler beim Sicherstellen der Import-Referenzen.",
             "failed_set_primary_photos": "Das Festlegen der primären Fotos ist fehlgeschlagen.",

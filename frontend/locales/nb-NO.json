@@ -2,7 +2,7 @@
     "components": {
         "app": {
             "create_modal": {
-                "createAndAddAnother": "",
+                "createAndAddAnother": "Bruk {shiftKey} + {enterKey} for å opprette og legge til en ny.",
                 "enter": "",
                 "shift": ""
             },
@@ -11,9 +11,9 @@
                 "description": "Importer en CSV-fil som inneholder alle objekter, merkelapper og lokasjoner. Konsulter dokumentasjonen for mer\ninformasjon om påkrevd format.",
                 "title": "Importer CSV-fil",
                 "toast": {
-                    "import_failed": "",
-                    "import_success": "",
-                    "please_select_file": ""
+                    "import_failed": "Import feilet, vennligst prøv igjen senere.",
+                    "import_success": "Import fullført!",
+                    "please_select_file": "Vennligst velg en fil for import."
                 }
             },
             "outdated": {
@@ -24,9 +24,16 @@
                 "new_version_available_link": "Klikk her for å se utgivelsesnotatene"
             }
         },
+        "color_selector": {
+            "clear": "Tøm farge",
+            "color": "Farge",
+            "no_color": "Ingen farge",
+            "no_color_selected": "Ingen farge valgt",
+            "randomize": "Tilfeldig farge"
+        },
         "form": {
             "password": {
-                "toggle_show": ""
+                "toggle_show": "Bytt visning av passord"
             }
         },
         "global": {
@@ -61,21 +68,21 @@
                 "yesterday": "i går"
             },
             "label_maker": {
-                "browser_print": "",
-                "confirm_description": "",
-                "download": "",
-                "print": "",
-                "server_print": "",
-                "titles": "",
+                "browser_print": "Skriv ut fra nettleser",
+                "confirm_description": "Ønsker du å skrive ut denne etiketten?",
+                "download": "Last ned etikett",
+                "print": "Skriv ut etikett",
+                "server_print": "Skriv ut på server",
+                "titles": "Etiketter",
                 "toast": {
-                    "load_status_failed": "",
-                    "print_failed": "",
-                    "print_success": ""
+                    "load_status_failed": "Fikk ikke lastet status",
+                    "print_failed": "Fikk ikke skrevet ut etikett",
+                    "print_success": "Etikett skrevet ut"
                 }
             },
             "page_qr_code": {
                 "page_url": "Side-URL",
-                "qr_tooltip": ""
+                "qr_tooltip": "Vis QR-kode"
             },
             "password_score": {
                 "password_strength": "Passordstyrke"
@@ -83,40 +90,40 @@
         },
         "item": {
             "attachments_list": {
-                "download": "",
-                "open_new_tab": ""
+                "download": "Last ned",
+                "open_new_tab": "Åpne i ny fane"
             },
             "create_modal": {
-                "delete_photo": "",
+                "delete_photo": "Slett bilde",
                 "item_description": "Objektbeskrivelse",
                 "item_name": "Objektnavn",
-                "item_photo": "",
-                "item_quantity": "",
-                "parent_item": "",
-                "rotate_photo": "",
-                "set_as_primary_photo": "",
+                "item_photo": "Objektfoto",
+                "item_quantity": "Objektantall",
+                "parent_item": "Overordnet enhet",
+                "rotate_photo": "Roter bile",
+                "set_as_primary_photo": "Sett som { isPrimary, select, true {non-} false {} other {}}primary photo",
                 "title": "Opprett objekt",
                 "toast": {
-                    "already_creating": "",
-                    "create_failed": "",
-                    "create_success": "",
-                    "failed_load_parent": "",
-                    "no_canvas_support": "",
-                    "please_select_location": "",
-                    "rotate_failed": "",
-                    "rotate_process_failed": "",
-                    "some_photos_failed": "",
-                    "upload_failed": "",
-                    "upload_success": "",
-                    "uploading_photos": ""
+                    "already_creating": "Opprettelse pågår allerede",
+                    "create_failed": "Klarte ikke opprette enhet",
+                    "create_success": "Enhet opprettet",
+                    "failed_load_parent": "Klarte ikke å laster overordnet enhet, vennligst velg en manuelt",
+                    "no_canvas_support": "Nettleseren din støtter ikke canvas-operasjoner",
+                    "please_select_location": "Vennligst velg en lokasjon.",
+                    "rotate_failed": "Fikk ikke å rotere bildet: { error }",
+                    "rotate_process_failed": "Fikk ikke prosessert rotert bilde",
+                    "some_photos_failed": "{count, plural, =0 {Ingen bilder å laste opp.} =1 {1 fikk ikke lastet opp bilde.} other {Noen bilder ble ikke lastet opp.}}",
+                    "upload_failed": "Fikk ikke lastet opp bildet: { photoName }",
+                    "upload_success": "{count, plural, =0 {Ingen bilder lastet opp.} =1 {Bilde lastet opp.} other {Alle bilder ble lastet opp.}}",
+                    "uploading_photos": "{count, plural, =0 {Ingen bilder å laste opp} =1 {Laster opp 1 bilde...} other {Laster opp{count} photos...}}"
                 },
-                "upload_photos": "",
-                "uploaded": ""
+                "upload_photos": "Last opp bilder",
+                "uploaded": "Bilde lastet opp"
             },
             "selector": {
-                "no_results": "",
-                "placeholder": "",
-                "search_placeholder": ""
+                "no_results": "Ikke funnet resultat",
+                "placeholder": "Velg...",
+                "search_placeholder": "Skriv for å søke..."
             },
             "view": {
                 "selectable": {
@@ -126,28 +133,29 @@
                     "table": "Tabell"
                 },
                 "table": {
-                    "headers": "",
+                    "headers": "Overskrifter",
                     "page": "Side",
-                    "rows_per_page": "Rader pr. Side",
-                    "table_settings": "",
-                    "view_item": ""
+                    "rows_per_page": "Rader pr. side",
+                    "table_settings": "Tabellinnstillinger",
+                    "view_item": "Vis enhet"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_color": "Farge på etikett",
                 "label_description": "Merkelappbeskrivelse",
                 "label_name": "Merkelappnavn",
                 "title": "Opprett merkelapp",
                 "toast": {
-                    "already_creating": "",
-                    "create_failed": "",
-                    "create_success": "",
-                    "label_name_too_long": ""
+                    "already_creating": "Opprettelse av etikett pågår allerede",
+                    "create_failed": "Fikk ikke opprettet etikett",
+                    "create_success": "Etikett opprettet",
+                    "label_name_too_long": "Etikettnavn kan ikke overstige 50 tegn"
                 }
             },
             "selector": {
-                "select_labels": ""
+                "select_labels": "Velg etikett"
             }
         },
         "location": {
@@ -156,39 +164,39 @@
                 "location_name": "Lokasjonsnavn",
                 "title": "Opprett lokasjon",
                 "toast": {
-                    "already_creating": "",
-                    "create_failed": "",
-                    "create_success": ""
+                    "already_creating": "Opprettelse av lokasjon pågår",
+                    "create_failed": "Fikk ikke opprettet lokasjon",
+                    "create_success": "Lokasjon opprettet"
                 }
             },
             "selector": {
-                "no_location_found": "",
+                "no_location_found": "Lokasjon ikke funnet",
                 "parent_location": "Overordnet lokasjon",
-                "search_location": "",
-                "select_location": ""
+                "search_location": "Søk lokasjon",
+                "select_location": "Velg en lokasjon"
             },
             "tree": {
                 "no_locations": "Ingen tilgjengelige lokasjoner. Legg til en ny lokasjon via\n `<`span class=\"link-primary\"`>`Opprett`<`/span`>`-knappen på navigasjonslinjen."
             }
         },
         "quick_menu": {
-            "no_results": "",
+            "no_results": "Ingen treff funnet.",
             "shortcut_hint": "Bruk nummertastene for å raskt velge en handling."
         }
     },
     "global": {
         "add": "Legg til",
-        "archived": "",
+        "archived": "Arkivert",
         "build": "Byggnummer: { build }",
-        "cancel": "",
+        "cancel": "Avbryt",
         "confirm": "Bekreft",
         "create": "Opprett",
         "create_and_add": "Opprett og legg til ny",
-        "create_subitem": "",
+        "create_subitem": "Opprett underenhet",
         "created": "Opprettet",
         "delete": "Slett",
-        "delete_confirm": "",
-        "demo_instance": "",
+        "delete_confirm": "Vil du virkelig slette denne enheten? ",
+        "demo_instance": "Dette er et demomiljø",
         "details": "Detaljer",
         "duplicate": "Dupliser",
         "edit": "Rediger",
@@ -199,26 +207,26 @@
             "version_link": ""
         },
         "github": "GitHub-prosjekt",
-        "insured": "",
+        "insured": "Forsikret",
         "items": "Objekter",
         "join_discord": "Bli med på Discord",
         "labels": "Merkelapper",
-        "loading": "",
+        "loading": "Laster...",
         "locations": "Lokasjoner",
         "maintenance": "Vedlikehold",
         "name": "Navn",
         "navigate": "Naviger",
         "password": "Passord",
-        "quantity": "",
+        "quantity": "Antall",
         "read_docs": "Les dokumentasjonen",
-        "return_home": "",
+        "return_home": "Returner hjem",
         "save": "Lagre",
         "search": "Søk",
         "sign_out": "Logg ut",
         "submit": "Send",
-        "unknown": "",
+        "unknown": "Ukjent",
         "update": "Oppdater",
-        "updating": "",
+        "updating": "Oppdaterer",
         "value": "Verdi",
         "version": "Versjon: { version }",
         "welcome": "Velkommen, { username }"
@@ -244,13 +252,13 @@
         "set_name": "Hva er navnet ditt?",
         "set_password": "Angi passord",
         "tagline": "Spor, organiser og hold styr på tingene dine.",
-        "title": "",
+        "title": "Organiser og merk dine ting",
         "toast": {
-            "invalid_email": "",
-            "invalid_email_password": "",
-            "login_success": "",
-            "problem_registering": "",
-            "user_registered": ""
+            "invalid_email": "Ugyldig e-post adresse",
+            "invalid_email_password": "Ugyldig e-post eller passord",
+            "login_success": "Innlogging vellykket",
+            "problem_registering": "Fikk ikke opprettet bruker",
+            "user_registered": "Bruker opprettet"
         }
     },
     "items": {
@@ -258,25 +266,25 @@
         "advanced": "Avansert",
         "archived": "Arkivert",
         "asset_id": "Asset-ID",
-        "associated_with_multiple": "",
+        "associated_with_multiple": "Denne eiendels-ID-en er tilknyttet flere elementer",
         "attachment": "Vedlegg",
         "attachments": "Vedlegg",
         "changes_persisted_immediately": "Endringer til vedlegg blir lagret umiddelbart",
         "created_at": "Lagt til den",
         "custom_fields": "Egendefinerte felt",
-        "delete_attachment_confirm": "",
-        "delete_item_confirm": "",
+        "delete_attachment_confirm": "Vil du virkelig slette dette vedlegget?",
+        "delete_item_confirm": "Vil du virkelig slette denne enheten?",
         "description": "Beskrivelse",
         "details": "Detaljer",
         "drag_and_drop": "Dra og slipp filer her, eller klikk for å bla gjennom",
         "edit": {
             "edit_attachment_dialog": {
-                "attachment_title": "",
-                "attachment_type": "",
-                "primary_photo": "",
-                "primary_photo_sub": "",
-                "select_type": "",
-                "title": ""
+                "attachment_title": "Vedleggstittel",
+                "attachment_type": "Vedleggstype",
+                "primary_photo": "Primærbilde",
+                "primary_photo_sub": "Dette valget er kun tilgjengelig for bilder. Kun et bilde kan være primær. Om du gjør dette valget, vil gjeldende primærbilde bli valgt bort.",
+                "select_type": "Velg en type",
+                "title": "Rediger vedlegg"
             }
         },
         "edit_details": "Rediger detaljer",
@@ -285,7 +293,7 @@
         "first": "Først",
         "include_archive": "Inkluder arkiverte objekter",
         "insured": "Forsikret",
-        "invalid_asset_id": "",
+        "invalid_asset_id": "Ugyldig eiendels-ID",
         "last": "Sist",
         "lifetime_warranty": "Livetidsgaranti",
         "location": "Lokasjon",
@@ -296,7 +304,7 @@
         "name": "Navn",
         "negate_labels": "Se bort fra valgte merkelapper",
         "next_page": "Neste side",
-        "no_attachments": "",
+        "no_attachments": "Ingen vedlegg funnet",
         "no_results": "Ingenting funnet",
         "notes": "Notater",
         "only_with_photo": "Kun objekter med bilde",
@@ -318,44 +326,44 @@
         "receipts": "Kvitteringer",
         "reset_search": "Nullstill søk",
         "results": "{ total } resultater",
-        "select_field": "",
+        "select_field": "Velg et felt",
         "serial_number": "Serienummer",
         "show_advanced_view_options": "Vis avansert Vis alternativer",
         "sold_at": "Salgskanal",
         "sold_details": "Salgsdetaljer",
         "sold_price": "Salgspris",
         "sold_to": "Solgt til",
-        "sync_child_locations": "",
+        "sync_child_locations": "Synkroniser underordnede elementers plasseringer",
         "tip_1": "Lokasjon og merkelappfiltere bruker ’OR’-operand. Hvis mer enn én er valgt, er bare en\n påkrevd for å få et søketreff.",
         "tip_2": "Søk med ’#’-prefix vil søke etter en asset-ID (f.eks. ’#000-001’)",
         "tip_3": "Feltet filtrer med ’OR’-operand. Hvis mer enn én er valgt vil bare en være påkrevd for å få et\nsøketreff.",
         "tips": "Tips",
         "tips_sub": "Søketips",
         "toast": {
-            "asset_not_found": "",
-            "attachment_deleted": "",
-            "attachment_updated": "",
-            "attachment_uploaded": "",
-            "child_items_location_no_longer_synced": "",
-            "child_items_location_synced": "",
+            "asset_not_found": "Eiendel ikke funnet",
+            "attachment_deleted": "Vedlegg slettet",
+            "attachment_updated": "Vedlegg oppdatert",
+            "attachment_uploaded": "Vedlegg lastet opp",
+            "child_items_location_no_longer_synced": "Underordnede elementers plasseringer vil ikke lenger synkroniseres med dette elementet.",
+            "child_items_location_synced": "Underordnede elementers plasseringer har blitt synkronisert med dette elementet",
             "child_location_desync": "",
-            "error_loading_parent_data": "",
-            "failed_adjust_quantity": "",
-            "failed_delete_attachment": "",
-            "failed_delete_item": "",
-            "failed_duplicate_item": "",
-            "failed_load_asset": "",
-            "failed_load_item": "",
-            "failed_load_items": "",
-            "failed_save": "",
-            "failed_save_no_location": "",
-            "failed_search_items": "",
-            "failed_update_attachment": "",
-            "failed_upload_attachment": "",
-            "item_deleted": "",
-            "item_saved": "",
-            "quantity_cannot_negative": "",
-            "sync_child_location": ""
+            "error_loading_parent_data": "Noe gikk galt ved lasting av overordnede data",
+            "failed_adjust_quantity": "Kunne ikke justere antall",
+            "failed_delete_attachment": "Kunne ikke slette vedlegg",
+            "failed_delete_item": "Kunne ikke slette enhet",
+            "failed_duplicate_item": "Kunne ikke duplisere element",
+            "failed_load_asset": "Kunne ikke laste inn ressurs",
+            "failed_load_item": "Klarte ikke å laste element",
+            "failed_load_items": "Kunne ikke laste inn elementer",
+            "failed_save": "Kunne ikke lagre element",
+            "failed_save_no_location": "Kunne ikke lagre element: ingen plassering valgt",
+            "failed_search_items": "Kunne ikke søke etter elementer",
+            "failed_update_attachment": "Kunne ikke oppdatere vedlegg",
+            "failed_upload_attachment": "Kunne ikke laste opp vedlegg",
+            "item_deleted": "Produkt slettet",
+            "item_saved": "Produkt lagret",
+            "quantity_cannot_negative": "Antall kan ikke være negativt",
+            "sync_child_location": "Valgte overordnet synkroniserer sine underordnede til sine egne. Lokasjonen har blitt oppdatert."
         },
         "updated_at": "Oppdatert den",
         "warranty": "Garanti",
@@ -363,43 +371,43 @@
         "warranty_expires": "Garanti upløper"
     },
     "labels": {
-        "label_delete_confirm": "",
+        "label_delete_confirm": "Er du sikker på at du vil slette denne etiketten? Denne handlingen kan ikke angres.",
         "no_results": "Ingen merkelapper funnet",
         "toast": {
-            "failed_delete_label": "",
-            "failed_load_label": "",
-            "failed_update_label": "",
-            "label_deleted": "",
-            "label_updated": ""
+            "failed_delete_label": "Kunne ikke slette etikett",
+            "failed_load_label": "Kunne ikke laste inn etikett",
+            "failed_update_label": "Kunne ikke oppdatere etikett",
+            "label_deleted": "Etikett slettet",
+            "label_updated": "Etikett oppdatert"
         },
         "update_label": "Oppdater merkelapp"
     },
     "languages": {
         "ca": "Katalansk",
-        "cs-CZ": "",
+        "cs-CZ": "Tsjekkisk",
         "de": "Tysk",
         "en": "Engelsk",
         "es": "Spansk",
-        "fi-FI": "",
+        "fi-FI": "Finsk",
         "fr": "Fransk",
         "hu": "Ungarsk",
-        "id-ID": "",
+        "id-ID": "Indonesisk",
         "it": "Italiensk",
         "ja-JP": "Japansk",
-        "ko-KR": "",
-        "lb-LU": "",
-        "lt-LT": "",
-        "nb-NO": "",
+        "ko-KR": "Koreansk",
+        "lb-LU": "Luxemburgisk (Luxembourg)",
+        "lt-LT": "Litauisk (Litauen)",
+        "nb-NO": "Norsk bokmål",
         "nl": "Nederlandsk",
         "pl": "Polsk",
         "pt-BR": "Portugisisk (Brasil)",
         "pt-PT": "Portugisisk (Portugal)",
         "ru": "Russisk",
         "sl": "Slovensk",
-        "sq-AL": "",
+        "sq-AL": "Albansk",
         "sv": "Svensk",
-        "ta-IN": "",
-        "th-TH": "",
+        "ta-IN": "Tamilsk",
+        "th-TH": "Thai",
         "tr": "Tyrkisk",
         "uk-UA": "Ukrainsk",
         "zh-CN": "Kinesisk (forenklet)",
@@ -413,15 +421,15 @@
     "locations": {
         "child_locations": "Underlokasjoner",
         "collapse_tree": "Slå sammen mappetre",
-        "expand_tree": "",
-        "location_items_delete_confirm": "",
+        "expand_tree": "Utvid treet",
+        "location_items_delete_confirm": "Er du sikker på at du vil slette denne plasseringen og alle elementene i den? Denne handlingen kan ikke angres.",
         "no_results": "Ingen lokasjoner funnet",
         "toast": {
-            "failed_delete_location": "",
-            "failed_load_location": "",
-            "failed_update_location": "",
-            "location_deleted": "",
-            "location_updated": ""
+            "failed_delete_location": "Kunne ikke slette plassering",
+            "failed_load_location": "Kunne ikke laste inn plassering",
+            "failed_update_location": "Kunne ikke oppdatere plassering",
+            "location_deleted": "Lokasjon slettet",
+            "location_updated": "Plassering oppdatert"
         },
         "update_location": "Oppdater lokasjon"
     },
@@ -468,7 +476,7 @@
         "locations": "Lokasjoner",
         "maintenance": "Vedlikehold",
         "profile": "Profil",
-        "scanner": "",
+        "scanner": "Skanner",
         "search": "Søk",
         "tools": "Verktøy"
     },
@@ -478,9 +486,9 @@
         "currency_format": "Valutaformat",
         "current_password": "Nåværende passord",
         "delete_account": "Slett konto",
-        "delete_account_confirm": "",
+        "delete_account_confirm": "Er du sikker på at du vil slette kontoen din? Hvis du er det siste medlemmet i gruppen, slettes alle dataene dine. Denne handlingen kan ikke angres.",
         "delete_account_sub": "Slett kontoen din og alle data knyttet til den. Denne handlingen kan ikke angres.",
-        "delete_notifier_confirm": "",
+        "delete_notifier_confirm": "Er du sikker på at du vil slette denne varsleren?",
         "display_legacy_header": "",
         "enabled": "Aktivert",
         "example": "Eksempel",
@@ -491,27 +499,27 @@
         "language": "Språk",
         "new_password": "Nytt passord",
         "no_notifiers": "Ingen varslingsmekanismer satt opp",
-        "no_override": "",
+        "no_override": "Ingen overstyring",
         "notifier_modal": "{ type, select, true {Rediger} false {Opprett} other {Annen}} varsling",
         "notifiers": "Varslingsmekanismer",
         "notifiers_sub": "Få varslinger for kommende vedlikeholdspåminnelser",
-        "override_locale": "",
+        "override_locale": "Overstyr dato og valutaspråk",
         "test": "Test",
         "theme_settings": "Temainnstillinger",
         "theme_settings_sub": "Temainnstillinger lagres i nettleseren din sin midlertidige lagring. Du kan endre temaet når som helst. Hvis du\n har problemer, last inn siden på nytt.",
         "toast": {
-            "account_deleted": "",
-            "failed_change_password": "",
-            "failed_create_notifier": "",
-            "failed_delete_account": "",
-            "failed_delete_notifier": "",
-            "failed_get_currencies": "",
-            "failed_test_notifier": "",
-            "failed_update_group": "",
-            "failed_update_notifier": "",
-            "group_updated": "",
-            "notifier_test_success": "",
-            "password_changed": ""
+            "account_deleted": "Profilen er slettet.",
+            "failed_change_password": "Klarte ikke å endre passord.",
+            "failed_create_notifier": "Kunne ikke opprette varsler.",
+            "failed_delete_account": "Kunne ikke slette kontoen din.",
+            "failed_delete_notifier": "Kunne ikke slette varsler.",
+            "failed_get_currencies": "Kunne ikke hente valutaer",
+            "failed_test_notifier": "Kunne ikke teste varsler.",
+            "failed_update_group": "Kunne ikke oppdatere gruppe",
+            "failed_update_notifier": "Kunne ikke oppdatere varsler.",
+            "group_updated": "Gruppe oppdatert",
+            "notifier_test_success": "Varslertest vellykket.",
+            "password_changed": "Passordet er nå endret."
         },
         "update_group": "Oppdater gruppe",
         "update_language": "Oppdater språk",
@@ -521,61 +529,64 @@
     },
     "reports": {
         "label_generator": {
-            "asset_end": "",
-            "asset_start": "",
-            "base_url": "",
-            "bordered_labels": "",
-            "generate_page": "",
-            "input_placeholder": "",
+            "asset_end": "Avslutning av eiendel",
+            "asset_start": "Oppstart av eiendel",
+            "base_url": "Base URL",
+            "bordered_labels": "Kantede etiketter",
+            "generate_page": "Generer side",
+            "input_placeholder": "Skriv her",
             "instruction_1": "",
             "instruction_2": "",
             "instruction_3": "",
-            "label_height": "",
-            "label_width": "",
-            "measure_type": "",
+            "label_height": "Etiketthøyde",
+            "label_width": "Etikettbredde",
+            "measure_type": "Måltype",
             "page_bottom_padding": "",
-            "page_height": "",
+            "page_height": "Sidehøyde",
             "page_left_padding": "",
             "page_right_padding": "",
             "page_top_padding": "",
-            "page_width": "",
-            "qr_code_example": "",
+            "page_width": "Sidebredde",
+            "qr_code_example": "Eksempel på QR-kode",
             "tip_1": "",
             "tip_2": "",
             "tip_3": "",
-            "tips": "",
-            "title": "",
+            "tips": "Tips",
+            "title": "Merkelappgenerator",
             "toast": {
-                "page_too_small_card": ""
+                "page_too_small_card": "Sidestørrelsen er for liten for kortstørrelsen"
             }
         }
     },
     "scanner": {
-        "error": "",
-        "invalid_url": "",
-        "no_sources": "",
-        "permission_denied": "",
-        "select_video_source": "",
-        "title": "",
-        "unsupported": ""
+        "error": "Det oppsto en feil med skanningen",
+        "invalid_url": "Ugyldig strekkode-URL",
+        "no_sources": "Ingen videokilder tilgjengelige",
+        "permission_denied": "Kameratillatelse nektet. Gi tilgang til kameraet i nettleserinnstillingene",
+        "select_video_source": "Velg en videokilde",
+        "title": "Skanner",
+        "unsupported": "API for mediestrøm støttes ikke uten https"
     },
     "tools": {
         "actions": "Inventarhandlinger",
         "actions_set": {
+            "create_missing_thumbnails": "Opprett manglende miniatyrbilder",
+            "create_missing_thumbnails_button": "Opprett miniatyrbilder",
+            "create_missing_thumbnails_confirm": "Er du sikker på at du vil opprette manglende miniatyrbilder? Dette kan ta en stund og kan ikke settes på pause.",
             "ensure_ids": "Sikre Asset IDer",
             "ensure_ids_button": "Sikre Asset IDer",
-            "ensure_ids_confirm": "",
+            "ensure_ids_confirm": "Er du sikker på at du vil sikre at alle ressurser har en ID? Dette kan ta en stund og kan ikke angres.",
             "ensure_ids_sub": "Sikrer at alle objekter i inventarlisten har et gyldig asset_id-felt. Dette gjøres ved å finne den høyeste asset_iden i databasen og legge til neste tilgjengelige verdi til hvert objekt som ikke har en asset_id. Dette gjøres i rekkefølgen til verdien fra created_at-feltet.",
             "ensure_import_refs": "Sikre import-referanser",
             "ensure_import_refs_button": "Sikre import-referanser",
             "ensure_import_refs_sub": "Sikrer at alle objektene i inventaret har et gyldig import_ref-felt. Dette gjøres ved å opprette en tilfeldig 8-tegns tekststreng for hvert objekt som har et tomt import_ref-felt.",
             "set_primary_photo": "Angi primærbilde",
             "set_primary_photo_button": "Angi primærbilde",
-            "set_primary_photo_confirm": "",
+            "set_primary_photo_confirm": "Er du sikker på at du vil sette primærbilder? Dette kan ta en stund og kan ikke angres.",
             "set_primary_photo_sub": "I versjon v0.10.0 av Homebox ble det primære bildefeltet lagt til vedlegg som type foto. Denne handlingen vil sette verdien for det primære bildefeltet til det første bildet lagret i databasen, hvis det ikke allerede er angitt. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Jfr. GitHub PR #576'</a>'",
             "zero_datetimes": "Null ut objektdatotider",
             "zero_datetimes_button": "Null ut objektdatotider",
-            "zero_datetimes_confirm": "",
+            "zero_datetimes_confirm": "Er du sikker på at du vil tilbakestille alle dato- og tidsverdier? Dette kan ta en stund og kan ikke angres.",
             "zero_datetimes_sub": "Nullstiller tidsverdien for alle datotid-felter i inventaret til starten av datoen. Dette er for å fikse en bug som ble tidlig introdusert i utviklingen av siden, og forårsaket at tidsverdien ble lagret sammen med tidspunktet, noe som skapte problemer for datofelt som skulle vise korrekte verdier. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Jfr. Github Issue #236 for flere detaljer.'</a>'"
         },
         "actions_sub": "Utfør massehandlinger for inventaret ditt. Disse handlingene er irreversible. '<b>'Vær forsiktig.'</b>'",
@@ -586,7 +597,7 @@
             "export_sub": "Eksporterer standard CSV-format for Homebox. Dette vil eksportere alle objektene i inventaret ditt.",
             "import": "Importer inventar",
             "import_button": "Importer inventar",
-            "import_ref_confirm": "",
+            "import_ref_confirm": "Er du sikker på at alle ressurser skal få en import_ref? Dette kan ta en stund og kan ikke angres.",
             "import_sub": "Importerer standard CSV-format for Homebox. Uten en '<code>'HB.import_ref'</code>'-kolonne vil dette '<b>'ikke'</b>' overskrive noen eksisterende objekter i inventaret ditt, bare legge til nye. Rader med en '<code>'HB.import_ref'</code>'-kolonne slås sammen med eksisterende objekter med samme import_ref, hvis en eksisterer."
         },
         "import_export_sub": "Importer og eksporter inventaret ditt til og fra CSV-format. Dette er nyttig for å flytte inventaret ditt til en ny instans av Homebox.",
@@ -602,10 +613,11 @@
         "reports_sub": "Genererer forskjellige rapporter for inventaret ditt.",
         "toast": {
             "asset_success": "",
+            "failed_create_missing_thumbnails": "Kunne ikke opprette manglende miniatyrbilder.",
             "failed_ensure_ids": "",
             "failed_ensure_import_refs": "",
-            "failed_set_primary_photos": "",
-            "failed_zero_datetimes": ""
+            "failed_set_primary_photos": "Kunne ikke angi primære bilder.",
+            "failed_zero_datetimes": "Kunne ikke tilbakestille dato- og tidsverdier."
         }
     }
 }
