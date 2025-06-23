@@ -10,7 +10,7 @@ require (
 	github.com/containrrr/shoutrrr v0.8.0
 	github.com/gen2brain/avif v0.4.4
 	github.com/gen2brain/webp v0.5.5
-	github.com/go-chi/chi/v5 v5.2.1
+	github.com/go-chi/chi/v5 v5.2.2
 	github.com/go-playground/validator/v10 v10.26.0
 	github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
