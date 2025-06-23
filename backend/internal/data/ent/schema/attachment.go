@@ -21,7 +21,7 @@ func (Attachment) Mixin() []ent.Mixin {
 // Fields of the Attachment.
 func (Attachment) Fields() []ent.Field {
 	return []ent.Field{
-		field.Enum("type").Values("photo", "manual", "warranty", "attachment", "receipt").Default("attachment"),
+		field.Enum("type").Values("photo", "manual", "warranty", "attachment", "receipt", "thumbnail").Default("attachment"),
 		field.Bool("primary").Default(false),
 		field.String("title").Default(""),
 		field.String("path").Default(""),
@@ -33,7 +33,8 @@ func (Attachment) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("item", Item.Type).
 			Ref("attachments").
-			Required().
+			Unique(),
+		edge.To("thumbnail", Attachment.Type).
 			Unique(),
 	}
 }

@@ -127,19 +127,16 @@
     toast.success(t("items.toast.item_saved"));
     navigateTo("/item/" + itemId.value);
   }
-  type NoUndefinedField<T> = { [P in keyof T]-?: NoUndefinedField<NonNullable<T[P]>> };
 
-  type StringKeys<T> = { [k in keyof T]: T[k] extends string ? k : never }[keyof T];
-  type OnlyString<T> = { [k in StringKeys<T>]: string };
-
-  type NumberKeys<T> = { [k in keyof T]: T[k] extends number ? k : never }[keyof T];
-  type OnlyNumber<T> = { [k in NumberKeys<T>]: number };
+  type NonNullableStringKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends string ? K : never]: any }>;
+  type NonNullableNumberKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends number ? K : never]: any }>;
+  type BooleanKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends boolean ? K : never]: any }>;
+  type DateKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends Date | string ? K : never]: any }>;
 
   type TextFormField = {
     type: "text" | "textarea";
     label: string;
-    // key of ItemOut where the value is a string
-    ref: keyof OnlyString<NoUndefinedField<ItemOut>>;
+    ref: NonNullableStringKeys<ItemOut>;
     maxLength?: number;
     minLength?: number;
   };
@@ -147,27 +144,19 @@
   type NumberFormField = {
     type: "number";
     label: string;
-    ref: keyof OnlyNumber<NoUndefinedField<ItemOut>> | keyof OnlyString<NoUndefinedField<ItemOut>>;
+    ref: NonNullableNumberKeys<ItemOut> | NonNullableStringKeys<ItemOut>;
   };
-
-  // https://stackoverflow.com/questions/50851263/how-do-i-require-a-keyof-to-be-for-a-property-of-a-specific-type
-  // I don't know why typescript can't just be normal
-  type BooleanKeys<T> = { [k in keyof T]: T[k] extends boolean ? k : never }[keyof T];
-  type OnlyBoolean<T> = { [k in BooleanKeys<T>]: boolean };
 
   interface BoolFormField {
     type: "checkbox";
     label: string;
-    ref: keyof OnlyBoolean<NoUndefinedField<ItemOut>>;
+    ref: BooleanKeys<ItemOut>;
   }
-
-  type DateKeys<T> = { [k in keyof T]: T[k] extends Date | string ? k : never }[keyof T];
-  type OnlyDate<T> = { [k in DateKeys<T>]: Date | string };
 
   type DateFormField = {
     type: "date";
     label: string;
-    ref: keyof OnlyDate<NoUndefinedField<ItemOut>>;
+    ref: DateKeys<ItemOut>;
   };
 
   type FormField = TextFormField | BoolFormField | DateFormField | NumberFormField;
@@ -247,7 +236,6 @@
     {
       type: "date",
       label: "items.purchase_date",
-      // @ts-expect-error - we know this is a date
       ref: "purchaseTime",
     },
   ];
@@ -261,7 +249,6 @@
     {
       type: "date",
       label: "items.warranty_expires",
-      // @ts-expect-error - we know this is a date
       ref: "warrantyExpires",
     },
     {
@@ -287,7 +274,6 @@
     {
       type: "date",
       label: "items.sold_at",
-      // @ts-expect-error - we know this is a date
       ref: "soldTime",
     },
   ];

@@ -69,8 +69,11 @@
     if (!props.item.imageId) {
       return "/no-image.jpg";
     }
-
-    return api.authURL(`/items/${props.item.id}/attachments/${props.item.imageId}`);
+    if (props.item.thumbnailId) {
+      return api.authURL(`/items/${props.item.id}/attachments/${props.item.thumbnailId}`);
+    } else {
+      return api.authURL(`/items/${props.item.id}/attachments/${props.item.imageId}`);
+    }
   });
 
   const top3 = computed(() => {

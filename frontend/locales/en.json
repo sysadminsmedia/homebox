@@ -576,7 +576,12 @@
             "zero_datetimes": "Zero Item Date Times",
             "zero_datetimes_button": "Zero Item Date Times",
             "zero_datetimes_confirm": "Are you sure you want to reset all date and time values? This can take a while and cannot be undone.",
-            "zero_datetimes_sub": "Resets the time value for all date time fields in your inventory to the beginning of the date. This is to fix a bug that was introduced early on in the development of the site that caused the time value to be stored with the time which caused issues with date fields displaying accurate values. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'"
+            "zero_datetimes_sub": "Resets the time value for all date time fields in your inventory to the beginning of the date. This is to fix a bug that was introduced early on in the development of the site that caused the time value to be stored with the time which caused issues with date fields displaying accurate values. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'",
+            "create_missing_thumbnails": "Create Missing Thumbnails",
+            "create_missing_thumbnails_sub": "Creates thumbnails for all attachments that are supported by the current configuration. This is useful for attachments that were uploaded prior to the v0.20.0 release of Homebox. This will not overwrite existing thumbnails, only create new ones for attachments that do not have a thumbnail. Please note that the thumbnails are created in the background and may take a while to complete.",
+            "create_missing_thumbnails_button": "Create Thumbnails",
+            "create_missing_thumbnails_confirm": "Are you sure you want to create missing thumbnails? This can take a while and cannot be paused."
+
         },
         "actions_sub": "Apply Actions to your inventory in bulk. These are irreversible actions. '<b>'Be careful.'</b>'",
         "import_export": "Import/Export",
@@ -605,7 +610,8 @@
             "failed_ensure_ids": "Failed to ensure asset IDs.",
             "failed_ensure_import_refs": "Failed to ensure import refs.",
             "failed_set_primary_photos": "Failed to set primary photos.",
-            "failed_zero_datetimes": "Failed to reset date and time values."
+            "failed_zero_datetimes": "Failed to reset date and time values.",
+            "failed_create_missing_thumbnails": "Failed to create missing thumbnails."
         }
     }
 }

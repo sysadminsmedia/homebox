@@ -422,6 +422,22 @@ func (c *AttachmentClient) QueryItem(a *Attachment) *ItemQuery {
 	return query
 }
 
+// QueryThumbnail queries the thumbnail edge of a Attachment.
+func (c *AttachmentClient) QueryThumbnail(a *Attachment) *AttachmentQuery {
+	query := (&AttachmentClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(attachment.Table, attachment.FieldID, id),
+			sqlgraph.To(attachment.Table, attachment.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, attachment.ThumbnailTable, attachment.ThumbnailColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *AttachmentClient) Hooks() []Hook {
 	return c.hooks.Attachment

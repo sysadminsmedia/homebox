@@ -13,11 +13,12 @@ var (
 		{Name: "id", Type: field.TypeUUID},
 		{Name: "created_at", Type: field.TypeTime},
 		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "type", Type: field.TypeEnum, Enums: []string{"photo", "manual", "warranty", "attachment", "receipt"}, Default: "attachment"},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"photo", "manual", "warranty", "attachment", "receipt", "thumbnail"}, Default: "attachment"},
 		{Name: "primary", Type: field.TypeBool, Default: false},
 		{Name: "title", Type: field.TypeString, Default: ""},
 		{Name: "path", Type: field.TypeString, Default: ""},
-		{Name: "item_attachments", Type: field.TypeUUID},
+		{Name: "attachment_thumbnail", Type: field.TypeUUID, Unique: true, Nullable: true},
+		{Name: "item_attachments", Type: field.TypeUUID, Nullable: true},
 	}
 	// AttachmentsTable holds the schema information for the "attachments" table.
 	AttachmentsTable = &schema.Table{
@@ -26,8 +27,14 @@ var (
 		PrimaryKey: []*schema.Column{AttachmentsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "attachments_items_attachments",
+				Symbol:     "attachments_attachments_thumbnail",
 				Columns:    []*schema.Column{AttachmentsColumns[7]},
+				RefColumns: []*schema.Column{AttachmentsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "attachments_items_attachments",
+				Columns:    []*schema.Column{AttachmentsColumns[8]},
 				RefColumns: []*schema.Column{ItemsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -443,7 +450,8 @@ var (
 )
 
 func init() {
-	AttachmentsTable.ForeignKeys[0].RefTable = ItemsTable
+	AttachmentsTable.ForeignKeys[0].RefTable = AttachmentsTable
+	AttachmentsTable.ForeignKeys[1].RefTable = ItemsTable
 	AuthRolesTable.ForeignKeys[0].RefTable = AuthTokensTable
 	AuthTokensTable.ForeignKeys[0].RefTable = UsersTable
 	GroupInvitationTokensTable.ForeignKeys[0].RefTable = GroupsTable

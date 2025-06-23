@@ -31,19 +31,19 @@ type (
 
 // HandleItemAttachmentCreate godocs
 //
-//	@Summary  Create Item Attachment
-//	@Tags     Items Attachments
-//	@Accept   multipart/form-data
-//	@Produce  json
-//	@Param    id   path     string true "Item ID"
-//	@Param    file formData file   true "File attachment"
-//	@Param    type formData string false "Type of file"
-//	@Param    primary formData bool false "Is this the primary attachment"
-//	@Param    name formData string true "name of the file including extension"
-//	@Success  200  {object} repo.ItemOut
-//	@Failure  422  {object} validate.ErrorResponse
-//	@Router   /v1/items/{id}/attachments [POST]
-//	@Security Bearer
+//	@Summary	Create Item Attachment
+//	@Tags		Items Attachments
+//	@Accept		multipart/form-data
+//	@Produce	json
+//	@Param		id		path		string	true	"Item ID"
+//	@Param		file	formData	file	true	"File attachment"
+//	@Param		type	formData	string	false	"Type of file"
+//	@Param		primary	formData	bool	false	"Is this the primary attachment"
+//	@Param		name	formData	string	true	"name of the file including extension"
+//	@Success	200		{object}	repo.ItemOut
+//	@Failure	422		{object}	validate.ErrorResponse
+//	@Router		/v1/items/{id}/attachments [POST]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		err := r.ParseMultipartForm(ctrl.maxUploadSize << 20)
