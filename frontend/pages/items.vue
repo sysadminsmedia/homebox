@@ -52,7 +52,7 @@
     },
   });
 
-  const pageSize = useRouteQuery("pageSize", 30);
+  const pageSize = useRouteQuery("pageSize", 24);
   const query = useRouteQuery("q", "");
   const advanced = useRouteQuery("advanced", false);
   const includeArchived = useRouteQuery("archived", false);
@@ -357,7 +357,7 @@
       query: {
         archived: "false",
         fieldSelector: "false",
-        pageSize: 10,
+        pageSize: pageSize.value,
         page: 1,
         orderBy: "name",
         q: "",
