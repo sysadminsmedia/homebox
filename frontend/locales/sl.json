@@ -24,6 +24,13 @@
                 "new_version_available_link": "Kliknite tukaj za ogled opomb ob izdaji"
             }
         },
+        "color_selector": {
+            "clear": "Počisti barvo",
+            "color": "Barva",
+            "no_color": "Ni barve",
+            "no_color_selected": "Barva ni izbrana",
+            "randomize": "Naključna barva"
+        },
         "form": {
             "password": {
                 "toggle_show": "Preklopi prikaz gesla"
@@ -136,6 +143,7 @@
         },
         "label": {
             "create_modal": {
+                "label_color": "Barva oznake",
                 "label_description": "Opis nalepke",
                 "label_name": "Ime nalepke",
                 "title": "Ustvari oznako",
@@ -340,7 +348,7 @@
             "child_items_location_synced": "Lokacije podrejenih predmetov so bile sinhronizirane s tem predmetom",
             "child_location_desync": "Sprememba lokacije bo onemogočila sinhronizacijo z lokacijo nadrejenega predmeta",
             "error_loading_parent_data": "Pri nalaganju podatkov nadrejenega predmeta je prišlo do napake",
-            "failed_adjust_quantity": "Količine ni bilo mogoče prilagoditi",
+            "failed_adjust_quantity": "Količine ni bilo mogoče spremeniti",
             "failed_delete_attachment": "Brisanje priloge ni uspelo",
             "failed_delete_item": "Brisanje predmeta ni uspelo",
             "failed_duplicate_item": "Podvajanje predmeta ni uspelo",
@@ -541,7 +549,7 @@
             "page_width": "Širina strani",
             "qr_code_example": "Primer QR kode",
             "tip_1": "Standardni vnosi so za \n '<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 nalepke'</a>'. Če uporabljate drug papir,\nboste morali prilagoditi nastavitve.",
-            "tip_2": "Privzete dimenzije so v inčih. Podane dimenzije za standardne 5260 nalepke se\nne ujemajo točno z morebitnimi nastavitvami za vaš tiskalnik.\n '<b>'Pripravljeni bodite na nekaj eksperimentiranja.'</b>'",
+            "tip_2": "Privzete dimenzije so v palcih (in). Podane dimenzije za standardne 5260 nalepke se\nne ujemajo točno z morebitnimi nastavitvami za vaš tiskalnik.\n '<b>'Pripravljeni bodite na nekaj eksperimentiranja.'</b>'",
             "tip_3": "Pri tisku preverite da:\n '<ol><li>'Obrobe so nastavljene na 0 ali Brez'</li><li>'Velikost strani je nastavljena na 100%'</li><li>'Onemogočen je duplex/dvostranski tisk'</li><li>'Natisnite testno stran pred tiskom več strani'</li></ol>",
             "tips": "Nasveti",
             "title": "Generator Nalepk",
@@ -562,6 +570,7 @@
     "tools": {
         "actions": "Dejanja inventarja",
         "actions_set": {
+            "create_missing_thumbnails": "Ustvari manjkajoče predoglede",
             "ensure_ids": "Zagotovi ID-je sredstev",
             "ensure_ids_button": "Zagotovi ID-je sredstev",
             "ensure_ids_confirm": "Ali ste prepričani, da želite zagotoviti, da imajo vsi predmeti ID? To lahko traja nekaj časa in ni možno razveljaviti.",

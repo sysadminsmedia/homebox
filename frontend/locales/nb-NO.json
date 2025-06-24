@@ -3,15 +3,15 @@
         "app": {
             "create_modal": {
                 "createAndAddAnother": "Bruk {shiftKey} + {enterKey} for å opprette og legge til en ny.",
-                "enter": "",
-                "shift": ""
+                "enter": "Enter",
+                "shift": "Shift"
             },
             "import_dialog": {
                 "change_warning": "Oppførsel for importjobber med eksisterende import_refs har blitt endret. Hvis en import_ref eksisterer i CSV-filen,\nvil objektet oppdateres med verdiene fra CSV-filen.",
                 "description": "Importer en CSV-fil som inneholder alle objekter, merkelapper og lokasjoner. Konsulter dokumentasjonen for mer\ninformasjon om påkrevd format.",
                 "title": "Importer CSV-fil",
                 "toast": {
-                    "import_failed": "Import feilet, vennligst prøv igjen senere.",
+                    "import_failed": "Import feilet. Vennligst prøv igjen senere.",
                     "import_success": "Import fullført!",
                     "please_select_file": "Vennligst velg en fil for import."
                 }
@@ -69,7 +69,7 @@
             },
             "label_maker": {
                 "browser_print": "Skriv ut fra nettleser",
-                "confirm_description": "Ønsker du å skrive ut denne etiketten?",
+                "confirm_description": "Er du sikker på at du vil skrive ut denne etiketten?",
                 "download": "Last ned etikett",
                 "print": "Skriv ut etikett",
                 "server_print": "Skriv ut på server",
@@ -203,8 +203,8 @@
         "email": "E-post",
         "follow_dev": "Følg utvikleren",
         "footer": {
-            "api_link": "",
-            "version_link": ""
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Versjon: { version } Bygg: { build } '</a>'"
         },
         "github": "GitHub-prosjekt",
         "insured": "Forsikret",
@@ -337,7 +337,7 @@
         "tip_1": "Lokasjon og merkelappfiltere bruker ’OR’-operand. Hvis mer enn én er valgt, er bare en\n påkrevd for å få et søketreff.",
         "tip_2": "Søk med ’#’-prefix vil søke etter en asset-ID (f.eks. ’#000-001’)",
         "tip_3": "Feltet filtrer med ’OR’-operand. Hvis mer enn én er valgt vil bare en være påkrevd for å få et\nsøketreff.",
-        "tips": "Tips",
+        "tips": "Forslag",
         "tips_sub": "Søketips",
         "toast": {
             "asset_not_found": "Eiendel ikke funnet",
@@ -346,7 +346,7 @@
             "attachment_uploaded": "Vedlegg lastet opp",
             "child_items_location_no_longer_synced": "Underordnede elementers plasseringer vil ikke lenger synkroniseres med dette elementet.",
             "child_items_location_synced": "Underordnede elementers plasseringer har blitt synkronisert med dette elementet",
-            "child_location_desync": "",
+            "child_location_desync": "Endring av plassering vil bryte synkroniseringen med overordnet plassering.\"",
             "error_loading_parent_data": "Noe gikk galt ved lasting av overordnede data",
             "failed_adjust_quantity": "Kunne ikke justere antall",
             "failed_delete_attachment": "Kunne ikke slette vedlegg",
@@ -489,7 +489,7 @@
         "delete_account_confirm": "Er du sikker på at du vil slette kontoen din? Hvis du er det siste medlemmet i gruppen, slettes alle dataene dine. Denne handlingen kan ikke angres.",
         "delete_account_sub": "Slett kontoen din og alle data knyttet til den. Denne handlingen kan ikke angres.",
         "delete_notifier_confirm": "Er du sikker på at du vil slette denne varsleren?",
-        "display_legacy_header": "",
+        "display_legacy_header": "{ currentValue, select, true {Deaktiver eldre topptekst} false {Aktiver eldre topptekst} other {Ikke aktuelt}}",
         "enabled": "Aktivert",
         "example": "Eksempel",
         "gen_invite": "Opprett invitasjonslenke",
@@ -531,27 +531,27 @@
         "label_generator": {
             "asset_end": "Avslutning av eiendel",
             "asset_start": "Oppstart av eiendel",
-            "base_url": "Base URL",
+            "base_url": "Basis-URL",
             "bordered_labels": "Kantede etiketter",
             "generate_page": "Generer side",
             "input_placeholder": "Skriv her",
-            "instruction_1": "",
-            "instruction_2": "",
-            "instruction_3": "",
+            "instruction_1": "Homebox Label Generator er et verktøy som hjelper deg med å skrive ut etiketter for Homebox-oversikten din. Disse er ment\n som forhåndsutskrevne etiketter, slik at du kan skrive ut mange etiketter og ha dem klare til bruk",
+            "instruction_2": "Etikettene fungerer ved å skrive ut en QR-kode med URL og AssetID-informasjon på etiketten. Hvis du har deaktivert\n AssetID-er i Homebox-innstillingene dine, kan du fortsatt bruke dette verktøyet, men AssetID-ene vil da ikke vise til noen gjenstand",
+            "instruction_3": "Denne funksjonen er i en tidlig utviklingsfase og kan endres i fremtidige versjoner. Hvis du har tilbakemeldinger,\n vennligst legg dem inn i '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">GitHub-diskusjonen</a>'",
             "label_height": "Etiketthøyde",
             "label_width": "Etikettbredde",
             "measure_type": "Måltype",
-            "page_bottom_padding": "",
+            "page_bottom_padding": "Bunnmarg på siden",
             "page_height": "Sidehøyde",
-            "page_left_padding": "",
-            "page_right_padding": "",
-            "page_top_padding": "",
+            "page_left_padding": "Venstremarg på siden",
+            "page_right_padding": "Høyremarg på siden",
+            "page_top_padding": "Toppmarg på siden",
             "page_width": "Sidebredde",
             "qr_code_example": "Eksempel på QR-kode",
-            "tip_1": "",
-            "tip_2": "",
-            "tip_3": "",
-            "tips": "Tips",
+            "tip_1": "Standardinnstillingene her er satt opp for\n‘<a href=\"https://www.avery.com/templates/5260\">Avery 5260 etikettark</a>’. Hvis du bruker et annet ark,\nmå du justere innstillingene slik at de passer til ditt ark.",
+            "tip_2": "Hvis du tilpasser arket ditt, er målene oppgitt i tommer. Da jeg laget 5260-arket, oppdaget jeg at \nmålene som ble brukt i deres mal ikke stemte overens med det som faktisk trengtes for å skrive ut innenfor boksene.\n '<b>'Vær forberedt på litt prøving og feiling.'</b>'",
+            "tip_3": "Når du skriver ut, må du sørge for å:\n '<ol><li>'Sett margen til 0 eller Ingen'</li><li>'Sett skaleringen til 100%'</li><li>'Deaktiver dobbeltsidig utskrift'</li><li>'Skriv ut en testside før du skriver ut flere sider'</li></ol>'",
+            "tips": "Forslag",
             "title": "Merkelappgenerator",
             "toast": {
                 "page_too_small_card": "Sidestørrelsen er for liten for kortstørrelsen"
@@ -573,6 +573,7 @@
             "create_missing_thumbnails": "Opprett manglende miniatyrbilder",
             "create_missing_thumbnails_button": "Opprett miniatyrbilder",
             "create_missing_thumbnails_confirm": "Er du sikker på at du vil opprette manglende miniatyrbilder? Dette kan ta en stund og kan ikke settes på pause.",
+            "create_missing_thumbnails_sub": "Oppretter miniatyrbilder for alle vedlegg som støttes av gjeldende konfigurasjon. Dette er nyttig for vedlegg som ble lastet opp før v0.20.0-utgivelsen av Homebox. Eksisterende miniatyrbilder vil ikke bli overskrevet – det opprettes kun nye miniatyrbilder for vedlegg som mangler dette. Vær oppmerksom på at miniatyrbildene opprettes i bakgrunnen, og at det kan ta litt tid før prosessen er ferdig.",
             "ensure_ids": "Sikre Asset IDer",
             "ensure_ids_button": "Sikre Asset IDer",
             "ensure_ids_confirm": "Er du sikker på at du vil sikre at alle ressurser har en ID? Dette kan ta en stund og kan ikke angres.",
@@ -612,10 +613,10 @@
         },
         "reports_sub": "Genererer forskjellige rapporter for inventaret ditt.",
         "toast": {
-            "asset_success": "",
+            "asset_success": "{ results } eiendeler har blitt oppdatert.",
             "failed_create_missing_thumbnails": "Kunne ikke opprette manglende miniatyrbilder.",
-            "failed_ensure_ids": "",
-            "failed_ensure_import_refs": "",
+            "failed_ensure_ids": "Kunne ikke verifisere eiendels-ID-er.",
+            "failed_ensure_import_refs": "Kunne ikke verifisere importreferanser.",
             "failed_set_primary_photos": "Kunne ikke angi primære bilder.",
             "failed_zero_datetimes": "Kunne ikke tilbakestille dato- og tidsverdier."
         }

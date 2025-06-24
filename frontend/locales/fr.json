@@ -602,6 +602,7 @@
         "reports_sub": "Générez différents rapports pour votre inventaire.",
         "toast": {
             "asset_success": "{ results } ressources ont été mises à jour.",
+            "failed_create_missing_thumbnails": "Échec de la création des vignettes manquantes.",
             "failed_ensure_ids": "Échec de la vérification des ID de ressources.",
             "failed_ensure_import_refs": "Échec de la vérifications des références d'importation.",
             "failed_set_primary_photos": "Échec de la définition des photos principales.",

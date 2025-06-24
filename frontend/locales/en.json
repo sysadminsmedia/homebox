@@ -25,8 +25,8 @@
             }
         },
         "color_selector": {
-            "color": "Color",
             "clear": "Clear color",
+            "color": "Color",
             "no_color": "No color",
             "no_color_selected": "No color selected",
             "randomize": "Randomize color"
@@ -143,6 +143,7 @@
         },
         "label": {
             "create_modal": {
+                "label_color": "Label Color",
                 "label_description": "Label Description",
                 "label_name": "Label Name",
                 "title": "Create Label",
@@ -151,8 +152,7 @@
                     "create_failed": "Couldn't create label",
                     "create_success": "Label created",
                     "label_name_too_long": "Label name must not be longer than 50 characters"
-                },
-                "label_color": "Label Color"
+                }
             },
             "selector": {
                 "select_labels": "Select Labels"
@@ -204,7 +204,7 @@
         "follow_dev": "Follow the Developer",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Version: { version } Build: { build } '</a>'"
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v'{ version }\" target=\"_blank\"> Version: { version } Build: { build } '</a>'"
         },
         "github": "GitHub Project",
         "insured": "Insured",
@@ -570,6 +570,10 @@
     "tools": {
         "actions": "Inventory Actions",
         "actions_set": {
+            "create_missing_thumbnails": "Create Missing Thumbnails",
+            "create_missing_thumbnails_button": "Create Thumbnails",
+            "create_missing_thumbnails_confirm": "Are you sure you want to create missing thumbnails? This can take a while and cannot be paused.",
+            "create_missing_thumbnails_sub": "Creates thumbnails for all attachments that are supported by the current configuration. This is useful for attachments that were uploaded prior to the v0.20.0 release of Homebox. This will not overwrite existing thumbnails, only create new ones for attachments that do not have a thumbnail. Please note that the thumbnails are created in the background and may take a while to complete.",
             "ensure_ids": "Ensure Asset IDs",
             "ensure_ids_button": "Ensure Asset IDs",
             "ensure_ids_confirm": "Are you sure you want to ensure all assets have an ID? This can take a while and cannot be undone.",
@@ -584,12 +588,7 @@
             "zero_datetimes": "Zero Item Date Times",
             "zero_datetimes_button": "Zero Item Date Times",
             "zero_datetimes_confirm": "Are you sure you want to reset all date and time values? This can take a while and cannot be undone.",
-            "zero_datetimes_sub": "Resets the time value for all date time fields in your inventory to the beginning of the date. This is to fix a bug that was introduced early on in the development of the site that caused the time value to be stored with the time which caused issues with date fields displaying accurate values. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'",
-            "create_missing_thumbnails": "Create Missing Thumbnails",
-            "create_missing_thumbnails_sub": "Creates thumbnails for all attachments that are supported by the current configuration. This is useful for attachments that were uploaded prior to the v0.20.0 release of Homebox. This will not overwrite existing thumbnails, only create new ones for attachments that do not have a thumbnail. Please note that the thumbnails are created in the background and may take a while to complete.",
-            "create_missing_thumbnails_button": "Create Thumbnails",
-            "create_missing_thumbnails_confirm": "Are you sure you want to create missing thumbnails? This can take a while and cannot be paused."
-
+            "zero_datetimes_sub": "Resets the time value for all date time fields in your inventory to the beginning of the date. This is to fix a bug that was introduced early on in the development of the site that caused the time value to be stored with the time which caused issues with date fields displaying accurate values. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'"
         },
         "actions_sub": "Apply Actions to your inventory in bulk. These are irreversible actions. '<b>'Be careful.'</b>'",
         "import_export": "Import/Export",
@@ -615,11 +614,11 @@
         "reports_sub": "Generate different reports for your inventory.",
         "toast": {
             "asset_success": "{ results } assets have been updated.",
+            "failed_create_missing_thumbnails": "Failed to create missing thumbnails.",
             "failed_ensure_ids": "Failed to ensure asset IDs.",
             "failed_ensure_import_refs": "Failed to ensure import refs.",
             "failed_set_primary_photos": "Failed to set primary photos.",
-            "failed_zero_datetimes": "Failed to reset date and time values.",
-            "failed_create_missing_thumbnails": "Failed to create missing thumbnails."
+            "failed_zero_datetimes": "Failed to reset date and time values."
         }
     }
 }
