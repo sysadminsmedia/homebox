@@ -24,6 +24,13 @@
                 "new_version_available_link": "Klik hier om de release notes te bekijken"
             }
         },
+        "color_selector": {
+            "clear": "Wis kleur",
+            "color": "Kleur",
+            "no_color": "Geen kleur",
+            "no_color_selected": "Geen kleur geselecteerd",
+            "randomize": "Kleur willekeurig maken"
+        },
         "form": {
             "password": {
                 "toggle_show": "Wachtwoord zichtbaar maken aan/uitzetten"
@@ -136,6 +143,7 @@
         },
         "label": {
             "create_modal": {
+                "label_color": "Label kleur",
                 "label_description": "Label beschrijving",
                 "label_name": "Label naam",
                 "title": "Maak label",
@@ -196,7 +204,7 @@
         "follow_dev": "Volg de ontwikkelaar",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Versie: { version } Build: { build } '</a>'"
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v'{ version }\" target=\"_blank\"> Version: { version } Build: { build } '</a>'"
         },
         "github": "GitHub Project",
         "insured": "Verzekerd",
@@ -562,6 +570,10 @@
     "tools": {
         "actions": "Acties inventariseren",
         "actions_set": {
+            "create_missing_thumbnails": "Ontbrekende miniaturen maken",
+            "create_missing_thumbnails_button": "Nieuwe thumbnails aanmaken",
+            "create_missing_thumbnails_confirm": "Weet u zeker dat u ontbrekende miniaturen wilt maken? Dit kan even duren en kan niet worden gepauzeerd.",
+            "create_missing_thumbnails_sub": "Maakt miniaturen voor alle bijlagen die worden ondersteund door de huidige configuratie. Dit is handig voor bijlagen die werden geüpload voor de v0.20.0 release van Homebox. Bestaande miniaturen worden niet overschreven, er worden alleen nieuwe miniaturen gemaakt voor bijlagen die geen miniatuurafbeelding hebben. Houd er rekening mee dat de miniaturen in de achtergrond worden gemaakt en dat dit een tijdje kan duren.",
             "ensure_ids": "Zorg voor item-ID's",
             "ensure_ids_button": "Zorg voor item-ID's",
             "ensure_ids_confirm": "Weet u zeker dat u alle items een ID wil geven? Dit kan even duren en kan niet ongedaan worden gemaakt.",
@@ -602,6 +614,7 @@
         "reports_sub": "Genereer verschillende rapporten van je voorraad.",
         "toast": {
             "asset_success": "{ results } items zijn bijgewerkt.",
+            "failed_create_missing_thumbnails": "Miniaturen aanmaken mislukt.",
             "failed_ensure_ids": "Item-ID's aanmaken mislukt.",
             "failed_ensure_import_refs": "Import refs aanmaken mislukt.",
             "failed_set_primary_photos": "Primaire foto's instellen mislukt.",
