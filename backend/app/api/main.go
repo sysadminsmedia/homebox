@@ -309,7 +309,7 @@ func run(cfg *config.Config) error {
 		}
 	}))
 
-	runner.AddFunc("create-thumbnails-subscription", func(ctx context.Context) error {
+	go runner.AddFunc("create-thumbnails-subscription", func(ctx context.Context) error {
 		pubsubString, err := utils.GenerateSubPubConn(cfg.Database.PubSubConnString, "thumbnails")
 		if err != nil {
 			log.Error().Err(err).Msg("failed to generate pubsub connection string")
