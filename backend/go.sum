@@ -183,6 +183,10 @@ github.com/gabriel-vasile/mimetype v1.4.8 h1:FfZ3gj38NjllZIeJAmMhr+qKL8Wu+nOoI3G
 github.com/gabriel-vasile/mimetype v1.4.8/go.mod h1:ByKUIKGjh1ODkGM1asKUbQZOLGrPjydw3hYPU2YU9t8=
 github.com/gen2brain/avif v0.4.4 h1:Ga/ss7qcWWQm2bxFpnjYjhJsNfZrWs5RsyklgFjKRSE=
 github.com/gen2brain/avif v0.4.4/go.mod h1:/XCaJcjZraQwKVhpu9aEd9aLOssYOawLvhMBtmHVGqk=
+github.com/gen2brain/heic v0.4.5 h1:Cq3hPu6wwlTJNv2t48ro3oWje54h82Q5pALeCBNgaSk=
+github.com/gen2brain/heic v0.4.5/go.mod h1:ECnpqbqLu0qSje4KSNWUUDK47UPXPzl80T27GWGEL5I=
+github.com/gen2brain/jpegxl v0.4.5 h1:TWpVEn5xkIfsswzkjHBArd0Cc9AE0tbjBSoa0jDsrbo=
+github.com/gen2brain/jpegxl v0.4.5/go.mod h1:4kWYJ18xCEuO2vzocYdGpeqNJ990/Gjy3uLMg5TBN6I=
 github.com/gen2brain/webp v0.5.5 h1:MvQR75yIPU/9nSqYT5h13k4URaJK3gf9tgz/ksRbyEg=
 github.com/gen2brain/webp v0.5.5/go.mod h1:xOSMzp4aROt2KFW++9qcK/RBTOVC2S9tJG66ip/9Oc0=
 github.com/go-chi/chi/v5 v5.2.2 h1:CMwsvRVTbXVytCk1Wd72Zy1LAsAh9GxMmSNWLHCG618=

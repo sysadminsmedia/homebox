@@ -82,7 +82,7 @@ func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 			ext := filepath.Ext(attachmentName)
 
 			switch strings.ToLower(ext) {
-			case ".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".tiff", ".avif", ".ico":
+			case ".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".tiff", ".avif", ".ico", ".heic", ".jxl":
 				attachmentType = attachment.TypePhoto.String()
 			default:
 				attachmentType = attachment.TypeAttachment.String()

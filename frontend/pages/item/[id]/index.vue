@@ -100,16 +100,26 @@
 
   type Photo = {
     src: string;
+    srcset?: string;
   };
 
   const photos = computed<Photo[]>(() => {
     return (
       item.value?.attachments.reduce((acc, cur) => {
         if (cur.type === "photo") {
-          acc.push({
-            // @ts-expect-error - it's impossible for this to be null at this point
-            src: api.authURL(`/items/${item.value.id}/attachments/${cur.id}`),
-          });
+          if (cur.thumbnail) {
+            acc.push({
+              // @ts-expect-error - it's impossible for this to be null at this point
+              src: api.authURL(`/items/${item.value.id}/attachments/${cur.thumbnail.id}`),
+              // @ts-expect-error - it's impossible for this to be null at this point
+              srcset: api.authURL(`/items/${item.value.id}/attachments/${cur.id}`),
+            });
+          } else {
+            acc.push({
+              // @ts-expect-error - it's impossible for this to be null at this point
+              src: api.authURL(`/items/${item.value.id}/attachments/${cur.id}`),
+            });
+          }
         }
         return acc;
       }, [] as Photo[]) || []
@@ -679,7 +689,7 @@
             <template #title> {{ $t("items.photos") }} </template>
             <div class="scroll-bg container mx-auto flex max-h-[500px] flex-wrap gap-2 overflow-y-scroll border-t p-4">
               <button v-for="(img, i) in photos" :key="i" @click="openImageDialog(img)">
-                <img class="max-h-[200px] rounded" :src="img.src" />
+                <img class="max-h-[200px] rounded" :src="img.src" :srcset="img.srcset" />
               </button>
             </div>
           </BaseCard>
