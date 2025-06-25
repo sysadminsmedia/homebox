@@ -148,7 +148,7 @@ tasks:
     desc: Run frontend development server
     dir: frontend
     cmds:
-      - pnpm dev
+      - pnpm dev --no-fork
 
   ui:ci:
     desc: Run frontend build in CI mode
