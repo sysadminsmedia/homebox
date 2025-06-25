@@ -30,7 +30,7 @@
 <template>
   <section>
     <BaseSectionHeader class="mb-2 mt-4 flex items-center justify-between">
-      <div>
+      <div class="flex gap-2">
         {{ $t("components.item.view.selectable.items") }}
         <Badge>
           {{ items.length }}
