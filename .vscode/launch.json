@@ -35,7 +35,8 @@
             "runtimeArgs": [
                 "run",
                 "dev",
-                "--host"
+                "--host",
+                "--no-fork"
             ],
             "cwd": "${workspaceFolder}/frontend",
             "serverReadyAction": {
