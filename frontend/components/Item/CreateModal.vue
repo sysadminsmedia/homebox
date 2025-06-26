@@ -2,6 +2,13 @@
   <BaseModal dialog-id="create-item" :title="$t('components.item.create_modal.title')">
     <form class="flex flex-col gap-2" @submit.prevent="create()">
       <LocationSelector v-model="form.location" />
+      <div class="flex w-full flex-col gap-1.5">
+        <div class="relative inline-block">
+          <Button type="button" variant="outline" class="w-full" aria-hidden="true" @click="importFromBarcode()">
+            {{ $t("components.item.create_modal.scan_barcode") }}
+          </Button>
+        </div>
+      </div>
       <FormTextField
         ref="nameInput"
         v-model="form.name"
@@ -224,13 +231,20 @@
   watch(
     () => activeDialog.value,
     active => {
-      if (active === "create-item") {
+      if (active && active.id === "create-item") {
         if (locationId.value) {
           const found = locations.value.find(l => l.id === locationId.value);
           if (found) {
             form.location = found;
           }
         }
+
+        if(active.params)
+        {
+          form.name = active.params.name;
+          form.description = active.params.description;
+        }
+
         if (labelId.value) {
           form.labels = labels.value.filter(l => l.id === labelId.value).map(l => l.id);
         }

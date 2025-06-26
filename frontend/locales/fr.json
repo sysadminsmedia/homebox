@@ -64,6 +64,7 @@
         "item": {
             "create_modal": {
                 "item_description": "Description de l'article",
+                "scan_barcode": "Importer depuis un code-barre 📷",
                 "item_name": "Nom de l'article",
                 "item_photo": "Photo de l'article 📷",
                 "item_quantity": "Quantité d'éléments",
