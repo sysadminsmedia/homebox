@@ -234,8 +234,8 @@
 
         if(active.params)
         {
-          form.name = active.params.name;
-          form.description = active.params.description;
+          form.name = active.params.item.name;
+          form.description = active.params.item.description;
         }
 
         if (labelId.value) {
