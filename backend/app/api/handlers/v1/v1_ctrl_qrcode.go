@@ -2,6 +2,7 @@ package v1
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"image/png"
 	"io"
@@ -90,7 +91,8 @@ type BarcodeProduct struct {
 
 	// TODO: add image attachement
 	// TODO: add asin?
-	ImageURL string `json:"imageURL"`
+	ImageURL    string `json:"imageURL"`
+	ImageBase64 string `json:"imageBase64"`
 
 	Item repo.ItemCreate `json:"item"`
 }
@@ -327,9 +329,53 @@ func (ctrl *V1Controller) HandleProductSearchEAN() errchain.HandlerFunc {
 			products = append(products, ps2[i])
 		}
 
+		// Retrieve images if possible
+		for i := range products {
+			p := &products[i]
+
+			if len(p.ImageURL) == 0 {
+				continue
+			}
+
+			res, err := http.Get(p.ImageURL)
+			if err != nil {
+				log.Warn().Msg("Cannot fetch image for URL: " + p.ImageURL + ": " + err.Error())
+			}
+
+			defer res.Body.Close()
+
+			// Read data of image
+			bytes, err := io.ReadAll(res.Body)
+			if err != nil {
+				log.Warn().Msg(err.Error())
+			}
+
+			// Convert to Base64
+			var base64Encoding string
+
+			// Determine the content type of the image file
+			mimeType := http.DetectContentType(bytes)
+
+			// Prepend the appropriate URI scheme header depending
+			// on the MIME type
+			switch mimeType {
+			case "image/jpeg":
+				base64Encoding += "data:image/jpeg;base64,"
+			case "image/png":
+				base64Encoding += "data:image/png;base64,"
+			}
+
+			// Append the base64 encoded output
+			base64Encoding += base64.StdEncoding.EncodeToString(bytes)
+
+			p.ImageBase64 = base64Encoding
+		}
+
 		w.Header().Set("Content-Type", "application/json")
 
 		if len(products) != 0 {
+			// Return only the first result for now. Enhance this with a dedicated dialog
+			// displaying all the references found?
 			return json.NewEncoder(w).Encode(products[0])
 		}
 

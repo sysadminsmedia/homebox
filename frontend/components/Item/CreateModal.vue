@@ -236,6 +236,15 @@
         {
           form.name = active.params.item.name;
           form.description = active.params.item.description;
+
+          if(active.params.imageURL)
+          {
+            form.photos.push({
+                    photoName: "product_view.jpg",
+                    fileBase64: active.params.imageBase64,
+                    primary: form.photos.length === 0,
+                  });
+          }
         }
 
         if (labelId.value) {
