@@ -124,7 +124,6 @@ type UPCITEMDBResponse struct {
 		Dimension            string   `json:"dimension"`
 		Weight               string   `json:"weight"`
 		Category             string   `json:"category"`
-		Currency             string   `json:"currency"`
 		LowestRecordedPrice  float64  `json:"lowest_recorded_price"`
 		HighestRecordedPrice float64  `json:"highest_recorded_price"`
 		Images               []string `json:"images"`
@@ -141,6 +140,8 @@ type UPCITEMDBResponse struct {
 			Link         string  `json:"link"`
 			UpdatedT     int     `json:"updated_t"`
 		} `json:"offers"`
+		Asin string `json:"asin"`
+		Elid string `json:"elid"`
 	} `json:"items"`
 }
 
