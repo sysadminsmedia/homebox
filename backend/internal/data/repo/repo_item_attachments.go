@@ -198,7 +198,8 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 		return nil, err
 	}
 
-	file, err := io.ReadAll(doc.Content)
+	limitedReader := io.LimitReader(doc.Content, 1024*128)
+	file, err := io.ReadAll(limitedReader)
 	if err != nil {
 		log.Err(err).Msg("failed to read file content")
 		err = tx.Rollback()
