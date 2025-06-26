@@ -92,6 +92,20 @@ func (au *AttachmentUpdate) SetNillablePath(s *string) *AttachmentUpdate {
 	return au
 }
 
+// SetMimeType sets the "mime_type" field.
+func (au *AttachmentUpdate) SetMimeType(s string) *AttachmentUpdate {
+	au.mutation.SetMimeType(s)
+	return au
+}
+
+// SetNillableMimeType sets the "mime_type" field if the given value is not nil.
+func (au *AttachmentUpdate) SetNillableMimeType(s *string) *AttachmentUpdate {
+	if s != nil {
+		au.SetMimeType(*s)
+	}
+	return au
+}
+
 // SetItemID sets the "item" edge to the Item entity by ID.
 func (au *AttachmentUpdate) SetItemID(id uuid.UUID) *AttachmentUpdate {
 	au.mutation.SetItemID(id)
@@ -219,6 +233,9 @@ func (au *AttachmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if value, ok := au.mutation.Path(); ok {
 		_spec.SetField(attachment.FieldPath, field.TypeString, value)
+	}
+	if value, ok := au.mutation.MimeType(); ok {
+		_spec.SetField(attachment.FieldMimeType, field.TypeString, value)
 	}
 	if au.mutation.ItemCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -356,6 +373,20 @@ func (auo *AttachmentUpdateOne) SetPath(s string) *AttachmentUpdateOne {
 func (auo *AttachmentUpdateOne) SetNillablePath(s *string) *AttachmentUpdateOne {
 	if s != nil {
 		auo.SetPath(*s)
+	}
+	return auo
+}
+
+// SetMimeType sets the "mime_type" field.
+func (auo *AttachmentUpdateOne) SetMimeType(s string) *AttachmentUpdateOne {
+	auo.mutation.SetMimeType(s)
+	return auo
+}
+
+// SetNillableMimeType sets the "mime_type" field if the given value is not nil.
+func (auo *AttachmentUpdateOne) SetNillableMimeType(s *string) *AttachmentUpdateOne {
+	if s != nil {
+		auo.SetMimeType(*s)
 	}
 	return auo
 }
@@ -517,6 +548,9 @@ func (auo *AttachmentUpdateOne) sqlSave(ctx context.Context) (_node *Attachment,
 	}
 	if value, ok := auo.mutation.Path(); ok {
 		_spec.SetField(attachment.FieldPath, field.TypeString, value)
+	}
+	if value, ok := auo.mutation.MimeType(); ok {
+		_spec.SetField(attachment.FieldMimeType, field.TypeString, value)
 	}
 	if auo.mutation.ItemCleared() {
 		edge := &sqlgraph.EdgeSpec{

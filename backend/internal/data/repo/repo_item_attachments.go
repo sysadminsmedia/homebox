@@ -12,6 +12,8 @@ import (
 	"github.com/zeebo/blake3"
 
 	"github.com/gen2brain/avif"
+	"github.com/gen2brain/heic"
+	"github.com/gen2brain/jpegxl"
 	"github.com/gen2brain/webp"
 	"golang.org/x/image/draw"
 	"image"
@@ -62,6 +64,7 @@ type (
 		Primary   bool            `json:"primary"`
 		Path      string          `json:"path"`
 		Title     string          `json:"title"`
+		MimeType  string          `json:"mimeType,omitempty"`
 		Thumbnail *ent.Attachment `json:"thumbnail,omitempty"`
 	}
 
@@ -87,6 +90,8 @@ func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
 		Primary:   attachment.Primary,
 		Path:      attachment.Path,
 		Title:     attachment.Title,
+		MimeType:  attachment.MimeType,
+		Thumbnail: attachment.QueryThumbnail().FirstX(context.Background()),
 	}
 }
 
@@ -193,6 +198,17 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 		return nil, err
 	}
 
+	limitedReader := io.LimitReader(doc.Content, 1024*128)
+	file, err := io.ReadAll(limitedReader)
+	if err != nil {
+		log.Err(err).Msg("failed to read file content")
+		err = tx.Rollback()
+		if err != nil {
+			return nil, err
+		}
+		return nil, err
+	}
+	bldr = bldr.SetMimeType(http.DetectContentType(file[:min(512, len(file))]))
 	bldr = bldr.SetPath(path)
 
 	attachmentDb, err := bldr.Save(ctx)
@@ -416,6 +432,14 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	log.Debug().Msg("detecting content type of original file")
 	contentType := http.DetectContentType(contentBytes[:min(512, len(contentBytes))])
 
+	if contentType == "application/octet-stream" {
+		if strings.HasSuffix(title, ".heic") || strings.HasSuffix(title, ".heif") {
+			contentType = "image/heic"
+		} else if strings.HasSuffix(title, ".avif") {
+			contentType = "image/avif"
+		}
+	}
+
 	switch {
 	case isImageFile(contentType):
 		log.Debug().Msg("creating thumbnail for image file")
@@ -532,9 +556,87 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		}
 		log.Debug().Msg("setting thumbnail file path in attachment")
 		att.SetPath(thumbnailFile)
+	case contentType == "image/heic" || contentType == "image/heif":
+		log.Debug().Msg("creating thumbnail for heic file")
+		img, err := heic.Decode(bytes.NewReader(contentBytes))
+		if err != nil {
+			log.Err(err).Msg("failed to decode avif image")
+			err := tx.Rollback()
+			if err != nil {
+				return err
+			}
+			return err
+		}
+		dst := image.NewRGBA(image.Rect(0, 0, r.thumbnail.Width, r.thumbnail.Height))
+		draw.ApproxBiLinear.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
+		buf := new(bytes.Buffer)
+		err = webp.Encode(buf, dst, webp.Options{Quality: 80, Lossless: false})
+		if err != nil {
+			err := tx.Rollback()
+			if err != nil {
+				return err
+			}
+			return err
+		}
+		contentBytes := buf.Bytes()
+		log.Debug().Msg("uploading thumbnail file")
+		thumbnailFile, err := r.UploadFile(ctx, tx.Group.GetX(ctx, groupId), ItemCreateAttachment{
+			Title:   fmt.Sprintf("%s-thumb", title),
+			Content: bytes.NewReader(contentBytes),
+		})
+		if err != nil {
+			log.Err(err).Msg("failed to upload thumbnail file")
+			err := tx.Rollback()
+			if err != nil {
+				return err
+			}
+			return err
+		}
+		log.Debug().Msg("setting thumbnail file path in attachment")
+		att.SetPath(thumbnailFile)
+	case contentType == "image/jxl":
+		log.Debug().Msg("creating thumbnail for jpegxl file")
+		img, err := jpegxl.Decode(bytes.NewReader(contentBytes))
+		if err != nil {
+			log.Err(err).Msg("failed to decode avif image")
+			err := tx.Rollback()
+			if err != nil {
+				return err
+			}
+			return err
+		}
+		dst := image.NewRGBA(image.Rect(0, 0, r.thumbnail.Width, r.thumbnail.Height))
+		draw.ApproxBiLinear.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
+		buf := new(bytes.Buffer)
+		err = webp.Encode(buf, dst, webp.Options{Quality: 80, Lossless: false})
+		if err != nil {
+			err := tx.Rollback()
+			if err != nil {
+				return err
+			}
+			return err
+		}
+		contentBytes := buf.Bytes()
+		log.Debug().Msg("uploading thumbnail file")
+		thumbnailFile, err := r.UploadFile(ctx, tx.Group.GetX(ctx, groupId), ItemCreateAttachment{
+			Title:   fmt.Sprintf("%s-thumb", title),
+			Content: bytes.NewReader(contentBytes),
+		})
+		if err != nil {
+			log.Err(err).Msg("failed to upload thumbnail file")
+			err := tx.Rollback()
+			if err != nil {
+				return err
+			}
+			return err
+		}
+		log.Debug().Msg("setting thumbnail file path in attachment")
+		att.SetPath(thumbnailFile)
 	default:
 		return fmt.Errorf("file type %s is not supported for thumbnail creation or document thumnails disabled", title)
 	}
+
+	att.SetMimeType("image/webp")
 
 	log.Debug().Msg("saving thumbnail attachment to database")
 	thumbnail, err := att.Save(ctx)

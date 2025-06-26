@@ -17,6 +17,7 @@ var (
 		{Name: "primary", Type: field.TypeBool, Default: false},
 		{Name: "title", Type: field.TypeString, Default: ""},
 		{Name: "path", Type: field.TypeString, Default: ""},
+		{Name: "mime_type", Type: field.TypeString, Default: "application/octet-stream"},
 		{Name: "attachment_thumbnail", Type: field.TypeUUID, Unique: true, Nullable: true},
 		{Name: "item_attachments", Type: field.TypeUUID, Nullable: true},
 	}
@@ -28,13 +29,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "attachments_attachments_thumbnail",
-				Columns:    []*schema.Column{AttachmentsColumns[7]},
+				Columns:    []*schema.Column{AttachmentsColumns[8]},
 				RefColumns: []*schema.Column{AttachmentsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "attachments_items_attachments",
-				Columns:    []*schema.Column{AttachmentsColumns[8]},
+				Columns:    []*schema.Column{AttachmentsColumns[9]},
 				RefColumns: []*schema.Column{ItemsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},

@@ -31,6 +31,8 @@ type Attachment struct {
 	Title string `json:"title,omitempty"`
 	// Path holds the value of the "path" field.
 	Path string `json:"path,omitempty"`
+	// MimeType holds the value of the "mime_type" field.
+	MimeType string `json:"mime_type,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AttachmentQuery when eager-loading is set.
 	Edges                AttachmentEdges `json:"edges"`
@@ -79,7 +81,7 @@ func (*Attachment) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case attachment.FieldPrimary:
 			values[i] = new(sql.NullBool)
-		case attachment.FieldType, attachment.FieldTitle, attachment.FieldPath:
+		case attachment.FieldType, attachment.FieldTitle, attachment.FieldPath, attachment.FieldMimeType:
 			values[i] = new(sql.NullString)
 		case attachment.FieldCreatedAt, attachment.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -145,6 +147,12 @@ func (a *Attachment) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field path", values[i])
 			} else if value.Valid {
 				a.Path = value.String
+			}
+		case attachment.FieldMimeType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mime_type", values[i])
+			} else if value.Valid {
+				a.MimeType = value.String
 			}
 		case attachment.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
@@ -223,6 +231,9 @@ func (a *Attachment) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("path=")
 	builder.WriteString(a.Path)
+	builder.WriteString(", ")
+	builder.WriteString("mime_type=")
+	builder.WriteString(a.MimeType)
 	builder.WriteByte(')')
 	return builder.String()
 }

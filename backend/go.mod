@@ -9,6 +9,8 @@ require (
 	github.com/ardanlabs/conf/v3 v3.8.0
 	github.com/containrrr/shoutrrr v0.8.0
 	github.com/gen2brain/avif v0.4.4
+	github.com/gen2brain/heic v0.4.5
+	github.com/gen2brain/jpegxl v0.4.5
 	github.com/gen2brain/webp v0.5.5
 	github.com/go-chi/chi/v5 v5.2.2
 	github.com/go-playground/validator/v10 v10.26.0

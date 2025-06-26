@@ -309,7 +309,7 @@ func run(cfg *config.Config) error {
 		}
 	}))
 
-	runner.AddFunc("create-thumbnails-subscription", func(ctx context.Context) error {
+	go runner.AddFunc("create-thumbnails-subscription", func(ctx context.Context) error {
 		pubsubString, err := utils.GenerateSubPubConn(cfg.Database.PubSubConnString, "thumbnails")
 		if err != nil {
 			log.Error().Err(err).Msg("failed to generate pubsub connection string")
@@ -347,7 +347,6 @@ func run(cfg *config.Config) error {
 				log.Debug().Msg("received thumbnail generation request from pubsub topic")
 				if err != nil {
 					log.Err(err).Msg("failed to receive message from pubsub topic")
-					return err
 				}
 				groupId, err := uuid.Parse(msg.Metadata["group_id"])
 				if err != nil {
@@ -355,8 +354,6 @@ func run(cfg *config.Config) error {
 						Err(err).
 						Str("group_id", msg.Metadata["group_id"]).
 						Msg("failed to parse group ID from message metadata")
-					msg.Nack()
-					return err
 				}
 				attachmentId, err := uuid.Parse(msg.Metadata["attachment_id"])
 				if err != nil {
@@ -364,14 +361,10 @@ func run(cfg *config.Config) error {
 						Err(err).
 						Str("attachment_id", msg.Metadata["attachment_id"]).
 						Msg("failed to parse attachment ID from message metadata")
-					msg.Nack()
-					return err
 				}
 				err = app.repos.Attachments.CreateThumbnail(ctx, groupId, attachmentId, msg.Metadata["title"], msg.Metadata["path"])
 				if err != nil {
-					msg.Nack()
 					log.Err(err).Msg("failed to create thumbnail")
-					return err
 				}
 				msg.Ack()
 			}

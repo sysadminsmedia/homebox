@@ -25,6 +25,7 @@ func (Attachment) Fields() []ent.Field {
 		field.Bool("primary").Default(false),
 		field.String("title").Default(""),
 		field.String("path").Default(""),
+		field.String("mime_type").Default("application/octet-stream"),
 	}
 }
 
