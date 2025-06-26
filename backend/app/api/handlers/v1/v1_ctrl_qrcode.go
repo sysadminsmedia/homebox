@@ -92,7 +92,7 @@ type BarcodeProduct struct {
 	// TODO: add asin?
 	ImageURL string `json:"imageURL"`
 
-	item repo.ItemCreate
+	Item repo.ItemCreate `json:"item"`
 }
 
 /*
@@ -245,8 +245,8 @@ func (ctrl *V1Controller) HandleProductSearchEAN() errchain.HandlerFunc {
 				p.SearchEngineName = "upcitemdb.com"
 				p.Barcode = iEan
 
-				p.item.Description = it.Description
-				p.item.Name = it.Title
+				p.Item.Description = it.Description
+				p.Item.Name = it.Title
 				p.Manufacturer = it.Brand
 				p.ModelNumber = it.Model
 				if len(it.Images) != 0 {
@@ -300,8 +300,8 @@ func (ctrl *V1Controller) HandleProductSearchEAN() errchain.HandlerFunc {
 			var p BarcodeProduct
 			p.Barcode = iEan
 			p.SearchEngineName = "barcodespider.com"
-			p.item.Name = result.ItemAttributes.Title
-			p.item.Description = result.ItemAttributes.Description
+			p.Item.Name = result.ItemAttributes.Title
+			p.Item.Description = result.ItemAttributes.Description
 			p.Manufacturer = result.ItemAttributes.Brand
 			p.ModelNumber = result.ItemAttributes.Model
 			p.ImageURL = result.ItemAttributes.Image
@@ -329,7 +329,7 @@ func (ctrl *V1Controller) HandleProductSearchEAN() errchain.HandlerFunc {
 		w.Header().Set("Content-Type", "application/json")
 
 		if len(products) != 0 {
-			return json.NewEncoder(w).Encode(products[0].item)
+			return json.NewEncoder(w).Encode(products[0])
 		}
 
 		return nil
