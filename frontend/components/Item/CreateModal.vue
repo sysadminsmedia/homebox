@@ -243,6 +243,28 @@
         {
           form.name = active.params.item.name;
           form.description = active.params.item.description;
+
+          if(active.params.imageURL)
+          {
+            var request = new XMLHttpRequest();
+            request.open('GET', active.params.imageURL, true);
+            request.responseType = 'blob';
+            request.onload = function() {
+
+                const reader = new FileReader();
+                reader.onload = e => {
+                  form.photos.push({
+                    photoName: "product_view.jpg",
+                    fileBase64: e.target?.result as string,
+                    file: request.response,
+                    primary: form.photos.length === 0,
+                  });
+                };
+
+                reader.readAsDataURL(request.response);
+            };
+            request.send();
+          }
         }
 
         if (labelId.value) {
