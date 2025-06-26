@@ -51,7 +51,7 @@
   watch(
     () => activeDialog.value,
     active => {
-      if (active === "create-location") {
+      if (active && active.id === "create-location") {
         // useTimeoutFn(() => {
         //   focused.value = true;
         // }, 50);

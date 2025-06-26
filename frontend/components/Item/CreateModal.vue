@@ -224,13 +224,20 @@
   watch(
     () => activeDialog.value,
     active => {
-      if (active === "create-item") {
+      if (active && active.id === "create-item") {
         if (locationId.value) {
           const found = locations.value.find(l => l.id === locationId.value);
           if (found) {
             form.location = found;
           }
         }
+
+        if(active.params)
+        {
+          form.name = active.params.name;
+          form.description = active.params.description;
+        }
+
         if (labelId.value) {
           form.labels = labels.value.filter(l => l.id === labelId.value).map(l => l.id);
         }

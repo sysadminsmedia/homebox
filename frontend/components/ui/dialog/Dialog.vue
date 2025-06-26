@@ -1,13 +1,13 @@
 <script setup lang="ts">
   import { DialogRoot, type DialogRootEmits, type DialogRootProps, useForwardPropsEmits } from "reka-ui";
-  import { useDialog } from "../dialog-provider/utils";
+  import { useDialog, type ActiveDialog } from "../dialog-provider/utils";
 
   const props = defineProps<DialogRootProps & { dialogId: string }>();
   const emits = defineEmits<DialogRootEmits>();
 
   const { closeDialog, activeDialog } = useDialog();
 
-  const isOpen = computed(() => activeDialog.value === props.dialogId);
+  const isOpen = computed(() => (activeDialog.value && activeDialog.value.id === props.dialogId));
   const onOpenChange = (open: boolean) => {
     if (!open) closeDialog(props.dialogId);
   };

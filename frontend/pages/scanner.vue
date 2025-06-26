@@ -6,6 +6,9 @@
   import { Button } from "@/components/ui/button";
   import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";
 
+  import { useDialog } from "~/components/ui/dialog-provider";
+  const { openDialog } = useDialog();
+
   definePageMeta({
     middleware: ["auth"],
   });
@@ -22,6 +25,7 @@
   const codeReader = new BrowserMultiFormatReader();
   const errorMessage = ref<string | null>(null);
   const detectedBarcode = ref<string | null>(null);
+  const api = useUserApi();
 
   const handleError = (error: unknown) => {
     console.error("Scanner error:", error);
@@ -30,7 +34,47 @@
 
   const handleButtonClick = () => {
     console.log("Button clicked!");
+
+    getQRCodeUrl();
+    // console.log("Value::: ", productEAN);
+
+    /* const route2 = useRoute();
+
+    const currentURL = window.location.href;
+    // Adjust route import as needed
+    console.log(route2(`/getproductfromean`)); */
   };
+
+/*
+  function openCreateModal(ItemCreate ic) {
+      this.$emit('open-modal', ic)
+  }
+  */
+
+  async function getQRCodeUrl() {
+    /* const { isCanceled } = await confirm.open(
+      "Are you sure you want to ensure all assets have an ID? This can take a while and cannot be undone."
+    );
+
+    if (isCanceled) {
+      return;
+    } */
+
+    const result = await api.actions.getEAN(detectedBarcode.value);
+
+    // this.$store.commit('setScannedData', result);
+
+    if(result.error)
+      return
+    
+    openDialog("create-item", result.data);
+
+    /* if (result.error) {
+      toast.error("Failed to ensure asset IDs.");
+    } */
+
+    // toast.success(`${result.data.completed} assets have been updated.`);
+  }
 
   onMounted(async () => {
     if (!(navigator && navigator.mediaDevices && "enumerateDevices" in navigator.mediaDevices)) {
@@ -80,6 +124,9 @@
             // Check if it's a barcode for a new element
             switch (result.getBarcodeFormat()) {
               case BarcodeFormat.EAN_13:
+              case BarcodeFormat.UPC_A:
+              case BarcodeFormat.UPC_E:
+              case BarcodeFormat.UPC_EAN_EXTENSION:
                 console.info("Barcode detected");
                 detectedBarcode.value = result.getText();
                 break;
