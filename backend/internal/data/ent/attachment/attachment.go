@@ -28,6 +28,8 @@ const (
 	FieldTitle = "title"
 	// FieldPath holds the string denoting the path field in the database.
 	FieldPath = "path"
+	// FieldMimeType holds the string denoting the mime_type field in the database.
+	FieldMimeType = "mime_type"
 	// EdgeItem holds the string denoting the item edge name in mutations.
 	EdgeItem = "item"
 	// EdgeThumbnail holds the string denoting the thumbnail edge name in mutations.
@@ -56,6 +58,7 @@ var Columns = []string{
 	FieldPrimary,
 	FieldTitle,
 	FieldPath,
+	FieldMimeType,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "attachments"
@@ -93,6 +96,8 @@ var (
 	DefaultTitle string
 	// DefaultPath holds the default value on creation for the "path" field.
 	DefaultPath string
+	// DefaultMimeType holds the default value on creation for the "mime_type" field.
+	DefaultMimeType string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
@@ -163,6 +168,11 @@ func ByTitle(opts ...sql.OrderTermOption) OrderOption {
 // ByPath orders the results by the path field.
 func ByPath(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPath, opts...).ToFunc()
+}
+
+// ByMimeType orders the results by the mime_type field.
+func ByMimeType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMimeType, opts...).ToFunc()
 }
 
 // ByItemField orders the results by item field.

@@ -2193,6 +2193,10 @@ const docTemplate = `{
                     "description": "ID of the ent.",
                     "type": "string"
                 },
+                "mime_type": {
+                    "description": "MimeType holds the value of the \"mime_type\" field.",
+                    "type": "string"
+                },
                 "path": {
                     "description": "Path holds the value of the \"path\" field.",
                     "type": "string"
@@ -3120,6 +3124,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "mimeType": {
                     "type": "string"
                 },
                 "path": {

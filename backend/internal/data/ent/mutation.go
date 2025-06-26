@@ -62,6 +62,7 @@ type AttachmentMutation struct {
 	primary          *bool
 	title            *string
 	_path            *string
+	mime_type        *string
 	clearedFields    map[string]struct{}
 	item             *uuid.UUID
 	cleareditem      bool
@@ -392,6 +393,42 @@ func (m *AttachmentMutation) ResetPath() {
 	m._path = nil
 }
 
+// SetMimeType sets the "mime_type" field.
+func (m *AttachmentMutation) SetMimeType(s string) {
+	m.mime_type = &s
+}
+
+// MimeType returns the value of the "mime_type" field in the mutation.
+func (m *AttachmentMutation) MimeType() (r string, exists bool) {
+	v := m.mime_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMimeType returns the old "mime_type" field's value of the Attachment entity.
+// If the Attachment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AttachmentMutation) OldMimeType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMimeType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMimeType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMimeType: %w", err)
+	}
+	return oldValue.MimeType, nil
+}
+
+// ResetMimeType resets all changes to the "mime_type" field.
+func (m *AttachmentMutation) ResetMimeType() {
+	m.mime_type = nil
+}
+
 // SetItemID sets the "item" edge to the Item entity by id.
 func (m *AttachmentMutation) SetItemID(id uuid.UUID) {
 	m.item = &id
@@ -504,7 +541,7 @@ func (m *AttachmentMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AttachmentMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.created_at != nil {
 		fields = append(fields, attachment.FieldCreatedAt)
 	}
@@ -522,6 +559,9 @@ func (m *AttachmentMutation) Fields() []string {
 	}
 	if m._path != nil {
 		fields = append(fields, attachment.FieldPath)
+	}
+	if m.mime_type != nil {
+		fields = append(fields, attachment.FieldMimeType)
 	}
 	return fields
 }
@@ -543,6 +583,8 @@ func (m *AttachmentMutation) Field(name string) (ent.Value, bool) {
 		return m.Title()
 	case attachment.FieldPath:
 		return m.Path()
+	case attachment.FieldMimeType:
+		return m.MimeType()
 	}
 	return nil, false
 }
@@ -564,6 +606,8 @@ func (m *AttachmentMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldTitle(ctx)
 	case attachment.FieldPath:
 		return m.OldPath(ctx)
+	case attachment.FieldMimeType:
+		return m.OldMimeType(ctx)
 	}
 	return nil, fmt.Errorf("unknown Attachment field %s", name)
 }
@@ -614,6 +658,13 @@ func (m *AttachmentMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPath(v)
+		return nil
+	case attachment.FieldMimeType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMimeType(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Attachment field %s", name)
@@ -681,6 +732,9 @@ func (m *AttachmentMutation) ResetField(name string) error {
 		return nil
 	case attachment.FieldPath:
 		m.ResetPath()
+		return nil
+	case attachment.FieldMimeType:
+		m.ResetMimeType()
 		return nil
 	}
 	return fmt.Errorf("unknown Attachment field %s", name)

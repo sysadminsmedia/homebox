@@ -106,6 +106,20 @@ func (ac *AttachmentCreate) SetNillablePath(s *string) *AttachmentCreate {
 	return ac
 }
 
+// SetMimeType sets the "mime_type" field.
+func (ac *AttachmentCreate) SetMimeType(s string) *AttachmentCreate {
+	ac.mutation.SetMimeType(s)
+	return ac
+}
+
+// SetNillableMimeType sets the "mime_type" field if the given value is not nil.
+func (ac *AttachmentCreate) SetNillableMimeType(s *string) *AttachmentCreate {
+	if s != nil {
+		ac.SetMimeType(*s)
+	}
+	return ac
+}
+
 // SetID sets the "id" field.
 func (ac *AttachmentCreate) SetID(u uuid.UUID) *AttachmentCreate {
 	ac.mutation.SetID(u)
@@ -217,6 +231,10 @@ func (ac *AttachmentCreate) defaults() {
 		v := attachment.DefaultPath
 		ac.mutation.SetPath(v)
 	}
+	if _, ok := ac.mutation.MimeType(); !ok {
+		v := attachment.DefaultMimeType
+		ac.mutation.SetMimeType(v)
+	}
 	if _, ok := ac.mutation.ID(); !ok {
 		v := attachment.DefaultID()
 		ac.mutation.SetID(v)
@@ -247,6 +265,9 @@ func (ac *AttachmentCreate) check() error {
 	}
 	if _, ok := ac.mutation.Path(); !ok {
 		return &ValidationError{Name: "path", err: errors.New(`ent: missing required field "Attachment.path"`)}
+	}
+	if _, ok := ac.mutation.MimeType(); !ok {
+		return &ValidationError{Name: "mime_type", err: errors.New(`ent: missing required field "Attachment.mime_type"`)}
 	}
 	return nil
 }
@@ -306,6 +327,10 @@ func (ac *AttachmentCreate) createSpec() (*Attachment, *sqlgraph.CreateSpec) {
 	if value, ok := ac.mutation.Path(); ok {
 		_spec.SetField(attachment.FieldPath, field.TypeString, value)
 		_node.Path = value
+	}
+	if value, ok := ac.mutation.MimeType(); ok {
+		_spec.SetField(attachment.FieldMimeType, field.TypeString, value)
+		_node.MimeType = value
 	}
 	if nodes := ac.mutation.ItemIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

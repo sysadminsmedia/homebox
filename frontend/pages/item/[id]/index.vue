@@ -99,27 +99,28 @@
   };
 
   type Photo = {
-    src: string;
-    srcset?: string;
+    thumbnailSrc?: string;
+    originalSrc: string;
+    originalType?: string;
   };
 
   const photos = computed<Photo[]>(() => {
+    if (!item.value) {
+      return [];
+    }
     return (
-      item.value?.attachments.reduce((acc, cur) => {
+      item.value.attachments.reduce((acc, cur) => {
         if (cur.type === "photo") {
+          const photo: Photo = {
+            originalSrc: api.authURL(`/items/${item.value!.id}/attachments/${cur.id}`),
+            originalType: cur.mimeType,
+          };
           if (cur.thumbnail) {
-            acc.push({
-              // @ts-expect-error - it's impossible for this to be null at this point
-              src: api.authURL(`/items/${item.value.id}/attachments/${cur.thumbnail.id}`),
-              // @ts-expect-error - it's impossible for this to be null at this point
-              srcset: api.authURL(`/items/${item.value.id}/attachments/${cur.id}`),
-            });
+            photo.thumbnailSrc = api.authURL(`/items/${item.value!.id}/attachments/${cur.thumbnail.id}`);
           } else {
-            acc.push({
-              // @ts-expect-error - it's impossible for this to be null at this point
-              src: api.authURL(`/items/${item.value.id}/attachments/${cur.id}`),
-            });
+            photo.thumbnailSrc = photo.originalSrc; // fallback to itself if no thumbnail
           }
+          acc.push(photo);
         }
         return acc;
       }, [] as Photo[]) || []
@@ -397,12 +398,14 @@
     return v;
   });
 
-  const dialoged = reactive({
-    src: "",
+  const dialoged = reactive<Photo>({
+    originalSrc: "",
   });
 
   function openImageDialog(img: Photo) {
-    dialoged.src = img.src;
+    dialoged.originalSrc = img.originalSrc;
+    dialoged.originalType = img.originalType;
+    dialoged.thumbnailSrc = img.thumbnailSrc;
     openDialog("item-image");
   }
 
@@ -543,8 +546,16 @@
 
     <Dialog dialog-id="item-image">
       <DialogContent class="w-auto border-transparent bg-transparent p-0" disable-close>
-        <img :src="dialoged.src" />
-        <a :class="buttonVariants({ size: 'icon' })" :href="dialoged.src" download class="absolute right-11 top-1">
+        <picture>
+          <source :srcset="dialoged.originalSrc" :type="dialoged.originalType" />
+          <img :src="dialoged.thumbnailSrc" alt="attachement image" />
+        </picture>
+        <a
+          :class="buttonVariants({ size: 'icon' })"
+          :href="dialoged.originalSrc"
+          download
+          class="absolute right-11 top-1"
+        >
           <MdiDownload />
         </a>
         <Button size="icon" class="absolute right-1 top-1" @click="closeImageDialog">
@@ -689,7 +700,10 @@
             <template #title> {{ $t("items.photos") }} </template>
             <div class="scroll-bg container mx-auto flex max-h-[500px] flex-wrap gap-2 overflow-y-scroll border-t p-4">
               <button v-for="(img, i) in photos" :key="i" @click="openImageDialog(img)">
-                <img class="max-h-[200px] rounded" :src="img.src" :srcset="img.srcset" />
+                <picture>
+                  <source :srcset="img.originalSrc" :type="img.originalType" />
+                  <img class="max-h-[200px] rounded" :src="img.thumbnailSrc" alt="attachment image" />
+                </picture>
               </button>
             </div>
           </BaseCard>

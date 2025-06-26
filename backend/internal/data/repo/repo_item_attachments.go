@@ -64,6 +64,7 @@ type (
 		Primary   bool            `json:"primary"`
 		Path      string          `json:"path"`
 		Title     string          `json:"title"`
+		MimeType  string          `json:"mimeType,omitempty"`
 		Thumbnail *ent.Attachment `json:"thumbnail,omitempty"`
 	}
 
@@ -89,6 +90,7 @@ func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
 		Primary:   attachment.Primary,
 		Path:      attachment.Path,
 		Title:     attachment.Title,
+		MimeType:  attachment.MimeType,
 		Thumbnail: attachment.QueryThumbnail().FirstX(context.Background()),
 	}
 }
@@ -196,6 +198,16 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 		return nil, err
 	}
 
+	file, err := io.ReadAll(doc.Content)
+	if err != nil {
+		log.Err(err).Msg("failed to read file content")
+		err = tx.Rollback()
+		if err != nil {
+			return nil, err
+		}
+		return nil, err
+	}
+	bldr = bldr.SetMimeType(http.DetectContentType(file[:min(512, len(file))]))
 	bldr = bldr.SetPath(path)
 
 	attachmentDb, err := bldr.Save(ctx)
@@ -622,6 +634,8 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	default:
 		return fmt.Errorf("file type %s is not supported for thumbnail creation or document thumnails disabled", title)
 	}
+
+	att.SetMimeType("image/webp")
 
 	log.Debug().Msg("saving thumbnail attachment to database")
 	thumbnail, err := att.Save(ctx)

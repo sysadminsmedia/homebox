@@ -69,6 +69,8 @@ export interface EntAttachment {
   edges: EntAttachmentEdges;
   /** ID of the ent. */
   id: string;
+  /** MimeType holds the value of the "mime_type" field. */
+  mime_type: string;
   /** Path holds the value of the "path" field. */
   path: string;
   /** Primary holds the value of the "primary" field. */
@@ -474,6 +476,7 @@ export interface GroupUpdate {
 export interface ItemAttachment {
   createdAt: Date | string;
   id: string;
+  mimeType: string;
   path: string;
   primary: boolean;
   thumbnail: EntAttachment;
