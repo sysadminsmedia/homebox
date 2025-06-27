@@ -24,6 +24,13 @@
                 "new_version_available_link": "点击这里了解新版本更新内容"
             }
         },
+        "color_selector": {
+            "clear": "清除颜色",
+            "color": "颜色",
+            "no_color": "透明",
+            "no_color_selected": "当前透明",
+            "randomize": "随机颜色"
+        },
         "form": {
             "password": {
                 "toggle_show": "切换密码显示"
@@ -97,26 +104,26 @@
                 "set_as_primary_photo": "设置为{isPrimary, select, true {非} false {} other {}}主照片",
                 "title": "创建物品",
                 "toast": {
-                    "already_creating": "",
-                    "create_failed": "",
-                    "create_success": "",
-                    "failed_load_parent": "",
-                    "no_canvas_support": "",
-                    "please_select_location": "",
-                    "rotate_failed": "",
-                    "rotate_process_failed": "",
-                    "some_photos_failed": "",
-                    "upload_failed": "",
-                    "upload_success": "",
+                    "already_creating": "已创建物品",
+                    "create_failed": "无法创建物品",
+                    "create_success": "物品创建成功",
+                    "failed_load_parent": "加载父级物品失败-请手动选择",
+                    "no_canvas_support": "您的浏览器不支持Canvas操作",
+                    "please_select_location": "请选择位置",
+                    "rotate_failed": "旋转图片失败：{ error }",
+                    "rotate_process_failed": "处理已旋转图片失败",
+                    "some_photos_failed": "{count, plural, =0 {无照片上传.} =1 {一张照片上传失败.} other {多张照片上传失败.}}",
+                    "upload_failed": "上传照片失败：{ photoName }",
+                    "upload_success": "{count, plural, = 0 {未上传照片} = 1 {照片上传成功} other {所有照片上传成功}}",
                     "uploading_photos": ""
                 },
                 "upload_photos": "上传照片",
-                "uploaded": ""
+                "uploaded": "照片已上传"
             },
             "selector": {
-                "no_results": "",
-                "placeholder": "",
-                "search_placeholder": ""
+                "no_results": "返回为空",
+                "placeholder": "选择...",
+                "search_placeholder": "输入搜索..."
             },
             "view": {
                 "selectable": {
@@ -130,20 +137,21 @@
                     "page": "页",
                     "rows_per_page": "每页行数",
                     "table_settings": "表格设置",
-                    "view_item": ""
+                    "view_item": "查看物品"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_color": "标签颜色",
                 "label_description": "标签说明",
                 "label_name": "标签名称",
                 "title": "创建标签",
                 "toast": {
-                    "already_creating": "",
-                    "create_failed": "",
-                    "create_success": "",
-                    "label_name_too_long": ""
+                    "already_creating": "正在创建标签",
+                    "create_failed": "无法创建标签",
+                    "create_success": "标签已创建",
+                    "label_name_too_long": "标签名称不能超过50个字符"
                 }
             },
             "selector": {
@@ -156,9 +164,9 @@
                 "location_name": "位置名称",
                 "title": "创建位置",
                 "toast": {
-                    "already_creating": "",
-                    "create_failed": "",
-                    "create_success": ""
+                    "already_creating": "正在创建位置",
+                    "create_failed": "无法创建位置",
+                    "create_success": "创建位置失败"
                 }
             },
             "selector": {
