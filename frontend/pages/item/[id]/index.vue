@@ -634,7 +634,7 @@
           </div>
         </header>
         <Separator v-if="item.description" />
-        <div v-if="item.description" class="prose max-w-full p-1">
+        <div v-if="item.description" class="not-prose max-w-full p-1">
           <Markdown class="text-base" :source="item.description"> </Markdown>
         </div>
       </Card>
