@@ -42,6 +42,6 @@
         <MdiArrowUp class="hidden group-hover/label-chip:block" />
       </div>
     </div>
-    {{ label.name.length > 20 ? `${label.name.substring(0, 20)}...` : label.name }}
+    {{label.name}}
   </NuxtLink>
 </template>
