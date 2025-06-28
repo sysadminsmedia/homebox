@@ -47,7 +47,7 @@
         </TooltipProvider>
         <Markdown class="mb-2 line-clamp-3 text-ellipsis" :source="item.description" />
         <div class="-mr-1 mt-auto flex flex-wrap justify-end gap-2">
-          <LabelChip v-for="label in top3" :key="label.id" :label="label" size="sm" />
+          <LabelChip v-for="label in itemLabels" :key="label.id" :label="label" size="sm" />
         </div>
       </div>
     </NuxtLink>
@@ -76,8 +76,8 @@
     }
   });
 
-  const top3 = computed(() => {
-    return props.item.labels.slice(0, 3) || [];
+  const itemLabels = computed(() => {
+    return props.item.labels || [];
   });
 
   const props = defineProps({
