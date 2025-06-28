@@ -512,7 +512,7 @@
       <div
         v-else
         ref="cardgrid"
-        class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5"
+        class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
       >
         <ItemCard v-for="item in items" :key="item.id" :item="item" :location-flat-tree="locationFlatTree" />
       </div>
