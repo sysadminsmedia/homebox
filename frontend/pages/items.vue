@@ -52,7 +52,7 @@
     },
   });
 
-  const pageSize = useRouteQuery("pageSize", 30);
+  const pageSize = useRouteQuery("pageSize", 24);
   const query = useRouteQuery("q", "");
   const advanced = useRouteQuery("advanced", false);
   const includeArchived = useRouteQuery("archived", false);
@@ -357,7 +357,7 @@
       query: {
         archived: "false",
         fieldSelector: "false",
-        pageSize: 10,
+        pageSize: pageSize.value,
         page: 1,
         orderBy: "name",
         q: "",
@@ -512,7 +512,7 @@
       <div
         v-else
         ref="cardgrid"
-        class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5"
+        class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
       >
         <ItemCard v-for="item in items" :key="item.id" :item="item" :location-flat-tree="locationFlatTree" />
       </div>
