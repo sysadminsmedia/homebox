@@ -36,6 +36,6 @@
         <MdiArrowUp class="hidden group-hover/label-chip:block" />
       </div>
     </div>
-    {{label.name}}
+    {{ label.name }}
   </NuxtLink>
 </template>
