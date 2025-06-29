@@ -57,7 +57,7 @@ function filterOutSubtree(tree: TreeItem[], excludeId: string): TreeItem[] {
 
 export function useFlatLocations(excludeSubtreeForLocation?: LocationSummary): Ref<FlatTreeItem[]> {
   const locations = useLocationStore();
-  
+
   if (locations.tree === null) {
     locations.refreshTree();
   }
