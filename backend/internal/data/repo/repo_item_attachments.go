@@ -316,6 +316,28 @@ func (r *AttachmentRepo) Delete(ctx context.Context, id uuid.UUID) error {
 	}
 	// If this is the last attachment for this path, delete the file
 	if len(all) == 1 {
+		thumb, err := doc.QueryThumbnail().First(ctx)
+		if err != nil && !ent.IsNotFound(err) {
+			log.Err(err).Msg("failed to query thumbnail for attachment")
+			return err
+		}
+		if thumb != nil {
+			thumbBucket, err := blob.OpenBucket(ctx, r.GetConnString())
+			if err != nil {
+				log.Err(err).Msg("failed to open bucket for thumbnail deletion")
+				return err
+			}
+			err = thumbBucket.Delete(ctx, thumb.Path)
+			if err != nil {
+				return err
+			}
+			_ = doc.Update().SetNillableThumbnailID(nil).SaveX(ctx)
+			_ = thumb.Update().SetNillableThumbnailID(nil).SaveX(ctx)
+			err = r.db.Attachment.DeleteOneID(thumb.ID).Exec(ctx)
+			if err != nil {
+				return err
+			}
+		}
 		bucket, err := blob.OpenBucket(ctx, r.GetConnString())
 		if err != nil {
 			log.Err(err).Msg("failed to open bucket")
