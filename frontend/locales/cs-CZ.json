@@ -24,6 +24,13 @@
                 "new_version_available_link": "Kliknutím sem zobrazíte poznámky k verzi"
             }
         },
+        "color_selector": {
+            "clear": "Vymazat barvu",
+            "color": "Barva",
+            "no_color": "Žádná barva",
+            "no_color_selected": "Není vybrána žádná barva",
+            "randomize": "Náhodně vybrat barvu"
+        },
         "form": {
             "password": {
                 "toggle_show": "Přepnout zobrazení hesla"
@@ -136,6 +143,7 @@
         },
         "label": {
             "create_modal": {
+                "label_color": "Barva štítku",
                 "label_description": "Popis štítku",
                 "label_name": "Název štítku",
                 "title": "Vytvořit štítek",
@@ -196,7 +204,7 @@
         "follow_dev": "Sledovat vývojáře",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Verze: { version } Sestavení: { build } '</a>'"
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v'{ version }\" target=\"_blank\"> Verze: { version } Sestavení: { build } '</a>'"
         },
         "github": "GitHub projekt",
         "insured": "Pojištěné",
@@ -562,6 +570,10 @@
     "tools": {
         "actions": "Inventurní akce",
         "actions_set": {
+            "create_missing_thumbnails": "Vytvořit chybějící miniatury",
+            "create_missing_thumbnails_button": "Vytvoření náhledů",
+            "create_missing_thumbnails_confirm": "Opravdu chcete vytvořit chybějící miniatury? Může to chvíli trvat a nelze to pozastavit.",
+            "create_missing_thumbnails_sub": "Vytvoří miniatury pro všechny přílohy, které jsou podporovány aktuální konfigurací. To je užitečné pro přílohy, které byly nahrány před vydáním verze Homebox v0.20.0. Tím se nepřepíšou existující miniatury, ale vytvoří se pouze nové pro přílohy, které miniaturu nemají. Upozorňujeme, že miniatury se vytvářejí na pozadí a jejich vytvoření může chvíli trvat.",
             "ensure_ids": "Zajištění ID majetku",
             "ensure_ids_button": "Zajištění ID majetku",
             "ensure_ids_confirm": "Jste si jisti, že chcete zajistit, aby všechen majetek měl ID? To může chvíli trvat a nelze to vrátit zpět.",
@@ -602,6 +614,7 @@
         "reports_sub": "Generování různých přehledů o zásobách.",
         "toast": {
             "asset_success": "{ results } byly aktualizovány.",
+            "failed_create_missing_thumbnails": "Vytvoření chybějících miniatur se nezdařilo.",
             "failed_ensure_ids": "Nepodařilo se zajistit ID majetku.",
             "failed_ensure_import_refs": "Nepodařilo se zajistit import referencí.",
             "failed_set_primary_photos": "Nepodařilo se nastavit primární fotky.",
