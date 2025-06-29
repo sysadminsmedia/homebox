@@ -316,7 +316,11 @@ func (r *AttachmentRepo) Delete(ctx context.Context, id uuid.UUID) error {
 	}
 	// If this is the last attachment for this path, delete the file
 	if len(all) == 1 {
-		thumb := doc.QueryThumbnail().FirstX(ctx)
+		thumb, err := doc.QueryThumbnail().First(ctx)
+		if err != nil && !ent.IsNotFound(err) {
+			log.Err(err).Msg("failed to query thumbnail for attachment")
+			return err
+		}
 		if thumb != nil {
 			thumbBucket, err := blob.OpenBucket(ctx, r.GetConnString())
 			if err != nil {

@@ -39,3 +39,7 @@ drop table attachments;
 alter table attachments_dg_tmp
     rename to attachments;
 
+CREATE INDEX IF NOT EXISTS idx_attachments_item_id ON attachments(item_attachments);
+CREATE INDEX IF NOT EXISTS idx_attachments_path ON attachments(path);
+CREATE INDEX IF NOT EXISTS idx_attachments_type ON attachments(type);
+CREATE INDEX IF NOT EXISTS idx_attachments_thumbnail ON attachments(attachment_thumbnail);
