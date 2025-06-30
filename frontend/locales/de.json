@@ -24,6 +24,12 @@
                 "new_version_available_link": "Klicken Sie hier, um die Release Notes anzuzeigen"
             }
         },
+        "color_selector": {
+            "clear": "Farbe löschen",
+            "color": "Farbe",
+            "no_color": "Keine Farbe",
+            "no_color_selected": "Keine Farbe ausgewählt"
+        },
         "form": {
             "password": {
                 "toggle_show": "Passwort anzeigen"

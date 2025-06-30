@@ -571,7 +571,7 @@
         "actions": "Acties inventariseren",
         "actions_set": {
             "create_missing_thumbnails": "Ontbrekende miniaturen maken",
-            "create_missing_thumbnails_button": "Nieuwe thumbnails aanmaken",
+            "create_missing_thumbnails_button": "Nieuwe miniaturen aanmaken",
             "create_missing_thumbnails_confirm": "Weet u zeker dat u ontbrekende miniaturen wilt maken? Dit kan even duren en kan niet worden gepauzeerd.",
             "create_missing_thumbnails_sub": "Maakt miniaturen voor alle bijlagen die worden ondersteund door de huidige configuratie. Dit is handig voor bijlagen die werden geüpload voor de v0.20.0 release van Homebox. Bestaande miniaturen worden niet overschreven, er worden alleen nieuwe miniaturen gemaakt voor bijlagen die geen miniatuurafbeelding hebben. Houd er rekening mee dat de miniaturen in de achtergrond worden gemaakt en dat dit een tijdje kan duren.",
             "ensure_ids": "Zorg voor item-ID's",

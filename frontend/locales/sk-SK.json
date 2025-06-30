@@ -82,7 +82,7 @@
             },
             "page_qr_code": {
                 "page_url": "URL stránka",
-                "qr_tooltip": "Zobraz QR kód"
+                "qr_tooltip": "Zobraziť QR kód"
             },
             "password_score": {
                 "password_strength": "Sila hesla"
@@ -94,31 +94,31 @@
                 "open_new_tab": "Otvoriť na novej karte"
             },
             "create_modal": {
-                "delete_photo": "Vymazať fotku",
+                "delete_photo": "Vymazať fotografiu",
                 "item_description": "Popis položky",
                 "item_name": "Názov položky",
-                "item_photo": "Obrázok predmetu 📷",
+                "item_photo": "Fotografia predmetu 📷",
                 "item_quantity": "Počet predmetov",
                 "parent_item": "Nadradená položka",
-                "rotate_photo": "Otočiť fotku",
-                "set_as_primary_photo": "",
+                "rotate_photo": "Otočiť fotografiu",
+                "set_as_primary_photo": "Nastaviť ako { isPrimary, select, true {non-} false {} other {}}primárnu fotografiu",
                 "title": "Vytvoriť položku",
                 "toast": {
-                    "already_creating": "",
-                    "create_failed": "",
-                    "create_success": "",
-                    "failed_load_parent": "",
-                    "no_canvas_support": "",
-                    "please_select_location": "",
-                    "rotate_failed": "",
-                    "rotate_process_failed": "",
+                    "already_creating": "Už vytváram položku",
+                    "create_failed": "Nepodarilo sa vytvoriť položku",
+                    "create_success": "Položka bola vytvorená",
+                    "failed_load_parent": "Nadradenú položku sa nepodarilo načítať - vyberte ju, prosím, ručne",
+                    "no_canvas_support": "Váš prehliadač nepodporuje operácie canvas",
+                    "please_select_location": "Prosím, vyberte miesto.",
+                    "rotate_failed": "Obrázok sa nepodarilo otočiť: { error }",
+                    "rotate_process_failed": "Nepodarilo sa spracovať otočený obrázok",
                     "some_photos_failed": "",
-                    "upload_failed": "",
+                    "upload_failed": "Nepodarilo sa nahrať fotku: { photoName }",
                     "upload_success": "",
                     "uploading_photos": ""
                 },
-                "upload_photos": "Nahraj fotky",
-                "uploaded": ""
+                "upload_photos": "Nahrať fotografie",
+                "uploaded": "Nahraná fotografia"
             },
             "selector": {
                 "no_results": "",
@@ -164,69 +164,69 @@
                 "location_name": "Názov miesta",
                 "title": "Vytvoriť polohu",
                 "toast": {
-                    "already_creating": "Lokalita sa už vytvára",
-                    "create_failed": "",
-                    "create_success": ""
+                    "already_creating": "Miesto sa už vytvára",
+                    "create_failed": "Nepodarilo sa vytvoriť miesto",
+                    "create_success": "Miesto bolo vytvorené"
                 }
             },
             "selector": {
                 "no_location_found": "Poloha nenájdená",
                 "parent_location": "Poloha rodiča",
-                "search_location": "",
-                "select_location": ""
+                "search_location": "Prehľadávať miesta",
+                "select_location": "Vyberte miesto"
             },
             "tree": {
                 "no_locations": "Nie sú k dispozícii žiadne miesta. Pridajte nové miesta cez\n `<`span class=\"link-primary\"`>`Vytvoriť`<`/span`>` na navigačnom paneli."
             }
         },
         "quick_menu": {
-            "no_results": "",
+            "no_results": "Nenašli sa žiadne výsledky.",
             "shortcut_hint": "Pomocou číselných tlačidiel rýchlo vyberte akciu."
         }
     },
     "global": {
         "add": "Pridať",
-        "archived": "",
+        "archived": "Archivované",
         "build": "Zostava: { build }",
-        "cancel": "",
+        "cancel": "Zrušiť",
         "confirm": "Potvrďte",
         "create": "Vytvorte",
         "create_and_add": "Vytvoriť a pridať ďalšie",
-        "create_subitem": "",
+        "create_subitem": "Vytvoriť podpoložku",
         "created": "Vytvorené",
         "delete": "Odstrániť",
-        "delete_confirm": "",
-        "demo_instance": "",
+        "delete_confirm": "Naozaj chcete odstrániť túto položku? ",
+        "demo_instance": "Toto je ukážková inštancia",
         "details": "Podrobnosti",
         "duplicate": "Duplicitné",
         "edit": "Upraviť",
         "email": "Email",
         "follow_dev": "Sledujte vývojára",
         "footer": {
-            "api_link": "",
-            "version_link": ""
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v'{ version }\" target=\"_blank\"> Verzia: { version } Zostavenie: { build } '</a>'"
         },
         "github": "Projekt GitHub",
-        "insured": "",
+        "insured": "Poistené",
         "items": "Položky",
         "join_discord": "Pripojte sa k Discordu",
         "labels": "Štítky",
-        "loading": "",
+        "loading": "Načítam...",
         "locations": "Miesta",
         "maintenance": "Údržba",
         "name": "Meno",
         "navigate": "Navigovať",
         "password": "heslo",
-        "quantity": "",
+        "quantity": "Množstvo",
         "read_docs": "Prečítajte si Dokumenty",
-        "return_home": "",
+        "return_home": "Vrátiť sa na začiatok",
         "save": "Uložiť",
         "search": "Hľadať",
         "sign_out": "Odhlásiť sa",
         "submit": "Odoslať",
-        "unknown": "",
+        "unknown": "Neznáme",
         "update": "Aktualizovať",
-        "updating": "",
+        "updating": "Aktualizujem",
         "value": "Hodnota",
         "version": "Verzia: { version }",
         "welcome": "Vitajte, { username }"
@@ -252,13 +252,13 @@
         "set_name": "Ako sa voláte?",
         "set_password": "Nastavte si heslo",
         "tagline": "Sledujte, organizujte a spravujte svoje veci.",
-        "title": "",
+        "title": "Usporiadajte a označte svoje veci",
         "toast": {
-            "invalid_email": "",
-            "invalid_email_password": "",
-            "login_success": "",
-            "problem_registering": "",
-            "user_registered": ""
+            "invalid_email": "Neplatná e-mailová adresa",
+            "invalid_email_password": "Neplatná e-mailová adresa alebo heslo",
+            "login_success": "Úspešne prihlásený",
+            "problem_registering": "Problém s registráciou používateľa",
+            "user_registered": "Používateľ bol zaregistrovaný"
         }
     },
     "items": {
@@ -266,22 +266,22 @@
         "advanced": "Pokročilé",
         "archived": "Archivované",
         "asset_id": "ID majetku",
-        "associated_with_multiple": "",
+        "associated_with_multiple": "Toto ID aktíva je priradené k viacerým položkám",
         "attachment": "Príloha",
         "attachments": "Prílohy",
         "changes_persisted_immediately": "Zmeny príloh sa okamžite uložia",
         "created_at": "Čas vytvorenia",
         "custom_fields": "Vlastné polia",
-        "delete_attachment_confirm": "",
-        "delete_item_confirm": "",
+        "delete_attachment_confirm": "Naozaj chcete odstrániť túto prílohu?",
+        "delete_item_confirm": "Naozaj chcete odstrániť túto položku?",
         "description": "Popis",
         "details": "Podrobnosti",
         "drag_and_drop": "Presuňte súbory sem alebo kliknutím vyberte súbory",
         "edit": {
             "edit_attachment_dialog": {
-                "attachment_title": "",
-                "attachment_type": "",
-                "primary_photo": "",
+                "attachment_title": "Názov prílohy",
+                "attachment_type": "Typ prílohy",
+                "primary_photo": "Primárna fotografia",
                 "primary_photo_sub": "",
                 "select_type": "",
                 "title": ""
@@ -332,7 +332,7 @@
         "sold_at": "Predané v",
         "sold_details": "Podrobnosti o predaji",
         "sold_price": "Predajná cena",
-        "sold_to": "Predané Komu",
+        "sold_to": "Predané komu",
         "sync_child_locations": "",
         "tip_1": "Filtre umiestnení a štítkov používajú operáciu 'OR'. Ak je vybratých viac ako jeden,\n bude vybraný iba jeden potrebné na zápas.",
         "tip_2": "Vyhľadávania s predponou # budú dotazovať na identifikátor diela (napríklad #000-001)",
@@ -579,7 +579,7 @@
             "ensure_import_refs_sub": "Zabezpečuje, že všetky položky vo vašom inventári majú platné pole import_ref. To sa dosiahne náhodným vygenerovaním 8-znakového reťazca pre každú položku, ktorá má nenastavené pole import_ref.",
             "set_primary_photo": "Nastaviť primárnu fotografiu",
             "set_primary_photo_button": "Nastaviť primárnu fotografiu",
-            "set_primary_photo_confirm": "",
+            "set_primary_photo_confirm": "Naozaj chcete nastaviť primárne fotografie? Môže to chvíľu trvať a nedá sa to vrátiť späť.",
             "set_primary_photo_sub": "Vo verzii v0.10.0 Homeboxu bolo k prílohám typu fotografia pridané pole primárneho obrázka. Táto akcia nastaví pole primárneho obrázka na prvý obrázok v poli príloh v databáze, ak ešte nie je nastavený. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'See GitHub PR #576'</a>'",
             "zero_datetimes": "Dátum nulovej položky Časy",
             "zero_datetimes_button": "Dátum nulovej položky Časy",
@@ -612,7 +612,7 @@
             "asset_success": "",
             "failed_ensure_ids": "",
             "failed_ensure_import_refs": "",
-            "failed_set_primary_photos": "",
+            "failed_set_primary_photos": "Nepodarilo sa nastaviť primárne fotografie.",
             "failed_zero_datetimes": ""
         }
     }
