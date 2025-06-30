@@ -112,9 +112,9 @@
                     "please_select_location": "Prosím, vyberte miesto.",
                     "rotate_failed": "Obrázok sa nepodarilo otočiť: { error }",
                     "rotate_process_failed": "Nepodarilo sa spracovať otočený obrázok",
-                    "some_photos_failed": "{count, plural, =0 {Žiadne fotky na nahranie.} =1 {1 fotku sa nepodarilo nahrať.} other {Niektoré fotky sa nepodarilo nahrať.}}",
+                    "some_photos_failed": "{count, plural, =0 {Žiadne fotky na nahranie.} =1 {1 fotografiu sa nepodarilo nahrať.} other {Niektoré fotografie sa nepodarilo nahrať.}}",
                     "upload_failed": "Nepodarilo sa nahrať fotku: { photoName }",
-                    "upload_success": "",
+                    "upload_success": "{count, plural, =0 {Žiadne fotky neboli nahrané.} =1 {Fotka bola úspešne nahraná.} other {Všetky fotky boli úspešne nahrané.}}",
                     "uploading_photos": ""
                 },
                 "upload_photos": "Nahrať fotografie",
