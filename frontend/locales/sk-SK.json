@@ -123,7 +123,7 @@
             "selector": {
                 "no_results": "Nenašli sa žiadne výsledky",
                 "placeholder": "Vybrať...",
-                "search_placeholder": "Zadajte, čo chcete vyhľadať."
+                "search_placeholder": "Zadajte, čo chcete vyhľadať..."
             },
             "view": {
                 "selectable": {
@@ -137,7 +137,7 @@
                     "page": "Stránka",
                     "rows_per_page": "Počet riadkov na stránku",
                     "table_settings": "Nastavenie tabuľky",
-                    "view_item": ""
+                    "view_item": "Zobraziť položku"
                 }
             }
         },
@@ -148,8 +148,8 @@
                 "label_name": "Názov štítku",
                 "title": "Vytvoriť štítok",
                 "toast": {
-                    "already_creating": "",
-                    "create_failed": "",
+                    "already_creating": "Štítok sa už vytvára",
+                    "create_failed": "Nepodarilo sa vytvoriť štítok",
                     "create_success": "Štítok bol vytvorený",
                     "label_name_too_long": "Meno štítku nesmie byť dlhšie ako 50 znakov"
                 }
@@ -282,9 +282,9 @@
                 "attachment_title": "Názov prílohy",
                 "attachment_type": "Typ prílohy",
                 "primary_photo": "Primárna fotografia",
-                "primary_photo_sub": "",
-                "select_type": "",
-                "title": ""
+                "primary_photo_sub": "Táto možnosť je dostupná len pre fotografie. Primárna môže byť iba jedna fotografia. Ak vyberiete túto voľbu, aktuálna primárna fotografia (ak taká existuje) bude zrušená.",
+                "select_type": "Vyberte typ",
+                "title": "Upraviť prílohu"
             }
         },
         "edit_details": "Upraviť podrobnosti",
@@ -293,7 +293,7 @@
         "first": "Prvý",
         "include_archive": "Zahrnúť archivované položky",
         "insured": "Poistený",
-        "invalid_asset_id": "",
+        "invalid_asset_id": "Neplatné ID aktíva",
         "last": "Posledný",
         "lifetime_warranty": "Doživotná záruka",
         "location": "Poloha",
@@ -304,7 +304,7 @@
         "name": "Meno",
         "negate_labels": "Negovať vybrané označenia",
         "next_page": "Ďalšia strana",
-        "no_attachments": "",
+        "no_attachments": "Neboli nájdené žiadne prílohy.",
         "no_results": "Nenašli sa žiadne položky",
         "notes": "Poznámky",
         "only_with_photo": "Iba položky s fotografiou",
@@ -326,25 +326,25 @@
         "receipts": "Účtenky",
         "reset_search": "Obnoviť vyhľadávanie",
         "results": "{ total } Výsledky",
-        "select_field": "",
+        "select_field": "Vyberte pole",
         "serial_number": "Sériové číslo",
         "show_advanced_view_options": "Zobraziť rozšírené možnosti zobrazenia",
         "sold_at": "Predané v",
         "sold_details": "Podrobnosti o predaji",
         "sold_price": "Predajná cena",
         "sold_to": "Predané komu",
-        "sync_child_locations": "",
+        "sync_child_locations": "Synchronizovať polohy podradených položiek",
         "tip_1": "Filtre umiestnení a štítkov používajú operáciu 'OR'. Ak je vybratých viac ako jeden,\n bude vybraný iba jeden potrebné na zápas.",
         "tip_2": "Vyhľadávania s predponou # budú dotazovať na identifikátor diela (napríklad #000-001)",
         "tip_3": "Filtre poľa používajú operáciu 'OR' . Ak je vybratých viac ako jeden, bude potrebný iba jeden pre a\n zápas.",
         "tips": "Tipy",
         "tips_sub": "Tipy na vyhľadávanie",
         "toast": {
-            "asset_not_found": "",
-            "attachment_deleted": "",
-            "attachment_updated": "",
-            "attachment_uploaded": "",
-            "child_items_location_no_longer_synced": "",
+            "asset_not_found": "Aktívum sa nenašlo",
+            "attachment_deleted": "Príloha bola odstránená",
+            "attachment_updated": "Príloha bola aktualizovaná",
+            "attachment_uploaded": "Príloha bola nahraná",
+            "child_items_location_no_longer_synced": "Polohy detských položiek sa už nebudú synchronizovať s touto položkou.",
             "child_items_location_synced": "",
             "child_location_desync": "",
             "error_loading_parent_data": "",
