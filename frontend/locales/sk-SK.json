@@ -115,15 +115,15 @@
                     "some_photos_failed": "{count, plural, =0 {Žiadne fotografie na nahranie.} =1 {1 fotografiu sa nepodarilo nahrať.} other {Niektoré fotografie sa nepodarilo nahrať.}}",
                     "upload_failed": "Nepodarilo sa nahrať fotku: { photoName }",
                     "upload_success": "{count, plural, =0 {Žiadne fotografie neboli nahrané.} =1 {Fotografia bola úspešne nahraná.} other {Všetky fotografie boli úspešne nahrané.}}",
-                    "uploading_photos": "{count, plural, =0 {Žiadne fotky na nahranie} =1 {Nahráva sa 1 fotka...} other {Nahráva sa {count} fotiek...}}"
+                    "uploading_photos": "{count, plural, =0 {Žiadne fotografie na nahranie} =1 {Nahrávam 1 fotografiu...} other {Nahrávam {count} fotografií...}}"
                 },
                 "upload_photos": "Nahrať fotografie",
                 "uploaded": "Nahraná fotografia"
             },
             "selector": {
-                "no_results": "",
-                "placeholder": "",
-                "search_placeholder": ""
+                "no_results": "Nenašli sa žiadne výsledky",
+                "placeholder": "Vybrať...",
+                "search_placeholder": "Zadajte, čo chcete vyhľadať."
             },
             "view": {
                 "selectable": {
