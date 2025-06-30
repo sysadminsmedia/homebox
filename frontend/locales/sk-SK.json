@@ -2,18 +2,18 @@
     "components": {
         "app": {
             "create_modal": {
-                "createAndAddAnother": "",
-                "enter": "",
-                "shift": ""
+                "createAndAddAnother": "Použite {shiftKey} + {enterKey} na vytvorenie a pridanie ďalšej položky.",
+                "enter": "Enter",
+                "shift": "Shift"
             },
             "import_dialog": {
                 "change_warning": "Správanie pre importy s existujúcimi import_refs sa zmenilo. Ak sa v súbore CSV nachádza import_ref,\npoložka bude aktualizovaná hodnotami v súbore CSV.",
                 "description": "Importujte súbor CSV obsahujúci vaše položky, štítky a miesta. Ďalšie informácie nájdete v dokumentácii\npožadovaný formát.",
                 "title": "Importovať súbor CSV",
                 "toast": {
-                    "import_failed": "",
-                    "import_success": "",
-                    "please_select_file": ""
+                    "import_failed": "Import skončil s chybou. Skúste to, prosím, neskôr.",
+                    "import_success": "Import bol úspešný!",
+                    "please_select_file": "Prosím, vyberte súbor, ktorý sa má naimportovať."
                 }
             },
             "outdated": {
@@ -24,9 +24,16 @@
                 "new_version_available_link": "Kliknutím sem zobrazíte poznámky k vydaniu"
             }
         },
+        "color_selector": {
+            "clear": "Vyčistiť farbu",
+            "color": "Farba",
+            "no_color": "Bez farby",
+            "no_color_selected": "Nevybrali ste farbu",
+            "randomize": "Náhodná farba"
+        },
         "form": {
             "password": {
-                "toggle_show": ""
+                "toggle_show": "Prepnúť zobrazenie hesla"
             }
         },
         "global": {
@@ -68,9 +75,9 @@
                 "server_print": "Tlač na serveri",
                 "titles": "Štítky",
                 "toast": {
-                    "load_status_failed": "",
-                    "print_failed": "",
-                    "print_success": ""
+                    "load_status_failed": "Nepodarilo sa načítať stav",
+                    "print_failed": "Štítok sa nepodarilo vytlačiť",
+                    "print_success": "Štítok bol vytlačený"
                 }
             },
             "page_qr_code": {
@@ -83,17 +90,17 @@
         },
         "item": {
             "attachments_list": {
-                "download": "",
-                "open_new_tab": ""
+                "download": "Stiahnuť",
+                "open_new_tab": "Otvoriť na novej karte"
             },
             "create_modal": {
-                "delete_photo": "",
+                "delete_photo": "Vymazať fotku",
                 "item_description": "Popis položky",
                 "item_name": "Názov položky",
                 "item_photo": "Obrázok predmetu 📷",
                 "item_quantity": "Počet predmetov",
-                "parent_item": "",
-                "rotate_photo": "",
+                "parent_item": "Nadradená položka",
+                "rotate_photo": "Otočiť fotku",
                 "set_as_primary_photo": "",
                 "title": "Vytvoriť položku",
                 "toast": {
@@ -136,14 +143,15 @@
         },
         "label": {
             "create_modal": {
+                "label_color": "Farba štítku",
                 "label_description": "Popis štítku",
                 "label_name": "Názov štítku",
                 "title": "Vytvoriť štítok",
                 "toast": {
                     "already_creating": "",
                     "create_failed": "",
-                    "create_success": "",
-                    "label_name_too_long": ""
+                    "create_success": "Štítok bol vytvorený",
+                    "label_name_too_long": "Meno štítku nesmie byť dlhšie ako 50 znakov"
                 }
             },
             "selector": {
@@ -156,7 +164,7 @@
                 "location_name": "Názov miesta",
                 "title": "Vytvoriť polohu",
                 "toast": {
-                    "already_creating": "",
+                    "already_creating": "Lokalita sa už vytvára",
                     "create_failed": "",
                     "create_success": ""
                 }
@@ -262,7 +270,7 @@
         "attachment": "Príloha",
         "attachments": "Prílohy",
         "changes_persisted_immediately": "Zmeny príloh sa okamžite uložia",
-        "created_at": "Vytvoril v",
+        "created_at": "Čas vytvorenia",
         "custom_fields": "Vlastné polia",
         "delete_attachment_confirm": "",
         "delete_item_confirm": "",
@@ -302,7 +310,7 @@
         "only_with_photo": "Iba položky s fotografiou",
         "only_without_photo": "Iba položky bez fotografie",
         "options": "Možnosti",
-        "order_by": "Objednať podľa",
+        "order_by": "Radiť podľa",
         "pages": "Strana { page } z { totalPages }",
         "parent_item": "Nadradená položka",
         "photo": "Fotografia",
