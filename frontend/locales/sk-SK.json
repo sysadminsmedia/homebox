@@ -422,14 +422,14 @@
         "child_locations": "Umiestnenie podriadených",
         "collapse_tree": "Zbaliť strom",
         "expand_tree": "Rozbaliť strom",
-        "location_items_delete_confirm": "Naozaj chcete odstrániť toto miesto a všetky jeho položky? Túto akciu nie je možné vrátiť späť.",
+        "location_items_delete_confirm": "Naozaj chcete odstrániť toto miesto a všetky jeho položky? Túto akciu nie je možné odvolať.",
         "no_results": "Žiadne lokality neboli nájdené",
         "toast": {
-            "failed_delete_location": "",
-            "failed_load_location": "",
-            "failed_update_location": "",
-            "location_deleted": "",
-            "location_updated": ""
+            "failed_delete_location": "Miesto sa nepodarilo odstrániť",
+            "failed_load_location": "Miesto sa nepodarilo načítať",
+            "failed_update_location": "Miesto sa nepodarilo aktualizovať",
+            "location_deleted": "Miesto bolo odstránené",
+            "location_updated": "Miesto bolo aktualizované"
         },
         "update_location": "Aktualizovať lokalitu"
     },
@@ -486,7 +486,7 @@
         "currency_format": "Formát meny",
         "current_password": "Aktuálne heslo",
         "delete_account": "Odstrániť účet",
-        "delete_account_confirm": "",
+        "delete_account_confirm": "Naozaj chcete odstrániť svoj účet? Ak ste posledným členom vo svojej skupine, všetky vaše údaje budú odstránené",
         "delete_account_sub": "Odstráňte svoj účet a všetky súvisiace údaje. Toto nie je možné vrátiť späť.",
         "delete_notifier_confirm": "",
         "display_legacy_header": "",
