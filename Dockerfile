@@ -1,5 +1,5 @@
 # Node dependencies stage
-FROM --platform=$BUILDPLATFORM public.ecr.aws/docker/library/node:lts-alpine AS frontend-dependencies
+FROM public.ecr.aws/docker/library/node:lts-alpine AS frontend-dependencies
 WORKDIR /app
 
 # Install pnpm globally (caching layer)
@@ -10,7 +10,7 @@ COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
 # Build Nuxt (frontend) stage
-FROM --platform=$BUILDPLATFORM public.ecr.aws/docker/library/node:lts-alpine AS frontend-builder
+FROM public.ecr.aws/docker/library/node:lts-alpine AS frontend-builder
 WORKDIR /app
 
 # Install pnpm globally again (it can reuse the cache if not changed)
@@ -22,7 +22,7 @@ COPY --from=frontend-dependencies /app/node_modules ./node_modules
 RUN pnpm build
 
 # Go dependencies stage
-FROM --platform=$BUILDPLATFORM public.ecr.aws/docker/library/golang:alpine AS builder-dependencies
+FROM public.ecr.aws/docker/library/golang:alpine AS builder-dependencies
 WORKDIR /go/src/app
 
 # Copy go.mod and go.sum for better caching
@@ -30,7 +30,7 @@ COPY ./backend/go.mod ./backend/go.sum ./
 RUN go mod download
 
 # Build API stage
-FROM --platform=$BUILDPLATFORM public.ecr.aws/docker/library/golang:alpine AS builder
+FROM public.ecr.aws/docker/library/golang:alpine AS builder
 ARG TARGETOS
 ARG TARGETARCH
 ARG BUILD_TIME
@@ -66,7 +66,7 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     fi
 
 # Production stage
-FROM --platform=$BUILDPLATFORM public.ecr.aws/docker/library/alpine:latest
+FROM public.ecr.aws/docker/library/alpine:latest
 ENV HBOX_MODE=production
 ENV HBOX_STORAGE_CONN_STRING=file:///?no_tmp_dir=true
 ENV HBOX_STORAGE_PREFIX_PATH=data

@@ -12,7 +12,6 @@ services:
             - linux/amd64
             - linux/arm64
             - linux/arm/v7
-            - linux/riscv64
     environment:
       - HBOX_DEBUG=true
       - HBOX_LOGGER_LEVEL=-1
