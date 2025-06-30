@@ -40,7 +40,8 @@ ARG VERSION
 # Install necessary build tools
 RUN apk update && \
     apk upgrade && \
-    apk add --no-cache git build-base gcc g++
+    apk add --no-cache git build-base gcc g++ && \
+    if [ "$TARGETARCH" != "arm" ] || [ "$TARGETARCH" != "riscv64" ]; then apk --no-cache add libwebp libavif libheif libjxl; fi
 
 WORKDIR /go/src/app
 
@@ -55,11 +56,11 @@ COPY --from=frontend-builder /app/.output/public ./app/api/static/public
 # Use cache for Go build artifacts
 RUN --mount=type=cache,target=/root/.cache/go-build \
     if [ "$TARGETARCH" = "arm" ] || [ "$TARGETARCH" = "riscv64" ];  \
-    then CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build \
+    then CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build \
         -ldflags "-s -w -X main.commit=$COMMIT -X main.buildTime=$BUILD_TIME -X main.version=$VERSION" \
         -tags nodynamic -o /go/bin/api -v ./app/api/*.go; \
     else \
-         CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build \
+         CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build \
         -ldflags "-s -w -X main.commit=$COMMIT -X main.buildTime=$BUILD_TIME -X main.version=$VERSION" \
         -o /go/bin/api -v ./app/api/*.go; \
     fi
@@ -73,7 +74,7 @@ ENV HBOX_DATABASE_SQLITE_PATH=/data/homebox.db?_pragma=busy_timeout=2000&_pragma
 
 # Install necessary runtime dependencies
 RUN apk --no-cache add ca-certificates wget && \
-    if [ "$TARGETARCH" != "arm" ] || [ "$TARGETARCH" != "riscv64" ]; then apk --no-cache add libwebp libavif; fi
+    if [ "$TARGETARCH" != "arm" ] || [ "$TARGETARCH" != "riscv64" ]; then apk --no-cache add libwebp libavif libheif libjxl; fi
 
 # Create application directory and copy over built Go binary
 RUN mkdir /app
