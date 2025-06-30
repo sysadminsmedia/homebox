@@ -362,7 +362,7 @@
             "failed_upload_attachment": "Nepodarilo sa nahrať prílohu",
             "item_deleted": "Položka bola odstránená",
             "item_saved": "Položka bola uložená",
-            "quantity_cannot_negative": "Množstvo nemôže byť záporné.",
+            "quantity_cannot_negative": "Množstvo nemôže byť záporné",
             "sync_child_location": "Vybraná položka nastavuje pre podriadené položky miesto podľa svojho. Miesto bolo aktualizované."
         },
         "updated_at": "Čas aktualizácie",
@@ -371,14 +371,14 @@
         "warranty_expires": "Záruka vyprší"
     },
     "labels": {
-        "label_delete_confirm": "",
+        "label_delete_confirm": "Naozaj chcete odstrániť tento štítok? Túto akciu nie je možné odvolať.",
         "no_results": "Nenašli sa žiadne štítky",
         "toast": {
-            "failed_delete_label": "",
-            "failed_load_label": "",
-            "failed_update_label": "",
-            "label_deleted": "",
-            "label_updated": ""
+            "failed_delete_label": "Nepodarilo sa odstrániť štítok",
+            "failed_load_label": "Štítok sa nepodarilo načítať",
+            "failed_update_label": "Štítok sa nepodarilo aktualizovať",
+            "label_deleted": "Štítok bol odstránený",
+            "label_updated": "Štítok bol aktualizovaný"
         },
         "update_label": "Aktualizovať štítok"
     },
@@ -395,8 +395,8 @@
         "it": "Taliančina",
         "ja-JP": "Japonsky",
         "ko-KR": "Korejsky",
-        "lb-LU": "",
-        "lt-LT": "",
+        "lb-LU": "Luxemburčina (Luxembursko)",
+        "lt-LT": "Litovčina (Litva)",
         "nb-NO": "Nórsky",
         "nl": "Holandsky",
         "pl": "Poľsky",
@@ -404,7 +404,7 @@
         "pt-PT": "Portugalsky (Portugalsko)",
         "ru": "Ruština",
         "sl": "Slovinsky",
-        "sq-AL": "",
+        "sq-AL": "Albánčina",
         "sv": "Švédčina",
         "ta-IN": "Tamilčina",
         "th-TH": "Thaičina",
@@ -421,8 +421,8 @@
     "locations": {
         "child_locations": "Umiestnenie podriadených",
         "collapse_tree": "Zbaliť strom",
-        "expand_tree": "",
-        "location_items_delete_confirm": "",
+        "expand_tree": "Rozbaliť strom",
+        "location_items_delete_confirm": "Naozaj chcete odstrániť toto miesto a všetky jeho položky? Túto akciu nie je možné vrátiť späť.",
         "no_results": "Žiadne lokality neboli nájdené",
         "toast": {
             "failed_delete_location": "",
