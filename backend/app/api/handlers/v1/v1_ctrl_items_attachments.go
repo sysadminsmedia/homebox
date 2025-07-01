@@ -3,6 +3,7 @@ package v1
 import (
 	"errors"
 	"net/http"
+	"net/url"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -203,7 +204,9 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 			}
 		}(bucket)
 
-		w.Header().Set("Content-Disposition", "attachment; filename="+doc.Title)
+		// Set the Content-Disposition header for RFC6266 compliance
+		disposition := "attachment; filename*=UTF-8''" + url.QueryEscape(doc.Title)
+		w.Header().Set("Content-Disposition", disposition)
 		http.ServeContent(w, r, doc.Title, doc.CreatedAt, file)
 		return nil
 
