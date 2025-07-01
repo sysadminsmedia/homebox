@@ -257,15 +257,31 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 }
 
 func (r *AttachmentRepo) Get(ctx context.Context, gid uuid.UUID, id uuid.UUID) (*ent.Attachment, error) {
-	return r.db.Attachment.
-		Query().
-		Where(
-			attachment.ID(id),
-			attachment.HasItemWith(item.HasGroupWith(group.ID(gid))),
-		).
-		WithItem().
-		WithThumbnail().
-		Only(ctx)
+	first, err := r.db.Attachment.Query().Where(attachment.ID(id)).Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if first.Type == attachment.TypeThumbnail {
+		// If the attachment is a thumbnail, get the parent attachment and check if it belongs to the specified group
+		return r.db.Attachment.
+			Query().
+			Where(attachment.ID(id),
+				attachment.HasThumbnailWith(attachment.HasItemWith(item.HasGroupWith(group.ID(gid)))),
+			).
+			WithItem().
+			WithThumbnail().
+			Only(ctx)
+	} else {
+		// For regular attachments, check if the attachment's item belongs to the specified group
+		return r.db.Attachment.
+			Query().
+			Where(attachment.ID(id),
+				attachment.HasItemWith(item.HasGroupWith(group.ID(gid))),
+			).
+			WithItem().
+			WithThumbnail().
+			Only(ctx)
+	}
 }
 
 func (r *AttachmentRepo) Update(ctx context.Context, gid uuid.UUID, id uuid.UUID, data *ItemAttachmentUpdate) (*ent.Attachment, error) {
