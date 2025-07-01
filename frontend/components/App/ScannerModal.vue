@@ -15,14 +15,20 @@
         </div>
         <div
           v-if="detectedBarcode"
-          class="border-destructive bg-destructive/10 text-destructive mb-5 flex items-center gap-2 rounded-md border p-4"
+          class="border-accent-foreground bg-accent text-accent-foreground mb-5 flex flex-col items-center gap-2 rounded-md border p-4"
           role="alert"
         >
-          <MdiAlertCircleOutline class="text-default" />
-          <span class="text-sm font-medium">{{ detectedBarcodeType }} product barcode detected: {{ detectedBarcode }} </span>
+          <div class="flex">
+            <MdiBarcode class="text-default mr-2" />
+            <span class="flex-1 text-center text-sm font-medium">
+              {{ detectedBarcodeType }} product barcode detected: <strong>{{ detectedBarcode }}</strong>
+            </span>
+          </div>
 
           <ButtonGroup>
-            <Button :disabled="loading" type="submit" @click="handleButtonClick">Fetchdata and create</Button>
+            <Button :disabled="loading" type="submit" @click="handleButtonClick">
+              Fetchdata and create
+            </Button>
           </ButtonGroup>
         </div>
         <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
@@ -51,6 +57,7 @@
   import { Dialog, DialogHeader, DialogTitle, DialogScrollContent } from "@/components/ui/dialog";
   import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
   import { Button } from "@/components/ui/button";
+  import MdiBarcode from "~icons/mdi/barcode";
   import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";
   import { useDialog } from "@/components/ui/dialog-provider";
   
