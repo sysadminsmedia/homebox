@@ -565,7 +565,9 @@
         "permission_denied": "Camera permission denied, please allow access to the camera in your browser settings",
         "select_video_source": "Pick a video source",
         "title": "Scanner",
-        "unsupported": "Media Stream API is not supported without HTTPS"
+        "unsupported": "Media Stream API is not supported without HTTPS",
+        "barcode_detected_message": "product barcode detected",
+        "barcode_fetch_data": "Fetch product data"
     },
     "tools": {
         "actions": "Inventory Actions",

@@ -21,13 +21,13 @@
           <div class="flex">
             <MdiBarcode class="text-default mr-2" />
             <span class="flex-1 text-center text-sm font-medium">
-              {{ detectedBarcodeType }} product barcode detected: <strong>{{ detectedBarcode }}</strong>
+              {{ detectedBarcodeType }} {{ $t("scanner.barcode_detected_message") }}: <strong>{{ detectedBarcode }}</strong>
             </span>
           </div>
 
           <ButtonGroup>
             <Button :disabled="loading" type="submit" @click="handleButtonClick">
-              Fetchdata and create
+              {{ $t("scanner.barcode_fetch_data") }}
             </Button>
           </ButtonGroup>
         </div>
