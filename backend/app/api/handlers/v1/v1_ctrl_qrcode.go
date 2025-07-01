@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"image/png"
 	"io"
 	"net/http"
@@ -12,6 +13,7 @@ import (
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/adapters"
 	"github.com/yeqown/go-qrcode/v2"
 	"github.com/yeqown/go-qrcode/writer/standard"
@@ -192,7 +194,7 @@ type BARCODESPIDER_COMResponse struct {
 //	@Success	200		{object}	repo.ItemCreate
 //	@Router		/v1/getproductfromean [GET]
 //	@Security	Bearer
-func (ctrl *V1Controller) HandleProductSearchEAN() errchain.HandlerFunc {
+func (ctrl *V1Controller) HandleProductSearchEAN(conf config.BarcodeAPIConf) errchain.HandlerFunc {
 	type query struct {
 		// 4,296 characters is the maximum length of a QR code
 		EAN string `schema:"productEAN" validate:"required,max=4296"`
@@ -267,8 +269,13 @@ func (ctrl *V1Controller) HandleProductSearchEAN() errchain.HandlerFunc {
 			log.Error().Msg("Can not retrieve product from upcitemdb.com" + err.Error())
 		}
 
-		// Barcode spider: Freetoken: 43866b1fa5d558a2bd12
-		barcodespider := func(iEan string) ([]BarcodeProduct, error) {
+		// Barcode spider implementation
+		barcodespider := func(tokenAPI string, iEan string) ([]BarcodeProduct, error) {
+
+			if len(tokenAPI) == 0 {
+				return nil, errors.New("no api token configured for barcodespider")
+			}
+
 			req, err := http.NewRequest(
 				"GET", "https://api.barcodespider.com/v1/lookup?upc="+iEan, nil)
 
@@ -276,7 +283,7 @@ func (ctrl *V1Controller) HandleProductSearchEAN() errchain.HandlerFunc {
 				return nil, err
 			}
 
-			req.Header.Add("token", "43866b1fa5d558a2bd12")
+			req.Header.Add("token", tokenAPI)
 
 			client := &http.Client{}
 
@@ -315,9 +322,9 @@ func (ctrl *V1Controller) HandleProductSearchEAN() errchain.HandlerFunc {
 			return res, nil
 		}
 
-		ps2, err := barcodespider(q.EAN)
+		ps2, err := barcodespider(conf.TokenBarcodespider, q.EAN)
 		if err != nil {
-			log.Error().Msg("Can not retrieve product from barcodespider.com" + err.Error())
+			log.Error().Msg("Can not retrieve product from barcodespider.com: " + err.Error())
 		}
 
 		// Merge everything.
