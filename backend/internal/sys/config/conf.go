@@ -28,6 +28,7 @@ type Config struct {
 	Debug      DebugConf      `yaml:"debug"`
 	Options    Options        `yaml:"options"`
 	LabelMaker LabelMakerConf `yaml:"labelmaker"`
+	Barcode    BarcodeAPIConf `yaml:"barcode"`
 }
 
 type Options struct {
@@ -61,6 +62,10 @@ type LabelMakerConf struct {
 	PrintCommand          *string `yaml:"string"`
 	AdditionalInformation *string `yaml:"string"`
 	DynamicLength         bool    `yaml:"bool"      conf:"default:true"`
+}
+
+type BarcodeAPIConf struct {
+	TokenBarcodespider string `yaml:"token_barcodespider"`
 }
 
 // New parses the CLI/Config file and returns a Config struct. If the file argument is an empty string, the
