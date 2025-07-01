@@ -201,10 +201,12 @@
                 console.info("Barcode detected");
                 detectedBarcode.value = result.getText();
                 break;
+              
+              default:
+                handleError(err);
             }
 
             loading.value = false;
-            handleError(err);
           }
         }
         if (err && !(err instanceof NotFoundException)) {
