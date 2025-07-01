@@ -204,7 +204,7 @@
         "follow_dev": "Følg utvikleren",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Versjon: { version } Bygg: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Versjon: { version } Bygg: { build } '</a>'"
         },
         "github": "GitHub-prosjekt",
         "insured": "Forsikret",

@@ -196,7 +196,7 @@
         "follow_dev": "Śledź dewelopera",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Wersja: { version } Build: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"'>' Wersja: { version } Build: { build } '</a>'"
         },
         "github": "Projekt na GitHubie",
         "insured": "Ubezpieczony",
