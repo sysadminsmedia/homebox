@@ -36,48 +36,8 @@ permissions:
   attestations: write   # Required for signing and attestation (if needed)
 
 jobs:
-  check-weblate:
-    runs-on: ubuntu-latest
-    outputs:
-      should-skip: ${{ steps.check.outputs.should-skip }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Check if only weblate changes
-        id: check
-        run: |
-          # Get the list of changed files in the push
-          if [ "${{ github.event_name }}" = "push" ]; then
-            # For push events, check files changed since the previous commit
-            CHANGED_FILES=$(git diff --name-only ${{ github.event.before }}..${{ github.event.after }})
-          else
-            # For other events, don't skip
-            echo "should-skip=false" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          
-          echo "Changed files:"
-          echo "$CHANGED_FILES"
-          
-          # Check if all changed files are only translation files
-          NON_TRANSLATION_FILES=$(echo "$CHANGED_FILES" | grep -v '^frontend/locales/' || true)
-          
-          # Check if the actor is weblate OR if only translation files were changed
-          if [ "${{ github.actor }}" = "weblate" ] || [ -z "$NON_TRANSLATION_FILES" ]; then
-            echo "should-skip=true" >> $GITHUB_OUTPUT
-            echo "Skipping build: weblate user or only translation files changed"
-          else
-            echo "should-skip=false" >> $GITHUB_OUTPUT
-            echo "Proceeding with build: non-translation changes detected"
-          fi
-
   build:
     runs-on: ubuntu-latest
-    needs: check-weblate
-    if: needs.check-weblate.outputs.should-skip != 'true'
     permissions:
       contents: read     # Allows access to repository contents (read-only)
       packages: write    # Allows pushing to GHCR
@@ -172,7 +132,7 @@ jobs:
           retention-days: 1
 
   merge:
-    if: github.event_name != 'pull_request' && needs.check-weblate.outputs.should-skip != 'true'
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       contents: read     # Allows access to repository contents (read-only)
@@ -180,7 +140,6 @@ jobs:
       id-token: write    # Allows identity token write access for authentication
       attestations: write  # Needed for signing and attestation (if required)
     needs:
-      - check-weblate
       - build
 
     steps:
