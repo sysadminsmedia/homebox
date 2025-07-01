@@ -25,6 +25,7 @@
   const codeReader = new BrowserMultiFormatReader();
   const errorMessage = ref<string | null>(null);
   const detectedBarcode = ref<string | null>(null);
+  const detectedBarcodeType = ref<string | null>();
   const api = useUserApi();
 
   const handleError = (error: unknown) => {
@@ -122,13 +123,16 @@
             navigateTo(sanitizedPath);
           } catch (err) {
             // Check if it's a barcode for a new element
-            switch (result.getBarcodeFormat()) {
+            const bcfmt = result.getBarcodeFormat();
+
+            switch (bcfmt) {
               case BarcodeFormat.EAN_13:
               case BarcodeFormat.UPC_A:
               case BarcodeFormat.UPC_E:
               case BarcodeFormat.UPC_EAN_EXTENSION:
                 console.info("Barcode detected");
                 detectedBarcode.value = result.getText();
+                detectedBarcodeType.value = BarcodeFormat[bcfmt].replaceAll("_","-");
                 break;
               
               default:
@@ -169,7 +173,7 @@
         role="alert"
       >
         <MdiAlertCircleOutline class="text-default" />
-        <span class="text-sm font-medium">Product barcode detected: {{ detectedBarcode }}</span>
+        <span class="text-sm font-medium">{{ detectedBarcodeType }} product barcode detected: {{ detectedBarcode }} </span>
 
         <ButtonGroup>
           <Button :disabled="loading" type="submit" @click="handleButtonClick">Fetchdata and create</Button>
