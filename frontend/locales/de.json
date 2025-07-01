@@ -113,8 +113,8 @@
                     "rotate_process_failed": "Das gedrehte Bild konnte nicht verarbeitet werden",
                     "some_photos_failed": "{Anzahl, Plural, =0 {Keine Fotos zum Hochladen.} =1 {1 Foto konnte nicht hochgeladen werden.} andere {Einige Fotos konnten nicht hochgeladen werden.}}",
                     "upload_failed": "Hochladen des Bildes Fehlgeschlagen: { photoName }",
-                    "upload_success": "{Anzahl, Plural, =0 {Keine Fotos hochgeladen.} =1 {Foto erfolgreich hochgeladen.} andere {Alle Fotos erfolgreich hochgeladen.}}",
-                    "uploading_photos": "{Anzahl, Plural, =0 {Keine Fotos zum Hochladen} =1 {1 Foto wird hochgeladen...} andere {{Anzahl} Fotos werden hochgeladen...}}"
+                    "upload_success": "{Anzahl, plural, =0 {Keine Fotos hochgeladen.} =1 {Foto erfolgreich hochgeladen.} other {Alle Fotos erfolgreich hochgeladen.}}",
+                    "uploading_photos": "{Anzahl, plural, =0 {Keine Fotos zum Hochladen} =1 {1 Foto wird hochgeladen...} other {{Anzahl} Fotos werden hochgeladen...}}"
                 },
                 "upload_photos": "Upload Bilder",
                 "uploaded": "Bild hochgeladen"

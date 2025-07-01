@@ -114,7 +114,7 @@
                     "rotate_process_failed": "处理已旋转图片失败",
                     "some_photos_failed": "{count, plural, =0 {无照片上传.} =1 {一张照片上传失败.} other {多张照片上传失败.}}",
                     "upload_failed": "上传照片失败：{ photoName }",
-                    "upload_success": "{count, plural, = 0 {未上传照片} = 1 {照片上传成功} other {所有照片上传成功}}",
+                    "upload_success": "{count, plural, =0 {未上传照片} =1 {照片上传成功} other {所有照片上传成功}}",
                     "uploading_photos": ""
                 },
                 "upload_photos": "上传照片",

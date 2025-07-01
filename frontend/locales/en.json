@@ -115,15 +115,15 @@
                     "some_photos_failed": "{count, plural, =0 {No photos to upload.} =1 {1 photo failed to upload.} other {Some photos failed to upload.}}",
                     "upload_failed": "Failed to upload photo: { photoName }",
                     "upload_success": "{count, plural, =0 {No photos uploaded.} =1 {Photo uploaded successfully.} other {All photos uploaded successfully.}}",
-                    "uploading_photos": "{count, plural, =0 {No photos to upload} =1 {Uploading 1 photo...} other {Uploading {count} photos...}}"
+                    "uploading_photos": "{count, plural, =0 {No photos to upload} =1 {Uploading 1 photo…} other {Uploading {count} photos…}}"
                 },
                 "upload_photos": "Upload Photos",
                 "uploaded": "Uploaded Photo"
             },
             "selector": {
                 "no_results": "No Results Found",
-                "placeholder": "Select...",
-                "search_placeholder": "Type to search..."
+                "placeholder": "Select…",
+                "search_placeholder": "Type to search…"
             },
             "view": {
                 "selectable": {
@@ -176,7 +176,7 @@
                 "select_location": "Select a Location"
             },
             "tree": {
-                "no_locations": "No locations available. Add new locations through the\n `<`span class=\"link-primary\"`>`Create`<`/span`>` button on the navigation bar."
+                "no_locations": "No locations available. Add new locations through the\n '<span class=\"link-primary\">'Create'</span>' button on the navigation bar."
             }
         },
         "quick_menu": {
@@ -204,14 +204,14 @@
         "follow_dev": "Follow the Developer",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v'{ version }\" target=\"_blank\"> Version: { version } Build: { build } '</a>'"
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\">' Version: { version } Build: { build } '</a>'"
         },
         "github": "GitHub Project",
         "insured": "Insured",
         "items": "Items",
         "join_discord": "Join the Discord",
         "labels": "Labels",
-        "loading": "Loading...",
+        "loading": "Loading…",
         "locations": "Locations",
         "maintenance": "Maintenance",
         "name": "Name",

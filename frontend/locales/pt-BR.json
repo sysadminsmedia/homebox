@@ -168,7 +168,7 @@
                 "select_location": "Selecionar um Local"
             },
             "tree": {
-                "no_locations": "Não há locais disponíveis. Adicione novos locais\n através do botão \"Criar\" na barra de navegação."
+                "no_locations": "Não há locais disponíveis. Adicione novos locais\n através do botão '<span class=\"link-primary\">'Criar'</span>' na barra de navegação."
             }
         },
         "quick_menu": {
