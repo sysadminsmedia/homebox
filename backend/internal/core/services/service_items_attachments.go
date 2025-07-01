@@ -10,8 +10,8 @@ import (
 	"io"
 )
 
-func (svc *ItemService) AttachmentPath(ctx context.Context, attachmentID uuid.UUID) (*ent.Attachment, error) {
-	attachment, err := svc.repo.Attachments.Get(ctx, attachmentID)
+func (svc *ItemService) AttachmentPath(ctx context.Context, gid uuid.UUID, attachmentID uuid.UUID) (*ent.Attachment, error) {
+	attachment, err := svc.repo.Attachments.Get(ctx, gid, attachmentID)
 	if err != nil {
 		return nil, err
 	}
@@ -19,16 +19,16 @@ func (svc *ItemService) AttachmentPath(ctx context.Context, attachmentID uuid.UU
 	return attachment, nil
 }
 
-func (svc *ItemService) AttachmentUpdate(ctx Context, itemID uuid.UUID, data *repo.ItemAttachmentUpdate) (repo.ItemOut, error) {
+func (svc *ItemService) AttachmentUpdate(ctx Context, gid uuid.UUID, itemID uuid.UUID, data *repo.ItemAttachmentUpdate) (repo.ItemOut, error) {
 	// Update Attachment
-	attachment, err := svc.repo.Attachments.Update(ctx, data.ID, data)
+	attachment, err := svc.repo.Attachments.Update(ctx, gid, data.ID, data)
 	if err != nil {
 		return repo.ItemOut{}, err
 	}
 
 	// Update Document
 	attDoc := attachment
-	_, err = svc.repo.Attachments.Rename(ctx, attDoc.ID, data.Title)
+	_, err = svc.repo.Attachments.Rename(ctx, gid, attDoc.ID, data.Title)
 	if err != nil {
 		return repo.ItemOut{}, err
 	}
@@ -57,7 +57,7 @@ func (svc *ItemService) AttachmentAdd(ctx Context, itemID uuid.UUID, filename st
 
 func (svc *ItemService) AttachmentDelete(ctx context.Context, gid uuid.UUID, id uuid.UUID, attachmentID uuid.UUID) error {
 	// Delete the attachment
-	err := svc.repo.Attachments.Delete(ctx, attachmentID)
+	err := svc.repo.Attachments.Delete(ctx, gid, id, attachmentID)
 	if err != nil {
 		return err
 	}

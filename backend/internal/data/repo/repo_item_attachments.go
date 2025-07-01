@@ -256,16 +256,30 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 	return attachmentDb, nil
 }
 
-func (r *AttachmentRepo) Get(ctx context.Context, id uuid.UUID) (*ent.Attachment, error) {
+func (r *AttachmentRepo) Get(ctx context.Context, gid uuid.UUID, id uuid.UUID) (*ent.Attachment, error) {
 	return r.db.Attachment.
 		Query().
-		Where(attachment.ID(id)).
+		Where(
+			attachment.ID(id),
+			attachment.HasItemWith(item.HasGroupWith(group.ID(gid))),
+		).
 		WithItem().
 		WithThumbnail().
 		Only(ctx)
 }
 
-func (r *AttachmentRepo) Update(ctx context.Context, id uuid.UUID, data *ItemAttachmentUpdate) (*ent.Attachment, error) {
+func (r *AttachmentRepo) Update(ctx context.Context, gid uuid.UUID, id uuid.UUID, data *ItemAttachmentUpdate) (*ent.Attachment, error) {
+	// Validate that the attachment belongs to the specified group
+	_, err := r.db.Attachment.Query().
+		Where(
+			attachment.ID(id),
+			attachment.HasItemWith(item.HasGroupWith(group.ID(gid))),
+		).
+		Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	// TODO: execute within Tx
 	typ := attachment.Type(data.Type)
 
@@ -301,13 +315,19 @@ func (r *AttachmentRepo) Update(ctx context.Context, id uuid.UUID, data *ItemAtt
 		return nil, err
 	}
 
-	return r.Get(ctx, updatedAttachment.ID)
+	return r.Get(ctx, gid, updatedAttachment.ID)
 }
 
-func (r *AttachmentRepo) Delete(ctx context.Context, id uuid.UUID) error {
-	doc, error := r.db.Attachment.Get(ctx, id)
-	if error != nil {
-		return error
+func (r *AttachmentRepo) Delete(ctx context.Context, gid uuid.UUID, itemId uuid.UUID, id uuid.UUID) error {
+	// Validate that the attachment belongs to the specified group
+	doc, err := r.db.Attachment.Query().
+		Where(
+			attachment.ID(id),
+			attachment.HasItemWith(item.HasGroupWith(group.ID(gid))),
+		).
+		Only(ctx)
+	if err != nil {
+		return err
 	}
 
 	all, err := r.db.Attachment.Query().Where(attachment.Path(doc.Path)).All(ctx)
@@ -358,7 +378,18 @@ func (r *AttachmentRepo) Delete(ctx context.Context, id uuid.UUID) error {
 	return r.db.Attachment.DeleteOneID(id).Exec(ctx)
 }
 
-func (r *AttachmentRepo) Rename(ctx context.Context, id uuid.UUID, title string) (*ent.Attachment, error) {
+func (r *AttachmentRepo) Rename(ctx context.Context, gid uuid.UUID, id uuid.UUID, title string) (*ent.Attachment, error) {
+	// Validate that the attachment belongs to the specified group
+	_, err := r.db.Attachment.Query().
+		Where(
+			attachment.ID(id),
+			attachment.HasItemWith(item.HasGroupWith(group.ID(gid))),
+		).
+		Only(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	return r.db.Attachment.UpdateOneID(id).SetTitle(title).Save(ctx)
 }
 

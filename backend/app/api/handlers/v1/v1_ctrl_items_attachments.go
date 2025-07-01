@@ -175,7 +175,7 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 	ctx := services.NewContext(r.Context())
 	switch r.Method {
 	case http.MethodGet:
-		doc, err := ctrl.svc.Items.AttachmentPath(r.Context(), attachmentID)
+		doc, err := ctrl.svc.Items.AttachmentPath(r.Context(), ctx.GID, attachmentID)
 		if err != nil {
 			log.Err(err).Msg("failed to get attachment path")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
@@ -230,9 +230,9 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 		}
 
 		attachment.ID = attachmentID
-		val, err := ctrl.svc.Items.AttachmentUpdate(ctx, ID, &attachment)
+		val, err := ctrl.svc.Items.AttachmentUpdate(ctx, ctx.GID, ID, &attachment)
 		if err != nil {
-			log.Err(err).Msg("failed to delete attachment")
+			log.Err(err).Msg("failed to update attachment")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
