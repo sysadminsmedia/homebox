@@ -71,7 +71,7 @@
                 "browser_print": "Tlač z prehliadača",
                 "confirm_description": "Naozaj chcete vytlačiť tento štítok?",
                 "download": "Stiahnuť štítok",
-                "print": "Vytlačte štítok",
+                "print": "Vytlačiť štítok",
                 "server_print": "Tlač na serveri",
                 "titles": "Štítky",
                 "toast": {
@@ -115,15 +115,15 @@
                     "some_photos_failed": "{count, plural, =0 {Žiadne fotografie na nahranie.} =1 {1 fotografiu sa nepodarilo nahrať.} other {Niektoré fotografie sa nepodarilo nahrať.}}",
                     "upload_failed": "Nepodarilo sa nahrať fotografiu: { photoName }",
                     "upload_success": "{count, plural, =0 {Žiadne fotografie neboli nahrané.} =1 {Fotografia bola úspešne nahraná.} other {Všetky fotografie boli úspešne nahrané.}}",
-                    "uploading_photos": "{count, plural, =0 {Žiadne fotografie na nahranie} =1 {Nahrávam 1 fotografiu...} other {Nahrávam {count} fotografií...}}"
+                    "uploading_photos": "{count, plural, =0 {Žiadne fotografie na nahratie} =1 {Nahrávam 1 fotografiu…} other {Nahrávam {count} fotografií…}}"
                 },
                 "upload_photos": "Nahrať fotografie",
                 "uploaded": "Nahraná fotografia"
             },
             "selector": {
                 "no_results": "Nenašli sa žiadne výsledky",
-                "placeholder": "Vybrať...",
-                "search_placeholder": "Zadajte, čo chcete vyhľadať..."
+                "placeholder": "Vybrať…",
+                "search_placeholder": "Zadajte, čo chcete vyhľadať…"
             },
             "view": {
                 "selectable": {
@@ -155,7 +155,7 @@
                 }
             },
             "selector": {
-                "select_labels": "Výber značiek"
+                "select_labels": "Vyberte štítky"
             }
         },
         "location": {
@@ -176,7 +176,7 @@
                 "select_location": "Vyberte miesto"
             },
             "tree": {
-                "no_locations": "Nie sú k dispozícii žiadne miesta. Pridajte nové miesta cez\n `<`span class=\"link-primary\"`>`Vytvoriť`<`/span`>` na navigačnom paneli."
+                "no_locations": "Nie sú k dispozícii žiadne miesta. Pridajte nové miesta pomocou\n tlačidla '<span class=\"link-primary\">'Vytvoriť'</span>' na lište navigácie."
             }
         },
         "quick_menu": {
@@ -189,7 +189,7 @@
         "archived": "Archivované",
         "build": "Zostava: { build }",
         "cancel": "Zrušiť",
-        "confirm": "Potvrďte",
+        "confirm": "Potvrdiť",
         "create": "Vytvoriť",
         "create_and_add": "Vytvoriť a pridať ďalšie",
         "create_subitem": "Vytvoriť podpoložku",
@@ -204,14 +204,14 @@
         "follow_dev": "Sledujte vývojára",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v'{ version }\" target=\"_blank\"> Verzia: { version } Zostavenie: { build } '</a>'"
+            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\">' Verzia: { version } Zostavenie: { build } '</a>'"
         },
         "github": "Projekt GitHub",
         "insured": "Poistené",
         "items": "Položky",
         "join_discord": "Pripojte sa k Discordu",
         "labels": "Štítky",
-        "loading": "Načítam...",
+        "loading": "Načítam…",
         "locations": "Miesta",
         "maintenance": "Údržba",
         "name": "Názov",
@@ -265,7 +265,7 @@
         "add": "Pridať",
         "advanced": "Pokročilé",
         "archived": "Archivované",
-        "asset_id": "ID majetku",
+        "asset_id": "ID položky",
         "associated_with_multiple": "Toto ID aktíva je priradené k viacerým položkám",
         "attachment": "Príloha",
         "attachments": "Prílohy",
@@ -292,7 +292,7 @@
         "field_value": "Hodnota poľa",
         "first": "Prvý",
         "include_archive": "Zahrnúť archivované položky",
-        "insured": "Poistený",
+        "insured": "Poistené",
         "invalid_asset_id": "Neplatné ID aktíva",
         "last": "Posledný",
         "lifetime_warranty": "Doživotná záruka",
@@ -302,7 +302,7 @@
         "manufacturer": "Výrobca",
         "model_number": "Číslo modelu",
         "name": "Názov",
-        "negate_labels": "Negovať vybrané označenia",
+        "negate_labels": "Prehodiť vybrané štítky",
         "next_page": "Ďalšia strana",
         "no_attachments": "Neboli nájdené žiadne prílohy.",
         "no_results": "Nenašli sa žiadne položky",
@@ -321,11 +321,11 @@
         "purchase_price": "Kúpna cena",
         "purchased_from": "Zakúpené od",
         "quantity": "Množstvo",
-        "query_id": "Dopyt na ID číslo majetku: { id }",
+        "query_id": "Dopyt na ID položky: { id }",
         "receipt": "Účtenka",
         "receipts": "Účtenky",
         "reset_search": "Obnoviť vyhľadávanie",
-        "results": "{ total } Výsledky",
+        "results": "{ total } výsledkov",
         "select_field": "Vyberte pole",
         "serial_number": "Sériové číslo",
         "show_advanced_view_options": "Zobraziť rozšírené možnosti zobrazenia",
@@ -334,9 +334,9 @@
         "sold_price": "Predajná cena",
         "sold_to": "Predané komu",
         "sync_child_locations": "Synchronizovať miesta podriadených položiek",
-        "tip_1": "Filtre umiestnení a štítkov používajú operáciu 'OR'. Ak je vybratých viac ako jeden,\n bude vybraný iba jeden potrebné na zápas.",
-        "tip_2": "Vyhľadávania s predponou # budú dotazovať na identifikátor diela (napríklad #000-001)",
-        "tip_3": "Filtre poľa používajú operáciu 'OR' . Ak je vybratých viac ako jeden, bude potrebný iba jeden pre a\n zápas.",
+        "tip_1": "Filtre miest a štítkov používajú operáciu „OR“. Ak vyberiete viac ako jeden, pre zhodu bude\n vyžadovaný iba jeden z nich.",
+        "tip_2": "Vyhľadávanie s predponou # sa dotazuje na ID dátového zdroja (napríklad '#000-001')",
+        "tip_3": "Filtre polí používajú operáciu „OR“. Ak vyberiete viac ako jeden, pre zhodu bude\n vyžadovaný iba jeden z nich.",
         "tips": "Tipy",
         "tips_sub": "Tipy na vyhľadávanie",
         "toast": {
@@ -366,7 +366,7 @@
             "sync_child_location": "Vybraná položka nastavuje pre podriadené položky miesto podľa svojho. Miesto bolo aktualizované."
         },
         "updated_at": "Čas aktualizácie",
-        "warranty": "Záruka",
+        "warranty": "Záručný list",
         "warranty_details": "Podrobnosti o záruke",
         "warranty_expires": "Záruka vyprší"
     },
@@ -419,7 +419,7 @@
     "languages.ro-RO": "Rumunsko",
     "languages.sk-SK": "Slovenčina",
     "locations": {
-        "child_locations": "Umiestnenie podriadených",
+        "child_locations": "Podriadené miesta",
         "collapse_tree": "Zbaliť strom",
         "expand_tree": "Rozbaliť strom",
         "location_items_delete_confirm": "Naozaj chcete odstrániť toto miesto a všetky jeho položky? Túto akciu nie je možné odvolať.",
@@ -521,7 +521,7 @@
             "notifier_test_success": "Test oznamovača bol úspešný.",
             "password_changed": "Heslo bolo úspešne zmenené."
         },
-        "update_group": "aktualizačná skupina",
+        "update_group": "Aktualizovať skupinu",
         "update_language": "Aktualizovať súbor jazyka",
         "url": "URL",
         "user_profile": "Profil používateľa",
@@ -562,7 +562,7 @@
         "error": "Počas skenovania sa vyskytla chyba",
         "invalid_url": "Neplatná adresa URL čiarového kódu",
         "no_sources": "Nie sú k dispozícii žiadne zdroje videa",
-        "permission_denied": "",
+        "permission_denied": "Povolenia na použitie kamery sú odoprené. Povoľte, prosím, prístup ku kamere v nastaveniach prehliadača",
         "select_video_source": "Vyberte zdroj videa",
         "title": "Skener",
         "unsupported": "Media Stream API nie je podporované bez protokolu HTTPS"
@@ -575,7 +575,7 @@
             "create_missing_thumbnails_confirm": "Naozaj chcete vytvoriť chýbajúce náhľady? Môže to chvíľku trvať a akciu nie je možné pozastaviť.",
             "ensure_ids": "Zabezpečenie identifikátorov aktív",
             "ensure_ids_button": "Zabezpečenie identifikátorov aktív",
-            "ensure_ids_confirm": "",
+            "ensure_ids_confirm": "Naozaj chcete zaistiť, aby všetky aktíva mali ID? To môže chvíľu trvať a akcia sa nedá odvolať.",
             "ensure_ids_sub": "Zabezpečí, aby všetky položky vo vašom inventári mali platné pole asset_id. To sa dosiahne tak, že sa v databáze zistí najvyššie aktuálne pole asset_id a na každú položku, ktorá nemá nastavené pole asset_id sa použije ďalšia hodnota. Toto sa vykonáva v poradí podľa poľa created_at.",
             "ensure_import_refs": "Zabezpečiť import referencií",
             "ensure_import_refs_button": "Zabezpečiť import referencií",
@@ -598,7 +598,7 @@
             "import": "Importovať inventár",
             "import_button": "Importovať inventár",
             "import_ref_confirm": "Naozaj chcete, aby všetky aktíva mali import_ref? To môže chvíľu trvať a akciu nie je možné odvolať.",
-            "import_sub": "Importuje štandardný formát CSV pre Homebox. Bez '<code>'HB.import_ref'</code>' stĺpca to bude '<b>'nie'</b>' prepísať všetky existujúce položky vo vašom inventári, iba pridať nové položky. Riadky so '<code>'HB.import_ref'</code>' stĺpcom sa zlúčia do existujúcich položiek s rovnakým import_ref, ak taký existuje."
+            "import_sub": "Importuje štandardný formát CSV pre Homebox. Bez stĺpca '<code>'HB.import_ref'</code>'  '<b>'neprepisuje'</b>' žiadne existujúce položky vo vašom inventári, iba pridáva nové položky. Riadky so stĺpcom '<code>'HB.import_ref'</code>' sa zlúčia do existujúcich položiek s rovnakým import_ref, ak také existujú."
         },
         "import_export_sub": "Importujte a exportujte svoj inventár do a zo súboru CSV. To je užitočné pri migrácii inventára do novej inštancie Homeboxu.",
         "reports": "Správy",
