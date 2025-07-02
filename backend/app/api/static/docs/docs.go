@@ -196,7 +196,10 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/repo.ItemCreate"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.BarcodeProduct"
+                            }
                         }
                     }
                 }
@@ -2142,6 +2145,38 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "symbol": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.BarcodeProduct": {
+            "type": "object",
+            "properties": {
+                "barcode": {
+                    "type": "string"
+                },
+                "imageBase64": {
+                    "type": "string"
+                },
+                "imageURL": {
+                    "description": "TODO: add image attachement\nTODO: add asin?",
+                    "type": "string"
+                },
+                "item": {
+                    "$ref": "#/definitions/repo.ItemCreate"
+                },
+                "manufacturer": {
+                    "type": "string"
+                },
+                "modelNumber": {
+                    "description": "Identifications",
+                    "type": "string"
+                },
+                "notes": {
+                    "description": "Extras",
+                    "type": "string"
+                },
+                "search_engine_name": {
                     "type": "string"
                 }
             }
