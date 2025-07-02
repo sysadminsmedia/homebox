@@ -96,7 +96,7 @@ type BARCODESPIDER_COMResponse struct {
 //	@Success	200		{object}	[]repo.BarcodeProduct
 //	@Router		/v1/getproductfromean [GET]
 //	@Security	Bearer
-func (ctrl *V1Controller) HandleProductSearchFromEAN(conf config.BarcodeAPIConf) errchain.HandlerFunc {
+func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIConf) errchain.HandlerFunc {
 	type query struct {
 		// 4,296 characters is the maximum length of a QR code
 		EAN string `schema:"productEAN" validate:"required,max=4296"`
