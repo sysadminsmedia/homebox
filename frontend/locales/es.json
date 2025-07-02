@@ -571,7 +571,8 @@
         "actions": "Acciones de Inventario",
         "actions_set": {
             "create_missing_thumbnails": "Crear Miniaturas que Faltan",
-            "create_missing_thumbnails_button": "Crear miniaturas",
+            "create_missing_thumbnails_button": "Crear Miniaturas",
+            "create_missing_thumbnails_confirm": "¿Está seguro de que desea crear las miniaturas que faltan? Esto puede tardar un poco y no se puede pausar.",
             "ensure_ids": "Asegurar IDs de Activos",
             "ensure_ids_button": "Asignar ID a los artículos",
             "ensure_ids_confirm": "¿Estás seguro de que quieres asegurarte de que todos los activos tengan un ID? Esto puede tardar un tiempo y no puede deshacerse.",
