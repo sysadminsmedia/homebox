@@ -143,7 +143,7 @@
         },
         "label": {
             "create_modal": {
-                "label_color": "Color de la etiqueta",
+                "label_color": "Color de Etiqueta",
                 "label_description": "Descripción de la etiqueta",
                 "label_name": "Nombre de la Etiqueta",
                 "title": "Crear Etiqueta",
@@ -570,6 +570,8 @@
     "tools": {
         "actions": "Acciones de Inventario",
         "actions_set": {
+            "create_missing_thumbnails": "Crear Miniaturas que Faltan",
+            "create_missing_thumbnails_button": "Crear miniaturas",
             "ensure_ids": "Asegurar IDs de Activos",
             "ensure_ids_button": "Asignar ID a los artículos",
             "ensure_ids_confirm": "¿Estás seguro de que quieres asegurarte de que todos los activos tengan un ID? Esto puede tardar un tiempo y no puede deshacerse.",
