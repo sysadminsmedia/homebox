@@ -136,14 +136,15 @@
         },
         "label": {
             "create_modal": {
+                "label_color": "Etikettfärg",
                 "label_description": "Etikettbeskrivning",
                 "label_name": "Etikettnamm",
                 "title": "Skapa etikett",
                 "toast": {
-                    "already_creating": "",
-                    "create_failed": "",
-                    "create_success": "",
-                    "label_name_too_long": ""
+                    "already_creating": "Skapar redan en etikett",
+                    "create_failed": "Det gick inte att skapa etiketten",
+                    "create_success": "Etikett skapad",
+                    "label_name_too_long": "Etikettnamnet får inte vara längre än 50 tecken"
                 }
             },
             "selector": {

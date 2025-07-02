@@ -24,6 +24,13 @@
                 "new_version_available_link": "Haz click aquí para ver las notas de la versión"
             }
         },
+        "color_selector": {
+            "clear": "Borrar color",
+            "color": "Color",
+            "no_color": "Sin color",
+            "no_color_selected": "Ningún color seleccionado",
+            "randomize": "Aleatorizar color"
+        },
         "form": {
             "password": {
                 "toggle_show": "Alternar Visibilidad de la Contraseña"
@@ -136,6 +143,7 @@
         },
         "label": {
             "create_modal": {
+                "label_color": "Color de la etiqueta",
                 "label_description": "Descripción de la etiqueta",
                 "label_name": "Nombre de la Etiqueta",
                 "title": "Crear Etiqueta",
