@@ -115,7 +115,7 @@
                     "some_photos_failed": "{count, plural, =0 {无照片上传.} =1 {一张照片上传失败.} other {多张照片上传失败.}}",
                     "upload_failed": "上传照片失败：{ photoName }",
                     "upload_success": "{count, plural, =0 {未上传照片} =1 {照片上传成功} other {所有照片上传成功}}",
-                    "uploading_photos": "{count, plural, = 0 {照片未上传} = 1 {正在上传1张照片...} other {正在上传{count}张照片...}}"
+                    "uploading_photos": "{count, plural, = 0 {没有要上传的照片} = 1 {正在上传1张照片...} other {正在上传{count}张照片...}}"
                 },
                 "upload_photos": "上传照片",
                 "uploaded": "照片已上传"
@@ -340,7 +340,7 @@
         "tips": "建议",
         "tips_sub": "搜索提示",
         "toast": {
-            "asset_not_found": "",
+            "asset_not_found": "未找到资产！",
             "attachment_deleted": "",
             "attachment_updated": "",
             "attachment_uploaded": "",
