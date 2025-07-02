@@ -341,9 +341,9 @@
         "tips_sub": "搜索提示",
         "toast": {
             "asset_not_found": "未找到资产",
-            "attachment_deleted": "附件删除成功",
-            "attachment_updated": "",
-            "attachment_uploaded": "",
+            "attachment_deleted": "附件已删除",
+            "attachment_updated": "附件已更新",
+            "attachment_uploaded": "没有上传附件",
             "child_items_location_no_longer_synced": "子项目的位置将不再与此项目同步。",
             "child_items_location_synced": "子项目的位置已与此项目同步",
             "child_location_desync": "更改位置将从父位置取消同步",
