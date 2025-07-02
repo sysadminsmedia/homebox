@@ -115,15 +115,15 @@
                     "some_photos_failed": "{count, plural, =0 {No hay fotos para subir.} =1 {1 foto no se ha podido subir.} other {Algunas fotos no se han podido subir.}}",
                     "upload_failed": "Error al subir la foto: { photoName }",
                     "upload_success": "{count, plural, =0 {No hay fotos subidas.} =1 {Foto subida con éxito.} other {Todas las fotos subidas con éxito.}}",
-                    "uploading_photos": "{count, plural, =0 {No hay fotos para subir} =1 {Subiendo 1 foto...} other {Subiendo {count} fotos...}}"
+                    "uploading_photos": "{count, plural, =0 {No hay fotos para subir} =1 {Subiendo 1 foto…} other {Subiendo {count} fotos…}}"
                 },
                 "upload_photos": "Fotos Subidas",
                 "uploaded": "Foto Subida"
             },
             "selector": {
                 "no_results": "Resultados No Encontrados",
-                "placeholder": "Seleccionar...",
-                "search_placeholder": "Escribe para buscar..."
+                "placeholder": "Seleccionar…",
+                "search_placeholder": "Escribe para buscar…"
             },
             "view": {
                 "selectable": {
@@ -176,7 +176,7 @@
                 "select_location": "Elegir una Ubicación"
             },
             "tree": {
-                "no_locations": "No hay ubicaciones disponibles. Añade nuevas ubicaciones mediante el botón de\n`<`span class=\"link-primary\"`>`Crear`<`/span`>` en la barra de navegación."
+                "no_locations": "No hay ubicaciones disponibles. Añade nuevas ubicaciones mediante el botón de\n'<span class=\"link-primary\">'Crear'</span>' en la barra de navegación."
             }
         },
         "quick_menu": {
@@ -211,7 +211,7 @@
         "items": "Elementos",
         "join_discord": "Únete al Discord",
         "labels": "Etiquetas",
-        "loading": "Cargando...",
+        "loading": "Cargando…",
         "locations": "Ubicaciones",
         "maintenance": "Mantenimiento",
         "name": "Nombre",
@@ -572,7 +572,8 @@
         "actions_set": {
             "create_missing_thumbnails": "Crear Miniaturas que Faltan",
             "create_missing_thumbnails_button": "Crear Miniaturas",
-            "create_missing_thumbnails_confirm": "¿Está seguro de que desea crear las miniaturas que faltan? Esto puede tardar un poco y no se puede pausar.",
+            "create_missing_thumbnails_confirm": "¿Estás seguro de que deseas crear las miniaturas que faltan? Esto puede tardar un poco y no se puede pausar.",
+            "create_missing_thumbnails_sub": "Crea miniaturas para todos los archivos adjuntos compatibles con la configuración actual. Esto es útil para los adjuntos que se subieron antes de la versión v0.20.0 de Homebox. Esto no sobreescribirá las miniaturas existentes, sólo creará nuevas para los adjuntos que no tienen una miniatura. Ten en cuenta que las miniaturas se crean en segundo plano y pueden tardar un poco en completarse.",
             "ensure_ids": "Asegurar IDs de Activos",
             "ensure_ids_button": "Asignar ID a los artículos",
             "ensure_ids_confirm": "¿Estás seguro de que quieres asegurarte de que todos los activos tengan un ID? Esto puede tardar un tiempo y no puede deshacerse.",
@@ -613,6 +614,7 @@
         "reports_sub": "Genera diferentes informes para tu inventario.",
         "toast": {
             "asset_success": "Se han actualizado { results } activos.",
+            "failed_create_missing_thumbnails": "No se han podido crear las miniaturas que faltaban.",
             "failed_ensure_ids": "Error al asegurar los ID de los activos.",
             "failed_ensure_import_refs": "Error al asegurar las ref. de importación.",
             "failed_set_primary_photos": "No se han podido establecer las fotos principales.",
