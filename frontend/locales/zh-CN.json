@@ -340,8 +340,8 @@
         "tips": "建议",
         "tips_sub": "搜索提示",
         "toast": {
-            "asset_not_found": "未找到资产！",
-            "attachment_deleted": "",
+            "asset_not_found": "未找到资产",
+            "attachment_deleted": "附件删除成功",
             "attachment_updated": "",
             "attachment_uploaded": "",
             "child_items_location_no_longer_synced": "子项目的位置将不再与此项目同步。",
