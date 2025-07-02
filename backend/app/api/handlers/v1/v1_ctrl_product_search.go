@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -102,21 +103,13 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 		EAN string `schema:"productEAN" validate:"required,max=4296"`
 	}
 
-	/*fn := func(r *http.Request, ID uuid.UUID) (repo.ItemOut, error) {
-		auth := services.NewContext(r.Context())
-
-		return ctrl.repo.Items.GetOneByGroup(auth, auth.GID, ID)
-	}
-
-	return adapters.CommandID("id", fn, http.StatusOK)*/
-
 	return func(w http.ResponseWriter, r *http.Request) error {
 		q, err := adapters.DecodeQuery[query](r)
 		if err != nil {
 			return err
 		}
 
-		log.Info().Msg("========================" + q.EAN)
+		log.Info().Msg("Processing barcode lookup request on: " + q.EAN)
 
 		// Search on UPCITEMDB
 		var products []repo.BarcodeProduct
@@ -130,12 +123,18 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 			if err != nil {
 				return nil, err
 			}
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusOK {
+				return nil, fmt.Errorf("API returned status code: %d", resp.StatusCode)
+			}
 
 			// We Read the response body on the line below.
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
 				return nil, err
 			}
+
 			// Convert the body to type string
 			sb := string(body)
 			log.Info().Msg("Response: " + sb)
@@ -192,12 +191,14 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 			if err != nil {
 				return nil, err
 			}
+			defer resp.Body.Close()
 
 			// We Read the response body on the line below.
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
 				return nil, err
 			}
+
 			// Convert the body to type string
 			sb := string(body)
 			log.Info().Msg("Response: " + sb)
@@ -248,10 +249,16 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 
 			defer res.Body.Close()
 
+			// Validate response
+			if res.StatusCode != http.StatusOK {
+				continue
+			}
+
 			// Read data of image
 			bytes, err := io.ReadAll(res.Body)
 			if err != nil {
 				log.Warn().Msg(err.Error())
+				continue
 			}
 
 			// Convert to Base64
@@ -267,6 +274,8 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 				base64Encoding += "data:image/jpeg;base64,"
 			case "image/png":
 				base64Encoding += "data:image/png;base64,"
+			default:
+				continue
 			}
 
 			// Append the base64 encoded output
