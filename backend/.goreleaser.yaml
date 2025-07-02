@@ -31,9 +31,6 @@ builds:
         {{- else if eq .Arch "arm" }}nodynamic
         {{- else if eq .Arch "386" }}nodynamic
         {{ end }}
-sboms:
-  - disable: false
-    artifacts: any
 
 signs:
   - cmd: cosign
