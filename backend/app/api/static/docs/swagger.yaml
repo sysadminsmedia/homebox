@@ -646,6 +646,27 @@ definitions:
     - TypeNumber
     - TypeBoolean
     - TypeTime
+  repo.BarcodeProduct:
+    properties:
+      barcode:
+        type: string
+      imageBase64:
+        type: string
+      imageURL:
+        type: string
+      item:
+        $ref: '#/definitions/repo.ItemCreate'
+      manufacturer:
+        type: string
+      modelNumber:
+        description: Identifications
+        type: string
+      notes:
+        description: Extras
+        type: string
+      search_engine_name:
+        type: string
+    type: object
   repo.Group:
     properties:
       createdAt:
@@ -1564,7 +1585,9 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/repo.ItemCreate'
+            items:
+              $ref: '#/definitions/repo.BarcodeProduct'
+            type: array
       security:
       - Bearer: []
       summary: Search EAN from Barcode
