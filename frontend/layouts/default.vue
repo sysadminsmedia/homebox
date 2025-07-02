@@ -10,6 +10,7 @@
     <ItemCreateModal />
     <LabelCreateModal />
     <LocationCreateModal />
+    <ItemBarcodeModal />
     <AppQuickMenuModal :actions="quickMenuActions" />
     <SidebarProvider :default-open="sidebarState">
       <Sidebar collapsible="icon">

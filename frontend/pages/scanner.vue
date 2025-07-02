@@ -36,48 +36,8 @@
   };
 
   const handleButtonClick = () => {
-    console.log("Button clicked!");
-
-    getQRCodeUrl();
-    // console.log("Value::: ", productEAN);
-
-    /* const route2 = useRoute();
-
-    const currentURL = window.location.href;
-    // Adjust route import as needed
-    console.log(route2(`/getproductfromean`)); */
+    openDialog("product-import", detectedBarcode);
   };
-
-/*
-  function openCreateModal(ItemCreate ic) {
-      this.$emit('open-modal', ic)
-  }
-  */
-
-  async function getQRCodeUrl() {
-    /* const { isCanceled } = await confirm.open(
-      "Are you sure you want to ensure all assets have an ID? This can take a while and cannot be undone."
-    );
-
-    if (isCanceled) {
-      return;
-    } */
-
-    const result = await api.actions.getEAN(detectedBarcode.value);
-
-    // this.$store.commit('setScannedData', result);
-
-    if(result.error)
-      return
-    
-    openDialog("create-item", result.data);
-
-    /* if (result.error) {
-      toast.error("Failed to ensure asset IDs.");
-    } */
-
-    // toast.success(`${result.data.completed} assets have been updated.`);
-  }
 
   onMounted(async () => {
     if (!(navigator && navigator.mediaDevices && "enumerateDevices" in navigator.mediaDevices)) {
