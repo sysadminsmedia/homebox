@@ -195,41 +195,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/getproductfromean": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Items"
-                ],
-                "summary": "Search EAN from Barcode",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "barcode to be searched",
-                        "name": "data",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/repo.BarcodeProduct"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/v1/groups": {
             "get": {
                 "security": [
@@ -1842,6 +1807,41 @@ const docTemplate = `{
                 "responses": {
                     "204": {
                         "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/v1/products/search-from-barcode": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Items"
+                ],
+                "summary": "Search EAN from Barcode",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "barcode to be searched",
+                        "name": "data",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.BarcodeProduct"
+                            }
+                        }
                     }
                 }
             }

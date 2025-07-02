@@ -152,7 +152,7 @@
   async function retrieveProductInfo(barcode: string) {
     products.value = null;
     searching.value = true;
-    const result = await api.actions.getEAN(barcode);
+    const result = await api.products.searchFromBarcode(barcode);
     searching.value = false;
 
     if(result.error)

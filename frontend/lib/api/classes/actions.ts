@@ -31,8 +31,4 @@ export class ActionsAPI extends BaseAPI {
       url: route("/actions/create-missing-thumbnails"),
     });
   }
-  
-  getEAN(productEAN: string) {
-    return this.http.get<ItemCreate>({ url: route(`/getproductfromean`, { productEAN }) });
-  }
 }

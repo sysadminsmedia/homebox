@@ -1572,27 +1572,6 @@ paths:
       summary: Currency
       tags:
       - Base
-  /v1/getproductfromean:
-    get:
-      parameters:
-      - description: barcode to be searched
-        in: query
-        name: data
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/repo.BarcodeProduct'
-            type: array
-      security:
-      - Bearer: []
-      summary: Search EAN from Barcode
-      tags:
-      - Items
   /v1/groups:
     get:
       produces:
@@ -2585,6 +2564,27 @@ paths:
       summary: Test Notifier
       tags:
       - Notifiers
+  /v1/products/search-from-barcode:
+    get:
+      parameters:
+      - description: barcode to be searched
+        in: query
+        name: data
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repo.BarcodeProduct'
+            type: array
+      security:
+      - Bearer: []
+      summary: Search EAN from Barcode
+      tags:
+      - Items
   /v1/qrcode:
     get:
       parameters:

@@ -94,7 +94,7 @@ type BARCODESPIDER_COMResponse struct {
 //	@Produce	json
 //	@Param		data	query		string	false	"barcode to be searched"
 //	@Success	200		{object}	[]repo.BarcodeProduct
-//	@Router		/v1/getproductfromean [GET]
+//	@Router		/v1/products/search-from-barcode [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIConf) errchain.HandlerFunc {
 	type query struct {
