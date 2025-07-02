@@ -77,28 +77,6 @@ func (ctrl *V1Controller) HandleGenerateQRCode() errchain.HandlerFunc {
 	}
 }
 
-type BarcodeProduct struct {
-	SearchEngineName string `json:"search_engine_name"`
-
-	//Name        string `json:"name"                    validate:"required,min=1,max=255"`
-	//Description string `json:"description"             validate:"max=1000"`
-
-	// Identifications
-	ModelNumber  string `json:"modelNumber"`
-	Manufacturer string `json:"manufacturer"`
-
-	// Extras
-	Country string `json:"notes"`
-	Barcode string `json:"barcode"`
-
-	// TODO: add image attachement
-	// TODO: add asin?
-	ImageURL    string `json:"imageURL"`
-	ImageBase64 string `json:"imageBase64"`
-
-	Item repo.ItemCreate `json:"item"`
-}
-
 /*
 	ImportRef   string    `json:"-"`
 		ParentID    uuid.UUID `json:"parentId"    extensions:"x-nullable"`
@@ -191,7 +169,7 @@ type BARCODESPIDER_COMResponse struct {
 //	@Tags		Items
 //	@Produce	json
 //	@Param		data	query		string	false	"barcode to be searched"
-//	@Success	200		{object}	repo.ItemCreate
+//	@Success	200		{object}	[]repo.BarcodeProduct
 //	@Router		/v1/getproductfromean [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleProductSearchEAN(conf config.BarcodeAPIConf) errchain.HandlerFunc {
@@ -217,13 +195,13 @@ func (ctrl *V1Controller) HandleProductSearchEAN(conf config.BarcodeAPIConf) err
 		log.Info().Msg("========================" + q.EAN)
 
 		// Search on UPCITEMDB
-		var products []BarcodeProduct
+		var products []repo.BarcodeProduct
 
 		// www.ean-search.org/: not free
 
 		// Example code: dewalt 5035048748428
 
-		upcitemdb := func(iEan string) ([]BarcodeProduct, error) {
+		upcitemdb := func(iEan string) ([]repo.BarcodeProduct, error) {
 			resp, err := http.Get("https://api.upcitemdb.com/prod/trial/lookup?upc=" + iEan)
 			if err != nil {
 				return nil, err
@@ -243,10 +221,10 @@ func (ctrl *V1Controller) HandleProductSearchEAN(conf config.BarcodeAPIConf) err
 				log.Error().Msg("Can not unmarshal JSON")
 			}
 
-			var res []BarcodeProduct
+			var res []repo.BarcodeProduct
 
 			for _, it := range result.Items {
-				var p BarcodeProduct
+				var p repo.BarcodeProduct
 				p.SearchEngineName = "upcitemdb.com"
 				p.Barcode = iEan
 
@@ -270,7 +248,7 @@ func (ctrl *V1Controller) HandleProductSearchEAN(conf config.BarcodeAPIConf) err
 		}
 
 		// Barcode spider implementation
-		barcodespider := func(tokenAPI string, iEan string) ([]BarcodeProduct, error) {
+		barcodespider := func(tokenAPI string, iEan string) ([]repo.BarcodeProduct, error) {
 
 			if len(tokenAPI) == 0 {
 				return nil, errors.New("no api token configured for barcodespider")
@@ -307,7 +285,7 @@ func (ctrl *V1Controller) HandleProductSearchEAN(conf config.BarcodeAPIConf) err
 			}
 
 			// TODO: check 200 code on HTTP repsonse.
-			var p BarcodeProduct
+			var p repo.BarcodeProduct
 			p.Barcode = iEan
 			p.SearchEngineName = "barcodespider.com"
 			p.Item.Name = result.ItemAttributes.Title
@@ -316,7 +294,7 @@ func (ctrl *V1Controller) HandleProductSearchEAN(conf config.BarcodeAPIConf) err
 			p.ModelNumber = result.ItemAttributes.Model
 			p.ImageURL = result.ItemAttributes.Image
 
-			var res []BarcodeProduct
+			var res []repo.BarcodeProduct
 			res = append(res, p)
 
 			return res, nil
@@ -383,7 +361,7 @@ func (ctrl *V1Controller) HandleProductSearchEAN(conf config.BarcodeAPIConf) err
 		if len(products) != 0 {
 			// Return only the first result for now. Enhance this with a dedicated dialog
 			// displaying all the references found?
-			return json.NewEncoder(w).Encode(products[0])
+			return json.NewEncoder(w).Encode(products)
 		}
 
 		return nil
