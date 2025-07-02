@@ -895,7 +895,7 @@ paths:
       summary: Currency
       tags:
       - Base
-  /v1/getproductfromean:
+  /v1/products/search-from-barcode:
     get:
       parameters:
       - description: barcode to be searched

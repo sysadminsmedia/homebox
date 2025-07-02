@@ -25,8 +25,4 @@ export class ActionsAPI extends BaseAPI {
       url: route("/actions/set-primary-photos"),
     });
   }
-
-  getEAN(productEAN: string) {
-    return this.http.get<ItemCreate>({ url: route(`/getproductfromean`, { productEAN }) });
-  }
 }

@@ -170,7 +170,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/getproductfromean": {
+        "/v1/products/search-from-barcode": {
             "get": {
                 "security": [
                     {
