@@ -548,9 +548,9 @@
             "page_top_padding": "顶部页边距",
             "page_width": "页面宽度",
             "qr_code_example": "二维码地址示例",
-            "tip_1": "这里的默认设置是\n <a href=\"https://www.avery.com/templates/5260\">“Avery 5260标签单”</a>的设置",
-            "tip_2": "",
-            "tip_3": "",
+            "tip_1": "这里的默认设置是\n <a href=\"https://www.avery.com/templates/5260\">“Avery 5260标签纸”</a>的设置\n 你需要根据你的标签纸调整大小设置",
+            "tip_2": "如果您在自定义纸张尺寸，单位是英寸。在制作 Avery 5260 标签纸时，我发现\n 其官方模板中的尺寸并不完全适合实际打印在标签框内，\n '<b>'所以请多尝试和调整来找到最佳设置。'</b>'",
+            "tip_3": "打印时，请务必：\n '<ol><li>'将边距设置为0或无'</li><li>“将缩放比例设置为100%”</li><li>'禁用双面打印'</li><li>'在打印多页之前打印测试页'</li></ol>'",
             "tips": "",
             "title": "",
             "toast": {
