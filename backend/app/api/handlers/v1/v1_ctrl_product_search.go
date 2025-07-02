@@ -131,12 +131,12 @@ func (ctrl *V1Controller) HandleProductSearchFromEAN(conf config.BarcodeAPIConf)
 				return nil, err
 			}
 
-			//We Read the response body on the line below.
+			// We Read the response body on the line below.
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
 				return nil, err
 			}
-			//Convert the body to type string
+			// Convert the body to type string
 			sb := string(body)
 			log.Info().Msg("Response: " + sb)
 
@@ -173,7 +173,6 @@ func (ctrl *V1Controller) HandleProductSearchFromEAN(conf config.BarcodeAPIConf)
 
 		// Barcode spider implementation
 		barcodespider := func(tokenAPI string, iEan string) ([]repo.BarcodeProduct, error) {
-
 			if len(tokenAPI) == 0 {
 				return nil, errors.New("no api token configured for barcodespider")
 			}
@@ -194,12 +193,12 @@ func (ctrl *V1Controller) HandleProductSearchFromEAN(conf config.BarcodeAPIConf)
 				return nil, err
 			}
 
-			//We Read the response body on the line below.
+			// We Read the response body on the line below.
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
 				return nil, err
 			}
-			//Convert the body to type string
+			// Convert the body to type string
 			sb := string(body)
 			log.Info().Msg("Response: " + sb)
 
@@ -208,7 +207,7 @@ func (ctrl *V1Controller) HandleProductSearchFromEAN(conf config.BarcodeAPIConf)
 				log.Error().Msg("Can not unmarshal JSON")
 			}
 
-			// TODO: check 200 code on HTTP repsonse.
+			// TODO: check 200 code on HTTP response.
 			var p repo.BarcodeProduct
 			p.Barcode = iEan
 			p.SearchEngineName = "barcodespider.com"
@@ -230,13 +229,9 @@ func (ctrl *V1Controller) HandleProductSearchFromEAN(conf config.BarcodeAPIConf)
 		}
 
 		// Merge everything.
-		for i := range ps {
-			products = append(products, ps[i])
-		}
+		products = append(products, ps...)
 
-		for i := range ps2 {
-			products = append(products, ps2[i])
-		}
+		products = append(products, ps2...)
 
 		// Retrieve images if possible
 		for i := range products {
