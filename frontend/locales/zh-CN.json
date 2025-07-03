@@ -2,7 +2,7 @@
     "components": {
         "app": {
             "create_modal": {
-                "createAndAddAnother": "使用{shiftKey}+{enterKey}来创建并添加另一个。",
+                "createAndAddAnother": "使用{shiftKey} + {enterKey}创建并添加另一个。",
                 "enter": "Enter",
                 "shift": "Shift"
             },
@@ -27,8 +27,8 @@
         "color_selector": {
             "clear": "清除颜色",
             "color": "颜色",
-            "no_color": "透明",
-            "no_color_selected": "当前透明",
+            "no_color": "没有颜色",
+            "no_color_selected": "尚未选择任何颜色",
             "randomize": "随机颜色"
         },
         "form": {
@@ -101,29 +101,29 @@
                 "item_quantity": "物品数量",
                 "parent_item": "父项目",
                 "rotate_photo": "旋转照片",
-                "set_as_primary_photo": "设置为{isPrimary, select, true {非} false {} other {}}主照片",
+                "set_as_primary_photo": "设置为{isPrimary, select, true {非} false {} other {}}封面",
                 "title": "创建物品",
                 "toast": {
-                    "already_creating": "已创建物品",
-                    "create_failed": "无法创建物品",
-                    "create_success": "物品创建成功",
-                    "failed_load_parent": "加载父级物品失败-请手动选择",
+                    "already_creating": "已创建项目",
+                    "create_failed": "无法创建项目",
+                    "create_success": "项目创建成功",
+                    "failed_load_parent": "加载父项失败-请手动选择",
                     "no_canvas_support": "您的浏览器不支持Canvas操作",
-                    "please_select_location": "请选择位置",
+                    "please_select_location": "请选择位置。",
                     "rotate_failed": "旋转图片失败：{ error }",
                     "rotate_process_failed": "处理已旋转图片失败",
                     "some_photos_failed": "{count, plural, =0 {无照片上传.} =1 {一张照片上传失败.} other {多张照片上传失败.}}",
                     "upload_failed": "上传照片失败：{ photoName }",
                     "upload_success": "{count, plural, =0 {未上传照片} =1 {照片上传成功} other {所有照片上传成功}}",
-                    "uploading_photos": "{count, plural, = 0 {没有要上传的照片} = 1 {正在上传1张照片...} other {正在上传{count}张照片...}}"
+                    "uploading_photos": "{count, plural, =0 {没有照片要上传} =1 {正上传 1 张照片…} other {正上传 {count} 照片…}}"
                 },
                 "upload_photos": "上传照片",
                 "uploaded": "照片已上传"
             },
             "selector": {
                 "no_results": "返回为空",
-                "placeholder": "选择...",
-                "search_placeholder": "输入搜索..."
+                "placeholder": "选择…",
+                "search_placeholder": "输入以搜索…"
             },
             "view": {
                 "selectable": {
@@ -137,7 +137,7 @@
                     "page": "页",
                     "rows_per_page": "每页行数",
                     "table_settings": "表格设置",
-                    "view_item": "查看物品"
+                    "view_item": "查看项目"
                 }
             }
         },
@@ -166,7 +166,7 @@
                 "toast": {
                     "already_creating": "正在创建位置",
                     "create_failed": "无法创建位置",
-                    "create_success": "创建位置失败"
+                    "create_success": "已创建位置"
                 }
             },
             "selector": {
@@ -176,7 +176,7 @@
                 "select_location": "选择一个位置"
             },
             "tree": {
-                "no_locations": "没有可用的位置。请添加新的位置\n `<`span class=\"link-primary\"`>`创建`<`/span`>` 按钮在导航栏上"
+                "no_locations": "没有可用的位置。请添加新的位置\n'<span class=\"link-primary\">'创建'</span>' 按钮在导航栏上."
             }
         },
         "quick_menu": {
@@ -203,8 +203,8 @@
         "email": "邮箱",
         "follow_dev": "关注开发者",
         "footer": {
-            "api_link": "",
-            "version_link": ""
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API接口'</a>'",
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' 版本号: { version } 构建号: { build } '</a>'"
         },
         "github": "Github项目",
         "insured": "已投保",
@@ -281,8 +281,8 @@
             "edit_attachment_dialog": {
                 "attachment_title": "附件标题",
                 "attachment_type": "附件类型",
-                "primary_photo": "首选照片",
-                "primary_photo_sub": "此项仅适用于照片。只有一张可以设为首选照片。如果选择此选项，若有，则当前首选照片将被替换。",
+                "primary_photo": "封面",
+                "primary_photo_sub": "此项仅适用于照片。只有一张可以设为封面。如果选择此选项，若有，则当前封面将被替换。",
                 "select_type": "选择类型",
                 "title": "附件编辑"
             }
@@ -350,7 +350,7 @@
             "error_loading_parent_data": "尝试加载父级数据时出错",
             "failed_adjust_quantity": "调整数量失败",
             "failed_delete_attachment": "删除附件失败",
-            "failed_delete_item": "删除项目失败",
+            "failed_delete_item": "无法删除项目",
             "failed_duplicate_item": "复制项目失败",
             "failed_load_asset": "加载资产失败",
             "failed_load_item": "加载项目失败",
@@ -359,11 +359,11 @@
             "failed_save_no_location": "保存项目失败：未选择位置",
             "failed_search_items": "搜索项目失败",
             "failed_update_attachment": "更新附件失败",
-            "failed_upload_attachment": "更新上传失败",
+            "failed_upload_attachment": "无法上传附件",
             "item_deleted": "项目已删除",
             "item_saved": "项目已保存",
             "quantity_cannot_negative": "数量不能为负",
-            "sync_child_location": "所选父项将其子项的位置同步到自己的位置"
+            "sync_child_location": "所选的父项会将其所有子项的位置同步到同一位置。位置已更新。"
         },
         "updated_at": "更新于",
         "warranty": "保修",
@@ -377,7 +377,7 @@
             "failed_delete_label": "删除标签失败",
             "failed_load_label": "加载标签失败",
             "failed_update_label": "更新标签失败",
-            "label_deleted": "标签已删除",
+            "label_deleted": "已删除标签",
             "label_updated": "标签已更新"
         },
         "update_label": "更新标签"
@@ -498,7 +498,7 @@
         "inactive": "未启用",
         "language": "语言",
         "new_password": "新密码",
-        "no_notifiers": "未配置通知器",
+        "no_notifiers": "尚未配置通知器",
         "no_override": "没有预算",
         "notifier_modal": "{ type, select, true {编辑} false {创建} other {Other}} 通知器",
         "notifiers": "通知器",
@@ -508,8 +508,8 @@
         "theme_settings": "主题设置",
         "theme_settings_sub": "主题设置存储在浏览器的本地存储中。您可以随时更改主题。\n如果您在设置主题时遇到问题，请尝试刷新浏览器。",
         "toast": {
-            "account_deleted": "您的账户已被删除。",
-            "failed_change_password": "无法更改密码",
+            "account_deleted": "您的账户已删除。",
+            "failed_change_password": "无法更改密码。",
             "failed_create_notifier": "创建通知器失败。",
             "failed_delete_account": "无法删除您的账号。",
             "failed_delete_notifier": "无法删除通知器。",
@@ -535,12 +535,12 @@
             "bordered_labels": "标签边框",
             "generate_page": "生成标签页",
             "input_placeholder": "在此输入",
-            "instruction_1": "Homebox 标签生成器是一款用于帮助您为 Homebox 库存打印标签的工具。旨在用于\n 预先打印标签，这样您就可以一次性打印出多张标签，随时备用并贴在物品上。",
-            "instruction_2": "因此，这些标签的工作方式是在标签上打印一个 URL 的二维码以及资产ID信息。\n 如果您在Homebox设置中禁用了资产ID，您仍然可以使用此工具，但这些资产编号将不会对应任何物品",
+            "instruction_1": "Homebox 标签生成器是一款用于帮助您为 Homebox 库存打印标签的工具。旨在用于\n预先打印标签，这样您就可以一次性打印出多张标签，随时备用并贴在物品上",
+            "instruction_2": "因此，这些标签的工作方式是在标签上打印一个 URL 的二维码以及资产ID信息。\n如果您在Homebox设置中禁用了资产ID，您仍然可以使用此工具，但这些资产编号将不会对应任何物品",
             "instruction_3": "此功能处于早期开发阶段，可能会在未来版本中发生变化，如果您有反馈，请\n在“<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">GitHub讨论”</a>中提供",
             "label_height": "标签高度",
             "label_width": "标签宽度",
-            "measure_type": "测量类型",
+            "measure_type": "长度单位",
             "page_bottom_padding": "底部页边距",
             "page_height": "页面高度",
             "page_left_padding": "左侧页边距",
@@ -548,13 +548,13 @@
             "page_top_padding": "顶部页边距",
             "page_width": "页面宽度",
             "qr_code_example": "二维码地址示例",
-            "tip_1": "这里的默认设置是\n <a href=\"https://www.avery.com/templates/5260\">“Avery 5260标签纸”</a>的设置\n 你需要根据你的标签纸调整大小设置",
-            "tip_2": "如果您在自定义纸张尺寸，单位是英寸。在制作 Avery 5260 标签纸时，我发现\n 其官方模板中的尺寸并不完全适合实际打印在标签框内，\n '<b>'所以请多尝试和调整来找到最佳设置。'</b>'",
-            "tip_3": "打印时，请务必：\n '<ol><li>'将边距设置为0或无'</li><li>“将缩放比例设置为100%”</li><li>'禁用双面打印'</li><li>'在打印多页之前打印测试页'</li></ol>'",
-            "tips": "",
-            "title": "",
+            "tip_1": "这里的默认设置是\n <a href=\"https://www.avery.com/templates/5260\">“Avery 5260标签纸”</a>的设置，\n 你需要根据你的标签纸调整大小设置。",
+            "tip_2": "如果您在自定义纸张尺寸，单位是英寸。在制作 Avery 5260 标签纸时，我发现\n其官方模板中的尺寸并不完全适合实际打印在标签框内，\n'<b>'所以请多尝试和调整来找到最佳设置。'</b>'",
+            "tip_3": "打印时，请务必注意：\n '<ol><li>'将边距设置为0或无'</li><li>“将缩放比例设置为100%”</li><li>'禁用双面打印'</li><li>'打印测试页'</li></ol>'",
+            "tips": "提示",
+            "title": "标签生成器",
             "toast": {
-                "page_too_small_card": ""
+                "page_too_small_card": "标签尺寸超出页面尺寸"
             }
         }
     },
@@ -562,39 +562,43 @@
         "error": "扫描遇到问题",
         "invalid_url": "非法的条形码地址",
         "no_sources": "没有可用的摄像头资源",
-        "permission_denied": "",
+        "permission_denied": "相机权限被拒绝，请在浏览器设置中允许访问相机",
         "select_video_source": "选择摄像头",
-        "title": "扫描仪",
+        "title": "扫描器",
         "unsupported": "媒体流API只在HTTPS环境下支持"
     },
     "tools": {
         "actions": "库存操作",
         "actions_set": {
+            "create_missing_thumbnails": "创建缺失的缩略图",
+            "create_missing_thumbnails_button": "创建缩略图",
+            "create_missing_thumbnails_confirm": "您确定要生成缺失的缩略图吗？这可能需要一段时间且无法暂停。",
+            "create_missing_thumbnails_sub": "为当前配置支持的所有附件生成缩略图。这对于在 Homebox v0.20.0 版本发布之前上传的附件尤其有用。该操作不会覆盖已有的缩略图，只会为尚未生成缩略图的附件创建新缩略图。请注意，缩略图是在后台生成的，可能需要一些时间才能完成。",
             "ensure_ids": "确认资产ID",
             "ensure_ids_button": "确认资产ID",
-            "ensure_ids_confirm": "",
+            "ensure_ids_confirm": "要开始确认所有资产ID吗？这可能需要一段时间，并且无法撤消。",
             "ensure_ids_sub": "确保库存中的所有项目都有有效的asset_id字段。它会找到库中最大的asset_id字段，并将下一个值应用于还未设置asset_id字段的每个项目。未设置asset_id的项目将按created_at字段的顺序生成。",
             "ensure_import_refs": "确认导入参考",
             "ensure_import_refs_button": "确认导入参考",
             "ensure_import_refs_sub": "确保库存中的所有项目都有有效的import_ref字段。这是通过为每个具有未设置的import_ref字段的项目随机生成一个8个字符的字符串来实现的。",
-            "set_primary_photo": "设置封面图片",
+            "set_primary_photo": "设置封面",
             "set_primary_photo_button": "设置封面",
-            "set_primary_photo_confirm": "",
+            "set_primary_photo_confirm": "您确定要设置封面图片吗？这可能需要一段时间，并且无法撤消。",
             "set_primary_photo_sub": "设置封面在 Homebox v0.10.0 版本中，该列的类型为图片。如果没有设置封面，则会把附件中第一张图片作为封面。 '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'更多请参考 GitHub PR #576'</a>'",
-            "zero_datetimes": "零项目日期",
-            "zero_datetimes_button": "零项目日期",
-            "zero_datetimes_confirm": "",
+            "zero_datetimes": "重置所有项目的日期与时间",
+            "zero_datetimes_button": "重置所有项目的日期与时间",
+            "zero_datetimes_confirm": "您确定要重置所有日期和时间值吗？这可能需要一段时间，并且无法撤消。",
             "zero_datetimes_sub": "将库存中所有日期时间字段的值重置为开始日期。这是为了修复在网站开发早期出现的一个错误，该错误导致自定义时间值保存时，日期会出现偏移的问题。 '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'详细问题请参考 Github Issue #236 '</a>'"
         },
-        "actions_sub": "将操作批量应用于您的库存。这些都是不可逆转的行动'<b> '谨慎操作。'</b>'",
+        "actions_sub": "将操作批量应用于您的库存。这些操作都是不可逆转的，'<b> '三思而后行！'</b>'",
         "import_export": "导入/导出",
         "import_export_set": {
             "export": "导出库存",
-            "export_button": "导出库存",
+            "export_button": "导出清单",
             "export_sub": "按标准CSV格式导出Homebox。这将导出库存中的所有项目。",
             "import": "导入库存",
             "import_button": "导入库存",
-            "import_ref_confirm": "",
+            "import_ref_confirm": "您确定要确保所有资产都有IMPORT_REF吗？这可能需要一段时间，并且无法撤消。",
             "import_sub": "Homebox只能导入标准的CSV格式文件。当不存在 '<code>'HB.import_ref'</code>' 列的时候，将 '<b>'不会'</b>' 覆盖现数据库存中的任何现有项目，只添加为新项目。如果与现有的 '<code>'HB.import_ref'</code>' 的项目一样，则会将新旧数据合并。"
         },
         "import_export_sub": "按CSV格式导入和导出您的库存。在将库存迁移到Homebox的新实例时非常有用。",
@@ -609,11 +613,12 @@
         },
         "reports_sub": "为您的库存生成其他的报告。",
         "toast": {
-            "asset_success": "",
-            "failed_ensure_ids": "",
-            "failed_ensure_import_refs": "",
-            "failed_set_primary_photos": "",
-            "failed_zero_datetimes": ""
+            "asset_success": "{results}资产已更新。",
+            "failed_create_missing_thumbnails": "无法创建缺失的缩略图。",
+            "failed_ensure_ids": "无法确认资产ID。",
+            "failed_ensure_import_refs": "无法确认导入参考。",
+            "failed_set_primary_photos": "无法设置封面。",
+            "failed_zero_datetimes": "无法重置日期和时间值。"
         }
     }
 }
