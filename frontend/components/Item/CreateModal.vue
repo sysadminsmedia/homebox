@@ -1,5 +1,37 @@
 <template>
   <BaseModal dialog-id="create-item" :title="$t('components.item.create_modal.title')">
+    <div class="flex flex-row-reverse">
+      <TooltipProvider :delay-duration="0">
+        <ButtonGroup>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button variant="outline" :disabled="loading" data-pos="start" @click="openBarcodeDialog()">
+                <MdiBarcode class="size-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{{ $t('components.item.create_modal.product_tooltip_input_barcode') }}</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button variant="outline" :disabled="loading" data-pos="end" @click="openQrScannerPage()">
+              <MdiBarcodeScan class="size-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{{ $t('components.item.create_modal.product_tooltip_scan_barcode') }}</p>
+            </TooltipContent>
+          </Tooltip>
+        </ButtonGroup>
+      </TooltipProvider >
+      <div class= "items-center justify-center flex mx-2">
+        {{ $t('components.item.create_modal.product_autofill') }}
+      </div>
+    </div>
+
+    <div class=" border-t" />
+    
     <form class="flex flex-col gap-2" @submit.prevent="create()">
       <LocationSelector v-model="form.location" />
       <ItemSelector
@@ -148,6 +180,8 @@
   import type { ItemCreate, LocationOut } from "~~/lib/api/types/data-contracts";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
+  import MdiBarcode from "~icons/mdi/barcode";
+  import MdiBarcodeScan from "~icons/mdi/barcode-scan";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
   import MdiDelete from "~icons/mdi/delete";
@@ -167,7 +201,7 @@
   }
 
   const { t } = useI18n();
-  const { activeDialog, closeDialog } = useDialog();
+  const { activeDialog, openDialog, closeDialog } = useDialog();
 
   useDialogHotkey("create-item", { code: "Digit1", shift: true });
 
@@ -481,5 +515,15 @@
       offScreenCanvas.width = 0;
       offScreenCanvas.height = 0;
     }
+  }
+
+  async function openQrScannerPage() {
+    closeDialog("create-item");
+    openDialog("scanner")
+  }
+
+  async function openBarcodeDialog() {
+    closeDialog("create-item");
+    openDialog("product-import")
   }
 </script>
