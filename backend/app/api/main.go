@@ -123,7 +123,8 @@ func run(cfg *config.Config) error {
 		}
 		// Construct and validate the full storage path
 		storageDir := filepath.Join(absBase, cfg.Storage.PrefixPath)
-		strings.Replace(storageDir, "\\", "/", -1)
+		// Set windows paths to use forward slashes required by go-cloud
+		storageDir = strings.ReplaceAll(storageDir, "\\", "/")
 		if !strings.HasPrefix(storageDir, absBase+"/") && storageDir != absBase {
 			log.Fatal().
 				Str("path", storageDir).
