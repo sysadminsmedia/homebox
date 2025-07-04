@@ -123,7 +123,9 @@ func run(cfg *config.Config) error {
 		}
 		// Construct and validate the full storage path
 		storageDir := filepath.Join(absBase, cfg.Storage.PrefixPath)
-		if !strings.HasPrefix(storageDir, absBase+string(os.PathSeparator)) && storageDir != absBase {
+		// Set windows paths to use forward slashes required by go-cloud
+		storageDir = strings.ReplaceAll(storageDir, "\\", "/")
+		if !strings.HasPrefix(storageDir, absBase+"/") && storageDir != absBase {
 			log.Fatal().
 				Str("path", storageDir).
 				Msg("invalid storage path: you tried to use a prefix that is not a subdirectory of the base path")
