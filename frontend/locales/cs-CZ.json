@@ -115,15 +115,15 @@
                     "some_photos_failed": "{count, plural, =0 {Žádná fotka k nahrání.} =1 {Nepodařilo se nahrát 1 fotografii.} other {Některé fotografie se nepodařilo nahrát.}}",
                     "upload_failed": "Nepodařilo se nahrát fotku: { photoName }",
                     "upload_success": "{count, plural, =0 {Nejsou nahrané žádné fotky.} =1 {Fotka byla úspěšně nahrána.} other {Všechny fotky byly úspěšně nahrány.}}",
-                    "uploading_photos": "{count, plural, =0 {Žádné fotky k nahrání} =1 {Nahrávání 1 fotky...} other {Nahrávání {count} fotek...}}"
+                    "uploading_photos": "{count, plural, =0 {Žádné fotky k nahrání} =1 {Nahrávání 1 fotky…} other {Nahrávání {count} fotek…}}"
                 },
                 "upload_photos": "Nahrát fotografie",
                 "uploaded": "Fotka byla nahrána"
             },
             "selector": {
                 "no_results": "Nebyly nalezeny žádné výsledky",
-                "placeholder": "Vyberte...",
-                "search_placeholder": "Pište pro vyhledávání..."
+                "placeholder": "Vyberte…",
+                "search_placeholder": "Pište pro vyhledávání…"
             },
             "view": {
                 "selectable": {
@@ -176,7 +176,7 @@
                 "select_location": "Vybrat lokaci"
             },
             "tree": {
-                "no_locations": "Nejsou dostupné žádné lokace. Přidejte nové lokace\npomocí tlačítka `<`span class=\"link-primary\"`>`Vytvořit`<`/span`>` na navigační liště."
+                "no_locations": "Nejsou dostupné žádné lokace. Přidejte nové lokace\npomocí tlačítka <span class=\"link-primary\">Vytvořit</span> na navigační liště."
             }
         },
         "quick_menu": {
@@ -211,7 +211,7 @@
         "items": "Položky",
         "join_discord": "Připojte se na Discord",
         "labels": "Štítky",
-        "loading": "Načítání...",
+        "loading": "Načítání…",
         "locations": "Lokality",
         "maintenance": "Údržba",
         "name": "Jméno",
