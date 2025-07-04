@@ -18,7 +18,7 @@ func TestAttachmentRepo_Create(t *testing.T) {
 	ids := []uuid.UUID{item.ID}
 	t.Cleanup(func() {
 		for _, id := range ids {
-			_ = tRepos.Attachments.Delete(context.Background(), id)
+			_ = tRepos.Attachments.Delete(context.Background(), tGroup.ID, item.ID, id)
 		}
 	})
 
@@ -69,7 +69,7 @@ func TestAttachmentRepo_Create(t *testing.T) {
 
 			assert.Equal(t, tt.want.Type, got.Type)
 
-			withItems, err := tRepos.Attachments.Get(tt.args.ctx, got.ID)
+			withItems, err := tRepos.Attachments.Get(tt.args.ctx, tGroup.ID, got.ID)
 			require.NoError(t, err)
 			assert.Equal(t, tt.args.itemID, withItems.Edges.Item.ID)
 
@@ -86,17 +86,17 @@ func useAttachments(t *testing.T, n int) []*ent.Attachment {
 	ids := make([]uuid.UUID, 0, n)
 	t.Cleanup(func() {
 		for _, id := range ids {
-			_ = tRepos.Attachments.Delete(context.Background(), id)
+			_ = tRepos.Attachments.Delete(context.Background(), tGroup.ID, item.ID, id)
 		}
 	})
 
 	attachments := make([]*ent.Attachment, n)
 	for i := 0; i < n; i++ {
-		attachment, err := tRepos.Attachments.Create(context.Background(), item.ID, ItemCreateAttachment{Title: "Test", Content: strings.NewReader("Test String")}, attachment.TypePhoto, true)
+		attach, err := tRepos.Attachments.Create(context.Background(), item.ID, ItemCreateAttachment{Title: "Test", Content: strings.NewReader("Test String")}, attachment.TypePhoto, true)
 		require.NoError(t, err)
-		attachments[i] = attachment
+		attachments[i] = attach
 
-		ids = append(ids, attachment.ID)
+		ids = append(ids, attach.ID)
 	}
 
 	return attachments
@@ -107,13 +107,13 @@ func TestAttachmentRepo_Update(t *testing.T) {
 
 	for _, typ := range []attachment.Type{"photo", "manual", "warranty", "attachment"} {
 		t.Run(string(typ), func(t *testing.T) {
-			_, err := tRepos.Attachments.Update(context.Background(), entity.ID, &ItemAttachmentUpdate{
+			_, err := tRepos.Attachments.Update(context.Background(), tGroup.ID, entity.ID, &ItemAttachmentUpdate{
 				Type: string(typ),
 			})
 
 			require.NoError(t, err)
 
-			updated, err := tRepos.Attachments.Get(context.Background(), entity.ID)
+			updated, err := tRepos.Attachments.Get(context.Background(), tGroup.ID, entity.ID)
 			require.NoError(t, err)
 			assert.Equal(t, typ, updated.Type)
 		})
@@ -122,11 +122,12 @@ func TestAttachmentRepo_Update(t *testing.T) {
 
 func TestAttachmentRepo_Delete(t *testing.T) {
 	entity := useAttachments(t, 1)[0]
+	item := useItems(t, 1)[0]
 
-	err := tRepos.Attachments.Delete(context.Background(), entity.ID)
+	err := tRepos.Attachments.Delete(context.Background(), tGroup.ID, item.ID, entity.ID)
 	require.NoError(t, err)
 
-	_, err = tRepos.Attachments.Get(context.Background(), entity.ID)
+	_, err = tRepos.Attachments.Get(context.Background(), tGroup.ID, entity.ID)
 	require.Error(t, err)
 }
 
@@ -135,13 +136,13 @@ func TestAttachmentRepo_EnsureSinglePrimaryAttachment(t *testing.T) {
 	attachments := useAttachments(t, 2)
 
 	setAndVerifyPrimary := func(primaryAttachmentID, nonPrimaryAttachmentID uuid.UUID) {
-		primaryAttachment, err := tRepos.Attachments.Update(ctx, primaryAttachmentID, &ItemAttachmentUpdate{
+		primaryAttachment, err := tRepos.Attachments.Update(ctx, tGroup.ID, primaryAttachmentID, &ItemAttachmentUpdate{
 			Type:    attachment.TypePhoto.String(),
 			Primary: true,
 		})
 		require.NoError(t, err)
 
-		nonPrimaryAttachment, err := tRepos.Attachments.Get(ctx, nonPrimaryAttachmentID)
+		nonPrimaryAttachment, err := tRepos.Attachments.Get(ctx, tGroup.ID, nonPrimaryAttachmentID)
 		require.NoError(t, err)
 
 		assert.True(t, primaryAttachment.Primary)
