@@ -522,7 +522,9 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
-		dst := image.NewRGBA(image.Rect(0, 0, r.thumbnail.Width, r.thumbnail.Height))
+		bounds := img.Bounds()
+		newWidth, newHeight := calculateThumbnailDimensions(bounds.Dx(), bounds.Dy(), r.thumbnail.Width, r.thumbnail.Height)
+		dst := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
 		draw.ApproxBiLinear.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
 		buf := new(bytes.Buffer)
 		err = webp.Encode(buf, dst, webp.Options{Quality: 80, Lossless: false})
@@ -560,7 +562,9 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
-		dst := image.NewRGBA(image.Rect(0, 0, r.thumbnail.Width, r.thumbnail.Height))
+		bounds := img.Bounds()
+		newWidth, newHeight := calculateThumbnailDimensions(bounds.Dx(), bounds.Dy(), r.thumbnail.Width, r.thumbnail.Height)
+		dst := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
 		draw.ApproxBiLinear.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
 		buf := new(bytes.Buffer)
 		err = webp.Encode(buf, dst, webp.Options{Quality: 80, Lossless: false})
@@ -598,7 +602,9 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
-		dst := image.NewRGBA(image.Rect(0, 0, r.thumbnail.Width, r.thumbnail.Height))
+		bounds := img.Bounds()
+		newWidth, newHeight := calculateThumbnailDimensions(bounds.Dx(), bounds.Dy(), r.thumbnail.Width, r.thumbnail.Height)
+		dst := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
 		draw.ApproxBiLinear.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
 		buf := new(bytes.Buffer)
 		err = webp.Encode(buf, dst, webp.Options{Quality: 80, Lossless: false})
@@ -636,7 +642,9 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
-		dst := image.NewRGBA(image.Rect(0, 0, r.thumbnail.Width, r.thumbnail.Height))
+		bounds := img.Bounds()
+		newWidth, newHeight := calculateThumbnailDimensions(bounds.Dx(), bounds.Dy(), r.thumbnail.Width, r.thumbnail.Height)
+		dst := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
 		draw.ApproxBiLinear.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
 		buf := new(bytes.Buffer)
 		err = webp.Encode(buf, dst, webp.Options{Quality: 80, Lossless: false})
@@ -674,7 +682,9 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
-		dst := image.NewRGBA(image.Rect(0, 0, r.thumbnail.Width, r.thumbnail.Height))
+		bounds := img.Bounds()
+		newWidth, newHeight := calculateThumbnailDimensions(bounds.Dx(), bounds.Dy(), r.thumbnail.Width, r.thumbnail.Height)
+		dst := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
 		draw.ApproxBiLinear.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
 		buf := new(bytes.Buffer)
 		err = webp.Encode(buf, dst, webp.Options{Quality: 80, Lossless: false})
@@ -830,4 +840,35 @@ func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, d
 func isImageFile(mimetype string) bool {
 	// Check file extension for image types
 	return strings.Contains(mimetype, "image/jpeg") || strings.Contains(mimetype, "image/png") || strings.Contains(mimetype, "image/gif")
+}
+
+// calculateThumbnailDimensions calculates new dimensions that preserve aspect ratio
+// while fitting within the configured maximum width and height
+func calculateThumbnailDimensions(origWidth, origHeight, maxWidth, maxHeight int) (int, int) {
+	if origWidth <= maxWidth && origHeight <= maxHeight {
+		return origWidth, origHeight
+	}
+
+	// Calculate scaling factors for both dimensions
+	scaleX := float64(maxWidth) / float64(origWidth)
+	scaleY := float64(maxHeight) / float64(origHeight)
+
+	// Use the smaller scaling factor to ensure both dimensions fit
+	scale := scaleX
+	if scaleY < scaleX {
+		scale = scaleY
+	}
+
+	newWidth := int(float64(origWidth) * scale)
+	newHeight := int(float64(origHeight) * scale)
+
+	// Ensure we don't get zero dimensions
+	if newWidth < 1 {
+		newWidth = 1
+	}
+	if newHeight < 1 {
+		newHeight = 1
+	}
+
+	return newWidth, newHeight
 }
