@@ -502,11 +502,12 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	contentType := http.DetectContentType(contentBytes[:min(512, len(contentBytes))])
 
 	if contentType == "application/octet-stream" {
-		if strings.HasSuffix(title, ".heic") || strings.HasSuffix(title, ".heif") {
+		switch {
+		case strings.HasSuffix(title, ".heic") || strings.HasSuffix(title, ".heif"):
 			contentType = "image/heic"
-		} else if strings.HasSuffix(title, ".avif") {
+		case strings.HasSuffix(title, ".avif"):
 			contentType = "image/avif"
-		} else if strings.HasSuffix(title, ".jxl") {
+		case strings.HasSuffix(title, ".jxl"):
 			contentType = "image/jxl"
 		}
 	}
