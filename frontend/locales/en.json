@@ -63,6 +63,9 @@
         },
         "item": {
             "create_modal": {
+                "product_autofill": "Product autofill:",
+                "product_tooltip_input_barcode": "Manually input barcode",
+                "product_tooltip_scan_barcode": "Scan barcode with 📷",
                 "item_description": "Item Description",
                 "item_name": "Item Name",
                 "item_photo": "Item Photo 📷",
