@@ -3,24 +3,7 @@ import { createI18n } from "vue-i18n";
 import { IntlMessageFormat } from "intl-messageformat";
 
 export default defineNuxtPlugin(({ vueApp }) => {
-  function checkDefaultLanguage() {
-    let matched = null;
-    const languages = Object.getOwnPropertyNames(messages());
-    const matching = navigator.languages.filter(lang => languages.some(l => l.toLowerCase() === lang.toLowerCase()));
-    if (matching.length > 0) {
-      matched = matching[0];
-    }
-    if (!matched) {
-      languages.forEach(lang => {
-        const languagePartials = navigator.language.split("-")[0];
-        if (lang.toLowerCase() === languagePartials) {
-          matched = lang;
-        }
-      });
-    }
-    return matched;
-  }
-  const preferences = useViewPreferences();
+  // 'checkDefaultLanguage' is defined but never used - Removed as it's not being called
   const i18n = createI18n({
     fallbackLocale: "en",
     globalInjection: true,
@@ -31,7 +14,7 @@ export default defineNuxtPlugin(({ vueApp }) => {
     fallbackWarn: false,
     missingWarn: false,
 
-    missing: (locale, key) => {  
+    missing: (locale, key) => {
       // Always return English translation if available, even if the key exists but is an empty string in the current locale
       const fallbackMessages = i18n.global.getLocaleMessage("en") || {};
       const fallbackMsg = getNested(fallbackMessages, key);
@@ -65,12 +48,12 @@ export default defineNuxtPlugin(({ vueApp }) => {
 
 // Utility to resolve nested keys like 'components.app.create_modal.enter'
 function getNested(obj: any, path: string) {
-  if (!obj || typeof obj !== 'object' || typeof path !== 'string') {
+  if (!obj || typeof obj !== "object" || typeof path !== "string") {
     return undefined;
   }
-  return path.split('.').reduce((o, k) => {
+  return path.split(".").reduce((o, k) => {
     // Prevent prototype pollution
-    if (!o || typeof o !== 'object' || !Object.prototype.hasOwnProperty.call(o, k)) {
+    if (!o || typeof o !== "object" || !Object.prototype.hasOwnProperty.call(o, k)) {
       return undefined;
     }
     return o[k];
