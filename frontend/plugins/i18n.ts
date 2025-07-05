@@ -65,7 +65,16 @@ export default defineNuxtPlugin(({ vueApp }) => {
 
 // Utility to resolve nested keys like 'components.app.create_modal.enter'
 function getNested(obj: any, path: string) {
-  return path.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : undefined), obj);
+  if (!obj || typeof obj !== 'object' || typeof path !== 'string') {
+    return undefined;
+  }
+  return path.split('.').reduce((o, k) => {
+    // Prevent prototype pollution
+    if (!o || typeof o !== 'object' || !Object.prototype.hasOwnProperty.call(o, k)) {
+      return undefined;
+    }
+    return o[k];
+  }, obj);
 }
 
 export const messages = () => {
