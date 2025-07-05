@@ -19,6 +19,9 @@ func (a *app) setupLogger() {
 
 	level, err := zerolog.ParseLevel(a.conf.Log.Level)
 	if err != nil {
+		log.Error().Err(err).Str("level", a.conf.Log.Level).Msg("invalid log level, falling back to info")
+		zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	} else {
 		zerolog.SetGlobalLevel(level)
 	}
 }
