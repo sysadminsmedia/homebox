@@ -130,8 +130,14 @@
       }))
       .filter(i => !modelValue.value.includes(i.value));
 
+    // Only show "Create" option if search term is not empty and no exact match exists
     if (searchTerm.value.trim() !== "") {
-      filtered.push({ value: "create-item", label: `${t("global.create")} ${searchTerm.value}` });
+      const trimmedSearchTerm = searchTerm.value.trim();
+      const hasExactMatch = props.labels.some(label => label.name.toLowerCase() === trimmedSearchTerm.toLowerCase());
+
+      if (!hasExactMatch) {
+        filtered.push({ value: "create-item", label: `${t("global.create")} ${searchTerm.value}` });
+      }
     }
 
     return filtered;
