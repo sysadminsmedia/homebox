@@ -25,9 +25,34 @@ export default defineNuxtPlugin(({ vueApp }) => {
     fallbackLocale: "en",
     globalInjection: true,
     legacy: false,
-    locale: preferences.value.language || checkDefaultLanguage() || "en",
+    locale: "en", // Force English only
     messageCompiler,
     messages: messages(),
+    fallbackWarn: false,
+    missingWarn: false,
+
+    missing: (locale, key) => {  
+      // Always return English translation if available, even if the key exists but is an empty string in the current locale
+      const fallbackMessages = i18n.global.getLocaleMessage("en") || {};
+      const fallbackMsg = getNested(fallbackMessages, key);
+      if (fallbackMsg !== undefined && fallbackMsg !== "") {
+        return fallbackMsg;
+      }
+      // Fallback to showing the raw key if nothing is found
+      return key;
+    },
+    // Custom fallback for empty string values
+    postTranslation: (result, key) => {
+      if (result === "") {
+        const fallbackMessages = i18n.global.getLocaleMessage("en") || {};
+        const fallbackMsg = getNested(fallbackMessages, key);
+        if (fallbackMsg !== undefined && fallbackMsg !== "") {
+          return fallbackMsg;
+        }
+        return key;
+      }
+      return result;
+    },
   });
   vueApp.use(i18n);
 
@@ -37,6 +62,11 @@ export default defineNuxtPlugin(({ vueApp }) => {
     },
   };
 });
+
+// Utility to resolve nested keys like 'components.app.create_modal.enter'
+function getNested(obj: any, path: string) {
+  return path.split('.').reduce((o, k) => (o && o[k] !== undefined ? o[k] : undefined), obj);
+}
 
 export const messages = () => {
   const messages: Record<string, any> = {};
