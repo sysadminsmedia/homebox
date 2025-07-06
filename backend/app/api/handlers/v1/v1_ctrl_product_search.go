@@ -182,7 +182,8 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 		// Barcode spider implementation
 		barcodespider := func(tokenAPI string, iEan string) ([]repo.BarcodeProduct, error) {
 			if len(tokenAPI) == 0 {
-				return nil, errors.New("no api token configured for barcodespider")
+				return nil, errors.New("no api token configured for barcodespider. " +
+					"Please define the api token in environment variable HBOX_BARCODE_TOKEN_BARCODESPIDER")
 			}
 
 			req, err := http.NewRequest(
