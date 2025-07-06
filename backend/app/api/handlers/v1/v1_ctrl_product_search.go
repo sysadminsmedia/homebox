@@ -102,8 +102,8 @@ type BARCODESPIDER_COMResponse struct {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIConf) errchain.HandlerFunc {
 	type query struct {
-		// 4,296 characters is the maximum length of a QR code
-		EAN string `schema:"productEAN" validate:"required,max=4296"`
+		// 80 characters is the longest non-2D barcode length (GS1-128)
+		EAN string `schema:"productEAN" validate:"required,max=80"`
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) error {
