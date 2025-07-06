@@ -143,9 +143,9 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 				return nil, err
 			}
 
-			// Convert the body to type string
-			sb := string(body)
-			log.Info().Msg("Response: " + sb)
+			// Uncomment the following string for debug
+			// sb := string(body)
+			// log.Debug().Msg("Response: " + sb)
 
 			var result UPCITEMDBResponse
 			if err := json.Unmarshal(body, &result); err != nil { // Parse []byte to go struct pointer
@@ -216,9 +216,9 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 				return nil, err
 			}
 
-			// Convert the body to type string
-			sb := string(body)
-			log.Info().Msg("Response: " + sb)
+			// Uncomment the following string for debug
+			// sb := string(body)
+			// log.Debug().Msg("Response: " + sb)
 
 			var result BARCODESPIDER_COMResponse
 			if err := json.Unmarshal(body, &result); err != nil { // Parse []byte to go struct pointer
