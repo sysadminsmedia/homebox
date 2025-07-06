@@ -55,7 +55,7 @@
   import { useDialog } from "@/components/ui/dialog-provider";
 
   const { t } = useI18n();
-  const { activeDialog } = useDialog();
+  const { activeDialog, openDialog } = useDialog();
   const open = computed(() => activeDialog.value && activeDialog.value.id === "scanner");
 
   const sources = ref<MediaDeviceInfo[]>([]);
@@ -65,6 +65,7 @@
   const codeReader = new BrowserMultiFormatReader();
   const errorMessage = ref<string | null>(null);
   const detectedBarcode = ref<string>("");
+  const api = useUserApi();
 
   const handleError = (error: unknown) => {
     console.error("Scanner error:", error);
@@ -84,6 +85,46 @@
 
   const handleButtonClick = () => {
     console.log("Button clicked!");
+
+    getQRCodeUrl();
+    // console.log("Value::: ", productEAN);
+
+    /* const route2 = useRoute();
+
+    const currentURL = window.location.href;
+    // Adjust route import as needed
+    console.log(route2(`/getproductfromean`)); */
+  };
+
+/*
+  function openCreateModal(ItemCreate ic) {
+      this.$emit('open-modal', ic)
+  }
+  */
+
+  async function getQRCodeUrl() {
+    /* const { isCanceled } = await confirm.open(
+      "Are you sure you want to ensure all assets have an ID? This can take a while and cannot be undone."
+    );
+
+    if (isCanceled) {
+      return;
+    } */
+
+    const result = await api.actions.getEAN(detectedBarcode.value);
+
+    // this.$store.commit('setScannedData', result);
+
+    if(result.error)
+      return
+    
+    openDialog("create-item", result.data);
+
+    /* if (result.error) {
+      toast.error("Failed to ensure asset IDs.");
+    } */
+
+    // toast.success(`${result.data.completed} assets have been updated.`);
   };
 
   const startScanner = async () => {
