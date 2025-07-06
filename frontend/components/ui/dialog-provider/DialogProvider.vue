@@ -1,19 +1,21 @@
 <!-- DialogProvider.vue -->
 <script setup lang="ts">
   import { ref, reactive, computed } from "vue";
-  import { provideDialogContext } from "./utils";
+  import { provideDialogContext, ActiveDialog } from "./utils";
 
-  const activeDialog = ref<string | null>(null);
+  const activeDialog =  ref<ActiveDialog | null>(null);
   const activeAlerts = reactive<string[]>([]);
 
-  const openDialog = (dialogId: string) => {
+  const openDialog = (dialogId: string, params?: any) => {
     if (activeAlerts.length > 0) return;
-    activeDialog.value = dialogId;
+
+    const ad = new ActiveDialog(dialogId, params);
+    activeDialog.value = ad;
   };
 
   const closeDialog = (dialogId?: string) => {
     if (dialogId) {
-      if (activeDialog.value === dialogId) {
+      if (activeDialog.value && activeDialog.value.id === dialogId) {
         activeDialog.value = null;
       }
     } else {

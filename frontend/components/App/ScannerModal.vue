@@ -56,7 +56,7 @@
 
   const { t } = useI18n();
   const { activeDialog } = useDialog();
-  const open = computed(() => activeDialog.value === "scanner");
+  const open = computed(() => activeDialog.value && activeDialog.value.id === "scanner");
 
   const sources = ref<MediaDeviceInfo[]>([]);
   const selectedSource = ref<string | null>(null);

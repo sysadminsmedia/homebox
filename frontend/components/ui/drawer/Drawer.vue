@@ -12,7 +12,7 @@
 
   const { closeDialog, activeDialog } = useDialog();
 
-  const isOpen = computed(() => activeDialog.value === props.dialogId);
+  const isOpen = computed(() => activeDialog.value !== null && activeDialog.value.id === props.dialogId);
   const onOpenChange = (open: boolean) => {
     if (!open) closeDialog(props.dialogId);
   };
