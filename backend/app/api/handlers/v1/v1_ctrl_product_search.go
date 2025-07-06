@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/rs/zerolog/log"
@@ -110,6 +111,8 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 			return err
 		}
 
+		const TIMEOUT_SEC = 10
+
 		log.Info().Msg("Processing barcode lookup request on: " + q.EAN)
 
 		// Search on UPCITEMDB
@@ -120,7 +123,8 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 		// Example code: dewalt 5035048748428
 
 		upcitemdb := func(iEan string) ([]repo.BarcodeProduct, error) {
-			resp, err := http.Get("https://api.upcitemdb.com/prod/trial/lookup?upc=" + iEan)
+			client := &http.Client{Timeout: TIMEOUT_SEC * time.Second}
+			resp, err := client.Get("https://api.upcitemdb.com/prod/trial/lookup?upc=" + iEan)
 			if err != nil {
 				return nil, err
 			}
@@ -189,7 +193,7 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 
 			req.Header.Add("token", tokenAPI)
 
-			client := &http.Client{}
+			client := &http.Client{Timeout: TIMEOUT_SEC * time.Second}
 
 			resp, err := client.Do(req)
 			if err != nil {
@@ -262,7 +266,8 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 				continue
 			}
 
-			res, err := http.Get(p.ImageURL)
+			client := &http.Client{Timeout: TIMEOUT_SEC * time.Second}
+			res, err := client.Get(p.ImageURL)
 			if err != nil {
 				log.Warn().Msg("Cannot fetch image for URL: " + p.ImageURL + ": " + err.Error())
 			}
