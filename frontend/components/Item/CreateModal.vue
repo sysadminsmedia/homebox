@@ -310,6 +310,13 @@
             form.location = found;
           }
         }
+
+        if(active.params)
+        {
+          form.name = active.params.name;
+          form.description = active.params.description;
+        }
+
         if (labelId.value) {
           form.labels = labels.value.filter(l => l.id === labelId.value).map(l => l.id);
         }
