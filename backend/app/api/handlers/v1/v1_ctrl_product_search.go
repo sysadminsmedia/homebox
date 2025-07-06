@@ -194,6 +194,10 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 			}
 			defer resp.Body.Close()
 
+			if resp.StatusCode != http.StatusOK {
+				return nil, fmt.Errorf("barcodespider API returned status code: %d", resp.StatusCode)
+			}
+
 			// We Read the response body on the line below.
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
