@@ -1,5 +1,5 @@
 import { BaseAPI, route } from "../base";
-import type { ActionAmountResult } from "../types/data-contracts";
+import type { ActionAmountResult, ItemCreate } from "../types/data-contracts";
 
 export class ActionsAPI extends BaseAPI {
   ensureAssetIDs() {
@@ -30,5 +30,9 @@ export class ActionsAPI extends BaseAPI {
     return this.http.post<void, ActionAmountResult>({
       url: route("/actions/create-missing-thumbnails"),
     });
+  }
+  
+  getEAN(productEAN: string) {
+    return this.http.get<ItemCreate>({ url: route(`/getproductfromean`, { productEAN }) });
   }
 }
