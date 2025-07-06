@@ -78,7 +78,7 @@
 
       <form class="flex flex-col gap-4" @submit.prevent="submitCsvFile">
         <DialogFooter>
-          <Button type="import" :disabled="selectedRow === -1" @click=createItem> Import selected </Button>
+          <Button type="import" :disabled="selectedRow === -1" @click="createItem"> Import selected </Button>
         </DialogFooter>
       </form>
     </DialogContent>
@@ -152,13 +152,28 @@
   async function retrieveProductInfo(barcode: string) {
     products.value = null;
     searching.value = true;
-    const result = await api.products.searchFromBarcode(barcode);
-    searching.value = false;
 
-    if(result.error)
-      return
+    if (!barcode || barcode.trim().length === 0) {
+      console.error('Invalid barcode provided');
+      return;
+    }
 
-    products.value = result.data;
+    try {
+      const result = await api.products.searchFromBarcode(barcode.trim());
+      if(result.error)
+      {
+        console.error('API Error:', result.error);
+        return;
+      }
+      else
+      {
+        products.value = result.data;
+      }
+    } catch (error) {
+      console.error('Failed to retrieve product info:', error);
+    } finally {
+      searching.value = false;
+    }
   }
 
   function extractValue(data: TableData, value: string) {
