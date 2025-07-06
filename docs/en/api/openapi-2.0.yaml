@@ -1551,6 +1551,25 @@ paths:
       summary: Currency
       tags:
       - Base
+  /v1/getproductfromean:
+    get:
+      parameters:
+      - description: barcode to be searched
+        in: query
+        name: data
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      security:
+      - Bearer: []
+      summary: Search EAN from Barcode
+      tags:
+      - Items
   /v1/groups:
     get:
       produces:
