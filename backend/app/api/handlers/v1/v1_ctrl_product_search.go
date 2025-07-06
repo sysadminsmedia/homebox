@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/rs/zerolog/log"
@@ -239,6 +240,13 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 			p := &products[i]
 
 			if len(p.ImageURL) == 0 {
+				continue
+			}
+
+			// Validate URL is HTTPS
+			u, err := url.Parse(p.ImageURL)
+			if err != nil || u.Scheme != "https" {
+				log.Warn().Msg("Skipping non-HTTPS image URL: " + p.ImageURL)
 				continue
 			}
 
