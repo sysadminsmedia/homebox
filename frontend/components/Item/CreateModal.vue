@@ -270,7 +270,7 @@
   watch(
     () => activeDialog.value,
     async active => {
-      if (active === "create-item") {
+      if (active !== null && active.id === "create-item") {
         // needed since URL will be cleared in the next step => ParentId Selection should stay though
         subItemCreate.value = subItemCreateParam.value === "y";
         let parentItemLocationId = null;
