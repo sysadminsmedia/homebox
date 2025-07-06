@@ -28,6 +28,7 @@ type Config struct {
 	Debug      DebugConf      `yaml:"debug"`
 	Options    Options        `yaml:"options"`
 	LabelMaker LabelMakerConf `yaml:"labelmaker"`
+	Thumbnail  Thumbnail      `yaml:"thumbnail"`
 }
 
 type Options struct {
@@ -36,6 +37,12 @@ type Options struct {
 	CurrencyConfig       string `yaml:"currencies"`
 	GithubReleaseCheck   bool   `yaml:"check_github_release"    conf:"default:true"`
 	AllowAnalytics       bool   `yaml:"allow_analytics"         conf:"default:false"`
+}
+
+type Thumbnail struct {
+	Enabled bool `yaml:"enabled" conf:"default:true"`
+	Width   int  `yaml:"width"   conf:"default:500"`
+	Height  int  `yaml:"height"  conf:"default:500"`
 }
 
 type DebugConf struct {

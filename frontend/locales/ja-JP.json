@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "【注意】インポート時の動作が変更されました'<br>'\n選択されたCSVファイルにimport_refsの値が存在する場合、該当するアイテムはCSVファイルの値で上書きされます。",
                 "description": "アイテム、ラベル、ロケーション情報を含む CSV ファイルをインポートします。\nデータの形式など詳細については、ドキュメントを参照してください。",
-                "title": ".csvファイルのインポート",
-                "upload": "ファイルを選択"
+                "title": ".csvファイルのインポート"
             },
             "outdated": {
                 "current_version": "現在のバージョン",
@@ -62,7 +61,6 @@
             "create_modal": {
                 "item_description": "説明",
                 "item_name": "名称",
-                "photo_button": "画像の追加",
                 "title": "アイテム情報の追加"
             },
             "view": {
@@ -122,6 +120,7 @@
         "maintenance": "メンテナンス情報",
         "name": "名前",
         "password": "パスワード",
+        "quantity": "数量",
         "read_docs": "ドキュメントを読む",
         "save": "保存",
         "search": "検索",
@@ -202,6 +201,7 @@
         "query_id": "識別ID { id } の情報を取得しています",
         "receipt": "領収書・レシート",
         "receipts": "レシート(領収書)",
+        "reset_search": "検索条件をクリア",
         "results": "検索結果: { total } 件",
         "serial_number": "シリアル番号(S/N)",
         "show_advanced_view_options": "高度なオプションを表示",
@@ -225,13 +225,17 @@
     },
     "languages": {
         "ca": "カタルーニャ語 (カタロニア語)",
+        "cs-CZ": "チェコ語",
         "de": "ドイツ語",
         "en": "英語",
         "es": "スペイン語",
+        "fi-FI": "フィンランド語",
         "fr": "フランス語",
         "hu": "ハンガリー語",
+        "id-ID": "インドネシア語",
         "it": "イタリア語",
         "ja-JP": "日本語",
+        "ko-KR": "韓国語",
         "nl": "オランダ語",
         "pl": "ポーランド語",
         "pt-BR": "ポルトガル語 (ブラジル)",
@@ -239,6 +243,8 @@
         "ru": "ロシア語",
         "sl": "スロベニア語",
         "sv": "スウェーデン語",
+        "ta-IN": "タミル語",
+        "th-TH": "タイ語",
         "tr": "トルコ語",
         "uk-UA": "ウクライナ語",
         "zh-CN": "中国語 (簡体字)",
@@ -249,6 +255,7 @@
     "languages.da-DK": "デンマーク語",
     "languages.ro-RO": "ルーマニア語",
     "languages.sk-SK": "スロバキア語",
+    "languages.sq-AL": "アルバニア語",
     "locations": {
         "child_locations": "属しているその他のロケーション",
         "collapse_tree": "ツリーを折りたたむ",
@@ -330,7 +337,9 @@
         "user_profile_sub": "アカウントの管理やユーザーの招待など"
     },
     "scanner": {
-        "invalid_url": "バーコードが無効です"
+        "error": "不明なエラーが発生しました。スキャンは利用できません。",
+        "invalid_url": "バーコードが無効です",
+        "unsupported": "メディアストリームAPIはHTTPSのみをサポートしています"
     },
     "tools": {
         "actions": "全てのアイテムに対する変更",
@@ -356,7 +365,7 @@
             "export_sub": "Homeboxで利用可能なCSV形式のファイルをエクスポートします。'<br>'すべてのアイテムが対象です。一部のアイテムを選択してエクスポートすることはできません。",
             "import": "インポート (CSVの取り込み)",
             "import_button": "CSVファイルを選択",
-            "import_sub": "Homeboxで利用可能なCSVファイルをインポートします。'<br>''<code>'HB.import_ref'</code>'が存在しないアイテムに重複がある場合は上書きされません。'<br>''<code>'HB.import_ref'</code>'が存在するアイテムに重複がある場合は、同じ'<code>'HB.import_ref'</code>'を持つアイテムのデータが上書きされます。'<br>'どちらも、重複していない場合は関係なく追加されます。"
+            "import_sub": "Homeboxで利用可能なCSVファイルをインポートします。\n'<code>'HB.import_ref'</code>'が存在しないアイテムに重複がある場合は上書きされません。\n'<code>'HB.import_ref'</code>'が存在するアイテムに重複がある場合は、同じ'<code>'HB.import_ref'</code>'を持つアイテムのデータが上書きされます。\nどちらも、重複していない場合は関係なく追加されます。"
         },
         "import_export_sub": "登録されたアイテムをCSVファイルにインポートおよびエクスポートします。Homeboxのソフトウェアを切り替える場合などに便利です。",
         "reports": "レポート",

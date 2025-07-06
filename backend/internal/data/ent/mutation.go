@@ -15,7 +15,6 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authroles"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/document"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
@@ -40,7 +39,6 @@ const (
 	TypeAttachment           = "Attachment"
 	TypeAuthRoles            = "AuthRoles"
 	TypeAuthTokens           = "AuthTokens"
-	TypeDocument             = "Document"
 	TypeGroup                = "Group"
 	TypeGroupInvitationToken = "GroupInvitationToken"
 	TypeItem                 = "Item"
@@ -55,21 +53,24 @@ const (
 // AttachmentMutation represents an operation that mutates the Attachment nodes in the graph.
 type AttachmentMutation struct {
 	config
-	op              Op
-	typ             string
-	id              *uuid.UUID
-	created_at      *time.Time
-	updated_at      *time.Time
-	_type           *attachment.Type
-	primary         *bool
-	clearedFields   map[string]struct{}
-	item            *uuid.UUID
-	cleareditem     bool
-	document        *uuid.UUID
-	cleareddocument bool
-	done            bool
-	oldValue        func(context.Context) (*Attachment, error)
-	predicates      []predicate.Attachment
+	op               Op
+	typ              string
+	id               *uuid.UUID
+	created_at       *time.Time
+	updated_at       *time.Time
+	_type            *attachment.Type
+	primary          *bool
+	title            *string
+	_path            *string
+	mime_type        *string
+	clearedFields    map[string]struct{}
+	item             *uuid.UUID
+	cleareditem      bool
+	thumbnail        *uuid.UUID
+	clearedthumbnail bool
+	done             bool
+	oldValue         func(context.Context) (*Attachment, error)
+	predicates       []predicate.Attachment
 }
 
 var _ ent.Mutation = (*AttachmentMutation)(nil)
@@ -320,6 +321,114 @@ func (m *AttachmentMutation) ResetPrimary() {
 	m.primary = nil
 }
 
+// SetTitle sets the "title" field.
+func (m *AttachmentMutation) SetTitle(s string) {
+	m.title = &s
+}
+
+// Title returns the value of the "title" field in the mutation.
+func (m *AttachmentMutation) Title() (r string, exists bool) {
+	v := m.title
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTitle returns the old "title" field's value of the Attachment entity.
+// If the Attachment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AttachmentMutation) OldTitle(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTitle is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTitle requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTitle: %w", err)
+	}
+	return oldValue.Title, nil
+}
+
+// ResetTitle resets all changes to the "title" field.
+func (m *AttachmentMutation) ResetTitle() {
+	m.title = nil
+}
+
+// SetPath sets the "path" field.
+func (m *AttachmentMutation) SetPath(s string) {
+	m._path = &s
+}
+
+// Path returns the value of the "path" field in the mutation.
+func (m *AttachmentMutation) Path() (r string, exists bool) {
+	v := m._path
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPath returns the old "path" field's value of the Attachment entity.
+// If the Attachment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AttachmentMutation) OldPath(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPath is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPath requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPath: %w", err)
+	}
+	return oldValue.Path, nil
+}
+
+// ResetPath resets all changes to the "path" field.
+func (m *AttachmentMutation) ResetPath() {
+	m._path = nil
+}
+
+// SetMimeType sets the "mime_type" field.
+func (m *AttachmentMutation) SetMimeType(s string) {
+	m.mime_type = &s
+}
+
+// MimeType returns the value of the "mime_type" field in the mutation.
+func (m *AttachmentMutation) MimeType() (r string, exists bool) {
+	v := m.mime_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMimeType returns the old "mime_type" field's value of the Attachment entity.
+// If the Attachment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AttachmentMutation) OldMimeType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMimeType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMimeType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMimeType: %w", err)
+	}
+	return oldValue.MimeType, nil
+}
+
+// ResetMimeType resets all changes to the "mime_type" field.
+func (m *AttachmentMutation) ResetMimeType() {
+	m.mime_type = nil
+}
+
 // SetItemID sets the "item" edge to the Item entity by id.
 func (m *AttachmentMutation) SetItemID(id uuid.UUID) {
 	m.item = &id
@@ -359,43 +468,43 @@ func (m *AttachmentMutation) ResetItem() {
 	m.cleareditem = false
 }
 
-// SetDocumentID sets the "document" edge to the Document entity by id.
-func (m *AttachmentMutation) SetDocumentID(id uuid.UUID) {
-	m.document = &id
+// SetThumbnailID sets the "thumbnail" edge to the Attachment entity by id.
+func (m *AttachmentMutation) SetThumbnailID(id uuid.UUID) {
+	m.thumbnail = &id
 }
 
-// ClearDocument clears the "document" edge to the Document entity.
-func (m *AttachmentMutation) ClearDocument() {
-	m.cleareddocument = true
+// ClearThumbnail clears the "thumbnail" edge to the Attachment entity.
+func (m *AttachmentMutation) ClearThumbnail() {
+	m.clearedthumbnail = true
 }
 
-// DocumentCleared reports if the "document" edge to the Document entity was cleared.
-func (m *AttachmentMutation) DocumentCleared() bool {
-	return m.cleareddocument
+// ThumbnailCleared reports if the "thumbnail" edge to the Attachment entity was cleared.
+func (m *AttachmentMutation) ThumbnailCleared() bool {
+	return m.clearedthumbnail
 }
 
-// DocumentID returns the "document" edge ID in the mutation.
-func (m *AttachmentMutation) DocumentID() (id uuid.UUID, exists bool) {
-	if m.document != nil {
-		return *m.document, true
+// ThumbnailID returns the "thumbnail" edge ID in the mutation.
+func (m *AttachmentMutation) ThumbnailID() (id uuid.UUID, exists bool) {
+	if m.thumbnail != nil {
+		return *m.thumbnail, true
 	}
 	return
 }
 
-// DocumentIDs returns the "document" edge IDs in the mutation.
+// ThumbnailIDs returns the "thumbnail" edge IDs in the mutation.
 // Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// DocumentID instead. It exists only for internal usage by the builders.
-func (m *AttachmentMutation) DocumentIDs() (ids []uuid.UUID) {
-	if id := m.document; id != nil {
+// ThumbnailID instead. It exists only for internal usage by the builders.
+func (m *AttachmentMutation) ThumbnailIDs() (ids []uuid.UUID) {
+	if id := m.thumbnail; id != nil {
 		ids = append(ids, *id)
 	}
 	return
 }
 
-// ResetDocument resets all changes to the "document" edge.
-func (m *AttachmentMutation) ResetDocument() {
-	m.document = nil
-	m.cleareddocument = false
+// ResetThumbnail resets all changes to the "thumbnail" edge.
+func (m *AttachmentMutation) ResetThumbnail() {
+	m.thumbnail = nil
+	m.clearedthumbnail = false
 }
 
 // Where appends a list predicates to the AttachmentMutation builder.
@@ -432,7 +541,7 @@ func (m *AttachmentMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AttachmentMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 7)
 	if m.created_at != nil {
 		fields = append(fields, attachment.FieldCreatedAt)
 	}
@@ -444,6 +553,15 @@ func (m *AttachmentMutation) Fields() []string {
 	}
 	if m.primary != nil {
 		fields = append(fields, attachment.FieldPrimary)
+	}
+	if m.title != nil {
+		fields = append(fields, attachment.FieldTitle)
+	}
+	if m._path != nil {
+		fields = append(fields, attachment.FieldPath)
+	}
+	if m.mime_type != nil {
+		fields = append(fields, attachment.FieldMimeType)
 	}
 	return fields
 }
@@ -461,6 +579,12 @@ func (m *AttachmentMutation) Field(name string) (ent.Value, bool) {
 		return m.GetType()
 	case attachment.FieldPrimary:
 		return m.Primary()
+	case attachment.FieldTitle:
+		return m.Title()
+	case attachment.FieldPath:
+		return m.Path()
+	case attachment.FieldMimeType:
+		return m.MimeType()
 	}
 	return nil, false
 }
@@ -478,6 +602,12 @@ func (m *AttachmentMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldType(ctx)
 	case attachment.FieldPrimary:
 		return m.OldPrimary(ctx)
+	case attachment.FieldTitle:
+		return m.OldTitle(ctx)
+	case attachment.FieldPath:
+		return m.OldPath(ctx)
+	case attachment.FieldMimeType:
+		return m.OldMimeType(ctx)
 	}
 	return nil, fmt.Errorf("unknown Attachment field %s", name)
 }
@@ -514,6 +644,27 @@ func (m *AttachmentMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPrimary(v)
+		return nil
+	case attachment.FieldTitle:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTitle(v)
+		return nil
+	case attachment.FieldPath:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPath(v)
+		return nil
+	case attachment.FieldMimeType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMimeType(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Attachment field %s", name)
@@ -576,6 +727,15 @@ func (m *AttachmentMutation) ResetField(name string) error {
 	case attachment.FieldPrimary:
 		m.ResetPrimary()
 		return nil
+	case attachment.FieldTitle:
+		m.ResetTitle()
+		return nil
+	case attachment.FieldPath:
+		m.ResetPath()
+		return nil
+	case attachment.FieldMimeType:
+		m.ResetMimeType()
+		return nil
 	}
 	return fmt.Errorf("unknown Attachment field %s", name)
 }
@@ -586,8 +746,8 @@ func (m *AttachmentMutation) AddedEdges() []string {
 	if m.item != nil {
 		edges = append(edges, attachment.EdgeItem)
 	}
-	if m.document != nil {
-		edges = append(edges, attachment.EdgeDocument)
+	if m.thumbnail != nil {
+		edges = append(edges, attachment.EdgeThumbnail)
 	}
 	return edges
 }
@@ -600,8 +760,8 @@ func (m *AttachmentMutation) AddedIDs(name string) []ent.Value {
 		if id := m.item; id != nil {
 			return []ent.Value{*id}
 		}
-	case attachment.EdgeDocument:
-		if id := m.document; id != nil {
+	case attachment.EdgeThumbnail:
+		if id := m.thumbnail; id != nil {
 			return []ent.Value{*id}
 		}
 	}
@@ -626,8 +786,8 @@ func (m *AttachmentMutation) ClearedEdges() []string {
 	if m.cleareditem {
 		edges = append(edges, attachment.EdgeItem)
 	}
-	if m.cleareddocument {
-		edges = append(edges, attachment.EdgeDocument)
+	if m.clearedthumbnail {
+		edges = append(edges, attachment.EdgeThumbnail)
 	}
 	return edges
 }
@@ -638,8 +798,8 @@ func (m *AttachmentMutation) EdgeCleared(name string) bool {
 	switch name {
 	case attachment.EdgeItem:
 		return m.cleareditem
-	case attachment.EdgeDocument:
-		return m.cleareddocument
+	case attachment.EdgeThumbnail:
+		return m.clearedthumbnail
 	}
 	return false
 }
@@ -651,8 +811,8 @@ func (m *AttachmentMutation) ClearEdge(name string) error {
 	case attachment.EdgeItem:
 		m.ClearItem()
 		return nil
-	case attachment.EdgeDocument:
-		m.ClearDocument()
+	case attachment.EdgeThumbnail:
+		m.ClearThumbnail()
 		return nil
 	}
 	return fmt.Errorf("unknown Attachment unique edge %s", name)
@@ -665,8 +825,8 @@ func (m *AttachmentMutation) ResetEdge(name string) error {
 	case attachment.EdgeItem:
 		m.ResetItem()
 		return nil
-	case attachment.EdgeDocument:
-		m.ResetDocument()
+	case attachment.EdgeThumbnail:
+		m.ResetThumbnail()
 		return nil
 	}
 	return fmt.Errorf("unknown Attachment edge %s", name)
@@ -1685,652 +1845,6 @@ func (m *AuthTokensMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown AuthTokens edge %s", name)
 }
 
-// DocumentMutation represents an operation that mutates the Document nodes in the graph.
-type DocumentMutation struct {
-	config
-	op                 Op
-	typ                string
-	id                 *uuid.UUID
-	created_at         *time.Time
-	updated_at         *time.Time
-	title              *string
-	_path              *string
-	clearedFields      map[string]struct{}
-	group              *uuid.UUID
-	clearedgroup       bool
-	attachments        map[uuid.UUID]struct{}
-	removedattachments map[uuid.UUID]struct{}
-	clearedattachments bool
-	done               bool
-	oldValue           func(context.Context) (*Document, error)
-	predicates         []predicate.Document
-}
-
-var _ ent.Mutation = (*DocumentMutation)(nil)
-
-// documentOption allows management of the mutation configuration using functional options.
-type documentOption func(*DocumentMutation)
-
-// newDocumentMutation creates new mutation for the Document entity.
-func newDocumentMutation(c config, op Op, opts ...documentOption) *DocumentMutation {
-	m := &DocumentMutation{
-		config:        c,
-		op:            op,
-		typ:           TypeDocument,
-		clearedFields: make(map[string]struct{}),
-	}
-	for _, opt := range opts {
-		opt(m)
-	}
-	return m
-}
-
-// withDocumentID sets the ID field of the mutation.
-func withDocumentID(id uuid.UUID) documentOption {
-	return func(m *DocumentMutation) {
-		var (
-			err   error
-			once  sync.Once
-			value *Document
-		)
-		m.oldValue = func(ctx context.Context) (*Document, error) {
-			once.Do(func() {
-				if m.done {
-					err = errors.New("querying old values post mutation is not allowed")
-				} else {
-					value, err = m.Client().Document.Get(ctx, id)
-				}
-			})
-			return value, err
-		}
-		m.id = &id
-	}
-}
-
-// withDocument sets the old Document of the mutation.
-func withDocument(node *Document) documentOption {
-	return func(m *DocumentMutation) {
-		m.oldValue = func(context.Context) (*Document, error) {
-			return node, nil
-		}
-		m.id = &node.ID
-	}
-}
-
-// Client returns a new `ent.Client` from the mutation. If the mutation was
-// executed in a transaction (ent.Tx), a transactional client is returned.
-func (m DocumentMutation) Client() *Client {
-	client := &Client{config: m.config}
-	client.init()
-	return client
-}
-
-// Tx returns an `ent.Tx` for mutations that were executed in transactions;
-// it returns an error otherwise.
-func (m DocumentMutation) Tx() (*Tx, error) {
-	if _, ok := m.driver.(*txDriver); !ok {
-		return nil, errors.New("ent: mutation is not running in a transaction")
-	}
-	tx := &Tx{config: m.config}
-	tx.init()
-	return tx, nil
-}
-
-// SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of Document entities.
-func (m *DocumentMutation) SetID(id uuid.UUID) {
-	m.id = &id
-}
-
-// ID returns the ID value in the mutation. Note that the ID is only available
-// if it was provided to the builder or after it was returned from the database.
-func (m *DocumentMutation) ID() (id uuid.UUID, exists bool) {
-	if m.id == nil {
-		return
-	}
-	return *m.id, true
-}
-
-// IDs queries the database and returns the entity ids that match the mutation's predicate.
-// That means, if the mutation is applied within a transaction with an isolation level such
-// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
-// or updated by the mutation.
-func (m *DocumentMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
-	switch {
-	case m.op.Is(OpUpdateOne | OpDeleteOne):
-		id, exists := m.ID()
-		if exists {
-			return []uuid.UUID{id}, nil
-		}
-		fallthrough
-	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().Document.Query().Where(m.predicates...).IDs(ctx)
-	default:
-		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
-	}
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (m *DocumentMutation) SetCreatedAt(t time.Time) {
-	m.created_at = &t
-}
-
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *DocumentMutation) CreatedAt() (r time.Time, exists bool) {
-	v := m.created_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreatedAt returns the old "created_at" field's value of the Document entity.
-// If the Document object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DocumentMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
-	}
-	return oldValue.CreatedAt, nil
-}
-
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *DocumentMutation) ResetCreatedAt() {
-	m.created_at = nil
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (m *DocumentMutation) SetUpdatedAt(t time.Time) {
-	m.updated_at = &t
-}
-
-// UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *DocumentMutation) UpdatedAt() (r time.Time, exists bool) {
-	v := m.updated_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdatedAt returns the old "updated_at" field's value of the Document entity.
-// If the Document object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DocumentMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
-	}
-	return oldValue.UpdatedAt, nil
-}
-
-// ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *DocumentMutation) ResetUpdatedAt() {
-	m.updated_at = nil
-}
-
-// SetTitle sets the "title" field.
-func (m *DocumentMutation) SetTitle(s string) {
-	m.title = &s
-}
-
-// Title returns the value of the "title" field in the mutation.
-func (m *DocumentMutation) Title() (r string, exists bool) {
-	v := m.title
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldTitle returns the old "title" field's value of the Document entity.
-// If the Document object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DocumentMutation) OldTitle(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldTitle is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldTitle requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldTitle: %w", err)
-	}
-	return oldValue.Title, nil
-}
-
-// ResetTitle resets all changes to the "title" field.
-func (m *DocumentMutation) ResetTitle() {
-	m.title = nil
-}
-
-// SetPath sets the "path" field.
-func (m *DocumentMutation) SetPath(s string) {
-	m._path = &s
-}
-
-// Path returns the value of the "path" field in the mutation.
-func (m *DocumentMutation) Path() (r string, exists bool) {
-	v := m._path
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldPath returns the old "path" field's value of the Document entity.
-// If the Document object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *DocumentMutation) OldPath(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldPath is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldPath requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldPath: %w", err)
-	}
-	return oldValue.Path, nil
-}
-
-// ResetPath resets all changes to the "path" field.
-func (m *DocumentMutation) ResetPath() {
-	m._path = nil
-}
-
-// SetGroupID sets the "group" edge to the Group entity by id.
-func (m *DocumentMutation) SetGroupID(id uuid.UUID) {
-	m.group = &id
-}
-
-// ClearGroup clears the "group" edge to the Group entity.
-func (m *DocumentMutation) ClearGroup() {
-	m.clearedgroup = true
-}
-
-// GroupCleared reports if the "group" edge to the Group entity was cleared.
-func (m *DocumentMutation) GroupCleared() bool {
-	return m.clearedgroup
-}
-
-// GroupID returns the "group" edge ID in the mutation.
-func (m *DocumentMutation) GroupID() (id uuid.UUID, exists bool) {
-	if m.group != nil {
-		return *m.group, true
-	}
-	return
-}
-
-// GroupIDs returns the "group" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// GroupID instead. It exists only for internal usage by the builders.
-func (m *DocumentMutation) GroupIDs() (ids []uuid.UUID) {
-	if id := m.group; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetGroup resets all changes to the "group" edge.
-func (m *DocumentMutation) ResetGroup() {
-	m.group = nil
-	m.clearedgroup = false
-}
-
-// AddAttachmentIDs adds the "attachments" edge to the Attachment entity by ids.
-func (m *DocumentMutation) AddAttachmentIDs(ids ...uuid.UUID) {
-	if m.attachments == nil {
-		m.attachments = make(map[uuid.UUID]struct{})
-	}
-	for i := range ids {
-		m.attachments[ids[i]] = struct{}{}
-	}
-}
-
-// ClearAttachments clears the "attachments" edge to the Attachment entity.
-func (m *DocumentMutation) ClearAttachments() {
-	m.clearedattachments = true
-}
-
-// AttachmentsCleared reports if the "attachments" edge to the Attachment entity was cleared.
-func (m *DocumentMutation) AttachmentsCleared() bool {
-	return m.clearedattachments
-}
-
-// RemoveAttachmentIDs removes the "attachments" edge to the Attachment entity by IDs.
-func (m *DocumentMutation) RemoveAttachmentIDs(ids ...uuid.UUID) {
-	if m.removedattachments == nil {
-		m.removedattachments = make(map[uuid.UUID]struct{})
-	}
-	for i := range ids {
-		delete(m.attachments, ids[i])
-		m.removedattachments[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedAttachments returns the removed IDs of the "attachments" edge to the Attachment entity.
-func (m *DocumentMutation) RemovedAttachmentsIDs() (ids []uuid.UUID) {
-	for id := range m.removedattachments {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// AttachmentsIDs returns the "attachments" edge IDs in the mutation.
-func (m *DocumentMutation) AttachmentsIDs() (ids []uuid.UUID) {
-	for id := range m.attachments {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetAttachments resets all changes to the "attachments" edge.
-func (m *DocumentMutation) ResetAttachments() {
-	m.attachments = nil
-	m.clearedattachments = false
-	m.removedattachments = nil
-}
-
-// Where appends a list predicates to the DocumentMutation builder.
-func (m *DocumentMutation) Where(ps ...predicate.Document) {
-	m.predicates = append(m.predicates, ps...)
-}
-
-// WhereP appends storage-level predicates to the DocumentMutation builder. Using this method,
-// users can use type-assertion to append predicates that do not depend on any generated package.
-func (m *DocumentMutation) WhereP(ps ...func(*sql.Selector)) {
-	p := make([]predicate.Document, len(ps))
-	for i := range ps {
-		p[i] = ps[i]
-	}
-	m.Where(p...)
-}
-
-// Op returns the operation name.
-func (m *DocumentMutation) Op() Op {
-	return m.op
-}
-
-// SetOp allows setting the mutation operation.
-func (m *DocumentMutation) SetOp(op Op) {
-	m.op = op
-}
-
-// Type returns the node type of this mutation (Document).
-func (m *DocumentMutation) Type() string {
-	return m.typ
-}
-
-// Fields returns all fields that were changed during this mutation. Note that in
-// order to get all numeric fields that were incremented/decremented, call
-// AddedFields().
-func (m *DocumentMutation) Fields() []string {
-	fields := make([]string, 0, 4)
-	if m.created_at != nil {
-		fields = append(fields, document.FieldCreatedAt)
-	}
-	if m.updated_at != nil {
-		fields = append(fields, document.FieldUpdatedAt)
-	}
-	if m.title != nil {
-		fields = append(fields, document.FieldTitle)
-	}
-	if m._path != nil {
-		fields = append(fields, document.FieldPath)
-	}
-	return fields
-}
-
-// Field returns the value of a field with the given name. The second boolean
-// return value indicates that this field was not set, or was not defined in the
-// schema.
-func (m *DocumentMutation) Field(name string) (ent.Value, bool) {
-	switch name {
-	case document.FieldCreatedAt:
-		return m.CreatedAt()
-	case document.FieldUpdatedAt:
-		return m.UpdatedAt()
-	case document.FieldTitle:
-		return m.Title()
-	case document.FieldPath:
-		return m.Path()
-	}
-	return nil, false
-}
-
-// OldField returns the old value of the field from the database. An error is
-// returned if the mutation operation is not UpdateOne, or the query to the
-// database failed.
-func (m *DocumentMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
-	switch name {
-	case document.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
-	case document.FieldUpdatedAt:
-		return m.OldUpdatedAt(ctx)
-	case document.FieldTitle:
-		return m.OldTitle(ctx)
-	case document.FieldPath:
-		return m.OldPath(ctx)
-	}
-	return nil, fmt.Errorf("unknown Document field %s", name)
-}
-
-// SetField sets the value of a field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *DocumentMutation) SetField(name string, value ent.Value) error {
-	switch name {
-	case document.FieldCreatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreatedAt(v)
-		return nil
-	case document.FieldUpdatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdatedAt(v)
-		return nil
-	case document.FieldTitle:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetTitle(v)
-		return nil
-	case document.FieldPath:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetPath(v)
-		return nil
-	}
-	return fmt.Errorf("unknown Document field %s", name)
-}
-
-// AddedFields returns all numeric fields that were incremented/decremented during
-// this mutation.
-func (m *DocumentMutation) AddedFields() []string {
-	return nil
-}
-
-// AddedField returns the numeric value that was incremented/decremented on a field
-// with the given name. The second boolean return value indicates that this field
-// was not set, or was not defined in the schema.
-func (m *DocumentMutation) AddedField(name string) (ent.Value, bool) {
-	return nil, false
-}
-
-// AddField adds the value to the field with the given name. It returns an error if
-// the field is not defined in the schema, or if the type mismatched the field
-// type.
-func (m *DocumentMutation) AddField(name string, value ent.Value) error {
-	switch name {
-	}
-	return fmt.Errorf("unknown Document numeric field %s", name)
-}
-
-// ClearedFields returns all nullable fields that were cleared during this
-// mutation.
-func (m *DocumentMutation) ClearedFields() []string {
-	return nil
-}
-
-// FieldCleared returns a boolean indicating if a field with the given name was
-// cleared in this mutation.
-func (m *DocumentMutation) FieldCleared(name string) bool {
-	_, ok := m.clearedFields[name]
-	return ok
-}
-
-// ClearField clears the value of the field with the given name. It returns an
-// error if the field is not defined in the schema.
-func (m *DocumentMutation) ClearField(name string) error {
-	return fmt.Errorf("unknown Document nullable field %s", name)
-}
-
-// ResetField resets all changes in the mutation for the field with the given name.
-// It returns an error if the field is not defined in the schema.
-func (m *DocumentMutation) ResetField(name string) error {
-	switch name {
-	case document.FieldCreatedAt:
-		m.ResetCreatedAt()
-		return nil
-	case document.FieldUpdatedAt:
-		m.ResetUpdatedAt()
-		return nil
-	case document.FieldTitle:
-		m.ResetTitle()
-		return nil
-	case document.FieldPath:
-		m.ResetPath()
-		return nil
-	}
-	return fmt.Errorf("unknown Document field %s", name)
-}
-
-// AddedEdges returns all edge names that were set/added in this mutation.
-func (m *DocumentMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.group != nil {
-		edges = append(edges, document.EdgeGroup)
-	}
-	if m.attachments != nil {
-		edges = append(edges, document.EdgeAttachments)
-	}
-	return edges
-}
-
-// AddedIDs returns all IDs (to other nodes) that were added for the given edge
-// name in this mutation.
-func (m *DocumentMutation) AddedIDs(name string) []ent.Value {
-	switch name {
-	case document.EdgeGroup:
-		if id := m.group; id != nil {
-			return []ent.Value{*id}
-		}
-	case document.EdgeAttachments:
-		ids := make([]ent.Value, 0, len(m.attachments))
-		for id := range m.attachments {
-			ids = append(ids, id)
-		}
-		return ids
-	}
-	return nil
-}
-
-// RemovedEdges returns all edge names that were removed in this mutation.
-func (m *DocumentMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.removedattachments != nil {
-		edges = append(edges, document.EdgeAttachments)
-	}
-	return edges
-}
-
-// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
-// the given name in this mutation.
-func (m *DocumentMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	case document.EdgeAttachments:
-		ids := make([]ent.Value, 0, len(m.removedattachments))
-		for id := range m.removedattachments {
-			ids = append(ids, id)
-		}
-		return ids
-	}
-	return nil
-}
-
-// ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *DocumentMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.clearedgroup {
-		edges = append(edges, document.EdgeGroup)
-	}
-	if m.clearedattachments {
-		edges = append(edges, document.EdgeAttachments)
-	}
-	return edges
-}
-
-// EdgeCleared returns a boolean which indicates if the edge with the given name
-// was cleared in this mutation.
-func (m *DocumentMutation) EdgeCleared(name string) bool {
-	switch name {
-	case document.EdgeGroup:
-		return m.clearedgroup
-	case document.EdgeAttachments:
-		return m.clearedattachments
-	}
-	return false
-}
-
-// ClearEdge clears the value of the edge with the given name. It returns an error
-// if that edge is not defined in the schema.
-func (m *DocumentMutation) ClearEdge(name string) error {
-	switch name {
-	case document.EdgeGroup:
-		m.ClearGroup()
-		return nil
-	}
-	return fmt.Errorf("unknown Document unique edge %s", name)
-}
-
-// ResetEdge resets all changes to the edge with the given name in this mutation.
-// It returns an error if the edge is not defined in the schema.
-func (m *DocumentMutation) ResetEdge(name string) error {
-	switch name {
-	case document.EdgeGroup:
-		m.ResetGroup()
-		return nil
-	case document.EdgeAttachments:
-		m.ResetAttachments()
-		return nil
-	}
-	return fmt.Errorf("unknown Document edge %s", name)
-}
-
 // GroupMutation represents an operation that mutates the Group nodes in the graph.
 type GroupMutation struct {
 	config
@@ -2354,9 +1868,6 @@ type GroupMutation struct {
 	labels                   map[uuid.UUID]struct{}
 	removedlabels            map[uuid.UUID]struct{}
 	clearedlabels            bool
-	documents                map[uuid.UUID]struct{}
-	removeddocuments         map[uuid.UUID]struct{}
-	cleareddocuments         bool
 	invitation_tokens        map[uuid.UUID]struct{}
 	removedinvitation_tokens map[uuid.UUID]struct{}
 	clearedinvitation_tokens bool
@@ -2832,60 +2343,6 @@ func (m *GroupMutation) ResetLabels() {
 	m.removedlabels = nil
 }
 
-// AddDocumentIDs adds the "documents" edge to the Document entity by ids.
-func (m *GroupMutation) AddDocumentIDs(ids ...uuid.UUID) {
-	if m.documents == nil {
-		m.documents = make(map[uuid.UUID]struct{})
-	}
-	for i := range ids {
-		m.documents[ids[i]] = struct{}{}
-	}
-}
-
-// ClearDocuments clears the "documents" edge to the Document entity.
-func (m *GroupMutation) ClearDocuments() {
-	m.cleareddocuments = true
-}
-
-// DocumentsCleared reports if the "documents" edge to the Document entity was cleared.
-func (m *GroupMutation) DocumentsCleared() bool {
-	return m.cleareddocuments
-}
-
-// RemoveDocumentIDs removes the "documents" edge to the Document entity by IDs.
-func (m *GroupMutation) RemoveDocumentIDs(ids ...uuid.UUID) {
-	if m.removeddocuments == nil {
-		m.removeddocuments = make(map[uuid.UUID]struct{})
-	}
-	for i := range ids {
-		delete(m.documents, ids[i])
-		m.removeddocuments[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedDocuments returns the removed IDs of the "documents" edge to the Document entity.
-func (m *GroupMutation) RemovedDocumentsIDs() (ids []uuid.UUID) {
-	for id := range m.removeddocuments {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// DocumentsIDs returns the "documents" edge IDs in the mutation.
-func (m *GroupMutation) DocumentsIDs() (ids []uuid.UUID) {
-	for id := range m.documents {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetDocuments resets all changes to the "documents" edge.
-func (m *GroupMutation) ResetDocuments() {
-	m.documents = nil
-	m.cleareddocuments = false
-	m.removeddocuments = nil
-}
-
 // AddInvitationTokenIDs adds the "invitation_tokens" edge to the GroupInvitationToken entity by ids.
 func (m *GroupMutation) AddInvitationTokenIDs(ids ...uuid.UUID) {
 	if m.invitation_tokens == nil {
@@ -3178,7 +2635,7 @@ func (m *GroupMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *GroupMutation) AddedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 6)
 	if m.users != nil {
 		edges = append(edges, group.EdgeUsers)
 	}
@@ -3190,9 +2647,6 @@ func (m *GroupMutation) AddedEdges() []string {
 	}
 	if m.labels != nil {
 		edges = append(edges, group.EdgeLabels)
-	}
-	if m.documents != nil {
-		edges = append(edges, group.EdgeDocuments)
 	}
 	if m.invitation_tokens != nil {
 		edges = append(edges, group.EdgeInvitationTokens)
@@ -3231,12 +2685,6 @@ func (m *GroupMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case group.EdgeDocuments:
-		ids := make([]ent.Value, 0, len(m.documents))
-		for id := range m.documents {
-			ids = append(ids, id)
-		}
-		return ids
 	case group.EdgeInvitationTokens:
 		ids := make([]ent.Value, 0, len(m.invitation_tokens))
 		for id := range m.invitation_tokens {
@@ -3255,7 +2703,7 @@ func (m *GroupMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *GroupMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 6)
 	if m.removedusers != nil {
 		edges = append(edges, group.EdgeUsers)
 	}
@@ -3267,9 +2715,6 @@ func (m *GroupMutation) RemovedEdges() []string {
 	}
 	if m.removedlabels != nil {
 		edges = append(edges, group.EdgeLabels)
-	}
-	if m.removeddocuments != nil {
-		edges = append(edges, group.EdgeDocuments)
 	}
 	if m.removedinvitation_tokens != nil {
 		edges = append(edges, group.EdgeInvitationTokens)
@@ -3308,12 +2753,6 @@ func (m *GroupMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
-	case group.EdgeDocuments:
-		ids := make([]ent.Value, 0, len(m.removeddocuments))
-		for id := range m.removeddocuments {
-			ids = append(ids, id)
-		}
-		return ids
 	case group.EdgeInvitationTokens:
 		ids := make([]ent.Value, 0, len(m.removedinvitation_tokens))
 		for id := range m.removedinvitation_tokens {
@@ -3332,7 +2771,7 @@ func (m *GroupMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *GroupMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 6)
 	if m.clearedusers {
 		edges = append(edges, group.EdgeUsers)
 	}
@@ -3344,9 +2783,6 @@ func (m *GroupMutation) ClearedEdges() []string {
 	}
 	if m.clearedlabels {
 		edges = append(edges, group.EdgeLabels)
-	}
-	if m.cleareddocuments {
-		edges = append(edges, group.EdgeDocuments)
 	}
 	if m.clearedinvitation_tokens {
 		edges = append(edges, group.EdgeInvitationTokens)
@@ -3369,8 +2805,6 @@ func (m *GroupMutation) EdgeCleared(name string) bool {
 		return m.cleareditems
 	case group.EdgeLabels:
 		return m.clearedlabels
-	case group.EdgeDocuments:
-		return m.cleareddocuments
 	case group.EdgeInvitationTokens:
 		return m.clearedinvitation_tokens
 	case group.EdgeNotifiers:
@@ -3402,9 +2836,6 @@ func (m *GroupMutation) ResetEdge(name string) error {
 		return nil
 	case group.EdgeLabels:
 		m.ResetLabels()
-		return nil
-	case group.EdgeDocuments:
-		m.ResetDocuments()
 		return nil
 	case group.EdgeInvitationTokens:
 		m.ResetInvitationTokens()

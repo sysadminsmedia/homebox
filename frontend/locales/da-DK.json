@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Adfærd for imports med eksisterende import_refs har ændret sig. Hvis en import_ref er tilstede i CSV filen,\nvil genstanden blive opdateret med værdierne fra CSV filen.",
                 "description": "Importer en CSV fil som indeholder dine genstande, etiketter, og lokationer. Se dokumentation for mere information vedrørende\nden korrekte format.",
-                "title": "Importer CSV Fil",
-                "upload": "Upload"
+                "title": "Importer CSV Fil"
             },
             "outdated": {
                 "current_version": "Nuværende version",
@@ -55,7 +54,8 @@
                 "titles": "Labels"
             },
             "page_qr_code": {
-                "page_url": "Side URL"
+                "page_url": "Side URL",
+                "qr_tooltip": "Vis kr-kode"
             },
             "password_score": {
                 "password_strength": "Adgangskodestyrke"
@@ -65,8 +65,9 @@
             "create_modal": {
                 "item_description": "Genstandsbeskrivelse",
                 "item_name": "Genstandsnavn",
-                "photo_button": "Foto 📷",
-                "title": "Opret genstand"
+                "item_photo": "Vare Foto 📷",
+                "title": "Opret genstand",
+                "upload_photos": "Upload Billeder"
             },
             "view": {
                 "selectable": {
@@ -77,7 +78,8 @@
                 },
                 "table": {
                     "page": "Side",
-                    "rows_per_page": "Rækker per side"
+                    "rows_per_page": "Rækker per side",
+                    "table_settings": "Tabel Indstillinger"
                 }
             }
         },
@@ -86,6 +88,9 @@
                 "label_description": "Etiketbeskrivelse",
                 "label_name": "Etiketnavn",
                 "title": "Opret label"
+            },
+            "selector": {
+                "select_labels": "Vælg Etiketter"
             }
         },
         "location": {
@@ -208,7 +213,7 @@
         "receipt": "Kvittering",
         "receipts": "Kvitteringer",
         "reset_search": "Nulstil Søgning",
-        "results": "{ total }  Resultater",
+        "results": "{ total } Wyniki",
         "serial_number": "Serienummer",
         "show_advanced_view_options": "vis avancerede indstillinger",
         "sold_at": "Solgt D.",
@@ -318,7 +323,6 @@
         "current_password": "Aktuel adgangskode",
         "delete_account": "Slet Konto",
         "delete_account_sub": "Slet din konto og alle dens tilknyttede data. Dette kan ikke laves om.",
-        "display_header": "{ currentValue, select, true {Hide Header} false {Show Header} other {Not Hit}}",
         "enabled": "Aktiveret",
         "example": "Eksempel",
         "gen_invite": "Generer invitationslink",
@@ -345,7 +349,7 @@
         "invalid_url": "Ugyldig stregkode-URL",
         "no_sources": "Ingen videokilder er tilgængelig",
         "select_video_source": "Vælg en videokilde",
-        "unsupported": "Media Stream API er ikke understøttet"
+        "unsupported": "Media Stream API understøttes ikke uden HTTPS"
     },
     "tools": {
         "actions": "Handlinger på lagerbeholdning",

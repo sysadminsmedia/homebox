@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Mevcut import_refs ile içe aktarmaların davranışı değişti. CSV dosyasında bir import_ref varsa, \nöğe CSV dosyasındaki değerlerle güncellenecektir.",
                 "description": "Öğelerinizi, etiketlerinizi ve konumlarınızı içeren bir CSV dosyasını içe aktarın. Daha fazla\nbilgi için dökümanları okuyun.",
-                "title": "CSV dosyasını içeri aktar",
-                "upload": "Yükle"
+                "title": "CSV dosyasını içeri aktar"
             },
             "outdated": {
                 "current_version": "Güncel Sürüm",
@@ -20,7 +19,7 @@
                 "documentation": "dokümantasyon",
                 "failed_to_copy": "Metin panoya kopyalanamadı",
                 "https_required": "çünkü HTTPS gereklidir",
-                "learn_more": "Daha fazla"
+                "learn_more": "Daha fazla bilgi edinmek için"
             },
             "date_time": {
                 "ago": "{0} önce",
@@ -46,8 +45,17 @@
                 "years": "yıl",
                 "yesterday": "dün"
             },
+            "label_maker": {
+                "browser_print": "Tarayıcıdan Yazdır",
+                "confirm_description": "Bu etiketi yazdırmak istediğinizden emin misiniz?",
+                "download": "Etiketi İndir",
+                "print": "Etiketi yazdır",
+                "server_print": "Sunucuda yazdır",
+                "titles": "Etiketler"
+            },
             "page_qr_code": {
-                "page_url": "Sayfa URL'si"
+                "page_url": "Sayfa URL'si",
+                "qr_tooltip": "QR Kodu Göster"
             },
             "password_score": {
                 "password_strength": "Şifre güvenlik seviyesi"
@@ -57,8 +65,11 @@
             "create_modal": {
                 "item_description": "Ürün Açıklaması",
                 "item_name": "Ürün Adı",
-                "photo_button": "Fotoğraf 📷",
-                "title": "Eşya Oluştur"
+                "item_photo": "Öğe Fotoğrafı 📷",
+                "item_quantity": "Öğe Miktarı",
+                "parent_item": "Ana Öğe",
+                "title": "Eşya Oluştur",
+                "upload_photos": "Fotoğrafları Yükle"
             },
             "view": {
                 "selectable": {
@@ -68,8 +79,10 @@
                     "table": "Tablo"
                 },
                 "table": {
+                    "headers": "Başlıklar",
                     "page": "Sayfa",
-                    "rows_per_page": "Sayfa başına satır sayısı"
+                    "rows_per_page": "Sayfa başına satır sayısı",
+                    "table_settings": "Tablo Ayarları"
                 }
             }
         },
@@ -78,6 +91,9 @@
                 "label_description": "Etiket Açıklaması",
                 "label_name": "Etiket Adı",
                 "title": "Etiket oluştur"
+            },
+            "selector": {
+                "select_labels": "Etiketleri seçin"
             }
         },
         "location": {
@@ -87,22 +103,29 @@
                 "title": "Konum oluştur"
             },
             "selector": {
-                "parent_location": "Üst Konum"
+                "no_location_found": "Konum bulunamadı",
+                "parent_location": "Üst Konum",
+                "search_location": "Konumları Ara",
+                "select_location": "Konumu Seç"
             },
             "tree": {
                 "no_locations": "Mevcut konum yok. Navigasyon çubuğundaki \n`<`span class=\"link-primary\"`>`Oluştur`<`/span`>` düğmesiyle yeni konumlar ekleyin."
             }
         },
         "quick_menu": {
+            "no_results": "Sonuç bulunamadı.",
             "shortcut_hint": "Bir eylemi hızlı bir şekilde seçmek için sayı tuşlarını kullanın."
         }
     },
     "global": {
         "add": "Ekle",
+        "archived": "Arşivlendi",
         "build": "Sürüm: { build }",
+        "cancel": "İptal et",
         "confirm": "Onaylayın",
         "create": "Oluştur",
         "create_and_add": "Oluştur ve Bir Tane Daha Ekle",
+        "create_subitem": "Alt Öğe Oluştur",
         "created": "Oluşturuldu",
         "delete": "Sil",
         "details": "Detaylar",
@@ -110,7 +133,12 @@
         "edit": "Düzenle",
         "email": "Elektronik posta",
         "follow_dev": "Geliştiriciyi takip edin",
+        "footer": {
+            "api_link": "<a href=\"https://homebox.software/en/api/\" target=\"_blank\">''API''</a>",
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Sürüm: { version } Yapı: { build }'</a>"
+        },
         "github": "GitHub projesi",
+        "insured": "Sigortalı",
         "items": "Öğeler",
         "join_discord": "Discord'a Katılın",
         "labels": "Etiketler",
@@ -119,6 +147,7 @@
         "name": "İsim",
         "navigate": "Gezin",
         "password": "Şifre",
+        "quantity": "Miktar",
         "read_docs": "Dokümanları okuyun",
         "save": "Kaydet",
         "search": "Ara",
@@ -304,7 +333,6 @@
         "current_password": "Mevcut Şifre",
         "delete_account": "Hesabı Sil",
         "delete_account_sub": "Hesabınızı ve ona bağlı tüm verileri silin. Bu işlem geri alınamaz.",
-        "display_header": "{ currentValue, select, true {Başlığı Gizle} false {Başlığı Göster} other {Etkilenmedi}}",
         "enabled": "Etkinleştirildi",
         "example": "Örnek",
         "gen_invite": "Davet Bağlantısı Oluştur",
@@ -325,6 +353,9 @@
         "url": "URL",
         "user_profile": "Kullanıcı Profili",
         "user_profile_sub": "Kullanıcıları davet edin ve hesabınızı yönetin."
+    },
+    "scanner": {
+        "permission_denied": "Kamera izni reddedildi, lütfen tarayıcı ayarlarınızda kameraya erişime izin verin"
     },
     "tools": {
         "actions": "Envanter İşlemleri",

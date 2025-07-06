@@ -50,7 +50,8 @@ Modify your `docker-compose.yml` file to point to the new Homebox fork:
   `ghcr.io/sysadminsmedia/homebox:latest-rootless`
 
 - Update the environment variable:  
-  If you're using `HBOX_STORAGE_SQLITE_URL`, change it to `HBOX_DATABASE_SQLITE_PATH`.
+  - If you're using `HBOX_STORAGE_SQLITE_URL`, change it to `HBOX_DATABASE_SQLITE_PATH`.
+  - If you're using `HBOX_WEB_READ_TIMEOUT`, `HBOX_WEB_WRITE_TIMEOUT`, or `HBOX_IDLE_TIMEOUT`, add an `s` for seconds or `m` for minutes to the end of the integers.
 
 ### 4. Start the New Homebox Instance
 

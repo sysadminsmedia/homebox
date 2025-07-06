@@ -24,10 +24,16 @@ const (
 	FieldType = "type"
 	// FieldPrimary holds the string denoting the primary field in the database.
 	FieldPrimary = "primary"
+	// FieldTitle holds the string denoting the title field in the database.
+	FieldTitle = "title"
+	// FieldPath holds the string denoting the path field in the database.
+	FieldPath = "path"
+	// FieldMimeType holds the string denoting the mime_type field in the database.
+	FieldMimeType = "mime_type"
 	// EdgeItem holds the string denoting the item edge name in mutations.
 	EdgeItem = "item"
-	// EdgeDocument holds the string denoting the document edge name in mutations.
-	EdgeDocument = "document"
+	// EdgeThumbnail holds the string denoting the thumbnail edge name in mutations.
+	EdgeThumbnail = "thumbnail"
 	// Table holds the table name of the attachment in the database.
 	Table = "attachments"
 	// ItemTable is the table that holds the item relation/edge.
@@ -37,13 +43,10 @@ const (
 	ItemInverseTable = "items"
 	// ItemColumn is the table column denoting the item relation/edge.
 	ItemColumn = "item_attachments"
-	// DocumentTable is the table that holds the document relation/edge.
-	DocumentTable = "attachments"
-	// DocumentInverseTable is the table name for the Document entity.
-	// It exists in this package in order to avoid circular dependency with the "document" package.
-	DocumentInverseTable = "documents"
-	// DocumentColumn is the table column denoting the document relation/edge.
-	DocumentColumn = "document_attachments"
+	// ThumbnailTable is the table that holds the thumbnail relation/edge.
+	ThumbnailTable = "attachments"
+	// ThumbnailColumn is the table column denoting the thumbnail relation/edge.
+	ThumbnailColumn = "attachment_thumbnail"
 )
 
 // Columns holds all SQL columns for attachment fields.
@@ -53,12 +56,15 @@ var Columns = []string{
 	FieldUpdatedAt,
 	FieldType,
 	FieldPrimary,
+	FieldTitle,
+	FieldPath,
+	FieldMimeType,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "attachments"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"document_attachments",
+	"attachment_thumbnail",
 	"item_attachments",
 }
 
@@ -86,6 +92,12 @@ var (
 	UpdateDefaultUpdatedAt func() time.Time
 	// DefaultPrimary holds the default value on creation for the "primary" field.
 	DefaultPrimary bool
+	// DefaultTitle holds the default value on creation for the "title" field.
+	DefaultTitle string
+	// DefaultPath holds the default value on creation for the "path" field.
+	DefaultPath string
+	// DefaultMimeType holds the default value on creation for the "mime_type" field.
+	DefaultMimeType string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
@@ -103,6 +115,7 @@ const (
 	TypeWarranty   Type = "warranty"
 	TypeAttachment Type = "attachment"
 	TypeReceipt    Type = "receipt"
+	TypeThumbnail  Type = "thumbnail"
 )
 
 func (_type Type) String() string {
@@ -112,7 +125,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypePhoto, TypeManual, TypeWarranty, TypeAttachment, TypeReceipt:
+	case TypePhoto, TypeManual, TypeWarranty, TypeAttachment, TypeReceipt, TypeThumbnail:
 		return nil
 	default:
 		return fmt.Errorf("attachment: invalid enum value for type field: %q", _type)
@@ -147,6 +160,21 @@ func ByPrimary(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPrimary, opts...).ToFunc()
 }
 
+// ByTitle orders the results by the title field.
+func ByTitle(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTitle, opts...).ToFunc()
+}
+
+// ByPath orders the results by the path field.
+func ByPath(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPath, opts...).ToFunc()
+}
+
+// ByMimeType orders the results by the mime_type field.
+func ByMimeType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMimeType, opts...).ToFunc()
+}
+
 // ByItemField orders the results by item field.
 func ByItemField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -154,10 +182,10 @@ func ByItemField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByDocumentField orders the results by document field.
-func ByDocumentField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByThumbnailField orders the results by thumbnail field.
+func ByThumbnailField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newDocumentStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newThumbnailStep(), sql.OrderByField(field, opts...))
 	}
 }
 func newItemStep() *sqlgraph.Step {
@@ -167,10 +195,10 @@ func newItemStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2O, true, ItemTable, ItemColumn),
 	)
 }
-func newDocumentStep() *sqlgraph.Step {
+func newThumbnailStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(DocumentInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, DocumentTable, DocumentColumn),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, ThumbnailTable, ThumbnailColumn),
 	)
 }

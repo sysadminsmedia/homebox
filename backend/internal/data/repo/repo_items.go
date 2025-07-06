@@ -60,6 +60,7 @@ type (
 		ImportRef   string    `json:"-"`
 		ParentID    uuid.UUID `json:"parentId"    extensions:"x-nullable"`
 		Name        string    `json:"name"        validate:"required,min=1,max=255"`
+		Quantity    int       `json:"quantity"`
 		Description string    `json:"description" validate:"max=1000"`
 		AssetID     AssetID   `json:"-"`
 
@@ -133,7 +134,8 @@ type (
 		Location *LocationSummary `json:"location,omitempty" extensions:"x-nullable,x-omitempty"`
 		Labels   []LabelSummary   `json:"labels"`
 
-		ImageID *uuid.UUID `json:"imageId,omitempty"`
+		ImageID     *uuid.UUID `json:"imageId,omitempty"     extensions:"x-nullable,x-omitempty"`
+		ThumbnailId *uuid.UUID `json:"thumbnailId,omitempty" extensions:"x-nullable,x-omitempty"`
 
 		// Sale details
 		SoldTime time.Time `json:"soldTime"`
@@ -188,10 +190,20 @@ func mapItemSummary(item *ent.Item) ItemSummary {
 	}
 
 	var imageID *uuid.UUID
+	var thumbnailID *uuid.UUID
 	if item.Edges.Attachments != nil {
 		for _, a := range item.Edges.Attachments {
-			if a.Primary && a.Edges.Document != nil {
+			if a.Primary && a.Type == attachment.TypePhoto {
 				imageID = &a.ID
+				if a.Edges.Thumbnail != nil {
+					if a.Edges.Thumbnail.ID != uuid.Nil {
+						thumbnailID = &a.Edges.Thumbnail.ID
+					} else {
+						thumbnailID = nil
+					}
+				} else {
+					thumbnailID = nil
+				}
 				break
 			}
 		}
@@ -214,8 +226,9 @@ func mapItemSummary(item *ent.Item) ItemSummary {
 		Labels:   labels,
 
 		// Warranty
-		Insured: item.Insured,
-		ImageID: imageID,
+		Insured:     item.Insured,
+		ImageID:     imageID,
+		ThumbnailId: thumbnailID,
 	}
 }
 
@@ -303,9 +316,7 @@ func (e *ItemsRepository) getOne(ctx context.Context, where ...predicate.Item) (
 		WithLocation().
 		WithGroup().
 		WithParent().
-		WithAttachments(func(aq *ent.AttachmentQuery) {
-			aq.WithDocument()
-		}).
+		WithAttachments().
 		Only(ctx),
 	)
 }
@@ -466,8 +477,8 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 		WithAttachments(func(aq *ent.AttachmentQuery) {
 			aq.Where(
 				attachment.Primary(true),
-			).
-				WithDocument()
+			)
+			aq.WithThumbnail()
 		})
 
 	if q.Page != -1 || q.PageSize != -1 {
@@ -575,10 +586,15 @@ func (e *ItemsRepository) Create(ctx context.Context, gid uuid.UUID, data ItemCr
 	q := e.db.Item.Create().
 		SetImportRef(data.ImportRef).
 		SetName(data.Name).
+		SetQuantity(data.Quantity).
 		SetDescription(data.Description).
 		SetGroupID(gid).
 		SetLocationID(data.LocationID).
 		SetAssetID(int(data.AssetID))
+
+	if data.ParentID != uuid.Nil {
+		q.SetParentID(data.ParentID)
+	}
 
 	if len(data.LabelIDs) > 0 {
 		q.AddLabelIDs(data.LabelIDs...)

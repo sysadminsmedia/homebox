@@ -18,6 +18,31 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/v1/actions/create-missing-thumbnails": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Creates thumbnails for items that are missing them",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Actions"
+                ],
+                "summary": "Create Missing Thumbnails",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ActionAmountResult"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/actions/ensure-asset-ids": {
             "post": {
                 "security": [
@@ -770,8 +795,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Type of file",
                         "name": "type",
-                        "in": "formData",
-                        "required": true
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Is this the primary attachment",
+                        "name": "primary",
+                        "in": "formData"
                     },
                     {
                         "type": "string",
@@ -2091,6 +2121,42 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "attachment.Type": {
+            "type": "string",
+            "enum": [
+                "attachment",
+                "photo",
+                "manual",
+                "warranty",
+                "attachment",
+                "receipt",
+                "thumbnail"
+            ],
+            "x-enum-varnames": [
+                "DefaultType",
+                "TypePhoto",
+                "TypeManual",
+                "TypeWarranty",
+                "TypeAttachment",
+                "TypeReceipt",
+                "TypeThumbnail"
+            ]
+        },
+        "authroles.Role": {
+            "type": "string",
+            "enum": [
+                "user",
+                "admin",
+                "user",
+                "attachments"
+            ],
+            "x-enum-varnames": [
+                "DefaultRole",
+                "RoleAdmin",
+                "RoleUser",
+                "RoleAttachments"
+            ]
+        },
         "currencies.Currency": {
             "type": "object",
             "properties": {
@@ -2108,19 +2174,894 @@ const docTemplate = `{
                 }
             }
         },
-        "repo.DocumentOut": {
+        "ent.Attachment": {
             "type": "object",
             "properties": {
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the AttachmentQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.AttachmentEdges"
+                        }
+                    ]
+                },
                 "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "mime_type": {
+                    "description": "MimeType holds the value of the \"mime_type\" field.",
                     "type": "string"
                 },
                 "path": {
+                    "description": "Path holds the value of the \"path\" field.",
                     "type": "string"
                 },
+                "primary": {
+                    "description": "Primary holds the value of the \"primary\" field.",
+                    "type": "boolean"
+                },
                 "title": {
+                    "description": "Title holds the value of the \"title\" field.",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "Type holds the value of the \"type\" field.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/attachment.Type"
+                        }
+                    ]
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
                     "type": "string"
                 }
             }
+        },
+        "ent.AttachmentEdges": {
+            "type": "object",
+            "properties": {
+                "item": {
+                    "description": "Item holds the value of the item edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Item"
+                        }
+                    ]
+                },
+                "thumbnail": {
+                    "description": "Thumbnail holds the value of the thumbnail edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Attachment"
+                        }
+                    ]
+                }
+            }
+        },
+        "ent.AuthRoles": {
+            "type": "object",
+            "properties": {
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the AuthRolesQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.AuthRolesEdges"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "integer"
+                },
+                "role": {
+                    "description": "Role holds the value of the \"role\" field.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/authroles.Role"
+                        }
+                    ]
+                }
+            }
+        },
+        "ent.AuthRolesEdges": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "description": "Token holds the value of the token edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.AuthTokens"
+                        }
+                    ]
+                }
+            }
+        },
+        "ent.AuthTokens": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the AuthTokensQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.AuthTokensEdges"
+                        }
+                    ]
+                },
+                "expires_at": {
+                    "description": "ExpiresAt holds the value of the \"expires_at\" field.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "token": {
+                    "description": "Token holds the value of the \"token\" field.",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.AuthTokensEdges": {
+            "type": "object",
+            "properties": {
+                "roles": {
+                    "description": "Roles holds the value of the roles edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.AuthRoles"
+                        }
+                    ]
+                },
+                "user": {
+                    "description": "User holds the value of the user edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.User"
+                        }
+                    ]
+                }
+            }
+        },
+        "ent.Group": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "currency": {
+                    "description": "Currency holds the value of the \"currency\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the GroupQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.GroupEdges"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.GroupEdges": {
+            "type": "object",
+            "properties": {
+                "invitation_tokens": {
+                    "description": "InvitationTokens holds the value of the invitation_tokens edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.GroupInvitationToken"
+                    }
+                },
+                "items": {
+                    "description": "Items holds the value of the items edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Item"
+                    }
+                },
+                "labels": {
+                    "description": "Labels holds the value of the labels edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Label"
+                    }
+                },
+                "locations": {
+                    "description": "Locations holds the value of the locations edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Location"
+                    }
+                },
+                "notifiers": {
+                    "description": "Notifiers holds the value of the notifiers edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Notifier"
+                    }
+                },
+                "users": {
+                    "description": "Users holds the value of the users edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.User"
+                    }
+                }
+            }
+        },
+        "ent.GroupInvitationToken": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the GroupInvitationTokenQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.GroupInvitationTokenEdges"
+                        }
+                    ]
+                },
+                "expires_at": {
+                    "description": "ExpiresAt holds the value of the \"expires_at\" field.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "token": {
+                    "description": "Token holds the value of the \"token\" field.",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                },
+                "uses": {
+                    "description": "Uses holds the value of the \"uses\" field.",
+                    "type": "integer"
+                }
+            }
+        },
+        "ent.GroupInvitationTokenEdges": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                }
+            }
+        },
+        "ent.Item": {
+            "type": "object",
+            "properties": {
+                "archived": {
+                    "description": "Archived holds the value of the \"archived\" field.",
+                    "type": "boolean"
+                },
+                "asset_id": {
+                    "description": "AssetID holds the value of the \"asset_id\" field.",
+                    "type": "integer"
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description holds the value of the \"description\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the ItemQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.ItemEdges"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "import_ref": {
+                    "description": "ImportRef holds the value of the \"import_ref\" field.",
+                    "type": "string"
+                },
+                "insured": {
+                    "description": "Insured holds the value of the \"insured\" field.",
+                    "type": "boolean"
+                },
+                "lifetime_warranty": {
+                    "description": "LifetimeWarranty holds the value of the \"lifetime_warranty\" field.",
+                    "type": "boolean"
+                },
+                "manufacturer": {
+                    "description": "Manufacturer holds the value of the \"manufacturer\" field.",
+                    "type": "string"
+                },
+                "model_number": {
+                    "description": "ModelNumber holds the value of the \"model_number\" field.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "notes": {
+                    "description": "Notes holds the value of the \"notes\" field.",
+                    "type": "string"
+                },
+                "purchase_from": {
+                    "description": "PurchaseFrom holds the value of the \"purchase_from\" field.",
+                    "type": "string"
+                },
+                "purchase_price": {
+                    "description": "PurchasePrice holds the value of the \"purchase_price\" field.",
+                    "type": "number"
+                },
+                "purchase_time": {
+                    "description": "PurchaseTime holds the value of the \"purchase_time\" field.",
+                    "type": "string"
+                },
+                "quantity": {
+                    "description": "Quantity holds the value of the \"quantity\" field.",
+                    "type": "integer"
+                },
+                "serial_number": {
+                    "description": "SerialNumber holds the value of the \"serial_number\" field.",
+                    "type": "string"
+                },
+                "sold_notes": {
+                    "description": "SoldNotes holds the value of the \"sold_notes\" field.",
+                    "type": "string"
+                },
+                "sold_price": {
+                    "description": "SoldPrice holds the value of the \"sold_price\" field.",
+                    "type": "number"
+                },
+                "sold_time": {
+                    "description": "SoldTime holds the value of the \"sold_time\" field.",
+                    "type": "string"
+                },
+                "sold_to": {
+                    "description": "SoldTo holds the value of the \"sold_to\" field.",
+                    "type": "string"
+                },
+                "sync_child_items_locations": {
+                    "description": "SyncChildItemsLocations holds the value of the \"sync_child_items_locations\" field.",
+                    "type": "boolean"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                },
+                "warranty_details": {
+                    "description": "WarrantyDetails holds the value of the \"warranty_details\" field.",
+                    "type": "string"
+                },
+                "warranty_expires": {
+                    "description": "WarrantyExpires holds the value of the \"warranty_expires\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.ItemEdges": {
+            "type": "object",
+            "properties": {
+                "attachments": {
+                    "description": "Attachments holds the value of the attachments edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Attachment"
+                    }
+                },
+                "children": {
+                    "description": "Children holds the value of the children edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Item"
+                    }
+                },
+                "fields": {
+                    "description": "Fields holds the value of the fields edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.ItemField"
+                    }
+                },
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                },
+                "label": {
+                    "description": "Label holds the value of the label edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Label"
+                    }
+                },
+                "location": {
+                    "description": "Location holds the value of the location edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Location"
+                        }
+                    ]
+                },
+                "maintenance_entries": {
+                    "description": "MaintenanceEntries holds the value of the maintenance_entries edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.MaintenanceEntry"
+                    }
+                },
+                "parent": {
+                    "description": "Parent holds the value of the parent edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Item"
+                        }
+                    ]
+                }
+            }
+        },
+        "ent.ItemField": {
+            "type": "object",
+            "properties": {
+                "boolean_value": {
+                    "description": "BooleanValue holds the value of the \"boolean_value\" field.",
+                    "type": "boolean"
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description holds the value of the \"description\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the ItemFieldQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.ItemFieldEdges"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "number_value": {
+                    "description": "NumberValue holds the value of the \"number_value\" field.",
+                    "type": "integer"
+                },
+                "text_value": {
+                    "description": "TextValue holds the value of the \"text_value\" field.",
+                    "type": "string"
+                },
+                "time_value": {
+                    "description": "TimeValue holds the value of the \"time_value\" field.",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "Type holds the value of the \"type\" field.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/itemfield.Type"
+                        }
+                    ]
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.ItemFieldEdges": {
+            "type": "object",
+            "properties": {
+                "item": {
+                    "description": "Item holds the value of the item edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Item"
+                        }
+                    ]
+                }
+            }
+        },
+        "ent.Label": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "description": "Color holds the value of the \"color\" field.",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description holds the value of the \"description\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the LabelQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.LabelEdges"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.LabelEdges": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                },
+                "items": {
+                    "description": "Items holds the value of the items edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Item"
+                    }
+                }
+            }
+        },
+        "ent.Location": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description holds the value of the \"description\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the LocationQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.LocationEdges"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.LocationEdges": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "description": "Children holds the value of the children edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Location"
+                    }
+                },
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                },
+                "items": {
+                    "description": "Items holds the value of the items edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Item"
+                    }
+                },
+                "parent": {
+                    "description": "Parent holds the value of the parent edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Location"
+                        }
+                    ]
+                }
+            }
+        },
+        "ent.MaintenanceEntry": {
+            "type": "object",
+            "properties": {
+                "cost": {
+                    "description": "Cost holds the value of the \"cost\" field.",
+                    "type": "number"
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "date": {
+                    "description": "Date holds the value of the \"date\" field.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description holds the value of the \"description\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the MaintenanceEntryQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.MaintenanceEntryEdges"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "item_id": {
+                    "description": "ItemID holds the value of the \"item_id\" field.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "scheduled_date": {
+                    "description": "ScheduledDate holds the value of the \"scheduled_date\" field.",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.MaintenanceEntryEdges": {
+            "type": "object",
+            "properties": {
+                "item": {
+                    "description": "Item holds the value of the item edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Item"
+                        }
+                    ]
+                }
+            }
+        },
+        "ent.Notifier": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the NotifierQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.NotifierEdges"
+                        }
+                    ]
+                },
+                "group_id": {
+                    "description": "GroupID holds the value of the \"group_id\" field.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "is_active": {
+                    "description": "IsActive holds the value of the \"is_active\" field.",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "UserID holds the value of the \"user_id\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.NotifierEdges": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                },
+                "user": {
+                    "description": "User holds the value of the user edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.User"
+                        }
+                    ]
+                }
+            }
+        },
+        "ent.User": {
+            "type": "object",
+            "properties": {
+                "activated_on": {
+                    "description": "ActivatedOn holds the value of the \"activated_on\" field.",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the UserQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.UserEdges"
+                        }
+                    ]
+                },
+                "email": {
+                    "description": "Email holds the value of the \"email\" field.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "is_superuser": {
+                    "description": "IsSuperuser holds the value of the \"is_superuser\" field.",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "role": {
+                    "description": "Role holds the value of the \"role\" field.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/user.Role"
+                        }
+                    ]
+                },
+                "superuser": {
+                    "description": "Superuser holds the value of the \"superuser\" field.",
+                    "type": "boolean"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.UserEdges": {
+            "type": "object",
+            "properties": {
+                "auth_tokens": {
+                    "description": "AuthTokens holds the value of the auth_tokens edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.AuthTokens"
+                    }
+                },
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                },
+                "notifiers": {
+                    "description": "Notifiers holds the value of the notifiers edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Notifier"
+                    }
+                }
+            }
+        },
+        "itemfield.Type": {
+            "type": "string",
+            "enum": [
+                "text",
+                "number",
+                "boolean",
+                "time"
+            ],
+            "x-enum-varnames": [
+                "TypeText",
+                "TypeNumber",
+                "TypeBoolean",
+                "TypeTime"
+            ]
         },
         "repo.Group": {
             "type": "object",
@@ -2182,14 +3123,23 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
-                "document": {
-                    "$ref": "#/definitions/repo.DocumentOut"
-                },
                 "id": {
+                    "type": "string"
+                },
+                "mimeType": {
+                    "type": "string"
+                },
+                "path": {
                     "type": "string"
                 },
                 "primary": {
                     "type": "boolean"
+                },
+                "thumbnail": {
+                    "$ref": "#/definitions/ent.Attachment"
+                },
+                "title": {
+                    "type": "string"
                 },
                 "type": {
                     "type": "string"
@@ -2241,6 +3191,9 @@ const docTemplate = `{
                 "parentId": {
                     "type": "string",
                     "x-nullable": true
+                },
+                "quantity": {
+                    "type": "integer"
                 }
             }
         },
@@ -2299,7 +3252,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "imageId": {
-                    "type": "string"
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "insured": {
                     "type": "boolean"
@@ -2378,6 +3333,11 @@ const docTemplate = `{
                 "syncChildItemsLocations": {
                     "type": "boolean"
                 },
+                "thumbnailId": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
                 "updatedAt": {
                     "type": "string"
                 },
@@ -2436,7 +3396,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "imageId": {
-                    "type": "string"
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "insured": {
                     "type": "boolean"
@@ -2465,6 +3427,15 @@ const docTemplate = `{
                 },
                 "quantity": {
                     "type": "integer"
+                },
+                "soldTime": {
+                    "description": "Sale details",
+                    "type": "string"
+                },
+                "thumbnailId": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
                 },
                 "updatedAt": {
                     "type": "string"
@@ -2614,6 +3585,9 @@ const docTemplate = `{
         "repo.LabelOut": {
             "type": "object",
             "properties": {
+                "color": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -2634,6 +3608,9 @@ const docTemplate = `{
         "repo.LabelSummary": {
             "type": "object",
             "properties": {
+                "color": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -3095,6 +4072,19 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "user.Role": {
+            "type": "string",
+            "enum": [
+                "user",
+                "user",
+                "owner"
+            ],
+            "x-enum-varnames": [
+                "DefaultRole",
+                "RoleUser",
+                "RoleOwner"
+            ]
         },
         "v1.APISummary": {
             "type": "object",

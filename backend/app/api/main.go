@@ -5,15 +5,15 @@ import (
 	"context"
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
 
-	atlas "ariga.io/atlas/sql/migrate"
-	"entgo.io/ent/dialect/sql/schema"
+	"github.com/pressly/goose/v3"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
@@ -28,11 +28,23 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/migrations"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
 
 	_ "github.com/lib/pq"
+	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/postgres"
+	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/sqlite3"
 	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
+
+	"gocloud.dev/pubsub"
+	_ "gocloud.dev/pubsub/awssnssqs"
+	_ "gocloud.dev/pubsub/azuresb"
+	_ "gocloud.dev/pubsub/gcppubsub"
+	_ "gocloud.dev/pubsub/kafkapubsub"
+	_ "gocloud.dev/pubsub/mempubsub"
+	_ "gocloud.dev/pubsub/natspubsub"
+	_ "gocloud.dev/pubsub/rabbitpubsub"
 )
 
 var (
@@ -63,19 +75,19 @@ func validatePostgresSSLMode(sslMode string) bool {
 	return validModes[strings.ToLower(strings.TrimSpace(sslMode))]
 }
 
-// @title                      Homebox API
-// @version                    1.0
-// @description                Track, Manage, and Organize your Things.
-// @contact.name               Homebox Team
-// @contact.url                https://discord.homebox.software
-// @host                       demo.homebox.software
-// @schemes                    https http
-// @BasePath                   /api
-// @securityDefinitions.apikey Bearer
-// @in                         header
-// @name                       Authorization
-// @description                "Type 'Bearer TOKEN' to correctly set the API Key"
-// @externalDocs.url 		   https://homebox.software/en/api
+//	@title						Homebox API
+//	@version					1.0
+//	@description				Track, Manage, and Organize your Things.
+//	@contact.name				Homebox Team
+//	@contact.url				https://discord.homebox.software
+//	@host						demo.homebox.software
+//	@schemes					https http
+//	@BasePath					/api
+//	@securityDefinitions.apikey	Bearer
+//	@in							header
+//	@name						Authorization
+//	@description				"Type 'Bearer TOKEN' to correctly set the API Key"
+//	@externalDocs.url			https://homebox.software/en/api
 
 func main() {
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
@@ -90,6 +102,7 @@ func main() {
 	}
 }
 
+//nolint:gocyclo
 func run(cfg *config.Config) error {
 	app := new(cfg)
 	app.setupLogger()
@@ -101,9 +114,28 @@ func run(cfg *config.Config) error {
 	// =========================================================================
 	// Initialize Database & Repos
 
-	err := os.MkdirAll(cfg.Storage.Data, 0o755)
-	if err != nil {
-		log.Fatal().Err(err).Msg("failed to create data directory")
+	if strings.HasPrefix(cfg.Storage.ConnString, "file:///./") {
+		raw := strings.TrimPrefix(cfg.Storage.ConnString, "file:///./")
+		clean := filepath.Clean(raw)
+		absBase, err := filepath.Abs(clean)
+		if err != nil {
+			log.Fatal().Err(err).Msg("failed to get absolute path for storage connection string")
+		}
+		// Construct and validate the full storage path
+		storageDir := filepath.Join(absBase, cfg.Storage.PrefixPath)
+		// Set windows paths to use forward slashes required by go-cloud
+		storageDir = strings.ReplaceAll(storageDir, "\\", "/")
+		if !strings.HasPrefix(storageDir, absBase+"/") && storageDir != absBase {
+			log.Fatal().
+				Str("path", storageDir).
+				Msg("invalid storage path: you tried to use a prefix that is not a subdirectory of the base path")
+		}
+		// Create with more restrictive permissions
+		if err := os.MkdirAll(storageDir, 0o750); err != nil {
+			log.Fatal().
+				Err(err).
+				Msg("failed to create data directory")
+		}
 	}
 
 	if strings.ToLower(cfg.Database.Driver) == "postgres" {
@@ -117,6 +149,13 @@ func run(cfg *config.Config) error {
 	switch strings.ToLower(cfg.Database.Driver) {
 	case "sqlite3":
 		databaseURL = cfg.Database.SqlitePath
+
+		// Create directory for SQLite database if it doesn't exist
+		dbFilePath := strings.Split(cfg.Database.SqlitePath, "?")[0] // Remove query parameters
+		dbDir := filepath.Dir(dbFilePath)
+		if err := os.MkdirAll(dbDir, 0o755); err != nil {
+			log.Fatal().Err(err).Str("path", dbDir).Msg("failed to create SQLite database directory")
+		}
 	case "postgres":
 		databaseURL = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", cfg.Database.Host, cfg.Database.Port, cfg.Database.Username, cfg.Database.Password, cfg.Database.Database, cfg.Database.SslMode)
 	default:
@@ -133,52 +172,19 @@ func run(cfg *config.Config) error {
 			Str("database", cfg.Database.Database).
 			Msg("failed opening connection to {driver} database at {host}:{port}/{database}")
 	}
-	defer func(c *ent.Client) {
-		err := c.Close()
-		if err != nil {
-			log.Fatal().Err(err).Msg("failed to close database connection")
-		}
-	}(c)
 
-	// Always create a random temporary directory for migrations
-	tempUUID, err := uuid.NewUUID()
+	goose.SetBaseFS(migrations.Migrations(strings.ToLower(cfg.Database.Driver)))
+	err = goose.SetDialect(strings.ToLower(cfg.Database.Driver))
 	if err != nil {
+		log.Fatal().Str("driver", cfg.Database.Driver).Msg("unsupported database driver")
+		return fmt.Errorf("unsupported database driver: %s", cfg.Database.Driver)
+	}
+
+	err = goose.Up(c.Sql(), strings.ToLower(cfg.Database.Driver))
+	if err != nil {
+		log.Error().Err(err).Msg("failed to migrate database")
 		return err
 	}
-	temp := filepath.Join(os.TempDir(), fmt.Sprintf("homebox-%s", tempUUID.String()))
-
-	err = migrations.Write(temp, cfg.Database.Driver)
-	if err != nil {
-		return err
-	}
-
-	dir, err := atlas.NewLocalDir(temp)
-	if err != nil {
-		return err
-	}
-
-	options := []schema.MigrateOption{
-		schema.WithDir(dir),
-		schema.WithDropColumn(true),
-		schema.WithDropIndex(true),
-	}
-
-	err = c.Schema.Create(context.Background(), options...)
-	if err != nil {
-		log.Error().
-			Err(err).
-			Str("driver", cfg.Database.Driver).
-			Str("url", databaseURL).
-			Msg("failed creating schema resources")
-		return err
-	}
-
-	defer func() {
-		err := os.RemoveAll(temp)
-		if err != nil {
-			log.Error().Err(err).Msg("failed to remove temporary directory for database migrations")
-		}
-	}()
 
 	collectFuncs := []currencies.CollectorFunc{
 		currencies.CollectDefaults(),
@@ -211,7 +217,7 @@ func run(cfg *config.Config) error {
 
 	app.bus = eventbus.New()
 	app.db = c
-	app.repos = repo.New(c, app.bus, cfg.Storage.Data)
+	app.repos = repo.New(c, app.bus, cfg.Storage, cfg.Database.PubSubConnString, cfg.Thumbnail)
 	app.services = services.New(
 		app.repos,
 		services.WithAutoIncrementAssetID(cfg.Options.AutoIncrementAssetID),
@@ -305,6 +311,68 @@ func run(cfg *config.Config) error {
 		}
 	}))
 
+	go runner.AddFunc("create-thumbnails-subscription", func(ctx context.Context) error {
+		pubsubString, err := utils.GenerateSubPubConn(cfg.Database.PubSubConnString, "thumbnails")
+		if err != nil {
+			log.Error().Err(err).Msg("failed to generate pubsub connection string")
+			return err
+		}
+		topic, err := pubsub.OpenTopic(ctx, pubsubString)
+		if err != nil {
+			return err
+		}
+		defer func(topic *pubsub.Topic, ctx context.Context) {
+			err := topic.Shutdown(ctx)
+			if err != nil {
+				log.Err(err).Msg("fail to shutdown pubsub topic")
+			}
+		}(topic, ctx)
+
+		subscription, err := pubsub.OpenSubscription(ctx, pubsubString)
+		if err != nil {
+			log.Err(err).Msg("failed to open pubsub topic")
+			return err
+		}
+		defer func(topic *pubsub.Subscription, ctx context.Context) {
+			err := topic.Shutdown(ctx)
+			if err != nil {
+				log.Err(err).Msg("fail to shutdown pubsub topic")
+			}
+		}(subscription, ctx)
+
+		for {
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
+			default:
+				msg, err := subscription.Receive(ctx)
+				log.Debug().Msg("received thumbnail generation request from pubsub topic")
+				if err != nil {
+					log.Err(err).Msg("failed to receive message from pubsub topic")
+				}
+				groupId, err := uuid.Parse(msg.Metadata["group_id"])
+				if err != nil {
+					log.Error().
+						Err(err).
+						Str("group_id", msg.Metadata["group_id"]).
+						Msg("failed to parse group ID from message metadata")
+				}
+				attachmentId, err := uuid.Parse(msg.Metadata["attachment_id"])
+				if err != nil {
+					log.Error().
+						Err(err).
+						Str("attachment_id", msg.Metadata["attachment_id"]).
+						Msg("failed to parse attachment ID from message metadata")
+				}
+				err = app.repos.Attachments.CreateThumbnail(ctx, groupId, attachmentId, msg.Metadata["title"], msg.Metadata["path"])
+				if err != nil {
+					log.Err(err).Msg("failed to create thumbnail")
+				}
+				msg.Ack()
+			}
+		}
+	})
+
 	if cfg.Options.GithubReleaseCheck {
 		runner.AddPlugin(NewTask("get-latest-github-release", time.Hour, func(ctx context.Context) {
 			log.Debug().Msg("running get latest github release")
@@ -335,6 +403,8 @@ func run(cfg *config.Config) error {
 			log.Info().Msgf("Debug server is running on %s:%s", cfg.Web.Host, cfg.Debug.Port)
 			return debugserver.ListenAndServe()
 		})
+		// Print the configuration to the console
+		cfg.Print()
 	}
 
 	return runner.Start(context.Background())

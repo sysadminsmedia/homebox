@@ -11,7 +11,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/document"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 )
 
@@ -28,10 +27,16 @@ type Attachment struct {
 	Type attachment.Type `json:"type,omitempty"`
 	// Primary holds the value of the "primary" field.
 	Primary bool `json:"primary,omitempty"`
+	// Title holds the value of the "title" field.
+	Title string `json:"title,omitempty"`
+	// Path holds the value of the "path" field.
+	Path string `json:"path,omitempty"`
+	// MimeType holds the value of the "mime_type" field.
+	MimeType string `json:"mime_type,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the AttachmentQuery when eager-loading is set.
 	Edges                AttachmentEdges `json:"edges"`
-	document_attachments *uuid.UUID
+	attachment_thumbnail *uuid.UUID
 	item_attachments     *uuid.UUID
 	selectValues         sql.SelectValues
 }
@@ -40,8 +45,8 @@ type Attachment struct {
 type AttachmentEdges struct {
 	// Item holds the value of the item edge.
 	Item *Item `json:"item,omitempty"`
-	// Document holds the value of the document edge.
-	Document *Document `json:"document,omitempty"`
+	// Thumbnail holds the value of the thumbnail edge.
+	Thumbnail *Attachment `json:"thumbnail,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
@@ -58,15 +63,15 @@ func (e AttachmentEdges) ItemOrErr() (*Item, error) {
 	return nil, &NotLoadedError{edge: "item"}
 }
 
-// DocumentOrErr returns the Document value or an error if the edge
+// ThumbnailOrErr returns the Thumbnail value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e AttachmentEdges) DocumentOrErr() (*Document, error) {
-	if e.Document != nil {
-		return e.Document, nil
+func (e AttachmentEdges) ThumbnailOrErr() (*Attachment, error) {
+	if e.Thumbnail != nil {
+		return e.Thumbnail, nil
 	} else if e.loadedTypes[1] {
-		return nil, &NotFoundError{label: document.Label}
+		return nil, &NotFoundError{label: attachment.Label}
 	}
-	return nil, &NotLoadedError{edge: "document"}
+	return nil, &NotLoadedError{edge: "thumbnail"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -76,13 +81,13 @@ func (*Attachment) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case attachment.FieldPrimary:
 			values[i] = new(sql.NullBool)
-		case attachment.FieldType:
+		case attachment.FieldType, attachment.FieldTitle, attachment.FieldPath, attachment.FieldMimeType:
 			values[i] = new(sql.NullString)
 		case attachment.FieldCreatedAt, attachment.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		case attachment.FieldID:
 			values[i] = new(uuid.UUID)
-		case attachment.ForeignKeys[0]: // document_attachments
+		case attachment.ForeignKeys[0]: // attachment_thumbnail
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		case attachment.ForeignKeys[1]: // item_attachments
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
@@ -131,12 +136,30 @@ func (a *Attachment) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				a.Primary = value.Bool
 			}
+		case attachment.FieldTitle:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field title", values[i])
+			} else if value.Valid {
+				a.Title = value.String
+			}
+		case attachment.FieldPath:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field path", values[i])
+			} else if value.Valid {
+				a.Path = value.String
+			}
+		case attachment.FieldMimeType:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field mime_type", values[i])
+			} else if value.Valid {
+				a.MimeType = value.String
+			}
 		case attachment.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
-				return fmt.Errorf("unexpected type %T for field document_attachments", values[i])
+				return fmt.Errorf("unexpected type %T for field attachment_thumbnail", values[i])
 			} else if value.Valid {
-				a.document_attachments = new(uuid.UUID)
-				*a.document_attachments = *value.S.(*uuid.UUID)
+				a.attachment_thumbnail = new(uuid.UUID)
+				*a.attachment_thumbnail = *value.S.(*uuid.UUID)
 			}
 		case attachment.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
@@ -163,9 +186,9 @@ func (a *Attachment) QueryItem() *ItemQuery {
 	return NewAttachmentClient(a.config).QueryItem(a)
 }
 
-// QueryDocument queries the "document" edge of the Attachment entity.
-func (a *Attachment) QueryDocument() *DocumentQuery {
-	return NewAttachmentClient(a.config).QueryDocument(a)
+// QueryThumbnail queries the "thumbnail" edge of the Attachment entity.
+func (a *Attachment) QueryThumbnail() *AttachmentQuery {
+	return NewAttachmentClient(a.config).QueryThumbnail(a)
 }
 
 // Update returns a builder for updating this Attachment.
@@ -202,6 +225,15 @@ func (a *Attachment) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("primary=")
 	builder.WriteString(fmt.Sprintf("%v", a.Primary))
+	builder.WriteString(", ")
+	builder.WriteString("title=")
+	builder.WriteString(a.Title)
+	builder.WriteString(", ")
+	builder.WriteString("path=")
+	builder.WriteString(a.Path)
+	builder.WriteString(", ")
+	builder.WriteString("mime_type=")
+	builder.WriteString(a.MimeType)
 	builder.WriteByte(')')
 	return builder.String()
 }

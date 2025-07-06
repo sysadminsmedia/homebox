@@ -1,5 +1,5 @@
 import type { Ref } from "vue";
-import type { TableHeader } from "~/components/Item/View/Table.types";
+import type { TableHeaderType } from "~/components/Item/View/Table.types";
 import type { DaisyTheme } from "~~/lib/data/themes";
 
 export type ViewType = "table" | "card" | "tree";
@@ -11,9 +11,10 @@ export type LocationViewPreferences = {
   itemDisplayView: ViewType;
   theme: DaisyTheme;
   itemsPerTablePage: number;
-  tableHeaders?: TableHeader[];
-  displayHeaderDecor: boolean;
+  tableHeaders?: TableHeaderType[];
+  displayLegacyHeader: boolean;
   language?: string;
+  overrideFormatLocale?: string;
 };
 
 /**
@@ -30,8 +31,9 @@ export function useViewPreferences(): Ref<LocationViewPreferences> {
       itemDisplayView: "card",
       theme: "homebox",
       itemsPerTablePage: 10,
-      displayHeaderDecor: true,
+      displayLegacyHeader: false,
       language: null,
+      overrideFormatLocale: null,
     },
     { mergeDefaults: true }
   );

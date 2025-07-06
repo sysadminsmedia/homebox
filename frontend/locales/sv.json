@@ -1,11 +1,20 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "Använd {shiftKey} + {enterKey} för att spara och skapa en ny.",
+                "enter": "Retur",
+                "shift": "Skift"
+            },
             "import_dialog": {
                 "change_warning": "Beteendet för importer med befintliga import_refs har ändrats. Om en import_ref finns i CSV-filen, kommer\nobjektet att uppdateras med värdena i CSV-filen.",
-                "description": "Importera en CSV-fil som innehåller dina föremål, etiketter och platser. Se dokumentationen för mer information om formatet som krävs.",
+                "description": "Importera en CSV-fil som innehåller dina föremål, etiketter och platser. Se dokumentationen för mer information om förväntat format.",
                 "title": "Importera CSV-fil",
-                "upload": "Ladda upp"
+                "toast": {
+                    "import_failed": "Import misslyckades. Försök igen senare.",
+                    "import_success": "Importen lyckades!",
+                    "please_select_file": "Välj en fil för import."
+                }
             },
             "outdated": {
                 "current_version": "Nuvarande version",
@@ -13,6 +22,11 @@
                 "latest_version": "Senaste version",
                 "new_version_available": "Ny Version Tillgänglig",
                 "new_version_available_link": "Klicka här för att visa versionsanteckningarna"
+            }
+        },
+        "form": {
+            "password": {
+                "toggle_show": "Visa/dölj lösenord"
             }
         },
         "global": {
@@ -55,7 +69,8 @@
                 "titles": "Etiketter"
             },
             "page_qr_code": {
-                "page_url": "Sidans URL"
+                "page_url": "Sidans URL",
+                "qr_tooltip": "Visa QR-kod"
             },
             "password_score": {
                 "password_strength": "Lösenordsstyrka"
@@ -65,8 +80,9 @@
             "create_modal": {
                 "item_description": "Objektbeskrivning",
                 "item_name": "Objektnamn",
-                "photo_button": "Foto 📷",
-                "title": "Skapa föremål"
+                "item_photo": "Artikelfoto 📷",
+                "title": "Skapa föremål",
+                "upload_photos": "Ladda upp bilder"
             },
             "view": {
                 "selectable": {
@@ -76,16 +92,28 @@
                     "table": "Tabell"
                 },
                 "table": {
+                    "headers": "Rubriker",
                     "page": "Sida",
-                    "rows_per_page": "Rader per sida"
+                    "rows_per_page": "Rader per sida",
+                    "table_settings": "Bordsinställningar"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_color": "Etikettfärg",
                 "label_description": "Etikettbeskrivning",
                 "label_name": "Etikettnamm",
-                "title": "Skapa etikett"
+                "title": "Skapa etikett",
+                "toast": {
+                    "already_creating": "Skapar redan en etikett",
+                    "create_failed": "Det gick inte att skapa etiketten",
+                    "create_success": "Etikett skapad",
+                    "label_name_too_long": "Etikettnamnet får inte vara längre än 50 tecken"
+                }
+            },
+            "selector": {
+                "select_labels": "Välj etiketter"
             }
         },
         "location": {
@@ -95,19 +123,25 @@
                 "title": "Skapa plats"
             },
             "selector": {
-                "parent_location": "Överordnad Plats"
+                "no_location_found": "Ingen plats hittades",
+                "parent_location": "Överordnad Plats",
+                "search_location": "Sök Platser",
+                "select_location": "Välj en plats"
             },
             "tree": {
                 "no_locations": "Inga platser tillgängliga. Lägg till nya platser via\n `<`span class=\"link-primary\"`>`Skapa`<`/span`>`-knappen i navigationsmenyn."
             }
         },
         "quick_menu": {
+            "no_results": "Inga resultat hittades.",
             "shortcut_hint": "Använd siffertangenterna för att snabbt välja en åtgärd."
         }
     },
     "global": {
         "add": "Lägg till",
+        "archived": "Arkiverad",
         "build": "Byggd: { build }",
+        "cancel": "Avbryta",
         "confirm": "Godkänn",
         "create": "Skapa",
         "create_and_add": "Skapa och lägg till en till",
@@ -118,7 +152,12 @@
         "edit": "Ändra",
         "email": "Epost",
         "follow_dev": "Följ utvecklaren",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Version: { version } Build: { build } '</a>'"
+        },
         "github": "GitHub-projekt",
+        "insured": "Försäkrad",
         "items": "Föremål",
         "join_discord": "Gå med i Discord",
         "labels": "Etiketter",
@@ -127,6 +166,7 @@
         "name": "Namn",
         "navigate": "Navigera",
         "password": "Lösenord",
+        "quantity": "Kvantitet",
         "read_docs": "Läs dokumentationen",
         "save": "Spara",
         "search": "Sök",
@@ -266,6 +306,7 @@
     "locations": {
         "child_locations": "Underordnade platser",
         "collapse_tree": "Dra ihop träd",
+        "expand_tree": "Expandera Träd",
         "no_results": "Inga platser hittades",
         "update_location": "Uppdatera plats"
     },
@@ -323,7 +364,6 @@
         "current_password": "Nuvarande lösenord",
         "delete_account": "Radera konto",
         "delete_account_sub": "Ta bort ditt konto och alla tillhörande data. Detta kan inte ångras.",
-        "display_header": "{ currentValue, select, true {Dölj sidhuvud} false {Visa sidhuvud} other {Inte träff}}",
         "enabled": "Aktiverad",
         "example": "Exempel",
         "gen_invite": "Skapa inbjudningslänk",
@@ -350,6 +390,7 @@
         "invalid_url": "Ogiltig streckkods-URL",
         "no_sources": "Inga videokällor tillgängliga",
         "select_video_source": "Välj en videokälla",
+        "title": "Skanner",
         "unsupported": "Media Stream API stöds inte utan HTTPS"
     },
     "tools": {

@@ -1,7 +1,26 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { route } from "../../lib/api/base";
+  import PageQRCode from "./PageQRCode.vue";
+  import { toast } from "@/components/ui/sonner";
+  import MdiLoading from "~icons/mdi/loading";
   import MdiPrinterPos from "~icons/mdi/printer-pos";
   import MdiFileDownload from "~icons/mdi/file-download";
+
+  import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+  } from "@/components/ui/dialog";
+  import { useDialog } from "@/components/ui/dialog-provider";
+  import { Button, ButtonGroup } from "@/components/ui/button";
+  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+
+  const { t } = useI18n();
+  const { openDialog, closeDialog } = useDialog();
 
   const props = defineProps<{
     type: string;
@@ -9,24 +28,18 @@
   }>();
 
   const pubApi = usePublicApi();
-  const toast = useNotifier();
 
   const { data: status } = useAsyncData(async () => {
     const { data, error } = await pubApi.status();
     if (error) {
-      toast.error("Failed to load status");
+      toast.error(t("components.global.label_maker.toast.load_status_failed"));
       return;
     }
 
     return data;
   });
 
-  const printModal = ref(false);
   const serverPrinting = ref(false);
-
-  function openPrint() {
-    printModal.value = true;
-  }
 
   function browserPrint() {
     const printWindow = window.open(getLabelUrl(false), "popup=true");
@@ -45,12 +58,12 @@
     } catch (err) {
       console.error("Failed to print labels:", err);
       serverPrinting.value = false;
-      toast.error("Failed to print label");
+      toast.error(t("components.global.label_maker.toast.print_failed"));
       return;
     }
 
-    toast.success("Label printed");
-    printModal.value = false;
+    toast.success(t("components.global.label_maker.toast.print_success"));
+    closeDialog("print-label");
     serverPrinting.value = false;
   }
 
@@ -80,46 +93,61 @@
 
 <template>
   <div>
-    <BaseModal v-model="printModal">
-      <template #title>{{ $t("components.global.label_maker.print") }}</template>
-      <p>
-        {{ $t("components.global.label_maker.confirm_description") }}
-      </p>
-      <img :src="getLabelUrl(false)" />
-      <div class="modal-action">
-        <BaseButton
-          v-if="status?.labelPrinting || false"
-          type="submit"
-          :loading="serverPrinting"
-          @click="serverPrint"
-          >{{ $t("components.global.label_maker.server_print") }}</BaseButton
-        >
-        <BaseButton type="submit" @click="browserPrint">{{
-          $t("components.global.label_maker.browser_print")
-        }}</BaseButton>
-      </div>
-    </BaseModal>
-
-    <div class="dropdown dropdown-left">
-      <slot>
-        <label tabindex="0" class="btn btn-sm">
-          {{ $t("components.global.label_maker.titles") }}
-        </label>
-      </slot>
-      <ul class="dropdown-content menu compact rounded-box w-52 bg-base-100 shadow-lg">
-        <li>
-          <button @click="openPrint">
-            <MdiPrinterPos name="mdi-printer-pos" class="mr-2" />
+    <Dialog dialog-id="print-label">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
             {{ $t("components.global.label_maker.print") }}
-          </button>
-        </li>
-        <li>
-          <button @click="downloadLabel">
-            <MdiFileDownload name="mdi-file-download" class="mr-2" />
+          </DialogTitle>
+          <DialogDescription>
+            {{ $t("components.global.label_maker.confirm_description") }}
+          </DialogDescription>
+        </DialogHeader>
+        <img :src="getLabelUrl(false)" />
+        <DialogFooter>
+          <ButtonGroup>
+            <Button v-if="status?.labelPrinting || false" type="submit" :disabled="serverPrinting" @click="serverPrint">
+              <MdiLoading v-if="serverPrinting" class="animate-spin" />
+              {{ $t("components.global.label_maker.server_print") }}
+            </Button>
+            <Button type="submit" @click="browserPrint">
+              {{ $t("components.global.label_maker.browser_print") }}
+            </Button>
+          </ButtonGroup>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    <TooltipProvider :delay-duration="0">
+      <ButtonGroup>
+        <Button variant="outline" disabled class="disabled:opacity-100">
+          {{ $t("components.global.label_maker.titles") }}
+        </Button>
+
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <Button size="icon" @click="downloadLabel">
+              <MdiFileDownload name="mdi-file-download" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
             {{ $t("components.global.label_maker.download") }}
-          </button>
-        </li>
-      </ul>
-    </div>
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <Button size="icon" @click="openDialog('print-label')">
+              <MdiPrinterPos name="mdi-printer-pos" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            {{ $t("components.global.label_maker.browser_print") }}
+          </TooltipContent>
+        </Tooltip>
+
+        <PageQRCode />
+      </ButtonGroup>
+    </TooltipProvider>
   </div>
 </template>

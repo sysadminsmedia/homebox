@@ -19,11 +19,18 @@ builds:
       - "386"
       - arm
       - arm64
+      - riscv64
     ignore:
       - goos: windows
         goarch: arm
       - goos: windows
         goarch: "386"
+    tags:
+      - >-
+        {{- if eq .Arch "riscv64" }}nodynamic
+        {{- else if eq .Arch "arm" }}nodynamic
+        {{- else if eq .Arch "386" }}nodynamic
+        {{ end }}
 
 signs:
   - cmd: cosign
@@ -54,7 +61,6 @@ archives:
 release:
   extra_files:
     - glob: dist/*.sig
-
 checksum:
   name_template: 'checksums.txt'
 snapshot:

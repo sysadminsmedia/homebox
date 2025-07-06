@@ -2,8 +2,9 @@
     "components": {
         "app": {
             "import_dialog": {
-                "title": "นำเข้า CSV",
-                "upload": "อัปโหลด"
+                "change_warning": "พฤติกรรมการนำเข้าสำหรับรายการที่มี import_ref อยู่แล้วมีการเปลี่ยนแปลง หากมี import_ref ในไฟล์ CSV\nรายการนั้นจะได้รับการอัปเดตด้วยค่าต่างๆ ที่อยู่ในไฟล์ CSV",
+                "description": "นำเข้าไฟล์ CSV ที่มีรายการ ป้ายกำกับ และตำแหน่งที่ตั้งของคุณ โปรดดูเอกสารสำหรับข้อมูลเพิ่มเติม\nเกี่ยวกับรูปแบบที่จำเป็น",
+                "title": "นำเข้า CSV"
             },
             "outdated": {
                 "current_version": "เวอร์ชั่นปัจจุบัน",
@@ -44,6 +45,10 @@
                 "years": "ปี",
                 "yesterday": "เมื่อวาน"
             },
+            "label_maker": {
+                "browser_print": "พิมพ์จากเบราว์เซอร์",
+                "confirm_description": "คุณแน่ใจหรือไม่ว่าต้องการพิมพ์ป้ายกำกับนี้?"
+            },
             "password_score": {
                 "password_strength": "ความแข็งแกร่งของรหัสผ่าน"
             }
@@ -52,7 +57,98 @@
             "create_modal": {
                 "item_description": "รายละเอียดรายการ",
                 "item_name": "ชื่อรายการ"
+            },
+            "view": {
+                "table": {
+                    "page": "หน้า"
+                }
             }
+        },
+        "location": {
+            "tree": {
+                "no_locations": "ไม่มีตำแหน่งที่ตั้ง โปรดเพิ่มตำแหน่งที่ตั้งใหม่โดยคลิกปุ่ม\n`<`span class=\"link-primary\"`>`สร้าง`<`/span`>`บนแถบนำทาง"
+            }
+        },
+        "quick_menu": {
+            "no_results": "ไม่พบผลลัพธ์",
+            "shortcut_hint": "ใช้ปุ่มตัวเลขเพื่อเลือกการกระทำอย่างรวดเร็ว"
         }
+    },
+    "global": {
+        "add": "เพิ่ม",
+        "archived": "เก็บถาวร",
+        "build": "รุ่น: { build }",
+        "cancel": "ยกเลิก",
+        "confirm": "ยืนยัน",
+        "create": "สร้าง",
+        "create_and_add": "สร้างและเพิ่มอีกรายการ",
+        "created": "สร้างแล้ว",
+        "delete": "ลบ",
+        "details": "รายละเอียด",
+        "duplicate": "ทำสำเนา",
+        "edit": "แก้ไข",
+        "email": "อีเมล์",
+        "follow_dev": "ติดตามผู้พัฒนา",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Version: { version } Build: { build } '</a>'"
+        },
+        "github": "GitHub Project",
+        "insured": "ประกัน",
+        "items": "รายการ",
+        "join_discord": "เข้าร่วม Discord",
+        "labels": "ป้ายกำกับ",
+        "locations": "สถานที่",
+        "maintenance": "การบำรุงรักษา",
+        "name": "ชื่อ",
+        "navigate": "นำทาง",
+        "password": "รหัสผ่าน",
+        "quantity": "ปริมาณ",
+        "read_docs": "อ่านเอกสาร",
+        "save": "บันทึก",
+        "search": "ค้นหา",
+        "sign_out": "ลงชื่อออก",
+        "submit": "ส่ง",
+        "update": "อัปเดต",
+        "value": "ราคา",
+        "version": "เวอร์ชั่น: { version }",
+        "welcome": "ยินดีต้อนรับ, { username }"
+    },
+    "home": {
+        "labels": "ป้ายกำกับ",
+        "quick_statistics": "ข้อมูลสถิติเบื้องต้น",
+        "recently_added": "เพิ่มล่าสุด",
+        "storage_locations": "สถานที่จัดเก็บ",
+        "total_items": "รายการทั้งหมด",
+        "total_labels": "ป้ายกำกำทั้งหมด",
+        "total_locations": "สถานที่ทั้งหมด",
+        "total_value": "ราคาทั้งหมด"
+    },
+    "index": {
+        "disabled_registration": "ปิดใช้งานการลงทะเบียน",
+        "dont_join_group": "ไม่ต้องการเข้าร่วมกลุ่มใช่ไหม?",
+        "joining_group": "คุณกำลังเข้าร่วมกลุ่มที่มีอยู่!",
+        "login": "เข้าสู่ระบบ",
+        "register": "ลงทะเบียน",
+        "remember_me": "จดจำฉัน",
+        "set_email": "อีเมลของคุณคืออะไร?",
+        "set_name": "ชื่อของคุณคืออะไร?",
+        "set_password": "ตั้งรหัสผ่านของคุณ",
+        "tagline": "ติดตาม จัดระเบียบ และจัดการสิ่งของของคุณ"
+    },
+    "items": {
+        "add": "เพิ่ม",
+        "advanced": "ขั้นสูง",
+        "archived": "เก็บถาวร",
+        "asset_id": "รหัสสินทรัพย์",
+        "attachment": "ไฟล์แนบ",
+        "attachments": "ไฟล์แนบ",
+        "changes_persisted_immediately": "การเปลี่ยนแปลงไฟล์แนบจะถูกบันทึกทันที",
+        "created_at": "สร้างเมื่อ",
+        "custom_fields": "ฟิลด์ที่กำหนดเอง",
+        "description": "รายละเอียด",
+        "details": "รายละเอียด",
+        "drag_and_drop": "ลากและวางไฟล์ที่นี่ หรือคลิกเพื่อเลือกไฟล์",
+        "edit_details": "แก้ไขรายละเอียด"
     }
 }

@@ -10,13 +10,10 @@
 </script>
 
 <template>
-  <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
-  <div class="root border-2 p-4">
+  <div>
     <p v-if="locs.length === 0" class="text-center text-sm">
       {{ $t("location.tree.no_locations") }}
     </p>
     <LocationTreeNode v-for="item in locs" :key="item.id" :item="item" :tree-id="treeId" />
   </div>
 </template>
-
-<style></style>

@@ -1,4 +1,4 @@
-name: Frontend / E2E
+name: Frontend
 
 on:
   workflow_call:
@@ -18,7 +18,7 @@ jobs:
           version: 9.12.2
 
       - name: Install dependencies
-        run: pnpm install --shamefully-hoist
+        run: pnpm install
         working-directory: frontend
 
       - name: Run Lint
@@ -60,7 +60,8 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.23"
+          cache-dependency-path: backend/go.mod
 
       - uses: actions/setup-node@v4
         with:
@@ -110,11 +111,12 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.23"
+          cache-dependency-path: backend/go.mod
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: lts/*
 
       - uses: pnpm/action-setup@v3.0.0
         with:

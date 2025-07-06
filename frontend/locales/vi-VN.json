@@ -1,0 +1,52 @@
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "title": "Nhập tệp CSV",
+                "toast": {
+                    "import_failed": "Nhập thất bại. Xin hãy thử lại sau.",
+                    "import_success": "Nhập thành công!",
+                    "please_select_file": "Xin hãy chọn tệp cần nhập."
+                }
+            },
+            "outdated": {
+                "current_version": "Phiên bản hiện tại",
+                "latest_version": "Phiên bản mới nhất",
+                "new_version_available": "Đã có phiên bản mới"
+            }
+        },
+        "color_selector": {
+            "color": "Màu",
+            "randomize": "Màu ngẫu nhiên"
+        },
+        "global": {
+            "date_time": {
+                "ago": "{0} trước",
+                "days": "ngày",
+                "hour": "giờ",
+                "hours": "giờ",
+                "last-month": "tháng trước",
+                "last-week": "tuần trước",
+                "last-year": "năm trước",
+                "minute": "phút",
+                "minutes": "phút",
+                "months": "tháng",
+                "next-month": "tháng tới",
+                "next-week": "tuần tới",
+                "next-year": "năm tới",
+                "second": "giây",
+                "seconds": "giây",
+                "tomorrow": "ngày mai",
+                "week": "tuần",
+                "weeks": "tuần",
+                "years": "năm",
+                "yesterday": "hôm qua"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "delete_photo": "Xóa Ảnh"
+            }
+        }
+    }
+}

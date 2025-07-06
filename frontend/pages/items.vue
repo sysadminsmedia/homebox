@@ -1,4 +1,7 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
+  import { toast } from "@/components/ui/sonner";
+  import { Input } from "~/components/ui/input";
   import type { ItemSummary, LabelSummary, LocationOutCount } from "~~/lib/api/types/data-contracts";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
@@ -6,15 +9,29 @@
   import MdiSelectSearch from "~icons/mdi/select-search";
   import MdiMagnify from "~icons/mdi/magnify";
   import MdiDelete from "~icons/mdi/delete";
-  import MdiChevronRight from "~icons/mdi/chevron-right";
-  import MdiChevronLeft from "~icons/mdi/chevron-left";
+  import { Button } from "@/components/ui/button";
+  import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+  import { Label } from "@/components/ui/label";
+  import { Switch } from "@/components/ui/switch";
+  import { Separator } from "@/components/ui/separator";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import {
+    Pagination,
+    PaginationEllipsis,
+    PaginationFirst,
+    PaginationLast,
+    PaginationList,
+    PaginationListItem,
+  } from "@/components/ui/pagination";
+
+  const { t } = useI18n();
 
   definePageMeta({
     middleware: ["auth"],
   });
 
   useHead({
-    title: "Homebox | Items",
+    title: "HomeBox | " + t("global.items"),
   });
 
   const searchLocked = ref(false);
@@ -35,7 +52,7 @@
     },
   });
 
-  const pageSize = useRouteQuery("pageSize", 30);
+  const pageSize = useRouteQuery("pageSize", 24);
   const query = useRouteQuery("q", "");
   const advanced = useRouteQuery("advanced", false);
   const includeArchived = useRouteQuery("archived", false);
@@ -46,16 +63,6 @@
   const orderBy = useRouteQuery("orderBy", "name");
 
   const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
-  const hasNext = computed(() => page.value * pageSize.value < total.value);
-  const hasPrev = computed(() => page.value > 1);
-
-  function prev() {
-    page.value = Math.max(1, page.value - 1);
-  }
-
-  function next() {
-    page.value = Math.min(Math.ceil(total.value / pageSize.value), page.value + 1);
-  }
 
   const route = useRoute();
   const router = useRouter();
@@ -141,7 +148,7 @@
     } else {
       const [aid, valid] = parseAssetIDString(query.value.replace("#", ""));
       if (!valid) {
-        return "Invalid Asset ID";
+        return t("items.invalid_asset_id");
       } else {
         return aid;
       }
@@ -258,8 +265,6 @@
       }
     }
 
-    const toast = useNotifier();
-
     const { data, error } = await api.items.getAll({
       q: query.value || "",
       locations: locIDs.value,
@@ -283,7 +288,7 @@
 
     if (error) {
       resetItems();
-      toast.error("Failed to search items");
+      toast.error(t("items.toast.failed_search_items"));
       return;
     }
 
@@ -352,7 +357,7 @@
       query: {
         archived: "false",
         fieldSelector: "false",
-        pageSize: 10,
+        pageSize: pageSize.value,
         page: 1,
         orderBy: "name",
         q: "",
@@ -367,84 +372,82 @@
 </script>
 
 <template>
-  <BaseContainer class="mb-16">
+  <BaseContainer>
     <div v-if="locations && labels">
       <div class="flex flex-wrap items-end gap-4 md:flex-nowrap">
         <div class="w-full">
-          <FormTextField v-model="query" :placeholder="$t('global.search')" />
+          <Input v-model:model-value="query" :placeholder="$t('global.search')" class="h-12" />
           <div v-if="byAssetId" class="pl-2 pt-2 text-sm">
             <p>{{ $t("items.query_id", { id: parsedAssetId }) }}</p>
           </div>
         </div>
-        <BaseButton class="btn-block md:w-auto" @click.prevent="submit">
-          <template #icon>
-            <MdiLoading v-if="loading" class="animate-spin" />
-            <MdiMagnify v-else />
-          </template>
+        <Button class="mb-auto h-12 w-full md:w-auto" @click.prevent="submit">
+          <MdiLoading v-if="loading" class="animate-spin" />
+          <MdiMagnify v-else />
           {{ $t("global.search") }}
-        </BaseButton>
+        </Button>
       </div>
 
       <div class="flex w-full flex-wrap gap-2 py-2 md:flex-nowrap">
-        <SearchFilter v-model="selectedLocations" :label="$t('global.locations')" :options="locationFlatTree">
-          <template #display="{ item }">
-            <div>
-              <div class="flex w-full">
-                {{ item.name }}
-              </div>
-              <div v-if="item.name != item.treeString" class="mt-1 text-xs">
-                {{ item.treeString }}
-              </div>
-            </div>
-          </template>
-        </SearchFilter>
+        <SearchFilter v-model="selectedLocations" :label="$t('global.locations')" :options="locationFlatTree" />
         <SearchFilter v-model="selectedLabels" :label="$t('global.labels')" :options="labels" />
-        <div class="dropdown">
-          <label tabindex="0" class="btn btn-xs">{{ $t("items.options") }}</label>
-          <div
-            tabindex="0"
-            class="dropdown-content mt-1 w-72 -translate-x-24 overflow-auto rounded-md bg-base-100 p-4 shadow"
-          >
-            <label class="label mr-auto cursor-pointer">
-              <input v-model="includeArchived" type="checkbox" class="toggle toggle-primary toggle-sm" />
-              <span class="label-text ml-4 text-right"> {{ $t("items.include_archive") }} </span>
-            </label>
-            <label class="label mr-auto cursor-pointer">
-              <input v-model="fieldSelector" type="checkbox" class="toggle toggle-primary toggle-sm" />
-              <span class="label-text ml-4 text-right"> {{ $t("items.field_selector") }} </span>
-            </label>
-            <label class="label mr-auto cursor-pointer">
-              <input v-model="negateLabels" type="checkbox" class="toggle toggle-primary toggle-sm" />
-              <span class="label-text ml-4 text-right"> {{ $t("items.negate_labels") }} </span>
-            </label>
-            <label class="label mr-auto cursor-pointer">
-              <input v-model="onlyWithoutPhoto" type="checkbox" class="toggle toggle-primary toggle-sm" />
-              <span class="label-text ml-4 text-right"> {{ $t("items.only_without_photo") }} </span>
-            </label>
-            <label class="label mr-auto cursor-pointer">
-              <input v-model="onlyWithPhoto" type="checkbox" class="toggle toggle-primary toggle-sm" />
-              <span class="label-text ml-4 text-right"> {{ $t("items.only_with_photo") }} </span>
-            </label>
-            <label class="label mr-auto cursor-pointer">
-              <select v-model="orderBy" class="select select-bordered select-sm">
-                <option value="name" selected>{{ $t("global.name") }}</option>
-                <option value="createdAt">{{ $t("items.created_at") }}</option>
-                <option value="updatedAt">{{ $t("items.updated_at") }}</option>
-              </select>
-              <span class="label-text ml-4 text-right"> {{ $t("items.order_by") }} </span>
-            </label>
-            <hr class="my-2" />
-            <BaseButton class="btn-sm btn-block" @click="reset"> {{ $t("items.reset_search") }} </BaseButton>
-          </div>
-        </div>
-        <div class="dropdown dropdown-end ml-auto">
-          <label tabindex="0" class="btn btn-xs">{{ $t("items.tips") }}</label>
-          <div
-            tabindex="0"
-            class="dropdown-content mt-1 w-[325px] overflow-auto rounded-md bg-base-100 p-4 text-sm shadow"
-          >
+        <Popover>
+          <PopoverTrigger as-child>
+            <Button size="sm" variant="outline"> {{ $t("items.options") }}</Button>
+          </PopoverTrigger>
+          <PopoverContent class="z-40 flex flex-col gap-2">
+            <Label class="flex cursor-pointer items-center">
+              <Switch v-model="includeArchived" class="ml-auto" />
+              <div class="grow"></div>
+              {{ $t("items.include_archive") }}
+            </Label>
+            <Label class="flex cursor-pointer items-center">
+              <Switch v-model="fieldSelector" class="ml-auto" />
+              <div class="grow"></div>
+              {{ $t("items.field_selector") }}
+            </Label>
+            <Label class="flex cursor-pointer items-center">
+              <Switch v-model="negateLabels" class="ml-auto" />
+              <div class="grow"></div>
+              {{ $t("items.negate_labels") }}
+            </Label>
+            <Label class="flex cursor-pointer items-center">
+              <Switch v-model="onlyWithoutPhoto" class="ml-auto" />
+              <div class="grow"></div>
+              {{ $t("items.only_without_photo") }}
+            </Label>
+            <Label class="flex cursor-pointer items-center">
+              <Switch v-model="onlyWithPhoto" class="ml-auto" />
+              <div class="grow"></div>
+              {{ $t("items.only_with_photo") }}
+            </Label>
+            <Label class="flex cursor-pointer flex-col gap-2">
+              <span class="text-right">
+                {{ $t("items.order_by") }}
+              </span>
+
+              <Select v-model="orderBy">
+                <SelectTrigger>
+                  <SelectValue :placeholder="$t('items.order_by')" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="createdAt"> {{ $t("items.created_at") }} </SelectItem>
+                  <SelectItem value="updatedAt"> {{ $t("items.updated_at") }} </SelectItem>
+                </SelectContent>
+              </Select>
+            </Label>
+            <Separator />
+            <Button @click="reset"> {{ $t("items.reset_search") }} </Button>
+          </PopoverContent>
+        </Popover>
+        <div class="grow"></div>
+        <Popover>
+          <PopoverTrigger as-child>
+            <Button size="sm" variant="outline"> {{ $t("items.tips") }}</Button>
+          </PopoverTrigger>
+          <PopoverContent class="z-40 w-[325px]" align="end">
             <p class="text-base">{{ $t("items.tips_sub") }}</p>
-            <ul class="mt-1 list-disc pl-6">
+            <ul class="mt-1 list-disc pl-6 text-sm">
               <li>
                 {{ $t("items.tip_1") }}
               </li>
@@ -455,48 +458,47 @@
                 {{ $t("items.tip_3") }}
               </li>
             </ul>
-          </div>
-        </div>
+          </PopoverContent>
+        </Popover>
       </div>
-      <div v-if="fieldSelector" class="space-y-2 py-4">
+      <div v-if="fieldSelector" class="flex flex-col gap-2 pb-2">
         <p>{{ $t("items.custom_fields") }}</p>
         <div v-for="(f, idx) in fieldTuples" :key="idx" class="flex flex-wrap gap-2">
-          <div class="form-control w-full max-w-xs">
-            <label class="label">
-              <span class="label-text">Field</span>
-            </label>
-            <select
-              v-model="fieldTuples[idx][0]"
-              class="select select-bordered"
-              :items="allFields ?? []"
-              @change="fetchValues(f[0])"
-            >
-              <option v-for="(fv, _, i) in allFields" :key="i" :value="fv">{{ fv }}</option>
-            </select>
+          <div class="flex w-full flex-col gap-1 md:w-auto md:grow">
+            <Label> Field </Label>
+            <Select v-model="fieldTuples[idx][0]" @update:model-value="fetchValues(f[0])">
+              <SelectTrigger>
+                <SelectValue :placeholder="$t('items.select_field')" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem v-for="field in allFields" :key="field" :value="field"> {{ field }} </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <div class="form-control w-full max-w-xs">
-            <label class="label">
-              <span class="label-text">{{ $t("items.field_value") }}</span>
-            </label>
-            <select v-model="fieldTuples[idx][1]" class="select select-bordered" :items="fieldValuesCache[f[0]]">
-              <option v-for="v in fieldValuesCache[f[0]]" :key="v" :value="v">{{ v }}</option>
-            </select>
+          <div class="flex w-full flex-col gap-1 md:w-auto md:grow">
+            <Label> {{ $t("items.field_value") }} </Label>
+            <Select v-model="fieldTuples[idx][1]">
+              <SelectTrigger>
+                <SelectValue placeholder="Select a value" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem v-for="value in fieldValuesCache[f[0]]" :key="value" :value="value">
+                  {{ value }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <button
-            type="button"
-            class="btn btn-square btn-sm mb-2 ml-auto mt-auto md:ml-0"
-            @click="fieldTuples.splice(idx, 1)"
-          >
-            <MdiDelete class="size-5" />
-          </button>
+          <Button variant="destructive" type="button" size="icon" class="my-auto" @click="fieldTuples.splice(idx, 1)">
+            <MdiDelete />
+          </Button>
         </div>
-        <BaseButton type="button" class="btn-sm mt-2" @click="() => fieldTuples.push(['', ''])">
+        <Button type="button" size="sm" class="mt-2" @click="() => fieldTuples.push(['', ''])">
           {{ $t("items.add") }}
-        </BaseButton>
+        </Button>
       </div>
     </div>
 
-    <section class="mt-10">
+    <section>
       <BaseSectionHeader ref="itemsTitle"> {{ $t("global.items") }} </BaseSectionHeader>
       <p v-if="items.length > 0" class="flex items-center text-base font-medium">
         {{ $t("items.results", { total: total }) }}
@@ -507,46 +509,31 @@
         <MdiSelectSearch class="size-10" />
         <p>{{ $t("items.no_results") }}</p>
       </div>
-      <div v-else ref="cardgrid" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5">
+      <div v-else ref="cardgrid" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         <ItemCard v-for="item in items" :key="item.id" :item="item" :location-flat-tree="locationFlatTree" />
       </div>
-      <div v-if="items.length > 0 && (hasNext || hasPrev)" class="mt-10 flex flex-col items-center gap-2">
-        <div class="flex">
-          <div class="btn-group">
-            <button :disabled="!hasPrev" class="text-no-transform btn" @click="prev">
-              <MdiChevronLeft class="mr-1 size-6" name="mdi-chevron-left" />
-              {{ $t("items.prev_page") }}
-            </button>
-            <button v-if="hasPrev" class="text-no-transform btn" @click="page = 1">{{ $t("items.first") }}</button>
-            <button v-if="hasNext" class="text-no-transform btn" @click="page = totalPages">
-              {{ $t("items.last") }}
-            </button>
-            <button :disabled="!hasNext" class="text-no-transform btn" @click="next">
-              {{ $t("items.next_page") }}
-              <MdiChevronRight class="ml-1 size-6" name="mdi-chevron-right" />
-            </button>
-          </div>
-        </div>
-        <p class="text-sm font-bold">{{ $t("items.pages", { page: page, totalPages: totalPages }) }}</p>
-      </div>
+      <Pagination
+        v-slot="{ page: currentPage }"
+        :items-per-page="pageSize"
+        :total="total"
+        :sibling-count="2"
+        :default-page="page"
+        class="flex justify-center p-2"
+        @update:page="page = $event"
+      >
+        <PaginationList v-slot="{ items: pageItems }" class="flex items-center gap-1">
+          <PaginationFirst />
+          <template v-for="(item, index) in pageItems">
+            <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
+              <Button class="size-10 p-0" :variant="item.value === currentPage ? 'default' : 'outline'">
+                {{ item.value }}
+              </Button>
+            </PaginationListItem>
+            <PaginationEllipsis v-else :key="item.type" :index="index" />
+          </template>
+          <PaginationLast />
+        </PaginationList>
+      </Pagination>
     </section>
   </BaseContainer>
 </template>
-
-<style lang="css">
-  .list-move,
-  .list-enter-active,
-  .list-leave-active {
-    transition: all 0.25s ease;
-  }
-
-  .list-enter-from,
-  .list-leave-to {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-
-  .list-leave-active {
-    position: absolute;
-  }
-</style>

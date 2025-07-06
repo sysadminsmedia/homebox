@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "現有 import_refs 的導入行為已變更。如果 CSV 檔案中存在 import_ref，則\n項目將使用 CSV 檔案中的值進行更新。",
                 "description": "匯入包含您的商品、標籤和位置的 CSV 檔案。有關所需格式的更多信息\n，請參閱文件。",
-                "title": "匯入CSV檔案",
-                "upload": "上傳"
+                "title": "匯入CSV檔案"
             },
             "outdated": {
                 "current_version": "當前版本",
@@ -28,10 +27,33 @@
                 "hour": "小時hour",
                 "hours": "小時hours",
                 "in": "鎖定{0}",
-                "just-now": "現在"
+                "just-now": "現在",
+                "last-month": "上個月",
+                "last-week": "上週",
+                "last-year": "去年",
+                "minute": "分鐘",
+                "minutes": "分鐘",
+                "months": "月",
+                "next-month": "下個月",
+                "next-week": "下週",
+                "next-year": "明年",
+                "second": "秒",
+                "seconds": "秒",
+                "tomorrow": "明天",
+                "week": "周",
+                "weeks": "周",
+                "years": "年",
+                "yesterday": "昨天"
+            },
+            "label_maker": {
+                "browser_print": "從瀏覽器列印",
+                "confirm_description": "您確定要列印此標籤嗎？",
+                "download": "下載標籤",
+                "titles": "標籤"
             },
             "page_qr_code": {
-                "page_url": "頁面網址"
+                "page_url": "頁面網址",
+                "qr_tooltip": "顯示二維修碼"
             },
             "password_score": {
                 "password_strength": "密碼強度"
@@ -39,7 +61,6 @@
         },
         "item": {
             "create_modal": {
-                "photo_button": "相片 📷",
                 "title": "新增項目"
             },
             "view": {

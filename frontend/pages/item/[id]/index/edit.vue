@@ -1,13 +1,26 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
+  import { toast } from "@/components/ui/sonner";
   import type { ItemAttachment, ItemField, ItemOut, ItemUpdate } from "~~/lib/api/types/data-contracts";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
-  import Autocomplete from "~~/components/Form/Autocomplete.vue";
+  import MdiLoading from "~icons/mdi/loading";
   import MdiDelete from "~icons/mdi/delete";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiContentSaveOutline from "~icons/mdi/content-save-outline";
-  import MdiContentCopy from "~icons/mdi/content-copy";
+  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import { Button } from "@/components/ui/button";
+  import { useDialog } from "@/components/ui/dialog-provider";
+  import { Checkbox } from "@/components/ui/checkbox";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+  import { Switch } from "@/components/ui/switch";
+  import { Label } from "@/components/ui/label";
+
+  const { t } = useI18n();
+
+  const { openDialog, closeDialog } = useDialog();
 
   definePageMeta({
     middleware: ["auth"],
@@ -15,7 +28,6 @@
 
   const route = useRoute();
   const api = useUserApi();
-  const toast = useNotifier();
   const preferences = useViewPreferences();
 
   const itemId = computed<string>(() => route.params.id as string);
@@ -33,7 +45,7 @@
   } = useAsyncData(async () => {
     const { data, error } = await api.items.get(itemId.value);
     if (error) {
-      toast.error("Failed to load item");
+      toast.error(t("items.toast.failed_load_item"));
       navigateTo("/home");
       return;
     }
@@ -53,48 +65,32 @@
     return data;
   });
 
-  const item = computed<ItemOut>(() => nullableItem.value as ItemOut);
+  const item = ref<ItemOut & { labelIds: string[] }>(null as any);
+
+  watchEffect(() => {
+    if (nullableItem.value) {
+      item.value = {
+        ...nullableItem.value,
+        labelIds: nullableItem.value.labels.map(l => l.id) ?? [],
+      };
+    }
+  });
+
+  // const item = computed(() => nullableItem.value as ItemOut);
 
   onMounted(() => {
     refresh();
   });
 
-  async function duplicateItem() {
-    const { error, data } = await api.items.create({
-      name: `${item.value.name} Copy`,
-      description: item.value.description,
-      locationId: item.value.location!.id,
-      parentId: item.value.parent?.id,
-      labelIds: item.value.labels.map(l => l.id),
-    });
-
-    if (error) {
-      toast.error("Failed to duplicate item");
-      return;
-    }
-
-    // add extra fields
-    const { error: updateError } = await api.items.update(data.id, {
-      ...item.value,
-      id: data.id,
-      labelIds: data.labels.map(l => l.id),
-      locationId: data.location!.id,
-      name: data.name,
-    });
-
-    if (updateError) {
-      toast.error("Failed to duplicate item");
-      return;
-    }
-
-    navigateTo(`/item/${data.id}`);
-  }
+  const saving = ref(false);
 
   async function saveItem() {
     if (!item.value.location?.id) {
-      toast.error("Failed to save item: no location selected");
+      toast.error(t("items.toast.failed_save_no_location"));
       return;
     }
+
+    saving.value = true;
 
     let purchasePrice = 0;
     let soldPrice = 0;
@@ -111,7 +107,7 @@
     const payload: ItemUpdate = {
       ...item.value,
       locationId: item.value.location?.id,
-      labelIds: item.value.labels.map(l => l.id),
+      labelIds: item.value.labelIds,
       parentId: parent.value ? parent.value.id : null,
       assetId: item.value.assetId,
       purchasePrice,
@@ -121,27 +117,26 @@
 
     const { error } = await api.items.update(itemId.value, payload);
 
+    saving.value = false;
+
     if (error) {
-      toast.error("Failed to save item");
+      toast.error(t("items.toast.failed_save"));
       return;
     }
 
-    toast.success("Item saved");
+    toast.success(t("items.toast.item_saved"));
     navigateTo("/item/" + itemId.value);
   }
-  type NoUndefinedField<T> = { [P in keyof T]-?: NoUndefinedField<NonNullable<T[P]>> };
 
-  type StringKeys<T> = { [k in keyof T]: T[k] extends string ? k : never }[keyof T];
-  type OnlyString<T> = { [k in StringKeys<T>]: string };
-
-  type NumberKeys<T> = { [k in keyof T]: T[k] extends number ? k : never }[keyof T];
-  type OnlyNumber<T> = { [k in NumberKeys<T>]: number };
+  type NonNullableStringKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends string ? K : never]: any }>;
+  type NonNullableNumberKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends number ? K : never]: any }>;
+  type BooleanKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends boolean ? K : never]: any }>;
+  type DateKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends Date | string ? K : never]: any }>;
 
   type TextFormField = {
     type: "text" | "textarea";
     label: string;
-    // key of ItemOut where the value is a string
-    ref: keyof OnlyString<NoUndefinedField<ItemOut>>;
+    ref: NonNullableStringKeys<ItemOut>;
     maxLength?: number;
     minLength?: number;
   };
@@ -149,27 +144,19 @@
   type NumberFormField = {
     type: "number";
     label: string;
-    ref: keyof OnlyNumber<NoUndefinedField<ItemOut>> | keyof OnlyString<NoUndefinedField<ItemOut>>;
+    ref: NonNullableNumberKeys<ItemOut> | NonNullableStringKeys<ItemOut>;
   };
-
-  // https://stackoverflow.com/questions/50851263/how-do-i-require-a-keyof-to-be-for-a-property-of-a-specific-type
-  // I don't know why typescript can't just be normal
-  type BooleanKeys<T> = { [k in keyof T]: T[k] extends boolean ? k : never }[keyof T];
-  type OnlyBoolean<T> = { [k in BooleanKeys<T>]: boolean };
 
   interface BoolFormField {
     type: "checkbox";
     label: string;
-    ref: keyof OnlyBoolean<NoUndefinedField<ItemOut>>;
+    ref: BooleanKeys<ItemOut>;
   }
-
-  type DateKeys<T> = { [k in keyof T]: T[k] extends Date | string ? k : never }[keyof T];
-  type OnlyDate<T> = { [k in DateKeys<T>]: Date | string };
 
   type DateFormField = {
     type: "date";
     label: string;
-    ref: keyof OnlyDate<NoUndefinedField<ItemOut>>;
+    ref: DateKeys<ItemOut>;
   };
 
   type FormField = TextFormField | BoolFormField | DateFormField | NumberFormField;
@@ -249,7 +236,6 @@
     {
       type: "date",
       label: "items.purchase_date",
-      // @ts-expect-error - we know this is a date
       ref: "purchaseTime",
     },
   ];
@@ -263,7 +249,6 @@
     {
       type: "date",
       label: "items.warranty_expires",
-      // @ts-expect-error - we know this is a date
       ref: "warrantyExpires",
     },
     {
@@ -289,7 +274,6 @@
     {
       type: "date",
       label: "items.sold_at",
-      // @ts-expect-error - we know this is a date
       ref: "soldTime",
     },
   ];
@@ -335,11 +319,11 @@
     const { data, error } = await api.items.attachments.add(itemId.value, files[0], files[0].name, type);
 
     if (error) {
-      toast.error("Failed to upload attachment");
+      toast.error(t("items.toast.failed_upload_attachment"));
       return;
     }
 
-    toast.success("Attachment uploaded");
+    toast.success(t("items.toast.attachment_uploaded"));
 
     item.value.attachments = data.attachments;
   }
@@ -347,7 +331,7 @@
   const confirm = useConfirm();
 
   async function deleteAttachment(attachmentId: string) {
-    const confirmed = await confirm.open("Are you sure you want to delete this attachment?");
+    const confirmed = await confirm.open(t("items.delete_attachment_confirm"));
 
     if (confirmed.isCanceled) {
       return;
@@ -356,16 +340,15 @@
     const { error } = await api.items.attachments.delete(itemId.value, attachmentId);
 
     if (error) {
-      toast.error("Failed to delete attachment");
+      toast.error(t("items.toast.failed_delete_attachment"));
       return;
     }
 
-    toast.success("Attachment deleted");
+    toast.success(t("items.toast.attachment_deleted"));
     item.value.attachments = item.value.attachments.filter(a => a.id !== attachmentId);
   }
 
   const editState = reactive({
-    modal: false,
     loading: false,
 
     // Values
@@ -383,10 +366,10 @@
 
   function openAttachmentEditDialog(attachment: ItemAttachment) {
     editState.id = attachment.id;
-    editState.title = attachment.document.title;
+    editState.title = attachment.title;
     editState.type = attachment.type;
     editState.primary = attachment.primary;
-    editState.modal = true;
+    openDialog("attachment-edit");
 
     editState.obj = attachmentOpts.find(o => o.value === attachment.type) || attachmentOpts[0];
   }
@@ -400,20 +383,20 @@
     });
 
     if (error) {
-      toast.error("Failed to update attachment");
+      toast.error(t("items.toast.failed_delete_attachment"));
       return;
     }
 
     item.value.attachments = data.attachments;
 
     editState.loading = false;
-    editState.modal = false;
+    closeDialog("attachment-edit");
 
     editState.id = "";
     editState.title = "";
     editState.type = "";
 
-    toast.success("Attachment updated");
+    toast.success(t("items.toast.attachment_updated"));
   }
 
   function addField() {
@@ -430,22 +413,6 @@
 
   const { query, results } = useItemSearch(api, { immediate: false });
   const parent = ref();
-
-  async function deleteItem() {
-    const confirmed = await confirm.open("Are you sure you want to delete this item?");
-
-    if (!confirmed.data) {
-      return;
-    }
-
-    const { error } = await api.items.delete(itemId.value);
-    if (error) {
-      toast.error("Failed to delete item");
-      return;
-    }
-    toast.success("Item deleted");
-    navigateTo("/home");
-  }
 
   async function keyboardSave(e: KeyboardEvent) {
     // Cmd + S
@@ -466,12 +433,12 @@
       const { data, error } = await api.items.get(parent.value.id);
 
       if (error) {
-        toast.error("Something went wrong trying to load parent data");
+        toast.error(t("items.toast.error_loading_parent_data"));
         return;
       }
 
       if (data.syncChildItemsLocations) {
-        toast.info("Selected parent syncs its children's locations to its own. The location has been updated.");
+        toast.info(t("items.toast.sync_child_location"));
         item.value.location = data.location;
       }
     }
@@ -482,26 +449,26 @@
       const { data, error } = await api.items.get(parent.value.id);
 
       if (error) {
-        toast.error("Something went wrong trying to load parent data");
+        toast.error(t("items.toast.error_loading_parent_data"));
         return;
       }
 
       if (data.syncChildItemsLocations) {
-        toast.info("Changing location will de-sync it from the parent's location");
+        toast.info(t("items.toast.child_location_desync"));
       }
     }
   }
 
   async function syncChildItemsLocations() {
     if (!item.value.location?.id) {
-      toast.error("Failed to save item: no location selected");
+      toast.error(t("items.toast.failed_save_no_location"));
       return;
     }
 
     const payload: ItemUpdate = {
       ...item.value,
       locationId: item.value.location?.id,
-      labelIds: item.value.labels.map(l => l.id),
+      labelIds: item.value.labelIds,
       parentId: parent.value ? parent.value.id : null,
       assetId: item.value.assetId,
     };
@@ -514,9 +481,9 @@
     }
 
     if (!item.value.syncChildItemsLocations) {
-      toast.success("Child items' locations will no longer be synced with this item.");
+      toast.success(t("items.toast.child_items_location_no_longer_synced"));
     } else {
-      toast.success("Child items' locations have been synced with this item");
+      toast.success(t("items.toast.child_items_location_synced"));
     }
   }
 
@@ -531,85 +498,98 @@
 
 <template>
   <div v-if="item" class="pb-8">
-    <BaseModal v-model="editState.modal">
-      <template #title> Attachment Edit </template>
+    <Dialog dialog-id="attachment-edit">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{{ $t("items.edit.edit_attachment_dialog.title") }}</DialogTitle>
+        </DialogHeader>
 
-      <FormTextField v-model="editState.title" label="Attachment Title" />
-      <FormSelect
-        v-model:value="editState.type"
-        label="Attachment Type"
-        value-key="value"
-        name="text"
-        :items="attachmentOpts"
-      />
-      <div v-if="editState.type == 'photo'" class="mt-3 flex gap-2">
-        <input v-model="editState.primary" type="checkbox" class="checkbox" />
-        <p class="text-sm">
-          <span class="font-semibold">Primary Photo</span>
-          This options is only available for photos. Only one photo can be primary. If you select this option, the
-          current primary photo, if any will be unselected.
-        </p>
-      </div>
-      <div class="modal-action">
-        <BaseButton :loading="editState.loading" @click="updateAttachment"> Update </BaseButton>
-      </div>
-    </BaseModal>
-
-    <section class="relative">
-      <div class="sticky top-1 z-10 my-4 flex items-center justify-end gap-2">
-        <div class="tooltip tooltip-right mr-auto" :data-tip="$t('items.show_advanced_view_options')">
-          <label class="label mr-auto cursor-pointer">
-            <input v-model="preferences.editorAdvancedView" type="checkbox" class="toggle toggle-primary" />
-            <span class="label-text ml-4"> {{ $t("items.advanced") }} </span>
+        <FormTextField v-model="editState.title" :label="$t('items.edit.edit_attachment_dialog.attachment_title')" />
+        <div>
+          <Label for="attachment-type"> {{ $t("items.edit.edit_attachment_dialog.attachment_type") }} </Label>
+          <Select id="attachment-type" v-model:model-value="editState.type">
+            <SelectTrigger>
+              <SelectValue :placeholder="$t('items.edit.edit_attachment_dialog.select_type')" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem v-for="opt in attachmentOpts" :key="opt.value" :value="opt.value">
+                {{ opt.text }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div v-if="editState.type == 'photo'" class="mt-3 flex items-center gap-2">
+          <Checkbox
+            id="primary"
+            v-model="editState.primary"
+            :label="$t('items.edit.edit_attachment_dialog.primary_photo')"
+          />
+          <label class="cursor-pointer text-sm" for="primary">
+            <span class="font-semibold">{{ $t("items.edit.edit_attachment_dialog.primary_photo") }}</span>
+            {{ $t("items.edit.edit_attachment_dialog.primary_photo_sub") }}
           </label>
         </div>
-        <BaseButton size="sm" class="btn" @click="duplicateItem">
-          <template #icon>
-            <MdiContentCopy />
-          </template>
-          {{ $t("global.duplicate") }}
-        </BaseButton>
-        <BaseButton size="sm" @click="saveItem">
-          <template #icon>
-            <MdiContentSaveOutline />
-          </template>
+
+        <DialogFooter>
+          <Button :disabled="editState.loading" @click="updateAttachment">
+            <MdiLoading v-if="editState.loading" class="animate-spin" />
+            {{ $t("global.update") }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+
+    <section class="relative">
+      <div
+        class="sticky z-10 my-4 flex items-center justify-between gap-2"
+        :class="{
+          'top-[calc(var(--header-height-mobile)+0.25rem)] sm:top-[calc(var(--header-height)+0.25rem)]':
+            !preferences.displayLegacyHeader,
+          'top-1': preferences.displayLegacyHeader,
+        }"
+      >
+        <TooltipProvider :delay-duration="0">
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <Label class="flex cursor-pointer items-center gap-2 backdrop-blur-sm">
+                <Switch v-model="preferences.editorAdvancedView" />
+                {{ $t("items.advanced") }}
+              </Label>
+            </TooltipTrigger>
+            <TooltipContent>{{ $t("items.show_advanced_view_options") }}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <Button size="sm" :disabled="saving" @click="saveItem">
+          <MdiLoading v-if="saving" class="animate-spin" />
+          <MdiContentSaveOutline v-else />
           {{ $t("global.save") }}
-        </BaseButton>
-        <BaseButton class="btn btn-error btn-sm" @click="deleteItem()">
-          <MdiDelete class="mr-2" />
-          {{ $t("global.delete") }}
-        </BaseButton>
+        </Button>
       </div>
       <div v-if="!requestPending" class="space-y-6">
         <BaseCard class="overflow-visible">
           <template #title> {{ $t("items.edit_details") }} </template>
-          <template #title-actions>
-            <div class="mt-2 flex flex-wrap items-center justify-between gap-4"></div>
-          </template>
           <div class="mb-6 grid gap-4 border-t px-5 pt-2 md:grid-cols-2">
             <LocationSelector v-model="item.location" @update:model-value="informAboutDesyncingLocationFromParent()" />
-            <FormMultiselect v-model="item.labels" :label="$t('global.labels')" :items="labels ?? []" />
-            <FormToggle
-              v-model="item.syncChildItemsLocations"
-              label="Sync child items' locations"
-              inline
-              @update:model-value="syncChildItemsLocations()"
-            />
-            <Autocomplete
-              v-if="preferences.editorAdvancedView"
+            <ItemSelector
               v-model="parent"
               v-model:search="query"
               :items="results"
               item-text="name"
               :label="$t('items.parent_item')"
               no-results-text="Type to search..."
+              :exclude-items="[item]"
               @update:model-value="maybeSyncWithParentLocation()"
             />
+            <div class="flex flex-col gap-2">
+              <Label class="px-1">{{ $t("items.sync_child_locations") }}</Label>
+              <Switch v-model="item.syncChildItemsLocations" @update:model-value="syncChildItemsLocations()" />
+            </div>
+            <LabelSelector v-model="item.labelIds" :labels="labels" />
           </div>
 
-          <div class="border-t border-gray-300 sm:p-0">
-            <div v-for="field in mainFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y sm:divide-gray-300">
-              <div class="border-b border-gray-300 px-4 pb-4 pt-2 sm:px-6">
+          <div class="border-t sm:p-0">
+            <div v-for="field in mainFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y">
+              <div class="border-b px-4 pb-4 pt-2 sm:px-6">
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
@@ -651,41 +631,40 @@
           </div>
         </BaseCard>
 
-        <BaseCard>
+        <BaseCard v-if="preferences.editorAdvancedView">
           <template #title> {{ $t("items.custom_fields") }} </template>
-          <div class="space-y-4 divide-y divide-gray-300 border-t px-5">
+          <div class="space-y-4 divide-y border-t px-5">
             <div
               v-for="(field, idx) in item.fields"
               :key="`field-${idx}`"
-              class="grid grid-cols-2 gap-2 md:grid-cols-4"
+              class="grid grid-cols-2 gap-2 pt-4 md:grid-cols-4"
             >
               <!-- <FormSelect v-model:value="field.type" label="Field Type" :items="fieldTypes" value-key="value" /> -->
               <FormTextField v-model="field.name" :label="$t('global.name')" />
               <div class="col-span-3 flex items-end">
                 <FormTextField v-model="field.textValue" :label="$t('global.value')" :max-length="500" />
-                <div class="tooltip" :data-tip="$t('global.delete')">
-                  <button class="btn btn-square btn-sm mb-2 ml-2" @click="item.fields.splice(idx, 1)">
-                    <MdiDelete />
-                  </button>
-                </div>
+                <Tooltip>
+                  <TooltipTrigger as-child>
+                    <Button size="icon" variant="destructive" class="ml-2" @click="item.fields.splice(idx, 1)">
+                      <MdiDelete />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>{{ $t("global.delete") }}</TooltipContent>
+                </Tooltip>
               </div>
             </div>
           </div>
           <div class="mt-4 flex justify-end px-5 pb-4">
-            <BaseButton size="sm" @click="addField"> {{ $t("global.add") }} </BaseButton>
+            <Button size="sm" @click="addField"> {{ $t("global.add") }} </Button>
           </div>
         </BaseCard>
 
-        <div
-          v-if="preferences.editorAdvancedView"
-          ref="attDropZone"
-          class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg"
-        >
+        <Card ref="attDropZone" class="overflow-visible shadow-xl">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">{{ $t("items.attachments") }}</h3>
             <p class="text-xs">{{ $t("items.changes_persisted_immediately") }}</p>
           </div>
-          <div class="border-t border-gray-300 p-4">
+          <div class="border-t p-4">
             <div v-if="attDropZoneActive" class="grid grid-cols-4 gap-4">
               <DropZone @drop="dropPhoto"> {{ $t("items.photos") }} </DropZone>
               <DropZone @drop="dropWarranty"> {{ $t("items.warranty") }} </DropZone>
@@ -703,47 +682,49 @@
             </button>
           </div>
 
-          <div class="border-t border-gray-300 p-4">
-            <ul role="list" class="divide-y divide-gray-400 rounded-md border border-gray-400">
+          <div class="border-t p-4">
+            <ul role="list" class="divide-y rounded-md border">
               <li
                 v-for="attachment in item.attachments"
                 :key="attachment.id"
                 class="grid grid-cols-6 justify-between py-3 pl-3 pr-4 text-sm"
               >
                 <p class="col-span-4 my-auto">
-                  {{ attachment.document.title }}
+                  {{ attachment.title }}
                 </p>
                 <p class="my-auto">
                   {{ $t(`items.${attachment.type}`) }}
                 </p>
                 <div class="flex justify-end gap-2">
-                  <div class="tooltip" :data-tip="$t('global.delete')">
-                    <button class="btn btn-square btn-sm" @click="deleteAttachment(attachment.id)">
-                      <MdiDelete />
-                    </button>
-                  </div>
-                  <div class="tooltip" :data-tip="$t('global.edit')">
-                    <button class="btn btn-square btn-sm" @click="openAttachmentEditDialog(attachment)">
-                      <MdiPencil />
-                    </button>
-                  </div>
+                  <Tooltip>
+                    <TooltipTrigger as-child>
+                      <Button variant="destructive" size="icon" @click="deleteAttachment(attachment.id)">
+                        <MdiDelete />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{{ $t("global.delete") }}</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger as-child>
+                      <Button size="icon" @click="openAttachmentEditDialog(attachment)">
+                        <MdiPencil />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{{ $t("global.edit") }}</TooltipContent>
+                  </Tooltip>
                 </div>
               </li>
             </ul>
           </div>
-        </div>
+        </Card>
 
-        <div v-if="preferences.editorAdvancedView" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
+        <Card v-if="preferences.editorAdvancedView" class="overflow-visible shadow-xl">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">{{ $t("items.purchase_details") }}</h3>
           </div>
-          <div class="border-t border-gray-300 sm:p-0">
-            <div
-              v-for="field in purchaseFields"
-              :key="field.ref"
-              class="grid grid-cols-1 sm:divide-y sm:divide-gray-300"
-            >
-              <div class="border-b border-gray-300 px-4 pb-4 pt-2 sm:px-6">
+          <div class="border-t sm:p-0">
+            <div v-for="field in purchaseFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y">
+              <div class="border-b px-4 pb-4 pt-2 sm:px-6">
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
@@ -782,19 +763,15 @@
               </div>
             </div>
           </div>
-        </div>
+        </Card>
 
-        <div v-if="preferences.editorAdvancedView" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
+        <Card v-if="preferences.editorAdvancedView" class="overflow-visible shadow-xl">
           <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg font-medium leading-6">{{ $t("items.warranty_details") }}</h3>
           </div>
-          <div class="border-t border-gray-300 sm:p-0">
-            <div
-              v-for="field in warrantyFields"
-              :key="field.ref"
-              class="grid grid-cols-1 sm:divide-y sm:divide-gray-300"
-            >
-              <div class="border-b border-gray-300 px-4 pb-4 pt-2 sm:px-6">
+          <div class="border-t sm:p-0">
+            <div v-for="field in warrantyFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y">
+              <div class="border-b px-4 pb-4 pt-2 sm:px-6">
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
@@ -833,15 +810,15 @@
               </div>
             </div>
           </div>
-        </div>
+        </Card>
 
-        <div v-if="preferences.editorAdvancedView" class="card overflow-visible bg-base-100 shadow-xl sm:rounded-lg">
+        <Card v-if="preferences.editorAdvancedView" class="overflow-visible shadow-xl">
           <div class="px-4 py-5 sm:px-6">
-            <h3 class="text-lg font-medium leading-6">Sold Details</h3>
+            <h3 class="text-lg font-medium leading-6">{{ $t("items.sold_details") }}</h3>
           </div>
-          <div class="border-t border-gray-300 sm:p-0">
-            <div v-for="field in soldFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y sm:divide-gray-300">
-              <div class="border-b border-gray-300 px-4 pb-4 pt-2 sm:px-6">
+          <div class="border-t sm:p-0">
+            <div v-for="field in soldFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y">
+              <div class="border-b px-4 pb-4 pt-2 sm:px-6">
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
@@ -880,7 +857,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     </section>
   </div>

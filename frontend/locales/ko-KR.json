@@ -1,1 +1,63 @@
-{}
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "title": "CSV 파일 들여오기",
+                "toast": {
+                    "import_failed": "들여오지 못했습니다. 나중에 다시 시도해 주세요.",
+                    "import_success": "들여오기 성공!",
+                    "please_select_file": "들여올 파일을 선택해 주세요."
+                }
+            },
+            "outdated": {
+                "current_version": "현재 버전",
+                "latest_version": "최신 버전",
+                "new_version_available_link": "릴리스 노트를 보려면 여기를 클릭하세요"
+            }
+        },
+        "form": {
+            "password": {
+                "toggle_show": "비밀번호 보기"
+            }
+        },
+        "global": {
+            "copy_text": {
+                "failed_to_copy": "클립보드에 복사하지 못했습니다"
+            },
+            "date_time": {
+                "ago": "{0} 전",
+                "days": "일",
+                "hour": "시간",
+                "hours": "시간",
+                "just-now": "지금",
+                "last-month": "지난 달",
+                "last-week": "지난 주",
+                "last-year": "작년",
+                "minute": "분",
+                "minutes": "분",
+                "months": "월",
+                "next-month": "다음 달",
+                "next-week": "다음 주",
+                "tomorrow": "내일",
+                "week": "주",
+                "weeks": "주",
+                "years": "년",
+                "yesterday": "어제"
+            },
+            "label_maker": {
+                "browser_print": "브라우저에서 인쇄"
+            },
+            "page_qr_code": {
+                "qr_tooltip": "QR 코드 표시"
+            },
+            "password_score": {
+                "password_strength": "암호 강도"
+            }
+        },
+        "item": {
+            "attachments_list": {
+                "download": "내려받기"
+            }
+        }
+    }
+}

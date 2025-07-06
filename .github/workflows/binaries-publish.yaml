@@ -5,14 +5,6 @@ on:
     tags: [ 'v*.*.*' ]
 
 jobs:
-#  backend-tests:
-#    name: "Backend Server Tests"
-#    uses: sysadminsmedia/homebox/.github/workflows/partial-backend.yaml@main
-
-#  frontend-tests:
-#    name: "Frontend and End-to-End Tests"
-#    uses: sysadminsmedia/homebox/.github/workflows/partial-frontend.yaml@main
-
   goreleaser:
     name: goreleaser
     runs-on: ubuntu-latest
@@ -24,24 +16,32 @@ jobs:
 
       - name: Set up Go
         uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache-dependency-path: backend/go.mod
 
       - uses: pnpm/action-setup@v2
         with:
-          version: 7.30.1
+          version: 9.15.3
 
       - name: Build Frontend and Copy to Backend
         working-directory: frontend
         run: |
-          pnpm install --shamefully-hoist
+          pnpm install
           pnpm run build
           cp -r ./.output/public ../backend/app/api/static/
+
+      - name: Install CoSign
+        working-directory: backend
+        run: |
+          go install github.com/sigstore/cosign/cmd/cosign@latest
 
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v5
         with:
           workdir: "backend"
           distribution: goreleaser
-          version: latest
+          version: "~> v2"
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
