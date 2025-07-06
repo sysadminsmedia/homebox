@@ -1,369 +1,440 @@
-import type { AppConfig, DockerServices } from "./types" // Assuming types are in a separate file
+export function generateDockerCompose(config: any): string {
+    const services: any = {}
+    const volumes: any = {}
+    const networks: any = {
+        homebox: {
+            driver: 'bridge'
+        }
+    }
 
-export function generateDockerCompose(config: AppConfig): string {
-  const services: DockerServices = {
-    homebox: {
-      image: config.rootless
-        ? "ghcr.io/sysadminsmedia/homebox:latest-rootless"
-        : "ghcr.io/sysadminsmedia/homebox:latest",
-      container_name: "homebox",
-      restart: "always",
-      environment: [
+    // Generate Homebox service
+    services.homebox = generateHomeboxService(config)
+
+    // Add database service if PostgreSQL is selected
+    if (config.databaseType === 'postgres') {
+        services.postgres = generatePostgresService(config)
+        if (config.storageConfig.containerStorage.postgresStorage.type === 'volume') {
+            volumes[config.storageConfig.containerStorage.postgresStorage.volumeName] = null
+        }
+    }
+
+    // Ensure homebox-data volume exists if SQLite is selected
+    if (config.databaseType === 'sqlite') {
+        volumes['homebox-data'] = null
+    }
+
+    // Add reverse proxy services based on HTTPS option
+    switch (config.httpsOption) {
+        case 'traefik':
+            services.traefik = generateTraefikService(config)
+            if (config.storageConfig.containerStorage.traefikStorage.type === 'volume') {
+                volumes[config.storageConfig.containerStorage.traefikStorage.volumeName] = null
+            }
+            break
+        case 'nginx':
+            services.nginx = generateNginxService(config)
+            if (config.storageConfig.containerStorage.nginxStorage.type === 'volume') {
+                volumes[config.storageConfig.containerStorage.nginxStorage.volumeName] = null
+            }
+            break
+        case 'caddy':
+            services.caddy = generateCaddyService(config)
+            if (config.storageConfig.containerStorage.caddyStorage.type === 'volume') {
+                volumes[config.storageConfig.containerStorage.caddyStorage.volumeName] = null
+            }
+            break
+        case 'cloudflared':
+            services.cloudflared = generateCloudflaredService(config)
+            if (config.storageConfig.containerStorage.cloudflaredStorage.type === 'volume') {
+                volumes[config.storageConfig.containerStorage.cloudflaredStorage.volumeName] = null
+            }
+            break
+    }
+
+    // Add Homebox storage volume only for local storage
+    if (config.storageType === 'local' && config.storageConfig.local.type === 'volume') {
+        volumes[config.storageConfig.local.volumeName] = null
+    }
+
+    const compose = {
+        version: '3.8',
+        services,
+        ...(Object.keys(volumes).length > 0 && {volumes}),
+        networks
+    }
+
+    return `# Generated Homebox Docker Compose Config Generator 1.0 Beta
+# Storage Type: ${config.storageType.toUpperCase()}
+# Generated on: ${new Date().toISOString()}
+${yaml.stringify(compose)}`
+}
+
+function generateHomeboxService(config: any): any {
+    const service: any = {
+        image: config.rootless ? config.image.replace(':latest', ':latest-rootless') : config.image,
+        container_name: 'homebox',
+        restart: 'unless-stopped',
+        environment: generateEnvironmentVariables(config),
+        networks: ['homebox']
+    }
+
+    // Add ports for direct access (when no reverse proxy is used)
+    if (config.httpsOption === 'none') {
+        service.ports = [`${config.port}:7745`]
+    }
+
+    // Configure storage based on storage type
+    if (config.storageType === 'local') {
+        service.volumes = generateLocalStorageVolumes(config)
+    } else {
+        // For cloud storage, we might still need some local volumes for certain files
+        service.volumes = generateCloudStorageVolumes(config)
+    }
+
+    // Always mount homebox-data at /data if SQLite is used
+    if (config.databaseType === 'sqlite') {
+        if (!service.volumes) service.volumes = []
+        // Only add if not already present
+        if (!service.volumes.some(v => v.startsWith('homebox-data:'))) {
+            service.volumes.push('homebox-data:/data')
+        }
+    }
+
+    return service
+}
+
+function generateEnvironmentVariables(config: any): string[] {
+    const env: string[] = [
         `HBOX_LOG_LEVEL=${config.logLevel}`,
         `HBOX_LOG_FORMAT=${config.logFormat}`,
-        `HBOX_WEB_MAX_FILE_UPLOAD=${config.maxFileUpload}`,
-        `HBOX_OPTIONS_ALLOW_ANALYTICS=${config.allowAnalytics}`,
-        `HBOX_OPTIONS_ALLOW_REGISTRATION=${config.allowRegistration}`,
-        `HBOX_OPTIONS_AUTO_INCREMENT_ASSET_ID=${config.autoIncrementAssetId}`,
-        `HBOX_OPTIONS_CHECK_GITHUB_RELEASE=${config.checkGithubRelease}`,
-      ],
-      volumes: [],
-    },
-  }
+        `HBOX_MAX_UPLOAD_SIZE=${config.maxFileUpload}`,
+        `HBOX_AUTO_INCREMENT_ASSET_ID=${config.autoIncrementAssetId}`,
+        `HBOX_WEB_PORT=7745`
+    ]
 
-  // Configure homebox volumes based on storage type
-  if (config.storageConfig.homeboxStorage.type === "volume") {
-    services.homebox.volumes.push(
-      `${config.storageConfig.homeboxStorage.volumeName}:/data/`,
-    )
-  } else {
-    services.homebox.volumes.push(
-      `${config.storageConfig.homeboxStorage.directory}:/data/`,
-    )
-  }
-
-  // Configure ports based on HTTPS option
-  if (config.httpsOption === "none") {
-    services.homebox.ports = [`${config.port}:7745`]
-  } else {
-    // For HTTPS options, the proxy will handle the ports
-    services.homebox.expose = ["7745"]
-  }
-
-  // Add database configuration if PostgreSQL is selected
-  if (config.databaseType === "postgres") {
-    // Ensure environment array exists before pushing
-    if (!services.homebox.environment) {
-      services.homebox.environment = []
-    }
-    services.homebox.environment.push(
-      "HBOX_DATABASE_DRIVER=postgres",
-      `HBOX_DATABASE_HOST=${config.postgresConfig.host}`,
-      `HBOX_DATABASE_PORT=${config.postgresConfig.port}`,
-      `HBOX_DATABASE_USERNAME=${config.postgresConfig.username}`,
-      `HBOX_DATABASE_PASSWORD=${config.postgresConfig.password}`,
-      `HBOX_DATABASE_DATABASE=${config.postgresConfig.database}`,
-    )
-
-    // Add PostgreSQL service
-    services["postgres"] = {
-      image: "postgres:14",
-      container_name: "homebox-postgres",
-      restart: "always",
-      environment: [
-        `POSTGRES_USER=${config.postgresConfig.username}`,
-        `POSTGRES_PASSWORD=${config.postgresConfig.password}`,
-        `POSTGRES_DB=${config.postgresConfig.database}`,
-      ],
-      volumes: [],
+    // Database configuration
+    if (config.databaseType === 'postgres') {
+        env.push(
+            `HBOX_DATABASE_DRIVER=postgres`,
+            `HBOX_DATABASE_HOST=${config.postgresConfig.host}`,
+            `HBOX_DATABASE_PORT=${config.postgresConfig.port}`,
+            `HBOX_DATABASE_NAME=${config.postgresConfig.database}`,
+            `HBOX_DATABASE_USER=${config.postgresConfig.username}`,
+            `HBOX_DATABASE_PASS=${config.postgresConfig.password}`
+        )
     }
 
-    // Configure postgres volumes based on storage type
-    if (config.storageConfig.postgresStorage.type === "volume") {
-      services.postgres.volumes.push(
-        `${config.storageConfig.postgresStorage.volumeName}:/var/lib/postgresql/data`,
-      )
+    // Registration settings
+    if (!config.allowRegistration) {
+        env.push('HBOX_OPTIONS_ALLOW_REGISTRATION=false')
+    }
+
+    // Analytics settings
+    if (!config.allowAnalytics) {
+        env.push('HBOX_OPTIONS_ALLOW_ANALYTICS=false')
+    }
+
+    // GitHub release check
+    if (!config.checkGithubRelease) {
+        env.push('HBOX_OPTIONS_CHECK_GITHUB_RELEASE=false')
+    }
+
+    // Storage configuration
+    env.push(...generateStorageEnvironmentVariables(config))
+
+    return env
+}
+
+function generateStorageEnvironmentVariables(config: any): string[] {
+    const env: string[] = []
+
+    switch (config.storageType) {
+        case 'local':
+            const storagePath = config.storageConfig.local.path || '/data'
+            env.push(`HBOX_STORAGE_CONN_STRING=file://${storagePath}`)
+            if (config.storageConfig.local.prefixPath) {
+                env.push(`HBOX_STORAGE_PREFIX_PATH=${config.storageConfig.local.prefixPath}`)
+            }
+            break
+
+        case 's3':
+            const s3Config = config.storageConfig.s3
+            let connectionString = `s3://${s3Config.bucket}?awssdk=${s3Config.awsSdk}`
+
+            if (s3Config.region && !s3Config.isCompatible) {
+                connectionString += `&region=${s3Config.region}`
+            }
+
+            if (s3Config.endpoint) {
+                connectionString += `&endpoint=${s3Config.endpoint}`
+            }
+
+            if (s3Config.disableSSL) {
+                connectionString += '&disableSSL=true'
+            }
+
+            if (s3Config.s3ForcePathStyle) {
+                connectionString += '&s3ForcePathStyle=true'
+            }
+
+            if (s3Config.sseType) {
+                connectionString += `&sseType=${s3Config.sseType}`
+            }
+
+            if (s3Config.kmsKeyId) {
+                connectionString += `&kmskeyid=${s3Config.kmsKeyId}`
+            }
+
+            if (s3Config.fips) {
+                connectionString += '&fips=true'
+            }
+
+            if (s3Config.dualstack) {
+                connectionString += '&dualstack=true'
+            }
+
+            if (s3Config.accelerate) {
+                connectionString += '&accelerate=true'
+            }
+
+            env.push(`HBOX_STORAGE_CONN_STRING=${connectionString}`)
+
+            if (s3Config.prefixPath) {
+                env.push(`HBOX_STORAGE_PREFIX_PATH=${s3Config.prefixPath}`)
+            }
+
+            // AWS credentials
+            env.push(`AWS_ACCESS_KEY_ID=${s3Config.awsAccessKeyId}`)
+            env.push(`AWS_SECRET_ACCESS_KEY=${s3Config.awsSecretAccessKey}`)
+
+            if (s3Config.awsSessionToken) {
+                env.push(`AWS_SESSION_TOKEN=${s3Config.awsSessionToken}`)
+            }
+            break
+
+        case 'gcs':
+            const gcsConfig = config.storageConfig.gcs
+            env.push(`HBOX_STORAGE_CONN_STRING=gcs://${gcsConfig.bucket}`)
+
+            if (gcsConfig.prefixPath) {
+                env.push(`HBOX_STORAGE_PREFIX_PATH=${gcsConfig.prefixPath}`)
+            }
+
+            env.push(`GOOGLE_APPLICATION_CREDENTIALS=${gcsConfig.credentialsPath}`)
+            break
+
+        case 'azure':
+            const azureConfig = config.storageConfig.azure
+            let azureConnectionString = `azblob://${azureConfig.container}`
+
+            if (azureConfig.useEmulator) {
+                azureConnectionString += `?protocol=http&domain=${azureConfig.emulatorEndpoint}`
+            }
+
+            env.push(`HBOX_STORAGE_CONN_STRING=${azureConnectionString}`)
+
+            if (azureConfig.prefixPath) {
+                env.push(`HBOX_STORAGE_PREFIX_PATH=${azureConfig.prefixPath}`)
+            }
+
+            if (!azureConfig.useEmulator) {
+                env.push(`AZURE_STORAGE_ACCOUNT=${azureConfig.storageAccount}`)
+
+                if (azureConfig.sasToken) {
+                    env.push(`AZURE_STORAGE_SAS_TOKEN=${azureConfig.sasToken}`)
+                } else {
+                    env.push(`AZURE_STORAGE_KEY=${azureConfig.storageKey}`)
+                }
+            }
+            break
+    }
+
+    return env
+}
+
+function generateLocalStorageVolumes(config: any): string[] {
+    const volumes: string[] = []
+
+    if (config.storageConfig.local.type === 'volume') {
+        const mountPath = config.storageConfig.local.path || '/data'
+        volumes.push(`${config.storageConfig.local.volumeName}:${mountPath}`)
     } else {
-      services.postgres.volumes.push(
-        `${config.storageConfig.postgresStorage.directory}:/var/lib/postgresql/data`,
-      )
+        const mountPath = config.storageConfig.local.path || '/data'
+        volumes.push(`${config.storageConfig.local.directory}:${mountPath}`)
     }
-  }
 
-  // Add HTTPS configuration based on selected option
-  switch (config.httpsOption) {
-    case "traefik":
-      addTraefikConfig(services, config)
-      break
-    case "nginx":
-      addNginxConfig(services, config)
-      break
-    case "caddy":
-      addCaddyConfig(services, config)
-      break
-    case "cloudflared":
-      addCloudflaredConfig(services, config)
-      break
-  }
-
-  // Format the Docker Compose YAML
-  let dockerCompose = "# generated by homebox config generator v0.0.1\n\nservices:\n"
-
-  // Add services
-  Object.entries(services).forEach(([serviceName, serviceConfig]) => {
-    dockerCompose += `  ${serviceName}:\n`
-    Object.entries(serviceConfig).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        dockerCompose += `    ${key}:\n`
-        value.forEach((item: string) => {
-          // Added type assertion for item
-          dockerCompose += `      - ${item}\n`
-        })
-      } else if (value !== undefined) {
-        // Check for undefined before adding
-        dockerCompose += `    ${key}: ${value}\n`
-      }
-    })
-  })
-
-  // Add volumes section if needed
-  const volumeNames: string[] = []
-
-  // Only add volumes that are configured as Docker volumes, not directories
-  if (config.storageConfig.homeboxStorage.type === "volume") {
-    volumeNames.push(config.storageConfig.homeboxStorage.volumeName)
-  }
-
-  if (
-    config.databaseType === "postgres" &&
-    config.storageConfig.postgresStorage.type === "volume"
-  ) {
-    volumeNames.push(config.storageConfig.postgresStorage.volumeName)
-  }
-
-  // Add HTTPS-related volumes
-  if (
-    config.httpsOption === "traefik" &&
-    config.storageConfig.traefikStorage.type === "volume"
-  ) {
-    volumeNames.push(config.storageConfig.traefikStorage.volumeName)
-  }
-
-  if (
-    config.httpsOption === "nginx" &&
-    config.storageConfig.nginxStorage.type === "volume"
-  ) {
-    volumeNames.push(config.storageConfig.nginxStorage.volumeName)
-  }
-
-  if (
-    config.httpsOption === "caddy" &&
-    config.storageConfig.caddyStorage.type === "volume"
-  ) {
-    volumeNames.push(config.storageConfig.caddyStorage.volumeName)
-  }
-
-  if (
-    config.httpsOption === "cloudflared" &&
-    config.storageConfig.cloudflaredStorage.type === "volume"
-  ) {
-    volumeNames.push(config.storageConfig.cloudflaredStorage.volumeName)
-  }
-
-  if (volumeNames.length > 0) {
-    dockerCompose += "\nvolumes:\n"
-    volumeNames.forEach((volumeName: string) => {
-      dockerCompose += `  ${volumeName}:\n    driver: local\n`
-    })
-  }
-
-  return dockerCompose
+    return volumes
 }
 
-function addTraefikConfig(services: DockerServices, config: AppConfig): void {
-  // Add Traefik labels to Homebox
-  services.homebox.labels = [
-    "traefik.enable=true",
-    `traefik.http.routers.homebox.rule=Host(\`${config.traefikConfig.domain}\`)`,
-    "traefik.http.routers.homebox.entrypoints=websecure",
-    "traefik.http.routers.homebox.tls.certresolver=letsencrypt",
-    "traefik.http.services.homebox.loadbalancer.server.port=7745",
-  ]
+function generateCloudStorageVolumes(config: any): string[] {
+    const volumes: string[] = []
 
-  // Add Traefik service
-  services["traefik"] = {
-    image: "traefik:v2.10",
-    container_name: "homebox-traefik",
-    restart: "always",
-    ports: ["80:80", "443:443"],
-    command: [
-      "--api.insecure=false",
-      "--providers.docker=true",
-      "--providers.docker.exposedbydefault=false",
-      "--entrypoints.web.address=:80",
-      "--entrypoints.web.http.redirections.entrypoint.to=websecure",
-      "--entrypoints.web.http.redirections.entrypoint.scheme=https",
-      "--entrypoints.websecure.address=:443",
-      "--certificatesresolvers.letsencrypt.acme.tlschallenge=true",
-      `--certificatesresolvers.letsencrypt.acme.email=${config.traefikConfig.email}`,
-      "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json",
-    ],
-    volumes: ["/var/run/docker.sock:/var/run/docker.sock:ro"],
-  }
-
-  // Configure traefik volumes based on storage type
-  if (config.storageConfig.traefikStorage.type === "volume") {
-    services.traefik.volumes.push(
-      `${config.storageConfig.traefikStorage.volumeName}:/letsencrypt`,
-    )
-  } else {
-    services.traefik.volumes.push(
-      `${config.storageConfig.traefikStorage.directory}:/letsencrypt`,
-    )
-  }
-}
-
-function addNginxConfig(services: DockerServices, config: AppConfig): void {
-  // Add Nginx service
-  services["nginx"] = {
-    image: "nginx:latest",
-    container_name: "homebox-nginx",
-    restart: "always",
-    ports: [`${config.nginxConfig.port}:443`, "80:80"],
-    volumes: [],
-    depends_on: ["homebox"],
-  }
-
-  // Configure nginx volumes based on storage type
-  if (config.storageConfig.nginxStorage.type === "volume") {
-    services.nginx.volumes.push(
-      `${config.storageConfig.nginxStorage.volumeName}/conf.d:/etc/nginx/conf.d`,
-    )
-    services.nginx.volumes.push(
-      `${config.storageConfig.nginxStorage.volumeName}/ssl:/etc/nginx/ssl`,
-    )
-  } else {
-    services.nginx.volumes.push(
-      `${config.storageConfig.nginxStorage.directory}/conf.d:/etc/nginx/conf.d`,
-    )
-    services.nginx.volumes.push(
-      `${config.storageConfig.nginxStorage.directory}/ssl:/etc/nginx/ssl`,
-    )
-  }
-
-  // Add default Nginx configuration path (assuming the file exists)
-  const nginxConfVolume =
-    config.storageConfig.nginxStorage.type === "volume"
-      ? `${config.storageConfig.nginxStorage.volumeName}/conf.d/default.conf:/etc/nginx/conf.d/default.conf`
-      : `${config.storageConfig.nginxStorage.directory}/conf.d/default.conf:/etc/nginx/conf.d/default.conf`
-
-  services.nginx.volumes.push(nginxConfVolume)
-
-  // Add comments via environment variables (Docker Compose doesn't support comments directly in YAML this way)
-  services.nginx.environment = [
-    "# You need to create SSL certificates and place them in the SSL directory",
-    `# Certificate path: ${config.nginxConfig.sslCertPath}`,
-    `# Key path: ${config.nginxConfig.sslKeyPath}`,
-    "# Then create a default.conf file in the conf.d directory with the following content:",
-    "# server {",
-    "#     listen 80;",
-    `#     server_name ${config.nginxConfig.domain};`,
-    "#     return 301 https://$host$request_uri;",
-    "# }",
-    "# server {",
-    "#     listen 443 ssl;",
-    `#     server_name ${config.nginxConfig.domain};`,
-    `#     ssl_certificate ${config.nginxConfig.sslCertPath};`,
-    `#     ssl_certificate_key ${config.nginxConfig.sslKeyPath};`,
-    "#     location / {",
-    "#         proxy_pass http://homebox:7745;",
-    "#         proxy_set_header Host $host;",
-    "#         proxy_set_header X-Real-IP $remote_addr;",
-    "#     }",
-    "# }",
-  ]
-}
-
-function addCaddyConfig(services: DockerServices, config: AppConfig): void {
-  // Add Caddy service
-  services["caddy"] = {
-    image: "caddy:latest",
-    container_name: "homebox-caddy",
-    restart: "always",
-    ports: ["80:80", "443:443"],
-    volumes: [],
-    depends_on: ["homebox"],
-  }
-
-  // Configure caddy volumes based on storage type
-  if (config.storageConfig.caddyStorage.type === "volume") {
-    services.caddy.volumes.push(
-      `${config.storageConfig.caddyStorage.volumeName}/data:/data`,
-    )
-    services.caddy.volumes.push(
-      `${config.storageConfig.caddyStorage.volumeName}/config:/config`,
-    )
-    services.caddy.volumes.push(
-      `${config.storageConfig.caddyStorage.volumeName}/Caddyfile:/etc/caddy/Caddyfile`,
-    )
-  } else {
-    services.caddy.volumes.push(
-      `${config.storageConfig.caddyStorage.directory}/data:/data`,
-    )
-    services.caddy.volumes.push(
-      `${config.storageConfig.caddyStorage.directory}/config:/config`,
-    )
-    services.caddy.volumes.push(
-      `${config.storageConfig.caddyStorage.directory}/Caddyfile:/etc/caddy/Caddyfile`,
-    )
-  }
-
-  // Add environment variables for Caddy comments and potential ACME config
-  services.caddy.environment = [
-    `# Create a Caddyfile in ${config.storageConfig.caddyStorage.type === "volume" ? config.storageConfig.caddyStorage.volumeName : config.storageConfig.caddyStorage.directory} with the following content:`,
-    `# ${config.caddyConfig.domain} {`,
-    "#     reverse_proxy homebox:7745",
-    "# }",
-  ]
-
-  // Add email if provided for ACME
-  if (config.caddyConfig.email) {
-    // Ensure environment array exists
-    if (!services.caddy.environment) {
-      services.caddy.environment = []
+    // For cloud storage, we might still need local volumes for certain files like GCS credentials
+    if (config.storageType === 'gcs') {
+        volumes.push('/path/to/gcs-credentials.json:/app/gcs-credentials.json:ro')
     }
-    services.caddy.environment.push(`ACME_AGREE=true`) // Note: Caddy v2 doesn't use ACME_AGREE env var, email is set in Caddyfile
-    services.caddy.environment.push(`EMAIL=${config.caddyConfig.email}`) // This might be useful for scripting but Caddy reads email from Caddyfile
-    services.caddy.environment.push(
-      `# Add 'email ${config.caddyConfig.email}' to your Caddyfile for automatic HTTPS`,
-    )
-  }
+
+    return volumes
 }
 
-function addCloudflaredConfig(
-  services: DockerServices,
-  config: AppConfig,
-): void {
-  // Add Cloudflared service
-  services["cloudflared"] = {
-    image: "cloudflare/cloudflared:latest",
-    container_name: "homebox-cloudflared",
-    restart: "always",
-    command: ["tunnel", "--no-autoupdate", "run"],
-    volumes: [],
-    environment: [`TUNNEL_TOKEN=${config.cloudflaredConfig.token}`],
-    depends_on: ["homebox"],
-  }
+function generatePostgresService(config: any): any {
+    const service: any = {
+        image: 'postgres:17-alpine',
+        container_name: 'homebox_postgres',
+        restart: 'unless-stopped',
+        environment: [
+            `POSTGRES_USER=${config.postgresConfig.username}`,
+            `POSTGRES_PASSWORD=${config.postgresConfig.password}`,
+            `POSTGRES_DB=${config.postgresConfig.database}`
+        ],
+        networks: ['homebox']
+    }
 
-  // Configure cloudflared volumes based on storage type
-  if (config.storageConfig.cloudflaredStorage.type === "volume") {
-    services.cloudflared.volumes.push(
-      `${config.storageConfig.cloudflaredStorage.volumeName}:/etc/cloudflared`,
-    )
-  } else {
-    services.cloudflared.volumes.push(
-      `${config.storageConfig.cloudflaredStorage.directory}:/etc/cloudflared`,
-    )
-  }
+    if (config.storageConfig.containerStorage.postgresStorage.type === 'volume') {
+        service.volumes = [`${config.storageConfig.containerStorage.postgresStorage.volumeName}:/var/lib/postgresql/data`]
+    } else {
+        service.volumes = [`${config.storageConfig.containerStorage.postgresStorage.directory}:/var/lib/postgresql/data`]
+    }
 
-  // Add comments via environment variables
-  // Ensure environment array exists
-  if (!services.cloudflared.environment) {
-    services.cloudflared.environment = []
-  }
-  services.cloudflared.environment.push(
-    "# Create a tunnel in the Cloudflare Zero Trust dashboard",
-    `# Configure DNS for ${config.cloudflaredConfig.domain} to point to your tunnel`,
-    "# Add a public hostname in the tunnel configuration pointing to http://homebox:7745",
-  )
+    return service
+}
+
+function generateTraefikService(config: any): any {
+    const service: any = {
+        image: 'traefik:v3.0',
+        container_name: 'traefik',
+        restart: 'unless-stopped',
+        command: [
+            '--api.dashboard=true',
+            '--providers.docker=true',
+            '--providers.docker.exposedbydefault=false',
+            '--entrypoints.web.address=:80',
+            '--entrypoints.websecure.address=:443',
+            '--certificatesresolvers.letsencrypt.acme.tlschallenge=true',
+            `--certificatesresolvers.letsencrypt.acme.email=${config.traefikConfig.email}`,
+            '--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json'
+        ],
+        ports: ['80:80', '443:443'],
+        networks: ['homebox'],
+        labels: [
+            'traefik.enable=true',
+            'traefik.http.routers.traefik.rule=Host(`traefik.${config.traefikConfig.domain}`)',
+            'traefik.http.routers.traefik.entrypoints=websecure',
+            'traefik.http.routers.traefik.tls.certresolver=letsencrypt',
+            'traefik.http.routers.traefik.service=api@internal'
+        ]
+    }
+
+    if (config.storageConfig.containerStorage.traefikStorage.type === 'volume') {
+        service.volumes = [
+            '/var/run/docker.sock:/var/run/docker.sock:ro',
+            `${config.storageConfig.containerStorage.traefikStorage.volumeName}:/letsencrypt`
+        ]
+    } else {
+        service.volumes = [
+            '/var/run/docker.sock:/var/run/docker.sock:ro',
+            `${config.storageConfig.containerStorage.traefikStorage.directory}:/letsencrypt`
+        ]
+    }
+
+    return service
+}
+
+function generateNginxService(config: any): any {
+    // This would generate an Nginx service with SSL configuration
+    // Implementation would depend on specific Nginx configuration needs
+    return {
+        image: 'nginx:alpine',
+        container_name: 'nginx',
+        restart: 'unless-stopped',
+        ports: [`${config.nginxConfig.port}:443`, '80:80'],
+        networks: ['homebox']
+    }
+}
+
+function generateCaddyService(config: any): any {
+    return {
+        image: 'caddy:alpine',
+        container_name: 'caddy',
+        restart: 'unless-stopped',
+        ports: ['80:80', '443:443'],
+        networks: ['homebox']
+    }
+}
+
+function generateCloudflaredService(config: any): any {
+    return {
+        image: 'cloudflare/cloudflared:latest',
+        container_name: 'cloudflared',
+        restart: 'unless-stopped',
+        command: `tunnel --no-autoupdate run --token ${config.cloudflaredConfig.token}`,
+        networks: ['homebox']
+    }
+}
+
+// Simple YAML stringifier (basic implementation
+
+const yaml = {
+    stringify(obj: any, indent = 0, parentKey = "", isTopLevel = true): string {
+        const spaces = '  '.repeat(indent)
+        const nextSpaces = '  '.repeat(indent + 1)
+        if (obj === null || obj === undefined) {
+            return 'null'
+        }
+        if (typeof obj === 'string') {
+            if (parentKey === 'environment') {
+                // Should not be used, handled by stringifyEnv
+                return obj
+            }
+            if (obj.includes(':') || obj.includes('#') || obj.includes('\n') || /^[0-9]/.test(obj) || obj.includes('${')) {
+                return `"${obj.replace(/"/g, '\\"')}"`
+            }
+            return obj
+        }
+        if (typeof obj === 'number' || typeof obj === 'boolean') {
+            return String(obj)
+        }
+        if (Array.isArray(obj)) {
+            if (obj.length === 0) return '[]'
+            if (parentKey === 'environment') {
+                return yaml.stringifyEnv(obj, indent)
+            }
+            // For arrays under object keys, indent dashes at the same level as the parent key's value (spaces)
+            return '\n' + obj.map(item => `${spaces}- ${this.stringify(item, indent + 1, '', false).replace(/^\s+/, '')}`).join('\n')
+        }
+        if (typeof obj === 'object') {
+            const keys = Object.keys(obj)
+            if (keys.length === 0) return '{}'
+            return (isTopLevel ? '' : '\n') + keys.map(key => {
+                const value = this.stringify(obj[key], indent + 1, key, false)
+                // If value is an array, ensure correct indentation
+                if (Array.isArray(obj[key])) {
+                    // Place key at current indent, then array items at next indent
+                    return `${isTopLevel ? '' : spaces}${key}:${value}`
+                }
+                if (value.startsWith('\n')) {
+                    return `${isTopLevel ? '' : spaces}${key}:${value}`
+                }
+                return `${isTopLevel ? '' : spaces}${key}: ${value}`
+            }).join('\n')
+        }
+        return String(obj)
+    },
+
+    stringifyEnv(envArr: string[], indent = 0): string {
+        const spaces = '  '.repeat(indent)
+        return '\n' + envArr.map(env => {
+            const eqIdx = env.indexOf('=')
+            if (eqIdx !== -1) {
+                const key = env.slice(0, eqIdx + 1)
+                let value = env.slice(eqIdx + 1)
+                // Only quote the value if it contains special YAML characters
+                if (value.match(/[:#\n]|^\d|\${/)) {
+                    value = `"${value.replace(/"/g, '\\"')}"`
+                }
+                return `${spaces}- ${key}${value}`
+            }
+            return `${spaces}- ${env}`
+        }).join('\n')
+    }
 }

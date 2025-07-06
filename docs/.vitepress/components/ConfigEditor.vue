@@ -128,36 +128,85 @@ const config = reactive({
   allowRegistration: true,
   autoIncrementAssetId: true,
   checkGithubRelease: true,
+
+  // Storage Configuration
+  storageType: "local", // local, s3, gcs, azure
   storageConfig: {
-    homeboxStorage: {
+    // Local storage settings
+    local: {
       type: "volume", // "volume" or "directory"
       directory: "./homebox-data",
       volumeName: "homebox-data",
+      path: "/data", // Custom path for local storage
     },
-    postgresStorage: {
-      type: "volume",
-      directory: "./postgres-data",
-      volumeName: "postgres-data",
+
+    // S3 storage settings
+    s3: {
+      bucket: "",
+      region: "",
+      endpoint: "", // For S3-compatible storage
+      awsAccessKeyId: "",
+      awsSecretAccessKey: "",
+      awsSessionToken: "", // Optional for temporary credentials
+      prefixPath: "", // Storage prefix path
+      awsSdk: "v2", // AWS SDK version
+      disableSSL: false,
+      s3ForcePathStyle: false,
+      sseType: "", // Server-side encryption type
+      kmsKeyId: "", // KMS key ID for encryption
+      fips: false,
+      dualstack: false,
+      accelerate: false,
+      isCompatible: false, // Whether using S3-compatible storage
+      compatibleService: "", // minio, cloudflare-r2, backblaze-b2, custom
     },
-    traefikStorage: {
-      type: "volume",
-      directory: "./traefik-data",
-      volumeName: "traefik-data",
+
+    // Google Cloud Storage settings
+    gcs: {
+      bucket: "",
+      projectId: "",
+      credentialsPath: "/app/gcs-credentials.json", // Path to service account key
+      prefixPath: "", // Storage prefix path
     },
-    nginxStorage: {
-      type: "volume",
-      directory: "./nginx-data",
-      volumeName: "nginx-data",
+
+    // Azure Blob Storage settings
+    azure: {
+      container: "",
+      storageAccount: "",
+      storageKey: "",
+      sasToken: "", // Optional SAS token
+      useEmulator: false,
+      emulatorEndpoint: "localhost:10001", // For local emulator
+      prefixPath: "", // Storage prefix path
     },
-    caddyStorage: {
-      type: "volume",
-      directory: "./caddy-data",
-      volumeName: "caddy-data",
-    },
-    cloudflaredStorage: {
-      type: "volume",
-      directory: "./cloudflared-data",
-      volumeName: "cloudflared-data",
+
+    // Container storage volumes (for non-local storage types)
+    containerStorage: {
+      postgresStorage: {
+        type: "volume",
+        directory: "./postgres-data",
+        volumeName: "postgres-data",
+      },
+      traefikStorage: {
+        type: "volume",
+        directory: "./traefik-data",
+        volumeName: "traefik-data",
+      },
+      nginxStorage: {
+        type: "volume",
+        directory: "./nginx-data",
+        volumeName: "nginx-data",
+      },
+      caddyStorage: {
+        type: "volume",
+        directory: "./caddy-data",
+        volumeName: "caddy-data",
+      },
+      cloudflaredStorage: {
+        type: "volume",
+        directory: "./cloudflared-data",
+        volumeName: "cloudflared-data",
+      },
     },
   },
 })
