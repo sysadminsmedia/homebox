@@ -192,7 +192,6 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 			if err != nil {
 				return nil, err
 			}
-			defer resp.Body.Close()
 
 			if resp.StatusCode != http.StatusOK {
 				return nil, fmt.Errorf("barcodespider API returned status code: %d", resp.StatusCode)
@@ -203,6 +202,8 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 			if err != nil {
 				return nil, err
 			}
+
+			resp.Body.Close()
 
 			// Convert the body to type string
 			sb := string(body)
@@ -259,15 +260,15 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 				log.Warn().Msg("Cannot fetch image for URL: " + p.ImageURL + ": " + err.Error())
 			}
 
-			defer res.Body.Close()
-
 			// Validate response
 			if res.StatusCode != http.StatusOK {
+				res.Body.Close()
 				continue
 			}
 
 			// Read data of image
 			bytes, err := io.ReadAll(res.Body)
+			res.Body.Close()
 			if err != nil {
 				log.Warn().Msg(err.Error())
 				continue
