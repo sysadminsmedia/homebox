@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/hay-kot/httpkit/errchain"
@@ -281,8 +282,17 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 				continue
 			}
 
+			// Check content type
+			contentType := res.Header.Get("Content-Type")
+			if !strings.HasPrefix(contentType, "image/") {
+				continue
+			}
+
+			// Limit image size to 8MB
+			limitedReader := io.LimitReader(res.Body, 8*1024*1024)
+
 			// Read data of image
-			bytes, err := io.ReadAll(res.Body)
+			bytes, err := io.ReadAll(limitedReader)
 			if err != nil {
 				log.Warn().Msg(err.Error())
 				continue
