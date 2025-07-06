@@ -1,20 +1,10 @@
 {
     "components": {
         "app": {
-            "create_modal": {
-                "createAndAddAnother": "",
-                "enter": "",
-                "shift": ""
-            },
             "import_dialog": {
                 "change_warning": "Изменено поведение для импортов с существующими import_ref. Если в CSV-файле присутствует import_ref, \nто элемент будет обновлен значениями из CSV-файла.",
                 "description": "Импортируйте CSV-файл, содержащий ваши предметы, ярлыки и местоположения. Для получения информации о требуемом формате \nсм. документацию.",
-                "title": "Импорт CSV файла",
-                "toast": {
-                    "import_failed": "",
-                    "import_success": "",
-                    "please_select_file": ""
-                }
+                "title": "Импорт CSV файла"
             },
             "outdated": {
                 "current_version": "Текущая версия",
@@ -22,11 +12,6 @@
                 "latest_version": "Последняя версия",
                 "new_version_available": "Доступна новая версия",
                 "new_version_available_link": "Показать комментарии к версии"
-            }
-        },
-        "form": {
-            "password": {
-                "toggle_show": ""
             }
         },
         "global": {
@@ -60,63 +45,18 @@
                 "years": "лет",
                 "yesterday": "вчера"
             },
-            "label_maker": {
-                "browser_print": "",
-                "confirm_description": "",
-                "download": "",
-                "print": "",
-                "server_print": "",
-                "titles": "",
-                "toast": {
-                    "load_status_failed": "",
-                    "print_failed": "",
-                    "print_success": ""
-                }
-            },
             "page_qr_code": {
-                "page_url": "URL-адрес страницы",
-                "qr_tooltip": ""
+                "page_url": "URL-адрес страницы"
             },
             "password_score": {
                 "password_strength": "Сложность пароля"
             }
         },
         "item": {
-            "attachments_list": {
-                "download": "",
-                "open_new_tab": ""
-            },
             "create_modal": {
-                "delete_photo": "",
                 "item_description": "Описание элемента",
                 "item_name": "Имя элемента",
-                "item_photo": "",
-                "item_quantity": "",
-                "parent_item": "",
-                "rotate_photo": "",
-                "set_as_primary_photo": "",
-                "title": "Создать элемент",
-                "toast": {
-                    "already_creating": "",
-                    "create_failed": "",
-                    "create_success": "",
-                    "failed_load_parent": "",
-                    "no_canvas_support": "",
-                    "please_select_location": "",
-                    "rotate_failed": "",
-                    "rotate_process_failed": "",
-                    "some_photos_failed": "",
-                    "upload_failed": "",
-                    "upload_success": "",
-                    "uploading_photos": ""
-                },
-                "upload_photos": "",
-                "uploaded": ""
-            },
-            "selector": {
-                "no_results": "",
-                "placeholder": "",
-                "search_placeholder": ""
+                "title": "Создать элемент"
             },
             "view": {
                 "selectable": {
@@ -126,11 +66,8 @@
                     "table": "Таблица"
                 },
                 "table": {
-                    "headers": "",
                     "page": "Страница",
-                    "rows_per_page": "Строк на странице",
-                    "table_settings": "",
-                    "view_item": ""
+                    "rows_per_page": "Строк на странице"
                 }
             }
         },
@@ -138,87 +75,53 @@
             "create_modal": {
                 "label_description": "Описание метки",
                 "label_name": "Название метки",
-                "title": "Создать метку",
-                "toast": {
-                    "already_creating": "",
-                    "create_failed": "",
-                    "create_success": "",
-                    "label_name_too_long": ""
-                }
-            },
-            "selector": {
-                "select_labels": ""
+                "title": "Создать метку"
             }
         },
         "location": {
             "create_modal": {
                 "location_description": "Описание места хранения",
                 "location_name": "Название места хранения",
-                "title": "Создать локацию",
-                "toast": {
-                    "already_creating": "",
-                    "create_failed": "",
-                    "create_success": ""
-                }
+                "title": "Создать локацию"
             },
             "selector": {
-                "no_location_found": "",
-                "parent_location": "Родительская локация",
-                "search_location": "",
-                "select_location": ""
+                "parent_location": "Родительская локация"
             },
             "tree": {
                 "no_locations": "Нет доступных локаций. Добавьте новую локацию, \nнажав на кнопку `<`span class=\"link-primary\"`>`Создать`<`/span`>` в навигационном меню."
             }
         },
         "quick_menu": {
-            "no_results": "",
             "shortcut_hint": "Используйте цифровые клавиши, чтобы быстро выбрать действие."
         }
     },
     "global": {
         "add": "Добавить",
-        "archived": "",
         "build": "Сборка: { build }",
-        "cancel": "",
         "confirm": "Подтвердить",
         "create": "Создать",
         "create_and_add": "Создать и добавить еще",
-        "create_subitem": "",
         "created": "Создано",
         "delete": "Удалить",
-        "delete_confirm": "",
-        "demo_instance": "",
         "details": "Подробнее",
         "duplicate": "Дублировать",
         "edit": "Редактировать",
         "email": "Email",
         "follow_dev": "Следить за разработчиком",
-        "footer": {
-            "api_link": "",
-            "version_link": ""
-        },
         "github": "Github проект",
-        "insured": "",
         "items": "Элементы",
         "join_discord": "Присоединяйтесь к Discord",
         "labels": "Метки",
-        "loading": "",
         "locations": "Места",
         "maintenance": "Техническое обслуживание и ремонт",
         "name": "Имя",
-        "navigate": "",
         "password": "Пароль",
-        "quantity": "",
         "read_docs": "Прочитать документацию",
-        "return_home": "",
         "save": "Сохранить",
         "search": "Поиск",
         "sign_out": "Выйти",
         "submit": "Отправить",
-        "unknown": "",
         "update": "Обновить",
-        "updating": "",
         "value": "Значение",
         "version": "Версия: { version }",
         "welcome": "Добро пожаловать, { username }"
@@ -243,49 +146,27 @@
         "set_email": "Какой у вас адрес электронной почты?",
         "set_name": "Как вас зовут?",
         "set_password": "Установите пароль",
-        "tagline": "Отслеживайте, упорядочивайте и управляйте своими вещами.",
-        "title": "",
-        "toast": {
-            "invalid_email": "",
-            "invalid_email_password": "",
-            "login_success": "",
-            "problem_registering": "",
-            "user_registered": ""
-        }
+        "tagline": "Отслеживайте, упорядочивайте и управляйте своими вещами."
     },
     "items": {
         "add": "Добавить",
         "advanced": "Дополнительно",
         "archived": "В архиве",
         "asset_id": "Инвентарный ID",
-        "associated_with_multiple": "",
         "attachment": "Вложение",
         "attachments": "Вложения",
         "changes_persisted_immediately": "Изменения во вложениях будут сохранены сразу же",
         "created_at": "Создано в",
         "custom_fields": "Настраиваемые поля",
-        "delete_attachment_confirm": "",
-        "delete_item_confirm": "",
         "description": "Описание",
         "details": "Подробнее",
         "drag_and_drop": "Перетащите файлы сюда или нажмите, чтобы выбрать файлы",
-        "edit": {
-            "edit_attachment_dialog": {
-                "attachment_title": "",
-                "attachment_type": "",
-                "primary_photo": "",
-                "primary_photo_sub": "",
-                "select_type": "",
-                "title": ""
-            }
-        },
         "edit_details": "Редактирование деталей",
         "field_selector": "Поле выбора",
         "field_value": "Значение поля",
         "first": "Первый",
         "include_archive": "Включая архивированные элементы",
         "insured": "Застраховано",
-        "invalid_asset_id": "",
         "last": "Последний",
         "lifetime_warranty": "Гарантия на весь срок эксплуатации",
         "location": "Местоположение",
@@ -296,7 +177,6 @@
         "name": "Название",
         "negate_labels": "Снять выбранные ярлыки",
         "next_page": "Следующая страница",
-        "no_attachments": "",
         "no_results": "Элементы не найдены",
         "notes": "Заметки",
         "only_with_photo": "Только элементы с фото",
@@ -318,78 +198,35 @@
         "receipts": "Квитанции",
         "reset_search": "Сбросить поиск",
         "results": "{ total } Результатов",
-        "select_field": "",
         "serial_number": "Серийный номер",
         "show_advanced_view_options": "Показать дополнительные параметры",
         "sold_at": "Место продажи",
         "sold_details": "Детали продажи",
         "sold_price": "Цена продажи",
         "sold_to": "Покупатель",
-        "sync_child_locations": "",
         "tip_1": "При фильтрации по локации и по ярлыкам используется логический оператор «ИЛИ». Если выбрано несколько фильтров, то для срабатывания\n требуется лишь одно совпадение.",
         "tip_2": "Поисковые запросы с префиксом \"#\" должны включать в себя ID актива (прим. '#000-001')",
         "tip_3": "Фильтры по полю используют операцию «ИЛИ». Если выбрано несколько фильтров, для совпадения\n требуется только один.",
         "tips": "Подсказки",
         "tips_sub": "Поисковые подсказки",
-        "toast": {
-            "asset_not_found": "",
-            "attachment_deleted": "",
-            "attachment_updated": "",
-            "attachment_uploaded": "",
-            "child_items_location_no_longer_synced": "",
-            "child_items_location_synced": "",
-            "child_location_desync": "",
-            "error_loading_parent_data": "",
-            "failed_adjust_quantity": "",
-            "failed_delete_attachment": "",
-            "failed_delete_item": "",
-            "failed_duplicate_item": "",
-            "failed_load_asset": "",
-            "failed_load_item": "",
-            "failed_load_items": "",
-            "failed_save": "",
-            "failed_save_no_location": "",
-            "failed_search_items": "",
-            "failed_update_attachment": "",
-            "failed_upload_attachment": "",
-            "item_deleted": "",
-            "item_saved": "",
-            "quantity_cannot_negative": "",
-            "sync_child_location": ""
-        },
         "updated_at": "Обновлено в",
         "warranty": "Гарантия",
         "warranty_details": "Гарантийная информация",
         "warranty_expires": "Срок гарантии истекает"
     },
     "labels": {
-        "label_delete_confirm": "",
         "no_results": "Метки не найдены",
-        "toast": {
-            "failed_delete_label": "",
-            "failed_load_label": "",
-            "failed_update_label": "",
-            "label_deleted": "",
-            "label_updated": ""
-        },
         "update_label": "Обновить метку"
     },
     "languages": {
         "ca": "Каталанский",
-        "cs-CZ": "",
         "de": "Немецкий",
         "en": "Английский",
         "es": "Испанский",
-        "fi-FI": "",
         "fr": "французский",
         "hu": "Венгерский",
-        "id-ID": "",
         "it": "Итальянский",
         "ja-JP": "Японский",
-        "ko-KR": "",
-        "lb-LU": "",
-        "lt-LT": "",
-        "nb-NO": "",
         "nl": "Голландский",
         "pl": "Польский",
         "pt-BR": "Португальский (Бразилия)",
@@ -397,8 +234,6 @@
         "ru": "Русский",
         "sl": "Словенский",
         "sv": "Шведский",
-        "ta-IN": "",
-        "th-TH": "",
         "tr": "Турецкий",
         "uk-UA": "Украинский",
         "zh-CN": "Китайский (упрощенный)",
@@ -413,16 +248,7 @@
     "locations": {
         "child_locations": "Вложенные локации",
         "collapse_tree": "Свернуть всё дерево",
-        "expand_tree": "",
-        "location_items_delete_confirm": "",
         "no_results": "Локаций не найдено",
-        "toast": {
-            "failed_delete_location": "",
-            "failed_load_location": "",
-            "failed_update_location": "",
-            "location_deleted": "",
-            "location_updated": ""
-        },
         "update_location": "Обновить локацию"
     },
     "maintenance": {
@@ -468,7 +294,6 @@
         "locations": "Локации",
         "maintenance": "Техническое обслуживание и ремонт",
         "profile": "Профиль",
-        "scanner": "",
         "search": "Поиск",
         "tools": "Инструменты"
     },
@@ -478,10 +303,7 @@
         "currency_format": "Формат валюты",
         "current_password": "Текущий пароль",
         "delete_account": "Удалить аккаунт",
-        "delete_account_confirm": "",
         "delete_account_sub": "Удалить свой аккаунт и все связанные с ним данные. Это действие невозможно отменить.",
-        "delete_notifier_confirm": "",
-        "display_legacy_header": "",
         "enabled": "Активен",
         "example": "Пример",
         "gen_invite": "Сгенерировать ссылку-приглашение",
@@ -491,91 +313,32 @@
         "language": "Язык",
         "new_password": "Новый пароль",
         "no_notifiers": "Нет настроенных уведомлений",
-        "no_override": "",
         "notifier_modal": "{ type, select, true {Изменить} false {Создать} other {Другое}} Уведомитель",
         "notifiers": "Уведомители",
         "notifiers_sub": "Получать уведомления о предстоящем обслуживании",
-        "override_locale": "",
         "test": "Тест",
         "theme_settings": "Настройки темы",
         "theme_settings_sub": "Настройки темы хранятся в локальном хранилище браузера. Вы можете изменить тему в любое время. Если у вас\n не удается установить тему, попробуйте перезапустить браузер.",
-        "toast": {
-            "account_deleted": "",
-            "failed_change_password": "",
-            "failed_create_notifier": "",
-            "failed_delete_account": "",
-            "failed_delete_notifier": "",
-            "failed_get_currencies": "",
-            "failed_test_notifier": "",
-            "failed_update_group": "",
-            "failed_update_notifier": "",
-            "group_updated": "",
-            "notifier_test_success": "",
-            "password_changed": ""
-        },
         "update_group": "Обновить группу",
         "update_language": "Обновить язык",
         "url": "URL",
         "user_profile": "Профиль пользователя",
         "user_profile_sub": "Приглашайте пользователей и управляйте своим аккаунтом."
     },
-    "reports": {
-        "label_generator": {
-            "asset_end": "",
-            "asset_start": "",
-            "base_url": "",
-            "bordered_labels": "",
-            "generate_page": "",
-            "input_placeholder": "",
-            "instruction_1": "",
-            "instruction_2": "",
-            "instruction_3": "",
-            "label_height": "",
-            "label_width": "",
-            "measure_type": "",
-            "page_bottom_padding": "",
-            "page_height": "",
-            "page_left_padding": "",
-            "page_right_padding": "",
-            "page_top_padding": "",
-            "page_width": "",
-            "qr_code_example": "",
-            "tip_1": "",
-            "tip_2": "",
-            "tip_3": "",
-            "tips": "",
-            "title": "",
-            "toast": {
-                "page_too_small_card": ""
-            }
-        }
-    },
-    "scanner": {
-        "error": "",
-        "invalid_url": "",
-        "no_sources": "",
-        "permission_denied": "",
-        "select_video_source": "",
-        "title": "",
-        "unsupported": ""
-    },
     "tools": {
         "actions": "Действия с инвентарем",
         "actions_set": {
             "ensure_ids": "Проверить ID активов",
             "ensure_ids_button": "Проверить ID активов",
-            "ensure_ids_confirm": "",
             "ensure_ids_sub": "Гарантирует, что все вещи в вашем инвентаре будут иметь корректное поле asset_id. Это производится при помощи поиска самого большого текущего значения поля asset_id в базе данных и применяет ко всем вещам новые значения, где они не были установлены в поле asset_id. Это производится в порядке сортировки по полю created_at.",
             "ensure_import_refs": "Проверка ссылок импорта",
             "ensure_import_refs_button": "Обеспечение импорта ссылок",
             "ensure_import_refs_sub": "Гарантирует что все вещи в Вашем инвентаре имеют корректное поле import_ref. Это производится при помощи генерации строки из 8 случайных символов для каждой вещи, где не поле import_ref не заполнено.",
             "set_primary_photo": "Установить основное фото",
             "set_primary_photo_button": "Установить основное фото",
-            "set_primary_photo_confirm": "",
             "set_primary_photo_sub": "В Homebox v0.10.0 мы добавили возможность отмечать вложенные фото как основное изображение. Это действие устанавливает первую фотографию во вложениях в качестве основной, если основное изображение еще не выбрано. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Посмотреть pull request #576'</a>'",
             "zero_datetimes": "Сбросить даты",
             "zero_datetimes_button": "Сбросить даты",
-            "zero_datetimes_confirm": "",
             "zero_datetimes_sub": "Сбрасывает значение полей даты и времени на начало даты в полном наборе. Это исправляет ошибку, когда сохранение значений времени на ранних этапах разработки сайта приводило к ошибке в точном отображении дат '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Посмотреть Issue #236 подробнее.'</a>'"
         },
         "actions_sub": "Применить действия ко всему вашему инвентарю. Это необратимое действие. '<b>'Будьте осторожны.'</b>'",
@@ -586,7 +349,6 @@
             "export_sub": "Экспортирует файл в стандартном CSV формате для Homebox. Это экспортирует все Ваши вещи из Вашего инвентаря.",
             "import": "Импортировать инвентарь",
             "import_button": "Импортировать инвентарь",
-            "import_ref_confirm": "",
             "import_sub": "Импортировать стандартный CSV формат в Homebox. Без колонки '<code>'HB.import_ref'</code>' , это '<b>'не'</b>' перезапишет какую либо существующую вещь в вашем инвентаре, только добавит новые вещи. Строки с колонкой '<code>'HB.import_ref'</code>' будут объеденены с существующими вещами с теми же import_ref, если такие существуют."
         },
         "import_export_sub": "Импортировать или экспортировать ваш инвентарь в или из CSV файла. Это полезно при миграции вашего инвентаря в новый экземпляр Homebox.",
@@ -599,13 +361,6 @@
             "bill_of_materials_button": "Сгенерировать список запчастей",
             "bill_of_materials_sub": "Генерирует CSV файл (значения, разделенные запятой), который может быть импортирован в приложении электронных таблиц. Это сводка вашего инвентаря с базовой информацией о вещах и их цене."
         },
-        "reports_sub": "Создавайте различные отчеты для вашего инвентаря.",
-        "toast": {
-            "asset_success": "",
-            "failed_ensure_ids": "",
-            "failed_ensure_import_refs": "",
-            "failed_set_primary_photos": "",
-            "failed_zero_datetimes": ""
-        }
+        "reports_sub": "Создавайте различные отчеты для вашего инвентаря."
     }
 }

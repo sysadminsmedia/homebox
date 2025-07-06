@@ -3,8 +3,7 @@
         "app": {
             "create_modal": {
                 "createAndAddAnother": "Utilitza {shiftKey} + {enterKey} per crear i afegir-ne un altre.",
-                "enter": "Entrar",
-                "shift": ""
+                "enter": "Entrar"
             },
             "import_dialog": {
                 "change_warning": "El comportament de les importacions amb import_refs existents ha canviat. Si hi ha un import_refs al fitxer CSV, \nl'article s'actualitzarà amb els valors del fitxer CSV.",
@@ -24,18 +23,7 @@
                 "new_version_available_link": "Fes clic aquí per veure les notes de la versió"
             }
         },
-        "form": {
-            "password": {
-                "toggle_show": ""
-            }
-        },
         "global": {
-            "copy_text": {
-                "documentation": "",
-                "failed_to_copy": "",
-                "https_required": "",
-                "learn_more": ""
-            },
             "date_time": {
                 "ago": "fa {0}",
                 "days": "dies",
@@ -61,62 +49,24 @@
                 "yesterday": "ahir"
             },
             "label_maker": {
-                "browser_print": "",
-                "confirm_description": "",
-                "download": "",
-                "print": "",
                 "server_print": "Imprimeix al servidor",
                 "titles": "Etiquetes",
                 "toast": {
-                    "load_status_failed": "Fallat en carregar l'estat",
-                    "print_failed": "",
-                    "print_success": ""
+                    "load_status_failed": "Fallat en carregar l'estat"
                 }
             },
             "page_qr_code": {
-                "page_url": "URL de la pàgina",
-                "qr_tooltip": ""
+                "page_url": "URL de la pàgina"
             },
             "password_score": {
                 "password_strength": "Força de la contrasenya"
             }
         },
         "item": {
-            "attachments_list": {
-                "download": "",
-                "open_new_tab": ""
-            },
             "create_modal": {
-                "delete_photo": "",
                 "item_description": "Descripció de l'article",
                 "item_name": "Nom de l'article",
-                "item_photo": "",
-                "item_quantity": "",
-                "parent_item": "",
-                "rotate_photo": "",
-                "set_as_primary_photo": "",
-                "title": "Crea un article",
-                "toast": {
-                    "already_creating": "",
-                    "create_failed": "",
-                    "create_success": "",
-                    "failed_load_parent": "",
-                    "no_canvas_support": "",
-                    "please_select_location": "",
-                    "rotate_failed": "",
-                    "rotate_process_failed": "",
-                    "some_photos_failed": "",
-                    "upload_failed": "",
-                    "upload_success": "",
-                    "uploading_photos": ""
-                },
-                "upload_photos": "",
-                "uploaded": ""
-            },
-            "selector": {
-                "no_results": "",
-                "placeholder": "",
-                "search_placeholder": ""
+                "title": "Crea un article"
             },
             "view": {
                 "selectable": {
@@ -126,11 +76,8 @@
                     "table": "Taula"
                 },
                 "table": {
-                    "headers": "",
                     "page": "Pàgina",
-                    "rows_per_page": "Files per pàgina",
-                    "table_settings": "",
-                    "view_item": ""
+                    "rows_per_page": "Files per pàgina"
                 }
             }
         },
@@ -138,87 +85,50 @@
             "create_modal": {
                 "label_description": "Descripció de l'etiqueta",
                 "label_name": "Nom de l'etiqueta",
-                "title": "Crea una etiqueta",
-                "toast": {
-                    "already_creating": "",
-                    "create_failed": "",
-                    "create_success": "",
-                    "label_name_too_long": ""
-                }
-            },
-            "selector": {
-                "select_labels": ""
+                "title": "Crea una etiqueta"
             }
         },
         "location": {
             "create_modal": {
                 "location_description": "Descripció de la ubicació",
                 "location_name": "Nom de la ubicació",
-                "title": "Crea una ubicació",
-                "toast": {
-                    "already_creating": "",
-                    "create_failed": "",
-                    "create_success": ""
-                }
+                "title": "Crea una ubicació"
             },
             "selector": {
-                "no_location_found": "",
-                "parent_location": "Ubicació pare",
-                "search_location": "",
-                "select_location": ""
+                "parent_location": "Ubicació pare"
             },
             "tree": {
                 "no_locations": "No hi ha ubicacions disponibles. Afegiu ubicacions amb el botó\n `<`span class=\"link-primary\"`>`Crea`<`/span`>` a la barra de navegació."
             }
-        },
-        "quick_menu": {
-            "no_results": "",
-            "shortcut_hint": ""
         }
     },
     "global": {
         "add": "Afegeix",
-        "archived": "",
         "build": "Construcció: { build }",
-        "cancel": "",
         "confirm": "Confirma",
         "create": "Crea",
         "create_and_add": "Crea i afegeix-ne un altre",
-        "create_subitem": "",
         "created": "Creat",
         "delete": "Esborra",
-        "delete_confirm": "",
-        "demo_instance": "",
         "details": "Detalls",
         "duplicate": "Duplica",
         "edit": "Edita",
         "email": "Correu electrònic",
         "follow_dev": "Segueix al desenvolupador",
-        "footer": {
-            "api_link": "",
-            "version_link": ""
-        },
         "github": "Projecte de GitHub",
-        "insured": "",
         "items": "Articles",
         "join_discord": "Uniu-vos a Discord",
         "labels": "Etiquetes",
-        "loading": "",
         "locations": "Ubicacions",
         "maintenance": "Manteniment",
         "name": "Nom",
-        "navigate": "",
         "password": "Contrasenya",
-        "quantity": "",
         "read_docs": "Llegiu la documentació",
-        "return_home": "",
         "save": "Desa",
         "search": "Cerca",
         "sign_out": "Tanca la sessió",
         "submit": "Envia",
-        "unknown": "",
         "update": "Actualitza",
-        "updating": "",
         "value": "Valor",
         "version": "Versió {version}",
         "welcome": "Us donem la benvinguda, { username }"
@@ -243,49 +153,27 @@
         "set_email": "Quin és el seu correu electrònic?",
         "set_name": "Com us dieu?",
         "set_password": "Definiu la contrasenya",
-        "tagline": "Feu el seguiment, organitzeu i gestioneu les vostres coses.",
-        "title": "",
-        "toast": {
-            "invalid_email": "",
-            "invalid_email_password": "",
-            "login_success": "",
-            "problem_registering": "",
-            "user_registered": ""
-        }
+        "tagline": "Feu el seguiment, organitzeu i gestioneu les vostres coses."
     },
     "items": {
         "add": "Afegeix",
         "advanced": "Mode avançat",
         "archived": "Arxivat",
         "asset_id": "ID de l'actiu",
-        "associated_with_multiple": "",
         "attachment": "Adjunt",
         "attachments": "Documents adjunts",
         "changes_persisted_immediately": "Els canvis als fitxers adjunts es desaran immediatament",
         "created_at": "Creat a",
         "custom_fields": "Camps personalitzats",
-        "delete_attachment_confirm": "",
-        "delete_item_confirm": "",
         "description": "Descripció",
         "details": "Detalls",
         "drag_and_drop": "Arrossegueu i deixeu anar fitxers aquí o feu clic per seleccionar fitxers",
-        "edit": {
-            "edit_attachment_dialog": {
-                "attachment_title": "",
-                "attachment_type": "",
-                "primary_photo": "",
-                "primary_photo_sub": "",
-                "select_type": "",
-                "title": ""
-            }
-        },
         "edit_details": "Edita els detalls",
         "field_selector": "Selector del camp",
         "field_value": "Valor del camp",
         "first": "Primer",
         "include_archive": "Inclou els articles arxivats",
         "insured": "Assegurat",
-        "invalid_asset_id": "",
         "last": "Últim",
         "lifetime_warranty": "Garantia de per vida",
         "location": "Ubicació",
@@ -296,11 +184,8 @@
         "name": "Nom",
         "negate_labels": "Nega les etiquetes seleccionades",
         "next_page": "Pàgina següent",
-        "no_attachments": "",
         "no_results": "No s'ha trobat cap element",
         "notes": "Notes",
-        "only_with_photo": "",
-        "only_without_photo": "",
         "options": "Opcions",
         "order_by": "Ordena per",
         "pages": "Pàgina { page } de { totalPages }",
@@ -318,88 +203,42 @@
         "receipts": "Factures",
         "reset_search": "Reinicia la cerca",
         "results": "{ total } resultats",
-        "select_field": "",
         "serial_number": "Número de sèrie",
         "show_advanced_view_options": "Mostra les opcions avançades de visualització",
         "sold_at": "Venut a (lloc)",
         "sold_details": "Detalls de la venda",
         "sold_price": "Preu de venda",
         "sold_to": "Venut a",
-        "sync_child_locations": "",
         "tip_1": "Els filtres d'ubicació i etiquetes utilitzen l'operació «O». Si se'n selecciona més d'un, \nnomés se'n requerirà un per a coincidència.",
         "tip_2": "Les cerques amb el prefix «#» sol·licitaran un ID d'un actiu (per exemple, «#000-001»)",
         "tip_3": "Els filtres de camp utilitzen l'operació «O». Si se'n selecciona més d'un, \nnomés se'n requerirà un per a coincidència.",
         "tips": "Consells",
         "tips_sub": "Consells de cerca",
-        "toast": {
-            "asset_not_found": "",
-            "attachment_deleted": "",
-            "attachment_updated": "",
-            "attachment_uploaded": "",
-            "child_items_location_no_longer_synced": "",
-            "child_items_location_synced": "",
-            "child_location_desync": "",
-            "error_loading_parent_data": "",
-            "failed_adjust_quantity": "",
-            "failed_delete_attachment": "",
-            "failed_delete_item": "",
-            "failed_duplicate_item": "",
-            "failed_load_asset": "",
-            "failed_load_item": "",
-            "failed_load_items": "",
-            "failed_save": "",
-            "failed_save_no_location": "",
-            "failed_search_items": "",
-            "failed_update_attachment": "",
-            "failed_upload_attachment": "",
-            "item_deleted": "",
-            "item_saved": "",
-            "quantity_cannot_negative": "",
-            "sync_child_location": ""
-        },
         "updated_at": "Actualitzat a",
         "warranty": "Garantia",
         "warranty_details": "Detalls de la garantia",
         "warranty_expires": "La garantia caduca"
     },
     "labels": {
-        "label_delete_confirm": "",
         "no_results": "No s'han trobat etiquetes",
-        "toast": {
-            "failed_delete_label": "",
-            "failed_load_label": "",
-            "failed_update_label": "",
-            "label_deleted": "",
-            "label_updated": ""
-        },
         "update_label": "Actualitza l'etiqueta"
     },
     "languages": {
         "ca": "Català",
-        "cs-CZ": "",
         "de": "Alemany",
         "en": "Anglès",
         "es": "Castellà",
-        "fi-FI": "",
         "fr": "Francès",
         "hu": "Hongarès",
-        "id-ID": "",
         "it": "Italià",
         "ja-JP": "Japonès",
-        "ko-KR": "",
-        "lb-LU": "",
-        "lt-LT": "",
-        "nb-NO": "",
         "nl": "Neerlandès",
         "pl": "Polonès",
         "pt-BR": "Portuguès (Brasil)",
         "pt-PT": "Portuguès (Portugal)",
         "ru": "Rus",
         "sl": "Eslovè",
-        "sq-AL": "",
         "sv": "Suec",
-        "ta-IN": "",
-        "th-TH": "",
         "tr": "Turc",
         "uk-UA": "Ucraïnès",
         "zh-CN": "Xinès (simplificat)",
@@ -413,16 +252,7 @@
     "locations": {
         "child_locations": "Ubicacions filles",
         "collapse_tree": "Col·lapsa l'arbre",
-        "expand_tree": "",
-        "location_items_delete_confirm": "",
         "no_results": "No s'han trobat ubicacions",
-        "toast": {
-            "failed_delete_location": "",
-            "failed_load_location": "",
-            "failed_update_location": "",
-            "location_deleted": "",
-            "location_updated": ""
-        },
         "update_location": "Actualitza ubicació"
     },
     "maintenance": {
@@ -468,7 +298,6 @@
         "locations": "Ubicacions",
         "maintenance": "Manteniment",
         "profile": "Perfil",
-        "scanner": "",
         "search": "Cerca",
         "tools": "Eines"
     },
@@ -478,10 +307,7 @@
         "currency_format": "Format de moneda",
         "current_password": "Contrasenya actual",
         "delete_account": "Suprimeix el compte",
-        "delete_account_confirm": "",
         "delete_account_sub": "Elimina el compte i totes les dades associades. Aquesta acció no es pot desfer.",
-        "delete_notifier_confirm": "",
-        "display_legacy_header": "",
         "enabled": "Habilitat",
         "example": "Exemple",
         "gen_invite": "Genera un enllaç d'invitació",
@@ -491,121 +317,44 @@
         "language": "Idioma",
         "new_password": "Contrasenya nova",
         "no_notifiers": "No hi ha notificadors configurats",
-        "no_override": "",
         "notifier_modal": "{ type, select, true {Edita} false {Crea} other {Altres}} Notificació",
         "notifiers": "Notificadors",
         "notifiers_sub": "Rebeu notificacions per als pròxims recordatoris de manteniment",
-        "override_locale": "",
         "test": "Prova",
         "theme_settings": "Configuracions del tema",
         "theme_settings_sub": "La configuració del tema s'emmagatzema a l'emmagatzematge local del navegador. Podeu canviar el tema en qualsevol moment. \nSi teniu problemes per definir el tema, proveu d'actualitzar el navegador.",
-        "toast": {
-            "account_deleted": "",
-            "failed_change_password": "",
-            "failed_create_notifier": "",
-            "failed_delete_account": "",
-            "failed_delete_notifier": "",
-            "failed_get_currencies": "",
-            "failed_test_notifier": "",
-            "failed_update_group": "",
-            "failed_update_notifier": "",
-            "group_updated": "",
-            "notifier_test_success": "",
-            "password_changed": ""
-        },
         "update_group": "Actualitza el grup",
         "update_language": "Actualitza l'idioma",
         "url": "URL",
         "user_profile": "Perfil d'usuari",
         "user_profile_sub": "Convida usuaris i gestiona el compte."
     },
-    "reports": {
-        "label_generator": {
-            "asset_end": "",
-            "asset_start": "",
-            "base_url": "",
-            "bordered_labels": "",
-            "generate_page": "",
-            "input_placeholder": "",
-            "instruction_1": "",
-            "instruction_2": "",
-            "instruction_3": "",
-            "label_height": "",
-            "label_width": "",
-            "measure_type": "",
-            "page_bottom_padding": "",
-            "page_height": "",
-            "page_left_padding": "",
-            "page_right_padding": "",
-            "page_top_padding": "",
-            "page_width": "",
-            "qr_code_example": "",
-            "tip_1": "",
-            "tip_2": "",
-            "tip_3": "",
-            "tips": "",
-            "title": "",
-            "toast": {
-                "page_too_small_card": ""
-            }
-        }
-    },
-    "scanner": {
-        "error": "",
-        "invalid_url": "",
-        "no_sources": "",
-        "permission_denied": "",
-        "select_video_source": "",
-        "title": "",
-        "unsupported": ""
-    },
     "tools": {
         "actions": "Accions d'inventari",
         "actions_set": {
             "ensure_ids": "Assegura els identificadors de recursos",
             "ensure_ids_button": "Assegura els identificadors de recursos",
-            "ensure_ids_confirm": "",
-            "ensure_ids_sub": "",
             "ensure_import_refs": "Assegureu-vos d'importar les referències",
             "ensure_import_refs_button": "Assegureu-vos d'importar les referències",
-            "ensure_import_refs_sub": "",
             "set_primary_photo": "Defineix la foto principal",
-            "set_primary_photo_button": "Defineix la foto principal",
-            "set_primary_photo_confirm": "",
-            "set_primary_photo_sub": "",
-            "zero_datetimes": "",
-            "zero_datetimes_button": "",
-            "zero_datetimes_confirm": "",
-            "zero_datetimes_sub": ""
+            "set_primary_photo_button": "Defineix la foto principal"
         },
-        "actions_sub": "",
         "import_export": "Importa / Exporta",
         "import_export_set": {
             "export": "Exporta inventari",
             "export_button": "Exporta inventari",
             "export_sub": "Exporta el format CSV estàndard per a Homebox. S'exportaran tots els articles de l'inventari.",
             "import": "Importa inventari",
-            "import_button": "Importa inventari",
-            "import_ref_confirm": "",
-            "import_sub": ""
+            "import_button": "Importa inventari"
         },
         "import_export_sub": "Importa i exporta l'inventari amb un fitxer CSV. És útil per a migracions d'inventari a una nova instància de Homebox.",
         "reports": "Informes",
         "reports_set": {
             "asset_labels": "Etiquetes d'identificador de recurs",
             "asset_labels_button": "Generador d'etiquetes",
-            "asset_labels_sub": "",
             "bill_of_materials": "Llista de materials",
-            "bill_of_materials_button": "Genera llista de materials",
-            "bill_of_materials_sub": ""
+            "bill_of_materials_button": "Genera llista de materials"
         },
-        "reports_sub": "Genera informes per a l'inventari",
-        "toast": {
-            "asset_success": "",
-            "failed_ensure_ids": "",
-            "failed_ensure_import_refs": "",
-            "failed_set_primary_photos": "",
-            "failed_zero_datetimes": ""
-        }
+        "reports_sub": "Genera informes per a l'inventari"
     }
 }
