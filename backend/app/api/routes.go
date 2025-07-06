@@ -158,6 +158,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		}
 
 		r.Get("/qrcode", chain.ToHandlerFunc(v1Ctrl.HandleGenerateQRCode(), assetMW...))
+		r.Get("/getproductfromean", chain.ToHandlerFunc(v1Ctrl.HandleProductSearchEAN(), userMW...))
 		r.Get(
 			"/items/{id}/attachments/{attachment_id}",
 			chain.ToHandlerFunc(v1Ctrl.HandleItemAttachmentGet(), assetMW...),
