@@ -54,7 +54,7 @@
   watch(
     () => activeDialog.value,
     active => {
-      if (active === "create-location") {
+      if (active && active.id === "create-location") {
         if (locationId.value) {
           const found = locations.value.find(l => l.id === locationId.value);
           form.parent = found || null;

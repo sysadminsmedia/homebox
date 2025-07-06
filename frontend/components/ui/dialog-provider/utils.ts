@@ -2,10 +2,20 @@ import type { ComputedRef } from "vue";
 import { createContext } from "reka-ui";
 import { useMagicKeys, useActiveElement } from "@vueuse/core";
 
+export class ActiveDialog {
+    id: string;
+    params: any;
+
+    constructor(id: string, params: any = null) {
+        this.id = id;
+        this.params = params;
+    }
+}
+
 export const [useDialog, provideDialogContext] = createContext<{
-  activeDialog: ComputedRef<string | null>;
+  activeDialog: ComputedRef<ActiveDialog | null>;
   activeAlerts: ComputedRef<string[]>;
-  openDialog: (dialogId: string) => void;
+  openDialog: (dialogId: string, params?: any) => void;
   closeDialog: (dialogId?: string) => void;
   addAlert: (alertId: string) => void;
   removeAlert: (alertId: string) => void;
