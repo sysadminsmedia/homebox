@@ -15,13 +15,14 @@
         </div>
         <div
           v-if="detectedBarcode"
-          class="border-accent-foreground bg-accent text-accent-foreground mb-5 flex flex-col items-center gap-2 rounded-md border p-4"
+          class="mb-5 flex flex-col items-center gap-2 rounded-md border border-accent-foreground bg-accent p-4 text-accent-foreground"
           role="alert"
         >
           <div class="flex">
-            <MdiBarcode class="text-default mr-2" />
+            <MdiBarcode class="mr-2" />
             <span class="flex-1 text-center text-sm font-medium">
-              {{ detectedBarcodeType }} {{ $t("scanner.barcode_detected_message") }}: <strong>{{ detectedBarcode }}</strong>
+              {{ detectedBarcodeType }} {{ $t("scanner.barcode_detected_message") }}:
+              <strong>{{ detectedBarcode }}</strong>
             </span>
           </div>
 
@@ -74,7 +75,6 @@
   const errorMessage = ref<string | null>(null);
   const detectedBarcode = ref<string>("");
   const detectedBarcodeType = ref<string>("");
-  const api = useUserApi();
 
   const handleError = (error: unknown) => {
     console.error("Scanner error:", error);
@@ -170,9 +170,9 @@
               case BarcodeFormat.UPC_EAN_EXTENSION:
                 console.info("Barcode detected");
                 detectedBarcode.value = result.getText();
-                detectedBarcodeType.value = BarcodeFormat[bcfmt].replaceAll("_","-");
+                detectedBarcodeType.value = BarcodeFormat[bcfmt].replaceAll("_", "-");
                 break;
-              
+
               default:
                 handleError(err);
             }
@@ -194,4 +194,3 @@
     stopScanner();
   });
 </script>
-
