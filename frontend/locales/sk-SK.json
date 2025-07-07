@@ -574,7 +574,7 @@
             "create_missing_thumbnails_button": "Vytvoriť náhľady",
             "create_missing_thumbnails_confirm": "Naozaj chcete vytvoriť chýbajúce náhľady? Môže to chvíľku trvať a akciu nie je možné pozastaviť.",
             "create_missing_thumbnails_sub": "Vytvorí miniatúry pre všetky prílohy, ktoré sú podporované aktuálnou konfiguráciou. Toto je užitočné pre prílohy, ktoré boli nahrané pred vydaním Homeboxu v0.20.0. Toto neprepíše existujúce miniatúry, vytvorí nové iba pre prílohy, ktoré nemajú miniatúru. Upozorňujeme, že miniatúry sa vytvárajú na pozadí a ich vytvorenie môže chvíľu trvať.",
-            "ensure_ids": "Zabezpečenie identifikátorov aktív",
+            "ensure_ids": "Zabezpečenie identifikátorov položiek",
             "ensure_ids_button": "Zabezpečenie identifikátorov aktív",
             "ensure_ids_confirm": "Naozaj chcete zabezpečiť, aby všetky prvky mali ID? Môže to chvíľu trvať a nedá sa to vrátiť späť.",
             "ensure_ids_sub": "Zabezpečí, aby všetky položky vo vašom inventári mali platné pole asset_id. To sa dosiahne tak, že sa v databáze zistí najvyššie aktuálne pole asset_id a na každú položku, ktorá nemá nastavené pole asset_id sa použije ďalšia hodnota. Toto sa vykonáva v poradí podľa poľa created_at.",
@@ -604,10 +604,10 @@
         "import_export_sub": "Importujte a exportujte svoj inventár do a zo súboru CSV. To je užitočné pri migrácii inventára do novej inštancie Homeboxu.",
         "reports": "Správy",
         "reports_set": {
-            "asset_labels": "Štítky ID diela",
+            "asset_labels": "Identifikačné štítky položiek",
             "asset_labels_button": "Generátor štítkov",
             "asset_labels_sub": "Generuje tlačiteľné PDF štítkov pre rad Asset ID. Tieto nie sú špecifické pre váš inventár, takže štítky si môžete vytlačiť vopred a aplikovať ich na váš inventár, keď ich dostanete.",
-            "bill_of_materials": "Faktúra za materiály",
+            "bill_of_materials": "Súpis položiek",
             "bill_of_materials_button": "Generovať kusovník",
             "bill_of_materials_sub": "Vygeneruje súbor CSV (Comma Separated Values), ktorý možno importovať do tabuľkového procesora. Toto je súhrn vášho inventára so základnými informáciami o položkách a cenách."
         },
