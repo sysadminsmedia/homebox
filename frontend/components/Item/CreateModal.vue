@@ -10,28 +10,28 @@
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{{ $t('components.item.create_modal.product_tooltip_input_barcode') }}</p>
+              <p>{{ $t("components.item.create_modal.product_tooltip_input_barcode") }}</p>
             </TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger>
               <Button variant="outline" :disabled="loading" data-pos="end" @click="openQrScannerPage()">
-              <MdiBarcodeScan class="size-5" />
+                <MdiBarcodeScan class="size-5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{{ $t('components.item.create_modal.product_tooltip_scan_barcode') }}</p>
+              <p>{{ $t("components.item.create_modal.product_tooltip_scan_barcode") }}</p>
             </TooltipContent>
           </Tooltip>
         </ButtonGroup>
-      </TooltipProvider >
-      <div class= "items-center justify-center flex mx-2">
-        {{ $t('components.item.create_modal.product_autofill') }}
+      </TooltipProvider>
+      <div class="mx-2 flex items-center justify-center">
+        {{ $t("components.item.create_modal.product_autofill") }}
       </div>
     </div>
 
-    <div class=" border-t" />
-    
+    <div class="border-t" />
+
     <form class="flex flex-col gap-2" @submit.prevent="create()">
       <LocationSelector v-model="form.location" />
       <ItemSelector
@@ -345,19 +345,17 @@
           }
         }
 
-        if(active.params)
-        {
+        if (active.params) {
           form.name = active.params.item.name;
           form.description = active.params.item.description;
 
-          if(active.params.imageURL)
-          {
+          if (active.params.imageURL) {
             form.photos.push({
-                    photoName: "product_view.jpg",
-                    fileBase64: active.params.imageBase64,
-                    primary: form.photos.length === 0,
-                    file: dataURLtoFile(active.params.imageBase64 ,"product_view.jpg")
-                  });
+              photoName: "product_view.jpg",
+              fileBase64: active.params.imageBase64,
+              primary: form.photos.length === 0,
+              file: dataURLtoFile(active.params.imageBase64, "product_view.jpg"),
+            });
           }
         }
 
@@ -517,13 +515,13 @@
     }
   }
 
-  async function openQrScannerPage() {
+  function openQrScannerPage() {
     closeDialog("create-item");
-    openDialog("scanner")
+    openDialog("scanner");
   }
 
-  async function openBarcodeDialog() {
+  function openBarcodeDialog() {
     closeDialog("create-item");
-    openDialog("product-import")
+    openDialog("product-import");
   }
 </script>
