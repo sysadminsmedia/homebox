@@ -6,7 +6,7 @@
       </DialogHeader>
 
       <div class="flex items-center space-x-4">
-        <FormTextField :disabled=searching class="w-[30%]" :modelValue="barcode" disabled :label="$t('components.item.product_import.barcode')" />
+        <FormTextField :disabled=searching class="w-[30%]" :modelValue="barcode" :label="$t('components.item.product_import.barcode')" />
         <Button :variant="searching ? 'destructive' : 'default'" @click="retrieveProductInfo(barcode)" style="margin-top: auto"> 
           <div class="relative mx-2">
             <div class="absolute inset-0 flex items-center justify-center">
@@ -27,13 +27,11 @@
                 v-for="h in headers"
                 :key="h.value"
                 class="text-no-transform bg-secondary text-sm text-secondary-foreground hover:bg-secondary/90"
-                @click="sortBy(h.value)"
               >
                 <div
                   class="flex items-center gap-1"
                   :class="{
                     'justify-center': h.align === 'center',
-                    'justify-start': h.align === 'right',
                     'justify-end': h.align === 'left',
                   }"
                 >
@@ -50,11 +48,10 @@
               :key="index"
               class='cursor-pointer'
               :class="{ selected: selectedRow === index }" 
-              @click="selectProduct(index, p)">
+              @click="selectProduct(index)">
                 <TableCell v-for="h in headers"
                   :class="{
                   'text-center': h.align === 'center',
-                  'text-right': h.align === 'right',
                   'text-left': h.align === 'left',
                 }">
 
@@ -76,11 +73,9 @@
         </Table>
       </BaseCard>
 
-      <form class="flex flex-col gap-4" @submit.prevent="submitCsvFile">
-        <DialogFooter>
-          <Button type="import" :disabled="selectedRow === -1" @click="createItem"> Import selected </Button>
-        </DialogFooter>
-      </form>
+      <DialogFooter>
+        <Button type="import" :disabled="selectedRow === -1" @click="createItem"> Import selected </Button>
+      </DialogFooter>
     </DialogContent>
   </Dialog>
 </template>
@@ -90,25 +85,34 @@
   import type { BarcodeProduct } from "~~/lib/api/types/data-contracts";
   import { useDialog } from "~/components/ui/dialog-provider";
   import MdiBarcode from "~icons/mdi/barcode";
-
+  import type { TableData } from "~/components/Item/View/Table.types";
   const { openDialog, activeDialog, closeDialog } = useDialog();
 
   const searching = ref(false);
-  const barcode = ref<string | null>(null);
+  const barcode = ref<string>("");
   const products = ref<BarcodeProduct[] | null>(null);
   const selectedRow = ref(-1);
+
+  import type { ItemSummary } from "~~/lib/api/types/data-contracts";
+
+  type BarcodeTableHeader = {
+    text: string;
+    value: string;
+    align?: "left" | "center" | "right";
+    type?: "name";
+  };
 
   const defaultHeaders = [
     {
       text: "items.name",
       value: "name",
-      enabled: true,
+      align: "left",
       type: "name",
     },
-    { text: "items.manufacturer", value: "manufacturer", align: "center", enabled: true },
-    { text: "items.model_number", value: "modelNumber", align: "center", enabled: true },
-    { text: "DB source", value: "search_engine_name", align: "center", enabled: true },
-  ] satisfies TableHeaderType[];
+    { text: "items.manufacturer", value: "manufacturer", align: "center"},
+    { text: "items.model_number", value: "modelNumber", align: "center"},
+    { text: "DB source", value: "search_engine_name", align: "center"},
+  ] satisfies BarcodeTableHeader[];
 
   // Need for later filtering
   const headers = defaultHeaders;
@@ -134,7 +138,7 @@
         }
         else
         {
-          barcode.value = null;
+          barcode.value = "";
           products.value = null;
         }
       }
@@ -144,9 +148,11 @@
   const api = useUserApi();
 
   async function createItem(close = true) {
-    var p = products.value[selectedRow.value];
-    closeDialog("product-import");
-    openDialog("create-item", p);
+    if (products !== null)
+    {
+      var p = products.value![selectedRow.value];
+      openDialog("create-item", p);  
+    }
   }
 
   async function retrieveProductInfo(barcode: string) {
@@ -185,11 +191,11 @@
     return current;
   }
 
-  function cell(h: TableHeaderType) {
+  function cell(h: BarcodeTableHeader) {
     return `cell-${h.value.replace(".", "_")}`;
   }
 
-  function selectProduct(index) {
+  function selectProduct(index: number) {
     // Unselect if already selected
     if(selectedRow.value == index)
     {
