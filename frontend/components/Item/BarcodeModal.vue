@@ -1,13 +1,22 @@
 <template>
-  <Dialog dialog-id="product-import">  
-    <DialogContent  :class="'w-full md:max-w-xl lg:max-w-4xl'" >
+  <Dialog dialog-id="product-import">
+    <DialogContent :class="'w-full md:max-w-xl lg:max-w-4xl'">
       <DialogHeader>
         <DialogTitle>{{ $t("components.item.product_import.title") }}</DialogTitle>
       </DialogHeader>
 
       <div class="flex items-center space-x-4">
-        <FormTextField :disabled=searching class="w-[30%]" :modelValue="barcode" :label="$t('components.item.product_import.barcode')" />
-        <Button :variant="searching ? 'destructive' : 'default'" @click="retrieveProductInfo(barcode)" style="margin-top: auto"> 
+        <FormTextField
+          :disabled="searching"
+          class="w-[30%]"
+          :model-value="barcode"
+          :label="$t('components.item.product_import.barcode')"
+        />
+        <Button
+          :variant="searching ? 'destructive' : 'default'"
+          style="margin-top: auto"
+          @click="retrieveProductInfo(barcode)"
+        >
           <div class="relative mx-2">
             <div class="absolute inset-0 flex items-center justify-center">
               <MdiBarcode class="size-5 group-hover:hidden" />
@@ -16,7 +25,7 @@
           {{ searching ? "Cancel" : "Search product" }}
         </Button>
       </div>
-          
+
       <div class="divide-y border-t" />
 
       <BaseCard>
@@ -43,31 +52,34 @@
           </TableHeader>
 
           <TableBody>
-            <TableRow 
+            <TableRow
               v-for="(p, index) in products"
               :key="index"
-              class='cursor-pointer'
-              :class="{ selected: selectedRow === index }" 
-              @click="selectProduct(index)">
-                <TableCell v-for="h in headers"
-                  :class="{
+              class="cursor-pointer"
+              :class="{ selected: selectedRow === index }"
+              @click="selectProduct(index)"
+            >
+              <TableCell
+                v-for="h in headers"
+                :key="h.value"
+                :class="{
                   'text-center': h.align === 'center',
                   'text-left': h.align === 'left',
-                }">
+                }"
+              >
+                <template v-if="h.type === 'name'">
+                  <div class="flex items-center space-x-4">
+                    <img :src="p.imageBase64" class="w-16 rounded object-fill shadow-sm" alt="Product's photo" />
+                    <span class="text-sm font-medium">
+                      {{ p.item.name }}
+                    </span>
+                  </div>
+                </template>
 
-                  <template v-if="h.type === 'name'">
-                      <div class="flex items-center space-x-4">
-                        <img :src="p.imageBase64" class="w-16 rounded object-fill shadow-sm" alt="Product's photo" />
-                        <span class="text-sm font-medium">
-                          {{ p.item.name }}
-                        </span>
-                      </div>
-                  </template>
-
-                  <slot v-else :name="cell(h)">
-                    {{ extractValue(p, h.value) }}
-                  </slot>
-                </TableCell>
+                <slot v-else :name="cell(h)">
+                  {{ extractValue(p, h.value) }}
+                </slot>
+              </TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -81,19 +93,18 @@
 </template>
 
 <script setup lang="ts">
-  import { Button, ButtonGroup } from "~/components/ui/button";
+  import { Button } from "~/components/ui/button";
   import type { BarcodeProduct } from "~~/lib/api/types/data-contracts";
   import { useDialog } from "~/components/ui/dialog-provider";
   import MdiBarcode from "~icons/mdi/barcode";
   import type { TableData } from "~/components/Item/View/Table.types";
-  const { openDialog, activeDialog, closeDialog } = useDialog();
+
+  const { openDialog, activeDialog } = useDialog();
 
   const searching = ref(false);
   const barcode = ref<string>("");
   const products = ref<BarcodeProduct[] | null>(null);
   const selectedRow = ref(-1);
-
-  import type { ItemSummary } from "~~/lib/api/types/data-contracts";
 
   type BarcodeTableHeader = {
     text: string;
@@ -109,9 +120,9 @@
       align: "left",
       type: "name",
     },
-    { text: "items.manufacturer", value: "manufacturer", align: "center"},
-    { text: "items.model_number", value: "modelNumber", align: "center"},
-    { text: "DB source", value: "search_engine_name", align: "center"},
+    { text: "items.manufacturer", value: "manufacturer", align: "center" },
+    { text: "items.model_number", value: "modelNumber", align: "center" },
+    { text: "DB source", value: "search_engine_name", align: "center" },
   ] satisfies BarcodeTableHeader[];
 
   // Need for later filtering
@@ -123,21 +134,16 @@
       if (active && active.id === "product-import") {
         selectedRow.value = -1;
 
-        if(active.params)
-        {
+        if (active.params) {
           // Reset if the barcode is different
-          if(active.params != barcode.value)
-          {
+          if (active.params !== barcode.value) {
             barcode.value = active.params;
 
-            retrieveProductInfo(barcode.value).then(() =>
-            {
+            retrieveProductInfo(barcode.value).then(() => {
               console.log("Processing finished");
             });
           }
-        }
-        else
-        {
+        } else {
           barcode.value = "";
           products.value = null;
         }
@@ -147,11 +153,10 @@
 
   const api = useUserApi();
 
-  async function createItem(close = true) {
-    if (products !== null)
-    {
-      var p = products.value![selectedRow.value];
-      openDialog("create-item", p);  
+  function createItem() {
+    if (products !== null) {
+      const p = products.value![selectedRow.value];
+      openDialog("create-item", p);
     }
   }
 
@@ -160,23 +165,19 @@
     searching.value = true;
 
     if (!barcode || barcode.trim().length === 0) {
-      console.error('Invalid barcode provided');
+      console.error("Invalid barcode provided");
       return;
     }
 
     try {
       const result = await api.products.searchFromBarcode(barcode.trim());
-      if(result.error)
-      {
-        console.error('API Error:', result.error);
-        return;
-      }
-      else
-      {
+      if (result.error) {
+        console.error("API Error:", result.error);
+      } else {
         products.value = result.data;
       }
     } catch (error) {
-      console.error('Failed to retrieve product info:', error);
+      console.error("Failed to retrieve product info:", error);
     } finally {
       searching.value = false;
     }
@@ -197,26 +198,22 @@
 
   function selectProduct(index: number) {
     // Unselect if already selected
-    if(selectedRow.value == index)
-    {
+    if (selectedRow.value === index) {
       selectedRow.value = -1;
       return;
     }
 
     selectedRow.value = index;
   }
-
 </script>
 
 <style>
-
-tr.selected {
-  background-color: hsl(var(--primary));
-  color: hsl(var(--background));
-}
-
-tr:hover.selected {
+  tr.selected {
     background-color: hsl(var(--primary));
-}
+    color: hsl(var(--background));
+  }
 
+  tr:hover.selected {
+    background-color: hsl(var(--primary));
+  }
 </style>
