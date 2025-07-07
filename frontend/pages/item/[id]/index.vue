@@ -294,7 +294,7 @@
     if (preferences.value.showEmpty) {
       return true;
     }
-    return validDate(item.value?.warrantyExpires);
+    return item.value?.lifetimeWarranty || validDate(item.value?.warrantyExpires);
   });
 
   const warrantyDetails = computed(() => {
