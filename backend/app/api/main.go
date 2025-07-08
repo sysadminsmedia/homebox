@@ -3,14 +3,16 @@ package main
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
 
 	"github.com/pressly/goose/v3"
 
@@ -31,6 +33,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
+	"go.balki.me/anyhttp"
 
 	_ "github.com/lib/pq"
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/postgres"
@@ -258,6 +261,23 @@ func run(cfg *config.Config) error {
 			_ = httpserver.Shutdown(context.Background())
 		}()
 
+		listener, addrType, addrCfg, err := anyhttp.GetListener(cfg.Web.Host)
+		if err == nil {
+			switch addrType {
+			case anyhttp.SystemdFD:
+				sysdCfg := addrCfg.(*anyhttp.SysdConfig)
+				if sysdCfg.IdleTimeout != nil {
+					log.Error().Msg("idle timeout not yet supported. Please remove and try again")
+					return errors.New("idle timeout not yet supported. Please remove and try again")
+				}
+				fallthrough
+			case anyhttp.UnixSocket:
+				log.Info().Msgf("Server is running on %s", cfg.Web.Host)
+				return httpserver.Serve(listener)
+			}
+		} else {
+			log.Debug().Msgf("anyhttp error: %v", err)
+		}
 		log.Info().Msgf("Server is running on %s:%s", cfg.Web.Host, cfg.Web.Port)
 		return httpserver.ListenAndServe()
 	})
