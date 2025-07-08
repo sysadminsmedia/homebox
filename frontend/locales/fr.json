@@ -24,6 +24,11 @@
                 "new_version_available_link": "Cliquez ici pour consulter les notes de version"
             }
         },
+        "color_selector": {
+            "color": "Couleur",
+            "no_color_selected": "Aucune couleur sélectionnée",
+            "randomize": "Couleur aléatoire"
+        },
         "form": {
             "password": {
                 "toggle_show": "Activer/désactiver l'affichage du mot de passe"
@@ -129,7 +134,8 @@
                     "headers": "En-têtes",
                     "page": "Page",
                     "rows_per_page": "Lignes par page",
-                    "table_settings": "Paramètres du Tableau"
+                    "table_settings": "Paramètres du Tableau",
+                    "view_item": "Afficher l'élément"
                 }
             }
         },
@@ -561,6 +567,10 @@
     "tools": {
         "actions": "Actions d’inventaire",
         "actions_set": {
+            "create_missing_thumbnails": "Crée les miniatures manquantes",
+            "create_missing_thumbnails_button": "Crée les miniatures",
+            "create_missing_thumbnails_confirm": "Êtes-vous sûr de vouloir créer les vignettes manquantes ? Cette opération peut prendre un certain temps et ne peut pas être interrompue.",
+            "create_missing_thumbnails_sub": "Crée des miniatures pour toutes les pièces jointes prises en charge par la configuration actuelle. Ceci est utile pour les pièces jointes importées avant la version 0.20.0 de Homebox. Cette opération n'écrase pas les miniatures existantes, mais crée de nouvelles miniatures pour les pièces jointes sans miniature. Veuillez noter que la création des miniatures s'effectue en arrière-plan et peut prendre un certain temps.",
             "ensure_ids": "Vérifier les ID de ressources",
             "ensure_ids_button": "Vérifier les ID de ressources",
             "ensure_ids_confirm": "Êtes-vous certain de vous assurer que toutes les ressources ont une ID ? Cela peut prendre du temps et est irréversible.",
