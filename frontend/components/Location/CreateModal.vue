@@ -55,26 +55,25 @@
     () => activeDialog.value,
     active => {
       if (active === "create-location") {
-        // useTimeoutFn(() => {
-        //   focused.value = true;
-        // }, 50);
-
-        if (locationId.value) {
-          const found = locations.value.find(l => l.id === locationId.value);
-          if (found) {
-            form.parent = found;
-          }
-        }
-      } else {
-        // focused.value = false;
+        initializeForm();
       }
     }
   );
 
-  function reset() {
+  function initializeForm() {
+    if (locationId.value) {
+      const found = locations.value.find(l => l.id === locationId.value);
+      form.parent = found || null;
+    } else {
+      form.parent = null;
+    }
+  }
+
+  function reset(preserveParent = false) {
     form.name = "";
     form.description = "";
-    form.parent = null;
+    if (!preserveParent || !locationId.value)
+      form.parent = null;
     focused.value = false;
     loading.value = false;
   }
@@ -118,7 +117,9 @@
     if (data) {
       toast.success(t("components.location.create_modal.toast.create_success"));
     }
-    reset();
+    
+    const shouldPreserveParent = !close && !!locationId.value;
+    reset(shouldPreserveParent);
 
     if (close) {
       closeDialog("create-location");
