@@ -55,25 +55,17 @@
     () => activeDialog.value,
     active => {
       if (active === "create-location") {
-        initializeForm();
+        if (locationId.value) {
+          const found = locations.value.find(l => l.id === locationId.value);
+          form.parent = found || null;
+        }
       }
     }
   );
 
-  function initializeForm() {
-    if (locationId.value) {
-      const found = locations.value.find(l => l.id === locationId.value);
-      form.parent = found || null;
-    } else {
-      form.parent = null;
-    }
-  }
-
-  function reset(preserveParent = false) {
+  function reset() {
     form.name = "";
     form.description = "";
-    if (!preserveParent || !locationId.value)
-      form.parent = null;
     focused.value = false;
     loading.value = false;
   }
@@ -117,9 +109,8 @@
     if (data) {
       toast.success(t("components.location.create_modal.toast.create_success"));
     }
-    
-    const shouldPreserveParent = !close && !!locationId.value;
-    reset(shouldPreserveParent);
+
+    reset();
 
     if (close) {
       closeDialog("create-location");
