@@ -108,4 +108,4 @@ func TestNormalizeSearchQuery(t *testing.T) {
 			}
 		})
 	}
-} 
+}

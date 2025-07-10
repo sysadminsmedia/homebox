@@ -58,35 +58,39 @@ func buildSQLiteNormalizeExpression(fieldExpr string) string {
 
 // buildPostgreSQLNormalizeExpression creates a PostgreSQL expression to normalize accented characters
 func buildPostgreSQLNormalizeExpression(fieldExpr string) string {
-	// Try to use unaccent extension if available, otherwise fall back to REPLACE
-	// Note: This assumes the unaccent extension is installed. If not, it will use the generic approach.
-	return "COALESCE(unaccent(" + fieldExpr + "), " + buildGenericNormalizeExpression(fieldExpr) + ")"
+	// Use a CASE statement to check if unaccent function exists before using it
+	// This prevents errors when the unaccent extension is not installed
+	return "CASE WHEN EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'unaccent') " +
+		"THEN unaccent(" + fieldExpr + ") " +
+		"ELSE " + buildGenericNormalizeExpression(fieldExpr) + " END"
 }
 
 // buildGenericNormalizeExpression creates a database-agnostic expression to normalize common accented characters
 func buildGenericNormalizeExpression(fieldExpr string) string {
-	// Chain REPLACE functions to handle common accented characters
-	// This handles the most common accented characters in Spanish, French, German, Portuguese, etc.
+	// Chain REPLACE functions to handle the most common accented characters
+	// Focused on the most frequently used accents in Spanish, French, and Portuguese
+	// Ordered by frequency of use for better performance
 	normalized := fieldExpr
 	
-	// Common accent mappings
-	accents := map[string]string{
-		"á": "a", "à": "a", "ä": "a", "â": "a", "ã": "a", "å": "a",
-		"é": "e", "è": "e", "ë": "e", "ê": "e",
-		"í": "i", "ì": "i", "ï": "i", "î": "i",
-		"ó": "o", "ò": "o", "ö": "o", "ô": "o", "õ": "o",
-		"ú": "u", "ù": "u", "ü": "u", "û": "u",
-		"ñ": "n", "ç": "c",
-		"Á": "A", "À": "A", "Ä": "A", "Â": "A", "Ã": "A", "Å": "A",
-		"É": "E", "È": "E", "Ë": "E", "Ê": "E",
-		"Í": "I", "Ì": "I", "Ï": "I", "Î": "I",
-		"Ó": "O", "Ò": "O", "Ö": "O", "Ô": "O", "Õ": "O",
-		"Ú": "U", "Ù": "U", "Ü": "U", "Û": "U",
-		"Ñ": "N", "Ç": "C",
+	// Most common accented characters ordered by frequency
+	commonAccents := []struct {
+		from, to string
+	}{
+		// Spanish - most common
+		{"á", "a"}, {"é", "e"}, {"í", "i"}, {"ó", "o"}, {"ú", "u"}, {"ñ", "n"},
+		{"Á", "A"}, {"É", "E"}, {"Í", "I"}, {"Ó", "O"}, {"Ú", "U"}, {"Ñ", "N"},
+
+		// French - most common
+		{"è", "e"}, {"ê", "e"}, {"à", "a"}, {"ç", "c"},
+		{"È", "E"}, {"Ê", "E"}, {"À", "A"}, {"Ç", "C"},
+
+		// German umlauts and Portuguese - common
+		{"ä", "a"}, {"ö", "o"}, {"ü", "u"}, {"ã", "a"}, {"õ", "o"},
+		{"Ä", "A"}, {"Ö", "O"}, {"Ü", "U"}, {"Ã", "A"}, {"Õ", "O"},
 	}
 	
-	for accented, normal := range accents {
-		normalized = "REPLACE(" + normalized + ", '" + accented + "', '" + normal + "')"
+	for _, accent := range commonAccents {
+		normalized = "REPLACE(" + normalized + ", '" + accent.from + "', '" + accent.to + "')"
 	}
 	
 	return normalized
@@ -120,4 +124,4 @@ func ItemManufacturerAccentInsensitiveContains(value string) predicate.Item {
 // ItemNotesAccentInsensitiveContains creates an accent-insensitive search predicate for the item notes field.
 func ItemNotesAccentInsensitiveContains(value string) predicate.Item {
 	return AccentInsensitiveContains(item.FieldNotes, value)
-} 
+}

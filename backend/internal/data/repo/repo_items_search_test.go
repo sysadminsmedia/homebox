@@ -210,4 +210,4 @@ func TestNormalizeSearchQueryIntegration(t *testing.T) {
 			assert.Equal(t, tc.expected, result, "Normalization should work correctly")
 		})
 	}
-} 
+}

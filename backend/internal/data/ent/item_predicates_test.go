@@ -153,4 +153,4 @@ func TestSpecificItemPredicates(t *testing.T) {
 			assert.NotNil(t, predicate, tt.description)
 		})
 	}
-} 
+}

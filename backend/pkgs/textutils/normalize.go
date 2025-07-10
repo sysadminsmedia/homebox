@@ -37,4 +37,4 @@ func RemoveAccents(text string) string {
 func NormalizeSearchQuery(query string) string {
 	normalized := RemoveAccents(query)
 	return strings.ToLower(normalized)
-} 
+}
