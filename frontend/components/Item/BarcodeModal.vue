@@ -1,5 +1,5 @@
 <template>
-  <Dialog dialog-id="product-import">
+  <Dialog :dialog-id="DialogID.ProductImport">
     <DialogContent :class="'w-full md:max-w-xl lg:max-w-4xl'">
       <DialogHeader>
         <DialogTitle>{{ $t("components.item.product_import.title") }}</DialogTitle>
@@ -93,13 +93,14 @@
 </template>
 
 <script setup lang="ts">
+  import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { Button } from "~/components/ui/button";
   import type { BarcodeProduct } from "~~/lib/api/types/data-contracts";
   import { useDialog } from "~/components/ui/dialog-provider";
   import MdiBarcode from "~icons/mdi/barcode";
   import type { TableData } from "~/components/Item/View/Table.types";
 
-  const { openDialog, activeDialog } = useDialog();
+  const { openDialog, registerOpenDialogCallback } = useDialog();
 
   const searching = ref(false);
   const barcode = ref<string>("");
@@ -128,35 +129,32 @@
   // Need for later filtering
   const headers = defaultHeaders;
 
-  watch(
-    () => activeDialog.value,
-    active => {
-      if (active && active.id === "product-import") {
-        selectedRow.value = -1;
+  onMounted(() => {
+    registerOpenDialogCallback(DialogID.ProductImport, params => {
+      selectedRow.value = -1;
 
-        if (active.params) {
-          // Reset if the barcode is different
-          if (active.params !== barcode.value) {
-            barcode.value = active.params;
+      if (params?.barcode) {
+        // Reset if the barcode is different
+        if (params.barcode !== barcode.value) {
+          barcode.value = params.barcode;
 
-            retrieveProductInfo(barcode.value).then(() => {
-              console.log("Processing finished");
-            });
-          }
-        } else {
-          barcode.value = "";
-          products.value = null;
+          retrieveProductInfo(barcode.value).then(() => {
+            console.log("Processing finished");
+          });
         }
+      } else {
+        barcode.value = "";
+        products.value = null;
       }
-    }
-  );
+    });
+  });
 
   const api = useUserApi();
 
   function createItem() {
     if (products !== null) {
       const p = products.value![selectedRow.value];
-      openDialog("create-item", p);
+      openDialog(DialogID.CreateItem, { product: p });
     }
   }
 

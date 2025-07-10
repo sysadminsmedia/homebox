@@ -1,5 +1,5 @@
 <template>
-  <Dialog dialog-id="import">
+  <Dialog :dialog-id="DialogID.Import">
     <DialogContent>
       <DialogHeader>
         <DialogTitle>{{ $t("components.app.import_dialog.title") }}</DialogTitle>
@@ -38,6 +38,7 @@
 
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
+  import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { toast } from "@/components/ui/sonner";
   import {
     Dialog,
