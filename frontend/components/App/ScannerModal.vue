@@ -33,12 +33,12 @@
 </template>
 
 <script setup lang="ts">
-  import { Dialog, DialogHeader, DialogScrollContent, DialogTitle } from "@/components/ui/dialog";
-  import { useDialog } from "@/components/ui/dialog-provider";
-  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import { BrowserMultiFormatReader, NotFoundException } from "@zxing/library";
   import { computed, ref, watch } from "vue";
   import { useI18n } from "vue-i18n";
+  import { Dialog, DialogHeader, DialogScrollContent, DialogTitle } from "@/components/ui/dialog";
+  import { useDialog } from "@/components/ui/dialog-provider";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";
 
   const { t } = useI18n();
