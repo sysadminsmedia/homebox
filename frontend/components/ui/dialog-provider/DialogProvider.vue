@@ -1,21 +1,34 @@
 <!-- DialogProvider.vue -->
 <script setup lang="ts">
   import { ref, reactive, computed } from "vue";
-  import { provideDialogContext, ActiveDialog } from "./utils";
+  import { provideDialogContext, type DialogID, type DialogParamsMap } from "./utils";
 
-  const activeDialog =  ref<ActiveDialog | null>(null);
+  const activeDialog =  ref<DialogID | null>(null);
   const activeAlerts = reactive<string[]>([]);
+  const openDialogCallbacks = new Map<DialogID, (params: any) => void>();
 
-  const openDialog = (dialogId: string, params?: any) => {
+  const registerOpenDialogCallback = <T extends DialogID>(
+    dialogId: T,
+    callback: (params?: T extends keyof DialogParamsMap ? DialogParamsMap[T] : undefined) => void
+  ) =>
+  {
+    openDialogCallbacks.set(dialogId, callback as (params: any) => void);
+  }
+
+  const openDialog = (dialogId: DialogID, params?: any) => {
     if (activeAlerts.length > 0) return;
 
-    const ad = new ActiveDialog(dialogId, params);
-    activeDialog.value = ad;
+    activeDialog.value = dialogId;
+
+    const openCallback = openDialogCallbacks.get(dialogId);
+    if (openCallback) {
+      openCallback(params);
+    }
   };
 
-  const closeDialog = (dialogId?: string) => {
+  const closeDialog = (dialogId?: DialogID) => {
     if (dialogId) {
-      if (activeDialog.value && activeDialog.value.id === dialogId) {
+      if (activeDialog.value && activeDialog.value === dialogId) {
         activeDialog.value = null;
       }
     } else {
@@ -37,6 +50,7 @@
   // Provide context to child components
   provideDialogContext({
     activeDialog: computed(() => activeDialog.value),
+    registerOpenDialogCallback,
     openDialog,
     closeDialog,
     activeAlerts: computed(() => activeAlerts),

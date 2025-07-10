@@ -79,7 +79,7 @@
                     'text-nowrap': typeof locale === 'string' && locale.startsWith('zh-'),
                   }"
                   :tooltip="$t('menu.scanner')"
-                  @click.prevent="openDialog('scanner')"
+                  @click.prevent="openDialog(DialogID.Scanner)"
                 >
                   <MdiQrcodeScan />
                   <span>{{ $t("menu.scanner") }}</span>
@@ -210,6 +210,7 @@
   import { Input } from "~/components/ui/input";
   import { Button } from "~/components/ui/button";
   import { toast } from "@/components/ui/sonner";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
@@ -250,7 +251,7 @@
       navigator.mediaDevices
         .getUserMedia({ video: true })
         .then(() => {
-          openDialog("scanner");
+          openDialog(DialogID.Scanner);
         })
         .catch(err => {
           console.error(err);
@@ -264,24 +265,31 @@
   // Preload currency format
   useFormatCurrency();
 
-  const dropdown = [
+  type DropdownItem = {
+    id: number;
+    name: ComputedRef<string>;
+    shortcut: string;
+    dialogId: DialogID;
+  };
+
+  const dropdown: DropdownItem[] = [
     {
       id: 0,
       name: computed(() => t("menu.create_item")),
       shortcut: "Shift+1",
-      dialogId: "create-item",
+      dialogId: DialogID.CreateItem,
     },
     {
       id: 1,
       name: computed(() => t("menu.create_location")),
       shortcut: "Shift+3",
-      dialogId: "create-location",
+      dialogId: DialogID.CreateLocation,
     },
     {
       id: 2,
       name: computed(() => t("menu.create_label")),
       shortcut: "Shift+2",
-      dialogId: "create-label",
+      dialogId: DialogID.CreateLabel,
     },
   ];
 

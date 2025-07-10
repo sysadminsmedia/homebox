@@ -1,5 +1,5 @@
 <template>
-  <BaseModal dialog-id="create-item" :title="$t('components.item.create_modal.title')">
+  <BaseModal :dialog-id="DialogID.CreateItem" :title="$t('components.item.create_modal.title')">
     <div class="flex flex-row-reverse">
       <TooltipProvider :delay-duration="0">
         <ButtonGroup>
@@ -172,6 +172,7 @@
 
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
+  import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { toast } from "@/components/ui/sonner";
   import { Button, ButtonGroup } from "~/components/ui/button";
   import BaseModal from "@/components/App/CreateModal.vue";
@@ -201,9 +202,9 @@
   }
 
   const { t } = useI18n();
-  const { activeDialog, openDialog, closeDialog } = useDialog();
+  const { openDialog, closeDialog, registerOpenDialogCallback } = useDialog();
 
-  useDialogHotkey("create-item", { code: "Digit1", shift: true });
+  useDialogHotkey(DialogID.CreateItem, { code: "Digit1", shift: true });
 
   const api = useUserApi();
 
@@ -301,70 +302,67 @@
     }
   }
 
-  watch(
-    () => activeDialog.value,
-    async active => {
-      if (active !== null && active.id === "create-item") {
-        // needed since URL will be cleared in the next step => ParentId Selection should stay though
-        subItemCreate.value = subItemCreateParam.value === "y";
-        let parentItemLocationId = null;
+  onMounted(() => {
+    registerOpenDialogCallback(DialogID.CreateItem, async params => {
+      // needed since URL will be cleared in the next step => ParentId Selection should stay though
+      subItemCreate.value = subItemCreateParam.value === "y";
+      let parentItemLocationId = null;
 
-        if (subItemCreate.value && itemId.value) {
-          const itemIdRead = typeof itemId.value === "string" ? (itemId.value as string) : itemId.value[0];
-          const { data, error } = await api.items.get(itemIdRead);
-          if (error || !data) {
-            toast.error(t("components.item.create_modal.toast.failed_load_parent"));
-            console.error("Parent item fetch error:", error);
-          }
-
-          if (data) {
-            parent.value = data;
-          }
-
-          if (data.location) {
-            const { location } = data;
-            parentItemLocationId = location.id;
-          }
-
-          // clear URL Parameter (subItemCreate) since intention was communicated and received
-          const currentQuery = { ...route.query };
-          delete currentQuery.subItemCreate;
-          await router.push({ query: currentQuery });
-        } else {
-          // since Input is hidden in this case, make sure no accidental parent information is sent out
-          parent.value = {};
-          form.parentId = null;
+      if (subItemCreate.value && itemId.value) {
+        const itemIdRead = typeof itemId.value === "string" ? (itemId.value as string) : itemId.value[0];
+        const { data, error } = await api.items.get(itemIdRead);
+        if (error || !data) {
+          toast.error(t("components.item.create_modal.toast.failed_load_parent"));
+          console.error("Parent item fetch error:", error);
         }
 
-        const locId = locationId.value ? locationId.value : parentItemLocationId;
-
-        if (locId) {
-          const found = locations.value.find(l => l.id === locId);
-          if (found) {
-            form.location = found;
-          }
+        if (data) {
+          parent.value = data;
         }
 
-        if (active.params) {
-          form.name = active.params.item.name;
-          form.description = active.params.item.description;
-
-          if (active.params.imageURL) {
-            form.photos.push({
-              photoName: "product_view.jpg",
-              fileBase64: active.params.imageBase64,
-              primary: form.photos.length === 0,
-              file: dataURLtoFile(active.params.imageBase64, "product_view.jpg"),
-            });
-          }
+        if (data.location) {
+          const { location } = data;
+          parentItemLocationId = location.id;
         }
 
-        if (labelId.value) {
-          form.labels = labels.value.filter(l => l.id === labelId.value).map(l => l.id);
+        // clear URL Parameter (subItemCreate) since intention was communicated and received
+        const currentQuery = { ...route.query };
+        delete currentQuery.subItemCreate;
+        await router.push({ query: currentQuery });
+      } else {
+        // since Input is hidden in this case, make sure no accidental parent information is sent out
+        parent.value = {};
+        form.parentId = null;
+      }
+
+      const locId = locationId.value ? locationId.value : parentItemLocationId;
+
+      if (locId) {
+        const found = locations.value.find(l => l.id === locId);
+        if (found) {
+          form.location = found;
         }
       }
-    }
-  );
+
+      if (params?.product) {
+        form.name = params.product.item.name;
+        form.description = params.product.item.description;
+
+        if (params.product.imageURL) {
+          form.photos.push({
+            photoName: "product_view.jpg",
+            fileBase64: params.product.imageBase64,
+            primary: form.photos.length === 0,
+            file: dataURLtoFile(params.product.imageBase64, "product_view.jpg"),
+          });
+        }
+      }
+
+      if (labelId.value) {
+        form.labels = labels.value.filter(l => l.id === labelId.value).map(l => l.id);
+      }
+    });
+  });
 
   async function create(close = true) {
     if (!form.location?.id) {
@@ -435,7 +433,7 @@
     loading.value = false;
 
     if (close) {
-      closeDialog("create-item");
+      closeDialog(DialogID.CreateItem);
       navigateTo(`/item/${data.id}`);
     }
   }
@@ -516,12 +514,12 @@
   }
 
   function openQrScannerPage() {
-    closeDialog("create-item");
-    openDialog("scanner");
+    closeDialog(DialogID.CreateItem);
+    openDialog(DialogID.Scanner);
   }
 
   function openBarcodeDialog() {
-    closeDialog("create-item");
-    openDialog("product-import");
+    closeDialog(DialogID.CreateItem);
+    openDialog(DialogID.ProductImport);
   }
 </script>
