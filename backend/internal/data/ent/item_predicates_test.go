@@ -61,9 +61,9 @@ func TestSQLiteNormalizeExpression(t *testing.T) {
 func TestPostgreSQLNormalizeExpression(t *testing.T) {
 	result := buildPostgreSQLNormalizeExpression("test_field")
 	
-	// Should contain unaccent function
+	// Should contain unaccent function and CASE WHEN logic
 	assert.Contains(t, result, "unaccent(")
-	assert.Contains(t, result, "COALESCE(")
+	assert.Contains(t, result, "CASE WHEN EXISTS")
 	assert.Contains(t, result, "test_field")
 }
 
