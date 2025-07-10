@@ -1,5 +1,5 @@
 <template>
-  <Dialog dialog-id="item-table-settings">
+  <Dialog :dialog-id="DialogID.ItemTableSettings">
     <DialogContent>
       <DialogHeader>
         <DialogTitle>{{ $t("components.item.view.table.table_settings") }}</DialogTitle>
@@ -41,7 +41,7 @@
       </div>
 
       <DialogFooter>
-        <Button @click="closeDialog('item-table-settings')"> {{ $t("global.save") }} </Button>
+        <Button @click="closeDialog(DialogID.ItemTableSettings)"> {{ $t("global.save") }} </Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>
@@ -123,7 +123,7 @@
         hidden: disableControls,
       }"
     >
-      <Button class="size-10 p-0" variant="outline" @click="openDialog('item-table-settings')">
+      <Button class="size-10 p-0" variant="outline" @click="openDialog(DialogID.ItemTableSettings)">
         <MdiTableCog />
       </Button>
       <Pagination
@@ -174,6 +174,7 @@
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { useDialog } from "@/components/ui/dialog-provider";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
 
   const { openDialog, closeDialog } = useDialog();
 

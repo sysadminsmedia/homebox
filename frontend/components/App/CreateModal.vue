@@ -39,13 +39,14 @@
 
 <script setup lang="ts">
   import { useMediaQuery } from "@vueuse/core";
+  import type { DialogID } from "@/components/ui/dialog-provider/utils";
   import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
   import { Dialog, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   defineProps<{
-    dialogId: string;
+    dialogId: DialogID;
     title: string;
   }>();
 </script>

@@ -17,6 +17,7 @@
   import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
   import { Switch } from "@/components/ui/switch";
   import { Label } from "@/components/ui/label";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
 
   const { t } = useI18n();
 
@@ -369,7 +370,7 @@
     editState.title = attachment.title;
     editState.type = attachment.type;
     editState.primary = attachment.primary;
-    openDialog("attachment-edit");
+    openDialog(DialogID.AttachmentEdit);
 
     editState.obj = attachmentOpts.find(o => o.value === attachment.type) || attachmentOpts[0];
   }
@@ -390,7 +391,7 @@
     item.value.attachments = data.attachments;
 
     editState.loading = false;
-    closeDialog("attachment-edit");
+    closeDialog(DialogID.AttachmentEdit);
 
     editState.id = "";
     editState.title = "";
@@ -498,7 +499,7 @@
 
 <template>
   <div v-if="item" class="pb-8">
-    <Dialog dialog-id="attachment-edit">
+    <Dialog :dialog-id="DialogID.AttachmentEdit">
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{{ $t("items.edit.edit_attachment_dialog.title") }}</DialogTitle>

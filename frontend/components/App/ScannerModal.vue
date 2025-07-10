@@ -1,5 +1,5 @@
 <template>
-  <Dialog dialog-id="scanner">
+  <Dialog :dialog-id="DialogID.Scanner">
     <DialogScrollContent>
       <DialogHeader>
         <DialogTitle>{{ t("scanner.title") }}</DialogTitle>
@@ -55,6 +55,7 @@
   import { ref, watch, computed } from "vue";
   import { BrowserMultiFormatReader, NotFoundException, BarcodeFormat } from "@zxing/library";
   import { useI18n } from "vue-i18n";
+  import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { Dialog, DialogHeader, DialogTitle, DialogScrollContent } from "@/components/ui/dialog";
   import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
   import { Button } from "@/components/ui/button";
@@ -64,8 +65,8 @@
   
 
   const { t } = useI18n();
-  const { activeDialog, openDialog, closeDialog } = useDialog();
-  const open = computed(() => activeDialog.value && activeDialog.value.id === "scanner");
+  const { activeDialog, openDialog, closeDialog} = useDialog();
+  const open = computed(() => activeDialog && activeDialog.value === DialogID.Scanner);
 
   const sources = ref<MediaDeviceInfo[]>([]);
   const selectedSource = ref<string | null>(null);
@@ -93,7 +94,7 @@
   };
 
   const handleButtonClick = () => {
-    openDialog("product-import", detectedBarcode.value);
+    openDialog(DialogID.ProductImport, { barcode: detectedBarcode.value });
   };
 
   const startScanner = async () => {
@@ -157,7 +158,7 @@
               throw new Error(t("scanner.invalid_url"));
             }
             const sanitizedPath = url.pathname.replace(/[^a-zA-Z0-9-_/]/g, "");
-            closeDialog("scanner");
+            closeDialog(DialogID.Scanner);
             navigateTo(sanitizedPath);
           } catch (err) {
             // Check if it's a barcode for a new element

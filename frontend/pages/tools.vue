@@ -37,7 +37,7 @@
           </BaseSectionHeader>
         </template>
         <div class="divide-y border-t px-6 pb-3">
-          <DetailAction @action="openDialog('import')">
+          <DetailAction @action="openDialog(DialogID.Import)">
             <template #title> {{ $t("tools.import_export_set.import") }} </template>
             <!-- eslint-disable-next-line vue/no-v-html -->
             <div v-html="DOMPurify.sanitize($t('tools.import_export_set.import_sub'))"></div>
@@ -105,6 +105,7 @@
   import MdiDatabase from "~icons/mdi/database";
   import MdiAlert from "~icons/mdi/alert";
   import { useDialog } from "~/components/ui/dialog-provider";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
 
   const { t } = useI18n();
 
