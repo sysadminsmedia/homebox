@@ -571,6 +571,9 @@
         "actions": "Dejanja inventarja",
         "actions_set": {
             "create_missing_thumbnails": "Ustvari manjkajoče predoglede",
+            "create_missing_thumbnails_button": "Ustvari Predoglede",
+            "create_missing_thumbnails_confirm": "Ali ste prepričani, da želite ustvariti manjkajoče predoglede? To lahko traja nekaj časa in ni možno ustaviti.",
+            "create_missing_thumbnails_sub": "Ustvari predoglede za vse priloge, ki jih omogoča trenutna konfiguracija. To je uporabno za priloge, ki so bile naložene pred Homebox izdajo v0.20.0. To ne bo prepisalo obstoječih predogledov, ampak samo izdelalo nove za priloge ki še nimajo predogledov. Upoštevajte da so predogledi izdelani v ozadju in da to lahko traja nekaj časa.",
             "ensure_ids": "Zagotovi ID-je sredstev",
             "ensure_ids_button": "Zagotovi ID-je sredstev",
             "ensure_ids_confirm": "Ali ste prepričani, da želite zagotoviti, da imajo vsi predmeti ID? To lahko traja nekaj časa in ni možno razveljaviti.",
@@ -611,6 +614,7 @@
         "reports_sub": "Ustvari različna poročila za svoj inventar.",
         "toast": {
             "asset_success": "{ results } predmetov je bilo posodobljenih.",
+            "failed_create_missing_thumbnails": "Izdelava manjkajočih predogledov ni uspela.",
             "failed_ensure_ids": "Zagotavljanje IDjev predmetov ni uspelo.",
             "failed_ensure_import_refs": "Zagotavljanje import_ref ni uspelo.",
             "failed_set_primary_photos": "Nastavljanje primarnih fotografij ni uspelo.",
