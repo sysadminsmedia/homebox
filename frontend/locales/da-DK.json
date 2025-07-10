@@ -112,7 +112,10 @@
                     "please_select_location": "Vælg venligst en placering.",
                     "rotate_failed": "Kunne ikke rotere billedet: { error }",
                     "rotate_process_failed": "Kunne ikke behandle roteret billede",
-                    "upload_failed": "Kunne ikke uploade billede: { photoName }"
+                    "some_photos_failed": "{count, plural, =0 {Ingen billeder at uploade.} =1 {1 billede kunne ikke uploades.} other {Nogle billeder kunne ikke uploades.}}",
+                    "upload_failed": "Kunne ikke uploade billede: { photoName }",
+                    "upload_success": "{count, plural, =0 {Ingen billeder uploadet.} =1 {Foto uploadet.} other {Alle billeder uploadet.}}",
+                    "uploading_photos": "{count, plural, =0 {Ingen billeder at uploade} =1 {Uploader 1 billede…} other {Uploader {count} billeder…}}"
                 },
                 "upload_photos": "Upload Billeder",
                 "uploaded": "Uploadet billede"
@@ -486,6 +489,7 @@
         "delete_account_confirm": "Er du sikker på, at du vil slette din konto? Hvis du er det sidste medlem i din gruppe, vil alle dine data blive slettet. Denne handling kan ikke fortrydes.",
         "delete_account_sub": "Slet din konto og alle dens tilknyttede data. Dette kan ikke laves om.",
         "delete_notifier_confirm": "Er du sikker på, at du vil slette denne underretter?",
+        "display_legacy_header": "{ currentValue, select, true {Deaktiver Legacy Header} false {Aktiver Legacy Header} other {Ikke ramt}}",
         "enabled": "Aktiveret",
         "example": "Eksempel",
         "gen_invite": "Generer invitationslink",
@@ -499,6 +503,7 @@
         "notifier_modal": "{ type, select, true {Rediger} false {Opret} other {Andet}} Meddeler",
         "notifiers": "Meddelere",
         "notifiers_sub": "Få notifikationer om kommende vedligeholdelsespåmindelser",
+        "override_locale": "Tilsidesæt dato og valutasprog",
         "test": "Test",
         "theme_settings": "Temaindstillinger",
         "theme_settings_sub": "Temaindstillinger gemmes i din browsers lokale lager. Du kan til enhver tid ændre temaet. Hvis du har\n problemer med at indstille dit tema, kan du prøve at opdatere din browser.",
@@ -530,9 +535,9 @@
             "bordered_labels": "Etiketter med kant",
             "generate_page": "Generer side",
             "input_placeholder": "Skriv her",
-            "instruction_1": "Homebox Label Generator er et værktøj, der hjælper dig med at udskrive etiketter til dit Homebox-lager. Disse er beregnet til\n.at være etiketter, der kan udskrives på forhånd, så du kan udskrive mange etiketter og have dem klar til påsætning.",
-            "instruction_2": "Disse etiketter fungerer derfor ved at udskrive en URL, QR-kode og AssetID-oplysninger på en etiket. Hvis du har deaktiveret\n.AssetID'er i dine Homebox-indstillinger, kan du stadig bruge dette værktøj, men AssetID'erne vil ikke referere til nogen varer.",
-            "instruction_3": "Denne funktion er i de tidlige udviklingsfaser og kan ændres i fremtidige udgivelser. Hvis du har feedback, bedes\n.du give den i '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub-diskussionen'</a>'",
+            "instruction_1": "Homebox Label Generator er et værktøj, der hjælper dig med at udskrive etiketter til dit Homebox-lager. Disse er beregnet til\nat være etiketter, der kan udskrives på forhånd, så du kan udskrive mange etiketter og have dem klar til påsætning.",
+            "instruction_2": "Disse etiketter fungerer derfor ved at udskrive en URL, QR-kode og AssetID-oplysninger på en etiket. Hvis du har deaktiveret\nAssetID'er i dine Homebox-indstillinger, kan du stadig bruge dette værktøj, men AssetID'erne vil ikke referere til nogen varer.",
+            "instruction_3": "Denne funktion er i de tidlige udviklingsfaser og kan ændres i fremtidige udgivelser. Hvis du har feedback, bedes\ndu give den i '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub-diskussionen'</a>'",
             "label_height": "Etikethøjde",
             "label_width": "Etiketbredde",
             "measure_type": "Målingstype",
@@ -543,30 +548,46 @@
             "page_top_padding": "Sidetoppolstring",
             "page_width": "Sidebredde",
             "qr_code_example": "Eksempel på QR-kode",
-            "tip_1": "Standardindstillingerne her er konfigureret for\n'<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 etiketark'</a>'. Hvis du bruger et andet ark,\nskal du justere indstillingerne, så de passer til dit ark."
+            "tip_1": "Standardindstillingerne her er konfigureret for\n'<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 etiketark'</a>'. Hvis du bruger et andet ark,\nskal du justere indstillingerne, så de passer til dit ark.",
+            "tip_2": "Hvis du tilpasser dit ark, er dimensionerne i tommer. Da jeg byggede 5260-arket, opdagede jeg, at de\ndimensioner, der blev brugt i deres skabelon, ikke matchede det, der var nødvendigt for at udskrive i felterne.\n'<b>'Vær forberedt på nogle forsøg og fejl.'</b>'",
+            "tip_3": "Ved printning sørg for at:\n'<ol><li>'Indstil margenerne til 0 eller Ingen'</li><li>'Indstil skaleringen til 100%'</li><li>'Deaktiver dobbeltsidet udskrivning'</li><li>'Udskriv en testside, før du udskriver flere sider'</li></ol>'",
+            "tips": "Tips",
+            "title": "Etiketgenerator",
+            "toast": {
+                "page_too_small_card": "Sidestørrelsen er for lille til kortstørrelsen"
+            }
         }
     },
     "scanner": {
         "error": "Der skete en fejl under skanningen",
         "invalid_url": "Ugyldig stregkode-URL",
         "no_sources": "Ingen videokilder er tilgængelig",
+        "permission_denied": "Kameratilladelse nægtet, Tillad venligst adgang til kameraet i dine browserindstillinger",
         "select_video_source": "Vælg en videokilde",
+        "title": "Skanner",
         "unsupported": "Media Stream API understøttes ikke uden HTTPS"
     },
     "tools": {
         "actions": "Handlinger på lagerbeholdning",
         "actions_set": {
+            "create_missing_thumbnails": "Opret manglende miniaturebilleder",
+            "create_missing_thumbnails_button": "Opret miniaturebilleder",
+            "create_missing_thumbnails_confirm": "Er du sikker på, at du vil oprette manglende miniaturebilleder? Dette kan tage et stykke tid og kan ikke sættes på pause.",
+            "create_missing_thumbnails_sub": "Opretter miniaturebilleder for alle vedhæftede filer, der understøttes af den aktuelle konfiguration. Dette er nyttigt for vedhæftede filer, der blev uploadet før v0.20.0-udgivelsen af Homebox. Dette overskriver ikke eksisterende miniaturebilleder, men opretter kun nye for vedhæftede filer, der ikke har et miniaturebillede. Bemærk, at miniaturebillederne oprettes i baggrunden og kan tage et stykke tid at fuldføre.",
             "ensure_ids": "Sørg for aktiv-id'er",
             "ensure_ids_button": "Sørg for aktiv-id'er",
+            "ensure_ids_confirm": "Er du sikker på, at du vil sikre dig, at alle aktiver har et ID? Dette kan tage et stykke tid og kan ikke fortrydes.",
             "ensure_ids_sub": "Sikrer, at alle varer på lageret har et gyldigt asset_id felt. Dette gøres ved at finde det højeste aktuelle aktiv_id felt i databasen og anvende den næste værdi på hvert element, der har et ikke sat aktiv_id felt. Dette gøres i rækkefølge efter feltet opret_den.",
             "ensure_import_refs": "Sørg for importreferencer",
             "ensure_import_refs_button": "Sørg for importreferencer",
             "ensure_import_refs_sub": "Sikrer, at alle varer på lageret har et gyldigt import_ref felt. Dette gøres ved tilfældigt at generere en streng på 8 tegn for hvert element, der har et uindstillet import_ref felt.",
             "set_primary_photo": "Indstil primært foto",
             "set_primary_photo_button": "Indstil primært foto",
+            "set_primary_photo_confirm": "Er du sikker på, at du vil indstille primære billeder? Dette kan tage et stykke tid og kan ikke fortrydes.",
             "set_primary_photo_sub": "I version v0.10.0 af Homebox blev det primære billedfelt tilføjet til vedhæftede filer af typen foto. Denne handling indstiller det primære billedfelt til det første billede i matrixen for vedhæftede filer i databasen, hvis det ikke allerede er angivet. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Se GitHub PR #576'</a>'",
             "zero_datetimes": "Nul Vare Dato Tider",
             "zero_datetimes_button": "Nul Varedato Tider",
+            "zero_datetimes_confirm": "Er du sikker på, at du vil nulstille alle dato- og klokkeslætsværdier? Dette kan tage et stykke tid og kan ikke fortrydes.",
             "zero_datetimes_sub": "Nulstiller klokkeslætsværdien for alle dato- og klokkeslætsfelter i lageret til begyndelsen af datoen. Dette er for at rette en fejl, der blev introduceret tidligt i udviklingen af webstedet, der forårsagede, at tidsværdien blev gemt med tiden, hvilket forårsagede problemer med datofelter, der viste nøjagtige værdier. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Se Github-udgave #236 for flere detaljer.'</a>'"
         },
         "actions_sub": "Anvend flere handlinger på din beholdning på én gang. Det er uigenkaldelige handlinger. '<b>'Vær forsigtig.'</b>'",
@@ -592,6 +613,7 @@
         },
         "reports_sub": "Generer forskellige rapporter for dit lager.",
         "toast": {
+            "asset_success": "Aktiverne i { results } er blevet opdateret.",
             "failed_create_missing_thumbnails": "Kunne ikke oprette manglende miniaturebilleder.",
             "failed_ensure_ids": "Kunne ikke sikre aktiv-ID'er.",
             "failed_ensure_import_refs": "Kunne ikke sikre importreferencer.",
