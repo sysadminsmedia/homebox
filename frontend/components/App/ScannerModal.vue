@@ -33,16 +33,16 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, watch, computed } from "vue";
-  import { BrowserMultiFormatReader, NotFoundException } from "@zxing/library";
-  import { useI18n } from "vue-i18n";
-  import { Dialog, DialogHeader, DialogTitle, DialogScrollContent } from "@/components/ui/dialog";
-  import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-  import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";
+  import { Dialog, DialogHeader, DialogScrollContent, DialogTitle } from "@/components/ui/dialog";
   import { useDialog } from "@/components/ui/dialog-provider";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import { BrowserMultiFormatReader, NotFoundException } from "@zxing/library";
+  import { computed, ref, watch } from "vue";
+  import { useI18n } from "vue-i18n";
+  import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";
 
   const { t } = useI18n();
-  const { activeDialog } = useDialog();
+  const { activeDialog, closeDialog } = useDialog();
   const open = computed(() => activeDialog.value === "scanner");
 
   const sources = ref<MediaDeviceInfo[]>([]);
@@ -129,6 +129,7 @@
               throw new Error(t("scanner.invalid_url"));
             }
             const sanitizedPath = url.pathname.replace(/[^a-zA-Z0-9-_/]/g, "");
+            closeDialog("scanner");
             navigateTo(sanitizedPath);
           } catch (err) {
             loading.value = false;
