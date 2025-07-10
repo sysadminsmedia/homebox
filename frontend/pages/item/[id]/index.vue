@@ -25,6 +25,7 @@
   import { Label } from "@/components/ui/label";
   import { Switch } from "@/components/ui/switch";
   import { Card } from "@/components/ui/card";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
 
   const { t } = useI18n();
 
@@ -406,11 +407,11 @@
     dialoged.originalSrc = img.originalSrc;
     dialoged.originalType = img.originalType;
     dialoged.thumbnailSrc = img.thumbnailSrc;
-    openDialog("item-image");
+    openDialog(DialogID.ItemImage);
   }
 
   function closeImageDialog() {
-    closeDialog("item-image");
+    closeDialog(DialogID.ItemImage);
   }
 
   const currentUrl = computed(() => {
@@ -535,7 +536,7 @@
       },
     });
 
-    openDialog("create-item");
+    openDialog(DialogID.CreateItem);
   }
 </script>
 
@@ -544,7 +545,7 @@
     <!-- set page title -->
     <Title>{{ item.name }}</Title>
 
-    <Dialog dialog-id="item-image">
+    <Dialog :dialog-id="DialogID.ItemImage">
       <DialogContent class="w-auto border-transparent bg-transparent p-0" disable-close>
         <picture>
           <source :srcset="dialoged.originalSrc" :type="dialoged.originalType" />

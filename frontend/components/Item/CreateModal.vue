@@ -1,5 +1,37 @@
 <template>
-  <BaseModal dialog-id="create-item" :title="$t('components.item.create_modal.title')">
+  <BaseModal :dialog-id="DialogID.CreateItem" :title="$t('components.item.create_modal.title')">
+    <div class="flex flex-row-reverse">
+      <TooltipProvider :delay-duration="0">
+        <ButtonGroup>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button variant="outline" :disabled="loading" data-pos="start" @click="openBarcodeDialog()">
+                <MdiBarcode class="size-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{{ $t("components.item.create_modal.product_tooltip_input_barcode") }}</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button variant="outline" :disabled="loading" data-pos="end" @click="openQrScannerPage()">
+                <MdiBarcodeScan class="size-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{{ $t("components.item.create_modal.product_tooltip_scan_barcode") }}</p>
+            </TooltipContent>
+          </Tooltip>
+        </ButtonGroup>
+      </TooltipProvider>
+      <div class="mx-2 flex items-center justify-center">
+        {{ $t("components.item.create_modal.product_autofill") }}
+      </div>
+    </div>
+
+    <div class="border-t" />
+
     <form class="flex flex-col gap-2" @submit.prevent="create()">
       <LocationSelector v-model="form.location" />
       <ItemSelector
@@ -140,6 +172,7 @@
 
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
+  import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { toast } from "@/components/ui/sonner";
   import { Button, ButtonGroup } from "~/components/ui/button";
   import BaseModal from "@/components/App/CreateModal.vue";
@@ -148,6 +181,8 @@
   import type { ItemCreate, LocationOut } from "~~/lib/api/types/data-contracts";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
+  import MdiBarcode from "~icons/mdi/barcode";
+  import MdiBarcodeScan from "~icons/mdi/barcode-scan";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
   import MdiDelete from "~icons/mdi/delete";
@@ -167,9 +202,9 @@
   }
 
   const { t } = useI18n();
-  const { activeDialog, closeDialog } = useDialog();
+  const { openDialog, closeDialog, registerOpenDialogCallback } = useDialog();
 
-  useDialogHotkey("create-item", { code: "Digit1", shift: true });
+  useDialogHotkey(DialogID.CreateItem, { code: "Digit1", shift: true });
 
   const api = useUserApi();
 
@@ -267,55 +302,67 @@
     }
   }
 
-  watch(
-    () => activeDialog.value,
-    async active => {
-      if (active === "create-item") {
-        // needed since URL will be cleared in the next step => ParentId Selection should stay though
-        subItemCreate.value = subItemCreateParam.value === "y";
-        let parentItemLocationId = null;
+  onMounted(() => {
+    registerOpenDialogCallback(DialogID.CreateItem, async params => {
+      // needed since URL will be cleared in the next step => ParentId Selection should stay though
+      subItemCreate.value = subItemCreateParam.value === "y";
+      let parentItemLocationId = null;
 
-        if (subItemCreate.value && itemId.value) {
-          const itemIdRead = typeof itemId.value === "string" ? (itemId.value as string) : itemId.value[0];
-          const { data, error } = await api.items.get(itemIdRead);
-          if (error || !data) {
-            toast.error(t("components.item.create_modal.toast.failed_load_parent"));
-            console.error("Parent item fetch error:", error);
-          }
-
-          if (data) {
-            parent.value = data;
-          }
-
-          if (data.location) {
-            const { location } = data;
-            parentItemLocationId = location.id;
-          }
-
-          // clear URL Parameter (subItemCreate) since intention was communicated and received
-          const currentQuery = { ...route.query };
-          delete currentQuery.subItemCreate;
-          await router.push({ query: currentQuery });
-        } else {
-          // since Input is hidden in this case, make sure no accidental parent information is sent out
-          parent.value = {};
-          form.parentId = null;
+      if (subItemCreate.value && itemId.value) {
+        const itemIdRead = typeof itemId.value === "string" ? (itemId.value as string) : itemId.value[0];
+        const { data, error } = await api.items.get(itemIdRead);
+        if (error || !data) {
+          toast.error(t("components.item.create_modal.toast.failed_load_parent"));
+          console.error("Parent item fetch error:", error);
         }
 
-        const locId = locationId.value ? locationId.value : parentItemLocationId;
-
-        if (locId) {
-          const found = locations.value.find(l => l.id === locId);
-          if (found) {
-            form.location = found;
-          }
+        if (data) {
+          parent.value = data;
         }
-        if (labelId.value) {
-          form.labels = labels.value.filter(l => l.id === labelId.value).map(l => l.id);
+
+        if (data.location) {
+          const { location } = data;
+          parentItemLocationId = location.id;
+        }
+
+        // clear URL Parameter (subItemCreate) since intention was communicated and received
+        const currentQuery = { ...route.query };
+        delete currentQuery.subItemCreate;
+        await router.push({ query: currentQuery });
+      } else {
+        // since Input is hidden in this case, make sure no accidental parent information is sent out
+        parent.value = {};
+        form.parentId = null;
+      }
+
+      const locId = locationId.value ? locationId.value : parentItemLocationId;
+
+      if (locId) {
+        const found = locations.value.find(l => l.id === locId);
+        if (found) {
+          form.location = found;
         }
       }
-    }
-  );
+
+      if (params?.product) {
+        form.name = params.product.item.name;
+        form.description = params.product.item.description;
+
+        if (params.product.imageURL) {
+          form.photos.push({
+            photoName: "product_view.jpg",
+            fileBase64: params.product.imageBase64,
+            primary: form.photos.length === 0,
+            file: dataURLtoFile(params.product.imageBase64, "product_view.jpg"),
+          });
+        }
+      }
+
+      if (labelId.value) {
+        form.labels = labels.value.filter(l => l.id === labelId.value).map(l => l.id);
+      }
+    });
+  });
 
   async function create(close = true) {
     if (!form.location?.id) {
@@ -386,7 +433,7 @@
     loading.value = false;
 
     if (close) {
-      closeDialog("create-item");
+      closeDialog(DialogID.CreateItem);
       navigateTo(`/item/${data.id}`);
     }
   }
@@ -464,5 +511,15 @@
       offScreenCanvas.width = 0;
       offScreenCanvas.height = 0;
     }
+  }
+
+  function openQrScannerPage() {
+    closeDialog(DialogID.CreateItem);
+    openDialog(DialogID.Scanner);
+  }
+
+  function openBarcodeDialog() {
+    closeDialog(DialogID.CreateItem);
+    openDialog(DialogID.ProductImport);
   }
 </script>
