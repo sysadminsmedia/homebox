@@ -29,23 +29,23 @@ func AccentInsensitiveContains(field string, searchValue string) predicate.Item 
 			// to handle common accented characters
 			normalizeFunc := buildSQLiteNormalizeExpression(s.C(field))
 			s.Where(sql.ExprP(
-				"LOWER("+normalizeFunc+") LIKE '%' || LOWER(?) || '%'",
-				normalizedSearch,
+				"LOWER("+normalizeFunc+") LIKE ?",
+				"%"+normalizedSearch+"%",
 			))
 		case "postgres":
 			// For PostgreSQL, try to use unaccent extension if available
 			// Fall back to REPLACE-based normalization if not available
 			normalizeFunc := buildPostgreSQLNormalizeExpression(s.C(field))
 			s.Where(sql.ExprP(
-				"LOWER("+normalizeFunc+") LIKE '%' || LOWER(?) || '%'",
-				normalizedSearch,
+				"LOWER("+normalizeFunc+") LIKE ?",
+				"%"+normalizedSearch+"%",
 			))
 		default:
 			// Default fallback using REPLACE for common accented characters
 			normalizeFunc := buildGenericNormalizeExpression(s.C(field))
 			s.Where(sql.ExprP(
-				"LOWER("+normalizeFunc+") LIKE '%' || LOWER(?) || '%'",
-				normalizedSearch,
+				"LOWER("+normalizeFunc+") LIKE ?",
+				"%"+normalizedSearch+"%",
 			))
 		}
 	})
