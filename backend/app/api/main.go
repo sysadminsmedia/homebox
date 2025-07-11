@@ -349,6 +349,11 @@ func run(cfg *config.Config) error {
 				log.Debug().Msg("received thumbnail generation request from pubsub topic")
 				if err != nil {
 					log.Err(err).Msg("failed to receive message from pubsub topic")
+					continue
+				}
+				if msg == nil {
+					log.Warn().Msg("received nil message from pubsub topic")
+					continue
 				}
 				groupId, err := uuid.Parse(msg.Metadata["group_id"])
 				if err != nil {
