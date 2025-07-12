@@ -2,11 +2,15 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/pressly/goose/v3"
+	"github.co
 	"net/http"
 	"strings"
+	"time"
+
+	"github.com/pressly/goose/v3"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -22,15 +26,16 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/migrations"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
-	"go.balki.me/anyhttp"
 
 	_ "github.com/lib/pq"
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/postgres"
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/sqlite3"
 	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
 
+	"gocloud.dev/pubsub"
 	_ "gocloud.dev/pubsub/awssnssqs"
 	_ "gocloud.dev/pubsub/azuresb"
 	_ "gocloud.dev/pubsub/gcppubsub"
@@ -192,23 +197,6 @@ func run(cfg *config.Config) error {
 			_ = httpserver.Shutdown(context.Background())
 		}()
 
-		listener, addrType, addrCfg, err := anyhttp.GetListener(cfg.Web.Host)
-		if err == nil {
-			switch addrType {
-			case anyhttp.SystemdFD:
-				sysdCfg := addrCfg.(*anyhttp.SysdConfig)
-				if sysdCfg.IdleTimeout != nil {
-					log.Error().Msg("idle timeout not yet supported. Please remove and try again")
-					return errors.New("idle timeout not yet supported. Please remove and try again")
-				}
-				fallthrough
-			case anyhttp.UnixSocket:
-				log.Info().Msgf("Server is running on %s", cfg.Web.Host)
-				return httpserver.Serve(listener)
-			}
-		} else {
-			log.Debug().Msgf("anyhttp error: %v", err)
-		}
 		log.Info().Msgf("Server is running on %s:%s", cfg.Web.Host, cfg.Web.Port)
 		return httpserver.ListenAndServe()
 	})
