@@ -95,7 +95,6 @@ func main() {
 	}
 }
 
-//nolint:gocyclo
 func run(cfg *config.Config) error {
 	app := new(cfg)
 	app.setupLogger()
