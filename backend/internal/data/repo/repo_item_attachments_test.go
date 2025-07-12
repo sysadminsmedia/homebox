@@ -152,3 +152,132 @@ func TestAttachmentRepo_EnsureSinglePrimaryAttachment(t *testing.T) {
 	setAndVerifyPrimary(attachments[0].ID, attachments[1].ID)
 	setAndVerifyPrimary(attachments[1].ID, attachments[0].ID)
 }
+
+func TestAttachmentRepo_UpdateNonPhotoDoesNotAffectPrimaryPhoto(t *testing.T) {
+	ctx := context.Background()
+	item := useItems(t, 1)[0]
+
+	// Create a photo attachment that will be primary
+	photoAttachment, err := tRepos.Attachments.Create(ctx, item.ID, ItemCreateAttachment{Title: "Test Photo", Content: strings.NewReader("Photo content")}, attachment.TypePhoto, true)
+	require.NoError(t, err)
+	
+	// Create a manual attachment (non-photo)
+	manualAttachment, err := tRepos.Attachments.Create(ctx, item.ID, ItemCreateAttachment{Title: "Test Manual", Content: strings.NewReader("Manual content")}, attachment.TypeManual, false)
+	require.NoError(t, err)
+
+	// Cleanup
+	t.Cleanup(func() {
+		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, item.ID, photoAttachment.ID)
+		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, item.ID, manualAttachment.ID)
+	})
+
+	// Verify photo is primary initially
+	photoAttachment, err = tRepos.Attachments.Get(ctx, tGroup.ID, photoAttachment.ID)
+	require.NoError(t, err)
+	assert.True(t, photoAttachment.Primary)
+
+	// Update the manual attachment (this should NOT affect the photo's primary status)
+	_, err = tRepos.Attachments.Update(ctx, tGroup.ID, manualAttachment.ID, &ItemAttachmentUpdate{
+		Type:    attachment.TypeManual.String(),
+		Title:   "Updated Manual",
+		Primary: false, // This should have no effect since it's not a photo
+	})
+	require.NoError(t, err)
+
+	// Verify photo is still primary after updating the manual
+	photoAttachment, err = tRepos.Attachments.Get(ctx, tGroup.ID, photoAttachment.ID)
+	require.NoError(t, err)
+	assert.True(t, photoAttachment.Primary, "Photo attachment should remain primary after updating non-photo attachment")
+
+	// Verify manual attachment is not primary
+	manualAttachment, err = tRepos.Attachments.Get(ctx, tGroup.ID, manualAttachment.ID)
+	require.NoError(t, err)
+	assert.False(t, manualAttachment.Primary)
+}
+
+func TestAttachmentRepo_AddingPDFAfterPhotoKeepsPhotoAsPrimary(t *testing.T) {
+	ctx := context.Background()
+	item := useItems(t, 1)[0]
+
+	// Step 1: Upload a photo first (this should become primary since it's the first photo)
+	photoAttachment, err := tRepos.Attachments.Create(ctx, item.ID, ItemCreateAttachment{Title: "Item Photo", Content: strings.NewReader("Photo content")}, attachment.TypePhoto, false)
+	require.NoError(t, err)
+	
+	// Cleanup
+	t.Cleanup(func() {
+		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, item.ID, photoAttachment.ID)
+	})
+
+	// Verify photo becomes primary automatically (since it's the first photo)
+	photoAttachment, err = tRepos.Attachments.Get(ctx, tGroup.ID, photoAttachment.ID)
+	require.NoError(t, err)
+	assert.True(t, photoAttachment.Primary, "First photo should automatically become primary")
+
+	// Step 2: Add a PDF receipt (this should NOT affect the photo's primary status)  
+	pdfAttachment, err := tRepos.Attachments.Create(ctx, item.ID, ItemCreateAttachment{Title: "Receipt PDF", Content: strings.NewReader("PDF content")}, attachment.TypeReceipt, false)
+	require.NoError(t, err)
+	
+	// Add to cleanup
+	t.Cleanup(func() {
+		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, item.ID, pdfAttachment.ID)
+	})
+
+	// Step 3: Verify photo is still primary after adding PDF
+	photoAttachment, err = tRepos.Attachments.Get(ctx, tGroup.ID, photoAttachment.ID)
+	require.NoError(t, err)
+	assert.True(t, photoAttachment.Primary, "Photo should remain primary after adding PDF attachment")
+
+	// Verify PDF is not primary
+	pdfAttachment, err = tRepos.Attachments.Get(ctx, tGroup.ID, pdfAttachment.ID)
+	require.NoError(t, err)
+	assert.False(t, pdfAttachment.Primary)
+
+	// Step 4: Test the actual item summary mapping (this is what determines the card display)
+	updatedItem, err := tRepos.Items.GetOne(ctx, item.ID)
+	require.NoError(t, err)
+	
+	// The item should have the photo's ID as the imageId
+	assert.NotNil(t, updatedItem.ImageID, "Item should have an imageId")
+	assert.Equal(t, photoAttachment.ID, *updatedItem.ImageID, "Item's imageId should match the photo attachment ID")
+}
+
+func TestAttachmentRepo_SettingPhotoPrimaryStillWorks(t *testing.T) {
+	ctx := context.Background()
+	item := useItems(t, 1)[0]
+
+	// Create two photo attachments
+	photo1, err := tRepos.Attachments.Create(ctx, item.ID, ItemCreateAttachment{Title: "Photo 1", Content: strings.NewReader("Photo 1 content")}, attachment.TypePhoto, false)
+	require.NoError(t, err)
+	
+	photo2, err := tRepos.Attachments.Create(ctx, item.ID, ItemCreateAttachment{Title: "Photo 2", Content: strings.NewReader("Photo 2 content")}, attachment.TypePhoto, false)
+	require.NoError(t, err)
+
+	// Cleanup
+	t.Cleanup(func() {
+		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, item.ID, photo1.ID)
+		_ = tRepos.Attachments.Delete(ctx, tGroup.ID, item.ID, photo2.ID)
+	})
+
+	// First photo should be primary (since it was created first)
+	photo1, err = tRepos.Attachments.Get(ctx, tGroup.ID, photo1.ID)
+	require.NoError(t, err)
+	assert.True(t, photo1.Primary)
+
+	photo2, err = tRepos.Attachments.Get(ctx, tGroup.ID, photo2.ID)
+	require.NoError(t, err)
+	assert.False(t, photo2.Primary)
+
+	// Now set photo2 as primary (this should work and remove primary from photo1)
+	photo2, err = tRepos.Attachments.Update(ctx, tGroup.ID, photo2.ID, &ItemAttachmentUpdate{
+		Type:    attachment.TypePhoto.String(),
+		Title:   "Photo 2",
+		Primary: true,
+	})
+	require.NoError(t, err)
+	assert.True(t, photo2.Primary)
+
+	// Verify photo1 is no longer primary
+	photo1, err = tRepos.Attachments.Get(ctx, tGroup.ID, photo1.ID)
+	require.NoError(t, err)
+	assert.False(t, photo1.Primary, "Photo 1 should no longer be primary after setting Photo 2 as primary")
+}

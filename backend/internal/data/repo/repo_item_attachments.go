@@ -319,16 +319,19 @@ func (r *AttachmentRepo) Update(ctx context.Context, gid uuid.UUID, id uuid.UUID
 		return nil, err
 	}
 
-	// Ensure all other attachments are not primary
-	err = r.db.Attachment.Update().
-		Where(
-			attachment.HasItemWith(item.ID(attachmentItem.ID)),
-			attachment.IDNEQ(updatedAttachment.ID),
-		).
-		SetPrimary(false).
-		Exec(ctx)
-	if err != nil {
-		return nil, err
+	// Only remove primary status from other photo attachments when setting a new photo as primary
+	if typ == attachment.TypePhoto && data.Primary {
+		err = r.db.Attachment.Update().
+			Where(
+				attachment.HasItemWith(item.ID(attachmentItem.ID)),
+				attachment.IDNEQ(updatedAttachment.ID),
+				attachment.TypeEQ(attachment.TypePhoto),
+			).
+			SetPrimary(false).
+			Exec(ctx)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return r.Get(ctx, gid, updatedAttachment.ID)
