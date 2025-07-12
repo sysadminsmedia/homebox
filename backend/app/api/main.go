@@ -45,8 +45,6 @@ var (
 	buildTime = "now"
 )
 
-var analyticsTime time.Duration
-
 func build() string {
 	short := commit
 	if len(short) > 7 {
@@ -105,7 +103,6 @@ func run(cfg *config.Config) error {
 		err := analytics.Send(version, build())
 		if err != nil {
 			log.Error().Err(err).Msg("failed to send analytics")
-			return err
 		}
 	}
 
