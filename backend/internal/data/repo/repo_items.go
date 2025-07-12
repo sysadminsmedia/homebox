@@ -360,14 +360,25 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 	}
 
 	if q.Search != "" {
+		// Use accent-insensitive search predicates that normalize both
+		// the search query and database field values during comparison.
+		// For queries without accents, the traditional search is more efficient.
 		qb.Where(
 			item.Or(
+				// Regular case-insensitive search (fastest)
 				item.NameContainsFold(q.Search),
 				item.DescriptionContainsFold(q.Search),
 				item.SerialNumberContainsFold(q.Search),
 				item.ModelNumberContainsFold(q.Search),
 				item.ManufacturerContainsFold(q.Search),
 				item.NotesContainsFold(q.Search),
+				// Accent-insensitive search using custom predicates
+				ent.ItemNameAccentInsensitiveContains(q.Search),
+				ent.ItemDescriptionAccentInsensitiveContains(q.Search),
+				ent.ItemSerialNumberAccentInsensitiveContains(q.Search),
+				ent.ItemModelNumberAccentInsensitiveContains(q.Search),
+				ent.ItemManufacturerAccentInsensitiveContains(q.Search),
+				ent.ItemNotesAccentInsensitiveContains(q.Search),
 			),
 		)
 	}
