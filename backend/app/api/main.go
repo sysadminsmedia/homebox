@@ -3,17 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/pressly/goose/v3"
-	"github.co
-	"net/http"
-	"strings"
-	"time"
-
-	"github.com/pressly/goose/v3"
-
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/pressly/goose/v3"
+	"net/http"
+	"strings"
 
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/graceful"
@@ -26,7 +20,6 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/migrations"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
 
@@ -35,7 +28,6 @@ import (
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/sqlite3"
 	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
 
-	"gocloud.dev/pubsub"
 	_ "gocloud.dev/pubsub/awssnssqs"
 	_ "gocloud.dev/pubsub/azuresb"
 	_ "gocloud.dev/pubsub/gcppubsub"
