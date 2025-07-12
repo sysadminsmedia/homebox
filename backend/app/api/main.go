@@ -45,6 +45,8 @@ var (
 	buildTime = "now"
 )
 
+var analyticsTime time.Duration
+
 func build() string {
 	short := commit
 	if len(short) > 7 {
@@ -208,11 +210,13 @@ func run(cfg *config.Config) error {
 
 	// Send analytics if enabled at around midnight UTC
 	if cfg.Options.AllowAnalytics {
-		runner.AddPlugin(NewTask("send-analytics", time.Hour, func(ctx context.Context) {
+		analyticsTime := time.Second
+		runner.AddPlugin(NewTask("send-analytics", analyticsTime, func(ctx context.Context) {
 			for {
 				now := time.Now().UTC()
 				nextMidnight := time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, time.UTC)
 				dur := time.Until(nextMidnight)
+				analyticsTime = dur
 				select {
 				case <-ctx.Done():
 					return
