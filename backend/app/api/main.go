@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -30,7 +31,6 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/migrations"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
 	"go.balki.me/anyhttp"
@@ -109,10 +109,6 @@ func main() {
 func run(cfg *config.Config) error {
 	app := new(cfg)
 	app.setupLogger()
-
-	if cfg.Options.AllowAnalytics {
-		analytics.Send(version, build())
-	}
 
 	// =========================================================================
 	// Initialize Database & Repos
@@ -401,6 +397,18 @@ func run(cfg *config.Config) error {
 				log.Error().
 					Err(err).
 					Msg("failed to get latest github release")
+			}
+		}))
+	}
+
+	if cfg.Options.AllowAnalytics {
+		runner.AddPlugin(NewTask("send-analytics", time.Duration(24)*time.Hour, func(ctx context.Context) {
+			log.Debug().Msg("running send analytics")
+			analytics.Send(version, build())
+			if err != nil {
+				log.Error().
+					Err(err).
+					Msg("failed to send analytics")
 			}
 		}))
 	}
