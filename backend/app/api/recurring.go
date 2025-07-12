@@ -91,10 +91,12 @@ func registerRecurringTasks(app *app, cfg *config.Config, runner *graceful.Runne
 				log.Debug().Msg("received thumbnail generation request from pubsub topic")
 				if err != nil {
 					log.Err(err).Msg("failed to receive message from pubsub topic")
+					msg.Ack()
 					continue
 				}
 				if msg == nil {
 					log.Warn().Msg("received nil message from pubsub topic")
+					msg.Ack()
 					continue
 				}
 				groupId, err := uuid.Parse(msg.Metadata["group_id"])

@@ -52,12 +52,21 @@ func setupDatabaseURL(cfg *config.Config) string {
 			databaseURL += fmt.Sprintf(" password=%s", cfg.Database.Password)
 		}
 		if cfg.Database.SslRootCert != "" {
+			if _, err := os.Stat(cfg.Database.SslRootCert); err != nil || !os.IsNotExist(err) {
+				log.Fatal().Err(err).Str("path", cfg.Database.SslRootCert).Msg("SSL root certificate file does not accessible")
+			}
 			databaseURL += fmt.Sprintf(" sslrootcert=%s", cfg.Database.SslRootCert)
 		}
 		if cfg.Database.SslCert != "" {
+			if _, err := os.Stat(cfg.Database.SslCert); err != nil || !os.IsNotExist(err) {
+				log.Fatal().Err(err).Str("path", cfg.Database.SslCert).Msg("SSL certificate file does not accessible")
+			}
 			databaseURL += fmt.Sprintf(" sslcert=%s", cfg.Database.SslCert)
 		}
 		if cfg.Database.SslKey != "" {
+			if _, err := os.Stat(cfg.Database.SslKey); err != nil || !os.IsNotExist(err) {
+				log.Fatal().Err(err).Str("path", cfg.Database.SslKey).Msg("SSL key file does not accessible")
+			}
 			databaseURL += fmt.Sprintf(" sslkey=%s", cfg.Database.SslKey)
 		}
 	default:
