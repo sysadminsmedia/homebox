@@ -55,18 +55,10 @@
     () => activeDialog.value,
     active => {
       if (active === "create-location") {
-        // useTimeoutFn(() => {
-        //   focused.value = true;
-        // }, 50);
-
         if (locationId.value) {
           const found = locations.value.find(l => l.id === locationId.value);
-          if (found) {
-            form.parent = found;
-          }
+          form.parent = found || null;
         }
-      } else {
-        // focused.value = false;
       }
     }
   );
@@ -74,7 +66,6 @@
   function reset() {
     form.name = "";
     form.description = "";
-    form.parent = null;
     focused.value = false;
     loading.value = false;
   }
@@ -118,6 +109,7 @@
     if (data) {
       toast.success(t("components.location.create_modal.toast.create_success"));
     }
+
     reset();
 
     if (close) {
