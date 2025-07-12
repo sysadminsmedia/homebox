@@ -404,11 +404,11 @@ func run(cfg *config.Config) error {
 	if cfg.Options.AllowAnalytics {
 		runner.AddPlugin(NewTask("send-analytics", time.Duration(24)*time.Hour, func(ctx context.Context) {
 			log.Debug().Msg("running send analytics")
-			analytics.Send(version, build())
+			err := analytics.Send(version, build())
 			if err != nil {
 				log.Error().
 					Err(err).
-					Msg("failed to send analytics")
+					Msg("failed to send scheduled analytics")
 			}
 		}))
 	}
