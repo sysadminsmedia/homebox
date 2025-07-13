@@ -98,14 +98,6 @@ func run(cfg *config.Config) error {
 	app := new(cfg)
 	app.setupLogger()
 
-	// Send analytics if enabled on startup
-	if cfg.Options.AllowAnalytics {
-		err := analytics.Send(version, build())
-		if err != nil {
-			log.Error().Err(err).Msg("failed to send analytics")
-		}
-	}
-
 	// =========================================================================
 	// Initialize Database & Repos
 	setupStorageDir(cfg)

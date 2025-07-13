@@ -34,7 +34,7 @@ func Send(version, buildInfo string) error {
 			"platform_version": hostData.PlatformVersion,
 			"kernel_arch":      hostData.KernelArch,
 			"virt_type":        hostData.VirtualizationSystem,
-			"uptime_sec":       time.Since(startTime).Seconds(),
+			"uptime_min":       time.Since(startTime).Minutes(),
 		},
 	}
 	jsonBody, err := json.Marshal(analytics)
@@ -50,7 +50,7 @@ func Send(version, buildInfo string) error {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", "Homebox/"+version+"/"+buildInfo+" (https://homebox.software)")
+	req.Header.Set("User-Agent", "Homebox/"+version+"/(https://homebox.software)")
 
 	client := &http.Client{
 		Timeout: 10 * time.Second,
