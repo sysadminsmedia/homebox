@@ -21,6 +21,7 @@ func setupStorageDir(cfg *config.Config) {
 		if err != nil {
 			log.Fatal().Err(err).Msg("failed to get absolute path for storage connection string")
 		}
+		absBase = strings.ReplaceAll(absBase, "\\", "/")
 		storageDir := filepath.Join(absBase, cfg.Storage.PrefixPath)
 		storageDir = strings.ReplaceAll(storageDir, "\\", "/")
 		if !strings.HasPrefix(storageDir, absBase+"/") && storageDir != absBase {
