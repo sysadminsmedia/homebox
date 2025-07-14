@@ -130,7 +130,8 @@
             },
             "product_import": {
                 "title": "Import product",
-                "barcode": "Product's barcode"
+                "barcode": "Product's barcode",
+                "search_item": "Search product"
             },
             "view": {
                 "selectable": {
