@@ -62,10 +62,9 @@
   import MdiBarcode from "~icons/mdi/barcode";
   import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";
   import { useDialog } from "@/components/ui/dialog-provider";
-  
 
   const { t } = useI18n();
-  const { activeDialog, openDialog, closeDialog} = useDialog();
+  const { activeDialog, openDialog, closeDialog } = useDialog();
   const open = computed(() => activeDialog && activeDialog.value === DialogID.Scanner);
 
   const sources = ref<MediaDeviceInfo[]>([]);

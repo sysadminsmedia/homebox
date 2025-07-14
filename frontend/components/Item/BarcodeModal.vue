@@ -6,19 +6,19 @@
       </DialogHeader>
 
       <div
-          v-if="errorMessage"
-          class="flex items-center gap-2 rounded-md border border-destructive bg-destructive/10 p-4 text-destructive"
-          role="alert"
-        >
-          <MdiAlertCircleOutline class="text-destructive" />
-          <span class="text-sm font-medium">{{ errorMessage }}</span>
+        v-if="errorMessage"
+        class="flex items-center gap-2 rounded-md border border-destructive bg-destructive/10 p-4 text-destructive"
+        role="alert"
+      >
+        <MdiAlertCircleOutline class="text-destructive" />
+        <span class="text-sm font-medium">{{ errorMessage }}</span>
       </div>
 
       <div class="flex items-center gap-3">
         <FormTextField
+          v-model="barcode"
           :disabled="searching"
           class="w-[30%]"
-          v-model="barcode"
           :label="$t('components.item.product_import.barcode')"
           @keyup.enter="retrieveProductInfo(barcode)"
         />
@@ -28,16 +28,16 @@
           @click="retrieveProductInfo(barcode)"
         >
           <MdiLoading v-if="searching" class="animate-spin" />
-          <div class="relative mx-2" v-if="!searching">
+          <div v-if="!searching" class="relative mx-2">
             <div class="absolute inset-0 flex items-center justify-center">
               <MdiBarcode class="size-5 group-hover:hidden" />
             </div>
           </div>
-          {{ searching ? $t('global.cancel') : $t("components.item.product_import.search_item") }}
+          {{ searching ? $t("global.cancel") : $t("components.item.product_import.search_item") }}
         </Button>
       </div>
 
-      <Separator/>
+      <Separator />
 
       <BaseCard>
         <Table class="w-full">
@@ -52,7 +52,6 @@
                   class="flex items-center gap-1"
                   :class="{
                     'justify-center': h.align === 'center',
-                    'justify-end': h.align === 'left',
                   }"
                 >
                   <template v-if="typeof h === 'string'">{{ h }}</template>
@@ -75,7 +74,6 @@
                 :key="h.value"
                 :class="{
                   'text-center': h.align === 'center',
-                  'text-left': h.align === 'left',
                 }"
               >
                 <template v-if="h.type === 'name'">
@@ -87,7 +85,9 @@
                   </div>
                 </template>
                 <template v-else-if="h.type === 'url'">
-                  <NuxtLink class="underline" :to="'https://' + extractValue(p, h.value)"  target="_blank">{{ extractValue(p, h.value) }}</NuxtLink>
+                  <NuxtLink class="underline" :to="'https://' + extractValue(p, h.value)" target="_blank">{{
+                    extractValue(p, h.value)
+                  }}</NuxtLink>
                 </template>
 
                 <slot v-else :name="cell(h)">
@@ -180,7 +180,7 @@
   async function retrieveProductInfo(barcode: string) {
     errorMessage.value = null;
 
-    if (!barcode || barcode.trim().length === 0 || !(/^[0-9]+$/.test(barcode))) {
+    if (!barcode || barcode.trim().length === 0 || !/^[0-9]+$/.test(barcode)) {
       errorMessage.value = "Invalid barcode provided";
       console.error(errorMessage.value);
       return;
