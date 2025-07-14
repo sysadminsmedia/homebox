@@ -99,9 +99,28 @@
                 "item_quantity": "Tételek mennyisége",
                 "parent_item": "Szülő tétel",
                 "rotate_photo": "Kép forgatása",
-                "set_as_primary_photo": "Beállítás {isPrimary , select, true {non} false {} other {}}elsődleges fényképként",
+                "set_as_primary_photo": "Beállítás {isPrimary , select, true {nem } false {} other {}}elsődleges fényképként",
                 "title": "Új elem létrehozása",
-                "upload_photos": "Fotók feltöltése"
+                "toast": {
+                    "already_creating": "Elem létrehozása már folyamatban",
+                    "create_failed": "Sikertelen elem létrehozás",
+                    "create_success": "Elem létrehozva",
+                    "failed_load_parent": "Szülő elem betöltése sikertelen - válaszd ki manuálisan",
+                    "please_select_location": "Válassz egy helyet.",
+                    "rotate_failed": "Sikertelen képforgatás: { error }",
+                    "rotate_process_failed": "Elforgatott kép feldolgozása sikertelen",
+                    "some_photos_failed": "{count, plural, =0 {Nincs feltölthető fénykép.} =1 {1 fénykép feltöltése nem sikerült.} other {Néhány fénykép feltöltése nem sikerült.}}",
+                    "upload_failed": "Kép feltöltése sikertelen: { photoName }",
+                    "upload_success": "{count, plural, =0 {Nincsenek feltöltött fényképek.} =1 {A fénykép feltöltése sikeres.} other {Minden fénykép feltöltése sikeres.}}",
+                    "uploading_photos": "{count, plural, =0 {Nincs feltöltendő fénykép} =1 {1 fénykép feltöltése…} egyéb {{count} fénykép feltöltése…}}"
+                },
+                "upload_photos": "Fotók feltöltése",
+                "uploaded": "Feltöltött fénykép"
+            },
+            "selector": {
+                "no_results": "Nincs Találat",
+                "placeholder": "Válassz…",
+                "search_placeholder": "Gépelje be a kereséshez"
             },
             "view": {
                 "selectable": {
