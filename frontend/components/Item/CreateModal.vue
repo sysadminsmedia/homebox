@@ -1,7 +1,7 @@
 <template>
   <BaseModal :dialog-id="DialogID.CreateItem" :title="$t('components.item.create_modal.title')">
-     <template v-slot:header-actions>
-      <div class="flex flex-end">
+    <template #header-actions>
+      <div class="flex">
         <TooltipProvider :delay-duration="0">
           <ButtonGroup>
             <Tooltip>

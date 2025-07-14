@@ -2,9 +2,9 @@
   <Dialog v-if="isDesktop" :dialog-id="dialogId">
     <DialogScrollContent>
       <DialogHeader>
-        <div class="flex items-center justify-items-center justify-between mr-4">
+        <div class="mr-4 flex place-items-center justify-between">
           <DialogTitle>{{ title }}</DialogTitle>
-          <slot name="header-actions"/>
+          <slot name="header-actions" />
         </div>
       </DialogHeader>
 
