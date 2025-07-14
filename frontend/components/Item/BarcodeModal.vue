@@ -9,7 +9,7 @@
         <FormTextField
           :disabled="searching"
           class="w-[30%]"
-          :model-value="barcode"
+          v-model="barcode"
           :label="$t('components.item.product_import.barcode')"
           @keyup.enter="retrieveProductInfo(barcode)"
         />
@@ -138,6 +138,7 @@
   onMounted(() => {
     registerOpenDialogCallback(DialogID.ProductImport, params => {
       selectedRow.value = -1;
+      searching.value = false;
 
       if (params?.barcode) {
         // Reset if the barcode is different
@@ -165,13 +166,13 @@
   }
 
   async function retrieveProductInfo(barcode: string) {
-    products.value = null;
-    searching.value = true;
-
     if (!barcode || barcode.trim().length === 0) {
       console.error("Invalid barcode provided");
       return;
     }
+
+    products.value = null;
+    searching.value = true;
 
     try {
       const result = await api.products.searchFromBarcode(barcode.trim());
