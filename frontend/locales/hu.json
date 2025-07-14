@@ -269,10 +269,19 @@
         "changes_persisted_immediately": "A mellékletek módosításai azonnal mentésre kerülnek",
         "created_at": "Létrehozás dátuma",
         "custom_fields": "Egyedi mezők",
-        "delete_attachment_confirm": "Biztos törli ezt a Mellékletet?",
+        "delete_attachment_confirm": "Biztos törlöd ezt a mellékletet?",
+        "delete_item_confirm": "Biztosan törlöd ezt az elemet?",
         "description": "Leírás",
         "details": "Részletek",
         "drag_and_drop": "Húzd ide a fájlokat, vagy kattints a fájlok kiválasztásához",
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "Melléklet Cím",
+                "attachment_type": "Melléklet típusa",
+                "primary_photo": "Elsődleges fénykép",
+                "primary_photo_sub": "Ez a lehetőség csak fényképeknél érhető el"
+            }
+        },
         "edit_details": "Részletek szerkesztése",
         "field_selector": "Mezőválasztó",
         "field_value": "Mező értéke",
