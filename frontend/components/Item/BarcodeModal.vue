@@ -11,6 +11,7 @@
           class="w-[30%]"
           :model-value="barcode"
           :label="$t('components.item.product_import.barcode')"
+          @keyup.enter="retrieveProductInfo(barcode)"
         />
         <Button
           :variant="searching ? 'destructive' : 'default'"
