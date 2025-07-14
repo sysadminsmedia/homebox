@@ -2,7 +2,10 @@
   <Dialog v-if="isDesktop" :dialog-id="dialogId">
     <DialogScrollContent>
       <DialogHeader>
-        <DialogTitle>{{ title }}</DialogTitle>
+        <div class="flex items-center justify-items-center justify-between mr-4">
+          <DialogTitle>{{ title }}</DialogTitle>
+          <slot name="header-actions"/>
+        </div>
       </DialogHeader>
 
       <slot />
@@ -29,6 +32,9 @@
       <DrawerHeader>
         <DrawerTitle>{{ title }}</DrawerTitle>
       </DrawerHeader>
+      <div class="flex justify-center">
+        <slot name="header-actions" />
+      </div>
 
       <div class="m-2 overflow-y-auto p-2">
         <slot />

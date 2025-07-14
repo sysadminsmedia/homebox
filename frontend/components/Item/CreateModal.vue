@@ -1,36 +1,33 @@
 <template>
   <BaseModal :dialog-id="DialogID.CreateItem" :title="$t('components.item.create_modal.title')">
-    <div class="flex flex-row-reverse">
-      <TooltipProvider :delay-duration="0">
-        <ButtonGroup>
-          <Tooltip>
-            <TooltipTrigger>
-              <Button variant="outline" :disabled="loading" data-pos="start" @click="openBarcodeDialog()">
-                <MdiBarcode class="size-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{{ $t("components.item.create_modal.product_tooltip_input_barcode") }}</p>
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger>
-              <Button variant="outline" :disabled="loading" data-pos="end" @click="openQrScannerPage()">
-                <MdiBarcodeScan class="size-5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{{ $t("components.item.create_modal.product_tooltip_scan_barcode") }}</p>
-            </TooltipContent>
-          </Tooltip>
-        </ButtonGroup>
-      </TooltipProvider>
-      <div class="mx-2 flex items-center justify-center">
-        {{ $t("components.item.create_modal.product_autofill") }}
+     <template v-slot:header-actions>
+      <div class="flex flex-end">
+        <TooltipProvider :delay-duration="0">
+          <ButtonGroup>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="outline" :disabled="loading" data-pos="start" @click="openQrScannerPage()">
+                  <MdiBarcodeScan class="size-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{{ $t("components.item.create_modal.product_tooltip_scan_barcode") }}</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="outline" :disabled="loading" data-pos="end" @click="openBarcodeDialog()">
+                  <MdiBarcode class="size-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{{ $t("components.item.create_modal.product_tooltip_input_barcode") }}</p>
+              </TooltipContent>
+            </Tooltip>
+          </ButtonGroup>
+        </TooltipProvider>
       </div>
-    </div>
-
-    <div class="border-t" />
+    </template>
 
     <form class="flex flex-col gap-2" @submit.prevent="create()">
       <LocationSelector v-model="form.location" />
