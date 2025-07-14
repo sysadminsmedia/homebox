@@ -5,6 +5,15 @@
         <DialogTitle>{{ $t("components.item.product_import.title") }}</DialogTitle>
       </DialogHeader>
 
+      <div
+          v-if="errorMessage"
+          class="flex items-center gap-2 rounded-md border border-destructive bg-destructive/10 p-4 text-destructive"
+          role="alert"
+        >
+          <MdiAlertCircleOutline class="text-destructive" />
+          <span class="text-sm font-medium">{{ errorMessage }}</span>
+      </div>
+
       <div class="flex items-center gap-3">
         <FormTextField
           :disabled="searching"
@@ -102,6 +111,7 @@
   import { Button } from "~/components/ui/button";
   import type { BarcodeProduct } from "~~/lib/api/types/data-contracts";
   import { useDialog } from "~/components/ui/dialog-provider";
+  import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";
   import MdiBarcode from "~icons/mdi/barcode";
   import MdiLoading from "~icons/mdi/loading";
   import type { TableData } from "~/components/Item/View/Table.types";
@@ -112,6 +122,7 @@
   const barcode = ref<string>("");
   const products = ref<BarcodeProduct[] | null>(null);
   const selectedRow = ref(-1);
+  const errorMessage = ref<string | null>(null);
 
   type BarcodeTableHeader = {
     text: string;
@@ -139,6 +150,7 @@
     registerOpenDialogCallback(DialogID.ProductImport, params => {
       selectedRow.value = -1;
       searching.value = false;
+      errorMessage.value = null;
 
       if (params?.barcode) {
         // Reset if the barcode is different
@@ -166,8 +178,11 @@
   }
 
   async function retrieveProductInfo(barcode: string) {
-    if (!barcode || barcode.trim().length === 0) {
-      console.error("Invalid barcode provided");
+    errorMessage.value = null;
+
+    if (!barcode || barcode.trim().length === 0 || !(/^[0-9]+$/.test(barcode))) {
+      errorMessage.value = "Invalid barcode provided";
+      console.error(errorMessage.value);
       return;
     }
 
@@ -177,12 +192,14 @@
     try {
       const result = await api.products.searchFromBarcode(barcode.trim());
       if (result.error) {
-        console.error("API Error:", result.error);
+        errorMessage.value = "API Error: " + result.error;
+        console.error(errorMessage.value);
       } else {
         products.value = result.data;
       }
     } catch (error) {
-      console.error("Failed to retrieve product info:", error);
+      errorMessage.value = "Failed to retrieve product info: " + error;
+      console.error(errorMessage.value);
     } finally {
       searching.value = false;
     }
