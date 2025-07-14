@@ -1,10 +1,19 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "enter": "Enter",
+                "shift": "Shift"
+            },
             "import_dialog": {
                 "change_warning": "A meglévő import_ref-fel rendelkező tételek importálásának menete megváltozott. Ha a CSV fájlban van import_ref, \nakkor a tételt felülírják a CSV fájlban található értékek.",
                 "description": "Importálj egy CSV fájlt, amely tartalmazza a tételeidet, címkéidet és helyeidet. A szükséges formátumról bővebben \na dokumentációban olvashatsz.",
-                "title": "Importálás CSV-fájlból"
+                "title": "Importálás CSV-fájlból",
+                "toast": {
+                    "import_failed": "Sikertelen importálás. Kérlek próbáld újra később.",
+                    "import_success": "Sikeres importálás!",
+                    "please_select_file": "Kérlek válassz egy fájlt az importáláshoz."
+                }
             },
             "outdated": {
                 "current_version": "Jelenlegi verzió",
@@ -12,6 +21,17 @@
                 "latest_version": "Legújabb verzió",
                 "new_version_available": "Új verzió érhető el",
                 "new_version_available_link": "Kattints ide az újdonságok megtekintéséhez"
+            }
+        },
+        "color_selector": {
+            "color": "Szín",
+            "no_color": "Nincs szín",
+            "no_color_selected": "Nincs kiválasztott szín",
+            "randomize": "Véletlenszerű színezés"
+        },
+        "form": {
+            "password": {
+                "toggle_show": "Jelszó megjelenítése"
             }
         },
         "global": {
@@ -51,7 +71,12 @@
                 "download": "Címke letöltése",
                 "print": "Címke nyomtatása",
                 "server_print": "Nyomtatás a szerveren",
-                "titles": "Címkék"
+                "titles": "Címkék",
+                "toast": {
+                    "load_status_failed": "Sikertelen állapot betöltés",
+                    "print_failed": "Sikertelen címke nyomtatás",
+                    "print_success": "Címke kinyomtatva"
+                }
             },
             "page_qr_code": {
                 "page_url": "Oldal URL-je",
@@ -62,12 +87,19 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "Letöltés",
+                "open_new_tab": "Megnyitás új lapon"
+            },
             "create_modal": {
+                "delete_photo": "Kép törlése",
                 "item_description": "Tétel leírása",
                 "item_name": "Tétel neve",
                 "item_photo": "Tétel fényképe 📷",
                 "item_quantity": "Tételek mennyisége",
                 "parent_item": "Szülő tétel",
+                "rotate_photo": "Kép forgatása",
+                "set_as_primary_photo": "Beállítás {isPrimary , select, true {non} false {} other {}}elsődleges fényképként",
                 "title": "Új elem létrehozása",
                 "upload_photos": "Fotók feltöltése"
             },

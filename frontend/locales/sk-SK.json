@@ -122,8 +122,8 @@
             },
             "selector": {
                 "no_results": "Nenašli sa žiadne výsledky",
-                "placeholder": "Vybrať...",
-                "search_placeholder": "Zadajte, čo chcete vyhľadať..."
+                "placeholder": "Vybrať…",
+                "search_placeholder": "Zadajte, čo chcete vyhľadať…"
             },
             "view": {
                 "selectable": {
@@ -176,7 +176,7 @@
                 "select_location": "Vyberte miesto"
             },
             "tree": {
-                "no_locations": "Nie sú k dispozícii žiadne miesta. Pridajte nové miesta cez\n `<`span class=\"link-primary\"`>`Vytvoriť`<`/span`>` na navigačnom paneli."
+                "no_locations": "Nie sú k dispozícii žiadne miesta. Pridajte nové miesta kliknutím na\n `<`span class=\"link-primary\"`>`Vytvoriť`<`/span`>` na navigačnej lište."
             }
         },
         "quick_menu": {
@@ -211,7 +211,7 @@
         "items": "Položky",
         "join_discord": "Pripojte sa k Discordu",
         "labels": "Štítky",
-        "loading": "Načítam...",
+        "loading": "Načítam…",
         "locations": "Miesta",
         "maintenance": "Údržba",
         "name": "Názov",
@@ -304,7 +304,7 @@
         "name": "Názov",
         "negate_labels": "Negovať vybrané označenia",
         "next_page": "Ďalšia strana",
-        "no_attachments": "Neboli nájdené žiadne prílohy.",
+        "no_attachments": "Neboli nájdené žiadne prílohy",
         "no_results": "Nenašli sa žiadne položky",
         "notes": "Poznámky",
         "only_with_photo": "Iba položky s fotografiou",
@@ -562,7 +562,7 @@
         "error": "Počas skenovania sa vyskytla chyba",
         "invalid_url": "Neplatná adresa URL čiarového kódu",
         "no_sources": "Nie sú k dispozícii žiadne zdroje videa",
-        "permission_denied": "Prístup k kamere bol zamietnutý, povoľte prístup k kamere v nastaveniach prehliadača.",
+        "permission_denied": "Prístup k kamere bol zamietnutý, povoľte prístup k kamere v nastaveniach prehliadača",
         "select_video_source": "Vyberte zdroj videa",
         "title": "Skener",
         "unsupported": "Media Stream API nie je podporované bez protokolu HTTPS"
