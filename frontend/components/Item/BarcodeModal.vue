@@ -5,7 +5,7 @@
         <DialogTitle>{{ $t("components.item.product_import.title") }}</DialogTitle>
       </DialogHeader>
 
-      <div class="flex items-center space-x-4">
+      <div class="flex items-center gap-3">
         <FormTextField
           :disabled="searching"
           class="w-[30%]"
@@ -15,19 +15,20 @@
         />
         <Button
           :variant="searching ? 'destructive' : 'default'"
-          style="margin-top: auto"
+          class="mt-auto h-10"
           @click="retrieveProductInfo(barcode)"
         >
-          <div class="relative mx-2">
+          <MdiLoading v-if="searching" class="animate-spin" />
+          <div class="relative mx-2" v-if="!searching">
             <div class="absolute inset-0 flex items-center justify-center">
               <MdiBarcode class="size-5 group-hover:hidden" />
             </div>
           </div>
-          {{ searching ? "Cancel" : "Search product" }}
+          {{ searching ? $t('global.cancel') : $t("components.item.product_import.search_item") }}
         </Button>
       </div>
 
-      <div class="divide-y border-t" />
+      <Separator/>
 
       <BaseCard>
         <Table class="w-full">
@@ -76,6 +77,9 @@
                     </span>
                   </div>
                 </template>
+                <template v-else-if="h.type === 'url'">
+                  <NuxtLink class="underline" :to="'https://' + extractValue(p, h.value)"  target="_blank">{{ extractValue(p, h.value) }}</NuxtLink>
+                </template>
 
                 <slot v-else :name="cell(h)">
                   {{ extractValue(p, h.value) }}
@@ -99,6 +103,7 @@
   import type { BarcodeProduct } from "~~/lib/api/types/data-contracts";
   import { useDialog } from "~/components/ui/dialog-provider";
   import MdiBarcode from "~icons/mdi/barcode";
+  import MdiLoading from "~icons/mdi/loading";
   import type { TableData } from "~/components/Item/View/Table.types";
 
   const { openDialog, registerOpenDialogCallback } = useDialog();
@@ -112,19 +117,19 @@
     text: string;
     value: string;
     align?: "left" | "center" | "right";
-    type?: "name";
+    type?: "name" | "url";
   };
 
   const defaultHeaders = [
     {
       text: "items.name",
       value: "name",
-      align: "left",
+      align: "center",
       type: "name",
     },
     { text: "items.manufacturer", value: "manufacturer", align: "center" },
     { text: "items.model_number", value: "modelNumber", align: "center" },
-    { text: "DB source", value: "search_engine_name", align: "center" },
+    { text: "DB source", value: "search_engine_name", align: "center", type: "url" },
   ] satisfies BarcodeTableHeader[];
 
   // Need for later filtering
