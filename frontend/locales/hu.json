@@ -120,7 +120,7 @@
             "selector": {
                 "no_results": "Nincs Találat",
                 "placeholder": "Válassz…",
-                "search_placeholder": "Gépelje be a kereséshez"
+                "search_placeholder": "Kezdj gépelni a kereséshez…"
             },
             "view": {
                 "selectable": {
@@ -133,15 +133,23 @@
                     "headers": "Fejlécek",
                     "page": "Oldal",
                     "rows_per_page": "Sorok oldalanként",
-                    "table_settings": "Táblázatbeállítások"
+                    "table_settings": "Táblázatbeállítások",
+                    "view_item": "Elem megtekintése"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_color": "Címke színe",
                 "label_description": "Címke leírása",
                 "label_name": "Címke neve",
-                "title": "Címke létrehozása"
+                "title": "Címke létrehozása",
+                "toast": {
+                    "already_creating": "Címke létrehozása már folyamatban",
+                    "create_failed": "Sikertelen címke létrehozás",
+                    "create_success": "Címke létrehozva",
+                    "label_name_too_long": "A címke neve nem lehet hosszabb 50 karakternél"
+                }
             },
             "selector": {
                 "select_labels": "Címkék kiválasztása"
@@ -151,7 +159,12 @@
             "create_modal": {
                 "location_description": "Hely leírása",
                 "location_name": "Hely neve",
-                "title": "Új hely létrehozása"
+                "title": "Új hely létrehozása",
+                "toast": {
+                    "already_creating": "Hely létrehozása már folyamatban",
+                    "create_failed": "Sikertelen hely létrehozás",
+                    "create_success": "Hely létrehozva"
+                }
             },
             "selector": {
                 "no_location_found": "Nem található hely",
@@ -160,7 +173,7 @@
                 "select_location": "Válassz egy helyet"
             },
             "tree": {
-                "no_locations": "Nincs elérhető hely. Adj hozzá új helyet a\n `<`span class=\"link-primary\"`>`Létrehozás`<`/span`>` gombbal a navigációs sávon."
+                "no_locations": "Nincs elérhető hely. Adj hozzá új helyet a\n '<span class=\"link-primary\">'Létrehozás'</span>' gombbal a navigációs sávon."
             }
         },
         "quick_menu": {
@@ -179,6 +192,8 @@
         "create_subitem": "Alelem létrehozása",
         "created": "Létrehozva",
         "delete": "Törlés",
+        "delete_confirm": "Biztosan törlöd ezt az elemet? ",
+        "demo_instance": "Ez egy demó példány",
         "details": "Részletek",
         "duplicate": "Másolás",
         "edit": "Szerkesztés",
@@ -193,6 +208,7 @@
         "items": "Tételek",
         "join_discord": "Csatlakozz a Discordhoz",
         "labels": "Címkék",
+        "loading": "Betöltés…",
         "locations": "Helyek",
         "maintenance": "Karbantartás",
         "name": "Név",
@@ -200,11 +216,14 @@
         "password": "Jelszó",
         "quantity": "Mennyiség",
         "read_docs": "Olvasd el a dokumentációt",
+        "return_home": "Vissza a kezdőlapra",
         "save": "Mentés",
         "search": "Keresés",
         "sign_out": "Kijelentkezés",
         "submit": "Elküldés",
+        "unknown": "Ismeretlen",
         "update": "Módosítás",
+        "updating": "Frissítés",
         "value": "Érték",
         "version": "Verzió: { version }",
         "welcome": "Üdv, { username }"
@@ -229,18 +248,28 @@
         "set_email": "Mi az email címed?",
         "set_name": "Mi a neved?",
         "set_password": "Állíts be egy jelszót!",
-        "tagline": "Kövesd nyomon, rendszerezd és kezeld a dolgaidat."
+        "tagline": "Kövesd nyomon, rendszerezd és kezeld a dolgaidat.",
+        "title": "Rendezd és címkézd a dolgaidat",
+        "toast": {
+            "invalid_email": "E-mail cím érvénytelen",
+            "invalid_email_password": "Az E-mail vagy jelszó érvénytelen",
+            "login_success": "Sikeres bejelentkezés",
+            "problem_registering": "Hiba a felhasználó regisztrálásakor",
+            "user_registered": "Felhasználó regisztrálva"
+        }
     },
     "items": {
         "add": "Hozzáadás",
         "advanced": "Haladó",
         "archived": "Archivált",
         "asset_id": "Eszközazonosító",
+        "associated_with_multiple": "Ez az eszköz Id több elemhez van hozzárendelve",
         "attachment": "Melléklet",
         "attachments": "Mellékletek",
         "changes_persisted_immediately": "A mellékletek módosításai azonnal mentésre kerülnek",
         "created_at": "Létrehozás dátuma",
         "custom_fields": "Egyedi mezők",
+        "delete_attachment_confirm": "Biztos törli ezt a Mellékletet?",
         "description": "Leírás",
         "details": "Részletek",
         "drag_and_drop": "Húzd ide a fájlokat, vagy kattints a fájlok kiválasztásához",
