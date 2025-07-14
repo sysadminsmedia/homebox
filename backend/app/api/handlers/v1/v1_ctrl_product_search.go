@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/hay-kot/httpkit/errchain"
+	"github.com/hay-kot/httpkit/server"
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
@@ -322,14 +323,10 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 			p.ImageBase64 = base64Encoding
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-
 		if len(products) != 0 {
-			// Return only the first result for now. Enhance this with a dedicated dialog
-			// displaying all the references found?
-			return json.NewEncoder(w).Encode(products)
+			return server.JSON(w, http.StatusOK, products)
 		}
 
-		return nil
+		return server.JSON(w, http.StatusNoContent, nil)
 	}
 }
