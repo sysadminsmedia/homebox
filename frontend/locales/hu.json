@@ -342,7 +342,15 @@
         "toast": {
             "asset_not_found": "Az eszköz nem található",
             "attachment_deleted": "Melléklet törölve",
-            "attachment_updated": "Frissített csatolmány"
+            "attachment_updated": "Melléklet frissítve",
+            "attachment_uploaded": "Melléklet feltöltve",
+            "child_items_location_no_longer_synced": "A gyermekelemek helye a továbbiakban nem lesz szinkronizálva ezzel a tétellel.",
+            "child_items_location_synced": "A gyermekelemek helye szinkronizálva lett ezzel a tétellel",
+            "child_location_desync": "A hely módosítása de-szinkronizálja a szülő helyéről",
+            "error_loading_parent_data": "Hiba történt a szülőadatok betöltése során",
+            "failed_adjust_quantity": "Mennyiség beállítása sikertelen",
+            "failed_delete_attachment": "Melléklet törlése sikertelen",
+            "failed_delete_item": "A törlés sikertelen."
         },
         "updated_at": "Változtatás dátuma",
         "warranty": "Garancia",
