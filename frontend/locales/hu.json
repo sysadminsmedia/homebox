@@ -421,8 +421,14 @@
         "child_locations": "Tartalmazott helyek",
         "collapse_tree": "Fanézet becsukása",
         "expand_tree": "Fa kibontása",
-        "location_items_delete_confirm": "Biztosan törli ezt a helyet és az összes elemét? Ez a művelet nem vonható vissza.",
+        "location_items_delete_confirm": "Biztosan törlöd ezt a helyet és az összes elemét? Ez a művelet nem visszavonható.",
         "no_results": "Nem található hely",
+        "toast": {
+            "failed_delete_location": "Hely törlése sikertelen",
+            "failed_load_location": "Hely betöltése sikertelen",
+            "failed_update_location": "Hely frissítése sikertelen",
+            "location_deleted": "Törölt hely"
+        },
         "update_location": "Hely módosítása"
     },
     "maintenance": {
