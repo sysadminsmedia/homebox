@@ -2,6 +2,7 @@
     "components": {
         "app": {
             "create_modal": {
+                "createAndAddAnother": "Nyomj {shiftKey} + {enterKey}t, hogy létrehozd ezt és hozzáadj egy újat.",
                 "enter": "Enter",
                 "shift": "Shift"
             },
@@ -24,6 +25,7 @@
             }
         },
         "color_selector": {
+            "clear": "Szín törlése",
             "color": "Szín",
             "no_color": "Nincs szín",
             "no_color_selected": "Nincs kiválasztott szín",
@@ -106,6 +108,7 @@
                     "create_failed": "Sikertelen elem létrehozás",
                     "create_success": "Elem létrehozva",
                     "failed_load_parent": "Szülő elem betöltése sikertelen - válaszd ki manuálisan",
+                    "no_canvas_support": "A böngésződ nem támogatja a canvas műveleteket",
                     "please_select_location": "Válassz egy helyet.",
                     "rotate_failed": "Sikertelen képforgatás: { error }",
                     "rotate_process_failed": "Elforgatott kép feldolgozása sikertelen",
@@ -337,7 +340,9 @@
         "tips": "Tippek",
         "tips_sub": "Tippek a kereséshez",
         "toast": {
-            "asset_not_found": "Az eszköz nem található"
+            "asset_not_found": "Az eszköz nem található",
+            "attachment_deleted": "Melléklet törölve",
+            "attachment_updated": "Frissített csatolmány"
         },
         "updated_at": "Változtatás dátuma",
         "warranty": "Garancia",
