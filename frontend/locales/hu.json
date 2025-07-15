@@ -115,7 +115,7 @@
                     "some_photos_failed": "{count, plural, =0 {Nincs feltölthető fénykép.} =1 {1 fénykép feltöltése nem sikerült.} other {Néhány fénykép feltöltése nem sikerült.}}",
                     "upload_failed": "Kép feltöltése sikertelen: { photoName }",
                     "upload_success": "{count, plural, =0 {Nincsenek feltöltött fényképek.} =1 {A fénykép feltöltése sikeres.} other {Minden fénykép feltöltése sikeres.}}",
-                    "uploading_photos": "{count, plural, =0 {Nincs feltöltendő fénykép} =1 {1 fénykép feltöltése…} egyéb {{count} fénykép feltöltése…}}"
+                    "uploading_photos": "{count, plural, =0 {Nincs feltöltendő fénykép} =1 {1 fénykép feltöltése…} other {{count} fénykép feltöltése…}}"
                 },
                 "upload_photos": "Fotók feltöltése",
                 "uploaded": "Feltöltött fénykép"
@@ -362,7 +362,8 @@
             "failed_upload_attachment": "Melléklet feltöltése sikertelen",
             "item_deleted": "Tétel törölve",
             "item_saved": "Tétel mentve",
-            "quantity_cannot_negative": "A mennyiség nem lehet negatív"
+            "quantity_cannot_negative": "A mennyiség nem lehet negatív",
+            "sync_child_location": "A kiválasztott szülő szinkronizálja gyermekei tartózkodási helyét a sajátjával"
         },
         "updated_at": "Változtatás dátuma",
         "warranty": "Garancia",
@@ -427,7 +428,7 @@
             "failed_delete_location": "Hely törlése sikertelen",
             "failed_load_location": "Hely betöltése sikertelen",
             "failed_update_location": "Hely frissítése sikertelen",
-            "location_deleted": "Törölt hely"
+            "location_deleted": "Hely törölve"
         },
         "update_location": "Hely módosítása"
     },
