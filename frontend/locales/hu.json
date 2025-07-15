@@ -360,7 +360,8 @@
             "failed_search_items": "Tételek keresése sikertelen",
             "failed_update_attachment": "Melléklet frissítése sikertelen",
             "failed_upload_attachment": "Melléklet feltöltése sikertelen",
-            "item_deleted": "A pont törölve"
+            "item_deleted": "Tétel törölve",
+            "item_saved": "Elem mentve."
         },
         "updated_at": "Változtatás dátuma",
         "warranty": "Garancia",
