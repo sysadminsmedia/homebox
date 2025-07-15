@@ -355,7 +355,8 @@
             "failed_load_asset": "Eszköz betöltése sikertelen",
             "failed_load_item": "Tétel betöltése sikertelen",
             "failed_load_items": "Tételek betöltése sikertelen",
-            "failed_save": "Sikertelen mentés:"
+            "failed_save": "Tétel mentése sikertelen",
+            "failed_save_no_location": "Nem sikerült menteni a tételt: nincs kiválasztott hely"
         },
         "updated_at": "Változtatás dátuma",
         "warranty": "Garancia",
