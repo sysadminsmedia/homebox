@@ -6,8 +6,10 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/pressly/goose/v3"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/graceful"
@@ -98,7 +100,6 @@ func run(cfg *config.Config) error {
 
 	// =========================================================================
 	// Initialize Database & Repos
-
 	setupStorageDir(cfg)
 
 	if strings.ToLower(cfg.Database.Driver) == "postgres" {
@@ -195,6 +196,29 @@ func run(cfg *config.Config) error {
 
 	// Start Reoccurring Tasks
 	registerRecurringTasks(app, cfg, runner)
+
+	// Send analytics if enabled at around midnight UTC
+	if cfg.Options.AllowAnalytics {
+		analyticsTime := time.Second
+		runner.AddPlugin(NewTask("send-analytics", analyticsTime, func(ctx context.Context) {
+			for {
+				now := time.Now().UTC()
+				nextMidnight := time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, time.UTC)
+				dur := time.Until(nextMidnight)
+				analyticsTime = dur
+				select {
+				case <-ctx.Done():
+					return
+				case <-time.After(dur):
+					log.Debug().Msg("running send analytics")
+					err := analytics.Send(version, build())
+					if err != nil {
+						log.Error().Err(err).Msg("failed to send analytics")
+					}
+				}
+			}
+		}))
+	}
 
 	return runner.Start(context.Background())
 }
