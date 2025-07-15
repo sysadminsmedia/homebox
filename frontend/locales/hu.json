@@ -489,7 +489,7 @@
         "delete_account_confirm": "Biztosan törlöd a fiókodat? Ha te vagy az utolsó tag a csoportodban, minden adatod törlődik. Ez a művelet nem visszafordítható.",
         "delete_account_sub": "Törlöd a fiókodat és az összes kapcsolódó adatot. Ezt a műveletet nem lehet visszavonni.",
         "delete_notifier_confirm": "Biztos, hogy törölni akarod ezt az értesítőt?",
-        "display_legacy_header": "{ currentValue, select, true {Legacy fejléc letiltása} false {Legacy fejléc engedélyezése} other {Nem találat}}",
+        "display_legacy_header": "{ currentValue, select, true {Legacy fejléc letiltása} false {Legacy fejléc engedélyezése} other {Nincs találat}}",
         "enabled": "Engedélyezve",
         "example": "Példa",
         "gen_invite": "Meghívó link létrehozása",
@@ -507,6 +507,9 @@
         "test": "Teszt",
         "theme_settings": "Téma Beállítások",
         "theme_settings_sub": "A témabeállítások a böngésző helyi tárhelyén tárolódnak. Bármikor megváltoztathatod a témát. Ha problémába\n ütközöl a téma beállításakor, próbáld meg frissíteni az oldalt a böngésződben.",
+        "toast": {
+            "account_deleted": "Fiókját törölték."
+        },
         "update_group": "Csoport módosítása",
         "update_language": "Nyelv átállítása",
         "url": "URL",
