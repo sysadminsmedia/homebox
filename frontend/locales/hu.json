@@ -361,7 +361,8 @@
             "failed_update_attachment": "Melléklet frissítése sikertelen",
             "failed_upload_attachment": "Melléklet feltöltése sikertelen",
             "item_deleted": "Tétel törölve",
-            "item_saved": "Elem mentve."
+            "item_saved": "Tétel mentve",
+            "quantity_cannot_negative": "A mennyiség nem lehet negatív"
         },
         "updated_at": "Változtatás dátuma",
         "warranty": "Garancia",
@@ -369,7 +370,15 @@
         "warranty_expires": "Garancia vége"
     },
     "labels": {
+        "label_delete_confirm": "Biztos vagy benne, hogy törölni szeretnéd ezt a címkét? A művelet nem visszafordítható.",
         "no_results": "Nem található címke",
+        "toast": {
+            "failed_delete_label": "Címke törlése sikertelen",
+            "failed_load_label": "Címke betöltése sikertelen",
+            "failed_update_label": "Címke frissítése sikertelen",
+            "label_deleted": "Címke törölve",
+            "label_updated": "Címke frissítve"
+        },
         "update_label": "Címke módosítása"
     },
     "languages": {
@@ -412,6 +421,7 @@
         "child_locations": "Tartalmazott helyek",
         "collapse_tree": "Fanézet becsukása",
         "expand_tree": "Fa kibontása",
+        "location_items_delete_confirm": "Biztosan törli ezt a helyet és az összes elemét? Ez a művelet nem vonható vissza.",
         "no_results": "Nem található hely",
         "update_location": "Hely módosítása"
     },
