@@ -614,7 +614,8 @@
         "reports_sub": "Hozz létre különböző jelentéseket a készletedhez.",
         "toast": {
             "asset_success": "{ results } eszköz frissítve.",
-            "failed_create_missing_thumbnails": "Hiányzó miniatűrök létrehozása sikertelen."
+            "failed_create_missing_thumbnails": "Hiányzó bélyegképek létrehozása sikertelen.",
+            "failed_ensure_ids": "Nem sikerült biztosítani az eszközazonosítókat."
         }
     }
 }
