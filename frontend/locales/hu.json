@@ -615,7 +615,8 @@
         "toast": {
             "asset_success": "{ results } eszköz frissítve.",
             "failed_create_missing_thumbnails": "Hiányzó bélyegképek létrehozása sikertelen.",
-            "failed_ensure_ids": "Nem sikerült biztosítani az eszközazonosítókat."
+            "failed_ensure_ids": "Nem sikerült biztosítani az eszközazonosítók létezését.",
+            "failed_ensure_import_refs": "Importálási referenciák biztosítása sikertelen."
         }
     }
 }
