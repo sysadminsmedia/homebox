@@ -353,7 +353,9 @@
             "failed_delete_item": "Tétel törlése sikertelen",
             "failed_duplicate_item": "Tétel másolása sikertelen",
             "failed_load_asset": "Eszköz betöltése sikertelen",
-            "failed_load_item": "Hiba a betöltés közben"
+            "failed_load_item": "Tétel betöltése sikertelen",
+            "failed_load_items": "Tételek betöltése sikertelen",
+            "failed_save": "Sikertelen mentés:"
         },
         "updated_at": "Változtatás dátuma",
         "warranty": "Garancia",
