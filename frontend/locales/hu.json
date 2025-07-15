@@ -535,7 +535,8 @@
             "bordered_labels": "Keretes címkék",
             "generate_page": "Oldal létrehozása",
             "input_placeholder": "Írj ide",
-            "instruction_1": "A Homebox Label Generator egy olyan eszköz, amely segít a Homebox-leltár címkéinek nyomtatásában"
+            "instruction_1": "A Homebox Label Generator egy olyan eszköz, amely segít a Homebox-leltár címkéinek nyomtatásában. Ezeket előre\n kinyomtathatod, hogy bármikor felragaszthass egy új, még használatlan címkét.",
+            "instruction_2": "Mint ilyenek, ezek a címkék úgy működnek, hogy egy URL QR-kódot és eszközazonosítót nyomtatnak egy címkére"
         }
     },
     "scanner": {
