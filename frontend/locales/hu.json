@@ -532,7 +532,10 @@
             "asset_end": "Utolsó eszköz",
             "asset_start": "Első eszköz",
             "base_url": "Alap URL",
-            "bordered_labels": "Szegélyezett címkék"
+            "bordered_labels": "Keretes címkék",
+            "generate_page": "Oldal létrehozása",
+            "input_placeholder": "Írj ide",
+            "instruction_1": "A Homebox Label Generator egy olyan eszköz, amely segít a Homebox-leltár címkéinek nyomtatásában"
         }
     },
     "scanner": {
