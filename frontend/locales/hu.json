@@ -530,7 +530,9 @@
     "reports": {
         "label_generator": {
             "asset_end": "Utolsó eszköz",
-            "asset_start": "Eszköz kezdete"
+            "asset_start": "Első eszköz",
+            "base_url": "Alap URL",
+            "bordered_labels": "Szegélyezett címkék"
         }
     },
     "scanner": {
