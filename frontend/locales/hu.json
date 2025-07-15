@@ -529,7 +529,8 @@
     },
     "reports": {
         "label_generator": {
-            "asset_end": "Eszköz vége"
+            "asset_end": "Utolsó eszköz",
+            "asset_start": "Eszköz kezdete"
         }
     },
     "scanner": {
