@@ -547,7 +547,8 @@
             "page_right_padding": "Oldal jobb margója",
             "page_top_padding": "Oldal felső margója",
             "page_width": "Oldalszélesség",
-            "qr_code_example": "Kód példa"
+            "qr_code_example": "QR-kód példa",
+            "tip_1": "Az alapértelmezett beállítások itt az\n '<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 címkeívek '</a>'"
         }
     },
     "scanner": {
