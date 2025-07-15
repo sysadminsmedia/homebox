@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import MarkdownIt from "markdown-it";
+  import { imgSize } from "@mdit/plugin-img-size";
   import DOMPurify from "dompurify";
 
   type Props = {
@@ -14,7 +15,7 @@
     html: true,
     linkify: true,
     typographer: true,
-  });
+  }).use(imgSize);
 
   const raw = computed(() => {
     const html = md.render(props.source || "").replace(/\n$/, ""); // remove trailing newline
