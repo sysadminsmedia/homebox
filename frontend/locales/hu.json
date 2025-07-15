@@ -549,7 +549,8 @@
             "page_width": "Oldalszélesség",
             "qr_code_example": "QR-kód példa",
             "tip_1": "Az alapértelmezett beállítások\n'<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 címkeívek'</a>'nek felelnek meg. Ha más íveket használsz,\n módosítanod kell a beállításokat, hogy a laphoz igazodjanak.",
-            "tip_2": "Ha a lapot testre szabod, a méretek hüvelykben vannak megadva"
+            "tip_2": "Ha a lapot testre szabod, a méretek hüvelykben vannak megadva. A 5260 ívek létrehozásakor feltűnt,\n hogy a hivatalosan megadott méretek nem azonosak a megfelelő szövegdoboz méretekkel.\n'<b>'Szükséged lehet néhány próbálkozásra a megfelelő méretek megtalálásához.'</b>'",
+            "tip_3": "Nyomtatáskor ügyeljen a következőkre:\n '<ol><li>'Állítsa a margókat 0-ra vagy Nincsre'</li><li>'Állítsa a skálázást 100% -ra'</li><li>'Kétoldalas nyomtatás letiltása'</li><li>'Több oldal nyomtatása előtt nyomtasson tesztoldalt'</li></ol>'"
         }
     },
     "scanner": {
