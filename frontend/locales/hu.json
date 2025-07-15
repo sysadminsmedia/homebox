@@ -536,7 +536,8 @@
             "generate_page": "Oldal létrehozása",
             "input_placeholder": "Írj ide",
             "instruction_1": "A Homebox Label Generator egy olyan eszköz, amely segít a Homebox-leltár címkéinek nyomtatásában. Ezeket előre\n kinyomtathatod, hogy bármikor felragaszthass egy új, még használatlan címkét.",
-            "instruction_2": "Mint ilyenek, ezek a címkék úgy működnek, hogy egy URL QR-kódot és eszközazonosítót nyomtatnak egy címkére"
+            "instruction_2": "Ezek a címkék ezért úgy működnek, hogy egy URL QR-kódot és eszközazonosítót nyomtatnak egy címkére. Ha kikapcsoltad\n az eszközazonosítókat a Homebox beállításokban, akkor is használhatod ezt az eszközt, de nem mutat majd az eszközazonosító semmilyen tételre",
+            "instruction_3": "Ez a funkció korai fejlesztési szakaszban van, és a jövőbeli kiadásokban változhat, ha visszajelzést kap, kérjük,\nadja meg a<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\"> „GitHub vitafórumon”</a>"
         }
     },
     "scanner": {
