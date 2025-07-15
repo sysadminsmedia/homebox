@@ -350,7 +350,10 @@
             "error_loading_parent_data": "Hiba történt a szülőadatok betöltése során",
             "failed_adjust_quantity": "Mennyiség beállítása sikertelen",
             "failed_delete_attachment": "Melléklet törlése sikertelen",
-            "failed_delete_item": "A törlés sikertelen."
+            "failed_delete_item": "Tétel törlése sikertelen",
+            "failed_duplicate_item": "Tétel másolása sikertelen",
+            "failed_load_asset": "Eszköz betöltése sikertelen",
+            "failed_load_item": "Hiba a betöltés közben"
         },
         "updated_at": "Változtatás dátuma",
         "warranty": "Garancia",
