@@ -508,13 +508,29 @@
         "theme_settings": "Téma Beállítások",
         "theme_settings_sub": "A témabeállítások a böngésző helyi tárhelyén tárolódnak. Bármikor megváltoztathatod a témát. Ha problémába\n ütközöl a téma beállításakor, próbáld meg frissíteni az oldalt a böngésződben.",
         "toast": {
-            "account_deleted": "Fiókját törölték."
+            "account_deleted": "Fiókodat sikeresen töröltük.",
+            "failed_change_password": "Jelszó megváltoztatása sikertelen.",
+            "failed_create_notifier": "Értesítő létrehozása sikertelen.",
+            "failed_delete_account": "Nem sikerült törölni a fiókodat.",
+            "failed_delete_notifier": "Értesítő törlése sikertelen.",
+            "failed_get_currencies": "Pénznemek lekérése sikertelen",
+            "failed_test_notifier": "Nem sikerült tesztelni az értesítőt.",
+            "failed_update_group": "Csoport frissítése sikertelen",
+            "failed_update_notifier": "Nem sikerült frissíteni az értesítőt.",
+            "group_updated": "Csoport frissítve",
+            "notifier_test_success": "Az értesítő tesztje sikeres volt.",
+            "password_changed": "A jelszóváltoztatás sikeres volt."
         },
         "update_group": "Csoport módosítása",
         "update_language": "Nyelv átállítása",
         "url": "URL",
         "user_profile": "Felhasználói profil",
         "user_profile_sub": "Hívj meg felhasználókat, és kezeld a fiókodat."
+    },
+    "reports": {
+        "label_generator": {
+            "asset_end": "Eszköz vége"
+        }
     },
     "scanner": {
         "error": "Hiba történt a szkennelés közben",
