@@ -550,13 +550,19 @@
             "qr_code_example": "QR-kód példa",
             "tip_1": "Az alapértelmezett beállítások\n'<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 címkeívek'</a>'nek felelnek meg. Ha más íveket használsz,\n módosítanod kell a beállításokat, hogy a laphoz igazodjanak.",
             "tip_2": "Ha a lapot testre szabod, a méretek hüvelykben vannak megadva. A 5260 ívek létrehozásakor feltűnt,\n hogy a hivatalosan megadott méretek nem azonosak a megfelelő szövegdoboz méretekkel.\n'<b>'Szükséged lehet néhány próbálkozásra a megfelelő méretek megtalálásához.'</b>'",
-            "tip_3": "Nyomtatáskor ügyeljen a következőkre:\n '<ol><li>'Állítsa a margókat 0-ra vagy Nincsre'</li><li>'Állítsa a skálázást 100% -ra'</li><li>'Kétoldalas nyomtatás letiltása'</li><li>'Több oldal nyomtatása előtt nyomtasson tesztoldalt'</li></ol>'"
+            "tip_3": "Nyomtatáskor ügyelj a következőkre:\n '<ol><li>'Állítsd a margókat 0-ra vagy Nincsre'</li><li>'Állítsd a skálázást 100% -ra'</li><li>'Tiltsd le a kétoldalas nyomtatást'</li><li>'Több oldal nyomtatása előtt nyomtass tesztoldalt'</li></ol>'",
+            "tips": "Tippek",
+            "title": "Címkegenerátor",
+            "toast": {
+                "page_too_small_card": "Az oldal mérete túl kicsi a kártya méretéhez képest"
+            }
         }
     },
     "scanner": {
         "error": "Hiba történt a szkennelés közben",
         "invalid_url": "Érvénytelen vonalkód URL",
         "no_sources": "Nincs elérhető videóforrás",
+        "permission_denied": "A kamera engedélye megtagadva, engedélyezze a kamerához való hozzáférést a böngésző beállításaiban",
         "select_video_source": "Videóforrás kiválasztása",
         "title": "Szkenner",
         "unsupported": "A Media Stream API nem támogatott HTTPS nélkül"
