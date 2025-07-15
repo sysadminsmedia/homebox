@@ -363,7 +363,7 @@
             "item_deleted": "Tétel törölve",
             "item_saved": "Tétel mentve",
             "quantity_cannot_negative": "A mennyiség nem lehet negatív",
-            "sync_child_location": "A kiválasztott szülő szinkronizálja gyermekei tartózkodási helyét a sajátjával"
+            "sync_child_location": "A kiválasztott szülő szinkronizálja gyermekei tartózkodási helyét a sajátjával. Hely frissítve."
         },
         "updated_at": "Változtatás dátuma",
         "warranty": "Garancia",
@@ -428,7 +428,8 @@
             "failed_delete_location": "Hely törlése sikertelen",
             "failed_load_location": "Hely betöltése sikertelen",
             "failed_update_location": "Hely frissítése sikertelen",
-            "location_deleted": "Hely törölve"
+            "location_deleted": "Hely törölve",
+            "location_updated": "Hely frissítve"
         },
         "update_location": "Hely módosítása"
     },
@@ -485,6 +486,7 @@
         "currency_format": "Pénz formátum",
         "current_password": "Jelenlegi jelszó",
         "delete_account": "Fiók törlése",
+        "delete_account_confirm": "Biztosan törlöd a fiókodat? Ha te vagy az utolsó tag a csoportodban, minden adatod törlődik",
         "delete_account_sub": "Törlöd a fiókodat és az összes kapcsolódó adatot. Ezt a műveletet nem lehet visszavonni.",
         "enabled": "Engedélyezve",
         "example": "Példa",
