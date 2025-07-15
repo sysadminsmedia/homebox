@@ -562,7 +562,7 @@
         "error": "Hiba történt a szkennelés közben",
         "invalid_url": "Érvénytelen vonalkód URL",
         "no_sources": "Nincs elérhető videóforrás",
-        "permission_denied": "A kamera engedélye megtagadva, engedélyezze a kamerához való hozzáférést a böngésző beállításaiban",
+        "permission_denied": "A kamera engedélye megtagadva, engedélyezd a kamerához való hozzáférést a böngésző beállításaiban",
         "select_video_source": "Videóforrás kiválasztása",
         "title": "Szkenner",
         "unsupported": "A Media Stream API nem támogatott HTTPS nélkül"
@@ -570,6 +570,9 @@
     "tools": {
         "actions": "Készletműveletek",
         "actions_set": {
+            "create_missing_thumbnails": "Hiányzó bélyegképek létrehozása",
+            "create_missing_thumbnails_button": "Bélyegképek létrehozása",
+            "create_missing_thumbnails_confirm": "Biztosan létrehozza a hiányzó miniatűröket? Ez eltarthat egy ideig, és nem lehet szüneteltetni.",
             "ensure_ids": "Eszközazonosítók meglétének biztosítása",
             "ensure_ids_button": "Eszközazonosítók generálása",
             "ensure_ids_sub": "Biztosítja, hogy a készletben lévő összes tétel rendelkezzen érvényes asset_id (eszközazonosító) mezővel. Ehhez megkeresi a legmagasabb asset_id mezőértéket az adatbázisban és minden olyan tételhez, amelynek nem beállított az asset_id mezője, rendre eggyel növelt értéket állít be. Ezt a created_at mezők értékének (a tétel létrehozásának dátuma) sorrendjében teszi.",
