@@ -107,6 +107,7 @@
 </template>
 
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { Button } from "~/components/ui/button";
   import type { BarcodeProduct } from "~~/lib/api/types/data-contracts";
@@ -117,6 +118,7 @@
   import type { TableData } from "~/components/Item/View/Table.types";
 
   const { openDialog, registerOpenDialogCallback } = useDialog();
+  const { t } = useI18n();
 
   const searching = ref(false);
   const barcode = ref<string>("");
@@ -140,7 +142,7 @@
     },
     { text: "items.manufacturer", value: "manufacturer", align: "center" },
     { text: "items.model_number", value: "modelNumber", align: "center" },
-    { text: "DB source", value: "search_engine_name", align: "center", type: "url" },
+    { text: "components.item.product_import.db_source", value: "search_engine_name", align: "center", type: "url" },
   ] satisfies BarcodeTableHeader[];
 
   // Need for later filtering
@@ -181,7 +183,7 @@
     errorMessage.value = null;
 
     if (!barcode || barcode.trim().length === 0 || !/^[0-9]+$/.test(barcode)) {
-      errorMessage.value = "Invalid barcode provided";
+      errorMessage.value = t("components.item.product_import.error_invalid_barcode");
       console.error(errorMessage.value);
       return;
     }
@@ -192,13 +194,17 @@
     try {
       const result = await api.products.searchFromBarcode(barcode.trim());
       if (result.error) {
-        errorMessage.value = "API Error: " + result.error;
+        errorMessage.value = t("errors.api_failure") + result.error;
         console.error(errorMessage.value);
       } else {
+        if (result.data === undefined || result.data.length === undefined || result.data.length === 0) {
+          errorMessage.value = t("components.item.product_import.error_not_found");
+        }
+
         products.value = result.data;
       }
     } catch (error) {
-      errorMessage.value = "Failed to retrieve product info: " + error;
+      errorMessage.value = t("components.item.product_import.error_exception") + error;
       console.error(errorMessage.value);
     } finally {
       searching.value = false;

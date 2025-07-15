@@ -137,6 +137,7 @@
 
   watch(open, async isOpen => {
     if (isOpen) {
+      detectedBarcode.value = "";
       await startScanner();
     } else {
       stopScanner();

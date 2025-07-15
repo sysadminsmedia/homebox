@@ -130,7 +130,11 @@
             "product_import": {
                 "title": "Import product",
                 "barcode": "Product's barcode",
-                "search_item": "Search product"
+                "db_source": "DB source",
+                "search_item": "Search product",
+                "error_invalid_barcode": "Invalid barcode provided",
+                "error_exception": "Exception occured while retrieving item barcode: ",
+                "error_not_found": "No product found with give barcode."
             },
             "view": {
                 "selectable": {
@@ -190,6 +194,9 @@
             "no_results": "No results found.",
             "shortcut_hint": "Use the number keys to quickly select an action."
         }
+    },
+    "errors": {
+        "api_failure": "Backend API call failed: "
     },
     "global": {
         "add": "Add",

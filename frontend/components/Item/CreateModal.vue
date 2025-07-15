@@ -6,7 +6,7 @@
           <ButtonGroup>
             <Tooltip>
               <TooltipTrigger>
-                <Button variant="outline" :disabled="loading" data-pos="start" @click="openQrScannerPage()">
+                <Button variant="outline" :disabled="loading" size="icon" data-pos="start" @click="openQrScannerPage()">
                   <MdiBarcodeScan class="size-5" />
                 </Button>
               </TooltipTrigger>
@@ -16,7 +16,7 @@
             </Tooltip>
             <Tooltip>
               <TooltipTrigger>
-                <Button variant="outline" :disabled="loading" data-pos="end" @click="openBarcodeDialog()">
+                <Button variant="outline" :disabled="loading" size="icon" data-pos="end" @click="openBarcodeDialog()">
                   <MdiBarcode class="size-5" />
                 </Button>
               </TooltipTrigger>
@@ -511,12 +511,10 @@
   }
 
   function openQrScannerPage() {
-    closeDialog(DialogID.CreateItem);
     openDialog(DialogID.Scanner);
   }
 
   function openBarcodeDialog() {
-    closeDialog(DialogID.CreateItem);
     openDialog(DialogID.ProductImport);
   }
 </script>
