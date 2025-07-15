@@ -548,7 +548,8 @@
             "page_top_padding": "Oldal felső margója",
             "page_width": "Oldalszélesség",
             "qr_code_example": "QR-kód példa",
-            "tip_1": "Az alapértelmezett beállítások itt az\n '<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 címkeívek '</a>'"
+            "tip_1": "Az alapértelmezett beállítások\n'<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 címkeívek'</a>'nek felelnek meg. Ha más íveket használsz,\n módosítanod kell a beállításokat, hogy a laphoz igazodjanak.",
+            "tip_2": "Ha a lapot testre szabod, a méretek hüvelykben vannak megadva"
         }
     },
     "scanner": {
