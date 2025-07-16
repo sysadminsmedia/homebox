@@ -134,7 +134,7 @@
                 "search_item": "Search product",
                 "error_invalid_barcode": "Invalid barcode provided",
                 "error_exception": "Exception occured while retrieving item barcode: ",
-                "error_not_found": "No product found with give barcode."
+                "error_not_found": "No product found for given barcode."
             },
             "view": {
                 "selectable": {
