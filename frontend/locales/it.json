@@ -115,8 +115,8 @@
             },
             "selector": {
                 "no_results": "Nessun risultato trovato",
-                "placeholder": "Seleziona...",
-                "search_placeholder": "Digita per cercare"
+                "placeholder": "Seleziona…",
+                "search_placeholder": "Digita per cercare…"
             },
             "view": {
                 "selectable": {
@@ -168,7 +168,7 @@
                 "select_location": "Seleziona una posizione"
             },
             "tree": {
-                "no_locations": "Nessuna posizione disponibile. Aggiungi nuove posizioni mediante il pulsante\n`<`span class=\"link-primary\"`>`Crea`<`/span`>` nella barra di navigazione."
+                "no_locations": "Nessuna posizione disponibile. Aggiungi nuove posizioni mediante il pulsante\n'<span class=\"link-primary\">'Crea'</span>' nella barra di navigazione."
             }
         },
         "quick_menu": {
@@ -203,7 +203,7 @@
         "items": "Articoli",
         "join_discord": "Unisciti a Discord",
         "labels": "Etichette",
-        "loading": "Caricamento...",
+        "loading": "Caricamento…",
         "locations": "Posizioni",
         "maintenance": "Manutenzione",
         "name": "Nome",
@@ -285,7 +285,7 @@
         "first": "Primo",
         "include_archive": "Includi Articoli Archiviati",
         "insured": "Assicurato",
-        "invalid_asset_id": "ID dell'asset non valido.",
+        "invalid_asset_id": "ID dell'asset non valido",
         "last": "Ultimo",
         "lifetime_warranty": "Garanzia a vita",
         "location": "Luogo",
@@ -469,7 +469,7 @@
             "page_top_padding": "Spaziatura in alto",
             "page_width": "Larghezza pagina",
             "qr_code_example": "Esempio di codice QR",
-            "tip_1": "Le impostazioni predefinite qui sono configurate per i\n\n '<a href=\"https://www.avery.com/templates/5260\">'fogli di etichette ''Avery 5260 '</a>'. Se stai utilizzando un foglio differente,\n\n devi modificare le impostazioni affinchè corrispondano al tuo foglio."
+            "tip_1": "Le impostazioni predefinite qui sono configurate per i\n'<a href=\"https://www.avery.com/templates/5260\">'fogli di etichette ''Avery 5260 '</a>'. Se stai utilizzando un foglio differente,\n devi modificare le impostazioni affinchè corrispondano al tuo foglio."
         }
     },
     "scanner": {

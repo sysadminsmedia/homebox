@@ -176,7 +176,7 @@
                 "select_location": "Vælg en placering"
             },
             "tree": {
-                "no_locations": "Ingen tilgængelige placeringer. Tilføj nye placeringer via knappen '<span class=\"link-primary\">'Opret'</span>' på navigationslinjen."
+                "no_locations": "Ingen tilgængelige placeringer. Tilføj nye placeringer via knappen \n'<span class=\"link-primary\">'Opret'</span>' på navigationslinjen."
             }
         },
         "quick_menu": {

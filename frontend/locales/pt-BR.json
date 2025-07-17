@@ -1,17 +1,38 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "enter": "Entrar",
+                "shift": "Continuar"
+            },
             "import_dialog": {
                 "change_warning": "O comportamento de importações com import_refs existentes foi alterado. Se houver um import_ref presente no arquivo CSV, o\nitem será atualizado com os valores presentes no arquivo CSV.",
                 "description": "Importe um arquivo CSV contendo seus items, etiquetas e locais. Consulte a documentação para mais informações\nsobre a formatação aceita.",
-                "title": "Importar arquivo CSV"
+                "title": "Importar arquivo CSV",
+                "toast": {
+                    "import_failed": "Importação falhou. Tente novamente mais tarde.",
+                    "import_success": "Importação bem-sucedida!",
+                    "please_select_file": "Por favor, selecione um arquivo para importar."
+                }
             },
             "outdated": {
                 "current_version": "Versão Atual",
-                "dismiss": "Dispensar",
+                "dismiss": "Fechar",
                 "latest_version": "Última Versão",
                 "new_version_available": "Nova Versão Disponível",
                 "new_version_available_link": "Clique aqui para ver as novidades"
+            }
+        },
+        "color_selector": {
+            "clear": "Remover cor",
+            "color": "Cor",
+            "no_color": "Sem cor",
+            "no_color_selected": "Nenhuma cor selecionada",
+            "randomize": "Cor aleatória"
+        },
+        "form": {
+            "password": {
+                "toggle_show": "Alternar Mostrar Senha"
             }
         },
         "global": {
@@ -51,7 +72,12 @@
                 "download": "Baixar Rótulo",
                 "print": "Imprimir etiqueta",
                 "server_print": "Imprimir no Servidor",
-                "titles": "Etiquetas"
+                "titles": "Etiquetas",
+                "toast": {
+                    "load_status_failed": "Falha ao carregar status",
+                    "print_failed": "Falhou ao imprimir etiqueta",
+                    "print_success": "Etiqueta impressa"
+                }
             },
             "page_qr_code": {
                 "page_url": "URL da página",
@@ -62,12 +88,32 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "Download",
+                "open_new_tab": "Abrir em uma nova aba"
+            },
             "create_modal": {
+                "delete_photo": "Apagar foto",
                 "item_description": "Descrição do Item",
                 "item_name": "Nome do Item",
                 "item_photo": "Foto do Item 📷",
                 "item_quantity": "Quantidade de Itens",
+                "parent_item": "Item Pai",
+                "rotate_photo": "Girar imagem",
+                "set_as_primary_photo": "Definir como { isPrimary, select, true {non-} false {} other {}} foto primária",
                 "title": "Criar Item",
+                "toast": {
+                    "already_creating": "Já está criando um item",
+                    "create_failed": "Não foi possível criar o item",
+                    "create_success": "Item criado",
+                    "failed_load_parent": "Falhou ao carregar item pai - por favor selecione manualmente",
+                    "no_canvas_support": "Seu navegador não suporta operações de tela",
+                    "please_select_location": "Por favor seleciona a localização",
+                    "rotate_failed": "Falha ao rotacionar imagem: { error }",
+                    "rotate_process_failed": "Falhou ao processar imagem rotacionada",
+                    "some_photos_failed": "{count, plural, =0 {Nenhuma foto para upload.} =1 {1 imagem falhou no upload.} other {Algumas fotos falharam durante upload.}}",
+                    "upload_failed": "Falhou ao carregar a imagem: { photoName }"
+                },
                 "upload_photos": "Carregar Fotos"
             },
             "view": {

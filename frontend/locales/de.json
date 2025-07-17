@@ -2,7 +2,7 @@
     "components": {
         "app": {
             "create_modal": {
-                "createAndAddAnother": "Verwenden Sie {Umschalttaste} + {Eingabetaste}, um eine weitere zu erstellen und hinzuzufügen.",
+                "createAndAddAnother": "Verwenden Sie {shiftKey} + {enterKey}, um eine weitere zu erstellen und hinzuzufügen.",
                 "enter": "Eingabe",
                 "shift": "Shift"
             },
@@ -111,18 +111,18 @@
                     "please_select_location": "Bitte einen Ort auswählen.",
                     "rotate_failed": "Drehen des Bildes fehlgeschlagen: {error}",
                     "rotate_process_failed": "Das gedrehte Bild konnte nicht verarbeitet werden",
-                    "some_photos_failed": "{Anzahl, Plural, =0 {Keine Fotos zum Hochladen.} =1 {1 Foto konnte nicht hochgeladen werden.} andere {Einige Fotos konnten nicht hochgeladen werden.}}",
+                    "some_photos_failed": "{count, plural, =0 {Keine Fotos zum Hochladen.} =1 {1 Foto konnte nicht hochgeladen werden.} other {Einige Fotos konnten nicht hochgeladen werden.}}",
                     "upload_failed": "Hochladen des Bildes Fehlgeschlagen: { photoName }",
-                    "upload_success": "{Anzahl, plural, =0 {Keine Fotos hochgeladen.} =1 {Foto erfolgreich hochgeladen.} other {Alle Fotos erfolgreich hochgeladen.}}",
-                    "uploading_photos": "{Anzahl, plural, =0 {Keine Fotos zum Hochladen} =1 {1 Foto wird hochgeladen...} other {{Anzahl} Fotos werden hochgeladen...}}"
+                    "upload_success": "{count, plural, =0 {Keine Fotos hochgeladen.} =1 {Foto erfolgreich hochgeladen.} other {Alle Fotos erfolgreich hochgeladen.}}",
+                    "uploading_photos": "{count, plural, =0 {Keine Fotos zum Hochladen} =1 {1 Foto wird hochgeladen...} other {{count} Fotos werden hochgeladen...}}"
                 },
                 "upload_photos": "Upload Bilder",
                 "uploaded": "Bild hochgeladen"
             },
             "selector": {
                 "no_results": "Keine Ergebnisse gefunden",
-                "placeholder": "Auswählen...",
-                "search_placeholder": "Für Suche tippen..."
+                "placeholder": "Auswählen…",
+                "search_placeholder": "Für Suche tippen…"
             },
             "view": {
                 "selectable": {
@@ -174,7 +174,7 @@
                 "select_location": "Standort wählen"
             },
             "tree": {
-                "no_locations": "Keine Standorte verfügbar. Fügen Sie neue Standorte über die Schaltfläche\n `<`span class=\"link-primary\"`>`Erstellen`<`/span`>` in der Navigationsleiste hinzu."
+                "no_locations": "Keine Standorte verfügbar. Fügen Sie neue Standorte über die Schaltfläche\n `<span class=\"link-primary\">`Erstellen`</span>` in der Navigationsleiste hinzu."
             }
         },
         "quick_menu": {
