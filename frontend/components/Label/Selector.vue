@@ -7,7 +7,7 @@
     <TagsInput
       v-model="modelValue"
       class="w-full gap-0 px-0"
-      :display-value="v => shortenedLabels.find(l => l.id === v)?.name ?? 'Loading...'"
+      :display-value="v => props.labels.find(l => l.id === v)?.name ?? 'Loading...'"
     >
       <div class="flex flex-wrap items-center gap-2 px-3">
         <TagsInputItem v-for="item in modelValue" :key="item" :value="item">
@@ -114,16 +114,9 @@
   const open = ref(false);
   const searchTerm = ref("");
 
-  const shortenedLabels = computed(() => {
-    return props.labels.map(l => ({
-      ...l,
-      name: l.name.length > 20 ? `${l.name.substring(0, 20)}...` : l.name,
-    }));
-  });
-
   const filteredLabels = computed(() => {
     const filtered = fuzzysort
-      .go(searchTerm.value, shortenedLabels.value, { key: "name", all: true })
+      .go(searchTerm.value, props.labels, { key: "name", all: true })
       .map(l => ({
         value: l.obj.id,
         label: l.obj.name,
