@@ -34,7 +34,7 @@ require (
 	github.com/yeqown/go-qrcode/v2 v2.2.5
 	github.com/yeqown/go-qrcode/writer/standard v1.3.0
 	github.com/zeebo/blake3 v0.2.4
-	go.balki.me/anyhttp v0.5.0
+	go.balki.me/anyhttp v0.5.2
 	gocloud.dev v0.41.0
 	gocloud.dev/pubsub/kafkapubsub v0.41.0
 	gocloud.dev/pubsub/natspubsub v0.41.0
