@@ -115,8 +115,8 @@
             },
             "selector": {
                 "no_results": "Nenhum Resultado Encontrado",
-                "placeholder": "Selecionar...",
-                "search_placeholder": "Escreva para pesquisar..."
+                "placeholder": "Selecionar…",
+                "search_placeholder": "Escreva para pesquisar…"
             },
             "view": {
                 "selectable": {
@@ -167,7 +167,7 @@
                 "select_location": "Selecionar uma Localização"
             },
             "tree": {
-                "no_locations": "Sem localizações disponíveis. Adicione novas localizações através do botão \n`<`span class=\"link-primary\"`>`Criar`<`/span`>` na barra de navegação."
+                "no_locations": "Sem localizações disponíveis. Adicione novas localizações através do botão \n'<span class=\"link-primary\">'Criar'</span>' na barra de navegação."
             }
         },
         "quick_menu": {
@@ -202,7 +202,7 @@
         "items": "Itens",
         "join_discord": "Junte-se ao Discord",
         "labels": "Etiquetas",
-        "loading": "A Carregar...",
+        "loading": "A Carregar…",
         "locations": "Localizações",
         "maintenance": "Manutenção",
         "name": "Nome",

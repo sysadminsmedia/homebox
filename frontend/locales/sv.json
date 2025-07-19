@@ -129,7 +129,7 @@
                 "select_location": "Välj en plats"
             },
             "tree": {
-                "no_locations": "Inga platser tillgängliga. Lägg till nya platser via\n `<`span class=\"link-primary\"`>`Skapa`<`/span`>`-knappen i navigationsmenyn."
+                "no_locations": "Inga platser tillgängliga. Lägg till nya platser via\n '<span class=\"link-primary\">'Skapa'</span>'-knappen i navigationsmenyn."
             }
         },
         "quick_menu": {

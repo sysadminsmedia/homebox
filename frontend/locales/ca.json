@@ -98,7 +98,7 @@
                 "parent_location": "Ubicació pare"
             },
             "tree": {
-                "no_locations": "No hi ha ubicacions disponibles. Afegiu ubicacions amb el botó\n `<`span class=\"link-primary\"`>`Crea`<`/span`>` a la barra de navegació."
+                "no_locations": "No hi ha ubicacions disponibles. Afegiu ubicacions amb el botó\n '<span class=\"link-primary\">'Crea'</span>' a la barra de navegació."
             }
         }
     },

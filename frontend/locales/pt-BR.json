@@ -2,12 +2,13 @@
     "components": {
         "app": {
             "create_modal": {
+                "createAndAddAnother": "Use {shiftKey} + {enterKey} para criar e adicionar outro.",
                 "enter": "Entrar",
                 "shift": "Continuar"
             },
             "import_dialog": {
-                "change_warning": "O comportamento de importações com import_refs existentes foi alterado. Se houver um import_ref presente no arquivo CSV, o\nitem será atualizado com os valores presentes no arquivo CSV.",
-                "description": "Importe um arquivo CSV contendo seus items, etiquetas e locais. Consulte a documentação para mais informações\nsobre a formatação aceita.",
+                "change_warning": "O comportamento das importações com import_refs existentes foi alterado. Se houver um import_ref presente no arquivo CSV, o \nitem será atualizado com os valores presentes no arquivo CSV.",
+                "description": "Importe um arquivo CSV contendo seus itens, etiquetas e locais. Consulte a documentação para mais informações \nsobre a formatação necessária.",
                 "title": "Importar arquivo CSV",
                 "toast": {
                     "import_failed": "Importação falhou. Tente novamente mais tarde.",
@@ -112,30 +113,46 @@
                     "rotate_failed": "Falha ao rotacionar imagem: { error }",
                     "rotate_process_failed": "Falhou ao processar imagem rotacionada",
                     "some_photos_failed": "{count, plural, =0 {Nenhuma foto para upload.} =1 {1 imagem falhou no upload.} other {Algumas fotos falharam durante upload.}}",
-                    "upload_failed": "Falhou ao carregar a imagem: { photoName }"
+                    "upload_failed": "Falhou ao carregar a imagem: { photoName }",
+                    "upload_success": "{count, plural, =0 {Nenhuma foto carregada.} =1 {Foto carregada com sucesso..} other {Todas as fotos carregadas com sucesso .}}",
+                    "uploading_photos": "{count, plural, =0 {Nenhuma foto para enviar.} =1 {Enviando 1 foto…} other {Enviando {count} fotos…}}"
                 },
-                "upload_photos": "Carregar Fotos"
+                "upload_photos": "Carregar Fotos",
+                "uploaded": "Fotos enviadas"
+            },
+            "selector": {
+                "no_results": "Nenhum Resultado Encontrado",
+                "placeholder": "Selecione…",
+                "search_placeholder": "Digite para pesquisar…"
             },
             "view": {
                 "selectable": {
                     "card": "Cartão",
                     "items": "Items",
-                    "no_items": "Nenhum item para exibir",
+                    "no_items": "Nenhum Item para Exibir",
                     "table": "Tabela"
                 },
                 "table": {
                     "headers": "Cabeçalhos",
                     "page": "Página",
                     "rows_per_page": "Linhas por página",
-                    "table_settings": "Configurações da Tabela"
+                    "table_settings": "Configurações da Tabela",
+                    "view_item": "Visualizar item"
                 }
             }
         },
         "label": {
             "create_modal": {
-                "label_description": "Descrição da Etiqueta",
+                "label_color": "Cor do Rótulo",
+                "label_description": "Descrição da Texto",
                 "label_name": "Nome da Etiqueta",
-                "title": "Criar etiqueta"
+                "title": "Criar etiqueta",
+                "toast": {
+                    "already_creating": "Etiqueta já criada",
+                    "create_failed": "Não foi possível criar etiqueta",
+                    "create_success": "Etiqueta criada",
+                    "label_name_too_long": "Nome da etiqueta não deve ultrapassar 50 caracteres"
+                }
             },
             "selector": {
                 "select_labels": "Selecionar Etiquetas"
@@ -145,7 +162,12 @@
             "create_modal": {
                 "location_description": "Descrição do Local",
                 "location_name": "Nome do Local",
-                "title": "Criar Local"
+                "title": "Criar Localização",
+                "toast": {
+                    "already_creating": "Localização já foi criada",
+                    "create_failed": "Não foi possível criar a localização",
+                    "create_success": "Localização criada"
+                }
             },
             "selector": {
                 "no_location_found": "Nenhum local encontrado",
@@ -170,8 +192,11 @@
         "confirm": "Confirmar",
         "create": "Criar",
         "create_and_add": "Criar e Adicionar Outro",
+        "create_subitem": "Criar Subitem",
         "created": "Criado",
         "delete": "Excluir",
+        "delete_confirm": "Tem certeza que deseja excluir este item? ",
+        "demo_instance": "Esta é uma instancia de demonstração",
         "details": "Detalhes",
         "duplicate": "Duplicar",
         "edit": "Editar",
@@ -186,6 +211,7 @@
         "items": "Items",
         "join_discord": "Junte-se ao Discord",
         "labels": "Etiquetas",
+        "loading": "Carregando…",
         "locations": "Locais",
         "maintenance": "Manutenção",
         "name": "Nome",
@@ -193,11 +219,14 @@
         "password": "Senha",
         "quantity": "Quantidade",
         "read_docs": "Leia a Documentação",
+        "return_home": "Retornar para Home",
         "save": "Salvar",
         "search": "Buscar",
         "sign_out": "Encerrar sessão",
         "submit": "Enviar",
+        "unknown": "Desconhecido",
         "update": "Atualizar",
+        "updating": "Atualizando",
         "value": "Valor",
         "version": "Versão: { version }",
         "welcome": "Bem-vindo, {username}"
@@ -222,27 +251,49 @@
         "set_email": "Qual o seu e-mail?",
         "set_name": "Qual é o seu nome?",
         "set_password": "Defina a sua Senha",
-        "tagline": "Rastreie, organize e gerencie suas coisas."
+        "tagline": "Rastreie, organize e gerencie suas coisas.",
+        "title": "Organize e Etiquete Suas Coisas",
+        "toast": {
+            "invalid_email": "Endereço de email inválido",
+            "invalid_email_password": "Email ou senha inválidos",
+            "login_success": "Logado com sucesso",
+            "problem_registering": "Problema ao registrar usuário",
+            "user_registered": "Usuário registrado"
+        }
     },
     "items": {
         "add": "Adicionar",
         "advanced": "Avançada",
         "archived": "Arquivado",
         "asset_id": "ID do Ativo",
+        "associated_with_multiple": "Este ID de ativo está associado a vários itens",
         "attachment": "Anexo",
         "attachments": "Anexos",
         "changes_persisted_immediately": "Alterações nos anexos serão salvas imediatamente",
         "created_at": "Criado em",
         "custom_fields": "Campos Personalizados",
+        "delete_attachment_confirm": "Tem certeza que deseja excluir este anexo?",
+        "delete_item_confirm": "Tem certeza que deseja excluir este item?",
         "description": "Descrição",
         "details": "Detalhes",
         "drag_and_drop": "Arraste e solte os arquivos aqui ou clique para selecionar os arquivos",
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "Título do Anexo",
+                "attachment_type": "Tipo do Anexo",
+                "primary_photo": "Foto Principal",
+                "primary_photo_sub": "Esta opção está disponível apenas para fotos. Apenas uma foto pode ser a principal. Se você selecionar esta opção, a foto principal atual, se houver, será desmarcada.",
+                "select_type": "Selecione um tipo",
+                "title": "Editar Anexo"
+            }
+        },
         "edit_details": "Detalhes da Edição",
         "field_selector": "Seletor de Campo",
         "field_value": "Valor do Campo",
         "first": "Primeira",
         "include_archive": "Incluir itens arquivados",
         "insured": "Segurado",
+        "invalid_asset_id": "ID de ativo inválido",
         "last": "Última",
         "lifetime_warranty": "Garantia Vitalícia",
         "location": "Local",
@@ -253,6 +304,7 @@
         "name": "Nome",
         "negate_labels": "Negar Rótulos Selecionados",
         "next_page": "Próxima página",
+        "no_attachments": "Nenhum anexo encontrado",
         "no_results": "Nenhum Item Encontrado",
         "notes": "Anotações",
         "only_with_photo": "Somente itens com foto",
@@ -274,24 +326,60 @@
         "receipts": "Recibos",
         "reset_search": "Reiniciar Pesquisa",
         "results": "{ total } Resultados",
+        "select_field": "Selecione o campo",
         "serial_number": "Número Serial",
         "show_advanced_view_options": "Exibir Opções de Visualização Avançada",
         "sold_at": "Vendido Em",
         "sold_details": "Detalhes da Venda",
         "sold_price": "Preço da Venda",
         "sold_to": "Vendido Para",
+        "sync_child_locations": "Sincronizar a localização dos itens filhos",
         "tip_1": "Os filtros de local e etiqueta usam o operador \"OR\". Se você selecionar mais de um, somente um será\nnecessário para obter um resultado.",
         "tip_2": "As pesquisas comprefixo '#'' buscam um ID de ativo (exemplo '#000-001')",
-        "tip_3": "Os filtros de local e etiqueta usam o operador \"OR\". Se você selecionar mais de um, somente um será\nnecessário para obter um resultado.",
+        "tip_3": "Os filtros de local e etiqueta usam o operador \"OR\". Se você selecionar mais de um, somente um será \nnecessário para obter um resultado.",
         "tips": "Dicas",
         "tips_sub": "Dicas de pesquisa",
+        "toast": {
+            "asset_not_found": "Ativo não encontrado",
+            "attachment_deleted": "Anexo apagado",
+            "attachment_updated": "Anexo atualizado",
+            "attachment_uploaded": "Anexo enviado",
+            "child_items_location_no_longer_synced": "As localizações dos itens filhos não serão mais sincronizadas com este item.",
+            "child_items_location_synced": "As localizações dos itens filhos foram sincronizadas com este item",
+            "child_location_desync": "Alterar a localização irá dessincronizá-la da localização dos pais",
+            "error_loading_parent_data": "Algo deu errado ao tentar carregar os dados dos pais",
+            "failed_adjust_quantity": "Falha ao ajustar quantidade",
+            "failed_delete_attachment": "Falhou ao apagar anexo",
+            "failed_delete_item": "Falhou ao apagar item",
+            "failed_duplicate_item": "Falhou ao duplicar item",
+            "failed_load_asset": "Falha ao carregar o ativo",
+            "failed_load_item": "Falha ao carregar item",
+            "failed_load_items": "Falha ao carregar o ativos",
+            "failed_save": "Falha ao salvar item",
+            "failed_save_no_location": "Falha ao salvar item: localização não selecionada",
+            "failed_search_items": "Falha ao localizar itens",
+            "failed_update_attachment": "Falha ao atualizar anexo",
+            "failed_upload_attachment": "Falha ao enviar anexo",
+            "item_deleted": "Item apagado",
+            "item_saved": "Item salvo",
+            "quantity_cannot_negative": "Quantidade não pode ser negativa",
+            "sync_child_location": "O item pai selecionado sincroniza a localização dos filhos com a sua. A localização foi atualizada."
+        },
         "updated_at": "Atualizado em",
         "warranty": "Garantia",
         "warranty_details": "Detalhes da Garantia",
         "warranty_expires": "Garantia Expira Em"
     },
     "labels": {
+        "label_delete_confirm": "Tem certeza de que deseja excluir este marcador? Esta ação não pode ser desfeita.",
         "no_results": "Nenhuma etiqueta encontrada",
+        "toast": {
+            "failed_delete_label": "Falha ao deletar etiqueta",
+            "failed_load_label": "Falha ao deletar rótulo",
+            "failed_update_label": "Falha ao deletar rótulo",
+            "label_deleted": "Rótulo excluído",
+            "label_updated": "Rótulo atualizado"
+        },
         "update_label": "Atualizar Etiqueta"
     },
     "languages": {
@@ -307,7 +395,9 @@
         "it": "Italiano",
         "ja-JP": "Japonês",
         "ko-KR": "Coreano",
-        "nb-NO": "Danonorueguês",
+        "lb-LU": "Luxemburguês (Luxemburgo)",
+        "lt-LT": "Lituano (Lituânia)",
+        "nb-NO": "Dano norueguês",
         "nl": "Holandês",
         "pl": "Polonês",
         "pt-BR": "Português (Brasil)",
@@ -332,8 +422,16 @@
         "child_locations": "Locais Filhos",
         "collapse_tree": "Ocultar Árvore",
         "expand_tree": "Expandir Árvore",
+        "location_items_delete_confirm": "Tem certeza de que deseja excluir este local e todos os seus itens? Esta ação não pode ser desfeita.",
         "no_results": "Nenhum local encontrado",
-        "update_location": "Atualizar Local"
+        "toast": {
+            "failed_delete_location": "Falhou ao apagar localização",
+            "failed_load_location": "Falhou ao carregar localização",
+            "failed_update_location": "Falha ao atualizar localização",
+            "location_deleted": "Localização deletada",
+            "location_updated": "Localização atualizada"
+        },
+        "update_location": "Atualizar Localização"
     },
     "maintenance": {
         "filter": {
@@ -388,13 +486,16 @@
         "currency_format": "Formato da moeda",
         "current_password": "Senha Atual",
         "delete_account": "Excluir conta",
+        "delete_account_confirm": "Tem certeza de que deseja excluir sua conta? Se você for o último membro do grupo, todos os seus dados serão excluídos. Esta ação não pode ser desfeita.",
         "delete_account_sub": "Excluir sua conta e todos os dados associados. Essa ação não pode ser desfeita.",
+        "delete_notifier_confirm": "Tem certeza que deseja apagar o notificador?",
+        "display_legacy_header": "{ currentValue, select, true {Desativar cabeçalho legado} false {Ativar cabeçalho legado} other {Não atingido}}",
         "enabled": "Ativado",
         "example": "Exemplo",
         "gen_invite": "Gerar link de convite",
         "group_settings": "Definições do grupo",
         "group_settings_sub": "Configurações de Grupo Compartilhado. É possível que tenha que recarregar a página para que alguns ajustes sejam aplicados.",
-        "inactive": "Inativa",
+        "inactive": "Inativo",
         "language": "Idioma",
         "new_password": "Nova Senha",
         "no_notifiers": "Nenhum notificador configurado",
@@ -406,16 +507,62 @@
         "test": "Teste",
         "theme_settings": "Configurações do Tema",
         "theme_settings_sub": "As configurações de tema são salvas localmente em seu navegador. Você pode mudar o tema a qualquer momento. Se está\ntendo problemas com a mudança de tema, tente recarregar a pagina.",
+        "toast": {
+            "account_deleted": "Sua conta foi apagada.",
+            "failed_change_password": "Falha ao alterar senha.",
+            "failed_create_notifier": "Falha ao criar notificação.",
+            "failed_delete_account": "Falha ao apagar usa conta.",
+            "failed_delete_notifier": "Falha ao apagar notificador.",
+            "failed_get_currencies": "Falha ao obter cotações",
+            "failed_test_notifier": "Falha ao testar notificador.",
+            "failed_update_group": "Falha ao atualizar grupo",
+            "failed_update_notifier": "Falha ao atualizar o notificador.",
+            "group_updated": "Grupo atualizado",
+            "notifier_test_success": "Notificador testado com sucesso.",
+            "password_changed": "Senha alterada com sucesso."
+        },
         "update_group": "Atualizar grupo",
         "update_language": "Atualizar idioma",
         "url": "URL",
         "user_profile": "Perfil do usuário",
         "user_profile_sub": "Convide usuários e gerencie sua conta."
     },
+    "reports": {
+        "label_generator": {
+            "asset_end": "Fim do Ativo",
+            "asset_start": "Inicio do Ativo",
+            "base_url": "URL Base",
+            "bordered_labels": "Etiquetas com bordas",
+            "generate_page": "Gerando Página",
+            "input_placeholder": "Digite aqui",
+            "instruction_1": "O Gerador de Etiquetas Homebox é uma ferramenta para ajudar você a imprimir etiquetas para o seu inventário Homebox. Elas são projetadas para\nserem etiquetas de impressão antecipada, para que você possa imprimir várias etiquetas e tê-las prontas para aplicar",
+            "instruction_2": "Dessa forma, essas etiquetas funcionam imprimindo um código QR de URL e informações de AssetID em uma etiqueta. Se você desativou\nos AssetIDs nas configurações do seu Homebox, ainda poderá usar esta ferramenta, mas os AssetIDs não farão referência a nenhum item",
+            "instruction_3": "Este recurso está em estágios iniciais de desenvolvimento e pode mudar em versões futuras. Se você tiver algum feedback,\nfaça-o na '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'Discussão do GitHub'</a>'",
+            "label_height": "Altura da Etiqueta",
+            "label_width": "Largura da Etiqueta",
+            "measure_type": "Tipo da Medida",
+            "page_bottom_padding": "Espaçamento inferior da página",
+            "page_height": "Altura da Página",
+            "page_left_padding": "Espaçamento Esquerdo da Página",
+            "page_right_padding": "Espaçamento Direito da Página",
+            "page_top_padding": "Espaçamento Superior da Página",
+            "page_width": "Largura da Página",
+            "qr_code_example": "Exemplo de QR Code",
+            "tip_1": "Os padrões aqui são configurados para as\n'<a href=\"https://www.avery.com/templates/5260\">'Folhas de etiquetas Avery 5260'</a>'. Se estiver usando uma folha diferente,\nserá necessário ajustar as configurações para corresponder à sua folha.",
+            "tip_2": "Se você estiver personalizando sua planilha, as dimensões estão em polegadas. Ao criar a planilha 5260, descobri que as\ndimensões usadas no modelo não correspondiam ao que era necessário para imprimir dentro das caixas.\n'<b>'Esteja preparado para algumas tentativas e erros.'</b>'",
+            "tip_3": "Ao imprimir, certifique-se de:\n'<ol><li>'Definir as margens como 0 ou Nenhuma'</li><li>'Definir a escala como 100%'</li><li>'Desativar a impressão frente e verso'</li><li>'Imprimir uma página de teste antes de imprimir várias páginas'</li></ol>'",
+            "tips": "Dicas",
+            "title": "Gerador de Etiquetas",
+            "toast": {
+                "page_too_small_card": "Tamanho da página é muito pequena para o tamanho do cartão"
+            }
+        }
+    },
     "scanner": {
         "error": "Ocorreu um erro durante a digitalização",
         "invalid_url": "Código de barras inválido",
         "no_sources": "Nenhuma fonte de vídeo disponível",
+        "permission_denied": "Permissão de câmera negada, permita o acesso à câmera nas configurações do seu navegador",
         "select_video_source": "Escolha uma fonte de vídeo",
         "title": "Scanner",
         "unsupported": "A API do Fluxo de Mídia não é suportada sem o protocolo HTTPS"
@@ -423,17 +570,24 @@
     "tools": {
         "actions": "Ações de inventário",
         "actions_set": {
+            "create_missing_thumbnails": "Criar Miniaturas Ausentes",
+            "create_missing_thumbnails_button": "Miniatura Criada",
+            "create_missing_thumbnails_confirm": "Tem certeza de que deseja criar as miniaturas ausentes? Isso pode demorar um pouco e não pode ser pausado.",
+            "create_missing_thumbnails_sub": "Cria miniaturas para todos os anexos suportados pela configuração atual. Isso é útil para anexos enviados antes da versão v0.20.0 do Homebox. Isso não substituirá as miniaturas existentes, apenas criará novas para anexos que não tenham miniatura. Observe que as miniaturas são criadas em segundo plano e podem levar algum tempo para serem concluídas.",
             "ensure_ids": "Garantir IDs de ativos",
             "ensure_ids_button": "Garantir IDs de ativos",
+            "ensure_ids_confirm": "Tem certeza de que deseja garantir que todos os ativos tenham um ID? Isso pode demorar um pouco e não pode ser desfeito.",
             "ensure_ids_sub": "Garante que todos os itens em seu inventário tenham um campo de asset_id válido. Isso é feito através da procura do mais alto asset_id no banco de dados e aplicando o próximo valor aos itens seguintes que não tenham valores de asset_id definidos. Isso é feito com base no campo created_at.",
             "ensure_import_refs": "Garantir refs de importação",
             "ensure_import_refs_button": "Garantir refs de importação",
             "ensure_import_refs_sub": "Garante que todos os itens no seu inventário tenham um campo import_ref válido. Isso é feito gerando aleatoriamente uma sequência de 8 caracteres para cada item que não possuir um campo import_ref válido.",
             "set_primary_photo": "Definir foto principal",
             "set_primary_photo_button": "Definir foto principal",
+            "set_primary_photo_confirm": "Tem certeza de que deseja definir as fotos principais? Isso pode demorar um pouco e não pode ser desfeito.",
             "set_primary_photo_sub": "Na versão v0.10.0 do Homebox, o campo principal de foto foi adicionado aos anexos do tipo foto. Essa ação irá marcar o campo da imagem principal para a primeira imagem no array de anexos do banco de dados, se não estiver feito ainda.'<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Veja no GitHub PR #576'</a>'",
             "zero_datetimes": "Zerar Data Hora do Item",
             "zero_datetimes_button": "Zerar Data Hora do Item",
+            "zero_datetimes_confirm": "Tem certeza de que deseja redefinir todos os valores de data e hora? Isso pode demorar um pouco e não pode ser desfeito.",
             "zero_datetimes_sub": "Redefine o valor de hora de todos os itens do inventário para o início da data. Isso é para corrigir um bug que foi introduzido no início do desenvolvimento do site que causava o valor da hora ser armazenado errado, resultando em um erro na mostra da data/hora do item. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Veja o item #236 do Github para mais detalhes.'</a>'"
         },
         "actions_sub": "Aplicar ações ao seu inventário em massa. Essas ações são irreversíveis. '<b>'Tenha cuidado'</b>'",
@@ -444,6 +598,7 @@
             "export_sub": "Exporta o formato CSV padrão para o Homebox. Isso irá exportar todos os itens do seu inventário.",
             "import": "Importar inventário",
             "import_button": "Importar inventário",
+            "import_ref_confirm": "Tem certeza de que deseja garantir que todos os ativos tenham um import_ref? Isso pode demorar um pouco e não pode ser desfeito.",
             "import_sub": "Importa o formato CSV padrão para o Homebox. Sem uma coluna '<code>'HB.import_ref'</code>' , isso '<b>não</b>' vai sobrescrever nenhum item de seu inventário, apenas adicionar novos items. Linhas que tenham '<code>'HB.import_ref'</code>' colunas são mescladas em itens existentes com o mesmo import_ref, se existir."
         },
         "import_export_sub": "Importar e exportar seu inventário de ou para um arquivo CSV. Isso é útil para migrar o seu inventário para uma nova instância do Homebox.",
@@ -456,6 +611,14 @@
             "bill_of_materials_button": "Gerar Lista de Materiais",
             "bill_of_materials_sub": "Gera um arquivo CSV (Valores Separados por Vírgula) que pode ser importado para um programa de planilha. Esse é um sumário do seu inventário com informações básicas dos itens e dos preços."
         },
-        "reports_sub": "Gere relatórios diferentes para o seu inventário."
+        "reports_sub": "Gere relatórios diferentes para o seu inventário.",
+        "toast": {
+            "asset_success": "{ results } os ativos foram atualizados.",
+            "failed_create_missing_thumbnails": "Falha ao criar miniaturas faltantes.",
+            "failed_ensure_ids": "Falha ao garantir IDs de ativos.",
+            "failed_ensure_import_refs": "Falha ao garantir referências de importação.",
+            "failed_set_primary_photos": "Falha ao definir foto principal.",
+            "failed_zero_datetimes": "Falha ao reiniciar os valores de data e hora."
+        }
     }
 }
