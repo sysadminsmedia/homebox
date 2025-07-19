@@ -173,7 +173,12 @@
   const api = useUserApi();
 
   function createItem() {
-    if (products !== null) {
+    if (
+      products.value !== null &&
+      products.value.length > 0 &&
+      selectedRow.value >= 0 &&
+      selectedRow.value < products.value.length
+    ) {
       const p = products.value![selectedRow.value];
       openDialog(DialogID.CreateItem, { product: p });
     }
