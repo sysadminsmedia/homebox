@@ -20,6 +20,7 @@
   import { Button } from "@/components/ui/button";
   import { Badge } from "@/components/ui/badge";
   import { Separator } from "@/components/ui/separator";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
 
   definePageMeta({
     middleware: ["auth"],
@@ -82,7 +83,7 @@
   function openUpdate() {
     updateData.name = location.value?.name || "";
     updateData.description = location.value?.description || "";
-    openDialog("update-location");
+    openDialog(DialogID.UpdateLocation);
   }
 
   async function update() {
@@ -98,7 +99,7 @@
 
     toast.success(t("locations.toast.location_updated"));
     location.value = data;
-    closeDialog("update-location");
+    closeDialog(DialogID.UpdateLocation);
     updating.value = false;
   }
 
@@ -128,7 +129,7 @@
 <template>
   <div>
     <!-- Update Dialog -->
-    <Dialog dialog-id="update-location">
+    <Dialog :dialog-id="DialogID.UpdateLocation">
       <DialogContent>
         <DialogHeader>
           <DialogTitle> {{ $t("locations.update_location") }} </DialogTitle>

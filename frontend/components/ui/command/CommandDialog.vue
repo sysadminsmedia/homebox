@@ -3,8 +3,9 @@ import type { DialogRootEmits, DialogRootProps } from 'reka-ui'
 import { Dialog, DialogContent } from '@/components/ui/dialog'
 import { useForwardPropsEmits } from 'reka-ui'
 import Command from './Command.vue'
+import type { DialogID } from '@/components/ui/dialog-provider/utils';
 
-const props = defineProps<DialogRootProps & { dialogId: string }>();
+const props = defineProps<DialogRootProps & { dialogId: DialogID }>();
 const emits = defineEmits<DialogRootEmits>()
 
 const forwarded = useForwardPropsEmits(props, emits)

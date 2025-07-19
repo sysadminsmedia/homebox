@@ -1,5 +1,5 @@
 <template>
-  <Dialog dialog-id="scanner">
+  <Dialog :dialog-id="DialogID.Scanner">
     <DialogScrollContent>
       <DialogHeader>
         <DialogTitle>{{ t("scanner.title") }}</DialogTitle>
@@ -12,6 +12,25 @@
         >
           <MdiAlertCircleOutline class="text-destructive" />
           <span class="text-sm font-medium">{{ errorMessage }}</span>
+        </div>
+        <div
+          v-if="detectedBarcode"
+          class="mb-5 flex flex-col items-center gap-2 rounded-md border border-accent-foreground bg-accent p-4 text-accent-foreground"
+          role="alert"
+        >
+          <div class="flex">
+            <MdiBarcode class="mr-2" />
+            <span class="flex-1 text-center text-sm font-medium">
+              {{ detectedBarcodeType }} {{ $t("scanner.barcode_detected_message") }}:
+              <strong>{{ detectedBarcode }}</strong>
+            </span>
+          </div>
+
+          <ButtonGroup>
+            <Button :disabled="loading" type="submit" @click="handleButtonClick">
+              {{ $t("scanner.barcode_fetch_data") }}
+            </Button>
+          </ButtonGroup>
         </div>
         <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
         <video ref="video" class="aspect-video w-full rounded-lg bg-muted shadow" poster="data:image/gif,AAAA"></video>
@@ -33,17 +52,20 @@
 </template>
 
 <script setup lang="ts">
-  import { BrowserMultiFormatReader, NotFoundException } from "@zxing/library";
-  import { computed, ref, watch } from "vue";
+  import { ref, watch, computed } from "vue";
+  import { BrowserMultiFormatReader, NotFoundException, BarcodeFormat } from "@zxing/library";
   import { useI18n } from "vue-i18n";
-  import { Dialog, DialogHeader, DialogScrollContent, DialogTitle } from "@/components/ui/dialog";
-  import { useDialog } from "@/components/ui/dialog-provider";
-  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import { DialogID } from "@/components/ui/dialog-provider/utils";
+  import { Dialog, DialogHeader, DialogTitle, DialogScrollContent } from "@/components/ui/dialog";
+  import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+  import { Button } from "@/components/ui/button";
+  import MdiBarcode from "~icons/mdi/barcode";
   import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";
+  import { useDialog } from "@/components/ui/dialog-provider";
 
   const { t } = useI18n();
-  const { activeDialog, closeDialog } = useDialog();
-  const open = computed(() => activeDialog.value === "scanner");
+  const { activeDialog, openDialog, closeDialog } = useDialog();
+  const open = computed(() => activeDialog && activeDialog.value === DialogID.Scanner);
 
   const sources = ref<MediaDeviceInfo[]>([]);
   const selectedSource = ref<string | null>(null);
@@ -51,6 +73,8 @@
   const video = ref<HTMLVideoElement>();
   const codeReader = new BrowserMultiFormatReader();
   const errorMessage = ref<string | null>(null);
+  const detectedBarcode = ref<string>("");
+  const detectedBarcodeType = ref<string>("");
 
   const handleError = (error: unknown) => {
     console.error("Scanner error:", error);
@@ -66,6 +90,10 @@
         return true;
       }
     }
+  };
+
+  const handleButtonClick = () => {
+    openDialog(DialogID.ProductImport, { barcode: detectedBarcode.value });
   };
 
   const startScanner = async () => {
@@ -109,6 +137,7 @@
 
   watch(open, async isOpen => {
     if (isOpen) {
+      detectedBarcode.value = "";
       await startScanner();
     } else {
       stopScanner();
@@ -129,11 +158,27 @@
               throw new Error(t("scanner.invalid_url"));
             }
             const sanitizedPath = url.pathname.replace(/[^a-zA-Z0-9-_/]/g, "");
-            closeDialog("scanner");
+            closeDialog(DialogID.Scanner);
             navigateTo(sanitizedPath);
           } catch (err) {
+            // Check if it's a barcode for a new element
+            const bcfmt = result.getBarcodeFormat();
+
+            switch (bcfmt) {
+              case BarcodeFormat.EAN_13:
+              case BarcodeFormat.UPC_A:
+              case BarcodeFormat.UPC_E:
+              case BarcodeFormat.UPC_EAN_EXTENSION:
+                console.info("Barcode detected");
+                detectedBarcode.value = result.getText();
+                detectedBarcodeType.value = BarcodeFormat[bcfmt].replaceAll("_", "-");
+                break;
+
+              default:
+                handleError(err);
+            }
+
             loading.value = false;
-            handleError(err);
           }
         }
         if (err && !(err instanceof NotFoundException)) {
@@ -150,9 +195,3 @@
     stopScanner();
   });
 </script>
-
-<style scoped>
-  video {
-    object-fit: cover;
-  }
-</style>
