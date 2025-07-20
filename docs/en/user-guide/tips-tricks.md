@@ -15,6 +15,20 @@ Custom fields are appended to the main details section of your item.
 Homebox Custom Fields also have special support for URLs. Provide a URL (`https://google.com`) and it will be automatically converted to a clickable link in the UI. Optionally, you can also use Markdown syntax to add a custom text to the button. `[Google](https://google.com)`
 :::
 
+## Autofill item information
+
+:label: 0.21.0
+
+Homebox allows to scan barcodes that might be seen on some items. Adding new items to Homebox become faster as Homebox will fetch information linked to a scanned barcode from popular online database ([barcodespider.com](https://barcodespider.com) and [UPCItemDB](https://www.upcitemdb.com/) are currently supported).
+
+**Environment Variable:** `HBOX_BARCODE_TOKEN_BARCODESPIDER` if you want to use *barcodespider.com* database.
+
+There is two ways to use this feature:
+
+* From the *Add item* dialog: click on one of the barcode icons on the top right. You can either manually enter a barcode, or scan it using the QRCode scanner.
+* Directly from *QR code scanner* dialog: once a barcode is detected, Homebox will ask you if you want to fetch the product information.
+
+
 ## Managing Asset IDs
 
 Homebox provides the option to auto-set asset IDs, this is the default behavior. These can be used for tracking assets with printable tags or labels. You can disable this behavior via a command line flag or ENV variable. See [configuration](/en/quick-start.md#env-variables-configuration) for more details.

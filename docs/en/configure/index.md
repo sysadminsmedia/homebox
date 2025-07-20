@@ -53,6 +53,7 @@ aside: false
 | HBOX_THUMBNAIL_ENABLED                  | true                                                                       | enable thumbnail generation for images, supports PNG, JPEG, AVIF, WEBP, GIF file types                                                                                                    |
 | HBOX_THUMBNAIL_WIDTH                    | 500                                                                        | width for generated thumbnails in pixels                                                                                                                                                  |
 | HBOX_THUMBNAIL_HEIGHT                   | 500                                                                        | height for generated thumbnails in pixels                                                                                                                                                 |
+| HBOX_BARCODE_TOKEN_BARCODESPIDER        |                                                                            | API key for fetching item's information from *barcodespider.com* database (see [Autofill item information](/en/user-guide/tips-tricks.md#autofill-item-information))                       |
 
 ### HBOX_WEB_HOST examples
 
