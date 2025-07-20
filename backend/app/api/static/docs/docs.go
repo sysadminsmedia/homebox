@@ -1811,6 +1811,41 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/products/search-from-barcode": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Items"
+                ],
+                "summary": "Search EAN from Barcode",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "barcode to be searched",
+                        "name": "data",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.BarcodeProduct"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/qrcode": {
             "get": {
                 "security": [
@@ -3062,6 +3097,37 @@ const docTemplate = `{
                 "TypeBoolean",
                 "TypeTime"
             ]
+        },
+        "repo.BarcodeProduct": {
+            "type": "object",
+            "properties": {
+                "barcode": {
+                    "type": "string"
+                },
+                "imageBase64": {
+                    "type": "string"
+                },
+                "imageURL": {
+                    "type": "string"
+                },
+                "item": {
+                    "$ref": "#/definitions/repo.ItemCreate"
+                },
+                "manufacturer": {
+                    "type": "string"
+                },
+                "modelNumber": {
+                    "description": "Identifications",
+                    "type": "string"
+                },
+                "notes": {
+                    "description": "Extras",
+                    "type": "string"
+                },
+                "search_engine_name": {
+                    "type": "string"
+                }
+            }
         },
         "repo.Group": {
             "type": "object",

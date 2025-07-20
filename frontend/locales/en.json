@@ -100,6 +100,8 @@
                 "item_photo": "Item Photo 📷",
                 "item_quantity": "Item Quantity",
                 "parent_item": "Parent Item",
+                "product_tooltip_input_barcode": "Autofill with a manually provided barcode",
+                "product_tooltip_scan_barcode": "Autofill with a barcode from 📷",
                 "rotate_photo": "Rotate photo",
                 "set_as_primary_photo": "Set as { isPrimary, select, true {non-} false {} other {}}primary photo",
                 "title": "Create Item",
@@ -124,6 +126,15 @@
                 "no_results": "No Results Found",
                 "placeholder": "Select…",
                 "search_placeholder": "Type to search…"
+            },
+            "product_import": {
+                "title": "Import product",
+                "barcode": "Product's barcode",
+                "db_source": "DB source",
+                "search_item": "Search product",
+                "error_invalid_barcode": "Invalid barcode provided",
+                "error_exception": "Exception occured while retrieving item barcode: ",
+                "error_not_found": "No product found with give barcode."
             },
             "view": {
                 "selectable": {
@@ -183,6 +194,9 @@
             "no_results": "No results found.",
             "shortcut_hint": "Use the number keys to quickly select an action."
         }
+    },
+    "errors": {
+        "api_failure": "Backend API call failed: "
     },
     "global": {
         "add": "Add",
@@ -565,7 +579,9 @@
         "permission_denied": "Camera permission denied, please allow access to the camera in your browser settings",
         "select_video_source": "Pick a video source",
         "title": "Scanner",
-        "unsupported": "Media Stream API is not supported without HTTPS"
+        "unsupported": "Media Stream API is not supported without HTTPS",
+        "barcode_detected_message": "product barcode detected",
+        "barcode_fetch_data": "Fetch product data"
     },
     "tools": {
         "actions": "Inventory Actions",

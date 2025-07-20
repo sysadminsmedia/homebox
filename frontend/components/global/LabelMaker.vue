@@ -2,6 +2,7 @@
   import { useI18n } from "vue-i18n";
   import { route } from "../../lib/api/base";
   import PageQRCode from "./PageQRCode.vue";
+  import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { toast } from "@/components/ui/sonner";
   import MdiLoading from "~icons/mdi/loading";
   import MdiPrinterPos from "~icons/mdi/printer-pos";
@@ -63,7 +64,7 @@
     }
 
     toast.success(t("components.global.label_maker.toast.print_success"));
-    closeDialog("print-label");
+    closeDialog(DialogID.PrintLabel);
     serverPrinting.value = false;
   }
 
@@ -93,7 +94,7 @@
 
 <template>
   <div>
-    <Dialog dialog-id="print-label">
+    <Dialog :dialog-id="DialogID.PrintLabel">
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
@@ -137,7 +138,7 @@
 
         <Tooltip>
           <TooltipTrigger as-child>
-            <Button size="icon" @click="openDialog('print-label')">
+            <Button size="icon" @click="openDialog(DialogID.PrintLabel)">
               <MdiPrinterPos name="mdi-printer-pos" />
             </Button>
           </TooltipTrigger>

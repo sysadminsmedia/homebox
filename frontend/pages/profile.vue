@@ -20,6 +20,7 @@
   import { badgeVariants } from "@/components/ui/badge";
   import LanguageSelector from "~/components/App/LanguageSelector.vue";
   import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
 
   const { t } = useI18n();
 
@@ -184,7 +185,7 @@
     }
 
     toast.success(t("profile.toast.password_changed"));
-    closeDialog("change-password");
+    closeDialog(DialogID.ChangePassword);
     passwordChange.new = "";
     passwordChange.current = "";
     passwordChange.loading = false;
@@ -218,7 +219,7 @@
       };
     }
 
-    openDialog("create-notifier");
+    openDialog(DialogID.CreateNotifier);
   }
 
   async function createNotifier() {
@@ -242,7 +243,7 @@
     }
 
     notifier.value = null;
-    closeDialog("create-notifier");
+    closeDialog(DialogID.CreateNotifier);
 
     await notifiers.refresh();
   }
@@ -263,7 +264,7 @@
     }
 
     notifier.value = null;
-    closeDialog("create-notifier");
+    closeDialog(DialogID.CreateNotifier);
     targetID.value = "";
 
     await notifiers.refresh();
@@ -304,7 +305,7 @@
 
 <template>
   <div>
-    <Dialog dialog-id="changePassword">
+    <Dialog :dialog-id="DialogID.ChangePassword">
       <DialogContent>
         <DialogHeader>
           <DialogTitle> {{ $t("profile.change_password") }} </DialogTitle>
@@ -330,7 +331,7 @@
       </DialogContent>
     </Dialog>
 
-    <Dialog dialog-id="create-notifier">
+    <Dialog :dialog-id="DialogID.CreateNotifier">
       <DialogContent>
         <DialogHeader>
           <DialogTitle> {{ $t("profile.notifier_modal", { type: notifier != null }) }} </DialogTitle>
@@ -371,7 +372,7 @@
 
         <div class="p-4">
           <div class="flex gap-2">
-            <Button variant="secondary" size="sm" @click="openDialog('changePassword')">
+            <Button variant="secondary" size="sm" @click="openDialog(DialogID.ChangePassword)">
               {{ $t("profile.change_password") }}
             </Button>
             <Button variant="secondary" size="sm" @click="generateToken"> {{ $t("profile.gen_invite") }} </Button>
