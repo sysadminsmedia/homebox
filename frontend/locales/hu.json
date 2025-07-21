@@ -100,6 +100,8 @@
                 "item_photo": "Tétel fényképe 📷",
                 "item_quantity": "Tételek mennyisége",
                 "parent_item": "Szülő tétel",
+                "product_tooltip_input_barcode": "Automatikus feltöltés kézzel megadott vonalkóddal",
+                "product_tooltip_scan_barcode": "Automatikus kitöltés vonalkóddal innen: 📷",
                 "rotate_photo": "Kép forgatása",
                 "set_as_primary_photo": "Beállítás {isPrimary , select, true {nem } false {} other {}}elsődleges fényképként",
                 "title": "Új elem létrehozása",
@@ -119,6 +121,12 @@
                 },
                 "upload_photos": "Fotók feltöltése",
                 "uploaded": "Feltöltött fénykép"
+            },
+            "product_import": {
+                "barcode": "Termék vonalkódja",
+                "error_invalid_barcode": "Érvénytelen vonalkód van megadva",
+                "search_item": "Termék keresése",
+                "title": "Termék importálása"
             },
             "selector": {
                 "no_results": "Nincs Találat",

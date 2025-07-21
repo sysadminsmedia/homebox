@@ -127,7 +127,7 @@
                 "db_source": "数据库源",
                 "error_exception": "检索物品条码时发生异常： ",
                 "error_invalid_barcode": "提供的条形码无效",
-                "error_not_found": "未找到带有给定条形码的产品。",
+                "error_not_found": "未找到该条形码对应的产品。",
                 "search_item": "搜索产品",
                 "title": "导入产品"
             },
@@ -194,6 +194,9 @@
             "no_results": "未找到结果。",
             "shortcut_hint": "使用数字键快速选择一个操作。"
         }
+    },
+    "errors": {
+        "api_failure": "后端API调用失败： "
     },
     "global": {
         "add": "添加",
@@ -570,6 +573,8 @@
         }
     },
     "scanner": {
+        "barcode_detected_message": "检测到产品条形码",
+        "barcode_fetch_data": "获取产品数据",
         "error": "扫描遇到问题",
         "invalid_url": "非法的条形码地址",
         "no_sources": "没有可用的摄像头资源",
