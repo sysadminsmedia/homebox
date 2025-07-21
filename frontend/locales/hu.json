@@ -126,7 +126,7 @@
                 "barcode": "Termék vonalkódja",
                 "error_exception": "Kivétel történt a tétel vonalkódjának lekérése során: ",
                 "error_invalid_barcode": "Érvénytelen vonalkód",
-                "error_not_found": "Nem található termék vonalkóddal.",
+                "error_not_found": "Nem található termék a megadott vonalkóddal.",
                 "search_item": "Termék keresése",
                 "title": "Termék importálása"
             },
@@ -193,6 +193,9 @@
             "no_results": "Nincs találat.",
             "shortcut_hint": "Használd a számgombokat egy művelet gyors kiválasztásához."
         }
+    },
+    "errors": {
+        "api_failure": "A háttér API-hívása sikertelen: "
     },
     "global": {
         "add": "Hozzáadás",
