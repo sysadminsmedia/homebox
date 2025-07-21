@@ -110,151 +110,127 @@ type (
 	}
 )
 
-func (r *BarcodeRepository) RetrieveProductsFromBarcode(conf config.BarcodeAPIConf, iBarcode string) ([]BarcodeProduct, error) {
-	const TIMEOUT_SEC = 10
+const FOREIGN_API_CALL_TIMEOUT_SEC = 10
 
-	log.Info().Msg("Processing barcode lookup request on: " + iBarcode)
+func (r *BarcodeRepository) UPCItemDB_Search(iBarcode string) ([]BarcodeProduct, error) {
 
-	// Search on UPCITEMDB
-	var products []BarcodeProduct
-
-	// www.ean-search.org/: not free
-
-	// Example code: dewalt 5035048748428
-
-	upcitemdb := func(iEan string) ([]BarcodeProduct, error) {
-		client := &http.Client{Timeout: TIMEOUT_SEC * time.Second}
-		resp, err := client.Get("https://api.upcitemdb.com/prod/trial/lookup?upc=" + iEan)
-		if err != nil {
-			return nil, err
-		}
-
-		defer func() {
-			err = errors.Join(err, resp.Body.Close())
-		}()
-
-		if resp.StatusCode != http.StatusOK {
-			return nil, fmt.Errorf("API returned status code: %d", resp.StatusCode)
-		}
-
-		// We Read the response body on the line below.
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return nil, err
-		}
-
-		// Uncomment the following string for debug
-		// sb := string(body)
-		// log.Debug().Msg("Response: " + sb)
-
-		var result UPCITEMDBResponse
-		if err := json.Unmarshal(body, &result); err != nil { // Parse []byte to go struct pointer
-			log.Error().Msg("Can not unmarshal JSON")
-		}
-
-		var res []BarcodeProduct
-
-		for _, it := range result.Items {
-			var p BarcodeProduct
-			p.SearchEngineName = "upcitemdb.com"
-			p.Barcode = iEan
-
-			p.Item.Description = it.Description
-			p.Item.Name = it.Title
-			p.Manufacturer = it.Brand
-			p.ModelNumber = it.Model
-			if len(it.Images) != 0 {
-				p.ImageURL = it.Images[0]
-			}
-
-			res = append(res, p)
-		}
-
-		return res, nil
-	}
-
-	ps, err := upcitemdb(iBarcode)
+	client := &http.Client{Timeout: FOREIGN_API_CALL_TIMEOUT_SEC * time.Second}
+	resp, err := client.Get("https://api.upcitemdb.com/prod/trial/lookup?upc=" + iBarcode)
 	if err != nil {
-		log.Error().Msg("Can not retrieve product from upcitemdb.com" + err.Error())
+		return nil, err
 	}
 
-	// Barcode spider implementation
-	barcodespider := func(tokenAPI string, iEan string) ([]BarcodeProduct, error) {
-		if len(tokenAPI) == 0 {
-			return nil, errors.New("no api token configured for barcodespider. " +
-				"Please define the api token in environment variable HBOX_BARCODE_TOKEN_BARCODESPIDER")
-		}
+	defer func() {
+		err = errors.Join(err, resp.Body.Close())
+	}()
 
-		req, err := http.NewRequest(
-			"GET", "https://api.barcodespider.com/v1/lookup?upc="+iEan, nil)
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("API returned status code: %d", resp.StatusCode)
+	}
 
-		if err != nil {
-			return nil, err
-		}
+	// We Read the response body on the line below.
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
 
-		req.Header.Add("token", tokenAPI)
+	// Uncomment the following string for debug
+	// sb := string(body)
+	// log.Debug().Msg("Response: " + sb)
 
-		client := &http.Client{Timeout: TIMEOUT_SEC * time.Second}
+	var result UPCITEMDBResponse
+	if err := json.Unmarshal(body, &result); err != nil { // Parse []byte to go struct pointer
+		log.Error().Msg("Can not unmarshal JSON")
+	}
 
-		resp, err := client.Do(req)
-		if err != nil {
-			return nil, err
-		}
+	var res []BarcodeProduct
 
-		// defer the call to Body.Close(). We also check the error code, and merge
-		// it with the other error in this code to avoid error overiding.
-		defer func() {
-			err = errors.Join(err, resp.Body.Close())
-		}()
-
-		if resp.StatusCode != http.StatusOK {
-			return nil, fmt.Errorf("barcodespider API returned status code: %d", resp.StatusCode)
-		}
-
-		// We Read the response body on the line below.
-		body, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return nil, err
-		}
-
-		// Uncomment the following string for debug
-		// sb := string(body)
-		// log.Debug().Msg("Response: " + sb)
-
-		var result BARCODESPIDER_COMResponse
-		if err := json.Unmarshal(body, &result); err != nil { // Parse []byte to go struct pointer
-			log.Error().Msg("Can not unmarshal JSON")
-		}
-
-		// TODO: check 200 code on HTTP response.
+	for _, it := range result.Items {
 		var p BarcodeProduct
-		p.Barcode = iEan
-		p.SearchEngineName = "barcodespider.com"
-		p.Item.Name = result.ItemAttributes.Title
-		p.Item.Description = result.ItemAttributes.Description
-		p.Manufacturer = result.ItemAttributes.Brand
-		p.ModelNumber = result.ItemAttributes.Model
-		p.ImageURL = result.ItemAttributes.Image
+		p.SearchEngineName = "upcitemdb.com"
+		p.Barcode = iBarcode
 
-		var res []BarcodeProduct
+		p.Item.Description = it.Description
+		p.Item.Name = it.Title
+		p.Manufacturer = it.Brand
+		p.ModelNumber = it.Model
+		if len(it.Images) != 0 {
+			p.ImageURL = it.Images[0]
+		}
+
 		res = append(res, p)
-
-		return res, nil
 	}
 
-	ps2, err := barcodespider(conf.TokenBarcodespider, iBarcode)
+	return res, nil
+}
+
+func (r *BarcodeRepository) BarcodeSpider_Search(conf config.BarcodeAPIConf, iBarcode string) ([]BarcodeProduct, error) {
+	if len(conf.TokenBarcodespider) == 0 {
+		return nil, errors.New("no api token configured for barcodespider. " +
+			"Please define the api token in environment variable HBOX_BARCODE_TOKEN_BARCODESPIDER")
+	}
+
+	req, err := http.NewRequest(
+		"GET", "https://api.barcodespider.com/v1/lookup?upc="+iBarcode, nil)
+
 	if err != nil {
-		log.Error().Msg("Can not retrieve product from barcodespider.com: " + err.Error())
+		return nil, err
 	}
 
-	// Merge everything.
-	products = append(products, ps...)
+	req.Header.Add("token", conf.TokenBarcodespider)
 
-	products = append(products, ps2...)
+	client := &http.Client{Timeout: FOREIGN_API_CALL_TIMEOUT_SEC * time.Second}
 
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	// defer the call to Body.Close(). We also check the error code, and merge
+	// it with the other error in this code to avoid error overiding.
+	defer func() {
+		err = errors.Join(err, resp.Body.Close())
+	}()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("barcodespider API returned status code: %d", resp.StatusCode)
+	}
+
+	// We Read the response body on the line below.
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	// Uncomment the following string for debug
+	// sb := string(body)
+	// log.Debug().Msg("Response: " + sb)
+
+	var result BARCODESPIDER_COMResponse
+	if err := json.Unmarshal(body, &result); err != nil { // Parse []byte to go struct pointer
+		log.Error().Msg("Can not unmarshal JSON")
+	}
+
+	// TODO: check 200 code on HTTP response.
+	var p BarcodeProduct
+	p.Barcode = iBarcode
+	p.SearchEngineName = "barcodespider.com"
+	p.Item.Name = result.ItemAttributes.Title
+	p.Item.Description = result.ItemAttributes.Description
+	p.Manufacturer = result.ItemAttributes.Brand
+	p.ModelNumber = result.ItemAttributes.Model
+	p.ImageURL = result.ItemAttributes.Image
+
+	var res []BarcodeProduct
+	res = append(res, p)
+
+	return res, nil
+}
+
+func (r *BarcodeRepository) UpdateProductsWithImage(iProducts *[]BarcodeProduct) {
 	// Retrieve images if possible
-	for i := range products {
-		p := &products[i]
+	for i := range *iProducts {
+		p := &(*iProducts)[i]
 
 		if len(p.ImageURL) == 0 {
 			continue
@@ -267,7 +243,7 @@ func (r *BarcodeRepository) RetrieveProductsFromBarcode(conf config.BarcodeAPICo
 			continue
 		}
 
-		client := &http.Client{Timeout: TIMEOUT_SEC * time.Second}
+		client := &http.Client{Timeout: FOREIGN_API_CALL_TIMEOUT_SEC * time.Second}
 		res, err := client.Get(p.ImageURL)
 		if err != nil {
 			log.Warn().Msg("Cannot fetch image for URL: " + p.ImageURL + ": " + err.Error())
@@ -320,6 +296,34 @@ func (r *BarcodeRepository) RetrieveProductsFromBarcode(conf config.BarcodeAPICo
 
 		p.ImageBase64 = base64Encoding
 	}
+}
+
+func (r *BarcodeRepository) RetrieveProductsFromBarcode(conf config.BarcodeAPIConf, iBarcode string) ([]BarcodeProduct, error) {
+
+	log.Info().Msg("Processing barcode lookup request on: " + iBarcode)
+
+	// For further implementer: we try to not use non-free databases
+	// - www.ean-search.org/: not free
+	// - barcodelookup.com/: trial with 50 items search / months. Need phone number for registration.
+
+	var products []BarcodeProduct
+
+	ps, err := r.UPCItemDB_Search(iBarcode)
+	if err != nil {
+		log.Error().Msg("Can not retrieve product from upcitemdb.com" + err.Error())
+	}
+
+	// Barcode spider implementation
+	ps2, err := r.BarcodeSpider_Search(conf, iBarcode)
+	if err != nil {
+		log.Error().Msg("Can not retrieve product from barcodespider.com: " + err.Error())
+	}
+
+	// Merge everything.
+	products = append(products, ps...)
+	products = append(products, ps2...)
+
+	r.UpdateProductsWithImage(&products)
 
 	return products, nil
 }
