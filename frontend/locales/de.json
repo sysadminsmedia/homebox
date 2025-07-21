@@ -125,7 +125,9 @@
             "product_import": {
                 "barcode": "Produkt-Strichcode",
                 "db_source": "DB-Quelle",
-                "search_item": "Gerät suchen",
+                "error_exception": "Beim Abrufen des Artikel-Barcodes ist eine Ausnahme aufgetreten: ",
+                "error_invalid_barcode": "Ungültiger Barcode angegeben",
+                "search_item": "Produkt suchen",
                 "title": "Produkt importieren"
             },
             "selector": {
