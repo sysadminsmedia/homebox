@@ -20,7 +20,9 @@ type (
 	}
 
 	BarcodeProduct struct {
-		SearchEngineName string `json:"search_engine_name"`
+		SearchEngineName       string `json:"search_engine_name"`
+		SearchEngineURL        string `json:"search_engine_url"`
+		SearchEngineProductURL string `json:"search_engine_product_url"`
 
 		// Identifications
 		ModelNumber  string `json:"modelNumber"`
@@ -121,7 +123,6 @@ type (
 const FOREIGN_API_CALL_TIMEOUT_SEC = 10
 
 func (r *BarcodeRepository) UPCItemDB_Search(_ config.BarcodeAPIConf, iBarcode string) ([]BarcodeProduct, error) {
-
 	client := &http.Client{Timeout: FOREIGN_API_CALL_TIMEOUT_SEC * time.Second}
 	resp, err := client.Get("https://api.upcitemdb.com/prod/trial/lookup?upc=" + iBarcode)
 	if err != nil {
@@ -155,8 +156,8 @@ func (r *BarcodeRepository) UPCItemDB_Search(_ config.BarcodeAPIConf, iBarcode s
 
 	for _, it := range result.Items {
 		var p BarcodeProduct
-		p.SearchEngineName = "upcitemdb.com"
 		p.Barcode = iBarcode
+		p.SearchEngineProductURL = "https://www.upcitemdb.com/upc/" + iBarcode
 
 		p.Item.Description = it.Description
 		p.Item.Name = it.Title
@@ -222,7 +223,7 @@ func (r *BarcodeRepository) BarcodeSpider_Search(conf config.BarcodeAPIConf, iBa
 	// TODO: check 200 code on HTTP response.
 	var p BarcodeProduct
 	p.Barcode = iBarcode
-	p.SearchEngineName = "barcodespider.com"
+	p.SearchEngineProductURL = "https://amp.barcodespider.com/" + iBarcode
 	p.Item.Name = result.ItemAttributes.Title
 	p.Item.Description = result.ItemAttributes.Description
 	p.Manufacturer = result.ItemAttributes.Brand
@@ -236,7 +237,6 @@ func (r *BarcodeRepository) BarcodeSpider_Search(conf config.BarcodeAPIConf, iBa
 }
 
 func (r *BarcodeRepository) UpdateProductWithImage(iProduct *BarcodeProduct) {
-
 	p := iProduct
 
 	if len(p.ImageURL) == 0 {
@@ -305,7 +305,6 @@ func (r *BarcodeRepository) UpdateProductWithImage(iProduct *BarcodeProduct) {
 }
 
 func (r *BarcodeRepository) RetrieveProductsFromBarcode(conf config.BarcodeAPIConf, iBarcode string) ([]BarcodeProduct, error) {
-
 	log.Info().Msg("Processing barcode lookup request on: " + iBarcode)
 
 	// For further implementer: we try to not use non-free databases
@@ -334,13 +333,18 @@ func (r *BarcodeRepository) RetrieveProductsFromBarcode(conf config.BarcodeAPICo
 			log.Error().Msg("Can not retrieve product from " + api.name + err.Error())
 		}
 
+		for idx := range ps {
+			// Update each product with API information
+			p := &ps[idx]
+			p.SearchEngineName = api.name
+			p.SearchEngineURL = api.url
+
+			// Fetch image of each product on the Internet
+			r.UpdateProductWithImage(p)
+		}
+
 		// Merge found products.
 		products = append(products, ps...)
-	}
-
-	// Fetch products images for each ProductBarcode
-	for _, p := range products {
-		r.UpdateProductWithImage(&p)
 	}
 
 	return products, nil
