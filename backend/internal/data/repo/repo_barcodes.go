@@ -36,6 +36,14 @@ type (
 		Item ItemCreate `json:"item"`
 	}
 
+	ProductDatabaseFunc func(config.BarcodeAPIConf, string) ([]BarcodeProduct, error)
+
+	ProductDatabaseImpl struct {
+		url  string
+		name string
+		call ProductDatabaseFunc
+	}
+
 	UPCITEMDBResponse struct {
 		Code   string `json:"code"`
 		Total  int    `json:"total"`
@@ -112,7 +120,7 @@ type (
 
 const FOREIGN_API_CALL_TIMEOUT_SEC = 10
 
-func (r *BarcodeRepository) UPCItemDB_Search(iBarcode string) ([]BarcodeProduct, error) {
+func (r *BarcodeRepository) UPCItemDB_Search(_ config.BarcodeAPIConf, iBarcode string) ([]BarcodeProduct, error) {
 
 	client := &http.Client{Timeout: FOREIGN_API_CALL_TIMEOUT_SEC * time.Second}
 	resp, err := client.Get("https://api.upcitemdb.com/prod/trial/lookup?upc=" + iBarcode)
@@ -227,75 +235,73 @@ func (r *BarcodeRepository) BarcodeSpider_Search(conf config.BarcodeAPIConf, iBa
 	return res, nil
 }
 
-func (r *BarcodeRepository) UpdateProductsWithImage(iProducts *[]BarcodeProduct) {
-	// Retrieve images if possible
-	for i := range *iProducts {
-		p := &(*iProducts)[i]
+func (r *BarcodeRepository) UpdateProductWithImage(iProduct *BarcodeProduct) {
 
-		if len(p.ImageURL) == 0 {
-			continue
-		}
+	p := iProduct
 
-		// Validate URL is HTTPS
-		u, err := url.Parse(p.ImageURL)
-		if err != nil || u.Scheme != "https" {
-			log.Warn().Msg("Skipping non-HTTPS image URL: " + p.ImageURL)
-			continue
-		}
-
-		client := &http.Client{Timeout: FOREIGN_API_CALL_TIMEOUT_SEC * time.Second}
-		res, err := client.Get(p.ImageURL)
-		if err != nil {
-			log.Warn().Msg("Cannot fetch image for URL: " + p.ImageURL + ": " + err.Error())
-		}
-
-		defer func() {
-			err = errors.Join(err, res.Body.Close())
-		}()
-
-		// Validate response
-		if res.StatusCode != http.StatusOK {
-			continue
-		}
-
-		// Check content type
-		contentType := res.Header.Get("Content-Type")
-		if !strings.HasPrefix(contentType, "image/") {
-			continue
-		}
-
-		// Limit image size to 8MB
-		limitedReader := io.LimitReader(res.Body, 8*1024*1024)
-
-		// Read data of image
-		bytes, err := io.ReadAll(limitedReader)
-		if err != nil {
-			log.Warn().Msg(err.Error())
-			continue
-		}
-
-		// Convert to Base64
-		var base64Encoding string
-
-		// Determine the content type of the image file
-		mimeType := http.DetectContentType(bytes)
-
-		// Prepend the appropriate URI scheme header depending
-		// on the MIME type
-		switch mimeType {
-		case "image/jpeg":
-			base64Encoding += "data:image/jpeg;base64,"
-		case "image/png":
-			base64Encoding += "data:image/png;base64,"
-		default:
-			continue
-		}
-
-		// Append the base64 encoded output
-		base64Encoding += base64.StdEncoding.EncodeToString(bytes)
-
-		p.ImageBase64 = base64Encoding
+	if len(p.ImageURL) == 0 {
+		return
 	}
+
+	// Validate URL is HTTPS
+	u, err := url.Parse(p.ImageURL)
+	if err != nil || u.Scheme != "https" {
+		log.Warn().Msg("Skipping non-HTTPS image URL: " + p.ImageURL)
+		return
+	}
+
+	client := &http.Client{Timeout: FOREIGN_API_CALL_TIMEOUT_SEC * time.Second}
+	res, err := client.Get(p.ImageURL)
+	if err != nil {
+		log.Warn().Msg("Cannot fetch image for URL: " + p.ImageURL + ": " + err.Error())
+	}
+
+	defer func() {
+		err = errors.Join(err, res.Body.Close())
+	}()
+
+	// Validate response
+	if res.StatusCode != http.StatusOK {
+		return
+	}
+
+	// Check content type
+	contentType := res.Header.Get("Content-Type")
+	if !strings.HasPrefix(contentType, "image/") {
+		return
+	}
+
+	// Limit image size to 8MB
+	limitedReader := io.LimitReader(res.Body, 8*1024*1024)
+
+	// Read data of image
+	bytes, err := io.ReadAll(limitedReader)
+	if err != nil {
+		log.Warn().Msg(err.Error())
+		return
+	}
+
+	// Convert to Base64
+	var base64Encoding string
+
+	// Determine the content type of the image file
+	mimeType := http.DetectContentType(bytes)
+
+	// Prepend the appropriate URI scheme header depending
+	// on the MIME type
+	switch mimeType {
+	case "image/jpeg":
+		base64Encoding += "data:image/jpeg;base64,"
+	case "image/png":
+		base64Encoding += "data:image/png;base64,"
+	default:
+		return
+	}
+
+	// Append the base64 encoded output
+	base64Encoding += base64.StdEncoding.EncodeToString(bytes)
+
+	p.ImageBase64 = base64Encoding
 }
 
 func (r *BarcodeRepository) RetrieveProductsFromBarcode(conf config.BarcodeAPIConf, iBarcode string) ([]BarcodeProduct, error) {
@@ -306,24 +312,36 @@ func (r *BarcodeRepository) RetrieveProductsFromBarcode(conf config.BarcodeAPICo
 	// - www.ean-search.org/: not free
 	// - barcodelookup.com/: trial with 50 items search / months. Need phone number for registration.
 
+	remoteAPIs := []ProductDatabaseImpl{
+		{
+			url:  "https://upcitemdb.com",
+			name: "UPCDBItem",
+			call: r.UPCItemDB_Search, // Assign function 1
+		},
+		{
+			url:  "https://barcodespider.com",
+			name: "BarcodeSpider",
+			call: r.BarcodeSpider_Search, // Assign function 2
+		},
+	}
+
 	var products []BarcodeProduct
 
-	ps, err := r.UPCItemDB_Search(iBarcode)
-	if err != nil {
-		log.Error().Msg("Can not retrieve product from upcitemdb.com" + err.Error())
+	// Call external APIs
+	for _, api := range remoteAPIs {
+		ps, err := api.call(conf, iBarcode)
+		if err != nil {
+			log.Error().Msg("Can not retrieve product from " + api.name + err.Error())
+		}
+
+		// Merge found products.
+		products = append(products, ps...)
 	}
 
-	// Barcode spider implementation
-	ps2, err := r.BarcodeSpider_Search(conf, iBarcode)
-	if err != nil {
-		log.Error().Msg("Can not retrieve product from barcodespider.com: " + err.Error())
+	// Fetch products images for each ProductBarcode
+	for _, p := range products {
+		r.UpdateProductWithImage(&p)
 	}
-
-	// Merge everything.
-	products = append(products, ps...)
-	products = append(products, ps2...)
-
-	r.UpdateProductsWithImage(&products)
 
 	return products, nil
 }
