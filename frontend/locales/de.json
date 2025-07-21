@@ -125,8 +125,9 @@
             "product_import": {
                 "barcode": "Produkt-Strichcode",
                 "db_source": "DB-Quelle",
-                "error_exception": "Beim Abrufen des Artikel-Barcodes ist eine Ausnahme aufgetreten: ",
+                "error_exception": "Beim Abrufen des Artikel-Barcodes ist ein Problem aufgetreten: ",
                 "error_invalid_barcode": "Ungültiger Barcode angegeben",
+                "error_not_found": "Kein Produkt mit dem angegebenen Barcode gefunden.",
                 "search_item": "Produkt suchen",
                 "title": "Produkt importieren"
             },
@@ -153,6 +154,7 @@
         },
         "label": {
             "create_modal": {
+                "label_color": "Label-Farbe",
                 "label_description": "Label-Beschreibung",
                 "label_name": "Label-Name",
                 "title": "Label erstellen",
@@ -193,6 +195,9 @@
             "shortcut_hint": "Verwenden Sie die Zifferntasten, um schnell eine Aktion auszuwählen."
         }
     },
+    "errors": {
+        "api_failure": "Backend-API-Aufruf fehlgeschlagen: "
+    },
     "global": {
         "add": "Hinzufügen",
         "archived": "Archiviert",
@@ -220,7 +225,7 @@
         "items": "Gegenstände",
         "join_discord": "Discord beitreten",
         "labels": "Labels",
-        "loading": "Wird geladen …",
+        "loading": "Wird geladen…",
         "locations": "Lagerorte",
         "maintenance": "Wartung",
         "name": "Name",
@@ -568,6 +573,8 @@
         }
     },
     "scanner": {
+        "barcode_detected_message": "Produkt-Barcode erkannt",
+        "barcode_fetch_data": "Produktdaten abrufen",
         "error": "Beim Scannen ist ein Fehler aufgetreten",
         "invalid_url": "Ungültige Barcode-URL",
         "no_sources": "Keine Videoquellen verfügbar",
