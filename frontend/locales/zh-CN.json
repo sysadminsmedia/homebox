@@ -101,7 +101,7 @@
                 "item_quantity": "物品数量",
                 "parent_item": "父项目",
                 "product_tooltip_input_barcode": "使用手动提供的条形码自动填充",
-                "product_tooltip_scan_barcode": "使用条形码自动填充，从 📷",
+                "product_tooltip_scan_barcode": "使用相机扫描条形码自动填充",
                 "rotate_photo": "旋转照片",
                 "set_as_primary_photo": "设置为{isPrimary, select, true {非} false {} other {}}封面",
                 "title": "创建物品",
@@ -121,6 +121,14 @@
                 },
                 "upload_photos": "上传照片",
                 "uploaded": "照片已上传"
+            },
+            "product_import": {
+                "barcode": "产品条形码",
+                "db_source": "数据库源",
+                "error_exception": "检索物料条码时发生异常： ",
+                "error_invalid_barcode": "提供的条形码无效",
+                "search_item": "搜索产品",
+                "title": "导入产品"
             },
             "selector": {
                 "no_results": "返回为空",
