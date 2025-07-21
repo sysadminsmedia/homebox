@@ -125,8 +125,9 @@
             "product_import": {
                 "barcode": "产品条形码",
                 "db_source": "数据库源",
-                "error_exception": "检索物料条码时发生异常： ",
+                "error_exception": "检索物品条码时发生异常： ",
                 "error_invalid_barcode": "提供的条形码无效",
+                "error_not_found": "未找到带有给定条形码的产品。",
                 "search_item": "搜索产品",
                 "title": "导入产品"
             },
