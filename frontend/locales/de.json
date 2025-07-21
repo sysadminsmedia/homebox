@@ -101,7 +101,7 @@
                 "item_quantity": "Anzahl der Artikel",
                 "parent_item": "Übergeordneter Gegenstand",
                 "product_tooltip_input_barcode": "Automatisch ausfüllen mit einem manuell bereitgestellten Barcode",
-                "product_tooltip_scan_barcode": "Automatisches Ausfüllen mit einem Barcode von 📷",
+                "product_tooltip_scan_barcode": "Automatisch ausfüllen mit einem Barcode von 📷",
                 "rotate_photo": "Photo drehen",
                 "set_as_primary_photo": "Festlegen als { isPrimary, select, true {non-} false {} other {}}primäres Foto",
                 "title": "Gegenstand erstellen",
@@ -121,6 +121,12 @@
                 },
                 "upload_photos": "Upload Bilder",
                 "uploaded": "Bild hochgeladen"
+            },
+            "product_import": {
+                "barcode": "Produkt-Strichcode",
+                "db_source": "DB-Quelle",
+                "search_item": "Gerät suchen",
+                "title": "Produkt importieren"
             },
             "selector": {
                 "no_results": "Keine Ergebnisse gefunden",
