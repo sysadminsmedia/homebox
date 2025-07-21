@@ -28,7 +28,8 @@
             "clear": "Farbe löschen",
             "color": "Farbe",
             "no_color": "Keine Farbe",
-            "no_color_selected": "Keine Farbe ausgewählt"
+            "no_color_selected": "Keine Farbe ausgewählt",
+            "randomize": "Zufällige Farbe"
         },
         "form": {
             "password": {
@@ -99,6 +100,7 @@
                 "item_photo": "Artikel Bild",
                 "item_quantity": "Anzahl der Artikel",
                 "parent_item": "Übergeordneter Gegenstand",
+                "product_tooltip_input_barcode": "Automatisches Ausfüllen mit einem manuell bereitgestellten Barcode",
                 "rotate_photo": "Photo drehen",
                 "set_as_primary_photo": "Festlegen als { isPrimary, select, true {non-} false {} other {}}primäres Foto",
                 "title": "Gegenstand erstellen",
