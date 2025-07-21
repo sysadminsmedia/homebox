@@ -124,7 +124,9 @@
             },
             "product_import": {
                 "barcode": "Termék vonalkódja",
-                "error_invalid_barcode": "Érvénytelen vonalkód van megadva",
+                "error_exception": "Kivétel történt a tétel vonalkódjának lekérése során: ",
+                "error_invalid_barcode": "Érvénytelen vonalkód",
+                "error_not_found": "Nem található termék vonalkóddal.",
                 "search_item": "Termék keresése",
                 "title": "Termék importálása"
             },
