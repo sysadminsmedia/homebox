@@ -100,6 +100,8 @@
                 "item_photo": "物品照片📷",
                 "item_quantity": "物品数量",
                 "parent_item": "父项目",
+                "product_tooltip_input_barcode": "使用手动提供的条形码自动填充",
+                "product_tooltip_scan_barcode": "使用条形码自动填充，从 📷",
                 "rotate_photo": "旋转照片",
                 "set_as_primary_photo": "设置为{isPrimary, select, true {非} false {} other {}}封面",
                 "title": "创建物品",

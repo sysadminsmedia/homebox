@@ -100,6 +100,8 @@
                 "item_photo": "Fotografie položky 📷",
                 "item_quantity": "Množství položek",
                 "parent_item": "Nadřazená položka",
+                "product_tooltip_input_barcode": "Automatické vyplnění ručně zadaným čárovým kódem",
+                "product_tooltip_scan_barcode": "Automatické vyplnění čárovým kódem z 📷",
                 "rotate_photo": "Otočit fotku",
                 "set_as_primary_photo": "Nastavit jako { isPrimary, select, true {non-} false {} other {}}primární fotku",
                 "title": "Vytvořit položku",
@@ -119,6 +121,15 @@
                 },
                 "upload_photos": "Nahrát fotografie",
                 "uploaded": "Fotka byla nahrána"
+            },
+            "product_import": {
+                "barcode": "Čárový kód produktu",
+                "db_source": "Zdroj DB",
+                "error_exception": "Při načítání čárového kódu položky došlo k výjimce: ",
+                "error_invalid_barcode": "Byl zadán neplatný čárový kód",
+                "error_not_found": "Žádný produkt s daným čárovým kódem nebyl nalezen.",
+                "search_item": "Vyhledat produkt",
+                "title": "Importovat produkt"
             },
             "selector": {
                 "no_results": "Nebyly nalezeny žádné výsledky",
@@ -183,6 +194,9 @@
             "no_results": "Nebyly nalezeny žádné výsledky.",
             "shortcut_hint": "Pomocí číselných tlačítek rychle vyberte akci."
         }
+    },
+    "errors": {
+        "api_failure": "Volání backendového API selhalo: "
     },
     "global": {
         "add": "Přidat",
@@ -559,6 +573,8 @@
         }
     },
     "scanner": {
+        "barcode_detected_message": "byl zjištěn čárový kód produktu",
+        "barcode_fetch_data": "Načíst produktová data",
         "error": "Při skenování došlo k chybě",
         "invalid_url": "Neplatná adresa URL čárového kódu",
         "no_sources": "Nejsou k dispozici žádné zdroje videa",

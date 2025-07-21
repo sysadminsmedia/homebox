@@ -29,7 +29,7 @@
             "color": "Kolor",
             "no_color": "Brak koloru",
             "no_color_selected": "Żaden kolor nie został wybrany",
-            "randomize": "Losowy kolor"
+            "randomize": "Losuj kolor"
         },
         "form": {
             "password": {
@@ -100,6 +100,8 @@
                 "item_photo": "Zdjęcie Przedmiotu 📷",
                 "item_quantity": "Ilość przedmiotu",
                 "parent_item": "Przedmiot nadrzędny",
+                "product_tooltip_input_barcode": "Autouzupełnianie za pomocą ręcznie dostarczonego kodu kreskowego",
+                "product_tooltip_scan_barcode": "Autouzupełnianie kodem kreskowym z 📷",
                 "rotate_photo": "Obróć zdjęcie",
                 "set_as_primary_photo": "Ustaw jako { isPrimary, select, true {non-} false {} other {}}główne zdjęcie",
                 "title": "Utwórz przedmiot",
@@ -120,8 +122,17 @@
                 "upload_photos": "Prześlij Zdjęcia",
                 "uploaded": "Przesłane Zdjęcie"
             },
+            "product_import": {
+                "barcode": "Kod Kreskowy Produktu",
+                "db_source": "Źródło bazy danych",
+                "error_exception": "Wystąpił wyjątek podczas pobierania kodu kreskowego pozycji: ",
+                "error_invalid_barcode": "Podano nieprawidłowy kod kreskowy",
+                "error_not_found": "Nie znaleziono produktu z podanym kodem kreskowym.",
+                "search_item": "Wyszukaj produkt",
+                "title": "Importuj produkt"
+            },
             "selector": {
-                "no_results": "Nie znaleziono wyników",
+                "no_results": "Brak rezultatów",
                 "placeholder": "Wybierz…",
                 "search_placeholder": "Wpisz, aby wyszukać…"
             },
@@ -184,6 +195,9 @@
             "shortcut_hint": "Użyj klawiszy numerycznych, aby szybko wybrać akcję."
         }
     },
+    "errors": {
+        "api_failure": "Wywołanie interfejsu API zaplecza nie powiodło się: "
+    },
     "global": {
         "add": "Dodaj",
         "archived": "Zarchiwizowane",
@@ -211,7 +225,7 @@
         "items": "Przedmioty",
         "join_discord": "Dołącz do Discorda",
         "labels": "Etykiety",
-        "loading": "Ładowanie…",
+        "loading": "Wczytywanie…",
         "locations": "Lokalizacje",
         "maintenance": "Konserwacja",
         "name": "Nazwa",
@@ -559,6 +573,8 @@
         }
     },
     "scanner": {
+        "barcode_detected_message": "wykryto kod kreskowy produktu",
+        "barcode_fetch_data": "Pobierz dane produktu",
         "error": "Wystąpił błąd podczas skanowania",
         "invalid_url": "Nieprawidłowy URL kodu kreskowego",
         "no_sources": "Brak dostępnych źródeł wideo",
