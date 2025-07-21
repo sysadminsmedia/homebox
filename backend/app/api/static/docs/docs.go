@@ -3168,6 +3168,12 @@ const docTemplate = `{
                 },
                 "search_engine_name": {
                     "type": "string"
+                },
+                "search_engine_product_url": {
+                    "type": "string"
+                },
+                "search_engine_url": {
+                    "type": "string"
                 }
             }
         },

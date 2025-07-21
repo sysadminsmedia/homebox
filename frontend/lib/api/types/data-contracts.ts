@@ -462,6 +462,8 @@ export interface BarcodeProduct {
   /** Extras */
   notes: string;
   search_engine_name: string;
+  search_engine_product_url: string;
+  search_engine_url: string;
 }
 
 export interface Group {
