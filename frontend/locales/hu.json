@@ -124,6 +124,7 @@
             },
             "product_import": {
                 "barcode": "Termék vonalkódja",
+                "db_source": "DB forrás",
                 "error_exception": "Kivétel történt a tétel vonalkódjának lekérése során: ",
                 "error_invalid_barcode": "Érvénytelen vonalkód",
                 "error_not_found": "Nem található termék a megadott vonalkóddal.",
@@ -195,7 +196,7 @@
         }
     },
     "errors": {
-        "api_failure": "A háttér API-hívása sikertelen: "
+        "api_failure": "Backend API hívás sikertelen: "
     },
     "global": {
         "add": "Hozzáadás",
@@ -572,6 +573,8 @@
         }
     },
     "scanner": {
+        "barcode_detected_message": "termék vonalkód észlelve",
+        "barcode_fetch_data": "Termékadatok lekérése",
         "error": "Hiba történt a szkennelés közben",
         "invalid_url": "Érvénytelen vonalkód URL",
         "no_sources": "Nincs elérhető videóforrás",
