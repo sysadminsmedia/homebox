@@ -512,6 +512,8 @@ export interface ItemCreate {
   labelIds: string[];
   /** Edges */
   locationId: string;
+  manufacturer: string;
+  modelNumber: string;
   /**
    * @minLength 1
    * @maxLength 255

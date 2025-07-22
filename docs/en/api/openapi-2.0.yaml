@@ -748,6 +748,10 @@ definitions:
       locationId:
         description: Edges
         type: string
+      manufacturer:
+        type: string
+      modelNumber:
+        type: string
       name:
         maxLength: 255
         minLength: 1

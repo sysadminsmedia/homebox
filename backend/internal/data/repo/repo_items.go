@@ -64,6 +64,9 @@ type (
 		Description string    `json:"description" validate:"max=1000"`
 		AssetID     AssetID   `json:"-"`
 
+		ModelNumber  string `json:"modelNumber"`
+		Manufacturer string `json:"manufacturer"`
+
 		// Edges
 		LocationID uuid.UUID   `json:"locationId"`
 		LabelIDs   []uuid.UUID `json:"labelIds"`
@@ -601,7 +604,9 @@ func (e *ItemsRepository) Create(ctx context.Context, gid uuid.UUID, data ItemCr
 		SetDescription(data.Description).
 		SetGroupID(gid).
 		SetLocationID(data.LocationID).
-		SetAssetID(int(data.AssetID))
+		SetAssetID(int(data.AssetID)).
+		SetManufacturer(data.Manufacturer).
+		SetModelNumber(data.ModelNumber)
 
 	if data.ParentID != uuid.Nil {
 		q.SetParentID(data.ParentID)
