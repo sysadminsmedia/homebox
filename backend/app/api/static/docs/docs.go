@@ -3314,6 +3314,12 @@ const docTemplate = `{
                     "description": "Edges",
                     "type": "string"
                 },
+                "manufacturer": {
+                    "type": "string"
+                },
+                "modelNumber": {
+                    "type": "string"
+                },
                 "name": {
                     "type": "string",
                     "maxLength": 255,

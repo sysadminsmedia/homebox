@@ -49,6 +49,26 @@
         :max-length="255"
         :min-length="1"
       />
+      <FormTextField
+        ref="manufacturerInput"
+        v-if="form.barcode.length > 0"
+        v-model="form.manufacturer"
+        :trigger-focus="focused"
+        :autofocus="true"
+        label="Item manufacturer"
+        :max-length="255"
+        :min-length="1"
+      />
+      <FormTextField
+        ref="modelInput"
+        v-if="form.barcode.length > 0"
+        v-model="form.modelNumber"
+        :trigger-focus="focused"
+        :autofocus="true"
+        label="Item model"
+        :max-length="255"
+        :min-length="1"
+      />
       <FormTextField v-model="form.quantity" :label="$t('components.item.create_modal.item_quantity')" type="number" />
       <FormTextArea
         v-model="form.description"
@@ -248,6 +268,8 @@
     location: locations.value && locations.value.length > 0 ? locations.value[0] : ({} as LocationOut),
     parentId: null,
     name: "",
+    manufacturer: "",
+    modelNumber: "",
     quantity: 1,
     description: "",
     color: "",
@@ -344,6 +366,8 @@
       if (params?.product) {
         form.name = params.product.item.name;
         form.description = params.product.item.description;
+        form.manufacturer = params.product.manufacturer;
+        form.modelNumber = params.product.modelNumber;
 
         if (params.product.imageURL) {
           form.photos.push({
@@ -383,6 +407,8 @@
       name: form.name,
       quantity: form.quantity,
       description: form.description,
+      modelNumber: form.modelNumber,
+      manufacturer: form.manufacturer,
       locationId: form.location.id as string,
       labelIds: form.labels,
     };
@@ -425,6 +451,8 @@
     form.name = "";
     form.quantity = 1;
     form.description = "";
+    form.modelNumber = "";
+    form.manufacturer = "";
     form.color = "";
     form.photos = [];
     form.labels = [];
