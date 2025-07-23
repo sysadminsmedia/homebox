@@ -9,6 +9,8 @@ import (
 	"image/png"
 	"io"
 	"log"
+	"net/http"
+	"net/url"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -138,9 +140,22 @@ func wrapText(text string, face font.Face, maxWidth int, maxHeight int, lineHeig
 	return wrappedLines, ""
 }
 
-func GenerateLabel(w io.Writer, params *GenerateParameters) error {
+func GenerateLabel(w io.Writer, params *GenerateParameters, cfg *config.Config) error {
 	if err := params.Validate(); err != nil {
 		return err
+	}
+
+	// If LabelServiceUrl is configured, fetch the label from the URL instead of generating it
+	if cfg != nil && cfg.LabelMaker.LabelServiceUrl != nil && *cfg.LabelMaker.LabelServiceUrl != "" {
+		log.Printf("LabelServiceUrl configured: %s", *cfg.LabelMaker.LabelServiceUrl)
+
+		// Use configured timeout or default to 30 seconds
+		timeout := 30 * time.Second
+		if cfg.LabelMaker.LabelServiceTimeout != nil {
+			timeout = *cfg.LabelMaker.LabelServiceTimeout
+		}
+
+		return fetchLabelFromURL(w, *cfg.LabelMaker.LabelServiceUrl, params, timeout)
 	}
 
 	bodyText := params.DescriptionText
@@ -279,6 +294,72 @@ func createContext(font *truetype.Font, size float64, img *image.RGBA, dpi float
 	return c
 }
 
+// fetchLabelFromURL fetches a PNG image from the specified URL and writes it to the writer
+func fetchLabelFromURL(w io.Writer, serviceURL string, params *GenerateParameters, timeout time.Duration) error {
+	// Parse the base URL
+	baseURL, err := url.Parse(serviceURL)
+	if err != nil {
+		return fmt.Errorf("failed to parse service URL %s: %w", serviceURL, err)
+	}
+
+	// Build query parameters with the same attributes passed to print command
+	query := url.Values{}
+	query.Set("Width", fmt.Sprintf("%d", params.Width))
+	query.Set("Height", fmt.Sprintf("%d", params.Height))
+	query.Set("QrSize", fmt.Sprintf("%d", params.QrSize))
+	query.Set("Margin", fmt.Sprintf("%d", params.Margin))
+	query.Set("ComponentPadding", fmt.Sprintf("%d", params.ComponentPadding))
+	query.Set("TitleText", params.TitleText)
+	query.Set("TitleFontSize", fmt.Sprintf("%f", params.TitleFontSize))
+	query.Set("DescriptionText", params.DescriptionText)
+	query.Set("DescriptionFontSize", fmt.Sprintf("%f", params.DescriptionFontSize))
+	query.Set("Dpi", fmt.Sprintf("%f", params.Dpi))
+	query.Set("URL", params.URL)
+	query.Set("DynamicLength", fmt.Sprintf("%t", params.DynamicLength))
+
+	// Add AdditionalInformation if it exists
+	if params.AdditionalInformation != nil {
+		query.Set("AdditionalInformation", *params.AdditionalInformation)
+	}
+
+	// Set the query parameters
+	baseURL.RawQuery = query.Encode()
+	finalServiceURL := baseURL.String()
+
+	log.Printf("Fetching label from URL: %s", finalServiceURL)
+
+	// Create HTTP client with configurable timeout
+	client := &http.Client{
+		Timeout: timeout,
+	}
+
+	// Make HTTP request to the label service
+	resp, err := client.Get(finalServiceURL)
+	if err != nil {
+		return fmt.Errorf("failed to fetch label from URL %s: %w", finalServiceURL, err)
+	}
+	defer resp.Body.Close()
+
+	// Check if the response status is OK
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("label service returned status %d for URL %s", resp.StatusCode, finalServiceURL)
+	}
+
+	// Check if the response is a PNG image
+	contentType := resp.Header.Get("Content-Type")
+	if contentType != "image/png" && contentType != "image/x-png" {
+		return fmt.Errorf("label service returned invalid content type %s, expected image/png", contentType)
+	}
+
+	// Copy the response body to the writer
+	_, err = io.Copy(w, resp.Body)
+	if err != nil {
+		return fmt.Errorf("failed to write fetched label data: %w", err)
+	}
+
+	return nil
+}
+
 func PrintLabel(cfg *config.Config, params *GenerateParameters) error {
 	tmpFile := filepath.Join(os.TempDir(), fmt.Sprintf("label-%d.png", time.Now().UnixNano()))
 	f, err := os.OpenFile(tmpFile, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0600)
@@ -292,7 +373,7 @@ func PrintLabel(cfg *config.Config, params *GenerateParameters) error {
 		}
 	}()
 
-	err = GenerateLabel(f, params)
+	err = GenerateLabel(f, params, cfg)
 	if err != nil {
 		return err
 	}
