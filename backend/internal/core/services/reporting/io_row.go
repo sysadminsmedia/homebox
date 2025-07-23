@@ -33,6 +33,7 @@ type ExportCSVRow struct {
 	Manufacturer string `csv:"HB.manufacturer"`
 	ModelNumber  string `csv:"HB.model_number"`
 	SerialNumber string `csv:"HB.serial_number"`
+	Barcode      string `csv:"HB.barcode"`
 
 	LifetimeWarranty bool       `csv:"HB.lifetime_warranty"`
 	WarrantyExpires  types.Date `csv:"HB.warranty_expires"`

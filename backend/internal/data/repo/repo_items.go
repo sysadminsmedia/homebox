@@ -75,6 +75,7 @@ type (
 
 		ModelNumber  string `json:"modelNumber"`
 		Manufacturer string `json:"manufacturer"`
+		Barcode      string `json:"barcode"`
 
 		// Edges
 		LocationID uuid.UUID   `json:"locationId"`
@@ -100,6 +101,7 @@ type (
 		SerialNumber string `json:"serialNumber"`
 		ModelNumber  string `json:"modelNumber"`
 		Manufacturer string `json:"manufacturer"`
+		Barcode      string `json:"barcode"`
 
 		// Warranty
 		LifetimeWarranty bool       `json:"lifetimeWarranty"`
@@ -163,6 +165,7 @@ type (
 		SerialNumber string `json:"serialNumber"`
 		ModelNumber  string `json:"modelNumber"`
 		Manufacturer string `json:"manufacturer"`
+		Barcode      string `json:"barcode"`
 
 		// Warranty
 		LifetimeWarranty bool       `json:"lifetimeWarranty"`
@@ -295,6 +298,7 @@ func mapItemOut(item *ent.Item) ItemOut {
 		SerialNumber: item.SerialNumber,
 		ModelNumber:  item.ModelNumber,
 		Manufacturer: item.Manufacturer,
+		Barcode:      item.Barcode,
 
 		// Purchase
 		PurchaseTime: types.DateFromTime(item.PurchaseTime),
@@ -383,6 +387,7 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 				item.SerialNumberContainsFold(q.Search),
 				item.ModelNumberContainsFold(q.Search),
 				item.ManufacturerContainsFold(q.Search),
+				item.BarcodeContainsFold(q.Search),
 				item.NotesContainsFold(q.Search),
 				// Accent-insensitive search using custom predicates
 				ent.ItemNameAccentInsensitiveContains(q.Search),
@@ -615,7 +620,8 @@ func (e *ItemsRepository) Create(ctx context.Context, gid uuid.UUID, data ItemCr
 		SetLocationID(data.LocationID).
 		SetAssetID(int(data.AssetID)).
 		SetManufacturer(data.Manufacturer).
-		SetModelNumber(data.ModelNumber)
+		SetModelNumber(data.ModelNumber).
+		SetBarcode(data.Barcode)
 
 	if data.ParentID != uuid.Nil {
 		q.SetParentID(data.ParentID)
@@ -667,6 +673,7 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 		SetSerialNumber(data.SerialNumber).
 		SetModelNumber(data.ModelNumber).
 		SetManufacturer(data.Manufacturer).
+		SetBarcode(data.Barcode).
 		SetArchived(data.Archived).
 		SetPurchaseTime(data.PurchaseTime.Time()).
 		SetPurchaseFrom(data.PurchaseFrom).

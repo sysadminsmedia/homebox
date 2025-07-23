@@ -48,6 +48,8 @@ type Item struct {
 	ModelNumber string `json:"model_number,omitempty"`
 	// Manufacturer holds the value of the "manufacturer" field.
 	Manufacturer string `json:"manufacturer,omitempty"`
+	// Barcode holds the value of the "barcode" field.
+	Barcode string `json:"barcode,omitempty"`
 	// LifetimeWarranty holds the value of the "lifetime_warranty" field.
 	LifetimeWarranty bool `json:"lifetime_warranty,omitempty"`
 	// WarrantyExpires holds the value of the "warranty_expires" field.
@@ -189,7 +191,7 @@ func (*Item) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullFloat64)
 		case item.FieldQuantity, item.FieldAssetID:
 			values[i] = new(sql.NullInt64)
-		case item.FieldName, item.FieldDescription, item.FieldImportRef, item.FieldNotes, item.FieldSerialNumber, item.FieldModelNumber, item.FieldManufacturer, item.FieldWarrantyDetails, item.FieldPurchaseFrom, item.FieldSoldTo, item.FieldSoldNotes:
+		case item.FieldName, item.FieldDescription, item.FieldImportRef, item.FieldNotes, item.FieldSerialNumber, item.FieldModelNumber, item.FieldManufacturer, item.FieldBarcode, item.FieldWarrantyDetails, item.FieldPurchaseFrom, item.FieldSoldTo, item.FieldSoldNotes:
 			values[i] = new(sql.NullString)
 		case item.FieldCreatedAt, item.FieldUpdatedAt, item.FieldWarrantyExpires, item.FieldPurchaseTime, item.FieldSoldTime:
 			values[i] = new(sql.NullTime)
@@ -305,6 +307,12 @@ func (i *Item) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field manufacturer", values[j])
 			} else if value.Valid {
 				i.Manufacturer = value.String
+			}
+		case item.FieldBarcode:
+			if value, ok := values[j].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field barcode", values[j])
+			} else if value.Valid {
+				i.Barcode = value.String
 			}
 		case item.FieldLifetimeWarranty:
 			if value, ok := values[j].(*sql.NullBool); !ok {
@@ -504,6 +512,9 @@ func (i *Item) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("manufacturer=")
 	builder.WriteString(i.Manufacturer)
+	builder.WriteString(", ")
+	builder.WriteString("barcode=")
+	builder.WriteString(i.Barcode)
 	builder.WriteString(", ")
 	builder.WriteString("lifetime_warranty=")
 	builder.WriteString(fmt.Sprintf("%v", i.LifetimeWarranty))
