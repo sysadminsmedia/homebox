@@ -149,13 +149,7 @@ func GenerateLabel(w io.Writer, params *GenerateParameters, cfg *config.Config) 
 	if cfg != nil && cfg.LabelMaker.LabelServiceUrl != nil && *cfg.LabelMaker.LabelServiceUrl != "" {
 		log.Printf("LabelServiceUrl configured: %s", *cfg.LabelMaker.LabelServiceUrl)
 
-		// Use configured timeout or default to 30 seconds
-		timeout := 30 * time.Second
-		if cfg.LabelMaker.LabelServiceTimeout != nil {
-			timeout = *cfg.LabelMaker.LabelServiceTimeout
-		}
-
-		return fetchLabelFromURL(w, *cfg.LabelMaker.LabelServiceUrl, params, timeout)
+		return fetchLabelFromURL(w, *cfg.LabelMaker.LabelServiceUrl, params, cfg)
 	}
 
 	bodyText := params.DescriptionText
@@ -294,8 +288,8 @@ func createContext(font *truetype.Font, size float64, img *image.RGBA, dpi float
 	return c
 }
 
-// fetchLabelFromURL fetches a PNG image from the specified URL and writes it to the writer
-func fetchLabelFromURL(w io.Writer, serviceURL string, params *GenerateParameters, timeout time.Duration) error {
+// fetchLabelFromURL fetches an image from the specified URL and writes it to the writer
+func fetchLabelFromURL(w io.Writer, serviceURL string, params *GenerateParameters, cfg *config.Config) error {
 	// Parse the base URL
 	baseURL, err := url.Parse(serviceURL)
 	if err != nil {
@@ -328,13 +322,29 @@ func fetchLabelFromURL(w io.Writer, serviceURL string, params *GenerateParameter
 
 	log.Printf("Fetching label from URL: %s", finalServiceURL)
 
+	// Use configured timeout or default to 30 seconds
+	timeout := 30 * time.Second
+	if cfg != nil && cfg.LabelMaker.LabelServiceTimeout != nil {
+		timeout = *cfg.LabelMaker.LabelServiceTimeout
+	}
+
 	// Create HTTP client with configurable timeout
 	client := &http.Client{
 		Timeout: timeout,
 	}
 
+	// Create HTTP request with custom headers
+	req, err := http.NewRequest("GET", finalServiceURL, nil)
+	if err != nil {
+		return fmt.Errorf("failed to create request for URL %s: %w", finalServiceURL, err)
+	}
+
+	// Set custom headers
+	req.Header.Set("User-Agent", "Homebox-LabelMaker/1.0")
+	req.Header.Set("Accept", "image/*")
+
 	// Make HTTP request to the label service
-	resp, err := client.Get(finalServiceURL)
+	resp, err := client.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to fetch label from URL %s: %w", finalServiceURL, err)
 	}
@@ -345,14 +355,21 @@ func fetchLabelFromURL(w io.Writer, serviceURL string, params *GenerateParameter
 		return fmt.Errorf("label service returned status %d for URL %s", resp.StatusCode, finalServiceURL)
 	}
 
-	// Check if the response is a PNG image
+	// Check if the response is an image
 	contentType := resp.Header.Get("Content-Type")
-	if contentType != "image/png" && contentType != "image/x-png" {
-		return fmt.Errorf("label service returned invalid content type %s, expected image/png", contentType)
+	if !strings.HasPrefix(contentType, "image/") {
+		return fmt.Errorf("label service returned invalid content type %s, expected image/*", contentType)
 	}
 
+	// Set default max response size (10MB)
+	maxResponseSize := int64(10 << 20)
+	if cfg != nil {
+		maxResponseSize = cfg.Web.MaxUploadSize << 20
+	}
+	limitedReader := io.LimitReader(resp.Body, maxResponseSize)
+
 	// Copy the response body to the writer
-	_, err = io.Copy(w, resp.Body)
+	_, err = io.Copy(w, limitedReader)
 	if err != nil {
 		return fmt.Errorf("failed to write fetched label data: %w", err)
 	}
