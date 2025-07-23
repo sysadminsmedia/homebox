@@ -3520,6 +3520,7 @@ type ItemMutation struct {
 	serial_number              *string
 	model_number               *string
 	manufacturer               *string
+	barcode                    *string
 	lifetime_warranty          *bool
 	warranty_expires           *time.Time
 	warranty_details           *string
@@ -4283,6 +4284,55 @@ func (m *ItemMutation) ManufacturerCleared() bool {
 func (m *ItemMutation) ResetManufacturer() {
 	m.manufacturer = nil
 	delete(m.clearedFields, item.FieldManufacturer)
+}
+
+// SetBarcode sets the "barcode" field.
+func (m *ItemMutation) SetBarcode(s string) {
+	m.barcode = &s
+}
+
+// Barcode returns the value of the "barcode" field in the mutation.
+func (m *ItemMutation) Barcode() (r string, exists bool) {
+	v := m.barcode
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBarcode returns the old "barcode" field's value of the Item entity.
+// If the Item object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ItemMutation) OldBarcode(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBarcode is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBarcode requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBarcode: %w", err)
+	}
+	return oldValue.Barcode, nil
+}
+
+// ClearBarcode clears the value of the "barcode" field.
+func (m *ItemMutation) ClearBarcode() {
+	m.barcode = nil
+	m.clearedFields[item.FieldBarcode] = struct{}{}
+}
+
+// BarcodeCleared returns if the "barcode" field was cleared in this mutation.
+func (m *ItemMutation) BarcodeCleared() bool {
+	_, ok := m.clearedFields[item.FieldBarcode]
+	return ok
+}
+
+// ResetBarcode resets all changes to the "barcode" field.
+func (m *ItemMutation) ResetBarcode() {
+	m.barcode = nil
+	delete(m.clearedFields, item.FieldBarcode)
 }
 
 // SetLifetimeWarranty sets the "lifetime_warranty" field.
@@ -5197,7 +5247,7 @@ func (m *ItemMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ItemMutation) Fields() []string {
-	fields := make([]string, 0, 24)
+	fields := make([]string, 0, 25)
 	if m.created_at != nil {
 		fields = append(fields, item.FieldCreatedAt)
 	}
@@ -5239,6 +5289,9 @@ func (m *ItemMutation) Fields() []string {
 	}
 	if m.manufacturer != nil {
 		fields = append(fields, item.FieldManufacturer)
+	}
+	if m.barcode != nil {
+		fields = append(fields, item.FieldBarcode)
 	}
 	if m.lifetime_warranty != nil {
 		fields = append(fields, item.FieldLifetimeWarranty)
@@ -5306,6 +5359,8 @@ func (m *ItemMutation) Field(name string) (ent.Value, bool) {
 		return m.ModelNumber()
 	case item.FieldManufacturer:
 		return m.Manufacturer()
+	case item.FieldBarcode:
+		return m.Barcode()
 	case item.FieldLifetimeWarranty:
 		return m.LifetimeWarranty()
 	case item.FieldWarrantyExpires:
@@ -5363,6 +5418,8 @@ func (m *ItemMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldModelNumber(ctx)
 	case item.FieldManufacturer:
 		return m.OldManufacturer(ctx)
+	case item.FieldBarcode:
+		return m.OldBarcode(ctx)
 	case item.FieldLifetimeWarranty:
 		return m.OldLifetimeWarranty(ctx)
 	case item.FieldWarrantyExpires:
@@ -5489,6 +5546,13 @@ func (m *ItemMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetManufacturer(v)
+		return nil
+	case item.FieldBarcode:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBarcode(v)
 		return nil
 	case item.FieldLifetimeWarranty:
 		v, ok := value.(bool)
@@ -5659,6 +5723,9 @@ func (m *ItemMutation) ClearedFields() []string {
 	if m.FieldCleared(item.FieldManufacturer) {
 		fields = append(fields, item.FieldManufacturer)
 	}
+	if m.FieldCleared(item.FieldBarcode) {
+		fields = append(fields, item.FieldBarcode)
+	}
 	if m.FieldCleared(item.FieldWarrantyExpires) {
 		fields = append(fields, item.FieldWarrantyExpires)
 	}
@@ -5711,6 +5778,9 @@ func (m *ItemMutation) ClearField(name string) error {
 		return nil
 	case item.FieldManufacturer:
 		m.ClearManufacturer()
+		return nil
+	case item.FieldBarcode:
+		m.ClearBarcode()
 		return nil
 	case item.FieldWarrantyExpires:
 		m.ClearWarrantyExpires()
@@ -5782,6 +5852,9 @@ func (m *ItemMutation) ResetField(name string) error {
 		return nil
 	case item.FieldManufacturer:
 		m.ResetManufacturer()
+		return nil
+	case item.FieldBarcode:
+		m.ResetBarcode()
 		return nil
 	case item.FieldLifetimeWarranty:
 		m.ResetLifetimeWarranty()

@@ -247,6 +247,9 @@ definitions:
       asset_id:
         description: AssetID holds the value of the "asset_id" field.
         type: integer
+      barcode:
+        description: Barcode holds the value of the "barcode" field.
+        type: string
       created_at:
         description: CreatedAt holds the value of the "created_at" field.
         type: string
@@ -738,6 +741,8 @@ definitions:
     type: object
   repo.ItemCreate:
     properties:
+      barcode:
+        type: string
       description:
         maxLength: 1000
         type: string
@@ -790,6 +795,8 @@ definitions:
         items:
           $ref: '#/definitions/repo.ItemAttachment'
         type: array
+      barcode:
+        type: string
       createdAt:
         type: string
       description:
@@ -942,6 +949,8 @@ definitions:
       archived:
         type: boolean
       assetId:
+        type: string
+      barcode:
         type: string
       description:
         maxLength: 1000

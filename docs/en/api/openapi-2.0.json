@@ -2516,6 +2516,10 @@
                     "description": "AssetID holds the value of the \"asset_id\" field.",
                     "type": "integer"
                 },
+                "barcode": {
+                    "description": "Barcode holds the value of the \"barcode\" field.",
+                    "type": "string"
+                },
                 "created_at": {
                     "description": "CreatedAt holds the value of the \"created_at\" field.",
                     "type": "string"
@@ -3239,6 +3243,9 @@
                 "name"
             ],
             "properties": {
+                "barcode": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string",
                     "maxLength": 1000
@@ -3311,6 +3318,9 @@
                     "items": {
                         "$ref": "#/definitions/repo.ItemAttachment"
                     }
+                },
+                "barcode": {
+                    "type": "string"
                 },
                 "createdAt": {
                     "type": "string"
@@ -3539,6 +3549,9 @@
                     "type": "boolean"
                 },
                 "assetId": {
+                    "type": "string"
+                },
+                "barcode": {
                     "type": "string"
                 },
                 "description": {

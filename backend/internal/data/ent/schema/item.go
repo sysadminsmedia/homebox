@@ -29,6 +29,7 @@ func (Item) Indexes() []ent.Index {
 		index.Fields("manufacturer"),
 		index.Fields("model_number"),
 		index.Fields("serial_number"),
+		index.Fields("barcode"),
 		index.Fields("archived"),
 		index.Fields("asset_id"),
 	}
@@ -63,6 +64,9 @@ func (Item) Fields() []ent.Field {
 			MaxLen(255).
 			Optional(),
 		field.String("manufacturer").
+			MaxLen(255).
+			Optional(),
+		field.String("barcode").
 			MaxLen(255).
 			Optional(),
 
