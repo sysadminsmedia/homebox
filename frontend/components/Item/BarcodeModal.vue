@@ -76,7 +76,7 @@
                   'text-center': h.align === 'center',
                 }"
               >
-                <template v-if="h.type === 'name'">
+                <template v-if="h.value === 'name'">
                   <div class="flex items-center space-x-4">
                     <img :src="p.imageBase64" class="w-16 rounded object-fill shadow-sm" alt="Product's photo" />
                     <span class="text-sm font-medium">
@@ -84,8 +84,8 @@
                     </span>
                   </div>
                 </template>
-                <template v-else-if="h.type === 'url'">
-                  <NuxtLink class="underline" :to="'https://' + extractValue(p, h.value)" target="_blank">{{
+                <template v-else-if="h.url?.length">
+                  <NuxtLink class="underline" :to="extractValue(p, h.url)" target="_blank">{{
                     extractValue(p, h.value)
                   }}</NuxtLink>
                 </template>
@@ -129,8 +129,8 @@
   type BarcodeTableHeader = {
     text: string;
     value: string;
+    url?: string;
     align?: "left" | "center" | "right";
-    type?: "name" | "url";
   };
 
   const defaultHeaders = [
@@ -138,11 +138,10 @@
       text: "items.name",
       value: "name",
       align: "center",
-      type: "name",
     },
     { text: "items.manufacturer", value: "manufacturer", align: "center" },
     { text: "items.model_number", value: "modelNumber", align: "center" },
-    { text: "components.item.product_import.db_source", value: "search_engine_name", align: "center", type: "url" },
+    { text: "components.item.product_import.db_source", value: "search_engine_name", url: "search_engine_product_url", align: "center"},
   ] satisfies BarcodeTableHeader[];
 
   // Need for later filtering
