@@ -50,8 +50,8 @@
         :min-length="1"
       />
       <FormTextField
+        v-if="form.barcode?.length"
         ref="manufacturerInput"
-        v-if="form.barcode.length > 0"
         v-model="form.manufacturer"
         :trigger-focus="focused"
         :autofocus="true"
@@ -60,12 +60,22 @@
         :min-length="1"
       />
       <FormTextField
+        v-if="form.barcode?.length"
         ref="modelInput"
-        v-if="form.barcode.length > 0"
         v-model="form.modelNumber"
         :trigger-focus="focused"
         :autofocus="true"
         label="Item model"
+        :max-length="255"
+        :min-length="1"
+      />
+      <FormTextField
+        v-if="form.barcode?.length"
+        ref="barcodeInput"
+        v-model="form.barcode"
+        :trigger-focus="focused"
+        :autofocus="true"
+        label="Item barcode"
         :max-length="255"
         :min-length="1"
       />
@@ -270,6 +280,7 @@
     name: "",
     manufacturer: "",
     modelNumber: "",
+    barcode: "",
     quantity: 1,
     description: "",
     color: "",
@@ -368,6 +379,7 @@
         form.description = params.product.item.description;
         form.manufacturer = params.product.manufacturer;
         form.modelNumber = params.product.modelNumber;
+        form.barcode = params.product.barcode;
 
         if (params.product.imageURL) {
           form.photos.push({
@@ -407,6 +419,7 @@
       description: form.description,
       modelNumber: form.modelNumber,
       manufacturer: form.manufacturer,
+      barcode: form.barcode,
       locationId: form.location.id as string,
       labelIds: form.labels,
     };
