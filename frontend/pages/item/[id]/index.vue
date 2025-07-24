@@ -487,6 +487,8 @@
     const { error, data } = await api.items.create({
       name: `${item.value.name} Copy`,
       description: item.value.description,
+      manufacturer: item.value.manufacturer,
+      modelNumber: item.value.modelNumber,
       barcode: item.value.barcode,
       quantity: item.value.quantity,
       locationId: item.value.location!.id,
