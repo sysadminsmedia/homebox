@@ -41,7 +41,7 @@
 
       <ItemViewSelectable
         :items="products"
-        :default-table-headers="BarcodeProductHeaders"
+        :item-type="'barcodeproduct'"
         :selection-mode="true"
         @update:selected-item="onSelectedItemChange"
       />
@@ -63,8 +63,6 @@
   import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";
   import MdiBarcode from "~icons/mdi/barcode";
   import MdiLoading from "~icons/mdi/loading";
-  import type { TableData, TableHeaderType } from "~/components/Item/View/Table.types";
-  import { BarcodeProductHeaders } from "~/components/Item/View/Table.types";
 
   const { openDialog, registerOpenDialogCallback } = useDialog();
   const { t } = useI18n();

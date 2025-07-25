@@ -13,7 +13,6 @@
   import ColorSelector from "@/components/Form/ColorSelector.vue";
   import { getContrastTextColor } from "~/lib/utils";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
-  import { ItemSummaryHeaders } from "~/components/Item/View/Table.types";
 
   definePageMeta({
     middleware: ["auth"],
@@ -193,7 +192,7 @@
       <Markdown v-if="label && label.description" class="mt-3 text-base" :source="label.description" />
     </Card>
     <section v-if="label && items">
-      <ItemViewSelectable :items="items.items" :default-table-headers="ItemSummaryHeaders" />
+      <ItemViewSelectable :items="items.items" :item-type="'itemsummary'" />
     </section>
   </BaseContainer>
 </template>

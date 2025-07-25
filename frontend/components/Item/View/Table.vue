@@ -132,7 +132,7 @@
               </template>
             </slot>
           </TableCell>
-          <TableCell v-if="!props.selectionMode ?? false" class="absolute inset-0">
+          <TableCell v-if="!props.selectionMode" class="absolute inset-0">
             <NuxtLink :to="`/item/${d.id}`" class="absolute inset-0">
               <span class="sr-only">{{ $t("components.item.view.table.view_item") }}</span>
             </NuxtLink>
@@ -177,15 +177,7 @@
 </template>
 
 <script setup lang="ts">
-  import type {
-    TableData,
-    TableHeaderType,
-    TableEmits,
-    TableProps,
-    ItemSummaryHeaders,
-    TableProperties,
-  } from "./Table.types";
-  import type { ItemSummary, BarcodeProduct } from "~~/lib/api/types/data-contracts";
+  import type { TableData, TableEmits, TableProps, TableProperties, TableHeaderType } from "./Table.types";
   import MdiArrowDown from "~icons/mdi/arrow-down";
   import MdiArrowUp from "~icons/mdi/arrow-up";
   import MdiCheck from "~icons/mdi/check";
@@ -206,6 +198,42 @@
   import { useDialog } from "@/components/ui/dialog-provider";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
 
+  const ItemSummaryHeaders = [
+    { text: "items.asset_id", value: "assetId", enabled: false },
+    {
+      text: "items.name",
+      value: "name",
+      enabled: true,
+      type: "name",
+    },
+    { text: "items.quantity", value: "quantity", align: "center", enabled: true },
+    { text: "items.insured", value: "insured", align: "center", enabled: true, type: "boolean" },
+    { text: "items.purchase_price", value: "purchasePrice", align: "center", enabled: true, type: "price" },
+    { text: "items.location", value: "location", align: "center", enabled: false, type: "location" },
+    { text: "items.archived", value: "archived", align: "center", enabled: false, type: "boolean" },
+    { text: "items.created_at", value: "createdAt", align: "center", enabled: false, type: "date" },
+    { text: "items.updated_at", value: "updatedAt", align: "center", enabled: false, type: "date" },
+  ] satisfies TableHeaderType[];
+
+  const BarcodeProductHeaders = [
+    {
+      text: "items.name",
+      value: "item.name",
+      enabled: true,
+      align: "center",
+      type: "name",
+    },
+    { text: "items.manufacturer", value: "item.manufacturer", align: "center", enabled: true },
+    { text: "items.model_number", value: "item.modelNumber", align: "center", enabled: true },
+    {
+      text: "components.item.product_import.db_source",
+      value: "search_engine_name",
+      url: "search_engine_product_url",
+      align: "center",
+      enabled: true,
+    },
+  ] satisfies TableHeaderType[];
+
   const { openDialog, closeDialog } = useDialog();
 
   const emit = defineEmits<TableEmits>();
@@ -218,17 +246,33 @@
 
   const preferences = useViewPreferences();
 
-  const headers = ref<TableHeaderType[]>(
-    props.defaultTableHeaders
-    // TODOOOOOO
-    /* []
-      .concat(props.defaultTableHeaders.filter(h => !preferences.value.tableHeaders?.find(h2 => h2.value === h.value)))
-      // this is a hack to make sure that any changes to the defaultTableHeaders are reflected in the preferences
-      .map(h => ({
-        ...(props.defaultTableHeaders.find(h2 => h2.value === h.value) as TableHeaderType),
-        enabled: h.enabled,
-      })) */
-  );
+  const headers = computed<TableHeaderType[]>(() => {
+    let defaultHeaders;
+    let params;
+    switch (props.itemType) {
+      case "barcodeproduct":
+        defaultHeaders = BarcodeProductHeaders;
+        params = preferences.value.tableHeadersBarcode;
+        break;
+      case "itemsummary":
+        defaultHeaders = ItemSummaryHeaders;
+        params = preferences.value.tableHeaders;
+        break;
+      default:
+        console.warn("Unknown item-type:", props.itemType);
+        return [];
+    }
+
+    return (
+      (params ?? [])
+        .concat(defaultHeaders.filter(h => !params?.find(h2 => h2.value === h.value)))
+        // this is a hack to make sure that any changes to the defaultHeaders are reflected in the preferences
+        .map(h => ({
+          ...(defaultHeaders.find(h2 => h2.value === h.value) as TableHeaderType),
+          enabled: h.enabled,
+        }))
+    );
+  });
 
   const toggleHeader = (value: string) => {
     const header = headers.value.find(h => h.value === value);
@@ -236,15 +280,29 @@
       header.enabled = !header.enabled; // Toggle the 'enabled' state
     }
 
-    // preferences.value.tableHeaders = headers.value;
+    updateParameters();
   };
+
   const moveHeader = (from: number, to: number) => {
     const header = headers.value[from];
     headers.value.splice(from, 1);
     headers.value.splice(to, 0, header);
 
-    // preferences.value.tableHeaders = headers.value;
+    updateParameters();
   };
+
+  function updateParameters() {
+    switch (props.itemType) {
+      case "barcodeproduct":
+        preferences.value.tableHeadersBarcode = headers.value;
+        break;
+      case "itemsummary":
+        preferences.value.tableHeaders = headers.value;
+        break;
+      default:
+        console.warn("Unknown item-type:", props.itemType);
+    }
+  }
 
   const pagination = reactive({
     descending: false,
@@ -261,7 +319,7 @@
   );
 
   function selectRow(index: number) {
-    if (!props.selectionMode ?? false) return;
+    if (!props.selectionMode) return;
 
     // Unselect if already selected
     if (selectedRow.value === index) {
@@ -283,7 +341,7 @@
     sortByProperty.value = property;
   }
 
-  function extractSortable(item: ItemSummary | BarcodeProduct, property: TableProperties): string | number | boolean {
+  function extractSortable<T extends Record<string, any>>(item: T, property: keyof T): string | number | boolean {
     const value = item[property];
     if (typeof value === "string") {
       // Try to parse number
@@ -302,7 +360,7 @@
     return value;
   }
 
-  function itemSort(a: ItemSummary | BarcodeProduct, b: ItemSummary | BarcodeProduct) {
+  function itemSort<T extends Record<string, any>>(a: T, b: T) {
     if (!sortByProperty.value) {
       return 0;
     }

@@ -21,7 +21,6 @@
   import { Badge } from "@/components/ui/badge";
   import { Separator } from "@/components/ui/separator";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
-  import { ItemSummaryHeaders } from "~/components/Item/View/Table.types";
 
   definePageMeta({
     middleware: ["auth"],
@@ -218,7 +217,7 @@
         </Markdown>
       </Card>
       <section v-if="location && items">
-        <ItemViewSelectable :items="items" :default-table-headers="ItemSummaryHeaders" />
+        <ItemViewSelectable :items="items" :item-type="'itemsummary'" />
       </section>
 
       <section v-if="location && location.children.length > 0" class="mt-6">
