@@ -58,7 +58,7 @@
   import { useI18n } from "vue-i18n";
   import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { Button } from "~/components/ui/button";
-  import type { BarcodeProduct } from "~~/lib/api/types/data-contracts";
+  import type { BarcodeProduct, ItemSummary } from "~~/lib/api/types/data-contracts";
   import { useDialog } from "~/components/ui/dialog-provider";
   import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";
   import MdiBarcode from "~icons/mdi/barcode";
@@ -73,9 +73,9 @@
   const errorMessage = ref<string | null>(null);
   const selectedItem = ref<BarcodeProduct | null>(null);
 
-  function onSelectedItemChange(item: BarcodeProduct) {
+  function onSelectedItemChange(item: BarcodeProduct | ItemSummary | null) {
     if (item === null) selectedItem.value = null;
-    else selectedItem.value = item;
+    else selectedItem.value = item as BarcodeProduct;
   }
 
   onMounted(() => {
