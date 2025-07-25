@@ -454,13 +454,9 @@ export interface EntUserEdges {
 }
 
 export interface BarcodeProduct {
-  barcode: string;
   imageBase64: string;
   imageURL: string;
   item: ItemCreate;
-  manufacturer: string;
-  /** Identifications */
-  modelNumber: string;
   /** Extras */
   notes: string;
   search_engine_name: string;

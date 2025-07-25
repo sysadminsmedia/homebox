@@ -24,13 +24,8 @@ type (
 		SearchEngineURL        string `json:"search_engine_url"`
 		SearchEngineProductURL string `json:"search_engine_product_url"`
 
-		// Identifications
-		ModelNumber  string `json:"modelNumber"`
-		Manufacturer string `json:"manufacturer"`
-
 		// Extras
 		Country string `json:"notes"`
-		Barcode string `json:"barcode"`
 
 		ImageURL    string `json:"imageURL"`
 		ImageBase64 string `json:"imageBase64"`
@@ -156,13 +151,13 @@ func (r *BarcodeRepository) UPCItemDB_Search(_ config.BarcodeAPIConf, iBarcode s
 
 	for _, it := range result.Items {
 		var p BarcodeProduct
-		p.Barcode = iBarcode
+		p.Item.Barcode = iBarcode
 		p.SearchEngineProductURL = "https://www.upcitemdb.com/upc/" + iBarcode
 
 		p.Item.Description = it.Description
 		p.Item.Name = it.Title
-		p.Manufacturer = it.Brand
-		p.ModelNumber = it.Model
+		p.Item.Manufacturer = it.Brand
+		p.Item.ModelNumber = it.Model
 		if len(it.Images) != 0 {
 			p.ImageURL = it.Images[0]
 		}
@@ -222,12 +217,12 @@ func (r *BarcodeRepository) BarcodeSpider_Search(conf config.BarcodeAPIConf, iBa
 
 	// TODO: check 200 code on HTTP response.
 	var p BarcodeProduct
-	p.Barcode = iBarcode
+	p.Item.Barcode = iBarcode
 	p.SearchEngineProductURL = "https://amp.barcodespider.com/" + iBarcode
 	p.Item.Name = result.ItemAttributes.Title
 	p.Item.Description = result.ItemAttributes.Description
-	p.Manufacturer = result.ItemAttributes.Brand
-	p.ModelNumber = result.ItemAttributes.Model
+	p.Item.Manufacturer = result.ItemAttributes.Brand
+	p.Item.ModelNumber = result.ItemAttributes.Model
 	p.ImageURL = result.ItemAttributes.Image
 
 	var res []BarcodeProduct

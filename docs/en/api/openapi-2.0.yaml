@@ -651,19 +651,12 @@ definitions:
     - TypeTime
   repo.BarcodeProduct:
     properties:
-      barcode:
-        type: string
       imageBase64:
         type: string
       imageURL:
         type: string
       item:
         $ref: '#/definitions/repo.ItemCreate'
-      manufacturer:
-        type: string
-      modelNumber:
-        description: Identifications
-        type: string
       notes:
         description: Extras
         type: string

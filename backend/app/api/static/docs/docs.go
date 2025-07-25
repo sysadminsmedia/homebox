@@ -3105,9 +3105,6 @@ const docTemplate = `{
         "repo.BarcodeProduct": {
             "type": "object",
             "properties": {
-                "barcode": {
-                    "type": "string"
-                },
                 "imageBase64": {
                     "type": "string"
                 },
@@ -3116,13 +3113,6 @@ const docTemplate = `{
                 },
                 "item": {
                     "$ref": "#/definitions/repo.ItemCreate"
-                },
-                "manufacturer": {
-                    "type": "string"
-                },
-                "modelNumber": {
-                    "description": "Identifications",
-                    "type": "string"
                 },
                 "notes": {
                     "description": "Extras",
