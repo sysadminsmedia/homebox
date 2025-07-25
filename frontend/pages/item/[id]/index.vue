@@ -23,7 +23,6 @@
   import { Switch } from "@/components/ui/switch";
   import { Card } from "@/components/ui/card";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
-  import { ItemSummaryHeaders } from "~/components/Item/View/Table.types";
 
   const { t } = useI18n();
 
@@ -781,7 +780,7 @@
     </section>
 
     <section v-if="items && items.length > 0" class="mt-6">
-      <ItemViewSelectable :items="items" :default-table-headers="ItemSummaryHeaders" />
+      <ItemViewSelectable :items="items" :item-type="'itemsummary'" />
     </section>
   </BaseContainer>
 </template>

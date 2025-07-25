@@ -4,8 +4,7 @@
   import { itemsTable } from "./table";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
-  import { ItemSummaryHeaders } from "~/components/Item/View/Table.types";
-  
+
   const { t } = useI18n();
 
   definePageMeta({
@@ -43,7 +42,7 @@
 
         <p v-if="itemTable.items.length === 0" class="ml-2 text-sm">{{ $t("items.no_results") }}</p>
         <BaseCard v-else-if="breakpoints.lg">
-          <ItemViewTable :items="itemTable.items" :default-table-headers="ItemSummaryHeaders" disable-controls />
+          <ItemViewTable :items="itemTable.items" :item-type="'itemsummary'" disable-controls />
         </BaseCard>
         <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2">
           <ItemCard v-for="item in itemTable.items" :key="item.id" :item="item" />
