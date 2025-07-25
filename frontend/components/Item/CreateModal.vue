@@ -377,9 +377,9 @@
       if (params?.product) {
         form.name = params.product.item.name;
         form.description = params.product.item.description;
-        form.manufacturer = params.product.manufacturer;
-        form.modelNumber = params.product.modelNumber;
-        form.barcode = params.product.barcode;
+        form.manufacturer = params.product.item.manufacturer;
+        form.modelNumber = params.product.item.modelNumber;
+        form.barcode = params.product.item.barcode;
 
         if (params.product.imageURL) {
           form.photos.push({
