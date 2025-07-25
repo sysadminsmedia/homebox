@@ -77,7 +77,13 @@
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow v-for="(d, i) in data" :key="d.id" class="relative cursor-pointer">
+        <TableRow
+          v-for="(d, i) in data"
+          :key="d.id"
+          class="relative cursor-pointer"
+          :class="{ selected: selectedRow === i }"
+          @click="selectRow(i)"
+        >
           <TableCell
             v-for="h in headers.filter(h => h.enabled)"
             :key="`${h.value}-${i}`"
@@ -88,7 +94,17 @@
             }"
           >
             <template v-if="h.type === 'name'">
-              {{ d.name }}
+              <div class="flex items-center space-x-4">
+                <img
+                  v-if="d?.imageBase64"
+                  :src="d.imageBase64"
+                  class="w-16 rounded object-fill shadow-sm"
+                  alt="Product's photo"
+                />
+                <span class="text-sm font-medium">
+                  {{ extractValue(d, h.value) }}
+                </span>
+              </div>
             </template>
             <template v-else-if="h.type === 'price'">
               <Currency :amount="d.purchasePrice" />
@@ -106,10 +122,17 @@
               <DateTime :date="d[h.value]" datetime-type="date" />
             </template>
             <slot v-else :name="cell(h)" v-bind="{ item: d }">
-              {{ extractValue(d, h.value) }}
+              <template v-if="h.url?.length">
+                <NuxtLink class="underline" :to="extractValue(d, h.url)" target="_blank">{{
+                  extractValue(d, h.value)
+                }}</NuxtLink>
+              </template>
+              <template v-else>
+                {{ extractValue(d, h.value) }}
+              </template>
             </slot>
           </TableCell>
-          <TableCell class="absolute inset-0">
+          <TableCell v-if="!props.selectionMode ?? false" class="absolute inset-0">
             <NuxtLink :to="`/item/${d.id}`" class="absolute inset-0">
               <span class="sr-only">{{ $t("components.item.view.table.view_item") }}</span>
             </NuxtLink>
@@ -154,8 +177,15 @@
 </template>
 
 <script setup lang="ts">
-  import type { TableData, TableHeaderType } from "./Table.types";
-  import type { ItemSummary } from "~~/lib/api/types/data-contracts";
+  import type {
+    TableData,
+    TableHeaderType,
+    TableEmits,
+    TableProps,
+    ItemSummaryHeaders,
+    TableProperties,
+  } from "./Table.types";
+  import type { ItemSummary, BarcodeProduct } from "~~/lib/api/types/data-contracts";
   import MdiArrowDown from "~icons/mdi/arrow-down";
   import MdiArrowUp from "~icons/mdi/arrow-up";
   import MdiCheck from "~icons/mdi/check";
@@ -178,41 +208,26 @@
 
   const { openDialog, closeDialog } = useDialog();
 
-  type Props = {
-    items: ItemSummary[];
-    disableControls?: boolean;
-  };
-  const props = defineProps<Props>();
+  const emit = defineEmits<TableEmits>();
 
-  const sortByProperty = ref<keyof ItemSummary | "">("");
+  const props = defineProps<TableProps>();
+
+  const sortByProperty = ref<TableProperties | "">("");
+
+  const selectedRow = ref(-1);
 
   const preferences = useViewPreferences();
 
-  const defaultHeaders = [
-    { text: "items.asset_id", value: "assetId", enabled: false },
-    {
-      text: "items.name",
-      value: "name",
-      enabled: true,
-      type: "name",
-    },
-    { text: "items.quantity", value: "quantity", align: "center", enabled: true },
-    { text: "items.insured", value: "insured", align: "center", enabled: true, type: "boolean" },
-    { text: "items.purchase_price", value: "purchasePrice", align: "center", enabled: true, type: "price" },
-    { text: "items.location", value: "location", align: "center", enabled: false, type: "location" },
-    { text: "items.archived", value: "archived", align: "center", enabled: false, type: "boolean" },
-    { text: "items.created_at", value: "createdAt", align: "center", enabled: false, type: "date" },
-    { text: "items.updated_at", value: "updatedAt", align: "center", enabled: false, type: "date" },
-  ] satisfies TableHeaderType[];
-
   const headers = ref<TableHeaderType[]>(
-    (preferences.value.tableHeaders ?? [])
-      .concat(defaultHeaders.filter(h => !preferences.value.tableHeaders?.find(h2 => h2.value === h.value)))
-      // this is a hack to make sure that any changes to the defaultHeaders are reflected in the preferences
+    props.defaultTableHeaders
+    // TODOOOOOO
+    /* []
+      .concat(props.defaultTableHeaders.filter(h => !preferences.value.tableHeaders?.find(h2 => h2.value === h.value)))
+      // this is a hack to make sure that any changes to the defaultTableHeaders are reflected in the preferences
       .map(h => ({
-        ...(defaultHeaders.find(h2 => h2.value === h.value) as TableHeaderType),
+        ...(props.defaultTableHeaders.find(h2 => h2.value === h.value) as TableHeaderType),
         enabled: h.enabled,
-      }))
+      })) */
   );
 
   const toggleHeader = (value: string) => {
@@ -221,14 +236,14 @@
       header.enabled = !header.enabled; // Toggle the 'enabled' state
     }
 
-    preferences.value.tableHeaders = headers.value;
+    // preferences.value.tableHeaders = headers.value;
   };
   const moveHeader = (from: number, to: number) => {
     const header = headers.value[from];
     headers.value.splice(from, 1);
     headers.value.splice(to, 0, header);
 
-    preferences.value.tableHeaders = headers.value;
+    // preferences.value.tableHeaders = headers.value;
   };
 
   const pagination = reactive({
@@ -245,7 +260,21 @@
     }
   );
 
-  function sortBy(property: keyof ItemSummary) {
+  function selectRow(index: number) {
+    if (!props.selectionMode ?? false) return;
+
+    // Unselect if already selected
+    if (selectedRow.value === index) {
+      selectedRow.value = -1;
+      emit("update:selectedItem", null);
+      return;
+    }
+
+    selectedRow.value = index;
+    emit("update:selectedItem", props.items[index]);
+  }
+
+  function sortBy(property: TableProperties) {
     if (sortByProperty.value === property) {
       pagination.descending = !pagination.descending;
     } else {
@@ -254,7 +283,7 @@
     sortByProperty.value = property;
   }
 
-  function extractSortable(item: ItemSummary, property: keyof ItemSummary): string | number | boolean {
+  function extractSortable(item: ItemSummary | BarcodeProduct, property: TableProperties): string | number | boolean {
     const value = item[property];
     if (typeof value === "string") {
       // Try to parse number
@@ -273,7 +302,7 @@
     return value;
   }
 
-  function itemSort(a: ItemSummary, b: ItemSummary) {
+  function itemSort(a: ItemSummary | BarcodeProduct, b: ItemSummary | BarcodeProduct) {
     if (!sortByProperty.value) {
       return 0;
     }
@@ -323,3 +352,14 @@
     return `cell-${h.value.replace(".", "_")}`;
   }
 </script>
+
+<style>
+  tr.selected {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--background));
+  }
+
+  tr:hover.selected {
+    background-color: hsl(var(--primary));
+  }
+</style>

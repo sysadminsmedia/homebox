@@ -39,74 +39,22 @@
 
       <Separator />
 
-      <BaseCard>
-        <Table class="w-full">
-          <TableHeader>
-            <TableRow>
-              <TableHead
-                v-for="h in headers"
-                :key="h.value"
-                class="text-no-transform bg-secondary text-sm text-secondary-foreground hover:bg-secondary/90"
-              >
-                <div
-                  class="flex items-center gap-1"
-                  :class="{
-                    'justify-center': h.align === 'center',
-                  }"
-                >
-                  <template v-if="typeof h === 'string'">{{ h }}</template>
-                  <template v-else>{{ $t(h.text) }}</template>
-                </div>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            <TableRow
-              v-for="(p, index) in products"
-              :key="index"
-              class="cursor-pointer"
-              :class="{ selected: selectedRow === index }"
-              @click="selectProduct(index)"
-            >
-              <TableCell
-                v-for="h in headers"
-                :key="h.value"
-                :class="{
-                  'text-center': h.align === 'center',
-                }"
-              >
-                <template v-if="h.value === 'name'">
-                  <div class="flex items-center space-x-4">
-                    <img :src="p.imageBase64" class="w-16 rounded object-fill shadow-sm" alt="Product's photo" />
-                    <span class="text-sm font-medium">
-                      {{ p.item.name }}
-                    </span>
-                  </div>
-                </template>
-                <template v-else-if="h.url?.length">
-                  <NuxtLink class="underline" :to="extractValue(p, h.url)" target="_blank">{{
-                    extractValue(p, h.value)
-                  }}</NuxtLink>
-                </template>
-
-                <slot v-else :name="cell(h)">
-                  {{ extractValue(p, h.value) }}
-                </slot>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </BaseCard>
+      <ItemViewSelectable
+        :items="products"
+        :default-table-headers="BarcodeProductHeaders"
+        :selection-mode="true"
+        @update:selected-item="onSelectedItemChange"
+      />
 
       <DialogFooter>
-        <Button type="import" :disabled="selectedRow === -1" @click="createItem"> Import selected </Button>
+        <Button type="import" :disabled="selectedItem === null" @click="createItem"> Import selected </Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>
 </template>
 
 <script setup lang="ts">
+  import { ref } from "vue";
   import { useI18n } from "vue-i18n";
   import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { Button } from "~/components/ui/button";
@@ -115,41 +63,25 @@
   import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";
   import MdiBarcode from "~icons/mdi/barcode";
   import MdiLoading from "~icons/mdi/loading";
-  import type { TableData } from "~/components/Item/View/Table.types";
+  import type { TableData, TableHeaderType } from "~/components/Item/View/Table.types";
+  import { BarcodeProductHeaders } from "~/components/Item/View/Table.types";
 
   const { openDialog, registerOpenDialogCallback } = useDialog();
   const { t } = useI18n();
 
   const searching = ref(false);
   const barcode = ref<string>("");
-  const products = ref<BarcodeProduct[] | null>(null);
-  const selectedRow = ref(-1);
+  const products = ref<BarcodeProduct[]>([]);
   const errorMessage = ref<string | null>(null);
+  const selectedItem = ref<BarcodeProduct | null>(null);
 
-  type BarcodeTableHeader = {
-    text: string;
-    value: string;
-    url?: string;
-    align?: "left" | "center" | "right";
-  };
-
-  const defaultHeaders = [
-    {
-      text: "items.name",
-      value: "name",
-      align: "center",
-    },
-    { text: "items.manufacturer", value: "manufacturer", align: "center" },
-    { text: "items.model_number", value: "modelNumber", align: "center" },
-    { text: "components.item.product_import.db_source", value: "search_engine_name", url: "search_engine_product_url", align: "center"},
-  ] satisfies BarcodeTableHeader[];
-
-  // Need for later filtering
-  const headers = defaultHeaders;
+  function onSelectedItemChange(item: BarcodeProduct) {
+    if (item === null) selectedItem.value = null;
+    else selectedItem.value = item;
+  }
 
   onMounted(() => {
     registerOpenDialogCallback(DialogID.ProductImport, params => {
-      selectedRow.value = -1;
       searching.value = false;
       errorMessage.value = null;
 
@@ -164,7 +96,7 @@
         }
       } else {
         barcode.value = "";
-        products.value = null;
+        products.value = [];
       }
     });
   });
@@ -172,15 +104,9 @@
   const api = useUserApi();
 
   function createItem() {
-    if (
-      products.value !== null &&
-      products.value.length > 0 &&
-      selectedRow.value >= 0 &&
-      selectedRow.value < products.value.length
-    ) {
-      const p = products.value![selectedRow.value];
-      openDialog(DialogID.CreateItem, { product: p });
-    }
+    if (selectedItem.value === null) return;
+
+    openDialog(DialogID.CreateItem, { product: selectedItem.value });
   }
 
   async function retrieveProductInfo(barcode: string) {
@@ -192,7 +118,7 @@
       return;
     }
 
-    products.value = null;
+    products.value = [];
     searching.value = true;
 
     try {
@@ -200,11 +126,10 @@
       if (result.error) {
         errorMessage.value = t("errors.api_failure") + result.error;
         console.error(errorMessage.value);
+      } else if (result.data === undefined || result.data.length === undefined || result.data.length === 0) {
+        errorMessage.value = t("components.item.product_import.error_not_found");
+        products.value = [];
       } else {
-        if (result.data === undefined || result.data.length === undefined || result.data.length === 0) {
-          errorMessage.value = t("components.item.product_import.error_not_found");
-        }
-
         products.value = result.data;
       }
     } catch (error) {
@@ -213,29 +138,6 @@
     } finally {
       searching.value = false;
     }
-  }
-
-  function extractValue(data: TableData, value: string) {
-    const parts = value.split(".");
-    let current = data;
-    for (const part of parts) {
-      current = current[part];
-    }
-    return current;
-  }
-
-  function cell(h: BarcodeTableHeader) {
-    return `cell-${h.value.replace(".", "_")}`;
-  }
-
-  function selectProduct(index: number) {
-    // Unselect if already selected
-    if (selectedRow.value === index) {
-      selectedRow.value = -1;
-      return;
-    }
-
-    selectedRow.value = index;
   }
 </script>
 
