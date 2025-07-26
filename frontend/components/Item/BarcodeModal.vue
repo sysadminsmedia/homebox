@@ -1,55 +1,52 @@
 <template>
-  <BaseModal :dialog-id="DialogID.ProductImport">
-    <DialogContent :class="'w-full md:max-w-xl lg:max-w-4xl'">
-      <DialogHeader>
-        <DialogTitle>{{ $t("components.item.product_import.title") }}</DialogTitle>
-      </DialogHeader>
+  <BaseModal
+    :dialog-id="DialogID.ProductImport"
+    :title="$t('components.item.product_import.title')"
+    >
+    <div
+      v-if="errorMessage"
+      class="flex items-center gap-2 rounded-md border border-destructive bg-destructive/10 p-4 text-destructive"
+      role="alert"
+    >
+      <MdiAlertCircleOutline class="text-destructive" />
+      <span class="text-sm font-medium">{{ errorMessage }}</span>
+    </div>
 
-      <div
-        v-if="errorMessage"
-        class="flex items-center gap-2 rounded-md border border-destructive bg-destructive/10 p-4 text-destructive"
-        role="alert"
-      >
-        <MdiAlertCircleOutline class="text-destructive" />
-        <span class="text-sm font-medium">{{ errorMessage }}</span>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <FormTextField
-          v-model="barcode"
-          :disabled="searching"
-          class="w-[30%]"
-          :label="$t('components.item.product_import.barcode')"
-          @keyup.enter="retrieveProductInfo(barcode)"
-        />
-        <Button
-          :variant="searching ? 'destructive' : 'default'"
-          class="mt-auto h-10"
-          @click="retrieveProductInfo(barcode)"
-        >
-          <MdiLoading v-if="searching" class="animate-spin" />
-          <div v-if="!searching" class="relative mx-2">
-            <div class="absolute inset-0 flex items-center justify-center">
-              <MdiBarcode class="size-5 group-hover:hidden" />
-            </div>
-          </div>
-          {{ searching ? $t("global.cancel") : $t("components.item.product_import.search_item") }}
-        </Button>
-      </div>
-
-      <Separator />
-
-      <ItemViewSelectable
-        :items="products"
-        :item-type="'barcodeproduct'"
-        :selection-mode="true"
-        @update:selected-item="onSelectedItemChange"
+    <div class="flex items-center gap-3">
+      <FormTextField
+        v-model="barcode"
+        :disabled="searching"
+        class="w-[30%]"
+        :label="$t('components.item.product_import.barcode')"
+        @keyup.enter="retrieveProductInfo(barcode)"
       />
+      <Button
+        :variant="searching ? 'destructive' : 'default'"
+        class="mt-auto h-10"
+        @click="retrieveProductInfo(barcode)"
+      >
+        <MdiLoading v-if="searching" class="animate-spin" />
+        <div v-if="!searching" class="relative mx-2">
+          <div class="absolute inset-0 flex items-center justify-center">
+            <MdiBarcode class="size-5 group-hover:hidden" />
+          </div>
+        </div>
+        {{ searching ? $t("global.cancel") : $t("components.item.product_import.search_item") }}
+      </Button>
+    </div>
 
-      <DialogFooter>
-        <Button type="import" :disabled="selectedItem === null" @click="createItem"> Import selected </Button>
-      </DialogFooter>
-    </DialogContent>
+    <Separator />
+
+    <ItemViewSelectable
+      :items="products"
+      :item-type="'barcodeproduct'"
+      :selection-mode="true"
+      @update:selected-item="onSelectedItemChange"
+    />
+
+    <DialogFooter>
+      <Button type="import" :disabled="selectedItem === null" @click="createItem"> Import selected </Button>
+    </DialogFooter>
   </BaseModal>
 </template>
 
