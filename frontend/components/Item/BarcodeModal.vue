@@ -1,5 +1,5 @@
 <template>
-  <Dialog :dialog-id="DialogID.ProductImport">
+  <BaseModal :dialog-id="DialogID.ProductImport">
     <DialogContent :class="'w-full md:max-w-xl lg:max-w-4xl'">
       <DialogHeader>
         <DialogTitle>{{ $t("components.item.product_import.title") }}</DialogTitle>
@@ -50,13 +50,14 @@
         <Button type="import" :disabled="selectedItem === null" @click="createItem"> Import selected </Button>
       </DialogFooter>
     </DialogContent>
-  </Dialog>
+  </BaseModal>
 </template>
 
 <script setup lang="ts">
   import { ref } from "vue";
   import { useI18n } from "vue-i18n";
   import { DialogID } from "@/components/ui/dialog-provider/utils";
+  import BaseModal from "@/components/App/CreateModal.vue";
   import { Button } from "~/components/ui/button";
   import type { BarcodeProduct, ItemSummary } from "~~/lib/api/types/data-contracts";
   import { useDialog } from "~/components/ui/dialog-provider";
