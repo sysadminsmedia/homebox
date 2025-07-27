@@ -11,16 +11,16 @@ import (
 
 //nolint:gochecknoinits
 func init() {
-	goose.AddMigrationNoTxContext(Up20250531120000, Down20250531120000)
+	goose.AddMigrationNoTxContext(Up20250831120000, Down20250831120000)
 }
 
-func Up20250531120000(ctx context.Context, tx *sql.DB) error {
+func Up20250831120000(ctx context.Context, tx *sql.DB) error {
 	// Create entity_types table
 	_, err := tx.ExecContext(ctx, `
 		CREATE TABLE IF NOT EXISTS "entity_types" (
 			"id" uuid NOT NULL,
-			"created_at" timestamptz NOT NULL,
-			"updated_at" timestamptz NOT NULL,
+			"created_at" timestamp WITH TIME ZONE NOT NULL,
+			"updated_at" timestamp WITH TIME ZONE NOT NULL,
 			"name" character varying NOT NULL,
 			"description" character varying NULL,
 			"icon" character varying NULL,
@@ -39,8 +39,8 @@ func Up20250531120000(ctx context.Context, tx *sql.DB) error {
 	_, err = tx.ExecContext(ctx, `
 		CREATE TABLE IF NOT EXISTS "entities" (
 			"id" uuid NOT NULL,
-			"created_at" timestamptz NOT NULL,
-			"updated_at" timestamptz NOT NULL,
+			"created_at" timestamp WITH TIME ZONE NOT NULL,
+			"updated_at" timestamp WITH TIME ZONE NOT NULL,
 			"name" character varying NOT NULL,
 			"description" character varying NULL,
 			"import_ref" character varying NULL,
@@ -53,12 +53,12 @@ func Up20250531120000(ctx context.Context, tx *sql.DB) error {
 			"model_number" character varying NULL,
 			"manufacturer" character varying NULL,
 			"lifetime_warranty" boolean NOT NULL DEFAULT false,
-			"warranty_expires" timestamptz NULL,
+			"warranty_expires" timestamp WITH TIME ZONE NULL,
 			"warranty_details" character varying NULL,
-			"purchase_time" timestamptz NULL,
+			"purchase_time" timestamp WITH TIME ZONE NULL,
 			"purchase_from" character varying NULL,
 			"purchase_price" double precision NOT NULL DEFAULT 0,
-			"sold_time" timestamptz NULL,
+			"sold_time" timestamp WITH TIME ZONE NULL,
 			"sold_to" character varying NULL,
 			"sold_price" double precision NOT NULL DEFAULT 0,
 			"sold_notes" character varying NULL,
@@ -228,6 +228,6 @@ func Up20250531120000(ctx context.Context, tx *sql.DB) error {
 	return nil
 }
 
-func Down20250531120000(ctx context.Context, tx *sql.DB) error {
+func Down20250831120000(ctx context.Context, tx *sql.DB) error {
 	return nil
 }

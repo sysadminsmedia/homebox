@@ -25,12 +25,12 @@ import (
 )
 
 type (
-	ItemAttachmentToken struct {
+	EntityAttachmentToken struct {
 		Token string `json:"token"`
 	}
 )
 
-// HandleItemAttachmentCreate godocs
+// HandleEntityAttachmentCreate godocs
 //
 //	@Summary	Create Item Attachment
 //	@Tags		Items Attachments
@@ -43,10 +43,9 @@ type (
 //	@Param		name	formData	string	true	"name of the file including extension"
 //	@Success	200		{object}	repo.ItemOut
 //	@Failure	422		{object}	validate.ErrorResponse
-//	@Router		/v1/items/{id}/attachments [POST]
+//	@Router		/v1/entities/{id}/attachments [POST]
 //	@Security	Bearer
-//	@Deprecated
-func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
+func (ctrl *V1Controller) HandleEntityAttachmentCreate() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		err := r.ParseMultipartForm(ctrl.maxUploadSize << 20)
 		if err != nil {
@@ -121,7 +120,7 @@ func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 	}
 }
 
-// HandleItemAttachmentGet godocs
+// HandleEntityAttachmentGet godocs
 //
 //	@Summary	Get Item Attachment
 //	@Tags		Items Attachments
@@ -129,28 +128,26 @@ func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 //	@Param		id				path		string	true	"Item ID"
 //	@Param		attachment_id	path		string	true	"Attachment ID"
 //	@Success	200				{object}	ItemAttachmentToken
-//	@Router		/v1/items/{id}/attachments/{attachment_id} [GET]
+//	@Router		/v1/entities/{id}/attachments/{attachment_id} [GET]
 //	@Security	Bearer
-//	@Deprecated
-func (ctrl *V1Controller) HandleItemAttachmentGet() errchain.HandlerFunc {
+func (ctrl *V1Controller) HandleEntityAttachmentGet() errchain.HandlerFunc {
 	return ctrl.handleItemAttachmentsHandler
 }
 
-// HandleItemAttachmentDelete godocs
+// HandleEntityAttachmentDelete godocs
 //
 //	@Summary	Delete Item Attachment
 //	@Tags		Items Attachments
 //	@Param		id				path	string	true	"Item ID"
 //	@Param		attachment_id	path	string	true	"Attachment ID"
 //	@Success	204
-//	@Router		/v1/items/{id}/attachments/{attachment_id} [DELETE]
+//	@Router		/v1/entities/{id}/attachments/{attachment_id} [DELETE]
 //	@Security	Bearer
-//	@Deprecated
-func (ctrl *V1Controller) HandleItemAttachmentDelete() errchain.HandlerFunc {
+func (ctrl *V1Controller) HandleEntityAttachmentDelete() errchain.HandlerFunc {
 	return ctrl.handleItemAttachmentsHandler
 }
 
-// HandleItemAttachmentUpdate godocs
+// HandleEntityAttachmentUpdate godocs
 //
 //	@Summary	Update Item Attachment
 //	@Tags		Items Attachments
@@ -158,14 +155,13 @@ func (ctrl *V1Controller) HandleItemAttachmentDelete() errchain.HandlerFunc {
 //	@Param		attachment_id	path		string						true	"Attachment ID"
 //	@Param		payload			body		repo.ItemAttachmentUpdate	true	"Attachment Update"
 //	@Success	200				{object}	repo.ItemOut
-//	@Router		/v1/items/{id}/attachments/{attachment_id} [PUT]
+//	@Router		/v1/entities/{id}/attachments/{attachment_id} [PUT]
 //	@Security	Bearer
-//	@Deprecated
-func (ctrl *V1Controller) HandleItemAttachmentUpdate() errchain.HandlerFunc {
+func (ctrl *V1Controller) HandleEntityAttachmentUpdate() errchain.HandlerFunc {
 	return ctrl.handleItemAttachmentsHandler
 }
 
-func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r *http.Request) error {
+func (ctrl *V1Controller) handleEntityAttachmentsHandler(w http.ResponseWriter, r *http.Request) error {
 	ID, err := ctrl.routeID(r)
 	if err != nil {
 		return err

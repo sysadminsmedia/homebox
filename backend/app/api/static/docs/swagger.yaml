@@ -1580,6 +1580,181 @@ paths:
       summary: Currency
       tags:
       - Base
+  /v1/entities/{id}/attachments:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: File attachment
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: Type of file
+        in: formData
+        name: type
+        type: string
+      - description: Is this the primary attachment
+        in: formData
+        name: primary
+        type: boolean
+      - description: name of the file including extension
+        in: formData
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.ItemOut'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/validate.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Create Item Attachment
+      tags:
+      - Items Attachments
+  /v1/entities/{id}/attachments/{attachment_id}:
+    delete:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Attachment ID
+        in: path
+        name: attachment_id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Delete Item Attachment
+      tags:
+      - Items Attachments
+    get:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Attachment ID
+        in: path
+        name: attachment_id
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ItemAttachmentToken'
+      security:
+      - Bearer: []
+      summary: Get Item Attachment
+      tags:
+      - Items Attachments
+    put:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Attachment ID
+        in: path
+        name: attachment_id
+        required: true
+        type: string
+      - description: Attachment Update
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.ItemAttachmentUpdate'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.ItemOut'
+      security:
+      - Bearer: []
+      summary: Update Item Attachment
+      tags:
+      - Items Attachments
+  /v1/entities/{id}/maintenance:
+    get:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - enum:
+        - scheduled
+        - completed
+        - both
+        in: query
+        name: status
+        type: string
+        x-enum-varnames:
+        - MaintenanceFilterStatusScheduled
+        - MaintenanceFilterStatusCompleted
+        - MaintenanceFilterStatusBoth
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repo.MaintenanceEntryWithDetails'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get Maintenance Log
+      tags:
+      - Item Maintenance
+    post:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Entry Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.MaintenanceEntryCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.MaintenanceEntry'
+      security:
+      - Bearer: []
+      summary: Create Maintenance Entry
+      tags:
+      - Item Maintenance
   /v1/groups:
     get:
       produces:
@@ -1754,6 +1929,8 @@ paths:
       tags:
       - Items
     post:
+      consumes:
+      - application/json
       deprecated: true
       parameters:
       - description: Item Data
@@ -1776,6 +1953,7 @@ paths:
       - Items
   /v1/items/{id}:
     delete:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -1868,6 +2046,7 @@ paths:
     post:
       consumes:
       - multipart/form-data
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -1910,6 +2089,7 @@ paths:
       - Items Attachments
   /v1/items/{id}/attachments/{attachment_id}:
     delete:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -1930,6 +2110,7 @@ paths:
       tags:
       - Items Attachments
     get:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -1954,6 +2135,7 @@ paths:
       tags:
       - Items Attachments
     put:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -1983,6 +2165,7 @@ paths:
       - Items Attachments
   /v1/items/{id}/maintenance:
     get:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -2015,6 +2198,7 @@ paths:
       tags:
       - Item Maintenance
     post:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path

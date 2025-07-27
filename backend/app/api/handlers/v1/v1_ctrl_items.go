@@ -156,14 +156,15 @@ func (ctrl *V1Controller) HandleItemFullPath() errchain.HandlerFunc {
 
 // HandleItemsCreate godoc
 //
-//	@Summary	Create Item
-//	@Tags		Items
-//	@Produce	json
-//	@Param		payload	body		repo.ItemCreate	true	"Item Data"
-//	@Success	201		{object}	repo.ItemSummary
-//	@Router		/v1/items [POST]
-//	@Security	Bearer
-//	@Deprecated
+//		@Summary	Create Item
+//		@Tags		Items
+//	 @Accept     json
+//		@Produce	json
+//		@Param		payload	body		repo.ItemCreate	true	"Item Data"
+//		@Success	201		{object}	repo.ItemSummary
+//		@Router		/v1/items [POST]
+//		@Security	Bearer
+//		@Deprecated
 func (ctrl *V1Controller) HandleItemsCreate() errchain.HandlerFunc {
 	fn := func(r *http.Request, body repo.ItemCreate) (repo.ItemOut, error) {
 		return ctrl.svc.Items.Create(services.NewContext(r.Context()), body)
@@ -201,6 +202,7 @@ func (ctrl *V1Controller) HandleItemGet() errchain.HandlerFunc {
 //	@Success	204
 //	@Router		/v1/items/{id} [DELETE]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleItemDelete() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID) (any, error) {
 		auth := services.NewContext(r.Context())

@@ -11,16 +11,16 @@ import (
 // It normalizes both the database field value and the search value for comparison.
 func AccentInsensitiveContains(field string, searchValue string) predicate.Entity {
 	if searchValue == "" {
-		return predicate.Entity(func(s *sql.Selector) {
+		return func(s *sql.Selector) {
 			// Return a predicate that never matches if search is empty
 			s.Where(sql.False())
-		})
+		}
 	}
 
 	// Normalize the search value
 	normalizedSearch := textutils.NormalizeSearchQuery(searchValue)
 
-	return predicate.Entity(func(s *sql.Selector) {
+	return func(s *sql.Selector) {
 		dialect := s.Dialect()
 
 		switch dialect {
@@ -48,7 +48,7 @@ func AccentInsensitiveContains(field string, searchValue string) predicate.Entit
 				"%"+normalizedSearch+"%",
 			))
 		}
-	})
+	}
 }
 
 // buildSQLiteNormalizeExpression creates a SQLite expression to normalize accented characters
