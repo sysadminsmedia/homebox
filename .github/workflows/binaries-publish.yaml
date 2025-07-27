@@ -17,10 +17,8 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.23"
-          cache-dependency-path: |
-            backend/go.mod
-            backend/go.sum
+          go-version: "1.24"
+          cache-dependency-path: backend/go.mod
 
       - uses: pnpm/action-setup@v2
         with:

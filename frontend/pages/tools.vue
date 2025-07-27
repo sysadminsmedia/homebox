@@ -1,7 +1,7 @@
 <template>
   <div>
     <AppImportDialog />
-    <BaseContainer class="mb-6 flex flex-col gap-4">
+    <BaseContainer class="flex flex-col gap-4">
       <BaseCard>
         <template #title>
           <BaseSectionHeader>
@@ -37,7 +37,7 @@
           </BaseSectionHeader>
         </template>
         <div class="divide-y border-t px-6 pb-3">
-          <DetailAction @action="openDialog('import')">
+          <DetailAction @action="openDialog(DialogID.Import)">
             <template #title> {{ $t("tools.import_export_set.import") }} </template>
             <!-- eslint-disable-next-line vue/no-v-html -->
             <div v-html="DOMPurify.sanitize($t('tools.import_export_set.import_sub'))"></div>
@@ -84,6 +84,12 @@
             <div v-html="DOMPurify.sanitize($t('tools.actions_set.set_primary_photo_sub'))"></div>
             <template #button> {{ $t("tools.actions_set.set_primary_photo_button") }} </template>
           </DetailAction>
+          <DetailAction @action="createMissingThumbnails">
+            <template #title> {{ $t("tools.actions_set.create_missing_thumbnails") }} </template>
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-html="DOMPurify.sanitize($t('tools.actions_set.create_missing_thumbnails_sub'))"></div>
+            <template #button> {{ $t("tools.actions_set.create_missing_thumbnails_button") }} </template>
+          </DetailAction>
         </div>
       </BaseCard>
     </BaseContainer>
@@ -92,18 +98,22 @@
 
 <script setup lang="ts">
   import DOMPurify from "dompurify";
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import MdiFileChart from "~icons/mdi/file-chart";
   import MdiArrowRight from "~icons/mdi/arrow-right";
   import MdiDatabase from "~icons/mdi/database";
   import MdiAlert from "~icons/mdi/alert";
   import { useDialog } from "~/components/ui/dialog-provider";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
+
+  const { t } = useI18n();
 
   definePageMeta({
     middleware: ["auth"],
   });
   useHead({
-    title: "Homebox | Tools",
+    title: "HomeBox | " + t("menu.tools"),
   });
 
   const { openDialog } = useDialog();
@@ -122,9 +132,7 @@
   }
 
   async function ensureAssetIDs() {
-    const { isCanceled } = await confirm.open(
-      "Are you sure you want to ensure all assets have an ID? This can take a while and cannot be undone."
-    );
+    const { isCanceled } = await confirm.open(t("tools.actions_set.ensure_ids_confirm"));
 
     if (isCanceled) {
       return;
@@ -133,17 +141,32 @@
     const result = await api.actions.ensureAssetIDs();
 
     if (result.error) {
-      toast.error("Failed to ensure asset IDs.");
+      toast.error(t("tools.toast.failed_ensure_ids"));
       return;
     }
 
-    toast.success(`${result.data.completed} assets have been updated.`);
+    toast.success(t("tools.toast.asset_success", { results: result.data.completed }));
+  }
+
+  async function createMissingThumbnails() {
+    const { isCanceled } = await confirm.open(t("tools.actions_set.create_missing_thumbnails_confirm"));
+
+    if (isCanceled) {
+      return;
+    }
+
+    const result = await api.actions.createMissingThumbnails();
+
+    if (result.error) {
+      toast.error(t("tools.toast.failed_create_missing_thumbnails"));
+      return;
+    }
+
+    toast.success(t("tools.toast.asset_success", { results: result.data.completed }));
   }
 
   async function ensureImportRefs() {
-    const { isCanceled } = await confirm.open(
-      "Are you sure you want to ensure all assets have an import_ref? This can take a while and cannot be undone."
-    );
+    const { isCanceled } = await confirm.open(t("tools.import_export_set.import_ref_confirm"));
 
     if (isCanceled) {
       return;
@@ -152,17 +175,15 @@
     const result = await api.actions.ensureImportRefs();
 
     if (result.error) {
-      toast.error("Failed to ensure import refs.");
+      toast.error(t("tools.toast.failed_ensure_import_refs"));
       return;
     }
 
-    toast.success(`${result.data.completed} assets have been updated.`);
+    toast.success(t("tools.toast.asset_success", { results: result.data.completed }));
   }
 
   async function resetItemDateTimes() {
-    const { isCanceled } = await confirm.open(
-      "Are you sure you want to reset all date and time values? This can take a while and cannot be undone."
-    );
+    const { isCanceled } = await confirm.open(t("tools.actions_set.zero_datetimes_confirm"));
 
     if (isCanceled) {
       return;
@@ -171,17 +192,15 @@
     const result = await api.actions.resetItemDateTimes();
 
     if (result.error) {
-      toast.error("Failed to reset date and time values.");
+      toast.error(t("tools.toast.failed_zero_datetimes"));
       return;
     }
 
-    toast.success(`${result.data.completed} assets have been updated.`);
+    toast.success(t("tools.toast.asset_success", { results: result.data.completed }));
   }
 
   async function setPrimaryPhotos() {
-    const { isCanceled } = await confirm.open(
-      "Are you sure you want to set primary photos? This can take a while and cannot be undone."
-    );
+    const { isCanceled } = await confirm.open(t("tools.actions_set.set_primary_photo_confirm"));
 
     if (isCanceled) {
       return;
@@ -190,11 +209,11 @@
     const result = await api.actions.setPrimaryPhotos();
 
     if (result.error) {
-      toast.error("Failed to set primary photos.");
+      toast.error(t("tools.toast.failed_set_primary_photos"));
       return;
     }
 
-    toast.success(`${result.data.completed} assets have been updated.`);
+    toast.success(t("tools.toast.asset_success", { results: result.data.completed }));
   }
 </script>
 

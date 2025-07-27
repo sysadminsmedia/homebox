@@ -303,8 +303,27 @@ func PrintLabel(cfg *config.Config, params *GenerateParameters) error {
 
 	commandTemplate := template.Must(template.New("command").Parse(*cfg.LabelMaker.PrintCommand))
 	builder := &strings.Builder{}
+	additionalInformation := func() string {
+		if params.AdditionalInformation != nil {
+			return *params.AdditionalInformation
+		}
+		return ""
+	}()
 	if err := commandTemplate.Execute(builder, map[string]string{
-		"FileName": f.Name(),
+		"FileName":              f.Name(),
+		"Width":                 fmt.Sprintf("%d", params.Width),
+		"Height":                fmt.Sprintf("%d", params.Height),
+		"QrSize":                fmt.Sprintf("%d", params.QrSize),
+		"Margin":                fmt.Sprintf("%d", params.Margin),
+		"ComponentPadding":      fmt.Sprintf("%d", params.ComponentPadding),
+		"TitleText":             params.TitleText,
+		"TitleFontSize":         fmt.Sprintf("%f", params.TitleFontSize),
+		"DescriptionText":       params.DescriptionText,
+		"DescriptionFontSize":   fmt.Sprintf("%f", params.DescriptionFontSize),
+		"AdditionalInformation": additionalInformation,
+		"Dpi":                   fmt.Sprintf("%f", params.Dpi),
+		"URL":                   params.URL,
+		"DynamicLength":         fmt.Sprintf("%t", params.DynamicLength),
 	}); err != nil {
 		return err
 	}

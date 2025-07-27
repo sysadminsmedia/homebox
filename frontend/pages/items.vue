@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import { Input } from "~/components/ui/input";
   import type { ItemSummary, LabelSummary, LocationOutCount } from "~~/lib/api/types/data-contracts";
@@ -23,12 +24,14 @@
     PaginationListItem,
   } from "@/components/ui/pagination";
 
+  const { t } = useI18n();
+
   definePageMeta({
     middleware: ["auth"],
   });
 
   useHead({
-    title: "Homebox | Items",
+    title: "HomeBox | " + t("global.items"),
   });
 
   const searchLocked = ref(false);
@@ -49,7 +52,7 @@
     },
   });
 
-  const pageSize = useRouteQuery("pageSize", 30);
+  const pageSize = useRouteQuery("pageSize", 24);
   const query = useRouteQuery("q", "");
   const advanced = useRouteQuery("advanced", false);
   const includeArchived = useRouteQuery("archived", false);
@@ -145,7 +148,7 @@
     } else {
       const [aid, valid] = parseAssetIDString(query.value.replace("#", ""));
       if (!valid) {
-        return "Invalid Asset ID";
+        return t("items.invalid_asset_id");
       } else {
         return aid;
       }
@@ -285,7 +288,7 @@
 
     if (error) {
       resetItems();
-      toast.error("Failed to search items");
+      toast.error(t("items.toast.failed_search_items"));
       return;
     }
 
@@ -354,7 +357,7 @@
       query: {
         archived: "false",
         fieldSelector: "false",
-        pageSize: 10,
+        pageSize: pageSize.value,
         page: 1,
         orderBy: "name",
         q: "",
@@ -369,11 +372,11 @@
 </script>
 
 <template>
-  <BaseContainer class="mb-16">
+  <BaseContainer>
     <div v-if="locations && labels">
       <div class="flex flex-wrap items-end gap-4 md:flex-nowrap">
         <div class="w-full">
-          <Input v-model="query" :placeholder="$t('global.search')" class="h-12" />
+          <Input v-model:model-value="query" :placeholder="$t('global.search')" class="h-12" />
           <div v-if="byAssetId" class="pl-2 pt-2 text-sm">
             <p>{{ $t("items.query_id", { id: parsedAssetId }) }}</p>
           </div>
@@ -465,7 +468,7 @@
             <Label> Field </Label>
             <Select v-model="fieldTuples[idx][0]" @update:model-value="fetchValues(f[0])">
               <SelectTrigger>
-                <SelectValue placeholder="Select a field" />
+                <SelectValue :placeholder="$t('items.select_field')" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem v-for="field in allFields" :key="field" :value="field"> {{ field }} </SelectItem>
@@ -506,11 +509,7 @@
         <MdiSelectSearch class="size-10" />
         <p>{{ $t("items.no_results") }}</p>
       </div>
-      <div
-        v-else
-        ref="cardgrid"
-        class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5"
-      >
+      <div v-else ref="cardgrid" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         <ItemCard v-for="item in items" :key="item.id" :item="item" :location-flat-tree="locationFlatTree" />
       </div>
       <Pagination
@@ -518,7 +517,7 @@
         :items-per-page="pageSize"
         :total="total"
         :sibling-count="2"
-        :default-page="1"
+        :default-page="page"
         class="flex justify-center p-2"
         @update:page="page = $event"
       >

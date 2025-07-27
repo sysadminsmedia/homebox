@@ -1,7 +1,10 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { route } from "../../lib/api/base";
   import PageQRCode from "./PageQRCode.vue";
+  import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { toast } from "@/components/ui/sonner";
+  import MdiLoading from "~icons/mdi/loading";
   import MdiPrinterPos from "~icons/mdi/printer-pos";
   import MdiFileDownload from "~icons/mdi/file-download";
 
@@ -17,6 +20,7 @@
   import { Button, ButtonGroup } from "@/components/ui/button";
   import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
 
+  const { t } = useI18n();
   const { openDialog, closeDialog } = useDialog();
 
   const props = defineProps<{
@@ -29,7 +33,7 @@
   const { data: status } = useAsyncData(async () => {
     const { data, error } = await pubApi.status();
     if (error) {
-      toast.error("Failed to load status");
+      toast.error(t("components.global.label_maker.toast.load_status_failed"));
       return;
     }
 
@@ -55,12 +59,12 @@
     } catch (err) {
       console.error("Failed to print labels:", err);
       serverPrinting.value = false;
-      toast.error("Failed to print label");
+      toast.error(t("components.global.label_maker.toast.print_failed"));
       return;
     }
 
-    toast.success("Label printed");
-    closeDialog("print-label");
+    toast.success(t("components.global.label_maker.toast.print_success"));
+    closeDialog(DialogID.PrintLabel);
     serverPrinting.value = false;
   }
 
@@ -90,7 +94,7 @@
 
 <template>
   <div>
-    <Dialog dialog-id="print-label">
+    <Dialog :dialog-id="DialogID.PrintLabel">
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
@@ -103,7 +107,8 @@
         <img :src="getLabelUrl(false)" />
         <DialogFooter>
           <ButtonGroup>
-            <Button v-if="status?.labelPrinting || false" type="submit" :loading="serverPrinting" @click="serverPrint">
+            <Button v-if="status?.labelPrinting || false" type="submit" :disabled="serverPrinting" @click="serverPrint">
+              <MdiLoading v-if="serverPrinting" class="animate-spin" />
               {{ $t("components.global.label_maker.server_print") }}
             </Button>
             <Button type="submit" @click="browserPrint">
@@ -133,7 +138,7 @@
 
         <Tooltip>
           <TooltipTrigger as-child>
-            <Button size="icon" @click="openDialog('print-label')">
+            <Button size="icon" @click="openDialog(DialogID.PrintLabel)">
               <MdiPrinterPos name="mdi-printer-pos" />
             </Button>
           </TooltipTrigger>

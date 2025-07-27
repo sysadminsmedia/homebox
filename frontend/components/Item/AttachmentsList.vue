@@ -21,7 +21,7 @@
                 <MdiDownload />
               </a>
             </TooltipTrigger>
-            <TooltipContent> Download </TooltipContent>
+            <TooltipContent> {{ $t("components.item.attachments_list.download") }} </TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger as-child>
@@ -29,7 +29,7 @@
                 <MdiOpenInNew />
               </a>
             </TooltipTrigger>
-            <TooltipContent> Open in new tab </TooltipContent>
+            <TooltipContent> {{ $t("components.item.attachments_list.open_new_tab") }} </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </div>

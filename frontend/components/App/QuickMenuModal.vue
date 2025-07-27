@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
+  import { DialogID } from "@/components/ui/dialog-provider/utils";
   import {
     CommandDialog,
     CommandInput,
@@ -14,7 +15,7 @@
 
   export type QuickMenuAction =
     | { text: string; href: string; type: "navigate" }
-    | { text: string; dialogId: string; shortcut: string; type: "create" };
+    | { text: string; dialogId: DialogID; shortcut: string; type: "create" };
 
   const props = defineProps({
     actions: {
@@ -27,11 +28,11 @@
   const { t } = useI18n();
   const { closeDialog, openDialog } = useDialog();
 
-  useDialogHotkey("quick-menu", { code: "Backquote", ctrl: true });
+  useDialogHotkey(DialogID.QuickMenu, { code: "Backquote", ctrl: true });
 </script>
 
 <template>
-  <CommandDialog dialog-id="quick-menu">
+  <CommandDialog :dialog-id="DialogID.QuickMenu">
     <CommandInput
       :placeholder="t('components.quick_menu.shortcut_hint')"
       @keydown="
@@ -44,7 +45,7 @@
           // if esc is pressed, close the dialog
           if (e.key === 'Escape') {
             e.preventDefault();
-            closeDialog('quick-menu');
+            closeDialog(DialogID.QuickMenu);
           }
         }
       "
@@ -76,12 +77,23 @@
           :value="`global.navigate_${i + 1}`"
           @select="
             () => {
-              closeDialog('quick-menu');
+              closeDialog(DialogID.QuickMenu);
               navigateTo(navigate.href);
             }
           "
         >
           {{ navigate.text }}
+        </CommandItem>
+        <CommandItem
+          value="scanner"
+          @select="
+            () => {
+              closeDialog(DialogID.QuickMenu);
+              openDialog(DialogID.Scanner);
+            }
+          "
+        >
+          {{ t("menu.scanner") }}
         </CommandItem>
       </CommandGroup>
     </CommandList>

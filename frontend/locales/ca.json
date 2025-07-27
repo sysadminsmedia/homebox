@@ -1,10 +1,26 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "Utilitza {shiftKey} + {enterKey} per crear i afegir-ne un altre.",
+                "enter": "Entrar"
+            },
             "import_dialog": {
                 "change_warning": "El comportament de les importacions amb import_refs existents ha canviat. Si hi ha un import_refs al fitxer CSV, \nl'article s'actualitzarà amb els valors del fitxer CSV.",
                 "description": "Importa un fitxer CSV que contingui els articles, etiquetes i ubicacions. \nConsulteu la documentació per a més informació sobre el format requerit.",
-                "title": "Importa un fitxer CSV"
+                "title": "Importa un fitxer CSV",
+                "toast": {
+                    "import_failed": "Importació fallada. Si us plau, torna-ho a intentar.",
+                    "import_success": "Importació satisfactòria!",
+                    "please_select_file": "Si us plau, selecciona un arxiu per importar."
+                }
+            },
+            "outdated": {
+                "current_version": "Versió actual",
+                "dismiss": "Descartar",
+                "latest_version": "Última versió",
+                "new_version_available": "Nova versió disponible",
+                "new_version_available_link": "Fes clic aquí per veure les notes de la versió"
             }
         },
         "global": {
@@ -31,6 +47,13 @@
                 "weeks": "setmanes",
                 "years": "anys",
                 "yesterday": "ahir"
+            },
+            "label_maker": {
+                "server_print": "Imprimeix al servidor",
+                "titles": "Etiquetes",
+                "toast": {
+                    "load_status_failed": "Fallat en carregar l'estat"
+                }
             },
             "page_qr_code": {
                 "page_url": "URL de la pàgina"
@@ -75,7 +98,7 @@
                 "parent_location": "Ubicació pare"
             },
             "tree": {
-                "no_locations": "No hi ha ubicacions disponibles. Afegiu ubicacions amb el botó\n `<`span class=\"link-primary\"`>`Crea`<`/span`>` a la barra de navegació."
+                "no_locations": "No hi ha ubicacions disponibles. Afegiu ubicacions amb el botó\n '<span class=\"link-primary\">'Crea'</span>' a la barra de navegació."
             }
         }
     },
@@ -285,7 +308,6 @@
         "current_password": "Contrasenya actual",
         "delete_account": "Suprimeix el compte",
         "delete_account_sub": "Elimina el compte i totes les dades associades. Aquesta acció no es pot desfer.",
-        "display_header": "{ currentValue, select, true {Amaga la capçalera} false {Mostra la capçalera} other {Desconegut}}",
         "enabled": "Habilitat",
         "example": "Exemple",
         "gen_invite": "Genera un enllaç d'invitació",

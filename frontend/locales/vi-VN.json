@@ -1,0 +1,124 @@
+{
+    "components": {
+        "app": {
+            "create_modal": {
+                "createAndAddAnother": "Dùng phím {shiftKey} + {enterKey} để tạo và thêm 1 cái khác."
+            },
+            "import_dialog": {
+                "description": "Nhập một tệp CSV chứa những món đồ, nhãn, và vị trí. Xem tài liệu để biết thêm thông tin về \nkhuôn dạng dữ liệu được yêu cầu.",
+                "title": "Nhập tệp CSV",
+                "toast": {
+                    "import_failed": "Nhập thất bại. Xin hãy thử lại sau.",
+                    "import_success": "Nhập thành công!",
+                    "please_select_file": "Xin hãy chọn tệp cần nhập."
+                }
+            },
+            "outdated": {
+                "current_version": "Phiên bản hiện tại",
+                "dismiss": "Bác bỏ",
+                "latest_version": "Phiên bản mới nhất",
+                "new_version_available": "Đã có phiên bản mới",
+                "new_version_available_link": "Nhấn vào đây để xem ghi chú về các phiên bản được phát hành"
+            }
+        },
+        "color_selector": {
+            "clear": "Xóa màu",
+            "color": "Màu",
+            "no_color": "Không màu",
+            "randomize": "Màu ngẫu nhiên"
+        },
+        "global": {
+            "copy_text": {
+                "documentation": "tài liệu",
+                "failed_to_copy": "Chép văn bản vào vùng lưu trữ dữ liệu tạm thời đã thất bại",
+                "https_required": "Bởi vì HTTPS là bắt buộc"
+            },
+            "date_time": {
+                "ago": "{0} trước",
+                "days": "ngày",
+                "hour": "giờ",
+                "hours": "giờ",
+                "last-month": "tháng trước",
+                "last-week": "tuần trước",
+                "last-year": "năm trước",
+                "minute": "phút",
+                "minutes": "phút",
+                "months": "tháng",
+                "next-month": "tháng tới",
+                "next-week": "tuần tới",
+                "next-year": "năm tới",
+                "second": "giây",
+                "seconds": "giây",
+                "tomorrow": "ngày mai",
+                "week": "tuần",
+                "weeks": "tuần",
+                "years": "năm",
+                "yesterday": "hôm qua"
+            },
+            "label_maker": {
+                "browser_print": "In ra giấy qua trình duyệt",
+                "confirm_description": "Bạn có chắc muốn in nhãn này?",
+                "download": "Tải về Nhãn",
+                "print": "In nhãn",
+                "server_print": "In trên server",
+                "titles": "Các Nhãn",
+                "toast": {
+                    "load_status_failed": "Thất bại khi nạp trạng thái",
+                    "print_failed": "Thất bại khi in nhãn",
+                    "print_success": "Nhãn đã được in"
+                }
+            },
+            "page_qr_code": {
+                "page_url": "Page URL",
+                "qr_tooltip": "Hiển thị mã QR"
+            },
+            "password_score": {
+                "password_strength": "Độ mạnh của Mật Khẩu"
+            }
+        },
+        "item": {
+            "attachments_list": {
+                "download": "Tải về",
+                "open_new_tab": "Mở ra trong tab mới"
+            },
+            "create_modal": {
+                "delete_photo": "Xóa Ảnh",
+                "item_description": "Mô tả về món đồ",
+                "item_name": "Tên món đồ",
+                "item_photo": "Hình ảnh món đồ",
+                "item_quantity": "Số lượng món đồ",
+                "parent_item": "Món đồ chủ",
+                "rotate_photo": "Xoay bức hình",
+                "title": "Tạo món đồ",
+                "toast": {
+                    "create_failed": "Không thể tạo món đồ",
+                    "create_success": "Món đồ đã được tạo",
+                    "please_select_location": "Xin chọn địa điểm.",
+                    "rotate_failed": "Thất bại khi xoay ảnh: { error }",
+                    "rotate_process_failed": "Thất bại khi xử lý ảnh đã được xoay",
+                    "upload_failed": "Thất bại khi tải lên ảnh: { photoName }"
+                },
+                "upload_photos": "Tải lên nhiều ảnh",
+                "uploaded": "Ảnh đã được tải lên"
+            },
+            "product_import": {
+                "title": "Nhập sản phẩm"
+            },
+            "selector": {
+                "no_results": "Không tìm thấy kết quả",
+                "placeholder": "Chọn …",
+                "search_placeholder": "Gõ chữ vào để tìm kiếm…"
+            },
+            "view": {
+                "selectable": {
+                    "card": "Thẻ",
+                    "items": "Các món đồ",
+                    "no_items": "Không có món đồ nào để hiển thị"
+                },
+                "table": {
+                    "view_item": "Xem món đồ"
+                }
+            }
+        }
+    }
+}

@@ -298,7 +298,6 @@
         "current_password": "Parola Actuală",
         "delete_account": "Șterge Cont",
         "delete_account_sub": "Ștergeți contul și toate datele asociate acestuia. Această acțiune nu poate fi revocată.",
-        "display_header": "{ currentValue, select, true {Hide Header} false {Show Header} other {Not Hit}}",
         "enabled": "Activat",
         "example": "Exemplu",
         "gen_invite": "Generează Link Invitație",

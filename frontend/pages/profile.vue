@@ -1,8 +1,10 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import type { Detail } from "~~/components/global/DetailsSection/types";
   import { themes } from "~~/lib/data/themes";
   import type { CurrenciesCurrency, NotifierCreate, NotifierOut } from "~~/lib/api/types/data-contracts";
+  import MdiLoading from "~icons/mdi/loading";
   import MdiAccount from "~icons/mdi/account";
   import MdiMegaphone from "~icons/mdi/megaphone";
   import MdiDelete from "~icons/mdi/delete";
@@ -18,12 +20,15 @@
   import { badgeVariants } from "@/components/ui/badge";
   import LanguageSelector from "~/components/App/LanguageSelector.vue";
   import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
+
+  const { t } = useI18n();
 
   definePageMeta({
     middleware: ["auth"],
   });
   useHead({
-    title: "Homebox | Profile",
+    title: "HomeBox | " + t("menu.profile"),
   });
 
   const api = useUserApi();
@@ -34,7 +39,7 @@
   const currencies = computedAsync(async () => {
     const resp = await api.group.currencies();
     if (resp.error) {
-      toast.error("Failed to get currencies");
+      toast.error(t("profile.toast.failed_get_currencies"));
       return [];
     }
 
@@ -43,7 +48,7 @@
 
   const preferences = useViewPreferences();
   function setDisplayHeader() {
-    preferences.value.displayHeaderDecor = !preferences.value.displayHeaderDecor;
+    preferences.value.displayLegacyHeader = !preferences.value.displayLegacyHeader;
   }
 
   // Currency Selection
@@ -92,12 +97,12 @@
     });
 
     if (error) {
-      toast.error("Failed to update group");
+      toast.error(t("profile.toast.failed_update_group"));
       return;
     }
 
     group.value = data;
-    toast.success("Group updated");
+    toast.success(t("profile.toast.group_updated"));
   }
 
   const { setTheme } = useTheme();
@@ -109,19 +114,17 @@
     return [
       {
         name: "global.name",
-        text: auth.user?.name || "Unknown",
+        text: auth.user?.name || t("global.unknown"),
       },
       {
         name: "global.email",
-        text: auth.user?.email || "Unknown",
+        text: auth.user?.email || t("global.unknown"),
       },
     ] as Detail[];
   });
 
   async function deleteProfile() {
-    const result = await confirm.open(
-      "Are you sure you want to delete your account? If you are the last member in your group all your data will be deleted. This action cannot be undone."
-    );
+    const result = await confirm.open(t("profile.delete_account_confirm"));
 
     if (result.isCanceled) {
       return;
@@ -130,12 +133,12 @@
     const { response } = await api.user.delete();
 
     if (response?.status === 204) {
-      toast.success("Your account has been deleted.");
+      toast.success(t("profile.toast.account_deleted"));
       auth.logout(api);
       navigateTo("/");
     }
 
-    toast.error("Failed to delete your account.");
+    toast.error(t("profile.toast.failed_delete_account"));
   }
 
   const token = ref("");
@@ -176,13 +179,13 @@
     const { error } = await api.user.changePassword(passwordChange.current, passwordChange.new);
 
     if (error) {
-      toast.error("Failed to change password.");
+      toast.error(t("profile.toast.failed_change_password"));
       passwordChange.loading = false;
       return;
     }
 
-    toast.success("Password changed successfully.");
-    closeDialog("change-password");
+    toast.success(t("profile.toast.password_changed"));
+    closeDialog(DialogID.ChangePassword);
     passwordChange.new = "";
     passwordChange.current = "";
     passwordChange.loading = false;
@@ -216,7 +219,7 @@
       };
     }
 
-    openDialog("create-notifier");
+    openDialog(DialogID.CreateNotifier);
   }
 
   async function createNotifier() {
@@ -236,11 +239,11 @@
     });
 
     if (result.error) {
-      toast.error("Failed to create notifier.");
+      toast.error(t("profile.toast.failed_create_notifier"));
     }
 
     notifier.value = null;
-    closeDialog("create-notifier");
+    closeDialog(DialogID.CreateNotifier);
 
     await notifiers.refresh();
   }
@@ -257,18 +260,18 @@
     });
 
     if (result.error) {
-      toast.error("Failed to update notifier.");
+      toast.error(t("profile.toast.failed_update_notifier"));
     }
 
     notifier.value = null;
-    closeDialog("create-notifier");
+    closeDialog(DialogID.CreateNotifier);
     targetID.value = "";
 
     await notifiers.refresh();
   }
 
   async function deleteNotifier(id: string) {
-    const result = await confirm.open("Are you sure you want to delete this notifier?");
+    const result = await confirm.open(t("profile.delete_notifier_confirm"));
 
     if (result.isCanceled) {
       return;
@@ -277,7 +280,7 @@
     const { error } = await api.notifiers.delete(id);
 
     if (error) {
-      toast.error("Failed to delete notifier.");
+      toast.error(t("profile.toast.failed_delete_notifier"));
       return;
     }
 
@@ -292,17 +295,17 @@
     const { error } = await api.notifiers.test(notifier.value.url);
 
     if (error) {
-      toast.error("Failed to test notifier.");
+      toast.error(t("profile.toast.failed_test_notifier"));
       return;
     }
 
-    toast.success("Notifier test successful.");
+    toast.success(t("profile.toast.notifier_test_success"));
   }
 </script>
 
 <template>
   <div>
-    <Dialog dialog-id="changePassword">
+    <Dialog :dialog-id="DialogID.ChangePassword">
       <DialogContent>
         <DialogHeader>
           <DialogTitle> {{ $t("profile.change_password") }} </DialogTitle>
@@ -319,7 +322,8 @@
 
         <form @submit.prevent="changePassword">
           <DialogFooter>
-            <Button :loading="passwordChange.loading" :disabled="!passwordChange.isValid" type="submit">
+            <Button :disabled="!passwordChange.isValid || passwordChange.loading" type="submit">
+              <MdiLoading v-if="passwordChange.loading" class="animate-spin" />
               {{ $t("global.submit") }}
             </Button>
           </DialogFooter>
@@ -327,7 +331,7 @@
       </DialogContent>
     </Dialog>
 
-    <Dialog dialog-id="create-notifier">
+    <Dialog :dialog-id="DialogID.CreateNotifier">
       <DialogContent>
         <DialogHeader>
           <DialogTitle> {{ $t("profile.notifier_modal", { type: notifier != null }) }} </DialogTitle>
@@ -354,7 +358,7 @@
       </DialogContent>
     </Dialog>
 
-    <BaseContainer class="mb-6 flex flex-col gap-4">
+    <BaseContainer class="flex flex-col gap-4">
       <BaseCard>
         <template #title>
           <BaseSectionHeader>
@@ -368,7 +372,7 @@
 
         <div class="p-4">
           <div class="flex gap-2">
-            <Button variant="secondary" size="sm" @click="openDialog('changePassword')">
+            <Button variant="secondary" size="sm" @click="openDialog(DialogID.ChangePassword)">
               {{ $t("profile.change_password") }}
             </Button>
             <Button variant="secondary" size="sm" @click="generateToken"> {{ $t("profile.gen_invite") }} </Button>
@@ -389,7 +393,7 @@
         <template #title>
           <BaseSectionHeader>
             <MdiMegaphone class="-mt-1 mr-2" />
-            <span class=""> {{ $t("profile.notifiers") }} </span>
+            <span> {{ $t("profile.notifiers") }} </span>
             <template #description> {{ $t("profile.notifiers_sub") }} </template>
           </BaseSectionHeader>
         </template>
@@ -408,7 +412,7 @@
                       <MdiDelete />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent> Delete </TooltipContent>
+                  <TooltipContent> {{ $t("global.delete") }} </TooltipContent>
                 </Tooltip>
                 <Tooltip>
                   <TooltipTrigger>
@@ -416,7 +420,7 @@
                       <MdiPencil />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent> Edit </TooltipContent>
+                  <TooltipContent> {{ $t("global.edit") }} </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </div>
@@ -442,7 +446,7 @@
         <template #title>
           <BaseSectionHeader class="pb-0">
             <MdiAccountMultiple class="-mt-1 mr-2" />
-            <span class=""> {{ $t("profile.group_settings") }} </span>
+            <span> {{ $t("profile.group_settings") }} </span>
             <template #description>
               {{ $t("profile.group_settings_sub") }}
             </template>
@@ -484,7 +488,7 @@
         <template #title>
           <BaseSectionHeader>
             <MdiFill class="mr-2" />
-            <span class=""> {{ $t("profile.theme_settings") }} </span>
+            <span> {{ $t("profile.theme_settings") }} </span>
             <template #description>
               {{ $t("profile.theme_settings_sub") }}
             </template>
@@ -494,7 +498,7 @@
         <div class="px-4 pb-4">
           <div class="mb-3">
             <Button variant="secondary" size="sm" @click="setDisplayHeader">
-              {{ $t("profile.display_header", { currentValue: preferences.displayHeaderDecor }) }}
+              {{ $t("profile.display_legacy_header", { currentValue: preferences.displayLegacyHeader }) }}
             </Button>
           </div>
           <div class="homebox grid grid-cols-1 gap-4 font-sans sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
@@ -538,7 +542,7 @@
         <template #title>
           <BaseSectionHeader>
             <MdiDelete class="-mt-1 mr-2" />
-            <span class=""> {{ $t("profile.delete_account") }} </span>
+            <span> {{ $t("profile.delete_account") }} </span>
             <template #description> {{ $t("profile.delete_account_sub") }} </template>
           </BaseSectionHeader>
         </template>

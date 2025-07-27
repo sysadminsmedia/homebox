@@ -1,10 +1,20 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "Use {shiftKey} + {enterKey} to create and add another.",
+                "enter": "Enter",
+                "shift": "Shift"
+            },
             "import_dialog": {
                 "change_warning": "Behavior for imports with existing import_refs has changed. If an import_ref is present in the CSV file, the \nitem will be updated with the values in the CSV file.",
                 "description": "Import a CSV file containing your items, labels, and locations. See documentation for more information on the \nrequired format.",
-                "title": "Import CSV File"
+                "title": "Import CSV File",
+                "toast": {
+                    "import_failed": "Import failed. Please try again later.",
+                    "import_success": "Import successful!",
+                    "please_select_file": "Please select a file to import."
+                }
             },
             "outdated": {
                 "current_version": "Current Version",
@@ -12,6 +22,18 @@
                 "latest_version": "Latest Version",
                 "new_version_available": "New Version Available",
                 "new_version_available_link": "Click here to view the release notes"
+            }
+        },
+        "color_selector": {
+            "clear": "Clear color",
+            "color": "Color",
+            "no_color": "No color",
+            "no_color_selected": "No color selected",
+            "randomize": "Randomize color"
+        },
+        "form": {
+            "password": {
+                "toggle_show": "Toggle Password Show"
             }
         },
         "global": {
@@ -51,7 +73,12 @@
                 "download": "Download Label",
                 "print": "Print label",
                 "server_print": "Print on Server",
-                "titles": "Labels"
+                "titles": "Labels",
+                "toast": {
+                    "load_status_failed": "Failed to load status",
+                    "print_failed": "Failed to print label",
+                    "print_success": "Label printed"
+                }
             },
             "page_qr_code": {
                 "page_url": "Page URL",
@@ -62,13 +89,52 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "Download",
+                "open_new_tab": "Open in new tab"
+            },
             "create_modal": {
+                "delete_photo": "Delete photo",
                 "item_description": "Item Description",
                 "item_name": "Item Name",
                 "item_photo": "Item Photo 📷",
                 "item_quantity": "Item Quantity",
+                "parent_item": "Parent Item",
+                "product_tooltip_input_barcode": "Autofill with a manually provided barcode",
+                "product_tooltip_scan_barcode": "Autofill with a barcode from 📷",
+                "rotate_photo": "Rotate photo",
+                "set_as_primary_photo": "Set as { isPrimary, select, true {non-} false {} other {}}primary photo",
                 "title": "Create Item",
-                "upload_photos": "Upload Photos"
+                "toast": {
+                    "already_creating": "Already creating an item",
+                    "create_failed": "Couldn't create item",
+                    "create_success": "Item created",
+                    "failed_load_parent": "Failed to load parent item - please select manually",
+                    "no_canvas_support": "Your browser doesn't support canvas operations",
+                    "please_select_location": "Please select a location.",
+                    "rotate_failed": "Failed to rotate image: { error }",
+                    "rotate_process_failed": "Failed to process rotated image",
+                    "some_photos_failed": "{count, plural, =0 {No photos to upload.} =1 {1 photo failed to upload.} other {Some photos failed to upload.}}",
+                    "upload_failed": "Failed to upload photo: { photoName }",
+                    "upload_success": "{count, plural, =0 {No photos uploaded.} =1 {Photo uploaded successfully.} other {All photos uploaded successfully.}}",
+                    "uploading_photos": "{count, plural, =0 {No photos to upload} =1 {Uploading 1 photo…} other {Uploading {count} photos…}}"
+                },
+                "upload_photos": "Upload Photos",
+                "uploaded": "Uploaded Photo"
+            },
+            "selector": {
+                "no_results": "No Results Found",
+                "placeholder": "Select…",
+                "search_placeholder": "Type to search…"
+            },
+            "product_import": {
+                "title": "Import product",
+                "barcode": "Product's barcode",
+                "db_source": "DB source",
+                "search_item": "Search product",
+                "error_invalid_barcode": "Invalid barcode provided",
+                "error_exception": "Exception occured while retrieving item barcode: ",
+                "error_not_found": "No product found with give barcode."
             },
             "view": {
                 "selectable": {
@@ -81,15 +147,23 @@
                     "headers": "Headers",
                     "page": "Page",
                     "rows_per_page": "Rows per page",
-                    "table_settings": "Table Settings"
+                    "table_settings": "Table Settings",
+                    "view_item": "View Item"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_color": "Label Color",
                 "label_description": "Label Description",
                 "label_name": "Label Name",
-                "title": "Create Label"
+                "title": "Create Label",
+                "toast": {
+                    "already_creating": "Already creating a label",
+                    "create_failed": "Couldn't create label",
+                    "create_success": "Label created",
+                    "label_name_too_long": "Label name must not be longer than 50 characters"
+                }
             },
             "selector": {
                 "select_labels": "Select Labels"
@@ -99,7 +173,12 @@
             "create_modal": {
                 "location_description": "Location Description",
                 "location_name": "Location Name",
-                "title": "Create Location"
+                "title": "Create Location",
+                "toast": {
+                    "already_creating": "Already creating a location",
+                    "create_failed": "Couldn't create location",
+                    "create_success": "Location created"
+                }
             },
             "selector": {
                 "no_location_found": "No location found",
@@ -108,13 +187,16 @@
                 "select_location": "Select a Location"
             },
             "tree": {
-                "no_locations": "No locations available. Add new locations through the\n `<`span class=\"link-primary\"`>`Create`<`/span`>` button on the navigation bar."
+                "no_locations": "No locations available. Add new locations through the\n '<span class=\"link-primary\">'Create'</span>' button on the navigation bar."
             }
         },
         "quick_menu": {
             "no_results": "No results found.",
             "shortcut_hint": "Use the number keys to quickly select an action."
         }
+    },
+    "errors": {
+        "api_failure": "Backend API call failed: "
     },
     "global": {
         "add": "Add",
@@ -124,8 +206,11 @@
         "confirm": "Confirm",
         "create": "Create",
         "create_and_add": "Create and Add Another",
+        "create_subitem": "Create Subitem",
         "created": "Created",
         "delete": "Delete",
+        "delete_confirm": "Are you sure you want to delete this item? ",
+        "demo_instance": "This is a demo instance",
         "details": "Details",
         "duplicate": "Duplicate",
         "edit": "Edit",
@@ -133,13 +218,14 @@
         "follow_dev": "Follow the Developer",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Version: { version } Build: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Version: { version } Build: { build } '</a>'"
         },
         "github": "GitHub Project",
         "insured": "Insured",
         "items": "Items",
         "join_discord": "Join the Discord",
         "labels": "Labels",
+        "loading": "Loading…",
         "locations": "Locations",
         "maintenance": "Maintenance",
         "name": "Name",
@@ -147,11 +233,14 @@
         "password": "Password",
         "quantity": "Quantity",
         "read_docs": "Read the Docs",
+        "return_home": "Return Home",
         "save": "Save",
         "search": "Search",
         "sign_out": "Sign Out",
         "submit": "Submit",
+        "unknown": "Unknown",
         "update": "Update",
+        "updating": "Updating",
         "value": "Value",
         "version": "Version: { version }",
         "welcome": "Welcome, { username }"
@@ -176,27 +265,49 @@
         "set_email": "What's your email?",
         "set_name": "What's your name?",
         "set_password": "Set your password",
-        "tagline": "Track, Organize, and Manage your Things."
+        "tagline": "Track, Organize, and Manage your Things.",
+        "title": "Organize and Tag Your Stuff",
+        "toast": {
+            "invalid_email": "Invalid email address",
+            "invalid_email_password": "Invalid email or password",
+            "login_success": "Logged in successfully",
+            "problem_registering": "Problem registering user",
+            "user_registered": "User registered"
+        }
     },
     "items": {
         "add": "Add",
         "advanced": "Advanced",
         "archived": "Archived",
         "asset_id": "Asset ID",
+        "associated_with_multiple": "This Asset Id is associated with multiple items",
         "attachment": "Attachment",
         "attachments": "Attachments",
         "changes_persisted_immediately": "Changes to attachments will be saved immediately",
         "created_at": "Created At",
         "custom_fields": "Custom Fields",
+        "delete_attachment_confirm": "Are you sure you want to delete this attachment?",
+        "delete_item_confirm": "Are you sure you want to delete this item?",
         "description": "Description",
         "details": "Details",
         "drag_and_drop": "Drag and drop files here or click to select files",
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "Attachment Title",
+                "attachment_type": "Attachment Type",
+                "primary_photo": "Primary Photo",
+                "primary_photo_sub": "This option is only available for photos. Only one photo can be primary. If you select this option, the current primary photo, if any will be unselected.",
+                "select_type": "Select a type",
+                "title": "Attachment Edit"
+            }
+        },
         "edit_details": "Edit Details",
         "field_selector": "Field Selector",
         "field_value": "Field Value",
         "first": "First",
         "include_archive": "Include Archived Items",
         "insured": "Insured",
+        "invalid_asset_id": "Invalid Asset ID",
         "last": "Last",
         "lifetime_warranty": "Lifetime Warranty",
         "location": "Location",
@@ -207,6 +318,7 @@
         "name": "Name",
         "negate_labels": "Negate Selected Labels",
         "next_page": "Next Page",
+        "no_attachments": "No attachments found",
         "no_results": "No Items Found",
         "notes": "Notes",
         "only_with_photo": "Only items with photo",
@@ -228,24 +340,60 @@
         "receipts": "Receipts",
         "reset_search": "Reset Search",
         "results": "{ total } Results",
+        "select_field": "Select a field",
         "serial_number": "Serial Number",
         "show_advanced_view_options": "Show Advanced View Options",
         "sold_at": "Sold At",
         "sold_details": "Sold Details",
         "sold_price": "Sold Price",
         "sold_to": "Sold To",
+        "sync_child_locations": "Sync child items' locations",
         "tip_1": "Location and label filters use the 'OR' operation. If more than one is selected only one will be\n required for a match.",
         "tip_2": "Searches prefixed with '#'' will query for a asset ID (example '#000-001')",
         "tip_3": "Field filters use the 'OR' operation. If more than one is selected only one will be required for a\n match.",
         "tips": "Tips",
         "tips_sub": "Search Tips",
+        "toast": {
+            "asset_not_found": "Asset not found",
+            "attachment_deleted": "Attachment deleted",
+            "attachment_updated": "Attachment updated",
+            "attachment_uploaded": "Attachment uploaded",
+            "child_items_location_no_longer_synced": "Child items' locations will no longer be synced with this item.",
+            "child_items_location_synced": "Child items' locations have been synced with this item",
+            "child_location_desync": "Changing location will de-sync it from the parent's location",
+            "error_loading_parent_data": "Something went wrong trying to load parent data",
+            "failed_adjust_quantity": "Failed to adjust quantity",
+            "failed_delete_attachment": "Failed to delete attachment",
+            "failed_delete_item": "Failed to delete item",
+            "failed_duplicate_item": "Failed to duplicate item",
+            "failed_load_asset": "Failed to load asset",
+            "failed_load_item": "Failed to load item",
+            "failed_load_items": "Failed to load items",
+            "failed_save": "Failed to save item",
+            "failed_save_no_location": "Failed to save item: no location selected",
+            "failed_search_items": "Failed to search items",
+            "failed_update_attachment": "Failed to update attachment",
+            "failed_upload_attachment": "Failed to upload attachment",
+            "item_deleted": "Item deleted",
+            "item_saved": "Item saved",
+            "quantity_cannot_negative": "Quantity cannot be negative",
+            "sync_child_location": "Selected parent syncs its children's locations to its own. The location has been updated."
+        },
         "updated_at": "Updated At",
         "warranty": "Warranty",
         "warranty_details": "Warranty Details",
         "warranty_expires": "Warranty Expires"
     },
     "labels": {
+        "label_delete_confirm": "Are you sure you want to delete this label? This action cannot be undone.",
         "no_results": "No Labels Found",
+        "toast": {
+            "failed_delete_label": "Failed to delete label",
+            "failed_load_label": "Failed to load label",
+            "failed_update_label": "Failed to update label",
+            "label_deleted": "Label deleted",
+            "label_updated": "Label updated"
+        },
         "update_label": "Update Label"
     },
     "languages": {
@@ -288,7 +436,15 @@
         "child_locations": "Child Locations",
         "collapse_tree": "Collapse Tree",
         "expand_tree": "Expand Tree",
+        "location_items_delete_confirm": "Are you sure you want to delete this location and all of its items? This action cannot be undone.",
         "no_results": "No Locations Found",
+        "toast": {
+            "failed_delete_location": "Failed to delete location",
+            "failed_load_location": "Failed to load location",
+            "failed_update_location": "Failed to update location",
+            "location_deleted": "Location deleted",
+            "location_updated": "Location updated"
+        },
         "update_location": "Update Location"
     },
     "maintenance": {
@@ -344,8 +500,10 @@
         "currency_format": "Currency Format",
         "current_password": "Current Password",
         "delete_account": "Delete Account",
+        "delete_account_confirm": "Are you sure you want to delete your account? If you are the last member in your group all your data will be deleted. This action cannot be undone.",
         "delete_account_sub": "Delete your account and all its associated data. This can not be undone.",
-        "display_header": "{ currentValue, select, true {Hide Header} false {Show Header} other {Not Hit}}",
+        "delete_notifier_confirm": "Are you sure you want to delete this notifier?",
+        "display_legacy_header": "{ currentValue, select, true {Disable Legacy Header} false {Enable Legacy Header} other {Not Hit}}",
         "enabled": "Enabled",
         "example": "Example",
         "gen_invite": "Generate Invite Link",
@@ -363,34 +521,89 @@
         "test": "Test",
         "theme_settings": "Theme Settings",
         "theme_settings_sub": "Theme settings are stored in your browser's local storage. You can change the theme at any time. If you're\n having trouble setting your theme try refreshing your browser.",
+        "toast": {
+            "account_deleted": "Your account has been deleted.",
+            "failed_change_password": "Failed to change password.",
+            "failed_create_notifier": "Failed to create notifier.",
+            "failed_delete_account": "Failed to delete your account.",
+            "failed_delete_notifier": "Failed to delete notifier.",
+            "failed_get_currencies": "Failed to get currencies",
+            "failed_test_notifier": "Failed to test notifier.",
+            "failed_update_group": "Failed to update group",
+            "failed_update_notifier": "Failed to update notifier.",
+            "group_updated": "Group updated",
+            "notifier_test_success": "Notifier test successful.",
+            "password_changed": "Password changed successfully."
+        },
         "update_group": "Update Group",
         "update_language": "Update Language",
         "url": "URL",
         "user_profile": "User Profile",
         "user_profile_sub": "Invite users, and manage your account."
     },
+    "reports": {
+        "label_generator": {
+            "asset_end": "Asset End",
+            "asset_start": "Asset Start",
+            "base_url": "Base URL",
+            "bordered_labels": "Bordered Labels",
+            "generate_page": "Generate Page",
+            "input_placeholder": "Type here",
+            "instruction_1": "The Homebox Label Generator is a tool to help you print labels for your Homebox inventory. These are intended to\n be print-ahead labels so you can print many labels and have them ready to apply",
+            "instruction_2": "As such, these labels work by printing a URL QR Code and AssetID information on a label. If you've disabled\n AssetID's in your Homebox settings, you can still use this tool, but the AssetID's won't reference any item",
+            "instruction_3": "This feature is in early development stages and may change in future releases, if you have feedback please\n provide it in the '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub Discussion'</a>'",
+            "label_height": "Label Height",
+            "label_width": "Label Width",
+            "measure_type": "Measure Type",
+            "page_bottom_padding": "Page Bottom Padding",
+            "page_height": "Page Height",
+            "page_left_padding": "Page Left Padding",
+            "page_right_padding": "Page Right Padding",
+            "page_top_padding": "Page Top Padding",
+            "page_width": "Page Width",
+            "qr_code_example": "QR Code Example",
+            "tip_1": "The defaults here are setup for the\n '<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 label sheets'</a>'. If you're using a different sheet,\n you'll need to adjust the settings to match your sheet.",
+            "tip_2": "If you're customizing your sheet the dimensions are in inches. When building the 5260 sheet, I found that the\n dimensions used in their template, did not match what was needed to print within the boxes.\n '<b>'Be prepared for some trial and error.'</b>'",
+            "tip_3": "When printing be sure to:\n '<ol><li>'Set the margins to 0 or None'</li><li>'Set the scaling to 100%'</li><li>'Disable double-sided printing'</li><li>'Print a test page before printing multiple pages'</li></ol>'",
+            "tips": "Tips",
+            "title": "Label Generator",
+            "toast": {
+                "page_too_small_card": "Page size is too small for the card size"
+            }
+        }
+    },
     "scanner": {
         "error": "An error occurred while scanning",
         "invalid_url": "Invalid barcode URL",
         "no_sources": "No video sources available",
+        "permission_denied": "Camera permission denied, please allow access to the camera in your browser settings",
         "select_video_source": "Pick a video source",
         "title": "Scanner",
-        "unsupported": "Media Stream API is not supported without HTTPS"
+        "unsupported": "Media Stream API is not supported without HTTPS",
+        "barcode_detected_message": "product barcode detected",
+        "barcode_fetch_data": "Fetch product data"
     },
     "tools": {
         "actions": "Inventory Actions",
         "actions_set": {
+            "create_missing_thumbnails": "Create Missing Thumbnails",
+            "create_missing_thumbnails_button": "Create Thumbnails",
+            "create_missing_thumbnails_confirm": "Are you sure you want to create missing thumbnails? This can take a while and cannot be paused.",
+            "create_missing_thumbnails_sub": "Creates thumbnails for all attachments that are supported by the current configuration. This is useful for attachments that were uploaded prior to the v0.20.0 release of Homebox. This will not overwrite existing thumbnails, only create new ones for attachments that do not have a thumbnail. Please note that the thumbnails are created in the background and may take a while to complete.",
             "ensure_ids": "Ensure Asset IDs",
             "ensure_ids_button": "Ensure Asset IDs",
+            "ensure_ids_confirm": "Are you sure you want to ensure all assets have an ID? This can take a while and cannot be undone.",
             "ensure_ids_sub": "Ensures that all items in your inventory have a valid asset_id field. This is done by finding the highest current asset_id field in the database and applying the next value to each item that has an unset asset_id field. This is done in order of the created_at field.",
             "ensure_import_refs": "Ensure Import Refs",
             "ensure_import_refs_button": "Ensure Import Refs",
             "ensure_import_refs_sub": "Ensures that all items in your inventory have a valid import_ref field. This is done by randomly generating a 8 character string for each item that has an unset import_ref field.",
             "set_primary_photo": "Set Primary Photo",
             "set_primary_photo_button": "Set Primary Photo",
+            "set_primary_photo_confirm": "Are you sure you want to set primary photos? This can take a while and cannot be undone.",
             "set_primary_photo_sub": "In version v0.10.0 of Homebox, the primary image field was added to attachments of type photo. This action will set the primary image field to the first image in the attachments array in the database, if it is not already set. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'See GitHub PR #576'</a>'",
             "zero_datetimes": "Zero Item Date Times",
             "zero_datetimes_button": "Zero Item Date Times",
+            "zero_datetimes_confirm": "Are you sure you want to reset all date and time values? This can take a while and cannot be undone.",
             "zero_datetimes_sub": "Resets the time value for all date time fields in your inventory to the beginning of the date. This is to fix a bug that was introduced early on in the development of the site that caused the time value to be stored with the time which caused issues with date fields displaying accurate values. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'"
         },
         "actions_sub": "Apply Actions to your inventory in bulk. These are irreversible actions. '<b>'Be careful.'</b>'",
@@ -401,6 +614,7 @@
             "export_sub": "Exports the standard CSV format for Homebox. This will export all items in your inventory.",
             "import": "Import Inventory",
             "import_button": "Import Inventory",
+            "import_ref_confirm": "Are you sure you want to ensure all assets have an import_ref? This can take a while and cannot be undone.",
             "import_sub": "Imports the standard CSV format for Homebox. Without an '<code>'HB.import_ref'</code>' column, this will '<b>'not'</b>' overwrite any existing items in your inventory, only add new items. Rows with an '<code>'HB.import_ref'</code>' column are merged into existing items with the same import_ref, if one exists."
         },
         "import_export_sub": "Import and export your inventory to and from a CSV file. This is useful for migrating your inventory to a new instance of Homebox.",
@@ -413,6 +627,14 @@
             "bill_of_materials_button": "Generate BOM",
             "bill_of_materials_sub": "Generates a CSV (Comma Separated Values) file that can be imported into a spreadsheet program. This is a summary of your inventory with basic item and pricing information."
         },
-        "reports_sub": "Generate different reports for your inventory."
+        "reports_sub": "Generate different reports for your inventory.",
+        "toast": {
+            "asset_success": "{ results } assets have been updated.",
+            "failed_create_missing_thumbnails": "Failed to create missing thumbnails.",
+            "failed_ensure_ids": "Failed to ensure asset IDs.",
+            "failed_ensure_import_refs": "Failed to ensure import refs.",
+            "failed_set_primary_photos": "Failed to set primary photos.",
+            "failed_zero_datetimes": "Failed to reset date and time values."
+        }
     }
 }

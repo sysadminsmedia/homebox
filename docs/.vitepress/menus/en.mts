@@ -5,6 +5,7 @@ export default [
             {text: 'Quick Start', link: '/en/quick-start'},
             {text: 'Installation', link: '/en/installation'},
             {text: 'Configure', link: '/en/configure'},
+            {text: 'Storage', link: '/en/configure/storage'},
             {text: 'Upgrade Guide', link: '/en/upgrade'},
             {text: 'Migration Guide', link: '/en/migration'},
         ]

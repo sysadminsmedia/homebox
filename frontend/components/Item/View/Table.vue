@@ -1,5 +1,5 @@
 <template>
-  <Dialog dialog-id="item-table-settings">
+  <Dialog :dialog-id="DialogID.ItemTableSettings">
     <DialogContent>
       <DialogHeader>
         <DialogTitle>{{ $t("components.item.view.table.table_settings") }}</DialogTitle>
@@ -41,7 +41,7 @@
       </div>
 
       <DialogFooter>
-        <Button @click="closeDialog('item-table-settings')"> {{ $t("global.save") }} </Button>
+        <Button @click="closeDialog(DialogID.ItemTableSettings)"> {{ $t("global.save") }} </Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>
@@ -77,7 +77,7 @@
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow v-for="(d, i) in data" :key="d.id" class="cursor-pointer" @click="navigateTo(`/item/${d.id}`)">
+        <TableRow v-for="(d, i) in data" :key="d.id" class="relative cursor-pointer">
           <TableCell
             v-for="h in headers.filter(h => h.enabled)"
             :key="`${h.value}-${i}`"
@@ -88,9 +88,7 @@
             }"
           >
             <template v-if="h.type === 'name'">
-              <NuxtLink class="text-wrap" :to="`/item/${d.id}`">
-                {{ d.name }}
-              </NuxtLink>
+              {{ d.name }}
             </template>
             <template v-else-if="h.type === 'price'">
               <Currency :amount="d.purchasePrice" />
@@ -111,6 +109,11 @@
               {{ extractValue(d, h.value) }}
             </slot>
           </TableCell>
+          <TableCell class="absolute inset-0">
+            <NuxtLink :to="`/item/${d.id}`" class="absolute inset-0">
+              <span class="sr-only">{{ $t("components.item.view.table.view_item") }}</span>
+            </NuxtLink>
+          </TableCell>
         </TableRow>
       </TableBody>
     </Table>
@@ -120,7 +123,7 @@
         hidden: disableControls,
       }"
     >
-      <Button class="size-10 p-0" variant="outline" @click="openDialog('item-table-settings')">
+      <Button class="size-10 p-0" variant="outline" @click="openDialog(DialogID.ItemTableSettings)">
         <MdiTableCog />
       </Button>
       <Pagination
@@ -171,6 +174,7 @@
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { useDialog } from "@/components/ui/dialog-provider";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
 
   const { openDialog, closeDialog } = useDialog();
 
@@ -185,6 +189,7 @@
   const preferences = useViewPreferences();
 
   const defaultHeaders = [
+    { text: "items.asset_id", value: "assetId", enabled: false },
     {
       text: "items.name",
       value: "name",
@@ -209,8 +214,6 @@
         enabled: h.enabled,
       }))
   );
-
-  console.log(headers.value);
 
   const toggleHeader = (value: string) => {
     const header = headers.value.find(h => h.value === value);
@@ -254,8 +257,8 @@
   function extractSortable(item: ItemSummary, property: keyof ItemSummary): string | number | boolean {
     const value = item[property];
     if (typeof value === "string") {
-      // Try parse float
-      const parsed = parseFloat(value);
+      // Try to parse number
+      const parsed = Number(value);
       if (!isNaN(parsed)) {
         return parsed;
       }

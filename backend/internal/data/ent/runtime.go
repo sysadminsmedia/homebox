@@ -51,6 +51,10 @@ func init() {
 	attachmentDescPath := attachmentFields[3].Descriptor()
 	// attachment.DefaultPath holds the default value on creation for the path field.
 	attachment.DefaultPath = attachmentDescPath.Default.(string)
+	// attachmentDescMimeType is the schema descriptor for mime_type field.
+	attachmentDescMimeType := attachmentFields[4].Descriptor()
+	// attachment.DefaultMimeType holds the default value on creation for the mime_type field.
+	attachment.DefaultMimeType = attachmentDescMimeType.Default.(string)
 	// attachmentDescID is the schema descriptor for id field.
 	attachmentDescID := attachmentMixinFields0[0].Descriptor()
 	// attachment.DefaultID holds the default value on creation for the id field.

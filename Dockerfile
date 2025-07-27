@@ -31,6 +31,8 @@ RUN go mod download
 
 # Build API stage
 FROM public.ecr.aws/docker/library/golang:alpine AS builder
+ARG TARGETOS
+ARG TARGETARCH
 ARG BUILD_TIME
 ARG COMMIT
 ARG VERSION
@@ -38,7 +40,8 @@ ARG VERSION
 # Install necessary build tools
 RUN apk update && \
     apk upgrade && \
-    apk add --no-cache git build-base gcc g++
+    apk add --no-cache git build-base gcc g++ && \
+    if [ "$TARGETARCH" != "arm" ] || [ "$TARGETARCH" != "riscv64" ]; then apk --no-cache add libwebp libavif libheif libjxl; fi
 
 WORKDIR /go/src/app
 
@@ -52,19 +55,26 @@ COPY --from=frontend-builder /app/.output/public ./app/api/static/public
 
 # Use cache for Go build artifacts
 RUN --mount=type=cache,target=/root/.cache/go-build \
-    CGO_ENABLED=0 GOOS=linux go build \
-    -ldflags "-s -w -X main.commit=$COMMIT -X main.buildTime=$BUILD_TIME -X main.version=$VERSION" \
-    -o /go/bin/api \
-    -v ./app/api/*.go
+    if [ "$TARGETARCH" = "arm" ] || [ "$TARGETARCH" = "riscv64" ];  \
+    then echo "nodynamic" $TARGETOS $TARGETARCH; CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build \
+        -ldflags "-s -w -X main.commit=$COMMIT -X main.buildTime=$BUILD_TIME -X main.version=$VERSION" \
+        -tags nodynamic -o /go/bin/api -v ./app/api/*.go; \
+    else \
+         echo $TARGETOS $TARGETARCH; CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build \
+        -ldflags "-s -w -X main.commit=$COMMIT -X main.buildTime=$BUILD_TIME -X main.version=$VERSION" \
+        -o /go/bin/api -v ./app/api/*.go; \
+    fi
 
 # Production stage
 FROM public.ecr.aws/docker/library/alpine:latest
 ENV HBOX_MODE=production
-ENV HBOX_STORAGE_DATA=/data/
+ENV HBOX_STORAGE_CONN_STRING=file:///?no_tmp_dir=true
+ENV HBOX_STORAGE_PREFIX_PATH=data
 ENV HBOX_DATABASE_SQLITE_PATH=/data/homebox.db?_pragma=busy_timeout=2000&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite
 
 # Install necessary runtime dependencies
-RUN apk --no-cache add ca-certificates wget
+RUN apk --no-cache add ca-certificates wget && \
+    if [ "$TARGETARCH" != "arm" ] || [ "$TARGETARCH" != "riscv64" ]; then apk --no-cache add libwebp libavif libheif libjxl; fi
 
 # Create application directory and copy over built Go binary
 RUN mkdir /app

@@ -1,7 +1,45 @@
 <template>
-  <BaseModal dialog-id="create-item" :title="$t('components.item.create_modal.title')">
+  <BaseModal :dialog-id="DialogID.CreateItem" :title="$t('components.item.create_modal.title')">
+    <template #header-actions>
+      <div class="flex">
+        <TooltipProvider :delay-duration="0">
+          <ButtonGroup>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="outline" :disabled="loading" size="icon" data-pos="start" @click="openQrScannerPage()">
+                  <MdiBarcodeScan class="size-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{{ $t("components.item.create_modal.product_tooltip_scan_barcode") }}</p>
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger>
+                <Button variant="outline" :disabled="loading" size="icon" data-pos="end" @click="openBarcodeDialog()">
+                  <MdiBarcode class="size-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{{ $t("components.item.create_modal.product_tooltip_input_barcode") }}</p>
+              </TooltipContent>
+            </Tooltip>
+          </ButtonGroup>
+        </TooltipProvider>
+      </div>
+    </template>
+
     <form class="flex flex-col gap-2" @submit.prevent="create()">
       <LocationSelector v-model="form.location" />
+      <ItemSelector
+        v-if="subItemCreate"
+        v-model="parent"
+        v-model:search="query"
+        :label="$t('components.item.create_modal.parent_item')"
+        :items="results"
+        item-text="name"
+        no-results-text="Type to search..."
+      />
       <FormTextField
         ref="nameInput"
         v-model="form.name"
@@ -60,7 +98,11 @@
       <div v-if="form.photos.length > 0" class="mt-4 border-t px-4 pb-4">
         <div v-for="(photo, index) in form.photos" :key="index">
           <div class="mt-8 w-full">
-            <img :src="photo.fileBase64" class="w-full rounded object-fill shadow-sm" alt="Uploaded Photo" />
+            <img
+              :src="photo.fileBase64"
+              class="w-full rounded object-fill shadow-sm"
+              :alt="$t('components.item.create_modal.uploaded')"
+            />
           </div>
           <div class="mt-2 flex items-center gap-2">
             <TooltipProvider class="flex gap-2" :delay-duration="0">
@@ -68,11 +110,11 @@
                 <TooltipTrigger>
                   <Button size="icon" type="button" variant="destructive" @click.prevent="deleteImage(index)">
                     <MdiDelete />
-                    <div class="sr-only">Delete photo</div>
+                    <div class="sr-only">{{ $t("components.item.create_modal.delete_photo") }}</div>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Delete photo</p>
+                  <p>{{ $t("components.item.create_modal.delete_photo") }}</p>
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
@@ -88,11 +130,11 @@
                     "
                   >
                     <MdiRotateClockwise />
-                    <div class="sr-only">Rotate photo</div>
+                    <div class="sr-only">{{ $t("components.item.create_modal.rotate_photo") }}</div>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Rotate photo</p>
+                  <p>{{ $t("components.item.create_modal.rotate_photo") }}</p>
                 </TooltipContent>
               </Tooltip>
               <Tooltip>
@@ -105,11 +147,15 @@
                   >
                     <MdiStar v-if="photo.primary" />
                     <MdiStarOutline v-else />
-                    <div class="sr-only">Set as {{ photo.primary ? "non" : "" }} primary photo</div>
+                    <div class="sr-only">
+                      {{ $t("components.item.create_modal.set_as_primary_photo", { isPrimary: photo.primary }) }}
+                    </div>
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Set as {{ photo.primary ? "non" : "" }} primary photo</p>
+                  <p>
+                    {{ $t("components.item.create_modal.set_as_primary_photo", { isPrimary: photo.primary }) }}
+                  </p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -122,6 +168,8 @@
 </template>
 
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
+  import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { toast } from "@/components/ui/sonner";
   import { Button, ButtonGroup } from "~/components/ui/button";
   import BaseModal from "@/components/App/CreateModal.vue";
@@ -130,6 +178,8 @@
   import type { ItemCreate, LocationOut } from "~~/lib/api/types/data-contracts";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
+  import MdiBarcode from "~icons/mdi/barcode";
+  import MdiBarcodeScan from "~icons/mdi/barcode-scan";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPackageVariantClosed from "~icons/mdi/package-variant-closed";
   import MdiDelete from "~icons/mdi/delete";
@@ -139,6 +189,7 @@
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
   import LabelSelector from "~/components/Label/Selector.vue";
+  import ItemSelector from "~/components/Item/Selector.vue";
 
   interface PhotoPreview {
     photoName: string;
@@ -147,9 +198,10 @@
     primary: boolean;
   }
 
-  const { activeDialog, closeDialog } = useDialog();
+  const { t } = useI18n();
+  const { openDialog, closeDialog, registerOpenDialogCallback } = useDialog();
 
-  useDialogHotkey("create-item", { code: "Digit1", shift: true });
+  useDialogHotkey(DialogID.CreateItem, { code: "Digit1", shift: true });
 
   const api = useUserApi();
 
@@ -160,6 +212,12 @@
   const labels = computed(() => labelStore.labels);
 
   const route = useRoute();
+  const router = useRouter();
+
+  const parent = ref();
+  const { query, results } = useItemSearch(api, { immediate: false });
+  const subItemCreateParam = useRouteQuery("subItemCreate", "n");
+  const subItemCreate = ref();
 
   const labelId = computed(() => {
     if (route.fullPath.includes("/label/")) {
@@ -175,12 +233,20 @@
     return null;
   });
 
+  const itemId = computed(() => {
+    if (route.fullPath.includes("/item/")) {
+      return route.params.id;
+    }
+    return null;
+  });
+
   const nameInput = ref<HTMLInputElement | null>(null);
 
   const loading = ref(false);
   const focused = ref(false);
   const form = reactive({
     location: locations.value && locations.value.length > 0 ? locations.value[0] : ({} as LocationOut),
+    parentId: null,
     name: "",
     quantity: 1,
     description: "",
@@ -188,6 +254,18 @@
     labels: [] as string[],
     photos: [] as PhotoPreview[],
   });
+
+  watch(
+    parent,
+    newParent => {
+      if (newParent && newParent.id && subItemCreate.value) {
+        form.parentId = newParent.id;
+      } else {
+        form.parentId = null;
+      }
+    },
+    { immediate: true }
+  );
 
   const { shift } = useMagicKeys();
 
@@ -221,31 +299,76 @@
     }
   }
 
-  watch(
-    () => activeDialog.value,
-    active => {
-      if (active === "create-item") {
-        if (locationId.value) {
-          const found = locations.value.find(l => l.id === locationId.value);
-          if (found) {
-            form.location = found;
-          }
+  onMounted(() => {
+    registerOpenDialogCallback(DialogID.CreateItem, async params => {
+      // needed since URL will be cleared in the next step => ParentId Selection should stay though
+      subItemCreate.value = subItemCreateParam.value === "y";
+      let parentItemLocationId = null;
+
+      if (subItemCreate.value && itemId.value) {
+        const itemIdRead = typeof itemId.value === "string" ? (itemId.value as string) : itemId.value[0];
+        const { data, error } = await api.items.get(itemIdRead);
+        if (error || !data) {
+          toast.error(t("components.item.create_modal.toast.failed_load_parent"));
+          console.error("Parent item fetch error:", error);
         }
-        if (labelId.value) {
-          form.labels = labels.value.filter(l => l.id === labelId.value).map(l => l.id);
+
+        if (data) {
+          parent.value = data;
+        }
+
+        if (data.location) {
+          const { location } = data;
+          parentItemLocationId = location.id;
+        }
+
+        // clear URL Parameter (subItemCreate) since intention was communicated and received
+        const currentQuery = { ...route.query };
+        delete currentQuery.subItemCreate;
+        await router.push({ query: currentQuery });
+      } else {
+        // since Input is hidden in this case, make sure no accidental parent information is sent out
+        parent.value = {};
+        form.parentId = null;
+      }
+
+      const locId = locationId.value ? locationId.value : parentItemLocationId;
+
+      if (locId) {
+        const found = locations.value.find(l => l.id === locId);
+        if (found) {
+          form.location = found;
         }
       }
-    }
-  );
+
+      if (params?.product) {
+        form.name = params.product.item.name;
+        form.description = params.product.item.description;
+
+        if (params.product.imageURL) {
+          form.photos.push({
+            photoName: "product_view.jpg",
+            fileBase64: params.product.imageBase64,
+            primary: form.photos.length === 0,
+            file: dataURLtoFile(params.product.imageBase64, "product_view.jpg"),
+          });
+        }
+      }
+
+      if (labelId.value) {
+        form.labels = labels.value.filter(l => l.id === labelId.value).map(l => l.id);
+      }
+    });
+  });
 
   async function create(close = true) {
     if (!form.location?.id) {
-      toast.error("Please select a location.");
+      toast.error(t("components.item.create_modal.toast.please_select_location"));
       return;
     }
 
     if (loading.value) {
-      toast.error("Already creating an item");
+      toast.error(t("components.item.create_modal.toast.already_creating"));
       return;
     }
 
@@ -254,7 +377,7 @@
     if (shift.value) close = false;
 
     const out: ItemCreate = {
-      parentId: null,
+      parentId: form.parentId,
       name: form.name,
       quantity: form.quantity,
       description: form.description,
@@ -266,14 +389,14 @@
 
     if (error) {
       loading.value = false;
-      toast.error("Couldn't create item");
+      toast.error(t("components.item.create_modal.toast.create_failed"));
       return;
     }
 
-    toast.success("Item created");
+    toast.success(t("components.item.create_modal.toast.create_success"));
 
     if (form.photos.length > 0) {
-      toast.info(`Uploading ${form.photos.length} photo(s)...`);
+      toast.info(t("components.item.create_modal.toast.uploading_photos", { count: form.photos.length }));
       let uploadError = false;
       for (const photo of form.photos) {
         const { error: attachError } = await api.items.attachments.add(
@@ -286,14 +409,14 @@
 
         if (attachError) {
           uploadError = true;
-          toast.error(`Failed to upload Photo: ${photo.photoName}`);
+          toast.error(t("components.item.create_modal.toast.upload_failed", { photoName: photo.photoName }));
           console.error(attachError);
         }
       }
       if (uploadError) {
-        toast.warning("Some photos failed to upload.");
+        toast.warning(t("components.item.create_modal.toast.some_photos_failed", { count: form.photos.length }));
       } else {
-        toast.success("All photos uploaded successfully.");
+        toast.success(t("components.item.create_modal.toast.upload_success", { count: form.photos.length }));
       }
     }
 
@@ -307,7 +430,7 @@
     loading.value = false;
 
     if (close) {
-      closeDialog("create-item");
+      closeDialog(DialogID.CreateItem);
       navigateTo(`/item/${data.id}`);
     }
   }
@@ -346,7 +469,7 @@
     const offScreenCanvasCtx = offScreenCanvas.getContext("2d");
 
     if (!offScreenCanvasCtx) {
-      toast.error("Your browser doesn't support canvas operations");
+      toast.error(t("components.item.create_modal.toast.no_canvas_support"));
       return;
     }
 
@@ -359,7 +482,7 @@
       img.onerror = () => reject(new Error("Failed to load image"));
       img.src = base64Image;
     }).catch(error => {
-      toast.error("Failed to rotate image: " + error.message);
+      toast.error(t("components.item.create_modal.toast.rotate_failed", { error: error.message }));
     });
 
     // Set its dimensions to rotated size
@@ -378,12 +501,20 @@
       form.photos[index].fileBase64 = offScreenCanvas.toDataURL(imageType, 100);
       form.photos[index].file = dataURLtoFile(form.photos[index].fileBase64, form.photos[index].photoName);
     } catch (error) {
-      toast.error("Failed to process rotated image");
+      toast.error(t("components.item.create_modal.toast.rotate_process_failed"));
       console.error(error);
     } finally {
       // Clean up resources
       offScreenCanvas.width = 0;
       offScreenCanvas.height = 0;
     }
+  }
+
+  function openQrScannerPage() {
+    openDialog(DialogID.Scanner);
+  }
+
+  function openBarcodeDialog() {
+    openDialog(DialogID.ProductImport);
   }
 </script>

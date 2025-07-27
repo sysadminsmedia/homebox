@@ -36,6 +36,7 @@ export function useUserApi(): UserClient {
     if (r.status === 401) {
       console.error("unauthorized request, invalidating session");
       authCtx.invalidateSession();
+      navigateTo("/");
     }
   });
 

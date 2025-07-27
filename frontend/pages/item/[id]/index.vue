@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import type { AnyDetail, Detail, Details } from "~~/components/global/DetailsSection/types";
   import { filterZeroValues } from "~~/components/global/DetailsSection/types";
@@ -24,6 +25,9 @@
   import { Label } from "@/components/ui/label";
   import { Switch } from "@/components/ui/switch";
   import { Card } from "@/components/ui/card";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
+
+  const { t } = useI18n();
 
   const { openDialog, closeDialog } = useDialog();
 
@@ -32,6 +36,7 @@
   });
 
   const route = useRoute();
+  const router = useRouter();
   const api = useUserApi();
 
   const itemId = computed<string>(() => route.params.id as string);
@@ -44,7 +49,7 @@
   const { data: item, refresh } = useAsyncData(itemId.value, async () => {
     const { data, error } = await api.items.get(itemId.value);
     if (error) {
-      toast.error("Failed to load item");
+      toast.error(t("items.toast.failed_load_item"));
       navigateTo("/home");
       return;
     }
@@ -70,7 +75,7 @@
 
     const newQuantity = item.value.quantity + amount;
     if (newQuantity < 0) {
-      toast.error("Quantity cannot be negative");
+      toast.error(t("items.toast.quantity_cannot_negative"));
       return;
     }
 
@@ -80,7 +85,7 @@
     });
 
     if (resp.error) {
-      toast.error("Failed to adjust quantity");
+      toast.error(t("items.toast.failed_adjust_quantity"));
       return;
     }
 
@@ -95,17 +100,28 @@
   };
 
   type Photo = {
-    src: string;
+    thumbnailSrc?: string;
+    originalSrc: string;
+    originalType?: string;
   };
 
   const photos = computed<Photo[]>(() => {
+    if (!item.value) {
+      return [];
+    }
     return (
-      item.value?.attachments.reduce((acc, cur) => {
+      item.value.attachments.reduce((acc, cur) => {
         if (cur.type === "photo") {
-          acc.push({
-            // @ts-expect-error - it's impossible for this to be null at this point
-            src: api.authURL(`/items/${item.value.id}/attachments/${cur.id}`),
-          });
+          const photo: Photo = {
+            originalSrc: api.authURL(`/items/${item.value!.id}/attachments/${cur.id}`),
+            originalType: cur.mimeType,
+          };
+          if (cur.thumbnail) {
+            photo.thumbnailSrc = api.authURL(`/items/${item.value!.id}/attachments/${cur.thumbnail.id}`);
+          } else {
+            photo.thumbnailSrc = photo.originalSrc; // fallback to itself if no thumbnail
+          }
+          acc.push(photo);
         }
         return acc;
       }, [] as Photo[]) || []
@@ -279,7 +295,7 @@
     if (preferences.value.showEmpty) {
       return true;
     }
-    return validDate(item.value?.warrantyExpires);
+    return item.value?.lifetimeWarranty || validDate(item.value?.warrantyExpires);
   });
 
   const warrantyDetails = computed(() => {
@@ -321,7 +337,7 @@
     if (preferences.value.showEmpty) {
       return true;
     }
-    return item.value?.purchaseFrom || item.value?.purchasePrice !== 0;
+    return item.value?.purchaseFrom || item.value?.purchasePrice !== 0 || validDate(item.value?.purchaseTime);
   });
 
   const purchaseDetails = computed<Details>(() => {
@@ -354,7 +370,7 @@
     if (preferences.value.showEmpty) {
       return true;
     }
-    return item.value?.soldTo || item.value?.soldPrice !== 0;
+    return item.value?.soldTo || item.value?.soldPrice !== 0 || validDate(item.value?.soldTime);
   });
 
   const soldDetails = computed<Details>(() => {
@@ -383,17 +399,19 @@
     return v;
   });
 
-  const dialoged = reactive({
-    src: "",
+  const dialoged = reactive<Photo>({
+    originalSrc: "",
   });
 
   function openImageDialog(img: Photo) {
-    dialoged.src = img.src;
-    openDialog("item-image");
+    dialoged.originalSrc = img.originalSrc;
+    dialoged.originalType = img.originalType;
+    dialoged.thumbnailSrc = img.thumbnailSrc;
+    openDialog(DialogID.ItemImage);
   }
 
   function closeImageDialog() {
-    closeDialog("item-image");
+    closeDialog(DialogID.ItemImage);
   }
 
   const currentUrl = computed(() => {
@@ -431,7 +449,7 @@
 
     const resp = await api.items.fullpath(item.value.id);
     if (resp.error) {
-      toast.error("Failed to load item");
+      toast.error(t("items.toast.failed_load_item"));
       return [];
     }
 
@@ -448,7 +466,7 @@
     });
 
     if (resp.error) {
-      toast.error("Failed to load items");
+      toast.error(t("items.toast.failed_load_items"));
       return [];
     }
 
@@ -470,7 +488,7 @@
     });
 
     if (error) {
-      toast.error("Failed to duplicate item");
+      toast.error(t("items.toast.failed_duplicate_item"));
       return;
     }
 
@@ -485,7 +503,7 @@
     });
 
     if (updateError) {
-      toast.error("Failed to duplicate item");
+      toast.error(t("items.toast.failed_duplicate_item"));
       return;
     }
 
@@ -495,7 +513,7 @@
   const confirm = useConfirm();
 
   async function deleteItem() {
-    const confirmed = await confirm.open("Are you sure you want to delete this item?");
+    const confirmed = await confirm.open(t("items.delete_item_confirm"));
 
     if (!confirmed.data) {
       return;
@@ -503,23 +521,42 @@
 
     const { error } = await api.items.delete(itemId.value);
     if (error) {
-      toast.error("Failed to delete item");
+      toast.error(t("items.toast.failed_delete_item"));
       return;
     }
-    toast.success("Item deleted");
+    toast.success(t("items.toast.item_deleted"));
     navigateTo("/home");
+  }
+
+  async function createSubitem() {
+    // setting URL Parameter that is read and immidiately removed in the Item-CreateModal
+    await router.push({
+      query: {
+        subItemCreate: "y",
+      },
+    });
+
+    openDialog(DialogID.CreateItem);
   }
 </script>
 
 <template>
-  <BaseContainer v-if="item" class="pb-8">
+  <BaseContainer v-if="item">
     <!-- set page title -->
     <Title>{{ item.name }}</Title>
 
-    <Dialog dialog-id="item-image">
+    <Dialog :dialog-id="DialogID.ItemImage">
       <DialogContent class="w-auto border-transparent bg-transparent p-0" disable-close>
-        <img :src="dialoged.src" />
-        <a :class="buttonVariants({ size: 'icon' })" :href="dialoged.src" download class="absolute right-11 top-1">
+        <picture>
+          <source :srcset="dialoged.originalSrc" :type="dialoged.originalType" />
+          <img :src="dialoged.thumbnailSrc" alt="attachement image" />
+        </picture>
+        <a
+          :class="buttonVariants({ size: 'icon' })"
+          :href="dialoged.originalSrc"
+          download
+          class="absolute right-11 top-1"
+        >
           <MdiDownload />
         </a>
         <Button size="icon" class="absolute right-1 top-1" @click="closeImageDialog">
@@ -582,11 +619,15 @@
                 type="asset"
               />
               <LabelMaker v-else :id="item.id" type="item" />
-              <Button class="w-9 md:w-auto" @click="duplicateItem">
+              <Button class="w-9 md:w-auto" :aria-label="$t('global.create_subitem')" @click="createSubitem">
+                <MdiPlus />
+                <span class="hidden md:inline">{{ $t("global.create_subitem") }}</span>
+              </Button>
+              <Button class="w-9 md:w-auto" :aria-label="$t('global.duplicate')" @click="duplicateItem">
                 <MdiContentCopy />
                 <span class="hidden md:inline">{{ $t("global.duplicate") }}</span>
               </Button>
-              <Button variant="destructive" class="w-9 md:w-auto" @click="deleteItem">
+              <Button variant="destructive" class="w-9 md:w-auto" :aria-label="$t('global.delete')" @click="deleteItem">
                 <MdiDelete />
                 <span class="hidden md:inline">{{ $t("global.delete") }}</span>
               </Button>
@@ -602,14 +643,14 @@
       <div class="mb-6 mt-3 flex flex-wrap items-center justify-between">
         <ButtonGroup>
           <Button
-            v-for="t in tabs"
-            :key="t.id"
+            v-for="tab in tabs"
+            :key="tab.id"
             as-child
-            :variant="t.to === currentPath ? 'default' : 'outline'"
+            :variant="tab.to === currentPath ? 'default' : 'outline'"
             size="sm"
           >
-            <NuxtLink :to="t.to">
-              {{ $t(t.name) }}
+            <NuxtLink :to="tab.to">
+              {{ $t(tab.name) }}
             </NuxtLink>
           </Button>
         </ButtonGroup>
@@ -660,7 +701,10 @@
             <template #title> {{ $t("items.photos") }} </template>
             <div class="scroll-bg container mx-auto flex max-h-[500px] flex-wrap gap-2 overflow-y-scroll border-t p-4">
               <button v-for="(img, i) in photos" :key="i" @click="openImageDialog(img)">
-                <img class="max-h-[200px] rounded" :src="img.src" />
+                <picture>
+                  <source :srcset="img.originalSrc" :type="img.originalType" />
+                  <img class="max-h-[200px] rounded" :src="img.thumbnailSrc" alt="attachment image" />
+                </picture>
               </button>
             </div>
           </BaseCard>
@@ -698,7 +742,7 @@
               </template>
             </DetailsSection>
             <div v-else>
-              <p class="px-6 pb-4 text-foreground/70">No attachments found</p>
+              <p class="px-6 pb-4 text-foreground/70">{{ $t("items.no_attachments") }}</p>
             </div>
           </BaseCard>
 
@@ -720,7 +764,7 @@
       </div>
     </section>
 
-    <section v-if="items && items.length > 0" class="my-6">
+    <section v-if="items && items.length > 0" class="mt-6">
       <ItemViewSelectable :items="items" />
     </section>
   </BaseContainer>

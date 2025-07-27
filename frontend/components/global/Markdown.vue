@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import MarkdownIt from "markdown-it";
+  import { imgSize } from "@mdit/plugin-img-size";
   import DOMPurify from "dompurify";
 
   type Props = {
@@ -11,14 +12,13 @@
   });
 
   const md = new MarkdownIt({
-    breaks: true,
     html: true,
     linkify: true,
     typographer: true,
-  });
+  }).use(imgSize);
 
   const raw = computed(() => {
-    const html = md.render(props.source || "");
+    const html = md.render(props.source || "").replace(/\n$/, ""); // remove trailing newline
     return DOMPurify.sanitize(html);
   });
 </script>
@@ -30,7 +30,6 @@
 
 <style scoped>
   * {
-    --y-gap: 0.65rem;
     word-wrap: break-word; /*Fix for long words going out of emelent bounds and issue #407 */
     overflow-wrap: break-word; /*Fix for long words going out of emelent bounds and issue #407 */
     white-space: pre-wrap; /*Fix for long words going out of emelent bounds and issue #407 */

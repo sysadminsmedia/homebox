@@ -365,7 +365,7 @@
             "export_sub": "Homeboxで利用可能なCSV形式のファイルをエクスポートします。'<br>'すべてのアイテムが対象です。一部のアイテムを選択してエクスポートすることはできません。",
             "import": "インポート (CSVの取り込み)",
             "import_button": "CSVファイルを選択",
-            "import_sub": "Homeboxで利用可能なCSVファイルをインポートします。'<br>''<code>'HB.import_ref'</code>'が存在しないアイテムに重複がある場合は上書きされません。'<br>''<code>'HB.import_ref'</code>'が存在するアイテムに重複がある場合は、同じ'<code>'HB.import_ref'</code>'を持つアイテムのデータが上書きされます。'<br>'どちらも、重複していない場合は関係なく追加されます。"
+            "import_sub": "Homeboxで利用可能なCSVファイルをインポートします。\n'<code>'HB.import_ref'</code>'が存在しないアイテムに重複がある場合は上書きされません。\n'<code>'HB.import_ref'</code>'が存在するアイテムに重複がある場合は、同じ'<code>'HB.import_ref'</code>'を持つアイテムのデータが上書きされます。\nどちらも、重複していない場合は関係なく追加されます。"
         },
         "import_export_sub": "登録されたアイテムをCSVファイルにインポートおよびエクスポートします。Homeboxのソフトウェアを切り替える場合などに便利です。",
         "reports": "レポート",

@@ -1,18 +1,16 @@
 package main
 
 import (
-	"bytes"
 	"context"
+	"errors"
 	"fmt"
-	"net/http"
-	"os"
-	"strings"
-	"time"
-
-	"github.com/pressly/goose/v3"
-
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/pressly/goose/v3"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
+	"net/http"
+	"strings"
+	"time"
 
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/graceful"
@@ -25,14 +23,22 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/migrations"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
+	"go.balki.me/anyhttp"
 
 	_ "github.com/lib/pq"
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/postgres"
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/sqlite3"
 	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
+
+	_ "gocloud.dev/pubsub/awssnssqs"
+	_ "gocloud.dev/pubsub/azuresb"
+	_ "gocloud.dev/pubsub/gcppubsub"
+	_ "gocloud.dev/pubsub/kafkapubsub"
+	_ "gocloud.dev/pubsub/mempubsub"
+	_ "gocloud.dev/pubsub/natspubsub"
+	_ "gocloud.dev/pubsub/rabbitpubsub"
 )
 
 var (
@@ -63,19 +69,19 @@ func validatePostgresSSLMode(sslMode string) bool {
 	return validModes[strings.ToLower(strings.TrimSpace(sslMode))]
 }
 
-// @title                      Homebox API
-// @version                    1.0
-// @description                Track, Manage, and Organize your Things.
-// @contact.name               Homebox Team
-// @contact.url                https://discord.homebox.software
-// @host                       demo.homebox.software
-// @schemes                    https http
-// @BasePath                   /api
-// @securityDefinitions.apikey Bearer
-// @in                         header
-// @name                       Authorization
-// @description                "Type 'Bearer TOKEN' to correctly set the API Key"
-// @externalDocs.url 		   https://homebox.software/en/api
+//	@title						Homebox API
+//	@version					1.0
+//	@description				Track, Manage, and Organize your Things.
+//	@contact.name				Homebox Team
+//	@contact.url				https://discord.homebox.software
+//	@host						demo.homebox.software
+//	@schemes					https http
+//	@BasePath					/api
+//	@securityDefinitions.apikey	Bearer
+//	@in							header
+//	@name						Authorization
+//	@description				"Type 'Bearer TOKEN' to correctly set the API Key"
+//	@externalDocs.url			https://homebox.software/en/api
 
 func main() {
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
@@ -94,17 +100,9 @@ func run(cfg *config.Config) error {
 	app := new(cfg)
 	app.setupLogger()
 
-	if cfg.Options.AllowAnalytics {
-		analytics.Send(version, build())
-	}
-
 	// =========================================================================
 	// Initialize Database & Repos
-
-	err := os.MkdirAll(cfg.Storage.Data, 0o755)
-	if err != nil {
-		log.Fatal().Err(err).Msg("failed to create data directory")
-	}
+	setupStorageDir(cfg)
 
 	if strings.ToLower(cfg.Database.Driver) == "postgres" {
 		if !validatePostgresSSLMode(cfg.Database.SslMode) {
@@ -112,16 +110,7 @@ func run(cfg *config.Config) error {
 		}
 	}
 
-	// Set up the database URL based on the driver because for some reason a common URL format is not used
-	databaseURL := ""
-	switch strings.ToLower(cfg.Database.Driver) {
-	case "sqlite3":
-		databaseURL = cfg.Database.SqlitePath
-	case "postgres":
-		databaseURL = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", cfg.Database.Host, cfg.Database.Port, cfg.Database.Username, cfg.Database.Password, cfg.Database.Database, cfg.Database.SslMode)
-	default:
-		log.Fatal().Str("driver", cfg.Database.Driver).Msg("unsupported database driver")
-	}
+	databaseURL := setupDatabaseURL(cfg)
 
 	c, err := ent.Open(strings.ToLower(cfg.Database.Driver), databaseURL)
 	if err != nil {
@@ -147,25 +136,9 @@ func run(cfg *config.Config) error {
 		return err
 	}
 
-	collectFuncs := []currencies.CollectorFunc{
-		currencies.CollectDefaults(),
-	}
-
-	if cfg.Options.CurrencyConfig != "" {
-		log.Info().
-			Str("path", cfg.Options.CurrencyConfig).
-			Msg("loading currency config file")
-
-		content, err := os.ReadFile(cfg.Options.CurrencyConfig)
-		if err != nil {
-			log.Error().
-				Err(err).
-				Str("path", cfg.Options.CurrencyConfig).
-				Msg("failed to read currency config file")
-			return err
-		}
-
-		collectFuncs = append(collectFuncs, currencies.CollectJSON(bytes.NewReader(content)))
+	collectFuncs, err := loadCurrencies(cfg)
+	if err != nil {
+		return err
 	}
 
 	currencies, err := currencies.CollectionCurrencies(collectFuncs...)
@@ -178,7 +151,7 @@ func run(cfg *config.Config) error {
 
 	app.bus = eventbus.New()
 	app.db = c
-	app.repos = repo.New(c, app.bus, cfg.Storage.Data)
+	app.repos = repo.New(c, app.bus, cfg.Storage, cfg.Database.PubSubConnString, cfg.Thumbnail)
 	app.services = services.New(
 		app.repos,
 		services.WithAutoIncrementAssetID(cfg.Options.AutoIncrementAssetID),
@@ -219,89 +192,51 @@ func run(cfg *config.Config) error {
 			_ = httpserver.Shutdown(context.Background())
 		}()
 
+		listener, addrType, addrCfg, err := anyhttp.GetListener(cfg.Web.Host)
+		if err == nil {
+			switch addrType {
+			case anyhttp.SystemdFD:
+				sysdCfg := addrCfg.(*anyhttp.SysdConfig)
+				if sysdCfg.IdleTimeout != nil {
+					log.Error().Msg("idle timeout not yet supported. Please remove and try again")
+					return errors.New("idle timeout not yet supported. Please remove and try again")
+				}
+				fallthrough
+			case anyhttp.UnixSocket:
+				log.Info().Msgf("Server is running on %s", cfg.Web.Host)
+				return httpserver.Serve(listener)
+			}
+		} else {
+			log.Debug().Msgf("anyhttp error: %v", err)
+		}
 		log.Info().Msgf("Server is running on %s:%s", cfg.Web.Host, cfg.Web.Port)
 		return httpserver.ListenAndServe()
 	})
 
-	// =========================================================================
 	// Start Reoccurring Tasks
+	registerRecurringTasks(app, cfg, runner)
 
-	runner.AddFunc("eventbus", app.bus.Run)
-
-	runner.AddFunc("seed_database", func(ctx context.Context) error {
-		// TODO: Remove through external API that does setup
-		if cfg.Demo {
-			log.Info().Msg("Running in demo mode, creating demo data")
-			err := app.SetupDemo()
-			if err != nil {
-				log.Fatal().Msg(err.Error())
-			}
-		}
-		return nil
-	})
-
-	runner.AddPlugin(NewTask("purge-tokens", time.Duration(24)*time.Hour, func(ctx context.Context) {
-		_, err := app.repos.AuthTokens.PurgeExpiredTokens(ctx)
-		if err != nil {
-			log.Error().
-				Err(err).
-				Msg("failed to purge expired tokens")
-		}
-	}))
-
-	runner.AddPlugin(NewTask("purge-invitations", time.Duration(24)*time.Hour, func(ctx context.Context) {
-		_, err := app.repos.Groups.InvitationPurge(ctx)
-		if err != nil {
-			log.Error().
-				Err(err).
-				Msg("failed to purge expired invitations")
-		}
-	}))
-
-	runner.AddPlugin(NewTask("send-notifications", time.Duration(1)*time.Hour, func(ctx context.Context) {
-		now := time.Now()
-
-		if now.Hour() == 8 {
-			fmt.Println("run notifiers")
-			err := app.services.BackgroundService.SendNotifiersToday(context.Background())
-			if err != nil {
-				log.Error().
-					Err(err).
-					Msg("failed to send notifiers")
-			}
-		}
-	}))
-
-	if cfg.Options.GithubReleaseCheck {
-		runner.AddPlugin(NewTask("get-latest-github-release", time.Hour, func(ctx context.Context) {
-			log.Debug().Msg("running get latest github release")
-			err := app.services.BackgroundService.GetLatestGithubRelease(context.Background())
-			if err != nil {
-				log.Error().
-					Err(err).
-					Msg("failed to get latest github release")
+	// Send analytics if enabled at around midnight UTC
+	if cfg.Options.AllowAnalytics {
+		analyticsTime := time.Second
+		runner.AddPlugin(NewTask("send-analytics", analyticsTime, func(ctx context.Context) {
+			for {
+				now := time.Now().UTC()
+				nextMidnight := time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, time.UTC)
+				dur := time.Until(nextMidnight)
+				analyticsTime = dur
+				select {
+				case <-ctx.Done():
+					return
+				case <-time.After(dur):
+					log.Debug().Msg("running send analytics")
+					err := analytics.Send(version, build())
+					if err != nil {
+						log.Error().Err(err).Msg("failed to send analytics")
+					}
+				}
 			}
 		}))
-	}
-
-	if cfg.Debug.Enabled {
-		runner.AddFunc("debug", func(ctx context.Context) error {
-			debugserver := http.Server{
-				Addr:         fmt.Sprintf("%s:%s", cfg.Web.Host, cfg.Debug.Port),
-				Handler:      app.debugRouter(),
-				ReadTimeout:  cfg.Web.ReadTimeout,
-				WriteTimeout: cfg.Web.WriteTimeout,
-				IdleTimeout:  cfg.Web.IdleTimeout,
-			}
-
-			go func() {
-				<-ctx.Done()
-				_ = debugserver.Shutdown(context.Background())
-			}()
-
-			log.Info().Msgf("Debug server is running on %s:%s", cfg.Web.Host, cfg.Debug.Port)
-			return debugserver.ListenAndServe()
-		})
 	}
 
 	return runner.Start(context.Background())

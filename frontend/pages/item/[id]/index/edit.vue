@@ -1,9 +1,11 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import type { ItemAttachment, ItemField, ItemOut, ItemUpdate } from "~~/lib/api/types/data-contracts";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
+  import MdiLoading from "~icons/mdi/loading";
   import MdiDelete from "~icons/mdi/delete";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiContentSaveOutline from "~icons/mdi/content-save-outline";
@@ -15,6 +17,9 @@
   import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
   import { Switch } from "@/components/ui/switch";
   import { Label } from "@/components/ui/label";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
+
+  const { t } = useI18n();
 
   const { openDialog, closeDialog } = useDialog();
 
@@ -41,7 +46,7 @@
   } = useAsyncData(async () => {
     const { data, error } = await api.items.get(itemId.value);
     if (error) {
-      toast.error("Failed to load item");
+      toast.error(t("items.toast.failed_load_item"));
       navigateTo("/home");
       return;
     }
@@ -78,11 +83,15 @@
     refresh();
   });
 
+  const saving = ref(false);
+
   async function saveItem() {
     if (!item.value.location?.id) {
-      toast.error("Failed to save item: no location selected");
+      toast.error(t("items.toast.failed_save_no_location"));
       return;
     }
+
+    saving.value = true;
 
     let purchasePrice = 0;
     let soldPrice = 0;
@@ -109,27 +118,26 @@
 
     const { error } = await api.items.update(itemId.value, payload);
 
+    saving.value = false;
+
     if (error) {
-      toast.error("Failed to save item");
+      toast.error(t("items.toast.failed_save"));
       return;
     }
 
-    toast.success("Item saved");
+    toast.success(t("items.toast.item_saved"));
     navigateTo("/item/" + itemId.value);
   }
-  type NoUndefinedField<T> = { [P in keyof T]-?: NoUndefinedField<NonNullable<T[P]>> };
 
-  type StringKeys<T> = { [k in keyof T]: T[k] extends string ? k : never }[keyof T];
-  type OnlyString<T> = { [k in StringKeys<T>]: string };
-
-  type NumberKeys<T> = { [k in keyof T]: T[k] extends number ? k : never }[keyof T];
-  type OnlyNumber<T> = { [k in NumberKeys<T>]: number };
+  type NonNullableStringKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends string ? K : never]: any }>;
+  type NonNullableNumberKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends number ? K : never]: any }>;
+  type BooleanKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends boolean ? K : never]: any }>;
+  type DateKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends Date | string ? K : never]: any }>;
 
   type TextFormField = {
     type: "text" | "textarea";
     label: string;
-    // key of ItemOut where the value is a string
-    ref: keyof OnlyString<NoUndefinedField<ItemOut>>;
+    ref: NonNullableStringKeys<ItemOut>;
     maxLength?: number;
     minLength?: number;
   };
@@ -137,27 +145,19 @@
   type NumberFormField = {
     type: "number";
     label: string;
-    ref: keyof OnlyNumber<NoUndefinedField<ItemOut>> | keyof OnlyString<NoUndefinedField<ItemOut>>;
+    ref: NonNullableNumberKeys<ItemOut> | NonNullableStringKeys<ItemOut>;
   };
-
-  // https://stackoverflow.com/questions/50851263/how-do-i-require-a-keyof-to-be-for-a-property-of-a-specific-type
-  // I don't know why typescript can't just be normal
-  type BooleanKeys<T> = { [k in keyof T]: T[k] extends boolean ? k : never }[keyof T];
-  type OnlyBoolean<T> = { [k in BooleanKeys<T>]: boolean };
 
   interface BoolFormField {
     type: "checkbox";
     label: string;
-    ref: keyof OnlyBoolean<NoUndefinedField<ItemOut>>;
+    ref: BooleanKeys<ItemOut>;
   }
-
-  type DateKeys<T> = { [k in keyof T]: T[k] extends Date | string ? k : never }[keyof T];
-  type OnlyDate<T> = { [k in DateKeys<T>]: Date | string };
 
   type DateFormField = {
     type: "date";
     label: string;
-    ref: keyof OnlyDate<NoUndefinedField<ItemOut>>;
+    ref: DateKeys<ItemOut>;
   };
 
   type FormField = TextFormField | BoolFormField | DateFormField | NumberFormField;
@@ -237,7 +237,6 @@
     {
       type: "date",
       label: "items.purchase_date",
-      // @ts-expect-error - we know this is a date
       ref: "purchaseTime",
     },
   ];
@@ -251,7 +250,6 @@
     {
       type: "date",
       label: "items.warranty_expires",
-      // @ts-expect-error - we know this is a date
       ref: "warrantyExpires",
     },
     {
@@ -277,7 +275,6 @@
     {
       type: "date",
       label: "items.sold_at",
-      // @ts-expect-error - we know this is a date
       ref: "soldTime",
     },
   ];
@@ -323,11 +320,11 @@
     const { data, error } = await api.items.attachments.add(itemId.value, files[0], files[0].name, type);
 
     if (error) {
-      toast.error("Failed to upload attachment");
+      toast.error(t("items.toast.failed_upload_attachment"));
       return;
     }
 
-    toast.success("Attachment uploaded");
+    toast.success(t("items.toast.attachment_uploaded"));
 
     item.value.attachments = data.attachments;
   }
@@ -335,7 +332,7 @@
   const confirm = useConfirm();
 
   async function deleteAttachment(attachmentId: string) {
-    const confirmed = await confirm.open("Are you sure you want to delete this attachment?");
+    const confirmed = await confirm.open(t("items.delete_attachment_confirm"));
 
     if (confirmed.isCanceled) {
       return;
@@ -344,11 +341,11 @@
     const { error } = await api.items.attachments.delete(itemId.value, attachmentId);
 
     if (error) {
-      toast.error("Failed to delete attachment");
+      toast.error(t("items.toast.failed_delete_attachment"));
       return;
     }
 
-    toast.success("Attachment deleted");
+    toast.success(t("items.toast.attachment_deleted"));
     item.value.attachments = item.value.attachments.filter(a => a.id !== attachmentId);
   }
 
@@ -373,7 +370,7 @@
     editState.title = attachment.title;
     editState.type = attachment.type;
     editState.primary = attachment.primary;
-    openDialog("attachment-edit");
+    openDialog(DialogID.AttachmentEdit);
 
     editState.obj = attachmentOpts.find(o => o.value === attachment.type) || attachmentOpts[0];
   }
@@ -387,20 +384,20 @@
     });
 
     if (error) {
-      toast.error("Failed to update attachment");
+      toast.error(t("items.toast.failed_delete_attachment"));
       return;
     }
 
     item.value.attachments = data.attachments;
 
     editState.loading = false;
-    closeDialog("attachment-edit");
+    closeDialog(DialogID.AttachmentEdit);
 
     editState.id = "";
     editState.title = "";
     editState.type = "";
 
-    toast.success("Attachment updated");
+    toast.success(t("items.toast.attachment_updated"));
   }
 
   function addField() {
@@ -437,12 +434,12 @@
       const { data, error } = await api.items.get(parent.value.id);
 
       if (error) {
-        toast.error("Something went wrong trying to load parent data");
+        toast.error(t("items.toast.error_loading_parent_data"));
         return;
       }
 
       if (data.syncChildItemsLocations) {
-        toast.info("Selected parent syncs its children's locations to its own. The location has been updated.");
+        toast.info(t("items.toast.sync_child_location"));
         item.value.location = data.location;
       }
     }
@@ -453,19 +450,19 @@
       const { data, error } = await api.items.get(parent.value.id);
 
       if (error) {
-        toast.error("Something went wrong trying to load parent data");
+        toast.error(t("items.toast.error_loading_parent_data"));
         return;
       }
 
       if (data.syncChildItemsLocations) {
-        toast.info("Changing location will de-sync it from the parent's location");
+        toast.info(t("items.toast.child_location_desync"));
       }
     }
   }
 
   async function syncChildItemsLocations() {
     if (!item.value.location?.id) {
-      toast.error("Failed to save item: no location selected");
+      toast.error(t("items.toast.failed_save_no_location"));
       return;
     }
 
@@ -485,9 +482,9 @@
     }
 
     if (!item.value.syncChildItemsLocations) {
-      toast.success("Child items' locations will no longer be synced with this item.");
+      toast.success(t("items.toast.child_items_location_no_longer_synced"));
     } else {
-      toast.success("Child items' locations have been synced with this item");
+      toast.success(t("items.toast.child_items_location_synced"));
     }
   }
 
@@ -502,18 +499,18 @@
 
 <template>
   <div v-if="item" class="pb-8">
-    <Dialog dialog-id="attachment-edit">
+    <Dialog :dialog-id="DialogID.AttachmentEdit">
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Attachment Edit</DialogTitle>
+          <DialogTitle>{{ $t("items.edit.edit_attachment_dialog.title") }}</DialogTitle>
         </DialogHeader>
 
-        <FormTextField v-model="editState.title" label="Attachment Title" />
+        <FormTextField v-model="editState.title" :label="$t('items.edit.edit_attachment_dialog.attachment_title')" />
         <div>
-          <Label for="attachment-type"> Attachment Type </Label>
+          <Label for="attachment-type"> {{ $t("items.edit.edit_attachment_dialog.attachment_type") }} </Label>
           <Select id="attachment-type" v-model:model-value="editState.type">
             <SelectTrigger>
-              <SelectValue placeholder="Select a type" />
+              <SelectValue :placeholder="$t('items.edit.edit_attachment_dialog.select_type')" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem v-for="opt in attachmentOpts" :key="opt.value" :value="opt.value">
@@ -523,22 +520,35 @@
           </Select>
         </div>
         <div v-if="editState.type == 'photo'" class="mt-3 flex items-center gap-2">
-          <Checkbox id="primary" v-model="editState.primary" label="Primary Photo" />
+          <Checkbox
+            id="primary"
+            v-model="editState.primary"
+            :label="$t('items.edit.edit_attachment_dialog.primary_photo')"
+          />
           <label class="cursor-pointer text-sm" for="primary">
-            <span class="font-semibold">Primary Photo</span>
-            This options is only available for photos. Only one photo can be primary. If you select this option, the
-            current primary photo, if any will be unselected.
+            <span class="font-semibold">{{ $t("items.edit.edit_attachment_dialog.primary_photo") }}</span>
+            {{ $t("items.edit.edit_attachment_dialog.primary_photo_sub") }}
           </label>
         </div>
 
         <DialogFooter>
-          <Button :loading="editState.loading" @click="updateAttachment"> Update </Button>
+          <Button :disabled="editState.loading" @click="updateAttachment">
+            <MdiLoading v-if="editState.loading" class="animate-spin" />
+            {{ $t("global.update") }}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
 
     <section class="relative">
-      <div class="sticky top-1 z-10 my-4 flex items-center justify-between gap-2">
+      <div
+        class="sticky z-10 my-4 flex items-center justify-between gap-2"
+        :class="{
+          'top-[calc(var(--header-height-mobile)+0.25rem)] sm:top-[calc(var(--header-height)+0.25rem)]':
+            !preferences.displayLegacyHeader,
+          'top-1': preferences.displayLegacyHeader,
+        }"
+      >
         <TooltipProvider :delay-duration="0">
           <Tooltip>
             <TooltipTrigger as-child>
@@ -550,8 +560,9 @@
             <TooltipContent>{{ $t("items.show_advanced_view_options") }}</TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <Button class="" size="sm" @click="saveItem">
-          <MdiContentSaveOutline />
+        <Button size="sm" :disabled="saving" @click="saveItem">
+          <MdiLoading v-if="saving" class="animate-spin" />
+          <MdiContentSaveOutline v-else />
           {{ $t("global.save") }}
         </Button>
       </div>
@@ -567,10 +578,11 @@
               item-text="name"
               :label="$t('items.parent_item')"
               no-results-text="Type to search..."
+              :exclude-items="[item]"
               @update:model-value="maybeSyncWithParentLocation()"
             />
             <div class="flex flex-col gap-2">
-              <Label class="px-1">Sync child items' locations</Label>
+              <Label class="px-1">{{ $t("items.sync_child_locations") }}</Label>
               <Switch v-model="item.syncChildItemsLocations" @update:model-value="syncChildItemsLocations()" />
             </div>
             <LabelSelector v-model="item.labelIds" :labels="labels" />
@@ -803,7 +815,7 @@
 
         <Card v-if="preferences.editorAdvancedView" class="overflow-visible shadow-xl">
           <div class="px-4 py-5 sm:px-6">
-            <h3 class="text-lg font-medium leading-6">Sold Details</h3>
+            <h3 class="text-lg font-medium leading-6">{{ $t("items.sold_details") }}</h3>
           </div>
           <div class="border-t sm:p-0">
             <div v-for="field in soldFields" :key="field.ref" class="grid grid-cols-1 sm:divide-y">

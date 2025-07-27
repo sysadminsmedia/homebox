@@ -134,7 +134,8 @@ type (
 		Location *LocationSummary `json:"location,omitempty" extensions:"x-nullable,x-omitempty"`
 		Labels   []LabelSummary   `json:"labels"`
 
-		ImageID *uuid.UUID `json:"imageId,omitempty"`
+		ImageID     *uuid.UUID `json:"imageId,omitempty"     extensions:"x-nullable,x-omitempty"`
+		ThumbnailId *uuid.UUID `json:"thumbnailId,omitempty" extensions:"x-nullable,x-omitempty"`
 
 		// Sale details
 		SoldTime time.Time `json:"soldTime"`
@@ -189,10 +190,20 @@ func mapItemSummary(item *ent.Entity) ItemSummary {
 	}
 
 	var imageID *uuid.UUID
+	var thumbnailID *uuid.UUID
 	if item.Edges.Attachments != nil {
 		for _, a := range item.Edges.Attachments {
 			if a.Primary && a.Type == attachment.TypePhoto {
 				imageID = &a.ID
+				if a.Edges.Thumbnail != nil {
+					if a.Edges.Thumbnail.ID != uuid.Nil {
+						thumbnailID = &a.Edges.Thumbnail.ID
+					} else {
+						thumbnailID = nil
+					}
+				} else {
+					thumbnailID = nil
+				}
 				break
 			}
 		}
@@ -215,8 +226,9 @@ func mapItemSummary(item *ent.Entity) ItemSummary {
 		Labels:   labels,
 
 		// Warranty
-		Insured: item.Insured,
-		ImageID: imageID,
+		Insured:     item.Insured,
+		ImageID:     imageID,
+		ThumbnailId: thumbnailID,
 	}
 }
 
@@ -349,6 +361,9 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 	}
 
 	if q.Search != "" {
+		// Use accent-insensitive search predicates that normalize both
+		// the search query and database field values during comparison.
+		// For queries without accents, the traditional search is more efficient.
 		qb.Where(
 			entity.Or(
 				entity.NameContainsFold(q.Search),
@@ -357,6 +372,21 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 				entity.ModelNumberContainsFold(q.Search),
 				entity.ManufacturerContainsFold(q.Search),
 				entity.NotesContainsFold(q.Search),
+			item.Or(
+				// Regular case-insensitive search (fastest)
+				item.NameContainsFold(q.Search),
+				item.DescriptionContainsFold(q.Search),
+				item.SerialNumberContainsFold(q.Search),
+				item.ModelNumberContainsFold(q.Search),
+				item.ManufacturerContainsFold(q.Search),
+				item.NotesContainsFold(q.Search),
+				// Accent-insensitive search using custom predicates
+				ent.ItemNameAccentInsensitiveContains(q.Search),
+				ent.ItemDescriptionAccentInsensitiveContains(q.Search),
+				ent.ItemSerialNumberAccentInsensitiveContains(q.Search),
+				ent.ItemModelNumberAccentInsensitiveContains(q.Search),
+				ent.ItemManufacturerAccentInsensitiveContains(q.Search),
+				ent.ItemNotesAccentInsensitiveContains(q.Search),
 			),
 		)
 	}
@@ -467,6 +497,7 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 			aq.Where(
 				attachment.Primary(true),
 			)
+			aq.WithThumbnail()
 		})
 
 	if q.Page != -1 || q.PageSize != -1 {
@@ -580,6 +611,10 @@ func (e *ItemsRepository) Create(ctx context.Context, gid uuid.UUID, data ItemCr
 		SetGroupID(gid).
 		SetAssetID(int(data.AssetID)).
 		SetLocationID(data.LocationID)
+
+	if data.ParentID != uuid.Nil {
+		q.SetParentID(data.ParentID)
+	}
 
 	if len(data.LabelIDs) > 0 {
 		q.AddLabelIDs(data.LabelIDs...)

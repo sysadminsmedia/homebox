@@ -17,7 +17,7 @@
     <h1 class="flex flex-col gap-5 text-center font-extrabold">
       <span class="text-7xl">{{ error.statusCode }}.</span>
       <span class="text-5xl"> {{ error.message }} </span>
-      <NuxtLink to="/" :class="buttonVariants({ size: 'lg' })"> Return Home </NuxtLink>
+      <NuxtLink to="/" :class="buttonVariants({ size: 'lg' })"> {{ $t("global.return_home") }} </NuxtLink>
     </h1>
   </main>
 </template>

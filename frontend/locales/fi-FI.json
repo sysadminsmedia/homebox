@@ -133,7 +133,7 @@
         "follow_dev": "Seuraa kehittäjää",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Versio: { version } Rakenna: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Versio: { version } Rakenna: { build } '</a>'"
         },
         "github": "GitHub Projekti",
         "insured": "Vakuuttaa",
@@ -343,7 +343,6 @@
         "current_password": "Nykyinen Salasana",
         "delete_account": "Poista tili",
         "delete_account_sub": "Poista tilisi ja kaikki siihen liittyvät tiedot. Tätä ei voi perua.",
-        "display_header": "{ currentValue, select, true {Näytä Otsikko} false {Näytä Otsikko} other {Ei Osunut}}",
         "enabled": "Käyttöön",
         "example": "Esimerkiksi",
         "gen_invite": "Luo Kutsulinkki",

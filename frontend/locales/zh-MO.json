@@ -22,11 +22,11 @@
                 "learn_more": "了解我们"
             },
             "date_time": {
-                "ago": "以前",
+                "ago": "{0} 以前",
                 "days": "日",
                 "hour": "小时",
                 "hours": "小时",
-                "in": "在",
+                "in": "在 {0}",
                 "just-now": "刚刚",
                 "last-month": "上个月",
                 "last-week": "上周",

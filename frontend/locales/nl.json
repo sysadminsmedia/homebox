@@ -1,10 +1,20 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "Gebruik {shiftKey} + {enterKey} om deze te maken en er nog een toe te voegen.",
+                "enter": "Enter",
+                "shift": "Shift"
+            },
             "import_dialog": {
                 "change_warning": "Gedrag voor importeren met bestaande import_refs is veranderd. Als een import_refs reeds bestaat in het CSV bestand, het\nobject zal worden aangepast met de waardes van het CSV bestand.",
                 "description": "Importeer een CSV bestand met je objecten, labels en locaties. Zie documentatie voor meer informatie m.b.t.\n vereist format.",
-                "title": "Importeer CSV bestand"
+                "title": "Importeer CSV bestand",
+                "toast": {
+                    "import_failed": "Importeren mislukt. Probeer later nog eens.",
+                    "import_success": "Importeren gelukt!",
+                    "please_select_file": "Kies een geldig bestand om te importeren."
+                }
             },
             "outdated": {
                 "current_version": "Huidige versie",
@@ -12,6 +22,18 @@
                 "latest_version": "Nieuwste versie",
                 "new_version_available": "Nieuwe Versie Beschikbaar",
                 "new_version_available_link": "Klik hier om de release notes te bekijken"
+            }
+        },
+        "color_selector": {
+            "clear": "Wis kleur",
+            "color": "Kleur",
+            "no_color": "Geen kleur",
+            "no_color_selected": "Geen kleur geselecteerd",
+            "randomize": "Kleur willekeurig maken"
+        },
+        "form": {
+            "password": {
+                "toggle_show": "Wachtwoord zichtbaar maken aan/uitzetten"
             }
         },
         "global": {
@@ -51,7 +73,12 @@
                 "download": "Download Label",
                 "print": "Print verzendlabel",
                 "server_print": "Afdrukken op server",
-                "titles": "Labels"
+                "titles": "Labels",
+                "toast": {
+                    "load_status_failed": "Laden van status mislukt",
+                    "print_failed": "Label afdrukken mislukt",
+                    "print_success": "Label afgedrukt"
+                }
             },
             "page_qr_code": {
                 "page_url": "Pagina URL",
@@ -62,13 +89,52 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "Download",
+                "open_new_tab": "Openen in een nieuw tabblad"
+            },
             "create_modal": {
+                "delete_photo": "Foto verwijderen",
                 "item_description": "Artikelomschrijving",
                 "item_name": "Artikelnaam",
                 "item_photo": "Artikel Foto",
                 "item_quantity": "Item aantal",
+                "parent_item": "Hoofd Item",
+                "product_tooltip_input_barcode": "Vul automatisch in met een handmatig verstrekte streepjescode",
+                "product_tooltip_scan_barcode": "Vul automatisch in met een streepjescode van 📷",
+                "rotate_photo": "Foto roteren",
+                "set_as_primary_photo": "Instellen als { isPrimary, select, true {non-} false {} other {}}primaire foto",
                 "title": "Maak object",
-                "upload_photos": "Foto’s toevoegen"
+                "toast": {
+                    "already_creating": "Een item wordt al aangemaakt",
+                    "create_failed": "Kan item niet maken",
+                    "create_success": "Item aangemaakt",
+                    "failed_load_parent": "Kan bovenliggend item niet laden - selecteer handmatig",
+                    "no_canvas_support": "Je browser ondersteund geen canvas",
+                    "please_select_location": "Selecteer een locatie.",
+                    "rotate_failed": "Roteren van afbeelding mislukt: { error }",
+                    "rotate_process_failed": "Kan geroteerde afbeelding niet verwerken",
+                    "some_photos_failed": "{count, plural, =0 {Geen foto's om te uploaden.} =1 {1 foto kon niet worden geüpload.} other {Sommige foto's konden niet worden geüpload.}}",
+                    "upload_failed": "Kan foto niet uploaden: { photoName }",
+                    "upload_success": "{count, plural, =0 {Geen foto's geüpload.} =1 {Foto succesvol geüpload.} other {Alle foto's succesvol geüpload.}}",
+                    "uploading_photos": "{count, plural, =0 {Geen foto's om te uploaden} =1 {1 foto uploaden…} other {{count} foto's uploaden…}}"
+                },
+                "upload_photos": "Foto’s toevoegen",
+                "uploaded": "Geüploade foto"
+            },
+            "product_import": {
+                "barcode": "Barcode van het product",
+                "db_source": "DB-bron",
+                "error_exception": "Er is een uitzondering opgetreden tijdens het ophalen van de streepjescode van het item: ",
+                "error_invalid_barcode": "Ongeldige barcode opgegeven",
+                "error_not_found": "Geen product gevonden met opgegeven barcode.",
+                "search_item": "Zoek product",
+                "title": "Importeer product"
+            },
+            "selector": {
+                "no_results": "Geen resultaten gevonden",
+                "placeholder": "Selecteer…",
+                "search_placeholder": "Type om te zoeken…"
             },
             "view": {
                 "selectable": {
@@ -81,15 +147,23 @@
                     "headers": "Kopteksten",
                     "page": "Pagina",
                     "rows_per_page": "Rijen per pagina",
-                    "table_settings": "Tabel instellingen"
+                    "table_settings": "Tabel instellingen",
+                    "view_item": "Toon Item"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_color": "Label kleur",
                 "label_description": "Label beschrijving",
                 "label_name": "Label naam",
-                "title": "Maak label"
+                "title": "Maak label",
+                "toast": {
+                    "already_creating": "Al een label aan het maken",
+                    "create_failed": "Kon label niet aanmaken",
+                    "create_success": "Label aangemaakt",
+                    "label_name_too_long": "Labelnaam mag niet langer zijn dan 50 tekens"
+                }
             },
             "selector": {
                 "select_labels": "Labels selecteren"
@@ -99,7 +173,12 @@
             "create_modal": {
                 "location_description": "Locatie omschrijving",
                 "location_name": "Locatie Naam",
-                "title": "Maak locatie"
+                "title": "Maak locatie",
+                "toast": {
+                    "already_creating": "Een locatie wordt al aangemaakt",
+                    "create_failed": "Kan locatie niet aanmaken",
+                    "create_success": "Locatie aangemaakt op"
+                }
             },
             "selector": {
                 "no_location_found": "Geen locatie gevonden",
@@ -108,7 +187,7 @@
                 "select_location": "Selecteer een locatie"
             },
             "tree": {
-                "no_locations": "Geen locaties beschikbaar. Voeg een nieuwe locatie toe\n via de `<`span class=\"link-primary\"`>`Creeer`<`/span`> knop op het navigatie menu."
+                "no_locations": "Geen locaties beschikbaar. Voeg een nieuwe locatie toe\n via de' <span class=\"link-primary\">'Creeer'</span>' knop op het navigatie menu."
             }
         },
         "quick_menu": {
@@ -116,16 +195,22 @@
             "shortcut_hint": "Gebruik de numerieke toetsen om snel een actie te selecteren."
         }
     },
+    "errors": {
+        "api_failure": "Backend API call mislukt: "
+    },
     "global": {
         "add": "Toevoegen",
         "archived": "Gearchiveerd",
-        "build": "Bouw: { build }",
+        "build": "Build: { build }",
         "cancel": "Annuleren",
         "confirm": "Bevestigen",
         "create": "Maken",
         "create_and_add": "Maak en voeg nog een toe",
+        "create_subitem": "Subitem aanmaken",
         "created": "Gemaakt",
         "delete": "Verwijderen",
+        "delete_confirm": "Weet u zeker dat u dit item wilt verwijderen? ",
+        "demo_instance": "Dit is een demo omgeving",
         "details": "Details",
         "duplicate": "Dupliceren",
         "edit": "Bewerk",
@@ -133,13 +218,14 @@
         "follow_dev": "Volg de ontwikkelaar",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Version: { version } Build: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Versie: { version } Build: { build } '</a>'"
         },
         "github": "GitHub Project",
         "insured": "Verzekerd",
         "items": "artikelen",
         "join_discord": "Sluit je aan bij de Discord",
         "labels": "Labels",
+        "loading": "Bezig met laden…",
         "locations": "Locaties",
         "maintenance": "Onderhoud",
         "name": "Naam",
@@ -147,11 +233,14 @@
         "password": "Wachtwoord",
         "quantity": "Aantal",
         "read_docs": "Lees de documentatie",
+        "return_home": "Terug naar startpagina",
         "save": "Opslaan",
         "search": "Zoeken",
         "sign_out": "Log uit",
         "submit": "Indienen",
+        "unknown": "Onbekend",
         "update": "Bijwerken",
+        "updating": "Aan het updaten",
         "value": "Waarde",
         "version": "Versie: { version }",
         "welcome": "Welkom, { username }"
@@ -176,27 +265,49 @@
         "set_email": "Wat is je mailadres?",
         "set_name": "Wat is je naam?",
         "set_password": "Stel je wachtwoord in",
-        "tagline": "Volg, Organiseer en beheer je dingen."
+        "tagline": "Volg, Organiseer en beheer je dingen.",
+        "title": "Organiseer en tag je spullen",
+        "toast": {
+            "invalid_email": "Ongeldig e-mailadres",
+            "invalid_email_password": "Ongeldig e-mailadres of wachtwoord",
+            "login_success": "Aangemeld",
+            "problem_registering": "Probleem bij het registreren van de gebruiker",
+            "user_registered": "Gebruiker geregistreerd"
+        }
     },
     "items": {
         "add": "Toevoegen",
         "advanced": "Geavanceerd",
         "archived": "Is gearchiveerd",
         "asset_id": "Artikel ID",
+        "associated_with_multiple": "Dit item-ID is gekoppeld aan meerdere items",
         "attachment": "Bijlage",
         "attachments": "Bijlagen",
         "changes_persisted_immediately": "Gewijzigde bijlagen worden direct opgeslagen",
         "created_at": "Aangemaakt op",
         "custom_fields": "Aangepaste velden",
+        "delete_attachment_confirm": "Weet u zeker dat u deze bijlage definitief wil verwijderen?",
+        "delete_item_confirm": "Weet u zeker dat u dit item wilt verwijderen?",
         "description": "Beschrijving",
         "details": "Details",
         "drag_and_drop": "Sleep bestanden hierheen en zet ze neer of klik om bestanden te selecteren",
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "Bijlage titel",
+                "attachment_type": "Bijlagetype",
+                "primary_photo": "Primaire foto",
+                "primary_photo_sub": "Deze optie is alleen beschikbaar voor foto's. Er kan maar één primaire foto zijn. Als je deze optie selecteerd zal de huidige primaire foto worden gedeselecteerd.",
+                "select_type": "Selecteer een type",
+                "title": "Bijlage bewerken"
+            }
+        },
         "edit_details": "Details bewerken",
         "field_selector": "Veld selectie",
         "field_value": "Veldwaarde",
         "first": "Eerst",
         "include_archive": "Inclusief gearchiveerde items",
         "insured": "Verzekerd",
+        "invalid_asset_id": "Ongeldig item-ID",
         "last": "Achternaam",
         "lifetime_warranty": "Levenslange garantie",
         "location": "Locatie",
@@ -207,6 +318,7 @@
         "name": "Naam",
         "negate_labels": "Negeer Geselecteerde Labels",
         "next_page": "Volgende pagina",
+        "no_attachments": "Geen bijlagen gevonden",
         "no_results": "Geen Items Gevonden",
         "notes": "Opmerkingen",
         "only_with_photo": "Alleen items met foto",
@@ -228,24 +340,60 @@
         "receipts": "Facturen",
         "reset_search": "Reset Zoeken",
         "results": "{ total } Resultaten",
+        "select_field": "Selecteer een veld",
         "serial_number": "Serienummer",
         "show_advanced_view_options": "Geavanceerde Opties Weergeven",
         "sold_at": "Verkocht bij",
         "sold_details": "Verkochte details",
         "sold_price": "Verkoopprijs",
         "sold_to": "Verkocht Aan",
+        "sync_child_locations": "Locaties van onderliggende items synchroniseren",
         "tip_1": "Locatie- en labelfilters gebruiken de 'OF' -werking. Als er meer dan een is geselecteerd,\nis er maar een nodig voor een overeenkomst.",
         "tip_2": "Zoekopdrachten voorafgegaan door '#'' zullen om een object-ID vragen (bijvoorbeeld '#000-001')",
         "tip_3": "Veldfilters gebruiken de 'OF' -bewerking. Indien meer dan 1 is geselecteerd\nzal er maar 1 nodig zijn voor een match.",
         "tips": "Tips",
         "tips_sub": "Zoektips",
+        "toast": {
+            "asset_not_found": "Item-ID niet gevonden",
+            "attachment_deleted": "Bijlage verwijderd",
+            "attachment_updated": "Bijlage bijgewerkt",
+            "attachment_uploaded": "Bijlage geüpload",
+            "child_items_location_no_longer_synced": "De locaties van onderliggende items worden niet meer gesynchroniseerd met dit item.",
+            "child_items_location_synced": "De locaties van onderliggende items zijn gesynchroniseerd met dit item",
+            "child_location_desync": "Door de locatie te wijzigen, wordt de synchronisatie met de bovenliggende locatie ongedaan gemaakt",
+            "error_loading_parent_data": "Er is iets misgegaan bij het laden van bovenliggende gegevens",
+            "failed_adjust_quantity": "Hoeveelheid aanpassen mislukt",
+            "failed_delete_attachment": "Verwijderen van bijlage mislukt",
+            "failed_delete_item": "Item verwijderen mislukt",
+            "failed_duplicate_item": "Item dupliceren mislukt",
+            "failed_load_asset": "Item-ID laden mislukt",
+            "failed_load_item": "Laden item mislukt",
+            "failed_load_items": "Laden items mislukt",
+            "failed_save": "Item opslaan mislukt",
+            "failed_save_no_location": "Item opslaan mislukt: geen locatie geselecteerd",
+            "failed_search_items": "Items zoeken mislukt",
+            "failed_update_attachment": "Bijwerken bijlage mislukt",
+            "failed_upload_attachment": "Uploaden bijlage mislukt",
+            "item_deleted": "Item verwijderd",
+            "item_saved": "Item opgeslagen",
+            "quantity_cannot_negative": "Hoeveelheid kan niet negatief zijn",
+            "sync_child_location": "Geselecteerd bovenstaand item synchroniseert locatie met onderstaande items. De locatie is geüpdatet."
+        },
         "updated_at": "Bijgewerkt op",
         "warranty": "Garantie",
         "warranty_details": "Garantiedetails",
         "warranty_expires": "Garantie vervalt"
     },
     "labels": {
+        "label_delete_confirm": "Bent u zeker dat u dit label wil verwijderen? Deze actie kan niet ongedaan gemaakt worden.",
         "no_results": "Geen labels gevonden",
+        "toast": {
+            "failed_delete_label": "Label verwijderen mislukt",
+            "failed_load_label": "Laden label mislukt",
+            "failed_update_label": "Label bijwerken mislukt",
+            "label_deleted": "Label verwijderd",
+            "label_updated": "Label bijgewerkt"
+        },
         "update_label": "Etiket bijwerken"
     },
     "languages": {
@@ -261,6 +409,8 @@
         "it": "Italiaans",
         "ja-JP": "Japans",
         "ko-KR": "Koreaans",
+        "lb-LU": "Luxemburgs (Luxemburg)",
+        "lt-LT": "Litouws (Litouwen)",
         "nb-NO": "Noors",
         "nl": "Nederlands",
         "pl": "Pools",
@@ -286,7 +436,15 @@
         "child_locations": "Sublocaties",
         "collapse_tree": "Structuur invouwen",
         "expand_tree": "Boomstructuur uitvouwen",
+        "location_items_delete_confirm": "Weet u zeker dat u deze locatie en alle bijbehorende items wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
         "no_results": "Geen locaties gevonden",
+        "toast": {
+            "failed_delete_location": "Locatie verwijderen mislukt",
+            "failed_load_location": "Locatie laden mislukt",
+            "failed_update_location": "Locatie bijwerken mislukt",
+            "location_deleted": "Locatie verwijderd",
+            "location_updated": "Locatie bijgewerkt"
+        },
         "update_location": "Locatie bijwerken"
     },
     "maintenance": {
@@ -342,8 +500,10 @@
         "currency_format": "Valutanotatie",
         "current_password": "Huidig Wachtwoord",
         "delete_account": "Verwijder account",
+        "delete_account_confirm": "Weet u zeker dat u uw account wilt verwijderen? Als u het laatste lid in uw groep bent, worden al uw gegevens verwijderd. Deze actie kan niet ongedaan worden gemaakt.",
         "delete_account_sub": "Verwijder je account en alle bijhorende data. Deze actie kan niet ongedaan worden.",
-        "display_header": "{ currentValue, select, true {Header verbergen} false {Header weergeven} other {Geen gevonden}}",
+        "delete_notifier_confirm": "Weet je zeker dat je deze notificatie wilt verwijderen?",
+        "display_legacy_header": "{ currentValue, select, true {Legacy Header uitschakelen} false {Legacy Header inschakelen} other {Overig}}",
         "enabled": "Ingeschakeld",
         "example": "Voorbeeld",
         "gen_invite": "Genereer Uitnodigingslink",
@@ -354,23 +514,71 @@
         "new_password": "Nieuw Wachtwoord",
         "no_notifiers": "Geen melders geconfigureerd",
         "no_override": "Niet overschrijven",
-        "notifier_modal": "{ type, select, true {Bewerk} false {Creëer} other {overig}} Notifier",
+        "notifier_modal": "{ type, select, true {Bewerk} false {Creëer} other {Overig}} Notifier",
         "notifiers": "Notificatie",
         "notifiers_sub": "Ontvang meldingen voor komende onderhoudsherinneringen",
         "override_locale": "Datum en valutataal overschrijven",
         "test": "Test",
         "theme_settings": "Thema-instellingen",
         "theme_settings_sub": "Thema-instellingen worden opgeslagen in de lokale opslag van uw browser. Je kan deze wijzigen op elk moment. \nAls je problemen hebt met de instellingen kun je de browser verversen.",
+        "toast": {
+            "account_deleted": "Uw account is verwijderd.",
+            "failed_change_password": "Wijzigen wachtwoord mislukt.",
+            "failed_create_notifier": "Aanmaken notificatie mislukt.",
+            "failed_delete_account": "Verwijderen van uw account mislukt.",
+            "failed_delete_notifier": "Verwijderen notificatie mislukt.",
+            "failed_get_currencies": "Valuta ophalen mislukt",
+            "failed_test_notifier": "Testen van notificatie mislukt.",
+            "failed_update_group": "Bijwerken groep mislukt",
+            "failed_update_notifier": "Bijwerken notificatie mislukt.",
+            "group_updated": "Groep geüpdatet",
+            "notifier_test_success": "Notificatie test geslaagd.",
+            "password_changed": "Wachtwoord wijzigen gelukt."
+        },
         "update_group": "Groep bijwerken",
         "update_language": "Taal bijwerken",
         "url": "URL",
         "user_profile": "Gebruikersprofiel",
         "user_profile_sub": "Nodig gebruikers uit, en beheer je account."
     },
+    "reports": {
+        "label_generator": {
+            "asset_end": "Einde item-ID",
+            "asset_start": "Begin item-ID",
+            "base_url": "Basis-URL",
+            "bordered_labels": "Omrande labels",
+            "generate_page": "Pagina genereren",
+            "input_placeholder": "Typ hier",
+            "instruction_1": "De Homebox Label Generator is een hulpmiddel om u te helpen bij het afdrukken van labels voor uw Homebox-inventaris.\nDeze zijn bedoeld om op voorhand te printen zodat je een voorraad hebt en deze klaar zijn om te gebruiken",
+            "instruction_2": "Als zodanig werken deze labels door een URL QR-code en item-ID-informatie op een label af te drukken. Als je item-ID's\nhebt uitgeschakeld in je Homebox-instellingen, kun je deze tool nog steeds gebruiken, maar zullen de item-ID's niet verwijzen naar een item",
+            "instruction_3": "Deze functie bevindt zich in een vroege ontwikkelingsfase en kan in toekomstige releases veranderen. Als je feedback hebt, geef\n deze dan op in de<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\"> ''GitHub-discussie '</a>'",
+            "label_height": "Label hoogte",
+            "label_width": "Label breedte",
+            "measure_type": "Meting type",
+            "page_bottom_padding": "Padding onderkant pagina",
+            "page_height": "Pagina hoogte",
+            "page_left_padding": "Padding links",
+            "page_right_padding": "Padding rechts",
+            "page_top_padding": "Top padding",
+            "page_width": "Pagina breedte",
+            "qr_code_example": "Voorbeeld QR Code",
+            "tip_1": "De standaardinstellingen hier zijn ingesteld voor de\n <a href=\"https://www.avery.com/templates/5260\">''Avery 5260-labelbladen '</a>'. Als je een ander vel gebruikt,\nmoet je de instellingen aanpassen aan jouw type vel.",
+            "tip_2": "Als je het vel aanpast zijn de afmetingen in inch. Bij het maken van een 5260 vel, heb ik ontdekt dat de\nafmetingen in hun template niet overeen komen om te printen in de vakken.\n'<b>'Hou rekening met wat trial en error.'</b>'",
+            "tip_3": "Let op bij het afdrukken:\n'<ol><li>'Stel de marges in op 0 of Geen'</li><li>'Zet de schaal op 100%'</li><li>'Dubbelzijdig afdrukken uitschakelen'</li><li>'Druk een testpagina af voordat u meerdere pagina's afdrukt'</li></ol>'",
+            "tips": "Tips",
+            "title": "Label Generator",
+            "toast": {
+                "page_too_small_card": "Paginaformaat is te klein voor het kaartformaat"
+            }
+        }
+    },
     "scanner": {
+        "barcode_detected_message": "productbarcode gedetecteerd",
+        "barcode_fetch_data": "Productgegevens ophalen",
         "error": "Tijdens het scannen is er een fout opgetreden",
         "invalid_url": "Ongeldige streepjescode",
         "no_sources": "Geen videobronnen beschikbaar",
+        "permission_denied": "Cameratoestemming geweigerd, geef toegang tot de camera in uw browserinstellingen",
         "select_video_source": "Kies een videobron",
         "title": "Scanner",
         "unsupported": "Mediastream-API wordt niet ondersteund zonder HTTPS"
@@ -378,17 +586,24 @@
     "tools": {
         "actions": "Acties inventariseren",
         "actions_set": {
+            "create_missing_thumbnails": "Ontbrekende miniaturen maken",
+            "create_missing_thumbnails_button": "Nieuwe miniaturen aanmaken",
+            "create_missing_thumbnails_confirm": "Weet u zeker dat u ontbrekende miniaturen wilt maken? Dit kan even duren en kan niet worden gepauzeerd.",
+            "create_missing_thumbnails_sub": "Maakt miniaturen voor alle bijlagen die worden ondersteund door de huidige configuratie. Dit is handig voor bijlagen die werden geüpload voor de v0.20.0 release van Homebox. Bestaande miniaturen worden niet overschreven, er worden alleen nieuwe miniaturen gemaakt voor bijlagen die geen miniatuurafbeelding hebben. Houd er rekening mee dat de miniaturen in de achtergrond worden gemaakt en dat dit een tijdje kan duren.",
             "ensure_ids": "Zorg voor item-ID's",
             "ensure_ids_button": "Zorg voor item-ID's",
+            "ensure_ids_confirm": "Weet u zeker dat u alle items een ID wil geven? Dit kan even duren en kan niet ongedaan worden gemaakt.",
             "ensure_ids_sub": "Zorgt ervoor dat alle artikelen in je voorraad een geldig asset_id veld hebben. Dit wordt gedaan door de hoogste huidige asset_id veld in de database te vinden en de volgende waarde toe te passen op het volgende niet ingevoerde asset_id veld. Dit gebeurt op volgorde van het created_at veld.",
             "ensure_import_refs": "Zorg voor Import Refs",
             "ensure_import_refs_button": "Zorg voor Import Refs",
             "ensure_import_refs_sub": "Zorgt ervoor dat alle artikelen in je voorraad een geldig import_ref veld hebben. Dit gebeurt door een random 8 karakter string voor elk item te maken die geen import_ref veld heeft.",
             "set_primary_photo": "Hoofdfoto instellen",
             "set_primary_photo_button": "Hoofdfoto instellen",
+            "set_primary_photo_confirm": "Weet u zeker dat u primaire foto's wilt instellen? Dit kan even duren en kan niet ongedaan worden gemaakt.",
             "set_primary_photo_sub": "In versie v0.10.0 van Homebox is het primaire afbeeldingsveld toegevoegd aan bijlagen van het type foto. Deze actie zet de primaire afbeelding naar de eerste afbeelding in de database, indien deze nog niet ingesteld is. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Zie GitHub PR #576'</a>'",
             "zero_datetimes": "Nul item Datum Tijden",
             "zero_datetimes_button": "Nul item Datum Tijden",
+            "zero_datetimes_confirm": "Weet u zeker dat u alle datum- en tijdwaarden opnieuw wilt instellen? Dit kan even duren en kan niet ongedaan worden gemaakt.",
             "zero_datetimes_sub": "Hiermee stelt u de tijdwaarde voor alle datum-/tijdvelden in uw voorraad in op het begin van de datum. Dit is een oplossing voor een fout in de applicatie geïntroduceerd in het begin van de ontwikkeling waarbij de tijd waarde verkeerd werd opgeslagen. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Zie Github Issue #236 voor alle details.'</a>'"
         },
         "actions_sub": "Acties in bulk toepassen op je inventaris. Deze zijn onomkeerbaar '<b>'Wees voorzichtig.'</b>'",
@@ -399,6 +614,7 @@
             "export_sub": "Exporteert het standaard CSV-formaat voor Homebox. Dit exporteert alle items in jouw inventaris.",
             "import": "Inventaris Importeren",
             "import_button": "Inventaris Importeren",
+            "import_ref_confirm": "Weet u zeker dat u ervoor wilt zorgen dat alle items een import_ref hebben? Dit kan even duren en kan niet ongedaan worden gemaakt.",
             "import_sub": "Importeert het standaard CSV-formaat voor Homebox. Zonder een '<code>'HB.import_ref'</code>' kolom zal dit '<b>'geen'</b>' bestaande waardes overschrijven, maar enkel nieuwe items toevoegen. Rijen met een '<code>'HB.import_ref'</code>' kolom zullen samengevoegd worden met bestaande items, als die bestaan."
         },
         "import_export_sub": "Importeer en exporteer je voorraad van en naar een CSV-bestand. Dit is handig voor het migreren van je voorraad naar een nieuwe HomeBox installatie.",
@@ -411,6 +627,14 @@
             "bill_of_materials_button": "BOM genereren",
             "bill_of_materials_sub": "Genereert een CSV-bestand (door komma's gescheiden waarden) dat kan worden geïmporteerd in een spreadsheetprogramma. Dit is een samenvattting van je voorraad met basis item en prijs informatie."
         },
-        "reports_sub": "Genereer verschillende rapporten van je voorraad."
+        "reports_sub": "Genereer verschillende rapporten van je voorraad.",
+        "toast": {
+            "asset_success": "{ results } items zijn bijgewerkt.",
+            "failed_create_missing_thumbnails": "Ontbrekende miniaturen aanmaken mislukt.",
+            "failed_ensure_ids": "Item-ID's aanmaken mislukt.",
+            "failed_ensure_import_refs": "Import refs aanmaken mislukt.",
+            "failed_set_primary_photos": "Primaire foto's instellen mislukt.",
+            "failed_zero_datetimes": "Datum- en tijdwaarden resetten mislukt."
+        }
     }
 }

@@ -11,6 +11,12 @@
  * ---------------------------------------------------------------
  */
 
+export enum UserRole {
+  DefaultRole = "user",
+  RoleUser = "user",
+  RoleOwner = "owner",
+}
+
 export enum MaintenanceFilterStatus {
   MaintenanceFilterStatusScheduled = "scheduled",
   MaintenanceFilterStatusCompleted = "completed",
@@ -22,11 +28,444 @@ export enum ItemType {
   ItemTypeItem = "item",
 }
 
+export enum ItemfieldType {
+  TypeText = "text",
+  TypeNumber = "number",
+  TypeBoolean = "boolean",
+  TypeTime = "time",
+}
+
+export enum AuthrolesRole {
+  DefaultRole = "user",
+  RoleAdmin = "admin",
+  RoleUser = "user",
+  RoleAttachments = "attachments",
+}
+
+export enum AttachmentType {
+  DefaultType = "attachment",
+  TypePhoto = "photo",
+  TypeManual = "manual",
+  TypeWarranty = "warranty",
+  TypeAttachment = "attachment",
+  TypeReceipt = "receipt",
+  TypeThumbnail = "thumbnail",
+}
+
 export interface CurrenciesCurrency {
   code: string;
   local: string;
   name: string;
   symbol: string;
+}
+
+export interface EntAttachment {
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the AttachmentQuery when eager-loading is set.
+   */
+  edges: EntAttachmentEdges;
+  /** ID of the ent. */
+  id: string;
+  /** MimeType holds the value of the "mime_type" field. */
+  mime_type: string;
+  /** Path holds the value of the "path" field. */
+  path: string;
+  /** Primary holds the value of the "primary" field. */
+  primary: boolean;
+  /** Title holds the value of the "title" field. */
+  title: string;
+  /** Type holds the value of the "type" field. */
+  type: AttachmentType;
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+}
+
+export interface EntAttachmentEdges {
+  /** Item holds the value of the item edge. */
+  item: EntItem;
+  /** Thumbnail holds the value of the thumbnail edge. */
+  thumbnail: EntAttachment;
+}
+
+export interface EntAuthRoles {
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the AuthRolesQuery when eager-loading is set.
+   */
+  edges: EntAuthRolesEdges;
+  /** ID of the ent. */
+  id: number;
+  /** Role holds the value of the "role" field. */
+  role: AuthrolesRole;
+}
+
+export interface EntAuthRolesEdges {
+  /** Token holds the value of the token edge. */
+  token: EntAuthTokens;
+}
+
+export interface EntAuthTokens {
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the AuthTokensQuery when eager-loading is set.
+   */
+  edges: EntAuthTokensEdges;
+  /** ExpiresAt holds the value of the "expires_at" field. */
+  expires_at: string;
+  /** ID of the ent. */
+  id: string;
+  /** Token holds the value of the "token" field. */
+  token: number[];
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+}
+
+export interface EntAuthTokensEdges {
+  /** Roles holds the value of the roles edge. */
+  roles: EntAuthRoles;
+  /** User holds the value of the user edge. */
+  user: EntUser;
+}
+
+export interface EntGroup {
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /** Currency holds the value of the "currency" field. */
+  currency: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the GroupQuery when eager-loading is set.
+   */
+  edges: EntGroupEdges;
+  /** ID of the ent. */
+  id: string;
+  /** Name holds the value of the "name" field. */
+  name: string;
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+}
+
+export interface EntGroupEdges {
+  /** InvitationTokens holds the value of the invitation_tokens edge. */
+  invitation_tokens: EntGroupInvitationToken[];
+  /** Items holds the value of the items edge. */
+  items: EntItem[];
+  /** Labels holds the value of the labels edge. */
+  labels: EntLabel[];
+  /** Locations holds the value of the locations edge. */
+  locations: EntLocation[];
+  /** Notifiers holds the value of the notifiers edge. */
+  notifiers: EntNotifier[];
+  /** Users holds the value of the users edge. */
+  users: EntUser[];
+}
+
+export interface EntGroupInvitationToken {
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the GroupInvitationTokenQuery when eager-loading is set.
+   */
+  edges: EntGroupInvitationTokenEdges;
+  /** ExpiresAt holds the value of the "expires_at" field. */
+  expires_at: string;
+  /** ID of the ent. */
+  id: string;
+  /** Token holds the value of the "token" field. */
+  token: number[];
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+  /** Uses holds the value of the "uses" field. */
+  uses: number;
+}
+
+export interface EntGroupInvitationTokenEdges {
+  /** Group holds the value of the group edge. */
+  group: EntGroup;
+}
+
+export interface EntItem {
+  /** Archived holds the value of the "archived" field. */
+  archived: boolean;
+  /** AssetID holds the value of the "asset_id" field. */
+  asset_id: number;
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /** Description holds the value of the "description" field. */
+  description: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the ItemQuery when eager-loading is set.
+   */
+  edges: EntItemEdges;
+  /** ID of the ent. */
+  id: string;
+  /** ImportRef holds the value of the "import_ref" field. */
+  import_ref: string;
+  /** Insured holds the value of the "insured" field. */
+  insured: boolean;
+  /** LifetimeWarranty holds the value of the "lifetime_warranty" field. */
+  lifetime_warranty: boolean;
+  /** Manufacturer holds the value of the "manufacturer" field. */
+  manufacturer: string;
+  /** ModelNumber holds the value of the "model_number" field. */
+  model_number: string;
+  /** Name holds the value of the "name" field. */
+  name: string;
+  /** Notes holds the value of the "notes" field. */
+  notes: string;
+  /** PurchaseFrom holds the value of the "purchase_from" field. */
+  purchase_from: string;
+  /** PurchasePrice holds the value of the "purchase_price" field. */
+  purchase_price: number;
+  /** PurchaseTime holds the value of the "purchase_time" field. */
+  purchase_time: string;
+  /** Quantity holds the value of the "quantity" field. */
+  quantity: number;
+  /** SerialNumber holds the value of the "serial_number" field. */
+  serial_number: string;
+  /** SoldNotes holds the value of the "sold_notes" field. */
+  sold_notes: string;
+  /** SoldPrice holds the value of the "sold_price" field. */
+  sold_price: number;
+  /** SoldTime holds the value of the "sold_time" field. */
+  sold_time: string;
+  /** SoldTo holds the value of the "sold_to" field. */
+  sold_to: string;
+  /** SyncChildItemsLocations holds the value of the "sync_child_items_locations" field. */
+  sync_child_items_locations: boolean;
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+  /** WarrantyDetails holds the value of the "warranty_details" field. */
+  warranty_details: string;
+  /** WarrantyExpires holds the value of the "warranty_expires" field. */
+  warranty_expires: string;
+}
+
+export interface EntItemEdges {
+  /** Attachments holds the value of the attachments edge. */
+  attachments: EntAttachment[];
+  /** Children holds the value of the children edge. */
+  children: EntItem[];
+  /** Fields holds the value of the fields edge. */
+  fields: EntItemField[];
+  /** Group holds the value of the group edge. */
+  group: EntGroup;
+  /** Label holds the value of the label edge. */
+  label: EntLabel[];
+  /** Location holds the value of the location edge. */
+  location: EntLocation;
+  /** MaintenanceEntries holds the value of the maintenance_entries edge. */
+  maintenance_entries: EntMaintenanceEntry[];
+  /** Parent holds the value of the parent edge. */
+  parent: EntItem;
+}
+
+export interface EntItemField {
+  /** BooleanValue holds the value of the "boolean_value" field. */
+  boolean_value: boolean;
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /** Description holds the value of the "description" field. */
+  description: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the ItemFieldQuery when eager-loading is set.
+   */
+  edges: EntItemFieldEdges;
+  /** ID of the ent. */
+  id: string;
+  /** Name holds the value of the "name" field. */
+  name: string;
+  /** NumberValue holds the value of the "number_value" field. */
+  number_value: number;
+  /** TextValue holds the value of the "text_value" field. */
+  text_value: string;
+  /** TimeValue holds the value of the "time_value" field. */
+  time_value: string;
+  /** Type holds the value of the "type" field. */
+  type: ItemfieldType;
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+}
+
+export interface EntItemFieldEdges {
+  /** Item holds the value of the item edge. */
+  item: EntItem;
+}
+
+export interface EntLabel {
+  /** Color holds the value of the "color" field. */
+  color: string;
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /** Description holds the value of the "description" field. */
+  description: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the LabelQuery when eager-loading is set.
+   */
+  edges: EntLabelEdges;
+  /** ID of the ent. */
+  id: string;
+  /** Name holds the value of the "name" field. */
+  name: string;
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+}
+
+export interface EntLabelEdges {
+  /** Group holds the value of the group edge. */
+  group: EntGroup;
+  /** Items holds the value of the items edge. */
+  items: EntItem[];
+}
+
+export interface EntLocation {
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /** Description holds the value of the "description" field. */
+  description: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the LocationQuery when eager-loading is set.
+   */
+  edges: EntLocationEdges;
+  /** ID of the ent. */
+  id: string;
+  /** Name holds the value of the "name" field. */
+  name: string;
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+}
+
+export interface EntLocationEdges {
+  /** Children holds the value of the children edge. */
+  children: EntLocation[];
+  /** Group holds the value of the group edge. */
+  group: EntGroup;
+  /** Items holds the value of the items edge. */
+  items: EntItem[];
+  /** Parent holds the value of the parent edge. */
+  parent: EntLocation;
+}
+
+export interface EntMaintenanceEntry {
+  /** Cost holds the value of the "cost" field. */
+  cost: number;
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /** Date holds the value of the "date" field. */
+  date: Date | string;
+  /** Description holds the value of the "description" field. */
+  description: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the MaintenanceEntryQuery when eager-loading is set.
+   */
+  edges: EntMaintenanceEntryEdges;
+  /** ID of the ent. */
+  id: string;
+  /** ItemID holds the value of the "item_id" field. */
+  item_id: string;
+  /** Name holds the value of the "name" field. */
+  name: string;
+  /** ScheduledDate holds the value of the "scheduled_date" field. */
+  scheduled_date: Date | string;
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+}
+
+export interface EntMaintenanceEntryEdges {
+  /** Item holds the value of the item edge. */
+  item: EntItem;
+}
+
+export interface EntNotifier {
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the NotifierQuery when eager-loading is set.
+   */
+  edges: EntNotifierEdges;
+  /** GroupID holds the value of the "group_id" field. */
+  group_id: string;
+  /** ID of the ent. */
+  id: string;
+  /** IsActive holds the value of the "is_active" field. */
+  is_active: boolean;
+  /** Name holds the value of the "name" field. */
+  name: string;
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+  /** UserID holds the value of the "user_id" field. */
+  user_id: string;
+}
+
+export interface EntNotifierEdges {
+  /** Group holds the value of the group edge. */
+  group: EntGroup;
+  /** User holds the value of the user edge. */
+  user: EntUser;
+}
+
+export interface EntUser {
+  /** ActivatedOn holds the value of the "activated_on" field. */
+  activated_on: string;
+  /** CreatedAt holds the value of the "created_at" field. */
+  created_at: string;
+  /**
+   * Edges holds the relations/edges for other nodes in the graph.
+   * The values are being populated by the UserQuery when eager-loading is set.
+   */
+  edges: EntUserEdges;
+  /** Email holds the value of the "email" field. */
+  email: string;
+  /** ID of the ent. */
+  id: string;
+  /** IsSuperuser holds the value of the "is_superuser" field. */
+  is_superuser: boolean;
+  /** Name holds the value of the "name" field. */
+  name: string;
+  /** Role holds the value of the "role" field. */
+  role: UserRole;
+  /** Superuser holds the value of the "superuser" field. */
+  superuser: boolean;
+  /** UpdatedAt holds the value of the "updated_at" field. */
+  updated_at: string;
+}
+
+export interface EntUserEdges {
+  /** AuthTokens holds the value of the auth_tokens edge. */
+  auth_tokens: EntAuthTokens[];
+  /** Group holds the value of the group edge. */
+  group: EntGroup;
+  /** Notifiers holds the value of the notifiers edge. */
+  notifiers: EntNotifier[];
+}
+
+export interface BarcodeProduct {
+  barcode: string;
+  imageBase64: string;
+  /**
+   * TODO: add image attachement
+   * TODO: add asin?
+   */
+  imageURL: string;
+  item: ItemCreate;
+  manufacturer: string;
+  /** Identifications */
+  modelNumber: string;
+  /** Extras */
+  notes: string;
+  search_engine_name: string;
 }
 
 export interface Group {
@@ -54,8 +493,10 @@ export interface GroupUpdate {
 export interface ItemAttachment {
   createdAt: Date | string;
   id: string;
+  mimeType: string;
   path: string;
   primary: boolean;
+  thumbnail: EntAttachment;
   title: string;
   type: string;
   updatedAt: Date | string;
@@ -100,7 +541,7 @@ export interface ItemOut {
   description: string;
   fields: ItemField[];
   id: string;
-  imageId: string;
+  imageId?: string | null;
   insured: boolean;
   labels: LabelSummary[];
   /** Warranty */
@@ -125,6 +566,7 @@ export interface ItemOut {
   soldTime: Date | string;
   soldTo: string;
   syncChildItemsLocations: boolean;
+  thumbnailId?: string | null;
   updatedAt: Date | string;
   warrantyDetails: string;
   warrantyExpires: Date | string;
@@ -148,7 +590,7 @@ export interface ItemSummary {
   createdAt: Date | string;
   description: string;
   id: string;
-  imageId: string;
+  imageId?: string | null;
   insured: boolean;
   labels: LabelSummary[];
   /** Edges */
@@ -158,6 +600,7 @@ export interface ItemSummary {
   quantity: number;
   /** Sale details */
   soldTime: Date | string;
+  thumbnailId?: string | null;
   updatedAt: Date | string;
 }
 
@@ -215,6 +658,7 @@ export interface LabelCreate {
 }
 
 export interface LabelOut {
+  color: string;
   createdAt: Date | string;
   description: string;
   id: string;
@@ -223,6 +667,7 @@ export interface LabelOut {
 }
 
 export interface LabelSummary {
+  color: string;
   createdAt: Date | string;
   description: string;
   id: string;

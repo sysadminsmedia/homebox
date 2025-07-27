@@ -11,6 +11,11 @@
     >
       <div class="flex flex-wrap items-center gap-2 px-3">
         <TagsInputItem v-for="item in modelValue" :key="item" :value="item">
+          <span
+            v-if="shortenedLabels.find(l => l.id === item)?.color"
+            class="ml-2 inline-block size-4 rounded-full"
+            :style="{ backgroundColor: shortenedLabels.find(l => l.id === item)?.color }"
+          />
           <TagsInputItemText />
           <TagsInputItemDelete />
         </TagsInputItem>
@@ -55,6 +60,11 @@
                     }
                   "
                 >
+                  <span
+                    class="mr-2 inline-block size-4 rounded-full align-middle"
+                    :class="{ border: shortenedLabels.find(l => l.id === label.value)?.color }"
+                    :style="{ backgroundColor: shortenedLabels.find(l => l.id === label.value)?.color }"
+                  />
                   {{ label.label }}
                 </CommandItem>
               </CommandGroup>
@@ -66,6 +76,7 @@
   </div>
 </template>
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { ComboboxAnchor, ComboboxContent, ComboboxInput, ComboboxPortal, ComboboxRoot } from "reka-ui";
   import { computed, ref } from "vue";
   import fuzzysort from "fuzzysort";
@@ -79,6 +90,8 @@
     TagsInputItemText,
   } from "@/components/ui/tags-input";
   import type { LabelOut } from "~/lib/api/types/data-contracts";
+
+  const { t } = useI18n();
 
   const id = useId();
 
@@ -117,30 +130,36 @@
       }))
       .filter(i => !modelValue.value.includes(i.value));
 
+    // Only show "Create" option if search term is not empty and no exact match exists
     if (searchTerm.value.trim() !== "") {
-      filtered.push({ value: "create-item", label: `Create ${searchTerm.value}` });
+      const trimmedSearchTerm = searchTerm.value.trim();
+      const hasExactMatch = props.labels.some(label => label.name.toLowerCase() === trimmedSearchTerm.toLowerCase());
+
+      if (!hasExactMatch) {
+        filtered.push({ value: "create-item", label: `${t("global.create")} ${searchTerm.value}` });
+      }
     }
 
     return filtered;
   });
 
-  const createAndAdd = async (name: string) => {
+  const createAndAdd = async (name: string, color = "") => {
     if (name.length > 50) {
-      toast.error("Label name must not be longer than 50 characters");
+      toast.error(t("components.label.create_modal.toast.label_name_too_long"));
       return;
     }
     const { error, data } = await api.labels.create({
       name,
-      color: "", // Future!
+      color,
       description: "",
     });
 
     if (error) {
-      toast.error("Couldn't create label");
+      toast.error(t("components.label.create_modal.toast.create_failed"));
       return;
     }
 
-    toast.success("Label created");
+    toast.success(t("components.label.create_modal.toast.create_success"));
 
     modelValue.value = [...modelValue.value, data.id];
   };
