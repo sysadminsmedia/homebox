@@ -2,16 +2,16 @@ package ent
 
 import (
 	"entgo.io/ent/dialect/sql"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/textutils"
 )
 
 // AccentInsensitiveContains creates a predicate that performs accent-insensitive text search.
 // It normalizes both the database field value and the search value for comparison.
-func AccentInsensitiveContains(field string, searchValue string) predicate.Item {
+func AccentInsensitiveContains(field string, searchValue string) predicate.Entity {
 	if searchValue == "" {
-		return predicate.Item(func(s *sql.Selector) {
+		return predicate.Entity(func(s *sql.Selector) {
 			// Return a predicate that never matches if search is empty
 			s.Where(sql.False())
 		})
@@ -20,9 +20,9 @@ func AccentInsensitiveContains(field string, searchValue string) predicate.Item 
 	// Normalize the search value
 	normalizedSearch := textutils.NormalizeSearchQuery(searchValue)
 
-	return predicate.Item(func(s *sql.Selector) {
+	return predicate.Entity(func(s *sql.Selector) {
 		dialect := s.Dialect()
-		
+
 		switch dialect {
 		case "sqlite3":
 			// For SQLite, we'll create a custom normalization function using REPLACE
@@ -71,7 +71,7 @@ func buildGenericNormalizeExpression(fieldExpr string) string {
 	// Focused on the most frequently used accents in Spanish, French, and Portuguese
 	// Ordered by frequency of use for better performance
 	normalized := fieldExpr
-	
+
 	// Most common accented characters ordered by frequency
 	commonAccents := []struct {
 		from, to string
@@ -88,40 +88,40 @@ func buildGenericNormalizeExpression(fieldExpr string) string {
 		{"ä", "a"}, {"ö", "o"}, {"ü", "u"}, {"ã", "a"}, {"õ", "o"},
 		{"Ä", "A"}, {"Ö", "O"}, {"Ü", "U"}, {"Ã", "A"}, {"Õ", "O"},
 	}
-	
+
 	for _, accent := range commonAccents {
 		normalized = "REPLACE(" + normalized + ", '" + accent.from + "', '" + accent.to + "')"
 	}
-	
+
 	return normalized
 }
 
 // ItemNameAccentInsensitiveContains creates an accent-insensitive search predicate for the item name field.
-func ItemNameAccentInsensitiveContains(value string) predicate.Item {
-	return AccentInsensitiveContains(item.FieldName, value)
+func ItemNameAccentInsensitiveContains(value string) predicate.Entity {
+	return AccentInsensitiveContains(entity.FieldName, value)
 }
 
 // ItemDescriptionAccentInsensitiveContains creates an accent-insensitive search predicate for the item description field.
-func ItemDescriptionAccentInsensitiveContains(value string) predicate.Item {
-	return AccentInsensitiveContains(item.FieldDescription, value)
+func ItemDescriptionAccentInsensitiveContains(value string) predicate.Entity {
+	return AccentInsensitiveContains(entity.FieldDescription, value)
 }
 
 // ItemSerialNumberAccentInsensitiveContains creates an accent-insensitive search predicate for the item serial number field.
-func ItemSerialNumberAccentInsensitiveContains(value string) predicate.Item {
-	return AccentInsensitiveContains(item.FieldSerialNumber, value)
+func ItemSerialNumberAccentInsensitiveContains(value string) predicate.Entity {
+	return AccentInsensitiveContains(entity.FieldSerialNumber, value)
 }
 
 // ItemModelNumberAccentInsensitiveContains creates an accent-insensitive search predicate for the item model number field.
-func ItemModelNumberAccentInsensitiveContains(value string) predicate.Item {
-	return AccentInsensitiveContains(item.FieldModelNumber, value)
+func ItemModelNumberAccentInsensitiveContains(value string) predicate.Entity {
+	return AccentInsensitiveContains(entity.FieldModelNumber, value)
 }
 
 // ItemManufacturerAccentInsensitiveContains creates an accent-insensitive search predicate for the item manufacturer field.
-func ItemManufacturerAccentInsensitiveContains(value string) predicate.Item {
-	return AccentInsensitiveContains(item.FieldManufacturer, value)
+func ItemManufacturerAccentInsensitiveContains(value string) predicate.Entity {
+	return AccentInsensitiveContains(entity.FieldManufacturer, value)
 }
 
 // ItemNotesAccentInsensitiveContains creates an accent-insensitive search predicate for the item notes field.
-func ItemNotesAccentInsensitiveContains(value string) predicate.Item {
-	return AccentInsensitiveContains(item.FieldNotes, value)
+func ItemNotesAccentInsensitiveContains(value string) predicate.Entity {
+	return AccentInsensitiveContains(entity.FieldNotes, value)
 }

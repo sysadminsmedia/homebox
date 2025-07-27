@@ -77,10 +77,10 @@ definitions:
     type: object
   ent.AttachmentEdges:
     properties:
-      item:
+      entity:
         allOf:
-        - $ref: '#/definitions/ent.Item'
-        description: Item holds the value of the item edge.
+        - $ref: '#/definitions/ent.Entity'
+        description: Entity holds the value of the entity edge.
       thumbnail:
         allOf:
         - $ref: '#/definitions/ent.Attachment'
@@ -146,100 +146,7 @@ definitions:
         - $ref: '#/definitions/ent.User'
         description: User holds the value of the user edge.
     type: object
-  ent.Group:
-    properties:
-      created_at:
-        description: CreatedAt holds the value of the "created_at" field.
-        type: string
-      currency:
-        description: Currency holds the value of the "currency" field.
-        type: string
-      edges:
-        allOf:
-        - $ref: '#/definitions/ent.GroupEdges'
-        description: |-
-          Edges holds the relations/edges for other nodes in the graph.
-          The values are being populated by the GroupQuery when eager-loading is set.
-      id:
-        description: ID of the ent.
-        type: string
-      name:
-        description: Name holds the value of the "name" field.
-        type: string
-      updated_at:
-        description: UpdatedAt holds the value of the "updated_at" field.
-        type: string
-    type: object
-  ent.GroupEdges:
-    properties:
-      invitation_tokens:
-        description: InvitationTokens holds the value of the invitation_tokens edge.
-        items:
-          $ref: '#/definitions/ent.GroupInvitationToken'
-        type: array
-      items:
-        description: Items holds the value of the items edge.
-        items:
-          $ref: '#/definitions/ent.Item'
-        type: array
-      labels:
-        description: Labels holds the value of the labels edge.
-        items:
-          $ref: '#/definitions/ent.Label'
-        type: array
-      locations:
-        description: Locations holds the value of the locations edge.
-        items:
-          $ref: '#/definitions/ent.Location'
-        type: array
-      notifiers:
-        description: Notifiers holds the value of the notifiers edge.
-        items:
-          $ref: '#/definitions/ent.Notifier'
-        type: array
-      users:
-        description: Users holds the value of the users edge.
-        items:
-          $ref: '#/definitions/ent.User'
-        type: array
-    type: object
-  ent.GroupInvitationToken:
-    properties:
-      created_at:
-        description: CreatedAt holds the value of the "created_at" field.
-        type: string
-      edges:
-        allOf:
-        - $ref: '#/definitions/ent.GroupInvitationTokenEdges'
-        description: |-
-          Edges holds the relations/edges for other nodes in the graph.
-          The values are being populated by the GroupInvitationTokenQuery when eager-loading is set.
-      expires_at:
-        description: ExpiresAt holds the value of the "expires_at" field.
-        type: string
-      id:
-        description: ID of the ent.
-        type: string
-      token:
-        description: Token holds the value of the "token" field.
-        items:
-          type: integer
-        type: array
-      updated_at:
-        description: UpdatedAt holds the value of the "updated_at" field.
-        type: string
-      uses:
-        description: Uses holds the value of the "uses" field.
-        type: integer
-    type: object
-  ent.GroupInvitationTokenEdges:
-    properties:
-      group:
-        allOf:
-        - $ref: '#/definitions/ent.Group'
-        description: Group holds the value of the group edge.
-    type: object
-  ent.Item:
+  ent.Entity:
     properties:
       archived:
         description: Archived holds the value of the "archived" field.
@@ -255,10 +162,10 @@ definitions:
         type: string
       edges:
         allOf:
-        - $ref: '#/definitions/ent.ItemEdges'
+        - $ref: '#/definitions/ent.EntityEdges'
         description: |-
           Edges holds the relations/edges for other nodes in the graph.
-          The values are being populated by the ItemQuery when eager-loading is set.
+          The values are being populated by the EntityQuery when eager-loading is set.
       id:
         description: ID of the ent.
         type: string
@@ -310,8 +217,8 @@ definitions:
       sold_to:
         description: SoldTo holds the value of the "sold_to" field.
         type: string
-      sync_child_items_locations:
-        description: SyncChildItemsLocations holds the value of the "sync_child_items_locations"
+      sync_child_entities_locations:
+        description: SyncChildEntitiesLocations holds the value of the "sync_child_entities_locations"
           field.
         type: boolean
       updated_at:
@@ -324,7 +231,7 @@ definitions:
         description: WarrantyExpires holds the value of the "warranty_expires" field.
         type: string
     type: object
-  ent.ItemEdges:
+  ent.EntityEdges:
     properties:
       attachments:
         description: Attachments holds the value of the attachments edge.
@@ -334,12 +241,16 @@ definitions:
       children:
         description: Children holds the value of the children edge.
         items:
-          $ref: '#/definitions/ent.Item'
+          $ref: '#/definitions/ent.Entity'
         type: array
+      entity:
+        allOf:
+        - $ref: '#/definitions/ent.Entity'
+        description: Entity holds the value of the entity edge.
       fields:
         description: Fields holds the value of the fields edge.
         items:
-          $ref: '#/definitions/ent.ItemField'
+          $ref: '#/definitions/ent.EntityField'
         type: array
       group:
         allOf:
@@ -352,7 +263,7 @@ definitions:
         type: array
       location:
         allOf:
-        - $ref: '#/definitions/ent.Location'
+        - $ref: '#/definitions/ent.Entity'
         description: Location holds the value of the location edge.
       maintenance_entries:
         description: MaintenanceEntries holds the value of the maintenance_entries
@@ -362,10 +273,14 @@ definitions:
         type: array
       parent:
         allOf:
-        - $ref: '#/definitions/ent.Item'
+        - $ref: '#/definitions/ent.Entity'
         description: Parent holds the value of the parent edge.
+      type:
+        allOf:
+        - $ref: '#/definitions/ent.EntityType'
+        description: Type holds the value of the type edge.
     type: object
-  ent.ItemField:
+  ent.EntityField:
     properties:
       boolean_value:
         description: BooleanValue holds the value of the "boolean_value" field.
@@ -378,10 +293,10 @@ definitions:
         type: string
       edges:
         allOf:
-        - $ref: '#/definitions/ent.ItemFieldEdges'
+        - $ref: '#/definitions/ent.EntityFieldEdges'
         description: |-
           Edges holds the relations/edges for other nodes in the graph.
-          The values are being populated by the ItemFieldQuery when eager-loading is set.
+          The values are being populated by the EntityFieldQuery when eager-loading is set.
       id:
         description: ID of the ent.
         type: string
@@ -399,18 +314,156 @@ definitions:
         type: string
       type:
         allOf:
-        - $ref: '#/definitions/itemfield.Type'
+        - $ref: '#/definitions/entityfield.Type'
         description: Type holds the value of the "type" field.
       updated_at:
         description: UpdatedAt holds the value of the "updated_at" field.
         type: string
     type: object
-  ent.ItemFieldEdges:
+  ent.EntityFieldEdges:
     properties:
-      item:
+      entity:
         allOf:
-        - $ref: '#/definitions/ent.Item'
-        description: Item holds the value of the item edge.
+        - $ref: '#/definitions/ent.Entity'
+        description: Entity holds the value of the entity edge.
+    type: object
+  ent.EntityType:
+    properties:
+      color:
+        description: Color holds the value of the "color" field.
+        type: string
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      description:
+        description: Description holds the value of the "description" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.EntityTypeEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the EntityTypeQuery when eager-loading is set.
+      icon:
+        description: Icon holds the value of the "icon" field.
+        type: string
+      id:
+        description: ID of the ent.
+        type: string
+      is_location:
+        description: IsLocation holds the value of the "is_location" field.
+        type: boolean
+      name:
+        description: Name holds the value of the "name" field.
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
+  ent.EntityTypeEdges:
+    properties:
+      entities:
+        description: Entities holds the value of the entities edge.
+        items:
+          $ref: '#/definitions/ent.Entity'
+        type: array
+      group:
+        allOf:
+        - $ref: '#/definitions/ent.Group'
+        description: Group holds the value of the group edge.
+    type: object
+  ent.Group:
+    properties:
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      currency:
+        description: Currency holds the value of the "currency" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.GroupEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the GroupQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: string
+      name:
+        description: Name holds the value of the "name" field.
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
+  ent.GroupEdges:
+    properties:
+      entities:
+        description: Entities holds the value of the entities edge.
+        items:
+          $ref: '#/definitions/ent.Entity'
+        type: array
+      entity_types:
+        description: EntityTypes holds the value of the entity_types edge.
+        items:
+          $ref: '#/definitions/ent.EntityType'
+        type: array
+      invitation_tokens:
+        description: InvitationTokens holds the value of the invitation_tokens edge.
+        items:
+          $ref: '#/definitions/ent.GroupInvitationToken'
+        type: array
+      labels:
+        description: Labels holds the value of the labels edge.
+        items:
+          $ref: '#/definitions/ent.Label'
+        type: array
+      notifiers:
+        description: Notifiers holds the value of the notifiers edge.
+        items:
+          $ref: '#/definitions/ent.Notifier'
+        type: array
+      users:
+        description: Users holds the value of the users edge.
+        items:
+          $ref: '#/definitions/ent.User'
+        type: array
+    type: object
+  ent.GroupInvitationToken:
+    properties:
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.GroupInvitationTokenEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the GroupInvitationTokenQuery when eager-loading is set.
+      expires_at:
+        description: ExpiresAt holds the value of the "expires_at" field.
+        type: string
+      id:
+        description: ID of the ent.
+        type: string
+      token:
+        description: Token holds the value of the "token" field.
+        items:
+          type: integer
+        type: array
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      uses:
+        description: Uses holds the value of the "uses" field.
+        type: integer
+    type: object
+  ent.GroupInvitationTokenEdges:
+    properties:
+      group:
+        allOf:
+        - $ref: '#/definitions/ent.Group'
+        description: Group holds the value of the group edge.
     type: object
   ent.Label:
     properties:
@@ -441,60 +494,15 @@ definitions:
     type: object
   ent.LabelEdges:
     properties:
-      group:
-        allOf:
-        - $ref: '#/definitions/ent.Group'
-        description: Group holds the value of the group edge.
-      items:
-        description: Items holds the value of the items edge.
+      entities:
+        description: Entities holds the value of the entities edge.
         items:
-          $ref: '#/definitions/ent.Item'
-        type: array
-    type: object
-  ent.Location:
-    properties:
-      created_at:
-        description: CreatedAt holds the value of the "created_at" field.
-        type: string
-      description:
-        description: Description holds the value of the "description" field.
-        type: string
-      edges:
-        allOf:
-        - $ref: '#/definitions/ent.LocationEdges'
-        description: |-
-          Edges holds the relations/edges for other nodes in the graph.
-          The values are being populated by the LocationQuery when eager-loading is set.
-      id:
-        description: ID of the ent.
-        type: string
-      name:
-        description: Name holds the value of the "name" field.
-        type: string
-      updated_at:
-        description: UpdatedAt holds the value of the "updated_at" field.
-        type: string
-    type: object
-  ent.LocationEdges:
-    properties:
-      children:
-        description: Children holds the value of the children edge.
-        items:
-          $ref: '#/definitions/ent.Location'
+          $ref: '#/definitions/ent.Entity'
         type: array
       group:
         allOf:
         - $ref: '#/definitions/ent.Group'
         description: Group holds the value of the group edge.
-      items:
-        description: Items holds the value of the items edge.
-        items:
-          $ref: '#/definitions/ent.Item'
-        type: array
-      parent:
-        allOf:
-        - $ref: '#/definitions/ent.Location'
-        description: Parent holds the value of the parent edge.
     type: object
   ent.MaintenanceEntry:
     properties:
@@ -516,11 +524,11 @@ definitions:
         description: |-
           Edges holds the relations/edges for other nodes in the graph.
           The values are being populated by the MaintenanceEntryQuery when eager-loading is set.
+      entity_id:
+        description: EntityID holds the value of the "entity_id" field.
+        type: string
       id:
         description: ID of the ent.
-        type: string
-      item_id:
-        description: ItemID holds the value of the "item_id" field.
         type: string
       name:
         description: Name holds the value of the "name" field.
@@ -534,10 +542,10 @@ definitions:
     type: object
   ent.MaintenanceEntryEdges:
     properties:
-      item:
+      entity:
         allOf:
-        - $ref: '#/definitions/ent.Item'
-        description: Item holds the value of the item edge.
+        - $ref: '#/definitions/ent.Entity'
+        description: Entity holds the value of the entity edge.
     type: object
   ent.Notifier:
     properties:
@@ -634,7 +642,7 @@ definitions:
           $ref: '#/definitions/ent.Notifier'
         type: array
     type: object
-  itemfield.Type:
+  entityfield.Type:
     enum:
     - text
     - number
@@ -1763,12 +1771,11 @@ paths:
             $ref: '#/definitions/repo.ItemSummary'
       security:
       - Bearer: []
-      summary: (Deprecated) Create Item
+      summary: Create Item
       tags:
       - Items
   /v1/items/{id}:
     delete:
-      deprecated: true
       parameters:
       - description: Item ID
         in: path
