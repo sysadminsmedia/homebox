@@ -35,7 +35,7 @@
       </Button>
     </div>
 
-    <Separator />
+    <Separator class="mt-4 sm:mt-0" />
 
     <ItemViewSelectable
       :items="products"
