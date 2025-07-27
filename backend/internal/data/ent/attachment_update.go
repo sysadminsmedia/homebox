@@ -92,15 +92,56 @@ func (au *AttachmentUpdate) SetNillablePath(s *string) *AttachmentUpdate {
 	return au
 }
 
+// SetMimeType sets the "mime_type" field.
+func (au *AttachmentUpdate) SetMimeType(s string) *AttachmentUpdate {
+	au.mutation.SetMimeType(s)
+	return au
+}
+
+// SetNillableMimeType sets the "mime_type" field if the given value is not nil.
+func (au *AttachmentUpdate) SetNillableMimeType(s *string) *AttachmentUpdate {
+	if s != nil {
+		au.SetMimeType(*s)
+	}
+	return au
+}
+
 // SetEntityID sets the "entity" edge to the Entity entity by ID.
 func (au *AttachmentUpdate) SetEntityID(id uuid.UUID) *AttachmentUpdate {
 	au.mutation.SetEntityID(id)
 	return au
 }
 
+// SetNillableEntityID sets the "entity" edge to the Entity entity by ID if the given value is not nil.
+func (au *AttachmentUpdate) SetNillableEntityID(id *uuid.UUID) *AttachmentUpdate {
+	if id != nil {
+		au = au.SetEntityID(*id)
+	}
+	return au
+}
+
 // SetEntity sets the "entity" edge to the Entity entity.
 func (au *AttachmentUpdate) SetEntity(e *Entity) *AttachmentUpdate {
 	return au.SetEntityID(e.ID)
+}
+
+// SetThumbnailID sets the "thumbnail" edge to the Attachment entity by ID.
+func (au *AttachmentUpdate) SetThumbnailID(id uuid.UUID) *AttachmentUpdate {
+	au.mutation.SetThumbnailID(id)
+	return au
+}
+
+// SetNillableThumbnailID sets the "thumbnail" edge to the Attachment entity by ID if the given value is not nil.
+func (au *AttachmentUpdate) SetNillableThumbnailID(id *uuid.UUID) *AttachmentUpdate {
+	if id != nil {
+		au = au.SetThumbnailID(*id)
+	}
+	return au
+}
+
+// SetThumbnail sets the "thumbnail" edge to the Attachment entity.
+func (au *AttachmentUpdate) SetThumbnail(a *Attachment) *AttachmentUpdate {
+	return au.SetThumbnailID(a.ID)
 }
 
 // Mutation returns the AttachmentMutation object of the builder.
@@ -111,6 +152,12 @@ func (au *AttachmentUpdate) Mutation() *AttachmentMutation {
 // ClearEntity clears the "entity" edge to the Entity entity.
 func (au *AttachmentUpdate) ClearEntity() *AttachmentUpdate {
 	au.mutation.ClearEntity()
+	return au
+}
+
+// ClearThumbnail clears the "thumbnail" edge to the Attachment entity.
+func (au *AttachmentUpdate) ClearThumbnail() *AttachmentUpdate {
+	au.mutation.ClearThumbnail()
 	return au
 }
 
@@ -157,9 +204,6 @@ func (au *AttachmentUpdate) check() error {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Attachment.type": %w`, err)}
 		}
 	}
-	if au.mutation.EntityCleared() && len(au.mutation.EntityIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Attachment.entity"`)
-	}
 	return nil
 }
 
@@ -190,6 +234,9 @@ func (au *AttachmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := au.mutation.Path(); ok {
 		_spec.SetField(attachment.FieldPath, field.TypeString, value)
 	}
+	if value, ok := au.mutation.MimeType(); ok {
+		_spec.SetField(attachment.FieldMimeType, field.TypeString, value)
+	}
 	if au.mutation.EntityCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -212,6 +259,35 @@ func (au *AttachmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if au.mutation.ThumbnailCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   attachment.ThumbnailTable,
+			Columns: []string{attachment.ThumbnailColumn},
+			Bidi:    true,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attachment.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.ThumbnailIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   attachment.ThumbnailTable,
+			Columns: []string{attachment.ThumbnailColumn},
+			Bidi:    true,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attachment.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -301,15 +377,56 @@ func (auo *AttachmentUpdateOne) SetNillablePath(s *string) *AttachmentUpdateOne 
 	return auo
 }
 
+// SetMimeType sets the "mime_type" field.
+func (auo *AttachmentUpdateOne) SetMimeType(s string) *AttachmentUpdateOne {
+	auo.mutation.SetMimeType(s)
+	return auo
+}
+
+// SetNillableMimeType sets the "mime_type" field if the given value is not nil.
+func (auo *AttachmentUpdateOne) SetNillableMimeType(s *string) *AttachmentUpdateOne {
+	if s != nil {
+		auo.SetMimeType(*s)
+	}
+	return auo
+}
+
 // SetEntityID sets the "entity" edge to the Entity entity by ID.
 func (auo *AttachmentUpdateOne) SetEntityID(id uuid.UUID) *AttachmentUpdateOne {
 	auo.mutation.SetEntityID(id)
 	return auo
 }
 
+// SetNillableEntityID sets the "entity" edge to the Entity entity by ID if the given value is not nil.
+func (auo *AttachmentUpdateOne) SetNillableEntityID(id *uuid.UUID) *AttachmentUpdateOne {
+	if id != nil {
+		auo = auo.SetEntityID(*id)
+	}
+	return auo
+}
+
 // SetEntity sets the "entity" edge to the Entity entity.
 func (auo *AttachmentUpdateOne) SetEntity(e *Entity) *AttachmentUpdateOne {
 	return auo.SetEntityID(e.ID)
+}
+
+// SetThumbnailID sets the "thumbnail" edge to the Attachment entity by ID.
+func (auo *AttachmentUpdateOne) SetThumbnailID(id uuid.UUID) *AttachmentUpdateOne {
+	auo.mutation.SetThumbnailID(id)
+	return auo
+}
+
+// SetNillableThumbnailID sets the "thumbnail" edge to the Attachment entity by ID if the given value is not nil.
+func (auo *AttachmentUpdateOne) SetNillableThumbnailID(id *uuid.UUID) *AttachmentUpdateOne {
+	if id != nil {
+		auo = auo.SetThumbnailID(*id)
+	}
+	return auo
+}
+
+// SetThumbnail sets the "thumbnail" edge to the Attachment entity.
+func (auo *AttachmentUpdateOne) SetThumbnail(a *Attachment) *AttachmentUpdateOne {
+	return auo.SetThumbnailID(a.ID)
 }
 
 // Mutation returns the AttachmentMutation object of the builder.
@@ -320,6 +437,12 @@ func (auo *AttachmentUpdateOne) Mutation() *AttachmentMutation {
 // ClearEntity clears the "entity" edge to the Entity entity.
 func (auo *AttachmentUpdateOne) ClearEntity() *AttachmentUpdateOne {
 	auo.mutation.ClearEntity()
+	return auo
+}
+
+// ClearThumbnail clears the "thumbnail" edge to the Attachment entity.
+func (auo *AttachmentUpdateOne) ClearThumbnail() *AttachmentUpdateOne {
+	auo.mutation.ClearThumbnail()
 	return auo
 }
 
@@ -379,9 +502,6 @@ func (auo *AttachmentUpdateOne) check() error {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Attachment.type": %w`, err)}
 		}
 	}
-	if auo.mutation.EntityCleared() && len(auo.mutation.EntityIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Attachment.entity"`)
-	}
 	return nil
 }
 
@@ -429,6 +549,9 @@ func (auo *AttachmentUpdateOne) sqlSave(ctx context.Context) (_node *Attachment,
 	if value, ok := auo.mutation.Path(); ok {
 		_spec.SetField(attachment.FieldPath, field.TypeString, value)
 	}
+	if value, ok := auo.mutation.MimeType(); ok {
+		_spec.SetField(attachment.FieldMimeType, field.TypeString, value)
+	}
 	if auo.mutation.EntityCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -451,6 +574,35 @@ func (auo *AttachmentUpdateOne) sqlSave(ctx context.Context) (_node *Attachment,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if auo.mutation.ThumbnailCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   attachment.ThumbnailTable,
+			Columns: []string{attachment.ThumbnailColumn},
+			Bidi:    true,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attachment.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.ThumbnailIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   attachment.ThumbnailTable,
+			Columns: []string{attachment.ThumbnailColumn},
+			Bidi:    true,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(attachment.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

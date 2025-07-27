@@ -11,7 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 )
 
 // Attachment is the model entity for the Attachment schema.
@@ -37,24 +37,19 @@ type Attachment struct {
 	// The values are being populated by the AttachmentQuery when eager-loading is set.
 	Edges                AttachmentEdges `json:"edges"`
 	attachment_thumbnail *uuid.UUID
-	item_attachments     *uuid.UUID
+	entity_attachments   *uuid.UUID
 	selectValues         sql.SelectValues
-	Edges              AttachmentEdges `json:"edges"`
-	entity_attachments *uuid.UUID
-	selectValues       sql.SelectValues
 }
 
 // AttachmentEdges holds the relations/edges for other nodes in the graph.
 type AttachmentEdges struct {
 	// Entity holds the value of the entity edge.
 	Entity *Entity `json:"entity,omitempty"`
-	// Item holds the value of the item edge.
-	Item *Item `json:"item,omitempty"`
 	// Thumbnail holds the value of the thumbnail edge.
 	Thumbnail *Attachment `json:"thumbnail,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // EntityOrErr returns the Entity value or an error if the edge
@@ -86,7 +81,7 @@ func (*Attachment) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case attachment.FieldPrimary:
 			values[i] = new(sql.NullBool)
-		case attachment.FieldType, attachment.FieldTitle, attachment.FieldPath:
+		case attachment.FieldType, attachment.FieldTitle, attachment.FieldPath, attachment.FieldMimeType:
 			values[i] = new(sql.NullString)
 		case attachment.FieldCreatedAt, attachment.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -94,8 +89,7 @@ func (*Attachment) scanValues(columns []string) ([]any, error) {
 			values[i] = new(uuid.UUID)
 		case attachment.ForeignKeys[0]: // attachment_thumbnail
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
-		case attachment.ForeignKeys[1]: // item_attachments
-		case attachment.ForeignKeys[0]: // entity_attachments
+		case attachment.ForeignKeys[1]: // entity_attachments
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
@@ -169,7 +163,6 @@ func (a *Attachment) assignValues(columns []string, values []any) error {
 			}
 		case attachment.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
-				return fmt.Errorf("unexpected type %T for field item_attachments", values[i])
 				return fmt.Errorf("unexpected type %T for field entity_attachments", values[i])
 			} else if value.Valid {
 				a.entity_attachments = new(uuid.UUID)

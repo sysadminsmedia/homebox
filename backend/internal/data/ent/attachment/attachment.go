@@ -28,8 +28,12 @@ const (
 	FieldTitle = "title"
 	// FieldPath holds the string denoting the path field in the database.
 	FieldPath = "path"
+	// FieldMimeType holds the string denoting the mime_type field in the database.
+	FieldMimeType = "mime_type"
 	// EdgeEntity holds the string denoting the entity edge name in mutations.
 	EdgeEntity = "entity"
+	// EdgeThumbnail holds the string denoting the thumbnail edge name in mutations.
+	EdgeThumbnail = "thumbnail"
 	// Table holds the table name of the attachment in the database.
 	Table = "attachments"
 	// EntityTable is the table that holds the entity relation/edge.
@@ -39,6 +43,10 @@ const (
 	EntityInverseTable = "entities"
 	// EntityColumn is the table column denoting the entity relation/edge.
 	EntityColumn = "entity_attachments"
+	// ThumbnailTable is the table that holds the thumbnail relation/edge.
+	ThumbnailTable = "attachments"
+	// ThumbnailColumn is the table column denoting the thumbnail relation/edge.
+	ThumbnailColumn = "attachment_thumbnail"
 )
 
 // Columns holds all SQL columns for attachment fields.
@@ -50,11 +58,13 @@ var Columns = []string{
 	FieldPrimary,
 	FieldTitle,
 	FieldPath,
+	FieldMimeType,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "attachments"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
+	"attachment_thumbnail",
 	"entity_attachments",
 }
 
@@ -86,6 +96,8 @@ var (
 	DefaultTitle string
 	// DefaultPath holds the default value on creation for the "path" field.
 	DefaultPath string
+	// DefaultMimeType holds the default value on creation for the "mime_type" field.
+	DefaultMimeType string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
@@ -103,6 +115,7 @@ const (
 	TypeWarranty   Type = "warranty"
 	TypeAttachment Type = "attachment"
 	TypeReceipt    Type = "receipt"
+	TypeThumbnail  Type = "thumbnail"
 )
 
 func (_type Type) String() string {
@@ -112,7 +125,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypePhoto, TypeManual, TypeWarranty, TypeAttachment, TypeReceipt:
+	case TypePhoto, TypeManual, TypeWarranty, TypeAttachment, TypeReceipt, TypeThumbnail:
 		return nil
 	default:
 		return fmt.Errorf("attachment: invalid enum value for type field: %q", _type)
@@ -157,10 +170,22 @@ func ByPath(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPath, opts...).ToFunc()
 }
 
+// ByMimeType orders the results by the mime_type field.
+func ByMimeType(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMimeType, opts...).ToFunc()
+}
+
 // ByEntityField orders the results by entity field.
 func ByEntityField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
 		sqlgraph.OrderByNeighborTerms(s, newEntityStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByThumbnailField orders the results by thumbnail field.
+func ByThumbnailField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newThumbnailStep(), sql.OrderByField(field, opts...))
 	}
 }
 func newEntityStep() *sqlgraph.Step {
@@ -168,5 +193,12 @@ func newEntityStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(EntityInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, EntityTable, EntityColumn),
+	)
+}
+func newThumbnailStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, ThumbnailTable, ThumbnailColumn),
 	)
 }

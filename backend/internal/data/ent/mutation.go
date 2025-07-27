@@ -53,21 +53,24 @@ const (
 // AttachmentMutation represents an operation that mutates the Attachment nodes in the graph.
 type AttachmentMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *uuid.UUID
-	created_at    *time.Time
-	updated_at    *time.Time
-	_type         *attachment.Type
-	primary       *bool
-	title         *string
-	_path         *string
-	clearedFields map[string]struct{}
-	entity        *uuid.UUID
-	clearedentity bool
-	done          bool
-	oldValue      func(context.Context) (*Attachment, error)
-	predicates    []predicate.Attachment
+	op               Op
+	typ              string
+	id               *uuid.UUID
+	created_at       *time.Time
+	updated_at       *time.Time
+	_type            *attachment.Type
+	primary          *bool
+	title            *string
+	_path            *string
+	mime_type        *string
+	clearedFields    map[string]struct{}
+	entity           *uuid.UUID
+	clearedentity    bool
+	thumbnail        *uuid.UUID
+	clearedthumbnail bool
+	done             bool
+	oldValue         func(context.Context) (*Attachment, error)
+	predicates       []predicate.Attachment
 }
 
 var _ ent.Mutation = (*AttachmentMutation)(nil)
@@ -390,6 +393,42 @@ func (m *AttachmentMutation) ResetPath() {
 	m._path = nil
 }
 
+// SetMimeType sets the "mime_type" field.
+func (m *AttachmentMutation) SetMimeType(s string) {
+	m.mime_type = &s
+}
+
+// MimeType returns the value of the "mime_type" field in the mutation.
+func (m *AttachmentMutation) MimeType() (r string, exists bool) {
+	v := m.mime_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMimeType returns the old "mime_type" field's value of the Attachment entity.
+// If the Attachment object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AttachmentMutation) OldMimeType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMimeType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMimeType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMimeType: %w", err)
+	}
+	return oldValue.MimeType, nil
+}
+
+// ResetMimeType resets all changes to the "mime_type" field.
+func (m *AttachmentMutation) ResetMimeType() {
+	m.mime_type = nil
+}
+
 // SetEntityID sets the "entity" edge to the Entity entity by id.
 func (m *AttachmentMutation) SetEntityID(id uuid.UUID) {
 	m.entity = &id
@@ -429,6 +468,45 @@ func (m *AttachmentMutation) ResetEntity() {
 	m.clearedentity = false
 }
 
+// SetThumbnailID sets the "thumbnail" edge to the Attachment entity by id.
+func (m *AttachmentMutation) SetThumbnailID(id uuid.UUID) {
+	m.thumbnail = &id
+}
+
+// ClearThumbnail clears the "thumbnail" edge to the Attachment entity.
+func (m *AttachmentMutation) ClearThumbnail() {
+	m.clearedthumbnail = true
+}
+
+// ThumbnailCleared reports if the "thumbnail" edge to the Attachment entity was cleared.
+func (m *AttachmentMutation) ThumbnailCleared() bool {
+	return m.clearedthumbnail
+}
+
+// ThumbnailID returns the "thumbnail" edge ID in the mutation.
+func (m *AttachmentMutation) ThumbnailID() (id uuid.UUID, exists bool) {
+	if m.thumbnail != nil {
+		return *m.thumbnail, true
+	}
+	return
+}
+
+// ThumbnailIDs returns the "thumbnail" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ThumbnailID instead. It exists only for internal usage by the builders.
+func (m *AttachmentMutation) ThumbnailIDs() (ids []uuid.UUID) {
+	if id := m.thumbnail; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetThumbnail resets all changes to the "thumbnail" edge.
+func (m *AttachmentMutation) ResetThumbnail() {
+	m.thumbnail = nil
+	m.clearedthumbnail = false
+}
+
 // Where appends a list predicates to the AttachmentMutation builder.
 func (m *AttachmentMutation) Where(ps ...predicate.Attachment) {
 	m.predicates = append(m.predicates, ps...)
@@ -463,7 +541,7 @@ func (m *AttachmentMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AttachmentMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.created_at != nil {
 		fields = append(fields, attachment.FieldCreatedAt)
 	}
@@ -481,6 +559,9 @@ func (m *AttachmentMutation) Fields() []string {
 	}
 	if m._path != nil {
 		fields = append(fields, attachment.FieldPath)
+	}
+	if m.mime_type != nil {
+		fields = append(fields, attachment.FieldMimeType)
 	}
 	return fields
 }
@@ -502,6 +583,8 @@ func (m *AttachmentMutation) Field(name string) (ent.Value, bool) {
 		return m.Title()
 	case attachment.FieldPath:
 		return m.Path()
+	case attachment.FieldMimeType:
+		return m.MimeType()
 	}
 	return nil, false
 }
@@ -523,6 +606,8 @@ func (m *AttachmentMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldTitle(ctx)
 	case attachment.FieldPath:
 		return m.OldPath(ctx)
+	case attachment.FieldMimeType:
+		return m.OldMimeType(ctx)
 	}
 	return nil, fmt.Errorf("unknown Attachment field %s", name)
 }
@@ -573,6 +658,13 @@ func (m *AttachmentMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPath(v)
+		return nil
+	case attachment.FieldMimeType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMimeType(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Attachment field %s", name)
@@ -641,15 +733,21 @@ func (m *AttachmentMutation) ResetField(name string) error {
 	case attachment.FieldPath:
 		m.ResetPath()
 		return nil
+	case attachment.FieldMimeType:
+		m.ResetMimeType()
+		return nil
 	}
 	return fmt.Errorf("unknown Attachment field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *AttachmentMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.entity != nil {
 		edges = append(edges, attachment.EdgeEntity)
+	}
+	if m.thumbnail != nil {
+		edges = append(edges, attachment.EdgeThumbnail)
 	}
 	return edges
 }
@@ -662,13 +760,17 @@ func (m *AttachmentMutation) AddedIDs(name string) []ent.Value {
 		if id := m.entity; id != nil {
 			return []ent.Value{*id}
 		}
+	case attachment.EdgeThumbnail:
+		if id := m.thumbnail; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *AttachmentMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	return edges
 }
 
@@ -680,9 +782,12 @@ func (m *AttachmentMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *AttachmentMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedentity {
 		edges = append(edges, attachment.EdgeEntity)
+	}
+	if m.clearedthumbnail {
+		edges = append(edges, attachment.EdgeThumbnail)
 	}
 	return edges
 }
@@ -693,6 +798,8 @@ func (m *AttachmentMutation) EdgeCleared(name string) bool {
 	switch name {
 	case attachment.EdgeEntity:
 		return m.clearedentity
+	case attachment.EdgeThumbnail:
+		return m.clearedthumbnail
 	}
 	return false
 }
@@ -704,6 +811,9 @@ func (m *AttachmentMutation) ClearEdge(name string) error {
 	case attachment.EdgeEntity:
 		m.ClearEntity()
 		return nil
+	case attachment.EdgeThumbnail:
+		m.ClearThumbnail()
+		return nil
 	}
 	return fmt.Errorf("unknown Attachment unique edge %s", name)
 }
@@ -714,6 +824,9 @@ func (m *AttachmentMutation) ResetEdge(name string) error {
 	switch name {
 	case attachment.EdgeEntity:
 		m.ResetEntity()
+		return nil
+	case attachment.EdgeThumbnail:
+		m.ResetThumbnail()
 		return nil
 	}
 	return fmt.Errorf("unknown Attachment edge %s", name)
