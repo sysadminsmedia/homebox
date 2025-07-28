@@ -9,12 +9,20 @@
       class="w-full gap-0 px-0"
       :display-value="v => props.labels.find(l => l.id === v)?.name ?? 'Loading...'"
     >
-      <div class="flex flex-wrap items-center gap-2 px-3">
-        <TagsInputItem v-for="item in modelValue" :key="item" :value="item">
+      <div class="flex flex-wrap items-center gap-2 px-3" style="overflow: hidden;">
+        <TagsInputItem 
+          v-for="item in modelValue"
+          :key="item"
+          :value="item"
+          :style="{
+            overflow: 'hidden',
+            'text-wrap': 'nowrap',
+          }"
+        >
           <span
-            v-if="shortenedLabels.find(l => l.id === item)?.color"
+            v-if="props.labels.find(l => l.id === item)?.color"
             class="ml-2 inline-block size-4 rounded-full"
-            :style="{ backgroundColor: shortenedLabels.find(l => l.id === item)?.color }"
+            :style="{ backgroundColor: props.labels.find(l => l.id === item)?.color }"
           />
           <TagsInputItemText />
           <TagsInputItemDelete />
@@ -62,8 +70,8 @@
                 >
                   <span
                     class="mr-2 inline-block size-4 rounded-full align-middle"
-                    :class="{ border: shortenedLabels.find(l => l.id === label.value)?.color }"
-                    :style="{ backgroundColor: shortenedLabels.find(l => l.id === label.value)?.color }"
+                    :class="{ border: props.labels.find(l => l.id === label.value)?.color }"
+                    :style="{ backgroundColor: props.labels.find(l => l.id === label.value)?.color }"
                   />
                   {{ label.label }}
                 </CommandItem>
