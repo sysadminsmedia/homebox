@@ -40,6 +40,8 @@
 
   function setViewPreference(view: ViewType) {
     preferences.value.itemDisplayView = view;
+    selectedCard.value = -1;
+    emits("update:selectedItem", null);
   }
 </script>
 
