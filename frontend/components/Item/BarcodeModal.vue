@@ -48,7 +48,7 @@
       @update:selected-item="onSelectedItemChange"
     />
 
-    <DialogFooter>
+    <DialogFooter class="mt-4 sm:mt-0">
       <Button type="import" :disabled="selectedItem === null" @click="createItem"> Import selected </Button>
     </DialogFooter>
   </BaseModal>
