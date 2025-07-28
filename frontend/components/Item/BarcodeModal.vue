@@ -18,6 +18,8 @@
         :disabled="searching"
         class="w-[30%]"
         :label="$t('components.item.product_import.barcode')"
+        inputmode="numeric"
+        pattern="[0-9]*"
         @keyup.enter="retrieveProductInfo(barcode)"
       />
       <Button
