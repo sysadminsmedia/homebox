@@ -2,7 +2,8 @@
   <BaseModal
     :dialog-id="DialogID.ProductImport"
     :title="$t('components.item.product_import.title')"
-    >
+    :display-shortcut="false"
+  >
     <div
       v-if="errorMessage"
       class="flex items-center gap-2 rounded-md border border-destructive bg-destructive/10 p-4 text-destructive"
