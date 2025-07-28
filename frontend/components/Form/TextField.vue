@@ -19,6 +19,8 @@
       v-model="value"
       :placeholder="placeholder"
       :type="type"
+      :inputmode="inputmode"
+      :pattern="pattern"
       :required="required"
       class="w-full"
     />
@@ -43,14 +45,18 @@
       :placeholder="placeholder"
       :type="type"
       :required="required"
+      :inputmode="inputmode"
+      :pattern="pattern"
       class="col-span-3 mt-2 w-full"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
+  import type { HTMLAttributes } from "vue";
   import { Label } from "~/components/ui/label";
   import { Input } from "~/components/ui/input";
+
   const props = defineProps({
     label: {
       type: String,
@@ -75,6 +81,16 @@
     inline: {
       type: Boolean,
       default: false,
+    },
+    inputmode: {
+      type: String as PropType<HTMLAttributes["inputmode"]>,
+      default: undefined,
+      required: false,
+    },
+    pattern: {
+      type: String,
+      default: undefined,
+      required: false,
     },
     placeholder: {
       type: String,
