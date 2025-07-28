@@ -44,6 +44,7 @@
       :items="products"
       :item-type="'barcodeproduct'"
       :selection-mode="true"
+      :disable-controls="true"
       @update:selected-item="onSelectedItemChange"
     />
 
