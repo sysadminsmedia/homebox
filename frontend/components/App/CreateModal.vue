@@ -10,7 +10,7 @@
 
       <slot />
 
-      <DialogFooter>
+      <DialogFooter v-if="displayShortcut">
         <i18n-t
           keypath="components.app.create_modal.createAndAddAnother"
           tag="span"
@@ -51,8 +51,14 @@
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
-  defineProps<{
-    dialogId: DialogID;
-    title: string;
-  }>();
+  withDefaults(
+    defineProps<{
+      dialogId: DialogID;
+      title: string;
+      displayShortcut?: boolean;
+    }>(),
+    {
+      displayShortcut: true,
+    }
+  );
 </script>
