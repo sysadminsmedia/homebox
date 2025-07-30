@@ -100,6 +100,8 @@
                 "item_photo": "Artikel Foto",
                 "item_quantity": "Item aantal",
                 "parent_item": "Hoofd Item",
+                "product_tooltip_input_barcode": "Vul automatisch in met een handmatig verstrekte streepjescode",
+                "product_tooltip_scan_barcode": "Vul automatisch in met een streepjescode van 📷",
                 "rotate_photo": "Foto roteren",
                 "set_as_primary_photo": "Instellen als { isPrimary, select, true {non-} false {} other {}}primaire foto",
                 "title": "Maak object",
@@ -119,6 +121,15 @@
                 },
                 "upload_photos": "Foto’s toevoegen",
                 "uploaded": "Geüploade foto"
+            },
+            "product_import": {
+                "barcode": "Barcode van het product",
+                "db_source": "DB-bron",
+                "error_exception": "Er is een uitzondering opgetreden tijdens het ophalen van de streepjescode van het item: ",
+                "error_invalid_barcode": "Ongeldige barcode opgegeven",
+                "error_not_found": "Geen product gevonden met opgegeven barcode.",
+                "search_item": "Zoek product",
+                "title": "Importeer product"
             },
             "selector": {
                 "no_results": "Geen resultaten gevonden",
@@ -183,6 +194,9 @@
             "no_results": "Geen resultaten gevonden.",
             "shortcut_hint": "Gebruik de numerieke toetsen om snel een actie te selecteren."
         }
+    },
+    "errors": {
+        "api_failure": "Backend API call mislukt: "
     },
     "global": {
         "add": "Toevoegen",
@@ -559,6 +573,8 @@
         }
     },
     "scanner": {
+        "barcode_detected_message": "productbarcode gedetecteerd",
+        "barcode_fetch_data": "Productgegevens ophalen",
         "error": "Tijdens het scannen is er een fout opgetreden",
         "invalid_url": "Ongeldige streepjescode",
         "no_sources": "Geen videobronnen beschikbaar",
