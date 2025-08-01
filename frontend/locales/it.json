@@ -24,6 +24,13 @@
                 "new_version_available_link": "Clicca qui per visualizzare le note di rilascio"
             }
         },
+        "color_selector": {
+            "clear": "Pulisci il colore",
+            "color": "Colore",
+            "no_color": "Nessun colore",
+            "no_color_selected": "Nessun colore selezionato",
+            "randomize": "Colore casuale"
+        },
         "form": {
             "password": {
                 "toggle_show": "Attiva/disattiva visualizzazione password"
@@ -113,10 +120,15 @@
                 "upload_photos": "Carica Foto",
                 "uploaded": "Foto caricata"
             },
+            "product_import": {
+                "barcode": "Codice a barre del prodotto",
+                "search_item": "Cerca prodotto",
+                "title": "Importa prodotto"
+            },
             "selector": {
                 "no_results": "Nessun risultato trovato",
                 "placeholder": "Seleziona…",
-                "search_placeholder": "Digita per cercare…"
+                "search_placeholder": "Scrivi per cercare…"
             },
             "view": {
                 "selectable": {
@@ -280,7 +292,7 @@
             }
         },
         "edit_details": "Modifica dettagli",
-        "field_selector": "Campo Selezione",
+        "field_selector": "Selezione in base ai campi",
         "field_value": "Campo valore",
         "first": "Primo",
         "include_archive": "Includi Articoli Archiviati",
@@ -311,7 +323,7 @@
         "purchase_date": "Data di acquisto",
         "purchase_details": "Dettagli dell'acquisto",
         "purchase_price": "Prezzo di acquisto",
-        "purchased_from": "Acqistato da",
+        "purchased_from": "Acquistato da",
         "quantity": "Quantità",
         "query_id": "ID dell'Asset in Ricerca: { id }",
         "receipt": "Ricevuta",
@@ -321,7 +333,7 @@
         "select_field": "Seleziona un campo",
         "serial_number": "Numero seriale",
         "show_advanced_view_options": "Mostra opzioni di visualizzazione avanzate",
-        "sold_at": "Venduto su",
+        "sold_at": "Venduto il",
         "sold_details": "Dettagli di vendita",
         "sold_price": "Prezzo di vendita",
         "sold_to": "Venduto a",
@@ -334,7 +346,7 @@
         "updated_at": "Aggiornato Il",
         "warranty": "Garanzia",
         "warranty_details": "Dettagli garanzia",
-        "warranty_expires": "Garanzia scaduta"
+        "warranty_expires": "La garanzia scade il"
     },
     "labels": {
         "no_results": "Nessuna etichetta trovata",
