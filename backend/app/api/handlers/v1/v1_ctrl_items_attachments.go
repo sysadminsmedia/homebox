@@ -45,6 +45,7 @@ type (
 //	@Failure	422		{object}	validate.ErrorResponse
 //	@Router		/v1/items/{id}/attachments [POST]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		err := r.ParseMultipartForm(ctrl.maxUploadSize << 20)
@@ -130,6 +131,7 @@ func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 //	@Success	200				{object}	ItemAttachmentToken
 //	@Router		/v1/items/{id}/attachments/{attachment_id} [GET]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleItemAttachmentGet() errchain.HandlerFunc {
 	return ctrl.handleItemAttachmentsHandler
 }
@@ -143,6 +145,7 @@ func (ctrl *V1Controller) HandleItemAttachmentGet() errchain.HandlerFunc {
 //	@Success	204
 //	@Router		/v1/items/{id}/attachments/{attachment_id} [DELETE]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleItemAttachmentDelete() errchain.HandlerFunc {
 	return ctrl.handleItemAttachmentsHandler
 }
@@ -157,6 +160,7 @@ func (ctrl *V1Controller) HandleItemAttachmentDelete() errchain.HandlerFunc {
 //	@Success	200				{object}	repo.ItemOut
 //	@Router		/v1/items/{id}/attachments/{attachment_id} [PUT]
 //	@Security	Bearer
+//	@Deprecated
 func (ctrl *V1Controller) HandleItemAttachmentUpdate() errchain.HandlerFunc {
 	return ctrl.handleItemAttachmentsHandler
 }

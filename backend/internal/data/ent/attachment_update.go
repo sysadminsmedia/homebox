@@ -13,7 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 )
 
@@ -106,23 +106,23 @@ func (au *AttachmentUpdate) SetNillableMimeType(s *string) *AttachmentUpdate {
 	return au
 }
 
-// SetItemID sets the "item" edge to the Item entity by ID.
-func (au *AttachmentUpdate) SetItemID(id uuid.UUID) *AttachmentUpdate {
-	au.mutation.SetItemID(id)
+// SetEntityID sets the "entity" edge to the Entity entity by ID.
+func (au *AttachmentUpdate) SetEntityID(id uuid.UUID) *AttachmentUpdate {
+	au.mutation.SetEntityID(id)
 	return au
 }
 
-// SetNillableItemID sets the "item" edge to the Item entity by ID if the given value is not nil.
-func (au *AttachmentUpdate) SetNillableItemID(id *uuid.UUID) *AttachmentUpdate {
+// SetNillableEntityID sets the "entity" edge to the Entity entity by ID if the given value is not nil.
+func (au *AttachmentUpdate) SetNillableEntityID(id *uuid.UUID) *AttachmentUpdate {
 	if id != nil {
-		au = au.SetItemID(*id)
+		au = au.SetEntityID(*id)
 	}
 	return au
 }
 
-// SetItem sets the "item" edge to the Item entity.
-func (au *AttachmentUpdate) SetItem(i *Item) *AttachmentUpdate {
-	return au.SetItemID(i.ID)
+// SetEntity sets the "entity" edge to the Entity entity.
+func (au *AttachmentUpdate) SetEntity(e *Entity) *AttachmentUpdate {
+	return au.SetEntityID(e.ID)
 }
 
 // SetThumbnailID sets the "thumbnail" edge to the Attachment entity by ID.
@@ -149,9 +149,9 @@ func (au *AttachmentUpdate) Mutation() *AttachmentMutation {
 	return au.mutation
 }
 
-// ClearItem clears the "item" edge to the Item entity.
-func (au *AttachmentUpdate) ClearItem() *AttachmentUpdate {
-	au.mutation.ClearItem()
+// ClearEntity clears the "entity" edge to the Entity entity.
+func (au *AttachmentUpdate) ClearEntity() *AttachmentUpdate {
+	au.mutation.ClearEntity()
 	return au
 }
 
@@ -237,28 +237,28 @@ func (au *AttachmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := au.mutation.MimeType(); ok {
 		_spec.SetField(attachment.FieldMimeType, field.TypeString, value)
 	}
-	if au.mutation.ItemCleared() {
+	if au.mutation.EntityCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   attachment.ItemTable,
-			Columns: []string{attachment.ItemColumn},
+			Table:   attachment.EntityTable,
+			Columns: []string{attachment.EntityColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := au.mutation.ItemIDs(); len(nodes) > 0 {
+	if nodes := au.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   attachment.ItemTable,
-			Columns: []string{attachment.ItemColumn},
+			Table:   attachment.EntityTable,
+			Columns: []string{attachment.EntityColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -391,23 +391,23 @@ func (auo *AttachmentUpdateOne) SetNillableMimeType(s *string) *AttachmentUpdate
 	return auo
 }
 
-// SetItemID sets the "item" edge to the Item entity by ID.
-func (auo *AttachmentUpdateOne) SetItemID(id uuid.UUID) *AttachmentUpdateOne {
-	auo.mutation.SetItemID(id)
+// SetEntityID sets the "entity" edge to the Entity entity by ID.
+func (auo *AttachmentUpdateOne) SetEntityID(id uuid.UUID) *AttachmentUpdateOne {
+	auo.mutation.SetEntityID(id)
 	return auo
 }
 
-// SetNillableItemID sets the "item" edge to the Item entity by ID if the given value is not nil.
-func (auo *AttachmentUpdateOne) SetNillableItemID(id *uuid.UUID) *AttachmentUpdateOne {
+// SetNillableEntityID sets the "entity" edge to the Entity entity by ID if the given value is not nil.
+func (auo *AttachmentUpdateOne) SetNillableEntityID(id *uuid.UUID) *AttachmentUpdateOne {
 	if id != nil {
-		auo = auo.SetItemID(*id)
+		auo = auo.SetEntityID(*id)
 	}
 	return auo
 }
 
-// SetItem sets the "item" edge to the Item entity.
-func (auo *AttachmentUpdateOne) SetItem(i *Item) *AttachmentUpdateOne {
-	return auo.SetItemID(i.ID)
+// SetEntity sets the "entity" edge to the Entity entity.
+func (auo *AttachmentUpdateOne) SetEntity(e *Entity) *AttachmentUpdateOne {
+	return auo.SetEntityID(e.ID)
 }
 
 // SetThumbnailID sets the "thumbnail" edge to the Attachment entity by ID.
@@ -434,9 +434,9 @@ func (auo *AttachmentUpdateOne) Mutation() *AttachmentMutation {
 	return auo.mutation
 }
 
-// ClearItem clears the "item" edge to the Item entity.
-func (auo *AttachmentUpdateOne) ClearItem() *AttachmentUpdateOne {
-	auo.mutation.ClearItem()
+// ClearEntity clears the "entity" edge to the Entity entity.
+func (auo *AttachmentUpdateOne) ClearEntity() *AttachmentUpdateOne {
+	auo.mutation.ClearEntity()
 	return auo
 }
 
@@ -552,28 +552,28 @@ func (auo *AttachmentUpdateOne) sqlSave(ctx context.Context) (_node *Attachment,
 	if value, ok := auo.mutation.MimeType(); ok {
 		_spec.SetField(attachment.FieldMimeType, field.TypeString, value)
 	}
-	if auo.mutation.ItemCleared() {
+	if auo.mutation.EntityCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   attachment.ItemTable,
-			Columns: []string{attachment.ItemColumn},
+			Table:   attachment.EntityTable,
+			Columns: []string{attachment.EntityColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := auo.mutation.ItemIDs(); len(nodes) > 0 {
+	if nodes := auo.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   attachment.ItemTable,
-			Columns: []string{attachment.ItemColumn},
+			Table:   attachment.EntityTable,
+			Columns: []string{attachment.EntityColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

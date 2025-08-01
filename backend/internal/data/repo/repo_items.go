@@ -3,17 +3,17 @@ package repo
 import (
 	"context"
 	"fmt"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemfield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 )
@@ -177,10 +177,10 @@ type (
 
 var mapItemsSummaryErr = mapTEachErrFunc(mapItemSummary)
 
-func mapItemSummary(item *ent.Item) ItemSummary {
+func mapItemSummary(item *ent.Entity) ItemSummary {
 	var location *LocationSummary
 	if item.Edges.Location != nil {
-		loc := mapLocationSummary(item.Edges.Location)
+		loc := mapLocationSummary(item.QueryLocation().Where(entity.HasTypeWith(entitytype.IsLocationEQ(true))).FirstX(context.Background()))
 		location = &loc
 	}
 
@@ -237,7 +237,7 @@ var (
 	mapItemsOutErr = mapTEachErrFunc(mapItemOut)
 )
 
-func mapFields(fields []*ent.ItemField) []ItemField {
+func mapFields(fields []*ent.EntityField) []ItemField {
 	result := make([]ItemField, len(fields))
 	for i, f := range fields {
 		result[i] = ItemField{
@@ -253,7 +253,7 @@ func mapFields(fields []*ent.ItemField) []ItemField {
 	return result
 }
 
-func mapItemOut(item *ent.Item) ItemOut {
+func mapItemOut(item *ent.Entity) ItemOut {
 	var attachments []ItemAttachment
 	if item.Edges.Attachments != nil {
 		attachments = mapEach(item.Edges.Attachments, ToItemAttachment)
@@ -277,7 +277,7 @@ func mapItemOut(item *ent.Item) ItemOut {
 		LifetimeWarranty:        item.LifetimeWarranty,
 		WarrantyExpires:         types.DateFromTime(item.WarrantyExpires),
 		WarrantyDetails:         item.WarrantyDetails,
-		SyncChildItemsLocations: item.SyncChildItemsLocations,
+		SyncChildItemsLocations: item.SyncChildEntitiesLocations,
 
 		// Identification
 		SerialNumber: item.SerialNumber,
@@ -307,8 +307,8 @@ func (e *ItemsRepository) publishMutationEvent(gid uuid.UUID) {
 	}
 }
 
-func (e *ItemsRepository) getOne(ctx context.Context, where ...predicate.Item) (ItemOut, error) {
-	q := e.db.Item.Query().Where(where...)
+func (e *ItemsRepository) getOne(ctx context.Context, where ...predicate.Entity) (ItemOut, error) {
+	q := e.db.Entity.Query().Where(where...).Where(entity.HasTypeWith(entitytype.IsLocationEQ(false)))
 
 	return mapItemOutErr(q.
 		WithFields().
@@ -324,39 +324,40 @@ func (e *ItemsRepository) getOne(ctx context.Context, where ...predicate.Item) (
 // GetOne returns a single item by ID. If the item does not exist, an error is returned.
 // See also: GetOneByGroup to ensure that the item belongs to a specific group.
 func (e *ItemsRepository) GetOne(ctx context.Context, id uuid.UUID) (ItemOut, error) {
-	return e.getOne(ctx, item.ID(id))
+	return e.getOne(ctx, entity.ID(id))
 }
 
 func (e *ItemsRepository) CheckRef(ctx context.Context, gid uuid.UUID, ref string) (bool, error) {
-	q := e.db.Item.Query().Where(item.HasGroupWith(group.ID(gid)))
-	return q.Where(item.ImportRef(ref)).Exist(ctx)
+	q := e.db.Entity.Query().Where(entity.HasGroupWith(group.ID(gid)), entity.HasTypeWith(entitytype.IsLocationEQ(false)))
+	return q.Where(entity.ImportRef(ref)).Exist(ctx)
 }
 
 func (e *ItemsRepository) GetByRef(ctx context.Context, gid uuid.UUID, ref string) (ItemOut, error) {
-	return e.getOne(ctx, item.ImportRef(ref), item.HasGroupWith(group.ID(gid)))
+	return e.getOne(ctx, entity.ImportRef(ref), entity.HasGroupWith(group.ID(gid)), entity.HasTypeWith(entitytype.IsLocationEQ(false)))
 }
 
 // GetOneByGroup returns a single item by ID. If the item does not exist, an error is returned.
 // GetOneByGroup ensures that the item belongs to a specific group.
 func (e *ItemsRepository) GetOneByGroup(ctx context.Context, gid, id uuid.UUID) (ItemOut, error) {
-	return e.getOne(ctx, item.ID(id), item.HasGroupWith(group.ID(gid)))
+	return e.getOne(ctx, entity.ID(id), entity.HasGroupWith(group.ID(gid)), entity.HasTypeWith(entitytype.IsLocationEQ(false)))
 }
 
 // QueryByGroup returns a list of items that belong to a specific group based on the provided query.
 func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q ItemQuery) (PaginationResult[ItemSummary], error) {
-	qb := e.db.Item.Query().Where(
-		item.HasGroupWith(group.ID(gid)),
+	qb := e.db.Entity.Query().Where(
+		entity.HasGroupWith(group.ID(gid)),
+		entity.HasTypeWith(entitytype.IsLocationEQ(false)),
 	)
 
 	if q.IncludeArchived {
 		qb = qb.Where(
-			item.Or(
-				item.Archived(true),
-				item.Archived(false),
+			entity.Or(
+				entity.Archived(true),
+				entity.Archived(false),
 			),
 		)
 	} else {
-		qb = qb.Where(item.Archived(false))
+		qb = qb.Where(entity.Archived(false))
 	}
 
 	if q.Search != "" {
@@ -364,14 +365,14 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 		// the search query and database field values during comparison.
 		// For queries without accents, the traditional search is more efficient.
 		qb.Where(
-			item.Or(
+			entity.Or(
 				// Regular case-insensitive search (fastest)
-				item.NameContainsFold(q.Search),
-				item.DescriptionContainsFold(q.Search),
-				item.SerialNumberContainsFold(q.Search),
-				item.ModelNumberContainsFold(q.Search),
-				item.ManufacturerContainsFold(q.Search),
-				item.NotesContainsFold(q.Search),
+				entity.NameContainsFold(q.Search),
+				entity.DescriptionContainsFold(q.Search),
+				entity.SerialNumberContainsFold(q.Search),
+				entity.ModelNumberContainsFold(q.Search),
+				entity.ManufacturerContainsFold(q.Search),
+				entity.NotesContainsFold(q.Search),
 				// Accent-insensitive search using custom predicates
 				ent.ItemNameAccentInsensitiveContains(q.Search),
 				ent.ItemDescriptionAccentInsensitiveContains(q.Search),
@@ -384,7 +385,7 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 	}
 
 	if !q.AssetID.Nil() {
-		qb = qb.Where(item.AssetID(q.AssetID.Int()))
+		qb = qb.Where(entity.AssetID(q.AssetID.Int()))
 	}
 
 	// Filters within this block define a AND relationship where each subset
@@ -394,27 +395,27 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 	//  - one of the selected labels AND
 	//  - one of the selected locations AND
 	//  - one of the selected fields key/value matches
-	var andPredicates []predicate.Item
+	var andPredicates []predicate.Entity
 	{
 		if len(q.LabelIDs) > 0 {
-			labelPredicates := make([]predicate.Item, 0, len(q.LabelIDs))
+			labelPredicates := make([]predicate.Entity, 0, len(q.LabelIDs))
 			for _, l := range q.LabelIDs {
 				if !q.NegateLabels {
-					labelPredicates = append(labelPredicates, item.HasLabelWith(label.ID(l)))
+					labelPredicates = append(labelPredicates, entity.HasLabelWith(label.ID(l)))
 				} else {
-					labelPredicates = append(labelPredicates, item.Not(item.HasLabelWith(label.ID(l))))
+					labelPredicates = append(labelPredicates, entity.Not(entity.HasLabelWith(label.ID(l))))
 				}
 			}
 			if !q.NegateLabels {
-				andPredicates = append(andPredicates, item.Or(labelPredicates...))
+				andPredicates = append(andPredicates, entity.Or(labelPredicates...))
 			} else {
-				andPredicates = append(andPredicates, item.And(labelPredicates...))
+				andPredicates = append(andPredicates, entity.And(labelPredicates...))
 			}
 		}
 
 		if q.OnlyWithoutPhoto {
-			andPredicates = append(andPredicates, item.Not(
-				item.HasAttachmentsWith(
+			andPredicates = append(andPredicates, entity.Not(
+				entity.HasAttachmentsWith(
 					attachment.And(
 						attachment.Primary(true),
 						attachment.TypeEQ(attachment.TypePhoto),
@@ -424,7 +425,7 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 		}
 
 		if q.OnlyWithPhoto {
-			andPredicates = append(andPredicates, item.HasAttachmentsWith(
+			andPredicates = append(andPredicates, entity.HasAttachmentsWith(
 				attachment.And(
 					attachment.Primary(true),
 					attachment.TypeEQ(attachment.TypePhoto),
@@ -434,35 +435,35 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 		}
 
 		if len(q.LocationIDs) > 0 {
-			locationPredicates := make([]predicate.Item, 0, len(q.LocationIDs))
+			locationPredicates := make([]predicate.Entity, 0, len(q.LocationIDs))
 			for _, l := range q.LocationIDs {
-				locationPredicates = append(locationPredicates, item.HasLocationWith(location.ID(l)))
+				locationPredicates = append(locationPredicates, entity.HasLocationWith(entity.ID(l), entity.HasTypeWith(entitytype.IsLocationEQ(false))))
 			}
 
-			andPredicates = append(andPredicates, item.Or(locationPredicates...))
+			andPredicates = append(andPredicates, entity.Or(locationPredicates...))
 		}
 
 		if len(q.Fields) > 0 {
-			fieldPredicates := make([]predicate.Item, 0, len(q.Fields))
+			fieldPredicates := make([]predicate.Entity, 0, len(q.Fields))
 			for _, f := range q.Fields {
-				fieldPredicates = append(fieldPredicates, item.HasFieldsWith(
-					itemfield.And(
-						itemfield.Name(f.Name),
-						itemfield.TextValue(f.Value),
+				fieldPredicates = append(fieldPredicates, entity.HasFieldsWith(
+					entityfield.And(
+						entityfield.Name(f.Name),
+						entityfield.TextValue(f.Value),
 					),
 				))
 			}
 
-			andPredicates = append(andPredicates, item.Or(fieldPredicates...))
+			andPredicates = append(andPredicates, entity.Or(fieldPredicates...))
 		}
 
 		if len(q.ParentItemIDs) > 0 {
-			andPredicates = append(andPredicates, item.HasParentWith(item.IDIn(q.ParentItemIDs...)))
+			andPredicates = append(andPredicates, entity.HasParentWith(entity.IDIn(q.ParentItemIDs...)))
 		}
 	}
 
 	if len(andPredicates) > 0 {
-		qb = qb.Where(item.And(andPredicates...))
+		qb = qb.Where(entity.And(andPredicates...))
 	}
 
 	count, err := qb.Count(ctx)
@@ -473,13 +474,13 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 	// Order
 	switch q.OrderBy {
 	case "createdAt":
-		qb = qb.Order(ent.Desc(item.FieldCreatedAt))
+		qb = qb.Order(ent.Desc(entity.FieldCreatedAt))
 	case "updatedAt":
-		qb = qb.Order(ent.Desc(item.FieldUpdatedAt))
+		qb = qb.Order(ent.Desc(entity.FieldUpdatedAt))
 	case "assetId":
-		qb = qb.Order(ent.Asc(item.FieldAssetID))
+		qb = qb.Order(ent.Asc(entity.FieldAssetID))
 	default: // "name"
-		qb = qb.Order(ent.Asc(item.FieldName))
+		qb = qb.Order(ent.Asc(entity.FieldName))
 	}
 
 	qb = qb.
@@ -513,9 +514,10 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 
 // QueryByAssetID returns items by asset ID. If the item does not exist, an error is returned.
 func (e *ItemsRepository) QueryByAssetID(ctx context.Context, gid uuid.UUID, assetID AssetID, page int, pageSize int) (PaginationResult[ItemSummary], error) {
-	qb := e.db.Item.Query().Where(
-		item.HasGroupWith(group.ID(gid)),
-		item.AssetID(int(assetID)),
+	qb := e.db.Entity.Query().Where(
+		entity.HasGroupWith(group.ID(gid)),
+		entity.AssetID(int(assetID)),
+		entity.HasTypeWith(entitytype.IsLocationEQ(false)),
 	)
 
 	if page != -1 || pageSize != -1 {
@@ -527,7 +529,7 @@ func (e *ItemsRepository) QueryByAssetID(ctx context.Context, gid uuid.UUID, ass
 	}
 
 	items, err := mapItemsSummaryErr(
-		qb.Order(ent.Asc(item.FieldName)).
+		qb.Order(ent.Asc(entity.FieldName)).
 			WithLabel().
 			WithLocation().
 			All(ctx),
@@ -546,8 +548,8 @@ func (e *ItemsRepository) QueryByAssetID(ctx context.Context, gid uuid.UUID, ass
 
 // GetAll returns all the items in the database with the Labels and Locations eager loaded.
 func (e *ItemsRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]ItemOut, error) {
-	return mapItemsOutErr(e.db.Item.Query().
-		Where(item.HasGroupWith(group.ID(gid))).
+	return mapItemsOutErr(e.db.Entity.Query().
+		Where(entity.HasGroupWith(group.ID(gid)), entity.HasTypeWith(entitytype.IsLocationEQ(false))).
 		WithLabel().
 		WithLocation().
 		WithFields().
@@ -555,21 +557,21 @@ func (e *ItemsRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]ItemOut,
 }
 
 func (e *ItemsRepository) GetAllZeroAssetID(ctx context.Context, gid uuid.UUID) ([]ItemSummary, error) {
-	q := e.db.Item.Query().Where(
-		item.HasGroupWith(group.ID(gid)),
-		item.AssetID(0),
+	q := e.db.Entity.Query().Where(
+		entity.HasGroupWith(group.ID(gid)),
+		entity.AssetID(0),
 	).Order(
-		ent.Asc(item.FieldCreatedAt),
+		ent.Asc(entity.FieldCreatedAt),
 	)
 
 	return mapItemsSummaryErr(q.All(ctx))
 }
 
 func (e *ItemsRepository) GetHighestAssetID(ctx context.Context, gid uuid.UUID) (AssetID, error) {
-	q := e.db.Item.Query().Where(
-		item.HasGroupWith(group.ID(gid)),
+	q := e.db.Entity.Query().Where(
+		entity.HasGroupWith(group.ID(gid)),
 	).Order(
-		ent.Desc(item.FieldAssetID),
+		ent.Desc(entity.FieldAssetID),
 	).Limit(1)
 
 	result, err := q.First(ctx)
@@ -584,9 +586,9 @@ func (e *ItemsRepository) GetHighestAssetID(ctx context.Context, gid uuid.UUID) 
 }
 
 func (e *ItemsRepository) SetAssetID(ctx context.Context, gid uuid.UUID, id uuid.UUID, assetID AssetID) error {
-	q := e.db.Item.Update().Where(
-		item.HasGroupWith(group.ID(gid)),
-		item.ID(id),
+	q := e.db.Entity.Update().Where(
+		entity.HasGroupWith(group.ID(gid)),
+		entity.ID(id),
 	)
 
 	_, err := q.SetAssetID(int(assetID)).Save(ctx)
@@ -594,14 +596,14 @@ func (e *ItemsRepository) SetAssetID(ctx context.Context, gid uuid.UUID, id uuid
 }
 
 func (e *ItemsRepository) Create(ctx context.Context, gid uuid.UUID, data ItemCreate) (ItemOut, error) {
-	q := e.db.Item.Create().
+	q := e.db.Entity.Create().
 		SetImportRef(data.ImportRef).
 		SetName(data.Name).
 		SetQuantity(data.Quantity).
 		SetDescription(data.Description).
 		SetGroupID(gid).
-		SetLocationID(data.LocationID).
-		SetAssetID(int(data.AssetID))
+		SetAssetID(int(data.AssetID)).
+		SetLocationID(data.LocationID)
 
 	if data.ParentID != uuid.Nil {
 		q.SetParentID(data.ParentID)
@@ -621,7 +623,7 @@ func (e *ItemsRepository) Create(ctx context.Context, gid uuid.UUID, data ItemCr
 }
 
 func (e *ItemsRepository) Delete(ctx context.Context, id uuid.UUID) error {
-	err := e.db.Item.DeleteOneID(id).Exec(ctx)
+	err := e.db.Entity.DeleteOneID(id).Exec(ctx)
 	if err != nil {
 		return err
 	}
@@ -631,11 +633,11 @@ func (e *ItemsRepository) Delete(ctx context.Context, id uuid.UUID) error {
 }
 
 func (e *ItemsRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID) error {
-	_, err := e.db.Item.
+	_, err := e.db.Entity.
 		Delete().
 		Where(
-			item.ID(id),
-			item.HasGroupWith(group.ID(gid)),
+			entity.ID(id),
+			entity.HasGroupWith(group.ID(gid)),
 		).Exec(ctx)
 	if err != nil {
 		return err
@@ -646,7 +648,7 @@ func (e *ItemsRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID) 
 }
 
 func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data ItemUpdate) (ItemOut, error) {
-	q := e.db.Item.Update().Where(item.ID(data.ID), item.HasGroupWith(group.ID(gid))).
+	q := e.db.Entity.Update().Where(entity.ID(data.ID), entity.HasGroupWith(group.ID(gid))).
 		SetName(data.Name).
 		SetDescription(data.Description).
 		SetLocationID(data.LocationID).
@@ -668,9 +670,9 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 		SetWarrantyDetails(data.WarrantyDetails).
 		SetQuantity(data.Quantity).
 		SetAssetID(int(data.AssetID)).
-		SetSyncChildItemsLocations(data.SyncChildItemsLocations)
+		SetSyncChildEntitiesLocations(data.SyncChildItemsLocations)
 
-	currentLabels, err := e.db.Item.Query().Where(item.ID(data.ID)).QueryLabel().All(ctx)
+	currentLabels, err := e.db.Entity.Query().Where(entity.ID(data.ID), entity.HasTypeWith(entitytype.IsLocationEQ(false))).QueryLabel().All(ctx)
 	if err != nil {
 		return ItemOut{}, err
 	}
@@ -696,7 +698,7 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 	}
 
 	if data.SyncChildItemsLocations {
-		children, err := e.db.Item.Query().Where(item.ID(data.ID)).QueryChildren().All(ctx)
+		children, err := e.db.Entity.Query().Where(entity.ID(data.ID), entity.HasTypeWith(entitytype.IsLocationEQ(false))).QueryChildren().All(ctx)
 		if err != nil {
 			return ItemOut{}, err
 		}
@@ -722,7 +724,7 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 		return ItemOut{}, err
 	}
 
-	fields, err := e.db.ItemField.Query().Where(itemfield.HasItemWith(item.ID(data.ID))).All(ctx)
+	fields, err := e.db.EntityField.Query().Where(entityfield.HasEntityWith(entity.ID(data.ID), entity.HasTypeWith(entitytype.IsLocationEQ(false)))).All(ctx)
 	if err != nil {
 		return ItemOut{}, err
 	}
@@ -733,9 +735,9 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 	for _, f := range data.Fields {
 		if f.ID == uuid.Nil {
 			// Create New Field
-			_, err = e.db.ItemField.Create().
-				SetItemID(data.ID).
-				SetType(itemfield.Type(f.Type)).
+			_, err = e.db.EntityField.Create().
+				SetEntityID(data.ID).
+				SetType(entityfield.Type(f.Type)).
 				SetName(f.Name).
 				SetTextValue(f.TextValue).
 				SetNumberValue(f.NumberValue).
@@ -747,12 +749,12 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 			}
 		}
 
-		opt := e.db.ItemField.Update().
+		opt := e.db.EntityField.Update().
 			Where(
-				itemfield.ID(f.ID),
-				itemfield.HasItemWith(item.ID(data.ID)),
+				entityfield.ID(f.ID),
+				entityfield.HasEntityWith(entity.ID(data.ID), entity.HasTypeWith(entitytype.IsLocationEQ(false))),
 			).
-			SetType(itemfield.Type(f.Type)).
+			SetType(entityfield.Type(f.Type)).
 			SetName(f.Name).
 			SetTextValue(f.TextValue).
 			SetNumberValue(f.NumberValue).
@@ -770,10 +772,10 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 
 	// Delete Fields that are no longer present
 	if fieldIds.Len() > 0 {
-		_, err = e.db.ItemField.Delete().
+		_, err = e.db.EntityField.Delete().
 			Where(
-				itemfield.IDIn(fieldIds.Slice()...),
-				itemfield.HasItemWith(item.ID(data.ID)),
+				entityfield.IDIn(fieldIds.Slice()...),
+				entityfield.HasEntityWith(entity.ID(data.ID), entity.HasTypeWith(entitytype.IsLocationEQ(false))),
 			).Exec(ctx)
 		if err != nil {
 			return ItemOut{}, err
@@ -787,15 +789,16 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 func (e *ItemsRepository) GetAllZeroImportRef(ctx context.Context, gid uuid.UUID) ([]uuid.UUID, error) {
 	var ids []uuid.UUID
 
-	err := e.db.Item.Query().
+	err := e.db.Entity.Query().
 		Where(
-			item.HasGroupWith(group.ID(gid)),
-			item.Or(
-				item.ImportRefEQ(""),
-				item.ImportRefIsNil(),
+			entity.HasGroupWith(group.ID(gid)),
+			entity.HasTypeWith(entitytype.IsLocationEQ(false)),
+			entity.Or(
+				entity.ImportRefEQ(""),
+				entity.ImportRefIsNil(),
 			),
 		).
-		Select(item.FieldID).
+		Select(entity.FieldID).
 		Scan(ctx, &ids)
 	if err != nil {
 		return nil, err
@@ -805,10 +808,11 @@ func (e *ItemsRepository) GetAllZeroImportRef(ctx context.Context, gid uuid.UUID
 }
 
 func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data ItemPatch) error {
-	q := e.db.Item.Update().
+	q := e.db.Entity.Update().
 		Where(
-			item.ID(id),
-			item.HasGroupWith(group.ID(gid)),
+			entity.ID(id),
+			entity.HasGroupWith(group.ID(gid)),
+			entity.HasTypeWith(entitytype.IsLocationEQ(false)),
 		)
 
 	if data.ImportRef != nil {
@@ -830,16 +834,16 @@ func (e *ItemsRepository) GetAllCustomFieldValues(ctx context.Context, gid uuid.
 
 	var values []st
 
-	err := e.db.Item.Query().
+	err := e.db.Entity.Query().
 		Where(
-			item.HasGroupWith(group.ID(gid)),
+			entity.HasGroupWith(group.ID(gid)),
 		).
 		QueryFields().
 		Where(
-			itemfield.Name(name),
+			entityfield.Name(name),
 		).
 		Unique(true).
-		Select(itemfield.FieldTextValue).
+		Select(entityfield.FieldTextValue).
 		Scan(ctx, &values)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get field values: %w", err)
@@ -860,13 +864,14 @@ func (e *ItemsRepository) GetAllCustomFieldNames(ctx context.Context, gid uuid.U
 
 	var fields []st
 
-	err := e.db.Item.Query().
+	err := e.db.Entity.Query().
 		Where(
-			item.HasGroupWith(group.ID(gid)),
+			entity.HasTypeWith(entitytype.IsLocationEQ(false)),
+			entity.HasGroupWith(group.ID(gid)),
 		).
 		QueryFields().
 		Unique(true).
-		Select(itemfield.FieldName).
+		Select(entityfield.FieldName).
 		Scan(ctx, &fields)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get custom fields: %w", err)
@@ -887,15 +892,16 @@ func (e *ItemsRepository) GetAllCustomFieldNames(ctx context.Context, gid uuid.U
 // frontend. This function is intended to be used as a one-time fix for existing databases and may be
 // removed in the future.
 func (e *ItemsRepository) ZeroOutTimeFields(ctx context.Context, gid uuid.UUID) (int, error) {
-	q := e.db.Item.Query().Where(
-		item.HasGroupWith(group.ID(gid)),
-		item.Or(
-			item.PurchaseTimeNotNil(),
-			item.PurchaseFromLT("0002-01-01"),
-			item.SoldTimeNotNil(),
-			item.SoldToLT("0002-01-01"),
-			item.WarrantyExpiresNotNil(),
-			item.WarrantyDetailsLT("0002-01-01"),
+	q := e.db.Entity.Query().Where(
+		entity.HasGroupWith(group.ID(gid)),
+		entity.HasTypeWith(entitytype.IsLocationEQ(false)),
+		entity.Or(
+			entity.PurchaseTimeNotNil(),
+			entity.PurchaseFromLT("0002-01-01"),
+			entity.SoldTimeNotNil(),
+			entity.SoldToLT("0002-01-01"),
+			entity.WarrantyExpiresNotNil(),
+			entity.WarrantyDetailsLT("0002-01-01"),
 		),
 	)
 
@@ -911,7 +917,7 @@ func (e *ItemsRepository) ZeroOutTimeFields(ctx context.Context, gid uuid.UUID) 
 	updated := 0
 
 	for _, i := range items {
-		updateQ := e.db.Item.Update().Where(item.ID(i.ID))
+		updateQ := e.db.Entity.Update().Where(entity.ID(i.ID), entity.HasTypeWith(entitytype.IsLocationEQ(false)))
 
 		if !i.PurchaseTime.IsZero() {
 			switch {
@@ -959,10 +965,11 @@ func (e *ItemsRepository) ZeroOutTimeFields(ctx context.Context, gid uuid.UUID) 
 
 func (e *ItemsRepository) SetPrimaryPhotos(ctx context.Context, gid uuid.UUID) (int, error) {
 	// All items where there is no primary photo
-	itemIDs, err := e.db.Item.Query().
+	itemIDs, err := e.db.Entity.Query().
 		Where(
-			item.HasGroupWith(group.ID(gid)),
-			item.HasAttachmentsWith(
+			entity.HasGroupWith(group.ID(gid)),
+			entity.HasTypeWith(entitytype.IsLocationEQ(false)),
+			entity.HasAttachmentsWith(
 				attachment.TypeEQ(attachment.TypePhoto),
 				attachment.Not(
 					attachment.And(
@@ -982,7 +989,7 @@ func (e *ItemsRepository) SetPrimaryPhotos(ctx context.Context, gid uuid.UUID) (
 		// Find the first photo attachment
 		a, err := e.db.Attachment.Query().
 			Where(
-				attachment.HasItemWith(item.ID(id)),
+				attachment.HasEntityWith(entity.ID(id), entity.HasTypeWith(entitytype.IsLocationEQ(false))),
 				attachment.TypeEQ(attachment.TypePhoto),
 				attachment.Primary(false),
 			).

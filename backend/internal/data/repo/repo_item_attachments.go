@@ -11,6 +11,7 @@ import (
 	"github.com/gen2brain/jpegxl"
 	"github.com/gen2brain/webp"
 	"github.com/rs/zerolog/log"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
@@ -27,7 +28,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 
 	"gocloud.dev/blob"
 	_ "gocloud.dev/blob/azureblob"
@@ -134,14 +134,14 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 		SetCreatedAt(time.Now()).
 		SetUpdatedAt(time.Now()).
 		SetType(typ).
-		SetItemID(itemID).
+		SetEntityID(itemID).
 		SetTitle(doc.Title)
 
 	if typ == attachment.TypePhoto && primary {
 		bldr = bldr.SetPrimary(true)
 		err := r.db.Attachment.Update().
 			Where(
-				attachment.HasItemWith(item.ID(itemID)),
+				attachment.HasEntityWith(entity.ID(itemID)),
 				attachment.IDNEQ(bldrId),
 			).
 			SetPrimary(false).
@@ -159,7 +159,7 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 		// that is of type photo
 		cnt, err := tx.Attachment.Query().
 			Where(
-				attachment.HasItemWith(item.ID(itemID)),
+				attachment.HasEntityWith(entity.ID(itemID)),
 				attachment.TypeEQ(typ),
 			).
 			Count(ctx)
@@ -178,7 +178,7 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 	}
 
 	// Get the group ID for the item the attachment is being created for
-	itemGroup, err := tx.Item.Query().QueryGroup().Where(group.HasItemsWith(item.ID(itemID))).First(ctx)
+	itemGroup, err := tx.Entity.Query().QueryGroup().Where(group.HasEntitiesWith(entity.ID(itemID))).First(ctx)
 	if err != nil {
 		log.Err(err).Msg("failed to get item group")
 		err := tx.Rollback()
@@ -191,6 +191,7 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 	// Upload the file to the storage bucket
 	path, err := r.UploadFile(ctx, itemGroup, doc)
 	if err != nil {
+		log.Err(err).Msg("failed to create parent directory")
 		err := tx.Rollback()
 		if err != nil {
 			return nil, err
@@ -266,9 +267,9 @@ func (r *AttachmentRepo) Get(ctx context.Context, gid uuid.UUID, id uuid.UUID) (
 		return r.db.Attachment.
 			Query().
 			Where(attachment.ID(id),
-				attachment.HasThumbnailWith(attachment.HasItemWith(item.HasGroupWith(group.ID(gid)))),
+				attachment.HasThumbnailWith(attachment.HasEntityWith(entity.HasGroupWith(group.ID(gid)))),
 			).
-			WithItem().
+			WithEntity().
 			WithThumbnail().
 			Only(ctx)
 	} else {
@@ -276,9 +277,9 @@ func (r *AttachmentRepo) Get(ctx context.Context, gid uuid.UUID, id uuid.UUID) (
 		return r.db.Attachment.
 			Query().
 			Where(attachment.ID(id),
-				attachment.HasItemWith(item.HasGroupWith(group.ID(gid))),
+				attachment.HasEntityWith(entity.HasGroupWith(group.ID(gid))),
 			).
-			WithItem().
+			WithEntity().
 			WithThumbnail().
 			Only(ctx)
 	}
@@ -289,7 +290,7 @@ func (r *AttachmentRepo) Update(ctx context.Context, gid uuid.UUID, id uuid.UUID
 	_, err := r.db.Attachment.Query().
 		Where(
 			attachment.ID(id),
-			attachment.HasItemWith(item.HasGroupWith(group.ID(gid))),
+			attachment.HasEntityWith(entity.HasGroupWith(group.ID(gid))),
 		).
 		Only(ctx)
 	if err != nil {
@@ -314,7 +315,7 @@ func (r *AttachmentRepo) Update(ctx context.Context, gid uuid.UUID, id uuid.UUID
 		return nil, err
 	}
 
-	attachmentItem, err := updatedAttachment.QueryItem().Only(ctx)
+	attachmentItem, err := updatedAttachment.QueryEntity().Only(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -323,7 +324,7 @@ func (r *AttachmentRepo) Update(ctx context.Context, gid uuid.UUID, id uuid.UUID
 	if typ == attachment.TypePhoto && data.Primary {
 		err = r.db.Attachment.Update().
 			Where(
-				attachment.HasItemWith(item.ID(attachmentItem.ID)),
+				attachment.HasEntityWith(entity.ID(attachmentItem.ID)),
 				attachment.IDNEQ(updatedAttachment.ID),
 				attachment.TypeEQ(attachment.TypePhoto),
 			).
@@ -342,7 +343,7 @@ func (r *AttachmentRepo) Delete(ctx context.Context, gid uuid.UUID, itemId uuid.
 	doc, err := r.db.Attachment.Query().
 		Where(
 			attachment.ID(id),
-			attachment.HasItemWith(item.HasGroupWith(group.ID(gid))),
+			attachment.HasEntityWith(entity.HasGroupWith(group.ID(gid))),
 		).
 		Only(ctx)
 	if err != nil {
@@ -353,6 +354,7 @@ func (r *AttachmentRepo) Delete(ctx context.Context, gid uuid.UUID, itemId uuid.
 	if err != nil {
 		return err
 	}
+
 	// If this is the last attachment for this path, delete the file
 	if len(all) == 1 {
 		thumb, err := doc.QueryThumbnail().First(ctx)
@@ -402,7 +404,7 @@ func (r *AttachmentRepo) Rename(ctx context.Context, gid uuid.UUID, id uuid.UUID
 	_, err := r.db.Attachment.Query().
 		Where(
 			attachment.ID(id),
-			attachment.HasItemWith(item.HasGroupWith(group.ID(gid))),
+			attachment.HasEntityWith(entity.HasGroupWith(group.ID(gid))),
 		).
 		Only(ctx)
 	if err != nil {
@@ -678,7 +680,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 func (r *AttachmentRepo) CreateMissingThumbnails(ctx context.Context, groupId uuid.UUID) (int, error) {
 	attachments, err := r.db.Attachment.Query().
 		Where(
-			attachment.HasItemWith(item.HasGroupWith(group.ID(groupId))),
+			attachment.HasEntityWith(entity.HasGroupWith(group.ID(groupId))),
 			attachment.TypeNEQ("thumbnail"),
 		).
 		All(ctx)
