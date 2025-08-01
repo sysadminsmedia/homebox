@@ -49,6 +49,36 @@
         :max-length="255"
         :min-length="1"
       />
+      <FormTextField
+        v-if="form.barcode?.length"
+        ref="manufacturerInput"
+        v-model="form.manufacturer"
+        :trigger-focus="focused"
+        :autofocus="true"
+        label="Item manufacturer"
+        :max-length="255"
+        :min-length="1"
+      />
+      <FormTextField
+        v-if="form.barcode?.length"
+        ref="modelInput"
+        v-model="form.modelNumber"
+        :trigger-focus="focused"
+        :autofocus="true"
+        label="Item model"
+        :max-length="255"
+        :min-length="1"
+      />
+      <FormTextField
+        v-if="form.barcode?.length"
+        ref="barcodeInput"
+        v-model="form.barcode"
+        :trigger-focus="focused"
+        :autofocus="true"
+        label="Item barcode"
+        :max-length="255"
+        :min-length="1"
+      />
       <FormTextField v-model="form.quantity" :label="$t('components.item.create_modal.item_quantity')" type="number" />
       <FormTextArea
         v-model="form.description"
@@ -248,6 +278,9 @@
     location: locations.value && locations.value.length > 0 ? locations.value[0] : ({} as LocationOut),
     parentId: null,
     name: "",
+    manufacturer: "",
+    modelNumber: "",
+    barcode: "",
     quantity: 1,
     description: "",
     color: "",
@@ -344,6 +377,9 @@
       if (params?.product) {
         form.name = params.product.item.name;
         form.description = params.product.item.description;
+        form.manufacturer = params.product.item.manufacturer;
+        form.modelNumber = params.product.item.modelNumber;
+        form.barcode = params.product.item.barcode;
 
         if (params.product.imageURL) {
           form.photos.push({
@@ -381,6 +417,9 @@
       name: form.name,
       quantity: form.quantity,
       description: form.description,
+      modelNumber: form.modelNumber,
+      manufacturer: form.manufacturer,
+      barcode: form.barcode,
       locationId: form.location.id as string,
       labelIds: form.labels,
     };
@@ -423,6 +462,8 @@
     form.name = "";
     form.quantity = 1;
     form.description = "";
+    form.modelNumber = "";
+    form.manufacturer = "";
     form.color = "";
     form.photos = [];
     form.labels = [];

@@ -1,19 +1,27 @@
 <script setup lang="ts">
+  import { useForwardPropsEmits } from "reka-ui";
+  import type { TableProps, TableEmits } from "./Table.types";
   import type { ViewType } from "~~/composables/use-preferences";
-  import type { ItemSummary } from "~~/lib/api/types/data-contracts";
   import MdiCardTextOutline from "~icons/mdi/card-text-outline";
   import MdiTable from "~icons/mdi/table";
   import { Badge } from "@/components/ui/badge";
   import { Button, ButtonGroup } from "@/components/ui/button";
+  import type { BarcodeProduct, ItemSummary } from "~~/lib/api/types/data-contracts";
 
   type Props = {
     view?: ViewType;
-    items: ItemSummary[];
   };
 
   const preferences = useViewPreferences();
 
-  const props = defineProps<Props>();
+  const props = defineProps<Props & TableProps>();
+
+  const emits = defineEmits<TableEmits>();
+
+  const forwardedPropsEmits = useForwardPropsEmits(props, emits);
+
+  const selectedCard = ref<number>(-1);
+
   const viewSet = computed(() => {
     return !!props.view;
   });
@@ -22,8 +30,18 @@
     return props.view ?? preferences.value.itemDisplayView;
   });
 
+  watch(selectedCard, index => {
+    if (index === -1) {
+      emits("update:selectedItem", null);
+      return;
+    }
+    emits("update:selectedItem", props.items[index]);
+  });
+
   function setViewPreference(view: ViewType) {
     preferences.value.itemDisplayView = view;
+    selectedCard.value = -1;
+    emits("update:selectedItem", null);
   }
 </script>
 
@@ -57,11 +75,22 @@
     </BaseSectionHeader>
 
     <template v-if="itemView === 'table'">
-      <ItemViewTable :items="items" />
+      <ItemViewTable v-bind="forwardedPropsEmits" />
     </template>
     <template v-else>
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        <ItemCard v-for="item in items" :key="item.id" :item="item" />
+        <template v-if="itemType === 'itemsummary'">
+          <ItemCard v-for="item in items" :key="(item as ItemSummary).id" :item="item as ItemSummary" />
+        </template>
+        <template v-if="itemType === 'barcodeproduct'">
+          <ItemBarcodeCard
+            v-for="(item, index) in items"
+            :key="index"
+            :item="item as BarcodeProduct"
+            :model-value="selectedCard === index"
+            @update:model-value="val => (selectedCard = val ? index : -1)"
+          />
+        </template>
         <div class="hidden first:block">{{ $t("components.item.view.selectable.no_items") }}</div>
       </div>
     </template>

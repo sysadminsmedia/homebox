@@ -966,6 +966,16 @@
     text-transform: none !important;
 }
 
+/* For selectable card for barcodes */
+.selectable-card:hover.selected {
+  background-color: hsl(var(--primary));
+}
+
+.selectable-card.selected {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--background));
+}
+
 /* transparent subtle scrollbar */
 ::-webkit-scrollbar {
   width: 0.2em;

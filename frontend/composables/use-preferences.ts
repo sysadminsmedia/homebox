@@ -12,6 +12,7 @@ export type LocationViewPreferences = {
   theme: DaisyTheme;
   itemsPerTablePage: number;
   tableHeaders?: TableHeaderType[];
+  tableHeadersBarcode?: TableHeaderType[];
   displayLegacyHeader: boolean;
   language?: string;
   overrideFormatLocale?: string;
