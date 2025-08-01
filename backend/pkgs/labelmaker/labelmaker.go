@@ -227,7 +227,7 @@ func GenerateLabel(w io.Writer, params *GenerateParameters, cfg *config.Config) 
 	// Create the actual image with calculated height
 	bounds := image.Rect(0, 0, params.Width, requiredHeight)
 	img := image.NewRGBA(bounds)
-	draw.Draw(img, bounds, &image.Uniform{color.White}, image.Point{}, draw.Src)
+	draw.Draw(img, bounds, &image.Uniform{C: color.White}, image.Point{}, draw.Src)
 
 	// Draw QR code onto the image
 	draw.Draw(img,
@@ -348,7 +348,9 @@ func fetchLabelFromURL(w io.Writer, serviceURL string, params *GenerateParameter
 	if err != nil {
 		return fmt.Errorf("failed to fetch label from URL %s: %w", finalServiceURL, err)
 	}
-	defer resp.Body.Close()
+	if closeErr := resp.Body.Close(); closeErr != nil {
+		log.Printf("failed to close response body: %v", closeErr)
+	}
 
 	// Check if the response status is OK
 	if resp.StatusCode != http.StatusOK {
