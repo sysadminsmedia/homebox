@@ -348,9 +348,6 @@ func fetchLabelFromURL(w io.Writer, serviceURL string, params *GenerateParameter
 	if err != nil {
 		return fmt.Errorf("failed to fetch label from URL %s: %w", finalServiceURL, err)
 	}
-	if closeErr := resp.Body.Close(); closeErr != nil {
-		log.Printf("failed to close response body: %v", closeErr)
-	}
 
 	// Check if the response status is OK
 	if resp.StatusCode != http.StatusOK {
@@ -374,6 +371,10 @@ func fetchLabelFromURL(w io.Writer, serviceURL string, params *GenerateParameter
 	_, err = io.Copy(w, limitedReader)
 	if err != nil {
 		return fmt.Errorf("failed to write fetched label data: %w", err)
+	}
+
+	if err := resp.Body.Close(); err != nil {
+		log.Printf("failed to close response body: %v", err)
 	}
 
 	return nil
