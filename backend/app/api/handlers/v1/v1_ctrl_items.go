@@ -254,6 +254,24 @@ func (ctrl *V1Controller) HandleItemPatch() errchain.HandlerFunc {
 	return adapters.ActionID("id", fn, http.StatusOK)
 }
 
+// HandleItemDuplicate godocs
+//
+//	@Summary	Duplicate Item
+//	@Tags		Items
+//	@Produce	json
+//	@Param		id	path		string	true	"Item ID"
+//	@Success	201	{object}	repo.ItemOut
+//	@Router		/v1/items/{id}/duplicate [POST]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleItemDuplicate() errchain.HandlerFunc {
+	fn := func(r *http.Request, ID uuid.UUID) (repo.ItemOut, error) {
+		auth := services.NewContext(r.Context())
+		return ctrl.repo.Items.Duplicate(auth, auth.GID, ID)
+	}
+
+	return adapters.CommandID("id", fn, http.StatusCreated)
+}
+
 // HandleGetAllCustomFieldNames godocs
 //
 //	@Summary	Get All Custom Field Names

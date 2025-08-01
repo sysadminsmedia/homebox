@@ -478,31 +478,9 @@
       return;
     }
 
-    const { error, data } = await api.items.create({
-      name: `${item.value.name} Copy`,
-      description: item.value.description,
-      quantity: item.value.quantity,
-      locationId: item.value.location!.id,
-      parentId: item.value.parent?.id,
-      labelIds: item.value.labels.map(l => l.id),
-    });
+    const { error, data } = await api.items.duplicate(itemId.value);
 
     if (error) {
-      toast.error(t("items.toast.failed_duplicate_item"));
-      return;
-    }
-
-    // add extra fields
-    const { error: updateError } = await api.items.update(data.id, {
-      ...item.value,
-      id: data.id,
-      labelIds: data.labels.map(l => l.id),
-      locationId: data.location!.id,
-      name: data.name,
-      assetId: data.assetId,
-    });
-
-    if (updateError) {
       toast.error(t("items.toast.failed_duplicate_item"));
       return;
     }

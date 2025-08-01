@@ -1968,6 +1968,26 @@ paths:
       summary: Update Item Attachment
       tags:
       - Items Attachments
+  /v1/items/{id}/duplicate:
+    post:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.ItemOut'
+      security:
+      - Bearer: []
+      summary: Duplicate Item
+      tags:
+      - Items
   /v1/items/{id}/maintenance:
     get:
       parameters:

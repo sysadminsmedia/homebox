@@ -153,6 +153,12 @@ export class ItemsApi extends BaseAPI {
     return resp;
   }
 
+  duplicate(id: string) {
+    return this.http.post<void, ItemOut>({
+      url: route(`/items/${id}/duplicate`),
+    });
+  }
+
   import(file: File | Blob) {
     const formData = new FormData();
     formData.append("csv", file);
