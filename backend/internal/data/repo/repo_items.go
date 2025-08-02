@@ -1014,7 +1014,11 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID) (Ite
 	if err != nil {
 		return ItemOut{}, err
 	}
-	defer tx.Rollback()
+	defer func() {
+		if err := tx.Rollback(); err != nil {
+			log.Warn().Err(err).Msg("failed to rollback transaction during item duplication")
+		}
+	}()
 
 	// Get the original item with all its data
 	originalItem, err := e.getOne(ctx, item.ID(id), item.HasGroupWith(group.ID(gid)))

@@ -39,7 +39,6 @@ func (svc *ItemService) Create(ctx Context, item repo.ItemCreate) (repo.ItemOut,
 }
 
 func (svc *ItemService) Duplicate(ctx Context, gid, id uuid.UUID) (repo.ItemOut, error) {
-	// eventually add permission checks here
 	return svc.repo.Items.Duplicate(ctx, gid, id)
 }
 
