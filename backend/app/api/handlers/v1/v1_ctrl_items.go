@@ -265,8 +265,8 @@ func (ctrl *V1Controller) HandleItemPatch() errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleItemDuplicate() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID) (repo.ItemOut, error) {
-		auth := services.NewContext(r.Context())
-		return ctrl.repo.Items.Duplicate(auth, auth.GID, ID)
+		ctx := services.NewContext(r.Context())
+		return ctrl.svc.Items.Duplicate(ctx, ctx.GID, ID)
 	}
 
 	return adapters.CommandID("id", fn, http.StatusCreated)

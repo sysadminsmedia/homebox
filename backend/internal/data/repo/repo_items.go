@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
@@ -1009,6 +1010,12 @@ func (e *ItemsRepository) SetPrimaryPhotos(ctx context.Context, gid uuid.UUID) (
 // Duplicate creates a copy of an item with all its data including attachments, maintenance entries, and custom fields.
 // The new item will have the next available asset ID and a "Copy" suffix in the name.
 func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID) (ItemOut, error) {
+	tx, err := e.db.Tx(ctx)
+	if err != nil {
+		return ItemOut{}, err
+	}
+	defer tx.Rollback()
+
 	// Get the original item with all its data
 	originalItem, err := e.getOne(ctx, item.ID(id), item.HasGroupWith(group.ID(gid)))
 	if err != nil {
@@ -1021,91 +1028,87 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID) (Ite
 	}
 	nextAssetID++
 
-	itemCreate := ItemCreate{
-		Name:        originalItem.Name + " Copy",
-		Description: originalItem.Description,
-		Quantity:    originalItem.Quantity,
-		LocationID:  originalItem.Location.ID,
-		LabelIDs:    make([]uuid.UUID, len(originalItem.Labels)),
-		AssetID:     nextAssetID,
-	}
-
-	for i, label := range originalItem.Labels {
-		itemCreate.LabelIDs[i] = label.ID
-	}
+	// Create the new item directly in the transaction
+	newItemID := uuid.New()
+	itemBuilder := tx.Item.Create().
+		SetID(newItemID).
+		SetName(originalItem.Name + " Copy").
+		SetDescription(originalItem.Description).
+		SetQuantity(originalItem.Quantity).
+		SetLocationID(originalItem.Location.ID).
+		SetGroupID(gid).
+		SetAssetID(int(nextAssetID)).
+		SetSerialNumber(originalItem.SerialNumber).
+		SetModelNumber(originalItem.ModelNumber).
+		SetManufacturer(originalItem.Manufacturer).
+		SetLifetimeWarranty(originalItem.LifetimeWarranty).
+		SetWarrantyExpires(originalItem.WarrantyExpires.Time()).
+		SetWarrantyDetails(originalItem.WarrantyDetails).
+		SetPurchaseTime(originalItem.PurchaseTime.Time()).
+		SetPurchaseFrom(originalItem.PurchaseFrom).
+		SetPurchasePrice(originalItem.PurchasePrice).
+		SetSoldTime(originalItem.SoldTime.Time()).
+		SetSoldTo(originalItem.SoldTo).
+		SetSoldPrice(originalItem.SoldPrice).
+		SetSoldNotes(originalItem.SoldNotes).
+		SetNotes(originalItem.Notes).
+		SetInsured(originalItem.Insured).
+		SetArchived(originalItem.Archived).
+		SetSyncChildItemsLocations(originalItem.SyncChildItemsLocations)
 
 	if originalItem.Parent != nil {
-		itemCreate.ParentID = originalItem.Parent.ID
+		itemBuilder.SetParentID(originalItem.Parent.ID)
 	}
 
-	newItem, err := e.Create(ctx, gid, itemCreate)
+	// Add labels
+	if len(originalItem.Labels) > 0 {
+		labelIDs := make([]uuid.UUID, len(originalItem.Labels))
+		for i, label := range originalItem.Labels {
+			labelIDs[i] = label.ID
+		}
+		itemBuilder.AddLabelIDs(labelIDs...)
+	}
+
+	_, err = itemBuilder.Save(ctx)
 	if err != nil {
 		return ItemOut{}, err
 	}
 
-	// Create new ItemField objects with new IDs but same values
-	var newFields []ItemField
-	for _, field := range originalItem.Fields {
-		newFields = append(newFields, ItemField{
-			ID:           uuid.Nil, // New ID will be generated
-			Type:         field.Type,
-			Name:         field.Name,
-			TextValue:    field.TextValue,
-			NumberValue:  field.NumberValue,
-			BooleanValue: field.BooleanValue,
-		})
-	}
-
-	itemUpdate := ItemUpdate{
-		ID:          newItem.ID,
-		AssetID:     newItem.AssetID,
-		Name:        newItem.Name,
-		Description: newItem.Description,
-		Quantity:    newItem.Quantity,
-		LocationID:  newItem.Location.ID,
-		LabelIDs:    itemCreate.LabelIDs,
-		Fields:      newFields,
-	}
-
-	itemUpdate.SerialNumber = originalItem.SerialNumber
-	itemUpdate.ModelNumber = originalItem.ModelNumber
-	itemUpdate.Manufacturer = originalItem.Manufacturer
-	itemUpdate.LifetimeWarranty = originalItem.LifetimeWarranty
-	itemUpdate.WarrantyExpires = originalItem.WarrantyExpires
-	itemUpdate.WarrantyDetails = originalItem.WarrantyDetails
-	itemUpdate.PurchaseTime = originalItem.PurchaseTime
-	itemUpdate.PurchaseFrom = originalItem.PurchaseFrom
-	itemUpdate.PurchasePrice = originalItem.PurchasePrice
-	itemUpdate.SoldTime = originalItem.SoldTime
-	itemUpdate.SoldTo = originalItem.SoldTo
-	itemUpdate.SoldPrice = originalItem.SoldPrice
-	itemUpdate.SoldNotes = originalItem.SoldNotes
-	itemUpdate.Notes = originalItem.Notes
-	itemUpdate.Insured = originalItem.Insured
-	itemUpdate.Archived = originalItem.Archived
-	itemUpdate.SyncChildItemsLocations = originalItem.SyncChildItemsLocations
-
-	// Update the item with all the copied data
-	newItem, err = e.UpdateByGroup(ctx, gid, itemUpdate)
-	if err != nil {
-		return ItemOut{}, err
+	// Copy custom fields
+	if len(originalItem.Fields) > 0 {
+		for _, field := range originalItem.Fields {
+			_, err = tx.ItemField.Create().
+				SetItemID(newItemID).
+				SetType(itemfield.Type(field.Type)).
+				SetName(field.Name).
+				SetTextValue(field.TextValue).
+				SetNumberValue(field.NumberValue).
+				SetBooleanValue(field.BooleanValue).
+				Save(ctx)
+			if err != nil {
+				log.Warn().Err(err).Str("field_name", field.Name).Msg("failed to copy custom field during duplication")
+				continue
+			}
+		}
 	}
 
 	// Copy attachments
 	if len(originalItem.Attachments) > 0 {
 		for _, att := range originalItem.Attachments {
 			// Get the original attachment file
-			originalAttachment, err := e.db.Attachment.Query().
+			originalAttachment, err := tx.Attachment.Query().
 				Where(attachment.ID(att.ID)).
 				Only(ctx)
 			if err != nil {
-				continue // Skip if attachment not found
+				// Log error but continue to copy other attachments
+				log.Warn().Err(err).Str("attachment_id", att.ID.String()).Msg("failed to find attachment during duplication")
+				continue
 			}
 
 			// Create a copy of the attachment with the same file path
 			// Since files are stored with hash-based paths, this is safe
-			_, err = e.db.Attachment.Create().
-				SetItemID(newItem.ID).
+			_, err = tx.Attachment.Create().
+				SetItemID(newItemID).
 				SetType(originalAttachment.Type).
 				SetTitle(originalAttachment.Title).
 				SetPath(originalAttachment.Path).
@@ -1113,19 +1116,20 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID) (Ite
 				SetPrimary(originalAttachment.Primary).
 				Save(ctx)
 			if err != nil {
-				continue // Skip if attachment creation fails
+				log.Warn().Err(err).Str("original_attachment_id", att.ID.String()).Msg("failed to copy attachment during duplication")
+				continue
 			}
 		}
 	}
 
 	// Copy maintenance entries
-	maintenanceEntries, err := e.db.MaintenanceEntry.Query().
+	maintenanceEntries, err := tx.MaintenanceEntry.Query().
 		Where(maintenanceentry.HasItemWith(item.ID(id))).
 		All(ctx)
 	if err == nil && len(maintenanceEntries) > 0 {
 		for _, entry := range maintenanceEntries {
-			_, err = e.db.MaintenanceEntry.Create().
-				SetItemID(newItem.ID).
+			_, err = tx.MaintenanceEntry.Create().
+				SetItemID(newItemID).
 				SetDate(entry.Date).
 				SetScheduledDate(entry.ScheduledDate).
 				SetName(entry.Name).
@@ -1133,13 +1137,18 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID) (Ite
 				SetCost(entry.Cost).
 				Save(ctx)
 			if err != nil {
-				continue // Skip if maintenance entry creation fails
+				log.Warn().Err(err).Str("maintenance_entry_id", entry.ID.String()).Msg("failed to copy maintenance entry during duplication")
+				continue
 			}
 		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return ItemOut{}, err
 	}
 
 	e.publishMutationEvent(gid)
 
 	// Get the final item with all copied data
-	return e.GetOne(ctx, newItem.ID)
+	return e.GetOne(ctx, newItemID)
 }

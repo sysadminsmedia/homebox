@@ -38,6 +38,11 @@ func (svc *ItemService) Create(ctx Context, item repo.ItemCreate) (repo.ItemOut,
 	return svc.repo.Items.Create(ctx, ctx.GID, item)
 }
 
+func (svc *ItemService) Duplicate(ctx Context, gid, id uuid.UUID) (repo.ItemOut, error) {
+	// eventually add permission checks here
+	return svc.repo.Items.Duplicate(ctx, gid, id)
+}
+
 func (svc *ItemService) EnsureAssetID(ctx context.Context, gid uuid.UUID) (int, error) {
 	items, err := svc.repo.Items.GetAllZeroAssetID(ctx, gid)
 	if err != nil {
