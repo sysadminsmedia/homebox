@@ -21,6 +21,7 @@ import (
 	"io/fs"
 	"net/http"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -102,13 +103,16 @@ func (r *AttachmentRepo) path(gid uuid.UUID, hash string) string {
 func (r *AttachmentRepo) GetConnString() string {
 	if strings.HasPrefix(r.storage.ConnString, "file:///./") {
 		dir, err := filepath.Abs(strings.TrimPrefix(r.storage.ConnString, "file:///./"))
+		if runtime.GOOS == "windows" {
+			dir = fmt.Sprintf("/%s", dir)
+		}
 		if err != nil {
 			log.Err(err).Msg("failed to get absolute path for attachment directory")
 			return r.storage.ConnString
 		}
-		return fmt.Sprintf("file://%s?no_tmp_dir=true", dir)
+		return strings.ReplaceAll(fmt.Sprintf("file://%s?no_tmp_dir=true", dir), "\\", "/")
 	}
-	return r.storage.ConnString
+	return strings.ReplaceAll(r.storage.ConnString, "\\", "/")
 }
 
 func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemCreateAttachment, typ attachment.Type, primary bool) (*ent.Attachment, error) {
