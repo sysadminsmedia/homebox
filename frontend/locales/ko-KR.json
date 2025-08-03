@@ -1,6 +1,10 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "enter": "Enter",
+                "shift": "Sjoft"
+            },
             "import_dialog": {
                 "title": "CSV 파일 들여오기",
                 "toast": {
@@ -12,6 +16,7 @@
             "outdated": {
                 "current_version": "현재 버전",
                 "latest_version": "최신 버전",
+                "new_version_available": "새 버전이 있습니다",
                 "new_version_available_link": "릴리스 노트를 보려면 여기를 클릭하세요"
             }
         },
@@ -22,7 +27,8 @@
         },
         "global": {
             "copy_text": {
-                "failed_to_copy": "클립보드에 복사하지 못했습니다"
+                "failed_to_copy": "클립보드에 복사하지 못했습니다",
+                "https_required": "HTTPS 연결이 필요합니다"
             },
             "date_time": {
                 "ago": "{0} 전",
