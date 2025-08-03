@@ -13,7 +13,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 )
 
@@ -24,7 +24,7 @@ type AttachmentQuery struct {
 	order         []attachment.OrderOption
 	inters        []Interceptor
 	predicates    []predicate.Attachment
-	withItem      *ItemQuery
+	withEntity    *EntityQuery
 	withThumbnail *AttachmentQuery
 	withFKs       bool
 	// intermediate query (i.e. traversal path).
@@ -63,9 +63,9 @@ func (aq *AttachmentQuery) Order(o ...attachment.OrderOption) *AttachmentQuery {
 	return aq
 }
 
-// QueryItem chains the current query on the "item" edge.
-func (aq *AttachmentQuery) QueryItem() *ItemQuery {
-	query := (&ItemClient{config: aq.config}).Query()
+// QueryEntity chains the current query on the "entity" edge.
+func (aq *AttachmentQuery) QueryEntity() *EntityQuery {
+	query := (&EntityClient{config: aq.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := aq.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -76,8 +76,8 @@ func (aq *AttachmentQuery) QueryItem() *ItemQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(attachment.Table, attachment.FieldID, selector),
-			sqlgraph.To(item.Table, item.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, attachment.ItemTable, attachment.ItemColumn),
+			sqlgraph.To(entity.Table, entity.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, attachment.EntityTable, attachment.EntityColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
 		return fromU, nil
@@ -299,7 +299,7 @@ func (aq *AttachmentQuery) Clone() *AttachmentQuery {
 		order:         append([]attachment.OrderOption{}, aq.order...),
 		inters:        append([]Interceptor{}, aq.inters...),
 		predicates:    append([]predicate.Attachment{}, aq.predicates...),
-		withItem:      aq.withItem.Clone(),
+		withEntity:    aq.withEntity.Clone(),
 		withThumbnail: aq.withThumbnail.Clone(),
 		// clone intermediate query.
 		sql:  aq.sql.Clone(),
@@ -307,14 +307,14 @@ func (aq *AttachmentQuery) Clone() *AttachmentQuery {
 	}
 }
 
-// WithItem tells the query-builder to eager-load the nodes that are connected to
-// the "item" edge. The optional arguments are used to configure the query builder of the edge.
-func (aq *AttachmentQuery) WithItem(opts ...func(*ItemQuery)) *AttachmentQuery {
-	query := (&ItemClient{config: aq.config}).Query()
+// WithEntity tells the query-builder to eager-load the nodes that are connected to
+// the "entity" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AttachmentQuery) WithEntity(opts ...func(*EntityQuery)) *AttachmentQuery {
+	query := (&EntityClient{config: aq.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	aq.withItem = query
+	aq.withEntity = query
 	return aq
 }
 
@@ -409,11 +409,11 @@ func (aq *AttachmentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*A
 		withFKs     = aq.withFKs
 		_spec       = aq.querySpec()
 		loadedTypes = [2]bool{
-			aq.withItem != nil,
+			aq.withEntity != nil,
 			aq.withThumbnail != nil,
 		}
 	)
-	if aq.withItem != nil || aq.withThumbnail != nil {
+	if aq.withEntity != nil || aq.withThumbnail != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -437,9 +437,9 @@ func (aq *AttachmentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*A
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := aq.withItem; query != nil {
-		if err := aq.loadItem(ctx, query, nodes, nil,
-			func(n *Attachment, e *Item) { n.Edges.Item = e }); err != nil {
+	if query := aq.withEntity; query != nil {
+		if err := aq.loadEntity(ctx, query, nodes, nil,
+			func(n *Attachment, e *Entity) { n.Edges.Entity = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -452,14 +452,14 @@ func (aq *AttachmentQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*A
 	return nodes, nil
 }
 
-func (aq *AttachmentQuery) loadItem(ctx context.Context, query *ItemQuery, nodes []*Attachment, init func(*Attachment), assign func(*Attachment, *Item)) error {
+func (aq *AttachmentQuery) loadEntity(ctx context.Context, query *EntityQuery, nodes []*Attachment, init func(*Attachment), assign func(*Attachment, *Entity)) error {
 	ids := make([]uuid.UUID, 0, len(nodes))
 	nodeids := make(map[uuid.UUID][]*Attachment)
 	for i := range nodes {
-		if nodes[i].item_attachments == nil {
+		if nodes[i].entity_attachments == nil {
 			continue
 		}
-		fk := *nodes[i].item_attachments
+		fk := *nodes[i].entity_attachments
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -468,7 +468,7 @@ func (aq *AttachmentQuery) loadItem(ctx context.Context, query *ItemQuery, nodes
 	if len(ids) == 0 {
 		return nil
 	}
-	query.Where(item.IDIn(ids...))
+	query.Where(entity.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
@@ -476,7 +476,7 @@ func (aq *AttachmentQuery) loadItem(ctx context.Context, query *ItemQuery, nodes
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "item_attachments" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "entity_attachments" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
