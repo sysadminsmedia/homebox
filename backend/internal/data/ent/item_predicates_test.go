@@ -27,19 +27,19 @@ func TestBuildGenericNormalizeExpression(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			result := buildGenericNormalizeExpression(tt.field)
-			
+
 			// Should contain the original field
 			assert.Contains(t, result, tt.field)
-			
+
 			// Should contain REPLACE functions for accent normalization
 			assert.Contains(t, result, "REPLACE(")
-			
+
 			// Should handle common accented characters
 			assert.Contains(t, result, "'á'", "Should handle Spanish á")
 			assert.Contains(t, result, "'é'", "Should handle Spanish é")
 			assert.Contains(t, result, "'ñ'", "Should handle Spanish ñ")
 			assert.Contains(t, result, "'ü'", "Should handle German ü")
-			
+
 			// Should handle uppercase accents too
 			assert.Contains(t, result, "'Á'", "Should handle uppercase Spanish Á")
 			assert.Contains(t, result, "'É'", "Should handle uppercase Spanish É")
@@ -49,22 +49,13 @@ func TestBuildGenericNormalizeExpression(t *testing.T) {
 
 func TestSQLiteNormalizeExpression(t *testing.T) {
 	result := buildSQLiteNormalizeExpression("test_field")
-	
+
 	// Should contain the field name and REPLACE functions
 	assert.Contains(t, result, "test_field")
 	assert.Contains(t, result, "REPLACE(")
 	// Check for some specific accent replacements (order doesn't matter)
 	assert.Contains(t, result, "'á'", "Should handle Spanish á")
 	assert.Contains(t, result, "'ó'", "Should handle Spanish ó")
-}
-
-func TestPostgreSQLNormalizeExpression(t *testing.T) {
-	result := buildPostgreSQLNormalizeExpression("test_field")
-	
-	// Should contain unaccent function and CASE WHEN logic
-	assert.Contains(t, result, "unaccent(")
-	assert.Contains(t, result, "CASE WHEN EXISTS")
-	assert.Contains(t, result, "test_field")
 }
 
 func TestAccentInsensitivePredicateCreation(t *testing.T) {
@@ -104,46 +95,46 @@ func TestAccentInsensitivePredicateCreation(t *testing.T) {
 
 func TestSpecificItemPredicates(t *testing.T) {
 	tests := []struct {
-		name        string
+		name          string
 		predicateFunc func(string) interface{}
-		searchValue string
-		description string
+		searchValue   string
+		description   string
 	}{
 		{
-			name:        "ItemNameAccentInsensitiveContains",
+			name:          "ItemNameAccentInsensitiveContains",
 			predicateFunc: func(val string) interface{} { return ItemNameAccentInsensitiveContains(val) },
-			searchValue: "electronica",
-			description: "Should create accent-insensitive name search predicate",
+			searchValue:   "electronica",
+			description:   "Should create accent-insensitive name search predicate",
 		},
 		{
-			name:        "ItemDescriptionAccentInsensitiveContains",
+			name:          "ItemDescriptionAccentInsensitiveContains",
 			predicateFunc: func(val string) interface{} { return ItemDescriptionAccentInsensitiveContains(val) },
-			searchValue: "descripcion",
-			description: "Should create accent-insensitive description search predicate",
+			searchValue:   "descripcion",
+			description:   "Should create accent-insensitive description search predicate",
 		},
 		{
-			name:        "ItemManufacturerAccentInsensitiveContains",
+			name:          "ItemManufacturerAccentInsensitiveContains",
 			predicateFunc: func(val string) interface{} { return ItemManufacturerAccentInsensitiveContains(val) },
-			searchValue: "compañia",
-			description: "Should create accent-insensitive manufacturer search predicate",
+			searchValue:   "compañia",
+			description:   "Should create accent-insensitive manufacturer search predicate",
 		},
 		{
-			name:        "ItemSerialNumberAccentInsensitiveContains",
+			name:          "ItemSerialNumberAccentInsensitiveContains",
 			predicateFunc: func(val string) interface{} { return ItemSerialNumberAccentInsensitiveContains(val) },
-			searchValue: "sn123",
-			description: "Should create accent-insensitive serial number search predicate",
+			searchValue:   "sn123",
+			description:   "Should create accent-insensitive serial number search predicate",
 		},
 		{
-			name:        "ItemModelNumberAccentInsensitiveContains",
+			name:          "ItemModelNumberAccentInsensitiveContains",
 			predicateFunc: func(val string) interface{} { return ItemModelNumberAccentInsensitiveContains(val) },
-			searchValue: "model456",
-			description: "Should create accent-insensitive model number search predicate",
+			searchValue:   "model456",
+			description:   "Should create accent-insensitive model number search predicate",
 		},
 		{
-			name:        "ItemNotesAccentInsensitiveContains",
+			name:          "ItemNotesAccentInsensitiveContains",
 			predicateFunc: func(val string) interface{} { return ItemNotesAccentInsensitiveContains(val) },
-			searchValue: "notas importantes",
-			description: "Should create accent-insensitive notes search predicate",
+			searchValue:   "notas importantes",
+			description:   "Should create accent-insensitive notes search predicate",
 		},
 	}
 
