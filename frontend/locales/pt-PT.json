@@ -113,6 +113,12 @@
                 "upload_photos": "Carregar Fotos",
                 "uploaded": "Foto Carregada"
             },
+            "product_import": {
+                "barcode": "Código de Barras do Produto",
+                "error_not_found": "Nenhum produto encontrado com código de barras.",
+                "search_item": "Pesquisar produto",
+                "title": "Importar produto"
+            },
             "selector": {
                 "no_results": "Nenhum Resultado Encontrado",
                 "placeholder": "Selecionar…",
@@ -129,7 +135,8 @@
                     "headers": "Cabeçalhos",
                     "page": "Página",
                     "rows_per_page": "Linhas por página",
-                    "table_settings": "Definições da Tabela"
+                    "table_settings": "Definições da Tabela",
+                    "view_item": "Ver item"
                 }
             }
         },
