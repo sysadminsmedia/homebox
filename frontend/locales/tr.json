@@ -1,11 +1,17 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "Başka bir tane oluşturmak ve eklemek için {shiftKey} + {enterKey} tuşlarını kullanın.",
+                "enter": "Giriş",
+                "shift": "Üst Karakter"
+            },
             "import_dialog": {
                 "change_warning": "Mevcut import_refs ile içe aktarmaların davranışı değişti. CSV dosyasında bir import_ref varsa, \nöğe CSV dosyasındaki değerlerle güncellenecektir.",
                 "description": "Öğelerinizi, etiketlerinizi ve konumlarınızı içeren bir CSV dosyasını içe aktarın. Daha fazla\nbilgi için dökümanları okuyun.",
                 "title": "CSV dosyasını içeri aktar",
                 "toast": {
+                    "import_failed": "İçe aktarım başarısız. Lütfen daha sonra tekrar deneyin.",
                     "import_success": "İçe aktarma başarılı!",
                     "please_select_file": "Lütfen içe aktarılacak dosyayı seçin."
                 }
@@ -21,6 +27,11 @@
         "color_selector": {
             "clear": "Rengi temizle",
             "color": "Renk"
+        },
+        "form": {
+            "password": {
+                "toggle_show": "Şifreyi Göster/Gizle"
+            }
         },
         "global": {
             "copy_text": {
@@ -61,6 +72,7 @@
                 "server_print": "Sunucuda yazdır",
                 "titles": "Etiketler",
                 "toast": {
+                    "load_status_failed": "Durum yüklenemedi",
                     "print_failed": "Etiket yazdırma başarısız",
                     "print_success": "Etiket yazdırıldı"
                 }
@@ -86,21 +98,43 @@
                 "item_quantity": "Öğe Miktarı",
                 "parent_item": "Ana Öğe",
                 "rotate_photo": "Fotoğrafı döndür",
+                "set_as_primary_photo": "{isPrimary, select, true {non} false {} other {}}ana fotoğraf olarak ayarla",
                 "title": "Eşya Oluştur",
                 "toast": {
-                    "please_select_location": "Lütfen bir lokasyon seçin.",
+                    "already_creating": "Zaten bir öğe oluşturuluyor",
+                    "create_failed": "Öğe oluşturulamadı",
+                    "create_success": "Öğe yaratıldı",
+                    "failed_load_parent": "Ana öğe yüklenemedi - lütfen elle seçin",
+                    "no_canvas_support": "Tarayıcınız canvas işlemlerini desteklemiyor",
+                    "please_select_location": "Lütfen bir konum seçin.",
                     "rotate_failed": "Fotoğraf döndürme başarısız: { error }",
+                    "rotate_process_failed": "Döndürülmüş görüntü işlenemedi",
                     "some_photos_failed": "{count, plural, =0 {Yüklenecek fotoğraf yok.} =1 {1 fotoğraf yüklenemedi.} other {Bazı fotoğraflar yüklenemedi.}}",
                     "upload_failed": "Fotoğraf yüklenemedi: { photoName }",
-                    "upload_success": "{count, plural, =0 {Fotoğraf yüklenmedi.} =1 {Fotoğraf başarıyla yüklendi.} other {Tüm fotoğraflar başarıyla yüklendi.}}"
+                    "upload_success": "{count, plural, =0 {Fotoğraf yüklenmedi.} =1 {Fotoğraf başarıyla yüklendi.} other {Tüm fotoğraflar başarıyla yüklendi.}}",
+                    "uploading_photos": "{count, plural, =0 {Yüklenecek fotoğraf yok} =1 {1 fotoğraf yükleniyor...} other {{count} fotoğraf yükleniyor...}}"
                 },
-                "upload_photos": "Fotoğrafları Yükle"
+                "upload_photos": "Fotoğrafları Yükle",
+                "uploaded": "Yüklenen Fotoğraf"
+            },
+            "product_import": {
+                "barcode": "Ürün barkodu",
+                "db_source": "Veritabanı kaynağı",
+                "error_invalid_barcode": "Geçersiz barkod girildi",
+                "error_not_found": "Girilen barkoda ait ürün bulunamadı.",
+                "search_item": "Ürün ara",
+                "title": "Ürünü içe aktar"
+            },
+            "selector": {
+                "no_results": "Sonuç Bulunamadı",
+                "placeholder": "Seç…",
+                "search_placeholder": "Aramak için yazın…"
             },
             "view": {
                 "selectable": {
                     "card": "Kart",
                     "items": "Öğeler",
-                    "no_items": "Görüntülecek Öge Yok",
+                    "no_items": "Görüntülenecek Öge Yok",
                     "table": "Tablo"
                 },
                 "table": {
@@ -113,19 +147,31 @@
         },
         "label": {
             "create_modal": {
+                "label_color": "Etiket Rengi",
                 "label_description": "Etiket Açıklaması",
                 "label_name": "Etiket Adı",
-                "title": "Etiket oluştur"
+                "title": "Etiket oluştur",
+                "toast": {
+                    "already_creating": "Zaten bir etiket oluşturuluyor",
+                    "create_failed": "Etiket oluşturulamadı",
+                    "create_success": "Etiket oluşturuldu",
+                    "label_name_too_long": "Etiket adı 50 karakterden uzun olmamalıdır"
+                }
             },
             "selector": {
-                "select_labels": "Etiketleri seçin"
+                "select_labels": "Etiketleri Seçin"
             }
         },
         "location": {
             "create_modal": {
                 "location_description": "Konum Açıklaması",
                 "location_name": "Konum Adı",
-                "title": "Konum oluştur"
+                "title": "Konum oluştur",
+                "toast": {
+                    "already_creating": "Zaten bir konum oluşturuluyor",
+                    "create_failed": "Konum oluşturulamadı",
+                    "create_success": "Konum oluşturuldu"
+                }
             },
             "selector": {
                 "no_location_found": "Konum bulunamadı",
@@ -142,17 +188,22 @@
             "shortcut_hint": "Bir eylemi hızlı bir şekilde seçmek için sayı tuşlarını kullanın."
         }
     },
+    "errors": {
+        "api_failure": "Backend API çağrısı başarısız oldu: "
+    },
     "global": {
         "add": "Ekle",
         "archived": "Arşivlendi",
         "build": "Sürüm: { build }",
-        "cancel": "İptal et",
+        "cancel": "İptal",
         "confirm": "Onaylayın",
         "create": "Oluştur",
         "create_and_add": "Oluştur ve Bir Tane Daha Ekle",
         "create_subitem": "Alt Öğe Oluştur",
         "created": "Oluşturuldu",
         "delete": "Sil",
+        "delete_confirm": "Bu öğeyi silmek istediğinizden emin misiniz? ",
+        "demo_instance": "Bu bir tanıtım örneğidir",
         "details": "Detaylar",
         "duplicate": "Kopyala",
         "edit": "Düzenle",
@@ -162,11 +213,12 @@
             "api_link": "<a href=\"https://homebox.software/en/api/\" target=\"_blank\">''API''</a>",
             "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Sürüm: { version } Yapı: { build }'</a>"
         },
-        "github": "GitHub projesi",
+        "github": "GitHub Projesi",
         "insured": "Sigortalı",
         "items": "Öğeler",
         "join_discord": "Discord'a Katılın",
         "labels": "Etiketler",
+        "loading": "Yükleniyor…",
         "locations": "Konumlar",
         "maintenance": "Bakım",
         "name": "İsim",
@@ -174,11 +226,14 @@
         "password": "Şifre",
         "quantity": "Miktar",
         "read_docs": "Dokümanları okuyun",
+        "return_home": "Anasayfaya Dön",
         "save": "Kaydet",
         "search": "Ara",
         "sign_out": "Oturumu kapat",
         "submit": "Gönder",
+        "unknown": "Bilinmeyen",
         "update": "Güncelle",
+        "updating": "Güncelleniyor",
         "value": "Değer",
         "version": "Versiyon:{ version }",
         "welcome": "Hoşgeldin, { username }"
@@ -201,29 +256,51 @@
         "register": "Kaydolun",
         "remember_me": "Beni Hatırla",
         "set_email": "E-posta adresiniz nedir?",
-        "set_name": "Adın ne?",
+        "set_name": "Adınız nedir?",
         "set_password": "Şifrenizi belirleyin",
-        "tagline": "Eşyalarınızı Takip Edin, Düzenleyin ve Yönetin."
+        "tagline": "Eşyalarınızı Takip Edin, Düzenleyin ve Yönetin.",
+        "title": "Eşyalarınızı Düzenleyin ve Etiketleyin",
+        "toast": {
+            "invalid_email": "Geçersiz e-posta adresi",
+            "invalid_email_password": "Geçersiz e-posta veya şifre",
+            "login_success": "Başarıyla oturum açıldı",
+            "problem_registering": "Kullanıcı kaydedilirken sorun oluştu",
+            "user_registered": "Kullanıcı kaydedildi"
+        }
     },
     "items": {
         "add": "Ekle",
         "advanced": "İleri Seviye",
         "archived": "Arşivlendi",
         "asset_id": "Öğe Kimliği",
+        "associated_with_multiple": "Bu varlık kimliği birden fazla öğe ile ilişkilidir",
         "attachment": "Ek",
         "attachments": "Ekler",
         "changes_persisted_immediately": "Eklerde yapılan değişiklikler hemen kaydedilecektir",
         "created_at": "Oluşturulma",
         "custom_fields": "Özel Alanlar",
+        "delete_attachment_confirm": "Bu eki silmek istediğinizden emin misiniz?",
+        "delete_item_confirm": "Bu öğeyi silmek istediğinizden emin misiniz?",
         "description": "Açıklama",
         "details": "Detaylar",
         "drag_and_drop": "Dosyaları buraya sürükleyip bırakın veya dosyaları seçmek için tıklayın",
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "Ek Başlığı",
+                "attachment_type": "Ek Türü",
+                "primary_photo": "Ana Fotoğraf",
+                "primary_photo_sub": "Bu seçenek yalnızca fotoğraflar için kullanılabilir. Yalnızca bir fotoğraf birincil olarak seçilebilir. Bu seçeneği seçerseniz, varsa mevcut ana fotoğraf seçili durumdan kaldırılır.",
+                "select_type": "Tür seçin",
+                "title": "Eki Düzenle"
+            }
+        },
         "edit_details": "Detayları Düzenle",
-        "field_selector": "alan seçici",
+        "field_selector": "Alan Seçici",
         "field_value": "Alan Değeri",
         "first": "Birinci",
         "include_archive": "Arşivlenen Öğeleri Dahil Et",
         "insured": "Sigortalı",
+        "invalid_asset_id": "Geçersiz Varlık Kimliği",
         "last": "Son",
         "lifetime_warranty": "Ömür Boyu Garanti",
         "location": "Konum",
@@ -234,6 +311,7 @@
         "name": "İsim",
         "negate_labels": "Seçili Etiketleri Yoksay",
         "next_page": "Sonraki Sayfa",
+        "no_attachments": "Ek bulunamadı",
         "no_results": "Öğe Bulunamadı",
         "notes": "Notlar",
         "only_with_photo": "Sadece fotoğraflı öğeler",
@@ -255,24 +333,58 @@
         "receipts": "Faturalar",
         "reset_search": "Aramayı Sıfırla",
         "results": "{ total } Sonuç",
+        "select_field": "Alan seçin",
         "serial_number": "Seri Numarası",
         "show_advanced_view_options": "Gelişmiş Seçenekleri Göster",
         "sold_at": "Satıldığı Yer",
         "sold_details": "Satış Detayları",
         "sold_price": "Satış Fiyatı",
         "sold_to": "Satılan Kişi",
+        "sync_child_locations": "Alt öğelerin konumlarını senkronize et",
         "tip_1": "Konum ve etiket filtreleri 'veya' işlemini kullanır. Eğer birden fazla seçilirse sadece biri \neşleştirme için kullanılacaktır.",
         "tip_2": "'#' ile başlayan aramalar bir varlık kimliğini sorgular (örneğin '#000-001')",
         "tip_3": "Alan filtreleri 'VEYA' işlemini kullanır. Birden fazla seçenek seçilirse, eşleşme için yalnızca birinin \nkarşılanması yeterlidir.",
         "tips": "İpuçları",
         "tips_sub": "Arama İpuçları",
-        "updated_at": "Güncellendiği Zaman",
+        "toast": {
+            "asset_not_found": "Varlık bulunamadı",
+            "attachment_deleted": "Ek silindi",
+            "attachment_updated": "Ek güncellendi",
+            "attachment_uploaded": "Ek yüklendi",
+            "child_items_location_no_longer_synced": "Alt öğelerin konumları artık bu öğeyle senkronize edilmeyecek.",
+            "child_items_location_synced": "Alt öğelerin konumları bu öğeyle senkronize edildi",
+            "child_location_desync": "Konumu değiştirmek, üst öğenin konumundan senkronizasyonu kaldıracaktır",
+            "error_loading_parent_data": "Üst veriler yüklenmeye çalışılırken bir hata oluştu",
+            "failed_adjust_quantity": "Miktar ayarlanamadı",
+            "failed_delete_attachment": "Ek silinemedi",
+            "failed_delete_item": "Öğe silinemedi",
+            "failed_duplicate_item": "Öğe çoğaltılamadı",
+            "failed_load_asset": "Varlık yüklenemedi",
+            "failed_load_item": "Öğe yüklenemedi",
+            "failed_load_items": "Öğeler yüklenemedi",
+            "failed_save": "Öğe kaydedilemedi",
+            "failed_save_no_location": "Öğe kaydedilemedi: konum seçilmedi",
+            "failed_update_attachment": "Ek güncellenemedi",
+            "failed_upload_attachment": "Ek yüklenemedi",
+            "item_deleted": "Öğe silindi",
+            "item_saved": "Öğe kaydedildi",
+            "quantity_cannot_negative": "Miktar negatif olamaz"
+        },
+        "updated_at": "Güncelleme",
         "warranty": "Garanti",
         "warranty_details": "Garanti Bilgileri",
         "warranty_expires": "Garanti Bitiş Tarihi"
     },
     "labels": {
+        "label_delete_confirm": "Bu etiketi silmek istediğinizden emin misiniz? Bu eylem geri alınamaz.",
         "no_results": "Etiket Bulunamadı",
+        "toast": {
+            "failed_delete_label": "Etiket silinemedi",
+            "failed_load_label": "Etiket yüklenemedi",
+            "failed_update_label": "Etiket güncellenemedi",
+            "label_deleted": "Etiket silindi",
+            "label_updated": "Etiket güncellendi"
+        },
         "update_label": "Etiket Güncelle"
     },
     "languages": {
@@ -288,6 +400,8 @@
         "it": "İtalyanca",
         "ja-JP": "Japonca",
         "ko-KR": "Korece",
+        "lb-LU": "Lüksemburgca (Lüksemburg)",
+        "lt-LT": "Litvanca (Litvanya)",
         "nb-NO": "Norveççe (Bokmål)",
         "nl": "Hollandaca",
         "pl": "Lehçe",
@@ -298,6 +412,7 @@
         "sq-AL": "Arnavutça",
         "sv": "İsveççe",
         "ta-IN": "Tamilce",
+        "th-TH": "Tayca",
         "tr": "Türkçe",
         "uk-UA": "Ukraynaca",
         "zh-CN": "Basitleştirilmiş Çince",
@@ -312,13 +427,21 @@
         "child_locations": "Alt konumlar",
         "collapse_tree": "Ağacı Daralt",
         "expand_tree": "Ağacı Genişlet",
+        "location_items_delete_confirm": "Bu konumu ve tüm öğelerini silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
         "no_results": "Konum bulunamadı",
+        "toast": {
+            "failed_delete_location": "Konum silinemedi",
+            "failed_load_location": "Konum yüklenemedi",
+            "failed_update_location": "Konum güncellenemedi",
+            "location_deleted": "Konum silindi",
+            "location_updated": "Konum güncellendi"
+        },
         "update_location": "Konumu Güncelle"
     },
     "maintenance": {
         "filter": {
             "both": "İkisi de",
-            "completed": "Tamamlandı",
+            "completed": "Tamamlanmış",
             "scheduled": "Planlanmış"
         },
         "list": {
@@ -368,7 +491,9 @@
         "currency_format": "Para Birimi Biçimi",
         "current_password": "Mevcut Şifre",
         "delete_account": "Hesabı Sil",
+        "delete_account_confirm": "Hesabınızı silmek istediğinizden emin misiniz? Grubunuzun son üyesiyseniz tüm verileriniz silinir. Bu işlem geri alınamaz.",
         "delete_account_sub": "Hesabınızı ve ona bağlı tüm verileri silin. Bu işlem geri alınamaz.",
+        "display_legacy_header": "{ currentValue, select, true {Eski Başlığı Devre Dışı Bırak} false {Eski Başlığı Etkinleştir} other {Vurulmadı}}",
         "enabled": "Etkinleştirildi",
         "example": "Örnek",
         "gen_invite": "Davet Bağlantısı Oluştur",
@@ -378,21 +503,42 @@
         "language": "Dil",
         "new_password": "Yeni Şifre",
         "no_notifiers": "Yapılandırılmış bildirimci yok",
+        "no_override": "Geçersiz kılma yok",
         "notifier_modal": "{ type, select, true {Edit} false {Create} other {Other}} Bildirici",
         "notifiers": "Bildirimde Bulunanlar",
         "notifiers_sub": "Yaklaşan bakım hatırlatmaları için bildirimler alın",
+        "override_locale": "Tarih ve Para Birimi Dilini Geçersiz Kıl",
         "test": "Test",
         "theme_settings": "Tema Ayarları",
         "theme_settings_sub": "Tema ayarları tarayıcınızın yerel depolama alanında saklanır. Temayı istediğiniz zaman değiştirebilirsiniz. \nTemanızı ayarlamakta sorun yaşıyorsanız, tarayıcınızı yenilemeyi deneyin.",
+        "toast": {
+            "account_deleted": "Hesabınız silindi.",
+            "failed_change_password": "Şifre değiştirilemedi.",
+            "password_changed": "Şifre başarıyla değiştirildi."
+        },
         "update_group": "Grubu Güncelle",
         "update_language": "Dili Güncelle",
         "url": "URL",
         "user_profile": "Kullanıcı Profili",
         "user_profile_sub": "Kullanıcıları davet edin ve hesabınızı yönetin."
     },
+    "reports": {
+        "label_generator": {
+            "generate_page": "Sayfayı Oluştur",
+            "label_height": "Etiket Yüksekliği",
+            "label_width": "Etiket Genişliği",
+            "page_height": "Sayfa Yüksekliği",
+            "tips": "İpuçları",
+            "title": "Etiket Oluşturucu",
+            "toast": {
+                "page_too_small_card": "Sayfa boyutu kart boyutu için çok küçük"
+            }
+        }
+    },
     "scanner": {
         "error": "Tarama yapılırken bir hata oluştu",
         "invalid_url": "Geçersiz barkod URL'si",
+        "no_sources": "Video kaynağı mevcut değil",
         "permission_denied": "Kamera izni reddedildi, lütfen tarayıcı ayarlarınızda kameraya erişime izin verin",
         "select_video_source": "Video kaynağı seçin",
         "title": "Tarayıcı",
