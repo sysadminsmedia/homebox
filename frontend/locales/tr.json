@@ -4,7 +4,11 @@
             "import_dialog": {
                 "change_warning": "Mevcut import_refs ile içe aktarmaların davranışı değişti. CSV dosyasında bir import_ref varsa, \nöğe CSV dosyasındaki değerlerle güncellenecektir.",
                 "description": "Öğelerinizi, etiketlerinizi ve konumlarınızı içeren bir CSV dosyasını içe aktarın. Daha fazla\nbilgi için dökümanları okuyun.",
-                "title": "CSV dosyasını içeri aktar"
+                "title": "CSV dosyasını içeri aktar",
+                "toast": {
+                    "import_success": "İçe aktarma başarılı!",
+                    "please_select_file": "Lütfen içe aktarılacak dosyayı seçin."
+                }
             },
             "outdated": {
                 "current_version": "Güncel Sürüm",
@@ -13,6 +17,10 @@
                 "new_version_available": "Yeni sürüm mevcut",
                 "new_version_available_link": "Sürüm notlarını görüntülemek için buraya tıklayın"
             }
+        },
+        "color_selector": {
+            "clear": "Rengi temizle",
+            "color": "Renk"
         },
         "global": {
             "copy_text": {
@@ -51,7 +59,11 @@
                 "download": "Etiketi İndir",
                 "print": "Etiketi yazdır",
                 "server_print": "Sunucuda yazdır",
-                "titles": "Etiketler"
+                "titles": "Etiketler",
+                "toast": {
+                    "print_failed": "Etiket yazdırma başarısız",
+                    "print_success": "Etiket yazdırıldı"
+                }
             },
             "page_qr_code": {
                 "page_url": "Sayfa URL'si",
@@ -62,13 +74,26 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "İndir",
+                "open_new_tab": "Yeni sekmede aç"
+            },
             "create_modal": {
+                "delete_photo": "Fotoğrafı sil",
                 "item_description": "Ürün Açıklaması",
                 "item_name": "Ürün Adı",
                 "item_photo": "Öğe Fotoğrafı 📷",
                 "item_quantity": "Öğe Miktarı",
                 "parent_item": "Ana Öğe",
+                "rotate_photo": "Fotoğrafı döndür",
                 "title": "Eşya Oluştur",
+                "toast": {
+                    "please_select_location": "Lütfen bir lokasyon seçin.",
+                    "rotate_failed": "Fotoğraf döndürme başarısız: { error }",
+                    "some_photos_failed": "{count, plural, =0 {Yüklenecek fotoğraf yok.} =1 {1 fotoğraf yüklenemedi.} other {Bazı fotoğraflar yüklenemedi.}}",
+                    "upload_failed": "Fotoğraf yüklenemedi: { photoName }",
+                    "upload_success": "{count, plural, =0 {Fotoğraf yüklenmedi.} =1 {Fotoğraf başarıyla yüklendi.} other {Tüm fotoğraflar başarıyla yüklendi.}}"
+                },
                 "upload_photos": "Fotoğrafları Yükle"
             },
             "view": {
@@ -109,7 +134,7 @@
                 "select_location": "Konumu Seç"
             },
             "tree": {
-                "no_locations": "Mevcut konum yok. Navigasyon çubuğundaki \n`<`span class=\"link-primary\"`>`Oluştur`<`/span`>` düğmesiyle yeni konumlar ekleyin."
+                "no_locations": "Mevcut konum yok. Navigasyon çubuğundaki\n.'<span class=\"link-primary\">'Oluştur'</span>' düğmesiyle yeni konumlar ekleyin."
             }
         },
         "quick_menu": {
@@ -211,6 +236,8 @@
         "next_page": "Sonraki Sayfa",
         "no_results": "Öğe Bulunamadı",
         "notes": "Notlar",
+        "only_with_photo": "Sadece fotoğraflı öğeler",
+        "only_without_photo": "Sadece fotoğrafsız öğeler",
         "options": "Seçenekler",
         "order_by": "Sıralama ölçütü",
         "pages": "Sayfa { page }/{ totalPages }",
@@ -250,20 +277,27 @@
     },
     "languages": {
         "ca": "Katalanca",
+        "cs-CZ": "Çekçe",
         "de": "Almanca",
         "en": "İngilizce",
         "es": "İspanyolca",
+        "fi-FI": "Fince",
         "fr": "Fransızca",
         "hu": "Macarca",
+        "id-ID": "Endonezce",
         "it": "İtalyanca",
         "ja-JP": "Japonca",
+        "ko-KR": "Korece",
+        "nb-NO": "Norveççe (Bokmål)",
         "nl": "Hollandaca",
         "pl": "Lehçe",
         "pt-BR": "Brezilya Portekizcesi",
         "pt-PT": "Portekizce (Portekiz)",
         "ru": "Rusça",
         "sl": "Slovence",
+        "sq-AL": "Arnavutça",
         "sv": "İsveççe",
+        "ta-IN": "Tamilce",
         "tr": "Türkçe",
         "uk-UA": "Ukraynaca",
         "zh-CN": "Basitleştirilmiş Çince",
@@ -277,6 +311,7 @@
     "locations": {
         "child_locations": "Alt konumlar",
         "collapse_tree": "Ağacı Daralt",
+        "expand_tree": "Ağacı Genişlet",
         "no_results": "Konum bulunamadı",
         "update_location": "Konumu Güncelle"
     },
@@ -323,6 +358,7 @@
         "locations": "Konumlar",
         "maintenance": "Bakım",
         "profile": "Profil",
+        "scanner": "Tarayıcı",
         "search": "Ara",
         "tools": "Araçlar"
     },
@@ -355,7 +391,12 @@
         "user_profile_sub": "Kullanıcıları davet edin ve hesabınızı yönetin."
     },
     "scanner": {
-        "permission_denied": "Kamera izni reddedildi, lütfen tarayıcı ayarlarınızda kameraya erişime izin verin"
+        "error": "Tarama yapılırken bir hata oluştu",
+        "invalid_url": "Geçersiz barkod URL'si",
+        "permission_denied": "Kamera izni reddedildi, lütfen tarayıcı ayarlarınızda kameraya erişime izin verin",
+        "select_video_source": "Video kaynağı seçin",
+        "title": "Tarayıcı",
+        "unsupported": "Media Stream API, HTTPS olmadan desteklenmez"
     },
     "tools": {
         "actions": "Envanter İşlemleri",
