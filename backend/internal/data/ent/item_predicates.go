@@ -22,7 +22,7 @@ func AccentInsensitiveContains(field string, searchValue string) predicate.Item 
 
 	return predicate.Item(func(s *sql.Selector) {
 		dialect := s.Dialect()
-		
+
 		switch dialect {
 		case "sqlite3":
 			// For SQLite, we'll create a custom normalization function using REPLACE
@@ -33,13 +33,15 @@ func AccentInsensitiveContains(field string, searchValue string) predicate.Item 
 				"%"+normalizedSearch+"%",
 			))
 		case "postgres":
-			// For PostgreSQL, try to use unaccent extension if available
-			// Fall back to REPLACE-based normalization if not available
-			normalizeFunc := buildPostgreSQLNormalizeExpression(s.C(field))
-			s.Where(sql.ExprP(
-				"LOWER("+normalizeFunc+") LIKE ?",
-				"%"+normalizedSearch+"%",
-			))
+			// For PostgreSQL, use REPLACE-based normalization to avoid unaccent dependency
+			normalizeFunc := buildGenericNormalizeExpression(s.C(field))
+			// Use sql.P() for proper PostgreSQL parameter binding ($1, $2, etc.)
+			s.Where(sql.P(func(b *sql.Builder) {
+				b.WriteString("LOWER(")
+				b.WriteString(normalizeFunc)
+				b.WriteString(") LIKE ")
+				b.Arg("%" + normalizedSearch + "%")
+			}))
 		default:
 			// Default fallback using REPLACE for common accented characters
 			normalizeFunc := buildGenericNormalizeExpression(s.C(field))
@@ -56,22 +58,13 @@ func buildSQLiteNormalizeExpression(fieldExpr string) string {
 	return buildGenericNormalizeExpression(fieldExpr)
 }
 
-// buildPostgreSQLNormalizeExpression creates a PostgreSQL expression to normalize accented characters
-func buildPostgreSQLNormalizeExpression(fieldExpr string) string {
-	// Use a CASE statement to check if unaccent function exists before using it
-	// This prevents errors when the unaccent extension is not installed
-	return "CASE WHEN EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'unaccent') " +
-		"THEN unaccent(" + fieldExpr + ") " +
-		"ELSE " + buildGenericNormalizeExpression(fieldExpr) + " END"
-}
-
 // buildGenericNormalizeExpression creates a database-agnostic expression to normalize common accented characters
 func buildGenericNormalizeExpression(fieldExpr string) string {
 	// Chain REPLACE functions to handle the most common accented characters
 	// Focused on the most frequently used accents in Spanish, French, and Portuguese
 	// Ordered by frequency of use for better performance
 	normalized := fieldExpr
-	
+
 	// Most common accented characters ordered by frequency
 	commonAccents := []struct {
 		from, to string
@@ -88,11 +81,11 @@ func buildGenericNormalizeExpression(fieldExpr string) string {
 		{"ä", "a"}, {"ö", "o"}, {"ü", "u"}, {"ã", "a"}, {"õ", "o"},
 		{"Ä", "A"}, {"Ö", "O"}, {"Ü", "U"}, {"Ã", "A"}, {"Õ", "O"},
 	}
-	
+
 	for _, accent := range commonAccents {
 		normalized = "REPLACE(" + normalized + ", '" + accent.from + "', '" + accent.to + "')"
 	}
-	
+
 	return normalized
 }
 
