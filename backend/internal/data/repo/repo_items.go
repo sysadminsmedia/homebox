@@ -1014,9 +1014,12 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID) (Ite
 	if err != nil {
 		return ItemOut{}, err
 	}
+	committed := false
 	defer func() {
-		if err := tx.Rollback(); err != nil {
-			log.Warn().Err(err).Msg("failed to rollback transaction during item duplication")
+		if !committed {
+			if err := tx.Rollback(); err != nil {
+				log.Warn().Err(err).Msg("failed to rollback transaction during item duplication")
+			}
 		}
 	}()
 
@@ -1150,6 +1153,7 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID) (Ite
 	if err := tx.Commit(); err != nil {
 		return ItemOut{}, err
 	}
+	committed = true
 
 	e.publishMutationEvent(gid)
 
