@@ -1094,7 +1094,7 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opti
 	}
 
 	// Copy custom fields if requested
-	if options.CopyCustomFields && len(originalItem.Fields) > 0 {
+	if options.CopyCustomFields {
 		for _, field := range originalItem.Fields {
 			_, err = tx.ItemField.Create().
 				SetItemID(newItemID).
@@ -1112,7 +1112,7 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opti
 	}
 
 	// Copy attachments if requested
-	if options.CopyAttachments && len(originalItem.Attachments) > 0 {
+	if options.CopyAttachments {
 		for _, att := range originalItem.Attachments {
 			// Get the original attachment file
 			originalAttachment, err := tx.Attachment.Query().
@@ -1146,7 +1146,7 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opti
 		maintenanceEntries, err := tx.MaintenanceEntry.Query().
 			Where(maintenanceentry.HasItemWith(item.ID(id))).
 			All(ctx)
-		if err == nil && len(maintenanceEntries) > 0 {
+		if err == nil {
 			for _, entry := range maintenanceEntries {
 				_, err = tx.MaintenanceEntry.Create().
 					SetItemID(newItemID).
