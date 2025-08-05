@@ -12,6 +12,17 @@
               :date="detail.text"
               :datetime-type="detail.date ? 'date' : 'datetime'"
             />
+            <template v-else-if="detail.type === 'barcode'">
+              <span class="flex w-full items-center break-words">
+                <Barcode :barcode="detail.text" />
+                <span
+                  v-if="detail.copyable"
+                  class="my-0 ml-4 shrink-0 opacity-0 transition-opacity duration-75 group-hover:opacity-100"
+                >
+                  <CopyText v-if="detail.text.toString()" :text="detail.text.toString()" :icon-size="16" />
+                </span>
+              </span>
+            </template>
             <Currency v-else-if="detail.type == 'currency'" :amount="detail.text" />
             <template v-else-if="detail.type === 'link'">
               <TooltipProvider :delay-duration="0">

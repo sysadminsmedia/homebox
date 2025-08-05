@@ -2518,6 +2518,10 @@ const docTemplate = `{
                     "description": "AssetID holds the value of the \"asset_id\" field.",
                     "type": "integer"
                 },
+                "barcode": {
+                    "description": "Barcode holds the value of the \"barcode\" field.",
+                    "type": "string"
+                },
                 "created_at": {
                     "description": "CreatedAt holds the value of the \"created_at\" field.",
                     "type": "string"
@@ -3101,9 +3105,6 @@ const docTemplate = `{
         "repo.BarcodeProduct": {
             "type": "object",
             "properties": {
-                "barcode": {
-                    "type": "string"
-                },
                 "imageBase64": {
                     "type": "string"
                 },
@@ -3113,18 +3114,17 @@ const docTemplate = `{
                 "item": {
                     "$ref": "#/definitions/repo.ItemCreate"
                 },
-                "manufacturer": {
-                    "type": "string"
-                },
-                "modelNumber": {
-                    "description": "Identifications",
-                    "type": "string"
-                },
                 "notes": {
                     "description": "Extras",
                     "type": "string"
                 },
                 "search_engine_name": {
+                    "type": "string"
+                },
+                "search_engine_product_url": {
+                    "type": "string"
+                },
+                "search_engine_url": {
                     "type": "string"
                 }
             }
@@ -3235,6 +3235,9 @@ const docTemplate = `{
                 "name"
             ],
             "properties": {
+                "barcode": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string",
                     "maxLength": 1000
@@ -3247,6 +3250,12 @@ const docTemplate = `{
                 },
                 "locationId": {
                     "description": "Edges",
+                    "type": "string"
+                },
+                "manufacturer": {
+                    "type": "string"
+                },
+                "modelNumber": {
                     "type": "string"
                 },
                 "name": {
@@ -3301,6 +3310,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/repo.ItemAttachment"
                     }
+                },
+                "barcode": {
+                    "type": "string"
                 },
                 "createdAt": {
                     "type": "string"
@@ -3529,6 +3541,9 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "assetId": {
+                    "type": "string"
+                },
+                "barcode": {
                     "type": "string"
                 },
                 "description": {

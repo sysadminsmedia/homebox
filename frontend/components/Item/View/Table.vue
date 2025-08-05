@@ -77,7 +77,13 @@
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow v-for="(d, i) in data" :key="d.id" class="relative cursor-pointer">
+        <TableRow
+          v-for="(d, i) in data"
+          :key="d.id"
+          class="relative cursor-pointer"
+          :class="{ selected: selectedRow === i }"
+          @click="selectRow(i)"
+        >
           <TableCell
             v-for="h in headers.filter(h => h.enabled)"
             :key="`${h.value}-${i}`"
@@ -88,7 +94,17 @@
             }"
           >
             <template v-if="h.type === 'name'">
-              {{ d.name }}
+              <div class="flex items-center space-x-4">
+                <img
+                  v-if="d?.imageBase64"
+                  :src="d.imageBase64"
+                  class="w-16 rounded object-fill shadow-sm"
+                  alt="Product's photo"
+                />
+                <span class="text-sm font-medium">
+                  {{ extractValue(d, h.value) }}
+                </span>
+              </div>
             </template>
             <template v-else-if="h.type === 'price'">
               <Currency :amount="d.purchasePrice" />
@@ -106,10 +122,17 @@
               <DateTime :date="d[h.value]" datetime-type="date" />
             </template>
             <slot v-else :name="cell(h)" v-bind="{ item: d }">
-              {{ extractValue(d, h.value) }}
+              <template v-if="h.url?.length">
+                <NuxtLink class="underline" :to="extractValue(d, h.url)" target="_blank">{{
+                  extractValue(d, h.value)
+                }}</NuxtLink>
+              </template>
+              <template v-else>
+                {{ extractValue(d, h.value) }}
+              </template>
             </slot>
           </TableCell>
-          <TableCell class="absolute inset-0">
+          <TableCell v-if="!props.selectionMode" class="absolute inset-0">
             <NuxtLink :to="`/item/${d.id}`" class="absolute inset-0">
               <span class="sr-only">{{ $t("components.item.view.table.view_item") }}</span>
             </NuxtLink>
@@ -154,8 +177,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { TableData, TableHeaderType } from "./Table.types";
-  import type { ItemSummary } from "~~/lib/api/types/data-contracts";
+  import type { TableData, TableEmits, TableProps, TableProperties, TableHeaderType } from "./Table.types";
   import MdiArrowDown from "~icons/mdi/arrow-down";
   import MdiArrowUp from "~icons/mdi/arrow-up";
   import MdiCheck from "~icons/mdi/check";
@@ -176,19 +198,7 @@
   import { useDialog } from "@/components/ui/dialog-provider";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
 
-  const { openDialog, closeDialog } = useDialog();
-
-  type Props = {
-    items: ItemSummary[];
-    disableControls?: boolean;
-  };
-  const props = defineProps<Props>();
-
-  const sortByProperty = ref<keyof ItemSummary | "">("");
-
-  const preferences = useViewPreferences();
-
-  const defaultHeaders = [
+  const ItemSummaryHeaders = [
     { text: "items.asset_id", value: "assetId", enabled: false },
     {
       text: "items.name",
@@ -205,15 +215,64 @@
     { text: "items.updated_at", value: "updatedAt", align: "center", enabled: false, type: "date" },
   ] satisfies TableHeaderType[];
 
-  const headers = ref<TableHeaderType[]>(
-    (preferences.value.tableHeaders ?? [])
-      .concat(defaultHeaders.filter(h => !preferences.value.tableHeaders?.find(h2 => h2.value === h.value)))
-      // this is a hack to make sure that any changes to the defaultHeaders are reflected in the preferences
-      .map(h => ({
-        ...(defaultHeaders.find(h2 => h2.value === h.value) as TableHeaderType),
-        enabled: h.enabled,
-      }))
-  );
+  const BarcodeProductHeaders = [
+    {
+      text: "items.name",
+      value: "item.name",
+      enabled: true,
+      align: "center",
+      type: "name",
+    },
+    { text: "items.manufacturer", value: "item.manufacturer", align: "center", enabled: true },
+    { text: "items.model_number", value: "item.modelNumber", align: "center", enabled: true },
+    {
+      text: "components.item.product_import.db_source",
+      value: "search_engine_name",
+      url: "search_engine_product_url",
+      align: "center",
+      enabled: true,
+    },
+  ] satisfies TableHeaderType[];
+
+  const { openDialog, closeDialog } = useDialog();
+
+  const emit = defineEmits<TableEmits>();
+
+  const props = defineProps<TableProps>();
+
+  const sortByProperty = ref<TableProperties | "">("");
+
+  const selectedRow = ref(-1);
+
+  const preferences = useViewPreferences();
+
+  const headers = computed<TableHeaderType[]>(() => {
+    let defaultHeaders;
+    let params;
+    switch (props.itemType) {
+      case "barcodeproduct":
+        defaultHeaders = BarcodeProductHeaders;
+        params = preferences.value.tableHeadersBarcode;
+        break;
+      case "itemsummary":
+        defaultHeaders = ItemSummaryHeaders;
+        params = preferences.value.tableHeaders;
+        break;
+      default:
+        console.warn("Unknown item-type:", props.itemType);
+        return [];
+    }
+
+    return (
+      (params ?? [])
+        .concat(defaultHeaders.filter(h => !params?.find(h2 => h2.value === h.value)))
+        // this is a hack to make sure that any changes to the defaultHeaders are reflected in the preferences
+        .map(h => ({
+          ...(defaultHeaders.find(h2 => h2.value === h.value) as TableHeaderType),
+          enabled: h.enabled,
+        }))
+    );
+  });
 
   const toggleHeader = (value: string) => {
     const header = headers.value.find(h => h.value === value);
@@ -221,15 +280,29 @@
       header.enabled = !header.enabled; // Toggle the 'enabled' state
     }
 
-    preferences.value.tableHeaders = headers.value;
+    updateParameters();
   };
+
   const moveHeader = (from: number, to: number) => {
     const header = headers.value[from];
     headers.value.splice(from, 1);
     headers.value.splice(to, 0, header);
 
-    preferences.value.tableHeaders = headers.value;
+    updateParameters();
   };
+
+  function updateParameters() {
+    switch (props.itemType) {
+      case "barcodeproduct":
+        preferences.value.tableHeadersBarcode = headers.value;
+        break;
+      case "itemsummary":
+        preferences.value.tableHeaders = headers.value;
+        break;
+      default:
+        console.warn("Unknown item-type:", props.itemType);
+    }
+  }
 
   const pagination = reactive({
     descending: false,
@@ -245,7 +318,21 @@
     }
   );
 
-  function sortBy(property: keyof ItemSummary) {
+  function selectRow(index: number) {
+    if (!props.selectionMode) return;
+
+    // Unselect if already selected
+    if (selectedRow.value === index) {
+      selectedRow.value = -1;
+      emit("update:selectedItem", null);
+      return;
+    }
+
+    selectedRow.value = index;
+    emit("update:selectedItem", props.items[index]);
+  }
+
+  function sortBy(property: TableProperties) {
     if (sortByProperty.value === property) {
       pagination.descending = !pagination.descending;
     } else {
@@ -254,7 +341,7 @@
     sortByProperty.value = property;
   }
 
-  function extractSortable(item: ItemSummary, property: keyof ItemSummary): string | number | boolean {
+  function extractSortable<T extends Record<string, any>>(item: T, property: keyof T): string | number | boolean {
     const value = item[property];
     if (typeof value === "string") {
       // Try to parse number
@@ -273,7 +360,7 @@
     return value;
   }
 
-  function itemSort(a: ItemSummary, b: ItemSummary) {
+  function itemSort<T extends Record<string, any>>(a: T, b: T) {
     if (!sortByProperty.value) {
       return 0;
     }
@@ -323,3 +410,14 @@
     return `cell-${h.value.replace(".", "_")}`;
   }
 </script>
+
+<style>
+  tr.selected {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--background));
+  }
+
+  tr:hover.selected {
+    background-color: hsl(var(--primary));
+  }
+</style>

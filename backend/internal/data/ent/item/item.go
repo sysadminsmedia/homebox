@@ -43,6 +43,8 @@ const (
 	FieldModelNumber = "model_number"
 	// FieldManufacturer holds the string denoting the manufacturer field in the database.
 	FieldManufacturer = "manufacturer"
+	// FieldBarcode holds the string denoting the barcode field in the database.
+	FieldBarcode = "barcode"
 	// FieldLifetimeWarranty holds the string denoting the lifetime_warranty field in the database.
 	FieldLifetimeWarranty = "lifetime_warranty"
 	// FieldWarrantyExpires holds the string denoting the warranty_expires field in the database.
@@ -148,6 +150,7 @@ var Columns = []string{
 	FieldSerialNumber,
 	FieldModelNumber,
 	FieldManufacturer,
+	FieldBarcode,
 	FieldLifetimeWarranty,
 	FieldWarrantyExpires,
 	FieldWarrantyDetails,
@@ -220,6 +223,8 @@ var (
 	ModelNumberValidator func(string) error
 	// ManufacturerValidator is a validator for the "manufacturer" field. It is called by the builders before save.
 	ManufacturerValidator func(string) error
+	// BarcodeValidator is a validator for the "barcode" field. It is called by the builders before save.
+	BarcodeValidator func(string) error
 	// DefaultLifetimeWarranty holds the default value on creation for the "lifetime_warranty" field.
 	DefaultLifetimeWarranty bool
 	// WarrantyDetailsValidator is a validator for the "warranty_details" field. It is called by the builders before save.
@@ -310,6 +315,11 @@ func ByModelNumber(opts ...sql.OrderTermOption) OrderOption {
 // ByManufacturer orders the results by the manufacturer field.
 func ByManufacturer(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldManufacturer, opts...).ToFunc()
+}
+
+// ByBarcode orders the results by the barcode field.
+func ByBarcode(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldBarcode, opts...).ToFunc()
 }
 
 // ByLifetimeWarranty orders the results by the lifetime_warranty field.

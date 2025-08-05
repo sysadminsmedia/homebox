@@ -283,6 +283,7 @@
         "associated_with_multiple": "This Asset Id is associated with multiple items",
         "attachment": "Attachment",
         "attachments": "Attachments",
+        "barcode": "Barcode",
         "changes_persisted_immediately": "Changes to attachments will be saved immediately",
         "created_at": "Created At",
         "custom_fields": "Custom Fields",

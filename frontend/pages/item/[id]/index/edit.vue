@@ -200,6 +200,12 @@
       maxLength: 255,
     },
     {
+      type: "text",
+      label: "items.barcode",
+      ref: "barcode",
+      maxLength: 255,
+    },
+    {
       type: "textarea",
       label: "items.notes",
       ref: "notes",
