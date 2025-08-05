@@ -153,9 +153,23 @@ export class ItemsApi extends BaseAPI {
     return resp;
   }
 
-  duplicate(id: string) {
-    return this.http.post<void, ItemOut>({
+  duplicate(
+    id: string,
+    options: {
+      copyMaintenance?: boolean;
+      copyAttachments?: boolean;
+      copyCustomFields?: boolean;
+      copyPrefix?: string;
+    } = {}
+  ) {
+    return this.http.post<typeof options, ItemOut>({
       url: route(`/items/${id}/duplicate`),
+      body: {
+        copyMaintenance: options.copyMaintenance,
+        copyAttachments: options.copyAttachments,
+        copyCustomFields: options.copyCustomFields,
+        copyPrefix: options.copyPrefix,
+      },
     });
   }
 

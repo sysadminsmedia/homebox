@@ -667,6 +667,17 @@ definitions:
       search_engine_name:
         type: string
     type: object
+  repo.DuplicateOptions:
+    properties:
+      copyAttachments:
+        type: boolean
+      copyCustomFields:
+        type: boolean
+      copyMaintenance:
+        type: boolean
+      copyPrefix:
+        type: string
+    type: object
   repo.Group:
     properties:
       createdAt:
@@ -1976,6 +1987,12 @@ paths:
         name: id
         required: true
         type: string
+      - description: Duplicate Options
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.DuplicateOptions'
       produces:
       - application/json
       responses:

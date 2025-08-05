@@ -48,6 +48,13 @@ type (
 		OrderBy          string       `json:"orderBy"`
 	}
 
+	DuplicateOptions struct {
+		CopyMaintenance  bool   `json:"copyMaintenance"`
+		CopyAttachments  bool   `json:"copyAttachments"`
+		CopyCustomFields bool   `json:"copyCustomFields"`
+		CopyPrefix       string `json:"copyPrefix"`
+	}
+
 	ItemField struct {
 		ID           uuid.UUID `json:"id,omitempty"`
 		Type         string    `json:"type"`
@@ -1007,9 +1014,9 @@ func (e *ItemsRepository) SetPrimaryPhotos(ctx context.Context, gid uuid.UUID) (
 	return updated, nil
 }
 
-// Duplicate creates a copy of an item with all its data including attachments, maintenance entries, and custom fields.
-// The new item will have the next available asset ID and a "Copy" suffix in the name.
-func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID) (ItemOut, error) {
+// Duplicate creates a copy of an item with configurable options for what data to copy.
+// The new item will have the next available asset ID and a customizable prefix in the name.
+func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, options DuplicateOptions) (ItemOut, error) {
 	tx, err := e.db.Tx(ctx)
 	if err != nil {
 		return ItemOut{}, err
@@ -1035,11 +1042,16 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID) (Ite
 	}
 	nextAssetID++
 
+	// Set default copy prefix if not provided
+	if options.CopyPrefix == "" {
+		options.CopyPrefix = "Copy of "
+	}
+
 	// Create the new item directly in the transaction
 	newItemID := uuid.New()
 	itemBuilder := tx.Item.Create().
 		SetID(newItemID).
-		SetName(originalItem.Name + " Copy").
+		SetName(options.CopyPrefix + originalItem.Name).
 		SetDescription(originalItem.Description).
 		SetQuantity(originalItem.Quantity).
 		SetLocationID(originalItem.Location.ID).
@@ -1081,8 +1093,8 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID) (Ite
 		return ItemOut{}, err
 	}
 
-	// Copy custom fields
-	if len(originalItem.Fields) > 0 {
+	// Copy custom fields if requested
+	if options.CopyCustomFields && len(originalItem.Fields) > 0 {
 		for _, field := range originalItem.Fields {
 			_, err = tx.ItemField.Create().
 				SetItemID(newItemID).
@@ -1099,8 +1111,8 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID) (Ite
 		}
 	}
 
-	// Copy attachments
-	if len(originalItem.Attachments) > 0 {
+	// Copy attachments if requested
+	if options.CopyAttachments && len(originalItem.Attachments) > 0 {
 		for _, att := range originalItem.Attachments {
 			// Get the original attachment file
 			originalAttachment, err := tx.Attachment.Query().
@@ -1129,23 +1141,25 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID) (Ite
 		}
 	}
 
-	// Copy maintenance entries
-	maintenanceEntries, err := tx.MaintenanceEntry.Query().
-		Where(maintenanceentry.HasItemWith(item.ID(id))).
-		All(ctx)
-	if err == nil && len(maintenanceEntries) > 0 {
-		for _, entry := range maintenanceEntries {
-			_, err = tx.MaintenanceEntry.Create().
-				SetItemID(newItemID).
-				SetDate(entry.Date).
-				SetScheduledDate(entry.ScheduledDate).
-				SetName(entry.Name).
-				SetDescription(entry.Description).
-				SetCost(entry.Cost).
-				Save(ctx)
-			if err != nil {
-				log.Warn().Err(err).Str("maintenance_entry_id", entry.ID.String()).Msg("failed to copy maintenance entry during duplication")
-				continue
+	// Copy maintenance entries if requested
+	if options.CopyMaintenance {
+		maintenanceEntries, err := tx.MaintenanceEntry.Query().
+			Where(maintenanceentry.HasItemWith(item.ID(id))).
+			All(ctx)
+		if err == nil && len(maintenanceEntries) > 0 {
+			for _, entry := range maintenanceEntries {
+				_, err = tx.MaintenanceEntry.Create().
+					SetItemID(newItemID).
+					SetDate(entry.Date).
+					SetScheduledDate(entry.ScheduledDate).
+					SetName(entry.Name).
+					SetDescription(entry.Description).
+					SetCost(entry.Cost).
+					Save(ctx)
+				if err != nil {
+					log.Warn().Err(err).Str("maintenance_entry_id", entry.ID.String()).Msg("failed to copy maintenance entry during duplication")
+					continue
+				}
 			}
 		}
 	}

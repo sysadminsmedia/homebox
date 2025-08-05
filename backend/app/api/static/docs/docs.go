@@ -964,6 +964,15 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Duplicate Options",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.DuplicateOptions"
+                        }
                     }
                 ],
                 "responses": {
@@ -3158,6 +3167,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "search_engine_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.DuplicateOptions": {
+            "type": "object",
+            "properties": {
+                "copyAttachments": {
+                    "type": "boolean"
+                },
+                "copyCustomFields": {
+                    "type": "boolean"
+                },
+                "copyMaintenance": {
+                    "type": "boolean"
+                },
+                "copyPrefix": {
                     "type": "string"
                 }
             }

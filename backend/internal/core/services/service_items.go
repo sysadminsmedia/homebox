@@ -38,8 +38,8 @@ func (svc *ItemService) Create(ctx Context, item repo.ItemCreate) (repo.ItemOut,
 	return svc.repo.Items.Create(ctx, ctx.GID, item)
 }
 
-func (svc *ItemService) Duplicate(ctx Context, gid, id uuid.UUID) (repo.ItemOut, error) {
-	return svc.repo.Items.Duplicate(ctx, gid, id)
+func (svc *ItemService) Duplicate(ctx Context, gid, id uuid.UUID, options repo.DuplicateOptions) (repo.ItemOut, error) {
+	return svc.repo.Items.Duplicate(ctx, gid, id, options)
 }
 
 func (svc *ItemService) EnsureAssetID(ctx context.Context, gid uuid.UUID) (int, error) {
