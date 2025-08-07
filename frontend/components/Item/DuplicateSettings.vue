@@ -2,13 +2,7 @@
   import { Input } from "@/components/ui/input";
   import { Switch } from "@/components/ui/switch";
   import { Label } from "@/components/ui/label";
-
-  type DuplicateSettings = {
-    copyMaintenance: boolean;
-    copyAttachments: boolean;
-    copyCustomFields: boolean;
-    copyPrefixOverride: string | null;
-  };
+  import type { DuplicateSettings } from "~/composables/use-preferences";
 
   type Props = {
     modelValue: DuplicateSettings;

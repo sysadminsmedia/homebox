@@ -26,7 +26,6 @@
   import { Switch } from "@/components/ui/switch";
   import { Card } from "@/components/ui/card";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
-  import { ItemDuplicateSettings } from "#components";
 
   const { t } = useI18n();
 
