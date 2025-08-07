@@ -454,10 +454,6 @@ export interface EntUserEdges {
 export interface BarcodeProduct {
   barcode: string;
   imageBase64: string;
-  /**
-   * TODO: add image attachement
-   * TODO: add asin?
-   */
   imageURL: string;
   item: ItemCreate;
   manufacturer: string;
