@@ -26,7 +26,10 @@
         },
         "color_selector": {
             "clear": "Rengi temizle",
-            "color": "Renk"
+            "color": "Renk",
+            "no_color": "Renksiz",
+            "no_color_selected": "Renk seçilmedi",
+            "randomize": "Rastgele renk"
         },
         "form": {
             "password": {
