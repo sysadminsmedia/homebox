@@ -563,7 +563,7 @@
             "page_width": "Seitenbreite",
             "qr_code_example": "QR-Code Beispiel",
             "tip_1": "Die Standardeinstellungen hier sind für die\n'<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 Etikettenbögen'</a>'. Wenn Sie einen anderen Bogen verwenden,\nmüssen Sie die Einstellungen an Ihr Blatt anpassen.",
-            "tip_2": "Wenn Sie Ihr Blatt anpassen, werden die Abmessungen in Zoll angegeben. Beim Erstellen des 5260-Blattes habe ich festgestellt, dass die\nin deren Vorlage verwendeten Abmessungen nicht mit den für den Druck in den Feldern erforderlichen Abmessungen übereinstimmen.\n„<b>Seien Sie auf einige Versuche und Irrtümer gefasst.“</b>",
+            "tip_2": "Wenn Sie Ihr Blatt anpassen, werden die Abmessungen in Zoll angegeben. Beim Erstellen des 5260-Blattes habe ich festgestellt, dass die\nin deren Vorlage verwendeten Abmessungen nicht mit den für den Druck in den Feldern erforderlichen Abmessungen übereinstimmen.\n'<b>'Seien Sie auf einige Versuche und Irrtümer gefasst.'</b>'",
             "tip_3": "Achten Sie beim Drucken auf Folgendes:\n'<ol><li>'Setzen Sie die Ränder auf 0 oder Keine'</li><li>'Setzen Sie die Skalierung auf 100 %'</li><li>'Deaktivieren Sie den beidseitigen Druck'</li><li>'Drucken Sie eine Testseite, bevor Sie mehrere Seiten drucken'</li></ol>'",
             "tips": "Tipps",
             "title": "Etikettengenerator",
