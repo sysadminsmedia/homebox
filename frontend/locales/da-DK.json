@@ -100,6 +100,7 @@
                 "item_photo": "Vare Foto 📷",
                 "item_quantity": "Vare Antal",
                 "parent_item": "Overordnet element",
+                "product_tooltip_scan_barcode": "Fyld automatisk med stregkode fra 📷",
                 "rotate_photo": "Roter foto",
                 "set_as_primary_photo": "Sæt som { isPrimary, select, true {non-} false {} other {}}primært foto",
                 "title": "Opret genstand",
@@ -119,6 +120,14 @@
                 },
                 "upload_photos": "Upload Billeder",
                 "uploaded": "Uploadet billede"
+            },
+            "product_import": {
+                "barcode": "Produkts stregkode",
+                "db_source": "DB kilde",
+                "error_invalid_barcode": "Ugyldig stregkode angivet",
+                "error_not_found": "Intet produkt fundet med angivet stregkode.",
+                "search_item": "Søg produkt",
+                "title": "Importér produkt"
             },
             "selector": {
                 "no_results": "Ingen resultater fundet",
@@ -183,6 +192,9 @@
             "no_results": "Ingen resultater fundet.",
             "shortcut_hint": "Brug de numeriske taster til hurtigt at vælge en handling."
         }
+    },
+    "errors": {
+        "api_failure": "Backend API kald fejlede: "
     },
     "global": {
         "add": "Tilføj",
@@ -559,6 +571,8 @@
         }
     },
     "scanner": {
+        "barcode_detected_message": "produkt stregkode opdaget",
+        "barcode_fetch_data": "Hent produktdata",
         "error": "Der skete en fejl under skanningen",
         "invalid_url": "Ugyldig stregkode-URL",
         "no_sources": "Ingen videokilder er tilgængelig",
