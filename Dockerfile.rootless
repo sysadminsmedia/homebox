@@ -19,6 +19,17 @@ RUN npm install -g pnpm
 # Copy over source files and node_modules from dependencies stage
 COPY frontend .
 COPY --from=frontend-dependencies /app/node_modules ./node_modules
+
+# Accept build args for date format environment variables
+ARG HBOX_DATE_FORMAT_HUMAN
+ARG HBOX_DATE_FORMAT_LONG
+ARG HBOX_DATE_FORMAT_SHORT
+
+# Set environment variables for the build
+ENV HBOX_DATE_FORMAT_HUMAN=$HBOX_DATE_FORMAT_HUMAN
+ENV HBOX_DATE_FORMAT_LONG=$HBOX_DATE_FORMAT_LONG
+ENV HBOX_DATE_FORMAT_SHORT=$HBOX_DATE_FORMAT_SHORT
+
 RUN pnpm build
 
 # Go dependencies stage

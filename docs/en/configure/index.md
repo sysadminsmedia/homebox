@@ -53,6 +53,74 @@ aside: false
 | HBOX_THUMBNAIL_ENABLED                  | true                                                                       | enable thumbnail generation for images, supports PNG, JPEG, AVIF, WEBP, GIF file types                                                                                                    |
 | HBOX_THUMBNAIL_WIDTH                    | 500                                                                        | width for generated thumbnails in pixels                                                                                                                                                  |
 | HBOX_THUMBNAIL_HEIGHT                   | 500                                                                        | height for generated thumbnails in pixels                                                                                                                                                 |
+| HBOX_DATE_FORMAT_HUMAN                  |                                                                            | custom date format for "human" readable dates (e.g., "MMMM do, yyyy"). If not set, uses locale-aware format                                                                             |
+| HBOX_DATE_FORMAT_LONG                   |                                                                            | custom date format for "long" dates (e.g., "MMM dd, yyyy"). If not set, uses locale-aware format                                                                                        |
+| HBOX_DATE_FORMAT_SHORT                  |                                                                            | custom date format for "short" dates (e.g., "MM/dd/yyyy"). If not set, uses locale-aware format                                                                                         |
+
+### Date Format Configuration
+
+The date format environment variables allow you to customize how dates are displayed throughout the Homebox frontend. These variables use [date-fns format tokens](https://date-fns.org/v2.29.3/docs/format) for flexible date formatting.
+
+| Format Type | Environment Variable | Default Behavior | Example Custom Value | Example Output |
+|-------------|---------------------|------------------|---------------------|----------------|
+| Human       | `HBOX_DATE_FORMAT_HUMAN` | Locale-aware long format | `"MMMM do, yyyy"` | `"August 11th, 2025"` |
+| Long        | `HBOX_DATE_FORMAT_LONG`  | Locale-aware medium format | `"MMM dd, yyyy"` | `"Aug 11, 2025"` |
+| Short       | `HBOX_DATE_FORMAT_SHORT` | Locale-aware short format | `"MM/dd/yyyy"` | `"08/11/2025"` |
+
+#### Common Format Tokens
+
+| Token | Description | Example |
+|-------|-------------|---------|
+| `yyyy` | 4-digit year | `2025` |
+| `yy` | 2-digit year | `25` |
+| `MMMM` | Full month name | `August` |
+| `MMM` | Short month name | `Aug` |
+| `MM` | 2-digit month | `08` |
+| `M` | 1-digit month | `8` |
+| `dd` | 2-digit day | `11` |
+| `d` | 1-digit day | `11` |
+| `do` | Day with ordinal | `11th` |
+
+#### Usage Examples
+
+```bash
+# ISO 8601 format
+HBOX_DATE_FORMAT_SHORT="yyyy-MM-dd"
+
+# European format
+HBOX_DATE_FORMAT_SHORT="dd/MM/yyyy"
+
+# US format with full month names
+HBOX_DATE_FORMAT_LONG="MMMM d, yyyy"
+
+# Compact format
+HBOX_DATE_FORMAT_HUMAN="MMM d, yy"
+```
+
+::: tip
+If any of these environment variables are not set, Homebox will use the default locale-aware formatting based on the user's browser language settings.
+:::
+
+::: warning Docker Build Requirements
+When using Docker, these environment variables must be available at **build time** since the frontend is statically generated. You have two options:
+
+**Option 1: Set as build arguments in docker-compose.yml**
+```yaml
+services:
+  homebox:
+    build:
+      args:
+        - HBOX_DATE_FORMAT_SHORT=dd/MM/yyyy
+        - HBOX_DATE_FORMAT_LONG=dd MMM yyyy
+        - HBOX_DATE_FORMAT_HUMAN=EEEE, dd MMMM yyyy
+```
+
+**Option 2: Set as environment variables before building**
+```bash
+export HBOX_DATE_FORMAT_SHORT="dd/MM/yyyy"
+docker-compose up --build
+```
+:::
 
 ### HBOX_WEB_HOST examples
 

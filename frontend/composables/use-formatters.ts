@@ -67,15 +67,18 @@ export function fmtDate(
 
   let formatStr = "";
 
+  // Get runtime config for custom date formats
+  const config = useRuntimeConfig();
+
   switch (fmt) {
     case "human":
-      formatStr = "PPP";
+      formatStr = (config.public.hboxDateFormatHuman as string) || "PPP";
       break;
     case "long":
-      formatStr = "PP";
+      formatStr = (config.public.hboxDateFormatLong as string) || "PP";
       break;
     case "short":
-      formatStr = "P";
+      formatStr = (config.public.hboxDateFormatShort as string) || "P";
       break;
     default:
       return "";

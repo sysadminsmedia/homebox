@@ -94,5 +94,13 @@ export default defineNuxtConfig({
     },
   },
 
+  runtimeConfig: {
+    public: {
+      hboxDateFormatHuman: process.env.HBOX_DATE_FORMAT_HUMAN || '',
+      hboxDateFormatLong: process.env.HBOX_DATE_FORMAT_LONG || '',
+      hboxDateFormatShort: process.env.HBOX_DATE_FORMAT_SHORT || '',
+    }
+  },
+
   compatibilityDate: "2024-11-29",
 });
