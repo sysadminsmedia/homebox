@@ -305,6 +305,18 @@
 
 <template>
   <div>
+    <Dialog :dialog-id="DialogID.DuplicateSettings">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{{ $t("items.duplicate.title") }}</DialogTitle>
+        </DialogHeader>
+        <ItemDuplicateSettings v-model="preferences.duplicateSettings" />
+        <p class="text-sm text-muted-foreground">
+          {{ $t("items.duplicate.override_instructions") }}
+        </p>
+      </DialogContent>
+    </Dialog>
+
     <Dialog :dialog-id="DialogID.ChangePassword">
       <DialogContent>
         <DialogHeader>
@@ -376,6 +388,9 @@
               {{ $t("profile.change_password") }}
             </Button>
             <Button variant="secondary" size="sm" @click="generateToken"> {{ $t("profile.gen_invite") }} </Button>
+            <Button variant="secondary" size="sm" @click="openDialog(DialogID.DuplicateSettings)">
+              {{ $t("items.duplicate.title") }}
+            </Button>
           </div>
           <div v-if="token" class="flex items-center gap-2 pl-1 pt-4">
             <CopyText :text="tokenUrl" />
