@@ -195,6 +195,8 @@ export interface EntItem {
   archived: boolean;
   /** AssetID holds the value of the "asset_id" field. */
   asset_id: number;
+  /** Barcode holds the value of the "barcode" field. */
+  barcode: string;
   /** CreatedAt holds the value of the "created_at" field. */
   created_at: string;
   /** Description holds the value of the "description" field. */
@@ -452,20 +454,14 @@ export interface EntUserEdges {
 }
 
 export interface BarcodeProduct {
-  barcode: string;
   imageBase64: string;
-  /**
-   * TODO: add image attachement
-   * TODO: add asin?
-   */
   imageURL: string;
   item: ItemCreate;
-  manufacturer: string;
-  /** Identifications */
-  modelNumber: string;
   /** Extras */
   notes: string;
   search_engine_name: string;
+  search_engine_product_url: string;
+  search_engine_url: string;
 }
 
 export interface Group {
@@ -509,11 +505,14 @@ export interface ItemAttachmentUpdate {
 }
 
 export interface ItemCreate {
+  barcode: string;
   /** @maxLength 1000 */
   description: string;
   labelIds: string[];
   /** Edges */
   locationId: string;
+  manufacturer: string;
+  modelNumber: string;
   /**
    * @minLength 1
    * @maxLength 255
@@ -537,6 +536,7 @@ export interface ItemOut {
   /** @example "0" */
   assetId: string;
   attachments: ItemAttachment[];
+  barcode: string;
   createdAt: Date | string;
   description: string;
   fields: ItemField[];
@@ -607,6 +607,7 @@ export interface ItemSummary {
 export interface ItemUpdate {
   archived: boolean;
   assetId: string;
+  barcode: string;
   /** @maxLength 1000 */
   description: string;
   fields: ItemField[];

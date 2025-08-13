@@ -78,7 +78,7 @@
 
   const handleError = (error: unknown) => {
     console.error("Scanner error:", error);
-    errorMessage.value = t("scanner.error");
+    errorMessage.value = t("scanner.error") + ": " + error;
   };
 
   const checkPermissionsError = async () => {

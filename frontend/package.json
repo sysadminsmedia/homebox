@@ -64,6 +64,7 @@
     "fuzzysort": "^3.1.0",
     "h3": "^1.15.1",
     "http-proxy": "^1.18.1",
+    "jsbarcode": "^3.12.1",
     "lucide-vue-next": "^0.474.0",
     "markdown-it": "^14.1.0",
     "pinia": "^2.3.1",

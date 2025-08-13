@@ -6,6 +6,8 @@
   const props = defineProps<{
     defaultValue?: string | number;
     modelValue?: string | number;
+    inputmode?: HTMLAttributes["inputmode"];
+    pattern?: string;
     class?: HTMLAttributes["class"];
   }>();
 
@@ -28,5 +30,7 @@
         props.class
       )
     "
+    :inputmode="inputmode"
+    :pattern="pattern"
   />
 </template>

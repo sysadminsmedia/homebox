@@ -192,7 +192,7 @@
       <Markdown v-if="label && label.description" class="mt-3 text-base" :source="label.description" />
     </Card>
     <section v-if="label && items">
-      <ItemViewSelectable :items="items.items" />
+      <ItemViewSelectable :items="items.items" :item-type="'itemsummary'" />
     </section>
   </BaseContainer>
 </template>
