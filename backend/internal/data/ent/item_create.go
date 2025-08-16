@@ -215,6 +215,20 @@ func (ic *ItemCreate) SetNillableManufacturer(s *string) *ItemCreate {
 	return ic
 }
 
+// SetBarcode sets the "barcode" field.
+func (ic *ItemCreate) SetBarcode(s string) *ItemCreate {
+	ic.mutation.SetBarcode(s)
+	return ic
+}
+
+// SetNillableBarcode sets the "barcode" field if the given value is not nil.
+func (ic *ItemCreate) SetNillableBarcode(s *string) *ItemCreate {
+	if s != nil {
+		ic.SetBarcode(*s)
+	}
+	return ic
+}
+
 // SetLifetimeWarranty sets the "lifetime_warranty" field.
 func (ic *ItemCreate) SetLifetimeWarranty(b bool) *ItemCreate {
 	ic.mutation.SetLifetimeWarranty(b)
@@ -635,6 +649,11 @@ func (ic *ItemCreate) check() error {
 			return &ValidationError{Name: "manufacturer", err: fmt.Errorf(`ent: validator failed for field "Item.manufacturer": %w`, err)}
 		}
 	}
+	if v, ok := ic.mutation.Barcode(); ok {
+		if err := item.BarcodeValidator(v); err != nil {
+			return &ValidationError{Name: "barcode", err: fmt.Errorf(`ent: validator failed for field "Item.barcode": %w`, err)}
+		}
+	}
 	if _, ok := ic.mutation.LifetimeWarranty(); !ok {
 		return &ValidationError{Name: "lifetime_warranty", err: errors.New(`ent: missing required field "Item.lifetime_warranty"`)}
 	}
@@ -747,6 +766,10 @@ func (ic *ItemCreate) createSpec() (*Item, *sqlgraph.CreateSpec) {
 	if value, ok := ic.mutation.Manufacturer(); ok {
 		_spec.SetField(item.FieldManufacturer, field.TypeString, value)
 		_node.Manufacturer = value
+	}
+	if value, ok := ic.mutation.Barcode(); ok {
+		_spec.SetField(item.FieldBarcode, field.TypeString, value)
+		_node.Barcode = value
 	}
 	if value, ok := ic.mutation.LifetimeWarranty(); ok {
 		_spec.SetField(item.FieldLifetimeWarranty, field.TypeBool, value)

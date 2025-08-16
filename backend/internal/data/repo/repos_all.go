@@ -18,6 +18,7 @@ type AllRepos struct {
 	Attachments *AttachmentRepo
 	MaintEntry  *MaintenanceEntryRepository
 	Notifiers   *NotifierRepository
+	Barcode     *BarcodeRepository
 }
 
 func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage, pubSubConn string, thumbnail config.Thumbnail) *AllRepos {
@@ -31,5 +32,6 @@ func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage, pubSubC
 		Attachments: &AttachmentRepo{db, storage, pubSubConn, thumbnail},
 		MaintEntry:  &MaintenanceEntryRepository{db},
 		Notifiers:   NewNotifierRepository(db),
+		Barcode:     &BarcodeRepository{},
 	}
 }

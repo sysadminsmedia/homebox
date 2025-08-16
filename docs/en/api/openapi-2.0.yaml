@@ -247,6 +247,9 @@ definitions:
       asset_id:
         description: AssetID holds the value of the "asset_id" field.
         type: integer
+      barcode:
+        description: Barcode holds the value of the "barcode" field.
+        type: string
       created_at:
         description: CreatedAt holds the value of the "created_at" field.
         type: string
@@ -648,23 +651,20 @@ definitions:
     - TypeTime
   repo.BarcodeProduct:
     properties:
-      barcode:
-        type: string
       imageBase64:
         type: string
       imageURL:
         type: string
       item:
         $ref: '#/definitions/repo.ItemCreate'
-      manufacturer:
-        type: string
-      modelNumber:
-        description: Identifications
-        type: string
       notes:
         description: Extras
         type: string
       search_engine_name:
+        type: string
+      search_engine_product_url:
+        type: string
+      search_engine_url:
         type: string
     type: object
   repo.Group:
@@ -734,6 +734,8 @@ definitions:
     type: object
   repo.ItemCreate:
     properties:
+      barcode:
+        type: string
       description:
         maxLength: 1000
         type: string
@@ -743,6 +745,10 @@ definitions:
         type: array
       locationId:
         description: Edges
+        type: string
+      manufacturer:
+        type: string
+      modelNumber:
         type: string
       name:
         maxLength: 255
@@ -782,6 +788,8 @@ definitions:
         items:
           $ref: '#/definitions/repo.ItemAttachment'
         type: array
+      barcode:
+        type: string
       createdAt:
         type: string
       description:
@@ -934,6 +942,8 @@ definitions:
       archived:
         type: boolean
       assetId:
+        type: string
+      barcode:
         type: string
       description:
         maxLength: 1000

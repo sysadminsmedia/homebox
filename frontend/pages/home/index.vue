@@ -42,7 +42,7 @@
 
         <p v-if="itemTable.items.length === 0" class="ml-2 text-sm">{{ $t("items.no_results") }}</p>
         <BaseCard v-else-if="breakpoints.lg">
-          <ItemViewTable :items="itemTable.items" disable-controls />
+          <ItemViewTable :items="itemTable.items" :item-type="'itemsummary'" disable-controls />
         </BaseCard>
         <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2">
           <ItemCard v-for="item in itemTable.items" :key="item.id" :item="item" />

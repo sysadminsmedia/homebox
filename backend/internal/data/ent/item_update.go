@@ -259,6 +259,26 @@ func (iu *ItemUpdate) ClearManufacturer() *ItemUpdate {
 	return iu
 }
 
+// SetBarcode sets the "barcode" field.
+func (iu *ItemUpdate) SetBarcode(s string) *ItemUpdate {
+	iu.mutation.SetBarcode(s)
+	return iu
+}
+
+// SetNillableBarcode sets the "barcode" field if the given value is not nil.
+func (iu *ItemUpdate) SetNillableBarcode(s *string) *ItemUpdate {
+	if s != nil {
+		iu.SetBarcode(*s)
+	}
+	return iu
+}
+
+// ClearBarcode clears the value of the "barcode" field.
+func (iu *ItemUpdate) ClearBarcode() *ItemUpdate {
+	iu.mutation.ClearBarcode()
+	return iu
+}
+
 // SetLifetimeWarranty sets the "lifetime_warranty" field.
 func (iu *ItemUpdate) SetLifetimeWarranty(b bool) *ItemUpdate {
 	iu.mutation.SetLifetimeWarranty(b)
@@ -780,6 +800,11 @@ func (iu *ItemUpdate) check() error {
 			return &ValidationError{Name: "manufacturer", err: fmt.Errorf(`ent: validator failed for field "Item.manufacturer": %w`, err)}
 		}
 	}
+	if v, ok := iu.mutation.Barcode(); ok {
+		if err := item.BarcodeValidator(v); err != nil {
+			return &ValidationError{Name: "barcode", err: fmt.Errorf(`ent: validator failed for field "Item.barcode": %w`, err)}
+		}
+	}
 	if v, ok := iu.mutation.WarrantyDetails(); ok {
 		if err := item.WarrantyDetailsValidator(v); err != nil {
 			return &ValidationError{Name: "warranty_details", err: fmt.Errorf(`ent: validator failed for field "Item.warranty_details": %w`, err)}
@@ -870,6 +895,12 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if iu.mutation.ManufacturerCleared() {
 		_spec.ClearField(item.FieldManufacturer, field.TypeString)
+	}
+	if value, ok := iu.mutation.Barcode(); ok {
+		_spec.SetField(item.FieldBarcode, field.TypeString, value)
+	}
+	if iu.mutation.BarcodeCleared() {
+		_spec.ClearField(item.FieldBarcode, field.TypeString)
 	}
 	if value, ok := iu.mutation.LifetimeWarranty(); ok {
 		_spec.SetField(item.FieldLifetimeWarranty, field.TypeBool, value)
@@ -1484,6 +1515,26 @@ func (iuo *ItemUpdateOne) ClearManufacturer() *ItemUpdateOne {
 	return iuo
 }
 
+// SetBarcode sets the "barcode" field.
+func (iuo *ItemUpdateOne) SetBarcode(s string) *ItemUpdateOne {
+	iuo.mutation.SetBarcode(s)
+	return iuo
+}
+
+// SetNillableBarcode sets the "barcode" field if the given value is not nil.
+func (iuo *ItemUpdateOne) SetNillableBarcode(s *string) *ItemUpdateOne {
+	if s != nil {
+		iuo.SetBarcode(*s)
+	}
+	return iuo
+}
+
+// ClearBarcode clears the value of the "barcode" field.
+func (iuo *ItemUpdateOne) ClearBarcode() *ItemUpdateOne {
+	iuo.mutation.ClearBarcode()
+	return iuo
+}
+
 // SetLifetimeWarranty sets the "lifetime_warranty" field.
 func (iuo *ItemUpdateOne) SetLifetimeWarranty(b bool) *ItemUpdateOne {
 	iuo.mutation.SetLifetimeWarranty(b)
@@ -2018,6 +2069,11 @@ func (iuo *ItemUpdateOne) check() error {
 			return &ValidationError{Name: "manufacturer", err: fmt.Errorf(`ent: validator failed for field "Item.manufacturer": %w`, err)}
 		}
 	}
+	if v, ok := iuo.mutation.Barcode(); ok {
+		if err := item.BarcodeValidator(v); err != nil {
+			return &ValidationError{Name: "barcode", err: fmt.Errorf(`ent: validator failed for field "Item.barcode": %w`, err)}
+		}
+	}
 	if v, ok := iuo.mutation.WarrantyDetails(); ok {
 		if err := item.WarrantyDetailsValidator(v); err != nil {
 			return &ValidationError{Name: "warranty_details", err: fmt.Errorf(`ent: validator failed for field "Item.warranty_details": %w`, err)}
@@ -2125,6 +2181,12 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 	}
 	if iuo.mutation.ManufacturerCleared() {
 		_spec.ClearField(item.FieldManufacturer, field.TypeString)
+	}
+	if value, ok := iuo.mutation.Barcode(); ok {
+		_spec.SetField(item.FieldBarcode, field.TypeString, value)
+	}
+	if iuo.mutation.BarcodeCleared() {
+		_spec.ClearField(item.FieldBarcode, field.TypeString)
 	}
 	if value, ok := iuo.mutation.LifetimeWarranty(); ok {
 		_spec.SetField(item.FieldLifetimeWarranty, field.TypeBool, value)

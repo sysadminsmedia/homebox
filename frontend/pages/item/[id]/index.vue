@@ -207,6 +207,12 @@
         copyable: true,
       },
       {
+        name: "items.barcode",
+        text: item.value?.barcode,
+        type: "barcode",
+        copyable: true,
+      },
+      {
         name: "items.insured",
         text: item.value?.insured ? "Yes" : "No",
       },
@@ -481,6 +487,9 @@
     const { error, data } = await api.items.create({
       name: `${item.value.name} Copy`,
       description: item.value.description,
+      manufacturer: item.value.manufacturer,
+      modelNumber: item.value.modelNumber,
+      barcode: item.value.barcode,
       quantity: item.value.quantity,
       locationId: item.value.location!.id,
       parentId: item.value.parent?.id,
@@ -765,7 +774,7 @@
     </section>
 
     <section v-if="items && items.length > 0" class="mt-6">
-      <ItemViewSelectable :items="items" />
+      <ItemViewSelectable :items="items" :item-type="'itemsummary'" />
     </section>
   </BaseContainer>
 </template>

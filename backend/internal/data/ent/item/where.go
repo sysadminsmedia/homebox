@@ -126,6 +126,11 @@ func Manufacturer(v string) predicate.Item {
 	return predicate.Item(sql.FieldEQ(FieldManufacturer, v))
 }
 
+// Barcode applies equality check predicate on the "barcode" field. It's identical to BarcodeEQ.
+func Barcode(v string) predicate.Item {
+	return predicate.Item(sql.FieldEQ(FieldBarcode, v))
+}
+
 // LifetimeWarranty applies equality check predicate on the "lifetime_warranty" field. It's identical to LifetimeWarrantyEQ.
 func LifetimeWarranty(v bool) predicate.Item {
 	return predicate.Item(sql.FieldEQ(FieldLifetimeWarranty, v))
@@ -879,6 +884,81 @@ func ManufacturerEqualFold(v string) predicate.Item {
 // ManufacturerContainsFold applies the ContainsFold predicate on the "manufacturer" field.
 func ManufacturerContainsFold(v string) predicate.Item {
 	return predicate.Item(sql.FieldContainsFold(FieldManufacturer, v))
+}
+
+// BarcodeEQ applies the EQ predicate on the "barcode" field.
+func BarcodeEQ(v string) predicate.Item {
+	return predicate.Item(sql.FieldEQ(FieldBarcode, v))
+}
+
+// BarcodeNEQ applies the NEQ predicate on the "barcode" field.
+func BarcodeNEQ(v string) predicate.Item {
+	return predicate.Item(sql.FieldNEQ(FieldBarcode, v))
+}
+
+// BarcodeIn applies the In predicate on the "barcode" field.
+func BarcodeIn(vs ...string) predicate.Item {
+	return predicate.Item(sql.FieldIn(FieldBarcode, vs...))
+}
+
+// BarcodeNotIn applies the NotIn predicate on the "barcode" field.
+func BarcodeNotIn(vs ...string) predicate.Item {
+	return predicate.Item(sql.FieldNotIn(FieldBarcode, vs...))
+}
+
+// BarcodeGT applies the GT predicate on the "barcode" field.
+func BarcodeGT(v string) predicate.Item {
+	return predicate.Item(sql.FieldGT(FieldBarcode, v))
+}
+
+// BarcodeGTE applies the GTE predicate on the "barcode" field.
+func BarcodeGTE(v string) predicate.Item {
+	return predicate.Item(sql.FieldGTE(FieldBarcode, v))
+}
+
+// BarcodeLT applies the LT predicate on the "barcode" field.
+func BarcodeLT(v string) predicate.Item {
+	return predicate.Item(sql.FieldLT(FieldBarcode, v))
+}
+
+// BarcodeLTE applies the LTE predicate on the "barcode" field.
+func BarcodeLTE(v string) predicate.Item {
+	return predicate.Item(sql.FieldLTE(FieldBarcode, v))
+}
+
+// BarcodeContains applies the Contains predicate on the "barcode" field.
+func BarcodeContains(v string) predicate.Item {
+	return predicate.Item(sql.FieldContains(FieldBarcode, v))
+}
+
+// BarcodeHasPrefix applies the HasPrefix predicate on the "barcode" field.
+func BarcodeHasPrefix(v string) predicate.Item {
+	return predicate.Item(sql.FieldHasPrefix(FieldBarcode, v))
+}
+
+// BarcodeHasSuffix applies the HasSuffix predicate on the "barcode" field.
+func BarcodeHasSuffix(v string) predicate.Item {
+	return predicate.Item(sql.FieldHasSuffix(FieldBarcode, v))
+}
+
+// BarcodeIsNil applies the IsNil predicate on the "barcode" field.
+func BarcodeIsNil() predicate.Item {
+	return predicate.Item(sql.FieldIsNull(FieldBarcode))
+}
+
+// BarcodeNotNil applies the NotNil predicate on the "barcode" field.
+func BarcodeNotNil() predicate.Item {
+	return predicate.Item(sql.FieldNotNull(FieldBarcode))
+}
+
+// BarcodeEqualFold applies the EqualFold predicate on the "barcode" field.
+func BarcodeEqualFold(v string) predicate.Item {
+	return predicate.Item(sql.FieldEqualFold(FieldBarcode, v))
+}
+
+// BarcodeContainsFold applies the ContainsFold predicate on the "barcode" field.
+func BarcodeContainsFold(v string) predicate.Item {
+	return predicate.Item(sql.FieldContainsFold(FieldBarcode, v))
 }
 
 // LifetimeWarrantyEQ applies the EQ predicate on the "lifetime_warranty" field.

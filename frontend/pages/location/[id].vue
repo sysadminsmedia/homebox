@@ -217,7 +217,7 @@
         </Markdown>
       </Card>
       <section v-if="location && items">
-        <ItemViewSelectable :items="items" />
+        <ItemViewSelectable :items="items" :item-type="'itemsummary'" />
       </section>
 
       <section v-if="location && location.children.length > 0" class="mt-6">
