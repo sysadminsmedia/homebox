@@ -5,6 +5,15 @@ import (
 	"context"
 	"crypto/md5"
 	"fmt"
+	"image"
+	"io"
+	"io/fs"
+	"net/http"
+	"path/filepath"
+	"runtime"
+	"strings"
+	"time"
+
 	"github.com/evanoberholster/imagemeta"
 	"github.com/gen2brain/avif"
 	"github.com/gen2brain/heic"
@@ -16,14 +25,6 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
 	"github.com/zeebo/blake3"
 	"golang.org/x/image/draw"
-	"image"
-	"io"
-	"io/fs"
-	"net/http"
-	"path/filepath"
-	"runtime"
-	"strings"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
@@ -101,6 +102,8 @@ func (r *AttachmentRepo) path(gid uuid.UUID, hash string) string {
 }
 
 func (r *AttachmentRepo) GetConnString() string {
+	// Handle the default case for file storage
+	// which is file:///./ meaning relative to the current working directory
 	if strings.HasPrefix(r.storage.ConnString, "file:///./") {
 		dir, err := filepath.Abs(strings.TrimPrefix(r.storage.ConnString, "file:///./"))
 		if runtime.GOOS == "windows" {
@@ -111,8 +114,20 @@ func (r *AttachmentRepo) GetConnString() string {
 			return r.storage.ConnString
 		}
 		return strings.ReplaceAll(fmt.Sprintf("file://%s?no_tmp_dir=true", dir), "\\", "/")
+	} else if strings.HasPrefix(r.storage.ConnString, "file://") {
+		// Handle the case for file storage with an absolute path
+		// Convert Windows paths to a format compatible with fileblob
+		// e.g. file:///C:/path/to/file becomes file:///C/path
+		dir := strings.TrimPrefix(strings.ReplaceAll(r.storage.ConnString, "\\", "/"), "file://")
+		if runtime.GOOS == "windows" {
+			// Remove the colon from the drive letter (in case the user adds it)
+			dir = strings.ReplaceAll(dir, ":", "")
+			// Ensure the path starts with a slash for Windows compatibility
+			dir = fmt.Sprintf("/%s", dir)
+		}
+		return fmt.Sprintf("file://%s", dir)
 	}
-	return strings.ReplaceAll(r.storage.ConnString, "\\", "/")
+	return r.storage.ConnString
 }
 
 func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemCreateAttachment, typ attachment.Type, primary bool) (*ent.Attachment, error) {
