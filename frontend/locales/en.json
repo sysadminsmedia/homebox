@@ -397,6 +397,7 @@
         "update_label": "Update Label"
     },
     "languages": {
+        "bs-BA": "Bosnian (Bosnia and Herzegovina)",
         "ca": "Catalan",
         "cs-CZ": "Czech",
         "da-DK": "Danish",
@@ -427,6 +428,7 @@
         "th-TH": "Thai",
         "tr": "Turkish",
         "uk-UA": "Ukrainian",
+        "vi-VN": "Vietnamese",
         "zh-CN": "Chinese (Simplified)",
         "zh-HK": "Chinese (Hong Kong)",
         "zh-MO": "Chinese (Macau)",
