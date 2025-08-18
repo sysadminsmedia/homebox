@@ -123,7 +123,7 @@
             },
             "product_import": {
                 "barcode": "Codice a barre del prodotto",
-                "error_exception": "Si è verificata un'eccezione durante il recupero del codice a barre dell'articolo: ",
+                "error_exception": "Si è verificato un errore durante il recupero del codice a barre dell'articolo: ",
                 "error_invalid_barcode": "Il codice a barre fornito non è valido",
                 "search_item": "Cerca prodotto",
                 "title": "Importa prodotto"
