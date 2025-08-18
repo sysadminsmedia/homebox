@@ -100,6 +100,7 @@
                 "item_photo": "Foto dell'articolo 📷",
                 "item_quantity": "Quantità Articoli",
                 "parent_item": "Articolo principale",
+                "product_tooltip_scan_barcode": "Riempimento automatico con un codice a barre da 📷",
                 "rotate_photo": "Ruota foto",
                 "set_as_primary_photo": "Imposta come { isPrimary, select, true {non} false {} other {}} foto principale",
                 "title": "Crea Articolo",
@@ -122,6 +123,8 @@
             },
             "product_import": {
                 "barcode": "Codice a barre del prodotto",
+                "error_exception": "Si è verificata un'eccezione durante il recupero del codice a barre dell'articolo: ",
+                "error_invalid_barcode": "Il codice a barre fornito non è valido",
                 "search_item": "Cerca prodotto",
                 "title": "Importa prodotto"
             },
@@ -343,6 +346,9 @@
         "tip_3": "I filtri di campo utilizzano l'operazione 'OR'. Se ne viene selezionato più di uno, ne sarà\n richiesto solo uno per una corrispondenza.",
         "tips": "Suggerimenti",
         "tips_sub": "Suggerimenti per la Ricerca",
+        "toast": {
+            "quantity_cannot_negative": "La quantità non può essere negativa"
+        },
         "updated_at": "Aggiornato Il",
         "warranty": "Garanzia",
         "warranty_details": "Dettagli garanzia",
@@ -353,6 +359,7 @@
         "update_label": "Aggiorna etichetta"
     },
     "languages": {
+        "bs-BA": "Bosniaco (Bosnia ed Erzegovina)",
         "ca": "Catalano",
         "cs-CZ": "Ceco",
         "de": "Tedesco",
@@ -379,6 +386,7 @@
         "th-TH": "Tailandese",
         "tr": "Turco",
         "uk-UA": "Ucraino",
+        "vi-VN": "Vietnamita",
         "zh-CN": "Cinese (semplificato)",
         "zh-HK": "Cinese Mandarino",
         "zh-MO": "Cinese (Macao)",

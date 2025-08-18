@@ -423,9 +423,10 @@
         "th-TH": "Thailändisch",
         "tr": "Türkisch",
         "uk-UA": "Ukrainisch",
-        "zh-CN": "Chinesisch (einfach)",
+        "vi-VN": "Vietnamesisch",
+        "zh-CN": "Chinesisch (vereinfacht)",
         "zh-HK": "Chinesisch (Hong Kong)",
-        "zh-MO": "Chinesisch (Macao)",
+        "zh-MO": "Chinesisch (Macau)",
         "zh-TW": "Chinesisch (traditionell)"
     },
     "languages.da-DK": "Dänisch",
@@ -437,7 +438,7 @@
         "collapse_tree": "Baum einklappen",
         "expand_tree": "Baum ausklappen",
         "location_items_delete_confirm": "Möchten Sie diesen Standort und alle darin enthaltenen Elemente wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
-        "no_results": "Keine Orte gefunden",
+        "no_results": "Keine Standorte gefunden",
         "toast": {
             "failed_delete_location": "Standort konnte nicht gelöscht werden",
             "failed_load_location": "Standort konnte nicht geladen werden",
