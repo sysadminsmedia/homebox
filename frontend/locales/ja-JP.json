@@ -116,6 +116,7 @@
             "product_import": {
                 "barcode": "商品のバーコード",
                 "db_source": "DBソース",
+                "search_item": "商品検索.",
                 "title": "商品をインポート"
             },
             "selector": {
