@@ -523,7 +523,8 @@
             "failed_test_notifier": "通知の送信テストに失敗しました",
             "failed_update_group": "グループ設定の更新に失敗しました",
             "failed_update_notifier": "通知設定の更新に失敗しました",
-            "group_updated": "グループを更新しました。"
+            "group_updated": "グループ設定を更新しました",
+            "notifier_test_success": "通知者テストに成功しました。"
         },
         "update_group": "グループ設定を更新",
         "update_language": "言語更新",
