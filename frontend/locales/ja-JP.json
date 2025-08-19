@@ -541,7 +541,9 @@
             "bordered_labels": "境界付きラベル",
             "generate_page": "ページを生成",
             "input_placeholder": "ここに入力",
-            "instruction_1": "ホームボックスラベルジェネレータは、ホームボックスインベントリのラベルを印刷するのに役立つツールです"
+            "instruction_1": "ホームボックスラベルジェネレータは、ホームボックスインベントリのラベルを印刷するのに役立つツールです",
+            "label_height": "ラベルの高さ",
+            "label_width": "ラベル幅"
         }
     },
     "scanner": {
