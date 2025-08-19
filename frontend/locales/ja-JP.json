@@ -505,6 +505,7 @@
         "language": "言語",
         "new_password": "新しいパスワード",
         "no_notifiers": "通知機能は設定されていません",
+        "no_override": "上書き",
         "notifiers": "通知",
         "notifiers_sub": "メンテナンスなどのリマインダー通知を受け取れます",
         "test": "テスト",
