@@ -286,7 +286,8 @@
                 "attachment_type": "添付ファイルの種類",
                 "primary_photo": "サムネイルに設定",
                 "primary_photo_sub": "この画像をアイテムサムネイルに設定します。既に画像が設定されている場合は、このチェックボックスを有効にすると設定が上書きされます。",
-                "select_type": "種類を選択する"
+                "select_type": "種類を選択する",
+                "title": "添付ファイルの編集"
             }
         },
         "edit_details": "基本的な情報の編集",
@@ -295,6 +296,7 @@
         "first": "最初の",
         "include_archive": "「現在は使用していない」にチェックを入れた項目を検索に含める",
         "insured": "保険適用",
+        "invalid_asset_id": "このAsset IDは無効です",
         "last": "最後",
         "lifetime_warranty": "無期限保証",
         "location": "場所",
@@ -305,6 +307,7 @@
         "name": "名称",
         "negate_labels": "選択されたラベルを除外",
         "next_page": "次の ページ",
+        "no_attachments": "添付ファイルが見つかりませんでした",
         "no_results": "一致する項目はありません",
         "notes": "備考",
         "only_with_photo": "写真付きのアイテムのみ",
