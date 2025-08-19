@@ -542,6 +542,7 @@
             "generate_page": "印刷プレビューを取得",
             "input_placeholder": "ここに入力",
             "instruction_1": "Homebox ラベルジェネレーターは、Homeboxに登録されたアイテムの管理シールを印刷するツールです。\nシールはアイテムを登録する前に印刷できるため、事前に大量作成することが可能です！",
+            "instruction_2": "シールには、HomeboxのQRコードやAsset IDを印刷できます。\nAsset IDを無効にしている場合でもこのツールは使用できますが、Asset IDを利用してアイテムページを開く機能などは利用できません。",
             "label_height": "ラベルの高さ",
             "label_width": "ラベルの幅",
             "measure_type": "メジャータイプ",
