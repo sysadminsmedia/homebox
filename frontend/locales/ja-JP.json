@@ -111,7 +111,11 @@
                     "upload_failed": "画像のアップロードに失敗しました ({ photoName })"
                 },
                 "upload_photos": "画像をアップロード",
-                "uploaded": "アップロードした写真"
+                "uploaded": "アップロードした画像"
+            },
+            "selector": {
+                "no_results": "一致するものがありません",
+                "placeholder": "選択…"
             },
             "view": {
                 "selectable": {
