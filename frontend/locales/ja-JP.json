@@ -502,7 +502,7 @@
             "export_sub": "Homeboxで利用可能なCSV形式のファイルをエクスポートします。'<br>'すべてのアイテムが対象です。一部のアイテムを選択してエクスポートすることはできません。",
             "import": "インポート (CSVの取り込み)",
             "import_button": "CSVファイルを選択",
-            "import_ref_confirm": "すべてのアセットにimport_refがあることを確認してもよろしいですか？これには時間がかかる場合があり、元に戻すことはできません。",
+            "import_ref_confirm": "すべてのアイテムに import_ref の値があることを確認します。'<br>'件数によっては時間がかかる場合があり、元に戻すことはできません。",
             "import_sub": "Homeboxで利用可能なCSVファイルをインポートします。\n'<code>'HB.import_ref'</code>'が存在しないアイテムに重複がある場合は上書きされません。\n'<code>'HB.import_ref'</code>'が存在するアイテムに重複がある場合は、同じ'<code>'HB.import_ref'</code>'を持つアイテムのデータが上書きされます。\nどちらも、重複していない場合は関係なく追加されます。"
         },
         "import_export_sub": "登録されたアイテムをCSVファイルにインポートおよびエクスポートします。Homeboxのソフトウェアを切り替える場合などに便利です。",
@@ -515,6 +515,9 @@
             "bill_of_materials_button": "部品表(BOM)を生成する",
             "bill_of_materials_sub": "CSV形式のファイルを出力します。基本的なアイテム情報と価格情報を含むアイテムの概要が含まれています。'<br>'UTF-8形式で出力されるため、Microsoft OfficeのExcelで開くと文字化けする恐れがあります。"
         },
-        "reports_sub": "アイテムに関するデータの含まれたファイルを作成できます。"
+        "reports_sub": "アイテムに関するデータの含まれたファイルを作成できます。",
+        "toast": {
+            "asset_success": "{results}件のアセットが更新されました。"
+        }
     }
 }
