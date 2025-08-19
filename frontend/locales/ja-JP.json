@@ -360,7 +360,8 @@
             "failed_load_item": "アイテムの読み込みに失敗しました",
             "failed_load_items": "アイテムの読み込みに失敗しました",
             "failed_save": "アイテム設定の保存に失敗しました",
-            "failed_save_no_location": "アイテムの保存に失敗しました：場所が選択されていません"
+            "failed_save_no_location": "アイテム設定の保存に失敗しました: ロケーションを選択してください",
+            "failed_search_items": "アイテムの検索に失敗しました"
         },
         "updated_at": "更新日",
         "warranty": "保証書",
