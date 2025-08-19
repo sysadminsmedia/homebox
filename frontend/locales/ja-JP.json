@@ -382,11 +382,12 @@
             "failed_load_label": "ラベルの読み込みに失敗しました",
             "failed_update_label": "ラベルの更新に失敗しました",
             "label_deleted": "ラベルが削除されました",
-            "label_updated": "ラベルが更新されました"
+            "label_updated": "ラベル設定が更新されました"
         },
         "update_label": "ラベル設定の変更"
     },
     "languages": {
+        "bs-BA": "ボスニア語 (ボスニアヘルツェゴビナ)",
         "ca": "カタルーニャ語 (カタロニア語)",
         "cs-CZ": "チェコ語",
         "de": "ドイツ語",
