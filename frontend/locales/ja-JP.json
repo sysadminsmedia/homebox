@@ -72,6 +72,7 @@
                 "confirm_description": "この管理ラベルを印刷しますか？",
                 "download": "画像として保存",
                 "print": "プリンターで印刷",
+                "server_print": "サーバーで印刷",
                 "titles": "管理ラベルの出力",
                 "toast": {
                     "load_status_failed": "ステータスの読み込みに失敗しました",
