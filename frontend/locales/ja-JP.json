@@ -520,7 +520,8 @@
             "failed_delete_account": "アカウントの削除に失敗しました",
             "failed_delete_notifier": "通知設定の削除に失敗しました",
             "failed_get_currencies": "通貨情報の取得に失敗しました",
-            "failed_test_notifier": "通知者のテストに失敗しました。"
+            "failed_test_notifier": "通知の送信テストに失敗しました",
+            "failed_update_group": "グループの更新に失敗しました"
         },
         "update_group": "グループ設定を更新",
         "update_language": "言語更新",
