@@ -282,7 +282,8 @@
         "drag_and_drop": "添付ファイルはドラッグ＆ドロップ、もしくはクリックで追加できます",
         "edit": {
             "edit_attachment_dialog": {
-                "attachment_title": "添付タイトル"
+                "attachment_title": "添付ファイルのタイトル",
+                "attachment_type": "添付資料の種類"
             }
         },
         "edit_details": "基本的な情報の編集",
