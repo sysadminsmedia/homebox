@@ -117,7 +117,7 @@
                     "some_photos_failed": "{count, plural, = 0 {アップロード可能な画像がありません} = 1 {画像のアップロードに失敗しました} other {一部の画像のアップロードに失敗しました}}",
                     "upload_failed": "画像のアップロードに失敗しました ({ photoName })",
                     "upload_success": "{count, plural, = 0 {画像はアップロードされていません} = 1 {画像をアップロードしました} other {すべての画像をアップロードしました}}",
-                    "uploading_photos": "{count, plural, = 0 {アップロードする写真がありません} = 1 {1枚の写真をアップロード中…} other {{count}枚の写真をアップロード中…}}"
+                    "uploading_photos": "{count, plural, = 0 {アップロード可能な画像がありません} = 1 {画像をアップロードしています} other {{count}枚の画像をアップロードしています…}}"
                 },
                 "upload_photos": "画像をアップロード",
                 "uploaded": "アップロードした画像"
@@ -229,6 +229,7 @@
         "locations": "ロケーション",
         "maintenance": "メンテナンス情報",
         "name": "名前",
+        "navigate": "移動",
         "password": "パスワード",
         "quantity": "数量",
         "read_docs": "ドキュメントを読む",
@@ -265,7 +266,7 @@
         "set_name": "お名前は何ですか？",
         "set_password": "パスワードを入力してください",
         "tagline": "Track, Organize, and Manage your Things.",
-        "title": "アイテムを整理してタグを設定",
+        "title": "Organize and Tag Your Stuff",
         "toast": {
             "invalid_email": "無効なメールアドレス",
             "invalid_email_password": "無効なメールアドレスまたはパスワードです",
@@ -514,7 +515,7 @@
         "language": "言語",
         "new_password": "新しいパスワード",
         "no_notifiers": "通知機能は設定されていません",
-        "no_override": "上書き",
+        "no_override": "既定の言語",
         "notifier_modal": "{type, select, true {編集} false {作成} other {その他}}通知者",
         "notifiers": "通知",
         "notifiers_sub": "メンテナンスなどのリマインダー通知を受け取れます",
@@ -574,14 +575,22 @@
         }
     },
     "scanner": {
+        "barcode_detected_message": "バーコードが見つかりました",
+        "barcode_fetch_data": "製品のデータを取得",
         "error": "不明なエラーが発生しました。スキャンは利用できません。",
         "invalid_url": "バーコードが無効です",
+        "no_sources": "映像デバイスが見つかりません",
+        "permission_denied": "カメラアクセスが拒否されています。ブラウザ設定・スマホ設定で許可してください。",
+        "select_video_source": "映像デバイスを選択",
+        "title": "スキャン",
         "unsupported": "メディアストリームAPIはHTTPSのみをサポートしています"
     },
     "tools": {
         "actions": "全てのアイテムに対する変更",
         "actions_set": {
             "create_missing_thumbnails": "サムネイルを自動設定",
+            "create_missing_thumbnails_button": "サムネイルを作成",
+            "create_missing_thumbnails_confirm": "不足しているサムネイルを作成してもよろしいですか？これには時間がかかる場合があり、一時停止することはできません。",
             "create_missing_thumbnails_sub": "アップロードされた添付ファイルのサムネイルを自動で作成します。既にサムネイルがある場合はスキップされます。サムネイルが存在しない場合に、自動で作成します。性能やファイル数により、処理が完了するまでに時間がかかる場合があります。",
             "ensure_ids": "アイテムのAsset IDの確認",
             "ensure_ids_button": "確認の実行",
