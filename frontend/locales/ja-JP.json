@@ -434,7 +434,8 @@
             "failed_delete_location": "ロケーションの削除に失敗しました",
             "failed_load_location": "ロケーションの読み込みに失敗しました",
             "failed_update_location": "ロケーション設定の更新に失敗しました",
-            "location_deleted": "場所が削除されました"
+            "location_deleted": "ロケーションを削除しました",
+            "location_updated": "位置情報が更新されました"
         },
         "update_location": "場所情報の変更"
     },
