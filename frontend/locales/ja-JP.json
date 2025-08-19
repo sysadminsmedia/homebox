@@ -116,7 +116,8 @@
                     "rotate_process_failed": "画像回転の処理でエラーが発生しました",
                     "some_photos_failed": "{count, plural, = 0 {アップロード可能な画像がありません} = 1 {画像のアップロードに失敗しました} other {一部の画像のアップロードに失敗しました}}",
                     "upload_failed": "画像のアップロードに失敗しました ({ photoName })",
-                    "upload_success": "{count, plural, = 0 {写真がアップロードされていません。} = 1 {写真が正常にアップロードされました。} other {すべての写真が正常にアップロードされました。}}"
+                    "upload_success": "{count, plural, = 0 {画像はアップロードされていません} = 1 {画像をアップロードしました} other {すべての画像をアップロードしました}}",
+                    "uploading_photos": "{count, plural, = 0 {アップロードする写真がありません} = 1 {1枚の写真をアップロード中…} other {{count}枚の写真をアップロード中…}}"
                 },
                 "upload_photos": "画像をアップロード",
                 "uploaded": "アップロードした画像"
