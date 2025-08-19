@@ -590,7 +590,7 @@
         "actions_set": {
             "create_missing_thumbnails": "サムネイルを自動設定",
             "create_missing_thumbnails_button": "サムネイルを作成",
-            "create_missing_thumbnails_confirm": "不足しているサムネイルを作成してもよろしいですか？これには時間がかかる場合があり、一時停止することはできません。",
+            "create_missing_thumbnails_confirm": "サムネイルを作成してもよろしいですか？件数によっては時間がかかる場合があり、一時停止することはできません。既存のサムネイルは上書きされません。元に戻すことはできません。",
             "create_missing_thumbnails_sub": "アップロードされた添付ファイルのサムネイルを自動で作成します。既にサムネイルがある場合はスキップされます。サムネイルが存在しない場合に、自動で作成します。性能やファイル数により、処理が完了するまでに時間がかかる場合があります。",
             "ensure_ids": "アイテムのAsset IDの確認",
             "ensure_ids_button": "確認の実行",
