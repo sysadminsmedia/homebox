@@ -18,6 +18,7 @@
             },
             "outdated": {
                 "current_version": "現在のバージョン",
+                "dismiss": "却下",
                 "latest_version": "最新バージョン",
                 "new_version_available": "利用可能な更新があります",
                 "new_version_available_link": "クリックしてリリースノートを表示"
@@ -47,6 +48,7 @@
                 "days": "日",
                 "hour": "時間",
                 "hours": "時間",
+                "in": "{0}内",
                 "just-now": "たった今",
                 "last-month": "先月",
                 "last-week": "先週",
