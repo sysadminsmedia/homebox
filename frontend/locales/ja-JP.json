@@ -11,7 +11,7 @@
                 "toast": {
                     "import_failed": "読み込みに失敗しました。もう一度お試しください。",
                     "import_success": "インポートに成功しました",
-                    "please_select_file": "インポートするファイルを選択してください。"
+                    "please_select_file": "ファイルを選択してください"
                 }
             },
             "outdated": {
@@ -20,6 +20,12 @@
                 "new_version_available": "利用可能な更新があります",
                 "new_version_available_link": "クリックしてリリースノートを表示"
             }
+        },
+        "color_selector": {
+            "clear": "色をリセット",
+            "color": "色",
+            "no_color": "色設定なし",
+            "no_color_selected": "色が選択されていません"
         },
         "global": {
             "copy_text": {
