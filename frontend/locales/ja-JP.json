@@ -544,7 +544,8 @@
             "instruction_1": "ホームボックスラベルジェネレータは、ホームボックスインベントリのラベルを印刷するのに役立つツールです",
             "label_height": "ラベルの高さ",
             "label_width": "ラベルの幅",
-            "measure_type": "メジャータイプ"
+            "measure_type": "メジャータイプ",
+            "page_bottom_padding": "下パディング"
         }
     },
     "scanner": {
