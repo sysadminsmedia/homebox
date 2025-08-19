@@ -285,7 +285,8 @@
                 "attachment_title": "添付ファイルのタイトル",
                 "attachment_type": "添付ファイルの種類",
                 "primary_photo": "サムネイルに設定",
-                "primary_photo_sub": "この画像をアイテムサムネイルに設定します。既に画像が設定されている場合は、このチェックボックスを有効にすると設定が上書きされます。"
+                "primary_photo_sub": "この画像をアイテムサムネイルに設定します。既に画像が設定されている場合は、このチェックボックスを有効にすると設定が上書きされます。",
+                "select_type": "種類を選択する"
             }
         },
         "edit_details": "基本的な情報の編集",
@@ -337,7 +338,7 @@
         "tips": "ヒント",
         "tips_sub": "検索に関するヒント",
         "toast": {
-            "attachment_deleted": "添付ファイルは削除されました"
+            "attachment_deleted": "添付ファイルを削除しました"
         },
         "updated_at": "更新日",
         "warranty": "保証書",
