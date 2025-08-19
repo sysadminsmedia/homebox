@@ -25,7 +25,13 @@
             "clear": "色をリセット",
             "color": "色",
             "no_color": "色設定なし",
-            "no_color_selected": "色が選択されていません"
+            "no_color_selected": "色を選択していません",
+            "randomize": "色をランダムに変更する"
+        },
+        "form": {
+            "password": {
+                "toggle_show": "パスワード表示を切り替える"
+            }
         },
         "global": {
             "copy_text": {
