@@ -361,7 +361,10 @@
             "failed_load_items": "アイテムの読み込みに失敗しました",
             "failed_save": "アイテム設定の保存に失敗しました",
             "failed_save_no_location": "アイテム設定の保存に失敗しました: ロケーションを選択してください",
-            "failed_search_items": "アイテムの検索に失敗しました"
+            "failed_search_items": "アイテム検索に失敗しました",
+            "failed_update_attachment": "添付ファイルの更新に失敗しました",
+            "failed_upload_attachment": "添付ファイルのアップロードに失敗しました",
+            "item_deleted": "アイテムが削除されました"
         },
         "updated_at": "更新日",
         "warranty": "保証書",
