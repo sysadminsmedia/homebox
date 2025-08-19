@@ -89,9 +89,12 @@
                 "open_new_tab": "新しいタブで開く"
             },
             "create_modal": {
-                "delete_photo": "写真を削除する",
+                "delete_photo": "写真を削除",
                 "item_description": "説明",
                 "item_name": "名称",
+                "item_photo": "商品写真 📷",
+                "item_quantity": "数量",
+                "parent_item": "関連するアイテム",
                 "title": "アイテム情報の追加"
             },
             "view": {
