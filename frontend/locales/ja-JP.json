@@ -364,7 +364,8 @@
             "failed_search_items": "アイテム検索に失敗しました",
             "failed_update_attachment": "添付ファイルの更新に失敗しました",
             "failed_upload_attachment": "添付ファイルのアップロードに失敗しました",
-            "item_deleted": "アイテムが削除されました"
+            "item_deleted": "アイテムを削除しました",
+            "item_saved": "アイテムが保存されました。"
         },
         "updated_at": "更新日",
         "warranty": "保証書",
