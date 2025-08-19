@@ -150,7 +150,8 @@
                 "label_name": "ラベル名",
                 "title": "ラベルの追加",
                 "toast": {
-                    "already_creating": "すでにラベルを作成しています"
+                    "already_creating": "既に同じラベルがあります",
+                    "create_failed": "ラベルを作成できませんでした"
                 }
             }
         },
