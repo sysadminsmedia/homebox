@@ -350,7 +350,8 @@
             "attachment_uploaded": "添付ファイルをアップロードしました",
             "child_items_location_no_longer_synced": "子アイテムのロケーションはこのアイテムと同期されなくなります。",
             "child_items_location_synced": "子アイテムのロケーションはこのアイテムと同期されています",
-            "child_location_desync": "場所を変更すると、親の場所から同期が解除されます"
+            "child_location_desync": "ロケーションを変更すると、親アイテムのロケーション同期が解除されます",
+            "error_loading_parent_data": "親データの読み込み中に問題が発生しました"
         },
         "updated_at": "更新日",
         "warranty": "保証書",
