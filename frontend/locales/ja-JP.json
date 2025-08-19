@@ -343,7 +343,7 @@
         "tips": "ヒント",
         "tips_sub": "検索に関するヒント",
         "toast": {
-            "asset_not_found": "アセットが見つかりません!",
+            "asset_not_found": "アセットがありません",
             "attachment_deleted": "添付ファイルを削除しました"
         },
         "updated_at": "更新日",
@@ -480,6 +480,7 @@
             "create_missing_thumbnails_sub": "アップロードされた添付ファイルのサムネイルを自動で作成します。既にサムネイルがある場合はスキップされます。サムネイルが存在しない場合に、自動で作成します。性能やファイル数により、処理が完了するまでに時間がかかる場合があります。",
             "ensure_ids": "アイテムのAsset IDの確認",
             "ensure_ids_button": "確認の実行",
+            "ensure_ids_confirm": "すべてのアセットにIDがあることを確認してもよろしいですか？これには時間がかかる場合があり、元に戻すことはできません。",
             "ensure_ids_sub": "全てのアイテムに、有効なAsset IDが存在することを確認します。'<br>'もし存在しないアイテムがあった場合は、登録された日付が古い順にAsset IDの登録を行います。",
             "ensure_import_refs": "Import Refsの確認",
             "ensure_import_refs_button": "確認の実行",
