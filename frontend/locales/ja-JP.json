@@ -103,7 +103,9 @@
                     "already_creating": "既に同じアイテムがあります",
                     "create_failed": "アイテムを作成できませんでした",
                     "create_success": "アイテムを作成しました",
-                    "failed_load_parent": "親アイテムの読み込みに失敗しました-手動で選択してください"
+                    "failed_load_parent": "親アイテムの読み込みに失敗しました。手動で選択してください",
+                    "no_canvas_support": "このブラウザはHTML5 canvasをサポートしていません",
+                    "please_select_location": "場所を選択してください。"
                 }
             },
             "view": {
