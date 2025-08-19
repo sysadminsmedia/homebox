@@ -356,7 +356,8 @@
             "failed_delete_attachment": "添付ファイルの削除に失敗しました",
             "failed_delete_item": "アイテムの削除に失敗しました",
             "failed_duplicate_item": "アイテムの複製に失敗しました",
-            "failed_load_asset": "アセットの読み込みに失敗しました"
+            "failed_load_asset": "アセットの読み込みに失敗しました",
+            "failed_load_item": "ロードに失敗しました。"
         },
         "updated_at": "更新日",
         "warranty": "保証書",
