@@ -535,18 +535,23 @@
     },
     "reports": {
         "label_generator": {
-            "asset_end": "アセット終了",
-            "asset_start": "アセット開始",
-            "base_url": "ベースURL",
-            "bordered_labels": "境界付きラベル",
-            "generate_page": "ページを生成",
+            "asset_end": "Asset ID 印刷終了位置 (このIDは含みません)",
+            "asset_start": "Asset ID 印刷開始位置 (このIDを含みます)",
+            "base_url": "QRコードのURL (通常変更する必要はありません。URL見本を参照し設定してください。)",
+            "bordered_labels": "ラベルの境界線を印刷",
+            "generate_page": "印刷プレビューを取得",
             "input_placeholder": "ここに入力",
-            "instruction_1": "ホームボックスラベルジェネレータは、ホームボックスインベントリのラベルを印刷するのに役立つツールです",
+            "instruction_1": "Homebox ラベルジェネレーターは、Homeboxに登録されたアイテムの管理シールを印刷するツールです。\nシールはアイテムを登録する前に印刷できるため、事前に大量作成することが可能です！",
             "label_height": "ラベルの高さ",
             "label_width": "ラベルの幅",
             "measure_type": "メジャータイプ",
-            "page_bottom_padding": "下パディング",
-            "page_height": "Page height"
+            "page_bottom_padding": "用紙 下余白",
+            "page_height": "用紙サイズ 高さ",
+            "page_left_padding": "用紙 左余白",
+            "page_right_padding": "用紙 右余白",
+            "page_top_padding": "用紙 上余白",
+            "page_width": "用紙サイズ 横幅",
+            "qr_code_example": "QRコードのURL見本"
         }
     },
     "scanner": {
