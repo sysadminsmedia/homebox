@@ -283,7 +283,8 @@
         "edit": {
             "edit_attachment_dialog": {
                 "attachment_title": "添付ファイルのタイトル",
-                "attachment_type": "添付資料の種類"
+                "attachment_type": "添付ファイルの種類",
+                "primary_photo": "主な写真"
             }
         },
         "edit_details": "基本的な情報の編集",
