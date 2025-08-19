@@ -515,7 +515,8 @@
         "theme_settings_sub": "テーマ設定はブラウザに保存されます。いつでも変更できます。\nテーマ設定によって問題が発生した場合は、再読み込みを行ってください。",
         "toast": {
             "account_deleted": "アカウントを削除しました",
-            "failed_change_password": "パスワードの変更に失敗しました！"
+            "failed_change_password": "パスワードを変更できませんでした",
+            "failed_create_notifier": "通知者の作成に失敗しました。"
         },
         "update_group": "グループ設定を更新",
         "update_language": "言語更新",
