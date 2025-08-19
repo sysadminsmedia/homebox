@@ -365,7 +365,8 @@
             "failed_update_attachment": "添付ファイルの更新に失敗しました",
             "failed_upload_attachment": "添付ファイルのアップロードに失敗しました",
             "item_deleted": "アイテムを削除しました",
-            "item_saved": "アイテムが保存されました。"
+            "item_saved": "アイテム設定を保存しました",
+            "quantity_cannot_negative": "数量をマイナスにすることはできません"
         },
         "updated_at": "更新日",
         "warranty": "保証書",
