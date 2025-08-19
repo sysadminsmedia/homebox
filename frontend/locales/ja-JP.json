@@ -72,11 +72,12 @@
                 "toast": {
                     "load_status_failed": "ステータスの読み込みに失敗しました",
                     "print_failed": "ラベルの印刷に失敗しました",
-                    "print_success": "ラベルが印刷されました"
+                    "print_success": "ラベルを印刷しました"
                 }
             },
             "page_qr_code": {
-                "page_url": "ページ URL"
+                "page_url": "ページ URL",
+                "qr_tooltip": "QR コードを表示"
             },
             "password_score": {
                 "password_strength": "パスワード強度"
