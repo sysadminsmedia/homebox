@@ -114,6 +114,7 @@
                 "uploaded": "アップロードした画像"
             },
             "product_import": {
+                "barcode": "商品のバーコード",
                 "title": "商品をインポート"
             },
             "selector": {
