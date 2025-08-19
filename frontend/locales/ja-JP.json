@@ -545,7 +545,8 @@
             "label_height": "ラベルの高さ",
             "label_width": "ラベルの幅",
             "measure_type": "メジャータイプ",
-            "page_bottom_padding": "下パディング"
+            "page_bottom_padding": "下パディング",
+            "page_height": "Page height"
         }
     },
     "scanner": {
