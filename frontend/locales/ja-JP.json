@@ -525,13 +525,19 @@
             "failed_update_notifier": "通知設定の更新に失敗しました",
             "group_updated": "グループ設定を更新しました",
             "notifier_test_success": "通知の送信テストに成功しました",
-            "password_changed": "パスワードが正常に変更されました。"
+            "password_changed": "パスワードを変更しました"
         },
         "update_group": "グループ設定を更新",
         "update_language": "言語更新",
         "url": "URL",
         "user_profile": "ユーザー情報",
         "user_profile_sub": "アカウントの管理やユーザーの招待など"
+    },
+    "reports": {
+        "label_generator": {
+            "asset_end": "アセット終了",
+            "asset_start": "アセットの開始"
+        }
     },
     "scanner": {
         "error": "不明なエラーが発生しました。スキャンは利用できません。",
