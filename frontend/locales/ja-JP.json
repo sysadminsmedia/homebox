@@ -145,10 +145,13 @@
         },
         "label": {
             "create_modal": {
-                "label_color": "ラベルカラー",
+                "label_color": "ラベルの色",
                 "label_description": "ラベルの説明",
                 "label_name": "ラベル名",
-                "title": "ラベルの追加"
+                "title": "ラベルの追加",
+                "toast": {
+                    "already_creating": "すでにラベルを作成しています"
+                }
             }
         },
         "location": {
