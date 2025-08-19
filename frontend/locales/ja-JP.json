@@ -269,6 +269,7 @@
         "advanced": "詳細項目の表示",
         "archived": "アーカイブ済み",
         "asset_id": "Asset ID",
+        "associated_with_multiple": "このアセットIDは複数のアイテムに関連付けられています",
         "attachment": "添付ファイル",
         "attachments": "添付ファイル",
         "changes_persisted_immediately": "添付ファイルの保存は自動で行われます",
