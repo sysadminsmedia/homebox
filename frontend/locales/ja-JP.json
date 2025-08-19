@@ -115,8 +115,9 @@
             },
             "product_import": {
                 "barcode": "商品のバーコード",
-                "db_source": "DBソース",
-                "search_item": "商品検索.",
+                "db_source": "情報提供元",
+                "error_invalid_barcode": "無効なバーコードが入力されました",
+                "search_item": "商品を検索",
                 "title": "商品をインポート"
             },
             "selector": {
