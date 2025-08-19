@@ -1,6 +1,9 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "{shiftKey} + {enterKey}を使用して、別のものを作成して追加します。"
+            },
             "import_dialog": {
                 "change_warning": "【注意】インポート時の動作が変更されました'<br>'\n選択されたCSVファイルにimport_refsの値が存在する場合、該当するアイテムはCSVファイルの値で上書きされます。",
                 "description": "アイテム、ラベル、ロケーション情報を含む CSV ファイルをインポートします。\nデータの形式など詳細については、ドキュメントを参照してください。",
@@ -147,7 +150,7 @@
         "joining_group": "既存のグループの招待を受け取りました！",
         "login": "ログイン",
         "register": "新規登録",
-        "remember_me": "ログインを維持する",
+        "remember_me": "ログインしたままにする",
         "set_email": "メールアドレスを入力してください",
         "set_name": "お名前は何ですか？",
         "set_password": "パスワードを入力してください",
@@ -344,6 +347,8 @@
     "tools": {
         "actions": "全てのアイテムに対する変更",
         "actions_set": {
+            "create_missing_thumbnails": "サムネイルを自動設定",
+            "create_missing_thumbnails_sub": "アップロードされた添付ファイルのサムネイルを自動で作成します。既にサムネイルがある場合はスキップされます。サムネイルが存在しない場合に、自動で作成します。性能やファイル数により、処理が完了するまでに時間がかかる場合があります。",
             "ensure_ids": "アイテムのAsset IDの確認",
             "ensure_ids_button": "確認の実行",
             "ensure_ids_sub": "全てのアイテムに、有効なAsset IDが存在することを確認します。'<br>'もし存在しないアイテムがあった場合は、登録された日付が古い順にAsset IDの登録を行います。",
