@@ -357,7 +357,9 @@
             "failed_delete_item": "アイテムの削除に失敗しました",
             "failed_duplicate_item": "アイテムの複製に失敗しました",
             "failed_load_asset": "アセットの読み込みに失敗しました",
-            "failed_load_item": "ロードに失敗しました。"
+            "failed_load_item": "アイテムの読み込みに失敗しました",
+            "failed_load_items": "アイテムの読み込みに失敗しました",
+            "failed_save": "アイテムを保存できませんでした..."
         },
         "updated_at": "更新日",
         "warranty": "保証書",
