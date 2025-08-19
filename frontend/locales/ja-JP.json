@@ -103,6 +103,7 @@
                 "product_tooltip_input_barcode": "バーコードを手動入力して自動取得を試みる",
                 "product_tooltip_scan_barcode": "バーコードを撮影して自動取得を試みる",
                 "rotate_photo": "写真を回転",
+                "set_as_primary_photo": "{isPrimary, select, true {non} false {} other {}}メイン写真として設定",
                 "title": "アイテム情報の追加",
                 "toast": {
                     "already_creating": "既に同じアイテムがあります",
