@@ -519,7 +519,8 @@
         "toast": {
             "asset_success": "{results}件のアイテムが更新されました。",
             "failed_create_missing_thumbnails": "サムネイルの自動作成ができませんでした。",
-            "failed_ensure_ids": "アセットIDを確認できませんでした。"
+            "failed_ensure_ids": "Asset IDの確認に失敗しました。",
+            "failed_ensure_import_refs": "インポート参照の確認に失敗しました。"
         }
     }
 }
