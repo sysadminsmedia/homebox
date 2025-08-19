@@ -517,7 +517,8 @@
         },
         "reports_sub": "アイテムに関するデータの含まれたファイルを作成できます。",
         "toast": {
-            "asset_success": "{results}件のアセットが更新されました。"
+            "asset_success": "{results}件のアイテムが更新されました。",
+            "failed_create_missing_thumbnails": "不足しているサムネイルを作成できませんでした。"
         }
     }
 }
