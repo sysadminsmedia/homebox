@@ -222,12 +222,14 @@
         "password": "パスワード",
         "quantity": "数量",
         "read_docs": "ドキュメントを読む",
-        "return_home": "ホームへ戻る",
+        "return_home": "トップページに戻る",
         "save": "保存",
         "search": "検索",
         "sign_out": "ログアウト",
         "submit": "送信",
+        "unknown": "不明",
         "update": "アップデート",
+        "updating": "更新中",
         "value": "値",
         "version": "現在のバージョン: { version }",
         "welcome": "{ username } でログイン中"
@@ -252,7 +254,8 @@
         "set_email": "メールアドレスを入力してください",
         "set_name": "お名前は何ですか？",
         "set_password": "パスワードを入力してください",
-        "tagline": "Track, Organize, and Manage your Things."
+        "tagline": "Track, Organize, and Manage your Things.",
+        "title": "スタッフを整理してタグを付ける"
     },
     "items": {
         "add": "項目を追加",
