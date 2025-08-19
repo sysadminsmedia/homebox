@@ -427,7 +427,8 @@
     "locations": {
         "child_locations": "属しているその他のロケーション",
         "collapse_tree": "ツリーを折りたたむ",
-        "expand_tree": "ツリーを展開(X)",
+        "expand_tree": "ツリーを展開",
+        "location_items_delete_confirm": "この場所とそのすべてのアイテムを削除してもよろしいですか？この操作は元に戻せません。",
         "no_results": "ロケーションはありません",
         "update_location": "場所情報の変更"
     },
