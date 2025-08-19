@@ -506,6 +506,7 @@
         "new_password": "新しいパスワード",
         "no_notifiers": "通知機能は設定されていません",
         "no_override": "上書き",
+        "notifier_modal": "{type, select, true {編集} false {作成} other {その他}}通知者",
         "notifiers": "通知",
         "notifiers_sub": "メンテナンスなどのリマインダー通知を受け取れます",
         "test": "テスト",
