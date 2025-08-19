@@ -524,7 +524,8 @@
             "failed_update_group": "グループ設定の更新に失敗しました",
             "failed_update_notifier": "通知設定の更新に失敗しました",
             "group_updated": "グループ設定を更新しました",
-            "notifier_test_success": "通知者テストに成功しました。"
+            "notifier_test_success": "通知の送信テストに成功しました",
+            "password_changed": "パスワードが正常に変更されました。"
         },
         "update_group": "グループ設定を更新",
         "update_language": "言語更新",
