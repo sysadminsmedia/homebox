@@ -352,7 +352,9 @@
             "child_items_location_synced": "子アイテムのロケーションはこのアイテムと同期されています",
             "child_location_desync": "ロケーションを変更すると、親アイテムのロケーション同期が解除されます",
             "error_loading_parent_data": "親アイテムの読み込み中にエラーが発生しました",
-            "failed_adjust_quantity": "数量の調整に失敗しました"
+            "failed_adjust_quantity": "数量の変更に失敗しました",
+            "failed_delete_attachment": "添付ファイルの削除に失敗しました",
+            "failed_delete_item": "削除に失敗しました。"
         },
         "updated_at": "更新日",
         "warranty": "保証書",
