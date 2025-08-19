@@ -139,12 +139,13 @@
                     "page": "ページ",
                     "rows_per_page": "表示件数",
                     "table_settings": "テーブル表示の設定",
-                    "view_item": "View Item"
+                    "view_item": "アイテムを見る"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_color": "ラベルカラー",
                 "label_description": "ラベルの説明",
                 "label_name": "ラベル名",
                 "title": "ラベルの追加"
