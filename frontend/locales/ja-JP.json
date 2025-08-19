@@ -30,7 +30,7 @@
         },
         "form": {
             "password": {
-                "toggle_show": "パスワード表示を切り替える"
+                "toggle_show": "パスワードの表示を切り替え"
             }
         },
         "global": {
@@ -68,7 +68,12 @@
                 "confirm_description": "この管理ラベルを印刷しますか？",
                 "download": "画像として保存",
                 "print": "プリンターで印刷",
-                "titles": "管理ラベルの出力"
+                "titles": "管理ラベルの出力",
+                "toast": {
+                    "load_status_failed": "ステータスの読み込みに失敗しました",
+                    "print_failed": "ラベルの印刷に失敗しました",
+                    "print_success": "ラベルが印刷されました"
+                }
             },
             "page_qr_code": {
                 "page_url": "ページ URL"
