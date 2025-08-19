@@ -537,7 +537,8 @@
         "label_generator": {
             "asset_end": "アセット終了",
             "asset_start": "アセット開始",
-            "base_url": "ベースURL"
+            "base_url": "ベースURL",
+            "bordered_labels": "境界付きラベル"
         }
     },
     "scanner": {
