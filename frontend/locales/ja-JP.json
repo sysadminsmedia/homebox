@@ -255,7 +255,14 @@
         "set_name": "お名前は何ですか？",
         "set_password": "パスワードを入力してください",
         "tagline": "Track, Organize, and Manage your Things.",
-        "title": "スタッフを整理してタグを付ける"
+        "title": "アイテムを整理してタグを設定",
+        "toast": {
+            "invalid_email": "無効なメールアドレス",
+            "invalid_email_password": "無効なメールアドレスまたはパスワードです",
+            "login_success": "ログインしました",
+            "problem_registering": "ユーザー情報を登録できませんでした",
+            "user_registered": "ユーザーを登録しました"
+        }
     },
     "items": {
         "add": "項目を追加",
