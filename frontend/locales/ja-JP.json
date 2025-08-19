@@ -208,7 +208,8 @@
         "email": "メール",
         "follow_dev": "開発者をフォローする",
         "footer": {
-            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'APIリファレンス(英語)'</a>'"
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'APIリファレンス(英語)'</a>'",
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Version: { version } Build: { build } '</a>'"
         },
         "github": "GitHub プロジェクト",
         "insured": "保険適用",
@@ -343,8 +344,9 @@
         "tips": "ヒント",
         "tips_sub": "検索に関するヒント",
         "toast": {
-            "asset_not_found": "アセットがありません",
-            "attachment_deleted": "添付ファイルを削除しました"
+            "asset_not_found": "アイテムがありません",
+            "attachment_deleted": "添付ファイルを削除しました",
+            "attachment_updated": "添付ファイルのデータを更新"
         },
         "updated_at": "更新日",
         "warranty": "保証書",
@@ -391,7 +393,7 @@
     "locations": {
         "child_locations": "属しているその他のロケーション",
         "collapse_tree": "ツリーを折りたたむ",
-        "no_results": "指定された場所は見つかりません",
+        "no_results": "ロケーションはありません",
         "update_location": "場所情報の変更"
     },
     "maintenance": {
