@@ -366,7 +366,8 @@
             "failed_upload_attachment": "添付ファイルのアップロードに失敗しました",
             "item_deleted": "アイテムを削除しました",
             "item_saved": "アイテム設定を保存しました",
-            "quantity_cannot_negative": "数量をマイナスにすることはできません"
+            "quantity_cannot_negative": "数量はマイナスにできません",
+            "sync_child_location": "選択された親は、その子の場所を独自の場所に同期します"
         },
         "updated_at": "更新日",
         "warranty": "保証書",
