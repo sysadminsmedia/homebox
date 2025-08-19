@@ -115,6 +115,7 @@
             },
             "product_import": {
                 "barcode": "商品のバーコード",
+                "db_source": "DBソース",
                 "title": "商品をインポート"
             },
             "selector": {
