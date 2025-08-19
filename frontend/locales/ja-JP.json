@@ -77,14 +77,19 @@
             },
             "page_qr_code": {
                 "page_url": "ページ URL",
-                "qr_tooltip": "QR コードを表示"
+                "qr_tooltip": "QRコードを表示"
             },
             "password_score": {
                 "password_strength": "パスワード強度"
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "ダウンロード",
+                "open_new_tab": "新しいタブで開く"
+            },
             "create_modal": {
+                "delete_photo": "写真を削除する",
                 "item_description": "説明",
                 "item_name": "名称",
                 "title": "アイテム情報の追加"
