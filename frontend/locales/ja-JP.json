@@ -347,7 +347,8 @@
             "asset_not_found": "アイテムがありません",
             "attachment_deleted": "添付ファイルを削除しました",
             "attachment_updated": "添付ファイルを更新",
-            "attachment_uploaded": "添付ファイルがアップロードされていません"
+            "attachment_uploaded": "添付ファイルをアップロードしました",
+            "child_items_location_no_longer_synced": "子アイテムの場所はこのアイテムと同期されなくなります。"
         },
         "updated_at": "更新日",
         "warranty": "保証書",
