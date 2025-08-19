@@ -168,11 +168,14 @@
                 "toast": {
                     "already_creating": "既に同じロケーションがあります",
                     "create_failed": "ロケーションを作成できませんでした",
-                    "create_success": "ロケーションが作成されました"
+                    "create_success": "ロケーションを作成しました"
                 }
             },
             "selector": {
-                "parent_location": "親項目 (選択された項目の下位にネスト)"
+                "no_location_found": "一致するロケーションがありません",
+                "parent_location": "親項目 (選択された項目の下位にネスト)",
+                "search_location": "ロケーションを検索",
+                "select_location": "場所を選択"
             },
             "tree": {
                 "no_locations": "場所の項目は存在しません。\nナビゲーションバー上部の\"Create\"から追加してください。"
