@@ -517,7 +517,8 @@
             "account_deleted": "アカウントを削除しました",
             "failed_change_password": "パスワードを変更できませんでした",
             "failed_create_notifier": "通知設定の作成に失敗しました。",
-            "failed_delete_account": "アカウントを削除できませんでした。"
+            "failed_delete_account": "アカウントの削除に失敗しました",
+            "failed_delete_notifier": "通知者の削除に失敗しました。"
         },
         "update_group": "グループ設定を更新",
         "update_language": "言語更新",
