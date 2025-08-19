@@ -175,13 +175,14 @@
                 "no_location_found": "一致するロケーションがありません",
                 "parent_location": "親項目 (選択された項目の下位にネスト)",
                 "search_location": "ロケーションを検索",
-                "select_location": "場所を選択"
+                "select_location": "ロケーションを選択"
             },
             "tree": {
-                "no_locations": "場所の項目は存在しません。\nナビゲーションバー上部の\"Create\"から追加してください。"
+                "no_locations": "ロケーションが設定されていません。\n左上の '<span class=\"link-primary\">'項目の追加'</span>' ボタンでロケーションを追加してください。"
             }
         },
         "quick_menu": {
+            "no_results": "結果がみつかりませんでした。",
             "shortcut_hint": "数字キーを入力することで対応する操作を実行できます"
         }
     },
@@ -189,7 +190,7 @@
         "add": "追加",
         "build": "ビルド番号: { build }",
         "confirm": "確認が必要です",
-        "create": "追加する",
+        "create": "項目の追加",
         "create_and_add": "続けて追加できます",
         "delete": "削除",
         "details": "製品の情報",
