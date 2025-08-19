@@ -432,7 +432,8 @@
         "no_results": "ロケーションはありません",
         "toast": {
             "failed_delete_location": "ロケーションの削除に失敗しました",
-            "failed_load_location": "位置情報の読み込みに失敗しました"
+            "failed_load_location": "ロケーションの読み込みに失敗しました",
+            "failed_update_location": "位置情報の更新に失敗しました"
         },
         "update_location": "場所情報の変更"
     },
