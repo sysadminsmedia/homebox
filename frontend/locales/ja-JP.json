@@ -543,8 +543,9 @@
             "input_placeholder": "ここに入力",
             "instruction_1": "Homebox ラベルジェネレーターは、Homeboxに登録されたアイテムの管理シールを印刷するツールです。\nシールはアイテムを登録する前に印刷できるため、事前に大量作成することが可能です！",
             "instruction_2": "シールには、HomeboxのQRコードやAsset IDを印刷できます。\nAsset IDを無効にしている場合でもこのツールは使用できますが、Asset IDを利用してアイテムページを開く機能などは利用できません。",
-            "label_height": "ラベルの高さ",
-            "label_width": "ラベルの幅",
+            "instruction_3": "この機能はまだ開発中であり、今後の更新で改修される可能性があります。\nバグ情報や機能提案がある方は、ぜひ'<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHubディスカッションに投稿をお願いします。'</a>'",
+            "label_height": "シール 高さ",
+            "label_width": "シール 横幅",
             "measure_type": "メジャータイプ",
             "page_bottom_padding": "用紙 下余白",
             "page_height": "用紙サイズ 高さ",
@@ -552,7 +553,9 @@
             "page_right_padding": "用紙 右余白",
             "page_top_padding": "用紙 上余白",
             "page_width": "用紙サイズ 横幅",
-            "qr_code_example": "QRコードのURL見本"
+            "qr_code_example": "QRコード URL見本",
+            "tip_1": "この機能の既定値は、'<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 label sheets'</a>'と適合する値になっています。\nそれ以外のシートを使用する場合は、必ず設定を調整する必要があります。",
+            "tip_2": "シールをカスタマイズする場合、寸法はインチ単位で設定してください。\n5260シートも、既定値が寸法と一致しないことがあります。\n'<br>' '<b>'試行錯誤が必要になることを覚悟してください。'<u>'必ず寸法や印刷位置の検証を行ってから、シール用紙に印刷してください。'</u>' '</b>'"
         }
     },
     "scanner": {
