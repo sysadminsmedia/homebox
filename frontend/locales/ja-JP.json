@@ -538,7 +538,10 @@
             "asset_end": "アセット終了",
             "asset_start": "アセット開始",
             "base_url": "ベースURL",
-            "bordered_labels": "境界付きラベル"
+            "bordered_labels": "境界付きラベル",
+            "generate_page": "ページを生成",
+            "input_placeholder": "ここに入力",
+            "instruction_1": "ホームボックスラベルジェネレータは、ホームボックスインベントリのラベルを印刷するのに役立つツールです"
         }
     },
     "scanner": {
