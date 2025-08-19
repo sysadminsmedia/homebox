@@ -182,23 +182,36 @@
             }
         },
         "quick_menu": {
-            "no_results": "結果がみつかりませんでした。",
+            "no_results": "一致する項目はありません",
             "shortcut_hint": "数字キーを入力することで対応する操作を実行できます"
         }
     },
+    "errors": {
+        "api_failure": "サーバーとの通信に失敗しました "
+    },
     "global": {
         "add": "追加",
+        "archived": "アーカイブ済み",
         "build": "ビルド番号: { build }",
+        "cancel": "キャンセル",
         "confirm": "確認が必要です",
         "create": "項目の追加",
         "create_and_add": "続けて追加できます",
+        "create_subitem": "サブアイテムを作成",
+        "created": "作成済み",
         "delete": "削除",
+        "delete_confirm": "このアイテムを削除しますか？ ",
+        "demo_instance": "これはデモ環境です。データは新しいバージョンになると初期化されます。",
         "details": "製品の情報",
         "duplicate": "複製",
         "edit": "編集",
         "email": "メール",
         "follow_dev": "開発者をフォローする",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'APIリファレンス(英語)'</a>'"
+        },
         "github": "GitHub プロジェクト",
+        "insured": "保険適用",
         "items": "アイテム",
         "join_discord": "Discordサーバーへの参加",
         "labels": "ラベル",
