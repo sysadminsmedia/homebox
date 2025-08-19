@@ -138,7 +138,8 @@
                     "headers": "ヘッダー",
                     "page": "ページ",
                     "rows_per_page": "表示件数",
-                    "table_settings": "表の設定"
+                    "table_settings": "テーブル表示の設定",
+                    "view_item": "View Item"
                 }
             }
         },
