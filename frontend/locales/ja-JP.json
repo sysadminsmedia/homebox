@@ -284,7 +284,8 @@
             "edit_attachment_dialog": {
                 "attachment_title": "添付ファイルのタイトル",
                 "attachment_type": "添付ファイルの種類",
-                "primary_photo": "主な写真"
+                "primary_photo": "サムネイルに設定",
+                "primary_photo_sub": "この画像をアイテムサムネイルに設定します。既に画像が設定されている場合は、このチェックボックスを有効にすると設定が上書きされます。"
             }
         },
         "edit_details": "基本的な情報の編集",
@@ -335,6 +336,9 @@
         "tip_3": "カスタム値絞り込み(Field Selector)は、\n複数選択された場合にどれかが該当するアイテムすべてを一致しているとみなしします。",
         "tips": "ヒント",
         "tips_sub": "検索に関するヒント",
+        "toast": {
+            "attachment_deleted": "添付ファイルは削除されました"
+        },
         "updated_at": "更新日",
         "warranty": "保証書",
         "warranty_details": "保証に関する情報",
