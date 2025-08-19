@@ -97,8 +97,12 @@
                 "parent_item": "関連アイテム",
                 "product_tooltip_input_barcode": "バーコードを手動入力して自動取得を試みる",
                 "product_tooltip_scan_barcode": "バーコードを撮影して自動取得を試みる",
-                "rotate_photo": "写真を回転します",
-                "title": "アイテム情報の追加"
+                "rotate_photo": "写真を回転",
+                "title": "アイテム情報の追加",
+                "toast": {
+                    "already_creating": "既に同じアイテムがあります",
+                    "create_failed": "アイテムを作成できませんでした"
+                }
             },
             "view": {
                 "selectable": {
