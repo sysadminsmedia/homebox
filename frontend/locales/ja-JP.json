@@ -509,9 +509,13 @@
         "notifier_modal": "{type, select, true {編集} false {作成} other {その他}}通知者",
         "notifiers": "通知",
         "notifiers_sub": "メンテナンスなどのリマインダー通知を受け取れます",
+        "override_locale": "日時・通貨の言語を設定 (上記の言語設定とは別の言語を設定可能)",
         "test": "テスト",
         "theme_settings": "テーマ設定",
         "theme_settings_sub": "テーマ設定はブラウザに保存されます。いつでも変更できます。\nテーマ設定によって問題が発生した場合は、再読み込みを行ってください。",
+        "toast": {
+            "account_deleted": "あなたのアカウントは削除されました"
+        },
         "update_group": "グループ設定を更新",
         "update_language": "言語更新",
         "url": "URL",
