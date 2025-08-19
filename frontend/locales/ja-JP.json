@@ -359,7 +359,8 @@
             "failed_load_asset": "アセットの読み込みに失敗しました",
             "failed_load_item": "アイテムの読み込みに失敗しました",
             "failed_load_items": "アイテムの読み込みに失敗しました",
-            "failed_save": "アイテムを保存できませんでした..."
+            "failed_save": "アイテム設定の保存に失敗しました",
+            "failed_save_no_location": "アイテムの保存に失敗しました：場所が選択されていません"
         },
         "updated_at": "更新日",
         "warranty": "保証書",
