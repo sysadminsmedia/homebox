@@ -435,7 +435,7 @@
             "failed_load_location": "ロケーションの読み込みに失敗しました",
             "failed_update_location": "ロケーション設定の更新に失敗しました",
             "location_deleted": "ロケーションを削除しました",
-            "location_updated": "位置情報が更新されました"
+            "location_updated": "ロケーション設定を更新しました"
         },
         "update_location": "場所情報の変更"
     },
@@ -492,6 +492,7 @@
         "currency_format": "通貨の種類",
         "current_password": "現在のパスワード",
         "delete_account": "アカウントの削除 (永久的です！)",
+        "delete_account_confirm": "アカウントを削除してもよろしいですか？あなたがグループの最後のメンバーである場合、すべてのデータが削除されます",
         "delete_account_sub": "アカウントと関連するデータをすべて削除します。元に戻すことはできません。",
         "enabled": "有効",
         "example": "例",
