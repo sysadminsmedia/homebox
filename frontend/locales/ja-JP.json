@@ -103,7 +103,7 @@
                 "product_tooltip_input_barcode": "バーコードを手動入力して自動取得を試みる",
                 "product_tooltip_scan_barcode": "バーコードを撮影して自動取得を試みる",
                 "rotate_photo": "写真を回転",
-                "set_as_primary_photo": "{isPrimary, select, true {non} false {} other {}}メイン写真として設定",
+                "set_as_primary_photo": "{isPrimary, select, true {non} false {} other {}} サムネイルに設定",
                 "title": "アイテム情報の追加",
                 "toast": {
                     "already_creating": "既に同じアイテムがあります",
@@ -114,6 +114,7 @@
                     "please_select_location": "ロケーションを選択",
                     "rotate_failed": "画像の回転ができませんでした。エラー内容: { error }",
                     "rotate_process_failed": "画像回転の処理でエラーが発生しました",
+                    "some_photos_failed": "{count, plural, = 0 {アップロードする写真がありません。} = 1 {1枚の写真をアップロードできませんでした。} other {一部の写真をアップロードできませんでした。}}",
                     "upload_failed": "画像のアップロードに失敗しました ({ photoName })"
                 },
                 "upload_photos": "画像をアップロード",
