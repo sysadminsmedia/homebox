@@ -431,7 +431,8 @@
         "location_items_delete_confirm": "このロケーションと、紐づいているアイテムをすべて削除します。'<br>'このロケーションに紐づけられたアイテムはすべて削除されます。'<br>'元に戻すことはできません。",
         "no_results": "ロケーションはありません",
         "toast": {
-            "failed_delete_location": "位置情報の削除に失敗しました"
+            "failed_delete_location": "ロケーションの削除に失敗しました",
+            "failed_load_location": "位置情報の読み込みに失敗しました"
         },
         "update_location": "場所情報の変更"
     },
