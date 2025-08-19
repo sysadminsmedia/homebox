@@ -152,15 +152,22 @@
                 "toast": {
                     "already_creating": "既に同じラベルがあります",
                     "create_failed": "ラベルを作成できませんでした",
-                    "create_success": "ラベルが作成されました"
+                    "create_success": "ラベルを作成しました",
+                    "label_name_too_long": "ラベル名は50文字以内で入力してください"
                 }
+            },
+            "selector": {
+                "select_labels": "ラベルを選択"
             }
         },
         "location": {
             "create_modal": {
                 "location_description": "場所の詳細",
                 "location_name": "名称",
-                "title": "ロケーション(場所)の追加"
+                "title": "ロケーション(場所)の追加",
+                "toast": {
+                    "already_creating": "すでに場所を作成しています"
+                }
             },
             "selector": {
                 "parent_location": "親項目 (選択された項目の下位にネスト)"
