@@ -520,7 +520,8 @@
             "asset_success": "{results}件のアイテムが更新されました。",
             "failed_create_missing_thumbnails": "サムネイルの自動作成ができませんでした。",
             "failed_ensure_ids": "Asset IDの確認に失敗しました。",
-            "failed_ensure_import_refs": "インポート参照の確認に失敗しました。"
+            "failed_ensure_import_refs": "import_ref の確認に失敗しました。",
+            "failed_set_primary_photos": "メインの写真を設定できませんでした。"
         }
     }
 }
