@@ -516,7 +516,8 @@
         "toast": {
             "account_deleted": "アカウントを削除しました",
             "failed_change_password": "パスワードを変更できませんでした",
-            "failed_create_notifier": "通知者の作成に失敗しました。"
+            "failed_create_notifier": "通知設定の作成に失敗しました。",
+            "failed_delete_account": "アカウントを削除できませんでした。"
         },
         "update_group": "グループ設定を更新",
         "update_language": "言語更新",
