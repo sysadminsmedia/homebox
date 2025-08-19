@@ -113,9 +113,13 @@
                 "upload_photos": "画像をアップロード",
                 "uploaded": "アップロードした画像"
             },
+            "product_import": {
+                "title": "商品をインポート"
+            },
             "selector": {
                 "no_results": "一致するものがありません",
-                "placeholder": "選択…"
+                "placeholder": "選択してください…",
+                "search_placeholder": "入力してください"
             },
             "view": {
                 "selectable": {
