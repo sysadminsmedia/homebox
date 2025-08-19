@@ -354,7 +354,8 @@
             "error_loading_parent_data": "親アイテムの読み込み中にエラーが発生しました",
             "failed_adjust_quantity": "数量の変更に失敗しました",
             "failed_delete_attachment": "添付ファイルの削除に失敗しました",
-            "failed_delete_item": "削除に失敗しました。"
+            "failed_delete_item": "アイテムの削除に失敗しました",
+            "failed_duplicate_item": "複製に失敗しました"
         },
         "updated_at": "更新日",
         "warranty": "保証書",
