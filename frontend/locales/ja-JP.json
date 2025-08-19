@@ -522,7 +522,7 @@
             "failed_ensure_ids": "Asset IDの確認に失敗しました。",
             "failed_ensure_import_refs": "import_ref の確認に失敗しました。",
             "failed_set_primary_photos": "サムネイルの設定に失敗しました。",
-            "failed_zero_datetimes": "日付と時刻の値をリセットできませんでした。"
+            "failed_zero_datetimes": "日時のリセットに失敗しました。"
         }
     }
 }
