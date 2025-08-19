@@ -166,7 +166,8 @@
                 "location_name": "名称",
                 "title": "ロケーション(場所)の追加",
                 "toast": {
-                    "already_creating": "すでに場所を作成しています"
+                    "already_creating": "既に同じロケーションがあります",
+                    "create_failed": "場所を作成できませんでした"
                 }
             },
             "selector": {
