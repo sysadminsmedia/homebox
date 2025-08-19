@@ -105,8 +105,13 @@
                     "create_success": "アイテムを作成しました",
                     "failed_load_parent": "親アイテムの読み込みに失敗しました。手動で選択してください",
                     "no_canvas_support": "このブラウザはHTML5 canvasをサポートしていません",
-                    "please_select_location": "場所を選択してください。"
-                }
+                    "please_select_location": "ロケーションを選択",
+                    "rotate_failed": "画像の回転ができませんでした。エラー内容: { error }",
+                    "rotate_process_failed": "画像回転の処理でエラーが発生しました",
+                    "upload_failed": "画像のアップロードに失敗しました ({ photoName })"
+                },
+                "upload_photos": "画像をアップロード",
+                "uploaded": "アップロードした写真"
             },
             "view": {
                 "selectable": {
