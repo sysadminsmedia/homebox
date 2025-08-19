@@ -127,7 +127,7 @@
                 "db_source": "DB source",
                 "error_exception": "Exception occured while retrieving item barcode: ",
                 "error_invalid_barcode": "Invalid barcode provided",
-                "error_not_found": "No product found with give barcode.",
+                "error_not_found": "No product found with given barcode.",
                 "search_item": "Search product",
                 "title": "Import product"
             },
