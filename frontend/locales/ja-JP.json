@@ -2,12 +2,17 @@
     "components": {
         "app": {
             "create_modal": {
-                "createAndAddAnother": "{shiftKey} + {enterKey}を使用して、別のものを作成して追加します。"
+                "createAndAddAnother": "{shiftKey} + {enterKey}を使用すると、別のアイテムをそのまま追加できます。"
             },
             "import_dialog": {
                 "change_warning": "【注意】インポート時の動作が変更されました'<br>'\n選択されたCSVファイルにimport_refsの値が存在する場合、該当するアイテムはCSVファイルの値で上書きされます。",
                 "description": "アイテム、ラベル、ロケーション情報を含む CSV ファイルをインポートします。\nデータの形式など詳細については、ドキュメントを参照してください。",
-                "title": ".csvファイルのインポート"
+                "title": ".csvファイルのインポート",
+                "toast": {
+                    "import_failed": "読み込みに失敗しました。もう一度お試しください。",
+                    "import_success": "インポートに成功しました",
+                    "please_select_file": "インポートするファイルを選択してください。"
+                }
             },
             "outdated": {
                 "current_version": "現在のバージョン",
