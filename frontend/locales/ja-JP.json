@@ -116,8 +116,9 @@
             "product_import": {
                 "barcode": "商品のバーコード",
                 "db_source": "情報提供元",
-                "error_exception": "商品バーコードの取得中に例外が発生しました： ",
+                "error_exception": "バーコード情報を取得できませんでした ",
                 "error_invalid_barcode": "このバーコードは使えません",
+                "error_not_found": "GIVEバーコードの製品は見つかりませんでした。",
                 "search_item": "商品を検索",
                 "title": "商品をインポート"
             },
