@@ -276,10 +276,15 @@
         "created_at": "作成日",
         "custom_fields": "カスタム項目",
         "delete_attachment_confirm": "この添付ファイルを削除しますか？",
-        "delete_item_confirm": "このアイテムを削除してもよろしいですか?",
+        "delete_item_confirm": "このアイテムを削除しますか？",
         "description": "説明",
         "details": "この製品の情報",
         "drag_and_drop": "添付ファイルはドラッグ＆ドロップ、もしくはクリックで追加できます",
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "添付タイトル"
+            }
+        },
         "edit_details": "基本的な情報の編集",
         "field_selector": "カスタム値で絞り込む",
         "field_value": "フィールド値",
