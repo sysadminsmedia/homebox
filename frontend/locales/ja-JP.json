@@ -346,7 +346,8 @@
         "toast": {
             "asset_not_found": "アイテムがありません",
             "attachment_deleted": "添付ファイルを削除しました",
-            "attachment_updated": "添付ファイルのデータを更新"
+            "attachment_updated": "添付ファイルを更新",
+            "attachment_uploaded": "添付ファイルがアップロードされていません"
         },
         "updated_at": "更新日",
         "warranty": "保証書",
