@@ -367,7 +367,7 @@
             "item_deleted": "アイテムを削除しました",
             "item_saved": "アイテム設定を保存しました",
             "quantity_cannot_negative": "数量はマイナスにできません",
-            "sync_child_location": "選択された親は、その子の場所を独自の場所に同期します"
+            "sync_child_location": "ペア設定されたアイテムのロケーションも更新されました。"
         },
         "updated_at": "更新日",
         "warranty": "保証書",
@@ -375,7 +375,15 @@
         "warranty_expires": "保証期間"
     },
     "labels": {
+        "label_delete_confirm": "このラベルを削除しますか？元に戻すことはできません。",
         "no_results": "一致するラベルはありません",
+        "toast": {
+            "failed_delete_label": "ラベルの削除に失敗しました",
+            "failed_load_label": "ラベルの読み込みに失敗しました",
+            "failed_update_label": "ラベルの更新に失敗しました",
+            "label_deleted": "ラベルが削除されました",
+            "label_updated": "ラベルが更新されました"
+        },
         "update_label": "ラベル設定の変更"
     },
     "languages": {
