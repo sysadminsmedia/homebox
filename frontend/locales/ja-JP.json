@@ -118,7 +118,7 @@
                 "db_source": "情報提供元",
                 "error_exception": "バーコード情報を取得できませんでした ",
                 "error_invalid_barcode": "このバーコードは使えません",
-                "error_not_found": "GIVEバーコードの製品は見つかりませんでした。",
+                "error_not_found": "入力されたバーコードの製品が見つかりません。手動登録が必要です。",
                 "search_item": "商品を検索",
                 "title": "商品をインポート"
             },
@@ -135,8 +135,10 @@
                     "table": "テーブル"
                 },
                 "table": {
+                    "headers": "ヘッダー",
                     "page": "ページ",
-                    "rows_per_page": "表示件数"
+                    "rows_per_page": "表示件数",
+                    "table_settings": "表の設定"
                 }
             }
         },
