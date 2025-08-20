@@ -129,7 +129,7 @@
         <FormTextArea
           v-model="updateData.description"
           :label="$t('components.label.create_modal.label_description')"
-          :max-length="255"
+          :max-length="1000"
         />
         <ColorSelector
           v-model="updateData.color"
