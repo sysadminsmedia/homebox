@@ -9,22 +9,14 @@
       class="w-full gap-0 px-0"
       :display-value="v => props.labels.find(l => l.id === v)?.name ?? 'Loading...'"
     >
-      <div class="flex flex-wrap items-center gap-2 px-3" style="overflow: hidden;">
-        <TagsInputItem 
-          v-for="item in modelValue"
-          :key="item"
-          :value="item"
-          :style="{
-            overflow: 'hidden',
-            'text-wrap': 'nowrap',
-          }"
-        >
+      <div class="flex flex-wrap items-center gap-2 overflow-hidden px-3">
+        <TagsInputItem v-for="item in modelValue" :key="item" :value="item" class="h-auto overflow-hidden text-wrap">
           <span
             v-if="props.labels.find(l => l.id === item)?.color"
-            class="ml-2 inline-block size-4 rounded-full"
+            class="ml-2 size-4 shrink-0 rounded-full"
             :style="{ backgroundColor: props.labels.find(l => l.id === item)?.color }"
           />
-          <TagsInputItemText />
+          <TagsInputItemText class="py-0.5" />
           <TagsInputItemDelete />
         </TagsInputItem>
       </div>
@@ -69,7 +61,7 @@
                   "
                 >
                   <span
-                    class="mr-2 inline-block size-4 rounded-full align-middle"
+                    class="mr-2 size-4 shrink-0 rounded-full align-middle"
                     :class="{ border: props.labels.find(l => l.id === label.value)?.color }"
                     :style="{ backgroundColor: props.labels.find(l => l.id === label.value)?.color }"
                   />
