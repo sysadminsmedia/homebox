@@ -103,31 +103,50 @@ func run(cfg *config.Config) error {
 
 	// =========================================================================
 	// Initialize Database & Repos
-	setupStorageDir(cfg)
+	err := setupStorageDir(cfg)
+	if err != nil {
+		return err
+	}
 
 	if strings.ToLower(cfg.Database.Driver) == "postgres" {
 		if !validatePostgresSSLMode(cfg.Database.SslMode) {
-			log.Fatal().Str("sslmode", cfg.Database.SslMode).Msg("invalid sslmode")
+			log.Error().Str("sslmode", cfg.Database.SslMode).Msg("invalid sslmode")
+			return fmt.Errorf("invalid sslmode: %s", cfg.Database.SslMode)
 		}
 	}
 
-	databaseURL := setupDatabaseURL(cfg)
+	databaseURL, err := setupDatabaseURL(cfg)
+	if err != nil {
+		return err
+	}
 
 	c, err := ent.Open(strings.ToLower(cfg.Database.Driver), databaseURL)
 	if err != nil {
-		log.Fatal().
+		log.Error().
 			Err(err).
 			Str("driver", strings.ToLower(cfg.Database.Driver)).
 			Str("host", cfg.Database.Host).
 			Str("port", cfg.Database.Port).
 			Str("database", cfg.Database.Database).
 			Msg("failed opening connection to {driver} database at {host}:{port}/{database}")
+		return fmt.Errorf("failed opening connection to %s database at %s:%s/%s: %w",
+			strings.ToLower(cfg.Database.Driver),
+			cfg.Database.Host,
+			cfg.Database.Port,
+			cfg.Database.Database,
+			err,
+		)
 	}
 
-	goose.SetBaseFS(migrations.Migrations(strings.ToLower(cfg.Database.Driver)))
+	migrationsFs, err := migrations.Migrations(strings.ToLower(cfg.Database.Driver))
+	if err != nil {
+		return fmt.Errorf("failed to get migrations for %s: %w", strings.ToLower(cfg.Database.Driver), err)
+	}
+
+	goose.SetBaseFS(migrationsFs)
 	err = goose.SetDialect(strings.ToLower(cfg.Database.Driver))
 	if err != nil {
-		log.Fatal().Str("driver", cfg.Database.Driver).Msg("unsupported database driver")
+		log.Error().Str("driver", cfg.Database.Driver).Msg("unsupported database driver")
 		return fmt.Errorf("unsupported database driver: %s", cfg.Database.Driver)
 	}
 

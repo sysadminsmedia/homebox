@@ -3,13 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/hay-kot/httpkit/graceful"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"net/http"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/hay-kot/httpkit/graceful"
 	"github.com/rs/zerolog/log"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
 	"gocloud.dev/pubsub"
 )
@@ -22,7 +22,8 @@ func registerRecurringTasks(app *app, cfg *config.Config, runner *graceful.Runne
 			log.Info().Msg("Running in demo mode, creating demo data")
 			err := app.SetupDemo()
 			if err != nil {
-				log.Fatal().Msg(err.Error())
+				log.Error().Err(err).Msg("failed to setup demo data")
+				return fmt.Errorf("failed to setup demo data: %w", err)
 			}
 		}
 		return nil

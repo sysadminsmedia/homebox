@@ -13,28 +13,32 @@ import (
 )
 
 // setupStorageDir handles the creation and validation of the storage directory.
-func setupStorageDir(cfg *config.Config) {
+func setupStorageDir(cfg *config.Config) error {
 	if strings.HasPrefix(cfg.Storage.ConnString, "file:///./") {
 		raw := strings.TrimPrefix(cfg.Storage.ConnString, "file:///./")
 		clean := filepath.Clean(raw)
 		absBase, err := filepath.Abs(clean)
 		if err != nil {
-			log.Fatal().Err(err).Msg("failed to get absolute path for storage connection string")
+			log.Error().Err(err).Msg("failed to get absolute path for storage connection string")
+			return fmt.Errorf("failed to get absolute path for storage connection string: %w", err)
 		}
 		absBase = strings.ReplaceAll(absBase, "\\", "/")
 		storageDir := filepath.Join(absBase, cfg.Storage.PrefixPath)
 		storageDir = strings.ReplaceAll(storageDir, "\\", "/")
 		if !strings.HasPrefix(storageDir, absBase+"/") && storageDir != absBase {
-			log.Fatal().Str("path", storageDir).Msg("invalid storage path: you tried to use a prefix that is not a subdirectory of the base path")
+			log.Error().Str("path", storageDir).Msg("invalid storage path: you tried to use a prefix that is not a subdirectory of the base path")
+			return fmt.Errorf("invalid storage path: you tried to use a prefix that is not a subdirectory of the base path")
 		}
 		if err := os.MkdirAll(storageDir, 0o750); err != nil {
-			log.Fatal().Err(err).Msg("failed to create data directory")
+			log.Error().Err(err).Msg("failed to create data directory")
+			return fmt.Errorf("failed to create data directory: %w", err)
 		}
 	}
+	return nil
 }
 
 // setupDatabaseURL returns the database URL and ensures any required directories exist.
-func setupDatabaseURL(cfg *config.Config) string {
+func setupDatabaseURL(cfg *config.Config) (string, error) {
 	databaseURL := ""
 	switch strings.ToLower(cfg.Database.Driver) {
 	case "sqlite3":
@@ -42,7 +46,8 @@ func setupDatabaseURL(cfg *config.Config) string {
 		dbFilePath := strings.Split(cfg.Database.SqlitePath, "?")[0]
 		dbDir := filepath.Dir(dbFilePath)
 		if err := os.MkdirAll(dbDir, 0o755); err != nil {
-			log.Fatal().Err(err).Str("path", dbDir).Msg("failed to create SQLite database directory")
+			log.Error().Err(err).Str("path", dbDir).Msg("failed to create SQLite database directory")
+			return "", fmt.Errorf("failed to create SQLite database directory: %w", err)
 		}
 	case "postgres":
 		databaseURL = fmt.Sprintf("host=%s port=%s dbname=%s sslmode=%s", cfg.Database.Host, cfg.Database.Port, cfg.Database.Database, cfg.Database.SslMode)
@@ -54,26 +59,30 @@ func setupDatabaseURL(cfg *config.Config) string {
 		}
 		if cfg.Database.SslRootCert != "" {
 			if _, err := os.Stat(cfg.Database.SslRootCert); err != nil || !os.IsNotExist(err) {
-				log.Fatal().Err(err).Str("path", cfg.Database.SslRootCert).Msg("SSL root certificate file does not accessible")
+				log.Error().Err(err).Str("path", cfg.Database.SslRootCert).Msg("SSL root certificate file is not accessible")
+				return "", fmt.Errorf("SSL root certificate file is not accessible: %w", err)
 			}
 			databaseURL += fmt.Sprintf(" sslrootcert=%s", cfg.Database.SslRootCert)
 		}
 		if cfg.Database.SslCert != "" {
 			if _, err := os.Stat(cfg.Database.SslCert); err != nil || !os.IsNotExist(err) {
-				log.Fatal().Err(err).Str("path", cfg.Database.SslCert).Msg("SSL certificate file does not accessible")
+				log.Error().Err(err).Str("path", cfg.Database.SslCert).Msg("SSL certificate file is not accessible")
+				return "", fmt.Errorf("SSL certificate file is not accessible: %w", err)
 			}
 			databaseURL += fmt.Sprintf(" sslcert=%s", cfg.Database.SslCert)
 		}
 		if cfg.Database.SslKey != "" {
 			if _, err := os.Stat(cfg.Database.SslKey); err != nil || !os.IsNotExist(err) {
-				log.Fatal().Err(err).Str("path", cfg.Database.SslKey).Msg("SSL key file does not accessible")
+				log.Error().Err(err).Str("path", cfg.Database.SslKey).Msg("SSL key file is not accessible")
+				return "", fmt.Errorf("SSL key file is not accessible: %w", err)
 			}
 			databaseURL += fmt.Sprintf(" sslkey=%s", cfg.Database.SslKey)
 		}
 	default:
-		log.Fatal().Str("driver", cfg.Database.Driver).Msg("unsupported database driver")
+		log.Error().Str("driver", cfg.Database.Driver).Msg("unsupported database driver")
+		return "", fmt.Errorf("unsupported database driver: %s", cfg.Database.Driver)
 	}
-	return databaseURL
+	return databaseURL, nil
 }
 
 // loadCurrencies loads currency data from config if provided.
