@@ -648,7 +648,7 @@ export interface ItemUpdate {
 
 export interface LabelCreate {
   color: string;
-  /** @maxLength 255 */
+  /** @maxLength 1000 */
   description: string;
   /**
    * @minLength 1

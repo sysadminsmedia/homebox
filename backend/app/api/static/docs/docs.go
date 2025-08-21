@@ -3639,7 +3639,7 @@ const docTemplate = `{
                 },
                 "description": {
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 1000
                 },
                 "name": {
                     "type": "string",
