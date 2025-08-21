@@ -93,7 +93,7 @@
   };
 
   const handleButtonClick = () => {
-    openDialog(DialogID.ProductImport, { barcode: detectedBarcode.value });
+    openDialog(DialogID.ProductImport, { params: { barcode: detectedBarcode.value } });
   };
 
   const startScanner = async () => {

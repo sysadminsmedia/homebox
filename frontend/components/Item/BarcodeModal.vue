@@ -180,7 +180,9 @@
       selectedRow.value < products.value.length
     ) {
       const p = products.value![selectedRow.value];
-      openDialog(DialogID.CreateItem, { product: p });
+      openDialog(DialogID.CreateItem, {
+        params: { product: p },
+      });
     }
   }
 

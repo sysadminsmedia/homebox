@@ -4,11 +4,9 @@
   import type { AnyDetail, Detail, Details } from "~~/components/global/DetailsSection/types";
   import { filterZeroValues } from "~~/components/global/DetailsSection/types";
   import type { ItemAttachment } from "~~/lib/api/types/data-contracts";
-  import MdiClose from "~icons/mdi/close";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPlus from "~icons/mdi/plus";
   import MdiMinus from "~icons/mdi/minus";
-  import MdiDownload from "~icons/mdi/download";
   import MdiContentCopy from "~icons/mdi/content-copy";
   import MdiDelete from "~icons/mdi/delete";
   import { Separator } from "@/components/ui/separator";
@@ -19,8 +17,7 @@
     BreadcrumbList,
     BreadcrumbSeparator,
   } from "@/components/ui/breadcrumb";
-  import { Button, ButtonGroup, buttonVariants } from "@/components/ui/button";
-  import { Dialog, DialogContent } from "@/components/ui/dialog";
+  import { Button, ButtonGroup } from "@/components/ui/button";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { Label } from "@/components/ui/label";
   import { Switch } from "@/components/ui/switch";
@@ -29,7 +26,7 @@
 
   const { t } = useI18n();
 
-  const { openDialog, closeDialog } = useDialog();
+  const { openDialog } = useDialog();
 
   definePageMeta({
     middleware: ["auth"],
@@ -102,6 +99,7 @@
   type Photo = {
     thumbnailSrc?: string;
     originalSrc: string;
+    attachmentId: string;
     originalType?: string;
   };
 
@@ -115,6 +113,7 @@
           const photo: Photo = {
             originalSrc: api.authURL(`/items/${item.value!.id}/attachments/${cur.id}`),
             originalType: cur.mimeType,
+            attachmentId: cur.id,
           };
           if (cur.thumbnail) {
             photo.thumbnailSrc = api.authURL(`/items/${item.value!.id}/attachments/${cur.thumbnail.id}`);
@@ -399,19 +398,22 @@
     return v;
   });
 
-  const dialoged = reactive<Photo>({
-    originalSrc: "",
-  });
-
-  function openImageDialog(img: Photo) {
-    dialoged.originalSrc = img.originalSrc;
-    dialoged.originalType = img.originalType;
-    dialoged.thumbnailSrc = img.thumbnailSrc;
-    openDialog(DialogID.ItemImage);
-  }
-
-  function closeImageDialog() {
-    closeDialog(DialogID.ItemImage);
+  function openImageDialog(img: Photo, itemId: string) {
+    openDialog(DialogID.ItemImage, {
+      params: {
+        type: "preloaded",
+        originalSrc: img.originalSrc,
+        originalType: img.originalType,
+        thumbnailSrc: img.thumbnailSrc,
+        attachmentId: img.attachmentId,
+        itemId,
+      },
+      onClose: result => {
+        if (result?.action === "delete") {
+          item.value!.attachments = item.value!.attachments.filter(a => a.id !== result.id);
+        }
+      },
+    });
   }
 
   const currentUrl = computed(() => {
@@ -545,25 +547,7 @@
     <!-- set page title -->
     <Title>{{ item.name }}</Title>
 
-    <Dialog :dialog-id="DialogID.ItemImage">
-      <DialogContent class="w-auto border-transparent bg-transparent p-0" disable-close>
-        <picture>
-          <source :srcset="dialoged.originalSrc" :type="dialoged.originalType" />
-          <img :src="dialoged.thumbnailSrc" alt="attachement image" />
-        </picture>
-        <a
-          :class="buttonVariants({ size: 'icon' })"
-          :href="dialoged.originalSrc"
-          download
-          class="absolute right-11 top-1"
-        >
-          <MdiDownload />
-        </a>
-        <Button size="icon" class="absolute right-1 top-1" @click="closeImageDialog">
-          <MdiClose />
-        </Button>
-      </DialogContent>
-    </Dialog>
+    <ItemImageDialog />
 
     <section>
       <Card class="p-3">
@@ -700,7 +684,7 @@
           <BaseCard v-if="photos && photos.length > 0">
             <template #title> {{ $t("items.photos") }} </template>
             <div class="scroll-bg container mx-auto flex max-h-[500px] flex-wrap gap-2 overflow-y-scroll border-t p-4">
-              <button v-for="(img, i) in photos" :key="i" @click="openImageDialog(img)">
+              <button v-for="(img, i) in photos" :key="i" @click="openImageDialog(img, item.id)">
                 <picture>
                   <source :srcset="img.originalSrc" :type="img.originalType" />
                   <img class="max-h-[200px] rounded" :src="img.thumbnailSrc" alt="attachment image" />
