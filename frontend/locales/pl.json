@@ -397,6 +397,7 @@
         "update_label": "Aktualizuj etykietę"
     },
     "languages": {
+        "bs-BA": "Bośniacki (Bośnia i Hercegowina)",
         "ca": "kataloński",
         "cs-CZ": "Czeski",
         "de": "niemiecki",
@@ -423,6 +424,7 @@
         "th-TH": "Tajski",
         "tr": "turecki",
         "uk-UA": "ukraiński",
+        "vi-VN": "Wietnamski",
         "zh-CN": "chiński (uproszczony)",
         "zh-HK": "chiński (Hong Kong)",
         "zh-MO": "chiński (Makau)",

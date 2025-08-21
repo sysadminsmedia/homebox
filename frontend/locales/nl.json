@@ -397,6 +397,7 @@
         "update_label": "Etiket bijwerken"
     },
     "languages": {
+        "bs-BA": "Bosnisch (Bosnië en Herzegovina)",
         "ca": "Catalaans",
         "cs-CZ": "Tsjechisch",
         "de": "Duits",
@@ -423,6 +424,7 @@
         "th-TH": "Thais",
         "tr": "Turks",
         "uk-UA": "Oekraïens",
+        "vi-VN": "Vietnamees",
         "zh-CN": "Chinees (vereenvoudigd)",
         "zh-HK": "Chinees (Hong Kong)",
         "zh-MO": "Chinees (Macau)",

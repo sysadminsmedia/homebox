@@ -122,19 +122,19 @@
                 "upload_photos": "Upload Photos",
                 "uploaded": "Uploaded Photo"
             },
+            "product_import": {
+                "barcode": "Product's barcode",
+                "db_source": "DB source",
+                "error_exception": "Exception occured while retrieving item barcode: ",
+                "error_invalid_barcode": "Invalid barcode provided",
+                "error_not_found": "No product found with give barcode.",
+                "search_item": "Search product",
+                "title": "Import product"
+            },
             "selector": {
                 "no_results": "No Results Found",
                 "placeholder": "Select…",
                 "search_placeholder": "Type to search…"
-            },
-            "product_import": {
-                "title": "Import product",
-                "barcode": "Product's barcode",
-                "db_source": "DB source",
-                "search_item": "Search product",
-                "error_invalid_barcode": "Invalid barcode provided",
-                "error_exception": "Exception occured while retrieving item barcode: ",
-                "error_not_found": "No product found with give barcode."
             },
             "view": {
                 "selectable": {
@@ -409,6 +409,7 @@
         "update_label": "Update Label"
     },
     "languages": {
+        "bs-BA": "Bosnian (Bosnia and Herzegovina)",
         "ca": "Catalan",
         "cs-CZ": "Czech",
         "da-DK": "Danish",
@@ -439,6 +440,7 @@
         "th-TH": "Thai",
         "tr": "Turkish",
         "uk-UA": "Ukrainian",
+        "vi-VN": "Vietnamese",
         "zh-CN": "Chinese (Simplified)",
         "zh-HK": "Chinese (Hong Kong)",
         "zh-MO": "Chinese (Macau)",
@@ -585,15 +587,15 @@
         }
     },
     "scanner": {
+        "barcode_detected_message": "product barcode detected",
+        "barcode_fetch_data": "Fetch product data",
         "error": "An error occurred while scanning",
         "invalid_url": "Invalid barcode URL",
         "no_sources": "No video sources available",
         "permission_denied": "Camera permission denied, please allow access to the camera in your browser settings",
         "select_video_source": "Pick a video source",
         "title": "Scanner",
-        "unsupported": "Media Stream API is not supported without HTTPS",
-        "barcode_detected_message": "product barcode detected",
-        "barcode_fetch_data": "Fetch product data"
+        "unsupported": "Media Stream API is not supported without HTTPS"
     },
     "tools": {
         "actions": "Inventory Actions",
