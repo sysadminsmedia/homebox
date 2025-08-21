@@ -14,6 +14,7 @@ builds:
       - linux
       - windows
       - darwin
+      - freebsd
     goarch:
       - amd64
       - "386"
@@ -25,15 +26,17 @@ builds:
         goarch: arm
       - goos: windows
         goarch: "386"
+      - goos: freebsd
+        goarch: arm
+      - goos: freebsd
+        goarch: "386"
     tags:
       - >-
         {{- if eq .Arch "riscv64" }}nodynamic
         {{- else if eq .Arch "arm" }}nodynamic
         {{- else if eq .Arch "386" }}nodynamic
+        {{- else if eq .Os "freebsd" }}nodynamic
         {{ end }}
-sboms:
-  - disable: false
-    artifacts: any
 
 signs:
   - cmd: cosign

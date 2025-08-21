@@ -24,6 +24,13 @@
                 "new_version_available_link": "Clicca qui per visualizzare le note di rilascio"
             }
         },
+        "color_selector": {
+            "clear": "Pulisci il colore",
+            "color": "Colore",
+            "no_color": "Nessun colore",
+            "no_color_selected": "Nessun colore selezionato",
+            "randomize": "Colore casuale"
+        },
         "form": {
             "password": {
                 "toggle_show": "Attiva/disattiva visualizzazione password"
@@ -93,6 +100,7 @@
                 "item_photo": "Foto dell'articolo 📷",
                 "item_quantity": "Quantità Articoli",
                 "parent_item": "Articolo principale",
+                "product_tooltip_scan_barcode": "Riempimento automatico con un codice a barre da 📷",
                 "rotate_photo": "Ruota foto",
                 "set_as_primary_photo": "Imposta come { isPrimary, select, true {non} false {} other {}} foto principale",
                 "title": "Crea Articolo",
@@ -113,10 +121,17 @@
                 "upload_photos": "Carica Foto",
                 "uploaded": "Foto caricata"
             },
+            "product_import": {
+                "barcode": "Codice a barre del prodotto",
+                "error_exception": "Si è verificato un errore durante il recupero del codice a barre dell'articolo: ",
+                "error_invalid_barcode": "Il codice a barre fornito non è valido",
+                "search_item": "Cerca prodotto",
+                "title": "Importa prodotto"
+            },
             "selector": {
                 "no_results": "Nessun risultato trovato",
-                "placeholder": "Seleziona...",
-                "search_placeholder": "Digita per cercare"
+                "placeholder": "Seleziona…",
+                "search_placeholder": "Scrivi per cercare…"
             },
             "view": {
                 "selectable": {
@@ -168,7 +183,7 @@
                 "select_location": "Seleziona una posizione"
             },
             "tree": {
-                "no_locations": "Nessuna posizione disponibile. Aggiungi nuove posizioni mediante il pulsante\n`<`span class=\"link-primary\"`>`Crea`<`/span`>` nella barra di navigazione."
+                "no_locations": "Nessuna posizione disponibile. Aggiungi nuove posizioni mediante il pulsante\n'<span class=\"link-primary\">'Crea'</span>' nella barra di navigazione."
             }
         },
         "quick_menu": {
@@ -196,14 +211,14 @@
         "follow_dev": "Segui lo Sviluppatore",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Versione: { version } Build: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Versione: { version } Build: { build } '</a>'"
         },
         "github": "Progetto GitHub",
         "insured": "Assicurato",
         "items": "Articoli",
         "join_discord": "Unisciti a Discord",
         "labels": "Etichette",
-        "loading": "Caricamento...",
+        "loading": "Caricamento…",
         "locations": "Posizioni",
         "maintenance": "Manutenzione",
         "name": "Nome",
@@ -280,12 +295,12 @@
             }
         },
         "edit_details": "Modifica dettagli",
-        "field_selector": "Campo Selezione",
+        "field_selector": "Selezione in base ai campi",
         "field_value": "Campo valore",
         "first": "Primo",
         "include_archive": "Includi Articoli Archiviati",
         "insured": "Assicurato",
-        "invalid_asset_id": "ID dell'asset non valido.",
+        "invalid_asset_id": "ID dell'asset non valido",
         "last": "Ultimo",
         "lifetime_warranty": "Garanzia a vita",
         "location": "Luogo",
@@ -311,7 +326,7 @@
         "purchase_date": "Data di acquisto",
         "purchase_details": "Dettagli dell'acquisto",
         "purchase_price": "Prezzo di acquisto",
-        "purchased_from": "Acqistato da",
+        "purchased_from": "Acquistato da",
         "quantity": "Quantità",
         "query_id": "ID dell'Asset in Ricerca: { id }",
         "receipt": "Ricevuta",
@@ -321,7 +336,7 @@
         "select_field": "Seleziona un campo",
         "serial_number": "Numero seriale",
         "show_advanced_view_options": "Mostra opzioni di visualizzazione avanzate",
-        "sold_at": "Venduto su",
+        "sold_at": "Venduto il",
         "sold_details": "Dettagli di vendita",
         "sold_price": "Prezzo di vendita",
         "sold_to": "Venduto a",
@@ -332,49 +347,19 @@
         "tips": "Suggerimenti",
         "tips_sub": "Suggerimenti per la Ricerca",
         "toast": {
-            "asset_not_found": "",
-            "attachment_deleted": "",
-            "attachment_updated": "",
-            "attachment_uploaded": "",
-            "child_items_location_no_longer_synced": "",
-            "child_items_location_synced": "",
-            "child_location_desync": "",
-            "error_loading_parent_data": "",
-            "failed_adjust_quantity": "",
-            "failed_delete_attachment": "",
-            "failed_delete_item": "",
-            "failed_duplicate_item": "",
-            "failed_load_asset": "",
-            "failed_load_item": "",
-            "failed_load_items": "",
-            "failed_save": "",
-            "failed_save_no_location": "",
-            "failed_search_items": "",
-            "failed_update_attachment": "",
-            "failed_upload_attachment": "",
-            "item_deleted": "",
-            "item_saved": "",
-            "quantity_cannot_negative": "",
-            "sync_child_location": ""
+            "quantity_cannot_negative": "La quantità non può essere negativa"
         },
         "updated_at": "Aggiornato Il",
         "warranty": "Garanzia",
         "warranty_details": "Dettagli garanzia",
-        "warranty_expires": "Garanzia scaduta"
+        "warranty_expires": "La garanzia scade il"
     },
     "labels": {
-        "label_delete_confirm": "",
         "no_results": "Nessuna etichetta trovata",
-        "toast": {
-            "failed_delete_label": "",
-            "failed_load_label": "",
-            "failed_update_label": "",
-            "label_deleted": "",
-            "label_updated": ""
-        },
         "update_label": "Aggiorna etichetta"
     },
     "languages": {
+        "bs-BA": "Bosniaco (Bosnia ed Erzegovina)",
         "ca": "Catalano",
         "cs-CZ": "Ceco",
         "de": "Tedesco",
@@ -401,6 +386,7 @@
         "th-TH": "Tailandese",
         "tr": "Turco",
         "uk-UA": "Ucraino",
+        "vi-VN": "Vietnamita",
         "zh-CN": "Cinese (semplificato)",
         "zh-HK": "Cinese Mandarino",
         "zh-MO": "Cinese (Macao)",
@@ -414,15 +400,7 @@
         "child_locations": "Ubicazione figlia",
         "collapse_tree": "Contrai albero",
         "expand_tree": "Espandi albero",
-        "location_items_delete_confirm": "",
         "no_results": "Nessuna posizione trovata",
-        "toast": {
-            "failed_delete_location": "",
-            "failed_load_location": "",
-            "failed_update_location": "",
-            "location_deleted": "",
-            "location_updated": ""
-        },
         "update_location": "Aggiorna ubicazione"
     },
     "maintenance": {
@@ -478,9 +456,7 @@
         "currency_format": "Formato Valuta",
         "current_password": "Password Corrente",
         "delete_account": "Elimina Account",
-        "delete_account_confirm": "",
         "delete_account_sub": "Elimina il tuo account e tutti i dati associati. Questa operazione non può essere annullata.",
-        "delete_notifier_confirm": "",
         "display_legacy_header": "{ currentValue, select, true {Disable Legacy Header} false {Enable Legacy Header} other {Not Hit}}",
         "enabled": "Abilitato",
         "example": "Esempio",
@@ -499,20 +475,6 @@
         "test": "Test",
         "theme_settings": "Impostazioni Tema",
         "theme_settings_sub": "Le impostazioni del tema sono memorizzate nella memoria locale del tuo browser. Puoi cambiare il tema \nin qualsiasi momento. Se hai problemi a impostare il tuo tema, prova a ricaricare la pagina.",
-        "toast": {
-            "account_deleted": "",
-            "failed_change_password": "",
-            "failed_create_notifier": "",
-            "failed_delete_account": "",
-            "failed_delete_notifier": "",
-            "failed_get_currencies": "",
-            "failed_test_notifier": "",
-            "failed_update_group": "",
-            "failed_update_notifier": "",
-            "group_updated": "",
-            "notifier_test_success": "",
-            "password_changed": ""
-        },
         "update_group": "Aggiorna Gruppo",
         "update_language": "Aggiorna Lingua",
         "url": "URL",
@@ -521,33 +483,13 @@
     },
     "reports": {
         "label_generator": {
-            "asset_end": "",
-            "asset_start": "",
-            "base_url": "",
-            "bordered_labels": "",
-            "generate_page": "",
-            "input_placeholder": "",
-            "instruction_1": "",
-            "instruction_2": "",
-            "instruction_3": "",
-            "label_height": "",
-            "label_width": "",
-            "measure_type": "",
-            "page_bottom_padding": "",
             "page_height": "Altezza della pagina",
             "page_left_padding": "Spaziatura Sinistra",
             "page_right_padding": "Spaziatura Destra",
             "page_top_padding": "Spaziatura in alto",
             "page_width": "Larghezza pagina",
             "qr_code_example": "Esempio di codice QR",
-            "tip_1": "Le impostazioni predefinite qui sono configurate per i\n\n '<a href=\"https://www.avery.com/templates/5260\">'fogli di etichette ''Avery 5260 '</a>'. Se stai utilizzando un foglio differente,\n\n devi modificare le impostazioni affinchè corrispondano al tuo foglio.",
-            "tip_2": "",
-            "tip_3": "",
-            "tips": "",
-            "title": "",
-            "toast": {
-                "page_too_small_card": ""
-            }
+            "tip_1": "Le impostazioni predefinite qui sono configurate per i\n'<a href=\"https://www.avery.com/templates/5260\">'fogli di etichette ''Avery 5260 '</a>'. Se stai utilizzando un foglio differente,\n devi modificare le impostazioni affinchè corrispondano al tuo foglio."
         }
     },
     "scanner": {
@@ -564,18 +506,15 @@
         "actions_set": {
             "ensure_ids": "Verifica ID delle risorse",
             "ensure_ids_button": "Verifica ID delle risorse",
-            "ensure_ids_confirm": "",
             "ensure_ids_sub": "Garantisce che tutti gli articoli nel tuo inventario abbiano un campo asset_id valido. Questo viene fatto trovando il campo asset_id corrente più alto nel database e applicando il valore successivo a ogni articolo che ha un campo asset_id non impostato. Questo viene fatto per il campo created_at.",
             "ensure_import_refs": "Verifica riferimenti di importazione",
             "ensure_import_refs_button": "Verifica riferimenti di importazione",
             "ensure_import_refs_sub": "Verifica che tutti gli articoli nel tuo inventario abbiano un campo import_ref valido. Questo viene fatto generando in modo casuale una stringa di 8 caratteri per ogni articolo che ha un campo import_ref non impostato.",
             "set_primary_photo": "Imposta foto principale",
             "set_primary_photo_button": "Imposta immagine principale",
-            "set_primary_photo_confirm": "",
             "set_primary_photo_sub": "Nella versione v0.10.0 di Homebox, il campo immagine principale è stato aggiunto agli allegati di tipo foto. Questa azione imposterà il campo immagine principale alla prima immagine nella matrice allegati nel database, se non è già impostato. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Vedi GitHub PR #576'</a>'",
             "zero_datetimes": "Azzera Data e Orario articolo",
             "zero_datetimes_button": "Azzera Date e Ora articolo",
-            "zero_datetimes_confirm": "",
             "zero_datetimes_sub": "Reimposta il valore dell'ora per tutti i campi data e ora dell'inventario all'inizio della data. Questo è per correggere un bug che è stato introdotto all'inizio dello sviluppo del sito che ha causato il valore di orario memorizzato con il tempo che ha causato problemi con i campi data visualizzazione dei valori esatti. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Vedi Github Issue #236 per maggiori dettagli.'</a>'"
         },
         "actions_sub": "Applica Azioni massive al tuo inventario. Questo sono azioni irreversibili. '<b>'Presta attenzione.'</b>'",
@@ -586,7 +525,6 @@
             "export_sub": "Esporta il formato CSV standard per Homebox. Questo esporterà tutti gli articoli del tuo inventario.",
             "import": "Importa Inventario",
             "import_button": "Importa Inventario",
-            "import_ref_confirm": "",
             "import_sub": "Importa il formato CSV standard per Homebox. Senza una colonna '<code>'HB.import_ref'</code>' questo '<b>'non'</b>' sovrascriverà gli articoli esistenti nel tuo inventario, aggiungerà solamente nuovi articoli. Le righe con una colonna '<code>'HB.import_ref'</code>' saranno unite agli articoli esistenti con lo stesso import_ref, se presente."
         },
         "import_export_sub": "Importa ed esporta il tuo inventario da e verso un file CSV. Questo è utile per migrare il tuo inventario verso una nuova istanza di Homebox.",
@@ -599,13 +537,6 @@
             "bill_of_materials_button": "Genera BOM",
             "bill_of_materials_sub": "Genera un file CSV (Valori Separati dalla Virgola) che può essere importato in un foglio di calcolo. Questo è un sommario del tuo inventario con informazioni di base su articoli e prezzi."
         },
-        "reports_sub": "Genera diversi report per il tuo inventario.",
-        "toast": {
-            "asset_success": "",
-            "failed_ensure_ids": "",
-            "failed_ensure_import_refs": "",
-            "failed_set_primary_photos": "",
-            "failed_zero_datetimes": ""
-        }
+        "reports_sub": "Genera diversi report per il tuo inventario."
     }
 }

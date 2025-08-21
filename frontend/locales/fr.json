@@ -24,6 +24,11 @@
                 "new_version_available_link": "Cliquez ici pour consulter les notes de version"
             }
         },
+        "color_selector": {
+            "color": "Couleur",
+            "no_color_selected": "Aucune couleur sélectionnée",
+            "randomize": "Couleur aléatoire"
+        },
         "form": {
             "password": {
                 "toggle_show": "Activer/désactiver l'affichage du mot de passe"
@@ -115,8 +120,8 @@
             },
             "selector": {
                 "no_results": "Aucun résultat trouvé",
-                "placeholder": "Sélectionner...",
-                "search_placeholder": "Tapez pour rechercher..."
+                "placeholder": "Sélectionner…",
+                "search_placeholder": "Tapez pour rechercher…"
             },
             "view": {
                 "selectable": {
@@ -130,7 +135,7 @@
                     "page": "Page",
                     "rows_per_page": "Lignes par page",
                     "table_settings": "Paramètres du Tableau",
-                    "view_item": ""
+                    "view_item": "Afficher l'élément"
                 }
             }
         },
@@ -168,7 +173,7 @@
                 "select_location": "Choisir un emplacement"
             },
             "tree": {
-                "no_locations": "Aucun emplacement disponible. Créez votre premier emplacement avec\nle bouton `<`span class=\"link-primary\"`>`Créer`<`/span`>` dans la barre de navigation."
+                "no_locations": "Aucun emplacement disponible. Créez votre premier emplacement avec\nle bouton '<span class=\"link-primary\">'Créer'</span>' dans la barre de navigation."
             }
         },
         "quick_menu": {
@@ -196,14 +201,14 @@
         "follow_dev": "Suivre le développeur",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Version : { version } Commit : { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Version : { version } Commit : { build } '</a>'"
         },
         "github": "Projet GitHub",
         "insured": "Assuré",
         "items": "Articles",
         "join_discord": "Rejoindre le Discord",
         "labels": "Étiquettes",
-        "loading": "Chargement...",
+        "loading": "Chargement…",
         "locations": "Emplacements",
         "maintenance": "Maintenance",
         "name": "Nom",
@@ -562,6 +567,10 @@
     "tools": {
         "actions": "Actions d’inventaire",
         "actions_set": {
+            "create_missing_thumbnails": "Crée les miniatures manquantes",
+            "create_missing_thumbnails_button": "Crée les miniatures",
+            "create_missing_thumbnails_confirm": "Êtes-vous sûr de vouloir créer les vignettes manquantes ? Cette opération peut prendre un certain temps et ne peut pas être interrompue.",
+            "create_missing_thumbnails_sub": "Crée des miniatures pour toutes les pièces jointes prises en charge par la configuration actuelle. Ceci est utile pour les pièces jointes importées avant la version 0.20.0 de Homebox. Cette opération n'écrase pas les miniatures existantes, mais crée de nouvelles miniatures pour les pièces jointes sans miniature. Veuillez noter que la création des miniatures s'effectue en arrière-plan et peut prendre un certain temps.",
             "ensure_ids": "Vérifier les ID de ressources",
             "ensure_ids_button": "Vérifier les ID de ressources",
             "ensure_ids_confirm": "Êtes-vous certain de vous assurer que toutes les ressources ont une ID ? Cela peut prendre du temps et est irréversible.",

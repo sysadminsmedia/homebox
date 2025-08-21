@@ -24,6 +24,13 @@
                 "new_version_available_link": "Haz click aquí para ver las notas de la versión"
             }
         },
+        "color_selector": {
+            "clear": "Borrar color",
+            "color": "Color",
+            "no_color": "Sin color",
+            "no_color_selected": "Ningún color seleccionado",
+            "randomize": "Aleatorizar color"
+        },
         "form": {
             "password": {
                 "toggle_show": "Alternar Visibilidad de la Contraseña"
@@ -93,6 +100,8 @@
                 "item_photo": "Foto del artículo 📷",
                 "item_quantity": "Cantidad de Elementos",
                 "parent_item": "Elemento Padre",
+                "product_tooltip_input_barcode": "Autocompletar con un código de barras proporcionado manualmente",
+                "product_tooltip_scan_barcode": "Autocompletar con un código de barras desde 📷",
                 "rotate_photo": "Girar foto",
                 "set_as_primary_photo": "Establecer como { isPrimary, select, true {non-} false {} other {}} foto principal",
                 "title": "Crear Elemento",
@@ -108,15 +117,24 @@
                     "some_photos_failed": "{count, plural, =0 {No hay fotos para subir.} =1 {1 foto no se ha podido subir.} other {Algunas fotos no se han podido subir.}}",
                     "upload_failed": "Error al subir la foto: { photoName }",
                     "upload_success": "{count, plural, =0 {No hay fotos subidas.} =1 {Foto subida con éxito.} other {Todas las fotos subidas con éxito.}}",
-                    "uploading_photos": "{count, plural, =0 {No hay fotos para subir} =1 {Subiendo 1 foto...} other {Subiendo {count} fotos...}}"
+                    "uploading_photos": "{count, plural, =0 {No hay fotos para subir} =1 {Subiendo 1 foto…} other {Subiendo {count} fotos…}}"
                 },
                 "upload_photos": "Fotos Subidas",
                 "uploaded": "Foto Subida"
             },
+            "product_import": {
+                "barcode": "Código de barras del producto",
+                "db_source": "Fuente de la base de datos",
+                "error_exception": "Se ha producido una excepción al recuperar el código de barras del artículo: ",
+                "error_invalid_barcode": "Código de barras proporcionado no válido",
+                "error_not_found": "No se ha encontrado ningún producto con código de barras.",
+                "search_item": "Buscar producto",
+                "title": "Importar producto"
+            },
             "selector": {
                 "no_results": "Resultados No Encontrados",
-                "placeholder": "Seleccionar...",
-                "search_placeholder": "Escribe para buscar..."
+                "placeholder": "Seleccionar…",
+                "search_placeholder": "Escribe para buscar…"
             },
             "view": {
                 "selectable": {
@@ -136,6 +154,7 @@
         },
         "label": {
             "create_modal": {
+                "label_color": "Color de Etiqueta",
                 "label_description": "Descripción de la etiqueta",
                 "label_name": "Nombre de la Etiqueta",
                 "title": "Crear Etiqueta",
@@ -168,13 +187,16 @@
                 "select_location": "Elegir una Ubicación"
             },
             "tree": {
-                "no_locations": "No hay ubicaciones disponibles. Añade nuevas ubicaciones mediante el botón de\n`<`span class=\"link-primary\"`>`Crear`<`/span`>` en la barra de navegación."
+                "no_locations": "No hay ubicaciones disponibles. Añade nuevas ubicaciones mediante el botón de\n'<span class=\"link-primary\">'Crear'</span>' en la barra de navegación."
             }
         },
         "quick_menu": {
             "no_results": "Sin resultados.",
             "shortcut_hint": "Usa las teclas numéricas para seleccionar rápidamente una acción."
         }
+    },
+    "errors": {
+        "api_failure": "Error en la llamada a la API del backend: "
     },
     "global": {
         "add": "Añadir",
@@ -196,14 +218,14 @@
         "follow_dev": "Seguir al Desarrollador",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Versión: { version } Compilación: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Versión: { version } Compilación: { build } '</a>'"
         },
         "github": "Proyecto GitHub",
         "insured": "Asegurado",
         "items": "Elementos",
         "join_discord": "Únete al Discord",
         "labels": "Etiquetas",
-        "loading": "Cargando...",
+        "loading": "Cargando…",
         "locations": "Ubicaciones",
         "maintenance": "Mantenimiento",
         "name": "Nombre",
@@ -551,6 +573,8 @@
         }
     },
     "scanner": {
+        "barcode_detected_message": "código de barras del producto detectado",
+        "barcode_fetch_data": "Obtener datos del producto",
         "error": "Se ha producido un error mientras se escaneaba",
         "invalid_url": "URL de código de barras inválido",
         "no_sources": "No hay fuentes de vídeo disponibles",
@@ -562,6 +586,10 @@
     "tools": {
         "actions": "Acciones de Inventario",
         "actions_set": {
+            "create_missing_thumbnails": "Crear Miniaturas que Faltan",
+            "create_missing_thumbnails_button": "Crear Miniaturas",
+            "create_missing_thumbnails_confirm": "¿Estás seguro de que deseas crear las miniaturas que faltan? Esto puede tardar un poco y no se puede pausar.",
+            "create_missing_thumbnails_sub": "Crea miniaturas para todos los archivos adjuntos compatibles con la configuración actual. Esto es útil para los adjuntos que se subieron antes de la versión v0.20.0 de Homebox. Esto no sobreescribirá las miniaturas existentes, sólo creará nuevas para los adjuntos que no tienen una miniatura. Ten en cuenta que las miniaturas se crean en segundo plano y pueden tardar un poco en completarse.",
             "ensure_ids": "Asegurar IDs de Activos",
             "ensure_ids_button": "Asignar ID a los artículos",
             "ensure_ids_confirm": "¿Estás seguro de que quieres asegurarte de que todos los activos tengan un ID? Esto puede tardar un tiempo y no puede deshacerse.",
@@ -573,12 +601,12 @@
             "set_primary_photo_button": "Establecer Foto Principal",
             "set_primary_photo_confirm": "¿Estás seguro de que quieres configurar las fotos principales? Esto puede tardar un tiempo y no se puede deshacer.",
             "set_primary_photo_sub": "En la versión v0.10.0 de Homebox, se añadió el indicador de imagen principal a los ficheros adjuntos de tipo foto. Esta acción establecerá la primera imagen de cada artículo como su imagen principal, si no hay una imagen principal ya definida. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Ver PR #576 en GitHub'</a>'",
-            "zero_datetimes": "Cero Horas Elementos",
-            "zero_datetimes_button": "Cero Horas Elementos",
+            "zero_datetimes": "Poner a cero las horas de los artículos",
+            "zero_datetimes_button": "Poner a cero las horas de los artículos",
             "zero_datetimes_confirm": "¿Estás seguro de que deseas restablecer todos los valores de fecha y hora? Esto puede tardar un tiempo y no se puede deshacer.",
             "zero_datetimes_sub": "Restablece el valor de la hora para todos los campos de fecha/hora en tu inventario al principio de esa fecha. Esto se hace para corregir un error que se introdujo al principio del desarrollo de la aplicación, que causó que el valor de la hora se almacenase con la fecha, lo cual produjo problemas al mostrar valores precisos del campo. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Ver el issue #236 de GitHub para más detalles.'</a>'"
         },
-        "actions_sub": "Aplica Acciones a tu inventario de forma masiva. Estas son acciones irreversibles. '<b>'Ten Cuidado.'</b>'",
+        "actions_sub": "Aplica Acciones a tu inventario de forma masiva. Estas acciones son irreversibles. '<b>'Ten Cuidado.'</b>'",
         "import_export": "Importar/Exportar",
         "import_export_set": {
             "export": "Exportar Inventario",
@@ -586,7 +614,7 @@
             "export_sub": "Exporta el formato CSV estándar para Homebox. Esto exportará todos los elementos de tu inventario.",
             "import": "Importar Inventario",
             "import_button": "Importar Inventario",
-            "import_ref_confirm": "¿Estás seguro de que deseas asegurarse de que todos los activos tengan un import_ref? Esto puede tardar un tiempo y no se puede deshacer.",
+            "import_ref_confirm": "¿Estás seguro de que deseas asegurarte de que todos los activos tengan un import_ref? Esto puede tardar un tiempo y no se puede deshacer.",
             "import_sub": "Importa el formato CSV estándar para Homebox. Sin una columna '<code>'HB.import_ref'</code>', esto '<b>'no'</b>' sobrescribirá cualquier elemento existente en tu inventario, sólo añadirá nuevos artículos. Las filas con una columna '<code>'HB.import_ref'</code>' se fusionan con los artículos existentes con la misma import_ref, si existe."
         },
         "import_export_sub": "Importa y exporta tu inventario a y desde un archivo CSV. Esto es útil para migrar tu inventario a una nueva instancia de Homebox.",
@@ -596,12 +624,13 @@
             "asset_labels_button": "Generador de Etiquetas",
             "asset_labels_sub": "Genera un PDF para impresión de etiquetas para un rango de IDs de Activos. Estas etiquetas no son específicas para tu inventario, por lo que puedes imprimirlas con antelación y aplicarlas a tu inventario cuando las recibas.",
             "bill_of_materials": "Lista de Materiales",
-            "bill_of_materials_button": "Generar lista de materiales",
+            "bill_of_materials_button": "Generar Lista de Materiales",
             "bill_of_materials_sub": "Genera un archivo CSV (Valores Separados por Comas) que puede importarse a un programa de hojas de cálculo. Es un resumen de tu inventario con información básica sobre artículos y precios."
         },
         "reports_sub": "Genera diferentes informes para tu inventario.",
         "toast": {
             "asset_success": "Se han actualizado { results } activos.",
+            "failed_create_missing_thumbnails": "No se han podido crear las miniaturas que faltaban.",
             "failed_ensure_ids": "Error al asegurar los ID de los activos.",
             "failed_ensure_import_refs": "Error al asegurar las ref. de importación.",
             "failed_set_primary_photos": "No se han podido establecer las fotos principales.",

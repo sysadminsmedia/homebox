@@ -451,6 +451,23 @@ export interface EntUserEdges {
   notifiers: EntNotifier[];
 }
 
+export interface BarcodeProduct {
+  barcode: string;
+  imageBase64: string;
+  /**
+   * TODO: add image attachement
+   * TODO: add asin?
+   */
+  imageURL: string;
+  item: ItemCreate;
+  manufacturer: string;
+  /** Identifications */
+  modelNumber: string;
+  /** Extras */
+  notes: string;
+  search_engine_name: string;
+}
+
 export interface Group {
   createdAt: Date | string;
   currency: string;
@@ -631,7 +648,7 @@ export interface ItemUpdate {
 
 export interface LabelCreate {
   color: string;
-  /** @maxLength 255 */
+  /** @maxLength 1000 */
   description: string;
   /**
    * @minLength 1

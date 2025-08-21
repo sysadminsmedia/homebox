@@ -24,6 +24,13 @@
                 "new_version_available_link": "Kliknutím sem zobrazíte poznámky k verzi"
             }
         },
+        "color_selector": {
+            "clear": "Vymazat barvu",
+            "color": "Barva",
+            "no_color": "Žádná barva",
+            "no_color_selected": "Není vybrána žádná barva",
+            "randomize": "Náhodně vybrat barvu"
+        },
         "form": {
             "password": {
                 "toggle_show": "Přepnout zobrazení hesla"
@@ -93,6 +100,8 @@
                 "item_photo": "Fotografie položky 📷",
                 "item_quantity": "Množství položek",
                 "parent_item": "Nadřazená položka",
+                "product_tooltip_input_barcode": "Automatické vyplnění ručně zadaným čárovým kódem",
+                "product_tooltip_scan_barcode": "Automatické vyplnění čárovým kódem z 📷",
                 "rotate_photo": "Otočit fotku",
                 "set_as_primary_photo": "Nastavit jako { isPrimary, select, true {non-} false {} other {}}primární fotku",
                 "title": "Vytvořit položku",
@@ -108,15 +117,24 @@
                     "some_photos_failed": "{count, plural, =0 {Žádná fotka k nahrání.} =1 {Nepodařilo se nahrát 1 fotografii.} other {Některé fotografie se nepodařilo nahrát.}}",
                     "upload_failed": "Nepodařilo se nahrát fotku: { photoName }",
                     "upload_success": "{count, plural, =0 {Nejsou nahrané žádné fotky.} =1 {Fotka byla úspěšně nahrána.} other {Všechny fotky byly úspěšně nahrány.}}",
-                    "uploading_photos": "{count, plural, =0 {Žádné fotky k nahrání} =1 {Nahrávání 1 fotky...} other {Nahrávání {count} fotek...}}"
+                    "uploading_photos": "{count, plural, =0 {Žádné fotky k nahrání} =1 {Nahrávání 1 fotky…} other {Nahrávání {count} fotek…}}"
                 },
                 "upload_photos": "Nahrát fotografie",
                 "uploaded": "Fotka byla nahrána"
             },
+            "product_import": {
+                "barcode": "Čárový kód produktu",
+                "db_source": "Zdroj DB",
+                "error_exception": "Při načítání čárového kódu položky došlo k výjimce: ",
+                "error_invalid_barcode": "Byl zadán neplatný čárový kód",
+                "error_not_found": "Žádný produkt s daným čárovým kódem nebyl nalezen.",
+                "search_item": "Vyhledat produkt",
+                "title": "Importovat produkt"
+            },
             "selector": {
                 "no_results": "Nebyly nalezeny žádné výsledky",
-                "placeholder": "Vyberte...",
-                "search_placeholder": "Pište pro vyhledávání..."
+                "placeholder": "Vyberte…",
+                "search_placeholder": "Pište pro vyhledávání…"
             },
             "view": {
                 "selectable": {
@@ -136,6 +154,7 @@
         },
         "label": {
             "create_modal": {
+                "label_color": "Barva štítku",
                 "label_description": "Popis štítku",
                 "label_name": "Název štítku",
                 "title": "Vytvořit štítek",
@@ -168,13 +187,16 @@
                 "select_location": "Vybrat lokaci"
             },
             "tree": {
-                "no_locations": "Nejsou dostupné žádné lokace. Přidejte nové lokace\npomocí tlačítka `<`span class=\"link-primary\"`>`Vytvořit`<`/span`>` na navigační liště."
+                "no_locations": "Nejsou dostupné žádné lokace. Přidejte nové lokace\npomocí tlačítka <span class=\"link-primary\">Vytvořit</span> na navigační liště."
             }
         },
         "quick_menu": {
             "no_results": "Nebyly nalezeny žádné výsledky.",
             "shortcut_hint": "Pomocí číselných tlačítek rychle vyberte akci."
         }
+    },
+    "errors": {
+        "api_failure": "Volání backendového API selhalo: "
     },
     "global": {
         "add": "Přidat",
@@ -196,14 +218,14 @@
         "follow_dev": "Sledovat vývojáře",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Verze: { version } Sestavení: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Verze: { version } Sestavení: { build } '</a>'"
         },
         "github": "GitHub projekt",
         "insured": "Pojištěné",
         "items": "Položky",
         "join_discord": "Připojte se na Discord",
         "labels": "Štítky",
-        "loading": "Načítání...",
+        "loading": "Načítání…",
         "locations": "Lokality",
         "maintenance": "Údržba",
         "name": "Jméno",
@@ -551,6 +573,8 @@
         }
     },
     "scanner": {
+        "barcode_detected_message": "byl zjištěn čárový kód produktu",
+        "barcode_fetch_data": "Načíst produktová data",
         "error": "Při skenování došlo k chybě",
         "invalid_url": "Neplatná adresa URL čárového kódu",
         "no_sources": "Nejsou k dispozici žádné zdroje videa",
@@ -562,6 +586,10 @@
     "tools": {
         "actions": "Inventurní akce",
         "actions_set": {
+            "create_missing_thumbnails": "Vytvořit chybějící miniatury",
+            "create_missing_thumbnails_button": "Vytvoření náhledů",
+            "create_missing_thumbnails_confirm": "Opravdu chcete vytvořit chybějící miniatury? Může to chvíli trvat a nelze to pozastavit.",
+            "create_missing_thumbnails_sub": "Vytvoří miniatury pro všechny přílohy, které jsou podporovány aktuální konfigurací. To je užitečné pro přílohy, které byly nahrány před vydáním verze Homebox v0.20.0. Tím se nepřepíšou existující miniatury, ale vytvoří se pouze nové pro přílohy, které miniaturu nemají. Upozorňujeme, že miniatury se vytvářejí na pozadí a jejich vytvoření může chvíli trvat.",
             "ensure_ids": "Zajištění ID majetku",
             "ensure_ids_button": "Zajištění ID majetku",
             "ensure_ids_confirm": "Jste si jisti, že chcete zajistit, aby všechen majetek měl ID? To může chvíli trvat a nelze to vrátit zpět.",
@@ -602,6 +630,7 @@
         "reports_sub": "Generování různých přehledů o zásobách.",
         "toast": {
             "asset_success": "{ results } byly aktualizovány.",
+            "failed_create_missing_thumbnails": "Vytvoření chybějících miniatur se nezdařilo.",
             "failed_ensure_ids": "Nepodařilo se zajistit ID majetku.",
             "failed_ensure_import_refs": "Nepodařilo se zajistit import referencí.",
             "failed_set_primary_photos": "Nepodařilo se nastavit primární fotky.",

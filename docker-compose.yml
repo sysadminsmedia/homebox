@@ -3,7 +3,7 @@ services:
     image: homebox
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile.rootless
       args:
         - COMMIT=head
         - BUILD_TIME=0001-01-01T00:00:00Z
@@ -12,7 +12,6 @@ services:
             - linux/amd64
             - linux/arm64
             - linux/arm/v7
-            - linux/riscv64
     environment:
       - HBOX_DEBUG=true
       - HBOX_LOGGER_LEVEL=-1

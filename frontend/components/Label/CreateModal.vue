@@ -1,5 +1,5 @@
 <template>
-  <BaseModal dialog-id="create-label" :title="$t('components.label.create_modal.title')">
+  <BaseModal :dialog-id="DialogID.CreateLabel" :title="$t('components.label.create_modal.title')">
     <form class="flex flex-col gap-2" @submit.prevent="create()">
       <FormTextField
         v-model="form.name"
@@ -12,7 +12,7 @@
       <FormTextArea
         v-model="form.description"
         :label="$t('components.label.create_modal.label_description')"
-        :max-length="255"
+        :max-length="1000"
       />
       <ColorSelector v-model="form.color" :label="$t('components.label.create_modal.label_color')" :show-hex="true" />
       <div class="mt-4 flex flex-row-reverse">
@@ -29,6 +29,7 @@
 
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
+  import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { toast } from "@/components/ui/sonner";
   import BaseModal from "@/components/App/CreateModal.vue";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
@@ -38,7 +39,7 @@
 
   const { closeDialog } = useDialog();
 
-  useDialogHotkey("create-label", { code: "Digit2", shift: true });
+  useDialogHotkey(DialogID.CreateLabel, { code: "Digit2", shift: true });
 
   const loading = ref(false);
   const focused = ref(false);
@@ -85,7 +86,7 @@
     reset();
 
     if (close) {
-      closeDialog("create-label");
+      closeDialog(DialogID.CreateLabel);
       navigateTo(`/label/${data.id}`);
     }
   }

@@ -2,7 +2,10 @@
   <Dialog v-if="isDesktop" :dialog-id="dialogId">
     <DialogScrollContent>
       <DialogHeader>
-        <DialogTitle>{{ title }}</DialogTitle>
+        <div class="mr-4 flex place-items-center justify-between">
+          <DialogTitle>{{ title }}</DialogTitle>
+          <slot name="header-actions" />
+        </div>
       </DialogHeader>
 
       <slot />
@@ -29,6 +32,9 @@
       <DrawerHeader>
         <DrawerTitle>{{ title }}</DrawerTitle>
       </DrawerHeader>
+      <div class="flex justify-center">
+        <slot name="header-actions" />
+      </div>
 
       <div class="m-2 overflow-y-auto p-2">
         <slot />
@@ -39,13 +45,14 @@
 
 <script setup lang="ts">
   import { useMediaQuery } from "@vueuse/core";
+  import type { DialogID } from "@/components/ui/dialog-provider/utils";
   import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
   import { Dialog, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   defineProps<{
-    dialogId: string;
+    dialogId: DialogID;
     title: string;
   }>();
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <Dialog dialog-id="edit-maintenance">
+  <Dialog :dialog-id="DialogID.EditMaintenance">
     <DialogContent>
       <DialogHeader>
         <DialogTitle>
@@ -27,6 +27,7 @@
 
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
+  import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { toast } from "@/components/ui/sonner";
   import type { MaintenanceEntry, MaintenanceEntryWithDetails } from "~~/lib/api/types/data-contracts";
   import MdiPost from "~icons/mdi/post";
@@ -77,7 +78,7 @@
       return;
     }
 
-    closeDialog("edit-maintenance");
+    closeDialog(DialogID.EditMaintenance);
     emit("changed");
   }
 
@@ -99,7 +100,7 @@
       return;
     }
 
-    closeDialog("edit-maintenance");
+    closeDialog(DialogID.EditMaintenance);
     emit("changed");
   }
 
@@ -111,7 +112,7 @@
     entry.description = "";
     entry.cost = "";
     entry.itemId = itemId;
-    openDialog("edit-maintenance");
+    openDialog(DialogID.EditMaintenance);
   };
 
   const openUpdateModal = (maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails) => {
@@ -122,7 +123,7 @@
     entry.description = maintenanceEntry.description;
     entry.cost = maintenanceEntry.cost;
     entry.itemId = null;
-    openDialog("edit-maintenance");
+    openDialog(DialogID.EditMaintenance);
   };
 
   const confirm = useConfirm();
@@ -164,7 +165,7 @@
     entry.description = maintenanceEntry.description;
     entry.cost = maintenanceEntry.cost;
     entry.itemId = itemId;
-    openDialog("edit-maintenance");
+    openDialog(DialogID.EditMaintenance);
   }
 
   defineExpose({ openCreateModal, openUpdateModal, deleteEntry, complete, duplicate });

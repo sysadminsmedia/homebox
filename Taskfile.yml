@@ -176,7 +176,7 @@ tasks:
     cmds:
       - cd backend && go build ./app/api
       - backend/api &
-      - sleep 10
+      - sleep 15
       - cd frontend && pnpm run test:ci
     silent: true
 
@@ -193,7 +193,7 @@ tasks:
     cmds:
       - cd backend && go build ./app/api
       - backend/api &
-      - sleep 10
+      - sleep 15
       - cd frontend && pnpm run test:ci
     silent: true
 

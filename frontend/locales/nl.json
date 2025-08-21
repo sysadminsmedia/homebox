@@ -100,6 +100,8 @@
                 "item_photo": "Artikel Foto",
                 "item_quantity": "Item aantal",
                 "parent_item": "Hoofd Item",
+                "product_tooltip_input_barcode": "Vul automatisch in met een handmatig verstrekte streepjescode",
+                "product_tooltip_scan_barcode": "Vul automatisch in met een streepjescode van 📷",
                 "rotate_photo": "Foto roteren",
                 "set_as_primary_photo": "Instellen als { isPrimary, select, true {non-} false {} other {}}primaire foto",
                 "title": "Maak object",
@@ -115,14 +117,23 @@
                     "some_photos_failed": "{count, plural, =0 {Geen foto's om te uploaden.} =1 {1 foto kon niet worden geüpload.} other {Sommige foto's konden niet worden geüpload.}}",
                     "upload_failed": "Kan foto niet uploaden: { photoName }",
                     "upload_success": "{count, plural, =0 {Geen foto's geüpload.} =1 {Foto succesvol geüpload.} other {Alle foto's succesvol geüpload.}}",
-                    "uploading_photos": "{count, plural, =0 {Geen foto's om te uploaden} =1 {1 foto uploaden...} other {{count} foto's uploaden...}}"
+                    "uploading_photos": "{count, plural, =0 {Geen foto's om te uploaden} =1 {1 foto uploaden…} other {{count} foto's uploaden…}}"
                 },
                 "upload_photos": "Foto’s toevoegen",
                 "uploaded": "Geüploade foto"
             },
+            "product_import": {
+                "barcode": "Barcode van het product",
+                "db_source": "DB-bron",
+                "error_exception": "Er is een uitzondering opgetreden tijdens het ophalen van de streepjescode van het item: ",
+                "error_invalid_barcode": "Ongeldige barcode opgegeven",
+                "error_not_found": "Geen product gevonden met opgegeven barcode.",
+                "search_item": "Zoek product",
+                "title": "Importeer product"
+            },
             "selector": {
                 "no_results": "Geen resultaten gevonden",
-                "placeholder": "Selecteer...",
+                "placeholder": "Selecteer…",
                 "search_placeholder": "Type om te zoeken…"
             },
             "view": {
@@ -137,7 +148,7 @@
                     "page": "Pagina",
                     "rows_per_page": "Rijen per pagina",
                     "table_settings": "Tabel instellingen",
-                    "view_item": "Item bekijken"
+                    "view_item": "Toon Item"
                 }
             }
         },
@@ -176,7 +187,7 @@
                 "select_location": "Selecteer een locatie"
             },
             "tree": {
-                "no_locations": "Geen locaties beschikbaar. Voeg een nieuwe locatie toe\n via de `<`span class=\"link-primary\"`>`Creeer`<`/span`> knop op het navigatie menu."
+                "no_locations": "Geen locaties beschikbaar. Voeg een nieuwe locatie toe\n via de' <span class=\"link-primary\">'Creeer'</span>' knop op het navigatie menu."
             }
         },
         "quick_menu": {
@@ -184,10 +195,13 @@
             "shortcut_hint": "Gebruik de numerieke toetsen om snel een actie te selecteren."
         }
     },
+    "errors": {
+        "api_failure": "Backend API call mislukt: "
+    },
     "global": {
         "add": "Toevoegen",
         "archived": "Gearchiveerd",
-        "build": "Bouw: { build }",
+        "build": "Build: { build }",
         "cancel": "Annuleren",
         "confirm": "Bevestigen",
         "create": "Maken",
@@ -204,14 +218,14 @@
         "follow_dev": "Volg de ontwikkelaar",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v'{ version }\" target=\"_blank\"> Version: { version } Build: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Versie: { version } Build: { build } '</a>'"
         },
         "github": "GitHub Project",
         "insured": "Verzekerd",
         "items": "artikelen",
         "join_discord": "Sluit je aan bij de Discord",
         "labels": "Labels",
-        "loading": "Bezig met laden...",
+        "loading": "Bezig met laden…",
         "locations": "Locaties",
         "maintenance": "Onderhoud",
         "name": "Naam",
@@ -383,6 +397,7 @@
         "update_label": "Etiket bijwerken"
     },
     "languages": {
+        "bs-BA": "Bosnisch (Bosnië en Herzegovina)",
         "ca": "Catalaans",
         "cs-CZ": "Tsjechisch",
         "de": "Duits",
@@ -409,6 +424,7 @@
         "th-TH": "Thais",
         "tr": "Turks",
         "uk-UA": "Oekraïens",
+        "vi-VN": "Vietnamees",
         "zh-CN": "Chinees (vereenvoudigd)",
         "zh-HK": "Chinees (Hong Kong)",
         "zh-MO": "Chinees (Macau)",
@@ -559,6 +575,8 @@
         }
     },
     "scanner": {
+        "barcode_detected_message": "productbarcode gedetecteerd",
+        "barcode_fetch_data": "Productgegevens ophalen",
         "error": "Tijdens het scannen is er een fout opgetreden",
         "invalid_url": "Ongeldige streepjescode",
         "no_sources": "Geen videobronnen beschikbaar",
@@ -571,7 +589,7 @@
         "actions": "Acties inventariseren",
         "actions_set": {
             "create_missing_thumbnails": "Ontbrekende miniaturen maken",
-            "create_missing_thumbnails_button": "Nieuwe thumbnails aanmaken",
+            "create_missing_thumbnails_button": "Nieuwe miniaturen aanmaken",
             "create_missing_thumbnails_confirm": "Weet u zeker dat u ontbrekende miniaturen wilt maken? Dit kan even duren en kan niet worden gepauzeerd.",
             "create_missing_thumbnails_sub": "Maakt miniaturen voor alle bijlagen die worden ondersteund door de huidige configuratie. Dit is handig voor bijlagen die werden geüpload voor de v0.20.0 release van Homebox. Bestaande miniaturen worden niet overschreven, er worden alleen nieuwe miniaturen gemaakt voor bijlagen die geen miniatuurafbeelding hebben. Houd er rekening mee dat de miniaturen in de achtergrond worden gemaakt en dat dit een tijdje kan duren.",
             "ensure_ids": "Zorg voor item-ID's",
@@ -614,7 +632,7 @@
         "reports_sub": "Genereer verschillende rapporten van je voorraad.",
         "toast": {
             "asset_success": "{ results } items zijn bijgewerkt.",
-            "failed_create_missing_thumbnails": "Miniaturen aanmaken mislukt.",
+            "failed_create_missing_thumbnails": "Ontbrekende miniaturen aanmaken mislukt.",
             "failed_ensure_ids": "Item-ID's aanmaken mislukt.",
             "failed_ensure_import_refs": "Import refs aanmaken mislukt.",
             "failed_set_primary_photos": "Primaire foto's instellen mislukt.",

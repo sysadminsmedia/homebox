@@ -12,6 +12,7 @@
   import { Separator } from "@/components/ui/separator";
   import ColorSelector from "@/components/Form/ColorSelector.vue";
   import { getContrastTextColor } from "~/lib/utils";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
 
   definePageMeta({
     middleware: ["auth"],
@@ -66,7 +67,7 @@
     updateData.name = label.value?.name || "";
     updateData.description = label.value?.description || "";
     updateData.color = "";
-    openDialog("update-label");
+    openDialog(DialogID.UpdateLabel);
   }
 
   async function update() {
@@ -81,7 +82,7 @@
 
     toast.success(t("labels.toast.label_updated"));
     label.value = data;
-    closeDialog("update-label");
+    closeDialog(DialogID.UpdateLabel);
     updating.value = false;
   }
 
@@ -111,7 +112,7 @@
 
 <template>
   <!-- Update Dialog -->
-  <Dialog dialog-id="update-label">
+  <Dialog :dialog-id="DialogID.UpdateLabel">
     <DialogContent>
       <DialogHeader>
         <DialogTitle> {{ $t("labels.update_label") }} </DialogTitle>
@@ -128,7 +129,7 @@
         <FormTextArea
           v-model="updateData.description"
           :label="$t('components.label.create_modal.label_description')"
-          :max-length="255"
+          :max-length="1000"
         />
         <ColorSelector
           v-model="updateData.color"
