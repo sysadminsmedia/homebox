@@ -70,8 +70,7 @@ ENV HBOX_STORAGE_PREFIX_PATH=data
 ENV HBOX_DATABASE_SQLITE_PATH=/data/homebox.db?_pragma=busy_timeout=2000&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite
 
 # Create application directory and copy over built Go binary
-COPY --from=builder --chown=65532:65532 /app /app
-COPY --from=builder --chown=65532:65532 --chmod=775 /go/bin/api /app
+COPY --from=builder --chown=65532:65532 --chmod=755 /go/bin/api /app
 COPY --from=builder --chown=65532:65532 /data /data
 
 # Labels and configuration for the final image

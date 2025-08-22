@@ -11,8 +11,6 @@ on:
       - 'Dockerfile.hardened'
       - '.dockerignore'
       - '.github/workflows/docker-publish-hardened.yaml'
-    ignore:
-      - 'docs/**'
     tags: [ 'v*.*.*' ]
   pull_request:
     branches: [ "main" ]
@@ -21,9 +19,7 @@ on:
       - 'frontend/**'
       - 'Dockerfile.hardened'
       - '.dockerignore'
-      - '.github/workflows/docker-publish-hardened.yaml.yaml'
-    ignore:
-      - 'docs/**'
+      - '.github/workflows/docker-publish-hardened.yaml'
 
 permissions:
   contents: read        # Access to repository contents
@@ -64,6 +60,7 @@ jobs:
 
       - name: Prepare
         run: |
+          echo "BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_ENV
           platform=${{ matrix.platform }}
           echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
           branch=${{ github.event.pull_request.number || github.ref_name }}
@@ -120,6 +117,7 @@ jobs:
           build-args: |
             VERSION=${{ github.ref_name }}
             COMMIT=${{ github.sha }}
+            BUILD_TIME=${{ env.BUILD_TIME }}
           provenance: true
           sbom: true
           annotations: ${{ steps.meta.outputs.annotations }}
