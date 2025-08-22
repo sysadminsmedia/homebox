@@ -63,7 +63,7 @@ RUN mkdir /app
 RUN mkdir /data
 
 # Production stage
-FROM gcr.io/distroless/base
+FROM gcr.io/distroless/static:nonroot
 ENV HBOX_MODE=production
 ENV HBOX_STORAGE_CONN_STRING=file:///?no_tmp_dir=true
 ENV HBOX_STORAGE_PREFIX_PATH=data
@@ -81,10 +81,6 @@ LABEL org.opencontainers.image.source="https://github.com/sysadminsmedia/homebox
 # Expose necessary ports for Homebox
 EXPOSE 7745
 WORKDIR /app
-
-# Healthcheck configuration
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-    CMD [ "wget", "--no-verbose", "--tries=1", "-O", "-", "http://localhost:7745/api/v1/status" ]
 
 # Persist volume for data
 VOLUME [ "/data" ]
