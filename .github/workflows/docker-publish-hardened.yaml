@@ -1,4 +1,4 @@
-name: Docker publish rootless
+name: Docker publish hardened
 
 on:
   schedule:
@@ -8,9 +8,9 @@ on:
     paths:
       - 'backend/**'
       - 'frontend/**'
-      - 'Dockerfile.rootless'
+      - 'Dockerfile.hardened'
       - '.dockerignore'
-      - '.github/workflows/docker-publish-rootless.yaml'
+      - '.github/workflows/docker-publish-hardened.yaml'
     ignore:
       - 'docs/**'
     tags: [ 'v*.*.*' ]
@@ -19,9 +19,9 @@ on:
     paths:
       - 'backend/**'
       - 'frontend/**'
-      - 'Dockerfile.rootless'
+      - 'Dockerfile.hardened'
       - '.dockerignore'
-      - '.github/workflows/docker-publish-rootless.yaml'
+      - '.github/workflows/docker-publish-hardened.yaml.yaml'
     ignore:
       - 'docs/**'
 
@@ -111,12 +111,12 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: . # Explicitly specify the build context
-          file: ./Dockerfile.rootless # Explicitly specify the Dockerfile
+          file: ./Dockerfile.hardened # Explicitly specify the Dockerfile
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,"name=${{ env.DOCKERNAMES }}",push-by-digest=true,name-canonical=true,push=${{ github.event_name != 'pull_request' }}
-          cache-from: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR }}-${{ env.BRANCH }}-rootless
-          cache-to: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR }}-${{ env.BRANCH }}-rootless,mode=max,ignore-error=true
+          cache-from: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR }}-${{ env.BRANCH }}-hardened
+          cache-to: type=registry,ref=ghcr.io/sysadminsmedia/devcache:${{ env.PLATFORM_PAIR }}-${{ env.BRANCH }}-hardened,mode=max,ignore-error=true
           build-args: |
             VERSION=${{ github.ref_name }}
             COMMIT=${{ github.sha }}
@@ -192,7 +192,7 @@ jobs:
             type=semver,pattern={{major}}
             type=schedule,pattern=nightly
           flavor: |
-            suffix=-rootless,onlatest=true
+            suffix=-hardened,onlatest=true
 
       - name: Create manifest list and push GHCR
         id: push-ghcr
