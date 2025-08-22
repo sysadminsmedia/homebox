@@ -69,7 +69,8 @@ ENV HBOX_STORAGE_CONN_STRING=file:///?no_tmp_dir=true
 ENV HBOX_STORAGE_PREFIX_PATH=data
 ENV HBOX_DATABASE_SQLITE_PATH=/data/homebox.db?_pragma=busy_timeout=2000&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite
 
-# Create application directory and copy over built Go binary
+# Create application directory and copy over built Go binary (copy the app directory as well because distroless can't create it)
+COPY --from=builder --chown=65532:65532 /app /app
 COPY --from=builder --chown=65532:65532 --chmod=755 /go/bin/api /app
 COPY --from=builder --chown=65532:65532 /data /data
 
