@@ -54,6 +54,20 @@
     }
   });
 
+  const isEvilAccentTheme = useIsThemeInList([
+    "bumblebee",
+    "corporate",
+    "forest",
+    "pastel",
+    "wireframe",
+    "black",
+    "dracula",
+    "autumn",
+    "acid",
+  ]);
+  const isEvilForegroundTheme = useIsThemeInList(["light", "aqua", "fantasy", "autumn", "night"]);
+  const isLofiTheme = useIsThemeInList(["lofi"]);
+
   const route = useRoute();
   const router = useRouter();
 
@@ -166,14 +180,19 @@
       </svg>
     </div>
     <div>
-      <header class="mx-auto p-4 text-accent sm:flex sm:items-end sm:p-6 lg:p-14">
+      <header
+        class="mx-auto p-4 sm:flex sm:items-end sm:p-6 lg:p-14"
+        :class="{ 'text-accent': !isEvilAccentTheme, 'text-white': isLofiTheme }"
+      >
         <div class="z-10">
           <h2 class="mt-1 flex text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
             HomeB
             <AppLogo class="-mb-4 w-12" />
             x
           </h2>
-          <p class="ml-1 text-lg text-foreground">{{ $t("index.tagline") }}</p>
+          <p class="ml-1 text-lg" :class="{ 'text-foreground': !isEvilForegroundTheme, 'text-white': isLofiTheme }">
+            {{ $t("index.tagline") }}
+          </p>
         </div>
         <TooltipProvider :delay-duration="0">
           <div class="z-10 ml-auto mt-6 flex items-center gap-4 sm:mt-0">
