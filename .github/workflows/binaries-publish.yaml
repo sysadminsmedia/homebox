@@ -48,11 +48,10 @@ jobs:
           workdir: "backend"
           distribution: goreleaser
           version: "~> v2"
-          args: release --clean
+          args: release --clean --yes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
-          COSIGN_YES: "true"
 
       - name: Run GoReleaser (No Publish)
         if: !startsWith(github.ref, 'refs/tags/')
@@ -61,7 +60,7 @@ jobs:
           workdir: "backend"
           distribution: goreleaser
           version: "~> v2"
-          args: release --clean --skip=publish,validate
+          args: release --clean --skip=publish,validate --yes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
