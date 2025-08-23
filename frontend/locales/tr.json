@@ -213,7 +213,7 @@
         "email": "Elektronik posta",
         "follow_dev": "Geliştiriciyi takip edin",
         "footer": {
-            "api_link": "<a href=\"https://homebox.software/en/api/\" target=\"_blank\">''API''</a>",
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
             "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Sürüm: { version } Yapı: { build }'</a>"
         },
         "github": "GitHub Projesi",

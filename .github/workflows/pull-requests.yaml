@@ -9,7 +9,10 @@ on:
     paths:
       - 'backend/**'
       - 'frontend/**'
-      - '.github/workflows/**'
+      - '.github/workflows/partial-backend.yaml'
+      - '.github/workflows/partial-frontend.yaml'
+      - '.github/workflows/e2e-partial.yaml'
+      - '.github/workflows/pull-requests.yaml'
 
 jobs:
   backend-tests:

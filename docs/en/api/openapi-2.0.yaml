@@ -667,6 +667,17 @@ definitions:
       search_engine_name:
         type: string
     type: object
+  repo.DuplicateOptions:
+    properties:
+      copyAttachments:
+        type: boolean
+      copyCustomFields:
+        type: boolean
+      copyMaintenance:
+        type: boolean
+      copyPrefix:
+        type: string
+    type: object
   repo.Group:
     properties:
       createdAt:
@@ -1012,7 +1023,7 @@ definitions:
       color:
         type: string
       description:
-        maxLength: 255
+        maxLength: 1000
         type: string
       name:
         maxLength: 255
@@ -1968,6 +1979,32 @@ paths:
       summary: Update Item Attachment
       tags:
       - Items Attachments
+  /v1/items/{id}/duplicate:
+    post:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Duplicate Options
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.DuplicateOptions'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.ItemOut'
+      security:
+      - Bearer: []
+      summary: Duplicate Item
+      tags:
+      - Items
   /v1/items/{id}/maintenance:
     get:
       parameters:

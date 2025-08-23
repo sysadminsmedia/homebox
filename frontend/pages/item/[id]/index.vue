@@ -39,6 +39,13 @@
   const itemId = computed<string>(() => route.params.id as string);
   const preferences = useViewPreferences();
 
+  const temporaryDuplicateSettings = ref<DuplicateSettings>({
+    copyMaintenance: preferences.value.duplicateSettings.copyMaintenance,
+    copyAttachments: preferences.value.duplicateSettings.copyAttachments,
+    copyCustomFields: preferences.value.duplicateSettings.copyCustomFields,
+    copyPrefixOverride: preferences.value.duplicateSettings.copyPrefixOverride,
+  });
+
   const hasNested = computed<boolean>(() => {
     return route.fullPath.split("/").at(-1) !== itemId.value;
   });
@@ -475,41 +482,41 @@
     return resp.data.items;
   });
 
-  async function duplicateItem() {
+  async function duplicateItem(settings?: DuplicateSettings) {
     if (!item.value) {
       return;
     }
 
-    const { error, data } = await api.items.create({
-      name: `${item.value.name} Copy`,
-      description: item.value.description,
-      quantity: item.value.quantity,
-      locationId: item.value.location!.id,
-      parentId: item.value.parent?.id,
-      labelIds: item.value.labels.map(l => l.id),
-    });
+    const duplicateSettings = settings
+      ? {
+          copyMaintenance: settings.copyMaintenance,
+          copyAttachments: settings.copyAttachments,
+          copyCustomFields: settings.copyCustomFields,
+          copyPrefix: settings.copyPrefixOverride ?? t("items.duplicate.prefix"),
+        }
+      : {
+          copyMaintenance: preferences.value.duplicateSettings.copyMaintenance,
+          copyAttachments: preferences.value.duplicateSettings.copyAttachments,
+          copyCustomFields: preferences.value.duplicateSettings.copyCustomFields,
+          copyPrefix: preferences.value.duplicateSettings.copyPrefixOverride ?? t("items.duplicate.prefix"),
+        };
+
+    const { error, data } = await api.items.duplicate(itemId.value, duplicateSettings);
 
     if (error) {
       toast.error(t("items.toast.failed_duplicate_item"));
       return;
     }
 
-    // add extra fields
-    const { error: updateError } = await api.items.update(data.id, {
-      ...item.value,
-      id: data.id,
-      labelIds: data.labels.map(l => l.id),
-      locationId: data.location!.id,
-      name: data.name,
-      assetId: data.assetId,
-    });
-
-    if (updateError) {
-      toast.error(t("items.toast.failed_duplicate_item"));
-      return;
-    }
-
     navigateTo(`/item/${data.id}`);
+  }
+
+  function handleDuplicateClick(event: MouseEvent) {
+    if (event.shiftKey) {
+      openDialog(DialogID.DuplicateTemporarySettings);
+    } else {
+      duplicateItem();
+    }
   }
 
   const confirm = useConfirm();
@@ -548,6 +555,24 @@
     <Title>{{ item.name }}</Title>
 
     <ItemImageDialog />
+    <Dialog :dialog-id="DialogID.DuplicateTemporarySettings">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{{ $t("items.duplicate.temporary_title") }}</DialogTitle>
+        </DialogHeader>
+        <ItemDuplicateSettings v-model="temporaryDuplicateSettings" />
+        <DialogFooter>
+          <Button
+            @click="
+              closeDialog(DialogID.DuplicateTemporarySettings);
+              duplicateItem(temporaryDuplicateSettings);
+            "
+          >
+            {{ $t("global.duplicate") }}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
 
     <section>
       <Card class="p-3">
@@ -607,7 +632,7 @@
                 <MdiPlus />
                 <span class="hidden md:inline">{{ $t("global.create_subitem") }}</span>
               </Button>
-              <Button class="w-9 md:w-auto" :aria-label="$t('global.duplicate')" @click="duplicateItem">
+              <Button class="w-9 md:w-auto" :aria-label="$t('global.duplicate')" @click="handleDuplicateClick">
                 <MdiContentCopy />
                 <span class="hidden md:inline">{{ $t("global.duplicate") }}</span>
               </Button>

@@ -397,6 +397,7 @@
         "update_label": "Aktualizuj etykietę"
     },
     "languages": {
+        "bs-BA": "Bośniacki (Bośnia i Hercegowina)",
         "ca": "kataloński",
         "cs-CZ": "Czeski",
         "de": "niemiecki",
@@ -423,6 +424,7 @@
         "th-TH": "Tajski",
         "tr": "turecki",
         "uk-UA": "ukraiński",
+        "vi-VN": "Wietnamski",
         "zh-CN": "chiński (uproszczony)",
         "zh-HK": "chiński (Hong Kong)",
         "zh-MO": "chiński (Makau)",
@@ -551,7 +553,7 @@
             "input_placeholder": "Wpisz",
             "instruction_1": "Generator etykiet Homebox to narzędzie, które pomoże Ci drukować etykiety do twojej kolekcji. Są to etykiety do\ndruku z wyprzedzeniem, dzięki czemu możesz wydrukować wiele etykiet i mieć je gotowe do użycia",
             "instruction_2": "W związku z tym etykiety te działają poprzez drukowanie kodu QR URL i informacji o AssetID na etykiecie. \nJeśli wyłączyłeś/aś AssetID w ustawieniach Homebox, nadal możesz korzystać z tego narzędzia, ale AssetID nie będzie odnosić się do żadnego elementu",
-            "instruction_3": "Ta funkcja jest na wczesnym etapie rozwoju i może ulec zmianie w przyszłych wersjach. Jeśli masz jakieś uwagi, prześlij je\nw '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">dyskusji na GitHubie</a>'",
+            "instruction_3": "Ta funkcja jest na wczesnym etapie rozwoju i może ulec zmianie w przyszłych wersjach. Jeśli masz jakieś uwagi, prześlij je\nw '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'dyskusji na GitHubie'</a>'",
             "label_height": "Wysokość etykiety",
             "label_width": "Szerokość etykiety",
             "measure_type": "Typ miary",
@@ -562,7 +564,7 @@
             "page_top_padding": "Wypełnienie górnej części strony",
             "page_width": "Szerokość strony",
             "qr_code_example": "Przykład kodu QR",
-            "tip_1": "Ustawienia domyślne są skonfigurowane dla\n<a href=\"https://www.avery.com/templates/5260\">arkuszy etykiet Avery 5260</a>. Jeśli używasz innego arkusza,\nmusisz dostosować ustawienia do swojego arkusza.",
+            "tip_1": "Ustawienia domyślne są skonfigurowane dla\n'<a href=\"https://www.avery.com/templates/5260\">'arkuszy etykiet Avery 5260'</a>'. Jeśli używasz innego arkusza,\nmusisz dostosować ustawienia do swojego arkusza.",
             "tip_2": "Jeśli dostosowujesz arkusz, jego wymiary są podane w calach. Podczas tworzenia arkusza 5260 zauważyłem, że\nwymiary użyte w ich szablonie nie odpowiadały wymiarom potrzebnym do wydrukowania w polach.\n'<b>'Przygotuj się na metodę prób i błędów.'</b>'",
             "tip_3": "Podczas drukowania pamiętaj o:\n'<ol><li>'Ustaw marginesy na 0 lub Brak'</li><li>'Ustaw skalowanie na 100%'</li><li>'Wyłącz drukowanie dwustronne'</li><li>'Wydrukuj stronę testową przed wydrukowaniem wielu stron'</li></ol>'",
             "tips": "Wskazówki",
@@ -604,7 +606,7 @@
             "zero_datetimes": "Wyzeruj daty i godziny przedmiotów",
             "zero_datetimes_button": "Wyzeruj daty i godziny przedmiotów",
             "zero_datetimes_confirm": "Czy na pewno chcesz zresetować wszystkie wartości daty i godziny? Może to chwilę potrwać i nie można tego cofnąć.",
-            "zero_datetimes_sub": "Resetuje wartość czasu dla wszystkich pól daty i godziny w Twoim inwentarzu, ustawiając ją na początek dnia. Jest to rozwiązanie problemu, który pojawił się we wczesnej fazie rozwoju aplikacji, powodując zapisywanie wartości czasu wraz z datą, co skutkowało nieprawidłowym wyświetlaniem wartości w polach daty. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">Zobacz szczegóły w GitHub Issue #236</a>'"
+            "zero_datetimes_sub": "Resetuje wartość czasu dla wszystkich pól daty i godziny w Twoim inwentarzu, ustawiając ją na początek dnia. Jest to rozwiązanie problemu, który pojawił się we wczesnej fazie rozwoju aplikacji, powodując zapisywanie wartości czasu wraz z datą, co skutkowało nieprawidłowym wyświetlaniem wartości w polach daty. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Zobacz szczegóły w GitHub Issue #236'</a>'"
         },
         "actions_sub": "Zastosuj akcje zbiorczo do swojego inwentarza. Są to działania nieodwracalne. '<b>'Bądź ostrożny.'</b>",
         "import_export": "Import/eksport",
