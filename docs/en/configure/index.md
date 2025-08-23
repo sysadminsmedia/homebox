@@ -160,8 +160,8 @@ OPTIONS
 --mode/$HBOX_MODE                                                             <string>  (default: development)
 --web-port/$HBOX_WEB_PORT                                                     <string>  (default: 7745)
 --web-host/$HBOX_WEB_HOST                                                     <string>
---web-max-file-upload/$HBOX_WEB_MAX_FILE_UPLOAD                               <int>     (default: 10)
---storage-conn-string/$HBOX_STORAGE_CONN_STRING                               <string>  (default: file://./)
+--web-max-upload-size/$HBOX_WEB_MAX_UPLOAD_SIZE                               <int>     (default: 10)
+--storage-conn-string/$HBOX_STORAGE_CONN_STRING                               <string>  (default: file:///./)
 --storage-prefix-path/$HBOX_STORAGE_PREFIX_PATH                               <string>  (default: .data)
 --log-level/$HBOX_LOG_LEVEL                                                   <string>  (default: info)
 --log-format/$HBOX_LOG_FORMAT                                                 <string>  (default: text)
@@ -170,31 +170,29 @@ OPTIONS
 --mailer-username/$HBOX_MAILER_USERNAME                                       <string>
 --mailer-password/$HBOX_MAILER_PASSWORD                                       <string>
 --mailer-from/$HBOX_MAILER_FROM                                               <string>
---swagger-host/$HBOX_SWAGGER_HOST                                             <string>  (default: localhost:7745)
---swagger-scheme/$HBOX_SWAGGER_SCHEME                                         <string>  (default: http)
 --demo/$HBOX_DEMO                                                             <bool>
 --debug-enabled/$HBOX_DEBUG_ENABLED                                           <bool>    (default: false)
 --debug-port/$HBOX_DEBUG_PORT                                                 <string>  (default: 4000)
 --database-driver/$HBOX_DATABASE_DRIVER                                       <string>  (default: sqlite3)
---database-sqlite-path/$HBOX_DATABASE_SQLITE_PATH                             <string>  (default: ./.data/homebox.db?_pragma=busy_timeout=999&_pragma=journal_mode=WAL&_fk=1)
+--database-sqlite-path/$HBOX_DATABASE_SQLITE_PATH                             <string>  (default: ./.data/homebox.db?_pragma=busy_timeout=999&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite)
 --database-host/$HBOX_DATABASE_HOST                                           <string>
 --database-port/$HBOX_DATABASE_PORT                                           <string>
 --database-username/$HBOX_DATABASE_USERNAME                                   <string>
 --database-password/$HBOX_DATABASE_PASSWORD                                   <string>
 --database-database/$HBOX_DATABASE_DATABASE                                   <string>
---database-ssl-mode/$HBOX_DATABASE_SSL_MODE                                   <string>
+--database-ssl-mode/$HBOX_DATABASE_SSL_MODE                                   <string>  (default: prefer)
 --options-allow-registration/$HBOX_OPTIONS_ALLOW_REGISTRATION                 <bool>    (default: true)
 --options-auto-increment-asset-id/$HBOX_OPTIONS_AUTO_INCREMENT_ASSET_ID       <bool>    (default: true)
 --options-currency-config/$HBOX_OPTIONS_CURRENCY_CONFIG                       <string>
---options-check-github-release/$HBOX_OPTIONS_CHECK_GITHUB_RELEASE             <bool>    (default: true)
+--options-github-release-check/$HBOX_OPTIONS_GITHUB_RELEASE_CHECK             <bool>    (default: true)
 --options-allow-analytics/$HBOX_OPTIONS_ALLOW_ANALYTICS                       <bool>    (default: false)
 --label-maker-width/$HBOX_LABEL_MAKER_WIDTH                                   <int>     (default: 526)
 --label-maker-height/$HBOX_LABEL_MAKER_HEIGHT                                 <int>     (default: 200)
 --label-maker-padding/$HBOX_LABEL_MAKER_PADDING                               <int>     (default: 32)
---label-maker-margin/$HBOX_LABEL_MAKER_MARGIN                                 <int>       (default: 32)
+--label-maker-margin/$HBOX_LABEL_MAKER_MARGIN                                 <int>     (default: 32)
 --label-maker-font-size/$HBOX_LABEL_MAKER_FONT_SIZE                           <float>   (default: 32.0)
 --label-maker-print-command/$HBOX_LABEL_MAKER_PRINT_COMMAND                   <string>
---label-maker-additional-information/$HBOX_LABEL_MAKER_DYNAMIC_LENGTH         <string>  (default: true) 
+--label-maker-dynamic-length/$HBOX_LABEL_MAKER_DYNAMIC_LENGTH                 <bool>    (default: true)
 --label-maker-additional-information/$HBOX_LABEL_MAKER_ADDITIONAL_INFORMATION <string>
 --thumbnail-enabled/$HBOX_THUMBNAIL_ENABLED                                   <bool>    (default: true)
 --thumbnail-width/$HBOX_THUMBNAIL_WIDTH                                       <int>     (default: 500)
