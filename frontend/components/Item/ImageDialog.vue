@@ -31,7 +31,6 @@
 
   onMounted(() => {
     registerOpenDialogCallback(DialogID.ItemImage, params => {
-      console.log(params);
       image.attachmentId = params.attachmentId;
       image.itemId = params.itemId;
       if (params.type === "preloaded") {
