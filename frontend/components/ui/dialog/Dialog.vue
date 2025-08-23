@@ -9,7 +9,7 @@
 
   const isOpen = computed(() => (activeDialog.value && activeDialog.value === props.dialogId));
   const onOpenChange = (open: boolean) => {
-    if (!open) closeDialog(props.dialogId);
+    if (!open) closeDialog(props.dialogId as any);
   };
 
   const forwarded = useForwardPropsEmits(props, emits);

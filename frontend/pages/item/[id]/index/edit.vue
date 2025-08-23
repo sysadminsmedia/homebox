@@ -9,6 +9,7 @@
   import MdiDelete from "~icons/mdi/delete";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiContentSaveOutline from "~icons/mdi/content-save-outline";
+  import MdiImageOutline from "~icons/mdi/image-outline";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { Button } from "@/components/ui/button";
   import { useDialog } from "@/components/ui/dialog-provider";
@@ -697,6 +698,33 @@
                   {{ $t(`items.${attachment.type}`) }}
                 </p>
                 <div class="flex justify-end gap-2">
+                  <Tooltip v-if="attachment.type === 'photo'">
+                    <TooltipTrigger as-child>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        @click="
+                          openDialog(DialogID.ItemImage, {
+                            params: {
+                              type: 'attachment',
+                              itemId: item.id,
+                              attachmentId: attachment.id,
+                              thumbnailId: attachment.thumbnail?.id,
+                              mimeType: attachment.mimeType,
+                            },
+                            onClose: result => {
+                              if (result?.action === 'delete') {
+                                item.attachments = item.attachments.filter(a => a.id !== result.id);
+                              }
+                            },
+                          })
+                        "
+                      >
+                        <MdiImageOutline />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{{ $t("items.edit.view_image") }}</TooltipContent>
+                  </Tooltip>
                   <Tooltip>
                     <TooltipTrigger as-child>
                       <Button variant="destructive" size="icon" @click="deleteAttachment(attachment.id)">

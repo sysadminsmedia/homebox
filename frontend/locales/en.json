@@ -311,7 +311,8 @@
                 "primary_photo_sub": "This option is only available for photos. Only one photo can be primary. If you select this option, the current primary photo, if any will be unselected.",
                 "select_type": "Select a type",
                 "title": "Attachment Edit"
-            }
+            },
+            "view_image": "View Image"
         },
         "edit_details": "Edit Details",
         "field_selector": "Field Selector",

@@ -149,7 +149,7 @@
   const headers = defaultHeaders;
 
   onMounted(() => {
-    registerOpenDialogCallback(DialogID.ProductImport, params => {
+    const cleanup = registerOpenDialogCallback(DialogID.ProductImport, params => {
       selectedRow.value = -1;
       searching.value = false;
       errorMessage.value = null;
@@ -168,6 +168,8 @@
         products.value = null;
       }
     });
+
+    onUnmounted(cleanup);
   });
 
   const api = useUserApi();
@@ -180,7 +182,9 @@
       selectedRow.value < products.value.length
     ) {
       const p = products.value![selectedRow.value];
-      openDialog(DialogID.CreateItem, { product: p });
+      openDialog(DialogID.CreateItem, {
+        params: { product: p },
+      });
     }
   }
 
