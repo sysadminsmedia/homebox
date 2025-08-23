@@ -48,9 +48,6 @@ signs:
       - "${artifact}"
       - "--yes" # needed on cosign 2.0.0+
     artifacts: all
-    output:
-      signature: "${artifact}.sig"
-      certificate: "${artifact}.pem"
 
 archives:
   - formats: [ 'tar.gz' ]
