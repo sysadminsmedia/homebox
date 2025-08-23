@@ -943,6 +943,48 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/items/{id}/duplicate": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Items"
+                ],
+                "summary": "Duplicate Item",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Duplicate Options",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.DuplicateOptions"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.ItemOut"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/items/{id}/maintenance": {
             "get": {
                 "security": [
@@ -3125,6 +3167,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "search_engine_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.DuplicateOptions": {
+            "type": "object",
+            "properties": {
+                "copyAttachments": {
+                    "type": "boolean"
+                },
+                "copyCustomFields": {
+                    "type": "boolean"
+                },
+                "copyMaintenance": {
+                    "type": "boolean"
+                },
+                "copyPrefix": {
                     "type": "string"
                 }
             }
