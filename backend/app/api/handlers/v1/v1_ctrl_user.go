@@ -144,15 +144,17 @@ func (ctrl *V1Controller) HandleUserSelfSettingsGet() errchain.HandlerFunc {
 
 // HandleUserSelfSettingsUpdate godoc
 //
-//	@Summary	Get user settings
+//	@Summary	Update user settings
 //	@Tags		User
 //	@Produce	json
-//	@Success	200	{object}	Wrapped{item=map[string]interface{}}
+//	@Success	200	{object}	Wrapped{item=schema.UserSettings}
 //	@Router		/v1/users/self/settings [PUT]
-//	@Param		payload	body	map[string]interface{}	true	"Settings Data"
+//	@Param		payload	body	schema.UserSettings	true	"Settings Data"
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleUserSelfSettingsUpdate() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
+		// Cap body to prevent DOS via large payloads.
+		r.Body = http.MaxBytesReader(w, r.Body, 64*1024)
 		var settings schema.UserSettings
 		if err := server.Decode(r, &settings); err != nil {
 			log.Err(err).Msg("failed to decode user settings data")
@@ -169,10 +171,10 @@ func (ctrl *V1Controller) HandleUserSelfSettingsUpdate() errchain.HandlerFunc {
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
+		w.Header().Set("Cache-Control", "no-store")
 		return server.JSON(w, http.StatusOK, Wrap(newSettings))
 	}
 }
-
 type (
 	ChangePassword struct {
 		Current string `json:"current,omitempty"`
