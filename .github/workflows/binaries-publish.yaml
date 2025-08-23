@@ -54,7 +54,7 @@ jobs:
           COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
 
       - name: Run GoReleaser Snapshot
-        if: !startsWith(github.ref, 'refs/tags/')
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         uses: goreleaser/goreleaser-action@v5
         with:
           workdir: "backend"
