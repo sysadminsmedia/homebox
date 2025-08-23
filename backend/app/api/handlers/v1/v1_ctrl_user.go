@@ -127,7 +127,7 @@ func (ctrl *V1Controller) HandleUserSelfDelete() errchain.HandlerFunc {
 //	@Summary	Get user settings
 //	@Tags		User
 //	@Produce	json
-//	@Success	200	{object}	Wrapped{item=map[string]interface{}}
+//	@Success	200	{object}	Wrapped{item=schema.UserSettings}
 //	@Router		/v1/users/self/settings [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleUserSelfSettingsGet() errchain.HandlerFunc {
@@ -138,6 +138,7 @@ func (ctrl *V1Controller) HandleUserSelfSettingsGet() errchain.HandlerFunc {
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
+		w.Header().Set("Cache-Control", "no-store")
 		return server.JSON(w, http.StatusOK, Wrap(settings))
 	}
 }
