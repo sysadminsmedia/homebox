@@ -43,11 +43,14 @@ signs:
     stdin: "{{ .Env.COSIGN_PWD }}"
     args:
       - "sign-blob"
-      - "--key=cosign.key"
+      - "--output-certificate=${certificate}"
       - "--output-signature=${signature}"
       - "${artifact}"
       - "--yes" # needed on cosign 2.0.0+
     artifacts: all
+    output:
+      signature: "${artifact}.sig"
+      certificate: "${artifact}.pem"
 
 archives:
   - formats: [ 'tar.gz' ]
