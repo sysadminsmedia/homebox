@@ -58,21 +58,21 @@ func setupDatabaseURL(cfg *config.Config) (string, error) {
 			databaseURL += fmt.Sprintf(" password=%s", cfg.Database.Password)
 		}
 		if cfg.Database.SslRootCert != "" {
-			if _, err := os.Stat(cfg.Database.SslRootCert); err != nil || !os.IsNotExist(err) {
+			if _, err := os.Stat(cfg.Database.SslRootCert); err != nil {
 				log.Error().Err(err).Str("path", cfg.Database.SslRootCert).Msg("SSL root certificate file is not accessible")
 				return "", fmt.Errorf("SSL root certificate file is not accessible: %w", err)
 			}
 			databaseURL += fmt.Sprintf(" sslrootcert=%s", cfg.Database.SslRootCert)
 		}
 		if cfg.Database.SslCert != "" {
-			if _, err := os.Stat(cfg.Database.SslCert); err != nil || !os.IsNotExist(err) {
+			if _, err := os.Stat(cfg.Database.SslCert); err != nil {
 				log.Error().Err(err).Str("path", cfg.Database.SslCert).Msg("SSL certificate file is not accessible")
 				return "", fmt.Errorf("SSL certificate file is not accessible: %w", err)
 			}
 			databaseURL += fmt.Sprintf(" sslcert=%s", cfg.Database.SslCert)
 		}
 		if cfg.Database.SslKey != "" {
-			if _, err := os.Stat(cfg.Database.SslKey); err != nil || !os.IsNotExist(err) {
+			if _, err := os.Stat(cfg.Database.SslKey); err != nil {
 				log.Error().Err(err).Str("path", cfg.Database.SslKey).Msg("SSL key file is not accessible")
 				return "", fmt.Errorf("SSL key file is not accessible: %w", err)
 			}
