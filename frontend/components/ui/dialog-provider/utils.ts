@@ -106,15 +106,15 @@ type CloseDialog = {
 };
 
 type OpenCallback = {
-  <T extends NoParamDialogIDs>(dialogId: T, cb: () => void): void;
+  <T extends NoParamDialogIDs>(dialogId: T, cb: () => void): () => void;
   <T extends RequiredDialogIDs>(
     dialogId: T,
     cb: (params: ParamsOf<T>) => void
-  ): void;
+  ): () => void;
   <T extends OptionalDialogIDs>(
     dialogId: T,
     cb: (params?: ParamsOf<T>) => void
-  ): void;
+  ): () => void;
 };
 
 export const [useDialog, provideDialogContext] = createContext<{

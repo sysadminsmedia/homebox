@@ -300,7 +300,7 @@
   }
 
   onMounted(() => {
-    registerOpenDialogCallback(DialogID.CreateItem, async params => {
+    const cleanup = registerOpenDialogCallback(DialogID.CreateItem, async params => {
       // needed since URL will be cleared in the next step => ParentId Selection should stay though
       subItemCreate.value = subItemCreateParam.value === "y";
       let parentItemLocationId = null;
@@ -359,6 +359,8 @@
         form.labels = labels.value.filter(l => l.id === labelId.value).map(l => l.id);
       }
     });
+
+    onUnmounted(cleanup);
   });
 
   async function create(close = true) {

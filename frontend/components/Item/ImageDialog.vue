@@ -30,7 +30,7 @@
   });
 
   onMounted(() => {
-    registerOpenDialogCallback(DialogID.ItemImage, params => {
+    const cleanup = registerOpenDialogCallback(DialogID.ItemImage, params => {
       image.attachmentId = params.attachmentId;
       image.itemId = params.itemId;
       if (params.type === "preloaded") {
@@ -45,6 +45,8 @@
           : image.originalSrc;
       }
     });
+
+    onUnmounted(cleanup);
   });
 
   async function deleteAttachment() {
