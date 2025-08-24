@@ -175,7 +175,7 @@ func (r *BarcodeRepository) BarcodeSpider_Search(conf config.BarcodeAPIConf, iBa
 	}
 
 	req, err := http.NewRequest(
-		"GET", "https://api.barcodespider.com/v1/lookup?upc="+iBarcode, nil)
+		"GET", "https://api.barcodespider.com/v1/lookup?upc="+url.QueryEscape(iBarcode), nil)
 
 	if err != nil {
 		return nil, err
