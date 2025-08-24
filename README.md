@@ -20,7 +20,7 @@ HomeBox is the inventory and organization system built for the Home User! With a
 - _Portable_ - Homebox is designed to be portable and run on anywhere. We use SQLite and an embedded Web UI to make it easy to deploy, use, and backup.
 
 # Screenshots
-Check out screenshots of the project [here](https://imgur.com/a/5gLWt2j).
+Check out screenshots of the project [here](https://github.com/sysadminsmedia/homebox/tree/main/screenshots).
 You can also try the demo instances of Homebox:
 - [Demo](https://demo.homebox.software)
 - [Nightly](https://nightly.homebox.software)
