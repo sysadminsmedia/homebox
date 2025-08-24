@@ -213,6 +213,8 @@ func (r *BarcodeRepository) BarcodeSpider_Search(conf config.BarcodeAPIConf, iBa
 	var result BARCODESPIDER_COMResponse
 	if err := json.Unmarshal(body, &result); err != nil { // Parse []byte to go struct pointer
 		log.Error().Msg("Can not unmarshal JSON")
+		// NOTE: unmarshal could fail but the decoded data are still exploitable.
+		// This is why we do not consider this case as a fatal error.
 	}
 
 	// TODO: check 200 code on HTTP response.
