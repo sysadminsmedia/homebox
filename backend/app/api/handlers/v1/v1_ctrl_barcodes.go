@@ -32,7 +32,7 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode() errchain.HandlerFunc 
 		products, err := ctrl.repo.Barcode.RetrieveProductsFromBarcode(ctrl.config.Barcode, q.EAN)
 
 		if err != nil {
-			return server.JSON(w, http.StatusInternalServerError, nil)
+			return server.JSON(w, http.StatusInternalServerError, err.Error())
 		}
 
 		if len(products) != 0 {
