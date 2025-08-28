@@ -25,17 +25,49 @@ export function validDate(dt: Date | string | null | undefined): boolean {
   return true;
 }
 
+// Currency cache to store decimal places information
+export const currencyDecimalsCache: Record<string, number> = {};
+
+// Function to load currency decimals from API
+async function loadCurrencyDecimals(): Promise<void> {
+  if (Object.keys(currencyDecimalsCache).length > 0) {
+    return; // Already loaded
+  }
+
+  try {
+    const api = useUserApi();
+    const { data, error } = await api.group.currencies();
+
+    if (!error && data) {
+      for (const currency of data) {
+        currencyDecimalsCache[currency.code] = currency.decimals;
+      }
+    }
+  } catch (e) {
+    // Fallback to default behavior if API fails
+    console.warn("Failed to load currency decimals, using defaults");
+  }
+}
+
 export function fmtCurrency(value: number | string, currency = "USD", locale = "en-Us"): string {
   if (typeof value === "string") {
     value = parseFloat(value);
   }
 
+  // Get decimal places from cache or default to 2
+  const fractionDigits = currencyDecimalsCache[currency] ?? 2;
+
   const formatter = new Intl.NumberFormat(locale, {
     style: "currency",
     currency,
-    minimumFractionDigits: 2,
+    minimumFractionDigits: fractionDigits,
   });
   return formatter.format(value);
+}
+
+export async function fmtCurrencyAsync(value: number | string, currency = "USD", locale = "en-Us"): Promise<string> {
+  await loadCurrencyDecimals();
+  return fmtCurrency(value, currency, locale);
 }
 
 export type MaybeUrlResult = {

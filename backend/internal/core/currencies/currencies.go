@@ -48,10 +48,11 @@ func CollectionCurrencies(collectors ...CollectorFunc) ([]Currency, error) {
 }
 
 type Currency struct {
-	Name   string `json:"name"`
-	Code   string `json:"code"`
-	Local  string `json:"local"`
-	Symbol string `json:"symbol"`
+	Name     string `json:"name"`
+	Code     string `json:"code"`
+	Local    string `json:"local"`
+	Symbol   string `json:"symbol"`
+	Decimals int    `json:"decimals"`
 }
 
 type CurrencyRegistry struct {

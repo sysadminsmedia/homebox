@@ -1,6 +1,7 @@
 import { format, formatDistance } from "date-fns";
 /* eslint import/namespace: ['error', { allowComputed: true }] */
 import * as Locales from "date-fns/locale";
+import { fmtCurrency, fmtCurrencyAsync } from "./utils";
 
 const cache = {
   currency: "",
@@ -20,6 +21,9 @@ export async function useFormatCurrency() {
       cache.currency = group.currency;
     }
   }
+
+  // Pre-load currency decimals for better formatting
+  await fmtCurrencyAsync(0, cache.currency, getLocaleCode());
 
   return (value: number | string) => fmtCurrency(value, cache.currency, getLocaleCode());
 }

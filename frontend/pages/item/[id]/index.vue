@@ -26,7 +26,7 @@
 
   const { t } = useI18n();
 
-  const { openDialog } = useDialog();
+  const { openDialog, closeDialog } = useDialog();
 
   definePageMeta({
     middleware: ["auth"],
