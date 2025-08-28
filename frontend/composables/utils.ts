@@ -31,24 +31,32 @@ export const currencyDecimalsCache: Record<string, number> = {};
 // Promise to track in-flight loading to coalesce concurrent calls
 let currencyLoadingPromise: Promise<void> | null = null;
 
-// Constants for decimal bounds
-const MIN_DECIMALS = 0;
-const MAX_DECIMALS = 3;
+// Safe range for server-provided decimals
+const SAFE_MIN_DECIMALS = 0;
+const SAFE_MAX_DECIMALS = 4;
 
-// Type guard to validate currency response shape
+// Type guard to validate currency response shape with strict validation
 function isValidCurrencyItem(item: any): item is { code: string; decimals: number } {
   return (
     typeof item === "object" &&
     item !== null &&
     typeof item.code === "string" &&
     item.code.trim() !== "" &&
+    item.code.length >= 1 && // Ensure non-empty after trim
     typeof item.decimals === "number" &&
-    !isNaN(item.decimals)
+    Number.isFinite(item.decimals) &&
+    item.decimals >= SAFE_MIN_DECIMALS &&
+    item.decimals <= SAFE_MAX_DECIMALS
   );
 }
 
 // Function to load currency decimals from API
 function loadCurrencyDecimals(): Promise<void> {
+  // Check environment variable to see if remote decimals are disabled
+  if (process.env.USE_REMOTE_DECIMALS === 'false') {
+    return Promise.resolve();
+  }
+
   // Return early if already loaded
   if (Object.keys(currencyDecimalsCache).length > 0) {
     return Promise.resolve();
@@ -68,25 +76,29 @@ function loadCurrencyDecimals(): Promise<void> {
       if (!error && data) {
         // Validate that data is an array
         if (!Array.isArray(data)) {
+          // Log generic message without server details
           console.warn("Currency API returned invalid data format");
           return;
         }
 
         // Process and validate each currency item
         for (const currency of data) {
+          // Strict validation: only process items that pass all checks
           if (!isValidCurrencyItem(currency)) {
-            // Skip invalid items silently to avoid log noise
+            // Skip invalid items without caching - no clamping for out-of-range values
             continue;
           }
 
-          // Normalize: uppercase code and clamp decimals to safe range
-          const code = currency.code.toUpperCase();
-          const decimals = Math.max(MIN_DECIMALS, Math.min(MAX_DECIMALS, currency.decimals));
-          currencyDecimalsCache[code] = decimals;
+          // Only cache strictly validated items - no clamping needed since validation ensures safe range
+          const code = currency.code.trim().toUpperCase();
+          currencyDecimalsCache[code] = currency.decimals;
         }
+      } else if (error) {
+        // Generic error logging without exposing server error details
+        console.warn("Currency API request failed, using default formatting");
       }
     } catch (e) {
-      // Generic error without sensitive details
+      // Generic error without sensitive details - no raw error logging
       console.warn("Currency data loading failed, using default formatting");
     } finally {
       // Clear loading promise when done (success or failure)
@@ -105,7 +117,7 @@ export function fmtCurrency(value: number | string, currency = "USD", locale = "
   // Normalize currency code to uppercase
   const normalizedCurrency = currency.toUpperCase();
   // Get decimal places from cache, default to 2, and clamp to safe range
-  const fractionDigits = Math.max(0, Math.min(3, currencyDecimalsCache[normalizedCurrency] ?? 2));
+  const fractionDigits = Math.max(SAFE_MIN_DECIMALS, Math.min(SAFE_MAX_DECIMALS, currencyDecimalsCache[normalizedCurrency] ?? 2));
 
   const formatter = new Intl.NumberFormat(locale, {
     style: "currency",
