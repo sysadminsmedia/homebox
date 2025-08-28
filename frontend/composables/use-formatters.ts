@@ -22,8 +22,15 @@ export async function useFormatCurrency() {
     }
   }
 
-  // Pre-load currency decimals for better formatting
-  await fmtCurrencyAsync(0, cache.currency, getLocaleCode());
+  // Pre-load currency decimals for better formatting (optional, non-blocking)
+  if (cache.currency && cache.currency.trim() !== "") {
+    try {
+      await fmtCurrencyAsync(0, cache.currency, getLocaleCode());
+    } catch (error) {
+      // Silently swallow preload errors - formatter will still work, just without pre-cached decimals
+      console.debug("Currency preload failed (non-fatal):", error);
+    }
+  }
 
   return (value: number | string) => fmtCurrency(value, cache.currency, getLocaleCode());
 }
