@@ -35,25 +35,34 @@ let currencyLoadingPromise: Promise<void> | null = null;
 const SAFE_MIN_DECIMALS = 0;
 const SAFE_MAX_DECIMALS = 4;
 
+// Helper function to clamp decimal places to safe range
+function clampDecimals(currency: string, decimals: number): number {
+  const truncated = Math.trunc(decimals);
+  return Math.max(SAFE_MIN_DECIMALS, Math.min(SAFE_MAX_DECIMALS, truncated));
+}
+
 // Type guard to validate currency response shape with strict validation
 function isValidCurrencyItem(item: any): item is { code: string; decimals: number } {
-  return (
-    typeof item === "object" &&
-    item !== null &&
-    typeof item.code === "string" &&
-    item.code.trim() !== "" &&
-    item.code.length >= 1 && // Ensure non-empty after trim
-    typeof item.decimals === "number" &&
-    Number.isFinite(item.decimals) &&
-    item.decimals >= SAFE_MIN_DECIMALS &&
-    item.decimals <= SAFE_MAX_DECIMALS
-  );
+  if (
+    typeof item !== "object" ||
+    item === null ||
+    typeof item.code !== "string" ||
+    item.code.trim() === "" ||
+    typeof item.decimals !== "number" ||
+    !Number.isFinite(item.decimals)
+  ) {
+    return false;
+  }
+
+  // Truncate decimals to integer and check range
+  const truncatedDecimals = Math.trunc(item.decimals);
+  return truncatedDecimals >= SAFE_MIN_DECIMALS && truncatedDecimals <= SAFE_MAX_DECIMALS;
 }
 
 // Function to load currency decimals from API
 function loadCurrencyDecimals(): Promise<void> {
   // Check environment variable to see if remote decimals are disabled
-  if (process.env.USE_REMOTE_DECIMALS === 'false') {
+  if (process.env.USE_REMOTE_DECIMALS === "false") {
     return Promise.resolve();
   }
 
@@ -89,9 +98,11 @@ function loadCurrencyDecimals(): Promise<void> {
             continue;
           }
 
-          // Only cache strictly validated items - no clamping needed since validation ensures safe range
+          // Only cache strictly validated items with truncated and clamped decimals
           const code = currency.code.trim().toUpperCase();
-          currencyDecimalsCache[code] = currency.decimals;
+          const truncatedDecimals = Math.trunc(currency.decimals);
+          const clampedDecimals = Math.max(SAFE_MIN_DECIMALS, Math.min(SAFE_MAX_DECIMALS, truncatedDecimals));
+          currencyDecimalsCache[code] = clampedDecimals;
         }
       } else if (error) {
         // Generic error logging without exposing server error details
@@ -114,14 +125,15 @@ export function fmtCurrency(value: number | string, currency = "USD", locale = "
     value = parseFloat(value);
   }
 
-  // Normalize currency code to uppercase
-  const normalizedCurrency = currency.toUpperCase();
-  // Get decimal places from cache, default to 2, and clamp to safe range
-  const fractionDigits = Math.max(SAFE_MIN_DECIMALS, Math.min(SAFE_MAX_DECIMALS, currencyDecimalsCache[normalizedCurrency] ?? 2));
+  // Normalize and validate currency code
+  const normalizedCurrency = String(currency).toUpperCase();
+  const safeCurrency = /^[A-Z]{3}$/.test(normalizedCurrency) ? normalizedCurrency : "USD";
+  // Derive fraction digits using the same clamp helper
+  const fractionDigits = clampDecimals(safeCurrency, currencyDecimalsCache[safeCurrency] ?? 2);
 
   const formatter = new Intl.NumberFormat(locale, {
     style: "currency",
-    currency: normalizedCurrency,
+    currency: safeCurrency,
     minimumFractionDigits: fractionDigits,
     maximumFractionDigits: fractionDigits,
   });
