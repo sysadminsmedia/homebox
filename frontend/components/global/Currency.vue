@@ -19,9 +19,7 @@
 
   const props = defineProps<Props>();
 
-  type AsyncReturnType<T extends (...args: any) => Promise<any>> = T extends (...args: any) => Promise<infer R>
-    ? R
-    : any;
+  type AsyncReturnType<T extends (...args: unknown[]) => unknown> = Awaited<ReturnType<T>>;
 
   const fmt = ref<AsyncReturnType<typeof useFormatCurrency> | null>(null);
 

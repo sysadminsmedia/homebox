@@ -4,6 +4,8 @@
   import MdiChevronRight from "~icons/mdi/chevron-right";
   import MdiMapMarker from "~icons/mdi/map-marker";
   import MdiPackageVariant from "~icons/mdi/package-variant";
+  import LocationTreeNode from "./Node.vue";
+  import { NuxtLink } from "#components";
 
   type Props = {
     treeId: string;

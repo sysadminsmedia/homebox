@@ -50,13 +50,13 @@
   import { Label } from "@/components/ui/label";
 
   type Props = {
-    label: string;
+    label?: string;
     options: {
       name: string;
       id: string;
       treeString?: string;
     }[];
-    modelValue: {
+    modelValue?: {
       name: string;
       id: string;
       treeString?: string;

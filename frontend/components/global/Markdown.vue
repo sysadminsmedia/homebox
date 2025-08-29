@@ -4,7 +4,7 @@
   import DOMPurify from "dompurify";
 
   type Props = {
-    source: string | null | undefined;
+    source?: string | null;
   };
 
   const props = withDefaults(defineProps<Props>(), {

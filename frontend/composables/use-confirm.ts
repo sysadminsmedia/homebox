@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { UseConfirmDialogRevealResult, UseConfirmDialogReturn } from "@vueuse/core";
 import type { Ref } from "vue";
 

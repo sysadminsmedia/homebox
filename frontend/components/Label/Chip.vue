@@ -3,6 +3,7 @@
   import MdiArrowUp from "~icons/mdi/arrow-up";
   import MdiTagOutline from "~icons/mdi/tag-outline";
   import { getContrastTextColor } from "~/lib/utils";
+  import { NuxtLink } from "#components";
 
   export type sizes = "sm" | "md" | "lg" | "xl";
   defineProps({

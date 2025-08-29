@@ -55,9 +55,9 @@
   };
 
   interface Props {
-    label: string;
-    modelValue: string | ItemsObject | null | undefined;
-    items: ItemsObject[] | string[];
+    label?: string;
+    modelValue?: string | ItemsObject | null | undefined;
+    items?: ItemsObject[] | string[];
     itemText?: string;
     itemValue?: string;
     search?: string;

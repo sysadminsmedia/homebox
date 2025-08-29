@@ -42,6 +42,7 @@ export default withNuxt([
           caughtErrors: "none",
         },
       ],
+      "@typescript-eslint/no-invalid-void-type": "off",
 
       "prettier/prettier": [
         "warn",

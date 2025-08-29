@@ -14,6 +14,10 @@
   import { Button } from "@/components/ui/button";
   import LanguageSelector from "~/components/App/LanguageSelector.vue";
   import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+  import AppLogo from "~/components/App/Logo.vue";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import FormPassword from "~/components/Form/Password.vue";
+  import FormCheckbox from "~/components/Form/Checkbox.vue";
 
   const { t } = useI18n();
 

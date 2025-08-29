@@ -216,6 +216,16 @@
   import OutdatedModal from "~/components/App/OutdatedModal.vue";
   import ItemCreateModal from "~/components/Item/CreateModal.vue";
 
+  import LabelCreateModal from "~/components/Label/CreateModal.vue";
+  import LocationCreateModal from "~/components/Location/CreateModal.vue";
+  import ItemBarcodeModal from "~/components/Item/BarcodeModal.vue";
+  import AppQuickMenuModal from "~/components/App/QuickMenuModal.vue";
+  import AppScannerModal from "~/components/App/ScannerModal.vue";
+  import { NuxtLink } from "#components";
+  import AppLogo from "~/components/App/Logo.vue";
+  import AppHeaderDecor from "~/components/App/HeaderDecor.vue";
+  import AppHeaderText from "~/components/App/HeaderText.vue";
+
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
 
@@ -348,7 +358,7 @@
     ...dropdown.map(v => ({
       text: computed(() => v.name.value),
       dialogId: v.dialogId as NoParamDialogIDs,
-      shortcut: v.shortcut.split("+")[1],
+      shortcut: v.shortcut.split("+")[1] as string,
       type: "create" as const,
     })),
     ...nav.map(v => ({

@@ -37,6 +37,9 @@
   import BaseModal from "@/components/App/CreateModal.vue";
   import type { LocationSummary } from "~~/lib/api/types/data-contracts";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
+  import LocationSelector from "~/components/Location/Selector.vue";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import FormTextArea from "~/components/Form/TextArea.vue";
 
   const { t } = useI18n();
 
@@ -94,7 +97,7 @@
     }
     loading.value = true;
 
-    if (shift.value) close = false;
+    if (shift?.value) close = false;
 
     const { data, error } = await api.locations.create({
       name: form.name,

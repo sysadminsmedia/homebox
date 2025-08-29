@@ -133,7 +133,7 @@
         :sibling-count="2"
         @update:page="pagination.page = $event"
       >
-        <PaginationList v-slot="{ pageItems }" class="flex items-center gap-1">
+        <PaginationList v-slot="{ items: pageItems }" class="flex items-center gap-1">
           <PaginationFirst />
           <template v-for="(item, index) in pageItems">
             <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
@@ -175,6 +175,12 @@
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
+  import { Button } from "@/components/ui/button";
+  import { Label } from "@/components/ui/label";
+  import BaseCard from "@/components/Base/Card.vue";
+  import Currency from "~/components/global/Currency.vue";
+  import { NuxtLink } from "#components";
+  import DateTime from "~/components/global/DateTime.vue";
 
   const { openDialog, closeDialog } = useDialog();
 
@@ -225,6 +231,9 @@
   };
   const moveHeader = (from: number, to: number) => {
     const header = headers.value[from];
+    if (!header) {
+      return;
+    }
     headers.value.splice(from, 1);
     headers.value.splice(to, 0, header);
 

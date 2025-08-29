@@ -44,7 +44,7 @@ class AuthContext implements IAuthContext {
   private _attachmentToken: CookieRef<string | null>;
 
   get token() {
-    // @ts-ignore sometimes it's a boolean I guess?
+    // @ts-expect-error sometimes it's a boolean I guess?
     return this._token.value === "true" || this._token.value === true;
   }
 
