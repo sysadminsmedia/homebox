@@ -1,3 +1,4 @@
+<!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
@@ -19,6 +20,16 @@
   import { Switch } from "@/components/ui/switch";
   import { Label } from "@/components/ui/label";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import FormTextArea from "~/components/Form/TextArea.vue";
+  import FormDatePicker from "~/components/Form/DatePicker.vue";
+  import FormCheckbox from "~/components/Form/Checkbox.vue";
+  import LocationSelector from "~/components/Location/Selector.vue";
+  import ItemSelector from "~/components/Item/Selector.vue";
+  import LabelSelector from "~/components/Label/Selector.vue";
+  import BaseCard from "@/components/Base/Card.vue";
+  import { Card } from "~/components/ui/card";
+  import DropZone from "~/components/global/DropZone.vue";
 
   const { t } = useI18n();
 
@@ -67,7 +78,7 @@
     return data;
   });
 
-  const item = ref<ItemOut & { labelIds: string[] }>(null as any);
+  const item = ref<ItemOut & { labelIds: string[] }>(null as never);
 
   watchEffect(() => {
     if (nullableItem.value) {
@@ -314,7 +325,7 @@
   const dropReceipt = (files: File[] | null) => uploadAttachment(files, AttachmentTypes.Receipt);
 
   async function uploadAttachment(files: File[] | null, type: AttachmentTypes | null) {
-    if (!files || files.length === 0) {
+    if (!files || files.length === 0 || !files[0]) {
       return;
     }
 
@@ -362,7 +373,7 @@
   });
 
   const attachmentOpts = Object.entries(AttachmentTypes).map(([key, value]) => ({
-    text: key[0].toUpperCase() + key.slice(1),
+    text: key[0]!.toUpperCase() + key.slice(1),
     value,
   }));
 
@@ -373,7 +384,7 @@
     editState.primary = attachment.primary;
     openDialog(DialogID.AttachmentEdit);
 
-    editState.obj = attachmentOpts.find(o => o.value === attachment.type) || attachmentOpts[0];
+    editState.obj = attachmentOpts.find(o => o.value === attachment.type) || attachmentOpts[0]!;
   }
 
   async function updateAttachment() {
@@ -679,7 +690,7 @@
               class="grid h-24 w-full place-content-center border-2 border-dashed border-primary"
               @click="clickUpload"
             >
-              <input ref="refAttachmentInput" hidden type="file" @change="uploadImage" >
+              <input ref="refAttachmentInput" hidden type="file" @change="uploadImage" />
               <p>{{ $t("items.drag_and_drop") }}</p>
             </button>
           </div>

@@ -106,6 +106,11 @@
   import MdiAlert from "~icons/mdi/alert";
   import { useDialog } from "~/components/ui/dialog-provider";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
+  import AppImportDialog from "@/components/App/ImportDialog.vue";
+  import BaseContainer from "@/components/Base/Container.vue";
+  import BaseCard from "@/components/Base/Card.vue";
+  import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
+  import DetailAction from "@/components/DetailAction.vue";
 
   const { t } = useI18n();
 

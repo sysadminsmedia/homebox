@@ -8,6 +8,7 @@
   import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
   import { Checkbox } from "@/components/ui/checkbox";
+  import { NuxtLink } from "#components";
 
   const { t } = useI18n();
 
@@ -319,7 +320,7 @@
           });
         }
 
-        page.rows[page.rows.length - 1].items.push(item);
+        page.rows[page.rows.length - 1]!.items.push(item);
       }
 
       calc.push(page);
@@ -435,7 +436,7 @@
                 width: `${out.card.height * 0.9}${out.measure}`,
                 height: `${out.card.height * 0.9}${out.measure}`,
               }"
-            >
+            />
           </div>
           <div class="ml-2 flex flex-col justify-center">
             <div class="font-bold">{{ item.assetID }}</div>

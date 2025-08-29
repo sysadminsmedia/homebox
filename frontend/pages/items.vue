@@ -23,6 +23,10 @@
     PaginationList,
     PaginationListItem,
   } from "@/components/ui/pagination";
+  import BaseContainer from "@/components/Base/Container.vue";
+  import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
+  import SearchFilter from "~/components/Search/Filter.vue";
+  import ItemCard from "~/components/Item/Card.vue";
 
   const { t } = useI18n();
 
@@ -466,7 +470,7 @@
         <div v-for="(f, idx) in fieldTuples" :key="idx" class="flex flex-wrap gap-2">
           <div class="flex w-full flex-col gap-1 md:w-auto md:grow">
             <Label> Field </Label>
-            <Select v-model="fieldTuples[idx][0]" @update:model-value="fetchValues(f[0])">
+            <Select v-model="fieldTuples[idx]![0]" @update:model-value="fetchValues(f[0])">
               <SelectTrigger>
                 <SelectValue :placeholder="$t('items.select_field')" />
               </SelectTrigger>
@@ -477,7 +481,7 @@
           </div>
           <div class="flex w-full flex-col gap-1 md:w-auto md:grow">
             <Label> {{ $t("items.field_value") }} </Label>
-            <Select v-model="fieldTuples[idx][1]">
+            <Select v-model="fieldTuples[idx]![1]">
               <SelectTrigger>
                 <SelectValue placeholder="Select a value" />
               </SelectTrigger>

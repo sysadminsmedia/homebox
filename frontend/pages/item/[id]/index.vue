@@ -23,6 +23,20 @@
   import { Switch } from "@/components/ui/switch";
   import { Card } from "@/components/ui/card";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
+  import BaseContainer from "@/components/Base/Container.vue";
+  import { NuxtLink, NuxtPage, Title } from "#components";
+  import ItemImageDialog from "~/components/Item/ImageDialog.vue";
+  import ItemDuplicateSettings from "~/components/Item/DuplicateSettings.vue";
+  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import LabelChip from "~/components/Label/Chip.vue";
+  import DateTime from "~/components/global/DateTime.vue";
+  import LabelMaker from "~/components/global/LabelMaker.vue";
+  import Markdown from "~/components/global/Markdown.vue";
+  import BaseCard from "@/components/Base/Card.vue";
+  import CopyText from "@/components/global/CopyText.vue";
+  import DetailsSection from "~/components/global/DetailsSection/DetailsSection.vue";
+  import ItemAttachmentsList from "~/components/Item/AttachmentsList.vue";
+  import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
 
   const { t } = useI18n();
 
@@ -711,8 +725,8 @@
             <div class="scroll-bg container mx-auto flex max-h-[500px] flex-wrap gap-2 overflow-y-scroll border-t p-4">
               <button v-for="(img, i) in photos" :key="i" @click="openImageDialog(img, item.id)">
                 <picture>
-                  <source :srcset="img.originalSrc" :type="img.originalType" >
-                  <img class="max-h-[200px] rounded" :src="img.thumbnailSrc" alt="attachment image" >
+                  <source :srcset="img.originalSrc" :type="img.originalType" />
+                  <img class="max-h-[200px] rounded" :src="img.thumbnailSrc" alt="attachment image" />
                 </picture>
               </button>
             </div>

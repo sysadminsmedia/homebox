@@ -11,7 +11,7 @@
   const props = defineProps({
     modelValue: {
       type: String,
-      required: true,
+      required: false,
       default: "",
     },
     label: {
@@ -108,7 +108,7 @@
           <MdiClose class="size-3" />
         </Button>
       </div>
-      <input :id="id" ref="colorInput" v-model="value" type="color" class="sr-only" tabindex="-1" >
+      <input :id="id" ref="colorInput" v-model="value" type="color" class="sr-only" tabindex="-1" />
     </div>
   </div>
   <div v-else class="sm:grid sm:grid-cols-4 sm:items-start sm:gap-4">
@@ -149,7 +149,7 @@
           <MdiClose class="size-3" />
         </Button>
       </div>
-      <input :id="id" ref="colorInput" v-model="value" type="color" class="sr-only" tabindex="-1" >
+      <input :id="id" ref="colorInput" v-model="value" type="color" class="sr-only" tabindex="-1" />
     </div>
   </div>
 </template>

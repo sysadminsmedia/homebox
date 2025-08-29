@@ -21,6 +21,16 @@
   import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
   import ThemePicker from "~/components/App/ThemePicker.vue";
+  import ItemDuplicateSettings from "~/components/Item/DuplicateSettings.vue";
+  import FormPassword from "~/components/Form/Password.vue";
+  import FormCheckbox from "~/components/Form/Checkbox.vue";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import BaseContainer from "@/components/Base/Container.vue";
+  import BaseCard from "@/components/Base/Card.vue";
+  import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
+  import DetailsSection from "@/components/global/DetailsSection/DetailsSection.vue";
+  import CopyText from "@/components/global/CopyText.vue";
+  import DateTime from "@/components/global/DateTime.vue";
 
   const { t } = useI18n();
 

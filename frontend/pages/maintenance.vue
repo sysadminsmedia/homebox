@@ -1,5 +1,8 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
+  import BaseContainer from "@/components/Base/Container.vue";
+  import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
+  import MaintenanceListView from "~/components/Maintenance/ListView.vue";
 
   const { t } = useI18n();
 

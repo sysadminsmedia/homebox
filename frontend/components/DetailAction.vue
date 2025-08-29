@@ -28,6 +28,7 @@
 </template>
 
 <script setup lang="ts">
+  import { NuxtLink } from "#components";
   import { defineProps } from "vue";
   import { Button, buttonVariants } from "@/components/ui/button";
 

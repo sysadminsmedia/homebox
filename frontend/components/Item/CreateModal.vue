@@ -102,7 +102,7 @@
               :src="photo.fileBase64"
               class="w-full rounded object-fill shadow-sm"
               :alt="$t('components.item.create_modal.uploaded')"
-            >
+            />
           </div>
           <div class="mt-2 flex items-center gap-2">
             <TooltipProvider class="flex gap-2" :delay-duration="0">
