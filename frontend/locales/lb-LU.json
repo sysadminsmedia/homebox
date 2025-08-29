@@ -1,12 +1,1 @@
-{
-    "components": {
-        "item": {
-            "selector": {
-                "no_results": "Keng Resultater fonnt",
-                "placeholder": "Wielen…",
-                "search_placeholder": "Tippt fir ze sichen…",
-                "searching": "Sicht…"
-            }
-        }
-    }
-}
+{}

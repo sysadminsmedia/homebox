@@ -79,12 +79,6 @@
                     "page": "Pàgina",
                     "rows_per_page": "Files per pàgina"
                 }
-            },
-            "selector": {
-                "no_results": "No s'han trobat resultats",
-                "placeholder": "Selecciona…",
-                "search_placeholder": "Escriu per cercar…",
-                "searching": "Cercant…"
             }
         },
         "label": {

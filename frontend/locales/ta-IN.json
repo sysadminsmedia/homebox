@@ -10,14 +10,6 @@
                 "last-month": "கடந்த மாதம்",
                 "last-week": "கடந்த வாரம்"
             }
-        },
-        "item": {
-            "selector": {
-                "no_results": "முடிவுகள் இல்லை",
-                "placeholder": "தேர்ந்தெடுக்கவும்…",
-                "search_placeholder": "தேட தட்டச்சு செய்யவும்…",
-                "searching": "தேடுகிறது..."
-            }
         }
     }
 }

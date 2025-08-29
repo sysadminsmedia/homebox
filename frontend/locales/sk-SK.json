@@ -123,8 +123,7 @@
             "selector": {
                 "no_results": "Nenašli sa žiadne výsledky",
                 "placeholder": "Vybrať…",
-                "search_placeholder": "Zadajte, čo chcete vyhľadať…",
-                "searching": "Hľadá sa…"
+                "search_placeholder": "Zadajte, čo chcete vyhľadať…"
             },
             "view": {
                 "selectable": {

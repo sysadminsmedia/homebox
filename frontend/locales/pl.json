@@ -134,8 +134,7 @@
             "selector": {
                 "no_results": "Brak rezultatów",
                 "placeholder": "Wybierz…",
-                "search_placeholder": "Wpisz, aby wyszukać…",
-                "searching": "Wyszukiwanie…"
+                "search_placeholder": "Wpisz, aby wyszukać…"
             },
             "view": {
                 "selectable": {

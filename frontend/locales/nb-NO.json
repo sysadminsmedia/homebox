@@ -123,8 +123,7 @@
             "selector": {
                 "no_results": "Ingen resultat funnet",
                 "placeholder": "Velg…",
-                "search_placeholder": "Skriv for å søke…",
-                "searching": "Søker…"
+                "search_placeholder": "Skriv for å søke…"
             },
             "view": {
                 "selectable": {

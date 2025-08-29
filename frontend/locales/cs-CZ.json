@@ -134,8 +134,7 @@
             "selector": {
                 "no_results": "Nebyly nalezeny žádné výsledky",
                 "placeholder": "Vyberte…",
-                "search_placeholder": "Pište pro vyhledávání…",
-                "searching": "Hledání…"
+                "search_placeholder": "Pište pro vyhledávání…"
             },
             "view": {
                 "selectable": {

@@ -72,12 +72,6 @@
                     "page": "Halaman",
                     "rows_per_page": "Baris per halaman"
                 }
-            },
-            "selector": {
-                "no_results": "Tidak ada hasil",
-                "placeholder": "Pilih…",
-                "search_placeholder": "Ketik untuk mencari…",
-                "searching": "Mencari…"
             }
         },
         "label": {

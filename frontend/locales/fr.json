@@ -121,8 +121,7 @@
             "selector": {
                 "no_results": "Aucun résultat trouvé",
                 "placeholder": "Sélectionner…",
-                "search_placeholder": "Tapez pour rechercher…",
-                "searching": "Recherche en cours…"
+                "search_placeholder": "Tapez pour rechercher…"
             },
             "view": {
                 "selectable": {

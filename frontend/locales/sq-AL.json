@@ -77,12 +77,6 @@
                     "page": "Faqe",
                     "rows_per_page": "Rreshta për faqe"
                 }
-            },
-            "selector": {
-                "no_results": "Nuk u gjetën rezultate",
-                "placeholder": "Zgjidhni…",
-                "search_placeholder": "Shkruani për të kërkuar…",
-                "searching": "Duke kërkuar…"
             }
         },
         "label": {

@@ -123,8 +123,7 @@
             "selector": {
                 "no_results": "Ni zadetkov",
                 "placeholder": "Izberi...",
-                "search_placeholder": "Vnesite za iskanje ...",
-                "searching": "Iskanje…"
+                "search_placeholder": "Vnesite za iskanje ..."
             },
             "view": {
                 "selectable": {

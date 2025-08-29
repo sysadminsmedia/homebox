@@ -134,8 +134,7 @@
             "selector": {
                 "no_results": "Результаты не найдены",
                 "placeholder": "Выберите…",
-                "search_placeholder": "Введите для поиска…",
-                "searching": "Поиск…"
+                "search_placeholder": "Введите для поиска…"
             },
             "view": {
                 "selectable": {

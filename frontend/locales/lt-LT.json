@@ -78,12 +78,6 @@
                 "table": {
                     "page": "Puslapis"
                 }
-            },
-            "selector": {
-                "no_results": "Rezultatų nerasta",
-                "placeholder": "Pasirinkti…",
-                "search_placeholder": "Rašykite norėdami ieškoti…",
-                "searching": "Ieškoma…"
             }
         }
     }

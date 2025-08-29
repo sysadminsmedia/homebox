@@ -83,12 +83,6 @@
                     "rows_per_page": "Рядків на сторінці",
                     "table_settings": "Налаштування таблиці"
                 }
-            },
-            "selector": {
-                "no_results": "Результатів не знайдено",
-                "placeholder": "Виберіть…",
-                "search_placeholder": "Введіть для пошуку…",
-                "searching": "Пошук…"
             }
         },
         "label": {

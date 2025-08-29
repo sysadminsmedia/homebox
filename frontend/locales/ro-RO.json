@@ -69,12 +69,6 @@
                     "page": "Pagină",
                     "rows_per_page": "Rânduri pe pagină"
                 }
-            },
-            "selector": {
-                "no_results": "Niciun rezultat găsit",
-                "placeholder": "Selectați…",
-                "search_placeholder": "Tastați pentru a căuta…",
-                "searching": "Se caută…"
             }
         },
         "label": {

@@ -122,8 +122,7 @@
             "selector": {
                 "no_results": "Nenhum Resultado Encontrado",
                 "placeholder": "Selecionar…",
-                "search_placeholder": "Escreva para pesquisar…",
-                "searching": "A pesquisar…"
+                "search_placeholder": "Escreva para pesquisar…"
             },
             "view": {
                 "selectable": {

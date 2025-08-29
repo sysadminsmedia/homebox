@@ -134,8 +134,7 @@
             "selector": {
                 "no_results": "Nincs Találat",
                 "placeholder": "Válassz…",
-                "search_placeholder": "Kezdj gépelni a kereséshez…",
-                "searching": "Keresés…"
+                "search_placeholder": "Kezdj gépelni a kereséshez…"
             },
             "view": {
                 "selectable": {
