@@ -9,7 +9,7 @@ const props = defineProps<ToasterProps>()
     class="toaster group"
     v-bind="props"
     rich-colors
-    visible-toasts="10"
+    :visible-toasts="10"
     :toast-options="{
       classes: {
         toast: 'group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg',
