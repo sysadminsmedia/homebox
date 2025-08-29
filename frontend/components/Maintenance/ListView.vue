@@ -11,16 +11,15 @@
   import MdiWrenchClock from "~icons/mdi/wrench-clock";
   import MdiContentDuplicate from "~icons/mdi/content-duplicate";
   import MaintenanceEditModal from "~~/components/Maintenance/EditModal.vue";
-  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
   import { Badge } from "@/components/ui/badge";
-  import { ButtonGroup, Button } from "@/components/ui/button";
+  import { Button, ButtonGroup } from "@/components/ui/button";
   import StatCard from "~/components/global/StatCard/StatCard.vue";
   import BaseCard from "@/components/Base/Card.vue";
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import DateTime from "~/components/global/DateTime.vue";
   import Currency from "~/components/global/Currency.vue";
   import Markdown from "~/components/global/Markdown.vue";
-  import { NuxtLink } from "#components";
 
   const maintenanceFilterStatus = ref(MaintenanceFilterStatus.MaintenanceFilterStatusScheduled);
   const maintenanceEditModal = ref<InstanceType<typeof MaintenanceEditModal>>();

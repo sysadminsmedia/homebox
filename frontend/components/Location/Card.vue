@@ -34,7 +34,6 @@
   import MdiMapMarkerOutline from "~icons/mdi/map-marker-outline";
   import { Card } from "@/components/ui/card";
   import { Badge } from "@/components/ui/badge";
-  import { NuxtLink } from "#components";
 
   const props = defineProps({
     location: {

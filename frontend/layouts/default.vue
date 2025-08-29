@@ -186,19 +186,19 @@
 
   import {
     Sidebar,
-    SidebarProvider,
     SidebarContent,
     SidebarFooter,
-    SidebarHeader,
-    SidebarInset,
-    SidebarRail,
-    SidebarTrigger,
     SidebarGroup,
     SidebarGroupLabel,
+    SidebarHeader,
+    SidebarInset,
     SidebarMenu,
-    SidebarMenuItem,
     SidebarMenuButton,
+    SidebarMenuItem,
     SidebarMenuLink,
+    SidebarProvider,
+    SidebarRail,
+    SidebarTrigger,
   } from "@/components/ui/sidebar";
   import {
     DropdownMenu,
@@ -221,7 +221,6 @@
   import ItemBarcodeModal from "~/components/Item/BarcodeModal.vue";
   import AppQuickMenuModal from "~/components/App/QuickMenuModal.vue";
   import AppScannerModal from "~/components/App/ScannerModal.vue";
-  import { NuxtLink } from "#components";
   import AppLogo from "~/components/App/Logo.vue";
   import AppHeaderDecor from "~/components/App/HeaderDecor.vue";
   import AppHeaderText from "~/components/App/HeaderText.vue";

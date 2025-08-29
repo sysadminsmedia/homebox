@@ -20,7 +20,6 @@
   import { useI18n } from "vue-i18n";
   import { DialogProvider } from "@/components/ui/dialog-provider";
   import { Toaster } from "@/components/ui/sonner";
-  import { ClientOnly, Html, Link, Meta, NuxtLayout, NuxtPage } from "#components";
 
   const { theme } = useTheme();
 

@@ -2,13 +2,12 @@
   import { useI18n } from "vue-i18n";
   import DOMPurify from "dompurify";
   import { route } from "../../lib/api/base";
-  import { toast, Toaster } from "@/components/ui/sonner";
+  import { Toaster, toast } from "@/components/ui/sonner";
   import { Separator } from "@/components/ui/separator";
   import { Button } from "@/components/ui/button";
   import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
   import { Checkbox } from "@/components/ui/checkbox";
-  import { NuxtLink } from "#components";
 
   const { t } = useI18n();
 

@@ -19,8 +19,18 @@ export default withNuxt([
       "vue/no-undef-components": [
         "error",
         {
-          // ignore anything that start with a lowercase letter
-          ignorePatterns: ["^i18n"],
+          // ignore anything that start with a lowercase letter or #composables
+          ignorePatterns: [
+            "^i18n",
+            "ClientOnly",
+            "Html",
+            "Link",
+            "Meta",
+            "NuxtLayout",
+            "NuxtPage",
+            "NuxtLink",
+            "Title",
+          ],
         },
       ],
       "no-console": 0,

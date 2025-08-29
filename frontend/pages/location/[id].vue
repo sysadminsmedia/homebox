@@ -25,7 +25,6 @@
   import FormTextArea from "~/components/Form/TextArea.vue";
   import LocationSelector from "~/components/Location/Selector.vue";
   import BaseContainer from "@/components/Base/Container.vue";
-  import { NuxtLink, Title } from "#components";
   import Currency from "~/components/global/Currency.vue";
   import DateTime from "~/components/global/DateTime.vue";
   import LabelMaker from "~/components/global/LabelMaker.vue";

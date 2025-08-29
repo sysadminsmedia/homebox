@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { UseConfirmDialogRevealResult, UseConfirmDialogReturn } from "@vueuse/core";
+import type { UseConfirmDialogReturn, UseConfirmDialogRevealResult } from "@vueuse/core";
 import type { Ref } from "vue";
 
 type Store = UseConfirmDialogReturn<any, boolean, boolean> & {

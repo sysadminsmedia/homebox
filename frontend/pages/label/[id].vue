@@ -16,7 +16,6 @@
   import FormTextField from "~/components/Form/TextField.vue";
   import FormTextArea from "~/components/Form/TextArea.vue";
   import BaseContainer from "@/components/Base/Container.vue";
-  import { Title } from "#components";
   import Currency from "~/components/global/Currency.vue";
   import DateTime from "~/components/global/DateTime.vue";
   import PageQRCode from "~/components/global/PageQRCode.vue";

@@ -116,12 +116,11 @@
   import MdiBarcode from "~icons/mdi/barcode";
   import MdiLoading from "~icons/mdi/loading";
   import type { TableData } from "~/components/Item/View/Table.types";
-  import { Dialog, DialogHeader, DialogTitle, DialogContent, DialogFooter } from "@/components/ui/dialog";
-  import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table";
+  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
   import { Separator } from "@/components/ui/separator";
   import BaseCard from "@/components/Base/Card.vue";
   import FormTextField from "@/components/Form/TextField.vue";
-  import { NuxtLink } from "#components";
 
   const { openDialog, registerOpenDialogCallback } = useDialog();
   const { t } = useI18n();

@@ -64,7 +64,6 @@
   import { Separator } from "@/components/ui/separator";
   import Markdown from "@/components/global/Markdown.vue";
   import LabelChip from "@/components/Label/Chip.vue";
-  import { NuxtLink } from "#components";
 
   const api = useUserApi();
 

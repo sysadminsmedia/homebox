@@ -21,7 +21,7 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
   import MdiEye from "~icons/mdi/eye";
-  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
   import FormTextField from "@/components/Form/TextField.vue";
 
   const { t } = useI18n();

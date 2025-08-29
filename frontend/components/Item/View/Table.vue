@@ -162,7 +162,7 @@
   import MdiClose from "~icons/mdi/close";
   import MdiTableCog from "~icons/mdi/table-cog";
   import { Checkbox } from "@/components/ui/checkbox";
-  import { Table, TableBody, TableHeader, TableCell, TableHead, TableRow } from "@/components/ui/table";
+  import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
   import {
     Pagination,
     PaginationEllipsis,
@@ -179,7 +179,6 @@
   import { Label } from "@/components/ui/label";
   import BaseCard from "@/components/Base/Card.vue";
   import Currency from "~/components/global/Currency.vue";
-  import { NuxtLink } from "#components";
   import DateTime from "~/components/global/DateTime.vue";
 
   const { openDialog, closeDialog } = useDialog();

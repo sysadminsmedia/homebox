@@ -52,12 +52,12 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, watch, computed } from "vue";
-  import { BrowserMultiFormatReader, NotFoundException, BarcodeFormat } from "@zxing/library";
+  import { computed, ref, watch } from "vue";
+  import { BarcodeFormat, BrowserMultiFormatReader, NotFoundException } from "@zxing/library";
   import { useI18n } from "vue-i18n";
   import { DialogID } from "@/components/ui/dialog-provider/utils";
-  import { Dialog, DialogHeader, DialogTitle, DialogScrollContent } from "@/components/ui/dialog";
-  import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+  import { Dialog, DialogHeader, DialogScrollContent, DialogTitle } from "@/components/ui/dialog";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import { Button, ButtonGroup } from "@/components/ui/button";
   import MdiBarcode from "~icons/mdi/barcode";
   import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";

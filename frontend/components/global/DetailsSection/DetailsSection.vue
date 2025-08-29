@@ -73,10 +73,9 @@
   import type { AnyDetail, Detail } from "./types";
   import MdiOpenInNew from "~icons/mdi/open-in-new";
   import { badgeVariants } from "~/components/ui/badge";
-  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
   import DateTime from "@/components/global/DateTime.vue";
   import Currency from "@/components/global/Currency.vue";
-  import { ClientOnly } from "#components";
   import Markdown from "@/components/global/Markdown.vue";
   import CopyText from "@/components/global/CopyText.vue";
 

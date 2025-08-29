@@ -1,6 +1,5 @@
 <script setup lang="ts">
   import type { NuxtError } from "#app";
-  import { NuxtLink } from "#components";
   import { buttonVariants } from "@/components/ui/button";
 
   const props = defineProps({
