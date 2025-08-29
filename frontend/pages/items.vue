@@ -398,27 +398,27 @@
           <PopoverContent class="z-40 flex flex-col gap-2">
             <Label class="flex cursor-pointer items-center">
               <Switch v-model="includeArchived" class="ml-auto" />
-              <div class="grow"></div>
+              <div class="grow" />
               {{ $t("items.include_archive") }}
             </Label>
             <Label class="flex cursor-pointer items-center">
               <Switch v-model="fieldSelector" class="ml-auto" />
-              <div class="grow"></div>
+              <div class="grow" />
               {{ $t("items.field_selector") }}
             </Label>
             <Label class="flex cursor-pointer items-center">
               <Switch v-model="negateLabels" class="ml-auto" />
-              <div class="grow"></div>
+              <div class="grow" />
               {{ $t("items.negate_labels") }}
             </Label>
             <Label class="flex cursor-pointer items-center">
               <Switch v-model="onlyWithoutPhoto" class="ml-auto" />
-              <div class="grow"></div>
+              <div class="grow" />
               {{ $t("items.only_without_photo") }}
             </Label>
             <Label class="flex cursor-pointer items-center">
               <Switch v-model="onlyWithPhoto" class="ml-auto" />
-              <div class="grow"></div>
+              <div class="grow" />
               {{ $t("items.only_with_photo") }}
             </Label>
             <Label class="flex cursor-pointer flex-col gap-2">
@@ -440,7 +440,7 @@
             <Button @click="reset"> {{ $t("items.reset_search") }} </Button>
           </PopoverContent>
         </Popover>
-        <div class="grow"></div>
+        <div class="grow" />
         <Popover>
           <PopoverTrigger as-child>
             <Button size="sm" variant="outline"> {{ $t("items.tips") }}</Button>

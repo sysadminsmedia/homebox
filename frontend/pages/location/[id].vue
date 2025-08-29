@@ -213,8 +213,7 @@
           </div>
         </header>
         <Separator v-if="location && location.description" />
-        <Markdown v-if="location && location.description" class="mt-3 text-base" :source="location.description">
-        </Markdown>
+        <Markdown v-if="location && location.description" class="mt-3 text-base" :source="location.description" />
       </Card>
       <section v-if="location && items">
         <ItemViewSelectable :items="items" />

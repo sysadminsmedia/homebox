@@ -104,7 +104,7 @@
             {{ $t("components.global.label_maker.confirm_description") }}
           </DialogDescription>
         </DialogHeader>
-        <img :src="getLabelUrl(false)" />
+        <img :src="getLabelUrl(false)" >
         <DialogFooter>
           <ButtonGroup>
             <Button v-if="status?.labelPrinting || false" type="submit" :disabled="serverPrinting" @click="serverPrint">

@@ -75,8 +75,8 @@
   <Dialog :dialog-id="DialogID.ItemImage">
     <DialogContent class="w-auto border-transparent bg-transparent p-0" disable-close>
       <picture>
-        <source :srcset="image.originalSrc" :type="image.originalType" />
-        <img :src="image.thumbnailSrc" alt="attachment image" />
+        <source :srcset="image.originalSrc" :type="image.originalType" >
+        <img :src="image.thumbnailSrc" alt="attachment image" >
       </picture>
       <Button variant="destructive" size="icon" class="absolute right-[84px] top-1" @click="deleteAttachment">
         <MdiDelete />

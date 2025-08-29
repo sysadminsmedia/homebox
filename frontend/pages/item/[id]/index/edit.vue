@@ -52,7 +52,7 @@
       return;
     }
 
-    if (locations && data.location?.id) {
+    if (locations.value && data.location?.id) {
       // @ts-expect-error - we know the locations is valid
       const location = locations.value.find(l => l.id === data.location.id);
       if (location) {
@@ -679,7 +679,7 @@
               class="grid h-24 w-full place-content-center border-2 border-dashed border-primary"
               @click="clickUpload"
             >
-              <input ref="refAttachmentInput" hidden type="file" @change="uploadImage" />
+              <input ref="refAttachmentInput" hidden type="file" @change="uploadImage" >
               <p>{{ $t("items.drag_and_drop") }}</p>
             </button>
           </div>

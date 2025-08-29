@@ -34,7 +34,6 @@ export interface IAuthContext {
 }
 
 class AuthContext implements IAuthContext {
-  // eslint-disable-next-line no-use-before-define
   private static _instance?: AuthContext;
 
   private static readonly cookieTokenKey = "hb.auth.session";

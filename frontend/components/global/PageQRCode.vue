@@ -24,7 +24,7 @@
           {{ $t("components.global.page_qr_code.page_url") }}
         </DialogTitle>
       </DialogHeader>
-      <img :src="getQRCodeUrl()" />
+      <img :src="getQRCodeUrl()" >
     </DialogContent>
   </Dialog>
 

@@ -344,12 +344,12 @@
       <p>
         {{ $t("reports.label_generator.instruction_2") }}
       </p>
-      <p v-html="DOMPurify.sanitize($t('reports.label_generator.instruction_3'))"></p>
+      <p v-html="DOMPurify.sanitize($t('reports.label_generator.instruction_3'))" />
       <h2>{{ $t("reports.label_generator.tips") }}</h2>
       <ul>
-        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_1'))"></li>
-        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_2'))"></li>
-        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_3'))"></li>
+        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_1'))" />
+        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_2'))" />
+        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_3'))" />
       </ul>
       <div class="flex flex-wrap gap-2">
         <NuxtLink href="/tools">{{ $t("menu.tools") }}</NuxtLink>
@@ -435,7 +435,7 @@
                 width: `${out.card.height * 0.9}${out.measure}`,
                 height: `${out.card.height * 0.9}${out.measure}`,
               }"
-            />
+            >
           </div>
           <div class="ml-2 flex flex-col justify-center">
             <div class="font-bold">{{ item.assetID }}</div>

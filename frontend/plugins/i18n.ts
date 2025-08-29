@@ -49,7 +49,7 @@ export const messages = () => {
 };
 
 export const messageCompiler: (
-  message: String | any,
+  message: string | any,
   {
     locale,
     key,

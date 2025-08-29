@@ -2,7 +2,7 @@
   <Card class="overflow-hidden">
     <NuxtLink :to="`/item/${item.id}`">
       <div class="relative h-[200px]">
-        <img v-if="imageUrl" class="h-[200px] w-full object-cover shadow-md" loading="lazy" :src="imageUrl" alt="" />
+        <img v-if="imageUrl" class="h-[200px] w-full object-cover shadow-md" loading="lazy" :src="imageUrl" alt="" >
         <div class="absolute inset-x-1 bottom-1">
           <Badge class="text-wrap bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:underline">
             <NuxtLink v-if="item.location" :to="`/location/${item.location.id}`">
@@ -32,7 +32,7 @@
                 {{ $t("global.archived") }}
               </TooltipContent>
             </Tooltip>
-            <div class="grow"></div>
+            <div class="grow" />
             <Tooltip>
               <TooltipTrigger>
                 <Badge>

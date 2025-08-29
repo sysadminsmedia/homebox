@@ -125,7 +125,7 @@
   </section>
   <section>
     <!-- begin -->
-    <MaintenanceEditModal ref="maintenanceEditModal" @changed="refreshList"></MaintenanceEditModal>
+    <MaintenanceEditModal ref="maintenanceEditModal" @changed="refreshList" />
     <div class="container space-y-6">
       <BaseCard v-for="e in maintenanceDataList" :key="e.id">
         <BaseSectionHeader class="border-b p-6">

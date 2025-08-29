@@ -645,7 +645,7 @@
         </header>
         <Separator v-if="item.description" />
         <div v-if="item.description" class="prose max-w-full p-1">
-          <Markdown class="text-base" :source="item.description"> </Markdown>
+          <Markdown class="text-base" :source="item.description" />
         </div>
       </Card>
 
@@ -711,8 +711,8 @@
             <div class="scroll-bg container mx-auto flex max-h-[500px] flex-wrap gap-2 overflow-y-scroll border-t p-4">
               <button v-for="(img, i) in photos" :key="i" @click="openImageDialog(img, item.id)">
                 <picture>
-                  <source :srcset="img.originalSrc" :type="img.originalType" />
-                  <img class="max-h-[200px] rounded" :src="img.thumbnailSrc" alt="attachment image" />
+                  <source :srcset="img.originalSrc" :type="img.originalType" >
+                  <img class="max-h-[200px] rounded" :src="img.thumbnailSrc" alt="attachment image" >
                 </picture>
               </button>
             </div>

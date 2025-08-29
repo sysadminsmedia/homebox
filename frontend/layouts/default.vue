@@ -6,7 +6,7 @@
     up the tree
     -->
     <ModalConfirm />
-    <AppOutdatedModal v-if="status" :status="status" />
+    <OutdatedModal v-if="status" :status="status" />
     <ItemCreateModal />
     <LabelCreateModal />
     <LocationCreateModal />
@@ -124,7 +124,7 @@
                 <AppHeaderText class="h-6" />
               </NuxtLink>
             </div>
-            <div class="sm:grow"></div>
+            <div class="sm:grow" />
             <div class="flex h-1/2 grow items-center justify-end gap-2 sm:h-auto">
               <Input
                 v-model:model-value="search"
@@ -146,8 +146,8 @@
             </div>
           </div>
 
-          <slot></slot>
-          <div class="grow"></div>
+          <slot />
+          <div class="grow" />
 
           <footer v-if="status" class="bottom-0 w-full pb-4 text-center">
             <p class="text-center text-sm">
@@ -157,9 +157,9 @@
                     $t('global.footer.version_link', { version: status.build.version, build: status.build.commit })
                   )
                 "
-              ></span>
+              />
               ~
-              <span v-html="DOMPurify.sanitize($t('global.footer.api_link'))"></span>
+              <span v-html="DOMPurify.sanitize($t('global.footer.api_link'))" />
             </p>
           </footer>
         </div>
@@ -186,6 +186,7 @@
 
   import {
     Sidebar,
+    SidebarProvider,
     SidebarContent,
     SidebarFooter,
     SidebarHeader,
@@ -211,6 +212,9 @@
   import { Button } from "~/components/ui/button";
   import { toast } from "@/components/ui/sonner";
   import { DialogID, type NoParamDialogIDs, type OptionalDialogIDs } from "~/components/ui/dialog-provider/utils";
+  import ModalConfirm from "~/components/ModalConfirm.vue";
+  import OutdatedModal from "~/components/App/OutdatedModal.vue";
+  import ItemCreateModal from "~/components/Item/CreateModal.vue";
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");

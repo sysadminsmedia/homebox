@@ -33,7 +33,7 @@
           </ButtonGroup>
         </div>
         <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
-        <video ref="video" class="aspect-video w-full rounded-lg bg-muted shadow" poster="data:image/gif,AAAA"></video>
+        <video ref="video" class="aspect-video w-full rounded-lg bg-muted shadow" poster="data:image/gif,AAAA" />
         <div class="mt-4">
           <Select v-model="selectedSource">
             <SelectTrigger class="w-full">

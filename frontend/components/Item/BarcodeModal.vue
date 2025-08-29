@@ -78,7 +78,7 @@
               >
                 <template v-if="h.type === 'name'">
                   <div class="flex items-center space-x-4">
-                    <img :src="p.imageBase64" class="w-16 rounded object-fill shadow-sm" alt="Product's photo" />
+                    <img :src="p.imageBase64" class="w-16 rounded object-fill shadow-sm" alt="Product's photo" >
                     <span class="text-sm font-medium">
                       {{ p.item.name }}
                     </span>

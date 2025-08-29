@@ -360,7 +360,7 @@
               <Button variant="secondary" :disabled="!(notifier && notifier.url)" type="button" @click="testNotifier">
                 {{ $t("profile.test") }}
               </Button>
-              <div class="grow"></div>
+              <div class="grow" />
               <Button type="submit"> {{ $t("global.submit") }} </Button>
             </DialogFooter>
           </div>

@@ -22,7 +22,7 @@
           </div>
           <Checkbox :model-value="true" @update:model-value="_ => (selected = selected.filter(s => s.id !== v.id))" />
         </Label>
-        <hr v-if="selected.length > 0" />
+        <hr v-if="selected.length > 0" >
         <Label
           v-for="v in unselected"
           :key="v.id"

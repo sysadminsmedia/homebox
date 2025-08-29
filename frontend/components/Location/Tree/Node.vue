@@ -51,7 +51,7 @@
           'hover:bg-accent hover:text-accent-foreground': hasChildren,
         }"
       >
-        <div v-if="!hasChildren" class="size-6"></div>
+        <div v-if="!hasChildren" class="size-6" />
         <div v-else class="group/node relative size-6" :data-swap="openRef">
           <div
             class="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-data-[swap=true]/node:rotate-90"

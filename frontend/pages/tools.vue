@@ -40,7 +40,7 @@
           <DetailAction @action="openDialog(DialogID.Import)">
             <template #title> {{ $t("tools.import_export_set.import") }} </template>
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <div v-html="DOMPurify.sanitize($t('tools.import_export_set.import_sub'))"></div>
+            <div v-html="DOMPurify.sanitize($t('tools.import_export_set.import_sub'))" />
             <template #button> {{ $t("tools.import_export_set.import_button") }} </template>
           </DetailAction>
           <DetailAction @action="getExportCSV()">
@@ -57,7 +57,7 @@
             <span> {{ $t("tools.actions") }} </span>
             <template #description>
               <!-- eslint-disable-next-line vue/no-v-html -->
-              <div v-html="DOMPurify.sanitize($t('tools.actions_sub'))"></div>
+              <div v-html="DOMPurify.sanitize($t('tools.actions_sub'))" />
             </template>
           </BaseSectionHeader>
         </template>
@@ -75,19 +75,19 @@
           <DetailAction @action="resetItemDateTimes">
             <template #title> {{ $t("tools.actions_set.zero_datetimes") }} </template>
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <div v-html="DOMPurify.sanitize($t('tools.actions_set.zero_datetimes_sub'))"></div>
+            <div v-html="DOMPurify.sanitize($t('tools.actions_set.zero_datetimes_sub'))" />
             <template #button> {{ $t("tools.actions_set.zero_datetimes_button") }} </template>
           </DetailAction>
           <DetailAction @action="setPrimaryPhotos">
             <template #title> {{ $t("tools.actions_set.set_primary_photo") }} </template>
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <div v-html="DOMPurify.sanitize($t('tools.actions_set.set_primary_photo_sub'))"></div>
+            <div v-html="DOMPurify.sanitize($t('tools.actions_set.set_primary_photo_sub'))" />
             <template #button> {{ $t("tools.actions_set.set_primary_photo_button") }} </template>
           </DetailAction>
           <DetailAction @action="createMissingThumbnails">
             <template #title> {{ $t("tools.actions_set.create_missing_thumbnails") }} </template>
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <div v-html="DOMPurify.sanitize($t('tools.actions_set.create_missing_thumbnails_sub'))"></div>
+            <div v-html="DOMPurify.sanitize($t('tools.actions_set.create_missing_thumbnails_sub'))" />
             <template #button> {{ $t("tools.actions_set.create_missing_thumbnails_button") }} </template>
           </DetailAction>
         </div>

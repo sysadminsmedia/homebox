@@ -8,6 +8,6 @@
 
 <template>
   <BaseContainer class="flex flex-col gap-8">
-    <MaintenanceListView :current-item-id="props.item.id"></MaintenanceListView>
+    <MaintenanceListView :current-item-id="props.item.id" />
   </BaseContainer>
 </template>

@@ -102,7 +102,7 @@
               :src="photo.fileBase64"
               class="w-full rounded object-fill shadow-sm"
               :alt="$t('components.item.create_modal.uploaded')"
-            />
+            >
           </div>
           <div class="mt-2 flex items-center gap-2">
             <TooltipProvider class="flex gap-2" :delay-duration="0">
@@ -190,6 +190,10 @@
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
   import LabelSelector from "~/components/Label/Selector.vue";
   import ItemSelector from "~/components/Item/Selector.vue";
+  import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from "~/components/ui/tooltip";
+  import LocationSelector from "~/components/Location/Selector.vue";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import FormTextArea from "~/components/Form/TextArea.vue";
 
   interface PhotoPreview {
     photoName: string;

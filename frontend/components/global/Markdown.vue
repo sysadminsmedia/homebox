@@ -25,7 +25,7 @@
 
 <template>
   <!-- eslint-disable-next-line vue/no-v-html -->
-  <div class="markdown text-wrap break-words" v-html="raw"></div>
+  <div class="markdown text-wrap break-words" v-html="raw" />
 </template>
 
 <style scoped>
