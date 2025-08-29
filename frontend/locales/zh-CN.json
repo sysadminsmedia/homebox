@@ -134,7 +134,8 @@
             "selector": {
                 "no_results": "返回为空",
                 "placeholder": "选择…",
-                "search_placeholder": "输入以搜索…"
+                "search_placeholder": "输入以搜索…",
+                "searching": "搜索中..."
             },
             "view": {
                 "selectable": {

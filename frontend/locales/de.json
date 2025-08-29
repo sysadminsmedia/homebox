@@ -134,7 +134,8 @@
             "selector": {
                 "no_results": "Keine Ergebnisse gefunden",
                 "placeholder": "Auswählen…",
-                "search_placeholder": "Für Suche tippen…"
+                "search_placeholder": "Für Suche tippen…",
+                "searching": "Suche läuft…"
             },
             "view": {
                 "selectable": {

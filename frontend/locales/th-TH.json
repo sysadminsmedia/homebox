@@ -62,6 +62,12 @@
                 "table": {
                     "page": "หน้า"
                 }
+            },
+            "selector": {
+                "no_results": "ไม่พบผลลัพธ์",
+                "placeholder": "เลือก…",
+                "search_placeholder": "พิมพ์เพื่อค้นหา…",
+                "searching": "กำลังค้นหา..."
             }
         },
         "location": {

@@ -39,6 +39,8 @@
         :items="results"
         item-text="name"
         no-results-text="Type to search..."
+        :is-loading="isLoading"
+        :trigger-search="triggerSearch"
       />
       <FormTextField
         ref="nameInput"
@@ -215,7 +217,7 @@
   const router = useRouter();
 
   const parent = ref();
-  const { query, results } = useItemSearch(api, { immediate: false });
+  const { query, results, isLoading, triggerSearch } = useItemSearch(api, { immediate: false });
   const subItemCreateParam = useRouteQuery("subItemCreate", "n");
   const subItemCreate = ref();
 

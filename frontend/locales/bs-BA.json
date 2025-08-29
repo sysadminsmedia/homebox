@@ -53,6 +53,12 @@
                     "headers": "Zaglavlje",
                     "page": "Stranica"
                 }
+            },
+            "selector": {
+                "no_results": "Nema rezultata",
+                "placeholder": "Odaberite…",
+                "search_placeholder": "Ukucajte za pretragu…",
+                "searching": "Pretraživanje…"
             }
         }
     },

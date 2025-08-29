@@ -133,7 +133,8 @@
             "selector": {
                 "no_results": "Không tìm thấy kết quả",
                 "placeholder": "Chọn …",
-                "search_placeholder": "Gõ chữ vào để tìm kiếm…"
+                "search_placeholder": "Gõ chữ vào để tìm kiếm…",
+                "searching": "Đang tìm kiếm…"
             },
             "view": {
                 "selectable": {

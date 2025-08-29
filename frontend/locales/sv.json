@@ -97,6 +97,12 @@
                     "rows_per_page": "Rader per sida",
                     "table_settings": "Bordsinställningar"
                 }
+            },
+            "selector": {
+                "no_results": "Inga resultat hittades",
+                "placeholder": "Välj…",
+                "search_placeholder": "Skriv för att söka…",
+                "searching": "Söker…"
             }
         },
         "label": {

@@ -77,6 +77,12 @@
                     "page": "页面",
                     "rows_per_page": "每页行数"
                 }
+            },
+            "selector": {
+                "no_results": "找不到結果",
+                "placeholder": "選擇…",
+                "search_placeholder": "輸入以搜尋…",
+                "searching": "搜尋中..."
             }
         },
         "label": {

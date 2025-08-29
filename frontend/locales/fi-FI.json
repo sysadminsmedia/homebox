@@ -83,6 +83,12 @@
                     "rows_per_page": "Rivejä sivua kohti",
                     "table_settings": "Taulukon Asetukset"
                 }
+            },
+            "selector": {
+                "no_results": "Ei tuloksia",
+                "placeholder": "Valitse…",
+                "search_placeholder": "Kirjoita hakeaksesi…",
+                "searching": "Haetaan…"
             }
         },
         "label": {

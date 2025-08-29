@@ -70,6 +70,12 @@
                     "no_items": "沒有可顯示的項目",
                     "table": "表格"
                 }
+            },
+            "selector": {
+                "no_results": "找不到結果",
+                "placeholder": "選擇…",
+                "search_placeholder": "輸入以搜尋…",
+                "searching": "搜尋中..."
             }
         },
         "label": {

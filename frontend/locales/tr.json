@@ -131,7 +131,8 @@
             "selector": {
                 "no_results": "Sonuç Bulunamadı",
                 "placeholder": "Seç…",
-                "search_placeholder": "Aramak için yazın…"
+                "search_placeholder": "Aramak için yazın…",
+                "searching": "Aranıyor…"
             },
             "view": {
                 "selectable": {

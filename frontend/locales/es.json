@@ -134,7 +134,8 @@
             "selector": {
                 "no_results": "Resultados No Encontrados",
                 "placeholder": "Seleccionar…",
-                "search_placeholder": "Escribe para buscar…"
+                "search_placeholder": "Escribe para buscar…",
+                "searching": "Buscando…"
             },
             "view": {
                 "selectable": {

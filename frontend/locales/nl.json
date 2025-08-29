@@ -134,7 +134,8 @@
             "selector": {
                 "no_results": "Geen resultaten gevonden",
                 "placeholder": "Selecteer…",
-                "search_placeholder": "Type om te zoeken…"
+                "search_placeholder": "Type om te zoeken…",
+                "searching": "Zoeken…"
             },
             "view": {
                 "selectable": {

@@ -123,7 +123,8 @@
             "selector": {
                 "no_results": "Nenhum Resultado Encontrado",
                 "placeholder": "Selecione…",
-                "search_placeholder": "Digite para pesquisar…"
+                "search_placeholder": "Digite para pesquisar…",
+                "searching": "Pesquisando…"
             },
             "view": {
                 "selectable": {

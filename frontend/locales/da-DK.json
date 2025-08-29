@@ -132,7 +132,8 @@
             "selector": {
                 "no_results": "Ingen resultater fundet",
                 "placeholder": "Vælg…",
-                "search_placeholder": "Skriv for at søge…"
+                "search_placeholder": "Skriv for at søge…",
+                "searching": "Søger…"
             },
             "view": {
                 "selectable": {
