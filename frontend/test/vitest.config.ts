@@ -1,17 +1,17 @@
-import path from "path";
-import { defineConfig } from "vite";
+export default async () => {
+  const { defineConfig } = await import("vitest/config");
+  const path = await import("path");
 
-export default defineConfig({
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  test: {
-    globalSetup: "./test/setup.ts",
-    include: ["**/*.test.ts"],
-  },
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, ".."),
-      "~~": path.resolve(__dirname, ".."),
+  return defineConfig({
+    test: {
+      globalSetup: "./test/setup.ts",
+      include: ["**/*.test.ts"],
     },
-  },
-});
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, ".."),
+        "~~": path.resolve(__dirname, ".."),
+      },
+    },
+  });
+};
