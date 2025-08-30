@@ -23,6 +23,10 @@
     PaginationList,
     PaginationListItem,
   } from "@/components/ui/pagination";
+  import BaseContainer from "@/components/Base/Container.vue";
+  import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
+  import SearchFilter from "~/components/Search/Filter.vue";
+  import ItemCard from "~/components/Item/Card.vue";
 
   const { t } = useI18n();
 
@@ -398,27 +402,27 @@
           <PopoverContent class="z-40 flex flex-col gap-2">
             <Label class="flex cursor-pointer items-center">
               <Switch v-model="includeArchived" class="ml-auto" />
-              <div class="grow"></div>
+              <div class="grow" />
               {{ $t("items.include_archive") }}
             </Label>
             <Label class="flex cursor-pointer items-center">
               <Switch v-model="fieldSelector" class="ml-auto" />
-              <div class="grow"></div>
+              <div class="grow" />
               {{ $t("items.field_selector") }}
             </Label>
             <Label class="flex cursor-pointer items-center">
               <Switch v-model="negateLabels" class="ml-auto" />
-              <div class="grow"></div>
+              <div class="grow" />
               {{ $t("items.negate_labels") }}
             </Label>
             <Label class="flex cursor-pointer items-center">
               <Switch v-model="onlyWithoutPhoto" class="ml-auto" />
-              <div class="grow"></div>
+              <div class="grow" />
               {{ $t("items.only_without_photo") }}
             </Label>
             <Label class="flex cursor-pointer items-center">
               <Switch v-model="onlyWithPhoto" class="ml-auto" />
-              <div class="grow"></div>
+              <div class="grow" />
               {{ $t("items.only_with_photo") }}
             </Label>
             <Label class="flex cursor-pointer flex-col gap-2">
@@ -440,7 +444,7 @@
             <Button @click="reset"> {{ $t("items.reset_search") }} </Button>
           </PopoverContent>
         </Popover>
-        <div class="grow"></div>
+        <div class="grow" />
         <Popover>
           <PopoverTrigger as-child>
             <Button size="sm" variant="outline"> {{ $t("items.tips") }}</Button>
@@ -466,7 +470,7 @@
         <div v-for="(f, idx) in fieldTuples" :key="idx" class="flex flex-wrap gap-2">
           <div class="flex w-full flex-col gap-1 md:w-auto md:grow">
             <Label> Field </Label>
-            <Select v-model="fieldTuples[idx][0]" @update:model-value="fetchValues(f[0])">
+            <Select v-model="fieldTuples[idx]![0]" @update:model-value="fetchValues(f[0])">
               <SelectTrigger>
                 <SelectValue :placeholder="$t('items.select_field')" />
               </SelectTrigger>
@@ -477,7 +481,7 @@
           </div>
           <div class="flex w-full flex-col gap-1 md:w-auto md:grow">
             <Label> {{ $t("items.field_value") }} </Label>
-            <Select v-model="fieldTuples[idx][1]">
+            <Select v-model="fieldTuples[idx]![1]">
               <SelectTrigger>
                 <SelectValue placeholder="Select a value" />
               </SelectTrigger>

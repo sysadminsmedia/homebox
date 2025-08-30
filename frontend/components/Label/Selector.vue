@@ -90,6 +90,7 @@
     TagsInputItemText,
   } from "@/components/ui/tags-input";
   import type { LabelOut } from "~/lib/api/types/data-contracts";
+  import { Label } from "@/components/ui/label";
 
   const { t } = useI18n();
 

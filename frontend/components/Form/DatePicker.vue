@@ -10,7 +10,6 @@
 </template>
 
 <script setup lang="ts">
-  // @ts-ignore
   import VueDatePicker from "@vuepic/vue-datepicker";
   import "@vuepic/vue-datepicker/dist/main.css";
   import * as datelib from "~/lib/datelib/datelib";

@@ -1,7 +1,6 @@
 <template>
   <div class="relative">
-    <FormTextField v-model="value" :placeholder="localizedPlaceholder" :label="localizedLabel" :type="inputType">
-    </FormTextField>
+    <FormTextField v-model="value" :placeholder="localizedPlaceholder" :label="localizedLabel" :type="inputType" />
     <TooltipProvider :delay-duration="0">
       <Tooltip>
         <TooltipTrigger as-child>
@@ -22,7 +21,8 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
   import MdiEye from "~icons/mdi/eye";
-  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+  import FormTextField from "@/components/Form/TextField.vue";
 
   const { t } = useI18n();
   type Props = {

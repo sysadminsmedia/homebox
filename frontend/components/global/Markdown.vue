@@ -4,7 +4,7 @@
   import DOMPurify from "dompurify";
 
   type Props = {
-    source: string | null | undefined;
+    source?: string | null;
   };
 
   const props = withDefaults(defineProps<Props>(), {
@@ -25,7 +25,7 @@
 
 <template>
   <!-- eslint-disable-next-line vue/no-v-html -->
-  <div class="markdown text-wrap break-words" v-html="raw"></div>
+  <div class="markdown text-wrap break-words" v-html="raw" />
 </template>
 
 <style scoped>

@@ -1,5 +1,5 @@
 import type { Ref } from "vue";
-import type { TreeItem, LocationSummary } from "~~/lib/api/types/data-contracts";
+import type { LocationSummary, TreeItem } from "~~/lib/api/types/data-contracts";
 
 export interface FlatTreeItem {
   id: string;

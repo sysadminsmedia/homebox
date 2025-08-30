@@ -9,4 +9,5 @@ export type TableHeaderType = {
   type?: "price" | "boolean" | "name" | "location" | "date";
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type TableData = Record<string, any>;

@@ -1,4 +1,4 @@
-import { describe, test, expect } from "vitest";
+import { describe, expect, test } from "vitest";
 import { factories } from "./factories";
 
 describe("[GET] /api/v1/status", () => {

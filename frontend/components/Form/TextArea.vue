@@ -2,7 +2,7 @@
   <div v-if="!inline" class="flex w-full flex-col gap-1.5">
     <Label :for="id" class="flex w-full px-1">
       <span>{{ label }}</span>
-      <span class="grow"></span>
+      <span class="grow" />
       <span :class="{ 'text-destructive': isLengthInvalid }">
         {{ lengthIndicator }}
       </span>
@@ -18,7 +18,7 @@
   <div v-else class="sm:grid sm:grid-cols-4 sm:items-start sm:gap-4">
     <Label :for="id" class="flex w-full px-1 py-2">
       <span>{{ label }}</span>
-      <span class="grow"></span>
+      <span class="grow" />
       <span :class="{ 'text-destructive': isLengthInvalid }">
         {{ lengthIndicator }}
       </span>

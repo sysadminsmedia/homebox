@@ -6,7 +6,7 @@
 
     <NuxtLayout>
       <Html :lang="locale" :data-theme="theme || 'homebox'" />
-      <Link rel="icon" type="image/svg" href="/favicon.svg"></Link>
+      <Link rel="icon" type="image/svg" href="/favicon.svg" />
       <Link rel="apple-touch-icon" href="/apple-touch-icon.png" size="180x180" />
       <Link rel="mask-icon" href="/mask-icon.svg" color="#5b7f67" />
       <Meta name="theme-color" content="#5b7f67" />

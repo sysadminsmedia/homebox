@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type DeferFunction<TArgs extends any[], TReturn> = (...args: TArgs) => TReturn;
 
 // useDefer is a function that takes a function and returns a function that

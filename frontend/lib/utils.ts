@@ -25,7 +25,7 @@ export function getContrastTextColor(bgColor: string): string {
     g = parseInt(hex.slice(2, 4), 16);
     b = parseInt(hex.slice(4, 6), 16);
   } else if (bgColor.startsWith("rgb")) {
-    const match = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    const match = bgColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/) as [string, string, string, string];
     if (match) {
       r = parseInt(match[1]);
       g = parseInt(match[2]);

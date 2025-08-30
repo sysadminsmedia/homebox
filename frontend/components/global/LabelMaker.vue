@@ -11,14 +11,14 @@
   import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogDescription,
   } from "@/components/ui/dialog";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { Button, ButtonGroup } from "@/components/ui/button";
-  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
   const { t } = useI18n();
   const { openDialog, closeDialog } = useDialog();

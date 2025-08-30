@@ -34,6 +34,9 @@
   import DatePicker from "~~/components/Form/DatePicker.vue";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { useDialog } from "@/components/ui/dialog-provider";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import FormTextArea from "~/components/Form/TextArea.vue";
+  import Button from "@/components/ui/button/Button.vue";
 
   const { openDialog, closeDialog } = useDialog();
 

@@ -23,6 +23,19 @@
   import { Switch } from "@/components/ui/switch";
   import { Card } from "@/components/ui/card";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
+  import BaseContainer from "@/components/Base/Container.vue";
+  import ItemImageDialog from "~/components/Item/ImageDialog.vue";
+  import ItemDuplicateSettings from "~/components/Item/DuplicateSettings.vue";
+  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import LabelChip from "~/components/Label/Chip.vue";
+  import DateTime from "~/components/global/DateTime.vue";
+  import LabelMaker from "~/components/global/LabelMaker.vue";
+  import Markdown from "~/components/global/Markdown.vue";
+  import BaseCard from "@/components/Base/Card.vue";
+  import CopyText from "@/components/global/CopyText.vue";
+  import DetailsSection from "~/components/global/DetailsSection/DetailsSection.vue";
+  import ItemAttachmentsList from "~/components/Item/AttachmentsList.vue";
+  import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
 
   const { t } = useI18n();
 
@@ -645,7 +658,7 @@
         </header>
         <Separator v-if="item.description" />
         <div v-if="item.description" class="prose max-w-full p-1">
-          <Markdown class="text-base" :source="item.description"> </Markdown>
+          <Markdown class="text-base" :source="item.description" />
         </div>
       </Card>
 

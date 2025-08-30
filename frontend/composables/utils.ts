@@ -59,8 +59,8 @@ export function maybeUrl(str: string): MaybeUrlResult {
     const match = str.match(/\[(.*)\]\((.*)\)/);
     if (match && match.length === 3) {
       result.isUrl = true;
-      result.text = match[1];
-      result.url = match[2];
+      result.text = match[1]!;
+      result.url = match[2]!;
     }
   } else {
     result.url = str;

@@ -1,5 +1,5 @@
-import { describe, test, expect } from "vitest";
-import { format, zeroTime, factorRange, parse } from "./datelib";
+import { describe, expect, test } from "vitest";
+import { factorRange, format, parse, zeroTime } from "./datelib";
 
 describe("format", () => {
   test("should format a date as a string", () => {

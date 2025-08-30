@@ -19,6 +19,16 @@
 
 <script setup lang="ts">
   import { useDialog } from "./ui/dialog-provider";
+  import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+  } from "@/components/ui/alert-dialog";
 
   const { text, isRevealed, confirm, cancel } = useConfirm();
   const { addAlert, removeAlert } = useDialog();

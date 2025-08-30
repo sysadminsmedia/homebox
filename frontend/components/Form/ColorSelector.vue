@@ -11,7 +11,7 @@
   const props = defineProps({
     modelValue: {
       type: String,
-      required: true,
+      required: false,
       default: "",
     },
     label: {
@@ -81,7 +81,7 @@
         :aria-label="`${t('components.color_selector.color')}: ${modelValue || t('components.color_selector.no_color_selected')}`"
         role="button"
         tabindex="0"
-        @click="$refs.colorInput.click()"
+        @click="($refs.colorInput as HTMLInputElement).click()"
       />
       <span v-if="showHex" class="font-mono text-xs text-muted-foreground">{{
         modelValue || t("components.color_selector.no_color")
@@ -122,7 +122,7 @@
         :aria-label="`${t('components.color_selector.color')}: ${modelValue || t('components.color_selector.no_color_selected')}`"
         role="button"
         tabindex="0"
-        @click="$refs.colorInput.click()"
+        @click="($refs.colorInput as HTMLInputElement).click()"
       />
       <span v-if="showHex" class="font-mono text-xs text-muted-foreground">{{
         modelValue || t("components.color_selector.no_color")

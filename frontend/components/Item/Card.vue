@@ -32,7 +32,7 @@
                 {{ $t("global.archived") }}
               </TooltipContent>
             </Tooltip>
-            <div class="grow"></div>
+            <div class="grow" />
             <Tooltip>
               <TooltipTrigger>
                 <Badge>
@@ -62,6 +62,8 @@
   import { Card } from "@/components/ui/card";
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
   import { Separator } from "@/components/ui/separator";
+  import Markdown from "@/components/global/Markdown.vue";
+  import LabelChip from "@/components/Label/Chip.vue";
 
   const api = useUserApi();
 

@@ -1,28 +1,29 @@
-import { computed, type ComputedRef } from 'vue';
-import { createContext } from 'reka-ui';
-import { useMagicKeys, useActiveElement } from '@vueuse/core';
-import type { BarcodeProduct } from '~~/lib/api/types/data-contracts';
+/* eslint-disable @typescript-eslint/unified-signatures */
+import { computed, type ComputedRef } from "vue";
+import { createContext } from "reka-ui";
+import { useMagicKeys, useActiveElement } from "@vueuse/core";
+import type { BarcodeProduct } from "~~/lib/api/types/data-contracts";
 
 export enum DialogID {
-  AttachmentEdit = 'attachment-edit',
-  ChangePassword = 'changePassword',
-  CreateItem = 'create-item',
-  CreateLocation = 'create-location',
-  CreateLabel = 'create-label',
-  CreateNotifier = 'create-notifier',
-  DuplicateSettings = 'duplicate-settings',
-  DuplicateTemporarySettings = 'duplicate-temporary-settings',
-  EditMaintenance = 'edit-maintenance',
-  Import = 'import',
-  ItemImage = 'item-image',
-  ItemTableSettings = 'item-table-settings',
-  PrintLabel = 'print-label',
-  ProductImport = 'product-import',
-  QuickMenu = 'quick-menu',
-  Scanner = 'scanner',
-  PageQRCode = 'page-qr-code',
-  UpdateLabel = 'update-label',
-  UpdateLocation = 'update-location',
+  AttachmentEdit = "attachment-edit",
+  ChangePassword = "changePassword",
+  CreateItem = "create-item",
+  CreateLocation = "create-location",
+  CreateLabel = "create-label",
+  CreateNotifier = "create-notifier",
+  DuplicateSettings = "duplicate-settings",
+  DuplicateTemporarySettings = "duplicate-temporary-settings",
+  EditMaintenance = "edit-maintenance",
+  Import = "import",
+  ItemImage = "item-image",
+  ItemTableSettings = "item-table-settings",
+  PrintLabel = "print-label",
+  ProductImport = "product-import",
+  QuickMenu = "quick-menu",
+  Scanner = "scanner",
+  PageQRCode = "page-qr-code",
+  UpdateLabel = "update-label",
+  UpdateLocation = "update-location",
 }
 
 /**
@@ -31,21 +32,22 @@ export enum DialogID {
  * - Keys not present       => no params allowed
  */
 export type DialogParamsMap = {
-  [DialogID.ItemImage]:
-    | ({
-        type: 'preloaded';
+  [DialogID.ItemImage]: (
+    | {
+        type: "preloaded";
         originalSrc: string;
         originalType?: string;
         thumbnailSrc?: string;
       }
     | {
-        type: 'attachment';
+        type: "attachment";
         mimeType: string;
         thumbnailId?: string;
-      }) & {
-        itemId: string;
-        attachmentId: string;
-      };
+      }
+  ) & {
+    itemId: string;
+    attachmentId: string;
+  };
   [DialogID.CreateItem]?: { product?: BarcodeProduct };
   [DialogID.ProductImport]?: { barcode?: string };
 };
@@ -54,11 +56,12 @@ export type DialogParamsMap = {
  * Defines the payload type for a dialog's onClose callback.
  */
 export type DialogResultMap = {
-  [DialogID.ItemImage]?: { action: 'delete', id: string };
+  [DialogID.ItemImage]?: { action: "delete"; id: string };
 };
 
 /** Helpers to split IDs by requirement */
 type OptionalKeys<T> = {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   [K in keyof T]-?: {} extends Pick<T, K> ? K : never;
 }[keyof T];
 
@@ -69,13 +72,9 @@ export type NoParamDialogIDs = Exclude<DialogID, SpecifiedDialogIDs>;
 export type RequiredDialogIDs = RequiredKeys<DialogParamsMap>;
 export type OptionalDialogIDs = OptionalKeys<DialogParamsMap>;
 
-type ParamsOf<T extends DialogID> = T extends SpecifiedDialogIDs
-  ? DialogParamsMap[T]
-  : never;
+type ParamsOf<T extends DialogID> = T extends SpecifiedDialogIDs ? DialogParamsMap[T] : never;
 
-type ResultOf<T extends DialogID> = T extends keyof DialogResultMap
-  ? DialogResultMap[T]
-  : void;
+type ResultOf<T extends DialogID> = T extends keyof DialogResultMap ? DialogResultMap[T] : void;
 
 type OpenDialog = {
   // Dialogs with no parameters
@@ -101,22 +100,14 @@ type CloseDialog = {
   // Close a specific dialog that has a defined result type.
   <T extends keyof DialogResultMap>(dialogId: T, result?: ResultOf<T>): void;
   // Close a specific dialog that has NO defined result type.
-  <T extends Exclude<DialogID, keyof DialogResultMap>>(
-    dialogId: T,
-    result?: never
-  ): void;
+  <T extends Exclude<DialogID, keyof DialogResultMap>>(dialogId: T, result?: never): void;
+  <T extends DialogID>(dialogId: T): void;
 };
 
 type OpenCallback = {
   <T extends NoParamDialogIDs>(dialogId: T, cb: () => void): () => void;
-  <T extends RequiredDialogIDs>(
-    dialogId: T,
-    cb: (params: ParamsOf<T>) => void
-  ): () => void;
-  <T extends OptionalDialogIDs>(
-    dialogId: T,
-    cb: (params?: ParamsOf<T>) => void
-  ): () => void;
+  <T extends RequiredDialogIDs>(dialogId: T, cb: (params: ParamsOf<T>) => void): () => void;
+  <T extends OptionalDialogIDs>(dialogId: T, cb: (params?: ParamsOf<T>) => void): () => void;
 };
 
 export const [useDialog, provideDialogContext] = createContext<{
@@ -127,7 +118,7 @@ export const [useDialog, provideDialogContext] = createContext<{
   closeDialog: CloseDialog;
   addAlert: (alertId: string) => void;
   removeAlert: (alertId: string) => void;
-}>('DialogProvider');
+}>("DialogProvider");
 
 /**
  * Hotkey helper:
@@ -140,36 +131,27 @@ type HotkeyKey = {
   code: string;
 };
 
-export function useDialogHotkey<T extends NoParamDialogIDs | OptionalDialogIDs>(
-  dialogId: T,
-  key: HotkeyKey
-): void;
+export function useDialogHotkey<T extends NoParamDialogIDs | OptionalDialogIDs>(dialogId: T, key: HotkeyKey): void;
 export function useDialogHotkey<T extends RequiredDialogIDs>(
   dialogId: T,
   key: HotkeyKey,
   getParams: () => ParamsOf<T>
 ): void;
-export function useDialogHotkey(
-  dialogId: DialogID,
-  key: HotkeyKey,
-  getParams?: () => unknown
-) {
+export function useDialogHotkey(dialogId: DialogID, key: HotkeyKey, getParams?: () => unknown) {
   const { openDialog } = useDialog();
 
   const activeElement = useActiveElement();
 
   const notUsingInput = computed(
-    () =>
-      activeElement.value?.tagName !== 'INPUT' &&
-      activeElement.value?.tagName !== 'TEXTAREA'
+    () => activeElement.value?.tagName !== "INPUT" && activeElement.value?.tagName !== "TEXTAREA"
   );
 
   useMagicKeys({
     passive: false,
-    onEventFired: (event) => {
+    onEventFired: event => {
       if (
         notUsingInput.value &&
-        event.type === 'keydown' &&
+        event.type === "keydown" &&
         event.code === key.code &&
         (key.shift === undefined || event.shiftKey === key.shift) &&
         (key.ctrl === undefined || event.ctrlKey === key.ctrl)

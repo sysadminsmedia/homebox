@@ -34,6 +34,9 @@
   import BaseModal from "@/components/App/CreateModal.vue";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
   import ColorSelector from "@/components/Form/ColorSelector.vue";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import FormTextArea from "~/components/Form/TextArea.vue";
+  import { Button, ButtonGroup } from "~/components/ui/button";
 
   const { t } = useI18n();
 
@@ -72,7 +75,7 @@
 
     loading.value = true;
 
-    if (shift.value) close = false;
+    if (shift?.value) close = false;
 
     const { error, data } = await api.labels.create(form);
 

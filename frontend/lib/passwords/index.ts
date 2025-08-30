@@ -23,8 +23,8 @@ export function scorePassword(pass: string): number {
   const letters: { [key: string]: number } = {};
 
   for (let i = 0; i < pass.length; i++) {
-    letters[pass[i]] = (letters[pass[i]] || 0) + 1;
-    score += 5.0 / letters[pass[i]];
+    letters[pass[i]!] = (letters[pass[i]!] || 0) + 1;
+    score += 5.0 / letters[pass[i]!]!;
   }
 
   // bonus points for mixing it up
