@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("valid login", async ({ page }) => {
   await page.goto("/home");
+  await page.waitForTimeout(1000); // Wait for vue to load
   await expect(page).toHaveURL("/");
   await page.fill("input[type='text']", "demo@example.com");
   await page.fill("input[type='password']", "demo");
