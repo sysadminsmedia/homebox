@@ -18,6 +18,7 @@
   import FormTextField from "~/components/Form/TextField.vue";
   import FormPassword from "~/components/Form/Password.vue";
   import FormCheckbox from "~/components/Form/Checkbox.vue";
+  import PasswordScore from "~/components/global/PasswordScore.vue";
 
   const { t } = useI18n();
 
