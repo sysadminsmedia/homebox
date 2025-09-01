@@ -1047,3 +1047,31 @@
   --header-height: 4rem;
   --header-height-mobile: 7rem;
 }
+
+/* Non-scoped styles for regular text */
+.break-all {
+  word-break: break-all;
+  max-width: 100%;
+}
+
+/* Handle very long words */
+pre,
+code,
+a,
+p,
+span,
+div,
+td,
+th,
+li,
+blockquote,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: anywhere;
+  word-break: normal;
+  hyphens: auto;
+}
