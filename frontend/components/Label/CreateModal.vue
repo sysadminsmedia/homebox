@@ -12,7 +12,7 @@
       <FormTextArea
         v-model="form.description"
         :label="$t('components.label.create_modal.label_description')"
-        :max-length="255"
+        :max-length="1000"
       />
       <ColorSelector v-model="form.color" :label="$t('components.label.create_modal.label_color')" :show-hex="true" />
       <div class="mt-4 flex flex-row-reverse">

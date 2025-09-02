@@ -3,8 +3,9 @@ package repo
 import (
 	"context"
 	"fmt"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"time"
+
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
@@ -44,6 +45,13 @@ type (
 		IncludeArchived  bool         `json:"includeArchived"`
 		Fields           []FieldQuery `json:"fields"`
 		OrderBy          string       `json:"orderBy"`
+	}
+
+	DuplicateOptions struct {
+		CopyMaintenance  bool   `json:"copyMaintenance"`
+		CopyAttachments  bool   `json:"copyAttachments"`
+		CopyCustomFields bool   `json:"copyCustomFields"`
+		CopyPrefix       string `json:"copyPrefix"`
 	}
 
 	ItemField struct {
@@ -1010,4 +1018,165 @@ func (e *ItemsRepository) SetPrimaryPhotos(ctx context.Context, gid uuid.UUID) (
 	}
 
 	return updated, nil
+}
+
+// Duplicate creates a copy of an item with configurable options for what data to copy.
+// The new item will have the next available asset ID and a customizable prefix in the name.
+func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, options DuplicateOptions) (ItemOut, error) {
+	tx, err := e.db.Tx(ctx)
+	if err != nil {
+		return ItemOut{}, err
+	}
+	committed := false
+	defer func() {
+		if !committed {
+			if err := tx.Rollback(); err != nil {
+				log.Warn().Err(err).Msg("failed to rollback transaction during item duplication")
+			}
+		}
+	}()
+
+	// Get the original item with all its data
+	originalItem, err := e.getOne(ctx, item.ID(id), item.HasGroupWith(group.ID(gid)))
+	if err != nil {
+		return ItemOut{}, err
+	}
+
+	nextAssetID, err := e.GetHighestAssetID(ctx, gid)
+	if err != nil {
+		return ItemOut{}, err
+	}
+	nextAssetID++
+
+	// Set default copy prefix if not provided
+	if options.CopyPrefix == "" {
+		options.CopyPrefix = "Copy of "
+	}
+
+	// Create the new item directly in the transaction
+	newItemID := uuid.New()
+	itemBuilder := tx.Item.Create().
+		SetID(newItemID).
+		SetName(options.CopyPrefix + originalItem.Name).
+		SetDescription(originalItem.Description).
+		SetQuantity(originalItem.Quantity).
+		SetLocationID(originalItem.Location.ID).
+		SetGroupID(gid).
+		SetAssetID(int(nextAssetID)).
+		SetSerialNumber(originalItem.SerialNumber).
+		SetModelNumber(originalItem.ModelNumber).
+		SetManufacturer(originalItem.Manufacturer).
+		SetLifetimeWarranty(originalItem.LifetimeWarranty).
+		SetWarrantyExpires(originalItem.WarrantyExpires.Time()).
+		SetWarrantyDetails(originalItem.WarrantyDetails).
+		SetPurchaseTime(originalItem.PurchaseTime.Time()).
+		SetPurchaseFrom(originalItem.PurchaseFrom).
+		SetPurchasePrice(originalItem.PurchasePrice).
+		SetSoldTime(originalItem.SoldTime.Time()).
+		SetSoldTo(originalItem.SoldTo).
+		SetSoldPrice(originalItem.SoldPrice).
+		SetSoldNotes(originalItem.SoldNotes).
+		SetNotes(originalItem.Notes).
+		SetInsured(originalItem.Insured).
+		SetArchived(originalItem.Archived).
+		SetSyncChildItemsLocations(originalItem.SyncChildItemsLocations)
+
+	if originalItem.Parent != nil {
+		itemBuilder.SetParentID(originalItem.Parent.ID)
+	}
+
+	// Add labels
+	if len(originalItem.Labels) > 0 {
+		labelIDs := make([]uuid.UUID, len(originalItem.Labels))
+		for i, label := range originalItem.Labels {
+			labelIDs[i] = label.ID
+		}
+		itemBuilder.AddLabelIDs(labelIDs...)
+	}
+
+	_, err = itemBuilder.Save(ctx)
+	if err != nil {
+		return ItemOut{}, err
+	}
+
+	// Copy custom fields if requested
+	if options.CopyCustomFields {
+		for _, field := range originalItem.Fields {
+			_, err = tx.ItemField.Create().
+				SetItemID(newItemID).
+				SetType(itemfield.Type(field.Type)).
+				SetName(field.Name).
+				SetTextValue(field.TextValue).
+				SetNumberValue(field.NumberValue).
+				SetBooleanValue(field.BooleanValue).
+				Save(ctx)
+			if err != nil {
+				log.Warn().Err(err).Str("field_name", field.Name).Msg("failed to copy custom field during duplication")
+				continue
+			}
+		}
+	}
+
+	// Copy attachments if requested
+	if options.CopyAttachments {
+		for _, att := range originalItem.Attachments {
+			// Get the original attachment file
+			originalAttachment, err := tx.Attachment.Query().
+				Where(attachment.ID(att.ID)).
+				Only(ctx)
+			if err != nil {
+				// Log error but continue to copy other attachments
+				log.Warn().Err(err).Str("attachment_id", att.ID.String()).Msg("failed to find attachment during duplication")
+				continue
+			}
+
+			// Create a copy of the attachment with the same file path
+			// Since files are stored with hash-based paths, this is safe
+			_, err = tx.Attachment.Create().
+				SetItemID(newItemID).
+				SetType(originalAttachment.Type).
+				SetTitle(originalAttachment.Title).
+				SetPath(originalAttachment.Path).
+				SetMimeType(originalAttachment.MimeType).
+				SetPrimary(originalAttachment.Primary).
+				Save(ctx)
+			if err != nil {
+				log.Warn().Err(err).Str("original_attachment_id", att.ID.String()).Msg("failed to copy attachment during duplication")
+				continue
+			}
+		}
+	}
+
+	// Copy maintenance entries if requested
+	if options.CopyMaintenance {
+		maintenanceEntries, err := tx.MaintenanceEntry.Query().
+			Where(maintenanceentry.HasItemWith(item.ID(id))).
+			All(ctx)
+		if err == nil {
+			for _, entry := range maintenanceEntries {
+				_, err = tx.MaintenanceEntry.Create().
+					SetItemID(newItemID).
+					SetDate(entry.Date).
+					SetScheduledDate(entry.ScheduledDate).
+					SetName(entry.Name).
+					SetDescription(entry.Description).
+					SetCost(entry.Cost).
+					Save(ctx)
+				if err != nil {
+					log.Warn().Err(err).Str("maintenance_entry_id", entry.ID.String()).Msg("failed to copy maintenance entry during duplication")
+					continue
+				}
+			}
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return ItemOut{}, err
+	}
+	committed = true
+
+	e.publishMutationEvent(gid)
+
+	// Get the final item with all copied data
+	return e.GetOne(ctx, newItemID)
 }

@@ -209,7 +209,7 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 		}(bucket)
 
 		// Set the Content-Disposition header for RFC6266 compliance
-		disposition := "attachment; filename*=UTF-8''" + url.QueryEscape(doc.Title)
+		disposition := "inline; filename*=UTF-8''" + url.QueryEscape(doc.Title)
 		w.Header().Set("Content-Disposition", disposition)
 		http.ServeContent(w, r, doc.Title, doc.CreatedAt, file)
 		return nil

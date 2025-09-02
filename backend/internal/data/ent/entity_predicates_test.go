@@ -58,15 +58,6 @@ func TestSQLiteNormalizeExpression(t *testing.T) {
 	assert.Contains(t, result, "'ó'", "Should handle Spanish ó")
 }
 
-func TestPostgreSQLNormalizeExpression(t *testing.T) {
-	result := buildPostgreSQLNormalizeExpression("test_field")
-
-	// Should contain unaccent function and CASE WHEN logic
-	assert.Contains(t, result, "unaccent(")
-	assert.Contains(t, result, "CASE WHEN EXISTS")
-	assert.Contains(t, result, "test_field")
-}
-
 func TestAccentInsensitivePredicateCreation(t *testing.T) {
 	tests := []struct {
 		name        string

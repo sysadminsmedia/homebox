@@ -15,6 +15,7 @@
   import "@vuepic/vue-datepicker/dist/main.css";
   import * as datelib from "~/lib/datelib/datelib";
   import { Label } from "@/components/ui/label";
+  import { darkThemes } from "~/lib/data/themes";
 
   const emit = defineEmits(["update:modelValue", "update:text"]);
 
@@ -34,7 +35,7 @@
     },
   });
 
-  const isDark = useIsDark();
+  const isDark = useIsThemeInList(darkThemes);
 
   const formatDate = (date: Date | string | number) => fmtDate(date, "human", "date");
 

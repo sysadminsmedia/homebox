@@ -122,19 +122,19 @@
                 "upload_photos": "Upload Photos",
                 "uploaded": "Uploaded Photo"
             },
+            "product_import": {
+                "barcode": "Product's barcode",
+                "db_source": "DB source",
+                "error_exception": "Exception occured while retrieving item barcode: ",
+                "error_invalid_barcode": "Invalid barcode provided",
+                "error_not_found": "No product found with given barcode.",
+                "search_item": "Search product",
+                "title": "Import product"
+            },
             "selector": {
                 "no_results": "No Results Found",
                 "placeholder": "Select…",
                 "search_placeholder": "Type to search…"
-            },
-            "product_import": {
-                "title": "Import product",
-                "barcode": "Product's barcode",
-                "db_source": "DB source",
-                "search_item": "Search product",
-                "error_invalid_barcode": "Invalid barcode provided",
-                "error_exception": "Exception occured while retrieving item barcode: ",
-                "error_not_found": "No product found with give barcode."
             },
             "view": {
                 "selectable": {
@@ -289,6 +289,18 @@
         "delete_attachment_confirm": "Are you sure you want to delete this attachment?",
         "delete_item_confirm": "Are you sure you want to delete this item?",
         "description": "Description",
+        "duplicate": {
+            "prefix": "Copy of ",
+            "copy_maintenance": "Copy Maintenance",
+            "copy_attachments": "Copy Attachments",
+            "copy_custom_fields": "Copy Custom Fields",
+            "custom_prefix": "Copy Prefix",
+            "enable_custom_prefix": "Enable Custom Prefix",
+            "prefix_instructions": "This prefix will be added to the beginning of the duplicated item's name. Include a space at the end of the prefix to add a space between the prefix and the item name.",
+            "temporary_title": "Temporary Settings",
+            "title": "Duplicate Settings",
+            "override_instructions": "Hold shift when clicking the duplicate button to override these settings."
+        },
         "details": "Details",
         "drag_and_drop": "Drag and drop files here or click to select files",
         "edit": {
@@ -299,7 +311,8 @@
                 "primary_photo_sub": "This option is only available for photos. Only one photo can be primary. If you select this option, the current primary photo, if any will be unselected.",
                 "select_type": "Select a type",
                 "title": "Attachment Edit"
-            }
+            },
+            "view_image": "View Image"
         },
         "edit_details": "Edit Details",
         "field_selector": "Field Selector",
@@ -397,6 +410,7 @@
         "update_label": "Update Label"
     },
     "languages": {
+        "bs-BA": "Bosnian (Bosnia and Herzegovina)",
         "ca": "Catalan",
         "cs-CZ": "Czech",
         "da-DK": "Danish",
@@ -427,6 +441,7 @@
         "th-TH": "Thai",
         "tr": "Turkish",
         "uk-UA": "Ukrainian",
+        "vi-VN": "Vietnamese",
         "zh-CN": "Chinese (Simplified)",
         "zh-HK": "Chinese (Hong Kong)",
         "zh-MO": "Chinese (Macau)",
@@ -573,15 +588,15 @@
         }
     },
     "scanner": {
+        "barcode_detected_message": "product barcode detected",
+        "barcode_fetch_data": "Fetch product data",
         "error": "An error occurred while scanning",
         "invalid_url": "Invalid barcode URL",
         "no_sources": "No video sources available",
         "permission_denied": "Camera permission denied, please allow access to the camera in your browser settings",
         "select_video_source": "Pick a video source",
         "title": "Scanner",
-        "unsupported": "Media Stream API is not supported without HTTPS",
-        "barcode_detected_message": "product barcode detected",
-        "barcode_fetch_data": "Fetch product data"
+        "unsupported": "Media Stream API is not supported without HTTPS"
     },
     "tools": {
         "actions": "Inventory Actions",

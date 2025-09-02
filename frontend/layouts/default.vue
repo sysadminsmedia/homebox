@@ -42,7 +42,7 @@
                 v-for="btn in dropdown"
                 :key="btn.id"
                 class="group cursor-pointer text-lg"
-                @click="openDialog(btn.dialogId)"
+                @click="openDialog(btn.dialogId as NoParamDialogIDs)"
               >
                 {{ btn.name.value }}
                 <Shortcut
@@ -210,7 +210,7 @@
   import { Input } from "~/components/ui/input";
   import { Button } from "~/components/ui/button";
   import { toast } from "@/components/ui/sonner";
-  import { DialogID } from "~/components/ui/dialog-provider/utils";
+  import { DialogID, type NoParamDialogIDs, type OptionalDialogIDs } from "~/components/ui/dialog-provider/utils";
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
@@ -269,7 +269,7 @@
     id: number;
     name: ComputedRef<string>;
     shortcut: string;
-    dialogId: DialogID;
+    dialogId: NoParamDialogIDs | OptionalDialogIDs;
   };
 
   const dropdown: DropdownItem[] = [
@@ -343,7 +343,7 @@
   const quickMenuActions = reactive([
     ...dropdown.map(v => ({
       text: computed(() => v.name.value),
-      dialogId: v.dialogId,
+      dialogId: v.dialogId as NoParamDialogIDs,
       shortcut: v.shortcut.split("+")[1],
       type: "create" as const,
     })),

@@ -33,13 +33,15 @@ func AccentInsensitiveContains(field string, searchValue string) predicate.Entit
 				"%"+normalizedSearch+"%",
 			))
 		case "postgres":
-			// For PostgreSQL, try to use unaccent extension if available
-			// Fall back to REPLACE-based normalization if not available
-			normalizeFunc := buildPostgreSQLNormalizeExpression(s.C(field))
-			s.Where(sql.ExprP(
-				"LOWER("+normalizeFunc+") LIKE ?",
-				"%"+normalizedSearch+"%",
-			))
+			// For PostgreSQL, use REPLACE-based normalization to avoid unaccent dependency
+			normalizeFunc := buildGenericNormalizeExpression(s.C(field))
+			// Use sql.P() for proper PostgreSQL parameter binding ($1, $2, etc.)
+			s.Where(sql.P(func(b *sql.Builder) {
+				b.WriteString("LOWER(")
+				b.WriteString(normalizeFunc)
+				b.WriteString(") LIKE ")
+				b.Arg("%" + normalizedSearch + "%")
+			}))
 		default:
 			// Default fallback using REPLACE for common accented characters
 			normalizeFunc := buildGenericNormalizeExpression(s.C(field))
@@ -54,15 +56,6 @@ func AccentInsensitiveContains(field string, searchValue string) predicate.Entit
 // buildSQLiteNormalizeExpression creates a SQLite expression to normalize accented characters
 func buildSQLiteNormalizeExpression(fieldExpr string) string {
 	return buildGenericNormalizeExpression(fieldExpr)
-}
-
-// buildPostgreSQLNormalizeExpression creates a PostgreSQL expression to normalize accented characters
-func buildPostgreSQLNormalizeExpression(fieldExpr string) string {
-	// Use a CASE statement to check if unaccent function exists before using it
-	// This prevents errors when the unaccent extension is not installed
-	return "CASE WHEN EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'unaccent') " +
-		"THEN unaccent(" + fieldExpr + ") " +
-		"ELSE " + buildGenericNormalizeExpression(fieldExpr) + " END"
 }
 
 // buildGenericNormalizeExpression creates a database-agnostic expression to normalize common accented characters
