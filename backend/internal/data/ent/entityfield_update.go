@@ -25,179 +25,179 @@ type EntityFieldUpdate struct {
 }
 
 // Where appends a list predicates to the EntityFieldUpdate builder.
-func (efu *EntityFieldUpdate) Where(ps ...predicate.EntityField) *EntityFieldUpdate {
-	efu.mutation.Where(ps...)
-	return efu
+func (_u *EntityFieldUpdate) Where(ps ...predicate.EntityField) *EntityFieldUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (efu *EntityFieldUpdate) SetUpdatedAt(t time.Time) *EntityFieldUpdate {
-	efu.mutation.SetUpdatedAt(t)
-	return efu
+func (_u *EntityFieldUpdate) SetUpdatedAt(v time.Time) *EntityFieldUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetName sets the "name" field.
-func (efu *EntityFieldUpdate) SetName(s string) *EntityFieldUpdate {
-	efu.mutation.SetName(s)
-	return efu
+func (_u *EntityFieldUpdate) SetName(v string) *EntityFieldUpdate {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (efu *EntityFieldUpdate) SetNillableName(s *string) *EntityFieldUpdate {
-	if s != nil {
-		efu.SetName(*s)
+func (_u *EntityFieldUpdate) SetNillableName(v *string) *EntityFieldUpdate {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return efu
+	return _u
 }
 
 // SetDescription sets the "description" field.
-func (efu *EntityFieldUpdate) SetDescription(s string) *EntityFieldUpdate {
-	efu.mutation.SetDescription(s)
-	return efu
+func (_u *EntityFieldUpdate) SetDescription(v string) *EntityFieldUpdate {
+	_u.mutation.SetDescription(v)
+	return _u
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (efu *EntityFieldUpdate) SetNillableDescription(s *string) *EntityFieldUpdate {
-	if s != nil {
-		efu.SetDescription(*s)
+func (_u *EntityFieldUpdate) SetNillableDescription(v *string) *EntityFieldUpdate {
+	if v != nil {
+		_u.SetDescription(*v)
 	}
-	return efu
+	return _u
 }
 
 // ClearDescription clears the value of the "description" field.
-func (efu *EntityFieldUpdate) ClearDescription() *EntityFieldUpdate {
-	efu.mutation.ClearDescription()
-	return efu
+func (_u *EntityFieldUpdate) ClearDescription() *EntityFieldUpdate {
+	_u.mutation.ClearDescription()
+	return _u
 }
 
 // SetType sets the "type" field.
-func (efu *EntityFieldUpdate) SetType(e entityfield.Type) *EntityFieldUpdate {
-	efu.mutation.SetType(e)
-	return efu
+func (_u *EntityFieldUpdate) SetType(v entityfield.Type) *EntityFieldUpdate {
+	_u.mutation.SetType(v)
+	return _u
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (efu *EntityFieldUpdate) SetNillableType(e *entityfield.Type) *EntityFieldUpdate {
-	if e != nil {
-		efu.SetType(*e)
+func (_u *EntityFieldUpdate) SetNillableType(v *entityfield.Type) *EntityFieldUpdate {
+	if v != nil {
+		_u.SetType(*v)
 	}
-	return efu
+	return _u
 }
 
 // SetTextValue sets the "text_value" field.
-func (efu *EntityFieldUpdate) SetTextValue(s string) *EntityFieldUpdate {
-	efu.mutation.SetTextValue(s)
-	return efu
+func (_u *EntityFieldUpdate) SetTextValue(v string) *EntityFieldUpdate {
+	_u.mutation.SetTextValue(v)
+	return _u
 }
 
 // SetNillableTextValue sets the "text_value" field if the given value is not nil.
-func (efu *EntityFieldUpdate) SetNillableTextValue(s *string) *EntityFieldUpdate {
-	if s != nil {
-		efu.SetTextValue(*s)
+func (_u *EntityFieldUpdate) SetNillableTextValue(v *string) *EntityFieldUpdate {
+	if v != nil {
+		_u.SetTextValue(*v)
 	}
-	return efu
+	return _u
 }
 
 // ClearTextValue clears the value of the "text_value" field.
-func (efu *EntityFieldUpdate) ClearTextValue() *EntityFieldUpdate {
-	efu.mutation.ClearTextValue()
-	return efu
+func (_u *EntityFieldUpdate) ClearTextValue() *EntityFieldUpdate {
+	_u.mutation.ClearTextValue()
+	return _u
 }
 
 // SetNumberValue sets the "number_value" field.
-func (efu *EntityFieldUpdate) SetNumberValue(i int) *EntityFieldUpdate {
-	efu.mutation.ResetNumberValue()
-	efu.mutation.SetNumberValue(i)
-	return efu
+func (_u *EntityFieldUpdate) SetNumberValue(v int) *EntityFieldUpdate {
+	_u.mutation.ResetNumberValue()
+	_u.mutation.SetNumberValue(v)
+	return _u
 }
 
 // SetNillableNumberValue sets the "number_value" field if the given value is not nil.
-func (efu *EntityFieldUpdate) SetNillableNumberValue(i *int) *EntityFieldUpdate {
-	if i != nil {
-		efu.SetNumberValue(*i)
+func (_u *EntityFieldUpdate) SetNillableNumberValue(v *int) *EntityFieldUpdate {
+	if v != nil {
+		_u.SetNumberValue(*v)
 	}
-	return efu
+	return _u
 }
 
-// AddNumberValue adds i to the "number_value" field.
-func (efu *EntityFieldUpdate) AddNumberValue(i int) *EntityFieldUpdate {
-	efu.mutation.AddNumberValue(i)
-	return efu
+// AddNumberValue adds value to the "number_value" field.
+func (_u *EntityFieldUpdate) AddNumberValue(v int) *EntityFieldUpdate {
+	_u.mutation.AddNumberValue(v)
+	return _u
 }
 
 // ClearNumberValue clears the value of the "number_value" field.
-func (efu *EntityFieldUpdate) ClearNumberValue() *EntityFieldUpdate {
-	efu.mutation.ClearNumberValue()
-	return efu
+func (_u *EntityFieldUpdate) ClearNumberValue() *EntityFieldUpdate {
+	_u.mutation.ClearNumberValue()
+	return _u
 }
 
 // SetBooleanValue sets the "boolean_value" field.
-func (efu *EntityFieldUpdate) SetBooleanValue(b bool) *EntityFieldUpdate {
-	efu.mutation.SetBooleanValue(b)
-	return efu
+func (_u *EntityFieldUpdate) SetBooleanValue(v bool) *EntityFieldUpdate {
+	_u.mutation.SetBooleanValue(v)
+	return _u
 }
 
 // SetNillableBooleanValue sets the "boolean_value" field if the given value is not nil.
-func (efu *EntityFieldUpdate) SetNillableBooleanValue(b *bool) *EntityFieldUpdate {
-	if b != nil {
-		efu.SetBooleanValue(*b)
+func (_u *EntityFieldUpdate) SetNillableBooleanValue(v *bool) *EntityFieldUpdate {
+	if v != nil {
+		_u.SetBooleanValue(*v)
 	}
-	return efu
+	return _u
 }
 
 // SetTimeValue sets the "time_value" field.
-func (efu *EntityFieldUpdate) SetTimeValue(t time.Time) *EntityFieldUpdate {
-	efu.mutation.SetTimeValue(t)
-	return efu
+func (_u *EntityFieldUpdate) SetTimeValue(v time.Time) *EntityFieldUpdate {
+	_u.mutation.SetTimeValue(v)
+	return _u
 }
 
 // SetNillableTimeValue sets the "time_value" field if the given value is not nil.
-func (efu *EntityFieldUpdate) SetNillableTimeValue(t *time.Time) *EntityFieldUpdate {
-	if t != nil {
-		efu.SetTimeValue(*t)
+func (_u *EntityFieldUpdate) SetNillableTimeValue(v *time.Time) *EntityFieldUpdate {
+	if v != nil {
+		_u.SetTimeValue(*v)
 	}
-	return efu
+	return _u
 }
 
 // SetEntityID sets the "entity" edge to the Entity entity by ID.
-func (efu *EntityFieldUpdate) SetEntityID(id uuid.UUID) *EntityFieldUpdate {
-	efu.mutation.SetEntityID(id)
-	return efu
+func (_u *EntityFieldUpdate) SetEntityID(id uuid.UUID) *EntityFieldUpdate {
+	_u.mutation.SetEntityID(id)
+	return _u
 }
 
 // SetNillableEntityID sets the "entity" edge to the Entity entity by ID if the given value is not nil.
-func (efu *EntityFieldUpdate) SetNillableEntityID(id *uuid.UUID) *EntityFieldUpdate {
+func (_u *EntityFieldUpdate) SetNillableEntityID(id *uuid.UUID) *EntityFieldUpdate {
 	if id != nil {
-		efu = efu.SetEntityID(*id)
+		_u = _u.SetEntityID(*id)
 	}
-	return efu
+	return _u
 }
 
 // SetEntity sets the "entity" edge to the Entity entity.
-func (efu *EntityFieldUpdate) SetEntity(e *Entity) *EntityFieldUpdate {
-	return efu.SetEntityID(e.ID)
+func (_u *EntityFieldUpdate) SetEntity(v *Entity) *EntityFieldUpdate {
+	return _u.SetEntityID(v.ID)
 }
 
 // Mutation returns the EntityFieldMutation object of the builder.
-func (efu *EntityFieldUpdate) Mutation() *EntityFieldMutation {
-	return efu.mutation
+func (_u *EntityFieldUpdate) Mutation() *EntityFieldMutation {
+	return _u.mutation
 }
 
 // ClearEntity clears the "entity" edge to the Entity entity.
-func (efu *EntityFieldUpdate) ClearEntity() *EntityFieldUpdate {
-	efu.mutation.ClearEntity()
-	return efu
+func (_u *EntityFieldUpdate) ClearEntity() *EntityFieldUpdate {
+	_u.mutation.ClearEntity()
+	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (efu *EntityFieldUpdate) Save(ctx context.Context) (int, error) {
-	efu.defaults()
-	return withHooks(ctx, efu.sqlSave, efu.mutation, efu.hooks)
+func (_u *EntityFieldUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (efu *EntityFieldUpdate) SaveX(ctx context.Context) int {
-	affected, err := efu.Save(ctx)
+func (_u *EntityFieldUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -205,44 +205,44 @@ func (efu *EntityFieldUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (efu *EntityFieldUpdate) Exec(ctx context.Context) error {
-	_, err := efu.Save(ctx)
+func (_u *EntityFieldUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (efu *EntityFieldUpdate) ExecX(ctx context.Context) {
-	if err := efu.Exec(ctx); err != nil {
+func (_u *EntityFieldUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (efu *EntityFieldUpdate) defaults() {
-	if _, ok := efu.mutation.UpdatedAt(); !ok {
+func (_u *EntityFieldUpdate) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
 		v := entityfield.UpdateDefaultUpdatedAt()
-		efu.mutation.SetUpdatedAt(v)
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (efu *EntityFieldUpdate) check() error {
-	if v, ok := efu.mutation.Name(); ok {
+func (_u *EntityFieldUpdate) check() error {
+	if v, ok := _u.mutation.Name(); ok {
 		if err := entityfield.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "EntityField.name": %w`, err)}
 		}
 	}
-	if v, ok := efu.mutation.Description(); ok {
+	if v, ok := _u.mutation.Description(); ok {
 		if err := entityfield.DescriptionValidator(v); err != nil {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "EntityField.description": %w`, err)}
 		}
 	}
-	if v, ok := efu.mutation.GetType(); ok {
+	if v, ok := _u.mutation.GetType(); ok {
 		if err := entityfield.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "EntityField.type": %w`, err)}
 		}
 	}
-	if v, ok := efu.mutation.TextValue(); ok {
+	if v, ok := _u.mutation.TextValue(); ok {
 		if err := entityfield.TextValueValidator(v); err != nil {
 			return &ValidationError{Name: "text_value", err: fmt.Errorf(`ent: validator failed for field "EntityField.text_value": %w`, err)}
 		}
@@ -250,55 +250,55 @@ func (efu *EntityFieldUpdate) check() error {
 	return nil
 }
 
-func (efu *EntityFieldUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := efu.check(); err != nil {
-		return n, err
+func (_u *EntityFieldUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(entityfield.Table, entityfield.Columns, sqlgraph.NewFieldSpec(entityfield.FieldID, field.TypeUUID))
-	if ps := efu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := efu.mutation.UpdatedAt(); ok {
+	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(entityfield.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := efu.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(entityfield.FieldName, field.TypeString, value)
 	}
-	if value, ok := efu.mutation.Description(); ok {
+	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(entityfield.FieldDescription, field.TypeString, value)
 	}
-	if efu.mutation.DescriptionCleared() {
+	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(entityfield.FieldDescription, field.TypeString)
 	}
-	if value, ok := efu.mutation.GetType(); ok {
+	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(entityfield.FieldType, field.TypeEnum, value)
 	}
-	if value, ok := efu.mutation.TextValue(); ok {
+	if value, ok := _u.mutation.TextValue(); ok {
 		_spec.SetField(entityfield.FieldTextValue, field.TypeString, value)
 	}
-	if efu.mutation.TextValueCleared() {
+	if _u.mutation.TextValueCleared() {
 		_spec.ClearField(entityfield.FieldTextValue, field.TypeString)
 	}
-	if value, ok := efu.mutation.NumberValue(); ok {
+	if value, ok := _u.mutation.NumberValue(); ok {
 		_spec.SetField(entityfield.FieldNumberValue, field.TypeInt, value)
 	}
-	if value, ok := efu.mutation.AddedNumberValue(); ok {
+	if value, ok := _u.mutation.AddedNumberValue(); ok {
 		_spec.AddField(entityfield.FieldNumberValue, field.TypeInt, value)
 	}
-	if efu.mutation.NumberValueCleared() {
+	if _u.mutation.NumberValueCleared() {
 		_spec.ClearField(entityfield.FieldNumberValue, field.TypeInt)
 	}
-	if value, ok := efu.mutation.BooleanValue(); ok {
+	if value, ok := _u.mutation.BooleanValue(); ok {
 		_spec.SetField(entityfield.FieldBooleanValue, field.TypeBool, value)
 	}
-	if value, ok := efu.mutation.TimeValue(); ok {
+	if value, ok := _u.mutation.TimeValue(); ok {
 		_spec.SetField(entityfield.FieldTimeValue, field.TypeTime, value)
 	}
-	if efu.mutation.EntityCleared() {
+	if _u.mutation.EntityCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -311,7 +311,7 @@ func (efu *EntityFieldUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := efu.mutation.EntityIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -327,7 +327,7 @@ func (efu *EntityFieldUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, efu.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{entityfield.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -335,8 +335,8 @@ func (efu *EntityFieldUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	efu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // EntityFieldUpdateOne is the builder for updating a single EntityField entity.
@@ -348,186 +348,186 @@ type EntityFieldUpdateOne struct {
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (efuo *EntityFieldUpdateOne) SetUpdatedAt(t time.Time) *EntityFieldUpdateOne {
-	efuo.mutation.SetUpdatedAt(t)
-	return efuo
+func (_u *EntityFieldUpdateOne) SetUpdatedAt(v time.Time) *EntityFieldUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetName sets the "name" field.
-func (efuo *EntityFieldUpdateOne) SetName(s string) *EntityFieldUpdateOne {
-	efuo.mutation.SetName(s)
-	return efuo
+func (_u *EntityFieldUpdateOne) SetName(v string) *EntityFieldUpdateOne {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (efuo *EntityFieldUpdateOne) SetNillableName(s *string) *EntityFieldUpdateOne {
-	if s != nil {
-		efuo.SetName(*s)
+func (_u *EntityFieldUpdateOne) SetNillableName(v *string) *EntityFieldUpdateOne {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return efuo
+	return _u
 }
 
 // SetDescription sets the "description" field.
-func (efuo *EntityFieldUpdateOne) SetDescription(s string) *EntityFieldUpdateOne {
-	efuo.mutation.SetDescription(s)
-	return efuo
+func (_u *EntityFieldUpdateOne) SetDescription(v string) *EntityFieldUpdateOne {
+	_u.mutation.SetDescription(v)
+	return _u
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (efuo *EntityFieldUpdateOne) SetNillableDescription(s *string) *EntityFieldUpdateOne {
-	if s != nil {
-		efuo.SetDescription(*s)
+func (_u *EntityFieldUpdateOne) SetNillableDescription(v *string) *EntityFieldUpdateOne {
+	if v != nil {
+		_u.SetDescription(*v)
 	}
-	return efuo
+	return _u
 }
 
 // ClearDescription clears the value of the "description" field.
-func (efuo *EntityFieldUpdateOne) ClearDescription() *EntityFieldUpdateOne {
-	efuo.mutation.ClearDescription()
-	return efuo
+func (_u *EntityFieldUpdateOne) ClearDescription() *EntityFieldUpdateOne {
+	_u.mutation.ClearDescription()
+	return _u
 }
 
 // SetType sets the "type" field.
-func (efuo *EntityFieldUpdateOne) SetType(e entityfield.Type) *EntityFieldUpdateOne {
-	efuo.mutation.SetType(e)
-	return efuo
+func (_u *EntityFieldUpdateOne) SetType(v entityfield.Type) *EntityFieldUpdateOne {
+	_u.mutation.SetType(v)
+	return _u
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (efuo *EntityFieldUpdateOne) SetNillableType(e *entityfield.Type) *EntityFieldUpdateOne {
-	if e != nil {
-		efuo.SetType(*e)
+func (_u *EntityFieldUpdateOne) SetNillableType(v *entityfield.Type) *EntityFieldUpdateOne {
+	if v != nil {
+		_u.SetType(*v)
 	}
-	return efuo
+	return _u
 }
 
 // SetTextValue sets the "text_value" field.
-func (efuo *EntityFieldUpdateOne) SetTextValue(s string) *EntityFieldUpdateOne {
-	efuo.mutation.SetTextValue(s)
-	return efuo
+func (_u *EntityFieldUpdateOne) SetTextValue(v string) *EntityFieldUpdateOne {
+	_u.mutation.SetTextValue(v)
+	return _u
 }
 
 // SetNillableTextValue sets the "text_value" field if the given value is not nil.
-func (efuo *EntityFieldUpdateOne) SetNillableTextValue(s *string) *EntityFieldUpdateOne {
-	if s != nil {
-		efuo.SetTextValue(*s)
+func (_u *EntityFieldUpdateOne) SetNillableTextValue(v *string) *EntityFieldUpdateOne {
+	if v != nil {
+		_u.SetTextValue(*v)
 	}
-	return efuo
+	return _u
 }
 
 // ClearTextValue clears the value of the "text_value" field.
-func (efuo *EntityFieldUpdateOne) ClearTextValue() *EntityFieldUpdateOne {
-	efuo.mutation.ClearTextValue()
-	return efuo
+func (_u *EntityFieldUpdateOne) ClearTextValue() *EntityFieldUpdateOne {
+	_u.mutation.ClearTextValue()
+	return _u
 }
 
 // SetNumberValue sets the "number_value" field.
-func (efuo *EntityFieldUpdateOne) SetNumberValue(i int) *EntityFieldUpdateOne {
-	efuo.mutation.ResetNumberValue()
-	efuo.mutation.SetNumberValue(i)
-	return efuo
+func (_u *EntityFieldUpdateOne) SetNumberValue(v int) *EntityFieldUpdateOne {
+	_u.mutation.ResetNumberValue()
+	_u.mutation.SetNumberValue(v)
+	return _u
 }
 
 // SetNillableNumberValue sets the "number_value" field if the given value is not nil.
-func (efuo *EntityFieldUpdateOne) SetNillableNumberValue(i *int) *EntityFieldUpdateOne {
-	if i != nil {
-		efuo.SetNumberValue(*i)
+func (_u *EntityFieldUpdateOne) SetNillableNumberValue(v *int) *EntityFieldUpdateOne {
+	if v != nil {
+		_u.SetNumberValue(*v)
 	}
-	return efuo
+	return _u
 }
 
-// AddNumberValue adds i to the "number_value" field.
-func (efuo *EntityFieldUpdateOne) AddNumberValue(i int) *EntityFieldUpdateOne {
-	efuo.mutation.AddNumberValue(i)
-	return efuo
+// AddNumberValue adds value to the "number_value" field.
+func (_u *EntityFieldUpdateOne) AddNumberValue(v int) *EntityFieldUpdateOne {
+	_u.mutation.AddNumberValue(v)
+	return _u
 }
 
 // ClearNumberValue clears the value of the "number_value" field.
-func (efuo *EntityFieldUpdateOne) ClearNumberValue() *EntityFieldUpdateOne {
-	efuo.mutation.ClearNumberValue()
-	return efuo
+func (_u *EntityFieldUpdateOne) ClearNumberValue() *EntityFieldUpdateOne {
+	_u.mutation.ClearNumberValue()
+	return _u
 }
 
 // SetBooleanValue sets the "boolean_value" field.
-func (efuo *EntityFieldUpdateOne) SetBooleanValue(b bool) *EntityFieldUpdateOne {
-	efuo.mutation.SetBooleanValue(b)
-	return efuo
+func (_u *EntityFieldUpdateOne) SetBooleanValue(v bool) *EntityFieldUpdateOne {
+	_u.mutation.SetBooleanValue(v)
+	return _u
 }
 
 // SetNillableBooleanValue sets the "boolean_value" field if the given value is not nil.
-func (efuo *EntityFieldUpdateOne) SetNillableBooleanValue(b *bool) *EntityFieldUpdateOne {
-	if b != nil {
-		efuo.SetBooleanValue(*b)
+func (_u *EntityFieldUpdateOne) SetNillableBooleanValue(v *bool) *EntityFieldUpdateOne {
+	if v != nil {
+		_u.SetBooleanValue(*v)
 	}
-	return efuo
+	return _u
 }
 
 // SetTimeValue sets the "time_value" field.
-func (efuo *EntityFieldUpdateOne) SetTimeValue(t time.Time) *EntityFieldUpdateOne {
-	efuo.mutation.SetTimeValue(t)
-	return efuo
+func (_u *EntityFieldUpdateOne) SetTimeValue(v time.Time) *EntityFieldUpdateOne {
+	_u.mutation.SetTimeValue(v)
+	return _u
 }
 
 // SetNillableTimeValue sets the "time_value" field if the given value is not nil.
-func (efuo *EntityFieldUpdateOne) SetNillableTimeValue(t *time.Time) *EntityFieldUpdateOne {
-	if t != nil {
-		efuo.SetTimeValue(*t)
+func (_u *EntityFieldUpdateOne) SetNillableTimeValue(v *time.Time) *EntityFieldUpdateOne {
+	if v != nil {
+		_u.SetTimeValue(*v)
 	}
-	return efuo
+	return _u
 }
 
 // SetEntityID sets the "entity" edge to the Entity entity by ID.
-func (efuo *EntityFieldUpdateOne) SetEntityID(id uuid.UUID) *EntityFieldUpdateOne {
-	efuo.mutation.SetEntityID(id)
-	return efuo
+func (_u *EntityFieldUpdateOne) SetEntityID(id uuid.UUID) *EntityFieldUpdateOne {
+	_u.mutation.SetEntityID(id)
+	return _u
 }
 
 // SetNillableEntityID sets the "entity" edge to the Entity entity by ID if the given value is not nil.
-func (efuo *EntityFieldUpdateOne) SetNillableEntityID(id *uuid.UUID) *EntityFieldUpdateOne {
+func (_u *EntityFieldUpdateOne) SetNillableEntityID(id *uuid.UUID) *EntityFieldUpdateOne {
 	if id != nil {
-		efuo = efuo.SetEntityID(*id)
+		_u = _u.SetEntityID(*id)
 	}
-	return efuo
+	return _u
 }
 
 // SetEntity sets the "entity" edge to the Entity entity.
-func (efuo *EntityFieldUpdateOne) SetEntity(e *Entity) *EntityFieldUpdateOne {
-	return efuo.SetEntityID(e.ID)
+func (_u *EntityFieldUpdateOne) SetEntity(v *Entity) *EntityFieldUpdateOne {
+	return _u.SetEntityID(v.ID)
 }
 
 // Mutation returns the EntityFieldMutation object of the builder.
-func (efuo *EntityFieldUpdateOne) Mutation() *EntityFieldMutation {
-	return efuo.mutation
+func (_u *EntityFieldUpdateOne) Mutation() *EntityFieldMutation {
+	return _u.mutation
 }
 
 // ClearEntity clears the "entity" edge to the Entity entity.
-func (efuo *EntityFieldUpdateOne) ClearEntity() *EntityFieldUpdateOne {
-	efuo.mutation.ClearEntity()
-	return efuo
+func (_u *EntityFieldUpdateOne) ClearEntity() *EntityFieldUpdateOne {
+	_u.mutation.ClearEntity()
+	return _u
 }
 
 // Where appends a list predicates to the EntityFieldUpdate builder.
-func (efuo *EntityFieldUpdateOne) Where(ps ...predicate.EntityField) *EntityFieldUpdateOne {
-	efuo.mutation.Where(ps...)
-	return efuo
+func (_u *EntityFieldUpdateOne) Where(ps ...predicate.EntityField) *EntityFieldUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (efuo *EntityFieldUpdateOne) Select(field string, fields ...string) *EntityFieldUpdateOne {
-	efuo.fields = append([]string{field}, fields...)
-	return efuo
+func (_u *EntityFieldUpdateOne) Select(field string, fields ...string) *EntityFieldUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated EntityField entity.
-func (efuo *EntityFieldUpdateOne) Save(ctx context.Context) (*EntityField, error) {
-	efuo.defaults()
-	return withHooks(ctx, efuo.sqlSave, efuo.mutation, efuo.hooks)
+func (_u *EntityFieldUpdateOne) Save(ctx context.Context) (*EntityField, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (efuo *EntityFieldUpdateOne) SaveX(ctx context.Context) *EntityField {
-	node, err := efuo.Save(ctx)
+func (_u *EntityFieldUpdateOne) SaveX(ctx context.Context) *EntityField {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -535,44 +535,44 @@ func (efuo *EntityFieldUpdateOne) SaveX(ctx context.Context) *EntityField {
 }
 
 // Exec executes the query on the entity.
-func (efuo *EntityFieldUpdateOne) Exec(ctx context.Context) error {
-	_, err := efuo.Save(ctx)
+func (_u *EntityFieldUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (efuo *EntityFieldUpdateOne) ExecX(ctx context.Context) {
-	if err := efuo.Exec(ctx); err != nil {
+func (_u *EntityFieldUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (efuo *EntityFieldUpdateOne) defaults() {
-	if _, ok := efuo.mutation.UpdatedAt(); !ok {
+func (_u *EntityFieldUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
 		v := entityfield.UpdateDefaultUpdatedAt()
-		efuo.mutation.SetUpdatedAt(v)
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (efuo *EntityFieldUpdateOne) check() error {
-	if v, ok := efuo.mutation.Name(); ok {
+func (_u *EntityFieldUpdateOne) check() error {
+	if v, ok := _u.mutation.Name(); ok {
 		if err := entityfield.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "EntityField.name": %w`, err)}
 		}
 	}
-	if v, ok := efuo.mutation.Description(); ok {
+	if v, ok := _u.mutation.Description(); ok {
 		if err := entityfield.DescriptionValidator(v); err != nil {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "EntityField.description": %w`, err)}
 		}
 	}
-	if v, ok := efuo.mutation.GetType(); ok {
+	if v, ok := _u.mutation.GetType(); ok {
 		if err := entityfield.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "EntityField.type": %w`, err)}
 		}
 	}
-	if v, ok := efuo.mutation.TextValue(); ok {
+	if v, ok := _u.mutation.TextValue(); ok {
 		if err := entityfield.TextValueValidator(v); err != nil {
 			return &ValidationError{Name: "text_value", err: fmt.Errorf(`ent: validator failed for field "EntityField.text_value": %w`, err)}
 		}
@@ -580,17 +580,17 @@ func (efuo *EntityFieldUpdateOne) check() error {
 	return nil
 }
 
-func (efuo *EntityFieldUpdateOne) sqlSave(ctx context.Context) (_node *EntityField, err error) {
-	if err := efuo.check(); err != nil {
+func (_u *EntityFieldUpdateOne) sqlSave(ctx context.Context) (_node *EntityField, err error) {
+	if err := _u.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(entityfield.Table, entityfield.Columns, sqlgraph.NewFieldSpec(entityfield.FieldID, field.TypeUUID))
-	id, ok := efuo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "EntityField.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := efuo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, entityfield.FieldID)
 		for _, f := range fields {
@@ -602,50 +602,50 @@ func (efuo *EntityFieldUpdateOne) sqlSave(ctx context.Context) (_node *EntityFie
 			}
 		}
 	}
-	if ps := efuo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := efuo.mutation.UpdatedAt(); ok {
+	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(entityfield.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := efuo.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(entityfield.FieldName, field.TypeString, value)
 	}
-	if value, ok := efuo.mutation.Description(); ok {
+	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(entityfield.FieldDescription, field.TypeString, value)
 	}
-	if efuo.mutation.DescriptionCleared() {
+	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(entityfield.FieldDescription, field.TypeString)
 	}
-	if value, ok := efuo.mutation.GetType(); ok {
+	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(entityfield.FieldType, field.TypeEnum, value)
 	}
-	if value, ok := efuo.mutation.TextValue(); ok {
+	if value, ok := _u.mutation.TextValue(); ok {
 		_spec.SetField(entityfield.FieldTextValue, field.TypeString, value)
 	}
-	if efuo.mutation.TextValueCleared() {
+	if _u.mutation.TextValueCleared() {
 		_spec.ClearField(entityfield.FieldTextValue, field.TypeString)
 	}
-	if value, ok := efuo.mutation.NumberValue(); ok {
+	if value, ok := _u.mutation.NumberValue(); ok {
 		_spec.SetField(entityfield.FieldNumberValue, field.TypeInt, value)
 	}
-	if value, ok := efuo.mutation.AddedNumberValue(); ok {
+	if value, ok := _u.mutation.AddedNumberValue(); ok {
 		_spec.AddField(entityfield.FieldNumberValue, field.TypeInt, value)
 	}
-	if efuo.mutation.NumberValueCleared() {
+	if _u.mutation.NumberValueCleared() {
 		_spec.ClearField(entityfield.FieldNumberValue, field.TypeInt)
 	}
-	if value, ok := efuo.mutation.BooleanValue(); ok {
+	if value, ok := _u.mutation.BooleanValue(); ok {
 		_spec.SetField(entityfield.FieldBooleanValue, field.TypeBool, value)
 	}
-	if value, ok := efuo.mutation.TimeValue(); ok {
+	if value, ok := _u.mutation.TimeValue(); ok {
 		_spec.SetField(entityfield.FieldTimeValue, field.TypeTime, value)
 	}
-	if efuo.mutation.EntityCleared() {
+	if _u.mutation.EntityCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -658,7 +658,7 @@ func (efuo *EntityFieldUpdateOne) sqlSave(ctx context.Context) (_node *EntityFie
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := efuo.mutation.EntityIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -674,10 +674,10 @@ func (efuo *EntityFieldUpdateOne) sqlSave(ctx context.Context) (_node *EntityFie
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &EntityField{config: efuo.config}
+	_node = &EntityField{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, efuo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{entityfield.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -685,6 +685,6 @@ func (efuo *EntityFieldUpdateOne) sqlSave(ctx context.Context) (_node *EntityFie
 		}
 		return nil, err
 	}
-	efuo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

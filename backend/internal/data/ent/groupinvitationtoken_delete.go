@@ -20,56 +20,56 @@ type GroupInvitationTokenDelete struct {
 }
 
 // Where appends a list predicates to the GroupInvitationTokenDelete builder.
-func (gitd *GroupInvitationTokenDelete) Where(ps ...predicate.GroupInvitationToken) *GroupInvitationTokenDelete {
-	gitd.mutation.Where(ps...)
-	return gitd
+func (_d *GroupInvitationTokenDelete) Where(ps ...predicate.GroupInvitationToken) *GroupInvitationTokenDelete {
+	_d.mutation.Where(ps...)
+	return _d
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (gitd *GroupInvitationTokenDelete) Exec(ctx context.Context) (int, error) {
-	return withHooks(ctx, gitd.sqlExec, gitd.mutation, gitd.hooks)
+func (_d *GroupInvitationTokenDelete) Exec(ctx context.Context) (int, error) {
+	return withHooks(ctx, _d.sqlExec, _d.mutation, _d.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (gitd *GroupInvitationTokenDelete) ExecX(ctx context.Context) int {
-	n, err := gitd.Exec(ctx)
+func (_d *GroupInvitationTokenDelete) ExecX(ctx context.Context) int {
+	n, err := _d.Exec(ctx)
 	if err != nil {
 		panic(err)
 	}
 	return n
 }
 
-func (gitd *GroupInvitationTokenDelete) sqlExec(ctx context.Context) (int, error) {
+func (_d *GroupInvitationTokenDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := sqlgraph.NewDeleteSpec(groupinvitationtoken.Table, sqlgraph.NewFieldSpec(groupinvitationtoken.FieldID, field.TypeUUID))
-	if ps := gitd.mutation.predicates; len(ps) > 0 {
+	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	affected, err := sqlgraph.DeleteNodes(ctx, gitd.driver, _spec)
+	affected, err := sqlgraph.DeleteNodes(ctx, _d.driver, _spec)
 	if err != nil && sqlgraph.IsConstraintError(err) {
 		err = &ConstraintError{msg: err.Error(), wrap: err}
 	}
-	gitd.mutation.done = true
+	_d.mutation.done = true
 	return affected, err
 }
 
 // GroupInvitationTokenDeleteOne is the builder for deleting a single GroupInvitationToken entity.
 type GroupInvitationTokenDeleteOne struct {
-	gitd *GroupInvitationTokenDelete
+	_d *GroupInvitationTokenDelete
 }
 
 // Where appends a list predicates to the GroupInvitationTokenDelete builder.
-func (gitdo *GroupInvitationTokenDeleteOne) Where(ps ...predicate.GroupInvitationToken) *GroupInvitationTokenDeleteOne {
-	gitdo.gitd.mutation.Where(ps...)
-	return gitdo
+func (_d *GroupInvitationTokenDeleteOne) Where(ps ...predicate.GroupInvitationToken) *GroupInvitationTokenDeleteOne {
+	_d._d.mutation.Where(ps...)
+	return _d
 }
 
 // Exec executes the deletion query.
-func (gitdo *GroupInvitationTokenDeleteOne) Exec(ctx context.Context) error {
-	n, err := gitdo.gitd.Exec(ctx)
+func (_d *GroupInvitationTokenDeleteOne) Exec(ctx context.Context) error {
+	n, err := _d._d.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
@@ -81,8 +81,8 @@ func (gitdo *GroupInvitationTokenDeleteOne) Exec(ctx context.Context) error {
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (gitdo *GroupInvitationTokenDeleteOne) ExecX(ctx context.Context) {
-	if err := gitdo.Exec(ctx); err != nil {
+func (_d *GroupInvitationTokenDeleteOne) ExecX(ctx context.Context) {
+	if err := _d.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

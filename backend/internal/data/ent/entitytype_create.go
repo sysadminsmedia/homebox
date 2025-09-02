@@ -24,149 +24,149 @@ type EntityTypeCreate struct {
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (etc *EntityTypeCreate) SetCreatedAt(t time.Time) *EntityTypeCreate {
-	etc.mutation.SetCreatedAt(t)
-	return etc
+func (_c *EntityTypeCreate) SetCreatedAt(v time.Time) *EntityTypeCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (etc *EntityTypeCreate) SetNillableCreatedAt(t *time.Time) *EntityTypeCreate {
-	if t != nil {
-		etc.SetCreatedAt(*t)
+func (_c *EntityTypeCreate) SetNillableCreatedAt(v *time.Time) *EntityTypeCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
 	}
-	return etc
+	return _c
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (etc *EntityTypeCreate) SetUpdatedAt(t time.Time) *EntityTypeCreate {
-	etc.mutation.SetUpdatedAt(t)
-	return etc
+func (_c *EntityTypeCreate) SetUpdatedAt(v time.Time) *EntityTypeCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
 }
 
 // SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (etc *EntityTypeCreate) SetNillableUpdatedAt(t *time.Time) *EntityTypeCreate {
-	if t != nil {
-		etc.SetUpdatedAt(*t)
+func (_c *EntityTypeCreate) SetNillableUpdatedAt(v *time.Time) *EntityTypeCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
 	}
-	return etc
+	return _c
 }
 
 // SetName sets the "name" field.
-func (etc *EntityTypeCreate) SetName(s string) *EntityTypeCreate {
-	etc.mutation.SetName(s)
-	return etc
+func (_c *EntityTypeCreate) SetName(v string) *EntityTypeCreate {
+	_c.mutation.SetName(v)
+	return _c
 }
 
 // SetDescription sets the "description" field.
-func (etc *EntityTypeCreate) SetDescription(s string) *EntityTypeCreate {
-	etc.mutation.SetDescription(s)
-	return etc
+func (_c *EntityTypeCreate) SetDescription(v string) *EntityTypeCreate {
+	_c.mutation.SetDescription(v)
+	return _c
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (etc *EntityTypeCreate) SetNillableDescription(s *string) *EntityTypeCreate {
-	if s != nil {
-		etc.SetDescription(*s)
+func (_c *EntityTypeCreate) SetNillableDescription(v *string) *EntityTypeCreate {
+	if v != nil {
+		_c.SetDescription(*v)
 	}
-	return etc
+	return _c
 }
 
 // SetIcon sets the "icon" field.
-func (etc *EntityTypeCreate) SetIcon(s string) *EntityTypeCreate {
-	etc.mutation.SetIcon(s)
-	return etc
+func (_c *EntityTypeCreate) SetIcon(v string) *EntityTypeCreate {
+	_c.mutation.SetIcon(v)
+	return _c
 }
 
 // SetNillableIcon sets the "icon" field if the given value is not nil.
-func (etc *EntityTypeCreate) SetNillableIcon(s *string) *EntityTypeCreate {
-	if s != nil {
-		etc.SetIcon(*s)
+func (_c *EntityTypeCreate) SetNillableIcon(v *string) *EntityTypeCreate {
+	if v != nil {
+		_c.SetIcon(*v)
 	}
-	return etc
+	return _c
 }
 
 // SetColor sets the "color" field.
-func (etc *EntityTypeCreate) SetColor(s string) *EntityTypeCreate {
-	etc.mutation.SetColor(s)
-	return etc
+func (_c *EntityTypeCreate) SetColor(v string) *EntityTypeCreate {
+	_c.mutation.SetColor(v)
+	return _c
 }
 
 // SetNillableColor sets the "color" field if the given value is not nil.
-func (etc *EntityTypeCreate) SetNillableColor(s *string) *EntityTypeCreate {
-	if s != nil {
-		etc.SetColor(*s)
+func (_c *EntityTypeCreate) SetNillableColor(v *string) *EntityTypeCreate {
+	if v != nil {
+		_c.SetColor(*v)
 	}
-	return etc
+	return _c
 }
 
 // SetIsLocation sets the "is_location" field.
-func (etc *EntityTypeCreate) SetIsLocation(b bool) *EntityTypeCreate {
-	etc.mutation.SetIsLocation(b)
-	return etc
+func (_c *EntityTypeCreate) SetIsLocation(v bool) *EntityTypeCreate {
+	_c.mutation.SetIsLocation(v)
+	return _c
 }
 
 // SetNillableIsLocation sets the "is_location" field if the given value is not nil.
-func (etc *EntityTypeCreate) SetNillableIsLocation(b *bool) *EntityTypeCreate {
-	if b != nil {
-		etc.SetIsLocation(*b)
+func (_c *EntityTypeCreate) SetNillableIsLocation(v *bool) *EntityTypeCreate {
+	if v != nil {
+		_c.SetIsLocation(*v)
 	}
-	return etc
+	return _c
 }
 
 // SetID sets the "id" field.
-func (etc *EntityTypeCreate) SetID(u uuid.UUID) *EntityTypeCreate {
-	etc.mutation.SetID(u)
-	return etc
+func (_c *EntityTypeCreate) SetID(v uuid.UUID) *EntityTypeCreate {
+	_c.mutation.SetID(v)
+	return _c
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (etc *EntityTypeCreate) SetNillableID(u *uuid.UUID) *EntityTypeCreate {
-	if u != nil {
-		etc.SetID(*u)
+func (_c *EntityTypeCreate) SetNillableID(v *uuid.UUID) *EntityTypeCreate {
+	if v != nil {
+		_c.SetID(*v)
 	}
-	return etc
+	return _c
 }
 
 // SetGroupID sets the "group" edge to the Group entity by ID.
-func (etc *EntityTypeCreate) SetGroupID(id uuid.UUID) *EntityTypeCreate {
-	etc.mutation.SetGroupID(id)
-	return etc
+func (_c *EntityTypeCreate) SetGroupID(id uuid.UUID) *EntityTypeCreate {
+	_c.mutation.SetGroupID(id)
+	return _c
 }
 
 // SetGroup sets the "group" edge to the Group entity.
-func (etc *EntityTypeCreate) SetGroup(g *Group) *EntityTypeCreate {
-	return etc.SetGroupID(g.ID)
+func (_c *EntityTypeCreate) SetGroup(v *Group) *EntityTypeCreate {
+	return _c.SetGroupID(v.ID)
 }
 
 // AddEntityIDs adds the "entities" edge to the Entity entity by IDs.
-func (etc *EntityTypeCreate) AddEntityIDs(ids ...uuid.UUID) *EntityTypeCreate {
-	etc.mutation.AddEntityIDs(ids...)
-	return etc
+func (_c *EntityTypeCreate) AddEntityIDs(ids ...uuid.UUID) *EntityTypeCreate {
+	_c.mutation.AddEntityIDs(ids...)
+	return _c
 }
 
 // AddEntities adds the "entities" edges to the Entity entity.
-func (etc *EntityTypeCreate) AddEntities(e ...*Entity) *EntityTypeCreate {
-	ids := make([]uuid.UUID, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+func (_c *EntityTypeCreate) AddEntities(v ...*Entity) *EntityTypeCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return etc.AddEntityIDs(ids...)
+	return _c.AddEntityIDs(ids...)
 }
 
 // Mutation returns the EntityTypeMutation object of the builder.
-func (etc *EntityTypeCreate) Mutation() *EntityTypeMutation {
-	return etc.mutation
+func (_c *EntityTypeCreate) Mutation() *EntityTypeMutation {
+	return _c.mutation
 }
 
 // Save creates the EntityType in the database.
-func (etc *EntityTypeCreate) Save(ctx context.Context) (*EntityType, error) {
-	etc.defaults()
-	return withHooks(ctx, etc.sqlSave, etc.mutation, etc.hooks)
+func (_c *EntityTypeCreate) Save(ctx context.Context) (*EntityType, error) {
+	_c.defaults()
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (etc *EntityTypeCreate) SaveX(ctx context.Context) *EntityType {
-	v, err := etc.Save(ctx)
+func (_c *EntityTypeCreate) SaveX(ctx context.Context) *EntityType {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -174,84 +174,84 @@ func (etc *EntityTypeCreate) SaveX(ctx context.Context) *EntityType {
 }
 
 // Exec executes the query.
-func (etc *EntityTypeCreate) Exec(ctx context.Context) error {
-	_, err := etc.Save(ctx)
+func (_c *EntityTypeCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (etc *EntityTypeCreate) ExecX(ctx context.Context) {
-	if err := etc.Exec(ctx); err != nil {
+func (_c *EntityTypeCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (etc *EntityTypeCreate) defaults() {
-	if _, ok := etc.mutation.CreatedAt(); !ok {
+func (_c *EntityTypeCreate) defaults() {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
 		v := entitytype.DefaultCreatedAt()
-		etc.mutation.SetCreatedAt(v)
+		_c.mutation.SetCreatedAt(v)
 	}
-	if _, ok := etc.mutation.UpdatedAt(); !ok {
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		v := entitytype.DefaultUpdatedAt()
-		etc.mutation.SetUpdatedAt(v)
+		_c.mutation.SetUpdatedAt(v)
 	}
-	if _, ok := etc.mutation.IsLocation(); !ok {
+	if _, ok := _c.mutation.IsLocation(); !ok {
 		v := entitytype.DefaultIsLocation
-		etc.mutation.SetIsLocation(v)
+		_c.mutation.SetIsLocation(v)
 	}
-	if _, ok := etc.mutation.ID(); !ok {
+	if _, ok := _c.mutation.ID(); !ok {
 		v := entitytype.DefaultID()
-		etc.mutation.SetID(v)
+		_c.mutation.SetID(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (etc *EntityTypeCreate) check() error {
-	if _, ok := etc.mutation.CreatedAt(); !ok {
+func (_c *EntityTypeCreate) check() error {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "EntityType.created_at"`)}
 	}
-	if _, ok := etc.mutation.UpdatedAt(); !ok {
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "EntityType.updated_at"`)}
 	}
-	if _, ok := etc.mutation.Name(); !ok {
+	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "EntityType.name"`)}
 	}
-	if v, ok := etc.mutation.Name(); ok {
+	if v, ok := _c.mutation.Name(); ok {
 		if err := entitytype.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "EntityType.name": %w`, err)}
 		}
 	}
-	if v, ok := etc.mutation.Description(); ok {
+	if v, ok := _c.mutation.Description(); ok {
 		if err := entitytype.DescriptionValidator(v); err != nil {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "EntityType.description": %w`, err)}
 		}
 	}
-	if v, ok := etc.mutation.Icon(); ok {
+	if v, ok := _c.mutation.Icon(); ok {
 		if err := entitytype.IconValidator(v); err != nil {
 			return &ValidationError{Name: "icon", err: fmt.Errorf(`ent: validator failed for field "EntityType.icon": %w`, err)}
 		}
 	}
-	if v, ok := etc.mutation.Color(); ok {
+	if v, ok := _c.mutation.Color(); ok {
 		if err := entitytype.ColorValidator(v); err != nil {
 			return &ValidationError{Name: "color", err: fmt.Errorf(`ent: validator failed for field "EntityType.color": %w`, err)}
 		}
 	}
-	if _, ok := etc.mutation.IsLocation(); !ok {
+	if _, ok := _c.mutation.IsLocation(); !ok {
 		return &ValidationError{Name: "is_location", err: errors.New(`ent: missing required field "EntityType.is_location"`)}
 	}
-	if len(etc.mutation.GroupIDs()) == 0 {
+	if len(_c.mutation.GroupIDs()) == 0 {
 		return &ValidationError{Name: "group", err: errors.New(`ent: missing required edge "EntityType.group"`)}
 	}
 	return nil
 }
 
-func (etc *EntityTypeCreate) sqlSave(ctx context.Context) (*EntityType, error) {
-	if err := etc.check(); err != nil {
+func (_c *EntityTypeCreate) sqlSave(ctx context.Context) (*EntityType, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := etc.createSpec()
-	if err := sqlgraph.CreateNode(ctx, etc.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -264,49 +264,49 @@ func (etc *EntityTypeCreate) sqlSave(ctx context.Context) (*EntityType, error) {
 			return nil, err
 		}
 	}
-	etc.mutation.id = &_node.ID
-	etc.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (etc *EntityTypeCreate) createSpec() (*EntityType, *sqlgraph.CreateSpec) {
+func (_c *EntityTypeCreate) createSpec() (*EntityType, *sqlgraph.CreateSpec) {
 	var (
-		_node = &EntityType{config: etc.config}
+		_node = &EntityType{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(entitytype.Table, sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeUUID))
 	)
-	if id, ok := etc.mutation.ID(); ok {
+	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
-	if value, ok := etc.mutation.CreatedAt(); ok {
+	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(entitytype.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
-	if value, ok := etc.mutation.UpdatedAt(); ok {
+	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(entitytype.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
-	if value, ok := etc.mutation.Name(); ok {
+	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(entitytype.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
-	if value, ok := etc.mutation.Description(); ok {
+	if value, ok := _c.mutation.Description(); ok {
 		_spec.SetField(entitytype.FieldDescription, field.TypeString, value)
 		_node.Description = value
 	}
-	if value, ok := etc.mutation.Icon(); ok {
+	if value, ok := _c.mutation.Icon(); ok {
 		_spec.SetField(entitytype.FieldIcon, field.TypeString, value)
 		_node.Icon = value
 	}
-	if value, ok := etc.mutation.Color(); ok {
+	if value, ok := _c.mutation.Color(); ok {
 		_spec.SetField(entitytype.FieldColor, field.TypeString, value)
 		_node.Color = value
 	}
-	if value, ok := etc.mutation.IsLocation(); ok {
+	if value, ok := _c.mutation.IsLocation(); ok {
 		_spec.SetField(entitytype.FieldIsLocation, field.TypeBool, value)
 		_node.IsLocation = value
 	}
-	if nodes := etc.mutation.GroupIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -323,7 +323,7 @@ func (etc *EntityTypeCreate) createSpec() (*EntityType, *sqlgraph.CreateSpec) {
 		_node.group_entity_types = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := etc.mutation.EntitiesIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.EntitiesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -350,16 +350,16 @@ type EntityTypeCreateBulk struct {
 }
 
 // Save creates the EntityType entities in the database.
-func (etcb *EntityTypeCreateBulk) Save(ctx context.Context) ([]*EntityType, error) {
-	if etcb.err != nil {
-		return nil, etcb.err
+func (_c *EntityTypeCreateBulk) Save(ctx context.Context) ([]*EntityType, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(etcb.builders))
-	nodes := make([]*EntityType, len(etcb.builders))
-	mutators := make([]Mutator, len(etcb.builders))
-	for i := range etcb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*EntityType, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := etcb.builders[i]
+			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*EntityTypeMutation)
@@ -373,11 +373,11 @@ func (etcb *EntityTypeCreateBulk) Save(ctx context.Context) ([]*EntityType, erro
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, etcb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, etcb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -397,7 +397,7 @@ func (etcb *EntityTypeCreateBulk) Save(ctx context.Context) ([]*EntityType, erro
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, etcb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -405,8 +405,8 @@ func (etcb *EntityTypeCreateBulk) Save(ctx context.Context) ([]*EntityType, erro
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (etcb *EntityTypeCreateBulk) SaveX(ctx context.Context) []*EntityType {
-	v, err := etcb.Save(ctx)
+func (_c *EntityTypeCreateBulk) SaveX(ctx context.Context) []*EntityType {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -414,14 +414,14 @@ func (etcb *EntityTypeCreateBulk) SaveX(ctx context.Context) []*EntityType {
 }
 
 // Exec executes the query.
-func (etcb *EntityTypeCreateBulk) Exec(ctx context.Context) error {
-	_, err := etcb.Save(ctx)
+func (_c *EntityTypeCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (etcb *EntityTypeCreateBulk) ExecX(ctx context.Context) {
-	if err := etcb.Exec(ctx); err != nil {
+func (_c *EntityTypeCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

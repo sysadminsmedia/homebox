@@ -95,7 +95,7 @@ func (*EntityType) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the EntityType fields.
-func (et *EntityType) assignValues(columns []string, values []any) error {
+func (_m *EntityType) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -105,59 +105,59 @@ func (et *EntityType) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
-				et.ID = *value
+				_m.ID = *value
 			}
 		case entitytype.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				et.CreatedAt = value.Time
+				_m.CreatedAt = value.Time
 			}
 		case entitytype.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				et.UpdatedAt = value.Time
+				_m.UpdatedAt = value.Time
 			}
 		case entitytype.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
-				et.Name = value.String
+				_m.Name = value.String
 			}
 		case entitytype.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
-				et.Description = value.String
+				_m.Description = value.String
 			}
 		case entitytype.FieldIcon:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field icon", values[i])
 			} else if value.Valid {
-				et.Icon = value.String
+				_m.Icon = value.String
 			}
 		case entitytype.FieldColor:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field color", values[i])
 			} else if value.Valid {
-				et.Color = value.String
+				_m.Color = value.String
 			}
 		case entitytype.FieldIsLocation:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field is_location", values[i])
 			} else if value.Valid {
-				et.IsLocation = value.Bool
+				_m.IsLocation = value.Bool
 			}
 		case entitytype.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field group_entity_types", values[i])
 			} else if value.Valid {
-				et.group_entity_types = new(uuid.UUID)
-				*et.group_entity_types = *value.S.(*uuid.UUID)
+				_m.group_entity_types = new(uuid.UUID)
+				*_m.group_entity_types = *value.S.(*uuid.UUID)
 			}
 		default:
-			et.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -165,63 +165,63 @@ func (et *EntityType) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the EntityType.
 // This includes values selected through modifiers, order, etc.
-func (et *EntityType) Value(name string) (ent.Value, error) {
-	return et.selectValues.Get(name)
+func (_m *EntityType) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // QueryGroup queries the "group" edge of the EntityType entity.
-func (et *EntityType) QueryGroup() *GroupQuery {
-	return NewEntityTypeClient(et.config).QueryGroup(et)
+func (_m *EntityType) QueryGroup() *GroupQuery {
+	return NewEntityTypeClient(_m.config).QueryGroup(_m)
 }
 
 // QueryEntities queries the "entities" edge of the EntityType entity.
-func (et *EntityType) QueryEntities() *EntityQuery {
-	return NewEntityTypeClient(et.config).QueryEntities(et)
+func (_m *EntityType) QueryEntities() *EntityQuery {
+	return NewEntityTypeClient(_m.config).QueryEntities(_m)
 }
 
 // Update returns a builder for updating this EntityType.
 // Note that you need to call EntityType.Unwrap() before calling this method if this EntityType
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (et *EntityType) Update() *EntityTypeUpdateOne {
-	return NewEntityTypeClient(et.config).UpdateOne(et)
+func (_m *EntityType) Update() *EntityTypeUpdateOne {
+	return NewEntityTypeClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the EntityType entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (et *EntityType) Unwrap() *EntityType {
-	_tx, ok := et.config.driver.(*txDriver)
+func (_m *EntityType) Unwrap() *EntityType {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: EntityType is not a transactional entity")
 	}
-	et.config.driver = _tx.drv
-	return et
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (et *EntityType) String() string {
+func (_m *EntityType) String() string {
 	var builder strings.Builder
 	builder.WriteString("EntityType(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", et.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("created_at=")
-	builder.WriteString(et.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
-	builder.WriteString(et.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("name=")
-	builder.WriteString(et.Name)
+	builder.WriteString(_m.Name)
 	builder.WriteString(", ")
 	builder.WriteString("description=")
-	builder.WriteString(et.Description)
+	builder.WriteString(_m.Description)
 	builder.WriteString(", ")
 	builder.WriteString("icon=")
-	builder.WriteString(et.Icon)
+	builder.WriteString(_m.Icon)
 	builder.WriteString(", ")
 	builder.WriteString("color=")
-	builder.WriteString(et.Color)
+	builder.WriteString(_m.Color)
 	builder.WriteString(", ")
 	builder.WriteString("is_location=")
-	builder.WriteString(fmt.Sprintf("%v", et.IsLocation))
+	builder.WriteString(fmt.Sprintf("%v", _m.IsLocation))
 	builder.WriteByte(')')
 	return builder.String()
 }

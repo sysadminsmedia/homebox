@@ -20,56 +20,56 @@ type EntityTypeDelete struct {
 }
 
 // Where appends a list predicates to the EntityTypeDelete builder.
-func (etd *EntityTypeDelete) Where(ps ...predicate.EntityType) *EntityTypeDelete {
-	etd.mutation.Where(ps...)
-	return etd
+func (_d *EntityTypeDelete) Where(ps ...predicate.EntityType) *EntityTypeDelete {
+	_d.mutation.Where(ps...)
+	return _d
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (etd *EntityTypeDelete) Exec(ctx context.Context) (int, error) {
-	return withHooks(ctx, etd.sqlExec, etd.mutation, etd.hooks)
+func (_d *EntityTypeDelete) Exec(ctx context.Context) (int, error) {
+	return withHooks(ctx, _d.sqlExec, _d.mutation, _d.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (etd *EntityTypeDelete) ExecX(ctx context.Context) int {
-	n, err := etd.Exec(ctx)
+func (_d *EntityTypeDelete) ExecX(ctx context.Context) int {
+	n, err := _d.Exec(ctx)
 	if err != nil {
 		panic(err)
 	}
 	return n
 }
 
-func (etd *EntityTypeDelete) sqlExec(ctx context.Context) (int, error) {
+func (_d *EntityTypeDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := sqlgraph.NewDeleteSpec(entitytype.Table, sqlgraph.NewFieldSpec(entitytype.FieldID, field.TypeUUID))
-	if ps := etd.mutation.predicates; len(ps) > 0 {
+	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	affected, err := sqlgraph.DeleteNodes(ctx, etd.driver, _spec)
+	affected, err := sqlgraph.DeleteNodes(ctx, _d.driver, _spec)
 	if err != nil && sqlgraph.IsConstraintError(err) {
 		err = &ConstraintError{msg: err.Error(), wrap: err}
 	}
-	etd.mutation.done = true
+	_d.mutation.done = true
 	return affected, err
 }
 
 // EntityTypeDeleteOne is the builder for deleting a single EntityType entity.
 type EntityTypeDeleteOne struct {
-	etd *EntityTypeDelete
+	_d *EntityTypeDelete
 }
 
 // Where appends a list predicates to the EntityTypeDelete builder.
-func (etdo *EntityTypeDeleteOne) Where(ps ...predicate.EntityType) *EntityTypeDeleteOne {
-	etdo.etd.mutation.Where(ps...)
-	return etdo
+func (_d *EntityTypeDeleteOne) Where(ps ...predicate.EntityType) *EntityTypeDeleteOne {
+	_d._d.mutation.Where(ps...)
+	return _d
 }
 
 // Exec executes the deletion query.
-func (etdo *EntityTypeDeleteOne) Exec(ctx context.Context) error {
-	n, err := etdo.etd.Exec(ctx)
+func (_d *EntityTypeDeleteOne) Exec(ctx context.Context) error {
+	n, err := _d._d.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
@@ -81,8 +81,8 @@ func (etdo *EntityTypeDeleteOne) Exec(ctx context.Context) error {
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (etdo *EntityTypeDeleteOne) ExecX(ctx context.Context) {
-	if err := etdo.Exec(ctx); err != nil {
+func (_d *EntityTypeDeleteOne) ExecX(ctx context.Context) {
+	if err := _d.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

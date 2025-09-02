@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
@@ -1037,7 +1039,7 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opti
 	}()
 
 	// Get the original item with all its data
-	originalItem, err := e.getOne(ctx, item.ID(id), item.HasGroupWith(group.ID(gid)))
+	originalItem, err := e.getOne(ctx, entity.ID(id), entity.HasGroupWith(group.ID(gid)))
 	if err != nil {
 		return ItemOut{}, err
 	}
@@ -1055,7 +1057,7 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opti
 
 	// Create the new item directly in the transaction
 	newItemID := uuid.New()
-	itemBuilder := tx.Item.Create().
+	itemBuilder := tx.Entity.Create().
 		SetID(newItemID).
 		SetName(options.CopyPrefix + originalItem.Name).
 		SetDescription(originalItem.Description).
@@ -1079,7 +1081,7 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opti
 		SetNotes(originalItem.Notes).
 		SetInsured(originalItem.Insured).
 		SetArchived(originalItem.Archived).
-		SetSyncChildItemsLocations(originalItem.SyncChildItemsLocations)
+		SetSyncChildEntitiesLocations(originalItem.SyncChildItemsLocations)
 
 	if originalItem.Parent != nil {
 		itemBuilder.SetParentID(originalItem.Parent.ID)
@@ -1102,9 +1104,9 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opti
 	// Copy custom fields if requested
 	if options.CopyCustomFields {
 		for _, field := range originalItem.Fields {
-			_, err = tx.ItemField.Create().
-				SetItemID(newItemID).
-				SetType(itemfield.Type(field.Type)).
+			_, err = tx.EntityField.Create().
+				SetEntityID(newItemID).
+				SetType(entityfield.Type(field.Type)).
 				SetName(field.Name).
 				SetTextValue(field.TextValue).
 				SetNumberValue(field.NumberValue).
@@ -1133,7 +1135,7 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opti
 			// Create a copy of the attachment with the same file path
 			// Since files are stored with hash-based paths, this is safe
 			_, err = tx.Attachment.Create().
-				SetItemID(newItemID).
+				SetEntityID(newItemID).
 				SetType(originalAttachment.Type).
 				SetTitle(originalAttachment.Title).
 				SetPath(originalAttachment.Path).
@@ -1150,12 +1152,12 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opti
 	// Copy maintenance entries if requested
 	if options.CopyMaintenance {
 		maintenanceEntries, err := tx.MaintenanceEntry.Query().
-			Where(maintenanceentry.HasItemWith(item.ID(id))).
+			Where(maintenanceentry.HasEntityWith(entity.ID(id))).
 			All(ctx)
 		if err == nil {
 			for _, entry := range maintenanceEntries {
 				_, err = tx.MaintenanceEntry.Create().
-					SetItemID(newItemID).
+					SetEntityID(newItemID).
 					SetDate(entry.Date).
 					SetScheduledDate(entry.ScheduledDate).
 					SetName(entry.Name).

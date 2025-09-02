@@ -30,742 +30,742 @@ type EntityUpdate struct {
 }
 
 // Where appends a list predicates to the EntityUpdate builder.
-func (eu *EntityUpdate) Where(ps ...predicate.Entity) *EntityUpdate {
-	eu.mutation.Where(ps...)
-	return eu
+func (_u *EntityUpdate) Where(ps ...predicate.Entity) *EntityUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (eu *EntityUpdate) SetUpdatedAt(t time.Time) *EntityUpdate {
-	eu.mutation.SetUpdatedAt(t)
-	return eu
+func (_u *EntityUpdate) SetUpdatedAt(v time.Time) *EntityUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetName sets the "name" field.
-func (eu *EntityUpdate) SetName(s string) *EntityUpdate {
-	eu.mutation.SetName(s)
-	return eu
+func (_u *EntityUpdate) SetName(v string) *EntityUpdate {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableName(s *string) *EntityUpdate {
-	if s != nil {
-		eu.SetName(*s)
+func (_u *EntityUpdate) SetNillableName(v *string) *EntityUpdate {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return eu
+	return _u
 }
 
 // SetDescription sets the "description" field.
-func (eu *EntityUpdate) SetDescription(s string) *EntityUpdate {
-	eu.mutation.SetDescription(s)
-	return eu
+func (_u *EntityUpdate) SetDescription(v string) *EntityUpdate {
+	_u.mutation.SetDescription(v)
+	return _u
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableDescription(s *string) *EntityUpdate {
-	if s != nil {
-		eu.SetDescription(*s)
+func (_u *EntityUpdate) SetNillableDescription(v *string) *EntityUpdate {
+	if v != nil {
+		_u.SetDescription(*v)
 	}
-	return eu
+	return _u
 }
 
 // ClearDescription clears the value of the "description" field.
-func (eu *EntityUpdate) ClearDescription() *EntityUpdate {
-	eu.mutation.ClearDescription()
-	return eu
+func (_u *EntityUpdate) ClearDescription() *EntityUpdate {
+	_u.mutation.ClearDescription()
+	return _u
 }
 
 // SetImportRef sets the "import_ref" field.
-func (eu *EntityUpdate) SetImportRef(s string) *EntityUpdate {
-	eu.mutation.SetImportRef(s)
-	return eu
+func (_u *EntityUpdate) SetImportRef(v string) *EntityUpdate {
+	_u.mutation.SetImportRef(v)
+	return _u
 }
 
 // SetNillableImportRef sets the "import_ref" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableImportRef(s *string) *EntityUpdate {
-	if s != nil {
-		eu.SetImportRef(*s)
+func (_u *EntityUpdate) SetNillableImportRef(v *string) *EntityUpdate {
+	if v != nil {
+		_u.SetImportRef(*v)
 	}
-	return eu
+	return _u
 }
 
 // ClearImportRef clears the value of the "import_ref" field.
-func (eu *EntityUpdate) ClearImportRef() *EntityUpdate {
-	eu.mutation.ClearImportRef()
-	return eu
+func (_u *EntityUpdate) ClearImportRef() *EntityUpdate {
+	_u.mutation.ClearImportRef()
+	return _u
 }
 
 // SetNotes sets the "notes" field.
-func (eu *EntityUpdate) SetNotes(s string) *EntityUpdate {
-	eu.mutation.SetNotes(s)
-	return eu
+func (_u *EntityUpdate) SetNotes(v string) *EntityUpdate {
+	_u.mutation.SetNotes(v)
+	return _u
 }
 
 // SetNillableNotes sets the "notes" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableNotes(s *string) *EntityUpdate {
-	if s != nil {
-		eu.SetNotes(*s)
+func (_u *EntityUpdate) SetNillableNotes(v *string) *EntityUpdate {
+	if v != nil {
+		_u.SetNotes(*v)
 	}
-	return eu
+	return _u
 }
 
 // ClearNotes clears the value of the "notes" field.
-func (eu *EntityUpdate) ClearNotes() *EntityUpdate {
-	eu.mutation.ClearNotes()
-	return eu
+func (_u *EntityUpdate) ClearNotes() *EntityUpdate {
+	_u.mutation.ClearNotes()
+	return _u
 }
 
 // SetQuantity sets the "quantity" field.
-func (eu *EntityUpdate) SetQuantity(i int) *EntityUpdate {
-	eu.mutation.ResetQuantity()
-	eu.mutation.SetQuantity(i)
-	return eu
+func (_u *EntityUpdate) SetQuantity(v int) *EntityUpdate {
+	_u.mutation.ResetQuantity()
+	_u.mutation.SetQuantity(v)
+	return _u
 }
 
 // SetNillableQuantity sets the "quantity" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableQuantity(i *int) *EntityUpdate {
-	if i != nil {
-		eu.SetQuantity(*i)
+func (_u *EntityUpdate) SetNillableQuantity(v *int) *EntityUpdate {
+	if v != nil {
+		_u.SetQuantity(*v)
 	}
-	return eu
+	return _u
 }
 
-// AddQuantity adds i to the "quantity" field.
-func (eu *EntityUpdate) AddQuantity(i int) *EntityUpdate {
-	eu.mutation.AddQuantity(i)
-	return eu
+// AddQuantity adds value to the "quantity" field.
+func (_u *EntityUpdate) AddQuantity(v int) *EntityUpdate {
+	_u.mutation.AddQuantity(v)
+	return _u
 }
 
 // SetInsured sets the "insured" field.
-func (eu *EntityUpdate) SetInsured(b bool) *EntityUpdate {
-	eu.mutation.SetInsured(b)
-	return eu
+func (_u *EntityUpdate) SetInsured(v bool) *EntityUpdate {
+	_u.mutation.SetInsured(v)
+	return _u
 }
 
 // SetNillableInsured sets the "insured" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableInsured(b *bool) *EntityUpdate {
-	if b != nil {
-		eu.SetInsured(*b)
+func (_u *EntityUpdate) SetNillableInsured(v *bool) *EntityUpdate {
+	if v != nil {
+		_u.SetInsured(*v)
 	}
-	return eu
+	return _u
 }
 
 // SetArchived sets the "archived" field.
-func (eu *EntityUpdate) SetArchived(b bool) *EntityUpdate {
-	eu.mutation.SetArchived(b)
-	return eu
+func (_u *EntityUpdate) SetArchived(v bool) *EntityUpdate {
+	_u.mutation.SetArchived(v)
+	return _u
 }
 
 // SetNillableArchived sets the "archived" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableArchived(b *bool) *EntityUpdate {
-	if b != nil {
-		eu.SetArchived(*b)
+func (_u *EntityUpdate) SetNillableArchived(v *bool) *EntityUpdate {
+	if v != nil {
+		_u.SetArchived(*v)
 	}
-	return eu
+	return _u
 }
 
 // SetAssetID sets the "asset_id" field.
-func (eu *EntityUpdate) SetAssetID(i int) *EntityUpdate {
-	eu.mutation.ResetAssetID()
-	eu.mutation.SetAssetID(i)
-	return eu
+func (_u *EntityUpdate) SetAssetID(v int) *EntityUpdate {
+	_u.mutation.ResetAssetID()
+	_u.mutation.SetAssetID(v)
+	return _u
 }
 
 // SetNillableAssetID sets the "asset_id" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableAssetID(i *int) *EntityUpdate {
-	if i != nil {
-		eu.SetAssetID(*i)
+func (_u *EntityUpdate) SetNillableAssetID(v *int) *EntityUpdate {
+	if v != nil {
+		_u.SetAssetID(*v)
 	}
-	return eu
+	return _u
 }
 
-// AddAssetID adds i to the "asset_id" field.
-func (eu *EntityUpdate) AddAssetID(i int) *EntityUpdate {
-	eu.mutation.AddAssetID(i)
-	return eu
+// AddAssetID adds value to the "asset_id" field.
+func (_u *EntityUpdate) AddAssetID(v int) *EntityUpdate {
+	_u.mutation.AddAssetID(v)
+	return _u
 }
 
 // SetSyncChildEntitiesLocations sets the "sync_child_entities_locations" field.
-func (eu *EntityUpdate) SetSyncChildEntitiesLocations(b bool) *EntityUpdate {
-	eu.mutation.SetSyncChildEntitiesLocations(b)
-	return eu
+func (_u *EntityUpdate) SetSyncChildEntitiesLocations(v bool) *EntityUpdate {
+	_u.mutation.SetSyncChildEntitiesLocations(v)
+	return _u
 }
 
 // SetNillableSyncChildEntitiesLocations sets the "sync_child_entities_locations" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableSyncChildEntitiesLocations(b *bool) *EntityUpdate {
-	if b != nil {
-		eu.SetSyncChildEntitiesLocations(*b)
+func (_u *EntityUpdate) SetNillableSyncChildEntitiesLocations(v *bool) *EntityUpdate {
+	if v != nil {
+		_u.SetSyncChildEntitiesLocations(*v)
 	}
-	return eu
+	return _u
 }
 
 // SetSerialNumber sets the "serial_number" field.
-func (eu *EntityUpdate) SetSerialNumber(s string) *EntityUpdate {
-	eu.mutation.SetSerialNumber(s)
-	return eu
+func (_u *EntityUpdate) SetSerialNumber(v string) *EntityUpdate {
+	_u.mutation.SetSerialNumber(v)
+	return _u
 }
 
 // SetNillableSerialNumber sets the "serial_number" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableSerialNumber(s *string) *EntityUpdate {
-	if s != nil {
-		eu.SetSerialNumber(*s)
+func (_u *EntityUpdate) SetNillableSerialNumber(v *string) *EntityUpdate {
+	if v != nil {
+		_u.SetSerialNumber(*v)
 	}
-	return eu
+	return _u
 }
 
 // ClearSerialNumber clears the value of the "serial_number" field.
-func (eu *EntityUpdate) ClearSerialNumber() *EntityUpdate {
-	eu.mutation.ClearSerialNumber()
-	return eu
+func (_u *EntityUpdate) ClearSerialNumber() *EntityUpdate {
+	_u.mutation.ClearSerialNumber()
+	return _u
 }
 
 // SetModelNumber sets the "model_number" field.
-func (eu *EntityUpdate) SetModelNumber(s string) *EntityUpdate {
-	eu.mutation.SetModelNumber(s)
-	return eu
+func (_u *EntityUpdate) SetModelNumber(v string) *EntityUpdate {
+	_u.mutation.SetModelNumber(v)
+	return _u
 }
 
 // SetNillableModelNumber sets the "model_number" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableModelNumber(s *string) *EntityUpdate {
-	if s != nil {
-		eu.SetModelNumber(*s)
+func (_u *EntityUpdate) SetNillableModelNumber(v *string) *EntityUpdate {
+	if v != nil {
+		_u.SetModelNumber(*v)
 	}
-	return eu
+	return _u
 }
 
 // ClearModelNumber clears the value of the "model_number" field.
-func (eu *EntityUpdate) ClearModelNumber() *EntityUpdate {
-	eu.mutation.ClearModelNumber()
-	return eu
+func (_u *EntityUpdate) ClearModelNumber() *EntityUpdate {
+	_u.mutation.ClearModelNumber()
+	return _u
 }
 
 // SetManufacturer sets the "manufacturer" field.
-func (eu *EntityUpdate) SetManufacturer(s string) *EntityUpdate {
-	eu.mutation.SetManufacturer(s)
-	return eu
+func (_u *EntityUpdate) SetManufacturer(v string) *EntityUpdate {
+	_u.mutation.SetManufacturer(v)
+	return _u
 }
 
 // SetNillableManufacturer sets the "manufacturer" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableManufacturer(s *string) *EntityUpdate {
-	if s != nil {
-		eu.SetManufacturer(*s)
+func (_u *EntityUpdate) SetNillableManufacturer(v *string) *EntityUpdate {
+	if v != nil {
+		_u.SetManufacturer(*v)
 	}
-	return eu
+	return _u
 }
 
 // ClearManufacturer clears the value of the "manufacturer" field.
-func (eu *EntityUpdate) ClearManufacturer() *EntityUpdate {
-	eu.mutation.ClearManufacturer()
-	return eu
+func (_u *EntityUpdate) ClearManufacturer() *EntityUpdate {
+	_u.mutation.ClearManufacturer()
+	return _u
 }
 
 // SetLifetimeWarranty sets the "lifetime_warranty" field.
-func (eu *EntityUpdate) SetLifetimeWarranty(b bool) *EntityUpdate {
-	eu.mutation.SetLifetimeWarranty(b)
-	return eu
+func (_u *EntityUpdate) SetLifetimeWarranty(v bool) *EntityUpdate {
+	_u.mutation.SetLifetimeWarranty(v)
+	return _u
 }
 
 // SetNillableLifetimeWarranty sets the "lifetime_warranty" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableLifetimeWarranty(b *bool) *EntityUpdate {
-	if b != nil {
-		eu.SetLifetimeWarranty(*b)
+func (_u *EntityUpdate) SetNillableLifetimeWarranty(v *bool) *EntityUpdate {
+	if v != nil {
+		_u.SetLifetimeWarranty(*v)
 	}
-	return eu
+	return _u
 }
 
 // SetWarrantyExpires sets the "warranty_expires" field.
-func (eu *EntityUpdate) SetWarrantyExpires(t time.Time) *EntityUpdate {
-	eu.mutation.SetWarrantyExpires(t)
-	return eu
+func (_u *EntityUpdate) SetWarrantyExpires(v time.Time) *EntityUpdate {
+	_u.mutation.SetWarrantyExpires(v)
+	return _u
 }
 
 // SetNillableWarrantyExpires sets the "warranty_expires" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableWarrantyExpires(t *time.Time) *EntityUpdate {
-	if t != nil {
-		eu.SetWarrantyExpires(*t)
+func (_u *EntityUpdate) SetNillableWarrantyExpires(v *time.Time) *EntityUpdate {
+	if v != nil {
+		_u.SetWarrantyExpires(*v)
 	}
-	return eu
+	return _u
 }
 
 // ClearWarrantyExpires clears the value of the "warranty_expires" field.
-func (eu *EntityUpdate) ClearWarrantyExpires() *EntityUpdate {
-	eu.mutation.ClearWarrantyExpires()
-	return eu
+func (_u *EntityUpdate) ClearWarrantyExpires() *EntityUpdate {
+	_u.mutation.ClearWarrantyExpires()
+	return _u
 }
 
 // SetWarrantyDetails sets the "warranty_details" field.
-func (eu *EntityUpdate) SetWarrantyDetails(s string) *EntityUpdate {
-	eu.mutation.SetWarrantyDetails(s)
-	return eu
+func (_u *EntityUpdate) SetWarrantyDetails(v string) *EntityUpdate {
+	_u.mutation.SetWarrantyDetails(v)
+	return _u
 }
 
 // SetNillableWarrantyDetails sets the "warranty_details" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableWarrantyDetails(s *string) *EntityUpdate {
-	if s != nil {
-		eu.SetWarrantyDetails(*s)
+func (_u *EntityUpdate) SetNillableWarrantyDetails(v *string) *EntityUpdate {
+	if v != nil {
+		_u.SetWarrantyDetails(*v)
 	}
-	return eu
+	return _u
 }
 
 // ClearWarrantyDetails clears the value of the "warranty_details" field.
-func (eu *EntityUpdate) ClearWarrantyDetails() *EntityUpdate {
-	eu.mutation.ClearWarrantyDetails()
-	return eu
+func (_u *EntityUpdate) ClearWarrantyDetails() *EntityUpdate {
+	_u.mutation.ClearWarrantyDetails()
+	return _u
 }
 
 // SetPurchaseTime sets the "purchase_time" field.
-func (eu *EntityUpdate) SetPurchaseTime(t time.Time) *EntityUpdate {
-	eu.mutation.SetPurchaseTime(t)
-	return eu
+func (_u *EntityUpdate) SetPurchaseTime(v time.Time) *EntityUpdate {
+	_u.mutation.SetPurchaseTime(v)
+	return _u
 }
 
 // SetNillablePurchaseTime sets the "purchase_time" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillablePurchaseTime(t *time.Time) *EntityUpdate {
-	if t != nil {
-		eu.SetPurchaseTime(*t)
+func (_u *EntityUpdate) SetNillablePurchaseTime(v *time.Time) *EntityUpdate {
+	if v != nil {
+		_u.SetPurchaseTime(*v)
 	}
-	return eu
+	return _u
 }
 
 // ClearPurchaseTime clears the value of the "purchase_time" field.
-func (eu *EntityUpdate) ClearPurchaseTime() *EntityUpdate {
-	eu.mutation.ClearPurchaseTime()
-	return eu
+func (_u *EntityUpdate) ClearPurchaseTime() *EntityUpdate {
+	_u.mutation.ClearPurchaseTime()
+	return _u
 }
 
 // SetPurchaseFrom sets the "purchase_from" field.
-func (eu *EntityUpdate) SetPurchaseFrom(s string) *EntityUpdate {
-	eu.mutation.SetPurchaseFrom(s)
-	return eu
+func (_u *EntityUpdate) SetPurchaseFrom(v string) *EntityUpdate {
+	_u.mutation.SetPurchaseFrom(v)
+	return _u
 }
 
 // SetNillablePurchaseFrom sets the "purchase_from" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillablePurchaseFrom(s *string) *EntityUpdate {
-	if s != nil {
-		eu.SetPurchaseFrom(*s)
+func (_u *EntityUpdate) SetNillablePurchaseFrom(v *string) *EntityUpdate {
+	if v != nil {
+		_u.SetPurchaseFrom(*v)
 	}
-	return eu
+	return _u
 }
 
 // ClearPurchaseFrom clears the value of the "purchase_from" field.
-func (eu *EntityUpdate) ClearPurchaseFrom() *EntityUpdate {
-	eu.mutation.ClearPurchaseFrom()
-	return eu
+func (_u *EntityUpdate) ClearPurchaseFrom() *EntityUpdate {
+	_u.mutation.ClearPurchaseFrom()
+	return _u
 }
 
 // SetPurchasePrice sets the "purchase_price" field.
-func (eu *EntityUpdate) SetPurchasePrice(f float64) *EntityUpdate {
-	eu.mutation.ResetPurchasePrice()
-	eu.mutation.SetPurchasePrice(f)
-	return eu
+func (_u *EntityUpdate) SetPurchasePrice(v float64) *EntityUpdate {
+	_u.mutation.ResetPurchasePrice()
+	_u.mutation.SetPurchasePrice(v)
+	return _u
 }
 
 // SetNillablePurchasePrice sets the "purchase_price" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillablePurchasePrice(f *float64) *EntityUpdate {
-	if f != nil {
-		eu.SetPurchasePrice(*f)
+func (_u *EntityUpdate) SetNillablePurchasePrice(v *float64) *EntityUpdate {
+	if v != nil {
+		_u.SetPurchasePrice(*v)
 	}
-	return eu
+	return _u
 }
 
-// AddPurchasePrice adds f to the "purchase_price" field.
-func (eu *EntityUpdate) AddPurchasePrice(f float64) *EntityUpdate {
-	eu.mutation.AddPurchasePrice(f)
-	return eu
+// AddPurchasePrice adds value to the "purchase_price" field.
+func (_u *EntityUpdate) AddPurchasePrice(v float64) *EntityUpdate {
+	_u.mutation.AddPurchasePrice(v)
+	return _u
 }
 
 // SetSoldTime sets the "sold_time" field.
-func (eu *EntityUpdate) SetSoldTime(t time.Time) *EntityUpdate {
-	eu.mutation.SetSoldTime(t)
-	return eu
+func (_u *EntityUpdate) SetSoldTime(v time.Time) *EntityUpdate {
+	_u.mutation.SetSoldTime(v)
+	return _u
 }
 
 // SetNillableSoldTime sets the "sold_time" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableSoldTime(t *time.Time) *EntityUpdate {
-	if t != nil {
-		eu.SetSoldTime(*t)
+func (_u *EntityUpdate) SetNillableSoldTime(v *time.Time) *EntityUpdate {
+	if v != nil {
+		_u.SetSoldTime(*v)
 	}
-	return eu
+	return _u
 }
 
 // ClearSoldTime clears the value of the "sold_time" field.
-func (eu *EntityUpdate) ClearSoldTime() *EntityUpdate {
-	eu.mutation.ClearSoldTime()
-	return eu
+func (_u *EntityUpdate) ClearSoldTime() *EntityUpdate {
+	_u.mutation.ClearSoldTime()
+	return _u
 }
 
 // SetSoldTo sets the "sold_to" field.
-func (eu *EntityUpdate) SetSoldTo(s string) *EntityUpdate {
-	eu.mutation.SetSoldTo(s)
-	return eu
+func (_u *EntityUpdate) SetSoldTo(v string) *EntityUpdate {
+	_u.mutation.SetSoldTo(v)
+	return _u
 }
 
 // SetNillableSoldTo sets the "sold_to" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableSoldTo(s *string) *EntityUpdate {
-	if s != nil {
-		eu.SetSoldTo(*s)
+func (_u *EntityUpdate) SetNillableSoldTo(v *string) *EntityUpdate {
+	if v != nil {
+		_u.SetSoldTo(*v)
 	}
-	return eu
+	return _u
 }
 
 // ClearSoldTo clears the value of the "sold_to" field.
-func (eu *EntityUpdate) ClearSoldTo() *EntityUpdate {
-	eu.mutation.ClearSoldTo()
-	return eu
+func (_u *EntityUpdate) ClearSoldTo() *EntityUpdate {
+	_u.mutation.ClearSoldTo()
+	return _u
 }
 
 // SetSoldPrice sets the "sold_price" field.
-func (eu *EntityUpdate) SetSoldPrice(f float64) *EntityUpdate {
-	eu.mutation.ResetSoldPrice()
-	eu.mutation.SetSoldPrice(f)
-	return eu
+func (_u *EntityUpdate) SetSoldPrice(v float64) *EntityUpdate {
+	_u.mutation.ResetSoldPrice()
+	_u.mutation.SetSoldPrice(v)
+	return _u
 }
 
 // SetNillableSoldPrice sets the "sold_price" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableSoldPrice(f *float64) *EntityUpdate {
-	if f != nil {
-		eu.SetSoldPrice(*f)
+func (_u *EntityUpdate) SetNillableSoldPrice(v *float64) *EntityUpdate {
+	if v != nil {
+		_u.SetSoldPrice(*v)
 	}
-	return eu
+	return _u
 }
 
-// AddSoldPrice adds f to the "sold_price" field.
-func (eu *EntityUpdate) AddSoldPrice(f float64) *EntityUpdate {
-	eu.mutation.AddSoldPrice(f)
-	return eu
+// AddSoldPrice adds value to the "sold_price" field.
+func (_u *EntityUpdate) AddSoldPrice(v float64) *EntityUpdate {
+	_u.mutation.AddSoldPrice(v)
+	return _u
 }
 
 // SetSoldNotes sets the "sold_notes" field.
-func (eu *EntityUpdate) SetSoldNotes(s string) *EntityUpdate {
-	eu.mutation.SetSoldNotes(s)
-	return eu
+func (_u *EntityUpdate) SetSoldNotes(v string) *EntityUpdate {
+	_u.mutation.SetSoldNotes(v)
+	return _u
 }
 
 // SetNillableSoldNotes sets the "sold_notes" field if the given value is not nil.
-func (eu *EntityUpdate) SetNillableSoldNotes(s *string) *EntityUpdate {
-	if s != nil {
-		eu.SetSoldNotes(*s)
+func (_u *EntityUpdate) SetNillableSoldNotes(v *string) *EntityUpdate {
+	if v != nil {
+		_u.SetSoldNotes(*v)
 	}
-	return eu
+	return _u
 }
 
 // ClearSoldNotes clears the value of the "sold_notes" field.
-func (eu *EntityUpdate) ClearSoldNotes() *EntityUpdate {
-	eu.mutation.ClearSoldNotes()
-	return eu
+func (_u *EntityUpdate) ClearSoldNotes() *EntityUpdate {
+	_u.mutation.ClearSoldNotes()
+	return _u
 }
 
 // SetGroupID sets the "group" edge to the Group entity by ID.
-func (eu *EntityUpdate) SetGroupID(id uuid.UUID) *EntityUpdate {
-	eu.mutation.SetGroupID(id)
-	return eu
+func (_u *EntityUpdate) SetGroupID(id uuid.UUID) *EntityUpdate {
+	_u.mutation.SetGroupID(id)
+	return _u
 }
 
 // SetGroup sets the "group" edge to the Group entity.
-func (eu *EntityUpdate) SetGroup(g *Group) *EntityUpdate {
-	return eu.SetGroupID(g.ID)
+func (_u *EntityUpdate) SetGroup(v *Group) *EntityUpdate {
+	return _u.SetGroupID(v.ID)
 }
 
 // SetParentID sets the "parent" edge to the Entity entity by ID.
-func (eu *EntityUpdate) SetParentID(id uuid.UUID) *EntityUpdate {
-	eu.mutation.SetParentID(id)
-	return eu
+func (_u *EntityUpdate) SetParentID(id uuid.UUID) *EntityUpdate {
+	_u.mutation.SetParentID(id)
+	return _u
 }
 
 // SetNillableParentID sets the "parent" edge to the Entity entity by ID if the given value is not nil.
-func (eu *EntityUpdate) SetNillableParentID(id *uuid.UUID) *EntityUpdate {
+func (_u *EntityUpdate) SetNillableParentID(id *uuid.UUID) *EntityUpdate {
 	if id != nil {
-		eu = eu.SetParentID(*id)
+		_u = _u.SetParentID(*id)
 	}
-	return eu
+	return _u
 }
 
 // SetParent sets the "parent" edge to the Entity entity.
-func (eu *EntityUpdate) SetParent(e *Entity) *EntityUpdate {
-	return eu.SetParentID(e.ID)
+func (_u *EntityUpdate) SetParent(v *Entity) *EntityUpdate {
+	return _u.SetParentID(v.ID)
 }
 
 // AddChildIDs adds the "children" edge to the Entity entity by IDs.
-func (eu *EntityUpdate) AddChildIDs(ids ...uuid.UUID) *EntityUpdate {
-	eu.mutation.AddChildIDs(ids...)
-	return eu
+func (_u *EntityUpdate) AddChildIDs(ids ...uuid.UUID) *EntityUpdate {
+	_u.mutation.AddChildIDs(ids...)
+	return _u
 }
 
 // AddChildren adds the "children" edges to the Entity entity.
-func (eu *EntityUpdate) AddChildren(e ...*Entity) *EntityUpdate {
-	ids := make([]uuid.UUID, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+func (_u *EntityUpdate) AddChildren(v ...*Entity) *EntityUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return eu.AddChildIDs(ids...)
+	return _u.AddChildIDs(ids...)
 }
 
 // SetEntityID sets the "entity" edge to the Entity entity by ID.
-func (eu *EntityUpdate) SetEntityID(id uuid.UUID) *EntityUpdate {
-	eu.mutation.SetEntityID(id)
-	return eu
+func (_u *EntityUpdate) SetEntityID(id uuid.UUID) *EntityUpdate {
+	_u.mutation.SetEntityID(id)
+	return _u
 }
 
 // SetNillableEntityID sets the "entity" edge to the Entity entity by ID if the given value is not nil.
-func (eu *EntityUpdate) SetNillableEntityID(id *uuid.UUID) *EntityUpdate {
+func (_u *EntityUpdate) SetNillableEntityID(id *uuid.UUID) *EntityUpdate {
 	if id != nil {
-		eu = eu.SetEntityID(*id)
+		_u = _u.SetEntityID(*id)
 	}
-	return eu
+	return _u
 }
 
 // SetEntity sets the "entity" edge to the Entity entity.
-func (eu *EntityUpdate) SetEntity(e *Entity) *EntityUpdate {
-	return eu.SetEntityID(e.ID)
+func (_u *EntityUpdate) SetEntity(v *Entity) *EntityUpdate {
+	return _u.SetEntityID(v.ID)
 }
 
 // SetLocationID sets the "location" edge to the Entity entity by ID.
-func (eu *EntityUpdate) SetLocationID(id uuid.UUID) *EntityUpdate {
-	eu.mutation.SetLocationID(id)
-	return eu
+func (_u *EntityUpdate) SetLocationID(id uuid.UUID) *EntityUpdate {
+	_u.mutation.SetLocationID(id)
+	return _u
 }
 
 // SetNillableLocationID sets the "location" edge to the Entity entity by ID if the given value is not nil.
-func (eu *EntityUpdate) SetNillableLocationID(id *uuid.UUID) *EntityUpdate {
+func (_u *EntityUpdate) SetNillableLocationID(id *uuid.UUID) *EntityUpdate {
 	if id != nil {
-		eu = eu.SetLocationID(*id)
+		_u = _u.SetLocationID(*id)
 	}
-	return eu
+	return _u
 }
 
 // SetLocation sets the "location" edge to the Entity entity.
-func (eu *EntityUpdate) SetLocation(e *Entity) *EntityUpdate {
-	return eu.SetLocationID(e.ID)
+func (_u *EntityUpdate) SetLocation(v *Entity) *EntityUpdate {
+	return _u.SetLocationID(v.ID)
 }
 
 // AddLabelIDs adds the "label" edge to the Label entity by IDs.
-func (eu *EntityUpdate) AddLabelIDs(ids ...uuid.UUID) *EntityUpdate {
-	eu.mutation.AddLabelIDs(ids...)
-	return eu
+func (_u *EntityUpdate) AddLabelIDs(ids ...uuid.UUID) *EntityUpdate {
+	_u.mutation.AddLabelIDs(ids...)
+	return _u
 }
 
 // AddLabel adds the "label" edges to the Label entity.
-func (eu *EntityUpdate) AddLabel(l ...*Label) *EntityUpdate {
-	ids := make([]uuid.UUID, len(l))
-	for i := range l {
-		ids[i] = l[i].ID
+func (_u *EntityUpdate) AddLabel(v ...*Label) *EntityUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return eu.AddLabelIDs(ids...)
+	return _u.AddLabelIDs(ids...)
 }
 
 // SetTypeID sets the "type" edge to the EntityType entity by ID.
-func (eu *EntityUpdate) SetTypeID(id uuid.UUID) *EntityUpdate {
-	eu.mutation.SetTypeID(id)
-	return eu
+func (_u *EntityUpdate) SetTypeID(id uuid.UUID) *EntityUpdate {
+	_u.mutation.SetTypeID(id)
+	return _u
 }
 
 // SetNillableTypeID sets the "type" edge to the EntityType entity by ID if the given value is not nil.
-func (eu *EntityUpdate) SetNillableTypeID(id *uuid.UUID) *EntityUpdate {
+func (_u *EntityUpdate) SetNillableTypeID(id *uuid.UUID) *EntityUpdate {
 	if id != nil {
-		eu = eu.SetTypeID(*id)
+		_u = _u.SetTypeID(*id)
 	}
-	return eu
+	return _u
 }
 
 // SetType sets the "type" edge to the EntityType entity.
-func (eu *EntityUpdate) SetType(e *EntityType) *EntityUpdate {
-	return eu.SetTypeID(e.ID)
+func (_u *EntityUpdate) SetType(v *EntityType) *EntityUpdate {
+	return _u.SetTypeID(v.ID)
 }
 
 // AddFieldIDs adds the "fields" edge to the EntityField entity by IDs.
-func (eu *EntityUpdate) AddFieldIDs(ids ...uuid.UUID) *EntityUpdate {
-	eu.mutation.AddFieldIDs(ids...)
-	return eu
+func (_u *EntityUpdate) AddFieldIDs(ids ...uuid.UUID) *EntityUpdate {
+	_u.mutation.AddFieldIDs(ids...)
+	return _u
 }
 
 // AddFields adds the "fields" edges to the EntityField entity.
-func (eu *EntityUpdate) AddFields(e ...*EntityField) *EntityUpdate {
-	ids := make([]uuid.UUID, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+func (_u *EntityUpdate) AddFields(v ...*EntityField) *EntityUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return eu.AddFieldIDs(ids...)
+	return _u.AddFieldIDs(ids...)
 }
 
 // AddMaintenanceEntryIDs adds the "maintenance_entries" edge to the MaintenanceEntry entity by IDs.
-func (eu *EntityUpdate) AddMaintenanceEntryIDs(ids ...uuid.UUID) *EntityUpdate {
-	eu.mutation.AddMaintenanceEntryIDs(ids...)
-	return eu
+func (_u *EntityUpdate) AddMaintenanceEntryIDs(ids ...uuid.UUID) *EntityUpdate {
+	_u.mutation.AddMaintenanceEntryIDs(ids...)
+	return _u
 }
 
 // AddMaintenanceEntries adds the "maintenance_entries" edges to the MaintenanceEntry entity.
-func (eu *EntityUpdate) AddMaintenanceEntries(m ...*MaintenanceEntry) *EntityUpdate {
-	ids := make([]uuid.UUID, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+func (_u *EntityUpdate) AddMaintenanceEntries(v ...*MaintenanceEntry) *EntityUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return eu.AddMaintenanceEntryIDs(ids...)
+	return _u.AddMaintenanceEntryIDs(ids...)
 }
 
 // AddAttachmentIDs adds the "attachments" edge to the Attachment entity by IDs.
-func (eu *EntityUpdate) AddAttachmentIDs(ids ...uuid.UUID) *EntityUpdate {
-	eu.mutation.AddAttachmentIDs(ids...)
-	return eu
+func (_u *EntityUpdate) AddAttachmentIDs(ids ...uuid.UUID) *EntityUpdate {
+	_u.mutation.AddAttachmentIDs(ids...)
+	return _u
 }
 
 // AddAttachments adds the "attachments" edges to the Attachment entity.
-func (eu *EntityUpdate) AddAttachments(a ...*Attachment) *EntityUpdate {
-	ids := make([]uuid.UUID, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
+func (_u *EntityUpdate) AddAttachments(v ...*Attachment) *EntityUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return eu.AddAttachmentIDs(ids...)
+	return _u.AddAttachmentIDs(ids...)
 }
 
 // Mutation returns the EntityMutation object of the builder.
-func (eu *EntityUpdate) Mutation() *EntityMutation {
-	return eu.mutation
+func (_u *EntityUpdate) Mutation() *EntityMutation {
+	return _u.mutation
 }
 
 // ClearGroup clears the "group" edge to the Group entity.
-func (eu *EntityUpdate) ClearGroup() *EntityUpdate {
-	eu.mutation.ClearGroup()
-	return eu
+func (_u *EntityUpdate) ClearGroup() *EntityUpdate {
+	_u.mutation.ClearGroup()
+	return _u
 }
 
 // ClearParent clears the "parent" edge to the Entity entity.
-func (eu *EntityUpdate) ClearParent() *EntityUpdate {
-	eu.mutation.ClearParent()
-	return eu
+func (_u *EntityUpdate) ClearParent() *EntityUpdate {
+	_u.mutation.ClearParent()
+	return _u
 }
 
 // ClearChildren clears all "children" edges to the Entity entity.
-func (eu *EntityUpdate) ClearChildren() *EntityUpdate {
-	eu.mutation.ClearChildren()
-	return eu
+func (_u *EntityUpdate) ClearChildren() *EntityUpdate {
+	_u.mutation.ClearChildren()
+	return _u
 }
 
 // RemoveChildIDs removes the "children" edge to Entity entities by IDs.
-func (eu *EntityUpdate) RemoveChildIDs(ids ...uuid.UUID) *EntityUpdate {
-	eu.mutation.RemoveChildIDs(ids...)
-	return eu
+func (_u *EntityUpdate) RemoveChildIDs(ids ...uuid.UUID) *EntityUpdate {
+	_u.mutation.RemoveChildIDs(ids...)
+	return _u
 }
 
 // RemoveChildren removes "children" edges to Entity entities.
-func (eu *EntityUpdate) RemoveChildren(e ...*Entity) *EntityUpdate {
-	ids := make([]uuid.UUID, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+func (_u *EntityUpdate) RemoveChildren(v ...*Entity) *EntityUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return eu.RemoveChildIDs(ids...)
+	return _u.RemoveChildIDs(ids...)
 }
 
 // ClearEntity clears the "entity" edge to the Entity entity.
-func (eu *EntityUpdate) ClearEntity() *EntityUpdate {
-	eu.mutation.ClearEntity()
-	return eu
+func (_u *EntityUpdate) ClearEntity() *EntityUpdate {
+	_u.mutation.ClearEntity()
+	return _u
 }
 
 // ClearLocation clears the "location" edge to the Entity entity.
-func (eu *EntityUpdate) ClearLocation() *EntityUpdate {
-	eu.mutation.ClearLocation()
-	return eu
+func (_u *EntityUpdate) ClearLocation() *EntityUpdate {
+	_u.mutation.ClearLocation()
+	return _u
 }
 
 // ClearLabel clears all "label" edges to the Label entity.
-func (eu *EntityUpdate) ClearLabel() *EntityUpdate {
-	eu.mutation.ClearLabel()
-	return eu
+func (_u *EntityUpdate) ClearLabel() *EntityUpdate {
+	_u.mutation.ClearLabel()
+	return _u
 }
 
 // RemoveLabelIDs removes the "label" edge to Label entities by IDs.
-func (eu *EntityUpdate) RemoveLabelIDs(ids ...uuid.UUID) *EntityUpdate {
-	eu.mutation.RemoveLabelIDs(ids...)
-	return eu
+func (_u *EntityUpdate) RemoveLabelIDs(ids ...uuid.UUID) *EntityUpdate {
+	_u.mutation.RemoveLabelIDs(ids...)
+	return _u
 }
 
 // RemoveLabel removes "label" edges to Label entities.
-func (eu *EntityUpdate) RemoveLabel(l ...*Label) *EntityUpdate {
-	ids := make([]uuid.UUID, len(l))
-	for i := range l {
-		ids[i] = l[i].ID
+func (_u *EntityUpdate) RemoveLabel(v ...*Label) *EntityUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return eu.RemoveLabelIDs(ids...)
+	return _u.RemoveLabelIDs(ids...)
 }
 
 // ClearType clears the "type" edge to the EntityType entity.
-func (eu *EntityUpdate) ClearType() *EntityUpdate {
-	eu.mutation.ClearType()
-	return eu
+func (_u *EntityUpdate) ClearType() *EntityUpdate {
+	_u.mutation.ClearType()
+	return _u
 }
 
 // ClearFields clears all "fields" edges to the EntityField entity.
-func (eu *EntityUpdate) ClearFields() *EntityUpdate {
-	eu.mutation.ClearFields()
-	return eu
+func (_u *EntityUpdate) ClearFields() *EntityUpdate {
+	_u.mutation.ClearFields()
+	return _u
 }
 
 // RemoveFieldIDs removes the "fields" edge to EntityField entities by IDs.
-func (eu *EntityUpdate) RemoveFieldIDs(ids ...uuid.UUID) *EntityUpdate {
-	eu.mutation.RemoveFieldIDs(ids...)
-	return eu
+func (_u *EntityUpdate) RemoveFieldIDs(ids ...uuid.UUID) *EntityUpdate {
+	_u.mutation.RemoveFieldIDs(ids...)
+	return _u
 }
 
 // RemoveFields removes "fields" edges to EntityField entities.
-func (eu *EntityUpdate) RemoveFields(e ...*EntityField) *EntityUpdate {
-	ids := make([]uuid.UUID, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+func (_u *EntityUpdate) RemoveFields(v ...*EntityField) *EntityUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return eu.RemoveFieldIDs(ids...)
+	return _u.RemoveFieldIDs(ids...)
 }
 
 // ClearMaintenanceEntries clears all "maintenance_entries" edges to the MaintenanceEntry entity.
-func (eu *EntityUpdate) ClearMaintenanceEntries() *EntityUpdate {
-	eu.mutation.ClearMaintenanceEntries()
-	return eu
+func (_u *EntityUpdate) ClearMaintenanceEntries() *EntityUpdate {
+	_u.mutation.ClearMaintenanceEntries()
+	return _u
 }
 
 // RemoveMaintenanceEntryIDs removes the "maintenance_entries" edge to MaintenanceEntry entities by IDs.
-func (eu *EntityUpdate) RemoveMaintenanceEntryIDs(ids ...uuid.UUID) *EntityUpdate {
-	eu.mutation.RemoveMaintenanceEntryIDs(ids...)
-	return eu
+func (_u *EntityUpdate) RemoveMaintenanceEntryIDs(ids ...uuid.UUID) *EntityUpdate {
+	_u.mutation.RemoveMaintenanceEntryIDs(ids...)
+	return _u
 }
 
 // RemoveMaintenanceEntries removes "maintenance_entries" edges to MaintenanceEntry entities.
-func (eu *EntityUpdate) RemoveMaintenanceEntries(m ...*MaintenanceEntry) *EntityUpdate {
-	ids := make([]uuid.UUID, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+func (_u *EntityUpdate) RemoveMaintenanceEntries(v ...*MaintenanceEntry) *EntityUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return eu.RemoveMaintenanceEntryIDs(ids...)
+	return _u.RemoveMaintenanceEntryIDs(ids...)
 }
 
 // ClearAttachments clears all "attachments" edges to the Attachment entity.
-func (eu *EntityUpdate) ClearAttachments() *EntityUpdate {
-	eu.mutation.ClearAttachments()
-	return eu
+func (_u *EntityUpdate) ClearAttachments() *EntityUpdate {
+	_u.mutation.ClearAttachments()
+	return _u
 }
 
 // RemoveAttachmentIDs removes the "attachments" edge to Attachment entities by IDs.
-func (eu *EntityUpdate) RemoveAttachmentIDs(ids ...uuid.UUID) *EntityUpdate {
-	eu.mutation.RemoveAttachmentIDs(ids...)
-	return eu
+func (_u *EntityUpdate) RemoveAttachmentIDs(ids ...uuid.UUID) *EntityUpdate {
+	_u.mutation.RemoveAttachmentIDs(ids...)
+	return _u
 }
 
 // RemoveAttachments removes "attachments" edges to Attachment entities.
-func (eu *EntityUpdate) RemoveAttachments(a ...*Attachment) *EntityUpdate {
-	ids := make([]uuid.UUID, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
+func (_u *EntityUpdate) RemoveAttachments(v ...*Attachment) *EntityUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return eu.RemoveAttachmentIDs(ids...)
+	return _u.RemoveAttachmentIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (eu *EntityUpdate) Save(ctx context.Context) (int, error) {
-	eu.defaults()
-	return withHooks(ctx, eu.sqlSave, eu.mutation, eu.hooks)
+func (_u *EntityUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (eu *EntityUpdate) SaveX(ctx context.Context) int {
-	affected, err := eu.Save(ctx)
+func (_u *EntityUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -773,212 +773,212 @@ func (eu *EntityUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (eu *EntityUpdate) Exec(ctx context.Context) error {
-	_, err := eu.Save(ctx)
+func (_u *EntityUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (eu *EntityUpdate) ExecX(ctx context.Context) {
-	if err := eu.Exec(ctx); err != nil {
+func (_u *EntityUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (eu *EntityUpdate) defaults() {
-	if _, ok := eu.mutation.UpdatedAt(); !ok {
+func (_u *EntityUpdate) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
 		v := entity.UpdateDefaultUpdatedAt()
-		eu.mutation.SetUpdatedAt(v)
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (eu *EntityUpdate) check() error {
-	if v, ok := eu.mutation.Name(); ok {
+func (_u *EntityUpdate) check() error {
+	if v, ok := _u.mutation.Name(); ok {
 		if err := entity.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Entity.name": %w`, err)}
 		}
 	}
-	if v, ok := eu.mutation.Description(); ok {
+	if v, ok := _u.mutation.Description(); ok {
 		if err := entity.DescriptionValidator(v); err != nil {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Entity.description": %w`, err)}
 		}
 	}
-	if v, ok := eu.mutation.ImportRef(); ok {
+	if v, ok := _u.mutation.ImportRef(); ok {
 		if err := entity.ImportRefValidator(v); err != nil {
 			return &ValidationError{Name: "import_ref", err: fmt.Errorf(`ent: validator failed for field "Entity.import_ref": %w`, err)}
 		}
 	}
-	if v, ok := eu.mutation.Notes(); ok {
+	if v, ok := _u.mutation.Notes(); ok {
 		if err := entity.NotesValidator(v); err != nil {
 			return &ValidationError{Name: "notes", err: fmt.Errorf(`ent: validator failed for field "Entity.notes": %w`, err)}
 		}
 	}
-	if v, ok := eu.mutation.SerialNumber(); ok {
+	if v, ok := _u.mutation.SerialNumber(); ok {
 		if err := entity.SerialNumberValidator(v); err != nil {
 			return &ValidationError{Name: "serial_number", err: fmt.Errorf(`ent: validator failed for field "Entity.serial_number": %w`, err)}
 		}
 	}
-	if v, ok := eu.mutation.ModelNumber(); ok {
+	if v, ok := _u.mutation.ModelNumber(); ok {
 		if err := entity.ModelNumberValidator(v); err != nil {
 			return &ValidationError{Name: "model_number", err: fmt.Errorf(`ent: validator failed for field "Entity.model_number": %w`, err)}
 		}
 	}
-	if v, ok := eu.mutation.Manufacturer(); ok {
+	if v, ok := _u.mutation.Manufacturer(); ok {
 		if err := entity.ManufacturerValidator(v); err != nil {
 			return &ValidationError{Name: "manufacturer", err: fmt.Errorf(`ent: validator failed for field "Entity.manufacturer": %w`, err)}
 		}
 	}
-	if v, ok := eu.mutation.WarrantyDetails(); ok {
+	if v, ok := _u.mutation.WarrantyDetails(); ok {
 		if err := entity.WarrantyDetailsValidator(v); err != nil {
 			return &ValidationError{Name: "warranty_details", err: fmt.Errorf(`ent: validator failed for field "Entity.warranty_details": %w`, err)}
 		}
 	}
-	if v, ok := eu.mutation.SoldNotes(); ok {
+	if v, ok := _u.mutation.SoldNotes(); ok {
 		if err := entity.SoldNotesValidator(v); err != nil {
 			return &ValidationError{Name: "sold_notes", err: fmt.Errorf(`ent: validator failed for field "Entity.sold_notes": %w`, err)}
 		}
 	}
-	if eu.mutation.GroupCleared() && len(eu.mutation.GroupIDs()) > 0 {
+	if _u.mutation.GroupCleared() && len(_u.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Entity.group"`)
 	}
 	return nil
 }
 
-func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := eu.check(); err != nil {
-		return n, err
+func (_u *EntityUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(entity.Table, entity.Columns, sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID))
-	if ps := eu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := eu.mutation.UpdatedAt(); ok {
+	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(entity.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := eu.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(entity.FieldName, field.TypeString, value)
 	}
-	if value, ok := eu.mutation.Description(); ok {
+	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(entity.FieldDescription, field.TypeString, value)
 	}
-	if eu.mutation.DescriptionCleared() {
+	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(entity.FieldDescription, field.TypeString)
 	}
-	if value, ok := eu.mutation.ImportRef(); ok {
+	if value, ok := _u.mutation.ImportRef(); ok {
 		_spec.SetField(entity.FieldImportRef, field.TypeString, value)
 	}
-	if eu.mutation.ImportRefCleared() {
+	if _u.mutation.ImportRefCleared() {
 		_spec.ClearField(entity.FieldImportRef, field.TypeString)
 	}
-	if value, ok := eu.mutation.Notes(); ok {
+	if value, ok := _u.mutation.Notes(); ok {
 		_spec.SetField(entity.FieldNotes, field.TypeString, value)
 	}
-	if eu.mutation.NotesCleared() {
+	if _u.mutation.NotesCleared() {
 		_spec.ClearField(entity.FieldNotes, field.TypeString)
 	}
-	if value, ok := eu.mutation.Quantity(); ok {
+	if value, ok := _u.mutation.Quantity(); ok {
 		_spec.SetField(entity.FieldQuantity, field.TypeInt, value)
 	}
-	if value, ok := eu.mutation.AddedQuantity(); ok {
+	if value, ok := _u.mutation.AddedQuantity(); ok {
 		_spec.AddField(entity.FieldQuantity, field.TypeInt, value)
 	}
-	if value, ok := eu.mutation.Insured(); ok {
+	if value, ok := _u.mutation.Insured(); ok {
 		_spec.SetField(entity.FieldInsured, field.TypeBool, value)
 	}
-	if value, ok := eu.mutation.Archived(); ok {
+	if value, ok := _u.mutation.Archived(); ok {
 		_spec.SetField(entity.FieldArchived, field.TypeBool, value)
 	}
-	if value, ok := eu.mutation.AssetID(); ok {
+	if value, ok := _u.mutation.AssetID(); ok {
 		_spec.SetField(entity.FieldAssetID, field.TypeInt, value)
 	}
-	if value, ok := eu.mutation.AddedAssetID(); ok {
+	if value, ok := _u.mutation.AddedAssetID(); ok {
 		_spec.AddField(entity.FieldAssetID, field.TypeInt, value)
 	}
-	if value, ok := eu.mutation.SyncChildEntitiesLocations(); ok {
+	if value, ok := _u.mutation.SyncChildEntitiesLocations(); ok {
 		_spec.SetField(entity.FieldSyncChildEntitiesLocations, field.TypeBool, value)
 	}
-	if value, ok := eu.mutation.SerialNumber(); ok {
+	if value, ok := _u.mutation.SerialNumber(); ok {
 		_spec.SetField(entity.FieldSerialNumber, field.TypeString, value)
 	}
-	if eu.mutation.SerialNumberCleared() {
+	if _u.mutation.SerialNumberCleared() {
 		_spec.ClearField(entity.FieldSerialNumber, field.TypeString)
 	}
-	if value, ok := eu.mutation.ModelNumber(); ok {
+	if value, ok := _u.mutation.ModelNumber(); ok {
 		_spec.SetField(entity.FieldModelNumber, field.TypeString, value)
 	}
-	if eu.mutation.ModelNumberCleared() {
+	if _u.mutation.ModelNumberCleared() {
 		_spec.ClearField(entity.FieldModelNumber, field.TypeString)
 	}
-	if value, ok := eu.mutation.Manufacturer(); ok {
+	if value, ok := _u.mutation.Manufacturer(); ok {
 		_spec.SetField(entity.FieldManufacturer, field.TypeString, value)
 	}
-	if eu.mutation.ManufacturerCleared() {
+	if _u.mutation.ManufacturerCleared() {
 		_spec.ClearField(entity.FieldManufacturer, field.TypeString)
 	}
-	if value, ok := eu.mutation.LifetimeWarranty(); ok {
+	if value, ok := _u.mutation.LifetimeWarranty(); ok {
 		_spec.SetField(entity.FieldLifetimeWarranty, field.TypeBool, value)
 	}
-	if value, ok := eu.mutation.WarrantyExpires(); ok {
+	if value, ok := _u.mutation.WarrantyExpires(); ok {
 		_spec.SetField(entity.FieldWarrantyExpires, field.TypeTime, value)
 	}
-	if eu.mutation.WarrantyExpiresCleared() {
+	if _u.mutation.WarrantyExpiresCleared() {
 		_spec.ClearField(entity.FieldWarrantyExpires, field.TypeTime)
 	}
-	if value, ok := eu.mutation.WarrantyDetails(); ok {
+	if value, ok := _u.mutation.WarrantyDetails(); ok {
 		_spec.SetField(entity.FieldWarrantyDetails, field.TypeString, value)
 	}
-	if eu.mutation.WarrantyDetailsCleared() {
+	if _u.mutation.WarrantyDetailsCleared() {
 		_spec.ClearField(entity.FieldWarrantyDetails, field.TypeString)
 	}
-	if value, ok := eu.mutation.PurchaseTime(); ok {
+	if value, ok := _u.mutation.PurchaseTime(); ok {
 		_spec.SetField(entity.FieldPurchaseTime, field.TypeTime, value)
 	}
-	if eu.mutation.PurchaseTimeCleared() {
+	if _u.mutation.PurchaseTimeCleared() {
 		_spec.ClearField(entity.FieldPurchaseTime, field.TypeTime)
 	}
-	if value, ok := eu.mutation.PurchaseFrom(); ok {
+	if value, ok := _u.mutation.PurchaseFrom(); ok {
 		_spec.SetField(entity.FieldPurchaseFrom, field.TypeString, value)
 	}
-	if eu.mutation.PurchaseFromCleared() {
+	if _u.mutation.PurchaseFromCleared() {
 		_spec.ClearField(entity.FieldPurchaseFrom, field.TypeString)
 	}
-	if value, ok := eu.mutation.PurchasePrice(); ok {
+	if value, ok := _u.mutation.PurchasePrice(); ok {
 		_spec.SetField(entity.FieldPurchasePrice, field.TypeFloat64, value)
 	}
-	if value, ok := eu.mutation.AddedPurchasePrice(); ok {
+	if value, ok := _u.mutation.AddedPurchasePrice(); ok {
 		_spec.AddField(entity.FieldPurchasePrice, field.TypeFloat64, value)
 	}
-	if value, ok := eu.mutation.SoldTime(); ok {
+	if value, ok := _u.mutation.SoldTime(); ok {
 		_spec.SetField(entity.FieldSoldTime, field.TypeTime, value)
 	}
-	if eu.mutation.SoldTimeCleared() {
+	if _u.mutation.SoldTimeCleared() {
 		_spec.ClearField(entity.FieldSoldTime, field.TypeTime)
 	}
-	if value, ok := eu.mutation.SoldTo(); ok {
+	if value, ok := _u.mutation.SoldTo(); ok {
 		_spec.SetField(entity.FieldSoldTo, field.TypeString, value)
 	}
-	if eu.mutation.SoldToCleared() {
+	if _u.mutation.SoldToCleared() {
 		_spec.ClearField(entity.FieldSoldTo, field.TypeString)
 	}
-	if value, ok := eu.mutation.SoldPrice(); ok {
+	if value, ok := _u.mutation.SoldPrice(); ok {
 		_spec.SetField(entity.FieldSoldPrice, field.TypeFloat64, value)
 	}
-	if value, ok := eu.mutation.AddedSoldPrice(); ok {
+	if value, ok := _u.mutation.AddedSoldPrice(); ok {
 		_spec.AddField(entity.FieldSoldPrice, field.TypeFloat64, value)
 	}
-	if value, ok := eu.mutation.SoldNotes(); ok {
+	if value, ok := _u.mutation.SoldNotes(); ok {
 		_spec.SetField(entity.FieldSoldNotes, field.TypeString, value)
 	}
-	if eu.mutation.SoldNotesCleared() {
+	if _u.mutation.SoldNotesCleared() {
 		_spec.ClearField(entity.FieldSoldNotes, field.TypeString)
 	}
-	if eu.mutation.GroupCleared() {
+	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -991,7 +991,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := eu.mutation.GroupIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -1007,7 +1007,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if eu.mutation.ParentCleared() {
+	if _u.mutation.ParentCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -1020,7 +1020,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := eu.mutation.ParentIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ParentIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -1036,7 +1036,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if eu.mutation.ChildrenCleared() {
+	if _u.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1049,7 +1049,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := eu.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !eu.mutation.ChildrenCleared() {
+	if nodes := _u.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !_u.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1065,7 +1065,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := eu.mutation.ChildrenIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ChildrenIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1081,7 +1081,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if eu.mutation.EntityCleared() {
+	if _u.mutation.EntityCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
@@ -1094,7 +1094,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := eu.mutation.EntityIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
@@ -1110,7 +1110,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if eu.mutation.LocationCleared() {
+	if _u.mutation.LocationCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
@@ -1123,7 +1123,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := eu.mutation.LocationIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.LocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
@@ -1139,7 +1139,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if eu.mutation.LabelCleared() {
+	if _u.mutation.LabelCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -1152,7 +1152,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := eu.mutation.RemovedLabelIDs(); len(nodes) > 0 && !eu.mutation.LabelCleared() {
+	if nodes := _u.mutation.RemovedLabelIDs(); len(nodes) > 0 && !_u.mutation.LabelCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -1168,7 +1168,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := eu.mutation.LabelIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.LabelIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -1184,7 +1184,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if eu.mutation.TypeCleared() {
+	if _u.mutation.TypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -1197,7 +1197,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := eu.mutation.TypeIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.TypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -1213,7 +1213,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if eu.mutation.FieldsCleared() {
+	if _u.mutation.FieldsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1226,7 +1226,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := eu.mutation.RemovedFieldsIDs(); len(nodes) > 0 && !eu.mutation.FieldsCleared() {
+	if nodes := _u.mutation.RemovedFieldsIDs(); len(nodes) > 0 && !_u.mutation.FieldsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1242,7 +1242,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := eu.mutation.FieldsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.FieldsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1258,7 +1258,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if eu.mutation.MaintenanceEntriesCleared() {
+	if _u.mutation.MaintenanceEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1271,7 +1271,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := eu.mutation.RemovedMaintenanceEntriesIDs(); len(nodes) > 0 && !eu.mutation.MaintenanceEntriesCleared() {
+	if nodes := _u.mutation.RemovedMaintenanceEntriesIDs(); len(nodes) > 0 && !_u.mutation.MaintenanceEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1287,7 +1287,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := eu.mutation.MaintenanceEntriesIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.MaintenanceEntriesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1303,7 +1303,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if eu.mutation.AttachmentsCleared() {
+	if _u.mutation.AttachmentsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1316,7 +1316,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := eu.mutation.RemovedAttachmentsIDs(); len(nodes) > 0 && !eu.mutation.AttachmentsCleared() {
+	if nodes := _u.mutation.RemovedAttachmentsIDs(); len(nodes) > 0 && !_u.mutation.AttachmentsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1332,7 +1332,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := eu.mutation.AttachmentsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.AttachmentsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1348,7 +1348,7 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, eu.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{entity.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -1356,8 +1356,8 @@ func (eu *EntityUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	eu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // EntityUpdateOne is the builder for updating a single Entity entity.
@@ -1369,749 +1369,749 @@ type EntityUpdateOne struct {
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (euo *EntityUpdateOne) SetUpdatedAt(t time.Time) *EntityUpdateOne {
-	euo.mutation.SetUpdatedAt(t)
-	return euo
+func (_u *EntityUpdateOne) SetUpdatedAt(v time.Time) *EntityUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetName sets the "name" field.
-func (euo *EntityUpdateOne) SetName(s string) *EntityUpdateOne {
-	euo.mutation.SetName(s)
-	return euo
+func (_u *EntityUpdateOne) SetName(v string) *EntityUpdateOne {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableName(s *string) *EntityUpdateOne {
-	if s != nil {
-		euo.SetName(*s)
+func (_u *EntityUpdateOne) SetNillableName(v *string) *EntityUpdateOne {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return euo
+	return _u
 }
 
 // SetDescription sets the "description" field.
-func (euo *EntityUpdateOne) SetDescription(s string) *EntityUpdateOne {
-	euo.mutation.SetDescription(s)
-	return euo
+func (_u *EntityUpdateOne) SetDescription(v string) *EntityUpdateOne {
+	_u.mutation.SetDescription(v)
+	return _u
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableDescription(s *string) *EntityUpdateOne {
-	if s != nil {
-		euo.SetDescription(*s)
+func (_u *EntityUpdateOne) SetNillableDescription(v *string) *EntityUpdateOne {
+	if v != nil {
+		_u.SetDescription(*v)
 	}
-	return euo
+	return _u
 }
 
 // ClearDescription clears the value of the "description" field.
-func (euo *EntityUpdateOne) ClearDescription() *EntityUpdateOne {
-	euo.mutation.ClearDescription()
-	return euo
+func (_u *EntityUpdateOne) ClearDescription() *EntityUpdateOne {
+	_u.mutation.ClearDescription()
+	return _u
 }
 
 // SetImportRef sets the "import_ref" field.
-func (euo *EntityUpdateOne) SetImportRef(s string) *EntityUpdateOne {
-	euo.mutation.SetImportRef(s)
-	return euo
+func (_u *EntityUpdateOne) SetImportRef(v string) *EntityUpdateOne {
+	_u.mutation.SetImportRef(v)
+	return _u
 }
 
 // SetNillableImportRef sets the "import_ref" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableImportRef(s *string) *EntityUpdateOne {
-	if s != nil {
-		euo.SetImportRef(*s)
+func (_u *EntityUpdateOne) SetNillableImportRef(v *string) *EntityUpdateOne {
+	if v != nil {
+		_u.SetImportRef(*v)
 	}
-	return euo
+	return _u
 }
 
 // ClearImportRef clears the value of the "import_ref" field.
-func (euo *EntityUpdateOne) ClearImportRef() *EntityUpdateOne {
-	euo.mutation.ClearImportRef()
-	return euo
+func (_u *EntityUpdateOne) ClearImportRef() *EntityUpdateOne {
+	_u.mutation.ClearImportRef()
+	return _u
 }
 
 // SetNotes sets the "notes" field.
-func (euo *EntityUpdateOne) SetNotes(s string) *EntityUpdateOne {
-	euo.mutation.SetNotes(s)
-	return euo
+func (_u *EntityUpdateOne) SetNotes(v string) *EntityUpdateOne {
+	_u.mutation.SetNotes(v)
+	return _u
 }
 
 // SetNillableNotes sets the "notes" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableNotes(s *string) *EntityUpdateOne {
-	if s != nil {
-		euo.SetNotes(*s)
+func (_u *EntityUpdateOne) SetNillableNotes(v *string) *EntityUpdateOne {
+	if v != nil {
+		_u.SetNotes(*v)
 	}
-	return euo
+	return _u
 }
 
 // ClearNotes clears the value of the "notes" field.
-func (euo *EntityUpdateOne) ClearNotes() *EntityUpdateOne {
-	euo.mutation.ClearNotes()
-	return euo
+func (_u *EntityUpdateOne) ClearNotes() *EntityUpdateOne {
+	_u.mutation.ClearNotes()
+	return _u
 }
 
 // SetQuantity sets the "quantity" field.
-func (euo *EntityUpdateOne) SetQuantity(i int) *EntityUpdateOne {
-	euo.mutation.ResetQuantity()
-	euo.mutation.SetQuantity(i)
-	return euo
+func (_u *EntityUpdateOne) SetQuantity(v int) *EntityUpdateOne {
+	_u.mutation.ResetQuantity()
+	_u.mutation.SetQuantity(v)
+	return _u
 }
 
 // SetNillableQuantity sets the "quantity" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableQuantity(i *int) *EntityUpdateOne {
-	if i != nil {
-		euo.SetQuantity(*i)
+func (_u *EntityUpdateOne) SetNillableQuantity(v *int) *EntityUpdateOne {
+	if v != nil {
+		_u.SetQuantity(*v)
 	}
-	return euo
+	return _u
 }
 
-// AddQuantity adds i to the "quantity" field.
-func (euo *EntityUpdateOne) AddQuantity(i int) *EntityUpdateOne {
-	euo.mutation.AddQuantity(i)
-	return euo
+// AddQuantity adds value to the "quantity" field.
+func (_u *EntityUpdateOne) AddQuantity(v int) *EntityUpdateOne {
+	_u.mutation.AddQuantity(v)
+	return _u
 }
 
 // SetInsured sets the "insured" field.
-func (euo *EntityUpdateOne) SetInsured(b bool) *EntityUpdateOne {
-	euo.mutation.SetInsured(b)
-	return euo
+func (_u *EntityUpdateOne) SetInsured(v bool) *EntityUpdateOne {
+	_u.mutation.SetInsured(v)
+	return _u
 }
 
 // SetNillableInsured sets the "insured" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableInsured(b *bool) *EntityUpdateOne {
-	if b != nil {
-		euo.SetInsured(*b)
+func (_u *EntityUpdateOne) SetNillableInsured(v *bool) *EntityUpdateOne {
+	if v != nil {
+		_u.SetInsured(*v)
 	}
-	return euo
+	return _u
 }
 
 // SetArchived sets the "archived" field.
-func (euo *EntityUpdateOne) SetArchived(b bool) *EntityUpdateOne {
-	euo.mutation.SetArchived(b)
-	return euo
+func (_u *EntityUpdateOne) SetArchived(v bool) *EntityUpdateOne {
+	_u.mutation.SetArchived(v)
+	return _u
 }
 
 // SetNillableArchived sets the "archived" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableArchived(b *bool) *EntityUpdateOne {
-	if b != nil {
-		euo.SetArchived(*b)
+func (_u *EntityUpdateOne) SetNillableArchived(v *bool) *EntityUpdateOne {
+	if v != nil {
+		_u.SetArchived(*v)
 	}
-	return euo
+	return _u
 }
 
 // SetAssetID sets the "asset_id" field.
-func (euo *EntityUpdateOne) SetAssetID(i int) *EntityUpdateOne {
-	euo.mutation.ResetAssetID()
-	euo.mutation.SetAssetID(i)
-	return euo
+func (_u *EntityUpdateOne) SetAssetID(v int) *EntityUpdateOne {
+	_u.mutation.ResetAssetID()
+	_u.mutation.SetAssetID(v)
+	return _u
 }
 
 // SetNillableAssetID sets the "asset_id" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableAssetID(i *int) *EntityUpdateOne {
-	if i != nil {
-		euo.SetAssetID(*i)
+func (_u *EntityUpdateOne) SetNillableAssetID(v *int) *EntityUpdateOne {
+	if v != nil {
+		_u.SetAssetID(*v)
 	}
-	return euo
+	return _u
 }
 
-// AddAssetID adds i to the "asset_id" field.
-func (euo *EntityUpdateOne) AddAssetID(i int) *EntityUpdateOne {
-	euo.mutation.AddAssetID(i)
-	return euo
+// AddAssetID adds value to the "asset_id" field.
+func (_u *EntityUpdateOne) AddAssetID(v int) *EntityUpdateOne {
+	_u.mutation.AddAssetID(v)
+	return _u
 }
 
 // SetSyncChildEntitiesLocations sets the "sync_child_entities_locations" field.
-func (euo *EntityUpdateOne) SetSyncChildEntitiesLocations(b bool) *EntityUpdateOne {
-	euo.mutation.SetSyncChildEntitiesLocations(b)
-	return euo
+func (_u *EntityUpdateOne) SetSyncChildEntitiesLocations(v bool) *EntityUpdateOne {
+	_u.mutation.SetSyncChildEntitiesLocations(v)
+	return _u
 }
 
 // SetNillableSyncChildEntitiesLocations sets the "sync_child_entities_locations" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableSyncChildEntitiesLocations(b *bool) *EntityUpdateOne {
-	if b != nil {
-		euo.SetSyncChildEntitiesLocations(*b)
+func (_u *EntityUpdateOne) SetNillableSyncChildEntitiesLocations(v *bool) *EntityUpdateOne {
+	if v != nil {
+		_u.SetSyncChildEntitiesLocations(*v)
 	}
-	return euo
+	return _u
 }
 
 // SetSerialNumber sets the "serial_number" field.
-func (euo *EntityUpdateOne) SetSerialNumber(s string) *EntityUpdateOne {
-	euo.mutation.SetSerialNumber(s)
-	return euo
+func (_u *EntityUpdateOne) SetSerialNumber(v string) *EntityUpdateOne {
+	_u.mutation.SetSerialNumber(v)
+	return _u
 }
 
 // SetNillableSerialNumber sets the "serial_number" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableSerialNumber(s *string) *EntityUpdateOne {
-	if s != nil {
-		euo.SetSerialNumber(*s)
+func (_u *EntityUpdateOne) SetNillableSerialNumber(v *string) *EntityUpdateOne {
+	if v != nil {
+		_u.SetSerialNumber(*v)
 	}
-	return euo
+	return _u
 }
 
 // ClearSerialNumber clears the value of the "serial_number" field.
-func (euo *EntityUpdateOne) ClearSerialNumber() *EntityUpdateOne {
-	euo.mutation.ClearSerialNumber()
-	return euo
+func (_u *EntityUpdateOne) ClearSerialNumber() *EntityUpdateOne {
+	_u.mutation.ClearSerialNumber()
+	return _u
 }
 
 // SetModelNumber sets the "model_number" field.
-func (euo *EntityUpdateOne) SetModelNumber(s string) *EntityUpdateOne {
-	euo.mutation.SetModelNumber(s)
-	return euo
+func (_u *EntityUpdateOne) SetModelNumber(v string) *EntityUpdateOne {
+	_u.mutation.SetModelNumber(v)
+	return _u
 }
 
 // SetNillableModelNumber sets the "model_number" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableModelNumber(s *string) *EntityUpdateOne {
-	if s != nil {
-		euo.SetModelNumber(*s)
+func (_u *EntityUpdateOne) SetNillableModelNumber(v *string) *EntityUpdateOne {
+	if v != nil {
+		_u.SetModelNumber(*v)
 	}
-	return euo
+	return _u
 }
 
 // ClearModelNumber clears the value of the "model_number" field.
-func (euo *EntityUpdateOne) ClearModelNumber() *EntityUpdateOne {
-	euo.mutation.ClearModelNumber()
-	return euo
+func (_u *EntityUpdateOne) ClearModelNumber() *EntityUpdateOne {
+	_u.mutation.ClearModelNumber()
+	return _u
 }
 
 // SetManufacturer sets the "manufacturer" field.
-func (euo *EntityUpdateOne) SetManufacturer(s string) *EntityUpdateOne {
-	euo.mutation.SetManufacturer(s)
-	return euo
+func (_u *EntityUpdateOne) SetManufacturer(v string) *EntityUpdateOne {
+	_u.mutation.SetManufacturer(v)
+	return _u
 }
 
 // SetNillableManufacturer sets the "manufacturer" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableManufacturer(s *string) *EntityUpdateOne {
-	if s != nil {
-		euo.SetManufacturer(*s)
+func (_u *EntityUpdateOne) SetNillableManufacturer(v *string) *EntityUpdateOne {
+	if v != nil {
+		_u.SetManufacturer(*v)
 	}
-	return euo
+	return _u
 }
 
 // ClearManufacturer clears the value of the "manufacturer" field.
-func (euo *EntityUpdateOne) ClearManufacturer() *EntityUpdateOne {
-	euo.mutation.ClearManufacturer()
-	return euo
+func (_u *EntityUpdateOne) ClearManufacturer() *EntityUpdateOne {
+	_u.mutation.ClearManufacturer()
+	return _u
 }
 
 // SetLifetimeWarranty sets the "lifetime_warranty" field.
-func (euo *EntityUpdateOne) SetLifetimeWarranty(b bool) *EntityUpdateOne {
-	euo.mutation.SetLifetimeWarranty(b)
-	return euo
+func (_u *EntityUpdateOne) SetLifetimeWarranty(v bool) *EntityUpdateOne {
+	_u.mutation.SetLifetimeWarranty(v)
+	return _u
 }
 
 // SetNillableLifetimeWarranty sets the "lifetime_warranty" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableLifetimeWarranty(b *bool) *EntityUpdateOne {
-	if b != nil {
-		euo.SetLifetimeWarranty(*b)
+func (_u *EntityUpdateOne) SetNillableLifetimeWarranty(v *bool) *EntityUpdateOne {
+	if v != nil {
+		_u.SetLifetimeWarranty(*v)
 	}
-	return euo
+	return _u
 }
 
 // SetWarrantyExpires sets the "warranty_expires" field.
-func (euo *EntityUpdateOne) SetWarrantyExpires(t time.Time) *EntityUpdateOne {
-	euo.mutation.SetWarrantyExpires(t)
-	return euo
+func (_u *EntityUpdateOne) SetWarrantyExpires(v time.Time) *EntityUpdateOne {
+	_u.mutation.SetWarrantyExpires(v)
+	return _u
 }
 
 // SetNillableWarrantyExpires sets the "warranty_expires" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableWarrantyExpires(t *time.Time) *EntityUpdateOne {
-	if t != nil {
-		euo.SetWarrantyExpires(*t)
+func (_u *EntityUpdateOne) SetNillableWarrantyExpires(v *time.Time) *EntityUpdateOne {
+	if v != nil {
+		_u.SetWarrantyExpires(*v)
 	}
-	return euo
+	return _u
 }
 
 // ClearWarrantyExpires clears the value of the "warranty_expires" field.
-func (euo *EntityUpdateOne) ClearWarrantyExpires() *EntityUpdateOne {
-	euo.mutation.ClearWarrantyExpires()
-	return euo
+func (_u *EntityUpdateOne) ClearWarrantyExpires() *EntityUpdateOne {
+	_u.mutation.ClearWarrantyExpires()
+	return _u
 }
 
 // SetWarrantyDetails sets the "warranty_details" field.
-func (euo *EntityUpdateOne) SetWarrantyDetails(s string) *EntityUpdateOne {
-	euo.mutation.SetWarrantyDetails(s)
-	return euo
+func (_u *EntityUpdateOne) SetWarrantyDetails(v string) *EntityUpdateOne {
+	_u.mutation.SetWarrantyDetails(v)
+	return _u
 }
 
 // SetNillableWarrantyDetails sets the "warranty_details" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableWarrantyDetails(s *string) *EntityUpdateOne {
-	if s != nil {
-		euo.SetWarrantyDetails(*s)
+func (_u *EntityUpdateOne) SetNillableWarrantyDetails(v *string) *EntityUpdateOne {
+	if v != nil {
+		_u.SetWarrantyDetails(*v)
 	}
-	return euo
+	return _u
 }
 
 // ClearWarrantyDetails clears the value of the "warranty_details" field.
-func (euo *EntityUpdateOne) ClearWarrantyDetails() *EntityUpdateOne {
-	euo.mutation.ClearWarrantyDetails()
-	return euo
+func (_u *EntityUpdateOne) ClearWarrantyDetails() *EntityUpdateOne {
+	_u.mutation.ClearWarrantyDetails()
+	return _u
 }
 
 // SetPurchaseTime sets the "purchase_time" field.
-func (euo *EntityUpdateOne) SetPurchaseTime(t time.Time) *EntityUpdateOne {
-	euo.mutation.SetPurchaseTime(t)
-	return euo
+func (_u *EntityUpdateOne) SetPurchaseTime(v time.Time) *EntityUpdateOne {
+	_u.mutation.SetPurchaseTime(v)
+	return _u
 }
 
 // SetNillablePurchaseTime sets the "purchase_time" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillablePurchaseTime(t *time.Time) *EntityUpdateOne {
-	if t != nil {
-		euo.SetPurchaseTime(*t)
+func (_u *EntityUpdateOne) SetNillablePurchaseTime(v *time.Time) *EntityUpdateOne {
+	if v != nil {
+		_u.SetPurchaseTime(*v)
 	}
-	return euo
+	return _u
 }
 
 // ClearPurchaseTime clears the value of the "purchase_time" field.
-func (euo *EntityUpdateOne) ClearPurchaseTime() *EntityUpdateOne {
-	euo.mutation.ClearPurchaseTime()
-	return euo
+func (_u *EntityUpdateOne) ClearPurchaseTime() *EntityUpdateOne {
+	_u.mutation.ClearPurchaseTime()
+	return _u
 }
 
 // SetPurchaseFrom sets the "purchase_from" field.
-func (euo *EntityUpdateOne) SetPurchaseFrom(s string) *EntityUpdateOne {
-	euo.mutation.SetPurchaseFrom(s)
-	return euo
+func (_u *EntityUpdateOne) SetPurchaseFrom(v string) *EntityUpdateOne {
+	_u.mutation.SetPurchaseFrom(v)
+	return _u
 }
 
 // SetNillablePurchaseFrom sets the "purchase_from" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillablePurchaseFrom(s *string) *EntityUpdateOne {
-	if s != nil {
-		euo.SetPurchaseFrom(*s)
+func (_u *EntityUpdateOne) SetNillablePurchaseFrom(v *string) *EntityUpdateOne {
+	if v != nil {
+		_u.SetPurchaseFrom(*v)
 	}
-	return euo
+	return _u
 }
 
 // ClearPurchaseFrom clears the value of the "purchase_from" field.
-func (euo *EntityUpdateOne) ClearPurchaseFrom() *EntityUpdateOne {
-	euo.mutation.ClearPurchaseFrom()
-	return euo
+func (_u *EntityUpdateOne) ClearPurchaseFrom() *EntityUpdateOne {
+	_u.mutation.ClearPurchaseFrom()
+	return _u
 }
 
 // SetPurchasePrice sets the "purchase_price" field.
-func (euo *EntityUpdateOne) SetPurchasePrice(f float64) *EntityUpdateOne {
-	euo.mutation.ResetPurchasePrice()
-	euo.mutation.SetPurchasePrice(f)
-	return euo
+func (_u *EntityUpdateOne) SetPurchasePrice(v float64) *EntityUpdateOne {
+	_u.mutation.ResetPurchasePrice()
+	_u.mutation.SetPurchasePrice(v)
+	return _u
 }
 
 // SetNillablePurchasePrice sets the "purchase_price" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillablePurchasePrice(f *float64) *EntityUpdateOne {
-	if f != nil {
-		euo.SetPurchasePrice(*f)
+func (_u *EntityUpdateOne) SetNillablePurchasePrice(v *float64) *EntityUpdateOne {
+	if v != nil {
+		_u.SetPurchasePrice(*v)
 	}
-	return euo
+	return _u
 }
 
-// AddPurchasePrice adds f to the "purchase_price" field.
-func (euo *EntityUpdateOne) AddPurchasePrice(f float64) *EntityUpdateOne {
-	euo.mutation.AddPurchasePrice(f)
-	return euo
+// AddPurchasePrice adds value to the "purchase_price" field.
+func (_u *EntityUpdateOne) AddPurchasePrice(v float64) *EntityUpdateOne {
+	_u.mutation.AddPurchasePrice(v)
+	return _u
 }
 
 // SetSoldTime sets the "sold_time" field.
-func (euo *EntityUpdateOne) SetSoldTime(t time.Time) *EntityUpdateOne {
-	euo.mutation.SetSoldTime(t)
-	return euo
+func (_u *EntityUpdateOne) SetSoldTime(v time.Time) *EntityUpdateOne {
+	_u.mutation.SetSoldTime(v)
+	return _u
 }
 
 // SetNillableSoldTime sets the "sold_time" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableSoldTime(t *time.Time) *EntityUpdateOne {
-	if t != nil {
-		euo.SetSoldTime(*t)
+func (_u *EntityUpdateOne) SetNillableSoldTime(v *time.Time) *EntityUpdateOne {
+	if v != nil {
+		_u.SetSoldTime(*v)
 	}
-	return euo
+	return _u
 }
 
 // ClearSoldTime clears the value of the "sold_time" field.
-func (euo *EntityUpdateOne) ClearSoldTime() *EntityUpdateOne {
-	euo.mutation.ClearSoldTime()
-	return euo
+func (_u *EntityUpdateOne) ClearSoldTime() *EntityUpdateOne {
+	_u.mutation.ClearSoldTime()
+	return _u
 }
 
 // SetSoldTo sets the "sold_to" field.
-func (euo *EntityUpdateOne) SetSoldTo(s string) *EntityUpdateOne {
-	euo.mutation.SetSoldTo(s)
-	return euo
+func (_u *EntityUpdateOne) SetSoldTo(v string) *EntityUpdateOne {
+	_u.mutation.SetSoldTo(v)
+	return _u
 }
 
 // SetNillableSoldTo sets the "sold_to" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableSoldTo(s *string) *EntityUpdateOne {
-	if s != nil {
-		euo.SetSoldTo(*s)
+func (_u *EntityUpdateOne) SetNillableSoldTo(v *string) *EntityUpdateOne {
+	if v != nil {
+		_u.SetSoldTo(*v)
 	}
-	return euo
+	return _u
 }
 
 // ClearSoldTo clears the value of the "sold_to" field.
-func (euo *EntityUpdateOne) ClearSoldTo() *EntityUpdateOne {
-	euo.mutation.ClearSoldTo()
-	return euo
+func (_u *EntityUpdateOne) ClearSoldTo() *EntityUpdateOne {
+	_u.mutation.ClearSoldTo()
+	return _u
 }
 
 // SetSoldPrice sets the "sold_price" field.
-func (euo *EntityUpdateOne) SetSoldPrice(f float64) *EntityUpdateOne {
-	euo.mutation.ResetSoldPrice()
-	euo.mutation.SetSoldPrice(f)
-	return euo
+func (_u *EntityUpdateOne) SetSoldPrice(v float64) *EntityUpdateOne {
+	_u.mutation.ResetSoldPrice()
+	_u.mutation.SetSoldPrice(v)
+	return _u
 }
 
 // SetNillableSoldPrice sets the "sold_price" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableSoldPrice(f *float64) *EntityUpdateOne {
-	if f != nil {
-		euo.SetSoldPrice(*f)
+func (_u *EntityUpdateOne) SetNillableSoldPrice(v *float64) *EntityUpdateOne {
+	if v != nil {
+		_u.SetSoldPrice(*v)
 	}
-	return euo
+	return _u
 }
 
-// AddSoldPrice adds f to the "sold_price" field.
-func (euo *EntityUpdateOne) AddSoldPrice(f float64) *EntityUpdateOne {
-	euo.mutation.AddSoldPrice(f)
-	return euo
+// AddSoldPrice adds value to the "sold_price" field.
+func (_u *EntityUpdateOne) AddSoldPrice(v float64) *EntityUpdateOne {
+	_u.mutation.AddSoldPrice(v)
+	return _u
 }
 
 // SetSoldNotes sets the "sold_notes" field.
-func (euo *EntityUpdateOne) SetSoldNotes(s string) *EntityUpdateOne {
-	euo.mutation.SetSoldNotes(s)
-	return euo
+func (_u *EntityUpdateOne) SetSoldNotes(v string) *EntityUpdateOne {
+	_u.mutation.SetSoldNotes(v)
+	return _u
 }
 
 // SetNillableSoldNotes sets the "sold_notes" field if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableSoldNotes(s *string) *EntityUpdateOne {
-	if s != nil {
-		euo.SetSoldNotes(*s)
+func (_u *EntityUpdateOne) SetNillableSoldNotes(v *string) *EntityUpdateOne {
+	if v != nil {
+		_u.SetSoldNotes(*v)
 	}
-	return euo
+	return _u
 }
 
 // ClearSoldNotes clears the value of the "sold_notes" field.
-func (euo *EntityUpdateOne) ClearSoldNotes() *EntityUpdateOne {
-	euo.mutation.ClearSoldNotes()
-	return euo
+func (_u *EntityUpdateOne) ClearSoldNotes() *EntityUpdateOne {
+	_u.mutation.ClearSoldNotes()
+	return _u
 }
 
 // SetGroupID sets the "group" edge to the Group entity by ID.
-func (euo *EntityUpdateOne) SetGroupID(id uuid.UUID) *EntityUpdateOne {
-	euo.mutation.SetGroupID(id)
-	return euo
+func (_u *EntityUpdateOne) SetGroupID(id uuid.UUID) *EntityUpdateOne {
+	_u.mutation.SetGroupID(id)
+	return _u
 }
 
 // SetGroup sets the "group" edge to the Group entity.
-func (euo *EntityUpdateOne) SetGroup(g *Group) *EntityUpdateOne {
-	return euo.SetGroupID(g.ID)
+func (_u *EntityUpdateOne) SetGroup(v *Group) *EntityUpdateOne {
+	return _u.SetGroupID(v.ID)
 }
 
 // SetParentID sets the "parent" edge to the Entity entity by ID.
-func (euo *EntityUpdateOne) SetParentID(id uuid.UUID) *EntityUpdateOne {
-	euo.mutation.SetParentID(id)
-	return euo
+func (_u *EntityUpdateOne) SetParentID(id uuid.UUID) *EntityUpdateOne {
+	_u.mutation.SetParentID(id)
+	return _u
 }
 
 // SetNillableParentID sets the "parent" edge to the Entity entity by ID if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableParentID(id *uuid.UUID) *EntityUpdateOne {
+func (_u *EntityUpdateOne) SetNillableParentID(id *uuid.UUID) *EntityUpdateOne {
 	if id != nil {
-		euo = euo.SetParentID(*id)
+		_u = _u.SetParentID(*id)
 	}
-	return euo
+	return _u
 }
 
 // SetParent sets the "parent" edge to the Entity entity.
-func (euo *EntityUpdateOne) SetParent(e *Entity) *EntityUpdateOne {
-	return euo.SetParentID(e.ID)
+func (_u *EntityUpdateOne) SetParent(v *Entity) *EntityUpdateOne {
+	return _u.SetParentID(v.ID)
 }
 
 // AddChildIDs adds the "children" edge to the Entity entity by IDs.
-func (euo *EntityUpdateOne) AddChildIDs(ids ...uuid.UUID) *EntityUpdateOne {
-	euo.mutation.AddChildIDs(ids...)
-	return euo
+func (_u *EntityUpdateOne) AddChildIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	_u.mutation.AddChildIDs(ids...)
+	return _u
 }
 
 // AddChildren adds the "children" edges to the Entity entity.
-func (euo *EntityUpdateOne) AddChildren(e ...*Entity) *EntityUpdateOne {
-	ids := make([]uuid.UUID, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+func (_u *EntityUpdateOne) AddChildren(v ...*Entity) *EntityUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return euo.AddChildIDs(ids...)
+	return _u.AddChildIDs(ids...)
 }
 
 // SetEntityID sets the "entity" edge to the Entity entity by ID.
-func (euo *EntityUpdateOne) SetEntityID(id uuid.UUID) *EntityUpdateOne {
-	euo.mutation.SetEntityID(id)
-	return euo
+func (_u *EntityUpdateOne) SetEntityID(id uuid.UUID) *EntityUpdateOne {
+	_u.mutation.SetEntityID(id)
+	return _u
 }
 
 // SetNillableEntityID sets the "entity" edge to the Entity entity by ID if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableEntityID(id *uuid.UUID) *EntityUpdateOne {
+func (_u *EntityUpdateOne) SetNillableEntityID(id *uuid.UUID) *EntityUpdateOne {
 	if id != nil {
-		euo = euo.SetEntityID(*id)
+		_u = _u.SetEntityID(*id)
 	}
-	return euo
+	return _u
 }
 
 // SetEntity sets the "entity" edge to the Entity entity.
-func (euo *EntityUpdateOne) SetEntity(e *Entity) *EntityUpdateOne {
-	return euo.SetEntityID(e.ID)
+func (_u *EntityUpdateOne) SetEntity(v *Entity) *EntityUpdateOne {
+	return _u.SetEntityID(v.ID)
 }
 
 // SetLocationID sets the "location" edge to the Entity entity by ID.
-func (euo *EntityUpdateOne) SetLocationID(id uuid.UUID) *EntityUpdateOne {
-	euo.mutation.SetLocationID(id)
-	return euo
+func (_u *EntityUpdateOne) SetLocationID(id uuid.UUID) *EntityUpdateOne {
+	_u.mutation.SetLocationID(id)
+	return _u
 }
 
 // SetNillableLocationID sets the "location" edge to the Entity entity by ID if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableLocationID(id *uuid.UUID) *EntityUpdateOne {
+func (_u *EntityUpdateOne) SetNillableLocationID(id *uuid.UUID) *EntityUpdateOne {
 	if id != nil {
-		euo = euo.SetLocationID(*id)
+		_u = _u.SetLocationID(*id)
 	}
-	return euo
+	return _u
 }
 
 // SetLocation sets the "location" edge to the Entity entity.
-func (euo *EntityUpdateOne) SetLocation(e *Entity) *EntityUpdateOne {
-	return euo.SetLocationID(e.ID)
+func (_u *EntityUpdateOne) SetLocation(v *Entity) *EntityUpdateOne {
+	return _u.SetLocationID(v.ID)
 }
 
 // AddLabelIDs adds the "label" edge to the Label entity by IDs.
-func (euo *EntityUpdateOne) AddLabelIDs(ids ...uuid.UUID) *EntityUpdateOne {
-	euo.mutation.AddLabelIDs(ids...)
-	return euo
+func (_u *EntityUpdateOne) AddLabelIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	_u.mutation.AddLabelIDs(ids...)
+	return _u
 }
 
 // AddLabel adds the "label" edges to the Label entity.
-func (euo *EntityUpdateOne) AddLabel(l ...*Label) *EntityUpdateOne {
-	ids := make([]uuid.UUID, len(l))
-	for i := range l {
-		ids[i] = l[i].ID
+func (_u *EntityUpdateOne) AddLabel(v ...*Label) *EntityUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return euo.AddLabelIDs(ids...)
+	return _u.AddLabelIDs(ids...)
 }
 
 // SetTypeID sets the "type" edge to the EntityType entity by ID.
-func (euo *EntityUpdateOne) SetTypeID(id uuid.UUID) *EntityUpdateOne {
-	euo.mutation.SetTypeID(id)
-	return euo
+func (_u *EntityUpdateOne) SetTypeID(id uuid.UUID) *EntityUpdateOne {
+	_u.mutation.SetTypeID(id)
+	return _u
 }
 
 // SetNillableTypeID sets the "type" edge to the EntityType entity by ID if the given value is not nil.
-func (euo *EntityUpdateOne) SetNillableTypeID(id *uuid.UUID) *EntityUpdateOne {
+func (_u *EntityUpdateOne) SetNillableTypeID(id *uuid.UUID) *EntityUpdateOne {
 	if id != nil {
-		euo = euo.SetTypeID(*id)
+		_u = _u.SetTypeID(*id)
 	}
-	return euo
+	return _u
 }
 
 // SetType sets the "type" edge to the EntityType entity.
-func (euo *EntityUpdateOne) SetType(e *EntityType) *EntityUpdateOne {
-	return euo.SetTypeID(e.ID)
+func (_u *EntityUpdateOne) SetType(v *EntityType) *EntityUpdateOne {
+	return _u.SetTypeID(v.ID)
 }
 
 // AddFieldIDs adds the "fields" edge to the EntityField entity by IDs.
-func (euo *EntityUpdateOne) AddFieldIDs(ids ...uuid.UUID) *EntityUpdateOne {
-	euo.mutation.AddFieldIDs(ids...)
-	return euo
+func (_u *EntityUpdateOne) AddFieldIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	_u.mutation.AddFieldIDs(ids...)
+	return _u
 }
 
 // AddFields adds the "fields" edges to the EntityField entity.
-func (euo *EntityUpdateOne) AddFields(e ...*EntityField) *EntityUpdateOne {
-	ids := make([]uuid.UUID, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+func (_u *EntityUpdateOne) AddFields(v ...*EntityField) *EntityUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return euo.AddFieldIDs(ids...)
+	return _u.AddFieldIDs(ids...)
 }
 
 // AddMaintenanceEntryIDs adds the "maintenance_entries" edge to the MaintenanceEntry entity by IDs.
-func (euo *EntityUpdateOne) AddMaintenanceEntryIDs(ids ...uuid.UUID) *EntityUpdateOne {
-	euo.mutation.AddMaintenanceEntryIDs(ids...)
-	return euo
+func (_u *EntityUpdateOne) AddMaintenanceEntryIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	_u.mutation.AddMaintenanceEntryIDs(ids...)
+	return _u
 }
 
 // AddMaintenanceEntries adds the "maintenance_entries" edges to the MaintenanceEntry entity.
-func (euo *EntityUpdateOne) AddMaintenanceEntries(m ...*MaintenanceEntry) *EntityUpdateOne {
-	ids := make([]uuid.UUID, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+func (_u *EntityUpdateOne) AddMaintenanceEntries(v ...*MaintenanceEntry) *EntityUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return euo.AddMaintenanceEntryIDs(ids...)
+	return _u.AddMaintenanceEntryIDs(ids...)
 }
 
 // AddAttachmentIDs adds the "attachments" edge to the Attachment entity by IDs.
-func (euo *EntityUpdateOne) AddAttachmentIDs(ids ...uuid.UUID) *EntityUpdateOne {
-	euo.mutation.AddAttachmentIDs(ids...)
-	return euo
+func (_u *EntityUpdateOne) AddAttachmentIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	_u.mutation.AddAttachmentIDs(ids...)
+	return _u
 }
 
 // AddAttachments adds the "attachments" edges to the Attachment entity.
-func (euo *EntityUpdateOne) AddAttachments(a ...*Attachment) *EntityUpdateOne {
-	ids := make([]uuid.UUID, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
+func (_u *EntityUpdateOne) AddAttachments(v ...*Attachment) *EntityUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return euo.AddAttachmentIDs(ids...)
+	return _u.AddAttachmentIDs(ids...)
 }
 
 // Mutation returns the EntityMutation object of the builder.
-func (euo *EntityUpdateOne) Mutation() *EntityMutation {
-	return euo.mutation
+func (_u *EntityUpdateOne) Mutation() *EntityMutation {
+	return _u.mutation
 }
 
 // ClearGroup clears the "group" edge to the Group entity.
-func (euo *EntityUpdateOne) ClearGroup() *EntityUpdateOne {
-	euo.mutation.ClearGroup()
-	return euo
+func (_u *EntityUpdateOne) ClearGroup() *EntityUpdateOne {
+	_u.mutation.ClearGroup()
+	return _u
 }
 
 // ClearParent clears the "parent" edge to the Entity entity.
-func (euo *EntityUpdateOne) ClearParent() *EntityUpdateOne {
-	euo.mutation.ClearParent()
-	return euo
+func (_u *EntityUpdateOne) ClearParent() *EntityUpdateOne {
+	_u.mutation.ClearParent()
+	return _u
 }
 
 // ClearChildren clears all "children" edges to the Entity entity.
-func (euo *EntityUpdateOne) ClearChildren() *EntityUpdateOne {
-	euo.mutation.ClearChildren()
-	return euo
+func (_u *EntityUpdateOne) ClearChildren() *EntityUpdateOne {
+	_u.mutation.ClearChildren()
+	return _u
 }
 
 // RemoveChildIDs removes the "children" edge to Entity entities by IDs.
-func (euo *EntityUpdateOne) RemoveChildIDs(ids ...uuid.UUID) *EntityUpdateOne {
-	euo.mutation.RemoveChildIDs(ids...)
-	return euo
+func (_u *EntityUpdateOne) RemoveChildIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	_u.mutation.RemoveChildIDs(ids...)
+	return _u
 }
 
 // RemoveChildren removes "children" edges to Entity entities.
-func (euo *EntityUpdateOne) RemoveChildren(e ...*Entity) *EntityUpdateOne {
-	ids := make([]uuid.UUID, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+func (_u *EntityUpdateOne) RemoveChildren(v ...*Entity) *EntityUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return euo.RemoveChildIDs(ids...)
+	return _u.RemoveChildIDs(ids...)
 }
 
 // ClearEntity clears the "entity" edge to the Entity entity.
-func (euo *EntityUpdateOne) ClearEntity() *EntityUpdateOne {
-	euo.mutation.ClearEntity()
-	return euo
+func (_u *EntityUpdateOne) ClearEntity() *EntityUpdateOne {
+	_u.mutation.ClearEntity()
+	return _u
 }
 
 // ClearLocation clears the "location" edge to the Entity entity.
-func (euo *EntityUpdateOne) ClearLocation() *EntityUpdateOne {
-	euo.mutation.ClearLocation()
-	return euo
+func (_u *EntityUpdateOne) ClearLocation() *EntityUpdateOne {
+	_u.mutation.ClearLocation()
+	return _u
 }
 
 // ClearLabel clears all "label" edges to the Label entity.
-func (euo *EntityUpdateOne) ClearLabel() *EntityUpdateOne {
-	euo.mutation.ClearLabel()
-	return euo
+func (_u *EntityUpdateOne) ClearLabel() *EntityUpdateOne {
+	_u.mutation.ClearLabel()
+	return _u
 }
 
 // RemoveLabelIDs removes the "label" edge to Label entities by IDs.
-func (euo *EntityUpdateOne) RemoveLabelIDs(ids ...uuid.UUID) *EntityUpdateOne {
-	euo.mutation.RemoveLabelIDs(ids...)
-	return euo
+func (_u *EntityUpdateOne) RemoveLabelIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	_u.mutation.RemoveLabelIDs(ids...)
+	return _u
 }
 
 // RemoveLabel removes "label" edges to Label entities.
-func (euo *EntityUpdateOne) RemoveLabel(l ...*Label) *EntityUpdateOne {
-	ids := make([]uuid.UUID, len(l))
-	for i := range l {
-		ids[i] = l[i].ID
+func (_u *EntityUpdateOne) RemoveLabel(v ...*Label) *EntityUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return euo.RemoveLabelIDs(ids...)
+	return _u.RemoveLabelIDs(ids...)
 }
 
 // ClearType clears the "type" edge to the EntityType entity.
-func (euo *EntityUpdateOne) ClearType() *EntityUpdateOne {
-	euo.mutation.ClearType()
-	return euo
+func (_u *EntityUpdateOne) ClearType() *EntityUpdateOne {
+	_u.mutation.ClearType()
+	return _u
 }
 
 // ClearFields clears all "fields" edges to the EntityField entity.
-func (euo *EntityUpdateOne) ClearFields() *EntityUpdateOne {
-	euo.mutation.ClearFields()
-	return euo
+func (_u *EntityUpdateOne) ClearFields() *EntityUpdateOne {
+	_u.mutation.ClearFields()
+	return _u
 }
 
 // RemoveFieldIDs removes the "fields" edge to EntityField entities by IDs.
-func (euo *EntityUpdateOne) RemoveFieldIDs(ids ...uuid.UUID) *EntityUpdateOne {
-	euo.mutation.RemoveFieldIDs(ids...)
-	return euo
+func (_u *EntityUpdateOne) RemoveFieldIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	_u.mutation.RemoveFieldIDs(ids...)
+	return _u
 }
 
 // RemoveFields removes "fields" edges to EntityField entities.
-func (euo *EntityUpdateOne) RemoveFields(e ...*EntityField) *EntityUpdateOne {
-	ids := make([]uuid.UUID, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+func (_u *EntityUpdateOne) RemoveFields(v ...*EntityField) *EntityUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return euo.RemoveFieldIDs(ids...)
+	return _u.RemoveFieldIDs(ids...)
 }
 
 // ClearMaintenanceEntries clears all "maintenance_entries" edges to the MaintenanceEntry entity.
-func (euo *EntityUpdateOne) ClearMaintenanceEntries() *EntityUpdateOne {
-	euo.mutation.ClearMaintenanceEntries()
-	return euo
+func (_u *EntityUpdateOne) ClearMaintenanceEntries() *EntityUpdateOne {
+	_u.mutation.ClearMaintenanceEntries()
+	return _u
 }
 
 // RemoveMaintenanceEntryIDs removes the "maintenance_entries" edge to MaintenanceEntry entities by IDs.
-func (euo *EntityUpdateOne) RemoveMaintenanceEntryIDs(ids ...uuid.UUID) *EntityUpdateOne {
-	euo.mutation.RemoveMaintenanceEntryIDs(ids...)
-	return euo
+func (_u *EntityUpdateOne) RemoveMaintenanceEntryIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	_u.mutation.RemoveMaintenanceEntryIDs(ids...)
+	return _u
 }
 
 // RemoveMaintenanceEntries removes "maintenance_entries" edges to MaintenanceEntry entities.
-func (euo *EntityUpdateOne) RemoveMaintenanceEntries(m ...*MaintenanceEntry) *EntityUpdateOne {
-	ids := make([]uuid.UUID, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+func (_u *EntityUpdateOne) RemoveMaintenanceEntries(v ...*MaintenanceEntry) *EntityUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return euo.RemoveMaintenanceEntryIDs(ids...)
+	return _u.RemoveMaintenanceEntryIDs(ids...)
 }
 
 // ClearAttachments clears all "attachments" edges to the Attachment entity.
-func (euo *EntityUpdateOne) ClearAttachments() *EntityUpdateOne {
-	euo.mutation.ClearAttachments()
-	return euo
+func (_u *EntityUpdateOne) ClearAttachments() *EntityUpdateOne {
+	_u.mutation.ClearAttachments()
+	return _u
 }
 
 // RemoveAttachmentIDs removes the "attachments" edge to Attachment entities by IDs.
-func (euo *EntityUpdateOne) RemoveAttachmentIDs(ids ...uuid.UUID) *EntityUpdateOne {
-	euo.mutation.RemoveAttachmentIDs(ids...)
-	return euo
+func (_u *EntityUpdateOne) RemoveAttachmentIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	_u.mutation.RemoveAttachmentIDs(ids...)
+	return _u
 }
 
 // RemoveAttachments removes "attachments" edges to Attachment entities.
-func (euo *EntityUpdateOne) RemoveAttachments(a ...*Attachment) *EntityUpdateOne {
-	ids := make([]uuid.UUID, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
+func (_u *EntityUpdateOne) RemoveAttachments(v ...*Attachment) *EntityUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return euo.RemoveAttachmentIDs(ids...)
+	return _u.RemoveAttachmentIDs(ids...)
 }
 
 // Where appends a list predicates to the EntityUpdate builder.
-func (euo *EntityUpdateOne) Where(ps ...predicate.Entity) *EntityUpdateOne {
-	euo.mutation.Where(ps...)
-	return euo
+func (_u *EntityUpdateOne) Where(ps ...predicate.Entity) *EntityUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (euo *EntityUpdateOne) Select(field string, fields ...string) *EntityUpdateOne {
-	euo.fields = append([]string{field}, fields...)
-	return euo
+func (_u *EntityUpdateOne) Select(field string, fields ...string) *EntityUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated Entity entity.
-func (euo *EntityUpdateOne) Save(ctx context.Context) (*Entity, error) {
-	euo.defaults()
-	return withHooks(ctx, euo.sqlSave, euo.mutation, euo.hooks)
+func (_u *EntityUpdateOne) Save(ctx context.Context) (*Entity, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (euo *EntityUpdateOne) SaveX(ctx context.Context) *Entity {
-	node, err := euo.Save(ctx)
+func (_u *EntityUpdateOne) SaveX(ctx context.Context) *Entity {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -2119,90 +2119,90 @@ func (euo *EntityUpdateOne) SaveX(ctx context.Context) *Entity {
 }
 
 // Exec executes the query on the entity.
-func (euo *EntityUpdateOne) Exec(ctx context.Context) error {
-	_, err := euo.Save(ctx)
+func (_u *EntityUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (euo *EntityUpdateOne) ExecX(ctx context.Context) {
-	if err := euo.Exec(ctx); err != nil {
+func (_u *EntityUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (euo *EntityUpdateOne) defaults() {
-	if _, ok := euo.mutation.UpdatedAt(); !ok {
+func (_u *EntityUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
 		v := entity.UpdateDefaultUpdatedAt()
-		euo.mutation.SetUpdatedAt(v)
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (euo *EntityUpdateOne) check() error {
-	if v, ok := euo.mutation.Name(); ok {
+func (_u *EntityUpdateOne) check() error {
+	if v, ok := _u.mutation.Name(); ok {
 		if err := entity.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Entity.name": %w`, err)}
 		}
 	}
-	if v, ok := euo.mutation.Description(); ok {
+	if v, ok := _u.mutation.Description(); ok {
 		if err := entity.DescriptionValidator(v); err != nil {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Entity.description": %w`, err)}
 		}
 	}
-	if v, ok := euo.mutation.ImportRef(); ok {
+	if v, ok := _u.mutation.ImportRef(); ok {
 		if err := entity.ImportRefValidator(v); err != nil {
 			return &ValidationError{Name: "import_ref", err: fmt.Errorf(`ent: validator failed for field "Entity.import_ref": %w`, err)}
 		}
 	}
-	if v, ok := euo.mutation.Notes(); ok {
+	if v, ok := _u.mutation.Notes(); ok {
 		if err := entity.NotesValidator(v); err != nil {
 			return &ValidationError{Name: "notes", err: fmt.Errorf(`ent: validator failed for field "Entity.notes": %w`, err)}
 		}
 	}
-	if v, ok := euo.mutation.SerialNumber(); ok {
+	if v, ok := _u.mutation.SerialNumber(); ok {
 		if err := entity.SerialNumberValidator(v); err != nil {
 			return &ValidationError{Name: "serial_number", err: fmt.Errorf(`ent: validator failed for field "Entity.serial_number": %w`, err)}
 		}
 	}
-	if v, ok := euo.mutation.ModelNumber(); ok {
+	if v, ok := _u.mutation.ModelNumber(); ok {
 		if err := entity.ModelNumberValidator(v); err != nil {
 			return &ValidationError{Name: "model_number", err: fmt.Errorf(`ent: validator failed for field "Entity.model_number": %w`, err)}
 		}
 	}
-	if v, ok := euo.mutation.Manufacturer(); ok {
+	if v, ok := _u.mutation.Manufacturer(); ok {
 		if err := entity.ManufacturerValidator(v); err != nil {
 			return &ValidationError{Name: "manufacturer", err: fmt.Errorf(`ent: validator failed for field "Entity.manufacturer": %w`, err)}
 		}
 	}
-	if v, ok := euo.mutation.WarrantyDetails(); ok {
+	if v, ok := _u.mutation.WarrantyDetails(); ok {
 		if err := entity.WarrantyDetailsValidator(v); err != nil {
 			return &ValidationError{Name: "warranty_details", err: fmt.Errorf(`ent: validator failed for field "Entity.warranty_details": %w`, err)}
 		}
 	}
-	if v, ok := euo.mutation.SoldNotes(); ok {
+	if v, ok := _u.mutation.SoldNotes(); ok {
 		if err := entity.SoldNotesValidator(v); err != nil {
 			return &ValidationError{Name: "sold_notes", err: fmt.Errorf(`ent: validator failed for field "Entity.sold_notes": %w`, err)}
 		}
 	}
-	if euo.mutation.GroupCleared() && len(euo.mutation.GroupIDs()) > 0 {
+	if _u.mutation.GroupCleared() && len(_u.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Entity.group"`)
 	}
 	return nil
 }
 
-func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err error) {
-	if err := euo.check(); err != nil {
+func (_u *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err error) {
+	if err := _u.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(entity.Table, entity.Columns, sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID))
-	id, ok := euo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Entity.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := euo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, entity.FieldID)
 		for _, f := range fields {
@@ -2214,134 +2214,134 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 			}
 		}
 	}
-	if ps := euo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := euo.mutation.UpdatedAt(); ok {
+	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(entity.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := euo.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(entity.FieldName, field.TypeString, value)
 	}
-	if value, ok := euo.mutation.Description(); ok {
+	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(entity.FieldDescription, field.TypeString, value)
 	}
-	if euo.mutation.DescriptionCleared() {
+	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(entity.FieldDescription, field.TypeString)
 	}
-	if value, ok := euo.mutation.ImportRef(); ok {
+	if value, ok := _u.mutation.ImportRef(); ok {
 		_spec.SetField(entity.FieldImportRef, field.TypeString, value)
 	}
-	if euo.mutation.ImportRefCleared() {
+	if _u.mutation.ImportRefCleared() {
 		_spec.ClearField(entity.FieldImportRef, field.TypeString)
 	}
-	if value, ok := euo.mutation.Notes(); ok {
+	if value, ok := _u.mutation.Notes(); ok {
 		_spec.SetField(entity.FieldNotes, field.TypeString, value)
 	}
-	if euo.mutation.NotesCleared() {
+	if _u.mutation.NotesCleared() {
 		_spec.ClearField(entity.FieldNotes, field.TypeString)
 	}
-	if value, ok := euo.mutation.Quantity(); ok {
+	if value, ok := _u.mutation.Quantity(); ok {
 		_spec.SetField(entity.FieldQuantity, field.TypeInt, value)
 	}
-	if value, ok := euo.mutation.AddedQuantity(); ok {
+	if value, ok := _u.mutation.AddedQuantity(); ok {
 		_spec.AddField(entity.FieldQuantity, field.TypeInt, value)
 	}
-	if value, ok := euo.mutation.Insured(); ok {
+	if value, ok := _u.mutation.Insured(); ok {
 		_spec.SetField(entity.FieldInsured, field.TypeBool, value)
 	}
-	if value, ok := euo.mutation.Archived(); ok {
+	if value, ok := _u.mutation.Archived(); ok {
 		_spec.SetField(entity.FieldArchived, field.TypeBool, value)
 	}
-	if value, ok := euo.mutation.AssetID(); ok {
+	if value, ok := _u.mutation.AssetID(); ok {
 		_spec.SetField(entity.FieldAssetID, field.TypeInt, value)
 	}
-	if value, ok := euo.mutation.AddedAssetID(); ok {
+	if value, ok := _u.mutation.AddedAssetID(); ok {
 		_spec.AddField(entity.FieldAssetID, field.TypeInt, value)
 	}
-	if value, ok := euo.mutation.SyncChildEntitiesLocations(); ok {
+	if value, ok := _u.mutation.SyncChildEntitiesLocations(); ok {
 		_spec.SetField(entity.FieldSyncChildEntitiesLocations, field.TypeBool, value)
 	}
-	if value, ok := euo.mutation.SerialNumber(); ok {
+	if value, ok := _u.mutation.SerialNumber(); ok {
 		_spec.SetField(entity.FieldSerialNumber, field.TypeString, value)
 	}
-	if euo.mutation.SerialNumberCleared() {
+	if _u.mutation.SerialNumberCleared() {
 		_spec.ClearField(entity.FieldSerialNumber, field.TypeString)
 	}
-	if value, ok := euo.mutation.ModelNumber(); ok {
+	if value, ok := _u.mutation.ModelNumber(); ok {
 		_spec.SetField(entity.FieldModelNumber, field.TypeString, value)
 	}
-	if euo.mutation.ModelNumberCleared() {
+	if _u.mutation.ModelNumberCleared() {
 		_spec.ClearField(entity.FieldModelNumber, field.TypeString)
 	}
-	if value, ok := euo.mutation.Manufacturer(); ok {
+	if value, ok := _u.mutation.Manufacturer(); ok {
 		_spec.SetField(entity.FieldManufacturer, field.TypeString, value)
 	}
-	if euo.mutation.ManufacturerCleared() {
+	if _u.mutation.ManufacturerCleared() {
 		_spec.ClearField(entity.FieldManufacturer, field.TypeString)
 	}
-	if value, ok := euo.mutation.LifetimeWarranty(); ok {
+	if value, ok := _u.mutation.LifetimeWarranty(); ok {
 		_spec.SetField(entity.FieldLifetimeWarranty, field.TypeBool, value)
 	}
-	if value, ok := euo.mutation.WarrantyExpires(); ok {
+	if value, ok := _u.mutation.WarrantyExpires(); ok {
 		_spec.SetField(entity.FieldWarrantyExpires, field.TypeTime, value)
 	}
-	if euo.mutation.WarrantyExpiresCleared() {
+	if _u.mutation.WarrantyExpiresCleared() {
 		_spec.ClearField(entity.FieldWarrantyExpires, field.TypeTime)
 	}
-	if value, ok := euo.mutation.WarrantyDetails(); ok {
+	if value, ok := _u.mutation.WarrantyDetails(); ok {
 		_spec.SetField(entity.FieldWarrantyDetails, field.TypeString, value)
 	}
-	if euo.mutation.WarrantyDetailsCleared() {
+	if _u.mutation.WarrantyDetailsCleared() {
 		_spec.ClearField(entity.FieldWarrantyDetails, field.TypeString)
 	}
-	if value, ok := euo.mutation.PurchaseTime(); ok {
+	if value, ok := _u.mutation.PurchaseTime(); ok {
 		_spec.SetField(entity.FieldPurchaseTime, field.TypeTime, value)
 	}
-	if euo.mutation.PurchaseTimeCleared() {
+	if _u.mutation.PurchaseTimeCleared() {
 		_spec.ClearField(entity.FieldPurchaseTime, field.TypeTime)
 	}
-	if value, ok := euo.mutation.PurchaseFrom(); ok {
+	if value, ok := _u.mutation.PurchaseFrom(); ok {
 		_spec.SetField(entity.FieldPurchaseFrom, field.TypeString, value)
 	}
-	if euo.mutation.PurchaseFromCleared() {
+	if _u.mutation.PurchaseFromCleared() {
 		_spec.ClearField(entity.FieldPurchaseFrom, field.TypeString)
 	}
-	if value, ok := euo.mutation.PurchasePrice(); ok {
+	if value, ok := _u.mutation.PurchasePrice(); ok {
 		_spec.SetField(entity.FieldPurchasePrice, field.TypeFloat64, value)
 	}
-	if value, ok := euo.mutation.AddedPurchasePrice(); ok {
+	if value, ok := _u.mutation.AddedPurchasePrice(); ok {
 		_spec.AddField(entity.FieldPurchasePrice, field.TypeFloat64, value)
 	}
-	if value, ok := euo.mutation.SoldTime(); ok {
+	if value, ok := _u.mutation.SoldTime(); ok {
 		_spec.SetField(entity.FieldSoldTime, field.TypeTime, value)
 	}
-	if euo.mutation.SoldTimeCleared() {
+	if _u.mutation.SoldTimeCleared() {
 		_spec.ClearField(entity.FieldSoldTime, field.TypeTime)
 	}
-	if value, ok := euo.mutation.SoldTo(); ok {
+	if value, ok := _u.mutation.SoldTo(); ok {
 		_spec.SetField(entity.FieldSoldTo, field.TypeString, value)
 	}
-	if euo.mutation.SoldToCleared() {
+	if _u.mutation.SoldToCleared() {
 		_spec.ClearField(entity.FieldSoldTo, field.TypeString)
 	}
-	if value, ok := euo.mutation.SoldPrice(); ok {
+	if value, ok := _u.mutation.SoldPrice(); ok {
 		_spec.SetField(entity.FieldSoldPrice, field.TypeFloat64, value)
 	}
-	if value, ok := euo.mutation.AddedSoldPrice(); ok {
+	if value, ok := _u.mutation.AddedSoldPrice(); ok {
 		_spec.AddField(entity.FieldSoldPrice, field.TypeFloat64, value)
 	}
-	if value, ok := euo.mutation.SoldNotes(); ok {
+	if value, ok := _u.mutation.SoldNotes(); ok {
 		_spec.SetField(entity.FieldSoldNotes, field.TypeString, value)
 	}
-	if euo.mutation.SoldNotesCleared() {
+	if _u.mutation.SoldNotesCleared() {
 		_spec.ClearField(entity.FieldSoldNotes, field.TypeString)
 	}
-	if euo.mutation.GroupCleared() {
+	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -2354,7 +2354,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := euo.mutation.GroupIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -2370,7 +2370,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if euo.mutation.ParentCleared() {
+	if _u.mutation.ParentCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -2383,7 +2383,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := euo.mutation.ParentIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ParentIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -2399,7 +2399,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if euo.mutation.ChildrenCleared() {
+	if _u.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2412,7 +2412,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := euo.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !euo.mutation.ChildrenCleared() {
+	if nodes := _u.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !_u.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2428,7 +2428,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := euo.mutation.ChildrenIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ChildrenIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2444,7 +2444,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if euo.mutation.EntityCleared() {
+	if _u.mutation.EntityCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
@@ -2457,7 +2457,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := euo.mutation.EntityIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
@@ -2473,7 +2473,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if euo.mutation.LocationCleared() {
+	if _u.mutation.LocationCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
@@ -2486,7 +2486,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := euo.mutation.LocationIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.LocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
@@ -2502,7 +2502,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if euo.mutation.LabelCleared() {
+	if _u.mutation.LabelCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -2515,7 +2515,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := euo.mutation.RemovedLabelIDs(); len(nodes) > 0 && !euo.mutation.LabelCleared() {
+	if nodes := _u.mutation.RemovedLabelIDs(); len(nodes) > 0 && !_u.mutation.LabelCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -2531,7 +2531,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := euo.mutation.LabelIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.LabelIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -2547,7 +2547,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if euo.mutation.TypeCleared() {
+	if _u.mutation.TypeCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -2560,7 +2560,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := euo.mutation.TypeIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.TypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -2576,7 +2576,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if euo.mutation.FieldsCleared() {
+	if _u.mutation.FieldsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2589,7 +2589,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := euo.mutation.RemovedFieldsIDs(); len(nodes) > 0 && !euo.mutation.FieldsCleared() {
+	if nodes := _u.mutation.RemovedFieldsIDs(); len(nodes) > 0 && !_u.mutation.FieldsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2605,7 +2605,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := euo.mutation.FieldsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.FieldsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2621,7 +2621,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if euo.mutation.MaintenanceEntriesCleared() {
+	if _u.mutation.MaintenanceEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2634,7 +2634,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := euo.mutation.RemovedMaintenanceEntriesIDs(); len(nodes) > 0 && !euo.mutation.MaintenanceEntriesCleared() {
+	if nodes := _u.mutation.RemovedMaintenanceEntriesIDs(); len(nodes) > 0 && !_u.mutation.MaintenanceEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2650,7 +2650,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := euo.mutation.MaintenanceEntriesIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.MaintenanceEntriesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2666,7 +2666,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if euo.mutation.AttachmentsCleared() {
+	if _u.mutation.AttachmentsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2679,7 +2679,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := euo.mutation.RemovedAttachmentsIDs(); len(nodes) > 0 && !euo.mutation.AttachmentsCleared() {
+	if nodes := _u.mutation.RemovedAttachmentsIDs(); len(nodes) > 0 && !_u.mutation.AttachmentsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2695,7 +2695,7 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := euo.mutation.AttachmentsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.AttachmentsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2711,10 +2711,10 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &Entity{config: euo.config}
+	_node = &Entity{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, euo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{entity.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -2722,6 +2722,6 @@ func (euo *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err err
 		}
 		return nil, err
 	}
-	euo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

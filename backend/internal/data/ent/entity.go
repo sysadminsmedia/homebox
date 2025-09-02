@@ -239,7 +239,7 @@ func (*Entity) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the Entity fields.
-func (e *Entity) assignValues(columns []string, values []any) error {
+func (_m *Entity) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -249,182 +249,182 @@ func (e *Entity) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
-				e.ID = *value
+				_m.ID = *value
 			}
 		case entity.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				e.CreatedAt = value.Time
+				_m.CreatedAt = value.Time
 			}
 		case entity.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				e.UpdatedAt = value.Time
+				_m.UpdatedAt = value.Time
 			}
 		case entity.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
-				e.Name = value.String
+				_m.Name = value.String
 			}
 		case entity.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
-				e.Description = value.String
+				_m.Description = value.String
 			}
 		case entity.FieldImportRef:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field import_ref", values[i])
 			} else if value.Valid {
-				e.ImportRef = value.String
+				_m.ImportRef = value.String
 			}
 		case entity.FieldNotes:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field notes", values[i])
 			} else if value.Valid {
-				e.Notes = value.String
+				_m.Notes = value.String
 			}
 		case entity.FieldQuantity:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field quantity", values[i])
 			} else if value.Valid {
-				e.Quantity = int(value.Int64)
+				_m.Quantity = int(value.Int64)
 			}
 		case entity.FieldInsured:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field insured", values[i])
 			} else if value.Valid {
-				e.Insured = value.Bool
+				_m.Insured = value.Bool
 			}
 		case entity.FieldArchived:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field archived", values[i])
 			} else if value.Valid {
-				e.Archived = value.Bool
+				_m.Archived = value.Bool
 			}
 		case entity.FieldAssetID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field asset_id", values[i])
 			} else if value.Valid {
-				e.AssetID = int(value.Int64)
+				_m.AssetID = int(value.Int64)
 			}
 		case entity.FieldSyncChildEntitiesLocations:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field sync_child_entities_locations", values[i])
 			} else if value.Valid {
-				e.SyncChildEntitiesLocations = value.Bool
+				_m.SyncChildEntitiesLocations = value.Bool
 			}
 		case entity.FieldSerialNumber:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field serial_number", values[i])
 			} else if value.Valid {
-				e.SerialNumber = value.String
+				_m.SerialNumber = value.String
 			}
 		case entity.FieldModelNumber:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field model_number", values[i])
 			} else if value.Valid {
-				e.ModelNumber = value.String
+				_m.ModelNumber = value.String
 			}
 		case entity.FieldManufacturer:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field manufacturer", values[i])
 			} else if value.Valid {
-				e.Manufacturer = value.String
+				_m.Manufacturer = value.String
 			}
 		case entity.FieldLifetimeWarranty:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field lifetime_warranty", values[i])
 			} else if value.Valid {
-				e.LifetimeWarranty = value.Bool
+				_m.LifetimeWarranty = value.Bool
 			}
 		case entity.FieldWarrantyExpires:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field warranty_expires", values[i])
 			} else if value.Valid {
-				e.WarrantyExpires = value.Time
+				_m.WarrantyExpires = value.Time
 			}
 		case entity.FieldWarrantyDetails:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field warranty_details", values[i])
 			} else if value.Valid {
-				e.WarrantyDetails = value.String
+				_m.WarrantyDetails = value.String
 			}
 		case entity.FieldPurchaseTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field purchase_time", values[i])
 			} else if value.Valid {
-				e.PurchaseTime = value.Time
+				_m.PurchaseTime = value.Time
 			}
 		case entity.FieldPurchaseFrom:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field purchase_from", values[i])
 			} else if value.Valid {
-				e.PurchaseFrom = value.String
+				_m.PurchaseFrom = value.String
 			}
 		case entity.FieldPurchasePrice:
 			if value, ok := values[i].(*sql.NullFloat64); !ok {
 				return fmt.Errorf("unexpected type %T for field purchase_price", values[i])
 			} else if value.Valid {
-				e.PurchasePrice = value.Float64
+				_m.PurchasePrice = value.Float64
 			}
 		case entity.FieldSoldTime:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field sold_time", values[i])
 			} else if value.Valid {
-				e.SoldTime = value.Time
+				_m.SoldTime = value.Time
 			}
 		case entity.FieldSoldTo:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field sold_to", values[i])
 			} else if value.Valid {
-				e.SoldTo = value.String
+				_m.SoldTo = value.String
 			}
 		case entity.FieldSoldPrice:
 			if value, ok := values[i].(*sql.NullFloat64); !ok {
 				return fmt.Errorf("unexpected type %T for field sold_price", values[i])
 			} else if value.Valid {
-				e.SoldPrice = value.Float64
+				_m.SoldPrice = value.Float64
 			}
 		case entity.FieldSoldNotes:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field sold_notes", values[i])
 			} else if value.Valid {
-				e.SoldNotes = value.String
+				_m.SoldNotes = value.String
 			}
 		case entity.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field entity_children", values[i])
 			} else if value.Valid {
-				e.entity_children = new(uuid.UUID)
-				*e.entity_children = *value.S.(*uuid.UUID)
+				_m.entity_children = new(uuid.UUID)
+				*_m.entity_children = *value.S.(*uuid.UUID)
 			}
 		case entity.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field entity_location", values[i])
 			} else if value.Valid {
-				e.entity_location = new(uuid.UUID)
-				*e.entity_location = *value.S.(*uuid.UUID)
+				_m.entity_location = new(uuid.UUID)
+				*_m.entity_location = *value.S.(*uuid.UUID)
 			}
 		case entity.ForeignKeys[2]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field entity_type_entities", values[i])
 			} else if value.Valid {
-				e.entity_type_entities = new(uuid.UUID)
-				*e.entity_type_entities = *value.S.(*uuid.UUID)
+				_m.entity_type_entities = new(uuid.UUID)
+				*_m.entity_type_entities = *value.S.(*uuid.UUID)
 			}
 		case entity.ForeignKeys[3]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field group_entities", values[i])
 			} else if value.Valid {
-				e.group_entities = new(uuid.UUID)
-				*e.group_entities = *value.S.(*uuid.UUID)
+				_m.group_entities = new(uuid.UUID)
+				*_m.group_entities = *value.S.(*uuid.UUID)
 			}
 		default:
-			e.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -432,154 +432,154 @@ func (e *Entity) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the Entity.
 // This includes values selected through modifiers, order, etc.
-func (e *Entity) Value(name string) (ent.Value, error) {
-	return e.selectValues.Get(name)
+func (_m *Entity) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // QueryGroup queries the "group" edge of the Entity entity.
-func (e *Entity) QueryGroup() *GroupQuery {
-	return NewEntityClient(e.config).QueryGroup(e)
+func (_m *Entity) QueryGroup() *GroupQuery {
+	return NewEntityClient(_m.config).QueryGroup(_m)
 }
 
 // QueryParent queries the "parent" edge of the Entity entity.
-func (e *Entity) QueryParent() *EntityQuery {
-	return NewEntityClient(e.config).QueryParent(e)
+func (_m *Entity) QueryParent() *EntityQuery {
+	return NewEntityClient(_m.config).QueryParent(_m)
 }
 
 // QueryChildren queries the "children" edge of the Entity entity.
-func (e *Entity) QueryChildren() *EntityQuery {
-	return NewEntityClient(e.config).QueryChildren(e)
+func (_m *Entity) QueryChildren() *EntityQuery {
+	return NewEntityClient(_m.config).QueryChildren(_m)
 }
 
 // QueryEntity queries the "entity" edge of the Entity entity.
-func (e *Entity) QueryEntity() *EntityQuery {
-	return NewEntityClient(e.config).QueryEntity(e)
+func (_m *Entity) QueryEntity() *EntityQuery {
+	return NewEntityClient(_m.config).QueryEntity(_m)
 }
 
 // QueryLocation queries the "location" edge of the Entity entity.
-func (e *Entity) QueryLocation() *EntityQuery {
-	return NewEntityClient(e.config).QueryLocation(e)
+func (_m *Entity) QueryLocation() *EntityQuery {
+	return NewEntityClient(_m.config).QueryLocation(_m)
 }
 
 // QueryLabel queries the "label" edge of the Entity entity.
-func (e *Entity) QueryLabel() *LabelQuery {
-	return NewEntityClient(e.config).QueryLabel(e)
+func (_m *Entity) QueryLabel() *LabelQuery {
+	return NewEntityClient(_m.config).QueryLabel(_m)
 }
 
 // QueryType queries the "type" edge of the Entity entity.
-func (e *Entity) QueryType() *EntityTypeQuery {
-	return NewEntityClient(e.config).QueryType(e)
+func (_m *Entity) QueryType() *EntityTypeQuery {
+	return NewEntityClient(_m.config).QueryType(_m)
 }
 
 // QueryFields queries the "fields" edge of the Entity entity.
-func (e *Entity) QueryFields() *EntityFieldQuery {
-	return NewEntityClient(e.config).QueryFields(e)
+func (_m *Entity) QueryFields() *EntityFieldQuery {
+	return NewEntityClient(_m.config).QueryFields(_m)
 }
 
 // QueryMaintenanceEntries queries the "maintenance_entries" edge of the Entity entity.
-func (e *Entity) QueryMaintenanceEntries() *MaintenanceEntryQuery {
-	return NewEntityClient(e.config).QueryMaintenanceEntries(e)
+func (_m *Entity) QueryMaintenanceEntries() *MaintenanceEntryQuery {
+	return NewEntityClient(_m.config).QueryMaintenanceEntries(_m)
 }
 
 // QueryAttachments queries the "attachments" edge of the Entity entity.
-func (e *Entity) QueryAttachments() *AttachmentQuery {
-	return NewEntityClient(e.config).QueryAttachments(e)
+func (_m *Entity) QueryAttachments() *AttachmentQuery {
+	return NewEntityClient(_m.config).QueryAttachments(_m)
 }
 
 // Update returns a builder for updating this Entity.
 // Note that you need to call Entity.Unwrap() before calling this method if this Entity
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (e *Entity) Update() *EntityUpdateOne {
-	return NewEntityClient(e.config).UpdateOne(e)
+func (_m *Entity) Update() *EntityUpdateOne {
+	return NewEntityClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the Entity entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (e *Entity) Unwrap() *Entity {
-	_tx, ok := e.config.driver.(*txDriver)
+func (_m *Entity) Unwrap() *Entity {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: Entity is not a transactional entity")
 	}
-	e.config.driver = _tx.drv
-	return e
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (e *Entity) String() string {
+func (_m *Entity) String() string {
 	var builder strings.Builder
 	builder.WriteString("Entity(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", e.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("created_at=")
-	builder.WriteString(e.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
-	builder.WriteString(e.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("name=")
-	builder.WriteString(e.Name)
+	builder.WriteString(_m.Name)
 	builder.WriteString(", ")
 	builder.WriteString("description=")
-	builder.WriteString(e.Description)
+	builder.WriteString(_m.Description)
 	builder.WriteString(", ")
 	builder.WriteString("import_ref=")
-	builder.WriteString(e.ImportRef)
+	builder.WriteString(_m.ImportRef)
 	builder.WriteString(", ")
 	builder.WriteString("notes=")
-	builder.WriteString(e.Notes)
+	builder.WriteString(_m.Notes)
 	builder.WriteString(", ")
 	builder.WriteString("quantity=")
-	builder.WriteString(fmt.Sprintf("%v", e.Quantity))
+	builder.WriteString(fmt.Sprintf("%v", _m.Quantity))
 	builder.WriteString(", ")
 	builder.WriteString("insured=")
-	builder.WriteString(fmt.Sprintf("%v", e.Insured))
+	builder.WriteString(fmt.Sprintf("%v", _m.Insured))
 	builder.WriteString(", ")
 	builder.WriteString("archived=")
-	builder.WriteString(fmt.Sprintf("%v", e.Archived))
+	builder.WriteString(fmt.Sprintf("%v", _m.Archived))
 	builder.WriteString(", ")
 	builder.WriteString("asset_id=")
-	builder.WriteString(fmt.Sprintf("%v", e.AssetID))
+	builder.WriteString(fmt.Sprintf("%v", _m.AssetID))
 	builder.WriteString(", ")
 	builder.WriteString("sync_child_entities_locations=")
-	builder.WriteString(fmt.Sprintf("%v", e.SyncChildEntitiesLocations))
+	builder.WriteString(fmt.Sprintf("%v", _m.SyncChildEntitiesLocations))
 	builder.WriteString(", ")
 	builder.WriteString("serial_number=")
-	builder.WriteString(e.SerialNumber)
+	builder.WriteString(_m.SerialNumber)
 	builder.WriteString(", ")
 	builder.WriteString("model_number=")
-	builder.WriteString(e.ModelNumber)
+	builder.WriteString(_m.ModelNumber)
 	builder.WriteString(", ")
 	builder.WriteString("manufacturer=")
-	builder.WriteString(e.Manufacturer)
+	builder.WriteString(_m.Manufacturer)
 	builder.WriteString(", ")
 	builder.WriteString("lifetime_warranty=")
-	builder.WriteString(fmt.Sprintf("%v", e.LifetimeWarranty))
+	builder.WriteString(fmt.Sprintf("%v", _m.LifetimeWarranty))
 	builder.WriteString(", ")
 	builder.WriteString("warranty_expires=")
-	builder.WriteString(e.WarrantyExpires.Format(time.ANSIC))
+	builder.WriteString(_m.WarrantyExpires.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("warranty_details=")
-	builder.WriteString(e.WarrantyDetails)
+	builder.WriteString(_m.WarrantyDetails)
 	builder.WriteString(", ")
 	builder.WriteString("purchase_time=")
-	builder.WriteString(e.PurchaseTime.Format(time.ANSIC))
+	builder.WriteString(_m.PurchaseTime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("purchase_from=")
-	builder.WriteString(e.PurchaseFrom)
+	builder.WriteString(_m.PurchaseFrom)
 	builder.WriteString(", ")
 	builder.WriteString("purchase_price=")
-	builder.WriteString(fmt.Sprintf("%v", e.PurchasePrice))
+	builder.WriteString(fmt.Sprintf("%v", _m.PurchasePrice))
 	builder.WriteString(", ")
 	builder.WriteString("sold_time=")
-	builder.WriteString(e.SoldTime.Format(time.ANSIC))
+	builder.WriteString(_m.SoldTime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("sold_to=")
-	builder.WriteString(e.SoldTo)
+	builder.WriteString(_m.SoldTo)
 	builder.WriteString(", ")
 	builder.WriteString("sold_price=")
-	builder.WriteString(fmt.Sprintf("%v", e.SoldPrice))
+	builder.WriteString(fmt.Sprintf("%v", _m.SoldPrice))
 	builder.WriteString(", ")
 	builder.WriteString("sold_notes=")
-	builder.WriteString(e.SoldNotes)
+	builder.WriteString(_m.SoldNotes)
 	builder.WriteByte(')')
 	return builder.String()
 }

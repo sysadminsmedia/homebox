@@ -23,162 +23,162 @@ type EntityFieldCreate struct {
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (efc *EntityFieldCreate) SetCreatedAt(t time.Time) *EntityFieldCreate {
-	efc.mutation.SetCreatedAt(t)
-	return efc
+func (_c *EntityFieldCreate) SetCreatedAt(v time.Time) *EntityFieldCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (efc *EntityFieldCreate) SetNillableCreatedAt(t *time.Time) *EntityFieldCreate {
-	if t != nil {
-		efc.SetCreatedAt(*t)
+func (_c *EntityFieldCreate) SetNillableCreatedAt(v *time.Time) *EntityFieldCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
 	}
-	return efc
+	return _c
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (efc *EntityFieldCreate) SetUpdatedAt(t time.Time) *EntityFieldCreate {
-	efc.mutation.SetUpdatedAt(t)
-	return efc
+func (_c *EntityFieldCreate) SetUpdatedAt(v time.Time) *EntityFieldCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
 }
 
 // SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (efc *EntityFieldCreate) SetNillableUpdatedAt(t *time.Time) *EntityFieldCreate {
-	if t != nil {
-		efc.SetUpdatedAt(*t)
+func (_c *EntityFieldCreate) SetNillableUpdatedAt(v *time.Time) *EntityFieldCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
 	}
-	return efc
+	return _c
 }
 
 // SetName sets the "name" field.
-func (efc *EntityFieldCreate) SetName(s string) *EntityFieldCreate {
-	efc.mutation.SetName(s)
-	return efc
+func (_c *EntityFieldCreate) SetName(v string) *EntityFieldCreate {
+	_c.mutation.SetName(v)
+	return _c
 }
 
 // SetDescription sets the "description" field.
-func (efc *EntityFieldCreate) SetDescription(s string) *EntityFieldCreate {
-	efc.mutation.SetDescription(s)
-	return efc
+func (_c *EntityFieldCreate) SetDescription(v string) *EntityFieldCreate {
+	_c.mutation.SetDescription(v)
+	return _c
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (efc *EntityFieldCreate) SetNillableDescription(s *string) *EntityFieldCreate {
-	if s != nil {
-		efc.SetDescription(*s)
+func (_c *EntityFieldCreate) SetNillableDescription(v *string) *EntityFieldCreate {
+	if v != nil {
+		_c.SetDescription(*v)
 	}
-	return efc
+	return _c
 }
 
 // SetType sets the "type" field.
-func (efc *EntityFieldCreate) SetType(e entityfield.Type) *EntityFieldCreate {
-	efc.mutation.SetType(e)
-	return efc
+func (_c *EntityFieldCreate) SetType(v entityfield.Type) *EntityFieldCreate {
+	_c.mutation.SetType(v)
+	return _c
 }
 
 // SetTextValue sets the "text_value" field.
-func (efc *EntityFieldCreate) SetTextValue(s string) *EntityFieldCreate {
-	efc.mutation.SetTextValue(s)
-	return efc
+func (_c *EntityFieldCreate) SetTextValue(v string) *EntityFieldCreate {
+	_c.mutation.SetTextValue(v)
+	return _c
 }
 
 // SetNillableTextValue sets the "text_value" field if the given value is not nil.
-func (efc *EntityFieldCreate) SetNillableTextValue(s *string) *EntityFieldCreate {
-	if s != nil {
-		efc.SetTextValue(*s)
+func (_c *EntityFieldCreate) SetNillableTextValue(v *string) *EntityFieldCreate {
+	if v != nil {
+		_c.SetTextValue(*v)
 	}
-	return efc
+	return _c
 }
 
 // SetNumberValue sets the "number_value" field.
-func (efc *EntityFieldCreate) SetNumberValue(i int) *EntityFieldCreate {
-	efc.mutation.SetNumberValue(i)
-	return efc
+func (_c *EntityFieldCreate) SetNumberValue(v int) *EntityFieldCreate {
+	_c.mutation.SetNumberValue(v)
+	return _c
 }
 
 // SetNillableNumberValue sets the "number_value" field if the given value is not nil.
-func (efc *EntityFieldCreate) SetNillableNumberValue(i *int) *EntityFieldCreate {
-	if i != nil {
-		efc.SetNumberValue(*i)
+func (_c *EntityFieldCreate) SetNillableNumberValue(v *int) *EntityFieldCreate {
+	if v != nil {
+		_c.SetNumberValue(*v)
 	}
-	return efc
+	return _c
 }
 
 // SetBooleanValue sets the "boolean_value" field.
-func (efc *EntityFieldCreate) SetBooleanValue(b bool) *EntityFieldCreate {
-	efc.mutation.SetBooleanValue(b)
-	return efc
+func (_c *EntityFieldCreate) SetBooleanValue(v bool) *EntityFieldCreate {
+	_c.mutation.SetBooleanValue(v)
+	return _c
 }
 
 // SetNillableBooleanValue sets the "boolean_value" field if the given value is not nil.
-func (efc *EntityFieldCreate) SetNillableBooleanValue(b *bool) *EntityFieldCreate {
-	if b != nil {
-		efc.SetBooleanValue(*b)
+func (_c *EntityFieldCreate) SetNillableBooleanValue(v *bool) *EntityFieldCreate {
+	if v != nil {
+		_c.SetBooleanValue(*v)
 	}
-	return efc
+	return _c
 }
 
 // SetTimeValue sets the "time_value" field.
-func (efc *EntityFieldCreate) SetTimeValue(t time.Time) *EntityFieldCreate {
-	efc.mutation.SetTimeValue(t)
-	return efc
+func (_c *EntityFieldCreate) SetTimeValue(v time.Time) *EntityFieldCreate {
+	_c.mutation.SetTimeValue(v)
+	return _c
 }
 
 // SetNillableTimeValue sets the "time_value" field if the given value is not nil.
-func (efc *EntityFieldCreate) SetNillableTimeValue(t *time.Time) *EntityFieldCreate {
-	if t != nil {
-		efc.SetTimeValue(*t)
+func (_c *EntityFieldCreate) SetNillableTimeValue(v *time.Time) *EntityFieldCreate {
+	if v != nil {
+		_c.SetTimeValue(*v)
 	}
-	return efc
+	return _c
 }
 
 // SetID sets the "id" field.
-func (efc *EntityFieldCreate) SetID(u uuid.UUID) *EntityFieldCreate {
-	efc.mutation.SetID(u)
-	return efc
+func (_c *EntityFieldCreate) SetID(v uuid.UUID) *EntityFieldCreate {
+	_c.mutation.SetID(v)
+	return _c
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (efc *EntityFieldCreate) SetNillableID(u *uuid.UUID) *EntityFieldCreate {
-	if u != nil {
-		efc.SetID(*u)
+func (_c *EntityFieldCreate) SetNillableID(v *uuid.UUID) *EntityFieldCreate {
+	if v != nil {
+		_c.SetID(*v)
 	}
-	return efc
+	return _c
 }
 
 // SetEntityID sets the "entity" edge to the Entity entity by ID.
-func (efc *EntityFieldCreate) SetEntityID(id uuid.UUID) *EntityFieldCreate {
-	efc.mutation.SetEntityID(id)
-	return efc
+func (_c *EntityFieldCreate) SetEntityID(id uuid.UUID) *EntityFieldCreate {
+	_c.mutation.SetEntityID(id)
+	return _c
 }
 
 // SetNillableEntityID sets the "entity" edge to the Entity entity by ID if the given value is not nil.
-func (efc *EntityFieldCreate) SetNillableEntityID(id *uuid.UUID) *EntityFieldCreate {
+func (_c *EntityFieldCreate) SetNillableEntityID(id *uuid.UUID) *EntityFieldCreate {
 	if id != nil {
-		efc = efc.SetEntityID(*id)
+		_c = _c.SetEntityID(*id)
 	}
-	return efc
+	return _c
 }
 
 // SetEntity sets the "entity" edge to the Entity entity.
-func (efc *EntityFieldCreate) SetEntity(e *Entity) *EntityFieldCreate {
-	return efc.SetEntityID(e.ID)
+func (_c *EntityFieldCreate) SetEntity(v *Entity) *EntityFieldCreate {
+	return _c.SetEntityID(v.ID)
 }
 
 // Mutation returns the EntityFieldMutation object of the builder.
-func (efc *EntityFieldCreate) Mutation() *EntityFieldMutation {
-	return efc.mutation
+func (_c *EntityFieldCreate) Mutation() *EntityFieldMutation {
+	return _c.mutation
 }
 
 // Save creates the EntityField in the database.
-func (efc *EntityFieldCreate) Save(ctx context.Context) (*EntityField, error) {
-	efc.defaults()
-	return withHooks(ctx, efc.sqlSave, efc.mutation, efc.hooks)
+func (_c *EntityFieldCreate) Save(ctx context.Context) (*EntityField, error) {
+	_c.defaults()
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (efc *EntityFieldCreate) SaveX(ctx context.Context) *EntityField {
-	v, err := efc.Save(ctx)
+func (_c *EntityFieldCreate) SaveX(ctx context.Context) *EntityField {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -186,91 +186,91 @@ func (efc *EntityFieldCreate) SaveX(ctx context.Context) *EntityField {
 }
 
 // Exec executes the query.
-func (efc *EntityFieldCreate) Exec(ctx context.Context) error {
-	_, err := efc.Save(ctx)
+func (_c *EntityFieldCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (efc *EntityFieldCreate) ExecX(ctx context.Context) {
-	if err := efc.Exec(ctx); err != nil {
+func (_c *EntityFieldCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (efc *EntityFieldCreate) defaults() {
-	if _, ok := efc.mutation.CreatedAt(); !ok {
+func (_c *EntityFieldCreate) defaults() {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
 		v := entityfield.DefaultCreatedAt()
-		efc.mutation.SetCreatedAt(v)
+		_c.mutation.SetCreatedAt(v)
 	}
-	if _, ok := efc.mutation.UpdatedAt(); !ok {
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		v := entityfield.DefaultUpdatedAt()
-		efc.mutation.SetUpdatedAt(v)
+		_c.mutation.SetUpdatedAt(v)
 	}
-	if _, ok := efc.mutation.BooleanValue(); !ok {
+	if _, ok := _c.mutation.BooleanValue(); !ok {
 		v := entityfield.DefaultBooleanValue
-		efc.mutation.SetBooleanValue(v)
+		_c.mutation.SetBooleanValue(v)
 	}
-	if _, ok := efc.mutation.TimeValue(); !ok {
+	if _, ok := _c.mutation.TimeValue(); !ok {
 		v := entityfield.DefaultTimeValue()
-		efc.mutation.SetTimeValue(v)
+		_c.mutation.SetTimeValue(v)
 	}
-	if _, ok := efc.mutation.ID(); !ok {
+	if _, ok := _c.mutation.ID(); !ok {
 		v := entityfield.DefaultID()
-		efc.mutation.SetID(v)
+		_c.mutation.SetID(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (efc *EntityFieldCreate) check() error {
-	if _, ok := efc.mutation.CreatedAt(); !ok {
+func (_c *EntityFieldCreate) check() error {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "EntityField.created_at"`)}
 	}
-	if _, ok := efc.mutation.UpdatedAt(); !ok {
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "EntityField.updated_at"`)}
 	}
-	if _, ok := efc.mutation.Name(); !ok {
+	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "EntityField.name"`)}
 	}
-	if v, ok := efc.mutation.Name(); ok {
+	if v, ok := _c.mutation.Name(); ok {
 		if err := entityfield.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "EntityField.name": %w`, err)}
 		}
 	}
-	if v, ok := efc.mutation.Description(); ok {
+	if v, ok := _c.mutation.Description(); ok {
 		if err := entityfield.DescriptionValidator(v); err != nil {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "EntityField.description": %w`, err)}
 		}
 	}
-	if _, ok := efc.mutation.GetType(); !ok {
+	if _, ok := _c.mutation.GetType(); !ok {
 		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "EntityField.type"`)}
 	}
-	if v, ok := efc.mutation.GetType(); ok {
+	if v, ok := _c.mutation.GetType(); ok {
 		if err := entityfield.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "EntityField.type": %w`, err)}
 		}
 	}
-	if v, ok := efc.mutation.TextValue(); ok {
+	if v, ok := _c.mutation.TextValue(); ok {
 		if err := entityfield.TextValueValidator(v); err != nil {
 			return &ValidationError{Name: "text_value", err: fmt.Errorf(`ent: validator failed for field "EntityField.text_value": %w`, err)}
 		}
 	}
-	if _, ok := efc.mutation.BooleanValue(); !ok {
+	if _, ok := _c.mutation.BooleanValue(); !ok {
 		return &ValidationError{Name: "boolean_value", err: errors.New(`ent: missing required field "EntityField.boolean_value"`)}
 	}
-	if _, ok := efc.mutation.TimeValue(); !ok {
+	if _, ok := _c.mutation.TimeValue(); !ok {
 		return &ValidationError{Name: "time_value", err: errors.New(`ent: missing required field "EntityField.time_value"`)}
 	}
 	return nil
 }
 
-func (efc *EntityFieldCreate) sqlSave(ctx context.Context) (*EntityField, error) {
-	if err := efc.check(); err != nil {
+func (_c *EntityFieldCreate) sqlSave(ctx context.Context) (*EntityField, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := efc.createSpec()
-	if err := sqlgraph.CreateNode(ctx, efc.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -283,57 +283,57 @@ func (efc *EntityFieldCreate) sqlSave(ctx context.Context) (*EntityField, error)
 			return nil, err
 		}
 	}
-	efc.mutation.id = &_node.ID
-	efc.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (efc *EntityFieldCreate) createSpec() (*EntityField, *sqlgraph.CreateSpec) {
+func (_c *EntityFieldCreate) createSpec() (*EntityField, *sqlgraph.CreateSpec) {
 	var (
-		_node = &EntityField{config: efc.config}
+		_node = &EntityField{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(entityfield.Table, sqlgraph.NewFieldSpec(entityfield.FieldID, field.TypeUUID))
 	)
-	if id, ok := efc.mutation.ID(); ok {
+	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
-	if value, ok := efc.mutation.CreatedAt(); ok {
+	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(entityfield.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
-	if value, ok := efc.mutation.UpdatedAt(); ok {
+	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(entityfield.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
-	if value, ok := efc.mutation.Name(); ok {
+	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(entityfield.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
-	if value, ok := efc.mutation.Description(); ok {
+	if value, ok := _c.mutation.Description(); ok {
 		_spec.SetField(entityfield.FieldDescription, field.TypeString, value)
 		_node.Description = value
 	}
-	if value, ok := efc.mutation.GetType(); ok {
+	if value, ok := _c.mutation.GetType(); ok {
 		_spec.SetField(entityfield.FieldType, field.TypeEnum, value)
 		_node.Type = value
 	}
-	if value, ok := efc.mutation.TextValue(); ok {
+	if value, ok := _c.mutation.TextValue(); ok {
 		_spec.SetField(entityfield.FieldTextValue, field.TypeString, value)
 		_node.TextValue = value
 	}
-	if value, ok := efc.mutation.NumberValue(); ok {
+	if value, ok := _c.mutation.NumberValue(); ok {
 		_spec.SetField(entityfield.FieldNumberValue, field.TypeInt, value)
 		_node.NumberValue = value
 	}
-	if value, ok := efc.mutation.BooleanValue(); ok {
+	if value, ok := _c.mutation.BooleanValue(); ok {
 		_spec.SetField(entityfield.FieldBooleanValue, field.TypeBool, value)
 		_node.BooleanValue = value
 	}
-	if value, ok := efc.mutation.TimeValue(); ok {
+	if value, ok := _c.mutation.TimeValue(); ok {
 		_spec.SetField(entityfield.FieldTimeValue, field.TypeTime, value)
 		_node.TimeValue = value
 	}
-	if nodes := efc.mutation.EntityIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -361,16 +361,16 @@ type EntityFieldCreateBulk struct {
 }
 
 // Save creates the EntityField entities in the database.
-func (efcb *EntityFieldCreateBulk) Save(ctx context.Context) ([]*EntityField, error) {
-	if efcb.err != nil {
-		return nil, efcb.err
+func (_c *EntityFieldCreateBulk) Save(ctx context.Context) ([]*EntityField, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(efcb.builders))
-	nodes := make([]*EntityField, len(efcb.builders))
-	mutators := make([]Mutator, len(efcb.builders))
-	for i := range efcb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*EntityField, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := efcb.builders[i]
+			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*EntityFieldMutation)
@@ -384,11 +384,11 @@ func (efcb *EntityFieldCreateBulk) Save(ctx context.Context) ([]*EntityField, er
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, efcb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, efcb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -408,7 +408,7 @@ func (efcb *EntityFieldCreateBulk) Save(ctx context.Context) ([]*EntityField, er
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, efcb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -416,8 +416,8 @@ func (efcb *EntityFieldCreateBulk) Save(ctx context.Context) ([]*EntityField, er
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (efcb *EntityFieldCreateBulk) SaveX(ctx context.Context) []*EntityField {
-	v, err := efcb.Save(ctx)
+func (_c *EntityFieldCreateBulk) SaveX(ctx context.Context) []*EntityField {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -425,14 +425,14 @@ func (efcb *EntityFieldCreateBulk) SaveX(ctx context.Context) []*EntityField {
 }
 
 // Exec executes the query.
-func (efcb *EntityFieldCreateBulk) Exec(ctx context.Context) error {
-	_, err := efcb.Save(ctx)
+func (_c *EntityFieldCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (efcb *EntityFieldCreateBulk) ExecX(ctx context.Context) {
-	if err := efcb.Exec(ctx); err != nil {
+func (_c *EntityFieldCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

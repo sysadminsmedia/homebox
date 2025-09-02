@@ -28,523 +28,523 @@ type EntityCreate struct {
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (ec *EntityCreate) SetCreatedAt(t time.Time) *EntityCreate {
-	ec.mutation.SetCreatedAt(t)
-	return ec
+func (_c *EntityCreate) SetCreatedAt(v time.Time) *EntityCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableCreatedAt(t *time.Time) *EntityCreate {
-	if t != nil {
-		ec.SetCreatedAt(*t)
+func (_c *EntityCreate) SetNillableCreatedAt(v *time.Time) *EntityCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (ec *EntityCreate) SetUpdatedAt(t time.Time) *EntityCreate {
-	ec.mutation.SetUpdatedAt(t)
-	return ec
+func (_c *EntityCreate) SetUpdatedAt(v time.Time) *EntityCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
 }
 
 // SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableUpdatedAt(t *time.Time) *EntityCreate {
-	if t != nil {
-		ec.SetUpdatedAt(*t)
+func (_c *EntityCreate) SetNillableUpdatedAt(v *time.Time) *EntityCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetName sets the "name" field.
-func (ec *EntityCreate) SetName(s string) *EntityCreate {
-	ec.mutation.SetName(s)
-	return ec
+func (_c *EntityCreate) SetName(v string) *EntityCreate {
+	_c.mutation.SetName(v)
+	return _c
 }
 
 // SetDescription sets the "description" field.
-func (ec *EntityCreate) SetDescription(s string) *EntityCreate {
-	ec.mutation.SetDescription(s)
-	return ec
+func (_c *EntityCreate) SetDescription(v string) *EntityCreate {
+	_c.mutation.SetDescription(v)
+	return _c
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableDescription(s *string) *EntityCreate {
-	if s != nil {
-		ec.SetDescription(*s)
+func (_c *EntityCreate) SetNillableDescription(v *string) *EntityCreate {
+	if v != nil {
+		_c.SetDescription(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetImportRef sets the "import_ref" field.
-func (ec *EntityCreate) SetImportRef(s string) *EntityCreate {
-	ec.mutation.SetImportRef(s)
-	return ec
+func (_c *EntityCreate) SetImportRef(v string) *EntityCreate {
+	_c.mutation.SetImportRef(v)
+	return _c
 }
 
 // SetNillableImportRef sets the "import_ref" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableImportRef(s *string) *EntityCreate {
-	if s != nil {
-		ec.SetImportRef(*s)
+func (_c *EntityCreate) SetNillableImportRef(v *string) *EntityCreate {
+	if v != nil {
+		_c.SetImportRef(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetNotes sets the "notes" field.
-func (ec *EntityCreate) SetNotes(s string) *EntityCreate {
-	ec.mutation.SetNotes(s)
-	return ec
+func (_c *EntityCreate) SetNotes(v string) *EntityCreate {
+	_c.mutation.SetNotes(v)
+	return _c
 }
 
 // SetNillableNotes sets the "notes" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableNotes(s *string) *EntityCreate {
-	if s != nil {
-		ec.SetNotes(*s)
+func (_c *EntityCreate) SetNillableNotes(v *string) *EntityCreate {
+	if v != nil {
+		_c.SetNotes(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetQuantity sets the "quantity" field.
-func (ec *EntityCreate) SetQuantity(i int) *EntityCreate {
-	ec.mutation.SetQuantity(i)
-	return ec
+func (_c *EntityCreate) SetQuantity(v int) *EntityCreate {
+	_c.mutation.SetQuantity(v)
+	return _c
 }
 
 // SetNillableQuantity sets the "quantity" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableQuantity(i *int) *EntityCreate {
-	if i != nil {
-		ec.SetQuantity(*i)
+func (_c *EntityCreate) SetNillableQuantity(v *int) *EntityCreate {
+	if v != nil {
+		_c.SetQuantity(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetInsured sets the "insured" field.
-func (ec *EntityCreate) SetInsured(b bool) *EntityCreate {
-	ec.mutation.SetInsured(b)
-	return ec
+func (_c *EntityCreate) SetInsured(v bool) *EntityCreate {
+	_c.mutation.SetInsured(v)
+	return _c
 }
 
 // SetNillableInsured sets the "insured" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableInsured(b *bool) *EntityCreate {
-	if b != nil {
-		ec.SetInsured(*b)
+func (_c *EntityCreate) SetNillableInsured(v *bool) *EntityCreate {
+	if v != nil {
+		_c.SetInsured(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetArchived sets the "archived" field.
-func (ec *EntityCreate) SetArchived(b bool) *EntityCreate {
-	ec.mutation.SetArchived(b)
-	return ec
+func (_c *EntityCreate) SetArchived(v bool) *EntityCreate {
+	_c.mutation.SetArchived(v)
+	return _c
 }
 
 // SetNillableArchived sets the "archived" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableArchived(b *bool) *EntityCreate {
-	if b != nil {
-		ec.SetArchived(*b)
+func (_c *EntityCreate) SetNillableArchived(v *bool) *EntityCreate {
+	if v != nil {
+		_c.SetArchived(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetAssetID sets the "asset_id" field.
-func (ec *EntityCreate) SetAssetID(i int) *EntityCreate {
-	ec.mutation.SetAssetID(i)
-	return ec
+func (_c *EntityCreate) SetAssetID(v int) *EntityCreate {
+	_c.mutation.SetAssetID(v)
+	return _c
 }
 
 // SetNillableAssetID sets the "asset_id" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableAssetID(i *int) *EntityCreate {
-	if i != nil {
-		ec.SetAssetID(*i)
+func (_c *EntityCreate) SetNillableAssetID(v *int) *EntityCreate {
+	if v != nil {
+		_c.SetAssetID(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetSyncChildEntitiesLocations sets the "sync_child_entities_locations" field.
-func (ec *EntityCreate) SetSyncChildEntitiesLocations(b bool) *EntityCreate {
-	ec.mutation.SetSyncChildEntitiesLocations(b)
-	return ec
+func (_c *EntityCreate) SetSyncChildEntitiesLocations(v bool) *EntityCreate {
+	_c.mutation.SetSyncChildEntitiesLocations(v)
+	return _c
 }
 
 // SetNillableSyncChildEntitiesLocations sets the "sync_child_entities_locations" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableSyncChildEntitiesLocations(b *bool) *EntityCreate {
-	if b != nil {
-		ec.SetSyncChildEntitiesLocations(*b)
+func (_c *EntityCreate) SetNillableSyncChildEntitiesLocations(v *bool) *EntityCreate {
+	if v != nil {
+		_c.SetSyncChildEntitiesLocations(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetSerialNumber sets the "serial_number" field.
-func (ec *EntityCreate) SetSerialNumber(s string) *EntityCreate {
-	ec.mutation.SetSerialNumber(s)
-	return ec
+func (_c *EntityCreate) SetSerialNumber(v string) *EntityCreate {
+	_c.mutation.SetSerialNumber(v)
+	return _c
 }
 
 // SetNillableSerialNumber sets the "serial_number" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableSerialNumber(s *string) *EntityCreate {
-	if s != nil {
-		ec.SetSerialNumber(*s)
+func (_c *EntityCreate) SetNillableSerialNumber(v *string) *EntityCreate {
+	if v != nil {
+		_c.SetSerialNumber(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetModelNumber sets the "model_number" field.
-func (ec *EntityCreate) SetModelNumber(s string) *EntityCreate {
-	ec.mutation.SetModelNumber(s)
-	return ec
+func (_c *EntityCreate) SetModelNumber(v string) *EntityCreate {
+	_c.mutation.SetModelNumber(v)
+	return _c
 }
 
 // SetNillableModelNumber sets the "model_number" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableModelNumber(s *string) *EntityCreate {
-	if s != nil {
-		ec.SetModelNumber(*s)
+func (_c *EntityCreate) SetNillableModelNumber(v *string) *EntityCreate {
+	if v != nil {
+		_c.SetModelNumber(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetManufacturer sets the "manufacturer" field.
-func (ec *EntityCreate) SetManufacturer(s string) *EntityCreate {
-	ec.mutation.SetManufacturer(s)
-	return ec
+func (_c *EntityCreate) SetManufacturer(v string) *EntityCreate {
+	_c.mutation.SetManufacturer(v)
+	return _c
 }
 
 // SetNillableManufacturer sets the "manufacturer" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableManufacturer(s *string) *EntityCreate {
-	if s != nil {
-		ec.SetManufacturer(*s)
+func (_c *EntityCreate) SetNillableManufacturer(v *string) *EntityCreate {
+	if v != nil {
+		_c.SetManufacturer(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetLifetimeWarranty sets the "lifetime_warranty" field.
-func (ec *EntityCreate) SetLifetimeWarranty(b bool) *EntityCreate {
-	ec.mutation.SetLifetimeWarranty(b)
-	return ec
+func (_c *EntityCreate) SetLifetimeWarranty(v bool) *EntityCreate {
+	_c.mutation.SetLifetimeWarranty(v)
+	return _c
 }
 
 // SetNillableLifetimeWarranty sets the "lifetime_warranty" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableLifetimeWarranty(b *bool) *EntityCreate {
-	if b != nil {
-		ec.SetLifetimeWarranty(*b)
+func (_c *EntityCreate) SetNillableLifetimeWarranty(v *bool) *EntityCreate {
+	if v != nil {
+		_c.SetLifetimeWarranty(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetWarrantyExpires sets the "warranty_expires" field.
-func (ec *EntityCreate) SetWarrantyExpires(t time.Time) *EntityCreate {
-	ec.mutation.SetWarrantyExpires(t)
-	return ec
+func (_c *EntityCreate) SetWarrantyExpires(v time.Time) *EntityCreate {
+	_c.mutation.SetWarrantyExpires(v)
+	return _c
 }
 
 // SetNillableWarrantyExpires sets the "warranty_expires" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableWarrantyExpires(t *time.Time) *EntityCreate {
-	if t != nil {
-		ec.SetWarrantyExpires(*t)
+func (_c *EntityCreate) SetNillableWarrantyExpires(v *time.Time) *EntityCreate {
+	if v != nil {
+		_c.SetWarrantyExpires(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetWarrantyDetails sets the "warranty_details" field.
-func (ec *EntityCreate) SetWarrantyDetails(s string) *EntityCreate {
-	ec.mutation.SetWarrantyDetails(s)
-	return ec
+func (_c *EntityCreate) SetWarrantyDetails(v string) *EntityCreate {
+	_c.mutation.SetWarrantyDetails(v)
+	return _c
 }
 
 // SetNillableWarrantyDetails sets the "warranty_details" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableWarrantyDetails(s *string) *EntityCreate {
-	if s != nil {
-		ec.SetWarrantyDetails(*s)
+func (_c *EntityCreate) SetNillableWarrantyDetails(v *string) *EntityCreate {
+	if v != nil {
+		_c.SetWarrantyDetails(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetPurchaseTime sets the "purchase_time" field.
-func (ec *EntityCreate) SetPurchaseTime(t time.Time) *EntityCreate {
-	ec.mutation.SetPurchaseTime(t)
-	return ec
+func (_c *EntityCreate) SetPurchaseTime(v time.Time) *EntityCreate {
+	_c.mutation.SetPurchaseTime(v)
+	return _c
 }
 
 // SetNillablePurchaseTime sets the "purchase_time" field if the given value is not nil.
-func (ec *EntityCreate) SetNillablePurchaseTime(t *time.Time) *EntityCreate {
-	if t != nil {
-		ec.SetPurchaseTime(*t)
+func (_c *EntityCreate) SetNillablePurchaseTime(v *time.Time) *EntityCreate {
+	if v != nil {
+		_c.SetPurchaseTime(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetPurchaseFrom sets the "purchase_from" field.
-func (ec *EntityCreate) SetPurchaseFrom(s string) *EntityCreate {
-	ec.mutation.SetPurchaseFrom(s)
-	return ec
+func (_c *EntityCreate) SetPurchaseFrom(v string) *EntityCreate {
+	_c.mutation.SetPurchaseFrom(v)
+	return _c
 }
 
 // SetNillablePurchaseFrom sets the "purchase_from" field if the given value is not nil.
-func (ec *EntityCreate) SetNillablePurchaseFrom(s *string) *EntityCreate {
-	if s != nil {
-		ec.SetPurchaseFrom(*s)
+func (_c *EntityCreate) SetNillablePurchaseFrom(v *string) *EntityCreate {
+	if v != nil {
+		_c.SetPurchaseFrom(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetPurchasePrice sets the "purchase_price" field.
-func (ec *EntityCreate) SetPurchasePrice(f float64) *EntityCreate {
-	ec.mutation.SetPurchasePrice(f)
-	return ec
+func (_c *EntityCreate) SetPurchasePrice(v float64) *EntityCreate {
+	_c.mutation.SetPurchasePrice(v)
+	return _c
 }
 
 // SetNillablePurchasePrice sets the "purchase_price" field if the given value is not nil.
-func (ec *EntityCreate) SetNillablePurchasePrice(f *float64) *EntityCreate {
-	if f != nil {
-		ec.SetPurchasePrice(*f)
+func (_c *EntityCreate) SetNillablePurchasePrice(v *float64) *EntityCreate {
+	if v != nil {
+		_c.SetPurchasePrice(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetSoldTime sets the "sold_time" field.
-func (ec *EntityCreate) SetSoldTime(t time.Time) *EntityCreate {
-	ec.mutation.SetSoldTime(t)
-	return ec
+func (_c *EntityCreate) SetSoldTime(v time.Time) *EntityCreate {
+	_c.mutation.SetSoldTime(v)
+	return _c
 }
 
 // SetNillableSoldTime sets the "sold_time" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableSoldTime(t *time.Time) *EntityCreate {
-	if t != nil {
-		ec.SetSoldTime(*t)
+func (_c *EntityCreate) SetNillableSoldTime(v *time.Time) *EntityCreate {
+	if v != nil {
+		_c.SetSoldTime(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetSoldTo sets the "sold_to" field.
-func (ec *EntityCreate) SetSoldTo(s string) *EntityCreate {
-	ec.mutation.SetSoldTo(s)
-	return ec
+func (_c *EntityCreate) SetSoldTo(v string) *EntityCreate {
+	_c.mutation.SetSoldTo(v)
+	return _c
 }
 
 // SetNillableSoldTo sets the "sold_to" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableSoldTo(s *string) *EntityCreate {
-	if s != nil {
-		ec.SetSoldTo(*s)
+func (_c *EntityCreate) SetNillableSoldTo(v *string) *EntityCreate {
+	if v != nil {
+		_c.SetSoldTo(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetSoldPrice sets the "sold_price" field.
-func (ec *EntityCreate) SetSoldPrice(f float64) *EntityCreate {
-	ec.mutation.SetSoldPrice(f)
-	return ec
+func (_c *EntityCreate) SetSoldPrice(v float64) *EntityCreate {
+	_c.mutation.SetSoldPrice(v)
+	return _c
 }
 
 // SetNillableSoldPrice sets the "sold_price" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableSoldPrice(f *float64) *EntityCreate {
-	if f != nil {
-		ec.SetSoldPrice(*f)
+func (_c *EntityCreate) SetNillableSoldPrice(v *float64) *EntityCreate {
+	if v != nil {
+		_c.SetSoldPrice(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetSoldNotes sets the "sold_notes" field.
-func (ec *EntityCreate) SetSoldNotes(s string) *EntityCreate {
-	ec.mutation.SetSoldNotes(s)
-	return ec
+func (_c *EntityCreate) SetSoldNotes(v string) *EntityCreate {
+	_c.mutation.SetSoldNotes(v)
+	return _c
 }
 
 // SetNillableSoldNotes sets the "sold_notes" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableSoldNotes(s *string) *EntityCreate {
-	if s != nil {
-		ec.SetSoldNotes(*s)
+func (_c *EntityCreate) SetNillableSoldNotes(v *string) *EntityCreate {
+	if v != nil {
+		_c.SetSoldNotes(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetID sets the "id" field.
-func (ec *EntityCreate) SetID(u uuid.UUID) *EntityCreate {
-	ec.mutation.SetID(u)
-	return ec
+func (_c *EntityCreate) SetID(v uuid.UUID) *EntityCreate {
+	_c.mutation.SetID(v)
+	return _c
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (ec *EntityCreate) SetNillableID(u *uuid.UUID) *EntityCreate {
-	if u != nil {
-		ec.SetID(*u)
+func (_c *EntityCreate) SetNillableID(v *uuid.UUID) *EntityCreate {
+	if v != nil {
+		_c.SetID(*v)
 	}
-	return ec
+	return _c
 }
 
 // SetGroupID sets the "group" edge to the Group entity by ID.
-func (ec *EntityCreate) SetGroupID(id uuid.UUID) *EntityCreate {
-	ec.mutation.SetGroupID(id)
-	return ec
+func (_c *EntityCreate) SetGroupID(id uuid.UUID) *EntityCreate {
+	_c.mutation.SetGroupID(id)
+	return _c
 }
 
 // SetGroup sets the "group" edge to the Group entity.
-func (ec *EntityCreate) SetGroup(g *Group) *EntityCreate {
-	return ec.SetGroupID(g.ID)
+func (_c *EntityCreate) SetGroup(v *Group) *EntityCreate {
+	return _c.SetGroupID(v.ID)
 }
 
 // SetParentID sets the "parent" edge to the Entity entity by ID.
-func (ec *EntityCreate) SetParentID(id uuid.UUID) *EntityCreate {
-	ec.mutation.SetParentID(id)
-	return ec
+func (_c *EntityCreate) SetParentID(id uuid.UUID) *EntityCreate {
+	_c.mutation.SetParentID(id)
+	return _c
 }
 
 // SetNillableParentID sets the "parent" edge to the Entity entity by ID if the given value is not nil.
-func (ec *EntityCreate) SetNillableParentID(id *uuid.UUID) *EntityCreate {
+func (_c *EntityCreate) SetNillableParentID(id *uuid.UUID) *EntityCreate {
 	if id != nil {
-		ec = ec.SetParentID(*id)
+		_c = _c.SetParentID(*id)
 	}
-	return ec
+	return _c
 }
 
 // SetParent sets the "parent" edge to the Entity entity.
-func (ec *EntityCreate) SetParent(e *Entity) *EntityCreate {
-	return ec.SetParentID(e.ID)
+func (_c *EntityCreate) SetParent(v *Entity) *EntityCreate {
+	return _c.SetParentID(v.ID)
 }
 
 // AddChildIDs adds the "children" edge to the Entity entity by IDs.
-func (ec *EntityCreate) AddChildIDs(ids ...uuid.UUID) *EntityCreate {
-	ec.mutation.AddChildIDs(ids...)
-	return ec
+func (_c *EntityCreate) AddChildIDs(ids ...uuid.UUID) *EntityCreate {
+	_c.mutation.AddChildIDs(ids...)
+	return _c
 }
 
 // AddChildren adds the "children" edges to the Entity entity.
-func (ec *EntityCreate) AddChildren(e ...*Entity) *EntityCreate {
-	ids := make([]uuid.UUID, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+func (_c *EntityCreate) AddChildren(v ...*Entity) *EntityCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return ec.AddChildIDs(ids...)
+	return _c.AddChildIDs(ids...)
 }
 
 // SetEntityID sets the "entity" edge to the Entity entity by ID.
-func (ec *EntityCreate) SetEntityID(id uuid.UUID) *EntityCreate {
-	ec.mutation.SetEntityID(id)
-	return ec
+func (_c *EntityCreate) SetEntityID(id uuid.UUID) *EntityCreate {
+	_c.mutation.SetEntityID(id)
+	return _c
 }
 
 // SetNillableEntityID sets the "entity" edge to the Entity entity by ID if the given value is not nil.
-func (ec *EntityCreate) SetNillableEntityID(id *uuid.UUID) *EntityCreate {
+func (_c *EntityCreate) SetNillableEntityID(id *uuid.UUID) *EntityCreate {
 	if id != nil {
-		ec = ec.SetEntityID(*id)
+		_c = _c.SetEntityID(*id)
 	}
-	return ec
+	return _c
 }
 
 // SetEntity sets the "entity" edge to the Entity entity.
-func (ec *EntityCreate) SetEntity(e *Entity) *EntityCreate {
-	return ec.SetEntityID(e.ID)
+func (_c *EntityCreate) SetEntity(v *Entity) *EntityCreate {
+	return _c.SetEntityID(v.ID)
 }
 
 // SetLocationID sets the "location" edge to the Entity entity by ID.
-func (ec *EntityCreate) SetLocationID(id uuid.UUID) *EntityCreate {
-	ec.mutation.SetLocationID(id)
-	return ec
+func (_c *EntityCreate) SetLocationID(id uuid.UUID) *EntityCreate {
+	_c.mutation.SetLocationID(id)
+	return _c
 }
 
 // SetNillableLocationID sets the "location" edge to the Entity entity by ID if the given value is not nil.
-func (ec *EntityCreate) SetNillableLocationID(id *uuid.UUID) *EntityCreate {
+func (_c *EntityCreate) SetNillableLocationID(id *uuid.UUID) *EntityCreate {
 	if id != nil {
-		ec = ec.SetLocationID(*id)
+		_c = _c.SetLocationID(*id)
 	}
-	return ec
+	return _c
 }
 
 // SetLocation sets the "location" edge to the Entity entity.
-func (ec *EntityCreate) SetLocation(e *Entity) *EntityCreate {
-	return ec.SetLocationID(e.ID)
+func (_c *EntityCreate) SetLocation(v *Entity) *EntityCreate {
+	return _c.SetLocationID(v.ID)
 }
 
 // AddLabelIDs adds the "label" edge to the Label entity by IDs.
-func (ec *EntityCreate) AddLabelIDs(ids ...uuid.UUID) *EntityCreate {
-	ec.mutation.AddLabelIDs(ids...)
-	return ec
+func (_c *EntityCreate) AddLabelIDs(ids ...uuid.UUID) *EntityCreate {
+	_c.mutation.AddLabelIDs(ids...)
+	return _c
 }
 
 // AddLabel adds the "label" edges to the Label entity.
-func (ec *EntityCreate) AddLabel(l ...*Label) *EntityCreate {
-	ids := make([]uuid.UUID, len(l))
-	for i := range l {
-		ids[i] = l[i].ID
+func (_c *EntityCreate) AddLabel(v ...*Label) *EntityCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return ec.AddLabelIDs(ids...)
+	return _c.AddLabelIDs(ids...)
 }
 
 // SetTypeID sets the "type" edge to the EntityType entity by ID.
-func (ec *EntityCreate) SetTypeID(id uuid.UUID) *EntityCreate {
-	ec.mutation.SetTypeID(id)
-	return ec
+func (_c *EntityCreate) SetTypeID(id uuid.UUID) *EntityCreate {
+	_c.mutation.SetTypeID(id)
+	return _c
 }
 
 // SetNillableTypeID sets the "type" edge to the EntityType entity by ID if the given value is not nil.
-func (ec *EntityCreate) SetNillableTypeID(id *uuid.UUID) *EntityCreate {
+func (_c *EntityCreate) SetNillableTypeID(id *uuid.UUID) *EntityCreate {
 	if id != nil {
-		ec = ec.SetTypeID(*id)
+		_c = _c.SetTypeID(*id)
 	}
-	return ec
+	return _c
 }
 
 // SetType sets the "type" edge to the EntityType entity.
-func (ec *EntityCreate) SetType(e *EntityType) *EntityCreate {
-	return ec.SetTypeID(e.ID)
+func (_c *EntityCreate) SetType(v *EntityType) *EntityCreate {
+	return _c.SetTypeID(v.ID)
 }
 
 // AddFieldIDs adds the "fields" edge to the EntityField entity by IDs.
-func (ec *EntityCreate) AddFieldIDs(ids ...uuid.UUID) *EntityCreate {
-	ec.mutation.AddFieldIDs(ids...)
-	return ec
+func (_c *EntityCreate) AddFieldIDs(ids ...uuid.UUID) *EntityCreate {
+	_c.mutation.AddFieldIDs(ids...)
+	return _c
 }
 
 // AddFields adds the "fields" edges to the EntityField entity.
-func (ec *EntityCreate) AddFields(e ...*EntityField) *EntityCreate {
-	ids := make([]uuid.UUID, len(e))
-	for i := range e {
-		ids[i] = e[i].ID
+func (_c *EntityCreate) AddFields(v ...*EntityField) *EntityCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return ec.AddFieldIDs(ids...)
+	return _c.AddFieldIDs(ids...)
 }
 
 // AddMaintenanceEntryIDs adds the "maintenance_entries" edge to the MaintenanceEntry entity by IDs.
-func (ec *EntityCreate) AddMaintenanceEntryIDs(ids ...uuid.UUID) *EntityCreate {
-	ec.mutation.AddMaintenanceEntryIDs(ids...)
-	return ec
+func (_c *EntityCreate) AddMaintenanceEntryIDs(ids ...uuid.UUID) *EntityCreate {
+	_c.mutation.AddMaintenanceEntryIDs(ids...)
+	return _c
 }
 
 // AddMaintenanceEntries adds the "maintenance_entries" edges to the MaintenanceEntry entity.
-func (ec *EntityCreate) AddMaintenanceEntries(m ...*MaintenanceEntry) *EntityCreate {
-	ids := make([]uuid.UUID, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+func (_c *EntityCreate) AddMaintenanceEntries(v ...*MaintenanceEntry) *EntityCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return ec.AddMaintenanceEntryIDs(ids...)
+	return _c.AddMaintenanceEntryIDs(ids...)
 }
 
 // AddAttachmentIDs adds the "attachments" edge to the Attachment entity by IDs.
-func (ec *EntityCreate) AddAttachmentIDs(ids ...uuid.UUID) *EntityCreate {
-	ec.mutation.AddAttachmentIDs(ids...)
-	return ec
+func (_c *EntityCreate) AddAttachmentIDs(ids ...uuid.UUID) *EntityCreate {
+	_c.mutation.AddAttachmentIDs(ids...)
+	return _c
 }
 
 // AddAttachments adds the "attachments" edges to the Attachment entity.
-func (ec *EntityCreate) AddAttachments(a ...*Attachment) *EntityCreate {
-	ids := make([]uuid.UUID, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
+func (_c *EntityCreate) AddAttachments(v ...*Attachment) *EntityCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return ec.AddAttachmentIDs(ids...)
+	return _c.AddAttachmentIDs(ids...)
 }
 
 // Mutation returns the EntityMutation object of the builder.
-func (ec *EntityCreate) Mutation() *EntityMutation {
-	return ec.mutation
+func (_c *EntityCreate) Mutation() *EntityMutation {
+	return _c.mutation
 }
 
 // Save creates the Entity in the database.
-func (ec *EntityCreate) Save(ctx context.Context) (*Entity, error) {
-	ec.defaults()
-	return withHooks(ctx, ec.sqlSave, ec.mutation, ec.hooks)
+func (_c *EntityCreate) Save(ctx context.Context) (*Entity, error) {
+	_c.defaults()
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (ec *EntityCreate) SaveX(ctx context.Context) *Entity {
-	v, err := ec.Save(ctx)
+func (_c *EntityCreate) SaveX(ctx context.Context) *Entity {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -552,158 +552,158 @@ func (ec *EntityCreate) SaveX(ctx context.Context) *Entity {
 }
 
 // Exec executes the query.
-func (ec *EntityCreate) Exec(ctx context.Context) error {
-	_, err := ec.Save(ctx)
+func (_c *EntityCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ec *EntityCreate) ExecX(ctx context.Context) {
-	if err := ec.Exec(ctx); err != nil {
+func (_c *EntityCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (ec *EntityCreate) defaults() {
-	if _, ok := ec.mutation.CreatedAt(); !ok {
+func (_c *EntityCreate) defaults() {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
 		v := entity.DefaultCreatedAt()
-		ec.mutation.SetCreatedAt(v)
+		_c.mutation.SetCreatedAt(v)
 	}
-	if _, ok := ec.mutation.UpdatedAt(); !ok {
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		v := entity.DefaultUpdatedAt()
-		ec.mutation.SetUpdatedAt(v)
+		_c.mutation.SetUpdatedAt(v)
 	}
-	if _, ok := ec.mutation.Quantity(); !ok {
+	if _, ok := _c.mutation.Quantity(); !ok {
 		v := entity.DefaultQuantity
-		ec.mutation.SetQuantity(v)
+		_c.mutation.SetQuantity(v)
 	}
-	if _, ok := ec.mutation.Insured(); !ok {
+	if _, ok := _c.mutation.Insured(); !ok {
 		v := entity.DefaultInsured
-		ec.mutation.SetInsured(v)
+		_c.mutation.SetInsured(v)
 	}
-	if _, ok := ec.mutation.Archived(); !ok {
+	if _, ok := _c.mutation.Archived(); !ok {
 		v := entity.DefaultArchived
-		ec.mutation.SetArchived(v)
+		_c.mutation.SetArchived(v)
 	}
-	if _, ok := ec.mutation.AssetID(); !ok {
+	if _, ok := _c.mutation.AssetID(); !ok {
 		v := entity.DefaultAssetID
-		ec.mutation.SetAssetID(v)
+		_c.mutation.SetAssetID(v)
 	}
-	if _, ok := ec.mutation.SyncChildEntitiesLocations(); !ok {
+	if _, ok := _c.mutation.SyncChildEntitiesLocations(); !ok {
 		v := entity.DefaultSyncChildEntitiesLocations
-		ec.mutation.SetSyncChildEntitiesLocations(v)
+		_c.mutation.SetSyncChildEntitiesLocations(v)
 	}
-	if _, ok := ec.mutation.LifetimeWarranty(); !ok {
+	if _, ok := _c.mutation.LifetimeWarranty(); !ok {
 		v := entity.DefaultLifetimeWarranty
-		ec.mutation.SetLifetimeWarranty(v)
+		_c.mutation.SetLifetimeWarranty(v)
 	}
-	if _, ok := ec.mutation.PurchasePrice(); !ok {
+	if _, ok := _c.mutation.PurchasePrice(); !ok {
 		v := entity.DefaultPurchasePrice
-		ec.mutation.SetPurchasePrice(v)
+		_c.mutation.SetPurchasePrice(v)
 	}
-	if _, ok := ec.mutation.SoldPrice(); !ok {
+	if _, ok := _c.mutation.SoldPrice(); !ok {
 		v := entity.DefaultSoldPrice
-		ec.mutation.SetSoldPrice(v)
+		_c.mutation.SetSoldPrice(v)
 	}
-	if _, ok := ec.mutation.ID(); !ok {
+	if _, ok := _c.mutation.ID(); !ok {
 		v := entity.DefaultID()
-		ec.mutation.SetID(v)
+		_c.mutation.SetID(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (ec *EntityCreate) check() error {
-	if _, ok := ec.mutation.CreatedAt(); !ok {
+func (_c *EntityCreate) check() error {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Entity.created_at"`)}
 	}
-	if _, ok := ec.mutation.UpdatedAt(); !ok {
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Entity.updated_at"`)}
 	}
-	if _, ok := ec.mutation.Name(); !ok {
+	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Entity.name"`)}
 	}
-	if v, ok := ec.mutation.Name(); ok {
+	if v, ok := _c.mutation.Name(); ok {
 		if err := entity.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Entity.name": %w`, err)}
 		}
 	}
-	if v, ok := ec.mutation.Description(); ok {
+	if v, ok := _c.mutation.Description(); ok {
 		if err := entity.DescriptionValidator(v); err != nil {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Entity.description": %w`, err)}
 		}
 	}
-	if v, ok := ec.mutation.ImportRef(); ok {
+	if v, ok := _c.mutation.ImportRef(); ok {
 		if err := entity.ImportRefValidator(v); err != nil {
 			return &ValidationError{Name: "import_ref", err: fmt.Errorf(`ent: validator failed for field "Entity.import_ref": %w`, err)}
 		}
 	}
-	if v, ok := ec.mutation.Notes(); ok {
+	if v, ok := _c.mutation.Notes(); ok {
 		if err := entity.NotesValidator(v); err != nil {
 			return &ValidationError{Name: "notes", err: fmt.Errorf(`ent: validator failed for field "Entity.notes": %w`, err)}
 		}
 	}
-	if _, ok := ec.mutation.Quantity(); !ok {
+	if _, ok := _c.mutation.Quantity(); !ok {
 		return &ValidationError{Name: "quantity", err: errors.New(`ent: missing required field "Entity.quantity"`)}
 	}
-	if _, ok := ec.mutation.Insured(); !ok {
+	if _, ok := _c.mutation.Insured(); !ok {
 		return &ValidationError{Name: "insured", err: errors.New(`ent: missing required field "Entity.insured"`)}
 	}
-	if _, ok := ec.mutation.Archived(); !ok {
+	if _, ok := _c.mutation.Archived(); !ok {
 		return &ValidationError{Name: "archived", err: errors.New(`ent: missing required field "Entity.archived"`)}
 	}
-	if _, ok := ec.mutation.AssetID(); !ok {
+	if _, ok := _c.mutation.AssetID(); !ok {
 		return &ValidationError{Name: "asset_id", err: errors.New(`ent: missing required field "Entity.asset_id"`)}
 	}
-	if _, ok := ec.mutation.SyncChildEntitiesLocations(); !ok {
+	if _, ok := _c.mutation.SyncChildEntitiesLocations(); !ok {
 		return &ValidationError{Name: "sync_child_entities_locations", err: errors.New(`ent: missing required field "Entity.sync_child_entities_locations"`)}
 	}
-	if v, ok := ec.mutation.SerialNumber(); ok {
+	if v, ok := _c.mutation.SerialNumber(); ok {
 		if err := entity.SerialNumberValidator(v); err != nil {
 			return &ValidationError{Name: "serial_number", err: fmt.Errorf(`ent: validator failed for field "Entity.serial_number": %w`, err)}
 		}
 	}
-	if v, ok := ec.mutation.ModelNumber(); ok {
+	if v, ok := _c.mutation.ModelNumber(); ok {
 		if err := entity.ModelNumberValidator(v); err != nil {
 			return &ValidationError{Name: "model_number", err: fmt.Errorf(`ent: validator failed for field "Entity.model_number": %w`, err)}
 		}
 	}
-	if v, ok := ec.mutation.Manufacturer(); ok {
+	if v, ok := _c.mutation.Manufacturer(); ok {
 		if err := entity.ManufacturerValidator(v); err != nil {
 			return &ValidationError{Name: "manufacturer", err: fmt.Errorf(`ent: validator failed for field "Entity.manufacturer": %w`, err)}
 		}
 	}
-	if _, ok := ec.mutation.LifetimeWarranty(); !ok {
+	if _, ok := _c.mutation.LifetimeWarranty(); !ok {
 		return &ValidationError{Name: "lifetime_warranty", err: errors.New(`ent: missing required field "Entity.lifetime_warranty"`)}
 	}
-	if v, ok := ec.mutation.WarrantyDetails(); ok {
+	if v, ok := _c.mutation.WarrantyDetails(); ok {
 		if err := entity.WarrantyDetailsValidator(v); err != nil {
 			return &ValidationError{Name: "warranty_details", err: fmt.Errorf(`ent: validator failed for field "Entity.warranty_details": %w`, err)}
 		}
 	}
-	if _, ok := ec.mutation.PurchasePrice(); !ok {
+	if _, ok := _c.mutation.PurchasePrice(); !ok {
 		return &ValidationError{Name: "purchase_price", err: errors.New(`ent: missing required field "Entity.purchase_price"`)}
 	}
-	if _, ok := ec.mutation.SoldPrice(); !ok {
+	if _, ok := _c.mutation.SoldPrice(); !ok {
 		return &ValidationError{Name: "sold_price", err: errors.New(`ent: missing required field "Entity.sold_price"`)}
 	}
-	if v, ok := ec.mutation.SoldNotes(); ok {
+	if v, ok := _c.mutation.SoldNotes(); ok {
 		if err := entity.SoldNotesValidator(v); err != nil {
 			return &ValidationError{Name: "sold_notes", err: fmt.Errorf(`ent: validator failed for field "Entity.sold_notes": %w`, err)}
 		}
 	}
-	if len(ec.mutation.GroupIDs()) == 0 {
+	if len(_c.mutation.GroupIDs()) == 0 {
 		return &ValidationError{Name: "group", err: errors.New(`ent: missing required edge "Entity.group"`)}
 	}
 	return nil
 }
 
-func (ec *EntityCreate) sqlSave(ctx context.Context) (*Entity, error) {
-	if err := ec.check(); err != nil {
+func (_c *EntityCreate) sqlSave(ctx context.Context) (*Entity, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := ec.createSpec()
-	if err := sqlgraph.CreateNode(ctx, ec.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -716,117 +716,117 @@ func (ec *EntityCreate) sqlSave(ctx context.Context) (*Entity, error) {
 			return nil, err
 		}
 	}
-	ec.mutation.id = &_node.ID
-	ec.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
+func (_c *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Entity{config: ec.config}
+		_node = &Entity{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(entity.Table, sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID))
 	)
-	if id, ok := ec.mutation.ID(); ok {
+	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
-	if value, ok := ec.mutation.CreatedAt(); ok {
+	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(entity.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
-	if value, ok := ec.mutation.UpdatedAt(); ok {
+	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(entity.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
-	if value, ok := ec.mutation.Name(); ok {
+	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(entity.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
-	if value, ok := ec.mutation.Description(); ok {
+	if value, ok := _c.mutation.Description(); ok {
 		_spec.SetField(entity.FieldDescription, field.TypeString, value)
 		_node.Description = value
 	}
-	if value, ok := ec.mutation.ImportRef(); ok {
+	if value, ok := _c.mutation.ImportRef(); ok {
 		_spec.SetField(entity.FieldImportRef, field.TypeString, value)
 		_node.ImportRef = value
 	}
-	if value, ok := ec.mutation.Notes(); ok {
+	if value, ok := _c.mutation.Notes(); ok {
 		_spec.SetField(entity.FieldNotes, field.TypeString, value)
 		_node.Notes = value
 	}
-	if value, ok := ec.mutation.Quantity(); ok {
+	if value, ok := _c.mutation.Quantity(); ok {
 		_spec.SetField(entity.FieldQuantity, field.TypeInt, value)
 		_node.Quantity = value
 	}
-	if value, ok := ec.mutation.Insured(); ok {
+	if value, ok := _c.mutation.Insured(); ok {
 		_spec.SetField(entity.FieldInsured, field.TypeBool, value)
 		_node.Insured = value
 	}
-	if value, ok := ec.mutation.Archived(); ok {
+	if value, ok := _c.mutation.Archived(); ok {
 		_spec.SetField(entity.FieldArchived, field.TypeBool, value)
 		_node.Archived = value
 	}
-	if value, ok := ec.mutation.AssetID(); ok {
+	if value, ok := _c.mutation.AssetID(); ok {
 		_spec.SetField(entity.FieldAssetID, field.TypeInt, value)
 		_node.AssetID = value
 	}
-	if value, ok := ec.mutation.SyncChildEntitiesLocations(); ok {
+	if value, ok := _c.mutation.SyncChildEntitiesLocations(); ok {
 		_spec.SetField(entity.FieldSyncChildEntitiesLocations, field.TypeBool, value)
 		_node.SyncChildEntitiesLocations = value
 	}
-	if value, ok := ec.mutation.SerialNumber(); ok {
+	if value, ok := _c.mutation.SerialNumber(); ok {
 		_spec.SetField(entity.FieldSerialNumber, field.TypeString, value)
 		_node.SerialNumber = value
 	}
-	if value, ok := ec.mutation.ModelNumber(); ok {
+	if value, ok := _c.mutation.ModelNumber(); ok {
 		_spec.SetField(entity.FieldModelNumber, field.TypeString, value)
 		_node.ModelNumber = value
 	}
-	if value, ok := ec.mutation.Manufacturer(); ok {
+	if value, ok := _c.mutation.Manufacturer(); ok {
 		_spec.SetField(entity.FieldManufacturer, field.TypeString, value)
 		_node.Manufacturer = value
 	}
-	if value, ok := ec.mutation.LifetimeWarranty(); ok {
+	if value, ok := _c.mutation.LifetimeWarranty(); ok {
 		_spec.SetField(entity.FieldLifetimeWarranty, field.TypeBool, value)
 		_node.LifetimeWarranty = value
 	}
-	if value, ok := ec.mutation.WarrantyExpires(); ok {
+	if value, ok := _c.mutation.WarrantyExpires(); ok {
 		_spec.SetField(entity.FieldWarrantyExpires, field.TypeTime, value)
 		_node.WarrantyExpires = value
 	}
-	if value, ok := ec.mutation.WarrantyDetails(); ok {
+	if value, ok := _c.mutation.WarrantyDetails(); ok {
 		_spec.SetField(entity.FieldWarrantyDetails, field.TypeString, value)
 		_node.WarrantyDetails = value
 	}
-	if value, ok := ec.mutation.PurchaseTime(); ok {
+	if value, ok := _c.mutation.PurchaseTime(); ok {
 		_spec.SetField(entity.FieldPurchaseTime, field.TypeTime, value)
 		_node.PurchaseTime = value
 	}
-	if value, ok := ec.mutation.PurchaseFrom(); ok {
+	if value, ok := _c.mutation.PurchaseFrom(); ok {
 		_spec.SetField(entity.FieldPurchaseFrom, field.TypeString, value)
 		_node.PurchaseFrom = value
 	}
-	if value, ok := ec.mutation.PurchasePrice(); ok {
+	if value, ok := _c.mutation.PurchasePrice(); ok {
 		_spec.SetField(entity.FieldPurchasePrice, field.TypeFloat64, value)
 		_node.PurchasePrice = value
 	}
-	if value, ok := ec.mutation.SoldTime(); ok {
+	if value, ok := _c.mutation.SoldTime(); ok {
 		_spec.SetField(entity.FieldSoldTime, field.TypeTime, value)
 		_node.SoldTime = value
 	}
-	if value, ok := ec.mutation.SoldTo(); ok {
+	if value, ok := _c.mutation.SoldTo(); ok {
 		_spec.SetField(entity.FieldSoldTo, field.TypeString, value)
 		_node.SoldTo = value
 	}
-	if value, ok := ec.mutation.SoldPrice(); ok {
+	if value, ok := _c.mutation.SoldPrice(); ok {
 		_spec.SetField(entity.FieldSoldPrice, field.TypeFloat64, value)
 		_node.SoldPrice = value
 	}
-	if value, ok := ec.mutation.SoldNotes(); ok {
+	if value, ok := _c.mutation.SoldNotes(); ok {
 		_spec.SetField(entity.FieldSoldNotes, field.TypeString, value)
 		_node.SoldNotes = value
 	}
-	if nodes := ec.mutation.GroupIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -843,7 +843,7 @@ func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 		_node.group_entities = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ec.mutation.ParentIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.ParentIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -860,7 +860,7 @@ func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 		_node.entity_children = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ec.mutation.ChildrenIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.ChildrenIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -876,7 +876,7 @@ func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ec.mutation.EntityIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
@@ -893,7 +893,7 @@ func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 		_node.entity_location = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ec.mutation.LocationIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.LocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
@@ -909,7 +909,7 @@ func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ec.mutation.LabelIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.LabelIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -925,7 +925,7 @@ func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ec.mutation.TypeIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.TypeIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -942,7 +942,7 @@ func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 		_node.entity_type_entities = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ec.mutation.FieldsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.FieldsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -958,7 +958,7 @@ func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ec.mutation.MaintenanceEntriesIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.MaintenanceEntriesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -974,7 +974,7 @@ func (ec *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := ec.mutation.AttachmentsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.AttachmentsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1001,16 +1001,16 @@ type EntityCreateBulk struct {
 }
 
 // Save creates the Entity entities in the database.
-func (ecb *EntityCreateBulk) Save(ctx context.Context) ([]*Entity, error) {
-	if ecb.err != nil {
-		return nil, ecb.err
+func (_c *EntityCreateBulk) Save(ctx context.Context) ([]*Entity, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(ecb.builders))
-	nodes := make([]*Entity, len(ecb.builders))
-	mutators := make([]Mutator, len(ecb.builders))
-	for i := range ecb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*Entity, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := ecb.builders[i]
+			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*EntityMutation)
@@ -1024,11 +1024,11 @@ func (ecb *EntityCreateBulk) Save(ctx context.Context) ([]*Entity, error) {
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, ecb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, ecb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -1048,7 +1048,7 @@ func (ecb *EntityCreateBulk) Save(ctx context.Context) ([]*Entity, error) {
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, ecb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -1056,8 +1056,8 @@ func (ecb *EntityCreateBulk) Save(ctx context.Context) ([]*Entity, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (ecb *EntityCreateBulk) SaveX(ctx context.Context) []*Entity {
-	v, err := ecb.Save(ctx)
+func (_c *EntityCreateBulk) SaveX(ctx context.Context) []*Entity {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -1065,14 +1065,14 @@ func (ecb *EntityCreateBulk) SaveX(ctx context.Context) []*Entity {
 }
 
 // Exec executes the query.
-func (ecb *EntityCreateBulk) Exec(ctx context.Context) error {
-	_, err := ecb.Save(ctx)
+func (_c *EntityCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ecb *EntityCreateBulk) ExecX(ctx context.Context) {
-	if err := ecb.Exec(ctx); err != nil {
+func (_c *EntityCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

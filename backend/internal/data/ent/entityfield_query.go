@@ -32,44 +32,44 @@ type EntityFieldQuery struct {
 }
 
 // Where adds a new predicate for the EntityFieldQuery builder.
-func (efq *EntityFieldQuery) Where(ps ...predicate.EntityField) *EntityFieldQuery {
-	efq.predicates = append(efq.predicates, ps...)
-	return efq
+func (_q *EntityFieldQuery) Where(ps ...predicate.EntityField) *EntityFieldQuery {
+	_q.predicates = append(_q.predicates, ps...)
+	return _q
 }
 
 // Limit the number of records to be returned by this query.
-func (efq *EntityFieldQuery) Limit(limit int) *EntityFieldQuery {
-	efq.ctx.Limit = &limit
-	return efq
+func (_q *EntityFieldQuery) Limit(limit int) *EntityFieldQuery {
+	_q.ctx.Limit = &limit
+	return _q
 }
 
 // Offset to start from.
-func (efq *EntityFieldQuery) Offset(offset int) *EntityFieldQuery {
-	efq.ctx.Offset = &offset
-	return efq
+func (_q *EntityFieldQuery) Offset(offset int) *EntityFieldQuery {
+	_q.ctx.Offset = &offset
+	return _q
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (efq *EntityFieldQuery) Unique(unique bool) *EntityFieldQuery {
-	efq.ctx.Unique = &unique
-	return efq
+func (_q *EntityFieldQuery) Unique(unique bool) *EntityFieldQuery {
+	_q.ctx.Unique = &unique
+	return _q
 }
 
 // Order specifies how the records should be ordered.
-func (efq *EntityFieldQuery) Order(o ...entityfield.OrderOption) *EntityFieldQuery {
-	efq.order = append(efq.order, o...)
-	return efq
+func (_q *EntityFieldQuery) Order(o ...entityfield.OrderOption) *EntityFieldQuery {
+	_q.order = append(_q.order, o...)
+	return _q
 }
 
 // QueryEntity chains the current query on the "entity" edge.
-func (efq *EntityFieldQuery) QueryEntity() *EntityQuery {
-	query := (&EntityClient{config: efq.config}).Query()
+func (_q *EntityFieldQuery) QueryEntity() *EntityQuery {
+	query := (&EntityClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := efq.prepareQuery(ctx); err != nil {
+		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
 		}
-		selector := efq.sqlQuery(ctx)
+		selector := _q.sqlQuery(ctx)
 		if err := selector.Err(); err != nil {
 			return nil, err
 		}
@@ -78,7 +78,7 @@ func (efq *EntityFieldQuery) QueryEntity() *EntityQuery {
 			sqlgraph.To(entity.Table, entity.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, entityfield.EntityTable, entityfield.EntityColumn),
 		)
-		fromU = sqlgraph.SetNeighbors(efq.driver.Dialect(), step)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
 	}
 	return query
@@ -86,8 +86,8 @@ func (efq *EntityFieldQuery) QueryEntity() *EntityQuery {
 
 // First returns the first EntityField entity from the query.
 // Returns a *NotFoundError when no EntityField was found.
-func (efq *EntityFieldQuery) First(ctx context.Context) (*EntityField, error) {
-	nodes, err := efq.Limit(1).All(setContextOp(ctx, efq.ctx, ent.OpQueryFirst))
+func (_q *EntityFieldQuery) First(ctx context.Context) (*EntityField, error) {
+	nodes, err := _q.Limit(1).All(setContextOp(ctx, _q.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -98,8 +98,8 @@ func (efq *EntityFieldQuery) First(ctx context.Context) (*EntityField, error) {
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (efq *EntityFieldQuery) FirstX(ctx context.Context) *EntityField {
-	node, err := efq.First(ctx)
+func (_q *EntityFieldQuery) FirstX(ctx context.Context) *EntityField {
+	node, err := _q.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
@@ -108,9 +108,9 @@ func (efq *EntityFieldQuery) FirstX(ctx context.Context) *EntityField {
 
 // FirstID returns the first EntityField ID from the query.
 // Returns a *NotFoundError when no EntityField ID was found.
-func (efq *EntityFieldQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
+func (_q *EntityFieldQuery) FirstID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = efq.Limit(1).IDs(setContextOp(ctx, efq.ctx, ent.OpQueryFirstID)); err != nil {
+	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -121,8 +121,8 @@ func (efq *EntityFieldQuery) FirstID(ctx context.Context) (id uuid.UUID, err err
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (efq *EntityFieldQuery) FirstIDX(ctx context.Context) uuid.UUID {
-	id, err := efq.FirstID(ctx)
+func (_q *EntityFieldQuery) FirstIDX(ctx context.Context) uuid.UUID {
+	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
 	}
@@ -132,8 +132,8 @@ func (efq *EntityFieldQuery) FirstIDX(ctx context.Context) uuid.UUID {
 // Only returns a single EntityField entity found by the query, ensuring it only returns one.
 // Returns a *NotSingularError when more than one EntityField entity is found.
 // Returns a *NotFoundError when no EntityField entities are found.
-func (efq *EntityFieldQuery) Only(ctx context.Context) (*EntityField, error) {
-	nodes, err := efq.Limit(2).All(setContextOp(ctx, efq.ctx, ent.OpQueryOnly))
+func (_q *EntityFieldQuery) Only(ctx context.Context) (*EntityField, error) {
+	nodes, err := _q.Limit(2).All(setContextOp(ctx, _q.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -148,8 +148,8 @@ func (efq *EntityFieldQuery) Only(ctx context.Context) (*EntityField, error) {
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (efq *EntityFieldQuery) OnlyX(ctx context.Context) *EntityField {
-	node, err := efq.Only(ctx)
+func (_q *EntityFieldQuery) OnlyX(ctx context.Context) *EntityField {
+	node, err := _q.Only(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -159,9 +159,9 @@ func (efq *EntityFieldQuery) OnlyX(ctx context.Context) *EntityField {
 // OnlyID is like Only, but returns the only EntityField ID in the query.
 // Returns a *NotSingularError when more than one EntityField ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (efq *EntityFieldQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
+func (_q *EntityFieldQuery) OnlyID(ctx context.Context) (id uuid.UUID, err error) {
 	var ids []uuid.UUID
-	if ids, err = efq.Limit(2).IDs(setContextOp(ctx, efq.ctx, ent.OpQueryOnlyID)); err != nil {
+	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -176,8 +176,8 @@ func (efq *EntityFieldQuery) OnlyID(ctx context.Context) (id uuid.UUID, err erro
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (efq *EntityFieldQuery) OnlyIDX(ctx context.Context) uuid.UUID {
-	id, err := efq.OnlyID(ctx)
+func (_q *EntityFieldQuery) OnlyIDX(ctx context.Context) uuid.UUID {
+	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -185,18 +185,18 @@ func (efq *EntityFieldQuery) OnlyIDX(ctx context.Context) uuid.UUID {
 }
 
 // All executes the query and returns a list of EntityFields.
-func (efq *EntityFieldQuery) All(ctx context.Context) ([]*EntityField, error) {
-	ctx = setContextOp(ctx, efq.ctx, ent.OpQueryAll)
-	if err := efq.prepareQuery(ctx); err != nil {
+func (_q *EntityFieldQuery) All(ctx context.Context) ([]*EntityField, error) {
+	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryAll)
+	if err := _q.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
 	qr := querierAll[[]*EntityField, *EntityFieldQuery]()
-	return withInterceptors[[]*EntityField](ctx, efq, qr, efq.inters)
+	return withInterceptors[[]*EntityField](ctx, _q, qr, _q.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (efq *EntityFieldQuery) AllX(ctx context.Context) []*EntityField {
-	nodes, err := efq.All(ctx)
+func (_q *EntityFieldQuery) AllX(ctx context.Context) []*EntityField {
+	nodes, err := _q.All(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -204,20 +204,20 @@ func (efq *EntityFieldQuery) AllX(ctx context.Context) []*EntityField {
 }
 
 // IDs executes the query and returns a list of EntityField IDs.
-func (efq *EntityFieldQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
-	if efq.ctx.Unique == nil && efq.path != nil {
-		efq.Unique(true)
+func (_q *EntityFieldQuery) IDs(ctx context.Context) (ids []uuid.UUID, err error) {
+	if _q.ctx.Unique == nil && _q.path != nil {
+		_q.Unique(true)
 	}
-	ctx = setContextOp(ctx, efq.ctx, ent.OpQueryIDs)
-	if err = efq.Select(entityfield.FieldID).Scan(ctx, &ids); err != nil {
+	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryIDs)
+	if err = _q.Select(entityfield.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (efq *EntityFieldQuery) IDsX(ctx context.Context) []uuid.UUID {
-	ids, err := efq.IDs(ctx)
+func (_q *EntityFieldQuery) IDsX(ctx context.Context) []uuid.UUID {
+	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -225,17 +225,17 @@ func (efq *EntityFieldQuery) IDsX(ctx context.Context) []uuid.UUID {
 }
 
 // Count returns the count of the given query.
-func (efq *EntityFieldQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, efq.ctx, ent.OpQueryCount)
-	if err := efq.prepareQuery(ctx); err != nil {
+func (_q *EntityFieldQuery) Count(ctx context.Context) (int, error) {
+	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryCount)
+	if err := _q.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return withInterceptors[int](ctx, efq, querierCount[*EntityFieldQuery](), efq.inters)
+	return withInterceptors[int](ctx, _q, querierCount[*EntityFieldQuery](), _q.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (efq *EntityFieldQuery) CountX(ctx context.Context) int {
-	count, err := efq.Count(ctx)
+func (_q *EntityFieldQuery) CountX(ctx context.Context) int {
+	count, err := _q.Count(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -243,9 +243,9 @@ func (efq *EntityFieldQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (efq *EntityFieldQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, efq.ctx, ent.OpQueryExist)
-	switch _, err := efq.FirstID(ctx); {
+func (_q *EntityFieldQuery) Exist(ctx context.Context) (bool, error) {
+	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryExist)
+	switch _, err := _q.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
 	case err != nil:
@@ -256,8 +256,8 @@ func (efq *EntityFieldQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (efq *EntityFieldQuery) ExistX(ctx context.Context) bool {
-	exist, err := efq.Exist(ctx)
+func (_q *EntityFieldQuery) ExistX(ctx context.Context) bool {
+	exist, err := _q.Exist(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -266,32 +266,32 @@ func (efq *EntityFieldQuery) ExistX(ctx context.Context) bool {
 
 // Clone returns a duplicate of the EntityFieldQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (efq *EntityFieldQuery) Clone() *EntityFieldQuery {
-	if efq == nil {
+func (_q *EntityFieldQuery) Clone() *EntityFieldQuery {
+	if _q == nil {
 		return nil
 	}
 	return &EntityFieldQuery{
-		config:     efq.config,
-		ctx:        efq.ctx.Clone(),
-		order:      append([]entityfield.OrderOption{}, efq.order...),
-		inters:     append([]Interceptor{}, efq.inters...),
-		predicates: append([]predicate.EntityField{}, efq.predicates...),
-		withEntity: efq.withEntity.Clone(),
+		config:     _q.config,
+		ctx:        _q.ctx.Clone(),
+		order:      append([]entityfield.OrderOption{}, _q.order...),
+		inters:     append([]Interceptor{}, _q.inters...),
+		predicates: append([]predicate.EntityField{}, _q.predicates...),
+		withEntity: _q.withEntity.Clone(),
 		// clone intermediate query.
-		sql:  efq.sql.Clone(),
-		path: efq.path,
+		sql:  _q.sql.Clone(),
+		path: _q.path,
 	}
 }
 
 // WithEntity tells the query-builder to eager-load the nodes that are connected to
 // the "entity" edge. The optional arguments are used to configure the query builder of the edge.
-func (efq *EntityFieldQuery) WithEntity(opts ...func(*EntityQuery)) *EntityFieldQuery {
-	query := (&EntityClient{config: efq.config}).Query()
+func (_q *EntityFieldQuery) WithEntity(opts ...func(*EntityQuery)) *EntityFieldQuery {
+	query := (&EntityClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	efq.withEntity = query
-	return efq
+	_q.withEntity = query
+	return _q
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -308,10 +308,10 @@ func (efq *EntityFieldQuery) WithEntity(opts ...func(*EntityQuery)) *EntityField
 //		GroupBy(entityfield.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-func (efq *EntityFieldQuery) GroupBy(field string, fields ...string) *EntityFieldGroupBy {
-	efq.ctx.Fields = append([]string{field}, fields...)
-	grbuild := &EntityFieldGroupBy{build: efq}
-	grbuild.flds = &efq.ctx.Fields
+func (_q *EntityFieldQuery) GroupBy(field string, fields ...string) *EntityFieldGroupBy {
+	_q.ctx.Fields = append([]string{field}, fields...)
+	grbuild := &EntityFieldGroupBy{build: _q}
+	grbuild.flds = &_q.ctx.Fields
 	grbuild.label = entityfield.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
@@ -329,55 +329,55 @@ func (efq *EntityFieldQuery) GroupBy(field string, fields ...string) *EntityFiel
 //	client.EntityField.Query().
 //		Select(entityfield.FieldCreatedAt).
 //		Scan(ctx, &v)
-func (efq *EntityFieldQuery) Select(fields ...string) *EntityFieldSelect {
-	efq.ctx.Fields = append(efq.ctx.Fields, fields...)
-	sbuild := &EntityFieldSelect{EntityFieldQuery: efq}
+func (_q *EntityFieldQuery) Select(fields ...string) *EntityFieldSelect {
+	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
+	sbuild := &EntityFieldSelect{EntityFieldQuery: _q}
 	sbuild.label = entityfield.Label
-	sbuild.flds, sbuild.scan = &efq.ctx.Fields, sbuild.Scan
+	sbuild.flds, sbuild.scan = &_q.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
 // Aggregate returns a EntityFieldSelect configured with the given aggregations.
-func (efq *EntityFieldQuery) Aggregate(fns ...AggregateFunc) *EntityFieldSelect {
-	return efq.Select().Aggregate(fns...)
+func (_q *EntityFieldQuery) Aggregate(fns ...AggregateFunc) *EntityFieldSelect {
+	return _q.Select().Aggregate(fns...)
 }
 
-func (efq *EntityFieldQuery) prepareQuery(ctx context.Context) error {
-	for _, inter := range efq.inters {
+func (_q *EntityFieldQuery) prepareQuery(ctx context.Context) error {
+	for _, inter := range _q.inters {
 		if inter == nil {
 			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
 		}
 		if trv, ok := inter.(Traverser); ok {
-			if err := trv.Traverse(ctx, efq); err != nil {
+			if err := trv.Traverse(ctx, _q); err != nil {
 				return err
 			}
 		}
 	}
-	for _, f := range efq.ctx.Fields {
+	for _, f := range _q.ctx.Fields {
 		if !entityfield.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
-	if efq.path != nil {
-		prev, err := efq.path(ctx)
+	if _q.path != nil {
+		prev, err := _q.path(ctx)
 		if err != nil {
 			return err
 		}
-		efq.sql = prev
+		_q.sql = prev
 	}
 	return nil
 }
 
-func (efq *EntityFieldQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*EntityField, error) {
+func (_q *EntityFieldQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*EntityField, error) {
 	var (
 		nodes       = []*EntityField{}
-		withFKs     = efq.withFKs
-		_spec       = efq.querySpec()
+		withFKs     = _q.withFKs
+		_spec       = _q.querySpec()
 		loadedTypes = [1]bool{
-			efq.withEntity != nil,
+			_q.withEntity != nil,
 		}
 	)
-	if efq.withEntity != nil {
+	if _q.withEntity != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -387,7 +387,7 @@ func (efq *EntityFieldQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		return (*EntityField).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &EntityField{config: efq.config}
+		node := &EntityField{config: _q.config}
 		nodes = append(nodes, node)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
@@ -395,14 +395,14 @@ func (efq *EntityFieldQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	for i := range hooks {
 		hooks[i](ctx, _spec)
 	}
-	if err := sqlgraph.QueryNodes(ctx, efq.driver, _spec); err != nil {
+	if err := sqlgraph.QueryNodes(ctx, _q.driver, _spec); err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := efq.withEntity; query != nil {
-		if err := efq.loadEntity(ctx, query, nodes, nil,
+	if query := _q.withEntity; query != nil {
+		if err := _q.loadEntity(ctx, query, nodes, nil,
 			func(n *EntityField, e *Entity) { n.Edges.Entity = e }); err != nil {
 			return nil, err
 		}
@@ -410,7 +410,7 @@ func (efq *EntityFieldQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	return nodes, nil
 }
 
-func (efq *EntityFieldQuery) loadEntity(ctx context.Context, query *EntityQuery, nodes []*EntityField, init func(*EntityField), assign func(*EntityField, *Entity)) error {
+func (_q *EntityFieldQuery) loadEntity(ctx context.Context, query *EntityQuery, nodes []*EntityField, init func(*EntityField), assign func(*EntityField, *Entity)) error {
 	ids := make([]uuid.UUID, 0, len(nodes))
 	nodeids := make(map[uuid.UUID][]*EntityField)
 	for i := range nodes {
@@ -443,24 +443,24 @@ func (efq *EntityFieldQuery) loadEntity(ctx context.Context, query *EntityQuery,
 	return nil
 }
 
-func (efq *EntityFieldQuery) sqlCount(ctx context.Context) (int, error) {
-	_spec := efq.querySpec()
-	_spec.Node.Columns = efq.ctx.Fields
-	if len(efq.ctx.Fields) > 0 {
-		_spec.Unique = efq.ctx.Unique != nil && *efq.ctx.Unique
+func (_q *EntityFieldQuery) sqlCount(ctx context.Context) (int, error) {
+	_spec := _q.querySpec()
+	_spec.Node.Columns = _q.ctx.Fields
+	if len(_q.ctx.Fields) > 0 {
+		_spec.Unique = _q.ctx.Unique != nil && *_q.ctx.Unique
 	}
-	return sqlgraph.CountNodes(ctx, efq.driver, _spec)
+	return sqlgraph.CountNodes(ctx, _q.driver, _spec)
 }
 
-func (efq *EntityFieldQuery) querySpec() *sqlgraph.QuerySpec {
+func (_q *EntityFieldQuery) querySpec() *sqlgraph.QuerySpec {
 	_spec := sqlgraph.NewQuerySpec(entityfield.Table, entityfield.Columns, sqlgraph.NewFieldSpec(entityfield.FieldID, field.TypeUUID))
-	_spec.From = efq.sql
-	if unique := efq.ctx.Unique; unique != nil {
+	_spec.From = _q.sql
+	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
-	} else if efq.path != nil {
+	} else if _q.path != nil {
 		_spec.Unique = true
 	}
-	if fields := efq.ctx.Fields; len(fields) > 0 {
+	if fields := _q.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, entityfield.FieldID)
 		for i := range fields {
@@ -469,20 +469,20 @@ func (efq *EntityFieldQuery) querySpec() *sqlgraph.QuerySpec {
 			}
 		}
 	}
-	if ps := efq.predicates; len(ps) > 0 {
+	if ps := _q.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if limit := efq.ctx.Limit; limit != nil {
+	if limit := _q.ctx.Limit; limit != nil {
 		_spec.Limit = *limit
 	}
-	if offset := efq.ctx.Offset; offset != nil {
+	if offset := _q.ctx.Offset; offset != nil {
 		_spec.Offset = *offset
 	}
-	if ps := efq.order; len(ps) > 0 {
+	if ps := _q.order; len(ps) > 0 {
 		_spec.Order = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
@@ -492,33 +492,33 @@ func (efq *EntityFieldQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (efq *EntityFieldQuery) sqlQuery(ctx context.Context) *sql.Selector {
-	builder := sql.Dialect(efq.driver.Dialect())
+func (_q *EntityFieldQuery) sqlQuery(ctx context.Context) *sql.Selector {
+	builder := sql.Dialect(_q.driver.Dialect())
 	t1 := builder.Table(entityfield.Table)
-	columns := efq.ctx.Fields
+	columns := _q.ctx.Fields
 	if len(columns) == 0 {
 		columns = entityfield.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
-	if efq.sql != nil {
-		selector = efq.sql
+	if _q.sql != nil {
+		selector = _q.sql
 		selector.Select(selector.Columns(columns...)...)
 	}
-	if efq.ctx.Unique != nil && *efq.ctx.Unique {
+	if _q.ctx.Unique != nil && *_q.ctx.Unique {
 		selector.Distinct()
 	}
-	for _, p := range efq.predicates {
+	for _, p := range _q.predicates {
 		p(selector)
 	}
-	for _, p := range efq.order {
+	for _, p := range _q.order {
 		p(selector)
 	}
-	if offset := efq.ctx.Offset; offset != nil {
+	if offset := _q.ctx.Offset; offset != nil {
 		// limit is mandatory for offset clause. We start
 		// with default value, and override it below if needed.
 		selector.Offset(*offset).Limit(math.MaxInt32)
 	}
-	if limit := efq.ctx.Limit; limit != nil {
+	if limit := _q.ctx.Limit; limit != nil {
 		selector.Limit(*limit)
 	}
 	return selector
@@ -531,41 +531,41 @@ type EntityFieldGroupBy struct {
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (efgb *EntityFieldGroupBy) Aggregate(fns ...AggregateFunc) *EntityFieldGroupBy {
-	efgb.fns = append(efgb.fns, fns...)
-	return efgb
+func (_g *EntityFieldGroupBy) Aggregate(fns ...AggregateFunc) *EntityFieldGroupBy {
+	_g.fns = append(_g.fns, fns...)
+	return _g
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (efgb *EntityFieldGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, efgb.build.ctx, ent.OpQueryGroupBy)
-	if err := efgb.build.prepareQuery(ctx); err != nil {
+func (_g *EntityFieldGroupBy) Scan(ctx context.Context, v any) error {
+	ctx = setContextOp(ctx, _g.build.ctx, ent.OpQueryGroupBy)
+	if err := _g.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*EntityFieldQuery, *EntityFieldGroupBy](ctx, efgb.build, efgb, efgb.build.inters, v)
+	return scanWithInterceptors[*EntityFieldQuery, *EntityFieldGroupBy](ctx, _g.build, _g, _g.build.inters, v)
 }
 
-func (efgb *EntityFieldGroupBy) sqlScan(ctx context.Context, root *EntityFieldQuery, v any) error {
+func (_g *EntityFieldGroupBy) sqlScan(ctx context.Context, root *EntityFieldQuery, v any) error {
 	selector := root.sqlQuery(ctx).Select()
-	aggregation := make([]string, 0, len(efgb.fns))
-	for _, fn := range efgb.fns {
+	aggregation := make([]string, 0, len(_g.fns))
+	for _, fn := range _g.fns {
 		aggregation = append(aggregation, fn(selector))
 	}
 	if len(selector.SelectedColumns()) == 0 {
-		columns := make([]string, 0, len(*efgb.flds)+len(efgb.fns))
-		for _, f := range *efgb.flds {
+		columns := make([]string, 0, len(*_g.flds)+len(_g.fns))
+		for _, f := range *_g.flds {
 			columns = append(columns, selector.C(f))
 		}
 		columns = append(columns, aggregation...)
 		selector.Select(columns...)
 	}
-	selector.GroupBy(selector.Columns(*efgb.flds...)...)
+	selector.GroupBy(selector.Columns(*_g.flds...)...)
 	if err := selector.Err(); err != nil {
 		return err
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := efgb.build.driver.Query(ctx, query, args, rows); err != nil {
+	if err := _g.build.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()
@@ -579,27 +579,27 @@ type EntityFieldSelect struct {
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
-func (efs *EntityFieldSelect) Aggregate(fns ...AggregateFunc) *EntityFieldSelect {
-	efs.fns = append(efs.fns, fns...)
-	return efs
+func (_s *EntityFieldSelect) Aggregate(fns ...AggregateFunc) *EntityFieldSelect {
+	_s.fns = append(_s.fns, fns...)
+	return _s
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (efs *EntityFieldSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, efs.ctx, ent.OpQuerySelect)
-	if err := efs.prepareQuery(ctx); err != nil {
+func (_s *EntityFieldSelect) Scan(ctx context.Context, v any) error {
+	ctx = setContextOp(ctx, _s.ctx, ent.OpQuerySelect)
+	if err := _s.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*EntityFieldQuery, *EntityFieldSelect](ctx, efs.EntityFieldQuery, efs, efs.inters, v)
+	return scanWithInterceptors[*EntityFieldQuery, *EntityFieldSelect](ctx, _s.EntityFieldQuery, _s, _s.inters, v)
 }
 
-func (efs *EntityFieldSelect) sqlScan(ctx context.Context, root *EntityFieldQuery, v any) error {
+func (_s *EntityFieldSelect) sqlScan(ctx context.Context, root *EntityFieldQuery, v any) error {
 	selector := root.sqlQuery(ctx)
-	aggregation := make([]string, 0, len(efs.fns))
-	for _, fn := range efs.fns {
+	aggregation := make([]string, 0, len(_s.fns))
+	for _, fn := range _s.fns {
 		aggregation = append(aggregation, fn(selector))
 	}
-	switch n := len(*efs.selector.flds); {
+	switch n := len(*_s.selector.flds); {
 	case n == 0 && len(aggregation) > 0:
 		selector.Select(aggregation...)
 	case n != 0 && len(aggregation) > 0:
@@ -607,7 +607,7 @@ func (efs *EntityFieldSelect) sqlScan(ctx context.Context, root *EntityFieldQuer
 	}
 	rows := &sql.Rows{}
 	query, args := selector.Query()
-	if err := efs.driver.Query(ctx, query, args, rows); err != nil {
+	if err := _s.driver.Query(ctx, query, args, rows); err != nil {
 		return err
 	}
 	defer rows.Close()

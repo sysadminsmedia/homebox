@@ -470,6 +470,13 @@ export interface BarcodeProduct {
   search_engine_name: string;
 }
 
+export interface DuplicateOptions {
+  copyAttachments: boolean;
+  copyCustomFields: boolean;
+  copyMaintenance: boolean;
+  copyPrefix: string;
+}
+
 export interface Group {
   createdAt: Date | string;
   currency: string;

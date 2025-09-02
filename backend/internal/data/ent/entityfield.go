@@ -90,7 +90,7 @@ func (*EntityField) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the EntityField fields.
-func (ef *EntityField) assignValues(columns []string, values []any) error {
+func (_m *EntityField) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -100,71 +100,71 @@ func (ef *EntityField) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
-				ef.ID = *value
+				_m.ID = *value
 			}
 		case entityfield.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				ef.CreatedAt = value.Time
+				_m.CreatedAt = value.Time
 			}
 		case entityfield.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				ef.UpdatedAt = value.Time
+				_m.UpdatedAt = value.Time
 			}
 		case entityfield.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
-				ef.Name = value.String
+				_m.Name = value.String
 			}
 		case entityfield.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
-				ef.Description = value.String
+				_m.Description = value.String
 			}
 		case entityfield.FieldType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
-				ef.Type = entityfield.Type(value.String)
+				_m.Type = entityfield.Type(value.String)
 			}
 		case entityfield.FieldTextValue:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field text_value", values[i])
 			} else if value.Valid {
-				ef.TextValue = value.String
+				_m.TextValue = value.String
 			}
 		case entityfield.FieldNumberValue:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field number_value", values[i])
 			} else if value.Valid {
-				ef.NumberValue = int(value.Int64)
+				_m.NumberValue = int(value.Int64)
 			}
 		case entityfield.FieldBooleanValue:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field boolean_value", values[i])
 			} else if value.Valid {
-				ef.BooleanValue = value.Bool
+				_m.BooleanValue = value.Bool
 			}
 		case entityfield.FieldTimeValue:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field time_value", values[i])
 			} else if value.Valid {
-				ef.TimeValue = value.Time
+				_m.TimeValue = value.Time
 			}
 		case entityfield.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field entity_fields", values[i])
 			} else if value.Valid {
-				ef.entity_fields = new(uuid.UUID)
-				*ef.entity_fields = *value.S.(*uuid.UUID)
+				_m.entity_fields = new(uuid.UUID)
+				*_m.entity_fields = *value.S.(*uuid.UUID)
 			}
 		default:
-			ef.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -172,64 +172,64 @@ func (ef *EntityField) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the EntityField.
 // This includes values selected through modifiers, order, etc.
-func (ef *EntityField) Value(name string) (ent.Value, error) {
-	return ef.selectValues.Get(name)
+func (_m *EntityField) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // QueryEntity queries the "entity" edge of the EntityField entity.
-func (ef *EntityField) QueryEntity() *EntityQuery {
-	return NewEntityFieldClient(ef.config).QueryEntity(ef)
+func (_m *EntityField) QueryEntity() *EntityQuery {
+	return NewEntityFieldClient(_m.config).QueryEntity(_m)
 }
 
 // Update returns a builder for updating this EntityField.
 // Note that you need to call EntityField.Unwrap() before calling this method if this EntityField
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (ef *EntityField) Update() *EntityFieldUpdateOne {
-	return NewEntityFieldClient(ef.config).UpdateOne(ef)
+func (_m *EntityField) Update() *EntityFieldUpdateOne {
+	return NewEntityFieldClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the EntityField entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (ef *EntityField) Unwrap() *EntityField {
-	_tx, ok := ef.config.driver.(*txDriver)
+func (_m *EntityField) Unwrap() *EntityField {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: EntityField is not a transactional entity")
 	}
-	ef.config.driver = _tx.drv
-	return ef
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (ef *EntityField) String() string {
+func (_m *EntityField) String() string {
 	var builder strings.Builder
 	builder.WriteString("EntityField(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", ef.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("created_at=")
-	builder.WriteString(ef.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
-	builder.WriteString(ef.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("name=")
-	builder.WriteString(ef.Name)
+	builder.WriteString(_m.Name)
 	builder.WriteString(", ")
 	builder.WriteString("description=")
-	builder.WriteString(ef.Description)
+	builder.WriteString(_m.Description)
 	builder.WriteString(", ")
 	builder.WriteString("type=")
-	builder.WriteString(fmt.Sprintf("%v", ef.Type))
+	builder.WriteString(fmt.Sprintf("%v", _m.Type))
 	builder.WriteString(", ")
 	builder.WriteString("text_value=")
-	builder.WriteString(ef.TextValue)
+	builder.WriteString(_m.TextValue)
 	builder.WriteString(", ")
 	builder.WriteString("number_value=")
-	builder.WriteString(fmt.Sprintf("%v", ef.NumberValue))
+	builder.WriteString(fmt.Sprintf("%v", _m.NumberValue))
 	builder.WriteString(", ")
 	builder.WriteString("boolean_value=")
-	builder.WriteString(fmt.Sprintf("%v", ef.BooleanValue))
+	builder.WriteString(fmt.Sprintf("%v", _m.BooleanValue))
 	builder.WriteString(", ")
 	builder.WriteString("time_value=")
-	builder.WriteString(ef.TimeValue.Format(time.ANSIC))
+	builder.WriteString(_m.TimeValue.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }
