@@ -148,37 +148,5 @@
     }
   }
 
-  /* Non-scoped styles for regular text */
-  .break-all {
-    word-break: break-all;
-    max-width: 100%;
-  }
 
-  /* Handle very long words */
-  pre,
-  code,
-  a,
-  p,
-  span,
-  div,
-  td,
-  th,
-  li,
-  blockquote,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    -ms-word-break: break-all;
-    word-break: break-all;
-    word-break: break-word;
-    -ms-hyphens: auto;
-    -moz-hyphens: auto;
-    -webkit-hyphens: auto;
-    hyphens: auto;
-  }
 </style>
