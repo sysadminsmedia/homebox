@@ -165,7 +165,7 @@ tasks:
       cmds:
         - pnpm install
         - pnpm run build
-        - pnpm exec vite preview --port 5173 --strictPort &
+        - pnpm run preview &
       silent: true
 
   ui:fix:
