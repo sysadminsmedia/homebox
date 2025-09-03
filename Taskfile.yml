@@ -159,6 +159,15 @@ tasks:
       - pnpm dev &
     silent: true
 
+  ui:ci:preview:
+      desc: Run frontend build in CI mode (build + preview)
+      dir: frontend
+      cmds:
+        - pnpm install
+        - pnpm run build
+        - pnpm exec vite preview --port 5173 --strictPort &
+      silent: true
+
   ui:fix:
     desc: Runs prettier and eslint on the frontend
     dir: frontend
@@ -202,7 +211,7 @@ tasks:
     dir: frontend
     cmds:
       - task: go:ci
-      - task: ui:ci
+      - task: ui:ci:preview
       - pnpm exec playwright install-deps
       - pnpm exec playwright install
       - sleep 30
