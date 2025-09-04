@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from "vue";
+  import { computed, ref } from "vue";
   import { useI18n } from "vue-i18n";
 
   const { t } = useI18n();
@@ -19,9 +19,7 @@
 
   const props = defineProps<Props>();
 
-  type AsyncReturnType<T extends (...args: any) => Promise<any>> = T extends (...args: any) => Promise<infer R>
-    ? R
-    : any;
+  type AsyncReturnType<T extends (...args: unknown[]) => unknown> = Awaited<ReturnType<T>>;
 
   const fmt = ref<AsyncReturnType<typeof useFormatCurrency> | null>(null);
 

@@ -51,7 +51,7 @@
   import { Button } from "@/components/ui/button";
   import { Input } from "@/components/ui/input";
   type Props = {
-    modelValue: boolean;
+    modelValue?: boolean;
   };
 
   const { t } = useI18n();
@@ -66,13 +66,13 @@
 
   const api = useUserApi();
 
-  const importCsv = ref<File | null>(null);
+  const importCsv = ref<File | undefined>(undefined);
   const importLoading = ref(false);
   const importRef = ref<HTMLInputElement>();
   whenever(
     () => !dialog.value,
     () => {
-      importCsv.value = null;
+      importCsv.value = undefined;
     }
   );
 
@@ -102,7 +102,7 @@
     // Reset
     dialog.value = false;
     importLoading.value = false;
-    importCsv.value = null;
+    importCsv.value = undefined;
 
     if (importRef.value) {
       importRef.value.value = "";

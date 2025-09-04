@@ -29,12 +29,12 @@
   import { lt } from "semver";
   import {
     AlertDialog,
+    AlertDialogAction,
     AlertDialogContent,
-    AlertDialogHeader,
-    AlertDialogTitle,
     AlertDialogDescription,
     AlertDialogFooter,
-    AlertDialogAction,
+    AlertDialogHeader,
+    AlertDialogTitle,
   } from "@/components/ui/alert-dialog";
   import { useDialog } from "@/components/ui/dialog-provider";
 

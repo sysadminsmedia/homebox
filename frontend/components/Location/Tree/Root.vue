@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import type { TreeItem } from "~~/lib/api/types/data-contracts";
+  import LocationTreeNode from "./Node.vue";
 
   type Props = {
     locs: TreeItem[];
