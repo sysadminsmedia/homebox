@@ -134,6 +134,8 @@
   const locIDs = computed(() => selectedLocations.value.map(l => l.id));
   const labIDs = computed(() => selectedLabels.value.map(l => l.id));
 
+  const cardGridAction = ref<{ action: "selectAll" | "clearAll" }>({ action: "clearAll" });
+
   function parseAssetIDString(d: string) {
     d = d.replace(/"/g, "").replace(/-/g, "");
 
@@ -504,8 +506,10 @@
 
     <section>
       <BaseSectionHeader ref="itemsTitle"> {{ $t("global.items") }} </BaseSectionHeader>
-      <p v-if="items.length > 0" class="flex items-center text-base font-medium">
+      <p v-if="items.length > 0" class="flex items-center gap-2 text-base font-medium">
         {{ $t("items.results", { total: total }) }}
+        <Button @click="cardGridAction = { action: 'selectAll' }"> Select all </Button>
+        <Button @click="cardGridAction = { action: 'clearAll' }"> Clear all </Button>
         <span class="ml-auto text-base"> {{ $t("items.pages", { page: page, totalPages: totalPages }) }} </span>
       </p>
 
