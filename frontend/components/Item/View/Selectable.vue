@@ -67,10 +67,10 @@
       <ItemViewTable :items="items" />
     </template>
     <template v-else>
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        <ItemCard v-for="item in items" :key="item.id" :item="item" />
-        <div class="hidden first:block">{{ $t("components.item.view.selectable.no_items") }}</div>
+      <div v-if="items.length === 0" class="flex flex-col items-center gap-2">
+        <p>{{ $t("items.no_results") }}</p>
       </div>
+      <ItemViewCardGrid v-else :items="items" :action="cardGridAction" />
     </template>
   </section>
 </template>
