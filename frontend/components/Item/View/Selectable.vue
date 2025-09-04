@@ -33,7 +33,7 @@
 <template>
   <section>
     <BaseSectionHeader class="mb-2 mt-4 flex items-center justify-between">
-      <div class="flex gap-2 text-nowrap">
+      <div class="flex items-center gap-2 text-nowrap">
         {{ $t("components.item.view.selectable.items") }}
         <Badge>
           {{ items.length }}
