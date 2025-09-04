@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
   import { Dialog, DialogContent } from "@/components/ui/dialog";
-  import { buttonVariants, Button } from "@/components/ui/button";
+  import { Button, buttonVariants } from "@/components/ui/button";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
   import { useConfirm } from "@/composables/use-confirm";

@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, watch } from "vue";
+  import { computed, ref, watch } from "vue";
   import { Check, ChevronsUpDown } from "lucide-vue-next";
   import fuzzysort from "fuzzysort";
   import { useVModel } from "@vueuse/core";
@@ -53,7 +53,6 @@
   import { Label } from "~/components/ui/label";
   import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
   import { cn } from "~/lib/utils";
-  import { useId } from "#imports";
 
   const { t } = useI18n();
 
@@ -62,9 +61,9 @@
   };
 
   interface Props {
-    label: string;
-    modelValue: string | ItemsObject | null | undefined;
-    items: ItemsObject[] | string[];
+    label?: string;
+    modelValue?: string | ItemsObject | null | undefined;
+    items?: ItemsObject[] | string[];
     itemText?: string;
     itemValue?: string;
     search?: string;

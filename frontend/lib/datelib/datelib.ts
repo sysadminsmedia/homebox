@@ -7,7 +7,7 @@ export function format(date: Date | string): string {
   if (typeof date === "string") {
     return date;
   }
-  return date.toISOString().split("T")[0];
+  return date.toISOString().split("T")[0]!;
 }
 
 export function zeroTime(date: Date): Date {
@@ -31,6 +31,6 @@ export function factory(offset = 0): Date {
 }
 
 export function parse(yyyyMMdd: string): Date {
-  const parts = yyyyMMdd.split("-");
+  const parts = yyyyMMdd.split("-") as [string, string, string];
   return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
 }

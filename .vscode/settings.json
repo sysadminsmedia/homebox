@@ -4,7 +4,7 @@
   },
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
-    "package.json": "package-lock.json, yarn.lock, .eslintrc.js, tsconfig.json, .prettierrc, .editorconfig, pnpm-lock.yaml, postcss.config.js, tailwind.config.js",
+    "package.json": "package-lock.json, yarn.lock, eslint.config.mjs, tsconfig.json, .prettierrc, .editorconfig, pnpm-lock.yaml, postcss.config.js, tailwind.config.js",
     "docker-compose.yml": "Dockerfile, .dockerignore, docker-compose.dev.yml, docker-compose.yml",
     "README.md": "LICENSE, SECURITY.md"
   },
@@ -22,6 +22,7 @@
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
   "eslint.format.enable": true,
+  "eslint.useFlatConfig": true,
   "css.validate": false,
 	"tailwindCSS.includeLanguages": {
 		"vue": "html",

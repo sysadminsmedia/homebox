@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Requests } from "../../requests";
 import { route } from ".";
 
@@ -47,7 +48,7 @@ export function parseDate<T>(obj: T, keys: Array<keyof T> = []): T {
         throw new Error(`Invalid date format: ${value}`);
       }
 
-      const [year, month, day] = split;
+      const [year, month, day] = split as [string, string, string];
 
       const dt = new Date();
 
@@ -90,9 +91,9 @@ export class BaseAPI {
   protected dropFields<T>(obj: T, keys: Array<keyof T> = []): T {
     const result = { ...obj };
     [...keys, "createdAt", "updatedAt"].forEach(key => {
-      // @ts-ignore - we are checking for the key above
+      // @ts-expect-error - TS doesn't know that we're checking for the key above
       if (hasKey(result, key)) {
-        // @ts-ignore - we are guarding against this above
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete result[key];
       }
     });

@@ -13,7 +13,12 @@
   import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
   import { Button } from "@/components/ui/button";
   import LanguageSelector from "~/components/App/LanguageSelector.vue";
-  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+  import AppLogo from "~/components/App/Logo.vue";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import FormPassword from "~/components/Form/Password.vue";
+  import FormCheckbox from "~/components/Form/Checkbox.vue";
+  import PasswordScore from "~/components/global/PasswordScore.vue";
 
   const { t } = useI18n();
 
@@ -176,7 +181,7 @@
         <path
           fill-opacity="1"
           d="M0,32L80,69.3C160,107,320,181,480,181.3C640,181,800,107,960,117.3C1120,128,1280,224,1360,272L1440,320L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z"
-        ></path>
+        />
       </svg>
     </div>
     <div>

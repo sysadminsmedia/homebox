@@ -192,6 +192,10 @@
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
   import LabelSelector from "~/components/Label/Selector.vue";
   import ItemSelector from "~/components/Item/Selector.vue";
+  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
+  import LocationSelector from "~/components/Location/Selector.vue";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import FormTextArea from "~/components/Form/TextArea.vue";
 
   interface PhotoPreview {
     photoName: string;
@@ -278,8 +282,8 @@
   function setPrimary(index: number) {
     const primary = form.photos.findIndex(p => p.primary);
 
-    if (primary !== -1) form.photos[primary].primary = false;
-    if (primary !== index) form.photos[index].primary = true;
+    if (primary !== -1) form.photos[primary]!.primary = false;
+    if (primary !== index) form.photos[index]!.primary = true;
   }
 
   function previewImage(event: Event) {
@@ -308,7 +312,7 @@
       let parentItemLocationId = null;
 
       if (subItemCreate.value && itemId.value) {
-        const itemIdRead = typeof itemId.value === "string" ? (itemId.value as string) : itemId.value[0];
+        const itemIdRead = typeof itemId.value === "string" ? (itemId.value as string) : itemId.value[0]!;
         const { data, error } = await api.items.get(itemIdRead);
         if (error || !data) {
           toast.error(t("components.item.create_modal.toast.failed_load_parent"));
@@ -378,7 +382,7 @@
 
     loading.value = true;
 
-    if (shift.value) close = false;
+    if (shift?.value) close = false;
 
     const out: ItemCreate = {
       parentId: form.parentId,
@@ -442,7 +446,7 @@
   function dataURLtoFile(dataURL: string, fileName: string) {
     try {
       const arr = dataURL.split(",");
-      const mimeMatch = arr[0].match(/:(.*?);/);
+      const mimeMatch = arr[0]!.match(/:(.*?);/);
       if (!mimeMatch || !mimeMatch[1]) {
         throw new Error("Invalid data URL format");
       }
@@ -453,7 +457,7 @@
         throw new Error("Invalid mime type, expected image");
       }
 
-      const bstr = atob(arr[arr.length - 1]);
+      const bstr = atob(arr[arr.length - 1]!);
       let n = bstr.length;
       const u8arr = new Uint8Array(n);
       while (n--) {
@@ -502,8 +506,8 @@
 
     // Encode image to data-uri with base64
     try {
-      form.photos[index].fileBase64 = offScreenCanvas.toDataURL(imageType, 100);
-      form.photos[index].file = dataURLtoFile(form.photos[index].fileBase64, form.photos[index].photoName);
+      form.photos[index]!.fileBase64 = offScreenCanvas.toDataURL(imageType, 100);
+      form.photos[index]!.file = dataURLtoFile(form.photos[index]!.fileBase64, form.photos[index]!.photoName);
     } catch (error) {
       toast.error(t("components.item.create_modal.toast.rotate_process_failed"));
       console.error(error);

@@ -73,7 +73,11 @@
   import type { AnyDetail, Detail } from "./types";
   import MdiOpenInNew from "~icons/mdi/open-in-new";
   import { badgeVariants } from "~/components/ui/badge";
-  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+  import DateTime from "@/components/global/DateTime.vue";
+  import Currency from "@/components/global/Currency.vue";
+  import Markdown from "@/components/global/Markdown.vue";
+  import CopyText from "@/components/global/CopyText.vue";
 
   defineProps({
     details: {
@@ -144,37 +148,5 @@
     }
   }
 
-  /* Non-scoped styles for regular text */
-  .break-all {
-    word-break: break-all;
-    max-width: 100%;
-  }
 
-  /* Handle very long words */
-  pre,
-  code,
-  a,
-  p,
-  span,
-  div,
-  td,
-  th,
-  li,
-  blockquote,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    -ms-word-break: break-all;
-    word-break: break-all;
-    word-break: break-word;
-    -ms-hyphens: auto;
-    -moz-hyphens: auto;
-    -webkit-hyphens: auto;
-    hyphens: auto;
-  }
 </style>
