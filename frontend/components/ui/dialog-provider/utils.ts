@@ -12,6 +12,7 @@ export enum DialogID {
   CreateNotifier = 'create-notifier',
   DuplicateSettings = 'duplicate-settings',
   DuplicateTemporarySettings = 'duplicate-temporary-settings',
+  EditLocationAndLabels = 'edit-location-and-labels',
   EditMaintenance = 'edit-maintenance',
   Import = 'import',
   ItemImage = 'item-image',
