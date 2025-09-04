@@ -12,7 +12,7 @@
     </DialogContent>
   </Dialog>
   <MaintenanceEditModal ref="maintenanceEditModal"></MaintenanceEditModal>
-  <ul v-if="selectedCards.length" className="flex flex-row cards-quick-menu">
+  <ul v-if="selectedCards.length" class="flex flex-row cards-quick-menu">
     <li>
       <Tooltip>
         <TooltipTrigger>
