@@ -66,7 +66,7 @@
       return;
     }
     try {
-      await Promise.any(
+      await Promise.all(
         entry.itemIds.map(async itemId => {
           const { error } = await api.items.maintenance.create(itemId, {
             name: entry.name,
