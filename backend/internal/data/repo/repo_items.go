@@ -859,7 +859,6 @@ func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data Ite
 		q.SetLocationID(*data.LocationID)
 	}
 
-re_run:
 	if data.LabelIDs != nil {
 		currentLabels, err := e.db.Item.Query().Where(item.ID(data.ID)).QueryLabel().All(ctx)
 		if err != nil {
@@ -880,16 +879,22 @@ re_run:
 			q.RemoveLabelIDs(set.Slice()...)
 		}
 	}
+	
+	for attempts := 0; attempts < 3; attempts++ {
+		error := q.Exec(ctx)
 
-	e.publishMutationEvent(gid)
-	error := q.Exec(ctx)
-
-	if error != nil && error.Error() == "database is locked (5) (SQLITE_BUSY)" {
-		time.Sleep(50 * time.Millisecond)
-		goto re_run
+		if error != nil {
+			if error.Error() == "database is locked (5) (SQLITE_BUSY)" {
+				if attempts == 2 { return error }
+				time.Sleep(50 * time.Millisecond)
+			} else {
+				return error
+			}
+		} else { break }
 	}
 
-	return error
+	e.publishMutationEvent(gid)
+	return nil
 }
 
 func (e *ItemsRepository) GetAllCustomFieldValues(ctx context.Context, gid uuid.UUID, name string) ([]string, error) {
