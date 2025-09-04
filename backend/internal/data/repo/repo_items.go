@@ -830,8 +830,66 @@ func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data Ite
 		q.SetQuantity(*data.Quantity)
 	}
 
+	if data.LocationID != nil {
+		item, err := e.db.Item.Query().Where(item.ID(id)).First(ctx)
+		if err != nil {
+			return err
+		}
+
+		if item.SyncChildItemsLocations {
+			children, err := item.QueryChildren().All(ctx)
+			if err != nil {
+				return err
+			}
+
+			for _, child := range children {
+				childLocation, err := child.QueryLocation().First(ctx)
+				if err != nil {
+					return err
+				}
+
+				if *data.LocationID != childLocation.ID {
+					err = child.Update().SetLocationID(*data.LocationID).Exec(ctx)
+					if err != nil {
+						return err
+					}
+				}
+			}
+		}
+		q.SetLocationID(*data.LocationID)
+	}
+
+re_run:
+	if data.LabelIDs != nil {
+		currentLabels, err := e.db.Item.Query().Where(item.ID(data.ID)).QueryLabel().All(ctx)
+		if err != nil {
+			return err
+		}
+
+		set := newIDSet(currentLabels)
+
+		for _, l := range data.LabelIDs {
+			if set.Contains(l) {
+				set.Remove(l)
+				continue
+			}
+			q.AddLabelIDs(l)
+		}
+
+		if set.Len() > 0 {
+			q.RemoveLabelIDs(set.Slice()...)
+		}
+	}
+
 	e.publishMutationEvent(gid)
-	return q.Exec(ctx)
+	error := q.Exec(ctx)
+
+	if error != nil && error.Error() == "database is locked (5) (SQLITE_BUSY)" {
+		time.Sleep(50 * time.Millisecond)
+		goto re_run
+	}
+
+	return error
 }
 
 func (e *ItemsRepository) GetAllCustomFieldValues(ctx context.Context, gid uuid.UUID, name string) ([]string, error) {
