@@ -405,10 +405,13 @@
             "failed_delete_label": "Failed to delete label",
             "failed_load_label": "Failed to load label",
             "failed_update_label": "Failed to update label",
+            "failed_update_labels": "Failed to update labels",
             "label_deleted": "Label deleted",
-            "label_updated": "Label updated"
+            "label_updated": "Label updated",
+            "labels_updated": "Labels updated"
         },
-        "update_label": "Update Label"
+        "update_label": "Update Label",
+        "update_labels": "Update labels"
     },
     "languages": {
         "bs-BA": "Bosnian (Bosnia and Herzegovina)",
@@ -493,7 +496,8 @@
         "toast": {
             "failed_to_create": "Failed to create entry",
             "failed_to_delete": "Failed to delete entry",
-            "failed_to_update": "Failed to update entry"
+            "failed_to_update": "Failed to update entry",
+            "successfully_created": "Successfully created entry"
         },
         "total_cost": "Total Cost",
         "total_entries": "Total Entries"
