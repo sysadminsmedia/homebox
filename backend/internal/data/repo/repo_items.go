@@ -120,9 +120,11 @@ type (
 	}
 
 	ItemPatch struct {
-		ID        uuid.UUID `json:"id"`
-		Quantity  *int      `json:"quantity,omitempty" extensions:"x-nullable,x-omitempty"`
-		ImportRef *string   `json:"-,omitempty"        extensions:"x-nullable,x-omitempty"`
+		ID         uuid.UUID   `json:"id"`
+		Quantity   *int        `json:"quantity,omitempty" extensions:"x-nullable,x-omitempty"`
+		ImportRef  *string     `json:"-,omitempty"        extensions:"x-nullable,x-omitempty"`
+		LocationID *uuid.UUID  `json:"location,omitempty" extensions:"x-nullable,x-omitempty"`
+		LabelIDs   []uuid.UUID `json:"labelIds,omitempty" extensions:"x-nullable,x-omitempty"`
 	}
 
 	ItemSummary struct {
