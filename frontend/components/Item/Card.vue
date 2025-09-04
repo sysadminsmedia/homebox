@@ -47,6 +47,7 @@
         </TooltipProvider>
         <Markdown class="mb-2 line-clamp-3 text-ellipsis" :source="item.description" />
         <div class="-mr-1 mt-auto flex flex-wrap justify-end gap-2">
+          <input v-model="selectedCards" :value="item" type="checkbox" class="mr-auto size-6" @click.stop />
           <LabelChip v-for="label in itemLabels" :key="label.id" :label="label" size="sm" />
         </div>
       </div>
@@ -92,7 +93,14 @@
       required: false,
       default: () => [],
     },
+    modelValue: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
   });
+
+  const selectedCards = useVModel(props, "modelValue");
 
   const locationString = computed(
     () => props.locationFlatTree.find(l => l.id === props.item.location?.id)?.treeString || props.item.location?.name
