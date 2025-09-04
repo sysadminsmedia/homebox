@@ -92,6 +92,7 @@
   );
 
   watch(location, async newLoc => {
+    if (!newLoc || !newLoc.id) return;
     try {
       await Promise.all(
         selectedCards.value.map(async item => {
