@@ -22,6 +22,8 @@
     return props.view ?? preferences.value.itemDisplayView;
   });
 
+  const cardGridAction = ref<{ action: "selectAll" | "clearAll" }>({ action: "clearAll" });
+
   function setViewPreference(view: ViewType) {
     preferences.value.itemDisplayView = view;
   }
@@ -35,6 +37,8 @@
         <Badge>
           {{ items.length }}
         </Badge>
+        <Button @click="cardGridAction = { action: 'selectAll' }"> Select all </Button>
+        <Button @click="cardGridAction = { action: 'clearAll' }"> Clear all </Button>
       </div>
       <template #description>
         <div v-if="!viewSet">
