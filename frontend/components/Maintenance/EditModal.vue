@@ -49,7 +49,7 @@
     scheduledDate: null as Date | null,
     description: "",
     cost: "",
-    itemId: null as string | null,
+    itemIds: null as string[] | null,
   });
 
   async function dispatchFormSubmit() {
@@ -62,22 +62,30 @@
   }
 
   async function createEntry() {
-    if (!entry.itemId) {
+    if (!entry.itemIds) {
       return;
     }
-    const { error } = await api.items.maintenance.create(entry.itemId, {
-      name: entry.name,
-      completedDate: entry.completedDate ?? "",
-      scheduledDate: entry.scheduledDate ?? "",
-      description: entry.description,
-      cost: parseFloat(entry.cost) ? entry.cost : "0",
-    });
+    try {
+      await Promise.any(
+        entry.itemIds.map(async itemId => {
+          const { error } = await api.items.maintenance.create(itemId, {
+            name: entry.name,
+            completedDate: entry.completedDate ?? "",
+            scheduledDate: entry.scheduledDate ?? "",
+            description: entry.description,
+            cost: parseFloat(entry.cost) ? entry.cost : "0",
+          });
 
-    if (error) {
+          if (error) {
+            throw new Error("failed");
+          }
+        })
+      );
+    } catch (err) {
       toast.error(t("maintenance.toast.failed_to_create"));
       return;
     }
-
+    toast.success(t("maintenance.toast.successfully_created"));
     closeDialog(DialogID.EditMaintenance);
     emit("changed");
   }
@@ -104,14 +112,14 @@
     emit("changed");
   }
 
-  const openCreateModal = (itemId: string) => {
+  const openCreateModal = (itemIds: string[]) => {
     entry.id = null;
     entry.name = "";
     entry.completedDate = null;
     entry.scheduledDate = null;
     entry.description = "";
     entry.cost = "";
-    entry.itemId = itemId;
+    entry.itemIds = itemIds;
     openDialog(DialogID.EditMaintenance);
   };
 
@@ -122,7 +130,7 @@
     entry.scheduledDate = new Date(maintenanceEntry.scheduledDate);
     entry.description = maintenanceEntry.description;
     entry.cost = maintenanceEntry.cost;
-    entry.itemId = null;
+    entry.itemIds = null;
     openDialog(DialogID.EditMaintenance);
   };
 
@@ -164,7 +172,7 @@
     entry.scheduledDate = null;
     entry.description = maintenanceEntry.description;
     entry.cost = maintenanceEntry.cost;
-    entry.itemId = itemId;
+    entry.itemIds = [itemId];
     openDialog(DialogID.EditMaintenance);
   }
 
