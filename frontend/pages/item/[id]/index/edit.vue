@@ -424,7 +424,7 @@
     } as unknown as ItemField);
   }
 
-  const { query, results } = useItemSearch(api, { immediate: false });
+  const { query, results, isLoading, triggerSearch } = useItemSearch(api, { immediate: false });
   const parent = ref();
 
   async function keyboardSave(e: KeyboardEvent) {
@@ -591,6 +591,8 @@
               :label="$t('items.parent_item')"
               no-results-text="Type to search..."
               :exclude-items="[item]"
+              :is-loading="isLoading"
+              :trigger-search="triggerSearch"
               @update:model-value="maybeSyncWithParentLocation()"
             />
             <div class="flex flex-col gap-2">

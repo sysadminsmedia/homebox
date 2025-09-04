@@ -18,7 +18,13 @@
         <Command :ignore-filter="true">
           <CommandInput v-model="search" :placeholder="localizedSearchPlaceholder" :display-value="_ => ''" />
           <CommandEmpty>
-            {{ localizedNoResultsText }}
+            <div v-if="isLoading" class="flex items-center justify-center p-4">
+              <div class="size-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+              <span class="ml-2">{{ t("components.item.selector.searching") }}</span>
+            </div>
+            <div v-else>
+              {{ localizedNoResultsText }}
+            </div>
           </CommandEmpty>
           <CommandList>
             <CommandGroup>
@@ -65,6 +71,8 @@
     noResultsText?: string;
     placeholder?: string;
     excludeItems?: ItemsObject[];
+    isLoading?: boolean;
+    triggerSearch?: () => Promise<boolean>;
   }
 
   const emit = defineEmits(["update:modelValue", "update:search"]);
@@ -79,18 +87,47 @@
     noResultsText: undefined,
     placeholder: undefined,
     excludeItems: undefined,
+    isLoading: false,
+    triggerSearch: undefined,
   });
 
   const id = useId();
   const open = ref(false);
   const search = ref(props.search);
   const value = useVModel(props, "modelValue", emit);
+  const hasInitialSearch = ref(false);
 
   const localizedSearchPlaceholder = computed(
     () => props.searchPlaceholder ?? t("components.item.selector.search_placeholder")
   );
   const localizedNoResultsText = computed(() => props.noResultsText ?? t("components.item.selector.no_results"));
   const localizedPlaceholder = computed(() => props.placeholder ?? t("components.item.selector.placeholder"));
+
+  // Trigger search when popover opens for the first time if no results exist
+  async function handlePopoverOpen() {
+    if (hasInitialSearch.value || props.items.length !== 0 || !props.triggerSearch) return;
+
+    try {
+      const success = await props.triggerSearch();
+      if (success) {
+        // Only mark as attempted after successful completion
+        hasInitialSearch.value = true;
+      }
+      // If not successful, leave hasInitialSearch false to allow retries
+    } catch (err) {
+      console.error("triggerSearch failed:", err);
+      // Leave hasInitialSearch false to allow retries on subsequent opens
+    }
+  }
+
+  watch(
+    () => open.value,
+    isOpen => {
+      if (isOpen) {
+        handlePopoverOpen();
+      }
+    }
+  );
 
   watch(
     () => props.search,
@@ -107,7 +144,7 @@
   );
 
   function isStrings(arr: string[] | ItemsObject[]): arr is string[] {
-    return typeof arr[0] === "string";
+    return arr.length > 0 && typeof arr[0] === "string";
   }
 
   function displayValue(item: string | ItemsObject | null | undefined): string {

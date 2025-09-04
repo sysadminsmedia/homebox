@@ -134,7 +134,8 @@
             "selector": {
                 "no_results": "No Results Found",
                 "placeholder": "Select…",
-                "search_placeholder": "Type to search…"
+                "search_placeholder": "Type to search…",
+                "searching": "Searching…"
             },
             "view": {
                 "selectable": {
