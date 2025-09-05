@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authroles"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
 )
@@ -259,4 +260,12 @@ func (svc *UserService) ChangePassword(ctx Context, current string, new string) 
 	}
 
 	return true
+}
+
+func (svc *UserService) GetSettings(ctx context.Context, uid uuid.UUID) (schema.UserSettings, error) {
+	return svc.repos.Users.GetSettings(ctx, uid)
+}
+
+func (svc *UserService) SetSettings(ctx context.Context, uid uuid.UUID, settings schema.UserSettings) error {
+	return svc.repos.Users.SetSettings(ctx, uid, settings)
 }

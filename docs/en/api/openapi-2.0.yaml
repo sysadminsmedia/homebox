@@ -610,6 +610,10 @@ definitions:
         allOf:
         - $ref: '#/definitions/user.Role'
         description: Role holds the value of the "role" field.
+      settings:
+        allOf:
+        - $ref: '#/definitions/schema.UserSettings'
+        description: Settings holds the value of the "settings" field.
       superuser:
         description: Superuser holds the value of the "superuser" field.
         type: boolean
@@ -1338,6 +1342,44 @@ definitions:
         type: string
       value:
         type: number
+    type: object
+  schema.DuplicateSettings:
+    properties:
+      copyAttachments:
+        type: boolean
+      copyCustomFields:
+        type: boolean
+      copyMaintenance:
+        type: boolean
+      copyPrefixOverride:
+        type: string
+    type: object
+  schema.UserSettings:
+    properties:
+      displayLegacyHeader:
+        type: boolean
+      duplicateSettings:
+        $ref: '#/definitions/schema.DuplicateSettings'
+      editorAdvancedView:
+        type: boolean
+      itemDisplayView:
+        type: string
+      itemsPerPage:
+        type: integer
+      itemsPerTablePage:
+        type: integer
+      language:
+        type: string
+      locale:
+        type: string
+      overrideFormatLocale:
+        type: string
+      showDetails:
+        type: boolean
+      showEmpty:
+        type: boolean
+      theme:
+        type: string
     type: object
   services.Latest:
     properties:
@@ -2803,6 +2845,53 @@ paths:
       security:
       - Bearer: []
       summary: Update Account
+      tags:
+      - User
+  /v1/users/self/settings:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/v1.Wrapped'
+            - properties:
+                item:
+                  additionalProperties: true
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get user settings
+      tags:
+      - User
+    put:
+      parameters:
+      - description: Settings Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/v1.Wrapped'
+            - properties:
+                item:
+                  additionalProperties: true
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get user settings
       tags:
       - User
 schemes:
