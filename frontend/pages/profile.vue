@@ -11,6 +11,7 @@
   import MdiPencil from "~icons/mdi/pencil";
   import MdiAccountMultiple from "~icons/mdi/account-multiple";
   import { getLocaleCode } from "~/composables/use-formatters";
+  import { fmtCurrencyAsync } from "~/composables/utils";
   import { Button } from "@/components/ui/button";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { useDialog } from "@/components/ui/dialog-provider";
@@ -67,6 +68,7 @@
     name: "United States Dollar",
     local: "en-US",
     symbol: "$",
+    decimals: 2,
   });
   watch(currency, () => {
     if (group.value) {
@@ -74,9 +76,18 @@
     }
   });
 
-  const currencyExample = computed(() => {
-    return fmtCurrency(1000, currency.value?.code ?? "USD", getLocaleCode());
-  });
+  const currencyExample = ref("$1,000.00");
+
+  // Update currency example when currency changes
+  watch(
+    currency,
+    async () => {
+      if (currency.value) {
+        currencyExample.value = await fmtCurrencyAsync(1000, currency.value.code, getLocaleCode());
+      }
+    },
+    { immediate: true }
+  );
 
   const { data: group } = useAsyncData(async () => {
     const { data } = await api.group.get();

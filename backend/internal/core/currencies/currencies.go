@@ -7,6 +7,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"io"
+	"log"
 	"slices"
 	"strings"
 	"sync"
@@ -14,6 +15,24 @@ import (
 
 //go:embed currencies.json
 var defaults []byte
+
+const (
+	MinDecimals = 0
+	MaxDecimals = 18
+)
+
+// clampDecimals ensures the decimals value is within a safe range [0, 18]
+func clampDecimals(decimals int, code string) int {
+	original := decimals
+	if decimals < MinDecimals {
+		decimals = MinDecimals
+		log.Printf("WARNING: Currency %s had negative decimals (%d), normalized to %d", code, original, decimals)
+	} else if decimals > MaxDecimals {
+		decimals = MaxDecimals
+		log.Printf("WARNING: Currency %s had excessive decimals (%d), normalized to %d", code, original, decimals)
+	}
+	return decimals
+}
 
 type CollectorFunc func() ([]Currency, error)
 
@@ -23,6 +42,11 @@ func CollectJSON(reader io.Reader) CollectorFunc {
 		err := json.NewDecoder(reader).Decode(&currencies)
 		if err != nil {
 			return nil, err
+		}
+
+		// Clamp decimals during collection to ensure early normalization
+		for i := range currencies {
+			currencies[i].Decimals = clampDecimals(currencies[i].Decimals, currencies[i].Code)
 		}
 
 		return currencies, nil
@@ -48,10 +72,11 @@ func CollectionCurrencies(collectors ...CollectorFunc) ([]Currency, error) {
 }
 
 type Currency struct {
-	Name   string `json:"name"`
-	Code   string `json:"code"`
-	Local  string `json:"local"`
-	Symbol string `json:"symbol"`
+	Name     string `json:"name"`
+	Code     string `json:"code"`
+	Local    string `json:"local"`
+	Symbol   string `json:"symbol"`
+	Decimals int    `json:"decimals"`
 }
 
 type CurrencyRegistry struct {
@@ -62,7 +87,10 @@ type CurrencyRegistry struct {
 func NewCurrencyService(currencies []Currency) *CurrencyRegistry {
 	registry := make(map[string]Currency, len(currencies))
 	for i := range currencies {
-		registry[currencies[i].Code] = currencies[i]
+		// Clamp decimals to safe range before adding to registry
+		currency := currencies[i]
+		currency.Decimals = clampDecimals(currency.Decimals, currency.Code)
+		registry[currency.Code] = currency
 	}
 
 	return &CurrencyRegistry{
