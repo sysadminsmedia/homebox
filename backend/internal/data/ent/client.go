@@ -901,22 +901,6 @@ func (c *EntityClient) QueryGroup(_m *Entity) *GroupQuery {
 	return query
 }
 
-// QueryParent queries the parent edge of a Entity.
-func (c *EntityClient) QueryParent(_m *Entity) *EntityQuery {
-	query := (&EntityClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := _m.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(entity.Table, entity.FieldID, id),
-			sqlgraph.To(entity.Table, entity.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, entity.ParentTable, entity.ParentColumn),
-		)
-		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // QueryChildren queries the children edge of a Entity.
 func (c *EntityClient) QueryChildren(_m *Entity) *EntityQuery {
 	query := (&EntityClient{config: c.config}).Query()
@@ -925,7 +909,23 @@ func (c *EntityClient) QueryChildren(_m *Entity) *EntityQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(entity.Table, entity.FieldID, id),
 			sqlgraph.To(entity.Table, entity.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, entity.ChildrenTable, entity.ChildrenColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, entity.ChildrenTable, entity.ChildrenColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryParent queries the parent edge of a Entity.
+func (c *EntityClient) QueryParent(_m *Entity) *EntityQuery {
+	query := (&EntityClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entity.Table, entity.FieldID, id),
+			sqlgraph.To(entity.Table, entity.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, entity.ParentTable, entity.ParentColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -941,7 +941,7 @@ func (c *EntityClient) QueryEntity(_m *Entity) *EntityQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(entity.Table, entity.FieldID, id),
 			sqlgraph.To(entity.Table, entity.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, entity.EntityTable, entity.EntityColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, entity.EntityTable, entity.EntityColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -957,7 +957,7 @@ func (c *EntityClient) QueryLocation(_m *Entity) *EntityQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(entity.Table, entity.FieldID, id),
 			sqlgraph.To(entity.Table, entity.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, entity.LocationTable, entity.LocationColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, entity.LocationTable, entity.LocationColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil

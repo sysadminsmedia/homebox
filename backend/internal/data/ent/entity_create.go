@@ -380,6 +380,21 @@ func (_c *EntityCreate) SetGroup(v *Group) *EntityCreate {
 	return _c.SetGroupID(v.ID)
 }
 
+// AddChildIDs adds the "children" edge to the Entity entity by IDs.
+func (_c *EntityCreate) AddChildIDs(ids ...uuid.UUID) *EntityCreate {
+	_c.mutation.AddChildIDs(ids...)
+	return _c
+}
+
+// AddChildren adds the "children" edges to the Entity entity.
+func (_c *EntityCreate) AddChildren(v ...*Entity) *EntityCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddChildIDs(ids...)
+}
+
 // SetParentID sets the "parent" edge to the Entity entity by ID.
 func (_c *EntityCreate) SetParentID(id uuid.UUID) *EntityCreate {
 	_c.mutation.SetParentID(id)
@@ -399,38 +414,19 @@ func (_c *EntityCreate) SetParent(v *Entity) *EntityCreate {
 	return _c.SetParentID(v.ID)
 }
 
-// AddChildIDs adds the "children" edge to the Entity entity by IDs.
-func (_c *EntityCreate) AddChildIDs(ids ...uuid.UUID) *EntityCreate {
-	_c.mutation.AddChildIDs(ids...)
+// AddEntityIDs adds the "entity" edge to the Entity entity by IDs.
+func (_c *EntityCreate) AddEntityIDs(ids ...uuid.UUID) *EntityCreate {
+	_c.mutation.AddEntityIDs(ids...)
 	return _c
 }
 
-// AddChildren adds the "children" edges to the Entity entity.
-func (_c *EntityCreate) AddChildren(v ...*Entity) *EntityCreate {
+// AddEntity adds the "entity" edges to the Entity entity.
+func (_c *EntityCreate) AddEntity(v ...*Entity) *EntityCreate {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _c.AddChildIDs(ids...)
-}
-
-// SetEntityID sets the "entity" edge to the Entity entity by ID.
-func (_c *EntityCreate) SetEntityID(id uuid.UUID) *EntityCreate {
-	_c.mutation.SetEntityID(id)
-	return _c
-}
-
-// SetNillableEntityID sets the "entity" edge to the Entity entity by ID if the given value is not nil.
-func (_c *EntityCreate) SetNillableEntityID(id *uuid.UUID) *EntityCreate {
-	if id != nil {
-		_c = _c.SetEntityID(*id)
-	}
-	return _c
-}
-
-// SetEntity sets the "entity" edge to the Entity entity.
-func (_c *EntityCreate) SetEntity(v *Entity) *EntityCreate {
-	return _c.SetEntityID(v.ID)
+	return _c.AddEntityIDs(ids...)
 }
 
 // SetLocationID sets the "location" edge to the Entity entity by ID.
@@ -843,27 +839,10 @@ func (_c *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 		_node.group_entities = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.ParentIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   entity.ParentTable,
-			Columns: []string{entity.ParentColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.entity_children = &nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
-	}
 	if nodes := _c.mutation.ChildrenIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   entity.ChildrenTable,
 			Columns: []string{entity.ChildrenColumn},
 			Bidi:    false,
@@ -876,9 +855,26 @@ func (_c *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
+	if nodes := _c.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   entity.ParentTable,
+			Columns: []string{entity.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.entity_parent = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	if nodes := _c.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: true,
 			Table:   entity.EntityTable,
 			Columns: []string{entity.EntityColumn},
@@ -890,12 +886,11 @@ func (_c *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.entity_location = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.LocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   entity.LocationTable,
 			Columns: []string{entity.LocationColumn},
@@ -907,6 +902,7 @@ func (_c *EntityCreate) createSpec() (*Entity, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_node.entity_location = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.LabelIDs(); len(nodes) > 0 {

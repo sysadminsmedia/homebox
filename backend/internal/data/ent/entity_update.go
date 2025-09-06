@@ -466,6 +466,21 @@ func (_u *EntityUpdate) SetGroup(v *Group) *EntityUpdate {
 	return _u.SetGroupID(v.ID)
 }
 
+// AddChildIDs adds the "children" edge to the Entity entity by IDs.
+func (_u *EntityUpdate) AddChildIDs(ids ...uuid.UUID) *EntityUpdate {
+	_u.mutation.AddChildIDs(ids...)
+	return _u
+}
+
+// AddChildren adds the "children" edges to the Entity entity.
+func (_u *EntityUpdate) AddChildren(v ...*Entity) *EntityUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddChildIDs(ids...)
+}
+
 // SetParentID sets the "parent" edge to the Entity entity by ID.
 func (_u *EntityUpdate) SetParentID(id uuid.UUID) *EntityUpdate {
 	_u.mutation.SetParentID(id)
@@ -485,38 +500,19 @@ func (_u *EntityUpdate) SetParent(v *Entity) *EntityUpdate {
 	return _u.SetParentID(v.ID)
 }
 
-// AddChildIDs adds the "children" edge to the Entity entity by IDs.
-func (_u *EntityUpdate) AddChildIDs(ids ...uuid.UUID) *EntityUpdate {
-	_u.mutation.AddChildIDs(ids...)
+// AddEntityIDs adds the "entity" edge to the Entity entity by IDs.
+func (_u *EntityUpdate) AddEntityIDs(ids ...uuid.UUID) *EntityUpdate {
+	_u.mutation.AddEntityIDs(ids...)
 	return _u
 }
 
-// AddChildren adds the "children" edges to the Entity entity.
-func (_u *EntityUpdate) AddChildren(v ...*Entity) *EntityUpdate {
+// AddEntity adds the "entity" edges to the Entity entity.
+func (_u *EntityUpdate) AddEntity(v ...*Entity) *EntityUpdate {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddChildIDs(ids...)
-}
-
-// SetEntityID sets the "entity" edge to the Entity entity by ID.
-func (_u *EntityUpdate) SetEntityID(id uuid.UUID) *EntityUpdate {
-	_u.mutation.SetEntityID(id)
-	return _u
-}
-
-// SetNillableEntityID sets the "entity" edge to the Entity entity by ID if the given value is not nil.
-func (_u *EntityUpdate) SetNillableEntityID(id *uuid.UUID) *EntityUpdate {
-	if id != nil {
-		_u = _u.SetEntityID(*id)
-	}
-	return _u
-}
-
-// SetEntity sets the "entity" edge to the Entity entity.
-func (_u *EntityUpdate) SetEntity(v *Entity) *EntityUpdate {
-	return _u.SetEntityID(v.ID)
+	return _u.AddEntityIDs(ids...)
 }
 
 // SetLocationID sets the "location" edge to the Entity entity by ID.
@@ -628,12 +624,6 @@ func (_u *EntityUpdate) ClearGroup() *EntityUpdate {
 	return _u
 }
 
-// ClearParent clears the "parent" edge to the Entity entity.
-func (_u *EntityUpdate) ClearParent() *EntityUpdate {
-	_u.mutation.ClearParent()
-	return _u
-}
-
 // ClearChildren clears all "children" edges to the Entity entity.
 func (_u *EntityUpdate) ClearChildren() *EntityUpdate {
 	_u.mutation.ClearChildren()
@@ -655,10 +645,31 @@ func (_u *EntityUpdate) RemoveChildren(v ...*Entity) *EntityUpdate {
 	return _u.RemoveChildIDs(ids...)
 }
 
-// ClearEntity clears the "entity" edge to the Entity entity.
+// ClearParent clears the "parent" edge to the Entity entity.
+func (_u *EntityUpdate) ClearParent() *EntityUpdate {
+	_u.mutation.ClearParent()
+	return _u
+}
+
+// ClearEntity clears all "entity" edges to the Entity entity.
 func (_u *EntityUpdate) ClearEntity() *EntityUpdate {
 	_u.mutation.ClearEntity()
 	return _u
+}
+
+// RemoveEntityIDs removes the "entity" edge to Entity entities by IDs.
+func (_u *EntityUpdate) RemoveEntityIDs(ids ...uuid.UUID) *EntityUpdate {
+	_u.mutation.RemoveEntityIDs(ids...)
+	return _u
+}
+
+// RemoveEntity removes "entity" edges to Entity entities.
+func (_u *EntityUpdate) RemoveEntity(v ...*Entity) *EntityUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveEntityIDs(ids...)
 }
 
 // ClearLocation clears the "location" edge to the Entity entity.
@@ -1007,39 +1018,10 @@ func (_u *EntityUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.ParentCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   entity.ParentTable,
-			Columns: []string{entity.ParentColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.ParentIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   entity.ParentTable,
-			Columns: []string{entity.ParentColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if _u.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   entity.ChildrenTable,
 			Columns: []string{entity.ChildrenColumn},
 			Bidi:    false,
@@ -1052,7 +1034,7 @@ func (_u *EntityUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if nodes := _u.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !_u.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   entity.ChildrenTable,
 			Columns: []string{entity.ChildrenColumn},
 			Bidi:    false,
@@ -1068,7 +1050,7 @@ func (_u *EntityUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if nodes := _u.mutation.ChildrenIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   entity.ChildrenTable,
 			Columns: []string{entity.ChildrenColumn},
 			Bidi:    false,
@@ -1081,9 +1063,38 @@ func (_u *EntityUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.ParentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   entity.ParentTable,
+			Columns: []string{entity.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   entity.ParentTable,
+			Columns: []string{entity.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _u.mutation.EntityCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: true,
 			Table:   entity.EntityTable,
 			Columns: []string{entity.EntityColumn},
@@ -1094,9 +1105,25 @@ func (_u *EntityUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
+	if nodes := _u.mutation.RemovedEntityIDs(); len(nodes) > 0 && !_u.mutation.EntityCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   entity.EntityTable,
+			Columns: []string{entity.EntityColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
 	if nodes := _u.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: true,
 			Table:   entity.EntityTable,
 			Columns: []string{entity.EntityColumn},
@@ -1112,7 +1139,7 @@ func (_u *EntityUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.LocationCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   entity.LocationTable,
 			Columns: []string{entity.LocationColumn},
@@ -1125,7 +1152,7 @@ func (_u *EntityUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if nodes := _u.mutation.LocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   entity.LocationTable,
 			Columns: []string{entity.LocationColumn},
@@ -1799,6 +1826,21 @@ func (_u *EntityUpdateOne) SetGroup(v *Group) *EntityUpdateOne {
 	return _u.SetGroupID(v.ID)
 }
 
+// AddChildIDs adds the "children" edge to the Entity entity by IDs.
+func (_u *EntityUpdateOne) AddChildIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	_u.mutation.AddChildIDs(ids...)
+	return _u
+}
+
+// AddChildren adds the "children" edges to the Entity entity.
+func (_u *EntityUpdateOne) AddChildren(v ...*Entity) *EntityUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddChildIDs(ids...)
+}
+
 // SetParentID sets the "parent" edge to the Entity entity by ID.
 func (_u *EntityUpdateOne) SetParentID(id uuid.UUID) *EntityUpdateOne {
 	_u.mutation.SetParentID(id)
@@ -1818,38 +1860,19 @@ func (_u *EntityUpdateOne) SetParent(v *Entity) *EntityUpdateOne {
 	return _u.SetParentID(v.ID)
 }
 
-// AddChildIDs adds the "children" edge to the Entity entity by IDs.
-func (_u *EntityUpdateOne) AddChildIDs(ids ...uuid.UUID) *EntityUpdateOne {
-	_u.mutation.AddChildIDs(ids...)
+// AddEntityIDs adds the "entity" edge to the Entity entity by IDs.
+func (_u *EntityUpdateOne) AddEntityIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	_u.mutation.AddEntityIDs(ids...)
 	return _u
 }
 
-// AddChildren adds the "children" edges to the Entity entity.
-func (_u *EntityUpdateOne) AddChildren(v ...*Entity) *EntityUpdateOne {
+// AddEntity adds the "entity" edges to the Entity entity.
+func (_u *EntityUpdateOne) AddEntity(v ...*Entity) *EntityUpdateOne {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _u.AddChildIDs(ids...)
-}
-
-// SetEntityID sets the "entity" edge to the Entity entity by ID.
-func (_u *EntityUpdateOne) SetEntityID(id uuid.UUID) *EntityUpdateOne {
-	_u.mutation.SetEntityID(id)
-	return _u
-}
-
-// SetNillableEntityID sets the "entity" edge to the Entity entity by ID if the given value is not nil.
-func (_u *EntityUpdateOne) SetNillableEntityID(id *uuid.UUID) *EntityUpdateOne {
-	if id != nil {
-		_u = _u.SetEntityID(*id)
-	}
-	return _u
-}
-
-// SetEntity sets the "entity" edge to the Entity entity.
-func (_u *EntityUpdateOne) SetEntity(v *Entity) *EntityUpdateOne {
-	return _u.SetEntityID(v.ID)
+	return _u.AddEntityIDs(ids...)
 }
 
 // SetLocationID sets the "location" edge to the Entity entity by ID.
@@ -1961,12 +1984,6 @@ func (_u *EntityUpdateOne) ClearGroup() *EntityUpdateOne {
 	return _u
 }
 
-// ClearParent clears the "parent" edge to the Entity entity.
-func (_u *EntityUpdateOne) ClearParent() *EntityUpdateOne {
-	_u.mutation.ClearParent()
-	return _u
-}
-
 // ClearChildren clears all "children" edges to the Entity entity.
 func (_u *EntityUpdateOne) ClearChildren() *EntityUpdateOne {
 	_u.mutation.ClearChildren()
@@ -1988,10 +2005,31 @@ func (_u *EntityUpdateOne) RemoveChildren(v ...*Entity) *EntityUpdateOne {
 	return _u.RemoveChildIDs(ids...)
 }
 
-// ClearEntity clears the "entity" edge to the Entity entity.
+// ClearParent clears the "parent" edge to the Entity entity.
+func (_u *EntityUpdateOne) ClearParent() *EntityUpdateOne {
+	_u.mutation.ClearParent()
+	return _u
+}
+
+// ClearEntity clears all "entity" edges to the Entity entity.
 func (_u *EntityUpdateOne) ClearEntity() *EntityUpdateOne {
 	_u.mutation.ClearEntity()
 	return _u
+}
+
+// RemoveEntityIDs removes the "entity" edge to Entity entities by IDs.
+func (_u *EntityUpdateOne) RemoveEntityIDs(ids ...uuid.UUID) *EntityUpdateOne {
+	_u.mutation.RemoveEntityIDs(ids...)
+	return _u
+}
+
+// RemoveEntity removes "entity" edges to Entity entities.
+func (_u *EntityUpdateOne) RemoveEntity(v ...*Entity) *EntityUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveEntityIDs(ids...)
 }
 
 // ClearLocation clears the "location" edge to the Entity entity.
@@ -2370,39 +2408,10 @@ func (_u *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err erro
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if _u.mutation.ParentCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   entity.ParentTable,
-			Columns: []string{entity.ParentColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := _u.mutation.ParentIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   entity.ParentTable,
-			Columns: []string{entity.ParentColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if _u.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   entity.ChildrenTable,
 			Columns: []string{entity.ChildrenColumn},
 			Bidi:    false,
@@ -2415,7 +2424,7 @@ func (_u *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err erro
 	if nodes := _u.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !_u.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   entity.ChildrenTable,
 			Columns: []string{entity.ChildrenColumn},
 			Bidi:    false,
@@ -2431,7 +2440,7 @@ func (_u *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err erro
 	if nodes := _u.mutation.ChildrenIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
-			Inverse: false,
+			Inverse: true,
 			Table:   entity.ChildrenTable,
 			Columns: []string{entity.ChildrenColumn},
 			Bidi:    false,
@@ -2444,9 +2453,38 @@ func (_u *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err erro
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.ParentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   entity.ParentTable,
+			Columns: []string{entity.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   entity.ParentTable,
+			Columns: []string{entity.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _u.mutation.EntityCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: true,
 			Table:   entity.EntityTable,
 			Columns: []string{entity.EntityColumn},
@@ -2457,9 +2495,25 @@ func (_u *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err erro
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
+	if nodes := _u.mutation.RemovedEntityIDs(); len(nodes) > 0 && !_u.mutation.EntityCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   entity.EntityTable,
+			Columns: []string{entity.EntityColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
 	if nodes := _u.mutation.EntityIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.O2M,
 			Inverse: true,
 			Table:   entity.EntityTable,
 			Columns: []string{entity.EntityColumn},
@@ -2475,7 +2529,7 @@ func (_u *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err erro
 	}
 	if _u.mutation.LocationCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   entity.LocationTable,
 			Columns: []string{entity.LocationColumn},
@@ -2488,7 +2542,7 @@ func (_u *EntityUpdateOne) sqlSave(ctx context.Context) (_node *Entity, err erro
 	}
 	if nodes := _u.mutation.LocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2O,
+			Rel:     sqlgraph.M2O,
 			Inverse: false,
 			Table:   entity.LocationTable,
 			Columns: []string{entity.LocationColumn},

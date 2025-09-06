@@ -31,8 +31,8 @@ type EntityQuery struct {
 	inters                 []Interceptor
 	predicates             []predicate.Entity
 	withGroup              *GroupQuery
-	withParent             *EntityQuery
 	withChildren           *EntityQuery
+	withParent             *EntityQuery
 	withEntity             *EntityQuery
 	withLocation           *EntityQuery
 	withLabel              *LabelQuery
@@ -99,28 +99,6 @@ func (_q *EntityQuery) QueryGroup() *GroupQuery {
 	return query
 }
 
-// QueryParent chains the current query on the "parent" edge.
-func (_q *EntityQuery) QueryParent() *EntityQuery {
-	query := (&EntityClient{config: _q.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := _q.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := _q.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(entity.Table, entity.FieldID, selector),
-			sqlgraph.To(entity.Table, entity.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, entity.ParentTable, entity.ParentColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
 // QueryChildren chains the current query on the "children" edge.
 func (_q *EntityQuery) QueryChildren() *EntityQuery {
 	query := (&EntityClient{config: _q.config}).Query()
@@ -135,7 +113,29 @@ func (_q *EntityQuery) QueryChildren() *EntityQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(entity.Table, entity.FieldID, selector),
 			sqlgraph.To(entity.Table, entity.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, entity.ChildrenTable, entity.ChildrenColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, entity.ChildrenTable, entity.ChildrenColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryParent chains the current query on the "parent" edge.
+func (_q *EntityQuery) QueryParent() *EntityQuery {
+	query := (&EntityClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(entity.Table, entity.FieldID, selector),
+			sqlgraph.To(entity.Table, entity.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, entity.ParentTable, entity.ParentColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -157,7 +157,7 @@ func (_q *EntityQuery) QueryEntity() *EntityQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(entity.Table, entity.FieldID, selector),
 			sqlgraph.To(entity.Table, entity.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, entity.EntityTable, entity.EntityColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, entity.EntityTable, entity.EntityColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -179,7 +179,7 @@ func (_q *EntityQuery) QueryLocation() *EntityQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(entity.Table, entity.FieldID, selector),
 			sqlgraph.To(entity.Table, entity.FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, entity.LocationTable, entity.LocationColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, entity.LocationTable, entity.LocationColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -490,8 +490,8 @@ func (_q *EntityQuery) Clone() *EntityQuery {
 		inters:                 append([]Interceptor{}, _q.inters...),
 		predicates:             append([]predicate.Entity{}, _q.predicates...),
 		withGroup:              _q.withGroup.Clone(),
-		withParent:             _q.withParent.Clone(),
 		withChildren:           _q.withChildren.Clone(),
+		withParent:             _q.withParent.Clone(),
 		withEntity:             _q.withEntity.Clone(),
 		withLocation:           _q.withLocation.Clone(),
 		withLabel:              _q.withLabel.Clone(),
@@ -516,17 +516,6 @@ func (_q *EntityQuery) WithGroup(opts ...func(*GroupQuery)) *EntityQuery {
 	return _q
 }
 
-// WithParent tells the query-builder to eager-load the nodes that are connected to
-// the "parent" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *EntityQuery) WithParent(opts ...func(*EntityQuery)) *EntityQuery {
-	query := (&EntityClient{config: _q.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	_q.withParent = query
-	return _q
-}
-
 // WithChildren tells the query-builder to eager-load the nodes that are connected to
 // the "children" edge. The optional arguments are used to configure the query builder of the edge.
 func (_q *EntityQuery) WithChildren(opts ...func(*EntityQuery)) *EntityQuery {
@@ -535,6 +524,17 @@ func (_q *EntityQuery) WithChildren(opts ...func(*EntityQuery)) *EntityQuery {
 		opt(query)
 	}
 	_q.withChildren = query
+	return _q
+}
+
+// WithParent tells the query-builder to eager-load the nodes that are connected to
+// the "parent" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *EntityQuery) WithParent(opts ...func(*EntityQuery)) *EntityQuery {
+	query := (&EntityClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withParent = query
 	return _q
 }
 
@@ -696,8 +696,8 @@ func (_q *EntityQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Entit
 		_spec       = _q.querySpec()
 		loadedTypes = [10]bool{
 			_q.withGroup != nil,
-			_q.withParent != nil,
 			_q.withChildren != nil,
+			_q.withParent != nil,
 			_q.withEntity != nil,
 			_q.withLocation != nil,
 			_q.withLabel != nil,
@@ -707,7 +707,7 @@ func (_q *EntityQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Entit
 			_q.withAttachments != nil,
 		}
 	)
-	if _q.withGroup != nil || _q.withParent != nil || _q.withEntity != nil || _q.withType != nil {
+	if _q.withGroup != nil || _q.withParent != nil || _q.withLocation != nil || _q.withType != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -737,12 +737,6 @@ func (_q *EntityQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Entit
 			return nil, err
 		}
 	}
-	if query := _q.withParent; query != nil {
-		if err := _q.loadParent(ctx, query, nodes, nil,
-			func(n *Entity, e *Entity) { n.Edges.Parent = e }); err != nil {
-			return nil, err
-		}
-	}
 	if query := _q.withChildren; query != nil {
 		if err := _q.loadChildren(ctx, query, nodes,
 			func(n *Entity) { n.Edges.Children = []*Entity{} },
@@ -750,9 +744,16 @@ func (_q *EntityQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Entit
 			return nil, err
 		}
 	}
+	if query := _q.withParent; query != nil {
+		if err := _q.loadParent(ctx, query, nodes, nil,
+			func(n *Entity, e *Entity) { n.Edges.Parent = e }); err != nil {
+			return nil, err
+		}
+	}
 	if query := _q.withEntity; query != nil {
-		if err := _q.loadEntity(ctx, query, nodes, nil,
-			func(n *Entity, e *Entity) { n.Edges.Entity = e }); err != nil {
+		if err := _q.loadEntity(ctx, query, nodes,
+			func(n *Entity) { n.Edges.Entity = []*Entity{} },
+			func(n *Entity, e *Entity) { n.Edges.Entity = append(n.Edges.Entity, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -833,38 +834,6 @@ func (_q *EntityQuery) loadGroup(ctx context.Context, query *GroupQuery, nodes [
 	}
 	return nil
 }
-func (_q *EntityQuery) loadParent(ctx context.Context, query *EntityQuery, nodes []*Entity, init func(*Entity), assign func(*Entity, *Entity)) error {
-	ids := make([]uuid.UUID, 0, len(nodes))
-	nodeids := make(map[uuid.UUID][]*Entity)
-	for i := range nodes {
-		if nodes[i].entity_children == nil {
-			continue
-		}
-		fk := *nodes[i].entity_children
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
-	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(entity.IDIn(ids...))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "entity_children" returned %v`, n.ID)
-		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
-	}
-	return nil
-}
 func (_q *EntityQuery) loadChildren(ctx context.Context, query *EntityQuery, nodes []*Entity, init func(*Entity), assign func(*Entity, *Entity)) error {
 	fks := make([]driver.Value, 0, len(nodes))
 	nodeids := make(map[uuid.UUID]*Entity)
@@ -884,19 +853,82 @@ func (_q *EntityQuery) loadChildren(ctx context.Context, query *EntityQuery, nod
 		return err
 	}
 	for _, n := range neighbors {
-		fk := n.entity_children
+		fk := n.entity_parent
 		if fk == nil {
-			return fmt.Errorf(`foreign-key "entity_children" is nil for node %v`, n.ID)
+			return fmt.Errorf(`foreign-key "entity_parent" is nil for node %v`, n.ID)
 		}
 		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "entity_children" returned %v for node %v`, *fk, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "entity_parent" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}
 	return nil
 }
+func (_q *EntityQuery) loadParent(ctx context.Context, query *EntityQuery, nodes []*Entity, init func(*Entity), assign func(*Entity, *Entity)) error {
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*Entity)
+	for i := range nodes {
+		if nodes[i].entity_parent == nil {
+			continue
+		}
+		fk := *nodes[i].entity_parent
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(entity.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "entity_parent" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
 func (_q *EntityQuery) loadEntity(ctx context.Context, query *EntityQuery, nodes []*Entity, init func(*Entity), assign func(*Entity, *Entity)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Entity)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.Entity(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(entity.EntityColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.entity_location
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "entity_location" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "entity_location" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *EntityQuery) loadLocation(ctx context.Context, query *EntityQuery, nodes []*Entity, init func(*Entity), assign func(*Entity, *Entity)) error {
 	ids := make([]uuid.UUID, 0, len(nodes))
 	nodeids := make(map[uuid.UUID][]*Entity)
 	for i := range nodes {
@@ -925,34 +957,6 @@ func (_q *EntityQuery) loadEntity(ctx context.Context, query *EntityQuery, nodes
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
-	}
-	return nil
-}
-func (_q *EntityQuery) loadLocation(ctx context.Context, query *EntityQuery, nodes []*Entity, init func(*Entity), assign func(*Entity, *Entity)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uuid.UUID]*Entity)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-	}
-	query.withFKs = true
-	query.Where(predicate.Entity(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(entity.LocationColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.entity_location
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "entity_location" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "entity_location" returned %v for node %v`, *fk, n.ID)
-		}
-		assign(node, n)
 	}
 	return nil
 }

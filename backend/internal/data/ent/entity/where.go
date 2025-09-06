@@ -1444,35 +1444,12 @@ func HasGroupWith(preds ...predicate.Group) predicate.Entity {
 	})
 }
 
-// HasParent applies the HasEdge predicate on the "parent" edge.
-func HasParent() predicate.Entity {
-	return predicate.Entity(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ParentTable, ParentColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasParentWith applies the HasEdge predicate on the "parent" edge with a given conditions (other predicates).
-func HasParentWith(preds ...predicate.Entity) predicate.Entity {
-	return predicate.Entity(func(s *sql.Selector) {
-		step := newParentStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
 // HasChildren applies the HasEdge predicate on the "children" edge.
 func HasChildren() predicate.Entity {
 	return predicate.Entity(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, ChildrenTable, ChildrenColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -1490,12 +1467,35 @@ func HasChildrenWith(preds ...predicate.Entity) predicate.Entity {
 	})
 }
 
+// HasParent applies the HasEdge predicate on the "parent" edge.
+func HasParent() predicate.Entity {
+	return predicate.Entity(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, ParentTable, ParentColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasParentWith applies the HasEdge predicate on the "parent" edge with a given conditions (other predicates).
+func HasParentWith(preds ...predicate.Entity) predicate.Entity {
+	return predicate.Entity(func(s *sql.Selector) {
+		step := newParentStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasEntity applies the HasEdge predicate on the "entity" edge.
 func HasEntity() predicate.Entity {
 	return predicate.Entity(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, true, EntityTable, EntityColumn),
+			sqlgraph.Edge(sqlgraph.O2M, true, EntityTable, EntityColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -1518,7 +1518,7 @@ func HasLocation() predicate.Entity {
 	return predicate.Entity(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2O, false, LocationTable, LocationColumn),
+			sqlgraph.Edge(sqlgraph.M2O, false, LocationTable, LocationColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})

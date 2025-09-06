@@ -111,13 +111,12 @@ func (Entity) Edges() []ent.Edge {
 	}
 
 	return []ent.Edge{
-		edge.To("children", Entity.Type).
-			From("parent").
-			Unique(),
+		edge.To("parent", Entity.Type).
+			Unique().
+			From("children"),
 		edge.To("location", Entity.Type).
 			Unique().
-			From("entity").
-			Unique(),
+			From("entity"),
 		edge.From("label", Label.Type).
 			Ref("entities"),
 		edge.From("type", EntityType.Type).

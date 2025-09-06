@@ -65,10 +65,10 @@ const (
 	FieldSoldNotes = "sold_notes"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
 	EdgeGroup = "group"
-	// EdgeParent holds the string denoting the parent edge name in mutations.
-	EdgeParent = "parent"
 	// EdgeChildren holds the string denoting the children edge name in mutations.
 	EdgeChildren = "children"
+	// EdgeParent holds the string denoting the parent edge name in mutations.
+	EdgeParent = "parent"
 	// EdgeEntity holds the string denoting the entity edge name in mutations.
 	EdgeEntity = "entity"
 	// EdgeLocation holds the string denoting the location edge name in mutations.
@@ -92,14 +92,14 @@ const (
 	GroupInverseTable = "groups"
 	// GroupColumn is the table column denoting the group relation/edge.
 	GroupColumn = "group_entities"
-	// ParentTable is the table that holds the parent relation/edge.
-	ParentTable = "entities"
-	// ParentColumn is the table column denoting the parent relation/edge.
-	ParentColumn = "entity_children"
 	// ChildrenTable is the table that holds the children relation/edge.
 	ChildrenTable = "entities"
 	// ChildrenColumn is the table column denoting the children relation/edge.
-	ChildrenColumn = "entity_children"
+	ChildrenColumn = "entity_parent"
+	// ParentTable is the table that holds the parent relation/edge.
+	ParentTable = "entities"
+	// ParentColumn is the table column denoting the parent relation/edge.
+	ParentColumn = "entity_parent"
 	// EntityTable is the table that holds the entity relation/edge.
 	EntityTable = "entities"
 	// EntityColumn is the table column denoting the entity relation/edge.
@@ -175,7 +175,7 @@ var Columns = []string{
 // ForeignKeys holds the SQL foreign-keys that are owned by the "entities"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
-	"entity_children",
+	"entity_parent",
 	"entity_location",
 	"entity_type_entities",
 	"group_entities",
@@ -382,13 +382,6 @@ func ByGroupField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
-// ByParentField orders the results by parent field.
-func ByParentField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newParentStep(), sql.OrderByField(field, opts...))
-	}
-}
-
 // ByChildrenCount orders the results by children count.
 func ByChildrenCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -403,10 +396,24 @@ func ByChildren(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByEntityField orders the results by entity field.
-func ByEntityField(field string, opts ...sql.OrderTermOption) OrderOption {
+// ByParentField orders the results by parent field.
+func ByParentField(field string, opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newEntityStep(), sql.OrderByField(field, opts...))
+		sqlgraph.OrderByNeighborTerms(s, newParentStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByEntityCount orders the results by entity count.
+func ByEntityCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newEntityStep(), opts...)
+	}
+}
+
+// ByEntity orders the results by entity terms.
+func ByEntity(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newEntityStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -486,32 +493,32 @@ func newGroupStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.M2O, true, GroupTable, GroupColumn),
 	)
 }
-func newParentStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(Table, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, ParentTable, ParentColumn),
-	)
-}
 func newChildrenStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
+		sqlgraph.Edge(sqlgraph.O2M, true, ChildrenTable, ChildrenColumn),
+	)
+}
+func newParentStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, ParentTable, ParentColumn),
 	)
 }
 func newEntityStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, true, EntityTable, EntityColumn),
+		sqlgraph.Edge(sqlgraph.O2M, true, EntityTable, EntityColumn),
 	)
 }
 func newLocationStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(Table, FieldID),
-		sqlgraph.Edge(sqlgraph.O2O, false, LocationTable, LocationColumn),
+		sqlgraph.Edge(sqlgraph.M2O, false, LocationTable, LocationColumn),
 	)
 }
 func newLabelStep() *sqlgraph.Step {

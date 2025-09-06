@@ -117,12 +117,12 @@ func (r *LocationRepository) GetAll(ctx context.Context, gid uuid.UUID, filter L
 				FROM
 					entities
 				WHERE
-				    entities.entity_children = entities.id
+				    entities.entity_parent = entities.id
 					AND entities.archived = false
 			) as item_count
 		FROM
 			entities
-		JOIN entity_types ON entities.entity_type = entity_types.id
+		JOIN entity_types ON entities.entity_type_entities = entity_types.id
 		AND entity_types.is_location = true
 		WHERE
 			entities.group_entities = $1 {{ FILTER_CHILDREN }}
@@ -131,7 +131,7 @@ func (r *LocationRepository) GetAll(ctx context.Context, gid uuid.UUID, filter L
 `
 
 	if filter.FilterChildren {
-		query = strings.Replace(query, "{{ FILTER_CHILDREN }}", "AND entities.entity_children IS NULL", 1)
+		query = strings.Replace(query, "{{ FILTER_CHILDREN }}", "AND entities.entity_parent IS NULL", 1)
 	} else {
 		query = strings.Replace(query, "{{ FILTER_CHILDREN }}", "", 1)
 	}
@@ -284,19 +284,19 @@ type ItemPath struct {
 
 func (r *LocationRepository) PathForLoc(ctx context.Context, gid, locID uuid.UUID) ([]ItemPath, error) {
 	query := `WITH RECURSIVE location_path AS (
-		SELECT e.id, e.name, e.entity_children
+		SELECT e.id, e.name, e.entity_parent
 		FROM entities e
-		JOIN entity_types et ON e.entity_type = et.id
+		JOIN entity_types et ON e.entity_type_entities = et.id
 		WHERE e.id = $1
 		AND e.group_entities = $2
 		AND et.is_location = true
 
 		UNION ALL
 
-		SELECT e.id, e.name, e.entity_children
+		SELECT e.id, e.name, e.entity_parent
 		FROM entities e
-		JOIN entity_types et ON e.entity_type = et.id
-		JOIN location_path lp ON e.id = lp.entity_children
+		JOIN entity_types et ON e.entity_type_entities = et.id
+		JOIN location_path lp ON e.id = lp.entity_parent
 		WHERE et.is_location = true
 	  )
 
@@ -339,24 +339,24 @@ func (r *LocationRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQue
 		(
 			SELECT  e.id,
 					e.NAME,
-					e.entity_children AS parent_id,
+					e.entity_parent AS parent_id,
 					0 AS level,
 					'location' AS node_type
 			FROM    entities e
-			JOIN    entity_types et ON e.entity_type = et.id
-			WHERE   e.entity_children IS NULL
+			JOIN    entity_types et ON e.entity_type_entities = et.id
+			WHERE   e.entity_parent IS NULL
 			AND     et.is_location = true
 			AND     e.group_entities = $1
 			UNION ALL
 			SELECT  c.id,
 					c.NAME,
-					c.entity_children AS parent_id,
+					c.entity_parent AS parent_id,
 					level + 1,
 					'location' AS node_type
 			FROM   entities c
-			JOIN    entity_types et ON c.entity_type = et.id
+			JOIN    entity_types et ON c.entity_type_entities = et.id
 			JOIN   location_tree p
-			ON     c.entity_children = p.id
+			ON     c.entity_parent = p.id
 			WHERE  et.is_location = true
 			AND    level < 10 -- prevent infinite loop & excessive recursion
 		){{ WITH_ITEMS }}
@@ -382,27 +382,27 @@ func (r *LocationRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQue
 		(
 			SELECT  e.id,
 					e.NAME,
-					e.entity_children as parent_id,
+					e.entity_parent as parent_id,
 					0 AS level,
 					'item' AS node_type
 			FROM    entities e
-			JOIN    entity_types et ON e.entity_type = et.id
-			WHERE   e.entity_children IS NULL
+			JOIN    entity_types et ON e.entity_type_entities = et.id
+			WHERE   e.entity_parent IS NULL
 			AND     et.is_location = false
-			AND     e.entity_children IN (SELECT id FROM location_tree)
+			AND     e.entity_parent IN (SELECT id FROM location_tree)
 
 			UNION ALL
 
 			SELECT  c.id,
 					c.NAME,
-					c.entity_children AS parent_id,
+					c.entity_parent AS parent_id,
 					level + 1,
 					'item' AS node_type
 			FROM    entities c
-			JOIN    entity_types et ON c.entity_type = et.id
+			JOIN    entity_types et ON c.entity_type_entities = et.id
 			JOIN    item_tree p
-			ON      c.entity_children = p.id
-			WHERE   c.entity_children IS NOT NULL
+			ON      c.entity_parent = p.id
+			WHERE   c.entity_parent IS NOT NULL
 			AND     et.is_location = false
 			AND     level < 10 -- prevent infinite loop & excessive recursion
 		)`
