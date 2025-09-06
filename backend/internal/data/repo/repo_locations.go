@@ -335,77 +335,77 @@ func (r *LocationRepository) PathForLoc(ctx context.Context, gid, locID uuid.UUI
 
 func (r *LocationRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery) ([]TreeItem, error) {
 	query := `
-		WITH recursive location_tree(id, NAME, parent_id, level, node_type) AS
-		(
-			SELECT  e.id,
-					e.NAME,
-					e.entity_parent AS parent_id,
-					0 AS level,
-					'location' AS node_type
-			FROM    entities e
-			JOIN    entity_types et ON e.entity_type_entities = et.id
-			WHERE   e.entity_parent IS NULL
-			AND     et.is_location = true
-			AND     e.group_entities = $1
-			UNION ALL
-			SELECT  c.id,
-					c.NAME,
-					c.entity_parent AS parent_id,
-					level + 1,
-					'location' AS node_type
-			FROM   entities c
-			JOIN    entity_types et ON c.entity_type_entities = et.id
-			JOIN   location_tree p
-			ON     c.entity_parent = p.id
-			WHERE  et.is_location = true
-			AND    level < 10 -- prevent infinite loop & excessive recursion
-		){{ WITH_ITEMS }}
+		WITH recursive
+    location_tree(id, NAME, parent_id, level, node_type) AS
+        (SELECT e.id,
+                e.NAME,
+                e.entity_parent AS parent_id,
+                0               AS level,
+                'location'      AS node_type
+         FROM entities e
+                  JOIN entity_types et ON e.entity_type_entities = et.id
+         WHERE e.entity_parent IS NULL
+           AND et.is_location = true
+           AND e.group_entities = ?
+         UNION ALL
+         SELECT c.id,
+                c.NAME,
+                c.entity_parent AS parent_id,
+                level + 1,
+                'location'      AS node_type
+         FROM entities c
+                  JOIN entity_types et ON c.entity_type_entities = et.id
+                  JOIN location_tree p
+                       ON c.entity_parent = p.id
+         WHERE et.is_location = true
+           AND level < 10){{ WITH_ITEMS }}
 
-		SELECT   id,
-				 NAME,
-				 level,
-				 parent_id,
-				 node_type
-		FROM    (
-					SELECT  *
-					FROM    location_tree
+		SELECT id,
+       NAME,
+       level,
+       parent_id,
+       node_type
+FROM (SELECT *
+      FROM location_tree
 
 					{{ WITH_ITEMS_FROM }}
 
 				) tree
-		ORDER BY node_type DESC, -- sort locations before items
-				 level,
-				 lower(NAME)`
+ORDER BY node_type DESC,
+         level,
+         lower(NAME)`
 
 	if tq.WithItems {
-		itemQuery := `, item_tree(id, NAME, parent_id, level, node_type) AS
-		(
-			SELECT  e.id,
-					e.NAME,
-					e.entity_parent as parent_id,
-					0 AS level,
-					'item' AS node_type
-			FROM    entities e
-			JOIN    entity_types et ON e.entity_type_entities = et.id
-			WHERE   e.entity_parent IS NULL
-			AND     et.is_location = false
-			AND     e.entity_parent IN (SELECT id FROM location_tree)
+		itemQuery := `,
+    item_tree(id, NAME, parent_id, level, node_type) AS
+        (SELECT e.id,
+                e.NAME,
+                -- 1. Set parent_id to the location's ID
+                e.entity_location AS parent_id,
+                -- 2. Set level to be the location's level + 1
+                lt.level + 1      AS level,
+                'item'            AS node_type
+         FROM entities e
+                  JOIN entity_types et ON e.entity_type_entities = et.id
+             -- Join location_tree to get the parent location's level
+                  JOIN location_tree lt ON e.entity_location = lt.id
+         WHERE et.is_location = false
 
-			UNION ALL
+         UNION ALL
 
-			SELECT  c.id,
-					c.NAME,
-					c.entity_parent AS parent_id,
-					level + 1,
-					'item' AS node_type
-			FROM    entities c
-			JOIN    entity_types et ON c.entity_type_entities = et.id
-			JOIN    item_tree p
-			ON      c.entity_parent = p.id
-			WHERE   c.entity_parent IS NOT NULL
-			AND     et.is_location = false
-			AND     level < 10 -- prevent infinite loop & excessive recursion
-		)`
+         SELECT c.id,
+                c.NAME,
+                c.entity_parent AS parent_id,
+                level + 1,
+                'item'          AS node_type
+         FROM entities c
+                  JOIN entity_types et ON c.entity_type_entities = et.id
+                  JOIN item_tree p
+                       ON c.entity_parent = p.id
+         WHERE c.entity_parent IS NOT NULL
+           AND et.is_location = false
+           AND level < 10
+        )`
 
 		// Conditional table joined to main query
 		itemsFrom := `
