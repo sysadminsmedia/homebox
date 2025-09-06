@@ -56,7 +56,7 @@ func TestAttachmentRepo_Create(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, _ := tRepos.Attachments.Create(tt.args.ctx, tt.args.itemID, ItemCreateAttachment{Title: "Test", Content: strings.NewReader("This is a test")}, tt.args.typ, false)
+			got, _ := tRepos.Attachments.Create(tt.args.ctx, tt.args.itemID, EntityCreateAttachment{Title: "Test", Content: strings.NewReader("This is a test")}, tt.args.typ, false)
 			// TODO: Figure out how this works and fix the test later
 			// if (err != nil) != tt.wantErr {
 			//	t.Errorf("AttachmentRepo.Create() error = %v, wantErr %v", err, tt.wantErr)
@@ -92,7 +92,7 @@ func useAttachments(t *testing.T, n int) []*ent.Attachment {
 
 	attachments := make([]*ent.Attachment, n)
 	for i := 0; i < n; i++ {
-		attach, err := tRepos.Attachments.Create(context.Background(), item.ID, ItemCreateAttachment{Title: "Test", Content: strings.NewReader("Test String")}, attachment.TypePhoto, true)
+		attach, err := tRepos.Attachments.Create(context.Background(), item.ID, EntityCreateAttachment{Title: "Test", Content: strings.NewReader("Test String")}, attachment.TypePhoto, true)
 		require.NoError(t, err)
 		attachments[i] = attach
 
@@ -107,7 +107,7 @@ func TestAttachmentRepo_Update(t *testing.T) {
 
 	for _, typ := range []attachment.Type{"photo", "manual", "warranty", "attachment"} {
 		t.Run(string(typ), func(t *testing.T) {
-			_, err := tRepos.Attachments.Update(context.Background(), tGroup.ID, entity.ID, &ItemAttachmentUpdate{
+			_, err := tRepos.Attachments.Update(context.Background(), tGroup.ID, entity.ID, &EntityAttachmentUpdate{
 				Type: string(typ),
 			})
 
@@ -136,7 +136,7 @@ func TestAttachmentRepo_EnsureSinglePrimaryAttachment(t *testing.T) {
 	attachments := useAttachments(t, 2)
 
 	setAndVerifyPrimary := func(primaryAttachmentID, nonPrimaryAttachmentID uuid.UUID) {
-		primaryAttachment, err := tRepos.Attachments.Update(ctx, tGroup.ID, primaryAttachmentID, &ItemAttachmentUpdate{
+		primaryAttachment, err := tRepos.Attachments.Update(ctx, tGroup.ID, primaryAttachmentID, &EntityAttachmentUpdate{
 			Type:    attachment.TypePhoto.String(),
 			Primary: true,
 		})
@@ -158,11 +158,11 @@ func TestAttachmentRepo_UpdateNonPhotoDoesNotAffectPrimaryPhoto(t *testing.T) {
 	item := useItems(t, 1)[0]
 
 	// Create a photo attachment that will be primary
-	photoAttachment, err := tRepos.Attachments.Create(ctx, item.ID, ItemCreateAttachment{Title: "Test Photo", Content: strings.NewReader("Photo content")}, attachment.TypePhoto, true)
+	photoAttachment, err := tRepos.Attachments.Create(ctx, item.ID, EntityCreateAttachment{Title: "Test Photo", Content: strings.NewReader("Photo content")}, attachment.TypePhoto, true)
 	require.NoError(t, err)
 
 	// Create a manual attachment (non-photo)
-	manualAttachment, err := tRepos.Attachments.Create(ctx, item.ID, ItemCreateAttachment{Title: "Test Manual", Content: strings.NewReader("Manual content")}, attachment.TypeManual, false)
+	manualAttachment, err := tRepos.Attachments.Create(ctx, item.ID, EntityCreateAttachment{Title: "Test Manual", Content: strings.NewReader("Manual content")}, attachment.TypeManual, false)
 	require.NoError(t, err)
 
 	// Cleanup
@@ -177,7 +177,7 @@ func TestAttachmentRepo_UpdateNonPhotoDoesNotAffectPrimaryPhoto(t *testing.T) {
 	assert.True(t, photoAttachment.Primary)
 
 	// Update the manual attachment (this should NOT affect the photo's primary status)
-	_, err = tRepos.Attachments.Update(ctx, tGroup.ID, manualAttachment.ID, &ItemAttachmentUpdate{
+	_, err = tRepos.Attachments.Update(ctx, tGroup.ID, manualAttachment.ID, &EntityAttachmentUpdate{
 		Type:    attachment.TypeManual.String(),
 		Title:   "Updated Manual",
 		Primary: false, // This should have no effect since it's not a photo
@@ -200,7 +200,7 @@ func TestAttachmentRepo_AddingPDFAfterPhotoKeepsPhotoAsPrimary(t *testing.T) {
 	item := useItems(t, 1)[0]
 
 	// Step 1: Upload a photo first (this should become primary since it's the first photo)
-	photoAttachment, err := tRepos.Attachments.Create(ctx, item.ID, ItemCreateAttachment{Title: "Item Photo", Content: strings.NewReader("Photo content")}, attachment.TypePhoto, false)
+	photoAttachment, err := tRepos.Attachments.Create(ctx, item.ID, EntityCreateAttachment{Title: "Item Photo", Content: strings.NewReader("Photo content")}, attachment.TypePhoto, false)
 	require.NoError(t, err)
 
 	// Cleanup
@@ -214,7 +214,7 @@ func TestAttachmentRepo_AddingPDFAfterPhotoKeepsPhotoAsPrimary(t *testing.T) {
 	assert.True(t, photoAttachment.Primary, "First photo should automatically become primary")
 
 	// Step 2: Add a PDF receipt (this should NOT affect the photo's primary status)
-	pdfAttachment, err := tRepos.Attachments.Create(ctx, item.ID, ItemCreateAttachment{Title: "Receipt PDF", Content: strings.NewReader("PDF content")}, attachment.TypeReceipt, false)
+	pdfAttachment, err := tRepos.Attachments.Create(ctx, item.ID, EntityCreateAttachment{Title: "Receipt PDF", Content: strings.NewReader("PDF content")}, attachment.TypeReceipt, false)
 	require.NoError(t, err)
 
 	// Add to cleanup
@@ -246,10 +246,10 @@ func TestAttachmentRepo_SettingPhotoPrimaryStillWorks(t *testing.T) {
 	item := useItems(t, 1)[0]
 
 	// Create two photo attachments
-	photo1, err := tRepos.Attachments.Create(ctx, item.ID, ItemCreateAttachment{Title: "Photo 1", Content: strings.NewReader("Photo 1 content")}, attachment.TypePhoto, false)
+	photo1, err := tRepos.Attachments.Create(ctx, item.ID, EntityCreateAttachment{Title: "Photo 1", Content: strings.NewReader("Photo 1 content")}, attachment.TypePhoto, false)
 	require.NoError(t, err)
 
-	photo2, err := tRepos.Attachments.Create(ctx, item.ID, ItemCreateAttachment{Title: "Photo 2", Content: strings.NewReader("Photo 2 content")}, attachment.TypePhoto, false)
+	photo2, err := tRepos.Attachments.Create(ctx, item.ID, EntityCreateAttachment{Title: "Photo 2", Content: strings.NewReader("Photo 2 content")}, attachment.TypePhoto, false)
 	require.NoError(t, err)
 
 	// Cleanup
@@ -268,7 +268,7 @@ func TestAttachmentRepo_SettingPhotoPrimaryStillWorks(t *testing.T) {
 	assert.False(t, photo2.Primary)
 
 	// Now set photo2 as primary (this should work and remove primary from photo1)
-	photo2, err = tRepos.Attachments.Update(ctx, tGroup.ID, photo2.ID, &ItemAttachmentUpdate{
+	photo2, err = tRepos.Attachments.Update(ctx, tGroup.ID, photo2.ID, &EntityAttachmentUpdate{
 		Type:    attachment.TypePhoto.String(),
 		Title:   "Photo 2",
 		Primary: true,

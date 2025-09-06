@@ -58,7 +58,7 @@ type AttachmentRepo struct {
 }
 
 type (
-	ItemAttachment struct {
+	EntityAttachment struct {
 		ID        uuid.UUID       `json:"id"`
 		CreatedAt time.Time       `json:"createdAt"`
 		UpdatedAt time.Time       `json:"updatedAt"`
@@ -70,21 +70,21 @@ type (
 		Thumbnail *ent.Attachment `json:"thumbnail,omitempty"`
 	}
 
-	ItemAttachmentUpdate struct {
+	EntityAttachmentUpdate struct {
 		ID      uuid.UUID `json:"-"`
 		Type    string    `json:"type"`
 		Title   string    `json:"title"`
 		Primary bool      `json:"primary"`
 	}
 
-	ItemCreateAttachment struct {
+	EntityCreateAttachment struct {
 		Title   string    `json:"title"`
 		Content io.Reader `json:"content"`
 	}
 )
 
-func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
-	return ItemAttachment{
+func ToItemAttachment(attachment *ent.Attachment) EntityAttachment {
+	return EntityAttachment{
 		ID:        attachment.ID,
 		CreatedAt: attachment.CreatedAt,
 		UpdatedAt: attachment.UpdatedAt,
@@ -138,7 +138,7 @@ func (r *AttachmentRepo) GetConnString() string {
 	return r.storage.ConnString
 }
 
-func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemCreateAttachment, typ attachment.Type, primary bool) (*ent.Attachment, error) {
+func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc EntityCreateAttachment, typ attachment.Type, primary bool) (*ent.Attachment, error) {
 	tx, err := r.db.Tx(ctx)
 	if err != nil {
 		return nil, err
@@ -312,7 +312,7 @@ func (r *AttachmentRepo) Get(ctx context.Context, gid uuid.UUID, id uuid.UUID) (
 	}
 }
 
-func (r *AttachmentRepo) Update(ctx context.Context, gid uuid.UUID, id uuid.UUID, data *ItemAttachmentUpdate) (*ent.Attachment, error) {
+func (r *AttachmentRepo) Update(ctx context.Context, gid uuid.UUID, id uuid.UUID, data *EntityAttachmentUpdate) (*ent.Attachment, error) {
 	// Validate that the attachment belongs to the specified group
 	_, err := r.db.Attachment.Query().
 		Where(
@@ -753,7 +753,7 @@ func (r *AttachmentRepo) CreateMissingThumbnails(ctx context.Context, groupId uu
 	return count, nil
 }
 
-func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, doc ItemCreateAttachment) (string, error) {
+func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, doc EntityCreateAttachment) (string, error) {
 	// Prepare for the hashing of the file contents
 	hashOut := make([]byte, 32)
 
@@ -869,7 +869,7 @@ func (r *AttachmentRepo) processThumbnailFromImage(ctx context.Context, groupId 
 		return "", err
 	}
 
-	thumbnailFile, err := r.UploadFile(ctx, group, ItemCreateAttachment{
+	thumbnailFile, err := r.UploadFile(ctx, group, EntityCreateAttachment{
 		Title:   fmt.Sprintf("%s-thumb", title),
 		Content: bytes.NewReader(contentBytes),
 	})

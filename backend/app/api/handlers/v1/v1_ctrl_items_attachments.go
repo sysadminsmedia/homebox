@@ -156,7 +156,7 @@ func (ctrl *V1Controller) HandleItemAttachmentDelete() errchain.HandlerFunc {
 //	@Tags		Items Attachments
 //	@Param		id				path		string						true	"Item ID"
 //	@Param		attachment_id	path		string						true	"Attachment ID"
-//	@Param		payload			body		repo.ItemAttachmentUpdate	true	"Attachment Update"
+//	@Param		payload			body		repo.EntityAttachmentUpdate	true	"Attachment Update"
 //	@Success	200				{object}	repo.ItemOut
 //	@Router		/v1/items/{id}/attachments/{attachment_id} [PUT]
 //	@Security	Bearer
@@ -226,7 +226,7 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 
 	// Update Attachment Handler
 	case http.MethodPut:
-		var attachment repo.ItemAttachmentUpdate
+		var attachment repo.EntityAttachmentUpdate
 		err = server.Decode(r, &attachment)
 		if err != nil {
 			log.Err(err).Msg("failed to decode attachment")

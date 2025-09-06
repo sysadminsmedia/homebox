@@ -106,30 +106,32 @@ type LocationQuery struct {
 func (r *LocationRepository) GetAll(ctx context.Context, gid uuid.UUID, filter LocationQuery) ([]LocationOutCount, error) {
 	query := `--sql
 		SELECT
-			id,
-			name,
-			description,
-			created_at,
-			updated_at,
+			entities.id,
+			entities.name,
+			entities.description,
+			entities.created_at,
+			entities.updated_at,
 			(
 				SELECT
 					SUM(entities.quantity)
 				FROM
 					entities
 				WHERE
-				    entities.location_entities = entities.id
+				    entities.entity_children = entities.id
 					AND entities.archived = false
 			) as item_count
 		FROM
-			locations
+			entities
+		JOIN entity_types ON entities.entity_type = entity_types.id
+		AND entity_types.is_location = true
 		WHERE
-			locations.group_locations = $1 {{ FILTER_CHILDREN }}
+			entities.group_entities = $1 {{ FILTER_CHILDREN }}
 		ORDER BY
-			locations.name ASC
+			entities.name ASC
 `
 
 	if filter.FilterChildren {
-		query = strings.Replace(query, "{{ FILTER_CHILDREN }}", "AND locations.location_children IS NULL", 1)
+		query = strings.Replace(query, "{{ FILTER_CHILDREN }}", "AND entities.entity_children IS NULL", 1)
 	} else {
 		query = strings.Replace(query, "{{ FILTER_CHILDREN }}", "", 1)
 	}
@@ -282,16 +284,20 @@ type ItemPath struct {
 
 func (r *LocationRepository) PathForLoc(ctx context.Context, gid, locID uuid.UUID) ([]ItemPath, error) {
 	query := `WITH RECURSIVE location_path AS (
-		SELECT id, name, location_children
-		FROM locations
-		WHERE id = $1 -- Replace ? with the ID of the item's location
-		AND group_locations = $2 -- Replace ? with the ID of the group
+		SELECT e.id, e.name, e.entity_children
+		FROM entities e
+		JOIN entity_types et ON e.entity_type = et.id
+		WHERE e.id = $1
+		AND e.group_entities = $2
+		AND et.is_location = true
 
 		UNION ALL
 
-		SELECT loc.id, loc.name, loc.location_children
-		FROM locations loc
-		JOIN location_path lp ON loc.id = lp.location_children
+		SELECT e.id, e.name, e.entity_children
+		FROM entities e
+		JOIN entity_types et ON e.entity_type = et.id
+		JOIN location_path lp ON e.id = lp.entity_children
+		WHERE et.is_location = true
 	  )
 
 	  SELECT id, name
@@ -331,24 +337,28 @@ func (r *LocationRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQue
 	query := `
 		WITH recursive location_tree(id, NAME, parent_id, level, node_type) AS
 		(
-			SELECT  id,
-					NAME,
-					location_children AS parent_id,
+			SELECT  e.id,
+					e.NAME,
+					e.entity_children AS parent_id,
 					0 AS level,
 					'location' AS node_type
-			FROM    locations
-			WHERE   location_children IS NULL
-			AND     group_locations = $1
+			FROM    entities e
+			JOIN    entity_types et ON e.entity_type = et.id
+			WHERE   e.entity_children IS NULL
+			AND     et.is_location = true
+			AND     e.group_entities = $1
 			UNION ALL
 			SELECT  c.id,
 					c.NAME,
-					c.location_children AS parent_id,
+					c.entity_children AS parent_id,
 					level + 1,
 					'location' AS node_type
-			FROM   locations c
+			FROM   entities c
+			JOIN    entity_types et ON c.entity_type = et.id
 			JOIN   location_tree p
-			ON     c.location_children = p.id
-			WHERE  level < 10 -- prevent infinite loop & excessive recursion
+			ON     c.entity_children = p.id
+			WHERE  et.is_location = true
+			AND    level < 10 -- prevent infinite loop & excessive recursion
 		){{ WITH_ITEMS }}
 
 		SELECT   id,
@@ -370,26 +380,30 @@ func (r *LocationRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQue
 	if tq.WithItems {
 		itemQuery := `, item_tree(id, NAME, parent_id, level, node_type) AS
 		(
-			SELECT  id,
-					NAME,
-					location_items as parent_id,
+			SELECT  e.id,
+					e.NAME,
+					e.entity_children as parent_id,
 					0 AS level,
 					'item' AS node_type
-			FROM    items
-			WHERE   item_children IS NULL
-			AND     location_items IN (SELECT id FROM location_tree)
+			FROM    entities e
+			JOIN    entity_types et ON e.entity_type = et.id
+			WHERE   e.entity_children IS NULL
+			AND     et.is_location = false
+			AND     e.entity_children IN (SELECT id FROM location_tree)
 
 			UNION ALL
 
 			SELECT  c.id,
 					c.NAME,
-					c.item_children AS parent_id,
+					c.entity_children AS parent_id,
 					level + 1,
 					'item' AS node_type
-			FROM    items c
+			FROM    entities c
+			JOIN    entity_types et ON c.entity_type = et.id
 			JOIN    item_tree p
-			ON      c.item_children = p.id
-			WHERE   c.item_children IS NOT NULL
+			ON      c.entity_children = p.id
+			WHERE   c.entity_children IS NOT NULL
+			AND     et.is_location = false
 			AND     level < 10 -- prevent infinite loop & excessive recursion
 		)`
 

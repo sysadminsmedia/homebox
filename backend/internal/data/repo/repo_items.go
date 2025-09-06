@@ -180,8 +180,8 @@ type (
 		// Extras
 		Notes string `json:"notes"`
 
-		Attachments []ItemAttachment `json:"attachments"`
-		Fields      []ItemField      `json:"fields"`
+		Attachments []EntityAttachment `json:"attachments"`
+		Fields      []ItemField        `json:"fields"`
 	}
 )
 
@@ -264,7 +264,7 @@ func mapFields(fields []*ent.EntityField) []ItemField {
 }
 
 func mapItemOut(item *ent.Entity) ItemOut {
-	var attachments []ItemAttachment
+	var attachments []EntityAttachment
 	if item.Edges.Attachments != nil {
 		attachments = mapEach(item.Edges.Attachments, ToItemAttachment)
 	}

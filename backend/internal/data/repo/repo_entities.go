@@ -1,11 +1,12 @@
 package repo
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
-	"time"
 )
 
 type EntitiesRepository struct {
@@ -72,7 +73,7 @@ type (
 		Notes string `json:"notes"`
 
 		// Edges
-		Attachments []ItemAttachment `json:"attachments,omitempty" extensions:"x-nullable,x-omitempty"`
-		Fields      []EntityField    `json:"fields,omitempty" extensions:"x-nullable,x-omitempty"`
+		Attachments []EntityAttachment `json:"attachments,omitempty" extensions:"x-nullable,x-omitempty"`
+		Fields      []EntityField      `json:"fields,omitempty" extensions:"x-nullable,x-omitempty"`
 	}
 )

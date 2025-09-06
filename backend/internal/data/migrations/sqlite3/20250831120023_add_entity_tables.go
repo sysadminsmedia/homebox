@@ -4,9 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/pressly/goose/v3"
-	"time"
 )
 
 //nolint:gochecknoinits
@@ -106,7 +107,7 @@ func Up20250831120023(ctx context.Context, tx *sql.Tx) error {
 	}
 	defer rows.Close()
 
-	// Process each group and create default entity types
+	// Process each group and create default entity types, and perform migrations that depend on entity types information
 	for rows.Next() {
 		var groupID string
 		if err := rows.Scan(&groupID); err != nil {
@@ -149,27 +150,58 @@ func Up20250831120023(ctx context.Context, tx *sql.Tx) error {
 		if err != nil {
 			return fmt.Errorf("failed to migrate locations to entities for group %s: %w", groupID, err)
 		}
+
+		// Migrate existing items to entities
+		_, err = tx.ExecContext(ctx, `
+			INSERT INTO "entities" (
+				"id", "created_at", "updated_at", "name", "description",
+				"import_ref", "notes", "quantity", "insured", "archived", "asset_id",
+				"serial_number", "model_number", "manufacturer", "lifetime_warranty",
+				"warranty_expires", "warranty_details", "purchase_time", "purchase_from",
+				"purchase_price", "sold_time", "sold_to", "sold_price", "sold_notes",
+				"group_entities", "entity_type"
+			)
+			SELECT
+				i."id", i."created_at", i."updated_at", i."name", i."description",
+				i."import_ref", i."notes", i."quantity", i."insured", i."archived", i."asset_id",
+				i."serial_number", i."model_number", i."manufacturer", i."lifetime_warranty",
+				i."warranty_expires", i."warranty_details", i."purchase_time", i."purchase_from",
+				i."purchase_price", i."sold_time", i."sold_to", i."sold_price", i."sold_notes",
+				i."group_items", ?
+			FROM "items" i
+			WHERE i."group_items" = ?
+		`, itemTypeID, groupID)
+		if err != nil {
+			return fmt.Errorf("failed to migrate items to entities for group %s: %w", groupID, err)
+		}
+
+		// Migrate existing locations to entities
+		_, err = tx.ExecContext(ctx, `
+			INSERT INTO "entities" (
+				"id", "created_at", "updated_at", "name", "description",
+				"group_entities", "entity_type"
+			)
+			SELECT l.id, l.created_at, l.updated_at, l.name, l.description, l.group_locations, ? FROM "locations" l WHERE l."group_locations" = ?
+		`, locTypeID, groupID)
+		if err != nil {
+			return fmt.Errorf("failed to migrate locations to entities for group %s: %w", groupID, err)
+		}
+	}
+
+	// Drop old tables
+	_, err = tx.ExecContext(ctx, `DROP TABLE IF EXISTS "items"`)
+	if err != nil {
+		return fmt.Errorf("failed to drop items table: %w", err)
+	}
+
+	_, err = tx.ExecContext(ctx, `DROP TABLE IF EXISTS "locations"`)
+	if err != nil {
+		return fmt.Errorf("failed to drop locations table: %w", err)
 	}
 
 	return nil
 }
 
 func Down20250831120023(ctx context.Context, tx *sql.Tx) error {
-	// Drop tables in reverse order to avoid foreign key constraints
-	_, err := tx.ExecContext(ctx, `DROP TABLE IF EXISTS "entity_fields";`)
-	if err != nil {
-		return fmt.Errorf("failed to drop entity_fields table: %w", err)
-	}
-
-	_, err = tx.ExecContext(ctx, `DROP TABLE IF EXISTS "entities";`)
-	if err != nil {
-		return fmt.Errorf("failed to drop entities table: %w", err)
-	}
-
-	_, err = tx.ExecContext(ctx, `DROP TABLE IF EXISTS "entity_types";`)
-	if err != nil {
-		return fmt.Errorf("failed to drop entity_types table: %w", err)
-	}
-
 	return nil
 }
