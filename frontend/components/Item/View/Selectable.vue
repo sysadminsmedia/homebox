@@ -5,6 +5,9 @@
   import MdiTable from "~icons/mdi/table";
   import { Badge } from "@/components/ui/badge";
   import { Button, ButtonGroup } from "@/components/ui/button";
+  import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
+  import ItemCard from "@/components/Item/Card.vue";
+  import ItemViewTable from "@/components/Item/View/Table.vue";
 
   type Props = {
     view?: ViewType;
@@ -30,7 +33,7 @@
 <template>
   <section>
     <BaseSectionHeader class="mb-2 mt-4 flex items-center justify-between">
-      <div class="flex gap-2">
+      <div class="flex gap-2 text-nowrap">
         {{ $t("components.item.view.selectable.items") }}
         <Badge>
           {{ items.length }}

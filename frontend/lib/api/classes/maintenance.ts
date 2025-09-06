@@ -1,8 +1,8 @@
 import { BaseAPI, route } from "../base";
 import type {
   MaintenanceEntry,
-  MaintenanceEntryWithDetails,
   MaintenanceEntryUpdate,
+  MaintenanceEntryWithDetails,
   MaintenanceFilterStatus,
 } from "../types/data-contracts";
 

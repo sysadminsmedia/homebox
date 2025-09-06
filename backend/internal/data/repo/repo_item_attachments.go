@@ -98,7 +98,15 @@ func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
 }
 
 func (r *AttachmentRepo) path(gid uuid.UUID, hash string) string {
-	return filepath.Join(r.storage.PrefixPath, gid.String(), "documents", hash)
+	return filepath.Join(gid.String(), "documents", hash)
+}
+
+func (r *AttachmentRepo) fullPath(relativePath string) string {
+	return filepath.Join(r.storage.PrefixPath, relativePath)
+}
+
+func (r *AttachmentRepo) GetFullPath(relativePath string) string {
+	return r.fullPath(relativePath)
 }
 
 func (r *AttachmentRepo) GetConnString() string {
@@ -387,7 +395,7 @@ func (r *AttachmentRepo) Delete(ctx context.Context, gid uuid.UUID, itemId uuid.
 				log.Err(err).Msg("failed to open bucket for thumbnail deletion")
 				return err
 			}
-			err = thumbBucket.Delete(ctx, thumb.Path)
+			err = thumbBucket.Delete(ctx, r.fullPath(thumb.Path))
 			if err != nil {
 				return err
 			}
@@ -409,7 +417,7 @@ func (r *AttachmentRepo) Delete(ctx context.Context, gid uuid.UUID, itemId uuid.
 				log.Err(err).Msg("failed to close bucket")
 			}
 		}(bucket)
-		err = bucket.Delete(ctx, doc.Path)
+		err = bucket.Delete(ctx, r.fullPath(doc.Path))
 		if err != nil {
 			return err
 		}
@@ -477,7 +485,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		}
 	}(bucket)
 
-	origFile, err := bucket.Open(path)
+	origFile, err := bucket.Open(r.fullPath(path))
 	if err != nil {
 		err := tx.Rollback()
 		if err != nil {
@@ -787,14 +795,15 @@ func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, d
 		ContentType: contentType,
 		ContentMD5:  md5hash.Sum(nil),
 	}
-	path := r.path(itemGroup.ID, fmt.Sprintf("%x", hashOut))
-	err = bucket.WriteAll(ctx, path, contentBytes, options)
+	relativePath := r.path(itemGroup.ID, fmt.Sprintf("%x", hashOut))
+	fullPath := r.fullPath(relativePath)
+	err = bucket.WriteAll(ctx, fullPath, contentBytes, options)
 	if err != nil {
 		log.Err(err).Msg("failed to write file to bucket")
 		return "", err
 	}
 
-	return path, nil
+	return relativePath, nil
 }
 
 func isImageFile(mimetype string) bool {
@@ -844,7 +853,7 @@ func (r *AttachmentRepo) processThumbnailFromImage(ctx context.Context, groupId 
 	}
 	newWidth, newHeight := calculateThumbnailDimensions(bounds.Dx(), bounds.Dy(), r.thumbnail.Width, r.thumbnail.Height)
 	dst := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
-	draw.ApproxBiLinear.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
+	draw.CatmullRom.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
 
 	buf := new(bytes.Buffer)
 	err := webp.Encode(buf, dst, webp.Options{Quality: 80, Lossless: false})

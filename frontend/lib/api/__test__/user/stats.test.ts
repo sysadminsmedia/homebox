@@ -28,7 +28,7 @@ type ImportObj = {
 };
 
 function toCsv(data: ImportObj[]): string {
-  const headers = Object.keys(data[0]).join("\t");
+  const headers = Object.keys(data[0]!).join("\t");
   const rows = data.map(row => {
     return Object.values(row).join("\t");
   });

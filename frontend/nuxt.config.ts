@@ -4,6 +4,10 @@ import { defineNuxtConfig } from "nuxt/config";
 export default defineNuxtConfig({
   ssr: false,
 
+  components: {
+    dirs: [],
+  },
+
   build: {
     transpile: ["vue-i18n"],
   },
@@ -15,7 +19,12 @@ export default defineNuxtConfig({
     "@vite-pwa/nuxt",
     "unplugin-icons/nuxt",
     "shadcn-nuxt",
+    "@nuxt/eslint",
   ],
+
+  eslint: {
+    config: {},
+  },
 
   nitro: {
     devProxy: {

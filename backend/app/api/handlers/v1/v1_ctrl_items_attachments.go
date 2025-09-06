@@ -190,7 +190,7 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 			log.Err(err).Msg("failed to open bucket")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
-		file, err := bucket.NewReader(ctx, doc.Path, nil)
+		file, err := bucket.NewReader(ctx, ctrl.repo.Attachments.GetFullPath(doc.Path), nil)
 		if err != nil {
 			log.Err(err).Msg("failed to open file")
 			return validate.NewRequestError(err, http.StatusInternalServerError)

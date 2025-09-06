@@ -134,7 +134,8 @@
             "selector": {
                 "no_results": "一致するものがありません",
                 "placeholder": "選択してください…",
-                "search_placeholder": "入力してください"
+                "search_placeholder": "入力してください",
+                "searching": "検索中…"
             },
             "view": {
                 "selectable": {

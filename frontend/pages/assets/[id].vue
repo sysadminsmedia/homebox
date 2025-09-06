@@ -1,6 +1,9 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
+  import BaseContainer from "@/components/Base/Container.vue";
+  import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
+  import ItemCard from "~/components/Item/Card.vue";
 
   const { t } = useI18n();
 
@@ -26,7 +29,7 @@
         navigateTo("/home");
         break;
       case 1:
-        navigateTo(`/item/${data.items[0].id}`, { replace: true, redirectCode: 302 });
+        navigateTo(`/item/${data.items[0]!.id}`, { replace: true, redirectCode: 302 });
         break;
       default:
         return data.items;
