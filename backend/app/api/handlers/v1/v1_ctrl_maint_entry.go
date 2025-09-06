@@ -10,7 +10,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/web/adapters"
 )
 
-// HandleMaintenanceLogGet godoc
+// HandleMaintenanceItemsLogGet godoc
 //
 //	@Summary	Get Maintenance Log
 //	@Tags		Item Maintenance
@@ -19,6 +19,26 @@ import (
 //	@Param		filters	query	repo.MaintenanceFilters	false	"which maintenance to retrieve"
 //	@Success	200		{array}	repo.MaintenanceEntryWithDetails[]
 //	@Router		/v1/items/{id}/maintenance [GET]
+//	@Security	Bearer
+//	@Deprecated
+func (ctrl *V1Controller) HandleMaintenanceItemsLogGet() errchain.HandlerFunc {
+	fn := func(r *http.Request, ID uuid.UUID, filters repo.MaintenanceFilters) ([]repo.MaintenanceEntryWithDetails, error) {
+		auth := services.NewContext(r.Context())
+		return ctrl.repo.MaintEntry.GetMaintenanceByItemID(auth, auth.GID, ID, filters)
+	}
+
+	return adapters.QueryID("id", fn, http.StatusOK)
+}
+
+// HandleMaintenanceLogGet godoc
+//
+//	@Summary	Get Maintenance Log
+//	@Tags		Item Maintenance
+//	@Produce	json
+//	@Param		id		path	string					true	"Item ID"
+//	@Param		filters	query	repo.MaintenanceFilters	false	"which maintenance to retrieve"
+//	@Success	200		{array}	repo.MaintenanceEntryWithDetails[]
+//	@Router		/v1/entities/{id}/maintenance [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleMaintenanceLogGet() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID, filters repo.MaintenanceFilters) ([]repo.MaintenanceEntryWithDetails, error) {
@@ -29,7 +49,7 @@ func (ctrl *V1Controller) HandleMaintenanceLogGet() errchain.HandlerFunc {
 	return adapters.QueryID("id", fn, http.StatusOK)
 }
 
-// HandleMaintenanceEntryCreate godoc
+// HandleMaintenanceItemsEntryCreate godoc
 //
 //	@Summary	Create Maintenance Entry
 //	@Tags		Item Maintenance
@@ -38,6 +58,26 @@ func (ctrl *V1Controller) HandleMaintenanceLogGet() errchain.HandlerFunc {
 //	@Param		payload	body		repo.MaintenanceEntryCreate	true	"Entry Data"
 //	@Success	201		{object}	repo.MaintenanceEntry
 //	@Router		/v1/items/{id}/maintenance [POST]
+//	@Security	Bearer
+//	@Deprecated
+func (ctrl *V1Controller) HandleMaintenanceItemsEntryCreate() errchain.HandlerFunc {
+	fn := func(r *http.Request, itemID uuid.UUID, body repo.MaintenanceEntryCreate) (repo.MaintenanceEntry, error) {
+		auth := services.NewContext(r.Context())
+		return ctrl.repo.MaintEntry.Create(auth, itemID, body)
+	}
+
+	return adapters.ActionID("id", fn, http.StatusCreated)
+}
+
+// HandleMaintenanceEntryCreate godoc
+//
+//	@Summary	Create Maintenance Entry
+//	@Tags		Item Maintenance
+//	@Produce	json
+//	@Param		id		path		string						true	"Item ID"
+//	@Param		payload	body		repo.MaintenanceEntryCreate	true	"Entry Data"
+//	@Success	201		{object}	repo.MaintenanceEntry
+//	@Router		/v1/entities/{id}/maintenance [POST]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleMaintenanceEntryCreate() errchain.HandlerFunc {
 	fn := func(r *http.Request, itemID uuid.UUID, body repo.MaintenanceEntryCreate) (repo.MaintenanceEntry, error) {

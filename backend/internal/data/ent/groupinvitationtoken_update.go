@@ -25,97 +25,97 @@ type GroupInvitationTokenUpdate struct {
 }
 
 // Where appends a list predicates to the GroupInvitationTokenUpdate builder.
-func (gitu *GroupInvitationTokenUpdate) Where(ps ...predicate.GroupInvitationToken) *GroupInvitationTokenUpdate {
-	gitu.mutation.Where(ps...)
-	return gitu
+func (_u *GroupInvitationTokenUpdate) Where(ps ...predicate.GroupInvitationToken) *GroupInvitationTokenUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (gitu *GroupInvitationTokenUpdate) SetUpdatedAt(t time.Time) *GroupInvitationTokenUpdate {
-	gitu.mutation.SetUpdatedAt(t)
-	return gitu
+func (_u *GroupInvitationTokenUpdate) SetUpdatedAt(v time.Time) *GroupInvitationTokenUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetToken sets the "token" field.
-func (gitu *GroupInvitationTokenUpdate) SetToken(b []byte) *GroupInvitationTokenUpdate {
-	gitu.mutation.SetToken(b)
-	return gitu
+func (_u *GroupInvitationTokenUpdate) SetToken(v []byte) *GroupInvitationTokenUpdate {
+	_u.mutation.SetToken(v)
+	return _u
 }
 
 // SetExpiresAt sets the "expires_at" field.
-func (gitu *GroupInvitationTokenUpdate) SetExpiresAt(t time.Time) *GroupInvitationTokenUpdate {
-	gitu.mutation.SetExpiresAt(t)
-	return gitu
+func (_u *GroupInvitationTokenUpdate) SetExpiresAt(v time.Time) *GroupInvitationTokenUpdate {
+	_u.mutation.SetExpiresAt(v)
+	return _u
 }
 
 // SetNillableExpiresAt sets the "expires_at" field if the given value is not nil.
-func (gitu *GroupInvitationTokenUpdate) SetNillableExpiresAt(t *time.Time) *GroupInvitationTokenUpdate {
-	if t != nil {
-		gitu.SetExpiresAt(*t)
+func (_u *GroupInvitationTokenUpdate) SetNillableExpiresAt(v *time.Time) *GroupInvitationTokenUpdate {
+	if v != nil {
+		_u.SetExpiresAt(*v)
 	}
-	return gitu
+	return _u
 }
 
 // SetUses sets the "uses" field.
-func (gitu *GroupInvitationTokenUpdate) SetUses(i int) *GroupInvitationTokenUpdate {
-	gitu.mutation.ResetUses()
-	gitu.mutation.SetUses(i)
-	return gitu
+func (_u *GroupInvitationTokenUpdate) SetUses(v int) *GroupInvitationTokenUpdate {
+	_u.mutation.ResetUses()
+	_u.mutation.SetUses(v)
+	return _u
 }
 
 // SetNillableUses sets the "uses" field if the given value is not nil.
-func (gitu *GroupInvitationTokenUpdate) SetNillableUses(i *int) *GroupInvitationTokenUpdate {
-	if i != nil {
-		gitu.SetUses(*i)
+func (_u *GroupInvitationTokenUpdate) SetNillableUses(v *int) *GroupInvitationTokenUpdate {
+	if v != nil {
+		_u.SetUses(*v)
 	}
-	return gitu
+	return _u
 }
 
-// AddUses adds i to the "uses" field.
-func (gitu *GroupInvitationTokenUpdate) AddUses(i int) *GroupInvitationTokenUpdate {
-	gitu.mutation.AddUses(i)
-	return gitu
+// AddUses adds value to the "uses" field.
+func (_u *GroupInvitationTokenUpdate) AddUses(v int) *GroupInvitationTokenUpdate {
+	_u.mutation.AddUses(v)
+	return _u
 }
 
 // SetGroupID sets the "group" edge to the Group entity by ID.
-func (gitu *GroupInvitationTokenUpdate) SetGroupID(id uuid.UUID) *GroupInvitationTokenUpdate {
-	gitu.mutation.SetGroupID(id)
-	return gitu
+func (_u *GroupInvitationTokenUpdate) SetGroupID(id uuid.UUID) *GroupInvitationTokenUpdate {
+	_u.mutation.SetGroupID(id)
+	return _u
 }
 
 // SetNillableGroupID sets the "group" edge to the Group entity by ID if the given value is not nil.
-func (gitu *GroupInvitationTokenUpdate) SetNillableGroupID(id *uuid.UUID) *GroupInvitationTokenUpdate {
+func (_u *GroupInvitationTokenUpdate) SetNillableGroupID(id *uuid.UUID) *GroupInvitationTokenUpdate {
 	if id != nil {
-		gitu = gitu.SetGroupID(*id)
+		_u = _u.SetGroupID(*id)
 	}
-	return gitu
+	return _u
 }
 
 // SetGroup sets the "group" edge to the Group entity.
-func (gitu *GroupInvitationTokenUpdate) SetGroup(g *Group) *GroupInvitationTokenUpdate {
-	return gitu.SetGroupID(g.ID)
+func (_u *GroupInvitationTokenUpdate) SetGroup(v *Group) *GroupInvitationTokenUpdate {
+	return _u.SetGroupID(v.ID)
 }
 
 // Mutation returns the GroupInvitationTokenMutation object of the builder.
-func (gitu *GroupInvitationTokenUpdate) Mutation() *GroupInvitationTokenMutation {
-	return gitu.mutation
+func (_u *GroupInvitationTokenUpdate) Mutation() *GroupInvitationTokenMutation {
+	return _u.mutation
 }
 
 // ClearGroup clears the "group" edge to the Group entity.
-func (gitu *GroupInvitationTokenUpdate) ClearGroup() *GroupInvitationTokenUpdate {
-	gitu.mutation.ClearGroup()
-	return gitu
+func (_u *GroupInvitationTokenUpdate) ClearGroup() *GroupInvitationTokenUpdate {
+	_u.mutation.ClearGroup()
+	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (gitu *GroupInvitationTokenUpdate) Save(ctx context.Context) (int, error) {
-	gitu.defaults()
-	return withHooks(ctx, gitu.sqlSave, gitu.mutation, gitu.hooks)
+func (_u *GroupInvitationTokenUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (gitu *GroupInvitationTokenUpdate) SaveX(ctx context.Context) int {
-	affected, err := gitu.Save(ctx)
+func (_u *GroupInvitationTokenUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -123,51 +123,51 @@ func (gitu *GroupInvitationTokenUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (gitu *GroupInvitationTokenUpdate) Exec(ctx context.Context) error {
-	_, err := gitu.Save(ctx)
+func (_u *GroupInvitationTokenUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (gitu *GroupInvitationTokenUpdate) ExecX(ctx context.Context) {
-	if err := gitu.Exec(ctx); err != nil {
+func (_u *GroupInvitationTokenUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (gitu *GroupInvitationTokenUpdate) defaults() {
-	if _, ok := gitu.mutation.UpdatedAt(); !ok {
+func (_u *GroupInvitationTokenUpdate) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
 		v := groupinvitationtoken.UpdateDefaultUpdatedAt()
-		gitu.mutation.SetUpdatedAt(v)
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
-func (gitu *GroupInvitationTokenUpdate) sqlSave(ctx context.Context) (n int, err error) {
+func (_u *GroupInvitationTokenUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	_spec := sqlgraph.NewUpdateSpec(groupinvitationtoken.Table, groupinvitationtoken.Columns, sqlgraph.NewFieldSpec(groupinvitationtoken.FieldID, field.TypeUUID))
-	if ps := gitu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := gitu.mutation.UpdatedAt(); ok {
+	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(groupinvitationtoken.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := gitu.mutation.Token(); ok {
+	if value, ok := _u.mutation.Token(); ok {
 		_spec.SetField(groupinvitationtoken.FieldToken, field.TypeBytes, value)
 	}
-	if value, ok := gitu.mutation.ExpiresAt(); ok {
+	if value, ok := _u.mutation.ExpiresAt(); ok {
 		_spec.SetField(groupinvitationtoken.FieldExpiresAt, field.TypeTime, value)
 	}
-	if value, ok := gitu.mutation.Uses(); ok {
+	if value, ok := _u.mutation.Uses(); ok {
 		_spec.SetField(groupinvitationtoken.FieldUses, field.TypeInt, value)
 	}
-	if value, ok := gitu.mutation.AddedUses(); ok {
+	if value, ok := _u.mutation.AddedUses(); ok {
 		_spec.AddField(groupinvitationtoken.FieldUses, field.TypeInt, value)
 	}
-	if gitu.mutation.GroupCleared() {
+	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -180,7 +180,7 @@ func (gitu *GroupInvitationTokenUpdate) sqlSave(ctx context.Context) (n int, err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := gitu.mutation.GroupIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -196,7 +196,7 @@ func (gitu *GroupInvitationTokenUpdate) sqlSave(ctx context.Context) (n int, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, gitu.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{groupinvitationtoken.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -204,8 +204,8 @@ func (gitu *GroupInvitationTokenUpdate) sqlSave(ctx context.Context) (n int, err
 		}
 		return 0, err
 	}
-	gitu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // GroupInvitationTokenUpdateOne is the builder for updating a single GroupInvitationToken entity.
@@ -217,104 +217,104 @@ type GroupInvitationTokenUpdateOne struct {
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (gituo *GroupInvitationTokenUpdateOne) SetUpdatedAt(t time.Time) *GroupInvitationTokenUpdateOne {
-	gituo.mutation.SetUpdatedAt(t)
-	return gituo
+func (_u *GroupInvitationTokenUpdateOne) SetUpdatedAt(v time.Time) *GroupInvitationTokenUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetToken sets the "token" field.
-func (gituo *GroupInvitationTokenUpdateOne) SetToken(b []byte) *GroupInvitationTokenUpdateOne {
-	gituo.mutation.SetToken(b)
-	return gituo
+func (_u *GroupInvitationTokenUpdateOne) SetToken(v []byte) *GroupInvitationTokenUpdateOne {
+	_u.mutation.SetToken(v)
+	return _u
 }
 
 // SetExpiresAt sets the "expires_at" field.
-func (gituo *GroupInvitationTokenUpdateOne) SetExpiresAt(t time.Time) *GroupInvitationTokenUpdateOne {
-	gituo.mutation.SetExpiresAt(t)
-	return gituo
+func (_u *GroupInvitationTokenUpdateOne) SetExpiresAt(v time.Time) *GroupInvitationTokenUpdateOne {
+	_u.mutation.SetExpiresAt(v)
+	return _u
 }
 
 // SetNillableExpiresAt sets the "expires_at" field if the given value is not nil.
-func (gituo *GroupInvitationTokenUpdateOne) SetNillableExpiresAt(t *time.Time) *GroupInvitationTokenUpdateOne {
-	if t != nil {
-		gituo.SetExpiresAt(*t)
+func (_u *GroupInvitationTokenUpdateOne) SetNillableExpiresAt(v *time.Time) *GroupInvitationTokenUpdateOne {
+	if v != nil {
+		_u.SetExpiresAt(*v)
 	}
-	return gituo
+	return _u
 }
 
 // SetUses sets the "uses" field.
-func (gituo *GroupInvitationTokenUpdateOne) SetUses(i int) *GroupInvitationTokenUpdateOne {
-	gituo.mutation.ResetUses()
-	gituo.mutation.SetUses(i)
-	return gituo
+func (_u *GroupInvitationTokenUpdateOne) SetUses(v int) *GroupInvitationTokenUpdateOne {
+	_u.mutation.ResetUses()
+	_u.mutation.SetUses(v)
+	return _u
 }
 
 // SetNillableUses sets the "uses" field if the given value is not nil.
-func (gituo *GroupInvitationTokenUpdateOne) SetNillableUses(i *int) *GroupInvitationTokenUpdateOne {
-	if i != nil {
-		gituo.SetUses(*i)
+func (_u *GroupInvitationTokenUpdateOne) SetNillableUses(v *int) *GroupInvitationTokenUpdateOne {
+	if v != nil {
+		_u.SetUses(*v)
 	}
-	return gituo
+	return _u
 }
 
-// AddUses adds i to the "uses" field.
-func (gituo *GroupInvitationTokenUpdateOne) AddUses(i int) *GroupInvitationTokenUpdateOne {
-	gituo.mutation.AddUses(i)
-	return gituo
+// AddUses adds value to the "uses" field.
+func (_u *GroupInvitationTokenUpdateOne) AddUses(v int) *GroupInvitationTokenUpdateOne {
+	_u.mutation.AddUses(v)
+	return _u
 }
 
 // SetGroupID sets the "group" edge to the Group entity by ID.
-func (gituo *GroupInvitationTokenUpdateOne) SetGroupID(id uuid.UUID) *GroupInvitationTokenUpdateOne {
-	gituo.mutation.SetGroupID(id)
-	return gituo
+func (_u *GroupInvitationTokenUpdateOne) SetGroupID(id uuid.UUID) *GroupInvitationTokenUpdateOne {
+	_u.mutation.SetGroupID(id)
+	return _u
 }
 
 // SetNillableGroupID sets the "group" edge to the Group entity by ID if the given value is not nil.
-func (gituo *GroupInvitationTokenUpdateOne) SetNillableGroupID(id *uuid.UUID) *GroupInvitationTokenUpdateOne {
+func (_u *GroupInvitationTokenUpdateOne) SetNillableGroupID(id *uuid.UUID) *GroupInvitationTokenUpdateOne {
 	if id != nil {
-		gituo = gituo.SetGroupID(*id)
+		_u = _u.SetGroupID(*id)
 	}
-	return gituo
+	return _u
 }
 
 // SetGroup sets the "group" edge to the Group entity.
-func (gituo *GroupInvitationTokenUpdateOne) SetGroup(g *Group) *GroupInvitationTokenUpdateOne {
-	return gituo.SetGroupID(g.ID)
+func (_u *GroupInvitationTokenUpdateOne) SetGroup(v *Group) *GroupInvitationTokenUpdateOne {
+	return _u.SetGroupID(v.ID)
 }
 
 // Mutation returns the GroupInvitationTokenMutation object of the builder.
-func (gituo *GroupInvitationTokenUpdateOne) Mutation() *GroupInvitationTokenMutation {
-	return gituo.mutation
+func (_u *GroupInvitationTokenUpdateOne) Mutation() *GroupInvitationTokenMutation {
+	return _u.mutation
 }
 
 // ClearGroup clears the "group" edge to the Group entity.
-func (gituo *GroupInvitationTokenUpdateOne) ClearGroup() *GroupInvitationTokenUpdateOne {
-	gituo.mutation.ClearGroup()
-	return gituo
+func (_u *GroupInvitationTokenUpdateOne) ClearGroup() *GroupInvitationTokenUpdateOne {
+	_u.mutation.ClearGroup()
+	return _u
 }
 
 // Where appends a list predicates to the GroupInvitationTokenUpdate builder.
-func (gituo *GroupInvitationTokenUpdateOne) Where(ps ...predicate.GroupInvitationToken) *GroupInvitationTokenUpdateOne {
-	gituo.mutation.Where(ps...)
-	return gituo
+func (_u *GroupInvitationTokenUpdateOne) Where(ps ...predicate.GroupInvitationToken) *GroupInvitationTokenUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (gituo *GroupInvitationTokenUpdateOne) Select(field string, fields ...string) *GroupInvitationTokenUpdateOne {
-	gituo.fields = append([]string{field}, fields...)
-	return gituo
+func (_u *GroupInvitationTokenUpdateOne) Select(field string, fields ...string) *GroupInvitationTokenUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated GroupInvitationToken entity.
-func (gituo *GroupInvitationTokenUpdateOne) Save(ctx context.Context) (*GroupInvitationToken, error) {
-	gituo.defaults()
-	return withHooks(ctx, gituo.sqlSave, gituo.mutation, gituo.hooks)
+func (_u *GroupInvitationTokenUpdateOne) Save(ctx context.Context) (*GroupInvitationToken, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (gituo *GroupInvitationTokenUpdateOne) SaveX(ctx context.Context) *GroupInvitationToken {
-	node, err := gituo.Save(ctx)
+func (_u *GroupInvitationTokenUpdateOne) SaveX(ctx context.Context) *GroupInvitationToken {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -322,34 +322,34 @@ func (gituo *GroupInvitationTokenUpdateOne) SaveX(ctx context.Context) *GroupInv
 }
 
 // Exec executes the query on the entity.
-func (gituo *GroupInvitationTokenUpdateOne) Exec(ctx context.Context) error {
-	_, err := gituo.Save(ctx)
+func (_u *GroupInvitationTokenUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (gituo *GroupInvitationTokenUpdateOne) ExecX(ctx context.Context) {
-	if err := gituo.Exec(ctx); err != nil {
+func (_u *GroupInvitationTokenUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (gituo *GroupInvitationTokenUpdateOne) defaults() {
-	if _, ok := gituo.mutation.UpdatedAt(); !ok {
+func (_u *GroupInvitationTokenUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
 		v := groupinvitationtoken.UpdateDefaultUpdatedAt()
-		gituo.mutation.SetUpdatedAt(v)
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
-func (gituo *GroupInvitationTokenUpdateOne) sqlSave(ctx context.Context) (_node *GroupInvitationToken, err error) {
+func (_u *GroupInvitationTokenUpdateOne) sqlSave(ctx context.Context) (_node *GroupInvitationToken, err error) {
 	_spec := sqlgraph.NewUpdateSpec(groupinvitationtoken.Table, groupinvitationtoken.Columns, sqlgraph.NewFieldSpec(groupinvitationtoken.FieldID, field.TypeUUID))
-	id, ok := gituo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "GroupInvitationToken.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := gituo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, groupinvitationtoken.FieldID)
 		for _, f := range fields {
@@ -361,29 +361,29 @@ func (gituo *GroupInvitationTokenUpdateOne) sqlSave(ctx context.Context) (_node 
 			}
 		}
 	}
-	if ps := gituo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := gituo.mutation.UpdatedAt(); ok {
+	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(groupinvitationtoken.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := gituo.mutation.Token(); ok {
+	if value, ok := _u.mutation.Token(); ok {
 		_spec.SetField(groupinvitationtoken.FieldToken, field.TypeBytes, value)
 	}
-	if value, ok := gituo.mutation.ExpiresAt(); ok {
+	if value, ok := _u.mutation.ExpiresAt(); ok {
 		_spec.SetField(groupinvitationtoken.FieldExpiresAt, field.TypeTime, value)
 	}
-	if value, ok := gituo.mutation.Uses(); ok {
+	if value, ok := _u.mutation.Uses(); ok {
 		_spec.SetField(groupinvitationtoken.FieldUses, field.TypeInt, value)
 	}
-	if value, ok := gituo.mutation.AddedUses(); ok {
+	if value, ok := _u.mutation.AddedUses(); ok {
 		_spec.AddField(groupinvitationtoken.FieldUses, field.TypeInt, value)
 	}
-	if gituo.mutation.GroupCleared() {
+	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -396,7 +396,7 @@ func (gituo *GroupInvitationTokenUpdateOne) sqlSave(ctx context.Context) (_node 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := gituo.mutation.GroupIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -412,10 +412,10 @@ func (gituo *GroupInvitationTokenUpdateOne) sqlSave(ctx context.Context) (_node 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &GroupInvitationToken{config: gituo.config}
+	_node = &GroupInvitationToken{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, gituo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{groupinvitationtoken.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -423,6 +423,6 @@ func (gituo *GroupInvitationTokenUpdateOne) sqlSave(ctx context.Context) (_node 
 		}
 		return nil, err
 	}
-	gituo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }
