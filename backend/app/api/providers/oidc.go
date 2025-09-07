@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -221,8 +222,13 @@ func (p *OIDCProvider) parseOIDCClaims(rawClaims map[string]interface{}) (OIDCCl
 			key = "email_verified"
 		}
 		if emailVerifiedValue, exists := rawClaims[key]; exists {
-			if emailVerified, ok := emailVerifiedValue.(bool); ok {
-				claims.EmailVerified = &emailVerified
+			switch v := emailVerifiedValue.(type) {
+			case bool:
+				claims.EmailVerified = &v
+			case string:
+				if b, err := strconv.ParseBool(v); err == nil {
+					claims.EmailVerified = &b
+				}
 			}
 		}
 	}
