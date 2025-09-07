@@ -227,6 +227,11 @@ func (svc *UserService) LoginOIDC(ctx context.Context, email, name string) (User
 	email = strings.ToLower(strings.TrimSpace(email))
 	name = strings.TrimSpace(name)
 
+	if email == "" {
+		log.Warn().Msg("OIDC login missing email claim")
+		return UserAuthTokenDetail{}, ErrorInvalidLogin
+	}
+
 	// Try to get existing user
         usr, err := svc.repos.Users.GetOneEmail(ctx, email)
         if err != nil {
