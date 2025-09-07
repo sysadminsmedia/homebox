@@ -331,10 +331,32 @@ func (p *OIDCProvider) initiateOIDCFlow(w http.ResponseWriter, r *http.Request) 
 
 // handleCallback processes the OAuth2 callback from the OIDC provider
 func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (services.UserAuthTokenDetail, error) {
+	// Helper to clear state cookie using computed domain
+	baseURL := p.getBaseURL(r)
+	u, _ := url.Parse(baseURL)
+	domain := u.Hostname()
+	if domain == "" {
+		domain = noPort(r.Host)
+	}
+	clearState := func() {
+		http.SetCookie(w, &http.Cookie{
+			Name:     "oidc_state",
+			Value:    "",
+			Expires:  time.Unix(0, 0),
+			Domain:   domain,
+			MaxAge:   -1,
+			Secure:   p.isSecure(r),
+			HttpOnly: true,
+			Path:     "/",
+			SameSite: http.SameSiteLaxMode,
+		})
+	}
+
 	// Check for OAuth error responses first
 	if errCode := r.URL.Query().Get("error"); errCode != "" {
 		errDesc := r.URL.Query().Get("error_description")
 		log.Warn().Str("error", errCode).Str("description", errDesc).Msg("OIDC provider returned error")
+		clearState()
 		return services.UserAuthTokenDetail{}, fmt.Errorf("OIDC provider error: %s - %s", errCode, errDesc)
 	}
 
@@ -342,39 +364,25 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 	stateCookie, err := r.Cookie("oidc_state")
 	if err != nil {
 		log.Warn().Err(err).Msg("OIDC state cookie not found - possible CSRF attack or expired session")
+		clearState()
 		return services.UserAuthTokenDetail{}, fmt.Errorf("state cookie not found")
 	}
 
 	stateParam := r.URL.Query().Get("state")
 	if stateParam == "" {
 		log.Warn().Msg("OIDC state parameter missing from callback")
+		clearState()
 		return services.UserAuthTokenDetail{}, fmt.Errorf("state parameter missing")
 	}
 
 	if stateParam != stateCookie.Value {
 		log.Warn().Str("received", stateParam).Str("expected", stateCookie.Value).Msg("OIDC state mismatch - possible CSRF attack")
+		clearState()
 		return services.UserAuthTokenDetail{}, fmt.Errorf("state parameter mismatch")
 	}
 
 	// Clear state cookie
-	baseURL := p.getBaseURL(r)
-	u, _ := url.Parse(baseURL)
-	domain := u.Hostname()
-	if domain == "" {
-		domain = noPort(r.Host)
-	}
-
-	http.SetCookie(w, &http.Cookie{
-		Name:     "oidc_state",
-		Value:    "",
-		Expires:  time.Unix(0, 0),
-		Domain:   domain,
-		MaxAge:   -1,
-		Secure:   p.isSecure(r),
-		HttpOnly: true,
-		Path:     "/",
-		SameSite: http.SameSiteLaxMode,
-	})
+	clearState()
 
 	// Use the existing callback logic but return the token instead of redirecting
 	return p.AuthenticateWithBaseURL(baseURL, w, r)
