@@ -380,13 +380,12 @@ func (p *OIDCProvider) getBaseURL(r *http.Request) string {
 	}
 
 	host := r.Host
-	if p.options.TrustProxy {
+	if p.options.Hostname != "" {
+		host = p.options.Hostname
+	} else if p.options.TrustProxy {
 		if xfHost := r.Header.Get("X-Forwarded-Host"); xfHost != "" {
 			host = xfHost
 		}
-	}
-	if p.options.Hostname != "" {
-		host = p.options.Hostname
 	}
 
 	return scheme + "://" + host
