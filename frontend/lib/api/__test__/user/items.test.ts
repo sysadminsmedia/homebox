@@ -50,6 +50,9 @@ describe("user should be able to create an item and add an attachment", () => {
       expect(response.status).toBe(201);
     }
 
+    // Small delay to ensure attachment is fully processed in CI
+    await new Promise(resolve => setTimeout(resolve, 100));
+
     // Get Attachment
     const { response: itmResp, data } = await api.items.get(item.id);
     expect(itmResp.status).toBe(200);
