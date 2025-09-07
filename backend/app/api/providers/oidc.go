@@ -18,14 +18,14 @@ import (
 )
 
 type OIDCProvider struct {
-	service       *services.UserService
-	config        *config.OIDCConf
-	options       *config.Options
-	cookieSecure  bool
-	provider      *oidc.Provider
-	verifier      *oidc.IDTokenVerifier
-	oauth2        oauth2.Config
-	endpoint      oauth2.Endpoint
+	service      *services.UserService
+	config       *config.OIDCConf
+	options      *config.Options
+	cookieSecure bool
+	provider     *oidc.Provider
+	verifier     *oidc.IDTokenVerifier
+	oauth2       oauth2.Config
+	endpoint     oauth2.Endpoint
 }
 
 type DiscoveryDocument struct {
@@ -93,7 +93,7 @@ func (p *OIDCProvider) Name() string {
 }
 
 // Authenticate implements the AuthProvider interface but is not used for OIDC
-// OIDC uses dedicated endpoints: GET /users/login/oidc and GET /users/login/oidc/callback  
+// OIDC uses dedicated endpoints: GET /users/login/oidc and GET /users/login/oidc/callback
 func (p *OIDCProvider) Authenticate(w http.ResponseWriter, r *http.Request) (services.UserAuthTokenDetail, error) {
 	return services.UserAuthTokenDetail{}, fmt.Errorf("OIDC authentication uses dedicated endpoints: /users/login/oidc")
 }
@@ -112,7 +112,7 @@ func (p *OIDCProvider) AuthenticateWithBaseURL(baseURL string, w http.ResponseWr
 	// Exchange code for token with timeout
 	ctx, cancel := context.WithTimeout(context.Background(), p.config.RequestTimeout)
 	defer cancel()
-	
+
 	token, err := oauth2Config.Exchange(ctx, code)
 	if err != nil {
 		log.Err(err).Msg("failed to exchange OIDC code for token")
@@ -128,7 +128,7 @@ func (p *OIDCProvider) AuthenticateWithBaseURL(baseURL string, w http.ResponseWr
 	// Parse and validate the ID token using the library's verifier with timeout
 	verifyCtx, verifyCancel := context.WithTimeout(context.Background(), p.config.RequestTimeout)
 	defer verifyCancel()
-	
+
 	idTokenStruct, err := p.verifier.Verify(verifyCtx, idToken)
 	if err != nil {
 		log.Err(err).Msg("failed to verify ID token")
@@ -380,7 +380,7 @@ func (p *OIDCProvider) InitiateOIDCFlow(w http.ResponseWriter, r *http.Request) 
 	return p.initiateOIDCFlow(w, r)
 }
 
-// HandleCallback processes the OIDC callback and returns the authenticated user token  
+// HandleCallback processes the OIDC callback and returns the authenticated user token
 func (p *OIDCProvider) HandleCallback(w http.ResponseWriter, r *http.Request) (services.UserAuthTokenDetail, error) {
 	return p.handleCallback(w, r)
 }
