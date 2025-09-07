@@ -92,8 +92,8 @@ func (p *OIDCProvider) Authenticate(w http.ResponseWriter, r *http.Request) (ser
 }
 
 // AuthenticateWithBaseURL is the main authentication method that requires baseURL
-// This is now only called from handleCallback after state verification
-func (p *OIDCProvider) AuthenticateWithBaseURL(baseURL string, w http.ResponseWriter, r *http.Request) (services.UserAuthTokenDetail, error) {
+// Called from handleCallback after state and nonce verification
+func (p *OIDCProvider) AuthenticateWithBaseURL(baseURL, expectedNonce string, w http.ResponseWriter, r *http.Request) (services.UserAuthTokenDetail, error) {
 	code := r.URL.Query().Get("code")
 	if code == "" {
 		return services.UserAuthTokenDetail{}, fmt.Errorf("missing authorization code")
@@ -140,6 +140,24 @@ func (p *OIDCProvider) AuthenticateWithBaseURL(baseURL string, w http.ResponseWr
 	if err != nil {
 		log.Err(err).Msg("failed to parse OIDC claims")
 		return services.UserAuthTokenDetail{}, fmt.Errorf("failed to parse OIDC claims: %w", err)
+	}
+
+	// Verify nonce claim matches expected value
+	tokenNonce, exists := rawClaims["nonce"]
+	if !exists {
+		log.Warn().Msg("nonce claim missing from ID token - possible replay attack")
+		return services.UserAuthTokenDetail{}, fmt.Errorf("nonce claim missing from token")
+	}
+
+	tokenNonceStr, ok := tokenNonce.(string)
+	if !ok {
+		log.Warn().Msg("nonce claim is not a string in ID token")
+		return services.UserAuthTokenDetail{}, fmt.Errorf("invalid nonce claim format")
+	}
+
+	if tokenNonceStr != expectedNonce {
+		log.Warn().Str("received", tokenNonceStr).Str("expected", expectedNonce).Msg("OIDC nonce mismatch - possible replay attack")
+		return services.UserAuthTokenDetail{}, fmt.Errorf("nonce parameter mismatch")
 	}
 
 	// Check if email is verified
@@ -270,9 +288,9 @@ func (p *OIDCProvider) hasAllowedGroup(userGroups, allowedGroups []string) bool 
 	return false
 }
 
-func (p *OIDCProvider) GetAuthURL(baseURL, state string) string {
+func (p *OIDCProvider) GetAuthURL(baseURL, state, nonce string) string {
 	oauth2Config := p.getOAuth2Config(baseURL)
-	return oauth2Config.AuthCodeURL(state)
+	return oauth2Config.AuthCodeURL(state, oidc.Nonce(nonce))
 }
 
 func (p *OIDCProvider) getOAuth2Config(baseURL string) oauth2.Config {
@@ -295,9 +313,16 @@ func (p *OIDCProvider) getOAuth2Config(baseURL string) oauth2.Config {
 // initiateOIDCFlow handles the initial OIDC authentication request by redirecting to the provider
 func (p *OIDCProvider) initiateOIDCFlow(w http.ResponseWriter, r *http.Request) (services.UserAuthTokenDetail, error) {
 	// Generate state parameter for CSRF protection
-	state, err := generateState()
+	state, err := generateSecureToken()
 	if err != nil {
 		log.Err(err).Msg("failed to generate OIDC state parameter")
+		return services.UserAuthTokenDetail{}, fmt.Errorf("internal server error")
+	}
+
+	// Generate nonce parameter for replay attack protection
+	nonce, err := generateSecureToken()
+	if err != nil {
+		log.Err(err).Msg("failed to generate OIDC nonce parameter")
 		return services.UserAuthTokenDetail{}, fmt.Errorf("internal server error")
 	}
 
@@ -321,8 +346,20 @@ func (p *OIDCProvider) initiateOIDCFlow(w http.ResponseWriter, r *http.Request) 
 		SameSite: http.SameSiteLaxMode,
 	})
 
+	// Store nonce in session cookie for validation
+	http.SetCookie(w, &http.Cookie{
+		Name:     "oidc_nonce",
+		Value:    nonce,
+		Expires:  time.Now().Add(p.config.StateExpiry),
+		Domain:   domain,
+		Secure:   p.isSecure(r),
+		HttpOnly: true,
+		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
+	})
+
 	// Generate auth URL and redirect
-	authURL := p.GetAuthURL(baseURL, state)
+	authURL := p.GetAuthURL(baseURL, state, nonce)
 	http.Redirect(w, r, authURL, http.StatusFound)
 
 	// Return empty token since this is a redirect response
@@ -338,9 +375,20 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 	if domain == "" {
 		domain = noPort(r.Host)
 	}
-	clearState := func() {
+	clearCookies := func() {
 		http.SetCookie(w, &http.Cookie{
 			Name:     "oidc_state",
+			Value:    "",
+			Expires:  time.Unix(0, 0),
+			Domain:   domain,
+			MaxAge:   -1,
+			Secure:   p.isSecure(r),
+			HttpOnly: true,
+			Path:     "/",
+			SameSite: http.SameSiteLaxMode,
+		})
+		http.SetCookie(w, &http.Cookie{
+			Name:     "oidc_nonce",
 			Value:    "",
 			Expires:  time.Unix(0, 0),
 			Domain:   domain,
@@ -356,7 +404,7 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 	if errCode := r.URL.Query().Get("error"); errCode != "" {
 		errDesc := r.URL.Query().Get("error_description")
 		log.Warn().Str("error", errCode).Str("description", errDesc).Msg("OIDC provider returned error")
-		clearState()
+		clearCookies()
 		return services.UserAuthTokenDetail{}, fmt.Errorf("OIDC provider error: %s - %s", errCode, errDesc)
 	}
 
@@ -364,37 +412,45 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 	stateCookie, err := r.Cookie("oidc_state")
 	if err != nil {
 		log.Warn().Err(err).Msg("OIDC state cookie not found - possible CSRF attack or expired session")
-		clearState()
+		clearCookies()
 		return services.UserAuthTokenDetail{}, fmt.Errorf("state cookie not found")
 	}
 
 	stateParam := r.URL.Query().Get("state")
 	if stateParam == "" {
 		log.Warn().Msg("OIDC state parameter missing from callback")
-		clearState()
+		clearCookies()
 		return services.UserAuthTokenDetail{}, fmt.Errorf("state parameter missing")
 	}
 
 	if stateParam != stateCookie.Value {
 		log.Warn().Str("received", stateParam).Str("expected", stateCookie.Value).Msg("OIDC state mismatch - possible CSRF attack")
-		clearState()
+		clearCookies()
 		return services.UserAuthTokenDetail{}, fmt.Errorf("state parameter mismatch")
 	}
 
-	// Clear state cookie
-	clearState()
+	// Verify nonce parameter
+	nonceCookie, err := r.Cookie("oidc_nonce")
+	if err != nil {
+		log.Warn().Err(err).Msg("OIDC nonce cookie not found - possible replay attack or expired session")
+		clearCookies()
+		return services.UserAuthTokenDetail{}, fmt.Errorf("nonce cookie not found")
+	}
+
+	// Clear cookies before proceeding to token verification
+	clearCookies()
 
 	// Use the existing callback logic but return the token instead of redirecting
-	return p.AuthenticateWithBaseURL(baseURL, w, r)
+	return p.AuthenticateWithBaseURL(baseURL, nonceCookie.Value, w, r)
 }
 
 // Helper functions
-func generateState() (string, error) {
+func generateSecureToken() (string, error) {
 	// Generate 32 bytes of cryptographically secure random data
 	bytes := make([]byte, 32)
 	_, err := rand.Read(bytes)
 	if err != nil {
-		return "", fmt.Errorf("failed to generate secure random state: %w", err)
+		return "", fmt.Errorf("failed to generate secure random token: %w", err)
 	}
 	// Use URL-safe base64 encoding without padding for clean URLs
 	return base64.RawURLEncoding.EncodeToString(bytes), nil
