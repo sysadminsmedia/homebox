@@ -94,7 +94,7 @@ func (p *OIDCProvider) Name() string {
 // Authenticate implements the AuthProvider interface but is not used for OIDC
 // OIDC uses dedicated endpoints: GET /api/v1/users/login/oidc and GET /api/v1/users/login/oidc/callback
 func (p *OIDCProvider) Authenticate(w http.ResponseWriter, r *http.Request) (services.UserAuthTokenDetail, error) {
-    return services.UserAuthTokenDetail{}, fmt.Errorf("OIDC authentication uses dedicated endpoints: /api/v1/users/login/oidc")
+	return services.UserAuthTokenDetail{}, fmt.Errorf("OIDC authentication uses dedicated endpoints: /api/v1/users/login/oidc")
 }
 
 // AuthenticateWithBaseURL is the main authentication method that requires baseURL
@@ -109,7 +109,7 @@ func (p *OIDCProvider) AuthenticateWithBaseURL(baseURL string, w http.ResponseWr
 	oauth2Config := p.getOAuth2Config(baseURL)
 
 	// Exchange code for token with timeout
-	ctx, cancel := context.WithTimeout(context.Background(), p.config.RequestTimeout)
+	ctx, cancel := context.WithTimeout(r.Context(), p.config.RequestTimeout)
 	defer cancel()
 
 	token, err := oauth2Config.Exchange(ctx, code)
@@ -125,7 +125,7 @@ func (p *OIDCProvider) AuthenticateWithBaseURL(baseURL string, w http.ResponseWr
 	}
 
 	// Parse and validate the ID token using the library's verifier with timeout
-	verifyCtx, verifyCancel := context.WithTimeout(context.Background(), p.config.RequestTimeout)
+	verifyCtx, verifyCancel := context.WithTimeout(r.Context(), p.config.RequestTimeout)
 	defer verifyCancel()
 
 	idTokenStruct, err := p.verifier.Verify(verifyCtx, idToken)
