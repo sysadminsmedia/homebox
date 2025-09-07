@@ -234,7 +234,7 @@ func (p *OIDCProvider) hasAllowedGroup(userGroups, allowedGroups []string) bool 
 
 func (p *OIDCProvider) GetAuthURL(baseURL, state string) string {
 	oauth2Config := p.getOAuth2Config(baseURL)
-	return oauth2Config.AuthCodeURL(state, oauth2.AccessTypeOffline)
+	return oauth2Config.AuthCodeURL(state)
 }
 
 func (p *OIDCProvider) getOAuth2Config(baseURL string) oauth2.Config {
