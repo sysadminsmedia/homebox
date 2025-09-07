@@ -82,7 +82,7 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 	usrCreate := repo.UserCreate{
 		Name:        data.Name,
 		Email:       data.Email,
-		Password:    hashed,
+		Password:    &hashed,
 		IsSuperuser: false,
 		GroupID:     group.ID,
 		IsOwner:     creatingGroup,
@@ -190,6 +190,14 @@ func (svc *UserService) Login(ctx context.Context, username, password string, ex
 		return UserAuthTokenDetail{}, ErrorInvalidLogin
 	}
 
+	// SECURITY: Deny login for users with null or empty password (OIDC users)
+	if usr.PasswordHash == "" {
+		log.Warn().Str("email", username).Msg("Login attempt blocked for user with null password (likely OIDC user)")
+		// SECURITY: Perform hash to ensure response times are the same
+		hasher.CheckPasswordHash("not-a-real-password", "not-a-real-password")
+		return UserAuthTokenDetail{}, ErrorInvalidLogin
+	}
+
 	check, rehash := hasher.CheckPasswordHash(password, usr.PasswordHash)
 
 	if !check {
@@ -208,6 +216,72 @@ func (svc *UserService) Login(ctx context.Context, username, password string, ex
 		}
 	}
 	return svc.createSessionToken(ctx, usr.ID, extendedSession)
+}
+
+// LoginOIDC creates a session token for a user authenticated via OIDC.
+// If the user doesn't exist, it will create one.
+func (svc *UserService) LoginOIDC(ctx context.Context, email, name string) (UserAuthTokenDetail, error) {
+	// Try to get existing user
+	usr, err := svc.repos.Users.GetOneEmail(ctx, email)
+	if err != nil {
+		// User doesn't exist, create a new one without password
+		log.Info().Str("email", email).Msg("OIDC user not found, creating new user")
+
+		usr, err = svc.registerOIDCUser(ctx, email, name)
+		if err != nil {
+			log.Err(err).Str("email", email).Msg("failed to create OIDC user")
+			return UserAuthTokenDetail{}, err
+		}
+
+		log.Info().Str("email", email).Msg("OIDC user created successfully")
+	}
+
+	// Create session token with extended session (7 days)
+	return svc.createSessionToken(ctx, usr.ID, true)
+}
+
+// registerOIDCUser creates a new user for OIDC authentication
+func (svc *UserService) registerOIDCUser(ctx context.Context, email, name string) (repo.UserOut, error) {
+	// Create a new group for the user (OIDC users always create their own group for now)
+	group, err := svc.repos.Groups.GroupCreate(ctx, "Home")
+	if err != nil {
+		log.Err(err).Msg("Failed to create group for OIDC user")
+		return repo.UserOut{}, err
+	}
+
+	// Create user without password (nil password for OIDC users)
+	usrCreate := repo.UserCreate{
+		Name:        name,
+		Email:       email,
+		Password:    nil, // OIDC users have no password
+		IsSuperuser: false,
+		GroupID:     group.ID,
+		IsOwner:     true, // OIDC users are owners of their new group
+	}
+
+	usr, err := svc.repos.Users.Create(ctx, usrCreate)
+	if err != nil {
+		return repo.UserOut{}, err
+	}
+
+	// Create default labels and locations for the new group
+	log.Debug().Msg("creating default labels for OIDC user")
+	for _, label := range defaultLabels() {
+		_, err := svc.repos.Labels.Create(ctx, group.ID, label)
+		if err != nil {
+			log.Err(err).Msg("Failed to create default label")
+		}
+	}
+
+	log.Debug().Msg("creating default locations for OIDC user")
+	for _, location := range defaultLocations() {
+		_, err := svc.repos.Locations.Create(ctx, group.ID, location)
+		if err != nil {
+			log.Err(err).Msg("Failed to create default location")
+		}
+	}
+
+	return usr, nil
 }
 
 func (svc *UserService) Logout(ctx context.Context, token string) error {

@@ -41,6 +41,9 @@
   const ctx = useAuthContext();
 
   const api = usePublicApi();
+  
+  // Use useState for OIDC error state management
+  const oidcError = useState<string | null>("oidc_error", () => null);
 
   const { data: status } = useAsyncData(async () => {
     const { data } = await api.status();
@@ -56,6 +59,11 @@
     if (status?.demo) {
       email.value = "demo@example.com";
       loginPassword.value = "demo";
+    }
+    
+    // Auto-redirect to OIDC if force is enabled, but not if there's an OIDC error
+    if (status?.oidc?.enabled && status?.oidc?.force && !oidcError.value) {
+      loginWithOIDC();
     }
   });
 
@@ -138,6 +146,35 @@
     if (groupToken.value !== "") {
       registerForm.value = true;
     }
+    
+    // Handle OIDC error notifications from URL parameters
+    const oidcErrorParam = route.query.oidc_error;
+    if (typeof oidcErrorParam === "string" && oidcErrorParam.startsWith("oidc_")) {
+      // Set the error state to prevent auto-redirect
+      oidcError.value = oidcErrorParam;
+      
+      const translationKey = `index.toast.${oidcErrorParam}`;
+      let errorMessage = t(translationKey);
+      
+      // If there are additional details, append them
+      const details = route.query.details;
+      if (typeof details === "string" && details.trim() !== "") {
+        errorMessage += `: ${details}`;
+      }
+      
+      toast.error(errorMessage);
+      
+      // Clean up the URL by removing the error parameters
+      const newQuery = { ...route.query };
+      delete newQuery.oidc_error;
+      delete newQuery.details;
+      router.replace({ query: newQuery });
+      
+      // Clear the error state after showing the message (with a delay to ensure auto-redirect doesn't trigger)
+      setTimeout(() => {
+        oidcError.value = null;
+      }, 1000);
+    }
   });
 
   const loading = ref(false);
@@ -163,6 +200,10 @@
     navigateTo(redirectTo.value || "/home");
     redirectTo.value = null;
     loading.value = false;
+  }
+
+  function loginWithOIDC() {
+    window.location.href = '/api/v1/users/login/oidc';
   }
 
   const [registerForm, toggleLogin] = useToggle();
@@ -285,7 +326,7 @@
                     {{ $t("index.login") }}
                   </CardTitle>
                 </CardHeader>
-                <CardContent class="flex flex-col gap-2">
+                <CardContent v-if="status?.oidc?.allowLocal !== false" class="flex flex-col gap-2">
                   <template v-if="status && status.demo">
                     <p class="text-center text-xs italic">{{ $t("global.demo_instance") }}</p>
                     <p class="text-center text-xs">
@@ -301,9 +342,25 @@
                     <FormCheckbox v-model="remember" :label="$t('index.remember_me')" />
                   </div>
                 </CardContent>
-                <CardFooter>
-                  <Button class="w-full" type="submit" :class="loading ? 'loading' : ''" :disabled="loading">
+                <CardFooter class="flex flex-col gap-2">
+                  <Button v-if="status?.oidc?.allowLocal !== false" class="w-full" type="submit" :class="loading ? 'loading' : ''" :disabled="loading">
                     {{ $t("index.login") }}
+                  </Button>
+                  
+                  <div v-if="status?.oidc?.enabled && status?.oidc?.allowLocal !== false" class="flex w-full items-center gap-2">
+                    <hr class="flex-1" />
+                    <span class="text-xs text-muted-foreground">{{ $t("index.or") }}</span>
+                    <hr class="flex-1" />
+                  </div>
+                  
+                  <Button 
+                    v-if="status?.oidc?.enabled"
+                    type="button"
+                    variant="outline"
+                    class="w-full"
+                    @click="loginWithOIDC"
+                  >
+                    {{ status.oidc.buttonText || 'Sign in with OIDC' }}
                   </Button>
                 </CardFooter>
               </Card>
@@ -311,7 +368,7 @@
           </Transition>
           <div class="mt-6 text-center">
             <Button
-              v-if="status && status.allowRegistration"
+              v-if="status && status.allowRegistration && status?.oidc?.allowLocal !== false"
               class="group"
               variant="link"
               data-testid="register-button"
