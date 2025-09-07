@@ -327,14 +327,21 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 	}
 
 	// Clear state cookie
+	u, _ := url.Parse(p.getBaseURL(r))
+	domain := u.Hostname()
+	if domain == "" {
+		domain = noPort(r.Host)
+	}
 	http.SetCookie(w, &http.Cookie{
 		Name:     "oidc_state",
 		Value:    "",
 		Expires:  time.Unix(0, 0),
-		Domain:   noPort(r.Host),
+		Domain:   domain,
+		MaxAge:   -1,
 		Secure:   p.isSecure(r),
 		HttpOnly: true,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	// Get base URL from request
