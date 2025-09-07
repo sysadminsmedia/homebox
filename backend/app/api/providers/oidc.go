@@ -173,21 +173,33 @@ func (p *OIDCProvider) parseOIDCClaims(rawClaims map[string]interface{}) (OIDCCl
 	var claims OIDCClaims
 
 	// Parse email claim
-	if emailValue, exists := rawClaims[p.config.EmailClaim]; exists {
+	key := p.config.EmailClaim
+	if key == "" {
+		key = "email"
+	}
+	if emailValue, exists := rawClaims[key]; exists {
 		if email, ok := emailValue.(string); ok {
 			claims.Email = email
 		}
 	}
 
 	// Parse name claim
-	if nameValue, exists := rawClaims[p.config.NameClaim]; exists {
+	key = p.config.NameClaim
+	if key == "" {
+		key = "name"
+	}
+	if nameValue, exists := rawClaims[key]; exists {
 		if name, ok := nameValue.(string); ok {
 			claims.Name = name
 		}
 	}
 
 	// Parse groups claim
-	if groupsValue, exists := rawClaims[p.config.GroupClaim]; exists {
+	key = p.config.GroupClaim
+	if key == "" {
+		key = "groups"
+	}
+	if groupsValue, exists := rawClaims[key]; exists {
 		switch groups := groupsValue.(type) {
 		case []interface{}:
 			for _, group := range groups {
