@@ -273,16 +273,22 @@ func (p *OIDCProvider) initiateOIDCFlow(w http.ResponseWriter, r *http.Request) 
 
 	// Get base URL from request
 	baseURL := p.getBaseURL(r)
+	u, _ := url.Parse(baseURL)
+	domain := u.Hostname()
+	if domain == "" {
+		domain = noPort(r.Host)
+	}
 
 	// Store state in session cookie for validation
 	http.SetCookie(w, &http.Cookie{
 		Name:     "oidc_state",
 		Value:    state,
 		Expires:  time.Now().Add(p.config.StateExpiry),
-		Domain:   noPort(r.Host),
+		Domain:   domain,
 		Secure:   p.isSecure(r),
 		HttpOnly: true,
 		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	// Generate auth URL and redirect
