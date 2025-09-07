@@ -346,9 +346,6 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 		SameSite: http.SameSiteLaxMode,
 	})
 
-	// Get base URL from request
-	baseURL := p.getBaseURL(r)
-
 	// Use the existing callback logic but return the token instead of redirecting
 	return p.AuthenticateWithBaseURL(baseURL, w, r)
 }
