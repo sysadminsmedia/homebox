@@ -24,7 +24,6 @@ type OIDCProvider struct {
 	cookieSecure bool
 	provider     *oidc.Provider
 	verifier     *oidc.IDTokenVerifier
-	oauth2       oauth2.Config
 	endpoint     oauth2.Endpoint
 }
 
