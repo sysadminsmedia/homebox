@@ -228,24 +228,35 @@ func (svc *UserService) LoginOIDC(ctx context.Context, email, name string) (User
 	name = strings.TrimSpace(name)
 
 	// Try to get existing user
-	usr, err := svc.repos.Users.GetOneEmail(ctx, email)
-	if err != nil {
-		// Only create if not found
-		if !ent.IsNotFound(err) {
-			log.Err(err).Str("email", email).Msg("failed to lookup user by email")
-			return UserAuthTokenDetail{}, err
-		}
-		// User doesn't exist, create a new one without password
-		log.Debug().Str("user", email).Msg("OIDC user not found, creating new user")
+        usr, err := svc.repos.Users.GetOneEmail(ctx, email)
+        if err != nil {
+            // Only create if not found
+            if !ent.IsNotFound(err) {
+                log.Err(err).Str("email", email).Msg("failed to lookup user by email")
+                return UserAuthTokenDetail{}, err
+            }
+            // User doesn't exist, create a new one without password
+            log.Debug().Str("email", email).Msg("OIDC user not found, creating new user")
 
-		usr, err = svc.registerOIDCUser(ctx, email, name)
-		if err != nil {
-			log.Err(err).Str("email", email).Msg("failed to create OIDC user")
-			return UserAuthTokenDetail{}, err
-		}
+            usr, err = svc.registerOIDCUser(ctx, email, name)
+            if err != nil {
+                // Handle concurrent creation race
+                if ent.IsConstraintError(err) {
+                    if usr2, gerr := svc.repos.Users.GetOneEmail(ctx, email); gerr == nil {
+                        log.Info().Str("email", email).Msg("OIDC user created concurrently; proceeding")
+                        usr = usr2
+                    } else {
+                        log.Err(gerr).Str("email", email).Msg("failed to fetch user after constraint error")
+                        return UserAuthTokenDetail{}, gerr
+                    }
+                } else {
+                    log.Err(err).Str("email", email).Msg("failed to create OIDC user")
+                    return UserAuthTokenDetail{}, err
+                }
+            }
 
-		log.Debug().Str("user", email).Msg("OIDC user created successfully")
-	}
+            log.Debug().Str("email", email).Msg("OIDC user created successfully")
+        }
 
 	// Create session token with extended session (4 weeks)
 	return svc.createSessionToken(ctx, usr.ID, true)
