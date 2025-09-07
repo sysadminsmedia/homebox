@@ -3,10 +3,12 @@ package services
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authroles"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
@@ -221,9 +223,18 @@ func (svc *UserService) Login(ctx context.Context, username, password string, ex
 // LoginOIDC creates a session token for a user authenticated via OIDC.
 // If the user doesn't exist, it will create one.
 func (svc *UserService) LoginOIDC(ctx context.Context, email, name string) (UserAuthTokenDetail, error) {
+	// Normalize inputs
+	email = strings.ToLower(strings.TrimSpace(email))
+	name = strings.TrimSpace(name)
+
 	// Try to get existing user
 	usr, err := svc.repos.Users.GetOneEmail(ctx, email)
 	if err != nil {
+		// Only create if not found
+		if !ent.IsNotFound(err) {
+			log.Err(err).Str("email", email).Msg("failed to lookup user by email")
+			return UserAuthTokenDetail{}, err
+		}
 		// User doesn't exist, create a new one without password
 		log.Debug().Str("user", email).Msg("OIDC user not found, creating new user")
 
