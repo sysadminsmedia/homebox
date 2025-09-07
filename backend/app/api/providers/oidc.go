@@ -50,7 +50,8 @@ func NewOIDCProvider(service *services.UserService, config *config.OIDCConf, opt
 		return nil, fmt.Errorf("OIDC issuer URL is required when OIDC is enabled (set HBOX_OIDC_ISSUER_URL)")
 	}
 
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), config.RequestTimeout)
+	defer cancel()
 
 	provider, err := oidc.NewProvider(ctx, config.IssuerURL)
 	if err != nil {
