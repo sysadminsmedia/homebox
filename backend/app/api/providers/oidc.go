@@ -27,14 +27,6 @@ type OIDCProvider struct {
 	endpoint     oauth2.Endpoint
 }
 
-type DiscoveryDocument struct {
-	AuthorizationEndpoint string `json:"authorization_endpoint"`
-	TokenEndpoint         string `json:"token_endpoint"`
-	UserinfoEndpoint      string `json:"userinfo_endpoint"`
-	JwksURI               string `json:"jwks_uri"`
-	Issuer                string `json:"issuer"`
-}
-
 type OIDCClaims struct {
 	Email   string
 	Groups  []string
