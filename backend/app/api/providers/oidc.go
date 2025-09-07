@@ -263,7 +263,7 @@ func (p *OIDCProvider) getOAuth2Config(baseURL string) oauth2.Config {
 		ClientSecret: p.config.ClientSecret,
 		RedirectURL:  redirectURL,
 		Endpoint:     p.endpoint,
-		Scopes:       strings.Split(p.config.Scope, " "),
+		Scopes:       strings.Fields(p.config.Scope),
 	}
 }
 
