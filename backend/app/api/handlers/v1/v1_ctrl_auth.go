@@ -101,15 +101,15 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) error {
-		// Forbidden if local login is not enabled
-		if !ctrl.config.Options.AllowLocalLogin {
-			return validate.NewRequestError(fmt.Errorf("local login is not enabled"), http.StatusForbidden)
-		}
-
 		// Extract provider query
 		provider := r.URL.Query().Get("provider")
 		if provider == "" {
 			provider = "local"
+		}
+
+		// Block local only when disabled
+		if provider == "local" && !ctrl.config.Options.AllowLocalLogin {
+			return validate.NewRequestError(fmt.Errorf("Local login is not enabled"), http.StatusForbidden)
 		}
 
 		// Get the provider
