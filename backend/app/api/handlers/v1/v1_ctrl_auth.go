@@ -109,7 +109,7 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 
 		// Block local only when disabled
 		if provider == "local" && !ctrl.config.Options.AllowLocalLogin {
-			return validate.NewRequestError(fmt.Errorf("Local login is not enabled"), http.StatusForbidden)
+			return validate.NewRequestError(fmt.Errorf("local login is not enabled"), http.StatusForbidden)
 		}
 
 		// Get the provider
