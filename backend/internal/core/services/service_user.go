@@ -236,7 +236,7 @@ func (svc *UserService) LoginOIDC(ctx context.Context, email, name string) (User
 		log.Info().Str("email", email).Msg("OIDC user created successfully")
 	}
 
-	// Create session token with extended session (7 days)
+	// Create session token with extended session (4 weeks)
 	return svc.createSessionToken(ctx, usr.ID, true)
 }
 
