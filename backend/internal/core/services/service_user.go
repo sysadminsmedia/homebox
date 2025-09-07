@@ -225,7 +225,7 @@ func (svc *UserService) LoginOIDC(ctx context.Context, email, name string) (User
 	usr, err := svc.repos.Users.GetOneEmail(ctx, email)
 	if err != nil {
 		// User doesn't exist, create a new one without password
-		log.Info().Str("email", email).Msg("OIDC user not found, creating new user")
+		log.Debug().Str("user", email).Msg("OIDC user not found, creating new user")
 
 		usr, err = svc.registerOIDCUser(ctx, email, name)
 		if err != nil {
