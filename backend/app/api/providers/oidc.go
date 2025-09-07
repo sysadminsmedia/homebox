@@ -92,9 +92,9 @@ func (p *OIDCProvider) Name() string {
 }
 
 // Authenticate implements the AuthProvider interface but is not used for OIDC
-// OIDC uses dedicated endpoints: GET /users/login/oidc and GET /users/login/oidc/callback
+// OIDC uses dedicated endpoints: GET /api/v1/users/login/oidc and GET /api/v1/users/login/oidc/callback
 func (p *OIDCProvider) Authenticate(w http.ResponseWriter, r *http.Request) (services.UserAuthTokenDetail, error) {
-	return services.UserAuthTokenDetail{}, fmt.Errorf("OIDC authentication uses dedicated endpoints: /users/login/oidc")
+    return services.UserAuthTokenDetail{}, fmt.Errorf("OIDC authentication uses dedicated endpoints: /api/v1/users/login/oidc")
 }
 
 // AuthenticateWithBaseURL is the main authentication method that requires baseURL
