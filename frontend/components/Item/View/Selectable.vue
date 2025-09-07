@@ -7,7 +7,8 @@
   import { Button, ButtonGroup } from "@/components/ui/button";
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import ItemCard from "@/components/Item/Card.vue";
-  import ItemViewTable from "@/components/Item/View/Table.vue";
+  import DataTable from "./table/data-table.vue";
+  import { columns, payments } from "./table/columns";
 
   type Props = {
     view?: ViewType;
@@ -60,7 +61,7 @@
     </BaseSectionHeader>
 
     <template v-if="itemView === 'table'">
-      <ItemViewTable :items="items" />
+      <DataTable :columns="columns" :data="payments" />
     </template>
     <template v-else>
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
