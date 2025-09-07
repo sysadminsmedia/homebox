@@ -82,7 +82,7 @@ type OIDCConf struct {
 	IssuerURL      string        `yaml:"issuer_url"`
 	ClientID       string        `yaml:"client_id"`
 	ClientSecret   string        `yaml:"client_secret"`
-	Scope          string        `yaml:"scope"           conf:"default:openid profile email offline_access"`
+	Scope          string        `yaml:"scope"           conf:"default:openid profile email"`
 	AllowedGroups  string        `yaml:"allowed_groups"`
 	Force          bool          `yaml:"force"           conf:"default:false"`
 	GroupClaim     string        `yaml:"group_claim"     conf:"default:groups"`

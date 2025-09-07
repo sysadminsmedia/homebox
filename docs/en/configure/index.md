@@ -48,7 +48,7 @@ aside: false
 | HBOX_OIDC_ISSUER_URL                    |                                                                            | OIDC provider issuer URL (required when OIDC is enabled)                                                                                                                                  |
 | HBOX_OIDC_CLIENT_ID                     |                                                                            | OIDC client ID (required when OIDC is enabled)                                                                                                                                            |
 | HBOX_OIDC_CLIENT_SECRET                 |                                                                            | OIDC client secret (required when OIDC is enabled)                                                                                                                                        |
-| HBOX_OIDC_SCOPE                         | openid profile email offline_access                                       | OIDC scopes to request from the provider                                                                                                                                                  |
+| HBOX_OIDC_SCOPE                         | openid profile email                                                      | OIDC scopes to request from the provider                                                                                                                                                  |
 | HBOX_OIDC_ALLOWED_GROUPS                |                                                                            | comma-separated list of groups that are allowed to login (empty means all groups allowed)                                                                                                 |
 | HBOX_OIDC_FORCE                         | false                                                                      | force OIDC authentication (disable local login form, redirect directly to OIDC)                                                                                                           |
 | HBOX_OIDC_GROUP_CLAIM                   | groups                                                                     | name of the claim in the ID token that contains user groups                                                                                                                               |
@@ -238,7 +238,7 @@ OPTIONS
 --oidc-issuer-url/$HBOX_OIDC_ISSUER_URL                                       <string>
 --oidc-client-id/$HBOX_OIDC_CLIENT_ID                                         <string>
 --oidc-client-secret/$HBOX_OIDC_CLIENT_SECRET                                 <string>
---oidc-scope/$HBOX_OIDC_SCOPE                                                 <string>  (default: openid profile email offline_access)
+--oidc-scope/$HBOX_OIDC_SCOPE                                                 <string>  (default: openid profile email)
 --oidc-allowed-groups/$HBOX_OIDC_ALLOWED_GROUPS                               <string>
 --oidc-force/$HBOX_OIDC_FORCE                                                 <bool>    (default: false)
 --oidc-group-claim/$HBOX_OIDC_GROUP_CLAIM                                     <string>  (default: groups)
