@@ -28,10 +28,11 @@ type OIDCProvider struct {
 }
 
 type OIDCClaims struct {
-	Email   string
-	Groups  []string
-	Name    string
-	Subject string
+	Email         string
+	Groups        []string
+	Name          string
+	Subject       string
+	EmailVerified *bool
 }
 
 func NewOIDCProvider(service *services.UserService, config *config.OIDCConf, options *config.Options, cookieSecure bool) (*OIDCProvider, error) {
@@ -141,6 +142,17 @@ func (p *OIDCProvider) AuthenticateWithBaseURL(baseURL string, w http.ResponseWr
 		return services.UserAuthTokenDetail{}, fmt.Errorf("failed to parse OIDC claims: %w", err)
 	}
 
+	// Check if email is verified
+	if p.config.VerifyEmail {
+		if claims.EmailVerified == nil {
+			return services.UserAuthTokenDetail{}, fmt.Errorf("email verification status not found in token claims")
+		}
+
+		if !*claims.EmailVerified {
+			return services.UserAuthTokenDetail{}, fmt.Errorf("email not verified")
+		}
+	}
+
 	// Check group authorization if configured
 	if p.config.AllowedGroups != "" {
 		allowedGroups := strings.Split(p.config.AllowedGroups, ",")
@@ -181,6 +193,19 @@ func (p *OIDCProvider) parseOIDCClaims(rawClaims map[string]interface{}) (OIDCCl
 	if emailValue, exists := rawClaims[key]; exists {
 		if email, ok := emailValue.(string); ok {
 			claims.Email = email
+		}
+	}
+
+	// Parse email_verified claim
+	if p.config.VerifyEmail {
+		key = p.config.EmailVerifiedClaim
+		if key == "" {
+			key = "email_verified"
+		}
+		if emailVerifiedValue, exists := rawClaims[key]; exists {
+			if emailVerified, ok := emailVerifiedValue.(bool); ok {
+				claims.EmailVerified = &emailVerified
+			}
 		}
 	}
 

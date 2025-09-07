@@ -78,19 +78,21 @@ type LabelMakerConf struct {
 }
 
 type OIDCConf struct {
-	Enabled        bool          `yaml:"enabled"         conf:"default:false"`
-	IssuerURL      string        `yaml:"issuer_url"`
-	ClientID       string        `yaml:"client_id"`
-	ClientSecret   string        `yaml:"client_secret"`
-	Scope          string        `yaml:"scope"           conf:"default:openid profile email"`
-	AllowedGroups  string        `yaml:"allowed_groups"`
-	Force          bool          `yaml:"force"           conf:"default:false"`
-	GroupClaim     string        `yaml:"group_claim"     conf:"default:groups"`
-	EmailClaim     string        `yaml:"email_claim"     conf:"default:email"`
-	NameClaim      string        `yaml:"name_claim"      conf:"default:name"`
-	ButtonText     string        `yaml:"button_text"     conf:"default:Sign in with OIDC"`
-	StateExpiry    time.Duration `yaml:"state_expiry"    conf:"default:10m"`
-	RequestTimeout time.Duration `yaml:"request_timeout" conf:"default:30s"`
+	Enabled            bool          `yaml:"enabled"             conf:"default:false"`
+	IssuerURL          string        `yaml:"issuer_url"`
+	ClientID           string        `yaml:"client_id"`
+	ClientSecret       string        `yaml:"client_secret"`
+	Scope              string        `yaml:"scope"                conf:"default:openid profile email"`
+	AllowedGroups      string        `yaml:"allowed_groups"`
+	Force              bool          `yaml:"force"                conf:"default:false"`
+	VerifyEmail        bool          `yaml:"verify_email"         conf:"default:false"`
+	GroupClaim         string        `yaml:"group_claim"          conf:"default:groups"`
+	EmailClaim         string        `yaml:"email_claim"          conf:"default:email"`
+	NameClaim          string        `yaml:"name_claim"           conf:"default:name"`
+	EmailVerifiedClaim string        `yaml:"email_verified_claim" conf:"default:email_verified"`
+	ButtonText         string        `yaml:"button_text"          conf:"default:Sign in with OIDC"`
+	StateExpiry        time.Duration `yaml:"state_expiry"         conf:"default:10m"`
+	RequestTimeout     time.Duration `yaml:"request_timeout"      conf:"default:30s"`
 }
 
 type BarcodeAPIConf struct {

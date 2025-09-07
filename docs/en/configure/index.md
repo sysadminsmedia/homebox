@@ -48,12 +48,14 @@ aside: false
 | HBOX_OIDC_ISSUER_URL                    |                                                                            | OIDC provider issuer URL (required when OIDC is enabled)                                                                                                                                  |
 | HBOX_OIDC_CLIENT_ID                     |                                                                            | OIDC client ID (required when OIDC is enabled)                                                                                                                                            |
 | HBOX_OIDC_CLIENT_SECRET                 |                                                                            | OIDC client secret (required when OIDC is enabled)                                                                                                                                        |
-| HBOX_OIDC_SCOPE                         | openid profile email                                                      | OIDC scopes to request from the provider                                                                                                                                                  |
+| HBOX_OIDC_SCOPE                         | openid profile email                                                       | OIDC scopes to request from the provider                                                                                                                                                  |
 | HBOX_OIDC_ALLOWED_GROUPS                |                                                                            | comma-separated list of groups that are allowed to login (empty means all groups allowed)                                                                                                 |
 | HBOX_OIDC_FORCE                         | false                                                                      | force OIDC authentication (disable local login form, redirect directly to OIDC)                                                                                                           |
+| HBOX_OIDC_VERIFY_EMAIL                  | false                                                                      | require email verification from OIDC provider                                                                                                                                             |
 | HBOX_OIDC_GROUP_CLAIM                   | groups                                                                     | name of the claim in the ID token that contains user groups                                                                                                                               |
 | HBOX_OIDC_EMAIL_CLAIM                   | email                                                                      | name of the claim in the ID token that contains user email                                                                                                                                |
 | HBOX_OIDC_NAME_CLAIM                    | name                                                                       | name of the claim in the ID token that contains user display name                                                                                                                         |
+| HBOX_OIDC_EMAIL_VERIFIED_CLAIM          | email_verified                                                             | name of the claim in the ID token that contains user email verification status                                                                                                            |
 | HBOX_OIDC_BUTTON_TEXT                   | Sign in with OIDC                                                          | text displayed on the OIDC login button                                                                                                                                                   |
 | HBOX_OIDC_STATE_EXPIRY                  | 10m                                                                        | how long OIDC state parameters are valid (for CSRF protection)                                                                                                                            |
 | HBOX_OIDC_REQUEST_TIMEOUT               | 30s                                                                        | timeout for OIDC provider requests (token exchange, userinfo, etc.)                                                                                                                       |
@@ -184,6 +186,7 @@ HomeBox supports OpenID Connect (OIDC) authentication, allowing users to login u
 - **Custom Claims**: Configure `HBOX_OIDC_GROUP_CLAIM`, `HBOX_OIDC_EMAIL_CLAIM`, and `HBOX_OIDC_NAME_CLAIM` if your provider uses different claim names
 - **Force OIDC**: Set `HBOX_OIDC_FORCE=true` to redirect users directly to OIDC (disables local login form)
 - **Local Login**: Set `HBOX_OPTIONS_ALLOW_LOCAL_LOGIN=false` to completely disable username/password login
+- **Email Verification**: Set `HBOX_OIDC_VERIFY_EMAIL=true` to require email verification from the OIDC provider
 
 ### Security Considerations
 
@@ -241,9 +244,11 @@ OPTIONS
 --oidc-scope/$HBOX_OIDC_SCOPE                                                 <string>  (default: openid profile email)
 --oidc-allowed-groups/$HBOX_OIDC_ALLOWED_GROUPS                               <string>
 --oidc-force/$HBOX_OIDC_FORCE                                                 <bool>    (default: false)
+--oidc-verify-email/$HBOX_OIDC_VERIFY_EMAIL                                   <bool>    (default: false)
 --oidc-group-claim/$HBOX_OIDC_GROUP_CLAIM                                     <string>  (default: groups)
 --oidc-email-claim/$HBOX_OIDC_EMAIL_CLAIM                                     <string>  (default: email)
 --oidc-name-claim/$HBOX_OIDC_NAME_CLAIM                                       <string>  (default: name)
+--oidc-email-verified-claim/$HBOX_OIDC_EMAIL_VERIFIED_CLAIM                   <string>  (default: email_verified)
 --oidc-button-text/$HBOX_OIDC_BUTTON_TEXT                                     <string>  (default: Sign in with OIDC)
 --oidc-state-expiry/$HBOX_OIDC_STATE_EXPIRY                                   <duration> (default: 10m)
 --oidc-request-timeout/$HBOX_OIDC_REQUEST_TIMEOUT                             <duration> (default: 30s)
