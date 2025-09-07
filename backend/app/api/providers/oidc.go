@@ -3,6 +3,7 @@ package providers
 import (
 	"context"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
 	"net/http"
@@ -93,8 +94,8 @@ func (p *OIDCProvider) Authenticate(w http.ResponseWriter, r *http.Request) (ser
 }
 
 // AuthenticateWithBaseURL is the main authentication method that requires baseURL
-// Called from handleCallback after state and nonce verification
-func (p *OIDCProvider) AuthenticateWithBaseURL(baseURL, expectedNonce string, w http.ResponseWriter, r *http.Request) (services.UserAuthTokenDetail, error) {
+// Called from handleCallback after state, nonce, and PKCE verification
+func (p *OIDCProvider) AuthenticateWithBaseURL(baseURL, expectedNonce, pkceVerifier string, w http.ResponseWriter, r *http.Request) (services.UserAuthTokenDetail, error) {
 	code := r.URL.Query().Get("code")
 	if code == "" {
 		return services.UserAuthTokenDetail{}, fmt.Errorf("missing authorization code")
@@ -103,11 +104,11 @@ func (p *OIDCProvider) AuthenticateWithBaseURL(baseURL, expectedNonce string, w 
 	// Get OAuth2 config for this request
 	oauth2Config := p.getOAuth2Config(baseURL)
 
-	// Exchange code for token with timeout
+	// Exchange code for token with timeout and PKCE verifier
 	ctx, cancel := context.WithTimeout(r.Context(), p.config.RequestTimeout)
 	defer cancel()
 
-	token, err := oauth2Config.Exchange(ctx, code)
+	token, err := oauth2Config.Exchange(ctx, code, oauth2.SetAuthURLParam("code_verifier", pkceVerifier))
 	if err != nil {
 		log.Err(err).Msg("failed to exchange OIDC code for token")
 		return services.UserAuthTokenDetail{}, fmt.Errorf("failed to exchange code for token")
@@ -294,9 +295,13 @@ func (p *OIDCProvider) hasAllowedGroup(userGroups, allowedGroups []string) bool 
 	return false
 }
 
-func (p *OIDCProvider) GetAuthURL(baseURL, state, nonce string) string {
+func (p *OIDCProvider) GetAuthURL(baseURL, state, nonce, pkceVerifier string) string {
 	oauth2Config := p.getOAuth2Config(baseURL)
-	return oauth2Config.AuthCodeURL(state, oidc.Nonce(nonce))
+	pkceChallenge := generatePKCEChallenge(pkceVerifier)
+	return oauth2Config.AuthCodeURL(state, 
+		oidc.Nonce(nonce),
+		oauth2.SetAuthURLParam("code_challenge", pkceChallenge),
+		oauth2.SetAuthURLParam("code_challenge_method", "S256"))
 }
 
 func (p *OIDCProvider) getOAuth2Config(baseURL string) oauth2.Config {
@@ -332,6 +337,13 @@ func (p *OIDCProvider) initiateOIDCFlow(w http.ResponseWriter, r *http.Request) 
 		return services.UserAuthTokenDetail{}, fmt.Errorf("internal server error")
 	}
 
+	// Generate PKCE verifier for code interception protection
+	pkceVerifier, err := generatePKCEVerifier()
+	if err != nil {
+		log.Err(err).Msg("failed to generate OIDC PKCE verifier")
+		return services.UserAuthTokenDetail{}, fmt.Errorf("internal server error")
+	}
+
 	// Get base URL from request
 	baseURL := p.getBaseURL(r)
 	u, _ := url.Parse(baseURL)
@@ -364,8 +376,20 @@ func (p *OIDCProvider) initiateOIDCFlow(w http.ResponseWriter, r *http.Request) 
 		SameSite: http.SameSiteLaxMode,
 	})
 
+	// Store PKCE verifier in session cookie for token exchange
+	http.SetCookie(w, &http.Cookie{
+		Name:     "oidc_pkce_verifier",
+		Value:    pkceVerifier,
+		Expires:  time.Now().Add(p.config.StateExpiry),
+		Domain:   domain,
+		Secure:   p.isSecure(r),
+		HttpOnly: true,
+		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
+	})
+
 	// Generate auth URL and redirect
-	authURL := p.GetAuthURL(baseURL, state, nonce)
+	authURL := p.GetAuthURL(baseURL, state, nonce, pkceVerifier)
 	http.Redirect(w, r, authURL, http.StatusFound)
 
 	// Return empty token since this is a redirect response
@@ -395,6 +419,17 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 		})
 		http.SetCookie(w, &http.Cookie{
 			Name:     "oidc_nonce",
+			Value:    "",
+			Expires:  time.Unix(0, 0),
+			Domain:   domain,
+			MaxAge:   -1,
+			Secure:   p.isSecure(r),
+			HttpOnly: true,
+			Path:     "/",
+			SameSite: http.SameSiteLaxMode,
+		})
+		http.SetCookie(w, &http.Cookie{
+			Name:     "oidc_pkce_verifier",
 			Value:    "",
 			Expires:  time.Unix(0, 0),
 			Domain:   domain,
@@ -443,11 +478,19 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 		return services.UserAuthTokenDetail{}, fmt.Errorf("nonce cookie not found")
 	}
 
+	// Verify PKCE verifier parameter
+	pkceCookie, err := r.Cookie("oidc_pkce_verifier")
+	if err != nil {
+		log.Warn().Err(err).Msg("OIDC PKCE verifier cookie not found - possible code interception attack or expired session")
+		clearCookies()
+		return services.UserAuthTokenDetail{}, fmt.Errorf("PKCE verifier cookie not found")
+	}
+
 	// Clear cookies before proceeding to token verification
 	clearCookies()
 
 	// Use the existing callback logic but return the token instead of redirecting
-	return p.AuthenticateWithBaseURL(baseURL, nonceCookie.Value, w, r)
+	return p.AuthenticateWithBaseURL(baseURL, nonceCookie.Value, pkceCookie.Value, w, r)
 }
 
 // Helper functions
@@ -460,6 +503,24 @@ func generateSecureToken() (string, error) {
 	}
 	// Use URL-safe base64 encoding without padding for clean URLs
 	return base64.RawURLEncoding.EncodeToString(bytes), nil
+}
+
+// generatePKCEVerifier generates a cryptographically secure code verifier for PKCE
+func generatePKCEVerifier() (string, error) {
+	// PKCE verifier must be 43-128 characters, we'll use 43 for efficiency
+	// 32 bytes = 43 characters when base64url encoded without padding
+	bytes := make([]byte, 32)
+	_, err := rand.Read(bytes)
+	if err != nil {
+		return "", fmt.Errorf("failed to generate PKCE verifier: %w", err)
+	}
+	return base64.RawURLEncoding.EncodeToString(bytes), nil
+}
+
+// generatePKCEChallenge generates a code challenge from a verifier using S256 method
+func generatePKCEChallenge(verifier string) string {
+	hash := sha256.Sum256([]byte(verifier))
+	return base64.RawURLEncoding.EncodeToString(hash[:])
 }
 
 func noPort(host string) string {
