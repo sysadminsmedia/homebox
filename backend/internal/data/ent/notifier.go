@@ -95,7 +95,7 @@ func (*Notifier) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the Notifier fields.
-func (n *Notifier) assignValues(columns []string, values []any) error {
+func (_m *Notifier) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -105,52 +105,52 @@ func (n *Notifier) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
-				n.ID = *value
+				_m.ID = *value
 			}
 		case notifier.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				n.CreatedAt = value.Time
+				_m.CreatedAt = value.Time
 			}
 		case notifier.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				n.UpdatedAt = value.Time
+				_m.UpdatedAt = value.Time
 			}
 		case notifier.FieldGroupID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field group_id", values[i])
 			} else if value != nil {
-				n.GroupID = *value
+				_m.GroupID = *value
 			}
 		case notifier.FieldUserID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
 			} else if value != nil {
-				n.UserID = *value
+				_m.UserID = *value
 			}
 		case notifier.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
-				n.Name = value.String
+				_m.Name = value.String
 			}
 		case notifier.FieldURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field url", values[i])
 			} else if value.Valid {
-				n.URL = value.String
+				_m.URL = value.String
 			}
 		case notifier.FieldIsActive:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field is_active", values[i])
 			} else if value.Valid {
-				n.IsActive = value.Bool
+				_m.IsActive = value.Bool
 			}
 		default:
-			n.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -158,62 +158,62 @@ func (n *Notifier) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the Notifier.
 // This includes values selected through modifiers, order, etc.
-func (n *Notifier) Value(name string) (ent.Value, error) {
-	return n.selectValues.Get(name)
+func (_m *Notifier) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // QueryGroup queries the "group" edge of the Notifier entity.
-func (n *Notifier) QueryGroup() *GroupQuery {
-	return NewNotifierClient(n.config).QueryGroup(n)
+func (_m *Notifier) QueryGroup() *GroupQuery {
+	return NewNotifierClient(_m.config).QueryGroup(_m)
 }
 
 // QueryUser queries the "user" edge of the Notifier entity.
-func (n *Notifier) QueryUser() *UserQuery {
-	return NewNotifierClient(n.config).QueryUser(n)
+func (_m *Notifier) QueryUser() *UserQuery {
+	return NewNotifierClient(_m.config).QueryUser(_m)
 }
 
 // Update returns a builder for updating this Notifier.
 // Note that you need to call Notifier.Unwrap() before calling this method if this Notifier
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (n *Notifier) Update() *NotifierUpdateOne {
-	return NewNotifierClient(n.config).UpdateOne(n)
+func (_m *Notifier) Update() *NotifierUpdateOne {
+	return NewNotifierClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the Notifier entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (n *Notifier) Unwrap() *Notifier {
-	_tx, ok := n.config.driver.(*txDriver)
+func (_m *Notifier) Unwrap() *Notifier {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: Notifier is not a transactional entity")
 	}
-	n.config.driver = _tx.drv
-	return n
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (n *Notifier) String() string {
+func (_m *Notifier) String() string {
 	var builder strings.Builder
 	builder.WriteString("Notifier(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", n.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("created_at=")
-	builder.WriteString(n.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
-	builder.WriteString(n.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("group_id=")
-	builder.WriteString(fmt.Sprintf("%v", n.GroupID))
+	builder.WriteString(fmt.Sprintf("%v", _m.GroupID))
 	builder.WriteString(", ")
 	builder.WriteString("user_id=")
-	builder.WriteString(fmt.Sprintf("%v", n.UserID))
+	builder.WriteString(fmt.Sprintf("%v", _m.UserID))
 	builder.WriteString(", ")
 	builder.WriteString("name=")
-	builder.WriteString(n.Name)
+	builder.WriteString(_m.Name)
 	builder.WriteString(", ")
 	builder.WriteString("url=<sensitive>")
 	builder.WriteString(", ")
 	builder.WriteString("is_active=")
-	builder.WriteString(fmt.Sprintf("%v", n.IsActive))
+	builder.WriteString(fmt.Sprintf("%v", _m.IsActive))
 	builder.WriteByte(')')
 	return builder.String()
 }
