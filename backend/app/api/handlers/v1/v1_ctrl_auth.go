@@ -120,8 +120,8 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 
 		newToken, err := p.Authenticate(w, r)
 		if err != nil {
-			log.Err(err).Msg("failed to authenticate")
-			return server.JSON(w, http.StatusInternalServerError, err.Error())
+			log.Warn().Err(err).Msg("authentication failed")
+			return validate.NewUnauthorizedError()
 		}
 
 		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, true)
