@@ -8,7 +8,9 @@
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import ItemCard from "@/components/Item/Card.vue";
   import DataTable from "./table/data-table.vue";
-  import { columns, payments } from "./table/columns";
+  import { makeColumns } from "./table/columns";
+  import { useI18n } from "vue-i18n";
+import Table from "./Table.vue";
 
   type Props = {
     view?: ViewType;
@@ -16,6 +18,8 @@
   };
 
   const preferences = useViewPreferences();
+  const { t } = useI18n();
+  const columns = computed(() => makeColumns(t));
 
   const props = defineProps<Props>();
   const viewSet = computed(() => {
@@ -61,7 +65,8 @@
     </BaseSectionHeader>
 
     <template v-if="itemView === 'table'">
-      <DataTable :columns="columns" :data="payments" />
+      <DataTable :columns="columns" :data="items" />
+      <Table :items="items" />
     </template>
     <template v-else>
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">

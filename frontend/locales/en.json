@@ -142,7 +142,9 @@
                     "card": "Card",
                     "items": "Items",
                     "no_items": "No Items to Display",
-                    "table": "Table"
+                    "table": "Table",
+                    "select_all": "Select All",
+                    "select_row": "Select Row"
                 },
                 "table": {
                     "headers": "Headers",

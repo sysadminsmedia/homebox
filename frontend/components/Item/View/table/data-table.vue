@@ -1,4 +1,5 @@
 <script setup lang="ts" generic="TData, TValue">
+  import BaseCard from "@/components/Base/Card.vue";
   import type { ColumnDef, SortingState, VisibilityState, ExpandedState } from "@tanstack/vue-table";
   import {
     FlexRender,
@@ -27,8 +28,31 @@
     data: TData[];
   }>();
 
+  const {
+    value: { tableHeaders: tableHeadersData },
+  } = useViewPreferences();
+  const defaultVisible = ["name", "quantity", "insured", "purchasePrice"];
+
+  const tableHeaders = computed(
+    () =>
+      tableHeadersData ??
+      props.columns
+        .filter(c => c.enableHiding !== false)
+        .map(c => ({
+          value: c.id!,
+          enabled: defaultVisible.includes(c.id ?? ""),
+        }))
+  );
+
   const sorting = ref<SortingState>([]);
-  const columnVisibility = ref<VisibilityState>({});
+  const columnOrder = ref<string[]>([
+    "select",
+    ...(tableHeaders.value ? tableHeaders.value.map(h => h.value) : []),
+    "actions",
+  ]);
+  const columnVisibility = ref<VisibilityState>(
+    tableHeaders.value?.reduce((acc, h) => ({ ...acc, [h.value]: h.enabled }), {})
+  );
   const rowSelection = ref({});
   const expanded = ref<ExpandedState>({});
 
@@ -49,6 +73,7 @@
     onColumnVisibilityChange: updaterOrValue => valueUpdater(updaterOrValue, columnVisibility),
     onRowSelectionChange: updaterOrValue => valueUpdater(updaterOrValue, rowSelection),
     onExpandedChange: updaterOrValue => valueUpdater(updaterOrValue, expanded),
+    onColumnOrderChange: updaterOrValue => valueUpdater(updaterOrValue, columnOrder),
 
     state: {
       get sorting() {
@@ -62,6 +87,9 @@
       },
       get expanded() {
         return expanded.value;
+      },
+      get columnOrder() {
+        return columnOrder.value;
       },
     },
   });
@@ -94,41 +122,47 @@
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-    <div class="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-            <TableHead v-for="header in headerGroup.headers" :key="header.id">
-              <FlexRender
-                v-if="!header.isPlaceholder"
-                :render="header.column.columnDef.header"
-                :props="header.getContext()"
-              />
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <template v-if="table.getRowModel().rows?.length">
-            <template v-for="row in table.getRowModel().rows" :key="row.id">
-              <TableRow :data-state="row.getIsSelected() ? 'selected' : undefined">
-                <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
-                  <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
-                </TableCell>
-              </TableRow>
-              <TableRow v-if="row.getIsExpanded()">
-                <TableCell :colspan="row.getAllCells().length">
-                  {{ JSON.stringify(row.original) }}
-                </TableCell>
+    <BaseCard>
+      <div>
+        <Table class="w-full">
+          <TableHeader>
+            <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
+              <TableHead
+                v-for="header in headerGroup.headers"
+                :key="header.id"
+                class="text-no-transform cursor-pointer bg-secondary text-sm text-secondary-foreground hover:bg-secondary/90"
+              >
+                <FlexRender
+                  v-if="!header.isPlaceholder"
+                  :render="header.column.columnDef.header"
+                  :props="header.getContext()"
+                />
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <template v-if="table.getRowModel().rows?.length">
+              <template v-for="row in table.getRowModel().rows" :key="row.id">
+                <TableRow :data-state="row.getIsSelected() ? 'selected' : undefined">
+                  <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
+                    <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
+                  </TableCell>
+                </TableRow>
+                <TableRow v-if="row.getIsExpanded()">
+                  <TableCell :colspan="row.getAllCells().length">
+                    {{ JSON.stringify(row.original) }}
+                  </TableCell>
+                </TableRow>
+              </template>
+            </template>
+            <template v-else>
+              <TableRow>
+                <TableCell :colspan="columns.length" class="h-24 text-center"> No results. </TableCell>
               </TableRow>
             </template>
-          </template>
-          <template v-else>
-            <TableRow>
-              <TableCell :colspan="columns.length" class="h-24 text-center"> No results. </TableCell>
-            </TableRow>
-          </template>
-        </TableBody>
-      </Table>
+          </TableBody>
+        </Table>
+      </div>
       <div class="flex items-center justify-end space-x-2 py-4">
         <div class="flex-1 text-sm text-muted-foreground">
           {{ table.getFilteredSelectedRowModel().rows.length }} of {{ table.getFilteredRowModel().rows.length }} row(s)
@@ -143,6 +177,6 @@
           </Button>
         </div>
       </div>
-    </div>
+    </BaseCard>
   </div>
 </template>

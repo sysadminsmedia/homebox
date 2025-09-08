@@ -9,16 +9,19 @@
     DropdownMenuSeparator,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu";
+  import type { ItemSummary } from "~/lib/api/types/data-contracts";
 
-  defineProps<{
-    payment: {
-      id: string;
-    };
+  const props = defineProps<{
+    item: ItemSummary | ItemSummary[];
   }>();
 
   defineEmits<{
     (e: "expand"): void;
   }>();
+
+  const multiple = computed(() => {
+    return Array.isArray(props.item);
+  });
 
   function copy(id: string) {
     navigator.clipboard.writeText(id);
@@ -35,6 +38,10 @@
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end">
       <DropdownMenuLabel>Actions</DropdownMenuLabel>
+      <DropdownMenuItem v-if="!multiple" as-child>
+        <NuxtLink :to="`/item/${item.id}`" class="hover:underline"> View item </NuxtLink>
+      </DropdownMenuItem>
+      <DropdownMenuItem v-else @click="console.log('needs to be implemented')"> View items </DropdownMenuItem>
       <DropdownMenuItem @click="copy(payment.id)"> Copy payment ID </DropdownMenuItem>
       <DropdownMenuItem @click="$emit('expand')"> Expand </DropdownMenuItem>
       <DropdownMenuSeparator />
