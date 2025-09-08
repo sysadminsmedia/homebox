@@ -12,7 +12,10 @@
         </div>
       </div>
       <div class="col-span-4 flex grow flex-col gap-y-1 p-4 pt-2">
-        <h2 class="line-clamp-2 text-ellipsis text-wrap text-lg font-bold">{{ item.name }}</h2>
+        <div class="flex gap-2">
+          <Checkbox v-model="card.selected" class="mt-1 size-6" @click.prevent />
+          <h2 class="line-clamp-2 text-ellipsis text-wrap text-lg font-bold">{{ item.name }}</h2>
+        </div>
         <Separator class="mb-1" />
         <TooltipProvider :delay-duration="0">
           <div class="flex items-center gap-2">
@@ -47,7 +50,6 @@
         </TooltipProvider>
         <Markdown class="mb-2 line-clamp-3 text-ellipsis" :source="item.description" />
         <div class="-mr-1 mt-auto flex flex-wrap justify-end gap-2">
-          <input v-model="selectedCards" :value="item" type="checkbox" class="mr-auto size-6" @click.stop />
           <LabelChip v-for="label in itemLabels" :key="label.id" :label="label" size="sm" />
         </div>
       </div>
@@ -65,6 +67,7 @@
   import { Separator } from "@/components/ui/separator";
   import Markdown from "@/components/global/Markdown.vue";
   import LabelChip from "@/components/Label/Chip.vue";
+  import { Checkbox } from "@/components/ui/checkbox";
 
   const api = useUserApi();
 
@@ -93,14 +96,11 @@
       required: false,
       default: () => [],
     },
-    modelValue: {
-      type: Array,
-      required: false,
-      default: () => [],
-    },
   });
 
-  const selectedCards = useVModel(props, "modelValue");
+  const card = defineModel<{ selected: boolean | "indeterminate"; item: ItemSummary }>({
+    default: { selected: false },
+  });
 
   const locationString = computed(
     () => props.locationFlatTree.find(l => l.id === props.item.location?.id)?.treeString || props.item.location?.name

@@ -26,7 +26,7 @@
   import BaseContainer from "@/components/Base/Container.vue";
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import SearchFilter from "~/components/Search/Filter.vue";
-  import ItemCard from "~/components/Item/Card.vue";
+  import { Checkbox } from "@/components/ui/checkbox";
 
   const { t } = useI18n();
 
@@ -134,7 +134,7 @@
   const locIDs = computed(() => selectedLocations.value.map(l => l.id));
   const labIDs = computed(() => selectedLabels.value.map(l => l.id));
 
-  const cardGridAction = ref<{ action: "selectAll" | "clearAll" }>({ action: "clearAll" });
+  const selectedAllCards = ref<boolean | "indeterminate">(false);
 
   function parseAssetIDString(d: string) {
     d = d.replace(/"/g, "").replace(/-/g, "");
@@ -508,8 +508,8 @@
       <BaseSectionHeader ref="itemsTitle"> {{ $t("global.items") }} </BaseSectionHeader>
       <p v-if="items.length > 0" class="flex items-center gap-2 text-base font-medium">
         {{ $t("items.results", { total: total }) }}
-        <Button @click="cardGridAction = { action: 'selectAll' }"> Select all </Button>
-        <Button @click="cardGridAction = { action: 'clearAll' }"> Clear all </Button>
+        <Checkbox id="selectAll" v-model="selectedAllCards" class="size-6"></Checkbox>
+        <Label for="selectAll" class="cursor-pointer"> Select all </Label>
         <span class="ml-auto text-base"> {{ $t("items.pages", { page: page, totalPages: totalPages }) }} </span>
       </p>
 
@@ -517,7 +517,7 @@
         <MdiSelectSearch class="size-10" />
         <p>{{ $t("items.no_results") }}</p>
       </div>
-      <ItemViewCardGrid v-else :items="items" :action="cardGridAction" :location-flat-tree="locationFlatTree" />
+      <ItemViewCardGrid v-else v-model="selectedAllCards" :items="items" :location-flat-tree="locationFlatTree" />
       <Pagination
         v-slot="{ page: currentPage }"
         :items-per-page="pageSize"

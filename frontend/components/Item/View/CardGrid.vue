@@ -12,7 +12,7 @@
     </DialogContent>
   </Dialog>
   <MaintenanceEditModal ref="maintenanceEditModal"></MaintenanceEditModal>
-  <ul v-if="selectedCards.length" class="flex flex-row cards-quick-menu">
+  <ul v-if="cards.some(c => c.selected)" class="cards-quick-menu flex flex-row">
     <li>
       <Tooltip>
         <TooltipTrigger>
@@ -26,7 +26,7 @@
     <li>
       <Tooltip>
         <TooltipTrigger>
-          <a @click="maintenanceEditModal?.openCreateModal(selectedCards.map(i => i.id))">
+          <a @click="maintenanceEditModal?.openCreateModal(cards.map(({ item }) => item.id))">
             <AlphaMCircle class="size-10" aria-hidden="true" />
           </a>
         </TooltipTrigger>
@@ -36,9 +36,9 @@
   </ul>
   <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
     <ItemCard
-      v-for="item in props.items"
+      v-for="(item, index) in props.items"
       :key="item.id"
-      v-model="selectedCards"
+      v-model="cards[index]"
       :item="item"
       :location-flat-tree="props.locationFlatTree"
     />
@@ -65,9 +65,15 @@
 
   const props = defineProps<{
     items: ItemSummary[];
-    action?: { action: "selectAll" | "clearAll" }; // using an object instead of a bare string to force watch update
     locationFlatTree?: FlatTreeItem[];
   }>();
+  const selectedAllCards = defineModel<boolean | "indeterminate">({ default: false });
+
+  const cards = ref<Array<{ selected: boolean; item: ItemSummary }>>(
+    props.items.map(item => {
+      return { selected: false, item };
+    })
+  );
 
   const api = useUserApi();
   const labelStore = useLabelStore();
@@ -75,27 +81,62 @@
 
   const location = ref();
   const currentLabels = ref<string[]>([]);
-  const selectedCards = ref<ItemSummary[]>([]);
   let initialLabels: Set<string>;
   let addedLabels: Set<string>;
   let removedLabels: Set<string>;
 
   watch(
-    () => props.action,
-    () => {
-      if (props.action?.action === "selectAll") {
-        selectedCards.value = props.items;
-      } else if (props.action?.action === "clearAll") {
-        selectedCards.value = [];
+    cards,
+    n => {
+      const notSelected = n.filter(c => {
+        return !c.selected;
+      });
+      if (notSelected.length) {
+        if (notSelected.length !== props.items.length) {
+          selectedAllCards.value = "indeterminate";
+        } else {
+          selectedAllCards.value = false;
+        }
+      } else {
+        selectedAllCards.value = true;
       }
-    }
+
+      initialLabels = new Set(
+        cards.value
+          .filter(({ selected }) => {
+            return !!selected;
+          })
+          .map(({ item }) => {
+            return item.labels.map(l => {
+              return l.id;
+            });
+          })
+          .flat()
+      );
+      currentLabels.value = [...initialLabels];
+    },
+    { deep: true }
   );
+
+  watch(selectedAllCards, () => {
+    if (selectedAllCards.value === "indeterminate") return;
+    if (selectedAllCards.value) {
+      cards.value.forEach(o => {
+        o.selected = true;
+      });
+    } else {
+      cards.value.forEach(o => {
+        o.selected = false;
+      });
+    }
+  });
 
   watch(location, async newLoc => {
     if (!newLoc || !newLoc.id) return;
     try {
       await Promise.all(
-        selectedCards.value.map(async item => {
+        cards.value.map(async ({ selected, item }) => {
+          if (!selected) return;
           const { error } = await api.items.patch(item.id, { id: item.id, location: newLoc.id });
 
           if (error) {
@@ -110,19 +151,6 @@
     toast.success(t("locations.toast.location_updated"));
   });
 
-  watch(selectedCards, () => {
-    initialLabels = new Set(
-      selectedCards.value
-        .map(item => {
-          return item.labels.map(l => {
-            return l.id;
-          });
-        })
-        .flat()
-    );
-    currentLabels.value = [...initialLabels];
-  });
-
   watch(currentLabels, clNew => {
     const clNewSet = new Set(clNew);
     addedLabels = clNewSet.difference(initialLabels);
@@ -133,7 +161,8 @@
     initialLabels = new Set(currentLabels.value);
     try {
       await Promise.all(
-        selectedCards.value.map(async item => {
+        cards.value.map(async ({ selected, item }) => {
+          if (!selected) return;
           let needsUpdate = false;
           addedLabels.forEach(l => {
             const index = item.labels.findIndex(il => {
