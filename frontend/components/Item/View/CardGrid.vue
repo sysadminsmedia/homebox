@@ -47,7 +47,7 @@
 
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
-  import { MaintenanceEditModal } from "#components";
+  import MaintenanceEditModal from "@/components/Maintenance/EditModal.vue";
   import type { ItemSummary } from "~~/lib/api/types/data-contracts";
   import { useLabelStore } from "~~/stores/labels";
   import { toast } from "@/components/ui/sonner";
