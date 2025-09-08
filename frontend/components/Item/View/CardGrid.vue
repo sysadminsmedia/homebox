@@ -61,7 +61,7 @@
 
   const { t } = useI18n();
 
-  const { openDialog } = useDialog();
+  const { openDialog, closeDialog } = useDialog();
 
   const props = defineProps<{
     items: ItemSummary[];
@@ -195,6 +195,7 @@
       toast.error(t("labels.toast.failed_update_labels"));
     }
     toast.success(t("labels.toast.labels_updated"));
+    closeDialog(DialogID.EditLocationAndLabels);
   }
 </script>
 
