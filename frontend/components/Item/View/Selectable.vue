@@ -10,7 +10,6 @@
   import DataTable from "./table/data-table.vue";
   import { makeColumns } from "./table/columns";
   import { useI18n } from "vue-i18n";
-import Table from "./Table.vue";
 
   type Props = {
     view?: ViewType;
@@ -66,7 +65,6 @@ import Table from "./Table.vue";
 
     <template v-if="itemView === 'table'">
       <DataTable :columns="columns" :data="items" />
-      <Table :items="items" />
     </template>
     <template v-else>
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">

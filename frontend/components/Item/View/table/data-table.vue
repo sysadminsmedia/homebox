@@ -23,6 +23,14 @@
   import Checkbox from "~/components/ui/checkbox/Checkbox.vue";
   import Label from "~/components/ui/label/Label.vue";
   import type { ItemSummary } from "~/lib/api/types/data-contracts";
+  import {
+    Pagination,
+    PaginationEllipsis,
+    PaginationFirst,
+    PaginationLast,
+    PaginationList,
+    PaginationListItem,
+  } from "@/components/ui/pagination";
 
   const { openDialog } = useDialog();
 
@@ -227,7 +235,15 @@
             <template v-if="table.getRowModel().rows?.length">
               <template v-for="row in table.getRowModel().rows" :key="row.id">
                 <TableRow :data-state="row.getIsSelected() ? 'selected' : undefined">
-                  <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
+                  <TableCell
+                    v-for="cell in row.getVisibleCells()"
+                    :key="cell.id"
+                    :href="
+                      cell.column.id !== 'select' && cell.column.id !== 'actions'
+                        ? `/item/${(row.original as ItemSummary).id}`
+                        : undefined
+                    "
+                  >
                     <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
                   </TableCell>
                 </TableRow>
@@ -246,21 +262,46 @@
           </TableBody>
         </Table>
       </div>
-      <div class="flex items-center justify-end space-x-2 py-4">
-        <Button class="size-10 p-0" variant="outline" @click="openDialog(DialogID.ItemTableSettings)">
-          <MdiTableCog />
-        </Button>
-        <div class="flex-1 text-sm text-muted-foreground">
-          {{ table.getFilteredSelectedRowModel().rows.length }} of {{ table.getFilteredRowModel().rows.length }} row(s)
-          selected.
+      <div class="flex flex-col gap-2 border-t p-3 md:flex-row md:items-center md:justify-between md:gap-0">
+        <div class="order-2 flex items-center gap-2 md:order-1">
+          <Button class="size-10 p-0" variant="outline" @click="openDialog(DialogID.ItemTableSettings)">
+            <MdiTableCog />
+          </Button>
+          <div class="text-sm text-muted-foreground">
+            {{
+              $t("components.item.view.table.selected_rows", {
+                selected: table.getFilteredSelectedRowModel().rows.length,
+                total: table.getFilteredRowModel().rows.length,
+              })
+            }}
+          </div>
         </div>
-        <div class="flex items-center justify-end space-x-2 py-4">
-          <Button variant="outline" size="sm" :disabled="!table.getCanPreviousPage()" @click="table.previousPage()">
-            Previous
-          </Button>
-          <Button variant="outline" size="sm" :disabled="!table.getCanNextPage()" @click="table.nextPage()">
-            Next
-          </Button>
+        <div class="order-1 flex w-full justify-center md:order-2 md:w-auto">
+          <Pagination
+            v-slot="{ page }"
+            :items-per-page="pagination.pageSize"
+            :total="props.data.length"
+            :sibling-count="2"
+            :page="pagination.pageIndex + 1"
+            @update:page="val => table.setPageIndex(val - 1)"
+          >
+            <PaginationList v-slot="{ items: pageItems }" class="flex items-center gap-1">
+              <PaginationFirst @click="() => table.setPageIndex(0)" />
+              <template v-for="(item, index) in pageItems">
+                <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
+                  <Button
+                    class="size-10 p-0"
+                    :variant="item.value === page ? 'default' : 'outline'"
+                    @click="() => table.setPageIndex(item.value - 1)"
+                  >
+                    {{ item.value }}
+                  </Button>
+                </PaginationListItem>
+                <PaginationEllipsis v-else :key="item.type" :index="index" />
+              </template>
+              <PaginationLast @click="() => table.setPageIndex(table.getPageCount() - 1)" />
+            </PaginationList>
+          </Pagination>
         </div>
       </div>
     </BaseCard>

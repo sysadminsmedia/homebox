@@ -10,9 +10,10 @@
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu";
   import type { ItemSummary } from "~/lib/api/types/data-contracts";
+  import type { Row } from "@tanstack/vue-table";
 
   const props = defineProps<{
-    item: ItemSummary | ItemSummary[];
+    item: ItemSummary | Row<ItemSummary>[];
   }>();
 
   defineEmits<{

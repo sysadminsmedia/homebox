@@ -214,9 +214,36 @@ export function makeColumns(t: (key: string) => string): ColumnDef<ItemSummary>[
     {
       id: "actions",
       enableHiding: false,
-      // TODO: fix this so all selected items are passed in
-      header: ({ column, table, header }) =>
-        h("div", { class: "relative" }, h(DropdownAction, { item: table.getState().rowSelection })),
+      header: ({ table }) => {
+        const selectedCount = table.getSelectedRowModel().rows.length;
+        return h(
+          "div",
+          {
+            class: [
+              "relative inline-flex items-center",
+              selectedCount === 0 ? "opacity-50 pointer-events-none" : "",
+            ].join(" "),
+          },
+          [
+            h(DropdownAction, { item: table.getSelectedRowModel().rows }),
+            selectedCount > 0 &&
+              h(
+                "span",
+                {
+                  class: "-right-1 -top-1 absolute flex size-4",
+                },
+                h(
+                  "span",
+                  {
+                    class:
+                      "relative flex size-4 items-center justify-center rounded-full bg-primary p-1 text-primary-foreground text-xs pointer-events-none",
+                  },
+                  String(selectedCount)
+                )
+              ),
+          ]
+        );
+      },
       cell: ({ row }) => {
         const item = row.original;
         return h("div", { class: "relative" }, h(DropdownAction, { item }));

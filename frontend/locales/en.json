@@ -151,7 +151,8 @@
                     "page": "Page",
                     "rows_per_page": "Rows per page",
                     "table_settings": "Table Settings",
-                    "view_item": "View Item"
+                    "view_item": "View Item",
+                    "selected_rows": "{selected} of {total} row(s) selected."
                 }
             }
         },

@@ -1,5 +1,5 @@
 import type { Ref } from "vue";
-import type { TableHeaderType } from "~/components/Item/View/Table.types";
+import type { ItemSummary } from "~/lib/api/types/data-contracts";
 import type { DaisyTheme } from "~~/lib/data/themes";
 
 export type ViewType = "table" | "card" | "tree";
@@ -18,7 +18,10 @@ export type LocationViewPreferences = {
   itemDisplayView: ViewType;
   theme: DaisyTheme;
   itemsPerTablePage: number;
-  tableHeaders?: TableHeaderType[];
+  tableHeaders?: {
+    value: keyof ItemSummary;
+    enabled: boolean;
+  }[];
   displayLegacyHeader: boolean;
   language?: string;
   overrideFormatLocale?: string;
