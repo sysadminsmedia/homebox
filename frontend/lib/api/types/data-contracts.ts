@@ -436,6 +436,8 @@ export interface EntUser {
   name: string;
   /** Role holds the value of the "role" field. */
   role: UserRole;
+  /** Settings holds the value of the "settings" field. */
+  settings: SchemaUserSettings;
   /** Superuser holds the value of the "superuser" field. */
   superuser: boolean;
   /** UpdatedAt holds the value of the "updated_at" field. */
@@ -462,6 +464,13 @@ export interface BarcodeProduct {
   /** Extras */
   notes: string;
   search_engine_name: string;
+}
+
+export interface DuplicateOptions {
+  copyAttachments: boolean;
+  copyCustomFields: boolean;
+  copyMaintenance: boolean;
+  copyPrefix: string;
 }
 
 export interface Group {
@@ -830,6 +839,28 @@ export interface ValueOverTimeEntry {
   date: Date | string;
   name: string;
   value: number;
+}
+
+export interface SchemaDuplicateSettings {
+  copyAttachments: boolean;
+  copyCustomFields: boolean;
+  copyMaintenance: boolean;
+  copyPrefixOverride: string;
+}
+
+export interface SchemaUserSettings {
+  displayLegacyHeader: boolean;
+  duplicateSettings: SchemaDuplicateSettings;
+  editorAdvancedView: boolean;
+  itemDisplayView: string;
+  itemsPerPage: number;
+  itemsPerTablePage: number;
+  language: string;
+  locale: string;
+  overrideFormatLocale: string;
+  showDetails: boolean;
+  showEmpty: boolean;
+  theme: string;
 }
 
 export interface Latest {

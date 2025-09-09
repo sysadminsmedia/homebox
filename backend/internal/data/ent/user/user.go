@@ -34,6 +34,8 @@ const (
 	FieldRole = "role"
 	// FieldActivatedOn holds the string denoting the activated_on field in the database.
 	FieldActivatedOn = "activated_on"
+	// FieldSettings holds the string denoting the settings field in the database.
+	FieldSettings = "settings"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
 	EdgeGroup = "group"
 	// EdgeAuthTokens holds the string denoting the auth_tokens edge name in mutations.
@@ -77,6 +79,7 @@ var Columns = []string{
 	FieldSuperuser,
 	FieldRole,
 	FieldActivatedOn,
+	FieldSettings,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "users"

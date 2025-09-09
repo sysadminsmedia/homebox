@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -132,4 +133,16 @@ func (r *UserRepository) GetSuperusers(ctx context.Context) ([]*ent.User, error)
 
 func (r *UserRepository) ChangePassword(ctx context.Context, uid uuid.UUID, pw string) error {
 	return r.db.User.UpdateOneID(uid).SetPassword(pw).Exec(ctx)
+}
+
+func (r *UserRepository) SetSettings(ctx context.Context, uid uuid.UUID, settings schema.UserSettings) error {
+	return r.db.User.UpdateOneID(uid).SetSettings(settings).Exec(ctx)
+}
+
+func (r *UserRepository) GetSettings(ctx context.Context, uid uuid.UUID) (schema.UserSettings, error) {
+	usr, err := r.db.User.Get(ctx, uid)
+	if err != nil {
+		return schema.UserSettings{}, err
+	}
+	return usr.Settings, nil
 }

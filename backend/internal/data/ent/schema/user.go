@@ -45,6 +45,8 @@ func (User) Fields() []ent.Field {
 			Values("user", "owner"),
 		field.Time("activated_on").
 			Optional(),
+		field.JSON("settings", UserSettings{}).
+			Optional(),
 	}
 }
 
@@ -60,6 +62,28 @@ func (User) Edges() []ent.Edge {
 				OnDelete: entsql.Cascade,
 			}),
 	}
+}
+
+type UserSettings struct {
+	Theme                string            `json:"theme"`
+	ItemsPerPage         int               `json:"itemsPerPage"`
+	Locale               string            `json:"locale"`
+	ShowDetails          bool              `json:"showDetails"`
+	ShowEmpty            bool              `json:"showEmpty"`
+	EditorAdvancedView   bool              `json:"editorAdvancedView"`
+	ItemDisplayView      string            `json:"itemDisplayView"`
+	ItemsPerTablePage    int               `json:"itemsPerTablePage"`
+	DisplayLegacyHeader  bool              `json:"displayLegacyHeader"`
+	Language             string            `json:"language"`
+	OverrideFormatLocale string            `json:"overrideFormatLocale"`
+	DuplicateSettings    DuplicateSettings `json:"duplicateSettings"`
+}
+
+type DuplicateSettings struct {
+	CopyMaintenance    bool   `json:"copyMaintenance"`
+	CopyAttachments    bool   `json:"copyAttachments"`
+	CopyCustomFields   bool   `json:"copyCustomFields"`
+	CopyPrefixOverride string `json:"copyPrefixOverride"`
 }
 
 // UserMixin when embedded in an ent.Schema, adds a reference to

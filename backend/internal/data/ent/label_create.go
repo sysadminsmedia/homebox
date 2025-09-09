@@ -24,121 +24,121 @@ type LabelCreate struct {
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (lc *LabelCreate) SetCreatedAt(t time.Time) *LabelCreate {
-	lc.mutation.SetCreatedAt(t)
-	return lc
+func (_c *LabelCreate) SetCreatedAt(v time.Time) *LabelCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (lc *LabelCreate) SetNillableCreatedAt(t *time.Time) *LabelCreate {
-	if t != nil {
-		lc.SetCreatedAt(*t)
+func (_c *LabelCreate) SetNillableCreatedAt(v *time.Time) *LabelCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
 	}
-	return lc
+	return _c
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (lc *LabelCreate) SetUpdatedAt(t time.Time) *LabelCreate {
-	lc.mutation.SetUpdatedAt(t)
-	return lc
+func (_c *LabelCreate) SetUpdatedAt(v time.Time) *LabelCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
 }
 
 // SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (lc *LabelCreate) SetNillableUpdatedAt(t *time.Time) *LabelCreate {
-	if t != nil {
-		lc.SetUpdatedAt(*t)
+func (_c *LabelCreate) SetNillableUpdatedAt(v *time.Time) *LabelCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
 	}
-	return lc
+	return _c
 }
 
 // SetName sets the "name" field.
-func (lc *LabelCreate) SetName(s string) *LabelCreate {
-	lc.mutation.SetName(s)
-	return lc
+func (_c *LabelCreate) SetName(v string) *LabelCreate {
+	_c.mutation.SetName(v)
+	return _c
 }
 
 // SetDescription sets the "description" field.
-func (lc *LabelCreate) SetDescription(s string) *LabelCreate {
-	lc.mutation.SetDescription(s)
-	return lc
+func (_c *LabelCreate) SetDescription(v string) *LabelCreate {
+	_c.mutation.SetDescription(v)
+	return _c
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (lc *LabelCreate) SetNillableDescription(s *string) *LabelCreate {
-	if s != nil {
-		lc.SetDescription(*s)
+func (_c *LabelCreate) SetNillableDescription(v *string) *LabelCreate {
+	if v != nil {
+		_c.SetDescription(*v)
 	}
-	return lc
+	return _c
 }
 
 // SetColor sets the "color" field.
-func (lc *LabelCreate) SetColor(s string) *LabelCreate {
-	lc.mutation.SetColor(s)
-	return lc
+func (_c *LabelCreate) SetColor(v string) *LabelCreate {
+	_c.mutation.SetColor(v)
+	return _c
 }
 
 // SetNillableColor sets the "color" field if the given value is not nil.
-func (lc *LabelCreate) SetNillableColor(s *string) *LabelCreate {
-	if s != nil {
-		lc.SetColor(*s)
+func (_c *LabelCreate) SetNillableColor(v *string) *LabelCreate {
+	if v != nil {
+		_c.SetColor(*v)
 	}
-	return lc
+	return _c
 }
 
 // SetID sets the "id" field.
-func (lc *LabelCreate) SetID(u uuid.UUID) *LabelCreate {
-	lc.mutation.SetID(u)
-	return lc
+func (_c *LabelCreate) SetID(v uuid.UUID) *LabelCreate {
+	_c.mutation.SetID(v)
+	return _c
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (lc *LabelCreate) SetNillableID(u *uuid.UUID) *LabelCreate {
-	if u != nil {
-		lc.SetID(*u)
+func (_c *LabelCreate) SetNillableID(v *uuid.UUID) *LabelCreate {
+	if v != nil {
+		_c.SetID(*v)
 	}
-	return lc
+	return _c
 }
 
 // SetGroupID sets the "group" edge to the Group entity by ID.
-func (lc *LabelCreate) SetGroupID(id uuid.UUID) *LabelCreate {
-	lc.mutation.SetGroupID(id)
-	return lc
+func (_c *LabelCreate) SetGroupID(id uuid.UUID) *LabelCreate {
+	_c.mutation.SetGroupID(id)
+	return _c
 }
 
 // SetGroup sets the "group" edge to the Group entity.
-func (lc *LabelCreate) SetGroup(g *Group) *LabelCreate {
-	return lc.SetGroupID(g.ID)
+func (_c *LabelCreate) SetGroup(v *Group) *LabelCreate {
+	return _c.SetGroupID(v.ID)
 }
 
 // AddItemIDs adds the "items" edge to the Item entity by IDs.
-func (lc *LabelCreate) AddItemIDs(ids ...uuid.UUID) *LabelCreate {
-	lc.mutation.AddItemIDs(ids...)
-	return lc
+func (_c *LabelCreate) AddItemIDs(ids ...uuid.UUID) *LabelCreate {
+	_c.mutation.AddItemIDs(ids...)
+	return _c
 }
 
 // AddItems adds the "items" edges to the Item entity.
-func (lc *LabelCreate) AddItems(i ...*Item) *LabelCreate {
-	ids := make([]uuid.UUID, len(i))
-	for j := range i {
-		ids[j] = i[j].ID
+func (_c *LabelCreate) AddItems(v ...*Item) *LabelCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return lc.AddItemIDs(ids...)
+	return _c.AddItemIDs(ids...)
 }
 
 // Mutation returns the LabelMutation object of the builder.
-func (lc *LabelCreate) Mutation() *LabelMutation {
-	return lc.mutation
+func (_c *LabelCreate) Mutation() *LabelMutation {
+	return _c.mutation
 }
 
 // Save creates the Label in the database.
-func (lc *LabelCreate) Save(ctx context.Context) (*Label, error) {
-	lc.defaults()
-	return withHooks(ctx, lc.sqlSave, lc.mutation, lc.hooks)
+func (_c *LabelCreate) Save(ctx context.Context) (*Label, error) {
+	_c.defaults()
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (lc *LabelCreate) SaveX(ctx context.Context) *Label {
-	v, err := lc.Save(ctx)
+func (_c *LabelCreate) SaveX(ctx context.Context) *Label {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -146,72 +146,72 @@ func (lc *LabelCreate) SaveX(ctx context.Context) *Label {
 }
 
 // Exec executes the query.
-func (lc *LabelCreate) Exec(ctx context.Context) error {
-	_, err := lc.Save(ctx)
+func (_c *LabelCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (lc *LabelCreate) ExecX(ctx context.Context) {
-	if err := lc.Exec(ctx); err != nil {
+func (_c *LabelCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (lc *LabelCreate) defaults() {
-	if _, ok := lc.mutation.CreatedAt(); !ok {
+func (_c *LabelCreate) defaults() {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
 		v := label.DefaultCreatedAt()
-		lc.mutation.SetCreatedAt(v)
+		_c.mutation.SetCreatedAt(v)
 	}
-	if _, ok := lc.mutation.UpdatedAt(); !ok {
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		v := label.DefaultUpdatedAt()
-		lc.mutation.SetUpdatedAt(v)
+		_c.mutation.SetUpdatedAt(v)
 	}
-	if _, ok := lc.mutation.ID(); !ok {
+	if _, ok := _c.mutation.ID(); !ok {
 		v := label.DefaultID()
-		lc.mutation.SetID(v)
+		_c.mutation.SetID(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (lc *LabelCreate) check() error {
-	if _, ok := lc.mutation.CreatedAt(); !ok {
+func (_c *LabelCreate) check() error {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Label.created_at"`)}
 	}
-	if _, ok := lc.mutation.UpdatedAt(); !ok {
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Label.updated_at"`)}
 	}
-	if _, ok := lc.mutation.Name(); !ok {
+	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Label.name"`)}
 	}
-	if v, ok := lc.mutation.Name(); ok {
+	if v, ok := _c.mutation.Name(); ok {
 		if err := label.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Label.name": %w`, err)}
 		}
 	}
-	if v, ok := lc.mutation.Description(); ok {
+	if v, ok := _c.mutation.Description(); ok {
 		if err := label.DescriptionValidator(v); err != nil {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Label.description": %w`, err)}
 		}
 	}
-	if v, ok := lc.mutation.Color(); ok {
+	if v, ok := _c.mutation.Color(); ok {
 		if err := label.ColorValidator(v); err != nil {
 			return &ValidationError{Name: "color", err: fmt.Errorf(`ent: validator failed for field "Label.color": %w`, err)}
 		}
 	}
-	if len(lc.mutation.GroupIDs()) == 0 {
+	if len(_c.mutation.GroupIDs()) == 0 {
 		return &ValidationError{Name: "group", err: errors.New(`ent: missing required edge "Label.group"`)}
 	}
 	return nil
 }
 
-func (lc *LabelCreate) sqlSave(ctx context.Context) (*Label, error) {
-	if err := lc.check(); err != nil {
+func (_c *LabelCreate) sqlSave(ctx context.Context) (*Label, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := lc.createSpec()
-	if err := sqlgraph.CreateNode(ctx, lc.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -224,41 +224,41 @@ func (lc *LabelCreate) sqlSave(ctx context.Context) (*Label, error) {
 			return nil, err
 		}
 	}
-	lc.mutation.id = &_node.ID
-	lc.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (lc *LabelCreate) createSpec() (*Label, *sqlgraph.CreateSpec) {
+func (_c *LabelCreate) createSpec() (*Label, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Label{config: lc.config}
+		_node = &Label{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(label.Table, sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID))
 	)
-	if id, ok := lc.mutation.ID(); ok {
+	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
-	if value, ok := lc.mutation.CreatedAt(); ok {
+	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(label.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
-	if value, ok := lc.mutation.UpdatedAt(); ok {
+	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(label.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
-	if value, ok := lc.mutation.Name(); ok {
+	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(label.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
-	if value, ok := lc.mutation.Description(); ok {
+	if value, ok := _c.mutation.Description(); ok {
 		_spec.SetField(label.FieldDescription, field.TypeString, value)
 		_node.Description = value
 	}
-	if value, ok := lc.mutation.Color(); ok {
+	if value, ok := _c.mutation.Color(); ok {
 		_spec.SetField(label.FieldColor, field.TypeString, value)
 		_node.Color = value
 	}
-	if nodes := lc.mutation.GroupIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -275,7 +275,7 @@ func (lc *LabelCreate) createSpec() (*Label, *sqlgraph.CreateSpec) {
 		_node.group_labels = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := lc.mutation.ItemsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.ItemsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -302,16 +302,16 @@ type LabelCreateBulk struct {
 }
 
 // Save creates the Label entities in the database.
-func (lcb *LabelCreateBulk) Save(ctx context.Context) ([]*Label, error) {
-	if lcb.err != nil {
-		return nil, lcb.err
+func (_c *LabelCreateBulk) Save(ctx context.Context) ([]*Label, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(lcb.builders))
-	nodes := make([]*Label, len(lcb.builders))
-	mutators := make([]Mutator, len(lcb.builders))
-	for i := range lcb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*Label, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := lcb.builders[i]
+			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*LabelMutation)
@@ -325,11 +325,11 @@ func (lcb *LabelCreateBulk) Save(ctx context.Context) ([]*Label, error) {
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, lcb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, lcb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -349,7 +349,7 @@ func (lcb *LabelCreateBulk) Save(ctx context.Context) ([]*Label, error) {
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, lcb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -357,8 +357,8 @@ func (lcb *LabelCreateBulk) Save(ctx context.Context) ([]*Label, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (lcb *LabelCreateBulk) SaveX(ctx context.Context) []*Label {
-	v, err := lcb.Save(ctx)
+func (_c *LabelCreateBulk) SaveX(ctx context.Context) []*Label {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -366,14 +366,14 @@ func (lcb *LabelCreateBulk) SaveX(ctx context.Context) []*Label {
 }
 
 // Exec executes the query.
-func (lcb *LabelCreateBulk) Exec(ctx context.Context) error {
-	_, err := lcb.Save(ctx)
+func (_c *LabelCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (lcb *LabelCreateBulk) ExecX(ctx context.Context) {
-	if err := lcb.Exec(ctx); err != nil {
+func (_c *LabelCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
