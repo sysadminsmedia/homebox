@@ -75,7 +75,10 @@
     loading.value = true;
     // Wait until locations and labels are loaded
     let maxRetry = 10;
-    while (!labels.value || !locations.value) {
+    while (
+        (!labels.value || labels.value.length == 0)
+        || (!locations.value || locations.value.length == 0)
+    ) {
       await new Promise(resolve => setTimeout(resolve, 100));
       if (maxRetry-- < 0) {
         break;
@@ -133,6 +136,30 @@
 
   const locIDs = computed(() => selectedLocations.value.map(l => l.id));
   const labIDs = computed(() => selectedLabels.value.map(l => l.id));
+
+  watch(selectedLocations, newLocs => {
+    if (!queryParamsInitialized.value) return;
+
+    const loc = newLocs.map(l => l.id);
+    router.replace({
+      query: {
+        ...route.query,
+        loc,
+      },
+    });
+  });
+
+  watch(selectedLabels, newLabs => {
+    if (!queryParamsInitialized.value) return;
+
+    const lab = newLabs.map(l => l.id);
+    router.replace({
+      query: {
+        ...route.query,
+        lab,
+      },
+    });
+  });
 
   function parseAssetIDString(d: string) {
     d = d.replace(/"/g, "").replace(/-/g, "");
@@ -333,10 +360,10 @@
         pageSize: pageSize.value,
         page: page.value,
         q: query.value,
-
-        // Non-reactive
         loc: locIDs.value,
         lab: labIDs.value,
+
+        // Non-reactive
         fields,
       },
     });
