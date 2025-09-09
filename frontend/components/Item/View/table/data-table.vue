@@ -10,18 +10,19 @@
     useVueTable,
   } from "@tanstack/vue-table";
 
-  import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuTrigger,
-  } from "@/components/ui/dropdown-menu";
-
   import { valueUpdater } from "@/lib/utils";
 
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import Button from "~/components/ui/button/Button.vue";
-  import { ChevronDown } from "lucide-vue-next";
+  import { DialogID, useDialog } from "~/components/ui/dialog-provider/utils";
+  import MdiArrowDown from "~icons/mdi/arrow-down";
+  import MdiArrowUp from "~icons/mdi/arrow-up";
+  import Checkbox from "~/components/ui/checkbox/Checkbox.vue";
+  import Label from "~/components/ui/label/Label.vue";
+
+  const { openDialog, closeDialog } = useDialog();
 
   const props = defineProps<{
     columns: ColumnDef<TData, TValue>[];
@@ -97,8 +98,7 @@
 
 <template>
   <div>
-    <div>
-      <DropdownMenu>
+    <!-- <DropdownMenu>
         <DropdownMenuTrigger as-child>
           <Button variant="outline" class="ml-auto">
             Columns
@@ -120,8 +120,53 @@
             {{ column.id }}
           </DropdownMenuCheckboxItem>
         </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+      </DropdownMenu> -->
+    <Dialog :dialog-id="DialogID.ItemTableSettings">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{{ $t("components.item.view.table.table_settings") }}</DialogTitle>
+        </DialogHeader>
+
+        <div>{{ $t("components.item.view.table.headers") }}</div>
+        <div class="flex flex-col">
+          <div v-for="(h, i) in headers" :key="h.value" class="flex flex-row items-center gap-1">
+            <Button size="icon" class="size-6" variant="ghost" :disabled="i === 0" @click="moveHeader(i, i - 1)">
+              <MdiArrowUp />
+            </Button>
+            <Button
+              size="icon"
+              class="size-6"
+              variant="ghost"
+              :disabled="i === headers.length - 1"
+              @click="moveHeader(i, i + 1)"
+            >
+              <MdiArrowDown />
+            </Button>
+            <Checkbox :id="h.value" :model-value="h.enabled" @update:model-value="toggleHeader(h.value)" />
+            <label class="text-sm" :for="h.value"> {{ $t(h.text) }} </label>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <Label> {{ $t("components.item.view.table.rows_per_page") }} </Label>
+          <Select :model-value="pagination.rowsPerPage" @update:model-value="pagination.rowsPerPage = Number($event)">
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem :value="10">10</SelectItem>
+              <SelectItem :value="25">25</SelectItem>
+              <SelectItem :value="50">50</SelectItem>
+              <SelectItem :value="100">100</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <DialogFooter>
+          <Button @click="closeDialog(DialogID.ItemTableSettings)"> {{ $t("global.save") }} </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
     <BaseCard>
       <div>
         <Table class="w-full">
