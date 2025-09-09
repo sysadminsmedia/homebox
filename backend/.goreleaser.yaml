@@ -17,24 +17,11 @@ builds:
       - freebsd
     goarch:
       - amd64
-      - "386"
-      - arm
       - arm64
       - riscv64
-    ignore:
-      - goos: windows
-        goarch: arm
-      - goos: windows
-        goarch: "386"
-      - goos: freebsd
-        goarch: arm
-      - goos: freebsd
-        goarch: "386"
     tags:
       - >-
         {{- if eq .Arch "riscv64" }}nodynamic
-        {{- else if eq .Arch "arm" }}nodynamic
-        {{- else if eq .Arch "386" }}nodynamic
         {{- else if eq .Os "freebsd" }}nodynamic
         {{ end }}
 
@@ -56,7 +43,6 @@ archives:
       {{ .ProjectName }}_
       {{- title .Os }}_
       {{- if eq .Arch "amd64" }}x86_64
-      {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
     # use zip for windows archives
