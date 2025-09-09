@@ -1,5 +1,5 @@
 <template>
-  <Dialog :dialog-id="DialogID.ItemTableSettings">
+  <!-- <Dialog :dialog-id="DialogID.ItemTableSettings">
     <DialogContent>
       <DialogHeader>
         <DialogTitle>{{ $t("components.item.view.table.table_settings") }}</DialogTitle>
@@ -44,7 +44,7 @@
         <Button @click="closeDialog(DialogID.ItemTableSettings)"> {{ $t("global.save") }} </Button>
       </DialogFooter>
     </DialogContent>
-  </Dialog>
+  </Dialog> -->
   <BaseCard>
     <Table class="w-full">
       <TableHeader>

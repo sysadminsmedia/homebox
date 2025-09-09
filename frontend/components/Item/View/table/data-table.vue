@@ -10,28 +10,30 @@
     useVueTable,
   } from "@tanstack/vue-table";
 
-  import { valueUpdater } from "@/lib/utils";
+  import { camelToSnakeCase, valueUpdater } from "@/lib/utils";
 
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import Button from "~/components/ui/button/Button.vue";
   import { DialogID, useDialog } from "~/components/ui/dialog-provider/utils";
   import MdiArrowDown from "~icons/mdi/arrow-down";
   import MdiArrowUp from "~icons/mdi/arrow-up";
+  import MdiTableCog from "~icons/mdi/table-cog";
   import Checkbox from "~/components/ui/checkbox/Checkbox.vue";
   import Label from "~/components/ui/label/Label.vue";
+  import type { ItemSummary } from "~/lib/api/types/data-contracts";
 
-  const { openDialog, closeDialog } = useDialog();
+  const { openDialog } = useDialog();
 
   const props = defineProps<{
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
   }>();
 
-  const {
-    value: { tableHeaders: tableHeadersData },
-  } = useViewPreferences();
+  const preferences = useViewPreferences();
+  const defaultPageSize = preferences.value.itemsPerTablePage;
+  const tableHeadersData = preferences.value.tableHeaders;
   const defaultVisible = ["name", "quantity", "insured", "purchasePrice"];
 
   const tableHeaders = computed(
@@ -56,6 +58,17 @@
   );
   const rowSelection = ref({});
   const expanded = ref<ExpandedState>({});
+  const pagination = ref({
+    pageIndex: 0,
+    pageSize: defaultPageSize || 10,
+  });
+
+  watch(
+    () => pagination.value.pageSize,
+    newSize => {
+      preferences.value.itemsPerTablePage = newSize;
+    }
+  );
 
   const table = useVueTable({
     get data() {
@@ -75,6 +88,7 @@
     onRowSelectionChange: updaterOrValue => valueUpdater(updaterOrValue, rowSelection),
     onExpandedChange: updaterOrValue => valueUpdater(updaterOrValue, expanded),
     onColumnOrderChange: updaterOrValue => valueUpdater(updaterOrValue, columnOrder),
+    onPaginationChange: updaterOrValue => valueUpdater(updaterOrValue, pagination),
 
     state: {
       get sorting() {
@@ -92,35 +106,54 @@
       get columnOrder() {
         return columnOrder.value;
       },
+      get pagination() {
+        return pagination.value;
+      },
     },
   });
+
+  const persistHeaders = () => {
+    const headers = table
+      .getAllColumns()
+      .filter(column => column.getCanHide())
+      .map(h => ({
+        value: h.id as keyof ItemSummary,
+        enabled: h.getIsVisible(),
+      }));
+
+    preferences.value.tableHeaders = headers;
+  };
+
+  const moveHeader = (from: number, to: number) => {
+    // Only allow moving between the first and last index (excluding 'select' and 'actions')
+    const start = 1; // index of 'select'
+    const end = columnOrder.value.length - 2; // index before 'actions'
+
+    if (from < start || from > end || to < start || to > end || from === to) return;
+
+    const order = [...columnOrder.value];
+    const [moved] = order.splice(from, 1);
+    order.splice(to, 0, moved!);
+    columnOrder.value = order;
+
+    persistHeaders();
+  };
+
+  const toggleHeader = (id: string) => {
+    const header = table
+      .getAllColumns()
+      .filter(column => column.getCanHide())
+      .find(h => h.id === id);
+    if (header) {
+      header.toggleVisibility();
+    }
+
+    persistHeaders();
+  };
 </script>
 
 <template>
   <div>
-    <!-- <DropdownMenu>
-        <DropdownMenuTrigger as-child>
-          <Button variant="outline" class="ml-auto">
-            Columns
-            <ChevronDown class="ml-2 size-4" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuCheckboxItem
-            v-for="column in table.getAllColumns().filter(column => column.getCanHide())"
-            :key="column.id"
-            class="capitalize"
-            :model-value="column.getIsVisible()"
-            @update:model-value="
-              value => {
-                column.toggleVisibility(!!value);
-              }
-            "
-          >
-            {{ column.id }}
-          </DropdownMenuCheckboxItem>
-        </DropdownMenuContent>
-      </DropdownMenu> -->
     <Dialog :dialog-id="DialogID.ItemTableSettings">
       <DialogContent>
         <DialogHeader>
@@ -129,31 +162,40 @@
 
         <div>{{ $t("components.item.view.table.headers") }}</div>
         <div class="flex flex-col">
-          <div v-for="(h, i) in headers" :key="h.value" class="flex flex-row items-center gap-1">
-            <Button size="icon" class="size-6" variant="ghost" :disabled="i === 0" @click="moveHeader(i, i - 1)">
+          <div
+            v-for="(colId, i) in columnOrder.slice(1, columnOrder.length - 1)"
+            :key="colId"
+            class="flex flex-row items-center gap-1"
+          >
+            <Button size="icon" class="size-6" variant="ghost" :disabled="i === 0" @click="moveHeader(i + 1, i)">
               <MdiArrowUp />
             </Button>
             <Button
               size="icon"
               class="size-6"
               variant="ghost"
-              :disabled="i === headers.length - 1"
-              @click="moveHeader(i, i + 1)"
+              :disabled="i === columnOrder.length - 3"
+              @click="moveHeader(i + 1, i + 2)"
             >
               <MdiArrowDown />
             </Button>
-            <Checkbox :id="h.value" :model-value="h.enabled" @update:model-value="toggleHeader(h.value)" />
-            <label class="text-sm" :for="h.value"> {{ $t(h.text) }} </label>
+            <Checkbox
+              :id="colId"
+              :model-value="table.getColumn(colId)?.getIsVisible()"
+              @update:model-value="toggleHeader(colId)"
+            />
+            <label class="text-sm" :for="colId"> {{ $t(`items.${camelToSnakeCase(colId)}`) }} </label>
           </div>
         </div>
 
-        <div class="flex flex-col gap-2">
+        <div class="mt-4 flex flex-col gap-2">
           <Label> {{ $t("components.item.view.table.rows_per_page") }} </Label>
-          <Select :model-value="pagination.rowsPerPage" @update:model-value="pagination.rowsPerPage = Number($event)">
+          <Select :model-value="pagination.pageSize" @update:model-value="val => table.setPageSize(Number(val))">
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem :value="1">1</SelectItem>
               <SelectItem :value="10">10</SelectItem>
               <SelectItem :value="25">25</SelectItem>
               <SelectItem :value="50">50</SelectItem>
@@ -161,10 +203,6 @@
             </SelectContent>
           </Select>
         </div>
-
-        <DialogFooter>
-          <Button @click="closeDialog(DialogID.ItemTableSettings)"> {{ $t("global.save") }} </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
     <BaseCard>
@@ -209,6 +247,9 @@
         </Table>
       </div>
       <div class="flex items-center justify-end space-x-2 py-4">
+        <Button class="size-10 p-0" variant="outline" @click="openDialog(DialogID.ItemTableSettings)">
+          <MdiTableCog />
+        </Button>
         <div class="flex-1 text-sm text-muted-foreground">
           {{ table.getFilteredSelectedRowModel().rows.length }} of {{ table.getFilteredRowModel().rows.length }} row(s)
           selected.

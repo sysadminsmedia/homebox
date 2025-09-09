@@ -1,7 +1,7 @@
 import type { ItemSummary } from "~~/lib/api/types/data-contracts";
 
 export type TableHeaderType = {
-  text: string;
+  text?: string;
   value: keyof ItemSummary;
   sortable?: boolean;
   align?: "left" | "center" | "right";
