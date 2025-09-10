@@ -25,6 +25,8 @@
     return props.view ?? preferences.value.itemDisplayView;
   });
 
+  const emit = defineEmits(["refreshItems"]);
+
   const selectedAllCards = ref<boolean | "indeterminate">(false);
 
   function setViewPreference(view: ViewType) {
@@ -72,7 +74,7 @@
       <div v-if="items.length === 0" class="flex flex-col items-center gap-2">
         <p>{{ $t("items.no_results") }}</p>
       </div>
-      <ItemViewCardGrid v-else v-model="selectedAllCards" :items="items" />
+      <ItemViewCardGrid v-else v-model="selectedAllCards" :items="items" @refresh-items="emit('refreshItems')" />
     </template>
   </section>
 </template>

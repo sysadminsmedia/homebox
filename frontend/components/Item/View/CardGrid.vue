@@ -47,6 +47,8 @@
         </DropdownMenuItem>
         <DropdownMenuItem @click="openDialog(DialogID.ChangeItemLocation)"> Change location </DropdownMenuItem>
         <DropdownMenuItem @click="openDialog(DialogID.ChangeItemLabels)"> Change labels </DropdownMenuItem>
+        <DropdownMenuItem @click="deleteItems">{{ $t("global.delete") }}</DropdownMenuItem>
+        <DropdownMenuItem @click="duplicateItems">{{ $t("global.duplicate") }}</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   </div>
@@ -66,7 +68,7 @@
   const maintenanceEditModal = ref<InstanceType<typeof MaintenanceEditModal>>();
 
   const { t } = useI18n();
-
+  const confirm = useConfirm();
   const { openDialog, closeDialog } = useDialog();
 
   const props = defineProps<{
@@ -80,6 +82,8 @@
       return { selected: false, item };
     })
   );
+
+  const emit = defineEmits(["refreshItems"]);
 
   const api = useUserApi();
   const labelStore = useLabelStore();
@@ -210,6 +214,49 @@
     toast.success(t("labels.toast.labels_updated"));
     closeDialog(DialogID.ChangeItemLabels);
   }
+
+  async function deleteItems() {
+    const confirmed = await confirm.open(t("items.delete_items_confirm"));
+
+    if (!confirmed.data) {
+      return;
+    }
+
+    try {
+      await Promise.all(
+        cards.value.map(async ({ selected, item }) => {
+          if (!selected) return;
+          console.log("deleting item", item.name);
+          const { error } = await api.items.delete(item.id);
+          if (error) {
+            throw new Error("failed");
+          }
+        })
+      );
+    } catch (e) {
+      toast.error(t("items.toast.failed_delete_items"));
+    }
+    selectedAllCards.value = false;
+    emit("refreshItems");
+    toast.success(t("items.toast.items_deleted"));
+  }
+
+  async function duplicateItems() {
+    try {
+      await Promise.all(
+        cards.value.map(async ({ selected, item }) => {
+          if (!selected) return;
+          const { error } = await api.items.duplicate(item.id);
+          if (error) {
+            throw new Error("failed");
+          }
+        })
+      );
+    } catch (e) {
+      toast.error(t("items.toast.failed_duplicate_item"));
+    }
+    selectedAllCards.value = false;
+    emit("refreshItems");
   }
 </script>
 

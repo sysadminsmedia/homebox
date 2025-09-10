@@ -375,6 +375,10 @@
 
     await search();
   }
+
+  async function refreshItems() {
+    await search();
+  }
 </script>
 
 <template>
@@ -517,7 +521,13 @@
         <MdiSelectSearch class="size-10" />
         <p>{{ $t("items.no_results") }}</p>
       </div>
-      <ItemViewCardGrid v-else v-model="selectedAllCards" :items="items" :location-flat-tree="locationFlatTree" />
+      <ItemViewCardGrid
+        v-else
+        v-model="selectedAllCards"
+        :items="items"
+        :location-flat-tree="locationFlatTree"
+        @refresh-items="refreshItems()"
+      />
       <Pagination
         v-slot="{ page: currentPage }"
         :items-per-page="pageSize"
