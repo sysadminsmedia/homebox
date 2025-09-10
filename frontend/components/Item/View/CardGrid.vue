@@ -1,39 +1,30 @@
 <template>
-  <Dialog :dialog-id="DialogID.EditLocationAndLabels">
+  <Dialog :dialog-id="DialogID.ChangeItemLocation">
     <DialogContent>
       <DialogHeader>
         <DialogTitle>
-          <span> Manage location and labels </span>
+          <span> Change location </span>
         </DialogTitle>
       </DialogHeader>
       <LocationSelector v-model="location" />
-      <LabelSelector v-model="currentLabels" :labels="labels" />
+      <Button @click="updateLocation"> Update location </Button>
+    </DialogContent>
+  </Dialog>
+  <Dialog :dialog-id="DialogID.ChangeItemLabels">
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>
+          <span> Change labels </span>
+        </DialogTitle>
+      </DialogHeader>
+      <span> Add labels </span>
+      <LabelSelector v-model="addedLabels" :labels="labels" />
+      <span> Remove labels </span>
+      <LabelSelector v-model="removedLabels" :labels="labels" />
       <Button @click="updateLabels">{{ $t("labels.update_labels") }}</Button>
     </DialogContent>
   </Dialog>
   <MaintenanceEditModal ref="maintenanceEditModal"></MaintenanceEditModal>
-  <ul v-if="cards.some(c => c.selected)" class="cards-quick-menu flex flex-row">
-    <li>
-      <Tooltip>
-        <TooltipTrigger>
-          <a @click="openDialog(DialogID.EditLocationAndLabels)">
-            <AlphaLCircle class="size-10" aria-hidden="true" />
-          </a>
-        </TooltipTrigger>
-        <TooltipContent> Manage location and labels </TooltipContent>
-      </Tooltip>
-    </li>
-    <li>
-      <Tooltip>
-        <TooltipTrigger>
-          <a @click="maintenanceEditModal?.openCreateModal(cards.map(({ item }) => item.id))">
-            <AlphaMCircle class="size-10" aria-hidden="true" />
-          </a>
-        </TooltipTrigger>
-        <TooltipContent> Add maintenance entry </TooltipContent>
-      </Tooltip>
-    </li>
-  </ul>
   <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
     <ItemCard
       v-for="(item, index) in props.items"
@@ -43,19 +34,34 @@
       :location-flat-tree="props.locationFlatTree"
     />
   </div>
+  <div class="DropdownMenu">
+    <DropdownMenu>
+      <DropdownMenuTrigger aria-label="Open quick actions menu">
+        <Ellipsis v-if="cards.some(c => c.selected)" class="cards-quick-menu-icon size-9 rounded-full border-solid" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuItem
+          @click="maintenanceEditModal?.openCreateModal(cards.filter(c => c.selected).map(({ item }) => item.id))"
+        >
+          Add maintenance entry
+        </DropdownMenuItem>
+        <DropdownMenuItem @click="openDialog(DialogID.ChangeItemLocation)"> Change location </DropdownMenuItem>
+        <DropdownMenuItem @click="openDialog(DialogID.ChangeItemLabels)"> Change labels </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  </div>
 </template>
 
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
+  import { Ellipsis } from "lucide-vue-next";
   import MaintenanceEditModal from "@/components/Maintenance/EditModal.vue";
-  import type { ItemSummary } from "~~/lib/api/types/data-contracts";
+  import type { ItemSummary, LocationSummary } from "~~/lib/api/types/data-contracts";
   import { useLabelStore } from "~~/stores/labels";
   import { toast } from "@/components/ui/sonner";
-  import AlphaLCircle from "~icons/mdi/alpha-l-circle";
-  import AlphaMCircle from "~icons/mdi/alpha-m-circle";
   import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { useDialog } from "@/components/ui/dialog-provider";
-  import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+  import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "~/components/ui/dropdown-menu";
 
   const maintenanceEditModal = ref<InstanceType<typeof MaintenanceEditModal>>();
 
@@ -79,11 +85,19 @@
   const labelStore = useLabelStore();
   const labels = computed(() => labelStore.labels);
 
-  const location = ref();
-  const currentLabels = ref<string[]>([]);
-  let initialLabels: Set<string>;
-  let addedLabels: Set<string>;
-  let removedLabels: Set<string>;
+  const location = ref<LocationSummary | null>();
+  const addedLabels = ref<string[]>([]);
+  const removedLabels = ref<string[]>([]);
+  let initialLabelsToRemove: string[] = [];
+
+  watch(
+    () => props.items,
+    () => {
+      cards.value = props.items.map(item => {
+        return { selected: false, item };
+      });
+    }
+  );
 
   watch(
     cards,
@@ -101,7 +115,7 @@
         selectedAllCards.value = true;
       }
 
-      initialLabels = new Set(
+      const initialLabels = new Set(
         cards.value
           .filter(({ selected }) => {
             return !!selected;
@@ -113,7 +127,8 @@
           })
           .flat()
       );
-      currentLabels.value = [...initialLabels];
+      removedLabels.value = [...initialLabels];
+      initialLabelsToRemove = removedLabels.value;
     },
     { deep: true }
   );
@@ -131,13 +146,13 @@
     }
   });
 
-  watch(location, async newLoc => {
-    if (!newLoc || !newLoc.id) return;
+  async function updateLocation() {
     try {
       await Promise.all(
         cards.value.map(async ({ selected, item }) => {
           if (!selected) return;
-          const { error } = await api.items.patch(item.id, { id: item.id, location: newLoc.id });
+          if (!location.value?.id) return;
+          const { error } = await api.items.patch(item.id, { id: item.id, location: location.value.id });
 
           if (error) {
             throw new Error("failed");
@@ -148,23 +163,20 @@
       toast.error(t("locations.toast.failed_update_location"));
       return;
     }
+    location.value = null;
+    closeDialog(DialogID.ChangeItemLocation);
     toast.success(t("locations.toast.location_updated"));
-  });
-
-  watch(currentLabels, clNew => {
-    const clNewSet = new Set(clNew);
-    addedLabels = clNewSet.difference(initialLabels);
-    removedLabels = initialLabels.difference(clNewSet);
-  });
+  }
 
   async function updateLabels() {
-    initialLabels = new Set(currentLabels.value);
+    const labelsToRemove = initialLabelsToRemove.filter(il => !removedLabels.value.includes(il));
+    if (!addedLabels.value.length && !labelsToRemove.length) return;
     try {
       await Promise.all(
         cards.value.map(async ({ selected, item }) => {
           if (!selected) return;
           let needsUpdate = false;
-          addedLabels.forEach(l => {
+          addedLabels.value.forEach(l => {
             const index = item.labels.findIndex(il => {
               return il.id === l;
             });
@@ -173,7 +185,7 @@
               needsUpdate = true;
             }
           });
-          removedLabels.forEach(l => {
+          labelsToRemove.forEach(l => {
             const index = item.labels.findIndex(il => {
               return il.id === l;
             });
@@ -194,16 +206,23 @@
     } catch (e) {
       toast.error(t("labels.toast.failed_update_labels"));
     }
+    addedLabels.value = [];
     toast.success(t("labels.toast.labels_updated"));
-    closeDialog(DialogID.EditLocationAndLabels);
+    closeDialog(DialogID.ChangeItemLabels);
+  }
   }
 </script>
 
 <style lang="css">
-  .cards-quick-menu {
+  .cards-quick-menu-icon {
     position: fixed;
     left: 50%;
     bottom: 5%;
-    z-index: 2;
+    background-color: whitesmoke;
+  }
+  .DropdownMenu {
+    position: fixed;
+    left: 50%;
+    bottom: 27%;
   }
 </style>

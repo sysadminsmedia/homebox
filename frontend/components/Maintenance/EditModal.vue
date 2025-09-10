@@ -65,7 +65,7 @@
   }
 
   async function createEntry() {
-    if (!entry.itemIds) {
+    if (!entry.itemIds || !entry.itemIds.length) {
       return;
     }
     try {
