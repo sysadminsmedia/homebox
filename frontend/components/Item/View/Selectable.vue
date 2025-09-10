@@ -25,7 +25,7 @@
     return props.view ?? preferences.value.itemDisplayView;
   });
 
-  const cardGridAction = ref<{ action: "selectAll" | "clearAll" }>({ action: "clearAll" });
+  const selectedAllCards = ref<boolean | "indeterminate">(false);
 
   function setViewPreference(view: ViewType) {
     preferences.value.itemDisplayView = view;
@@ -40,8 +40,10 @@
         <Badge>
           {{ items.length }}
         </Badge>
-        <Button @click="cardGridAction = { action: 'selectAll' }"> Select all </Button>
-        <Button @click="cardGridAction = { action: 'clearAll' }"> Clear all </Button>
+        <div v-if="itemView === 'card'" class="flex items-center gap-2">
+          <Checkbox id="selectAll" v-model="selectedAllCards" class="size-6" />
+          <Label for="selectAll" class="cursor-pointer"> Select all </Label>
+        </div>
       </div>
       <template #description>
         <div v-if="!viewSet">
@@ -70,7 +72,7 @@
       <div v-if="items.length === 0" class="flex flex-col items-center gap-2">
         <p>{{ $t("items.no_results") }}</p>
       </div>
-      <ItemViewCardGrid v-else :items="items" :action="cardGridAction" />
+      <ItemViewCardGrid v-else v-model="selectedAllCards" :items="items" />
     </template>
   </section>
 </template>
