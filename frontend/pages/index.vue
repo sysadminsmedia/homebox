@@ -43,6 +43,7 @@
   const api = usePublicApi();
   // Use ref for OIDC error state management
   const oidcError = ref<string | null>(null);
+  const shownErrorMessage = ref(false);
 
   const { data: status } = useAsyncData(async () => {
     const { data } = await api.status();
@@ -61,7 +62,7 @@
     }
 
     // Auto-redirect to OIDC if autoRedirect is enabled, but not if there's an OIDC initialization error
-    if (status?.oidc?.enabled && status?.oidc?.autoRedirect && !oidcError.value) {
+    if (status?.oidc?.enabled && status?.oidc?.autoRedirect && !oidcError.value && !shownErrorMessage.value) {
       loginWithOIDC();
     }
   });
@@ -151,6 +152,7 @@
     if (typeof oidcErrorParam === "string" && oidcErrorParam.startsWith("oidc_")) {
       // Set the error state to prevent auto-redirect
       oidcError.value = oidcErrorParam;
+      shownErrorMessage.value = true;
 
       const translationKey = `index.toast.${oidcErrorParam}`;
       let errorMessage = t(translationKey);
@@ -169,10 +171,8 @@
       delete newQuery.details;
       router.replace({ query: newQuery });
 
-      // Clear the error state after showing the message (with a delay to ensure auto-redirect doesn't trigger)
-      setTimeout(() => {
-        oidcError.value = null;
-      }, 1000);
+      // Clear the error state after showing the message
+      oidcError.value = null;
     }
   });
 
