@@ -816,11 +816,20 @@ func (e *ItemsRepository) GetAllZeroImportRef(ctx context.Context, gid uuid.UUID
 }
 
 func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data ItemPatch) error {
-	q := e.db.Item.Update().
-		Where(
-			item.ID(id),
-			item.HasGroupWith(group.ID(gid)),
-		)
+	tx, err := e.db.Tx(ctx)
+	if err != nil {
+		return err
+	}
+	committed := false
+	defer func() {
+		if !committed {
+			if err := tx.Rollback(); err != nil {
+				log.Warn().Err(err).Msg("failed to rollback transaction when patching an item")
+			}
+		}
+	}()
+
+	q := tx.Item.UpdateOneID(id)
 
 	if data.ImportRef != nil {
 		q.SetImportRef(*data.ImportRef)
@@ -879,19 +888,17 @@ func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data Ite
 			q.RemoveLabelIDs(set.Slice()...)
 		}
 	}
-	
-	for attempts := 0; attempts < 3; attempts++ {
-		error := q.Exec(ctx)
 
-		if error != nil {
-			if error.Error() == "database is locked (5) (SQLITE_BUSY)" {
-				if attempts == 2 { return error }
-				time.Sleep(50 * time.Millisecond)
-			} else {
-				return error
-			}
-		} else { break }
+	err = q.Exec(ctx)
+	if err != nil {
+		return err
 	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+	committed = true
 
 	e.publishMutationEvent(gid)
 	return nil
