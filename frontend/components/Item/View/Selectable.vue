@@ -7,7 +7,9 @@
   import { Button, ButtonGroup } from "@/components/ui/button";
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import ItemCard from "@/components/Item/Card.vue";
-  import ItemViewTable from "@/components/Item/View/Table.vue";
+  import DataTable from "./table/data-table.vue";
+  import { makeColumns } from "./table/columns";
+  import { useI18n } from "vue-i18n";
 
   type Props = {
     view?: ViewType;
@@ -15,6 +17,8 @@
   };
 
   const preferences = useViewPreferences();
+  const { t } = useI18n();
+  const columns = computed(() => makeColumns(t));
 
   const props = defineProps<Props>();
   const viewSet = computed(() => {
@@ -60,7 +64,7 @@
     </BaseSectionHeader>
 
     <template v-if="itemView === 'table'">
-      <ItemViewTable :items="items" />
+      <DataTable :columns="columns" :data="items" />
     </template>
     <template v-else>
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
