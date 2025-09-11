@@ -50,7 +50,7 @@ aside: false
 | HBOX_OIDC_CLIENT_SECRET                 |                                                                            | OIDC client secret (required when OIDC is enabled)                                                                                                                                        |
 | HBOX_OIDC_SCOPE                         | openid profile email                                                       | OIDC scopes to request from the provider                                                                                                                                                  |
 | HBOX_OIDC_ALLOWED_GROUPS                |                                                                            | comma-separated list of groups that are allowed to login (empty means all groups allowed)                                                                                                 |
-| HBOX_OIDC_FORCE                         | false                                                                      | force OIDC authentication (disable local login form, redirect directly to OIDC)                                                                                                           |
+| HBOX_OIDC_AUTO_REDIRECT                 | false                                                                      | auto redirect to OIDC authentication (automatically redirects to OIDC provider, but does not disable local login. See HBOX_OPTIONS_ALLOW_LOCAL_LOGIN)                                     |
 | HBOX_OIDC_VERIFY_EMAIL                  | false                                                                      | require email verification from OIDC provider                                                                                                                                             |
 | HBOX_OIDC_GROUP_CLAIM                   | groups                                                                     | name of the claim in the ID token that contains user groups                                                                                                                               |
 | HBOX_OIDC_EMAIL_CLAIM                   | email                                                                      | name of the claim in the ID token that contains user email                                                                                                                                |
@@ -184,7 +184,7 @@ HomeBox supports OpenID Connect (OIDC) authentication, allowing users to login u
 
 - **Group Authorization**: Use `HBOX_OIDC_ALLOWED_GROUPS` to restrict access to specific groups
 - **Custom Claims**: Configure `HBOX_OIDC_GROUP_CLAIM`, `HBOX_OIDC_EMAIL_CLAIM`, and `HBOX_OIDC_NAME_CLAIM` if your provider uses different claim names
-- **Force OIDC**: Set `HBOX_OIDC_FORCE=true` to redirect users directly to OIDC (disables local login form)
+- **Auto Redirect to OIDC**: Set `HBOX_OIDC_AUTO_REDIRECT=true` to automatically redirect users directly to OIDC
 - **Local Login**: Set `HBOX_OPTIONS_ALLOW_LOCAL_LOGIN=false` to completely disable username/password login
 - **Email Verification**: Set `HBOX_OIDC_VERIFY_EMAIL=true` to require email verification from the OIDC provider
 
@@ -243,7 +243,7 @@ OPTIONS
 --oidc-client-secret/$HBOX_OIDC_CLIENT_SECRET                                 <string>
 --oidc-scope/$HBOX_OIDC_SCOPE                                                 <string>  (default: openid profile email)
 --oidc-allowed-groups/$HBOX_OIDC_ALLOWED_GROUPS                               <string>
---oidc-force/$HBOX_OIDC_FORCE                                                 <bool>    (default: false)
+--oidc-auto-redirect/$HBOX_OIDC_AUTO_REDIRECT                                 <bool>    (default: false)
 --oidc-verify-email/$HBOX_OIDC_VERIFY_EMAIL                                   <bool>    (default: false)
 --oidc-group-claim/$HBOX_OIDC_GROUP_CLAIM                                     <string>  (default: groups)
 --oidc-email-claim/$HBOX_OIDC_EMAIL_CLAIM                                     <string>  (default: email)

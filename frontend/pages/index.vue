@@ -60,8 +60,8 @@
       loginPassword.value = "demo";
     }
 
-    // Auto-redirect to OIDC if force is enabled, but not if there's an OIDC error
-    if (status?.oidc?.enabled && status?.oidc?.force && !oidcError.value) {
+    // Auto-redirect to OIDC if autoRedirect is enabled, but not if there's an OIDC initialization error
+    if (status?.oidc?.enabled && status?.oidc?.autoRedirect && !oidcError.value) {
       loginWithOIDC();
     }
   });

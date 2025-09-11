@@ -101,10 +101,10 @@ type (
 	}
 
 	OIDCStatus struct {
-		Enabled    bool   `json:"enabled"`
-		ButtonText string `json:"buttonText,omitempty"`
-		Force      bool   `json:"force,omitempty"`
-		AllowLocal bool   `json:"allowLocal"`
+		Enabled      bool   `json:"enabled"`
+		ButtonText   string `json:"buttonText,omitempty"`
+		AutoRedirect bool   `json:"autoRedirect,omitempty"`
+		AllowLocal   bool   `json:"allowLocal"`
 	}
 )
 
@@ -157,10 +157,10 @@ func (ctrl *V1Controller) HandleBase(ready ReadyFunc, build Build) errchain.Hand
 			AllowRegistration: ctrl.allowRegistration,
 			LabelPrinting:     ctrl.config.LabelMaker.PrintCommand != nil,
 			OIDC: OIDCStatus{
-				Enabled:    ctrl.config.OIDC.Enabled,
-				ButtonText: ctrl.config.OIDC.ButtonText,
-				Force:      ctrl.config.OIDC.Force,
-				AllowLocal: ctrl.config.Options.AllowLocalLogin,
+				Enabled:      ctrl.config.OIDC.Enabled,
+				ButtonText:   ctrl.config.OIDC.ButtonText,
+				AutoRedirect: ctrl.config.OIDC.AutoRedirect,
+				AllowLocal:   ctrl.config.Options.AllowLocalLogin,
 			},
 		})
 	}

@@ -854,7 +854,7 @@ export interface APISummary {
   message: string;
   oidc?: {
     enabled: boolean;
-    force?: boolean;
+    autoRedirect?: boolean;
     allowLocal?: boolean;
     buttonText?: string;
   };

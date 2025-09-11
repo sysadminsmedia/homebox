@@ -84,7 +84,7 @@ type OIDCConf struct {
 	ClientSecret       string        `yaml:"client_secret"`
 	Scope              string        `yaml:"scope"                conf:"default:openid profile email"`
 	AllowedGroups      string        `yaml:"allowed_groups"`
-	Force              bool          `yaml:"force"                conf:"default:false"`
+	AutoRedirect       bool          `yaml:"auto_redirect"                conf:"default:false"`
 	VerifyEmail        bool          `yaml:"verify_email"         conf:"default:false"`
 	GroupClaim         string        `yaml:"group_claim"          conf:"default:groups"`
 	EmailClaim         string        `yaml:"email_claim"          conf:"default:email"`
