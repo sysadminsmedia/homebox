@@ -244,9 +244,10 @@ definitions:
           $ref: '#/definitions/ent.Entity'
         type: array
       entity:
-        allOf:
-        - $ref: '#/definitions/ent.Entity'
         description: Entity holds the value of the entity edge.
+        items:
+          $ref: '#/definitions/ent.Entity'
+        type: array
       fields:
         description: Fields holds the value of the fields edge.
         items:
@@ -686,6 +687,77 @@ definitions:
       copyPrefix:
         type: string
     type: object
+  repo.EntityAttachment:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      mimeType:
+        type: string
+      path:
+        type: string
+      primary:
+        type: boolean
+      thumbnail:
+        $ref: '#/definitions/ent.Attachment'
+      title:
+        type: string
+      type:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  repo.EntityAttachmentUpdate:
+    properties:
+      primary:
+        type: boolean
+      title:
+        type: string
+      type:
+        type: string
+    type: object
+  repo.EntityType:
+    properties:
+      color:
+        type: string
+      description:
+        type: string
+      icon:
+        type: string
+      isLocation:
+        type: boolean
+      name:
+        type: string
+    type: object
+  repo.EntityTypeCreate:
+    properties:
+      color:
+        type: string
+      description:
+        type: string
+      icon:
+        type: string
+      isLocation:
+        type: boolean
+      name:
+        type: string
+    required:
+    - isLocation
+    - name
+    type: object
+  repo.EntityTypeUpdate:
+    properties:
+      color:
+        type: string
+      description:
+        type: string
+      icon:
+        type: string
+      name:
+        minLength: 1
+        type: string
+    type: object
   repo.Group:
     properties:
       createdAt:
@@ -721,40 +793,12 @@ definitions:
       name:
         type: string
     type: object
-  repo.ItemAttachment:
-    properties:
-      createdAt:
-        type: string
-      id:
-        type: string
-      mimeType:
-        type: string
-      path:
-        type: string
-      primary:
-        type: boolean
-      thumbnail:
-        $ref: '#/definitions/ent.Attachment'
-      title:
-        type: string
-      type:
-        type: string
-      updatedAt:
-        type: string
-    type: object
-  repo.ItemAttachmentUpdate:
-    properties:
-      primary:
-        type: boolean
-      title:
-        type: string
-      type:
-        type: string
-    type: object
   repo.ItemCreate:
     properties:
       description:
         maxLength: 1000
+        type: string
+      entityType:
         type: string
       labelIds:
         items:
@@ -773,6 +817,7 @@ definitions:
       quantity:
         type: integer
     required:
+    - entityType
     - name
     type: object
   repo.ItemField:
@@ -799,11 +844,13 @@ definitions:
         type: string
       attachments:
         items:
-          $ref: '#/definitions/repo.ItemAttachment'
+          $ref: '#/definitions/repo.EntityAttachment'
         type: array
       createdAt:
         type: string
       description:
+        type: string
+      entityType:
         type: string
       fields:
         items:
@@ -906,6 +953,8 @@ definitions:
         type: string
       description:
         type: string
+      entityType:
+        type: string
       id:
         type: string
       imageId:
@@ -956,6 +1005,8 @@ definitions:
         type: string
       description:
         maxLength: 1000
+        type: string
+      entityType:
         type: string
       fields:
         items:
@@ -1024,6 +1075,7 @@ definitions:
       warrantyExpires:
         type: string
     required:
+    - entityType
     - name
     type: object
   repo.LabelCreate:
@@ -1074,11 +1126,15 @@ definitions:
     properties:
       description:
         type: string
+      entityType:
+        type: string
       name:
         type: string
       parentId:
         type: string
         x-nullable: true
+    required:
+    - entityType
     type: object
   repo.LocationOut:
     properties:
@@ -1089,6 +1145,8 @@ definitions:
       createdAt:
         type: string
       description:
+        type: string
+      entityType:
         type: string
       id:
         type: string
@@ -1107,6 +1165,8 @@ definitions:
         type: string
       description:
         type: string
+      entityType:
+        type: string
       id:
         type: string
       itemCount:
@@ -1122,6 +1182,8 @@ definitions:
         type: string
       description:
         type: string
+      entityType:
+        type: string
       id:
         type: string
       name:
@@ -1133,6 +1195,8 @@ definitions:
     properties:
       description:
         type: string
+      entityType:
+        type: string
       id:
         type: string
       name:
@@ -1140,6 +1204,8 @@ definitions:
       parentId:
         type: string
         x-nullable: true
+    required:
+    - entityType
     type: object
   repo.MaintenanceEntry:
     properties:
@@ -1697,7 +1763,7 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/repo.ItemAttachmentUpdate'
+          $ref: '#/definitions/repo.EntityAttachmentUpdate'
       responses:
         "200":
           description: OK
@@ -1766,6 +1832,91 @@ paths:
       summary: Create Maintenance Entry
       tags:
       - Item Maintenance
+  /v1/entitytype:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repo.EntityType'
+            type: array
+      security:
+      - Bearer: []
+      summary: Query All Entity Types
+      tags:
+      - EntityTypes
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Entity Type Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.EntityTypeCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.EntityType'
+      security:
+      - Bearer: []
+      summary: Create Entity Type
+      tags:
+      - EntityTypes
+  /v1/entitytype/{id}:
+    get:
+      parameters:
+      - description: Entity Type ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.EntityType'
+      security:
+      - Bearer: []
+      summary: Get One Entity Type
+      tags:
+      - EntityTypes
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Entity Type ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Entity Type Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.EntityTypeUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.EntityType'
+      security:
+      - Bearer: []
+      summary: Update Entity Type
+      tags:
+      - EntityTypes
   /v1/groups:
     get:
       produces:
@@ -2163,7 +2314,7 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/repo.ItemAttachmentUpdate'
+          $ref: '#/definitions/repo.EntityAttachmentUpdate'
       responses:
         "200":
           description: OK

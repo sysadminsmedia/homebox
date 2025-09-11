@@ -73,6 +73,7 @@ type (
 		Quantity    int       `json:"quantity"`
 		Description string    `json:"description" validate:"max=1000"`
 		AssetID     AssetID   `json:"-"`
+		EntityType  uuid.UUID `json:"entityType"  validate:"required,uuid"`
 
 		// Edges
 		LocationID uuid.UUID   `json:"locationId"`
@@ -89,6 +90,7 @@ type (
 		Insured                 bool      `json:"insured"`
 		Archived                bool      `json:"archived"`
 		SyncChildItemsLocations bool      `json:"syncChildItemsLocations"`
+		EntityType              uuid.UUID `json:"entityType"              validate:"required,uuid"`
 
 		// Edges
 		LocationID uuid.UUID   `json:"locationId"`
@@ -137,6 +139,7 @@ type (
 		Archived    bool      `json:"archived"`
 		CreatedAt   time.Time `json:"createdAt"`
 		UpdatedAt   time.Time `json:"updatedAt"`
+		EntityType  uuid.UUID `json:"entityType"`
 
 		PurchasePrice float64 `json:"purchasePrice"`
 
@@ -219,6 +222,11 @@ func mapItemSummary(item *ent.Entity) ItemSummary {
 		}
 	}
 
+	var typeID uuid.UUID
+	if item.Edges.Type != nil {
+		typeID = item.Edges.Type.ID
+	}
+
 	return ItemSummary{
 		ID:            item.ID,
 		AssetID:       AssetID(item.AssetID),
@@ -230,6 +238,7 @@ func mapItemSummary(item *ent.Entity) ItemSummary {
 		UpdatedAt:     item.UpdatedAt,
 		Archived:      item.Archived,
 		PurchasePrice: item.PurchasePrice,
+		EntityType:    typeID,
 
 		// Edges
 		Location: location,
@@ -327,6 +336,7 @@ func (e *ItemsRepository) getOne(ctx context.Context, where ...predicate.Entity)
 		WithGroup().
 		WithParent().
 		WithAttachments().
+		WithType().
 		Only(ctx),
 	)
 }
@@ -496,6 +506,7 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 	qb = qb.
 		WithLabel().
 		WithLocation().
+		WithType().
 		WithAttachments(func(aq *ent.AttachmentQuery) {
 			aq.Where(
 				attachment.Primary(true),
@@ -542,6 +553,7 @@ func (e *ItemsRepository) QueryByAssetID(ctx context.Context, gid uuid.UUID, ass
 		qb.Order(ent.Asc(entity.FieldName)).
 			WithLabel().
 			WithLocation().
+			WithType().
 			All(ctx),
 	)
 	if err != nil {
@@ -563,6 +575,7 @@ func (e *ItemsRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]ItemOut,
 		WithLabel().
 		WithLocation().
 		WithFields().
+		WithType().
 		All(ctx))
 }
 
@@ -613,6 +626,7 @@ func (e *ItemsRepository) Create(ctx context.Context, gid uuid.UUID, data ItemCr
 		SetDescription(data.Description).
 		SetGroupID(gid).
 		SetAssetID(int(data.AssetID)).
+		SetTypeID(data.EntityType).
 		SetLocationID(data.LocationID)
 
 	if data.ParentID != uuid.Nil {
@@ -680,6 +694,7 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 		SetWarrantyDetails(data.WarrantyDetails).
 		SetQuantity(data.Quantity).
 		SetAssetID(int(data.AssetID)).
+		SetTypeID(data.EntityType).
 		SetSyncChildEntitiesLocations(data.SyncChildItemsLocations)
 
 	currentLabels, err := e.db.Entity.Query().Where(entity.ID(data.ID), entity.HasTypeWith(entitytype.IsLocationEQ(false))).QueryLabel().All(ctx)
@@ -1081,6 +1096,7 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opti
 		SetNotes(originalItem.Notes).
 		SetInsured(originalItem.Insured).
 		SetArchived(originalItem.Archived).
+		SetTypeID(originalItem.EntityType).
 		SetSyncChildEntitiesLocations(originalItem.SyncChildItemsLocations)
 
 	if originalItem.Parent != nil {

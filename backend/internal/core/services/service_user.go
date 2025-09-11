@@ -105,7 +105,7 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 		}
 
 		log.Debug().Msg("creating default entity types")
-		err := svc.repos.EntityType.CreateDefaultEntities(ctx, usr.GroupID)
+		err := svc.repos.EntityType.CreateDefaultEntityTypes(ctx, usr.GroupID)
 		if err != nil {
 			return repo.UserOut{}, err
 		}

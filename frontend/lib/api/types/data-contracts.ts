@@ -196,7 +196,7 @@ export interface EntEntityEdges {
   /** Children holds the value of the children edge. */
   children: EntEntity[];
   /** Entity holds the value of the entity edge. */
-  entity: EntEntity;
+  entity: EntEntity[];
   /** Fields holds the value of the fields edge. */
   fields: EntEntityField[];
   /** Group holds the value of the group edge. */
@@ -477,6 +477,48 @@ export interface DuplicateOptions {
   copyPrefix: string;
 }
 
+export interface EntityAttachment {
+  createdAt: Date | string;
+  id: string;
+  mimeType: string;
+  path: string;
+  primary: boolean;
+  thumbnail: EntAttachment;
+  title: string;
+  type: string;
+  updatedAt: Date | string;
+}
+
+export interface EntityAttachmentUpdate {
+  primary: boolean;
+  title: string;
+  type: string;
+}
+
+export interface EntityType {
+  color: string;
+  description: string;
+  icon: string;
+  isLocation: boolean;
+  name: string;
+}
+
+export interface EntityTypeCreate {
+  color: string;
+  description: string;
+  icon: string;
+  isLocation: boolean;
+  name: string;
+}
+
+export interface EntityTypeUpdate {
+  color: string;
+  description: string;
+  icon: string;
+  /** @minLength 1 */
+  name: string;
+}
+
 export interface Group {
   createdAt: Date | string;
   currency: string;
@@ -499,27 +541,10 @@ export interface GroupUpdate {
   name: string;
 }
 
-export interface ItemAttachment {
-  createdAt: Date | string;
-  id: string;
-  mimeType: string;
-  path: string;
-  primary: boolean;
-  thumbnail: EntAttachment;
-  title: string;
-  type: string;
-  updatedAt: Date | string;
-}
-
-export interface ItemAttachmentUpdate {
-  primary: boolean;
-  title: string;
-  type: string;
-}
-
 export interface ItemCreate {
   /** @maxLength 1000 */
   description: string;
+  entityType: string;
   labelIds: string[];
   /** Edges */
   locationId: string;
@@ -545,9 +570,10 @@ export interface ItemOut {
   archived: boolean;
   /** @example "0" */
   assetId: string;
-  attachments: ItemAttachment[];
+  attachments: EntityAttachment[];
   createdAt: Date | string;
   description: string;
+  entityType: string;
   fields: ItemField[];
   id: string;
   imageId?: string | null;
@@ -598,6 +624,7 @@ export interface ItemSummary {
   assetId: string;
   createdAt: Date | string;
   description: string;
+  entityType: string;
   id: string;
   imageId?: string | null;
   insured: boolean;
@@ -618,6 +645,7 @@ export interface ItemUpdate {
   assetId: string;
   /** @maxLength 1000 */
   description: string;
+  entityType: string;
   fields: ItemField[];
   id: string;
   insured: boolean;
@@ -686,6 +714,7 @@ export interface LabelSummary {
 
 export interface LocationCreate {
   description: string;
+  entityType: string;
   name: string;
   parentId?: string | null;
 }
@@ -694,6 +723,7 @@ export interface LocationOut {
   children: LocationSummary[];
   createdAt: Date | string;
   description: string;
+  entityType: string;
   id: string;
   name: string;
   parent: LocationSummary;
@@ -704,6 +734,7 @@ export interface LocationOut {
 export interface LocationOutCount {
   createdAt: Date | string;
   description: string;
+  entityType: string;
   id: string;
   itemCount: number;
   name: string;
@@ -713,6 +744,7 @@ export interface LocationOutCount {
 export interface LocationSummary {
   createdAt: Date | string;
   description: string;
+  entityType: string;
   id: string;
   name: string;
   updatedAt: Date | string;
@@ -720,6 +752,7 @@ export interface LocationSummary {
 
 export interface LocationUpdate {
   description: string;
+  entityType: string;
   id: string;
   name: string;
   parentId?: string | null;

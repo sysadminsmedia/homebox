@@ -185,6 +185,12 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		// Reporting Services
 		r.Get("/reporting/bill-of-materials", chain.ToHandlerFunc(v1Ctrl.HandleBillOfMaterialsExport(), userMW...))
 
+		// Entity Types
+		r.Get("/entitytype", chain.ToHandlerFunc(v1Ctrl.HandleEntityTypesGetAll(), userMW...))
+		r.Post("/entitytype", chain.ToHandlerFunc(v1Ctrl.HandleEntityTypeCreate(), userMW...))
+		r.Get("/entitytype/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityTypeGetOne(), userMW...))
+		r.Put("/entitytype/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityTypeUpdate(), userMW...))
+
 		r.NotFound(http.NotFound)
 	})
 

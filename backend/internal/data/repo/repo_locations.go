@@ -24,6 +24,7 @@ type (
 		Name        string    `json:"name"`
 		ParentID    uuid.UUID `json:"parentId"    extensions:"x-nullable"`
 		Description string    `json:"description"`
+		EntityType  uuid.UUID `json:"entityType"  validate:"required"`
 	}
 
 	LocationUpdate struct {
@@ -31,6 +32,7 @@ type (
 		ID          uuid.UUID `json:"id"`
 		Name        string    `json:"name"`
 		Description string    `json:"description"`
+		EntityType  uuid.UUID `json:"entityType"  validate:"required"`
 	}
 
 	LocationSummary struct {
@@ -39,6 +41,7 @@ type (
 		Description string    `json:"description"`
 		CreatedAt   time.Time `json:"createdAt"`
 		UpdatedAt   time.Time `json:"updatedAt"`
+		EntityType  uuid.UUID `json:"entityType"`
 	}
 
 	LocationOutCount struct {
@@ -55,12 +58,17 @@ type (
 )
 
 func mapLocationSummary(location *ent.Entity) LocationSummary {
+	var typeID uuid.UUID
+	if location.Edges.Type != nil {
+		typeID = location.Edges.Type.ID
+	}
 	return LocationSummary{
 		ID:          location.ID,
 		Name:        location.Name,
 		Description: location.Description,
 		CreatedAt:   location.CreatedAt,
 		UpdatedAt:   location.UpdatedAt,
+		EntityType:  typeID,
 	}
 }
 
@@ -169,6 +177,7 @@ func (r *LocationRepository) getOne(ctx context.Context, where ...predicate.Enti
 		Where(entity.HasTypeWith(entitytype.IsLocationEQ(true))).
 		WithGroup().
 		WithParent().
+		WithType().
 		WithChildren(func(lq *ent.EntityQuery) {
 			lq.Order(entity.ByName())
 		}).
@@ -188,7 +197,7 @@ func (r *LocationRepository) Create(ctx context.Context, gid uuid.UUID, data Loc
 		SetName(data.Name).
 		SetDescription(data.Description).
 		SetGroupID(gid).
-		SetType(r.db.EntityType.Query().Where(entitytype.IsLocationEQ(true)).FirstX(ctx))
+		SetTypeID(data.EntityType)
 
 	if data.ParentID != uuid.Nil {
 		q.SetParentID(data.ParentID)
@@ -208,7 +217,8 @@ func (r *LocationRepository) update(ctx context.Context, data LocationUpdate, wh
 	q := r.db.Entity.Update().
 		Where(where...).
 		SetName(data.Name).
-		SetDescription(data.Description)
+		SetDescription(data.Description).
+		SetTypeID(data.EntityType)
 
 	if data.ParentID != uuid.Nil {
 		q.SetParentID(data.ParentID)
