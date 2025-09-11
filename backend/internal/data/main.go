@@ -8,11 +8,12 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/ent/migrate"
 
+	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	client, err := ent.Open("sqlite3", "file?mode=memory&cache=shared&_fk=1")
+	client, err := ent.Open("postgres", "host=localhost port=5432 user=homebox dbname=homebox password=homebox sslmode=disable")
 	if err != nil {
 		log.Fatalf("failed connecting to mysql: %v", err)
 	}
