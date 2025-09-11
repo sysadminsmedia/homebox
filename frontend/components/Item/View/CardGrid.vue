@@ -132,7 +132,7 @@
           .flat()
       );
       removedLabels.value = [...initialLabels];
-      initialLabelsToRemove = removedLabels.value;
+      initialLabelsToRemove = [...removedLabels.value];
     },
     { deep: true }
   );
@@ -209,6 +209,7 @@
       );
     } catch (e) {
       toast.error(t("labels.toast.failed_update_labels"));
+      return;
     }
     addedLabels.value = [];
     toast.success(t("labels.toast.labels_updated"));
@@ -226,7 +227,6 @@
       await Promise.all(
         cards.value.map(async ({ selected, item }) => {
           if (!selected) return;
-          console.log("deleting item", item.name);
           const { error } = await api.items.delete(item.id);
           if (error) {
             throw new Error("failed");
@@ -235,6 +235,7 @@
       );
     } catch (e) {
       toast.error(t("items.toast.failed_delete_items"));
+      return;
     }
     selectedAllCards.value = false;
     emit("refreshItems");
@@ -253,7 +254,8 @@
         })
       );
     } catch (e) {
-      toast.error(t("items.toast.failed_duplicate_item"));
+      toast.error(t("items.toast.failed_duplicate_items"));
+      return;
     }
     selectedAllCards.value = false;
     emit("refreshItems");
