@@ -41,8 +41,8 @@
   const ctx = useAuthContext();
 
   const api = usePublicApi();
-  // Use useState for OIDC error state management
-  const oidcError = useState<string | null>("oidc_error", () => null);
+  // Use ref for OIDC error state management
+  const oidcError = ref<string | null>(null);
 
   const { data: status } = useAsyncData(async () => {
     const { data } = await api.status();
