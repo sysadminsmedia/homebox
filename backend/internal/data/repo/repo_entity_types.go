@@ -20,23 +20,23 @@ type (
 		Name        string `json:"name"`
 		IsLocation  bool   `json:"isLocation"`
 		Description string `json:"description" extension:"x-nullable"`
-		Icon        string `json:"icon" extension:"x-nullable"`
-		Color       string `json:"color" extension:"x-nullable"`
+		Icon        string `json:"icon"        extension:"x-nullable"`
+		Color       string `json:"color"       extension:"x-nullable"`
 	}
 
 	EntityTypeCreate struct {
-		Name        string `json:"name" validate:"required"`
-		IsLocation  bool   `json:"isLocation" validate:"required"`
+		Name        string `json:"name"        validate:"required"`
+		IsLocation  bool   `json:"isLocation"  validate:"required"`
 		Description string `json:"description" extension:"x-nullable"`
-		Icon        string `json:"icon" extension:"x-nullable"`
-		Color       string `json:"color" extension:"x-nullable"`
+		Icon        string `json:"icon"        extension:"x-nullable"`
+		Color       string `json:"color"       extension:"x-nullable"`
 	}
 
 	EntityTypeUpdate struct {
-		Name        string `json:"name" validate:"omitempty,min=1"`
+		Name        string `json:"name"        validate:"omitempty,min=1"`
 		Description string `json:"description" extension:"x-nullable"`
-		Icon        string `json:"icon" extension:"x-nullable"`
-		Color       string `json:"color" extension:"x-nullable"`
+		Icon        string `json:"icon"        extension:"x-nullable"`
+		Color       string `json:"color"       extension:"x-nullable"`
 	}
 )
 

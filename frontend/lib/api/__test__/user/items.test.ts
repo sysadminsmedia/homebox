@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { describe, expect, test } from "vitest";
-import type { ItemField, ItemUpdate, LocationOut } from "../../types/data-contracts";
+import type {EntityType, ItemField, ItemUpdate, LocationOut} from "../../types/data-contracts";
 import { AttachmentTypes } from "../../types/non-generated";
 import type { UserClient } from "../../user";
 import { factories } from "../factories";
@@ -8,6 +8,7 @@ import { sharedUserClient } from "../test-utils";
 
 describe("user should be able to create an item and add an attachment", () => {
   let increment = 0;
+
   /**
    * useLocation sets up a location resource for testing, and returns a function
    * that can be used to delete the location from the backend server.
@@ -27,6 +28,11 @@ describe("user should be able to create an item and add an attachment", () => {
     };
 
     return [data, cleanup];
+  }
+
+  async function useEntityType(api: UserClient): Promise<[EntityType, () => Promise<void>]> {
+    const { response, data } = await api.
+    }
   }
 
   test("user should be able to create an item and add an attachment", async () => {

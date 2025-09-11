@@ -74,6 +74,6 @@ type (
 
 		// Edges
 		Attachments []EntityAttachment `json:"attachments,omitempty" extensions:"x-nullable,x-omitempty"`
-		Fields      []EntityField      `json:"fields,omitempty" extensions:"x-nullable,x-omitempty"`
+		Fields      []EntityField      `json:"fields,omitempty"      extensions:"x-nullable,x-omitempty"`
 	}
 )
