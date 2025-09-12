@@ -19,7 +19,7 @@ func (svc *ItemService) AttachmentPath(ctx context.Context, gid uuid.UUID, attac
 	return attachment, nil
 }
 
-func (svc *ItemService) AttachmentUpdate(ctx Context, gid uuid.UUID, itemID uuid.UUID, data *repo.ItemAttachmentUpdate) (repo.ItemOut, error) {
+func (svc *ItemService) AttachmentUpdate(ctx Context, gid uuid.UUID, itemID uuid.UUID, data *repo.EntityAttachmentUpdate) (repo.ItemOut, error) {
 	// Update Attachment
 	attachment, err := svc.repo.Attachments.Update(ctx, gid, data.ID, data)
 	if err != nil {
@@ -47,7 +47,7 @@ func (svc *ItemService) AttachmentAdd(ctx Context, itemID uuid.UUID, filename st
 	}
 
 	// Create the attachment
-	_, err = svc.repo.Attachments.Create(ctx, itemID, repo.ItemCreateAttachment{Title: filename, Content: file}, attachmentType, primary)
+	_, err = svc.repo.Attachments.Create(ctx, itemID, repo.EntityCreateAttachment{Title: filename, Content: file}, attachmentType, primary)
 	if err != nil {
 		log.Err(err).Msg("failed to create attachment")
 	}
