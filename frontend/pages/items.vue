@@ -26,7 +26,8 @@
   import BaseContainer from "@/components/Base/Container.vue";
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import SearchFilter from "~/components/Search/Filter.vue";
-  import ItemCard from "~/components/Item/Card.vue";
+  import { Checkbox } from "@/components/ui/checkbox";
+  import ItemViewCardGrid from "@/components/Item/View/CardGrid.vue";
 
   const { t } = useI18n();
 
@@ -133,6 +134,8 @@
 
   const locIDs = computed(() => selectedLocations.value.map(l => l.id));
   const labIDs = computed(() => selectedLabels.value.map(l => l.id));
+
+  const selectedAllCards = ref<boolean | "indeterminate">(false);
 
   function parseAssetIDString(d: string) {
     d = d.replace(/"/g, "").replace(/-/g, "");
@@ -373,6 +376,10 @@
 
     await search();
   }
+
+  async function refreshItems() {
+    await search();
+  }
 </script>
 
 <template>
@@ -504,8 +511,10 @@
 
     <section>
       <BaseSectionHeader ref="itemsTitle"> {{ $t("global.items") }} </BaseSectionHeader>
-      <p v-if="items.length > 0" class="flex items-center text-base font-medium">
+      <p v-if="items.length > 0" class="flex items-center gap-2 text-base font-medium">
         {{ $t("items.results", { total: total }) }}
+        <Checkbox id="selectAll" v-model="selectedAllCards" class="size-6"></Checkbox>
+        <Label for="selectAll" class="cursor-pointer"> Select all </Label>
         <span class="ml-auto text-base"> {{ $t("items.pages", { page: page, totalPages: totalPages }) }} </span>
       </p>
 
@@ -513,9 +522,13 @@
         <MdiSelectSearch class="size-10" />
         <p>{{ $t("items.no_results") }}</p>
       </div>
-      <div v-else ref="cardgrid" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        <ItemCard v-for="item in items" :key="item.id" :item="item" :location-flat-tree="locationFlatTree" />
-      </div>
+      <ItemViewCardGrid
+        v-else
+        v-model="selectedAllCards"
+        :items="items"
+        :location-flat-tree="locationFlatTree"
+        @refresh-items="refreshItems()"
+      />
       <Pagination
         v-slot="{ page: currentPage }"
         :items-per-page="pageSize"

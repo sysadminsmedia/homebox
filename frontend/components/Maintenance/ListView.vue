@@ -122,7 +122,7 @@
         v-if="props.currentItemId"
         class="ml-auto"
         size="sm"
-        @click="maintenanceEditModal?.openCreateModal(props.currentItemId)"
+        @click="maintenanceEditModal?.openCreateModal([props.currentItemId])"
       >
         <MdiPlus />
         {{ $t("maintenance.list.new") }}
@@ -198,7 +198,7 @@
         <button
           type="button"
           class="relative block w-full rounded-lg border-2 border-dashed p-12 text-center"
-          @click="maintenanceEditModal?.openCreateModal(props.currentItemId)"
+          @click="maintenanceEditModal?.openCreateModal([props.currentItemId])"
         >
           <MdiWrenchClock class="inline size-16" />
           <span class="mt-2 block text-sm font-medium text-gray-900"> {{ $t("maintenance.list.create_first") }} </span>

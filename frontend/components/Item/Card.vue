@@ -12,7 +12,10 @@
         </div>
       </div>
       <div class="col-span-4 flex grow flex-col gap-y-1 p-4 pt-2">
-        <h2 class="line-clamp-2 text-ellipsis text-wrap text-lg font-bold">{{ item.name }}</h2>
+        <div class="flex gap-2">
+          <Checkbox v-model="card.selected" class="mt-1 size-6" @click.prevent />
+          <h2 class="line-clamp-2 text-ellipsis text-wrap text-lg font-bold">{{ item.name }}</h2>
+        </div>
         <Separator class="mb-1" />
         <TooltipProvider :delay-duration="0">
           <div class="flex items-center gap-2">
@@ -64,6 +67,7 @@
   import { Separator } from "@/components/ui/separator";
   import Markdown from "@/components/global/Markdown.vue";
   import LabelChip from "@/components/Label/Chip.vue";
+  import { Checkbox } from "@/components/ui/checkbox";
 
   const api = useUserApi();
 
@@ -92,6 +96,10 @@
       required: false,
       default: () => [],
     },
+  });
+
+  const card = defineModel<{ selected: boolean | "indeterminate"; item: ItemSummary }>({
+    default: { selected: false },
   });
 
   const locationString = computed(

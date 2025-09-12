@@ -6,8 +6,10 @@
   import { Badge } from "@/components/ui/badge";
   import { Button, ButtonGroup } from "@/components/ui/button";
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
-  import ItemCard from "@/components/Item/Card.vue";
   import ItemViewTable from "@/components/Item/View/Table.vue";
+  import { Checkbox } from "@/components/ui/checkbox";
+  import { Label } from "@/components/ui/label";
+  import ItemViewCardGrid from "@/components/Item/View/CardGrid.vue";
 
   type Props = {
     view?: ViewType;
@@ -25,6 +27,10 @@
     return props.view ?? preferences.value.itemDisplayView;
   });
 
+  const emit = defineEmits(["refreshItems"]);
+
+  const selectedAllCards = ref<boolean | "indeterminate">(false);
+
   function setViewPreference(view: ViewType) {
     preferences.value.itemDisplayView = view;
   }
@@ -33,11 +39,15 @@
 <template>
   <section>
     <BaseSectionHeader class="mb-2 mt-4 flex items-center justify-between">
-      <div class="flex gap-2 text-nowrap">
+      <div class="flex items-center gap-2 text-nowrap">
         {{ $t("components.item.view.selectable.items") }}
         <Badge>
           {{ items.length }}
         </Badge>
+        <div v-if="itemView === 'card'" class="flex items-center gap-2">
+          <Checkbox id="selectAll" v-model="selectedAllCards" class="size-6" />
+          <Label for="selectAll" class="cursor-pointer"> Select all </Label>
+        </div>
       </div>
       <template #description>
         <div v-if="!viewSet">
@@ -63,10 +73,10 @@
       <ItemViewTable :items="items" />
     </template>
     <template v-else>
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        <ItemCard v-for="item in items" :key="item.id" :item="item" />
-        <div class="hidden first:block">{{ $t("components.item.view.selectable.no_items") }}</div>
+      <div v-if="items.length === 0" class="flex flex-col items-center gap-2">
+        <p>{{ $t("items.no_results") }}</p>
       </div>
+      <ItemViewCardGrid v-else v-model="selectedAllCards" :items="items" @refresh-items="emit('refreshItems')" />
     </template>
   </section>
 </template>
