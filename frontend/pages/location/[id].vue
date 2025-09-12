@@ -141,7 +141,7 @@
     // force recompute of items
     if (!location.value) return;
     const temp = location.value;
-    location.value = {} as any;
+    location.value = undefined;
     location.value = temp;
   }
 </script>

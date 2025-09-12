@@ -34,10 +34,13 @@
       :location-flat-tree="props.locationFlatTree"
     />
   </div>
-  <div class="DropdownMenu">
+  <div class="fixed bottom-[27%] left-1/2">
     <DropdownMenu>
       <DropdownMenuTrigger aria-label="Open quick actions menu">
-        <Ellipsis v-if="cards.some(c => c.selected)" class="cards-quick-menu-icon size-9 rounded-full border-solid" />
+        <Ellipsis
+          v-if="cards.some(c => c.selected)"
+          class="fixed bottom-[5%] left-1/2 size-9 rounded-full border-solid bg-[whitesmoke]"
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem
@@ -63,8 +66,18 @@
   import { toast } from "@/components/ui/sonner";
   import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { useDialog } from "@/components/ui/dialog-provider";
-  import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
-  
+  import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+  } from "~/components/ui/dropdown-menu";
+  import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import { Button } from "@/components/ui/button";
+  import LabelSelector from "~/components/Label/Selector.vue";
+  import LocationSelector from "~/components/Location/Selector.vue";
+  import ItemCard from "~/components/Item/Card.vue";
+
   const maintenanceEditModal = ref<InstanceType<typeof MaintenanceEditModal>>();
 
   const { t } = useI18n();
@@ -185,7 +198,9 @@
               return il.id === l;
             });
             if (index === -1) {
-              item.labels.push(labels.value.find(ls => ls.id === l) as any);
+              const label = labels.value.find(ls => ls.id === l);
+              if (!label) return;
+              item.labels.push(label);
               needsUpdate = true;
             }
           });
@@ -262,16 +277,4 @@
   }
 </script>
 
-<style lang="css">
-  .cards-quick-menu-icon {
-    position: fixed;
-    left: 50%;
-    bottom: 5%;
-    background-color: whitesmoke;
-  }
-  .DropdownMenu {
-    position: fixed;
-    left: 50%;
-    bottom: 27%;
-  }
-</style>
+<style lang="css"></style>

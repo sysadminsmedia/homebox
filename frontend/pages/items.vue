@@ -27,6 +27,7 @@
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import SearchFilter from "~/components/Search/Filter.vue";
   import { Checkbox } from "@/components/ui/checkbox";
+  import ItemViewCardGrid from "@/components/Item/View/CardGrid.vue";
 
   const { t } = useI18n();
 

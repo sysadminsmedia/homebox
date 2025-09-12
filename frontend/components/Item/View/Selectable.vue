@@ -6,8 +6,10 @@
   import { Badge } from "@/components/ui/badge";
   import { Button, ButtonGroup } from "@/components/ui/button";
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
-  import ItemCard from "@/components/Item/Card.vue";
   import ItemViewTable from "@/components/Item/View/Table.vue";
+  import { Checkbox } from "@/components/ui/checkbox";
+  import { Label } from "@/components/ui/label";
+  import ItemViewCardGrid from "@/components/Item/View/CardGrid.vue";
 
   type Props = {
     view?: ViewType;
