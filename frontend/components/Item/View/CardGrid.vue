@@ -63,8 +63,8 @@
   import { toast } from "@/components/ui/sonner";
   import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { useDialog } from "@/components/ui/dialog-provider";
-  import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "~/components/ui/dropdown-menu";
-
+  import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
+  
   const maintenanceEditModal = ref<InstanceType<typeof MaintenanceEditModal>>();
 
   const { t } = useI18n();
