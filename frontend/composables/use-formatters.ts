@@ -49,20 +49,36 @@ export function fmtDate(
   fmt: DateTimeFormat = "human",
   type: DateTimeType = "date"
 ): string {
-  const dt = typeof value === "string" || typeof value === "number" ? new Date(value) : value;
+  let dt: Date | null = null;
+  
+  if (typeof value === "string" || typeof value === "number") {
+    dt = new Date(value);
+  } else {
+    dt = value;
+  }
 
   if (!dt || !validDate(dt)) {
     return "";
   }
 
+  // Always use UTC dates internally
+  const utcDate = new Date(Date.UTC(
+    dt.getUTCFullYear(),
+    dt.getUTCMonth(),
+    dt.getUTCDate(),
+    dt.getUTCHours(),
+    dt.getUTCMinutes(),
+    dt.getUTCSeconds()
+  ));
+
   const localeOptions = { locale: getLocaleForDate() };
 
   if (fmt === "relative") {
-    return `${formatDistance(dt, new Date(), { ...localeOptions, addSuffix: true })} (${fmtDate(dt, "short", "date")})`;
+    return `${formatDistance(utcDate, new Date(), { ...localeOptions, addSuffix: true })} (${fmtDate(utcDate, "short", "date")})`;
   }
 
   if (type === "time") {
-    return format(dt, "p", localeOptions);
+    return format(utcDate, "p", localeOptions);
   }
 
   let formatStr = "";
@@ -84,5 +100,5 @@ export function fmtDate(
     formatStr += "p";
   }
 
-  return format(dt, formatStr, localeOptions);
+  return format(utcDate, formatStr, localeOptions);
 }
