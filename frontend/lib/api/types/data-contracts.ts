@@ -511,6 +511,10 @@ export interface EntityTypeCreate {
   name: string;
 }
 
+export interface EntityTypeDelete {
+  replacementId: UuidNullUUID;
+}
+
 export interface EntityTypeUpdate {
   color: string;
   description: string;
@@ -888,6 +892,12 @@ export interface UserRegistration {
   name: string;
   password: string;
   token: string;
+}
+
+export interface UuidNullUUID {
+  uuid: string;
+  /** Valid is true if UUID is not NULL */
+  valid: boolean;
 }
 
 export interface APISummary {

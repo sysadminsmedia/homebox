@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 )
@@ -37,6 +38,10 @@ type (
 		Description string `json:"description" extension:"x-nullable"`
 		Icon        string `json:"icon"        extension:"x-nullable"`
 		Color       string `json:"color"       extension:"x-nullable"`
+	}
+
+	EntityTypeDelete struct {
+		ReplacementId uuid.NullUUID `json:"replacementId" extension:"x-nullable"`
 	}
 )
 
@@ -132,4 +137,18 @@ func (e *EntityTypeRepository) UpdateEntityType(ctx context.Context, gid uuid.UU
 		return EntityType{}, err
 	}
 	return et, nil
+}
+
+func (e *EntityTypeRepository) DeleteEntityType(ctx context.Context, gid uuid.UUID, id uuid.UUID, data EntityTypeDelete) error {
+	del := e.db.EntityType.Delete().Where(entitytype.HasGroupWith(group.ID(gid)), entitytype.ID(id))
+	if data.ReplacementId.Valid {
+		del = del.Where(entitytype.IDNEQ(data.ReplacementId.UUID))
+		// Reassign entities to replacement type
+		_, err := e.db.Entity.Update().Where(entity.HasTypeWith(entitytype.ID(id))).SetTypeID(data.ReplacementId.UUID).Save(ctx)
+		if err != nil {
+			return err
+		}
+	}
+	_, err := del.Exec(ctx)
+	return err
 }

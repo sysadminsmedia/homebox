@@ -190,6 +190,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Post("/entitytype", chain.ToHandlerFunc(v1Ctrl.HandleEntityTypeCreate(), userMW...))
 		r.Get("/entitytype/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityTypeGetOne(), userMW...))
 		r.Put("/entitytype/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityTypeUpdate(), userMW...))
+		r.Delete("/entitytype/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityTypeDelete(), userMW...))
 
 		r.NotFound(http.NotFound)
 	})

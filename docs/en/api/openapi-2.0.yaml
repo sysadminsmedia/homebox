@@ -746,6 +746,11 @@ definitions:
     - isLocation
     - name
     type: object
+  repo.EntityTypeDelete:
+    properties:
+      replacementId:
+        $ref: '#/definitions/uuid.NullUUID'
+    type: object
   repo.EntityTypeUpdate:
     properties:
       color:
@@ -1441,6 +1446,14 @@ definitions:
     - DefaultRole
     - RoleUser
     - RoleOwner
+  uuid.NullUUID:
+    properties:
+      uuid:
+        type: string
+      valid:
+        description: Valid is true if UUID is not NULL
+        type: boolean
+    type: object
   v1.APISummary:
     properties:
       allowRegistration:
@@ -1871,6 +1884,27 @@ paths:
       tags:
       - EntityTypes
   /v1/entitytype/{id}:
+    delete:
+      parameters:
+      - description: Entity Type ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Entity Type Delete Options
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.EntityTypeDelete'
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Delete Entity Type
+      tags:
+      - EntityTypes
     get:
       parameters:
       - description: Entity Type ID

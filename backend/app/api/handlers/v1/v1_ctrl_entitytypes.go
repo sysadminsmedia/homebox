@@ -79,3 +79,21 @@ func (ctrl *V1Controller) HandleEntityTypeUpdate() errchain.HandlerFunc {
 	}
 	return adapters.ActionID("id", fn, http.StatusOK)
 }
+
+// HandleEntityTypeDelete godoc
+//
+//	@Summary	Delete Entity Type
+//	@Tags		EntityTypes
+//	@Param		id	path	string	true	"Entity Type ID"
+//	@Param		payload	body		repo.EntityTypeDelete	true	"Entity Type Delete Options"
+//	@Success	204
+//	@Router		/v1/entitytype/{id} [DELETE]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleEntityTypeDelete() errchain.HandlerFunc {
+	fn := func(r *http.Request, entityTypeID uuid.UUID, body repo.EntityTypeDelete) (any, error) {
+		auth := services.NewContext(r.Context())
+		err := ctrl.repo.EntityType.DeleteEntityType(auth, auth.GID, entityTypeID, body)
+		return nil, err
+	}
+	return adapters.ActionID("id", fn, http.StatusNoContent)
+}
