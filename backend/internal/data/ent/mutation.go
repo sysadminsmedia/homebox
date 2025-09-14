@@ -24,6 +24,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -10169,6 +10170,7 @@ type UserMutation struct {
 	superuser          *bool
 	role               *user.Role
 	activated_on       *time.Time
+	settings           *schema.UserSettings
 	clearedFields      map[string]struct{}
 	group              *uuid.UUID
 	clearedgroup       bool
@@ -10624,6 +10626,55 @@ func (m *UserMutation) ResetActivatedOn() {
 	delete(m.clearedFields, user.FieldActivatedOn)
 }
 
+// SetSettings sets the "settings" field.
+func (m *UserMutation) SetSettings(ss schema.UserSettings) {
+	m.settings = &ss
+}
+
+// Settings returns the value of the "settings" field in the mutation.
+func (m *UserMutation) Settings() (r schema.UserSettings, exists bool) {
+	v := m.settings
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSettings returns the old "settings" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldSettings(ctx context.Context) (v schema.UserSettings, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSettings is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSettings requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSettings: %w", err)
+	}
+	return oldValue.Settings, nil
+}
+
+// ClearSettings clears the value of the "settings" field.
+func (m *UserMutation) ClearSettings() {
+	m.settings = nil
+	m.clearedFields[user.FieldSettings] = struct{}{}
+}
+
+// SettingsCleared returns if the "settings" field was cleared in this mutation.
+func (m *UserMutation) SettingsCleared() bool {
+	_, ok := m.clearedFields[user.FieldSettings]
+	return ok
+}
+
+// ResetSettings resets all changes to the "settings" field.
+func (m *UserMutation) ResetSettings() {
+	m.settings = nil
+	delete(m.clearedFields, user.FieldSettings)
+}
+
 // SetGroupID sets the "group" edge to the Group entity by id.
 func (m *UserMutation) SetGroupID(id uuid.UUID) {
 	m.group = &id
@@ -10805,7 +10856,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 10)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -10833,6 +10884,9 @@ func (m *UserMutation) Fields() []string {
 	if m.activated_on != nil {
 		fields = append(fields, user.FieldActivatedOn)
 	}
+	if m.settings != nil {
+		fields = append(fields, user.FieldSettings)
+	}
 	return fields
 }
 
@@ -10859,6 +10913,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Role()
 	case user.FieldActivatedOn:
 		return m.ActivatedOn()
+	case user.FieldSettings:
+		return m.Settings()
 	}
 	return nil, false
 }
@@ -10886,6 +10942,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldRole(ctx)
 	case user.FieldActivatedOn:
 		return m.OldActivatedOn(ctx)
+	case user.FieldSettings:
+		return m.OldSettings(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -10958,6 +11016,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetActivatedOn(v)
 		return nil
+	case user.FieldSettings:
+		v, ok := value.(schema.UserSettings)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSettings(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -10991,6 +11056,9 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldActivatedOn) {
 		fields = append(fields, user.FieldActivatedOn)
 	}
+	if m.FieldCleared(user.FieldSettings) {
+		fields = append(fields, user.FieldSettings)
+	}
 	return fields
 }
 
@@ -11007,6 +11075,9 @@ func (m *UserMutation) ClearField(name string) error {
 	switch name {
 	case user.FieldActivatedOn:
 		m.ClearActivatedOn()
+		return nil
+	case user.FieldSettings:
+		m.ClearSettings()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -11042,6 +11113,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldActivatedOn:
 		m.ResetActivatedOn()
+		return nil
+	case user.FieldSettings:
+		m.ResetSettings()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

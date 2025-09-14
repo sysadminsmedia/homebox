@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -11,6 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -37,6 +39,8 @@ type User struct {
 	Role user.Role `json:"role,omitempty"`
 	// ActivatedOn holds the value of the "activated_on" field.
 	ActivatedOn time.Time `json:"activated_on,omitempty"`
+	// Settings holds the value of the "settings" field.
+	Settings schema.UserSettings `json:"settings,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -91,6 +95,8 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case user.FieldSettings:
+			values[i] = new([]byte)
 		case user.FieldIsSuperuser, user.FieldSuperuser:
 			values[i] = new(sql.NullBool)
 		case user.FieldName, user.FieldEmail, user.FieldPassword, user.FieldRole:
@@ -110,7 +116,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the User fields.
-func (u *User) assignValues(columns []string, values []any) error {
+func (_m *User) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -120,71 +126,79 @@ func (u *User) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
-				u.ID = *value
+				_m.ID = *value
 			}
 		case user.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				u.CreatedAt = value.Time
+				_m.CreatedAt = value.Time
 			}
 		case user.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				u.UpdatedAt = value.Time
+				_m.UpdatedAt = value.Time
 			}
 		case user.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
-				u.Name = value.String
+				_m.Name = value.String
 			}
 		case user.FieldEmail:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field email", values[i])
 			} else if value.Valid {
-				u.Email = value.String
+				_m.Email = value.String
 			}
 		case user.FieldPassword:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field password", values[i])
 			} else if value.Valid {
-				u.Password = value.String
+				_m.Password = value.String
 			}
 		case user.FieldIsSuperuser:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field is_superuser", values[i])
 			} else if value.Valid {
-				u.IsSuperuser = value.Bool
+				_m.IsSuperuser = value.Bool
 			}
 		case user.FieldSuperuser:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field superuser", values[i])
 			} else if value.Valid {
-				u.Superuser = value.Bool
+				_m.Superuser = value.Bool
 			}
 		case user.FieldRole:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field role", values[i])
 			} else if value.Valid {
-				u.Role = user.Role(value.String)
+				_m.Role = user.Role(value.String)
 			}
 		case user.FieldActivatedOn:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field activated_on", values[i])
 			} else if value.Valid {
-				u.ActivatedOn = value.Time
+				_m.ActivatedOn = value.Time
+			}
+		case user.FieldSettings:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field settings", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.Settings); err != nil {
+					return fmt.Errorf("unmarshal field settings: %w", err)
+				}
 			}
 		case user.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field group_users", values[i])
 			} else if value.Valid {
-				u.group_users = new(uuid.UUID)
-				*u.group_users = *value.S.(*uuid.UUID)
+				_m.group_users = new(uuid.UUID)
+				*_m.group_users = *value.S.(*uuid.UUID)
 			}
 		default:
-			u.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -192,73 +206,76 @@ func (u *User) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the User.
 // This includes values selected through modifiers, order, etc.
-func (u *User) Value(name string) (ent.Value, error) {
-	return u.selectValues.Get(name)
+func (_m *User) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // QueryGroup queries the "group" edge of the User entity.
-func (u *User) QueryGroup() *GroupQuery {
-	return NewUserClient(u.config).QueryGroup(u)
+func (_m *User) QueryGroup() *GroupQuery {
+	return NewUserClient(_m.config).QueryGroup(_m)
 }
 
 // QueryAuthTokens queries the "auth_tokens" edge of the User entity.
-func (u *User) QueryAuthTokens() *AuthTokensQuery {
-	return NewUserClient(u.config).QueryAuthTokens(u)
+func (_m *User) QueryAuthTokens() *AuthTokensQuery {
+	return NewUserClient(_m.config).QueryAuthTokens(_m)
 }
 
 // QueryNotifiers queries the "notifiers" edge of the User entity.
-func (u *User) QueryNotifiers() *NotifierQuery {
-	return NewUserClient(u.config).QueryNotifiers(u)
+func (_m *User) QueryNotifiers() *NotifierQuery {
+	return NewUserClient(_m.config).QueryNotifiers(_m)
 }
 
 // Update returns a builder for updating this User.
 // Note that you need to call User.Unwrap() before calling this method if this User
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (u *User) Update() *UserUpdateOne {
-	return NewUserClient(u.config).UpdateOne(u)
+func (_m *User) Update() *UserUpdateOne {
+	return NewUserClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the User entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (u *User) Unwrap() *User {
-	_tx, ok := u.config.driver.(*txDriver)
+func (_m *User) Unwrap() *User {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: User is not a transactional entity")
 	}
-	u.config.driver = _tx.drv
-	return u
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (u *User) String() string {
+func (_m *User) String() string {
 	var builder strings.Builder
 	builder.WriteString("User(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", u.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("created_at=")
-	builder.WriteString(u.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
-	builder.WriteString(u.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("name=")
-	builder.WriteString(u.Name)
+	builder.WriteString(_m.Name)
 	builder.WriteString(", ")
 	builder.WriteString("email=")
-	builder.WriteString(u.Email)
+	builder.WriteString(_m.Email)
 	builder.WriteString(", ")
 	builder.WriteString("password=<sensitive>")
 	builder.WriteString(", ")
 	builder.WriteString("is_superuser=")
-	builder.WriteString(fmt.Sprintf("%v", u.IsSuperuser))
+	builder.WriteString(fmt.Sprintf("%v", _m.IsSuperuser))
 	builder.WriteString(", ")
 	builder.WriteString("superuser=")
-	builder.WriteString(fmt.Sprintf("%v", u.Superuser))
+	builder.WriteString(fmt.Sprintf("%v", _m.Superuser))
 	builder.WriteString(", ")
 	builder.WriteString("role=")
-	builder.WriteString(fmt.Sprintf("%v", u.Role))
+	builder.WriteString(fmt.Sprintf("%v", _m.Role))
 	builder.WriteString(", ")
 	builder.WriteString("activated_on=")
-	builder.WriteString(u.ActivatedOn.Format(time.ANSIC))
+	builder.WriteString(_m.ActivatedOn.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("settings=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Settings))
 	builder.WriteByte(')')
 	return builder.String()
 }

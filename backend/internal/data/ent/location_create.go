@@ -24,141 +24,141 @@ type LocationCreate struct {
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (lc *LocationCreate) SetCreatedAt(t time.Time) *LocationCreate {
-	lc.mutation.SetCreatedAt(t)
-	return lc
+func (_c *LocationCreate) SetCreatedAt(v time.Time) *LocationCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (lc *LocationCreate) SetNillableCreatedAt(t *time.Time) *LocationCreate {
-	if t != nil {
-		lc.SetCreatedAt(*t)
+func (_c *LocationCreate) SetNillableCreatedAt(v *time.Time) *LocationCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
 	}
-	return lc
+	return _c
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (lc *LocationCreate) SetUpdatedAt(t time.Time) *LocationCreate {
-	lc.mutation.SetUpdatedAt(t)
-	return lc
+func (_c *LocationCreate) SetUpdatedAt(v time.Time) *LocationCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
 }
 
 // SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (lc *LocationCreate) SetNillableUpdatedAt(t *time.Time) *LocationCreate {
-	if t != nil {
-		lc.SetUpdatedAt(*t)
+func (_c *LocationCreate) SetNillableUpdatedAt(v *time.Time) *LocationCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
 	}
-	return lc
+	return _c
 }
 
 // SetName sets the "name" field.
-func (lc *LocationCreate) SetName(s string) *LocationCreate {
-	lc.mutation.SetName(s)
-	return lc
+func (_c *LocationCreate) SetName(v string) *LocationCreate {
+	_c.mutation.SetName(v)
+	return _c
 }
 
 // SetDescription sets the "description" field.
-func (lc *LocationCreate) SetDescription(s string) *LocationCreate {
-	lc.mutation.SetDescription(s)
-	return lc
+func (_c *LocationCreate) SetDescription(v string) *LocationCreate {
+	_c.mutation.SetDescription(v)
+	return _c
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (lc *LocationCreate) SetNillableDescription(s *string) *LocationCreate {
-	if s != nil {
-		lc.SetDescription(*s)
+func (_c *LocationCreate) SetNillableDescription(v *string) *LocationCreate {
+	if v != nil {
+		_c.SetDescription(*v)
 	}
-	return lc
+	return _c
 }
 
 // SetID sets the "id" field.
-func (lc *LocationCreate) SetID(u uuid.UUID) *LocationCreate {
-	lc.mutation.SetID(u)
-	return lc
+func (_c *LocationCreate) SetID(v uuid.UUID) *LocationCreate {
+	_c.mutation.SetID(v)
+	return _c
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (lc *LocationCreate) SetNillableID(u *uuid.UUID) *LocationCreate {
-	if u != nil {
-		lc.SetID(*u)
+func (_c *LocationCreate) SetNillableID(v *uuid.UUID) *LocationCreate {
+	if v != nil {
+		_c.SetID(*v)
 	}
-	return lc
+	return _c
 }
 
 // SetGroupID sets the "group" edge to the Group entity by ID.
-func (lc *LocationCreate) SetGroupID(id uuid.UUID) *LocationCreate {
-	lc.mutation.SetGroupID(id)
-	return lc
+func (_c *LocationCreate) SetGroupID(id uuid.UUID) *LocationCreate {
+	_c.mutation.SetGroupID(id)
+	return _c
 }
 
 // SetGroup sets the "group" edge to the Group entity.
-func (lc *LocationCreate) SetGroup(g *Group) *LocationCreate {
-	return lc.SetGroupID(g.ID)
+func (_c *LocationCreate) SetGroup(v *Group) *LocationCreate {
+	return _c.SetGroupID(v.ID)
 }
 
 // SetParentID sets the "parent" edge to the Location entity by ID.
-func (lc *LocationCreate) SetParentID(id uuid.UUID) *LocationCreate {
-	lc.mutation.SetParentID(id)
-	return lc
+func (_c *LocationCreate) SetParentID(id uuid.UUID) *LocationCreate {
+	_c.mutation.SetParentID(id)
+	return _c
 }
 
 // SetNillableParentID sets the "parent" edge to the Location entity by ID if the given value is not nil.
-func (lc *LocationCreate) SetNillableParentID(id *uuid.UUID) *LocationCreate {
+func (_c *LocationCreate) SetNillableParentID(id *uuid.UUID) *LocationCreate {
 	if id != nil {
-		lc = lc.SetParentID(*id)
+		_c = _c.SetParentID(*id)
 	}
-	return lc
+	return _c
 }
 
 // SetParent sets the "parent" edge to the Location entity.
-func (lc *LocationCreate) SetParent(l *Location) *LocationCreate {
-	return lc.SetParentID(l.ID)
+func (_c *LocationCreate) SetParent(v *Location) *LocationCreate {
+	return _c.SetParentID(v.ID)
 }
 
 // AddChildIDs adds the "children" edge to the Location entity by IDs.
-func (lc *LocationCreate) AddChildIDs(ids ...uuid.UUID) *LocationCreate {
-	lc.mutation.AddChildIDs(ids...)
-	return lc
+func (_c *LocationCreate) AddChildIDs(ids ...uuid.UUID) *LocationCreate {
+	_c.mutation.AddChildIDs(ids...)
+	return _c
 }
 
 // AddChildren adds the "children" edges to the Location entity.
-func (lc *LocationCreate) AddChildren(l ...*Location) *LocationCreate {
-	ids := make([]uuid.UUID, len(l))
-	for i := range l {
-		ids[i] = l[i].ID
+func (_c *LocationCreate) AddChildren(v ...*Location) *LocationCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return lc.AddChildIDs(ids...)
+	return _c.AddChildIDs(ids...)
 }
 
 // AddItemIDs adds the "items" edge to the Item entity by IDs.
-func (lc *LocationCreate) AddItemIDs(ids ...uuid.UUID) *LocationCreate {
-	lc.mutation.AddItemIDs(ids...)
-	return lc
+func (_c *LocationCreate) AddItemIDs(ids ...uuid.UUID) *LocationCreate {
+	_c.mutation.AddItemIDs(ids...)
+	return _c
 }
 
 // AddItems adds the "items" edges to the Item entity.
-func (lc *LocationCreate) AddItems(i ...*Item) *LocationCreate {
-	ids := make([]uuid.UUID, len(i))
-	for j := range i {
-		ids[j] = i[j].ID
+func (_c *LocationCreate) AddItems(v ...*Item) *LocationCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return lc.AddItemIDs(ids...)
+	return _c.AddItemIDs(ids...)
 }
 
 // Mutation returns the LocationMutation object of the builder.
-func (lc *LocationCreate) Mutation() *LocationMutation {
-	return lc.mutation
+func (_c *LocationCreate) Mutation() *LocationMutation {
+	return _c.mutation
 }
 
 // Save creates the Location in the database.
-func (lc *LocationCreate) Save(ctx context.Context) (*Location, error) {
-	lc.defaults()
-	return withHooks(ctx, lc.sqlSave, lc.mutation, lc.hooks)
+func (_c *LocationCreate) Save(ctx context.Context) (*Location, error) {
+	_c.defaults()
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (lc *LocationCreate) SaveX(ctx context.Context) *Location {
-	v, err := lc.Save(ctx)
+func (_c *LocationCreate) SaveX(ctx context.Context) *Location {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -166,67 +166,67 @@ func (lc *LocationCreate) SaveX(ctx context.Context) *Location {
 }
 
 // Exec executes the query.
-func (lc *LocationCreate) Exec(ctx context.Context) error {
-	_, err := lc.Save(ctx)
+func (_c *LocationCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (lc *LocationCreate) ExecX(ctx context.Context) {
-	if err := lc.Exec(ctx); err != nil {
+func (_c *LocationCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (lc *LocationCreate) defaults() {
-	if _, ok := lc.mutation.CreatedAt(); !ok {
+func (_c *LocationCreate) defaults() {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
 		v := location.DefaultCreatedAt()
-		lc.mutation.SetCreatedAt(v)
+		_c.mutation.SetCreatedAt(v)
 	}
-	if _, ok := lc.mutation.UpdatedAt(); !ok {
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		v := location.DefaultUpdatedAt()
-		lc.mutation.SetUpdatedAt(v)
+		_c.mutation.SetUpdatedAt(v)
 	}
-	if _, ok := lc.mutation.ID(); !ok {
+	if _, ok := _c.mutation.ID(); !ok {
 		v := location.DefaultID()
-		lc.mutation.SetID(v)
+		_c.mutation.SetID(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (lc *LocationCreate) check() error {
-	if _, ok := lc.mutation.CreatedAt(); !ok {
+func (_c *LocationCreate) check() error {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Location.created_at"`)}
 	}
-	if _, ok := lc.mutation.UpdatedAt(); !ok {
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Location.updated_at"`)}
 	}
-	if _, ok := lc.mutation.Name(); !ok {
+	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Location.name"`)}
 	}
-	if v, ok := lc.mutation.Name(); ok {
+	if v, ok := _c.mutation.Name(); ok {
 		if err := location.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Location.name": %w`, err)}
 		}
 	}
-	if v, ok := lc.mutation.Description(); ok {
+	if v, ok := _c.mutation.Description(); ok {
 		if err := location.DescriptionValidator(v); err != nil {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Location.description": %w`, err)}
 		}
 	}
-	if len(lc.mutation.GroupIDs()) == 0 {
+	if len(_c.mutation.GroupIDs()) == 0 {
 		return &ValidationError{Name: "group", err: errors.New(`ent: missing required edge "Location.group"`)}
 	}
 	return nil
 }
 
-func (lc *LocationCreate) sqlSave(ctx context.Context) (*Location, error) {
-	if err := lc.check(); err != nil {
+func (_c *LocationCreate) sqlSave(ctx context.Context) (*Location, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := lc.createSpec()
-	if err := sqlgraph.CreateNode(ctx, lc.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -239,37 +239,37 @@ func (lc *LocationCreate) sqlSave(ctx context.Context) (*Location, error) {
 			return nil, err
 		}
 	}
-	lc.mutation.id = &_node.ID
-	lc.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (lc *LocationCreate) createSpec() (*Location, *sqlgraph.CreateSpec) {
+func (_c *LocationCreate) createSpec() (*Location, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Location{config: lc.config}
+		_node = &Location{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(location.Table, sqlgraph.NewFieldSpec(location.FieldID, field.TypeUUID))
 	)
-	if id, ok := lc.mutation.ID(); ok {
+	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
-	if value, ok := lc.mutation.CreatedAt(); ok {
+	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(location.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
-	if value, ok := lc.mutation.UpdatedAt(); ok {
+	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(location.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
-	if value, ok := lc.mutation.Name(); ok {
+	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(location.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
-	if value, ok := lc.mutation.Description(); ok {
+	if value, ok := _c.mutation.Description(); ok {
 		_spec.SetField(location.FieldDescription, field.TypeString, value)
 		_node.Description = value
 	}
-	if nodes := lc.mutation.GroupIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -286,7 +286,7 @@ func (lc *LocationCreate) createSpec() (*Location, *sqlgraph.CreateSpec) {
 		_node.group_locations = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := lc.mutation.ParentIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.ParentIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -303,7 +303,7 @@ func (lc *LocationCreate) createSpec() (*Location, *sqlgraph.CreateSpec) {
 		_node.location_children = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := lc.mutation.ChildrenIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.ChildrenIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -319,7 +319,7 @@ func (lc *LocationCreate) createSpec() (*Location, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := lc.mutation.ItemsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.ItemsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -346,16 +346,16 @@ type LocationCreateBulk struct {
 }
 
 // Save creates the Location entities in the database.
-func (lcb *LocationCreateBulk) Save(ctx context.Context) ([]*Location, error) {
-	if lcb.err != nil {
-		return nil, lcb.err
+func (_c *LocationCreateBulk) Save(ctx context.Context) ([]*Location, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(lcb.builders))
-	nodes := make([]*Location, len(lcb.builders))
-	mutators := make([]Mutator, len(lcb.builders))
-	for i := range lcb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*Location, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := lcb.builders[i]
+			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*LocationMutation)
@@ -369,11 +369,11 @@ func (lcb *LocationCreateBulk) Save(ctx context.Context) ([]*Location, error) {
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, lcb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, lcb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -393,7 +393,7 @@ func (lcb *LocationCreateBulk) Save(ctx context.Context) ([]*Location, error) {
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, lcb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -401,8 +401,8 @@ func (lcb *LocationCreateBulk) Save(ctx context.Context) ([]*Location, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (lcb *LocationCreateBulk) SaveX(ctx context.Context) []*Location {
-	v, err := lcb.Save(ctx)
+func (_c *LocationCreateBulk) SaveX(ctx context.Context) []*Location {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -410,14 +410,14 @@ func (lcb *LocationCreateBulk) SaveX(ctx context.Context) []*Location {
 }
 
 // Exec executes the query.
-func (lcb *LocationCreateBulk) Exec(ctx context.Context) error {
-	_, err := lcb.Save(ctx)
+func (_c *LocationCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (lcb *LocationCreateBulk) ExecX(ctx context.Context) {
-	if err := lcb.Exec(ctx); err != nil {
+func (_c *LocationCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
