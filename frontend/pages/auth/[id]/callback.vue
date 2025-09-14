@@ -17,7 +17,18 @@
 
   async function login() {
     const urlParams = new URLSearchParams(window.location.search);
-    const { error } = await ctx.loginOauth(api, "oidc", urlParams.get("iss")!, urlParams.get("code")!);
+    const code = urlParams.get("code");
+    const state = urlParams.get("state");
+    
+    if (!code) {
+      console.error("No authorization code received");
+      navigateTo("/");
+      return;
+    }
+
+    // For OIDC, we need to get the issuer from the provider configuration
+    // The issuer will be determined by the backend from the ID token
+    const { error } = await ctx.loginOauth(api, "oidc", "", code, state);
 
     if (error) {
       console.warn(error);
@@ -25,7 +36,7 @@
       return;
     }
 
-    navigateTo(redirectTo || "/home");
+    navigateTo(redirectTo.value || "/home");
     redirectTo.value = null;
   }
 

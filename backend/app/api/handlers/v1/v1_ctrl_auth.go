@@ -1,6 +1,8 @@
 package v1
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"errors"
 	"net/http"
 	"strconv"
@@ -10,6 +12,7 @@ import (
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/server"
 	"github.com/rs/zerolog/log"
+	"github.com/sysadminsmedia/homebox/backend/app/api/providers"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
@@ -31,6 +34,10 @@ type (
 		Username     string `json:"username"     example:"admin@admin.com"`
 		Password     string `json:"password"     example:"admin"`
 		StayLoggedIn bool   `json:"stayLoggedIn"`
+	}
+
+	OIDCAuthURLResponse struct {
+		AuthURL string `json:"authUrl"`
 	}
 )
 
@@ -177,8 +184,57 @@ func (ctrl *V1Controller) HandleAuthRefresh() errchain.HandlerFunc {
 	}
 }
 
+// HandleOIDCAuthURL godoc
+//
+//	@Summary		Get OIDC Authorization URL
+//	@Description	Returns the OIDC authorization URL for SSO login
+//	@Tags			Authentication
+//	@Success		200 {object} OIDCAuthURLResponse
+//	@Failure		404
+//	@Router			/v1/users/oidc/auth-url [GET]
+func (ctrl *V1Controller) HandleOIDCAuthURL(provider AuthProvider) errchain.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		// Check if OIDC provider is available
+		if provider == nil || provider.Name() != "OIDC" {
+			return validate.NewRequestError(errors.New("OIDC provider not configured"), http.StatusNotFound)
+		}
+
+		// Get the OIDC provider and generate auth URL
+		oidcProvider, ok := provider.(*providers.OAuthProvider)
+		if !ok {
+			return validate.NewRequestError(errors.New("invalid OIDC provider"), http.StatusInternalServerError)
+		}
+
+		// Generate state parameter for security
+		state := generateRandomState()
+		
+		// Store state in session/cookie for validation
+		http.SetCookie(w, &http.Cookie{
+			Name:     "oidc_state",
+			Value:    state,
+			MaxAge:   600, // 10 minutes
+			HttpOnly: true,
+			Secure:   ctrl.cookieSecure,
+			Path:     "/",
+		})
+		
+		// Get the authorization URL
+		authURL := oidcProvider.GetAuthURL(state)
+		
+		return server.JSON(w, http.StatusOK, OIDCAuthURLResponse{
+			AuthURL: authURL,
+		})
+	}
+}
+
 func noPort(host string) string {
 	return strings.Split(host, ":")[0]
+}
+
+func generateRandomState() string {
+	bytes := make([]byte, 16)
+	rand.Read(bytes)
+	return hex.EncodeToString(bytes)
 }
 
 func (ctrl *V1Controller) setCookies(w http.ResponseWriter, domain, token string, expires time.Time, remember bool) {

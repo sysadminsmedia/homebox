@@ -87,6 +87,18 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 
 		r.Post("/users/register", chain.ToHandlerFunc(v1Ctrl.HandleUserRegistration()))
 		r.Post("/users/login", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(providerList...)))
+		
+		// OIDC endpoints
+		if options.OIDCProviderURL != "" {
+			oidcProvider, err := providers.NewOAuthProvider(context.Background(), a.services.OAuth,
+				options.OIDCClientID,
+				options.OIDCClientSecret,
+				options.OIDCRedirectURI,
+				options.OIDCProviderURL)
+			if err == nil {
+				r.Get("/users/oidc/auth-url", chain.ToHandlerFunc(v1Ctrl.HandleOIDCAuthURL(oidcProvider)))
+			}
+		}
 
 		userMW := []errchain.Middleware{
 			a.mwAuthToken,

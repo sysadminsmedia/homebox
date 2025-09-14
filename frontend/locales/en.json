@@ -171,6 +171,7 @@
         "dont_join_group": "Don't want to join a group?",
         "joining_group": "You're Joining an Existing Group!",
         "login": "Login",
+        "login_with_oidc": "Login with SSO",
         "register": "Register",
         "remember_me": "Remember Me",
         "set_email": "What's your email?",

@@ -56,3 +56,7 @@ func (p *OAuthProvider) Authenticate(w http.ResponseWriter, r *http.Request) (se
 
 	return p.service.Login(r.Context(), p.config, oauthForm)
 }
+
+func (p *OAuthProvider) GetAuthURL(state string) string {
+	return p.config.Config.AuthCodeURL(state)
+}

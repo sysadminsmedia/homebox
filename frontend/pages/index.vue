@@ -112,11 +112,13 @@
     if (groupToken.value !== "") {
       registerForm.value = true;
     }
+    fetchOIDCAuthURL();
   });
 
   const loading = ref(false);
   const loginPassword = ref("");
   const redirectTo = useState("authRedirect");
+  const oidcAuthURL = ref<string | null>(null);
 
   async function login() {
     loading.value = true;
@@ -133,6 +135,29 @@
     navigateTo(redirectTo.value || "/home");
     redirectTo.value = null;
     loading.value = false;
+  }
+
+  async function loginWithOIDC() {
+    if (!oidcAuthURL.value) {
+      toast.error("OIDC authentication not available");
+      return;
+    }
+    
+    // Redirect to OIDC provider
+    window.location.href = oidcAuthURL.value;
+  }
+
+  async function fetchOIDCAuthURL() {
+    try {
+      const { data, error } = await api.getOIDCAuthURL();
+      if (error) {
+        console.debug("OIDC not configured:", error);
+        return;
+      }
+      oidcAuthURL.value = data.authUrl;
+    } catch (err) {
+      console.debug("OIDC not available:", err);
+    }
   }
 
   const [registerForm, toggleLogin] = useToggle();
@@ -274,10 +299,15 @@
             </form>
           </Transition>
           <div class="mt-6 text-center">
-            <a
-              href="https://auth.kloenk.dev/realms/kloenk/protocol/openid-connect/auth?client_id=homebox-dev&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Foidc%2Fcallback&response_type=code&scope=openid+email+profile&response_mode=query"
-              >OIDC</a
+            <Button 
+              v-if="oidcAuthURL" 
+              variant="outline" 
+              class="mb-4 w-full" 
+              @click="loginWithOIDC"
             >
+              <MdiLogin class="mr-2 size-4" />
+              {{ $t("index.login_with_oidc") }}
+            </Button>
             <Button v-if="status && status.allowRegistration" class="group" variant="link" @click="() => toggleLogin()">
               <div class="relative mx-2">
                 <div

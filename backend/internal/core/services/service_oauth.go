@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/google/uuid"
@@ -62,7 +63,12 @@ func (svc *OAuthService) ValidateCode(ctx context.Context, config *OAuthConfig, 
 		return repo.UserOut{}, err
 	}
 	if !ok {
-		panic("Id token check not ok") // TODO: fallback to user info
+		// Fallback to user info endpoint if ID token is not available
+		user, err := svc.LoginWithUserInfo(ctx, config, token)
+		if err != nil {
+			return repo.UserOut{}, err
+		}
+		return user, nil
 	}
 	return user, nil
 }
@@ -179,4 +185,44 @@ func (svc *OAuthService) CreateUser(ctx context.Context, registration OAuthUserR
 
 	log.Debug().Msg("OAuth User created")
 	return usr, nil
+}
+
+func (svc *OAuthService) LoginWithUserInfo(ctx context.Context, config *OAuthConfig, token *oauth2.Token) (repo.UserOut, error) {
+	// Use the user info endpoint as fallback
+	client := config.Config.Client(ctx, token)
+	resp, err := client.Get(config.Provider.Endpoint().UserInfoURL)
+	if err != nil {
+		return repo.UserOut{}, err
+	}
+	defer resp.Body.Close()
+
+	var userInfo struct {
+		Sub           string `json:"sub"`
+		Name          string `json:"name"`
+		Email         string `json:"email"`
+		EmailVerified bool   `json:"email_verified"`
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(&userInfo); err != nil {
+		return repo.UserOut{}, err
+	}
+
+	// Check if user exists
+	user, err := svc.repos.OAuth.GetUserFromToken(ctx, config.Provider.Endpoint().AuthURL, userInfo.Sub)
+	if err != nil {
+		var notFoundError *ent.NotFoundError
+		if errors.As(err, &notFoundError) {
+			// Create new user
+			registration := OAuthUserRegistration{
+				Issuer:  config.Provider.Endpoint().AuthURL,
+				Subject: userInfo.Sub,
+				Email:   userInfo.Email,
+				Name:    userInfo.Name,
+			}
+			return svc.CreateUser(ctx, registration)
+		}
+		return repo.UserOut{}, err
+	}
+
+	return user, nil
 }

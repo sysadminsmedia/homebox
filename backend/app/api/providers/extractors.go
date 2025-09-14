@@ -64,7 +64,7 @@ func getOAuthForm(r *http.Request) (services.OAuthValidate, error) {
 			return oauthForm, errors.New("failed to parse form")
 		}
 
-		oauthForm.Issuer = r.PostFormValue("issuer")
+		oauthForm.Issuer = r.PostFormValue("iss")
 		oauthForm.Code = r.PostFormValue("code")
 		oauthForm.State = r.PostFormValue("state")
 	case "application/json":
@@ -77,12 +77,16 @@ func getOAuthForm(r *http.Request) (services.OAuthValidate, error) {
 		return oauthForm, errors.New("invalid content type")
 	}
 
-	if oauthForm.Issuer == "" || oauthForm.Code == "" {
+	// Validate state parameter for security
+	if oauthForm.State != "" {
+		stateCookie, err := r.Cookie("oidc_state")
+		if err != nil || stateCookie.Value != oauthForm.State {
+			return oauthForm, errors.New("invalid state parameter")
+		}
+	}
+
+	if oauthForm.Code == "" {
 		return oauthForm, validate.NewFieldErrors(
-			validate.FieldError{
-				Field: "iss",
-				Error: "Issuer is empty",
-			},
 			validate.FieldError{
 				Field: "code",
 				Error: "Code is missing",
