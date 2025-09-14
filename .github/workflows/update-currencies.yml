@@ -5,18 +5,22 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   update-currencies:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.8'
           cache: 'pip'
@@ -25,15 +29,14 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests
+          pip install -r .github/workflows/update-currencies/requirements.txt
 
       - name: Run currency update script
         run: python .github/scripts/update_currencies.py
 
-      - name: Check for file changes
-        id: changes
+      - name: Check for currencies.json changes
         run: |
-          if git diff --quiet; then
+          if git diff --quiet -- backend/internal/core/currencies/currencies.json; then
             echo "changed=false" >> $GITHUB_ENV
           else
             echo "changed=true"  >> $GITHUB_ENV
@@ -41,16 +44,17 @@ jobs:
 
       - name: Create Pull Request
         if: env.changed == 'true'
-        uses: peter-evans/create-pull-request@v7.0.7
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: update-currencies
           base: main
           title: "Update currencies.json"
           commit-message: "chore: update currencies.json"
-          path: backend/internal/core/currencies/currencies.json
+          path: .  
+          add-paths: |
+            backend/internal/core/currencies/currencies.json
 
       - name: No updates needed
         if: env.changed == 'false'
         run: echo "✅ currencies.json is already up-to-date"
-
