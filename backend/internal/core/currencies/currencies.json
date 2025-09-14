@@ -158,7 +158,7 @@
         "local": "Benin",
         "symbol": "Fr",
         "name": "West African CFA franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "BMD",
@@ -249,14 +249,14 @@
         "local": "Burkina Faso",
         "symbol": "Fr",
         "name": "West African CFA franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "BIF",
         "local": "Burundi",
         "symbol": "Fr",
         "name": "Burundian franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "KHR",
@@ -277,7 +277,7 @@
         "local": "Cameroon",
         "symbol": "Fr",
         "name": "Central African CFA franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "CAD",
@@ -312,21 +312,21 @@
         "local": "Central African Republic",
         "symbol": "Fr",
         "name": "Central African CFA franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "XAF",
         "local": "Chad",
         "symbol": "Fr",
         "name": "Central African CFA franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "CLP",
         "local": "Chile",
         "symbol": "$",
         "name": "Chilean peso",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "CNY",
@@ -361,7 +361,7 @@
         "local": "Comoros",
         "symbol": "Fr",
         "name": "Comorian franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "CKD",
@@ -438,7 +438,7 @@
         "local": "Djibouti",
         "symbol": "Fr",
         "name": "Djiboutian franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "XCD",
@@ -487,7 +487,7 @@
         "local": "Equatorial Guinea",
         "symbol": "Fr",
         "name": "Central African CFA franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "ERN",
@@ -578,7 +578,7 @@
         "local": "French Polynesia",
         "symbol": "₣",
         "name": "CFP franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "EUR",
@@ -592,7 +592,7 @@
         "local": "Gabon",
         "symbol": "Fr",
         "name": "Central African CFA franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "GMD",
@@ -690,14 +690,14 @@
         "local": "Guinea",
         "symbol": "Fr",
         "name": "Guinean franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "XOF",
         "local": "Guinea-Bissau",
         "symbol": "Fr",
         "name": "West African CFA franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "GYD",
@@ -739,7 +739,7 @@
         "local": "Iceland",
         "symbol": "kr",
         "name": "Icelandic króna",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "INR",
@@ -767,7 +767,7 @@
         "local": "Iraq",
         "symbol": "ع.د",
         "name": "Iraqi dinar",
-        "decimals": 3
+        "decimals": 2
     },
     {
         "code": "EUR",
@@ -809,7 +809,7 @@
         "local": "Ivory Coast",
         "symbol": "Fr",
         "name": "West African CFA franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "JMD",
@@ -844,7 +844,7 @@
         "local": "Jordan",
         "symbol": "د.ا",
         "name": "Jordanian dinar",
-        "decimals": 3
+        "decimals": 2
     },
     {
         "code": "KZT",
@@ -886,7 +886,7 @@
         "local": "Kuwait",
         "symbol": "د.ك",
         "name": "Kuwaiti dinar",
-        "decimals": 3
+        "decimals": 2
     },
     {
         "code": "KGS",
@@ -942,7 +942,7 @@
         "local": "Libya",
         "symbol": "ل.د",
         "name": "Libyan dinar",
-        "decimals": 3
+        "decimals": 2
     },
     {
         "code": "CHF",
@@ -1005,7 +1005,7 @@
         "local": "Mali",
         "symbol": "Fr",
         "name": "West African CFA franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "EUR",
@@ -1159,7 +1159,7 @@
         "local": "New Caledonia",
         "symbol": "₣",
         "name": "CFP franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "NZD",
@@ -1180,7 +1180,7 @@
         "local": "Niger",
         "symbol": "Fr",
         "name": "West African CFA franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "NGN",
@@ -1236,7 +1236,7 @@
         "local": "Oman",
         "symbol": "ر.ع.",
         "name": "Omani rial",
-        "decimals": 3
+        "decimals": 2
     },
     {
         "code": "PKR",
@@ -1271,7 +1271,7 @@
         "local": "Palestine",
         "symbol": "JD",
         "name": "Jordanian dinar",
-        "decimals": 3
+        "decimals": 2
     },
     {
         "code": "PAB",
@@ -1299,7 +1299,7 @@
         "local": "Paraguay",
         "symbol": "₲",
         "name": "Paraguayan guaraní",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "PEN",
@@ -1355,7 +1355,7 @@
         "local": "Republic of the Congo",
         "symbol": "Fr",
         "name": "Central African CFA franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "RON",
@@ -1376,7 +1376,7 @@
         "local": "Rwanda",
         "symbol": "Fr",
         "name": "Rwandan franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "EUR",
@@ -1467,7 +1467,7 @@
         "local": "Senegal",
         "symbol": "Fr",
         "name": "West African CFA franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "RSD",
@@ -1551,7 +1551,7 @@
         "local": "South Korea",
         "symbol": "₩",
         "name": "South Korean won",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "SSP",
@@ -1663,7 +1663,7 @@
         "local": "Togo",
         "symbol": "Fr",
         "name": "West African CFA franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "NZD",
@@ -1691,7 +1691,7 @@
         "local": "Tunisia",
         "symbol": "د.ت",
         "name": "Tunisian dinar",
-        "decimals": 3
+        "decimals": 2
     },
     {
         "code": "TRY",
@@ -1733,7 +1733,7 @@
         "local": "Uganda",
         "symbol": "Sh",
         "name": "Ugandan shilling",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "UAH",
@@ -1796,7 +1796,7 @@
         "local": "Vanuatu",
         "symbol": "Vt",
         "name": "Vanuatu vatu",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "EUR",
@@ -1817,14 +1817,14 @@
         "local": "Vietnam",
         "symbol": "₫",
         "name": "Vietnamese đồng",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "XPF",
         "local": "Wallis and Futuna",
         "symbol": "₣",
         "name": "CFP franc",
-        "decimals": 0
+        "decimals": 2
     },
     {
         "code": "DZD",
