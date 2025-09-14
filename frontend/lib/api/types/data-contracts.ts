@@ -853,6 +853,12 @@ export interface APISummary {
   labelPrinting: boolean;
   latest: Latest;
   message: string;
+  oidc?: {
+    enabled: boolean;
+    autoRedirect?: boolean;
+    allowLocal?: boolean;
+    buttonText?: string;
+  };
   title: string;
   versions: string[];
 }
