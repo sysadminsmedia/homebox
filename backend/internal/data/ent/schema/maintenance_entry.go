@@ -12,15 +12,17 @@ type MaintenanceEntry struct {
 	ent.Schema
 }
 
+// Mixin for the MaintenanceEntry.
 func (MaintenanceEntry) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixins.BaseMixin{},
 	}
 }
 
+// Fields of the EntityField.
 func (MaintenanceEntry) Fields() []ent.Field {
 	return []ent.Field{
-		field.UUID("item_id", uuid.UUID{}),
+		field.UUID("entity_id", uuid.UUID{}),
 		field.Time("date").
 			Optional(),
 		field.Time("scheduled_date").
@@ -36,11 +38,11 @@ func (MaintenanceEntry) Fields() []ent.Field {
 	}
 }
 
-// Edges of the ItemField.
+// Edges of the EntityField.
 func (MaintenanceEntry) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.From("item", Item.Type).
-			Field("item_id").
+		edge.From("entity", Entity.Type).
+			Field("entity_id").
 			Ref("maintenance_entries").
 			Required().
 			Unique(),
