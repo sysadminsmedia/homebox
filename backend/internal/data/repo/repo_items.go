@@ -120,9 +120,11 @@ type (
 	}
 
 	ItemPatch struct {
-		ID        uuid.UUID `json:"id"`
-		Quantity  *int      `json:"quantity,omitempty" extensions:"x-nullable,x-omitempty"`
-		ImportRef *string   `json:"-,omitempty"        extensions:"x-nullable,x-omitempty"`
+		ID         uuid.UUID   `json:"id"`
+		Quantity   *int        `json:"quantity,omitempty" extensions:"x-nullable,x-omitempty"`
+		ImportRef  *string     `json:"-,omitempty"        extensions:"x-nullable,x-omitempty"`
+		LocationID *uuid.UUID  `json:"location,omitempty" extensions:"x-nullable,x-omitempty"`
+		LabelIDs   []uuid.UUID `json:"labelIds,omitempty" extensions:"x-nullable,x-omitempty"`
 	}
 
 	ItemSummary struct {
@@ -814,11 +816,20 @@ func (e *ItemsRepository) GetAllZeroImportRef(ctx context.Context, gid uuid.UUID
 }
 
 func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data ItemPatch) error {
-	q := e.db.Item.Update().
-		Where(
-			item.ID(id),
-			item.HasGroupWith(group.ID(gid)),
-		)
+	tx, err := e.db.Tx(ctx)
+	if err != nil {
+		return err
+	}
+	committed := false
+	defer func() {
+		if !committed {
+			if err := tx.Rollback(); err != nil {
+				log.Warn().Err(err).Msg("failed to rollback transaction when patching an item")
+			}
+		}
+	}()
+
+	q := tx.Item.UpdateOneID(id)
 
 	if data.ImportRef != nil {
 		q.SetImportRef(*data.ImportRef)
@@ -828,8 +839,69 @@ func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data Ite
 		q.SetQuantity(*data.Quantity)
 	}
 
+	if data.LocationID != nil {
+		item, err := e.db.Item.Query().Where(item.ID(id)).First(ctx)
+		if err != nil {
+			return err
+		}
+
+		if item.SyncChildItemsLocations {
+			children, err := item.QueryChildren().All(ctx)
+			if err != nil {
+				return err
+			}
+
+			for _, child := range children {
+				childLocation, err := child.QueryLocation().First(ctx)
+				if err != nil {
+					return err
+				}
+
+				if *data.LocationID != childLocation.ID {
+					err = child.Update().SetLocationID(*data.LocationID).Exec(ctx)
+					if err != nil {
+						return err
+					}
+				}
+			}
+		}
+		q.SetLocationID(*data.LocationID)
+	}
+
+	if data.LabelIDs != nil {
+		currentLabels, err := e.db.Item.Query().Where(item.ID(data.ID)).QueryLabel().All(ctx)
+		if err != nil {
+			return err
+		}
+
+		set := newIDSet(currentLabels)
+
+		for _, l := range data.LabelIDs {
+			if set.Contains(l) {
+				set.Remove(l)
+				continue
+			}
+			q.AddLabelIDs(l)
+		}
+
+		if set.Len() > 0 {
+			q.RemoveLabelIDs(set.Slice()...)
+		}
+	}
+
+	err = q.Exec(ctx)
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+	committed = true
+
 	e.publishMutationEvent(gid)
-	return q.Exec(ctx)
+	return nil
 }
 
 func (e *ItemsRepository) GetAllCustomFieldValues(ctx context.Context, gid uuid.UUID, name string) ([]string, error) {
