@@ -2,16 +2,27 @@
   <Dialog v-if="isDesktop" :dialog-id="dialogId">
     <DialogScrollContent>
       <DialogHeader>
-        <DialogTitle>{{ title }}</DialogTitle>
+        <div class="mr-4 flex place-items-center justify-between">
+          <DialogTitle>{{ title }}</DialogTitle>
+          <slot name="header-actions" />
+        </div>
       </DialogHeader>
 
       <slot />
 
       <DialogFooter>
-        <span class="flex items-center gap-1 text-sm">
-          Use <Shortcut size="sm" :keys="['Shift']" /> + <Shortcut size="sm" :keys="['Enter']" /> to create and add
-          another.
-        </span>
+        <i18n-t
+          keypath="components.app.create_modal.createAndAddAnother"
+          tag="span"
+          class="flex items-center gap-1 text-sm"
+        >
+          <template #shiftKey>
+            <Shortcut size="sm" :keys="[$t('components.app.create_modal.shift')]" />
+          </template>
+          <template #enterKey>
+            <Shortcut size="sm" :keys="[$t('components.app.create_modal.enter')]" />
+          </template>
+        </i18n-t>
       </DialogFooter>
     </DialogScrollContent>
   </Dialog>
@@ -21,6 +32,9 @@
       <DrawerHeader>
         <DrawerTitle>{{ title }}</DrawerTitle>
       </DrawerHeader>
+      <div class="flex justify-center">
+        <slot name="header-actions" />
+      </div>
 
       <div class="m-2 overflow-y-auto p-2">
         <slot />
@@ -31,13 +45,15 @@
 
 <script setup lang="ts">
   import { useMediaQuery } from "@vueuse/core";
+  import type { DialogID } from "@/components/ui/dialog-provider/utils";
   import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
-  import { Dialog, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import { Dialog, DialogFooter, DialogHeader, DialogScrollContent, DialogTitle } from "@/components/ui/dialog";
+  import { Shortcut } from "@/components/ui/shortcut";
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   defineProps<{
-    dialogId: string;
+    dialogId: DialogID;
     title: string;
   }>();
 </script>

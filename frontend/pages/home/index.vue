@@ -1,14 +1,25 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { statCardData } from "./statistics";
   import { itemsTable } from "./table";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
+  import BaseContainer from "@/components/Base/Container.vue";
+  import BaseCard from "@/components/Base/Card.vue";
+  import Subtitle from "~/components/global/Subtitle.vue";
+  import StatCard from "~/components/global/StatCard/StatCard.vue";
+  import ItemViewTable from "~/components/Item/View/Table.vue";
+  import ItemCard from "~/components/Item/Card.vue";
+  import LocationCard from "~/components/Location/Card.vue";
+  import LabelChip from "~/components/Label/Chip.vue";
+
+  const { t } = useI18n();
 
   definePageMeta({
     middleware: ["auth"],
   });
   useHead({
-    title: "Homebox | Home",
+    title: "HomeBox | " + t("menu.home"),
   });
 
   const api = useUserApi();
@@ -26,7 +37,7 @@
 
 <template>
   <div>
-    <BaseContainer class="flex flex-col gap-12 pb-16">
+    <BaseContainer class="flex flex-col gap-4">
       <section>
         <Subtitle> {{ $t("home.quick_statistics") }} </Subtitle>
         <div class="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-6">

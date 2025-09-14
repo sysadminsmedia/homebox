@@ -13,7 +13,7 @@ tasks:
       - go install github.com/swaggo/swag/cmd/swag@latest
       - go install github.com/pressly/goose/v3/cmd/goose@v3.8.0
       - cd backend && go mod tidy
-      - cd frontend && pnpm install --shamefully-hoist
+      - cd frontend && pnpm install
 
   swag:
     desc: Generate swagger docs
@@ -25,6 +25,8 @@ tasks:
     cmds:
       - swag fmt --dir={{ .API }}
       - swag init --dir={{ .API }},{{ .INTERNAL }}/core/services,{{ .INTERNAL }}/data/repo --parseDependency
+      - cp -r ./docs/swagger.json ../../../../docs/en/api/openapi-2.0.json
+      - cp -r ./docs/swagger.yaml ../../../../docs/en/api/openapi-2.0.yaml
     sources:
       - "./backend/app/api/**/*"
       - "./backend/internal/data/**"
@@ -91,11 +93,21 @@ tasks:
       - go run ./app/api/ {{ .CLI_ARGS }} &
     silent: true
 
+  go:ci:with-frontend:
+      desc: Run backend with frontend in CI mode
+      dir: frontend
+      cmds:
+        - pnpm install
+        - pnpm run build
+        - cp -r ./.output/public ../backend/app/api/static/
+        - task: go:ci
+      silent: true
+
   go:test:
     desc: Runs all go tests using gotestsum - supports passing gotestsum args
     dir: backend
     cmds:
-      - gotestsum {{ .CLI_ARGS }} ./...
+      - go test {{ .CLI_ARGS }} ./...
 
   go:coverage:
     desc: Runs all go tests with -race flag and generates a coverage report
@@ -148,7 +160,7 @@ tasks:
     desc: Run frontend development server
     dir: frontend
     cmds:
-      - pnpm dev
+      - pnpm dev --no-fork
 
   ui:ci:
     desc: Run frontend build in CI mode
@@ -174,7 +186,7 @@ tasks:
     cmds:
       - cd backend && go build ./app/api
       - backend/api &
-      - sleep 10
+      - sleep 15
       - cd frontend && pnpm run test:ci
     silent: true
 
@@ -191,7 +203,7 @@ tasks:
     cmds:
       - cd backend && go build ./app/api
       - backend/api &
-      - sleep 10
+      - sleep 15
       - cd frontend && pnpm run test:ci
     silent: true
 
@@ -199,12 +211,11 @@ tasks:
     desc: Runs end-to-end test on a live server
     dir: frontend
     cmds:
-      - task: go:ci
-      - task: ui:ci
+      - task: go:ci:with-frontend
       - pnpm exec playwright install-deps
       - pnpm exec playwright install
       - sleep 30
-      - TEST_SHUTDOWN_API_SERVER=true pnpm exec playwright test -c ./test/playwright.config.ts {{ .CLI_ARGS }}
+      - TEST_SHUTDOWN_API_SERVER=true E2E_BASE_URL=http://localhost:7745 pnpm exec playwright test -c ./test/playwright.config.ts {{ .CLI_ARGS }}
 
   pr:
     desc: Runs all tasks required for a PR

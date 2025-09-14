@@ -1,5 +1,5 @@
 <template>
-  <Dialog dialog-id="import">
+  <Dialog :dialog-id="DialogID.Import">
     <DialogContent>
       <DialogHeader>
         <DialogTitle>{{ $t("components.app.import_dialog.title") }}</DialogTitle>
@@ -37,6 +37,8 @@
 </template>
 
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
+  import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { toast } from "@/components/ui/sonner";
   import {
     Dialog,
@@ -49,8 +51,10 @@
   import { Button } from "@/components/ui/button";
   import { Input } from "@/components/ui/input";
   type Props = {
-    modelValue: boolean;
+    modelValue?: boolean;
   };
+
+  const { t } = useI18n();
 
   const props = withDefaults(defineProps<Props>(), {
     modelValue: false,
@@ -62,13 +66,13 @@
 
   const api = useUserApi();
 
-  const importCsv = ref<File | null>(null);
+  const importCsv = ref<File | undefined>(undefined);
   const importLoading = ref(false);
   const importRef = ref<HTMLInputElement>();
   whenever(
     () => !dialog.value,
     () => {
-      importCsv.value = null;
+      importCsv.value = undefined;
     }
   );
 
@@ -83,7 +87,7 @@
 
   async function submitCsvFile() {
     if (!importCsv.value) {
-      toast.error("Please select a file to import.");
+      toast.error(t("components.app.import_dialog.toast.please_select_file"));
       return;
     }
 
@@ -92,18 +96,18 @@
     const { error } = await api.items.import(importCsv.value);
 
     if (error) {
-      toast.error("Import failed. Please try again later.");
+      toast.error(t("components.app.import_dialog.toast.import_failed"));
     }
 
     // Reset
     dialog.value = false;
     importLoading.value = false;
-    importCsv.value = null;
+    importCsv.value = undefined;
 
     if (importRef.value) {
       importRef.value.value = "";
     }
 
-    toast.success("Import successful!");
+    toast.success(t("components.app.import_dialog.toast.import_success"));
   }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <BaseModal dialog-id="create-label" :title="$t('components.label.create_modal.title')">
+  <BaseModal :dialog-id="DialogID.CreateLabel" :title="$t('components.label.create_modal.title')">
     <form class="flex flex-col gap-2" @submit.prevent="create()">
       <FormTextField
         v-model="form.name"
@@ -12,8 +12,9 @@
       <FormTextArea
         v-model="form.description"
         :label="$t('components.label.create_modal.label_description')"
-        :max-length="255"
+        :max-length="1000"
       />
+      <ColorSelector v-model="form.color" :label="$t('components.label.create_modal.label_color')" :show-hex="true" />
       <div class="mt-4 flex flex-row-reverse">
         <ButtonGroup>
           <Button :disabled="loading" type="submit">{{ $t("global.create") }}</Button>
@@ -27,13 +28,21 @@
 </template>
 
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
+  import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { toast } from "@/components/ui/sonner";
   import BaseModal from "@/components/App/CreateModal.vue";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
+  import ColorSelector from "@/components/Form/ColorSelector.vue";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import FormTextArea from "~/components/Form/TextArea.vue";
+  import { Button, ButtonGroup } from "~/components/ui/button";
+
+  const { t } = useI18n();
 
   const { closeDialog } = useDialog();
 
-  useDialogHotkey("create-label", { code: "Digit2", shift: true });
+  useDialogHotkey(DialogID.CreateLabel, { code: "Digit2", shift: true });
 
   const loading = ref(false);
   const focused = ref(false);
@@ -56,31 +65,31 @@
 
   async function create(close = true) {
     if (loading.value) {
-      toast.error("Already creating a label");
+      toast.error(t("components.label.create_modal.toast.already_creating"));
       return;
     }
     if (form.name.length > 50) {
-      toast.error("Label name must not be longer than 50 characters");
+      toast.error(t("components.label.create_modal.toast.label_name_too_long"));
       return;
     }
 
     loading.value = true;
 
-    if (shift.value) close = false;
+    if (shift?.value) close = false;
 
     const { error, data } = await api.labels.create(form);
 
     if (error) {
-      toast.error("Couldn't create label");
+      toast.error(t("components.label.create_modal.toast.create_failed"));
       loading.value = false;
       return;
     }
 
-    toast.success("Label created");
+    toast.success(t("components.label.create_modal.toast.create_success"));
     reset();
 
     if (close) {
-      closeDialog("create-label");
+      closeDialog(DialogID.CreateLabel);
       navigateTo(`/label/${data.id}`);
     }
   }

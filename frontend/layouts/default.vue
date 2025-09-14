@@ -6,11 +6,13 @@
     up the tree
     -->
     <ModalConfirm />
-    <AppOutdatedModal v-if="status" :status="status" />
+    <OutdatedModal v-if="status" :status="status" />
     <ItemCreateModal />
     <LabelCreateModal />
     <LocationCreateModal />
+    <ItemBarcodeModal />
     <AppQuickMenuModal :actions="quickMenuActions" />
+    <AppScannerModal />
     <SidebarProvider :default-open="sidebarState">
       <Sidebar collapsible="icon">
         <SidebarHeader class="items-center">
@@ -40,7 +42,7 @@
                 v-for="btn in dropdown"
                 :key="btn.id"
                 class="group cursor-pointer text-lg"
-                @click="openDialog(btn.dialogId)"
+                @click="openDialog(btn.dialogId as NoParamDialogIDs)"
               >
                 {{ btn.name.value }}
                 <Shortcut
@@ -69,6 +71,20 @@
                   <span>{{ n.name.value }}</span>
                 </SidebarMenuLink>
               </SidebarMenuItem>
+
+              <!-- makes scanner accessible easily if using legacy header -->
+              <SidebarMenuItem v-if="preferences.displayLegacyHeader">
+                <SidebarMenuButton
+                  :class="{
+                    'text-nowrap': typeof locale === 'string' && locale.startsWith('zh-'),
+                  }"
+                  :tooltip="$t('menu.scanner')"
+                  @click.prevent="openDialog(DialogID.Scanner)"
+                >
+                  <MdiQrcodeScan />
+                  <span>{{ $t("menu.scanner") }}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>
@@ -77,6 +93,7 @@
           <SidebarMenuButton
             class="flex justify-center group-data-[collapsible=icon]:justify-start group-data-[collapsible=icon]:bg-destructive group-data-[collapsible=icon]:text-destructive-foreground group-data-[collapsible=icon]:shadow-sm group-data-[collapsible=icon]:hover:bg-destructive/90"
             :tooltip="$t('global.sign_out')"
+            data-testid="logout-button"
             @click="logout"
           >
             <MdiLogout />
@@ -88,22 +105,49 @@
 
         <SidebarRail />
       </Sidebar>
-      <SidebarInset class="min-h-screen bg-background-accent">
-        <div class="justify-center pt-20 lg:pt-0">
-          <AppHeaderDecor v-if="preferences.displayHeaderDecor" class="-mt-10 hidden lg:block" />
-          <SidebarTrigger class="absolute left-2 top-2 hidden lg:flex" variant="default" />
-          <div class="fixed top-0 z-20 flex h-16 w-full items-center gap-2 bg-primary p-2 shadow-md lg:hidden">
-            <SidebarTrigger class="hover:bg-foreground" />
-            <NuxtLink to="/home">
-              <h2 class="flex text-3xl font-bold tracking-tight text-primary-foreground">
-                HomeB
-                <AppLogo class="-mb-3 w-8" />
-                x
-              </h2>
-            </NuxtLink>
+      <SidebarInset class="min-h-dvh bg-background-accent">
+        <div class="relative flex h-full flex-col justify-center">
+          <div v-if="preferences.displayLegacyHeader">
+            <AppHeaderDecor class="-mt-10 hidden lg:block" />
+            <SidebarTrigger class="absolute left-2 top-2 hidden lg:flex" variant="default" />
+          </div>
+          <!-- IMPORTANT: if you change the height of this div, alter the top value in the item edit page-->
+          <div
+            class="sticky top-0 z-20 flex h-[var(--header-height-mobile)] translate-y-[-0.5px] flex-col bg-secondary p-2 shadow-md sm:h-[var(--header-height)] sm:flex-row"
+            :class="{
+              'lg:hidden': preferences.displayLegacyHeader,
+            }"
+          >
+            <div class="flex h-1/2 items-center gap-2 sm:h-auto">
+              <SidebarTrigger variant="default" />
+              <NuxtLink to="/home">
+                <AppHeaderText class="h-6" />
+              </NuxtLink>
+            </div>
+            <div class="sm:grow" />
+            <div class="flex h-1/2 grow items-center justify-end gap-2 sm:h-auto">
+              <Input
+                v-model:model-value="search"
+                class="h-9 grow sm:max-w-sm"
+                :placeholder="$t('global.search')"
+                type="search"
+                @keyup.enter="triggerSearch"
+              />
+              <div>
+                <Button size="icon" @click="triggerSearch">
+                  <MdiMagnify />
+                </Button>
+              </div>
+              <div>
+                <Button size="icon" @click="openScanner">
+                  <MdiQrcodeScan />
+                </Button>
+              </div>
+            </div>
           </div>
 
-          <slot></slot>
+          <slot />
+          <div class="grow" />
 
           <footer v-if="status" class="bottom-0 w-full pb-4 text-center">
             <p class="text-center text-sm">
@@ -113,9 +157,9 @@
                     $t('global.footer.version_link', { version: status.build.version, build: status.build.commit })
                   )
                 "
-              ></span>
+              />
               ~
-              <span v-html="DOMPurify.sanitize($t('global.footer.api_link'))"></span>
+              <span v-html="DOMPurify.sanitize($t('global.footer.api_link'))" />
             </p>
           </footer>
         </div>
@@ -144,16 +188,17 @@
     Sidebar,
     SidebarContent,
     SidebarFooter,
-    SidebarHeader,
-    SidebarInset,
-    SidebarRail,
-    SidebarTrigger,
     SidebarGroup,
     SidebarGroupLabel,
+    SidebarHeader,
+    SidebarInset,
     SidebarMenu,
-    SidebarMenuItem,
     SidebarMenuButton,
+    SidebarMenuItem,
     SidebarMenuLink,
+    SidebarProvider,
+    SidebarRail,
+    SidebarTrigger,
   } from "@/components/ui/sidebar";
   import {
     DropdownMenu,
@@ -163,6 +208,22 @@
   } from "@/components/ui/dropdown-menu";
   import { Shortcut } from "~/components/ui/shortcut";
   import { useDialog } from "~/components/ui/dialog-provider";
+  import { Input } from "~/components/ui/input";
+  import { Button } from "~/components/ui/button";
+  import { toast } from "@/components/ui/sonner";
+  import { DialogID, type NoParamDialogIDs, type OptionalDialogIDs } from "~/components/ui/dialog-provider/utils";
+  import ModalConfirm from "~/components/ModalConfirm.vue";
+  import OutdatedModal from "~/components/App/OutdatedModal.vue";
+  import ItemCreateModal from "~/components/Item/CreateModal.vue";
+
+  import LabelCreateModal from "~/components/Label/CreateModal.vue";
+  import LocationCreateModal from "~/components/Location/CreateModal.vue";
+  import ItemBarcodeModal from "~/components/Item/BarcodeModal.vue";
+  import AppQuickMenuModal from "~/components/App/QuickMenuModal.vue";
+  import AppScannerModal from "~/components/App/ScannerModal.vue";
+  import AppLogo from "~/components/App/Logo.vue";
+  import AppHeaderDecor from "~/components/App/HeaderDecor.vue";
+  import AppHeaderText from "~/components/App/HeaderText.vue";
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
@@ -184,27 +245,64 @@
     return data;
   });
 
+  const search = ref("");
+
+  const triggerSearch = () => {
+    if (search.value) {
+      navigateTo(`/items?q=${encodeURIComponent(search.value)}`);
+      search.value = "";
+      // remove focus from input
+      if (document.activeElement && "blur" in document.activeElement) {
+        (document.activeElement as HTMLElement).blur();
+      }
+    }
+  };
+
+  const openScanner = () => {
+    // request permission
+    if (navigator.mediaDevices) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true })
+        .then(() => {
+          openDialog(DialogID.Scanner);
+        })
+        .catch(err => {
+          console.error(err);
+          toast.error(t("scanner.permission_denied"));
+        });
+    } else {
+      toast.error(t("scanner.unsupported"));
+    }
+  };
+
   // Preload currency format
   useFormatCurrency();
 
-  const dropdown = [
+  type DropdownItem = {
+    id: number;
+    name: ComputedRef<string>;
+    shortcut: string;
+    dialogId: NoParamDialogIDs | OptionalDialogIDs;
+  };
+
+  const dropdown: DropdownItem[] = [
     {
       id: 0,
       name: computed(() => t("menu.create_item")),
       shortcut: "Shift+1",
-      dialogId: "create-item",
+      dialogId: DialogID.CreateItem,
     },
     {
       id: 1,
       name: computed(() => t("menu.create_location")),
-      shortcut: "Shift+2",
-      dialogId: "create-location",
+      shortcut: "Shift+3",
+      dialogId: DialogID.CreateLocation,
     },
     {
       id: 2,
       name: computed(() => t("menu.create_label")),
-      shortcut: "Shift+3",
-      dialogId: "create-label",
+      shortcut: "Shift+2",
+      dialogId: DialogID.CreateLabel,
     },
   ];
 
@@ -233,13 +331,6 @@
       to: "/items",
     },
     {
-      icon: MdiQrcodeScan,
-      id: 3,
-      active: computed(() => route.path === "/scanner"),
-      name: computed(() => t("menu.scanner")),
-      to: "/scanner",
-    },
-    {
       icon: MdiWrench,
       id: 4,
       active: computed(() => route.path === "/maintenance"),
@@ -265,8 +356,8 @@
   const quickMenuActions = reactive([
     ...dropdown.map(v => ({
       text: computed(() => v.name.value),
-      dialogId: v.dialogId,
-      shortcut: v.shortcut.split("+")[1],
+      dialogId: v.dialogId as NoParamDialogIDs,
+      shortcut: v.shortcut.split("+")[1] as string,
       type: "create" as const,
     })),
     ...nav.map(v => ({
@@ -279,6 +370,13 @@
   const labelStore = useLabelStore();
 
   const locationStore = useLocationStore();
+
+  onMounted(() => {
+    labelStore.refresh();
+    locationStore.refreshChildren();
+    locationStore.refreshParents();
+    locationStore.refreshTree();
+  });
 
   onServerEvent(ServerEvent.LabelMutation, () => {
     labelStore.refresh();

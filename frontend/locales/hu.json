@@ -1,10 +1,20 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "Nyomj {shiftKey} + {enterKey}t, hogy létrehozd ezt és hozzáadj egy újat.",
+                "enter": "Enter",
+                "shift": "Shift"
+            },
             "import_dialog": {
                 "change_warning": "A meglévő import_ref-fel rendelkező tételek importálásának menete megváltozott. Ha a CSV fájlban van import_ref, \nakkor a tételt felülírják a CSV fájlban található értékek.",
                 "description": "Importálj egy CSV fájlt, amely tartalmazza a tételeidet, címkéidet és helyeidet. A szükséges formátumról bővebben \na dokumentációban olvashatsz.",
-                "title": "Importálás CSV-fájlból"
+                "title": "Importálás CSV-fájlból",
+                "toast": {
+                    "import_failed": "Sikertelen importálás. Kérlek próbáld újra később.",
+                    "import_success": "Sikeres importálás!",
+                    "please_select_file": "Kérlek válassz egy fájlt az importáláshoz."
+                }
             },
             "outdated": {
                 "current_version": "Jelenlegi verzió",
@@ -12,6 +22,18 @@
                 "latest_version": "Legújabb verzió",
                 "new_version_available": "Új verzió érhető el",
                 "new_version_available_link": "Kattints ide az újdonságok megtekintéséhez"
+            }
+        },
+        "color_selector": {
+            "clear": "Szín törlése",
+            "color": "Szín",
+            "no_color": "Nincs szín",
+            "no_color_selected": "Nincs kiválasztott szín",
+            "randomize": "Véletlenszerű színezés"
+        },
+        "form": {
+            "password": {
+                "toggle_show": "Jelszó megjelenítése"
             }
         },
         "global": {
@@ -51,7 +73,12 @@
                 "download": "Címke letöltése",
                 "print": "Címke nyomtatása",
                 "server_print": "Nyomtatás a szerveren",
-                "titles": "Címkék"
+                "titles": "Címkék",
+                "toast": {
+                    "load_status_failed": "Sikertelen állapot betöltés",
+                    "print_failed": "Sikertelen címke nyomtatás",
+                    "print_success": "Címke kinyomtatva"
+                }
             },
             "page_qr_code": {
                 "page_url": "Oldal URL-je",
@@ -62,12 +89,52 @@
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "Letöltés",
+                "open_new_tab": "Megnyitás új lapon"
+            },
             "create_modal": {
+                "delete_photo": "Kép törlése",
                 "item_description": "Tétel leírása",
                 "item_name": "Tétel neve",
                 "item_photo": "Tétel fényképe 📷",
+                "item_quantity": "Tételek mennyisége",
+                "parent_item": "Szülő tétel",
+                "product_tooltip_input_barcode": "Automatikus feltöltés kézzel megadott vonalkóddal",
+                "product_tooltip_scan_barcode": "Automatikus kitöltés vonalkóddal innen: 📷",
+                "rotate_photo": "Kép forgatása",
+                "set_as_primary_photo": "Beállítás {isPrimary , select, true {nem } false {} other {}}elsődleges fényképként",
                 "title": "Új elem létrehozása",
-                "upload_photos": "Fotók feltöltése"
+                "toast": {
+                    "already_creating": "Elem létrehozása már folyamatban",
+                    "create_failed": "Sikertelen elem létrehozás",
+                    "create_success": "Elem létrehozva",
+                    "failed_load_parent": "Szülő elem betöltése sikertelen - válaszd ki manuálisan",
+                    "no_canvas_support": "A böngésződ nem támogatja a canvas műveleteket",
+                    "please_select_location": "Válassz egy helyet.",
+                    "rotate_failed": "Sikertelen képforgatás: { error }",
+                    "rotate_process_failed": "Elforgatott kép feldolgozása sikertelen",
+                    "some_photos_failed": "{count, plural, =0 {Nincs feltölthető fénykép.} =1 {1 fénykép feltöltése nem sikerült.} other {Néhány fénykép feltöltése nem sikerült.}}",
+                    "upload_failed": "Kép feltöltése sikertelen: { photoName }",
+                    "upload_success": "{count, plural, =0 {Nincsenek feltöltött fényképek.} =1 {A fénykép feltöltése sikeres.} other {Minden fénykép feltöltése sikeres.}}",
+                    "uploading_photos": "{count, plural, =0 {Nincs feltöltendő fénykép} =1 {1 fénykép feltöltése…} other {{count} fénykép feltöltése…}}"
+                },
+                "upload_photos": "Fotók feltöltése",
+                "uploaded": "Feltöltött fénykép"
+            },
+            "product_import": {
+                "barcode": "Termék vonalkódja",
+                "db_source": "Adatbázis forrás",
+                "error_exception": "Kivétel történt a tétel vonalkódjának lekérése során: ",
+                "error_invalid_barcode": "Érvénytelen vonalkód",
+                "error_not_found": "Nem található termék a megadott vonalkóddal.",
+                "search_item": "Termék keresése",
+                "title": "Termék importálása"
+            },
+            "selector": {
+                "no_results": "Nincs Találat",
+                "placeholder": "Válassz…",
+                "search_placeholder": "Kezdj gépelni a kereséshez…"
             },
             "view": {
                 "selectable": {
@@ -80,15 +147,23 @@
                     "headers": "Fejlécek",
                     "page": "Oldal",
                     "rows_per_page": "Sorok oldalanként",
-                    "table_settings": "Táblázatbeállítások"
+                    "table_settings": "Táblázatbeállítások",
+                    "view_item": "Elem megtekintése"
                 }
             }
         },
         "label": {
             "create_modal": {
+                "label_color": "Címke színe",
                 "label_description": "Címke leírása",
                 "label_name": "Címke neve",
-                "title": "Címke létrehozása"
+                "title": "Címke létrehozása",
+                "toast": {
+                    "already_creating": "Címke létrehozása már folyamatban",
+                    "create_failed": "Sikertelen címke létrehozás",
+                    "create_success": "Címke létrehozva",
+                    "label_name_too_long": "A címke neve nem lehet hosszabb 50 karakternél"
+                }
             },
             "selector": {
                 "select_labels": "Címkék kiválasztása"
@@ -98,7 +173,12 @@
             "create_modal": {
                 "location_description": "Hely leírása",
                 "location_name": "Hely neve",
-                "title": "Új hely létrehozása"
+                "title": "Új hely létrehozása",
+                "toast": {
+                    "already_creating": "Hely létrehozása már folyamatban",
+                    "create_failed": "Sikertelen hely létrehozás",
+                    "create_success": "Hely létrehozva"
+                }
             },
             "selector": {
                 "no_location_found": "Nem található hely",
@@ -107,13 +187,16 @@
                 "select_location": "Válassz egy helyet"
             },
             "tree": {
-                "no_locations": "Nincs elérhető hely. Adj hozzá új helyet a\n `<`span class=\"link-primary\"`>`Létrehozás`<`/span`>` gombbal a navigációs sávon."
+                "no_locations": "Nincs elérhető hely. Adj hozzá új helyet a\n '<span class=\"link-primary\">'Létrehozás'</span>' gombbal a navigációs sávon."
             }
         },
         "quick_menu": {
             "no_results": "Nincs találat.",
             "shortcut_hint": "Használd a számgombokat egy művelet gyors kiválasztásához."
         }
+    },
+    "errors": {
+        "api_failure": "Backend API hívás sikertelen: "
     },
     "global": {
         "add": "Hozzáadás",
@@ -123,8 +206,11 @@
         "confirm": "Megerősítés",
         "create": "Létrehozás",
         "create_and_add": "Létrehozás és újabb hozzáadása",
+        "create_subitem": "Alelem létrehozása",
         "created": "Létrehozva",
         "delete": "Törlés",
+        "delete_confirm": "Biztosan törlöd ezt az elemet? ",
+        "demo_instance": "Ez egy demó példány",
         "details": "Részletek",
         "duplicate": "Másolás",
         "edit": "Szerkesztés",
@@ -132,13 +218,14 @@
         "follow_dev": "Kövesd a fejlesztőt",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/'{ version }\" target=\"_blank\"> Verzió: { version } Build: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Verzió: { version } Build: { build } '</a>'"
         },
         "github": "Github projekt",
         "insured": "Biztosítva",
         "items": "Tételek",
         "join_discord": "Csatlakozz a Discordhoz",
         "labels": "Címkék",
+        "loading": "Betöltés…",
         "locations": "Helyek",
         "maintenance": "Karbantartás",
         "name": "Név",
@@ -146,11 +233,14 @@
         "password": "Jelszó",
         "quantity": "Mennyiség",
         "read_docs": "Olvasd el a dokumentációt",
+        "return_home": "Vissza a kezdőlapra",
         "save": "Mentés",
         "search": "Keresés",
         "sign_out": "Kijelentkezés",
         "submit": "Elküldés",
+        "unknown": "Ismeretlen",
         "update": "Módosítás",
+        "updating": "Frissítés",
         "value": "Érték",
         "version": "Verzió: { version }",
         "welcome": "Üdv, { username }"
@@ -175,27 +265,49 @@
         "set_email": "Mi az email címed?",
         "set_name": "Mi a neved?",
         "set_password": "Állíts be egy jelszót!",
-        "tagline": "Kövesd nyomon, rendszerezd és kezeld a dolgaidat."
+        "tagline": "Kövesd nyomon, rendszerezd és kezeld a dolgaidat.",
+        "title": "Rendezd és címkézd a dolgaidat",
+        "toast": {
+            "invalid_email": "E-mail cím érvénytelen",
+            "invalid_email_password": "Az E-mail vagy jelszó érvénytelen",
+            "login_success": "Sikeres bejelentkezés",
+            "problem_registering": "Hiba a felhasználó regisztrálásakor",
+            "user_registered": "Felhasználó regisztrálva"
+        }
     },
     "items": {
         "add": "Hozzáadás",
         "advanced": "Haladó",
         "archived": "Archivált",
         "asset_id": "Eszközazonosító",
+        "associated_with_multiple": "Ez az eszköz Id több elemhez van hozzárendelve",
         "attachment": "Melléklet",
         "attachments": "Mellékletek",
         "changes_persisted_immediately": "A mellékletek módosításai azonnal mentésre kerülnek",
         "created_at": "Létrehozás dátuma",
         "custom_fields": "Egyedi mezők",
+        "delete_attachment_confirm": "Biztos törlöd ezt a mellékletet?",
+        "delete_item_confirm": "Biztosan törlöd ezt az elemet?",
         "description": "Leírás",
         "details": "Részletek",
         "drag_and_drop": "Húzd ide a fájlokat, vagy kattints a fájlok kiválasztásához",
+        "edit": {
+            "edit_attachment_dialog": {
+                "attachment_title": "Melléklet Cím",
+                "attachment_type": "Melléklet típusa",
+                "primary_photo": "Elsődleges fénykép",
+                "primary_photo_sub": "Ez a lehetőség csak fényképeknél érhető el. Csak egy fotó lehet elsődleges. Ha kiválasztod ezt a műveletet, a jelenlegi elsődleges fotó elveszti ezt a jellegét.",
+                "select_type": "Válassz típust",
+                "title": "Melléklet szerkesztése"
+            }
+        },
         "edit_details": "Részletek szerkesztése",
         "field_selector": "Mezőválasztó",
         "field_value": "Mező értéke",
         "first": "Első",
         "include_archive": "Archivált elemek belefoglalása",
         "insured": "Biztosítva",
+        "invalid_asset_id": "Érvénytelen eszközazonosító",
         "last": "Utolsó",
         "lifetime_warranty": "Élettartam garancia",
         "location": "Hely",
@@ -206,6 +318,7 @@
         "name": "Név",
         "negate_labels": "Címkeválasztás negálása",
         "next_page": "Következő oldal",
+        "no_attachments": "Nem található melléklet",
         "no_results": "Egy elem sem található",
         "notes": "Megjegyzések",
         "only_with_photo": "Csak fényképes tételek",
@@ -227,24 +340,60 @@
         "receipts": "Számlák",
         "reset_search": "Alaphelyzet",
         "results": "{total} találat",
+        "select_field": "Válaszd ki a mezőt",
         "serial_number": "Sorozatszám",
         "show_advanced_view_options": "További beállítások megjelenítése",
         "sold_at": "Eladás dátuma",
         "sold_details": "Eladás részletei",
         "sold_price": "Eladási ár",
         "sold_to": "Vevő",
+        "sync_child_locations": "Gyermekelemek helyeinek szinkronizálása",
         "tip_1": "A hely- és címkeszűrők a „vagy” műveletet használják. Ha egynél többet választasz ki,\n bármelyik egyezése esetén megjelenik a tétel.",
         "tip_2": "A '#' előtaggal ellátott keresések egy eszközazonosítót fognak lekérdezni (például '#000-001')",
         "tip_3": "A mezőszűrők a „vagy” műveletet használják. Ha egynél többet választasz ki,\n bármelyik egyezése esetén megjelenik a tétel.",
         "tips": "Tippek",
         "tips_sub": "Tippek a kereséshez",
+        "toast": {
+            "asset_not_found": "Az eszköz nem található",
+            "attachment_deleted": "Melléklet törölve",
+            "attachment_updated": "Melléklet frissítve",
+            "attachment_uploaded": "Melléklet feltöltve",
+            "child_items_location_no_longer_synced": "A gyermekelemek helye a továbbiakban nem lesz szinkronizálva ezzel a tétellel.",
+            "child_items_location_synced": "A gyermekelemek helye szinkronizálva lett ezzel a tétellel",
+            "child_location_desync": "A hely módosítása de-szinkronizálja a szülő helyéről",
+            "error_loading_parent_data": "Hiba történt a szülőadatok betöltése során",
+            "failed_adjust_quantity": "Mennyiség beállítása sikertelen",
+            "failed_delete_attachment": "Melléklet törlése sikertelen",
+            "failed_delete_item": "Tétel törlése sikertelen",
+            "failed_duplicate_item": "Tétel másolása sikertelen",
+            "failed_load_asset": "Eszköz betöltése sikertelen",
+            "failed_load_item": "Tétel betöltése sikertelen",
+            "failed_load_items": "Tételek betöltése sikertelen",
+            "failed_save": "Tétel mentése sikertelen",
+            "failed_save_no_location": "Tétel mentése sikertelen: nincs kiválasztott hely",
+            "failed_search_items": "Tételek keresése sikertelen",
+            "failed_update_attachment": "Melléklet frissítése sikertelen",
+            "failed_upload_attachment": "Melléklet feltöltése sikertelen",
+            "item_deleted": "Tétel törölve",
+            "item_saved": "Tétel mentve",
+            "quantity_cannot_negative": "A mennyiség nem lehet negatív",
+            "sync_child_location": "A kiválasztott szülő szinkronizálja gyermekei tartózkodási helyét a sajátjával. Hely frissítve."
+        },
         "updated_at": "Változtatás dátuma",
         "warranty": "Garancia",
         "warranty_details": "Garancia részletei",
         "warranty_expires": "Garancia vége"
     },
     "labels": {
+        "label_delete_confirm": "Biztos vagy benne, hogy törölni szeretnéd ezt a címkét? A művelet nem visszafordítható.",
         "no_results": "Nem található címke",
+        "toast": {
+            "failed_delete_label": "Címke törlése sikertelen",
+            "failed_load_label": "Címke betöltése sikertelen",
+            "failed_update_label": "Címke frissítése sikertelen",
+            "label_deleted": "Címke törölve",
+            "label_updated": "Címke frissítve"
+        },
         "update_label": "Címke módosítása"
     },
     "languages": {
@@ -260,6 +409,8 @@
         "it": "Olasz",
         "ja-JP": "Japán",
         "ko-KR": "Koreai",
+        "lb-LU": "Luxemburgi (Luxemburg)",
+        "lt-LT": "Litván (Litvánia)",
         "nb-NO": "Norvég (bokmål)",
         "nl": "Holland",
         "pl": "Lengyel",
@@ -285,7 +436,15 @@
         "child_locations": "Tartalmazott helyek",
         "collapse_tree": "Fanézet becsukása",
         "expand_tree": "Fa kibontása",
+        "location_items_delete_confirm": "Biztosan törlöd ezt a helyet és az összes elemét? Ez a művelet nem visszavonható.",
         "no_results": "Nem található hely",
+        "toast": {
+            "failed_delete_location": "Hely törlése sikertelen",
+            "failed_load_location": "Hely betöltése sikertelen",
+            "failed_update_location": "Hely frissítése sikertelen",
+            "location_deleted": "Hely törölve",
+            "location_updated": "Hely frissítve"
+        },
         "update_location": "Hely módosítása"
     },
     "maintenance": {
@@ -341,8 +500,10 @@
         "currency_format": "Pénz formátum",
         "current_password": "Jelenlegi jelszó",
         "delete_account": "Fiók törlése",
+        "delete_account_confirm": "Biztosan törlöd a fiókodat? Ha te vagy az utolsó tag a csoportodban, minden adatod törlődik. Ez a művelet nem visszafordítható.",
         "delete_account_sub": "Törlöd a fiókodat és az összes kapcsolódó adatot. Ezt a műveletet nem lehet visszavonni.",
-        "display_header": "{ currentValue, select, true {Fejléc elrejtése} false {Fejléc megjelenítése} other{Nincs találat}}",
+        "delete_notifier_confirm": "Biztos, hogy törölni akarod ezt az értesítőt?",
+        "display_legacy_header": "{ currentValue, select, true {Legacy fejléc letiltása} false {Legacy fejléc engedélyezése} other {Nincs találat}}",
         "enabled": "Engedélyezve",
         "example": "Példa",
         "gen_invite": "Meghívó link létrehozása",
@@ -352,22 +513,72 @@
         "language": "Nyelv",
         "new_password": "Új jelszó",
         "no_notifiers": "Nincs értesítő beállítva",
+        "no_override": "Nincs felülírás",
         "notifier_modal": "Értesítő { type, select, true {szerkesztése} false {létrehozása} other {egyéb}}",
         "notifiers": "Értesítők",
         "notifiers_sub": "Értesítések kérése a közelgő karbantartási emlékeztetőkről",
+        "override_locale": "Dátum és pénznem nyelvének felülbírálása",
         "test": "Teszt",
         "theme_settings": "Téma Beállítások",
         "theme_settings_sub": "A témabeállítások a böngésző helyi tárhelyén tárolódnak. Bármikor megváltoztathatod a témát. Ha problémába\n ütközöl a téma beállításakor, próbáld meg frissíteni az oldalt a böngésződben.",
+        "toast": {
+            "account_deleted": "Fiókodat sikeresen töröltük.",
+            "failed_change_password": "Jelszó megváltoztatása sikertelen.",
+            "failed_create_notifier": "Értesítő létrehozása sikertelen.",
+            "failed_delete_account": "Nem sikerült törölni a fiókodat.",
+            "failed_delete_notifier": "Értesítő törlése sikertelen.",
+            "failed_get_currencies": "Pénznemek lekérése sikertelen",
+            "failed_test_notifier": "Nem sikerült tesztelni az értesítőt.",
+            "failed_update_group": "Csoport frissítése sikertelen",
+            "failed_update_notifier": "Nem sikerült frissíteni az értesítőt.",
+            "group_updated": "Csoport frissítve",
+            "notifier_test_success": "Az értesítő tesztje sikeres volt.",
+            "password_changed": "A jelszóváltoztatás sikeres volt."
+        },
         "update_group": "Csoport módosítása",
         "update_language": "Nyelv átállítása",
         "url": "URL",
         "user_profile": "Felhasználói profil",
         "user_profile_sub": "Hívj meg felhasználókat, és kezeld a fiókodat."
     },
+    "reports": {
+        "label_generator": {
+            "asset_end": "Utolsó eszköz",
+            "asset_start": "Első eszköz",
+            "base_url": "Alap URL",
+            "bordered_labels": "Keretes címkék",
+            "generate_page": "Oldal létrehozása",
+            "input_placeholder": "Írj ide",
+            "instruction_1": "A Homebox Label Generator egy olyan eszköz, amely segít a Homebox-leltár címkéinek nyomtatásában. Ezeket előre\n kinyomtathatod, hogy bármikor felragaszthass egy új, még használatlan címkét",
+            "instruction_2": "Ezek a címkék ezért úgy működnek, hogy egy URL QR-kódot és eszközazonosítót nyomtatnak egy címkére. Ha kikapcsoltad\n az eszközazonosítókat a Homebox beállításokban, akkor is használhatod ezt az eszközt, de nem mutat majd az eszközazonosító semmilyen tételre",
+            "instruction_3": "Ez a funkció korai fejlesztési szakaszban van, és a jövőbeli kiadásokban változhat, ha visszajelzésed van, kérlek\nírd meg nekünk a '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub vitafórumon'</a>'",
+            "label_height": "Címke magassága",
+            "label_width": "Címke szélessége",
+            "measure_type": "Mértékegység",
+            "page_bottom_padding": "Oldal alsó margója",
+            "page_height": "Oldal magassága",
+            "page_left_padding": "Oldal bal margója",
+            "page_right_padding": "Oldal jobb margója",
+            "page_top_padding": "Oldal felső margója",
+            "page_width": "Oldalszélesség",
+            "qr_code_example": "QR-kód példa",
+            "tip_1": "Az alapértelmezett beállítások\n'<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 címkeívek'</a>'nek felelnek meg. Ha más íveket használsz,\n módosítanod kell a beállításokat, hogy a laphoz igazodjanak.",
+            "tip_2": "Ha a lapot testre szabod, a méretek hüvelykben vannak megadva. A 5260 ívek létrehozásakor feltűnt,\n hogy a hivatalosan megadott méretek nem azonosak a megfelelő szövegdoboz méretekkel.\n'<b>'Szükséged lehet néhány próbálkozásra a megfelelő méretek megtalálásához.'</b>'",
+            "tip_3": "Nyomtatáskor ügyelj a következőkre:\n '<ol><li>'Állítsd a margókat 0-ra vagy Nincsre'</li><li>'Állítsd a skálázást 100% -ra'</li><li>'Tiltsd le a kétoldalas nyomtatást'</li><li>'Több oldal nyomtatása előtt nyomtass tesztoldalt'</li></ol>'",
+            "tips": "Tippek",
+            "title": "Címkegenerátor",
+            "toast": {
+                "page_too_small_card": "Az oldal mérete túl kicsi a kártya méretéhez képest"
+            }
+        }
+    },
     "scanner": {
+        "barcode_detected_message": "termék vonalkód észlelve",
+        "barcode_fetch_data": "Termékadatok lekérése",
         "error": "Hiba történt a szkennelés közben",
         "invalid_url": "Érvénytelen vonalkód URL",
         "no_sources": "Nincs elérhető videóforrás",
+        "permission_denied": "A kamera engedélye megtagadva, engedélyezd a kamerához való hozzáférést a böngésző beállításaiban",
         "select_video_source": "Videóforrás kiválasztása",
         "title": "Szkenner",
         "unsupported": "A Media Stream API nem támogatott HTTPS nélkül"
@@ -375,17 +586,24 @@
     "tools": {
         "actions": "Készletműveletek",
         "actions_set": {
+            "create_missing_thumbnails": "Hiányzó bélyegképek létrehozása",
+            "create_missing_thumbnails_button": "Bélyegképek létrehozása",
+            "create_missing_thumbnails_confirm": "Biztosan létrehozod a hiányzó bélyegképeket? Ez eltarthat egy ideig, és nem lehet szüneteltetni.",
+            "create_missing_thumbnails_sub": "Bélyegképeket hoz létre minden olyan melléklethez, melyet a jelenlegi konfiguráció támogat. Ez abban az esetben lehet hasznos, ha a mellékletek a Homebox v0.20.0 verziója előtt lettek feltöltve. A folyamat nem ír felül már létező bélyegképeket, csak újakat készít, ha a melléklet még nem rendelkezik ilyennel. Figyelem, a bélyegképeket egy háttérfolyamat generálja, és egy ideig eltarthat, amíg mind elkészülnek.",
             "ensure_ids": "Eszközazonosítók meglétének biztosítása",
             "ensure_ids_button": "Eszközazonosítók generálása",
+            "ensure_ids_confirm": "Biztos elindítod az eszközazonosítók generálását? Ez eltarthat egy ideig, és nem lehet visszavonni.",
             "ensure_ids_sub": "Biztosítja, hogy a készletben lévő összes tétel rendelkezzen érvényes asset_id (eszközazonosító) mezővel. Ehhez megkeresi a legmagasabb asset_id mezőértéket az adatbázisban és minden olyan tételhez, amelynek nem beállított az asset_id mezője, rendre eggyel növelt értéket állít be. Ezt a created_at mezők értékének (a tétel létrehozásának dátuma) sorrendjében teszi.",
             "ensure_import_refs": "Importálási hivatkozások meglétének biztosítása",
             "ensure_import_refs_button": "Hivatkozások generálása",
             "ensure_import_refs_sub": "Biztosítja, hogy a készletben lévő összes tétel rendelkezzen érvényes import_ref mezővel. Véletlenszerűen generál egy 8 hosszúságú karakterláncot minden olyan tételhez, amelynél az import_ref mező üres.",
             "set_primary_photo": "Elsődleges fénykép hozzárendelése",
             "set_primary_photo_button": "Hozzárendelés",
+            "set_primary_photo_confirm": "Biztosan elindítod az elsődleges fényképek hozzárendelését? Ez eltarthat egy ideig, és nem lehet visszavonni.",
             "set_primary_photo_sub": "A Homebox v0.10.0 verziójában hozzáadtuk a fénykép típusú mellékletekhez az elsődleges fényképként történő megjelölés lehetőségét. Ezzel a művelettel a mellékletekben található első fényképet állítod be elsődleges fényképnek, ha ilyen a tételhez még nincs kiválasztva. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Lásd az #576 GitHub PR-t'</a>'",
             "zero_datetimes": "Idő törlése a tételek dátummezőiből",
             "zero_datetimes_button": "Dátummezők javítása",
+            "zero_datetimes_confirm": "Biztosan elindítod az összes dátummező időértékének törlését? Ez eltarthat egy ideig, és nem lehet visszavonni.",
             "zero_datetimes_sub": "Visszaállítja a dátumot és időt tartalmazó mezők értékét a dátum kezdetére a teljes készletben. Ezzel javíthatsz egy olyan bugot, mely során az oldal fejlesztésének korai szakaszában az időértékek mentése a dátumok pontos megjelenítésében hibát okozott. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Lásd a #236 Github Issue-t további részletekért.'</a>'"
         },
         "actions_sub": "Műveletek tömeges alkalmazása a készletre. Ezeket a vissza nem vonható műveleteket csak '<b>'kellő körültekintés mellett használd'</b>'.",
@@ -396,6 +614,7 @@
             "export_sub": "Exportálja a Homebox szabványos CSV formátumát. Ez minden készletedben található tételt exportál.",
             "import": "Készlet importálása",
             "import_button": "Készlet importálása",
+            "import_ref_confirm": "Biztos elindítod az importálási hivatkozások meglétének biztosítását? Ez eltarthat egy ideig, és nem lehet visszavonni.",
             "import_sub": "Importálja a Homebox szabványos CSV formátumát. Amennyiben nem található '<code>'HB.import_ref'</code>' oszlop a fájlban, ez '<b>'nem'</b>' ír felül létező tételeket a készletedben, csak újakat ad hozzá. Azon sorok, melyeknél a '<code>'HB.import_ref'</code>' oszlop értéke megegyezik egy létező tétel import_ref mezőjének értékével, a sor tartalma beolvad a létező tételbe."
         },
         "import_export_sub": "Készlet importálása és exportálása CSV-fájlba és CSV-fájlból. Ez hasznos lehet a készleted átmozgatásához a Homebox egy új példányába.",
@@ -408,6 +627,14 @@
             "bill_of_materials_button": "Jegyzék létrehozása",
             "bill_of_materials_sub": "Létrehoz egy CSV (vesszővel elválasztott értékek) fájlt, amely importálható egy táblázatkezelő programba. Ez a készleted összesítése a tételek alap és árra vonatkozó információival."
         },
-        "reports_sub": "Hozz létre különböző jelentéseket a készletedhez."
+        "reports_sub": "Hozz létre különböző jelentéseket a készletedhez.",
+        "toast": {
+            "asset_success": "{ results } eszköz frissítve.",
+            "failed_create_missing_thumbnails": "Hiányzó bélyegképek létrehozása sikertelen.",
+            "failed_ensure_ids": "Nem sikerült biztosítani az eszközazonosítók létezését.",
+            "failed_ensure_import_refs": "Importálási hivatkozások meglétének biztosítása sikertelen.",
+            "failed_set_primary_photos": "Nem sikerült beállítani az elsődleges fényképeket.",
+            "failed_zero_datetimes": "Nem sikerült visszaállítani a dátum- és időértékeket."
+        }
     }
 }

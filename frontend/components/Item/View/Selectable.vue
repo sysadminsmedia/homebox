@@ -3,7 +3,11 @@
   import type { ItemSummary } from "~~/lib/api/types/data-contracts";
   import MdiCardTextOutline from "~icons/mdi/card-text-outline";
   import MdiTable from "~icons/mdi/table";
+  import { Badge } from "@/components/ui/badge";
   import { Button, ButtonGroup } from "@/components/ui/button";
+  import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
+  import ItemCard from "@/components/Item/Card.vue";
+  import ItemViewTable from "@/components/Item/View/Table.vue";
 
   type Props = {
     view?: ViewType;
@@ -29,7 +33,12 @@
 <template>
   <section>
     <BaseSectionHeader class="mb-2 mt-4 flex items-center justify-between">
-      {{ $t("components.item.view.selectable.items") }}
+      <div class="flex gap-2 text-nowrap">
+        {{ $t("components.item.view.selectable.items") }}
+        <Badge>
+          {{ items.length }}
+        </Badge>
+      </div>
       <template #description>
         <div v-if="!viewSet">
           <ButtonGroup>

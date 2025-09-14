@@ -8,5 +8,10 @@ type PaginationResult[T any] struct {
 }
 
 func calculateOffset(page, pageSize int) int {
-	return (page - 1) * pageSize
+	offset := (page - 1) * pageSize
+	if offset < 0 {
+		return 0
+	} else {
+		return offset
+	}
 }

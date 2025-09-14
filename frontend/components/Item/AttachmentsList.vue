@@ -21,7 +21,7 @@
                 <MdiDownload />
               </a>
             </TooltipTrigger>
-            <TooltipContent> Download </TooltipContent>
+            <TooltipContent> {{ $t("components.item.attachments_list.download") }} </TooltipContent>
           </Tooltip>
           <Tooltip>
             <TooltipTrigger as-child>
@@ -29,7 +29,7 @@
                 <MdiOpenInNew />
               </a>
             </TooltipTrigger>
-            <TooltipContent> Open in new tab </TooltipContent>
+            <TooltipContent> {{ $t("components.item.attachments_list.open_new_tab") }} </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </div>
@@ -43,7 +43,7 @@
   import MdiDownload from "~icons/mdi/download";
   import MdiOpenInNew from "~icons/mdi/open-in-new";
   import { buttonVariants } from "@/components/ui/button";
-  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
   const props = defineProps({
     attachments: {

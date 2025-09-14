@@ -1,18 +1,22 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
+  import DOMPurify from "dompurify";
   import { route } from "../../lib/api/base";
-  import { toast, Toaster } from "@/components/ui/sonner";
+  import { Toaster, toast } from "@/components/ui/sonner";
   import { Separator } from "@/components/ui/separator";
   import { Button } from "@/components/ui/button";
   import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
   import { Checkbox } from "@/components/ui/checkbox";
 
+  const { t } = useI18n();
+
   definePageMeta({
     middleware: ["auth"],
     layout: false,
   });
   useHead({
-    title: "Homebox | Printer",
+    title: "HomeBox | " + t("reports.label_generator.title"),
   });
 
   const api = useUserApi();
@@ -80,7 +84,7 @@
     const availablePageHeight = page.height - page.pageTopPadding - page.pageBottomPadding;
 
     if (availablePageWidth < cardWidth || availablePageHeight < cardHeight) {
-      toast.error("Page size is too small for the card size");
+      toast.error(t("reports.label_generator.toast.page_too_small_card"));
       return out.value;
     }
 
@@ -119,52 +123,52 @@
   const propertyInputs = computed<InputDef[]>(() => {
     return [
       {
-        label: "Asset Start",
+        label: t("reports.label_generator.asset_start"),
         ref: "assetRange",
       },
       {
-        label: "Asset End",
+        label: t("reports.label_generator.asset_end"),
         ref: "assetRangeMax",
       },
       {
-        label: "Measure Type",
+        label: t("reports.label_generator.measure_type"),
         ref: "measure",
         type: "text",
       },
       {
-        label: "Label Height",
+        label: t("reports.label_generator.label_height"),
         ref: "cardHeight",
       },
       {
-        label: "Label Width",
+        label: t("reports.label_generator.label_width"),
         ref: "cardWidth",
       },
       {
-        label: "Page Width",
+        label: t("reports.label_generator.page_width"),
         ref: "pageWidth",
       },
       {
-        label: "Page Height",
+        label: t("reports.label_generator.page_height"),
         ref: "pageHeight",
       },
       {
-        label: "Page Top Padding",
+        label: t("reports.label_generator.page_top_padding"),
         ref: "pageTopPadding",
       },
       {
-        label: "Page Bottom Padding",
+        label: t("reports.label_generator.page_bottom_padding"),
         ref: "pageBottomPadding",
       },
       {
-        label: "Page Left Padding",
+        label: t("reports.label_generator.page_left_padding"),
         ref: "pageLeftPadding",
       },
       {
-        label: "Page Right Padding",
+        label: t("reports.label_generator.page_right_padding"),
         ref: "pageRightPadding",
       },
       {
-        label: "Base URL",
+        label: t("reports.label_generator.base_url"),
         ref: "baseURL",
         type: "text",
       },
@@ -315,7 +319,7 @@
           });
         }
 
-        page.rows[page.rows.length - 1].items.push(item);
+        page.rows[page.rows.length - 1]!.items.push(item);
       }
 
       calc.push(page);
@@ -333,44 +337,23 @@
   <div class="print:hidden">
     <Toaster />
     <div class="container prose mx-auto max-w-4xl p-4 pt-6">
-      <h1>Homebox Label Generator</h1>
+      <h1>HomeBox {{ $t("reports.label_generator.title") }}</h1>
       <p>
-        The Homebox Label Generator is a tool to help you print labels for your Homebox inventory. These are intended to
-        be print-ahead labels so you can print many labels and have them ready to apply
+        {{ $t("reports.label_generator.instruction_1") }}
       </p>
       <p>
-        As such, these labels work by printing a URL QR Code and AssetID information on a label. If you've disabled
-        AssetID's in your Homebox settings, you can still use this tool, but the AssetID's won't reference any item
+        {{ $t("reports.label_generator.instruction_2") }}
       </p>
-      <p>
-        This feature is in early development stages and may change in future releases, if you have feedback please
-        provide it in the <a href="https://github.com/sysadminsmedia/homebox/discussions/53">GitHub Discussion</a>
-      </p>
-      <h2>Tips</h2>
+      <p v-html="DOMPurify.sanitize($t('reports.label_generator.instruction_3'))" />
+      <h2>{{ $t("reports.label_generator.tips") }}</h2>
       <ul>
-        <li>
-          The defaults here are setup for the
-          <a href="https://www.avery.com/templates/5260">Avery 5260 label sheets</a>. If you're using a different sheet,
-          you'll need to adjust the settings to match your sheet.
-        </li>
-        <li>
-          If you're customizing your sheet the dimensions are in inches. When building the 5260 sheet, I found that the
-          dimensions used in their template, did not match what was needed to print within the boxes.
-          <b>Be prepared for some trial and error</b>
-        </li>
-        <li>
-          When printing be sure to:
-          <ol>
-            <li>Set the margins to 0 or None</li>
-            <li>Set the scaling to 100%</li>
-            <li>Disable double-sided printing</li>
-            <li>Print a test page before printing multiple pages</li>
-          </ol>
-        </li>
+        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_1'))" />
+        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_2'))" />
+        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_3'))" />
       </ul>
       <div class="flex flex-wrap gap-2">
-        <NuxtLink href="/tools">Tools</NuxtLink>
-        <NuxtLink href="/home">Home</NuxtLink>
+        <NuxtLink href="/tools">{{ $t("menu.tools") }}</NuxtLink>
+        <NuxtLink href="/home">{{ $t("menu.home") }}</NuxtLink>
       </div>
     </div>
     <Separator class="mx-auto max-w-4xl" />
@@ -385,7 +368,7 @@
             v-model="displayProperties[prop.ref]"
             :type="prop.type ? prop.type : 'number'"
             step="0.01"
-            placeholder="Type here"
+            :placeholder="$t('reports.label_generator.input_placeholder')"
             class="w-full max-w-xs"
           />
         </div>
@@ -393,13 +376,17 @@
       <div class="max-w-xs">
         <div class="flex items-center gap-2 py-4">
           <Checkbox id="borderedLabels" v-model="bordered" />
-          <Label class="cursor-pointer" for="borderedLabels"> Bordered Labels </Label>
+          <Label class="cursor-pointer" for="borderedLabels">
+            {{ $t("reports.label_generator.bordered_labels") }}
+          </Label>
         </div>
       </div>
 
       <div>
-        <p>QR Code Example {{ displayProperties.baseURL }}/a/{asset_id}</p>
-        <Button size="lg" class="my-4 w-full" @click="calcPages"> Generate Page </Button>
+        <p>{{ $t("reports.label_generator.qr_code_example") }} {{ displayProperties.baseURL }}/a/{asset_id}</p>
+        <Button size="lg" class="my-4 w-full" @click="calcPages">
+          {{ $t("reports.label_generator.generate_page") }}
+        </Button>
       </div>
     </div>
   </div>
@@ -414,6 +401,8 @@
         paddingLeft: `${out.page.pl}${out.measure}`,
         paddingRight: `${out.page.pr}${out.measure}`,
         width: `${out.page.width}${out.measure}`,
+        background: `white`,
+        color: `black`,
       }"
     >
       <div
@@ -450,7 +439,7 @@
           </div>
           <div class="ml-2 flex flex-col justify-center">
             <div class="font-bold">{{ item.assetID }}</div>
-            <div class="text-xs font-light italic">Homebox</div>
+            <div class="text-xs font-light italic">HomeBox</div>
             <div class="overflow-hidden text-wrap text-xs">{{ item.name }}</div>
             <div class="text-xs">{{ item.location }}</div>
           </div>

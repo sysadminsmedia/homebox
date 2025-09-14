@@ -83,13 +83,13 @@ func (ctrl *V1Controller) HandleUpdateNotifier() errchain.HandlerFunc {
 
 // HandlerNotifierTest godoc
 //
-//	@Summary  Test Notifier
-//	@Tags     Notifiers
-//	@Produce  json
-//	@Param url query string true "URL"
-//	@Success  204
-//	@Router   /v1/notifiers/test [POST]
-//	@Security Bearer
+//	@Summary	Test Notifier
+//	@Tags		Notifiers
+//	@Produce	json
+//	@Param		url	query	string	true	"URL"
+//	@Success	204
+//	@Router		/v1/notifiers/test [POST]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandlerNotifierTest() errchain.HandlerFunc {
 	type body struct {
 		URL string `json:"url" validate:"required"`

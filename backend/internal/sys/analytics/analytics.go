@@ -11,6 +11,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+var startTime = time.Now()
+
 type Data struct {
 	Domain string                 `json:"domain"`
 	Name   string                 `json:"name"`
@@ -18,7 +20,7 @@ type Data struct {
 	Props  map[string]interface{} `json:"props"`
 }
 
-func Send(version, buildInfo string) {
+func Send(version, buildInfo string) error {
 	hostData, _ := host.Info()
 	analytics := Data{
 		Domain: "homebox.software",
@@ -32,22 +34,23 @@ func Send(version, buildInfo string) {
 			"platform_version": hostData.PlatformVersion,
 			"kernel_arch":      hostData.KernelArch,
 			"virt_type":        hostData.VirtualizationSystem,
+			"uptime_min":       time.Since(startTime).Minutes(),
 		},
 	}
 	jsonBody, err := json.Marshal(analytics)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to marshal analytics data")
-		return
+		return err
 	}
 	bodyReader := bytes.NewReader(jsonBody)
 	req, err := http.NewRequest("POST", "https://a.sysadmins.zone/api/event", bodyReader)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to create analytics request")
-		return
+		return err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", "Homebox/"+version+"/"+buildInfo+" (https://homebox.software)")
+	req.Header.Set("User-Agent", "Homebox/"+version+"/(https://homebox.software)")
 
 	client := &http.Client{
 		Timeout: 10 * time.Second,
@@ -56,7 +59,7 @@ func Send(version, buildInfo string) {
 	res, err := client.Do(req)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to send analytics request")
-		return
+		return err
 	}
 
 	defer func() {
@@ -65,4 +68,5 @@ func Send(version, buildInfo string) {
 			log.Error().Err(err).Msg("failed to close response body")
 		}
 	}()
+	return nil
 }

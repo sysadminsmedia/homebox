@@ -2,7 +2,6 @@
   <Card>
     <NuxtLink :to="`/location/${location.id}`" class="group/location-card transition duration-300">
       <div
-        class=""
         :class="{
           'p-4': !dense,
           'px-3 py-2': dense,
@@ -20,7 +19,7 @@
           <span class="mx-auto">
             {{ location.name }}
           </span>
-          <Badge class="" :class="{ 'opacity-0': !hasCount }">
+          <Badge :class="{ 'opacity-0': !hasCount }">
             {{ count }}
           </Badge>
         </h2>
@@ -52,8 +51,6 @@
   });
 
   const count = computed(() => {
-    if (hasCount.value) {
-      return (props.location as LocationOutCount).itemCount;
-    }
+    return hasCount.value ? (props.location as LocationOutCount).itemCount : undefined;
   });
 </script>

@@ -1,21 +1,43 @@
 <template>
-  {{ value }}
+  <Suspense>
+    <template #default>
+      {{ formattedValue }}
+    </template>
+    <template #fallback> {{ $t("global.loading") }} </template>
+  </Suspense>
 </template>
 
 <script setup lang="ts">
+  import { computed, ref } from "vue";
+  import { useI18n } from "vue-i18n";
+
+  const { t } = useI18n();
+
   type Props = {
     amount: string | number;
   };
 
   const props = defineProps<Props>();
 
-  const fmt = await useFormatCurrency();
+  type AsyncReturnType<T extends (...args: unknown[]) => unknown> = Awaited<ReturnType<T>>;
 
-  const value = computed(() => {
-    if (!props.amount || props.amount === "0") {
-      return fmt(0);
+  const fmt = ref<AsyncReturnType<typeof useFormatCurrency> | null>(null);
+
+  const loadFormatter = async () => {
+    fmt.value = await useFormatCurrency();
+  };
+
+  loadFormatter();
+
+  const formattedValue = computed(() => {
+    if (!fmt.value) {
+      return t("global.loading");
     }
 
-    return fmt(props.amount);
+    if (!props.amount || props.amount === "0") {
+      return fmt.value(0);
+    }
+
+    return fmt.value(props.amount);
   });
 </script>

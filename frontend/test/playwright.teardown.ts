@@ -4,10 +4,10 @@ function globalTeardown() {
   if (process.env.TEST_SHUTDOWN_API_SERVER) {
     const pc = exec("pkill -SIGTERM api"); // Kill background API process
     const fr = exec("pkill -SIGTERM task"); // Kill background Frontend process
-    pc.stdout?.on("data", (data: void) => {
+    pc.stdout?.on("data", (data: unknown) => {
       console.log(`stdout: ${data}`);
     });
-    fr.stdout?.on("data", (data: void) => {
+    fr.stdout?.on("data", (data: unknown) => {
       console.log(`stdout: ${data}`);
     });
   }

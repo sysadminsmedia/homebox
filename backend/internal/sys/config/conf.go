@@ -28,6 +28,8 @@ type Config struct {
 	Debug      DebugConf      `yaml:"debug"`
 	Options    Options        `yaml:"options"`
 	LabelMaker LabelMakerConf `yaml:"labelmaker"`
+	Thumbnail  Thumbnail      `yaml:"thumbnail"`
+	Barcode    BarcodeAPIConf `yaml:"barcode"`
 }
 
 type Options struct {
@@ -40,6 +42,12 @@ type Options struct {
 	OIDCClientSecret     string `yaml:"oidc_client_secret"`
 	OIDCRedirectURI      string `yaml:"oidc_redirect_uri"`
 	OIDCProviderURL      string `yaml:"oidc_provider_url"`
+}
+
+type Thumbnail struct {
+	Enabled bool `yaml:"enabled" conf:"default:true"`
+	Width   int  `yaml:"width"   conf:"default:500"`
+	Height  int  `yaml:"height"  conf:"default:500"`
 }
 
 type DebugConf struct {
@@ -57,14 +65,20 @@ type WebConfig struct {
 }
 
 type LabelMakerConf struct {
-	Width                 int64   `yaml:"width"     conf:"default:526"`
-	Height                int64   `yaml:"height"    conf:"default:200"`
-	Padding               int64   `yaml:"padding"   conf:"default:32"`
-	Margin                int64   `yaml:"margin"    conf:"default:32"`
-	FontSize              float64 `yaml:"font_size" conf:"default:32.0"`
-	PrintCommand          *string `yaml:"string"`
-	AdditionalInformation *string `yaml:"string"`
-	DynamicLength         bool    `yaml:"bool"      conf:"default:true"`
+	Width                 int64          `yaml:"width"     conf:"default:526"`
+	Height                int64          `yaml:"height"    conf:"default:200"`
+	Padding               int64          `yaml:"padding"   conf:"default:32"`
+	Margin                int64          `yaml:"margin"    conf:"default:32"`
+	FontSize              float64        `yaml:"font_size" conf:"default:32.0"`
+	PrintCommand          *string        `yaml:"string"`
+	AdditionalInformation *string        `yaml:"string"`
+	DynamicLength         bool           `yaml:"bool"      conf:"default:true"`
+	LabelServiceUrl       *string        `yaml:"label_service_url"`
+	LabelServiceTimeout   *time.Duration `yaml:"label_service_timeout"`
+}
+
+type BarcodeAPIConf struct {
+	TokenBarcodespider string `yaml:"token_barcodespider"`
 }
 
 // New parses the CLI/Config file and returns a Config struct. If the file argument is an empty string, the

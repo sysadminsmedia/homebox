@@ -1,9 +1,4 @@
----
-name: "Feature Request"
-description: "Submit a feature request for the current release"
 labels: ["⬆️ enhancement"]
-projects: ["sysadminsmedia/2"]
-type: "Enhancement"
 body:
   - type: textarea
     id: problem-statement
@@ -31,9 +26,5 @@ body:
       label: Contributions
       description: Please confirm the following
       options:
-        - label: I have searched through existing issues and feature requests to see if my idea has already been proposed.
+        - label: I have searched through existing ideas in the discussions to check if this is a duplicate
           required: true
-        - label: If this feature is accepted, I would be willing to help implement and maintain this feature.
-          required: false
-        - label: If this feature is accepted, I'm willing to sponsor the development of this feature.
-          required: false

@@ -2,6 +2,7 @@
   import type { LabelOut, LabelSummary } from "~~/lib/api/types/data-contracts";
   import MdiArrowUp from "~icons/mdi/arrow-up";
   import MdiTagOutline from "~icons/mdi/tag-outline";
+  import { getContrastTextColor } from "~/lib/utils";
 
   export type sizes = "sm" | "md" | "lg" | "xl";
   defineProps({
@@ -18,12 +19,17 @@
 
 <template>
   <NuxtLink
-    class="group/label-chip flex gap-2 rounded-full bg-accent text-accent-foreground shadow transition duration-300 hover:bg-accent/50"
+    class="group/label-chip flex gap-2 rounded-full shadow transition duration-300 hover:bg-accent/50"
     :class="{
       'p-4 py-1 text-base': size === 'lg',
       'p-3 py-1 text-sm': size !== 'sm' && size !== 'lg',
       'p-2 py-0.5 text-xs': size === 'sm',
     }"
+    :style="
+      label.color
+        ? { backgroundColor: label.color, color: getContrastTextColor(label.color) }
+        : { backgroundColor: 'hsl(var(--accent))' }
+    "
     :to="`/label/${label.id}`"
   >
     <div class="relative">
@@ -36,6 +42,6 @@
         <MdiArrowUp class="hidden group-hover/label-chip:block" />
       </div>
     </div>
-    {{ label.name.length > 20 ? `${label.name.substring(0, 20)}...` : label.name }}
+    {{ label.name }}
   </NuxtLink>
 </template>

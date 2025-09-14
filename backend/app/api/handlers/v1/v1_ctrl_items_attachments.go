@@ -3,6 +3,7 @@ package v1
 import (
 	"errors"
 	"net/http"
+	"net/url"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -14,6 +15,13 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
+
+	"gocloud.dev/blob"
+	_ "gocloud.dev/blob/azureblob"
+	_ "gocloud.dev/blob/fileblob"
+	_ "gocloud.dev/blob/gcsblob"
+	_ "gocloud.dev/blob/memblob"
+	_ "gocloud.dev/blob/s3blob"
 )
 
 type (
@@ -24,19 +32,19 @@ type (
 
 // HandleItemAttachmentCreate godocs
 //
-//	@Summary  Create Item Attachment
-//	@Tags     Items Attachments
-//	@Accept   multipart/form-data
-//	@Produce  json
-//	@Param    id   path     string true "Item ID"
-//	@Param    file formData file   true "File attachment"
-//	@Param    type formData string true "Type of file"
-//	@Param    primary formData bool false "Is this the primary attachment"
-//	@Param    name formData string true "name of the file including extension"
-//	@Success  200  {object} repo.ItemOut
-//	@Failure  422  {object} validate.ErrorResponse
-//	@Router   /v1/items/{id}/attachments [POST]
-//	@Security Bearer
+//	@Summary	Create Item Attachment
+//	@Tags		Items Attachments
+//	@Accept		multipart/form-data
+//	@Produce	json
+//	@Param		id		path		string	true	"Item ID"
+//	@Param		file	formData	file	true	"File attachment"
+//	@Param		type	formData	string	false	"Type of file"
+//	@Param		primary	formData	bool	false	"Is this the primary attachment"
+//	@Param		name	formData	string	true	"name of the file including extension"
+//	@Success	200		{object}	repo.ItemOut
+//	@Failure	422		{object}	validate.ErrorResponse
+//	@Router		/v1/items/{id}/attachments [POST]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		err := r.ParseMultipartForm(ctrl.maxUploadSize << 20)
@@ -75,7 +83,7 @@ func (ctrl *V1Controller) HandleItemAttachmentCreate() errchain.HandlerFunc {
 			ext := filepath.Ext(attachmentName)
 
 			switch strings.ToLower(ext) {
-			case ".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".tiff":
+			case ".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp", ".tiff", ".avif", ".ico", ".heic", ".jxl":
 				attachmentType = attachment.TypePhoto.String()
 			default:
 				attachmentType = attachment.TypeAttachment.String()
@@ -167,13 +175,39 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 	ctx := services.NewContext(r.Context())
 	switch r.Method {
 	case http.MethodGet:
-		doc, err := ctrl.svc.Items.AttachmentPath(r.Context(), attachmentID)
+		doc, err := ctrl.svc.Items.AttachmentPath(r.Context(), ctx.GID, attachmentID)
 		if err != nil {
 			log.Err(err).Msg("failed to get attachment path")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
-		// w.Header().Set("Content-Disposition", "attachment; filename="+doc.Title)
-		http.ServeFile(w, r, doc.Path)
+
+		bucket, err := blob.OpenBucket(ctx, ctrl.repo.Attachments.GetConnString())
+		if err != nil {
+			log.Err(err).Msg("failed to open bucket")
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+		file, err := bucket.NewReader(ctx, ctrl.repo.Attachments.GetFullPath(doc.Path), nil)
+		if err != nil {
+			log.Err(err).Msg("failed to open file")
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+		defer func(file *blob.Reader) {
+			err := file.Close()
+			if err != nil {
+				log.Err(err).Msg("failed to close file")
+			}
+		}(file)
+		defer func(bucket *blob.Bucket) {
+			err := bucket.Close()
+			if err != nil {
+				log.Err(err).Msg("failed to close bucket")
+			}
+		}(bucket)
+
+		// Set the Content-Disposition header for RFC6266 compliance
+		disposition := "inline; filename*=UTF-8''" + url.QueryEscape(doc.Title)
+		w.Header().Set("Content-Disposition", disposition)
+		http.ServeContent(w, r, doc.Title, doc.CreatedAt, file)
 		return nil
 
 	// Delete Attachment Handler
@@ -196,9 +230,9 @@ func (ctrl *V1Controller) handleItemAttachmentsHandler(w http.ResponseWriter, r 
 		}
 
 		attachment.ID = attachmentID
-		val, err := ctrl.svc.Items.AttachmentUpdate(ctx, ID, &attachment)
+		val, err := ctrl.svc.Items.AttachmentUpdate(ctx, ctx.GID, ID, &attachment)
 		if err != nil {
-			log.Err(err).Msg("failed to delete attachment")
+			log.Err(err).Msg("failed to update attachment")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 

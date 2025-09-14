@@ -37,7 +37,6 @@ export interface IAuthContext {
 }
 
 class AuthContext implements IAuthContext {
-  // eslint-disable-next-line no-use-before-define
   private static _instance?: AuthContext;
 
   private static readonly cookieTokenKey = "hb.auth.session";
@@ -48,7 +47,7 @@ class AuthContext implements IAuthContext {
   private _attachmentToken: CookieRef<string | null>;
 
   get token() {
-    // @ts-ignore sometimes it's a boolean I guess?
+    // @ts-expect-error sometimes it's a boolean I guess?
     return this._token.value === "true" || this._token.value === true;
   }
 

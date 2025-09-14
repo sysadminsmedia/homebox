@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { route } from "~/lib/api/base";
   import MdiQrcode from "~icons/mdi/qrcode";
@@ -16,7 +17,7 @@
 </script>
 
 <template>
-  <Dialog dialog-id="page-qr-code">
+  <Dialog :dialog-id="DialogID.PageQRCode">
     <DialogContent>
       <DialogHeader>
         <DialogTitle>
@@ -29,7 +30,7 @@
 
   <Tooltip>
     <TooltipTrigger as-child>
-      <Button size="icon" @click="openDialog('page-qr-code')">
+      <Button size="icon" @click="openDialog(DialogID.PageQRCode)">
         <MdiQrcode name="mdi-qrcode" />
       </Button>
     </TooltipTrigger>

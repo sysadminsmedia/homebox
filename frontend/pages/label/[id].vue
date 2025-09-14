@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPencil from "~icons/mdi/pencil";
@@ -9,10 +10,23 @@
   import { Button } from "@/components/ui/button";
   import { Badge } from "@/components/ui/badge";
   import { Separator } from "@/components/ui/separator";
+  import ColorSelector from "@/components/Form/ColorSelector.vue";
+  import { getContrastTextColor } from "~/lib/utils";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import FormTextArea from "~/components/Form/TextArea.vue";
+  import BaseContainer from "@/components/Base/Container.vue";
+  import Currency from "~/components/global/Currency.vue";
+  import DateTime from "~/components/global/DateTime.vue";
+  import PageQRCode from "~/components/global/PageQRCode.vue";
+  import Markdown from "~/components/global/Markdown.vue";
+  import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
 
   definePageMeta({
     middleware: ["auth"],
   });
+
+  const { t } = useI18n();
 
   const { openDialog, closeDialog } = useDialog();
 
@@ -24,7 +38,7 @@
   const { data: label } = useAsyncData(labelId.value, async () => {
     const { data, error } = await api.labels.get(labelId.value);
     if (error) {
-      toast.error("Failed to load label");
+      toast.error(t("labels.toast.failed_load_label"));
       navigateTo("/home");
       return;
     }
@@ -34,9 +48,7 @@
   const confirm = useConfirm();
 
   async function confirmDelete() {
-    const { isCanceled } = await confirm.open(
-      "Are you sure you want to delete this label? This action cannot be undone."
-    );
+    const { isCanceled } = await confirm.open(t("labels.label_delete_confirm"));
 
     if (isCanceled) {
       return;
@@ -45,10 +57,10 @@
     const { error } = await api.labels.delete(labelId.value);
 
     if (error) {
-      toast.error("Failed to delete label");
+      toast.error(t("labels.toast.failed_delete_label"));
       return;
     }
-    toast.success("Label deleted");
+    toast.success(t("labels.toast.label_deleted"));
     navigateTo("/home");
   }
 
@@ -63,7 +75,7 @@
     updateData.name = label.value?.name || "";
     updateData.description = label.value?.description || "";
     updateData.color = "";
-    openDialog("update-label");
+    openDialog(DialogID.UpdateLabel);
   }
 
   async function update() {
@@ -72,13 +84,13 @@
 
     if (error) {
       updating.value = false;
-      toast.error("Failed to update label");
+      toast.error(t("labels.toast.failed_update_label"));
       return;
     }
 
-    toast.success("Label updated");
+    toast.success(t("labels.toast.label_updated"));
     label.value = data;
-    closeDialog("update-label");
+    closeDialog(DialogID.UpdateLabel);
     updating.value = false;
   }
 
@@ -95,7 +107,7 @@
     });
 
     if (resp.error) {
-      toast.error("Failed to load items");
+      toast.error(t("items.toast.failed_load_items"));
       return {
         items: [],
         totalPrice: null,
@@ -108,7 +120,7 @@
 
 <template>
   <!-- Update Dialog -->
-  <Dialog dialog-id="update-label">
+  <Dialog :dialog-id="DialogID.UpdateLabel">
     <DialogContent>
       <DialogHeader>
         <DialogTitle> {{ $t("labels.update_label") }} </DialogTitle>
@@ -125,9 +137,14 @@
         <FormTextArea
           v-model="updateData.description"
           :label="$t('components.label.create_modal.label_description')"
-          :max-length="255"
+          :max-length="1000"
         />
-        <!-- TODO: color  -->
+        <ColorSelector
+          v-model="updateData.color"
+          :label="$t('components.label.create_modal.label_color')"
+          :show-hex="true"
+          :starting-color="label.color"
+        />
         <DialogFooter>
           <Button type="submit" :loading="updating"> {{ $t("global.update") }} </Button>
         </DialogFooter>
@@ -136,11 +153,19 @@
   </Dialog>
 
   <BaseContainer v-if="label">
+    <!-- set page title -->
+    <Title>{{ label.name }}</Title>
+
     <Card class="p-3">
       <header :class="{ 'mb-2': label.description }">
         <div class="flex flex-wrap items-end gap-2">
           <div
-            class="mb-auto flex size-12 items-center justify-center rounded-full bg-secondary text-secondary-foreground"
+            class="mb-auto flex size-12 items-center justify-center rounded-full"
+            :style="
+              label.color
+                ? { backgroundColor: label.color, color: getContrastTextColor(label.color) }
+                : { backgroundColor: 'hsl(var(--secondary))', color: 'hsl(var(--secondary-foreground))' }
+            "
           >
             <MdiPackageVariant class="size-7" />
           </div>

@@ -1,6 +1,7 @@
 import { format, formatDistance } from "date-fns";
 /* eslint import/namespace: ['error', { allowComputed: true }] */
 import * as Locales from "date-fns/locale";
+import { fmtCurrency, fmtCurrencyAsync } from "./utils";
 
 const cache = {
   currency: "",
@@ -21,6 +22,16 @@ export async function useFormatCurrency() {
     }
   }
 
+  // Pre-load currency decimals for better formatting (optional, non-blocking)
+  if (cache.currency && cache.currency.trim() !== "") {
+    try {
+      await fmtCurrencyAsync(0, cache.currency, getLocaleCode());
+    } catch (error) {
+      // Silently swallow preload errors - formatter will still work, just without pre-cached decimals
+      console.debug("Currency preload failed (non-fatal):", error);
+    }
+  }
+
   return (value: number | string) => fmtCurrency(value, cache.currency, getLocaleCode());
 }
 
@@ -29,6 +40,11 @@ export type DateTimeType = "date" | "time" | "datetime";
 
 export function getLocaleCode() {
   const { $i18nGlobal } = useNuxtApp();
+  const preferences = useViewPreferences();
+  // TODO: make reactive
+  if (preferences.value.overrideFormatLocale) {
+    return preferences.value.overrideFormatLocale;
+  }
   return ($i18nGlobal?.locale?.value as string) ?? "en-US";
 }
 

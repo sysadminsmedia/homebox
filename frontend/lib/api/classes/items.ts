@@ -32,13 +32,16 @@ export type ItemsQuery = {
 };
 
 export class AttachmentsAPI extends BaseAPI {
-  add(id: string, file: File | Blob, filename: string, type: AttachmentTypes | null = null) {
+  add(id: string, file: File | Blob, filename: string, type: AttachmentTypes | null = null, primary?: boolean) {
     const formData = new FormData();
     formData.append("file", file);
     if (type) {
       formData.append("type", type);
     }
     formData.append("name", filename);
+    if (primary !== undefined) {
+      formData.append("primary", primary.toString());
+    }
 
     return this.http.post<FormData, ItemOut>({
       url: route(`/items/${id}/attachments`),
@@ -148,6 +151,26 @@ export class ItemsApi extends BaseAPI {
 
     resp.data = parseDate(resp.data, ["purchaseTime", "soldTime", "warrantyExpires"]);
     return resp;
+  }
+
+  duplicate(
+    id: string,
+    options: {
+      copyMaintenance?: boolean;
+      copyAttachments?: boolean;
+      copyCustomFields?: boolean;
+      copyPrefix?: string;
+    } = {}
+  ) {
+    return this.http.post<typeof options, ItemOut>({
+      url: route(`/items/${id}/duplicate`),
+      body: {
+        copyMaintenance: options.copyMaintenance,
+        copyAttachments: options.copyAttachments,
+        copyCustomFields: options.copyCustomFields,
+        copyPrefix: options.copyPrefix,
+      },
+    });
   }
 
   import(file: File | Blob) {

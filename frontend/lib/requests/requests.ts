@@ -82,7 +82,7 @@ export class Requests {
     const token = this.token();
     if (token !== "" && payload.headers !== undefined) {
       // @ts-expect-error - we know that the header is there
-      payload.headers["Authorization"] = token; // eslint-disable-line dot-notation
+      payload.headers["Authorization"] = token;
     }
 
     if (this.methodSupportsBody(method)) {

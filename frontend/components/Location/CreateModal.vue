@@ -1,5 +1,5 @@
 <template>
-  <BaseModal dialog-id="create-location" :title="$t('components.location.create_modal.title')">
+  <BaseModal :dialog-id="DialogID.CreateLocation" :title="$t('components.location.create_modal.title')">
     <form class="flex flex-col gap-2" @submit.prevent="create()">
       <LocationSelector v-model="form.parent" />
       <FormTextField
@@ -30,15 +30,22 @@
 </template>
 
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
+  import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { toast } from "@/components/ui/sonner";
   import { Button, ButtonGroup } from "~/components/ui/button";
   import BaseModal from "@/components/App/CreateModal.vue";
   import type { LocationSummary } from "~~/lib/api/types/data-contracts";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
+  import LocationSelector from "~/components/Location/Selector.vue";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import FormTextArea from "~/components/Form/TextArea.vue";
+
+  const { t } = useI18n();
 
   const { activeDialog, closeDialog } = useDialog();
 
-  useDialogHotkey("create-location", { code: "Digit3", shift: true });
+  useDialogHotkey(DialogID.CreateLocation, { code: "Digit3", shift: true });
 
   const loading = ref(false);
   const focused = ref(false);
@@ -51,19 +58,11 @@
   watch(
     () => activeDialog.value,
     active => {
-      if (active === "create-location") {
-        // useTimeoutFn(() => {
-        //   focused.value = true;
-        // }, 50);
-
+      if (active && active === DialogID.CreateLocation) {
         if (locationId.value) {
           const found = locations.value.find(l => l.id === locationId.value);
-          if (found) {
-            form.parent = found;
-          }
+          form.parent = found || null;
         }
-      } else {
-        // focused.value = false;
       }
     }
   );
@@ -71,7 +70,6 @@
   function reset() {
     form.name = "";
     form.description = "";
-    form.parent = null;
     focused.value = false;
     loading.value = false;
   }
@@ -94,12 +92,12 @@
 
   async function create(close = true) {
     if (loading.value) {
-      toast.error("Already creating a location");
+      toast.error(t("components.location.create_modal.toast.already_creating"));
       return;
     }
     loading.value = true;
 
-    if (shift.value) close = false;
+    if (shift?.value) close = false;
 
     const { data, error } = await api.locations.create({
       name: form.name,
@@ -109,16 +107,17 @@
 
     if (error) {
       loading.value = false;
-      toast.error("Couldn't create location");
+      toast.error(t("components.location.create_modal.toast.create_failed"));
     }
 
     if (data) {
-      toast.success("Location created");
+      toast.success(t("components.location.create_modal.toast.create_success"));
     }
+
     reset();
 
     if (close) {
-      closeDialog("create-location");
+      closeDialog(DialogID.CreateLocation);
       navigateTo(`/location/${data.id}`);
     }
   }

@@ -1,7 +1,9 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import type { LocationSummary, LocationUpdate } from "~~/lib/api/types/data-contracts";
   import { useLocationStore } from "~~/stores/locations";
+  import MdiLoading from "~icons/mdi/loading";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiDelete from "~icons/mdi/delete";
@@ -18,10 +20,24 @@
   import { Button } from "@/components/ui/button";
   import { Badge } from "@/components/ui/badge";
   import { Separator } from "@/components/ui/separator";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import FormTextArea from "~/components/Form/TextArea.vue";
+  import LocationSelector from "~/components/Location/Selector.vue";
+  import BaseContainer from "@/components/Base/Container.vue";
+  import Currency from "~/components/global/Currency.vue";
+  import DateTime from "~/components/global/DateTime.vue";
+  import LabelMaker from "~/components/global/LabelMaker.vue";
+  import Markdown from "~/components/global/Markdown.vue";
+  import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
+  import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
+  import LocationCard from "~/components/Location/Card.vue";
 
   definePageMeta({
     middleware: ["auth"],
   });
+
+  const { t } = useI18n();
 
   const { openDialog, closeDialog } = useDialog();
 
@@ -33,7 +49,7 @@
   const { data: location } = useAsyncData(locationId.value, async () => {
     const { data, error } = await api.locations.get(locationId.value);
     if (error) {
-      toast.error("Failed to load location");
+      toast.error(t("locations.toast.failed_load_location"));
       navigateTo("/home");
       return;
     }
@@ -52,20 +68,18 @@
   const confirm = useConfirm();
 
   async function confirmDelete() {
-    const { isCanceled } = await confirm.open(
-      "Are you sure you want to delete this location and all of its items? This action cannot be undone."
-    );
+    const { isCanceled } = await confirm.open(t("locations.location_items_delete_confirm"));
     if (isCanceled) {
       return;
     }
 
     const { error } = await api.locations.delete(locationId.value);
     if (error) {
-      toast.error("Failed to delete location");
+      toast.error(t("locations.toast.failed_delete_location"));
       return;
     }
 
-    toast.success("Location deleted");
+    toast.success(t("locations.toast.location_deleted"));
     navigateTo("/locations");
   }
 
@@ -80,7 +94,7 @@
   function openUpdate() {
     updateData.name = location.value?.name || "";
     updateData.description = location.value?.description || "";
-    openDialog("update-location");
+    openDialog(DialogID.UpdateLocation);
   }
 
   async function update() {
@@ -90,19 +104,20 @@
 
     if (error) {
       updating.value = false;
-      toast.error("Failed to update location");
+      toast.error(t("locations.toast.failed_update_location"));
       return;
     }
 
-    toast.success("Location updated");
+    toast.success(t("locations.toast.location_updated"));
     location.value = data;
-    closeDialog("update-location");
+    closeDialog(DialogID.UpdateLocation);
     updating.value = false;
   }
 
   const locationStore = useLocationStore();
   const locations = computed(() => locationStore.allLocations);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const parent = ref<LocationSummary | any>({});
 
   const items = computedAsync(async () => {
@@ -115,7 +130,7 @@
     });
 
     if (resp.error) {
-      toast.error("Failed to load items");
+      toast.error(t("items.toast.failed_load_items"));
       return [];
     }
 
@@ -126,7 +141,7 @@
 <template>
   <div>
     <!-- Update Dialog -->
-    <Dialog dialog-id="update-location">
+    <Dialog :dialog-id="DialogID.UpdateLocation">
       <DialogContent>
         <DialogHeader>
           <DialogTitle> {{ $t("locations.update_location") }} </DialogTitle>
@@ -145,15 +160,21 @@
             :label="$t('components.location.create_modal.location_description')"
             :max-length="1000"
           />
-          <LocationSelector v-model="parent" />
+          <LocationSelector v-model="parent" :current-location="location" />
           <DialogFooter>
-            <Button type="submit" :loading="updating"> {{ $t("global.update") }} </Button>
+            <Button type="submit" :disabled="updating">
+              <MdiLoading v-if="updating" class="animate-spin" />
+              {{ $t("global.update") }}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
 
     <BaseContainer v-if="location">
+      <!-- set page title -->
+      <Title>{{ location.name }}</Title>
+
       <Card class="p-3">
         <header :class="{ 'mb-2': location?.description }">
           <div class="flex flex-wrap items-end gap-2">
@@ -204,8 +225,7 @@
           </div>
         </header>
         <Separator v-if="location && location.description" />
-        <Markdown v-if="location && location.description" class="mt-3 text-base" :source="location.description">
-        </Markdown>
+        <Markdown v-if="location && location.description" class="mt-3 text-base" :source="location.description" />
       </Card>
       <section v-if="location && items">
         <ItemViewSelectable :items="items" />

@@ -1,5 +1,5 @@
 <template>
-  <Dialog dialog-id="item-table-settings">
+  <Dialog :dialog-id="DialogID.ItemTableSettings">
     <DialogContent>
       <DialogHeader>
         <DialogTitle>{{ $t("components.item.view.table.table_settings") }}</DialogTitle>
@@ -41,7 +41,7 @@
       </div>
 
       <DialogFooter>
-        <Button @click="closeDialog('item-table-settings')"> {{ $t("global.save") }} </Button>
+        <Button @click="closeDialog(DialogID.ItemTableSettings)"> {{ $t("global.save") }} </Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>
@@ -77,7 +77,7 @@
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableRow v-for="(d, i) in data" :key="d.id" class="cursor-pointer" @click="navigateTo(`/item/${d.id}`)">
+        <TableRow v-for="(d, i) in data" :key="d.id" class="relative cursor-pointer">
           <TableCell
             v-for="h in headers.filter(h => h.enabled)"
             :key="`${h.value}-${i}`"
@@ -88,9 +88,7 @@
             }"
           >
             <template v-if="h.type === 'name'">
-              <NuxtLink class="text-wrap" :to="`/item/${d.id}`">
-                {{ d.name }}
-              </NuxtLink>
+              {{ d.name }}
             </template>
             <template v-else-if="h.type === 'price'">
               <Currency :amount="d.purchasePrice" />
@@ -111,6 +109,11 @@
               {{ extractValue(d, h.value) }}
             </slot>
           </TableCell>
+          <TableCell class="absolute inset-0">
+            <NuxtLink :to="`/item/${d.id}`" class="absolute inset-0">
+              <span class="sr-only">{{ $t("components.item.view.table.view_item") }}</span>
+            </NuxtLink>
+          </TableCell>
         </TableRow>
       </TableBody>
     </Table>
@@ -120,7 +123,7 @@
         hidden: disableControls,
       }"
     >
-      <Button class="size-10 p-0" variant="outline" @click="openDialog('item-table-settings')">
+      <Button class="size-10 p-0" variant="outline" @click="openDialog(DialogID.ItemTableSettings)">
         <MdiTableCog />
       </Button>
       <Pagination
@@ -130,7 +133,7 @@
         :sibling-count="2"
         @update:page="pagination.page = $event"
       >
-        <PaginationList v-slot="{ pageItems }" class="flex items-center gap-1">
+        <PaginationList v-slot="{ items: pageItems }" class="flex items-center gap-1">
           <PaginationFirst />
           <template v-for="(item, index) in pageItems">
             <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
@@ -159,7 +162,7 @@
   import MdiClose from "~icons/mdi/close";
   import MdiTableCog from "~icons/mdi/table-cog";
   import { Checkbox } from "@/components/ui/checkbox";
-  import { Table, TableBody, TableHeader, TableCell, TableHead, TableRow } from "@/components/ui/table";
+  import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
   import {
     Pagination,
     PaginationEllipsis,
@@ -171,6 +174,12 @@
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { useDialog } from "@/components/ui/dialog-provider";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
+  import { Button } from "@/components/ui/button";
+  import { Label } from "@/components/ui/label";
+  import BaseCard from "@/components/Base/Card.vue";
+  import Currency from "~/components/global/Currency.vue";
+  import DateTime from "~/components/global/DateTime.vue";
 
   const { openDialog, closeDialog } = useDialog();
 
@@ -185,6 +194,7 @@
   const preferences = useViewPreferences();
 
   const defaultHeaders = [
+    { text: "items.asset_id", value: "assetId", enabled: false },
     {
       text: "items.name",
       value: "name",
@@ -210,8 +220,6 @@
       }))
   );
 
-  console.log(headers.value);
-
   const toggleHeader = (value: string) => {
     const header = headers.value.find(h => h.value === value);
     if (header) {
@@ -222,6 +230,9 @@
   };
   const moveHeader = (from: number, to: number) => {
     const header = headers.value[from];
+    if (!header) {
+      return;
+    }
     headers.value.splice(from, 1);
     headers.value.splice(to, 0, header);
 
@@ -254,8 +265,8 @@
   function extractSortable(item: ItemSummary, property: keyof ItemSummary): string | number | boolean {
     const value = item[property];
     if (typeof value === "string") {
-      // Try parse float
-      const parsed = parseFloat(value);
+      // Try to parse number
+      const parsed = Number(value);
       if (!isNaN(parsed)) {
         return parsed;
       }

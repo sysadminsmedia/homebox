@@ -86,15 +86,15 @@ type AuthProvider interface {
 
 // HandleAuthLogin godoc
 //
-//	@Summary User Login
-//	@Tags    Authentication
-//	@Accept  x-www-form-urlencoded
-//	@Accept  application/json
-//	@Param   payload body     LoginForm true "Login Data"
-//	@Param   provider    query    string   false "auth provider"
-//	@Produce json
-//	@Success 200 {object} TokenResponse
-//	@Router  /v1/users/login [POST]
+//	@Summary	User Login
+//	@Tags		Authentication
+//	@Accept		x-www-form-urlencoded
+//	@Accept		application/json
+//	@Param		payload		body	LoginForm	true	"Login Data"
+//	@Param		provider	query	string		false	"auth provider"
+//	@Produce	json
+//	@Success	200	{object}	TokenResponse
+//	@Router		/v1/users/login [POST]
 func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFunc {
 	if len(ps) == 0 {
 		panic("no auth providers provided")

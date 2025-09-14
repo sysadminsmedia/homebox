@@ -19,8 +19,6 @@ If you're using `taskfile` you can run `task --list-all` for a list of all comma
 
 If you're using the taskfile, you can use the `task setup` command to run the required setup commands. Otherwise, you can review the commands required in the `Taskfile.yml` file.
 
-Note that when installing dependencies with pnpm, you must use the `--shamefully-hoist` flag. If you don't use this flag, you will get an error when running the frontend server.
-
 ### API Development Notes
 start command `task go:run`
 

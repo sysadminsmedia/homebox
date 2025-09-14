@@ -4,6 +4,13 @@ import type { DaisyTheme } from "~~/lib/data/themes";
 
 export type ViewType = "table" | "card" | "tree";
 
+export type DuplicateSettings = {
+  copyMaintenance: boolean;
+  copyAttachments: boolean;
+  copyCustomFields: boolean;
+  copyPrefixOverride: string | null;
+};
+
 export type LocationViewPreferences = {
   showDetails: boolean;
   showEmpty: boolean;
@@ -12,8 +19,10 @@ export type LocationViewPreferences = {
   theme: DaisyTheme;
   itemsPerTablePage: number;
   tableHeaders?: TableHeaderType[];
-  displayHeaderDecor: boolean;
+  displayLegacyHeader: boolean;
   language?: string;
+  overrideFormatLocale?: string;
+  duplicateSettings: DuplicateSettings;
 };
 
 /**
@@ -30,8 +39,15 @@ export function useViewPreferences(): Ref<LocationViewPreferences> {
       itemDisplayView: "card",
       theme: "homebox",
       itemsPerTablePage: 10,
-      displayHeaderDecor: true,
+      displayLegacyHeader: false,
       language: null,
+      overrideFormatLocale: null,
+      duplicateSettings: {
+        copyMaintenance: false,
+        copyAttachments: true,
+        copyCustomFields: true,
+        copyPrefixOverride: null,
+      },
     },
     { mergeDefaults: true }
   );

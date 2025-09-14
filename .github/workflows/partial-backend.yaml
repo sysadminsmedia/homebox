@@ -12,7 +12,8 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.24"
+          cache-dependency-path: backend/go.mod
 
       - name: Install Task
         uses: arduino/setup-task@v1
@@ -34,8 +35,3 @@ jobs:
 
       - name: Test
         run: task go:coverage
-
-      - name: Validate OpenAPI definition
-        uses: swaggerexpert/swagger-editor-validate@v1
-        with:
-          definition-file: backend/app/api/static/docs/swagger.json

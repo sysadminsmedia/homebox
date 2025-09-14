@@ -8,7 +8,7 @@
         <Button :id="id" variant="outline" role="combobox" :aria-expanded="open" class="w-full justify-between">
           <span>
             <slot name="display" v-bind="{ item: value }">
-              {{ displayValue(value) || placeholder }}
+              {{ displayValue(value) || localizedPlaceholder }}
             </slot>
           </span>
           <ChevronsUpDown class="ml-2 size-4 shrink-0 opacity-50" />
@@ -16,9 +16,15 @@
       </PopoverTrigger>
       <PopoverContent class="w-[--reka-popper-anchor-width] p-0">
         <Command :ignore-filter="true">
-          <CommandInput v-model="search" :placeholder="searchPlaceholder" :display-value="_ => ''" />
+          <CommandInput v-model="search" :placeholder="localizedSearchPlaceholder" :display-value="_ => ''" />
           <CommandEmpty>
-            {{ noResultsText }}
+            <div v-if="isLoading" class="flex items-center justify-center p-4">
+              <div class="size-4 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+              <span class="ml-2">{{ t("components.item.selector.searching") }}</span>
+            </div>
+            <div v-else>
+              {{ localizedNoResultsText }}
+            </div>
           </CommandEmpty>
           <CommandList>
             <CommandGroup>
@@ -37,31 +43,36 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, watch } from "vue";
+  import { computed, ref, watch } from "vue";
   import { Check, ChevronsUpDown } from "lucide-vue-next";
   import fuzzysort from "fuzzysort";
   import { useVModel } from "@vueuse/core";
+  import { useI18n } from "vue-i18n";
   import { Button } from "~/components/ui/button";
   import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "~/components/ui/command";
   import { Label } from "~/components/ui/label";
   import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
   import { cn } from "~/lib/utils";
-  import { useId } from "#imports";
+
+  const { t } = useI18n();
 
   type ItemsObject = {
     [key: string]: unknown;
   };
 
   interface Props {
-    label: string;
-    modelValue: string | ItemsObject | null | undefined;
-    items: ItemsObject[] | string[];
+    label?: string;
+    modelValue?: string | ItemsObject | null | undefined;
+    items?: ItemsObject[] | string[];
     itemText?: string;
     itemValue?: string;
     search?: string;
     searchPlaceholder?: string;
     noResultsText?: string;
     placeholder?: string;
+    excludeItems?: ItemsObject[];
+    isLoading?: boolean;
+    triggerSearch?: () => Promise<boolean>;
   }
 
   const emit = defineEmits(["update:modelValue", "update:search"]);
@@ -72,15 +83,51 @@
     itemText: "text",
     itemValue: "value",
     search: "",
-    searchPlaceholder: "Type to search...",
-    noResultsText: "No Results Found",
-    placeholder: "Select...",
+    searchPlaceholder: undefined,
+    noResultsText: undefined,
+    placeholder: undefined,
+    excludeItems: undefined,
+    isLoading: false,
+    triggerSearch: undefined,
   });
 
   const id = useId();
   const open = ref(false);
   const search = ref(props.search);
   const value = useVModel(props, "modelValue", emit);
+  const hasInitialSearch = ref(false);
+
+  const localizedSearchPlaceholder = computed(
+    () => props.searchPlaceholder ?? t("components.item.selector.search_placeholder")
+  );
+  const localizedNoResultsText = computed(() => props.noResultsText ?? t("components.item.selector.no_results"));
+  const localizedPlaceholder = computed(() => props.placeholder ?? t("components.item.selector.placeholder"));
+
+  // Trigger search when popover opens for the first time if no results exist
+  async function handlePopoverOpen() {
+    if (hasInitialSearch.value || props.items.length !== 0 || !props.triggerSearch) return;
+
+    try {
+      const success = await props.triggerSearch();
+      if (success) {
+        // Only mark as attempted after successful completion
+        hasInitialSearch.value = true;
+      }
+      // If not successful, leave hasInitialSearch false to allow retries
+    } catch (err) {
+      console.error("triggerSearch failed:", err);
+      // Leave hasInitialSearch false to allow retries on subsequent opens
+    }
+  }
+
+  watch(
+    () => open.value,
+    isOpen => {
+      if (isOpen) {
+        handlePopoverOpen();
+      }
+    }
+  );
 
   watch(
     () => props.search,
@@ -97,7 +144,7 @@
   );
 
   function isStrings(arr: string[] | ItemsObject[]): arr is string[] {
-    return typeof arr[0] === "string";
+    return arr.length > 0 && typeof arr[0] === "string";
   }
 
   function displayValue(item: string | ItemsObject | null | undefined): string {
@@ -128,12 +175,19 @@
   }
 
   const filtered = computed(() => {
-    if (!search.value) return props.items;
-    if (isStrings(props.items)) {
-      return props.items.filter(item => item.toLowerCase().includes(search.value.toLowerCase()));
+    let baseItems = props.items;
+
+    if (!isStrings(baseItems) && props.excludeItems) {
+      const excludeIds = props.excludeItems.map(i => i.id);
+      baseItems = baseItems.filter(item => !excludeIds?.includes(item.id));
+    }
+    if (!search.value) return baseItems;
+
+    if (isStrings(baseItems)) {
+      return baseItems.filter(item => item.toLowerCase().includes(search.value.toLowerCase()));
     } else {
       // Fuzzy search on itemText
-      return fuzzysort.go(search.value, props.items, { key: props.itemText, all: true }).map(i => i.obj);
+      return fuzzysort.go(search.value, baseItems, { key: props.itemText, all: true }).map(i => i.obj);
     }
   });
 </script>

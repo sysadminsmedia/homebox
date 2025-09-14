@@ -32,7 +32,7 @@
                 {{ $t("global.archived") }}
               </TooltipContent>
             </Tooltip>
-            <div class="grow"></div>
+            <div class="grow" />
             <Tooltip>
               <TooltipTrigger>
                 <Badge>
@@ -47,7 +47,7 @@
         </TooltipProvider>
         <Markdown class="mb-2 line-clamp-3 text-ellipsis" :source="item.description" />
         <div class="-mr-1 mt-auto flex flex-wrap justify-end gap-2">
-          <LabelChip v-for="label in top3" :key="label.id" :label="label" size="sm" />
+          <LabelChip v-for="label in itemLabels" :key="label.id" :label="label" size="sm" />
         </div>
       </div>
     </NuxtLink>
@@ -62,6 +62,8 @@
   import { Card } from "@/components/ui/card";
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
   import { Separator } from "@/components/ui/separator";
+  import Markdown from "@/components/global/Markdown.vue";
+  import LabelChip from "@/components/Label/Chip.vue";
 
   const api = useUserApi();
 
@@ -69,12 +71,15 @@
     if (!props.item.imageId) {
       return "/no-image.jpg";
     }
-
-    return api.authURL(`/items/${props.item.id}/attachments/${props.item.imageId}`);
+    if (props.item.thumbnailId) {
+      return api.authURL(`/items/${props.item.id}/attachments/${props.item.thumbnailId}`);
+    } else {
+      return api.authURL(`/items/${props.item.id}/attachments/${props.item.imageId}`);
+    }
   });
 
-  const top3 = computed(() => {
-    return props.item.labels.slice(0, 3) || [];
+  const itemLabels = computed(() => {
+    return props.item.labels || [];
   });
 
   const props = defineProps({

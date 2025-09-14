@@ -1,17 +1,24 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
+  import BaseContainer from "@/components/Base/Container.vue";
+  import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
+  import MaintenanceListView from "~/components/Maintenance/ListView.vue";
+
+  const { t } = useI18n();
+
   definePageMeta({
     middleware: ["auth"],
   });
   useHead({
-    title: "Homebox | Maintenance",
+    title: "HomeBox | " + t("menu.maintenance"),
   });
 </script>
 
 <template>
   <div>
-    <BaseContainer class="mb-6 flex flex-col gap-8">
+    <BaseContainer class="flex flex-col gap-4">
       <BaseSectionHeader> {{ $t("menu.maintenance") }} </BaseSectionHeader>
-      <MaintenanceListView></MaintenanceListView>
+      <MaintenanceListView />
     </BaseContainer>
   </div>
 </template>

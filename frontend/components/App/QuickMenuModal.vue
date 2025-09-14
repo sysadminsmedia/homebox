@@ -1,12 +1,13 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
+  import { DialogID, type NoParamDialogIDs, type OptionalDialogIDs } from "@/components/ui/dialog-provider/utils";
   import {
     CommandDialog,
-    CommandInput,
-    CommandList,
     CommandEmpty,
     CommandGroup,
+    CommandInput,
     CommandItem,
+    CommandList,
     CommandSeparator,
   } from "~/components/ui/command";
   import { Shortcut } from "~/components/ui/shortcut";
@@ -14,7 +15,7 @@
 
   export type QuickMenuAction =
     | { text: string; href: string; type: "navigate" }
-    | { text: string; dialogId: string; shortcut: string; type: "create" };
+    | { text: string; dialogId: NoParamDialogIDs | OptionalDialogIDs; shortcut: string; type: "create" };
 
   const props = defineProps({
     actions: {
@@ -27,11 +28,11 @@
   const { t } = useI18n();
   const { closeDialog, openDialog } = useDialog();
 
-  useDialogHotkey("quick-menu", { code: "Backquote", ctrl: true });
+  useDialogHotkey(DialogID.QuickMenu, { code: "Backquote", ctrl: true });
 </script>
 
 <template>
-  <CommandDialog dialog-id="quick-menu">
+  <CommandDialog :dialog-id="DialogID.QuickMenu">
     <CommandInput
       :placeholder="t('components.quick_menu.shortcut_hint')"
       @keydown="
@@ -39,12 +40,12 @@
           const item = props.actions.filter(item => 'shortcut' in item).find(item => item.shortcut === e.key);
           if (item) {
             e.preventDefault();
-            openDialog(item.dialogId);
+            openDialog(item.dialogId as NoParamDialogIDs);
           }
           // if esc is pressed, close the dialog
           if (e.key === 'Escape') {
             e.preventDefault();
-            closeDialog('quick-menu');
+            closeDialog(DialogID.QuickMenu);
           }
         }
       "
@@ -60,7 +61,7 @@
           @select="
             e => {
               e.preventDefault();
-              openDialog(create.dialogId);
+              openDialog(create.dialogId as NoParamDialogIDs);
             }
           "
         >
@@ -76,12 +77,23 @@
           :value="`global.navigate_${i + 1}`"
           @select="
             () => {
-              closeDialog('quick-menu');
+              closeDialog(DialogID.QuickMenu);
               navigateTo(navigate.href);
             }
           "
         >
           {{ navigate.text }}
+        </CommandItem>
+        <CommandItem
+          value="scanner"
+          @select="
+            () => {
+              closeDialog(DialogID.QuickMenu);
+              openDialog(DialogID.Scanner);
+            }
+          "
+        >
+          {{ t("menu.scanner") }}
         </CommandItem>
       </CommandGroup>
     </CommandList>

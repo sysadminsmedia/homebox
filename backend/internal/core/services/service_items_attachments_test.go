@@ -52,11 +52,11 @@ func TestItemService_AddAttachment(t *testing.T) {
 	// Check that the file exists
 	storedPath := afterAttachment.Attachments[0].Path
 
-	// {root}/{group}/{item}/{attachment}
-	assert.Equal(t, path.Join(temp, "homebox", tGroup.ID.String(), "documents"), path.Dir(storedPath))
+	// path should now be relative: {group}/{documents}
+	assert.Equal(t, path.Join(tGroup.ID.String(), "documents"), path.Dir(storedPath))
 
 	// Check that the file contents are correct
-	bts, err := os.ReadFile(storedPath)
+	bts, err := os.ReadFile(path.Join(os.TempDir(), storedPath))
 	require.NoError(t, err)
 	assert.Equal(t, contents, string(bts))
 }

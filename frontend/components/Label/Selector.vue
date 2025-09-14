@@ -7,11 +7,16 @@
     <TagsInput
       v-model="modelValue"
       class="w-full gap-0 px-0"
-      :display-value="v => shortenedLabels.find(l => l.id === v)?.name ?? 'Loading...'"
+      :display-value="v => props.labels.find(l => l.id === v)?.name ?? 'Loading...'"
     >
-      <div class="flex flex-wrap items-center gap-2 px-3">
-        <TagsInputItem v-for="item in modelValue" :key="item" :value="item">
-          <TagsInputItemText />
+      <div class="flex flex-wrap items-center gap-2 overflow-hidden px-3">
+        <TagsInputItem v-for="item in modelValue" :key="item" :value="item" class="h-auto overflow-hidden text-wrap">
+          <span
+            v-if="props.labels.find(l => l.id === item)?.color"
+            class="ml-2 size-4 shrink-0 rounded-full"
+            :style="{ backgroundColor: props.labels.find(l => l.id === item)?.color }"
+          />
+          <TagsInputItemText class="py-0.5" />
           <TagsInputItemDelete />
         </TagsInputItem>
       </div>
@@ -55,6 +60,11 @@
                     }
                   "
                 >
+                  <span
+                    class="mr-2 size-4 shrink-0 rounded-full align-middle"
+                    :class="{ border: props.labels.find(l => l.id === label.value)?.color }"
+                    :style="{ backgroundColor: props.labels.find(l => l.id === label.value)?.color }"
+                  />
                   {{ label.label }}
                 </CommandItem>
               </CommandGroup>
@@ -66,6 +76,7 @@
   </div>
 </template>
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { ComboboxAnchor, ComboboxContent, ComboboxInput, ComboboxPortal, ComboboxRoot } from "reka-ui";
   import { computed, ref } from "vue";
   import fuzzysort from "fuzzysort";
@@ -79,6 +90,9 @@
     TagsInputItemText,
   } from "@/components/ui/tags-input";
   import type { LabelOut } from "~/lib/api/types/data-contracts";
+  import { Label } from "@/components/ui/label";
+
+  const { t } = useI18n();
 
   const id = useId();
 
@@ -101,46 +115,45 @@
   const open = ref(false);
   const searchTerm = ref("");
 
-  const shortenedLabels = computed(() => {
-    return props.labels.map(l => ({
-      ...l,
-      name: l.name.length > 20 ? `${l.name.substring(0, 20)}...` : l.name,
-    }));
-  });
-
   const filteredLabels = computed(() => {
     const filtered = fuzzysort
-      .go(searchTerm.value, shortenedLabels.value, { key: "name", all: true })
+      .go(searchTerm.value, props.labels, { key: "name", all: true })
       .map(l => ({
         value: l.obj.id,
         label: l.obj.name,
       }))
       .filter(i => !modelValue.value.includes(i.value));
 
+    // Only show "Create" option if search term is not empty and no exact match exists
     if (searchTerm.value.trim() !== "") {
-      filtered.push({ value: "create-item", label: `Create ${searchTerm.value}` });
+      const trimmedSearchTerm = searchTerm.value.trim();
+      const hasExactMatch = props.labels.some(label => label.name.toLowerCase() === trimmedSearchTerm.toLowerCase());
+
+      if (!hasExactMatch) {
+        filtered.push({ value: "create-item", label: `${t("global.create")} ${searchTerm.value}` });
+      }
     }
 
     return filtered;
   });
 
-  const createAndAdd = async (name: string) => {
+  const createAndAdd = async (name: string, color = "") => {
     if (name.length > 50) {
-      toast.error("Label name must not be longer than 50 characters");
+      toast.error(t("components.label.create_modal.toast.label_name_too_long"));
       return;
     }
     const { error, data } = await api.labels.create({
       name,
-      color: "", // Future!
+      color,
       description: "",
     });
 
     if (error) {
-      toast.error("Couldn't create label");
+      toast.error(t("components.label.create_modal.toast.create_failed"));
       return;
     }
 
-    toast.success("Label created");
+    toast.success(t("components.label.create_modal.toast.create_success"));
 
     modelValue.value = [...modelValue.value, data.id];
   };

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import MdiGithub from "~icons/mdi/github";
   import MdiDiscord from "~icons/mdi/discord";
@@ -12,10 +13,17 @@
   import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
   import { Button } from "@/components/ui/button";
   import LanguageSelector from "~/components/App/LanguageSelector.vue";
-  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+  import AppLogo from "~/components/App/Logo.vue";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import FormPassword from "~/components/Form/Password.vue";
+  import FormCheckbox from "~/components/Form/Checkbox.vue";
+  import PasswordScore from "~/components/global/PasswordScore.vue";
+
+  const { t } = useI18n();
 
   useHead({
-    title: "Homebox | Organize and Tag Your Stuff",
+    title: "HomeBox | " + t("index.title"),
   });
 
   definePageMeta({
@@ -51,6 +59,20 @@
     }
   });
 
+  const isEvilAccentTheme = useIsThemeInList([
+    "bumblebee",
+    "corporate",
+    "forest",
+    "pastel",
+    "wireframe",
+    "black",
+    "dracula",
+    "autumn",
+    "acid",
+  ]);
+  const isEvilForegroundTheme = useIsThemeInList(["light", "aqua", "fantasy", "autumn", "night"]);
+  const isLofiTheme = useIsThemeInList(["lofi"]);
+
   const route = useRoute();
   const router = useRouter();
 
@@ -85,7 +107,7 @@
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(email.value)) {
-      toast.error("Invalid email address");
+      toast.error(t("index.toast.invalid_email"));
       loading.value = false;
       return;
     }
@@ -98,11 +120,15 @@
     });
 
     if (error) {
-      toast.error("Problem registering user");
+      toast.error(t("index.toast.problem_registering"), {
+        classes: {
+          title: "login-error",
+        },
+      });
       return;
     }
 
-    toast.success("User registered");
+    toast.success(t("index.toast.user_registered"));
 
     loading.value = false;
     registerForm.value = false;
@@ -125,12 +151,16 @@
     const { error } = await ctx.login(api, email.value, loginPassword.value, remember.value);
 
     if (error) {
-      toast.error("Invalid email or password");
+      toast.error(t("index.toast.invalid_email_password"), {
+        classes: {
+          title: "login-error",
+        },
+      });
       loading.value = false;
       return;
     }
 
-    toast.success("Logged in successfully");
+    toast.success(t("index.toast.login_success"));
 
     navigateTo(redirectTo.value || "/home");
     redirectTo.value = null;
@@ -176,24 +206,29 @@
         <path
           fill-opacity="1"
           d="M0,32L80,69.3C160,107,320,181,480,181.3C640,181,800,107,960,117.3C1120,128,1280,224,1360,272L1440,320L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z"
-        ></path>
+        />
       </svg>
     </div>
     <div>
-      <header class="mx-auto p-4 text-accent sm:flex sm:items-end sm:p-6 lg:p-14">
+      <header
+        class="mx-auto p-4 sm:flex sm:items-end sm:p-6 lg:p-14"
+        :class="{ 'text-accent': !isEvilAccentTheme, 'text-white': isLofiTheme }"
+      >
         <div class="z-10">
           <h2 class="mt-1 flex text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
             HomeB
             <AppLogo class="-mb-4 w-12" />
             x
           </h2>
-          <p class="ml-1 text-lg text-foreground">{{ $t("index.tagline") }}</p>
+          <p class="ml-1 text-lg" :class="{ 'text-foreground': !isEvilForegroundTheme, 'text-white': isLofiTheme }">
+            {{ $t("index.tagline") }}
+          </p>
         </div>
         <TooltipProvider :delay-duration="0">
           <div class="z-10 ml-auto mt-6 flex items-center gap-4 sm:mt-0">
             <Tooltip>
               <TooltipTrigger as-child>
-                <a href="https://github.com/sysadminsmedia/homebox" target="_blank">
+                <a href="https://github.com/sysadminsmedia/homebox" target="_blank" rel="noopener noreferrer">
                   <MdiGithub class="size-8" />
                 </a>
               </TooltipTrigger>
@@ -202,7 +237,7 @@
 
             <Tooltip>
               <TooltipTrigger as-child>
-                <a href="https://noc.social/@sysadminszone" target="_blank">
+                <a href="https://noc.social/@sysadminszone" target="_blank" rel="noopener noreferrer">
                   <MdiMastodon class="size-8" />
                 </a>
               </TooltipTrigger>
@@ -211,7 +246,7 @@
 
             <Tooltip>
               <TooltipTrigger as-child>
-                <a href="https://discord.gg/aY4DCkpNA9" target="_blank">
+                <a href="https://discord.gg/aY4DCkpNA9" target="_blank" rel="noopener noreferrer">
                   <MdiDiscord class="size-8" />
                 </a>
               </TooltipTrigger>
@@ -220,14 +255,14 @@
 
             <Tooltip>
               <TooltipTrigger as-child>
-                <a href="https://homebox.software/en/" target="_blank">
+                <a href="https://homebox.software/en/" target="_blank" rel="noopener noreferrer">
                   <MdiFolder class="size-8" />
                 </a>
               </TooltipTrigger>
               <TooltipContent>{{ $t("global.read_docs") }}</TooltipContent>
             </Tooltip>
 
-            <LanguageSelector class="z-10 text-primary" :include-text="false" />
+            <LanguageSelector class="z-10 text-primary" :expanded="false" />
           </div>
         </TooltipProvider>
       </header>
@@ -243,19 +278,20 @@
                   </CardTitle>
                 </CardHeader>
                 <CardContent class="flex flex-col gap-2">
-                  <FormTextField v-model="email" :label="$t('index.set_email')" />
-                  <FormTextField v-model="username" :label="$t('index.set_name')" />
+                  <FormTextField v-model="email" :label="$t('index.set_email')" data-testid="email-input" />
+                  <FormTextField v-model="username" :label="$t('index.set_name')" data-testid="name-input" />
                   <div v-if="!(groupToken == '')" class="pb-1 pt-4 text-center">
                     <p>{{ $t("index.joining_group") }}</p>
                     <button type="button" class="text-xs underline" @click="groupToken = ''">
                       {{ $t("index.dont_join_group") }}
                     </button>
                   </div>
-                  <FormPassword v-model="password" :label="$t('index.set_password')" />
+                  <FormPassword v-model="password" :label="$t('index.set_password')" data-testid="password-input" />
                   <PasswordScore v-model:valid="canRegister" :password="password" />
                 </CardContent>
                 <CardFooter>
                   <Button
+                    data-testid="confirm-register-button"
                     class="w-full"
                     type="submit"
                     :class="loading ? 'loading' : ''"
@@ -276,7 +312,7 @@
                 </CardHeader>
                 <CardContent class="flex flex-col gap-2">
                   <template v-if="status && status.demo">
-                    <p class="text-center text-xs italic">This is a demo instance</p>
+                    <p class="text-center text-xs italic">{{ $t("global.demo_instance") }}</p>
                     <p class="text-center text-xs">
                       <b>{{ $t("global.email") }}</b> demo@example.com
                     </p>
@@ -308,7 +344,13 @@
               <MdiLogin class="mr-2 size-4" />
               {{ $t("index.login_with_oidc") }}
             </Button>
-            <Button v-if="status && status.allowRegistration" class="group" variant="link" @click="() => toggleLogin()">
+            <Button
+              v-if="status && status.allowRegistration"
+              class="group"
+              variant="link"
+              data-testid="register-button"
+              @click="() => toggleLogin()"
+            >
               <div class="relative mx-2">
                 <div
                   class="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:rotate-[360deg]"

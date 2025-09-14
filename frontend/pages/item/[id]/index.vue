@@ -1,13 +1,12 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import type { AnyDetail, Detail, Details } from "~~/components/global/DetailsSection/types";
   import { filterZeroValues } from "~~/components/global/DetailsSection/types";
   import type { ItemAttachment } from "~~/lib/api/types/data-contracts";
-  import MdiClose from "~icons/mdi/close";
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPlus from "~icons/mdi/plus";
   import MdiMinus from "~icons/mdi/minus";
-  import MdiDownload from "~icons/mdi/download";
   import MdiContentCopy from "~icons/mdi/content-copy";
   import MdiDelete from "~icons/mdi/delete";
   import { Separator } from "@/components/ui/separator";
@@ -18,12 +17,27 @@
     BreadcrumbList,
     BreadcrumbSeparator,
   } from "@/components/ui/breadcrumb";
-  import { Button, ButtonGroup, buttonVariants } from "@/components/ui/button";
-  import { Dialog, DialogContent } from "@/components/ui/dialog";
+  import { Button, ButtonGroup } from "@/components/ui/button";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { Label } from "@/components/ui/label";
   import { Switch } from "@/components/ui/switch";
   import { Card } from "@/components/ui/card";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
+  import BaseContainer from "@/components/Base/Container.vue";
+  import ItemImageDialog from "~/components/Item/ImageDialog.vue";
+  import ItemDuplicateSettings from "~/components/Item/DuplicateSettings.vue";
+  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import LabelChip from "~/components/Label/Chip.vue";
+  import DateTime from "~/components/global/DateTime.vue";
+  import LabelMaker from "~/components/global/LabelMaker.vue";
+  import Markdown from "~/components/global/Markdown.vue";
+  import BaseCard from "@/components/Base/Card.vue";
+  import CopyText from "@/components/global/CopyText.vue";
+  import DetailsSection from "~/components/global/DetailsSection/DetailsSection.vue";
+  import ItemAttachmentsList from "~/components/Item/AttachmentsList.vue";
+  import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
+
+  const { t } = useI18n();
 
   const { openDialog, closeDialog } = useDialog();
 
@@ -32,10 +46,18 @@
   });
 
   const route = useRoute();
+  const router = useRouter();
   const api = useUserApi();
 
   const itemId = computed<string>(() => route.params.id as string);
   const preferences = useViewPreferences();
+
+  const temporaryDuplicateSettings = ref<DuplicateSettings>({
+    copyMaintenance: preferences.value.duplicateSettings.copyMaintenance,
+    copyAttachments: preferences.value.duplicateSettings.copyAttachments,
+    copyCustomFields: preferences.value.duplicateSettings.copyCustomFields,
+    copyPrefixOverride: preferences.value.duplicateSettings.copyPrefixOverride,
+  });
 
   const hasNested = computed<boolean>(() => {
     return route.fullPath.split("/").at(-1) !== itemId.value;
@@ -44,7 +66,7 @@
   const { data: item, refresh } = useAsyncData(itemId.value, async () => {
     const { data, error } = await api.items.get(itemId.value);
     if (error) {
-      toast.error("Failed to load item");
+      toast.error(t("items.toast.failed_load_item"));
       navigateTo("/home");
       return;
     }
@@ -70,7 +92,7 @@
 
     const newQuantity = item.value.quantity + amount;
     if (newQuantity < 0) {
-      toast.error("Quantity cannot be negative");
+      toast.error(t("items.toast.quantity_cannot_negative"));
       return;
     }
 
@@ -80,7 +102,7 @@
     });
 
     if (resp.error) {
-      toast.error("Failed to adjust quantity");
+      toast.error(t("items.toast.failed_adjust_quantity"));
       return;
     }
 
@@ -95,17 +117,30 @@
   };
 
   type Photo = {
-    src: string;
+    thumbnailSrc?: string;
+    originalSrc: string;
+    attachmentId: string;
+    originalType?: string;
   };
 
   const photos = computed<Photo[]>(() => {
+    if (!item.value) {
+      return [];
+    }
     return (
-      item.value?.attachments.reduce((acc, cur) => {
+      item.value.attachments.reduce((acc, cur) => {
         if (cur.type === "photo") {
-          acc.push({
-            // @ts-expect-error - it's impossible for this to be null at this point
-            src: api.authURL(`/items/${item.value.id}/attachments/${cur.id}`),
-          });
+          const photo: Photo = {
+            originalSrc: api.authURL(`/items/${item.value!.id}/attachments/${cur.id}`),
+            originalType: cur.mimeType,
+            attachmentId: cur.id,
+          };
+          if (cur.thumbnail) {
+            photo.thumbnailSrc = api.authURL(`/items/${item.value!.id}/attachments/${cur.thumbnail.id}`);
+          } else {
+            photo.thumbnailSrc = photo.originalSrc; // fallback to itself if no thumbnail
+          }
+          acc.push(photo);
         }
         return acc;
       }, [] as Photo[]) || []
@@ -279,7 +314,7 @@
     if (preferences.value.showEmpty) {
       return true;
     }
-    return validDate(item.value?.warrantyExpires);
+    return item.value?.lifetimeWarranty || validDate(item.value?.warrantyExpires);
   });
 
   const warrantyDetails = computed(() => {
@@ -321,7 +356,7 @@
     if (preferences.value.showEmpty) {
       return true;
     }
-    return item.value?.purchaseFrom || item.value?.purchasePrice !== 0;
+    return item.value?.purchaseFrom || item.value?.purchasePrice !== 0 || validDate(item.value?.purchaseTime);
   });
 
   const purchaseDetails = computed<Details>(() => {
@@ -354,7 +389,7 @@
     if (preferences.value.showEmpty) {
       return true;
     }
-    return item.value?.soldTo || item.value?.soldPrice !== 0;
+    return item.value?.soldTo || item.value?.soldPrice !== 0 || validDate(item.value?.soldTime);
   });
 
   const soldDetails = computed<Details>(() => {
@@ -383,17 +418,22 @@
     return v;
   });
 
-  const dialoged = reactive({
-    src: "",
-  });
-
-  function openImageDialog(img: Photo) {
-    dialoged.src = img.src;
-    openDialog("item-image");
-  }
-
-  function closeImageDialog() {
-    closeDialog("item-image");
+  function openImageDialog(img: Photo, itemId: string) {
+    openDialog(DialogID.ItemImage, {
+      params: {
+        type: "preloaded",
+        originalSrc: img.originalSrc,
+        originalType: img.originalType,
+        thumbnailSrc: img.thumbnailSrc,
+        attachmentId: img.attachmentId,
+        itemId,
+      },
+      onClose: result => {
+        if (result?.action === "delete") {
+          item.value!.attachments = item.value!.attachments.filter(a => a.id !== result.id);
+        }
+      },
+    });
   }
 
   const currentUrl = computed(() => {
@@ -431,7 +471,7 @@
 
     const resp = await api.items.fullpath(item.value.id);
     if (resp.error) {
-      toast.error("Failed to load item");
+      toast.error(t("items.toast.failed_load_item"));
       return [];
     }
 
@@ -448,54 +488,54 @@
     });
 
     if (resp.error) {
-      toast.error("Failed to load items");
+      toast.error(t("items.toast.failed_load_items"));
       return [];
     }
 
     return resp.data.items;
   });
 
-  async function duplicateItem() {
+  async function duplicateItem(settings?: DuplicateSettings) {
     if (!item.value) {
       return;
     }
 
-    const { error, data } = await api.items.create({
-      name: `${item.value.name} Copy`,
-      description: item.value.description,
-      quantity: item.value.quantity,
-      locationId: item.value.location!.id,
-      parentId: item.value.parent?.id,
-      labelIds: item.value.labels.map(l => l.id),
-    });
+    const duplicateSettings = settings
+      ? {
+          copyMaintenance: settings.copyMaintenance,
+          copyAttachments: settings.copyAttachments,
+          copyCustomFields: settings.copyCustomFields,
+          copyPrefix: settings.copyPrefixOverride ?? t("items.duplicate.prefix"),
+        }
+      : {
+          copyMaintenance: preferences.value.duplicateSettings.copyMaintenance,
+          copyAttachments: preferences.value.duplicateSettings.copyAttachments,
+          copyCustomFields: preferences.value.duplicateSettings.copyCustomFields,
+          copyPrefix: preferences.value.duplicateSettings.copyPrefixOverride ?? t("items.duplicate.prefix"),
+        };
+
+    const { error, data } = await api.items.duplicate(itemId.value, duplicateSettings);
 
     if (error) {
-      toast.error("Failed to duplicate item");
-      return;
-    }
-
-    // add extra fields
-    const { error: updateError } = await api.items.update(data.id, {
-      ...item.value,
-      id: data.id,
-      labelIds: data.labels.map(l => l.id),
-      locationId: data.location!.id,
-      name: data.name,
-      assetId: data.assetId,
-    });
-
-    if (updateError) {
-      toast.error("Failed to duplicate item");
+      toast.error(t("items.toast.failed_duplicate_item"));
       return;
     }
 
     navigateTo(`/item/${data.id}`);
   }
 
+  function handleDuplicateClick(event: MouseEvent) {
+    if (event.shiftKey) {
+      openDialog(DialogID.DuplicateTemporarySettings);
+    } else {
+      duplicateItem();
+    }
+  }
+
   const confirm = useConfirm();
 
   async function deleteItem() {
-    const confirmed = await confirm.open("Are you sure you want to delete this item?");
+    const confirmed = await confirm.open(t("items.delete_item_confirm"));
 
     if (!confirmed.data) {
       return;
@@ -503,28 +543,47 @@
 
     const { error } = await api.items.delete(itemId.value);
     if (error) {
-      toast.error("Failed to delete item");
+      toast.error(t("items.toast.failed_delete_item"));
       return;
     }
-    toast.success("Item deleted");
+    toast.success(t("items.toast.item_deleted"));
     navigateTo("/home");
+  }
+
+  async function createSubitem() {
+    // setting URL Parameter that is read and immidiately removed in the Item-CreateModal
+    await router.push({
+      query: {
+        subItemCreate: "y",
+      },
+    });
+
+    openDialog(DialogID.CreateItem);
   }
 </script>
 
 <template>
-  <BaseContainer v-if="item" class="pb-8">
+  <BaseContainer v-if="item">
     <!-- set page title -->
     <Title>{{ item.name }}</Title>
 
-    <Dialog dialog-id="item-image">
-      <DialogContent class="w-auto border-transparent bg-transparent p-0" disable-close>
-        <img :src="dialoged.src" />
-        <a :class="buttonVariants({ size: 'icon' })" :href="dialoged.src" download class="absolute right-11 top-1">
-          <MdiDownload />
-        </a>
-        <Button size="icon" class="absolute right-1 top-1" @click="closeImageDialog">
-          <MdiClose />
-        </Button>
+    <ItemImageDialog />
+    <Dialog :dialog-id="DialogID.DuplicateTemporarySettings">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{{ $t("items.duplicate.temporary_title") }}</DialogTitle>
+        </DialogHeader>
+        <ItemDuplicateSettings v-model="temporaryDuplicateSettings" />
+        <DialogFooter>
+          <Button
+            @click="
+              closeDialog(DialogID.DuplicateTemporarySettings);
+              duplicateItem(temporaryDuplicateSettings);
+            "
+          >
+            {{ $t("global.duplicate") }}
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
 
@@ -582,11 +641,15 @@
                 type="asset"
               />
               <LabelMaker v-else :id="item.id" type="item" />
-              <Button class="w-9 md:w-auto" @click="duplicateItem">
+              <Button class="w-9 md:w-auto" :aria-label="$t('global.create_subitem')" @click="createSubitem">
+                <MdiPlus />
+                <span class="hidden md:inline">{{ $t("global.create_subitem") }}</span>
+              </Button>
+              <Button class="w-9 md:w-auto" :aria-label="$t('global.duplicate')" @click="handleDuplicateClick">
                 <MdiContentCopy />
                 <span class="hidden md:inline">{{ $t("global.duplicate") }}</span>
               </Button>
-              <Button variant="destructive" class="w-9 md:w-auto" @click="deleteItem">
+              <Button variant="destructive" class="w-9 md:w-auto" :aria-label="$t('global.delete')" @click="deleteItem">
                 <MdiDelete />
                 <span class="hidden md:inline">{{ $t("global.delete") }}</span>
               </Button>
@@ -595,21 +658,21 @@
         </header>
         <Separator v-if="item.description" />
         <div v-if="item.description" class="prose max-w-full p-1">
-          <Markdown class="text-base" :source="item.description"> </Markdown>
+          <Markdown class="text-base" :source="item.description" />
         </div>
       </Card>
 
       <div class="mb-6 mt-3 flex flex-wrap items-center justify-between">
         <ButtonGroup>
           <Button
-            v-for="t in tabs"
-            :key="t.id"
+            v-for="tab in tabs"
+            :key="tab.id"
             as-child
-            :variant="t.to === currentPath ? 'default' : 'outline'"
+            :variant="tab.to === currentPath ? 'default' : 'outline'"
             size="sm"
           >
-            <NuxtLink :to="t.to">
-              {{ $t(t.name) }}
+            <NuxtLink :to="tab.to">
+              {{ $t(tab.name) }}
             </NuxtLink>
           </Button>
         </ButtonGroup>
@@ -659,8 +722,11 @@
           <BaseCard v-if="photos && photos.length > 0">
             <template #title> {{ $t("items.photos") }} </template>
             <div class="scroll-bg container mx-auto flex max-h-[500px] flex-wrap gap-2 overflow-y-scroll border-t p-4">
-              <button v-for="(img, i) in photos" :key="i" @click="openImageDialog(img)">
-                <img class="max-h-[200px] rounded" :src="img.src" />
+              <button v-for="(img, i) in photos" :key="i" @click="openImageDialog(img, item.id)">
+                <picture>
+                  <source :srcset="img.originalSrc" :type="img.originalType" />
+                  <img class="max-h-[200px] rounded" :src="img.thumbnailSrc" alt="attachment image" />
+                </picture>
               </button>
             </div>
           </BaseCard>
@@ -698,7 +764,7 @@
               </template>
             </DetailsSection>
             <div v-else>
-              <p class="px-6 pb-4 text-foreground/70">No attachments found</p>
+              <p class="px-6 pb-4 text-foreground/70">{{ $t("items.no_attachments") }}</p>
             </div>
           </BaseCard>
 
@@ -720,7 +786,7 @@
       </div>
     </section>
 
-    <section v-if="items && items.length > 0" class="my-6">
+    <section v-if="items && items.length > 0" class="mt-6">
       <ItemViewSelectable :items="items" />
     </section>
   </BaseContainer>
