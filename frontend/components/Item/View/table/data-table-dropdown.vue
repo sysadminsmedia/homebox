@@ -50,7 +50,7 @@
 <template>
   <DropdownMenu>
     <DropdownMenuTrigger as-child>
-      <Button variant="ghost" class="size-8 p-0">
+      <Button variant="ghost" class="size-8 p-0 hover:bg-primary hover:text-primary-foreground">
         <span class="sr-only">Open menu</span>
         <MoreHorizontal class="size-4" />
       </Button>

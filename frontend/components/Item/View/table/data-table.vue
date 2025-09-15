@@ -221,7 +221,10 @@
               <TableHead
                 v-for="header in headerGroup.headers"
                 :key="header.id"
-                class="text-no-transform cursor-pointer bg-secondary text-sm text-secondary-foreground hover:bg-secondary/90"
+                :class="[
+                  'text-no-transform cursor-pointer bg-secondary text-sm text-secondary-foreground hover:bg-secondary/90',
+                  header.column.id === 'select' || header.column.id === 'actions' ? 'w-10 px-3 text-center' : '',
+                ]"
               >
                 <FlexRender
                   v-if="!header.isPlaceholder"
@@ -243,6 +246,8 @@
                         ? `/item/${(row.original as ItemSummary).id}`
                         : undefined
                     "
+                    :class="cell.column.id === 'select' || cell.column.id === 'actions' ? 'w-10 px-3' : ''"
+                    :compact="cell.column.id === 'select' || cell.column.id === 'actions'"
                   >
                     <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
                   </TableCell>
