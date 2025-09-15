@@ -225,7 +225,15 @@ export function makeColumns(t: (key: string) => string): ColumnDef<ItemSummary>[
             ].join(" "),
           },
           [
-            h(DropdownAction, { item: table.getSelectedRowModel().rows }),
+            h(DropdownAction, {
+              multi: {
+                items: table.getSelectedRowModel().rows,
+                columns: table.getAllColumns(),
+              },
+              onExpand: () => {
+                table.getSelectedRowModel().rows.forEach(row => row.toggleExpanded());
+              },
+            }),
             selectedCount > 0 &&
               h(
                 "span",
@@ -246,7 +254,7 @@ export function makeColumns(t: (key: string) => string): ColumnDef<ItemSummary>[
       },
       cell: ({ row }) => {
         const item = row.original;
-        return h("div", { class: "relative" }, h(DropdownAction, { item }));
+        return h("div", { class: "relative" }, h(DropdownAction, { item, onExpand: row.toggleExpanded }));
       },
     },
   ];
