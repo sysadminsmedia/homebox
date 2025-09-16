@@ -31,12 +31,13 @@
     PaginationList,
     PaginationListItem,
   } from "@/components/ui/pagination";
+  import DataTableExpandedRow from "./data-table-expanded-row.vue";
 
   const { openDialog } = useDialog();
 
   const props = defineProps<{
-    columns: ColumnDef<TData, TValue>[];
-    data: TData[];
+    columns: ColumnDef<ItemSummary, TValue>[];
+    data: ItemSummary[];
   }>();
 
   const preferences = useViewPreferences();
@@ -78,7 +79,7 @@
     }
   );
 
-  const table = useVueTable({
+  const table = useVueTable<ItemSummary>({
     get data() {
       return props.data;
     },
@@ -243,7 +244,7 @@
                     :key="cell.id"
                     :href="
                       cell.column.id !== 'select' && cell.column.id !== 'actions'
-                        ? `/item/${(row.original as ItemSummary).id}`
+                        ? `/item/${row.original.id}`
                         : undefined
                     "
                     :class="cell.column.id === 'select' || cell.column.id === 'actions' ? 'w-10 px-3' : ''"
@@ -254,7 +255,7 @@
                 </TableRow>
                 <TableRow v-if="row.getIsExpanded()">
                   <TableCell :colspan="row.getAllCells().length">
-                    {{ JSON.stringify(row.original) }}
+                    <DataTableExpandedRow :item="row.original" />
                   </TableCell>
                 </TableRow>
               </template>
