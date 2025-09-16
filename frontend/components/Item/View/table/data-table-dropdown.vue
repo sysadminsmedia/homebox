@@ -10,6 +10,9 @@
   } from "@/components/ui/dropdown-menu";
   import type { ItemSummary } from "~/lib/api/types/data-contracts";
   import type { Column, Row } from "@tanstack/vue-table";
+  import { useI18n } from "vue-i18n";
+
+  const { t } = useI18n();
 
   defineProps<{
     item?: ItemSummary;
@@ -80,22 +83,28 @@
   <DropdownMenu>
     <DropdownMenuTrigger as-child>
       <Button variant="ghost" class="size-8 p-0 hover:bg-primary hover:text-primary-foreground">
-        <span class="sr-only">Open menu</span>
+        <span class="sr-only">{{ t("components.item.view.table.dropdown.open_menu") }}</span>
         <MoreHorizontal class="size-4" />
       </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end">
-      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+      <DropdownMenuLabel>{{ t("components.item.view.table.dropdown.actions") }}</DropdownMenuLabel>
       <DropdownMenuItem v-if="item" as-child>
-        <NuxtLink :to="`/item/${item.id}`" class="hover:underline"> View item </NuxtLink>
+        <NuxtLink :to="`/item/${item.id}`" class="hover:underline">
+          {{ t("components.item.view.table.dropdown.view_item") }}
+        </NuxtLink>
       </DropdownMenuItem>
-      <DropdownMenuItem v-if="multi" @click="console.log('needs to be implemented')"> View items </DropdownMenuItem>
-      <DropdownMenuItem @click="$emit('expand')"> Toggle Expand </DropdownMenuItem>
+      <DropdownMenuItem v-if="multi" @click="console.log('needs to be implemented')">
+        {{ t("components.item.view.table.dropdown.view_items") }}
+      </DropdownMenuItem>
+      <DropdownMenuItem @click="$emit('expand')">
+        {{ t("components.item.view.table.dropdown.toggle_expand") }}
+      </DropdownMenuItem>
       <DropdownMenuItem v-if="multi" @click="downloadCsv(multi.items, multi.columns)">
-        Download Table as CSV
+        {{ t("components.item.view.table.dropdown.download_csv") }}
       </DropdownMenuItem>
       <DropdownMenuItem v-if="multi" @click="downloadJson(multi.items, multi.columns)">
-        Download Table as JSON
+        {{ t("components.item.view.table.dropdown.download_json") }}
       </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>

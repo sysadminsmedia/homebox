@@ -152,7 +152,16 @@
                     "rows_per_page": "Rows per page",
                     "table_settings": "Table Settings",
                     "view_item": "View Item",
-                    "selected_rows": "{selected} of {total} row(s) selected."
+                    "selected_rows": "{selected} of {total} row(s) selected.",
+                    "dropdown": {
+                        "open_menu": "Open menu",
+                        "actions": "Actions",
+                        "view_item": "View item",
+                        "view_items": "View items",
+                        "toggle_expand": "Toggle Expand",
+                        "download_csv": "Download Table as CSV",
+                        "download_json": "Download Table as JSON"
+                    }
                 }
             }
         },
