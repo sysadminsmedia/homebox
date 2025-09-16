@@ -38,6 +38,7 @@
   const props = defineProps<{
     columns: ColumnDef<ItemSummary, TValue>[];
     data: ItemSummary[];
+    disableControls?: boolean;
   }>();
 
   const preferences = useViewPreferences();
@@ -268,7 +269,10 @@
           </TableBody>
         </Table>
       </div>
-      <div class="flex flex-col gap-2 border-t p-3 md:flex-row md:items-center md:justify-between md:gap-0">
+      <div
+        v-if="!props.disableControls"
+        class="flex flex-col gap-2 border-t p-3 md:flex-row md:items-center md:justify-between md:gap-0"
+      >
         <div class="order-2 flex items-center gap-2 md:order-1">
           <Button class="size-10 p-0" variant="outline" @click="openDialog(DialogID.ItemTableSettings)">
             <MdiTableCog />
