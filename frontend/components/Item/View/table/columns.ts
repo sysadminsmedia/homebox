@@ -54,6 +54,7 @@ export function makeColumns(t: (key: string) => string): ColumnDef<ItemSummary>[
       enableHiding: false,
     },
     {
+      id: "assetId",
       accessorKey: "assetId",
       header: ({ column }) =>
         h(
@@ -68,6 +69,7 @@ export function makeColumns(t: (key: string) => string): ColumnDef<ItemSummary>[
       cell: ({ row }) => h("div", { class: "text-sm" }, String(row.getValue("assetId") ?? "")),
     },
     {
+      id: "name",
       accessorKey: "name",
       header: ({ column }) =>
         h(
@@ -83,6 +85,7 @@ export function makeColumns(t: (key: string) => string): ColumnDef<ItemSummary>[
         h("a", { class: "text-sm font-medium", href: `/item/${row.original.id}` }, row.getValue("name")),
     },
     {
+      id: "quantity",
       accessorKey: "quantity",
       header: ({ column }) =>
         h(
@@ -97,6 +100,7 @@ export function makeColumns(t: (key: string) => string): ColumnDef<ItemSummary>[
       cell: ({ row }) => h("div", { class: "text-center" }, String(row.getValue("quantity") ?? "")),
     },
     {
+      id: "insured",
       accessorKey: "insured",
       header: ({ column }) =>
         h(
@@ -118,6 +122,7 @@ export function makeColumns(t: (key: string) => string): ColumnDef<ItemSummary>[
       },
     },
     {
+      id: "purchasePrice",
       accessorKey: "purchasePrice",
       header: ({ column }) =>
         h(
@@ -133,6 +138,7 @@ export function makeColumns(t: (key: string) => string): ColumnDef<ItemSummary>[
         h("div", { class: "text-center" }, h(Currency, { amount: Number(row.getValue("purchasePrice")) })),
     },
     {
+      id: "location",
       accessorKey: "location",
       header: ({ column }) =>
         h(
@@ -153,6 +159,7 @@ export function makeColumns(t: (key: string) => string): ColumnDef<ItemSummary>[
       },
     },
     {
+      id: "archived",
       accessorKey: "archived",
       header: ({ column }) =>
         h(
@@ -174,6 +181,7 @@ export function makeColumns(t: (key: string) => string): ColumnDef<ItemSummary>[
       },
     },
     {
+      id: "createdAt",
       accessorKey: "createdAt",
       header: ({ column }) =>
         h(
@@ -193,6 +201,7 @@ export function makeColumns(t: (key: string) => string): ColumnDef<ItemSummary>[
         ),
     },
     {
+      id: "updatedAt",
       accessorKey: "updatedAt",
       header: ({ column }) =>
         h(
