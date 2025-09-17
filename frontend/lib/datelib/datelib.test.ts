@@ -3,7 +3,7 @@ import { factorRange, format, parse, zeroTime } from "./datelib";
 
 describe("format", () => {
   test("should format a date as a string", () => {
-    const date = new Date(2020, 1, 1);
+    const date = new Date(Date.UTC(2020, 1, 1));
     expect(format(date)).toBe("2020-02-01");
   });
 
@@ -14,7 +14,7 @@ describe("format", () => {
 
 describe("zeroTime", () => {
   test("should zero out the time", () => {
-    const date = new Date(2020, 1, 1, 12, 30, 30);
+    const date = new Date(Date.UTC(2020, 1, 1, 12, 30, 30));
     const zeroed = zeroTime(date);
     expect(zeroed.getHours()).toBe(0);
     expect(zeroed.getMinutes()).toBe(0);

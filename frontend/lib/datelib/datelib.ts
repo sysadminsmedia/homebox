@@ -11,9 +11,9 @@ export function format(date: Date | string): string {
 }
 
 export function zeroTime(date: Date): Date {
-  return new Date(
-    new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime() - date.getTimezoneOffset() * 60000
-  );
+  const result = new Date(date.getTime());
+  result.setHours(0, 0, 0, 0);
+  return result;
 }
 
 export function factorRange(offset: number = 7): [Date, Date] {
