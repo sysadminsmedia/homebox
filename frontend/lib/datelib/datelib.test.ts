@@ -1,16 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { factorRange, format, parse, zeroTime } from "./datelib";
-
-describe("format", () => {
-  test("should format a date as a string", () => {
-    const date = new Date(Date.UTC(2020, 1, 1));
-    expect(format(date)).toBe("2020-02-01");
-  });
-
-  test("should return the string if a string is passed in", () => {
-    expect(format("2020-02-01")).toBe("2020-02-01");
-  });
-});
+import { factorRange, parse, zeroTime } from "./datelib";
 
 describe("zeroTime", () => {
   test("should zero out the time", () => {
