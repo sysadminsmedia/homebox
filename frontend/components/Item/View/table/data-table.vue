@@ -24,12 +24,15 @@
   import TableView from "./table-view.vue";
   import CardView from "./card-view.vue";
   import DataTableControls from "./data-table-controls.vue";
+  import type { Pagination } from "../pagination";
 
   const props = defineProps<{
     columns: ColumnDef<ItemSummary, TValue>[];
     data: ItemSummary[];
     disableControls?: boolean;
     view: "table" | "card";
+    locationFlatTree?: FlatTreeItem[];
+    externalPagination?: Pagination;
   }>();
 
   const preferences = useViewPreferences();
@@ -72,6 +75,8 @@
   );
 
   const table = useVueTable<ItemSummary>({
+    manualPagination: !!props.externalPagination,
+
     get data() {
       return props.data;
     },
@@ -197,10 +202,10 @@
             </SelectTrigger>
             <SelectContent>
               <SelectItem :value="1">1</SelectItem>
-              <SelectItem :value="10">12</SelectItem>
-              <SelectItem :value="25">24</SelectItem>
-              <SelectItem :value="50">48</SelectItem>
-              <SelectItem :value="100">96</SelectItem>
+              <SelectItem :value="12">12</SelectItem>
+              <SelectItem :value="24">24</SelectItem>
+              <SelectItem :value="48">48</SelectItem>
+              <SelectItem :value="96">96</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -211,13 +216,23 @@
         <TableView :table="table" :columns="columns" />
       </div>
       <div v-if="!props.disableControls" class="border-t p-3">
-        <DataTableControls :table="table" :pagination="pagination" :data-length="data.length" />
+        <DataTableControls
+          :table="table"
+          :pagination="pagination"
+          :data-length="data.length"
+          :external-pagination="externalPagination"
+        />
       </div>
     </BaseCard>
     <div v-else>
-      <CardView :table="table" />
+      <CardView :table="table" :location-flat-tree="locationFlatTree" />
       <div v-if="!props.disableControls" class="pt-2">
-        <DataTableControls :table="table" :pagination="pagination" :data-length="data.length" />
+        <DataTableControls
+          :table="table"
+          :pagination="pagination"
+          :data-length="data.length"
+          :external-pagination="externalPagination"
+        />
       </div>
     </div>
   </div>

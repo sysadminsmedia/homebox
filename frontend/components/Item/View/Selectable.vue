@@ -9,10 +9,13 @@
   import DataTable from "./table/data-table.vue";
   import { makeColumns } from "./table/columns";
   import { useI18n } from "vue-i18n";
+  import type { Pagination } from "./pagination";
 
   type Props = {
     view?: ViewType;
     items: ItemSummary[];
+    locationFlatTree?: FlatTreeItem[];
+    pagination?: Pagination;
   };
 
   const preferences = useViewPreferences();
@@ -31,14 +34,16 @@
   function setViewPreference(view: ViewType) {
     preferences.value.itemDisplayView = view;
   }
+
+  const externalPagination = computed(() => !!props.pagination);
 </script>
 
 <template>
   <section>
-    <BaseSectionHeader class="mb-2 mt-4 flex items-center justify-between">
+    <BaseSectionHeader class="flex items-center justify-between" :class="{ 'mb-2 mt-4': !externalPagination }">
       <div class="flex gap-2 text-nowrap">
         {{ $t("components.item.view.selectable.items") }}
-        <Badge>
+        <Badge v-if="!externalPagination">
           {{ items.length }}
         </Badge>
       </div>
@@ -62,7 +67,25 @@
       </template>
     </BaseSectionHeader>
 
-    <DataTable :view="itemView" :columns="columns" :data="items" />
+    <p v-if="externalPagination && pagination!.totalSize > 0" class="mb-4 flex items-center text-base font-medium">
+      {{ $t("items.results", { total: pagination!.totalSize }) }}
+      <span class="ml-auto text-base">
+        {{
+          $t("items.pages", {
+            page: pagination!.page,
+            totalPages: Math.ceil(pagination!.totalSize / pagination!.pageSize),
+          })
+        }}
+      </span>
+    </p>
+
+    <DataTable
+      :view="itemView"
+      :columns="columns"
+      :data="items"
+      :location-flat-tree="locationFlatTree"
+      :external-pagination="pagination"
+    />
   </section>
 </template>
 

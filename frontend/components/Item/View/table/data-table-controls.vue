@@ -14,12 +14,14 @@
     PaginationListItem,
   } from "@/components/ui/pagination";
   import { DialogID, useDialog } from "~/components/ui/dialog-provider/utils";
+  import type { Pagination as PaginationType } from "../pagination";
 
   const { openDialog } = useDialog();
 
   defineProps<{
     table: TableType<ItemSummary>;
     dataLength: number;
+    externalPagination?: PaginationType;
   }>();
 </script>
 
@@ -41,27 +43,39 @@
     <div class="order-1 flex w-full justify-center md:order-2 md:w-auto">
       <Pagination
         v-slot="{ page }"
-        :items-per-page="table.getState().pagination.pageSize"
-        :total="dataLength"
+        :items-per-page="externalPagination ? externalPagination.pageSize : table.getState().pagination.pageSize"
+        :total="externalPagination ? externalPagination.totalSize : dataLength"
         :sibling-count="2"
-        :page="table.getState().pagination.pageIndex + 1"
-        @update:page="val => table.setPageIndex(val - 1)"
+        :page="externalPagination ? externalPagination.page : table.getState().pagination.pageIndex + 1"
+        @update:page="val => (externalPagination ? externalPagination.setPage(val) : table.setPageIndex(val - 1))"
       >
         <PaginationList v-slot="{ items: pageItems }" class="flex items-center gap-1">
-          <PaginationFirst @click="() => table.setPageIndex(0)" />
+          <PaginationFirst
+            @click="() => (externalPagination ? externalPagination.setPage(1) : table.setPageIndex(0))"
+          />
           <template v-for="(item, index) in pageItems">
             <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
               <Button
                 class="size-10 p-0"
                 :variant="item.value === page ? 'default' : 'outline'"
-                @click="() => table.setPageIndex(item.value - 1)"
+                @click="
+                  () =>
+                    externalPagination ? externalPagination.setPage(item.value) : table.setPageIndex(item.value - 1)
+                "
               >
                 {{ item.value }}
               </Button>
             </PaginationListItem>
             <PaginationEllipsis v-else :key="item.type" :index="index" />
           </template>
-          <PaginationLast @click="() => table.setPageIndex(table.getPageCount() - 1)" />
+          <PaginationLast
+            @click="
+              () =>
+                externalPagination
+                  ? externalPagination.setPage(Math.ceil(externalPagination.totalSize / externalPagination.pageSize))
+                  : table.setPageIndex(table.getPageCount() - 1)
+            "
+          />
         </PaginationList>
       </Pagination>
     </div>

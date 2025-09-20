@@ -55,7 +55,9 @@
       </template>
       <template v-else>
         <TableRow>
-          <TableCell :colspan="columns.length" class="h-24 text-center"> No results. </TableCell>
+          <TableCell :colspan="columns.length" class="h-24 text-center">
+            <p>{{ $t("items.no_results") }}</p>
+          </TableCell>
         </TableRow>
       </template>
     </TableBody>
