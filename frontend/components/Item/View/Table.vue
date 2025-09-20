@@ -15,5 +15,5 @@
 </script>
 
 <template>
-  <DataTable :data="items" :columns="columns" disable-controls />
+  <DataTable view="table" :data="items" :columns="columns" disable-controls />
 </template>

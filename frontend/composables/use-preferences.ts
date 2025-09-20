@@ -2,7 +2,7 @@ import type { Ref } from "vue";
 import type { ItemSummary } from "~/lib/api/types/data-contracts";
 import type { DaisyTheme } from "~~/lib/data/themes";
 
-export type ViewType = "table" | "card" | "tree";
+export type ViewType = "table" | "card";
 
 export type DuplicateSettings = {
   copyMaintenance: boolean;

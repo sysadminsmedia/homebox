@@ -6,7 +6,6 @@
   import { Badge } from "@/components/ui/badge";
   import { Button, ButtonGroup } from "@/components/ui/button";
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
-  import ItemCard from "@/components/Item/Card.vue";
   import DataTable from "./table/data-table.vue";
   import { makeColumns } from "./table/columns";
   import { useI18n } from "vue-i18n";
@@ -63,15 +62,7 @@
       </template>
     </BaseSectionHeader>
 
-    <template v-if="itemView === 'table'">
-      <DataTable :columns="columns" :data="items" />
-    </template>
-    <template v-else>
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        <ItemCard v-for="item in items" :key="item.id" :item="item" />
-        <div class="hidden first:block">{{ $t("components.item.view.selectable.no_items") }}</div>
-      </div>
-    </template>
+    <DataTable :view="itemView" :columns="columns" :data="items" />
   </section>
 </template>
 

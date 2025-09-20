@@ -2,7 +2,6 @@
   import BaseCard from "@/components/Base/Card.vue";
   import type { ColumnDef, SortingState, VisibilityState, ExpandedState } from "@tanstack/vue-table";
   import {
-    FlexRender,
     getCoreRowModel,
     getPaginationRowModel,
     getSortedRowModel,
@@ -12,33 +11,25 @@
 
   import { camelToSnakeCase, valueUpdater } from "@/lib/utils";
 
-  import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
   import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import Button from "~/components/ui/button/Button.vue";
-  import { DialogID, useDialog } from "~/components/ui/dialog-provider/utils";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
   import MdiArrowDown from "~icons/mdi/arrow-down";
   import MdiArrowUp from "~icons/mdi/arrow-up";
-  import MdiTableCog from "~icons/mdi/table-cog";
   import Checkbox from "~/components/ui/checkbox/Checkbox.vue";
   import Label from "~/components/ui/label/Label.vue";
   import type { ItemSummary } from "~/lib/api/types/data-contracts";
-  import {
-    Pagination,
-    PaginationEllipsis,
-    PaginationFirst,
-    PaginationLast,
-    PaginationList,
-    PaginationListItem,
-  } from "@/components/ui/pagination";
-  import DataTableExpandedRow from "./data-table-expanded-row.vue";
 
-  const { openDialog } = useDialog();
+  import TableView from "./table-view.vue";
+  import CardView from "./card-view.vue";
+  import DataTableControls from "./data-table-controls.vue";
 
   const props = defineProps<{
     columns: ColumnDef<ItemSummary, TValue>[];
     data: ItemSummary[];
     disableControls?: boolean;
+    view: "table" | "card";
   }>();
 
   const preferences = useViewPreferences();
@@ -70,7 +61,7 @@
   const expanded = ref<ExpandedState>({});
   const pagination = ref({
     pageIndex: 0,
-    pageSize: defaultPageSize || 10,
+    pageSize: defaultPageSize || 12,
   });
 
   watch(
@@ -170,8 +161,8 @@
           <DialogTitle>{{ $t("components.item.view.table.table_settings") }}</DialogTitle>
         </DialogHeader>
 
-        <div>{{ $t("components.item.view.table.headers") }}</div>
-        <div class="flex flex-col">
+        <div v-if="props.view === 'table'">{{ $t("components.item.view.table.headers") }}</div>
+        <div v-if="props.view === 'table'" class="flex flex-col">
           <div
             v-for="(colId, i) in columnOrder.slice(1, columnOrder.length - 1)"
             :key="colId"
@@ -206,114 +197,28 @@
             </SelectTrigger>
             <SelectContent>
               <SelectItem :value="1">1</SelectItem>
-              <SelectItem :value="10">10</SelectItem>
-              <SelectItem :value="25">25</SelectItem>
-              <SelectItem :value="50">50</SelectItem>
-              <SelectItem :value="100">100</SelectItem>
+              <SelectItem :value="10">12</SelectItem>
+              <SelectItem :value="25">24</SelectItem>
+              <SelectItem :value="50">48</SelectItem>
+              <SelectItem :value="100">96</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </DialogContent>
     </Dialog>
-    <BaseCard>
+    <BaseCard v-if="props.view === 'table'">
       <div>
-        <Table class="w-full">
-          <TableHeader>
-            <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-              <TableHead
-                v-for="header in headerGroup.headers"
-                :key="header.id"
-                :class="[
-                  'text-no-transform cursor-pointer bg-secondary text-sm text-secondary-foreground hover:bg-secondary/90',
-                  header.column.id === 'select' || header.column.id === 'actions' ? 'w-10 px-3 text-center' : '',
-                ]"
-              >
-                <FlexRender
-                  v-if="!header.isPlaceholder"
-                  :render="header.column.columnDef.header"
-                  :props="header.getContext()"
-                />
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <template v-if="table.getRowModel().rows?.length">
-              <template v-for="row in table.getRowModel().rows" :key="row.id">
-                <TableRow :data-state="row.getIsSelected() ? 'selected' : undefined">
-                  <TableCell
-                    v-for="cell in row.getVisibleCells()"
-                    :key="cell.id"
-                    :href="
-                      cell.column.id !== 'select' && cell.column.id !== 'actions'
-                        ? `/item/${row.original.id}`
-                        : undefined
-                    "
-                    :class="cell.column.id === 'select' || cell.column.id === 'actions' ? 'w-10 px-3' : ''"
-                    :compact="cell.column.id === 'select' || cell.column.id === 'actions'"
-                  >
-                    <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
-                  </TableCell>
-                </TableRow>
-                <TableRow v-if="row.getIsExpanded()">
-                  <TableCell :colspan="row.getAllCells().length">
-                    <DataTableExpandedRow :item="row.original" />
-                  </TableCell>
-                </TableRow>
-              </template>
-            </template>
-            <template v-else>
-              <TableRow>
-                <TableCell :colspan="columns.length" class="h-24 text-center"> No results. </TableCell>
-              </TableRow>
-            </template>
-          </TableBody>
-        </Table>
+        <TableView :table="table" :columns="columns" />
       </div>
-      <div
-        v-if="!props.disableControls"
-        class="flex flex-col gap-2 border-t p-3 md:flex-row md:items-center md:justify-between md:gap-0"
-      >
-        <div class="order-2 flex items-center gap-2 md:order-1">
-          <Button class="size-10 p-0" variant="outline" @click="openDialog(DialogID.ItemTableSettings)">
-            <MdiTableCog />
-          </Button>
-          <div class="text-sm text-muted-foreground">
-            {{
-              $t("components.item.view.table.selected_rows", {
-                selected: table.getFilteredSelectedRowModel().rows.length,
-                total: table.getFilteredRowModel().rows.length,
-              })
-            }}
-          </div>
-        </div>
-        <div class="order-1 flex w-full justify-center md:order-2 md:w-auto">
-          <Pagination
-            v-slot="{ page }"
-            :items-per-page="pagination.pageSize"
-            :total="props.data.length"
-            :sibling-count="2"
-            :page="pagination.pageIndex + 1"
-            @update:page="val => table.setPageIndex(val - 1)"
-          >
-            <PaginationList v-slot="{ items: pageItems }" class="flex items-center gap-1">
-              <PaginationFirst @click="() => table.setPageIndex(0)" />
-              <template v-for="(item, index) in pageItems">
-                <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
-                  <Button
-                    class="size-10 p-0"
-                    :variant="item.value === page ? 'default' : 'outline'"
-                    @click="() => table.setPageIndex(item.value - 1)"
-                  >
-                    {{ item.value }}
-                  </Button>
-                </PaginationListItem>
-                <PaginationEllipsis v-else :key="item.type" :index="index" />
-              </template>
-              <PaginationLast @click="() => table.setPageIndex(table.getPageCount() - 1)" />
-            </PaginationList>
-          </Pagination>
-        </div>
+      <div v-if="!props.disableControls" class="border-t p-3">
+        <DataTableControls :table="table" :pagination="pagination" :data-length="data.length" />
       </div>
     </BaseCard>
+    <div v-else>
+      <CardView :table="table" />
+      <div v-if="!props.disableControls" class="pt-2">
+        <DataTableControls :table="table" :pagination="pagination" :data-length="data.length" />
+      </div>
+    </div>
   </div>
 </template>
