@@ -104,6 +104,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Post("/actions/set-primary-photos", chain.ToHandlerFunc(v1Ctrl.HandleSetPrimaryPhotos(), userMW...))
 		r.Post("/actions/create-missing-thumbnails", chain.ToHandlerFunc(v1Ctrl.HandleCreateMissingThumbnails(), userMW...))
 
+		// TODO: Remove after some time
 		r.Get("/locations", chain.ToHandlerFunc(v1Ctrl.HandleLocationGetAll(), userMW...))
 		r.Post("/locations", chain.ToHandlerFunc(v1Ctrl.HandleLocationCreate(), userMW...))
 		r.Get("/locations/tree", chain.ToHandlerFunc(v1Ctrl.HandleLocationTreeQuery(), userMW...))
@@ -192,6 +193,23 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Put("/entitytype/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityTypeUpdate(), userMW...))
 		r.Delete("/entitytype/{id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityTypeDelete(), userMW...))
 
+		// TODO: Implement all of these endpoints for real
+		/*
+			r.Get("/entities")
+			r.Post("/entities")
+			r.Get("/entities/tree")
+			r.Post("/entities/import")
+			r.Get("/entities/export")
+			r.Get("/entities/fields")
+			r.Get("/entities/fields/values")
+
+			r.Get("/entities/{id}")
+			r.Get("/entities/{id}/path")
+			r.Put("/entities/{id}")
+			r.Patch("/entities/{id}")
+			r.Delete("/entities/{id}")
+			r.Post("/entities/{id}/duplicate")
+		*/
 		r.NotFound(http.NotFound)
 	})
 
