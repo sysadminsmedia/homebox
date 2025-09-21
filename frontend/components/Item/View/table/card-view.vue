@@ -22,7 +22,9 @@
   <Teleport to="#selectable-subtitle" defer>
     <Checkbox
       class="size-6 p-0"
-      :model-value="table.getIsAllPageRowsSelected()"
+      :model-value="
+        table.getIsAllPageRowsSelected() ? true : table.getSelectedRowModel().rows.length > 0 ? 'indeterminate' : false
+      "
       :aria-label="$t('components.item.view.selectable.select_all')"
       @update:model-value="table.toggleAllPageRowsSelected(!!$event)"
     />

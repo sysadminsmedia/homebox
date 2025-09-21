@@ -41,7 +41,11 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
       id: "select",
       header: ({ table }) =>
         h(Checkbox, {
-          modelValue: table.getIsAllPageRowsSelected(),
+          modelValue: table.getIsAllPageRowsSelected()
+            ? true
+            : table.getSelectedRowModel().rows.length > 0
+              ? ("indeterminate" as unknown as boolean) // :)
+              : false,
           "onUpdate:modelValue": (value: boolean) => table.toggleAllPageRowsSelected(!!value),
           ariaLabel: t("components.item.view.selectable.select_all"),
         }),
