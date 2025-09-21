@@ -10,6 +10,7 @@
   import { makeColumns } from "./table/columns";
   import { useI18n } from "vue-i18n";
   import type { Pagination } from "./pagination";
+  import MaintenanceEditModal from "@/components/Maintenance/EditModal.vue";
 
   const props = defineProps<{
     view?: ViewType;
@@ -47,6 +48,8 @@
 
 <template>
   <section>
+    <MaintenanceEditModal ref="maintenanceEditModal" />
+
     <BaseSectionHeader class="flex items-center justify-between" :class="{ 'mb-2 mt-4': !externalPagination }">
       <div class="flex gap-2 text-nowrap">
         {{ $t("components.item.view.selectable.items") }}

@@ -12,11 +12,14 @@
   import type { Column, Row, Table } from "@tanstack/vue-table";
   import { useI18n } from "vue-i18n";
   import { toast } from "~/components/ui/sonner";
+  import { useDialog } from "@/components/ui/dialog-provider";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
 
   const { t } = useI18n();
   const api = useUserApi();
   const confirm = useConfirm();
   const preferences = useViewPreferences();
+  const { openDialog } = useDialog();
 
   const props = defineProps<{
     item?: ItemSummary;
@@ -183,6 +186,36 @@
       </DropdownMenuItem>
       <DropdownMenuItem v-else @click="duplicateItems([item!.id])">
         {{ t("components.item.view.table.dropdown.duplicate_item") }}
+      </DropdownMenuItem>
+      <DropdownMenuItem
+        v-if="multi"
+        @click="
+          openDialog(DialogID.EditMaintenance, {
+            params: { type: 'create', itemId: multi.items.map(row => row.original.id) },
+            onClose: result => {
+              if (result) {
+                toast.success(t('components.item.view.table.dropdown.create_maintenance_success'));
+              }
+            },
+          })
+        "
+      >
+        {{ t("components.item.view.table.dropdown.create_maintenance_selected") }}
+      </DropdownMenuItem>
+      <DropdownMenuItem
+        v-else
+        @click="
+          openDialog(DialogID.EditMaintenance, {
+            params: { type: 'create', itemId: item!.id },
+            onClose: result => {
+              if (result) {
+                toast.success(t('components.item.view.table.dropdown.create_maintenance_success'));
+              }
+            },
+          })
+        "
+      >
+        {{ t("components.item.view.table.dropdown.create_maintenance_item") }}
       </DropdownMenuItem>
       <DropdownMenuItem v-if="multi && view === 'table'" @click="downloadCsv(multi.items, multi.columns)">
         {{ t("components.item.view.table.dropdown.download_csv") }}

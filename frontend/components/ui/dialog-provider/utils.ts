@@ -1,7 +1,7 @@
 import { computed, type ComputedRef } from "vue";
 import { createContext } from "reka-ui";
 import { useMagicKeys, useActiveElement } from "@vueuse/core";
-import type { BarcodeProduct } from "~~/lib/api/types/data-contracts";
+import type { BarcodeProduct, MaintenanceEntry, MaintenanceEntryWithDetails } from "~~/lib/api/types/data-contracts";
 
 export enum DialogID {
   AttachmentEdit = "attachment-edit",
@@ -49,6 +49,10 @@ export type DialogParamsMap = {
   };
   [DialogID.CreateItem]?: { product?: BarcodeProduct };
   [DialogID.ProductImport]?: { barcode?: string };
+  [DialogID.EditMaintenance]:
+    | { type: "create"; itemId: string | string[] }
+    | { type: "update"; maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails }
+    | { type: "duplicate"; maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails; itemId: string };
 };
 
 /**
@@ -56,6 +60,7 @@ export type DialogParamsMap = {
  */
 export type DialogResultMap = {
   [DialogID.ItemImage]?: { action: "delete"; id: string };
+  [DialogID.EditMaintenance]?: boolean;
 };
 
 /** Helpers to split IDs by requirement */
