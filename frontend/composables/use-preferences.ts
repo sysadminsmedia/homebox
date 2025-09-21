@@ -26,6 +26,7 @@ export type LocationViewPreferences = {
   language?: string;
   overrideFormatLocale?: string;
   duplicateSettings: DuplicateSettings;
+  shownMultiTabWarning: boolean;
 };
 
 /**
@@ -51,6 +52,7 @@ export function useViewPreferences(): Ref<LocationViewPreferences> {
         copyCustomFields: true,
         copyPrefixOverride: null,
       },
+      shownMultiTabWarning: false,
     },
     { mergeDefaults: true }
   );

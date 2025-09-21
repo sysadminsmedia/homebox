@@ -13,7 +13,7 @@ import { cn } from "~/lib/utils";
  * Create columns with i18n support.
  * Pass `t` from useI18n() when creating the columns in your component.
  */
-export function makeColumns(t: (key: string) => string): ColumnDef<ItemSummary>[] {
+export function makeColumns(t: (key: string) => string, refresh?: () => void): ColumnDef<ItemSummary>[] {
   const sortable = (column: Column<ItemSummary, unknown>, key: string) => {
     const sortState = column.getIsSorted(); // 'asc' | 'desc' | false
     if (!sortState) {
@@ -242,6 +242,9 @@ export function makeColumns(t: (key: string) => string): ColumnDef<ItemSummary>[
               onExpand: () => {
                 table.getSelectedRowModel().rows.forEach(row => row.toggleExpanded());
               },
+              view: "table",
+              onRefresh: () => refresh?.(),
+              table,
             }),
             selectedCount > 0 &&
               h(
@@ -261,9 +264,19 @@ export function makeColumns(t: (key: string) => string): ColumnDef<ItemSummary>[
           ]
         );
       },
-      cell: ({ row }) => {
+      cell: ({ row, table }) => {
         const item = row.original;
-        return h("div", { class: "relative" }, h(DropdownAction, { item, onExpand: row.toggleExpanded }));
+        return h(
+          "div",
+          { class: "relative" },
+          h(DropdownAction, {
+            item,
+            onExpand: row.toggleExpanded,
+            view: "table",
+            onRefresh: () => refresh?.(),
+            table,
+          })
+        );
       },
     },
   ];

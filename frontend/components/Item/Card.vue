@@ -1,5 +1,13 @@
 <template>
-  <Card class="overflow-hidden">
+  <Card class="relative overflow-hidden">
+    <div v-if="tableRow" class="absolute left-1 top-1 z-10">
+      <Checkbox
+        class="size-5 bg-accent hover:bg-background-accent"
+        :model-value="tableRow.getIsSelected()"
+        :aria-label="$t('components.item.view.selectable.select_card')"
+        @update:model-value="tableRow.toggleSelected()"
+      />
+    </div>
     <NuxtLink :to="`/item/${item.id}`">
       <div class="relative h-[200px]">
         <img v-if="imageUrl" class="h-[200px] w-full object-cover shadow-md" loading="lazy" :src="imageUrl" alt="" />
@@ -64,6 +72,8 @@
   import { Separator } from "@/components/ui/separator";
   import Markdown from "@/components/global/Markdown.vue";
   import LabelChip from "@/components/Label/Chip.vue";
+  import type { Row } from "@tanstack/vue-table";
+  import { Checkbox } from "@/components/ui/checkbox";
 
   const api = useUserApi();
 
@@ -91,6 +101,11 @@
       type: Array as () => FlatTreeItem[],
       required: false,
       default: () => [],
+    },
+    tableRow: {
+      type: Object as () => Row<ItemSummary>,
+      required: false,
+      default: () => null,
     },
   });
 

@@ -115,7 +115,6 @@
   import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";
   import MdiBarcode from "~icons/mdi/barcode";
   import MdiLoading from "~icons/mdi/loading";
-  import type { TableData } from "~/components/Item/View/Table.types";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
   import { Separator } from "@/components/ui/separator";
@@ -225,7 +224,8 @@
     }
   }
 
-  function extractValue(data: TableData, value: string) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function extractValue(data: Record<string, any>, value: string) {
     const parts = value.split(".");
     let current = data;
     for (const part of parts) {

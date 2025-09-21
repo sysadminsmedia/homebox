@@ -144,7 +144,8 @@
                     "no_items": "No Items to Display",
                     "table": "Table",
                     "select_all": "Select All",
-                    "select_row": "Select Row"
+                    "select_row": "Select Row",
+                    "select_card": "Select Card"
                 },
                 "table": {
                     "headers": "Headers",
@@ -160,7 +161,15 @@
                         "view_items": "View items",
                         "toggle_expand": "Toggle Expand",
                         "download_csv": "Download Table as CSV",
-                        "download_json": "Download Table as JSON"
+                        "download_json": "Download Table as JSON",
+                        "delete_selected": "Delete Selected Items",
+                        "delete_item": "Delete Item",
+                        "error_deleting": "Error Deleting Item",
+                        "delete_confirmation": "Are you sure you want to delete the selected item(s)? This action cannot be undone.",
+                        "duplicate_selected": "Duplicate Selected Items",
+                        "duplicate_item": "Duplicate Item",
+                        "error_duplicating": "Error Duplicating Item",
+                        "open_multi_tab_warning": "For security reasons browsers do not allow multiple tabs to be opened at once by default, to change this please follow the documentation:"
                     }
                 }
             }

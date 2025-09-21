@@ -11,18 +11,25 @@
   import { useI18n } from "vue-i18n";
   import type { Pagination } from "./pagination";
 
-  type Props = {
+  const props = defineProps<{
     view?: ViewType;
     items: ItemSummary[];
     locationFlatTree?: FlatTreeItem[];
     pagination?: Pagination;
-  };
+  }>();
+
+  const emit = defineEmits<{
+    (e: "refresh"): void;
+  }>();
 
   const preferences = useViewPreferences();
   const { t } = useI18n();
-  const columns = computed(() => makeColumns(t));
+  const columns = computed(() =>
+    makeColumns(t, () => {
+      emit("refresh");
+    })
+  );
 
-  const props = defineProps<Props>();
   const viewSet = computed(() => {
     return !!props.view;
   });
@@ -47,6 +54,9 @@
           {{ items.length }}
         </Badge>
       </div>
+      <template #subtitle>
+        <div id="selectable-subtitle" class="flex grow items-center px-2" />
+      </template>
       <template #description>
         <div v-if="!viewSet">
           <ButtonGroup>
@@ -85,6 +95,7 @@
       :data="items"
       :location-flat-tree="locationFlatTree"
       :external-pagination="pagination"
+      @refresh="$emit('refresh')"
     />
   </section>
 </template>

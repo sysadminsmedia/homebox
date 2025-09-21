@@ -499,7 +499,12 @@
     </div>
 
     <section>
-      <ItemViewSelectable :items="items" :location-flat-tree="locationFlatTree" :pagination="pagination" />
+      <ItemViewSelectable
+        :items="items"
+        :location-flat-tree="locationFlatTree"
+        :pagination="pagination"
+        @refresh="async () => search()"
+      />
     </section>
   </BaseContainer>
 </template>

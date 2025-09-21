@@ -35,6 +35,10 @@
     externalPagination?: Pagination;
   }>();
 
+  defineEmits<{
+    (e: "refresh"): void;
+  }>();
+
   const preferences = useViewPreferences();
   const defaultPageSize = preferences.value.itemsPerTablePage;
   const tableHeadersData = preferences.value.tableHeaders;
@@ -225,7 +229,7 @@
       </div>
     </BaseCard>
     <div v-else>
-      <CardView :table="table" :location-flat-tree="locationFlatTree" />
+      <CardView :table="table" :location-flat-tree="locationFlatTree" @refresh="$emit('refresh')" />
       <div v-if="!props.disableControls" class="pt-2">
         <DataTableControls
           :table="table"

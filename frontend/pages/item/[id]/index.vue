@@ -478,7 +478,7 @@
     return resp.data;
   });
 
-  const items = computedAsync(async () => {
+  const fetchItems = async () => {
     if (!item.value) {
       return [];
     }
@@ -493,7 +493,9 @@
     }
 
     return resp.data.items;
-  });
+  };
+
+  const items = computedAsync(fetchItems);
 
   async function duplicateItem(settings?: DuplicateSettings) {
     if (!item.value) {
@@ -787,7 +789,7 @@
     </section>
 
     <section v-if="items && items.length > 0" class="mt-6">
-      <ItemViewSelectable :items="items" />
+      <ItemViewSelectable :items="items" @refresh="async () => (items = await fetchItems())" />
     </section>
   </BaseContainer>
 </template>

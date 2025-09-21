@@ -9,22 +9,50 @@
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu";
   import type { ItemSummary } from "~/lib/api/types/data-contracts";
-  import type { Column, Row } from "@tanstack/vue-table";
+  import type { Column, Row, Table } from "@tanstack/vue-table";
   import { useI18n } from "vue-i18n";
+  import { toast } from "~/components/ui/sonner";
 
   const { t } = useI18n();
+  const api = useUserApi();
+  const confirm = useConfirm();
+  const preferences = useViewPreferences();
 
-  defineProps<{
+  const props = defineProps<{
     item?: ItemSummary;
     multi?: {
       items: Row<ItemSummary>[];
       columns: Column<ItemSummary>[];
     };
+    view: "table" | "card";
+    table: Table<ItemSummary>;
   }>();
 
-  defineEmits<{
+  const resetSelection = () => {
+    props.table.resetRowSelection();
+    props.table.resetExpanded();
+  };
+
+  const emit = defineEmits<{
     (e: "expand"): void;
+    (e: "refresh"): void;
   }>();
+
+  const openMultiTab = async (items: string[]) => {
+    if (!preferences.value.shownMultiTabWarning) {
+      // TODO: add warning with link to docs and just improve this
+      const { isCanceled } = await confirm.open({
+        message: t("components.item.view.table.dropdown.open_multi_tab_warning"),
+        href: "https://homebox.software/en/user-guide/tips-tricks#open-multiple-items-in-new-tabs",
+      });
+      if (isCanceled) {
+        return;
+      }
+      preferences.value.shownMultiTabWarning = true;
+    }
+
+    items.forEach(item => window.open(`/item/${item}`, "_blank"));
+  };
 
   const downloadCsv = (items: Row<ItemSummary>[], columns: Column<ItemSummary>[]) => {
     // get enabled columns
@@ -77,12 +105,56 @@
     a.remove();
     URL.revokeObjectURL(url);
   };
+
+  const deleteItems = async (ids: string[]) => {
+    const { isCanceled } = await confirm.open(t("components.item.view.table.dropdown.delete_confirmation"));
+
+    if (isCanceled) {
+      return;
+    }
+
+    await Promise.allSettled(
+      ids.map(id =>
+        api.items.delete(id).catch(err => {
+          toast.error(t("components.item.view.table.dropdown.error_deleting"));
+          console.error(err);
+        })
+      )
+    );
+
+    resetSelection();
+    emit("refresh");
+  };
+
+  const duplicateItems = async (ids: string[]) => {
+    await Promise.allSettled(
+      ids.map(id =>
+        api.items
+          .duplicate(id, {
+            copyMaintenance: preferences.value.duplicateSettings.copyMaintenance,
+            copyAttachments: preferences.value.duplicateSettings.copyAttachments,
+            copyCustomFields: preferences.value.duplicateSettings.copyCustomFields,
+            copyPrefix: preferences.value.duplicateSettings.copyPrefixOverride ?? t("items.duplicate.prefix"),
+          })
+          .catch(err => {
+            toast.error(t("components.item.view.table.dropdown.error_duplicating"));
+            console.error(err);
+          })
+      )
+    );
+
+    resetSelection();
+    emit("refresh");
+  };
 </script>
 
 <template>
   <DropdownMenu>
     <DropdownMenuTrigger as-child>
-      <Button variant="ghost" class="size-8 p-0 hover:bg-primary hover:text-primary-foreground">
+      <Button
+        :variant="view === 'table' ? 'ghost' : 'outline'"
+        class="size-8 p-0 hover:bg-primary hover:text-primary-foreground"
+      >
         <span class="sr-only">{{ t("components.item.view.table.dropdown.open_menu") }}</span>
         <MoreHorizontal class="size-4" />
       </Button>
@@ -94,16 +166,28 @@
           {{ t("components.item.view.table.dropdown.view_item") }}
         </NuxtLink>
       </DropdownMenuItem>
-      <DropdownMenuItem v-if="multi" @click="console.log('needs to be implemented')">
+      <DropdownMenuItem v-if="multi" @click="openMultiTab(multi.items.map(row => row.original.id))">
         {{ t("components.item.view.table.dropdown.view_items") }}
       </DropdownMenuItem>
-      <DropdownMenuItem @click="$emit('expand')">
+      <DropdownMenuItem v-if="view === 'table'" @click="$emit('expand')">
         {{ t("components.item.view.table.dropdown.toggle_expand") }}
       </DropdownMenuItem>
-      <DropdownMenuItem v-if="multi" @click="downloadCsv(multi.items, multi.columns)">
+      <DropdownMenuItem v-if="multi" @click="deleteItems(multi.items.map(row => row.original.id))">
+        {{ t("components.item.view.table.dropdown.delete_selected") }}
+      </DropdownMenuItem>
+      <DropdownMenuItem v-else @click="deleteItems([item!.id])">
+        {{ t("components.item.view.table.dropdown.delete_item") }}
+      </DropdownMenuItem>
+      <DropdownMenuItem v-if="multi" @click="duplicateItems(multi.items.map(row => row.original.id))">
+        {{ t("components.item.view.table.dropdown.duplicate_selected") }}
+      </DropdownMenuItem>
+      <DropdownMenuItem v-else @click="duplicateItems([item!.id])">
+        {{ t("components.item.view.table.dropdown.duplicate_item") }}
+      </DropdownMenuItem>
+      <DropdownMenuItem v-if="multi && view === 'table'" @click="downloadCsv(multi.items, multi.columns)">
         {{ t("components.item.view.table.dropdown.download_csv") }}
       </DropdownMenuItem>
-      <DropdownMenuItem v-if="multi" @click="downloadJson(multi.items, multi.columns)">
+      <DropdownMenuItem v-if="multi && view === 'table'" @click="downloadJson(multi.items, multi.columns)">
         {{ t("components.item.view.table.dropdown.download_json") }}
       </DropdownMenuItem>
     </DropdownMenuContent>

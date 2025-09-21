@@ -94,7 +94,7 @@
     updating.value = false;
   }
 
-  const items = computedAsync(async () => {
+  const fetchItems = async () => {
     if (!label.value) {
       return {
         items: [],
@@ -115,7 +115,9 @@
     }
 
     return resp.data;
-  });
+  };
+
+  const items = computedAsync(fetchItems);
 </script>
 
 <template>
@@ -200,7 +202,7 @@
       <Markdown v-if="label && label.description" class="mt-3 text-base" :source="label.description" />
     </Card>
     <section v-if="label && items">
-      <ItemViewSelectable :items="items.items" />
+      <ItemViewSelectable :items="items.items" @refresh="async () => (items = await fetchItems())" />
     </section>
   </BaseContainer>
 </template>

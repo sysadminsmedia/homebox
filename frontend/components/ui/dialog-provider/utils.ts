@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unified-signatures */
 import { computed, type ComputedRef } from "vue";
 import { createContext } from "reka-ui";
 import { useMagicKeys, useActiveElement } from "@vueuse/core";
