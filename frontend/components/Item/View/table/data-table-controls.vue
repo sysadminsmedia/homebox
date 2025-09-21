@@ -18,11 +18,24 @@
 
   const { openDialog } = useDialog();
 
-  defineProps<{
+  const props = defineProps<{
     table: TableType<ItemSummary>;
     dataLength: number;
     externalPagination?: PaginationType;
   }>();
+
+  const setPage = (page: number) => {
+    if (props.externalPagination) {
+      if (page !== props.externalPagination.page) {
+        // clear selection and expanded
+        props.table.resetRowSelection();
+        props.table.resetExpanded();
+      }
+      props.externalPagination.setPage(page);
+    } else {
+      props.table.setPageIndex(page - 1);
+    }
+  };
 </script>
 
 <template>
@@ -47,21 +60,16 @@
         :total="externalPagination ? externalPagination.totalSize : dataLength"
         :sibling-count="2"
         :page="externalPagination ? externalPagination.page : table.getState().pagination.pageIndex + 1"
-        @update:page="val => (externalPagination ? externalPagination.setPage(val) : table.setPageIndex(val - 1))"
+        @update:page="val => setPage(val)"
       >
         <PaginationList v-slot="{ items: pageItems }" class="flex items-center gap-1">
-          <PaginationFirst
-            @click="() => (externalPagination ? externalPagination.setPage(1) : table.setPageIndex(0))"
-          />
+          <PaginationFirst @click="() => setPage(1)" />
           <template v-for="(item, index) in pageItems">
             <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
               <Button
                 class="size-10 p-0"
                 :variant="item.value === page ? 'default' : 'outline'"
-                @click="
-                  () =>
-                    externalPagination ? externalPagination.setPage(item.value) : table.setPageIndex(item.value - 1)
-                "
+                @click="() => setPage(item.value)"
               >
                 {{ item.value }}
               </Button>
@@ -71,9 +79,11 @@
           <PaginationLast
             @click="
               () =>
-                externalPagination
-                  ? externalPagination.setPage(Math.ceil(externalPagination.totalSize / externalPagination.pageSize))
-                  : table.setPageIndex(table.getPageCount() - 1)
+                setPage(
+                  externalPagination
+                    ? Math.ceil(externalPagination.totalSize / externalPagination.pageSize)
+                    : table.getPageCount() - 1
+                )
             "
           />
         </PaginationList>

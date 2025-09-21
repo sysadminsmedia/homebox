@@ -253,7 +253,7 @@ export function makeColumns(t: (key: string) => string): ColumnDef<ItemSummary>[
                   "span",
                   {
                     class:
-                      "relative flex size-4 items-center justify-center rounded-full bg-primary p-1 text-primary-foreground text-xs pointer-events-none",
+                      "relative flex size-4 items-center justify-center rounded-full bg-primary p-1 text-primary-foreground text-xs pointer-events-none whitespace-nowrap",
                   },
                   String(selectedCount)
                 )
