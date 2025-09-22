@@ -197,7 +197,11 @@
       <DropdownMenuItem
         @click="
           openDialog(DialogID.ItemChangeDetails, {
-            params: { items: multi ? multi.items.map(row => row.original) : [item!], addLabels: true, removeLabels: true },
+            params: {
+              items: multi ? multi.items.map(row => row.original) : [item!],
+              addLabels: true,
+              removeLabels: true,
+            },
             onClose: result => {
               if (result) {
                 toast.success(t('components.item.view.table.dropdown.change_labels_success'));

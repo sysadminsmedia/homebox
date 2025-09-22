@@ -111,6 +111,7 @@
     name: {
       type: String,
       required: false,
+      default: undefined,
     },
   });
 
