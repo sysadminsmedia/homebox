@@ -1,22 +1,22 @@
-<div style="display: flex; justify-content: center; align-items: center;">
+<div align="center">
   <img src="/docs/public/lilbox.svg" height="200"/>
 </div>
 
-<h1 style="margin-top: -10px; text-align: center;"> HomeBox </h1>
-<p style="width: 100%; text-align: center;">
+<h1 align="center" style="margin-top: -10px;"> HomeBox </h1>
+<p align="center" style="width: 100%;">
    <a href="https://homebox.software/en/">Docs</a>
    |
    <a href="https://demo.homebox.software">Demo</a>
    |
    <a href="https://discord.gg/aY4DCkpNA9">Discord</a>
 </p>
-<p style="width: 100%; text-align: center;">
+<p align="center" style="width: 100%;">
     <img src="https://img.shields.io/github/check-runs/sysadminsmedia/homebox/main" alt="Github Checks"/>
     <img src="https://img.shields.io/github/license/sysadminsmedia/homebox"/>
     <img src="https://img.shields.io/github/v/release/sysadminsmedia/homebox?sort=semver&display_name=release"/>
     <img src="https://img.shields.io/weblate/progress/homebox?server=https%3A%2F%2Ftranslate.sysadminsmedia.com"/>
 </p>
-<p style="width: 100%; text-align: center;">
+<p align="center" style="width: 100%;">
     <img src="https://img.shields.io/reddit/subreddit-subscribers/homebox"/>
     <img src="https://img.shields.io/mastodon/follow/110749314839831923?domain=infosec.exchange"/>
 </p>
