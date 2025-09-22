@@ -843,26 +843,44 @@ func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data Ite
 		q.SetQuantity(*data.Quantity)
 	}
 
-	if len(data.LabelIDs) > 0 {
-		currentLabels, err := tx.Item.Query().Where(item.ID(id)).QueryLabel().All(ctx)
-		if err != nil {
-			return err
-		}
-		set := newIDSet(currentLabels)
-		for _, l := range data.LabelIDs {
-			if set.Contains(l) {
-				set.Remove(l)
-				continue
-			}
-			q.AddLabelIDs(l)
-		}
-		if set.Len() > 0 {
-			q.RemoveLabelIDs(set.Slice()...)
-		}
-	}
-
 	if data.LocationID != uuid.Nil {
 		q.SetLocationID(data.LocationID)
+	}
+
+	err = q.Exec(ctx)
+	if err != nil {
+		return err
+	}
+
+	if data.LabelIDs != nil {
+    currentLabels, err := tx.Item.Query().Where(item.ID(id)).QueryLabel().All(ctx)
+    if err != nil {
+        return err
+    }
+    set := newIDSet(currentLabels)
+
+    addLabels := []uuid.UUID{}
+    for _, l := range data.LabelIDs {
+        if set.Contains(l) {
+            set.Remove(l)
+        } else {
+            addLabels = append(addLabels, l)
+        }
+    }
+
+    if len(addLabels) > 0 {
+        if err := tx.Item.UpdateOneID(id).AddLabelIDs(addLabels...).Exec(ctx); err != nil {
+            return err
+        }
+    }
+    if set.Len() > 0 {
+        if err := tx.Item.UpdateOneID(id).RemoveLabelIDs(set.Slice()...).Exec(ctx); err != nil {
+            return err
+        }
+    }
+}
+
+	if data.LocationID != uuid.Nil {
 		itemEnt, err := tx.Item.Query().Where(item.ID(id)).Only(ctx)
 		if err != nil {
 			return err
@@ -885,11 +903,6 @@ func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data Ite
 				}
 			}
 		}
-	}
-
-	err = q.Exec(ctx)
-	if err != nil {
-		return err
 	}
 
 	if err := tx.Commit(); err != nil {

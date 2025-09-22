@@ -11,6 +11,7 @@
   import { useI18n } from "vue-i18n";
   import type { Pagination } from "./pagination";
   import MaintenanceEditModal from "@/components/Maintenance/EditModal.vue";
+  import ItemChangeDetails from "./ItemChangeDetails.vue";
 
   const props = defineProps<{
     view?: ViewType;
@@ -48,7 +49,8 @@
 
 <template>
   <section>
-    <MaintenanceEditModal ref="maintenanceEditModal" />
+    <MaintenanceEditModal />
+    <ItemChangeDetails />
 
     <BaseSectionHeader class="flex items-center justify-between" :class="{ 'mb-2 mt-4': !externalPagination }">
       <div class="flex gap-2 text-nowrap">

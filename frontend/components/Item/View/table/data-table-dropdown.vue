@@ -7,6 +7,7 @@
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuTrigger,
+    DropdownMenuSeparator,
   } from "@/components/ui/dropdown-menu";
   import type { ItemSummary } from "~/lib/api/types/data-contracts";
   import type { Column, Row, Table } from "@tanstack/vue-table";
@@ -31,15 +32,16 @@
     table: Table<ItemSummary>;
   }>();
 
-  const resetSelection = () => {
-    props.table.resetRowSelection();
-    props.table.resetExpanded();
-  };
-
   const emit = defineEmits<{
     (e: "expand"): void;
     (e: "refresh"): void;
   }>();
+
+  const resetSelection = () => {
+    props.table.resetRowSelection();
+    props.table.resetExpanded();
+    emit("refresh");
+  };
 
   const openMultiTab = async (items: string[]) => {
     if (!preferences.value.shownMultiTabWarning) {
@@ -126,7 +128,6 @@
     );
 
     resetSelection();
-    emit("refresh");
   };
 
   const duplicateItems = async (ids: string[]) => {
@@ -147,7 +148,6 @@
     );
 
     resetSelection();
-    emit("refresh");
   };
 </script>
 
@@ -164,6 +164,7 @@
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end">
       <DropdownMenuLabel>{{ t("components.item.view.table.dropdown.actions") }}</DropdownMenuLabel>
+      <DropdownMenuSeparator />
       <DropdownMenuItem v-if="item" as-child>
         <NuxtLink :to="`/item/${item.id}`" class="hover:underline">
           {{ t("components.item.view.table.dropdown.view_item") }}
@@ -175,23 +176,44 @@
       <DropdownMenuItem v-if="view === 'table'" @click="$emit('expand')">
         {{ t("components.item.view.table.dropdown.toggle_expand") }}
       </DropdownMenuItem>
-      <DropdownMenuItem v-if="multi" @click="deleteItems(multi.items.map(row => row.original.id))">
-        {{ t("components.item.view.table.dropdown.delete_selected") }}
-      </DropdownMenuItem>
-      <DropdownMenuItem v-else @click="deleteItems([item!.id])">
-        {{ t("components.item.view.table.dropdown.delete_item") }}
-      </DropdownMenuItem>
-      <DropdownMenuItem v-if="multi" @click="duplicateItems(multi.items.map(row => row.original.id))">
-        {{ t("components.item.view.table.dropdown.duplicate_selected") }}
-      </DropdownMenuItem>
-      <DropdownMenuItem v-else @click="duplicateItems([item!.id])">
-        {{ t("components.item.view.table.dropdown.duplicate_item") }}
-      </DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <!-- change location -->
       <DropdownMenuItem
-        v-if="multi"
+        @click="
+          openDialog(DialogID.ItemChangeDetails, {
+            params: { items: multi ? multi.items.map(row => row.original) : [item!], changeLocation: true },
+            onClose: result => {
+              if (result) {
+                toast.success(t('components.item.view.table.dropdown.change_location_success'));
+                resetSelection();
+              }
+            },
+          })
+        "
+      >
+        {{ t("components.item.view.table.dropdown.change_location") }}
+      </DropdownMenuItem>
+      <!-- change labels -->
+      <DropdownMenuItem
+        @click="
+          openDialog(DialogID.ItemChangeDetails, {
+            params: { items: multi ? multi.items.map(row => row.original) : [item!], addLabels: true, removeLabels: true },
+            onClose: result => {
+              if (result) {
+                toast.success(t('components.item.view.table.dropdown.change_labels_success'));
+                resetSelection();
+              }
+            },
+          })
+        "
+      >
+        {{ t("components.item.view.table.dropdown.change_labels") }}
+      </DropdownMenuItem>
+      <!-- maintenance -->
+      <DropdownMenuItem
         @click="
           openDialog(DialogID.EditMaintenance, {
-            params: { type: 'create', itemId: multi.items.map(row => row.original.id) },
+            params: { type: 'create', itemId: multi ? multi.items.map(row => row.original.id) : item!.id },
             onClose: result => {
               if (result) {
                 toast.success(t('components.item.view.table.dropdown.create_maintenance_success'));
@@ -200,23 +222,30 @@
           })
         "
       >
-        {{ t("components.item.view.table.dropdown.create_maintenance_selected") }}
+        {{
+          multi
+            ? t("components.item.view.table.dropdown.create_maintenance_selected")
+            : t("components.item.view.table.dropdown.create_maintenance_item")
+        }}
       </DropdownMenuItem>
-      <DropdownMenuItem
-        v-else
-        @click="
-          openDialog(DialogID.EditMaintenance, {
-            params: { type: 'create', itemId: item!.id },
-            onClose: result => {
-              if (result) {
-                toast.success(t('components.item.view.table.dropdown.create_maintenance_success'));
-              }
-            },
-          })
-        "
-      >
-        {{ t("components.item.view.table.dropdown.create_maintenance_item") }}
+      <!-- duplicate -->
+      <DropdownMenuItem @click="duplicateItems(multi ? multi.items.map(row => row.original.id) : [item!.id])">
+        {{
+          multi
+            ? t("components.item.view.table.dropdown.duplicate_selected")
+            : t("components.item.view.table.dropdown.duplicate_item")
+        }}
       </DropdownMenuItem>
+      <!-- delete -->
+      <DropdownMenuItem @click="deleteItems(multi ? multi.items.map(row => row.original.id) : [item!.id])">
+        {{
+          multi
+            ? t("components.item.view.table.dropdown.delete_selected")
+            : t("components.item.view.table.dropdown.delete_item")
+        }}
+      </DropdownMenuItem>
+      <!-- download -->
+      <DropdownMenuSeparator v-if="multi && view === 'table'" />
       <DropdownMenuItem v-if="multi && view === 'table'" @click="downloadCsv(multi.items, multi.columns)">
         {{ t("components.item.view.table.dropdown.download_csv") }}
       </DropdownMenuItem>

@@ -138,6 +138,12 @@
                 "searching": "Searching…"
             },
             "view": {
+                "change_details": {
+                    "title": "Change Item Details",
+                    "failed_to_update_item": "Failed to update item",
+                    "add_labels": "Add Labels",
+                    "remove_labels": "Remove Labels"
+                },
                 "selectable": {
                     "card": "Card",
                     "items": "Items",
@@ -172,7 +178,11 @@
                         "open_multi_tab_warning": "For security reasons browsers do not allow multiple tabs to be opened at once by default, to change this please follow the documentation:",
                         "create_maintenance_selected": "Create Maintenance Entry for Selected Items",
                         "create_maintenance_item": "Create Maintenance Entry for Item",
-                        "create_maintenance_success": "Maintenance Entry(s) Created"
+                        "create_maintenance_success": "Maintenance Entry(s) Created",
+                        "change_location": "Change Location",
+                        "change_location_success": "Location Changed",
+                        "change_labels": "Change Labels",
+                        "change_labels_success": "Labels Changed"
                     }
                 }
             }

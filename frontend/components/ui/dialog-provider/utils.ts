@@ -1,7 +1,7 @@
 import { computed, type ComputedRef } from "vue";
 import { createContext } from "reka-ui";
 import { useMagicKeys, useActiveElement } from "@vueuse/core";
-import type { BarcodeProduct, MaintenanceEntry, MaintenanceEntryWithDetails } from "~~/lib/api/types/data-contracts";
+import type { BarcodeProduct, ItemSummary, MaintenanceEntry, MaintenanceEntryWithDetails } from "~~/lib/api/types/data-contracts";
 
 export enum DialogID {
   AttachmentEdit = "attachment-edit",
@@ -23,6 +23,7 @@ export enum DialogID {
   PageQRCode = "page-qr-code",
   UpdateLabel = "update-label",
   UpdateLocation = "update-location",
+  ItemChangeDetails = "item-table-updater",
 }
 
 /**
@@ -53,6 +54,12 @@ export type DialogParamsMap = {
     | { type: "create"; itemId: string | string[] }
     | { type: "update"; maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails }
     | { type: "duplicate"; maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails; itemId: string };
+  [DialogID.ItemChangeDetails]: {
+    items: ItemSummary[];
+    changeLocation?: boolean;
+    addLabels?: boolean;
+    removeLabels?: boolean;
+  };
 };
 
 /**
@@ -61,6 +68,7 @@ export type DialogParamsMap = {
 export type DialogResultMap = {
   [DialogID.ItemImage]?: { action: "delete"; id: string };
   [DialogID.EditMaintenance]?: boolean;
+  [DialogID.ItemChangeDetails]?: boolean;
 };
 
 /** Helpers to split IDs by requirement */
