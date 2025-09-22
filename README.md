@@ -19,13 +19,14 @@
 <p align="center" style="width: 100%;">
     <img src="https://img.shields.io/reddit/subreddit-subscribers/homebox"/>
     <img src="https://img.shields.io/mastodon/follow/110749314839831923?domain=infosec.exchange"/>
+    <img src="https://img.shields.io/lemmy/homebox%40lemmy.world?label=lemmy"/>
 </p>
 
 ## What is HomeBox
 
 HomeBox is the inventory and organization system built for the Home User! With a focus on simplicity and ease of use, Homebox is the perfect solution for your home inventory, organization, and management needs. While developing this project, We've tried to keep the following principles in mind:
 
-- 🧘 _Simple_ - Homebox is designed to be simple and easy to use. No complicated setup or configuration required. Use either a single docker container, or deploy yourself by compiling the binary for your platform of choice.
+- 🧘 _Simple but Expandable_ - Homebox is designed to be simple and easy to use. No complicated setup or configuration required. But expandable to whatever level of infrastructure you want to put into it.
 - 🚀 _Blazingly Fast_ - Homebox is written in Go, which makes it extremely fast and requires minimal resources to deploy. In general, idle memory usage is less than 50MB for the whole container.
 - 📦 _Portable_ - Homebox is designed to be portable and run on anywhere. We use SQLite and an embedded Web UI to make it easy to deploy, use, and backup.
 
@@ -81,7 +82,7 @@ If you are not a coder and can't help translate, you can still contribute financ
 ## Help us Translate
 We want to make sure that Homebox is available in as many languages as possible. If you are interested in helping us translate Homebox, please help us via our [Weblate instance](https://translate.sysadminsmedia.com/projects/homebox/).
 
-[![Translation status](http://translate.sysadminsmedia.com/widget/homebox/multi-auto.svg)](http://translate.sysadminsmedia.com/engage/homebox/)
+[![Translation status](https://translate.sysadminsmedia.com/widget/homebox/multi-auto.svg)](https://translate.sysadminsmedia.com/engage/homebox/)
 
 ## Credits
 - Original project by [@hay-kot](https://github.com/hay-kot)
