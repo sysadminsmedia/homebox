@@ -577,6 +577,8 @@ export interface ItemOut {
 
 export interface ItemPatch {
   id: string;
+  labelIds?: string[] | null;
+  locationId?: string | null;
   quantity?: number | null;
 }
 

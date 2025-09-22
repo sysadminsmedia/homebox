@@ -816,7 +816,20 @@ func (e *ItemsRepository) GetAllZeroImportRef(ctx context.Context, gid uuid.UUID
 }
 
 func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data ItemPatch) error {
-	q := e.db.Item.Update().
+	tx, err := e.db.Tx(ctx)
+	if err != nil {
+		return err
+	}
+	committed := false
+	defer func() {
+		if !committed {
+			if err := tx.Rollback(); err != nil {
+				log.Warn().Err(err).Msg("failed to rollback transaction during item patch")
+			}
+		}
+	}()
+
+	q := tx.Item.Update().
 		Where(
 			item.ID(id),
 			item.HasGroupWith(group.ID(gid)),
@@ -830,13 +843,62 @@ func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data Ite
 		q.SetQuantity(*data.Quantity)
 	}
 
-	if data.LocationID != uuid.Nil {
-		q.SetLocationID(data.LocationID)
-		// TODO: handle sync child items locations
+	if len(data.LabelIDs) > 0 {
+		currentLabels, err := tx.Item.Query().Where(item.ID(id)).QueryLabel().All(ctx)
+		if err != nil {
+			return err
+		}
+		set := newIDSet(currentLabels)
+		for _, l := range data.LabelIDs {
+			if set.Contains(l) {
+				set.Remove(l)
+				continue
+			}
+			q.AddLabelIDs(l)
+		}
+		if set.Len() > 0 {
+			q.RemoveLabelIDs(set.Slice()...)
+		}
 	}
 
+	if data.LocationID != uuid.Nil {
+		q.SetLocationID(data.LocationID)
+		itemEnt, err := tx.Item.Query().Where(item.ID(id)).Only(ctx)
+		if err != nil {
+			return err
+		}
+		if itemEnt.SyncChildItemsLocations {
+			children, err := tx.Item.Query().Where(item.ID(id)).QueryChildren().All(ctx)
+			if err != nil {
+				return err
+			}
+			for _, child := range children {
+				childLocation, err := child.QueryLocation().First(ctx)
+				if err != nil {
+					return err
+				}
+				if data.LocationID != childLocation.ID {
+					err = child.Update().SetLocationID(data.LocationID).Exec(ctx)
+					if err != nil {
+						return err
+					}
+				}
+			}
+		}
+	}
+
+	err = q.Exec(ctx)
+	if err != nil {
+		return err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	committed = true
+
 	e.publishMutationEvent(gid)
-	return q.Exec(ctx)
+	return nil
 }
 
 func (e *ItemsRepository) GetAllCustomFieldValues(ctx context.Context, gid uuid.UUID, name string) ([]string, error) {
