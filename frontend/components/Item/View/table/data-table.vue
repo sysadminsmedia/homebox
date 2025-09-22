@@ -25,6 +25,7 @@
   import CardView from "./card-view.vue";
   import DataTableControls from "./data-table-controls.vue";
   import type { Pagination } from "../pagination";
+  import Switch from "~/components/ui/switch/Switch.vue";
 
   const props = defineProps<{
     columns: ColumnDef<ItemSummary, TValue>[];
@@ -170,48 +171,57 @@
           <DialogTitle>{{ $t("components.item.view.table.table_settings") }}</DialogTitle>
         </DialogHeader>
 
-        <div v-if="props.view === 'table'">{{ $t("components.item.view.table.headers") }}</div>
-        <div v-if="props.view === 'table'" class="flex flex-col">
-          <div
-            v-for="(colId, i) in columnOrder.slice(1, columnOrder.length - 1)"
-            :key="colId"
-            class="flex flex-row items-center gap-1"
-          >
-            <Button size="icon" class="size-6" variant="ghost" :disabled="i === 0" @click="moveHeader(i + 1, i)">
-              <MdiArrowUp />
-            </Button>
-            <Button
-              size="icon"
-              class="size-6"
-              variant="ghost"
-              :disabled="i === columnOrder.length - 3"
-              @click="moveHeader(i + 1, i + 2)"
-            >
-              <MdiArrowDown />
-            </Button>
-            <Checkbox
-              :id="colId"
-              :model-value="table.getColumn(colId)?.getIsVisible()"
-              @update:model-value="toggleHeader(colId)"
-            />
-            <label class="text-sm" :for="colId"> {{ $t(`items.${camelToSnakeCase(colId)}`) }} </label>
+        <div class="flex flex-col gap-4">
+          <div v-if="props.view === 'table'" class="flex flex-col gap-2">
+            <div>{{ $t("components.item.view.table.headers") }}</div>
+            <div class="flex flex-col">
+              <div
+                v-for="(colId, i) in columnOrder.slice(1, columnOrder.length - 1)"
+                :key="colId"
+                class="flex flex-row items-center gap-1"
+              >
+                <Button size="icon" class="size-6" variant="ghost" :disabled="i === 0" @click="moveHeader(i + 1, i)">
+                  <MdiArrowUp />
+                </Button>
+                <Button
+                  size="icon"
+                  class="size-6"
+                  variant="ghost"
+                  :disabled="i === columnOrder.length - 3"
+                  @click="moveHeader(i + 1, i + 2)"
+                >
+                  <MdiArrowDown />
+                </Button>
+                <Checkbox
+                  :id="colId"
+                  :model-value="table.getColumn(colId)?.getIsVisible()"
+                  @update:model-value="toggleHeader(colId)"
+                />
+                <label class="text-sm" :for="colId"> {{ $t(`items.${camelToSnakeCase(colId)}`) }} </label>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div class="mt-4 flex flex-col gap-2">
-          <Label> {{ $t("components.item.view.table.rows_per_page") }} </Label>
-          <Select :model-value="pagination.pageSize" @update:model-value="val => table.setPageSize(Number(val))">
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem :value="1">1</SelectItem>
-              <SelectItem :value="12">12</SelectItem>
-              <SelectItem :value="24">24</SelectItem>
-              <SelectItem :value="48">48</SelectItem>
-              <SelectItem :value="96">96</SelectItem>
-            </SelectContent>
-          </Select>
+          <div class="flex flex-col gap-2">
+            <Label> {{ $t("components.item.view.table.rows_per_page") }} </Label>
+            <Select :model-value="pagination.pageSize" @update:model-value="val => table.setPageSize(Number(val))">
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem :value="1">1</SelectItem>
+                <SelectItem :value="12">12</SelectItem>
+                <SelectItem :value="24">24</SelectItem>
+                <SelectItem :value="48">48</SelectItem>
+                <SelectItem :value="96">96</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <Label class="text-sm"> {{ $t("components.item.view.table.quick_actions") }} </Label>
+            <Switch v-model="preferences.quickActions.enabled" />
+          </div>
         </div>
       </DialogContent>
     </Dialog>

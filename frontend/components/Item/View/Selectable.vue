@@ -60,7 +60,11 @@
         </Badge>
       </div>
       <template #subtitle>
-        <div id="selectable-subtitle" class="flex grow items-center px-2" />
+        <div
+          id="selectable-subtitle"
+          class="flex grow items-center px-2"
+          :class="{ hidden: !preferences.quickActions.enabled }"
+        />
       </template>
       <template #description>
         <div v-if="!viewSet">
@@ -96,7 +100,7 @@
 
     <DataTable
       :view="itemView"
-      :columns="columns"
+      :columns="preferences.quickActions.enabled ? columns : columns.filter(c => c.enableHiding !== false)"
       :data="items"
       :location-flat-tree="locationFlatTree"
       :external-pagination="pagination"

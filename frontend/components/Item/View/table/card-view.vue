@@ -6,6 +6,8 @@
   import { Checkbox } from "@/components/ui/checkbox";
   import DropdownAction from "./data-table-dropdown.vue";
 
+  const preferences = useViewPreferences();
+
   const props = defineProps<{
     table: TableType<ItemSummary>;
     locationFlatTree?: FlatTreeItem[];
@@ -57,7 +59,7 @@
       v-for="item in table.getRowModel().rows"
       :key="item.id"
       :item="item.original"
-      :table-row="item"
+      :table-row="preferences.quickActions.enabled ? item : undefined"
       :location-flat-tree="locationFlatTree"
     />
   </div>
