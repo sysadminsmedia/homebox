@@ -57,7 +57,7 @@
   <div v-else class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
     <ItemCard
       v-for="item in table.getRowModel().rows"
-      :key="item.id"
+      :key="item.original.id"
       :item="item.original"
       :table-row="preferences.quickActions.enabled ? item : undefined"
       :location-flat-tree="locationFlatTree"

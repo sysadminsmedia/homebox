@@ -113,7 +113,7 @@
         }
 
         if (enabled.addLabels || enabled.removeLabels) {
-          patch.labelIds = currentLabels;
+          patch.labelIds = Array.from(new Set(currentLabels));
         }
 
         const { error, data } = await api.items.patch(item.id, patch);

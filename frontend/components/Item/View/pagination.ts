@@ -1,8 +1,8 @@
 import type { ShallowUnwrapRef } from "vue";
 
 export type Pagination = ShallowUnwrapRef<{
-  page: globalThis.WritableComputedRef<number, number>;
-  pageSize: globalThis.ComputedRef<number>;
-  totalSize: globalThis.Ref<number, number>;
+  page: WritableComputedRef<number, number>;
+  pageSize: ComputedRef<number>;
+  totalSize: Ref<number, number>;
   setPage: (newPage: number) => void;
 }>;

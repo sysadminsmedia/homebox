@@ -82,7 +82,7 @@
                 setPage(
                   externalPagination
                     ? Math.ceil(externalPagination.totalSize / externalPagination.pageSize)
-                    : table.getPageCount() - 1
+                    : table.getPageCount()
                 )
             "
           />

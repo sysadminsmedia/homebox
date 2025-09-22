@@ -85,8 +85,7 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
           },
           () => sortable(column, "items.name")
         ),
-      cell: ({ row }) =>
-        h("a", { class: "text-sm font-medium", href: `/item/${row.original.id}` }, row.getValue("name")),
+      cell: ({ row }) => h("span", { class: "text-sm font-medium" }, row.getValue("name")),
     },
     {
       id: "quantity",
