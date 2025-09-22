@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export function validDate(dt: Date | string | null | undefined): boolean {
   if (!dt) {
     return false;
