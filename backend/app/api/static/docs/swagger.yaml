@@ -34,6 +34,8 @@ definitions:
     properties:
       code:
         type: string
+      decimals:
+        type: integer
       local:
         type: string
       name:

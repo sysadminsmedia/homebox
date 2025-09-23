@@ -2240,6 +2240,9 @@ const docTemplate = `{
                 "code": {
                     "type": "string"
                 },
+                "decimals": {
+                    "type": "integer"
+                },
                 "local": {
                     "type": "string"
                 },
