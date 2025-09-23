@@ -3661,6 +3661,19 @@
                     "id": {
                         "type": "string"
                     },
+                    "labelIds": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "x-omitempty": true,
+                        "nullable": true
+                    },
+                    "locationId": {
+                        "type": "string",
+                        "x-omitempty": true,
+                        "nullable": true
+                    },
                     "quantity": {
                         "type": "integer",
                         "x-omitempty": true,

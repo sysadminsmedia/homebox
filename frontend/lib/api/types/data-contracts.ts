@@ -54,10 +54,10 @@ export enum AttachmentType {
 
 export interface CurrenciesCurrency {
   code: string;
+  decimals: number;
   local: string;
   name: string;
   symbol: string;
-  decimals: number;
 }
 
 export interface EntAttachment {
