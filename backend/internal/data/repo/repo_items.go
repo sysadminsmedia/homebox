@@ -853,40 +853,46 @@ func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data Ite
 	}
 
 	if data.LabelIDs != nil {
-    currentLabels, err := tx.Item.Query().Where(item.ID(id)).QueryLabel().All(ctx)
-    if err != nil {
-        return err
-    }
-    set := newIDSet(currentLabels)
+		currentLabels, err := tx.Item.Query().Where(item.ID(id), item.HasGroupWith(group.ID(gid))).QueryLabel().All(ctx)
+		if err != nil {
+			return err
+		}
+		set := newIDSet(currentLabels)
 
-    addLabels := []uuid.UUID{}
-    for _, l := range data.LabelIDs {
-        if set.Contains(l) {
-            set.Remove(l)
-        } else {
-            addLabels = append(addLabels, l)
-        }
-    }
+		addLabels := []uuid.UUID{}
+		for _, l := range data.LabelIDs {
+			if set.Contains(l) {
+				set.Remove(l)
+			} else {
+				addLabels = append(addLabels, l)
+			}
+		}
 
-    if len(addLabels) > 0 {
-        if err := tx.Item.UpdateOneID(id).AddLabelIDs(addLabels...).Exec(ctx); err != nil {
-            return err
-        }
-    }
-    if set.Len() > 0 {
-        if err := tx.Item.UpdateOneID(id).RemoveLabelIDs(set.Slice()...).Exec(ctx); err != nil {
-            return err
-        }
-    }
-}
+		if len(addLabels) > 0 {
+			if err := tx.Item.Update().
+				Where(item.ID(id), item.HasGroupWith(group.ID(gid))).
+				AddLabelIDs(addLabels...).
+				Exec(ctx); err != nil {
+				return err
+			}
+		}
+		if set.Len() > 0 {
+			if err := tx.Item.Update().
+				Where(item.ID(id), item.HasGroupWith(group.ID(gid))).
+				RemoveLabelIDs(set.Slice()...).
+				Exec(ctx); err != nil {
+				return err
+			}
+		}
+	}
 
 	if data.LocationID != uuid.Nil {
-		itemEnt, err := tx.Item.Query().Where(item.ID(id)).Only(ctx)
+		itemEnt, err := tx.Item.Query().Where(item.ID(id), item.HasGroupWith(group.ID(gid))).Only(ctx)
 		if err != nil {
 			return err
 		}
 		if itemEnt.SyncChildItemsLocations {
-			children, err := tx.Item.Query().Where(item.ID(id)).QueryChildren().All(ctx)
+			children, err := tx.Item.Query().Where(item.ID(id), item.HasGroupWith(group.ID(gid))).QueryChildren().All(ctx)
 			if err != nil {
 				return err
 			}
