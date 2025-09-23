@@ -29,13 +29,6 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
     ];
   };
 
-  const ariaSort = (column: Column<ItemSummary, unknown>) => {
-    const s = column.getIsSorted();
-    if (s === "asc") return "ascending";
-    if (s === "desc") return "descending";
-    return "none";
-  };
-
   return [
     {
       id: "select",
@@ -66,7 +59,6 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
           {
             variant: "ghost",
             onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-            "aria-sort": ariaSort(column),
           },
           () => sortable(column, "items.asset_id")
         ),
@@ -81,7 +73,6 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
           {
             variant: "ghost",
             onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-            "aria-sort": ariaSort(column),
           },
           () => sortable(column, "items.name")
         ),
@@ -96,7 +87,6 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
           {
             variant: "ghost",
             onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-            "aria-sort": ariaSort(column),
           },
           () => sortable(column, "items.quantity")
         ),
@@ -111,7 +101,6 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
           {
             variant: "ghost",
             onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-            "aria-sort": ariaSort(column),
           },
           () => sortable(column, "items.insured")
         ),
@@ -133,7 +122,6 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
           {
             variant: "ghost",
             onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-            "aria-sort": ariaSort(column),
           },
           () => sortable(column, "items.purchase_price")
         ),
@@ -149,7 +137,6 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
           {
             variant: "ghost",
             onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-            "aria-sort": ariaSort(column),
           },
           () => sortable(column, "items.location")
         ),
@@ -170,7 +157,6 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
           {
             variant: "ghost",
             onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-            "aria-sort": ariaSort(column),
           },
           () => sortable(column, "items.archived")
         ),
@@ -192,7 +178,6 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
           {
             variant: "ghost",
             onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-            "aria-sort": ariaSort(column),
           },
           () => sortable(column, "items.created_at")
         ),
@@ -212,7 +197,6 @@ export function makeColumns(t: (key: string) => string, refresh?: () => void): C
           {
             variant: "ghost",
             onClick: () => column.toggleSorting(column.getIsSorted() === "asc"),
-            "aria-sort": ariaSort(column),
           },
           () => sortable(column, "items.updated_at")
         ),

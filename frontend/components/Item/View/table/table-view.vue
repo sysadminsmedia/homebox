@@ -1,13 +1,20 @@
 <script setup lang="ts" generic="TValue">
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
   import DataTableExpandedRow from "./data-table-expanded-row.vue";
-  import { FlexRender, type ColumnDef, type Table as TableType } from "@tanstack/vue-table";
+  import { FlexRender, type Column, type ColumnDef, type Table as TableType } from "@tanstack/vue-table";
   import type { ItemSummary } from "~/lib/api/types/data-contracts";
 
   defineProps<{
     table: TableType<ItemSummary>;
     columns: ColumnDef<ItemSummary, TValue>[];
   }>();
+
+  const ariaSort = (column: Column<ItemSummary, unknown>) => {
+    const s = column.getIsSorted();
+    if (s === "asc") return "ascending";
+    if (s === "desc") return "descending";
+    return "none";
+  };
 </script>
 
 <template>
@@ -21,6 +28,7 @@
             'text-no-transform cursor-pointer bg-secondary text-sm text-secondary-foreground hover:bg-secondary/90',
             header.column.id === 'select' || header.column.id === 'actions' ? 'w-10 px-3 text-center' : '',
           ]"
+          :aria-sort="ariaSort(header.column)"
         >
           <FlexRender
             v-if="!header.isPlaceholder"
