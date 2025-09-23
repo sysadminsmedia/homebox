@@ -46,6 +46,7 @@ export function useConfirm(): Store {
       throw new Error("href is not defined");
     }
 
+    store.href.value = "";
     if (typeof msg === "string") {
       store.text.value = msg;
     } else {

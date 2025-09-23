@@ -120,24 +120,28 @@
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const parent = ref<LocationSummary | any>({});
 
-  const fetchItems = async () => {
-    if (!location.value) {
-      return [];
+  const { data: items, refresh: refreshItemList } = useAsyncData(
+    () => locationId.value + "_item_list",
+    async () => {
+      if (!locationId.value) {
+        return [];
+      }
+
+      const resp = await api.items.getAll({
+        locations: [locationId.value],
+      });
+
+      if (resp.error) {
+        toast.error(t("items.toast.failed_load_items"));
+        return [];
+      }
+
+      return resp.data.items;
+    },
+    {
+      watch: [locationId],
     }
-
-    const resp = await api.items.getAll({
-      locations: [location.value.id],
-    });
-
-    if (resp.error) {
-      toast.error(t("items.toast.failed_load_items"));
-      return [];
-    }
-
-    return resp.data.items;
-  };
-
-  const items = computedAsync(fetchItems);
+  );
 </script>
 
 <template>
@@ -230,7 +234,7 @@
         <Markdown v-if="location && location.description" class="mt-3 text-base" :source="location.description" />
       </Card>
       <section v-if="location && items">
-        <ItemViewSelectable :items="items" @refresh="async () => (items = await fetchItems())" />
+        <ItemViewSelectable :items="items" @refresh="refreshItemList" />
       </section>
 
       <section v-if="location && location.children.length > 0" class="mt-6">

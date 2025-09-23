@@ -94,30 +94,34 @@
     updating.value = false;
   }
 
-  const fetchItems = async () => {
-    if (!label.value) {
-      return {
-        items: [],
-        totalPrice: null,
-      };
+  const { data: items, refresh: refreshItemList } = useAsyncData(
+    () => labelId.value + "_item_list",
+    async () => {
+      if (!labelId.value) {
+        return {
+          items: [],
+          totalPrice: null,
+        };
+      }
+
+      const resp = await api.items.getAll({
+        labels: [labelId.value],
+      });
+
+      if (resp.error) {
+        toast.error(t("items.toast.failed_load_items"));
+        return {
+          items: [],
+          totalPrice: null,
+        };
+      }
+
+      return resp.data;
+    },
+    {
+      watch: [labelId],
     }
-
-    const resp = await api.items.getAll({
-      labels: [label.value.id],
-    });
-
-    if (resp.error) {
-      toast.error(t("items.toast.failed_load_items"));
-      return {
-        items: [],
-        totalPrice: null,
-      };
-    }
-
-    return resp.data;
-  };
-
-  const items = computedAsync(fetchItems);
+  );
 </script>
 
 <template>
@@ -202,7 +206,7 @@
       <Markdown v-if="label && label.description" class="mt-3 text-base" :source="label.description" />
     </Card>
     <section v-if="label && items">
-      <ItemViewSelectable :items="items.items" @refresh="async () => (items = await fetchItems())" />
+      <ItemViewSelectable :items="items.items" @refresh="refreshItemList" />
     </section>
   </BaseContainer>
 </template>
