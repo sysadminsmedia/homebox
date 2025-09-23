@@ -100,6 +100,7 @@
                 "item_photo": "Foto dell'articolo 📷",
                 "item_quantity": "Quantità Articoli",
                 "parent_item": "Articolo principale",
+                "product_tooltip_input_barcode": "Compilazione automatica con un codice a barre fornito manualmente",
                 "product_tooltip_scan_barcode": "Riempimento automatico con un codice a barre da 📷",
                 "rotate_photo": "Ruota foto",
                 "set_as_primary_photo": "Imposta come { isPrimary, select, true {non} false {} other {}} foto principale",
@@ -125,6 +126,7 @@
                 "barcode": "Codice a barre del prodotto",
                 "error_exception": "Si è verificato un errore durante il recupero del codice a barre dell'articolo: ",
                 "error_invalid_barcode": "Il codice a barre fornito non è valido",
+                "error_not_found": "Nessun prodotto trovato con il codice a barre fornito.",
                 "search_item": "Cerca prodotto",
                 "title": "Importa prodotto"
             },
@@ -151,6 +153,7 @@
         },
         "label": {
             "create_modal": {
+                "label_color": "Colore Etichetta",
                 "label_description": "Descrizione Etichetta",
                 "label_name": "Nome Etichetta",
                 "title": "Crea Etichetta",
@@ -190,6 +193,9 @@
             "no_results": "Non sono stati trovati risultati.",
             "shortcut_hint": "Utilizzare i tasti numerici per selezionare rapidamente un'azione."
         }
+    },
+    "errors": {
+        "api_failure": "Chiamata API backend non riuscita: "
     },
     "global": {
         "add": "Aggiungi",
@@ -284,6 +290,14 @@
         "description": "Descrizione",
         "details": "Dettagli",
         "drag_and_drop": "Trascina e rilascia i file qui o fai clic per selezionare i file",
+        "duplicate": {
+            "copy_attachments": "Copia allegati",
+            "copy_custom_fields": "Copia Campi Personalizzati",
+            "custom_prefix": "Copia Prefisso",
+            "enable_custom_prefix": "Abilita prefisso personalizzato",
+            "prefix": "Copia di ",
+            "temporary_title": "Impostazioni temporanee"
+        },
         "edit": {
             "edit_attachment_dialog": {
                 "attachment_title": "Titolo allegato",

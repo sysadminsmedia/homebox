@@ -291,6 +291,9 @@
         "description": "Opis",
         "details": "Szczegóły",
         "drag_and_drop": "Przeciągnij i upuść pliki tutaj lub kliknij, aby wybrać pliki",
+        "duplicate": {
+            "prefix": "Kopia z "
+        },
         "edit": {
             "edit_attachment_dialog": {
                 "attachment_title": "Tytuł załącznika",

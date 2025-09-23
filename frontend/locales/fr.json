@@ -25,7 +25,9 @@
             }
         },
         "color_selector": {
+            "clear": "Effacer Couleur",
             "color": "Couleur",
+            "no_color": "Aucune couleur",
             "no_color_selected": "Aucune couleur sélectionnée",
             "randomize": "Couleur aléatoire"
         },
@@ -98,6 +100,8 @@
                 "item_photo": "Photo de l'article 📷",
                 "item_quantity": "Quantité d'articles",
                 "parent_item": "Article parent",
+                "product_tooltip_input_barcode": "Remplir avec un code-barre entré manuellement",
+                "product_tooltip_scan_barcode": "Remplir avec un barre-code d'une 📷",
                 "rotate_photo": "Faire pivoter la photo",
                 "set_as_primary_photo": "Définir comme photo { isPrimary, select, true {non-} false {} other {}}principale",
                 "title": "Créer un article",
@@ -118,10 +122,20 @@
                 "upload_photos": "Transférer des photos",
                 "uploaded": "Photo téléversée"
             },
+            "product_import": {
+                "barcode": "Code-barre produit",
+                "db_source": "Base de données source",
+                "error_exception": "Une erreur s'est produite lors de la récupération du code-barre ",
+                "error_invalid_barcode": "Le code-barre fourni est invalide",
+                "error_not_found": "Aucun produit trouvé pour le barre-code fourni.",
+                "search_item": "Rechercher un produit",
+                "title": "Importer un produit"
+            },
             "selector": {
                 "no_results": "Aucun résultat trouvé",
                 "placeholder": "Sélectionner…",
-                "search_placeholder": "Tapez pour rechercher…"
+                "search_placeholder": "Tapez pour rechercher…",
+                "searching": "Recherche en cours…"
             },
             "view": {
                 "selectable": {
@@ -141,6 +155,7 @@
         },
         "label": {
             "create_modal": {
+                "label_color": "Couleur de l'étiquette",
                 "label_description": "Description de l'étiquette",
                 "label_name": "Nom de l'étiquette",
                 "title": "Créer une étiquette",
@@ -180,6 +195,9 @@
             "no_results": "Aucun résultat trouvé.",
             "shortcut_hint": "Utilisez les touches numériques pour sélectionner rapidement une action."
         }
+    },
+    "errors": {
+        "api_failure": "L'appel vers l'API du back-end a échoué "
     },
     "global": {
         "add": "Ajouter",
@@ -274,6 +292,18 @@
         "description": "Description",
         "details": "Détails",
         "drag_and_drop": "Glissez-déposez les fichiers ici ou cliquez pour choisir des fichiers",
+        "duplicate": {
+            "copy_attachments": "Copier les fichiers joints",
+            "copy_custom_fields": "Copier les champs personnaliisés",
+            "copy_maintenance": "Copie de la maintenance",
+            "custom_prefix": "Copier le préfixe",
+            "enable_custom_prefix": "Activer le préfixe personnalisé",
+            "override_instructions": "Maintenez la touche Maj enfoncée lorsque vous cliquez sur le bouton Dupliquer pour remplacer ces paramètres.",
+            "prefix": "Copie de ",
+            "prefix_instructions": "Ce préfixe sera ajouté au début du nom de l'élément dupliqué. Insérez un espace à la fin afin de séparer le préfixe du nom de l'élément.",
+            "temporary_title": "Paramètres temporaires",
+            "title": "Paramètres de duplication"
+        },
         "edit": {
             "edit_attachment_dialog": {
                 "attachment_title": "Titre de la pièce jointe",
@@ -282,7 +312,8 @@
                 "primary_photo_sub": "Cette option n'est disponible que pour les photos. Seule une photo peut être principale. Si vous sélectionnez cette option, la photo principale, s'il y en a une, sera désélectionnée.",
                 "select_type": "Sélectionner un type",
                 "title": "Modification de pièce jointe"
-            }
+            },
+            "view_image": "Voir l'image"
         },
         "edit_details": "Éditez les détails",
         "field_selector": "Sélecteur de champ",
@@ -380,6 +411,7 @@
         "update_label": "Mettre à jour l'étiquette"
     },
     "languages": {
+        "bs-BA": "Bosnie (Bosnie-Herzégovine)",
         "ca": "Catalan",
         "cs-CZ": "Tchèque",
         "de": "Allemand",
@@ -557,6 +589,8 @@
         }
     },
     "scanner": {
+        "barcode_detected_message": "Le code-barre du produit a été détecté",
+        "barcode_fetch_data": "Récupérer les données du produit",
         "error": "Une erreur s'est produite lors du scan",
         "invalid_url": "URL de code-barres non valide",
         "no_sources": "Aucune source vidéo disponible",
