@@ -11,8 +11,15 @@
     <NuxtLink :to="`/item/${item.id}`">
       <div class="relative h-[200px]">
         <img
+          v-if="imageUrl && objectContain"
+          class="absolute h-[200px] w-full object-cover blur-md"
+          loading="lazy"
+          :src="imageUrl"
+          alt=""
+        />
+        <img
           v-if="imageUrl"
-          class="h-[200px] w-full shadow-md"
+          class="absolute h-[200px] w-full shadow-md"
           :class="objectContain ? 'object-contain' : 'object-cover'"
           loading="lazy"
           :src="imageUrl"
