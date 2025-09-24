@@ -310,11 +310,11 @@
                   <Button class="w-full" type="submit" :class="loading ? 'loading' : ''" :disabled="loading">
                     {{ $t("index.login") }}
                   </Button>
-                  <Button 
-                    v-if="status && status.oidcEnabled" 
-                    variant="outline" 
-                    class="w-full" 
-                    type="button" 
+                  <Button
+                    v-if="status && status.oidcEnabled"
+                    variant="outline"
+                    class="w-full"
+                    type="button"
                     @click="loginOIDC"
                   >
                     <MdiOpenid class="mr-2 size-4" />
