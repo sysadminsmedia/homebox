@@ -31,6 +31,11 @@ export interface IAuthContext {
    * Logs in the user and sets the authorization context via cookies
    */
   login(api: PublicApi, email: string, password: string, stayLoggedIn: boolean): ReturnType<PublicApi["login"]>;
+
+  /**
+   * Initiates OIDC login by redirecting to the auth provider
+   */
+  loginOIDC(): void;
 }
 
 class AuthContext implements IAuthContext {
@@ -106,6 +111,11 @@ class AuthContext implements IAuthContext {
     }
 
     return r;
+  }
+
+  loginOIDC() {
+    // Redirect to OIDC login endpoint with provider parameter
+    window.location.href = "/api/v1/users/login?provider=oidc";
   }
 }
 

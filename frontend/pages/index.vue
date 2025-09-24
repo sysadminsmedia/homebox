@@ -10,6 +10,7 @@
   import MdiArrowRight from "~icons/mdi/arrow-right";
   import MdiLock from "~icons/mdi/lock";
   import MdiMastodon from "~icons/mdi/mastodon";
+  import MdiOpenid from "~icons/mdi/openid";
   import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
   import { Button } from "@/components/ui/button";
   import LanguageSelector from "~/components/App/LanguageSelector.vue";
@@ -143,6 +144,10 @@
   const loading = ref(false);
   const loginPassword = ref("");
   const redirectTo = useState("authRedirect");
+
+  function loginOIDC() {
+    ctx.loginOIDC();
+  }
 
   async function login() {
     loading.value = true;
@@ -301,9 +306,19 @@
                     <FormCheckbox v-model="remember" :label="$t('index.remember_me')" />
                   </div>
                 </CardContent>
-                <CardFooter>
+                <CardFooter class="flex flex-col gap-2">
                   <Button class="w-full" type="submit" :class="loading ? 'loading' : ''" :disabled="loading">
                     {{ $t("index.login") }}
+                  </Button>
+                  <Button 
+                    v-if="status && status.oidcEnabled" 
+                    variant="outline" 
+                    class="w-full" 
+                    type="button" 
+                    @click="loginOIDC"
+                  >
+                    <MdiOpenid class="mr-2 size-4" />
+                    {{ $t("index.login_with_oidc") }}
                   </Button>
                 </CardFooter>
               </Card>
