@@ -23,6 +23,7 @@ export type LocationViewPreferences = {
     enabled: boolean;
   }[];
   displayLegacyHeader: boolean;
+  legacyImageFit: boolean;
   language?: string;
   overrideFormatLocale?: string;
   duplicateSettings: DuplicateSettings;
@@ -47,6 +48,7 @@ export function useViewPreferences(): Ref<LocationViewPreferences> {
       theme: "homebox",
       itemsPerTablePage: 10,
       displayLegacyHeader: false,
+      legacyImageFit: false,
       language: null,
       overrideFormatLocale: null,
       duplicateSettings: {

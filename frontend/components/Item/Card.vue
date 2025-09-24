@@ -10,7 +10,21 @@
     </div>
     <NuxtLink :to="`/item/${item.id}`">
       <div class="relative h-[200px]">
-        <img v-if="imageUrl" class="h-[200px] w-full object-cover shadow-md" loading="lazy" :src="imageUrl" alt="" />
+        <img
+          v-if="imageUrl && objectContain"
+          class="absolute h-[200px] w-full object-cover blur-md"
+          loading="lazy"
+          :src="imageUrl"
+          alt=""
+        />
+        <img
+          v-if="imageUrl"
+          class="absolute h-[200px] w-full shadow-md"
+          :class="objectContain ? 'object-contain' : 'object-cover'"
+          loading="lazy"
+          :src="imageUrl"
+          :alt="item.name"
+        />
         <div class="absolute inset-x-1 bottom-1">
           <Badge class="text-wrap bg-secondary text-secondary-foreground hover:bg-secondary/70 hover:underline">
             <NuxtLink v-if="item.location" :to="`/location/${item.location.id}`">
@@ -76,6 +90,7 @@
   import { Checkbox } from "@/components/ui/checkbox";
 
   const api = useUserApi();
+  const preferences = useViewPreferences();
 
   const imageUrl = computed(() => {
     if (!props.item.imageId) {
@@ -108,6 +123,8 @@
       default: () => null,
     },
   });
+
+  const objectContain = computed(() => imageUrl.value !== "/no-image.jpg" && !preferences.value.legacyImageFit);
 
   const locationString = computed(
     () => props.locationFlatTree.find(l => l.id === props.item.location?.id)?.treeString || props.item.location?.name

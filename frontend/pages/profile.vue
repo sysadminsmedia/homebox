@@ -61,6 +61,9 @@
   function setDisplayHeader() {
     preferences.value.displayLegacyHeader = !preferences.value.displayLegacyHeader;
   }
+  function setLegacyImageFit() {
+    preferences.value.legacyImageFit = !preferences.value.legacyImageFit;
+  }
 
   // Currency Selection
   const currency = ref<CurrenciesCurrency>({
@@ -530,9 +533,12 @@
         </template>
 
         <div class="px-4 pb-4">
-          <div class="mb-3">
+          <div class="mb-3 flex gap-2">
             <Button variant="secondary" size="sm" @click="setDisplayHeader">
               {{ $t("profile.display_legacy_header", { currentValue: preferences.displayLegacyHeader }) }}
+            </Button>
+            <Button variant="secondary" size="sm" @click="setLegacyImageFit">
+              {{ $t("profile.legacy_image_fit", { currentValue: preferences.legacyImageFit }) }}
             </Button>
           </div>
           <ThemePicker />
