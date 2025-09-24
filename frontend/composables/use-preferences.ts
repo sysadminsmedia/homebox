@@ -1,8 +1,8 @@
 import type { Ref } from "vue";
-import type { TableHeaderType } from "~/components/Item/View/Table.types";
+import type { ItemSummary } from "~/lib/api/types/data-contracts";
 import type { DaisyTheme } from "~~/lib/data/themes";
 
-export type ViewType = "table" | "card" | "tree";
+export type ViewType = "table" | "card";
 
 export type DuplicateSettings = {
   copyMaintenance: boolean;
@@ -18,11 +18,18 @@ export type LocationViewPreferences = {
   itemDisplayView: ViewType;
   theme: DaisyTheme;
   itemsPerTablePage: number;
-  tableHeaders?: TableHeaderType[];
+  tableHeaders?: {
+    value: keyof ItemSummary;
+    enabled: boolean;
+  }[];
   displayLegacyHeader: boolean;
   language?: string;
   overrideFormatLocale?: string;
   duplicateSettings: DuplicateSettings;
+  shownMultiTabWarning: boolean;
+  quickActions: {
+    enabled: boolean;
+  };
 };
 
 /**
@@ -47,6 +54,10 @@ export function useViewPreferences(): Ref<LocationViewPreferences> {
         copyAttachments: true,
         copyCustomFields: true,
         copyPrefixOverride: null,
+      },
+      shownMultiTabWarning: false,
+      quickActions: {
+        enabled: true,
       },
     },
     { mergeDefaults: true }

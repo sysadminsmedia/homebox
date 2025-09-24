@@ -3,7 +3,14 @@
     <AlertDialogContent>
       <AlertDialogHeader>
         <AlertDialogTitle>{{ $t("global.confirm") }}</AlertDialogTitle>
-        <AlertDialogDescription> {{ text || $t("global.delete_confirm") }} </AlertDialogDescription>
+        <AlertDialogDescription>
+          {{ text || $t("global.delete_confirm") }}
+        </AlertDialogDescription>
+        <div v-if="href && href !== ''">
+          <a :href="href" target="_blank" rel="noopener noreferrer" class="break-all text-sm text-primary underline">
+            {{ href }}
+          </a>
+        </div>
       </AlertDialogHeader>
       <AlertDialogFooter>
         <AlertDialogCancel @click="cancel(false)">
@@ -30,7 +37,7 @@
     AlertDialogTitle,
   } from "@/components/ui/alert-dialog";
 
-  const { text, isRevealed, confirm, cancel } = useConfirm();
+  const { text, href, isRevealed, confirm, cancel } = useConfirm();
   const { addAlert, removeAlert } = useDialog();
 
   watch(

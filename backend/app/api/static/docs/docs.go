@@ -3483,6 +3483,19 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "labelIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "locationId": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
                 "quantity": {
                     "type": "integer",
                     "x-nullable": true,
