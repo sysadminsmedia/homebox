@@ -20,7 +20,8 @@ export default [
     {
         text: 'Advanced',
         items: [
-            {text: 'Import CSV', link: '/en/import-csv'},
+            {text: 'Import CSV', link: '/en/advanced/import-csv'},
+            {text: 'External Label Service', link: '/en/advanced/external-label-service'},
         ]
     },
     {
