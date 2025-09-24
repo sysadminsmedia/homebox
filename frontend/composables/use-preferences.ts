@@ -23,7 +23,7 @@ export type LocationViewPreferences = {
     enabled: boolean;
   }[];
   displayLegacyHeader: boolean;
-  legacyImageFit: boolean
+  legacyImageFit: boolean;
   language?: string;
   overrideFormatLocale?: string;
   duplicateSettings: DuplicateSettings;
