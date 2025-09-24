@@ -144,6 +144,11 @@ func (svc *UserService) UpdateSelf(ctx context.Context, id uuid.UUID, data repo.
 // ============================================================================
 // User Authentication
 
+// CreateSessionTokenForUser creates a session token for a user by ID (used for OIDC authentication)
+func (svc *UserService) CreateSessionTokenForUser(ctx context.Context, userID uuid.UUID, extendedSession bool) (UserAuthTokenDetail, error) {
+	return svc.createSessionToken(ctx, userID, extendedSession)
+}
+
 func (svc *UserService) createSessionToken(ctx context.Context, userID uuid.UUID, extendedSession bool) (UserAuthTokenDetail, error) {
 	attachmentToken := hasher.GenerateToken()
 

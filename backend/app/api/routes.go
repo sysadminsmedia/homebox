@@ -12,6 +12,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/hay-kot/httpkit/errchain"
+	"github.com/rs/zerolog/log"
 	httpSwagger "github.com/swaggo/http-swagger/v2" // http-swagger middleware
 	"github.com/sysadminsmedia/homebox/backend/app/api/handlers/debughandlers"
 	v1 "github.com/sysadminsmedia/homebox/backend/app/api/handlers/v1"
@@ -85,7 +86,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 
 		r.Post("/users/register", chain.ToHandlerFunc(v1Ctrl.HandleUserRegistration()))
 		r.Post("/users/login", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(authProviders...)))
-		
+
 		// OIDC specific routes
 		if a.conf.OIDC.Enabled {
 			r.Get("/auth/oidc/callback", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(authProviders...)))

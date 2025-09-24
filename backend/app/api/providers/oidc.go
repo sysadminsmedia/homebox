@@ -19,12 +19,12 @@ import (
 )
 
 type OIDCProvider struct {
-	config     *config.OIDCConf
-	userSvc    *services.UserService
-	oauth2Cfg  *oauth2.Config
-	verifier   *oidc.IDTokenVerifier
-	provider   *oidc.Provider
-	states     map[string]time.Time // Simple state storage - in production, use Redis or database
+	config    *config.OIDCConf
+	userSvc   *services.UserService
+	oauth2Cfg *oauth2.Config
+	verifier  *oidc.IDTokenVerifier
+	provider  *oidc.Provider
+	states    map[string]time.Time // Simple state storage - in production, use Redis or database
 }
 
 func NewOIDCProvider(cfg *config.OIDCConf, userSvc *services.UserService) (*OIDCProvider, error) {
@@ -86,7 +86,7 @@ func (p *OIDCProvider) handleLogin(w http.ResponseWriter, r *http.Request) (serv
 
 	// Redirect to OIDC provider
 	http.Redirect(w, r, authURL, http.StatusFound)
-	
+
 	// Return empty token since this is a redirect
 	return services.UserAuthTokenDetail{}, nil
 }
@@ -150,10 +150,10 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 		return services.UserAuthTokenDetail{}, fmt.Errorf("failed to create or get user: %w", err)
 	}
 
-	// Generate authentication token
-	authToken, err := p.userSvc.GenerateToken(ctx, userOut.ID, time.Hour*24*7) // 7 days
+	// Generate authentication token for OIDC authenticated user
+	authToken, err := p.userSvc.CreateSessionTokenForUser(ctx, userOut.ID, true) // Extended session for OIDC
 	if err != nil {
-		return services.UserAuthTokenDetail{}, fmt.Errorf("failed to generate token: %w", err)
+		return services.UserAuthTokenDetail{}, fmt.Errorf("failed to generate session token: %w", err)
 	}
 
 	return authToken, nil
@@ -197,7 +197,7 @@ func (p *OIDCProvider) createOrGetUser(ctx context.Context, email, name, role st
 	// Try to get existing user by email
 	// Note: We'll need to implement GetByEmail in the user service if it doesn't exist
 	// For now, we'll create the user directly through the registration process
-	
+
 	// Create new OIDC user registration
 	registration := services.UserRegistration{
 		Email:    email,
