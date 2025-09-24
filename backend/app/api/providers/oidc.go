@@ -19,12 +19,12 @@ import (
 )
 
 type OIDCProvider struct {
-	config    *config.OIDCConf
-	userSvc   *services.UserService
-	oauth2Cfg *oauth2.Config
-	verifier  *oidc.IDTokenVerifier
-	provider  *oidc.Provider
-	states    map[string]time.Time // Simple state storage - in production, use Redis or database
+	config     *config.OIDCConf
+	userSvc    *services.UserService
+	oauth2Cfg  *oauth2.Config
+	verifier   *oidc.IDTokenVerifier
+	provider   *oidc.Provider
+	states     map[string]time.Time // Simple state storage - in production, use Redis or database
 }
 
 func NewOIDCProvider(cfg *config.OIDCConf, userSvc *services.UserService) (*OIDCProvider, error) {
@@ -194,10 +194,6 @@ func (p *OIDCProvider) determineUserRole(groups []string) string {
 }
 
 func (p *OIDCProvider) createOrGetUser(ctx context.Context, email, name, role string) (repo.UserOut, error) {
-	// Try to get existing user by email
-	// Note: We'll need to implement GetByEmail in the user service if it doesn't exist
-	// For now, we'll create the user directly through the registration process
-
 	// Create new OIDC user registration
 	registration := services.UserRegistration{
 		Email:    email,
@@ -211,7 +207,7 @@ func (p *OIDCProvider) createOrGetUser(ctx context.Context, email, name, role st
 		// If registration fails due to existing email, try to login instead
 		if strings.Contains(err.Error(), "email") {
 			// User exists, we need to get them - for now return error
-			// TODO: Implement proper user lookup by email
+			// TODO: Implement proper user lookup by email in repo/services
 			return repo.UserOut{}, fmt.Errorf("OIDC user already exists but cannot retrieve: %w", err)
 		}
 		return repo.UserOut{}, fmt.Errorf("failed to register OIDC user: %w", err)
