@@ -10169,6 +10169,8 @@ type UserMutation struct {
 	superuser          *bool
 	role               *user.Role
 	activated_on       *time.Time
+	auth_provider      *string
+	external_id        *string
 	clearedFields      map[string]struct{}
 	group              *uuid.UUID
 	clearedgroup       bool
@@ -10462,9 +10464,22 @@ func (m *UserMutation) OldPassword(ctx context.Context) (v string, err error) {
 	return oldValue.Password, nil
 }
 
+// ClearPassword clears the value of the "password" field.
+func (m *UserMutation) ClearPassword() {
+	m.password = nil
+	m.clearedFields[user.FieldPassword] = struct{}{}
+}
+
+// PasswordCleared returns if the "password" field was cleared in this mutation.
+func (m *UserMutation) PasswordCleared() bool {
+	_, ok := m.clearedFields[user.FieldPassword]
+	return ok
+}
+
 // ResetPassword resets all changes to the "password" field.
 func (m *UserMutation) ResetPassword() {
 	m.password = nil
+	delete(m.clearedFields, user.FieldPassword)
 }
 
 // SetIsSuperuser sets the "is_superuser" field.
@@ -10622,6 +10637,104 @@ func (m *UserMutation) ActivatedOnCleared() bool {
 func (m *UserMutation) ResetActivatedOn() {
 	m.activated_on = nil
 	delete(m.clearedFields, user.FieldActivatedOn)
+}
+
+// SetAuthProvider sets the "auth_provider" field.
+func (m *UserMutation) SetAuthProvider(s string) {
+	m.auth_provider = &s
+}
+
+// AuthProvider returns the value of the "auth_provider" field in the mutation.
+func (m *UserMutation) AuthProvider() (r string, exists bool) {
+	v := m.auth_provider
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAuthProvider returns the old "auth_provider" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldAuthProvider(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAuthProvider is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAuthProvider requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAuthProvider: %w", err)
+	}
+	return oldValue.AuthProvider, nil
+}
+
+// ClearAuthProvider clears the value of the "auth_provider" field.
+func (m *UserMutation) ClearAuthProvider() {
+	m.auth_provider = nil
+	m.clearedFields[user.FieldAuthProvider] = struct{}{}
+}
+
+// AuthProviderCleared returns if the "auth_provider" field was cleared in this mutation.
+func (m *UserMutation) AuthProviderCleared() bool {
+	_, ok := m.clearedFields[user.FieldAuthProvider]
+	return ok
+}
+
+// ResetAuthProvider resets all changes to the "auth_provider" field.
+func (m *UserMutation) ResetAuthProvider() {
+	m.auth_provider = nil
+	delete(m.clearedFields, user.FieldAuthProvider)
+}
+
+// SetExternalID sets the "external_id" field.
+func (m *UserMutation) SetExternalID(s string) {
+	m.external_id = &s
+}
+
+// ExternalID returns the value of the "external_id" field in the mutation.
+func (m *UserMutation) ExternalID() (r string, exists bool) {
+	v := m.external_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExternalID returns the old "external_id" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldExternalID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExternalID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExternalID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExternalID: %w", err)
+	}
+	return oldValue.ExternalID, nil
+}
+
+// ClearExternalID clears the value of the "external_id" field.
+func (m *UserMutation) ClearExternalID() {
+	m.external_id = nil
+	m.clearedFields[user.FieldExternalID] = struct{}{}
+}
+
+// ExternalIDCleared returns if the "external_id" field was cleared in this mutation.
+func (m *UserMutation) ExternalIDCleared() bool {
+	_, ok := m.clearedFields[user.FieldExternalID]
+	return ok
+}
+
+// ResetExternalID resets all changes to the "external_id" field.
+func (m *UserMutation) ResetExternalID() {
+	m.external_id = nil
+	delete(m.clearedFields, user.FieldExternalID)
 }
 
 // SetGroupID sets the "group" edge to the Group entity by id.
@@ -10805,7 +10918,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -10833,6 +10946,12 @@ func (m *UserMutation) Fields() []string {
 	if m.activated_on != nil {
 		fields = append(fields, user.FieldActivatedOn)
 	}
+	if m.auth_provider != nil {
+		fields = append(fields, user.FieldAuthProvider)
+	}
+	if m.external_id != nil {
+		fields = append(fields, user.FieldExternalID)
+	}
 	return fields
 }
 
@@ -10859,6 +10978,10 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Role()
 	case user.FieldActivatedOn:
 		return m.ActivatedOn()
+	case user.FieldAuthProvider:
+		return m.AuthProvider()
+	case user.FieldExternalID:
+		return m.ExternalID()
 	}
 	return nil, false
 }
@@ -10886,6 +11009,10 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldRole(ctx)
 	case user.FieldActivatedOn:
 		return m.OldActivatedOn(ctx)
+	case user.FieldAuthProvider:
+		return m.OldAuthProvider(ctx)
+	case user.FieldExternalID:
+		return m.OldExternalID(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -10958,6 +11085,20 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetActivatedOn(v)
 		return nil
+	case user.FieldAuthProvider:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAuthProvider(v)
+		return nil
+	case user.FieldExternalID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExternalID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -10988,8 +11129,17 @@ func (m *UserMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *UserMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(user.FieldPassword) {
+		fields = append(fields, user.FieldPassword)
+	}
 	if m.FieldCleared(user.FieldActivatedOn) {
 		fields = append(fields, user.FieldActivatedOn)
+	}
+	if m.FieldCleared(user.FieldAuthProvider) {
+		fields = append(fields, user.FieldAuthProvider)
+	}
+	if m.FieldCleared(user.FieldExternalID) {
+		fields = append(fields, user.FieldExternalID)
 	}
 	return fields
 }
@@ -11005,8 +11155,17 @@ func (m *UserMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *UserMutation) ClearField(name string) error {
 	switch name {
+	case user.FieldPassword:
+		m.ClearPassword()
+		return nil
 	case user.FieldActivatedOn:
 		m.ClearActivatedOn()
+		return nil
+	case user.FieldAuthProvider:
+		m.ClearAuthProvider()
+		return nil
+	case user.FieldExternalID:
+		m.ClearExternalID()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -11042,6 +11201,12 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldActivatedOn:
 		m.ResetActivatedOn()
+		return nil
+	case user.FieldAuthProvider:
+		m.ResetAuthProvider()
+		return nil
+	case user.FieldExternalID:
+		m.ResetExternalID()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

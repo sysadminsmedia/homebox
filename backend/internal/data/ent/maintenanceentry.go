@@ -83,7 +83,7 @@ func (*MaintenanceEntry) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the MaintenanceEntry fields.
-func (me *MaintenanceEntry) assignValues(columns []string, values []any) error {
+func (_m *MaintenanceEntry) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -93,58 +93,58 @@ func (me *MaintenanceEntry) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
-				me.ID = *value
+				_m.ID = *value
 			}
 		case maintenanceentry.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				me.CreatedAt = value.Time
+				_m.CreatedAt = value.Time
 			}
 		case maintenanceentry.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				me.UpdatedAt = value.Time
+				_m.UpdatedAt = value.Time
 			}
 		case maintenanceentry.FieldItemID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field item_id", values[i])
 			} else if value != nil {
-				me.ItemID = *value
+				_m.ItemID = *value
 			}
 		case maintenanceentry.FieldDate:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field date", values[i])
 			} else if value.Valid {
-				me.Date = value.Time
+				_m.Date = value.Time
 			}
 		case maintenanceentry.FieldScheduledDate:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field scheduled_date", values[i])
 			} else if value.Valid {
-				me.ScheduledDate = value.Time
+				_m.ScheduledDate = value.Time
 			}
 		case maintenanceentry.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
-				me.Name = value.String
+				_m.Name = value.String
 			}
 		case maintenanceentry.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
-				me.Description = value.String
+				_m.Description = value.String
 			}
 		case maintenanceentry.FieldCost:
 			if value, ok := values[i].(*sql.NullFloat64); !ok {
 				return fmt.Errorf("unexpected type %T for field cost", values[i])
 			} else if value.Valid {
-				me.Cost = value.Float64
+				_m.Cost = value.Float64
 			}
 		default:
-			me.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -152,61 +152,61 @@ func (me *MaintenanceEntry) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the MaintenanceEntry.
 // This includes values selected through modifiers, order, etc.
-func (me *MaintenanceEntry) Value(name string) (ent.Value, error) {
-	return me.selectValues.Get(name)
+func (_m *MaintenanceEntry) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // QueryItem queries the "item" edge of the MaintenanceEntry entity.
-func (me *MaintenanceEntry) QueryItem() *ItemQuery {
-	return NewMaintenanceEntryClient(me.config).QueryItem(me)
+func (_m *MaintenanceEntry) QueryItem() *ItemQuery {
+	return NewMaintenanceEntryClient(_m.config).QueryItem(_m)
 }
 
 // Update returns a builder for updating this MaintenanceEntry.
 // Note that you need to call MaintenanceEntry.Unwrap() before calling this method if this MaintenanceEntry
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (me *MaintenanceEntry) Update() *MaintenanceEntryUpdateOne {
-	return NewMaintenanceEntryClient(me.config).UpdateOne(me)
+func (_m *MaintenanceEntry) Update() *MaintenanceEntryUpdateOne {
+	return NewMaintenanceEntryClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the MaintenanceEntry entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (me *MaintenanceEntry) Unwrap() *MaintenanceEntry {
-	_tx, ok := me.config.driver.(*txDriver)
+func (_m *MaintenanceEntry) Unwrap() *MaintenanceEntry {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: MaintenanceEntry is not a transactional entity")
 	}
-	me.config.driver = _tx.drv
-	return me
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (me *MaintenanceEntry) String() string {
+func (_m *MaintenanceEntry) String() string {
 	var builder strings.Builder
 	builder.WriteString("MaintenanceEntry(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", me.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("created_at=")
-	builder.WriteString(me.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
-	builder.WriteString(me.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("item_id=")
-	builder.WriteString(fmt.Sprintf("%v", me.ItemID))
+	builder.WriteString(fmt.Sprintf("%v", _m.ItemID))
 	builder.WriteString(", ")
 	builder.WriteString("date=")
-	builder.WriteString(me.Date.Format(time.ANSIC))
+	builder.WriteString(_m.Date.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("scheduled_date=")
-	builder.WriteString(me.ScheduledDate.Format(time.ANSIC))
+	builder.WriteString(_m.ScheduledDate.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("name=")
-	builder.WriteString(me.Name)
+	builder.WriteString(_m.Name)
 	builder.WriteString(", ")
 	builder.WriteString("description=")
-	builder.WriteString(me.Description)
+	builder.WriteString(_m.Description)
 	builder.WriteString(", ")
 	builder.WriteString("cost=")
-	builder.WriteString(fmt.Sprintf("%v", me.Cost))
+	builder.WriteString(fmt.Sprintf("%v", _m.Cost))
 	builder.WriteByte(')')
 	return builder.String()
 }

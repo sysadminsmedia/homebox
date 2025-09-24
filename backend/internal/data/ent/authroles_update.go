@@ -24,63 +24,63 @@ type AuthRolesUpdate struct {
 }
 
 // Where appends a list predicates to the AuthRolesUpdate builder.
-func (aru *AuthRolesUpdate) Where(ps ...predicate.AuthRoles) *AuthRolesUpdate {
-	aru.mutation.Where(ps...)
-	return aru
+func (_u *AuthRolesUpdate) Where(ps ...predicate.AuthRoles) *AuthRolesUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetRole sets the "role" field.
-func (aru *AuthRolesUpdate) SetRole(a authroles.Role) *AuthRolesUpdate {
-	aru.mutation.SetRole(a)
-	return aru
+func (_u *AuthRolesUpdate) SetRole(v authroles.Role) *AuthRolesUpdate {
+	_u.mutation.SetRole(v)
+	return _u
 }
 
 // SetNillableRole sets the "role" field if the given value is not nil.
-func (aru *AuthRolesUpdate) SetNillableRole(a *authroles.Role) *AuthRolesUpdate {
-	if a != nil {
-		aru.SetRole(*a)
+func (_u *AuthRolesUpdate) SetNillableRole(v *authroles.Role) *AuthRolesUpdate {
+	if v != nil {
+		_u.SetRole(*v)
 	}
-	return aru
+	return _u
 }
 
 // SetTokenID sets the "token" edge to the AuthTokens entity by ID.
-func (aru *AuthRolesUpdate) SetTokenID(id uuid.UUID) *AuthRolesUpdate {
-	aru.mutation.SetTokenID(id)
-	return aru
+func (_u *AuthRolesUpdate) SetTokenID(id uuid.UUID) *AuthRolesUpdate {
+	_u.mutation.SetTokenID(id)
+	return _u
 }
 
 // SetNillableTokenID sets the "token" edge to the AuthTokens entity by ID if the given value is not nil.
-func (aru *AuthRolesUpdate) SetNillableTokenID(id *uuid.UUID) *AuthRolesUpdate {
+func (_u *AuthRolesUpdate) SetNillableTokenID(id *uuid.UUID) *AuthRolesUpdate {
 	if id != nil {
-		aru = aru.SetTokenID(*id)
+		_u = _u.SetTokenID(*id)
 	}
-	return aru
+	return _u
 }
 
 // SetToken sets the "token" edge to the AuthTokens entity.
-func (aru *AuthRolesUpdate) SetToken(a *AuthTokens) *AuthRolesUpdate {
-	return aru.SetTokenID(a.ID)
+func (_u *AuthRolesUpdate) SetToken(v *AuthTokens) *AuthRolesUpdate {
+	return _u.SetTokenID(v.ID)
 }
 
 // Mutation returns the AuthRolesMutation object of the builder.
-func (aru *AuthRolesUpdate) Mutation() *AuthRolesMutation {
-	return aru.mutation
+func (_u *AuthRolesUpdate) Mutation() *AuthRolesMutation {
+	return _u.mutation
 }
 
 // ClearToken clears the "token" edge to the AuthTokens entity.
-func (aru *AuthRolesUpdate) ClearToken() *AuthRolesUpdate {
-	aru.mutation.ClearToken()
-	return aru
+func (_u *AuthRolesUpdate) ClearToken() *AuthRolesUpdate {
+	_u.mutation.ClearToken()
+	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (aru *AuthRolesUpdate) Save(ctx context.Context) (int, error) {
-	return withHooks(ctx, aru.sqlSave, aru.mutation, aru.hooks)
+func (_u *AuthRolesUpdate) Save(ctx context.Context) (int, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (aru *AuthRolesUpdate) SaveX(ctx context.Context) int {
-	affected, err := aru.Save(ctx)
+func (_u *AuthRolesUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -88,21 +88,21 @@ func (aru *AuthRolesUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (aru *AuthRolesUpdate) Exec(ctx context.Context) error {
-	_, err := aru.Save(ctx)
+func (_u *AuthRolesUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (aru *AuthRolesUpdate) ExecX(ctx context.Context) {
-	if err := aru.Exec(ctx); err != nil {
+func (_u *AuthRolesUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (aru *AuthRolesUpdate) check() error {
-	if v, ok := aru.mutation.Role(); ok {
+func (_u *AuthRolesUpdate) check() error {
+	if v, ok := _u.mutation.Role(); ok {
 		if err := authroles.RoleValidator(v); err != nil {
 			return &ValidationError{Name: "role", err: fmt.Errorf(`ent: validator failed for field "AuthRoles.role": %w`, err)}
 		}
@@ -110,22 +110,22 @@ func (aru *AuthRolesUpdate) check() error {
 	return nil
 }
 
-func (aru *AuthRolesUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := aru.check(); err != nil {
-		return n, err
+func (_u *AuthRolesUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(authroles.Table, authroles.Columns, sqlgraph.NewFieldSpec(authroles.FieldID, field.TypeInt))
-	if ps := aru.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := aru.mutation.Role(); ok {
+	if value, ok := _u.mutation.Role(); ok {
 		_spec.SetField(authroles.FieldRole, field.TypeEnum, value)
 	}
-	if aru.mutation.TokenCleared() {
+	if _u.mutation.TokenCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
@@ -138,7 +138,7 @@ func (aru *AuthRolesUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := aru.mutation.TokenIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.TokenIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
@@ -154,7 +154,7 @@ func (aru *AuthRolesUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, aru.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{authroles.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -162,8 +162,8 @@ func (aru *AuthRolesUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	aru.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // AuthRolesUpdateOne is the builder for updating a single AuthRoles entity.
@@ -175,70 +175,70 @@ type AuthRolesUpdateOne struct {
 }
 
 // SetRole sets the "role" field.
-func (aruo *AuthRolesUpdateOne) SetRole(a authroles.Role) *AuthRolesUpdateOne {
-	aruo.mutation.SetRole(a)
-	return aruo
+func (_u *AuthRolesUpdateOne) SetRole(v authroles.Role) *AuthRolesUpdateOne {
+	_u.mutation.SetRole(v)
+	return _u
 }
 
 // SetNillableRole sets the "role" field if the given value is not nil.
-func (aruo *AuthRolesUpdateOne) SetNillableRole(a *authroles.Role) *AuthRolesUpdateOne {
-	if a != nil {
-		aruo.SetRole(*a)
+func (_u *AuthRolesUpdateOne) SetNillableRole(v *authroles.Role) *AuthRolesUpdateOne {
+	if v != nil {
+		_u.SetRole(*v)
 	}
-	return aruo
+	return _u
 }
 
 // SetTokenID sets the "token" edge to the AuthTokens entity by ID.
-func (aruo *AuthRolesUpdateOne) SetTokenID(id uuid.UUID) *AuthRolesUpdateOne {
-	aruo.mutation.SetTokenID(id)
-	return aruo
+func (_u *AuthRolesUpdateOne) SetTokenID(id uuid.UUID) *AuthRolesUpdateOne {
+	_u.mutation.SetTokenID(id)
+	return _u
 }
 
 // SetNillableTokenID sets the "token" edge to the AuthTokens entity by ID if the given value is not nil.
-func (aruo *AuthRolesUpdateOne) SetNillableTokenID(id *uuid.UUID) *AuthRolesUpdateOne {
+func (_u *AuthRolesUpdateOne) SetNillableTokenID(id *uuid.UUID) *AuthRolesUpdateOne {
 	if id != nil {
-		aruo = aruo.SetTokenID(*id)
+		_u = _u.SetTokenID(*id)
 	}
-	return aruo
+	return _u
 }
 
 // SetToken sets the "token" edge to the AuthTokens entity.
-func (aruo *AuthRolesUpdateOne) SetToken(a *AuthTokens) *AuthRolesUpdateOne {
-	return aruo.SetTokenID(a.ID)
+func (_u *AuthRolesUpdateOne) SetToken(v *AuthTokens) *AuthRolesUpdateOne {
+	return _u.SetTokenID(v.ID)
 }
 
 // Mutation returns the AuthRolesMutation object of the builder.
-func (aruo *AuthRolesUpdateOne) Mutation() *AuthRolesMutation {
-	return aruo.mutation
+func (_u *AuthRolesUpdateOne) Mutation() *AuthRolesMutation {
+	return _u.mutation
 }
 
 // ClearToken clears the "token" edge to the AuthTokens entity.
-func (aruo *AuthRolesUpdateOne) ClearToken() *AuthRolesUpdateOne {
-	aruo.mutation.ClearToken()
-	return aruo
+func (_u *AuthRolesUpdateOne) ClearToken() *AuthRolesUpdateOne {
+	_u.mutation.ClearToken()
+	return _u
 }
 
 // Where appends a list predicates to the AuthRolesUpdate builder.
-func (aruo *AuthRolesUpdateOne) Where(ps ...predicate.AuthRoles) *AuthRolesUpdateOne {
-	aruo.mutation.Where(ps...)
-	return aruo
+func (_u *AuthRolesUpdateOne) Where(ps ...predicate.AuthRoles) *AuthRolesUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (aruo *AuthRolesUpdateOne) Select(field string, fields ...string) *AuthRolesUpdateOne {
-	aruo.fields = append([]string{field}, fields...)
-	return aruo
+func (_u *AuthRolesUpdateOne) Select(field string, fields ...string) *AuthRolesUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated AuthRoles entity.
-func (aruo *AuthRolesUpdateOne) Save(ctx context.Context) (*AuthRoles, error) {
-	return withHooks(ctx, aruo.sqlSave, aruo.mutation, aruo.hooks)
+func (_u *AuthRolesUpdateOne) Save(ctx context.Context) (*AuthRoles, error) {
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (aruo *AuthRolesUpdateOne) SaveX(ctx context.Context) *AuthRoles {
-	node, err := aruo.Save(ctx)
+func (_u *AuthRolesUpdateOne) SaveX(ctx context.Context) *AuthRoles {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -246,21 +246,21 @@ func (aruo *AuthRolesUpdateOne) SaveX(ctx context.Context) *AuthRoles {
 }
 
 // Exec executes the query on the entity.
-func (aruo *AuthRolesUpdateOne) Exec(ctx context.Context) error {
-	_, err := aruo.Save(ctx)
+func (_u *AuthRolesUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (aruo *AuthRolesUpdateOne) ExecX(ctx context.Context) {
-	if err := aruo.Exec(ctx); err != nil {
+func (_u *AuthRolesUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (aruo *AuthRolesUpdateOne) check() error {
-	if v, ok := aruo.mutation.Role(); ok {
+func (_u *AuthRolesUpdateOne) check() error {
+	if v, ok := _u.mutation.Role(); ok {
 		if err := authroles.RoleValidator(v); err != nil {
 			return &ValidationError{Name: "role", err: fmt.Errorf(`ent: validator failed for field "AuthRoles.role": %w`, err)}
 		}
@@ -268,17 +268,17 @@ func (aruo *AuthRolesUpdateOne) check() error {
 	return nil
 }
 
-func (aruo *AuthRolesUpdateOne) sqlSave(ctx context.Context) (_node *AuthRoles, err error) {
-	if err := aruo.check(); err != nil {
+func (_u *AuthRolesUpdateOne) sqlSave(ctx context.Context) (_node *AuthRoles, err error) {
+	if err := _u.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(authroles.Table, authroles.Columns, sqlgraph.NewFieldSpec(authroles.FieldID, field.TypeInt))
-	id, ok := aruo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "AuthRoles.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := aruo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, authroles.FieldID)
 		for _, f := range fields {
@@ -290,17 +290,17 @@ func (aruo *AuthRolesUpdateOne) sqlSave(ctx context.Context) (_node *AuthRoles, 
 			}
 		}
 	}
-	if ps := aruo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := aruo.mutation.Role(); ok {
+	if value, ok := _u.mutation.Role(); ok {
 		_spec.SetField(authroles.FieldRole, field.TypeEnum, value)
 	}
-	if aruo.mutation.TokenCleared() {
+	if _u.mutation.TokenCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
@@ -313,7 +313,7 @@ func (aruo *AuthRolesUpdateOne) sqlSave(ctx context.Context) (_node *AuthRoles, 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := aruo.mutation.TokenIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.TokenIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: true,
@@ -329,10 +329,10 @@ func (aruo *AuthRolesUpdateOne) sqlSave(ctx context.Context) (_node *AuthRoles, 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &AuthRoles{config: aruo.config}
+	_node = &AuthRoles{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, aruo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{authroles.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -340,6 +340,6 @@ func (aruo *AuthRolesUpdateOne) sqlSave(ctx context.Context) (_node *AuthRoles, 
 		}
 		return nil, err
 	}
-	aruo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

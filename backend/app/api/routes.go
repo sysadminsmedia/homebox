@@ -68,12 +68,28 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 
 		r.Get("/currencies", chain.ToHandlerFunc(v1Ctrl.HandleCurrency()))
 
-		providers := []v1.AuthProvider{
+		authProviders := []v1.AuthProvider{
 			providers.NewLocalProvider(a.services.User),
 		}
 
+		// Add OIDC provider if enabled
+		if a.conf.OIDC.Enabled {
+			oidcProvider, err := providers.NewOIDCProvider(&a.conf.OIDC, a.services.User)
+			if err != nil {
+				log.Error().Err(err).Msg("failed to initialize OIDC provider")
+			} else {
+				authProviders = append(authProviders, oidcProvider)
+				log.Info().Msg("OIDC authentication provider enabled")
+			}
+		}
+
 		r.Post("/users/register", chain.ToHandlerFunc(v1Ctrl.HandleUserRegistration()))
-		r.Post("/users/login", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(providers...)))
+		r.Post("/users/login", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(authProviders...)))
+		
+		// OIDC specific routes
+		if a.conf.OIDC.Enabled {
+			r.Get("/auth/oidc/callback", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(authProviders...)))
+		}
 
 		userMW := []errchain.Middleware{
 			a.mwAuthToken,

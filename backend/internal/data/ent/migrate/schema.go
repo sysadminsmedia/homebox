@@ -386,11 +386,13 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Size: 255},
 		{Name: "email", Type: field.TypeString, Unique: true, Size: 255},
-		{Name: "password", Type: field.TypeString, Size: 255},
+		{Name: "password", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "is_superuser", Type: field.TypeBool, Default: false},
 		{Name: "superuser", Type: field.TypeBool, Default: false},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"user", "owner"}, Default: "user"},
 		{Name: "activated_on", Type: field.TypeTime, Nullable: true},
+		{Name: "auth_provider", Type: field.TypeString, Nullable: true, Default: "local"},
+		{Name: "external_id", Type: field.TypeString, Nullable: true},
 		{Name: "group_users", Type: field.TypeUUID},
 	}
 	// UsersTable holds the schema information for the "users" table.
@@ -401,7 +403,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "users_groups_users",
-				Columns:    []*schema.Column{UsersColumns[10]},
+				Columns:    []*schema.Column{UsersColumns[12]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},

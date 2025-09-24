@@ -34,7 +34,7 @@ func (User) Fields() []ent.Field {
 			Unique(),
 		field.String("password").
 			MaxLen(255).
-			NotEmpty().
+			Optional().
 			Sensitive(),
 		field.Bool("is_superuser").
 			Default(false),
@@ -44,6 +44,11 @@ func (User) Fields() []ent.Field {
 			Default("user").
 			Values("user", "owner"),
 		field.Time("activated_on").
+			Optional(),
+		field.String("auth_provider").
+			Default("local").
+			Optional(),
+		field.String("external_id").
 			Optional(),
 	}
 }
