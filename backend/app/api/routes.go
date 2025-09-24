@@ -12,6 +12,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/hay-kot/httpkit/errchain"
+	"github.com/rs/zerolog/log"
 	httpSwagger "github.com/swaggo/http-swagger/v2" // http-swagger middleware
 	"github.com/sysadminsmedia/homebox/backend/app/api/handlers/debughandlers"
 	v1 "github.com/sysadminsmedia/homebox/backend/app/api/handlers/v1"
@@ -67,13 +68,33 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		})))
 
 		r.Get("/currencies", chain.ToHandlerFunc(v1Ctrl.HandleCurrency()))
+		r.Get("/auth/oidc/config", chain.ToHandlerFunc(v1Ctrl.HandleOIDCConfig()))
+		
+		// OIDC specific routes (only add if OIDC is enabled)
+		if a.conf.OIDC.Enabled {
+			oidcProvider, err := providers.NewOIDCProvider(&a.conf.OIDC, a.services.User)
+			if err != nil {
+				log.Fatal().Err(err).Msg("failed to create OIDC provider for routes")
+			}
+			r.Get("/auth/oidc/login", chain.ToHandlerFunc(v1Ctrl.HandleOIDCLogin(oidcProvider)))
+			r.Get("/auth/oidc/callback", chain.ToHandlerFunc(v1Ctrl.HandleOIDCCallback(oidcProvider)))
+		}
 
-		providers := []v1.AuthProvider{
+		authProviders := []v1.AuthProvider{
 			providers.NewLocalProvider(a.services.User),
 		}
 
+		// Add OIDC provider if enabled
+		if a.conf.OIDC.Enabled {
+			oidcProvider, err := providers.NewOIDCProvider(&a.conf.OIDC, a.services.User)
+			if err != nil {
+				log.Fatal().Err(err).Msg("failed to create OIDC provider")
+			}
+			authProviders = append(authProviders, oidcProvider)
+		}
+
 		r.Post("/users/register", chain.ToHandlerFunc(v1Ctrl.HandleUserRegistration()))
-		r.Post("/users/login", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(providers...)))
+		r.Post("/users/login", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(authProviders...)))
 
 		userMW := []errchain.Middleware{
 			a.mwAuthToken,

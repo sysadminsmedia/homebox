@@ -4,50 +4,50 @@ package ent
 
 import "github.com/google/uuid"
 
-func (a *Attachment) GetID() uuid.UUID {
-	return a.ID
+func (_m *Attachment) GetID() uuid.UUID {
+	return _m.ID
 }
 
-func (ar *AuthRoles) GetID() int {
-	return ar.ID
+func (_m *AuthRoles) GetID() int {
+	return _m.ID
 }
 
-func (at *AuthTokens) GetID() uuid.UUID {
-	return at.ID
+func (_m *AuthTokens) GetID() uuid.UUID {
+	return _m.ID
 }
 
-func (gr *Group) GetID() uuid.UUID {
-	return gr.ID
+func (_m *Group) GetID() uuid.UUID {
+	return _m.ID
 }
 
-func (git *GroupInvitationToken) GetID() uuid.UUID {
-	return git.ID
+func (_m *GroupInvitationToken) GetID() uuid.UUID {
+	return _m.ID
 }
 
-func (i *Item) GetID() uuid.UUID {
-	return i.ID
+func (_m *Item) GetID() uuid.UUID {
+	return _m.ID
 }
 
-func (_if *ItemField) GetID() uuid.UUID {
-	return _if.ID
+func (_m *ItemField) GetID() uuid.UUID {
+	return _m.ID
 }
 
-func (l *Label) GetID() uuid.UUID {
-	return l.ID
+func (_m *Label) GetID() uuid.UUID {
+	return _m.ID
 }
 
-func (l *Location) GetID() uuid.UUID {
-	return l.ID
+func (_m *Location) GetID() uuid.UUID {
+	return _m.ID
 }
 
-func (me *MaintenanceEntry) GetID() uuid.UUID {
-	return me.ID
+func (_m *MaintenanceEntry) GetID() uuid.UUID {
+	return _m.ID
 }
 
-func (n *Notifier) GetID() uuid.UUID {
-	return n.ID
+func (_m *Notifier) GetID() uuid.UUID {
+	return _m.ID
 }
 
-func (u *User) GetID() uuid.UUID {
-	return u.ID
+func (_m *User) GetID() uuid.UUID {
+	return _m.ID
 }

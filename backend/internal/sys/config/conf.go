@@ -30,6 +30,7 @@ type Config struct {
 	LabelMaker LabelMakerConf `yaml:"labelmaker"`
 	Thumbnail  Thumbnail      `yaml:"thumbnail"`
 	Barcode    BarcodeAPIConf `yaml:"barcode"`
+	OIDC       OIDCConf       `yaml:"oidc"`
 }
 
 type Options struct {
@@ -75,6 +76,18 @@ type LabelMakerConf struct {
 
 type BarcodeAPIConf struct {
 	TokenBarcodespider string `yaml:"token_barcodespider"`
+}
+
+type OIDCConf struct {
+	Enabled      bool   `yaml:"enabled"       conf:"default:false"`
+	Issuer       string `yaml:"issuer"`
+	ClientID     string `yaml:"client_id"`
+	ClientSecret string `yaml:"client_secret"`
+	RedirectURL  string `yaml:"redirect_url"`
+	Scopes       string `yaml:"scopes"        conf:"default:openid profile email"`
+	UsernameClaim string `yaml:"username_claim" conf:"default:preferred_username"`
+	EmailClaim    string `yaml:"email_claim"   conf:"default:email"`
+	NameClaim     string `yaml:"name_claim"    conf:"default:name"`
 }
 
 // New parses the CLI/Config file and returns a Config struct. If the file argument is an empty string, the

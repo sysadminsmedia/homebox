@@ -27,4 +27,10 @@ export class PublicApi extends BaseAPI {
   public register(body: UserRegistration) {
     return this.http.post<UserRegistration, TokenResponse>({ url: route("/users/register"), body });
   }
+
+  public getOIDCConfig() {
+    return this.http.get<{ enabled: boolean; authUrl?: string }>({
+      url: route("/auth/oidc/config"),
+    });
+  }
 }

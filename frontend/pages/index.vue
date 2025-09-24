@@ -52,6 +52,11 @@
     return data;
   });
 
+  const { data: oidcConfig } = useAsyncData(async () => {
+    const { data } = await api.getOIDCConfig();
+    return data;
+  });
+
   whenever(status, status => {
     if (status?.demo) {
       email.value = "demo@example.com";
@@ -163,6 +168,12 @@
     navigateTo(redirectTo.value || "/home");
     redirectTo.value = null;
     loading.value = false;
+  }
+
+  function loginWithOIDC() {
+    if (oidcConfig.value?.authUrl) {
+      window.location.href = oidcConfig.value.authUrl;
+    }
   }
 
   const [registerForm, toggleLogin] = useToggle();
@@ -301,9 +312,19 @@
                     <FormCheckbox v-model="remember" :label="$t('index.remember_me')" />
                   </div>
                 </CardContent>
-                <CardFooter>
+                <CardFooter class="flex flex-col gap-2">
                   <Button class="w-full" type="submit" :class="loading ? 'loading' : ''" :disabled="loading">
                     {{ $t("index.login") }}
+                  </Button>
+                  <Button
+                    v-if="oidcConfig?.enabled"
+                    variant="outline"
+                    class="w-full"
+                    type="button"
+                    :disabled="loading"
+                    @click="loginWithOIDC"
+                  >
+                    {{ $t("index.login_with_oidc") }}
                   </Button>
                 </CardFooter>
               </Card>

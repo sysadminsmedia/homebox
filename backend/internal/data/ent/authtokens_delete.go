@@ -20,56 +20,56 @@ type AuthTokensDelete struct {
 }
 
 // Where appends a list predicates to the AuthTokensDelete builder.
-func (atd *AuthTokensDelete) Where(ps ...predicate.AuthTokens) *AuthTokensDelete {
-	atd.mutation.Where(ps...)
-	return atd
+func (_d *AuthTokensDelete) Where(ps ...predicate.AuthTokens) *AuthTokensDelete {
+	_d.mutation.Where(ps...)
+	return _d
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (atd *AuthTokensDelete) Exec(ctx context.Context) (int, error) {
-	return withHooks(ctx, atd.sqlExec, atd.mutation, atd.hooks)
+func (_d *AuthTokensDelete) Exec(ctx context.Context) (int, error) {
+	return withHooks(ctx, _d.sqlExec, _d.mutation, _d.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (atd *AuthTokensDelete) ExecX(ctx context.Context) int {
-	n, err := atd.Exec(ctx)
+func (_d *AuthTokensDelete) ExecX(ctx context.Context) int {
+	n, err := _d.Exec(ctx)
 	if err != nil {
 		panic(err)
 	}
 	return n
 }
 
-func (atd *AuthTokensDelete) sqlExec(ctx context.Context) (int, error) {
+func (_d *AuthTokensDelete) sqlExec(ctx context.Context) (int, error) {
 	_spec := sqlgraph.NewDeleteSpec(authtokens.Table, sqlgraph.NewFieldSpec(authtokens.FieldID, field.TypeUUID))
-	if ps := atd.mutation.predicates; len(ps) > 0 {
+	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	affected, err := sqlgraph.DeleteNodes(ctx, atd.driver, _spec)
+	affected, err := sqlgraph.DeleteNodes(ctx, _d.driver, _spec)
 	if err != nil && sqlgraph.IsConstraintError(err) {
 		err = &ConstraintError{msg: err.Error(), wrap: err}
 	}
-	atd.mutation.done = true
+	_d.mutation.done = true
 	return affected, err
 }
 
 // AuthTokensDeleteOne is the builder for deleting a single AuthTokens entity.
 type AuthTokensDeleteOne struct {
-	atd *AuthTokensDelete
+	_d *AuthTokensDelete
 }
 
 // Where appends a list predicates to the AuthTokensDelete builder.
-func (atdo *AuthTokensDeleteOne) Where(ps ...predicate.AuthTokens) *AuthTokensDeleteOne {
-	atdo.atd.mutation.Where(ps...)
-	return atdo
+func (_d *AuthTokensDeleteOne) Where(ps ...predicate.AuthTokens) *AuthTokensDeleteOne {
+	_d._d.mutation.Where(ps...)
+	return _d
 }
 
 // Exec executes the deletion query.
-func (atdo *AuthTokensDeleteOne) Exec(ctx context.Context) error {
-	n, err := atdo.atd.Exec(ctx)
+func (_d *AuthTokensDeleteOne) Exec(ctx context.Context) error {
+	n, err := _d._d.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
@@ -81,8 +81,8 @@ func (atdo *AuthTokensDeleteOne) Exec(ctx context.Context) error {
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (atdo *AuthTokensDeleteOne) ExecX(ctx context.Context) {
-	if err := atdo.Exec(ctx); err != nil {
+func (_d *AuthTokensDeleteOne) ExecX(ctx context.Context) {
+	if err := _d.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

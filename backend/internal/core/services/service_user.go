@@ -260,3 +260,94 @@ func (svc *UserService) ChangePassword(ctx Context, current string, new string) 
 
 	return true
 }
+
+// GetOrCreateOIDCUser retrieves an existing user or creates a new one for OIDC authentication
+func (svc *UserService) GetOrCreateOIDCUser(ctx context.Context, username, email, name string) (UserAuthTokenDetail, error) {
+	log.Debug().
+		Str("username", username).
+		Str("email", email).
+		Str("name", name).
+		Msg("Getting or creating OIDC user")
+
+	// Try to find existing user by email first, then by username
+	var usr repo.UserOut
+	var err error
+
+	if email != "" {
+		usr, err = svc.repos.Users.GetOneEmail(ctx, email)
+		if err == nil {
+			log.Debug().Str("email", email).Msg("Found existing user by email")
+			return svc.createSessionToken(ctx, usr.ID, false)
+		}
+	}
+
+	// If not found by email, try by username
+	if username != "" && username != email {
+		usr, err = svc.repos.Users.GetOneEmail(ctx, username)
+		if err == nil {
+			log.Debug().Str("username", username).Msg("Found existing user by username")
+			return svc.createSessionToken(ctx, usr.ID, false)
+		}
+	}
+
+	// User doesn't exist, create a new one
+	log.Debug().Msg("Creating new OIDC user")
+
+	// Create a new group for the user (OIDC users get their own group by default)
+	group, err := svc.repos.Groups.GroupCreate(ctx, "Home")
+	if err != nil {
+		log.Err(err).Msg("Failed to create group for OIDC user")
+		return UserAuthTokenDetail{}, err
+	}
+
+	// Use a placeholder password for OIDC users (they won't use password auth)
+	placeholderPassword, _ := hasher.HashPassword(hasher.GenerateToken().Raw)
+
+	// Use email as username if username is empty
+	if username == "" {
+		username = email
+	}
+
+	// Use email as name if name is empty
+	if name == "" {
+		name = email
+	}
+
+	usrCreate := repo.UserCreate{
+		Name:        name,
+		Email:       username, // Store username in email field for OIDC users
+		Password:    placeholderPassword,
+		IsSuperuser: false,
+		GroupID:     group.ID,
+		IsOwner:     true, // OIDC users are owners of their groups
+	}
+
+	usr, err = svc.repos.Users.Create(ctx, usrCreate)
+	if err != nil {
+		log.Err(err).Msg("Failed to create OIDC user")
+		return UserAuthTokenDetail{}, err
+	}
+
+	log.Debug().Str("userID", usr.ID.String()).Msg("OIDC user created")
+
+	// Create default labels and locations for the new user's group
+	log.Debug().Msg("Creating default labels for OIDC user")
+	for _, label := range defaultLabels() {
+		_, err := svc.repos.Labels.Create(ctx, usr.GroupID, label)
+		if err != nil {
+			log.Err(err).Msg("Failed to create default label for OIDC user")
+			// Continue creating other labels even if one fails
+		}
+	}
+
+	log.Debug().Msg("Creating default locations for OIDC user")
+	for _, location := range defaultLocations() {
+		_, err := svc.repos.Locations.Create(ctx, usr.GroupID, location)
+		if err != nil {
+			log.Err(err).Msg("Failed to create default location for OIDC user")
+			// Continue creating other locations even if one fails
+		}
+	}
+
+	return svc.createSessionToken(ctx, usr.ID, false)
+}
