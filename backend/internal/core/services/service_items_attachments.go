@@ -47,10 +47,13 @@ func (svc *ItemService) AttachmentAdd(ctx Context, itemID uuid.UUID, filename st
 	}
 
 	// Create the attachment
-	_, err = svc.repo.Attachments.Create(ctx, itemID, repo.ItemCreateAttachment{Title: filename, Content: file}, attachmentType, primary)
+	createdAttachment, err := svc.repo.Attachments.Create(ctx, itemID, repo.ItemCreateAttachment{Title: filename, Content: file}, attachmentType, primary)
 	if err != nil {
 		log.Err(err).Msg("failed to create attachment")
+		return repo.ItemOut{}, err
 	}
+
+	log.Debug().Str("attachment_id", createdAttachment.ID.String()).Str("item_id", itemID.String()).Msg("attachment created successfully")
 
 	return svc.repo.Items.GetOneByGroup(ctx, ctx.GID, itemID)
 }

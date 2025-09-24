@@ -84,6 +84,11 @@ type (
 )
 
 func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
+	var thumbnail *ent.Attachment
+	if attachment.Edges.Thumbnail != nil {
+		thumbnail = attachment.Edges.Thumbnail
+	}
+	
 	return ItemAttachment{
 		ID:        attachment.ID,
 		CreatedAt: attachment.CreatedAt,
@@ -93,7 +98,7 @@ func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
 		Path:      attachment.Path,
 		Title:     attachment.Title,
 		MimeType:  attachment.MimeType,
-		Thumbnail: attachment.QueryThumbnail().FirstX(context.Background()),
+		Thumbnail: thumbnail,
 	}
 }
 

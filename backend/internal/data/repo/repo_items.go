@@ -327,7 +327,9 @@ func (e *ItemsRepository) getOne(ctx context.Context, where ...predicate.Item) (
 		WithLocation().
 		WithGroup().
 		WithParent().
-		WithAttachments().
+		WithAttachments(func(aq *ent.AttachmentQuery) {
+			aq.WithThumbnail()
+		}).
 		Only(ctx),
 	)
 }
