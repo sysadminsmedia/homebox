@@ -3,6 +3,7 @@ package providers
 import (
 	"context"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/base64"
 	"errors"
 	"fmt"
@@ -26,8 +27,14 @@ type OIDCProvider struct {
 	oauth2Cfg *oauth2.Config
 	verifier  *oidc.IDTokenVerifier
 	provider  *oidc.Provider
-	states    map[string]time.Time // Simple state storage - in production, use Redis or database
+	states    map[string]pkceState // state -> verifier+nonce+expiry (use Redis in production)
 	statesMu  sync.RWMutex
+}
+
+type pkceState struct {
+	Verifier string
+	Nonce    string
+	Expires  time.Time
 }
 
 func NewOIDCProvider(ctx context.Context, cfg *config.OIDCConf, userSvc *services.UserService) (*OIDCProvider, error) {
@@ -80,13 +87,22 @@ func (p *OIDCProvider) handleLogin(w http.ResponseWriter, r *http.Request) (serv
 		return services.UserAuthTokenDetail{}, fmt.Errorf("failed to generate state: %w", err)
 	}
 
+	// PKCE: generate code_verifier and S256 code_challenge, plus nonce
+	verifier := mustRandomString(64)
+	challenge := codeChallengeS256(verifier)
+	nonce := mustRandomString(32)
+
 	// Store state with expiration (write lock)
 	p.statesMu.Lock()
-	p.states[state] = time.Now().Add(10 * time.Minute)
+	p.states[state] = pkceState{Verifier: verifier, Nonce: nonce, Expires: time.Now().Add(10 * time.Minute)}
 	p.statesMu.Unlock()
 
-	// Generate authorization URL
-	authURL := p.oauth2Cfg.AuthCodeURL(state)
+	// Generate authorization URL with PKCE and nonce
+	authURL := p.oauth2Cfg.AuthCodeURL(state,
+		oauth2.SetAuthURLParam("code_challenge", challenge),
+		oauth2.SetAuthURLParam("code_challenge_method", "S256"),
+		oauth2.SetAuthURLParam("nonce", nonce),
+	)
 
 	// Redirect to OIDC provider
 	http.Redirect(w, r, authURL, http.StatusFound)
@@ -96,9 +112,10 @@ func (p *OIDCProvider) handleLogin(w http.ResponseWriter, r *http.Request) (serv
 }
 
 func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (services.UserAuthTokenDetail, error) {
-	// Verify state parameter
+	// Verify state parameter and retrieve PKCE/nonce
 	state := r.URL.Query().Get("state")
-	if !p.verifyState(state) {
+	ps, ok := p.popState(state)
+	if !ok {
 		return services.UserAuthTokenDetail{}, errors.New("invalid state parameter")
 	}
 
@@ -108,9 +125,9 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 		return services.UserAuthTokenDetail{}, errors.New("authorization code not found")
 	}
 
-	// Exchange code for token
+	// Exchange code for token with PKCE code_verifier
 	ctx := r.Context()
-	token, err := p.oauth2Cfg.Exchange(ctx, code)
+	token, err := p.oauth2Cfg.Exchange(ctx, code, oauth2.SetAuthURLParam("code_verifier", ps.Verifier))
 	if err != nil {
 		return services.UserAuthTokenDetail{}, fmt.Errorf("failed to exchange token: %w", err)
 	}
@@ -134,6 +151,7 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 		Subject       string   `json:"sub"`
 		EmailVerified bool     `json:"email_verified"`
 		Groups        []string `json:"groups"`
+		Nonce         string   `json:"nonce"`
 	}
 
 	if err := idToken.Claims(&claims); err != nil {
@@ -143,6 +161,10 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 	// Verify email is verified
 	if !claims.EmailVerified {
 		return services.UserAuthTokenDetail{}, errors.New("email not verified")
+	}
+	// Verify nonce matches what we generated
+	if claims.Nonce == "" || claims.Nonce != ps.Nonce {
+		return services.UserAuthTokenDetail{}, errors.New("invalid id token nonce")
 	}
 
 	// Determine user role based on groups
@@ -171,28 +193,35 @@ func (p *OIDCProvider) generateState() (string, error) {
 	return base64.URLEncoding.EncodeToString(bytes), nil
 }
 
-func (p *OIDCProvider) verifyState(state string) bool {
-	// Read lock to check
-	p.statesMu.RLock()
-	expiration, exists := p.states[state]
-	p.statesMu.RUnlock()
-	if !exists {
-		return false
+// mustRandomString returns a URL-safe base64 string of n random bytes or panics
+func mustRandomString(n int) string {
+	b := make([]byte, n)
+	if _, err := rand.Read(b); err != nil {
+		panic(err)
 	}
+	return base64.URLEncoding.WithPadding(base64.NoPadding).EncodeToString(b)
+}
 
-	// If expired, write lock to delete
-	if time.Now().After(expiration) {
-		p.statesMu.Lock()
-		delete(p.states, state)
-		p.statesMu.Unlock()
-		return false
-	}
+// codeChallengeS256 returns the base64url-encoded SHA256 of the verifier
+func codeChallengeS256(verifier string) string {
+	h := sha256.Sum256([]byte(verifier))
+	return base64.URLEncoding.WithPadding(base64.NoPadding).EncodeToString(h[:])
+}
 
-	// Clean up state after use (write lock)
+// popState returns the pkce state and removes it atomically if present and not expired
+func (p *OIDCProvider) popState(state string) (pkceState, bool) {
 	p.statesMu.Lock()
+	defer p.statesMu.Unlock()
+	ps, exists := p.states[state]
+	if !exists {
+		return pkceState{}, false
+	}
+	if time.Now().After(ps.Expires) {
+		delete(p.states, state)
+		return pkceState{}, false
+	}
 	delete(p.states, state)
-	p.statesMu.Unlock()
-	return true
+	return ps, true
 }
 
 func (p *OIDCProvider) determineUserRole(groups []string) string {
