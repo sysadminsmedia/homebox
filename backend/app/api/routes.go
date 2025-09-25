@@ -77,7 +77,9 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 
 		// Add OIDC provider if enabled
 		if a.conf.OIDC.Enabled {
-			oidcProvider, err := providers.NewOIDCProvider(&a.conf.OIDC, a.services.User)
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+			oidcProvider, err := providers.NewOIDCProvider(ctx, &a.conf.OIDC, a.services.User)
 			if err != nil {
 				log.Error().Err(err).Msg("failed to initialize OIDC provider")
 			} else {
