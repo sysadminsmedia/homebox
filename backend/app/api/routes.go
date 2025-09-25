@@ -85,7 +85,10 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		}
 
 		r.Post("/users/register", chain.ToHandlerFunc(v1Ctrl.HandleUserRegistration()))
+		// POST for local username/password login
 		r.Post("/users/login", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(authProviders...)))
+		// GET to initiate OIDC login (provider=oidc)
+		r.Get("/users/login", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(authProviders...)))
 
 		// OIDC specific routes
 		if a.conf.OIDC.Enabled {
