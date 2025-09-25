@@ -16,6 +16,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
 	"golang.org/x/oauth2"
 )
 
@@ -212,10 +213,11 @@ func (p *OIDCProvider) createOrGetUser(ctx context.Context, email, name, role st
 	}
 
 	// Create new OIDC user registration
+	randomPassword := hasher.GenerateToken()
 	registration := services.UserRegistration{
 		Email:    email,
 		Name:     name,
-		Password: "oidc-user", // placeholder, not used
+		Password: randomPassword.Raw,
 	}
 
 	createdUser, err := p.userSvc.RegisterUser(ctx, registration)
