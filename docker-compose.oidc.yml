@@ -1,0 +1,46 @@
+services:
+  homebox:
+    image: homebox
+    build:
+      context: .
+      dockerfile: ./Dockerfile.hardened
+      args:
+        COMMIT: head
+        BUILD_TIME: 0001-01-01T00:00:00Z
+      x-bake:
+        platforms:
+          - linux/amd64
+          - linux/arm64
+          - linux/arm/v7
+    environment:
+      HBOX_MODE: production
+      HBOX_LOGGER_LEVEL: "-1"
+      HBOX_DEBUG: "false"
+
+      # Storage/DB (defaults shown)
+      HBOX_STORAGE_CONN_STRING: file:///?no_tmp_dir=true
+      HBOX_STORAGE_PREFIX_PATH: data
+      HBOX_DATABASE_SQLITE_PATH: /data/homebox.db?_pragma=busy_timeout=2000&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite
+
+      # Web server
+      HBOX_WEB_HOST: 0.0.0.0
+      HBOX_WEB_PORT: "7745"
+
+      # OIDC configuration (point to your existing provider)
+      HBOX_OIDC_ENABLED: "true"
+      HBOX_OIDC_ISSUER_URL: https://your-oidc.example.com/realms/homebox
+      HBOX_OIDC_CLIENT_ID: homebox-client
+      HBOX_OIDC_CLIENT_SECRET: REPLACE_ME
+      HBOX_OIDC_REDIRECT_URL: https://your-homebox.example.com/api/v1/auth/oidc/callback
+
+      # Optional OIDC tuning
+      HBOX_OIDC_SCOPES: openid email profile groups
+      HBOX_OIDC_ROLES_CLAIM: groups
+      HBOX_OIDC_ADMIN_ROLE: admin
+      HBOX_OIDC_USER_ROLE: user
+
+    ports:
+      - "3100:7745"
+
+    volumes:
+      - ./data:/data
