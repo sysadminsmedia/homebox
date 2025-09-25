@@ -31,4 +31,3 @@ func Migrations(dialect string) (embed.FS, error) {
 	}
 	// This should never get hit, but just in case
 }
-}
