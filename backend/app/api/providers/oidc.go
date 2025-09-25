@@ -125,8 +125,9 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 		return services.UserAuthTokenDetail{}, errors.New("authorization code not found")
 	}
 
-	// Exchange code for token with PKCE code_verifier
-	ctx := r.Context()
+	// Exchange code for token with PKCE code_verifier (bounded context)
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
 	token, err := p.oauth2Cfg.Exchange(ctx, code, oauth2.SetAuthURLParam("code_verifier", ps.Verifier))
 	if err != nil {
 		return services.UserAuthTokenDetail{}, fmt.Errorf("failed to exchange token: %w", err)
@@ -146,12 +147,11 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 
 	// Extract claims
 	var claims struct {
-		Email         string   `json:"email"`
-		Name          string   `json:"name"`
-		Subject       string   `json:"sub"`
-		EmailVerified bool     `json:"email_verified"`
-		Groups        []string `json:"groups"`
-		Nonce         string   `json:"nonce"`
+		Email         string `json:"email"`
+		Name          string `json:"name"`
+		Subject       string `json:"sub"`
+		EmailVerified bool   `json:"email_verified"`
+		Nonce         string `json:"nonce"`
 	}
 
 	if err := idToken.Claims(&claims); err != nil {
@@ -167,8 +167,9 @@ func (p *OIDCProvider) handleCallback(w http.ResponseWriter, r *http.Request) (s
 		return services.UserAuthTokenDetail{}, errors.New("invalid id token nonce")
 	}
 
-	// Determine user role based on groups
-	role := p.determineUserRole(claims.Groups)
+	// Extract roles from configured claim and determine user role
+	roles := p.extractRolesFromIDToken(idToken, p.config.RolesClaim)
+	role := p.determineUserRole(roles)
 
 	// Create or get user
 	userOut, err := p.createOrGetUser(ctx, claims.Email, claims.Name, role)
@@ -224,13 +225,57 @@ func (p *OIDCProvider) popState(state string) (pkceState, bool) {
 	return ps, true
 }
 
-func (p *OIDCProvider) determineUserRole(groups []string) string {
-	for _, group := range groups {
-		if group == p.config.AdminRole {
+func (p *OIDCProvider) determineUserRole(roles []string) string {
+	for _, r := range roles {
+		if r == p.config.AdminRole {
 			return "owner"
 		}
 	}
 	return "user"
+}
+
+// extractRolesFromIDToken reads roles from a dynamic claim. Supports:
+// - string
+// - []string
+// - nested dotted paths (e.g., "realm_access.roles")
+func (p *OIDCProvider) extractRolesFromIDToken(idToken *oidc.IDToken, claimPath string) []string {
+	var raw map[string]any
+	if err := idToken.Claims(&raw); err != nil {
+		return nil
+	}
+	val := getByDottedPath(raw, claimPath)
+	switch v := val.(type) {
+	case string:
+		return []string{v}
+	case []any:
+		out := make([]string, 0, len(v))
+		for _, it := range v {
+			if s, ok := it.(string); ok {
+				out = append(out, s)
+			}
+		}
+		return out
+	default:
+		return nil
+	}
+}
+
+func getByDottedPath(m map[string]any, path string) any {
+	if path == "" {
+		return nil
+	}
+	cur := any(m)
+	for _, part := range strings.Split(path, ".") {
+		obj, ok := cur.(map[string]any)
+		if !ok {
+			return nil
+		}
+		cur, ok = obj[part]
+		if !ok {
+			return nil
+		}
+	}
+	return cur
 }
 
 func (p *OIDCProvider) createOrGetUser(ctx context.Context, email, name, role string) (repo.UserOut, error) {
