@@ -30,12 +30,11 @@ type OIDCProvider struct {
 	statesMu  sync.RWMutex
 }
 
-func NewOIDCProvider(cfg *config.OIDCConf, userSvc *services.UserService) (*OIDCProvider, error) {
+func NewOIDCProvider(ctx context.Context, cfg *config.OIDCConf, userSvc *services.UserService) (*OIDCProvider, error) {
 	if !cfg.Enabled {
 		return nil, errors.New("OIDC is not enabled")
 	}
 
-	ctx := context.Background()
 	provider, err := oidc.NewProvider(ctx, cfg.IssuerURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get OIDC provider: %w", err)
