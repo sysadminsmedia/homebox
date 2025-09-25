@@ -314,8 +314,8 @@ func (p *OIDCProvider) CleanupExpiredStates() {
 	now := time.Now()
 	// Write lock for iteration + deletion safety
 	p.statesMu.Lock()
-	for state, expiration := range p.states {
-		if now.After(expiration) {
+	for state, ps := range p.states {
+		if now.After(ps.Expires) {
 			delete(p.states, state)
 		}
 	}
