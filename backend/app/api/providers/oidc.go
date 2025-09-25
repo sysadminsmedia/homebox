@@ -194,35 +194,35 @@ func (p *OIDCProvider) determineUserRole(groups []string) string {
 }
 
 func (p *OIDCProvider) createOrGetUser(ctx context.Context, email, name, role string) (repo.UserOut, error) {
-	// Try to get existing user by email
-	// Note: We'll need to implement GetByEmail in the user service if it doesn't exist
-	// For now, we'll create the user directly through the registration process
+	// Check if user already exists by email
+	if existing, err := p.userSvc.GetByEmail(ctx, email); err == nil && existing.ID != (existing.ID) {
+		return existing, nil
+	} else if err == nil {
+		// If fetched without error but empty ID, continue to create
+	} else {
+		// On fetch error, we will still try to register; repo may return not found as error
+	}
 
 	// Create new OIDC user registration
 	registration := services.UserRegistration{
 		Email:    email,
 		Name:     name,
-		Password: "oidc-user", // Placeholder password that won't be used
+		Password: "oidc-user", // placeholder, not used
 	}
 
-	// Try to register the user - this will fail if user already exists
 	createdUser, err := p.userSvc.RegisterUser(ctx, registration)
 	if err != nil {
-		// If registration fails due to existing email, try to login instead
-		if strings.Contains(err.Error(), "email") {
-			// User exists, we need to get them - for now return error
-			// TODO: Implement proper user lookup by email in repo/services
-			return repo.UserOut{}, fmt.Errorf("OIDC user already exists but cannot retrieve: %w", err)
+		// If creation fails because user exists, fetch and return
+		errStr := strings.ToLower(err.Error())
+		if strings.Contains(errStr, "unique") || strings.Contains(errStr, "users.email") || strings.Contains(errStr, "email") {
+			if existing, gerr := p.userSvc.GetByEmail(ctx, email); gerr == nil {
+				return existing, nil
+			}
 		}
 		return repo.UserOut{}, fmt.Errorf("failed to register OIDC user: %w", err)
 	}
 
-	log.Info().
-		Str("email", email).
-		Str("name", name).
-		Str("role", role).
-		Msg("created new OIDC user")
-
+	log.Info().Str("email", email).Str("name", name).Str("role", role).Msg("created new OIDC user")
 	return createdUser, nil
 }
 

@@ -23,6 +23,11 @@ type UserService struct {
 	repos *repo.AllRepos
 }
 
+// GetByEmail returns a user by email if present
+func (svc *UserService) GetByEmail(ctx context.Context, email string) (repo.UserOut, error) {
+	return svc.repos.Users.GetOneEmail(ctx, email)
+}
+
 type (
 	UserRegistration struct {
 		GroupToken string `json:"token"`
