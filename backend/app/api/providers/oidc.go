@@ -195,12 +195,9 @@ func (p *OIDCProvider) determineUserRole(groups []string) string {
 
 func (p *OIDCProvider) createOrGetUser(ctx context.Context, email, name, role string) (repo.UserOut, error) {
 	// Check if user already exists by email
-	if existing, err := p.userSvc.GetByEmail(ctx, email); err == nil && existing.ID != (existing.ID) {
+	existing, err := p.userSvc.GetByEmail(ctx, email)
+	if err == nil {
 		return existing, nil
-	} else if err == nil {
-		// If fetched without error but empty ID, continue to create
-	} else {
-		// On fetch error, we will still try to register; repo may return not found as error
 	}
 
 	// Create new OIDC user registration
