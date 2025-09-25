@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/coreos/go-oidc/v3/oidc"
@@ -25,6 +26,7 @@ type OIDCProvider struct {
 	verifier  *oidc.IDTokenVerifier
 	provider  *oidc.Provider
 	states    map[string]time.Time // Simple state storage - in production, use Redis or database
+	statesMu  sync.RWMutex
 }
 
 func NewOIDCProvider(cfg *config.OIDCConf, userSvc *services.UserService) (*OIDCProvider, error) {
@@ -78,8 +80,10 @@ func (p *OIDCProvider) handleLogin(w http.ResponseWriter, r *http.Request) (serv
 		return services.UserAuthTokenDetail{}, fmt.Errorf("failed to generate state: %w", err)
 	}
 
-	// Store state with expiration
+	// Store state with expiration (write lock)
+	p.statesMu.Lock()
 	p.states[state] = time.Now().Add(10 * time.Minute)
+	p.statesMu.Unlock()
 
 	// Generate authorization URL
 	authURL := p.oauth2Cfg.AuthCodeURL(state)
@@ -168,19 +172,26 @@ func (p *OIDCProvider) generateState() (string, error) {
 }
 
 func (p *OIDCProvider) verifyState(state string) bool {
+	// Read lock to check
+	p.statesMu.RLock()
 	expiration, exists := p.states[state]
+	p.statesMu.RUnlock()
 	if !exists {
 		return false
 	}
 
-	// Check if expired
+	// If expired, write lock to delete
 	if time.Now().After(expiration) {
+		p.statesMu.Lock()
 		delete(p.states, state)
+		p.statesMu.Unlock()
 		return false
 	}
 
-	// Clean up state after use
+	// Clean up state after use (write lock)
+	p.statesMu.Lock()
 	delete(p.states, state)
+	p.statesMu.Unlock()
 	return true
 }
 
@@ -226,9 +237,12 @@ func (p *OIDCProvider) createOrGetUser(ctx context.Context, email, name, role st
 // CleanupExpiredStates should be called periodically to clean up expired states
 func (p *OIDCProvider) CleanupExpiredStates() {
 	now := time.Now()
+	// Write lock for iteration + deletion safety
+	p.statesMu.Lock()
 	for state, expiration := range p.states {
 		if now.After(expiration) {
 			delete(p.states, state)
 		}
 	}
+	p.statesMu.Unlock()
 }
