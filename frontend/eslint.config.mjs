@@ -53,6 +53,7 @@ export default withNuxt([
         },
       ],
       "@typescript-eslint/no-invalid-void-type": "off",
+      "@typescript-eslint/unified-signatures": "off",
 
       "prettier/prettier": [
         "warn",

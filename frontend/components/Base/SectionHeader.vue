@@ -3,6 +3,7 @@
     <CardTitle class="flex items-center">
       <slot />
     </CardTitle>
+    <slot name="subtitle" />
     <CardDescription v-if="$slots.description">
       <slot name="description" />
     </CardDescription>

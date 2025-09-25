@@ -19,6 +19,13 @@ builds:
       - amd64
       - arm64
       - riscv64
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
     tags:
       - >-
         {{- if eq .Arch "riscv64" }}nodynamic

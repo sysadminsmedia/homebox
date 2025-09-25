@@ -478,22 +478,28 @@
     return resp.data;
   });
 
-  const items = computedAsync(async () => {
-    if (!item.value) {
-      return [];
+  const { data: items, refresh: refreshItemList } = useAsyncData(
+    () => itemId.value + "_item_list",
+    async () => {
+      if (!itemId.value) {
+        return [];
+      }
+
+      const resp = await api.items.getAll({
+        parentIds: [itemId.value],
+      });
+
+      if (resp.error) {
+        toast.error(t("items.toast.failed_load_items"));
+        return [];
+      }
+
+      return resp.data.items;
+    },
+    {
+      watch: [itemId],
     }
-
-    const resp = await api.items.getAll({
-      parentIds: [item.value.id],
-    });
-
-    if (resp.error) {
-      toast.error(t("items.toast.failed_load_items"));
-      return [];
-    }
-
-    return resp.data.items;
-  });
+  );
 
   async function duplicateItem(settings?: DuplicateSettings) {
     if (!item.value) {
@@ -787,7 +793,7 @@
     </section>
 
     <section v-if="items && items.length > 0" class="mt-6">
-      <ItemViewSelectable :items="items" />
+      <ItemViewSelectable :items="items" @refresh="refreshItemList" />
     </section>
   </BaseContainer>
 </template>

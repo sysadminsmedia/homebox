@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-1">
     <Label :for="id" class="px-1">
-      {{ $t("global.labels") }}
+      {{ props.name ?? $t("global.labels") }}
     </Label>
 
     <TagsInput
@@ -107,6 +107,11 @@
     labels: {
       type: Array as () => LabelOut[],
       required: true,
+    },
+    name: {
+      type: String,
+      required: false,
+      default: undefined,
     },
   });
 
