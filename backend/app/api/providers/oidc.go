@@ -64,7 +64,7 @@ func NewOIDCProvider(ctx context.Context, cfg *config.OIDCConf, userSvc *service
 		oauth2Cfg: oauth2Cfg,
 		verifier:  verifier,
 		provider:  provider,
-		states:    make(map[string]time.Time),
+		states:    make(map[string]pkceState),
 	}, nil
 }
 
