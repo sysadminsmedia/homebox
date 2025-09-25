@@ -43,19 +43,24 @@ function clampDecimals(currency: string, decimals: number): number {
 
 // Type guard to validate currency response shape with strict validation
 function isValidCurrencyItem(item: unknown): item is { code: string; decimals: number } {
+  if (typeof item !== "object" || item === null) {
+    return false;
+  }
+
+  // Type assertion after null check
+  const obj = item as Record<string, unknown>;
+
   if (
-    typeof item !== "object" ||
-    item === null ||
-    typeof item.code !== "string" ||
-    item.code.trim() === "" ||
-    typeof item.decimals !== "number" ||
-    !Number.isFinite(item.decimals)
+    typeof obj.code !== "string" ||
+    obj.code.trim() === "" ||
+    typeof obj.decimals !== "number" ||
+    !Number.isFinite(obj.decimals)
   ) {
     return false;
   }
 
   // Truncate decimals to integer and check range
-  const truncatedDecimals = Math.trunc(item.decimals);
+  const truncatedDecimals = Math.trunc(obj.decimals);
   return truncatedDecimals >= SAFE_MIN_DECIMALS && truncatedDecimals <= SAFE_MAX_DECIMALS;
 }
 
