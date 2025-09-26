@@ -33,7 +33,7 @@ type (
 		Item ItemCreate `json:"item"`
 	}
 
-	ProductDatabaseFunc func(config.BarcodeAPIConf, string) ([]BarcodeProduct, error)
+	ProductDatabaseFunc func(cfg config.BarcodeAPIConf, barcode string, mockedURL string) ([]BarcodeProduct, error)
 
 	ProductDatabaseImpl struct {
 		url  string
@@ -117,9 +117,16 @@ type (
 
 const FOREIGN_API_CALL_TIMEOUT_SEC = 10
 
-func (r *BarcodeRepository) UPCItemDB_Search(_ config.BarcodeAPIConf, iBarcode string) ([]BarcodeProduct, error) {
+func (r *BarcodeRepository) UPCItemDB_Search(_ config.BarcodeAPIConf, iBarcode string, mockedURL string) ([]BarcodeProduct, error) {
+
+	apiUrl := "https://api.upcitemdb.com"
+
+	if mockedURL != "" {
+		apiUrl = mockedURL
+	}
+
 	client := &http.Client{Timeout: FOREIGN_API_CALL_TIMEOUT_SEC * time.Second}
-	resp, err := client.Get("https://api.upcitemdb.com/prod/trial/lookup?upc=" + iBarcode)
+	resp, err := client.Get(apiUrl + "/prod/trial/lookup?upc=" + iBarcode)
 	if err != nil {
 		return nil, err
 	}
@@ -168,14 +175,20 @@ func (r *BarcodeRepository) UPCItemDB_Search(_ config.BarcodeAPIConf, iBarcode s
 	return res, nil
 }
 
-func (r *BarcodeRepository) BarcodeSpider_Search(conf config.BarcodeAPIConf, iBarcode string) ([]BarcodeProduct, error) {
-	if len(conf.TokenBarcodespider) == 0 {
+func (r *BarcodeRepository) BarcodeSpider_Search(conf config.BarcodeAPIConf, iBarcode string, mockedURL string) ([]BarcodeProduct, error) {
+	if len(conf.TokenBarcodespider) == 0 && mockedURL == "" {
 		return nil, errors.New("no api token configured for barcodespider. " +
 			"Please define the api token in environment variable HBOX_BARCODE_TOKEN_BARCODESPIDER")
 	}
 
+	apiUrl := "https://api.barcodespider.com"
+
+	if mockedURL != "" {
+		apiUrl = mockedURL
+	}
+
 	req, err := http.NewRequest(
-		"GET", "https://api.barcodespider.com/v1/lookup?upc="+url.QueryEscape(iBarcode), nil)
+		"GET", apiUrl+"/v1/lookup?upc="+url.QueryEscape(iBarcode), nil)
 
 	if err != nil {
 		return nil, err
@@ -325,7 +338,7 @@ func (r *BarcodeRepository) RetrieveProductsFromBarcode(conf config.BarcodeAPICo
 
 	// Call external APIs
 	for _, api := range remoteAPIs {
-		ps, err := api.call(conf, iBarcode)
+		ps, err := api.call(conf, iBarcode, "")
 		if err != nil {
 			log.Error().Msg("Can not retrieve product from " + api.name + err.Error())
 		}
