@@ -219,6 +219,10 @@ func (r *BarcodeRepository) BarcodeSpider_Search(conf config.BarcodeAPIConf, iBa
 		return nil, err
 	}
 
+	if resp.StatusCode != 200 {
+		return nil, nil
+	}
+
 	// Uncomment the following string for debug
 	// sb := string(body)
 	// log.Debug().Msg("Response: " + sb)
@@ -228,6 +232,10 @@ func (r *BarcodeRepository) BarcodeSpider_Search(conf config.BarcodeAPIConf, iBa
 		log.Error().Msg("Can not unmarshal JSON")
 		// NOTE: unmarshal could fail but the decoded data are still exploitable.
 		// This is why we do not consider this case as a fatal error.
+	}
+
+	if result.ItemResponse.Code != 200 {
+		return nil, nil
 	}
 
 	// TODO: check 200 code on HTTP response.
