@@ -55,7 +55,7 @@
         v-model="form.manufacturer"
         :trigger-focus="focused"
         :autofocus="true"
-        label="Item manufacturer"
+        :label="$t('items.manufacturer')"
         :max-length="255"
         :min-length="1"
       />
@@ -65,7 +65,7 @@
         v-model="form.modelNumber"
         :trigger-focus="focused"
         :autofocus="true"
-        label="Item model"
+        :label="$t('items.model_number')"
         :max-length="255"
         :min-length="1"
       />
@@ -75,9 +75,11 @@
         v-model="form.barcode"
         :trigger-focus="focused"
         :autofocus="true"
-        label="Item barcode"
+        :label="$t('items.barcode')"
         :max-length="255"
         :min-length="1"
+        inputmode="numeric"
+        pattern="[0-9]*"
       />
       <FormTextField v-model="form.quantity" :label="$t('components.item.create_modal.item_quantity')" type="number" />
       <FormTextArea
@@ -464,6 +466,7 @@
     form.name = "";
     form.quantity = 1;
     form.description = "";
+    form.barcode = "";
     form.modelNumber = "";
     form.manufacturer = "";
     form.color = "";
