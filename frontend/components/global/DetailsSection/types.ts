@@ -5,6 +5,12 @@ type BaseDetail = {
   slot?: string;
 };
 
+type Barcode = BaseDetail & {
+  type: "barcode";
+  text: string;
+  copyable?: boolean;
+};
+
 type DateDetail = BaseDetail & {
   type: "date";
   text: Date | string;
@@ -33,7 +39,7 @@ export type Detail = BaseDetail & {
   copyable?: boolean;
 };
 
-export type AnyDetail = DateDetail | CurrencyDetail | LinkDetail | MarkdownDetail | Detail;
+export type AnyDetail = Barcode | DateDetail | CurrencyDetail | LinkDetail | MarkdownDetail | Detail;
 
 export type Details = Array<Detail | AnyDetail>;
 

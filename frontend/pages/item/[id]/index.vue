@@ -213,6 +213,12 @@
         copyable: true,
       },
       {
+        name: "items.barcode",
+        text: item.value?.barcode,
+        type: "barcode",
+        copyable: true,
+      },
+      {
         name: "items.insured",
         text: item.value?.insured ? "Yes" : "No",
       },
