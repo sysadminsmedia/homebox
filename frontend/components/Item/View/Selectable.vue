@@ -1,6 +1,7 @@
 <script setup lang="ts">
+  import { useForwardPropsEmits } from "reka-ui";
+  import type { TableProps, TableEmits } from "./Table.types";
   import type { ViewType } from "~~/composables/use-preferences";
-  import type { ItemSummary } from "~~/lib/api/types/data-contracts";
   import MdiCardTextOutline from "~icons/mdi/card-text-outline";
   import MdiTable from "~icons/mdi/table";
   import { Badge } from "@/components/ui/badge";
@@ -8,12 +9,16 @@
 
   type Props = {
     view?: ViewType;
-    items: ItemSummary[];
   };
 
   const preferences = useViewPreferences();
 
-  const props = defineProps<Props>();
+  const props = defineProps<Props & TableProps>();
+
+  const emits = defineEmits<TableEmits>();
+
+  const forwardedPropsEmits = useForwardPropsEmits(props, emits);
+
   const viewSet = computed(() => {
     return !!props.view;
   });
@@ -57,7 +62,7 @@
     </BaseSectionHeader>
 
     <template v-if="itemView === 'table'">
-      <ItemViewTable :items="items" />
+      <ItemViewTable v-bind="forwardedPropsEmits" />
     </template>
     <template v-else>
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
