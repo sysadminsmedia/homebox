@@ -1067,6 +1067,7 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opti
 		SetDescription(originalItem.Description).
 		SetQuantity(originalItem.Quantity).
 		SetLocationID(originalItem.Location.ID).
+		SetBarcode(originalItem.Barcode).
 		SetGroupID(gid).
 		SetAssetID(int(nextAssetID)).
 		SetSerialNumber(originalItem.SerialNumber).
