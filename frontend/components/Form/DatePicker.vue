@@ -41,44 +41,40 @@
   const selected = computed<Date | null>({
     get() {
       // String
+      if (props.modelValue === null) {
+        return null;
+      }
+
+      let date: Date;
       if (typeof props.modelValue === "string") {
         // Empty string
         if (props.modelValue === "") {
           return null;
         }
-
-        // Invalid Date string
-        if (props.modelValue === "Invalid Date") {
-          return null;
-        }
-
-        return datelib.parse(props.modelValue);
+        date = new Date(props.modelValue);
+      } else {
+        date = props.modelValue;
       }
 
-      // Date
-      if (props.modelValue instanceof Date) {
-        if (props.modelValue.getFullYear() < 1000) {
-          return null;
-        }
-
-        if (isNaN(props.modelValue.getTime())) {
-          return null;
-        }
-
-        // Valid Date
-        return props.modelValue;
+      // quick and dirty check for invalid dates
+      if (isNaN(date.getTime()) || date.getFullYear() < 1000) {
+        return null;
       }
 
-      return null;
+      // Convert UTC date to local date for display
+      return new Date(
+        date.getUTCFullYear(),
+        date.getUTCMonth(),
+        date.getUTCDate()
+      );
     },
     set(value: Date | null) {
-      console.debug("DatePicker: SET", value);
       if (value instanceof Date) {
-        value = datelib.zeroTime(value);
-        emit("update:modelValue", value);
+        // Convert to UTC date without time components
+        const utcDate = datelib.zeroTime(value);
+        emit("update:modelValue", utcDate);
       } else {
-        value = value ? datelib.zeroTime(new Date(value)) : null;
-        emit("update:modelValue", value);
+        emit("update:modelValue", null);
       }
     },
   });
