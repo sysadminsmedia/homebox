@@ -100,10 +100,16 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 	}
 
 	return func(w http.ResponseWriter, r *http.Request) error {
-		// Extract provider query
+		// Extract provider query; default to OIDC for OIDC callback path
 		provider := r.URL.Query().Get("provider")
 		if provider == "" {
-			provider = "local"
+			// Default to OIDC when hitting the callback route or when OAuth code/state are present
+			if strings.Contains(r.URL.Path, "/auth/oidc") ||
+				(r.Method == http.MethodGet && r.URL.Query().Get("code") != "" && r.URL.Query().Get("state") != "") {
+				provider = "oidc"
+			} else {
+				provider = "local"
+			}
 		}
 
 		// Get the provider
@@ -118,7 +124,22 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 			return server.JSON(w, http.StatusInternalServerError, err.Error())
 		}
 
+		// If initiating OIDC (GET /users/login?provider=oidc), the provider already redirected.
+		// Avoid writing cookies/body in that case.
+		if r.Method == http.MethodGet && provider == "oidc" && strings.Contains(r.URL.Path, "/users/login") && r.URL.Query().Get("code") == "" {
+			return nil
+		}
+
+		// For all successful auth, set cookies
 		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, true)
+
+		// If this is the OIDC callback (browser navigated here), redirect back to the SPA
+		if r.Method == http.MethodGet && (strings.Contains(r.URL.Path, "/auth/oidc") || r.URL.Query().Get("code") != "") {
+			http.Redirect(w, r, "/", http.StatusFound)
+			return nil
+		}
+
+		// Default API response (used by XHR for local auth)
 		return server.JSON(w, http.StatusOK, TokenResponse{
 			Token:           "Bearer " + newToken.Raw,
 			ExpiresAt:       newToken.ExpiresAt,

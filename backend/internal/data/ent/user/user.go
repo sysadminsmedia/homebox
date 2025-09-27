@@ -34,6 +34,10 @@ const (
 	FieldRole = "role"
 	// FieldActivatedOn holds the string denoting the activated_on field in the database.
 	FieldActivatedOn = "activated_on"
+	// FieldAuthProvider holds the string denoting the auth_provider field in the database.
+	FieldAuthProvider = "auth_provider"
+	// FieldExternalID holds the string denoting the external_id field in the database.
+	FieldExternalID = "external_id"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
 	EdgeGroup = "group"
 	// EdgeAuthTokens holds the string denoting the auth_tokens edge name in mutations.
@@ -77,6 +81,8 @@ var Columns = []string{
 	FieldSuperuser,
 	FieldRole,
 	FieldActivatedOn,
+	FieldAuthProvider,
+	FieldExternalID,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "users"
@@ -117,6 +123,8 @@ var (
 	DefaultIsSuperuser bool
 	// DefaultSuperuser holds the default value on creation for the "superuser" field.
 	DefaultSuperuser bool
+	// DefaultAuthProvider holds the default value on creation for the "auth_provider" field.
+	DefaultAuthProvider string
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() uuid.UUID
 )
@@ -198,6 +206,16 @@ func ByRole(opts ...sql.OrderTermOption) OrderOption {
 // ByActivatedOn orders the results by the activated_on field.
 func ByActivatedOn(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldActivatedOn, opts...).ToFunc()
+}
+
+// ByAuthProvider orders the results by the auth_provider field.
+func ByAuthProvider(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAuthProvider, opts...).ToFunc()
+}
+
+// ByExternalID orders the results by the external_id field.
+func ByExternalID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldExternalID, opts...).ToFunc()
 }
 
 // ByGroupField orders the results by group field.

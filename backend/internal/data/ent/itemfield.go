@@ -90,7 +90,7 @@ func (*ItemField) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the ItemField fields.
-func (_if *ItemField) assignValues(columns []string, values []any) error {
+func (_m *ItemField) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -100,71 +100,71 @@ func (_if *ItemField) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
-				_if.ID = *value
+				_m.ID = *value
 			}
 		case itemfield.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				_if.CreatedAt = value.Time
+				_m.CreatedAt = value.Time
 			}
 		case itemfield.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				_if.UpdatedAt = value.Time
+				_m.UpdatedAt = value.Time
 			}
 		case itemfield.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
-				_if.Name = value.String
+				_m.Name = value.String
 			}
 		case itemfield.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
-				_if.Description = value.String
+				_m.Description = value.String
 			}
 		case itemfield.FieldType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
-				_if.Type = itemfield.Type(value.String)
+				_m.Type = itemfield.Type(value.String)
 			}
 		case itemfield.FieldTextValue:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field text_value", values[i])
 			} else if value.Valid {
-				_if.TextValue = value.String
+				_m.TextValue = value.String
 			}
 		case itemfield.FieldNumberValue:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field number_value", values[i])
 			} else if value.Valid {
-				_if.NumberValue = int(value.Int64)
+				_m.NumberValue = int(value.Int64)
 			}
 		case itemfield.FieldBooleanValue:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field boolean_value", values[i])
 			} else if value.Valid {
-				_if.BooleanValue = value.Bool
+				_m.BooleanValue = value.Bool
 			}
 		case itemfield.FieldTimeValue:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field time_value", values[i])
 			} else if value.Valid {
-				_if.TimeValue = value.Time
+				_m.TimeValue = value.Time
 			}
 		case itemfield.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field item_fields", values[i])
 			} else if value.Valid {
-				_if.item_fields = new(uuid.UUID)
-				*_if.item_fields = *value.S.(*uuid.UUID)
+				_m.item_fields = new(uuid.UUID)
+				*_m.item_fields = *value.S.(*uuid.UUID)
 			}
 		default:
-			_if.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -172,64 +172,64 @@ func (_if *ItemField) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the ItemField.
 // This includes values selected through modifiers, order, etc.
-func (_if *ItemField) Value(name string) (ent.Value, error) {
-	return _if.selectValues.Get(name)
+func (_m *ItemField) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // QueryItem queries the "item" edge of the ItemField entity.
-func (_if *ItemField) QueryItem() *ItemQuery {
-	return NewItemFieldClient(_if.config).QueryItem(_if)
+func (_m *ItemField) QueryItem() *ItemQuery {
+	return NewItemFieldClient(_m.config).QueryItem(_m)
 }
 
 // Update returns a builder for updating this ItemField.
 // Note that you need to call ItemField.Unwrap() before calling this method if this ItemField
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (_if *ItemField) Update() *ItemFieldUpdateOne {
-	return NewItemFieldClient(_if.config).UpdateOne(_if)
+func (_m *ItemField) Update() *ItemFieldUpdateOne {
+	return NewItemFieldClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the ItemField entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (_if *ItemField) Unwrap() *ItemField {
-	_tx, ok := _if.config.driver.(*txDriver)
+func (_m *ItemField) Unwrap() *ItemField {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: ItemField is not a transactional entity")
 	}
-	_if.config.driver = _tx.drv
-	return _if
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (_if *ItemField) String() string {
+func (_m *ItemField) String() string {
 	var builder strings.Builder
 	builder.WriteString("ItemField(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", _if.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("created_at=")
-	builder.WriteString(_if.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
-	builder.WriteString(_if.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("name=")
-	builder.WriteString(_if.Name)
+	builder.WriteString(_m.Name)
 	builder.WriteString(", ")
 	builder.WriteString("description=")
-	builder.WriteString(_if.Description)
+	builder.WriteString(_m.Description)
 	builder.WriteString(", ")
 	builder.WriteString("type=")
-	builder.WriteString(fmt.Sprintf("%v", _if.Type))
+	builder.WriteString(fmt.Sprintf("%v", _m.Type))
 	builder.WriteString(", ")
 	builder.WriteString("text_value=")
-	builder.WriteString(_if.TextValue)
+	builder.WriteString(_m.TextValue)
 	builder.WriteString(", ")
 	builder.WriteString("number_value=")
-	builder.WriteString(fmt.Sprintf("%v", _if.NumberValue))
+	builder.WriteString(fmt.Sprintf("%v", _m.NumberValue))
 	builder.WriteString(", ")
 	builder.WriteString("boolean_value=")
-	builder.WriteString(fmt.Sprintf("%v", _if.BooleanValue))
+	builder.WriteString(fmt.Sprintf("%v", _m.BooleanValue))
 	builder.WriteString(", ")
 	builder.WriteString("time_value=")
-	builder.WriteString(_if.TimeValue.Format(time.ANSIC))
+	builder.WriteString(_m.TimeValue.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

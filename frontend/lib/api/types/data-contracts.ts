@@ -864,6 +864,7 @@ export interface APISummary {
   message: string;
   title: string;
   versions: string[];
+  oidcEnabled?: boolean;
 }
 
 export interface ActionAmountResult {

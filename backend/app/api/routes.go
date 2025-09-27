@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"errors"
 	"fmt"
@@ -9,9 +10,11 @@ import (
 	"net/http"
 	"path"
 	"path/filepath"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/hay-kot/httpkit/errchain"
+	"github.com/rs/zerolog/log"
 	httpSwagger "github.com/swaggo/http-swagger/v2" // http-swagger middleware
 	"github.com/sysadminsmedia/homebox/backend/app/api/handlers/debughandlers"
 	v1 "github.com/sysadminsmedia/homebox/backend/app/api/handlers/v1"
@@ -68,12 +71,33 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 
 		r.Get("/currencies", chain.ToHandlerFunc(v1Ctrl.HandleCurrency()))
 
-		providers := []v1.AuthProvider{
+		authProviders := []v1.AuthProvider{
 			providers.NewLocalProvider(a.services.User),
 		}
 
+		// Add OIDC provider if enabled
+		if a.conf.OIDC.Enabled {
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+			oidcProvider, err := providers.NewOIDCProvider(ctx, &a.conf.OIDC, a.services.User)
+			if err != nil {
+				log.Error().Err(err).Msg("failed to initialize OIDC provider")
+			} else {
+				authProviders = append(authProviders, oidcProvider)
+				log.Info().Msg("OIDC authentication provider enabled")
+			}
+		}
+
 		r.Post("/users/register", chain.ToHandlerFunc(v1Ctrl.HandleUserRegistration()))
-		r.Post("/users/login", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(providers...)))
+		// POST for local username/password login
+		r.Post("/users/login", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(authProviders...)))
+		// GET to initiate OIDC login (provider=oidc)
+		r.Get("/users/login", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(authProviders...)))
+
+		// OIDC specific routes
+		if a.conf.OIDC.Enabled {
+			r.Get("/auth/oidc/callback", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(authProviders...)))
+		}
 
 		userMW := []errchain.Middleware{
 			a.mwAuthToken,

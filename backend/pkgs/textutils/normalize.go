@@ -22,13 +22,13 @@ func RemoveAccents(text string) string {
 	// 2. Removes diacritical marks (combining characters)
 	// 3. Normalizes back to NFC (canonical composition)
 	t := transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
-	
+
 	result, _, err := transform.String(t, text)
 	if err != nil {
 		// If transformation fails, return the original text
 		return text
 	}
-	
+
 	return result
 }
 

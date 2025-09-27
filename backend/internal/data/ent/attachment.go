@@ -100,7 +100,7 @@ func (*Attachment) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the Attachment fields.
-func (a *Attachment) assignValues(columns []string, values []any) error {
+func (_m *Attachment) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -110,66 +110,66 @@ func (a *Attachment) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
-				a.ID = *value
+				_m.ID = *value
 			}
 		case attachment.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				a.CreatedAt = value.Time
+				_m.CreatedAt = value.Time
 			}
 		case attachment.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				a.UpdatedAt = value.Time
+				_m.UpdatedAt = value.Time
 			}
 		case attachment.FieldType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
-				a.Type = attachment.Type(value.String)
+				_m.Type = attachment.Type(value.String)
 			}
 		case attachment.FieldPrimary:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field primary", values[i])
 			} else if value.Valid {
-				a.Primary = value.Bool
+				_m.Primary = value.Bool
 			}
 		case attachment.FieldTitle:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field title", values[i])
 			} else if value.Valid {
-				a.Title = value.String
+				_m.Title = value.String
 			}
 		case attachment.FieldPath:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field path", values[i])
 			} else if value.Valid {
-				a.Path = value.String
+				_m.Path = value.String
 			}
 		case attachment.FieldMimeType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field mime_type", values[i])
 			} else if value.Valid {
-				a.MimeType = value.String
+				_m.MimeType = value.String
 			}
 		case attachment.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field attachment_thumbnail", values[i])
 			} else if value.Valid {
-				a.attachment_thumbnail = new(uuid.UUID)
-				*a.attachment_thumbnail = *value.S.(*uuid.UUID)
+				_m.attachment_thumbnail = new(uuid.UUID)
+				*_m.attachment_thumbnail = *value.S.(*uuid.UUID)
 			}
 		case attachment.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field item_attachments", values[i])
 			} else if value.Valid {
-				a.item_attachments = new(uuid.UUID)
-				*a.item_attachments = *value.S.(*uuid.UUID)
+				_m.item_attachments = new(uuid.UUID)
+				*_m.item_attachments = *value.S.(*uuid.UUID)
 			}
 		default:
-			a.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -177,63 +177,63 @@ func (a *Attachment) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the Attachment.
 // This includes values selected through modifiers, order, etc.
-func (a *Attachment) Value(name string) (ent.Value, error) {
-	return a.selectValues.Get(name)
+func (_m *Attachment) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // QueryItem queries the "item" edge of the Attachment entity.
-func (a *Attachment) QueryItem() *ItemQuery {
-	return NewAttachmentClient(a.config).QueryItem(a)
+func (_m *Attachment) QueryItem() *ItemQuery {
+	return NewAttachmentClient(_m.config).QueryItem(_m)
 }
 
 // QueryThumbnail queries the "thumbnail" edge of the Attachment entity.
-func (a *Attachment) QueryThumbnail() *AttachmentQuery {
-	return NewAttachmentClient(a.config).QueryThumbnail(a)
+func (_m *Attachment) QueryThumbnail() *AttachmentQuery {
+	return NewAttachmentClient(_m.config).QueryThumbnail(_m)
 }
 
 // Update returns a builder for updating this Attachment.
 // Note that you need to call Attachment.Unwrap() before calling this method if this Attachment
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (a *Attachment) Update() *AttachmentUpdateOne {
-	return NewAttachmentClient(a.config).UpdateOne(a)
+func (_m *Attachment) Update() *AttachmentUpdateOne {
+	return NewAttachmentClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the Attachment entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (a *Attachment) Unwrap() *Attachment {
-	_tx, ok := a.config.driver.(*txDriver)
+func (_m *Attachment) Unwrap() *Attachment {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: Attachment is not a transactional entity")
 	}
-	a.config.driver = _tx.drv
-	return a
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (a *Attachment) String() string {
+func (_m *Attachment) String() string {
 	var builder strings.Builder
 	builder.WriteString("Attachment(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", a.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("created_at=")
-	builder.WriteString(a.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
-	builder.WriteString(a.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("type=")
-	builder.WriteString(fmt.Sprintf("%v", a.Type))
+	builder.WriteString(fmt.Sprintf("%v", _m.Type))
 	builder.WriteString(", ")
 	builder.WriteString("primary=")
-	builder.WriteString(fmt.Sprintf("%v", a.Primary))
+	builder.WriteString(fmt.Sprintf("%v", _m.Primary))
 	builder.WriteString(", ")
 	builder.WriteString("title=")
-	builder.WriteString(a.Title)
+	builder.WriteString(_m.Title)
 	builder.WriteString(", ")
 	builder.WriteString("path=")
-	builder.WriteString(a.Path)
+	builder.WriteString(_m.Path)
 	builder.WriteString(", ")
 	builder.WriteString("mime_type=")
-	builder.WriteString(a.MimeType)
+	builder.WriteString(_m.MimeType)
 	builder.WriteByte(')')
 	return builder.String()
 }

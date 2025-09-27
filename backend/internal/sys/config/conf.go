@@ -30,6 +30,7 @@ type Config struct {
 	LabelMaker LabelMakerConf `yaml:"labelmaker"`
 	Thumbnail  Thumbnail      `yaml:"thumbnail"`
 	Barcode    BarcodeAPIConf `yaml:"barcode"`
+	OIDC       OIDCConf       `yaml:"oidc"`
 }
 
 type Options struct {
@@ -61,20 +62,32 @@ type WebConfig struct {
 }
 
 type LabelMakerConf struct {
-	Width                 int64          `yaml:"width"     conf:"default:526"`
-	Height                int64          `yaml:"height"    conf:"default:200"`
-	Padding               int64          `yaml:"padding"   conf:"default:32"`
-	Margin                int64          `yaml:"margin"    conf:"default:32"`
-	FontSize              float64        `yaml:"font_size" conf:"default:32.0"`
+	Width                 int64          `yaml:"width"                 conf:"default:526"`
+	Height                int64          `yaml:"height"                conf:"default:200"`
+	Padding               int64          `yaml:"padding"               conf:"default:32"`
+	Margin                int64          `yaml:"margin"                conf:"default:32"`
+	FontSize              float64        `yaml:"font_size"             conf:"default:32.0"`
 	PrintCommand          *string        `yaml:"string"`
 	AdditionalInformation *string        `yaml:"string"`
-	DynamicLength         bool           `yaml:"bool"      conf:"default:true"`
+	DynamicLength         bool           `yaml:"bool"                  conf:"default:true"`
 	LabelServiceUrl       *string        `yaml:"label_service_url"`
 	LabelServiceTimeout   *time.Duration `yaml:"label_service_timeout"`
 }
 
 type BarcodeAPIConf struct {
 	TokenBarcodespider string `yaml:"token_barcodespider"`
+}
+
+type OIDCConf struct {
+	Enabled      bool   `yaml:"enabled"       conf:"default:false"`
+	IssuerURL    string `yaml:"issuer_url"`
+	ClientID     string `yaml:"client_id"`
+	ClientSecret string `yaml:"client_secret"`
+	RedirectURL  string `yaml:"redirect_url"`
+	Scopes       string `yaml:"scopes"        conf:"default:openid email profile"`
+	RolesClaim   string `yaml:"roles_claim"   conf:"default:groups"`
+	AdminRole    string `yaml:"admin_role"    conf:"default:admin"`
+	UserRole     string `yaml:"user_role"     conf:"default:user"`
 }
 
 // New parses the CLI/Config file and returns a Config struct. If the file argument is an empty string, the
