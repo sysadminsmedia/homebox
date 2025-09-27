@@ -54,6 +54,7 @@ document.head.appendChild(elementStyle);
     router="hash"
     layout="responsive"
     hideSchemas="true"
+    hideTryIt="true"
     :data-theme="theme"
     :tryItBaseUrl="BaseURL"
   />
