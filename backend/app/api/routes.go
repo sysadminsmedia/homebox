@@ -75,6 +75,11 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Post("/users/register", chain.ToHandlerFunc(v1Ctrl.HandleUserRegistration()))
 		r.Post("/users/login", chain.ToHandlerFunc(v1Ctrl.HandleAuthLogin(providers...)))
 
+		if a.conf.OIDC.Enabled {
+			r.Get("/users/login/oidc", chain.ToHandlerFunc(v1Ctrl.HandleOIDCLogin()))
+			r.Get("/users/login/oidc/callback", chain.ToHandlerFunc(v1Ctrl.HandleOIDCCallback()))
+		}
+
 		userMW := []errchain.Middleware{
 			a.mwAuthToken,
 			a.mwRoles(RoleModeOr, authroles.RoleUser.String()),
