@@ -33,7 +33,7 @@
           </ButtonGroup>
         </div>
         <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
-        <video ref="video" class="aspect-video w-full rounded-lg bg-muted shadow" poster="data:image/gif,AAAA"></video>
+        <video ref="video" class="aspect-video w-full rounded-lg bg-muted shadow" poster="data:image/gif,AAAA" />
         <div class="mt-4">
           <Select v-model="selectedSource">
             <SelectTrigger class="w-full">
@@ -52,13 +52,13 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, watch, computed } from "vue";
-  import { BrowserMultiFormatReader, NotFoundException, BarcodeFormat } from "@zxing/library";
+  import { computed, ref, watch } from "vue";
+  import { BarcodeFormat, BrowserMultiFormatReader, NotFoundException } from "@zxing/library";
   import { useI18n } from "vue-i18n";
   import { DialogID } from "@/components/ui/dialog-provider/utils";
-  import { Dialog, DialogHeader, DialogTitle, DialogScrollContent } from "@/components/ui/dialog";
-  import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-  import { Button } from "@/components/ui/button";
+  import { Dialog, DialogHeader, DialogScrollContent, DialogTitle } from "@/components/ui/dialog";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import { Button, ButtonGroup } from "@/components/ui/button";
   import MdiBarcode from "~icons/mdi/barcode";
   import MdiAlertCircleOutline from "~icons/mdi/alert-circle-outline";
   import { useDialog } from "@/components/ui/dialog-provider";
@@ -93,7 +93,7 @@
   };
 
   const handleButtonClick = () => {
-    openDialog(DialogID.ProductImport, { barcode: detectedBarcode.value });
+    openDialog(DialogID.ProductImport, { params: { barcode: detectedBarcode.value } });
   };
 
   const startScanner = async () => {
@@ -113,12 +113,12 @@
 
       if (devices.length > 0) {
         for (let i = 0; i < devices.length; i++) {
-          if (devices[i].label.toLowerCase().includes("back")) {
-            selectedSource.value = devices[i].deviceId;
+          if (devices[i]!.label.toLowerCase().includes("back")) {
+            selectedSource.value = devices[i]!.deviceId;
           }
         }
         if (!selectedSource.value) {
-          selectedSource.value = devices[0].deviceId;
+          selectedSource.value = devices[0]!.deviceId;
         }
       } else {
         errorMessage.value = t("scanner.no_sources");

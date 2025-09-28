@@ -17,7 +17,7 @@ type Database struct {
 	Host             string `yaml:"host"`
 	Port             string `yaml:"port"`
 	Database         string `yaml:"database"`
-	SslMode          string `yaml:"ssl_mode"`
+	SslMode          string `yaml:"ssl_mode"           conf:"default:require"`
 	SslRootCert      string `yaml:"ssl_rootcert"`
 	SslCert          string `yaml:"ssl_cert"`
 	SslKey           string `yaml:"ssl_key"`

@@ -2,7 +2,7 @@
   import { useI18n } from "vue-i18n";
   import DOMPurify from "dompurify";
   import { route } from "../../lib/api/base";
-  import { toast, Toaster } from "@/components/ui/sonner";
+  import { Toaster, toast } from "@/components/ui/sonner";
   import { Separator } from "@/components/ui/separator";
   import { Button } from "@/components/ui/button";
   import { Label } from "@/components/ui/label";
@@ -319,7 +319,7 @@
           });
         }
 
-        page.rows[page.rows.length - 1].items.push(item);
+        page.rows[page.rows.length - 1]!.items.push(item);
       }
 
       calc.push(page);
@@ -344,12 +344,12 @@
       <p>
         {{ $t("reports.label_generator.instruction_2") }}
       </p>
-      <p v-html="DOMPurify.sanitize($t('reports.label_generator.instruction_3'))"></p>
+      <p v-html="DOMPurify.sanitize($t('reports.label_generator.instruction_3'))" />
       <h2>{{ $t("reports.label_generator.tips") }}</h2>
       <ul>
-        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_1'))"></li>
-        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_2'))"></li>
-        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_3'))"></li>
+        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_1'))" />
+        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_2'))" />
+        <li v-html="DOMPurify.sanitize($t('reports.label_generator.tip_3'))" />
       </ul>
       <div class="flex flex-wrap gap-2">
         <NuxtLink href="/tools">{{ $t("menu.tools") }}</NuxtLink>

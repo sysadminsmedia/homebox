@@ -1,22 +1,22 @@
 <template>
   <div class="flex flex-col gap-1">
     <Label :for="id" class="px-1">
-      {{ $t("global.labels") }}
+      {{ props.name ?? $t("global.labels") }}
     </Label>
 
     <TagsInput
       v-model="modelValue"
       class="w-full gap-0 px-0"
-      :display-value="v => shortenedLabels.find(l => l.id === v)?.name ?? 'Loading...'"
+      :display-value="v => props.labels.find(l => l.id === v)?.name ?? 'Loading...'"
     >
-      <div class="flex flex-wrap items-center gap-2 px-3">
-        <TagsInputItem v-for="item in modelValue" :key="item" :value="item">
+      <div class="flex flex-wrap items-center gap-2 overflow-hidden px-3">
+        <TagsInputItem v-for="item in modelValue" :key="item" :value="item" class="h-auto overflow-hidden text-wrap">
           <span
-            v-if="shortenedLabels.find(l => l.id === item)?.color"
-            class="ml-2 inline-block size-4 rounded-full"
-            :style="{ backgroundColor: shortenedLabels.find(l => l.id === item)?.color }"
+            v-if="props.labels.find(l => l.id === item)?.color"
+            class="ml-2 size-4 shrink-0 rounded-full"
+            :style="{ backgroundColor: props.labels.find(l => l.id === item)?.color }"
           />
-          <TagsInputItemText />
+          <TagsInputItemText class="py-0.5" />
           <TagsInputItemDelete />
         </TagsInputItem>
       </div>
@@ -61,9 +61,9 @@
                   "
                 >
                   <span
-                    class="mr-2 inline-block size-4 rounded-full align-middle"
-                    :class="{ border: shortenedLabels.find(l => l.id === label.value)?.color }"
-                    :style="{ backgroundColor: shortenedLabels.find(l => l.id === label.value)?.color }"
+                    class="mr-2 size-4 shrink-0 rounded-full align-middle"
+                    :class="{ border: props.labels.find(l => l.id === label.value)?.color }"
+                    :style="{ backgroundColor: props.labels.find(l => l.id === label.value)?.color }"
                   />
                   {{ label.label }}
                 </CommandItem>
@@ -90,6 +90,7 @@
     TagsInputItemText,
   } from "@/components/ui/tags-input";
   import type { LabelOut } from "~/lib/api/types/data-contracts";
+  import { Label } from "@/components/ui/label";
 
   const { t } = useI18n();
 
@@ -107,6 +108,11 @@
       type: Array as () => LabelOut[],
       required: true,
     },
+    name: {
+      type: String,
+      required: false,
+      default: undefined,
+    },
   });
 
   const modelValue = useVModel(props, "modelValue", emit);
@@ -114,16 +120,9 @@
   const open = ref(false);
   const searchTerm = ref("");
 
-  const shortenedLabels = computed(() => {
-    return props.labels.map(l => ({
-      ...l,
-      name: l.name.length > 20 ? `${l.name.substring(0, 20)}...` : l.name,
-    }));
-  });
-
   const filteredLabels = computed(() => {
     const filtered = fuzzysort
-      .go(searchTerm.value, shortenedLabels.value, { key: "name", all: true })
+      .go(searchTerm.value, props.labels, { key: "name", all: true })
       .map(l => ({
         value: l.obj.id,
         label: l.obj.name,

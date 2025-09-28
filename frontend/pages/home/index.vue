@@ -4,6 +4,14 @@
   import { itemsTable } from "./table";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
+  import BaseContainer from "@/components/Base/Container.vue";
+  import BaseCard from "@/components/Base/Card.vue";
+  import Subtitle from "~/components/global/Subtitle.vue";
+  import StatCard from "~/components/global/StatCard/StatCard.vue";
+  import ItemCard from "~/components/Item/Card.vue";
+  import LocationCard from "~/components/Location/Card.vue";
+  import LabelChip from "~/components/Label/Chip.vue";
+  import Table from "~/components/Item/View/Table.vue";
 
   const { t } = useI18n();
 
@@ -42,7 +50,7 @@
 
         <p v-if="itemTable.items.length === 0" class="ml-2 text-sm">{{ $t("items.no_results") }}</p>
         <BaseCard v-else-if="breakpoints.lg">
-          <ItemViewTable :items="itemTable.items" disable-controls />
+          <Table :items="itemTable.items" />
         </BaseCard>
         <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2">
           <ItemCard v-for="item in itemTable.items" :key="item.id" :item="item" />

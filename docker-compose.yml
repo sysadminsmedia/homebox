@@ -3,7 +3,7 @@ services:
     image: homebox
     build:
       context: .
-      dockerfile: ./Dockerfile.rootless
+      dockerfile: ./Dockerfile.hardened
       args:
         - COMMIT=head
         - BUILD_TIME=0001-01-01T00:00:00Z

@@ -5,6 +5,15 @@ import (
 	"context"
 	"crypto/md5"
 	"fmt"
+	"image"
+	"io"
+	"io/fs"
+	"net/http"
+	"path/filepath"
+	"runtime"
+	"strings"
+	"time"
+
 	"github.com/evanoberholster/imagemeta"
 	"github.com/gen2brain/avif"
 	"github.com/gen2brain/heic"
@@ -16,13 +25,6 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
 	"github.com/zeebo/blake3"
 	"golang.org/x/image/draw"
-	"image"
-	"io"
-	"io/fs"
-	"net/http"
-	"path/filepath"
-	"strings"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
@@ -96,17 +98,42 @@ func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
 }
 
 func (r *AttachmentRepo) path(gid uuid.UUID, hash string) string {
-	return filepath.Join(r.storage.PrefixPath, gid.String(), "documents", hash)
+	return filepath.Join(gid.String(), "documents", hash)
+}
+
+func (r *AttachmentRepo) fullPath(relativePath string) string {
+	return filepath.Join(r.storage.PrefixPath, relativePath)
+}
+
+func (r *AttachmentRepo) GetFullPath(relativePath string) string {
+	return r.fullPath(relativePath)
 }
 
 func (r *AttachmentRepo) GetConnString() string {
+	// Handle the default case for file storage
+	// which is file:///./ meaning relative to the current working directory
 	if strings.HasPrefix(r.storage.ConnString, "file:///./") {
 		dir, err := filepath.Abs(strings.TrimPrefix(r.storage.ConnString, "file:///./"))
+		if runtime.GOOS == "windows" {
+			dir = fmt.Sprintf("/%s", dir)
+		}
 		if err != nil {
 			log.Err(err).Msg("failed to get absolute path for attachment directory")
 			return r.storage.ConnString
 		}
-		return fmt.Sprintf("file://%s?no_tmp_dir=true", dir)
+		return strings.ReplaceAll(fmt.Sprintf("file://%s?no_tmp_dir=true", dir), "\\", "/")
+	} else if strings.HasPrefix(r.storage.ConnString, "file://") {
+		// Handle the case for file storage with an absolute path
+		// Convert Windows paths to a format compatible with fileblob
+		// e.g. file:///C:/path/to/file becomes file:///C/path
+		dir := strings.TrimPrefix(strings.ReplaceAll(r.storage.ConnString, "\\", "/"), "file://")
+		if runtime.GOOS == "windows" {
+			// Remove the colon from the drive letter (in case the user adds it)
+			dir = strings.ReplaceAll(dir, ":", "")
+			// Ensure the path starts with a slash for Windows compatibility
+			dir = fmt.Sprintf("/%s", dir)
+		}
+		return fmt.Sprintf("file://%s", dir)
 	}
 	return r.storage.ConnString
 }
@@ -366,7 +393,7 @@ func (r *AttachmentRepo) Delete(ctx context.Context, gid uuid.UUID, itemId uuid.
 				log.Err(err).Msg("failed to open bucket for thumbnail deletion")
 				return err
 			}
-			err = thumbBucket.Delete(ctx, thumb.Path)
+			err = thumbBucket.Delete(ctx, r.fullPath(thumb.Path))
 			if err != nil {
 				return err
 			}
@@ -388,7 +415,7 @@ func (r *AttachmentRepo) Delete(ctx context.Context, gid uuid.UUID, itemId uuid.
 				log.Err(err).Msg("failed to close bucket")
 			}
 		}(bucket)
-		err = bucket.Delete(ctx, doc.Path)
+		err = bucket.Delete(ctx, r.fullPath(doc.Path))
 		if err != nil {
 			return err
 		}
@@ -456,7 +483,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		}
 	}(bucket)
 
-	origFile, err := bucket.Open(path)
+	origFile, err := bucket.Open(r.fullPath(path))
 	if err != nil {
 		err := tx.Rollback()
 		if err != nil {
@@ -766,14 +793,15 @@ func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, d
 		ContentType: contentType,
 		ContentMD5:  md5hash.Sum(nil),
 	}
-	path := r.path(itemGroup.ID, fmt.Sprintf("%x", hashOut))
-	err = bucket.WriteAll(ctx, path, contentBytes, options)
+	relativePath := r.path(itemGroup.ID, fmt.Sprintf("%x", hashOut))
+	fullPath := r.fullPath(relativePath)
+	err = bucket.WriteAll(ctx, fullPath, contentBytes, options)
 	if err != nil {
 		log.Err(err).Msg("failed to write file to bucket")
 		return "", err
 	}
 
-	return path, nil
+	return relativePath, nil
 }
 
 func isImageFile(mimetype string) bool {
@@ -823,7 +851,7 @@ func (r *AttachmentRepo) processThumbnailFromImage(ctx context.Context, groupId 
 	}
 	newWidth, newHeight := calculateThumbnailDimensions(bounds.Dx(), bounds.Dy(), r.thumbnail.Width, r.thumbnail.Height)
 	dst := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
-	draw.ApproxBiLinear.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
+	draw.CatmullRom.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
 
 	buf := new(bytes.Buffer)
 	err := webp.Encode(buf, dst, webp.Options{Quality: 80, Lossless: false})

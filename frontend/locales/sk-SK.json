@@ -100,6 +100,8 @@
                 "item_photo": "Fotografia predmetu 📷",
                 "item_quantity": "Počet predmetov",
                 "parent_item": "Nadradená položka",
+                "product_tooltip_input_barcode": "Automaticky vyplniť ručne zadaným čiarovým kódom",
+                "product_tooltip_scan_barcode": "Automaticky vyplniť čiarovým kódom z 📷",
                 "rotate_photo": "Otočiť fotografiu",
                 "set_as_primary_photo": "Nastaviť ako { isPrimary, select, true {non-} false {} other {}}primárnu fotografiu",
                 "title": "Vytvoriť položku",
@@ -119,6 +121,15 @@
                 },
                 "upload_photos": "Nahrať fotografie",
                 "uploaded": "Nahraná fotografia"
+            },
+            "product_import": {
+                "barcode": "Čiarový kód produktu",
+                "db_source": "Zdroj DB",
+                "error_exception": "Pri načítaní čiarového kódu došlo k výnimke: ",
+                "error_invalid_barcode": "Zadali ste neplatný čiarový kód",
+                "error_not_found": "Nenašiel sa žiaden produkt s uvedeným čiarovým kódom.",
+                "search_item": "Vyhľadať produkt",
+                "title": "Importovať produkt"
             },
             "selector": {
                 "no_results": "Nenašli sa žiadne výsledky",
@@ -183,6 +194,9 @@
             "no_results": "Nenašli sa žiadne výsledky.",
             "shortcut_hint": "Pomocou číselných tlačidiel rýchlo vyberte akciu."
         }
+    },
+    "errors": {
+        "api_failure": "Volanie backendového API skončilo s chybou: "
     },
     "global": {
         "add": "Pridať",
@@ -277,6 +291,18 @@
         "description": "Popis",
         "details": "Podrobnosti",
         "drag_and_drop": "Presuňte súbory sem alebo kliknutím vyberte súbory",
+        "duplicate": {
+            "copy_attachments": "Kopírovať prílohy",
+            "copy_custom_fields": "Kopírovať vlastné polia",
+            "copy_maintenance": "Kopírovať údržbu",
+            "custom_prefix": "Kopírovať predponu",
+            "enable_custom_prefix": "Povoliť vlastnú predponu",
+            "override_instructions": "Ak pri kliknutí na tlačidlo duplikovať stlačíte kláves Shift, toto nastavenie prepíšete.",
+            "prefix": "Kópia ",
+            "prefix_instructions": "Táto predpona bude pridaná na začiatok názvu duplikovanej položky. Na koniec predpony vložte medzeru, aby medzi predponou a názvom položky bola medzera.",
+            "temporary_title": "Dočasné nastavenia",
+            "title": "Duplikovať nastavenia"
+        },
         "edit": {
             "edit_attachment_dialog": {
                 "attachment_title": "Názov prílohy",
@@ -285,7 +311,8 @@
                 "primary_photo_sub": "Táto možnosť je dostupná len pre fotografie. Primárna môže byť iba jedna fotografia. Ak vyberiete túto voľbu, aktuálna primárna fotografia (ak taká existuje) bude zrušená.",
                 "select_type": "Vyberte typ",
                 "title": "Upraviť prílohu"
-            }
+            },
+            "view_image": "Zobraziť obrázok"
         },
         "edit_details": "Upraviť podrobnosti",
         "field_selector": "Výber poľa",
@@ -383,6 +410,7 @@
         "update_label": "Aktualizovať štítok"
     },
     "languages": {
+        "bs-BA": "Bosniačtina (Bosna a Hercegovina)",
         "ca": "Katalánsky",
         "cs-CZ": "Čeština",
         "de": "Nemecky",
@@ -410,6 +438,7 @@
         "th-TH": "Thaičina",
         "tr": "Turečtina",
         "uk-UA": "Ukrajinsky",
+        "vi-VN": "Vietnamčina",
         "zh-CN": "Čínština (zjednodušená)",
         "zh-HK": "Čínsky (Hong Kong) Name",
         "zh-MO": "Čínština (Macao)",
@@ -537,7 +566,7 @@
             "input_placeholder": "Píšte sem",
             "instruction_1": "Generátor štítkov Homebox je nástroj, ktorý vám pomôže vytlačiť štítky pre inventár Homeboxu. Tie sú určené na\n to, aby ste mohli vytlačiť viacero štítkov naraz a mať ich pripravených vopred",
             "instruction_2": "Tieto štítky fungujú tak, že sa na štítok vytlačí QR kód URL adresy a informácia AssetID. Ak ste v nastaveniach Homeboxu\n AssetID zakázali, môžete tento nástroj i naďalej používať, ale AssetIT nebude odkazovať na žiadnu položku",
-            "instruction_3": "Táto funkcia je v ranej fáze vývoja a v budúcich verziách sa môže zmeniť, ak máte spätnú väzbu, podeľte sa s ňou, prosím,\n v <a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'Diskusii na GitHube</a>",
+            "instruction_3": "Táto funkcia je v ranej fáze vývoja a v budúcich verziách sa môže zmeniť, ak máte spätnú väzbu, podeľte sa s ňou, prosím,\n v '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'Diskusii na GitHube'</a>'",
             "label_height": "Výška štítka",
             "label_width": "Šírka štítku",
             "measure_type": "Typ merania",
@@ -559,6 +588,8 @@
         }
     },
     "scanner": {
+        "barcode_detected_message": "bol zistený čiarový kód produktu",
+        "barcode_fetch_data": "Načítať údaje produktu",
         "error": "Počas skenovania sa vyskytla chyba",
         "invalid_url": "Neplatná adresa URL čiarového kódu",
         "no_sources": "Nie sú k dispozícii žiadne zdroje videa",

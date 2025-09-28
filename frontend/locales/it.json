@@ -24,6 +24,13 @@
                 "new_version_available_link": "Clicca qui per visualizzare le note di rilascio"
             }
         },
+        "color_selector": {
+            "clear": "Pulisci il colore",
+            "color": "Colore",
+            "no_color": "Nessun colore",
+            "no_color_selected": "Nessun colore selezionato",
+            "randomize": "Colore casuale"
+        },
         "form": {
             "password": {
                 "toggle_show": "Attiva/disattiva visualizzazione password"
@@ -93,6 +100,8 @@
                 "item_photo": "Foto dell'articolo 📷",
                 "item_quantity": "Quantità Articoli",
                 "parent_item": "Articolo principale",
+                "product_tooltip_input_barcode": "Compilazione automatica con un codice a barre fornito manualmente",
+                "product_tooltip_scan_barcode": "Riempimento automatico con un codice a barre da 📷",
                 "rotate_photo": "Ruota foto",
                 "set_as_primary_photo": "Imposta come { isPrimary, select, true {non} false {} other {}} foto principale",
                 "title": "Crea Articolo",
@@ -113,10 +122,18 @@
                 "upload_photos": "Carica Foto",
                 "uploaded": "Foto caricata"
             },
+            "product_import": {
+                "barcode": "Codice a barre del prodotto",
+                "error_exception": "Si è verificato un errore durante il recupero del codice a barre dell'articolo: ",
+                "error_invalid_barcode": "Il codice a barre fornito non è valido",
+                "error_not_found": "Nessun prodotto trovato con il codice a barre fornito.",
+                "search_item": "Cerca prodotto",
+                "title": "Importa prodotto"
+            },
             "selector": {
                 "no_results": "Nessun risultato trovato",
                 "placeholder": "Seleziona…",
-                "search_placeholder": "Digita per cercare…"
+                "search_placeholder": "Scrivi per cercare…"
             },
             "view": {
                 "selectable": {
@@ -136,6 +153,7 @@
         },
         "label": {
             "create_modal": {
+                "label_color": "Colore Etichetta",
                 "label_description": "Descrizione Etichetta",
                 "label_name": "Nome Etichetta",
                 "title": "Crea Etichetta",
@@ -175,6 +193,9 @@
             "no_results": "Non sono stati trovati risultati.",
             "shortcut_hint": "Utilizzare i tasti numerici per selezionare rapidamente un'azione."
         }
+    },
+    "errors": {
+        "api_failure": "Chiamata API backend non riuscita: "
     },
     "global": {
         "add": "Aggiungi",
@@ -269,6 +290,14 @@
         "description": "Descrizione",
         "details": "Dettagli",
         "drag_and_drop": "Trascina e rilascia i file qui o fai clic per selezionare i file",
+        "duplicate": {
+            "copy_attachments": "Copia allegati",
+            "copy_custom_fields": "Copia Campi Personalizzati",
+            "custom_prefix": "Copia Prefisso",
+            "enable_custom_prefix": "Abilita prefisso personalizzato",
+            "prefix": "Copia di ",
+            "temporary_title": "Impostazioni temporanee"
+        },
         "edit": {
             "edit_attachment_dialog": {
                 "attachment_title": "Titolo allegato",
@@ -280,7 +309,7 @@
             }
         },
         "edit_details": "Modifica dettagli",
-        "field_selector": "Campo Selezione",
+        "field_selector": "Selezione in base ai campi",
         "field_value": "Campo valore",
         "first": "Primo",
         "include_archive": "Includi Articoli Archiviati",
@@ -311,7 +340,7 @@
         "purchase_date": "Data di acquisto",
         "purchase_details": "Dettagli dell'acquisto",
         "purchase_price": "Prezzo di acquisto",
-        "purchased_from": "Acqistato da",
+        "purchased_from": "Acquistato da",
         "quantity": "Quantità",
         "query_id": "ID dell'Asset in Ricerca: { id }",
         "receipt": "Ricevuta",
@@ -321,7 +350,7 @@
         "select_field": "Seleziona un campo",
         "serial_number": "Numero seriale",
         "show_advanced_view_options": "Mostra opzioni di visualizzazione avanzate",
-        "sold_at": "Venduto su",
+        "sold_at": "Venduto il",
         "sold_details": "Dettagli di vendita",
         "sold_price": "Prezzo di vendita",
         "sold_to": "Venduto a",
@@ -331,16 +360,20 @@
         "tip_3": "I filtri di campo utilizzano l'operazione 'OR'. Se ne viene selezionato più di uno, ne sarà\n richiesto solo uno per una corrispondenza.",
         "tips": "Suggerimenti",
         "tips_sub": "Suggerimenti per la Ricerca",
+        "toast": {
+            "quantity_cannot_negative": "La quantità non può essere negativa"
+        },
         "updated_at": "Aggiornato Il",
         "warranty": "Garanzia",
         "warranty_details": "Dettagli garanzia",
-        "warranty_expires": "Garanzia scaduta"
+        "warranty_expires": "La garanzia scade il"
     },
     "labels": {
         "no_results": "Nessuna etichetta trovata",
         "update_label": "Aggiorna etichetta"
     },
     "languages": {
+        "bs-BA": "Bosniaco (Bosnia ed Erzegovina)",
         "ca": "Catalano",
         "cs-CZ": "Ceco",
         "de": "Tedesco",
@@ -367,6 +400,7 @@
         "th-TH": "Tailandese",
         "tr": "Turco",
         "uk-UA": "Ucraino",
+        "vi-VN": "Vietnamita",
         "zh-CN": "Cinese (semplificato)",
         "zh-HK": "Cinese Mandarino",
         "zh-MO": "Cinese (Macao)",

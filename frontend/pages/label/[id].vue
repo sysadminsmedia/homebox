@@ -13,6 +13,14 @@
   import ColorSelector from "@/components/Form/ColorSelector.vue";
   import { getContrastTextColor } from "~/lib/utils";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import FormTextArea from "~/components/Form/TextArea.vue";
+  import BaseContainer from "@/components/Base/Container.vue";
+  import Currency from "~/components/global/Currency.vue";
+  import DateTime from "~/components/global/DateTime.vue";
+  import PageQRCode from "~/components/global/PageQRCode.vue";
+  import Markdown from "~/components/global/Markdown.vue";
+  import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
 
   definePageMeta({
     middleware: ["auth"],
@@ -86,28 +94,34 @@
     updating.value = false;
   }
 
-  const items = computedAsync(async () => {
-    if (!label.value) {
-      return {
-        items: [],
-        totalPrice: null,
-      };
+  const { data: items, refresh: refreshItemList } = useAsyncData(
+    () => labelId.value + "_item_list",
+    async () => {
+      if (!labelId.value) {
+        return {
+          items: [],
+          totalPrice: null,
+        };
+      }
+
+      const resp = await api.items.getAll({
+        labels: [labelId.value],
+      });
+
+      if (resp.error) {
+        toast.error(t("items.toast.failed_load_items"));
+        return {
+          items: [],
+          totalPrice: null,
+        };
+      }
+
+      return resp.data;
+    },
+    {
+      watch: [labelId],
     }
-
-    const resp = await api.items.getAll({
-      labels: [label.value.id],
-    });
-
-    if (resp.error) {
-      toast.error(t("items.toast.failed_load_items"));
-      return {
-        items: [],
-        totalPrice: null,
-      };
-    }
-
-    return resp.data;
-  });
+  );
 </script>
 
 <template>
@@ -129,7 +143,7 @@
         <FormTextArea
           v-model="updateData.description"
           :label="$t('components.label.create_modal.label_description')"
-          :max-length="255"
+          :max-length="1000"
         />
         <ColorSelector
           v-model="updateData.color"
@@ -192,7 +206,7 @@
       <Markdown v-if="label && label.description" class="mt-3 text-base" :source="label.description" />
     </Card>
     <section v-if="label && items">
-      <ItemViewSelectable :items="items.items" />
+      <ItemViewSelectable :items="items.items" @refresh="refreshItemList" />
     </section>
   </BaseContainer>
 </template>

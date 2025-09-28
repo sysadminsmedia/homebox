@@ -2,9 +2,12 @@
     "components": {
         "app": {
             "create_modal": {
-                "createAndAddAnother": "Dùng phím {shiftKey} + {enterKey} để tạo và thêm 1 cái khác."
+                "createAndAddAnother": "Dùng phím {shiftKey} + {enterKey} để tạo và thêm 1 cái khác.",
+                "enter": "Nhập Enter",
+                "shift": "Nhấn Shift"
             },
             "import_dialog": {
+                "change_warning": "Thiết lập của import_refs trước đó đã có sự thay đổi. Nếu một giá trị trong import_ref đã tồn tại trong CSV, giá trị đã có sẽ được giữ nguyên",
                 "description": "Nhập một tệp CSV chứa những món đồ, nhãn, và vị trí. Xem tài liệu để biết thêm thông tin về \nkhuôn dạng dữ liệu được yêu cầu.",
                 "title": "Nhập tệp CSV",
                 "toast": {
@@ -25,19 +28,28 @@
             "clear": "Xóa màu",
             "color": "Màu",
             "no_color": "Không màu",
+            "no_color_selected": "Chưa chọn màu",
             "randomize": "Màu ngẫu nhiên"
+        },
+        "form": {
+            "password": {
+                "toggle_show": "Chọn Hiển thị Mật khẩu"
+            }
         },
         "global": {
             "copy_text": {
                 "documentation": "tài liệu",
                 "failed_to_copy": "Chép văn bản vào vùng lưu trữ dữ liệu tạm thời đã thất bại",
-                "https_required": "Bởi vì HTTPS là bắt buộc"
+                "https_required": "Bởi vì HTTPS là bắt buộc",
+                "learn_more": "Học thêm trong  của chúng tôi"
             },
             "date_time": {
                 "ago": "{0} trước",
                 "days": "ngày",
                 "hour": "giờ",
                 "hours": "giờ",
+                "in": "Trong{0}",
+                "just-now": "vừa đây",
                 "last-month": "tháng trước",
                 "last-week": "tuần trước",
                 "last-year": "năm trước",
@@ -69,7 +81,7 @@
                 }
             },
             "page_qr_code": {
-                "page_url": "Page URL",
+                "page_url": "URL của trang",
                 "qr_tooltip": "Hiển thị mã QR"
             },
             "password_score": {
@@ -88,20 +100,34 @@
                 "item_photo": "Hình ảnh món đồ",
                 "item_quantity": "Số lượng món đồ",
                 "parent_item": "Món đồ chủ",
+                "product_tooltip_input_barcode": "Điền tự động với barcode tạo thủ công",
+                "product_tooltip_scan_barcode": "Điền tự động với barcode từ hình chụp",
                 "rotate_photo": "Xoay bức hình",
+                "set_as_primary_photo": "Đặt với { isPrimary, select, true {non-} false {} other {}} hình chính",
                 "title": "Tạo món đồ",
                 "toast": {
+                    "already_creating": "Đã đang tạo vật phẩm",
                     "create_failed": "Không thể tạo món đồ",
                     "create_success": "Món đồ đã được tạo",
+                    "failed_load_parent": "Không nạp được giá trị vật phẩm nhóm - hãy chọn thủ công",
+                    "no_canvas_support": "Trình duyệt bạn không hỗ trợ thao tác với canvas",
                     "please_select_location": "Xin chọn địa điểm.",
                     "rotate_failed": "Thất bại khi xoay ảnh: { error }",
                     "rotate_process_failed": "Thất bại khi xử lý ảnh đã được xoay",
-                    "upload_failed": "Thất bại khi tải lên ảnh: { photoName }"
+                    "some_photos_failed": "{count, plural, =0 {Không có ảnh để đăng.} =1 {1 ảnh đăng thất bại.} other {Một vài hình đăng thất bại}}",
+                    "upload_failed": "Thất bại khi tải lên ảnh: { photoName }",
+                    "upload_success": "{count, plural, =0 {Không có ảnh nào được đăng} =1 {Ảnh đăng thành công.} other {Tất cả ảnh được đăng thành công.}}",
+                    "uploading_photos": "{count, plural, =0 {Không có ảnh để đăng} =1 {Đang đăng 1 ảnh…} other {Đang đăng {count} ảnh…}}"
                 },
                 "upload_photos": "Tải lên nhiều ảnh",
                 "uploaded": "Ảnh đã được tải lên"
             },
             "product_import": {
+                "barcode": "Barcode của sản phẩm",
+                "db_source": "Nguồn cơ sở dữ liệu",
+                "error_exception": "Có lỗi xảy ra khi truy nhập barcode của vật phẩm. ",
+                "error_invalid_barcode": "Barcode không hợp lệ",
+                "search_item": "Tìm vật phẩm",
                 "title": "Nhập sản phẩm"
             },
             "selector": {

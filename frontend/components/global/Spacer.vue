@@ -1,3 +1,3 @@
 <template>
-  <div class="max-w-full"></div>
+  <div class="max-w-full" />
 </template>

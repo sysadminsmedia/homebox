@@ -1,3 +1,4 @@
+<!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
@@ -9,15 +10,26 @@
   import MdiDelete from "~icons/mdi/delete";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiContentSaveOutline from "~icons/mdi/content-save-outline";
+  import MdiImageOutline from "~icons/mdi/image-outline";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { Button } from "@/components/ui/button";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { Checkbox } from "@/components/ui/checkbox";
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-  import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from "@/components/ui/tooltip";
+  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
   import { Switch } from "@/components/ui/switch";
   import { Label } from "@/components/ui/label";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import FormTextArea from "~/components/Form/TextArea.vue";
+  import FormDatePicker from "~/components/Form/DatePicker.vue";
+  import FormCheckbox from "~/components/Form/Checkbox.vue";
+  import LocationSelector from "~/components/Location/Selector.vue";
+  import ItemSelector from "~/components/Item/Selector.vue";
+  import LabelSelector from "~/components/Label/Selector.vue";
+  import BaseCard from "@/components/Base/Card.vue";
+  import { Card } from "~/components/ui/card";
+  import DropZone from "~/components/global/DropZone.vue";
 
   const { t } = useI18n();
 
@@ -51,7 +63,7 @@
       return;
     }
 
-    if (locations && data.location?.id) {
+    if (locations.value && data.location?.id) {
       // @ts-expect-error - we know the locations is valid
       const location = locations.value.find(l => l.id === data.location.id);
       if (location) {
@@ -66,7 +78,7 @@
     return data;
   });
 
-  const item = ref<ItemOut & { labelIds: string[] }>(null as any);
+  const item = ref<ItemOut & { labelIds: string[] }>(null as never);
 
   watchEffect(() => {
     if (nullableItem.value) {
@@ -313,7 +325,7 @@
   const dropReceipt = (files: File[] | null) => uploadAttachment(files, AttachmentTypes.Receipt);
 
   async function uploadAttachment(files: File[] | null, type: AttachmentTypes | null) {
-    if (!files || files.length === 0) {
+    if (!files || files.length === 0 || !files[0]) {
       return;
     }
 
@@ -361,7 +373,7 @@
   });
 
   const attachmentOpts = Object.entries(AttachmentTypes).map(([key, value]) => ({
-    text: key[0].toUpperCase() + key.slice(1),
+    text: key[0]!.toUpperCase() + key.slice(1),
     value,
   }));
 
@@ -372,7 +384,7 @@
     editState.primary = attachment.primary;
     openDialog(DialogID.AttachmentEdit);
 
-    editState.obj = attachmentOpts.find(o => o.value === attachment.type) || attachmentOpts[0];
+    editState.obj = attachmentOpts.find(o => o.value === attachment.type) || attachmentOpts[0]!;
   }
 
   async function updateAttachment() {
@@ -412,7 +424,7 @@
     } as unknown as ItemField);
   }
 
-  const { query, results } = useItemSearch(api, { immediate: false });
+  const { query, results, isLoading, triggerSearch } = useItemSearch(api, { immediate: false });
   const parent = ref();
 
   async function keyboardSave(e: KeyboardEvent) {
@@ -579,6 +591,8 @@
               :label="$t('items.parent_item')"
               no-results-text="Type to search..."
               :exclude-items="[item]"
+              :is-loading="isLoading"
+              :trigger-search="triggerSearch"
               @update:model-value="maybeSyncWithParentLocation()"
             />
             <div class="flex flex-col gap-2">
@@ -697,6 +711,33 @@
                   {{ $t(`items.${attachment.type}`) }}
                 </p>
                 <div class="flex justify-end gap-2">
+                  <Tooltip v-if="attachment.type === 'photo'">
+                    <TooltipTrigger as-child>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        @click="
+                          openDialog(DialogID.ItemImage, {
+                            params: {
+                              type: 'attachment',
+                              itemId: item.id,
+                              attachmentId: attachment.id,
+                              thumbnailId: attachment.thumbnail?.id,
+                              mimeType: attachment.mimeType,
+                            },
+                            onClose: result => {
+                              if (result?.action === 'delete') {
+                                item.attachments = item.attachments.filter(a => a.id !== result.id);
+                              }
+                            },
+                          })
+                        "
+                      >
+                        <MdiImageOutline />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>{{ $t("items.edit.view_image") }}</TooltipContent>
+                  </Tooltip>
                   <Tooltip>
                     <TooltipTrigger as-child>
                       <Button variant="destructive" size="icon" @click="deleteAttachment(attachment.id)">

@@ -134,7 +134,8 @@
             "selector": {
                 "no_results": "Geen resultaten gevonden",
                 "placeholder": "Selecteer…",
-                "search_placeholder": "Type om te zoeken…"
+                "search_placeholder": "Type om te zoeken…",
+                "searching": "Zoeken…"
             },
             "view": {
                 "selectable": {
@@ -291,6 +292,18 @@
         "description": "Beschrijving",
         "details": "Details",
         "drag_and_drop": "Sleep bestanden hierheen en zet ze neer of klik om bestanden te selecteren",
+        "duplicate": {
+            "copy_attachments": "Bijlagen kopiëren",
+            "copy_custom_fields": "Aangepaste velden kopiëren",
+            "copy_maintenance": "Onderhoud kopiëren",
+            "custom_prefix": "Voorvoegsel kopiëren",
+            "enable_custom_prefix": "Aangepast voorvoegsel inschakelen",
+            "override_instructions": "Houd Shift ingedrukt wanneer u op de knop dupliceren klikt om deze instellingen te overschrijven.",
+            "prefix": "Kopie van ",
+            "prefix_instructions": "Dit voorvoegsel wordt toegevoegd aan het begin van de naam van het gedupliceerde item. Voeg een spatie toe aan het einde van het voorvoegsel om een spatie toe te voegen tussen het voorvoegsel en de itemnaam.",
+            "temporary_title": "Tijdelijke instellingen",
+            "title": "Dupliceer instellingen"
+        },
         "edit": {
             "edit_attachment_dialog": {
                 "attachment_title": "Bijlage titel",
@@ -299,7 +312,8 @@
                 "primary_photo_sub": "Deze optie is alleen beschikbaar voor foto's. Er kan maar één primaire foto zijn. Als je deze optie selecteerd zal de huidige primaire foto worden gedeselecteerd.",
                 "select_type": "Selecteer een type",
                 "title": "Bijlage bewerken"
-            }
+            },
+            "view_image": "Afbeelding bekijken"
         },
         "edit_details": "Details bewerken",
         "field_selector": "Veld selectie",
@@ -397,6 +411,7 @@
         "update_label": "Etiket bijwerken"
     },
     "languages": {
+        "bs-BA": "Bosnisch (Bosnië en Herzegovina)",
         "ca": "Catalaans",
         "cs-CZ": "Tsjechisch",
         "de": "Duits",
@@ -423,6 +438,7 @@
         "th-TH": "Thais",
         "tr": "Turks",
         "uk-UA": "Oekraïens",
+        "vi-VN": "Vietnamees",
         "zh-CN": "Chinees (vereenvoudigd)",
         "zh-HK": "Chinees (Hong Kong)",
         "zh-MO": "Chinees (Macau)",
@@ -551,7 +567,7 @@
             "input_placeholder": "Typ hier",
             "instruction_1": "De Homebox Label Generator is een hulpmiddel om u te helpen bij het afdrukken van labels voor uw Homebox-inventaris.\nDeze zijn bedoeld om op voorhand te printen zodat je een voorraad hebt en deze klaar zijn om te gebruiken",
             "instruction_2": "Als zodanig werken deze labels door een URL QR-code en item-ID-informatie op een label af te drukken. Als je item-ID's\nhebt uitgeschakeld in je Homebox-instellingen, kun je deze tool nog steeds gebruiken, maar zullen de item-ID's niet verwijzen naar een item",
-            "instruction_3": "Deze functie bevindt zich in een vroege ontwikkelingsfase en kan in toekomstige releases veranderen. Als je feedback hebt, geef\n deze dan op in de<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\"> ''GitHub-discussie '</a>'",
+            "instruction_3": "Deze functie bevindt zich in een vroege ontwikkelingsfase en kan in toekomstige releases veranderen. Als je feedback hebt, geef\n deze dan op in de '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub-discussie'</a>'",
             "label_height": "Label hoogte",
             "label_width": "Label breedte",
             "measure_type": "Meting type",
@@ -562,7 +578,7 @@
             "page_top_padding": "Top padding",
             "page_width": "Pagina breedte",
             "qr_code_example": "Voorbeeld QR Code",
-            "tip_1": "De standaardinstellingen hier zijn ingesteld voor de\n <a href=\"https://www.avery.com/templates/5260\">''Avery 5260-labelbladen '</a>'. Als je een ander vel gebruikt,\nmoet je de instellingen aanpassen aan jouw type vel.",
+            "tip_1": "De standaardinstellingen hier zijn ingesteld voor de\n '<a href=\"https://www.avery.com/templates/5260\">'Avery 5260-labelbladen'</a>'. Als je een ander vel gebruikt,\nmoet je de instellingen aanpassen aan jouw type vel.",
             "tip_2": "Als je het vel aanpast zijn de afmetingen in inch. Bij het maken van een 5260 vel, heb ik ontdekt dat de\nafmetingen in hun template niet overeen komen om te printen in de vakken.\n'<b>'Hou rekening met wat trial en error.'</b>'",
             "tip_3": "Let op bij het afdrukken:\n'<ol><li>'Stel de marges in op 0 of Geen'</li><li>'Zet de schaal op 100%'</li><li>'Dubbelzijdig afdrukken uitschakelen'</li><li>'Druk een testpagina af voordat u meerdere pagina's afdrukt'</li></ol>'",
             "tips": "Tips",

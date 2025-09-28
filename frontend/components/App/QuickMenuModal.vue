@@ -1,13 +1,13 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
-  import { DialogID } from "@/components/ui/dialog-provider/utils";
+  import { DialogID, type NoParamDialogIDs, type OptionalDialogIDs } from "@/components/ui/dialog-provider/utils";
   import {
     CommandDialog,
-    CommandInput,
-    CommandList,
     CommandEmpty,
     CommandGroup,
+    CommandInput,
     CommandItem,
+    CommandList,
     CommandSeparator,
   } from "~/components/ui/command";
   import { Shortcut } from "~/components/ui/shortcut";
@@ -15,7 +15,7 @@
 
   export type QuickMenuAction =
     | { text: string; href: string; type: "navigate" }
-    | { text: string; dialogId: DialogID; shortcut: string; type: "create" };
+    | { text: string; dialogId: NoParamDialogIDs | OptionalDialogIDs; shortcut: string; type: "create" };
 
   const props = defineProps({
     actions: {
@@ -40,7 +40,7 @@
           const item = props.actions.filter(item => 'shortcut' in item).find(item => item.shortcut === e.key);
           if (item) {
             e.preventDefault();
-            openDialog(item.dialogId);
+            openDialog(item.dialogId as NoParamDialogIDs);
           }
           // if esc is pressed, close the dialog
           if (e.key === 'Escape') {
@@ -61,7 +61,7 @@
           @select="
             e => {
               e.preventDefault();
-              openDialog(create.dialogId);
+              openDialog(create.dialogId as NoParamDialogIDs);
             }
           "
         >

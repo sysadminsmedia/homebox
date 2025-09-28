@@ -54,6 +54,7 @@ export enum AttachmentType {
 
 export interface CurrenciesCurrency {
   code: string;
+  decimals: number;
   local: string;
   name: string;
   symbol: string;
@@ -454,10 +455,6 @@ export interface EntUserEdges {
 export interface BarcodeProduct {
   barcode: string;
   imageBase64: string;
-  /**
-   * TODO: add image attachement
-   * TODO: add asin?
-   */
   imageURL: string;
   item: ItemCreate;
   manufacturer: string;
@@ -466,6 +463,13 @@ export interface BarcodeProduct {
   /** Extras */
   notes: string;
   search_engine_name: string;
+}
+
+export interface DuplicateOptions {
+  copyAttachments: boolean;
+  copyCustomFields: boolean;
+  copyMaintenance: boolean;
+  copyPrefix: string;
 }
 
 export interface Group {
@@ -574,6 +578,8 @@ export interface ItemOut {
 
 export interface ItemPatch {
   id: string;
+  labelIds?: string[] | null;
+  locationId?: string | null;
   quantity?: number | null;
 }
 
@@ -648,7 +654,7 @@ export interface ItemUpdate {
 
 export interface LabelCreate {
   color: string;
-  /** @maxLength 255 */
+  /** @maxLength 1000 */
   description: string;
   /**
    * @minLength 1

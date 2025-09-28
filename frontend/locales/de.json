@@ -291,15 +291,28 @@
         "description": "Beschreibung",
         "details": "Details",
         "drag_and_drop": "Ziehen Sie Dateien hierher und legen Sie sie dort ab oder klicken Sie, um Dateien auszuwählen",
+        "duplicate": {
+            "copy_attachments": "Anhänge kopieren",
+            "copy_custom_fields": "Benutzerdefinierte Felder kopieren",
+            "copy_maintenance": "Kopiere Wartung",
+            "custom_prefix": "Präfix kopieren",
+            "enable_custom_prefix": "Benutzerdefinierten Präfix aktivieren",
+            "override_instructions": "Die Umschalt-Taste während des Drückens des Duplizieren-Knopfes halten, um die Einstellungen außer Kraft zu setzen.",
+            "prefix": "Kopie von ",
+            "prefix_instructions": "Dieser Präfix wird vor den Beginn des Namens des duplizierten Artikels gestellt. Verwenden Sie ein Leerzeichen am Ende des Präfix, um einen Platz zwischen Präfix und Artikelnamen zu lassen.",
+            "temporary_title": "Temporäre Einstellungen",
+            "title": "Einstellungen duplizieren"
+        },
         "edit": {
             "edit_attachment_dialog": {
-                "attachment_title": "Anhang Überschrift",
+                "attachment_title": "Anhangsüberschrift",
                 "attachment_type": "Anhangstyp",
                 "primary_photo": "Primäres Bild",
                 "primary_photo_sub": "Diese Option ist nur für Bilder verfügbar. Nur ein Bild kann das primäre Bild sein. Wenn Sie diese Option auswählen, wird das aktuelle primär Bild, wenn eins ausgewählt ist, abgewählt.",
                 "select_type": "Wählen Sie einen Typ aus",
                 "title": "Anhang bearbeiten"
-            }
+            },
+            "view_image": "Bild anzeigen"
         },
         "edit_details": "Details bearbeiten",
         "field_selector": "Feldauswahl",
@@ -397,6 +410,7 @@
         "update_label": "Label aktualisieren"
     },
     "languages": {
+        "bs-BA": "Bosnisch (Bosnien und Herzegowina)",
         "ca": "Katalanisch",
         "cs-CZ": "Tschechisch",
         "de": "Deutsch",
@@ -423,9 +437,10 @@
         "th-TH": "Thailändisch",
         "tr": "Türkisch",
         "uk-UA": "Ukrainisch",
-        "zh-CN": "Chinesisch (einfach)",
+        "vi-VN": "Vietnamesisch",
+        "zh-CN": "Chinesisch (vereinfacht)",
         "zh-HK": "Chinesisch (Hong Kong)",
-        "zh-MO": "Chinesisch (Macao)",
+        "zh-MO": "Chinesisch (Macau)",
         "zh-TW": "Chinesisch (traditionell)"
     },
     "languages.da-DK": "Dänisch",
@@ -437,7 +452,7 @@
         "collapse_tree": "Baum einklappen",
         "expand_tree": "Baum ausklappen",
         "location_items_delete_confirm": "Möchten Sie diesen Standort und alle darin enthaltenen Elemente wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
-        "no_results": "Keine Orte gefunden",
+        "no_results": "Keine Standorte gefunden",
         "toast": {
             "failed_delete_location": "Standort konnte nicht gelöscht werden",
             "failed_load_location": "Standort konnte nicht geladen werden",
@@ -563,7 +578,7 @@
             "page_width": "Seitenbreite",
             "qr_code_example": "QR-Code Beispiel",
             "tip_1": "Die Standardeinstellungen hier sind für die\n'<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 Etikettenbögen'</a>'. Wenn Sie einen anderen Bogen verwenden,\nmüssen Sie die Einstellungen an Ihr Blatt anpassen.",
-            "tip_2": "Wenn Sie Ihr Blatt anpassen, werden die Abmessungen in Zoll angegeben. Beim Erstellen des 5260-Blattes habe ich festgestellt, dass die\nin deren Vorlage verwendeten Abmessungen nicht mit den für den Druck in den Feldern erforderlichen Abmessungen übereinstimmen.\n„<b>Seien Sie auf einige Versuche und Irrtümer gefasst.“</b>",
+            "tip_2": "Wenn Sie Ihr Blatt anpassen, werden die Abmessungen in Zoll angegeben. Beim Erstellen des 5260-Blattes habe ich festgestellt, dass die\nin deren Vorlage verwendeten Abmessungen nicht mit den für den Druck in den Feldern erforderlichen Abmessungen übereinstimmen.\n'<b>'Seien Sie auf einige Versuche und Irrtümer gefasst.'</b>'",
             "tip_3": "Achten Sie beim Drucken auf Folgendes:\n'<ol><li>'Setzen Sie die Ränder auf 0 oder Keine'</li><li>'Setzen Sie die Skalierung auf 100 %'</li><li>'Deaktivieren Sie den beidseitigen Druck'</li><li>'Drucken Sie eine Testseite, bevor Sie mehrere Seiten drucken'</li></ol>'",
             "tips": "Tipps",
             "title": "Etikettengenerator",

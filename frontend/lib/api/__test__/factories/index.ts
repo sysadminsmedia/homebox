@@ -9,7 +9,7 @@ import { Requests } from "../../../requests";
 
 function itemField(id = null): ItemField {
   return {
-    // @ts-expect-error
+    // @ts-expect-error - not actually an issue
     id,
     name: faker.lorem.word(),
     type: "text",
@@ -45,7 +45,7 @@ function label(): LabelCreate {
   return {
     name: faker.lorem.word(),
     description: faker.lorem.sentence(),
-    color: faker.internet.color(),
+    color: faker.color.rgb(),
   };
 }
 

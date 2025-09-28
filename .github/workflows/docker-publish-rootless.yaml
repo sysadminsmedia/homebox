@@ -8,7 +8,7 @@ on:
     paths:
       - 'backend/**'
       - 'frontend/**'
-      - 'Dockerfile'
+      - 'Dockerfile.rootless'
       - '.dockerignore'
       - '.github/workflows/docker-publish-rootless.yaml'
     ignore:
@@ -19,7 +19,7 @@ on:
     paths:
       - 'backend/**'
       - 'frontend/**'
-      - 'Dockerfile'
+      - 'Dockerfile.rootless'
       - '.dockerignore'
       - '.github/workflows/docker-publish-rootless.yaml'
     ignore:
