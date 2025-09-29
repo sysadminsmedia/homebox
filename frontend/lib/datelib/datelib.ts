@@ -1,19 +1,9 @@
 import { addDays } from "date-fns";
 
-/*
- * Formats a date as a string
- * */
-export function format(date: Date | string): string {
-  if (typeof date === "string") {
-    return date;
-  }
-  return date.toISOString().split("T")[0]!;
-}
-
 export function zeroTime(date: Date): Date {
-  return new Date(
-    new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime() - date.getTimezoneOffset() * 60000
-  );
+  const result = new Date(date.getTime());
+  result.setHours(0, 0, 0, 0);
+  return result;
 }
 
 export function factorRange(offset: number = 7): [Date, Date] {
