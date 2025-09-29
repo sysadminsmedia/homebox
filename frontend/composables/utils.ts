@@ -1,3 +1,5 @@
+import type { CurrenciesCurrency } from "~/lib/api/types/data-contracts";
+
 export function validDate(dt: Date | string | null | undefined): boolean {
   if (!dt) {
     return false;
@@ -42,7 +44,7 @@ function clampDecimals(currency: string, decimals: number): number {
 }
 
 // Type guard to validate currency response shape with strict validation
-function isValidCurrencyItem(item: any): item is { code: string; decimals: number } {
+function isValidCurrencyItem(item: CurrenciesCurrency) {
   if (
     typeof item !== "object" ||
     item === null ||
