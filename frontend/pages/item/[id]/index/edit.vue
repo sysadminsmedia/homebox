@@ -692,7 +692,13 @@
               class="grid h-24 w-full place-content-center border-2 border-dashed border-primary"
               @click="clickUpload"
             >
-              <input ref="refAttachmentInput" hidden type="file" @change="uploadImage" />
+              <input
+                ref="refAttachmentInput"
+                hidden
+                type="file"
+                accept="image/png,image/jpeg,image/gif,image/avif,image/webp;capture=camera"
+                @change="uploadImage"
+              />
               <p>{{ $t("items.drag_and_drop") }}</p>
             </button>
           </div>
