@@ -34,7 +34,8 @@ func (User) Fields() []ent.Field {
 			Unique(),
 		field.String("password").
 			MaxLen(255).
-			NotEmpty().
+			Nillable().
+			Optional().
 			Sensitive(),
 		field.Bool("is_superuser").
 			Default(false),

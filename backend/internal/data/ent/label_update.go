@@ -26,138 +26,138 @@ type LabelUpdate struct {
 }
 
 // Where appends a list predicates to the LabelUpdate builder.
-func (lu *LabelUpdate) Where(ps ...predicate.Label) *LabelUpdate {
-	lu.mutation.Where(ps...)
-	return lu
+func (_u *LabelUpdate) Where(ps ...predicate.Label) *LabelUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (lu *LabelUpdate) SetUpdatedAt(t time.Time) *LabelUpdate {
-	lu.mutation.SetUpdatedAt(t)
-	return lu
+func (_u *LabelUpdate) SetUpdatedAt(v time.Time) *LabelUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetName sets the "name" field.
-func (lu *LabelUpdate) SetName(s string) *LabelUpdate {
-	lu.mutation.SetName(s)
-	return lu
+func (_u *LabelUpdate) SetName(v string) *LabelUpdate {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (lu *LabelUpdate) SetNillableName(s *string) *LabelUpdate {
-	if s != nil {
-		lu.SetName(*s)
+func (_u *LabelUpdate) SetNillableName(v *string) *LabelUpdate {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return lu
+	return _u
 }
 
 // SetDescription sets the "description" field.
-func (lu *LabelUpdate) SetDescription(s string) *LabelUpdate {
-	lu.mutation.SetDescription(s)
-	return lu
+func (_u *LabelUpdate) SetDescription(v string) *LabelUpdate {
+	_u.mutation.SetDescription(v)
+	return _u
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (lu *LabelUpdate) SetNillableDescription(s *string) *LabelUpdate {
-	if s != nil {
-		lu.SetDescription(*s)
+func (_u *LabelUpdate) SetNillableDescription(v *string) *LabelUpdate {
+	if v != nil {
+		_u.SetDescription(*v)
 	}
-	return lu
+	return _u
 }
 
 // ClearDescription clears the value of the "description" field.
-func (lu *LabelUpdate) ClearDescription() *LabelUpdate {
-	lu.mutation.ClearDescription()
-	return lu
+func (_u *LabelUpdate) ClearDescription() *LabelUpdate {
+	_u.mutation.ClearDescription()
+	return _u
 }
 
 // SetColor sets the "color" field.
-func (lu *LabelUpdate) SetColor(s string) *LabelUpdate {
-	lu.mutation.SetColor(s)
-	return lu
+func (_u *LabelUpdate) SetColor(v string) *LabelUpdate {
+	_u.mutation.SetColor(v)
+	return _u
 }
 
 // SetNillableColor sets the "color" field if the given value is not nil.
-func (lu *LabelUpdate) SetNillableColor(s *string) *LabelUpdate {
-	if s != nil {
-		lu.SetColor(*s)
+func (_u *LabelUpdate) SetNillableColor(v *string) *LabelUpdate {
+	if v != nil {
+		_u.SetColor(*v)
 	}
-	return lu
+	return _u
 }
 
 // ClearColor clears the value of the "color" field.
-func (lu *LabelUpdate) ClearColor() *LabelUpdate {
-	lu.mutation.ClearColor()
-	return lu
+func (_u *LabelUpdate) ClearColor() *LabelUpdate {
+	_u.mutation.ClearColor()
+	return _u
 }
 
 // SetGroupID sets the "group" edge to the Group entity by ID.
-func (lu *LabelUpdate) SetGroupID(id uuid.UUID) *LabelUpdate {
-	lu.mutation.SetGroupID(id)
-	return lu
+func (_u *LabelUpdate) SetGroupID(id uuid.UUID) *LabelUpdate {
+	_u.mutation.SetGroupID(id)
+	return _u
 }
 
 // SetGroup sets the "group" edge to the Group entity.
-func (lu *LabelUpdate) SetGroup(g *Group) *LabelUpdate {
-	return lu.SetGroupID(g.ID)
+func (_u *LabelUpdate) SetGroup(v *Group) *LabelUpdate {
+	return _u.SetGroupID(v.ID)
 }
 
 // AddItemIDs adds the "items" edge to the Item entity by IDs.
-func (lu *LabelUpdate) AddItemIDs(ids ...uuid.UUID) *LabelUpdate {
-	lu.mutation.AddItemIDs(ids...)
-	return lu
+func (_u *LabelUpdate) AddItemIDs(ids ...uuid.UUID) *LabelUpdate {
+	_u.mutation.AddItemIDs(ids...)
+	return _u
 }
 
 // AddItems adds the "items" edges to the Item entity.
-func (lu *LabelUpdate) AddItems(i ...*Item) *LabelUpdate {
-	ids := make([]uuid.UUID, len(i))
-	for j := range i {
-		ids[j] = i[j].ID
+func (_u *LabelUpdate) AddItems(v ...*Item) *LabelUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return lu.AddItemIDs(ids...)
+	return _u.AddItemIDs(ids...)
 }
 
 // Mutation returns the LabelMutation object of the builder.
-func (lu *LabelUpdate) Mutation() *LabelMutation {
-	return lu.mutation
+func (_u *LabelUpdate) Mutation() *LabelMutation {
+	return _u.mutation
 }
 
 // ClearGroup clears the "group" edge to the Group entity.
-func (lu *LabelUpdate) ClearGroup() *LabelUpdate {
-	lu.mutation.ClearGroup()
-	return lu
+func (_u *LabelUpdate) ClearGroup() *LabelUpdate {
+	_u.mutation.ClearGroup()
+	return _u
 }
 
 // ClearItems clears all "items" edges to the Item entity.
-func (lu *LabelUpdate) ClearItems() *LabelUpdate {
-	lu.mutation.ClearItems()
-	return lu
+func (_u *LabelUpdate) ClearItems() *LabelUpdate {
+	_u.mutation.ClearItems()
+	return _u
 }
 
 // RemoveItemIDs removes the "items" edge to Item entities by IDs.
-func (lu *LabelUpdate) RemoveItemIDs(ids ...uuid.UUID) *LabelUpdate {
-	lu.mutation.RemoveItemIDs(ids...)
-	return lu
+func (_u *LabelUpdate) RemoveItemIDs(ids ...uuid.UUID) *LabelUpdate {
+	_u.mutation.RemoveItemIDs(ids...)
+	return _u
 }
 
 // RemoveItems removes "items" edges to Item entities.
-func (lu *LabelUpdate) RemoveItems(i ...*Item) *LabelUpdate {
-	ids := make([]uuid.UUID, len(i))
-	for j := range i {
-		ids[j] = i[j].ID
+func (_u *LabelUpdate) RemoveItems(v ...*Item) *LabelUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return lu.RemoveItemIDs(ids...)
+	return _u.RemoveItemIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (lu *LabelUpdate) Save(ctx context.Context) (int, error) {
-	lu.defaults()
-	return withHooks(ctx, lu.sqlSave, lu.mutation, lu.hooks)
+func (_u *LabelUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (lu *LabelUpdate) SaveX(ctx context.Context) int {
-	affected, err := lu.Save(ctx)
+func (_u *LabelUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -165,80 +165,80 @@ func (lu *LabelUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (lu *LabelUpdate) Exec(ctx context.Context) error {
-	_, err := lu.Save(ctx)
+func (_u *LabelUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (lu *LabelUpdate) ExecX(ctx context.Context) {
-	if err := lu.Exec(ctx); err != nil {
+func (_u *LabelUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (lu *LabelUpdate) defaults() {
-	if _, ok := lu.mutation.UpdatedAt(); !ok {
+func (_u *LabelUpdate) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
 		v := label.UpdateDefaultUpdatedAt()
-		lu.mutation.SetUpdatedAt(v)
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (lu *LabelUpdate) check() error {
-	if v, ok := lu.mutation.Name(); ok {
+func (_u *LabelUpdate) check() error {
+	if v, ok := _u.mutation.Name(); ok {
 		if err := label.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Label.name": %w`, err)}
 		}
 	}
-	if v, ok := lu.mutation.Description(); ok {
+	if v, ok := _u.mutation.Description(); ok {
 		if err := label.DescriptionValidator(v); err != nil {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Label.description": %w`, err)}
 		}
 	}
-	if v, ok := lu.mutation.Color(); ok {
+	if v, ok := _u.mutation.Color(); ok {
 		if err := label.ColorValidator(v); err != nil {
 			return &ValidationError{Name: "color", err: fmt.Errorf(`ent: validator failed for field "Label.color": %w`, err)}
 		}
 	}
-	if lu.mutation.GroupCleared() && len(lu.mutation.GroupIDs()) > 0 {
+	if _u.mutation.GroupCleared() && len(_u.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Label.group"`)
 	}
 	return nil
 }
 
-func (lu *LabelUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := lu.check(); err != nil {
-		return n, err
+func (_u *LabelUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(label.Table, label.Columns, sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID))
-	if ps := lu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := lu.mutation.UpdatedAt(); ok {
+	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(label.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := lu.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(label.FieldName, field.TypeString, value)
 	}
-	if value, ok := lu.mutation.Description(); ok {
+	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(label.FieldDescription, field.TypeString, value)
 	}
-	if lu.mutation.DescriptionCleared() {
+	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(label.FieldDescription, field.TypeString)
 	}
-	if value, ok := lu.mutation.Color(); ok {
+	if value, ok := _u.mutation.Color(); ok {
 		_spec.SetField(label.FieldColor, field.TypeString, value)
 	}
-	if lu.mutation.ColorCleared() {
+	if _u.mutation.ColorCleared() {
 		_spec.ClearField(label.FieldColor, field.TypeString)
 	}
-	if lu.mutation.GroupCleared() {
+	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -251,7 +251,7 @@ func (lu *LabelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := lu.mutation.GroupIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -267,7 +267,7 @@ func (lu *LabelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if lu.mutation.ItemsCleared() {
+	if _u.mutation.ItemsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -280,7 +280,7 @@ func (lu *LabelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := lu.mutation.RemovedItemsIDs(); len(nodes) > 0 && !lu.mutation.ItemsCleared() {
+	if nodes := _u.mutation.RemovedItemsIDs(); len(nodes) > 0 && !_u.mutation.ItemsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -296,7 +296,7 @@ func (lu *LabelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := lu.mutation.ItemsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ItemsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -312,7 +312,7 @@ func (lu *LabelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, lu.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{label.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -320,8 +320,8 @@ func (lu *LabelUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	lu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // LabelUpdateOne is the builder for updating a single Label entity.
@@ -333,145 +333,145 @@ type LabelUpdateOne struct {
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (luo *LabelUpdateOne) SetUpdatedAt(t time.Time) *LabelUpdateOne {
-	luo.mutation.SetUpdatedAt(t)
-	return luo
+func (_u *LabelUpdateOne) SetUpdatedAt(v time.Time) *LabelUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetName sets the "name" field.
-func (luo *LabelUpdateOne) SetName(s string) *LabelUpdateOne {
-	luo.mutation.SetName(s)
-	return luo
+func (_u *LabelUpdateOne) SetName(v string) *LabelUpdateOne {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (luo *LabelUpdateOne) SetNillableName(s *string) *LabelUpdateOne {
-	if s != nil {
-		luo.SetName(*s)
+func (_u *LabelUpdateOne) SetNillableName(v *string) *LabelUpdateOne {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return luo
+	return _u
 }
 
 // SetDescription sets the "description" field.
-func (luo *LabelUpdateOne) SetDescription(s string) *LabelUpdateOne {
-	luo.mutation.SetDescription(s)
-	return luo
+func (_u *LabelUpdateOne) SetDescription(v string) *LabelUpdateOne {
+	_u.mutation.SetDescription(v)
+	return _u
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (luo *LabelUpdateOne) SetNillableDescription(s *string) *LabelUpdateOne {
-	if s != nil {
-		luo.SetDescription(*s)
+func (_u *LabelUpdateOne) SetNillableDescription(v *string) *LabelUpdateOne {
+	if v != nil {
+		_u.SetDescription(*v)
 	}
-	return luo
+	return _u
 }
 
 // ClearDescription clears the value of the "description" field.
-func (luo *LabelUpdateOne) ClearDescription() *LabelUpdateOne {
-	luo.mutation.ClearDescription()
-	return luo
+func (_u *LabelUpdateOne) ClearDescription() *LabelUpdateOne {
+	_u.mutation.ClearDescription()
+	return _u
 }
 
 // SetColor sets the "color" field.
-func (luo *LabelUpdateOne) SetColor(s string) *LabelUpdateOne {
-	luo.mutation.SetColor(s)
-	return luo
+func (_u *LabelUpdateOne) SetColor(v string) *LabelUpdateOne {
+	_u.mutation.SetColor(v)
+	return _u
 }
 
 // SetNillableColor sets the "color" field if the given value is not nil.
-func (luo *LabelUpdateOne) SetNillableColor(s *string) *LabelUpdateOne {
-	if s != nil {
-		luo.SetColor(*s)
+func (_u *LabelUpdateOne) SetNillableColor(v *string) *LabelUpdateOne {
+	if v != nil {
+		_u.SetColor(*v)
 	}
-	return luo
+	return _u
 }
 
 // ClearColor clears the value of the "color" field.
-func (luo *LabelUpdateOne) ClearColor() *LabelUpdateOne {
-	luo.mutation.ClearColor()
-	return luo
+func (_u *LabelUpdateOne) ClearColor() *LabelUpdateOne {
+	_u.mutation.ClearColor()
+	return _u
 }
 
 // SetGroupID sets the "group" edge to the Group entity by ID.
-func (luo *LabelUpdateOne) SetGroupID(id uuid.UUID) *LabelUpdateOne {
-	luo.mutation.SetGroupID(id)
-	return luo
+func (_u *LabelUpdateOne) SetGroupID(id uuid.UUID) *LabelUpdateOne {
+	_u.mutation.SetGroupID(id)
+	return _u
 }
 
 // SetGroup sets the "group" edge to the Group entity.
-func (luo *LabelUpdateOne) SetGroup(g *Group) *LabelUpdateOne {
-	return luo.SetGroupID(g.ID)
+func (_u *LabelUpdateOne) SetGroup(v *Group) *LabelUpdateOne {
+	return _u.SetGroupID(v.ID)
 }
 
 // AddItemIDs adds the "items" edge to the Item entity by IDs.
-func (luo *LabelUpdateOne) AddItemIDs(ids ...uuid.UUID) *LabelUpdateOne {
-	luo.mutation.AddItemIDs(ids...)
-	return luo
+func (_u *LabelUpdateOne) AddItemIDs(ids ...uuid.UUID) *LabelUpdateOne {
+	_u.mutation.AddItemIDs(ids...)
+	return _u
 }
 
 // AddItems adds the "items" edges to the Item entity.
-func (luo *LabelUpdateOne) AddItems(i ...*Item) *LabelUpdateOne {
-	ids := make([]uuid.UUID, len(i))
-	for j := range i {
-		ids[j] = i[j].ID
+func (_u *LabelUpdateOne) AddItems(v ...*Item) *LabelUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return luo.AddItemIDs(ids...)
+	return _u.AddItemIDs(ids...)
 }
 
 // Mutation returns the LabelMutation object of the builder.
-func (luo *LabelUpdateOne) Mutation() *LabelMutation {
-	return luo.mutation
+func (_u *LabelUpdateOne) Mutation() *LabelMutation {
+	return _u.mutation
 }
 
 // ClearGroup clears the "group" edge to the Group entity.
-func (luo *LabelUpdateOne) ClearGroup() *LabelUpdateOne {
-	luo.mutation.ClearGroup()
-	return luo
+func (_u *LabelUpdateOne) ClearGroup() *LabelUpdateOne {
+	_u.mutation.ClearGroup()
+	return _u
 }
 
 // ClearItems clears all "items" edges to the Item entity.
-func (luo *LabelUpdateOne) ClearItems() *LabelUpdateOne {
-	luo.mutation.ClearItems()
-	return luo
+func (_u *LabelUpdateOne) ClearItems() *LabelUpdateOne {
+	_u.mutation.ClearItems()
+	return _u
 }
 
 // RemoveItemIDs removes the "items" edge to Item entities by IDs.
-func (luo *LabelUpdateOne) RemoveItemIDs(ids ...uuid.UUID) *LabelUpdateOne {
-	luo.mutation.RemoveItemIDs(ids...)
-	return luo
+func (_u *LabelUpdateOne) RemoveItemIDs(ids ...uuid.UUID) *LabelUpdateOne {
+	_u.mutation.RemoveItemIDs(ids...)
+	return _u
 }
 
 // RemoveItems removes "items" edges to Item entities.
-func (luo *LabelUpdateOne) RemoveItems(i ...*Item) *LabelUpdateOne {
-	ids := make([]uuid.UUID, len(i))
-	for j := range i {
-		ids[j] = i[j].ID
+func (_u *LabelUpdateOne) RemoveItems(v ...*Item) *LabelUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return luo.RemoveItemIDs(ids...)
+	return _u.RemoveItemIDs(ids...)
 }
 
 // Where appends a list predicates to the LabelUpdate builder.
-func (luo *LabelUpdateOne) Where(ps ...predicate.Label) *LabelUpdateOne {
-	luo.mutation.Where(ps...)
-	return luo
+func (_u *LabelUpdateOne) Where(ps ...predicate.Label) *LabelUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (luo *LabelUpdateOne) Select(field string, fields ...string) *LabelUpdateOne {
-	luo.fields = append([]string{field}, fields...)
-	return luo
+func (_u *LabelUpdateOne) Select(field string, fields ...string) *LabelUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated Label entity.
-func (luo *LabelUpdateOne) Save(ctx context.Context) (*Label, error) {
-	luo.defaults()
-	return withHooks(ctx, luo.sqlSave, luo.mutation, luo.hooks)
+func (_u *LabelUpdateOne) Save(ctx context.Context) (*Label, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (luo *LabelUpdateOne) SaveX(ctx context.Context) *Label {
-	node, err := luo.Save(ctx)
+func (_u *LabelUpdateOne) SaveX(ctx context.Context) *Label {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -479,60 +479,60 @@ func (luo *LabelUpdateOne) SaveX(ctx context.Context) *Label {
 }
 
 // Exec executes the query on the entity.
-func (luo *LabelUpdateOne) Exec(ctx context.Context) error {
-	_, err := luo.Save(ctx)
+func (_u *LabelUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (luo *LabelUpdateOne) ExecX(ctx context.Context) {
-	if err := luo.Exec(ctx); err != nil {
+func (_u *LabelUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (luo *LabelUpdateOne) defaults() {
-	if _, ok := luo.mutation.UpdatedAt(); !ok {
+func (_u *LabelUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
 		v := label.UpdateDefaultUpdatedAt()
-		luo.mutation.SetUpdatedAt(v)
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (luo *LabelUpdateOne) check() error {
-	if v, ok := luo.mutation.Name(); ok {
+func (_u *LabelUpdateOne) check() error {
+	if v, ok := _u.mutation.Name(); ok {
 		if err := label.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Label.name": %w`, err)}
 		}
 	}
-	if v, ok := luo.mutation.Description(); ok {
+	if v, ok := _u.mutation.Description(); ok {
 		if err := label.DescriptionValidator(v); err != nil {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Label.description": %w`, err)}
 		}
 	}
-	if v, ok := luo.mutation.Color(); ok {
+	if v, ok := _u.mutation.Color(); ok {
 		if err := label.ColorValidator(v); err != nil {
 			return &ValidationError{Name: "color", err: fmt.Errorf(`ent: validator failed for field "Label.color": %w`, err)}
 		}
 	}
-	if luo.mutation.GroupCleared() && len(luo.mutation.GroupIDs()) > 0 {
+	if _u.mutation.GroupCleared() && len(_u.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Label.group"`)
 	}
 	return nil
 }
 
-func (luo *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error) {
-	if err := luo.check(); err != nil {
+func (_u *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error) {
+	if err := _u.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(label.Table, label.Columns, sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID))
-	id, ok := luo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Label.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := luo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, label.FieldID)
 		for _, f := range fields {
@@ -544,32 +544,32 @@ func (luo *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error
 			}
 		}
 	}
-	if ps := luo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := luo.mutation.UpdatedAt(); ok {
+	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(label.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := luo.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(label.FieldName, field.TypeString, value)
 	}
-	if value, ok := luo.mutation.Description(); ok {
+	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(label.FieldDescription, field.TypeString, value)
 	}
-	if luo.mutation.DescriptionCleared() {
+	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(label.FieldDescription, field.TypeString)
 	}
-	if value, ok := luo.mutation.Color(); ok {
+	if value, ok := _u.mutation.Color(); ok {
 		_spec.SetField(label.FieldColor, field.TypeString, value)
 	}
-	if luo.mutation.ColorCleared() {
+	if _u.mutation.ColorCleared() {
 		_spec.ClearField(label.FieldColor, field.TypeString)
 	}
-	if luo.mutation.GroupCleared() {
+	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -582,7 +582,7 @@ func (luo *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := luo.mutation.GroupIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -598,7 +598,7 @@ func (luo *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if luo.mutation.ItemsCleared() {
+	if _u.mutation.ItemsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -611,7 +611,7 @@ func (luo *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := luo.mutation.RemovedItemsIDs(); len(nodes) > 0 && !luo.mutation.ItemsCleared() {
+	if nodes := _u.mutation.RemovedItemsIDs(); len(nodes) > 0 && !_u.mutation.ItemsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -627,7 +627,7 @@ func (luo *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := luo.mutation.ItemsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ItemsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
@@ -643,10 +643,10 @@ func (luo *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &Label{config: luo.config}
+	_node = &Label{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, luo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{label.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -654,6 +654,6 @@ func (luo *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error
 		}
 		return nil, err
 	}
-	luo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }
