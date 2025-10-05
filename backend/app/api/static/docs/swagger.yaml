@@ -1010,8 +1010,12 @@ definitions:
     enum:
     - location
     - item
+    - location
+    - item
     type: string
     x-enum-varnames:
+    - EntityTypeLocation
+    - EntityTypeItem
     - ItemTypeLocation
     - ItemTypeItem
   repo.ItemUpdate:
