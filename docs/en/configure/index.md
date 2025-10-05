@@ -48,6 +48,8 @@ aside: false
 | HBOX_LABEL_MAKER_PRINT_COMMAND          |                                                                            | the command to use for printing labels. if empty, label printing is disabled. <span v-pre>`{{.FileName}}`</span> in the command will be replaced with the png filename of the label       |
 | HBOX_LABEL_MAKER_DYNAMIC_LENGTH         | true                                                                       | allow label generation with open length. `HBOX_LABEL_MAKER_HEIGHT` is still used for layout and minimal height. If not used, long text may be cut off, but all labels have the same size. |
 | HBOX_LABEL_MAKER_ADDITIONAL_INFORMATION |                                                                            | Additional information added to the label like name or phone number                                                                                                                       |
+| HBOX_LABEL_MAKER_REGULAR_FONT_PATH      |                                                                            | path to regular font file for label generation (e.g., `/fonts/NotoSansKR-Regular.ttf`). If not set, uses embedded font. Supports TTF format.                                             |
+| HBOX_LABEL_MAKER_BOLD_FONT_PATH         |                                                                            | path to bold font file for label generation (e.g., `/fonts/NotoSansKR-Bold.ttf`). If not set, uses embedded font. Supports TTF format.                                                   |
 | HBOX_THUMBNAIL_ENABLED                  | true                                                                       | enable thumbnail generation for images, supports PNG, JPEG, AVIF, WEBP, GIF file types                                                                                                    |
 | HBOX_THUMBNAIL_WIDTH                    | 500                                                                        | width for generated thumbnails in pixels                                                                                                                                                  |
 | HBOX_THUMBNAIL_HEIGHT                   | 500                                                                        | height for generated thumbnails in pixels                                                                                                                                                 |
@@ -192,6 +194,8 @@ OPTIONS
 --label-maker-print-command/$HBOX_LABEL_MAKER_PRINT_COMMAND                   <string>
 --label-maker-dynamic-length/$HBOX_LABEL_MAKER_DYNAMIC_LENGTH                 <bool>    (default: true)
 --label-maker-additional-information/$HBOX_LABEL_MAKER_ADDITIONAL_INFORMATION <string>
+--label-maker-regular-font-path/$HBOX_LABEL_MAKER_REGULAR_FONT_PATH           <string>
+--label-maker-bold-font-path/$HBOX_LABEL_MAKER_BOLD_FONT_PATH                 <string>
 --thumbnail-enabled/$HBOX_THUMBNAIL_ENABLED                                   <bool>    (default: true)
 --thumbnail-width/$HBOX_THUMBNAIL_WIDTH                                       <int>     (default: 500)
 --thumbnail-height/$HBOX_THUMBNAIL_HEIGHT                                     <int>     (default: 500)
