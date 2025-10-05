@@ -229,20 +229,17 @@
 
     await router.push({
       query: {
-        // Reactive
-        archived: includeArchived.value ? "true" : "false",
-        fieldSelector: fieldSelector.value ? "true" : "false",
-        negateLabels: negateLabels.value ? "true" : "false",
-        onlyWithoutPhoto: onlyWithoutPhoto.value ? "true" : "false",
-        onlyWithPhoto: onlyWithPhoto.value ? "true" : "false",
-        orderBy: orderBy.value,
-        page: page.value,
-        q: query.value,
-
-        // Non-reactive
-        loc: locIDs.value,
-        lab: labIDs.value,
-        fields,
+        archived: includeArchived.value ? "true" : undefined,
+        fieldSelector: fieldSelector.value ? "true" : undefined,
+        negateLabels: negateLabels.value ? "true" : undefined,
+        onlyWithoutPhoto: onlyWithoutPhoto.value ? "true" : undefined,
+        onlyWithPhoto: onlyWithPhoto.value ? "true" : undefined,
+        orderBy: orderBy.value && orderBy.value !== "name" ? orderBy.value : undefined,
+        page: page.value && page.value !== 1 ? page.value : undefined,
+        q: query.value && query.value !== "" ? query.value : undefined,
+        loc: locIDs.value && locIDs.value.length > 0 ? locIDs.value : undefined,
+        lab: labIDs && labIDs.value.length > 0 ? labIDs.value : undefined,
+        fields: fields && fields.length > 0 ? fields : undefined,
       },
     });
 
@@ -287,9 +284,6 @@
 
   watchDebounced([page, pageSize, query, selectedLabels, selectedLocations], search, { debounce: 250, maxWait: 1000 });
 
-  async function updateRoute() {
-  }
-
   async function submit() {
     // Set URL Params
     const fields = [];
@@ -298,8 +292,6 @@
         fields.push(`${t[0]}=${t[1]}`);
       }
     }
-
-    await updateRoute()
 
     // Reset Pagination
     page.value = 1;
