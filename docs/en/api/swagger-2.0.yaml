@@ -34,6 +34,8 @@ definitions:
     properties:
       code:
         type: string
+      decimals:
+        type: integer
       local:
         type: string
       name:
@@ -933,6 +935,16 @@ definitions:
     properties:
       id:
         type: string
+      labelIds:
+        items:
+          type: string
+        type: array
+        x-nullable: true
+        x-omitempty: true
+      locationId:
+        type: string
+        x-nullable: true
+        x-omitempty: true
       quantity:
         type: integer
         x-nullable: true

@@ -29,7 +29,6 @@
   import { useI18n } from "vue-i18n";
   import { DialogID } from "@/components/ui/dialog-provider/utils";
   import { toast } from "@/components/ui/sonner";
-  import type { MaintenanceEntry, MaintenanceEntryWithDetails } from "~~/lib/api/types/data-contracts";
   import MdiPost from "~icons/mdi/post";
   import DatePicker from "~~/components/Form/DatePicker.vue";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -38,12 +37,10 @@
   import FormTextArea from "~/components/Form/TextArea.vue";
   import Button from "@/components/ui/button/Button.vue";
 
-  const { openDialog, closeDialog } = useDialog();
+  const { closeDialog, registerOpenDialogCallback } = useDialog();
 
   const { t } = useI18n();
   const api = useUserApi();
-
-  const emit = defineEmits(["changed"]);
 
   const entry = reactive({
     id: null as string | null,
@@ -52,7 +49,7 @@
     scheduledDate: null as Date | null,
     description: "",
     cost: "",
-    itemId: null as string | null,
+    itemIds: null as string[] | null,
   });
 
   async function dispatchFormSubmit() {
@@ -65,24 +62,28 @@
   }
 
   async function createEntry() {
-    if (!entry.itemId) {
-      return;
-    }
-    const { error } = await api.items.maintenance.create(entry.itemId, {
-      name: entry.name,
-      completedDate: entry.completedDate ?? "",
-      scheduledDate: entry.scheduledDate ?? "",
-      description: entry.description,
-      cost: parseFloat(entry.cost) ? entry.cost : "0",
-    });
-
-    if (error) {
-      toast.error(t("maintenance.toast.failed_to_create"));
+    if (!entry.itemIds) {
       return;
     }
 
-    closeDialog(DialogID.EditMaintenance);
-    emit("changed");
+    await Promise.allSettled(
+      entry.itemIds.map(async itemId => {
+        const { error } = await api.items.maintenance.create(itemId, {
+          name: entry.name,
+          completedDate: entry.completedDate ?? "",
+          scheduledDate: entry.scheduledDate ?? "",
+          description: entry.description,
+          cost: parseFloat(entry.cost) ? entry.cost : "0",
+        });
+
+        if (error) {
+          toast.error(t("maintenance.toast.failed_to_create"));
+          return;
+        }
+      })
+    );
+
+    closeDialog(DialogID.EditMaintenance, true);
   }
 
   async function editEntry() {
@@ -103,73 +104,42 @@
       return;
     }
 
-    closeDialog(DialogID.EditMaintenance);
-    emit("changed");
+    closeDialog(DialogID.EditMaintenance, true);
   }
 
-  const openCreateModal = (itemId: string) => {
-    entry.id = null;
-    entry.name = "";
-    entry.completedDate = null;
-    entry.scheduledDate = null;
-    entry.description = "";
-    entry.cost = "";
-    entry.itemId = itemId;
-    openDialog(DialogID.EditMaintenance);
-  };
-
-  const openUpdateModal = (maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails) => {
-    entry.id = maintenanceEntry.id;
-    entry.name = maintenanceEntry.name;
-    entry.completedDate = new Date(maintenanceEntry.completedDate);
-    entry.scheduledDate = new Date(maintenanceEntry.scheduledDate);
-    entry.description = maintenanceEntry.description;
-    entry.cost = maintenanceEntry.cost;
-    entry.itemId = null;
-    openDialog(DialogID.EditMaintenance);
-  };
-
-  const confirm = useConfirm();
-
-  async function deleteEntry(id: string) {
-    const result = await confirm.open(t("maintenance.modal.delete_confirmation"));
-    if (result.isCanceled) {
-      return;
-    }
-
-    const { error } = await api.maintenance.delete(id);
-
-    if (error) {
-      toast.error(t("maintenance.toast.failed_to_delete"));
-      return;
-    }
-    emit("changed");
-  }
-
-  async function complete(maintenanceEntry: MaintenanceEntry) {
-    const { error } = await api.maintenance.update(maintenanceEntry.id, {
-      name: maintenanceEntry.name,
-      completedDate: new Date(Date.now()),
-      scheduledDate: maintenanceEntry.scheduledDate ?? "null",
-      description: maintenanceEntry.description,
-      cost: maintenanceEntry.cost,
+  onMounted(() => {
+    const cleanup = registerOpenDialogCallback(DialogID.EditMaintenance, params => {
+      switch (params.type) {
+        case "create":
+          entry.id = null;
+          entry.name = "";
+          entry.completedDate = null;
+          entry.scheduledDate = null;
+          entry.description = "";
+          entry.cost = "";
+          entry.itemIds = typeof params.itemId === "string" ? [params.itemId] : params.itemId;
+          break;
+        case "update":
+          entry.id = params.maintenanceEntry.id;
+          entry.name = params.maintenanceEntry.name;
+          entry.completedDate = new Date(params.maintenanceEntry.completedDate);
+          entry.scheduledDate = new Date(params.maintenanceEntry.scheduledDate);
+          entry.description = params.maintenanceEntry.description;
+          entry.cost = params.maintenanceEntry.cost;
+          entry.itemIds = null;
+          break;
+        case "duplicate":
+          entry.id = null;
+          entry.name = params.maintenanceEntry.name;
+          entry.completedDate = null;
+          entry.scheduledDate = null;
+          entry.description = params.maintenanceEntry.description;
+          entry.cost = params.maintenanceEntry.cost;
+          entry.itemIds = [params.itemId];
+          break;
+      }
     });
-    if (error) {
-      toast.error(t("maintenance.toast.failed_to_update"));
-    }
-    emit("changed");
-  }
 
-  function duplicate(maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails, itemId: string) {
-    entry.id = null;
-    entry.name = maintenanceEntry.name;
-    entry.completedDate = null;
-    entry.scheduledDate = null;
-    entry.description = maintenanceEntry.description;
-    entry.cost = maintenanceEntry.cost;
-    entry.itemId = itemId;
-    openDialog(DialogID.EditMaintenance);
-  }
-
-  defineExpose({ openCreateModal, openUpdateModal, deleteEntry, complete, duplicate });
+    onUnmounted(cleanup);
+  });
 </script>

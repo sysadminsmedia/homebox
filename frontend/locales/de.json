@@ -291,15 +291,28 @@
         "description": "Beschreibung",
         "details": "Details",
         "drag_and_drop": "Ziehen Sie Dateien hierher und legen Sie sie dort ab oder klicken Sie, um Dateien auszuwählen",
+        "duplicate": {
+            "copy_attachments": "Anhänge kopieren",
+            "copy_custom_fields": "Benutzerdefinierte Felder kopieren",
+            "copy_maintenance": "Kopiere Wartung",
+            "custom_prefix": "Präfix kopieren",
+            "enable_custom_prefix": "Benutzerdefinierten Präfix aktivieren",
+            "override_instructions": "Die Umschalt-Taste während des Drückens des Duplizieren-Knopfes halten, um die Einstellungen außer Kraft zu setzen.",
+            "prefix": "Kopie von ",
+            "prefix_instructions": "Dieser Präfix wird vor den Beginn des Namens des duplizierten Artikels gestellt. Verwenden Sie ein Leerzeichen am Ende des Präfix, um einen Platz zwischen Präfix und Artikelnamen zu lassen.",
+            "temporary_title": "Temporäre Einstellungen",
+            "title": "Einstellungen duplizieren"
+        },
         "edit": {
             "edit_attachment_dialog": {
-                "attachment_title": "Anhang Überschrift",
+                "attachment_title": "Anhangsüberschrift",
                 "attachment_type": "Anhangstyp",
                 "primary_photo": "Primäres Bild",
                 "primary_photo_sub": "Diese Option ist nur für Bilder verfügbar. Nur ein Bild kann das primäre Bild sein. Wenn Sie diese Option auswählen, wird das aktuelle primär Bild, wenn eins ausgewählt ist, abgewählt.",
                 "select_type": "Wählen Sie einen Typ aus",
                 "title": "Anhang bearbeiten"
-            }
+            },
+            "view_image": "Bild anzeigen"
         },
         "edit_details": "Details bearbeiten",
         "field_selector": "Feldauswahl",
