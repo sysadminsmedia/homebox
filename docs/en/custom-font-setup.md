@@ -1,6 +1,6 @@
 # Custom Font Support for Label Maker
 
-Homebox label maker now supports external font files, making it easy to add support for Korean, Chinese, Japanese, and other languages.
+Homebox label maker now supports external font files. **CJK (Chinese, Japanese, Korean) characters require a custom font** - the default bundled fonts only support Latin characters.
 
 ## Quick Start
 
@@ -59,8 +59,7 @@ podman run -d \
 ## Fallback Behavior
 
 1. **External font specified** → Tries to load from `HBOX_LABEL_MAKER_*_FONT_PATH`
-2. **External font fails** → Falls back to embedded CJK font (Noto Sans KR)
-3. **Embedded font fails** → Falls back to Go's default font (Latin only)
+2. **External font fails or not specified** → Falls back to bundled Go fonts (Latin-only, **does not support CJK characters**)
 
 ## Troubleshooting
 
