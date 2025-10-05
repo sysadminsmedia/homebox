@@ -37,7 +37,13 @@
   const items = ref<ItemSummary[]>([]);
   const total = ref(0);
 
-  const page1 = useRouteQuery("page", 1);
+  const queryParamDefaultValues = {}
+  function useOptionalRouteQuery(key, defaultValue) {
+    queryParamDefaultValues[key] = defaultValue;
+    return useRouteQuery(key, defaultValue);
+  }
+
+  const page1 = useOptionalRouteQuery("page", 1);
 
   const page = computed({
     get: () => page1.value,
@@ -46,13 +52,13 @@
     },
   });
 
-  const query = useRouteQuery("q", "");
-  const includeArchived = useRouteQuery("archived", false);
-  const fieldSelector = useRouteQuery("fieldSelector", false);
-  const negateLabels = useRouteQuery("negateLabels", false);
-  const onlyWithoutPhoto = useRouteQuery("onlyWithoutPhoto", false);
-  const onlyWithPhoto = useRouteQuery("onlyWithPhoto", false);
-  const orderBy = useRouteQuery("orderBy", "name");
+  const query = useOptionalRouteQuery("q", "");
+  const includeArchived = useOptionalRouteQuery("archived", false);
+  const fieldSelector = useOptionalRouteQuery("fieldSelector", false);
+  const negateLabels = useOptionalRouteQuery("negateLabels", false);
+  const onlyWithoutPhoto = useOptionalRouteQuery("onlyWithoutPhoto", false);
+  const onlyWithPhoto = useOptionalRouteQuery("onlyWithPhoto", false);
+  const orderBy = useOptionalRouteQuery("orderBy", "name");
 
   const preferences = useViewPreferences();
   const pageSize = computed(() => preferences.value.itemsPerTablePage);
@@ -227,21 +233,28 @@
       }
     }
 
-    await router.push({
-      query: {
-        archived: includeArchived.value ? "true" : undefined,
-        fieldSelector: fieldSelector.value ? "true" : undefined,
-        negateLabels: negateLabels.value ? "true" : undefined,
-        onlyWithoutPhoto: onlyWithoutPhoto.value ? "true" : undefined,
-        onlyWithPhoto: onlyWithPhoto.value ? "true" : undefined,
-        orderBy: orderBy.value && orderBy.value !== "name" ? orderBy.value : undefined,
-        page: page.value && page.value !== 1 ? page.value : undefined,
-        q: query.value && query.value !== "" ? query.value : undefined,
-        loc: locIDs.value && locIDs.value.length > 0 ? locIDs.value : undefined,
-        lab: labIDs && labIDs.value.length > 0 ? labIDs.value : undefined,
-        fields: fields && fields.length > 0 ? fields : undefined,
-      },
-    });
+    const push_query = {
+        archived: includeArchived.value,
+        fieldSelector: fieldSelector.value,
+        negateLabels: negateLabels.value,
+        onlyWithoutPhoto: onlyWithoutPhoto.value,
+        onlyWithPhoto: onlyWithPhoto.value,
+        orderBy: orderBy.value,
+        page: page.value,
+        q: query.value,
+        loc: locIDs.value,
+        lab: labIDs.value,
+        fields: fields,
+      };
+
+    for (const key in push_query) {
+        const val = push_query[key]
+        if (Array.isArray(val) && val.length == 0 || val === queryParamDefaultValues[key]) {
+            push_query[key] = undefined;
+        }
+    }
+
+    await router.push({ query: push_query });
 
     const { data, error } = await api.items.getAll({
       q: query.value || "",
