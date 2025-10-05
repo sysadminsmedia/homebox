@@ -69,7 +69,7 @@ func TestLoadFont_UnknownFontType(t *testing.T) {
 	cfg := &config.Config{}
 
 	_, err := loadFont(cfg, FontType(999))
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Contains(t, err.Error(), "unknown font type")
 }
 
