@@ -134,11 +134,18 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Delete("/items/{id}", chain.ToHandlerFunc(v1Ctrl.HandleItemDelete(), userMW...))
 		r.Post("/items/{id}/duplicate", chain.ToHandlerFunc(v1Ctrl.HandleItemDuplicate(), userMW...))
 
+		// Asset-Like endpoints
+		assetMW := []errchain.Middleware{
+			a.mwAuthToken,
+			a.mwRoles(RoleModeOr, authroles.RoleUser.String(), authroles.RoleAttachments.String()),
+		}
 		// Deprecated, TODO: Remove after some time
+		r.Get("/items/{id}/attachments/{attachment_id}", chain.ToHandlerFunc(v1Ctrl.HandleItemAttachmentGet(), assetMW...))
 		r.Post("/items/{id}/attachments", chain.ToHandlerFunc(v1Ctrl.HandleItemAttachmentCreate(), userMW...))
 		r.Put("/items/{id}/attachments/{attachment_id}", chain.ToHandlerFunc(v1Ctrl.HandleItemAttachmentUpdate(), userMW...))
 		r.Delete("/items/{id}/attachments/{attachment_id}", chain.ToHandlerFunc(v1Ctrl.HandleItemAttachmentDelete(), userMW...))
 
+		r.Get("/entities/{id}/attachments/{attachment_id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentGet(), assetMW...))
 		r.Post("/entities/{id}/attachments", chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentCreate(), userMW...))
 		r.Put("/entities/{id}/attachments/{attachment_id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentUpdate(), userMW...))
 		r.Delete("/entities/{id}/attachments/{attachment_id}", chain.ToHandlerFunc(v1Ctrl.HandleEntityAttachmentDelete(), userMW...))
@@ -164,19 +171,9 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Delete("/notifiers/{id}", chain.ToHandlerFunc(v1Ctrl.HandleDeleteNotifier(), userMW...))
 		r.Post("/notifiers/test", chain.ToHandlerFunc(v1Ctrl.HandlerNotifierTest(), userMW...))
 
-		// Asset-Like endpoints
-		assetMW := []errchain.Middleware{
-			a.mwAuthToken,
-			a.mwRoles(RoleModeOr, authroles.RoleUser.String(), authroles.RoleAttachments.String()),
-		}
-
 		r.Get("/products/search-from-barcode", chain.ToHandlerFunc(v1Ctrl.HandleProductSearchFromBarcode(a.conf.Barcode), userMW...))
 
 		r.Get("/qrcode", chain.ToHandlerFunc(v1Ctrl.HandleGenerateQRCode(), assetMW...))
-		r.Get(
-			"/items/{id}/attachments/{attachment_id}",
-			chain.ToHandlerFunc(v1Ctrl.HandleItemAttachmentGet(), assetMW...),
-		)
 
 		// Labelmaker
 		r.Get("/labelmaker/location/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGetLocationLabel(), userMW...))
