@@ -13,19 +13,22 @@ export const useLabelStore = defineStore("labels", {
      * response.
      */
     labels(state): LabelOut[] {
-      if (state.allLabels === null) {
-        this.client.labels.getAll().then(result => {
-          if (result.error) {
-            console.error(result.error);
-          }
-
-          this.allLabels = result.data;
-        });
-      }
+      // ensures that labels are eventually available but not synchronously
+      state.ensureAllLabelsFetched()
       return state.allLabels ?? [];
     },
   },
   actions: {
+    async ensureAllLabelsFetched() {
+      if (this.allLabels !== null) {
+          return;
+      }
+
+      if (this.refreshAllLabelsPromise === undefined) {
+          this.refreshAllLabelsPromise = this.refresh()
+      }
+      await this.refreshAllLabelsPromise;
+    },
     async refresh() {
       const result = await this.client.labels.getAll();
       if (result.error) {

@@ -63,15 +63,8 @@
 
   onMounted(async () => {
     loading.value = true;
-    // Wait until locations and labels are loaded
-    let maxRetry = 10;
-    while (!labels.value || !locations.value) {
-      await new Promise(resolve => setTimeout(resolve, 100));
-      if (maxRetry-- < 0) {
-        break;
-      }
-    }
     searchLocked.value = true;
+    await Promise.all([locationsStore.ensureLocationsFetched(), labelStore.ensureAllLabelsFetched()]);
     const qLoc = route.query.loc as string[];
     if (qLoc) {
       selectedLocations.value = locations.value.filter(l => qLoc.includes(l.id));
@@ -111,7 +104,7 @@
 
   const locationsStore = useLocationStore();
 
-  const locationFlatTree = await useFlatLocations();
+  const locationFlatTree = useFlatLocations();
 
   const locations = computed(() => locationsStore.allLocations);
 

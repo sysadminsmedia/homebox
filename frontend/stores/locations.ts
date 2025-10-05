@@ -29,20 +29,22 @@ export const useLocationStore = defineStore("locations", {
       return state.parents ?? [];
     },
     allLocations(state): LocationOutCount[] {
-      if (state.Locations === null) {
-        this.client.locations.getAll({ filterChildren: false }).then(result => {
-          if (result.error) {
-            console.error(result.error);
-            return;
-          }
-
-          this.Locations = result.data;
-        });
-      }
+      // ensures that locations are eventually available but not synchronously
+      state.ensureLocationsFetched()
       return state.Locations ?? [];
     },
   },
   actions: {
+    async ensureLocationsFetched() {
+      if (this.Locations !== null) {
+          return;
+      }
+
+      if (this.refreshLocationsPromise === undefined) {
+          this.refreshLocationsPromise = this.refreshChildren()
+      }
+      await this.refreshLocationsPromise;
+    },
     async refreshParents(): ReturnType<LocationsApi["getAll"]> {
       const result = await this.client.locations.getAll({ filterChildren: true });
       if (result.error) {
