@@ -37,7 +37,7 @@
   const items = ref<ItemSummary[]>([]);
   const total = ref(0);
 
-  const queryParamDefaultValues = {}
+  const queryParamDefaultValues = {};
   function useOptionalRouteQuery(key, defaultValue) {
     queryParamDefaultValues[key] = defaultValue;
     return useRouteQuery(key, defaultValue);
@@ -234,24 +234,24 @@
     }
 
     const push_query = {
-        archived: includeArchived.value,
-        fieldSelector: fieldSelector.value,
-        negateLabels: negateLabels.value,
-        onlyWithoutPhoto: onlyWithoutPhoto.value,
-        onlyWithPhoto: onlyWithPhoto.value,
-        orderBy: orderBy.value,
-        page: page.value,
-        q: query.value,
-        loc: locIDs.value,
-        lab: labIDs.value,
-        fields: fields,
-      };
+      archived: includeArchived.value,
+      fieldSelector: fieldSelector.value,
+      negateLabels: negateLabels.value,
+      onlyWithoutPhoto: onlyWithoutPhoto.value,
+      onlyWithPhoto: onlyWithPhoto.value,
+      orderBy: orderBy.value,
+      page: page.value,
+      q: query.value,
+      loc: locIDs.value,
+      lab: labIDs.value,
+      fields: fields,
+    };
 
     for (const key in push_query) {
-        const val = push_query[key]
-        if (Array.isArray(val) && val.length == 0 || val === queryParamDefaultValues[key]) {
-            push_query[key] = undefined;
-        }
+      const val = push_query[key];
+      if ((Array.isArray(val) && val.length == 0) || val === queryParamDefaultValues[key]) {
+        push_query[key] = undefined;
+      }
     }
 
     await router.push({ query: push_query });

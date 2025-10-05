@@ -14,18 +14,18 @@ export const useLabelStore = defineStore("labels", {
      */
     labels(state): LabelOut[] {
       // ensures that labels are eventually available but not synchronously
-      state.ensureAllLabelsFetched()
+      state.ensureAllLabelsFetched();
       return state.allLabels ?? [];
     },
   },
   actions: {
     async ensureAllLabelsFetched() {
       if (this.allLabels !== null) {
-          return;
+        return;
       }
 
       if (this.refreshAllLabelsPromise === undefined) {
-          this.refreshAllLabelsPromise = this.refresh()
+        this.refreshAllLabelsPromise = this.refresh();
       }
       await this.refreshAllLabelsPromise;
     },

@@ -30,18 +30,18 @@ export const useLocationStore = defineStore("locations", {
     },
     allLocations(state): LocationOutCount[] {
       // ensures that locations are eventually available but not synchronously
-      state.ensureLocationsFetched()
+      state.ensureLocationsFetched();
       return state.Locations ?? [];
     },
   },
   actions: {
     async ensureLocationsFetched() {
       if (this.Locations !== null) {
-          return;
+        return;
       }
 
       if (this.refreshLocationsPromise === undefined) {
-          this.refreshLocationsPromise = this.refreshChildren()
+        this.refreshLocationsPromise = this.refreshChildren();
       }
       await this.refreshLocationsPromise;
     },
