@@ -121,7 +121,7 @@ func TestLoadFont_CJKRendering(t *testing.T) {
 		},
 		{
 			name:            "Chinese with default font",
-			text:            "中문",
+			text:            "中文",
 			fontPath:        "",
 			shouldHaveGlyph: false,
 		},
