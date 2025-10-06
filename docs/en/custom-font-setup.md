@@ -1,12 +1,12 @@
-# Custom Font Support for Label Maker
+# External Font Support for Label Maker
 
-Homebox label maker now supports external font files. **CJK (Chinese, Japanese, Korean) characters require a custom font** - the default bundled fonts only support Latin characters.
+Label maker supports external font files.
 
 ## Quick Start
 
 ### Docker/Podman Setup
 
-1. **Download custom fonts** (e.g., Noto Sans KR):
+1. **Download external fonts** (e.g., Noto Sans KR):
    - Download from [Google Fonts](https://fonts.google.com/noto/specimen/Noto+Sans+KR)
    - Or use the Variable Font from [GitHub](https://github.com/notofonts/noto-cjk)
 
