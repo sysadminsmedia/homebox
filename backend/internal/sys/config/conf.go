@@ -71,6 +71,8 @@ type LabelMakerConf struct {
 	DynamicLength         bool           `yaml:"bool"      conf:"default:true"`
 	LabelServiceUrl       *string        `yaml:"label_service_url"`
 	LabelServiceTimeout   *time.Duration `yaml:"label_service_timeout"`
+	RegularFontPath       *string        `yaml:"regular_font_path"`
+	BoldFontPath          *string        `yaml:"bold_font_path"`
 }
 
 type BarcodeAPIConf struct {
