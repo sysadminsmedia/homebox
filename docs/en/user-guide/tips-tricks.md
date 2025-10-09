@@ -102,3 +102,11 @@ The copy to clipboard functionality requires a secure context (HTTPS or localhos
 To enable this feature:
 - Use HTTPS by setting up a reverse proxy (like Nginx or Caddy)
 - OR access Homebox through localhost
+
+## Open Multiple Items in New Tabs
+
+By default browsers prevent opening multiple tabs with one click, to allow for the `View Items` button to work you therefore need to enable a setting usually called `Allow pop-ups and redirects` or similar for the domain you're using Homebox on.
+
+- Chrome: [Block or allow pop-ups in Chrome](https://support.google.com/chrome/answer/95472?hl=en-GB&co=GENIE.Platform%3DDesktop#zippy=%2Callow-pop-ups-and-redirects-from-a-site)
+- Firefox: [Pop-up blocker settings, exceptions and troubleshooting](https://support.mozilla.org/en-US/kb/pop-blocker-settings-exceptions-troubleshooting)
+- Safari: [Block pop-up ads and windows in Safari](https://support.apple.com/en-gb/102524)

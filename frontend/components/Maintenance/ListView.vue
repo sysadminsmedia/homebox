@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
-  import type { MaintenanceEntryWithDetails } from "~~/lib/api/types/data-contracts";
+  import type { MaintenanceEntry, MaintenanceEntryWithDetails } from "~~/lib/api/types/data-contracts";
   import { MaintenanceFilterStatus } from "~~/lib/api/types/data-contracts";
   import type { StatsFormat } from "~~/components/global/StatCard/types";
   import MdiCheck from "~icons/mdi/check";
@@ -20,12 +20,16 @@
   import DateTime from "~/components/global/DateTime.vue";
   import Currency from "~/components/global/Currency.vue";
   import Markdown from "~/components/global/Markdown.vue";
+  import { toast } from "@/components/ui/sonner";
+  import { useDialog } from "@/components/ui/dialog-provider";
+  import { DialogID } from "../ui/dialog-provider/utils";
 
   const maintenanceFilterStatus = ref(MaintenanceFilterStatus.MaintenanceFilterStatusScheduled);
-  const maintenanceEditModal = ref<InstanceType<typeof MaintenanceEditModal>>();
 
   const api = useUserApi();
   const { t } = useI18n();
+  const confirm = useConfirm();
+  const { openDialog } = useDialog();
 
   const props = defineProps({
     currentItemId: {
@@ -81,6 +85,35 @@
       },
     ];
   });
+
+  async function deleteEntry(id: string) {
+    const result = await confirm.open(t("maintenance.modal.delete_confirmation"));
+    if (result.isCanceled) {
+      return;
+    }
+
+    const { error } = await api.maintenance.delete(id);
+
+    if (error) {
+      toast.error(t("maintenance.toast.failed_to_delete"));
+      return;
+    }
+    refreshList();
+  }
+
+  async function completeEntry(maintenanceEntry: MaintenanceEntry) {
+    const { error } = await api.maintenance.update(maintenanceEntry.id, {
+      name: maintenanceEntry.name,
+      completedDate: new Date(Date.now()),
+      scheduledDate: maintenanceEntry.scheduledDate ?? "null",
+      description: maintenanceEntry.description,
+      cost: maintenanceEntry.cost,
+    });
+    if (error) {
+      toast.error(t("maintenance.toast.failed_to_update"));
+    }
+    refreshList();
+  }
 </script>
 
 <template>
@@ -122,7 +155,16 @@
         v-if="props.currentItemId"
         class="ml-auto"
         size="sm"
-        @click="maintenanceEditModal?.openCreateModal(props.currentItemId)"
+        @click="
+          openDialog(DialogID.EditMaintenance, {
+            params: { type: 'create', itemId: props.currentItemId },
+            onClose: result => {
+              if (result) {
+                refreshList();
+              }
+            },
+          })
+        "
       >
         <MdiPlus />
         {{ $t("maintenance.list.new") }}
@@ -171,24 +213,44 @@
           <Markdown :source="e.description" />
         </div>
         <ButtonGroup class="flex flex-wrap justify-end p-4">
-          <Button size="sm" @click="maintenanceEditModal?.openUpdateModal(e)">
+          <Button
+            size="sm"
+            @click="
+              openDialog(DialogID.EditMaintenance, {
+                params: { type: 'update', maintenanceEntry: e },
+                onClose: result => {
+                  if (result) {
+                    refreshList();
+                  }
+                },
+              })
+            "
+          >
             <MdiEdit />
             {{ $t("maintenance.list.edit") }}
           </Button>
-          <Button
-            v-if="!validDate(e.completedDate)"
-            size="sm"
-            variant="outline"
-            @click="maintenanceEditModal?.complete(e)"
-          >
+          <Button v-if="!validDate(e.completedDate)" size="sm" variant="outline" @click="completeEntry(e)">
             <MdiCheck />
             {{ $t("maintenance.list.complete") }}
           </Button>
-          <Button size="sm" variant="outline" @click="maintenanceEditModal?.duplicate(e, e.itemID)">
+          <Button
+            size="sm"
+            variant="outline"
+            @click="
+              openDialog(DialogID.EditMaintenance, {
+                params: { type: 'duplicate', maintenanceEntry: e, itemId: props.currentItemId! },
+                onClose: result => {
+                  if (result) {
+                    refreshList();
+                  }
+                },
+              })
+            "
+          >
             <MdiContentDuplicate />
             {{ $t("maintenance.list.duplicate") }}
           </Button>
-          <Button size="sm" variant="destructive" @click="maintenanceEditModal?.deleteEntry(e.id)">
+          <Button size="sm" variant="destructive" @click="deleteEntry(e.id)">
             <MdiDelete />
             {{ $t("maintenance.list.delete") }}
           </Button>
@@ -198,7 +260,16 @@
         <button
           type="button"
           class="relative block w-full rounded-lg border-2 border-dashed p-12 text-center"
-          @click="maintenanceEditModal?.openCreateModal(props.currentItemId)"
+          @click="
+            openDialog(DialogID.EditMaintenance, {
+              params: { type: 'create', itemId: props.currentItemId },
+              onClose: result => {
+                if (result) {
+                  refreshList();
+                }
+              },
+            })
+          "
         >
           <MdiWrenchClock class="inline size-16" />
           <span class="mt-2 block text-sm font-medium text-gray-900"> {{ $t("maintenance.list.create_first") }} </span>
