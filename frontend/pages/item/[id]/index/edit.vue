@@ -22,6 +22,7 @@
   import { DialogID } from "~/components/ui/dialog-provider/utils";
   import FormTextField from "~/components/Form/TextField.vue";
   import FormTextArea from "~/components/Form/TextArea.vue";
+  import MarkdownEditor from "~/components/Form/MarkdownEditor.vue";
   import FormDatePicker from "~/components/Form/DatePicker.vue";
   import FormCheckbox from "~/components/Form/Checkbox.vue";
   import LocationSelector from "~/components/Location/Selector.vue";
@@ -147,7 +148,7 @@
   type DateKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends Date | string ? K : never]: any }>;
 
   type TextFormField = {
-    type: "text" | "textarea";
+    type: "text" | "textarea" | "markdown";
     label: string;
     ref: NonNullableStringKeys<ItemOut>;
     maxLength?: number;
@@ -188,7 +189,7 @@
       ref: "quantity",
     },
     {
-      type: "textarea",
+      type: "markdown",
       label: "items.description",
       ref: "description",
       maxLength: 1000,
@@ -212,7 +213,7 @@
       maxLength: 255,
     },
     {
-      type: "textarea",
+      type: "markdown",
       label: "items.notes",
       ref: "notes",
       maxLength: 1000,
@@ -612,6 +613,11 @@
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
+                />
+                <MarkdownEditor
+                  v-else-if="field.type === 'markdown'"
+                  v-model="item[field.ref]"
+                  :label="$t(field.label)"
                 />
                 <FormTextField
                   v-else-if="field.type === 'text'"
