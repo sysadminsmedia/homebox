@@ -618,6 +618,8 @@
                   v-else-if="field.type === 'markdown'"
                   v-model="item[field.ref]"
                   :label="$t(field.label)"
+                  :max-length="field.maxLength"
+                  :min-length="field.minLength"
                 />
                 <FormTextField
                   v-else-if="field.type === 'text'"
