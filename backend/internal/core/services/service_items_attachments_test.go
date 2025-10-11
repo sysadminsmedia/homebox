@@ -107,7 +107,7 @@ func TestItemService_AddAttachment_InvalidStorage(t *testing.T) {
 
 	// Attempt to add attachment with invalid storage - should return an error
 	_, err = svc.AttachmentAdd(tCtx, itm.ID, "testfile.txt", "attachment", false, reader)
-	
+
 	// This should return an error now (after the fix)
 	assert.Error(t, err, "AttachmentAdd should return an error when storage is invalid")
 }
