@@ -17,6 +17,7 @@
   import BaseContainer from "@/components/Base/Container.vue";
   import SearchFilter from "~/components/Search/Filter.vue";
   import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
+  import type { LocationQueryRaw } from "vue-router";
 
   const { t } = useI18n();
 
@@ -37,10 +38,33 @@
   const items = ref<ItemSummary[]>([]);
   const total = ref(0);
 
-  const queryParamDefaultValues = {};
-  function useOptionalRouteQuery(key, defaultValue) {
+  type queryParamValue = string | string[] | number | boolean;
+  type queryRef =
+    | WritableComputedRef<string>
+    | WritableComputedRef<string[]>
+    | WritableComputedRef<number>
+    | WritableComputedRef<boolean>;
+  const queryParamDefaultValues: Record<string, queryParamValue> = {};
+  function useOptionalRouteQuery(key: string, defaultValue: string): WritableComputedRef<string>;
+  function useOptionalRouteQuery(key: string, defaultValue: string[]): WritableComputedRef<string[]>;
+  function useOptionalRouteQuery(key: string, defaultValue: number): WritableComputedRef<number>;
+  function useOptionalRouteQuery(key: string, defaultValue: boolean): WritableComputedRef<boolean>;
+  function useOptionalRouteQuery(key: string, defaultValue: queryParamValue): queryRef {
     queryParamDefaultValues[key] = defaultValue;
-    return useRouteQuery(key, defaultValue);
+    if (typeof defaultValue === "string") {
+      return useRouteQuery(key, defaultValue);
+    }
+    if (Array.isArray(defaultValue)) {
+      return useRouteQuery(key, defaultValue as string[]);
+    }
+    if (typeof defaultValue === "number") {
+      return useRouteQuery(key, defaultValue);
+    }
+    if (typeof defaultValue === "boolean") {
+      return useRouteQuery(key, defaultValue);
+    }
+
+    throw Error(`Invalid query value type ${typeof defaultValue}`);
   }
 
   const page1 = useOptionalRouteQuery("page", 1);
@@ -59,6 +83,8 @@
   const onlyWithoutPhoto = useOptionalRouteQuery("onlyWithoutPhoto", false);
   const onlyWithPhoto = useOptionalRouteQuery("onlyWithPhoto", false);
   const orderBy = useOptionalRouteQuery("orderBy", "name");
+  const qLoc = useOptionalRouteQuery("loc", []);
+  const qLab = useOptionalRouteQuery("lab", []);
 
   const preferences = useViewPreferences();
   const pageSize = computed(() => preferences.value.itemsPerTablePage);
@@ -70,14 +96,12 @@
     loading.value = true;
     searchLocked.value = true;
     await Promise.all([locationsStore.ensureLocationsFetched(), labelStore.ensureAllLabelsFetched()]);
-    const qLoc = route.query.loc as string[];
     if (qLoc) {
-      selectedLocations.value = locations.value.filter(l => qLoc.includes(l.id));
+      selectedLocations.value = locations.value.filter(l => qLoc.value.includes(l.id));
     }
 
-    const qLab = route.query.lab as string[];
     if (qLab) {
-      selectedLabels.value = labels.value.filter(l => qLab.includes(l.id));
+      selectedLabels.value = labels.value.filter(l => qLab.value.includes(l.id));
     }
 
     queryParamsInitialized.value = true;
@@ -233,7 +257,7 @@
       }
     }
 
-    const push_query = {
+    const push_query: Record<string, string | string[] | number | boolean | undefined> = {
       archived: includeArchived.value,
       fieldSelector: fieldSelector.value,
       negateLabels: negateLabels.value,
@@ -249,12 +273,25 @@
 
     for (const key in push_query) {
       const val = push_query[key];
-      if ((Array.isArray(val) && val.length == 0) || val === queryParamDefaultValues[key]) {
+      const defaultVal = queryParamDefaultValues[key];
+      if (
+        (Array.isArray(val) &&
+          Array.isArray(defaultVal) &&
+          val.length == defaultVal.length &&
+          val.every(v => (defaultVal as string[]).includes(v))) ||
+        val === queryParamDefaultValues[key]
+      ) {
         push_query[key] = undefined;
+      }
+
+      // Empirically seen to be unnecessary but according to router.push types,
+      // booleans are not supported. This might be more stable.
+      if (typeof push_query[key] === "boolean") {
+        push_query[key] = String(val);
       }
     }
 
-    await router.push({ query: push_query });
+    await router.push({ query: push_query as LocationQueryRaw });
 
     const { data, error } = await api.items.getAll({
       q: query.value || "",

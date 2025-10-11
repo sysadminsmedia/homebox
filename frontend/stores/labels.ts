@@ -5,6 +5,7 @@ export const useLabelStore = defineStore("labels", {
   state: () => ({
     allLabels: null as LabelOut[] | null,
     client: useUserApi(),
+    refreshAllLabelsPromise: null as Promise<void> | null,
   }),
   getters: {
     /**
@@ -13,8 +14,6 @@ export const useLabelStore = defineStore("labels", {
      * response.
      */
     labels(state): LabelOut[] {
-      // ensures that labels are eventually available but not synchronously
-      state.ensureAllLabelsFetched();
       return state.allLabels ?? [];
     },
   },
@@ -24,8 +23,8 @@ export const useLabelStore = defineStore("labels", {
         return;
       }
 
-      if (this.refreshAllLabelsPromise === undefined) {
-        this.refreshAllLabelsPromise = this.refresh();
+      if (this.refreshAllLabelsPromise === null) {
+        this.refreshAllLabelsPromise = this.refresh().then(() => {});
       }
       await this.refreshAllLabelsPromise;
     },

@@ -8,6 +8,7 @@ export const useLocationStore = defineStore("locations", {
     Locations: null as LocationOutCount[] | null,
     client: useUserApi(),
     tree: null as TreeItem[] | null,
+    refreshLocationsPromise: null as Promise<void> | null,
   }),
   getters: {
     /**
@@ -29,8 +30,6 @@ export const useLocationStore = defineStore("locations", {
       return state.parents ?? [];
     },
     allLocations(state): LocationOutCount[] {
-      // ensures that locations are eventually available but not synchronously
-      state.ensureLocationsFetched();
       return state.Locations ?? [];
     },
   },
@@ -40,8 +39,8 @@ export const useLocationStore = defineStore("locations", {
         return;
       }
 
-      if (this.refreshLocationsPromise === undefined) {
-        this.refreshLocationsPromise = this.refreshChildren();
+      if (this.refreshLocationsPromise === null) {
+        this.refreshLocationsPromise = this.refreshChildren().then(() => {});
       }
       await this.refreshLocationsPromise;
     },
