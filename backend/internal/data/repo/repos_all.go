@@ -21,14 +21,15 @@ type AllRepos struct {
 }
 
 func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage, pubSubConn string, thumbnail config.Thumbnail) *AllRepos {
+	attachments := &AttachmentRepo{db, storage, pubSubConn, thumbnail}
 	return &AllRepos{
 		Users:       &UserRepository{db},
 		AuthTokens:  &TokenRepository{db},
 		Groups:      NewGroupRepository(db),
 		Locations:   &LocationRepository{db, bus},
 		Labels:      &LabelRepository{db, bus},
-		Items:       &ItemsRepository{db, bus},
-		Attachments: &AttachmentRepo{db, storage, pubSubConn, thumbnail},
+		Items:       &ItemsRepository{db, bus, attachments},
+		Attachments: attachments,
 		MaintEntry:  &MaintenanceEntryRepository{db},
 		Notifiers:   NewNotifierRepository(db),
 	}
