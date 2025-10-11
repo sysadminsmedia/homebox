@@ -368,12 +368,12 @@
   ]);
 
   const labelStore = useLabelStore();
+  labelStore.ensureAllLabelsFetched();
 
   const locationStore = useLocationStore();
+  locationStore.ensureLocationsFetched();
 
   onMounted(() => {
-    labelStore.refresh();
-    locationStore.refreshChildren();
     locationStore.refreshParents();
     locationStore.refreshTree();
   });

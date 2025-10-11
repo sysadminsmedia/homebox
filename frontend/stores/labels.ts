@@ -5,6 +5,7 @@ export const useLabelStore = defineStore("labels", {
   state: () => ({
     allLabels: null as LabelOut[] | null,
     client: useUserApi(),
+    refreshAllLabelsPromise: null as Promise<void> | null,
   }),
   getters: {
     /**
@@ -13,19 +14,20 @@ export const useLabelStore = defineStore("labels", {
      * response.
      */
     labels(state): LabelOut[] {
-      if (state.allLabels === null) {
-        this.client.labels.getAll().then(result => {
-          if (result.error) {
-            console.error(result.error);
-          }
-
-          this.allLabels = result.data;
-        });
-      }
       return state.allLabels ?? [];
     },
   },
   actions: {
+    async ensureAllLabelsFetched() {
+      if (this.allLabels !== null) {
+        return;
+      }
+
+      if (this.refreshAllLabelsPromise === null) {
+        this.refreshAllLabelsPromise = this.refresh().then(() => {});
+      }
+      await this.refreshAllLabelsPromise;
+    },
     async refresh() {
       const result = await this.client.labels.getAll();
       if (result.error) {
