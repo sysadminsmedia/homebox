@@ -1005,12 +1005,12 @@
 
 .markdown :where(ul) {
   list-style: disc;
-  margin-left: 2rem;
+  margin-left: 1rem;
 }
 
 .markdown :where(ol) {
   list-style: decimal;
-  margin-left: 2rem;
+  margin-left: 1rem;
 }
 /* Heading Styles */
 .markdown :where(h1) {

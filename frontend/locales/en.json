@@ -279,7 +279,8 @@
         "updating": "Updating",
         "value": "Value",
         "version": "Version: { version }",
-        "welcome": "Welcome, { username }"
+        "welcome": "Welcome, { username }",
+        "preview": "Preview"
     },
     "home": {
         "labels": "Labels",

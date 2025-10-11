@@ -218,9 +218,8 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 	// Upload the file to the storage bucket
 	path, err := r.UploadFile(ctx, itemGroup, doc)
 	if err != nil {
-		err := tx.Rollback()
-		if err != nil {
-			return nil, err
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return nil, rollbackErr
 		}
 		return nil, err
 	}

@@ -44,7 +44,7 @@ function clampDecimals(currency: string, decimals: number): number {
 }
 
 // Type guard to validate currency response shape with strict validation
-function isValidCurrencyItem(item: CurrenciesCurrency) {
+function isValidCurrencyItem(item: CurrenciesCurrency): boolean {
   if (
     typeof item !== "object" ||
     item === null ||
