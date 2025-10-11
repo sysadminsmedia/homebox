@@ -19,7 +19,7 @@ type (
 	UserCreate struct {
 		Name        string    `json:"name"`
 		Email       string    `json:"email"`
-		Password    string    `json:"password"`
+		Password    *string   `json:"password"`
 		IsSuperuser bool      `json:"isSuperuser"`
 		GroupID     uuid.UUID `json:"groupID"`
 		IsOwner     bool      `json:"isOwner"`
@@ -48,6 +48,11 @@ var (
 )
 
 func mapUserOut(user *ent.User) UserOut {
+	var passwordHash string
+	if user.Password != nil {
+		passwordHash = *user.Password
+	}
+	
 	return UserOut{
 		ID:           user.ID,
 		Name:         user.Name,
@@ -55,7 +60,7 @@ func mapUserOut(user *ent.User) UserOut {
 		IsSuperuser:  user.IsSuperuser,
 		GroupID:      user.Edges.Group.ID,
 		GroupName:    user.Edges.Group.Name,
-		PasswordHash: user.Password,
+		PasswordHash: passwordHash,
 		IsOwner:      user.Role == "owner",
 	}
 }
@@ -85,15 +90,20 @@ func (r *UserRepository) Create(ctx context.Context, usr UserCreate) (UserOut, e
 		role = user.RoleOwner
 	}
 
-	entUser, err := r.db.User.
+	createQuery := r.db.User.
 		Create().
 		SetName(usr.Name).
 		SetEmail(usr.Email).
-		SetPassword(usr.Password).
 		SetIsSuperuser(usr.IsSuperuser).
 		SetGroupID(usr.GroupID).
-		SetRole(role).
-		Save(ctx)
+		SetRole(role)
+
+	// Only set password if provided (non-nil)
+	if usr.Password != nil {
+		createQuery = createQuery.SetPassword(*usr.Password)
+	}
+
+	entUser, err := createQuery.Save(ctx)
 	if err != nil {
 		return UserOut{}, err
 	}

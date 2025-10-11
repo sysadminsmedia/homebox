@@ -25,151 +25,151 @@ type AttachmentUpdate struct {
 }
 
 // Where appends a list predicates to the AttachmentUpdate builder.
-func (au *AttachmentUpdate) Where(ps ...predicate.Attachment) *AttachmentUpdate {
-	au.mutation.Where(ps...)
-	return au
+func (_u *AttachmentUpdate) Where(ps ...predicate.Attachment) *AttachmentUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (au *AttachmentUpdate) SetUpdatedAt(t time.Time) *AttachmentUpdate {
-	au.mutation.SetUpdatedAt(t)
-	return au
+func (_u *AttachmentUpdate) SetUpdatedAt(v time.Time) *AttachmentUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetType sets the "type" field.
-func (au *AttachmentUpdate) SetType(a attachment.Type) *AttachmentUpdate {
-	au.mutation.SetType(a)
-	return au
+func (_u *AttachmentUpdate) SetType(v attachment.Type) *AttachmentUpdate {
+	_u.mutation.SetType(v)
+	return _u
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (au *AttachmentUpdate) SetNillableType(a *attachment.Type) *AttachmentUpdate {
-	if a != nil {
-		au.SetType(*a)
+func (_u *AttachmentUpdate) SetNillableType(v *attachment.Type) *AttachmentUpdate {
+	if v != nil {
+		_u.SetType(*v)
 	}
-	return au
+	return _u
 }
 
 // SetPrimary sets the "primary" field.
-func (au *AttachmentUpdate) SetPrimary(b bool) *AttachmentUpdate {
-	au.mutation.SetPrimary(b)
-	return au
+func (_u *AttachmentUpdate) SetPrimary(v bool) *AttachmentUpdate {
+	_u.mutation.SetPrimary(v)
+	return _u
 }
 
 // SetNillablePrimary sets the "primary" field if the given value is not nil.
-func (au *AttachmentUpdate) SetNillablePrimary(b *bool) *AttachmentUpdate {
-	if b != nil {
-		au.SetPrimary(*b)
+func (_u *AttachmentUpdate) SetNillablePrimary(v *bool) *AttachmentUpdate {
+	if v != nil {
+		_u.SetPrimary(*v)
 	}
-	return au
+	return _u
 }
 
 // SetTitle sets the "title" field.
-func (au *AttachmentUpdate) SetTitle(s string) *AttachmentUpdate {
-	au.mutation.SetTitle(s)
-	return au
+func (_u *AttachmentUpdate) SetTitle(v string) *AttachmentUpdate {
+	_u.mutation.SetTitle(v)
+	return _u
 }
 
 // SetNillableTitle sets the "title" field if the given value is not nil.
-func (au *AttachmentUpdate) SetNillableTitle(s *string) *AttachmentUpdate {
-	if s != nil {
-		au.SetTitle(*s)
+func (_u *AttachmentUpdate) SetNillableTitle(v *string) *AttachmentUpdate {
+	if v != nil {
+		_u.SetTitle(*v)
 	}
-	return au
+	return _u
 }
 
 // SetPath sets the "path" field.
-func (au *AttachmentUpdate) SetPath(s string) *AttachmentUpdate {
-	au.mutation.SetPath(s)
-	return au
+func (_u *AttachmentUpdate) SetPath(v string) *AttachmentUpdate {
+	_u.mutation.SetPath(v)
+	return _u
 }
 
 // SetNillablePath sets the "path" field if the given value is not nil.
-func (au *AttachmentUpdate) SetNillablePath(s *string) *AttachmentUpdate {
-	if s != nil {
-		au.SetPath(*s)
+func (_u *AttachmentUpdate) SetNillablePath(v *string) *AttachmentUpdate {
+	if v != nil {
+		_u.SetPath(*v)
 	}
-	return au
+	return _u
 }
 
 // SetMimeType sets the "mime_type" field.
-func (au *AttachmentUpdate) SetMimeType(s string) *AttachmentUpdate {
-	au.mutation.SetMimeType(s)
-	return au
+func (_u *AttachmentUpdate) SetMimeType(v string) *AttachmentUpdate {
+	_u.mutation.SetMimeType(v)
+	return _u
 }
 
 // SetNillableMimeType sets the "mime_type" field if the given value is not nil.
-func (au *AttachmentUpdate) SetNillableMimeType(s *string) *AttachmentUpdate {
-	if s != nil {
-		au.SetMimeType(*s)
+func (_u *AttachmentUpdate) SetNillableMimeType(v *string) *AttachmentUpdate {
+	if v != nil {
+		_u.SetMimeType(*v)
 	}
-	return au
+	return _u
 }
 
 // SetItemID sets the "item" edge to the Item entity by ID.
-func (au *AttachmentUpdate) SetItemID(id uuid.UUID) *AttachmentUpdate {
-	au.mutation.SetItemID(id)
-	return au
+func (_u *AttachmentUpdate) SetItemID(id uuid.UUID) *AttachmentUpdate {
+	_u.mutation.SetItemID(id)
+	return _u
 }
 
 // SetNillableItemID sets the "item" edge to the Item entity by ID if the given value is not nil.
-func (au *AttachmentUpdate) SetNillableItemID(id *uuid.UUID) *AttachmentUpdate {
+func (_u *AttachmentUpdate) SetNillableItemID(id *uuid.UUID) *AttachmentUpdate {
 	if id != nil {
-		au = au.SetItemID(*id)
+		_u = _u.SetItemID(*id)
 	}
-	return au
+	return _u
 }
 
 // SetItem sets the "item" edge to the Item entity.
-func (au *AttachmentUpdate) SetItem(i *Item) *AttachmentUpdate {
-	return au.SetItemID(i.ID)
+func (_u *AttachmentUpdate) SetItem(v *Item) *AttachmentUpdate {
+	return _u.SetItemID(v.ID)
 }
 
 // SetThumbnailID sets the "thumbnail" edge to the Attachment entity by ID.
-func (au *AttachmentUpdate) SetThumbnailID(id uuid.UUID) *AttachmentUpdate {
-	au.mutation.SetThumbnailID(id)
-	return au
+func (_u *AttachmentUpdate) SetThumbnailID(id uuid.UUID) *AttachmentUpdate {
+	_u.mutation.SetThumbnailID(id)
+	return _u
 }
 
 // SetNillableThumbnailID sets the "thumbnail" edge to the Attachment entity by ID if the given value is not nil.
-func (au *AttachmentUpdate) SetNillableThumbnailID(id *uuid.UUID) *AttachmentUpdate {
+func (_u *AttachmentUpdate) SetNillableThumbnailID(id *uuid.UUID) *AttachmentUpdate {
 	if id != nil {
-		au = au.SetThumbnailID(*id)
+		_u = _u.SetThumbnailID(*id)
 	}
-	return au
+	return _u
 }
 
 // SetThumbnail sets the "thumbnail" edge to the Attachment entity.
-func (au *AttachmentUpdate) SetThumbnail(a *Attachment) *AttachmentUpdate {
-	return au.SetThumbnailID(a.ID)
+func (_u *AttachmentUpdate) SetThumbnail(v *Attachment) *AttachmentUpdate {
+	return _u.SetThumbnailID(v.ID)
 }
 
 // Mutation returns the AttachmentMutation object of the builder.
-func (au *AttachmentUpdate) Mutation() *AttachmentMutation {
-	return au.mutation
+func (_u *AttachmentUpdate) Mutation() *AttachmentMutation {
+	return _u.mutation
 }
 
 // ClearItem clears the "item" edge to the Item entity.
-func (au *AttachmentUpdate) ClearItem() *AttachmentUpdate {
-	au.mutation.ClearItem()
-	return au
+func (_u *AttachmentUpdate) ClearItem() *AttachmentUpdate {
+	_u.mutation.ClearItem()
+	return _u
 }
 
 // ClearThumbnail clears the "thumbnail" edge to the Attachment entity.
-func (au *AttachmentUpdate) ClearThumbnail() *AttachmentUpdate {
-	au.mutation.ClearThumbnail()
-	return au
+func (_u *AttachmentUpdate) ClearThumbnail() *AttachmentUpdate {
+	_u.mutation.ClearThumbnail()
+	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (au *AttachmentUpdate) Save(ctx context.Context) (int, error) {
-	au.defaults()
-	return withHooks(ctx, au.sqlSave, au.mutation, au.hooks)
+func (_u *AttachmentUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (au *AttachmentUpdate) SaveX(ctx context.Context) int {
-	affected, err := au.Save(ctx)
+func (_u *AttachmentUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -177,29 +177,29 @@ func (au *AttachmentUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (au *AttachmentUpdate) Exec(ctx context.Context) error {
-	_, err := au.Save(ctx)
+func (_u *AttachmentUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (au *AttachmentUpdate) ExecX(ctx context.Context) {
-	if err := au.Exec(ctx); err != nil {
+func (_u *AttachmentUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (au *AttachmentUpdate) defaults() {
-	if _, ok := au.mutation.UpdatedAt(); !ok {
+func (_u *AttachmentUpdate) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
 		v := attachment.UpdateDefaultUpdatedAt()
-		au.mutation.SetUpdatedAt(v)
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (au *AttachmentUpdate) check() error {
-	if v, ok := au.mutation.GetType(); ok {
+func (_u *AttachmentUpdate) check() error {
+	if v, ok := _u.mutation.GetType(); ok {
 		if err := attachment.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Attachment.type": %w`, err)}
 		}
@@ -207,37 +207,37 @@ func (au *AttachmentUpdate) check() error {
 	return nil
 }
 
-func (au *AttachmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := au.check(); err != nil {
-		return n, err
+func (_u *AttachmentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(attachment.Table, attachment.Columns, sqlgraph.NewFieldSpec(attachment.FieldID, field.TypeUUID))
-	if ps := au.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := au.mutation.UpdatedAt(); ok {
+	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(attachment.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := au.mutation.GetType(); ok {
+	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(attachment.FieldType, field.TypeEnum, value)
 	}
-	if value, ok := au.mutation.Primary(); ok {
+	if value, ok := _u.mutation.Primary(); ok {
 		_spec.SetField(attachment.FieldPrimary, field.TypeBool, value)
 	}
-	if value, ok := au.mutation.Title(); ok {
+	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(attachment.FieldTitle, field.TypeString, value)
 	}
-	if value, ok := au.mutation.Path(); ok {
+	if value, ok := _u.mutation.Path(); ok {
 		_spec.SetField(attachment.FieldPath, field.TypeString, value)
 	}
-	if value, ok := au.mutation.MimeType(); ok {
+	if value, ok := _u.mutation.MimeType(); ok {
 		_spec.SetField(attachment.FieldMimeType, field.TypeString, value)
 	}
-	if au.mutation.ItemCleared() {
+	if _u.mutation.ItemCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -250,7 +250,7 @@ func (au *AttachmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := au.mutation.ItemIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ItemIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -266,7 +266,7 @@ func (au *AttachmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if au.mutation.ThumbnailCleared() {
+	if _u.mutation.ThumbnailCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
@@ -279,7 +279,7 @@ func (au *AttachmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := au.mutation.ThumbnailIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ThumbnailIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
@@ -295,7 +295,7 @@ func (au *AttachmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, au.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{attachment.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -303,8 +303,8 @@ func (au *AttachmentUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	au.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // AttachmentUpdateOne is the builder for updating a single Attachment entity.
@@ -316,158 +316,158 @@ type AttachmentUpdateOne struct {
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (auo *AttachmentUpdateOne) SetUpdatedAt(t time.Time) *AttachmentUpdateOne {
-	auo.mutation.SetUpdatedAt(t)
-	return auo
+func (_u *AttachmentUpdateOne) SetUpdatedAt(v time.Time) *AttachmentUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetType sets the "type" field.
-func (auo *AttachmentUpdateOne) SetType(a attachment.Type) *AttachmentUpdateOne {
-	auo.mutation.SetType(a)
-	return auo
+func (_u *AttachmentUpdateOne) SetType(v attachment.Type) *AttachmentUpdateOne {
+	_u.mutation.SetType(v)
+	return _u
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (auo *AttachmentUpdateOne) SetNillableType(a *attachment.Type) *AttachmentUpdateOne {
-	if a != nil {
-		auo.SetType(*a)
+func (_u *AttachmentUpdateOne) SetNillableType(v *attachment.Type) *AttachmentUpdateOne {
+	if v != nil {
+		_u.SetType(*v)
 	}
-	return auo
+	return _u
 }
 
 // SetPrimary sets the "primary" field.
-func (auo *AttachmentUpdateOne) SetPrimary(b bool) *AttachmentUpdateOne {
-	auo.mutation.SetPrimary(b)
-	return auo
+func (_u *AttachmentUpdateOne) SetPrimary(v bool) *AttachmentUpdateOne {
+	_u.mutation.SetPrimary(v)
+	return _u
 }
 
 // SetNillablePrimary sets the "primary" field if the given value is not nil.
-func (auo *AttachmentUpdateOne) SetNillablePrimary(b *bool) *AttachmentUpdateOne {
-	if b != nil {
-		auo.SetPrimary(*b)
+func (_u *AttachmentUpdateOne) SetNillablePrimary(v *bool) *AttachmentUpdateOne {
+	if v != nil {
+		_u.SetPrimary(*v)
 	}
-	return auo
+	return _u
 }
 
 // SetTitle sets the "title" field.
-func (auo *AttachmentUpdateOne) SetTitle(s string) *AttachmentUpdateOne {
-	auo.mutation.SetTitle(s)
-	return auo
+func (_u *AttachmentUpdateOne) SetTitle(v string) *AttachmentUpdateOne {
+	_u.mutation.SetTitle(v)
+	return _u
 }
 
 // SetNillableTitle sets the "title" field if the given value is not nil.
-func (auo *AttachmentUpdateOne) SetNillableTitle(s *string) *AttachmentUpdateOne {
-	if s != nil {
-		auo.SetTitle(*s)
+func (_u *AttachmentUpdateOne) SetNillableTitle(v *string) *AttachmentUpdateOne {
+	if v != nil {
+		_u.SetTitle(*v)
 	}
-	return auo
+	return _u
 }
 
 // SetPath sets the "path" field.
-func (auo *AttachmentUpdateOne) SetPath(s string) *AttachmentUpdateOne {
-	auo.mutation.SetPath(s)
-	return auo
+func (_u *AttachmentUpdateOne) SetPath(v string) *AttachmentUpdateOne {
+	_u.mutation.SetPath(v)
+	return _u
 }
 
 // SetNillablePath sets the "path" field if the given value is not nil.
-func (auo *AttachmentUpdateOne) SetNillablePath(s *string) *AttachmentUpdateOne {
-	if s != nil {
-		auo.SetPath(*s)
+func (_u *AttachmentUpdateOne) SetNillablePath(v *string) *AttachmentUpdateOne {
+	if v != nil {
+		_u.SetPath(*v)
 	}
-	return auo
+	return _u
 }
 
 // SetMimeType sets the "mime_type" field.
-func (auo *AttachmentUpdateOne) SetMimeType(s string) *AttachmentUpdateOne {
-	auo.mutation.SetMimeType(s)
-	return auo
+func (_u *AttachmentUpdateOne) SetMimeType(v string) *AttachmentUpdateOne {
+	_u.mutation.SetMimeType(v)
+	return _u
 }
 
 // SetNillableMimeType sets the "mime_type" field if the given value is not nil.
-func (auo *AttachmentUpdateOne) SetNillableMimeType(s *string) *AttachmentUpdateOne {
-	if s != nil {
-		auo.SetMimeType(*s)
+func (_u *AttachmentUpdateOne) SetNillableMimeType(v *string) *AttachmentUpdateOne {
+	if v != nil {
+		_u.SetMimeType(*v)
 	}
-	return auo
+	return _u
 }
 
 // SetItemID sets the "item" edge to the Item entity by ID.
-func (auo *AttachmentUpdateOne) SetItemID(id uuid.UUID) *AttachmentUpdateOne {
-	auo.mutation.SetItemID(id)
-	return auo
+func (_u *AttachmentUpdateOne) SetItemID(id uuid.UUID) *AttachmentUpdateOne {
+	_u.mutation.SetItemID(id)
+	return _u
 }
 
 // SetNillableItemID sets the "item" edge to the Item entity by ID if the given value is not nil.
-func (auo *AttachmentUpdateOne) SetNillableItemID(id *uuid.UUID) *AttachmentUpdateOne {
+func (_u *AttachmentUpdateOne) SetNillableItemID(id *uuid.UUID) *AttachmentUpdateOne {
 	if id != nil {
-		auo = auo.SetItemID(*id)
+		_u = _u.SetItemID(*id)
 	}
-	return auo
+	return _u
 }
 
 // SetItem sets the "item" edge to the Item entity.
-func (auo *AttachmentUpdateOne) SetItem(i *Item) *AttachmentUpdateOne {
-	return auo.SetItemID(i.ID)
+func (_u *AttachmentUpdateOne) SetItem(v *Item) *AttachmentUpdateOne {
+	return _u.SetItemID(v.ID)
 }
 
 // SetThumbnailID sets the "thumbnail" edge to the Attachment entity by ID.
-func (auo *AttachmentUpdateOne) SetThumbnailID(id uuid.UUID) *AttachmentUpdateOne {
-	auo.mutation.SetThumbnailID(id)
-	return auo
+func (_u *AttachmentUpdateOne) SetThumbnailID(id uuid.UUID) *AttachmentUpdateOne {
+	_u.mutation.SetThumbnailID(id)
+	return _u
 }
 
 // SetNillableThumbnailID sets the "thumbnail" edge to the Attachment entity by ID if the given value is not nil.
-func (auo *AttachmentUpdateOne) SetNillableThumbnailID(id *uuid.UUID) *AttachmentUpdateOne {
+func (_u *AttachmentUpdateOne) SetNillableThumbnailID(id *uuid.UUID) *AttachmentUpdateOne {
 	if id != nil {
-		auo = auo.SetThumbnailID(*id)
+		_u = _u.SetThumbnailID(*id)
 	}
-	return auo
+	return _u
 }
 
 // SetThumbnail sets the "thumbnail" edge to the Attachment entity.
-func (auo *AttachmentUpdateOne) SetThumbnail(a *Attachment) *AttachmentUpdateOne {
-	return auo.SetThumbnailID(a.ID)
+func (_u *AttachmentUpdateOne) SetThumbnail(v *Attachment) *AttachmentUpdateOne {
+	return _u.SetThumbnailID(v.ID)
 }
 
 // Mutation returns the AttachmentMutation object of the builder.
-func (auo *AttachmentUpdateOne) Mutation() *AttachmentMutation {
-	return auo.mutation
+func (_u *AttachmentUpdateOne) Mutation() *AttachmentMutation {
+	return _u.mutation
 }
 
 // ClearItem clears the "item" edge to the Item entity.
-func (auo *AttachmentUpdateOne) ClearItem() *AttachmentUpdateOne {
-	auo.mutation.ClearItem()
-	return auo
+func (_u *AttachmentUpdateOne) ClearItem() *AttachmentUpdateOne {
+	_u.mutation.ClearItem()
+	return _u
 }
 
 // ClearThumbnail clears the "thumbnail" edge to the Attachment entity.
-func (auo *AttachmentUpdateOne) ClearThumbnail() *AttachmentUpdateOne {
-	auo.mutation.ClearThumbnail()
-	return auo
+func (_u *AttachmentUpdateOne) ClearThumbnail() *AttachmentUpdateOne {
+	_u.mutation.ClearThumbnail()
+	return _u
 }
 
 // Where appends a list predicates to the AttachmentUpdate builder.
-func (auo *AttachmentUpdateOne) Where(ps ...predicate.Attachment) *AttachmentUpdateOne {
-	auo.mutation.Where(ps...)
-	return auo
+func (_u *AttachmentUpdateOne) Where(ps ...predicate.Attachment) *AttachmentUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (auo *AttachmentUpdateOne) Select(field string, fields ...string) *AttachmentUpdateOne {
-	auo.fields = append([]string{field}, fields...)
-	return auo
+func (_u *AttachmentUpdateOne) Select(field string, fields ...string) *AttachmentUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated Attachment entity.
-func (auo *AttachmentUpdateOne) Save(ctx context.Context) (*Attachment, error) {
-	auo.defaults()
-	return withHooks(ctx, auo.sqlSave, auo.mutation, auo.hooks)
+func (_u *AttachmentUpdateOne) Save(ctx context.Context) (*Attachment, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (auo *AttachmentUpdateOne) SaveX(ctx context.Context) *Attachment {
-	node, err := auo.Save(ctx)
+func (_u *AttachmentUpdateOne) SaveX(ctx context.Context) *Attachment {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -475,29 +475,29 @@ func (auo *AttachmentUpdateOne) SaveX(ctx context.Context) *Attachment {
 }
 
 // Exec executes the query on the entity.
-func (auo *AttachmentUpdateOne) Exec(ctx context.Context) error {
-	_, err := auo.Save(ctx)
+func (_u *AttachmentUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (auo *AttachmentUpdateOne) ExecX(ctx context.Context) {
-	if err := auo.Exec(ctx); err != nil {
+func (_u *AttachmentUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (auo *AttachmentUpdateOne) defaults() {
-	if _, ok := auo.mutation.UpdatedAt(); !ok {
+func (_u *AttachmentUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
 		v := attachment.UpdateDefaultUpdatedAt()
-		auo.mutation.SetUpdatedAt(v)
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (auo *AttachmentUpdateOne) check() error {
-	if v, ok := auo.mutation.GetType(); ok {
+func (_u *AttachmentUpdateOne) check() error {
+	if v, ok := _u.mutation.GetType(); ok {
 		if err := attachment.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "Attachment.type": %w`, err)}
 		}
@@ -505,17 +505,17 @@ func (auo *AttachmentUpdateOne) check() error {
 	return nil
 }
 
-func (auo *AttachmentUpdateOne) sqlSave(ctx context.Context) (_node *Attachment, err error) {
-	if err := auo.check(); err != nil {
+func (_u *AttachmentUpdateOne) sqlSave(ctx context.Context) (_node *Attachment, err error) {
+	if err := _u.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(attachment.Table, attachment.Columns, sqlgraph.NewFieldSpec(attachment.FieldID, field.TypeUUID))
-	id, ok := auo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Attachment.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := auo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, attachment.FieldID)
 		for _, f := range fields {
@@ -527,32 +527,32 @@ func (auo *AttachmentUpdateOne) sqlSave(ctx context.Context) (_node *Attachment,
 			}
 		}
 	}
-	if ps := auo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := auo.mutation.UpdatedAt(); ok {
+	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(attachment.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := auo.mutation.GetType(); ok {
+	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(attachment.FieldType, field.TypeEnum, value)
 	}
-	if value, ok := auo.mutation.Primary(); ok {
+	if value, ok := _u.mutation.Primary(); ok {
 		_spec.SetField(attachment.FieldPrimary, field.TypeBool, value)
 	}
-	if value, ok := auo.mutation.Title(); ok {
+	if value, ok := _u.mutation.Title(); ok {
 		_spec.SetField(attachment.FieldTitle, field.TypeString, value)
 	}
-	if value, ok := auo.mutation.Path(); ok {
+	if value, ok := _u.mutation.Path(); ok {
 		_spec.SetField(attachment.FieldPath, field.TypeString, value)
 	}
-	if value, ok := auo.mutation.MimeType(); ok {
+	if value, ok := _u.mutation.MimeType(); ok {
 		_spec.SetField(attachment.FieldMimeType, field.TypeString, value)
 	}
-	if auo.mutation.ItemCleared() {
+	if _u.mutation.ItemCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -565,7 +565,7 @@ func (auo *AttachmentUpdateOne) sqlSave(ctx context.Context) (_node *Attachment,
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := auo.mutation.ItemIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ItemIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -581,7 +581,7 @@ func (auo *AttachmentUpdateOne) sqlSave(ctx context.Context) (_node *Attachment,
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if auo.mutation.ThumbnailCleared() {
+	if _u.mutation.ThumbnailCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
@@ -594,7 +594,7 @@ func (auo *AttachmentUpdateOne) sqlSave(ctx context.Context) (_node *Attachment,
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := auo.mutation.ThumbnailIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ThumbnailIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2O,
 			Inverse: false,
@@ -610,10 +610,10 @@ func (auo *AttachmentUpdateOne) sqlSave(ctx context.Context) (_node *Attachment,
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &Attachment{config: auo.config}
+	_node = &Attachment{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, auo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{attachment.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -621,6 +621,6 @@ func (auo *AttachmentUpdateOne) sqlSave(ctx context.Context) (_node *Attachment,
 		}
 		return nil, err
 	}
-	auo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

@@ -23,114 +23,114 @@ type GroupInvitationTokenCreate struct {
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (gitc *GroupInvitationTokenCreate) SetCreatedAt(t time.Time) *GroupInvitationTokenCreate {
-	gitc.mutation.SetCreatedAt(t)
-	return gitc
+func (_c *GroupInvitationTokenCreate) SetCreatedAt(v time.Time) *GroupInvitationTokenCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (gitc *GroupInvitationTokenCreate) SetNillableCreatedAt(t *time.Time) *GroupInvitationTokenCreate {
-	if t != nil {
-		gitc.SetCreatedAt(*t)
+func (_c *GroupInvitationTokenCreate) SetNillableCreatedAt(v *time.Time) *GroupInvitationTokenCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
 	}
-	return gitc
+	return _c
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (gitc *GroupInvitationTokenCreate) SetUpdatedAt(t time.Time) *GroupInvitationTokenCreate {
-	gitc.mutation.SetUpdatedAt(t)
-	return gitc
+func (_c *GroupInvitationTokenCreate) SetUpdatedAt(v time.Time) *GroupInvitationTokenCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
 }
 
 // SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (gitc *GroupInvitationTokenCreate) SetNillableUpdatedAt(t *time.Time) *GroupInvitationTokenCreate {
-	if t != nil {
-		gitc.SetUpdatedAt(*t)
+func (_c *GroupInvitationTokenCreate) SetNillableUpdatedAt(v *time.Time) *GroupInvitationTokenCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
 	}
-	return gitc
+	return _c
 }
 
 // SetToken sets the "token" field.
-func (gitc *GroupInvitationTokenCreate) SetToken(b []byte) *GroupInvitationTokenCreate {
-	gitc.mutation.SetToken(b)
-	return gitc
+func (_c *GroupInvitationTokenCreate) SetToken(v []byte) *GroupInvitationTokenCreate {
+	_c.mutation.SetToken(v)
+	return _c
 }
 
 // SetExpiresAt sets the "expires_at" field.
-func (gitc *GroupInvitationTokenCreate) SetExpiresAt(t time.Time) *GroupInvitationTokenCreate {
-	gitc.mutation.SetExpiresAt(t)
-	return gitc
+func (_c *GroupInvitationTokenCreate) SetExpiresAt(v time.Time) *GroupInvitationTokenCreate {
+	_c.mutation.SetExpiresAt(v)
+	return _c
 }
 
 // SetNillableExpiresAt sets the "expires_at" field if the given value is not nil.
-func (gitc *GroupInvitationTokenCreate) SetNillableExpiresAt(t *time.Time) *GroupInvitationTokenCreate {
-	if t != nil {
-		gitc.SetExpiresAt(*t)
+func (_c *GroupInvitationTokenCreate) SetNillableExpiresAt(v *time.Time) *GroupInvitationTokenCreate {
+	if v != nil {
+		_c.SetExpiresAt(*v)
 	}
-	return gitc
+	return _c
 }
 
 // SetUses sets the "uses" field.
-func (gitc *GroupInvitationTokenCreate) SetUses(i int) *GroupInvitationTokenCreate {
-	gitc.mutation.SetUses(i)
-	return gitc
+func (_c *GroupInvitationTokenCreate) SetUses(v int) *GroupInvitationTokenCreate {
+	_c.mutation.SetUses(v)
+	return _c
 }
 
 // SetNillableUses sets the "uses" field if the given value is not nil.
-func (gitc *GroupInvitationTokenCreate) SetNillableUses(i *int) *GroupInvitationTokenCreate {
-	if i != nil {
-		gitc.SetUses(*i)
+func (_c *GroupInvitationTokenCreate) SetNillableUses(v *int) *GroupInvitationTokenCreate {
+	if v != nil {
+		_c.SetUses(*v)
 	}
-	return gitc
+	return _c
 }
 
 // SetID sets the "id" field.
-func (gitc *GroupInvitationTokenCreate) SetID(u uuid.UUID) *GroupInvitationTokenCreate {
-	gitc.mutation.SetID(u)
-	return gitc
+func (_c *GroupInvitationTokenCreate) SetID(v uuid.UUID) *GroupInvitationTokenCreate {
+	_c.mutation.SetID(v)
+	return _c
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (gitc *GroupInvitationTokenCreate) SetNillableID(u *uuid.UUID) *GroupInvitationTokenCreate {
-	if u != nil {
-		gitc.SetID(*u)
+func (_c *GroupInvitationTokenCreate) SetNillableID(v *uuid.UUID) *GroupInvitationTokenCreate {
+	if v != nil {
+		_c.SetID(*v)
 	}
-	return gitc
+	return _c
 }
 
 // SetGroupID sets the "group" edge to the Group entity by ID.
-func (gitc *GroupInvitationTokenCreate) SetGroupID(id uuid.UUID) *GroupInvitationTokenCreate {
-	gitc.mutation.SetGroupID(id)
-	return gitc
+func (_c *GroupInvitationTokenCreate) SetGroupID(id uuid.UUID) *GroupInvitationTokenCreate {
+	_c.mutation.SetGroupID(id)
+	return _c
 }
 
 // SetNillableGroupID sets the "group" edge to the Group entity by ID if the given value is not nil.
-func (gitc *GroupInvitationTokenCreate) SetNillableGroupID(id *uuid.UUID) *GroupInvitationTokenCreate {
+func (_c *GroupInvitationTokenCreate) SetNillableGroupID(id *uuid.UUID) *GroupInvitationTokenCreate {
 	if id != nil {
-		gitc = gitc.SetGroupID(*id)
+		_c = _c.SetGroupID(*id)
 	}
-	return gitc
+	return _c
 }
 
 // SetGroup sets the "group" edge to the Group entity.
-func (gitc *GroupInvitationTokenCreate) SetGroup(g *Group) *GroupInvitationTokenCreate {
-	return gitc.SetGroupID(g.ID)
+func (_c *GroupInvitationTokenCreate) SetGroup(v *Group) *GroupInvitationTokenCreate {
+	return _c.SetGroupID(v.ID)
 }
 
 // Mutation returns the GroupInvitationTokenMutation object of the builder.
-func (gitc *GroupInvitationTokenCreate) Mutation() *GroupInvitationTokenMutation {
-	return gitc.mutation
+func (_c *GroupInvitationTokenCreate) Mutation() *GroupInvitationTokenMutation {
+	return _c.mutation
 }
 
 // Save creates the GroupInvitationToken in the database.
-func (gitc *GroupInvitationTokenCreate) Save(ctx context.Context) (*GroupInvitationToken, error) {
-	gitc.defaults()
-	return withHooks(ctx, gitc.sqlSave, gitc.mutation, gitc.hooks)
+func (_c *GroupInvitationTokenCreate) Save(ctx context.Context) (*GroupInvitationToken, error) {
+	_c.defaults()
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (gitc *GroupInvitationTokenCreate) SaveX(ctx context.Context) *GroupInvitationToken {
-	v, err := gitc.Save(ctx)
+func (_c *GroupInvitationTokenCreate) SaveX(ctx context.Context) *GroupInvitationToken {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -138,68 +138,68 @@ func (gitc *GroupInvitationTokenCreate) SaveX(ctx context.Context) *GroupInvitat
 }
 
 // Exec executes the query.
-func (gitc *GroupInvitationTokenCreate) Exec(ctx context.Context) error {
-	_, err := gitc.Save(ctx)
+func (_c *GroupInvitationTokenCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (gitc *GroupInvitationTokenCreate) ExecX(ctx context.Context) {
-	if err := gitc.Exec(ctx); err != nil {
+func (_c *GroupInvitationTokenCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (gitc *GroupInvitationTokenCreate) defaults() {
-	if _, ok := gitc.mutation.CreatedAt(); !ok {
+func (_c *GroupInvitationTokenCreate) defaults() {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
 		v := groupinvitationtoken.DefaultCreatedAt()
-		gitc.mutation.SetCreatedAt(v)
+		_c.mutation.SetCreatedAt(v)
 	}
-	if _, ok := gitc.mutation.UpdatedAt(); !ok {
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		v := groupinvitationtoken.DefaultUpdatedAt()
-		gitc.mutation.SetUpdatedAt(v)
+		_c.mutation.SetUpdatedAt(v)
 	}
-	if _, ok := gitc.mutation.ExpiresAt(); !ok {
+	if _, ok := _c.mutation.ExpiresAt(); !ok {
 		v := groupinvitationtoken.DefaultExpiresAt()
-		gitc.mutation.SetExpiresAt(v)
+		_c.mutation.SetExpiresAt(v)
 	}
-	if _, ok := gitc.mutation.Uses(); !ok {
+	if _, ok := _c.mutation.Uses(); !ok {
 		v := groupinvitationtoken.DefaultUses
-		gitc.mutation.SetUses(v)
+		_c.mutation.SetUses(v)
 	}
-	if _, ok := gitc.mutation.ID(); !ok {
+	if _, ok := _c.mutation.ID(); !ok {
 		v := groupinvitationtoken.DefaultID()
-		gitc.mutation.SetID(v)
+		_c.mutation.SetID(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (gitc *GroupInvitationTokenCreate) check() error {
-	if _, ok := gitc.mutation.CreatedAt(); !ok {
+func (_c *GroupInvitationTokenCreate) check() error {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "GroupInvitationToken.created_at"`)}
 	}
-	if _, ok := gitc.mutation.UpdatedAt(); !ok {
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "GroupInvitationToken.updated_at"`)}
 	}
-	if _, ok := gitc.mutation.Token(); !ok {
+	if _, ok := _c.mutation.Token(); !ok {
 		return &ValidationError{Name: "token", err: errors.New(`ent: missing required field "GroupInvitationToken.token"`)}
 	}
-	if _, ok := gitc.mutation.ExpiresAt(); !ok {
+	if _, ok := _c.mutation.ExpiresAt(); !ok {
 		return &ValidationError{Name: "expires_at", err: errors.New(`ent: missing required field "GroupInvitationToken.expires_at"`)}
 	}
-	if _, ok := gitc.mutation.Uses(); !ok {
+	if _, ok := _c.mutation.Uses(); !ok {
 		return &ValidationError{Name: "uses", err: errors.New(`ent: missing required field "GroupInvitationToken.uses"`)}
 	}
 	return nil
 }
 
-func (gitc *GroupInvitationTokenCreate) sqlSave(ctx context.Context) (*GroupInvitationToken, error) {
-	if err := gitc.check(); err != nil {
+func (_c *GroupInvitationTokenCreate) sqlSave(ctx context.Context) (*GroupInvitationToken, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := gitc.createSpec()
-	if err := sqlgraph.CreateNode(ctx, gitc.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -212,41 +212,41 @@ func (gitc *GroupInvitationTokenCreate) sqlSave(ctx context.Context) (*GroupInvi
 			return nil, err
 		}
 	}
-	gitc.mutation.id = &_node.ID
-	gitc.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (gitc *GroupInvitationTokenCreate) createSpec() (*GroupInvitationToken, *sqlgraph.CreateSpec) {
+func (_c *GroupInvitationTokenCreate) createSpec() (*GroupInvitationToken, *sqlgraph.CreateSpec) {
 	var (
-		_node = &GroupInvitationToken{config: gitc.config}
+		_node = &GroupInvitationToken{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(groupinvitationtoken.Table, sqlgraph.NewFieldSpec(groupinvitationtoken.FieldID, field.TypeUUID))
 	)
-	if id, ok := gitc.mutation.ID(); ok {
+	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
-	if value, ok := gitc.mutation.CreatedAt(); ok {
+	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(groupinvitationtoken.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
-	if value, ok := gitc.mutation.UpdatedAt(); ok {
+	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(groupinvitationtoken.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
-	if value, ok := gitc.mutation.Token(); ok {
+	if value, ok := _c.mutation.Token(); ok {
 		_spec.SetField(groupinvitationtoken.FieldToken, field.TypeBytes, value)
 		_node.Token = value
 	}
-	if value, ok := gitc.mutation.ExpiresAt(); ok {
+	if value, ok := _c.mutation.ExpiresAt(); ok {
 		_spec.SetField(groupinvitationtoken.FieldExpiresAt, field.TypeTime, value)
 		_node.ExpiresAt = value
 	}
-	if value, ok := gitc.mutation.Uses(); ok {
+	if value, ok := _c.mutation.Uses(); ok {
 		_spec.SetField(groupinvitationtoken.FieldUses, field.TypeInt, value)
 		_node.Uses = value
 	}
-	if nodes := gitc.mutation.GroupIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -274,16 +274,16 @@ type GroupInvitationTokenCreateBulk struct {
 }
 
 // Save creates the GroupInvitationToken entities in the database.
-func (gitcb *GroupInvitationTokenCreateBulk) Save(ctx context.Context) ([]*GroupInvitationToken, error) {
-	if gitcb.err != nil {
-		return nil, gitcb.err
+func (_c *GroupInvitationTokenCreateBulk) Save(ctx context.Context) ([]*GroupInvitationToken, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(gitcb.builders))
-	nodes := make([]*GroupInvitationToken, len(gitcb.builders))
-	mutators := make([]Mutator, len(gitcb.builders))
-	for i := range gitcb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*GroupInvitationToken, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := gitcb.builders[i]
+			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*GroupInvitationTokenMutation)
@@ -297,11 +297,11 @@ func (gitcb *GroupInvitationTokenCreateBulk) Save(ctx context.Context) ([]*Group
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, gitcb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, gitcb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -321,7 +321,7 @@ func (gitcb *GroupInvitationTokenCreateBulk) Save(ctx context.Context) ([]*Group
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, gitcb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -329,8 +329,8 @@ func (gitcb *GroupInvitationTokenCreateBulk) Save(ctx context.Context) ([]*Group
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (gitcb *GroupInvitationTokenCreateBulk) SaveX(ctx context.Context) []*GroupInvitationToken {
-	v, err := gitcb.Save(ctx)
+func (_c *GroupInvitationTokenCreateBulk) SaveX(ctx context.Context) []*GroupInvitationToken {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -338,14 +338,14 @@ func (gitcb *GroupInvitationTokenCreateBulk) SaveX(ctx context.Context) []*Group
 }
 
 // Exec executes the query.
-func (gitcb *GroupInvitationTokenCreateBulk) Exec(ctx context.Context) error {
-	_, err := gitcb.Save(ctx)
+func (_c *GroupInvitationTokenCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (gitcb *GroupInvitationTokenCreateBulk) ExecX(ctx context.Context) {
-	if err := gitcb.Exec(ctx); err != nil {
+func (_c *GroupInvitationTokenCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

@@ -41,6 +41,24 @@ aside: false
 | HBOX_DATABASE_SSL_KEY                   |                                                                            | sets the sslkey for a postgres connection (should be a path)                                                                                                                              |
 | HBOX_DATABASE_SSL_ROOT_CERT             |                                                                            | sets the sslrootcert for a postgres connection (should be a path)                                                                                                                         |
 | HBOX_OPTIONS_GITHUB_RELEASE_CHECK       | true                                                                       | check for new github releases                                                                                                                                                             |
+| HBOX_OPTIONS_ALLOW_LOCAL_LOGIN          | true                                                                       | allow users to login with username/password when OIDC is enabled                                                                                                                          |
+| HBOX_OPTIONS_TRUST_PROXY                | false                                                                      | trust proxy headers for determining request scheme (X-Forwarded-Proto)                                                                                                                    |
+| HBOX_OPTIONS_HOSTNAME                   |                                                                            | override hostname used for OIDC redirect URLs and other absolute URLs                                                                                                                     |
+| HBOX_OIDC_ENABLED                       | false                                                                      | enable OpenID Connect (OIDC) authentication                                                                                                                                               |
+| HBOX_OIDC_ISSUER_URL                    |                                                                            | OIDC provider issuer URL (required when OIDC is enabled)                                                                                                                                  |
+| HBOX_OIDC_CLIENT_ID                     |                                                                            | OIDC client ID (required when OIDC is enabled)                                                                                                                                            |
+| HBOX_OIDC_CLIENT_SECRET                 |                                                                            | OIDC client secret (required when OIDC is enabled)                                                                                                                                        |
+| HBOX_OIDC_SCOPE                         | openid profile email                                                       | OIDC scopes to request from the provider                                                                                                                                                  |
+| HBOX_OIDC_ALLOWED_GROUPS                |                                                                            | comma-separated list of groups that are allowed to login (empty means all groups allowed)                                                                                                 |
+| HBOX_OIDC_AUTO_REDIRECT                 | false                                                                      | auto redirect to OIDC authentication (automatically redirects to OIDC provider, but does not disable local login. See HBOX_OPTIONS_ALLOW_LOCAL_LOGIN)                                     |
+| HBOX_OIDC_VERIFY_EMAIL                  | false                                                                      | require email verification from OIDC provider                                                                                                                                             |
+| HBOX_OIDC_GROUP_CLAIM                   | groups                                                                     | name of the claim in the ID token that contains user groups                                                                                                                               |
+| HBOX_OIDC_EMAIL_CLAIM                   | email                                                                      | name of the claim in the ID token that contains user email                                                                                                                                |
+| HBOX_OIDC_NAME_CLAIM                    | name                                                                       | name of the claim in the ID token that contains user display name                                                                                                                         |
+| HBOX_OIDC_EMAIL_VERIFIED_CLAIM          | email_verified                                                             | name of the claim in the ID token that contains user email verification status                                                                                                            |
+| HBOX_OIDC_BUTTON_TEXT                   | Sign in with OIDC                                                          | text displayed on the OIDC login button                                                                                                                                                   |
+| HBOX_OIDC_STATE_EXPIRY                  | 10m                                                                        | how long OIDC state parameters are valid (for CSRF protection)                                                                                                                            |
+| HBOX_OIDC_REQUEST_TIMEOUT               | 30s                                                                        | timeout for OIDC provider requests (token exchange, userinfo, etc.)                                                                                                                       |
 | HBOX_LABEL_MAKER_WIDTH                  | 526                                                                        | width for generated labels in pixels                                                                                                                                                      |
 | HBOX_LABEL_MAKER_HEIGHT                 | 200                                                                        | height for generated labels in pixels                                                                                                                                                     |
 | HBOX_LABEL_MAKER_PADDING                | 32                                                                         | space between elements on label                                                                                                                                                           |
@@ -149,6 +167,38 @@ For SQLite in production:
 - Monitor the file size and consider using a different database for large installations
   :::
 
+## OIDC Configuration
+
+HomeBox supports OpenID Connect (OIDC) authentication, allowing users to login using external identity providers like Keycloak, Authentik, Google, Microsoft, etc.
+
+### Basic OIDC Setup
+
+1. **Enable OIDC**: Set `HBOX_OIDC_ENABLED=true`
+2. **Provider Configuration**: Set the required provider details:
+   - `HBOX_OIDC_ISSUER_URL`: Your OIDC provider's issuer URL
+   - `HBOX_OIDC_CLIENT_ID`: Client ID from your OIDC provider
+   - `HBOX_OIDC_CLIENT_SECRET`: Client secret from your OIDC provider
+
+3. **Configure Redirect URI**: In your OIDC provider, set the redirect URI to:
+   `https://your-homebox-domain.com/api/v1/users/login/oidc/callback`
+
+### Advanced OIDC Configuration
+
+- **Group Authorization**: Use `HBOX_OIDC_ALLOWED_GROUPS` to restrict access to specific groups
+- **Custom Claims**: Configure `HBOX_OIDC_GROUP_CLAIM`, `HBOX_OIDC_EMAIL_CLAIM`, and `HBOX_OIDC_NAME_CLAIM` if your provider uses different claim names
+- **Auto Redirect to OIDC**: Set `HBOX_OIDC_AUTO_REDIRECT=true` to automatically redirect users directly to OIDC
+- **Local Login**: Set `HBOX_OPTIONS_ALLOW_LOCAL_LOGIN=false` to completely disable username/password login
+- **Email Verification**: Set `HBOX_OIDC_VERIFY_EMAIL=true` to require email verification from the OIDC provider
+
+### Security Considerations
+
+::: warning OIDC Security
+- Store `HBOX_OIDC_CLIENT_SECRET` securely (use environment variables, not config files)
+- Use HTTPS for production deployments
+- Configure proper redirect URIs in your OIDC provider
+- Consider setting `HBOX_OIDC_ALLOWED_GROUPS` for group-based access control
+:::
+
 ::: tip CLI Arguments
 If you're deploying without docker you can use command line arguments to configure the application. Run `homebox --help`
 for more information.
@@ -186,6 +236,24 @@ OPTIONS
 --options-currency-config/$HBOX_OPTIONS_CURRENCY_CONFIG                       <string>
 --options-github-release-check/$HBOX_OPTIONS_GITHUB_RELEASE_CHECK             <bool>    (default: true)
 --options-allow-analytics/$HBOX_OPTIONS_ALLOW_ANALYTICS                       <bool>    (default: false)
+--options-allow-local-login/$HBOX_OPTIONS_ALLOW_LOCAL_LOGIN                   <bool>    (default: true)
+--options-trust-proxy/$HBOX_OPTIONS_TRUST_PROXY                               <bool>    (default: false)
+--options-hostname/$HBOX_OPTIONS_HOSTNAME                                     <string>
+--oidc-enabled/$HBOX_OIDC_ENABLED                                             <bool>    (default: false)
+--oidc-issuer-url/$HBOX_OIDC_ISSUER_URL                                       <string>
+--oidc-client-id/$HBOX_OIDC_CLIENT_ID                                         <string>
+--oidc-client-secret/$HBOX_OIDC_CLIENT_SECRET                                 <string>
+--oidc-scope/$HBOX_OIDC_SCOPE                                                 <string>  (default: openid profile email)
+--oidc-allowed-groups/$HBOX_OIDC_ALLOWED_GROUPS                               <string>
+--oidc-auto-redirect/$HBOX_OIDC_AUTO_REDIRECT                                 <bool>    (default: false)
+--oidc-verify-email/$HBOX_OIDC_VERIFY_EMAIL                                   <bool>    (default: false)
+--oidc-group-claim/$HBOX_OIDC_GROUP_CLAIM                                     <string>  (default: groups)
+--oidc-email-claim/$HBOX_OIDC_EMAIL_CLAIM                                     <string>  (default: email)
+--oidc-name-claim/$HBOX_OIDC_NAME_CLAIM                                       <string>  (default: name)
+--oidc-email-verified-claim/$HBOX_OIDC_EMAIL_VERIFIED_CLAIM                   <string>  (default: email_verified)
+--oidc-button-text/$HBOX_OIDC_BUTTON_TEXT                                     <string>  (default: Sign in with OIDC)
+--oidc-state-expiry/$HBOX_OIDC_STATE_EXPIRY                                   <duration> (default: 10m)
+--oidc-request-timeout/$HBOX_OIDC_REQUEST_TIMEOUT                             <duration> (default: 30s)
 --label-maker-width/$HBOX_LABEL_MAKER_WIDTH                                   <int>     (default: 526)
 --label-maker-height/$HBOX_LABEL_MAKER_HEIGHT                                 <int>     (default: 200)
 --label-maker-padding/$HBOX_LABEL_MAKER_PADDING                               <int>     (default: 32)
