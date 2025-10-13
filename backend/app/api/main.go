@@ -138,6 +138,13 @@ func run(cfg *config.Config) error {
 		)
 	}
 
+	if strings.ToLower(cfg.Database.Driver) == "sqlite3" {
+		db := c.Sql()
+		db.SetMaxOpenConns(1)
+		db.SetMaxIdleConns(1)
+		log.Info().Msg("SQLite connection pool configured: max_open=1, max_idle=1")
+	}
+
 	migrationsFs, err := migrations.Migrations(strings.ToLower(cfg.Database.Driver))
 	if err != nil {
 		return fmt.Errorf("failed to get migrations for %s: %w", strings.ToLower(cfg.Database.Driver), err)

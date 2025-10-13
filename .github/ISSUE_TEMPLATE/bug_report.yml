@@ -59,6 +59,17 @@ body:
     validations:
       required: true
   - type: dropdown
+    id: database
+    attributes:
+      label: Database Type
+      description: What database backend are you using?
+      multiple: false
+      options:
+        - SQLite
+        - PostgreSQL
+    validations:
+      required: true
+  - type: dropdown
     id: arch
     attributes:
       label: OS Architechture

@@ -6,7 +6,6 @@
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
   import MdiLoading from "~icons/mdi/loading";
-  import MdiSelectSearch from "~icons/mdi/select-search";
   import MdiMagnify from "~icons/mdi/magnify";
   import MdiDelete from "~icons/mdi/delete";
   import { Button } from "@/components/ui/button";
@@ -15,18 +14,9 @@
   import { Switch } from "@/components/ui/switch";
   import { Separator } from "@/components/ui/separator";
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-  import {
-    Pagination,
-    PaginationEllipsis,
-    PaginationFirst,
-    PaginationLast,
-    PaginationList,
-    PaginationListItem,
-  } from "@/components/ui/pagination";
   import BaseContainer from "@/components/Base/Container.vue";
-  import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import SearchFilter from "~/components/Search/Filter.vue";
-  import ItemCard from "~/components/Item/Card.vue";
+  import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
 
   const { t } = useI18n();
 
@@ -56,7 +46,6 @@
     },
   });
 
-  const pageSize = useRouteQuery("pageSize", 24);
   const query = useRouteQuery("q", "");
   const advanced = useRouteQuery("advanced", false);
   const includeArchived = useRouteQuery("archived", false);
@@ -66,7 +55,8 @@
   const onlyWithPhoto = useRouteQuery("onlyWithPhoto", false);
   const orderBy = useRouteQuery("orderBy", "name");
 
-  const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
+  const preferences = useViewPreferences();
+  const pageSize = computed(() => preferences.value.itemsPerTablePage);
 
   const route = useRoute();
   const router = useRouter();
@@ -270,8 +260,7 @@
           advanced: route.query.advanced,
           q: query.value,
           page: page.value,
-          pageSize: pageSize.value,
-          includeArchived: includeArchived.value ? "true" : "false",
+          archived: includeArchived.value ? "true" : "false",
           negateLabels: negateLabels.value ? "true" : "false",
           onlyWithoutPhoto: onlyWithoutPhoto.value ? "true" : "false",
           onlyWithPhoto: onlyWithPhoto.value ? "true" : "false",
@@ -357,7 +346,6 @@
         onlyWithoutPhoto: onlyWithoutPhoto.value ? "true" : "false",
         onlyWithPhoto: onlyWithPhoto.value ? "true" : "false",
         orderBy: orderBy.value,
-        pageSize: pageSize.value,
         page: page.value,
         q: query.value,
         loc: locIDs.value,
@@ -388,7 +376,6 @@
       query: {
         archived: "false",
         fieldSelector: "false",
-        pageSize: pageSize.value,
         page: 1,
         orderBy: "name",
         q: "",
@@ -400,6 +387,15 @@
 
     await search();
   }
+
+  const pagination = proxyRefs({
+    page,
+    pageSize,
+    totalSize: total,
+    setPage: (newPage: number) => {
+      page.value = newPage;
+    },
+  });
 </script>
 
 <template>
@@ -530,41 +526,12 @@
     </div>
 
     <section>
-      <BaseSectionHeader ref="itemsTitle"> {{ $t("global.items") }} </BaseSectionHeader>
-      <p v-if="items.length > 0" class="flex items-center text-base font-medium">
-        {{ $t("items.results", { total: total }) }}
-        <span class="ml-auto text-base"> {{ $t("items.pages", { page: page, totalPages: totalPages }) }} </span>
-      </p>
-
-      <div v-if="items.length === 0" class="flex flex-col items-center gap-2">
-        <MdiSelectSearch class="size-10" />
-        <p>{{ $t("items.no_results") }}</p>
-      </div>
-      <div v-else ref="cardgrid" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        <ItemCard v-for="item in items" :key="item.id" :item="item" :location-flat-tree="locationFlatTree" />
-      </div>
-      <Pagination
-        v-slot="{ page: currentPage }"
-        :items-per-page="pageSize"
-        :total="total"
-        :sibling-count="2"
-        :default-page="page"
-        class="flex justify-center p-2"
-        @update:page="page = $event"
-      >
-        <PaginationList v-slot="{ items: pageItems }" class="flex items-center gap-1">
-          <PaginationFirst />
-          <template v-for="(item, index) in pageItems">
-            <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
-              <Button class="size-10 p-0" :variant="item.value === currentPage ? 'default' : 'outline'">
-                {{ item.value }}
-              </Button>
-            </PaginationListItem>
-            <PaginationEllipsis v-else :key="item.type" :index="index" />
-          </template>
-          <PaginationLast />
-        </PaginationList>
-      </Pagination>
+      <ItemViewSelectable
+        :items="items"
+        :location-flat-tree="locationFlatTree"
+        :pagination="pagination"
+        @refresh="async () => search()"
+      />
     </section>
   </BaseContainer>
 </template>

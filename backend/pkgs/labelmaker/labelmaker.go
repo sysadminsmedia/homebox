@@ -27,6 +27,13 @@ import (
 	"golang.org/x/image/font/gofont/gomedium"
 )
 
+type FontType int
+
+const (
+	FontTypeRegular FontType = iota
+	FontTypeBold
+)
+
 type GenerateParameters struct {
 	Width                 int
 	Height                int
@@ -140,6 +147,48 @@ func wrapText(text string, face font.Face, maxWidth int, maxHeight int, lineHeig
 	return wrappedLines, ""
 }
 
+func loadFont(cfg *config.Config, fontType FontType) (*truetype.Font, error) {
+	var fontPath *string
+	var fallbackData []byte
+
+	switch fontType {
+	case FontTypeRegular:
+		if cfg != nil && cfg.LabelMaker.RegularFontPath != nil {
+			fontPath = cfg.LabelMaker.RegularFontPath
+		}
+		fallbackData = gomedium.TTF
+	case FontTypeBold:
+		if cfg != nil && cfg.LabelMaker.BoldFontPath != nil {
+			fontPath = cfg.LabelMaker.BoldFontPath
+		}
+		fallbackData = gobold.TTF
+	default:
+		return nil, fmt.Errorf("unknown font type: %d", fontType)
+	}
+
+	if fontPath != nil && *fontPath != "" {
+		data, err := os.ReadFile(*fontPath)
+		if err != nil {
+			log.Printf("Failed to load font from %s: %v, using fallback font", *fontPath, err)
+		} else {
+			font, err := truetype.Parse(data)
+			if err != nil {
+				log.Printf("Failed to parse font from %s: %v, using fallback font", *fontPath, err)
+			} else {
+				log.Printf("Successfully loaded font from %s", *fontPath)
+				return font, nil
+			}
+		}
+	}
+
+	font, err := truetype.Parse(fallbackData)
+	if err != nil {
+		return nil, err
+	}
+
+	return font, nil
+}
+
 func GenerateLabel(w io.Writer, params *GenerateParameters, cfg *config.Config) error {
 	if err := params.Validate(); err != nil {
 		return err
@@ -165,12 +214,12 @@ func GenerateLabel(w io.Writer, params *GenerateParameters, cfg *config.Config) 
 	qr.DisableBorder = true
 	qrImage := qr.Image(params.QrSize)
 
-	regularFont, err := truetype.Parse(gomedium.TTF)
+	regularFont, err := loadFont(cfg, FontTypeRegular)
 	if err != nil {
 		return err
 	}
 
-	boldFont, err := truetype.Parse(gobold.TTF)
+	boldFont, err := loadFont(cfg, FontTypeBold)
 	if err != nil {
 		return err
 	}
