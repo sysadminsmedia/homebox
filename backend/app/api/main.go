@@ -140,9 +140,9 @@ func run(cfg *config.Config) error {
 
 	if strings.ToLower(cfg.Database.Driver) == "sqlite3" {
 		db := c.Sql()
-		db.SetMaxOpenConns(1)
-		db.SetMaxIdleConns(1)
-		log.Info().Msg("SQLite connection pool configured: max_open=1, max_idle=1")
+		db.SetMaxOpenConns(4)
+		db.SetMaxIdleConns(4)
+		log.Info().Msg("SQLite connection pool configured: max_open=4, max_idle=4")
 	}
 
 	migrationsFs, err := migrations.Migrations(strings.ToLower(cfg.Database.Driver))
