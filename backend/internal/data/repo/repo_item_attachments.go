@@ -721,33 +721,33 @@ func (r *AttachmentRepo) CreateMissingThumbnails(ctx context.Context, groupId uu
 		log.Err(err).Msg("failed to open pubsub topic")
 	}
 
-	count := 0
+	if !r.thumbnail.Enabled {
+		return 0, nil
+	}
+
+	var messages []*pubsub.Message
 	for _, attachment := range attachments {
-		if r.thumbnail.Enabled {
-			if !attachment.QueryThumbnail().ExistX(ctx) {
-				if count > 0 && count%100 == 0 {
-					time.Sleep(2 * time.Second)
-				}
-				err = topic.Send(ctx, &pubsub.Message{
-					Body: []byte(fmt.Sprintf("attachment_created:%s", attachment.ID.String())),
-					Metadata: map[string]string{
-						"group_id":      groupId.String(),
-						"attachment_id": attachment.ID.String(),
-						"title":         attachment.Title,
-						"path":          attachment.Path,
-					},
-				})
-				if err != nil {
-					log.Err(err).Msg("failed to send message to topic")
-					continue
-				} else {
-					count++
-				}
+		if !attachment.QueryThumbnail().ExistX(ctx) {
+			msg := &pubsub.Message{
+				Body: fmt.Appendf(nil, "attachment_created:%s", attachment.ID.String()),
+				Metadata: map[string]string{
+					"group_id":      groupId.String(),
+					"attachment_id": attachment.ID.String(),
+					"title":         attachment.Title,
+					"path":          attachment.Path,
+				},
 			}
+			messages = append(messages, msg)
+		}
+	}
+	for _, msg := range messages {
+		err = topic.Send(ctx, msg)
+		if err != nil {
+			log.Err(err).Msg("failed to send 'attachment_created' message to topic 'thumbnails'")
 		}
 	}
 
-	return count, nil
+	return len(messages), nil
 }
 
 func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, doc ItemCreateAttachment) (string, error) {
@@ -861,6 +861,7 @@ func (r *AttachmentRepo) processThumbnailFromImage(ctx context.Context, groupId 
 	log.Debug().Msg("uploading thumbnail file")
 
 	// Get the group for uploading the thumbnail
+	log.Debug().Msg(fmt.Sprintf("OpenConnections = %d", r.db.Debug().Sql().Stats().OpenConnections))
 	group, err := r.db.Group.Get(ctx, groupId)
 	if err != nil {
 		return "", err
