@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"image"
 	"io"
-	"io/fs"
 	"net/http"
 	"path/filepath"
 	"runtime"
@@ -442,18 +441,15 @@ func (r *AttachmentRepo) Rename(ctx context.Context, gid uuid.UUID, id uuid.UUID
 func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmentId uuid.UUID, title string, path string) error {
 	log.Debug().Msg("starting thumbnail creation")
 	tx, err := r.db.Tx(ctx)
+
+	// Cleanup: always rollback the transaction and ignore errors to prevent leaving connections open
+	defer func() {
+		tx.Rollback()
+	}()
+
 	if err != nil {
 		return err
 	}
-	// If there is an error during file creation rollback the database
-	defer func() {
-		if v := recover(); v != nil {
-			err := tx.Rollback()
-			if err != nil {
-				return
-			}
-		}
-	}()
 
 	log.Debug().Msg("set initial database transaction")
 	att := tx.Attachment.Create().
@@ -465,49 +461,23 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	bucket, err := blob.OpenBucket(ctx, r.GetConnString())
 	if err != nil {
 		log.Err(err).Msg("failed to open bucket")
-		err := tx.Rollback()
-		if err != nil {
-			return err
-		}
 		return err
 	}
 	defer func(bucket *blob.Bucket) {
 		err := bucket.Close()
 		if err != nil {
-			err := tx.Rollback()
-			if err != nil {
-				return
-			}
 			log.Err(err).Msg("failed to close bucket")
 		}
 	}(bucket)
 
 	origFile, err := bucket.Open(r.fullPath(path))
 	if err != nil {
-		err := tx.Rollback()
-		if err != nil {
-			return err
-		}
 		return err
 	}
-	defer func(file fs.File) {
-		err := file.Close()
-		if err != nil {
-			err := tx.Rollback()
-			if err != nil {
-				return
-			}
-			log.Err(err).Msg("failed to close file")
-		}
-	}(origFile)
 
 	log.Debug().Msg("stat original file for file size")
 	stats, err := origFile.Stat()
 	if err != nil {
-		err := tx.Rollback()
-		if err != nil {
-			return err
-		}
 		log.Err(err).Msg("failed to stat original file")
 		return err
 	}
@@ -519,10 +489,6 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	log.Debug().Msg("reading original file content")
 	contentBytes, err := io.ReadAll(origFile)
 	if err != nil {
-		err := tx.Rollback()
-		if err != nil {
-			return err
-		}
 		log.Err(err).Msg("failed to read original file content")
 		return err
 	}
@@ -547,30 +513,17 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		img, _, err := image.Decode(bytes.NewReader(contentBytes))
 		if err != nil {
 			log.Err(err).Msg("failed to decode image file")
-			err := tx.Rollback()
-			if err != nil {
-				log.Err(err).Msg("failed to rollback transaction")
-				return err
-			}
 			return err
 		}
 		log.Debug().Msg("reading original file orientation")
 		imageMeta, err := imagemeta.Decode(bytes.NewReader(contentBytes))
 		if err != nil {
 			log.Err(err).Msg("failed to decode original file content")
-			err := tx.Rollback()
-			if err != nil {
-				return err
-			}
 			return err
 		}
 		orientation := uint16(imageMeta.Orientation)
 		thumbnailPath, err := r.processThumbnailFromImage(ctx, groupId, img, title, orientation)
 		if err != nil {
-			err := tx.Rollback()
-			if err != nil {
-				return err
-			}
 			return err
 		}
 		att.SetPath(thumbnailPath)
@@ -579,29 +532,17 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		img, err := webp.Decode(bytes.NewReader(contentBytes))
 		if err != nil {
 			log.Err(err).Msg("failed to decode webp image")
-			err := tx.Rollback()
-			if err != nil {
-				return err
-			}
 			return err
 		}
 		log.Debug().Msg("reading original file orientation")
 		imageMeta, err := imagemeta.Decode(bytes.NewReader(contentBytes))
 		if err != nil {
 			log.Err(err).Msg("failed to decode original file content")
-			err := tx.Rollback()
-			if err != nil {
-				return err
-			}
 			return err
 		}
 		orientation := uint16(imageMeta.Orientation)
 		thumbnailPath, err := r.processThumbnailFromImage(ctx, groupId, img, title, orientation)
 		if err != nil {
-			err := tx.Rollback()
-			if err != nil {
-				return err
-			}
 			return err
 		}
 		att.SetPath(thumbnailPath)
@@ -610,18 +551,10 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		img, err := avif.Decode(bytes.NewReader(contentBytes))
 		if err != nil {
 			log.Err(err).Msg("failed to decode avif image")
-			err := tx.Rollback()
-			if err != nil {
-				return err
-			}
 			return err
 		}
 		thumbnailPath, err := r.processThumbnailFromImage(ctx, groupId, img, title, uint16(1))
 		if err != nil {
-			err := tx.Rollback()
-			if err != nil {
-				return err
-			}
 			return err
 		}
 		att.SetPath(thumbnailPath)
@@ -630,29 +563,17 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		img, err := heic.Decode(bytes.NewReader(contentBytes))
 		if err != nil {
 			log.Err(err).Msg("failed to decode avif image")
-			err := tx.Rollback()
-			if err != nil {
-				return err
-			}
 			return err
 		}
 		log.Debug().Msg("reading original file orientation")
 		imageMeta, err := imagemeta.Decode(bytes.NewReader(contentBytes))
 		if err != nil {
 			log.Err(err).Msg("failed to decode original file content")
-			err := tx.Rollback()
-			if err != nil {
-				return err
-			}
 			return err
 		}
 		orientation := uint16(imageMeta.Orientation)
 		thumbnailPath, err := r.processThumbnailFromImage(ctx, groupId, img, title, orientation)
 		if err != nil {
-			err := tx.Rollback()
-			if err != nil {
-				return err
-			}
 			return err
 		}
 		att.SetPath(thumbnailPath)
@@ -661,18 +582,10 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		img, err := jpegxl.Decode(bytes.NewReader(contentBytes))
 		if err != nil {
 			log.Err(err).Msg("failed to decode avif image")
-			err := tx.Rollback()
-			if err != nil {
-				return err
-			}
 			return err
 		}
 		thumbnailPath, err := r.processThumbnailFromImage(ctx, groupId, img, title, uint16(1))
 		if err != nil {
-			err := tx.Rollback()
-			if err != nil {
-				return err
-			}
 			return err
 		}
 		att.SetPath(thumbnailPath)
@@ -694,9 +607,10 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	}
 
 	log.Debug().Msg("finishing thumbnail creation transaction")
-	if err := tx.Commit(); err != nil {
+	err = tx.Commit()
+	if err != nil {
 		log.Err(err).Msg("failed to commit transaction")
-		return nil
+		return err
 	}
 	return nil
 }
