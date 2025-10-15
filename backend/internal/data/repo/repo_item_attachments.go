@@ -443,7 +443,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	log.Debug().Msg("starting thumbnail creation")
 	tx, err := r.db.Tx(ctx)
 	if err != nil {
-		return nil
+		return err
 	}
 	// If there is an error during file creation rollback the database
 	defer func() {
