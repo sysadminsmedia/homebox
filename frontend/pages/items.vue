@@ -38,18 +38,18 @@
   const items = ref<ItemSummary[]>([]);
   const total = ref(0);
 
-  type queryParamValue = string | string[] | number | boolean;
+  type QueryParamValue = string | string[] | number | boolean;
   type queryRef =
     | WritableComputedRef<string>
     | WritableComputedRef<string[]>
     | WritableComputedRef<number>
     | WritableComputedRef<boolean>;
-  const queryParamDefaultValues: Record<string, queryParamValue> = {};
+  const queryParamDefaultValues: Record<string, QueryParamValue> = {};
   function useOptionalRouteQuery(key: string, defaultValue: string): WritableComputedRef<string>;
   function useOptionalRouteQuery(key: string, defaultValue: string[]): WritableComputedRef<string[]>;
   function useOptionalRouteQuery(key: string, defaultValue: number): WritableComputedRef<number>;
   function useOptionalRouteQuery(key: string, defaultValue: boolean): WritableComputedRef<boolean>;
-  function useOptionalRouteQuery(key: string, defaultValue: queryParamValue): queryRef {
+  function useOptionalRouteQuery(key: string, defaultValue: QueryParamValue): queryRef {
     queryParamDefaultValues[key] = defaultValue;
     if (typeof defaultValue === "string") {
       return useRouteQuery(key, defaultValue);
