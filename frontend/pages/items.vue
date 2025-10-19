@@ -38,30 +38,35 @@
   const items = ref<ItemSummary[]>([]);
   const total = ref(0);
 
+  // Using useRouteQuery directly has two downsides
+  // 1. It persists the default value in the query string
+  // 2. The ref returned by useRouteQuery updates asynchronously after calling the setter.
+  //    This can cause unintuitive behaviors.
+  // -> We copy query parameters into separate refs on page load and update the query explicitly via `router.push`.
   type QueryParamValue = string | string[] | number | boolean;
-  type queryRef =
-    | WritableComputedRef<string>
-    | WritableComputedRef<string[]>
-    | WritableComputedRef<number>
-    | WritableComputedRef<boolean>;
+  type queryRef = Ref<boolean | string | string[] | number, boolean | string | string[] | number>;
   const queryParamDefaultValues: Record<string, QueryParamValue> = {};
-  function useOptionalRouteQuery(key: string, defaultValue: string): WritableComputedRef<string>;
-  function useOptionalRouteQuery(key: string, defaultValue: string[]): WritableComputedRef<string[]>;
-  function useOptionalRouteQuery(key: string, defaultValue: number): WritableComputedRef<number>;
-  function useOptionalRouteQuery(key: string, defaultValue: boolean): WritableComputedRef<boolean>;
+  function useOptionalRouteQuery(key: string, defaultValue: string): Ref<string>;
+  function useOptionalRouteQuery(key: string, defaultValue: string[]): Ref<string[]>;
+  function useOptionalRouteQuery(key: string, defaultValue: number): Ref<number>;
+  function useOptionalRouteQuery(key: string, defaultValue: boolean): Ref<boolean>;
   function useOptionalRouteQuery(key: string, defaultValue: QueryParamValue): queryRef {
     queryParamDefaultValues[key] = defaultValue;
     if (typeof defaultValue === "string") {
-      return useRouteQuery(key, defaultValue);
+      const val = useRouteQuery(key, defaultValue);
+      return ref(val.value);
     }
     if (Array.isArray(defaultValue)) {
-      return useRouteQuery(key, defaultValue as string[]);
+      const val = useRouteQuery(key, defaultValue);
+      return ref(val.value);
     }
     if (typeof defaultValue === "number") {
-      return useRouteQuery(key, defaultValue);
+      const val = useRouteQuery(key, defaultValue);
+      return ref(val.value);
     }
     if (typeof defaultValue === "boolean") {
-      return useRouteQuery(key, defaultValue);
+      const val = useRouteQuery(key, defaultValue);
+      return ref(val.value);
     }
 
     throw Error(`Invalid query value type ${typeof defaultValue}`);
@@ -203,19 +208,19 @@
   });
 
   watch(onlyWithoutPhoto, (newV, oldV) => {
-    if (newV && onlyWithPhoto) {
+    if (newV && onlyWithPhoto.value) {
+      // this triggers the watch on onlyWithPhoto
       onlyWithPhoto.value = false;
-    }
-    if (newV !== oldV) {
+    } else if (newV !== oldV) {
       search();
     }
   });
 
   watch(onlyWithPhoto, (newV, oldV) => {
-    if (newV && onlyWithoutPhoto) {
+    if (newV && onlyWithoutPhoto.value) {
+      // this triggers the watch on onlyWithoutPhoto
       onlyWithoutPhoto.value = false;
-    }
-    if (newV !== oldV) {
+    } else if (newV !== oldV) {
       search();
     }
   });
