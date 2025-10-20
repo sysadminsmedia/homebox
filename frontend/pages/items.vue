@@ -44,13 +44,13 @@
   //    This can cause unintuitive behaviors.
   // -> We copy query parameters into separate refs on page load and update the query explicitly via `router.push`.
   type QueryParamValue = string | string[] | number | boolean;
-  type queryRef = Ref<boolean | string | string[] | number, boolean | string | string[] | number>;
+  type QueryRef = Ref<boolean | string | string[] | number, boolean | string | string[] | number>;
   const queryParamDefaultValues: Record<string, QueryParamValue> = {};
   function useOptionalRouteQuery(key: string, defaultValue: string): Ref<string>;
   function useOptionalRouteQuery(key: string, defaultValue: string[]): Ref<string[]>;
   function useOptionalRouteQuery(key: string, defaultValue: number): Ref<number>;
   function useOptionalRouteQuery(key: string, defaultValue: boolean): Ref<boolean>;
-  function useOptionalRouteQuery(key: string, defaultValue: QueryParamValue): queryRef {
+  function useOptionalRouteQuery(key: string, defaultValue: QueryParamValue): QueryRef {
     queryParamDefaultValues[key] = defaultValue;
     if (typeof defaultValue === "string") {
       const val = useRouteQuery(key, defaultValue);
