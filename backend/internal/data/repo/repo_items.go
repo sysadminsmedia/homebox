@@ -319,8 +319,13 @@ func (e *ItemsRepository) publishMutationEvent(gid uuid.UUID) {
 	}
 }
 
-func (e *ItemsRepository) getOne(ctx context.Context, where ...predicate.Item) (ItemOut, error) {
-	q := e.db.Item.Query().Where(where...)
+func (e *ItemsRepository) getOneTx(ctx context.Context, tx *ent.Tx, where ...predicate.Item) (ItemOut, error) {
+	var q *ent.ItemQuery
+	if tx != nil {
+		q = tx.Item.Query().Where(where...)
+	} else {
+		q = e.db.Item.Query().Where(where...)
+	}
 
 	return mapItemOutErr(q.
 		WithFields().
@@ -331,6 +336,10 @@ func (e *ItemsRepository) getOne(ctx context.Context, where ...predicate.Item) (
 		WithAttachments().
 		Only(ctx),
 	)
+}
+
+func (e *ItemsRepository) getOne(ctx context.Context, where ...predicate.Item) (ItemOut, error) {
+	return e.getOneTx(ctx, nil, where...)
 }
 
 // GetOne returns a single item by ID. If the item does not exist, an error is returned.
@@ -577,12 +586,21 @@ func (e *ItemsRepository) GetAllZeroAssetID(ctx context.Context, gid uuid.UUID) 
 	return mapItemsSummaryErr(q.All(ctx))
 }
 
-func (e *ItemsRepository) GetHighestAssetID(ctx context.Context, gid uuid.UUID) (AssetID, error) {
-	q := e.db.Item.Query().Where(
-		item.HasGroupWith(group.ID(gid)),
-	).Order(
-		ent.Desc(item.FieldAssetID),
-	).Limit(1)
+func (e *ItemsRepository) GetHighestAssetIDTx(ctx context.Context, tx *ent.Tx, gid uuid.UUID) (AssetID, error) {
+	var q *ent.ItemQuery
+	if tx != nil {
+		q = tx.Item.Query().Where(
+			item.HasGroupWith(group.ID(gid)),
+		).Order(
+			ent.Desc(item.FieldAssetID),
+		).Limit(1)
+	} else {
+		q = e.db.Item.Query().Where(
+			item.HasGroupWith(group.ID(gid)),
+		).Order(
+			ent.Desc(item.FieldAssetID),
+		).Limit(1)
+	}
 
 	result, err := q.First(ctx)
 	if err != nil {
@@ -593,6 +611,10 @@ func (e *ItemsRepository) GetHighestAssetID(ctx context.Context, gid uuid.UUID) 
 	}
 
 	return AssetID(result.AssetID), nil
+}
+
+func (e *ItemsRepository) GetHighestAssetID(ctx context.Context, gid uuid.UUID) (AssetID, error) {
+	return e.GetHighestAssetIDTx(ctx, nil, gid)
 }
 
 func (e *ItemsRepository) SetAssetID(ctx context.Context, gid uuid.UUID, id uuid.UUID, assetID AssetID) error {
@@ -1166,12 +1188,12 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opti
 	}()
 
 	// Get the original item with all its data
-	originalItem, err := e.getOne(ctx, item.ID(id), item.HasGroupWith(group.ID(gid)))
+	originalItem, err := e.getOneTx(ctx, tx, item.ID(id), item.HasGroupWith(group.ID(gid)))
 	if err != nil {
 		return ItemOut{}, err
 	}
 
-	nextAssetID, err := e.GetHighestAssetID(ctx, gid)
+	nextAssetID, err := e.GetHighestAssetIDTx(ctx, tx, gid)
 	if err != nil {
 		return ItemOut{}, err
 	}
