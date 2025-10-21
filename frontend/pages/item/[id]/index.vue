@@ -7,8 +7,8 @@
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPlus from "~icons/mdi/plus";
   import MdiMinus from "~icons/mdi/minus";
-  import MdiContentCopy from "~icons/mdi/content-copy";
   import MdiDelete from "~icons/mdi/delete";
+  import MdiPlusBoxMultipleOutline from "~icons/mdi/plus-box-multiple-outline";
   import { Separator } from "@/components/ui/separator";
   import {
     Breadcrumb,
@@ -652,7 +652,7 @@
                 <span class="hidden md:inline">{{ $t("global.create_subitem") }}</span>
               </Button>
               <Button class="w-9 md:w-auto" :aria-label="$t('global.duplicate')" @click="handleDuplicateClick">
-                <MdiContentCopy />
+                <MdiPlusBoxMultipleOutline />
                 <span class="hidden md:inline">{{ $t("global.duplicate") }}</span>
               </Button>
               <Button variant="destructive" class="w-9 md:w-auto" :aria-label="$t('global.delete')" @click="deleteItem">
