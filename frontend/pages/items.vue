@@ -17,6 +17,7 @@
   import BaseContainer from "@/components/Base/Container.vue";
   import SearchFilter from "~/components/Search/Filter.vue";
   import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
+  import type { LocationQueryRaw } from "vue-router";
 
   const { t } = useI18n();
 
@@ -37,7 +38,41 @@
   const items = ref<ItemSummary[]>([]);
   const total = ref(0);
 
-  const page1 = useRouteQuery("page", 1);
+  // Using useRouteQuery directly has two downsides
+  // 1. It persists the default value in the query string
+  // 2. The ref returned by useRouteQuery updates asynchronously after calling the setter.
+  //    This can cause unintuitive behaviors.
+  // -> We copy query parameters into separate refs on page load and update the query explicitly via `router.push`.
+  type QueryParamValue = string | string[] | number | boolean;
+  type QueryRef = Ref<boolean | string | string[] | number, boolean | string | string[] | number>;
+  const queryParamDefaultValues: Record<string, QueryParamValue> = {};
+  function useOptionalRouteQuery(key: string, defaultValue: string): Ref<string>;
+  function useOptionalRouteQuery(key: string, defaultValue: string[]): Ref<string[]>;
+  function useOptionalRouteQuery(key: string, defaultValue: number): Ref<number>;
+  function useOptionalRouteQuery(key: string, defaultValue: boolean): Ref<boolean>;
+  function useOptionalRouteQuery(key: string, defaultValue: QueryParamValue): QueryRef {
+    queryParamDefaultValues[key] = defaultValue;
+    if (typeof defaultValue === "string") {
+      const val = useRouteQuery(key, defaultValue);
+      return ref(val.value);
+    }
+    if (Array.isArray(defaultValue)) {
+      const val = useRouteQuery(key, defaultValue);
+      return ref(val.value);
+    }
+    if (typeof defaultValue === "number") {
+      const val = useRouteQuery(key, defaultValue);
+      return ref(val.value);
+    }
+    if (typeof defaultValue === "boolean") {
+      const val = useRouteQuery(key, defaultValue);
+      return ref(val.value);
+    }
+
+    throw Error(`Invalid query value type ${typeof defaultValue}`);
+  }
+
+  const page1 = useOptionalRouteQuery("page", 1);
 
   const page = computed({
     get: () => page1.value,
@@ -46,14 +81,15 @@
     },
   });
 
-  const query = useRouteQuery("q", "");
-  const advanced = useRouteQuery("advanced", false);
-  const includeArchived = useRouteQuery("archived", false);
-  const fieldSelector = useRouteQuery("fieldSelector", false);
-  const negateLabels = useRouteQuery("negateLabels", false);
-  const onlyWithoutPhoto = useRouteQuery("onlyWithoutPhoto", false);
-  const onlyWithPhoto = useRouteQuery("onlyWithPhoto", false);
-  const orderBy = useRouteQuery("orderBy", "name");
+  const query = useOptionalRouteQuery("q", "");
+  const includeArchived = useOptionalRouteQuery("archived", false);
+  const fieldSelector = useOptionalRouteQuery("fieldSelector", false);
+  const negateLabels = useOptionalRouteQuery("negateLabels", false);
+  const onlyWithoutPhoto = useOptionalRouteQuery("onlyWithoutPhoto", false);
+  const onlyWithPhoto = useOptionalRouteQuery("onlyWithPhoto", false);
+  const orderBy = useOptionalRouteQuery("orderBy", "name");
+  const qLoc = useOptionalRouteQuery("loc", []);
+  const qLab = useOptionalRouteQuery("lab", []);
 
   const preferences = useViewPreferences();
   const pageSize = computed(() => preferences.value.itemsPerTablePage);
@@ -63,23 +99,14 @@
 
   onMounted(async () => {
     loading.value = true;
-    // Wait until locations and labels are loaded
-    let maxRetry = 10;
-    while (!labels.value || !locations.value) {
-      await new Promise(resolve => setTimeout(resolve, 100));
-      if (maxRetry-- < 0) {
-        break;
-      }
-    }
     searchLocked.value = true;
-    const qLoc = route.query.loc as string[];
+    await Promise.all([locationsStore.ensureLocationsFetched(), labelStore.ensureAllLabelsFetched()]);
     if (qLoc) {
-      selectedLocations.value = locations.value.filter(l => qLoc.includes(l.id));
+      selectedLocations.value = locations.value.filter(l => qLoc.value.includes(l.id));
     }
 
-    const qLab = route.query.lab as string[];
     if (qLab) {
-      selectedLabels.value = labels.value.filter(l => qLab.includes(l.id));
+      selectedLabels.value = labels.value.filter(l => qLab.value.includes(l.id));
     }
 
     queryParamsInitialized.value = true;
@@ -111,7 +138,7 @@
 
   const locationsStore = useLocationStore();
 
-  const locationFlatTree = await useFlatLocations();
+  const locationFlatTree = useFlatLocations();
 
   const locations = computed(() => locationsStore.allLocations);
 
@@ -181,19 +208,19 @@
   });
 
   watch(onlyWithoutPhoto, (newV, oldV) => {
-    if (newV && onlyWithPhoto) {
+    if (newV && onlyWithPhoto.value) {
+      // this triggers the watch on onlyWithPhoto
       onlyWithPhoto.value = false;
-    }
-    if (newV !== oldV) {
+    } else if (newV !== oldV) {
       search();
     }
   });
 
   watch(onlyWithPhoto, (newV, oldV) => {
-    if (newV && onlyWithoutPhoto) {
+    if (newV && onlyWithoutPhoto.value) {
+      // this triggers the watch on onlyWithoutPhoto
       onlyWithoutPhoto.value = false;
-    }
-    if (newV !== oldV) {
+    } else if (newV !== oldV) {
       search();
     }
   });
@@ -220,29 +247,6 @@
     return data;
   }
 
-  watch(advanced, (v, lv) => {
-    if (v === false && lv === true) {
-      selectedLocations.value = [];
-      selectedLabels.value = [];
-      fieldTuples.value = [];
-
-      console.log("advanced", advanced.value);
-
-      router.push({
-        query: {
-          advanced: route.query.advanced,
-          q: query.value,
-          page: page.value,
-          archived: includeArchived.value ? "true" : "false",
-          negateLabels: negateLabels.value ? "true" : "false",
-          onlyWithoutPhoto: onlyWithoutPhoto.value ? "true" : "false",
-          onlyWithPhoto: onlyWithPhoto.value ? "true" : "false",
-          orderBy: orderBy.value,
-        },
-      });
-    }
-  });
-
   async function search() {
     if (searchLocked.value) {
       return;
@@ -257,6 +261,42 @@
         fields.push(`${t[0]}=${t[1]}`);
       }
     }
+
+    const push_query: Record<string, string | string[] | number | boolean | undefined> = {
+      archived: includeArchived.value,
+      fieldSelector: fieldSelector.value,
+      negateLabels: negateLabels.value,
+      onlyWithoutPhoto: onlyWithoutPhoto.value,
+      onlyWithPhoto: onlyWithPhoto.value,
+      orderBy: orderBy.value,
+      page: page.value,
+      q: query.value,
+      loc: locIDs.value,
+      lab: labIDs.value,
+      fields: fields,
+    };
+
+    for (const key in push_query) {
+      const val = push_query[key];
+      const defaultVal = queryParamDefaultValues[key];
+      if (
+        (Array.isArray(val) &&
+          Array.isArray(defaultVal) &&
+          val.length == defaultVal.length &&
+          val.every(v => (defaultVal as string[]).includes(v))) ||
+        val === queryParamDefaultValues[key]
+      ) {
+        push_query[key] = undefined;
+      }
+
+      // Empirically seen to be unnecessary but according to router.push types,
+      // booleans are not supported. This might be more stable.
+      if (typeof push_query[key] === "boolean") {
+        push_query[key] = String(val);
+      }
+    }
+
+    await router.push({ query: push_query as LocationQueryRaw });
 
     const { data, error } = await api.items.getAll({
       q: query.value || "",
@@ -308,27 +348,6 @@
       }
     }
 
-    // Push non-reactive query fields
-    await router.push({
-      query: {
-        // Reactive
-        advanced: "true",
-        archived: includeArchived.value ? "true" : "false",
-        fieldSelector: fieldSelector.value ? "true" : "false",
-        negateLabels: negateLabels.value ? "true" : "false",
-        onlyWithoutPhoto: onlyWithoutPhoto.value ? "true" : "false",
-        onlyWithPhoto: onlyWithPhoto.value ? "true" : "false",
-        orderBy: orderBy.value,
-        page: page.value,
-        q: query.value,
-
-        // Non-reactive
-        loc: locIDs.value,
-        lab: labIDs.value,
-        fields,
-      },
-    });
-
     // Reset Pagination
     page.value = 1;
 
@@ -344,19 +363,6 @@
         fields.push(`${t[0]}=${t[1]}`);
       }
     }
-
-    await router.push({
-      query: {
-        archived: "false",
-        fieldSelector: "false",
-        page: 1,
-        orderBy: "name",
-        q: "",
-        loc: [],
-        lab: [],
-        fields,
-      },
-    });
 
     await search();
   }
