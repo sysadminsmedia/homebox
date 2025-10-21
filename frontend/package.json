@@ -74,7 +74,7 @@
     "tailwindcss": "^3.4.17",
     "tailwindcss-animate": "^1.0.7",
     "vaul-vue": "^0.4.1",
-    "vite": "^7.1.5",
+    "vite": "^7.1.11",
     "vue": "3.5.20",
     "vue-router": "^4.5.1",
     "vue-sonner": "^2.0.8"
