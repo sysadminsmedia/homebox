@@ -2161,7 +2161,7 @@ paths:
       summary: Import Items
       tags:
       - Items
-  /v1/labelmaker/assets/{id}:
+  /v1/labelmaker/asset/{id}:
     get:
       parameters:
       - description: Asset ID
