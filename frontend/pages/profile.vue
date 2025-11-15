@@ -1,7 +1,9 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
+  import { toast } from "@/components/ui/sonner";
   import type { Detail } from "~~/components/global/DetailsSection/types";
-  import { themes } from "~~/lib/data/themes";
   import type { CurrenciesCurrency, NotifierCreate, NotifierOut } from "~~/lib/api/types/data-contracts";
+  import MdiLoading from "~icons/mdi/loading";
   import MdiAccount from "~icons/mdi/account";
   import MdiMegaphone from "~icons/mdi/megaphone";
   import MdiDelete from "~icons/mdi/delete";
@@ -9,22 +11,46 @@
   import MdiPencil from "~icons/mdi/pencil";
   import MdiAccountMultiple from "~icons/mdi/account-multiple";
   import { getLocaleCode } from "~/composables/use-formatters";
+  import { fmtCurrencyAsync } from "~/composables/utils";
+  import { Button } from "@/components/ui/button";
+  import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+  import { useDialog } from "@/components/ui/dialog-provider";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+  import { Label } from "@/components/ui/label";
+  import { badgeVariants } from "@/components/ui/badge";
+  import LanguageSelector from "~/components/App/LanguageSelector.vue";
+  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
+  import ThemePicker from "~/components/App/ThemePicker.vue";
+  import ItemDuplicateSettings from "~/components/Item/DuplicateSettings.vue";
+  import FormPassword from "~/components/Form/Password.vue";
+  import FormCheckbox from "~/components/Form/Checkbox.vue";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import BaseContainer from "@/components/Base/Container.vue";
+  import BaseCard from "@/components/Base/Card.vue";
+  import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
+  import DetailsSection from "@/components/global/DetailsSection/DetailsSection.vue";
+  import CopyText from "@/components/global/CopyText.vue";
+  import DateTime from "@/components/global/DateTime.vue";
+
+  const { t } = useI18n();
 
   definePageMeta({
     middleware: ["auth"],
   });
   useHead({
-    title: "Homebox | Profile",
+    title: "HomeBox | " + t("menu.profile"),
   });
 
   const api = useUserApi();
   const confirm = useConfirm();
-  const notify = useNotifier();
+
+  const { openDialog, closeDialog } = useDialog();
 
   const currencies = computedAsync(async () => {
     const resp = await api.group.currencies();
     if (resp.error) {
-      notify.error("Failed to get currencies");
+      toast.error(t("profile.toast.failed_get_currencies"));
       return [];
     }
 
@@ -33,10 +59,10 @@
 
   const preferences = useViewPreferences();
   function setDisplayHeader() {
-    preferences.value.displayHeaderDecor = !preferences.value.displayHeaderDecor;
+    preferences.value.displayLegacyHeader = !preferences.value.displayLegacyHeader;
   }
-  function setLanguage(lang: string) {
-    preferences.value.language = lang;
+  function setLegacyImageFit() {
+    preferences.value.legacyImageFit = !preferences.value.legacyImageFit;
   }
 
   // Currency Selection
@@ -45,6 +71,7 @@
     name: "United States Dollar",
     local: "en-US",
     symbol: "$",
+    decimals: 2,
   });
   watch(currency, () => {
     if (group.value) {
@@ -52,13 +79,18 @@
     }
   });
 
-  const currencyExample = computed(() => {
-    return fmtCurrency(1000, currency.value?.code ?? "USD", getLocaleCode());
-  });
+  const currencyExample = ref("$1,000.00");
 
-  const dateExample = computed(() => {
-    return fmtDate(new Date(Date.now() - 15 * 60000), "relative");
-  });
+  // Update currency example when currency changes
+  watch(
+    currency,
+    async () => {
+      if (currency.value) {
+        currencyExample.value = await fmtCurrencyAsync(1000, currency.value.code, getLocaleCode());
+      }
+    },
+    { immediate: true }
+  );
 
   const { data: group } = useAsyncData(async () => {
     const { data } = await api.group.get();
@@ -89,15 +121,13 @@
     });
 
     if (error) {
-      notify.error("Failed to update group");
+      toast.error(t("profile.toast.failed_update_group"));
       return;
     }
 
     group.value = data;
-    notify.success("Group updated");
+    toast.success(t("profile.toast.group_updated"));
   }
-
-  const { setTheme } = useTheme();
 
   const auth = useAuthContext();
 
@@ -106,19 +136,17 @@
     return [
       {
         name: "global.name",
-        text: auth.user?.name || "Unknown",
+        text: auth.user?.name || t("global.unknown"),
       },
       {
         name: "global.email",
-        text: auth.user?.email || "Unknown",
+        text: auth.user?.email || t("global.unknown"),
       },
     ] as Detail[];
   });
 
   async function deleteProfile() {
-    const result = await confirm.open(
-      "Are you sure you want to delete your account? If you are the last member in your group all your data will be deleted. This action cannot be undone."
-    );
+    const result = await confirm.open(t("profile.delete_account_confirm"));
 
     if (result.isCanceled) {
       return;
@@ -127,12 +155,12 @@
     const { response } = await api.user.delete();
 
     if (response?.status === 204) {
-      notify.success("Your account has been deleted.");
+      toast.success(t("profile.toast.account_deleted"));
       auth.logout(api);
       navigateTo("/");
     }
 
-    notify.error("Failed to delete your account.");
+    toast.error(t("profile.toast.failed_delete_account"));
   }
 
   const token = ref("");
@@ -159,15 +187,10 @@
 
   const passwordChange = reactive({
     loading: false,
-    dialog: false,
     current: "",
     new: "",
     isValid: false,
   });
-
-  function openPassChange() {
-    passwordChange.dialog = true;
-  }
 
   async function changePassword() {
     passwordChange.loading = true;
@@ -178,13 +201,13 @@
     const { error } = await api.user.changePassword(passwordChange.current, passwordChange.new);
 
     if (error) {
-      notify.error("Failed to change password.");
+      toast.error(t("profile.toast.failed_change_password"));
       passwordChange.loading = false;
       return;
     }
 
-    notify.success("Password changed successfully.");
-    passwordChange.dialog = false;
+    toast.success(t("profile.toast.password_changed"));
+    closeDialog(DialogID.ChangePassword);
     passwordChange.new = "";
     passwordChange.current = "";
     passwordChange.loading = false;
@@ -201,7 +224,6 @@
 
   const targetID = ref("");
   const notifier = ref<NotifierCreate | null>(null);
-  const notifierDialog = ref(false);
 
   function openNotifierDialog(v: NotifierOut | null) {
     if (v) {
@@ -219,7 +241,7 @@
       };
     }
 
-    notifierDialog.value = true;
+    openDialog(DialogID.CreateNotifier);
   }
 
   async function createNotifier() {
@@ -239,11 +261,11 @@
     });
 
     if (result.error) {
-      notify.error("Failed to create notifier.");
+      toast.error(t("profile.toast.failed_create_notifier"));
     }
 
     notifier.value = null;
-    notifierDialog.value = false;
+    closeDialog(DialogID.CreateNotifier);
 
     await notifiers.refresh();
   }
@@ -260,18 +282,18 @@
     });
 
     if (result.error) {
-      notify.error("Failed to update notifier.");
+      toast.error(t("profile.toast.failed_update_notifier"));
     }
 
     notifier.value = null;
-    notifierDialog.value = false;
+    closeDialog(DialogID.CreateNotifier);
     targetID.value = "";
 
     await notifiers.refresh();
   }
 
   async function deleteNotifier(id: string) {
-    const result = await confirm.open("Are you sure you want to delete this notifier?");
+    const result = await confirm.open(t("profile.delete_notifier_confirm"));
 
     if (result.isCanceled) {
       return;
@@ -280,7 +302,7 @@
     const { error } = await api.notifiers.delete(id);
 
     if (error) {
-      notify.error("Failed to delete notifier.");
+      toast.error(t("profile.toast.failed_delete_notifier"));
       return;
     }
 
@@ -295,58 +317,82 @@
     const { error } = await api.notifiers.test(notifier.value.url);
 
     if (error) {
-      notify.error("Failed to test notifier.");
+      toast.error(t("profile.toast.failed_test_notifier"));
       return;
     }
 
-    notify.success("Notifier test successful.");
+    toast.success(t("profile.toast.notifier_test_success"));
   }
 </script>
 
 <template>
   <div>
-    <BaseModal v-model="passwordChange.dialog">
-      <template #title> {{ $t("profile.change_password") }} </template>
+    <Dialog :dialog-id="DialogID.DuplicateSettings">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{{ $t("items.duplicate.title") }}</DialogTitle>
+        </DialogHeader>
+        <ItemDuplicateSettings v-model="preferences.duplicateSettings" />
+        <p class="text-sm text-muted-foreground">
+          {{ $t("items.duplicate.override_instructions") }}
+        </p>
+      </DialogContent>
+    </Dialog>
 
-      <form @submit.prevent="changePassword">
-        <FormPassword v-model="passwordChange.current" :label="$t('profile.current_password')" placeholder="" />
+    <Dialog :dialog-id="DialogID.ChangePassword">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle> {{ $t("profile.change_password") }} </DialogTitle>
+        </DialogHeader>
+
+        <FormPassword
+          v-model="passwordChange.current"
+          :label="$t('profile.current_password')"
+          placeholder=""
+          class="mb-2"
+        />
         <FormPassword v-model="passwordChange.new" :label="$t('profile.new_password')" placeholder="" />
         <PasswordScore v-model:valid="passwordChange.isValid" :password="passwordChange.new" />
 
-        <div class="flex">
-          <BaseButton
-            class="ml-auto"
-            :loading="passwordChange.loading"
-            :disabled="!passwordChange.isValid"
-            type="submit"
-          >
-            {{ $t("global.submit") }}
-          </BaseButton>
-        </div>
-      </form>
-    </BaseModal>
+        <form @submit.prevent="changePassword">
+          <DialogFooter>
+            <Button :disabled="!passwordChange.isValid || passwordChange.loading" type="submit">
+              <MdiLoading v-if="passwordChange.loading" class="animate-spin" />
+              {{ $t("global.submit") }}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
 
-    <BaseModal v-model="notifierDialog">
-      <template #title> {{ $t("profile.notifier_modal", { type: notifier != null }) }} </template>
+    <Dialog :dialog-id="DialogID.CreateNotifier">
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle> {{ $t("profile.notifier_modal", { type: notifier != null }) }} </DialogTitle>
+        </DialogHeader>
 
-      <form @submit.prevent="createNotifier">
-        <template v-if="notifier">
-          <FormTextField v-model="notifier.name" :label="$t('global.name')" />
-          <FormTextField v-model="notifier.url" :label="$t('profile.url')" />
-          <div class="max-w-[100px]">
-            <FormCheckbox v-model="notifier.isActive" :label="$t('profile.enabled')" />
+        <form @submit.prevent="createNotifier">
+          <template v-if="notifier">
+            <FormTextField v-model="notifier.name" :label="$t('global.name')" class="mb-2" />
+            <FormTextField v-model="notifier.url" :label="$t('profile.url')" class="mb-2" />
+            <div class="max-w-[100px]">
+              <FormCheckbox v-model="notifier.isActive" :label="$t('profile.enabled')" />
+            </div>
+          </template>
+          <div class="mt-4 flex justify-between gap-2">
+            <DialogFooter class="flex w-full">
+              <Button variant="secondary" :disabled="!(notifier && notifier.url)" type="button" @click="testNotifier">
+                {{ $t("profile.test") }}
+              </Button>
+              <div class="grow" />
+              <Button type="submit"> {{ $t("global.submit") }} </Button>
+            </DialogFooter>
           </div>
-        </template>
-        <div class="mt-4 flex justify-between gap-2">
-          <BaseButton :disabled="!(notifier && notifier.url)" type="button" @click="testNotifier">
-            {{ $t("profile.test") }}
-          </BaseButton>
-          <BaseButton type="submit"> {{ $t("global.submit") }} </BaseButton>
-        </div>
-      </form>
-    </BaseModal>
+        </form>
+      </DialogContent>
+    </Dialog>
 
-    <BaseContainer class="mb-6 flex flex-col gap-4">
+    <BaseContainer class="flex flex-col gap-4">
       <BaseCard>
         <template #title>
           <BaseSectionHeader>
@@ -360,72 +406,65 @@
 
         <div class="p-4">
           <div class="flex gap-2">
-            <BaseButton size="sm" @click="openPassChange"> {{ $t("profile.change_password") }} </BaseButton>
-            <BaseButton size="sm" @click="generateToken"> {{ $t("profile.gen_invite") }} </BaseButton>
+            <Button variant="secondary" size="sm" @click="openDialog(DialogID.ChangePassword)">
+              {{ $t("profile.change_password") }}
+            </Button>
+            <Button variant="secondary" size="sm" @click="generateToken"> {{ $t("profile.gen_invite") }} </Button>
+            <Button variant="secondary" size="sm" @click="openDialog(DialogID.DuplicateSettings)">
+              {{ $t("items.duplicate.title") }}
+            </Button>
           </div>
-          <div v-if="token" class="flex items-center pl-1 pt-4">
-            <CopyText class="btn btn-square btn-outline btn-primary btn-sm mr-2" :text="tokenUrl" />
+          <div v-if="token" class="flex items-center gap-2 pl-1 pt-4">
+            <CopyText :text="tokenUrl" />
             {{ tokenUrl }}
           </div>
-          <div v-if="token" class="flex items-center pl-1 pt-4">
-            <CopyText class="btn btn-square btn-outline btn-primary btn-sm mr-2" :text="token" />
+          <div v-if="token" class="flex items-center gap-2 pl-1 pt-4">
+            <CopyText :text="token" />
             {{ token }}
           </div>
         </div>
-        <div class="form-control w-full p-5 pt-0">
-          <label class="label">
-            <span class="label-text">{{ $t("profile.language") }}</span>
-          </label>
-          <select
-            v-model="$i18n.locale"
-            class="select select-bordered"
-            @change="
-              event => {
-                setLanguage((event.target as HTMLSelectElement).value);
-              }
-            "
-          >
-            <option v-for="lang in $i18n.availableLocales" :key="lang" :value="lang">
-              {{ $t(`languages.${lang}`) }} ({{ $t(`languages.${lang}`, 1, { locale: lang }) }})
-            </option>
-          </select>
-          <p class="m-2 text-sm">{{ $t("profile.example") }}: {{ $t("global.created") }} {{ dateExample }}</p>
-        </div>
+        <LanguageSelector />
       </BaseCard>
 
       <BaseCard>
         <template #title>
           <BaseSectionHeader>
             <MdiMegaphone class="-mt-1 mr-2" />
-            <span class=""> {{ $t("profile.notifiers") }} </span>
+            <span> {{ $t("profile.notifiers") }} </span>
             <template #description> {{ $t("profile.notifiers_sub") }} </template>
           </BaseSectionHeader>
         </template>
 
-        <div v-if="notifiers.data.value" class="mx-4 divide-y divide-gray-400 rounded-md border border-gray-400">
+        <div v-if="notifiers.data.value" class="mx-4 divide-y rounded-md border">
           <p v-if="notifiers.data.value.length === 0" class="p-2 text-center text-sm">
             {{ $t("profile.no_notifiers") }}
           </p>
           <article v-for="n in notifiers.data.value" v-else :key="n.id" class="p-2">
             <div class="flex flex-wrap items-center gap-2">
               <p class="mr-auto text-lg">{{ n.name }}</p>
-              <div class="flex justify-end gap-2">
-                <div class="tooltip" data-tip="Delete">
-                  <button class="btn btn-square btn-sm" @click="deleteNotifier(n.id)">
-                    <MdiDelete />
-                  </button>
-                </div>
-                <div class="tooltip" data-tip="Edit">
-                  <button class="btn btn-square btn-sm" @click="openNotifierDialog(n)">
-                    <MdiPencil />
-                  </button>
-                </div>
-              </div>
+              <TooltipProvider :delay-duration="0" class="flex justify-end gap-2">
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant="destructive" size="icon" @click="deleteNotifier(n.id)">
+                      <MdiDelete />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent> {{ $t("global.delete") }} </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button variant="outline" size="icon" @click="openNotifierDialog(n)">
+                      <MdiPencil />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent> {{ $t("global.edit") }} </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             <div class="flex flex-wrap justify-between py-1 text-sm">
               <p>
-                <span v-if="n.isActive" class="badge badge-success"> {{ $t("profile.active") }} </span>
-                <span v-else class="badge badge-error"> {{ $t("profile.inactive") }} </span>
+                <span v-if="n.isActive" :class="badgeVariants()"> {{ $t("profile.active") }} </span>
+                <span v-else :class="badgeVariants({ variant: 'destructive' })"> {{ $t("profile.inactive") }} </span>
               </p>
               <p>
                 {{ $t("global.created") }}
@@ -436,7 +475,7 @@
         </div>
 
         <div class="p-4">
-          <BaseButton size="sm" @click="openNotifierDialog"> {{ $t("global.create") }} </BaseButton>
+          <Button variant="secondary" size="sm" @click="openNotifierDialog"> {{ $t("global.create") }} </Button>
         </div>
       </BaseCard>
 
@@ -444,7 +483,7 @@
         <template #title>
           <BaseSectionHeader class="pb-0">
             <MdiAccountMultiple class="-mt-1 mr-2" />
-            <span class=""> {{ $t("profile.group_settings") }} </span>
+            <span> {{ $t("profile.group_settings") }} </span>
             <template #description>
               {{ $t("profile.group_settings_sub") }}
             </template>
@@ -452,11 +491,32 @@
         </template>
 
         <div v-if="group && currencies && currencies.length > 0" class="p-5 pt-0">
-          <FormSelect v-model="currency" :label="$t('profile.currency_format')" :items="currencies" />
+          <Label for="currency"> {{ $t("profile.currency_format") }} </Label>
+          <Select
+            id="currency"
+            :model-value="currency.code"
+            @update:model-value="
+              event => {
+                const newCurrency = currencies?.find(c => c.code === event);
+                if (newCurrency) {
+                  currency = newCurrency;
+                }
+              }
+            "
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem v-for="c in currencies" :key="c.code" :value="c.code">
+                {{ c.name }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
           <p class="m-2 text-sm">{{ $t("profile.example") }}: {{ currencyExample }}</p>
 
           <div class="mt-4">
-            <BaseButton size="sm" @click="updateGroup"> {{ $t("profile.update_group") }} </BaseButton>
+            <Button variant="secondary" size="sm" @click="updateGroup"> {{ $t("profile.update_group") }} </Button>
           </div>
         </div>
       </BaseCard>
@@ -465,7 +525,7 @@
         <template #title>
           <BaseSectionHeader>
             <MdiFill class="mr-2" />
-            <span class=""> {{ $t("profile.theme_settings") }} </span>
+            <span> {{ $t("profile.theme_settings") }} </span>
             <template #description>
               {{ $t("profile.theme_settings_sub") }}
             </template>
@@ -473,47 +533,15 @@
         </template>
 
         <div class="px-4 pb-4">
-          <div class="mb-3">
-            <BaseButton size="sm" @click="setDisplayHeader">
-              {{ $t("profile.display_header", { currentValue: preferences.displayHeaderDecor }) }}
-            </BaseButton>
+          <div class="mb-3 flex gap-2">
+            <Button variant="secondary" size="sm" @click="setDisplayHeader">
+              {{ $t("profile.display_legacy_header", { currentValue: preferences.displayLegacyHeader }) }}
+            </Button>
+            <Button variant="secondary" size="sm" @click="setLegacyImageFit">
+              {{ $t("profile.legacy_image_fit", { currentValue: preferences.legacyImageFit }) }}
+            </Button>
           </div>
-          <div class="homebox rounded-box grid grid-cols-1 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            <div
-              v-for="theme in themes"
-              :key="theme.value"
-              :class="'theme-' + theme.value"
-              class="overflow-hidden rounded-lg border border-base-content/20 outline-2 outline-offset-2 outline-base-content hover:border-base-content/40"
-              :data-theme="theme.value"
-              :data-set-theme="theme.value"
-              data-act-class="outline"
-              @click="setTheme(theme.value)"
-            >
-              <div :data-theme="theme.value" class="w-full cursor-pointer bg-base-100 font-sans text-base-content">
-                <div class="grid grid-cols-5 grid-rows-3">
-                  <div class="col-start-1 row-span-2 row-start-1 bg-base-200"></div>
-                  <div class="col-start-1 row-start-3 bg-base-300"></div>
-                  <div class="col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 bg-base-100 p-2">
-                    <div class="font-bold">{{ theme.label }}</div>
-                    <div class="flex flex-wrap gap-1">
-                      <div class="flex aspect-1 w-5 items-center justify-center rounded bg-primary lg:w-6">
-                        <div class="text-sm font-bold text-primary-content">A</div>
-                      </div>
-                      <div class="flex aspect-1 w-5 items-center justify-center rounded bg-secondary lg:w-6">
-                        <div class="text-sm font-bold text-secondary-content">A</div>
-                      </div>
-                      <div class="flex aspect-1 w-5 items-center justify-center rounded bg-accent lg:w-6">
-                        <div class="text-sm font-bold text-accent-content">A</div>
-                      </div>
-                      <div class="flex aspect-1 w-5 items-center justify-center rounded bg-neutral lg:w-6">
-                        <div class="text-sm font-bold text-neutral-content">A</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <ThemePicker />
         </div>
       </BaseCard>
 
@@ -521,14 +549,14 @@
         <template #title>
           <BaseSectionHeader>
             <MdiDelete class="-mt-1 mr-2" />
-            <span class=""> {{ $t("profile.delete_account") }} </span>
+            <span> {{ $t("profile.delete_account") }} </span>
             <template #description> {{ $t("profile.delete_account_sub") }} </template>
           </BaseSectionHeader>
         </template>
-        <div class="border-t-2 border-gray-300 p-4 px-6">
-          <BaseButton size="sm" class="btn-error" @click="deleteProfile">
+        <div class="border-t-2 p-4 px-6">
+          <Button size="sm" variant="destructive" @click="deleteProfile">
             {{ $t("profile.delete_account") }}
-          </BaseButton>
+          </Button>
         </div>
       </BaseCard>
     </BaseContainer>

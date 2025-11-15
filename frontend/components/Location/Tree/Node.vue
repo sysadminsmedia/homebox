@@ -1,10 +1,10 @@
 <script setup lang="ts">
   import { useTreeState } from "./tree-state";
   import type { TreeItem } from "~~/lib/api/types/data-contracts";
-  import MdiChevronDown from "~icons/mdi/chevron-down";
   import MdiChevronRight from "~icons/mdi/chevron-right";
   import MdiMapMarker from "~icons/mdi/map-marker";
   import MdiPackageVariant from "~icons/mdi/package-variant";
+  import LocationTreeNode from "./Node.vue";
 
   type Props = {
     treeId: string;
@@ -42,36 +42,31 @@
     <div
       class="flex items-center gap-1 rounded p-1"
       :class="{
-        'cursor-pointer hover:bg-base-200': hasChildren,
+        'cursor-pointer hover:bg-accent hover:text-accent-foreground': hasChildren,
       }"
       @click="openRef = !openRef"
     >
       <div
         class="mr-1 flex items-center justify-center rounded p-0.5"
         :class="{
-          'hover:bg-base-200': hasChildren,
+          'hover:bg-accent hover:text-accent-foreground': hasChildren,
         }"
       >
-        <div v-if="!hasChildren" class="size-6"></div>
-        <label
-          v-else
-          class="swap swap-rotate"
-          :class="{
-            'swap-active': openRef,
-          }"
-        >
-          <MdiChevronRight name="mdi-chevron-right" class="swap-off size-6" />
-          <MdiChevronDown name="mdi-chevron-down" class="swap-on size-6" />
-        </label>
+        <div v-if="!hasChildren" class="size-6" />
+        <div v-else class="group/node relative size-6" :data-swap="openRef">
+          <div
+            class="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-data-[swap=true]/node:rotate-90"
+          >
+            <MdiChevronRight class="size-6" />
+          </div>
+        </div>
       </div>
       <MdiMapMarker v-if="item.type === 'location'" class="size-4" />
       <MdiPackageVariant v-else class="size-4" />
-      <NuxtLink class="text-lg hover:link" :to="link" @click.stop>{{ item.name }} </NuxtLink>
+      <NuxtLink class="text-lg hover:underline" :to="link" @click.stop>{{ item.name }} </NuxtLink>
     </div>
     <div v-if="openRef" class="ml-4">
       <LocationTreeNode v-for="child in item.children" :key="child.id" :item="child" :tree-id="treeId" />
     </div>
   </div>
 </template>
-
-<style scoped></style>

@@ -1,17 +1,39 @@
 <template>
-  <div class="grid grid-cols-1 gap-10 py-6 md:grid-cols-4">
-    <div class="col-span-3">
+  <div class="flex flex-col gap-10 py-6 md:flex-row">
+    <div class="flex-1">
       <h4 class="mb-1 text-lg font-semibold">
-        <slot name="title"></slot>
+        <slot name="title" />
       </h4>
       <p class="text-sm">
-        <slot></slot>
+        <slot />
       </p>
     </div>
-    <BaseButton class="btn-primary mt-auto" @click="$emit('action')">
-      <slot name="button">
-        <slot name="title"></slot>
-      </slot>
-    </BaseButton>
+    <div class="flex items-center">
+      <template v-if="to">
+        <NuxtLink :to="to" :class="buttonVariants({ size: 'lg' })" class="min-w-52 grow">
+          <slot name="button">
+            <slot name="title" />
+          </slot>
+        </NuxtLink>
+      </template>
+      <template v-else>
+        <Button class="min-w-52 grow" size="lg" @click="$emit('action')">
+          <slot name="button">
+            <slot name="title" />
+          </slot>
+        </Button>
+      </template>
+    </div>
   </div>
 </template>
+
+<script setup lang="ts">
+  import { defineProps } from "vue";
+  import { Button, buttonVariants } from "@/components/ui/button";
+
+  defineProps<{
+    to?: string;
+  }>();
+
+  defineEmits(["action"]);
+</script>

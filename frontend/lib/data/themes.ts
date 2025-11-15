@@ -153,3 +153,19 @@ export const themes: ThemeOption[] = [
     value: "winter",
   },
 ];
+
+export const darkThemes: DaisyTheme[] = [
+  "synthwave",
+  "retro",
+  "cyberpunk",
+  "valentine",
+  "halloween",
+  "forest",
+  "aqua",
+  "black",
+  "luxury",
+  "dracula",
+  "business",
+  "night",
+  "coffee",
+];

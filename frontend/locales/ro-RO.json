@@ -1,11 +1,16 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "shift": "Shift"
+            },
             "import_dialog": {
                 "change_warning": "Comportamentul pentru importuri cu import_refs existente s-a schimbat. Dacă un import_ref este prezent în fișierul CSV,\nobiectul v-a fi actualizat cu valorile din fișierul CSV.",
                 "description": "Importă un fișier CSV care conține toate obiectele, etichetele și locațiile tale. \nCitește documentația pentru mai multe informații privind format-ul necesar.",
                 "title": "Importă fișier CSV",
-                "upload": "Încarcă"
+                "toast": {
+                    "import_success": "Import cu succes!"
+                }
             },
             "outdated": {
                 "current_version": "Versiune Curentă",
@@ -15,12 +20,16 @@
                 "new_version_available_link": "Dă click aici pentru a vedea notele de lansare"
             }
         },
+        "color_selector": {
+            "color": "Culoare",
+            "no_color": "Fara culoare"
+        },
         "global": {
             "copy_text": {
                 "documentation": "documentație",
                 "failed_to_copy": "Nu s-a copiat textul în clipboard",
                 "https_required": "pentru că HTTPS este necesar",
-                "learn_more": "Învață mai multe în noastră"
+                "learn_more": "Învață mai multe în"
             },
             "date_time": {
                 "ago": "{0} în urmă",
@@ -46,19 +55,47 @@
                 "years": "ani",
                 "yesterday": "ieri"
             },
+            "label_maker": {
+                "browser_print": "Imprimare din browser",
+                "confirm_description": "Sigur doriți să imprimați această etichetă?",
+                "download": "Descărcare etichetă",
+                "print": "Imprimare etichetă",
+                "server_print": "Imprimare pe server",
+                "titles": "Etichete",
+                "toast": {
+                    "print_failed": "Imprimarea etichetei a eșuat",
+                    "print_success": "Etichetă imprimată"
+                }
+            },
             "page_qr_code": {
-                "page_url": "URL Pagină"
+                "page_url": "URL Pagină",
+                "qr_tooltip": "Afișați codul QR"
             },
             "password_score": {
                 "password_strength": "Complexitate Parolă"
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "Descărcare",
+                "open_new_tab": "Deschideți într-o filă nouă"
+            },
             "create_modal": {
+                "delete_photo": "Ştergere fotografie",
                 "item_description": "Descriere articol",
                 "item_name": "Denumire articol",
-                "photo_button": "Imagine 📷",
-                "title": "Crează articol"
+                "item_photo": "Fotografie de articol 📷",
+                "item_quantity": "Cantitate Articol",
+                "parent_item": "Articol Părinte",
+                "product_tooltip_input_barcode": "Completare automată cu un cod de bare furnizat manual",
+                "product_tooltip_scan_barcode": "Completare automată cu un cod de bare de la 📷",
+                "rotate_photo": "Rotește fotografia",
+                "set_as_primary_photo": "Setați ca { isPrimary, select, true {non-} false {} other {}} fotografie principală",
+                "title": "Crează articol",
+                "toast": {
+                    "create_failed": "Articolul nu a putut fi creat",
+                    "create_success": "Articol creat"
+                }
             },
             "view": {
                 "selectable": {
@@ -90,7 +127,7 @@
                 "parent_location": "Locație Părinte"
             },
             "tree": {
-                "no_locations": "Nu există locații disponibile. Adaugă o locație nouă folosind butonul\n`<`span class=\"link-primary\"`>`Crează`<`/span`>` din bara de navigație."
+                "no_locations": "Nu există locații disponibile. Adaugă o locație nouă folosind butonul\n<span class=\"link-primary\">'Crează'</span> din bara de navigație."
             }
         }
     },
@@ -107,7 +144,12 @@
         "edit": "Redactare",
         "email": "Adresă de email",
         "follow_dev": "Urmărește developer-ul",
+        "footer": {
+            "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Versiune: { version } Build: { build } '</a>'"
+        },
         "github": "Proiect GitHub",
+        "insured": "Asigurat",
         "items": "Articole",
         "join_discord": "Vino pe Discord",
         "labels": "Etichete",
@@ -160,6 +202,9 @@
         "description": "Descriere",
         "details": "Detalii",
         "drag_and_drop": "Trageți și plasați fișierele aici sau faceți clic pentru a selecta fișierele",
+        "edit": {
+            "view_image": "Vizualizează Imagine"
+        },
         "edit_details": "Editare detalii",
         "field_selector": "Selector Câmp",
         "field_value": "Valoare Câmp",
@@ -300,7 +345,6 @@
         "current_password": "Parola Actuală",
         "delete_account": "Șterge Cont",
         "delete_account_sub": "Ștergeți contul și toate datele asociate acestuia. Această acțiune nu poate fi revocată.",
-        "display_header": "{ currentValue, select, true {Hide Header} false {Show Header} other {Not Hit}}",
         "enabled": "Activat",
         "example": "Exemplu",
         "gen_invite": "Generează Link Invitație",
@@ -346,7 +390,7 @@
             "export_sub": "Exportă formatul CSV standard pentru Homebox. Această acțiune ca exporta toate articolele din inventar.",
             "import": "Importă Inventar",
             "import_button": "Importă Inventar",
-            "import_sub": "Importă formatul CSV standard pentru Homebox. Fără o coloana  '<code>'HB.import_ref'</code>', '<b>'nu'</b>' se vor suprascrie articole existente în inventar, doar se vor adăuga articole noi. Câmpurile ce au o coloană '<code>'HB.import_ref'</code>' vor fi contopite cu articole existente care au același import_ref, în cazul în care acesta există."
+            "import_sub": "Importă formatul standard CSV pentru Homebox. Fără un '<code>' HB.import_ref '</code>' coloană, aceasta va'<b>'nu'</b>' suprascrie orice elemente existente în inventarul dvs., adăugați doar elemente noi. Rânduri cu'<code>'HB.import_ref'</code>' coloana sunt îmbinate în elementele existente cu același import_ref, dacă există unul."
         },
         "import_export_sub": "Importați și exportați inventarul într-un fișier CSV. Acest lucru este util atunci când se migrează inventarul către o instanță nouă de Homebox.",
         "reports": "Rapoarte",

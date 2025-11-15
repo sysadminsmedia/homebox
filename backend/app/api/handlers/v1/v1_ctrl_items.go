@@ -88,6 +88,9 @@ func (ctrl *V1Controller) HandleItemsGetAll() errchain.HandlerFunc {
 		items, err := ctrl.repo.Items.QueryByGroup(ctx, ctx.GID, extractQuery(r))
 		totalPrice := new(big.Int)
 		for _, item := range items.Items {
+			if !item.SoldTime.IsZero() { // Skip items with a non-null SoldDate
+				continue
+			}
 			totalPrice.Add(totalPrice, big.NewInt(int64(item.PurchasePrice*100)))
 		}
 
@@ -251,6 +254,25 @@ func (ctrl *V1Controller) HandleItemPatch() errchain.HandlerFunc {
 	return adapters.ActionID("id", fn, http.StatusOK)
 }
 
+// HandleItemDuplicate godocs
+//
+//	@Summary	Duplicate Item
+//	@Tags		Items
+//	@Produce	json
+//	@Param		id		path		string					true	"Item ID"
+//	@Param		payload	body		repo.DuplicateOptions	true	"Duplicate Options"
+//	@Success	201		{object}	repo.ItemOut
+//	@Router		/v1/items/{id}/duplicate [POST]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleItemDuplicate() errchain.HandlerFunc {
+	fn := func(r *http.Request, ID uuid.UUID, options repo.DuplicateOptions) (repo.ItemOut, error) {
+		ctx := services.NewContext(r.Context())
+		return ctrl.svc.Items.Duplicate(ctx, ctx.GID, ID, options)
+	}
+
+	return adapters.ActionID("id", fn, http.StatusCreated)
+}
+
 // HandleGetAllCustomFieldNames godocs
 //
 //	@Summary	Get All Custom Field Names
@@ -293,14 +315,14 @@ func (ctrl *V1Controller) HandleGetAllCustomFieldValues() errchain.HandlerFunc {
 
 // HandleItemsImport godocs
 //
-//	@Summary  Import Items
-//	@Tags     Items
-//	@Accept   multipart/form-data
-//	@Produce  json
-//	@Success  204
-//	@Param    csv formData file true "Image to upload"
-//	@Router   /v1/items/import [Post]
-//	@Security Bearer
+//	@Summary	Import Items
+//	@Tags		Items
+//	@Accept		multipart/form-data
+//	@Produce	json
+//	@Success	204
+//	@Param		csv	formData	file	true	"Image to upload"
+//	@Router		/v1/items/import [Post]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleItemsImport() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		err := r.ParseMultipartForm(ctrl.maxUploadSize << 20)

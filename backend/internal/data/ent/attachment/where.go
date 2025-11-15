@@ -71,6 +71,21 @@ func Primary(v bool) predicate.Attachment {
 	return predicate.Attachment(sql.FieldEQ(FieldPrimary, v))
 }
 
+// Title applies equality check predicate on the "title" field. It's identical to TitleEQ.
+func Title(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldEQ(FieldTitle, v))
+}
+
+// Path applies equality check predicate on the "path" field. It's identical to PathEQ.
+func Path(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldEQ(FieldPath, v))
+}
+
+// MimeType applies equality check predicate on the "mime_type" field. It's identical to MimeTypeEQ.
+func MimeType(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldEQ(FieldMimeType, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Attachment {
 	return predicate.Attachment(sql.FieldEQ(FieldCreatedAt, v))
@@ -181,6 +196,201 @@ func PrimaryNEQ(v bool) predicate.Attachment {
 	return predicate.Attachment(sql.FieldNEQ(FieldPrimary, v))
 }
 
+// TitleEQ applies the EQ predicate on the "title" field.
+func TitleEQ(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldEQ(FieldTitle, v))
+}
+
+// TitleNEQ applies the NEQ predicate on the "title" field.
+func TitleNEQ(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldNEQ(FieldTitle, v))
+}
+
+// TitleIn applies the In predicate on the "title" field.
+func TitleIn(vs ...string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldIn(FieldTitle, vs...))
+}
+
+// TitleNotIn applies the NotIn predicate on the "title" field.
+func TitleNotIn(vs ...string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldNotIn(FieldTitle, vs...))
+}
+
+// TitleGT applies the GT predicate on the "title" field.
+func TitleGT(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldGT(FieldTitle, v))
+}
+
+// TitleGTE applies the GTE predicate on the "title" field.
+func TitleGTE(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldGTE(FieldTitle, v))
+}
+
+// TitleLT applies the LT predicate on the "title" field.
+func TitleLT(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldLT(FieldTitle, v))
+}
+
+// TitleLTE applies the LTE predicate on the "title" field.
+func TitleLTE(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldLTE(FieldTitle, v))
+}
+
+// TitleContains applies the Contains predicate on the "title" field.
+func TitleContains(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldContains(FieldTitle, v))
+}
+
+// TitleHasPrefix applies the HasPrefix predicate on the "title" field.
+func TitleHasPrefix(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldHasPrefix(FieldTitle, v))
+}
+
+// TitleHasSuffix applies the HasSuffix predicate on the "title" field.
+func TitleHasSuffix(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldHasSuffix(FieldTitle, v))
+}
+
+// TitleEqualFold applies the EqualFold predicate on the "title" field.
+func TitleEqualFold(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldEqualFold(FieldTitle, v))
+}
+
+// TitleContainsFold applies the ContainsFold predicate on the "title" field.
+func TitleContainsFold(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldContainsFold(FieldTitle, v))
+}
+
+// PathEQ applies the EQ predicate on the "path" field.
+func PathEQ(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldEQ(FieldPath, v))
+}
+
+// PathNEQ applies the NEQ predicate on the "path" field.
+func PathNEQ(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldNEQ(FieldPath, v))
+}
+
+// PathIn applies the In predicate on the "path" field.
+func PathIn(vs ...string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldIn(FieldPath, vs...))
+}
+
+// PathNotIn applies the NotIn predicate on the "path" field.
+func PathNotIn(vs ...string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldNotIn(FieldPath, vs...))
+}
+
+// PathGT applies the GT predicate on the "path" field.
+func PathGT(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldGT(FieldPath, v))
+}
+
+// PathGTE applies the GTE predicate on the "path" field.
+func PathGTE(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldGTE(FieldPath, v))
+}
+
+// PathLT applies the LT predicate on the "path" field.
+func PathLT(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldLT(FieldPath, v))
+}
+
+// PathLTE applies the LTE predicate on the "path" field.
+func PathLTE(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldLTE(FieldPath, v))
+}
+
+// PathContains applies the Contains predicate on the "path" field.
+func PathContains(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldContains(FieldPath, v))
+}
+
+// PathHasPrefix applies the HasPrefix predicate on the "path" field.
+func PathHasPrefix(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldHasPrefix(FieldPath, v))
+}
+
+// PathHasSuffix applies the HasSuffix predicate on the "path" field.
+func PathHasSuffix(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldHasSuffix(FieldPath, v))
+}
+
+// PathEqualFold applies the EqualFold predicate on the "path" field.
+func PathEqualFold(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldEqualFold(FieldPath, v))
+}
+
+// PathContainsFold applies the ContainsFold predicate on the "path" field.
+func PathContainsFold(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldContainsFold(FieldPath, v))
+}
+
+// MimeTypeEQ applies the EQ predicate on the "mime_type" field.
+func MimeTypeEQ(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldEQ(FieldMimeType, v))
+}
+
+// MimeTypeNEQ applies the NEQ predicate on the "mime_type" field.
+func MimeTypeNEQ(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldNEQ(FieldMimeType, v))
+}
+
+// MimeTypeIn applies the In predicate on the "mime_type" field.
+func MimeTypeIn(vs ...string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldIn(FieldMimeType, vs...))
+}
+
+// MimeTypeNotIn applies the NotIn predicate on the "mime_type" field.
+func MimeTypeNotIn(vs ...string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldNotIn(FieldMimeType, vs...))
+}
+
+// MimeTypeGT applies the GT predicate on the "mime_type" field.
+func MimeTypeGT(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldGT(FieldMimeType, v))
+}
+
+// MimeTypeGTE applies the GTE predicate on the "mime_type" field.
+func MimeTypeGTE(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldGTE(FieldMimeType, v))
+}
+
+// MimeTypeLT applies the LT predicate on the "mime_type" field.
+func MimeTypeLT(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldLT(FieldMimeType, v))
+}
+
+// MimeTypeLTE applies the LTE predicate on the "mime_type" field.
+func MimeTypeLTE(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldLTE(FieldMimeType, v))
+}
+
+// MimeTypeContains applies the Contains predicate on the "mime_type" field.
+func MimeTypeContains(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldContains(FieldMimeType, v))
+}
+
+// MimeTypeHasPrefix applies the HasPrefix predicate on the "mime_type" field.
+func MimeTypeHasPrefix(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldHasPrefix(FieldMimeType, v))
+}
+
+// MimeTypeHasSuffix applies the HasSuffix predicate on the "mime_type" field.
+func MimeTypeHasSuffix(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldHasSuffix(FieldMimeType, v))
+}
+
+// MimeTypeEqualFold applies the EqualFold predicate on the "mime_type" field.
+func MimeTypeEqualFold(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldEqualFold(FieldMimeType, v))
+}
+
+// MimeTypeContainsFold applies the ContainsFold predicate on the "mime_type" field.
+func MimeTypeContainsFold(v string) predicate.Attachment {
+	return predicate.Attachment(sql.FieldContainsFold(FieldMimeType, v))
+}
+
 // HasItem applies the HasEdge predicate on the "item" edge.
 func HasItem() predicate.Attachment {
 	return predicate.Attachment(func(s *sql.Selector) {
@@ -204,21 +414,21 @@ func HasItemWith(preds ...predicate.Item) predicate.Attachment {
 	})
 }
 
-// HasDocument applies the HasEdge predicate on the "document" edge.
-func HasDocument() predicate.Attachment {
+// HasThumbnail applies the HasEdge predicate on the "thumbnail" edge.
+func HasThumbnail() predicate.Attachment {
 	return predicate.Attachment(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, DocumentTable, DocumentColumn),
+			sqlgraph.Edge(sqlgraph.O2O, false, ThumbnailTable, ThumbnailColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasDocumentWith applies the HasEdge predicate on the "document" edge with a given conditions (other predicates).
-func HasDocumentWith(preds ...predicate.Document) predicate.Attachment {
+// HasThumbnailWith applies the HasEdge predicate on the "thumbnail" edge with a given conditions (other predicates).
+func HasThumbnailWith(preds ...predicate.Attachment) predicate.Attachment {
 	return predicate.Attachment(func(s *sql.Selector) {
-		step := newDocumentStep()
+		step := newThumbnailStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

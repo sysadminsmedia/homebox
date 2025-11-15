@@ -4,8 +4,7 @@
             "import_dialog": {
                 "change_warning": "Ada perubahan pada logika impor untuk data dengan import_ref yang sudah ada.  Jika sebuah import_ref ditemukan di file CSV,\ndata tersebut akan diperbarui menggunakan nilai-nilai yang ada di file CSV.",
                 "description": "Impor file CSV yang berisi item, label, dan lokasi Anda. Lihat dokumentasi untuk informasi lebih lanjut mengenai\nformat yang diperlukan.",
-                "title": "Impor CSV",
-                "upload": "Unggah"
+                "title": "Impor CSV"
             },
             "outdated": {
                 "current_version": "Versi Terkini",
@@ -60,7 +59,6 @@
             "create_modal": {
                 "item_description": "Deskripsi item",
                 "item_name": "Nama item",
-                "photo_button": "Foto",
                 "title": "Buat item"
             },
             "view": {
@@ -309,7 +307,6 @@
         "current_password": "Kata sandi saat ini",
         "delete_account": "Hapus Akun",
         "delete_account_sub": "Hapus akun Anda dan semua data terkait.",
-        "display_header": "{ currentValue, select, true {Sembunyikan Header} false {Tampilkan Header} other {Not Hit}}",
         "enabled": "Tersedia",
         "example": "Contoh",
         "gen_invite": "Buat Tautan Undangan",

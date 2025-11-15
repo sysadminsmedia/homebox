@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"log"
 	"os"
 	"testing"
@@ -55,7 +56,19 @@ func MainNoExit(m *testing.M) int {
 	}
 
 	tClient = client
-	tRepos = New(tClient, tbus, os.TempDir())
+	tRepos = New(tClient, tbus, config.Storage{
+		PrefixPath: "/",
+		ConnString: "file://" + os.TempDir(),
+	}, "mem://{{ .Topic }}", config.Thumbnail{
+		Enabled: false,
+		Width:   0,
+		Height:  0,
+	})
+	err = os.MkdirAll(os.TempDir()+"/homebox", 0o755)
+	if err != nil {
+		return 0
+	}
+
 	defer func() { _ = client.Close() }()
 
 	bootstrap()

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
@@ -14,13 +15,15 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemfield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 )
 
 type ItemsRepository struct {
-	db  *ent.Client
-	bus *eventbus.EventBus
+	db          *ent.Client
+	bus         *eventbus.EventBus
+	attachments *AttachmentRepo
 }
 
 type (
@@ -46,6 +49,13 @@ type (
 		OrderBy          string       `json:"orderBy"`
 	}
 
+	DuplicateOptions struct {
+		CopyMaintenance  bool   `json:"copyMaintenance"`
+		CopyAttachments  bool   `json:"copyAttachments"`
+		CopyCustomFields bool   `json:"copyCustomFields"`
+		CopyPrefix       string `json:"copyPrefix"`
+	}
+
 	ItemField struct {
 		ID           uuid.UUID `json:"id,omitempty"`
 		Type         string    `json:"type"`
@@ -60,6 +70,7 @@ type (
 		ImportRef   string    `json:"-"`
 		ParentID    uuid.UUID `json:"parentId"    extensions:"x-nullable"`
 		Name        string    `json:"name"        validate:"required,min=1,max=255"`
+		Quantity    int       `json:"quantity"`
 		Description string    `json:"description" validate:"max=1000"`
 		AssetID     AssetID   `json:"-"`
 
@@ -110,9 +121,11 @@ type (
 	}
 
 	ItemPatch struct {
-		ID        uuid.UUID `json:"id"`
-		Quantity  *int      `json:"quantity,omitempty" extensions:"x-nullable,x-omitempty"`
-		ImportRef *string   `json:"-,omitempty"        extensions:"x-nullable,x-omitempty"`
+		ID         uuid.UUID   `json:"id"`
+		Quantity   *int        `json:"quantity,omitempty" extensions:"x-nullable,x-omitempty"`
+		ImportRef  *string     `json:"-,omitempty"        extensions:"x-nullable,x-omitempty"`
+		LocationID uuid.UUID   `json:"locationId"         extensions:"x-nullable,x-omitempty"`
+		LabelIDs   []uuid.UUID `json:"labelIds"           extensions:"x-nullable,x-omitempty"`
 	}
 
 	ItemSummary struct {
@@ -133,7 +146,11 @@ type (
 		Location *LocationSummary `json:"location,omitempty" extensions:"x-nullable,x-omitempty"`
 		Labels   []LabelSummary   `json:"labels"`
 
-		ImageID *uuid.UUID `json:"imageId,omitempty"`
+		ImageID     *uuid.UUID `json:"imageId,omitempty"     extensions:"x-nullable,x-omitempty"`
+		ThumbnailId *uuid.UUID `json:"thumbnailId,omitempty" extensions:"x-nullable,x-omitempty"`
+
+		// Sale details
+		SoldTime time.Time `json:"soldTime"`
 	}
 
 	ItemOut struct {
@@ -185,10 +202,20 @@ func mapItemSummary(item *ent.Item) ItemSummary {
 	}
 
 	var imageID *uuid.UUID
+	var thumbnailID *uuid.UUID
 	if item.Edges.Attachments != nil {
 		for _, a := range item.Edges.Attachments {
-			if a.Primary && a.Edges.Document != nil {
+			if a.Primary && a.Type == attachment.TypePhoto {
 				imageID = &a.ID
+				if a.Edges.Thumbnail != nil {
+					if a.Edges.Thumbnail.ID != uuid.Nil {
+						thumbnailID = &a.Edges.Thumbnail.ID
+					} else {
+						thumbnailID = nil
+					}
+				} else {
+					thumbnailID = nil
+				}
 				break
 			}
 		}
@@ -211,8 +238,9 @@ func mapItemSummary(item *ent.Item) ItemSummary {
 		Labels:   labels,
 
 		// Warranty
-		Insured: item.Insured,
-		ImageID: imageID,
+		Insured:     item.Insured,
+		ImageID:     imageID,
+		ThumbnailId: thumbnailID,
 	}
 }
 
@@ -291,8 +319,13 @@ func (e *ItemsRepository) publishMutationEvent(gid uuid.UUID) {
 	}
 }
 
-func (e *ItemsRepository) getOne(ctx context.Context, where ...predicate.Item) (ItemOut, error) {
-	q := e.db.Item.Query().Where(where...)
+func (e *ItemsRepository) getOneTx(ctx context.Context, tx *ent.Tx, where ...predicate.Item) (ItemOut, error) {
+	var q *ent.ItemQuery
+	if tx != nil {
+		q = tx.Item.Query().Where(where...)
+	} else {
+		q = e.db.Item.Query().Where(where...)
+	}
 
 	return mapItemOutErr(q.
 		WithFields().
@@ -300,11 +333,13 @@ func (e *ItemsRepository) getOne(ctx context.Context, where ...predicate.Item) (
 		WithLocation().
 		WithGroup().
 		WithParent().
-		WithAttachments(func(aq *ent.AttachmentQuery) {
-			aq.WithDocument()
-		}).
+		WithAttachments().
 		Only(ctx),
 	)
+}
+
+func (e *ItemsRepository) getOne(ctx context.Context, where ...predicate.Item) (ItemOut, error) {
+	return e.getOneTx(ctx, nil, where...)
 }
 
 // GetOne returns a single item by ID. If the item does not exist, an error is returned.
@@ -346,14 +381,25 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 	}
 
 	if q.Search != "" {
+		// Use accent-insensitive search predicates that normalize both
+		// the search query and database field values during comparison.
+		// For queries without accents, the traditional search is more efficient.
 		qb.Where(
 			item.Or(
+				// Regular case-insensitive search (fastest)
 				item.NameContainsFold(q.Search),
 				item.DescriptionContainsFold(q.Search),
 				item.SerialNumberContainsFold(q.Search),
 				item.ModelNumberContainsFold(q.Search),
 				item.ManufacturerContainsFold(q.Search),
 				item.NotesContainsFold(q.Search),
+				// Accent-insensitive search using custom predicates
+				ent.ItemNameAccentInsensitiveContains(q.Search),
+				ent.ItemDescriptionAccentInsensitiveContains(q.Search),
+				ent.ItemSerialNumberAccentInsensitiveContains(q.Search),
+				ent.ItemModelNumberAccentInsensitiveContains(q.Search),
+				ent.ItemManufacturerAccentInsensitiveContains(q.Search),
+				ent.ItemNotesAccentInsensitiveContains(q.Search),
 			),
 		)
 	}
@@ -463,8 +509,8 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 		WithAttachments(func(aq *ent.AttachmentQuery) {
 			aq.Where(
 				attachment.Primary(true),
-			).
-				WithDocument()
+			)
+			aq.WithThumbnail()
 		})
 
 	if q.Page != -1 || q.PageSize != -1 {
@@ -540,12 +586,21 @@ func (e *ItemsRepository) GetAllZeroAssetID(ctx context.Context, gid uuid.UUID) 
 	return mapItemsSummaryErr(q.All(ctx))
 }
 
-func (e *ItemsRepository) GetHighestAssetID(ctx context.Context, gid uuid.UUID) (AssetID, error) {
-	q := e.db.Item.Query().Where(
-		item.HasGroupWith(group.ID(gid)),
-	).Order(
-		ent.Desc(item.FieldAssetID),
-	).Limit(1)
+func (e *ItemsRepository) GetHighestAssetIDTx(ctx context.Context, tx *ent.Tx, gid uuid.UUID) (AssetID, error) {
+	var q *ent.ItemQuery
+	if tx != nil {
+		q = tx.Item.Query().Where(
+			item.HasGroupWith(group.ID(gid)),
+		).Order(
+			ent.Desc(item.FieldAssetID),
+		).Limit(1)
+	} else {
+		q = e.db.Item.Query().Where(
+			item.HasGroupWith(group.ID(gid)),
+		).Order(
+			ent.Desc(item.FieldAssetID),
+		).Limit(1)
+	}
 
 	result, err := q.First(ctx)
 	if err != nil {
@@ -556,6 +611,10 @@ func (e *ItemsRepository) GetHighestAssetID(ctx context.Context, gid uuid.UUID) 
 	}
 
 	return AssetID(result.AssetID), nil
+}
+
+func (e *ItemsRepository) GetHighestAssetID(ctx context.Context, gid uuid.UUID) (AssetID, error) {
+	return e.GetHighestAssetIDTx(ctx, nil, gid)
 }
 
 func (e *ItemsRepository) SetAssetID(ctx context.Context, gid uuid.UUID, id uuid.UUID, assetID AssetID) error {
@@ -572,10 +631,15 @@ func (e *ItemsRepository) Create(ctx context.Context, gid uuid.UUID, data ItemCr
 	q := e.db.Item.Create().
 		SetImportRef(data.ImportRef).
 		SetName(data.Name).
+		SetQuantity(data.Quantity).
 		SetDescription(data.Description).
 		SetGroupID(gid).
 		SetLocationID(data.LocationID).
 		SetAssetID(int(data.AssetID))
+
+	if data.ParentID != uuid.Nil {
+		q.SetParentID(data.ParentID)
+	}
 
 	if len(data.LabelIDs) > 0 {
 		q.AddLabelIDs(data.LabelIDs...)
@@ -591,7 +655,32 @@ func (e *ItemsRepository) Create(ctx context.Context, gid uuid.UUID, data ItemCr
 }
 
 func (e *ItemsRepository) Delete(ctx context.Context, id uuid.UUID) error {
-	err := e.db.Item.DeleteOneID(id).Exec(ctx)
+	// Get the item with its group and attachments before deletion
+	itm, err := e.db.Item.Query().
+		Where(item.ID(id)).
+		WithGroup().
+		WithAttachments().
+		Only(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Get the group ID for attachment deletion
+	var gid uuid.UUID
+	if itm.Edges.Group != nil {
+		gid = itm.Edges.Group.ID
+	}
+
+	// Delete all attachments (and their files) before deleting the item
+	for _, att := range itm.Edges.Attachments {
+		err := e.attachments.Delete(ctx, gid, id, att.ID)
+		if err != nil {
+			log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during item deletion")
+			// Continue with other attachments even if one fails
+		}
+	}
+
+	err = e.db.Item.DeleteOneID(id).Exec(ctx)
 	if err != nil {
 		return err
 	}
@@ -601,7 +690,28 @@ func (e *ItemsRepository) Delete(ctx context.Context, id uuid.UUID) error {
 }
 
 func (e *ItemsRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID) error {
-	_, err := e.db.Item.
+	// Get the item with its attachments before deletion
+	itm, err := e.db.Item.Query().
+		Where(
+			item.ID(id),
+			item.HasGroupWith(group.ID(gid)),
+		).
+		WithAttachments().
+		Only(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Delete all attachments (and their files) before deleting the item
+	for _, att := range itm.Edges.Attachments {
+		err := e.attachments.Delete(ctx, gid, id, att.ID)
+		if err != nil {
+			log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during item deletion")
+			// Continue with other attachments even if one fails
+		}
+	}
+
+	_, err = e.db.Item.
 		Delete().
 		Where(
 			item.ID(id),
@@ -775,7 +885,20 @@ func (e *ItemsRepository) GetAllZeroImportRef(ctx context.Context, gid uuid.UUID
 }
 
 func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data ItemPatch) error {
-	q := e.db.Item.Update().
+	tx, err := e.db.Tx(ctx)
+	if err != nil {
+		return err
+	}
+	committed := false
+	defer func() {
+		if !committed {
+			if err := tx.Rollback(); err != nil {
+				log.Warn().Err(err).Msg("failed to rollback transaction during item patch")
+			}
+		}
+	}()
+
+	q := tx.Item.Update().
 		Where(
 			item.ID(id),
 			item.HasGroupWith(group.ID(gid)),
@@ -789,8 +912,81 @@ func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data Ite
 		q.SetQuantity(*data.Quantity)
 	}
 
+	if data.LocationID != uuid.Nil {
+		q.SetLocationID(data.LocationID)
+	}
+
+	err = q.Exec(ctx)
+	if err != nil {
+		return err
+	}
+
+	if data.LabelIDs != nil {
+		currentLabels, err := tx.Item.Query().Where(item.ID(id), item.HasGroupWith(group.ID(gid))).QueryLabel().All(ctx)
+		if err != nil {
+			return err
+		}
+		set := newIDSet(currentLabels)
+
+		addLabels := []uuid.UUID{}
+		for _, l := range data.LabelIDs {
+			if set.Contains(l) {
+				set.Remove(l)
+			} else {
+				addLabels = append(addLabels, l)
+			}
+		}
+
+		if len(addLabels) > 0 {
+			if err := tx.Item.Update().
+				Where(item.ID(id), item.HasGroupWith(group.ID(gid))).
+				AddLabelIDs(addLabels...).
+				Exec(ctx); err != nil {
+				return err
+			}
+		}
+		if set.Len() > 0 {
+			if err := tx.Item.Update().
+				Where(item.ID(id), item.HasGroupWith(group.ID(gid))).
+				RemoveLabelIDs(set.Slice()...).
+				Exec(ctx); err != nil {
+				return err
+			}
+		}
+	}
+
+	if data.LocationID != uuid.Nil {
+		itemEnt, err := tx.Item.Query().Where(item.ID(id), item.HasGroupWith(group.ID(gid))).Only(ctx)
+		if err != nil {
+			return err
+		}
+		if itemEnt.SyncChildItemsLocations {
+			children, err := tx.Item.Query().Where(item.ID(id), item.HasGroupWith(group.ID(gid))).QueryChildren().All(ctx)
+			if err != nil {
+				return err
+			}
+			for _, child := range children {
+				childLocation, err := child.QueryLocation().First(ctx)
+				if err != nil {
+					return err
+				}
+				if data.LocationID != childLocation.ID {
+					err = child.Update().SetLocationID(data.LocationID).Exec(ctx)
+					if err != nil {
+						return err
+					}
+				}
+			}
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	committed = true
+
 	e.publishMutationEvent(gid)
-	return q.Exec(ctx)
+	return nil
 }
 
 func (e *ItemsRepository) GetAllCustomFieldValues(ctx context.Context, gid uuid.UUID, name string) ([]string, error) {
@@ -973,4 +1169,165 @@ func (e *ItemsRepository) SetPrimaryPhotos(ctx context.Context, gid uuid.UUID) (
 	}
 
 	return updated, nil
+}
+
+// Duplicate creates a copy of an item with configurable options for what data to copy.
+// The new item will have the next available asset ID and a customizable prefix in the name.
+func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, options DuplicateOptions) (ItemOut, error) {
+	tx, err := e.db.Tx(ctx)
+	if err != nil {
+		return ItemOut{}, err
+	}
+	committed := false
+	defer func() {
+		if !committed {
+			if err := tx.Rollback(); err != nil {
+				log.Warn().Err(err).Msg("failed to rollback transaction during item duplication")
+			}
+		}
+	}()
+
+	// Get the original item with all its data
+	originalItem, err := e.getOneTx(ctx, tx, item.ID(id), item.HasGroupWith(group.ID(gid)))
+	if err != nil {
+		return ItemOut{}, err
+	}
+
+	nextAssetID, err := e.GetHighestAssetIDTx(ctx, tx, gid)
+	if err != nil {
+		return ItemOut{}, err
+	}
+	nextAssetID++
+
+	// Set default copy prefix if not provided
+	if options.CopyPrefix == "" {
+		options.CopyPrefix = "Copy of "
+	}
+
+	// Create the new item directly in the transaction
+	newItemID := uuid.New()
+	itemBuilder := tx.Item.Create().
+		SetID(newItemID).
+		SetName(options.CopyPrefix + originalItem.Name).
+		SetDescription(originalItem.Description).
+		SetQuantity(originalItem.Quantity).
+		SetLocationID(originalItem.Location.ID).
+		SetGroupID(gid).
+		SetAssetID(int(nextAssetID)).
+		SetSerialNumber(originalItem.SerialNumber).
+		SetModelNumber(originalItem.ModelNumber).
+		SetManufacturer(originalItem.Manufacturer).
+		SetLifetimeWarranty(originalItem.LifetimeWarranty).
+		SetWarrantyExpires(originalItem.WarrantyExpires.Time()).
+		SetWarrantyDetails(originalItem.WarrantyDetails).
+		SetPurchaseTime(originalItem.PurchaseTime.Time()).
+		SetPurchaseFrom(originalItem.PurchaseFrom).
+		SetPurchasePrice(originalItem.PurchasePrice).
+		SetSoldTime(originalItem.SoldTime.Time()).
+		SetSoldTo(originalItem.SoldTo).
+		SetSoldPrice(originalItem.SoldPrice).
+		SetSoldNotes(originalItem.SoldNotes).
+		SetNotes(originalItem.Notes).
+		SetInsured(originalItem.Insured).
+		SetArchived(originalItem.Archived).
+		SetSyncChildItemsLocations(originalItem.SyncChildItemsLocations)
+
+	if originalItem.Parent != nil {
+		itemBuilder.SetParentID(originalItem.Parent.ID)
+	}
+
+	// Add labels
+	if len(originalItem.Labels) > 0 {
+		labelIDs := make([]uuid.UUID, len(originalItem.Labels))
+		for i, label := range originalItem.Labels {
+			labelIDs[i] = label.ID
+		}
+		itemBuilder.AddLabelIDs(labelIDs...)
+	}
+
+	_, err = itemBuilder.Save(ctx)
+	if err != nil {
+		return ItemOut{}, err
+	}
+
+	// Copy custom fields if requested
+	if options.CopyCustomFields {
+		for _, field := range originalItem.Fields {
+			_, err = tx.ItemField.Create().
+				SetItemID(newItemID).
+				SetType(itemfield.Type(field.Type)).
+				SetName(field.Name).
+				SetTextValue(field.TextValue).
+				SetNumberValue(field.NumberValue).
+				SetBooleanValue(field.BooleanValue).
+				Save(ctx)
+			if err != nil {
+				log.Warn().Err(err).Str("field_name", field.Name).Msg("failed to copy custom field during duplication")
+				continue
+			}
+		}
+	}
+
+	// Copy attachments if requested
+	if options.CopyAttachments {
+		for _, att := range originalItem.Attachments {
+			// Get the original attachment file
+			originalAttachment, err := tx.Attachment.Query().
+				Where(attachment.ID(att.ID)).
+				Only(ctx)
+			if err != nil {
+				// Log error but continue to copy other attachments
+				log.Warn().Err(err).Str("attachment_id", att.ID.String()).Msg("failed to find attachment during duplication")
+				continue
+			}
+
+			// Create a copy of the attachment with the same file path
+			// Since files are stored with hash-based paths, this is safe
+			_, err = tx.Attachment.Create().
+				SetItemID(newItemID).
+				SetType(originalAttachment.Type).
+				SetTitle(originalAttachment.Title).
+				SetPath(originalAttachment.Path).
+				SetMimeType(originalAttachment.MimeType).
+				SetPrimary(originalAttachment.Primary).
+				Save(ctx)
+			if err != nil {
+				log.Warn().Err(err).Str("original_attachment_id", att.ID.String()).Msg("failed to copy attachment during duplication")
+				continue
+			}
+		}
+	}
+
+	// Copy maintenance entries if requested
+	if options.CopyMaintenance {
+		maintenanceEntries, err := tx.MaintenanceEntry.Query().
+			Where(maintenanceentry.HasItemWith(item.ID(id))).
+			All(ctx)
+		if err == nil {
+			for _, entry := range maintenanceEntries {
+				_, err = tx.MaintenanceEntry.Create().
+					SetItemID(newItemID).
+					SetDate(entry.Date).
+					SetScheduledDate(entry.ScheduledDate).
+					SetName(entry.Name).
+					SetDescription(entry.Description).
+					SetCost(entry.Cost).
+					Save(ctx)
+				if err != nil {
+					log.Warn().Err(err).Str("maintenance_entry_id", entry.ID.String()).Msg("failed to copy maintenance entry during duplication")
+					continue
+				}
+			}
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return ItemOut{}, err
+	}
+	committed = true
+
+	e.publishMutationEvent(gid)
+
+	// Get the final item with all copied data
+	return e.GetOne(ctx, newItemID)
 }

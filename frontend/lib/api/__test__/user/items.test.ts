@@ -1,5 +1,5 @@
 import { faker } from "@faker-js/faker";
-import { describe, test, expect } from "vitest";
+import { describe, expect, test } from "vitest";
 import type { ItemField, ItemUpdate, LocationOut } from "../../types/data-contracts";
 import { AttachmentTypes } from "../../types/non-generated";
 import type { UserClient } from "../../user";
@@ -38,6 +38,7 @@ describe("user should be able to create an item and add an attachment", () => {
       name: "test-item",
       labelIds: [],
       description: "test-description",
+      quantity: 2,
       locationId: location.id,
     });
     expect(response.status).toBe(201);
@@ -54,9 +55,9 @@ describe("user should be able to create an item and add an attachment", () => {
     expect(itmResp.status).toBe(200);
 
     expect(data.attachments).toHaveLength(1);
-    expect(data.attachments[0].document.title).toBe("test.txt");
+    expect(data.attachments[0]?.title).toBe("test.txt");
 
-    const resp = await api.items.attachments.delete(data.id, data.attachments[0].id);
+    const resp = await api.items.attachments.delete(data.id, data.attachments[0]!.id);
     expect(resp.response.status).toBe(204);
 
     api.items.delete(item.id);
@@ -72,6 +73,7 @@ describe("user should be able to create an item and add an attachment", () => {
       name: faker.vehicle.model(),
       labelIds: [],
       description: faker.lorem.paragraph(1),
+      quantity: 2,
       locationId: location.id,
     });
     expect(response.status).toBe(201);
@@ -98,21 +100,21 @@ describe("user should be able to create an item and add an attachment", () => {
     expect(item2.fields).toHaveLength(fields.length);
 
     for (let i = 0; i < fields.length; i++) {
-      expect(item2.fields[i].name).toBe(fields[i].name);
-      expect(item2.fields[i].textValue).toBe(fields[i].textValue);
-      expect(item2.fields[i].numberValue).toBe(fields[i].numberValue);
+      expect(item2.fields[i]?.name).toBe(fields[i]!.name);
+      expect(item2.fields[i]?.textValue).toBe(fields[i]!.textValue);
+      expect(item2.fields[i]?.numberValue).toBe(fields[i]!.numberValue);
     }
 
-    itemUpdate.fields = [fields[0], fields[1]];
+    itemUpdate.fields = [fields[0]!, fields[1]!];
 
     const { response: updateResponse2, data: item3 } = await api.items.update(item.id, itemUpdate as ItemUpdate);
     expect(updateResponse2.status).toBe(200);
 
     expect(item3.fields).toHaveLength(2);
     for (let i = 0; i < item3.fields.length; i++) {
-      expect(item3.fields[i].name).toBe(itemUpdate.fields[i].name);
-      expect(item3.fields[i].textValue).toBe(itemUpdate.fields[i].textValue);
-      expect(item3.fields[i].numberValue).toBe(itemUpdate.fields[i].numberValue);
+      expect(item3.fields[i]?.name).toBe(itemUpdate.fields[i]!.name);
+      expect(item3.fields[i]?.textValue).toBe(itemUpdate.fields[i]!.textValue);
+      expect(item3.fields[i]?.numberValue).toBe(itemUpdate.fields[i]!.numberValue);
     }
 
     cleanup();
@@ -126,6 +128,7 @@ describe("user should be able to create an item and add an attachment", () => {
       name: faker.vehicle.model(),
       labelIds: [],
       description: faker.lorem.paragraph(1),
+      quantity: 2,
       locationId: location.id,
     });
     expect(response.status).toBe(201);
@@ -165,7 +168,7 @@ describe("user should be able to create an item and add an attachment", () => {
       // Skip first one
       const { response, data: loc } = await api.locations.create({
         parentId: lastLocationId,
-        name: locations[i],
+        name: locations[i]!,
         description: "",
       });
       expect(response.status).toBe(201);
@@ -177,6 +180,7 @@ describe("user should be able to create an item and add an attachment", () => {
       name: faker.vehicle.model(),
       labelIds: [],
       description: faker.lorem.paragraph(1),
+      quantity: 2,
       locationId: lastLocationId,
     });
     expect(response.status).toBe(201);
@@ -201,6 +205,7 @@ describe("user should be able to create an item and add an attachment", () => {
       name: "parent-item",
       labelIds: [],
       description: "test-description",
+      quantity: 2,
       locationId: parentLocation.id,
     });
     expect(parentResponse.status).toBe(201);
@@ -210,6 +215,7 @@ describe("user should be able to create an item and add an attachment", () => {
       name: "child1-item",
       labelIds: [],
       description: "test-description",
+      quantity: 2,
       locationId: childsLocation.id,
     });
     expect(child1Response.status).toBe(201);
@@ -226,6 +232,7 @@ describe("user should be able to create an item and add an attachment", () => {
       name: "child2-item",
       labelIds: [],
       description: "test-description",
+      quantity: 2,
       locationId: childsLocation.id,
     });
     expect(child2Response.status).toBe(201);

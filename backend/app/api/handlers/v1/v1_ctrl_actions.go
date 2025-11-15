@@ -81,3 +81,16 @@ func (ctrl *V1Controller) HandleItemDateZeroOut() errchain.HandlerFunc {
 func (ctrl *V1Controller) HandleSetPrimaryPhotos() errchain.HandlerFunc {
 	return actionHandlerFactory("ensure asset IDs", ctrl.repo.Items.SetPrimaryPhotos)
 }
+
+// HandleCreateMissingThumbnails godoc
+//
+//	@Summary		Create Missing Thumbnails
+//	@Description	Creates thumbnails for items that are missing them
+//	@Tags			Actions
+//	@Produce		json
+//	@Success		200	{object}	ActionAmountResult
+//	@Router			/v1/actions/create-missing-thumbnails [Post]
+//	@Security		Bearer
+func (ctrl *V1Controller) HandleCreateMissingThumbnails() errchain.HandlerFunc {
+	return actionHandlerFactory("create missing thumbnails", ctrl.repo.Attachments.CreateMissingThumbnails)
+}

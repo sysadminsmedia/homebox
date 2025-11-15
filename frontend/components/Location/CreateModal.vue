@@ -1,7 +1,6 @@
 <template>
-  <BaseModal v-model="modal">
-    <template #title>{{ $t("components.location.create_modal.title") }}</template>
-    <form @submit.prevent="create()">
+  <BaseModal :dialog-id="DialogID.CreateLocation" :title="$t('components.location.create_modal.title')">
+    <form class="flex flex-col gap-2" @submit.prevent="create()">
       <LocationSelector v-model="form.parent" />
       <FormTextField
         ref="locationNameRef"
@@ -18,39 +17,36 @@
         :label="$t('components.location.create_modal.location_description')"
         :max-length="1000"
       />
-      <div class="modal-action">
-        <div class="flex justify-center">
-          <BaseButton class="rounded-r-none" type="submit" :loading="loading">{{ $t("global.create") }}</BaseButton>
-          <div class="dropdown dropdown-top">
-            <label tabindex="0" class="btn rounded-l-none rounded-r-xl">
-              <MdiChevronDown class="size-5" />
-            </label>
-            <ul tabindex="0" class="dropdown-content menu rounded-box right-0 w-64 bg-base-100 p-2 shadow">
-              <li>
-                <button type="button" @click="create(false)">{{ $t("global.create_and_add") }}</button>
-              </li>
-            </ul>
-          </div>
-        </div>
+      <div class="mt-4 flex flex-row-reverse">
+        <ButtonGroup>
+          <Button :disabled="loading" type="submit">{{ $t("global.create") }}</Button>
+          <Button variant="outline" :disabled="loading" type="button" @click="create(false)">{{
+            $t("global.create_and_add")
+          }}</Button>
+        </ButtonGroup>
       </div>
     </form>
-    <p class="mt-4 text-center text-sm">
-      use <kbd class="kbd kbd-xs">Shift</kbd> + <kbd class="kbd kbd-xs"> Enter </kbd> to create and add another
-    </p>
   </BaseModal>
 </template>
 
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
+  import { DialogID } from "@/components/ui/dialog-provider/utils";
+  import { toast } from "@/components/ui/sonner";
+  import { Button, ButtonGroup } from "~/components/ui/button";
+  import BaseModal from "@/components/App/CreateModal.vue";
   import type { LocationSummary } from "~~/lib/api/types/data-contracts";
-  import MdiChevronDown from "~icons/mdi/chevron-down";
-  const props = defineProps({
-    modelValue: {
-      type: Boolean,
-      required: true,
-    },
-  });
+  import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
+  import LocationSelector from "~/components/Location/Selector.vue";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import FormTextArea from "~/components/Form/TextArea.vue";
 
-  const modal = useVModel(props, "modelValue");
+  const { t } = useI18n();
+
+  const { activeDialog, closeDialog } = useDialog();
+
+  useDialogHotkey(DialogID.CreateLocation, { code: "Digit3", shift: true });
+
   const loading = ref(false);
   const focused = ref(false);
   const form = reactive({
@@ -60,21 +56,13 @@
   });
 
   watch(
-    () => modal.value,
-    open => {
-      if (open) {
-        useTimeoutFn(() => {
-          focused.value = true;
-        }, 50);
-
+    () => activeDialog.value,
+    active => {
+      if (active && active === DialogID.CreateLocation) {
         if (locationId.value) {
           const found = locations.value.find(l => l.id === locationId.value);
-          if (found) {
-            form.parent = found;
-          }
+          form.parent = found || null;
         }
-      } else {
-        focused.value = false;
       }
     }
   );
@@ -82,13 +70,11 @@
   function reset() {
     form.name = "";
     form.description = "";
-    form.parent = null;
     focused.value = false;
     loading.value = false;
   }
 
   const api = useUserApi();
-  const toast = useNotifier();
 
   const locationsStore = useLocationStore();
   const locations = computed(() => locationsStore.allLocations);
@@ -106,14 +92,12 @@
 
   async function create(close = true) {
     if (loading.value) {
-      toast.error("Already creating a location");
+      toast.error(t("components.location.create_modal.toast.already_creating"));
       return;
     }
     loading.value = true;
 
-    if (shift.value) {
-      close = false;
-    }
+    if (shift?.value) close = false;
 
     const { data, error } = await api.locations.create({
       name: form.name,
@@ -123,16 +107,17 @@
 
     if (error) {
       loading.value = false;
-      toast.error("Couldn't create location");
+      toast.error(t("components.location.create_modal.toast.create_failed"));
     }
 
     if (data) {
-      toast.success("Location created");
+      toast.success(t("components.location.create_modal.toast.create_success"));
     }
+
     reset();
 
     if (close) {
-      modal.value = false;
+      closeDialog(DialogID.CreateLocation);
       navigateTo(`/location/${data.id}`);
     }
   }

@@ -1,5 +1,5 @@
 <template>
-  <ul role="list" class="divide-y divide-gray-400 rounded-md border border-gray-400">
+  <ul role="list" class="divide-y rounded-md border">
     <li
       v-for="attachment in attachments"
       :key="attachment.id"
@@ -7,15 +7,31 @@
     >
       <div class="flex w-0 flex-1 items-center">
         <MdiPaperclip class="size-5 shrink-0 text-gray-400" aria-hidden="true" />
-        <span class="ml-2 w-0 flex-1 truncate"> {{ attachment.document.title }}</span>
+        <span class="ml-2 w-0 flex-1 truncate"> {{ attachment.title }}</span>
       </div>
-      <div class="ml-4 shrink-0">
-        <a class="tooltip mr-2" data-tip="Download" :href="attachmentURL(attachment.id)" target="_blank">
-          <MdiDownload class="size-5" />
-        </a>
-        <a class="tooltip" data-tip="Open" :href="attachmentURL(attachment.id)" target="_blank">
-          <MdiOpenInNew class="size-5" />
-        </a>
+      <div class="ml-4 flex shrink-0 gap-2">
+        <TooltipProvider :delay-duration="0">
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <a
+                :class="buttonVariants({ size: 'icon' })"
+                :href="attachmentURL(attachment.id)"
+                :download="attachment.title"
+              >
+                <MdiDownload />
+              </a>
+            </TooltipTrigger>
+            <TooltipContent> {{ $t("components.item.attachments_list.download") }} </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger as-child>
+              <a :class="buttonVariants({ size: 'icon' })" :href="attachmentURL(attachment.id)" target="_blank">
+                <MdiOpenInNew />
+              </a>
+            </TooltipTrigger>
+            <TooltipContent> {{ $t("components.item.attachments_list.open_new_tab") }} </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </li>
   </ul>
@@ -26,6 +42,8 @@
   import MdiPaperclip from "~icons/mdi/paperclip";
   import MdiDownload from "~icons/mdi/download";
   import MdiOpenInNew from "~icons/mdi/open-in-new";
+  import { buttonVariants } from "@/components/ui/button";
+  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
   const props = defineProps({
     attachments: {

@@ -6,7 +6,7 @@
 
 There is a devcontainer available for this project. If you are using VSCode, you can use the devcontainer to get started. If you are not using VSCode, you need to ensure that you have the following tools installed:
 
-- [Go 1.19+](https://golang.org/doc/install)
+- [Go 1.23+](https://golang.org/doc/install)
 - [Swaggo](https://github.com/swaggo/swag)
 - [Node.js 16+](https://nodejs.org/en/download/)
 - [pnpm](https://pnpm.io/installation)
@@ -18,8 +18,6 @@ If you're using `taskfile` you can run `task --list-all` for a list of all comma
 ### Setup
 
 If you're using the taskfile, you can use the `task setup` command to run the required setup commands. Otherwise, you can review the commands required in the `Taskfile.yml` file.
-
-Note that when installing dependencies with pnpm, you must use the `--shamefully-hoist` flag. If you don't use this flag, you will get an error when running the frontend server.
 
 ### API Development Notes
 start command `task go:run`
@@ -37,7 +35,7 @@ swagger update command `task swag`
 
 start command `task ui:dev`
 
-1. The frontend is a Vue 3 app with Nuxt.js that uses Tailwind and DaisyUI for styling.
+1. The frontend is a Vue 3 app with Nuxt.js that uses Tailwind and Shadcn-vue for styling.
 2. We're using Vitest for our automated testing. You can run these with `task ui:watch`.
 3. Tests require the API server to be running, and in some cases the first run will fail due to a race condition. If this happens, just run the tests again and they should pass.
 

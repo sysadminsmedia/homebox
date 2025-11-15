@@ -14,6 +14,7 @@ export function defineObserver(key: string, observer: Observer): RemoveObserver 
   observers[key] = observer;
 
   return () => {
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     delete observers[key];
   };
 }
@@ -36,6 +37,7 @@ export function useUserApi(): UserClient {
     if (r.status === 401) {
       console.error("unauthorized request, invalidating session");
       authCtx.invalidateSession();
+      navigateTo("/");
     }
   });
 

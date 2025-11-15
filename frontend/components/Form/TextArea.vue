@@ -1,57 +1,52 @@
 <template>
-  <div v-if="!inline" class="form-control w-full">
-    <label class="label">
-      <span class="label-text">{{ label }}</span>
-      <span
-        :class="{
-          'text-red-600':
-            typeof value === 'string' &&
-            ((maxLength !== -1 && value.length > maxLength) || (minLength !== -1 && value.length < minLength)),
-        }"
-      >
-        {{ typeof value === "string" && (maxLength !== -1 || minLength !== -1) ? `${value.length}/${maxLength}` : "" }}
+  <div v-if="!inline" class="flex w-full flex-col gap-1.5">
+    <Label :for="id" class="flex w-full px-1">
+      <span>{{ label }}</span>
+      <span class="grow" />
+      <span :class="{ 'text-destructive': isLengthInvalid }">
+        {{ lengthIndicator }}
       </span>
-    </label>
-    <textarea ref="el" v-model="value" class="textarea textarea-bordered h-28 w-full" :placeholder="placeholder" />
+    </Label>
+    <Textarea
+      :id="id"
+      v-model="value"
+      :placeholder="placeholder"
+      class="min-h-[112px] w-full resize-none"
+      @keydown="handleKeyDown"
+    />
   </div>
   <div v-else class="sm:grid sm:grid-cols-4 sm:items-start sm:gap-4">
-    <label class="label">
-      <span class="label-text">{{ label }}</span>
-      <span
-        :class="{
-          'text-red-600':
-            typeof value === 'string' &&
-            ((maxLength !== -1 && value.length > maxLength) || (minLength !== -1 && value.length < minLength)),
-        }"
-      >
-        {{ typeof value === "string" && (maxLength !== -1 || minLength !== -1) ? `${value.length}/${maxLength}` : "" }}
+    <Label :for="id" class="flex w-full px-1 py-2">
+      <span>{{ label }}</span>
+      <span class="grow" />
+      <span :class="{ 'text-destructive': isLengthInvalid }">
+        {{ lengthIndicator }}
       </span>
-    </label>
-    <textarea
-      ref="el"
+    </Label>
+    <Textarea
+      :id="id"
       v-model="value"
-      class="textarea textarea-bordered col-span-3 mt-3 h-28 w-full"
-      auto-grow
+      autosize
       :placeholder="placeholder"
-      auto-height
+      class="col-span-3 mt-2 w-full resize-none"
+      @keydown="handleKeyDown"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
-  const emit = defineEmits(["update:modelValue"]);
+  import { computed } from "vue";
+  import { Label } from "~/components/ui/label";
+  import { Textarea } from "~/components/ui/textarea";
+
   const props = defineProps({
-    modelValue: {
-      type: [String],
-      required: true,
-    },
     label: {
       type: String,
       required: true,
     },
-    type: {
+    modelValue: {
       type: String,
-      default: "text",
+      required: true,
     },
     placeholder: {
       type: String,
@@ -73,17 +68,37 @@
     },
   });
 
-  const el = ref();
-  function setHeight() {
-    el.value.style.height = "auto";
-    el.value.style.height = el.value.scrollHeight + 5 + "px";
-  }
+  const id = useId();
+  const value = useVModel(props, "modelValue");
 
-  onUpdated(() => {
-    if (props.inline) {
-      setHeight();
-    }
+  const isLengthInvalid = computed(() => {
+    if (typeof value.value !== "string") return false;
+    const len = value.value.length;
+    const max = props.maxLength;
+    const min = props.minLength;
+    // invalid if max length exists and is exceeded OR min length exists and is not met
+    return (max !== -1 && len > max) || (min !== -1 && len < min);
   });
 
-  const value = useVModel(props, "modelValue", emit);
+  const lengthIndicator = computed(() => {
+    if (typeof value.value !== "string") return "";
+    const max = props.maxLength;
+    if (max !== -1) {
+      return `${value.value.length}/${max}`;
+    }
+    return "";
+  });
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.ctrlKey && event.key === "Enter") {
+      // find the closest ancestor form element
+      const targetElement = event.target as HTMLElement;
+      const form = targetElement.closest("form");
+
+      if (form) {
+        event.preventDefault();
+        form.requestSubmit();
+      }
+    }
+  };
 </script>

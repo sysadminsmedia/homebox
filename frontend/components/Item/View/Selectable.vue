@@ -1,18 +1,37 @@
 <script setup lang="ts">
   import type { ViewType } from "~~/composables/use-preferences";
   import type { ItemSummary } from "~~/lib/api/types/data-contracts";
-  import MdiDotsVertical from "~icons/mdi/dots-vertical";
   import MdiCardTextOutline from "~icons/mdi/card-text-outline";
   import MdiTable from "~icons/mdi/table";
+  import { Badge } from "@/components/ui/badge";
+  import { Button, ButtonGroup } from "@/components/ui/button";
+  import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
+  import DataTable from "./table/data-table.vue";
+  import { makeColumns } from "./table/columns";
+  import { useI18n } from "vue-i18n";
+  import type { Pagination } from "./pagination";
+  import MaintenanceEditModal from "@/components/Maintenance/EditModal.vue";
+  import ItemChangeDetails from "./ItemChangeDetails.vue";
 
-  type Props = {
+  const props = defineProps<{
     view?: ViewType;
     items: ItemSummary[];
-  };
+    locationFlatTree?: FlatTreeItem[];
+    pagination?: Pagination;
+  }>();
+
+  const emit = defineEmits<{
+    (e: "refresh"): void;
+  }>();
 
   const preferences = useViewPreferences();
+  const { t } = useI18n();
+  const columns = computed(() =>
+    makeColumns(t, () => {
+      emit("refresh");
+    })
+  );
 
-  const props = defineProps<Props>();
   const viewSet = computed(() => {
     return !!props.view;
   });
@@ -24,44 +43,69 @@
   function setViewPreference(view: ViewType) {
     preferences.value.itemDisplayView = view;
   }
+
+  const externalPagination = computed(() => !!props.pagination);
 </script>
 
 <template>
   <section>
-    <BaseSectionHeader class="mb-2 flex items-center justify-between">
-      {{ $t("components.item.view.selectable.items") }}
+    <MaintenanceEditModal />
+    <ItemChangeDetails />
+
+    <BaseSectionHeader class="flex items-center justify-between" :class="{ 'mb-2 mt-4': !externalPagination }">
+      <div class="flex gap-2 text-nowrap">
+        {{ $t("components.item.view.selectable.items") }}
+        <Badge v-if="!externalPagination">
+          {{ items.length }}
+        </Badge>
+      </div>
+      <template #subtitle>
+        <div
+          id="selectable-subtitle"
+          class="flex grow items-center px-2"
+          :class="{ hidden: !preferences.quickActions.enabled }"
+        />
+      </template>
       <template #description>
-        <div v-if="!viewSet" class="dropdown dropdown-left dropdown-hover">
-          <label tabindex="0" class="btn btn-ghost m-1">
-            <MdiDotsVertical class="size-7" />
-          </label>
-          <ul tabindex="0" class="dropdown-content menu rounded-box w-32 bg-base-100 p-2 shadow">
-            <li>
-              <button @click="setViewPreference('card')">
-                <MdiCardTextOutline class="size-5" />
-                {{ $t("components.item.view.selectable.card") }}
-              </button>
-            </li>
-            <li>
-              <button @click="setViewPreference('table')">
-                <MdiTable class="size-5" />
-                {{ $t("components.item.view.selectable.table") }}
-              </button>
-            </li>
-          </ul>
+        <div v-if="!viewSet">
+          <ButtonGroup>
+            <Button size="sm" :variant="itemView === 'card' ? 'default' : 'outline'" @click="setViewPreference('card')">
+              <MdiCardTextOutline class="size-5" />
+              {{ $t("components.item.view.selectable.card") }}
+            </Button>
+            <Button
+              size="sm"
+              :variant="itemView === 'table' ? 'default' : 'outline'"
+              @click="setViewPreference('table')"
+            >
+              <MdiTable class="size-5" />
+              {{ $t("components.item.view.selectable.table") }}
+            </Button>
+          </ButtonGroup>
         </div>
       </template>
     </BaseSectionHeader>
 
-    <template v-if="itemView === 'table'">
-      <ItemViewTable :items="items" />
-    </template>
-    <template v-else>
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        <ItemCard v-for="item in items" :key="item.id" :item="item" />
-        <div class="hidden first:block">{{ $t("components.item.view.selectable.no_items") }}</div>
-      </div>
-    </template>
+    <p v-if="externalPagination && pagination!.totalSize > 0" class="mb-4 flex items-center text-base font-medium">
+      {{ $t("items.results", { total: pagination!.totalSize }) }}
+      <span class="ml-auto text-base">
+        {{
+          $t("items.pages", {
+            page: pagination!.page,
+            totalPages: Math.ceil(pagination!.totalSize / pagination!.pageSize),
+          })
+        }}
+      </span>
+    </p>
+
+    <DataTable
+      :view="itemView"
+      :columns="preferences.quickActions.enabled ? columns : columns.filter(c => c.enableHiding !== false)"
+      :data="items"
+      :location-flat-tree="locationFlatTree"
+      :external-pagination="pagination"
+      @refresh="$emit('refresh')"
+    />
   </section>
 </template>
 

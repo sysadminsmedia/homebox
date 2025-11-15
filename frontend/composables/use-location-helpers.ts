@@ -1,5 +1,5 @@
 import type { Ref } from "vue";
-import type { TreeItem } from "~~/lib/api/types/data-contracts";
+import type { LocationSummary, TreeItem } from "~~/lib/api/types/data-contracts";
 
 export interface FlatTreeItem {
   id: string;
@@ -35,7 +35,27 @@ function flatTree(tree: TreeItem[]): FlatTreeItem[] {
   return v;
 }
 
-export function useFlatLocations(): Ref<FlatTreeItem[]> {
+function filterOutSubtree(tree: TreeItem[], excludeId: string): TreeItem[] {
+  // Recursively filters out a subtree starting from excludeId
+  const result: TreeItem[] = [];
+
+  for (const item of tree) {
+    if (item.id === excludeId) {
+      continue;
+    }
+
+    const newItem = { ...item };
+    if (item.children) {
+      newItem.children = filterOutSubtree(item.children, excludeId);
+    }
+
+    result.push(newItem);
+  }
+
+  return result;
+}
+
+export function useFlatLocations(excludeSubtreeForLocation?: LocationSummary): Ref<FlatTreeItem[]> {
   const locations = useLocationStore();
 
   if (locations.tree === null) {
@@ -47,6 +67,10 @@ export function useFlatLocations(): Ref<FlatTreeItem[]> {
       return [];
     }
 
-    return flatTree(locations.tree);
+    const filteredTree = excludeSubtreeForLocation
+      ? filterOutSubtree(locations.tree, excludeSubtreeForLocation.id)
+      : locations.tree;
+
+    return flatTree(filteredTree);
   });
 }

@@ -1,36 +1,39 @@
 <template>
-  <NuxtLink
-    ref="card"
-    :to="`/location/${location.id}`"
-    class="card rounded-md bg-base-100 text-base-content shadow-md transition duration-300"
-  >
-    <div
-      class="card-body"
-      :class="{
-        'p-4': !dense,
-        'px-3 py-2': dense,
-      }"
-    >
-      <h2 class="flex items-center justify-between gap-2">
-        <label class="swap swap-rotate" :class="isActive ? 'swap-active' : ''">
-          <MdiArrowRight class="swap-on size-6" />
-          <MdiMapMarkerOutline class="swap-off size-6" />
-        </label>
-        <span class="mx-auto">
-          {{ location.name }}
-        </span>
-        <span class="badge badge-primary badge-lg h-6" :class="{ 'opacity-0': !hasCount }">
-          {{ count }}
-        </span>
-      </h2>
-    </div>
-  </NuxtLink>
+  <Card>
+    <NuxtLink :to="`/location/${location.id}`" class="group/location-card transition duration-300">
+      <div
+        :class="{
+          'p-4': !dense,
+          'px-3 py-2': dense,
+        }"
+      >
+        <h2 class="flex items-center justify-between gap-2">
+          <div class="relative size-6">
+            <div
+              class="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover/location-card:-rotate-90"
+            >
+              <MdiMapMarkerOutline class="size-6 group-hover/location-card:hidden" />
+              <MdiArrowUp class="hidden size-6 group-hover/location-card:block" />
+            </div>
+          </div>
+          <span class="mx-auto">
+            {{ location.name }}
+          </span>
+          <Badge :class="{ 'opacity-0': !hasCount }">
+            {{ count }}
+          </Badge>
+        </h2>
+      </div>
+    </NuxtLink>
+  </Card>
 </template>
 
 <script lang="ts" setup>
   import type { LocationOut, LocationOutCount, LocationSummary } from "~~/lib/api/types/data-contracts";
-  import MdiArrowRight from "~icons/mdi/arrow-right";
+  import MdiArrowUp from "~icons/mdi/arrow-down";
   import MdiMapMarkerOutline from "~icons/mdi/map-marker-outline";
+  import { Card } from "@/components/ui/card";
+  import { Badge } from "@/components/ui/badge";
 
   const props = defineProps({
     location: {
@@ -48,14 +51,6 @@
   });
 
   const count = computed(() => {
-    if (hasCount.value) {
-      return (props.location as LocationOutCount).itemCount;
-    }
+    return hasCount.value ? (props.location as LocationOutCount).itemCount : undefined;
   });
-
-  const card = ref(null);
-  const isHover = useElementHover(card);
-  const { focused } = useFocus(card);
-
-  const isActive = computed(() => isHover.value || focused.value);
 </script>

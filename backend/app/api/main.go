@@ -1,20 +1,17 @@
 package main
 
 import (
-	"bytes"
 	"context"
+	"errors"
 	"fmt"
-	"github.com/google/uuid"
 	"net/http"
-	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
-	atlas "ariga.io/atlas/sql/migrate"
-	"entgo.io/ent/dialect/sql/schema"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/pressly/goose/v3"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/graceful"
@@ -29,9 +26,20 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
+	"go.balki.me/anyhttp"
 
 	_ "github.com/lib/pq"
+	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/postgres"
+	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/sqlite3"
 	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
+
+	_ "gocloud.dev/pubsub/awssnssqs"
+	_ "gocloud.dev/pubsub/azuresb"
+	_ "gocloud.dev/pubsub/gcppubsub"
+	_ "gocloud.dev/pubsub/kafkapubsub"
+	_ "gocloud.dev/pubsub/mempubsub"
+	_ "gocloud.dev/pubsub/natspubsub"
+	_ "gocloud.dev/pubsub/rabbitpubsub"
 )
 
 var (
@@ -62,15 +70,19 @@ func validatePostgresSSLMode(sslMode string) bool {
 	return validModes[strings.ToLower(strings.TrimSpace(sslMode))]
 }
 
-// @title                      Homebox API
-// @version                    1.0
-// @description                Track, Manage, and Organize your Things.
-// @contact.name               Don't
-// @BasePath                   /api
-// @securityDefinitions.apikey Bearer
-// @in                         header
-// @name                       Authorization
-// @description                "Type 'Bearer TOKEN' to correctly set the API Key"
+//	@title						Homebox API
+//	@version					1.0
+//	@description				Track, Manage, and Organize your Things.
+//	@contact.name				Homebox Team
+//	@contact.url				https://discord.homebox.software
+//	@host						demo.homebox.software
+//	@schemes					https http
+//	@BasePath					/api
+//	@securityDefinitions.apikey	Bearer
+//	@in							header
+//	@name						Authorization
+//	@description				"Type 'Bearer TOKEN' to correctly set the API Key"
+//	@externalDocs.url			https://homebox.software/en/api
 
 func main() {
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
@@ -91,105 +103,62 @@ func run(cfg *config.Config) error {
 
 	// =========================================================================
 	// Initialize Database & Repos
-
-	err := os.MkdirAll(cfg.Storage.Data, 0o755)
+	err := setupStorageDir(cfg)
 	if err != nil {
-		log.Fatal().Err(err).Msg("failed to create data directory")
+		return err
 	}
 
 	if strings.ToLower(cfg.Database.Driver) == "postgres" {
 		if !validatePostgresSSLMode(cfg.Database.SslMode) {
-			log.Fatal().Str("sslmode", cfg.Database.SslMode).Msg("invalid sslmode")
+			log.Error().Str("sslmode", cfg.Database.SslMode).Msg("invalid sslmode")
+			return fmt.Errorf("invalid sslmode: %s", cfg.Database.SslMode)
 		}
 	}
 
-	// Set up the database URL based on the driver because for some reason a common URL format is not used
-	databaseURL := ""
-	switch strings.ToLower(cfg.Database.Driver) {
-	case "sqlite3":
-		databaseURL = cfg.Database.SqlitePath
-	case "postgres":
-		databaseURL = fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", cfg.Database.Host, cfg.Database.Port, cfg.Database.Username, cfg.Database.Password, cfg.Database.Database, cfg.Database.SslMode)
-	default:
-		log.Fatal().Str("driver", cfg.Database.Driver).Msg("unsupported database driver")
+	databaseURL, err := setupDatabaseURL(cfg)
+	if err != nil {
+		return err
 	}
 
 	c, err := ent.Open(strings.ToLower(cfg.Database.Driver), databaseURL)
 	if err != nil {
-		log.Fatal().
+		log.Error().
 			Err(err).
 			Str("driver", strings.ToLower(cfg.Database.Driver)).
 			Str("host", cfg.Database.Host).
 			Str("port", cfg.Database.Port).
 			Str("database", cfg.Database.Database).
 			Msg("failed opening connection to {driver} database at {host}:{port}/{database}")
+		return fmt.Errorf("failed opening connection to %s database at %s:%s/%s: %w",
+			strings.ToLower(cfg.Database.Driver),
+			cfg.Database.Host,
+			cfg.Database.Port,
+			cfg.Database.Database,
+			err,
+		)
 	}
-	defer func(c *ent.Client) {
-		err := c.Close()
-		if err != nil {
-			log.Fatal().Err(err).Msg("failed to close database connection")
-		}
-	}(c)
 
-	// Always create a random temporary directory for migrations
-	tempUUID, err := uuid.NewUUID()
+	migrationsFs, err := migrations.Migrations(strings.ToLower(cfg.Database.Driver))
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get migrations for %s: %w", strings.ToLower(cfg.Database.Driver), err)
 	}
-	temp := filepath.Join(os.TempDir(), fmt.Sprintf("homebox-%s", tempUUID.String()))
 
-	err = migrations.Write(temp, cfg.Database.Driver)
+	goose.SetBaseFS(migrationsFs)
+	err = goose.SetDialect(strings.ToLower(cfg.Database.Driver))
 	if err != nil {
-		return err
+		log.Error().Str("driver", cfg.Database.Driver).Msg("unsupported database driver")
+		return fmt.Errorf("unsupported database driver: %s", cfg.Database.Driver)
 	}
 
-	dir, err := atlas.NewLocalDir(temp)
+	err = goose.Up(c.Sql(), strings.ToLower(cfg.Database.Driver))
 	if err != nil {
-		return err
-	}
-
-	options := []schema.MigrateOption{
-		schema.WithDir(dir),
-		schema.WithDropColumn(true),
-		schema.WithDropIndex(true),
-	}
-
-	err = c.Schema.Create(context.Background(), options...)
-	if err != nil {
-		log.Error().
-			Err(err).
-			Str("driver", cfg.Database.Driver).
-			Str("url", databaseURL).
-			Msg("failed creating schema resources")
+		log.Error().Err(err).Msg("failed to migrate database")
 		return err
 	}
 
-	defer func() {
-		err := os.RemoveAll(temp)
-		if err != nil {
-			log.Error().Err(err).Msg("failed to remove temporary directory for database migrations")
-		}
-	}()
-
-	collectFuncs := []currencies.CollectorFunc{
-		currencies.CollectDefaults(),
-	}
-
-	if cfg.Options.CurrencyConfig != "" {
-		log.Info().
-			Str("path", cfg.Options.CurrencyConfig).
-			Msg("loading currency config file")
-
-		content, err := os.ReadFile(cfg.Options.CurrencyConfig)
-		if err != nil {
-			log.Error().
-				Err(err).
-				Str("path", cfg.Options.CurrencyConfig).
-				Msg("failed to read currency config file")
-			return err
-		}
-
-		collectFuncs = append(collectFuncs, currencies.CollectJSON(bytes.NewReader(content)))
+	collectFuncs, err := loadCurrencies(cfg)
+	if err != nil {
+		return err
 	}
 
 	currencies, err := currencies.CollectionCurrencies(collectFuncs...)
@@ -202,7 +171,7 @@ func run(cfg *config.Config) error {
 
 	app.bus = eventbus.New()
 	app.db = c
-	app.repos = repo.New(c, app.bus, cfg.Storage.Data)
+	app.repos = repo.New(c, app.bus, cfg.Storage, cfg.Database.PubSubConnString, cfg.Thumbnail)
 	app.services = services.New(
 		app.repos,
 		services.WithAutoIncrementAssetID(cfg.Options.AutoIncrementAssetID),
@@ -243,89 +212,51 @@ func run(cfg *config.Config) error {
 			_ = httpserver.Shutdown(context.Background())
 		}()
 
+		listener, addrType, addrCfg, err := anyhttp.GetListener(cfg.Web.Host)
+		if err == nil {
+			switch addrType {
+			case anyhttp.SystemdFD:
+				sysdCfg := addrCfg.(*anyhttp.SysdConfig)
+				if sysdCfg.IdleTimeout != nil {
+					log.Error().Msg("idle timeout not yet supported. Please remove and try again")
+					return errors.New("idle timeout not yet supported. Please remove and try again")
+				}
+				fallthrough
+			case anyhttp.UnixSocket:
+				log.Info().Msgf("Server is running on %s", cfg.Web.Host)
+				return httpserver.Serve(listener)
+			}
+		} else {
+			log.Debug().Msgf("anyhttp error: %v", err)
+		}
 		log.Info().Msgf("Server is running on %s:%s", cfg.Web.Host, cfg.Web.Port)
 		return httpserver.ListenAndServe()
 	})
 
-	// =========================================================================
 	// Start Reoccurring Tasks
+	registerRecurringTasks(app, cfg, runner)
 
-	runner.AddFunc("eventbus", app.bus.Run)
-
-	runner.AddFunc("seed_database", func(ctx context.Context) error {
-		// TODO: Remove through external API that does setup
-		if cfg.Demo {
-			log.Info().Msg("Running in demo mode, creating demo data")
-			err := app.SetupDemo()
-			if err != nil {
-				log.Fatal().Msg(err.Error())
-			}
-		}
-		return nil
-	})
-
-	runner.AddPlugin(NewTask("purge-tokens", time.Duration(24)*time.Hour, func(ctx context.Context) {
-		_, err := app.repos.AuthTokens.PurgeExpiredTokens(ctx)
-		if err != nil {
-			log.Error().
-				Err(err).
-				Msg("failed to purge expired tokens")
-		}
-	}))
-
-	runner.AddPlugin(NewTask("purge-invitations", time.Duration(24)*time.Hour, func(ctx context.Context) {
-		_, err := app.repos.Groups.InvitationPurge(ctx)
-		if err != nil {
-			log.Error().
-				Err(err).
-				Msg("failed to purge expired invitations")
-		}
-	}))
-
-	runner.AddPlugin(NewTask("send-notifications", time.Duration(1)*time.Hour, func(ctx context.Context) {
-		now := time.Now()
-
-		if now.Hour() == 8 {
-			fmt.Println("run notifiers")
-			err := app.services.BackgroundService.SendNotifiersToday(context.Background())
-			if err != nil {
-				log.Error().
-					Err(err).
-					Msg("failed to send notifiers")
-			}
-		}
-	}))
-
-	if cfg.Options.GithubReleaseCheck {
-		runner.AddPlugin(NewTask("get-latest-github-release", time.Hour, func(ctx context.Context) {
-			log.Debug().Msg("running get latest github release")
-			err := app.services.BackgroundService.GetLatestGithubRelease(context.Background())
-			if err != nil {
-				log.Error().
-					Err(err).
-					Msg("failed to get latest github release")
+	// Send analytics if enabled at around midnight UTC
+	if cfg.Options.AllowAnalytics {
+		analyticsTime := time.Second
+		runner.AddPlugin(NewTask("send-analytics", analyticsTime, func(ctx context.Context) {
+			for {
+				now := time.Now().UTC()
+				nextMidnight := time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, time.UTC)
+				dur := time.Until(nextMidnight)
+				analyticsTime = dur
+				select {
+				case <-ctx.Done():
+					return
+				case <-time.After(dur):
+					log.Debug().Msg("running send analytics")
+					err := analytics.Send(version, build())
+					if err != nil {
+						log.Error().Err(err).Msg("failed to send analytics")
+					}
+				}
 			}
 		}))
-	}
-
-	if cfg.Debug.Enabled {
-		runner.AddFunc("debug", func(ctx context.Context) error {
-			debugserver := http.Server{
-				Addr:         fmt.Sprintf("%s:%s", cfg.Web.Host, cfg.Debug.Port),
-				Handler:      app.debugRouter(),
-				ReadTimeout:  cfg.Web.ReadTimeout,
-				WriteTimeout: cfg.Web.WriteTimeout,
-				IdleTimeout:  cfg.Web.IdleTimeout,
-			}
-
-			go func() {
-				<-ctx.Done()
-				_ = debugserver.Shutdown(context.Background())
-			}()
-
-			log.Info().Msgf("Debug server is running on %s:%s", cfg.Web.Host, cfg.Debug.Port)
-			return debugserver.ListenAndServe()
-		})
 	}
 
 	return runner.Start(context.Background())

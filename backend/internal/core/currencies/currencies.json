@@ -3,1608 +3,1876 @@
         "code": "AFN",
         "local": "Afghanistan",
         "symbol": "؋",
-        "name": "Afghan afghani"
+        "name": "Afghan afghani",
+        "decimals": 2
     },
     {
         "code": "ALL",
         "local": "Albania",
         "symbol": "L",
-        "name": "Albanian lek"
+        "name": "Albanian lek",
+        "decimals": 2
     },
     {
         "code": "DZD",
         "local": "Algeria",
         "symbol": "د.ج",
-        "name": "Algerian dinar"
+        "name": "Algerian dinar",
+        "decimals": 2
     },
     {
         "code": "USD",
         "local": "American Samoa",
         "symbol": "$",
-        "name": "United States dollar"
+        "name": "United States dollar",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Andorra",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "AOA",
         "local": "Angola",
         "symbol": "Kz",
-        "name": "Angolan kwanza"
+        "name": "Angolan kwanza",
+        "decimals": 2
     },
     {
         "code": "XCD",
         "local": "Anguilla",
         "symbol": "$",
-        "name": "Eastern Caribbean dollar"
+        "name": "Eastern Caribbean dollar",
+        "decimals": 2
     },
     {
         "code": "XCD",
         "local": "Antigua and Barbuda",
         "symbol": "$",
-        "name": "Eastern Caribbean dollar"
+        "name": "Eastern Caribbean dollar",
+        "decimals": 2
     },
     {
         "code": "ARS",
         "local": "Argentina",
         "symbol": "$",
-        "name": "Argentine peso"
+        "name": "Argentine peso",
+        "decimals": 2
     },
     {
         "code": "AMD",
         "local": "Armenia",
         "symbol": "֏",
-        "name": "Armenian dram"
+        "name": "Armenian dram",
+        "decimals": 2
     },
     {
         "code": "AWG",
         "local": "Aruba",
         "symbol": "ƒ",
-        "name": "Aruban florin"
+        "name": "Aruban florin",
+        "decimals": 2
     },
     {
         "code": "AUD",
         "local": "Australia",
         "symbol": "$",
-        "name": "Australian dollar"
+        "name": "Australian dollar",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Austria",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "AZN",
         "local": "Azerbaijan",
         "symbol": "₼",
-        "name": "Azerbaijani manat"
+        "name": "Azerbaijani manat",
+        "decimals": 2
     },
     {
         "code": "BSD",
         "local": "Bahamas",
         "symbol": "$",
-        "name": "Bahamian dollar"
+        "name": "Bahamian dollar",
+        "decimals": 2
     },
     {
         "code": "USD",
         "local": "Bahamas",
         "symbol": "$",
-        "name": "United States dollar"
+        "name": "United States dollar",
+        "decimals": 2
     },
     {
         "code": "BHD",
         "local": "Bahrain",
         "symbol": ".د.ب",
-        "name": "Bahraini dinar"
+        "name": "Bahraini dinar",
+        "decimals": 3
     },
     {
         "code": "BDT",
         "local": "Bangladesh",
         "symbol": "৳",
-        "name": "Bangladeshi taka"
+        "name": "Bangladeshi taka",
+        "decimals": 2
     },
     {
         "code": "BBD",
         "local": "Barbados",
         "symbol": "$",
-        "name": "Barbadian dollar"
+        "name": "Barbadian dollar",
+        "decimals": 2
     },
     {
         "code": "BYN",
         "local": "Belarus",
         "symbol": "Br",
-        "name": "Belarusian ruble"
+        "name": "Belarusian ruble",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Belgium",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "BZD",
         "local": "Belize",
         "symbol": "$",
-        "name": "Belize dollar"
+        "name": "Belize dollar",
+        "decimals": 2
     },
     {
         "code": "XOF",
         "local": "Benin",
         "symbol": "Fr",
-        "name": "West African CFA franc"
+        "name": "West African CFA franc",
+        "decimals": 2
     },
     {
         "code": "BMD",
         "local": "Bermuda",
         "symbol": "$",
-        "name": "Bermudian dollar"
+        "name": "Bermudian dollar",
+        "decimals": 2
     },
     {
         "code": "BTN",
         "local": "Bhutan",
         "symbol": "Nu.",
-        "name": "Bhutanese ngultrum"
+        "name": "Bhutanese ngultrum",
+        "decimals": 2
     },
     {
         "code": "INR",
         "local": "Bhutan",
         "symbol": "₹",
-        "name": "Indian rupee"
+        "name": "Indian rupee",
+        "decimals": 2
     },
     {
         "code": "BOB",
         "local": "Bolivia",
         "symbol": "Bs.",
-        "name": "Bolivian boliviano"
+        "name": "Bolivian boliviano",
+        "decimals": 2
     },
     {
         "code": "BAM",
         "local": "Bosnia and Herzegovina",
         "symbol": "KM",
-        "name": "Bosnia and Herzegovina convertible mark"
+        "name": "Bosnia and Herzegovina convertible mark",
+        "decimals": 2
     },
     {
         "code": "BWP",
         "local": "Botswana",
         "symbol": "P",
-        "name": "Botswana pula"
+        "name": "Botswana pula",
+        "decimals": 2
     },
     {
         "code": "BRL",
         "local": "Brazil",
         "symbol": "R$",
-        "name": "Brazilian real"
+        "name": "Brazilian real",
+        "decimals": 2
     },
     {
         "code": "USD",
         "local": "British Indian Ocean Territory",
         "symbol": "$",
-        "name": "United States dollar"
+        "name": "United States dollar",
+        "decimals": 2
     },
     {
         "code": "USD",
         "local": "British Virgin Islands",
         "symbol": "$",
-        "name": "United States dollar"
+        "name": "United States dollar",
+        "decimals": 2
     },
     {
         "code": "BND",
         "local": "Brunei",
         "symbol": "$",
-        "name": "Brunei dollar"
+        "name": "Brunei dollar",
+        "decimals": 2
     },
     {
         "code": "SGD",
         "local": "Brunei",
         "symbol": "$",
-        "name": "Singapore dollar"
+        "name": "Singapore dollar",
+        "decimals": 2
     },
     {
         "code": "BGN",
         "local": "Bulgaria",
         "symbol": "лв",
-        "name": "Bulgarian lev"
+        "name": "Bulgarian lev",
+        "decimals": 2
     },
     {
         "code": "XOF",
         "local": "Burkina Faso",
         "symbol": "Fr",
-        "name": "West African CFA franc"
+        "name": "West African CFA franc",
+        "decimals": 2
     },
     {
         "code": "BIF",
         "local": "Burundi",
         "symbol": "Fr",
-        "name": "Burundian franc"
+        "name": "Burundian franc",
+        "decimals": 2
     },
     {
         "code": "KHR",
         "local": "Cambodia",
         "symbol": "៛",
-        "name": "Cambodian riel"
+        "name": "Cambodian riel",
+        "decimals": 2
     },
     {
         "code": "USD",
         "local": "Cambodia",
         "symbol": "$",
-        "name": "United States dollar"
+        "name": "United States dollar",
+        "decimals": 2
     },
     {
         "code": "XAF",
         "local": "Cameroon",
         "symbol": "Fr",
-        "name": "Central African CFA franc"
+        "name": "Central African CFA franc",
+        "decimals": 2
     },
     {
         "code": "CAD",
         "local": "Canada",
         "symbol": "$",
-        "name": "Canadian dollar"
+        "name": "Canadian dollar",
+        "decimals": 2
     },
     {
         "code": "CVE",
         "local": "Cape Verde",
         "symbol": "Esc",
-        "name": "Cape Verdean escudo"
+        "name": "Cape Verdean escudo",
+        "decimals": 2
     },
     {
         "code": "USD",
         "local": "Caribbean Netherlands",
         "symbol": "$",
-        "name": "United States dollar"
+        "name": "United States dollar",
+        "decimals": 2
     },
     {
         "code": "KYD",
         "local": "Cayman Islands",
         "symbol": "$",
-        "name": "Cayman Islands dollar"
+        "name": "Cayman Islands dollar",
+        "decimals": 2
     },
     {
         "code": "XAF",
         "local": "Central African Republic",
         "symbol": "Fr",
-        "name": "Central African CFA franc"
+        "name": "Central African CFA franc",
+        "decimals": 2
     },
     {
         "code": "XAF",
         "local": "Chad",
         "symbol": "Fr",
-        "name": "Central African CFA franc"
+        "name": "Central African CFA franc",
+        "decimals": 2
     },
     {
         "code": "CLP",
         "local": "Chile",
         "symbol": "$",
-        "name": "Chilean peso"
+        "name": "Chilean peso",
+        "decimals": 2
     },
     {
         "code": "CNY",
         "local": "China",
         "symbol": "¥",
-        "name": "Chinese yuan"
+        "name": "Chinese yuan",
+        "decimals": 2
     },
     {
         "code": "AUD",
         "local": "Christmas Island",
         "symbol": "$",
-        "name": "Australian dollar"
+        "name": "Australian dollar",
+        "decimals": 2
     },
     {
         "code": "AUD",
         "local": "Cocos (Keeling) Islands",
         "symbol": "$",
-        "name": "Australian dollar"
+        "name": "Australian dollar",
+        "decimals": 2
     },
     {
         "code": "COP",
         "local": "Colombia",
         "symbol": "$",
-        "name": "Colombian peso"
+        "name": "Colombian peso",
+        "decimals": 2
     },
     {
         "code": "KMF",
         "local": "Comoros",
         "symbol": "Fr",
-        "name": "Comorian franc"
+        "name": "Comorian franc",
+        "decimals": 2
     },
     {
         "code": "CKD",
         "local": "Cook Islands",
         "symbol": "$",
-        "name": "Cook Islands dollar"
+        "name": "Cook Islands dollar",
+        "decimals": 2
     },
     {
         "code": "NZD",
         "local": "Cook Islands",
         "symbol": "$",
-        "name": "New Zealand dollar"
+        "name": "New Zealand dollar",
+        "decimals": 2
     },
     {
         "code": "CRC",
         "local": "Costa Rica",
         "symbol": "₡",
-        "name": "Costa Rican colón"
+        "name": "Costa Rican colón",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Croatia",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "CUC",
         "local": "Cuba",
         "symbol": "$",
-        "name": "Cuban convertible peso"
+        "name": "Cuban convertible peso",
+        "decimals": 2
     },
     {
         "code": "CUP",
         "local": "Cuba",
         "symbol": "$",
-        "name": "Cuban peso"
+        "name": "Cuban peso",
+        "decimals": 2
     },
     {
         "code": "ANG",
         "local": "Curaçao",
         "symbol": "ƒ",
-        "name": "Netherlands Antillean guilder"
+        "name": "Netherlands Antillean guilder",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Cyprus",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "CZK",
         "local": "Czechia",
         "symbol": "Kč",
-        "name": "Czech koruna"
+        "name": "Czech koruna",
+        "decimals": 2
     },
     {
         "code": "DKK",
         "local": "Denmark",
         "symbol": "kr",
-        "name": "Danish krone"
+        "name": "Danish krone",
+        "decimals": 2
     },
     {
         "code": "DJF",
         "local": "Djibouti",
         "symbol": "Fr",
-        "name": "Djiboutian franc"
+        "name": "Djiboutian franc",
+        "decimals": 2
     },
     {
         "code": "XCD",
         "local": "Dominica",
         "symbol": "$",
-        "name": "Eastern Caribbean dollar"
+        "name": "Eastern Caribbean dollar",
+        "decimals": 2
     },
     {
         "code": "DOP",
         "local": "Dominican Republic",
         "symbol": "$",
-        "name": "Dominican peso"
+        "name": "Dominican peso",
+        "decimals": 2
     },
     {
         "code": "CDF",
         "local": "DR Congo",
         "symbol": "FC",
-        "name": "Congolese franc"
+        "name": "Congolese franc",
+        "decimals": 2
     },
     {
         "code": "USD",
         "local": "Ecuador",
         "symbol": "$",
-        "name": "United States dollar"
+        "name": "United States dollar",
+        "decimals": 2
     },
     {
         "code": "EGP",
         "local": "Egypt",
         "symbol": "£",
-        "name": "Egyptian pound"
+        "name": "Egyptian pound",
+        "decimals": 2
     },
     {
         "code": "USD",
         "local": "El Salvador",
         "symbol": "$",
-        "name": "United States dollar"
+        "name": "United States dollar",
+        "decimals": 2
     },
     {
         "code": "XAF",
         "local": "Equatorial Guinea",
         "symbol": "Fr",
-        "name": "Central African CFA franc"
+        "name": "Central African CFA franc",
+        "decimals": 2
     },
     {
         "code": "ERN",
         "local": "Eritrea",
         "symbol": "Nfk",
-        "name": "Eritrean nakfa"
+        "name": "Eritrean nakfa",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Estonia",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "SZL",
         "local": "Eswatini",
         "symbol": "L",
-        "name": "Swazi lilangeni"
+        "name": "Swazi lilangeni",
+        "decimals": 2
     },
     {
         "code": "ZAR",
         "local": "Eswatini",
         "symbol": "R",
-        "name": "South African rand"
+        "name": "South African rand",
+        "decimals": 2
     },
     {
         "code": "ETB",
         "local": "Ethiopia",
         "symbol": "Br",
-        "name": "Ethiopian birr"
+        "name": "Ethiopian birr",
+        "decimals": 2
     },
     {
         "code": "FKP",
         "local": "Falkland Islands",
         "symbol": "£",
-        "name": "Falkland Islands pound"
+        "name": "Falkland Islands pound",
+        "decimals": 2
     },
     {
         "code": "DKK",
         "local": "Faroe Islands",
         "symbol": "kr",
-        "name": "Danish krone"
+        "name": "Danish krone",
+        "decimals": 2
     },
     {
         "code": "FOK",
         "local": "Faroe Islands",
         "symbol": "kr",
-        "name": "Faroese króna"
+        "name": "Faroese króna",
+        "decimals": 2
     },
     {
         "code": "FJD",
         "local": "Fiji",
         "symbol": "$",
-        "name": "Fijian dollar"
+        "name": "Fijian dollar",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Finland",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "France",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "French Guiana",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "XPF",
         "local": "French Polynesia",
         "symbol": "₣",
-        "name": "CFP franc"
+        "name": "CFP franc",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "French Southern and Antarctic Lands",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "XAF",
         "local": "Gabon",
         "symbol": "Fr",
-        "name": "Central African CFA franc"
+        "name": "Central African CFA franc",
+        "decimals": 2
     },
     {
         "code": "GMD",
         "local": "Gambia",
         "symbol": "D",
-        "name": "dalasi"
+        "name": "dalasi",
+        "decimals": 2
     },
     {
         "code": "GEL",
         "local": "Georgia",
         "symbol": "₾",
-        "name": "lari"
+        "name": "lari",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Germany",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "GHS",
         "local": "Ghana",
         "symbol": "₵",
-        "name": "Ghanaian cedi"
+        "name": "Ghanaian cedi",
+        "decimals": 2
     },
     {
         "code": "GIP",
         "local": "Gibraltar",
         "symbol": "£",
-        "name": "Gibraltar pound"
+        "name": "Gibraltar pound",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Greece",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "DKK",
         "local": "Greenland",
         "symbol": "kr.",
-        "name": "krone"
+        "name": "krone",
+        "decimals": 2
     },
     {
         "code": "XCD",
         "local": "Grenada",
         "symbol": "$",
-        "name": "Eastern Caribbean dollar"
+        "name": "Eastern Caribbean dollar",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Guadeloupe",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "USD",
         "local": "Guam",
         "symbol": "$",
-        "name": "United States dollar"
+        "name": "United States dollar",
+        "decimals": 2
     },
     {
         "code": "GTQ",
         "local": "Guatemala",
         "symbol": "Q",
-        "name": "Guatemalan quetzal"
+        "name": "Guatemalan quetzal",
+        "decimals": 2
     },
     {
         "code": "GBP",
         "local": "Guernsey",
         "symbol": "£",
-        "name": "British pound"
+        "name": "British pound",
+        "decimals": 2
     },
     {
         "code": "GGP",
         "local": "Guernsey",
         "symbol": "£",
-        "name": "Guernsey pound"
+        "name": "Guernsey pound",
+        "decimals": 2
     },
     {
         "code": "GNF",
         "local": "Guinea",
         "symbol": "Fr",
-        "name": "Guinean franc"
+        "name": "Guinean franc",
+        "decimals": 2
     },
     {
         "code": "XOF",
         "local": "Guinea-Bissau",
         "symbol": "Fr",
-        "name": "West African CFA franc"
+        "name": "West African CFA franc",
+        "decimals": 2
     },
     {
         "code": "GYD",
         "local": "Guyana",
         "symbol": "$",
-        "name": "Guyanese dollar"
+        "name": "Guyanese dollar",
+        "decimals": 2
     },
     {
         "code": "HTG",
         "local": "Haiti",
         "symbol": "G",
-        "name": "Haitian gourde"
+        "name": "Haitian gourde",
+        "decimals": 2
     },
     {
         "code": "HNL",
         "local": "Honduras",
         "symbol": "L",
-        "name": "Honduran lempira"
+        "name": "Honduran lempira",
+        "decimals": 2
     },
     {
         "code": "HKD",
         "local": "Hong Kong",
         "symbol": "$",
-        "name": "Hong Kong dollar"
+        "name": "Hong Kong dollar",
+        "decimals": 2
     },
     {
         "code": "HUF",
         "local": "Hungary",
         "symbol": "Ft",
-        "name": "Hungarian forint"
+        "name": "Hungarian forint",
+        "decimals": 2
     },
     {
         "code": "ISK",
         "local": "Iceland",
         "symbol": "kr",
-        "name": "Icelandic króna"
+        "name": "Icelandic króna",
+        "decimals": 2
     },
     {
         "code": "INR",
         "local": "India",
         "symbol": "₹",
-        "name": "Indian rupee"
+        "name": "Indian rupee",
+        "decimals": 2
     },
     {
         "code": "IDR",
         "local": "Indonesia",
         "symbol": "Rp",
-        "name": "Indonesian rupiah"
+        "name": "Indonesian rupiah",
+        "decimals": 2
     },
     {
         "code": "IRR",
         "local": "Iran",
         "symbol": "﷼",
-        "name": "Iranian rial"
+        "name": "Iranian rial",
+        "decimals": 2
     },
     {
         "code": "IQD",
         "local": "Iraq",
         "symbol": "ع.د",
-        "name": "Iraqi dinar"
+        "name": "Iraqi dinar",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Ireland",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "GBP",
         "local": "Isle of Man",
         "symbol": "£",
-        "name": "British pound"
+        "name": "British pound",
+        "decimals": 2
     },
     {
         "code": "IMP",
         "local": "Isle of Man",
         "symbol": "£",
-        "name": "Manx pound"
+        "name": "Manx pound",
+        "decimals": 2
     },
     {
         "code": "ILS",
         "local": "Israel",
         "symbol": "₪",
-        "name": "Israeli new shekel"
+        "name": "Israeli new shekel",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Italy",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "XOF",
         "local": "Ivory Coast",
         "symbol": "Fr",
-        "name": "West African CFA franc"
+        "name": "West African CFA franc",
+        "decimals": 2
     },
     {
         "code": "JMD",
         "local": "Jamaica",
         "symbol": "$",
-        "name": "Jamaican dollar"
+        "name": "Jamaican dollar",
+        "decimals": 2
     },
     {
         "code": "JPY",
         "local": "Japan",
         "symbol": "¥",
-        "name": "Japanese yen"
+        "name": "Japanese yen",
+        "decimals": 0
     },
     {
         "code": "GBP",
         "local": "Jersey",
         "symbol": "£",
-        "name": "British pound"
+        "name": "British pound",
+        "decimals": 2
     },
     {
         "code": "JEP",
         "local": "Jersey",
         "symbol": "£",
-        "name": "Jersey pound"
+        "name": "Jersey pound",
+        "decimals": 2
     },
     {
         "code": "JOD",
         "local": "Jordan",
         "symbol": "د.ا",
-        "name": "Jordanian dinar"
+        "name": "Jordanian dinar",
+        "decimals": 2
     },
     {
         "code": "KZT",
         "local": "Kazakhstan",
         "symbol": "₸",
-        "name": "Kazakhstani tenge"
+        "name": "Kazakhstani tenge",
+        "decimals": 2
     },
     {
         "code": "KES",
         "local": "Kenya",
         "symbol": "Sh",
-        "name": "Kenyan shilling"
+        "name": "Kenyan shilling",
+        "decimals": 2
     },
     {
         "code": "AUD",
         "local": "Kiribati",
         "symbol": "$",
-        "name": "Australian dollar"
+        "name": "Australian dollar",
+        "decimals": 2
     },
     {
         "code": "KID",
         "local": "Kiribati",
         "symbol": "$",
-        "name": "Kiribati dollar"
+        "name": "Kiribati dollar",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Kosovo",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "KWD",
         "local": "Kuwait",
         "symbol": "د.ك",
-        "name": "Kuwaiti dinar"
+        "name": "Kuwaiti dinar",
+        "decimals": 2
     },
     {
         "code": "KGS",
         "local": "Kyrgyzstan",
         "symbol": "с",
-        "name": "Kyrgyzstani som"
+        "name": "Kyrgyzstani som",
+        "decimals": 2
     },
     {
         "code": "LAK",
         "local": "Laos",
         "symbol": "₭",
-        "name": "Lao kip"
+        "name": "Lao kip",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Latvia",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "LBP",
         "local": "Lebanon",
         "symbol": "ل.ل",
-        "name": "Lebanese pound"
+        "name": "Lebanese pound",
+        "decimals": 2
     },
     {
         "code": "LSL",
         "local": "Lesotho",
         "symbol": "L",
-        "name": "Lesotho loti"
+        "name": "Lesotho loti",
+        "decimals": 2
     },
     {
         "code": "ZAR",
         "local": "Lesotho",
         "symbol": "R",
-        "name": "South African rand"
+        "name": "South African rand",
+        "decimals": 2
     },
     {
         "code": "LRD",
         "local": "Liberia",
         "symbol": "$",
-        "name": "Liberian dollar"
+        "name": "Liberian dollar",
+        "decimals": 2
     },
     {
         "code": "LYD",
         "local": "Libya",
         "symbol": "ل.د",
-        "name": "Libyan dinar"
+        "name": "Libyan dinar",
+        "decimals": 2
     },
     {
         "code": "CHF",
         "local": "Liechtenstein",
         "symbol": "Fr",
-        "name": "Swiss franc"
+        "name": "Swiss franc",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Lithuania",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Luxembourg",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "MOP",
         "local": "Macau",
         "symbol": "P",
-        "name": "Macanese pataca"
+        "name": "Macanese pataca",
+        "decimals": 2
     },
     {
         "code": "MGA",
         "local": "Madagascar",
         "symbol": "Ar",
-        "name": "Malagasy ariary"
+        "name": "Malagasy ariary",
+        "decimals": 2
     },
     {
         "code": "MWK",
         "local": "Malawi",
         "symbol": "MK",
-        "name": "Malawian kwacha"
+        "name": "Malawian kwacha",
+        "decimals": 2
     },
     {
         "code": "MYR",
         "local": "Malaysia",
         "symbol": "RM",
-        "name": "Malaysian ringgit"
+        "name": "Malaysian ringgit",
+        "decimals": 2
     },
     {
         "code": "MVR",
         "local": "Maldives",
         "symbol": ".ރ",
-        "name": "Maldivian rufiyaa"
+        "name": "Maldivian rufiyaa",
+        "decimals": 2
     },
     {
         "code": "XOF",
         "local": "Mali",
         "symbol": "Fr",
-        "name": "West African CFA franc"
+        "name": "West African CFA franc",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Malta",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "USD",
         "local": "Marshall Islands",
         "symbol": "$",
-        "name": "United States dollar"
+        "name": "United States dollar",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Martinique",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "MRU",
         "local": "Mauritania",
         "symbol": "UM",
-        "name": "Mauritanian ouguiya"
+        "name": "Mauritanian ouguiya",
+        "decimals": 2
     },
     {
         "code": "MUR",
         "local": "Mauritius",
         "symbol": "₨",
-        "name": "Mauritian rupee"
+        "name": "Mauritian rupee",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Mayotte",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "MXN",
         "local": "Mexico",
         "symbol": "$",
-        "name": "Mexican peso"
+        "name": "Mexican peso",
+        "decimals": 2
     },
     {
         "code": "USD",
         "local": "Micronesia",
         "symbol": "$",
-        "name": "United States dollar"
+        "name": "United States dollar",
+        "decimals": 2
     },
     {
         "code": "MDL",
         "local": "Moldova",
         "symbol": "L",
-        "name": "Moldovan leu"
+        "name": "Moldovan leu",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Monaco",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "MNT",
         "local": "Mongolia",
         "symbol": "₮",
-        "name": "Mongolian tögrög"
+        "name": "Mongolian tögrög",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Montenegro",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "XCD",
         "local": "Montserrat",
         "symbol": "$",
-        "name": "Eastern Caribbean dollar"
+        "name": "Eastern Caribbean dollar",
+        "decimals": 2
     },
     {
         "code": "MAD",
         "local": "Morocco",
         "symbol": "د.م.",
-        "name": "Moroccan dirham"
+        "name": "Moroccan dirham",
+        "decimals": 2
     },
     {
         "code": "MZN",
         "local": "Mozambique",
         "symbol": "MT",
-        "name": "Mozambican metical"
+        "name": "Mozambican metical",
+        "decimals": 2
     },
     {
         "code": "MMK",
         "local": "Myanmar",
         "symbol": "Ks",
-        "name": "Burmese kyat"
+        "name": "Burmese kyat",
+        "decimals": 2
     },
     {
         "code": "NAD",
         "local": "Namibia",
         "symbol": "$",
-        "name": "Namibian dollar"
+        "name": "Namibian dollar",
+        "decimals": 2
     },
     {
         "code": "ZAR",
         "local": "Namibia",
         "symbol": "R",
-        "name": "South African rand"
+        "name": "South African rand",
+        "decimals": 2
     },
     {
         "code": "AUD",
         "local": "Nauru",
         "symbol": "$",
-        "name": "Australian dollar"
+        "name": "Australian dollar",
+        "decimals": 2
     },
     {
         "code": "NPR",
         "local": "Nepal",
         "symbol": "₨",
-        "name": "Nepalese rupee"
+        "name": "Nepalese rupee",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Netherlands",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "XPF",
         "local": "New Caledonia",
         "symbol": "₣",
-        "name": "CFP franc"
+        "name": "CFP franc",
+        "decimals": 2
     },
     {
         "code": "NZD",
         "local": "New Zealand",
         "symbol": "$",
-        "name": "New Zealand dollar"
+        "name": "New Zealand dollar",
+        "decimals": 2
     },
     {
         "code": "NIO",
         "local": "Nicaragua",
         "symbol": "C$",
-        "name": "Nicaraguan córdoba"
+        "name": "Nicaraguan córdoba",
+        "decimals": 2
     },
     {
         "code": "XOF",
         "local": "Niger",
         "symbol": "Fr",
-        "name": "West African CFA franc"
+        "name": "West African CFA franc",
+        "decimals": 2
     },
     {
         "code": "NGN",
         "local": "Nigeria",
         "symbol": "₦",
-        "name": "Nigerian naira"
+        "name": "Nigerian naira",
+        "decimals": 2
     },
     {
         "code": "NZD",
         "local": "Niue",
         "symbol": "$",
-        "name": "New Zealand dollar"
+        "name": "New Zealand dollar",
+        "decimals": 2
     },
     {
         "code": "AUD",
         "local": "Norfolk Island",
         "symbol": "$",
-        "name": "Australian dollar"
+        "name": "Australian dollar",
+        "decimals": 2
     },
     {
         "code": "KPW",
         "local": "North Korea",
         "symbol": "₩",
-        "name": "North Korean won"
+        "name": "North Korean won",
+        "decimals": 2
     },
     {
         "code": "MKD",
         "local": "North Macedonia",
         "symbol": "den",
-        "name": "denar"
+        "name": "denar",
+        "decimals": 2
     },
     {
         "code": "USD",
         "local": "Northern Mariana Islands",
         "symbol": "$",
-        "name": "United States dollar"
+        "name": "United States dollar",
+        "decimals": 2
     },
     {
         "code": "NOK",
         "local": "Norway",
         "symbol": "kr",
-        "name": "Norwegian krone"
+        "name": "Norwegian krone",
+        "decimals": 2
     },
     {
         "code": "OMR",
         "local": "Oman",
         "symbol": "ر.ع.",
-        "name": "Omani rial"
+        "name": "Omani rial",
+        "decimals": 2
     },
     {
         "code": "PKR",
         "local": "Pakistan",
         "symbol": "₨",
-        "name": "Pakistani rupee"
+        "name": "Pakistani rupee",
+        "decimals": 2
     },
     {
         "code": "USD",
         "local": "Palau",
         "symbol": "$",
-        "name": "United States dollar"
+        "name": "United States dollar",
+        "decimals": 2
     },
     {
         "code": "EGP",
         "local": "Palestine",
         "symbol": "E£",
-        "name": "Egyptian pound"
+        "name": "Egyptian pound",
+        "decimals": 2
     },
     {
         "code": "ILS",
         "local": "Palestine",
         "symbol": "₪",
-        "name": "Israeli new shekel"
+        "name": "Israeli new shekel",
+        "decimals": 2
     },
     {
         "code": "JOD",
         "local": "Palestine",
         "symbol": "JD",
-        "name": "Jordanian dinar"
+        "name": "Jordanian dinar",
+        "decimals": 2
     },
     {
         "code": "PAB",
         "local": "Panama",
         "symbol": "B/.",
-        "name": "Panamanian balboa"
+        "name": "Panamanian balboa",
+        "decimals": 2
     },
     {
         "code": "USD",
         "local": "Panama",
         "symbol": "$",
-        "name": "United States dollar"
+        "name": "United States dollar",
+        "decimals": 2
     },
     {
         "code": "PGK",
         "local": "Papua New Guinea",
         "symbol": "K",
-        "name": "Papua New Guinean kina"
+        "name": "Papua New Guinean kina",
+        "decimals": 2
     },
     {
         "code": "PYG",
         "local": "Paraguay",
         "symbol": "₲",
-        "name": "Paraguayan guaraní"
+        "name": "Paraguayan guaraní",
+        "decimals": 2
     },
     {
         "code": "PEN",
         "local": "Peru",
         "symbol": "S/ ",
-        "name": "Peruvian sol"
+        "name": "Peruvian sol",
+        "decimals": 2
     },
     {
         "code": "PHP",
         "local": "Philippines",
         "symbol": "₱",
-        "name": "Philippine peso"
+        "name": "Philippine peso",
+        "decimals": 2
     },
     {
         "code": "NZD",
         "local": "Pitcairn Islands",
         "symbol": "$",
-        "name": "New Zealand dollar"
+        "name": "New Zealand dollar",
+        "decimals": 2
     },
     {
         "code": "PLN",
         "local": "Poland",
         "symbol": "zł",
-        "name": "Polish złoty"
+        "name": "Polish złoty",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Portugal",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "USD",
         "local": "Puerto Rico",
         "symbol": "$",
-        "name": "United States dollar"
+        "name": "United States dollar",
+        "decimals": 2
     },
     {
         "code": "QAR",
         "local": "Qatar",
         "symbol": "ر.ق",
-        "name": "Qatari riyal"
+        "name": "Qatari riyal",
+        "decimals": 2
     },
     {
         "code": "XAF",
         "local": "Republic of the Congo",
         "symbol": "Fr",
-        "name": "Central African CFA franc"
+        "name": "Central African CFA franc",
+        "decimals": 2
     },
     {
         "code": "RON",
         "local": "Romania",
         "symbol": "lei",
-        "name": "Romanian leu"
+        "name": "Romanian leu",
+        "decimals": 2
     },
     {
         "code": "RUB",
         "local": "Russia",
         "symbol": "₽",
-        "name": "Russian ruble"
+        "name": "Russian ruble",
+        "decimals": 2
     },
     {
         "code": "RWF",
         "local": "Rwanda",
         "symbol": "Fr",
-        "name": "Rwandan franc"
+        "name": "Rwandan franc",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Réunion",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Saint Barthélemy",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "GBP",
         "local": "Saint Helena, Ascension and Tristan da Cunha",
         "symbol": "£",
-        "name": "Pound sterling"
+        "name": "Pound sterling",
+        "decimals": 2
     },
     {
         "code": "SHP",
         "local": "Saint Helena, Ascension and Tristan da Cunha",
         "symbol": "£",
-        "name": "Saint Helena pound"
+        "name": "Saint Helena pound",
+        "decimals": 2
     },
     {
         "code": "XCD",
         "local": "Saint Kitts and Nevis",
         "symbol": "$",
-        "name": "Eastern Caribbean dollar"
+        "name": "Eastern Caribbean dollar",
+        "decimals": 2
     },
     {
         "code": "XCD",
         "local": "Saint Lucia",
         "symbol": "$",
-        "name": "Eastern Caribbean dollar"
+        "name": "Eastern Caribbean dollar",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Saint Martin",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Saint Pierre and Miquelon",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "XCD",
         "local": "Saint Vincent and the Grenadines",
         "symbol": "$",
-        "name": "Eastern Caribbean dollar"
+        "name": "Eastern Caribbean dollar",
+        "decimals": 2
     },
     {
         "code": "WST",
         "local": "Samoa",
         "symbol": "T",
-        "name": "Samoan tālā"
+        "name": "Samoan tālā",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "San Marino",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "SAR",
         "local": "Saudi Arabia",
         "symbol": "ر.س",
-        "name": "Saudi riyal"
+        "name": "Saudi riyal",
+        "decimals": 2
     },
     {
         "code": "XOF",
         "local": "Senegal",
         "symbol": "Fr",
-        "name": "West African CFA franc"
+        "name": "West African CFA franc",
+        "decimals": 2
     },
     {
         "code": "RSD",
         "local": "Serbia",
         "symbol": "дин.",
-        "name": "Serbian dinar"
+        "name": "Serbian dinar",
+        "decimals": 2
     },
     {
         "code": "SCR",
         "local": "Seychelles",
         "symbol": "₨",
-        "name": "Seychellois rupee"
+        "name": "Seychellois rupee",
+        "decimals": 2
     },
     {
-        "code": "SLL",
+        "code": "SLE",
         "local": "Sierra Leone",
         "symbol": "Le",
-        "name": "Sierra Leonean leone"
+        "name": "Leone",
+        "decimals": 2
     },
     {
         "code": "SGD",
         "local": "Singapore",
         "symbol": "$",
-        "name": "Singapore dollar"
+        "name": "Singapore dollar",
+        "decimals": 2
     },
     {
         "code": "ANG",
         "local": "Sint Maarten",
         "symbol": "ƒ",
-        "name": "Netherlands Antillean guilder"
+        "name": "Netherlands Antillean guilder",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Slovakia",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Slovenia",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "SBD",
         "local": "Solomon Islands",
         "symbol": "$",
-        "name": "Solomon Islands dollar"
+        "name": "Solomon Islands dollar",
+        "decimals": 2
     },
     {
         "code": "SOS",
         "local": "Somalia",
         "symbol": "Sh",
-        "name": "Somali shilling"
+        "name": "Somali shilling",
+        "decimals": 2
     },
     {
         "code": "ZAR",
         "local": "South Africa",
         "symbol": "R",
-        "name": "South African rand"
+        "name": "South African rand",
+        "decimals": 2
     },
     {
-        "code": "SHP",
+        "code": "GBP",
         "local": "South Georgia",
         "symbol": "£",
-        "name": "Saint Helena pound"
+        "name": "British pound",
+        "decimals": 2
     },
     {
         "code": "KRW",
         "local": "South Korea",
         "symbol": "₩",
-        "name": "South Korean won"
+        "name": "South Korean won",
+        "decimals": 2
     },
     {
         "code": "SSP",
         "local": "South Sudan",
         "symbol": "£",
-        "name": "South Sudanese pound"
+        "name": "South Sudanese pound",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Spain",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "LKR",
         "local": "Sri Lanka",
         "symbol": "Rs  රු",
-        "name": "Sri Lankan rupee"
+        "name": "Sri Lankan rupee",
+        "decimals": 2
     },
     {
         "code": "SDG",
         "local": "Sudan",
         "symbol": "ج.س",
-        "name": "Sudanese pound"
+        "name": "Sudanese pound",
+        "decimals": 2
     },
     {
         "code": "SRD",
         "local": "Suriname",
         "symbol": "$",
-        "name": "Surinamese dollar"
+        "name": "Surinamese dollar",
+        "decimals": 2
     },
     {
         "code": "NOK",
         "local": "Svalbard and Jan Mayen",
         "symbol": "kr",
-        "name": "krone"
+        "name": "krone",
+        "decimals": 2
     },
     {
         "code": "SEK",
         "local": "Sweden",
         "symbol": "kr",
-        "name": "Swedish krona"
+        "name": "Swedish krona",
+        "decimals": 2
     },
     {
         "code": "CHF",
         "local": "Switzerland",
         "symbol": "Fr.",
-        "name": "Swiss franc"
+        "name": "Swiss franc",
+        "decimals": 2
     },
     {
         "code": "SYP",
         "local": "Syria",
         "symbol": "£",
-        "name": "Syrian pound"
+        "name": "Syrian pound",
+        "decimals": 2
     },
     {
         "code": "STN",
         "local": "São Tomé and Príncipe",
         "symbol": "Db",
-        "name": "São Tomé and Príncipe dobra"
+        "name": "São Tomé and Príncipe dobra",
+        "decimals": 2
     },
     {
         "code": "TWD",
         "local": "Taiwan",
         "symbol": "$",
-        "name": "New Taiwan dollar"
+        "name": "New Taiwan dollar",
+        "decimals": 2
     },
     {
         "code": "TJS",
         "local": "Tajikistan",
         "symbol": "ЅМ",
-        "name": "Tajikistani somoni"
+        "name": "Tajikistani somoni",
+        "decimals": 2
     },
     {
         "code": "TZS",
         "local": "Tanzania",
         "symbol": "Sh",
-        "name": "Tanzanian shilling"
+        "name": "Tanzanian shilling",
+        "decimals": 2
     },
     {
         "code": "THB",
         "local": "Thailand",
         "symbol": "฿",
-        "name": "Thai baht"
+        "name": "Thai baht",
+        "decimals": 2
     },
     {
         "code": "USD",
         "local": "Timor-Leste",
         "symbol": "$",
-        "name": "United States dollar"
+        "name": "United States dollar",
+        "decimals": 2
     },
     {
         "code": "XOF",
         "local": "Togo",
         "symbol": "Fr",
-        "name": "West African CFA franc"
+        "name": "West African CFA franc",
+        "decimals": 2
     },
     {
         "code": "NZD",
         "local": "Tokelau",
         "symbol": "$",
-        "name": "New Zealand dollar"
+        "name": "New Zealand dollar",
+        "decimals": 2
     },
     {
         "code": "TOP",
         "local": "Tonga",
         "symbol": "T$",
-        "name": "Tongan paʻanga"
+        "name": "Tongan paʻanga",
+        "decimals": 2
     },
     {
         "code": "TTD",
         "local": "Trinidad and Tobago",
         "symbol": "$",
-        "name": "Trinidad and Tobago dollar"
+        "name": "Trinidad and Tobago dollar",
+        "decimals": 2
     },
     {
         "code": "TND",
         "local": "Tunisia",
         "symbol": "د.ت",
-        "name": "Tunisian dinar"
+        "name": "Tunisian dinar",
+        "decimals": 2
     },
     {
         "code": "TRY",
         "local": "Turkey",
         "symbol": "₺",
-        "name": "Turkish lira"
+        "name": "Turkish lira",
+        "decimals": 2
     },
     {
         "code": "TMT",
         "local": "Turkmenistan",
         "symbol": "m",
-        "name": "Turkmenistan manat"
+        "name": "Turkmenistan manat",
+        "decimals": 2
     },
     {
         "code": "USD",
         "local": "Turks and Caicos Islands",
         "symbol": "$",
-        "name": "United States dollar"
+        "name": "United States dollar",
+        "decimals": 2
     },
     {
         "code": "AUD",
         "local": "Tuvalu",
         "symbol": "$",
-        "name": "Australian dollar"
+        "name": "Australian dollar",
+        "decimals": 2
     },
     {
         "code": "TVD",
         "local": "Tuvalu",
         "symbol": "$",
-        "name": "Tuvaluan dollar"
+        "name": "Tuvaluan dollar",
+        "decimals": 2
     },
     {
         "code": "UGX",
         "local": "Uganda",
         "symbol": "Sh",
-        "name": "Ugandan shilling"
+        "name": "Ugandan shilling",
+        "decimals": 2
     },
     {
         "code": "UAH",
         "local": "Ukraine",
         "symbol": "₴",
-        "name": "Ukrainian hryvnia"
+        "name": "Ukrainian hryvnia",
+        "decimals": 2
     },
     {
         "code": "AED",
         "local": "United Arab Emirates",
         "symbol": "د.إ",
-        "name": "United Arab Emirates dirham"
+        "name": "United Arab Emirates dirham",
+        "decimals": 2
     },
     {
         "code": "GBP",
         "local": "United Kingdom",
         "symbol": "£",
-        "name": "British pound"
+        "name": "British pound",
+        "decimals": 2
     },
     {
         "code": "USD",
         "local": "United States",
         "symbol": "$",
-        "name": "United States dollar"
+        "name": "United States dollar",
+        "decimals": 2
     },
     {
         "code": "USD",
         "local": "United States Minor Outlying Islands",
         "symbol": "$",
-        "name": "United States dollar"
+        "name": "United States dollar",
+        "decimals": 2
     },
     {
         "code": "USD",
         "local": "United States Virgin Islands",
         "symbol": "$",
-        "name": "United States dollar"
+        "name": "United States dollar",
+        "decimals": 2
     },
     {
         "code": "UYU",
         "local": "Uruguay",
         "symbol": "$",
-        "name": "Uruguayan peso"
+        "name": "Uruguayan peso",
+        "decimals": 2
     },
     {
         "code": "UZS",
         "local": "Uzbekistan",
         "symbol": "so'm",
-        "name": "Uzbekistani soʻm"
+        "name": "Uzbekistani soʻm",
+        "decimals": 2
     },
     {
         "code": "VUV",
         "local": "Vanuatu",
         "symbol": "Vt",
-        "name": "Vanuatu vatu"
+        "name": "Vanuatu vatu",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Vatican City",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     },
     {
         "code": "VES",
         "local": "Venezuela",
         "symbol": "Bs.S.",
-        "name": "Venezuelan bolívar soberano"
+        "name": "Venezuelan bolívar soberano",
+        "decimals": 2
     },
     {
         "code": "VND",
         "local": "Vietnam",
         "symbol": "₫",
-        "name": "Vietnamese đồng"
+        "name": "Vietnamese đồng",
+        "decimals": 2
     },
     {
         "code": "XPF",
         "local": "Wallis and Futuna",
         "symbol": "₣",
-        "name": "CFP franc"
+        "name": "CFP franc",
+        "decimals": 2
     },
     {
         "code": "DZD",
         "local": "Western Sahara",
         "symbol": "دج",
-        "name": "Algerian dinar"
+        "name": "Algerian dinar",
+        "decimals": 2
     },
     {
         "code": "MAD",
         "local": "Western Sahara",
         "symbol": "DH",
-        "name": "Moroccan dirham"
+        "name": "Moroccan dirham",
+        "decimals": 2
     },
     {
         "code": "MRU",
         "local": "Western Sahara",
         "symbol": "UM",
-        "name": "Mauritanian ouguiya"
+        "name": "Mauritanian ouguiya",
+        "decimals": 2
     },
     {
         "code": "YER",
         "local": "Yemen",
         "symbol": "﷼",
-        "name": "Yemeni rial"
+        "name": "Yemeni rial",
+        "decimals": 2
     },
     {
         "code": "ZMW",
         "local": "Zambia",
         "symbol": "ZK",
-        "name": "Zambian kwacha"
+        "name": "Zambian kwacha",
+        "decimals": 2
     },
     {
         "code": "ZWL",
         "local": "Zimbabwe",
         "symbol": "$",
-        "name": "Zimbabwean dollar"
+        "name": "Zimbabwean dollar",
+        "decimals": 2
     },
     {
         "code": "EUR",
         "local": "Åland Islands",
         "symbol": "€",
-        "name": "Euro"
+        "name": "Euro",
+        "decimals": 2
     }
 ]

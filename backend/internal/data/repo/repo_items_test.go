@@ -2,12 +2,14 @@ package repo
 
 import (
 	"context"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
 )
 
@@ -317,3 +319,83 @@ func TestItemRepository_GetAllCustomFields(t *testing.T) {
 		assert.ElementsMatch(t, values[:1], results)
 	}
 }
+
+func TestItemsRepository_DeleteWithAttachments(t *testing.T) {
+	// Create an item with an attachment
+	item := useItems(t, 1)[0]
+
+	// Add an attachment to the item
+	attachment, err := tRepos.Attachments.Create(
+		context.Background(),
+		item.ID,
+		ItemCreateAttachment{
+			Title:   "test-attachment.txt",
+			Content: strings.NewReader("test content for attachment deletion"),
+		},
+		attachment.TypePhoto,
+		true,
+	)
+	require.NoError(t, err)
+	assert.NotNil(t, attachment)
+
+	// Verify the attachment exists
+	retrievedAttachment, err := tRepos.Attachments.Get(context.Background(), tGroup.ID, attachment.ID)
+	require.NoError(t, err)
+	assert.Equal(t, attachment.ID, retrievedAttachment.ID)
+
+	// Verify the attachment is linked to the item
+	itemWithAttachments, err := tRepos.Items.GetOne(context.Background(), item.ID)
+	require.NoError(t, err)
+	assert.Len(t, itemWithAttachments.Attachments, 1)
+	assert.Equal(t, attachment.ID, itemWithAttachments.Attachments[0].ID)
+
+	// Delete the item
+	err = tRepos.Items.Delete(context.Background(), item.ID)
+	require.NoError(t, err)
+
+	// Verify the item is deleted
+	_, err = tRepos.Items.GetOne(context.Background(), item.ID)
+	require.Error(t, err)
+
+	// Verify the attachment is also deleted
+	_, err = tRepos.Attachments.Get(context.Background(), tGroup.ID, attachment.ID)
+	require.Error(t, err)
+}
+
+func TestItemsRepository_DeleteByGroupWithAttachments(t *testing.T) {
+	// Create an item with an attachment
+	item := useItems(t, 1)[0]
+
+	// Add an attachment to the item
+	attachment, err := tRepos.Attachments.Create(
+		context.Background(),
+		item.ID,
+		ItemCreateAttachment{
+			Title:   "test-attachment-by-group.txt",
+			Content: strings.NewReader("test content for attachment deletion by group"),
+		},
+		attachment.TypePhoto,
+		true,
+	)
+	require.NoError(t, err)
+	assert.NotNil(t, attachment)
+
+	// Verify the attachment exists
+	retrievedAttachment, err := tRepos.Attachments.Get(context.Background(), tGroup.ID, attachment.ID)
+	require.NoError(t, err)
+	assert.Equal(t, attachment.ID, retrievedAttachment.ID)
+
+	// Delete the item using DeleteByGroup
+	err = tRepos.Items.DeleteByGroup(context.Background(), tGroup.ID, item.ID)
+	require.NoError(t, err)
+
+	// Verify the item is deleted
+	_, err = tRepos.Items.GetOneByGroup(context.Background(), tGroup.ID, item.ID)
+	require.Error(t, err)
+
+	// Verify the attachment is also deleted
+	_, err = tRepos.Attachments.Get(context.Background(), tGroup.ID, attachment.ID)
+	require.Error(t, err)
+}
+
+

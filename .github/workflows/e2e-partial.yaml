@@ -1,0 +1,95 @@
+name: E2E (Playwright)
+
+on:
+  workflow_call:
+
+
+jobs:
+  playwright-tests:
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        shardIndex: [1,2,3,4]
+        shardTotal: [4]
+    name: E2E Playwright Testing ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Task
+        uses: arduino/setup-task@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+          cache-dependency-path: backend/go.mod
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - uses: pnpm/action-setup@v3.0.0
+        with:
+          version: 9.12.2
+
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: frontend
+
+      - name: Install Go Dependencies
+        run: go mod download
+        working-directory: backend
+
+      - name: Run E2E Tests
+        run: task test:e2e -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+
+      - uses: actions/upload-artifact@v4
+        name: Upload partial Playwright report
+        if: ${{ !cancelled() }}
+        with:
+          name: blob-report-${{ matrix.shardIndex }}
+          path: frontend/blob-report/
+          retention-days: 2
+
+  merge-reports:
+    # Merge reports after playwright-tests, even if some shards have failed
+    if: ${{ !cancelled() }}
+    needs: [playwright-tests]
+    name: Merge Playwright Reports
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - uses: pnpm/action-setup@v3.0.0
+        with:
+          version: 9.12.2
+
+      - name: Install dependencies
+        run: pnpm install
+        working-directory: frontend
+
+      - name: Download blob reports from GitHub Actions Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: frontend/all-blob-reports
+          pattern: blob-report-*
+          merge-multiple: true
+
+      - name: Merge into HTML Report
+        run: pnpm exec playwright merge-reports --reporter html,github ./all-blob-reports
+        working-directory: frontend
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-report--attempt-${{ github.run_attempt }}
+          path: frontend/playwright-report
+          retention-days: 30

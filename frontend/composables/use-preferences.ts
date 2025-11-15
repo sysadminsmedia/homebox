@@ -1,8 +1,15 @@
 import type { Ref } from "vue";
-import type { TableHeader } from "~/components/Item/View/Table.types";
+import type { ItemSummary } from "~/lib/api/types/data-contracts";
 import type { DaisyTheme } from "~~/lib/data/themes";
 
-export type ViewType = "table" | "card" | "tree";
+export type ViewType = "table" | "card";
+
+export type DuplicateSettings = {
+  copyMaintenance: boolean;
+  copyAttachments: boolean;
+  copyCustomFields: boolean;
+  copyPrefixOverride: string | null;
+};
 
 export type LocationViewPreferences = {
   showDetails: boolean;
@@ -11,9 +18,19 @@ export type LocationViewPreferences = {
   itemDisplayView: ViewType;
   theme: DaisyTheme;
   itemsPerTablePage: number;
-  tableHeaders?: TableHeader[];
-  displayHeaderDecor: boolean;
+  tableHeaders?: {
+    value: keyof ItemSummary;
+    enabled: boolean;
+  }[];
+  displayLegacyHeader: boolean;
+  legacyImageFit: boolean;
   language?: string;
+  overrideFormatLocale?: string;
+  duplicateSettings: DuplicateSettings;
+  shownMultiTabWarning: boolean;
+  quickActions: {
+    enabled: boolean;
+  };
 };
 
 /**
@@ -30,8 +47,20 @@ export function useViewPreferences(): Ref<LocationViewPreferences> {
       itemDisplayView: "card",
       theme: "homebox",
       itemsPerTablePage: 10,
-      displayHeaderDecor: true,
+      displayLegacyHeader: false,
+      legacyImageFit: false,
       language: null,
+      overrideFormatLocale: null,
+      duplicateSettings: {
+        copyMaintenance: false,
+        copyAttachments: true,
+        copyCustomFields: true,
+        copyPrefixOverride: null,
+      },
+      shownMultiTabWarning: false,
+      quickActions: {
+        enabled: true,
+      },
     },
     { mergeDefaults: true }
   );

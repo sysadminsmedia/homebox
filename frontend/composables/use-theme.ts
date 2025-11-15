@@ -42,27 +42,11 @@ export function useTheme(): UseTheme {
   return { theme, setTheme };
 }
 
-export function useIsDark() {
+export function useIsThemeInList(list: DaisyTheme[]) {
   const theme = useTheme();
 
-  const darkthemes = [
-    "synthwave",
-    "retro",
-    "cyberpunk",
-    "valentine",
-    "halloween",
-    "forest",
-    "aqua",
-    "black",
-    "luxury",
-    "dracula",
-    "business",
-    "night",
-    "coffee",
-  ];
-
   return computed(() => {
-    return darkthemes.includes(theme.theme.value);
+    return list.includes(theme.theme.value);
   });
 }
 
@@ -75,7 +59,6 @@ export const themes = [
   "theme-corporate",
   "theme-cupcake",
   "theme-cyberpunk",
-  "theme-dark",
   "theme-dracula",
   "theme-emerald",
   "theme-fantasy",
@@ -97,7 +80,4 @@ export const themes = [
   "theme-night",
   "theme-coffee",
   "theme-winter",
-  "theme-dim",
-  "theme-nord",
-  "theme-sunset",
 ];

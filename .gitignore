@@ -60,4 +60,10 @@ backend/app/api/static/public/*
 backend/api
 
 docs/.vitepress/cache/
-/.data/
+.data/
+
+# Playwright
+frontend/test-results/
+frontend/playwright-report/
+frontend/blob-report/
+frontend/playwright/.cache/

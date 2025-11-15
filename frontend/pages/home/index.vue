@@ -1,14 +1,25 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { statCardData } from "./statistics";
   import { itemsTable } from "./table";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
+  import BaseContainer from "@/components/Base/Container.vue";
+  import BaseCard from "@/components/Base/Card.vue";
+  import Subtitle from "~/components/global/Subtitle.vue";
+  import StatCard from "~/components/global/StatCard/StatCard.vue";
+  import ItemCard from "~/components/Item/Card.vue";
+  import LocationCard from "~/components/Location/Card.vue";
+  import LabelChip from "~/components/Label/Chip.vue";
+  import Table from "~/components/Item/View/Table.vue";
+
+  const { t } = useI18n();
 
   definePageMeta({
     middleware: ["auth"],
   });
   useHead({
-    title: "Homebox | Home",
+    title: "HomeBox | " + t("menu.home"),
   });
 
   const api = useUserApi();
@@ -26,7 +37,7 @@
 
 <template>
   <div>
-    <BaseContainer class="flex flex-col gap-12 pb-16">
+    <BaseContainer class="flex flex-col gap-4">
       <section>
         <Subtitle> {{ $t("home.quick_statistics") }} </Subtitle>
         <div class="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-6">
@@ -39,7 +50,7 @@
 
         <p v-if="itemTable.items.length === 0" class="ml-2 text-sm">{{ $t("items.no_results") }}</p>
         <BaseCard v-else-if="breakpoints.lg">
-          <ItemViewTable :items="itemTable.items" disable-controls />
+          <Table :items="itemTable.items" />
         </BaseCard>
         <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2">
           <ItemCard v-for="item in itemTable.items" :key="item.id" :item="item" />
@@ -49,7 +60,7 @@
       <section>
         <Subtitle> {{ $t("home.storage_locations") }} </Subtitle>
         <p v-if="locations.length === 0" class="ml-2 text-sm">{{ $t("locations.no_results") }}</p>
-        <div v-else class="card grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+        <div v-else class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
           <LocationCard v-for="location in locations" :key="location.id" :location="location" />
         </div>
       </section>

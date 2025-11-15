@@ -29,20 +29,20 @@ func generateOrPrint(ctrl *V1Controller, w http.ResponseWriter, r *http.Request,
 		_, err = w.Write([]byte("Printed!"))
 		return err
 	} else {
-		return labelmaker.GenerateLabel(w, &params)
+		return labelmaker.GenerateLabel(w, &params, ctrl.config)
 	}
 }
 
 // HandleGetLocationLabel godoc
 //
-//	@Summary  Get Location label
-//	@Tags     Locations
-//	@Produce  json
-//	@Param    id	path	string	true	"Location ID"
-//	@Param		print	query	bool	false	"Print this label, defaults to false"
-//	@Success  200  {string}  string  "image/png"
-//	@Router   /v1/labelmaker/location/{id} [GET]
-//	@Security Bearer
+//	@Summary	Get Location label
+//	@Tags		Locations
+//	@Produce	json
+//	@Param		id		path		string	true	"Location ID"
+//	@Param		print	query		bool	false	"Print this label, defaults to false"
+//	@Success	200		{string}	string	"image/png"
+//	@Router		/v1/labelmaker/location/{id} [GET]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleGetLocationLabel() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		ID, err := adapters.RouteUUID(r, "id")
@@ -63,14 +63,14 @@ func (ctrl *V1Controller) HandleGetLocationLabel() errchain.HandlerFunc {
 
 // HandleGetItemLabel godoc
 //
-//	@Summary  Get Item label
-//	@Tags     Items
-//	@Produce  json
-//	@Param    id  path  string  true  "Item ID"
-//	@Param		print	query	bool	false	"Print this label, defaults to false"
-//	@Success  200  {string}  string  "image/png"
-//	@Router   /v1/labelmaker/item/{id} [GET]
-//	@Security Bearer
+//	@Summary	Get Item label
+//	@Tags		Items
+//	@Produce	json
+//	@Param		id		path		string	true	"Item ID"
+//	@Param		print	query		bool	false	"Print this label, defaults to false"
+//	@Success	200		{string}	string	"image/png"
+//	@Router		/v1/labelmaker/item/{id} [GET]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleGetItemLabel() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		ID, err := adapters.RouteUUID(r, "id")
@@ -97,14 +97,14 @@ func (ctrl *V1Controller) HandleGetItemLabel() errchain.HandlerFunc {
 
 // HandleGetAssetLabel godoc
 //
-//	@Summary  Get Asset label
-//	@Tags     Items
-//	@Produce  json
-//	@Param    id  path  string  true  "Asset ID"
-//	@Param		print	query	bool	false	"Print this label, defaults to false"
-//	@Success  200  {string}  string  "image/png"
-//	@Router   /v1/labelmaker/assets/{id} [GET]
-//	@Security Bearer
+//	@Summary	Get Asset label
+//	@Tags		Items
+//	@Produce	json
+//	@Param		id		path		string	true	"Asset ID"
+//	@Param		print	query		bool	false	"Print this label, defaults to false"
+//	@Success	200		{string}	string	"image/png"
+//	@Router		/v1/labelmaker/assets/{id} [GET]
+//	@Security	Bearer
 func (ctrl *V1Controller) HandleGetAssetLabel() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		assetIDParam := chi.URLParam(r, "id")

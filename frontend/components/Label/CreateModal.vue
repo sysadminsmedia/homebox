@@ -1,53 +1,49 @@
 <template>
-  <BaseModal v-model="modal">
-    <template #title>{{ $t("components.label.create_modal.title") }}</template>
-    <form @submit.prevent="create()">
+  <BaseModal :dialog-id="DialogID.CreateLabel" :title="$t('components.label.create_modal.title')">
+    <form class="flex flex-col gap-2" @submit.prevent="create()">
       <FormTextField
-        ref="locationNameRef"
         v-model="form.name"
         :trigger-focus="focused"
         :autofocus="true"
         :label="$t('components.label.create_modal.label_name')"
-        :max-length="255"
+        :max-length="50"
         :min-length="1"
       />
       <FormTextArea
         v-model="form.description"
         :label="$t('components.label.create_modal.label_description')"
-        :max-length="255"
+        :max-length="1000"
       />
-      <div class="modal-action">
-        <div class="flex justify-center">
-          <BaseButton class="rounded-r-none" :loading="loading" type="submit"> {{ $t("global.create") }} </BaseButton>
-          <div class="dropdown dropdown-top">
-            <label tabindex="0" class="btn rounded-l-none rounded-r-xl">
-              <MdiChevronDown class="size-5" />
-            </label>
-            <ul tabindex="0" class="dropdown-content menu rounded-box right-0 w-64 bg-base-100 p-2 shadow">
-              <li>
-                <button type="button" @click="create(false)">{{ $t("global.create_and_add") }}</button>
-              </li>
-            </ul>
-          </div>
-        </div>
+      <ColorSelector v-model="form.color" :label="$t('components.label.create_modal.label_color')" :show-hex="true" />
+      <div class="mt-4 flex flex-row-reverse">
+        <ButtonGroup>
+          <Button :disabled="loading" type="submit">{{ $t("global.create") }}</Button>
+          <Button variant="outline" :disabled="loading" type="button" @click="create(false)">
+            {{ $t("global.create_and_add") }}
+          </Button>
+        </ButtonGroup>
       </div>
     </form>
-    <p class="mt-4 text-center text-sm">
-      use <kbd class="kbd kbd-xs">Shift</kbd> + <kbd class="kbd kbd-xs"> Enter </kbd> to create and add another
-    </p>
   </BaseModal>
 </template>
 
 <script setup lang="ts">
-  import MdiChevronDown from "~icons/mdi/chevron-down";
-  const props = defineProps({
-    modelValue: {
-      type: Boolean,
-      required: true,
-    },
-  });
+  import { useI18n } from "vue-i18n";
+  import { DialogID } from "@/components/ui/dialog-provider/utils";
+  import { toast } from "@/components/ui/sonner";
+  import BaseModal from "@/components/App/CreateModal.vue";
+  import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
+  import ColorSelector from "@/components/Form/ColorSelector.vue";
+  import FormTextField from "~/components/Form/TextField.vue";
+  import FormTextArea from "~/components/Form/TextArea.vue";
+  import { Button, ButtonGroup } from "~/components/ui/button";
 
-  const modal = useVModel(props, "modelValue");
+  const { t } = useI18n();
+
+  const { closeDialog } = useDialog();
+
+  useDialogHotkey(DialogID.CreateLabel, { code: "Digit2", shift: true });
+
   const loading = ref(false);
   const focused = ref(false);
   const form = reactive({
@@ -64,45 +60,36 @@
     loading.value = false;
   }
 
-  watch(
-    () => modal.value,
-    open => {
-      if (open)
-        useTimeoutFn(() => {
-          focused.value = true;
-        }, 50);
-      else focused.value = false;
-    }
-  );
-
   const api = useUserApi();
-  const toast = useNotifier();
-
   const { shift } = useMagicKeys();
 
   async function create(close = true) {
     if (loading.value) {
-      toast.error("Already creating a label");
+      toast.error(t("components.label.create_modal.toast.already_creating"));
       return;
     }
-    loading.value = true;
-
-    if (shift.value) {
-      close = false;
+    if (form.name.length > 50) {
+      toast.error(t("components.label.create_modal.toast.label_name_too_long"));
+      return;
     }
 
+    loading.value = true;
+
+    if (shift?.value) close = false;
+
     const { error, data } = await api.labels.create(form);
+
     if (error) {
-      toast.error("Couldn't create label");
+      toast.error(t("components.label.create_modal.toast.create_failed"));
       loading.value = false;
       return;
     }
 
-    toast.success("Label created");
+    toast.success(t("components.label.create_modal.toast.create_success"));
     reset();
 
     if (close) {
-      modal.value = false;
+      closeDialog(DialogID.CreateLabel);
       navigateTo(`/label/${data.id}`);
     }
   }

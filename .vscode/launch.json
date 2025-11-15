@@ -16,14 +16,12 @@
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "${workspaceRoot}/backend/app/api/",
+            "program": "${workspaceFolder}/backend/app/api/",
             "args": [],
             "env": {
                 "HBOX_DEMO": "true",
                 "HBOX_LOG_LEVEL": "debug",
-                "HBOX_DEBUG_ENABLED": "true",
-                "HBOX_STORAGE_DATA": "${workspaceRoot}/backend/.data",
-                "HBOX_STORAGE_SQLITE_URL": "${workspaceRoot}/backend/.data/homebox.db?_fk=1&_time_format=sqlite"
+                "HBOX_DEBUG_ENABLED": "true"
             },
             "console": "integratedTerminal",
         },

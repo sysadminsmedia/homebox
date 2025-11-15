@@ -1,0 +1,118 @@
+{
+    "components": {
+        "app": {
+            "import_dialog": {
+                "change_warning": "Način unosa podataka s postojećim import_refs se promjenio. Ako je import_ref prisutan u CSV fajlu,\npredmet će se ažurirati s vrijednostima iz CSV fajla.",
+                "title": "Importuj CSV fajl"
+            },
+            "outdated": {
+                "current_version": "Trenutna verzija",
+                "dismiss": "Odbaci",
+                "latest_version": "Najnovija verzija",
+                "new_version_available": "Dostupna nova verzija",
+                "new_version_available_link": "Klikni ovdje za pregled bilješke o izdanju"
+            }
+        },
+        "global": {
+            "copy_text": {
+                "documentation": "dokumentacija",
+                "failed_to_copy": "Kopiranje teksta u clipboard nije uspjelo",
+                "https_required": "jer je HTTPS obavezan",
+                "learn_more": "Saznaj više u našoj"
+            },
+            "date_time": {
+                "ago": "prije {0}",
+                "days": "dana",
+                "hour": "sat",
+                "hours": "sati",
+                "in": "u {0}",
+                "just-now": "upravo sada",
+                "last-month": "prošlog mjeseca",
+                "last-week": "prošle sedmice",
+                "last-year": "prošle godine",
+                "minute": "minuta",
+                "minutes": "minuta",
+                "months": "mjeseci",
+                "second": "sekunda",
+                "seconds": "sekundi",
+                "tomorrow": "sutra",
+                "week": "sedmica",
+                "weeks": "sedmica/e",
+                "years": "godine/a",
+                "yesterday": "jučer"
+            }
+        },
+        "item": {
+            "view": {
+                "selectable": {
+                    "card": "Karta",
+                    "items": "Predmeti",
+                    "table": "Tabela"
+                },
+                "table": {
+                    "headers": "Zaglavlje",
+                    "page": "Stranica"
+                }
+            }
+        }
+    },
+    "global": {
+        "add": "Dodaj",
+        "archived": "Arhivirano",
+        "cancel": "Poništi",
+        "confirm": "Potvrdi",
+        "create": "Kreiraj",
+        "created": "Kreirano",
+        "delete": "Obriši",
+        "details": "Detalji",
+        "duplicate": "Dupliciraj",
+        "edit": "Izmjeni",
+        "email": "Email",
+        "insured": "Osigurano",
+        "items": "Predmeti",
+        "labels": "Etikete",
+        "locations": "Lokacije",
+        "maintenance": "Održavanje",
+        "name": "Ime",
+        "navigate": "Navigiraj",
+        "password": "Šifra",
+        "quantity": "Količina",
+        "save": "Sačuvaj",
+        "search": "Pretraži"
+    },
+    "maintenance": {
+        "list": {
+            "delete": "Obriši",
+            "duplicate": "Dupliciraj",
+            "edit": "Izmjeni"
+        },
+        "modal": {
+            "notes": "Bilješke"
+        }
+    },
+    "menu": {
+        "profile": "Profil"
+    },
+    "profile": {
+        "enabled": "Uključeno",
+        "example": "Primjer",
+        "gen_invite": "Generiši link pozivnicu",
+        "group_settings": "Postavke grupe",
+        "test": "Test"
+    },
+    "scanner": {
+        "title": "Skener"
+    },
+    "tools": {
+        "import_export": "Imortovanje/Eksportovanje",
+        "import_export_set": {
+            "export": "Izvoz inventara",
+            "export_button": "Izvoz inventara"
+        },
+        "reports": "Izvještaji",
+        "reports_set": {
+            "bill_of_materials": "Popis materijala",
+            "bill_of_materials_button": "Generiši popis materijala"
+        }
+    }
+}
