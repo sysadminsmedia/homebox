@@ -9,10 +9,11 @@ import (
 )
 
 func userFactory() UserCreate {
+	password := fk.Str(10)
 	return UserCreate{
 		Name:        fk.Str(10),
 		Email:       fk.Email(),
-		Password:    fk.Str(10),
+		Password:    &password,
 		IsSuperuser: fk.Bool(),
 		GroupID:     tGroup.ID,
 	}

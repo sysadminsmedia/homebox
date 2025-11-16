@@ -20,9 +20,15 @@ import (
 //	@Produce	json
 //	@Param		payload	body	services.UserRegistration	true	"User Data"
 //	@Success	204
+//  @Failure    403 {string} string "Local login is not enabled"
 //	@Router		/v1/users/register [Post]
 func (ctrl *V1Controller) HandleUserRegistration() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
+		// Forbidden if local login is not enabled
+		if !ctrl.config.Options.AllowLocalLogin {
+			return validate.NewRequestError(fmt.Errorf("local login is not enabled"), http.StatusForbidden)
+		}
+
 		regData := services.UserRegistration{}
 
 		if err := server.Decode(r, &regData); err != nil {

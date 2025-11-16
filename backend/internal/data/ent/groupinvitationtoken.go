@@ -80,7 +80,7 @@ func (*GroupInvitationToken) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the GroupInvitationToken fields.
-func (git *GroupInvitationToken) assignValues(columns []string, values []any) error {
+func (_m *GroupInvitationToken) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -90,47 +90,47 @@ func (git *GroupInvitationToken) assignValues(columns []string, values []any) er
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
-				git.ID = *value
+				_m.ID = *value
 			}
 		case groupinvitationtoken.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				git.CreatedAt = value.Time
+				_m.CreatedAt = value.Time
 			}
 		case groupinvitationtoken.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				git.UpdatedAt = value.Time
+				_m.UpdatedAt = value.Time
 			}
 		case groupinvitationtoken.FieldToken:
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field token", values[i])
 			} else if value != nil {
-				git.Token = *value
+				_m.Token = *value
 			}
 		case groupinvitationtoken.FieldExpiresAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field expires_at", values[i])
 			} else if value.Valid {
-				git.ExpiresAt = value.Time
+				_m.ExpiresAt = value.Time
 			}
 		case groupinvitationtoken.FieldUses:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field uses", values[i])
 			} else if value.Valid {
-				git.Uses = int(value.Int64)
+				_m.Uses = int(value.Int64)
 			}
 		case groupinvitationtoken.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field group_invitation_tokens", values[i])
 			} else if value.Valid {
-				git.group_invitation_tokens = new(uuid.UUID)
-				*git.group_invitation_tokens = *value.S.(*uuid.UUID)
+				_m.group_invitation_tokens = new(uuid.UUID)
+				*_m.group_invitation_tokens = *value.S.(*uuid.UUID)
 			}
 		default:
-			git.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -138,52 +138,52 @@ func (git *GroupInvitationToken) assignValues(columns []string, values []any) er
 
 // Value returns the ent.Value that was dynamically selected and assigned to the GroupInvitationToken.
 // This includes values selected through modifiers, order, etc.
-func (git *GroupInvitationToken) Value(name string) (ent.Value, error) {
-	return git.selectValues.Get(name)
+func (_m *GroupInvitationToken) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // QueryGroup queries the "group" edge of the GroupInvitationToken entity.
-func (git *GroupInvitationToken) QueryGroup() *GroupQuery {
-	return NewGroupInvitationTokenClient(git.config).QueryGroup(git)
+func (_m *GroupInvitationToken) QueryGroup() *GroupQuery {
+	return NewGroupInvitationTokenClient(_m.config).QueryGroup(_m)
 }
 
 // Update returns a builder for updating this GroupInvitationToken.
 // Note that you need to call GroupInvitationToken.Unwrap() before calling this method if this GroupInvitationToken
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (git *GroupInvitationToken) Update() *GroupInvitationTokenUpdateOne {
-	return NewGroupInvitationTokenClient(git.config).UpdateOne(git)
+func (_m *GroupInvitationToken) Update() *GroupInvitationTokenUpdateOne {
+	return NewGroupInvitationTokenClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the GroupInvitationToken entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (git *GroupInvitationToken) Unwrap() *GroupInvitationToken {
-	_tx, ok := git.config.driver.(*txDriver)
+func (_m *GroupInvitationToken) Unwrap() *GroupInvitationToken {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: GroupInvitationToken is not a transactional entity")
 	}
-	git.config.driver = _tx.drv
-	return git
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (git *GroupInvitationToken) String() string {
+func (_m *GroupInvitationToken) String() string {
 	var builder strings.Builder
 	builder.WriteString("GroupInvitationToken(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", git.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("created_at=")
-	builder.WriteString(git.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
-	builder.WriteString(git.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("token=")
-	builder.WriteString(fmt.Sprintf("%v", git.Token))
+	builder.WriteString(fmt.Sprintf("%v", _m.Token))
 	builder.WriteString(", ")
 	builder.WriteString("expires_at=")
-	builder.WriteString(git.ExpiresAt.Format(time.ANSIC))
+	builder.WriteString(_m.ExpiresAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("uses=")
-	builder.WriteString(fmt.Sprintf("%v", git.Uses))
+	builder.WriteString(fmt.Sprintf("%v", _m.Uses))
 	builder.WriteByte(')')
 	return builder.String()
 }
