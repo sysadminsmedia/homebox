@@ -3,7 +3,7 @@ services:
     image: homebox
     build:
       context: .
-      dockerfile: ./Dockerfile.hardened
+      dockerfile: ./Dockerfile
       args:
         - COMMIT=head
         - BUILD_TIME=0001-01-01T00:00:00Z
@@ -11,7 +11,7 @@ services:
         platforms:
             - linux/amd64
             - linux/arm64
-            - linux/arm/v7
+            - linux/arm
     environment:
       - HBOX_DEBUG=true
       - HBOX_LOGGER_LEVEL=-1
