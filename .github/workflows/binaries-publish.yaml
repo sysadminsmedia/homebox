@@ -51,7 +51,7 @@ jobs:
           workdir: "backend"
           distribution: goreleaser
           version: "~> v2"
-          args: release --rm-dist
+          args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
