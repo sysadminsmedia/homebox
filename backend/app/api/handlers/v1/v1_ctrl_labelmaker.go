@@ -103,7 +103,7 @@ func (ctrl *V1Controller) HandleGetItemLabel() errchain.HandlerFunc {
 //	@Param		id		path		string	true	"Asset ID"
 //	@Param		print	query		bool	false	"Print this label, defaults to false"
 //	@Success	200		{string}	string	"image/png"
-//	@Router		/v1/labelmaker/assets/{id} [GET]
+//	@Router		/v1/labelmaker/asset/{id} [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleGetAssetLabel() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
