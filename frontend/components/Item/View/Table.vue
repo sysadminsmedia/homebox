@@ -11,7 +11,7 @@
 
   const { t } = useI18n();
 
-  const columns = computed(() => makeColumns(t).filter(c => c.enableHiding !== false));
+  const columns = computed(() => makeColumns({ t }).filter(c => c.enableHiding !== false));
 </script>
 
 <template>

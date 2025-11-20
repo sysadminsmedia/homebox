@@ -437,6 +437,7 @@
                   <SelectValue :placeholder="$t('items.order_by')" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="name"> {{ $t("items.name") }} </SelectItem>
                   <SelectItem value="createdAt"> {{ $t("items.created_at") }} </SelectItem>
                   <SelectItem value="updatedAt"> {{ $t("items.updated_at") }} </SelectItem>
                 </SelectContent>
@@ -509,6 +510,7 @@
         :items="items"
         :location-flat-tree="locationFlatTree"
         :pagination="pagination"
+        disable-sort
         @refresh="async () => search()"
       />
     </section>
