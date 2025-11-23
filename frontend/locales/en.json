@@ -138,18 +138,53 @@
                 "searching": "Searching…"
             },
             "view": {
+                "change_details": {
+                    "title": "Change Item Details",
+                    "failed_to_update_item": "Failed to update item",
+                    "add_labels": "Add Labels",
+                    "remove_labels": "Remove Labels"
+                },
                 "selectable": {
                     "card": "Card",
                     "items": "Items",
                     "no_items": "No Items to Display",
-                    "table": "Table"
+                    "table": "Table",
+                    "select_all": "Select All",
+                    "select_row": "Select Row",
+                    "select_card": "Select Card"
                 },
                 "table": {
                     "headers": "Headers",
                     "page": "Page",
                     "rows_per_page": "Rows per page",
+                    "quick_actions": "Enable Quick Actions & Selection",
                     "table_settings": "Table Settings",
-                    "view_item": "View Item"
+                    "view_item": "View Item",
+                    "selected_rows": "{selected} of {total} row(s) selected.",
+                    "dropdown": {
+                        "open_menu": "Open menu",
+                        "actions": "Actions",
+                        "view_item": "View item",
+                        "view_items": "View items",
+                        "toggle_expand": "Toggle Expand",
+                        "download_csv": "Download Table as CSV",
+                        "download_json": "Download Table as JSON",
+                        "delete_selected": "Delete Selected Items",
+                        "delete_item": "Delete Item",
+                        "error_deleting": "Error Deleting Item",
+                        "delete_confirmation": "Are you sure you want to delete the selected item(s)? This action cannot be undone.",
+                        "duplicate_selected": "Duplicate Selected Items",
+                        "duplicate_item": "Duplicate Item",
+                        "error_duplicating": "Error Duplicating Item",
+                        "open_multi_tab_warning": "For security reasons browsers do not allow multiple tabs to be opened at once by default, to change this please follow the documentation:",
+                        "create_maintenance_selected": "Create Maintenance Entry for Selected Items",
+                        "create_maintenance_item": "Create Maintenance Entry for Item",
+                        "create_maintenance_success": "Maintenance Entry(s) Created",
+                        "change_location": "Change Location",
+                        "change_location_success": "Location Changed",
+                        "change_labels": "Change Labels",
+                        "change_labels_success": "Labels Changed"
+                    }
                 }
             }
         },
@@ -244,7 +279,8 @@
         "updating": "Updating",
         "value": "Value",
         "version": "Version: { version }",
-        "welcome": "Welcome, { username }"
+        "welcome": "Welcome, { username }",
+        "preview": "Preview"
     },
     "home": {
         "labels": "Labels",
@@ -529,6 +565,7 @@
         "delete_account_sub": "Delete your account and all its associated data. This can not be undone.",
         "delete_notifier_confirm": "Are you sure you want to delete this notifier?",
         "display_legacy_header": "{ currentValue, select, true {Disable Legacy Header} false {Enable Legacy Header} other {Not Hit}}",
+        "legacy_image_fit": "{ currentValue, select, true {Disable Legacy Fit: Fit Image with Bars} false {Enable Legacy Fit: Fill Image with Crop} other {Not Hit}}",
         "enabled": "Enabled",
         "example": "Example",
         "gen_invite": "Generate Invite Link",

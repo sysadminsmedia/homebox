@@ -4,12 +4,14 @@ import type { Ref } from "vue";
 
 type Store = UseConfirmDialogReturn<any, boolean, boolean> & {
   text: Ref<string>;
+  href: Ref<string>;
   setup: boolean;
-  open: (text: string) => Promise<UseConfirmDialogRevealResult<boolean, boolean>>;
+  open: (text: string | { message: string; href?: string }) => Promise<UseConfirmDialogRevealResult<boolean, boolean>>;
 };
 
 const store: Partial<Store> = {
   text: ref("Are you sure you want to delete this item? "),
+  href: ref(""),
   setup: false,
 };
 
@@ -31,15 +33,26 @@ export function useConfirm(): Store {
     store.cancel = cancel;
   }
 
-  async function openDialog(msg: string): Promise<UseConfirmDialogRevealResult<boolean, boolean>> {
+  async function openDialog(
+    msg: string | { message: string; href?: string }
+  ): Promise<UseConfirmDialogRevealResult<boolean, boolean>> {
     if (!store.reveal) {
       throw new Error("reveal is not defined");
     }
     if (!store.text) {
       throw new Error("text is not defined");
     }
+    if (store.href === undefined) {
+      throw new Error("href is not defined");
+    }
 
-    store.text.value = msg;
+    store.href.value = "";
+    if (typeof msg === "string") {
+      store.text.value = msg;
+    } else {
+      store.text.value = msg.message;
+      store.href.value = msg.href ?? "";
+    }
     return await store.reveal();
   }
 

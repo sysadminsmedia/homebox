@@ -54,6 +54,7 @@ export enum AttachmentType {
 
 export interface CurrenciesCurrency {
   code: string;
+  decimals: number;
   local: string;
   name: string;
   symbol: string;
@@ -464,6 +465,13 @@ export interface BarcodeProduct {
   search_engine_name: string;
 }
 
+export interface DuplicateOptions {
+  copyAttachments: boolean;
+  copyCustomFields: boolean;
+  copyMaintenance: boolean;
+  copyPrefix: string;
+}
+
 export interface Group {
   createdAt: Date | string;
   currency: string;
@@ -570,6 +578,8 @@ export interface ItemOut {
 
 export interface ItemPatch {
   id: string;
+  labelIds?: string[] | null;
+  locationId?: string | null;
   quantity?: number | null;
 }
 

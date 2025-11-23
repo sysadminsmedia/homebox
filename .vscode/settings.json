@@ -22,6 +22,7 @@
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
   },
   "eslint.format.enable": true,
+  "eslint.validate": ["javascript", "typescript", "vue"],
   "eslint.useFlatConfig": true,
   "css.validate": false,
 	"tailwindCSS.includeLanguages": {

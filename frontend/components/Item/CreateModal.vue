@@ -71,7 +71,7 @@
             ref="fileInput"
             class="absolute left-0 top-0 size-full cursor-pointer opacity-0"
             type="file"
-            accept="image/png,image/jpeg,image/gif,image/avif,image/webp;capture=camera"
+            accept="image/png,image/jpeg,image/gif,image/avif,image/webp,android/force-camera-workaround"
             multiple
             @change="previewImage"
           />

@@ -291,6 +291,18 @@
         "description": "Popis",
         "details": "Detaily",
         "drag_and_drop": "Přetáhněte sem soubory nebo klikněte pro výběr",
+        "duplicate": {
+            "copy_attachments": "Kopírovat přílohy",
+            "copy_custom_fields": "Kopírovat vlastní pole",
+            "copy_maintenance": "Kopírovat údržbu",
+            "custom_prefix": "Kopírovat předponu",
+            "enable_custom_prefix": "Povolit vlastní předponu",
+            "override_instructions": "Podržením klávesy Shift při kliknutí na tlačítko duplikovat přepíšete tato nastavení.",
+            "prefix": "Kopie ",
+            "prefix_instructions": "Tato předpona bude přidána na začátek názvu duplikované položky. Na konec předpony vložte mezeru, aby mezi předponou a názvem položky byla mezera.",
+            "temporary_title": "Dočasné nastavení",
+            "title": "Duplikovat nastavení"
+        },
         "edit": {
             "edit_attachment_dialog": {
                 "attachment_title": "Název přílohy",
@@ -299,7 +311,8 @@
                 "primary_photo_sub": "Tato možnost je k dispozici pouze pro fotky. Primární může být pouze jedna fotka. Pokud vyberete tuto možnost, aktuální primární fotka, pokud existuje, bude odškrtnuta.",
                 "select_type": "Zvolte typ",
                 "title": "Úprava přílohy"
-            }
+            },
+            "view_image": "Zobrazit obrázek"
         },
         "edit_details": "Upravit detaily",
         "field_selector": "Výběr pole",
@@ -397,6 +410,7 @@
         "update_label": "Aktualizovat štítek"
     },
     "languages": {
+        "bs-BA": "Bosňština (Bosna a Hercegovina)",
         "ca": "Katalánština",
         "cs-CZ": "Čeština",
         "de": "Němčina",
@@ -423,6 +437,7 @@
         "th-TH": "Thajština",
         "tr": "Turečtina",
         "uk-UA": "Ukrajinština",
+        "vi-VN": "Vietnamština",
         "zh-CN": "Čínština (Zjednodušená)",
         "zh-HK": "Čínština (Hong Kong)",
         "zh-MO": "Čínština (Macau)",

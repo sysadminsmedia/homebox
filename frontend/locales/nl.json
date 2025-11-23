@@ -134,7 +134,8 @@
             "selector": {
                 "no_results": "Geen resultaten gevonden",
                 "placeholder": "Selecteer…",
-                "search_placeholder": "Type om te zoeken…"
+                "search_placeholder": "Type om te zoeken…",
+                "searching": "Zoeken…"
             },
             "view": {
                 "selectable": {
@@ -291,6 +292,18 @@
         "description": "Beschrijving",
         "details": "Details",
         "drag_and_drop": "Sleep bestanden hierheen en zet ze neer of klik om bestanden te selecteren",
+        "duplicate": {
+            "copy_attachments": "Bijlagen kopiëren",
+            "copy_custom_fields": "Aangepaste velden kopiëren",
+            "copy_maintenance": "Onderhoud kopiëren",
+            "custom_prefix": "Voorvoegsel kopiëren",
+            "enable_custom_prefix": "Aangepast voorvoegsel inschakelen",
+            "override_instructions": "Houd Shift ingedrukt wanneer u op de knop dupliceren klikt om deze instellingen te overschrijven.",
+            "prefix": "Kopie van ",
+            "prefix_instructions": "Dit voorvoegsel wordt toegevoegd aan het begin van de naam van het gedupliceerde item. Voeg een spatie toe aan het einde van het voorvoegsel om een spatie toe te voegen tussen het voorvoegsel en de itemnaam.",
+            "temporary_title": "Tijdelijke instellingen",
+            "title": "Dupliceer instellingen"
+        },
         "edit": {
             "edit_attachment_dialog": {
                 "attachment_title": "Bijlage titel",
@@ -299,7 +312,8 @@
                 "primary_photo_sub": "Deze optie is alleen beschikbaar voor foto's. Er kan maar één primaire foto zijn. Als je deze optie selecteerd zal de huidige primaire foto worden gedeselecteerd.",
                 "select_type": "Selecteer een type",
                 "title": "Bijlage bewerken"
-            }
+            },
+            "view_image": "Afbeelding bekijken"
         },
         "edit_details": "Details bewerken",
         "field_selector": "Veld selectie",

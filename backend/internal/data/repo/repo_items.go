@@ -21,8 +21,9 @@ import (
 )
 
 type ItemsRepository struct {
-	db  *ent.Client
-	bus *eventbus.EventBus
+	db          *ent.Client
+	bus         *eventbus.EventBus
+	attachments *AttachmentRepo
 }
 
 type (
@@ -120,9 +121,11 @@ type (
 	}
 
 	ItemPatch struct {
-		ID        uuid.UUID `json:"id"`
-		Quantity  *int      `json:"quantity,omitempty" extensions:"x-nullable,x-omitempty"`
-		ImportRef *string   `json:"-,omitempty"        extensions:"x-nullable,x-omitempty"`
+		ID         uuid.UUID   `json:"id"`
+		Quantity   *int        `json:"quantity,omitempty" extensions:"x-nullable,x-omitempty"`
+		ImportRef  *string     `json:"-,omitempty"        extensions:"x-nullable,x-omitempty"`
+		LocationID uuid.UUID   `json:"locationId"         extensions:"x-nullable,x-omitempty"`
+		LabelIDs   []uuid.UUID `json:"labelIds"           extensions:"x-nullable,x-omitempty"`
 	}
 
 	ItemSummary struct {
@@ -316,8 +319,13 @@ func (e *ItemsRepository) publishMutationEvent(gid uuid.UUID) {
 	}
 }
 
-func (e *ItemsRepository) getOne(ctx context.Context, where ...predicate.Item) (ItemOut, error) {
-	q := e.db.Item.Query().Where(where...)
+func (e *ItemsRepository) getOneTx(ctx context.Context, tx *ent.Tx, where ...predicate.Item) (ItemOut, error) {
+	var q *ent.ItemQuery
+	if tx != nil {
+		q = tx.Item.Query().Where(where...)
+	} else {
+		q = e.db.Item.Query().Where(where...)
+	}
 
 	return mapItemOutErr(q.
 		WithFields().
@@ -328,6 +336,10 @@ func (e *ItemsRepository) getOne(ctx context.Context, where ...predicate.Item) (
 		WithAttachments().
 		Only(ctx),
 	)
+}
+
+func (e *ItemsRepository) getOne(ctx context.Context, where ...predicate.Item) (ItemOut, error) {
+	return e.getOneTx(ctx, nil, where...)
 }
 
 // GetOne returns a single item by ID. If the item does not exist, an error is returned.
@@ -574,12 +586,21 @@ func (e *ItemsRepository) GetAllZeroAssetID(ctx context.Context, gid uuid.UUID) 
 	return mapItemsSummaryErr(q.All(ctx))
 }
 
-func (e *ItemsRepository) GetHighestAssetID(ctx context.Context, gid uuid.UUID) (AssetID, error) {
-	q := e.db.Item.Query().Where(
-		item.HasGroupWith(group.ID(gid)),
-	).Order(
-		ent.Desc(item.FieldAssetID),
-	).Limit(1)
+func (e *ItemsRepository) GetHighestAssetIDTx(ctx context.Context, tx *ent.Tx, gid uuid.UUID) (AssetID, error) {
+	var q *ent.ItemQuery
+	if tx != nil {
+		q = tx.Item.Query().Where(
+			item.HasGroupWith(group.ID(gid)),
+		).Order(
+			ent.Desc(item.FieldAssetID),
+		).Limit(1)
+	} else {
+		q = e.db.Item.Query().Where(
+			item.HasGroupWith(group.ID(gid)),
+		).Order(
+			ent.Desc(item.FieldAssetID),
+		).Limit(1)
+	}
 
 	result, err := q.First(ctx)
 	if err != nil {
@@ -590,6 +611,10 @@ func (e *ItemsRepository) GetHighestAssetID(ctx context.Context, gid uuid.UUID) 
 	}
 
 	return AssetID(result.AssetID), nil
+}
+
+func (e *ItemsRepository) GetHighestAssetID(ctx context.Context, gid uuid.UUID) (AssetID, error) {
+	return e.GetHighestAssetIDTx(ctx, nil, gid)
 }
 
 func (e *ItemsRepository) SetAssetID(ctx context.Context, gid uuid.UUID, id uuid.UUID, assetID AssetID) error {
@@ -630,7 +655,32 @@ func (e *ItemsRepository) Create(ctx context.Context, gid uuid.UUID, data ItemCr
 }
 
 func (e *ItemsRepository) Delete(ctx context.Context, id uuid.UUID) error {
-	err := e.db.Item.DeleteOneID(id).Exec(ctx)
+	// Get the item with its group and attachments before deletion
+	itm, err := e.db.Item.Query().
+		Where(item.ID(id)).
+		WithGroup().
+		WithAttachments().
+		Only(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Get the group ID for attachment deletion
+	var gid uuid.UUID
+	if itm.Edges.Group != nil {
+		gid = itm.Edges.Group.ID
+	}
+
+	// Delete all attachments (and their files) before deleting the item
+	for _, att := range itm.Edges.Attachments {
+		err := e.attachments.Delete(ctx, gid, id, att.ID)
+		if err != nil {
+			log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during item deletion")
+			// Continue with other attachments even if one fails
+		}
+	}
+
+	err = e.db.Item.DeleteOneID(id).Exec(ctx)
 	if err != nil {
 		return err
 	}
@@ -640,7 +690,28 @@ func (e *ItemsRepository) Delete(ctx context.Context, id uuid.UUID) error {
 }
 
 func (e *ItemsRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID) error {
-	_, err := e.db.Item.
+	// Get the item with its attachments before deletion
+	itm, err := e.db.Item.Query().
+		Where(
+			item.ID(id),
+			item.HasGroupWith(group.ID(gid)),
+		).
+		WithAttachments().
+		Only(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Delete all attachments (and their files) before deleting the item
+	for _, att := range itm.Edges.Attachments {
+		err := e.attachments.Delete(ctx, gid, id, att.ID)
+		if err != nil {
+			log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during item deletion")
+			// Continue with other attachments even if one fails
+		}
+	}
+
+	_, err = e.db.Item.
 		Delete().
 		Where(
 			item.ID(id),
@@ -814,7 +885,20 @@ func (e *ItemsRepository) GetAllZeroImportRef(ctx context.Context, gid uuid.UUID
 }
 
 func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data ItemPatch) error {
-	q := e.db.Item.Update().
+	tx, err := e.db.Tx(ctx)
+	if err != nil {
+		return err
+	}
+	committed := false
+	defer func() {
+		if !committed {
+			if err := tx.Rollback(); err != nil {
+				log.Warn().Err(err).Msg("failed to rollback transaction during item patch")
+			}
+		}
+	}()
+
+	q := tx.Item.Update().
 		Where(
 			item.ID(id),
 			item.HasGroupWith(group.ID(gid)),
@@ -828,8 +912,81 @@ func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data Ite
 		q.SetQuantity(*data.Quantity)
 	}
 
+	if data.LocationID != uuid.Nil {
+		q.SetLocationID(data.LocationID)
+	}
+
+	err = q.Exec(ctx)
+	if err != nil {
+		return err
+	}
+
+	if data.LabelIDs != nil {
+		currentLabels, err := tx.Item.Query().Where(item.ID(id), item.HasGroupWith(group.ID(gid))).QueryLabel().All(ctx)
+		if err != nil {
+			return err
+		}
+		set := newIDSet(currentLabels)
+
+		addLabels := []uuid.UUID{}
+		for _, l := range data.LabelIDs {
+			if set.Contains(l) {
+				set.Remove(l)
+			} else {
+				addLabels = append(addLabels, l)
+			}
+		}
+
+		if len(addLabels) > 0 {
+			if err := tx.Item.Update().
+				Where(item.ID(id), item.HasGroupWith(group.ID(gid))).
+				AddLabelIDs(addLabels...).
+				Exec(ctx); err != nil {
+				return err
+			}
+		}
+		if set.Len() > 0 {
+			if err := tx.Item.Update().
+				Where(item.ID(id), item.HasGroupWith(group.ID(gid))).
+				RemoveLabelIDs(set.Slice()...).
+				Exec(ctx); err != nil {
+				return err
+			}
+		}
+	}
+
+	if data.LocationID != uuid.Nil {
+		itemEnt, err := tx.Item.Query().Where(item.ID(id), item.HasGroupWith(group.ID(gid))).Only(ctx)
+		if err != nil {
+			return err
+		}
+		if itemEnt.SyncChildItemsLocations {
+			children, err := tx.Item.Query().Where(item.ID(id), item.HasGroupWith(group.ID(gid))).QueryChildren().All(ctx)
+			if err != nil {
+				return err
+			}
+			for _, child := range children {
+				childLocation, err := child.QueryLocation().First(ctx)
+				if err != nil {
+					return err
+				}
+				if data.LocationID != childLocation.ID {
+					err = child.Update().SetLocationID(data.LocationID).Exec(ctx)
+					if err != nil {
+						return err
+					}
+				}
+			}
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	committed = true
+
 	e.publishMutationEvent(gid)
-	return q.Exec(ctx)
+	return nil
 }
 
 func (e *ItemsRepository) GetAllCustomFieldValues(ctx context.Context, gid uuid.UUID, name string) ([]string, error) {
@@ -1031,12 +1188,12 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opti
 	}()
 
 	// Get the original item with all its data
-	originalItem, err := e.getOne(ctx, item.ID(id), item.HasGroupWith(group.ID(gid)))
+	originalItem, err := e.getOneTx(ctx, tx, item.ID(id), item.HasGroupWith(group.ID(gid)))
 	if err != nil {
 		return ItemOut{}, err
 	}
 
-	nextAssetID, err := e.GetHighestAssetID(ctx, gid)
+	nextAssetID, err := e.GetHighestAssetIDTx(ctx, tx, gid)
 	if err != nil {
 		return ItemOut{}, err
 	}

@@ -105,7 +105,7 @@
 
         <SidebarRail />
       </Sidebar>
-      <SidebarInset class="min-h-dvh bg-background-accent">
+      <SidebarInset class="min-h-dvh max-w-full overflow-hidden bg-background-accent">
         <div class="relative flex h-full flex-col justify-center">
           <div v-if="preferences.displayLegacyHeader">
             <AppHeaderDecor class="-mt-10 hidden lg:block" />
@@ -368,12 +368,12 @@
   ]);
 
   const labelStore = useLabelStore();
+  labelStore.ensureAllLabelsFetched();
 
   const locationStore = useLocationStore();
+  locationStore.ensureLocationsFetched();
 
   onMounted(() => {
-    labelStore.refresh();
-    locationStore.refreshChildren();
     locationStore.refreshParents();
     locationStore.refreshTree();
   });

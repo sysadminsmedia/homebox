@@ -11,6 +11,7 @@
   import MdiPencil from "~icons/mdi/pencil";
   import MdiAccountMultiple from "~icons/mdi/account-multiple";
   import { getLocaleCode } from "~/composables/use-formatters";
+  import { fmtCurrencyAsync } from "~/composables/utils";
   import { Button } from "@/components/ui/button";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { useDialog } from "@/components/ui/dialog-provider";
@@ -60,6 +61,9 @@
   function setDisplayHeader() {
     preferences.value.displayLegacyHeader = !preferences.value.displayLegacyHeader;
   }
+  function setLegacyImageFit() {
+    preferences.value.legacyImageFit = !preferences.value.legacyImageFit;
+  }
 
   // Currency Selection
   const currency = ref<CurrenciesCurrency>({
@@ -67,6 +71,7 @@
     name: "United States Dollar",
     local: "en-US",
     symbol: "$",
+    decimals: 2,
   });
   watch(currency, () => {
     if (group.value) {
@@ -74,9 +79,18 @@
     }
   });
 
-  const currencyExample = computed(() => {
-    return fmtCurrency(1000, currency.value?.code ?? "USD", getLocaleCode());
-  });
+  const currencyExample = ref("$1,000.00");
+
+  // Update currency example when currency changes
+  watch(
+    currency,
+    async () => {
+      if (currency.value) {
+        currencyExample.value = await fmtCurrencyAsync(1000, currency.value.code, getLocaleCode());
+      }
+    },
+    { immediate: true }
+  );
 
   const { data: group } = useAsyncData(async () => {
     const { data } = await api.group.get();
@@ -519,9 +533,12 @@
         </template>
 
         <div class="px-4 pb-4">
-          <div class="mb-3">
+          <div class="mb-3 flex gap-2">
             <Button variant="secondary" size="sm" @click="setDisplayHeader">
               {{ $t("profile.display_legacy_header", { currentValue: preferences.displayLegacyHeader }) }}
+            </Button>
+            <Button variant="secondary" size="sm" @click="setLegacyImageFit">
+              {{ $t("profile.legacy_image_fit", { currentValue: preferences.legacyImageFit }) }}
             </Button>
           </div>
           <ThemePicker />

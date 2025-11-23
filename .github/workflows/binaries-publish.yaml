@@ -9,6 +9,8 @@ jobs:
   goreleaser:
     name: goreleaser
     runs-on: ubuntu-latest
+    outputs:
+      hashes: ${{ steps.binary.outputs.hashes }}
     permissions:
       contents: write
       packages: write
@@ -42,6 +44,7 @@ jobs:
           go install github.com/sigstore/cosign/cmd/cosign@latest
 
       - name: Run GoReleaser
+        id: releaser
         if: startsWith(github.ref, 'refs/tags/')
         uses: goreleaser/goreleaser-action@v5
         with:
@@ -53,6 +56,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
           COSIGN_YES: "true"
+
+      - name: Generate binary hashes
+        if: startsWith(github.ref, 'refs/tags/')
+        id: binary
+        env:
+          ARTIFACTS: "${{ steps.releaser.outputs.artifacts }}"
+        run: |
+          set -euo pipefail
+          
+          checksum_file=$(echo "$ARTIFACTS" | jq -r '.[] | select (.type=="Checksum") | .path')
+          echo "hashes=$(cat $checksum_file | base64 -w0)" >> "$GITHUB_OUTPUT"
 
       - name: Run GoReleaser No Release
         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
@@ -66,3 +80,49 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           COSIGN_PWD: ${{ secrets.COSIGN_PWD }}
           COSIGN_YES: "true"
+
+  binary-provenance:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [ goreleaser ]
+    permissions:
+      actions: read # To read the workflow path.
+      id-token: write # To sign the provenance.
+      contents: write # To add assets to a release.
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.9.0
+    with:
+      base64-subjects: "${{ needs.goreleaser.outputs.hashes }}"
+      upload-assets: true # upload to a new release
+
+  verification-with-slsa-verifier:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [goreleaser, binary-provenance]
+    runs-on: ubuntu-latest
+    permissions: read-all
+    steps:
+      - name: Install the verifier
+        uses: slsa-framework/slsa-verifier/actions/installer@v2.4.0
+
+      - name: Download assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROVENANCE: "${{ needs.binary-provenance.outputs.provenance-name }}"
+        run: |
+          set -euo pipefail
+          gh -R "$GITHUB_REPOSITORY" release download "$GITHUB_REF_NAME" -p "*.tar.gz"
+          gh -R "$GITHUB_REPOSITORY" release download "$GITHUB_REF_NAME" -p "*.zip"
+          gh -R "$GITHUB_REPOSITORY" release download "$GITHUB_REF_NAME" -p "$PROVENANCE"
+      - name: Verify assets
+        env:
+          CHECKSUMS: ${{ needs.goreleaser.outputs.hashes }}
+          PROVENANCE: "${{ needs.binary-provenance.outputs.provenance-name }}"
+        run: |
+          set -euo pipefail
+          checksums=$(echo "$CHECKSUMS" | base64 -d)
+          while read -r line; do
+              fn=$(echo $line | cut -d ' ' -f2)
+              echo "Verifying $fn"
+              slsa-verifier verify-artifact --provenance-path "$PROVENANCE" \
+                                            --source-uri "github.com/$GITHUB_REPOSITORY" \
+                                            --source-tag "$GITHUB_REF_NAME" \
+                                            "$fn"
+          done <<<"$checksums"

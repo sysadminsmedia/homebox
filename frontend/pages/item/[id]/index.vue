@@ -7,8 +7,8 @@
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPlus from "~icons/mdi/plus";
   import MdiMinus from "~icons/mdi/minus";
-  import MdiContentCopy from "~icons/mdi/content-copy";
   import MdiDelete from "~icons/mdi/delete";
+  import MdiPlusBoxMultipleOutline from "~icons/mdi/plus-box-multiple-outline";
   import { Separator } from "@/components/ui/separator";
   import {
     Breadcrumb,
@@ -478,22 +478,28 @@
     return resp.data;
   });
 
-  const items = computedAsync(async () => {
-    if (!item.value) {
-      return [];
+  const { data: items, refresh: refreshItemList } = useAsyncData(
+    () => itemId.value + "_item_list",
+    async () => {
+      if (!itemId.value) {
+        return [];
+      }
+
+      const resp = await api.items.getAll({
+        parentIds: [itemId.value],
+      });
+
+      if (resp.error) {
+        toast.error(t("items.toast.failed_load_items"));
+        return [];
+      }
+
+      return resp.data.items;
+    },
+    {
+      watch: [itemId],
     }
-
-    const resp = await api.items.getAll({
-      parentIds: [item.value.id],
-    });
-
-    if (resp.error) {
-      toast.error(t("items.toast.failed_load_items"));
-      return [];
-    }
-
-    return resp.data.items;
-  });
+  );
 
   async function duplicateItem(settings?: DuplicateSettings) {
     if (!item.value) {
@@ -646,7 +652,7 @@
                 <span class="hidden md:inline">{{ $t("global.create_subitem") }}</span>
               </Button>
               <Button class="w-9 md:w-auto" :aria-label="$t('global.duplicate')" @click="handleDuplicateClick">
-                <MdiContentCopy />
+                <MdiPlusBoxMultipleOutline />
                 <span class="hidden md:inline">{{ $t("global.duplicate") }}</span>
               </Button>
               <Button variant="destructive" class="w-9 md:w-auto" :aria-label="$t('global.delete')" @click="deleteItem">
@@ -787,7 +793,7 @@
     </section>
 
     <section v-if="items && items.length > 0" class="mt-6">
-      <ItemViewSelectable :items="items" />
+      <ItemViewSelectable :items="items" @refresh="refreshItemList" />
     </section>
   </BaseContainer>
 </template>
