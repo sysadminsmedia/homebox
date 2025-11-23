@@ -40,7 +40,7 @@ require (
 	gocloud.dev/pubsub/kafkapubsub v0.43.0
 	gocloud.dev/pubsub/natspubsub v0.43.0
 	gocloud.dev/pubsub/rabbitpubsub v0.43.0
-	golang.org/x/crypto v0.44.0
+	golang.org/x/crypto v0.45.0
 	golang.org/x/image v0.33.0
 	golang.org/x/oauth2 v0.33.0
 	golang.org/x/text v0.31.0
