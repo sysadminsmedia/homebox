@@ -15,10 +15,9 @@ import (
 )
 
 var (
-	oneWeek              = time.Hour * 24 * 7
-	ErrorInvalidLogin    = errors.New("invalid username or password")
-	ErrorInvalidToken    = errors.New("invalid token")
-	ErrorTokenIDMismatch = errors.New("token id mismatch")
+	oneWeek           = time.Hour * 24 * 7
+	ErrorInvalidLogin = errors.New("invalid username or password")
+	ErrorInvalidToken = errors.New("invalid token")
 )
 
 type UserService struct {
@@ -221,78 +220,87 @@ func (svc *UserService) Login(ctx context.Context, username, password string, ex
 }
 
 // LoginOIDC creates a session token for a user authenticated via OIDC.
+// It now uses issuer + subject for identity association (OIDC spec compliance).
 // If the user doesn't exist, it will create one.
-func (svc *UserService) LoginOIDC(ctx context.Context, email, name string) (UserAuthTokenDetail, error) {
-	// Normalize inputs
+func (svc *UserService) LoginOIDC(ctx context.Context, issuer, subject, email, name string) (UserAuthTokenDetail, error) {
+	issuer = strings.TrimSpace(issuer)
+	subject = strings.TrimSpace(subject)
 	email = strings.ToLower(strings.TrimSpace(email))
 	name = strings.TrimSpace(name)
 
-	if email == "" {
-		log.Warn().Msg("OIDC login missing email claim")
+	if issuer == "" || subject == "" {
+		log.Warn().Str("issuer", issuer).Str("subject", subject).Msg("OIDC login missing issuer or subject")
 		return UserAuthTokenDetail{}, ErrorInvalidLogin
 	}
 
-	// Try to get existing user
-        usr, err := svc.repos.Users.GetOneEmail(ctx, email)
-        if err != nil {
-            // Only create if not found
-            if !ent.IsNotFound(err) {
-                log.Err(err).Str("email", email).Msg("failed to lookup user by email")
-                return UserAuthTokenDetail{}, err
-            }
-            // User doesn't exist, create a new one without password
-            log.Debug().Str("email", email).Msg("OIDC user not found, creating new user")
+	// Try to get existing user by OIDC identity
+	usr, err := svc.repos.Users.GetOneOIDC(ctx, issuer, subject)
+	if err != nil {
+		if !ent.IsNotFound(err) {
+			log.Err(err).Str("issuer", issuer).Str("subject", subject).Msg("failed to lookup user by OIDC identity")
+			return UserAuthTokenDetail{}, err
+		}
+		// Not found: attempt migration path by email (legacy) if email provided
+		if email != "" {
+			legacyUsr, lerr := svc.repos.Users.GetOneEmail(ctx, email)
+			if lerr == nil {
+				log.Info().Str("email", email).Str("issuer", issuer).Str("subject", subject).Msg("migrating legacy email-based OIDC user to issuer+subject")
+				// Update user with OIDC identity fields
+				if uerr := svc.repos.Users.SetOIDCIdentity(ctx, legacyUsr.ID, issuer, subject); uerr == nil {
+					usr = legacyUsr
+				} else {
+					log.Err(uerr).Str("email", email).Msg("failed to set OIDC identity on legacy user")
+				}
+			}
+		}
+	}
 
-            usr, err = svc.registerOIDCUser(ctx, email, name)
-            if err != nil {
-                // Handle concurrent creation race
-                if ent.IsConstraintError(err) {
-                    if usr2, gerr := svc.repos.Users.GetOneEmail(ctx, email); gerr == nil {
-                        log.Info().Str("email", email).Msg("OIDC user created concurrently; proceeding")
-                        usr = usr2
-                    } else {
-                        log.Err(gerr).Str("email", email).Msg("failed to fetch user after constraint error")
-                        return UserAuthTokenDetail{}, gerr
-                    }
-                } else {
-                    log.Err(err).Str("email", email).Msg("failed to create OIDC user")
-                    return UserAuthTokenDetail{}, err
-                }
-            }
+	// Create user if still not resolved
+	if usr.ID == uuid.Nil {
+		log.Debug().Str("issuer", issuer).Str("subject", subject).Msg("OIDC user not found, creating new user")
+		usr, err = svc.registerOIDCUser(ctx, issuer, subject, email, name)
+		if err != nil {
+			if ent.IsConstraintError(err) {
+				if usr2, gerr := svc.repos.Users.GetOneOIDC(ctx, issuer, subject); gerr == nil {
+					log.Info().Str("issuer", issuer).Str("subject", subject).Msg("OIDC user created concurrently; proceeding")
+					usr = usr2
+				} else {
+					log.Err(gerr).Str("issuer", issuer).Str("subject", subject).Msg("failed to fetch user after constraint error")
+					return UserAuthTokenDetail{}, gerr
+				}
+			} else {
+				log.Err(err).Str("issuer", issuer).Str("subject", subject).Msg("failed to create OIDC user")
+				return UserAuthTokenDetail{}, err
+			}
+		}
+	}
 
-            log.Debug().Str("email", email).Msg("OIDC user created successfully")
-        }
-
-	// Create session token with extended session (4 weeks)
 	return svc.createSessionToken(ctx, usr.ID, true)
 }
 
-// registerOIDCUser creates a new user for OIDC authentication
-func (svc *UserService) registerOIDCUser(ctx context.Context, email, name string) (repo.UserOut, error) {
-	// Create a new group for the user (OIDC users always create their own group for now)
+// registerOIDCUser creates a new user for OIDC authentication with issuer+subject identity.
+func (svc *UserService) registerOIDCUser(ctx context.Context, issuer, subject, email, name string) (repo.UserOut, error) {
 	group, err := svc.repos.Groups.GroupCreate(ctx, "Home")
 	if err != nil {
 		log.Err(err).Msg("Failed to create group for OIDC user")
 		return repo.UserOut{}, err
 	}
 
-	// Create user without password (nil password for OIDC users)
 	usrCreate := repo.UserCreate{
 		Name:        name,
 		Email:       email,
-		Password:    nil, // OIDC users have no password
+		Password:    nil,
 		IsSuperuser: false,
 		GroupID:     group.ID,
-		IsOwner:     true, // OIDC users are owners of their new group
+		IsOwner:     true,
 	}
 
-	usr, err := svc.repos.Users.Create(ctx, usrCreate)
+	entUser, err := svc.repos.Users.CreateWithOIDC(ctx, usrCreate, issuer, subject)
 	if err != nil {
 		return repo.UserOut{}, err
 	}
 
-	// Create default labels and locations for the new group
-	log.Debug().Msg("creating default labels for OIDC user")
+	log.Debug().Str("issuer", issuer).Str("subject", subject).Msg("creating default labels for OIDC user")
 	for _, label := range defaultLabels() {
 		_, err := svc.repos.Labels.Create(ctx, group.ID, label)
 		if err != nil {
@@ -300,7 +308,7 @@ func (svc *UserService) registerOIDCUser(ctx context.Context, email, name string
 		}
 	}
 
-	log.Debug().Msg("creating default locations for OIDC user")
+	log.Debug().Str("issuer", issuer).Str("subject", subject).Msg("creating default locations for OIDC user")
 	for _, location := range defaultLocations() {
 		_, err := svc.repos.Locations.Create(ctx, group.ID, location)
 		if err != nil {
@@ -308,7 +316,7 @@ func (svc *UserService) registerOIDCUser(ctx context.Context, email, name string
 		}
 	}
 
-	return usr, nil
+	return entUser, nil
 }
 
 func (svc *UserService) Logout(ctx context.Context, token string) error {

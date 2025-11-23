@@ -391,6 +391,8 @@ var (
 		{Name: "superuser", Type: field.TypeBool, Default: false},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"user", "owner"}, Default: "user"},
 		{Name: "activated_on", Type: field.TypeTime, Nullable: true},
+		{Name: "oidc_issuer", Type: field.TypeString, Nullable: true},
+		{Name: "oidc_subject", Type: field.TypeString, Nullable: true},
 		{Name: "group_users", Type: field.TypeUUID},
 	}
 	// UsersTable holds the schema information for the "users" table.
@@ -401,9 +403,16 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "users_groups_users",
-				Columns:    []*schema.Column{UsersColumns[10]},
+				Columns:    []*schema.Column{UsersColumns[12]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "user_oidc_issuer_oidc_subject",
+				Unique:  true,
+				Columns: []*schema.Column{UsersColumns[10], UsersColumns[11]},
 			},
 		},
 	}

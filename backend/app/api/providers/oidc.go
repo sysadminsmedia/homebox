@@ -34,6 +34,7 @@ type OIDCClaims struct {
 	Groups        []string
 	Name          string
 	Subject       string
+	Issuer        string
 	EmailVerified *bool
 }
 
@@ -90,12 +91,14 @@ func (p *OIDCProvider) Name() string {
 // Authenticate implements the AuthProvider interface but is not used for OIDC
 // OIDC uses dedicated endpoints: GET /api/v1/users/login/oidc and GET /api/v1/users/login/oidc/callback
 func (p *OIDCProvider) Authenticate(w http.ResponseWriter, r *http.Request) (services.UserAuthTokenDetail, error) {
+	_ = w
+	_ = r
 	return services.UserAuthTokenDetail{}, fmt.Errorf("OIDC authentication uses dedicated endpoints: /api/v1/users/login/oidc")
 }
 
 // AuthenticateWithBaseURL is the main authentication method that requires baseURL
 // Called from handleCallback after state, nonce, and PKCE verification
-func (p *OIDCProvider) AuthenticateWithBaseURL(baseURL, expectedNonce, pkceVerifier string, w http.ResponseWriter, r *http.Request) (services.UserAuthTokenDetail, error) {
+func (p *OIDCProvider) AuthenticateWithBaseURL(baseURL, expectedNonce, pkceVerifier string, _ http.ResponseWriter, r *http.Request) (services.UserAuthTokenDetail, error) {
 	code := r.URL.Query().Get("code")
 	if code == "" {
 		return services.UserAuthTokenDetail{}, fmt.Errorf("missing authorization code")
@@ -137,15 +140,33 @@ func (p *OIDCProvider) AuthenticateWithBaseURL(baseURL, expectedNonce, pkceVerif
 		return services.UserAuthTokenDetail{}, fmt.Errorf("failed to extract claims from ID token")
 	}
 
-	// Parse claims using configurable claim names
-	claims, err := p.parseOIDCClaims(rawClaims)
+	// Attempt to retrieve UserInfo claims; use them as primary, fallback to ID token claims.
+	finalClaims := rawClaims
+	userInfoCtx, uiCancel := context.WithTimeout(r.Context(), p.config.RequestTimeout)
+	defer uiCancel()
+
+	userInfo, uiErr := p.provider.UserInfo(userInfoCtx, oauth2.StaticTokenSource(token))
+	if uiErr != nil {
+		log.Debug().Err(uiErr).Msg("OIDC UserInfo fetch failed; falling back to ID token claims")
+	} else {
+		var uiClaims map[string]interface{}
+		if err := userInfo.Claims(&uiClaims); err != nil {
+			log.Debug().Err(err).Msg("failed to decode UserInfo claims; falling back to ID token claims")
+		} else {
+			finalClaims = mergeOIDCClaims(uiClaims, rawClaims) // UserInfo first, then fill gaps from ID token
+			log.Debug().Int("userinfo_claims", len(uiClaims)).Int("id_token_claims", len(rawClaims)).Int("merged_claims", len(finalClaims)).Msg("merged UserInfo and ID token claims")
+		}
+	}
+
+	// Parse claims using configurable claim names (after merge)
+	claims, err := p.parseOIDCClaims(finalClaims)
 	if err != nil {
 		log.Err(err).Msg("failed to parse OIDC claims")
 		return services.UserAuthTokenDetail{}, fmt.Errorf("failed to parse OIDC claims: %w", err)
 	}
 
-	// Verify nonce claim matches expected value
-	tokenNonce, exists := rawClaims["nonce"]
+	// Verify nonce claim matches expected value (nonce only from ID token; ensure preserved in merged map)
+	tokenNonce, exists := finalClaims["nonce"]
 	if !exists {
 		log.Warn().Msg("nonce claim missing from ID token - possible replay attack")
 		return services.UserAuthTokenDetail{}, fmt.Errorf("nonce claim missing from token")
@@ -191,11 +212,17 @@ func (p *OIDCProvider) AuthenticateWithBaseURL(baseURL, expectedNonce, pkceVerif
 	if email == "" {
 		return services.UserAuthTokenDetail{}, fmt.Errorf("no email found in token claims")
 	}
+	if claims.Subject == "" {
+		return services.UserAuthTokenDetail{}, fmt.Errorf("no subject (sub) claim present")
+	}
+	if claims.Issuer == "" {
+		claims.Issuer = p.config.IssuerURL // fallback to configured issuer, though spec requires 'iss'
+	}
 
-	// Use the dedicated OIDC login method
-	sessionToken, err := p.service.LoginOIDC(r.Context(), email, claims.Name)
+	// Use the dedicated OIDC login method (issuer + subject identity)
+	sessionToken, err := p.service.LoginOIDC(r.Context(), claims.Issuer, claims.Subject, email, claims.Name)
 	if err != nil {
-		log.Err(err).Str("email", email).Msg("OIDC login failed")
+		log.Err(err).Str("email", email).Str("issuer", claims.Issuer).Str("subject", claims.Subject).Msg("OIDC login failed")
 		return services.UserAuthTokenDetail{}, fmt.Errorf("OIDC login failed: %w", err)
 	}
 
@@ -272,6 +299,12 @@ func (p *OIDCProvider) parseOIDCClaims(rawClaims map[string]interface{}) (OIDCCl
 			claims.Subject = subject
 		}
 	}
+	// Parse issuer claim ("iss")
+	if issValue, exists := rawClaims["iss"]; exists {
+		if iss, ok := issValue.(string); ok {
+			claims.Issuer = iss
+		}
+	}
 
 	return claims, nil
 }
@@ -298,7 +331,7 @@ func (p *OIDCProvider) hasAllowedGroup(userGroups, allowedGroups []string) bool 
 func (p *OIDCProvider) GetAuthURL(baseURL, state, nonce, pkceVerifier string) string {
 	oauth2Config := p.getOAuth2Config(baseURL)
 	pkceChallenge := generatePKCEChallenge(pkceVerifier)
-	return oauth2Config.AuthCodeURL(state, 
+	return oauth2Config.AuthCodeURL(state,
 		oidc.Nonce(nonce),
 		oauth2.SetAuthURLParam("code_challenge", pkceChallenge),
 		oauth2.SetAuthURLParam("code_challenge_method", "S256"))
@@ -548,6 +581,7 @@ func (p *OIDCProvider) getBaseURL(r *http.Request) string {
 }
 
 func (p *OIDCProvider) isSecure(r *http.Request) bool {
+	_ = r
 	return p.cookieSecure
 }
 
@@ -559,4 +593,34 @@ func (p *OIDCProvider) InitiateOIDCFlow(w http.ResponseWriter, r *http.Request) 
 // HandleCallback processes the OIDC callback and returns the authenticated user token
 func (p *OIDCProvider) HandleCallback(w http.ResponseWriter, r *http.Request) (services.UserAuthTokenDetail, error) {
 	return p.handleCallback(w, r)
+}
+
+func mergeOIDCClaims(primary, secondary map[string]interface{}) map[string]interface{} {
+	// primary has precedence; fill missing/empty values from secondary.
+	merged := make(map[string]interface{}, len(primary)+len(secondary))
+	for k, v := range primary {
+		merged[k] = v
+	}
+	for k, v := range secondary {
+		if existing, ok := merged[k]; !ok || isEmptyClaim(existing) {
+			merged[k] = v
+		}
+	}
+	return merged
+}
+
+func isEmptyClaim(v interface{}) bool {
+	if v == nil {
+		return true
+	}
+	switch val := v.(type) {
+	case string:
+		return val == ""
+	case []interface{}:
+		return len(val) == 0
+	case []string:
+		return len(val) == 0
+	default:
+		return false
+	}
 }

@@ -5,6 +5,7 @@ import (
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"entgo.io/ent/schema/mixin"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
@@ -46,6 +47,19 @@ func (User) Fields() []ent.Field {
 			Values("user", "owner"),
 		field.Time("activated_on").
 			Optional(),
+		// OIDC identity mapping fields (issuer + subject)
+		field.String("oidc_issuer").
+			Optional().
+			Nillable(),
+		field.String("oidc_subject").
+			Optional().
+			Nillable(),
+	}
+}
+
+func (User) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("oidc_issuer", "oidc_subject").Unique(),
 	}
 }
 
@@ -82,14 +96,14 @@ func (g UserMixin) Fields() []ent.Field {
 }
 
 func (g UserMixin) Edges() []ent.Edge {
-	edge := edge.From("user", User.Type).
+	e := edge.From("user", User.Type).
 		Ref(g.ref).
 		Unique().
 		Required()
 
 	if g.field != "" {
-		edge = edge.Field(g.field)
+		e = e.Field(g.field)
 	}
 
-	return []ent.Edge{edge}
+	return []ent.Edge{e}
 }

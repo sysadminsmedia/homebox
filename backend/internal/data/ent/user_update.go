@@ -148,6 +148,46 @@ func (_u *UserUpdate) ClearActivatedOn() *UserUpdate {
 	return _u
 }
 
+// SetOidcIssuer sets the "oidc_issuer" field.
+func (_u *UserUpdate) SetOidcIssuer(v string) *UserUpdate {
+	_u.mutation.SetOidcIssuer(v)
+	return _u
+}
+
+// SetNillableOidcIssuer sets the "oidc_issuer" field if the given value is not nil.
+func (_u *UserUpdate) SetNillableOidcIssuer(v *string) *UserUpdate {
+	if v != nil {
+		_u.SetOidcIssuer(*v)
+	}
+	return _u
+}
+
+// ClearOidcIssuer clears the value of the "oidc_issuer" field.
+func (_u *UserUpdate) ClearOidcIssuer() *UserUpdate {
+	_u.mutation.ClearOidcIssuer()
+	return _u
+}
+
+// SetOidcSubject sets the "oidc_subject" field.
+func (_u *UserUpdate) SetOidcSubject(v string) *UserUpdate {
+	_u.mutation.SetOidcSubject(v)
+	return _u
+}
+
+// SetNillableOidcSubject sets the "oidc_subject" field if the given value is not nil.
+func (_u *UserUpdate) SetNillableOidcSubject(v *string) *UserUpdate {
+	if v != nil {
+		_u.SetOidcSubject(*v)
+	}
+	return _u
+}
+
+// ClearOidcSubject clears the value of the "oidc_subject" field.
+func (_u *UserUpdate) ClearOidcSubject() *UserUpdate {
+	_u.mutation.ClearOidcSubject()
+	return _u
+}
+
 // SetGroupID sets the "group" edge to the Group entity by ID.
 func (_u *UserUpdate) SetGroupID(id uuid.UUID) *UserUpdate {
 	_u.mutation.SetGroupID(id)
@@ -347,6 +387,18 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.ActivatedOnCleared() {
 		_spec.ClearField(user.FieldActivatedOn, field.TypeTime)
+	}
+	if value, ok := _u.mutation.OidcIssuer(); ok {
+		_spec.SetField(user.FieldOidcIssuer, field.TypeString, value)
+	}
+	if _u.mutation.OidcIssuerCleared() {
+		_spec.ClearField(user.FieldOidcIssuer, field.TypeString)
+	}
+	if value, ok := _u.mutation.OidcSubject(); ok {
+		_spec.SetField(user.FieldOidcSubject, field.TypeString, value)
+	}
+	if _u.mutation.OidcSubjectCleared() {
+		_spec.ClearField(user.FieldOidcSubject, field.TypeString)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -603,6 +655,46 @@ func (_u *UserUpdateOne) ClearActivatedOn() *UserUpdateOne {
 	return _u
 }
 
+// SetOidcIssuer sets the "oidc_issuer" field.
+func (_u *UserUpdateOne) SetOidcIssuer(v string) *UserUpdateOne {
+	_u.mutation.SetOidcIssuer(v)
+	return _u
+}
+
+// SetNillableOidcIssuer sets the "oidc_issuer" field if the given value is not nil.
+func (_u *UserUpdateOne) SetNillableOidcIssuer(v *string) *UserUpdateOne {
+	if v != nil {
+		_u.SetOidcIssuer(*v)
+	}
+	return _u
+}
+
+// ClearOidcIssuer clears the value of the "oidc_issuer" field.
+func (_u *UserUpdateOne) ClearOidcIssuer() *UserUpdateOne {
+	_u.mutation.ClearOidcIssuer()
+	return _u
+}
+
+// SetOidcSubject sets the "oidc_subject" field.
+func (_u *UserUpdateOne) SetOidcSubject(v string) *UserUpdateOne {
+	_u.mutation.SetOidcSubject(v)
+	return _u
+}
+
+// SetNillableOidcSubject sets the "oidc_subject" field if the given value is not nil.
+func (_u *UserUpdateOne) SetNillableOidcSubject(v *string) *UserUpdateOne {
+	if v != nil {
+		_u.SetOidcSubject(*v)
+	}
+	return _u
+}
+
+// ClearOidcSubject clears the value of the "oidc_subject" field.
+func (_u *UserUpdateOne) ClearOidcSubject() *UserUpdateOne {
+	_u.mutation.ClearOidcSubject()
+	return _u
+}
+
 // SetGroupID sets the "group" edge to the Group entity by ID.
 func (_u *UserUpdateOne) SetGroupID(id uuid.UUID) *UserUpdateOne {
 	_u.mutation.SetGroupID(id)
@@ -832,6 +924,18 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	}
 	if _u.mutation.ActivatedOnCleared() {
 		_spec.ClearField(user.FieldActivatedOn, field.TypeTime)
+	}
+	if value, ok := _u.mutation.OidcIssuer(); ok {
+		_spec.SetField(user.FieldOidcIssuer, field.TypeString, value)
+	}
+	if _u.mutation.OidcIssuerCleared() {
+		_spec.ClearField(user.FieldOidcIssuer, field.TypeString)
+	}
+	if value, ok := _u.mutation.OidcSubject(); ok {
+		_spec.SetField(user.FieldOidcSubject, field.TypeString, value)
+	}
+	if _u.mutation.OidcSubjectCleared() {
+		_spec.ClearField(user.FieldOidcSubject, field.TypeString)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
