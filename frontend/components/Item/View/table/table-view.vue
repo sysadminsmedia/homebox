@@ -46,7 +46,9 @@
               v-for="cell in row.getVisibleCells()"
               :key="cell.id"
               :href="
-                cell.column.id !== 'select' && cell.column.id !== 'actions' ? `/item/${row.original.id}` : undefined
+                cell.column.id !== 'select' && cell.column.id !== 'actions' && cell.column.id !== 'location'
+                  ? `/item/${row.original.id}`
+                  : undefined
               "
               :class="cell.column.id === 'select' || cell.column.id === 'actions' ? 'w-10 px-3' : ''"
               :compact="cell.column.id === 'select' || cell.column.id === 'actions'"
