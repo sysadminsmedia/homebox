@@ -103,6 +103,24 @@ To enable this feature:
 - Use HTTPS by setting up a reverse proxy (like Nginx or Caddy)
 - OR access Homebox through localhost
 
+
+## Asset Shortlinks
+
+Items can be accessed through the following URL structure:
+
+`instance.com/item/uuid`
+
+The UUID is a unique ID generated for each asset and corresponds to the database value in `items` with the same field name.
+
+A shortlink path is also available and is used when constructing QR codes for more efficient encoding. This shortlink uses the **asset ID** which is visible on the frontend.
+
+Its structure is:
+
+`instance.com/a/asset-id`
+
+The asset ID is the parsed version of the asset ID (the sequence number without the trailing zeroes). If you have an asset `003-912`, for example, you can use: `instance.com/a/3192` to jump to its entry in Homebox.
+
+
 ## Open Multiple Items in New Tabs
 
 By default browsers prevent opening multiple tabs with one click, to allow for the `View Items` button to work you therefore need to enable a setting usually called `Allow pop-ups and redirects` or similar for the domain you're using Homebox on.
