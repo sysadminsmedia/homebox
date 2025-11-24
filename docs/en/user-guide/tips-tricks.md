@@ -108,7 +108,7 @@ To enable this feature:
 
 Items can be accessed through the following URL structure:
 
-`instance.com/item/uuid`
+`example.com/item/uuid`
 
 The UUID is a unique ID generated for each asset and corresponds to the database value in `items` with the same field name.
 
@@ -116,9 +116,9 @@ A shortlink path is also available and is used when constructing QR codes for mo
 
 Its structure is:
 
-`instance.com/a/asset-id`
+`example.com/a/asset-id`
 
-The asset ID is the parsed version of the asset ID (the sequence number without the trailing zeroes). If you have an asset `003-912`, for example, you can use: `instance.com/a/3192` to jump to its entry in Homebox.
+The asset ID is the parsed version of the asset ID (the sequence number without the trailing zeroes). If you have an asset `003-912`, for example, you can use: `example.com/a/3192` to jump to its entry in Homebox.
 
 
 ## Open Multiple Items in New Tabs
