@@ -1,0 +1,611 @@
+include:
+  - template: Jobs/SAST.gitlab-ci.yml
+  - component: $CI_SERVER_FQDN/components/code-quality-oss/codequality-os-scanners-integration/codequality-oss@1.1.4
+  - component: $CI_SERVER_FQDN/components/code-intelligence/golang-code-intel@v0.3.1
+  - component: $CI_SERVER_FQDN/components/code-intelligence/typescript-code-intel@v0.3.1
+    inputs:
+      node_version: 24
+  - component: $CI_SERVER_FQDN/components/secret-detection/secret-detection@2.1.0
+
+variables:
+  GITLAB_ADVANCED_SAST_ENABLED: 'true'
+  ADVANCED_SAST_PARTIAL_SCAN: 'differential'
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+  # Registry configuration - adjust as needed
+  CI_REGISTRY_IMAGE: $CI_REGISTRY/$CI_PROJECT_PATH
+
+stages:
+  - test
+  - build-binaries
+  - build-docker
+  - release
+
+# ==========================================
+# Test Jobs
+# ==========================================
+
+# Backend Tests (Go)
+test:backend:
+  stage: test
+  image: golang:1.24
+  cache:
+    key:
+      files:
+        - backend/go.sum
+    paths:
+      - backend/.go-pkg-cache/
+    policy: pull-push
+  before_script:
+    - export GOMODCACHE=$(pwd)/backend/.go-pkg-cache
+    # Install Task
+    - sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+  script:
+    - cd backend
+    - task go:lint
+    - task go:build
+    - task go:coverage
+  coverage: '/coverage: \d+.\d+% of statements/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: backend/coverage.out
+    paths:
+      - backend/coverage.out
+    expire_in: 7 days
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# Frontend Lint and Typecheck
+test:frontend:lint:
+  stage: test
+  image: node:22-alpine
+  cache:
+    key:
+      files:
+        - frontend/pnpm-lock.yaml
+    paths:
+      - frontend/node_modules/
+      - .pnpm-store/
+    policy: pull-push
+  before_script:
+    - npm install -g pnpm@9.15.3
+    - pnpm config set store-dir $(pwd)/.pnpm-store
+  script:
+    - cd frontend
+    - pnpm install --frozen-lockfile
+    - pnpm run lint:ci
+    - pnpm run typecheck
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# Frontend Integration Tests (SQLite)
+test:frontend:integration:
+  stage: test
+  image: node:22
+  cache:
+    - key:
+        files:
+          - frontend/pnpm-lock.yaml
+      paths:
+        - frontend/node_modules/
+        - .pnpm-store/
+      policy: pull-push
+    - key:
+        files:
+          - backend/go.sum
+      paths:
+        - backend/.go-pkg-cache/
+      policy: pull-push
+  before_script:
+    - npm install -g pnpm@9.15.3
+    - pnpm config set store-dir $(pwd)/.pnpm-store
+    # Install Task
+    - sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+    # Install Go
+    - wget -q https://go.dev/dl/go1.24.0.linux-amd64.tar.gz
+    - tar -C /usr/local -xzf go1.24.0.linux-amd64.tar.gz
+    - export PATH=$PATH:/usr/local/go/bin
+    - export GOMODCACHE=$(pwd)/backend/.go-pkg-cache
+  script:
+    - cd frontend
+    - pnpm install --frozen-lockfile
+    - cd ..
+    - task test:ci
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# Frontend Integration Tests (PostgreSQL Matrix)
+test:frontend:integration:postgresql:
+  stage: test
+  image: node:22
+  services:
+    - name: postgres:${POSTGRES_VERSION}
+      alias: postgres
+  variables:
+    POSTGRES_USER: homebox
+    POSTGRES_PASSWORD: homebox
+    POSTGRES_DB: homebox
+    POSTGRES_HOST_AUTH_METHOD: trust
+  parallel:
+    matrix:
+      - POSTGRES_VERSION: ["17", "16", "15"]
+  cache:
+    - key:
+        files:
+          - frontend/pnpm-lock.yaml
+      paths:
+        - frontend/node_modules/
+        - .pnpm-store/
+      policy: pull-push
+    - key:
+        files:
+          - backend/go.sum
+      paths:
+        - backend/.go-pkg-cache/
+      policy: pull-push
+  before_script:
+    - npm install -g pnpm@9.15.3
+    - pnpm config set store-dir $(pwd)/.pnpm-store
+    # Install Task
+    - sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+    # Install Go
+    - wget -q https://go.dev/dl/go1.24.0.linux-amd64.tar.gz
+    - tar -C /usr/local -xzf go1.24.0.linux-amd64.tar.gz
+    - export PATH=$PATH:/usr/local/go/bin
+    - export GOMODCACHE=$(pwd)/backend/.go-pkg-cache
+  script:
+    - cd frontend
+    - pnpm install --frozen-lockfile
+    - cd ..
+    - task test:ci:postgresql
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# E2E Tests (Playwright) - Sharded
+test:e2e:playwright:
+  stage: test
+  image: mcr.microsoft.com/playwright:v1.48.2-jammy
+  timeout: 1h
+  parallel:
+    matrix:
+      - SHARD_INDEX: ["1", "2", "3", "4"]
+        SHARD_TOTAL: "4"
+  cache:
+    - key:
+        files:
+          - frontend/pnpm-lock.yaml
+      paths:
+        - frontend/node_modules/
+        - .pnpm-store/
+      policy: pull-push
+    - key:
+        files:
+          - backend/go.sum
+      paths:
+        - backend/.go-pkg-cache/
+      policy: pull-push
+  before_script:
+    - npm install -g pnpm@9.15.3
+    - pnpm config set store-dir $(pwd)/.pnpm-store
+    # Install Task
+    - sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+    # Install Go
+    - wget -q https://go.dev/dl/go1.24.0.linux-amd64.tar.gz
+    - tar -C /usr/local -xzf go1.24.0.linux-amd64.tar.gz
+    - export PATH=$PATH:/usr/local/go/bin
+    - export GOMODCACHE=$(pwd)/backend/.go-pkg-cache
+  script:
+    - cd frontend
+    - pnpm install --frozen-lockfile
+    - cd ..
+    - cd backend && go mod download
+    - task test:e2e -- --shard=$SHARD_INDEX/$SHARD_TOTAL
+  artifacts:
+    when: always
+    paths:
+      - frontend/blob-report/
+    expire_in: 2 days
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# E2E Reports Merge
+test:e2e:merge-reports:
+  stage: test
+  image: mcr.microsoft.com/playwright:v1.48.2-jammy
+  needs:
+    - test:e2e:playwright
+  cache:
+    key:
+      files:
+        - frontend/pnpm-lock.yaml
+    paths:
+      - frontend/node_modules/
+      - .pnpm-store/
+    policy: pull
+  before_script:
+    - npm install -g pnpm@9.15.3
+    - pnpm config set store-dir $(pwd)/.pnpm-store
+  script:
+    - cd frontend
+    - pnpm install --frozen-lockfile
+    # Download all blob reports
+    - mkdir -p all-blob-reports
+    # GitLab automatically downloads artifacts from dependencies
+    - cp -r ../frontend/blob-report/* all-blob-reports/ || true
+    - pnpm exec playwright merge-reports --reporter html,github ./all-blob-reports || true
+  artifacts:
+    when: always
+    paths:
+      - frontend/playwright-report/
+    expire_in: 30 days
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: always
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: always
+
+# Update Currencies (Scheduled Job)
+update:currencies:
+  stage: test
+  image: python:3.11
+  cache:
+    key: python-currencies
+    paths:
+      - .pip-cache/
+  before_script:
+    - pip install --cache-dir .pip-cache -r .github/workflows/update-currencies/requirements.txt
+  script:
+    - python .github/scripts/update_currencies.py
+    - |
+      if git diff --quiet -- backend/internal/core/currencies/currencies.json; then
+        echo "✅ currencies.json is already up-to-date"
+        exit 0
+      else
+        echo "Changes detected in currencies.json"
+        git config user.name "GitLab CI"
+        git config user.email "ci@gitlab.com"
+        git checkout -b update-currencies-$CI_COMMIT_SHORT_SHA
+        git add backend/internal/core/currencies/currencies.json
+        git commit -m "chore: update currencies.json"
+        git push -o merge_request.create -o merge_request.target=$CI_DEFAULT_BRANCH -o merge_request.title="Update currencies.json" origin update-currencies-$CI_COMMIT_SHORT_SHA
+      fi
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+  only:
+    variables:
+      - $UPDATE_CURRENCIES == "true"
+
+# ==========================================
+# Binary Build with GoReleaser
+# ==========================================
+build:binaries:
+  stage: build-binaries
+  image: golang:1.24
+  cache:
+    - key:
+        files:
+          - frontend/pnpm-lock.yaml
+      paths:
+        - frontend/node_modules/
+        - .pnpm-store/
+      policy: pull-push
+    - key:
+        files:
+          - backend/go.sum
+      paths:
+        - backend/.go-pkg-cache/
+      policy: pull-push
+  before_script:
+    # Install Node.js and pnpm for frontend build
+    - curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+    - apt-get install -y nodejs
+    - npm install -g pnpm@9.15.3
+    # Configure pnpm store
+    - pnpm config set store-dir $(pwd)/.pnpm-store
+    # Install GoReleaser
+    - curl -sfL https://goreleaser.com/static/run | bash -s -- check
+    - curl -sfL https://goreleaser.com/static/run | bash -s -- --version
+    # Configure Go cache
+    - export GOMODCACHE=$(pwd)/backend/.go-pkg-cache
+  script:
+    # Build frontend
+    - cd frontend
+    - pnpm install --frozen-lockfile
+    - pnpm run build
+    - cp -r ./.output/public ../backend/app/api/static/
+    - cd ..
+    # Run GoReleaser
+    - cd backend
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        echo "Building release for tag: $CI_COMMIT_TAG"
+        curl -sfL https://goreleaser.com/static/run | bash -s -- release --clean --skip=publish
+      else
+        echo "Building snapshot"
+        curl -sfL https://goreleaser.com/static/run | bash -s -- release --clean --snapshot --skip=publish
+      fi
+  artifacts:
+    name: "homebox-binaries-$CI_COMMIT_REF_SLUG"
+    paths:
+      - backend/dist/
+    expire_in: 30 days
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+# ==========================================
+# Docker Build Jobs - Regular
+# ==========================================
+.docker_build_template:
+  stage: build-docker
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  variables:
+    DOCKER_BUILDKIT: 1
+    DOCKERFILE: Dockerfile
+    IMAGE_SUFFIX: ""
+  script:
+    - export VERSION=${CI_COMMIT_TAG:-$CI_COMMIT_REF_NAME}
+    - export COMMIT=$CI_COMMIT_SHA
+    - export BUILD_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+    - export CACHE_TAG=${IMAGE_SUFFIX:-regular}
+    # Build and push for the specific platform with layer caching
+    - |
+      docker buildx create --use --name builder-${CI_JOB_ID} || true
+      docker buildx build \
+        --platform $PLATFORM \
+        --build-arg VERSION=$VERSION \
+        --build-arg COMMIT=$COMMIT \
+        --build-arg BUILD_TIME=$BUILD_TIME \
+        --cache-from type=registry,ref=$CI_REGISTRY_IMAGE/cache:${PLATFORM_PAIR}-${CACHE_TAG}-$CI_COMMIT_REF_SLUG \
+        --cache-from type=registry,ref=$CI_REGISTRY_IMAGE/cache:${PLATFORM_PAIR}-${CACHE_TAG}-$CI_DEFAULT_BRANCH \
+        --cache-to type=registry,ref=$CI_REGISTRY_IMAGE/cache:${PLATFORM_PAIR}-${CACHE_TAG}-$CI_COMMIT_REF_SLUG,mode=max \
+        --file ./$DOCKERFILE \
+        --tag $CI_REGISTRY_IMAGE${IMAGE_SUFFIX}:${CI_COMMIT_REF_SLUG}-${PLATFORM_PAIR} \
+        --push \
+        .
+      docker buildx rm builder-${CI_JOB_ID} || true
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+docker:build:amd64:
+  extends: .docker_build_template
+  variables:
+    PLATFORM: linux/amd64
+    PLATFORM_PAIR: linux-amd64
+
+docker:build:arm64:
+  extends: .docker_build_template
+  variables:
+    PLATFORM: linux/arm64
+    PLATFORM_PAIR: linux-arm64
+
+docker:build:armv7:
+  extends: .docker_build_template
+  variables:
+    PLATFORM: linux/arm/v7
+    PLATFORM_PAIR: linux-arm-v7
+
+# ==========================================
+# Docker Build Jobs - Rootless
+# ==========================================
+docker:build:rootless:amd64:
+  extends: .docker_build_template
+  variables:
+    PLATFORM: linux/amd64
+    PLATFORM_PAIR: linux-amd64
+    DOCKERFILE: Dockerfile.rootless
+    IMAGE_SUFFIX: -rootless
+
+docker:build:rootless:arm64:
+  extends: .docker_build_template
+  variables:
+    PLATFORM: linux/arm64
+    PLATFORM_PAIR: linux-arm64
+    DOCKERFILE: Dockerfile.rootless
+    IMAGE_SUFFIX: -rootless
+
+docker:build:rootless:armv7:
+  extends: .docker_build_template
+  variables:
+    PLATFORM: linux/arm/v7
+    PLATFORM_PAIR: linux-arm-v7
+    DOCKERFILE: Dockerfile.rootless
+    IMAGE_SUFFIX: -rootless
+
+# ==========================================
+# Docker Build Jobs - Hardened
+# ==========================================
+docker:build:hardened:amd64:
+  extends: .docker_build_template
+  variables:
+    PLATFORM: linux/amd64
+    PLATFORM_PAIR: linux-amd64
+    DOCKERFILE: Dockerfile.hardened
+    IMAGE_SUFFIX: -hardened
+
+docker:build:hardened:arm64:
+  extends: .docker_build_template
+  variables:
+    PLATFORM: linux/arm64
+    PLATFORM_PAIR: linux-arm64
+    DOCKERFILE: Dockerfile.hardened
+    IMAGE_SUFFIX: -hardened
+
+docker:build:hardened:armv7:
+  extends: .docker_build_template
+  variables:
+    PLATFORM: linux/arm/v7
+    PLATFORM_PAIR: linux-arm-v7
+    DOCKERFILE: Dockerfile.hardened
+    IMAGE_SUFFIX: -hardened
+
+# ==========================================
+# Docker Manifest Creation - Regular
+# ==========================================
+docker:manifest:
+  stage: release
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - export VERSION=${CI_COMMIT_TAG:-$CI_COMMIT_REF_NAME}
+    # Create manifest for regular image
+    - |
+      docker manifest create $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG \
+        $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG}-linux-amd64 \
+        $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG}-linux-arm64 \
+        $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG}-linux-arm-v7
+      docker manifest push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+    # Tag as latest on main branch or create version tags
+    - |
+      if [ "$CI_COMMIT_BRANCH" = "$CI_DEFAULT_BRANCH" ]; then
+        docker manifest create $CI_REGISTRY_IMAGE:latest \
+          $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG}-linux-amd64 \
+          $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG}-linux-arm64 \
+          $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG}-linux-arm-v7
+        docker manifest push $CI_REGISTRY_IMAGE:latest
+      fi
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        # Create version tag
+        docker manifest create $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG \
+          $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG}-linux-amd64 \
+          $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG}-linux-arm64 \
+          $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG}-linux-arm-v7
+        docker manifest push $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
+      
+        # Create major.minor tag if semantic version
+        MAJOR_MINOR=$(echo $CI_COMMIT_TAG | sed -E 's/^v?([0-9]+\.[0-9]+)\..*/\1/')
+        if [ -n "$MAJOR_MINOR" ]; then
+          docker manifest create $CI_REGISTRY_IMAGE:$MAJOR_MINOR \
+            $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG}-linux-amd64 \
+            $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG}-linux-arm64 \
+            $CI_REGISTRY_IMAGE:${CI_COMMIT_REF_SLUG}-linux-arm-v7
+          docker manifest push $CI_REGISTRY_IMAGE:$MAJOR_MINOR
+        fi
+      fi
+  needs:
+    - docker:build:amd64
+    - docker:build:arm64
+    - docker:build:armv7
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# ==========================================
+# Docker Manifest Creation - Rootless
+# ==========================================
+docker:manifest:rootless:
+  stage: release
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - export VERSION=${CI_COMMIT_TAG:-$CI_COMMIT_REF_NAME}
+    # Create manifest for rootless image
+    - |
+      docker manifest create $CI_REGISTRY_IMAGE-rootless:$CI_COMMIT_REF_SLUG \
+        $CI_REGISTRY_IMAGE-rootless:${CI_COMMIT_REF_SLUG}-linux-amd64 \
+        $CI_REGISTRY_IMAGE-rootless:${CI_COMMIT_REF_SLUG}-linux-arm64 \
+        $CI_REGISTRY_IMAGE-rootless:${CI_COMMIT_REF_SLUG}-linux-arm-v7
+      docker manifest push $CI_REGISTRY_IMAGE-rootless:$CI_COMMIT_REF_SLUG
+    # Tag as latest on main branch or create version tags
+    - |
+      if [ "$CI_COMMIT_BRANCH" = "$CI_DEFAULT_BRANCH" ]; then
+        docker manifest create $CI_REGISTRY_IMAGE-rootless:latest \
+          $CI_REGISTRY_IMAGE-rootless:${CI_COMMIT_REF_SLUG}-linux-amd64 \
+          $CI_REGISTRY_IMAGE-rootless:${CI_COMMIT_REF_SLUG}-linux-arm64 \
+          $CI_REGISTRY_IMAGE-rootless:${CI_COMMIT_REF_SLUG}-linux-arm-v7
+        docker manifest push $CI_REGISTRY_IMAGE-rootless:latest
+      fi
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        docker manifest create $CI_REGISTRY_IMAGE-rootless:$CI_COMMIT_TAG \
+          $CI_REGISTRY_IMAGE-rootless:${CI_COMMIT_REF_SLUG}-linux-amd64 \
+          $CI_REGISTRY_IMAGE-rootless:${CI_COMMIT_REF_SLUG}-linux-arm64 \
+          $CI_REGISTRY_IMAGE-rootless:${CI_COMMIT_REF_SLUG}-linux-arm-v7
+        docker manifest push $CI_REGISTRY_IMAGE-rootless:$CI_COMMIT_TAG
+      
+        MAJOR_MINOR=$(echo $CI_COMMIT_TAG | sed -E 's/^v?([0-9]+\.[0-9]+)\..*/\1/')
+        if [ -n "$MAJOR_MINOR" ]; then
+          docker manifest create $CI_REGISTRY_IMAGE-rootless:$MAJOR_MINOR \
+            $CI_REGISTRY_IMAGE-rootless:${CI_COMMIT_REF_SLUG}-linux-amd64 \
+            $CI_REGISTRY_IMAGE-rootless:${CI_COMMIT_REF_SLUG}-linux-arm64 \
+            $CI_REGISTRY_IMAGE-rootless:${CI_COMMIT_REF_SLUG}-linux-arm-v7
+          docker manifest push $CI_REGISTRY_IMAGE-rootless:$MAJOR_MINOR
+        fi
+      fi
+  needs:
+    - docker:build:rootless:amd64
+    - docker:build:rootless:arm64
+    - docker:build:rootless:armv7
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+# ==========================================
+# Docker Manifest Creation - Hardened
+# ==========================================
+docker:manifest:hardened:
+  stage: release
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - export VERSION=${CI_COMMIT_TAG:-$CI_COMMIT_REF_NAME}
+    # Create manifest for hardened image
+    - |
+      docker manifest create $CI_REGISTRY_IMAGE-hardened:$CI_COMMIT_REF_SLUG \
+        $CI_REGISTRY_IMAGE-hardened:${CI_COMMIT_REF_SLUG}-linux-amd64 \
+        $CI_REGISTRY_IMAGE-hardened:${CI_COMMIT_REF_SLUG}-linux-arm64
+      docker manifest push $CI_REGISTRY_IMAGE-hardened:$CI_COMMIT_REF_SLUG
+    # Tag as latest on main branch or create version tags
+    - |
+      if [ "$CI_COMMIT_BRANCH" = "$CI_DEFAULT_BRANCH" ]; then
+        docker manifest create $CI_REGISTRY_IMAGE-hardened:latest \
+          $CI_REGISTRY_IMAGE-hardened:${CI_COMMIT_REF_SLUG}-linux-amd64 \
+          $CI_REGISTRY_IMAGE-hardened:${CI_COMMIT_REF_SLUG}-linux-arm64
+        docker manifest push $CI_REGISTRY_IMAGE-hardened:latest
+      fi
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        docker manifest create $CI_REGISTRY_IMAGE-hardened:$CI_COMMIT_TAG \
+          $CI_REGISTRY_IMAGE-hardened:${CI_COMMIT_REF_SLUG}-linux-amd64 \
+          $CI_REGISTRY_IMAGE-hardened:${CI_COMMIT_REF_SLUG}-linux-arm64
+        docker manifest push $CI_REGISTRY_IMAGE-hardened:$CI_COMMIT_TAG
+      
+        MAJOR_MINOR=$(echo $CI_COMMIT_TAG | sed -E 's/^v?([0-9]+\.[0-9]+)\..*/\1/')
+        if [ -n "$MAJOR_MINOR" ]; then
+          docker manifest create $CI_REGISTRY_IMAGE-hardened:$MAJOR_MINOR \
+            $CI_REGISTRY_IMAGE-hardened:${CI_COMMIT_REF_SLUG}-linux-amd64 \
+            $CI_REGISTRY_IMAGE-hardened:${CI_COMMIT_REF_SLUG}-linux-arm64
+          docker manifest push $CI_REGISTRY_IMAGE-hardened:$MAJOR_MINOR
+        fi
+      fi
+  needs:
+    - docker:build:hardened:amd64
+    - docker:build:hardened:arm64
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
