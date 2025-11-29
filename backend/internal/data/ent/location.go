@@ -114,7 +114,7 @@ func (*Location) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the Location fields.
-func (l *Location) assignValues(columns []string, values []any) error {
+func (_m *Location) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -124,48 +124,48 @@ func (l *Location) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
-				l.ID = *value
+				_m.ID = *value
 			}
 		case location.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				l.CreatedAt = value.Time
+				_m.CreatedAt = value.Time
 			}
 		case location.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				l.UpdatedAt = value.Time
+				_m.UpdatedAt = value.Time
 			}
 		case location.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
-				l.Name = value.String
+				_m.Name = value.String
 			}
 		case location.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
-				l.Description = value.String
+				_m.Description = value.String
 			}
 		case location.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field group_locations", values[i])
 			} else if value.Valid {
-				l.group_locations = new(uuid.UUID)
-				*l.group_locations = *value.S.(*uuid.UUID)
+				_m.group_locations = new(uuid.UUID)
+				*_m.group_locations = *value.S.(*uuid.UUID)
 			}
 		case location.ForeignKeys[1]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field location_children", values[i])
 			} else if value.Valid {
-				l.location_children = new(uuid.UUID)
-				*l.location_children = *value.S.(*uuid.UUID)
+				_m.location_children = new(uuid.UUID)
+				*_m.location_children = *value.S.(*uuid.UUID)
 			}
 		default:
-			l.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -173,64 +173,64 @@ func (l *Location) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the Location.
 // This includes values selected through modifiers, order, etc.
-func (l *Location) Value(name string) (ent.Value, error) {
-	return l.selectValues.Get(name)
+func (_m *Location) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // QueryGroup queries the "group" edge of the Location entity.
-func (l *Location) QueryGroup() *GroupQuery {
-	return NewLocationClient(l.config).QueryGroup(l)
+func (_m *Location) QueryGroup() *GroupQuery {
+	return NewLocationClient(_m.config).QueryGroup(_m)
 }
 
 // QueryParent queries the "parent" edge of the Location entity.
-func (l *Location) QueryParent() *LocationQuery {
-	return NewLocationClient(l.config).QueryParent(l)
+func (_m *Location) QueryParent() *LocationQuery {
+	return NewLocationClient(_m.config).QueryParent(_m)
 }
 
 // QueryChildren queries the "children" edge of the Location entity.
-func (l *Location) QueryChildren() *LocationQuery {
-	return NewLocationClient(l.config).QueryChildren(l)
+func (_m *Location) QueryChildren() *LocationQuery {
+	return NewLocationClient(_m.config).QueryChildren(_m)
 }
 
 // QueryItems queries the "items" edge of the Location entity.
-func (l *Location) QueryItems() *ItemQuery {
-	return NewLocationClient(l.config).QueryItems(l)
+func (_m *Location) QueryItems() *ItemQuery {
+	return NewLocationClient(_m.config).QueryItems(_m)
 }
 
 // Update returns a builder for updating this Location.
 // Note that you need to call Location.Unwrap() before calling this method if this Location
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (l *Location) Update() *LocationUpdateOne {
-	return NewLocationClient(l.config).UpdateOne(l)
+func (_m *Location) Update() *LocationUpdateOne {
+	return NewLocationClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the Location entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (l *Location) Unwrap() *Location {
-	_tx, ok := l.config.driver.(*txDriver)
+func (_m *Location) Unwrap() *Location {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: Location is not a transactional entity")
 	}
-	l.config.driver = _tx.drv
-	return l
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (l *Location) String() string {
+func (_m *Location) String() string {
 	var builder strings.Builder
 	builder.WriteString("Location(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", l.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("created_at=")
-	builder.WriteString(l.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
-	builder.WriteString(l.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("name=")
-	builder.WriteString(l.Name)
+	builder.WriteString(_m.Name)
 	builder.WriteString(", ")
 	builder.WriteString("description=")
-	builder.WriteString(l.Description)
+	builder.WriteString(_m.Description)
 	builder.WriteByte(')')
 	return builder.String()
 }

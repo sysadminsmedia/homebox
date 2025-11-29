@@ -30,692 +30,692 @@ type ItemUpdate struct {
 }
 
 // Where appends a list predicates to the ItemUpdate builder.
-func (iu *ItemUpdate) Where(ps ...predicate.Item) *ItemUpdate {
-	iu.mutation.Where(ps...)
-	return iu
+func (_u *ItemUpdate) Where(ps ...predicate.Item) *ItemUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (iu *ItemUpdate) SetUpdatedAt(t time.Time) *ItemUpdate {
-	iu.mutation.SetUpdatedAt(t)
-	return iu
+func (_u *ItemUpdate) SetUpdatedAt(v time.Time) *ItemUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetName sets the "name" field.
-func (iu *ItemUpdate) SetName(s string) *ItemUpdate {
-	iu.mutation.SetName(s)
-	return iu
+func (_u *ItemUpdate) SetName(v string) *ItemUpdate {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillableName(s *string) *ItemUpdate {
-	if s != nil {
-		iu.SetName(*s)
+func (_u *ItemUpdate) SetNillableName(v *string) *ItemUpdate {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return iu
+	return _u
 }
 
 // SetDescription sets the "description" field.
-func (iu *ItemUpdate) SetDescription(s string) *ItemUpdate {
-	iu.mutation.SetDescription(s)
-	return iu
+func (_u *ItemUpdate) SetDescription(v string) *ItemUpdate {
+	_u.mutation.SetDescription(v)
+	return _u
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillableDescription(s *string) *ItemUpdate {
-	if s != nil {
-		iu.SetDescription(*s)
+func (_u *ItemUpdate) SetNillableDescription(v *string) *ItemUpdate {
+	if v != nil {
+		_u.SetDescription(*v)
 	}
-	return iu
+	return _u
 }
 
 // ClearDescription clears the value of the "description" field.
-func (iu *ItemUpdate) ClearDescription() *ItemUpdate {
-	iu.mutation.ClearDescription()
-	return iu
+func (_u *ItemUpdate) ClearDescription() *ItemUpdate {
+	_u.mutation.ClearDescription()
+	return _u
 }
 
 // SetImportRef sets the "import_ref" field.
-func (iu *ItemUpdate) SetImportRef(s string) *ItemUpdate {
-	iu.mutation.SetImportRef(s)
-	return iu
+func (_u *ItemUpdate) SetImportRef(v string) *ItemUpdate {
+	_u.mutation.SetImportRef(v)
+	return _u
 }
 
 // SetNillableImportRef sets the "import_ref" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillableImportRef(s *string) *ItemUpdate {
-	if s != nil {
-		iu.SetImportRef(*s)
+func (_u *ItemUpdate) SetNillableImportRef(v *string) *ItemUpdate {
+	if v != nil {
+		_u.SetImportRef(*v)
 	}
-	return iu
+	return _u
 }
 
 // ClearImportRef clears the value of the "import_ref" field.
-func (iu *ItemUpdate) ClearImportRef() *ItemUpdate {
-	iu.mutation.ClearImportRef()
-	return iu
+func (_u *ItemUpdate) ClearImportRef() *ItemUpdate {
+	_u.mutation.ClearImportRef()
+	return _u
 }
 
 // SetNotes sets the "notes" field.
-func (iu *ItemUpdate) SetNotes(s string) *ItemUpdate {
-	iu.mutation.SetNotes(s)
-	return iu
+func (_u *ItemUpdate) SetNotes(v string) *ItemUpdate {
+	_u.mutation.SetNotes(v)
+	return _u
 }
 
 // SetNillableNotes sets the "notes" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillableNotes(s *string) *ItemUpdate {
-	if s != nil {
-		iu.SetNotes(*s)
+func (_u *ItemUpdate) SetNillableNotes(v *string) *ItemUpdate {
+	if v != nil {
+		_u.SetNotes(*v)
 	}
-	return iu
+	return _u
 }
 
 // ClearNotes clears the value of the "notes" field.
-func (iu *ItemUpdate) ClearNotes() *ItemUpdate {
-	iu.mutation.ClearNotes()
-	return iu
+func (_u *ItemUpdate) ClearNotes() *ItemUpdate {
+	_u.mutation.ClearNotes()
+	return _u
 }
 
 // SetQuantity sets the "quantity" field.
-func (iu *ItemUpdate) SetQuantity(i int) *ItemUpdate {
-	iu.mutation.ResetQuantity()
-	iu.mutation.SetQuantity(i)
-	return iu
+func (_u *ItemUpdate) SetQuantity(v int) *ItemUpdate {
+	_u.mutation.ResetQuantity()
+	_u.mutation.SetQuantity(v)
+	return _u
 }
 
 // SetNillableQuantity sets the "quantity" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillableQuantity(i *int) *ItemUpdate {
-	if i != nil {
-		iu.SetQuantity(*i)
+func (_u *ItemUpdate) SetNillableQuantity(v *int) *ItemUpdate {
+	if v != nil {
+		_u.SetQuantity(*v)
 	}
-	return iu
+	return _u
 }
 
-// AddQuantity adds i to the "quantity" field.
-func (iu *ItemUpdate) AddQuantity(i int) *ItemUpdate {
-	iu.mutation.AddQuantity(i)
-	return iu
+// AddQuantity adds value to the "quantity" field.
+func (_u *ItemUpdate) AddQuantity(v int) *ItemUpdate {
+	_u.mutation.AddQuantity(v)
+	return _u
 }
 
 // SetInsured sets the "insured" field.
-func (iu *ItemUpdate) SetInsured(b bool) *ItemUpdate {
-	iu.mutation.SetInsured(b)
-	return iu
+func (_u *ItemUpdate) SetInsured(v bool) *ItemUpdate {
+	_u.mutation.SetInsured(v)
+	return _u
 }
 
 // SetNillableInsured sets the "insured" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillableInsured(b *bool) *ItemUpdate {
-	if b != nil {
-		iu.SetInsured(*b)
+func (_u *ItemUpdate) SetNillableInsured(v *bool) *ItemUpdate {
+	if v != nil {
+		_u.SetInsured(*v)
 	}
-	return iu
+	return _u
 }
 
 // SetArchived sets the "archived" field.
-func (iu *ItemUpdate) SetArchived(b bool) *ItemUpdate {
-	iu.mutation.SetArchived(b)
-	return iu
+func (_u *ItemUpdate) SetArchived(v bool) *ItemUpdate {
+	_u.mutation.SetArchived(v)
+	return _u
 }
 
 // SetNillableArchived sets the "archived" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillableArchived(b *bool) *ItemUpdate {
-	if b != nil {
-		iu.SetArchived(*b)
+func (_u *ItemUpdate) SetNillableArchived(v *bool) *ItemUpdate {
+	if v != nil {
+		_u.SetArchived(*v)
 	}
-	return iu
+	return _u
 }
 
 // SetAssetID sets the "asset_id" field.
-func (iu *ItemUpdate) SetAssetID(i int) *ItemUpdate {
-	iu.mutation.ResetAssetID()
-	iu.mutation.SetAssetID(i)
-	return iu
+func (_u *ItemUpdate) SetAssetID(v int) *ItemUpdate {
+	_u.mutation.ResetAssetID()
+	_u.mutation.SetAssetID(v)
+	return _u
 }
 
 // SetNillableAssetID sets the "asset_id" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillableAssetID(i *int) *ItemUpdate {
-	if i != nil {
-		iu.SetAssetID(*i)
+func (_u *ItemUpdate) SetNillableAssetID(v *int) *ItemUpdate {
+	if v != nil {
+		_u.SetAssetID(*v)
 	}
-	return iu
+	return _u
 }
 
-// AddAssetID adds i to the "asset_id" field.
-func (iu *ItemUpdate) AddAssetID(i int) *ItemUpdate {
-	iu.mutation.AddAssetID(i)
-	return iu
+// AddAssetID adds value to the "asset_id" field.
+func (_u *ItemUpdate) AddAssetID(v int) *ItemUpdate {
+	_u.mutation.AddAssetID(v)
+	return _u
 }
 
 // SetSyncChildItemsLocations sets the "sync_child_items_locations" field.
-func (iu *ItemUpdate) SetSyncChildItemsLocations(b bool) *ItemUpdate {
-	iu.mutation.SetSyncChildItemsLocations(b)
-	return iu
+func (_u *ItemUpdate) SetSyncChildItemsLocations(v bool) *ItemUpdate {
+	_u.mutation.SetSyncChildItemsLocations(v)
+	return _u
 }
 
 // SetNillableSyncChildItemsLocations sets the "sync_child_items_locations" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillableSyncChildItemsLocations(b *bool) *ItemUpdate {
-	if b != nil {
-		iu.SetSyncChildItemsLocations(*b)
+func (_u *ItemUpdate) SetNillableSyncChildItemsLocations(v *bool) *ItemUpdate {
+	if v != nil {
+		_u.SetSyncChildItemsLocations(*v)
 	}
-	return iu
+	return _u
 }
 
 // SetSerialNumber sets the "serial_number" field.
-func (iu *ItemUpdate) SetSerialNumber(s string) *ItemUpdate {
-	iu.mutation.SetSerialNumber(s)
-	return iu
+func (_u *ItemUpdate) SetSerialNumber(v string) *ItemUpdate {
+	_u.mutation.SetSerialNumber(v)
+	return _u
 }
 
 // SetNillableSerialNumber sets the "serial_number" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillableSerialNumber(s *string) *ItemUpdate {
-	if s != nil {
-		iu.SetSerialNumber(*s)
+func (_u *ItemUpdate) SetNillableSerialNumber(v *string) *ItemUpdate {
+	if v != nil {
+		_u.SetSerialNumber(*v)
 	}
-	return iu
+	return _u
 }
 
 // ClearSerialNumber clears the value of the "serial_number" field.
-func (iu *ItemUpdate) ClearSerialNumber() *ItemUpdate {
-	iu.mutation.ClearSerialNumber()
-	return iu
+func (_u *ItemUpdate) ClearSerialNumber() *ItemUpdate {
+	_u.mutation.ClearSerialNumber()
+	return _u
 }
 
 // SetModelNumber sets the "model_number" field.
-func (iu *ItemUpdate) SetModelNumber(s string) *ItemUpdate {
-	iu.mutation.SetModelNumber(s)
-	return iu
+func (_u *ItemUpdate) SetModelNumber(v string) *ItemUpdate {
+	_u.mutation.SetModelNumber(v)
+	return _u
 }
 
 // SetNillableModelNumber sets the "model_number" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillableModelNumber(s *string) *ItemUpdate {
-	if s != nil {
-		iu.SetModelNumber(*s)
+func (_u *ItemUpdate) SetNillableModelNumber(v *string) *ItemUpdate {
+	if v != nil {
+		_u.SetModelNumber(*v)
 	}
-	return iu
+	return _u
 }
 
 // ClearModelNumber clears the value of the "model_number" field.
-func (iu *ItemUpdate) ClearModelNumber() *ItemUpdate {
-	iu.mutation.ClearModelNumber()
-	return iu
+func (_u *ItemUpdate) ClearModelNumber() *ItemUpdate {
+	_u.mutation.ClearModelNumber()
+	return _u
 }
 
 // SetManufacturer sets the "manufacturer" field.
-func (iu *ItemUpdate) SetManufacturer(s string) *ItemUpdate {
-	iu.mutation.SetManufacturer(s)
-	return iu
+func (_u *ItemUpdate) SetManufacturer(v string) *ItemUpdate {
+	_u.mutation.SetManufacturer(v)
+	return _u
 }
 
 // SetNillableManufacturer sets the "manufacturer" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillableManufacturer(s *string) *ItemUpdate {
-	if s != nil {
-		iu.SetManufacturer(*s)
+func (_u *ItemUpdate) SetNillableManufacturer(v *string) *ItemUpdate {
+	if v != nil {
+		_u.SetManufacturer(*v)
 	}
-	return iu
+	return _u
 }
 
 // ClearManufacturer clears the value of the "manufacturer" field.
-func (iu *ItemUpdate) ClearManufacturer() *ItemUpdate {
-	iu.mutation.ClearManufacturer()
-	return iu
+func (_u *ItemUpdate) ClearManufacturer() *ItemUpdate {
+	_u.mutation.ClearManufacturer()
+	return _u
 }
 
 // SetLifetimeWarranty sets the "lifetime_warranty" field.
-func (iu *ItemUpdate) SetLifetimeWarranty(b bool) *ItemUpdate {
-	iu.mutation.SetLifetimeWarranty(b)
-	return iu
+func (_u *ItemUpdate) SetLifetimeWarranty(v bool) *ItemUpdate {
+	_u.mutation.SetLifetimeWarranty(v)
+	return _u
 }
 
 // SetNillableLifetimeWarranty sets the "lifetime_warranty" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillableLifetimeWarranty(b *bool) *ItemUpdate {
-	if b != nil {
-		iu.SetLifetimeWarranty(*b)
+func (_u *ItemUpdate) SetNillableLifetimeWarranty(v *bool) *ItemUpdate {
+	if v != nil {
+		_u.SetLifetimeWarranty(*v)
 	}
-	return iu
+	return _u
 }
 
 // SetWarrantyExpires sets the "warranty_expires" field.
-func (iu *ItemUpdate) SetWarrantyExpires(t time.Time) *ItemUpdate {
-	iu.mutation.SetWarrantyExpires(t)
-	return iu
+func (_u *ItemUpdate) SetWarrantyExpires(v time.Time) *ItemUpdate {
+	_u.mutation.SetWarrantyExpires(v)
+	return _u
 }
 
 // SetNillableWarrantyExpires sets the "warranty_expires" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillableWarrantyExpires(t *time.Time) *ItemUpdate {
-	if t != nil {
-		iu.SetWarrantyExpires(*t)
+func (_u *ItemUpdate) SetNillableWarrantyExpires(v *time.Time) *ItemUpdate {
+	if v != nil {
+		_u.SetWarrantyExpires(*v)
 	}
-	return iu
+	return _u
 }
 
 // ClearWarrantyExpires clears the value of the "warranty_expires" field.
-func (iu *ItemUpdate) ClearWarrantyExpires() *ItemUpdate {
-	iu.mutation.ClearWarrantyExpires()
-	return iu
+func (_u *ItemUpdate) ClearWarrantyExpires() *ItemUpdate {
+	_u.mutation.ClearWarrantyExpires()
+	return _u
 }
 
 // SetWarrantyDetails sets the "warranty_details" field.
-func (iu *ItemUpdate) SetWarrantyDetails(s string) *ItemUpdate {
-	iu.mutation.SetWarrantyDetails(s)
-	return iu
+func (_u *ItemUpdate) SetWarrantyDetails(v string) *ItemUpdate {
+	_u.mutation.SetWarrantyDetails(v)
+	return _u
 }
 
 // SetNillableWarrantyDetails sets the "warranty_details" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillableWarrantyDetails(s *string) *ItemUpdate {
-	if s != nil {
-		iu.SetWarrantyDetails(*s)
+func (_u *ItemUpdate) SetNillableWarrantyDetails(v *string) *ItemUpdate {
+	if v != nil {
+		_u.SetWarrantyDetails(*v)
 	}
-	return iu
+	return _u
 }
 
 // ClearWarrantyDetails clears the value of the "warranty_details" field.
-func (iu *ItemUpdate) ClearWarrantyDetails() *ItemUpdate {
-	iu.mutation.ClearWarrantyDetails()
-	return iu
+func (_u *ItemUpdate) ClearWarrantyDetails() *ItemUpdate {
+	_u.mutation.ClearWarrantyDetails()
+	return _u
 }
 
 // SetPurchaseTime sets the "purchase_time" field.
-func (iu *ItemUpdate) SetPurchaseTime(t time.Time) *ItemUpdate {
-	iu.mutation.SetPurchaseTime(t)
-	return iu
+func (_u *ItemUpdate) SetPurchaseTime(v time.Time) *ItemUpdate {
+	_u.mutation.SetPurchaseTime(v)
+	return _u
 }
 
 // SetNillablePurchaseTime sets the "purchase_time" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillablePurchaseTime(t *time.Time) *ItemUpdate {
-	if t != nil {
-		iu.SetPurchaseTime(*t)
+func (_u *ItemUpdate) SetNillablePurchaseTime(v *time.Time) *ItemUpdate {
+	if v != nil {
+		_u.SetPurchaseTime(*v)
 	}
-	return iu
+	return _u
 }
 
 // ClearPurchaseTime clears the value of the "purchase_time" field.
-func (iu *ItemUpdate) ClearPurchaseTime() *ItemUpdate {
-	iu.mutation.ClearPurchaseTime()
-	return iu
+func (_u *ItemUpdate) ClearPurchaseTime() *ItemUpdate {
+	_u.mutation.ClearPurchaseTime()
+	return _u
 }
 
 // SetPurchaseFrom sets the "purchase_from" field.
-func (iu *ItemUpdate) SetPurchaseFrom(s string) *ItemUpdate {
-	iu.mutation.SetPurchaseFrom(s)
-	return iu
+func (_u *ItemUpdate) SetPurchaseFrom(v string) *ItemUpdate {
+	_u.mutation.SetPurchaseFrom(v)
+	return _u
 }
 
 // SetNillablePurchaseFrom sets the "purchase_from" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillablePurchaseFrom(s *string) *ItemUpdate {
-	if s != nil {
-		iu.SetPurchaseFrom(*s)
+func (_u *ItemUpdate) SetNillablePurchaseFrom(v *string) *ItemUpdate {
+	if v != nil {
+		_u.SetPurchaseFrom(*v)
 	}
-	return iu
+	return _u
 }
 
 // ClearPurchaseFrom clears the value of the "purchase_from" field.
-func (iu *ItemUpdate) ClearPurchaseFrom() *ItemUpdate {
-	iu.mutation.ClearPurchaseFrom()
-	return iu
+func (_u *ItemUpdate) ClearPurchaseFrom() *ItemUpdate {
+	_u.mutation.ClearPurchaseFrom()
+	return _u
 }
 
 // SetPurchasePrice sets the "purchase_price" field.
-func (iu *ItemUpdate) SetPurchasePrice(f float64) *ItemUpdate {
-	iu.mutation.ResetPurchasePrice()
-	iu.mutation.SetPurchasePrice(f)
-	return iu
+func (_u *ItemUpdate) SetPurchasePrice(v float64) *ItemUpdate {
+	_u.mutation.ResetPurchasePrice()
+	_u.mutation.SetPurchasePrice(v)
+	return _u
 }
 
 // SetNillablePurchasePrice sets the "purchase_price" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillablePurchasePrice(f *float64) *ItemUpdate {
-	if f != nil {
-		iu.SetPurchasePrice(*f)
+func (_u *ItemUpdate) SetNillablePurchasePrice(v *float64) *ItemUpdate {
+	if v != nil {
+		_u.SetPurchasePrice(*v)
 	}
-	return iu
+	return _u
 }
 
-// AddPurchasePrice adds f to the "purchase_price" field.
-func (iu *ItemUpdate) AddPurchasePrice(f float64) *ItemUpdate {
-	iu.mutation.AddPurchasePrice(f)
-	return iu
+// AddPurchasePrice adds value to the "purchase_price" field.
+func (_u *ItemUpdate) AddPurchasePrice(v float64) *ItemUpdate {
+	_u.mutation.AddPurchasePrice(v)
+	return _u
 }
 
 // SetSoldTime sets the "sold_time" field.
-func (iu *ItemUpdate) SetSoldTime(t time.Time) *ItemUpdate {
-	iu.mutation.SetSoldTime(t)
-	return iu
+func (_u *ItemUpdate) SetSoldTime(v time.Time) *ItemUpdate {
+	_u.mutation.SetSoldTime(v)
+	return _u
 }
 
 // SetNillableSoldTime sets the "sold_time" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillableSoldTime(t *time.Time) *ItemUpdate {
-	if t != nil {
-		iu.SetSoldTime(*t)
+func (_u *ItemUpdate) SetNillableSoldTime(v *time.Time) *ItemUpdate {
+	if v != nil {
+		_u.SetSoldTime(*v)
 	}
-	return iu
+	return _u
 }
 
 // ClearSoldTime clears the value of the "sold_time" field.
-func (iu *ItemUpdate) ClearSoldTime() *ItemUpdate {
-	iu.mutation.ClearSoldTime()
-	return iu
+func (_u *ItemUpdate) ClearSoldTime() *ItemUpdate {
+	_u.mutation.ClearSoldTime()
+	return _u
 }
 
 // SetSoldTo sets the "sold_to" field.
-func (iu *ItemUpdate) SetSoldTo(s string) *ItemUpdate {
-	iu.mutation.SetSoldTo(s)
-	return iu
+func (_u *ItemUpdate) SetSoldTo(v string) *ItemUpdate {
+	_u.mutation.SetSoldTo(v)
+	return _u
 }
 
 // SetNillableSoldTo sets the "sold_to" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillableSoldTo(s *string) *ItemUpdate {
-	if s != nil {
-		iu.SetSoldTo(*s)
+func (_u *ItemUpdate) SetNillableSoldTo(v *string) *ItemUpdate {
+	if v != nil {
+		_u.SetSoldTo(*v)
 	}
-	return iu
+	return _u
 }
 
 // ClearSoldTo clears the value of the "sold_to" field.
-func (iu *ItemUpdate) ClearSoldTo() *ItemUpdate {
-	iu.mutation.ClearSoldTo()
-	return iu
+func (_u *ItemUpdate) ClearSoldTo() *ItemUpdate {
+	_u.mutation.ClearSoldTo()
+	return _u
 }
 
 // SetSoldPrice sets the "sold_price" field.
-func (iu *ItemUpdate) SetSoldPrice(f float64) *ItemUpdate {
-	iu.mutation.ResetSoldPrice()
-	iu.mutation.SetSoldPrice(f)
-	return iu
+func (_u *ItemUpdate) SetSoldPrice(v float64) *ItemUpdate {
+	_u.mutation.ResetSoldPrice()
+	_u.mutation.SetSoldPrice(v)
+	return _u
 }
 
 // SetNillableSoldPrice sets the "sold_price" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillableSoldPrice(f *float64) *ItemUpdate {
-	if f != nil {
-		iu.SetSoldPrice(*f)
+func (_u *ItemUpdate) SetNillableSoldPrice(v *float64) *ItemUpdate {
+	if v != nil {
+		_u.SetSoldPrice(*v)
 	}
-	return iu
+	return _u
 }
 
-// AddSoldPrice adds f to the "sold_price" field.
-func (iu *ItemUpdate) AddSoldPrice(f float64) *ItemUpdate {
-	iu.mutation.AddSoldPrice(f)
-	return iu
+// AddSoldPrice adds value to the "sold_price" field.
+func (_u *ItemUpdate) AddSoldPrice(v float64) *ItemUpdate {
+	_u.mutation.AddSoldPrice(v)
+	return _u
 }
 
 // SetSoldNotes sets the "sold_notes" field.
-func (iu *ItemUpdate) SetSoldNotes(s string) *ItemUpdate {
-	iu.mutation.SetSoldNotes(s)
-	return iu
+func (_u *ItemUpdate) SetSoldNotes(v string) *ItemUpdate {
+	_u.mutation.SetSoldNotes(v)
+	return _u
 }
 
 // SetNillableSoldNotes sets the "sold_notes" field if the given value is not nil.
-func (iu *ItemUpdate) SetNillableSoldNotes(s *string) *ItemUpdate {
-	if s != nil {
-		iu.SetSoldNotes(*s)
+func (_u *ItemUpdate) SetNillableSoldNotes(v *string) *ItemUpdate {
+	if v != nil {
+		_u.SetSoldNotes(*v)
 	}
-	return iu
+	return _u
 }
 
 // ClearSoldNotes clears the value of the "sold_notes" field.
-func (iu *ItemUpdate) ClearSoldNotes() *ItemUpdate {
-	iu.mutation.ClearSoldNotes()
-	return iu
+func (_u *ItemUpdate) ClearSoldNotes() *ItemUpdate {
+	_u.mutation.ClearSoldNotes()
+	return _u
 }
 
 // SetGroupID sets the "group" edge to the Group entity by ID.
-func (iu *ItemUpdate) SetGroupID(id uuid.UUID) *ItemUpdate {
-	iu.mutation.SetGroupID(id)
-	return iu
+func (_u *ItemUpdate) SetGroupID(id uuid.UUID) *ItemUpdate {
+	_u.mutation.SetGroupID(id)
+	return _u
 }
 
 // SetGroup sets the "group" edge to the Group entity.
-func (iu *ItemUpdate) SetGroup(g *Group) *ItemUpdate {
-	return iu.SetGroupID(g.ID)
+func (_u *ItemUpdate) SetGroup(v *Group) *ItemUpdate {
+	return _u.SetGroupID(v.ID)
 }
 
 // SetParentID sets the "parent" edge to the Item entity by ID.
-func (iu *ItemUpdate) SetParentID(id uuid.UUID) *ItemUpdate {
-	iu.mutation.SetParentID(id)
-	return iu
+func (_u *ItemUpdate) SetParentID(id uuid.UUID) *ItemUpdate {
+	_u.mutation.SetParentID(id)
+	return _u
 }
 
 // SetNillableParentID sets the "parent" edge to the Item entity by ID if the given value is not nil.
-func (iu *ItemUpdate) SetNillableParentID(id *uuid.UUID) *ItemUpdate {
+func (_u *ItemUpdate) SetNillableParentID(id *uuid.UUID) *ItemUpdate {
 	if id != nil {
-		iu = iu.SetParentID(*id)
+		_u = _u.SetParentID(*id)
 	}
-	return iu
+	return _u
 }
 
 // SetParent sets the "parent" edge to the Item entity.
-func (iu *ItemUpdate) SetParent(i *Item) *ItemUpdate {
-	return iu.SetParentID(i.ID)
+func (_u *ItemUpdate) SetParent(v *Item) *ItemUpdate {
+	return _u.SetParentID(v.ID)
 }
 
 // AddChildIDs adds the "children" edge to the Item entity by IDs.
-func (iu *ItemUpdate) AddChildIDs(ids ...uuid.UUID) *ItemUpdate {
-	iu.mutation.AddChildIDs(ids...)
-	return iu
+func (_u *ItemUpdate) AddChildIDs(ids ...uuid.UUID) *ItemUpdate {
+	_u.mutation.AddChildIDs(ids...)
+	return _u
 }
 
 // AddChildren adds the "children" edges to the Item entity.
-func (iu *ItemUpdate) AddChildren(i ...*Item) *ItemUpdate {
-	ids := make([]uuid.UUID, len(i))
-	for j := range i {
-		ids[j] = i[j].ID
+func (_u *ItemUpdate) AddChildren(v ...*Item) *ItemUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return iu.AddChildIDs(ids...)
+	return _u.AddChildIDs(ids...)
 }
 
 // AddLabelIDs adds the "label" edge to the Label entity by IDs.
-func (iu *ItemUpdate) AddLabelIDs(ids ...uuid.UUID) *ItemUpdate {
-	iu.mutation.AddLabelIDs(ids...)
-	return iu
+func (_u *ItemUpdate) AddLabelIDs(ids ...uuid.UUID) *ItemUpdate {
+	_u.mutation.AddLabelIDs(ids...)
+	return _u
 }
 
 // AddLabel adds the "label" edges to the Label entity.
-func (iu *ItemUpdate) AddLabel(l ...*Label) *ItemUpdate {
-	ids := make([]uuid.UUID, len(l))
-	for i := range l {
-		ids[i] = l[i].ID
+func (_u *ItemUpdate) AddLabel(v ...*Label) *ItemUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return iu.AddLabelIDs(ids...)
+	return _u.AddLabelIDs(ids...)
 }
 
 // SetLocationID sets the "location" edge to the Location entity by ID.
-func (iu *ItemUpdate) SetLocationID(id uuid.UUID) *ItemUpdate {
-	iu.mutation.SetLocationID(id)
-	return iu
+func (_u *ItemUpdate) SetLocationID(id uuid.UUID) *ItemUpdate {
+	_u.mutation.SetLocationID(id)
+	return _u
 }
 
 // SetNillableLocationID sets the "location" edge to the Location entity by ID if the given value is not nil.
-func (iu *ItemUpdate) SetNillableLocationID(id *uuid.UUID) *ItemUpdate {
+func (_u *ItemUpdate) SetNillableLocationID(id *uuid.UUID) *ItemUpdate {
 	if id != nil {
-		iu = iu.SetLocationID(*id)
+		_u = _u.SetLocationID(*id)
 	}
-	return iu
+	return _u
 }
 
 // SetLocation sets the "location" edge to the Location entity.
-func (iu *ItemUpdate) SetLocation(l *Location) *ItemUpdate {
-	return iu.SetLocationID(l.ID)
+func (_u *ItemUpdate) SetLocation(v *Location) *ItemUpdate {
+	return _u.SetLocationID(v.ID)
 }
 
 // AddFieldIDs adds the "fields" edge to the ItemField entity by IDs.
-func (iu *ItemUpdate) AddFieldIDs(ids ...uuid.UUID) *ItemUpdate {
-	iu.mutation.AddFieldIDs(ids...)
-	return iu
+func (_u *ItemUpdate) AddFieldIDs(ids ...uuid.UUID) *ItemUpdate {
+	_u.mutation.AddFieldIDs(ids...)
+	return _u
 }
 
 // AddFields adds the "fields" edges to the ItemField entity.
-func (iu *ItemUpdate) AddFields(i ...*ItemField) *ItemUpdate {
-	ids := make([]uuid.UUID, len(i))
-	for j := range i {
-		ids[j] = i[j].ID
+func (_u *ItemUpdate) AddFields(v ...*ItemField) *ItemUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return iu.AddFieldIDs(ids...)
+	return _u.AddFieldIDs(ids...)
 }
 
 // AddMaintenanceEntryIDs adds the "maintenance_entries" edge to the MaintenanceEntry entity by IDs.
-func (iu *ItemUpdate) AddMaintenanceEntryIDs(ids ...uuid.UUID) *ItemUpdate {
-	iu.mutation.AddMaintenanceEntryIDs(ids...)
-	return iu
+func (_u *ItemUpdate) AddMaintenanceEntryIDs(ids ...uuid.UUID) *ItemUpdate {
+	_u.mutation.AddMaintenanceEntryIDs(ids...)
+	return _u
 }
 
 // AddMaintenanceEntries adds the "maintenance_entries" edges to the MaintenanceEntry entity.
-func (iu *ItemUpdate) AddMaintenanceEntries(m ...*MaintenanceEntry) *ItemUpdate {
-	ids := make([]uuid.UUID, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+func (_u *ItemUpdate) AddMaintenanceEntries(v ...*MaintenanceEntry) *ItemUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return iu.AddMaintenanceEntryIDs(ids...)
+	return _u.AddMaintenanceEntryIDs(ids...)
 }
 
 // AddAttachmentIDs adds the "attachments" edge to the Attachment entity by IDs.
-func (iu *ItemUpdate) AddAttachmentIDs(ids ...uuid.UUID) *ItemUpdate {
-	iu.mutation.AddAttachmentIDs(ids...)
-	return iu
+func (_u *ItemUpdate) AddAttachmentIDs(ids ...uuid.UUID) *ItemUpdate {
+	_u.mutation.AddAttachmentIDs(ids...)
+	return _u
 }
 
 // AddAttachments adds the "attachments" edges to the Attachment entity.
-func (iu *ItemUpdate) AddAttachments(a ...*Attachment) *ItemUpdate {
-	ids := make([]uuid.UUID, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
+func (_u *ItemUpdate) AddAttachments(v ...*Attachment) *ItemUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return iu.AddAttachmentIDs(ids...)
+	return _u.AddAttachmentIDs(ids...)
 }
 
 // Mutation returns the ItemMutation object of the builder.
-func (iu *ItemUpdate) Mutation() *ItemMutation {
-	return iu.mutation
+func (_u *ItemUpdate) Mutation() *ItemMutation {
+	return _u.mutation
 }
 
 // ClearGroup clears the "group" edge to the Group entity.
-func (iu *ItemUpdate) ClearGroup() *ItemUpdate {
-	iu.mutation.ClearGroup()
-	return iu
+func (_u *ItemUpdate) ClearGroup() *ItemUpdate {
+	_u.mutation.ClearGroup()
+	return _u
 }
 
 // ClearParent clears the "parent" edge to the Item entity.
-func (iu *ItemUpdate) ClearParent() *ItemUpdate {
-	iu.mutation.ClearParent()
-	return iu
+func (_u *ItemUpdate) ClearParent() *ItemUpdate {
+	_u.mutation.ClearParent()
+	return _u
 }
 
 // ClearChildren clears all "children" edges to the Item entity.
-func (iu *ItemUpdate) ClearChildren() *ItemUpdate {
-	iu.mutation.ClearChildren()
-	return iu
+func (_u *ItemUpdate) ClearChildren() *ItemUpdate {
+	_u.mutation.ClearChildren()
+	return _u
 }
 
 // RemoveChildIDs removes the "children" edge to Item entities by IDs.
-func (iu *ItemUpdate) RemoveChildIDs(ids ...uuid.UUID) *ItemUpdate {
-	iu.mutation.RemoveChildIDs(ids...)
-	return iu
+func (_u *ItemUpdate) RemoveChildIDs(ids ...uuid.UUID) *ItemUpdate {
+	_u.mutation.RemoveChildIDs(ids...)
+	return _u
 }
 
 // RemoveChildren removes "children" edges to Item entities.
-func (iu *ItemUpdate) RemoveChildren(i ...*Item) *ItemUpdate {
-	ids := make([]uuid.UUID, len(i))
-	for j := range i {
-		ids[j] = i[j].ID
+func (_u *ItemUpdate) RemoveChildren(v ...*Item) *ItemUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return iu.RemoveChildIDs(ids...)
+	return _u.RemoveChildIDs(ids...)
 }
 
 // ClearLabel clears all "label" edges to the Label entity.
-func (iu *ItemUpdate) ClearLabel() *ItemUpdate {
-	iu.mutation.ClearLabel()
-	return iu
+func (_u *ItemUpdate) ClearLabel() *ItemUpdate {
+	_u.mutation.ClearLabel()
+	return _u
 }
 
 // RemoveLabelIDs removes the "label" edge to Label entities by IDs.
-func (iu *ItemUpdate) RemoveLabelIDs(ids ...uuid.UUID) *ItemUpdate {
-	iu.mutation.RemoveLabelIDs(ids...)
-	return iu
+func (_u *ItemUpdate) RemoveLabelIDs(ids ...uuid.UUID) *ItemUpdate {
+	_u.mutation.RemoveLabelIDs(ids...)
+	return _u
 }
 
 // RemoveLabel removes "label" edges to Label entities.
-func (iu *ItemUpdate) RemoveLabel(l ...*Label) *ItemUpdate {
-	ids := make([]uuid.UUID, len(l))
-	for i := range l {
-		ids[i] = l[i].ID
+func (_u *ItemUpdate) RemoveLabel(v ...*Label) *ItemUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return iu.RemoveLabelIDs(ids...)
+	return _u.RemoveLabelIDs(ids...)
 }
 
 // ClearLocation clears the "location" edge to the Location entity.
-func (iu *ItemUpdate) ClearLocation() *ItemUpdate {
-	iu.mutation.ClearLocation()
-	return iu
+func (_u *ItemUpdate) ClearLocation() *ItemUpdate {
+	_u.mutation.ClearLocation()
+	return _u
 }
 
 // ClearFields clears all "fields" edges to the ItemField entity.
-func (iu *ItemUpdate) ClearFields() *ItemUpdate {
-	iu.mutation.ClearFields()
-	return iu
+func (_u *ItemUpdate) ClearFields() *ItemUpdate {
+	_u.mutation.ClearFields()
+	return _u
 }
 
 // RemoveFieldIDs removes the "fields" edge to ItemField entities by IDs.
-func (iu *ItemUpdate) RemoveFieldIDs(ids ...uuid.UUID) *ItemUpdate {
-	iu.mutation.RemoveFieldIDs(ids...)
-	return iu
+func (_u *ItemUpdate) RemoveFieldIDs(ids ...uuid.UUID) *ItemUpdate {
+	_u.mutation.RemoveFieldIDs(ids...)
+	return _u
 }
 
 // RemoveFields removes "fields" edges to ItemField entities.
-func (iu *ItemUpdate) RemoveFields(i ...*ItemField) *ItemUpdate {
-	ids := make([]uuid.UUID, len(i))
-	for j := range i {
-		ids[j] = i[j].ID
+func (_u *ItemUpdate) RemoveFields(v ...*ItemField) *ItemUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return iu.RemoveFieldIDs(ids...)
+	return _u.RemoveFieldIDs(ids...)
 }
 
 // ClearMaintenanceEntries clears all "maintenance_entries" edges to the MaintenanceEntry entity.
-func (iu *ItemUpdate) ClearMaintenanceEntries() *ItemUpdate {
-	iu.mutation.ClearMaintenanceEntries()
-	return iu
+func (_u *ItemUpdate) ClearMaintenanceEntries() *ItemUpdate {
+	_u.mutation.ClearMaintenanceEntries()
+	return _u
 }
 
 // RemoveMaintenanceEntryIDs removes the "maintenance_entries" edge to MaintenanceEntry entities by IDs.
-func (iu *ItemUpdate) RemoveMaintenanceEntryIDs(ids ...uuid.UUID) *ItemUpdate {
-	iu.mutation.RemoveMaintenanceEntryIDs(ids...)
-	return iu
+func (_u *ItemUpdate) RemoveMaintenanceEntryIDs(ids ...uuid.UUID) *ItemUpdate {
+	_u.mutation.RemoveMaintenanceEntryIDs(ids...)
+	return _u
 }
 
 // RemoveMaintenanceEntries removes "maintenance_entries" edges to MaintenanceEntry entities.
-func (iu *ItemUpdate) RemoveMaintenanceEntries(m ...*MaintenanceEntry) *ItemUpdate {
-	ids := make([]uuid.UUID, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+func (_u *ItemUpdate) RemoveMaintenanceEntries(v ...*MaintenanceEntry) *ItemUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return iu.RemoveMaintenanceEntryIDs(ids...)
+	return _u.RemoveMaintenanceEntryIDs(ids...)
 }
 
 // ClearAttachments clears all "attachments" edges to the Attachment entity.
-func (iu *ItemUpdate) ClearAttachments() *ItemUpdate {
-	iu.mutation.ClearAttachments()
-	return iu
+func (_u *ItemUpdate) ClearAttachments() *ItemUpdate {
+	_u.mutation.ClearAttachments()
+	return _u
 }
 
 // RemoveAttachmentIDs removes the "attachments" edge to Attachment entities by IDs.
-func (iu *ItemUpdate) RemoveAttachmentIDs(ids ...uuid.UUID) *ItemUpdate {
-	iu.mutation.RemoveAttachmentIDs(ids...)
-	return iu
+func (_u *ItemUpdate) RemoveAttachmentIDs(ids ...uuid.UUID) *ItemUpdate {
+	_u.mutation.RemoveAttachmentIDs(ids...)
+	return _u
 }
 
 // RemoveAttachments removes "attachments" edges to Attachment entities.
-func (iu *ItemUpdate) RemoveAttachments(a ...*Attachment) *ItemUpdate {
-	ids := make([]uuid.UUID, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
+func (_u *ItemUpdate) RemoveAttachments(v ...*Attachment) *ItemUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return iu.RemoveAttachmentIDs(ids...)
+	return _u.RemoveAttachmentIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (iu *ItemUpdate) Save(ctx context.Context) (int, error) {
-	iu.defaults()
-	return withHooks(ctx, iu.sqlSave, iu.mutation, iu.hooks)
+func (_u *ItemUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (iu *ItemUpdate) SaveX(ctx context.Context) int {
-	affected, err := iu.Save(ctx)
+func (_u *ItemUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -723,212 +723,212 @@ func (iu *ItemUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (iu *ItemUpdate) Exec(ctx context.Context) error {
-	_, err := iu.Save(ctx)
+func (_u *ItemUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (iu *ItemUpdate) ExecX(ctx context.Context) {
-	if err := iu.Exec(ctx); err != nil {
+func (_u *ItemUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (iu *ItemUpdate) defaults() {
-	if _, ok := iu.mutation.UpdatedAt(); !ok {
+func (_u *ItemUpdate) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
 		v := item.UpdateDefaultUpdatedAt()
-		iu.mutation.SetUpdatedAt(v)
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (iu *ItemUpdate) check() error {
-	if v, ok := iu.mutation.Name(); ok {
+func (_u *ItemUpdate) check() error {
+	if v, ok := _u.mutation.Name(); ok {
 		if err := item.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Item.name": %w`, err)}
 		}
 	}
-	if v, ok := iu.mutation.Description(); ok {
+	if v, ok := _u.mutation.Description(); ok {
 		if err := item.DescriptionValidator(v); err != nil {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Item.description": %w`, err)}
 		}
 	}
-	if v, ok := iu.mutation.ImportRef(); ok {
+	if v, ok := _u.mutation.ImportRef(); ok {
 		if err := item.ImportRefValidator(v); err != nil {
 			return &ValidationError{Name: "import_ref", err: fmt.Errorf(`ent: validator failed for field "Item.import_ref": %w`, err)}
 		}
 	}
-	if v, ok := iu.mutation.Notes(); ok {
+	if v, ok := _u.mutation.Notes(); ok {
 		if err := item.NotesValidator(v); err != nil {
 			return &ValidationError{Name: "notes", err: fmt.Errorf(`ent: validator failed for field "Item.notes": %w`, err)}
 		}
 	}
-	if v, ok := iu.mutation.SerialNumber(); ok {
+	if v, ok := _u.mutation.SerialNumber(); ok {
 		if err := item.SerialNumberValidator(v); err != nil {
 			return &ValidationError{Name: "serial_number", err: fmt.Errorf(`ent: validator failed for field "Item.serial_number": %w`, err)}
 		}
 	}
-	if v, ok := iu.mutation.ModelNumber(); ok {
+	if v, ok := _u.mutation.ModelNumber(); ok {
 		if err := item.ModelNumberValidator(v); err != nil {
 			return &ValidationError{Name: "model_number", err: fmt.Errorf(`ent: validator failed for field "Item.model_number": %w`, err)}
 		}
 	}
-	if v, ok := iu.mutation.Manufacturer(); ok {
+	if v, ok := _u.mutation.Manufacturer(); ok {
 		if err := item.ManufacturerValidator(v); err != nil {
 			return &ValidationError{Name: "manufacturer", err: fmt.Errorf(`ent: validator failed for field "Item.manufacturer": %w`, err)}
 		}
 	}
-	if v, ok := iu.mutation.WarrantyDetails(); ok {
+	if v, ok := _u.mutation.WarrantyDetails(); ok {
 		if err := item.WarrantyDetailsValidator(v); err != nil {
 			return &ValidationError{Name: "warranty_details", err: fmt.Errorf(`ent: validator failed for field "Item.warranty_details": %w`, err)}
 		}
 	}
-	if v, ok := iu.mutation.SoldNotes(); ok {
+	if v, ok := _u.mutation.SoldNotes(); ok {
 		if err := item.SoldNotesValidator(v); err != nil {
 			return &ValidationError{Name: "sold_notes", err: fmt.Errorf(`ent: validator failed for field "Item.sold_notes": %w`, err)}
 		}
 	}
-	if iu.mutation.GroupCleared() && len(iu.mutation.GroupIDs()) > 0 {
+	if _u.mutation.GroupCleared() && len(_u.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Item.group"`)
 	}
 	return nil
 }
 
-func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := iu.check(); err != nil {
-		return n, err
+func (_u *ItemUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(item.Table, item.Columns, sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID))
-	if ps := iu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := iu.mutation.UpdatedAt(); ok {
+	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(item.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := iu.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(item.FieldName, field.TypeString, value)
 	}
-	if value, ok := iu.mutation.Description(); ok {
+	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(item.FieldDescription, field.TypeString, value)
 	}
-	if iu.mutation.DescriptionCleared() {
+	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(item.FieldDescription, field.TypeString)
 	}
-	if value, ok := iu.mutation.ImportRef(); ok {
+	if value, ok := _u.mutation.ImportRef(); ok {
 		_spec.SetField(item.FieldImportRef, field.TypeString, value)
 	}
-	if iu.mutation.ImportRefCleared() {
+	if _u.mutation.ImportRefCleared() {
 		_spec.ClearField(item.FieldImportRef, field.TypeString)
 	}
-	if value, ok := iu.mutation.Notes(); ok {
+	if value, ok := _u.mutation.Notes(); ok {
 		_spec.SetField(item.FieldNotes, field.TypeString, value)
 	}
-	if iu.mutation.NotesCleared() {
+	if _u.mutation.NotesCleared() {
 		_spec.ClearField(item.FieldNotes, field.TypeString)
 	}
-	if value, ok := iu.mutation.Quantity(); ok {
+	if value, ok := _u.mutation.Quantity(); ok {
 		_spec.SetField(item.FieldQuantity, field.TypeInt, value)
 	}
-	if value, ok := iu.mutation.AddedQuantity(); ok {
+	if value, ok := _u.mutation.AddedQuantity(); ok {
 		_spec.AddField(item.FieldQuantity, field.TypeInt, value)
 	}
-	if value, ok := iu.mutation.Insured(); ok {
+	if value, ok := _u.mutation.Insured(); ok {
 		_spec.SetField(item.FieldInsured, field.TypeBool, value)
 	}
-	if value, ok := iu.mutation.Archived(); ok {
+	if value, ok := _u.mutation.Archived(); ok {
 		_spec.SetField(item.FieldArchived, field.TypeBool, value)
 	}
-	if value, ok := iu.mutation.AssetID(); ok {
+	if value, ok := _u.mutation.AssetID(); ok {
 		_spec.SetField(item.FieldAssetID, field.TypeInt, value)
 	}
-	if value, ok := iu.mutation.AddedAssetID(); ok {
+	if value, ok := _u.mutation.AddedAssetID(); ok {
 		_spec.AddField(item.FieldAssetID, field.TypeInt, value)
 	}
-	if value, ok := iu.mutation.SyncChildItemsLocations(); ok {
+	if value, ok := _u.mutation.SyncChildItemsLocations(); ok {
 		_spec.SetField(item.FieldSyncChildItemsLocations, field.TypeBool, value)
 	}
-	if value, ok := iu.mutation.SerialNumber(); ok {
+	if value, ok := _u.mutation.SerialNumber(); ok {
 		_spec.SetField(item.FieldSerialNumber, field.TypeString, value)
 	}
-	if iu.mutation.SerialNumberCleared() {
+	if _u.mutation.SerialNumberCleared() {
 		_spec.ClearField(item.FieldSerialNumber, field.TypeString)
 	}
-	if value, ok := iu.mutation.ModelNumber(); ok {
+	if value, ok := _u.mutation.ModelNumber(); ok {
 		_spec.SetField(item.FieldModelNumber, field.TypeString, value)
 	}
-	if iu.mutation.ModelNumberCleared() {
+	if _u.mutation.ModelNumberCleared() {
 		_spec.ClearField(item.FieldModelNumber, field.TypeString)
 	}
-	if value, ok := iu.mutation.Manufacturer(); ok {
+	if value, ok := _u.mutation.Manufacturer(); ok {
 		_spec.SetField(item.FieldManufacturer, field.TypeString, value)
 	}
-	if iu.mutation.ManufacturerCleared() {
+	if _u.mutation.ManufacturerCleared() {
 		_spec.ClearField(item.FieldManufacturer, field.TypeString)
 	}
-	if value, ok := iu.mutation.LifetimeWarranty(); ok {
+	if value, ok := _u.mutation.LifetimeWarranty(); ok {
 		_spec.SetField(item.FieldLifetimeWarranty, field.TypeBool, value)
 	}
-	if value, ok := iu.mutation.WarrantyExpires(); ok {
+	if value, ok := _u.mutation.WarrantyExpires(); ok {
 		_spec.SetField(item.FieldWarrantyExpires, field.TypeTime, value)
 	}
-	if iu.mutation.WarrantyExpiresCleared() {
+	if _u.mutation.WarrantyExpiresCleared() {
 		_spec.ClearField(item.FieldWarrantyExpires, field.TypeTime)
 	}
-	if value, ok := iu.mutation.WarrantyDetails(); ok {
+	if value, ok := _u.mutation.WarrantyDetails(); ok {
 		_spec.SetField(item.FieldWarrantyDetails, field.TypeString, value)
 	}
-	if iu.mutation.WarrantyDetailsCleared() {
+	if _u.mutation.WarrantyDetailsCleared() {
 		_spec.ClearField(item.FieldWarrantyDetails, field.TypeString)
 	}
-	if value, ok := iu.mutation.PurchaseTime(); ok {
+	if value, ok := _u.mutation.PurchaseTime(); ok {
 		_spec.SetField(item.FieldPurchaseTime, field.TypeTime, value)
 	}
-	if iu.mutation.PurchaseTimeCleared() {
+	if _u.mutation.PurchaseTimeCleared() {
 		_spec.ClearField(item.FieldPurchaseTime, field.TypeTime)
 	}
-	if value, ok := iu.mutation.PurchaseFrom(); ok {
+	if value, ok := _u.mutation.PurchaseFrom(); ok {
 		_spec.SetField(item.FieldPurchaseFrom, field.TypeString, value)
 	}
-	if iu.mutation.PurchaseFromCleared() {
+	if _u.mutation.PurchaseFromCleared() {
 		_spec.ClearField(item.FieldPurchaseFrom, field.TypeString)
 	}
-	if value, ok := iu.mutation.PurchasePrice(); ok {
+	if value, ok := _u.mutation.PurchasePrice(); ok {
 		_spec.SetField(item.FieldPurchasePrice, field.TypeFloat64, value)
 	}
-	if value, ok := iu.mutation.AddedPurchasePrice(); ok {
+	if value, ok := _u.mutation.AddedPurchasePrice(); ok {
 		_spec.AddField(item.FieldPurchasePrice, field.TypeFloat64, value)
 	}
-	if value, ok := iu.mutation.SoldTime(); ok {
+	if value, ok := _u.mutation.SoldTime(); ok {
 		_spec.SetField(item.FieldSoldTime, field.TypeTime, value)
 	}
-	if iu.mutation.SoldTimeCleared() {
+	if _u.mutation.SoldTimeCleared() {
 		_spec.ClearField(item.FieldSoldTime, field.TypeTime)
 	}
-	if value, ok := iu.mutation.SoldTo(); ok {
+	if value, ok := _u.mutation.SoldTo(); ok {
 		_spec.SetField(item.FieldSoldTo, field.TypeString, value)
 	}
-	if iu.mutation.SoldToCleared() {
+	if _u.mutation.SoldToCleared() {
 		_spec.ClearField(item.FieldSoldTo, field.TypeString)
 	}
-	if value, ok := iu.mutation.SoldPrice(); ok {
+	if value, ok := _u.mutation.SoldPrice(); ok {
 		_spec.SetField(item.FieldSoldPrice, field.TypeFloat64, value)
 	}
-	if value, ok := iu.mutation.AddedSoldPrice(); ok {
+	if value, ok := _u.mutation.AddedSoldPrice(); ok {
 		_spec.AddField(item.FieldSoldPrice, field.TypeFloat64, value)
 	}
-	if value, ok := iu.mutation.SoldNotes(); ok {
+	if value, ok := _u.mutation.SoldNotes(); ok {
 		_spec.SetField(item.FieldSoldNotes, field.TypeString, value)
 	}
-	if iu.mutation.SoldNotesCleared() {
+	if _u.mutation.SoldNotesCleared() {
 		_spec.ClearField(item.FieldSoldNotes, field.TypeString)
 	}
-	if iu.mutation.GroupCleared() {
+	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -941,7 +941,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iu.mutation.GroupIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -957,7 +957,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if iu.mutation.ParentCleared() {
+	if _u.mutation.ParentCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -970,7 +970,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iu.mutation.ParentIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ParentIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -986,7 +986,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if iu.mutation.ChildrenCleared() {
+	if _u.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -999,7 +999,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iu.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !iu.mutation.ChildrenCleared() {
+	if nodes := _u.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !_u.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1015,7 +1015,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iu.mutation.ChildrenIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ChildrenIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1031,7 +1031,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if iu.mutation.LabelCleared() {
+	if _u.mutation.LabelCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -1044,7 +1044,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iu.mutation.RemovedLabelIDs(); len(nodes) > 0 && !iu.mutation.LabelCleared() {
+	if nodes := _u.mutation.RemovedLabelIDs(); len(nodes) > 0 && !_u.mutation.LabelCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -1060,7 +1060,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iu.mutation.LabelIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.LabelIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -1076,7 +1076,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if iu.mutation.LocationCleared() {
+	if _u.mutation.LocationCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -1089,7 +1089,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iu.mutation.LocationIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.LocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -1105,7 +1105,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if iu.mutation.FieldsCleared() {
+	if _u.mutation.FieldsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1118,7 +1118,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iu.mutation.RemovedFieldsIDs(); len(nodes) > 0 && !iu.mutation.FieldsCleared() {
+	if nodes := _u.mutation.RemovedFieldsIDs(); len(nodes) > 0 && !_u.mutation.FieldsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1134,7 +1134,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iu.mutation.FieldsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.FieldsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1150,7 +1150,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if iu.mutation.MaintenanceEntriesCleared() {
+	if _u.mutation.MaintenanceEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1163,7 +1163,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iu.mutation.RemovedMaintenanceEntriesIDs(); len(nodes) > 0 && !iu.mutation.MaintenanceEntriesCleared() {
+	if nodes := _u.mutation.RemovedMaintenanceEntriesIDs(); len(nodes) > 0 && !_u.mutation.MaintenanceEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1179,7 +1179,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iu.mutation.MaintenanceEntriesIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.MaintenanceEntriesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1195,7 +1195,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if iu.mutation.AttachmentsCleared() {
+	if _u.mutation.AttachmentsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1208,7 +1208,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iu.mutation.RemovedAttachmentsIDs(); len(nodes) > 0 && !iu.mutation.AttachmentsCleared() {
+	if nodes := _u.mutation.RemovedAttachmentsIDs(); len(nodes) > 0 && !_u.mutation.AttachmentsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1224,7 +1224,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iu.mutation.AttachmentsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.AttachmentsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -1240,7 +1240,7 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, iu.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{item.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -1248,8 +1248,8 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	iu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // ItemUpdateOne is the builder for updating a single Item entity.
@@ -1261,699 +1261,699 @@ type ItemUpdateOne struct {
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (iuo *ItemUpdateOne) SetUpdatedAt(t time.Time) *ItemUpdateOne {
-	iuo.mutation.SetUpdatedAt(t)
-	return iuo
+func (_u *ItemUpdateOne) SetUpdatedAt(v time.Time) *ItemUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetName sets the "name" field.
-func (iuo *ItemUpdateOne) SetName(s string) *ItemUpdateOne {
-	iuo.mutation.SetName(s)
-	return iuo
+func (_u *ItemUpdateOne) SetName(v string) *ItemUpdateOne {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableName(s *string) *ItemUpdateOne {
-	if s != nil {
-		iuo.SetName(*s)
+func (_u *ItemUpdateOne) SetNillableName(v *string) *ItemUpdateOne {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return iuo
+	return _u
 }
 
 // SetDescription sets the "description" field.
-func (iuo *ItemUpdateOne) SetDescription(s string) *ItemUpdateOne {
-	iuo.mutation.SetDescription(s)
-	return iuo
+func (_u *ItemUpdateOne) SetDescription(v string) *ItemUpdateOne {
+	_u.mutation.SetDescription(v)
+	return _u
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableDescription(s *string) *ItemUpdateOne {
-	if s != nil {
-		iuo.SetDescription(*s)
+func (_u *ItemUpdateOne) SetNillableDescription(v *string) *ItemUpdateOne {
+	if v != nil {
+		_u.SetDescription(*v)
 	}
-	return iuo
+	return _u
 }
 
 // ClearDescription clears the value of the "description" field.
-func (iuo *ItemUpdateOne) ClearDescription() *ItemUpdateOne {
-	iuo.mutation.ClearDescription()
-	return iuo
+func (_u *ItemUpdateOne) ClearDescription() *ItemUpdateOne {
+	_u.mutation.ClearDescription()
+	return _u
 }
 
 // SetImportRef sets the "import_ref" field.
-func (iuo *ItemUpdateOne) SetImportRef(s string) *ItemUpdateOne {
-	iuo.mutation.SetImportRef(s)
-	return iuo
+func (_u *ItemUpdateOne) SetImportRef(v string) *ItemUpdateOne {
+	_u.mutation.SetImportRef(v)
+	return _u
 }
 
 // SetNillableImportRef sets the "import_ref" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableImportRef(s *string) *ItemUpdateOne {
-	if s != nil {
-		iuo.SetImportRef(*s)
+func (_u *ItemUpdateOne) SetNillableImportRef(v *string) *ItemUpdateOne {
+	if v != nil {
+		_u.SetImportRef(*v)
 	}
-	return iuo
+	return _u
 }
 
 // ClearImportRef clears the value of the "import_ref" field.
-func (iuo *ItemUpdateOne) ClearImportRef() *ItemUpdateOne {
-	iuo.mutation.ClearImportRef()
-	return iuo
+func (_u *ItemUpdateOne) ClearImportRef() *ItemUpdateOne {
+	_u.mutation.ClearImportRef()
+	return _u
 }
 
 // SetNotes sets the "notes" field.
-func (iuo *ItemUpdateOne) SetNotes(s string) *ItemUpdateOne {
-	iuo.mutation.SetNotes(s)
-	return iuo
+func (_u *ItemUpdateOne) SetNotes(v string) *ItemUpdateOne {
+	_u.mutation.SetNotes(v)
+	return _u
 }
 
 // SetNillableNotes sets the "notes" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableNotes(s *string) *ItemUpdateOne {
-	if s != nil {
-		iuo.SetNotes(*s)
+func (_u *ItemUpdateOne) SetNillableNotes(v *string) *ItemUpdateOne {
+	if v != nil {
+		_u.SetNotes(*v)
 	}
-	return iuo
+	return _u
 }
 
 // ClearNotes clears the value of the "notes" field.
-func (iuo *ItemUpdateOne) ClearNotes() *ItemUpdateOne {
-	iuo.mutation.ClearNotes()
-	return iuo
+func (_u *ItemUpdateOne) ClearNotes() *ItemUpdateOne {
+	_u.mutation.ClearNotes()
+	return _u
 }
 
 // SetQuantity sets the "quantity" field.
-func (iuo *ItemUpdateOne) SetQuantity(i int) *ItemUpdateOne {
-	iuo.mutation.ResetQuantity()
-	iuo.mutation.SetQuantity(i)
-	return iuo
+func (_u *ItemUpdateOne) SetQuantity(v int) *ItemUpdateOne {
+	_u.mutation.ResetQuantity()
+	_u.mutation.SetQuantity(v)
+	return _u
 }
 
 // SetNillableQuantity sets the "quantity" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableQuantity(i *int) *ItemUpdateOne {
-	if i != nil {
-		iuo.SetQuantity(*i)
+func (_u *ItemUpdateOne) SetNillableQuantity(v *int) *ItemUpdateOne {
+	if v != nil {
+		_u.SetQuantity(*v)
 	}
-	return iuo
+	return _u
 }
 
-// AddQuantity adds i to the "quantity" field.
-func (iuo *ItemUpdateOne) AddQuantity(i int) *ItemUpdateOne {
-	iuo.mutation.AddQuantity(i)
-	return iuo
+// AddQuantity adds value to the "quantity" field.
+func (_u *ItemUpdateOne) AddQuantity(v int) *ItemUpdateOne {
+	_u.mutation.AddQuantity(v)
+	return _u
 }
 
 // SetInsured sets the "insured" field.
-func (iuo *ItemUpdateOne) SetInsured(b bool) *ItemUpdateOne {
-	iuo.mutation.SetInsured(b)
-	return iuo
+func (_u *ItemUpdateOne) SetInsured(v bool) *ItemUpdateOne {
+	_u.mutation.SetInsured(v)
+	return _u
 }
 
 // SetNillableInsured sets the "insured" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableInsured(b *bool) *ItemUpdateOne {
-	if b != nil {
-		iuo.SetInsured(*b)
+func (_u *ItemUpdateOne) SetNillableInsured(v *bool) *ItemUpdateOne {
+	if v != nil {
+		_u.SetInsured(*v)
 	}
-	return iuo
+	return _u
 }
 
 // SetArchived sets the "archived" field.
-func (iuo *ItemUpdateOne) SetArchived(b bool) *ItemUpdateOne {
-	iuo.mutation.SetArchived(b)
-	return iuo
+func (_u *ItemUpdateOne) SetArchived(v bool) *ItemUpdateOne {
+	_u.mutation.SetArchived(v)
+	return _u
 }
 
 // SetNillableArchived sets the "archived" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableArchived(b *bool) *ItemUpdateOne {
-	if b != nil {
-		iuo.SetArchived(*b)
+func (_u *ItemUpdateOne) SetNillableArchived(v *bool) *ItemUpdateOne {
+	if v != nil {
+		_u.SetArchived(*v)
 	}
-	return iuo
+	return _u
 }
 
 // SetAssetID sets the "asset_id" field.
-func (iuo *ItemUpdateOne) SetAssetID(i int) *ItemUpdateOne {
-	iuo.mutation.ResetAssetID()
-	iuo.mutation.SetAssetID(i)
-	return iuo
+func (_u *ItemUpdateOne) SetAssetID(v int) *ItemUpdateOne {
+	_u.mutation.ResetAssetID()
+	_u.mutation.SetAssetID(v)
+	return _u
 }
 
 // SetNillableAssetID sets the "asset_id" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableAssetID(i *int) *ItemUpdateOne {
-	if i != nil {
-		iuo.SetAssetID(*i)
+func (_u *ItemUpdateOne) SetNillableAssetID(v *int) *ItemUpdateOne {
+	if v != nil {
+		_u.SetAssetID(*v)
 	}
-	return iuo
+	return _u
 }
 
-// AddAssetID adds i to the "asset_id" field.
-func (iuo *ItemUpdateOne) AddAssetID(i int) *ItemUpdateOne {
-	iuo.mutation.AddAssetID(i)
-	return iuo
+// AddAssetID adds value to the "asset_id" field.
+func (_u *ItemUpdateOne) AddAssetID(v int) *ItemUpdateOne {
+	_u.mutation.AddAssetID(v)
+	return _u
 }
 
 // SetSyncChildItemsLocations sets the "sync_child_items_locations" field.
-func (iuo *ItemUpdateOne) SetSyncChildItemsLocations(b bool) *ItemUpdateOne {
-	iuo.mutation.SetSyncChildItemsLocations(b)
-	return iuo
+func (_u *ItemUpdateOne) SetSyncChildItemsLocations(v bool) *ItemUpdateOne {
+	_u.mutation.SetSyncChildItemsLocations(v)
+	return _u
 }
 
 // SetNillableSyncChildItemsLocations sets the "sync_child_items_locations" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableSyncChildItemsLocations(b *bool) *ItemUpdateOne {
-	if b != nil {
-		iuo.SetSyncChildItemsLocations(*b)
+func (_u *ItemUpdateOne) SetNillableSyncChildItemsLocations(v *bool) *ItemUpdateOne {
+	if v != nil {
+		_u.SetSyncChildItemsLocations(*v)
 	}
-	return iuo
+	return _u
 }
 
 // SetSerialNumber sets the "serial_number" field.
-func (iuo *ItemUpdateOne) SetSerialNumber(s string) *ItemUpdateOne {
-	iuo.mutation.SetSerialNumber(s)
-	return iuo
+func (_u *ItemUpdateOne) SetSerialNumber(v string) *ItemUpdateOne {
+	_u.mutation.SetSerialNumber(v)
+	return _u
 }
 
 // SetNillableSerialNumber sets the "serial_number" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableSerialNumber(s *string) *ItemUpdateOne {
-	if s != nil {
-		iuo.SetSerialNumber(*s)
+func (_u *ItemUpdateOne) SetNillableSerialNumber(v *string) *ItemUpdateOne {
+	if v != nil {
+		_u.SetSerialNumber(*v)
 	}
-	return iuo
+	return _u
 }
 
 // ClearSerialNumber clears the value of the "serial_number" field.
-func (iuo *ItemUpdateOne) ClearSerialNumber() *ItemUpdateOne {
-	iuo.mutation.ClearSerialNumber()
-	return iuo
+func (_u *ItemUpdateOne) ClearSerialNumber() *ItemUpdateOne {
+	_u.mutation.ClearSerialNumber()
+	return _u
 }
 
 // SetModelNumber sets the "model_number" field.
-func (iuo *ItemUpdateOne) SetModelNumber(s string) *ItemUpdateOne {
-	iuo.mutation.SetModelNumber(s)
-	return iuo
+func (_u *ItemUpdateOne) SetModelNumber(v string) *ItemUpdateOne {
+	_u.mutation.SetModelNumber(v)
+	return _u
 }
 
 // SetNillableModelNumber sets the "model_number" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableModelNumber(s *string) *ItemUpdateOne {
-	if s != nil {
-		iuo.SetModelNumber(*s)
+func (_u *ItemUpdateOne) SetNillableModelNumber(v *string) *ItemUpdateOne {
+	if v != nil {
+		_u.SetModelNumber(*v)
 	}
-	return iuo
+	return _u
 }
 
 // ClearModelNumber clears the value of the "model_number" field.
-func (iuo *ItemUpdateOne) ClearModelNumber() *ItemUpdateOne {
-	iuo.mutation.ClearModelNumber()
-	return iuo
+func (_u *ItemUpdateOne) ClearModelNumber() *ItemUpdateOne {
+	_u.mutation.ClearModelNumber()
+	return _u
 }
 
 // SetManufacturer sets the "manufacturer" field.
-func (iuo *ItemUpdateOne) SetManufacturer(s string) *ItemUpdateOne {
-	iuo.mutation.SetManufacturer(s)
-	return iuo
+func (_u *ItemUpdateOne) SetManufacturer(v string) *ItemUpdateOne {
+	_u.mutation.SetManufacturer(v)
+	return _u
 }
 
 // SetNillableManufacturer sets the "manufacturer" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableManufacturer(s *string) *ItemUpdateOne {
-	if s != nil {
-		iuo.SetManufacturer(*s)
+func (_u *ItemUpdateOne) SetNillableManufacturer(v *string) *ItemUpdateOne {
+	if v != nil {
+		_u.SetManufacturer(*v)
 	}
-	return iuo
+	return _u
 }
 
 // ClearManufacturer clears the value of the "manufacturer" field.
-func (iuo *ItemUpdateOne) ClearManufacturer() *ItemUpdateOne {
-	iuo.mutation.ClearManufacturer()
-	return iuo
+func (_u *ItemUpdateOne) ClearManufacturer() *ItemUpdateOne {
+	_u.mutation.ClearManufacturer()
+	return _u
 }
 
 // SetLifetimeWarranty sets the "lifetime_warranty" field.
-func (iuo *ItemUpdateOne) SetLifetimeWarranty(b bool) *ItemUpdateOne {
-	iuo.mutation.SetLifetimeWarranty(b)
-	return iuo
+func (_u *ItemUpdateOne) SetLifetimeWarranty(v bool) *ItemUpdateOne {
+	_u.mutation.SetLifetimeWarranty(v)
+	return _u
 }
 
 // SetNillableLifetimeWarranty sets the "lifetime_warranty" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableLifetimeWarranty(b *bool) *ItemUpdateOne {
-	if b != nil {
-		iuo.SetLifetimeWarranty(*b)
+func (_u *ItemUpdateOne) SetNillableLifetimeWarranty(v *bool) *ItemUpdateOne {
+	if v != nil {
+		_u.SetLifetimeWarranty(*v)
 	}
-	return iuo
+	return _u
 }
 
 // SetWarrantyExpires sets the "warranty_expires" field.
-func (iuo *ItemUpdateOne) SetWarrantyExpires(t time.Time) *ItemUpdateOne {
-	iuo.mutation.SetWarrantyExpires(t)
-	return iuo
+func (_u *ItemUpdateOne) SetWarrantyExpires(v time.Time) *ItemUpdateOne {
+	_u.mutation.SetWarrantyExpires(v)
+	return _u
 }
 
 // SetNillableWarrantyExpires sets the "warranty_expires" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableWarrantyExpires(t *time.Time) *ItemUpdateOne {
-	if t != nil {
-		iuo.SetWarrantyExpires(*t)
+func (_u *ItemUpdateOne) SetNillableWarrantyExpires(v *time.Time) *ItemUpdateOne {
+	if v != nil {
+		_u.SetWarrantyExpires(*v)
 	}
-	return iuo
+	return _u
 }
 
 // ClearWarrantyExpires clears the value of the "warranty_expires" field.
-func (iuo *ItemUpdateOne) ClearWarrantyExpires() *ItemUpdateOne {
-	iuo.mutation.ClearWarrantyExpires()
-	return iuo
+func (_u *ItemUpdateOne) ClearWarrantyExpires() *ItemUpdateOne {
+	_u.mutation.ClearWarrantyExpires()
+	return _u
 }
 
 // SetWarrantyDetails sets the "warranty_details" field.
-func (iuo *ItemUpdateOne) SetWarrantyDetails(s string) *ItemUpdateOne {
-	iuo.mutation.SetWarrantyDetails(s)
-	return iuo
+func (_u *ItemUpdateOne) SetWarrantyDetails(v string) *ItemUpdateOne {
+	_u.mutation.SetWarrantyDetails(v)
+	return _u
 }
 
 // SetNillableWarrantyDetails sets the "warranty_details" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableWarrantyDetails(s *string) *ItemUpdateOne {
-	if s != nil {
-		iuo.SetWarrantyDetails(*s)
+func (_u *ItemUpdateOne) SetNillableWarrantyDetails(v *string) *ItemUpdateOne {
+	if v != nil {
+		_u.SetWarrantyDetails(*v)
 	}
-	return iuo
+	return _u
 }
 
 // ClearWarrantyDetails clears the value of the "warranty_details" field.
-func (iuo *ItemUpdateOne) ClearWarrantyDetails() *ItemUpdateOne {
-	iuo.mutation.ClearWarrantyDetails()
-	return iuo
+func (_u *ItemUpdateOne) ClearWarrantyDetails() *ItemUpdateOne {
+	_u.mutation.ClearWarrantyDetails()
+	return _u
 }
 
 // SetPurchaseTime sets the "purchase_time" field.
-func (iuo *ItemUpdateOne) SetPurchaseTime(t time.Time) *ItemUpdateOne {
-	iuo.mutation.SetPurchaseTime(t)
-	return iuo
+func (_u *ItemUpdateOne) SetPurchaseTime(v time.Time) *ItemUpdateOne {
+	_u.mutation.SetPurchaseTime(v)
+	return _u
 }
 
 // SetNillablePurchaseTime sets the "purchase_time" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillablePurchaseTime(t *time.Time) *ItemUpdateOne {
-	if t != nil {
-		iuo.SetPurchaseTime(*t)
+func (_u *ItemUpdateOne) SetNillablePurchaseTime(v *time.Time) *ItemUpdateOne {
+	if v != nil {
+		_u.SetPurchaseTime(*v)
 	}
-	return iuo
+	return _u
 }
 
 // ClearPurchaseTime clears the value of the "purchase_time" field.
-func (iuo *ItemUpdateOne) ClearPurchaseTime() *ItemUpdateOne {
-	iuo.mutation.ClearPurchaseTime()
-	return iuo
+func (_u *ItemUpdateOne) ClearPurchaseTime() *ItemUpdateOne {
+	_u.mutation.ClearPurchaseTime()
+	return _u
 }
 
 // SetPurchaseFrom sets the "purchase_from" field.
-func (iuo *ItemUpdateOne) SetPurchaseFrom(s string) *ItemUpdateOne {
-	iuo.mutation.SetPurchaseFrom(s)
-	return iuo
+func (_u *ItemUpdateOne) SetPurchaseFrom(v string) *ItemUpdateOne {
+	_u.mutation.SetPurchaseFrom(v)
+	return _u
 }
 
 // SetNillablePurchaseFrom sets the "purchase_from" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillablePurchaseFrom(s *string) *ItemUpdateOne {
-	if s != nil {
-		iuo.SetPurchaseFrom(*s)
+func (_u *ItemUpdateOne) SetNillablePurchaseFrom(v *string) *ItemUpdateOne {
+	if v != nil {
+		_u.SetPurchaseFrom(*v)
 	}
-	return iuo
+	return _u
 }
 
 // ClearPurchaseFrom clears the value of the "purchase_from" field.
-func (iuo *ItemUpdateOne) ClearPurchaseFrom() *ItemUpdateOne {
-	iuo.mutation.ClearPurchaseFrom()
-	return iuo
+func (_u *ItemUpdateOne) ClearPurchaseFrom() *ItemUpdateOne {
+	_u.mutation.ClearPurchaseFrom()
+	return _u
 }
 
 // SetPurchasePrice sets the "purchase_price" field.
-func (iuo *ItemUpdateOne) SetPurchasePrice(f float64) *ItemUpdateOne {
-	iuo.mutation.ResetPurchasePrice()
-	iuo.mutation.SetPurchasePrice(f)
-	return iuo
+func (_u *ItemUpdateOne) SetPurchasePrice(v float64) *ItemUpdateOne {
+	_u.mutation.ResetPurchasePrice()
+	_u.mutation.SetPurchasePrice(v)
+	return _u
 }
 
 // SetNillablePurchasePrice sets the "purchase_price" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillablePurchasePrice(f *float64) *ItemUpdateOne {
-	if f != nil {
-		iuo.SetPurchasePrice(*f)
+func (_u *ItemUpdateOne) SetNillablePurchasePrice(v *float64) *ItemUpdateOne {
+	if v != nil {
+		_u.SetPurchasePrice(*v)
 	}
-	return iuo
+	return _u
 }
 
-// AddPurchasePrice adds f to the "purchase_price" field.
-func (iuo *ItemUpdateOne) AddPurchasePrice(f float64) *ItemUpdateOne {
-	iuo.mutation.AddPurchasePrice(f)
-	return iuo
+// AddPurchasePrice adds value to the "purchase_price" field.
+func (_u *ItemUpdateOne) AddPurchasePrice(v float64) *ItemUpdateOne {
+	_u.mutation.AddPurchasePrice(v)
+	return _u
 }
 
 // SetSoldTime sets the "sold_time" field.
-func (iuo *ItemUpdateOne) SetSoldTime(t time.Time) *ItemUpdateOne {
-	iuo.mutation.SetSoldTime(t)
-	return iuo
+func (_u *ItemUpdateOne) SetSoldTime(v time.Time) *ItemUpdateOne {
+	_u.mutation.SetSoldTime(v)
+	return _u
 }
 
 // SetNillableSoldTime sets the "sold_time" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableSoldTime(t *time.Time) *ItemUpdateOne {
-	if t != nil {
-		iuo.SetSoldTime(*t)
+func (_u *ItemUpdateOne) SetNillableSoldTime(v *time.Time) *ItemUpdateOne {
+	if v != nil {
+		_u.SetSoldTime(*v)
 	}
-	return iuo
+	return _u
 }
 
 // ClearSoldTime clears the value of the "sold_time" field.
-func (iuo *ItemUpdateOne) ClearSoldTime() *ItemUpdateOne {
-	iuo.mutation.ClearSoldTime()
-	return iuo
+func (_u *ItemUpdateOne) ClearSoldTime() *ItemUpdateOne {
+	_u.mutation.ClearSoldTime()
+	return _u
 }
 
 // SetSoldTo sets the "sold_to" field.
-func (iuo *ItemUpdateOne) SetSoldTo(s string) *ItemUpdateOne {
-	iuo.mutation.SetSoldTo(s)
-	return iuo
+func (_u *ItemUpdateOne) SetSoldTo(v string) *ItemUpdateOne {
+	_u.mutation.SetSoldTo(v)
+	return _u
 }
 
 // SetNillableSoldTo sets the "sold_to" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableSoldTo(s *string) *ItemUpdateOne {
-	if s != nil {
-		iuo.SetSoldTo(*s)
+func (_u *ItemUpdateOne) SetNillableSoldTo(v *string) *ItemUpdateOne {
+	if v != nil {
+		_u.SetSoldTo(*v)
 	}
-	return iuo
+	return _u
 }
 
 // ClearSoldTo clears the value of the "sold_to" field.
-func (iuo *ItemUpdateOne) ClearSoldTo() *ItemUpdateOne {
-	iuo.mutation.ClearSoldTo()
-	return iuo
+func (_u *ItemUpdateOne) ClearSoldTo() *ItemUpdateOne {
+	_u.mutation.ClearSoldTo()
+	return _u
 }
 
 // SetSoldPrice sets the "sold_price" field.
-func (iuo *ItemUpdateOne) SetSoldPrice(f float64) *ItemUpdateOne {
-	iuo.mutation.ResetSoldPrice()
-	iuo.mutation.SetSoldPrice(f)
-	return iuo
+func (_u *ItemUpdateOne) SetSoldPrice(v float64) *ItemUpdateOne {
+	_u.mutation.ResetSoldPrice()
+	_u.mutation.SetSoldPrice(v)
+	return _u
 }
 
 // SetNillableSoldPrice sets the "sold_price" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableSoldPrice(f *float64) *ItemUpdateOne {
-	if f != nil {
-		iuo.SetSoldPrice(*f)
+func (_u *ItemUpdateOne) SetNillableSoldPrice(v *float64) *ItemUpdateOne {
+	if v != nil {
+		_u.SetSoldPrice(*v)
 	}
-	return iuo
+	return _u
 }
 
-// AddSoldPrice adds f to the "sold_price" field.
-func (iuo *ItemUpdateOne) AddSoldPrice(f float64) *ItemUpdateOne {
-	iuo.mutation.AddSoldPrice(f)
-	return iuo
+// AddSoldPrice adds value to the "sold_price" field.
+func (_u *ItemUpdateOne) AddSoldPrice(v float64) *ItemUpdateOne {
+	_u.mutation.AddSoldPrice(v)
+	return _u
 }
 
 // SetSoldNotes sets the "sold_notes" field.
-func (iuo *ItemUpdateOne) SetSoldNotes(s string) *ItemUpdateOne {
-	iuo.mutation.SetSoldNotes(s)
-	return iuo
+func (_u *ItemUpdateOne) SetSoldNotes(v string) *ItemUpdateOne {
+	_u.mutation.SetSoldNotes(v)
+	return _u
 }
 
 // SetNillableSoldNotes sets the "sold_notes" field if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableSoldNotes(s *string) *ItemUpdateOne {
-	if s != nil {
-		iuo.SetSoldNotes(*s)
+func (_u *ItemUpdateOne) SetNillableSoldNotes(v *string) *ItemUpdateOne {
+	if v != nil {
+		_u.SetSoldNotes(*v)
 	}
-	return iuo
+	return _u
 }
 
 // ClearSoldNotes clears the value of the "sold_notes" field.
-func (iuo *ItemUpdateOne) ClearSoldNotes() *ItemUpdateOne {
-	iuo.mutation.ClearSoldNotes()
-	return iuo
+func (_u *ItemUpdateOne) ClearSoldNotes() *ItemUpdateOne {
+	_u.mutation.ClearSoldNotes()
+	return _u
 }
 
 // SetGroupID sets the "group" edge to the Group entity by ID.
-func (iuo *ItemUpdateOne) SetGroupID(id uuid.UUID) *ItemUpdateOne {
-	iuo.mutation.SetGroupID(id)
-	return iuo
+func (_u *ItemUpdateOne) SetGroupID(id uuid.UUID) *ItemUpdateOne {
+	_u.mutation.SetGroupID(id)
+	return _u
 }
 
 // SetGroup sets the "group" edge to the Group entity.
-func (iuo *ItemUpdateOne) SetGroup(g *Group) *ItemUpdateOne {
-	return iuo.SetGroupID(g.ID)
+func (_u *ItemUpdateOne) SetGroup(v *Group) *ItemUpdateOne {
+	return _u.SetGroupID(v.ID)
 }
 
 // SetParentID sets the "parent" edge to the Item entity by ID.
-func (iuo *ItemUpdateOne) SetParentID(id uuid.UUID) *ItemUpdateOne {
-	iuo.mutation.SetParentID(id)
-	return iuo
+func (_u *ItemUpdateOne) SetParentID(id uuid.UUID) *ItemUpdateOne {
+	_u.mutation.SetParentID(id)
+	return _u
 }
 
 // SetNillableParentID sets the "parent" edge to the Item entity by ID if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableParentID(id *uuid.UUID) *ItemUpdateOne {
+func (_u *ItemUpdateOne) SetNillableParentID(id *uuid.UUID) *ItemUpdateOne {
 	if id != nil {
-		iuo = iuo.SetParentID(*id)
+		_u = _u.SetParentID(*id)
 	}
-	return iuo
+	return _u
 }
 
 // SetParent sets the "parent" edge to the Item entity.
-func (iuo *ItemUpdateOne) SetParent(i *Item) *ItemUpdateOne {
-	return iuo.SetParentID(i.ID)
+func (_u *ItemUpdateOne) SetParent(v *Item) *ItemUpdateOne {
+	return _u.SetParentID(v.ID)
 }
 
 // AddChildIDs adds the "children" edge to the Item entity by IDs.
-func (iuo *ItemUpdateOne) AddChildIDs(ids ...uuid.UUID) *ItemUpdateOne {
-	iuo.mutation.AddChildIDs(ids...)
-	return iuo
+func (_u *ItemUpdateOne) AddChildIDs(ids ...uuid.UUID) *ItemUpdateOne {
+	_u.mutation.AddChildIDs(ids...)
+	return _u
 }
 
 // AddChildren adds the "children" edges to the Item entity.
-func (iuo *ItemUpdateOne) AddChildren(i ...*Item) *ItemUpdateOne {
-	ids := make([]uuid.UUID, len(i))
-	for j := range i {
-		ids[j] = i[j].ID
+func (_u *ItemUpdateOne) AddChildren(v ...*Item) *ItemUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return iuo.AddChildIDs(ids...)
+	return _u.AddChildIDs(ids...)
 }
 
 // AddLabelIDs adds the "label" edge to the Label entity by IDs.
-func (iuo *ItemUpdateOne) AddLabelIDs(ids ...uuid.UUID) *ItemUpdateOne {
-	iuo.mutation.AddLabelIDs(ids...)
-	return iuo
+func (_u *ItemUpdateOne) AddLabelIDs(ids ...uuid.UUID) *ItemUpdateOne {
+	_u.mutation.AddLabelIDs(ids...)
+	return _u
 }
 
 // AddLabel adds the "label" edges to the Label entity.
-func (iuo *ItemUpdateOne) AddLabel(l ...*Label) *ItemUpdateOne {
-	ids := make([]uuid.UUID, len(l))
-	for i := range l {
-		ids[i] = l[i].ID
+func (_u *ItemUpdateOne) AddLabel(v ...*Label) *ItemUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return iuo.AddLabelIDs(ids...)
+	return _u.AddLabelIDs(ids...)
 }
 
 // SetLocationID sets the "location" edge to the Location entity by ID.
-func (iuo *ItemUpdateOne) SetLocationID(id uuid.UUID) *ItemUpdateOne {
-	iuo.mutation.SetLocationID(id)
-	return iuo
+func (_u *ItemUpdateOne) SetLocationID(id uuid.UUID) *ItemUpdateOne {
+	_u.mutation.SetLocationID(id)
+	return _u
 }
 
 // SetNillableLocationID sets the "location" edge to the Location entity by ID if the given value is not nil.
-func (iuo *ItemUpdateOne) SetNillableLocationID(id *uuid.UUID) *ItemUpdateOne {
+func (_u *ItemUpdateOne) SetNillableLocationID(id *uuid.UUID) *ItemUpdateOne {
 	if id != nil {
-		iuo = iuo.SetLocationID(*id)
+		_u = _u.SetLocationID(*id)
 	}
-	return iuo
+	return _u
 }
 
 // SetLocation sets the "location" edge to the Location entity.
-func (iuo *ItemUpdateOne) SetLocation(l *Location) *ItemUpdateOne {
-	return iuo.SetLocationID(l.ID)
+func (_u *ItemUpdateOne) SetLocation(v *Location) *ItemUpdateOne {
+	return _u.SetLocationID(v.ID)
 }
 
 // AddFieldIDs adds the "fields" edge to the ItemField entity by IDs.
-func (iuo *ItemUpdateOne) AddFieldIDs(ids ...uuid.UUID) *ItemUpdateOne {
-	iuo.mutation.AddFieldIDs(ids...)
-	return iuo
+func (_u *ItemUpdateOne) AddFieldIDs(ids ...uuid.UUID) *ItemUpdateOne {
+	_u.mutation.AddFieldIDs(ids...)
+	return _u
 }
 
 // AddFields adds the "fields" edges to the ItemField entity.
-func (iuo *ItemUpdateOne) AddFields(i ...*ItemField) *ItemUpdateOne {
-	ids := make([]uuid.UUID, len(i))
-	for j := range i {
-		ids[j] = i[j].ID
+func (_u *ItemUpdateOne) AddFields(v ...*ItemField) *ItemUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return iuo.AddFieldIDs(ids...)
+	return _u.AddFieldIDs(ids...)
 }
 
 // AddMaintenanceEntryIDs adds the "maintenance_entries" edge to the MaintenanceEntry entity by IDs.
-func (iuo *ItemUpdateOne) AddMaintenanceEntryIDs(ids ...uuid.UUID) *ItemUpdateOne {
-	iuo.mutation.AddMaintenanceEntryIDs(ids...)
-	return iuo
+func (_u *ItemUpdateOne) AddMaintenanceEntryIDs(ids ...uuid.UUID) *ItemUpdateOne {
+	_u.mutation.AddMaintenanceEntryIDs(ids...)
+	return _u
 }
 
 // AddMaintenanceEntries adds the "maintenance_entries" edges to the MaintenanceEntry entity.
-func (iuo *ItemUpdateOne) AddMaintenanceEntries(m ...*MaintenanceEntry) *ItemUpdateOne {
-	ids := make([]uuid.UUID, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+func (_u *ItemUpdateOne) AddMaintenanceEntries(v ...*MaintenanceEntry) *ItemUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return iuo.AddMaintenanceEntryIDs(ids...)
+	return _u.AddMaintenanceEntryIDs(ids...)
 }
 
 // AddAttachmentIDs adds the "attachments" edge to the Attachment entity by IDs.
-func (iuo *ItemUpdateOne) AddAttachmentIDs(ids ...uuid.UUID) *ItemUpdateOne {
-	iuo.mutation.AddAttachmentIDs(ids...)
-	return iuo
+func (_u *ItemUpdateOne) AddAttachmentIDs(ids ...uuid.UUID) *ItemUpdateOne {
+	_u.mutation.AddAttachmentIDs(ids...)
+	return _u
 }
 
 // AddAttachments adds the "attachments" edges to the Attachment entity.
-func (iuo *ItemUpdateOne) AddAttachments(a ...*Attachment) *ItemUpdateOne {
-	ids := make([]uuid.UUID, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
+func (_u *ItemUpdateOne) AddAttachments(v ...*Attachment) *ItemUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return iuo.AddAttachmentIDs(ids...)
+	return _u.AddAttachmentIDs(ids...)
 }
 
 // Mutation returns the ItemMutation object of the builder.
-func (iuo *ItemUpdateOne) Mutation() *ItemMutation {
-	return iuo.mutation
+func (_u *ItemUpdateOne) Mutation() *ItemMutation {
+	return _u.mutation
 }
 
 // ClearGroup clears the "group" edge to the Group entity.
-func (iuo *ItemUpdateOne) ClearGroup() *ItemUpdateOne {
-	iuo.mutation.ClearGroup()
-	return iuo
+func (_u *ItemUpdateOne) ClearGroup() *ItemUpdateOne {
+	_u.mutation.ClearGroup()
+	return _u
 }
 
 // ClearParent clears the "parent" edge to the Item entity.
-func (iuo *ItemUpdateOne) ClearParent() *ItemUpdateOne {
-	iuo.mutation.ClearParent()
-	return iuo
+func (_u *ItemUpdateOne) ClearParent() *ItemUpdateOne {
+	_u.mutation.ClearParent()
+	return _u
 }
 
 // ClearChildren clears all "children" edges to the Item entity.
-func (iuo *ItemUpdateOne) ClearChildren() *ItemUpdateOne {
-	iuo.mutation.ClearChildren()
-	return iuo
+func (_u *ItemUpdateOne) ClearChildren() *ItemUpdateOne {
+	_u.mutation.ClearChildren()
+	return _u
 }
 
 // RemoveChildIDs removes the "children" edge to Item entities by IDs.
-func (iuo *ItemUpdateOne) RemoveChildIDs(ids ...uuid.UUID) *ItemUpdateOne {
-	iuo.mutation.RemoveChildIDs(ids...)
-	return iuo
+func (_u *ItemUpdateOne) RemoveChildIDs(ids ...uuid.UUID) *ItemUpdateOne {
+	_u.mutation.RemoveChildIDs(ids...)
+	return _u
 }
 
 // RemoveChildren removes "children" edges to Item entities.
-func (iuo *ItemUpdateOne) RemoveChildren(i ...*Item) *ItemUpdateOne {
-	ids := make([]uuid.UUID, len(i))
-	for j := range i {
-		ids[j] = i[j].ID
+func (_u *ItemUpdateOne) RemoveChildren(v ...*Item) *ItemUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return iuo.RemoveChildIDs(ids...)
+	return _u.RemoveChildIDs(ids...)
 }
 
 // ClearLabel clears all "label" edges to the Label entity.
-func (iuo *ItemUpdateOne) ClearLabel() *ItemUpdateOne {
-	iuo.mutation.ClearLabel()
-	return iuo
+func (_u *ItemUpdateOne) ClearLabel() *ItemUpdateOne {
+	_u.mutation.ClearLabel()
+	return _u
 }
 
 // RemoveLabelIDs removes the "label" edge to Label entities by IDs.
-func (iuo *ItemUpdateOne) RemoveLabelIDs(ids ...uuid.UUID) *ItemUpdateOne {
-	iuo.mutation.RemoveLabelIDs(ids...)
-	return iuo
+func (_u *ItemUpdateOne) RemoveLabelIDs(ids ...uuid.UUID) *ItemUpdateOne {
+	_u.mutation.RemoveLabelIDs(ids...)
+	return _u
 }
 
 // RemoveLabel removes "label" edges to Label entities.
-func (iuo *ItemUpdateOne) RemoveLabel(l ...*Label) *ItemUpdateOne {
-	ids := make([]uuid.UUID, len(l))
-	for i := range l {
-		ids[i] = l[i].ID
+func (_u *ItemUpdateOne) RemoveLabel(v ...*Label) *ItemUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return iuo.RemoveLabelIDs(ids...)
+	return _u.RemoveLabelIDs(ids...)
 }
 
 // ClearLocation clears the "location" edge to the Location entity.
-func (iuo *ItemUpdateOne) ClearLocation() *ItemUpdateOne {
-	iuo.mutation.ClearLocation()
-	return iuo
+func (_u *ItemUpdateOne) ClearLocation() *ItemUpdateOne {
+	_u.mutation.ClearLocation()
+	return _u
 }
 
 // ClearFields clears all "fields" edges to the ItemField entity.
-func (iuo *ItemUpdateOne) ClearFields() *ItemUpdateOne {
-	iuo.mutation.ClearFields()
-	return iuo
+func (_u *ItemUpdateOne) ClearFields() *ItemUpdateOne {
+	_u.mutation.ClearFields()
+	return _u
 }
 
 // RemoveFieldIDs removes the "fields" edge to ItemField entities by IDs.
-func (iuo *ItemUpdateOne) RemoveFieldIDs(ids ...uuid.UUID) *ItemUpdateOne {
-	iuo.mutation.RemoveFieldIDs(ids...)
-	return iuo
+func (_u *ItemUpdateOne) RemoveFieldIDs(ids ...uuid.UUID) *ItemUpdateOne {
+	_u.mutation.RemoveFieldIDs(ids...)
+	return _u
 }
 
 // RemoveFields removes "fields" edges to ItemField entities.
-func (iuo *ItemUpdateOne) RemoveFields(i ...*ItemField) *ItemUpdateOne {
-	ids := make([]uuid.UUID, len(i))
-	for j := range i {
-		ids[j] = i[j].ID
+func (_u *ItemUpdateOne) RemoveFields(v ...*ItemField) *ItemUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return iuo.RemoveFieldIDs(ids...)
+	return _u.RemoveFieldIDs(ids...)
 }
 
 // ClearMaintenanceEntries clears all "maintenance_entries" edges to the MaintenanceEntry entity.
-func (iuo *ItemUpdateOne) ClearMaintenanceEntries() *ItemUpdateOne {
-	iuo.mutation.ClearMaintenanceEntries()
-	return iuo
+func (_u *ItemUpdateOne) ClearMaintenanceEntries() *ItemUpdateOne {
+	_u.mutation.ClearMaintenanceEntries()
+	return _u
 }
 
 // RemoveMaintenanceEntryIDs removes the "maintenance_entries" edge to MaintenanceEntry entities by IDs.
-func (iuo *ItemUpdateOne) RemoveMaintenanceEntryIDs(ids ...uuid.UUID) *ItemUpdateOne {
-	iuo.mutation.RemoveMaintenanceEntryIDs(ids...)
-	return iuo
+func (_u *ItemUpdateOne) RemoveMaintenanceEntryIDs(ids ...uuid.UUID) *ItemUpdateOne {
+	_u.mutation.RemoveMaintenanceEntryIDs(ids...)
+	return _u
 }
 
 // RemoveMaintenanceEntries removes "maintenance_entries" edges to MaintenanceEntry entities.
-func (iuo *ItemUpdateOne) RemoveMaintenanceEntries(m ...*MaintenanceEntry) *ItemUpdateOne {
-	ids := make([]uuid.UUID, len(m))
-	for i := range m {
-		ids[i] = m[i].ID
+func (_u *ItemUpdateOne) RemoveMaintenanceEntries(v ...*MaintenanceEntry) *ItemUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return iuo.RemoveMaintenanceEntryIDs(ids...)
+	return _u.RemoveMaintenanceEntryIDs(ids...)
 }
 
 // ClearAttachments clears all "attachments" edges to the Attachment entity.
-func (iuo *ItemUpdateOne) ClearAttachments() *ItemUpdateOne {
-	iuo.mutation.ClearAttachments()
-	return iuo
+func (_u *ItemUpdateOne) ClearAttachments() *ItemUpdateOne {
+	_u.mutation.ClearAttachments()
+	return _u
 }
 
 // RemoveAttachmentIDs removes the "attachments" edge to Attachment entities by IDs.
-func (iuo *ItemUpdateOne) RemoveAttachmentIDs(ids ...uuid.UUID) *ItemUpdateOne {
-	iuo.mutation.RemoveAttachmentIDs(ids...)
-	return iuo
+func (_u *ItemUpdateOne) RemoveAttachmentIDs(ids ...uuid.UUID) *ItemUpdateOne {
+	_u.mutation.RemoveAttachmentIDs(ids...)
+	return _u
 }
 
 // RemoveAttachments removes "attachments" edges to Attachment entities.
-func (iuo *ItemUpdateOne) RemoveAttachments(a ...*Attachment) *ItemUpdateOne {
-	ids := make([]uuid.UUID, len(a))
-	for i := range a {
-		ids[i] = a[i].ID
+func (_u *ItemUpdateOne) RemoveAttachments(v ...*Attachment) *ItemUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
 	}
-	return iuo.RemoveAttachmentIDs(ids...)
+	return _u.RemoveAttachmentIDs(ids...)
 }
 
 // Where appends a list predicates to the ItemUpdate builder.
-func (iuo *ItemUpdateOne) Where(ps ...predicate.Item) *ItemUpdateOne {
-	iuo.mutation.Where(ps...)
-	return iuo
+func (_u *ItemUpdateOne) Where(ps ...predicate.Item) *ItemUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (iuo *ItemUpdateOne) Select(field string, fields ...string) *ItemUpdateOne {
-	iuo.fields = append([]string{field}, fields...)
-	return iuo
+func (_u *ItemUpdateOne) Select(field string, fields ...string) *ItemUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated Item entity.
-func (iuo *ItemUpdateOne) Save(ctx context.Context) (*Item, error) {
-	iuo.defaults()
-	return withHooks(ctx, iuo.sqlSave, iuo.mutation, iuo.hooks)
+func (_u *ItemUpdateOne) Save(ctx context.Context) (*Item, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (iuo *ItemUpdateOne) SaveX(ctx context.Context) *Item {
-	node, err := iuo.Save(ctx)
+func (_u *ItemUpdateOne) SaveX(ctx context.Context) *Item {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -1961,90 +1961,90 @@ func (iuo *ItemUpdateOne) SaveX(ctx context.Context) *Item {
 }
 
 // Exec executes the query on the entity.
-func (iuo *ItemUpdateOne) Exec(ctx context.Context) error {
-	_, err := iuo.Save(ctx)
+func (_u *ItemUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (iuo *ItemUpdateOne) ExecX(ctx context.Context) {
-	if err := iuo.Exec(ctx); err != nil {
+func (_u *ItemUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (iuo *ItemUpdateOne) defaults() {
-	if _, ok := iuo.mutation.UpdatedAt(); !ok {
+func (_u *ItemUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
 		v := item.UpdateDefaultUpdatedAt()
-		iuo.mutation.SetUpdatedAt(v)
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (iuo *ItemUpdateOne) check() error {
-	if v, ok := iuo.mutation.Name(); ok {
+func (_u *ItemUpdateOne) check() error {
+	if v, ok := _u.mutation.Name(); ok {
 		if err := item.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Item.name": %w`, err)}
 		}
 	}
-	if v, ok := iuo.mutation.Description(); ok {
+	if v, ok := _u.mutation.Description(); ok {
 		if err := item.DescriptionValidator(v); err != nil {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Item.description": %w`, err)}
 		}
 	}
-	if v, ok := iuo.mutation.ImportRef(); ok {
+	if v, ok := _u.mutation.ImportRef(); ok {
 		if err := item.ImportRefValidator(v); err != nil {
 			return &ValidationError{Name: "import_ref", err: fmt.Errorf(`ent: validator failed for field "Item.import_ref": %w`, err)}
 		}
 	}
-	if v, ok := iuo.mutation.Notes(); ok {
+	if v, ok := _u.mutation.Notes(); ok {
 		if err := item.NotesValidator(v); err != nil {
 			return &ValidationError{Name: "notes", err: fmt.Errorf(`ent: validator failed for field "Item.notes": %w`, err)}
 		}
 	}
-	if v, ok := iuo.mutation.SerialNumber(); ok {
+	if v, ok := _u.mutation.SerialNumber(); ok {
 		if err := item.SerialNumberValidator(v); err != nil {
 			return &ValidationError{Name: "serial_number", err: fmt.Errorf(`ent: validator failed for field "Item.serial_number": %w`, err)}
 		}
 	}
-	if v, ok := iuo.mutation.ModelNumber(); ok {
+	if v, ok := _u.mutation.ModelNumber(); ok {
 		if err := item.ModelNumberValidator(v); err != nil {
 			return &ValidationError{Name: "model_number", err: fmt.Errorf(`ent: validator failed for field "Item.model_number": %w`, err)}
 		}
 	}
-	if v, ok := iuo.mutation.Manufacturer(); ok {
+	if v, ok := _u.mutation.Manufacturer(); ok {
 		if err := item.ManufacturerValidator(v); err != nil {
 			return &ValidationError{Name: "manufacturer", err: fmt.Errorf(`ent: validator failed for field "Item.manufacturer": %w`, err)}
 		}
 	}
-	if v, ok := iuo.mutation.WarrantyDetails(); ok {
+	if v, ok := _u.mutation.WarrantyDetails(); ok {
 		if err := item.WarrantyDetailsValidator(v); err != nil {
 			return &ValidationError{Name: "warranty_details", err: fmt.Errorf(`ent: validator failed for field "Item.warranty_details": %w`, err)}
 		}
 	}
-	if v, ok := iuo.mutation.SoldNotes(); ok {
+	if v, ok := _u.mutation.SoldNotes(); ok {
 		if err := item.SoldNotesValidator(v); err != nil {
 			return &ValidationError{Name: "sold_notes", err: fmt.Errorf(`ent: validator failed for field "Item.sold_notes": %w`, err)}
 		}
 	}
-	if iuo.mutation.GroupCleared() && len(iuo.mutation.GroupIDs()) > 0 {
+	if _u.mutation.GroupCleared() && len(_u.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Item.group"`)
 	}
 	return nil
 }
 
-func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) {
-	if err := iuo.check(); err != nil {
+func (_u *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) {
+	if err := _u.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(item.Table, item.Columns, sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID))
-	id, ok := iuo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Item.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := iuo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, item.FieldID)
 		for _, f := range fields {
@@ -2056,134 +2056,134 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 			}
 		}
 	}
-	if ps := iuo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := iuo.mutation.UpdatedAt(); ok {
+	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(item.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := iuo.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(item.FieldName, field.TypeString, value)
 	}
-	if value, ok := iuo.mutation.Description(); ok {
+	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(item.FieldDescription, field.TypeString, value)
 	}
-	if iuo.mutation.DescriptionCleared() {
+	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(item.FieldDescription, field.TypeString)
 	}
-	if value, ok := iuo.mutation.ImportRef(); ok {
+	if value, ok := _u.mutation.ImportRef(); ok {
 		_spec.SetField(item.FieldImportRef, field.TypeString, value)
 	}
-	if iuo.mutation.ImportRefCleared() {
+	if _u.mutation.ImportRefCleared() {
 		_spec.ClearField(item.FieldImportRef, field.TypeString)
 	}
-	if value, ok := iuo.mutation.Notes(); ok {
+	if value, ok := _u.mutation.Notes(); ok {
 		_spec.SetField(item.FieldNotes, field.TypeString, value)
 	}
-	if iuo.mutation.NotesCleared() {
+	if _u.mutation.NotesCleared() {
 		_spec.ClearField(item.FieldNotes, field.TypeString)
 	}
-	if value, ok := iuo.mutation.Quantity(); ok {
+	if value, ok := _u.mutation.Quantity(); ok {
 		_spec.SetField(item.FieldQuantity, field.TypeInt, value)
 	}
-	if value, ok := iuo.mutation.AddedQuantity(); ok {
+	if value, ok := _u.mutation.AddedQuantity(); ok {
 		_spec.AddField(item.FieldQuantity, field.TypeInt, value)
 	}
-	if value, ok := iuo.mutation.Insured(); ok {
+	if value, ok := _u.mutation.Insured(); ok {
 		_spec.SetField(item.FieldInsured, field.TypeBool, value)
 	}
-	if value, ok := iuo.mutation.Archived(); ok {
+	if value, ok := _u.mutation.Archived(); ok {
 		_spec.SetField(item.FieldArchived, field.TypeBool, value)
 	}
-	if value, ok := iuo.mutation.AssetID(); ok {
+	if value, ok := _u.mutation.AssetID(); ok {
 		_spec.SetField(item.FieldAssetID, field.TypeInt, value)
 	}
-	if value, ok := iuo.mutation.AddedAssetID(); ok {
+	if value, ok := _u.mutation.AddedAssetID(); ok {
 		_spec.AddField(item.FieldAssetID, field.TypeInt, value)
 	}
-	if value, ok := iuo.mutation.SyncChildItemsLocations(); ok {
+	if value, ok := _u.mutation.SyncChildItemsLocations(); ok {
 		_spec.SetField(item.FieldSyncChildItemsLocations, field.TypeBool, value)
 	}
-	if value, ok := iuo.mutation.SerialNumber(); ok {
+	if value, ok := _u.mutation.SerialNumber(); ok {
 		_spec.SetField(item.FieldSerialNumber, field.TypeString, value)
 	}
-	if iuo.mutation.SerialNumberCleared() {
+	if _u.mutation.SerialNumberCleared() {
 		_spec.ClearField(item.FieldSerialNumber, field.TypeString)
 	}
-	if value, ok := iuo.mutation.ModelNumber(); ok {
+	if value, ok := _u.mutation.ModelNumber(); ok {
 		_spec.SetField(item.FieldModelNumber, field.TypeString, value)
 	}
-	if iuo.mutation.ModelNumberCleared() {
+	if _u.mutation.ModelNumberCleared() {
 		_spec.ClearField(item.FieldModelNumber, field.TypeString)
 	}
-	if value, ok := iuo.mutation.Manufacturer(); ok {
+	if value, ok := _u.mutation.Manufacturer(); ok {
 		_spec.SetField(item.FieldManufacturer, field.TypeString, value)
 	}
-	if iuo.mutation.ManufacturerCleared() {
+	if _u.mutation.ManufacturerCleared() {
 		_spec.ClearField(item.FieldManufacturer, field.TypeString)
 	}
-	if value, ok := iuo.mutation.LifetimeWarranty(); ok {
+	if value, ok := _u.mutation.LifetimeWarranty(); ok {
 		_spec.SetField(item.FieldLifetimeWarranty, field.TypeBool, value)
 	}
-	if value, ok := iuo.mutation.WarrantyExpires(); ok {
+	if value, ok := _u.mutation.WarrantyExpires(); ok {
 		_spec.SetField(item.FieldWarrantyExpires, field.TypeTime, value)
 	}
-	if iuo.mutation.WarrantyExpiresCleared() {
+	if _u.mutation.WarrantyExpiresCleared() {
 		_spec.ClearField(item.FieldWarrantyExpires, field.TypeTime)
 	}
-	if value, ok := iuo.mutation.WarrantyDetails(); ok {
+	if value, ok := _u.mutation.WarrantyDetails(); ok {
 		_spec.SetField(item.FieldWarrantyDetails, field.TypeString, value)
 	}
-	if iuo.mutation.WarrantyDetailsCleared() {
+	if _u.mutation.WarrantyDetailsCleared() {
 		_spec.ClearField(item.FieldWarrantyDetails, field.TypeString)
 	}
-	if value, ok := iuo.mutation.PurchaseTime(); ok {
+	if value, ok := _u.mutation.PurchaseTime(); ok {
 		_spec.SetField(item.FieldPurchaseTime, field.TypeTime, value)
 	}
-	if iuo.mutation.PurchaseTimeCleared() {
+	if _u.mutation.PurchaseTimeCleared() {
 		_spec.ClearField(item.FieldPurchaseTime, field.TypeTime)
 	}
-	if value, ok := iuo.mutation.PurchaseFrom(); ok {
+	if value, ok := _u.mutation.PurchaseFrom(); ok {
 		_spec.SetField(item.FieldPurchaseFrom, field.TypeString, value)
 	}
-	if iuo.mutation.PurchaseFromCleared() {
+	if _u.mutation.PurchaseFromCleared() {
 		_spec.ClearField(item.FieldPurchaseFrom, field.TypeString)
 	}
-	if value, ok := iuo.mutation.PurchasePrice(); ok {
+	if value, ok := _u.mutation.PurchasePrice(); ok {
 		_spec.SetField(item.FieldPurchasePrice, field.TypeFloat64, value)
 	}
-	if value, ok := iuo.mutation.AddedPurchasePrice(); ok {
+	if value, ok := _u.mutation.AddedPurchasePrice(); ok {
 		_spec.AddField(item.FieldPurchasePrice, field.TypeFloat64, value)
 	}
-	if value, ok := iuo.mutation.SoldTime(); ok {
+	if value, ok := _u.mutation.SoldTime(); ok {
 		_spec.SetField(item.FieldSoldTime, field.TypeTime, value)
 	}
-	if iuo.mutation.SoldTimeCleared() {
+	if _u.mutation.SoldTimeCleared() {
 		_spec.ClearField(item.FieldSoldTime, field.TypeTime)
 	}
-	if value, ok := iuo.mutation.SoldTo(); ok {
+	if value, ok := _u.mutation.SoldTo(); ok {
 		_spec.SetField(item.FieldSoldTo, field.TypeString, value)
 	}
-	if iuo.mutation.SoldToCleared() {
+	if _u.mutation.SoldToCleared() {
 		_spec.ClearField(item.FieldSoldTo, field.TypeString)
 	}
-	if value, ok := iuo.mutation.SoldPrice(); ok {
+	if value, ok := _u.mutation.SoldPrice(); ok {
 		_spec.SetField(item.FieldSoldPrice, field.TypeFloat64, value)
 	}
-	if value, ok := iuo.mutation.AddedSoldPrice(); ok {
+	if value, ok := _u.mutation.AddedSoldPrice(); ok {
 		_spec.AddField(item.FieldSoldPrice, field.TypeFloat64, value)
 	}
-	if value, ok := iuo.mutation.SoldNotes(); ok {
+	if value, ok := _u.mutation.SoldNotes(); ok {
 		_spec.SetField(item.FieldSoldNotes, field.TypeString, value)
 	}
-	if iuo.mutation.SoldNotesCleared() {
+	if _u.mutation.SoldNotesCleared() {
 		_spec.ClearField(item.FieldSoldNotes, field.TypeString)
 	}
-	if iuo.mutation.GroupCleared() {
+	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -2196,7 +2196,7 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iuo.mutation.GroupIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -2212,7 +2212,7 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if iuo.mutation.ParentCleared() {
+	if _u.mutation.ParentCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -2225,7 +2225,7 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iuo.mutation.ParentIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ParentIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -2241,7 +2241,7 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if iuo.mutation.ChildrenCleared() {
+	if _u.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2254,7 +2254,7 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iuo.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !iuo.mutation.ChildrenCleared() {
+	if nodes := _u.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !_u.mutation.ChildrenCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2270,7 +2270,7 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iuo.mutation.ChildrenIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ChildrenIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2286,7 +2286,7 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if iuo.mutation.LabelCleared() {
+	if _u.mutation.LabelCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -2299,7 +2299,7 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iuo.mutation.RemovedLabelIDs(); len(nodes) > 0 && !iuo.mutation.LabelCleared() {
+	if nodes := _u.mutation.RemovedLabelIDs(); len(nodes) > 0 && !_u.mutation.LabelCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -2315,7 +2315,7 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iuo.mutation.LabelIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.LabelIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
@@ -2331,7 +2331,7 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if iuo.mutation.LocationCleared() {
+	if _u.mutation.LocationCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -2344,7 +2344,7 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iuo.mutation.LocationIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.LocationIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -2360,7 +2360,7 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if iuo.mutation.FieldsCleared() {
+	if _u.mutation.FieldsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2373,7 +2373,7 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iuo.mutation.RemovedFieldsIDs(); len(nodes) > 0 && !iuo.mutation.FieldsCleared() {
+	if nodes := _u.mutation.RemovedFieldsIDs(); len(nodes) > 0 && !_u.mutation.FieldsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2389,7 +2389,7 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iuo.mutation.FieldsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.FieldsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2405,7 +2405,7 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if iuo.mutation.MaintenanceEntriesCleared() {
+	if _u.mutation.MaintenanceEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2418,7 +2418,7 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iuo.mutation.RemovedMaintenanceEntriesIDs(); len(nodes) > 0 && !iuo.mutation.MaintenanceEntriesCleared() {
+	if nodes := _u.mutation.RemovedMaintenanceEntriesIDs(); len(nodes) > 0 && !_u.mutation.MaintenanceEntriesCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2434,7 +2434,7 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iuo.mutation.MaintenanceEntriesIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.MaintenanceEntriesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2450,7 +2450,7 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if iuo.mutation.AttachmentsCleared() {
+	if _u.mutation.AttachmentsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2463,7 +2463,7 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iuo.mutation.RemovedAttachmentsIDs(); len(nodes) > 0 && !iuo.mutation.AttachmentsCleared() {
+	if nodes := _u.mutation.RemovedAttachmentsIDs(); len(nodes) > 0 && !_u.mutation.AttachmentsCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2479,7 +2479,7 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := iuo.mutation.AttachmentsIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.AttachmentsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
 			Inverse: false,
@@ -2495,10 +2495,10 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &Item{config: iuo.config}
+	_node = &Item{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, iuo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{item.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -2506,6 +2506,6 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 		}
 		return nil, err
 	}
-	iuo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

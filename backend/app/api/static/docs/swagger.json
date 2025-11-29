@@ -1961,6 +1961,209 @@
                 }
             }
         },
+        "/v1/templates": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Item Templates"
+                ],
+                "summary": "Get All Item Templates",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.ItemTemplateSummary"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Item Templates"
+                ],
+                "summary": "Create Item Template",
+                "parameters": [
+                    {
+                        "description": "Template Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.ItemTemplateCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.ItemTemplateOut"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/templates/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Item Templates"
+                ],
+                "summary": "Get Item Template",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.ItemTemplateOut"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Item Templates"
+                ],
+                "summary": "Update Item Template",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Template Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.ItemTemplateUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.ItemTemplateOut"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Item Templates"
+                ],
+                "summary": "Delete Item Template",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/v1/templates/{id}/create-item": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Item Templates"
+                ],
+                "summary": "Create Item from Template",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Item Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.ItemTemplateCreateItemRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.ItemOut"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/users/change-password": {
             "put": {
                 "security": [
@@ -2460,6 +2663,13 @@
                         "$ref": "#/definitions/ent.GroupInvitationToken"
                     }
                 },
+                "item_templates": {
+                    "description": "ItemTemplates holds the value of the item_templates edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.ItemTemplate"
+                    }
+                },
                 "items": {
                     "description": "Items holds the value of the items edge.",
                     "type": "array",
@@ -2797,6 +3007,95 @@
                 }
             }
         },
+        "ent.ItemTemplate": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "default_insured": {
+                    "description": "DefaultInsured holds the value of the \"default_insured\" field.",
+                    "type": "boolean"
+                },
+                "default_lifetime_warranty": {
+                    "description": "DefaultLifetimeWarranty holds the value of the \"default_lifetime_warranty\" field.",
+                    "type": "boolean"
+                },
+                "default_manufacturer": {
+                    "description": "DefaultManufacturer holds the value of the \"default_manufacturer\" field.",
+                    "type": "string"
+                },
+                "default_quantity": {
+                    "description": "DefaultQuantity holds the value of the \"default_quantity\" field.",
+                    "type": "integer"
+                },
+                "default_warranty_details": {
+                    "description": "DefaultWarrantyDetails holds the value of the \"default_warranty_details\" field.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description holds the value of the \"description\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the ItemTemplateQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.ItemTemplateEdges"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "include_purchase_fields": {
+                    "description": "Whether to include purchase fields in items created from this template",
+                    "type": "boolean"
+                },
+                "include_sold_fields": {
+                    "description": "Whether to include sold fields in items created from this template",
+                    "type": "boolean"
+                },
+                "include_warranty_fields": {
+                    "description": "Whether to include warranty fields in items created from this template",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "notes": {
+                    "description": "Notes holds the value of the \"notes\" field.",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.ItemTemplateEdges": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "description": "Fields holds the value of the fields edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.TemplateField"
+                    }
+                },
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                }
+            }
+        },
         "ent.Label": {
             "type": "object",
             "properties": {
@@ -3041,6 +3340,64 @@
                     "allOf": [
                         {
                             "$ref": "#/definitions/ent.User"
+                        }
+                    ]
+                }
+            }
+        },
+        "ent.TemplateField": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description holds the value of the \"description\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the TemplateFieldQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.TemplateFieldEdges"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "text_value": {
+                    "description": "TextValue holds the value of the \"text_value\" field.",
+                    "type": "string"
+                },
+                "type": {
+                    "description": "Type holds the value of the \"type\" field.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/templatefield.Type"
+                        }
+                    ]
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.TemplateFieldEdges": {
+            "type": "object",
+            "properties": {
+                "item_template": {
+                    "description": "ItemTemplate holds the value of the item_template edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.ItemTemplate"
                         }
                     ]
                 }
@@ -3581,6 +3938,197 @@
                 }
             }
         },
+        "repo.ItemTemplateCreate": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "defaultInsured": {
+                    "type": "boolean"
+                },
+                "defaultLifetimeWarranty": {
+                    "type": "boolean"
+                },
+                "defaultManufacturer": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "defaultQuantity": {
+                    "description": "Default values for items",
+                    "type": "integer"
+                },
+                "defaultWarrantyDetails": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "fields": {
+                    "description": "Custom fields",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.TemplateField"
+                    }
+                },
+                "includePurchaseFields": {
+                    "type": "boolean"
+                },
+                "includeSoldFields": {
+                    "type": "boolean"
+                },
+                "includeWarrantyFields": {
+                    "description": "Metadata flags",
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "notes": {
+                    "type": "string",
+                    "maxLength": 1000
+                }
+            }
+        },
+        "repo.ItemTemplateOut": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "defaultInsured": {
+                    "type": "boolean"
+                },
+                "defaultLifetimeWarranty": {
+                    "type": "boolean"
+                },
+                "defaultManufacturer": {
+                    "type": "string"
+                },
+                "defaultQuantity": {
+                    "description": "Default values for items",
+                    "type": "integer"
+                },
+                "defaultWarrantyDetails": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "fields": {
+                    "description": "Custom fields",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.TemplateField"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "includePurchaseFields": {
+                    "type": "boolean"
+                },
+                "includeSoldFields": {
+                    "type": "boolean"
+                },
+                "includeWarrantyFields": {
+                    "description": "Metadata flags",
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.ItemTemplateSummary": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.ItemTemplateUpdate": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "defaultInsured": {
+                    "type": "boolean"
+                },
+                "defaultLifetimeWarranty": {
+                    "type": "boolean"
+                },
+                "defaultManufacturer": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "defaultQuantity": {
+                    "description": "Default values for items",
+                    "type": "integer"
+                },
+                "defaultWarrantyDetails": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "fields": {
+                    "description": "Custom fields",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.TemplateField"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "includePurchaseFields": {
+                    "type": "boolean"
+                },
+                "includeSoldFields": {
+                    "type": "boolean"
+                },
+                "includeWarrantyFields": {
+                    "description": "Metadata flags",
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "notes": {
+                    "type": "string",
+                    "maxLength": 1000
+                }
+            }
+        },
         "repo.ItemType": {
             "type": "string",
             "enum": [
@@ -4076,6 +4624,23 @@
                 }
             }
         },
+        "repo.TemplateField": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "textValue": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
         "repo.TotalsByOrganizer": {
             "type": "object",
             "properties": {
@@ -4212,6 +4777,15 @@
                 }
             }
         },
+        "templatefield.Type": {
+            "type": "string",
+            "enum": [
+                "text"
+            ],
+            "x-enum-varnames": [
+                "TypeText"
+            ]
+        },
         "user.Role": {
             "type": "string",
             "enum": [
@@ -4328,6 +4902,36 @@
             "properties": {
                 "token": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.ItemTemplateCreateItemRequest": {
+            "type": "object",
+            "required": [
+                "locationId",
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "labelIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "locationId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "quantity": {
+                    "type": "integer"
                 }
             }
         },

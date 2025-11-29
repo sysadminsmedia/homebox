@@ -183,6 +183,7 @@
   import MdiWrench from "~icons/mdi/wrench";
   import MdiPlus from "~icons/mdi/plus";
   import MdiLogout from "~icons/mdi/logout";
+  import MdiFileDocumentMultiple from "~icons/mdi/file-document-multiple";
 
   import {
     Sidebar,
@@ -329,6 +330,13 @@
       active: computed(() => route.path === "/items"),
       name: computed(() => t("menu.search")),
       to: "/items",
+    },
+    {
+      icon: MdiFileDocumentMultiple,
+      id: 3,
+      active: computed(() => route.path === "/templates"),
+      name: computed(() => t("menu.templates")),
+      to: "/templates",
     },
     {
       icon: MdiWrench,

@@ -31,6 +31,33 @@
 
     <form class="flex flex-col gap-2" @submit.prevent="create()">
       <LocationSelector v-model="form.location" />
+      <TemplateSelector v-model="selectedTemplate" @template-selected="handleTemplateSelected" />
+
+      <!-- Template Info Display -->
+      <div v-if="templateData" class="rounded-lg border bg-muted/50 p-3">
+        <div class="mb-2 flex items-center justify-between">
+          <h4 class="text-sm font-semibold">Template: {{ templateData.name }}</h4>
+        </div>
+        <div class="space-y-1 text-xs text-muted-foreground">
+          <p v-if="templateData.description">{{ templateData.description }}</p>
+          <div class="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
+            <div><span class="font-medium">Quantity:</span> {{ templateData.defaultQuantity }}</div>
+            <div><span class="font-medium">Insured:</span> {{ templateData.defaultInsured ? 'Yes' : 'No' }}</div>
+            <div v-if="templateData.defaultManufacturer"><span class="font-medium">Manufacturer:</span> {{ templateData.defaultManufacturer }}</div>
+            <div v-if="templateData.defaultLifetimeWarranty"><span class="font-medium">Warranty:</span> Lifetime</div>
+          </div>
+          <div v-if="templateData.fields && templateData.fields.length > 0" class="mt-2">
+            <p class="font-medium">Custom Fields:</p>
+            <ul class="ml-4 list-none space-y-1">
+              <li v-for="field in templateData.fields" :key="field.id">
+                <span class="font-medium">{{ field.name }}:</span>
+                <span> {{ field.textValue || '(empty)' }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       <ItemSelector
         v-if="subItemCreate"
         v-model="parent"
@@ -192,6 +219,7 @@
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
   import LabelSelector from "~/components/Label/Selector.vue";
   import ItemSelector from "~/components/Item/Selector.vue";
+  import TemplateSelector from "~/components/Template/Selector.vue";
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
   import LocationSelector from "~/components/Location/Selector.vue";
   import FormTextField from "~/components/Form/TextField.vue";
@@ -250,6 +278,8 @@
 
   const loading = ref(false);
   const focused = ref(false);
+  const selectedTemplate = ref(null);
+  const templateData = ref<any>(null);
   const form = reactive({
     location: locations.value && locations.value.length > 0 ? locations.value[0] : ({} as LocationOut),
     parentId: null,
@@ -260,6 +290,30 @@
     labels: [] as string[],
     photos: [] as PhotoPreview[],
   });
+
+  async function handleTemplateSelected(template: any) {
+    if (!template) {
+      // Template was deselected, clear template data
+      templateData.value = null;
+      form.quantity = 1;
+      return;
+    }
+
+    // Load full template details
+    const { data, error } = await api.templates.get(template.id);
+    if (error || !data) {
+      toast.error("Failed to load template details");
+      return;
+    }
+
+    // Store template data for display and item creation
+    templateData.value = data;
+
+    // Pre-fill form with template defaults
+    form.quantity = data.defaultQuantity;
+
+    toast.success(`Template "${data.name}" applied. Review the template settings below.`);
+  }
 
   watch(
     parent,
@@ -384,16 +438,36 @@
 
     if (shift?.value) close = false;
 
-    const out: ItemCreate = {
-      parentId: form.parentId,
-      name: form.name,
-      quantity: form.quantity,
-      description: form.description,
-      locationId: form.location.id as string,
-      labelIds: form.labels,
-    };
+    let error, data;
 
-    const { error, data } = await api.items.create(out);
+    // If a template is selected, use the template creation endpoint
+    if (templateData.value) {
+      const templateRequest = {
+        name: form.name,
+        description: form.description,
+        locationId: form.location.id as string,
+        labelIds: form.labels,
+        quantity: form.quantity,
+      };
+
+      const result = await api.templates.createItem(templateData.value.id, templateRequest);
+      error = result.error;
+      data = result.data;
+    } else {
+      // Normal item creation without template
+      const out: ItemCreate = {
+        parentId: form.parentId,
+        name: form.name,
+        quantity: form.quantity,
+        description: form.description,
+        locationId: form.location.id as string,
+        labelIds: form.labels,
+      };
+
+      const result = await api.items.create(out);
+      error = result.error;
+      data = result.data;
+    }
 
     if (error) {
       loading.value = false;
@@ -434,6 +508,8 @@
     form.color = "";
     form.photos = [];
     form.labels = [];
+    selectedTemplate.value = null;
+    templateData.value = null;
     focused.value = false;
     loading.value = false;
 

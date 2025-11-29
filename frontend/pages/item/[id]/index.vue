@@ -9,6 +9,7 @@
   import MdiMinus from "~icons/mdi/minus";
   import MdiDelete from "~icons/mdi/delete";
   import MdiPlusBoxMultipleOutline from "~icons/mdi/plus-box-multiple-outline";
+  import MdiContentSaveEdit from "~icons/mdi/content-save-edit";
   import { Separator } from "@/components/ui/separator";
   import {
     Breadcrumb,
@@ -556,6 +557,41 @@
     navigateTo("/home");
   }
 
+  async function saveAsTemplate() {
+    if (!item.value) {
+      return;
+    }
+
+    // Create template from item data
+    const templateData = {
+      name: `Template: ${item.value.name}`,
+      description: item.value.description || "",
+      notes: "",
+      defaultQuantity: item.value.quantity,
+      defaultInsured: item.value.insured,
+      defaultManufacturer: item.value.manufacturer || "",
+      defaultLifetimeWarranty: item.value.lifetimeWarranty,
+      defaultWarrantyDetails: item.value.warrantyDetails || "",
+      includeWarrantyFields: !!(item.value.warrantyDetails || item.value.lifetimeWarranty || item.value.warrantyExpires),
+      includePurchaseFields: !!(item.value.purchaseFrom || item.value.purchasePrice || item.value.purchaseTime),
+      includeSoldFields: !!(item.value.soldTo || item.value.soldPrice || item.value.soldTime),
+      fields: item.value.fields.map(field => ({
+        name: field.name,
+        type: "text",
+        textValue: field.textValue || "",
+      })),
+    };
+
+    const { data, error } = await api.templates.create(templateData);
+    if (error) {
+      toast.error("Failed to create template");
+      return;
+    }
+
+    toast.success(`Template "${templateData.name}" created successfully`);
+    navigateTo(`/template/${data.id}`);
+  }
+
   async function createSubitem() {
     // setting URL Parameter that is read and immidiately removed in the Item-CreateModal
     await router.push({
@@ -654,6 +690,10 @@
               <Button class="w-9 md:w-auto" :aria-label="$t('global.duplicate')" @click="handleDuplicateClick">
                 <MdiPlusBoxMultipleOutline />
                 <span class="hidden md:inline">{{ $t("global.duplicate") }}</span>
+              </Button>
+              <Button class="w-9 md:w-auto" aria-label="Save as Template" @click="saveAsTemplate">
+                <MdiContentSaveEdit />
+                <span class="hidden md:inline">Save as Template</span>
               </Button>
               <Button variant="destructive" class="w-9 md:w-auto" :aria-label="$t('global.delete')" @click="deleteItem">
                 <MdiDelete />
