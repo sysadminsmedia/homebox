@@ -277,11 +277,8 @@ update:currencies:
         git push -o merge_request.create -o merge_request.target=$CI_DEFAULT_BRANCH -o merge_request.title="Update currencies.json" origin update-currencies-$CI_COMMIT_SHORT_SHA
       fi
   rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-  only:
-    variables:
-      - $UPDATE_CURRENCIES == "true"
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $UPDATE_CURRENCIES == "true"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $UPDATE_CURRENCIES == "true"
 
 # ==========================================
 # Binary Build with GoReleaser
