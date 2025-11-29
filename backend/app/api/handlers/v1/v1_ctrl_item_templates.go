@@ -38,7 +38,8 @@ func (ctrl *V1Controller) HandleItemTemplatesGetAll() errchain.HandlerFunc {
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleItemTemplatesGet() errchain.HandlerFunc {
 	fn := func(r *http.Request, ID uuid.UUID) (repo.ItemTemplateOut, error) {
-		return ctrl.repo.ItemTemplates.GetOne(r.Context(), ID)
+		auth := services.NewContext(r.Context())
+		return ctrl.repo.ItemTemplates.GetOne(r.Context(), auth.GID, ID)
 	}
 
 	return adapters.CommandID("id", fn, http.StatusOK)
@@ -123,72 +124,39 @@ func (ctrl *V1Controller) HandleItemTemplatesCreateItem() errchain.HandlerFunc {
 	fn := func(r *http.Request, templateID uuid.UUID, body ItemTemplateCreateItemRequest) (repo.ItemOut, error) {
 		auth := services.NewContext(r.Context())
 
-		// Get the template
-		template, err := ctrl.repo.ItemTemplates.GetOne(r.Context(), templateID)
+		template, err := ctrl.repo.ItemTemplates.GetOne(r.Context(), auth.GID, templateID)
 		if err != nil {
 			return repo.ItemOut{}, err
 		}
 
-		// Build the item from the template
 		quantity := template.DefaultQuantity
 		if body.Quantity != nil {
 			quantity = *body.Quantity
 		}
 
-		itemData := repo.ItemCreate{
-			Name:        body.Name,
-			Description: body.Description,
-			LocationID:  body.LocationID,
-			LabelIDs:    body.LabelIDs,
-			Quantity:    quantity,
-		}
-
-		// Create the item
-		item, err := ctrl.svc.Items.Create(auth, itemData)
-		if err != nil {
-			return repo.ItemOut{}, err
-		}
-
-		// Build update data with template defaults
-		updateData := repo.ItemUpdate{
-			ID:                      item.ID,
-			Name:                    body.Name,
-			Description:             body.Description,
-			Quantity:                quantity,
-			LocationID:              body.LocationID,
-			LabelIDs:                body.LabelIDs,
-			Insured:                 template.DefaultInsured,
-			Archived:                false,
-			SyncChildItemsLocations: false,
-			AssetID:                 item.AssetID,
-			SerialNumber:            "",
-			ModelNumber:             "",
-			Manufacturer:            template.DefaultManufacturer,
-			LifetimeWarranty:        template.DefaultLifetimeWarranty,
-			WarrantyDetails:         template.DefaultWarrantyDetails,
-			Notes:                   "",
-		}
-
-		// Add template fields to item
-		itemFields := make([]repo.ItemField, len(template.Fields))
-		for i, field := range template.Fields {
-			itemFields[i] = repo.ItemField{
-				Type:      field.Type,
-				Name:      field.Name,
-				TextValue: field.TextValue,
+		// Build custom fields from template
+		fields := make([]repo.ItemField, len(template.Fields))
+		for i, f := range template.Fields {
+			fields[i] = repo.ItemField{
+				Type:      f.Type,
+				Name:      f.Name,
+				TextValue: f.TextValue,
 			}
 		}
-		updateData.Fields = itemFields
 
-		// Update the item with template data
-		updatedItem, err := ctrl.repo.Items.UpdateByGroup(auth, auth.GID, updateData)
-		if err != nil {
-			// If update fails, try to delete the created item to avoid orphaned data
-			_ = ctrl.repo.Items.DeleteByGroup(auth, auth.GID, item.ID)
-			return repo.ItemOut{}, err
-		}
-
-		return updatedItem, nil
+		// Create item with all template data in a single transaction
+		return ctrl.repo.Items.CreateFromTemplate(r.Context(), auth.GID, repo.ItemCreateFromTemplate{
+			Name:             body.Name,
+			Description:      body.Description,
+			Quantity:         quantity,
+			LocationID:       body.LocationID,
+			LabelIDs:         body.LabelIDs,
+			Insured:          template.DefaultInsured,
+			Manufacturer:     template.DefaultManufacturer,
+			LifetimeWarranty: template.DefaultLifetimeWarranty,
+			WarrantyDetails:  template.DefaultWarrantyDetails,
+			Fields:           fields,
+		})
 	}
 
 	return adapters.ActionID("id", fn, http.StatusCreated)

@@ -179,10 +179,13 @@ func (r *ItemTemplatesRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]
 	return result, nil
 }
 
-// GetOne returns a single template by ID
-func (r *ItemTemplatesRepository) GetOne(ctx context.Context, id uuid.UUID) (ItemTemplateOut, error) {
+// GetOne returns a single template by ID, verified to belong to the specified group
+func (r *ItemTemplatesRepository) GetOne(ctx context.Context, gid uuid.UUID, id uuid.UUID) (ItemTemplateOut, error) {
 	template, err := r.db.ItemTemplate.Query().
-		Where(itemtemplate.ID(id)).
+		Where(
+			itemtemplate.ID(id),
+			itemtemplate.HasGroupWith(group.ID(gid)),
+		).
 		WithFields().
 		Only(ctx)
 
@@ -230,7 +233,7 @@ func (r *ItemTemplatesRepository) Create(ctx context.Context, gid uuid.UUID, dat
 	}
 
 	r.publishMutationEvent(gid)
-	return r.GetOne(ctx, template.ID)
+	return r.GetOne(ctx, gid, template.ID)
 }
 
 // Update updates an existing template
@@ -330,7 +333,7 @@ func (r *ItemTemplatesRepository) Update(ctx context.Context, gid uuid.UUID, dat
 	}
 
 	r.publishMutationEvent(gid)
-	return r.GetOne(ctx, template.ID)
+	return r.GetOne(ctx, gid, template.ID)
 }
 
 // Delete deletes a template
