@@ -572,7 +572,11 @@
       defaultManufacturer: item.value.manufacturer || "",
       defaultLifetimeWarranty: item.value.lifetimeWarranty,
       defaultWarrantyDetails: item.value.warrantyDetails || "",
-      includeWarrantyFields: !!(item.value.warrantyDetails || item.value.lifetimeWarranty || item.value.warrantyExpires),
+      includeWarrantyFields: !!(
+        item.value.warrantyDetails ||
+        item.value.lifetimeWarranty ||
+        item.value.warrantyExpires
+      ),
       includePurchaseFields: !!(item.value.purchaseFrom || item.value.purchasePrice || item.value.purchaseTime),
       includeSoldFields: !!(item.value.soldTo || item.value.soldPrice || item.value.soldTime),
       fields: item.value.fields.map(field => ({

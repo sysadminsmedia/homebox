@@ -42,8 +42,10 @@
           <p v-if="templateData.description">{{ templateData.description }}</p>
           <div class="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
             <div><span class="font-medium">Quantity:</span> {{ templateData.defaultQuantity }}</div>
-            <div><span class="font-medium">Insured:</span> {{ templateData.defaultInsured ? 'Yes' : 'No' }}</div>
-            <div v-if="templateData.defaultManufacturer"><span class="font-medium">Manufacturer:</span> {{ templateData.defaultManufacturer }}</div>
+            <div><span class="font-medium">Insured:</span> {{ templateData.defaultInsured ? "Yes" : "No" }}</div>
+            <div v-if="templateData.defaultManufacturer">
+              <span class="font-medium">Manufacturer:</span> {{ templateData.defaultManufacturer }}
+            </div>
             <div v-if="templateData.defaultLifetimeWarranty"><span class="font-medium">Warranty:</span> Lifetime</div>
           </div>
           <div v-if="templateData.fields && templateData.fields.length > 0" class="mt-2">
@@ -51,7 +53,7 @@
             <ul class="ml-4 list-none space-y-1">
               <li v-for="field in templateData.fields" :key="field.id">
                 <span class="font-medium">{{ field.name }}:</span>
-                <span> {{ field.textValue || '(empty)' }}</span>
+                <span> {{ field.textValue || "(empty)" }}</span>
               </li>
             </ul>
           </div>
@@ -204,7 +206,7 @@
   import BaseModal from "@/components/App/CreateModal.vue";
   import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
-  import type { ItemCreate, LocationOut } from "~~/lib/api/types/data-contracts";
+  import type { ItemCreate, ItemTemplateOut, ItemTemplateSummary, LocationOut } from "~~/lib/api/types/data-contracts";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
   import MdiBarcode from "~icons/mdi/barcode";
@@ -279,7 +281,7 @@
   const loading = ref(false);
   const focused = ref(false);
   const selectedTemplate = ref(null);
-  const templateData = ref<any>(null);
+  const templateData = ref<ItemTemplateOut | null>(null);
   const form = reactive({
     location: locations.value && locations.value.length > 0 ? locations.value[0] : ({} as LocationOut),
     parentId: null,
@@ -291,7 +293,7 @@
     photos: [] as PhotoPreview[],
   });
 
-  async function handleTemplateSelected(template: any) {
+  async function handleTemplateSelected(template: ItemTemplateSummary | null) {
     if (!template) {
       // Template was deselected, clear template data
       templateData.value = null;
