@@ -1,0 +1,3 @@
+backend/internal/data/ent/** linguist-generated=true
+backend/internal/data/ent/schema/** linguist-generated=false
+frontend/lib/api/types/** linguist-generated=true
