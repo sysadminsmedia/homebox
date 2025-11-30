@@ -32,10 +32,7 @@ create table if not exists template_fields
     description          text,
     type                 text                  not null,
     text_value           text,
-    number_value         integer,
-    boolean_value        bool    default false not null,
-    time_value           datetime              not null,
-    item_template_fields uuid                  not null
+    item_template_fields uuid
         constraint template_fields_item_templates_fields
             references item_templates
             on delete cascade
