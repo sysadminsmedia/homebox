@@ -580,6 +580,7 @@
       includePurchaseFields: !!(item.value.purchaseFrom || item.value.purchasePrice || item.value.purchaseTime),
       includeSoldFields: !!(item.value.soldTo || item.value.soldPrice || item.value.soldTime),
       fields: item.value.fields.map(field => ({
+        id: "",
         name: field.name,
         type: "text",
         textValue: field.textValue || "",

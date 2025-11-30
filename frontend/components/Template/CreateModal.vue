@@ -75,11 +75,11 @@
     includeWarrantyFields: false,
     includePurchaseFields: false,
     includeSoldFields: false,
-    fields: [] as Array<{ name: string; type: "text"; textValue: string }>,
+    fields: [] as Array<{ id: string; name: string; type: "text"; textValue: string }>,
   });
 
   function addField() {
-    form.fields.push({ name: "", type: "text", textValue: "" });
+    form.fields.push({ id: "", name: "", type: "text", textValue: "" });
   }
 
   function reset() {
