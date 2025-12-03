@@ -686,15 +686,35 @@ export interface ItemSummary {
   updatedAt: Date | string;
 }
 
+export interface TemplateLabelSummary {
+  id: string;
+  name: string;
+}
+
+export interface TemplateLocationSummary {
+  id: string;
+  name: string;
+}
+
 export interface ItemTemplateCreate {
   defaultInsured: boolean;
   defaultLifetimeWarranty: boolean;
   /** @maxLength 255 */
   defaultManufacturer: string;
+  /** @maxLength 255 */
+  defaultModelNumber: string;
+  /** @maxLength 255 */
+  defaultName: string;
+  /** @maxLength 1000 */
+  defaultDescription: string;
   /** Default values for items */
   defaultQuantity: number;
   /** @maxLength 1000 */
   defaultWarrantyDetails: string;
+  /** Default location ID */
+  defaultLocationId?: string | null;
+  /** Default label IDs */
+  defaultLabelIds: string[];
   /** @maxLength 1000 */
   description: string;
   /** Custom fields */
@@ -717,9 +737,16 @@ export interface ItemTemplateOut {
   defaultInsured: boolean;
   defaultLifetimeWarranty: boolean;
   defaultManufacturer: string;
+  defaultModelNumber: string;
+  defaultName: string;
+  defaultDescription: string;
   /** Default values for items */
   defaultQuantity: number;
   defaultWarrantyDetails: string;
+  /** Default location */
+  defaultLocation?: TemplateLocationSummary | null;
+  /** Default labels */
+  defaultLabels: TemplateLabelSummary[];
   description: string;
   /** Custom fields */
   fields: TemplateField[];
@@ -746,10 +773,20 @@ export interface ItemTemplateUpdate {
   defaultLifetimeWarranty: boolean;
   /** @maxLength 255 */
   defaultManufacturer: string;
+  /** @maxLength 255 */
+  defaultModelNumber: string;
+  /** @maxLength 255 */
+  defaultName: string;
+  /** @maxLength 1000 */
+  defaultDescription: string;
   /** Default values for items */
   defaultQuantity: number;
   /** @maxLength 1000 */
   defaultWarrantyDetails: string;
+  /** Default location ID */
+  defaultLocationId?: string | null;
+  /** Default label IDs */
+  defaultLabelIds: string[];
   /** @maxLength 1000 */
   description: string;
   /** Custom fields */

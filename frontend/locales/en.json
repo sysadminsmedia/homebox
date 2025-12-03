@@ -229,6 +229,56 @@
         "quick_menu": {
             "no_results": "No results found.",
             "shortcut_hint": "Use the number keys to quickly select an action."
+        },
+        "template": {
+            "card": {
+                "delete": "Delete template",
+                "duplicate": "Duplicate template",
+                "edit": "Edit template"
+            },
+            "confirm_delete": "Delete this template?",
+            "create_modal": {
+                "title": "Create Template"
+            },
+            "detail": {
+                "default_values": "Default Values"
+            },
+            "edit_modal": {
+                "title": "Edit Template"
+            },
+            "form": {
+                "custom_fields": "Custom Fields",
+                "default_item_values": "Default Item Values",
+                "default_location": "Default Location",
+                "default_value": "Default Value",
+                "field_name": "Field Name",
+                "item_description": "Item Description",
+                "item_name": "Item Name",
+                "lifetime_warranty": "Lifetime Warranty",
+                "location": "Location",
+                "manufacturer": "Manufacturer",
+                "model_number": "Model Number",
+                "no_custom_fields": "No custom fields.",
+                "template_description": "Template Description",
+                "template_name": "Template Name"
+            },
+            "selector": {
+                "label": "Template (Optional)",
+                "not_found": "No template found",
+                "search": "Search templates...",
+                "select": "Select template..."
+            },
+            "toast": {
+                "create_failed": "Failed to create template",
+                "created": "Template created",
+                "delete_failed": "Failed to delete template",
+                "deleted": "Template deleted",
+                "duplicate_failed": "Failed to duplicate template",
+                "duplicated": "Template duplicated as \"{name}\"",
+                "load_failed": "Failed to load template details",
+                "update_failed": "Failed to update template",
+                "updated": "Template updated"
+            }
         }
     },
     "errors": {
@@ -280,7 +330,9 @@
         "value": "Value",
         "version": "Version: { version }",
         "welcome": "Welcome, { username }",
-        "preview": "Preview"
+        "preview": "Preview",
+        "yes": "Yes",
+        "no": "No"
     },
     "home": {
         "labels": "Labels",

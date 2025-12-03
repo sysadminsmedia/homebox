@@ -15,6 +15,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 )
@@ -22,13 +23,14 @@ import (
 // ItemTemplateQuery is the builder for querying ItemTemplate entities.
 type ItemTemplateQuery struct {
 	config
-	ctx        *QueryContext
-	order      []itemtemplate.OrderOption
-	inters     []Interceptor
-	predicates []predicate.ItemTemplate
-	withGroup  *GroupQuery
-	withFields *TemplateFieldQuery
-	withFKs    bool
+	ctx          *QueryContext
+	order        []itemtemplate.OrderOption
+	inters       []Interceptor
+	predicates   []predicate.ItemTemplate
+	withGroup    *GroupQuery
+	withFields   *TemplateFieldQuery
+	withLocation *LocationQuery
+	withFKs      bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -102,6 +104,28 @@ func (_q *ItemTemplateQuery) QueryFields() *TemplateFieldQuery {
 			sqlgraph.From(itemtemplate.Table, itemtemplate.FieldID, selector),
 			sqlgraph.To(templatefield.Table, templatefield.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, itemtemplate.FieldsTable, itemtemplate.FieldsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryLocation chains the current query on the "location" edge.
+func (_q *ItemTemplateQuery) QueryLocation() *LocationQuery {
+	query := (&LocationClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(itemtemplate.Table, itemtemplate.FieldID, selector),
+			sqlgraph.To(location.Table, location.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, itemtemplate.LocationTable, itemtemplate.LocationColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -296,13 +320,14 @@ func (_q *ItemTemplateQuery) Clone() *ItemTemplateQuery {
 		return nil
 	}
 	return &ItemTemplateQuery{
-		config:     _q.config,
-		ctx:        _q.ctx.Clone(),
-		order:      append([]itemtemplate.OrderOption{}, _q.order...),
-		inters:     append([]Interceptor{}, _q.inters...),
-		predicates: append([]predicate.ItemTemplate{}, _q.predicates...),
-		withGroup:  _q.withGroup.Clone(),
-		withFields: _q.withFields.Clone(),
+		config:       _q.config,
+		ctx:          _q.ctx.Clone(),
+		order:        append([]itemtemplate.OrderOption{}, _q.order...),
+		inters:       append([]Interceptor{}, _q.inters...),
+		predicates:   append([]predicate.ItemTemplate{}, _q.predicates...),
+		withGroup:    _q.withGroup.Clone(),
+		withFields:   _q.withFields.Clone(),
+		withLocation: _q.withLocation.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -328,6 +353,17 @@ func (_q *ItemTemplateQuery) WithFields(opts ...func(*TemplateFieldQuery)) *Item
 		opt(query)
 	}
 	_q.withFields = query
+	return _q
+}
+
+// WithLocation tells the query-builder to eager-load the nodes that are connected to
+// the "location" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *ItemTemplateQuery) WithLocation(opts ...func(*LocationQuery)) *ItemTemplateQuery {
+	query := (&LocationClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withLocation = query
 	return _q
 }
 
@@ -410,12 +446,13 @@ func (_q *ItemTemplateQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		nodes       = []*ItemTemplate{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			_q.withGroup != nil,
 			_q.withFields != nil,
+			_q.withLocation != nil,
 		}
 	)
-	if _q.withGroup != nil {
+	if _q.withGroup != nil || _q.withLocation != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -449,6 +486,12 @@ func (_q *ItemTemplateQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 		if err := _q.loadFields(ctx, query, nodes,
 			func(n *ItemTemplate) { n.Edges.Fields = []*TemplateField{} },
 			func(n *ItemTemplate, e *TemplateField) { n.Edges.Fields = append(n.Edges.Fields, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withLocation; query != nil {
+		if err := _q.loadLocation(ctx, query, nodes, nil,
+			func(n *ItemTemplate, e *Location) { n.Edges.Location = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -515,6 +558,38 @@ func (_q *ItemTemplateQuery) loadFields(ctx context.Context, query *TemplateFiel
 			return fmt.Errorf(`unexpected referenced foreign-key "item_template_fields" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
+	}
+	return nil
+}
+func (_q *ItemTemplateQuery) loadLocation(ctx context.Context, query *LocationQuery, nodes []*ItemTemplate, init func(*ItemTemplate), assign func(*ItemTemplate, *Location)) error {
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*ItemTemplate)
+	for i := range nodes {
+		if nodes[i].item_template_location == nil {
+			continue
+		}
+		fk := *nodes[i].item_template_location
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(location.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "item_template_location" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
 	}
 	return nil
 }

@@ -43,7 +43,7 @@
     <TemplateCreateModal @created="refresh" />
 
     <div v-if="templates && templates.length > 0" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      <TemplateCard v-for="tpl in templates" :key="tpl.id" :template="tpl" @deleted="refresh" />
+      <TemplateCard v-for="tpl in templates" :key="tpl.id" :template="tpl" @deleted="refresh" @duplicated="refresh" />
     </div>
 
     <div v-else class="flex flex-col items-center justify-center py-12 text-center">

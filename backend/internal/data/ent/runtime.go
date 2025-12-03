@@ -363,28 +363,40 @@ func init() {
 	itemtemplateDescDefaultInsured := itemtemplateFields[2].Descriptor()
 	// itemtemplate.DefaultDefaultInsured holds the default value on creation for the default_insured field.
 	itemtemplate.DefaultDefaultInsured = itemtemplateDescDefaultInsured.Default.(bool)
+	// itemtemplateDescDefaultName is the schema descriptor for default_name field.
+	itemtemplateDescDefaultName := itemtemplateFields[3].Descriptor()
+	// itemtemplate.DefaultNameValidator is a validator for the "default_name" field. It is called by the builders before save.
+	itemtemplate.DefaultNameValidator = itemtemplateDescDefaultName.Validators[0].(func(string) error)
+	// itemtemplateDescDefaultDescription is the schema descriptor for default_description field.
+	itemtemplateDescDefaultDescription := itemtemplateFields[4].Descriptor()
+	// itemtemplate.DefaultDescriptionValidator is a validator for the "default_description" field. It is called by the builders before save.
+	itemtemplate.DefaultDescriptionValidator = itemtemplateDescDefaultDescription.Validators[0].(func(string) error)
 	// itemtemplateDescDefaultManufacturer is the schema descriptor for default_manufacturer field.
-	itemtemplateDescDefaultManufacturer := itemtemplateFields[3].Descriptor()
+	itemtemplateDescDefaultManufacturer := itemtemplateFields[5].Descriptor()
 	// itemtemplate.DefaultManufacturerValidator is a validator for the "default_manufacturer" field. It is called by the builders before save.
 	itemtemplate.DefaultManufacturerValidator = itemtemplateDescDefaultManufacturer.Validators[0].(func(string) error)
+	// itemtemplateDescDefaultModelNumber is the schema descriptor for default_model_number field.
+	itemtemplateDescDefaultModelNumber := itemtemplateFields[6].Descriptor()
+	// itemtemplate.DefaultModelNumberValidator is a validator for the "default_model_number" field. It is called by the builders before save.
+	itemtemplate.DefaultModelNumberValidator = itemtemplateDescDefaultModelNumber.Validators[0].(func(string) error)
 	// itemtemplateDescDefaultLifetimeWarranty is the schema descriptor for default_lifetime_warranty field.
-	itemtemplateDescDefaultLifetimeWarranty := itemtemplateFields[4].Descriptor()
+	itemtemplateDescDefaultLifetimeWarranty := itemtemplateFields[7].Descriptor()
 	// itemtemplate.DefaultDefaultLifetimeWarranty holds the default value on creation for the default_lifetime_warranty field.
 	itemtemplate.DefaultDefaultLifetimeWarranty = itemtemplateDescDefaultLifetimeWarranty.Default.(bool)
 	// itemtemplateDescDefaultWarrantyDetails is the schema descriptor for default_warranty_details field.
-	itemtemplateDescDefaultWarrantyDetails := itemtemplateFields[5].Descriptor()
+	itemtemplateDescDefaultWarrantyDetails := itemtemplateFields[8].Descriptor()
 	// itemtemplate.DefaultWarrantyDetailsValidator is a validator for the "default_warranty_details" field. It is called by the builders before save.
 	itemtemplate.DefaultWarrantyDetailsValidator = itemtemplateDescDefaultWarrantyDetails.Validators[0].(func(string) error)
 	// itemtemplateDescIncludeWarrantyFields is the schema descriptor for include_warranty_fields field.
-	itemtemplateDescIncludeWarrantyFields := itemtemplateFields[6].Descriptor()
+	itemtemplateDescIncludeWarrantyFields := itemtemplateFields[9].Descriptor()
 	// itemtemplate.DefaultIncludeWarrantyFields holds the default value on creation for the include_warranty_fields field.
 	itemtemplate.DefaultIncludeWarrantyFields = itemtemplateDescIncludeWarrantyFields.Default.(bool)
 	// itemtemplateDescIncludePurchaseFields is the schema descriptor for include_purchase_fields field.
-	itemtemplateDescIncludePurchaseFields := itemtemplateFields[7].Descriptor()
+	itemtemplateDescIncludePurchaseFields := itemtemplateFields[10].Descriptor()
 	// itemtemplate.DefaultIncludePurchaseFields holds the default value on creation for the include_purchase_fields field.
 	itemtemplate.DefaultIncludePurchaseFields = itemtemplateDescIncludePurchaseFields.Default.(bool)
 	// itemtemplateDescIncludeSoldFields is the schema descriptor for include_sold_fields field.
-	itemtemplateDescIncludeSoldFields := itemtemplateFields[8].Descriptor()
+	itemtemplateDescIncludeSoldFields := itemtemplateFields[11].Descriptor()
 	// itemtemplate.DefaultIncludeSoldFields holds the default value on creation for the include_sold_fields field.
 	itemtemplate.DefaultIncludeSoldFields = itemtemplateDescIncludeSoldFields.Default.(bool)
 	// itemtemplateDescID is the schema descriptor for id field.

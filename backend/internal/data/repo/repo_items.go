@@ -663,6 +663,7 @@ type ItemCreateFromTemplate struct {
 	LabelIDs         []uuid.UUID
 	Insured          bool
 	Manufacturer     string
+	ModelNumber      string
 	LifetimeWarranty bool
 	WarrantyDetails  string
 	Fields           []ItemField
@@ -702,6 +703,7 @@ func (e *ItemsRepository) CreateFromTemplate(ctx context.Context, gid uuid.UUID,
 		SetAssetID(int(nextAssetID)).
 		SetInsured(data.Insured).
 		SetManufacturer(data.Manufacturer).
+		SetModelNumber(data.ModelNumber).
 		SetLifetimeWarranty(data.LifetimeWarranty).
 		SetWarrantyDetails(data.WarrantyDetails)
 

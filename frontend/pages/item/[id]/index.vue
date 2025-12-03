@@ -10,7 +10,15 @@
   import MdiDelete from "~icons/mdi/delete";
   import MdiPlusBoxMultipleOutline from "~icons/mdi/plus-box-multiple-outline";
   import MdiContentSaveEdit from "~icons/mdi/content-save-edit";
+  import MdiDotsVertical from "~icons/mdi/dots-vertical";
   import { Separator } from "@/components/ui/separator";
+  import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+  } from "@/components/ui/dropdown-menu";
   import {
     Breadcrumb,
     BreadcrumbItem,
@@ -562,16 +570,23 @@
       return;
     }
 
+    const NIL_UUID = "00000000-0000-0000-0000-000000000000";
+
     // Create template from item data
     const templateData = {
       name: `Template: ${item.value.name}`,
-      description: item.value.description || "",
+      description: "",
       notes: "",
+      defaultName: item.value.name,
+      defaultDescription: item.value.description || "",
       defaultQuantity: item.value.quantity,
       defaultInsured: item.value.insured,
       defaultManufacturer: item.value.manufacturer || "",
+      defaultModelNumber: item.value.modelNumber || "",
       defaultLifetimeWarranty: item.value.lifetimeWarranty,
       defaultWarrantyDetails: item.value.warrantyDetails || "",
+      defaultLocationId: item.value.location?.id || null,
+      defaultLabelIds: item.value.labels?.map(l => l.id) || [],
       includeWarrantyFields: !!(
         item.value.warrantyDetails ||
         item.value.lifetimeWarranty ||
@@ -580,7 +595,7 @@
       includePurchaseFields: !!(item.value.purchaseFrom || item.value.purchasePrice || item.value.purchaseTime),
       includeSoldFields: !!(item.value.soldTo || item.value.soldPrice || item.value.soldTime),
       fields: item.value.fields.map(field => ({
-        id: "",
+        id: NIL_UUID,
         name: field.name,
         type: "text",
         textValue: field.textValue || "",
@@ -681,7 +696,7 @@
                 </div>
               </div>
             </div>
-            <div class="ml-auto mt-2 flex flex-wrap items-center justify-between gap-3">
+            <div class="ml-auto mt-2 flex flex-wrap items-center justify-between gap-2">
               <LabelMaker
                 v-if="typeof item.assetId === 'string' && item.assetId != ''"
                 :id="item.assetId"
@@ -692,18 +707,30 @@
                 <MdiPlus />
                 <span class="hidden md:inline">{{ $t("global.create_subitem") }}</span>
               </Button>
-              <Button class="w-9 md:w-auto" :aria-label="$t('global.duplicate')" @click="handleDuplicateClick">
-                <MdiPlusBoxMultipleOutline />
-                <span class="hidden md:inline">{{ $t("global.duplicate") }}</span>
-              </Button>
-              <Button class="w-9 md:w-auto" aria-label="Save as Template" @click="saveAsTemplate">
-                <MdiContentSaveEdit />
-                <span class="hidden md:inline">Save as Template</span>
-              </Button>
-              <Button variant="destructive" class="w-9 md:w-auto" :aria-label="$t('global.delete')" @click="deleteItem">
-                <MdiDelete />
-                <span class="hidden md:inline">{{ $t("global.delete") }}</span>
-              </Button>
+
+              <!-- More actions dropdown -->
+              <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                  <Button variant="outline" size="icon" aria-label="More actions">
+                    <MdiDotsVertical class="size-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" class="w-48">
+                  <DropdownMenuItem @click="handleDuplicateClick">
+                    <MdiPlusBoxMultipleOutline class="mr-2 size-4" />
+                    {{ $t("global.duplicate") }}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem @click="saveAsTemplate">
+                    <MdiContentSaveEdit class="mr-2 size-4" />
+                    Save as Template
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem class="text-destructive focus:text-destructive" @click="deleteItem">
+                    <MdiDelete class="mr-2 size-4" />
+                    {{ $t("global.delete") }}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </header>

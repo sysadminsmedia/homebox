@@ -7088,18 +7088,25 @@ type ItemTemplateMutation struct {
 	default_quantity          *int
 	adddefault_quantity       *int
 	default_insured           *bool
+	default_name              *string
+	default_description       *string
 	default_manufacturer      *string
+	default_model_number      *string
 	default_lifetime_warranty *bool
 	default_warranty_details  *string
 	include_warranty_fields   *bool
 	include_purchase_fields   *bool
 	include_sold_fields       *bool
+	default_label_ids         *[]uuid.UUID
+	appenddefault_label_ids   []uuid.UUID
 	clearedFields             map[string]struct{}
 	group                     *uuid.UUID
 	clearedgroup              bool
 	fields                    map[uuid.UUID]struct{}
 	removedfields             map[uuid.UUID]struct{}
 	clearedfields             bool
+	location                  *uuid.UUID
+	clearedlocation           bool
 	done                      bool
 	oldValue                  func(context.Context) (*ItemTemplate, error)
 	predicates                []predicate.ItemTemplate
@@ -7507,6 +7514,104 @@ func (m *ItemTemplateMutation) ResetDefaultInsured() {
 	m.default_insured = nil
 }
 
+// SetDefaultName sets the "default_name" field.
+func (m *ItemTemplateMutation) SetDefaultName(s string) {
+	m.default_name = &s
+}
+
+// DefaultName returns the value of the "default_name" field in the mutation.
+func (m *ItemTemplateMutation) DefaultName() (r string, exists bool) {
+	v := m.default_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDefaultName returns the old "default_name" field's value of the ItemTemplate entity.
+// If the ItemTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ItemTemplateMutation) OldDefaultName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDefaultName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDefaultName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDefaultName: %w", err)
+	}
+	return oldValue.DefaultName, nil
+}
+
+// ClearDefaultName clears the value of the "default_name" field.
+func (m *ItemTemplateMutation) ClearDefaultName() {
+	m.default_name = nil
+	m.clearedFields[itemtemplate.FieldDefaultName] = struct{}{}
+}
+
+// DefaultNameCleared returns if the "default_name" field was cleared in this mutation.
+func (m *ItemTemplateMutation) DefaultNameCleared() bool {
+	_, ok := m.clearedFields[itemtemplate.FieldDefaultName]
+	return ok
+}
+
+// ResetDefaultName resets all changes to the "default_name" field.
+func (m *ItemTemplateMutation) ResetDefaultName() {
+	m.default_name = nil
+	delete(m.clearedFields, itemtemplate.FieldDefaultName)
+}
+
+// SetDefaultDescription sets the "default_description" field.
+func (m *ItemTemplateMutation) SetDefaultDescription(s string) {
+	m.default_description = &s
+}
+
+// DefaultDescription returns the value of the "default_description" field in the mutation.
+func (m *ItemTemplateMutation) DefaultDescription() (r string, exists bool) {
+	v := m.default_description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDefaultDescription returns the old "default_description" field's value of the ItemTemplate entity.
+// If the ItemTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ItemTemplateMutation) OldDefaultDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDefaultDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDefaultDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDefaultDescription: %w", err)
+	}
+	return oldValue.DefaultDescription, nil
+}
+
+// ClearDefaultDescription clears the value of the "default_description" field.
+func (m *ItemTemplateMutation) ClearDefaultDescription() {
+	m.default_description = nil
+	m.clearedFields[itemtemplate.FieldDefaultDescription] = struct{}{}
+}
+
+// DefaultDescriptionCleared returns if the "default_description" field was cleared in this mutation.
+func (m *ItemTemplateMutation) DefaultDescriptionCleared() bool {
+	_, ok := m.clearedFields[itemtemplate.FieldDefaultDescription]
+	return ok
+}
+
+// ResetDefaultDescription resets all changes to the "default_description" field.
+func (m *ItemTemplateMutation) ResetDefaultDescription() {
+	m.default_description = nil
+	delete(m.clearedFields, itemtemplate.FieldDefaultDescription)
+}
+
 // SetDefaultManufacturer sets the "default_manufacturer" field.
 func (m *ItemTemplateMutation) SetDefaultManufacturer(s string) {
 	m.default_manufacturer = &s
@@ -7554,6 +7659,55 @@ func (m *ItemTemplateMutation) DefaultManufacturerCleared() bool {
 func (m *ItemTemplateMutation) ResetDefaultManufacturer() {
 	m.default_manufacturer = nil
 	delete(m.clearedFields, itemtemplate.FieldDefaultManufacturer)
+}
+
+// SetDefaultModelNumber sets the "default_model_number" field.
+func (m *ItemTemplateMutation) SetDefaultModelNumber(s string) {
+	m.default_model_number = &s
+}
+
+// DefaultModelNumber returns the value of the "default_model_number" field in the mutation.
+func (m *ItemTemplateMutation) DefaultModelNumber() (r string, exists bool) {
+	v := m.default_model_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDefaultModelNumber returns the old "default_model_number" field's value of the ItemTemplate entity.
+// If the ItemTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ItemTemplateMutation) OldDefaultModelNumber(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDefaultModelNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDefaultModelNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDefaultModelNumber: %w", err)
+	}
+	return oldValue.DefaultModelNumber, nil
+}
+
+// ClearDefaultModelNumber clears the value of the "default_model_number" field.
+func (m *ItemTemplateMutation) ClearDefaultModelNumber() {
+	m.default_model_number = nil
+	m.clearedFields[itemtemplate.FieldDefaultModelNumber] = struct{}{}
+}
+
+// DefaultModelNumberCleared returns if the "default_model_number" field was cleared in this mutation.
+func (m *ItemTemplateMutation) DefaultModelNumberCleared() bool {
+	_, ok := m.clearedFields[itemtemplate.FieldDefaultModelNumber]
+	return ok
+}
+
+// ResetDefaultModelNumber resets all changes to the "default_model_number" field.
+func (m *ItemTemplateMutation) ResetDefaultModelNumber() {
+	m.default_model_number = nil
+	delete(m.clearedFields, itemtemplate.FieldDefaultModelNumber)
 }
 
 // SetDefaultLifetimeWarranty sets the "default_lifetime_warranty" field.
@@ -7749,6 +7903,71 @@ func (m *ItemTemplateMutation) ResetIncludeSoldFields() {
 	m.include_sold_fields = nil
 }
 
+// SetDefaultLabelIds sets the "default_label_ids" field.
+func (m *ItemTemplateMutation) SetDefaultLabelIds(u []uuid.UUID) {
+	m.default_label_ids = &u
+	m.appenddefault_label_ids = nil
+}
+
+// DefaultLabelIds returns the value of the "default_label_ids" field in the mutation.
+func (m *ItemTemplateMutation) DefaultLabelIds() (r []uuid.UUID, exists bool) {
+	v := m.default_label_ids
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDefaultLabelIds returns the old "default_label_ids" field's value of the ItemTemplate entity.
+// If the ItemTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ItemTemplateMutation) OldDefaultLabelIds(ctx context.Context) (v []uuid.UUID, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDefaultLabelIds is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDefaultLabelIds requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDefaultLabelIds: %w", err)
+	}
+	return oldValue.DefaultLabelIds, nil
+}
+
+// AppendDefaultLabelIds adds u to the "default_label_ids" field.
+func (m *ItemTemplateMutation) AppendDefaultLabelIds(u []uuid.UUID) {
+	m.appenddefault_label_ids = append(m.appenddefault_label_ids, u...)
+}
+
+// AppendedDefaultLabelIds returns the list of values that were appended to the "default_label_ids" field in this mutation.
+func (m *ItemTemplateMutation) AppendedDefaultLabelIds() ([]uuid.UUID, bool) {
+	if len(m.appenddefault_label_ids) == 0 {
+		return nil, false
+	}
+	return m.appenddefault_label_ids, true
+}
+
+// ClearDefaultLabelIds clears the value of the "default_label_ids" field.
+func (m *ItemTemplateMutation) ClearDefaultLabelIds() {
+	m.default_label_ids = nil
+	m.appenddefault_label_ids = nil
+	m.clearedFields[itemtemplate.FieldDefaultLabelIds] = struct{}{}
+}
+
+// DefaultLabelIdsCleared returns if the "default_label_ids" field was cleared in this mutation.
+func (m *ItemTemplateMutation) DefaultLabelIdsCleared() bool {
+	_, ok := m.clearedFields[itemtemplate.FieldDefaultLabelIds]
+	return ok
+}
+
+// ResetDefaultLabelIds resets all changes to the "default_label_ids" field.
+func (m *ItemTemplateMutation) ResetDefaultLabelIds() {
+	m.default_label_ids = nil
+	m.appenddefault_label_ids = nil
+	delete(m.clearedFields, itemtemplate.FieldDefaultLabelIds)
+}
+
 // SetGroupID sets the "group" edge to the Group entity by id.
 func (m *ItemTemplateMutation) SetGroupID(id uuid.UUID) {
 	m.group = &id
@@ -7842,6 +8061,45 @@ func (m *ItemTemplateMutation) ResetFields() {
 	m.removedfields = nil
 }
 
+// SetLocationID sets the "location" edge to the Location entity by id.
+func (m *ItemTemplateMutation) SetLocationID(id uuid.UUID) {
+	m.location = &id
+}
+
+// ClearLocation clears the "location" edge to the Location entity.
+func (m *ItemTemplateMutation) ClearLocation() {
+	m.clearedlocation = true
+}
+
+// LocationCleared reports if the "location" edge to the Location entity was cleared.
+func (m *ItemTemplateMutation) LocationCleared() bool {
+	return m.clearedlocation
+}
+
+// LocationID returns the "location" edge ID in the mutation.
+func (m *ItemTemplateMutation) LocationID() (id uuid.UUID, exists bool) {
+	if m.location != nil {
+		return *m.location, true
+	}
+	return
+}
+
+// LocationIDs returns the "location" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// LocationID instead. It exists only for internal usage by the builders.
+func (m *ItemTemplateMutation) LocationIDs() (ids []uuid.UUID) {
+	if id := m.location; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetLocation resets all changes to the "location" edge.
+func (m *ItemTemplateMutation) ResetLocation() {
+	m.location = nil
+	m.clearedlocation = false
+}
+
 // Where appends a list predicates to the ItemTemplateMutation builder.
 func (m *ItemTemplateMutation) Where(ps ...predicate.ItemTemplate) {
 	m.predicates = append(m.predicates, ps...)
@@ -7876,7 +8134,7 @@ func (m *ItemTemplateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ItemTemplateMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 17)
 	if m.created_at != nil {
 		fields = append(fields, itemtemplate.FieldCreatedAt)
 	}
@@ -7898,8 +8156,17 @@ func (m *ItemTemplateMutation) Fields() []string {
 	if m.default_insured != nil {
 		fields = append(fields, itemtemplate.FieldDefaultInsured)
 	}
+	if m.default_name != nil {
+		fields = append(fields, itemtemplate.FieldDefaultName)
+	}
+	if m.default_description != nil {
+		fields = append(fields, itemtemplate.FieldDefaultDescription)
+	}
 	if m.default_manufacturer != nil {
 		fields = append(fields, itemtemplate.FieldDefaultManufacturer)
+	}
+	if m.default_model_number != nil {
+		fields = append(fields, itemtemplate.FieldDefaultModelNumber)
 	}
 	if m.default_lifetime_warranty != nil {
 		fields = append(fields, itemtemplate.FieldDefaultLifetimeWarranty)
@@ -7915,6 +8182,9 @@ func (m *ItemTemplateMutation) Fields() []string {
 	}
 	if m.include_sold_fields != nil {
 		fields = append(fields, itemtemplate.FieldIncludeSoldFields)
+	}
+	if m.default_label_ids != nil {
+		fields = append(fields, itemtemplate.FieldDefaultLabelIds)
 	}
 	return fields
 }
@@ -7938,8 +8208,14 @@ func (m *ItemTemplateMutation) Field(name string) (ent.Value, bool) {
 		return m.DefaultQuantity()
 	case itemtemplate.FieldDefaultInsured:
 		return m.DefaultInsured()
+	case itemtemplate.FieldDefaultName:
+		return m.DefaultName()
+	case itemtemplate.FieldDefaultDescription:
+		return m.DefaultDescription()
 	case itemtemplate.FieldDefaultManufacturer:
 		return m.DefaultManufacturer()
+	case itemtemplate.FieldDefaultModelNumber:
+		return m.DefaultModelNumber()
 	case itemtemplate.FieldDefaultLifetimeWarranty:
 		return m.DefaultLifetimeWarranty()
 	case itemtemplate.FieldDefaultWarrantyDetails:
@@ -7950,6 +8226,8 @@ func (m *ItemTemplateMutation) Field(name string) (ent.Value, bool) {
 		return m.IncludePurchaseFields()
 	case itemtemplate.FieldIncludeSoldFields:
 		return m.IncludeSoldFields()
+	case itemtemplate.FieldDefaultLabelIds:
+		return m.DefaultLabelIds()
 	}
 	return nil, false
 }
@@ -7973,8 +8251,14 @@ func (m *ItemTemplateMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldDefaultQuantity(ctx)
 	case itemtemplate.FieldDefaultInsured:
 		return m.OldDefaultInsured(ctx)
+	case itemtemplate.FieldDefaultName:
+		return m.OldDefaultName(ctx)
+	case itemtemplate.FieldDefaultDescription:
+		return m.OldDefaultDescription(ctx)
 	case itemtemplate.FieldDefaultManufacturer:
 		return m.OldDefaultManufacturer(ctx)
+	case itemtemplate.FieldDefaultModelNumber:
+		return m.OldDefaultModelNumber(ctx)
 	case itemtemplate.FieldDefaultLifetimeWarranty:
 		return m.OldDefaultLifetimeWarranty(ctx)
 	case itemtemplate.FieldDefaultWarrantyDetails:
@@ -7985,6 +8269,8 @@ func (m *ItemTemplateMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldIncludePurchaseFields(ctx)
 	case itemtemplate.FieldIncludeSoldFields:
 		return m.OldIncludeSoldFields(ctx)
+	case itemtemplate.FieldDefaultLabelIds:
+		return m.OldDefaultLabelIds(ctx)
 	}
 	return nil, fmt.Errorf("unknown ItemTemplate field %s", name)
 }
@@ -8043,12 +8329,33 @@ func (m *ItemTemplateMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDefaultInsured(v)
 		return nil
+	case itemtemplate.FieldDefaultName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDefaultName(v)
+		return nil
+	case itemtemplate.FieldDefaultDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDefaultDescription(v)
+		return nil
 	case itemtemplate.FieldDefaultManufacturer:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDefaultManufacturer(v)
+		return nil
+	case itemtemplate.FieldDefaultModelNumber:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDefaultModelNumber(v)
 		return nil
 	case itemtemplate.FieldDefaultLifetimeWarranty:
 		v, ok := value.(bool)
@@ -8084,6 +8391,13 @@ func (m *ItemTemplateMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetIncludeSoldFields(v)
+		return nil
+	case itemtemplate.FieldDefaultLabelIds:
+		v, ok := value.([]uuid.UUID)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDefaultLabelIds(v)
 		return nil
 	}
 	return fmt.Errorf("unknown ItemTemplate field %s", name)
@@ -8136,11 +8450,23 @@ func (m *ItemTemplateMutation) ClearedFields() []string {
 	if m.FieldCleared(itemtemplate.FieldNotes) {
 		fields = append(fields, itemtemplate.FieldNotes)
 	}
+	if m.FieldCleared(itemtemplate.FieldDefaultName) {
+		fields = append(fields, itemtemplate.FieldDefaultName)
+	}
+	if m.FieldCleared(itemtemplate.FieldDefaultDescription) {
+		fields = append(fields, itemtemplate.FieldDefaultDescription)
+	}
 	if m.FieldCleared(itemtemplate.FieldDefaultManufacturer) {
 		fields = append(fields, itemtemplate.FieldDefaultManufacturer)
 	}
+	if m.FieldCleared(itemtemplate.FieldDefaultModelNumber) {
+		fields = append(fields, itemtemplate.FieldDefaultModelNumber)
+	}
 	if m.FieldCleared(itemtemplate.FieldDefaultWarrantyDetails) {
 		fields = append(fields, itemtemplate.FieldDefaultWarrantyDetails)
+	}
+	if m.FieldCleared(itemtemplate.FieldDefaultLabelIds) {
+		fields = append(fields, itemtemplate.FieldDefaultLabelIds)
 	}
 	return fields
 }
@@ -8162,11 +8488,23 @@ func (m *ItemTemplateMutation) ClearField(name string) error {
 	case itemtemplate.FieldNotes:
 		m.ClearNotes()
 		return nil
+	case itemtemplate.FieldDefaultName:
+		m.ClearDefaultName()
+		return nil
+	case itemtemplate.FieldDefaultDescription:
+		m.ClearDefaultDescription()
+		return nil
 	case itemtemplate.FieldDefaultManufacturer:
 		m.ClearDefaultManufacturer()
 		return nil
+	case itemtemplate.FieldDefaultModelNumber:
+		m.ClearDefaultModelNumber()
+		return nil
 	case itemtemplate.FieldDefaultWarrantyDetails:
 		m.ClearDefaultWarrantyDetails()
+		return nil
+	case itemtemplate.FieldDefaultLabelIds:
+		m.ClearDefaultLabelIds()
 		return nil
 	}
 	return fmt.Errorf("unknown ItemTemplate nullable field %s", name)
@@ -8197,8 +8535,17 @@ func (m *ItemTemplateMutation) ResetField(name string) error {
 	case itemtemplate.FieldDefaultInsured:
 		m.ResetDefaultInsured()
 		return nil
+	case itemtemplate.FieldDefaultName:
+		m.ResetDefaultName()
+		return nil
+	case itemtemplate.FieldDefaultDescription:
+		m.ResetDefaultDescription()
+		return nil
 	case itemtemplate.FieldDefaultManufacturer:
 		m.ResetDefaultManufacturer()
+		return nil
+	case itemtemplate.FieldDefaultModelNumber:
+		m.ResetDefaultModelNumber()
 		return nil
 	case itemtemplate.FieldDefaultLifetimeWarranty:
 		m.ResetDefaultLifetimeWarranty()
@@ -8215,18 +8562,24 @@ func (m *ItemTemplateMutation) ResetField(name string) error {
 	case itemtemplate.FieldIncludeSoldFields:
 		m.ResetIncludeSoldFields()
 		return nil
+	case itemtemplate.FieldDefaultLabelIds:
+		m.ResetDefaultLabelIds()
+		return nil
 	}
 	return fmt.Errorf("unknown ItemTemplate field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ItemTemplateMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.group != nil {
 		edges = append(edges, itemtemplate.EdgeGroup)
 	}
 	if m.fields != nil {
 		edges = append(edges, itemtemplate.EdgeFields)
+	}
+	if m.location != nil {
+		edges = append(edges, itemtemplate.EdgeLocation)
 	}
 	return edges
 }
@@ -8245,13 +8598,17 @@ func (m *ItemTemplateMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case itemtemplate.EdgeLocation:
+		if id := m.location; id != nil {
+			return []ent.Value{*id}
+		}
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ItemTemplateMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removedfields != nil {
 		edges = append(edges, itemtemplate.EdgeFields)
 	}
@@ -8274,12 +8631,15 @@ func (m *ItemTemplateMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ItemTemplateMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedgroup {
 		edges = append(edges, itemtemplate.EdgeGroup)
 	}
 	if m.clearedfields {
 		edges = append(edges, itemtemplate.EdgeFields)
+	}
+	if m.clearedlocation {
+		edges = append(edges, itemtemplate.EdgeLocation)
 	}
 	return edges
 }
@@ -8292,6 +8652,8 @@ func (m *ItemTemplateMutation) EdgeCleared(name string) bool {
 		return m.clearedgroup
 	case itemtemplate.EdgeFields:
 		return m.clearedfields
+	case itemtemplate.EdgeLocation:
+		return m.clearedlocation
 	}
 	return false
 }
@@ -8302,6 +8664,9 @@ func (m *ItemTemplateMutation) ClearEdge(name string) error {
 	switch name {
 	case itemtemplate.EdgeGroup:
 		m.ClearGroup()
+		return nil
+	case itemtemplate.EdgeLocation:
+		m.ClearLocation()
 		return nil
 	}
 	return fmt.Errorf("unknown ItemTemplate unique edge %s", name)
@@ -8316,6 +8681,9 @@ func (m *ItemTemplateMutation) ResetEdge(name string) error {
 		return nil
 	case itemtemplate.EdgeFields:
 		m.ResetFields()
+		return nil
+	case itemtemplate.EdgeLocation:
+		m.ResetLocation()
 		return nil
 	}
 	return fmt.Errorf("unknown ItemTemplate edge %s", name)

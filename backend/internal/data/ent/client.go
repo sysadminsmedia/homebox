@@ -1737,6 +1737,22 @@ func (c *ItemTemplateClient) QueryFields(_m *ItemTemplate) *TemplateFieldQuery {
 	return query
 }
 
+// QueryLocation queries the location edge of a ItemTemplate.
+func (c *ItemTemplateClient) QueryLocation(_m *ItemTemplate) *LocationQuery {
+	query := (&LocationClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(itemtemplate.Table, itemtemplate.FieldID, id),
+			sqlgraph.To(location.Table, location.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, itemtemplate.LocationTable, itemtemplate.LocationColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *ItemTemplateClient) Hooks() []Hook {
 	return c.hooks.ItemTemplate

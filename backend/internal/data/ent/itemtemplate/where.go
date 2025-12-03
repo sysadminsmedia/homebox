@@ -91,9 +91,24 @@ func DefaultInsured(v bool) predicate.ItemTemplate {
 	return predicate.ItemTemplate(sql.FieldEQ(FieldDefaultInsured, v))
 }
 
+// DefaultName applies equality check predicate on the "default_name" field. It's identical to DefaultNameEQ.
+func DefaultName(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldEQ(FieldDefaultName, v))
+}
+
+// DefaultDescription applies equality check predicate on the "default_description" field. It's identical to DefaultDescriptionEQ.
+func DefaultDescription(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldEQ(FieldDefaultDescription, v))
+}
+
 // DefaultManufacturer applies equality check predicate on the "default_manufacturer" field. It's identical to DefaultManufacturerEQ.
 func DefaultManufacturer(v string) predicate.ItemTemplate {
 	return predicate.ItemTemplate(sql.FieldEQ(FieldDefaultManufacturer, v))
+}
+
+// DefaultModelNumber applies equality check predicate on the "default_model_number" field. It's identical to DefaultModelNumberEQ.
+func DefaultModelNumber(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldEQ(FieldDefaultModelNumber, v))
 }
 
 // DefaultLifetimeWarranty applies equality check predicate on the "default_lifetime_warranty" field. It's identical to DefaultLifetimeWarrantyEQ.
@@ -466,6 +481,156 @@ func DefaultInsuredNEQ(v bool) predicate.ItemTemplate {
 	return predicate.ItemTemplate(sql.FieldNEQ(FieldDefaultInsured, v))
 }
 
+// DefaultNameEQ applies the EQ predicate on the "default_name" field.
+func DefaultNameEQ(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldEQ(FieldDefaultName, v))
+}
+
+// DefaultNameNEQ applies the NEQ predicate on the "default_name" field.
+func DefaultNameNEQ(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldNEQ(FieldDefaultName, v))
+}
+
+// DefaultNameIn applies the In predicate on the "default_name" field.
+func DefaultNameIn(vs ...string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldIn(FieldDefaultName, vs...))
+}
+
+// DefaultNameNotIn applies the NotIn predicate on the "default_name" field.
+func DefaultNameNotIn(vs ...string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldNotIn(FieldDefaultName, vs...))
+}
+
+// DefaultNameGT applies the GT predicate on the "default_name" field.
+func DefaultNameGT(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldGT(FieldDefaultName, v))
+}
+
+// DefaultNameGTE applies the GTE predicate on the "default_name" field.
+func DefaultNameGTE(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldGTE(FieldDefaultName, v))
+}
+
+// DefaultNameLT applies the LT predicate on the "default_name" field.
+func DefaultNameLT(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldLT(FieldDefaultName, v))
+}
+
+// DefaultNameLTE applies the LTE predicate on the "default_name" field.
+func DefaultNameLTE(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldLTE(FieldDefaultName, v))
+}
+
+// DefaultNameContains applies the Contains predicate on the "default_name" field.
+func DefaultNameContains(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldContains(FieldDefaultName, v))
+}
+
+// DefaultNameHasPrefix applies the HasPrefix predicate on the "default_name" field.
+func DefaultNameHasPrefix(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldHasPrefix(FieldDefaultName, v))
+}
+
+// DefaultNameHasSuffix applies the HasSuffix predicate on the "default_name" field.
+func DefaultNameHasSuffix(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldHasSuffix(FieldDefaultName, v))
+}
+
+// DefaultNameIsNil applies the IsNil predicate on the "default_name" field.
+func DefaultNameIsNil() predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldIsNull(FieldDefaultName))
+}
+
+// DefaultNameNotNil applies the NotNil predicate on the "default_name" field.
+func DefaultNameNotNil() predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldNotNull(FieldDefaultName))
+}
+
+// DefaultNameEqualFold applies the EqualFold predicate on the "default_name" field.
+func DefaultNameEqualFold(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldEqualFold(FieldDefaultName, v))
+}
+
+// DefaultNameContainsFold applies the ContainsFold predicate on the "default_name" field.
+func DefaultNameContainsFold(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldContainsFold(FieldDefaultName, v))
+}
+
+// DefaultDescriptionEQ applies the EQ predicate on the "default_description" field.
+func DefaultDescriptionEQ(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldEQ(FieldDefaultDescription, v))
+}
+
+// DefaultDescriptionNEQ applies the NEQ predicate on the "default_description" field.
+func DefaultDescriptionNEQ(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldNEQ(FieldDefaultDescription, v))
+}
+
+// DefaultDescriptionIn applies the In predicate on the "default_description" field.
+func DefaultDescriptionIn(vs ...string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldIn(FieldDefaultDescription, vs...))
+}
+
+// DefaultDescriptionNotIn applies the NotIn predicate on the "default_description" field.
+func DefaultDescriptionNotIn(vs ...string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldNotIn(FieldDefaultDescription, vs...))
+}
+
+// DefaultDescriptionGT applies the GT predicate on the "default_description" field.
+func DefaultDescriptionGT(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldGT(FieldDefaultDescription, v))
+}
+
+// DefaultDescriptionGTE applies the GTE predicate on the "default_description" field.
+func DefaultDescriptionGTE(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldGTE(FieldDefaultDescription, v))
+}
+
+// DefaultDescriptionLT applies the LT predicate on the "default_description" field.
+func DefaultDescriptionLT(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldLT(FieldDefaultDescription, v))
+}
+
+// DefaultDescriptionLTE applies the LTE predicate on the "default_description" field.
+func DefaultDescriptionLTE(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldLTE(FieldDefaultDescription, v))
+}
+
+// DefaultDescriptionContains applies the Contains predicate on the "default_description" field.
+func DefaultDescriptionContains(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldContains(FieldDefaultDescription, v))
+}
+
+// DefaultDescriptionHasPrefix applies the HasPrefix predicate on the "default_description" field.
+func DefaultDescriptionHasPrefix(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldHasPrefix(FieldDefaultDescription, v))
+}
+
+// DefaultDescriptionHasSuffix applies the HasSuffix predicate on the "default_description" field.
+func DefaultDescriptionHasSuffix(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldHasSuffix(FieldDefaultDescription, v))
+}
+
+// DefaultDescriptionIsNil applies the IsNil predicate on the "default_description" field.
+func DefaultDescriptionIsNil() predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldIsNull(FieldDefaultDescription))
+}
+
+// DefaultDescriptionNotNil applies the NotNil predicate on the "default_description" field.
+func DefaultDescriptionNotNil() predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldNotNull(FieldDefaultDescription))
+}
+
+// DefaultDescriptionEqualFold applies the EqualFold predicate on the "default_description" field.
+func DefaultDescriptionEqualFold(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldEqualFold(FieldDefaultDescription, v))
+}
+
+// DefaultDescriptionContainsFold applies the ContainsFold predicate on the "default_description" field.
+func DefaultDescriptionContainsFold(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldContainsFold(FieldDefaultDescription, v))
+}
+
 // DefaultManufacturerEQ applies the EQ predicate on the "default_manufacturer" field.
 func DefaultManufacturerEQ(v string) predicate.ItemTemplate {
 	return predicate.ItemTemplate(sql.FieldEQ(FieldDefaultManufacturer, v))
@@ -539,6 +704,81 @@ func DefaultManufacturerEqualFold(v string) predicate.ItemTemplate {
 // DefaultManufacturerContainsFold applies the ContainsFold predicate on the "default_manufacturer" field.
 func DefaultManufacturerContainsFold(v string) predicate.ItemTemplate {
 	return predicate.ItemTemplate(sql.FieldContainsFold(FieldDefaultManufacturer, v))
+}
+
+// DefaultModelNumberEQ applies the EQ predicate on the "default_model_number" field.
+func DefaultModelNumberEQ(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldEQ(FieldDefaultModelNumber, v))
+}
+
+// DefaultModelNumberNEQ applies the NEQ predicate on the "default_model_number" field.
+func DefaultModelNumberNEQ(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldNEQ(FieldDefaultModelNumber, v))
+}
+
+// DefaultModelNumberIn applies the In predicate on the "default_model_number" field.
+func DefaultModelNumberIn(vs ...string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldIn(FieldDefaultModelNumber, vs...))
+}
+
+// DefaultModelNumberNotIn applies the NotIn predicate on the "default_model_number" field.
+func DefaultModelNumberNotIn(vs ...string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldNotIn(FieldDefaultModelNumber, vs...))
+}
+
+// DefaultModelNumberGT applies the GT predicate on the "default_model_number" field.
+func DefaultModelNumberGT(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldGT(FieldDefaultModelNumber, v))
+}
+
+// DefaultModelNumberGTE applies the GTE predicate on the "default_model_number" field.
+func DefaultModelNumberGTE(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldGTE(FieldDefaultModelNumber, v))
+}
+
+// DefaultModelNumberLT applies the LT predicate on the "default_model_number" field.
+func DefaultModelNumberLT(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldLT(FieldDefaultModelNumber, v))
+}
+
+// DefaultModelNumberLTE applies the LTE predicate on the "default_model_number" field.
+func DefaultModelNumberLTE(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldLTE(FieldDefaultModelNumber, v))
+}
+
+// DefaultModelNumberContains applies the Contains predicate on the "default_model_number" field.
+func DefaultModelNumberContains(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldContains(FieldDefaultModelNumber, v))
+}
+
+// DefaultModelNumberHasPrefix applies the HasPrefix predicate on the "default_model_number" field.
+func DefaultModelNumberHasPrefix(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldHasPrefix(FieldDefaultModelNumber, v))
+}
+
+// DefaultModelNumberHasSuffix applies the HasSuffix predicate on the "default_model_number" field.
+func DefaultModelNumberHasSuffix(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldHasSuffix(FieldDefaultModelNumber, v))
+}
+
+// DefaultModelNumberIsNil applies the IsNil predicate on the "default_model_number" field.
+func DefaultModelNumberIsNil() predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldIsNull(FieldDefaultModelNumber))
+}
+
+// DefaultModelNumberNotNil applies the NotNil predicate on the "default_model_number" field.
+func DefaultModelNumberNotNil() predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldNotNull(FieldDefaultModelNumber))
+}
+
+// DefaultModelNumberEqualFold applies the EqualFold predicate on the "default_model_number" field.
+func DefaultModelNumberEqualFold(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldEqualFold(FieldDefaultModelNumber, v))
+}
+
+// DefaultModelNumberContainsFold applies the ContainsFold predicate on the "default_model_number" field.
+func DefaultModelNumberContainsFold(v string) predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldContainsFold(FieldDefaultModelNumber, v))
 }
 
 // DefaultLifetimeWarrantyEQ applies the EQ predicate on the "default_lifetime_warranty" field.
@@ -656,6 +896,16 @@ func IncludeSoldFieldsNEQ(v bool) predicate.ItemTemplate {
 	return predicate.ItemTemplate(sql.FieldNEQ(FieldIncludeSoldFields, v))
 }
 
+// DefaultLabelIdsIsNil applies the IsNil predicate on the "default_label_ids" field.
+func DefaultLabelIdsIsNil() predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldIsNull(FieldDefaultLabelIds))
+}
+
+// DefaultLabelIdsNotNil applies the NotNil predicate on the "default_label_ids" field.
+func DefaultLabelIdsNotNil() predicate.ItemTemplate {
+	return predicate.ItemTemplate(sql.FieldNotNull(FieldDefaultLabelIds))
+}
+
 // HasGroup applies the HasEdge predicate on the "group" edge.
 func HasGroup() predicate.ItemTemplate {
 	return predicate.ItemTemplate(func(s *sql.Selector) {
@@ -694,6 +944,29 @@ func HasFields() predicate.ItemTemplate {
 func HasFieldsWith(preds ...predicate.TemplateField) predicate.ItemTemplate {
 	return predicate.ItemTemplate(func(s *sql.Selector) {
 		step := newFieldsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasLocation applies the HasEdge predicate on the "location" edge.
+func HasLocation() predicate.ItemTemplate {
+	return predicate.ItemTemplate(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, LocationTable, LocationColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasLocationWith applies the HasEdge predicate on the "location" edge with a given conditions (other predicates).
+func HasLocationWith(preds ...predicate.Location) predicate.ItemTemplate {
+	return predicate.ItemTemplate(func(s *sql.Selector) {
+		step := newLocationStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

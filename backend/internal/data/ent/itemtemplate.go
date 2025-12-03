@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -12,6 +13,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 )
 
 // ItemTemplate is the model entity for the ItemTemplate schema.
@@ -33,8 +35,14 @@ type ItemTemplate struct {
 	DefaultQuantity int `json:"default_quantity,omitempty"`
 	// DefaultInsured holds the value of the "default_insured" field.
 	DefaultInsured bool `json:"default_insured,omitempty"`
+	// Default name template for items (can use placeholders)
+	DefaultName string `json:"default_name,omitempty"`
+	// Default description for items created from this template
+	DefaultDescription string `json:"default_description,omitempty"`
 	// DefaultManufacturer holds the value of the "default_manufacturer" field.
 	DefaultManufacturer string `json:"default_manufacturer,omitempty"`
+	// Default model number for items created from this template
+	DefaultModelNumber string `json:"default_model_number,omitempty"`
 	// DefaultLifetimeWarranty holds the value of the "default_lifetime_warranty" field.
 	DefaultLifetimeWarranty bool `json:"default_lifetime_warranty,omitempty"`
 	// DefaultWarrantyDetails holds the value of the "default_warranty_details" field.
@@ -45,11 +53,14 @@ type ItemTemplate struct {
 	IncludePurchaseFields bool `json:"include_purchase_fields,omitempty"`
 	// Whether to include sold fields in items created from this template
 	IncludeSoldFields bool `json:"include_sold_fields,omitempty"`
+	// Default label IDs for items created from this template
+	DefaultLabelIds []uuid.UUID `json:"default_label_ids,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ItemTemplateQuery when eager-loading is set.
-	Edges                ItemTemplateEdges `json:"edges"`
-	group_item_templates *uuid.UUID
-	selectValues         sql.SelectValues
+	Edges                  ItemTemplateEdges `json:"edges"`
+	group_item_templates   *uuid.UUID
+	item_template_location *uuid.UUID
+	selectValues           sql.SelectValues
 }
 
 // ItemTemplateEdges holds the relations/edges for other nodes in the graph.
@@ -58,9 +69,11 @@ type ItemTemplateEdges struct {
 	Group *Group `json:"group,omitempty"`
 	// Fields holds the value of the fields edge.
 	Fields []*TemplateField `json:"fields,omitempty"`
+	// Location holds the value of the location edge.
+	Location *Location `json:"location,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 }
 
 // GroupOrErr returns the Group value or an error if the edge
@@ -83,22 +96,37 @@ func (e ItemTemplateEdges) FieldsOrErr() ([]*TemplateField, error) {
 	return nil, &NotLoadedError{edge: "fields"}
 }
 
+// LocationOrErr returns the Location value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e ItemTemplateEdges) LocationOrErr() (*Location, error) {
+	if e.Location != nil {
+		return e.Location, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: location.Label}
+	}
+	return nil, &NotLoadedError{edge: "location"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*ItemTemplate) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case itemtemplate.FieldDefaultLabelIds:
+			values[i] = new([]byte)
 		case itemtemplate.FieldDefaultInsured, itemtemplate.FieldDefaultLifetimeWarranty, itemtemplate.FieldIncludeWarrantyFields, itemtemplate.FieldIncludePurchaseFields, itemtemplate.FieldIncludeSoldFields:
 			values[i] = new(sql.NullBool)
 		case itemtemplate.FieldDefaultQuantity:
 			values[i] = new(sql.NullInt64)
-		case itemtemplate.FieldName, itemtemplate.FieldDescription, itemtemplate.FieldNotes, itemtemplate.FieldDefaultManufacturer, itemtemplate.FieldDefaultWarrantyDetails:
+		case itemtemplate.FieldName, itemtemplate.FieldDescription, itemtemplate.FieldNotes, itemtemplate.FieldDefaultName, itemtemplate.FieldDefaultDescription, itemtemplate.FieldDefaultManufacturer, itemtemplate.FieldDefaultModelNumber, itemtemplate.FieldDefaultWarrantyDetails:
 			values[i] = new(sql.NullString)
 		case itemtemplate.FieldCreatedAt, itemtemplate.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		case itemtemplate.FieldID:
 			values[i] = new(uuid.UUID)
 		case itemtemplate.ForeignKeys[0]: // group_item_templates
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
+		case itemtemplate.ForeignKeys[1]: // item_template_location
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
@@ -163,11 +191,29 @@ func (_m *ItemTemplate) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.DefaultInsured = value.Bool
 			}
+		case itemtemplate.FieldDefaultName:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field default_name", values[i])
+			} else if value.Valid {
+				_m.DefaultName = value.String
+			}
+		case itemtemplate.FieldDefaultDescription:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field default_description", values[i])
+			} else if value.Valid {
+				_m.DefaultDescription = value.String
+			}
 		case itemtemplate.FieldDefaultManufacturer:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field default_manufacturer", values[i])
 			} else if value.Valid {
 				_m.DefaultManufacturer = value.String
+			}
+		case itemtemplate.FieldDefaultModelNumber:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field default_model_number", values[i])
+			} else if value.Valid {
+				_m.DefaultModelNumber = value.String
 			}
 		case itemtemplate.FieldDefaultLifetimeWarranty:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -199,12 +245,27 @@ func (_m *ItemTemplate) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.IncludeSoldFields = value.Bool
 			}
+		case itemtemplate.FieldDefaultLabelIds:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field default_label_ids", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.DefaultLabelIds); err != nil {
+					return fmt.Errorf("unmarshal field default_label_ids: %w", err)
+				}
+			}
 		case itemtemplate.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field group_item_templates", values[i])
 			} else if value.Valid {
 				_m.group_item_templates = new(uuid.UUID)
 				*_m.group_item_templates = *value.S.(*uuid.UUID)
+			}
+		case itemtemplate.ForeignKeys[1]:
+			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field item_template_location", values[i])
+			} else if value.Valid {
+				_m.item_template_location = new(uuid.UUID)
+				*_m.item_template_location = *value.S.(*uuid.UUID)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -227,6 +288,11 @@ func (_m *ItemTemplate) QueryGroup() *GroupQuery {
 // QueryFields queries the "fields" edge of the ItemTemplate entity.
 func (_m *ItemTemplate) QueryFields() *TemplateFieldQuery {
 	return NewItemTemplateClient(_m.config).QueryFields(_m)
+}
+
+// QueryLocation queries the "location" edge of the ItemTemplate entity.
+func (_m *ItemTemplate) QueryLocation() *LocationQuery {
+	return NewItemTemplateClient(_m.config).QueryLocation(_m)
 }
 
 // Update returns a builder for updating this ItemTemplate.
@@ -273,8 +339,17 @@ func (_m *ItemTemplate) String() string {
 	builder.WriteString("default_insured=")
 	builder.WriteString(fmt.Sprintf("%v", _m.DefaultInsured))
 	builder.WriteString(", ")
+	builder.WriteString("default_name=")
+	builder.WriteString(_m.DefaultName)
+	builder.WriteString(", ")
+	builder.WriteString("default_description=")
+	builder.WriteString(_m.DefaultDescription)
+	builder.WriteString(", ")
 	builder.WriteString("default_manufacturer=")
 	builder.WriteString(_m.DefaultManufacturer)
+	builder.WriteString(", ")
+	builder.WriteString("default_model_number=")
+	builder.WriteString(_m.DefaultModelNumber)
 	builder.WriteString(", ")
 	builder.WriteString("default_lifetime_warranty=")
 	builder.WriteString(fmt.Sprintf("%v", _m.DefaultLifetimeWarranty))
@@ -290,6 +365,9 @@ func (_m *ItemTemplate) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("include_sold_fields=")
 	builder.WriteString(fmt.Sprintf("%v", _m.IncludeSoldFields))
+	builder.WriteString(", ")
+	builder.WriteString("default_label_ids=")
+	builder.WriteString(fmt.Sprintf("%v", _m.DefaultLabelIds))
 	builder.WriteByte(')')
 	return builder.String()
 }

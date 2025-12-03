@@ -10,10 +10,12 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 )
@@ -126,6 +128,46 @@ func (_u *ItemTemplateUpdate) SetNillableDefaultInsured(v *bool) *ItemTemplateUp
 	return _u
 }
 
+// SetDefaultName sets the "default_name" field.
+func (_u *ItemTemplateUpdate) SetDefaultName(v string) *ItemTemplateUpdate {
+	_u.mutation.SetDefaultName(v)
+	return _u
+}
+
+// SetNillableDefaultName sets the "default_name" field if the given value is not nil.
+func (_u *ItemTemplateUpdate) SetNillableDefaultName(v *string) *ItemTemplateUpdate {
+	if v != nil {
+		_u.SetDefaultName(*v)
+	}
+	return _u
+}
+
+// ClearDefaultName clears the value of the "default_name" field.
+func (_u *ItemTemplateUpdate) ClearDefaultName() *ItemTemplateUpdate {
+	_u.mutation.ClearDefaultName()
+	return _u
+}
+
+// SetDefaultDescription sets the "default_description" field.
+func (_u *ItemTemplateUpdate) SetDefaultDescription(v string) *ItemTemplateUpdate {
+	_u.mutation.SetDefaultDescription(v)
+	return _u
+}
+
+// SetNillableDefaultDescription sets the "default_description" field if the given value is not nil.
+func (_u *ItemTemplateUpdate) SetNillableDefaultDescription(v *string) *ItemTemplateUpdate {
+	if v != nil {
+		_u.SetDefaultDescription(*v)
+	}
+	return _u
+}
+
+// ClearDefaultDescription clears the value of the "default_description" field.
+func (_u *ItemTemplateUpdate) ClearDefaultDescription() *ItemTemplateUpdate {
+	_u.mutation.ClearDefaultDescription()
+	return _u
+}
+
 // SetDefaultManufacturer sets the "default_manufacturer" field.
 func (_u *ItemTemplateUpdate) SetDefaultManufacturer(v string) *ItemTemplateUpdate {
 	_u.mutation.SetDefaultManufacturer(v)
@@ -143,6 +185,26 @@ func (_u *ItemTemplateUpdate) SetNillableDefaultManufacturer(v *string) *ItemTem
 // ClearDefaultManufacturer clears the value of the "default_manufacturer" field.
 func (_u *ItemTemplateUpdate) ClearDefaultManufacturer() *ItemTemplateUpdate {
 	_u.mutation.ClearDefaultManufacturer()
+	return _u
+}
+
+// SetDefaultModelNumber sets the "default_model_number" field.
+func (_u *ItemTemplateUpdate) SetDefaultModelNumber(v string) *ItemTemplateUpdate {
+	_u.mutation.SetDefaultModelNumber(v)
+	return _u
+}
+
+// SetNillableDefaultModelNumber sets the "default_model_number" field if the given value is not nil.
+func (_u *ItemTemplateUpdate) SetNillableDefaultModelNumber(v *string) *ItemTemplateUpdate {
+	if v != nil {
+		_u.SetDefaultModelNumber(*v)
+	}
+	return _u
+}
+
+// ClearDefaultModelNumber clears the value of the "default_model_number" field.
+func (_u *ItemTemplateUpdate) ClearDefaultModelNumber() *ItemTemplateUpdate {
+	_u.mutation.ClearDefaultModelNumber()
 	return _u
 }
 
@@ -222,6 +284,24 @@ func (_u *ItemTemplateUpdate) SetNillableIncludeSoldFields(v *bool) *ItemTemplat
 	return _u
 }
 
+// SetDefaultLabelIds sets the "default_label_ids" field.
+func (_u *ItemTemplateUpdate) SetDefaultLabelIds(v []uuid.UUID) *ItemTemplateUpdate {
+	_u.mutation.SetDefaultLabelIds(v)
+	return _u
+}
+
+// AppendDefaultLabelIds appends value to the "default_label_ids" field.
+func (_u *ItemTemplateUpdate) AppendDefaultLabelIds(v []uuid.UUID) *ItemTemplateUpdate {
+	_u.mutation.AppendDefaultLabelIds(v)
+	return _u
+}
+
+// ClearDefaultLabelIds clears the value of the "default_label_ids" field.
+func (_u *ItemTemplateUpdate) ClearDefaultLabelIds() *ItemTemplateUpdate {
+	_u.mutation.ClearDefaultLabelIds()
+	return _u
+}
+
 // SetGroupID sets the "group" edge to the Group entity by ID.
 func (_u *ItemTemplateUpdate) SetGroupID(id uuid.UUID) *ItemTemplateUpdate {
 	_u.mutation.SetGroupID(id)
@@ -246,6 +326,25 @@ func (_u *ItemTemplateUpdate) AddFields(v ...*TemplateField) *ItemTemplateUpdate
 		ids[i] = v[i].ID
 	}
 	return _u.AddFieldIDs(ids...)
+}
+
+// SetLocationID sets the "location" edge to the Location entity by ID.
+func (_u *ItemTemplateUpdate) SetLocationID(id uuid.UUID) *ItemTemplateUpdate {
+	_u.mutation.SetLocationID(id)
+	return _u
+}
+
+// SetNillableLocationID sets the "location" edge to the Location entity by ID if the given value is not nil.
+func (_u *ItemTemplateUpdate) SetNillableLocationID(id *uuid.UUID) *ItemTemplateUpdate {
+	if id != nil {
+		_u = _u.SetLocationID(*id)
+	}
+	return _u
+}
+
+// SetLocation sets the "location" edge to the Location entity.
+func (_u *ItemTemplateUpdate) SetLocation(v *Location) *ItemTemplateUpdate {
+	return _u.SetLocationID(v.ID)
 }
 
 // Mutation returns the ItemTemplateMutation object of the builder.
@@ -278,6 +377,12 @@ func (_u *ItemTemplateUpdate) RemoveFields(v ...*TemplateField) *ItemTemplateUpd
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveFieldIDs(ids...)
+}
+
+// ClearLocation clears the "location" edge to the Location entity.
+func (_u *ItemTemplateUpdate) ClearLocation() *ItemTemplateUpdate {
+	_u.mutation.ClearLocation()
+	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -333,9 +438,24 @@ func (_u *ItemTemplateUpdate) check() error {
 			return &ValidationError{Name: "notes", err: fmt.Errorf(`ent: validator failed for field "ItemTemplate.notes": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.DefaultName(); ok {
+		if err := itemtemplate.DefaultNameValidator(v); err != nil {
+			return &ValidationError{Name: "default_name", err: fmt.Errorf(`ent: validator failed for field "ItemTemplate.default_name": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.DefaultDescription(); ok {
+		if err := itemtemplate.DefaultDescriptionValidator(v); err != nil {
+			return &ValidationError{Name: "default_description", err: fmt.Errorf(`ent: validator failed for field "ItemTemplate.default_description": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.DefaultManufacturer(); ok {
 		if err := itemtemplate.DefaultManufacturerValidator(v); err != nil {
 			return &ValidationError{Name: "default_manufacturer", err: fmt.Errorf(`ent: validator failed for field "ItemTemplate.default_manufacturer": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.DefaultModelNumber(); ok {
+		if err := itemtemplate.DefaultModelNumberValidator(v); err != nil {
+			return &ValidationError{Name: "default_model_number", err: fmt.Errorf(`ent: validator failed for field "ItemTemplate.default_model_number": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.DefaultWarrantyDetails(); ok {
@@ -388,11 +508,29 @@ func (_u *ItemTemplateUpdate) sqlSave(ctx context.Context) (_node int, err error
 	if value, ok := _u.mutation.DefaultInsured(); ok {
 		_spec.SetField(itemtemplate.FieldDefaultInsured, field.TypeBool, value)
 	}
+	if value, ok := _u.mutation.DefaultName(); ok {
+		_spec.SetField(itemtemplate.FieldDefaultName, field.TypeString, value)
+	}
+	if _u.mutation.DefaultNameCleared() {
+		_spec.ClearField(itemtemplate.FieldDefaultName, field.TypeString)
+	}
+	if value, ok := _u.mutation.DefaultDescription(); ok {
+		_spec.SetField(itemtemplate.FieldDefaultDescription, field.TypeString, value)
+	}
+	if _u.mutation.DefaultDescriptionCleared() {
+		_spec.ClearField(itemtemplate.FieldDefaultDescription, field.TypeString)
+	}
 	if value, ok := _u.mutation.DefaultManufacturer(); ok {
 		_spec.SetField(itemtemplate.FieldDefaultManufacturer, field.TypeString, value)
 	}
 	if _u.mutation.DefaultManufacturerCleared() {
 		_spec.ClearField(itemtemplate.FieldDefaultManufacturer, field.TypeString)
+	}
+	if value, ok := _u.mutation.DefaultModelNumber(); ok {
+		_spec.SetField(itemtemplate.FieldDefaultModelNumber, field.TypeString, value)
+	}
+	if _u.mutation.DefaultModelNumberCleared() {
+		_spec.ClearField(itemtemplate.FieldDefaultModelNumber, field.TypeString)
 	}
 	if value, ok := _u.mutation.DefaultLifetimeWarranty(); ok {
 		_spec.SetField(itemtemplate.FieldDefaultLifetimeWarranty, field.TypeBool, value)
@@ -411,6 +549,17 @@ func (_u *ItemTemplateUpdate) sqlSave(ctx context.Context) (_node int, err error
 	}
 	if value, ok := _u.mutation.IncludeSoldFields(); ok {
 		_spec.SetField(itemtemplate.FieldIncludeSoldFields, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.DefaultLabelIds(); ok {
+		_spec.SetField(itemtemplate.FieldDefaultLabelIds, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedDefaultLabelIds(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, itemtemplate.FieldDefaultLabelIds, value)
+		})
+	}
+	if _u.mutation.DefaultLabelIdsCleared() {
+		_spec.ClearField(itemtemplate.FieldDefaultLabelIds, field.TypeJSON)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -479,6 +628,35 @@ func (_u *ItemTemplateUpdate) sqlSave(ctx context.Context) (_node int, err error
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(templatefield.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.LocationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   itemtemplate.LocationTable,
+			Columns: []string{itemtemplate.LocationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(location.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.LocationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   itemtemplate.LocationTable,
+			Columns: []string{itemtemplate.LocationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(location.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -601,6 +779,46 @@ func (_u *ItemTemplateUpdateOne) SetNillableDefaultInsured(v *bool) *ItemTemplat
 	return _u
 }
 
+// SetDefaultName sets the "default_name" field.
+func (_u *ItemTemplateUpdateOne) SetDefaultName(v string) *ItemTemplateUpdateOne {
+	_u.mutation.SetDefaultName(v)
+	return _u
+}
+
+// SetNillableDefaultName sets the "default_name" field if the given value is not nil.
+func (_u *ItemTemplateUpdateOne) SetNillableDefaultName(v *string) *ItemTemplateUpdateOne {
+	if v != nil {
+		_u.SetDefaultName(*v)
+	}
+	return _u
+}
+
+// ClearDefaultName clears the value of the "default_name" field.
+func (_u *ItemTemplateUpdateOne) ClearDefaultName() *ItemTemplateUpdateOne {
+	_u.mutation.ClearDefaultName()
+	return _u
+}
+
+// SetDefaultDescription sets the "default_description" field.
+func (_u *ItemTemplateUpdateOne) SetDefaultDescription(v string) *ItemTemplateUpdateOne {
+	_u.mutation.SetDefaultDescription(v)
+	return _u
+}
+
+// SetNillableDefaultDescription sets the "default_description" field if the given value is not nil.
+func (_u *ItemTemplateUpdateOne) SetNillableDefaultDescription(v *string) *ItemTemplateUpdateOne {
+	if v != nil {
+		_u.SetDefaultDescription(*v)
+	}
+	return _u
+}
+
+// ClearDefaultDescription clears the value of the "default_description" field.
+func (_u *ItemTemplateUpdateOne) ClearDefaultDescription() *ItemTemplateUpdateOne {
+	_u.mutation.ClearDefaultDescription()
+	return _u
+}
+
 // SetDefaultManufacturer sets the "default_manufacturer" field.
 func (_u *ItemTemplateUpdateOne) SetDefaultManufacturer(v string) *ItemTemplateUpdateOne {
 	_u.mutation.SetDefaultManufacturer(v)
@@ -618,6 +836,26 @@ func (_u *ItemTemplateUpdateOne) SetNillableDefaultManufacturer(v *string) *Item
 // ClearDefaultManufacturer clears the value of the "default_manufacturer" field.
 func (_u *ItemTemplateUpdateOne) ClearDefaultManufacturer() *ItemTemplateUpdateOne {
 	_u.mutation.ClearDefaultManufacturer()
+	return _u
+}
+
+// SetDefaultModelNumber sets the "default_model_number" field.
+func (_u *ItemTemplateUpdateOne) SetDefaultModelNumber(v string) *ItemTemplateUpdateOne {
+	_u.mutation.SetDefaultModelNumber(v)
+	return _u
+}
+
+// SetNillableDefaultModelNumber sets the "default_model_number" field if the given value is not nil.
+func (_u *ItemTemplateUpdateOne) SetNillableDefaultModelNumber(v *string) *ItemTemplateUpdateOne {
+	if v != nil {
+		_u.SetDefaultModelNumber(*v)
+	}
+	return _u
+}
+
+// ClearDefaultModelNumber clears the value of the "default_model_number" field.
+func (_u *ItemTemplateUpdateOne) ClearDefaultModelNumber() *ItemTemplateUpdateOne {
+	_u.mutation.ClearDefaultModelNumber()
 	return _u
 }
 
@@ -697,6 +935,24 @@ func (_u *ItemTemplateUpdateOne) SetNillableIncludeSoldFields(v *bool) *ItemTemp
 	return _u
 }
 
+// SetDefaultLabelIds sets the "default_label_ids" field.
+func (_u *ItemTemplateUpdateOne) SetDefaultLabelIds(v []uuid.UUID) *ItemTemplateUpdateOne {
+	_u.mutation.SetDefaultLabelIds(v)
+	return _u
+}
+
+// AppendDefaultLabelIds appends value to the "default_label_ids" field.
+func (_u *ItemTemplateUpdateOne) AppendDefaultLabelIds(v []uuid.UUID) *ItemTemplateUpdateOne {
+	_u.mutation.AppendDefaultLabelIds(v)
+	return _u
+}
+
+// ClearDefaultLabelIds clears the value of the "default_label_ids" field.
+func (_u *ItemTemplateUpdateOne) ClearDefaultLabelIds() *ItemTemplateUpdateOne {
+	_u.mutation.ClearDefaultLabelIds()
+	return _u
+}
+
 // SetGroupID sets the "group" edge to the Group entity by ID.
 func (_u *ItemTemplateUpdateOne) SetGroupID(id uuid.UUID) *ItemTemplateUpdateOne {
 	_u.mutation.SetGroupID(id)
@@ -721,6 +977,25 @@ func (_u *ItemTemplateUpdateOne) AddFields(v ...*TemplateField) *ItemTemplateUpd
 		ids[i] = v[i].ID
 	}
 	return _u.AddFieldIDs(ids...)
+}
+
+// SetLocationID sets the "location" edge to the Location entity by ID.
+func (_u *ItemTemplateUpdateOne) SetLocationID(id uuid.UUID) *ItemTemplateUpdateOne {
+	_u.mutation.SetLocationID(id)
+	return _u
+}
+
+// SetNillableLocationID sets the "location" edge to the Location entity by ID if the given value is not nil.
+func (_u *ItemTemplateUpdateOne) SetNillableLocationID(id *uuid.UUID) *ItemTemplateUpdateOne {
+	if id != nil {
+		_u = _u.SetLocationID(*id)
+	}
+	return _u
+}
+
+// SetLocation sets the "location" edge to the Location entity.
+func (_u *ItemTemplateUpdateOne) SetLocation(v *Location) *ItemTemplateUpdateOne {
+	return _u.SetLocationID(v.ID)
 }
 
 // Mutation returns the ItemTemplateMutation object of the builder.
@@ -753,6 +1028,12 @@ func (_u *ItemTemplateUpdateOne) RemoveFields(v ...*TemplateField) *ItemTemplate
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveFieldIDs(ids...)
+}
+
+// ClearLocation clears the "location" edge to the Location entity.
+func (_u *ItemTemplateUpdateOne) ClearLocation() *ItemTemplateUpdateOne {
+	_u.mutation.ClearLocation()
+	return _u
 }
 
 // Where appends a list predicates to the ItemTemplateUpdate builder.
@@ -821,9 +1102,24 @@ func (_u *ItemTemplateUpdateOne) check() error {
 			return &ValidationError{Name: "notes", err: fmt.Errorf(`ent: validator failed for field "ItemTemplate.notes": %w`, err)}
 		}
 	}
+	if v, ok := _u.mutation.DefaultName(); ok {
+		if err := itemtemplate.DefaultNameValidator(v); err != nil {
+			return &ValidationError{Name: "default_name", err: fmt.Errorf(`ent: validator failed for field "ItemTemplate.default_name": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.DefaultDescription(); ok {
+		if err := itemtemplate.DefaultDescriptionValidator(v); err != nil {
+			return &ValidationError{Name: "default_description", err: fmt.Errorf(`ent: validator failed for field "ItemTemplate.default_description": %w`, err)}
+		}
+	}
 	if v, ok := _u.mutation.DefaultManufacturer(); ok {
 		if err := itemtemplate.DefaultManufacturerValidator(v); err != nil {
 			return &ValidationError{Name: "default_manufacturer", err: fmt.Errorf(`ent: validator failed for field "ItemTemplate.default_manufacturer": %w`, err)}
+		}
+	}
+	if v, ok := _u.mutation.DefaultModelNumber(); ok {
+		if err := itemtemplate.DefaultModelNumberValidator(v); err != nil {
+			return &ValidationError{Name: "default_model_number", err: fmt.Errorf(`ent: validator failed for field "ItemTemplate.default_model_number": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.DefaultWarrantyDetails(); ok {
@@ -893,11 +1189,29 @@ func (_u *ItemTemplateUpdateOne) sqlSave(ctx context.Context) (_node *ItemTempla
 	if value, ok := _u.mutation.DefaultInsured(); ok {
 		_spec.SetField(itemtemplate.FieldDefaultInsured, field.TypeBool, value)
 	}
+	if value, ok := _u.mutation.DefaultName(); ok {
+		_spec.SetField(itemtemplate.FieldDefaultName, field.TypeString, value)
+	}
+	if _u.mutation.DefaultNameCleared() {
+		_spec.ClearField(itemtemplate.FieldDefaultName, field.TypeString)
+	}
+	if value, ok := _u.mutation.DefaultDescription(); ok {
+		_spec.SetField(itemtemplate.FieldDefaultDescription, field.TypeString, value)
+	}
+	if _u.mutation.DefaultDescriptionCleared() {
+		_spec.ClearField(itemtemplate.FieldDefaultDescription, field.TypeString)
+	}
 	if value, ok := _u.mutation.DefaultManufacturer(); ok {
 		_spec.SetField(itemtemplate.FieldDefaultManufacturer, field.TypeString, value)
 	}
 	if _u.mutation.DefaultManufacturerCleared() {
 		_spec.ClearField(itemtemplate.FieldDefaultManufacturer, field.TypeString)
+	}
+	if value, ok := _u.mutation.DefaultModelNumber(); ok {
+		_spec.SetField(itemtemplate.FieldDefaultModelNumber, field.TypeString, value)
+	}
+	if _u.mutation.DefaultModelNumberCleared() {
+		_spec.ClearField(itemtemplate.FieldDefaultModelNumber, field.TypeString)
 	}
 	if value, ok := _u.mutation.DefaultLifetimeWarranty(); ok {
 		_spec.SetField(itemtemplate.FieldDefaultLifetimeWarranty, field.TypeBool, value)
@@ -916,6 +1230,17 @@ func (_u *ItemTemplateUpdateOne) sqlSave(ctx context.Context) (_node *ItemTempla
 	}
 	if value, ok := _u.mutation.IncludeSoldFields(); ok {
 		_spec.SetField(itemtemplate.FieldIncludeSoldFields, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.DefaultLabelIds(); ok {
+		_spec.SetField(itemtemplate.FieldDefaultLabelIds, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedDefaultLabelIds(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, itemtemplate.FieldDefaultLabelIds, value)
+		})
+	}
+	if _u.mutation.DefaultLabelIdsCleared() {
+		_spec.ClearField(itemtemplate.FieldDefaultLabelIds, field.TypeJSON)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -984,6 +1309,35 @@ func (_u *ItemTemplateUpdateOne) sqlSave(ctx context.Context) (_node *ItemTempla
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(templatefield.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.LocationCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   itemtemplate.LocationTable,
+			Columns: []string{itemtemplate.LocationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(location.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.LocationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   itemtemplate.LocationTable,
+			Columns: []string{itemtemplate.LocationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(location.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

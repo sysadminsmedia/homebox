@@ -10,6 +10,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 )
 
@@ -26,6 +27,16 @@ type (
 		TextValue string    `json:"textValue"`
 	}
 
+	TemplateLabelSummary struct {
+		ID   uuid.UUID `json:"id"`
+		Name string    `json:"name"`
+	}
+
+	TemplateLocationSummary struct {
+		ID   uuid.UUID `json:"id"`
+		Name string    `json:"name"`
+	}
+
 	ItemTemplateCreate struct {
 		Name        string `json:"name"        validate:"required,min=1,max=255"`
 		Description string `json:"description" validate:"max=1000"`
@@ -34,9 +45,16 @@ type (
 		// Default values for items
 		DefaultQuantity         int    `json:"defaultQuantity"`
 		DefaultInsured          bool   `json:"defaultInsured"`
+		DefaultName             string `json:"defaultName"             validate:"max=255"`
+		DefaultDescription      string `json:"defaultDescription"      validate:"max=1000"`
 		DefaultManufacturer     string `json:"defaultManufacturer"     validate:"max=255"`
+		DefaultModelNumber      string `json:"defaultModelNumber"      validate:"max=255"`
 		DefaultLifetimeWarranty bool   `json:"defaultLifetimeWarranty"`
 		DefaultWarrantyDetails  string `json:"defaultWarrantyDetails"  validate:"max=1000"`
+
+		// Default location and labels
+		DefaultLocationID *uuid.UUID  `json:"defaultLocationId"`
+		DefaultLabelIDs   []uuid.UUID `json:"defaultLabelIds"`
 
 		// Metadata flags
 		IncludeWarrantyFields bool `json:"includeWarrantyFields"`
@@ -56,9 +74,16 @@ type (
 		// Default values for items
 		DefaultQuantity         int    `json:"defaultQuantity"`
 		DefaultInsured          bool   `json:"defaultInsured"`
+		DefaultName             string `json:"defaultName"             validate:"max=255"`
+		DefaultDescription      string `json:"defaultDescription"      validate:"max=1000"`
 		DefaultManufacturer     string `json:"defaultManufacturer"     validate:"max=255"`
+		DefaultModelNumber      string `json:"defaultModelNumber"      validate:"max=255"`
 		DefaultLifetimeWarranty bool   `json:"defaultLifetimeWarranty"`
 		DefaultWarrantyDetails  string `json:"defaultWarrantyDetails"  validate:"max=1000"`
+
+		// Default location and labels
+		DefaultLocationID *uuid.UUID  `json:"defaultLocationId"`
+		DefaultLabelIDs   []uuid.UUID `json:"defaultLabelIds"`
 
 		// Metadata flags
 		IncludeWarrantyFields bool `json:"includeWarrantyFields"`
@@ -88,9 +113,16 @@ type (
 		// Default values for items
 		DefaultQuantity         int    `json:"defaultQuantity"`
 		DefaultInsured          bool   `json:"defaultInsured"`
+		DefaultName             string `json:"defaultName"`
+		DefaultDescription      string `json:"defaultDescription"`
 		DefaultManufacturer     string `json:"defaultManufacturer"`
+		DefaultModelNumber      string `json:"defaultModelNumber"`
 		DefaultLifetimeWarranty bool   `json:"defaultLifetimeWarranty"`
 		DefaultWarrantyDetails  string `json:"defaultWarrantyDetails"`
+
+		// Default location and labels
+		DefaultLocation *TemplateLocationSummary `json:"defaultLocation"`
+		DefaultLabels   []TemplateLabelSummary   `json:"defaultLabels"`
 
 		// Metadata flags
 		IncludeWarrantyFields bool `json:"includeWarrantyFields"`
@@ -129,10 +161,35 @@ func mapTemplateSummary(template *ent.ItemTemplate) ItemTemplateSummary {
 	}
 }
 
-func mapTemplateOut(template *ent.ItemTemplate) ItemTemplateOut {
+func (r *ItemTemplatesRepository) mapTemplateOut(ctx context.Context, template *ent.ItemTemplate) ItemTemplateOut {
 	fields := make([]TemplateField, 0)
 	if template.Edges.Fields != nil {
 		fields = mapTemplateFieldSlice(template.Edges.Fields)
+	}
+
+	// Map location if present
+	var location *TemplateLocationSummary
+	if template.Edges.Location != nil {
+		location = &TemplateLocationSummary{
+			ID:   template.Edges.Location.ID,
+			Name: template.Edges.Location.Name,
+		}
+	}
+
+	// Fetch labels from database using stored IDs
+	labels := make([]TemplateLabelSummary, 0)
+	if len(template.DefaultLabelIds) > 0 {
+		labelEntities, err := r.db.Label.Query().
+			Where(label.IDIn(template.DefaultLabelIds...)).
+			All(ctx)
+		if err == nil {
+			for _, l := range labelEntities {
+				labels = append(labels, TemplateLabelSummary{
+					ID:   l.ID,
+					Name: l.Name,
+				})
+			}
+		}
 	}
 
 	return ItemTemplateOut{
@@ -144,9 +201,14 @@ func mapTemplateOut(template *ent.ItemTemplate) ItemTemplateOut {
 		UpdatedAt:               template.UpdatedAt,
 		DefaultQuantity:         template.DefaultQuantity,
 		DefaultInsured:          template.DefaultInsured,
+		DefaultName:             template.DefaultName,
+		DefaultDescription:      template.DefaultDescription,
 		DefaultManufacturer:     template.DefaultManufacturer,
+		DefaultModelNumber:      template.DefaultModelNumber,
 		DefaultLifetimeWarranty: template.DefaultLifetimeWarranty,
 		DefaultWarrantyDetails:  template.DefaultWarrantyDetails,
+		DefaultLocation:         location,
+		DefaultLabels:           labels,
 		IncludeWarrantyFields:   template.IncludeWarrantyFields,
 		IncludePurchaseFields:   template.IncludePurchaseFields,
 		IncludeSoldFields:       template.IncludeSoldFields,
@@ -187,13 +249,14 @@ func (r *ItemTemplatesRepository) GetOne(ctx context.Context, gid uuid.UUID, id 
 			itemtemplate.HasGroupWith(group.ID(gid)),
 		).
 		WithFields().
+		WithLocation().
 		Only(ctx)
 
 	if err != nil {
 		return ItemTemplateOut{}, err
 	}
 
-	return mapTemplateOut(template), nil
+	return r.mapTemplateOut(ctx, template), nil
 }
 
 // Create creates a new template
@@ -204,13 +267,26 @@ func (r *ItemTemplatesRepository) Create(ctx context.Context, gid uuid.UUID, dat
 		SetNotes(data.Notes).
 		SetDefaultQuantity(data.DefaultQuantity).
 		SetDefaultInsured(data.DefaultInsured).
+		SetDefaultName(data.DefaultName).
+		SetDefaultDescription(data.DefaultDescription).
 		SetDefaultManufacturer(data.DefaultManufacturer).
+		SetDefaultModelNumber(data.DefaultModelNumber).
 		SetDefaultLifetimeWarranty(data.DefaultLifetimeWarranty).
 		SetDefaultWarrantyDetails(data.DefaultWarrantyDetails).
 		SetIncludeWarrantyFields(data.IncludeWarrantyFields).
 		SetIncludePurchaseFields(data.IncludePurchaseFields).
 		SetIncludeSoldFields(data.IncludeSoldFields).
 		SetGroupID(gid)
+
+	// Set default location if provided
+	if data.DefaultLocationID != nil {
+		q.SetLocationID(*data.DefaultLocationID)
+	}
+
+	// Set default label IDs (stored as JSON)
+	if len(data.DefaultLabelIDs) > 0 {
+		q.SetDefaultLabelIds(data.DefaultLabelIDs)
+	}
 
 	template, err := q.Save(ctx)
 	if err != nil {
@@ -251,20 +327,37 @@ func (r *ItemTemplatesRepository) Update(ctx context.Context, gid uuid.UUID, dat
 	}
 
 	// Update template
-	_, err = template.Update().
+	updateQ := template.Update().
 		SetName(data.Name).
 		SetDescription(data.Description).
 		SetNotes(data.Notes).
 		SetDefaultQuantity(data.DefaultQuantity).
 		SetDefaultInsured(data.DefaultInsured).
+		SetDefaultName(data.DefaultName).
+		SetDefaultDescription(data.DefaultDescription).
 		SetDefaultManufacturer(data.DefaultManufacturer).
+		SetDefaultModelNumber(data.DefaultModelNumber).
 		SetDefaultLifetimeWarranty(data.DefaultLifetimeWarranty).
 		SetDefaultWarrantyDetails(data.DefaultWarrantyDetails).
 		SetIncludeWarrantyFields(data.IncludeWarrantyFields).
 		SetIncludePurchaseFields(data.IncludePurchaseFields).
-		SetIncludeSoldFields(data.IncludeSoldFields).
-		Save(ctx)
+		SetIncludeSoldFields(data.IncludeSoldFields)
 
+	// Update location
+	if data.DefaultLocationID != nil {
+		updateQ.SetLocationID(*data.DefaultLocationID)
+	} else {
+		updateQ.ClearLocation()
+	}
+
+	// Update default label IDs (stored as JSON)
+	if len(data.DefaultLabelIDs) > 0 {
+		updateQ.SetDefaultLabelIds(data.DefaultLabelIDs)
+	} else {
+		updateQ.ClearDefaultLabelIds()
+	}
+
+	_, err = updateQ.Save(ctx)
 	if err != nil {
 		return ItemTemplateOut{}, err
 	}

@@ -10,12 +10,19 @@ create table if not exists item_templates
     notes                        text,
     default_quantity             integer default 1     not null,
     default_insured              bool    default false not null,
+    default_name                 text,
+    default_description          text,
     default_manufacturer         text,
+    default_model_number         text,
     default_lifetime_warranty    bool    default false not null,
     default_warranty_details     text,
     include_warranty_fields      bool    default false not null,
     include_purchase_fields      bool    default false not null,
     include_sold_fields          bool    default false not null,
+    default_label_ids            json,
+    item_template_location       uuid
+        references locations(id)
+            on delete set null,
     group_item_templates         uuid                  not null
         constraint item_templates_groups_item_templates
             references groups

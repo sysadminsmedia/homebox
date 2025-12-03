@@ -29,8 +29,14 @@ const (
 	FieldDefaultQuantity = "default_quantity"
 	// FieldDefaultInsured holds the string denoting the default_insured field in the database.
 	FieldDefaultInsured = "default_insured"
+	// FieldDefaultName holds the string denoting the default_name field in the database.
+	FieldDefaultName = "default_name"
+	// FieldDefaultDescription holds the string denoting the default_description field in the database.
+	FieldDefaultDescription = "default_description"
 	// FieldDefaultManufacturer holds the string denoting the default_manufacturer field in the database.
 	FieldDefaultManufacturer = "default_manufacturer"
+	// FieldDefaultModelNumber holds the string denoting the default_model_number field in the database.
+	FieldDefaultModelNumber = "default_model_number"
 	// FieldDefaultLifetimeWarranty holds the string denoting the default_lifetime_warranty field in the database.
 	FieldDefaultLifetimeWarranty = "default_lifetime_warranty"
 	// FieldDefaultWarrantyDetails holds the string denoting the default_warranty_details field in the database.
@@ -41,10 +47,14 @@ const (
 	FieldIncludePurchaseFields = "include_purchase_fields"
 	// FieldIncludeSoldFields holds the string denoting the include_sold_fields field in the database.
 	FieldIncludeSoldFields = "include_sold_fields"
+	// FieldDefaultLabelIds holds the string denoting the default_label_ids field in the database.
+	FieldDefaultLabelIds = "default_label_ids"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
 	EdgeGroup = "group"
 	// EdgeFields holds the string denoting the fields edge name in mutations.
 	EdgeFields = "fields"
+	// EdgeLocation holds the string denoting the location edge name in mutations.
+	EdgeLocation = "location"
 	// Table holds the table name of the itemtemplate in the database.
 	Table = "item_templates"
 	// GroupTable is the table that holds the group relation/edge.
@@ -61,6 +71,13 @@ const (
 	FieldsInverseTable = "template_fields"
 	// FieldsColumn is the table column denoting the fields relation/edge.
 	FieldsColumn = "item_template_fields"
+	// LocationTable is the table that holds the location relation/edge.
+	LocationTable = "item_templates"
+	// LocationInverseTable is the table name for the Location entity.
+	// It exists in this package in order to avoid circular dependency with the "location" package.
+	LocationInverseTable = "locations"
+	// LocationColumn is the table column denoting the location relation/edge.
+	LocationColumn = "item_template_location"
 )
 
 // Columns holds all SQL columns for itemtemplate fields.
@@ -73,18 +90,23 @@ var Columns = []string{
 	FieldNotes,
 	FieldDefaultQuantity,
 	FieldDefaultInsured,
+	FieldDefaultName,
+	FieldDefaultDescription,
 	FieldDefaultManufacturer,
+	FieldDefaultModelNumber,
 	FieldDefaultLifetimeWarranty,
 	FieldDefaultWarrantyDetails,
 	FieldIncludeWarrantyFields,
 	FieldIncludePurchaseFields,
 	FieldIncludeSoldFields,
+	FieldDefaultLabelIds,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "item_templates"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"group_item_templates",
+	"item_template_location",
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -119,8 +141,14 @@ var (
 	DefaultDefaultQuantity int
 	// DefaultDefaultInsured holds the default value on creation for the "default_insured" field.
 	DefaultDefaultInsured bool
+	// DefaultNameValidator is a validator for the "default_name" field. It is called by the builders before save.
+	DefaultNameValidator func(string) error
+	// DefaultDescriptionValidator is a validator for the "default_description" field. It is called by the builders before save.
+	DefaultDescriptionValidator func(string) error
 	// DefaultManufacturerValidator is a validator for the "default_manufacturer" field. It is called by the builders before save.
 	DefaultManufacturerValidator func(string) error
+	// DefaultModelNumberValidator is a validator for the "default_model_number" field. It is called by the builders before save.
+	DefaultModelNumberValidator func(string) error
 	// DefaultDefaultLifetimeWarranty holds the default value on creation for the "default_lifetime_warranty" field.
 	DefaultDefaultLifetimeWarranty bool
 	// DefaultWarrantyDetailsValidator is a validator for the "default_warranty_details" field. It is called by the builders before save.
@@ -178,9 +206,24 @@ func ByDefaultInsured(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDefaultInsured, opts...).ToFunc()
 }
 
+// ByDefaultName orders the results by the default_name field.
+func ByDefaultName(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDefaultName, opts...).ToFunc()
+}
+
+// ByDefaultDescription orders the results by the default_description field.
+func ByDefaultDescription(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDefaultDescription, opts...).ToFunc()
+}
+
 // ByDefaultManufacturer orders the results by the default_manufacturer field.
 func ByDefaultManufacturer(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDefaultManufacturer, opts...).ToFunc()
+}
+
+// ByDefaultModelNumber orders the results by the default_model_number field.
+func ByDefaultModelNumber(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDefaultModelNumber, opts...).ToFunc()
 }
 
 // ByDefaultLifetimeWarranty orders the results by the default_lifetime_warranty field.
@@ -228,6 +271,13 @@ func ByFields(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newFieldsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByLocationField orders the results by location field.
+func ByLocationField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newLocationStep(), sql.OrderByField(field, opts...))
+	}
+}
 func newGroupStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -240,5 +290,12 @@ func newFieldsStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(FieldsInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, FieldsTable, FieldsColumn),
+	)
+}
+func newLocationStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(LocationInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, LocationTable, LocationColumn),
 	)
 }

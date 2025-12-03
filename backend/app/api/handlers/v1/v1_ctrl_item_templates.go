@@ -153,6 +153,7 @@ func (ctrl *V1Controller) HandleItemTemplatesCreateItem() errchain.HandlerFunc {
 			LabelIDs:         body.LabelIDs,
 			Insured:          template.DefaultInsured,
 			Manufacturer:     template.DefaultManufacturer,
+			ModelNumber:      template.DefaultModelNumber,
 			LifetimeWarranty: template.DefaultLifetimeWarranty,
 			WarrantyDetails:  template.DefaultWarrantyDetails,
 			Fields:           fields,

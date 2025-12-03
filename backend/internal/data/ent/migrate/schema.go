@@ -256,13 +256,18 @@ var (
 		{Name: "notes", Type: field.TypeString, Nullable: true, Size: 1000},
 		{Name: "default_quantity", Type: field.TypeInt, Default: 1},
 		{Name: "default_insured", Type: field.TypeBool, Default: false},
+		{Name: "default_name", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "default_description", Type: field.TypeString, Nullable: true, Size: 1000},
 		{Name: "default_manufacturer", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "default_model_number", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "default_lifetime_warranty", Type: field.TypeBool, Default: false},
 		{Name: "default_warranty_details", Type: field.TypeString, Nullable: true, Size: 1000},
 		{Name: "include_warranty_fields", Type: field.TypeBool, Default: false},
 		{Name: "include_purchase_fields", Type: field.TypeBool, Default: false},
 		{Name: "include_sold_fields", Type: field.TypeBool, Default: false},
+		{Name: "default_label_ids", Type: field.TypeJSON, Nullable: true},
 		{Name: "group_item_templates", Type: field.TypeUUID},
+		{Name: "item_template_location", Type: field.TypeUUID, Nullable: true},
 	}
 	// ItemTemplatesTable holds the schema information for the "item_templates" table.
 	ItemTemplatesTable = &schema.Table{
@@ -272,9 +277,15 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "item_templates_groups_item_templates",
-				Columns:    []*schema.Column{ItemTemplatesColumns[14]},
+				Columns:    []*schema.Column{ItemTemplatesColumns[18]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "item_templates_locations_location",
+				Columns:    []*schema.Column{ItemTemplatesColumns[19]},
+				RefColumns: []*schema.Column{LocationsColumns[0]},
+				OnDelete:   schema.SetNull,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -527,6 +538,7 @@ func init() {
 	ItemsTable.ForeignKeys[2].RefTable = LocationsTable
 	ItemFieldsTable.ForeignKeys[0].RefTable = ItemsTable
 	ItemTemplatesTable.ForeignKeys[0].RefTable = GroupsTable
+	ItemTemplatesTable.ForeignKeys[1].RefTable = LocationsTable
 	LabelsTable.ForeignKeys[0].RefTable = GroupsTable
 	LocationsTable.ForeignKeys[0].RefTable = GroupsTable
 	LocationsTable.ForeignKeys[1].RefTable = LocationsTable

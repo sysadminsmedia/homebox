@@ -13,6 +13,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 )
 
@@ -113,6 +114,34 @@ func (_c *ItemTemplateCreate) SetNillableDefaultInsured(v *bool) *ItemTemplateCr
 	return _c
 }
 
+// SetDefaultName sets the "default_name" field.
+func (_c *ItemTemplateCreate) SetDefaultName(v string) *ItemTemplateCreate {
+	_c.mutation.SetDefaultName(v)
+	return _c
+}
+
+// SetNillableDefaultName sets the "default_name" field if the given value is not nil.
+func (_c *ItemTemplateCreate) SetNillableDefaultName(v *string) *ItemTemplateCreate {
+	if v != nil {
+		_c.SetDefaultName(*v)
+	}
+	return _c
+}
+
+// SetDefaultDescription sets the "default_description" field.
+func (_c *ItemTemplateCreate) SetDefaultDescription(v string) *ItemTemplateCreate {
+	_c.mutation.SetDefaultDescription(v)
+	return _c
+}
+
+// SetNillableDefaultDescription sets the "default_description" field if the given value is not nil.
+func (_c *ItemTemplateCreate) SetNillableDefaultDescription(v *string) *ItemTemplateCreate {
+	if v != nil {
+		_c.SetDefaultDescription(*v)
+	}
+	return _c
+}
+
 // SetDefaultManufacturer sets the "default_manufacturer" field.
 func (_c *ItemTemplateCreate) SetDefaultManufacturer(v string) *ItemTemplateCreate {
 	_c.mutation.SetDefaultManufacturer(v)
@@ -123,6 +152,20 @@ func (_c *ItemTemplateCreate) SetDefaultManufacturer(v string) *ItemTemplateCrea
 func (_c *ItemTemplateCreate) SetNillableDefaultManufacturer(v *string) *ItemTemplateCreate {
 	if v != nil {
 		_c.SetDefaultManufacturer(*v)
+	}
+	return _c
+}
+
+// SetDefaultModelNumber sets the "default_model_number" field.
+func (_c *ItemTemplateCreate) SetDefaultModelNumber(v string) *ItemTemplateCreate {
+	_c.mutation.SetDefaultModelNumber(v)
+	return _c
+}
+
+// SetNillableDefaultModelNumber sets the "default_model_number" field if the given value is not nil.
+func (_c *ItemTemplateCreate) SetNillableDefaultModelNumber(v *string) *ItemTemplateCreate {
+	if v != nil {
+		_c.SetDefaultModelNumber(*v)
 	}
 	return _c
 }
@@ -197,6 +240,12 @@ func (_c *ItemTemplateCreate) SetNillableIncludeSoldFields(v *bool) *ItemTemplat
 	return _c
 }
 
+// SetDefaultLabelIds sets the "default_label_ids" field.
+func (_c *ItemTemplateCreate) SetDefaultLabelIds(v []uuid.UUID) *ItemTemplateCreate {
+	_c.mutation.SetDefaultLabelIds(v)
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *ItemTemplateCreate) SetID(v uuid.UUID) *ItemTemplateCreate {
 	_c.mutation.SetID(v)
@@ -235,6 +284,25 @@ func (_c *ItemTemplateCreate) AddFields(v ...*TemplateField) *ItemTemplateCreate
 		ids[i] = v[i].ID
 	}
 	return _c.AddFieldIDs(ids...)
+}
+
+// SetLocationID sets the "location" edge to the Location entity by ID.
+func (_c *ItemTemplateCreate) SetLocationID(id uuid.UUID) *ItemTemplateCreate {
+	_c.mutation.SetLocationID(id)
+	return _c
+}
+
+// SetNillableLocationID sets the "location" edge to the Location entity by ID if the given value is not nil.
+func (_c *ItemTemplateCreate) SetNillableLocationID(id *uuid.UUID) *ItemTemplateCreate {
+	if id != nil {
+		_c = _c.SetLocationID(*id)
+	}
+	return _c
+}
+
+// SetLocation sets the "location" edge to the Location entity.
+func (_c *ItemTemplateCreate) SetLocation(v *Location) *ItemTemplateCreate {
+	return _c.SetLocationID(v.ID)
 }
 
 // Mutation returns the ItemTemplateMutation object of the builder.
@@ -342,9 +410,24 @@ func (_c *ItemTemplateCreate) check() error {
 	if _, ok := _c.mutation.DefaultInsured(); !ok {
 		return &ValidationError{Name: "default_insured", err: errors.New(`ent: missing required field "ItemTemplate.default_insured"`)}
 	}
+	if v, ok := _c.mutation.DefaultName(); ok {
+		if err := itemtemplate.DefaultNameValidator(v); err != nil {
+			return &ValidationError{Name: "default_name", err: fmt.Errorf(`ent: validator failed for field "ItemTemplate.default_name": %w`, err)}
+		}
+	}
+	if v, ok := _c.mutation.DefaultDescription(); ok {
+		if err := itemtemplate.DefaultDescriptionValidator(v); err != nil {
+			return &ValidationError{Name: "default_description", err: fmt.Errorf(`ent: validator failed for field "ItemTemplate.default_description": %w`, err)}
+		}
+	}
 	if v, ok := _c.mutation.DefaultManufacturer(); ok {
 		if err := itemtemplate.DefaultManufacturerValidator(v); err != nil {
 			return &ValidationError{Name: "default_manufacturer", err: fmt.Errorf(`ent: validator failed for field "ItemTemplate.default_manufacturer": %w`, err)}
+		}
+	}
+	if v, ok := _c.mutation.DefaultModelNumber(); ok {
+		if err := itemtemplate.DefaultModelNumberValidator(v); err != nil {
+			return &ValidationError{Name: "default_model_number", err: fmt.Errorf(`ent: validator failed for field "ItemTemplate.default_model_number": %w`, err)}
 		}
 	}
 	if _, ok := _c.mutation.DefaultLifetimeWarranty(); !ok {
@@ -430,9 +513,21 @@ func (_c *ItemTemplateCreate) createSpec() (*ItemTemplate, *sqlgraph.CreateSpec)
 		_spec.SetField(itemtemplate.FieldDefaultInsured, field.TypeBool, value)
 		_node.DefaultInsured = value
 	}
+	if value, ok := _c.mutation.DefaultName(); ok {
+		_spec.SetField(itemtemplate.FieldDefaultName, field.TypeString, value)
+		_node.DefaultName = value
+	}
+	if value, ok := _c.mutation.DefaultDescription(); ok {
+		_spec.SetField(itemtemplate.FieldDefaultDescription, field.TypeString, value)
+		_node.DefaultDescription = value
+	}
 	if value, ok := _c.mutation.DefaultManufacturer(); ok {
 		_spec.SetField(itemtemplate.FieldDefaultManufacturer, field.TypeString, value)
 		_node.DefaultManufacturer = value
+	}
+	if value, ok := _c.mutation.DefaultModelNumber(); ok {
+		_spec.SetField(itemtemplate.FieldDefaultModelNumber, field.TypeString, value)
+		_node.DefaultModelNumber = value
 	}
 	if value, ok := _c.mutation.DefaultLifetimeWarranty(); ok {
 		_spec.SetField(itemtemplate.FieldDefaultLifetimeWarranty, field.TypeBool, value)
@@ -453,6 +548,10 @@ func (_c *ItemTemplateCreate) createSpec() (*ItemTemplate, *sqlgraph.CreateSpec)
 	if value, ok := _c.mutation.IncludeSoldFields(); ok {
 		_spec.SetField(itemtemplate.FieldIncludeSoldFields, field.TypeBool, value)
 		_node.IncludeSoldFields = value
+	}
+	if value, ok := _c.mutation.DefaultLabelIds(); ok {
+		_spec.SetField(itemtemplate.FieldDefaultLabelIds, field.TypeJSON, value)
+		_node.DefaultLabelIds = value
 	}
 	if nodes := _c.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -485,6 +584,23 @@ func (_c *ItemTemplateCreate) createSpec() (*ItemTemplate, *sqlgraph.CreateSpec)
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.LocationIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   itemtemplate.LocationTable,
+			Columns: []string{itemtemplate.LocationColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(location.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.item_template_location = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
