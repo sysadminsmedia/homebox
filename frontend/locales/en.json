@@ -241,7 +241,8 @@
                 "title": "Create Template"
             },
             "detail": {
-                "default_values": "Default Values"
+                "default_values": "Default Values",
+                "updated": "Updated"
             },
             "edit_modal": {
                 "title": "Edit Template"
@@ -269,6 +270,7 @@
                 "select": "Select template..."
             },
             "toast": {
+                "applied": "Template \"{name}\" applied",
                 "create_failed": "Failed to create template",
                 "created": "Template created",
                 "delete_failed": "Failed to delete template",
@@ -276,9 +278,16 @@
                 "duplicate_failed": "Failed to duplicate template",
                 "duplicated": "Template duplicated as \"{name}\"",
                 "load_failed": "Failed to load template details",
+                "saved_as_template": "Item saved as template \"{name}\"",
                 "update_failed": "Failed to update template",
                 "updated": "Template updated"
-            }
+            },
+            "apply_template": "Apply a template",
+            "using_template": "Using template: {name}",
+            "show_defaults": "Show defaults",
+            "hide_defaults": "Hide defaults",
+            "empty_value": "(empty)",
+            "save_as_template": "Save as Template"
         }
     },
     "errors": {
@@ -598,6 +607,12 @@
         "search": "Search",
         "templates": "Templates",
         "tools": "Tools"
+    },
+    "pages": {
+        "templates": {
+            "title": "Templates",
+            "no_templates": "No templates yet."
+        }
     },
     "profile": {
         "active": "Active",

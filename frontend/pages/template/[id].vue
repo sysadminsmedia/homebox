@@ -98,8 +98,8 @@
       defaultModelNumber: template.value.defaultModelNumber ?? "",
       defaultLifetimeWarranty: template.value.defaultLifetimeWarranty,
       defaultWarrantyDetails: template.value.defaultWarrantyDetails,
-      defaultLocation: template.value.location ?? null,
-      defaultLabelIds: template.value.labels?.map(l => l.id) ?? [],
+      defaultLocation: template.value.defaultLocation ?? null,
+      defaultLabelIds: template.value.defaultLabels?.map(l => l.id) ?? [],
       includeWarrantyFields: template.value.includeWarrantyFields,
       includePurchaseFields: template.value.includePurchaseFields,
       includeSoldFields: template.value.includeSoldFields,
@@ -212,9 +212,9 @@
           <div>
             <h1 class="pb-1 text-2xl">{{ template.name }}</h1>
             <div class="flex flex-wrap gap-1 text-xs text-muted-foreground">
-              <span>Created <DateTime :date="template.createdAt" /></span>
+              <span>{{ $t("global.created") }} <DateTime :date="template.createdAt" /></span>
               <span>•</span>
-              <span>Updated <DateTime :date="template.updatedAt" /></span>
+              <span>{{ $t("components.template.detail.updated") }} <DateTime :date="template.updatedAt" /></span>
             </div>
           </div>
           <div class="ml-auto flex gap-2">
@@ -258,13 +258,13 @@
               <dt class="text-muted-foreground">{{ $t("components.template.form.manufacturer") }}</dt>
               <dd>{{ template.defaultManufacturer }}</dd>
             </div>
-            <div v-if="template.location" class="flex justify-between">
+            <div v-if="template.defaultLocation" class="flex justify-between">
               <dt class="text-muted-foreground">{{ $t("components.template.form.location") }}</dt>
-              <dd>{{ template.location.name }}</dd>
+              <dd>{{ template.defaultLocation.name }}</dd>
             </div>
-            <div v-if="template.labels && template.labels.length > 0" class="flex justify-between">
+            <div v-if="template.defaultLabels && template.defaultLabels.length > 0" class="flex justify-between">
               <dt class="text-muted-foreground">{{ $t("global.labels") }}</dt>
-              <dd>{{ template.labels.map(l => l.name).join(", ") }}</dd>
+              <dd>{{ template.defaultLabels.map(l => l.name).join(", ") }}</dd>
             </div>
             <div class="flex justify-between">
               <dt class="text-muted-foreground">{{ $t("global.insured") }}</dt>

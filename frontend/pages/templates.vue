@@ -1,4 +1,5 @@
 <script setup lang="ts">
+  import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import MdiPlus from "~icons/mdi/plus";
   import { Button } from "@/components/ui/button";
@@ -13,8 +14,10 @@
     middleware: ["auth"],
   });
 
+  const { t } = useI18n();
+
   useHead({
-    title: "HomeBox | Templates",
+    title: computed(() => `HomeBox | ${t("pages.templates.title")}`),
   });
 
   const api = useUserApi();
@@ -23,7 +26,7 @@
   const { data: templates, refresh } = useAsyncData("templates", async () => {
     const { data, error } = await api.templates.getAll();
     if (error) {
-      toast.error("Failed to load templates");
+      toast.error(t("components.template.toast.load_failed"));
       return [];
     }
     return data;
@@ -33,7 +36,7 @@
 <template>
   <BaseContainer>
     <div class="mb-4 flex justify-between">
-      <BaseSectionHeader>Templates</BaseSectionHeader>
+      <BaseSectionHeader>{{ $t("pages.templates.title") }}</BaseSectionHeader>
       <Button @click="openDialog(DialogID.CreateTemplate)">
         <MdiPlus class="mr-2" />
         {{ $t("global.create") }}
@@ -47,10 +50,10 @@
     </div>
 
     <div v-else class="flex flex-col items-center justify-center py-12 text-center">
-      <p class="mb-4 text-muted-foreground">No templates yet.</p>
+      <p class="mb-4 text-muted-foreground">{{ $t("pages.templates.no_templates") }}</p>
       <Button @click="openDialog(DialogID.CreateTemplate)">
         <MdiPlus class="mr-2" />
-        Create Template
+        {{ $t("components.template.create_modal.title") }}
       </Button>
     </div>
   </BaseContainer>

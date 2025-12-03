@@ -13,7 +13,7 @@
               />
             </TooltipTrigger>
             <TooltipContent>
-              <p>Apply a template</p>
+              <p>{{ $t("components.template.apply_template") }}</p>
             </TooltipContent>
           </Tooltip>
 
@@ -53,15 +53,15 @@
             <MdiFileDocumentOutline class="mt-0.5 size-4 shrink-0 text-primary" />
             <div class="flex-1">
               <h4 class="text-sm font-medium text-foreground">
-                Using template: {{ templateData.name }}
+                {{ $t("components.template.using_template", { name: templateData.name }) }}
               </h4>
               <button
                 type="button"
                 class="mt-1 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
                 @click="showTemplateDetails = !showTemplateDetails"
               >
-                <span v-if="!showTemplateDetails">Show defaults</span>
-                <span v-else>Hide defaults</span>
+                <span v-if="!showTemplateDetails">{{ $t("components.template.show_defaults") }}</span>
+                <span v-else>{{ $t("components.template.hide_defaults") }}</span>
                 <MdiChevronDown
                   class="size-4 transition-transform"
                   :class="{ 'rotate-180': showTemplateDetails }"
@@ -87,35 +87,35 @@
             <p v-if="templateData.description" class="text-foreground/80">{{ templateData.description }}</p>
             <div class="grid grid-cols-2 gap-x-4 gap-y-1">
               <div v-if="templateData.defaultName">
-                <span class="font-medium">Name:</span> {{ templateData.defaultName }}
+                <span class="font-medium">{{ $t("global.name") }}:</span> {{ templateData.defaultName }}
               </div>
-              <div><span class="font-medium">Quantity:</span> {{ templateData.defaultQuantity }}</div>
-              <div><span class="font-medium">Insured:</span> {{ templateData.defaultInsured ? "Yes" : "No" }}</div>
+              <div><span class="font-medium">{{ $t("global.quantity") }}:</span> {{ templateData.defaultQuantity }}</div>
+              <div><span class="font-medium">{{ $t("global.insured") }}:</span> {{ templateData.defaultInsured ? $t("global.yes") : $t("global.no") }}</div>
               <div v-if="templateData.defaultManufacturer">
-                <span class="font-medium">Manufacturer:</span> {{ templateData.defaultManufacturer }}
+                <span class="font-medium">{{ $t("components.template.form.manufacturer") }}:</span> {{ templateData.defaultManufacturer }}
               </div>
               <div v-if="templateData.defaultModelNumber">
-                <span class="font-medium">Model:</span> {{ templateData.defaultModelNumber }}
+                <span class="font-medium">{{ $t("components.template.form.model_number") }}:</span> {{ templateData.defaultModelNumber }}
               </div>
-              <div v-if="templateData.defaultLifetimeWarranty"><span class="font-medium">Warranty:</span> Lifetime</div>
+              <div v-if="templateData.defaultLifetimeWarranty"><span class="font-medium">{{ $t("components.template.form.lifetime_warranty") }}:</span> {{ $t("global.yes") }}</div>
               <div v-if="templateData.defaultLocation">
-                <span class="font-medium">Location:</span> {{ templateData.defaultLocation.name }}
+                <span class="font-medium">{{ $t("components.template.form.location") }}:</span> {{ templateData.defaultLocation.name }}
               </div>
             </div>
             <div v-if="templateData.defaultLabels && templateData.defaultLabels.length > 0" class="mt-1">
-              <span class="font-medium">Labels:</span>
+              <span class="font-medium">{{ $t("global.labels") }}:</span>
               {{ templateData.defaultLabels.map((l: any) => l.name).join(", ") }}
             </div>
             <div v-if="templateData.defaultDescription" class="mt-1">
-              <p class="font-medium">Description:</p>
+              <p class="font-medium">{{ $t("components.template.form.item_description") }}:</p>
               <p class="ml-2">{{ templateData.defaultDescription }}</p>
             </div>
             <div v-if="templateData.fields && templateData.fields.length > 0" class="mt-1">
-              <p class="font-medium">Custom Fields:</p>
+              <p class="font-medium">{{ $t("components.template.form.custom_fields") }}:</p>
               <ul class="ml-4 flex list-none flex-col gap-1">
                 <li v-for="field in templateData.fields" :key="field.id">
                   <span class="font-medium">{{ field.name }}:</span>
-                  <span> {{ field.textValue || "(empty)" }}</span>
+                  <span> {{ field.textValue || $t("components.template.empty_value") }}</span>
                 </li>
               </ul>
             </div>
@@ -374,7 +374,7 @@
     // Load full template details
     const { data, error } = await api.templates.get(template.id);
     if (error || !data) {
-      toast.error("Failed to load template details");
+      toast.error(t("components.template.toast.load_failed"));
       return;
     }
 
@@ -404,7 +404,7 @@
     // Save template ID to localStorage for persistence
     localStorage.setItem(LAST_TEMPLATE_KEY, template.id);
 
-    toast.success(`Template "${data.name}" applied`);
+    toast.success(t("components.template.toast.applied", { name: data.name }));
   }
 
   async function restoreLastTemplate() {

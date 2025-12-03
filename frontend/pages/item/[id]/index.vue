@@ -604,11 +604,11 @@
 
     const { data, error } = await api.templates.create(templateData);
     if (error) {
-      toast.error("Failed to create template");
+      toast.error(t("components.template.toast.create_failed"));
       return;
     }
 
-    toast.success(`Template "${templateData.name}" created successfully`);
+    toast.success(t("components.template.toast.saved_as_template", { name: templateData.name }));
     navigateTo(`/template/${data.id}`);
   }
 
@@ -722,7 +722,7 @@
                   </DropdownMenuItem>
                   <DropdownMenuItem @click="saveAsTemplate">
                     <MdiContentSaveEdit class="mr-2 size-4" />
-                    Save as Template
+                    {{ $t("components.template.save_as_template") }}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem class="text-destructive focus:text-destructive" @click="deleteItem">
