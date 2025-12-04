@@ -6,11 +6,7 @@
           <!-- Template selector button -->
           <Tooltip>
             <TooltipTrigger>
-              <TemplateSelector
-                v-model="selectedTemplate"
-                compact
-                @template-selected="handleTemplateSelected"
-              />
+              <TemplateSelector v-model="selectedTemplate" compact @template-selected="handleTemplateSelected" />
             </TooltipTrigger>
             <TooltipContent>
               <p>{{ $t("components.template.apply_template") }}</p>
@@ -62,10 +58,7 @@
               >
                 <span v-if="!showTemplateDetails">{{ $t("components.template.show_defaults") }}</span>
                 <span v-else>{{ $t("components.template.hide_defaults") }}</span>
-                <MdiChevronDown
-                  class="size-4 transition-transform"
-                  :class="{ 'rotate-180': showTemplateDetails }"
-                />
+                <MdiChevronDown class="size-4 transition-transform" :class="{ 'rotate-180': showTemplateDetails }" />
               </button>
             </div>
           </div>
@@ -89,17 +82,28 @@
               <div v-if="templateData.defaultName">
                 <span class="font-medium">{{ $t("global.name") }}:</span> {{ templateData.defaultName }}
               </div>
-              <div><span class="font-medium">{{ $t("global.quantity") }}:</span> {{ templateData.defaultQuantity }}</div>
-              <div><span class="font-medium">{{ $t("global.insured") }}:</span> {{ templateData.defaultInsured ? $t("global.yes") : $t("global.no") }}</div>
+              <div>
+                <span class="font-medium">{{ $t("global.quantity") }}:</span> {{ templateData.defaultQuantity }}
+              </div>
+              <div>
+                <span class="font-medium">{{ $t("global.insured") }}:</span>
+                {{ templateData.defaultInsured ? $t("global.yes") : $t("global.no") }}
+              </div>
               <div v-if="templateData.defaultManufacturer">
-                <span class="font-medium">{{ $t("components.template.form.manufacturer") }}:</span> {{ templateData.defaultManufacturer }}
+                <span class="font-medium">{{ $t("components.template.form.manufacturer") }}:</span>
+                {{ templateData.defaultManufacturer }}
               </div>
               <div v-if="templateData.defaultModelNumber">
-                <span class="font-medium">{{ $t("components.template.form.model_number") }}:</span> {{ templateData.defaultModelNumber }}
+                <span class="font-medium">{{ $t("components.template.form.model_number") }}:</span>
+                {{ templateData.defaultModelNumber }}
               </div>
-              <div v-if="templateData.defaultLifetimeWarranty"><span class="font-medium">{{ $t("components.template.form.lifetime_warranty") }}:</span> {{ $t("global.yes") }}</div>
+              <div v-if="templateData.defaultLifetimeWarranty">
+                <span class="font-medium">{{ $t("components.template.form.lifetime_warranty") }}:</span>
+                {{ $t("global.yes") }}
+              </div>
               <div v-if="templateData.defaultLocation">
-                <span class="font-medium">{{ $t("components.template.form.location") }}:</span> {{ templateData.defaultLocation.name }}
+                <span class="font-medium">{{ $t("components.template.form.location") }}:</span>
+                {{ templateData.defaultLocation.name }}
               </div>
             </div>
             <div v-if="templateData.defaultLabels && templateData.defaultLabels.length > 0" class="mt-1">

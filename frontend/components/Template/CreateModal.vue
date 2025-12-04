@@ -1,19 +1,41 @@
 <template>
   <BaseModal :dialog-id="DialogID.CreateTemplate" :title="$t('components.template.create_modal.title')">
     <form class="flex flex-col gap-2" @submit.prevent="create()">
-      <FormTextField v-model="form.name" :autofocus="true" :label="$t('components.template.form.template_name')" :max-length="255" :min-length="1" />
-      <FormTextArea v-model="form.description" :label="$t('components.template.form.template_description')" :max-length="1000" />
+      <FormTextField
+        v-model="form.name"
+        :autofocus="true"
+        :label="$t('components.template.form.template_name')"
+        :max-length="255"
+        :min-length="1"
+      />
+      <FormTextArea
+        v-model="form.description"
+        :label="$t('components.template.form.template_description')"
+        :max-length="1000"
+      />
 
       <Separator class="my-2" />
       <h3 class="text-sm font-medium">{{ $t("components.template.form.default_item_values") }}</h3>
       <div class="grid gap-2">
         <FormTextField v-model="form.defaultName" :label="$t('components.template.form.item_name')" :max-length="255" />
-        <FormTextArea v-model="form.defaultDescription" :label="$t('components.template.form.item_description')" :max-length="1000" />
+        <FormTextArea
+          v-model="form.defaultDescription"
+          :label="$t('components.template.form.item_description')"
+          :max-length="1000"
+        />
         <div class="grid grid-cols-2 gap-2">
           <FormTextField v-model.number="form.defaultQuantity" :label="$t('global.quantity')" type="number" :min="1" />
-          <FormTextField v-model="form.defaultModelNumber" :label="$t('components.template.form.model_number')" :max-length="255" />
+          <FormTextField
+            v-model="form.defaultModelNumber"
+            :label="$t('components.template.form.model_number')"
+            :max-length="255"
+          />
         </div>
-        <FormTextField v-model="form.defaultManufacturer" :label="$t('components.template.form.manufacturer')" :max-length="255" />
+        <FormTextField
+          v-model="form.defaultManufacturer"
+          :label="$t('components.template.form.manufacturer')"
+          :max-length="255"
+        />
         <LocationSelector v-model="form.defaultLocation" :label="$t('components.template.form.default_location')" />
         <LabelSelector v-model="form.defaultLabelIds" :labels="labels ?? []" />
         <div class="flex items-center gap-4">
@@ -23,7 +45,9 @@
           </div>
           <div class="flex items-center gap-2">
             <Switch id="defaultLifetimeWarranty" v-model:checked="form.defaultLifetimeWarranty" />
-            <Label for="defaultLifetimeWarranty" class="text-sm">{{ $t("components.template.form.lifetime_warranty") }}</Label>
+            <Label for="defaultLifetimeWarranty" class="text-sm">{{
+              $t("components.template.form.lifetime_warranty")
+            }}</Label>
           </div>
         </div>
       </div>
@@ -38,8 +62,17 @@
       </div>
       <div v-if="form.fields.length > 0" class="flex flex-col gap-2">
         <div v-for="(field, idx) in form.fields" :key="idx" class="flex items-end gap-2">
-          <FormTextField v-model="field.name" :label="$t('components.template.form.field_name')" :max-length="255" class="flex-1" />
-          <FormTextField v-model="field.textValue" :label="$t('components.template.form.default_value')" class="flex-1" />
+          <FormTextField
+            v-model="field.name"
+            :label="$t('components.template.form.field_name')"
+            :max-length="255"
+            class="flex-1"
+          />
+          <FormTextField
+            v-model="field.textValue"
+            :label="$t('components.template.form.default_value')"
+            class="flex-1"
+          />
           <Button type="button" size="icon" variant="ghost" @click="form.fields.splice(idx, 1)">
             <MdiDelete class="size-4" />
           </Button>

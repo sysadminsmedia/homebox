@@ -15,7 +15,11 @@
     </PopoverTrigger>
     <PopoverContent class="w-72 p-0" align="end">
       <Command :ignore-filter="true">
-        <CommandInput v-model="search" :placeholder="$t('components.template.selector.search')" :display-value="_ => ''" />
+        <CommandInput
+          v-model="search"
+          :placeholder="$t('components.template.selector.search')"
+          :display-value="_ => ''"
+        />
         <CommandEmpty>{{ $t("components.template.selector.not_found") }}</CommandEmpty>
         <CommandList>
           <CommandGroup>
@@ -52,7 +56,11 @@
       </PopoverTrigger>
       <PopoverContent class="w-[--reka-popper-anchor-width] p-0">
         <Command :ignore-filter="true">
-          <CommandInput v-model="search" :placeholder="$t('components.template.selector.search')" :display-value="_ => ''" />
+          <CommandInput
+            v-model="search"
+            :placeholder="$t('components.template.selector.search')"
+            :display-value="_ => ''"
+          />
           <CommandEmpty>{{ $t("components.template.selector.not_found") }}</CommandEmpty>
           <CommandList>
             <CommandGroup>

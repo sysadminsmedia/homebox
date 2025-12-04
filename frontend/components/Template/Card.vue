@@ -96,10 +96,22 @@
           <MdiPencil class="size-4" />
         </NuxtLink>
       </Button>
-      <Button size="icon" variant="outline" class="size-8" :title="$t('components.template.card.duplicate')" @click="handleDuplicate">
+      <Button
+        size="icon"
+        variant="outline"
+        class="size-8"
+        :title="$t('components.template.card.duplicate')"
+        @click="handleDuplicate"
+      >
         <MdiContentCopy class="size-4" />
       </Button>
-      <Button size="icon" variant="destructive" class="size-8" :title="$t('components.template.card.delete')" @click="handleDelete">
+      <Button
+        size="icon"
+        variant="destructive"
+        class="size-8"
+        :title="$t('components.template.card.delete')"
+        @click="handleDelete"
+      >
         <MdiDelete class="size-4" />
       </Button>
     </CardFooter>

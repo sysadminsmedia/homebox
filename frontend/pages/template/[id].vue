@@ -146,20 +146,53 @@
       </DialogHeader>
 
       <form v-if="template" class="flex flex-col gap-2" @submit.prevent="update">
-        <FormTextField v-model="updateData.name" :autofocus="true" :label="$t('components.template.form.template_name')" :max-length="255" />
-        <FormTextArea v-model="updateData.description" :label="$t('components.template.form.template_description')" :max-length="1000" />
+        <FormTextField
+          v-model="updateData.name"
+          :autofocus="true"
+          :label="$t('components.template.form.template_name')"
+          :max-length="255"
+        />
+        <FormTextArea
+          v-model="updateData.description"
+          :label="$t('components.template.form.template_description')"
+          :max-length="1000"
+        />
 
         <Separator class="my-2" />
         <h3 class="text-sm font-medium">{{ $t("components.template.form.default_item_values") }}</h3>
         <div class="grid gap-2">
-          <FormTextField v-model="updateData.defaultName" :label="$t('components.template.form.item_name')" :max-length="255" />
-          <FormTextArea v-model="updateData.defaultDescription" :label="$t('components.template.form.item_description')" :max-length="1000" />
+          <FormTextField
+            v-model="updateData.defaultName"
+            :label="$t('components.template.form.item_name')"
+            :max-length="255"
+          />
+          <FormTextArea
+            v-model="updateData.defaultDescription"
+            :label="$t('components.template.form.item_description')"
+            :max-length="1000"
+          />
           <div class="grid grid-cols-2 gap-2">
-            <FormTextField v-model.number="updateData.defaultQuantity" :label="$t('global.quantity')" type="number" :min="1" />
-            <FormTextField v-model="updateData.defaultModelNumber" :label="$t('components.template.form.model_number')" :max-length="255" />
+            <FormTextField
+              v-model.number="updateData.defaultQuantity"
+              :label="$t('global.quantity')"
+              type="number"
+              :min="1"
+            />
+            <FormTextField
+              v-model="updateData.defaultModelNumber"
+              :label="$t('components.template.form.model_number')"
+              :max-length="255"
+            />
           </div>
-          <FormTextField v-model="updateData.defaultManufacturer" :label="$t('components.template.form.manufacturer')" :max-length="255" />
-          <LocationSelector v-model="updateData.defaultLocation" :label="$t('components.template.form.default_location')" />
+          <FormTextField
+            v-model="updateData.defaultManufacturer"
+            :label="$t('components.template.form.manufacturer')"
+            :max-length="255"
+          />
+          <LocationSelector
+            v-model="updateData.defaultLocation"
+            :label="$t('components.template.form.default_location')"
+          />
           <LabelSelector v-model="updateData.defaultLabelIds" :labels="labels ?? []" />
           <div class="flex items-center gap-4">
             <div class="flex items-center gap-2">
@@ -188,8 +221,17 @@
         </div>
         <div v-if="updateData.fields.length > 0" class="flex flex-col gap-2">
           <div v-for="(field, idx) in updateData.fields" :key="idx" class="flex items-end gap-2">
-            <FormTextField v-model="field.name" :label="$t('components.template.form.field_name')" :max-length="255" class="flex-1" />
-            <FormTextField v-model="field.textValue" :label="$t('components.template.form.default_value')" class="flex-1" />
+            <FormTextField
+              v-model="field.name"
+              :label="$t('components.template.form.field_name')"
+              :max-length="255"
+              class="flex-1"
+            />
+            <FormTextField
+              v-model="field.textValue"
+              :label="$t('components.template.form.default_value')"
+              class="flex-1"
+            />
             <Button type="button" size="icon" variant="ghost" @click="updateData.fields.splice(idx, 1)">
               <MdiDelete class="size-4" />
             </Button>

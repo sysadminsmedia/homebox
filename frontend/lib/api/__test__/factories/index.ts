@@ -2,7 +2,13 @@ import { faker } from "@faker-js/faker";
 import { expect } from "vitest";
 import { overrideParts } from "../../base/urls";
 import { PublicApi } from "../../public";
-import type { ItemField, ItemTemplateCreate, LabelCreate, LocationCreate, UserRegistration } from "../../types/data-contracts";
+import type {
+  ItemField,
+  ItemTemplateCreate,
+  LabelCreate,
+  LocationCreate,
+  UserRegistration,
+} from "../../types/data-contracts";
 import * as config from "../../../../test/config";
 import { UserClient } from "../../user";
 import { Requests } from "../../../requests";
