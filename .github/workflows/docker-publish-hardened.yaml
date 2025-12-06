@@ -118,7 +118,7 @@ jobs:
             VERSION=${{ github.ref_name }}
             COMMIT=${{ github.sha }}
             BUILD_TIME=${{ env.BUILD_TIME }}
-          provenance: mode=slsa
+          provenance: mode=max
           sbom: true
           annotations: ${{ steps.meta.outputs.annotations }}
 
@@ -181,7 +181,7 @@ jobs:
         uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435
         with:
           driver-opts: |
-            image=ghcr.io/amitie10g/buildkit:master
+            image=ghcr.io/sysadminsmedia/buildkit:master
 
       - name: Docker meta
         id: meta
