@@ -28,7 +28,7 @@ type User struct {
 	// Email holds the value of the "email" field.
 	Email string `json:"email,omitempty"`
 	// Password holds the value of the "password" field.
-	Password string `json:"-"`
+	Password *string `json:"-"`
 	// IsSuperuser holds the value of the "is_superuser" field.
 	IsSuperuser bool `json:"is_superuser,omitempty"`
 	// Superuser holds the value of the "superuser" field.
@@ -37,6 +37,10 @@ type User struct {
 	Role user.Role `json:"role,omitempty"`
 	// ActivatedOn holds the value of the "activated_on" field.
 	ActivatedOn time.Time `json:"activated_on,omitempty"`
+	// OidcIssuer holds the value of the "oidc_issuer" field.
+	OidcIssuer *string `json:"oidc_issuer,omitempty"`
+	// OidcSubject holds the value of the "oidc_subject" field.
+	OidcSubject *string `json:"oidc_subject,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -93,7 +97,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldIsSuperuser, user.FieldSuperuser:
 			values[i] = new(sql.NullBool)
-		case user.FieldName, user.FieldEmail, user.FieldPassword, user.FieldRole:
+		case user.FieldName, user.FieldEmail, user.FieldPassword, user.FieldRole, user.FieldOidcIssuer, user.FieldOidcSubject:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt, user.FieldActivatedOn:
 			values[i] = new(sql.NullTime)
@@ -150,7 +154,8 @@ func (_m *User) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field password", values[i])
 			} else if value.Valid {
-				_m.Password = value.String
+				_m.Password = new(string)
+				*_m.Password = value.String
 			}
 		case user.FieldIsSuperuser:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -175,6 +180,20 @@ func (_m *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field activated_on", values[i])
 			} else if value.Valid {
 				_m.ActivatedOn = value.Time
+			}
+		case user.FieldOidcIssuer:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field oidc_issuer", values[i])
+			} else if value.Valid {
+				_m.OidcIssuer = new(string)
+				*_m.OidcIssuer = value.String
+			}
+		case user.FieldOidcSubject:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field oidc_subject", values[i])
+			} else if value.Valid {
+				_m.OidcSubject = new(string)
+				*_m.OidcSubject = value.String
 			}
 		case user.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
@@ -259,6 +278,16 @@ func (_m *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("activated_on=")
 	builder.WriteString(_m.ActivatedOn.Format(time.ANSIC))
+	builder.WriteString(", ")
+	if v := _m.OidcIssuer; v != nil {
+		builder.WriteString("oidc_issuer=")
+		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.OidcSubject; v != nil {
+		builder.WriteString("oidc_subject=")
+		builder.WriteString(*v)
+	}
 	builder.WriteByte(')')
 	return builder.String()
 }

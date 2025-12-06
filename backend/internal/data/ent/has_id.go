@@ -32,10 +32,6 @@ func (_m *ItemField) GetID() uuid.UUID {
 	return _m.ID
 }
 
-func (_m *ItemTemplate) GetID() uuid.UUID {
-	return _m.ID
-}
-
 func (_m *Label) GetID() uuid.UUID {
 	return _m.ID
 }
@@ -49,10 +45,6 @@ func (_m *MaintenanceEntry) GetID() uuid.UUID {
 }
 
 func (_m *Notifier) GetID() uuid.UUID {
-	return _m.ID
-}
-
-func (_m *TemplateField) GetID() uuid.UUID {
 	return _m.ID
 }
 

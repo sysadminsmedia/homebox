@@ -16,7 +16,6 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
@@ -37,7 +36,6 @@ type GroupQuery struct {
 	withLabels           *LabelQuery
 	withInvitationTokens *GroupInvitationTokenQuery
 	withNotifiers        *NotifierQuery
-	withItemTemplates    *ItemTemplateQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -199,28 +197,6 @@ func (_q *GroupQuery) QueryNotifiers() *NotifierQuery {
 			sqlgraph.From(group.Table, group.FieldID, selector),
 			sqlgraph.To(notifier.Table, notifier.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, group.NotifiersTable, group.NotifiersColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
-// QueryItemTemplates chains the current query on the "item_templates" edge.
-func (_q *GroupQuery) QueryItemTemplates() *ItemTemplateQuery {
-	query := (&ItemTemplateClient{config: _q.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := _q.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := _q.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(group.Table, group.FieldID, selector),
-			sqlgraph.To(itemtemplate.Table, itemtemplate.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, group.ItemTemplatesTable, group.ItemTemplatesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -426,7 +402,6 @@ func (_q *GroupQuery) Clone() *GroupQuery {
 		withLabels:           _q.withLabels.Clone(),
 		withInvitationTokens: _q.withInvitationTokens.Clone(),
 		withNotifiers:        _q.withNotifiers.Clone(),
-		withItemTemplates:    _q.withItemTemplates.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -496,17 +471,6 @@ func (_q *GroupQuery) WithNotifiers(opts ...func(*NotifierQuery)) *GroupQuery {
 		opt(query)
 	}
 	_q.withNotifiers = query
-	return _q
-}
-
-// WithItemTemplates tells the query-builder to eager-load the nodes that are connected to
-// the "item_templates" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *GroupQuery) WithItemTemplates(opts ...func(*ItemTemplateQuery)) *GroupQuery {
-	query := (&ItemTemplateClient{config: _q.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	_q.withItemTemplates = query
 	return _q
 }
 
@@ -588,14 +552,13 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 	var (
 		nodes       = []*Group{}
 		_spec       = _q.querySpec()
-		loadedTypes = [7]bool{
+		loadedTypes = [6]bool{
 			_q.withUsers != nil,
 			_q.withLocations != nil,
 			_q.withItems != nil,
 			_q.withLabels != nil,
 			_q.withInvitationTokens != nil,
 			_q.withNotifiers != nil,
-			_q.withItemTemplates != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -657,13 +620,6 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 		if err := _q.loadNotifiers(ctx, query, nodes,
 			func(n *Group) { n.Edges.Notifiers = []*Notifier{} },
 			func(n *Group, e *Notifier) { n.Edges.Notifiers = append(n.Edges.Notifiers, e) }); err != nil {
-			return nil, err
-		}
-	}
-	if query := _q.withItemTemplates; query != nil {
-		if err := _q.loadItemTemplates(ctx, query, nodes,
-			func(n *Group) { n.Edges.ItemTemplates = []*ItemTemplate{} },
-			func(n *Group, e *ItemTemplate) { n.Edges.ItemTemplates = append(n.Edges.ItemTemplates, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -850,37 +806,6 @@ func (_q *GroupQuery) loadNotifiers(ctx context.Context, query *NotifierQuery, n
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "group_id" returned %v for node %v`, fk, n.ID)
-		}
-		assign(node, n)
-	}
-	return nil
-}
-func (_q *GroupQuery) loadItemTemplates(ctx context.Context, query *ItemTemplateQuery, nodes []*Group, init func(*Group), assign func(*Group, *ItemTemplate)) error {
-	fks := make([]driver.Value, 0, len(nodes))
-	nodeids := make(map[uuid.UUID]*Group)
-	for i := range nodes {
-		fks = append(fks, nodes[i].ID)
-		nodeids[nodes[i].ID] = nodes[i]
-		if init != nil {
-			init(nodes[i])
-		}
-	}
-	query.withFKs = true
-	query.Where(predicate.ItemTemplate(func(s *sql.Selector) {
-		s.Where(sql.InValues(s.C(group.ItemTemplatesColumn), fks...))
-	}))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		fk := n.group_item_templates
-		if fk == nil {
-			return fmt.Errorf(`foreign-key "group_item_templates" is nil for node %v`, n.ID)
-		}
-		node, ok := nodeids[*fk]
-		if !ok {
-			return fmt.Errorf(`unexpected referenced foreign-key "group_item_templates" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

@@ -46,11 +46,9 @@ type GroupEdges struct {
 	InvitationTokens []*GroupInvitationToken `json:"invitation_tokens,omitempty"`
 	// Notifiers holds the value of the notifiers edge.
 	Notifiers []*Notifier `json:"notifiers,omitempty"`
-	// ItemTemplates holds the value of the item_templates edge.
-	ItemTemplates []*ItemTemplate `json:"item_templates,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [7]bool
+	loadedTypes [6]bool
 }
 
 // UsersOrErr returns the Users value or an error if the edge
@@ -105,15 +103,6 @@ func (e GroupEdges) NotifiersOrErr() ([]*Notifier, error) {
 		return e.Notifiers, nil
 	}
 	return nil, &NotLoadedError{edge: "notifiers"}
-}
-
-// ItemTemplatesOrErr returns the ItemTemplates value or an error if the edge
-// was not loaded in eager-loading.
-func (e GroupEdges) ItemTemplatesOrErr() ([]*ItemTemplate, error) {
-	if e.loadedTypes[6] {
-		return e.ItemTemplates, nil
-	}
-	return nil, &NotLoadedError{edge: "item_templates"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -213,11 +202,6 @@ func (_m *Group) QueryInvitationTokens() *GroupInvitationTokenQuery {
 // QueryNotifiers queries the "notifiers" edge of the Group entity.
 func (_m *Group) QueryNotifiers() *NotifierQuery {
 	return NewGroupClient(_m.config).QueryNotifiers(_m)
-}
-
-// QueryItemTemplates queries the "item_templates" edge of the Group entity.
-func (_m *Group) QueryItemTemplates() *ItemTemplateQuery {
-	return NewGroupClient(_m.config).QueryItemTemplates(_m)
 }
 
 // Update returns a builder for updating this Group.

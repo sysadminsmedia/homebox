@@ -19,7 +19,7 @@ type (
 	UserCreate struct {
 		Name        string    `json:"name"`
 		Email       string    `json:"email"`
-		Password    string    `json:"password"`
+		Password    *string   `json:"password"`
 		IsSuperuser bool      `json:"isSuperuser"`
 		GroupID     uuid.UUID `json:"groupID"`
 		IsOwner     bool      `json:"isOwner"`
@@ -39,6 +39,8 @@ type (
 		GroupName    string    `json:"groupName"`
 		PasswordHash string    `json:"-"`
 		IsOwner      bool      `json:"isOwner"`
+		OidcIssuer   *string   `json:"oidcIssuer"`
+		OidcSubject  *string   `json:"oidcSubject"`
 	}
 )
 
@@ -48,6 +50,11 @@ var (
 )
 
 func mapUserOut(user *ent.User) UserOut {
+	var passwordHash string
+	if user.Password != nil {
+		passwordHash = *user.Password
+	}
+
 	return UserOut{
 		ID:           user.ID,
 		Name:         user.Name,
@@ -55,8 +62,10 @@ func mapUserOut(user *ent.User) UserOut {
 		IsSuperuser:  user.IsSuperuser,
 		GroupID:      user.Edges.Group.ID,
 		GroupName:    user.Edges.Group.Name,
-		PasswordHash: user.Password,
+		PasswordHash: passwordHash,
 		IsOwner:      user.Role == "owner",
+		OidcIssuer:   user.OidcIssuer,
+		OidcSubject:  user.OidcSubject,
 	}
 }
 
@@ -85,15 +94,48 @@ func (r *UserRepository) Create(ctx context.Context, usr UserCreate) (UserOut, e
 		role = user.RoleOwner
 	}
 
-	entUser, err := r.db.User.
+	createQuery := r.db.User.
 		Create().
 		SetName(usr.Name).
 		SetEmail(usr.Email).
-		SetPassword(usr.Password).
+		SetIsSuperuser(usr.IsSuperuser).
+		SetGroupID(usr.GroupID).
+		SetRole(role)
+
+	// Only set password if provided (non-nil)
+	if usr.Password != nil {
+		createQuery = createQuery.SetPassword(*usr.Password)
+	}
+
+	entUser, err := createQuery.Save(ctx)
+	if err != nil {
+		return UserOut{}, err
+	}
+
+	return r.GetOneID(ctx, entUser.ID)
+}
+
+func (r *UserRepository) CreateWithOIDC(ctx context.Context, usr UserCreate, issuer, subject string) (UserOut, error) {
+	role := user.RoleUser
+	if usr.IsOwner {
+		role = user.RoleOwner
+	}
+
+	createQuery := r.db.User.
+		Create().
+		SetName(usr.Name).
+		SetEmail(usr.Email).
 		SetIsSuperuser(usr.IsSuperuser).
 		SetGroupID(usr.GroupID).
 		SetRole(role).
-		Save(ctx)
+		SetOidcIssuer(issuer).
+		SetOidcSubject(subject)
+
+	if usr.Password != nil {
+		createQuery = createQuery.SetPassword(*usr.Password)
+	}
+
+	entUser, err := createQuery.Save(ctx)
 	if err != nil {
 		return UserOut{}, err
 	}
@@ -132,4 +174,15 @@ func (r *UserRepository) GetSuperusers(ctx context.Context) ([]*ent.User, error)
 
 func (r *UserRepository) ChangePassword(ctx context.Context, uid uuid.UUID, pw string) error {
 	return r.db.User.UpdateOneID(uid).SetPassword(pw).Exec(ctx)
+}
+
+func (r *UserRepository) SetOIDCIdentity(ctx context.Context, uid uuid.UUID, issuer, subject string) error {
+	return r.db.User.UpdateOneID(uid).SetOidcIssuer(issuer).SetOidcSubject(subject).Exec(ctx)
+}
+
+func (r *UserRepository) GetOneOIDC(ctx context.Context, issuer, subject string) (UserOut, error) {
+	return mapUserOutErr(r.db.User.Query().
+		Where(user.OidcIssuerEQ(issuer), user.OidcSubjectEQ(subject)).
+		WithGroup().
+		Only(ctx))
 }

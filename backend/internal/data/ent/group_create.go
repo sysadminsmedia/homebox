@@ -14,7 +14,6 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
@@ -178,21 +177,6 @@ func (_c *GroupCreate) AddNotifiers(v ...*Notifier) *GroupCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddNotifierIDs(ids...)
-}
-
-// AddItemTemplateIDs adds the "item_templates" edge to the ItemTemplate entity by IDs.
-func (_c *GroupCreate) AddItemTemplateIDs(ids ...uuid.UUID) *GroupCreate {
-	_c.mutation.AddItemTemplateIDs(ids...)
-	return _c
-}
-
-// AddItemTemplates adds the "item_templates" edges to the ItemTemplate entity.
-func (_c *GroupCreate) AddItemTemplates(v ...*ItemTemplate) *GroupCreate {
-	ids := make([]uuid.UUID, len(v))
-	for i := range v {
-		ids[i] = v[i].ID
-	}
-	return _c.AddItemTemplateIDs(ids...)
 }
 
 // Mutation returns the GroupMutation object of the builder.
@@ -407,22 +391,6 @@ func (_c *GroupCreate) createSpec() (*Group, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(notifier.FieldID, field.TypeUUID),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := _c.mutation.ItemTemplatesIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   group.ItemTemplatesTable,
-			Columns: []string{group.ItemTemplatesColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(itemtemplate.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

@@ -2,6 +2,7 @@ package v1
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -106,6 +107,11 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 			provider = "local"
 		}
 
+		// Block local only when disabled
+		if provider == "local" && !ctrl.config.Options.AllowLocalLogin {
+			return validate.NewRequestError(fmt.Errorf("local login is not enabled"), http.StatusForbidden)
+		}
+
 		// Get the provider
 		p, ok := providers[provider]
 		if !ok {
@@ -114,8 +120,8 @@ func (ctrl *V1Controller) HandleAuthLogin(ps ...AuthProvider) errchain.HandlerFu
 
 		newToken, err := p.Authenticate(w, r)
 		if err != nil {
-			log.Err(err).Msg("failed to authenticate")
-			return server.JSON(w, http.StatusInternalServerError, err.Error())
+			log.Warn().Err(err).Msg("authentication failed")
+			return validate.NewUnauthorizedError()
 		}
 
 		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, true)
@@ -246,4 +252,66 @@ func (ctrl *V1Controller) unsetCookies(w http.ResponseWriter, domain string) {
 		HttpOnly: false,
 		Path:     "/",
 	})
+}
+
+// HandleOIDCLogin godoc
+//
+//	@Summary	OIDC Login Initiation
+//	@Tags		Authentication
+//	@Produce	json
+//	@Success	302
+//	@Router		/v1/users/login/oidc [GET]
+func (ctrl *V1Controller) HandleOIDCLogin() errchain.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		// Forbidden if OIDC is not enabled
+		if !ctrl.config.OIDC.Enabled {
+			return validate.NewRequestError(fmt.Errorf("OIDC is not enabled"), http.StatusForbidden)
+		}
+
+		// Check if OIDC provider is available
+		if ctrl.oidcProvider == nil {
+			log.Error().Msg("OIDC provider not initialized")
+			return validate.NewRequestError(errors.New("OIDC provider not available"), http.StatusInternalServerError)
+		}
+
+		// Initiate OIDC flow
+		_, err := ctrl.oidcProvider.InitiateOIDCFlow(w, r)
+		return err
+	}
+}
+
+// HandleOIDCCallback godoc
+//
+//	@Summary	OIDC Callback Handler
+//	@Tags		Authentication
+//	@Param		code	query	string	true	"Authorization code"
+//	@Param		state	query	string	true	"State parameter"
+//	@Success	302
+//	@Router		/v1/users/login/oidc/callback [GET]
+func (ctrl *V1Controller) HandleOIDCCallback() errchain.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		// Forbidden if OIDC is not enabled
+		if !ctrl.config.OIDC.Enabled {
+			return validate.NewRequestError(fmt.Errorf("OIDC is not enabled"), http.StatusForbidden)
+		}
+
+		// Check if OIDC provider is available
+		if ctrl.oidcProvider == nil {
+			log.Error().Msg("OIDC provider not initialized")
+			return validate.NewRequestError(errors.New("OIDC provider not available"), http.StatusInternalServerError)
+		}
+
+		// Handle callback
+		newToken, err := ctrl.oidcProvider.HandleCallback(w, r)
+		if err != nil {
+			log.Err(err).Msg("OIDC callback failed")
+			http.Redirect(w, r, "/?oidc_error=oidc_auth_failed", http.StatusFound)
+			return nil
+		}
+
+		// Set cookies and redirect to home
+		ctrl.setCookies(w, noPort(r.Host), newToken.Raw, newToken.ExpiresAt, true)
+		http.Redirect(w, r, "/home", http.StatusFound)
+		return nil
+	}
 }

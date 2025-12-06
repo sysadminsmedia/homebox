@@ -358,6 +358,7 @@
         "dont_join_group": "Don't want to join a group?",
         "joining_group": "You're Joining an Existing Group!",
         "login": "Login",
+        "or": "or",
         "register": "Register",
         "remember_me": "Remember Me",
         "set_email": "What's your email?",
@@ -369,6 +370,14 @@
             "invalid_email": "Invalid email address",
             "invalid_email_password": "Invalid email or password",
             "login_success": "Logged in successfully",
+            "oidc_access_denied": "Access denied: Your account does not have the required role/group membership",
+            "oidc_auth_failed": "OIDC authentication failed",
+            "oidc_invalid_response": "Invalid OIDC response received",
+            "oidc_provider_error": "OIDC provider returned an error",
+            "oidc_security_error": "OIDC security error - possible CSRF attack",
+            "oidc_session_expired": "OIDC session has expired",
+            "oidc_token_expired": "OIDC token has expired",
+            "oidc_token_invalid": "OIDC token signature is invalid",
             "problem_registering": "Problem registering user",
             "user_registered": "User registered"
         }
