@@ -2,7 +2,13 @@ import { faker } from "@faker-js/faker";
 import { expect } from "vitest";
 import { overrideParts } from "../../base/urls";
 import { PublicApi } from "../../public";
-import type { ItemField, LabelCreate, LocationCreate, UserRegistration } from "../../types/data-contracts";
+import type {
+  ItemField,
+  ItemTemplateCreate,
+  LabelCreate,
+  LocationCreate,
+  UserRegistration,
+} from "../../types/data-contracts";
 import * as config from "../../../../test/config";
 import { UserClient } from "../../user";
 import { Requests } from "../../../requests";
@@ -49,6 +55,28 @@ function label(): LabelCreate {
   };
 }
 
+function template(): ItemTemplateCreate {
+  return {
+    name: faker.lorem.words(2),
+    description: faker.lorem.sentence(),
+    notes: "",
+    defaultQuantity: 1,
+    defaultInsured: false,
+    defaultName: faker.lorem.word(),
+    defaultDescription: faker.lorem.sentence(),
+    defaultManufacturer: faker.company.name(),
+    defaultModelNumber: faker.string.alphanumeric(10),
+    defaultLifetimeWarranty: false,
+    defaultWarrantyDetails: "",
+    defaultLocationId: null,
+    defaultLabelIds: null,
+    includeWarrantyFields: false,
+    includePurchaseFields: false,
+    includeSoldFields: false,
+    fields: [],
+  };
+}
+
 function publicClient(): PublicApi {
   overrideParts(config.BASE_URL, "/api/v1");
   const requests = new Requests("");
@@ -86,6 +114,7 @@ export const factories = {
   user,
   location,
   label,
+  template,
   itemField,
   client: {
     public: publicClient,

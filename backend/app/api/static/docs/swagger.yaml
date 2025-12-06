@@ -179,6 +179,11 @@ definitions:
         items:
           $ref: '#/definitions/ent.GroupInvitationToken'
         type: array
+      item_templates:
+        description: ItemTemplates holds the value of the item_templates edge.
+        items:
+          $ref: '#/definitions/ent.ItemTemplate'
+        type: array
       items:
         description: Items holds the value of the items edge.
         items:
@@ -414,6 +419,92 @@ definitions:
         - $ref: '#/definitions/ent.Item'
         description: Item holds the value of the item edge.
     type: object
+  ent.ItemTemplate:
+    properties:
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      default_description:
+        description: Default description for items created from this template
+        type: string
+      default_insured:
+        description: DefaultInsured holds the value of the "default_insured" field.
+        type: boolean
+      default_label_ids:
+        description: Default label IDs for items created from this template
+        items:
+          type: string
+        type: array
+      default_lifetime_warranty:
+        description: DefaultLifetimeWarranty holds the value of the "default_lifetime_warranty"
+          field.
+        type: boolean
+      default_manufacturer:
+        description: DefaultManufacturer holds the value of the "default_manufacturer"
+          field.
+        type: string
+      default_model_number:
+        description: Default model number for items created from this template
+        type: string
+      default_name:
+        description: Default name template for items (can use placeholders)
+        type: string
+      default_quantity:
+        description: DefaultQuantity holds the value of the "default_quantity" field.
+        type: integer
+      default_warranty_details:
+        description: DefaultWarrantyDetails holds the value of the "default_warranty_details"
+          field.
+        type: string
+      description:
+        description: Description holds the value of the "description" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.ItemTemplateEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the ItemTemplateQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: string
+      include_purchase_fields:
+        description: Whether to include purchase fields in items created from this
+          template
+        type: boolean
+      include_sold_fields:
+        description: Whether to include sold fields in items created from this template
+        type: boolean
+      include_warranty_fields:
+        description: Whether to include warranty fields in items created from this
+          template
+        type: boolean
+      name:
+        description: Name holds the value of the "name" field.
+        type: string
+      notes:
+        description: Notes holds the value of the "notes" field.
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
+  ent.ItemTemplateEdges:
+    properties:
+      fields:
+        description: Fields holds the value of the fields edge.
+        items:
+          $ref: '#/definitions/ent.TemplateField'
+        type: array
+      group:
+        allOf:
+        - $ref: '#/definitions/ent.Group'
+        description: Group holds the value of the group edge.
+      location:
+        allOf:
+        - $ref: '#/definitions/ent.Location'
+        description: Location holds the value of the location edge.
+    type: object
   ent.Label:
     properties:
       color:
@@ -582,6 +673,44 @@ definitions:
         - $ref: '#/definitions/ent.User'
         description: User holds the value of the user edge.
     type: object
+  ent.TemplateField:
+    properties:
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      description:
+        description: Description holds the value of the "description" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.TemplateFieldEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the TemplateFieldQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: string
+      name:
+        description: Name holds the value of the "name" field.
+        type: string
+      text_value:
+        description: TextValue holds the value of the "text_value" field.
+        type: string
+      type:
+        allOf:
+        - $ref: '#/definitions/templatefield.Type'
+        description: Type holds the value of the "type" field.
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
+  ent.TemplateFieldEdges:
+    properties:
+      item_template:
+        allOf:
+        - $ref: '#/definitions/ent.ItemTemplate'
+        description: ItemTemplate holds the value of the item_template edge.
+    type: object
   ent.User:
     properties:
       activated_on:
@@ -607,6 +736,12 @@ definitions:
         type: boolean
       name:
         description: Name holds the value of the "name" field.
+        type: string
+      oidc_issuer:
+        description: OidcIssuer holds the value of the "oidc_issuer" field.
+        type: string
+      oidc_subject:
+        description: OidcSubject holds the value of the "oidc_subject" field.
         type: string
       role:
         allOf:
@@ -943,6 +1078,201 @@ definitions:
         x-omitempty: true
       updatedAt:
         type: string
+    type: object
+  repo.ItemTemplateCreate:
+    properties:
+      defaultDescription:
+        maxLength: 1000
+        type: string
+        x-nullable: true
+      defaultInsured:
+        type: boolean
+      defaultLabelIds:
+        items:
+          type: string
+        type: array
+        x-nullable: true
+      defaultLifetimeWarranty:
+        type: boolean
+      defaultLocationId:
+        description: Default location and labels
+        type: string
+        x-nullable: true
+      defaultManufacturer:
+        maxLength: 255
+        type: string
+        x-nullable: true
+      defaultModelNumber:
+        maxLength: 255
+        type: string
+        x-nullable: true
+      defaultName:
+        maxLength: 255
+        type: string
+        x-nullable: true
+      defaultQuantity:
+        description: Default values for items
+        type: integer
+        x-nullable: true
+      defaultWarrantyDetails:
+        maxLength: 1000
+        type: string
+        x-nullable: true
+      description:
+        maxLength: 1000
+        type: string
+      fields:
+        description: Custom fields
+        items:
+          $ref: '#/definitions/repo.TemplateField'
+        type: array
+      includePurchaseFields:
+        type: boolean
+      includeSoldFields:
+        type: boolean
+      includeWarrantyFields:
+        description: Metadata flags
+        type: boolean
+      name:
+        maxLength: 255
+        minLength: 1
+        type: string
+      notes:
+        maxLength: 1000
+        type: string
+    required:
+    - name
+    type: object
+  repo.ItemTemplateOut:
+    properties:
+      createdAt:
+        type: string
+      defaultDescription:
+        type: string
+      defaultInsured:
+        type: boolean
+      defaultLabels:
+        items:
+          $ref: '#/definitions/repo.TemplateLabelSummary'
+        type: array
+      defaultLifetimeWarranty:
+        type: boolean
+      defaultLocation:
+        allOf:
+        - $ref: '#/definitions/repo.TemplateLocationSummary'
+        description: Default location and labels
+      defaultManufacturer:
+        type: string
+      defaultModelNumber:
+        type: string
+      defaultName:
+        type: string
+      defaultQuantity:
+        description: Default values for items
+        type: integer
+      defaultWarrantyDetails:
+        type: string
+      description:
+        type: string
+      fields:
+        description: Custom fields
+        items:
+          $ref: '#/definitions/repo.TemplateField'
+        type: array
+      id:
+        type: string
+      includePurchaseFields:
+        type: boolean
+      includeSoldFields:
+        type: boolean
+      includeWarrantyFields:
+        description: Metadata flags
+        type: boolean
+      name:
+        type: string
+      notes:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  repo.ItemTemplateSummary:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  repo.ItemTemplateUpdate:
+    properties:
+      defaultDescription:
+        maxLength: 1000
+        type: string
+        x-nullable: true
+      defaultInsured:
+        type: boolean
+      defaultLabelIds:
+        items:
+          type: string
+        type: array
+        x-nullable: true
+      defaultLifetimeWarranty:
+        type: boolean
+      defaultLocationId:
+        description: Default location and labels
+        type: string
+        x-nullable: true
+      defaultManufacturer:
+        maxLength: 255
+        type: string
+        x-nullable: true
+      defaultModelNumber:
+        maxLength: 255
+        type: string
+        x-nullable: true
+      defaultName:
+        maxLength: 255
+        type: string
+        x-nullable: true
+      defaultQuantity:
+        description: Default values for items
+        type: integer
+        x-nullable: true
+      defaultWarrantyDetails:
+        maxLength: 1000
+        type: string
+        x-nullable: true
+      description:
+        maxLength: 1000
+        type: string
+      fields:
+        description: Custom fields
+        items:
+          $ref: '#/definitions/repo.TemplateField'
+        type: array
+      id:
+        type: string
+      includePurchaseFields:
+        type: boolean
+      includeSoldFields:
+        type: boolean
+      includeWarrantyFields:
+        description: Metadata flags
+        type: boolean
+      name:
+        maxLength: 255
+        minLength: 1
+        type: string
+      notes:
+        maxLength: 1000
+        type: string
+    required:
+    - name
     type: object
   repo.ItemType:
     enum:
@@ -1281,6 +1611,31 @@ definitions:
       total:
         type: integer
     type: object
+  repo.TemplateField:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      textValue:
+        type: string
+      type:
+        type: string
+    type: object
+  repo.TemplateLabelSummary:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  repo.TemplateLocationSummary:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
   repo.TotalsByOrganizer:
     properties:
       id:
@@ -1318,6 +1673,10 @@ definitions:
       isSuperuser:
         type: boolean
       name:
+        type: string
+      oidcIssuer:
+        type: string
+      oidcSubject:
         type: string
     type: object
   repo.UserUpdate:
@@ -1369,6 +1728,12 @@ definitions:
       token:
         type: string
     type: object
+  templatefield.Type:
+    enum:
+    - text
+    type: string
+    x-enum-varnames:
+    - TypeText
   user.Role:
     enum:
     - user
@@ -1395,6 +1760,8 @@ definitions:
         $ref: '#/definitions/services.Latest'
       message:
         type: string
+      oidc:
+        $ref: '#/definitions/v1.OIDCStatus'
       title:
         type: string
       versions:
@@ -1448,6 +1815,27 @@ definitions:
       token:
         type: string
     type: object
+  v1.ItemTemplateCreateItemRequest:
+    properties:
+      description:
+        maxLength: 1000
+        type: string
+      labelIds:
+        items:
+          type: string
+        type: array
+      locationId:
+        type: string
+      name:
+        maxLength: 255
+        minLength: 1
+        type: string
+      quantity:
+        type: integer
+    required:
+    - locationId
+    - name
+    type: object
   v1.LoginForm:
     properties:
       password:
@@ -1458,6 +1846,17 @@ definitions:
       username:
         example: admin@admin.com
         type: string
+    type: object
+  v1.OIDCStatus:
+    properties:
+      allowLocal:
+        type: boolean
+      autoRedirect:
+        type: boolean
+      buttonText:
+        type: string
+      enabled:
+        type: boolean
     type: object
   v1.TokenResponse:
     properties:
@@ -2679,6 +3078,130 @@ paths:
       summary: Application Info
       tags:
       - Base
+  /v1/templates:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repo.ItemTemplateSummary'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get All Item Templates
+      tags:
+      - Item Templates
+    post:
+      parameters:
+      - description: Template Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.ItemTemplateCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.ItemTemplateOut'
+      security:
+      - Bearer: []
+      summary: Create Item Template
+      tags:
+      - Item Templates
+  /v1/templates/{id}:
+    delete:
+      parameters:
+      - description: Template ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Delete Item Template
+      tags:
+      - Item Templates
+    get:
+      parameters:
+      - description: Template ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.ItemTemplateOut'
+      security:
+      - Bearer: []
+      summary: Get Item Template
+      tags:
+      - Item Templates
+    put:
+      parameters:
+      - description: Template ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Template Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.ItemTemplateUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.ItemTemplateOut'
+      security:
+      - Bearer: []
+      summary: Update Item Template
+      tags:
+      - Item Templates
+  /v1/templates/{id}/create-item:
+    post:
+      parameters:
+      - description: Template ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Item Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/v1.ItemTemplateCreateItemRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.ItemOut'
+      security:
+      - Bearer: []
+      summary: Create Item from Template
+      tags:
+      - Item Templates
   /v1/users/change-password:
     put:
       parameters:
@@ -2722,6 +3245,35 @@ paths:
       summary: User Login
       tags:
       - Authentication
+  /v1/users/login/oidc:
+    get:
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Found
+      summary: OIDC Login Initiation
+      tags:
+      - Authentication
+  /v1/users/login/oidc/callback:
+    get:
+      parameters:
+      - description: Authorization code
+        in: query
+        name: code
+        required: true
+        type: string
+      - description: State parameter
+        in: query
+        name: state
+        required: true
+        type: string
+      responses:
+        "302":
+          description: Found
+      summary: OIDC Callback Handler
+      tags:
+      - Authentication
   /v1/users/logout:
     post:
       responses:
@@ -2759,6 +3311,10 @@ paths:
       responses:
         "204":
           description: No Content
+        "403":
+          description: Local login is not enabled
+          schema:
+            type: string
       summary: Register New User
       tags:
       - User

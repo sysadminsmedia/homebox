@@ -654,6 +654,90 @@ func (e *ItemsRepository) Create(ctx context.Context, gid uuid.UUID, data ItemCr
 	return e.GetOne(ctx, result.ID)
 }
 
+// ItemCreateFromTemplate contains all data needed to create an item from a template.
+type ItemCreateFromTemplate struct {
+	Name             string
+	Description      string
+	Quantity         int
+	LocationID       uuid.UUID
+	LabelIDs         []uuid.UUID
+	Insured          bool
+	Manufacturer     string
+	ModelNumber      string
+	LifetimeWarranty bool
+	WarrantyDetails  string
+	Fields           []ItemField
+}
+
+// CreateFromTemplate creates an item with all template data in a single transaction.
+func (e *ItemsRepository) CreateFromTemplate(ctx context.Context, gid uuid.UUID, data ItemCreateFromTemplate) (ItemOut, error) {
+	tx, err := e.db.Tx(ctx)
+	if err != nil {
+		return ItemOut{}, err
+	}
+	committed := false
+	defer func() {
+		if !committed {
+			if err := tx.Rollback(); err != nil {
+				log.Warn().Err(err).Msg("failed to rollback transaction during template item creation")
+			}
+		}
+	}()
+
+	// Get next asset ID within transaction
+	nextAssetID, err := e.GetHighestAssetIDTx(ctx, tx, gid)
+	if err != nil {
+		return ItemOut{}, err
+	}
+	nextAssetID++
+
+	// Create item with all template data
+	newItemID := uuid.New()
+	itemBuilder := tx.Item.Create().
+		SetID(newItemID).
+		SetName(data.Name).
+		SetDescription(data.Description).
+		SetQuantity(data.Quantity).
+		SetLocationID(data.LocationID).
+		SetGroupID(gid).
+		SetAssetID(int(nextAssetID)).
+		SetInsured(data.Insured).
+		SetManufacturer(data.Manufacturer).
+		SetModelNumber(data.ModelNumber).
+		SetLifetimeWarranty(data.LifetimeWarranty).
+		SetWarrantyDetails(data.WarrantyDetails)
+
+	if len(data.LabelIDs) > 0 {
+		itemBuilder.AddLabelIDs(data.LabelIDs...)
+	}
+
+	_, err = itemBuilder.Save(ctx)
+	if err != nil {
+		return ItemOut{}, err
+	}
+
+	// Create custom fields
+	for _, field := range data.Fields {
+		_, err = tx.ItemField.Create().
+			SetItemID(newItemID).
+			SetType(itemfield.Type(field.Type)).
+			SetName(field.Name).
+			SetTextValue(field.TextValue).
+			Save(ctx)
+		if err != nil {
+			return ItemOut{}, fmt.Errorf("failed to create field %s: %w", field.Name, err)
+		}
+	}
+
+	if err = tx.Commit(); err != nil {
+		return ItemOut{}, err
+	}
+	committed = true
+
+	e.publishMutationEvent(gid)
+	return e.GetOne(ctx, newItemID)
+}
+
 func (e *ItemsRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	// Get the item with its group and attachments before deletion
 	itm, err := e.db.Item.Query().

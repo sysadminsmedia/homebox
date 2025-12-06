@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import { fileURLToPath } from "node:url";
 
 export default defineConfig({
   testDir: "./e2e",
@@ -25,5 +26,5 @@ export default defineConfig({
       use: { ...devices["Desktop Safari"] },
     },
   ],
-  globalTeardown: require.resolve("./playwright.teardown"),
+  globalTeardown: fileURLToPath(new URL("./playwright.teardown.ts", import.meta.url)),
 });
