@@ -43,6 +43,11 @@ jobs:
         run: |
           go install github.com/sigstore/cosign/cmd/cosign@latest
 
+      - name: Install Syft
+        working-directory: backend
+        run: |
+          go install github.com/anchore/syft/cmd/syft@latest
+
       - name: Run GoReleaser
         id: releaser
         if: startsWith(github.ref, 'refs/tags/')
