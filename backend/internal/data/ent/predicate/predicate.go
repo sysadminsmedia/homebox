@@ -27,6 +27,9 @@ type Item func(*sql.Selector)
 // ItemField is the predicate function for itemfield builders.
 type ItemField func(*sql.Selector)
 
+// ItemTemplate is the predicate function for itemtemplate builders.
+type ItemTemplate func(*sql.Selector)
+
 // Label is the predicate function for label builders.
 type Label func(*sql.Selector)
 
@@ -38,6 +41,9 @@ type MaintenanceEntry func(*sql.Selector)
 
 // Notifier is the predicate function for notifier builders.
 type Notifier func(*sql.Selector)
+
+// TemplateField is the predicate function for templatefield builders.
+type TemplateField func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

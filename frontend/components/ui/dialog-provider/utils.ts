@@ -10,6 +10,7 @@ export enum DialogID {
   CreateLocation = "create-location",
   CreateLabel = "create-label",
   CreateNotifier = "create-notifier",
+  CreateTemplate = "create-template",
   DuplicateSettings = "duplicate-settings",
   DuplicateTemporarySettings = "duplicate-temporary-settings",
   EditMaintenance = "edit-maintenance",
@@ -23,6 +24,7 @@ export enum DialogID {
   PageQRCode = "page-qr-code",
   UpdateLabel = "update-label",
   UpdateLocation = "update-location",
+  UpdateTemplate = "update-template",
   ItemChangeDetails = "item-table-updater",
 }
 
