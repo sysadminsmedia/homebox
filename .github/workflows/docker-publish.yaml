@@ -197,8 +197,16 @@ jobs:
         id: push-ghcr
         working-directory: /tmp/digests
         run: |
+          set -euo pipefail
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.GHCR_REPO }}@sha256:%s ' *)
+            $(printf '${{ env.GHCR_REPO }}@sha256:%s ' *) 2>&1 | tee /tmp/push-ghcr.out
+          digest=$(grep -oE 'sha256:[a-f0-9]{64}' /tmp/push-ghcr.out | head -n1 || true)
+          if [ -z "$digest" ]; then
+            echo "No digest found in imagetools output:"
+            cat /tmp/push-ghcr.out
+            exit 1
+          fi
+          echo "digest=$digest" >> $GITHUB_OUTPUT
 
       - name: Attest GHCR images
         uses: actions/attest-build-provenance@v1
@@ -213,8 +221,16 @@ jobs:
         working-directory: /tmp/digests
         if: (github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/'))
         run: |
+          set -euo pipefail
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.DOCKERHUB_REPO }}@sha256:%s ' *)
+            $(printf '${{ env.DOCKERHUB_REPO }}@sha256:%s ' *) 2>&1 | tee /tmp/push-dockerhub.out
+          digest=$(grep -oE 'sha256:[a-f0-9]{64}' /tmp/push-dockerhub.out | head -n1 || true)
+          if [ -z "$digest" ]; then
+            echo "No digest found in imagetools output:"
+            cat /tmp/push-dockerhub.out
+            exit 1
+          fi
+          echo "digest=$digest" >> $GITHUB_OUTPUT
 
       - name: Attest Dockerhub images
         uses: actions/attest-build-provenance@v1
