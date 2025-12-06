@@ -26,123 +26,123 @@ type NotifierUpdate struct {
 }
 
 // Where appends a list predicates to the NotifierUpdate builder.
-func (nu *NotifierUpdate) Where(ps ...predicate.Notifier) *NotifierUpdate {
-	nu.mutation.Where(ps...)
-	return nu
+func (_u *NotifierUpdate) Where(ps ...predicate.Notifier) *NotifierUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (nu *NotifierUpdate) SetUpdatedAt(t time.Time) *NotifierUpdate {
-	nu.mutation.SetUpdatedAt(t)
-	return nu
+func (_u *NotifierUpdate) SetUpdatedAt(v time.Time) *NotifierUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetGroupID sets the "group_id" field.
-func (nu *NotifierUpdate) SetGroupID(u uuid.UUID) *NotifierUpdate {
-	nu.mutation.SetGroupID(u)
-	return nu
+func (_u *NotifierUpdate) SetGroupID(v uuid.UUID) *NotifierUpdate {
+	_u.mutation.SetGroupID(v)
+	return _u
 }
 
 // SetNillableGroupID sets the "group_id" field if the given value is not nil.
-func (nu *NotifierUpdate) SetNillableGroupID(u *uuid.UUID) *NotifierUpdate {
-	if u != nil {
-		nu.SetGroupID(*u)
+func (_u *NotifierUpdate) SetNillableGroupID(v *uuid.UUID) *NotifierUpdate {
+	if v != nil {
+		_u.SetGroupID(*v)
 	}
-	return nu
+	return _u
 }
 
 // SetUserID sets the "user_id" field.
-func (nu *NotifierUpdate) SetUserID(u uuid.UUID) *NotifierUpdate {
-	nu.mutation.SetUserID(u)
-	return nu
+func (_u *NotifierUpdate) SetUserID(v uuid.UUID) *NotifierUpdate {
+	_u.mutation.SetUserID(v)
+	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (nu *NotifierUpdate) SetNillableUserID(u *uuid.UUID) *NotifierUpdate {
-	if u != nil {
-		nu.SetUserID(*u)
+func (_u *NotifierUpdate) SetNillableUserID(v *uuid.UUID) *NotifierUpdate {
+	if v != nil {
+		_u.SetUserID(*v)
 	}
-	return nu
+	return _u
 }
 
 // SetName sets the "name" field.
-func (nu *NotifierUpdate) SetName(s string) *NotifierUpdate {
-	nu.mutation.SetName(s)
-	return nu
+func (_u *NotifierUpdate) SetName(v string) *NotifierUpdate {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (nu *NotifierUpdate) SetNillableName(s *string) *NotifierUpdate {
-	if s != nil {
-		nu.SetName(*s)
+func (_u *NotifierUpdate) SetNillableName(v *string) *NotifierUpdate {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return nu
+	return _u
 }
 
 // SetURL sets the "url" field.
-func (nu *NotifierUpdate) SetURL(s string) *NotifierUpdate {
-	nu.mutation.SetURL(s)
-	return nu
+func (_u *NotifierUpdate) SetURL(v string) *NotifierUpdate {
+	_u.mutation.SetURL(v)
+	return _u
 }
 
 // SetNillableURL sets the "url" field if the given value is not nil.
-func (nu *NotifierUpdate) SetNillableURL(s *string) *NotifierUpdate {
-	if s != nil {
-		nu.SetURL(*s)
+func (_u *NotifierUpdate) SetNillableURL(v *string) *NotifierUpdate {
+	if v != nil {
+		_u.SetURL(*v)
 	}
-	return nu
+	return _u
 }
 
 // SetIsActive sets the "is_active" field.
-func (nu *NotifierUpdate) SetIsActive(b bool) *NotifierUpdate {
-	nu.mutation.SetIsActive(b)
-	return nu
+func (_u *NotifierUpdate) SetIsActive(v bool) *NotifierUpdate {
+	_u.mutation.SetIsActive(v)
+	return _u
 }
 
 // SetNillableIsActive sets the "is_active" field if the given value is not nil.
-func (nu *NotifierUpdate) SetNillableIsActive(b *bool) *NotifierUpdate {
-	if b != nil {
-		nu.SetIsActive(*b)
+func (_u *NotifierUpdate) SetNillableIsActive(v *bool) *NotifierUpdate {
+	if v != nil {
+		_u.SetIsActive(*v)
 	}
-	return nu
+	return _u
 }
 
 // SetGroup sets the "group" edge to the Group entity.
-func (nu *NotifierUpdate) SetGroup(g *Group) *NotifierUpdate {
-	return nu.SetGroupID(g.ID)
+func (_u *NotifierUpdate) SetGroup(v *Group) *NotifierUpdate {
+	return _u.SetGroupID(v.ID)
 }
 
 // SetUser sets the "user" edge to the User entity.
-func (nu *NotifierUpdate) SetUser(u *User) *NotifierUpdate {
-	return nu.SetUserID(u.ID)
+func (_u *NotifierUpdate) SetUser(v *User) *NotifierUpdate {
+	return _u.SetUserID(v.ID)
 }
 
 // Mutation returns the NotifierMutation object of the builder.
-func (nu *NotifierUpdate) Mutation() *NotifierMutation {
-	return nu.mutation
+func (_u *NotifierUpdate) Mutation() *NotifierMutation {
+	return _u.mutation
 }
 
 // ClearGroup clears the "group" edge to the Group entity.
-func (nu *NotifierUpdate) ClearGroup() *NotifierUpdate {
-	nu.mutation.ClearGroup()
-	return nu
+func (_u *NotifierUpdate) ClearGroup() *NotifierUpdate {
+	_u.mutation.ClearGroup()
+	return _u
 }
 
 // ClearUser clears the "user" edge to the User entity.
-func (nu *NotifierUpdate) ClearUser() *NotifierUpdate {
-	nu.mutation.ClearUser()
-	return nu
+func (_u *NotifierUpdate) ClearUser() *NotifierUpdate {
+	_u.mutation.ClearUser()
+	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (nu *NotifierUpdate) Save(ctx context.Context) (int, error) {
-	nu.defaults()
-	return withHooks(ctx, nu.sqlSave, nu.mutation, nu.hooks)
+func (_u *NotifierUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (nu *NotifierUpdate) SaveX(ctx context.Context) int {
-	affected, err := nu.Save(ctx)
+func (_u *NotifierUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -150,72 +150,72 @@ func (nu *NotifierUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (nu *NotifierUpdate) Exec(ctx context.Context) error {
-	_, err := nu.Save(ctx)
+func (_u *NotifierUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (nu *NotifierUpdate) ExecX(ctx context.Context) {
-	if err := nu.Exec(ctx); err != nil {
+func (_u *NotifierUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (nu *NotifierUpdate) defaults() {
-	if _, ok := nu.mutation.UpdatedAt(); !ok {
+func (_u *NotifierUpdate) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
 		v := notifier.UpdateDefaultUpdatedAt()
-		nu.mutation.SetUpdatedAt(v)
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (nu *NotifierUpdate) check() error {
-	if v, ok := nu.mutation.Name(); ok {
+func (_u *NotifierUpdate) check() error {
+	if v, ok := _u.mutation.Name(); ok {
 		if err := notifier.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Notifier.name": %w`, err)}
 		}
 	}
-	if v, ok := nu.mutation.URL(); ok {
+	if v, ok := _u.mutation.URL(); ok {
 		if err := notifier.URLValidator(v); err != nil {
 			return &ValidationError{Name: "url", err: fmt.Errorf(`ent: validator failed for field "Notifier.url": %w`, err)}
 		}
 	}
-	if nu.mutation.GroupCleared() && len(nu.mutation.GroupIDs()) > 0 {
+	if _u.mutation.GroupCleared() && len(_u.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Notifier.group"`)
 	}
-	if nu.mutation.UserCleared() && len(nu.mutation.UserIDs()) > 0 {
+	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Notifier.user"`)
 	}
 	return nil
 }
 
-func (nu *NotifierUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := nu.check(); err != nil {
-		return n, err
+func (_u *NotifierUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(notifier.Table, notifier.Columns, sqlgraph.NewFieldSpec(notifier.FieldID, field.TypeUUID))
-	if ps := nu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := nu.mutation.UpdatedAt(); ok {
+	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(notifier.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := nu.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(notifier.FieldName, field.TypeString, value)
 	}
-	if value, ok := nu.mutation.URL(); ok {
+	if value, ok := _u.mutation.URL(); ok {
 		_spec.SetField(notifier.FieldURL, field.TypeString, value)
 	}
-	if value, ok := nu.mutation.IsActive(); ok {
+	if value, ok := _u.mutation.IsActive(); ok {
 		_spec.SetField(notifier.FieldIsActive, field.TypeBool, value)
 	}
-	if nu.mutation.GroupCleared() {
+	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -228,7 +228,7 @@ func (nu *NotifierUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := nu.mutation.GroupIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -244,7 +244,7 @@ func (nu *NotifierUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nu.mutation.UserCleared() {
+	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -257,7 +257,7 @@ func (nu *NotifierUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := nu.mutation.UserIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -273,7 +273,7 @@ func (nu *NotifierUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, nu.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{notifier.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -281,8 +281,8 @@ func (nu *NotifierUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	nu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // NotifierUpdateOne is the builder for updating a single Notifier entity.
@@ -294,130 +294,130 @@ type NotifierUpdateOne struct {
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (nuo *NotifierUpdateOne) SetUpdatedAt(t time.Time) *NotifierUpdateOne {
-	nuo.mutation.SetUpdatedAt(t)
-	return nuo
+func (_u *NotifierUpdateOne) SetUpdatedAt(v time.Time) *NotifierUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetGroupID sets the "group_id" field.
-func (nuo *NotifierUpdateOne) SetGroupID(u uuid.UUID) *NotifierUpdateOne {
-	nuo.mutation.SetGroupID(u)
-	return nuo
+func (_u *NotifierUpdateOne) SetGroupID(v uuid.UUID) *NotifierUpdateOne {
+	_u.mutation.SetGroupID(v)
+	return _u
 }
 
 // SetNillableGroupID sets the "group_id" field if the given value is not nil.
-func (nuo *NotifierUpdateOne) SetNillableGroupID(u *uuid.UUID) *NotifierUpdateOne {
-	if u != nil {
-		nuo.SetGroupID(*u)
+func (_u *NotifierUpdateOne) SetNillableGroupID(v *uuid.UUID) *NotifierUpdateOne {
+	if v != nil {
+		_u.SetGroupID(*v)
 	}
-	return nuo
+	return _u
 }
 
 // SetUserID sets the "user_id" field.
-func (nuo *NotifierUpdateOne) SetUserID(u uuid.UUID) *NotifierUpdateOne {
-	nuo.mutation.SetUserID(u)
-	return nuo
+func (_u *NotifierUpdateOne) SetUserID(v uuid.UUID) *NotifierUpdateOne {
+	_u.mutation.SetUserID(v)
+	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (nuo *NotifierUpdateOne) SetNillableUserID(u *uuid.UUID) *NotifierUpdateOne {
-	if u != nil {
-		nuo.SetUserID(*u)
+func (_u *NotifierUpdateOne) SetNillableUserID(v *uuid.UUID) *NotifierUpdateOne {
+	if v != nil {
+		_u.SetUserID(*v)
 	}
-	return nuo
+	return _u
 }
 
 // SetName sets the "name" field.
-func (nuo *NotifierUpdateOne) SetName(s string) *NotifierUpdateOne {
-	nuo.mutation.SetName(s)
-	return nuo
+func (_u *NotifierUpdateOne) SetName(v string) *NotifierUpdateOne {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (nuo *NotifierUpdateOne) SetNillableName(s *string) *NotifierUpdateOne {
-	if s != nil {
-		nuo.SetName(*s)
+func (_u *NotifierUpdateOne) SetNillableName(v *string) *NotifierUpdateOne {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return nuo
+	return _u
 }
 
 // SetURL sets the "url" field.
-func (nuo *NotifierUpdateOne) SetURL(s string) *NotifierUpdateOne {
-	nuo.mutation.SetURL(s)
-	return nuo
+func (_u *NotifierUpdateOne) SetURL(v string) *NotifierUpdateOne {
+	_u.mutation.SetURL(v)
+	return _u
 }
 
 // SetNillableURL sets the "url" field if the given value is not nil.
-func (nuo *NotifierUpdateOne) SetNillableURL(s *string) *NotifierUpdateOne {
-	if s != nil {
-		nuo.SetURL(*s)
+func (_u *NotifierUpdateOne) SetNillableURL(v *string) *NotifierUpdateOne {
+	if v != nil {
+		_u.SetURL(*v)
 	}
-	return nuo
+	return _u
 }
 
 // SetIsActive sets the "is_active" field.
-func (nuo *NotifierUpdateOne) SetIsActive(b bool) *NotifierUpdateOne {
-	nuo.mutation.SetIsActive(b)
-	return nuo
+func (_u *NotifierUpdateOne) SetIsActive(v bool) *NotifierUpdateOne {
+	_u.mutation.SetIsActive(v)
+	return _u
 }
 
 // SetNillableIsActive sets the "is_active" field if the given value is not nil.
-func (nuo *NotifierUpdateOne) SetNillableIsActive(b *bool) *NotifierUpdateOne {
-	if b != nil {
-		nuo.SetIsActive(*b)
+func (_u *NotifierUpdateOne) SetNillableIsActive(v *bool) *NotifierUpdateOne {
+	if v != nil {
+		_u.SetIsActive(*v)
 	}
-	return nuo
+	return _u
 }
 
 // SetGroup sets the "group" edge to the Group entity.
-func (nuo *NotifierUpdateOne) SetGroup(g *Group) *NotifierUpdateOne {
-	return nuo.SetGroupID(g.ID)
+func (_u *NotifierUpdateOne) SetGroup(v *Group) *NotifierUpdateOne {
+	return _u.SetGroupID(v.ID)
 }
 
 // SetUser sets the "user" edge to the User entity.
-func (nuo *NotifierUpdateOne) SetUser(u *User) *NotifierUpdateOne {
-	return nuo.SetUserID(u.ID)
+func (_u *NotifierUpdateOne) SetUser(v *User) *NotifierUpdateOne {
+	return _u.SetUserID(v.ID)
 }
 
 // Mutation returns the NotifierMutation object of the builder.
-func (nuo *NotifierUpdateOne) Mutation() *NotifierMutation {
-	return nuo.mutation
+func (_u *NotifierUpdateOne) Mutation() *NotifierMutation {
+	return _u.mutation
 }
 
 // ClearGroup clears the "group" edge to the Group entity.
-func (nuo *NotifierUpdateOne) ClearGroup() *NotifierUpdateOne {
-	nuo.mutation.ClearGroup()
-	return nuo
+func (_u *NotifierUpdateOne) ClearGroup() *NotifierUpdateOne {
+	_u.mutation.ClearGroup()
+	return _u
 }
 
 // ClearUser clears the "user" edge to the User entity.
-func (nuo *NotifierUpdateOne) ClearUser() *NotifierUpdateOne {
-	nuo.mutation.ClearUser()
-	return nuo
+func (_u *NotifierUpdateOne) ClearUser() *NotifierUpdateOne {
+	_u.mutation.ClearUser()
+	return _u
 }
 
 // Where appends a list predicates to the NotifierUpdate builder.
-func (nuo *NotifierUpdateOne) Where(ps ...predicate.Notifier) *NotifierUpdateOne {
-	nuo.mutation.Where(ps...)
-	return nuo
+func (_u *NotifierUpdateOne) Where(ps ...predicate.Notifier) *NotifierUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (nuo *NotifierUpdateOne) Select(field string, fields ...string) *NotifierUpdateOne {
-	nuo.fields = append([]string{field}, fields...)
-	return nuo
+func (_u *NotifierUpdateOne) Select(field string, fields ...string) *NotifierUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated Notifier entity.
-func (nuo *NotifierUpdateOne) Save(ctx context.Context) (*Notifier, error) {
-	nuo.defaults()
-	return withHooks(ctx, nuo.sqlSave, nuo.mutation, nuo.hooks)
+func (_u *NotifierUpdateOne) Save(ctx context.Context) (*Notifier, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (nuo *NotifierUpdateOne) SaveX(ctx context.Context) *Notifier {
-	node, err := nuo.Save(ctx)
+func (_u *NotifierUpdateOne) SaveX(ctx context.Context) *Notifier {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -425,58 +425,58 @@ func (nuo *NotifierUpdateOne) SaveX(ctx context.Context) *Notifier {
 }
 
 // Exec executes the query on the entity.
-func (nuo *NotifierUpdateOne) Exec(ctx context.Context) error {
-	_, err := nuo.Save(ctx)
+func (_u *NotifierUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (nuo *NotifierUpdateOne) ExecX(ctx context.Context) {
-	if err := nuo.Exec(ctx); err != nil {
+func (_u *NotifierUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (nuo *NotifierUpdateOne) defaults() {
-	if _, ok := nuo.mutation.UpdatedAt(); !ok {
+func (_u *NotifierUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
 		v := notifier.UpdateDefaultUpdatedAt()
-		nuo.mutation.SetUpdatedAt(v)
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (nuo *NotifierUpdateOne) check() error {
-	if v, ok := nuo.mutation.Name(); ok {
+func (_u *NotifierUpdateOne) check() error {
+	if v, ok := _u.mutation.Name(); ok {
 		if err := notifier.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Notifier.name": %w`, err)}
 		}
 	}
-	if v, ok := nuo.mutation.URL(); ok {
+	if v, ok := _u.mutation.URL(); ok {
 		if err := notifier.URLValidator(v); err != nil {
 			return &ValidationError{Name: "url", err: fmt.Errorf(`ent: validator failed for field "Notifier.url": %w`, err)}
 		}
 	}
-	if nuo.mutation.GroupCleared() && len(nuo.mutation.GroupIDs()) > 0 {
+	if _u.mutation.GroupCleared() && len(_u.mutation.GroupIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Notifier.group"`)
 	}
-	if nuo.mutation.UserCleared() && len(nuo.mutation.UserIDs()) > 0 {
+	if _u.mutation.UserCleared() && len(_u.mutation.UserIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "Notifier.user"`)
 	}
 	return nil
 }
 
-func (nuo *NotifierUpdateOne) sqlSave(ctx context.Context) (_node *Notifier, err error) {
-	if err := nuo.check(); err != nil {
+func (_u *NotifierUpdateOne) sqlSave(ctx context.Context) (_node *Notifier, err error) {
+	if err := _u.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(notifier.Table, notifier.Columns, sqlgraph.NewFieldSpec(notifier.FieldID, field.TypeUUID))
-	id, ok := nuo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Notifier.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := nuo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, notifier.FieldID)
 		for _, f := range fields {
@@ -488,26 +488,26 @@ func (nuo *NotifierUpdateOne) sqlSave(ctx context.Context) (_node *Notifier, err
 			}
 		}
 	}
-	if ps := nuo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := nuo.mutation.UpdatedAt(); ok {
+	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(notifier.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := nuo.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(notifier.FieldName, field.TypeString, value)
 	}
-	if value, ok := nuo.mutation.URL(); ok {
+	if value, ok := _u.mutation.URL(); ok {
 		_spec.SetField(notifier.FieldURL, field.TypeString, value)
 	}
-	if value, ok := nuo.mutation.IsActive(); ok {
+	if value, ok := _u.mutation.IsActive(); ok {
 		_spec.SetField(notifier.FieldIsActive, field.TypeBool, value)
 	}
-	if nuo.mutation.GroupCleared() {
+	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -520,7 +520,7 @@ func (nuo *NotifierUpdateOne) sqlSave(ctx context.Context) (_node *Notifier, err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := nuo.mutation.GroupIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -536,7 +536,7 @@ func (nuo *NotifierUpdateOne) sqlSave(ctx context.Context) (_node *Notifier, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if nuo.mutation.UserCleared() {
+	if _u.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -549,7 +549,7 @@ func (nuo *NotifierUpdateOne) sqlSave(ctx context.Context) (_node *Notifier, err
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := nuo.mutation.UserIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -565,10 +565,10 @@ func (nuo *NotifierUpdateOne) sqlSave(ctx context.Context) (_node *Notifier, err
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &Notifier{config: nuo.config}
+	_node = &Notifier{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, nuo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{notifier.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -576,6 +576,6 @@ func (nuo *NotifierUpdateOne) sqlSave(ctx context.Context) (_node *Notifier, err
 		}
 		return nil, err
 	}
-	nuo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }
