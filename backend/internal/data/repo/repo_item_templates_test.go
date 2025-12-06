@@ -122,19 +122,26 @@ func TestItemTemplatesRepository_Update(t *testing.T) {
 	templates := useTemplates(t, 1)
 	template := templates[0]
 
+	qty := 5
+	defaultName := "Default Item Name"
+	defaultDesc := "Default Item Description"
+	defaultMfr := "Updated Manufacturer"
+	defaultModel := "MODEL-123"
+	defaultWarranty := "Lifetime coverage"
+
 	updateData := ItemTemplateUpdate{
 		ID:                      template.ID,
 		Name:                    "Updated Name",
 		Description:             "Updated Description",
 		Notes:                   "Updated Notes",
-		DefaultQuantity:         5,
+		DefaultQuantity:         &qty,
 		DefaultInsured:          true,
-		DefaultName:             "Default Item Name",
-		DefaultDescription:      "Default Item Description",
-		DefaultManufacturer:     "Updated Manufacturer",
-		DefaultModelNumber:      "MODEL-123",
+		DefaultName:             &defaultName,
+		DefaultDescription:      &defaultDesc,
+		DefaultManufacturer:     &defaultMfr,
+		DefaultModelNumber:      &defaultModel,
 		DefaultLifetimeWarranty: true,
-		DefaultWarrantyDetails:  "Lifetime coverage",
+		DefaultWarrantyDetails:  &defaultWarranty,
 		IncludeWarrantyFields:   true,
 		IncludePurchaseFields:   true,
 		IncludeSoldFields:       false,
@@ -172,11 +179,12 @@ func TestItemTemplatesRepository_UpdateWithFields(t *testing.T) {
 	require.Len(t, template.Fields, 1)
 
 	// Update with new fields
+	qty := template.DefaultQuantity
 	updateData := ItemTemplateUpdate{
 		ID:              template.ID,
 		Name:            template.Name,
 		Description:     template.Description,
-		DefaultQuantity: template.DefaultQuantity,
+		DefaultQuantity: &qty,
 		Fields: []TemplateField{
 			{ID: template.Fields[0].ID, Name: "Updated Field", Type: "text", TextValue: "Updated Value"},
 			{Name: "New Field", Type: "text", TextValue: "New Value"},
@@ -310,10 +318,11 @@ func TestItemTemplatesRepository_UpdateRemoveLocation(t *testing.T) {
 	require.NotNil(t, template.DefaultLocation)
 
 	// Update to remove location
+	qty := template.DefaultQuantity
 	updateData := ItemTemplateUpdate{
 		ID:                template.ID,
 		Name:              template.Name,
-		DefaultQuantity:   template.DefaultQuantity,
+		DefaultQuantity:   &qty,
 		DefaultLocationID: nil, // Remove location
 	}
 
