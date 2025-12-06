@@ -173,7 +173,7 @@
     // Prepare the data with proper format for API
     const createData = {
       ...form,
-      defaultLocationId: form.defaultLocation?.id ?? null,
+      defaultLocationId: form.defaultLocation?.id ?? "",
     };
 
     const { error } = await api.templates.create(createData);

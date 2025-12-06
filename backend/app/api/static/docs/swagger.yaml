@@ -424,9 +424,17 @@ definitions:
       created_at:
         description: CreatedAt holds the value of the "created_at" field.
         type: string
+      default_description:
+        description: Default description for items created from this template
+        type: string
       default_insured:
         description: DefaultInsured holds the value of the "default_insured" field.
         type: boolean
+      default_label_ids:
+        description: Default label IDs for items created from this template
+        items:
+          type: string
+        type: array
       default_lifetime_warranty:
         description: DefaultLifetimeWarranty holds the value of the "default_lifetime_warranty"
           field.
@@ -434,6 +442,12 @@ definitions:
       default_manufacturer:
         description: DefaultManufacturer holds the value of the "default_manufacturer"
           field.
+        type: string
+      default_model_number:
+        description: Default model number for items created from this template
+        type: string
+      default_name:
+        description: Default name template for items (can use placeholders)
         type: string
       default_quantity:
         description: DefaultQuantity holds the value of the "default_quantity" field.
@@ -486,6 +500,10 @@ definitions:
         allOf:
         - $ref: '#/definitions/ent.Group'
         description: Group holds the value of the group edge.
+      location:
+        allOf:
+        - $ref: '#/definitions/ent.Location'
+        description: Location holds the value of the location edge.
     type: object
   ent.Label:
     properties:
@@ -718,6 +736,12 @@ definitions:
         type: boolean
       name:
         description: Name holds the value of the "name" field.
+        type: string
+      oidc_issuer:
+        description: OidcIssuer holds the value of the "oidc_issuer" field.
+        type: string
+      oidc_subject:
+        description: OidcSubject holds the value of the "oidc_subject" field.
         type: string
       role:
         allOf:
@@ -1057,11 +1081,27 @@ definitions:
     type: object
   repo.ItemTemplateCreate:
     properties:
+      defaultDescription:
+        maxLength: 1000
+        type: string
       defaultInsured:
         type: boolean
+      defaultLabelIds:
+        items:
+          type: string
+        type: array
       defaultLifetimeWarranty:
         type: boolean
+      defaultLocationId:
+        description: Default location and labels
+        type: string
       defaultManufacturer:
+        maxLength: 255
+        type: string
+      defaultModelNumber:
+        maxLength: 255
+        type: string
+      defaultName:
         maxLength: 255
         type: string
       defaultQuantity:
@@ -1099,11 +1139,25 @@ definitions:
     properties:
       createdAt:
         type: string
+      defaultDescription:
+        type: string
       defaultInsured:
         type: boolean
+      defaultLabels:
+        items:
+          $ref: '#/definitions/repo.TemplateLabelSummary'
+        type: array
       defaultLifetimeWarranty:
         type: boolean
+      defaultLocation:
+        allOf:
+        - $ref: '#/definitions/repo.TemplateLocationSummary'
+        description: Default location and labels
       defaultManufacturer:
+        type: string
+      defaultModelNumber:
+        type: string
+      defaultName:
         type: string
       defaultQuantity:
         description: Default values for items
@@ -1148,11 +1202,27 @@ definitions:
     type: object
   repo.ItemTemplateUpdate:
     properties:
+      defaultDescription:
+        maxLength: 1000
+        type: string
       defaultInsured:
         type: boolean
+      defaultLabelIds:
+        items:
+          type: string
+        type: array
       defaultLifetimeWarranty:
         type: boolean
+      defaultLocationId:
+        description: Default location and labels
+        type: string
       defaultManufacturer:
+        maxLength: 255
+        type: string
+      defaultModelNumber:
+        maxLength: 255
+        type: string
+      defaultName:
         maxLength: 255
         type: string
       defaultQuantity:
@@ -1536,6 +1606,20 @@ definitions:
       type:
         type: string
     type: object
+  repo.TemplateLabelSummary:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  repo.TemplateLocationSummary:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
   repo.TotalsByOrganizer:
     properties:
       id:
@@ -1573,6 +1657,10 @@ definitions:
       isSuperuser:
         type: boolean
       name:
+        type: string
+      oidcIssuer:
+        type: string
+      oidcSubject:
         type: string
     type: object
   repo.UserUpdate:
@@ -1656,6 +1744,8 @@ definitions:
         $ref: '#/definitions/services.Latest'
       message:
         type: string
+      oidc:
+        $ref: '#/definitions/v1.OIDCStatus'
       title:
         type: string
       versions:
@@ -1740,6 +1830,17 @@ definitions:
       username:
         example: admin@admin.com
         type: string
+    type: object
+  v1.OIDCStatus:
+    properties:
+      allowLocal:
+        type: boolean
+      autoRedirect:
+        type: boolean
+      buttonText:
+        type: string
+      enabled:
+        type: boolean
     type: object
   v1.TokenResponse:
     properties:
@@ -3128,6 +3229,35 @@ paths:
       summary: User Login
       tags:
       - Authentication
+  /v1/users/login/oidc:
+    get:
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Found
+      summary: OIDC Login Initiation
+      tags:
+      - Authentication
+  /v1/users/login/oidc/callback:
+    get:
+      parameters:
+      - description: Authorization code
+        in: query
+        name: code
+        required: true
+        type: string
+      - description: State parameter
+        in: query
+        name: state
+        required: true
+        type: string
+      responses:
+        "302":
+          description: Found
+      summary: OIDC Callback Handler
+      tags:
+      - Authentication
   /v1/users/logout:
     post:
       responses:
@@ -3165,6 +3295,10 @@ paths:
       responses:
         "204":
           description: No Content
+        "403":
+          description: Local login is not enabled
+          schema:
+            type: string
       summary: Register New User
       tags:
       - User

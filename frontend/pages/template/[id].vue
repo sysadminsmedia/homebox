@@ -119,7 +119,7 @@
     // Prepare the data with proper format for API
     const payload = {
       ...updateData,
-      defaultLocationId: updateData.defaultLocation?.id ?? null,
+      defaultLocationId: updateData.defaultLocation?.id ?? "",
     };
 
     const { error, data } = await api.templates.update(templateId.value, payload);

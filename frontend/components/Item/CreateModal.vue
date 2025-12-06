@@ -352,7 +352,7 @@
 
   const loading = ref(false);
   const focused = ref(false);
-  const selectedTemplate = ref(null);
+  const selectedTemplate = ref<ItemTemplateSummary | null>(null);
   const templateData = ref<ItemTemplateOut | null>(null);
   const showTemplateDetails = ref(false);
   const form = reactive({

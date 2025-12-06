@@ -6,7 +6,7 @@
   import MdiContentCopy from "~icons/mdi/content-copy";
   import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
   import { Button } from "@/components/ui/button";
-  import type { ItemTemplateSummary } from "~/lib/api/types/data-contracts";
+  import type { ItemTemplateSummary, ItemTemplateCreate } from "~/lib/api/types/data-contracts";
 
   const props = defineProps<{
     template: ItemTemplateSummary;
@@ -46,7 +46,7 @@
     const NIL_UUID = "00000000-0000-0000-0000-000000000000";
 
     // Create a duplicate with "(Copy)" suffix
-    const duplicateData = {
+    const duplicateData: ItemTemplateCreate = {
       name: `${fullTemplate.name} (Copy)`,
       description: fullTemplate.description,
       notes: fullTemplate.notes,
@@ -58,7 +58,7 @@
       defaultModelNumber: fullTemplate.defaultModelNumber,
       defaultLifetimeWarranty: fullTemplate.defaultLifetimeWarranty,
       defaultWarrantyDetails: fullTemplate.defaultWarrantyDetails,
-      defaultLocationId: fullTemplate.defaultLocation?.id || null,
+      defaultLocationId: fullTemplate.defaultLocation?.id ?? "",
       defaultLabelIds: fullTemplate.defaultLabels?.map(l => l.id) || [],
       includeWarrantyFields: fullTemplate.includeWarrantyFields,
       includePurchaseFields: fullTemplate.includePurchaseFields,

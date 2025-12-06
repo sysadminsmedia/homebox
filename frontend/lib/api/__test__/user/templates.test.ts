@@ -80,7 +80,7 @@ describe("templates lifecycle (create, update, delete)", () => {
       defaultModelNumber: "MODEL-999",
       defaultLifetimeWarranty: true,
       defaultWarrantyDetails: "Lifetime coverage",
-      defaultLocationId: null,
+      defaultLocationId: "",
       defaultLabelIds: [],
       includeWarrantyFields: true,
       includePurchaseFields: true,
@@ -137,10 +137,10 @@ describe("templates lifecycle (create, update, delete)", () => {
 
     expect(response.status).toBe(201);
     expect(data.fields).toHaveLength(2);
-    expect(data.fields[0].name).toBe("Custom Field 1");
-    expect(data.fields[0].textValue).toBe("Value 1");
-    expect(data.fields[1].name).toBe("Custom Field 2");
-    expect(data.fields[1].textValue).toBe("Value 2");
+    expect(data.fields![0]!.name).toBe("Custom Field 1");
+    expect(data.fields![0]!.textValue).toBe("Value 1");
+    expect(data.fields![1]!.name).toBe("Custom Field 2");
+    expect(data.fields![1]!.textValue).toBe("Value 2");
 
     // Cleanup
     const { response: deleteResponse } = await api.templates.delete(data.id);
@@ -173,13 +173,13 @@ describe("templates lifecycle (create, update, delete)", () => {
       defaultModelNumber: createdTemplate.defaultModelNumber,
       defaultLifetimeWarranty: createdTemplate.defaultLifetimeWarranty,
       defaultWarrantyDetails: createdTemplate.defaultWarrantyDetails,
-      defaultLocationId: null,
+      defaultLocationId: "",
       defaultLabelIds: [],
       includeWarrantyFields: createdTemplate.includeWarrantyFields,
       includePurchaseFields: createdTemplate.includePurchaseFields,
       includeSoldFields: createdTemplate.includeSoldFields,
       fields: [
-        { id: createdTemplate.fields[0].id, name: "Updated Field", type: "text", textValue: "Updated Value" },
+        { id: createdTemplate.fields![0]!.id, name: "Updated Field", type: "text", textValue: "Updated Value" },
         { id: NIL_UUID, name: "New Field", type: "text", textValue: "New Value" },
       ],
     };
@@ -278,7 +278,7 @@ describe("templates with location and labels", () => {
       defaultModelNumber: template.defaultModelNumber,
       defaultLifetimeWarranty: template.defaultLifetimeWarranty,
       defaultWarrantyDetails: template.defaultWarrantyDetails,
-      defaultLocationId: null,
+      defaultLocationId: "",
       defaultLabelIds: [],
       includeWarrantyFields: template.includeWarrantyFields,
       includePurchaseFields: template.includePurchaseFields,

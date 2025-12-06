@@ -310,12 +310,20 @@ export interface EntItemFieldEdges {
 export interface EntItemTemplate {
   /** CreatedAt holds the value of the "created_at" field. */
   created_at: string;
+  /** Default description for items created from this template */
+  default_description: string;
   /** DefaultInsured holds the value of the "default_insured" field. */
   default_insured: boolean;
+  /** Default label IDs for items created from this template */
+  default_label_ids: string[];
   /** DefaultLifetimeWarranty holds the value of the "default_lifetime_warranty" field. */
   default_lifetime_warranty: boolean;
   /** DefaultManufacturer holds the value of the "default_manufacturer" field. */
   default_manufacturer: string;
+  /** Default model number for items created from this template */
+  default_model_number: string;
+  /** Default name template for items (can use placeholders) */
+  default_name: string;
   /** DefaultQuantity holds the value of the "default_quantity" field. */
   default_quantity: number;
   /** DefaultWarrantyDetails holds the value of the "default_warranty_details" field. */
@@ -348,6 +356,8 @@ export interface EntItemTemplateEdges {
   fields: EntTemplateField[];
   /** Group holds the value of the group edge. */
   group: EntGroup;
+  /** Location holds the value of the location edge. */
+  location: EntLocation;
 }
 
 export interface EntLabel {
@@ -511,6 +521,10 @@ export interface EntUser {
   is_superuser: boolean;
   /** Name holds the value of the "name" field. */
   name: string;
+  /** OidcIssuer holds the value of the "oidc_issuer" field. */
+  oidc_issuer: string;
+  /** OidcSubject holds the value of the "oidc_subject" field. */
+  oidc_subject: string;
   /** Role holds the value of the "role" field. */
   role: UserRole;
   /** Superuser holds the value of the "superuser" field. */
@@ -686,35 +700,24 @@ export interface ItemSummary {
   updatedAt: Date | string;
 }
 
-export interface TemplateLabelSummary {
-  id: string;
-  name: string;
-}
-
-export interface TemplateLocationSummary {
-  id: string;
-  name: string;
-}
-
 export interface ItemTemplateCreate {
+  /** @maxLength 1000 */
+  defaultDescription: string;
   defaultInsured: boolean;
+  defaultLabelIds: string[];
   defaultLifetimeWarranty: boolean;
+  /** Default location and labels */
+  defaultLocationId: string;
   /** @maxLength 255 */
   defaultManufacturer: string;
   /** @maxLength 255 */
   defaultModelNumber: string;
   /** @maxLength 255 */
   defaultName: string;
-  /** @maxLength 1000 */
-  defaultDescription: string;
   /** Default values for items */
   defaultQuantity: number;
   /** @maxLength 1000 */
   defaultWarrantyDetails: string;
-  /** Default location ID */
-  defaultLocationId?: string | null;
-  /** Default label IDs */
-  defaultLabelIds: string[];
   /** @maxLength 1000 */
   description: string;
   /** Custom fields */
@@ -734,19 +737,18 @@ export interface ItemTemplateCreate {
 
 export interface ItemTemplateOut {
   createdAt: Date | string;
+  defaultDescription: string;
   defaultInsured: boolean;
+  defaultLabels: TemplateLabelSummary[];
   defaultLifetimeWarranty: boolean;
+  /** Default location and labels */
+  defaultLocation: TemplateLocationSummary;
   defaultManufacturer: string;
   defaultModelNumber: string;
   defaultName: string;
-  defaultDescription: string;
   /** Default values for items */
   defaultQuantity: number;
   defaultWarrantyDetails: string;
-  /** Default location */
-  defaultLocation?: TemplateLocationSummary | null;
-  /** Default labels */
-  defaultLabels: TemplateLabelSummary[];
   description: string;
   /** Custom fields */
   fields: TemplateField[];
@@ -769,24 +771,23 @@ export interface ItemTemplateSummary {
 }
 
 export interface ItemTemplateUpdate {
+  /** @maxLength 1000 */
+  defaultDescription: string;
   defaultInsured: boolean;
+  defaultLabelIds: string[];
   defaultLifetimeWarranty: boolean;
+  /** Default location and labels */
+  defaultLocationId: string;
   /** @maxLength 255 */
   defaultManufacturer: string;
   /** @maxLength 255 */
   defaultModelNumber: string;
   /** @maxLength 255 */
   defaultName: string;
-  /** @maxLength 1000 */
-  defaultDescription: string;
   /** Default values for items */
   defaultQuantity: number;
   /** @maxLength 1000 */
   defaultWarrantyDetails: string;
-  /** Default location ID */
-  defaultLocationId?: string | null;
-  /** Default label IDs */
-  defaultLabelIds: string[];
   /** @maxLength 1000 */
   description: string;
   /** Custom fields */
@@ -1002,6 +1003,16 @@ export interface TemplateField {
   type: string;
 }
 
+export interface TemplateLabelSummary {
+  id: string;
+  name: string;
+}
+
+export interface TemplateLocationSummary {
+  id: string;
+  name: string;
+}
+
 export interface TotalsByOrganizer {
   id: string;
   name: string;
@@ -1023,6 +1034,8 @@ export interface UserOut {
   isOwner: boolean;
   isSuperuser: boolean;
   name: string;
+  oidcIssuer: string;
+  oidcSubject: string;
 }
 
 export interface UserUpdate {
@@ -1064,12 +1077,7 @@ export interface APISummary {
   labelPrinting: boolean;
   latest: Latest;
   message: string;
-  oidc?: {
-    enabled: boolean;
-    autoRedirect?: boolean;
-    allowLocal?: boolean;
-    buttonText?: string;
-  };
+  oidc: OIDCStatus;
   title: string;
   versions: string[];
 }
@@ -1127,6 +1135,13 @@ export interface LoginForm {
   stayLoggedIn: boolean;
   /** @example "admin@admin.com" */
   username: string;
+}
+
+export interface OIDCStatus {
+  allowLocal: boolean;
+  autoRedirect: boolean;
+  buttonText: string;
+  enabled: boolean;
 }
 
 export interface TokenResponse {

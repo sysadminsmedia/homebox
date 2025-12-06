@@ -585,7 +585,7 @@
       defaultModelNumber: item.value.modelNumber || "",
       defaultLifetimeWarranty: item.value.lifetimeWarranty,
       defaultWarrantyDetails: item.value.warrantyDetails || "",
-      defaultLocationId: item.value.location?.id || null,
+      defaultLocationId: item.value.location?.id || "",
       defaultLabelIds: item.value.labels?.map(l => l.id) || [],
       includeWarrantyFields: !!(
         item.value.warrantyDetails ||

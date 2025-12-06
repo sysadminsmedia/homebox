@@ -2235,6 +2235,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/users/login/oidc": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "OIDC Login Initiation",
+                "responses": {
+                    "302": {
+                        "description": "Found"
+                    }
+                }
+            }
+        },
+        "/v1/users/login/oidc/callback": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "OIDC Callback Handler",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization code",
+                        "name": "code",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "State parameter",
+                        "name": "state",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Found"
+                    }
+                }
+            }
+        },
         "/v1/users/logout": {
             "post": {
                 "security": [
@@ -2295,6 +2340,12 @@ const docTemplate = `{
                 "responses": {
                     "204": {
                         "description": "No Content"
+                    },
+                    "403": {
+                        "description": "Local login is not enabled",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 }
             }
@@ -3016,9 +3067,20 @@ const docTemplate = `{
                     "description": "CreatedAt holds the value of the \"created_at\" field.",
                     "type": "string"
                 },
+                "default_description": {
+                    "description": "Default description for items created from this template",
+                    "type": "string"
+                },
                 "default_insured": {
                     "description": "DefaultInsured holds the value of the \"default_insured\" field.",
                     "type": "boolean"
+                },
+                "default_label_ids": {
+                    "description": "Default label IDs for items created from this template",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "default_lifetime_warranty": {
                     "description": "DefaultLifetimeWarranty holds the value of the \"default_lifetime_warranty\" field.",
@@ -3026,6 +3088,14 @@ const docTemplate = `{
                 },
                 "default_manufacturer": {
                     "description": "DefaultManufacturer holds the value of the \"default_manufacturer\" field.",
+                    "type": "string"
+                },
+                "default_model_number": {
+                    "description": "Default model number for items created from this template",
+                    "type": "string"
+                },
+                "default_name": {
+                    "description": "Default name template for items (can use placeholders)",
                     "type": "string"
                 },
                 "default_quantity": {
@@ -3093,6 +3163,14 @@ const docTemplate = `{
                     "allOf": [
                         {
                             "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                },
+                "location": {
+                    "description": "Location holds the value of the location edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Location"
                         }
                     ]
                 }
@@ -3438,6 +3516,14 @@ const docTemplate = `{
                 },
                 "name": {
                     "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "oidc_issuer": {
+                    "description": "OidcIssuer holds the value of the \"oidc_issuer\" field.",
+                    "type": "string"
+                },
+                "oidc_subject": {
+                    "description": "OidcSubject holds the value of the \"oidc_subject\" field.",
                     "type": "string"
                 },
                 "role": {
@@ -3946,13 +4032,35 @@ const docTemplate = `{
                 "name"
             ],
             "properties": {
+                "defaultDescription": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
                 "defaultInsured": {
                     "type": "boolean"
+                },
+                "defaultLabelIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "defaultLifetimeWarranty": {
                     "type": "boolean"
                 },
+                "defaultLocationId": {
+                    "description": "Default location and labels",
+                    "type": "string"
+                },
                 "defaultManufacturer": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "defaultModelNumber": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "defaultName": {
                     "type": "string",
                     "maxLength": 255
                 },
@@ -4002,13 +4110,36 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
+                "defaultDescription": {
+                    "type": "string"
+                },
                 "defaultInsured": {
                     "type": "boolean"
+                },
+                "defaultLabels": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.TemplateLabelSummary"
+                    }
                 },
                 "defaultLifetimeWarranty": {
                     "type": "boolean"
                 },
+                "defaultLocation": {
+                    "description": "Default location and labels",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/repo.TemplateLocationSummary"
+                        }
+                    ]
+                },
                 "defaultManufacturer": {
+                    "type": "string"
+                },
+                "defaultModelNumber": {
+                    "type": "string"
+                },
+                "defaultName": {
                     "type": "string"
                 },
                 "defaultQuantity": {
@@ -4078,13 +4209,35 @@ const docTemplate = `{
                 "name"
             ],
             "properties": {
+                "defaultDescription": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
                 "defaultInsured": {
                     "type": "boolean"
+                },
+                "defaultLabelIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "defaultLifetimeWarranty": {
                     "type": "boolean"
                 },
+                "defaultLocationId": {
+                    "description": "Default location and labels",
+                    "type": "string"
+                },
                 "defaultManufacturer": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "defaultModelNumber": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "defaultName": {
                     "type": "string",
                     "maxLength": 255
                 },
@@ -4643,6 +4796,28 @@ const docTemplate = `{
                 }
             }
         },
+        "repo.TemplateLabelSummary": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.TemplateLocationSummary": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "repo.TotalsByOrganizer": {
             "type": "object",
             "properties": {
@@ -4699,6 +4874,12 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "oidcIssuer": {
+                    "type": "string"
+                },
+                "oidcSubject": {
                     "type": "string"
                 }
             }
@@ -4825,6 +5006,9 @@ const docTemplate = `{
                 "message": {
                     "type": "string"
                 },
+                "oidc": {
+                    "$ref": "#/definitions/v1.OIDCStatus"
+                },
                 "title": {
                     "type": "string"
                 },
@@ -4950,6 +5134,23 @@ const docTemplate = `{
                 "username": {
                     "type": "string",
                     "example": "admin@admin.com"
+                }
+            }
+        },
+        "v1.OIDCStatus": {
+            "type": "object",
+            "properties": {
+                "allowLocal": {
+                    "type": "boolean"
+                },
+                "autoRedirect": {
+                    "type": "boolean"
+                },
+                "buttonText": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
                 }
             }
         },

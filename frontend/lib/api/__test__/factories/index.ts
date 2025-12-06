@@ -68,7 +68,7 @@ function template(): ItemTemplateCreate {
     defaultModelNumber: faker.string.alphanumeric(10),
     defaultLifetimeWarranty: false,
     defaultWarrantyDetails: "",
-    defaultLocationId: null,
+    defaultLocationId: "",
     defaultLabelIds: [],
     includeWarrantyFields: false,
     includePurchaseFields: false,

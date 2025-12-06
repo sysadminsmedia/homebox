@@ -31,8 +31,12 @@
     }
     return data;
   });
-</script>
 
+  // Wrapper functions to match event signatures
+  const handleRefresh = () => refresh();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleDuplicated = (_id: string) => refresh();
+</script>
 <template>
   <BaseContainer>
     <div class="mb-4 flex justify-between">
@@ -43,10 +47,16 @@
       </Button>
     </div>
 
-    <TemplateCreateModal @created="refresh" />
+    <TemplateCreateModal @created="handleRefresh" />
 
     <div v-if="templates && templates.length > 0" class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      <TemplateCard v-for="tpl in templates" :key="tpl.id" :template="tpl" @deleted="refresh" @duplicated="refresh" />
+      <TemplateCard
+        v-for="tpl in templates"
+        :key="tpl.id"
+        :template="tpl"
+        @deleted="handleRefresh"
+        @duplicated="handleDuplicated"
+      />
     </div>
 
     <div v-else class="flex flex-col items-center justify-center py-12 text-center">
