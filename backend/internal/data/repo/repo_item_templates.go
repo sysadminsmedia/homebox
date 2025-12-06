@@ -72,18 +72,18 @@ type (
 		Notes       string    `json:"notes"       validate:"max=1000"`
 
 		// Default values for items
-		DefaultQuantity         int    `json:"defaultQuantity"`
-		DefaultInsured          bool   `json:"defaultInsured"`
-		DefaultName             string `json:"defaultName"             validate:"max=255"`
-		DefaultDescription      string `json:"defaultDescription"      validate:"max=1000"`
-		DefaultManufacturer     string `json:"defaultManufacturer"     validate:"max=255"`
-		DefaultModelNumber      string `json:"defaultModelNumber"      validate:"max=255"`
-		DefaultLifetimeWarranty bool   `json:"defaultLifetimeWarranty"`
-		DefaultWarrantyDetails  string `json:"defaultWarrantyDetails"  validate:"max=1000"`
+		DefaultQuantity         *int    `json:"defaultQuantity,omitempty" extensions:"x-nullable"`
+		DefaultInsured          bool    `json:"defaultInsured"`
+		DefaultName             *string `json:"defaultName,omitempty"   extensions:"x-nullable"          validate:"omitempty,max=255"`
+		DefaultDescription      *string `json:"defaultDescription,omitempty"   extensions:"x-nullable"   validate:"omitempty,max=1000"`
+		DefaultManufacturer     *string `json:"defaultManufacturer,omitempty" extensions:"x-nullable"    validate:"omitempty,max=255"`
+		DefaultModelNumber      *string `json:"defaultModelNumber,omitempty"  extensions:"x-nullable"    validate:"omitempty,max=255"`
+		DefaultLifetimeWarranty bool    `json:"defaultLifetimeWarranty"`
+		DefaultWarrantyDetails  *string `json:"defaultWarrantyDetails,omitempty" extensions:"x-nullable" validate:"omitempty,max=1000"`
 
 		// Default location and labels
-		DefaultLocationID *uuid.UUID  `json:"defaultLocationId"`
-		DefaultLabelIDs   []uuid.UUID `json:"defaultLabelIds"`
+		DefaultLocationID *uuid.UUID   `json:"defaultLocationId,omitempty" extensions:"x-nullable"`
+		DefaultLabelIDs   *[]uuid.UUID `json:"defaultLabelIds,omitempty" extensions:"x-nullable"`
 
 		// Metadata flags
 		IncludeWarrantyFields bool `json:"includeWarrantyFields"`
@@ -328,14 +328,14 @@ func (r *ItemTemplatesRepository) Update(ctx context.Context, gid uuid.UUID, dat
 		SetName(data.Name).
 		SetDescription(data.Description).
 		SetNotes(data.Notes).
-		SetDefaultQuantity(data.DefaultQuantity).
+		SetNillableDefaultQuantity(data.DefaultQuantity).
 		SetDefaultInsured(data.DefaultInsured).
-		SetDefaultName(data.DefaultName).
-		SetDefaultDescription(data.DefaultDescription).
-		SetDefaultManufacturer(data.DefaultManufacturer).
-		SetDefaultModelNumber(data.DefaultModelNumber).
+		SetNillableDefaultName(data.DefaultName).
+		SetNillableDefaultDescription(data.DefaultDescription).
+		SetNillableDefaultManufacturer(data.DefaultManufacturer).
+		SetNillableDefaultModelNumber(data.DefaultModelNumber).
 		SetDefaultLifetimeWarranty(data.DefaultLifetimeWarranty).
-		SetDefaultWarrantyDetails(data.DefaultWarrantyDetails).
+		SetNillableDefaultWarrantyDetails(data.DefaultWarrantyDetails).
 		SetIncludeWarrantyFields(data.IncludeWarrantyFields).
 		SetIncludePurchaseFields(data.IncludePurchaseFields).
 		SetIncludeSoldFields(data.IncludeSoldFields)
@@ -348,8 +348,8 @@ func (r *ItemTemplatesRepository) Update(ctx context.Context, gid uuid.UUID, dat
 	}
 
 	// Update default label IDs (stored as JSON)
-	if len(data.DefaultLabelIDs) > 0 {
-		updateQ.SetDefaultLabelIds(data.DefaultLabelIDs)
+	if data.DefaultLabelIDs != nil && len(*data.DefaultLabelIDs) > 0 {
+		updateQ.SetDefaultLabelIds(*data.DefaultLabelIDs)
 	} else {
 		updateQ.ClearDefaultLabelIds()
 	}

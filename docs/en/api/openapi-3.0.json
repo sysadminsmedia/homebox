@@ -4416,7 +4416,8 @@
                 "properties": {
                     "defaultDescription": {
                         "type": "string",
-                        "maxLength": 1000
+                        "maxLength": 1000,
+                        "nullable": true
                     },
                     "defaultInsured": {
                         "type": "boolean"
@@ -4425,34 +4426,41 @@
                         "type": "array",
                         "items": {
                             "type": "string"
-                        }
+                        },
+                        "nullable": true
                     },
                     "defaultLifetimeWarranty": {
                         "type": "boolean"
                     },
                     "defaultLocationId": {
                         "description": "Default location and labels",
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "defaultManufacturer": {
                         "type": "string",
-                        "maxLength": 255
+                        "maxLength": 255,
+                        "nullable": true
                     },
                     "defaultModelNumber": {
                         "type": "string",
-                        "maxLength": 255
+                        "maxLength": 255,
+                        "nullable": true
                     },
                     "defaultName": {
                         "type": "string",
-                        "maxLength": 255
+                        "maxLength": 255,
+                        "nullable": true
                     },
                     "defaultQuantity": {
                         "description": "Default values for items",
-                        "type": "integer"
+                        "type": "integer",
+                        "nullable": true
                     },
                     "defaultWarrantyDetails": {
                         "type": "string",
-                        "maxLength": 1000
+                        "maxLength": 1000,
+                        "nullable": true
                     },
                     "description": {
                         "type": "string",
