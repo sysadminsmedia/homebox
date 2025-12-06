@@ -21,10 +21,10 @@ type ItemTemplatesRepository struct {
 
 type (
 	TemplateField struct {
-		ID        uuid.UUID `json:"id,omitempty"`
-		Type      string    `json:"type"`
-		Name      string    `json:"name"`
-		TextValue string    `json:"textValue"`
+		ID        *uuid.UUID `json:"id,omitempty"`
+		Type      string     `json:"type"`
+		Name      string     `json:"name"`
+		TextValue string     `json:"textValue"`
 	}
 
 	TemplateLabelSummary struct {
@@ -43,18 +43,18 @@ type (
 		Notes       string `json:"notes"       validate:"max=1000"`
 
 		// Default values for items
-		DefaultQuantity         int    `json:"defaultQuantity"`
-		DefaultInsured          bool   `json:"defaultInsured"`
-		DefaultName             string `json:"defaultName"             validate:"max=255"`
-		DefaultDescription      string `json:"defaultDescription"      validate:"max=1000"`
-		DefaultManufacturer     string `json:"defaultManufacturer"     validate:"max=255"`
-		DefaultModelNumber      string `json:"defaultModelNumber"      validate:"max=255"`
-		DefaultLifetimeWarranty bool   `json:"defaultLifetimeWarranty"`
-		DefaultWarrantyDetails  string `json:"defaultWarrantyDetails"  validate:"max=1000"`
+		DefaultQuantity         *int    `json:"defaultQuantity,omitempty" extensions:"x-nullable"`
+		DefaultInsured          bool    `json:"defaultInsured"`
+		DefaultName             *string `json:"defaultName,omitempty"   extensions:"x-nullable"          validate:"omitempty,max=255"`
+		DefaultDescription      *string `json:"defaultDescription,omitempty"   extensions:"x-nullable"   validate:"omitempty,max=1000"`
+		DefaultManufacturer     *string `json:"defaultManufacturer,omitempty" extensions:"x-nullable"    validate:"omitempty,max=255"`
+		DefaultModelNumber      *string `json:"defaultModelNumber,omitempty"  extensions:"x-nullable"    validate:"omitempty,max=255"`
+		DefaultLifetimeWarranty bool    `json:"defaultLifetimeWarranty"`
+		DefaultWarrantyDetails  *string `json:"defaultWarrantyDetails,omitempty" extensions:"x-nullable" validate:"omitempty,max=1000"`
 
 		// Default location and labels
-		DefaultLocationID *uuid.UUID  `json:"defaultLocationId"`
-		DefaultLabelIDs   []uuid.UUID `json:"defaultLabelIds"`
+		DefaultLocationID *uuid.UUID   `json:"defaultLocationId,omitempty" extensions:"x-nullable"`
+		DefaultLabelIDs   *[]uuid.UUID `json:"defaultLabelIds,omitempty" extensions:"x-nullable"`
 
 		// Metadata flags
 		IncludeWarrantyFields bool `json:"includeWarrantyFields"`
@@ -135,8 +135,9 @@ type (
 )
 
 func mapTemplateField(field *ent.TemplateField) TemplateField {
+	id := field.ID
 	return TemplateField{
-		ID:        field.ID,
+		ID:        &id,
 		Type:      string(field.Type),
 		Name:      field.Name,
 		TextValue: field.TextValue,
@@ -265,27 +266,23 @@ func (r *ItemTemplatesRepository) Create(ctx context.Context, gid uuid.UUID, dat
 		SetName(data.Name).
 		SetDescription(data.Description).
 		SetNotes(data.Notes).
-		SetDefaultQuantity(data.DefaultQuantity).
+		SetNillableDefaultQuantity(data.DefaultQuantity).
 		SetDefaultInsured(data.DefaultInsured).
-		SetDefaultName(data.DefaultName).
-		SetDefaultDescription(data.DefaultDescription).
-		SetDefaultManufacturer(data.DefaultManufacturer).
-		SetDefaultModelNumber(data.DefaultModelNumber).
+		SetNillableDefaultName(data.DefaultName).
+		SetNillableDefaultDescription(data.DefaultDescription).
+		SetNillableDefaultManufacturer(data.DefaultManufacturer).
+		SetNillableDefaultModelNumber(data.DefaultModelNumber).
 		SetDefaultLifetimeWarranty(data.DefaultLifetimeWarranty).
-		SetDefaultWarrantyDetails(data.DefaultWarrantyDetails).
+		SetNillableDefaultWarrantyDetails(data.DefaultWarrantyDetails).
 		SetIncludeWarrantyFields(data.IncludeWarrantyFields).
 		SetIncludePurchaseFields(data.IncludePurchaseFields).
 		SetIncludeSoldFields(data.IncludeSoldFields).
-		SetGroupID(gid)
-
-	// Set default location if provided
-	if data.DefaultLocationID != nil {
-		q.SetLocationID(*data.DefaultLocationID)
-	}
+		SetGroupID(gid).
+		SetNillableLocationID(data.DefaultLocationID)
 
 	// Set default label IDs (stored as JSON)
-	if len(data.DefaultLabelIDs) > 0 {
-		q.SetDefaultLabelIds(data.DefaultLabelIDs)
+	if data.DefaultLabelIDs != nil && len(*data.DefaultLabelIDs) > 0 {
+		q.SetDefaultLabelIds(*data.DefaultLabelIDs)
 	}
 
 	template, err := q.Save(ctx)
@@ -382,7 +379,7 @@ func (r *ItemTemplatesRepository) Update(ctx context.Context, gid uuid.UUID, dat
 
 	// Create or update fields
 	for _, field := range data.Fields {
-		if field.ID == uuid.Nil {
+		if field.ID == nil || *field.ID == uuid.Nil {
 			// Create new field
 			_, err = r.db.TemplateField.Create().
 				SetItemTemplateID(data.ID).
@@ -397,10 +394,10 @@ func (r *ItemTemplatesRepository) Update(ctx context.Context, gid uuid.UUID, dat
 			}
 		} else {
 			// Update existing field
-			updatedFieldIDs[field.ID] = true
+			updatedFieldIDs[*field.ID] = true
 			_, err = r.db.TemplateField.Update().
 				Where(
-					templatefield.ID(field.ID),
+					templatefield.ID(*field.ID),
 					templatefield.HasItemTemplateWith(itemtemplate.ID(data.ID)),
 				).
 				SetType(templatefield.Type(field.Type)).

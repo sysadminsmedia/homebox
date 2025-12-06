@@ -36,7 +36,10 @@
           :label="$t('components.template.form.manufacturer')"
           :max-length="255"
         />
-        <LocationSelector v-model="form.defaultLocation" :label="$t('components.template.form.default_location')" />
+        <LocationSelector
+          v-model="form.defaultLocationObject"
+          :label="$t('components.template.form.default_location')"
+        />
         <LabelSelector v-model="form.defaultLabelIds" :labels="labels ?? []" />
         <div class="flex items-center gap-4">
           <div class="flex items-center gap-2">
@@ -104,7 +107,7 @@
   import LocationSelector from "~/components/Location/Selector.vue";
   import LabelSelector from "~/components/Label/Selector.vue";
   import { useLabelStore } from "~~/stores/labels";
-  import type { LocationOut } from "~~/lib/api/types/data-contracts";
+  import type { LocationSummary } from "~~/lib/api/types/data-contracts";
 
   const emit = defineEmits<{ created: [] }>();
   const { closeDialog } = useDialog();
@@ -125,7 +128,8 @@
     defaultModelNumber: "",
     defaultLifetimeWarranty: false,
     defaultWarrantyDetails: "",
-    defaultLocation: null as LocationOut | null,
+    defaultLocationId: null as string | null,
+    defaultLocationObject: null as LocationSummary | null,
     defaultLabelIds: [] as string[],
     includeWarrantyFields: false,
     includePurchaseFields: false,
@@ -152,7 +156,8 @@
       defaultModelNumber: "",
       defaultLifetimeWarranty: false,
       defaultWarrantyDetails: "",
-      defaultLocation: null,
+      defaultLocationId: null,
+      defaultLocationObject: null,
       defaultLabelIds: [],
       includeWarrantyFields: false,
       includePurchaseFields: false,
@@ -172,8 +177,23 @@
 
     // Prepare the data with proper format for API
     const createData = {
-      ...form,
-      defaultLocationId: form.defaultLocation?.id ?? "",
+      name: form.name,
+      description: form.description,
+      notes: form.notes,
+      defaultName: form.defaultName || null,
+      defaultDescription: form.defaultDescription || null,
+      defaultQuantity: form.defaultQuantity,
+      defaultInsured: form.defaultInsured,
+      defaultManufacturer: form.defaultManufacturer || null,
+      defaultModelNumber: form.defaultModelNumber || null,
+      defaultLifetimeWarranty: form.defaultLifetimeWarranty,
+      defaultWarrantyDetails: form.defaultWarrantyDetails || null,
+      defaultLocationId: form.defaultLocationObject?.id ?? null,
+      defaultLabelIds: form.defaultLabelIds,
+      includeWarrantyFields: form.includeWarrantyFields,
+      includePurchaseFields: form.includePurchaseFields,
+      includeSoldFields: form.includeSoldFields,
+      fields: form.fields,
     };
 
     const { error } = await api.templates.create(createData);

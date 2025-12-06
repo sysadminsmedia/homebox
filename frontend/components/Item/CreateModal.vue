@@ -67,7 +67,7 @@
             variant="ghost"
             size="icon"
             class="size-7 shrink-0"
-            aria-label="Remove template"
+            :aria-label="$t('components.item.create_modal.clear_template')"
             @click="clearTemplate"
           >
             <MdiClose class="size-4" />

@@ -711,7 +711,7 @@
               <!-- More actions dropdown -->
               <DropdownMenu>
                 <DropdownMenuTrigger as-child>
-                  <Button variant="outline" size="icon" aria-label="More actions">
+                  <Button variant="outline" size="icon" :aria-label="$t('global.more_actions')">
                     <MdiDotsVertical class="size-5" />
                   </Button>
                 </DropdownMenuTrigger>

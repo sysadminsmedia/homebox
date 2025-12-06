@@ -4034,7 +4034,8 @@ const docTemplate = `{
             "properties": {
                 "defaultDescription": {
                     "type": "string",
-                    "maxLength": 1000
+                    "maxLength": 1000,
+                    "x-nullable": true
                 },
                 "defaultInsured": {
                     "type": "boolean"
@@ -4043,34 +4044,41 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "x-nullable": true
                 },
                 "defaultLifetimeWarranty": {
                     "type": "boolean"
                 },
                 "defaultLocationId": {
                     "description": "Default location and labels",
-                    "type": "string"
+                    "type": "string",
+                    "x-nullable": true
                 },
                 "defaultManufacturer": {
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "x-nullable": true
                 },
                 "defaultModelNumber": {
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "x-nullable": true
                 },
                 "defaultName": {
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "x-nullable": true
                 },
                 "defaultQuantity": {
                     "description": "Default values for items",
-                    "type": "integer"
+                    "type": "integer",
+                    "x-nullable": true
                 },
                 "defaultWarrantyDetails": {
                     "type": "string",
-                    "maxLength": 1000
+                    "maxLength": 1000,
+                    "x-nullable": true
                 },
                 "description": {
                     "type": "string",

@@ -105,6 +105,7 @@
                 "rotate_photo": "Rotate photo",
                 "set_as_primary_photo": "Set as { isPrimary, select, true {non-} false {} other {}}primary photo",
                 "title": "Create Item",
+                "clear_template": "Clear Template",
                 "toast": {
                     "already_creating": "Already creating an item",
                     "create_failed": "Couldn't create item",

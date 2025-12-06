@@ -10,18 +10,25 @@ import (
 )
 
 func templateFactory() ItemTemplateCreate {
+	qty := 1
+	name := fk.Str(20)
+	desc := fk.Str(50)
+	mfr := fk.Str(15)
+	model := fk.Str(10)
+	warranty := ""
+
 	return ItemTemplateCreate{
 		Name:                    fk.Str(10),
 		Description:             fk.Str(100),
 		Notes:                   fk.Str(50),
-		DefaultQuantity:         1,
+		DefaultQuantity:         &qty,
 		DefaultInsured:          false,
-		DefaultName:             fk.Str(20),
-		DefaultDescription:      fk.Str(50),
-		DefaultManufacturer:     fk.Str(15),
-		DefaultModelNumber:      fk.Str(10),
+		DefaultName:             &name,
+		DefaultDescription:      &desc,
+		DefaultManufacturer:     &mfr,
+		DefaultModelNumber:      &model,
 		DefaultLifetimeWarranty: false,
-		DefaultWarrantyDetails:  "",
+		DefaultWarrantyDetails:  &warranty,
 		IncludeWarrantyFields:   false,
 		IncludePurchaseFields:   false,
 		IncludeSoldFields:       false,
@@ -78,12 +85,12 @@ func TestItemTemplatesRepository_Create(t *testing.T) {
 	assert.NotEqual(t, uuid.Nil, template.ID)
 	assert.Equal(t, data.Name, template.Name)
 	assert.Equal(t, data.Description, template.Description)
-	assert.Equal(t, data.DefaultQuantity, template.DefaultQuantity)
+	assert.Equal(t, *data.DefaultQuantity, template.DefaultQuantity)
 	assert.Equal(t, data.DefaultInsured, template.DefaultInsured)
-	assert.Equal(t, data.DefaultName, template.DefaultName)
-	assert.Equal(t, data.DefaultDescription, template.DefaultDescription)
-	assert.Equal(t, data.DefaultManufacturer, template.DefaultManufacturer)
-	assert.Equal(t, data.DefaultModelNumber, template.DefaultModelNumber)
+	assert.Equal(t, *data.DefaultName, template.DefaultName)
+	assert.Equal(t, *data.DefaultDescription, template.DefaultDescription)
+	assert.Equal(t, *data.DefaultManufacturer, template.DefaultManufacturer)
+	assert.Equal(t, *data.DefaultModelNumber, template.DefaultModelNumber)
 
 	// Cleanup
 	err = tRepos.ItemTemplates.Delete(context.Background(), tGroup.ID, template.ID)
@@ -269,7 +276,8 @@ func TestItemTemplatesRepository_CreateWithLabels(t *testing.T) {
 
 	// Create template with labels
 	data := templateFactory()
-	data.DefaultLabelIDs = []uuid.UUID{label1.ID, label2.ID}
+	labelIDs := []uuid.UUID{label1.ID, label2.ID}
+	data.DefaultLabelIDs = &labelIDs
 
 	template, err := tRepos.ItemTemplates.Create(context.Background(), tGroup.ID, data)
 	require.NoError(t, err)

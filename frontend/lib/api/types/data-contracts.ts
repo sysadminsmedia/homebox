@@ -702,22 +702,22 @@ export interface ItemSummary {
 
 export interface ItemTemplateCreate {
   /** @maxLength 1000 */
-  defaultDescription: string;
+  defaultDescription?: string | null;
   defaultInsured: boolean;
-  defaultLabelIds: string[];
+  defaultLabelIds?: string[] | null;
   defaultLifetimeWarranty: boolean;
   /** Default location and labels */
-  defaultLocationId: string;
+  defaultLocationId?: string | null;
   /** @maxLength 255 */
-  defaultManufacturer: string;
+  defaultManufacturer?: string | null;
   /** @maxLength 255 */
-  defaultModelNumber: string;
+  defaultModelNumber?: string | null;
   /** @maxLength 255 */
-  defaultName: string;
+  defaultName?: string | null;
   /** Default values for items */
-  defaultQuantity: number;
+  defaultQuantity?: number | null;
   /** @maxLength 1000 */
-  defaultWarrantyDetails: string;
+  defaultWarrantyDetails?: string | null;
   /** @maxLength 1000 */
   description: string;
   /** Custom fields */
