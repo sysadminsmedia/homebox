@@ -120,10 +120,18 @@ jobs:
           build-args: |
             VERSION=${{ github.ref_name }}
             COMMIT=${{ github.sha }}
-          provenance: true
+          provenance: mode=slsa
           sbom: true
           annotations: ${{ steps.meta.outputs.annotations }}
-          
+
+      - name: Attest platform-specific images
+        uses: actions/attest-build-provenance@v1
+        if: github.event_name != 'pull_request'
+        with:
+          subject-name: ${{ env.GHCR_REPO }}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          push-to-registry: true
+                              
       - name: Export digest
         run: |
           mkdir -p /tmp/digests
@@ -201,6 +209,14 @@ jobs:
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf '${{ env.GHCR_REPO }}@sha256:%s ' *)
 
+      - name: Attest GHCR images
+        uses: actions/attest-build-provenance@v1
+        if: github.event_name != 'pull_request'
+        with:
+          subject-name: ${{ env.GHCR_REPO }}
+          subject-digest: ${{ steps.push-ghcr.outputs.digest }}
+          push-to-registry: true
+
       - name: Create manifest list and push Dockerhub
         id: push-dockerhub
         working-directory: /tmp/digests
@@ -208,3 +224,11 @@ jobs:
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf '${{ env.DOCKERHUB_REPO }}@sha256:%s ' *)
+
+      - name: Attest Dockerhub images
+        uses: actions/attest-build-provenance@v1
+        if: (github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/'))
+        with:
+          subject-name: ${{ env.DOCKERHUB_REPO }}
+          subject-digest: ${{ steps.push-dockerhub.outputs.digest }}
+          push-to-registry: true
