@@ -108,6 +108,22 @@
     }
 
     try {
+      // Request camera permission first
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        stream.getTracks().forEach(track => track.stop());
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === "NotAllowedError") {
+          errorMessage.value = t("scanner.permission_denied");
+          return;
+        }
+        if (err instanceof Error && err.name === "NotFoundError") {
+          errorMessage.value = t("scanner.no_sources");
+          return;
+        }
+        throw err;
+      }
+
       const devices = await codeReader.listVideoInputDevices();
       sources.value = devices;
 
