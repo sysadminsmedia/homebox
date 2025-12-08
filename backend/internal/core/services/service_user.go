@@ -21,7 +21,8 @@ var (
 )
 
 type UserService struct {
-	repos *repo.AllRepos
+	repos                  *repo.AllRepos
+	createDefaultDemoItems bool
 }
 
 type (
@@ -96,7 +97,7 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 	log.Debug().Msg("user created")
 
 	// Create the default labels and locations for the group.
-	if creatingGroup {
+	if creatingGroup && svc.createDefaultDemoItems {
 		log.Debug().Msg("creating default labels")
 		for _, label := range defaultLabels() {
 			_, err := svc.repos.Labels.Create(ctx, usr.GroupID, label)
@@ -300,19 +301,21 @@ func (svc *UserService) registerOIDCUser(ctx context.Context, issuer, subject, e
 		return repo.UserOut{}, err
 	}
 
-	log.Debug().Str("issuer", issuer).Str("subject", subject).Msg("creating default labels for OIDC user")
-	for _, label := range defaultLabels() {
-		_, err := svc.repos.Labels.Create(ctx, group.ID, label)
-		if err != nil {
-			log.Err(err).Msg("Failed to create default label")
+	if svc.createDefaultDemoItems {
+		log.Debug().Str("issuer", issuer).Str("subject", subject).Msg("creating default labels for OIDC user")
+		for _, label := range defaultLabels() {
+			_, err := svc.repos.Labels.Create(ctx, group.ID, label)
+			if err != nil {
+				log.Err(err).Msg("Failed to create default label")
+			}
 		}
-	}
 
-	log.Debug().Str("issuer", issuer).Str("subject", subject).Msg("creating default locations for OIDC user")
-	for _, location := range defaultLocations() {
-		_, err := svc.repos.Locations.Create(ctx, group.ID, location)
-		if err != nil {
-			log.Err(err).Msg("Failed to create default location")
+		log.Debug().Str("issuer", issuer).Str("subject", subject).Msg("creating default locations for OIDC user")
+		for _, location := range defaultLocations() {
+			_, err := svc.repos.Locations.Create(ctx, group.ID, location)
+			if err != nil {
+				log.Err(err).Msg("Failed to create default location")
+			}
 		}
 	}
 
