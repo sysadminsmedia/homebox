@@ -31,7 +31,7 @@
       data-sidebar="sidebar"
       data-mobile="true"
       :side="side"
-      class="bg-sidebar text-sidebar-foreground z-40 w-[--sidebar-width] p-0 [&>button]:hidden"
+      class="z-40 w-[--sidebar-width] bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
       :style="{
         '--sidebar-width': SIDEBAR_WIDTH_MOBILE,
       }"
@@ -81,7 +81,7 @@
     >
       <div
         data-sidebar="sidebar"
-        class="text-sidebar-foreground bg-sidebar group-data-[variant=floating]:border-sidebar-border flex size-full flex-col group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:shadow"
+        class="flex size-full flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:border group-data-[variant=floating]:border-sidebar-border group-data-[variant=floating]:shadow"
       >
         <slot />
       </div>

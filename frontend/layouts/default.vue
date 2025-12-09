@@ -90,17 +90,27 @@
         </SidebarContent>
 
         <SidebarFooter>
-          <SidebarMenuButton
-            class="flex justify-center group-data-[collapsible=icon]:justify-start group-data-[collapsible=icon]:bg-destructive group-data-[collapsible=icon]:text-destructive-foreground group-data-[collapsible=icon]:shadow-sm group-data-[collapsible=icon]:hover:bg-destructive/90"
-            :tooltip="$t('global.sign_out')"
-            data-testid="logout-button"
-            @click="logout"
-          >
-            <MdiLogout />
-            <span>
-              {{ $t("global.sign_out") }}
-            </span>
-          </SidebarMenuButton>
+          <SidebarGroup>
+            <SidebarMenu>
+              <!-- Dark mode toggle - only show for homebox theme -->
+              <SidebarMenuItem v-if="preferences.theme === 'homebox'">
+                <DarkModeToggle />
+              </SidebarMenuItem>
+
+              <!-- Sign out button -->
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  class="text-destructive hover:bg-destructive/10 hover:text-destructive group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:bg-destructive group-data-[collapsible=icon]:text-destructive-foreground group-data-[collapsible=icon]:shadow-sm group-data-[collapsible=icon]:hover:bg-destructive/90"
+                  :tooltip="$t('global.sign_out')"
+                  data-testid="logout-button"
+                  @click="logout"
+                >
+                  <MdiLogout />
+                  <span>{{ $t("global.sign_out") }}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
         </SidebarFooter>
 
         <SidebarRail />
@@ -225,6 +235,7 @@
   import AppLogo from "~/components/App/Logo.vue";
   import AppHeaderDecor from "~/components/App/HeaderDecor.vue";
   import AppHeaderText from "~/components/App/HeaderText.vue";
+  import DarkModeToggle from "~/components/App/DarkModeToggle.vue";
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
