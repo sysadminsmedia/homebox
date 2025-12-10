@@ -629,7 +629,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		log.Debug().Msg("creating thumbnail for heic file")
 		img, err := heic.Decode(bytes.NewReader(contentBytes))
 		if err != nil {
-			log.Err(err).Msg("failed to decode avif image")
+			log.Err(err).Msg("failed to decode heic image")
 			err := tx.Rollback()
 			if err != nil {
 				return err
@@ -637,9 +637,9 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			return err
 		}
 		log.Debug().Msg("reading original file orientation")
-		imageMeta, err := imagemeta.Decode(bytes.NewReader(contentBytes))
+		imageMeta, err := imagemeta.DecodeHeif(bytes.NewReader(contentBytes))
 		if err != nil {
-			log.Err(err).Msg("failed to decode original file content")
+			log.Err(err).Msg("failed to decode heic file metadata")
 			err := tx.Rollback()
 			if err != nil {
 				return err
@@ -660,14 +660,22 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		log.Debug().Msg("creating thumbnail for jpegxl file")
 		img, err := jpegxl.Decode(bytes.NewReader(contentBytes))
 		if err != nil {
-			log.Err(err).Msg("failed to decode avif image")
+			log.Err(err).Msg("failed to decode jpegxl image")
 			err := tx.Rollback()
 			if err != nil {
 				return err
 			}
 			return err
 		}
-		thumbnailPath, err := r.processThumbnailFromImage(ctx, groupId, img, title, uint16(1))
+		log.Debug().Msg("reading original file orientation")
+		orientation := uint16(1) // Default orientation
+		imageMeta, err := imagemeta.Decode(bytes.NewReader(contentBytes))
+		if err != nil {
+			log.Debug().Msg("unable to decode jxl metadata, using default orientation")
+		} else {
+			orientation = uint16(imageMeta.Orientation)
+		}
+		thumbnailPath, err := r.processThumbnailFromImage(ctx, groupId, img, title, orientation)
 		if err != nil {
 			err := tx.Rollback()
 			if err != nil {
