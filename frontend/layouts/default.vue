@@ -47,7 +47,7 @@
                 {{ btn.name.value }}
                 <Shortcut
                   v-if="btn.shortcut"
-                  class="ml-auto hidden group-hover:inline"
+                  class="invisible ml-auto group-hover:visible"
                   :keys="btn.shortcut.replace('Shift', '⇧').split('+')"
                 />
               </DropdownMenuItem>
