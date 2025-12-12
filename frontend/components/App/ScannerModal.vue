@@ -81,17 +81,6 @@
     errorMessage.value = t("scanner.error");
   };
 
-  const checkPermissionsError = async () => {
-    if (navigator.permissions) {
-      const permissionStatus = await navigator.permissions.query({ name: "camera" as PermissionName });
-      if (permissionStatus.state === "denied") {
-        errorMessage.value = t("scanner.permission_denied");
-        console.error("Camera permission denied");
-        return true;
-      }
-    }
-  };
-
   const handleButtonClick = () => {
     openDialog(DialogID.ProductImport, { params: { barcode: detectedBarcode.value } });
   };
@@ -103,11 +92,19 @@
       return;
     }
 
-    if (await checkPermissionsError()) {
-      return;
-    }
-
     try {
+      // Request camera permission first
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        stream.getTracks().forEach(track => track.stop());
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === "NotAllowedError") {
+          errorMessage.value = t("scanner.permission_denied");
+          return;
+        }
+        throw err;
+      }
+
       const devices = await codeReader.listVideoInputDevices();
       sources.value = devices;
 
