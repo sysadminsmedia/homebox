@@ -10,12 +10,12 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemfield"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
 )
 
-// ItemField is the model entity for the ItemField schema.
-type ItemField struct {
+// EntityField is the model entity for the EntityField schema.
+type EntityField struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
@@ -28,7 +28,7 @@ type ItemField struct {
 	// Description holds the value of the "description" field.
 	Description string `json:"description,omitempty"`
 	// Type holds the value of the "type" field.
-	Type itemfield.Type `json:"type,omitempty"`
+	Type entityfield.Type `json:"type,omitempty"`
 	// TextValue holds the value of the "text_value" field.
 	TextValue string `json:"text_value,omitempty"`
 	// NumberValue holds the value of the "number_value" field.
@@ -38,48 +38,48 @@ type ItemField struct {
 	// TimeValue holds the value of the "time_value" field.
 	TimeValue time.Time `json:"time_value,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the ItemFieldQuery when eager-loading is set.
-	Edges        ItemFieldEdges `json:"edges"`
-	item_fields  *uuid.UUID
-	selectValues sql.SelectValues
+	// The values are being populated by the EntityFieldQuery when eager-loading is set.
+	Edges         EntityFieldEdges `json:"edges"`
+	entity_fields *uuid.UUID
+	selectValues  sql.SelectValues
 }
 
-// ItemFieldEdges holds the relations/edges for other nodes in the graph.
-type ItemFieldEdges struct {
-	// Item holds the value of the item edge.
-	Item *Item `json:"item,omitempty"`
+// EntityFieldEdges holds the relations/edges for other nodes in the graph.
+type EntityFieldEdges struct {
+	// Entity holds the value of the entity edge.
+	Entity *Entity `json:"entity,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
-// ItemOrErr returns the Item value or an error if the edge
+// EntityOrErr returns the Entity value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e ItemFieldEdges) ItemOrErr() (*Item, error) {
-	if e.Item != nil {
-		return e.Item, nil
+func (e EntityFieldEdges) EntityOrErr() (*Entity, error) {
+	if e.Entity != nil {
+		return e.Entity, nil
 	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: item.Label}
+		return nil, &NotFoundError{label: entity.Label}
 	}
-	return nil, &NotLoadedError{edge: "item"}
+	return nil, &NotLoadedError{edge: "entity"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*ItemField) scanValues(columns []string) ([]any, error) {
+func (*EntityField) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case itemfield.FieldBooleanValue:
+		case entityfield.FieldBooleanValue:
 			values[i] = new(sql.NullBool)
-		case itemfield.FieldNumberValue:
+		case entityfield.FieldNumberValue:
 			values[i] = new(sql.NullInt64)
-		case itemfield.FieldName, itemfield.FieldDescription, itemfield.FieldType, itemfield.FieldTextValue:
+		case entityfield.FieldName, entityfield.FieldDescription, entityfield.FieldType, entityfield.FieldTextValue:
 			values[i] = new(sql.NullString)
-		case itemfield.FieldCreatedAt, itemfield.FieldUpdatedAt, itemfield.FieldTimeValue:
+		case entityfield.FieldCreatedAt, entityfield.FieldUpdatedAt, entityfield.FieldTimeValue:
 			values[i] = new(sql.NullTime)
-		case itemfield.FieldID:
+		case entityfield.FieldID:
 			values[i] = new(uuid.UUID)
-		case itemfield.ForeignKeys[0]: // item_fields
+		case entityfield.ForeignKeys[0]: // entity_fields
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
@@ -89,79 +89,79 @@ func (*ItemField) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the ItemField fields.
-func (_m *ItemField) assignValues(columns []string, values []any) error {
+// to the EntityField fields.
+func (_m *EntityField) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case itemfield.FieldID:
+		case entityfield.FieldID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
 				_m.ID = *value
 			}
-		case itemfield.FieldCreatedAt:
+		case entityfield.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				_m.CreatedAt = value.Time
 			}
-		case itemfield.FieldUpdatedAt:
+		case entityfield.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				_m.UpdatedAt = value.Time
 			}
-		case itemfield.FieldName:
+		case entityfield.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				_m.Name = value.String
 			}
-		case itemfield.FieldDescription:
+		case entityfield.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
 				_m.Description = value.String
 			}
-		case itemfield.FieldType:
+		case entityfield.FieldType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
 			} else if value.Valid {
-				_m.Type = itemfield.Type(value.String)
+				_m.Type = entityfield.Type(value.String)
 			}
-		case itemfield.FieldTextValue:
+		case entityfield.FieldTextValue:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field text_value", values[i])
 			} else if value.Valid {
 				_m.TextValue = value.String
 			}
-		case itemfield.FieldNumberValue:
+		case entityfield.FieldNumberValue:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field number_value", values[i])
 			} else if value.Valid {
 				_m.NumberValue = int(value.Int64)
 			}
-		case itemfield.FieldBooleanValue:
+		case entityfield.FieldBooleanValue:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field boolean_value", values[i])
 			} else if value.Valid {
 				_m.BooleanValue = value.Bool
 			}
-		case itemfield.FieldTimeValue:
+		case entityfield.FieldTimeValue:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field time_value", values[i])
 			} else if value.Valid {
 				_m.TimeValue = value.Time
 			}
-		case itemfield.ForeignKeys[0]:
+		case entityfield.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
-				return fmt.Errorf("unexpected type %T for field item_fields", values[i])
+				return fmt.Errorf("unexpected type %T for field entity_fields", values[i])
 			} else if value.Valid {
-				_m.item_fields = new(uuid.UUID)
-				*_m.item_fields = *value.S.(*uuid.UUID)
+				_m.entity_fields = new(uuid.UUID)
+				*_m.entity_fields = *value.S.(*uuid.UUID)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -170,39 +170,39 @@ func (_m *ItemField) assignValues(columns []string, values []any) error {
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the ItemField.
+// Value returns the ent.Value that was dynamically selected and assigned to the EntityField.
 // This includes values selected through modifiers, order, etc.
-func (_m *ItemField) Value(name string) (ent.Value, error) {
+func (_m *EntityField) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
-// QueryItem queries the "item" edge of the ItemField entity.
-func (_m *ItemField) QueryItem() *ItemQuery {
-	return NewItemFieldClient(_m.config).QueryItem(_m)
+// QueryEntity queries the "entity" edge of the EntityField entity.
+func (_m *EntityField) QueryEntity() *EntityQuery {
+	return NewEntityFieldClient(_m.config).QueryEntity(_m)
 }
 
-// Update returns a builder for updating this ItemField.
-// Note that you need to call ItemField.Unwrap() before calling this method if this ItemField
+// Update returns a builder for updating this EntityField.
+// Note that you need to call EntityField.Unwrap() before calling this method if this EntityField
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (_m *ItemField) Update() *ItemFieldUpdateOne {
-	return NewItemFieldClient(_m.config).UpdateOne(_m)
+func (_m *EntityField) Update() *EntityFieldUpdateOne {
+	return NewEntityFieldClient(_m.config).UpdateOne(_m)
 }
 
-// Unwrap unwraps the ItemField entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the EntityField entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (_m *ItemField) Unwrap() *ItemField {
+func (_m *EntityField) Unwrap() *EntityField {
 	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: ItemField is not a transactional entity")
+		panic("ent: EntityField is not a transactional entity")
 	}
 	_m.config.driver = _tx.drv
 	return _m
 }
 
 // String implements the fmt.Stringer.
-func (_m *ItemField) String() string {
+func (_m *EntityField) String() string {
 	var builder strings.Builder
-	builder.WriteString("ItemField(")
+	builder.WriteString("EntityField(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("created_at=")
 	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
@@ -234,5 +234,5 @@ func (_m *ItemField) String() string {
 	return builder.String()
 }
 
-// ItemFields is a parsable slice of ItemField.
-type ItemFields []*ItemField
+// EntityFields is a parsable slice of EntityField.
+type EntityFields []*EntityField

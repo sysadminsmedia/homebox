@@ -73,9 +73,9 @@ const (
 	FieldsColumn = "item_template_fields"
 	// LocationTable is the table that holds the location relation/edge.
 	LocationTable = "item_templates"
-	// LocationInverseTable is the table name for the Location entity.
-	// It exists in this package in order to avoid circular dependency with the "location" package.
-	LocationInverseTable = "locations"
+	// LocationInverseTable is the table name for the Entity entity.
+	// It exists in this package in order to avoid circular dependency with the "entity" package.
+	LocationInverseTable = "entities"
 	// LocationColumn is the table column denoting the location relation/edge.
 	LocationColumn = "item_template_location"
 )

@@ -79,10 +79,10 @@ definitions:
     type: object
   ent.AttachmentEdges:
     properties:
-      item:
+      entity:
         allOf:
-        - $ref: '#/definitions/ent.Item'
-        description: Item holds the value of the item edge.
+        - $ref: '#/definitions/ent.Entity'
+        description: Entity holds the value of the entity edge.
       thumbnail:
         allOf:
         - $ref: '#/definitions/ent.Attachment'
@@ -148,105 +148,7 @@ definitions:
         - $ref: '#/definitions/ent.User'
         description: User holds the value of the user edge.
     type: object
-  ent.Group:
-    properties:
-      created_at:
-        description: CreatedAt holds the value of the "created_at" field.
-        type: string
-      currency:
-        description: Currency holds the value of the "currency" field.
-        type: string
-      edges:
-        allOf:
-        - $ref: '#/definitions/ent.GroupEdges'
-        description: |-
-          Edges holds the relations/edges for other nodes in the graph.
-          The values are being populated by the GroupQuery when eager-loading is set.
-      id:
-        description: ID of the ent.
-        type: string
-      name:
-        description: Name holds the value of the "name" field.
-        type: string
-      updated_at:
-        description: UpdatedAt holds the value of the "updated_at" field.
-        type: string
-    type: object
-  ent.GroupEdges:
-    properties:
-      invitation_tokens:
-        description: InvitationTokens holds the value of the invitation_tokens edge.
-        items:
-          $ref: '#/definitions/ent.GroupInvitationToken'
-        type: array
-      item_templates:
-        description: ItemTemplates holds the value of the item_templates edge.
-        items:
-          $ref: '#/definitions/ent.ItemTemplate'
-        type: array
-      items:
-        description: Items holds the value of the items edge.
-        items:
-          $ref: '#/definitions/ent.Item'
-        type: array
-      labels:
-        description: Labels holds the value of the labels edge.
-        items:
-          $ref: '#/definitions/ent.Label'
-        type: array
-      locations:
-        description: Locations holds the value of the locations edge.
-        items:
-          $ref: '#/definitions/ent.Location'
-        type: array
-      notifiers:
-        description: Notifiers holds the value of the notifiers edge.
-        items:
-          $ref: '#/definitions/ent.Notifier'
-        type: array
-      users:
-        description: Users holds the value of the users edge.
-        items:
-          $ref: '#/definitions/ent.User'
-        type: array
-    type: object
-  ent.GroupInvitationToken:
-    properties:
-      created_at:
-        description: CreatedAt holds the value of the "created_at" field.
-        type: string
-      edges:
-        allOf:
-        - $ref: '#/definitions/ent.GroupInvitationTokenEdges'
-        description: |-
-          Edges holds the relations/edges for other nodes in the graph.
-          The values are being populated by the GroupInvitationTokenQuery when eager-loading is set.
-      expires_at:
-        description: ExpiresAt holds the value of the "expires_at" field.
-        type: string
-      id:
-        description: ID of the ent.
-        type: string
-      token:
-        description: Token holds the value of the "token" field.
-        items:
-          type: integer
-        type: array
-      updated_at:
-        description: UpdatedAt holds the value of the "updated_at" field.
-        type: string
-      uses:
-        description: Uses holds the value of the "uses" field.
-        type: integer
-    type: object
-  ent.GroupInvitationTokenEdges:
-    properties:
-      group:
-        allOf:
-        - $ref: '#/definitions/ent.Group'
-        description: Group holds the value of the group edge.
-    type: object
-  ent.Item:
+  ent.Entity:
     properties:
       archived:
         description: Archived holds the value of the "archived" field.
@@ -262,10 +164,10 @@ definitions:
         type: string
       edges:
         allOf:
-        - $ref: '#/definitions/ent.ItemEdges'
+        - $ref: '#/definitions/ent.EntityEdges'
         description: |-
           Edges holds the relations/edges for other nodes in the graph.
-          The values are being populated by the ItemQuery when eager-loading is set.
+          The values are being populated by the EntityQuery when eager-loading is set.
       id:
         description: ID of the ent.
         type: string
@@ -317,8 +219,8 @@ definitions:
       sold_to:
         description: SoldTo holds the value of the "sold_to" field.
         type: string
-      sync_child_items_locations:
-        description: SyncChildItemsLocations holds the value of the "sync_child_items_locations"
+      sync_child_entities_locations:
+        description: SyncChildEntitiesLocations holds the value of the "sync_child_entities_locations"
           field.
         type: boolean
       updated_at:
@@ -331,7 +233,7 @@ definitions:
         description: WarrantyExpires holds the value of the "warranty_expires" field.
         type: string
     type: object
-  ent.ItemEdges:
+  ent.EntityEdges:
     properties:
       attachments:
         description: Attachments holds the value of the attachments edge.
@@ -341,12 +243,17 @@ definitions:
       children:
         description: Children holds the value of the children edge.
         items:
-          $ref: '#/definitions/ent.Item'
+          $ref: '#/definitions/ent.Entity'
+        type: array
+      entity:
+        description: Entity holds the value of the entity edge.
+        items:
+          $ref: '#/definitions/ent.Entity'
         type: array
       fields:
         description: Fields holds the value of the fields edge.
         items:
-          $ref: '#/definitions/ent.ItemField'
+          $ref: '#/definitions/ent.EntityField'
         type: array
       group:
         allOf:
@@ -359,7 +266,7 @@ definitions:
         type: array
       location:
         allOf:
-        - $ref: '#/definitions/ent.Location'
+        - $ref: '#/definitions/ent.Entity'
         description: Location holds the value of the location edge.
       maintenance_entries:
         description: MaintenanceEntries holds the value of the maintenance_entries
@@ -369,10 +276,14 @@ definitions:
         type: array
       parent:
         allOf:
-        - $ref: '#/definitions/ent.Item'
+        - $ref: '#/definitions/ent.Entity'
         description: Parent holds the value of the parent edge.
+      type:
+        allOf:
+        - $ref: '#/definitions/ent.EntityType'
+        description: Type holds the value of the type edge.
     type: object
-  ent.ItemField:
+  ent.EntityField:
     properties:
       boolean_value:
         description: BooleanValue holds the value of the "boolean_value" field.
@@ -385,10 +296,10 @@ definitions:
         type: string
       edges:
         allOf:
-        - $ref: '#/definitions/ent.ItemFieldEdges'
+        - $ref: '#/definitions/ent.EntityFieldEdges'
         description: |-
           Edges holds the relations/edges for other nodes in the graph.
-          The values are being populated by the ItemFieldQuery when eager-loading is set.
+          The values are being populated by the EntityFieldQuery when eager-loading is set.
       id:
         description: ID of the ent.
         type: string
@@ -406,18 +317,161 @@ definitions:
         type: string
       type:
         allOf:
-        - $ref: '#/definitions/itemfield.Type'
+        - $ref: '#/definitions/entityfield.Type'
         description: Type holds the value of the "type" field.
       updated_at:
         description: UpdatedAt holds the value of the "updated_at" field.
         type: string
     type: object
-  ent.ItemFieldEdges:
+  ent.EntityFieldEdges:
     properties:
-      item:
+      entity:
         allOf:
-        - $ref: '#/definitions/ent.Item'
-        description: Item holds the value of the item edge.
+        - $ref: '#/definitions/ent.Entity'
+        description: Entity holds the value of the entity edge.
+    type: object
+  ent.EntityType:
+    properties:
+      color:
+        description: Color holds the value of the "color" field.
+        type: string
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      description:
+        description: Description holds the value of the "description" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.EntityTypeEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the EntityTypeQuery when eager-loading is set.
+      icon:
+        description: Icon holds the value of the "icon" field.
+        type: string
+      id:
+        description: ID of the ent.
+        type: string
+      is_location:
+        description: IsLocation holds the value of the "is_location" field.
+        type: boolean
+      name:
+        description: Name holds the value of the "name" field.
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
+  ent.EntityTypeEdges:
+    properties:
+      entities:
+        description: Entities holds the value of the entities edge.
+        items:
+          $ref: '#/definitions/ent.Entity'
+        type: array
+      group:
+        allOf:
+        - $ref: '#/definitions/ent.Group'
+        description: Group holds the value of the group edge.
+    type: object
+  ent.Group:
+    properties:
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      currency:
+        description: Currency holds the value of the "currency" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.GroupEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the GroupQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: string
+      name:
+        description: Name holds the value of the "name" field.
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
+  ent.GroupEdges:
+    properties:
+      entities:
+        description: Entities holds the value of the entities edge.
+        items:
+          $ref: '#/definitions/ent.Entity'
+        type: array
+      entity_types:
+        description: EntityTypes holds the value of the entity_types edge.
+        items:
+          $ref: '#/definitions/ent.EntityType'
+        type: array
+      invitation_tokens:
+        description: InvitationTokens holds the value of the invitation_tokens edge.
+        items:
+          $ref: '#/definitions/ent.GroupInvitationToken'
+        type: array
+      item_templates:
+        description: ItemTemplates holds the value of the item_templates edge.
+        items:
+          $ref: '#/definitions/ent.ItemTemplate'
+        type: array
+      labels:
+        description: Labels holds the value of the labels edge.
+        items:
+          $ref: '#/definitions/ent.Label'
+        type: array
+      notifiers:
+        description: Notifiers holds the value of the notifiers edge.
+        items:
+          $ref: '#/definitions/ent.Notifier'
+        type: array
+      users:
+        description: Users holds the value of the users edge.
+        items:
+          $ref: '#/definitions/ent.User'
+        type: array
+    type: object
+  ent.GroupInvitationToken:
+    properties:
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.GroupInvitationTokenEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the GroupInvitationTokenQuery when eager-loading is set.
+      expires_at:
+        description: ExpiresAt holds the value of the "expires_at" field.
+        type: string
+      id:
+        description: ID of the ent.
+        type: string
+      token:
+        description: Token holds the value of the "token" field.
+        items:
+          type: integer
+        type: array
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      uses:
+        description: Uses holds the value of the "uses" field.
+        type: integer
+    type: object
+  ent.GroupInvitationTokenEdges:
+    properties:
+      group:
+        allOf:
+        - $ref: '#/definitions/ent.Group'
+        description: Group holds the value of the group edge.
     type: object
   ent.ItemTemplate:
     properties:
@@ -502,7 +556,7 @@ definitions:
         description: Group holds the value of the group edge.
       location:
         allOf:
-        - $ref: '#/definitions/ent.Location'
+        - $ref: '#/definitions/ent.Entity'
         description: Location holds the value of the location edge.
     type: object
   ent.Label:
@@ -534,60 +588,15 @@ definitions:
     type: object
   ent.LabelEdges:
     properties:
-      group:
-        allOf:
-        - $ref: '#/definitions/ent.Group'
-        description: Group holds the value of the group edge.
-      items:
-        description: Items holds the value of the items edge.
+      entities:
+        description: Entities holds the value of the entities edge.
         items:
-          $ref: '#/definitions/ent.Item'
-        type: array
-    type: object
-  ent.Location:
-    properties:
-      created_at:
-        description: CreatedAt holds the value of the "created_at" field.
-        type: string
-      description:
-        description: Description holds the value of the "description" field.
-        type: string
-      edges:
-        allOf:
-        - $ref: '#/definitions/ent.LocationEdges'
-        description: |-
-          Edges holds the relations/edges for other nodes in the graph.
-          The values are being populated by the LocationQuery when eager-loading is set.
-      id:
-        description: ID of the ent.
-        type: string
-      name:
-        description: Name holds the value of the "name" field.
-        type: string
-      updated_at:
-        description: UpdatedAt holds the value of the "updated_at" field.
-        type: string
-    type: object
-  ent.LocationEdges:
-    properties:
-      children:
-        description: Children holds the value of the children edge.
-        items:
-          $ref: '#/definitions/ent.Location'
+          $ref: '#/definitions/ent.Entity'
         type: array
       group:
         allOf:
         - $ref: '#/definitions/ent.Group'
         description: Group holds the value of the group edge.
-      items:
-        description: Items holds the value of the items edge.
-        items:
-          $ref: '#/definitions/ent.Item'
-        type: array
-      parent:
-        allOf:
-        - $ref: '#/definitions/ent.Location'
-        description: Parent holds the value of the parent edge.
     type: object
   ent.MaintenanceEntry:
     properties:
@@ -609,11 +618,11 @@ definitions:
         description: |-
           Edges holds the relations/edges for other nodes in the graph.
           The values are being populated by the MaintenanceEntryQuery when eager-loading is set.
+      entity_id:
+        description: EntityID holds the value of the "entity_id" field.
+        type: string
       id:
         description: ID of the ent.
-        type: string
-      item_id:
-        description: ItemID holds the value of the "item_id" field.
         type: string
       name:
         description: Name holds the value of the "name" field.
@@ -627,10 +636,10 @@ definitions:
     type: object
   ent.MaintenanceEntryEdges:
     properties:
-      item:
+      entity:
         allOf:
-        - $ref: '#/definitions/ent.Item'
-        description: Item holds the value of the item edge.
+        - $ref: '#/definitions/ent.Entity'
+        description: Entity holds the value of the entity edge.
     type: object
   ent.Notifier:
     properties:
@@ -771,7 +780,7 @@ definitions:
           $ref: '#/definitions/ent.Notifier'
         type: array
     type: object
-  itemfield.Type:
+  entityfield.Type:
     enum:
     - text
     - number
@@ -815,6 +824,82 @@ definitions:
       copyPrefix:
         type: string
     type: object
+  repo.EntityAttachment:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      mimeType:
+        type: string
+      path:
+        type: string
+      primary:
+        type: boolean
+      thumbnail:
+        $ref: '#/definitions/ent.Attachment'
+      title:
+        type: string
+      type:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  repo.EntityAttachmentUpdate:
+    properties:
+      primary:
+        type: boolean
+      title:
+        type: string
+      type:
+        type: string
+    type: object
+  repo.EntityType:
+    properties:
+      color:
+        type: string
+      description:
+        type: string
+      icon:
+        type: string
+      isLocation:
+        type: boolean
+      name:
+        type: string
+    type: object
+  repo.EntityTypeCreate:
+    properties:
+      color:
+        type: string
+      description:
+        type: string
+      icon:
+        type: string
+      isLocation:
+        type: boolean
+      name:
+        type: string
+    required:
+    - isLocation
+    - name
+    type: object
+  repo.EntityTypeDelete:
+    properties:
+      replacementId:
+        $ref: '#/definitions/uuid.NullUUID'
+    type: object
+  repo.EntityTypeUpdate:
+    properties:
+      color:
+        type: string
+      description:
+        type: string
+      icon:
+        type: string
+      name:
+        minLength: 1
+        type: string
+    type: object
   repo.Group:
     properties:
       createdAt:
@@ -850,40 +935,12 @@ definitions:
       name:
         type: string
     type: object
-  repo.ItemAttachment:
-    properties:
-      createdAt:
-        type: string
-      id:
-        type: string
-      mimeType:
-        type: string
-      path:
-        type: string
-      primary:
-        type: boolean
-      thumbnail:
-        $ref: '#/definitions/ent.Attachment'
-      title:
-        type: string
-      type:
-        type: string
-      updatedAt:
-        type: string
-    type: object
-  repo.ItemAttachmentUpdate:
-    properties:
-      primary:
-        type: boolean
-      title:
-        type: string
-      type:
-        type: string
-    type: object
   repo.ItemCreate:
     properties:
       description:
         maxLength: 1000
+        type: string
+      entityType:
         type: string
       labelIds:
         items:
@@ -902,6 +959,7 @@ definitions:
       quantity:
         type: integer
     required:
+    - entityType
     - name
     type: object
   repo.ItemField:
@@ -928,11 +986,13 @@ definitions:
         type: string
       attachments:
         items:
-          $ref: '#/definitions/repo.ItemAttachment'
+          $ref: '#/definitions/repo.EntityAttachment'
         type: array
       createdAt:
         type: string
       description:
+        type: string
+      entityType:
         type: string
       fields:
         items:
@@ -1044,6 +1104,8 @@ definitions:
       createdAt:
         type: string
       description:
+        type: string
+      entityType:
         type: string
       id:
         type: string
@@ -1278,10 +1340,14 @@ definitions:
     enum:
     - location
     - item
+    - location
+    - item
     type: string
     x-enum-varnames:
     - ItemTypeLocation
     - ItemTypeItem
+    - EntityTypeLocation
+    - EntityTypeItem
   repo.ItemUpdate:
     properties:
       archived:
@@ -1290,6 +1356,8 @@ definitions:
         type: string
       description:
         maxLength: 1000
+        type: string
+      entityType:
         type: string
       fields:
         items:
@@ -1358,6 +1426,7 @@ definitions:
       warrantyExpires:
         type: string
     required:
+    - entityType
     - name
     type: object
   repo.LabelCreate:
@@ -1408,11 +1477,15 @@ definitions:
     properties:
       description:
         type: string
+      entityType:
+        type: string
       name:
         type: string
       parentId:
         type: string
         x-nullable: true
+    required:
+    - entityType
     type: object
   repo.LocationOut:
     properties:
@@ -1423,6 +1496,8 @@ definitions:
       createdAt:
         type: string
       description:
+        type: string
+      entityType:
         type: string
       id:
         type: string
@@ -1441,6 +1516,8 @@ definitions:
         type: string
       description:
         type: string
+      entityType:
+        type: string
       id:
         type: string
       itemCount:
@@ -1456,6 +1533,8 @@ definitions:
         type: string
       description:
         type: string
+      entityType:
+        type: string
       id:
         type: string
       name:
@@ -1467,6 +1546,8 @@ definitions:
     properties:
       description:
         type: string
+      entityType:
+        type: string
       id:
         type: string
       name:
@@ -1474,6 +1555,8 @@ definitions:
       parentId:
         type: string
         x-nullable: true
+    required:
+    - entityType
     type: object
   repo.MaintenanceEntry:
     properties:
@@ -1744,6 +1827,14 @@ definitions:
     - DefaultRole
     - RoleUser
     - RoleOwner
+  uuid.NullUUID:
+    properties:
+      uuid:
+        type: string
+      valid:
+        description: Valid is true if UUID is not NULL
+        type: boolean
+    type: object
   v1.APISummary:
     properties:
       allowRegistration:
@@ -1994,6 +2085,287 @@ paths:
       summary: Currency
       tags:
       - Base
+  /v1/entities/{id}/attachments:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: File attachment
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: Type of file
+        in: formData
+        name: type
+        type: string
+      - description: Is this the primary attachment
+        in: formData
+        name: primary
+        type: boolean
+      - description: name of the file including extension
+        in: formData
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.ItemOut'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/validate.ErrorResponse'
+      security:
+      - Bearer: []
+      summary: Create Item Attachment
+      tags:
+      - Items Attachments
+  /v1/entities/{id}/attachments/{attachment_id}:
+    delete:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Attachment ID
+        in: path
+        name: attachment_id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Delete Item Attachment
+      tags:
+      - Items Attachments
+    get:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Attachment ID
+        in: path
+        name: attachment_id
+        required: true
+        type: string
+      produces:
+      - application/octet-stream
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ItemAttachmentToken'
+      security:
+      - Bearer: []
+      summary: Get Item Attachment
+      tags:
+      - Items Attachments
+    put:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Attachment ID
+        in: path
+        name: attachment_id
+        required: true
+        type: string
+      - description: Attachment Update
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.EntityAttachmentUpdate'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.ItemOut'
+      security:
+      - Bearer: []
+      summary: Update Item Attachment
+      tags:
+      - Items Attachments
+  /v1/entities/{id}/maintenance:
+    get:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - enum:
+        - scheduled
+        - completed
+        - both
+        in: query
+        name: status
+        type: string
+        x-enum-varnames:
+        - MaintenanceFilterStatusScheduled
+        - MaintenanceFilterStatusCompleted
+        - MaintenanceFilterStatusBoth
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repo.MaintenanceEntryWithDetails'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get Maintenance Log
+      tags:
+      - Item Maintenance
+    post:
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Entry Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.MaintenanceEntryCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.MaintenanceEntry'
+      security:
+      - Bearer: []
+      summary: Create Maintenance Entry
+      tags:
+      - Item Maintenance
+  /v1/entitytype:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repo.EntityType'
+            type: array
+      security:
+      - Bearer: []
+      summary: Query All Entity Types
+      tags:
+      - EntityTypes
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Entity Type Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.EntityTypeCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.EntityType'
+      security:
+      - Bearer: []
+      summary: Create Entity Type
+      tags:
+      - EntityTypes
+  /v1/entitytype/{id}:
+    delete:
+      parameters:
+      - description: Entity Type ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Entity Type Delete Options
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.EntityTypeDelete'
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Delete Entity Type
+      tags:
+      - EntityTypes
+    get:
+      parameters:
+      - description: Entity Type ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.EntityType'
+      security:
+      - Bearer: []
+      summary: Get One Entity Type
+      tags:
+      - EntityTypes
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Entity Type ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Entity Type Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.EntityTypeUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.EntityType'
+      security:
+      - Bearer: []
+      summary: Update Entity Type
+      tags:
+      - EntityTypes
   /v1/groups:
     get:
       produces:
@@ -2120,6 +2492,7 @@ paths:
       - Statistics
   /v1/items:
     get:
+      deprecated: true
       parameters:
       - description: search string
         in: query
@@ -2163,10 +2536,13 @@ paths:
             $ref: '#/definitions/repo.PaginationResult-repo_ItemSummary'
       security:
       - Bearer: []
-      summary: Query All Items
+      summary: (Deprecated) Query All Items
       tags:
       - Items
     post:
+      consumes:
+      - application/json
+      deprecated: true
       parameters:
       - description: Item Data
         in: body
@@ -2188,6 +2564,7 @@ paths:
       - Items
   /v1/items/{id}:
     delete:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -2201,10 +2578,11 @@ paths:
           description: No Content
       security:
       - Bearer: []
-      summary: Delete Item
+      summary: (Deprecated) Delete Item
       tags:
       - Items
     get:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -2220,10 +2598,11 @@ paths:
             $ref: '#/definitions/repo.ItemOut'
       security:
       - Bearer: []
-      summary: Get Item
+      summary: (Deprecated) Get Item
       tags:
       - Items
     patch:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -2245,10 +2624,11 @@ paths:
             $ref: '#/definitions/repo.ItemOut'
       security:
       - Bearer: []
-      summary: Update Item
+      summary: (Deprecated) Update Item
       tags:
       - Items
     put:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -2270,13 +2650,14 @@ paths:
             $ref: '#/definitions/repo.ItemOut'
       security:
       - Bearer: []
-      summary: Update Item
+      summary: (Deprecated) Update Item
       tags:
       - Items
   /v1/items/{id}/attachments:
     post:
       consumes:
       - multipart/form-data
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -2319,6 +2700,7 @@ paths:
       - Items Attachments
   /v1/items/{id}/attachments/{attachment_id}:
     delete:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -2339,6 +2721,7 @@ paths:
       tags:
       - Items Attachments
     get:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -2363,6 +2746,7 @@ paths:
       tags:
       - Items Attachments
     put:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -2379,7 +2763,7 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/repo.ItemAttachmentUpdate'
+          $ref: '#/definitions/repo.EntityAttachmentUpdate'
       responses:
         "200":
           description: OK
@@ -2418,6 +2802,7 @@ paths:
       - Items
   /v1/items/{id}/maintenance:
     get:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -2450,6 +2835,7 @@ paths:
       tags:
       - Item Maintenance
     post:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -2476,6 +2862,7 @@ paths:
       - Item Maintenance
   /v1/items/{id}/path:
     get:
+      deprecated: true
       parameters:
       - description: Item ID
         in: path
@@ -2493,11 +2880,12 @@ paths:
             type: array
       security:
       - Bearer: []
-      summary: Get the full path of an item
+      summary: (Deprecated) Get the full path of an item
       tags:
       - Items
   /v1/items/export:
     get:
+      deprecated: true
       responses:
         "200":
           description: text/csv
@@ -2505,11 +2893,12 @@ paths:
             type: string
       security:
       - Bearer: []
-      summary: Export Items
+      summary: (Deprecated) Export Items
       tags:
       - Items
   /v1/items/fields:
     get:
+      deprecated: true
       produces:
       - application/json
       responses:
@@ -2521,11 +2910,12 @@ paths:
             type: array
       security:
       - Bearer: []
-      summary: Get All Custom Field Names
+      summary: (Deprecated) Get All Custom Field Names
       tags:
       - Items
   /v1/items/fields/values:
     get:
+      deprecated: true
       produces:
       - application/json
       responses:
@@ -2537,13 +2927,14 @@ paths:
             type: array
       security:
       - Bearer: []
-      summary: Get All Custom Field Values
+      summary: (Deprecated) Get All Custom Field Values
       tags:
       - Items
   /v1/items/import:
     post:
       consumes:
       - multipart/form-data
+      deprecated: true
       parameters:
       - description: Image to upload
         in: formData
@@ -2557,7 +2948,7 @@ paths:
           description: No Content
       security:
       - Bearer: []
-      summary: Import Items
+      summary: (Deprecated) Import Items
       tags:
       - Items
   /v1/labelmaker/assets/{id}:
@@ -2726,6 +3117,7 @@ paths:
       - Labels
   /v1/locations:
     get:
+      deprecated: true
       parameters:
       - description: Filter locations with parents
         in: query
@@ -2742,10 +3134,11 @@ paths:
             type: array
       security:
       - Bearer: []
-      summary: Get All Locations
+      summary: (Deprecated) Get All Locations
       tags:
       - Locations
     post:
+      deprecated: true
       parameters:
       - description: Location Data
         in: body
@@ -2762,11 +3155,12 @@ paths:
             $ref: '#/definitions/repo.LocationSummary'
       security:
       - Bearer: []
-      summary: Create Location
+      summary: (Deprecated) Create Location
       tags:
       - Locations
   /v1/locations/{id}:
     delete:
+      deprecated: true
       parameters:
       - description: Location ID
         in: path
@@ -2780,10 +3174,11 @@ paths:
           description: No Content
       security:
       - Bearer: []
-      summary: Delete Location
+      summary: (Deprecated) Delete Location
       tags:
       - Locations
     get:
+      deprecated: true
       parameters:
       - description: Location ID
         in: path
@@ -2799,10 +3194,11 @@ paths:
             $ref: '#/definitions/repo.LocationOut'
       security:
       - Bearer: []
-      summary: Get Location
+      summary: (Deprecated) Get Location
       tags:
       - Locations
     put:
+      deprecated: true
       parameters:
       - description: Location ID
         in: path
@@ -2824,11 +3220,12 @@ paths:
             $ref: '#/definitions/repo.LocationOut'
       security:
       - Bearer: []
-      summary: Update Location
+      summary: (Deprecated) Update Location
       tags:
       - Locations
   /v1/locations/tree:
     get:
+      deprecated: true
       parameters:
       - description: include items in response tree
         in: query
@@ -2845,7 +3242,7 @@ paths:
             type: array
       security:
       - Bearer: []
-      summary: Get Locations Tree
+      summary: (Deprecated) Get Locations Tree
       tags:
       - Locations
   /v1/maintenance:

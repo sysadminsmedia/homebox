@@ -11,9 +11,9 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 )
 
 // ItemTemplate is the model entity for the ItemTemplate schema.
@@ -70,7 +70,7 @@ type ItemTemplateEdges struct {
 	// Fields holds the value of the fields edge.
 	Fields []*TemplateField `json:"fields,omitempty"`
 	// Location holds the value of the location edge.
-	Location *Location `json:"location,omitempty"`
+	Location *Entity `json:"location,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool
@@ -98,11 +98,11 @@ func (e ItemTemplateEdges) FieldsOrErr() ([]*TemplateField, error) {
 
 // LocationOrErr returns the Location value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e ItemTemplateEdges) LocationOrErr() (*Location, error) {
+func (e ItemTemplateEdges) LocationOrErr() (*Entity, error) {
 	if e.Location != nil {
 		return e.Location, nil
 	} else if e.loadedTypes[2] {
-		return nil, &NotFoundError{label: location.Label}
+		return nil, &NotFoundError{label: entity.Label}
 	}
 	return nil, &NotLoadedError{edge: "location"}
 }
@@ -291,7 +291,7 @@ func (_m *ItemTemplate) QueryFields() *TemplateFieldQuery {
 }
 
 // QueryLocation queries the "location" edge of the ItemTemplate entity.
-func (_m *ItemTemplate) QueryLocation() *LocationQuery {
+func (_m *ItemTemplate) QueryLocation() *EntityQuery {
 	return NewItemTemplateClient(_m.config).QueryLocation(_m)
 }
 

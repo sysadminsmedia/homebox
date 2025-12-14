@@ -40,8 +40,8 @@ type Label struct {
 type LabelEdges struct {
 	// Group holds the value of the group edge.
 	Group *Group `json:"group,omitempty"`
-	// Items holds the value of the items edge.
-	Items []*Item `json:"items,omitempty"`
+	// Entities holds the value of the entities edge.
+	Entities []*Entity `json:"entities,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [2]bool
@@ -58,13 +58,13 @@ func (e LabelEdges) GroupOrErr() (*Group, error) {
 	return nil, &NotLoadedError{edge: "group"}
 }
 
-// ItemsOrErr returns the Items value or an error if the edge
+// EntitiesOrErr returns the Entities value or an error if the edge
 // was not loaded in eager-loading.
-func (e LabelEdges) ItemsOrErr() ([]*Item, error) {
+func (e LabelEdges) EntitiesOrErr() ([]*Entity, error) {
 	if e.loadedTypes[1] {
-		return e.Items, nil
+		return e.Entities, nil
 	}
-	return nil, &NotLoadedError{edge: "items"}
+	return nil, &NotLoadedError{edge: "entities"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -156,9 +156,9 @@ func (_m *Label) QueryGroup() *GroupQuery {
 	return NewLabelClient(_m.config).QueryGroup(_m)
 }
 
-// QueryItems queries the "items" edge of the Label entity.
-func (_m *Label) QueryItems() *ItemQuery {
-	return NewLabelClient(_m.config).QueryItems(_m)
+// QueryEntities queries the "entities" edge of the Label entity.
+func (_m *Label) QueryEntities() *EntityQuery {
+	return NewLabelClient(_m.config).QueryEntities(_m)
 }
 
 // Update returns a builder for updating this Label.

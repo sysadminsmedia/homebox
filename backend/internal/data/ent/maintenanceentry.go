@@ -10,7 +10,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 )
 
@@ -23,8 +23,8 @@ type MaintenanceEntry struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
-	// ItemID holds the value of the "item_id" field.
-	ItemID uuid.UUID `json:"item_id,omitempty"`
+	// EntityID holds the value of the "entity_id" field.
+	EntityID uuid.UUID `json:"entity_id,omitempty"`
 	// Date holds the value of the "date" field.
 	Date time.Time `json:"date,omitempty"`
 	// ScheduledDate holds the value of the "scheduled_date" field.
@@ -43,22 +43,22 @@ type MaintenanceEntry struct {
 
 // MaintenanceEntryEdges holds the relations/edges for other nodes in the graph.
 type MaintenanceEntryEdges struct {
-	// Item holds the value of the item edge.
-	Item *Item `json:"item,omitempty"`
+	// Entity holds the value of the entity edge.
+	Entity *Entity `json:"entity,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [1]bool
 }
 
-// ItemOrErr returns the Item value or an error if the edge
+// EntityOrErr returns the Entity value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e MaintenanceEntryEdges) ItemOrErr() (*Item, error) {
-	if e.Item != nil {
-		return e.Item, nil
+func (e MaintenanceEntryEdges) EntityOrErr() (*Entity, error) {
+	if e.Entity != nil {
+		return e.Entity, nil
 	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: item.Label}
+		return nil, &NotFoundError{label: entity.Label}
 	}
-	return nil, &NotLoadedError{edge: "item"}
+	return nil, &NotLoadedError{edge: "entity"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -72,7 +72,7 @@ func (*MaintenanceEntry) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case maintenanceentry.FieldCreatedAt, maintenanceentry.FieldUpdatedAt, maintenanceentry.FieldDate, maintenanceentry.FieldScheduledDate:
 			values[i] = new(sql.NullTime)
-		case maintenanceentry.FieldID, maintenanceentry.FieldItemID:
+		case maintenanceentry.FieldID, maintenanceentry.FieldEntityID:
 			values[i] = new(uuid.UUID)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -107,11 +107,11 @@ func (_m *MaintenanceEntry) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.UpdatedAt = value.Time
 			}
-		case maintenanceentry.FieldItemID:
+		case maintenanceentry.FieldEntityID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
-				return fmt.Errorf("unexpected type %T for field item_id", values[i])
+				return fmt.Errorf("unexpected type %T for field entity_id", values[i])
 			} else if value != nil {
-				_m.ItemID = *value
+				_m.EntityID = *value
 			}
 		case maintenanceentry.FieldDate:
 			if value, ok := values[i].(*sql.NullTime); !ok {
@@ -156,9 +156,9 @@ func (_m *MaintenanceEntry) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
-// QueryItem queries the "item" edge of the MaintenanceEntry entity.
-func (_m *MaintenanceEntry) QueryItem() *ItemQuery {
-	return NewMaintenanceEntryClient(_m.config).QueryItem(_m)
+// QueryEntity queries the "entity" edge of the MaintenanceEntry entity.
+func (_m *MaintenanceEntry) QueryEntity() *EntityQuery {
+	return NewMaintenanceEntryClient(_m.config).QueryEntity(_m)
 }
 
 // Update returns a builder for updating this MaintenanceEntry.
@@ -190,8 +190,8 @@ func (_m *MaintenanceEntry) String() string {
 	builder.WriteString("updated_at=")
 	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
-	builder.WriteString("item_id=")
-	builder.WriteString(fmt.Sprintf("%v", _m.ItemID))
+	builder.WriteString("entity_id=")
+	builder.WriteString(fmt.Sprintf("%v", _m.EntityID))
 	builder.WriteString(", ")
 	builder.WriteString("date=")
 	builder.WriteString(_m.Date.Format(time.ANSIC))

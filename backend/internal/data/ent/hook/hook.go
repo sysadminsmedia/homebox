@@ -45,6 +45,42 @@ func (f AuthTokensFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AuthTokensMutation", m)
 }
 
+// The EntityFunc type is an adapter to allow the use of ordinary
+// function as Entity mutator.
+type EntityFunc func(context.Context, *ent.EntityMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EntityFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.EntityMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EntityMutation", m)
+}
+
+// The EntityFieldFunc type is an adapter to allow the use of ordinary
+// function as EntityField mutator.
+type EntityFieldFunc func(context.Context, *ent.EntityFieldMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EntityFieldFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.EntityFieldMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EntityFieldMutation", m)
+}
+
+// The EntityTypeFunc type is an adapter to allow the use of ordinary
+// function as EntityType mutator.
+type EntityTypeFunc func(context.Context, *ent.EntityTypeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f EntityTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.EntityTypeMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.EntityTypeMutation", m)
+}
+
 // The GroupFunc type is an adapter to allow the use of ordinary
 // function as Group mutator.
 type GroupFunc func(context.Context, *ent.GroupMutation) (ent.Value, error)
@@ -69,30 +105,6 @@ func (f GroupInvitationTokenFunc) Mutate(ctx context.Context, m ent.Mutation) (e
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.GroupInvitationTokenMutation", m)
 }
 
-// The ItemFunc type is an adapter to allow the use of ordinary
-// function as Item mutator.
-type ItemFunc func(context.Context, *ent.ItemMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f ItemFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.ItemMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ItemMutation", m)
-}
-
-// The ItemFieldFunc type is an adapter to allow the use of ordinary
-// function as ItemField mutator.
-type ItemFieldFunc func(context.Context, *ent.ItemFieldMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f ItemFieldFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.ItemFieldMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ItemFieldMutation", m)
-}
-
 // The ItemTemplateFunc type is an adapter to allow the use of ordinary
 // function as ItemTemplate mutator.
 type ItemTemplateFunc func(context.Context, *ent.ItemTemplateMutation) (ent.Value, error)
@@ -115,18 +127,6 @@ func (f LabelFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.LabelMutation", m)
-}
-
-// The LocationFunc type is an adapter to allow the use of ordinary
-// function as Location mutator.
-type LocationFunc func(context.Context, *ent.LocationMutation) (ent.Value, error)
-
-// Mutate calls f(ctx, m).
-func (f LocationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.LocationMutation); ok {
-		return f(ctx, mv)
-	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.LocationMutation", m)
 }
 
 // The MaintenanceEntryFunc type is an adapter to allow the use of ordinary
