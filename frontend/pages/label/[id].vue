@@ -21,6 +21,8 @@
   import PageQRCode from "~/components/global/PageQRCode.vue";
   import Markdown from "~/components/global/Markdown.vue";
   import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
+  import LabelParentSelector from "@/components/Label/ParentSelector.vue";
+  import LabelChip from "@/components/Label/Chip.vue";
 
   definePageMeta({
     middleware: ["auth"],
@@ -69,12 +71,19 @@
     name: "",
     description: "",
     color: "",
+    parentId: null as string | null,
+  });
+
+  const { data: allLabels } = useAsyncData("all-labels", async () => {
+    const { data } = await api.labels.getAll();
+    return data || [];
   });
 
   function openUpdate() {
     updateData.name = label.value?.name || "";
     updateData.description = label.value?.description || "";
     updateData.color = "";
+    updateData.parentId = label.value?.parent?.id || null;
     openDialog(DialogID.UpdateLabel);
   }
 
@@ -151,6 +160,7 @@
           :show-hex="true"
           :starting-color="label.color"
         />
+        <LabelParentSelector v-if="allLabels" v-model="updateData.parentId" :labels="allLabels.filter(l => l.id !== labelId)" />
         <DialogFooter>
           <Button type="submit" :loading="updating"> {{ $t("global.update") }} </Button>
         </DialogFooter>
@@ -204,6 +214,25 @@
       </header>
       <Separator v-if="label && label.description" />
       <Markdown v-if="label && label.description" class="mt-3 text-base" :source="label.description" />
+      
+      <!-- Display parent and children -->
+      <div v-if="label && (label.parent || (label.children && label.children.length > 0))" class="mt-3">
+        <Separator />
+        <div class="mt-3">
+          <div v-if="label.parent" class="mb-2">
+            <span class="text-sm font-medium">{{ $t("labels.parent_label") }}:</span>
+            <div class="mt-1">
+              <LabelChip :label="label.parent" size="sm" />
+            </div>
+          </div>
+          <div v-if="label.children && label.children.length > 0">
+            <span class="text-sm font-medium">{{ $t("labels.child_labels") }}:</span>
+            <div class="mt-1 flex flex-wrap gap-2">
+              <LabelChip v-for="child in label.children" :key="child.id" :label="child" size="sm" />
+            </div>
+          </div>
+        </div>
+      </div>
     </Card>
     <section v-if="label && items">
       <ItemViewSelectable :items="items.items" @refresh="refreshItemList" />

@@ -15,6 +15,7 @@
         :max-length="1000"
       />
       <ColorSelector v-model="form.color" :label="$t('components.label.create_modal.label_color')" :show-hex="true" />
+      <LabelParentSelector v-model="form.parentId" :labels="labels" />
       <div class="mt-4 flex flex-row-reverse">
         <ButtonGroup>
           <Button :disabled="loading" type="submit">{{ $t("global.create") }}</Button>
@@ -37,6 +38,8 @@
   import FormTextField from "~/components/Form/TextField.vue";
   import FormTextArea from "~/components/Form/TextArea.vue";
   import { Button, ButtonGroup } from "~/components/ui/button";
+  import LabelParentSelector from "@/components/Label/ParentSelector.vue";
+  import type { LabelOut } from "~/lib/api/types/data-contracts";
 
   const { t } = useI18n();
 
@@ -49,13 +52,25 @@
   const form = reactive({
     name: "",
     description: "",
-    color: "", // Future!
+    color: "",
+    parentId: null as string | null,
+  });
+
+  const labels = ref<LabelOut[]>([]);
+
+  // Load labels for parent selection
+  onMounted(async () => {
+    const { data } = await api.labels.getAll();
+    if (data) {
+      labels.value = data;
+    }
   });
 
   function reset() {
     form.name = "";
     form.description = "";
     form.color = "";
+    form.parentId = null;
     focused.value = false;
     loading.value = false;
   }

@@ -15,6 +15,11 @@
       default: "md",
     },
   });
+
+  // Type guard to check if label is LabelOut (has parent/children)
+  const isLabelOut = (label: LabelOut | LabelSummary): label is LabelOut => {
+    return 'parent' in label || 'children' in label;
+  };
 </script>
 
 <template>
@@ -42,6 +47,10 @@
         <MdiArrowUp class="hidden group-hover/label-chip:block" />
       </div>
     </div>
+    <template v-if="isLabelOut(label) && label.parent">
+      <span class="opacity-70">{{ label.parent.name }}</span>
+      <span class="opacity-50">/</span>
+    </template>
     {{ label.name }}
   </NuxtLink>
 </template>
