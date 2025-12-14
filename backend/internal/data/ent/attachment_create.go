@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 )
 
 // AttachmentCreate is the builder for creating a Attachment entity.
@@ -134,23 +134,23 @@ func (_c *AttachmentCreate) SetNillableID(v *uuid.UUID) *AttachmentCreate {
 	return _c
 }
 
-// SetEntityID sets the "entity" edge to the Entity entity by ID.
-func (_c *AttachmentCreate) SetEntityID(id uuid.UUID) *AttachmentCreate {
-	_c.mutation.SetEntityID(id)
+// SetItemID sets the "item" edge to the Item entity by ID.
+func (_c *AttachmentCreate) SetItemID(id uuid.UUID) *AttachmentCreate {
+	_c.mutation.SetItemID(id)
 	return _c
 }
 
-// SetNillableEntityID sets the "entity" edge to the Entity entity by ID if the given value is not nil.
-func (_c *AttachmentCreate) SetNillableEntityID(id *uuid.UUID) *AttachmentCreate {
+// SetNillableItemID sets the "item" edge to the Item entity by ID if the given value is not nil.
+func (_c *AttachmentCreate) SetNillableItemID(id *uuid.UUID) *AttachmentCreate {
 	if id != nil {
-		_c = _c.SetEntityID(*id)
+		_c = _c.SetItemID(*id)
 	}
 	return _c
 }
 
-// SetEntity sets the "entity" edge to the Entity entity.
-func (_c *AttachmentCreate) SetEntity(v *Entity) *AttachmentCreate {
-	return _c.SetEntityID(v.ID)
+// SetItem sets the "item" edge to the Item entity.
+func (_c *AttachmentCreate) SetItem(v *Item) *AttachmentCreate {
+	return _c.SetItemID(v.ID)
 }
 
 // SetThumbnailID sets the "thumbnail" edge to the Attachment entity by ID.
@@ -332,21 +332,21 @@ func (_c *AttachmentCreate) createSpec() (*Attachment, *sqlgraph.CreateSpec) {
 		_spec.SetField(attachment.FieldMimeType, field.TypeString, value)
 		_node.MimeType = value
 	}
-	if nodes := _c.mutation.EntityIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.ItemIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   attachment.EntityTable,
-			Columns: []string{attachment.EntityColumn},
+			Table:   attachment.ItemTable,
+			Columns: []string{attachment.ItemColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.entity_attachments = &nodes[0]
+		_node.item_attachments = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.ThumbnailIDs(); len(nodes) > 0 {

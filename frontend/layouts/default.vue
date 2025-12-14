@@ -183,6 +183,7 @@
   import MdiWrench from "~icons/mdi/wrench";
   import MdiPlus from "~icons/mdi/plus";
   import MdiLogout from "~icons/mdi/logout";
+  import MdiFileDocumentMultiple from "~icons/mdi/file-document-multiple";
 
   import {
     Sidebar,
@@ -331,6 +332,13 @@
       to: "/items",
     },
     {
+      icon: MdiFileDocumentMultiple,
+      id: 3,
+      active: computed(() => route.path === "/templates"),
+      name: computed(() => t("menu.templates")),
+      to: "/templates",
+    },
+    {
       icon: MdiWrench,
       id: 4,
       active: computed(() => route.path === "/maintenance"),
@@ -368,12 +376,12 @@
   ]);
 
   const labelStore = useLabelStore();
+  labelStore.ensureAllLabelsFetched();
 
   const locationStore = useLocationStore();
+  locationStore.ensureLocationsFetched();
 
   onMounted(() => {
-    labelStore.refresh();
-    locationStore.refreshChildren();
     locationStore.refreshParents();
     locationStore.refreshTree();
   });

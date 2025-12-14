@@ -50,6 +50,7 @@ func (svc *ItemService) AttachmentAdd(ctx Context, itemID uuid.UUID, filename st
 	_, err = svc.repo.Attachments.Create(ctx, itemID, repo.EntityCreateAttachment{Title: filename, Content: file}, attachmentType, primary)
 	if err != nil {
 		log.Err(err).Msg("failed to create attachment")
+		return repo.ItemOut{}, err
 	}
 
 	return svc.repo.Items.GetOneByGroup(ctx, ctx.GID, itemID)

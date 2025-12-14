@@ -105,6 +105,7 @@
                 "rotate_photo": "Rotate photo",
                 "set_as_primary_photo": "Set as { isPrimary, select, true {non-} false {} other {}}primary photo",
                 "title": "Create Item",
+                "clear_template": "Clear Template",
                 "toast": {
                     "already_creating": "Already creating an item",
                     "create_failed": "Couldn't create item",
@@ -229,6 +230,65 @@
         "quick_menu": {
             "no_results": "No results found.",
             "shortcut_hint": "Use the number keys to quickly select an action."
+        },
+        "template": {
+            "card": {
+                "delete": "Delete template",
+                "duplicate": "Duplicate template",
+                "edit": "Edit template"
+            },
+            "confirm_delete": "Delete this template?",
+            "create_modal": {
+                "title": "Create Template"
+            },
+            "detail": {
+                "default_values": "Default Values",
+                "updated": "Updated"
+            },
+            "edit_modal": {
+                "title": "Edit Template"
+            },
+            "form": {
+                "custom_fields": "Custom Fields",
+                "default_item_values": "Default Item Values",
+                "default_location": "Default Location",
+                "default_value": "Default Value",
+                "field_name": "Field Name",
+                "item_description": "Item Description",
+                "item_name": "Item Name",
+                "lifetime_warranty": "Lifetime Warranty",
+                "location": "Location",
+                "manufacturer": "Manufacturer",
+                "model_number": "Model Number",
+                "no_custom_fields": "No custom fields.",
+                "template_description": "Template Description",
+                "template_name": "Template Name"
+            },
+            "selector": {
+                "label": "Template (Optional)",
+                "not_found": "No template found",
+                "search": "Search templates...",
+                "select": "Select template..."
+            },
+            "toast": {
+                "applied": "Template \"{name}\" applied",
+                "create_failed": "Failed to create template",
+                "created": "Template created",
+                "delete_failed": "Failed to delete template",
+                "deleted": "Template deleted",
+                "duplicate_failed": "Failed to duplicate template",
+                "duplicated": "Template duplicated as \"{name}\"",
+                "load_failed": "Failed to load template details",
+                "saved_as_template": "Item saved as template \"{name}\"",
+                "update_failed": "Failed to update template",
+                "updated": "Template updated"
+            },
+            "apply_template": "Apply a template",
+            "using_template": "Using template: {name}",
+            "show_defaults": "Show defaults",
+            "hide_defaults": "Hide defaults",
+            "empty_value": "(empty)",
+            "save_as_template": "Save as Template"
         }
     },
     "errors": {
@@ -279,7 +339,10 @@
         "updating": "Updating",
         "value": "Value",
         "version": "Version: { version }",
-        "welcome": "Welcome, { username }"
+        "welcome": "Welcome, { username }",
+        "preview": "Preview",
+        "yes": "Yes",
+        "no": "No"
     },
     "home": {
         "labels": "Labels",
@@ -296,6 +359,7 @@
         "dont_join_group": "Don't want to join a group?",
         "joining_group": "You're Joining an Existing Group!",
         "login": "Login",
+        "or": "or",
         "register": "Register",
         "remember_me": "Remember Me",
         "set_email": "What's your email?",
@@ -307,6 +371,14 @@
             "invalid_email": "Invalid email address",
             "invalid_email_password": "Invalid email or password",
             "login_success": "Logged in successfully",
+            "oidc_access_denied": "Access denied: Your account does not have the required role/group membership",
+            "oidc_auth_failed": "OIDC authentication failed",
+            "oidc_invalid_response": "Invalid OIDC response received",
+            "oidc_provider_error": "OIDC provider returned an error",
+            "oidc_security_error": "OIDC security error - possible CSRF attack",
+            "oidc_session_expired": "OIDC session has expired",
+            "oidc_token_expired": "OIDC token has expired",
+            "oidc_token_invalid": "OIDC token signature is invalid",
             "problem_registering": "Problem registering user",
             "user_registered": "User registered"
         }
@@ -543,7 +615,14 @@
         "profile": "Profile",
         "scanner": "Scanner",
         "search": "Search",
+        "templates": "Templates",
         "tools": "Tools"
+    },
+    "pages": {
+        "templates": {
+            "title": "Templates",
+            "no_templates": "No templates yet."
+        }
     },
     "profile": {
         "active": "Active",

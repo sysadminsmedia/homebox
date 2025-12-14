@@ -16,18 +16,6 @@ func (_m *AuthTokens) GetID() uuid.UUID {
 	return _m.ID
 }
 
-func (_m *Entity) GetID() uuid.UUID {
-	return _m.ID
-}
-
-func (_m *EntityField) GetID() uuid.UUID {
-	return _m.ID
-}
-
-func (_m *EntityType) GetID() uuid.UUID {
-	return _m.ID
-}
-
 func (_m *Group) GetID() uuid.UUID {
 	return _m.ID
 }
@@ -36,7 +24,23 @@ func (_m *GroupInvitationToken) GetID() uuid.UUID {
 	return _m.ID
 }
 
+func (_m *Item) GetID() uuid.UUID {
+	return _m.ID
+}
+
+func (_m *ItemField) GetID() uuid.UUID {
+	return _m.ID
+}
+
+func (_m *ItemTemplate) GetID() uuid.UUID {
+	return _m.ID
+}
+
 func (_m *Label) GetID() uuid.UUID {
+	return _m.ID
+}
+
+func (_m *Location) GetID() uuid.UUID {
 	return _m.ID
 }
 
@@ -45,6 +49,10 @@ func (_m *MaintenanceEntry) GetID() uuid.UUID {
 }
 
 func (_m *Notifier) GetID() uuid.UUID {
+	return _m.ID
+}
+
+func (_m *TemplateField) GetID() uuid.UUID {
 	return _m.ID
 }
 

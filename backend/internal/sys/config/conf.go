@@ -27,6 +27,7 @@ type Config struct {
 	Demo       bool           `yaml:"demo"`
 	Debug      DebugConf      `yaml:"debug"`
 	Options    Options        `yaml:"options"`
+	OIDC       OIDCConf       `yaml:"oidc"`
 	LabelMaker LabelMakerConf `yaml:"labelmaker"`
 	Thumbnail  Thumbnail      `yaml:"thumbnail"`
 	Barcode    BarcodeAPIConf `yaml:"barcode"`
@@ -38,6 +39,9 @@ type Options struct {
 	CurrencyConfig       string `yaml:"currencies"`
 	GithubReleaseCheck   bool   `yaml:"check_github_release"    conf:"default:true"`
 	AllowAnalytics       bool   `yaml:"allow_analytics"         conf:"default:false"`
+	AllowLocalLogin      bool   `yaml:"allow_local_login"       conf:"default:true"`
+	TrustProxy           bool   `yaml:"trust_proxy"             conf:"default:false"`
+	Hostname             string `yaml:"hostname"`
 }
 
 type Thumbnail struct {
@@ -71,6 +75,26 @@ type LabelMakerConf struct {
 	DynamicLength         bool           `yaml:"bool"                  conf:"default:true"`
 	LabelServiceUrl       *string        `yaml:"label_service_url"`
 	LabelServiceTimeout   *time.Duration `yaml:"label_service_timeout"`
+	RegularFontPath       *string        `yaml:"regular_font_path"`
+	BoldFontPath          *string        `yaml:"bold_font_path"`
+}
+
+type OIDCConf struct {
+	Enabled            bool          `yaml:"enabled"             conf:"default:false"`
+	IssuerURL          string        `yaml:"issuer_url"`
+	ClientID           string        `yaml:"client_id"`
+	ClientSecret       string        `yaml:"client_secret"`
+	Scope              string        `yaml:"scope"                conf:"default:openid profile email"`
+	AllowedGroups      string        `yaml:"allowed_groups"`
+	AutoRedirect       bool          `yaml:"auto_redirect"                conf:"default:false"`
+	VerifyEmail        bool          `yaml:"verify_email"         conf:"default:false"`
+	GroupClaim         string        `yaml:"group_claim"          conf:"default:groups"`
+	EmailClaim         string        `yaml:"email_claim"          conf:"default:email"`
+	NameClaim          string        `yaml:"name_claim"           conf:"default:name"`
+	EmailVerifiedClaim string        `yaml:"email_verified_claim" conf:"default:email_verified"`
+	ButtonText         string        `yaml:"button_text"          conf:"default:Sign in with OIDC"`
+	StateExpiry        time.Duration `yaml:"state_expiry"         conf:"default:10m"`
+	RequestTimeout     time.Duration `yaml:"request_timeout"      conf:"default:30s"`
 }
 
 type BarcodeAPIConf struct {

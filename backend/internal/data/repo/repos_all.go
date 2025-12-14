@@ -20,9 +20,11 @@ type AllRepos struct {
 	Notifiers   *NotifierRepository
 	EntityType  *EntityTypeRepository
 	Entities    *EntitiesRepository
+	ItemTemplates *ItemTemplatesRepository
 }
 
 func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage, pubSubConn string, thumbnail config.Thumbnail) *AllRepos {
+	attachments := &AttachmentRepo{db, storage, pubSubConn, thumbnail}
 	return &AllRepos{
 		Users:       &UserRepository{db},
 		AuthTokens:  &TokenRepository{db},
@@ -35,5 +37,6 @@ func New(db *ent.Client, bus *eventbus.EventBus, storage config.Storage, pubSubC
 		Notifiers:   NewNotifierRepository(db),
 		EntityType:  &EntityTypeRepository{db, bus},
 		Entities:    &EntitiesRepository{db, bus},
+		ItemTemplates: &ItemTemplatesRepository{db, bus},
 	}
 }

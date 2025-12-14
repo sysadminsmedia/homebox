@@ -218,10 +218,8 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc Entit
 	// Upload the file to the storage bucket
 	path, err := r.UploadFile(ctx, itemGroup, doc)
 	if err != nil {
-		log.Err(err).Msg("failed to create parent directory")
-		err := tx.Rollback()
-		if err != nil {
-			return nil, err
+		if rollbackErr := tx.Rollback(); rollbackErr != nil {
+			return nil, rollbackErr
 		}
 		return nil, err
 	}

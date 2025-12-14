@@ -25,16 +25,18 @@ const (
 	FieldCurrency = "currency"
 	// EdgeUsers holds the string denoting the users edge name in mutations.
 	EdgeUsers = "users"
-	// EdgeEntities holds the string denoting the entities edge name in mutations.
-	EdgeEntities = "entities"
+	// EdgeLocations holds the string denoting the locations edge name in mutations.
+	EdgeLocations = "locations"
+	// EdgeItems holds the string denoting the items edge name in mutations.
+	EdgeItems = "items"
 	// EdgeLabels holds the string denoting the labels edge name in mutations.
 	EdgeLabels = "labels"
 	// EdgeInvitationTokens holds the string denoting the invitation_tokens edge name in mutations.
 	EdgeInvitationTokens = "invitation_tokens"
 	// EdgeNotifiers holds the string denoting the notifiers edge name in mutations.
 	EdgeNotifiers = "notifiers"
-	// EdgeEntityTypes holds the string denoting the entity_types edge name in mutations.
-	EdgeEntityTypes = "entity_types"
+	// EdgeItemTemplates holds the string denoting the item_templates edge name in mutations.
+	EdgeItemTemplates = "item_templates"
 	// Table holds the table name of the group in the database.
 	Table = "groups"
 	// UsersTable is the table that holds the users relation/edge.
@@ -44,13 +46,20 @@ const (
 	UsersInverseTable = "users"
 	// UsersColumn is the table column denoting the users relation/edge.
 	UsersColumn = "group_users"
-	// EntitiesTable is the table that holds the entities relation/edge.
-	EntitiesTable = "entities"
-	// EntitiesInverseTable is the table name for the Entity entity.
-	// It exists in this package in order to avoid circular dependency with the "entity" package.
-	EntitiesInverseTable = "entities"
-	// EntitiesColumn is the table column denoting the entities relation/edge.
-	EntitiesColumn = "group_entities"
+	// LocationsTable is the table that holds the locations relation/edge.
+	LocationsTable = "locations"
+	// LocationsInverseTable is the table name for the Location entity.
+	// It exists in this package in order to avoid circular dependency with the "location" package.
+	LocationsInverseTable = "locations"
+	// LocationsColumn is the table column denoting the locations relation/edge.
+	LocationsColumn = "group_locations"
+	// ItemsTable is the table that holds the items relation/edge.
+	ItemsTable = "items"
+	// ItemsInverseTable is the table name for the Item entity.
+	// It exists in this package in order to avoid circular dependency with the "item" package.
+	ItemsInverseTable = "items"
+	// ItemsColumn is the table column denoting the items relation/edge.
+	ItemsColumn = "group_items"
 	// LabelsTable is the table that holds the labels relation/edge.
 	LabelsTable = "labels"
 	// LabelsInverseTable is the table name for the Label entity.
@@ -72,13 +81,13 @@ const (
 	NotifiersInverseTable = "notifiers"
 	// NotifiersColumn is the table column denoting the notifiers relation/edge.
 	NotifiersColumn = "group_id"
-	// EntityTypesTable is the table that holds the entity_types relation/edge.
-	EntityTypesTable = "entity_types"
-	// EntityTypesInverseTable is the table name for the EntityType entity.
-	// It exists in this package in order to avoid circular dependency with the "entitytype" package.
-	EntityTypesInverseTable = "entity_types"
-	// EntityTypesColumn is the table column denoting the entity_types relation/edge.
-	EntityTypesColumn = "group_entity_types"
+	// ItemTemplatesTable is the table that holds the item_templates relation/edge.
+	ItemTemplatesTable = "item_templates"
+	// ItemTemplatesInverseTable is the table name for the ItemTemplate entity.
+	// It exists in this package in order to avoid circular dependency with the "itemtemplate" package.
+	ItemTemplatesInverseTable = "item_templates"
+	// ItemTemplatesColumn is the table column denoting the item_templates relation/edge.
+	ItemTemplatesColumn = "group_item_templates"
 )
 
 // Columns holds all SQL columns for group fields.
@@ -157,17 +166,31 @@ func ByUsers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByEntitiesCount orders the results by entities count.
-func ByEntitiesCount(opts ...sql.OrderTermOption) OrderOption {
+// ByLocationsCount orders the results by locations count.
+func ByLocationsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newEntitiesStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newLocationsStep(), opts...)
 	}
 }
 
-// ByEntities orders the results by entities terms.
-func ByEntities(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByLocations orders the results by locations terms.
+func ByLocations(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newEntitiesStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newLocationsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByItemsCount orders the results by items count.
+func ByItemsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newItemsStep(), opts...)
+	}
+}
+
+// ByItems orders the results by items terms.
+func ByItems(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newItemsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -213,17 +236,17 @@ func ByNotifiers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByEntityTypesCount orders the results by entity_types count.
-func ByEntityTypesCount(opts ...sql.OrderTermOption) OrderOption {
+// ByItemTemplatesCount orders the results by item_templates count.
+func ByItemTemplatesCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newEntityTypesStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newItemTemplatesStep(), opts...)
 	}
 }
 
-// ByEntityTypes orders the results by entity_types terms.
-func ByEntityTypes(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByItemTemplates orders the results by item_templates terms.
+func ByItemTemplates(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newEntityTypesStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newItemTemplatesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 func newUsersStep() *sqlgraph.Step {
@@ -233,11 +256,18 @@ func newUsersStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, UsersTable, UsersColumn),
 	)
 }
-func newEntitiesStep() *sqlgraph.Step {
+func newLocationsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(EntitiesInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, EntitiesTable, EntitiesColumn),
+		sqlgraph.To(LocationsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, LocationsTable, LocationsColumn),
+	)
+}
+func newItemsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ItemsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ItemsTable, ItemsColumn),
 	)
 }
 func newLabelsStep() *sqlgraph.Step {
@@ -261,10 +291,10 @@ func newNotifiersStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, NotifiersTable, NotifiersColumn),
 	)
 }
-func newEntityTypesStep() *sqlgraph.Step {
+func newItemTemplatesStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(EntityTypesInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, EntityTypesTable, EntityTypesColumn),
+		sqlgraph.To(ItemTemplatesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ItemTemplatesTable, ItemTemplatesColumn),
 	)
 }

@@ -70,6 +70,14 @@ func (_c *UserCreate) SetPassword(v string) *UserCreate {
 	return _c
 }
 
+// SetNillablePassword sets the "password" field if the given value is not nil.
+func (_c *UserCreate) SetNillablePassword(v *string) *UserCreate {
+	if v != nil {
+		_c.SetPassword(*v)
+	}
+	return _c
+}
+
 // SetIsSuperuser sets the "is_superuser" field.
 func (_c *UserCreate) SetIsSuperuser(v bool) *UserCreate {
 	_c.mutation.SetIsSuperuser(v)
@@ -122,6 +130,34 @@ func (_c *UserCreate) SetActivatedOn(v time.Time) *UserCreate {
 func (_c *UserCreate) SetNillableActivatedOn(v *time.Time) *UserCreate {
 	if v != nil {
 		_c.SetActivatedOn(*v)
+	}
+	return _c
+}
+
+// SetOidcIssuer sets the "oidc_issuer" field.
+func (_c *UserCreate) SetOidcIssuer(v string) *UserCreate {
+	_c.mutation.SetOidcIssuer(v)
+	return _c
+}
+
+// SetNillableOidcIssuer sets the "oidc_issuer" field if the given value is not nil.
+func (_c *UserCreate) SetNillableOidcIssuer(v *string) *UserCreate {
+	if v != nil {
+		_c.SetOidcIssuer(*v)
+	}
+	return _c
+}
+
+// SetOidcSubject sets the "oidc_subject" field.
+func (_c *UserCreate) SetOidcSubject(v string) *UserCreate {
+	_c.mutation.SetOidcSubject(v)
+	return _c
+}
+
+// SetNillableOidcSubject sets the "oidc_subject" field if the given value is not nil.
+func (_c *UserCreate) SetNillableOidcSubject(v *string) *UserCreate {
+	if v != nil {
+		_c.SetOidcSubject(*v)
 	}
 	return _c
 }
@@ -266,9 +302,6 @@ func (_c *UserCreate) check() error {
 			return &ValidationError{Name: "email", err: fmt.Errorf(`ent: validator failed for field "User.email": %w`, err)}
 		}
 	}
-	if _, ok := _c.mutation.Password(); !ok {
-		return &ValidationError{Name: "password", err: errors.New(`ent: missing required field "User.password"`)}
-	}
 	if v, ok := _c.mutation.Password(); ok {
 		if err := user.PasswordValidator(v); err != nil {
 			return &ValidationError{Name: "password", err: fmt.Errorf(`ent: validator failed for field "User.password": %w`, err)}
@@ -344,7 +377,7 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	}
 	if value, ok := _c.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
-		_node.Password = value
+		_node.Password = &value
 	}
 	if value, ok := _c.mutation.IsSuperuser(); ok {
 		_spec.SetField(user.FieldIsSuperuser, field.TypeBool, value)
@@ -361,6 +394,14 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.ActivatedOn(); ok {
 		_spec.SetField(user.FieldActivatedOn, field.TypeTime, value)
 		_node.ActivatedOn = value
+	}
+	if value, ok := _c.mutation.OidcIssuer(); ok {
+		_spec.SetField(user.FieldOidcIssuer, field.TypeString, value)
+		_node.OidcIssuer = &value
+	}
+	if value, ok := _c.mutation.OidcSubject(); ok {
+		_spec.SetField(user.FieldOidcSubject, field.TypeString, value)
+		_node.OidcSubject = &value
 	}
 	if nodes := _c.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

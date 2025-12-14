@@ -37,7 +37,7 @@ export async function sharedUserClient(): Promise<UserClient> {
   expect(loginResp.status).toBe(200);
 
   cache.token = loginData.token;
-  return factories.client.user(data.token);
+  return factories.client.user(loginData.token);
 }
 
 beforeAll(async () => {
