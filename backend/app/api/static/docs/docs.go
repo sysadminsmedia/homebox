@@ -3216,6 +3216,13 @@ const docTemplate = `{
         "ent.LabelEdges": {
             "type": "object",
             "properties": {
+                "children": {
+                    "description": "Children holds the value of the children edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Label"
+                    }
+                },
                 "group": {
                     "description": "Group holds the value of the group edge.",
                     "allOf": [
@@ -3230,6 +3237,14 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/ent.Item"
                     }
+                },
+                "parent": {
+                    "description": "Parent holds the value of the parent edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Label"
+                        }
+                    ]
                 }
             }
         },
@@ -4437,12 +4452,22 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 255,
                     "minLength": 1
+                },
+                "parentId": {
+                    "type": "string",
+                    "x-nullable": true
                 }
             }
         },
         "repo.LabelOut": {
             "type": "object",
             "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.LabelSummary"
+                    }
+                },
                 "color": {
                     "type": "string"
                 },
@@ -4457,6 +4482,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "parent": {
+                    "$ref": "#/definitions/repo.LabelSummary"
                 },
                 "updatedAt": {
                     "type": "string"
