@@ -110,6 +110,40 @@ func (_c *LabelCreate) SetGroup(v *Group) *LabelCreate {
 	return _c.SetGroupID(v.ID)
 }
 
+// SetParentID sets the "parent" edge to the Label entity by ID.
+func (_c *LabelCreate) SetParentID(id uuid.UUID) *LabelCreate {
+	_c.mutation.SetParentID(id)
+	return _c
+}
+
+// SetNillableParentID sets the "parent" edge to the Label entity by ID if the given value is not nil.
+func (_c *LabelCreate) SetNillableParentID(id *uuid.UUID) *LabelCreate {
+	if id != nil {
+		_c = _c.SetParentID(*id)
+	}
+	return _c
+}
+
+// SetParent sets the "parent" edge to the Label entity.
+func (_c *LabelCreate) SetParent(v *Label) *LabelCreate {
+	return _c.SetParentID(v.ID)
+}
+
+// AddChildIDs adds the "children" edge to the Label entity by IDs.
+func (_c *LabelCreate) AddChildIDs(ids ...uuid.UUID) *LabelCreate {
+	_c.mutation.AddChildIDs(ids...)
+	return _c
+}
+
+// AddChildren adds the "children" edges to the Label entity.
+func (_c *LabelCreate) AddChildren(v ...*Label) *LabelCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddChildIDs(ids...)
+}
+
 // AddItemIDs adds the "items" edge to the Item entity by IDs.
 func (_c *LabelCreate) AddItemIDs(ids ...uuid.UUID) *LabelCreate {
 	_c.mutation.AddItemIDs(ids...)
@@ -273,6 +307,39 @@ func (_c *LabelCreate) createSpec() (*Label, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.group_labels = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   label.ParentTable,
+			Columns: []string{label.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.label_children = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   label.ChildrenTable,
+			Columns: []string{label.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.ItemsIDs(); len(nodes) > 0 {

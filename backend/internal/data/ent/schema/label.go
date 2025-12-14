@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
@@ -32,6 +33,12 @@ func (Label) Fields() []ent.Field {
 // Edges of the Label.
 func (Label) Edges() []ent.Edge {
 	return []ent.Edge{
+		edge.To("children", Label.Type).
+			Annotations(entsql.Annotation{
+				OnDelete: entsql.Cascade,
+			}).
+			From("parent").
+			Unique(),
 		edge.To("items", Item.Type),
 	}
 }

@@ -27,6 +27,10 @@ const (
 	FieldColor = "color"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
 	EdgeGroup = "group"
+	// EdgeParent holds the string denoting the parent edge name in mutations.
+	EdgeParent = "parent"
+	// EdgeChildren holds the string denoting the children edge name in mutations.
+	EdgeChildren = "children"
 	// EdgeItems holds the string denoting the items edge name in mutations.
 	EdgeItems = "items"
 	// Table holds the table name of the label in the database.
@@ -38,6 +42,14 @@ const (
 	GroupInverseTable = "groups"
 	// GroupColumn is the table column denoting the group relation/edge.
 	GroupColumn = "group_labels"
+	// ParentTable is the table that holds the parent relation/edge.
+	ParentTable = "labels"
+	// ParentColumn is the table column denoting the parent relation/edge.
+	ParentColumn = "label_children"
+	// ChildrenTable is the table that holds the children relation/edge.
+	ChildrenTable = "labels"
+	// ChildrenColumn is the table column denoting the children relation/edge.
+	ChildrenColumn = "label_children"
 	// ItemsTable is the table that holds the items relation/edge. The primary key declared below.
 	ItemsTable = "label_items"
 	// ItemsInverseTable is the table name for the Item entity.
@@ -59,6 +71,7 @@ var Columns = []string{
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"group_labels",
+	"label_children",
 }
 
 var (
@@ -139,6 +152,27 @@ func ByGroupField(field string, opts ...sql.OrderTermOption) OrderOption {
 	}
 }
 
+// ByParentField orders the results by parent field.
+func ByParentField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newParentStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByChildrenCount orders the results by children count.
+func ByChildrenCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newChildrenStep(), opts...)
+	}
+}
+
+// ByChildren orders the results by children terms.
+func ByChildren(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newChildrenStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
 // ByItemsCount orders the results by items count.
 func ByItemsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
@@ -157,6 +191,20 @@ func newGroupStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(GroupInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, GroupTable, GroupColumn),
+	)
+}
+func newParentStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, true, ParentTable, ParentColumn),
+	)
+}
+func newChildrenStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(Table, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
 	)
 }
 func newItemsStep() *sqlgraph.Step {

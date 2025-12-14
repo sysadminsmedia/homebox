@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -19,9 +20,10 @@ type LabelRepository struct {
 
 type (
 	LabelCreate struct {
-		Name        string `json:"name"        validate:"required,min=1,max=255"`
-		Description string `json:"description" validate:"max=1000"`
-		Color       string `json:"color"`
+		Name        string    `json:"name"        validate:"required,min=1,max=255"`
+		Description string    `json:"description" validate:"max=1000"`
+		Color       string    `json:"color"`
+		ParentID    uuid.UUID `json:"parentId"    extensions:"x-nullable"`
 	}
 
 	LabelUpdate struct {
@@ -29,6 +31,7 @@ type (
 		Name        string    `json:"name"        validate:"required,min=1,max=255"`
 		Description string    `json:"description" validate:"max=1000"`
 		Color       string    `json:"color"`
+		ParentID    uuid.UUID `json:"parentId"    extensions:"x-nullable"`
 	}
 
 	LabelSummary struct {
@@ -41,7 +44,9 @@ type (
 	}
 
 	LabelOut struct {
+		Parent *LabelSummary `json:"parent,omitempty"`
 		LabelSummary
+		Children []LabelSummary `json:"children"`
 	}
 )
 
@@ -62,7 +67,20 @@ var (
 )
 
 func mapLabelOut(label *ent.Label) LabelOut {
+	var parent *LabelSummary
+	if label.Edges.Parent != nil {
+		p := mapLabelSummary(label.Edges.Parent)
+		parent = &p
+	}
+
+	children := make([]LabelSummary, 0, len(label.Edges.Children))
+	for _, c := range label.Edges.Children {
+		children = append(children, mapLabelSummary(c))
+	}
+
 	return LabelOut{
+		Parent:   parent,
+		Children: children,
 		LabelSummary: mapLabelSummary(label),
 	}
 }
@@ -73,10 +91,59 @@ func (r *LabelRepository) publishMutationEvent(gid uuid.UUID) {
 	}
 }
 
+const maxLabelDepth = 20
+
+// validateParentNotCircular checks if setting parentID as parent of labelID would create a circular reference
+func (r *LabelRepository) validateParentNotCircular(ctx context.Context, labelID, parentID uuid.UUID) error {
+	// Check if label is being set as its own parent
+	if labelID == parentID {
+		return fmt.Errorf("label cannot be its own parent")
+	}
+
+	// Check if parent exists and get its parent chain
+	depth := 0
+	currentID := parentID
+
+	for currentID != uuid.Nil && depth < maxLabelDepth {
+		l, err := r.db.Label.Query().
+			Where(label.ID(currentID)).
+			WithParent().
+			Only(ctx)
+		if err != nil {
+			if ent.IsNotFound(err) {
+				return fmt.Errorf("parent label not found")
+			}
+			return err
+		}
+
+		// Check if we've reached the label we're trying to set a parent for (circular reference)
+		if l.ID == labelID {
+			return fmt.Errorf("circular reference detected in label hierarchy")
+		}
+
+		depth++
+		if depth >= maxLabelDepth {
+			return fmt.Errorf("label hierarchy exceeds maximum depth of 20")
+		}
+
+		if l.Edges.Parent != nil {
+			currentID = l.Edges.Parent.ID
+		} else {
+			currentID = uuid.Nil
+		}
+	}
+
+	return nil
+}
+
 func (r *LabelRepository) getOne(ctx context.Context, where ...predicate.Label) (LabelOut, error) {
 	return mapLabelOutErr(r.db.Label.Query().
 		Where(where...).
 		WithGroup().
+		WithParent().
+		WithChildren(func(lq *ent.LabelQuery) {
+			lq.Order(label.ByName())
+		}).
 		Only(ctx),
 	)
 }
@@ -99,19 +166,62 @@ func (r *LabelRepository) GetAll(ctx context.Context, groupID uuid.UUID) ([]Labe
 }
 
 func (r *LabelRepository) Create(ctx context.Context, groupID uuid.UUID, data LabelCreate) (LabelOut, error) {
-	label, err := r.db.Label.Create().
+	// Validate parent if provided
+	if data.ParentID != uuid.Nil {
+		// Check that parent exists and belongs to same group
+		parent, err := r.db.Label.Query().
+			Where(label.ID(data.ParentID), label.HasGroupWith(group.ID(groupID))).
+			Only(ctx)
+		if err != nil {
+			if ent.IsNotFound(err) {
+				return LabelOut{}, fmt.Errorf("parent label not found or does not belong to the same group")
+			}
+			return LabelOut{}, err
+		}
+
+		// Validate parent hierarchy depth
+		depth := 0
+		currentID := parent.ID
+		for currentID != uuid.Nil && depth < maxLabelDepth {
+			l, err := r.db.Label.Query().
+				Where(label.ID(currentID)).
+				WithParent().
+				Only(ctx)
+			if err != nil {
+				return LabelOut{}, err
+			}
+
+			depth++
+			if depth >= maxLabelDepth {
+				return LabelOut{}, fmt.Errorf("label hierarchy exceeds maximum depth of 20")
+			}
+
+			if l.Edges.Parent != nil {
+				currentID = l.Edges.Parent.ID
+			} else {
+				currentID = uuid.Nil
+			}
+		}
+	}
+
+	q := r.db.Label.Create().
 		SetName(data.Name).
 		SetDescription(data.Description).
 		SetColor(data.Color).
-		SetGroupID(groupID).
-		Save(ctx)
+		SetGroupID(groupID)
+
+	if data.ParentID != uuid.Nil {
+		q.SetParentID(data.ParentID)
+	}
+
+	label, err := q.Save(ctx)
 	if err != nil {
 		return LabelOut{}, err
 	}
 
 	label.Edges.Group = &ent.Group{ID: groupID} // bootstrap group ID
 	r.publishMutationEvent(groupID)
-	return mapLabelOut(label), err
+	return mapLabelOut(label), nil
 }
 
 func (r *LabelRepository) update(ctx context.Context, data LabelUpdate, where ...predicate.Label) (int, error) {
@@ -119,15 +229,41 @@ func (r *LabelRepository) update(ctx context.Context, data LabelUpdate, where ..
 		panic("empty where not supported empty")
 	}
 
-	return r.db.Label.Update().
+	q := r.db.Label.Update().
 		Where(where...).
 		SetName(data.Name).
 		SetDescription(data.Description).
-		SetColor(data.Color).
-		Save(ctx)
+		SetColor(data.Color)
+
+	if data.ParentID != uuid.Nil {
+		q.SetParentID(data.ParentID)
+	} else {
+		q.ClearParent()
+	}
+
+	return q.Save(ctx)
 }
 
 func (r *LabelRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data LabelUpdate) (LabelOut, error) {
+	// Validate parent if provided
+	if data.ParentID != uuid.Nil {
+		// Check that parent exists and belongs to same group
+		parent, err := r.db.Label.Query().
+			Where(label.ID(data.ParentID), label.HasGroupWith(group.ID(gid))).
+			Only(ctx)
+		if err != nil {
+			if ent.IsNotFound(err) {
+				return LabelOut{}, fmt.Errorf("parent label not found or does not belong to the same group")
+			}
+			return LabelOut{}, err
+		}
+
+		// Validate no circular reference
+		if err := r.validateParentNotCircular(ctx, data.ID, parent.ID); err != nil {
+			return LabelOut{}, err
+		}
+	}
+
 	_, err := r.update(ctx, data, label.ID(data.ID), label.HasGroupWith(group.ID(gid)))
 	if err != nil {
 		return LabelOut{}, err

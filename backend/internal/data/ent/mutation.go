@@ -8692,23 +8692,28 @@ func (m *ItemTemplateMutation) ResetEdge(name string) error {
 // LabelMutation represents an operation that mutates the Label nodes in the graph.
 type LabelMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *uuid.UUID
-	created_at    *time.Time
-	updated_at    *time.Time
-	name          *string
-	description   *string
-	color         *string
-	clearedFields map[string]struct{}
-	group         *uuid.UUID
-	clearedgroup  bool
-	items         map[uuid.UUID]struct{}
-	removeditems  map[uuid.UUID]struct{}
-	cleareditems  bool
-	done          bool
-	oldValue      func(context.Context) (*Label, error)
-	predicates    []predicate.Label
+	op              Op
+	typ             string
+	id              *uuid.UUID
+	created_at      *time.Time
+	updated_at      *time.Time
+	name            *string
+	description     *string
+	color           *string
+	clearedFields   map[string]struct{}
+	group           *uuid.UUID
+	clearedgroup    bool
+	parent          *uuid.UUID
+	clearedparent   bool
+	children        map[uuid.UUID]struct{}
+	removedchildren map[uuid.UUID]struct{}
+	clearedchildren bool
+	items           map[uuid.UUID]struct{}
+	removeditems    map[uuid.UUID]struct{}
+	cleareditems    bool
+	done            bool
+	oldValue        func(context.Context) (*Label, error)
+	predicates      []predicate.Label
 }
 
 var _ ent.Mutation = (*LabelMutation)(nil)
@@ -9060,6 +9065,99 @@ func (m *LabelMutation) ResetGroup() {
 	m.clearedgroup = false
 }
 
+// SetParentID sets the "parent" edge to the Label entity by id.
+func (m *LabelMutation) SetParentID(id uuid.UUID) {
+	m.parent = &id
+}
+
+// ClearParent clears the "parent" edge to the Label entity.
+func (m *LabelMutation) ClearParent() {
+	m.clearedparent = true
+}
+
+// ParentCleared reports if the "parent" edge to the Label entity was cleared.
+func (m *LabelMutation) ParentCleared() bool {
+	return m.clearedparent
+}
+
+// ParentID returns the "parent" edge ID in the mutation.
+func (m *LabelMutation) ParentID() (id uuid.UUID, exists bool) {
+	if m.parent != nil {
+		return *m.parent, true
+	}
+	return
+}
+
+// ParentIDs returns the "parent" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ParentID instead. It exists only for internal usage by the builders.
+func (m *LabelMutation) ParentIDs() (ids []uuid.UUID) {
+	if id := m.parent; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetParent resets all changes to the "parent" edge.
+func (m *LabelMutation) ResetParent() {
+	m.parent = nil
+	m.clearedparent = false
+}
+
+// AddChildIDs adds the "children" edge to the Label entity by ids.
+func (m *LabelMutation) AddChildIDs(ids ...uuid.UUID) {
+	if m.children == nil {
+		m.children = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		m.children[ids[i]] = struct{}{}
+	}
+}
+
+// ClearChildren clears the "children" edge to the Label entity.
+func (m *LabelMutation) ClearChildren() {
+	m.clearedchildren = true
+}
+
+// ChildrenCleared reports if the "children" edge to the Label entity was cleared.
+func (m *LabelMutation) ChildrenCleared() bool {
+	return m.clearedchildren
+}
+
+// RemoveChildIDs removes the "children" edge to the Label entity by IDs.
+func (m *LabelMutation) RemoveChildIDs(ids ...uuid.UUID) {
+	if m.removedchildren == nil {
+		m.removedchildren = make(map[uuid.UUID]struct{})
+	}
+	for i := range ids {
+		delete(m.children, ids[i])
+		m.removedchildren[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedChildren returns the removed IDs of the "children" edge to the Label entity.
+func (m *LabelMutation) RemovedChildrenIDs() (ids []uuid.UUID) {
+	for id := range m.removedchildren {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ChildrenIDs returns the "children" edge IDs in the mutation.
+func (m *LabelMutation) ChildrenIDs() (ids []uuid.UUID) {
+	for id := range m.children {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetChildren resets all changes to the "children" edge.
+func (m *LabelMutation) ResetChildren() {
+	m.children = nil
+	m.clearedchildren = false
+	m.removedchildren = nil
+}
+
 // AddItemIDs adds the "items" edge to the Item entity by ids.
 func (m *LabelMutation) AddItemIDs(ids ...uuid.UUID) {
 	if m.items == nil {
@@ -9330,9 +9428,15 @@ func (m *LabelMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *LabelMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 4)
 	if m.group != nil {
 		edges = append(edges, label.EdgeGroup)
+	}
+	if m.parent != nil {
+		edges = append(edges, label.EdgeParent)
+	}
+	if m.children != nil {
+		edges = append(edges, label.EdgeChildren)
 	}
 	if m.items != nil {
 		edges = append(edges, label.EdgeItems)
@@ -9348,6 +9452,16 @@ func (m *LabelMutation) AddedIDs(name string) []ent.Value {
 		if id := m.group; id != nil {
 			return []ent.Value{*id}
 		}
+	case label.EdgeParent:
+		if id := m.parent; id != nil {
+			return []ent.Value{*id}
+		}
+	case label.EdgeChildren:
+		ids := make([]ent.Value, 0, len(m.children))
+		for id := range m.children {
+			ids = append(ids, id)
+		}
+		return ids
 	case label.EdgeItems:
 		ids := make([]ent.Value, 0, len(m.items))
 		for id := range m.items {
@@ -9360,7 +9474,10 @@ func (m *LabelMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *LabelMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 4)
+	if m.removedchildren != nil {
+		edges = append(edges, label.EdgeChildren)
+	}
 	if m.removeditems != nil {
 		edges = append(edges, label.EdgeItems)
 	}
@@ -9371,6 +9488,12 @@ func (m *LabelMutation) RemovedEdges() []string {
 // the given name in this mutation.
 func (m *LabelMutation) RemovedIDs(name string) []ent.Value {
 	switch name {
+	case label.EdgeChildren:
+		ids := make([]ent.Value, 0, len(m.removedchildren))
+		for id := range m.removedchildren {
+			ids = append(ids, id)
+		}
+		return ids
 	case label.EdgeItems:
 		ids := make([]ent.Value, 0, len(m.removeditems))
 		for id := range m.removeditems {
@@ -9383,9 +9506,15 @@ func (m *LabelMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *LabelMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 4)
 	if m.clearedgroup {
 		edges = append(edges, label.EdgeGroup)
+	}
+	if m.clearedparent {
+		edges = append(edges, label.EdgeParent)
+	}
+	if m.clearedchildren {
+		edges = append(edges, label.EdgeChildren)
 	}
 	if m.cleareditems {
 		edges = append(edges, label.EdgeItems)
@@ -9399,6 +9528,10 @@ func (m *LabelMutation) EdgeCleared(name string) bool {
 	switch name {
 	case label.EdgeGroup:
 		return m.clearedgroup
+	case label.EdgeParent:
+		return m.clearedparent
+	case label.EdgeChildren:
+		return m.clearedchildren
 	case label.EdgeItems:
 		return m.cleareditems
 	}
@@ -9412,6 +9545,9 @@ func (m *LabelMutation) ClearEdge(name string) error {
 	case label.EdgeGroup:
 		m.ClearGroup()
 		return nil
+	case label.EdgeParent:
+		m.ClearParent()
+		return nil
 	}
 	return fmt.Errorf("unknown Label unique edge %s", name)
 }
@@ -9422,6 +9558,12 @@ func (m *LabelMutation) ResetEdge(name string) error {
 	switch name {
 	case label.EdgeGroup:
 		m.ResetGroup()
+		return nil
+	case label.EdgeParent:
+		m.ResetParent()
+		return nil
+	case label.EdgeChildren:
+		m.ResetChildren()
 		return nil
 	case label.EdgeItems:
 		m.ResetItems()

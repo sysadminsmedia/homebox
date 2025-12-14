@@ -31,20 +31,25 @@ type Label struct {
 	Color string `json:"color,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the LabelQuery when eager-loading is set.
-	Edges        LabelEdges `json:"edges"`
-	group_labels *uuid.UUID
-	selectValues sql.SelectValues
+	Edges          LabelEdges `json:"edges"`
+	group_labels   *uuid.UUID
+	label_children *uuid.UUID
+	selectValues   sql.SelectValues
 }
 
 // LabelEdges holds the relations/edges for other nodes in the graph.
 type LabelEdges struct {
 	// Group holds the value of the group edge.
 	Group *Group `json:"group,omitempty"`
+	// Parent holds the value of the parent edge.
+	Parent *Label `json:"parent,omitempty"`
+	// Children holds the value of the children edge.
+	Children []*Label `json:"children,omitempty"`
 	// Items holds the value of the items edge.
 	Items []*Item `json:"items,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [4]bool
 }
 
 // GroupOrErr returns the Group value or an error if the edge
@@ -58,10 +63,30 @@ func (e LabelEdges) GroupOrErr() (*Group, error) {
 	return nil, &NotLoadedError{edge: "group"}
 }
 
+// ParentOrErr returns the Parent value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e LabelEdges) ParentOrErr() (*Label, error) {
+	if e.Parent != nil {
+		return e.Parent, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: label.Label}
+	}
+	return nil, &NotLoadedError{edge: "parent"}
+}
+
+// ChildrenOrErr returns the Children value or an error if the edge
+// was not loaded in eager-loading.
+func (e LabelEdges) ChildrenOrErr() ([]*Label, error) {
+	if e.loadedTypes[2] {
+		return e.Children, nil
+	}
+	return nil, &NotLoadedError{edge: "children"}
+}
+
 // ItemsOrErr returns the Items value or an error if the edge
 // was not loaded in eager-loading.
 func (e LabelEdges) ItemsOrErr() ([]*Item, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[3] {
 		return e.Items, nil
 	}
 	return nil, &NotLoadedError{edge: "items"}
@@ -79,6 +104,8 @@ func (*Label) scanValues(columns []string) ([]any, error) {
 		case label.FieldID:
 			values[i] = new(uuid.UUID)
 		case label.ForeignKeys[0]: // group_labels
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
+		case label.ForeignKeys[1]: // label_children
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
@@ -138,6 +165,13 @@ func (_m *Label) assignValues(columns []string, values []any) error {
 				_m.group_labels = new(uuid.UUID)
 				*_m.group_labels = *value.S.(*uuid.UUID)
 			}
+		case label.ForeignKeys[1]:
+			if value, ok := values[i].(*sql.NullScanner); !ok {
+				return fmt.Errorf("unexpected type %T for field label_children", values[i])
+			} else if value.Valid {
+				_m.label_children = new(uuid.UUID)
+				*_m.label_children = *value.S.(*uuid.UUID)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -154,6 +188,16 @@ func (_m *Label) Value(name string) (ent.Value, error) {
 // QueryGroup queries the "group" edge of the Label entity.
 func (_m *Label) QueryGroup() *GroupQuery {
 	return NewLabelClient(_m.config).QueryGroup(_m)
+}
+
+// QueryParent queries the "parent" edge of the Label entity.
+func (_m *Label) QueryParent() *LabelQuery {
+	return NewLabelClient(_m.config).QueryParent(_m)
+}
+
+// QueryChildren queries the "children" edge of the Label entity.
+func (_m *Label) QueryChildren() *LabelQuery {
+	return NewLabelClient(_m.config).QueryChildren(_m)
 }
 
 // QueryItems queries the "items" edge of the Label entity.

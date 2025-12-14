@@ -22,13 +22,15 @@ import (
 // LabelQuery is the builder for querying Label entities.
 type LabelQuery struct {
 	config
-	ctx        *QueryContext
-	order      []label.OrderOption
-	inters     []Interceptor
-	predicates []predicate.Label
-	withGroup  *GroupQuery
-	withItems  *ItemQuery
-	withFKs    bool
+	ctx          *QueryContext
+	order        []label.OrderOption
+	inters       []Interceptor
+	predicates   []predicate.Label
+	withGroup    *GroupQuery
+	withParent   *LabelQuery
+	withChildren *LabelQuery
+	withItems    *ItemQuery
+	withFKs      bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -80,6 +82,50 @@ func (_q *LabelQuery) QueryGroup() *GroupQuery {
 			sqlgraph.From(label.Table, label.FieldID, selector),
 			sqlgraph.To(group.Table, group.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, label.GroupTable, label.GroupColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryParent chains the current query on the "parent" edge.
+func (_q *LabelQuery) QueryParent() *LabelQuery {
+	query := (&LabelClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(label.Table, label.FieldID, selector),
+			sqlgraph.To(label.Table, label.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, label.ParentTable, label.ParentColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryChildren chains the current query on the "children" edge.
+func (_q *LabelQuery) QueryChildren() *LabelQuery {
+	query := (&LabelClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(label.Table, label.FieldID, selector),
+			sqlgraph.To(label.Table, label.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, label.ChildrenTable, label.ChildrenColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -296,13 +342,15 @@ func (_q *LabelQuery) Clone() *LabelQuery {
 		return nil
 	}
 	return &LabelQuery{
-		config:     _q.config,
-		ctx:        _q.ctx.Clone(),
-		order:      append([]label.OrderOption{}, _q.order...),
-		inters:     append([]Interceptor{}, _q.inters...),
-		predicates: append([]predicate.Label{}, _q.predicates...),
-		withGroup:  _q.withGroup.Clone(),
-		withItems:  _q.withItems.Clone(),
+		config:       _q.config,
+		ctx:          _q.ctx.Clone(),
+		order:        append([]label.OrderOption{}, _q.order...),
+		inters:       append([]Interceptor{}, _q.inters...),
+		predicates:   append([]predicate.Label{}, _q.predicates...),
+		withGroup:    _q.withGroup.Clone(),
+		withParent:   _q.withParent.Clone(),
+		withChildren: _q.withChildren.Clone(),
+		withItems:    _q.withItems.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -317,6 +365,28 @@ func (_q *LabelQuery) WithGroup(opts ...func(*GroupQuery)) *LabelQuery {
 		opt(query)
 	}
 	_q.withGroup = query
+	return _q
+}
+
+// WithParent tells the query-builder to eager-load the nodes that are connected to
+// the "parent" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *LabelQuery) WithParent(opts ...func(*LabelQuery)) *LabelQuery {
+	query := (&LabelClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withParent = query
+	return _q
+}
+
+// WithChildren tells the query-builder to eager-load the nodes that are connected to
+// the "children" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *LabelQuery) WithChildren(opts ...func(*LabelQuery)) *LabelQuery {
+	query := (&LabelClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withChildren = query
 	return _q
 }
 
@@ -410,12 +480,14 @@ func (_q *LabelQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Label,
 		nodes       = []*Label{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [4]bool{
 			_q.withGroup != nil,
+			_q.withParent != nil,
+			_q.withChildren != nil,
 			_q.withItems != nil,
 		}
 	)
-	if _q.withGroup != nil {
+	if _q.withGroup != nil || _q.withParent != nil {
 		withFKs = true
 	}
 	if withFKs {
@@ -442,6 +514,19 @@ func (_q *LabelQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Label,
 	if query := _q.withGroup; query != nil {
 		if err := _q.loadGroup(ctx, query, nodes, nil,
 			func(n *Label, e *Group) { n.Edges.Group = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withParent; query != nil {
+		if err := _q.loadParent(ctx, query, nodes, nil,
+			func(n *Label, e *Label) { n.Edges.Parent = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withChildren; query != nil {
+		if err := _q.loadChildren(ctx, query, nodes,
+			func(n *Label) { n.Edges.Children = []*Label{} },
+			func(n *Label, e *Label) { n.Edges.Children = append(n.Edges.Children, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -484,6 +569,69 @@ func (_q *LabelQuery) loadGroup(ctx context.Context, query *GroupQuery, nodes []
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
+	}
+	return nil
+}
+func (_q *LabelQuery) loadParent(ctx context.Context, query *LabelQuery, nodes []*Label, init func(*Label), assign func(*Label, *Label)) error {
+	ids := make([]uuid.UUID, 0, len(nodes))
+	nodeids := make(map[uuid.UUID][]*Label)
+	for i := range nodes {
+		if nodes[i].label_children == nil {
+			continue
+		}
+		fk := *nodes[i].label_children
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(label.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "label_children" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (_q *LabelQuery) loadChildren(ctx context.Context, query *LabelQuery, nodes []*Label, init func(*Label), assign func(*Label, *Label)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Label)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.Label(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(label.ChildrenColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.label_children
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "label_children" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "label_children" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }

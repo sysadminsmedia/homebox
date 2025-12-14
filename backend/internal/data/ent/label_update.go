@@ -102,6 +102,40 @@ func (_u *LabelUpdate) SetGroup(v *Group) *LabelUpdate {
 	return _u.SetGroupID(v.ID)
 }
 
+// SetParentID sets the "parent" edge to the Label entity by ID.
+func (_u *LabelUpdate) SetParentID(id uuid.UUID) *LabelUpdate {
+	_u.mutation.SetParentID(id)
+	return _u
+}
+
+// SetNillableParentID sets the "parent" edge to the Label entity by ID if the given value is not nil.
+func (_u *LabelUpdate) SetNillableParentID(id *uuid.UUID) *LabelUpdate {
+	if id != nil {
+		_u = _u.SetParentID(*id)
+	}
+	return _u
+}
+
+// SetParent sets the "parent" edge to the Label entity.
+func (_u *LabelUpdate) SetParent(v *Label) *LabelUpdate {
+	return _u.SetParentID(v.ID)
+}
+
+// AddChildIDs adds the "children" edge to the Label entity by IDs.
+func (_u *LabelUpdate) AddChildIDs(ids ...uuid.UUID) *LabelUpdate {
+	_u.mutation.AddChildIDs(ids...)
+	return _u
+}
+
+// AddChildren adds the "children" edges to the Label entity.
+func (_u *LabelUpdate) AddChildren(v ...*Label) *LabelUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddChildIDs(ids...)
+}
+
 // AddItemIDs adds the "items" edge to the Item entity by IDs.
 func (_u *LabelUpdate) AddItemIDs(ids ...uuid.UUID) *LabelUpdate {
 	_u.mutation.AddItemIDs(ids...)
@@ -126,6 +160,33 @@ func (_u *LabelUpdate) Mutation() *LabelMutation {
 func (_u *LabelUpdate) ClearGroup() *LabelUpdate {
 	_u.mutation.ClearGroup()
 	return _u
+}
+
+// ClearParent clears the "parent" edge to the Label entity.
+func (_u *LabelUpdate) ClearParent() *LabelUpdate {
+	_u.mutation.ClearParent()
+	return _u
+}
+
+// ClearChildren clears all "children" edges to the Label entity.
+func (_u *LabelUpdate) ClearChildren() *LabelUpdate {
+	_u.mutation.ClearChildren()
+	return _u
+}
+
+// RemoveChildIDs removes the "children" edge to Label entities by IDs.
+func (_u *LabelUpdate) RemoveChildIDs(ids ...uuid.UUID) *LabelUpdate {
+	_u.mutation.RemoveChildIDs(ids...)
+	return _u
+}
+
+// RemoveChildren removes "children" edges to Label entities.
+func (_u *LabelUpdate) RemoveChildren(v ...*Label) *LabelUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveChildIDs(ids...)
 }
 
 // ClearItems clears all "items" edges to the Item entity.
@@ -260,6 +321,80 @@ func (_u *LabelUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.ParentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   label.ParentTable,
+			Columns: []string{label.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   label.ParentTable,
+			Columns: []string{label.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   label.ChildrenTable,
+			Columns: []string{label.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !_u.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   label.ChildrenTable,
+			Columns: []string{label.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   label.ChildrenTable,
+			Columns: []string{label.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {
@@ -403,6 +538,40 @@ func (_u *LabelUpdateOne) SetGroup(v *Group) *LabelUpdateOne {
 	return _u.SetGroupID(v.ID)
 }
 
+// SetParentID sets the "parent" edge to the Label entity by ID.
+func (_u *LabelUpdateOne) SetParentID(id uuid.UUID) *LabelUpdateOne {
+	_u.mutation.SetParentID(id)
+	return _u
+}
+
+// SetNillableParentID sets the "parent" edge to the Label entity by ID if the given value is not nil.
+func (_u *LabelUpdateOne) SetNillableParentID(id *uuid.UUID) *LabelUpdateOne {
+	if id != nil {
+		_u = _u.SetParentID(*id)
+	}
+	return _u
+}
+
+// SetParent sets the "parent" edge to the Label entity.
+func (_u *LabelUpdateOne) SetParent(v *Label) *LabelUpdateOne {
+	return _u.SetParentID(v.ID)
+}
+
+// AddChildIDs adds the "children" edge to the Label entity by IDs.
+func (_u *LabelUpdateOne) AddChildIDs(ids ...uuid.UUID) *LabelUpdateOne {
+	_u.mutation.AddChildIDs(ids...)
+	return _u
+}
+
+// AddChildren adds the "children" edges to the Label entity.
+func (_u *LabelUpdateOne) AddChildren(v ...*Label) *LabelUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddChildIDs(ids...)
+}
+
 // AddItemIDs adds the "items" edge to the Item entity by IDs.
 func (_u *LabelUpdateOne) AddItemIDs(ids ...uuid.UUID) *LabelUpdateOne {
 	_u.mutation.AddItemIDs(ids...)
@@ -427,6 +596,33 @@ func (_u *LabelUpdateOne) Mutation() *LabelMutation {
 func (_u *LabelUpdateOne) ClearGroup() *LabelUpdateOne {
 	_u.mutation.ClearGroup()
 	return _u
+}
+
+// ClearParent clears the "parent" edge to the Label entity.
+func (_u *LabelUpdateOne) ClearParent() *LabelUpdateOne {
+	_u.mutation.ClearParent()
+	return _u
+}
+
+// ClearChildren clears all "children" edges to the Label entity.
+func (_u *LabelUpdateOne) ClearChildren() *LabelUpdateOne {
+	_u.mutation.ClearChildren()
+	return _u
+}
+
+// RemoveChildIDs removes the "children" edge to Label entities by IDs.
+func (_u *LabelUpdateOne) RemoveChildIDs(ids ...uuid.UUID) *LabelUpdateOne {
+	_u.mutation.RemoveChildIDs(ids...)
+	return _u
+}
+
+// RemoveChildren removes "children" edges to Label entities.
+func (_u *LabelUpdateOne) RemoveChildren(v ...*Label) *LabelUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveChildIDs(ids...)
 }
 
 // ClearItems clears all "items" edges to the Item entity.
@@ -591,6 +787,80 @@ func (_u *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error)
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.ParentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   label.ParentTable,
+			Columns: []string{label.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   label.ParentTable,
+			Columns: []string{label.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   label.ChildrenTable,
+			Columns: []string{label.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !_u.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   label.ChildrenTable,
+			Columns: []string{label.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   label.ChildrenTable,
+			Columns: []string{label.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

@@ -305,6 +305,7 @@ var (
 		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
 		{Name: "color", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "group_labels", Type: field.TypeUUID},
+		{Name: "label_children", Type: field.TypeUUID, Nullable: true},
 	}
 	// LabelsTable holds the schema information for the "labels" table.
 	LabelsTable = &schema.Table{
@@ -316,6 +317,12 @@ var (
 				Symbol:     "labels_groups_labels",
 				Columns:    []*schema.Column{LabelsColumns[6]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "labels_labels_children",
+				Columns:    []*schema.Column{LabelsColumns[7]},
+				RefColumns: []*schema.Column{LabelsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 		},
@@ -549,6 +556,7 @@ func init() {
 	ItemTemplatesTable.ForeignKeys[0].RefTable = GroupsTable
 	ItemTemplatesTable.ForeignKeys[1].RefTable = LocationsTable
 	LabelsTable.ForeignKeys[0].RefTable = GroupsTable
+	LabelsTable.ForeignKeys[1].RefTable = LabelsTable
 	LocationsTable.ForeignKeys[0].RefTable = GroupsTable
 	LocationsTable.ForeignKeys[1].RefTable = LocationsTable
 	MaintenanceEntriesTable.ForeignKeys[0].RefTable = ItemsTable

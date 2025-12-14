@@ -1902,6 +1902,38 @@ func (c *LabelClient) QueryGroup(_m *Label) *GroupQuery {
 	return query
 }
 
+// QueryParent queries the parent edge of a Label.
+func (c *LabelClient) QueryParent(_m *Label) *LabelQuery {
+	query := (&LabelClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(label.Table, label.FieldID, id),
+			sqlgraph.To(label.Table, label.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, label.ParentTable, label.ParentColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryChildren queries the children edge of a Label.
+func (c *LabelClient) QueryChildren(_m *Label) *LabelQuery {
+	query := (&LabelClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(label.Table, label.FieldID, id),
+			sqlgraph.To(label.Table, label.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, label.ChildrenTable, label.ChildrenColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryItems queries the items edge of a Label.
 func (c *LabelClient) QueryItems(_m *Label) *ItemQuery {
 	query := (&ItemClient{config: c.config}).Query()
