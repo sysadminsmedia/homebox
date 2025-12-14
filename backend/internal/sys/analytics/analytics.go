@@ -4,9 +4,10 @@ package analytics
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/shirou/gopsutil/v4/host"
 	"net/http"
 	"time"
+
+	"github.com/shirou/gopsutil/v4/host"
 
 	"github.com/rs/zerolog/log"
 )

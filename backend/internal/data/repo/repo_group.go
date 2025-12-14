@@ -2,9 +2,10 @@ package repo
 
 import (
 	"context"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"strings"
 	"time"
+
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"

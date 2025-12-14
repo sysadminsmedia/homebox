@@ -329,12 +329,12 @@ func (e *ItemsRepository) publishMutationEvent(gid uuid.UUID) {
 	}
 }
 
-func (e *ItemsRepository) getOneTx(ctx context.Context, tx *ent.Tx, where ...predicate.Item) (ItemOut, error) {
-	var q *ent.ItemQuery
+func (e *ItemsRepository) getOneTx(ctx context.Context, tx *ent.Tx, where ...predicate.Entity) (ItemOut, error) {
+	var q *ent.EntityQuery
 	if tx != nil {
-		q = tx.Item.Query().Where(where...)
+		q = tx.Entity.Query().Where(where...)
 	} else {
-		q = e.db.Item.Query().Where(where...)
+		q = e.db.Entity.Query().Where(where...)
 	}
 
 	return mapItemOutErr(q.
@@ -349,7 +349,7 @@ func (e *ItemsRepository) getOneTx(ctx context.Context, tx *ent.Tx, where ...pre
 	)
 }
 
-func (e *ItemsRepository) getOne(ctx context.Context, where ...predicate.Item) (ItemOut, error) {
+func (e *ItemsRepository) getOne(ctx context.Context, where ...predicate.Entity) (ItemOut, error) {
 	return e.getOneTx(ctx, nil, where...)
 }
 
@@ -603,18 +603,18 @@ func (e *ItemsRepository) GetAllZeroAssetID(ctx context.Context, gid uuid.UUID) 
 }
 
 func (e *ItemsRepository) GetHighestAssetIDTx(ctx context.Context, tx *ent.Tx, gid uuid.UUID) (AssetID, error) {
-	var q *ent.ItemQuery
+	var q *ent.EntityQuery
 	if tx != nil {
-		q = tx.Item.Query().Where(
-			item.HasGroupWith(group.ID(gid)),
+		q = tx.Entity.Query().Where(
+			entity.HasGroupWith(group.ID(gid)),
 		).Order(
-			ent.Desc(item.FieldAssetID),
+			ent.Desc(entity.FieldAssetID),
 		).Limit(1)
 	} else {
-		q = e.db.Item.Query().Where(
-			item.HasGroupWith(group.ID(gid)),
+		q = e.db.Entity.Query().Where(
+			entity.HasGroupWith(group.ID(gid)),
 		).Order(
-			ent.Desc(item.FieldAssetID),
+			ent.Desc(entity.FieldAssetID),
 		).Limit(1)
 	}
 
@@ -710,7 +710,7 @@ func (e *ItemsRepository) CreateFromTemplate(ctx context.Context, gid uuid.UUID,
 
 	// Create item with all template data
 	newItemID := uuid.New()
-	itemBuilder := tx.Item.Create().
+	itemBuilder := tx.Entity.Create().
 		SetID(newItemID).
 		SetName(data.Name).
 		SetDescription(data.Description).
@@ -735,9 +735,9 @@ func (e *ItemsRepository) CreateFromTemplate(ctx context.Context, gid uuid.UUID,
 
 	// Create custom fields
 	for _, field := range data.Fields {
-		_, err = tx.ItemField.Create().
-			SetItemID(newItemID).
-			SetType(itemfield.Type(field.Type)).
+		_, err = tx.EntityField.Create().
+			SetEntityID(newItemID).
+			SetType(entityfield.Type(field.Type)).
 			SetName(field.Name).
 			SetTextValue(field.TextValue).
 			Save(ctx)
@@ -757,8 +757,8 @@ func (e *ItemsRepository) CreateFromTemplate(ctx context.Context, gid uuid.UUID,
 
 func (e *ItemsRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	// Get the item with its group and attachments before deletion
-	itm, err := e.db.Item.Query().
-		Where(item.ID(id)).
+	itm, err := e.db.Entity.Query().
+		Where(entity.ID(id)).
 		WithGroup().
 		WithAttachments().
 		Only(ctx)
@@ -781,7 +781,7 @@ func (e *ItemsRepository) Delete(ctx context.Context, id uuid.UUID) error {
 		}
 	}
 
-	err = e.db.Item.DeleteOneID(id).Exec(ctx)
+	err = e.db.Entity.DeleteOneID(id).Exec(ctx)
 	if err != nil {
 		return err
 	}
@@ -792,10 +792,10 @@ func (e *ItemsRepository) Delete(ctx context.Context, id uuid.UUID) error {
 
 func (e *ItemsRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID) error {
 	// Get the item with its attachments before deletion
-	itm, err := e.db.Item.Query().
+	itm, err := e.db.Entity.Query().
 		Where(
-			item.ID(id),
-			item.HasGroupWith(group.ID(gid)),
+			entity.ID(id),
+			entity.HasGroupWith(group.ID(gid)),
 		).
 		WithAttachments().
 		Only(ctx)
@@ -812,7 +812,7 @@ func (e *ItemsRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID) 
 		}
 	}
 
-	_, err = e.db.Item.
+	_, err = e.db.Entity.
 		Delete().
 		Where(
 			entity.ID(id),
@@ -1064,7 +1064,7 @@ func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data Ite
 		if err != nil {
 			return err
 		}
-		if itemEnt.SyncChildItemsLocations {
+		if itemEnt.SyncChildEntitiesLocations {
 			children, err := tx.Entity.Query().Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).QueryChildren().All(ctx)
 			if err != nil {
 				return err
@@ -1295,7 +1295,7 @@ func (e *ItemsRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, opti
 	}()
 
 	// Get the original item with all its data
-	originalItem, err := e.getOneTx(ctx, tx, item.ID(id), item.HasGroupWith(group.ID(gid)))
+	originalItem, err := e.getOneTx(ctx, tx, entity.ID(id), entity.HasGroupWith(group.ID(gid)))
 	if err != nil {
 		return ItemOut{}, err
 	}

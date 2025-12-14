@@ -297,17 +297,17 @@ func (r *AttachmentRepo) Get(ctx context.Context, gid uuid.UUID, id uuid.UUID) (
 			WithEntity().
 			WithThumbnail().
 			Only(ctx)
-	} else {
-		// For regular attachments, check if the attachment's item belongs to the specified group
-		return r.db.Attachment.
-			Query().
-			Where(attachment.ID(id),
-				attachment.HasEntityWith(entity.HasGroupWith(group.ID(gid))),
-			).
-			WithEntity().
-			WithThumbnail().
-			Only(ctx)
 	}
+
+	// For regular attachments, check if the attachment's item belongs to the specified group
+	return r.db.Attachment.
+		Query().
+		Where(attachment.ID(id),
+			attachment.HasEntityWith(entity.HasGroupWith(group.ID(gid))),
+		).
+		WithEntity().
+		WithThumbnail().
+		Only(ctx)
 }
 
 func (r *AttachmentRepo) Update(ctx context.Context, gid uuid.UUID, id uuid.UUID, data *EntityAttachmentUpdate) (*ent.Attachment, error) {
