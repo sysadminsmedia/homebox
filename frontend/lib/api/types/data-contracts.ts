@@ -381,10 +381,14 @@ export interface EntLabel {
 }
 
 export interface EntLabelEdges {
+  /** Children holds the value of the children edge. */
+  children: EntLabel[];
   /** Group holds the value of the group edge. */
   group: EntGroup;
   /** Items holds the value of the items edge. */
   items: EntItem[];
+  /** Parent holds the value of the parent edge. */
+  parent: EntLabel;
 }
 
 export interface EntLocation {
@@ -857,14 +861,17 @@ export interface LabelCreate {
    * @maxLength 255
    */
   name: string;
+  parentId?: string | null;
 }
 
 export interface LabelOut {
+  children: LabelSummary[];
   color: string;
   createdAt: Date | string;
   description: string;
   id: string;
   name: string;
+  parent: LabelSummary;
   updatedAt: Date | string;
 }
 
