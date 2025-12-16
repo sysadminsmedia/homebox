@@ -176,7 +176,7 @@
                 "select_location": "Velg en lokasjon"
             },
             "tree": {
-                "no_locations": "Ingen tilgjengelige lokasjoner. Legg til en ny lokasjon via\n `<`span class=\"link-primary\"`>`Opprett`<`/span`>`-knappen på navigasjonslinjen."
+                "no_locations": "Ingen tilgjengelige lokasjoner. Legg til en ny lokasjon via\n '<span class=\"link-primary\">'Opprett'</span>'-knappen på navigasjonslinjen."
             }
         },
         "quick_menu": {

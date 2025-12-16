@@ -100,6 +100,7 @@
                 "item_photo": "Vare Foto 📷",
                 "item_quantity": "Vare Antal",
                 "parent_item": "Overordnet element",
+                "product_tooltip_input_barcode": "Autoudfyld med en manuelt angivet stregkode",
                 "product_tooltip_scan_barcode": "Fyld automatisk med stregkode fra 📷",
                 "rotate_photo": "Roter foto",
                 "set_as_primary_photo": "Sæt som { isPrimary, select, true {non-} false {} other {}}primært foto",
@@ -124,27 +125,64 @@
             "product_import": {
                 "barcode": "Produkts stregkode",
                 "db_source": "DB kilde",
+                "error_exception": "Der opstod en undtagelse under hentning af varens stregkode: ",
                 "error_invalid_barcode": "Ugyldig stregkode angivet",
-                "error_not_found": "Intet produkt fundet med angivet stregkode.",
+                "error_not_found": "Intet produkt fundet med den angivne stregkode.",
                 "search_item": "Søg produkt",
                 "title": "Importér produkt"
             },
             "selector": {
                 "no_results": "Ingen resultater fundet",
                 "placeholder": "Vælg…",
-                "search_placeholder": "Skriv for at søge…"
+                "search_placeholder": "Skriv for at søge…",
+                "searching": "Søger…"
             },
             "view": {
+                "change_details": {
+                    "add_labels": "Tilføj etiketter",
+                    "failed_to_update_item": "Kunne ikke opdatere elementet",
+                    "remove_labels": "Fjern Etiketter",
+                    "title": "Skift elementoplysninger"
+                },
                 "selectable": {
                     "card": "Kort",
                     "items": "Genstande",
                     "no_items": "Ingen genstande at vise",
+                    "select_all": "Vælg alle",
+                    "select_card": "Vælg kort",
+                    "select_row": "Vælg række",
                     "table": "Tabel"
                 },
                 "table": {
+                    "dropdown": {
+                        "actions": "Handlinger",
+                        "change_labels": "Skift etiketter",
+                        "change_labels_success": "Etiketter ændret",
+                        "change_location": "Skift placering",
+                        "change_location_success": "Placering ændret",
+                        "create_maintenance_item": "Opret vedligeholdelsespost for vare",
+                        "create_maintenance_selected": "Opret vedligeholdelsespost for valgte varer",
+                        "create_maintenance_success": "Vedligeholdelsespost(er) oprettet",
+                        "delete_confirmation": "Er du sikker på, at du vil slette det/de valgte element(er)? Denne handling kan ikke fortrydes.",
+                        "delete_item": "Slet element",
+                        "delete_selected": "Slet valgte elementer",
+                        "download_csv": "Download tabel som CSV",
+                        "download_json": "Download tabel som JSON",
+                        "duplicate_item": "Dupliker element",
+                        "duplicate_selected": "Dupliker valgte elementer",
+                        "error_deleting": "Fejl ved sletning af element",
+                        "error_duplicating": "Fejl ved duplikering af element",
+                        "open_menu": "Åbn menu",
+                        "open_multi_tab_warning": "Af sikkerhedsmæssige årsager tillader browsere som standard ikke, at flere faner åbnes på én gang. For at ændre dette skal du følge dokumentationen:",
+                        "toggle_expand": "Udvid til/fra",
+                        "view_item": "Vis element",
+                        "view_items": "Vis elementer"
+                    },
                     "headers": "Overskrifter",
                     "page": "Side",
+                    "quick_actions": "Aktivér hurtige handlinger og valg",
                     "rows_per_page": "Rækker per side",
+                    "selected_rows": "{selected} af {total} række(r) valgt.",
                     "table_settings": "Tabel Indstillinger",
                     "view_item": "Se vare"
                 }
@@ -229,6 +267,7 @@
         "name": "Navn",
         "navigate": "Naviger",
         "password": "Adgangskode",
+        "preview": "Forhåndsvisning",
         "quantity": "Mængde",
         "read_docs": "Læs Docs",
         "return_home": "Vend hjem",
@@ -289,6 +328,18 @@
         "description": "Beskrivelse",
         "details": "Detaljer",
         "drag_and_drop": "Træk og slip filer her, eller klik for at vælge filer",
+        "duplicate": {
+            "copy_attachments": "Kopiér vedhæftede filer",
+            "copy_custom_fields": "Kopiér brugerdefinerede felter",
+            "copy_maintenance": "Kopier vedligeholdelse",
+            "custom_prefix": "Kopiér præfiks",
+            "enable_custom_prefix": "Aktivér brugerdefineret præfiks",
+            "override_instructions": "Hold Shift nede, når du klikker på duplikatknappen for at tilsidesætte disse indstillinger.",
+            "prefix": "Kopi af ",
+            "prefix_instructions": "Dette præfiks vil blive tilføjet i begyndelsen af det duplikerede elements navn. Medtag et mellemrum i slutningen af præfikset for at tilføje et mellemrum mellem præfikset og elementnavnet.",
+            "temporary_title": "Midlertidige indstillinger",
+            "title": "Dupliker indstillinger"
+        },
         "edit": {
             "edit_attachment_dialog": {
                 "attachment_title": "Titel på vedhæftet fil",
@@ -297,7 +348,8 @@
                 "primary_photo_sub": "Denne mulighed er kun tilgængelig for fotos. Kun ét foto kan være primært. Hvis du vælger denne mulighed, vil det aktuelle primære foto, hvis der er et, blive fravalgt.",
                 "select_type": "Vælg en type",
                 "title": "Rediger vedhæftet fil"
-            }
+            },
+            "view_image": "Vis billede"
         },
         "edit_details": "Rediger detaljer",
         "field_selector": "Feltvælger",
@@ -395,6 +447,7 @@
         "update_label": "Opdater etiket"
     },
     "languages": {
+        "bs-BA": "Bosnisk (Bosnien-Hercegovina)",
         "ca": "Catalansk",
         "cs-CZ": "Tjekkisk",
         "de": "Tysk",
@@ -422,6 +475,7 @@
         "th-TH": "Thailandsk",
         "tr": "Tyrkisk",
         "uk-UA": "Ukrainsk",
+        "vi-VN": "Vietnamesisk",
         "zh-CN": "Kinesisk (simplificeret)",
         "zh-HK": "Kinesisk (Hong Kong)",
         "zh-MO": "Kinesisk (Macao)",
@@ -509,6 +563,7 @@
         "group_settings_sub": "Indstillinger for delt gruppe. Det kan være nødvendigt at genindlæse din browser før nogle indstillinger træder i kraft.",
         "inactive": "Inaktiv",
         "language": "Sprog",
+        "legacy_image_fit": "{ currentValue, select, true {Deaktiver Legacy Fit: Tilpas billede med bjælker} false {Aktiver Legacy Fit: Fyld billede med beskæring} other {Ikke ramt}}",
         "new_password": "Ny Adgangskode",
         "no_notifiers": "Ingen notifikationer konfiguret",
         "no_override": "Ingen tilsidesættelse",

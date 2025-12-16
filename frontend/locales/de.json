@@ -94,6 +94,7 @@
                 "open_new_tab": "In einem neuen Tab öffnen"
             },
             "create_modal": {
+                "clear_template": "Vorlage leeren",
                 "delete_photo": "Photo löschen",
                 "item_description": "Gegenstandsbezeichnung",
                 "item_name": "Gegenstandsname",
@@ -115,7 +116,7 @@
                     "rotate_failed": "Drehen des Bildes fehlgeschlagen: {error}",
                     "rotate_process_failed": "Das gedrehte Bild konnte nicht verarbeitet werden",
                     "some_photos_failed": "{count, plural, =0 {Keine Fotos zum Hochladen.} =1 {1 Foto konnte nicht hochgeladen werden.} other {Einige Fotos konnten nicht hochgeladen werden.}}",
-                    "upload_failed": "Hochladen des Bildes Fehlgeschlagen: { photoName }",
+                    "upload_failed": "Hochladen des Bildes fehlgeschlagen: { photoName }",
                     "upload_success": "{count, plural, =0 {Keine Fotos hochgeladen.} =1 {Foto erfolgreich hochgeladen.} other {Alle Fotos erfolgreich hochgeladen.}}",
                     "uploading_photos": "{count, plural, =0 {Keine Fotos zum Hochladen} =1 {1 Foto wird hochgeladen...} other {{count} Fotos werden hochgeladen...}}"
                 },
@@ -134,19 +135,55 @@
             "selector": {
                 "no_results": "Keine Ergebnisse gefunden",
                 "placeholder": "Auswählen…",
-                "search_placeholder": "Für Suche tippen…"
+                "search_placeholder": "Für Suche tippen…",
+                "searching": "Suche…"
             },
             "view": {
+                "change_details": {
+                    "add_labels": "Labels hinzufügen",
+                    "failed_to_update_item": "Artikel konnte nicht aktualisiert werden",
+                    "remove_labels": "Labels entfernen",
+                    "title": "Artikeldetails ändern"
+                },
                 "selectable": {
                     "card": "Karte",
                     "items": "Gegenstände",
                     "no_items": "Keine Gegenstände anzuzeigen",
+                    "select_all": "Alles auswählen",
+                    "select_card": "Karte auswählen",
+                    "select_row": "Zeile auswählen",
                     "table": "Tabelle"
                 },
                 "table": {
+                    "dropdown": {
+                        "actions": "Aktionen",
+                        "change_labels": "Labels ändern",
+                        "change_labels_success": "Etiketten geändert",
+                        "change_location": "Standort ändern",
+                        "change_location_success": "Standort geändert",
+                        "create_maintenance_item": "Wartungsposten für Artikel erstellen",
+                        "create_maintenance_selected": "Wartungsposten für ausgewählte Artikel erstellen",
+                        "create_maintenance_success": "Wartungseinträge erstellt",
+                        "delete_confirmation": "Möchten Sie die ausgewählten Elemente wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+                        "delete_item": "Löschen",
+                        "delete_selected": "Ausgewählte Elemente löschen",
+                        "download_csv": "Tabelle als CSV herunterladen",
+                        "download_json": "Tabelle als json herunterladen",
+                        "duplicate_item": "Duplizieren",
+                        "duplicate_selected": "Ausgewählte Elemente duplizieren",
+                        "error_deleting": "Fehler beim Löschen",
+                        "error_duplicating": "Fehler beim Duplizieren des Elements",
+                        "open_menu": "Menü öffnen",
+                        "open_multi_tab_warning": "Aus Sicherheitsgründen erlauben Browser standardmäßig nicht, dass mehrere Registerkarten gleichzeitig geöffnet werden. Um dies zu ändern, folgen Sie bitte der Dokumentation:",
+                        "toggle_expand": "Ausklappen",
+                        "view_item": "Artikel anzeigen",
+                        "view_items": "Einträge anzeigen"
+                    },
                     "headers": "Kopfzeilen",
                     "page": "Seite",
+                    "quick_actions": "Schnellaktionen und Auswahl aktivieren",
                     "rows_per_page": "Zeilen pro Seite",
+                    "selected_rows": "{selected} von {total} Zeilen ausgewählt.",
                     "table_settings": "Tabellen Einstellungen",
                     "view_item": "Artikel anzeigen"
                 }
@@ -193,6 +230,65 @@
         "quick_menu": {
             "no_results": "Keine Ergebnisse gefunden.",
             "shortcut_hint": "Verwenden Sie die Zifferntasten, um schnell eine Aktion auszuwählen."
+        },
+        "template": {
+            "apply_template": "Eine Vorlage anwenden",
+            "card": {
+                "delete": "Vorlage löschen",
+                "duplicate": "Vorlage duplizieren",
+                "edit": "Vorlage bearbeiten"
+            },
+            "confirm_delete": "Diese Vorlage löschen?",
+            "create_modal": {
+                "title": "Vorlage erstellen"
+            },
+            "detail": {
+                "default_values": "Standardwerte",
+                "updated": "Aktualisiert"
+            },
+            "edit_modal": {
+                "title": "Vorlage bearbeiten"
+            },
+            "empty_value": "(leer)",
+            "form": {
+                "custom_fields": "Eigene Felder",
+                "default_item_values": "Standard Gegenstandswerte",
+                "default_location": "Standard Lagerort",
+                "default_value": "Standardwert",
+                "field_name": "Feldname",
+                "item_description": "Gegenstandsbeschreibung",
+                "item_name": "Gegenstandsname",
+                "lifetime_warranty": "Lebenslange Garantie",
+                "location": "Lagerort",
+                "manufacturer": "Hersteller",
+                "model_number": "Modellnummer",
+                "no_custom_fields": "Keine eigenen Felder.",
+                "template_description": "Vorlagen Beschreibung",
+                "template_name": "Vorlagen Name"
+            },
+            "hide_defaults": "Standardwerte ausblenden",
+            "save_as_template": "Als Vorlage speichern",
+            "selector": {
+                "label": "Vorlage (optional)",
+                "not_found": "Keine Vorlage gefunden",
+                "search": "Vorlagen suchen…",
+                "select": "Vorlage auswählen…"
+            },
+            "show_defaults": "Standardwerte anzeigen",
+            "toast": {
+                "applied": "Vorlage \"{name}\" angewendet",
+                "create_failed": "Erstellen der Vorlage fehlgeschlagen",
+                "created": "Vorlage erstellt",
+                "delete_failed": "Löschen der Vorlage fehlgeschlagen",
+                "deleted": "Vorlage gelöscht",
+                "duplicate_failed": "Duplizieren der Vorlage fehlgeschlagen",
+                "duplicated": "Vorlage dupliziert als \"{name}\"",
+                "load_failed": "Laden der Vorlagen Details fehlgeschlagen",
+                "saved_as_template": "Objekt als Vorlage \"{name}\" gespeichert",
+                "update_failed": "Aktualisieren der Vorlage fehlgeschlagen",
+                "updated": "Vorlage aktualisiert"
+            },
+            "using_template": "Verwendet Vorlage: {name}"
         }
     },
     "errors": {
@@ -230,7 +326,9 @@
         "maintenance": "Wartung",
         "name": "Name",
         "navigate": "Navigieren",
+        "no": "Nein",
         "password": "Passwort",
+        "preview": "Vorschau",
         "quantity": "Menge",
         "read_docs": "Dokumentation lesen",
         "return_home": "Startbildschirm",
@@ -243,7 +341,8 @@
         "updating": "Aktualisiere",
         "value": "Wert",
         "version": "Version: { version }",
-        "welcome": "Willkommen, { username }"
+        "welcome": "Willkommen, { username }",
+        "yes": "Ja"
     },
     "home": {
         "labels": "Labels",
@@ -260,6 +359,7 @@
         "dont_join_group": "Möchtest du nicht einer Gruppe beitreten?",
         "joining_group": "Du trittst einer bereits bestehenden Gruppe bei!",
         "login": "Anmelden",
+        "or": "oder",
         "register": "Registrieren",
         "remember_me": "Angemeldet bleiben",
         "set_email": "Was ist deine E-Mail?",
@@ -271,6 +371,14 @@
             "invalid_email": "Ungültige Email-Adresse",
             "invalid_email_password": "Ungültige Email oder Passwort",
             "login_success": "Erfolgreich eingeloggt",
+            "oidc_access_denied": "Zugriff verweigert: Dein Konto hat nicht die erforderliche Rollen-/Gruppenmitgliedschaft",
+            "oidc_auth_failed": "OIDC authentifizierung fehlgeschlagen",
+            "oidc_invalid_response": "Ungültige OIDC-Antwort erhalten",
+            "oidc_provider_error": "OIDC-Anbieter hat einen Fehler zurückgegeben",
+            "oidc_security_error": "OIDC-Sicherheitsfehler - möglicher CSRF-Angriff",
+            "oidc_session_expired": "OIDC-Sitzung ist abgelaufen",
+            "oidc_token_expired": "OIDC-Token ist abgelaufen",
+            "oidc_token_invalid": "OIDC-Token-Signatur ist ungültig",
             "problem_registering": "Problem bei der Benutzerregistrierung",
             "user_registered": "Benutzer registriert"
         }
@@ -498,7 +606,7 @@
         "total_entries": "Gesamteinträge"
     },
     "menu": {
-        "create_item": "Artikel / Vermögenswert",
+        "create_item": "Artikel / Objekt",
         "create_label": "Label",
         "create_location": "Standort",
         "home": "Home",
@@ -507,7 +615,14 @@
         "profile": "Profil",
         "scanner": "Der Scanner",
         "search": "Suche",
+        "templates": "Vorlagen",
         "tools": "Extras"
+    },
+    "pages": {
+        "templates": {
+            "no_templates": "Noch keine Vorlagen.",
+            "title": "Vorlagen"
+        }
     },
     "profile": {
         "active": "Aktiv",
@@ -526,6 +641,7 @@
         "group_settings_sub": "Gemeinsame Gruppeneinstellungen. Möglicherweise müssen Sie Ihren Browser aktualisieren, damit die Einstellungen wirksam werden.",
         "inactive": "Inaktiv",
         "language": "Sprache",
+        "legacy_image_fit": "{ currentValue, select, true {Legacy-Anpassung deaktivieren: Bild mit Balken anpassen} false {Legacy-Anpassung aktivieren: Bild mit Zuschneiden füllen} other {Nicht getroffen}}",
         "new_password": "Neues Passwort",
         "no_notifiers": "Keine Benachrichtigungen konfiguriert",
         "no_override": "Kein Überschreiben",

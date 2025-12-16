@@ -1,9 +1,19 @@
 {
     "components": {
         "app": {
+            "create_modal": {
+                "createAndAddAnother": "Koristite {shiftKey} + {enterKey} da kreirate i dodate novu stavku.",
+                "enter": "Enter",
+                "shift": "Shift"
+            },
             "import_dialog": {
-                "change_warning": "Način unosa podataka s postojećim import_refs se promjenio. Ako je import_ref prisutan u CSV fajlu,\npredmet će se ažurirati s vrijednostima iz CSV fajla.",
-                "title": "Importuj CSV fajl"
+                "change_warning": "Način unosa podataka s postojećim import_refs se promijenio. Ako je import_ref prisutan u CSV fajlu,\npredmet će se ažurirati s vrijednostima iz CSV fajla.",
+                "title": "Importuj CSV fajl",
+                "toast": {
+                    "import_failed": "Import neuspješan. Molim vas pokušajte ponovo kasnije.",
+                    "import_success": "Import uspješan!",
+                    "please_select_file": "Molim odaberite fajl za import."
+                }
             },
             "outdated": {
                 "current_version": "Trenutna verzija",
@@ -11,6 +21,18 @@
                 "latest_version": "Najnovija verzija",
                 "new_version_available": "Dostupna nova verzija",
                 "new_version_available_link": "Klikni ovdje za pregled bilješke o izdanju"
+            }
+        },
+        "color_selector": {
+            "clear": "Poništi izbor boje",
+            "color": "Boja",
+            "no_color": "Bez boje",
+            "no_color_selected": "Nije odabrana boja",
+            "randomize": "Slučajni izbor boje"
+        },
+        "form": {
+            "password": {
+                "toggle_show": "Prikaži/sakrij šifru"
             }
         },
         "global": {
@@ -33,6 +55,9 @@
                 "minute": "minuta",
                 "minutes": "minuta",
                 "months": "mjeseci",
+                "next-month": "idući mjesec",
+                "next-week": "iduća hefta",
+                "next-year": "iduća godina",
                 "second": "sekunda",
                 "seconds": "sekundi",
                 "tomorrow": "sutra",
@@ -40,9 +65,62 @@
                 "weeks": "sedmica/e",
                 "years": "godine/a",
                 "yesterday": "jučer"
+            },
+            "label_maker": {
+                "browser_print": "Štampaj iz browsera",
+                "confirm_description": "Da li ste sigurni da želite štampati ovu oznaku?",
+                "download": "Preuzmi oznaku",
+                "print": "Štampaj oznaku",
+                "server_print": "Štampaj na server",
+                "titles": "Oznake",
+                "toast": {
+                    "load_status_failed": "Ne mogu da učitam status",
+                    "print_failed": "Ne mogu da štampam oznaku",
+                    "print_success": "Oznaka otštampana"
+                }
+            },
+            "page_qr_code": {
+                "page_url": "Link stranice",
+                "qr_tooltip": "Prikaži QR kod"
+            },
+            "password_score": {
+                "password_strength": "Kompleksnost šifre"
             }
         },
         "item": {
+            "attachments_list": {
+                "download": "Preuzimanje",
+                "open_new_tab": "Otvori u novom tabu"
+            },
+            "create_modal": {
+                "delete_photo": "Obriši fotografiju",
+                "item_description": "Opis stavke",
+                "item_name": "Naziv stavke",
+                "item_photo": "Fotografija stavke 📷",
+                "item_quantity": "Količina stavke",
+                "product_tooltip_input_barcode": "Automatski popuni s ručno unesenim barkodom",
+                "product_tooltip_scan_barcode": "Automatski popuni s barkodom sa 📷",
+                "rotate_photo": "Okreni fotografiju",
+                "title": "Kreiraj stavku",
+                "toast": {
+                    "already_creating": "Već kreiram stavku",
+                    "create_failed": "Ne mogu kreirati stavku",
+                    "create_success": "Stavka kreirana",
+                    "no_canvas_support": "Vaš browser ne podržava canvas operacije",
+                    "please_select_location": "Molim odaberite lokaciju.",
+                    "rotate_failed": "Ne mogu rotirati fotografiju: { error }",
+                    "rotate_process_failed": "Ne mogu obraditi rotiranu fotografiju",
+                    "some_photos_failed": "{count, plural, =0 {Nema fotografija za upload.} =1 {1 fotografiju nije moguće uplodovati.} other {Neke fotografije nije moguće uploadovati.}}",
+                    "upload_failed": "Ne mogu uploadovati fotografiju: { photoName }",
+                    "upload_success": "{count, plural, =0 {Nema fotografija za upload.} =1 {Fotografija uspješno uploadovana.} other {Sve fotografije uspješno uploadovane.}}",
+                    "uploading_photos": "{count, plural, =0 {Nema fotografija za upload.} =1 {Uploadujem 1 fotografiju…} other {Uploadujem {count} fotografija…}}"
+                },
+                "upload_photos": "Uploaduj fotografije",
+                "uploaded": "Uploadovane fotografije"
+            },
+            "product_import": {
+                "barcode": "Barkod proizvoda"
+            },
             "view": {
                 "selectable": {
                     "card": "Karta",
