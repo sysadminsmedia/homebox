@@ -97,6 +97,13 @@ func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
 	}
 }
 
+// normalizePath converts backslashes to forward slashes and trims slashes from both ends
+// This ensures consistent path separators for blob storage which expects forward slashes
+func normalizePath(path string) string {
+	path = strings.ReplaceAll(path, "\\", "/")
+	return strings.Trim(path, "/")
+}
+
 func (r *AttachmentRepo) path(gid uuid.UUID, hash string) string {
 	// Always use forward slashes for consistency across platforms
 	// This ensures paths are stored in the database with forward slashes
@@ -106,18 +113,13 @@ func (r *AttachmentRepo) path(gid uuid.UUID, hash string) string {
 func (r *AttachmentRepo) fullPath(relativePath string) string {
 	// Normalize path separators to forward slashes for blob storage
 	// The blob library expects forward slashes in keys regardless of OS
-	normalizedRelativePath := strings.ReplaceAll(relativePath, "\\", "/")
+	normalizedRelativePath := normalizePath(relativePath)
 	
 	// Always use forward slashes when joining paths for blob storage
 	if r.storage.PrefixPath == "" {
 		return normalizedRelativePath
 	}
-	normalizedPrefix := strings.ReplaceAll(r.storage.PrefixPath, "\\", "/")
-	
-	// Trim trailing slashes from prefix and leading slashes from relative path
-	// to avoid double slashes when joining
-	normalizedPrefix = strings.TrimSuffix(normalizedPrefix, "/")
-	normalizedRelativePath = strings.TrimPrefix(normalizedRelativePath, "/")
+	normalizedPrefix := normalizePath(r.storage.PrefixPath)
 	
 	if normalizedPrefix == "" {
 		return normalizedRelativePath
