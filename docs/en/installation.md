@@ -52,7 +52,7 @@ services:
     environment:
     - HBOX_LOG_LEVEL=info
     - HBOX_LOG_FORMAT=text
-    - HBOX_WEB_MAX_FILE_UPLOAD=10
+    - HBOX_WEB_MAX_UPLOAD_SIZE=10
     # Please consider allowing analytics to help us improve Homebox (basic computer information, no personal data)
     - HBOX_OPTIONS_ALLOW_ANALYTICS=false
     volumes:
