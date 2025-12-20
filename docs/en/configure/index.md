@@ -181,7 +181,7 @@ HomeBox supports OpenID Connect (OIDC) authentication, allowing users to login u
    - `HBOX_OIDC_CLIENT_SECRET`: Client secret from your OIDC provider
 
 3. **Configure Redirect URI**: In your OIDC provider, set the redirect URI to:
-   `https://your-homebox-domain.com/api/v1/users/login/oidc/callback`
+   `https://your-homebox-domain.example.com/api/v1/users/login/oidc/callback`
 
 ### Advanced OIDC Configuration
 
