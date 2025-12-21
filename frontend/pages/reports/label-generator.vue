@@ -25,7 +25,7 @@
   const bordered = ref(false);
   const labelBlankLine = ref("_______________");
   const replaceHomeboxBehavior = ref(t("reports.label_generator.replace_homebox_behavior_show_homebox"));
-  const replaceHomeboxText = labelBlankLine.value;
+  const replaceHomeboxText = ref(labelBlankLine.value);
 
   const displayProperties = reactive({
     baseURL: window.location.origin,
@@ -341,7 +341,7 @@
   <div class="print:hidden">
     <Toaster />
     <div class="container prose mx-auto max-w-4xl p-4 pt-6">
-      <h1>(Test) Homebox {{ $t("reports.label_generator.title") }}</h1>
+      <h1>Homebox {{ $t("reports.label_generator.title") }}</h1>
       <p>
         {{ $t("reports.label_generator.instruction_1") }}
       </p>
