@@ -23,9 +23,9 @@
   const api = useUserApi();
 
   const bordered = ref(false);
-  const labelBlankLine = ref("_______________");
+  const labelBlankLine = "_______________";
   const replaceHomeboxBehavior = ref(t("reports.label_generator.replace_homebox_behavior_show_homebox"));
-  const replaceHomeboxText = ref(labelBlankLine.value);
+  const replaceHomeboxText = ref(labelBlankLine);
 
   const displayProperties = reactive({
     baseURL: window.location.origin,
@@ -214,8 +214,8 @@
     return {
       url: getQRCodeUrl(assetID),
       assetID: item?.assetId ?? assetID,
-      name: item?.name ?? labelBlankLine.value,
-      location: item?.location?.name ?? labelBlankLine.value,
+      name: item?.name ?? labelBlankLine,
+      location: item?.location?.name ?? labelBlankLine,
     };
   }
 
