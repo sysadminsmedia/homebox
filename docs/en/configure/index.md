@@ -73,6 +73,83 @@ aside: false
 | HBOX_THUMBNAIL_HEIGHT                   | 500                                                                        | height for generated thumbnails in pixels                                                                                                                                                 |
 | HBOX_BARCODE_TOKEN_BARCODESPIDER        |                                                                            | API token for BarcodeSpider.com service used for barcode product lookups. If not set, barcode product lookups will not be performed.                                                 |    
 
+```sh
+Options:
+      --barcode-token-barcodespider         <string>                                                                                                               
+      --database-database                   <string>                                                                                                               
+      --database-driver                     <string>    (default: sqlite3)                                                                                         
+      --database-host                       <string>                                                                                                               
+      --database-password                   <string>                                                                                                               
+      --database-port                       <string>                                                                                                               
+      --database-pub-sub-conn-string        <string>    (default: mem://{{ .Topic }})                                                                              
+      --database-sqlite-path                <string>    (default: ./.data/homebox.db?_pragma=busy_timeout=999&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite)  
+      --database-ssl-cert                   <string>                                                                                                               
+      --database-ssl-key                    <string>                                                                                                               
+      --database-ssl-mode                   <string>    (default: require)                                                                                         
+      --database-ssl-root-cert              <string>                                                                                                               
+      --database-username                   <string>                                                                                                               
+      --debug-enabled                       <bool>      (default: false)                                                                                           
+      --debug-port                          <string>    (default: 4000)                                                                                            
+      --demo                                <bool>                                                                                                                 
+  -h, --help                                                                                                                                                       display this help message
+      --label-maker-additional-information  <string>                                                                                                               
+      --label-maker-bold-font-path          <string>                                                                                                               
+      --label-maker-dynamic-length          <bool>      (default: true)                                                                                            
+      --label-maker-font-size               <float>     (default: 32.0)                                                                                            
+      --label-maker-height                  <int>       (default: 200)                                                                                             
+      --label-maker-label-service-timeout   <int>                                                                                                                  
+      --label-maker-label-service-url       <string>                                                                                                               
+      --label-maker-margin                  <int>       (default: 32)                                                                                              
+      --label-maker-padding                 <int>       (default: 32)                                                                                              
+      --label-maker-print-command           <string>                                                                                                               
+      --label-maker-regular-font-path       <string>                                                                                                               
+      --label-maker-width                   <int>       (default: 526)                                                                                             
+      --log-format                          <string>    (default: text)                                                                                            
+      --log-level                           <string>    (default: info)                                                                                            
+      --mailer-from                         <string>                                                                                                               
+      --mailer-host                         <string>                                                                                                               
+      --mailer-password                     <string>                                                                                                               
+      --mailer-port                         <int>                                                                                                                  
+      --mailer-username                     <string>                                                                                                               
+      --mode                                <string>    (default: development)                                                                                     
+      --oidc-allowed-groups                 <string>                                                                                                               
+      --oidc-auto-redirect                  <bool>      (default: false)                                                                                           
+      --oidc-button-text                    <string>    (default: Sign in with OIDC)                                                                               
+      --oidc-client-id                      <string>                                                                                                               
+      --oidc-client-secret                  <string>                                                                                                               
+      --oidc-email-claim                    <string>    (default: email)                                                                                           
+      --oidc-email-verified-claim           <string>    (default: email_verified)                                                                                  
+      --oidc-enabled                        <bool>      (default: false)                                                                                           
+      --oidc-group-claim                    <string>    (default: groups)                                                                                          
+      --oidc-issuer-url                     <string>                                                                                                               
+      --oidc-name-claim                     <string>    (default: name)                                                                                            
+      --oidc-request-timeout                <duration>  (default: 30s)                                                                                             
+      --oidc-scope                          <string>    (default: openid profile email)                                                                            
+      --oidc-state-expiry                   <duration>  (default: 10m)                                                                                             
+      --oidc-verify-email                   <bool>      (default: false)                                                                                           
+      --options-allow-analytics             <bool>      (default: false)                                                                                           
+      --options-allow-local-login           <bool>      (default: true)                                                                                            
+      --options-allow-registration          <bool>      (default: true)                                                                                            
+      --options-auto-increment-asset-id     <bool>      (default: true)                                                                                            
+      --options-currency-config             <string>                                                                                                               
+      --options-github-release-check        <bool>      (default: true)                                                                                            
+      --options-hostname                    <string>                                                                                                               
+      --options-trust-proxy                 <bool>      (default: false)                                                                                           
+      --storage-conn-string                 <string>    (default: file:///./)                                                                                      
+      --storage-prefix-path                 <string>    (default: .data)                                                                                           
+      --thumbnail-enabled                   <bool>      (default: true)                                                                                            
+      --thumbnail-height                    <int>       (default: 500)                                                                                             
+      --thumbnail-width                     <int>       (default: 500)                                                                                             
+  -v, --version                                                                                                                                                    display version
+      --web-host                            <string>                                                                                                               
+      --web-idle-timeout                    <duration>  (default: 30s)                                                                                             
+      --web-max-upload-size                 <int>       (default: 10)                                                                                              
+      --web-port                            <string>    (default: 7745)                                                                                            
+      --web-read-timeout                    <duration>  (default: 10s)                                                                                             
+      --web-write-timeout                   <duration>  (default: 10s)                                                                                         
+```
+:::
+
 ### HBOX_WEB_HOST examples
 
 | Value                       | Notes                                                      |
@@ -170,114 +247,4 @@ For SQLite in production:
 
 ## OIDC Configuration
 
-HomeBox supports OpenID Connect (OIDC) authentication, allowing users to login using external identity providers like Keycloak, Authentik, Google, Microsoft, etc.
-
-### Basic OIDC Setup
-
-1. **Enable OIDC**: Set `HBOX_OIDC_ENABLED=true`
-2. **Provider Configuration**: Set the required provider details:
-   - `HBOX_OIDC_ISSUER_URL`: Your OIDC provider's issuer URL
-   - `HBOX_OIDC_CLIENT_ID`: Client ID from your OIDC provider
-   - `HBOX_OIDC_CLIENT_SECRET`: Client secret from your OIDC provider
-
-3. **Configure Redirect URI**: In your OIDC provider, set the redirect URI to:
-   `https://your-homebox-domain.example.com/api/v1/users/login/oidc/callback`
-
-### Advanced OIDC Configuration
-
-- **Group Authorization**: Use `HBOX_OIDC_ALLOWED_GROUPS` to restrict access to specific groups
-- **Custom Claims**: Configure `HBOX_OIDC_GROUP_CLAIM`, `HBOX_OIDC_EMAIL_CLAIM`, and `HBOX_OIDC_NAME_CLAIM` if your provider uses different claim names
-- **Auto Redirect to OIDC**: Set `HBOX_OIDC_AUTO_REDIRECT=true` to automatically redirect users directly to OIDC
-- **Local Login**: Set `HBOX_OPTIONS_ALLOW_LOCAL_LOGIN=false` to completely disable username/password login
-- **Email Verification**: Set `HBOX_OIDC_VERIFY_EMAIL=true` to require email verification from the OIDC provider
-
-### Security Considerations
-
-::: warning OIDC Security
-- Store `HBOX_OIDC_CLIENT_SECRET` securely (use environment variables, not config files)
-- Use HTTPS for production deployments
-- Configure proper redirect URIs in your OIDC provider
-- Consider setting `HBOX_OIDC_ALLOWED_GROUPS` for group-based access control
-:::
-
-::: tip CLI Arguments
-If you're deploying without docker you can use command line arguments to configure the application. Run `homebox --help`
-for more information.
-
-```sh
-Options:
-      --barcode-token-barcodespider         <string>                                                                                                               
-      --database-database                   <string>                                                                                                               
-      --database-driver                     <string>    (default: sqlite3)                                                                                         
-      --database-host                       <string>                                                                                                               
-      --database-password                   <string>                                                                                                               
-      --database-port                       <string>                                                                                                               
-      --database-pub-sub-conn-string        <string>    (default: mem://{{ .Topic }})                                                                              
-      --database-sqlite-path                <string>    (default: ./.data/homebox.db?_pragma=busy_timeout=999&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite)  
-      --database-ssl-cert                   <string>                                                                                                               
-      --database-ssl-key                    <string>                                                                                                               
-      --database-ssl-mode                   <string>    (default: require)                                                                                         
-      --database-ssl-root-cert              <string>                                                                                                               
-      --database-username                   <string>                                                                                                               
-      --debug-enabled                       <bool>      (default: false)                                                                                           
-      --debug-port                          <string>    (default: 4000)                                                                                            
-      --demo                                <bool>                                                                                                                 
-  -h, --help                                                                                                                                                       display this help message
-      --label-maker-additional-information  <string>                                                                                                               
-      --label-maker-bold-font-path          <string>                                                                                                               
-      --label-maker-dynamic-length          <bool>      (default: true)                                                                                            
-      --label-maker-font-size               <float>     (default: 32.0)                                                                                            
-      --label-maker-height                  <int>       (default: 200)                                                                                             
-      --label-maker-label-service-timeout   <int>                                                                                                                  
-      --label-maker-label-service-url       <string>                                                                                                               
-      --label-maker-margin                  <int>       (default: 32)                                                                                              
-      --label-maker-padding                 <int>       (default: 32)                                                                                              
-      --label-maker-print-command           <string>                                                                                                               
-      --label-maker-regular-font-path       <string>                                                                                                               
-      --label-maker-width                   <int>       (default: 526)                                                                                             
-      --log-format                          <string>    (default: text)                                                                                            
-      --log-level                           <string>    (default: info)                                                                                            
-      --mailer-from                         <string>                                                                                                               
-      --mailer-host                         <string>                                                                                                               
-      --mailer-password                     <string>                                                                                                               
-      --mailer-port                         <int>                                                                                                                  
-      --mailer-username                     <string>                                                                                                               
-      --mode                                <string>    (default: development)                                                                                     
-      --oidc-allowed-groups                 <string>                                                                                                               
-      --oidc-auto-redirect                  <bool>      (default: false)                                                                                           
-      --oidc-button-text                    <string>    (default: Sign in with OIDC)                                                                               
-      --oidc-client-id                      <string>                                                                                                               
-      --oidc-client-secret                  <string>                                                                                                               
-      --oidc-email-claim                    <string>    (default: email)                                                                                           
-      --oidc-email-verified-claim           <string>    (default: email_verified)                                                                                  
-      --oidc-enabled                        <bool>      (default: false)                                                                                           
-      --oidc-group-claim                    <string>    (default: groups)                                                                                          
-      --oidc-issuer-url                     <string>                                                                                                               
-      --oidc-name-claim                     <string>    (default: name)                                                                                            
-      --oidc-request-timeout                <duration>  (default: 30s)                                                                                             
-      --oidc-scope                          <string>    (default: openid profile email)                                                                            
-      --oidc-state-expiry                   <duration>  (default: 10m)                                                                                             
-      --oidc-verify-email                   <bool>      (default: false)                                                                                           
-      --options-allow-analytics             <bool>      (default: false)                                                                                           
-      --options-allow-local-login           <bool>      (default: true)                                                                                            
-      --options-allow-registration          <bool>      (default: true)                                                                                            
-      --options-auto-increment-asset-id     <bool>      (default: true)                                                                                            
-      --options-currency-config             <string>                                                                                                               
-      --options-github-release-check        <bool>      (default: true)                                                                                            
-      --options-hostname                    <string>                                                                                                               
-      --options-trust-proxy                 <bool>      (default: false)                                                                                           
-      --storage-conn-string                 <string>    (default: file:///./)                                                                                      
-      --storage-prefix-path                 <string>    (default: .data)                                                                                           
-      --thumbnail-enabled                   <bool>      (default: true)                                                                                            
-      --thumbnail-height                    <int>       (default: 500)                                                                                             
-      --thumbnail-width                     <int>       (default: 500)                                                                                             
-  -v, --version                                                                                                                                                    display version
-      --web-host                            <string>                                                                                                               
-      --web-idle-timeout                    <duration>  (default: 30s)                                                                                             
-      --web-max-upload-size                 <int>       (default: 10)                                                                                              
-      --web-port                            <string>    (default: 7745)                                                                                            
-      --web-read-timeout                    <duration>  (default: 10s)                                                                                             
-      --web-write-timeout                   <duration>  (default: 10s)                                                                                         
-```
-
-:::
+For configuring OpenID Connect (OIDC) authentication, refer to the [OIDC Configuration Guide](/en/configure/oidc).
