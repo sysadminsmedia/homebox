@@ -23,8 +23,9 @@
   const api = useUserApi();
 
   const bordered = ref(false);
-  const replaceHomeboxBehavior = ref(t("reports.label_generator.replace_homebox_behavior_show_homebox"));
   const labelBlankLine = ref("_______________");
+  const replaceHomeboxBehavior = ref(t("reports.label_generator.replace_homebox_behavior_show_homebox"));
+  const replaceHomeboxText = labelBlankLine.value;
 
   const displayProperties = reactive({
     baseURL: window.location.origin,
@@ -340,7 +341,7 @@
   <div class="print:hidden">
     <Toaster />
     <div class="container prose mx-auto max-w-4xl p-4 pt-6">
-      <h1>Homebox {{ $t("reports.label_generator.title") }}</h1>
+      <h1>(Test) Homebox {{ $t("reports.label_generator.title") }}</h1>
       <p>
         {{ $t("reports.label_generator.instruction_1") }}
       </p>
@@ -484,31 +485,47 @@
           </div>
           <div class="ml-2 flex flex-col justify-center">
             <div class="font-bold">{{ item.assetID }}</div>
-            <div v-if="replaceHomeboxBehavior === 'Show Homebox Text'" class="text-xs font-light italic">Homebox</div>
-            <div v-else-if="replaceHomeboxBehavior === 'Always Replace'" class="text-xs font-light italic">
-              {{ labelBlankLine }}
+            <div
+              v-if="replaceHomeboxBehavior === $t('reports.label_generator.replace_homebox_behavior_show_homebox')"
+              class="text-xs font-light italic"
+            >
+              Homebox
             </div>
             <div
               v-else-if="
-                replaceHomeboxBehavior === 'No Name AND No Location' &&
+                replaceHomeboxBehavior === $t('reports.label_generator.replace_homebox_behavior_always_replace')
+              "
+              class="text-xs font-light italic"
+            >
+              {{ replaceHomeboxText }}
+            </div>
+            <div
+              v-else-if="
+                replaceHomeboxBehavior === $t('reports.label_generator.replace_homebox_behavior_no_item_no_location') &&
                 item.name === labelBlankLine &&
                 item.location === labelBlankLine
               "
               class="text-xs font-light italic"
             >
-              {{ labelBlankLine }}
+              {{ replaceHomeboxText }}
             </div>
             <div
-              v-else-if="replaceHomeboxBehavior === 'No Item Name' && item.name === labelBlankLine"
+              v-else-if="
+                replaceHomeboxBehavior === $t('reports.label_generator.replace_homebox_behavior_no_item_name') &&
+                item.name === labelBlankLine
+              "
               class="text-xs font-light italic"
             >
-              {{ labelBlankLine }}
+              {{ replaceHomeboxText }}
             </div>
             <div
-              v-else-if="replaceHomeboxBehavior === 'No Item Location' && item.location === labelBlankLine"
+              v-else-if="
+                replaceHomeboxBehavior === $t('reports.label_generator.replace_homebox_behavior_no_item_location') &&
+                item.location === labelBlankLine
+              "
               class="text-xs font-light italic"
             >
-              {{ labelBlankLine }}
+              {{ replaceHomeboxText }}
             </div>
             <div class="overflow-hidden text-wrap text-xs">{{ item.name }}</div>
             <div class="text-xs">{{ item.location }}</div>
