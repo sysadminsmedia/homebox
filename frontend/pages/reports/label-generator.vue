@@ -24,7 +24,7 @@
 
   const bordered = ref(false);
   const replaceHomeboxBehavior = ref(t("reports.label_generator.replace_homebox_behavior_show_homebox"));
-  const replaceHomeboxText = ref("_______________");
+  const labelBlankLine = ref("_______________");
 
   const displayProperties = reactive({
     baseURL: window.location.origin,
@@ -213,8 +213,8 @@
     return {
       url: getQRCodeUrl(assetID),
       assetID: item?.assetId ?? assetID,
-      name: item?.name ?? "_______________",
-      location: item?.location?.name ?? "_______________",
+      name: item?.name ?? labelBlankLine.value,
+      location: item?.location?.name ?? labelBlankLine.value,
     };
   }
 
@@ -486,29 +486,29 @@
             <div class="font-bold">{{ item.assetID }}</div>
             <div v-if="replaceHomeboxBehavior === 'Show Homebox Text'" class="text-xs font-light italic">Homebox</div>
             <div v-else-if="replaceHomeboxBehavior === 'Always Replace'" class="text-xs font-light italic">
-              {{ replaceHomeboxText }}
+              {{ labelBlankLine }}
             </div>
             <div
               v-else-if="
                 replaceHomeboxBehavior === 'No Name AND No Location' &&
-                item.name === '_______________' &&
-                item.location === '_______________'
+                item.name === labelBlankLine &&
+                item.location === labelBlankLine
               "
               class="text-xs font-light italic"
             >
-              {{ replaceHomeboxText }}
+              {{ labelBlankLine }}
             </div>
             <div
-              v-else-if="replaceHomeboxBehavior === 'No Item Name' && item.name === '_______________'"
+              v-else-if="replaceHomeboxBehavior === 'No Item Name' && item.name === labelBlankLine"
               class="text-xs font-light italic"
             >
-              {{ replaceHomeboxText }}
+              {{ labelBlankLine }}
             </div>
             <div
-              v-else-if="replaceHomeboxBehavior === 'No Item Location' && item.location === '_______________'"
+              v-else-if="replaceHomeboxBehavior === 'No Item Location' && item.location === labelBlankLine"
               class="text-xs font-light italic"
             >
-              {{ replaceHomeboxText }}
+              {{ labelBlankLine }}
             </div>
             <div class="overflow-hidden text-wrap text-xs">{{ item.name }}</div>
             <div class="text-xs">{{ item.location }}</div>
