@@ -136,7 +136,8 @@
                 "no_results": "No Results Found",
                 "placeholder": "Select…",
                 "search_placeholder": "Type to search…",
-                "searching": "Searching…"
+                "searching": "Searching…",
+                "clear": "Clear Item Selection"
             },
             "view": {
                 "change_details": {
@@ -221,7 +222,8 @@
                 "no_location_found": "No location found",
                 "parent_location": "Parent Location",
                 "search_location": "Search Locations",
-                "select_location": "Select a Location"
+                "select_location": "Select a Location",
+                "clear": "Clear Location Selection"
             },
             "tree": {
                 "no_locations": "No locations available. Add new locations through the\n '<span class=\"link-primary\">'Create'</span>' button on the navigation bar."
@@ -268,7 +270,8 @@
                 "label": "Template (Optional)",
                 "not_found": "No template found",
                 "search": "Search templates...",
-                "select": "Select template..."
+                "select": "Select template...",
+                "clear": "Clear Template Selection"
             },
             "toast": {
                 "applied": "Template \"{name}\" applied",
