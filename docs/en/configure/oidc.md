@@ -2,14 +2,20 @@
 
 HomeBox supports OpenID Connect (OIDC) authentication, allowing users to login using external identity providers like Keycloak, Authentik, Authelia, Google, Microsoft, etc.
 
+::: tip OIDC Provider Documentation
+When configuring OIDC, always refer to the documentation provided by your identity provider for specific details and requirements.
+:::
+
 ## Basic OIDC Setup
 
 1. **Enable OIDC**: Set `HBOX_OIDC_ENABLED=true`.
 2. **Provider Configuration**: Set the required provider details:
-   - `HBOX_OIDC_ISSUER_URL`: Your OIDC provider's issuer URL (this should be a URL without a trailing slash).
+   - `HBOX_OIDC_ISSUER_URL`: Your OIDC provider's issuer URL.
+     - Generally this URL should not have a trailing slash, though it may be required for some providers.
    - `HBOX_OIDC_CLIENT_ID`: Client ID from your OIDC provider.
    - `HBOX_OIDC_CLIENT_SECRET`: Client secret from your OIDC provider.
    - If you are using a reverse proxy, it may be necessary to set `HBOX_OPTIONS_TRUST_PROXY=true` to ensure `https` is correctly detected.
+   - If you have set `HBOX_OPTIONS_HOSTNAME` make sure it is just the hostname and does not include `https://` or `http://`.
 
 3. **Configure Redirect URI**: In your OIDC provider, set the redirect URI to:
    `https://your-homebox-domain.example.com/api/v1/users/login/oidc/callback`.
