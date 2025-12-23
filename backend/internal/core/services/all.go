@@ -17,8 +17,9 @@ type AllServices struct {
 type OptionsFunc func(*options)
 
 type options struct {
-	autoIncrementAssetID bool
-	currencies           []currencies.Currency
+	autoIncrementAssetID   bool
+	currencies             []currencies.Currency
+	createDefaultDemoItems bool
 }
 
 func WithAutoIncrementAssetID(v bool) func(*options) {
@@ -30,6 +31,12 @@ func WithAutoIncrementAssetID(v bool) func(*options) {
 func WithCurrencies(v []currencies.Currency) func(*options) {
 	return func(o *options) {
 		o.currencies = v
+	}
+}
+
+func WithCreateDefaultDemoItems(v bool) func(*options) {
+	return func(o *options) {
+		o.createDefaultDemoItems = v
 	}
 }
 
@@ -46,8 +53,9 @@ func New(repos *repo.AllRepos, opts ...OptionsFunc) *AllServices {
 	}
 
 	options := &options{
-		autoIncrementAssetID: true,
-		currencies:           defaultCurrencies,
+		autoIncrementAssetID:   true,
+		currencies:             defaultCurrencies,
+		createDefaultDemoItems: true,
 	}
 
 	for _, opt := range opts {
@@ -55,7 +63,10 @@ func New(repos *repo.AllRepos, opts ...OptionsFunc) *AllServices {
 	}
 
 	return &AllServices{
-		User:  &UserService{repos},
+		User: &UserService{
+			repos:                  repos,
+			createDefaultDemoItems: options.createDefaultDemoItems,
+		},
 		Group: &GroupService{repos},
 		Items: &ItemService{
 			repo:                 repos,

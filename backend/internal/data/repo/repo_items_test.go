@@ -397,5 +397,3 @@ func TestItemsRepository_DeleteByGroupWithAttachments(t *testing.T) {
 	_, err = tRepos.Attachments.Get(context.Background(), tGroup.ID, attachment.ID)
 	require.Error(t, err)
 }
-
-
