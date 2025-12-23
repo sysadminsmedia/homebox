@@ -11,8 +11,8 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 )
 
@@ -110,19 +110,19 @@ func (_c *LabelCreate) SetGroup(v *Group) *LabelCreate {
 	return _c.SetGroupID(v.ID)
 }
 
-// AddItemIDs adds the "items" edge to the Item entity by IDs.
-func (_c *LabelCreate) AddItemIDs(ids ...uuid.UUID) *LabelCreate {
-	_c.mutation.AddItemIDs(ids...)
+// AddEntityIDs adds the "entities" edge to the Entity entity by IDs.
+func (_c *LabelCreate) AddEntityIDs(ids ...uuid.UUID) *LabelCreate {
+	_c.mutation.AddEntityIDs(ids...)
 	return _c
 }
 
-// AddItems adds the "items" edges to the Item entity.
-func (_c *LabelCreate) AddItems(v ...*Item) *LabelCreate {
+// AddEntities adds the "entities" edges to the Entity entity.
+func (_c *LabelCreate) AddEntities(v ...*Entity) *LabelCreate {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _c.AddItemIDs(ids...)
+	return _c.AddEntityIDs(ids...)
 }
 
 // Mutation returns the LabelMutation object of the builder.
@@ -275,15 +275,15 @@ func (_c *LabelCreate) createSpec() (*Label, *sqlgraph.CreateSpec) {
 		_node.group_labels = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.ItemsIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.EntitiesIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   label.ItemsTable,
-			Columns: label.ItemsPrimaryKey,
+			Table:   label.EntitiesTable,
+			Columns: label.EntitiesPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(entity.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

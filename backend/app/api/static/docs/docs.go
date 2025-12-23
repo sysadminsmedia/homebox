@@ -195,6 +195,454 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/entities/{id}/attachments": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Items Attachments"
+                ],
+                "summary": "Create Item Attachment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "File attachment",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Type of file",
+                        "name": "type",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Is this the primary attachment",
+                        "name": "primary",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "name of the file including extension",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.ItemOut"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/validate.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entities/{id}/attachments/{attachment_id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/octet-stream"
+                ],
+                "tags": [
+                    "Items Attachments"
+                ],
+                "summary": "Get Item Attachment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Attachment ID",
+                        "name": "attachment_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ItemAttachmentToken"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Items Attachments"
+                ],
+                "summary": "Update Item Attachment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Attachment ID",
+                        "name": "attachment_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Attachment Update",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityAttachmentUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.ItemOut"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Items Attachments"
+                ],
+                "summary": "Delete Item Attachment",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Attachment ID",
+                        "name": "attachment_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/v1/entities/{id}/maintenance": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Item Maintenance"
+                ],
+                "summary": "Get Maintenance Log",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "scheduled",
+                            "completed",
+                            "both"
+                        ],
+                        "type": "string",
+                        "x-enum-varnames": [
+                            "MaintenanceFilterStatusScheduled",
+                            "MaintenanceFilterStatusCompleted",
+                            "MaintenanceFilterStatusBoth"
+                        ],
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.MaintenanceEntryWithDetails"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Item Maintenance"
+                ],
+                "summary": "Create Maintenance Entry",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Item ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Entry Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.MaintenanceEntryCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.MaintenanceEntry"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entitytype": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "EntityTypes"
+                ],
+                "summary": "Query All Entity Types",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.EntityType"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "EntityTypes"
+                ],
+                "summary": "Create Entity Type",
+                "parameters": [
+                    {
+                        "description": "Entity Type Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityTypeCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityType"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/entitytype/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "EntityTypes"
+                ],
+                "summary": "Get One Entity Type",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity Type ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityType"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "EntityTypes"
+                ],
+                "summary": "Update Entity Type",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity Type ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Entity Type Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityTypeUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityType"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "EntityTypes"
+                ],
+                "summary": "Delete Entity Type",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Entity Type ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Entity Type Delete Options",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.EntityTypeDelete"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
         "/v1/groups": {
             "get": {
                 "security": [
@@ -416,7 +864,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Query All Items",
+                "summary": "(Deprecated) Query All Items",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -482,6 +931,9 @@ const docTemplate = `{
                         "Bearer": []
                     }
                 ],
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
@@ -489,6 +941,7 @@ const docTemplate = `{
                     "Items"
                 ],
                 "summary": "Create Item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Item Data",
@@ -520,7 +973,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Export Items",
+                "summary": "(Deprecated) Export Items",
+                "deprecated": true,
                 "responses": {
                     "200": {
                         "description": "text/csv",
@@ -544,7 +998,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Get All Custom Field Names",
+                "summary": "(Deprecated) Get All Custom Field Names",
+                "deprecated": true,
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -571,7 +1026,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Get All Custom Field Values",
+                "summary": "(Deprecated) Get All Custom Field Values",
+                "deprecated": true,
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -601,7 +1057,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Import Items",
+                "summary": "(Deprecated) Import Items",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "file",
@@ -631,7 +1088,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Get Item",
+                "summary": "(Deprecated) Get Item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -662,7 +1120,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Update Item",
+                "summary": "(Deprecated) Update Item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -702,7 +1161,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Delete Item",
+                "summary": "(Deprecated) Delete Item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -730,7 +1190,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Update Item",
+                "summary": "(Deprecated) Update Item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -776,6 +1237,7 @@ const docTemplate = `{
                     "Items Attachments"
                 ],
                 "summary": "Create Item Attachment",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -841,6 +1303,7 @@ const docTemplate = `{
                     "Items Attachments"
                 ],
                 "summary": "Get Item Attachment",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -876,6 +1339,7 @@ const docTemplate = `{
                     "Items Attachments"
                 ],
                 "summary": "Update Item Attachment",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -897,7 +1361,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/repo.ItemAttachmentUpdate"
+                            "$ref": "#/definitions/repo.EntityAttachmentUpdate"
                         }
                     }
                 ],
@@ -920,6 +1384,7 @@ const docTemplate = `{
                     "Items Attachments"
                 ],
                 "summary": "Delete Item Attachment",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -999,6 +1464,7 @@ const docTemplate = `{
                     "Item Maintenance"
                 ],
                 "summary": "Get Maintenance Log",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -1048,6 +1514,7 @@ const docTemplate = `{
                     "Item Maintenance"
                 ],
                 "summary": "Create Maintenance Entry",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -1089,7 +1556,8 @@ const docTemplate = `{
                 "tags": [
                     "Items"
                 ],
-                "summary": "Get the full path of an item",
+                "summary": "(Deprecated) Get the full path of an item",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -1394,7 +1862,8 @@ const docTemplate = `{
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Get All Locations",
+                "summary": "(Deprecated) Get All Locations",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "boolean",
@@ -1427,7 +1896,8 @@ const docTemplate = `{
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Create Location",
+                "summary": "(Deprecated) Create Location",
+                "deprecated": true,
                 "parameters": [
                     {
                         "description": "Location Data",
@@ -1462,7 +1932,8 @@ const docTemplate = `{
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Get Locations Tree",
+                "summary": "(Deprecated) Get Locations Tree",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "boolean",
@@ -1497,7 +1968,8 @@ const docTemplate = `{
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Get Location",
+                "summary": "(Deprecated) Get Location",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -1528,7 +2000,8 @@ const docTemplate = `{
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Update Location",
+                "summary": "(Deprecated) Update Location",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -1568,7 +2041,8 @@ const docTemplate = `{
                 "tags": [
                     "Locations"
                 ],
-                "summary": "Delete Location",
+                "summary": "(Deprecated) Delete Location",
+                "deprecated": true,
                 "parameters": [
                     {
                         "type": "string",
@@ -2560,11 +3034,11 @@ const docTemplate = `{
         "ent.AttachmentEdges": {
             "type": "object",
             "properties": {
-                "item": {
-                    "description": "Item holds the value of the item edge.",
+                "entity": {
+                    "description": "Entity holds the value of the entity edge.",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/ent.Item"
+                            "$ref": "#/definitions/ent.Entity"
                         }
                     ]
                 },
@@ -2673,147 +3147,7 @@ const docTemplate = `{
                 }
             }
         },
-        "ent.Group": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "description": "CreatedAt holds the value of the \"created_at\" field.",
-                    "type": "string"
-                },
-                "currency": {
-                    "description": "Currency holds the value of the \"currency\" field.",
-                    "type": "string"
-                },
-                "edges": {
-                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the GroupQuery when eager-loading is set.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.GroupEdges"
-                        }
-                    ]
-                },
-                "id": {
-                    "description": "ID of the ent.",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "Name holds the value of the \"name\" field.",
-                    "type": "string"
-                },
-                "updated_at": {
-                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
-                    "type": "string"
-                }
-            }
-        },
-        "ent.GroupEdges": {
-            "type": "object",
-            "properties": {
-                "invitation_tokens": {
-                    "description": "InvitationTokens holds the value of the invitation_tokens edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.GroupInvitationToken"
-                    }
-                },
-                "item_templates": {
-                    "description": "ItemTemplates holds the value of the item_templates edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.ItemTemplate"
-                    }
-                },
-                "items": {
-                    "description": "Items holds the value of the items edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.Item"
-                    }
-                },
-                "labels": {
-                    "description": "Labels holds the value of the labels edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.Label"
-                    }
-                },
-                "locations": {
-                    "description": "Locations holds the value of the locations edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.Location"
-                    }
-                },
-                "notifiers": {
-                    "description": "Notifiers holds the value of the notifiers edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.Notifier"
-                    }
-                },
-                "users": {
-                    "description": "Users holds the value of the users edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.User"
-                    }
-                }
-            }
-        },
-        "ent.GroupInvitationToken": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "description": "CreatedAt holds the value of the \"created_at\" field.",
-                    "type": "string"
-                },
-                "edges": {
-                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the GroupInvitationTokenQuery when eager-loading is set.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.GroupInvitationTokenEdges"
-                        }
-                    ]
-                },
-                "expires_at": {
-                    "description": "ExpiresAt holds the value of the \"expires_at\" field.",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "ID of the ent.",
-                    "type": "string"
-                },
-                "token": {
-                    "description": "Token holds the value of the \"token\" field.",
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "updated_at": {
-                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
-                    "type": "string"
-                },
-                "uses": {
-                    "description": "Uses holds the value of the \"uses\" field.",
-                    "type": "integer"
-                }
-            }
-        },
-        "ent.GroupInvitationTokenEdges": {
-            "type": "object",
-            "properties": {
-                "group": {
-                    "description": "Group holds the value of the group edge.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.Group"
-                        }
-                    ]
-                }
-            }
-        },
-        "ent.Item": {
+        "ent.Entity": {
             "type": "object",
             "properties": {
                 "archived": {
@@ -2833,10 +3167,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "edges": {
-                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the ItemQuery when eager-loading is set.",
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the EntityQuery when eager-loading is set.",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/ent.ItemEdges"
+                            "$ref": "#/definitions/ent.EntityEdges"
                         }
                     ]
                 },
@@ -2908,8 +3242,8 @@ const docTemplate = `{
                     "description": "SoldTo holds the value of the \"sold_to\" field.",
                     "type": "string"
                 },
-                "sync_child_items_locations": {
-                    "description": "SyncChildItemsLocations holds the value of the \"sync_child_items_locations\" field.",
+                "sync_child_entities_locations": {
+                    "description": "SyncChildEntitiesLocations holds the value of the \"sync_child_entities_locations\" field.",
                     "type": "boolean"
                 },
                 "updated_at": {
@@ -2926,7 +3260,7 @@ const docTemplate = `{
                 }
             }
         },
-        "ent.ItemEdges": {
+        "ent.EntityEdges": {
             "type": "object",
             "properties": {
                 "attachments": {
@@ -2940,14 +3274,21 @@ const docTemplate = `{
                     "description": "Children holds the value of the children edge.",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/ent.Item"
+                        "$ref": "#/definitions/ent.Entity"
+                    }
+                },
+                "entity": {
+                    "description": "Entity holds the value of the entity edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Entity"
                     }
                 },
                 "fields": {
                     "description": "Fields holds the value of the fields edge.",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/ent.ItemField"
+                        "$ref": "#/definitions/ent.EntityField"
                     }
                 },
                 "group": {
@@ -2969,7 +3310,7 @@ const docTemplate = `{
                     "description": "Location holds the value of the location edge.",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/ent.Location"
+                            "$ref": "#/definitions/ent.Entity"
                         }
                     ]
                 },
@@ -2984,13 +3325,21 @@ const docTemplate = `{
                     "description": "Parent holds the value of the parent edge.",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/ent.Item"
+                            "$ref": "#/definitions/ent.Entity"
+                        }
+                    ]
+                },
+                "type": {
+                    "description": "Type holds the value of the type edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.EntityType"
                         }
                     ]
                 }
             }
         },
-        "ent.ItemField": {
+        "ent.EntityField": {
             "type": "object",
             "properties": {
                 "boolean_value": {
@@ -3006,10 +3355,10 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "edges": {
-                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the ItemFieldQuery when eager-loading is set.",
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the EntityFieldQuery when eager-loading is set.",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/ent.ItemFieldEdges"
+                            "$ref": "#/definitions/ent.EntityFieldEdges"
                         }
                     ]
                 },
@@ -3037,7 +3386,7 @@ const docTemplate = `{
                     "description": "Type holds the value of the \"type\" field.",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/itemfield.Type"
+                            "$ref": "#/definitions/entityfield.Type"
                         }
                     ]
                 },
@@ -3047,14 +3396,219 @@ const docTemplate = `{
                 }
             }
         },
-        "ent.ItemFieldEdges": {
+        "ent.EntityFieldEdges": {
             "type": "object",
             "properties": {
-                "item": {
-                    "description": "Item holds the value of the item edge.",
+                "entity": {
+                    "description": "Entity holds the value of the entity edge.",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/ent.Item"
+                            "$ref": "#/definitions/ent.Entity"
+                        }
+                    ]
+                }
+            }
+        },
+        "ent.EntityType": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "description": "Color holds the value of the \"color\" field.",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description holds the value of the \"description\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the EntityTypeQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.EntityTypeEdges"
+                        }
+                    ]
+                },
+                "icon": {
+                    "description": "Icon holds the value of the \"icon\" field.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "is_location": {
+                    "description": "IsLocation holds the value of the \"is_location\" field.",
+                    "type": "boolean"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.EntityTypeEdges": {
+            "type": "object",
+            "properties": {
+                "entities": {
+                    "description": "Entities holds the value of the entities edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Entity"
+                    }
+                },
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                }
+            }
+        },
+        "ent.Group": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "currency": {
+                    "description": "Currency holds the value of the \"currency\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the GroupQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.GroupEdges"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.GroupEdges": {
+            "type": "object",
+            "properties": {
+                "entities": {
+                    "description": "Entities holds the value of the entities edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Entity"
+                    }
+                },
+                "entity_types": {
+                    "description": "EntityTypes holds the value of the entity_types edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.EntityType"
+                    }
+                },
+                "invitation_tokens": {
+                    "description": "InvitationTokens holds the value of the invitation_tokens edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.GroupInvitationToken"
+                    }
+                },
+                "item_templates": {
+                    "description": "ItemTemplates holds the value of the item_templates edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.ItemTemplate"
+                    }
+                },
+                "labels": {
+                    "description": "Labels holds the value of the labels edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Label"
+                    }
+                },
+                "notifiers": {
+                    "description": "Notifiers holds the value of the notifiers edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Notifier"
+                    }
+                },
+                "users": {
+                    "description": "Users holds the value of the users edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.User"
+                    }
+                }
+            }
+        },
+        "ent.GroupInvitationToken": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the GroupInvitationTokenQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.GroupInvitationTokenEdges"
+                        }
+                    ]
+                },
+                "expires_at": {
+                    "description": "ExpiresAt holds the value of the \"expires_at\" field.",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "token": {
+                    "description": "Token holds the value of the \"token\" field.",
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                },
+                "uses": {
+                    "description": "Uses holds the value of the \"uses\" field.",
+                    "type": "integer"
+                }
+            }
+        },
+        "ent.GroupInvitationTokenEdges": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
                         }
                     ]
                 }
@@ -3170,7 +3724,7 @@ const docTemplate = `{
                     "description": "Location holds the value of the location edge.",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/ent.Location"
+                            "$ref": "#/definitions/ent.Entity"
                         }
                     ]
                 }
@@ -3216,64 +3770,11 @@ const docTemplate = `{
         "ent.LabelEdges": {
             "type": "object",
             "properties": {
-                "group": {
-                    "description": "Group holds the value of the group edge.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.Group"
-                        }
-                    ]
-                },
-                "items": {
-                    "description": "Items holds the value of the items edge.",
+                "entities": {
+                    "description": "Entities holds the value of the entities edge.",
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/ent.Item"
-                    }
-                }
-            }
-        },
-        "ent.Location": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "description": "CreatedAt holds the value of the \"created_at\" field.",
-                    "type": "string"
-                },
-                "description": {
-                    "description": "Description holds the value of the \"description\" field.",
-                    "type": "string"
-                },
-                "edges": {
-                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the LocationQuery when eager-loading is set.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.LocationEdges"
-                        }
-                    ]
-                },
-                "id": {
-                    "description": "ID of the ent.",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "Name holds the value of the \"name\" field.",
-                    "type": "string"
-                },
-                "updated_at": {
-                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
-                    "type": "string"
-                }
-            }
-        },
-        "ent.LocationEdges": {
-            "type": "object",
-            "properties": {
-                "children": {
-                    "description": "Children holds the value of the children edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.Location"
+                        "$ref": "#/definitions/ent.Entity"
                     }
                 },
                 "group": {
@@ -3281,21 +3782,6 @@ const docTemplate = `{
                     "allOf": [
                         {
                             "$ref": "#/definitions/ent.Group"
-                        }
-                    ]
-                },
-                "items": {
-                    "description": "Items holds the value of the items edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.Item"
-                    }
-                },
-                "parent": {
-                    "description": "Parent holds the value of the parent edge.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.Location"
                         }
                     ]
                 }
@@ -3328,12 +3814,12 @@ const docTemplate = `{
                         }
                     ]
                 },
-                "id": {
-                    "description": "ID of the ent.",
+                "entity_id": {
+                    "description": "EntityID holds the value of the \"entity_id\" field.",
                     "type": "string"
                 },
-                "item_id": {
-                    "description": "ItemID holds the value of the \"item_id\" field.",
+                "id": {
+                    "description": "ID of the ent.",
                     "type": "string"
                 },
                 "name": {
@@ -3353,11 +3839,11 @@ const docTemplate = `{
         "ent.MaintenanceEntryEdges": {
             "type": "object",
             "properties": {
-                "item": {
-                    "description": "Item holds the value of the item edge.",
+                "entity": {
+                    "description": "Entity holds the value of the entity edge.",
                     "allOf": [
                         {
-                            "$ref": "#/definitions/ent.Item"
+                            "$ref": "#/definitions/ent.Entity"
                         }
                     ]
                 }
@@ -3571,7 +4057,7 @@ const docTemplate = `{
                 }
             }
         },
-        "itemfield.Type": {
+        "entityfield.Type": {
             "type": "string",
             "enum": [
                 "text",
@@ -3634,6 +4120,122 @@ const docTemplate = `{
                 }
             }
         },
+        "repo.EntityAttachment": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "mimeType": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "primary": {
+                    "type": "boolean"
+                },
+                "thumbnail": {
+                    "$ref": "#/definitions/ent.Attachment"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.EntityAttachmentUpdate": {
+            "type": "object",
+            "properties": {
+                "primary": {
+                    "type": "boolean"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.EntityType": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "isLocation": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.EntityTypeCreate": {
+            "type": "object",
+            "required": [
+                "isLocation",
+                "name"
+            ],
+            "properties": {
+                "color": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "isLocation": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.EntityTypeDelete": {
+            "type": "object",
+            "properties": {
+                "replacementId": {
+                    "$ref": "#/definitions/uuid.NullUUID"
+                }
+            }
+        },
+        "repo.EntityTypeUpdate": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "icon": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
         "repo.Group": {
             "type": "object",
             "properties": {
@@ -3688,61 +4290,19 @@ const docTemplate = `{
                 }
             }
         },
-        "repo.ItemAttachment": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "mimeType": {
-                    "type": "string"
-                },
-                "path": {
-                    "type": "string"
-                },
-                "primary": {
-                    "type": "boolean"
-                },
-                "thumbnail": {
-                    "$ref": "#/definitions/ent.Attachment"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "repo.ItemAttachmentUpdate": {
-            "type": "object",
-            "properties": {
-                "primary": {
-                    "type": "boolean"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
         "repo.ItemCreate": {
             "type": "object",
             "required": [
+                "entityType",
                 "name"
             ],
             "properties": {
                 "description": {
                     "type": "string",
                     "maxLength": 1000
+                },
+                "entityType": {
+                    "type": "string"
                 },
                 "labelIds": {
                     "type": "array",
@@ -3804,13 +4364,16 @@ const docTemplate = `{
                 "attachments": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/repo.ItemAttachment"
+                        "$ref": "#/definitions/repo.EntityAttachment"
                     }
                 },
                 "createdAt": {
                     "type": "string"
                 },
                 "description": {
+                    "type": "string"
+                },
+                "entityType": {
                     "type": "string"
                 },
                 "fields": {
@@ -3974,6 +4537,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "description": {
+                    "type": "string"
+                },
+                "entityType": {
                     "type": "string"
                 },
                 "id": {
@@ -4304,16 +4870,21 @@ const docTemplate = `{
             "type": "string",
             "enum": [
                 "location",
+                "item",
+                "location",
                 "item"
             ],
             "x-enum-varnames": [
                 "ItemTypeLocation",
-                "ItemTypeItem"
+                "ItemTypeItem",
+                "EntityTypeLocation",
+                "EntityTypeItem"
             ]
         },
         "repo.ItemUpdate": {
             "type": "object",
             "required": [
+                "entityType",
                 "name"
             ],
             "properties": {
@@ -4326,6 +4897,9 @@ const docTemplate = `{
                 "description": {
                     "type": "string",
                     "maxLength": 1000
+                },
+                "entityType": {
+                    "type": "string"
                 },
                 "fields": {
                     "type": "array",
@@ -4488,8 +5062,14 @@ const docTemplate = `{
         },
         "repo.LocationCreate": {
             "type": "object",
+            "required": [
+                "entityType"
+            ],
             "properties": {
                 "description": {
+                    "type": "string"
+                },
+                "entityType": {
                     "type": "string"
                 },
                 "name": {
@@ -4514,6 +5094,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "description": {
+                    "type": "string"
+                },
+                "entityType": {
                     "type": "string"
                 },
                 "id": {
@@ -4542,6 +5125,9 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "entityType": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -4565,6 +5151,9 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
+                "entityType": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
@@ -4578,8 +5167,14 @@ const docTemplate = `{
         },
         "repo.LocationUpdate": {
             "type": "object",
+            "required": [
+                "entityType"
+            ],
             "properties": {
                 "description": {
+                    "type": "string"
+                },
+                "entityType": {
                     "type": "string"
                 },
                 "id": {
@@ -4997,6 +5592,18 @@ const docTemplate = `{
                 "RoleUser",
                 "RoleOwner"
             ]
+        },
+        "uuid.NullUUID": {
+            "type": "object",
+            "properties": {
+                "uuid": {
+                    "type": "string"
+                },
+                "valid": {
+                    "description": "Valid is true if UUID is not NULL",
+                    "type": "boolean"
+                }
+            }
         },
         "v1.APISummary": {
             "type": "object",

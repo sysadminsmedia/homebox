@@ -13,9 +13,9 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/google/uuid"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 )
@@ -29,7 +29,7 @@ type ItemTemplateQuery struct {
 	predicates   []predicate.ItemTemplate
 	withGroup    *GroupQuery
 	withFields   *TemplateFieldQuery
-	withLocation *LocationQuery
+	withLocation *EntityQuery
 	withFKs      bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -112,8 +112,8 @@ func (_q *ItemTemplateQuery) QueryFields() *TemplateFieldQuery {
 }
 
 // QueryLocation chains the current query on the "location" edge.
-func (_q *ItemTemplateQuery) QueryLocation() *LocationQuery {
-	query := (&LocationClient{config: _q.config}).Query()
+func (_q *ItemTemplateQuery) QueryLocation() *EntityQuery {
+	query := (&EntityClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -124,7 +124,7 @@ func (_q *ItemTemplateQuery) QueryLocation() *LocationQuery {
 		}
 		step := sqlgraph.NewStep(
 			sqlgraph.From(itemtemplate.Table, itemtemplate.FieldID, selector),
-			sqlgraph.To(location.Table, location.FieldID),
+			sqlgraph.To(entity.Table, entity.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, false, itemtemplate.LocationTable, itemtemplate.LocationColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
@@ -358,8 +358,8 @@ func (_q *ItemTemplateQuery) WithFields(opts ...func(*TemplateFieldQuery)) *Item
 
 // WithLocation tells the query-builder to eager-load the nodes that are connected to
 // the "location" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *ItemTemplateQuery) WithLocation(opts ...func(*LocationQuery)) *ItemTemplateQuery {
-	query := (&LocationClient{config: _q.config}).Query()
+func (_q *ItemTemplateQuery) WithLocation(opts ...func(*EntityQuery)) *ItemTemplateQuery {
+	query := (&EntityClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
@@ -491,7 +491,7 @@ func (_q *ItemTemplateQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]
 	}
 	if query := _q.withLocation; query != nil {
 		if err := _q.loadLocation(ctx, query, nodes, nil,
-			func(n *ItemTemplate, e *Location) { n.Edges.Location = e }); err != nil {
+			func(n *ItemTemplate, e *Entity) { n.Edges.Location = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -561,7 +561,7 @@ func (_q *ItemTemplateQuery) loadFields(ctx context.Context, query *TemplateFiel
 	}
 	return nil
 }
-func (_q *ItemTemplateQuery) loadLocation(ctx context.Context, query *LocationQuery, nodes []*ItemTemplate, init func(*ItemTemplate), assign func(*ItemTemplate, *Location)) error {
+func (_q *ItemTemplateQuery) loadLocation(ctx context.Context, query *EntityQuery, nodes []*ItemTemplate, init func(*ItemTemplate), assign func(*ItemTemplate, *Entity)) error {
 	ids := make([]uuid.UUID, 0, len(nodes))
 	nodeids := make(map[uuid.UUID][]*ItemTemplate)
 	for i := range nodes {
@@ -577,7 +577,7 @@ func (_q *ItemTemplateQuery) loadLocation(ctx context.Context, query *LocationQu
 	if len(ids) == 0 {
 		return nil
 	}
-	query.Where(location.IDIn(ids...))
+	query.Where(entity.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err

@@ -2,10 +2,11 @@ package services
 
 import (
 	"context"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"log"
 	"os"
 	"testing"
+
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/currencies"

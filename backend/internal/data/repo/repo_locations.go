@@ -5,11 +5,13 @@ import (
 	"strings"
 	"time"
 
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
+
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 )
 
@@ -23,6 +25,7 @@ type (
 		Name        string    `json:"name"`
 		ParentID    uuid.UUID `json:"parentId"    extensions:"x-nullable"`
 		Description string    `json:"description"`
+		EntityType  uuid.UUID `json:"entityType"  validate:"required"`
 	}
 
 	LocationUpdate struct {
@@ -30,6 +33,7 @@ type (
 		ID          uuid.UUID `json:"id"`
 		Name        string    `json:"name"`
 		Description string    `json:"description"`
+		EntityType  uuid.UUID `json:"entityType"  validate:"required"`
 	}
 
 	LocationSummary struct {
@@ -38,6 +42,7 @@ type (
 		Description string    `json:"description"`
 		CreatedAt   time.Time `json:"createdAt"`
 		UpdatedAt   time.Time `json:"updatedAt"`
+		EntityType  uuid.UUID `json:"entityType"`
 	}
 
 	LocationOutCount struct {
@@ -53,28 +58,34 @@ type (
 	}
 )
 
-func mapLocationSummary(location *ent.Location) LocationSummary {
+func mapLocationSummary(location *ent.Entity) LocationSummary {
+	var typeID uuid.UUID
+	if location.Edges.Type != nil {
+		typeID = location.Edges.Type.ID
+	}
 	return LocationSummary{
 		ID:          location.ID,
 		Name:        location.Name,
 		Description: location.Description,
 		CreatedAt:   location.CreatedAt,
 		UpdatedAt:   location.UpdatedAt,
+		EntityType:  typeID,
 	}
 }
 
 var mapLocationOutErr = mapTErrFunc(mapLocationOut)
 
-func mapLocationOut(location *ent.Location) LocationOut {
+func mapLocationOut(location *ent.Entity) LocationOut {
 	var parent *LocationSummary
-	if location.Edges.Parent != nil {
+	var isParentLocation = location.QueryParent().Where(entity.HasTypeWith(entitytype.IsLocationEQ(true))).ExistX(context.Background())
+	if location.Edges.Parent != nil && isParentLocation {
 		p := mapLocationSummary(location.Edges.Parent)
 		parent = &p
 	}
 
 	children := make([]LocationSummary, 0, len(location.Edges.Children))
 	for _, c := range location.Edges.Children {
-		children = append(children, mapLocationSummary(c))
+		children = append(children, mapLocationSummary(c.QueryChildren().Where(entity.HasTypeWith(entitytype.IsLocationEQ(true))).OnlyX(context.Background())))
 	}
 
 	return LocationOut{
@@ -104,30 +115,32 @@ type LocationQuery struct {
 func (r *LocationRepository) GetAll(ctx context.Context, gid uuid.UUID, filter LocationQuery) ([]LocationOutCount, error) {
 	query := `--sql
 		SELECT
-			id,
-			name,
-			description,
-			created_at,
-			updated_at,
+			entities.id,
+			entities.name,
+			entities.description,
+			entities.created_at,
+			entities.updated_at,
 			(
 				SELECT
-					SUM(items.quantity)
+					SUM(entities.quantity)
 				FROM
-					items
+					entities
 				WHERE
-					items.location_items = locations.id
-					AND items.archived = false
+				    entities.entity_parent = entities.id
+					AND entities.archived = false
 			) as item_count
 		FROM
-			locations
+			entities
+		JOIN entity_types ON entities.entity_type_entities = entity_types.id
+		AND entity_types.is_location = true
 		WHERE
-			locations.group_locations = $1 {{ FILTER_CHILDREN }}
+			entities.group_entities = $1 {{ FILTER_CHILDREN }}
 		ORDER BY
-			locations.name ASC
+			entities.name ASC
 `
 
 	if filter.FilterChildren {
-		query = strings.Replace(query, "{{ FILTER_CHILDREN }}", "AND locations.location_children IS NULL", 1)
+		query = strings.Replace(query, "{{ FILTER_CHILDREN }}", "AND entities.entity_parent IS NULL", 1)
 	} else {
 		query = strings.Replace(query, "{{ FILTER_CHILDREN }}", "", 1)
 	}
@@ -159,30 +172,33 @@ func (r *LocationRepository) GetAll(ctx context.Context, gid uuid.UUID, filter L
 	return list, err
 }
 
-func (r *LocationRepository) getOne(ctx context.Context, where ...predicate.Location) (LocationOut, error) {
-	return mapLocationOutErr(r.db.Location.Query().
+func (r *LocationRepository) getOne(ctx context.Context, where ...predicate.Entity) (LocationOut, error) {
+	return mapLocationOutErr(r.db.Entity.Query().
 		Where(where...).
+		Where(entity.HasTypeWith(entitytype.IsLocationEQ(true))).
 		WithGroup().
 		WithParent().
-		WithChildren(func(lq *ent.LocationQuery) {
-			lq.Order(location.ByName())
+		WithType().
+		WithChildren(func(lq *ent.EntityQuery) {
+			lq.Order(entity.ByName())
 		}).
 		Only(ctx))
 }
 
 func (r *LocationRepository) Get(ctx context.Context, id uuid.UUID) (LocationOut, error) {
-	return r.getOne(ctx, location.ID(id))
+	return r.getOne(ctx, entity.ID(id))
 }
 
 func (r *LocationRepository) GetOneByGroup(ctx context.Context, gid, id uuid.UUID) (LocationOut, error) {
-	return r.getOne(ctx, location.ID(id), location.HasGroupWith(group.ID(gid)))
+	return r.getOne(ctx, entity.ID(id), entity.HasGroupWith(group.ID(gid)))
 }
 
 func (r *LocationRepository) Create(ctx context.Context, gid uuid.UUID, data LocationCreate) (LocationOut, error) {
-	q := r.db.Location.Create().
+	q := r.db.Entity.Create().
 		SetName(data.Name).
 		SetDescription(data.Description).
-		SetGroupID(gid)
+		SetGroupID(gid).
+		SetTypeID(data.EntityType)
 
 	if data.ParentID != uuid.Nil {
 		q.SetParentID(data.ParentID)
@@ -198,11 +214,12 @@ func (r *LocationRepository) Create(ctx context.Context, gid uuid.UUID, data Loc
 	return mapLocationOut(location), nil
 }
 
-func (r *LocationRepository) update(ctx context.Context, data LocationUpdate, where ...predicate.Location) (LocationOut, error) {
-	q := r.db.Location.Update().
+func (r *LocationRepository) update(ctx context.Context, data LocationUpdate, where ...predicate.Entity) (LocationOut, error) {
+	q := r.db.Entity.Update().
 		Where(where...).
 		SetName(data.Name).
-		SetDescription(data.Description)
+		SetDescription(data.Description).
+		SetTypeID(data.EntityType)
 
 	if data.ParentID != uuid.Nil {
 		q.SetParentID(data.ParentID)
@@ -219,7 +236,7 @@ func (r *LocationRepository) update(ctx context.Context, data LocationUpdate, wh
 }
 
 func (r *LocationRepository) UpdateByGroup(ctx context.Context, gid, id uuid.UUID, data LocationUpdate) (LocationOut, error) {
-	v, err := r.update(ctx, data, location.ID(id), location.HasGroupWith(group.ID(gid)))
+	v, err := r.update(ctx, data, entity.ID(id), entity.HasGroupWith(group.ID(gid)))
 	if err != nil {
 		return LocationOut{}, err
 	}
@@ -231,11 +248,11 @@ func (r *LocationRepository) UpdateByGroup(ctx context.Context, gid, id uuid.UUI
 // delete should only be used after checking that the location is owned by the
 // group. Otherwise, use DeleteByGroup
 func (r *LocationRepository) delete(ctx context.Context, id uuid.UUID) error {
-	return r.db.Location.DeleteOneID(id).Exec(ctx)
+	return r.db.Entity.DeleteOneID(id).Exec(ctx)
 }
 
 func (r *LocationRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID) error {
-	_, err := r.db.Location.Delete().Where(location.ID(id), location.HasGroupWith(group.ID(gid))).Exec(ctx)
+	_, err := r.db.Entity.Delete().Where(entity.ID(id), entity.HasGroupWith(group.ID(gid))).Exec(ctx)
 	if err != nil {
 		return err
 	}
@@ -278,16 +295,20 @@ type ItemPath struct {
 
 func (r *LocationRepository) PathForLoc(ctx context.Context, gid, locID uuid.UUID) ([]ItemPath, error) {
 	query := `WITH RECURSIVE location_path AS (
-		SELECT id, name, location_children
-		FROM locations
-		WHERE id = $1 -- Replace ? with the ID of the item's location
-		AND group_locations = $2 -- Replace ? with the ID of the group
+		SELECT e.id, e.name, e.entity_parent
+		FROM entities e
+		JOIN entity_types et ON e.entity_type_entities = et.id
+		WHERE e.id = $1
+		AND e.group_entities = $2
+		AND et.is_location = true
 
 		UNION ALL
 
-		SELECT loc.id, loc.name, loc.location_children
-		FROM locations loc
-		JOIN location_path lp ON loc.id = lp.location_children
+		SELECT e.id, e.name, e.entity_parent
+		FROM entities e
+		JOIN entity_types et ON e.entity_type_entities = et.id
+		JOIN location_path lp ON e.id = lp.entity_parent
+		WHERE et.is_location = true
 	  )
 
 	  SELECT id, name
@@ -325,70 +346,77 @@ func (r *LocationRepository) PathForLoc(ctx context.Context, gid, locID uuid.UUI
 
 func (r *LocationRepository) Tree(ctx context.Context, gid uuid.UUID, tq TreeQuery) ([]TreeItem, error) {
 	query := `
-		WITH recursive location_tree(id, NAME, parent_id, level, node_type) AS
-		(
-			SELECT  id,
-					NAME,
-					location_children AS parent_id,
-					0 AS level,
-					'location' AS node_type
-			FROM    locations
-			WHERE   location_children IS NULL
-			AND     group_locations = $1
+		WITH recursive
+    location_tree(id, NAME, parent_id, level, node_type) AS
+        (SELECT e.id,
+                e.NAME,
+                e.entity_parent AS parent_id,
+                0               AS level,
+                'location'      AS node_type
+         FROM entities e
+                  JOIN entity_types et ON e.entity_type_entities = et.id
+         WHERE e.entity_parent IS NULL
+           AND et.is_location = true
+           AND e.group_entities = ?
+         UNION ALL
+         SELECT c.id,
+                c.NAME,
+                c.entity_parent AS parent_id,
+                level + 1,
+                'location'      AS node_type
+         FROM entities c
+                  JOIN entity_types et ON c.entity_type_entities = et.id
+                  JOIN location_tree p
+                       ON c.entity_parent = p.id
+         WHERE et.is_location = true
+           AND level < 10){{ WITH_ITEMS }}
 
-			UNION ALL
-			SELECT  c.id,
-					c.NAME,
-					c.location_children AS parent_id,
-					level + 1,
-					'location' AS node_type
-			FROM   locations c
-			JOIN   location_tree p
-			ON     c.location_children = p.id
-			WHERE  level < 10 -- prevent infinite loop & excessive recursion
-		){{ WITH_ITEMS }}
-
-		SELECT   id,
-				 NAME,
-				 level,
-				 parent_id,
-				 node_type
-		FROM    (
-					SELECT  *
-					FROM    location_tree
+		SELECT id,
+       NAME,
+       level,
+       parent_id,
+       node_type
+FROM (SELECT *
+      FROM location_tree
 
 					{{ WITH_ITEMS_FROM }}
 
 				) tree
-		ORDER BY node_type DESC, -- sort locations before items
-				 level,
-				 lower(NAME)`
+ORDER BY node_type DESC,
+         level,
+         lower(NAME)`
 
 	if tq.WithItems {
-		itemQuery := `, item_tree(id, NAME, parent_id, level, node_type) AS
-		(
-			SELECT  id,
-					NAME,
-					location_items as parent_id,
-					0 AS level,
-					'item' AS node_type
-			FROM    items
-			WHERE   item_children IS NULL
-			AND     location_items IN (SELECT id FROM location_tree)
+		itemQuery := `,
+    item_tree(id, NAME, parent_id, level, node_type) AS
+        (SELECT e.id,
+                e.NAME,
+                -- 1. Set parent_id to the location's ID
+                e.entity_location AS parent_id,
+                -- 2. Set level to be the location's level + 1
+                lt.level + 1      AS level,
+                'item'            AS node_type
+         FROM entities e
+                  JOIN entity_types et ON e.entity_type_entities = et.id
+             -- Join location_tree to get the parent location's level
+                  JOIN location_tree lt ON e.entity_location = lt.id
+         WHERE et.is_location = false
 
-			UNION ALL
+         UNION ALL
 
-			SELECT  c.id,
-					c.NAME,
-					c.item_children AS parent_id,
-					level + 1,
-					'item' AS node_type
-			FROM    items c
-			JOIN    item_tree p
-			ON      c.item_children = p.id
-			WHERE   c.item_children IS NOT NULL
-			AND     level < 10 -- prevent infinite loop & excessive recursion
-		)`
+         SELECT c.id,
+                c.NAME,
+                c.entity_parent AS parent_id,
+                level + 1,
+                'item'          AS node_type
+         FROM entities c
+                  JOIN entity_types et ON c.entity_type_entities = et.id
+                  JOIN item_tree p
+                       ON c.entity_parent = p.id
+         WHERE c.entity_parent IS NOT NULL
+           AND et.is_location = false
+           AND level < 10
+        )`
 
 		// Conditional table joined to main query
 		itemsFrom := `
