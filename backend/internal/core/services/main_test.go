@@ -38,10 +38,11 @@ func bootstrap() {
 		log.Fatal(err)
 	}
 
+	password := fk.Str(10)
 	tUser, err = tRepos.Users.Create(ctx, repo.UserCreate{
 		Name:        fk.Str(10),
 		Email:       fk.Email(),
-		Password:    fk.Str(10),
+		Password:    &password,
 		IsSuperuser: fk.Bool(),
 		GroupID:     tGroup.ID,
 	})

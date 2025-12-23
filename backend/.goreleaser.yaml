@@ -21,6 +21,13 @@ builds:
       - arm
       - arm64
       - riscv64
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
     ignore:
       - goos: windows
         goarch: arm
@@ -40,15 +47,14 @@ builds:
 
 signs:
   - cmd: cosign
-    stdin: "{{ .Env.COSIGN_PWD }}"
+    signature: "${artifact}.sigstore.json"
     args:
-      - "sign-blob"
-      - "--key=cosign.key"
-      - "--output-signature=${signature}"
+      - sign-blob
+      - "--bundle=${signature}"
       - "${artifact}"
-      - "--yes" # needed on cosign 2.0.0+
-    artifacts: all
-
+      - "--yes"
+    artifacts: checksum
+    output: true
 archives:
   - formats: [ 'tar.gz' ]
     # this name template makes the OS and Arch compatible with the results of uname.
@@ -63,7 +69,8 @@ archives:
     format_overrides:
     - goos: windows
       formats: [ 'zip' ]
-    
+sboms:
+  - artifacts: archive
 release:
   extra_files:
     - glob: dist/*.sig

@@ -6,7 +6,6 @@
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
   import MdiLoading from "~icons/mdi/loading";
-  import MdiSelectSearch from "~icons/mdi/select-search";
   import MdiMagnify from "~icons/mdi/magnify";
   import MdiDelete from "~icons/mdi/delete";
   import { Button } from "@/components/ui/button";
@@ -15,18 +14,10 @@
   import { Switch } from "@/components/ui/switch";
   import { Separator } from "@/components/ui/separator";
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-  import {
-    Pagination,
-    PaginationEllipsis,
-    PaginationFirst,
-    PaginationLast,
-    PaginationList,
-    PaginationListItem,
-  } from "@/components/ui/pagination";
   import BaseContainer from "@/components/Base/Container.vue";
-  import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import SearchFilter from "~/components/Search/Filter.vue";
-  import ItemCard from "~/components/Item/Card.vue";
+  import ItemViewSelectable from "~/components/Item/View/Selectable.vue";
+  import type { LocationQueryRaw } from "vue-router";
 
   const { t } = useI18n();
 
@@ -47,7 +38,41 @@
   const items = ref<ItemSummary[]>([]);
   const total = ref(0);
 
-  const page1 = useRouteQuery("page", 1);
+  // Using useRouteQuery directly has two downsides
+  // 1. It persists the default value in the query string
+  // 2. The ref returned by useRouteQuery updates asynchronously after calling the setter.
+  //    This can cause unintuitive behaviors.
+  // -> We copy query parameters into separate refs on page load and update the query explicitly via `router.push`.
+  type QueryParamValue = string | string[] | number | boolean;
+  type QueryRef = Ref<boolean | string | string[] | number, boolean | string | string[] | number>;
+  const queryParamDefaultValues: Record<string, QueryParamValue> = {};
+  function useOptionalRouteQuery(key: string, defaultValue: string): Ref<string>;
+  function useOptionalRouteQuery(key: string, defaultValue: string[]): Ref<string[]>;
+  function useOptionalRouteQuery(key: string, defaultValue: number): Ref<number>;
+  function useOptionalRouteQuery(key: string, defaultValue: boolean): Ref<boolean>;
+  function useOptionalRouteQuery(key: string, defaultValue: QueryParamValue): QueryRef {
+    queryParamDefaultValues[key] = defaultValue;
+    if (typeof defaultValue === "string") {
+      const val = useRouteQuery(key, defaultValue);
+      return ref(val.value);
+    }
+    if (Array.isArray(defaultValue)) {
+      const val = useRouteQuery(key, defaultValue);
+      return ref(val.value);
+    }
+    if (typeof defaultValue === "number") {
+      const val = useRouteQuery(key, defaultValue);
+      return ref(val.value);
+    }
+    if (typeof defaultValue === "boolean") {
+      const val = useRouteQuery(key, defaultValue);
+      return ref(val.value);
+    }
+
+    throw Error(`Invalid query value type ${typeof defaultValue}`);
+  }
+
+  const page1 = useOptionalRouteQuery("page", 1);
 
   const page = computed({
     get: () => page1.value,
@@ -56,40 +81,32 @@
     },
   });
 
-  const pageSize = useRouteQuery("pageSize", 24);
-  const query = useRouteQuery("q", "");
-  const advanced = useRouteQuery("advanced", false);
-  const includeArchived = useRouteQuery("archived", false);
-  const fieldSelector = useRouteQuery("fieldSelector", false);
-  const negateLabels = useRouteQuery("negateLabels", false);
-  const onlyWithoutPhoto = useRouteQuery("onlyWithoutPhoto", false);
-  const onlyWithPhoto = useRouteQuery("onlyWithPhoto", false);
-  const orderBy = useRouteQuery("orderBy", "name");
+  const query = useOptionalRouteQuery("q", "");
+  const includeArchived = useOptionalRouteQuery("archived", false);
+  const fieldSelector = useOptionalRouteQuery("fieldSelector", false);
+  const negateLabels = useOptionalRouteQuery("negateLabels", false);
+  const onlyWithoutPhoto = useOptionalRouteQuery("onlyWithoutPhoto", false);
+  const onlyWithPhoto = useOptionalRouteQuery("onlyWithPhoto", false);
+  const orderBy = useOptionalRouteQuery("orderBy", "name");
+  const qLoc = useOptionalRouteQuery("loc", []);
+  const qLab = useOptionalRouteQuery("lab", []);
 
-  const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
+  const preferences = useViewPreferences();
+  const pageSize = computed(() => preferences.value.itemsPerTablePage);
 
   const route = useRoute();
   const router = useRouter();
 
   onMounted(async () => {
     loading.value = true;
-    // Wait until locations and labels are loaded
-    let maxRetry = 10;
-    while (!labels.value || !locations.value) {
-      await new Promise(resolve => setTimeout(resolve, 100));
-      if (maxRetry-- < 0) {
-        break;
-      }
-    }
     searchLocked.value = true;
-    const qLoc = route.query.loc as string[];
+    await Promise.all([locationsStore.ensureLocationsFetched(), labelStore.ensureAllLabelsFetched()]);
     if (qLoc) {
-      selectedLocations.value = locations.value.filter(l => qLoc.includes(l.id));
+      selectedLocations.value = locations.value.filter(l => qLoc.value.includes(l.id));
     }
 
-    const qLab = route.query.lab as string[];
     if (qLab) {
-      selectedLabels.value = labels.value.filter(l => qLab.includes(l.id));
+      selectedLabels.value = labels.value.filter(l => qLab.value.includes(l.id));
     }
 
     queryParamsInitialized.value = true;
@@ -121,7 +138,7 @@
 
   const locationsStore = useLocationStore();
 
-  const locationFlatTree = await useFlatLocations();
+  const locationFlatTree = useFlatLocations();
 
   const locations = computed(() => locationsStore.allLocations);
 
@@ -191,19 +208,19 @@
   });
 
   watch(onlyWithoutPhoto, (newV, oldV) => {
-    if (newV && onlyWithPhoto) {
+    if (newV && onlyWithPhoto.value) {
+      // this triggers the watch on onlyWithPhoto
       onlyWithPhoto.value = false;
-    }
-    if (newV !== oldV) {
+    } else if (newV !== oldV) {
       search();
     }
   });
 
   watch(onlyWithPhoto, (newV, oldV) => {
-    if (newV && onlyWithoutPhoto) {
+    if (newV && onlyWithoutPhoto.value) {
+      // this triggers the watch on onlyWithoutPhoto
       onlyWithoutPhoto.value = false;
-    }
-    if (newV !== oldV) {
+    } else if (newV !== oldV) {
       search();
     }
   });
@@ -230,30 +247,6 @@
     return data;
   }
 
-  watch(advanced, (v, lv) => {
-    if (v === false && lv === true) {
-      selectedLocations.value = [];
-      selectedLabels.value = [];
-      fieldTuples.value = [];
-
-      console.log("advanced", advanced.value);
-
-      router.push({
-        query: {
-          advanced: route.query.advanced,
-          q: query.value,
-          page: page.value,
-          pageSize: pageSize.value,
-          includeArchived: includeArchived.value ? "true" : "false",
-          negateLabels: negateLabels.value ? "true" : "false",
-          onlyWithoutPhoto: onlyWithoutPhoto.value ? "true" : "false",
-          onlyWithPhoto: onlyWithPhoto.value ? "true" : "false",
-          orderBy: orderBy.value,
-        },
-      });
-    }
-  });
-
   async function search() {
     if (searchLocked.value) {
       return;
@@ -268,6 +261,42 @@
         fields.push(`${t[0]}=${t[1]}`);
       }
     }
+
+    const push_query: Record<string, string | string[] | number | boolean | undefined> = {
+      archived: includeArchived.value,
+      fieldSelector: fieldSelector.value,
+      negateLabels: negateLabels.value,
+      onlyWithoutPhoto: onlyWithoutPhoto.value,
+      onlyWithPhoto: onlyWithPhoto.value,
+      orderBy: orderBy.value,
+      page: page.value,
+      q: query.value,
+      loc: locIDs.value,
+      lab: labIDs.value,
+      fields: fields,
+    };
+
+    for (const key in push_query) {
+      const val = push_query[key];
+      const defaultVal = queryParamDefaultValues[key];
+      if (
+        (Array.isArray(val) &&
+          Array.isArray(defaultVal) &&
+          val.length == defaultVal.length &&
+          val.every(v => (defaultVal as string[]).includes(v))) ||
+        val === queryParamDefaultValues[key]
+      ) {
+        push_query[key] = undefined;
+      }
+
+      // Empirically seen to be unnecessary but according to router.push types,
+      // booleans are not supported. This might be more stable.
+      if (typeof push_query[key] === "boolean") {
+        push_query[key] = String(val);
+      }
+    }
+
+    await router.push({ query: push_query as LocationQueryRaw });
 
     const { data, error } = await api.items.getAll({
       q: query.value || "",
@@ -319,28 +348,6 @@
       }
     }
 
-    // Push non-reactive query fields
-    await router.push({
-      query: {
-        // Reactive
-        advanced: "true",
-        archived: includeArchived.value ? "true" : "false",
-        fieldSelector: fieldSelector.value ? "true" : "false",
-        negateLabels: negateLabels.value ? "true" : "false",
-        onlyWithoutPhoto: onlyWithoutPhoto.value ? "true" : "false",
-        onlyWithPhoto: onlyWithPhoto.value ? "true" : "false",
-        orderBy: orderBy.value,
-        pageSize: pageSize.value,
-        page: page.value,
-        q: query.value,
-
-        // Non-reactive
-        loc: locIDs.value,
-        lab: labIDs.value,
-        fields,
-      },
-    });
-
     // Reset Pagination
     page.value = 1;
 
@@ -357,22 +364,17 @@
       }
     }
 
-    await router.push({
-      query: {
-        archived: "false",
-        fieldSelector: "false",
-        pageSize: pageSize.value,
-        page: 1,
-        orderBy: "name",
-        q: "",
-        loc: [],
-        lab: [],
-        fields,
-      },
-    });
-
     await search();
   }
+
+  const pagination = proxyRefs({
+    page,
+    pageSize,
+    totalSize: total,
+    setPage: (newPage: number) => {
+      page.value = newPage;
+    },
+  });
 </script>
 
 <template>
@@ -435,6 +437,7 @@
                   <SelectValue :placeholder="$t('items.order_by')" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="name"> {{ $t("items.name") }} </SelectItem>
                   <SelectItem value="createdAt"> {{ $t("items.created_at") }} </SelectItem>
                   <SelectItem value="updatedAt"> {{ $t("items.updated_at") }} </SelectItem>
                 </SelectContent>
@@ -503,41 +506,13 @@
     </div>
 
     <section>
-      <BaseSectionHeader ref="itemsTitle"> {{ $t("global.items") }} </BaseSectionHeader>
-      <p v-if="items.length > 0" class="flex items-center text-base font-medium">
-        {{ $t("items.results", { total: total }) }}
-        <span class="ml-auto text-base"> {{ $t("items.pages", { page: page, totalPages: totalPages }) }} </span>
-      </p>
-
-      <div v-if="items.length === 0" class="flex flex-col items-center gap-2">
-        <MdiSelectSearch class="size-10" />
-        <p>{{ $t("items.no_results") }}</p>
-      </div>
-      <div v-else ref="cardgrid" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        <ItemCard v-for="item in items" :key="item.id" :item="item" :location-flat-tree="locationFlatTree" />
-      </div>
-      <Pagination
-        v-slot="{ page: currentPage }"
-        :items-per-page="pageSize"
-        :total="total"
-        :sibling-count="2"
-        :default-page="page"
-        class="flex justify-center p-2"
-        @update:page="page = $event"
-      >
-        <PaginationList v-slot="{ items: pageItems }" class="flex items-center gap-1">
-          <PaginationFirst />
-          <template v-for="(item, index) in pageItems">
-            <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
-              <Button class="size-10 p-0" :variant="item.value === currentPage ? 'default' : 'outline'">
-                {{ item.value }}
-              </Button>
-            </PaginationListItem>
-            <PaginationEllipsis v-else :key="item.type" :index="index" />
-          </template>
-          <PaginationLast />
-        </PaginationList>
-      </Pagination>
+      <ItemViewSelectable
+        :items="items"
+        :location-flat-tree="locationFlatTree"
+        :pagination="pagination"
+        disable-sort
+        @refresh="async () => search()"
+      />
     </section>
   </BaseContainer>
 </template>

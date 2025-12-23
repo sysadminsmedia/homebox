@@ -25,151 +25,151 @@ type MaintenanceEntryUpdate struct {
 }
 
 // Where appends a list predicates to the MaintenanceEntryUpdate builder.
-func (meu *MaintenanceEntryUpdate) Where(ps ...predicate.MaintenanceEntry) *MaintenanceEntryUpdate {
-	meu.mutation.Where(ps...)
-	return meu
+func (_u *MaintenanceEntryUpdate) Where(ps ...predicate.MaintenanceEntry) *MaintenanceEntryUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (meu *MaintenanceEntryUpdate) SetUpdatedAt(t time.Time) *MaintenanceEntryUpdate {
-	meu.mutation.SetUpdatedAt(t)
-	return meu
+func (_u *MaintenanceEntryUpdate) SetUpdatedAt(v time.Time) *MaintenanceEntryUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetItemID sets the "item_id" field.
-func (meu *MaintenanceEntryUpdate) SetItemID(u uuid.UUID) *MaintenanceEntryUpdate {
-	meu.mutation.SetItemID(u)
-	return meu
+func (_u *MaintenanceEntryUpdate) SetItemID(v uuid.UUID) *MaintenanceEntryUpdate {
+	_u.mutation.SetItemID(v)
+	return _u
 }
 
 // SetNillableItemID sets the "item_id" field if the given value is not nil.
-func (meu *MaintenanceEntryUpdate) SetNillableItemID(u *uuid.UUID) *MaintenanceEntryUpdate {
-	if u != nil {
-		meu.SetItemID(*u)
+func (_u *MaintenanceEntryUpdate) SetNillableItemID(v *uuid.UUID) *MaintenanceEntryUpdate {
+	if v != nil {
+		_u.SetItemID(*v)
 	}
-	return meu
+	return _u
 }
 
 // SetDate sets the "date" field.
-func (meu *MaintenanceEntryUpdate) SetDate(t time.Time) *MaintenanceEntryUpdate {
-	meu.mutation.SetDate(t)
-	return meu
+func (_u *MaintenanceEntryUpdate) SetDate(v time.Time) *MaintenanceEntryUpdate {
+	_u.mutation.SetDate(v)
+	return _u
 }
 
 // SetNillableDate sets the "date" field if the given value is not nil.
-func (meu *MaintenanceEntryUpdate) SetNillableDate(t *time.Time) *MaintenanceEntryUpdate {
-	if t != nil {
-		meu.SetDate(*t)
+func (_u *MaintenanceEntryUpdate) SetNillableDate(v *time.Time) *MaintenanceEntryUpdate {
+	if v != nil {
+		_u.SetDate(*v)
 	}
-	return meu
+	return _u
 }
 
 // ClearDate clears the value of the "date" field.
-func (meu *MaintenanceEntryUpdate) ClearDate() *MaintenanceEntryUpdate {
-	meu.mutation.ClearDate()
-	return meu
+func (_u *MaintenanceEntryUpdate) ClearDate() *MaintenanceEntryUpdate {
+	_u.mutation.ClearDate()
+	return _u
 }
 
 // SetScheduledDate sets the "scheduled_date" field.
-func (meu *MaintenanceEntryUpdate) SetScheduledDate(t time.Time) *MaintenanceEntryUpdate {
-	meu.mutation.SetScheduledDate(t)
-	return meu
+func (_u *MaintenanceEntryUpdate) SetScheduledDate(v time.Time) *MaintenanceEntryUpdate {
+	_u.mutation.SetScheduledDate(v)
+	return _u
 }
 
 // SetNillableScheduledDate sets the "scheduled_date" field if the given value is not nil.
-func (meu *MaintenanceEntryUpdate) SetNillableScheduledDate(t *time.Time) *MaintenanceEntryUpdate {
-	if t != nil {
-		meu.SetScheduledDate(*t)
+func (_u *MaintenanceEntryUpdate) SetNillableScheduledDate(v *time.Time) *MaintenanceEntryUpdate {
+	if v != nil {
+		_u.SetScheduledDate(*v)
 	}
-	return meu
+	return _u
 }
 
 // ClearScheduledDate clears the value of the "scheduled_date" field.
-func (meu *MaintenanceEntryUpdate) ClearScheduledDate() *MaintenanceEntryUpdate {
-	meu.mutation.ClearScheduledDate()
-	return meu
+func (_u *MaintenanceEntryUpdate) ClearScheduledDate() *MaintenanceEntryUpdate {
+	_u.mutation.ClearScheduledDate()
+	return _u
 }
 
 // SetName sets the "name" field.
-func (meu *MaintenanceEntryUpdate) SetName(s string) *MaintenanceEntryUpdate {
-	meu.mutation.SetName(s)
-	return meu
+func (_u *MaintenanceEntryUpdate) SetName(v string) *MaintenanceEntryUpdate {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (meu *MaintenanceEntryUpdate) SetNillableName(s *string) *MaintenanceEntryUpdate {
-	if s != nil {
-		meu.SetName(*s)
+func (_u *MaintenanceEntryUpdate) SetNillableName(v *string) *MaintenanceEntryUpdate {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return meu
+	return _u
 }
 
 // SetDescription sets the "description" field.
-func (meu *MaintenanceEntryUpdate) SetDescription(s string) *MaintenanceEntryUpdate {
-	meu.mutation.SetDescription(s)
-	return meu
+func (_u *MaintenanceEntryUpdate) SetDescription(v string) *MaintenanceEntryUpdate {
+	_u.mutation.SetDescription(v)
+	return _u
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (meu *MaintenanceEntryUpdate) SetNillableDescription(s *string) *MaintenanceEntryUpdate {
-	if s != nil {
-		meu.SetDescription(*s)
+func (_u *MaintenanceEntryUpdate) SetNillableDescription(v *string) *MaintenanceEntryUpdate {
+	if v != nil {
+		_u.SetDescription(*v)
 	}
-	return meu
+	return _u
 }
 
 // ClearDescription clears the value of the "description" field.
-func (meu *MaintenanceEntryUpdate) ClearDescription() *MaintenanceEntryUpdate {
-	meu.mutation.ClearDescription()
-	return meu
+func (_u *MaintenanceEntryUpdate) ClearDescription() *MaintenanceEntryUpdate {
+	_u.mutation.ClearDescription()
+	return _u
 }
 
 // SetCost sets the "cost" field.
-func (meu *MaintenanceEntryUpdate) SetCost(f float64) *MaintenanceEntryUpdate {
-	meu.mutation.ResetCost()
-	meu.mutation.SetCost(f)
-	return meu
+func (_u *MaintenanceEntryUpdate) SetCost(v float64) *MaintenanceEntryUpdate {
+	_u.mutation.ResetCost()
+	_u.mutation.SetCost(v)
+	return _u
 }
 
 // SetNillableCost sets the "cost" field if the given value is not nil.
-func (meu *MaintenanceEntryUpdate) SetNillableCost(f *float64) *MaintenanceEntryUpdate {
-	if f != nil {
-		meu.SetCost(*f)
+func (_u *MaintenanceEntryUpdate) SetNillableCost(v *float64) *MaintenanceEntryUpdate {
+	if v != nil {
+		_u.SetCost(*v)
 	}
-	return meu
+	return _u
 }
 
-// AddCost adds f to the "cost" field.
-func (meu *MaintenanceEntryUpdate) AddCost(f float64) *MaintenanceEntryUpdate {
-	meu.mutation.AddCost(f)
-	return meu
+// AddCost adds value to the "cost" field.
+func (_u *MaintenanceEntryUpdate) AddCost(v float64) *MaintenanceEntryUpdate {
+	_u.mutation.AddCost(v)
+	return _u
 }
 
 // SetItem sets the "item" edge to the Item entity.
-func (meu *MaintenanceEntryUpdate) SetItem(i *Item) *MaintenanceEntryUpdate {
-	return meu.SetItemID(i.ID)
+func (_u *MaintenanceEntryUpdate) SetItem(v *Item) *MaintenanceEntryUpdate {
+	return _u.SetItemID(v.ID)
 }
 
 // Mutation returns the MaintenanceEntryMutation object of the builder.
-func (meu *MaintenanceEntryUpdate) Mutation() *MaintenanceEntryMutation {
-	return meu.mutation
+func (_u *MaintenanceEntryUpdate) Mutation() *MaintenanceEntryMutation {
+	return _u.mutation
 }
 
 // ClearItem clears the "item" edge to the Item entity.
-func (meu *MaintenanceEntryUpdate) ClearItem() *MaintenanceEntryUpdate {
-	meu.mutation.ClearItem()
-	return meu
+func (_u *MaintenanceEntryUpdate) ClearItem() *MaintenanceEntryUpdate {
+	_u.mutation.ClearItem()
+	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (meu *MaintenanceEntryUpdate) Save(ctx context.Context) (int, error) {
-	meu.defaults()
-	return withHooks(ctx, meu.sqlSave, meu.mutation, meu.hooks)
+func (_u *MaintenanceEntryUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (meu *MaintenanceEntryUpdate) SaveX(ctx context.Context) int {
-	affected, err := meu.Save(ctx)
+func (_u *MaintenanceEntryUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -177,87 +177,87 @@ func (meu *MaintenanceEntryUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (meu *MaintenanceEntryUpdate) Exec(ctx context.Context) error {
-	_, err := meu.Save(ctx)
+func (_u *MaintenanceEntryUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (meu *MaintenanceEntryUpdate) ExecX(ctx context.Context) {
-	if err := meu.Exec(ctx); err != nil {
+func (_u *MaintenanceEntryUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (meu *MaintenanceEntryUpdate) defaults() {
-	if _, ok := meu.mutation.UpdatedAt(); !ok {
+func (_u *MaintenanceEntryUpdate) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
 		v := maintenanceentry.UpdateDefaultUpdatedAt()
-		meu.mutation.SetUpdatedAt(v)
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (meu *MaintenanceEntryUpdate) check() error {
-	if v, ok := meu.mutation.Name(); ok {
+func (_u *MaintenanceEntryUpdate) check() error {
+	if v, ok := _u.mutation.Name(); ok {
 		if err := maintenanceentry.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "MaintenanceEntry.name": %w`, err)}
 		}
 	}
-	if v, ok := meu.mutation.Description(); ok {
+	if v, ok := _u.mutation.Description(); ok {
 		if err := maintenanceentry.DescriptionValidator(v); err != nil {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "MaintenanceEntry.description": %w`, err)}
 		}
 	}
-	if meu.mutation.ItemCleared() && len(meu.mutation.ItemIDs()) > 0 {
+	if _u.mutation.ItemCleared() && len(_u.mutation.ItemIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "MaintenanceEntry.item"`)
 	}
 	return nil
 }
 
-func (meu *MaintenanceEntryUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := meu.check(); err != nil {
-		return n, err
+func (_u *MaintenanceEntryUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(maintenanceentry.Table, maintenanceentry.Columns, sqlgraph.NewFieldSpec(maintenanceentry.FieldID, field.TypeUUID))
-	if ps := meu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := meu.mutation.UpdatedAt(); ok {
+	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(maintenanceentry.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := meu.mutation.Date(); ok {
+	if value, ok := _u.mutation.Date(); ok {
 		_spec.SetField(maintenanceentry.FieldDate, field.TypeTime, value)
 	}
-	if meu.mutation.DateCleared() {
+	if _u.mutation.DateCleared() {
 		_spec.ClearField(maintenanceentry.FieldDate, field.TypeTime)
 	}
-	if value, ok := meu.mutation.ScheduledDate(); ok {
+	if value, ok := _u.mutation.ScheduledDate(); ok {
 		_spec.SetField(maintenanceentry.FieldScheduledDate, field.TypeTime, value)
 	}
-	if meu.mutation.ScheduledDateCleared() {
+	if _u.mutation.ScheduledDateCleared() {
 		_spec.ClearField(maintenanceentry.FieldScheduledDate, field.TypeTime)
 	}
-	if value, ok := meu.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(maintenanceentry.FieldName, field.TypeString, value)
 	}
-	if value, ok := meu.mutation.Description(); ok {
+	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(maintenanceentry.FieldDescription, field.TypeString, value)
 	}
-	if meu.mutation.DescriptionCleared() {
+	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(maintenanceentry.FieldDescription, field.TypeString)
 	}
-	if value, ok := meu.mutation.Cost(); ok {
+	if value, ok := _u.mutation.Cost(); ok {
 		_spec.SetField(maintenanceentry.FieldCost, field.TypeFloat64, value)
 	}
-	if value, ok := meu.mutation.AddedCost(); ok {
+	if value, ok := _u.mutation.AddedCost(); ok {
 		_spec.AddField(maintenanceentry.FieldCost, field.TypeFloat64, value)
 	}
-	if meu.mutation.ItemCleared() {
+	if _u.mutation.ItemCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -270,7 +270,7 @@ func (meu *MaintenanceEntryUpdate) sqlSave(ctx context.Context) (n int, err erro
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := meu.mutation.ItemIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ItemIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -286,7 +286,7 @@ func (meu *MaintenanceEntryUpdate) sqlSave(ctx context.Context) (n int, err erro
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, meu.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{maintenanceentry.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -294,8 +294,8 @@ func (meu *MaintenanceEntryUpdate) sqlSave(ctx context.Context) (n int, err erro
 		}
 		return 0, err
 	}
-	meu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // MaintenanceEntryUpdateOne is the builder for updating a single MaintenanceEntry entity.
@@ -307,158 +307,158 @@ type MaintenanceEntryUpdateOne struct {
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (meuo *MaintenanceEntryUpdateOne) SetUpdatedAt(t time.Time) *MaintenanceEntryUpdateOne {
-	meuo.mutation.SetUpdatedAt(t)
-	return meuo
+func (_u *MaintenanceEntryUpdateOne) SetUpdatedAt(v time.Time) *MaintenanceEntryUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetItemID sets the "item_id" field.
-func (meuo *MaintenanceEntryUpdateOne) SetItemID(u uuid.UUID) *MaintenanceEntryUpdateOne {
-	meuo.mutation.SetItemID(u)
-	return meuo
+func (_u *MaintenanceEntryUpdateOne) SetItemID(v uuid.UUID) *MaintenanceEntryUpdateOne {
+	_u.mutation.SetItemID(v)
+	return _u
 }
 
 // SetNillableItemID sets the "item_id" field if the given value is not nil.
-func (meuo *MaintenanceEntryUpdateOne) SetNillableItemID(u *uuid.UUID) *MaintenanceEntryUpdateOne {
-	if u != nil {
-		meuo.SetItemID(*u)
+func (_u *MaintenanceEntryUpdateOne) SetNillableItemID(v *uuid.UUID) *MaintenanceEntryUpdateOne {
+	if v != nil {
+		_u.SetItemID(*v)
 	}
-	return meuo
+	return _u
 }
 
 // SetDate sets the "date" field.
-func (meuo *MaintenanceEntryUpdateOne) SetDate(t time.Time) *MaintenanceEntryUpdateOne {
-	meuo.mutation.SetDate(t)
-	return meuo
+func (_u *MaintenanceEntryUpdateOne) SetDate(v time.Time) *MaintenanceEntryUpdateOne {
+	_u.mutation.SetDate(v)
+	return _u
 }
 
 // SetNillableDate sets the "date" field if the given value is not nil.
-func (meuo *MaintenanceEntryUpdateOne) SetNillableDate(t *time.Time) *MaintenanceEntryUpdateOne {
-	if t != nil {
-		meuo.SetDate(*t)
+func (_u *MaintenanceEntryUpdateOne) SetNillableDate(v *time.Time) *MaintenanceEntryUpdateOne {
+	if v != nil {
+		_u.SetDate(*v)
 	}
-	return meuo
+	return _u
 }
 
 // ClearDate clears the value of the "date" field.
-func (meuo *MaintenanceEntryUpdateOne) ClearDate() *MaintenanceEntryUpdateOne {
-	meuo.mutation.ClearDate()
-	return meuo
+func (_u *MaintenanceEntryUpdateOne) ClearDate() *MaintenanceEntryUpdateOne {
+	_u.mutation.ClearDate()
+	return _u
 }
 
 // SetScheduledDate sets the "scheduled_date" field.
-func (meuo *MaintenanceEntryUpdateOne) SetScheduledDate(t time.Time) *MaintenanceEntryUpdateOne {
-	meuo.mutation.SetScheduledDate(t)
-	return meuo
+func (_u *MaintenanceEntryUpdateOne) SetScheduledDate(v time.Time) *MaintenanceEntryUpdateOne {
+	_u.mutation.SetScheduledDate(v)
+	return _u
 }
 
 // SetNillableScheduledDate sets the "scheduled_date" field if the given value is not nil.
-func (meuo *MaintenanceEntryUpdateOne) SetNillableScheduledDate(t *time.Time) *MaintenanceEntryUpdateOne {
-	if t != nil {
-		meuo.SetScheduledDate(*t)
+func (_u *MaintenanceEntryUpdateOne) SetNillableScheduledDate(v *time.Time) *MaintenanceEntryUpdateOne {
+	if v != nil {
+		_u.SetScheduledDate(*v)
 	}
-	return meuo
+	return _u
 }
 
 // ClearScheduledDate clears the value of the "scheduled_date" field.
-func (meuo *MaintenanceEntryUpdateOne) ClearScheduledDate() *MaintenanceEntryUpdateOne {
-	meuo.mutation.ClearScheduledDate()
-	return meuo
+func (_u *MaintenanceEntryUpdateOne) ClearScheduledDate() *MaintenanceEntryUpdateOne {
+	_u.mutation.ClearScheduledDate()
+	return _u
 }
 
 // SetName sets the "name" field.
-func (meuo *MaintenanceEntryUpdateOne) SetName(s string) *MaintenanceEntryUpdateOne {
-	meuo.mutation.SetName(s)
-	return meuo
+func (_u *MaintenanceEntryUpdateOne) SetName(v string) *MaintenanceEntryUpdateOne {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (meuo *MaintenanceEntryUpdateOne) SetNillableName(s *string) *MaintenanceEntryUpdateOne {
-	if s != nil {
-		meuo.SetName(*s)
+func (_u *MaintenanceEntryUpdateOne) SetNillableName(v *string) *MaintenanceEntryUpdateOne {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return meuo
+	return _u
 }
 
 // SetDescription sets the "description" field.
-func (meuo *MaintenanceEntryUpdateOne) SetDescription(s string) *MaintenanceEntryUpdateOne {
-	meuo.mutation.SetDescription(s)
-	return meuo
+func (_u *MaintenanceEntryUpdateOne) SetDescription(v string) *MaintenanceEntryUpdateOne {
+	_u.mutation.SetDescription(v)
+	return _u
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (meuo *MaintenanceEntryUpdateOne) SetNillableDescription(s *string) *MaintenanceEntryUpdateOne {
-	if s != nil {
-		meuo.SetDescription(*s)
+func (_u *MaintenanceEntryUpdateOne) SetNillableDescription(v *string) *MaintenanceEntryUpdateOne {
+	if v != nil {
+		_u.SetDescription(*v)
 	}
-	return meuo
+	return _u
 }
 
 // ClearDescription clears the value of the "description" field.
-func (meuo *MaintenanceEntryUpdateOne) ClearDescription() *MaintenanceEntryUpdateOne {
-	meuo.mutation.ClearDescription()
-	return meuo
+func (_u *MaintenanceEntryUpdateOne) ClearDescription() *MaintenanceEntryUpdateOne {
+	_u.mutation.ClearDescription()
+	return _u
 }
 
 // SetCost sets the "cost" field.
-func (meuo *MaintenanceEntryUpdateOne) SetCost(f float64) *MaintenanceEntryUpdateOne {
-	meuo.mutation.ResetCost()
-	meuo.mutation.SetCost(f)
-	return meuo
+func (_u *MaintenanceEntryUpdateOne) SetCost(v float64) *MaintenanceEntryUpdateOne {
+	_u.mutation.ResetCost()
+	_u.mutation.SetCost(v)
+	return _u
 }
 
 // SetNillableCost sets the "cost" field if the given value is not nil.
-func (meuo *MaintenanceEntryUpdateOne) SetNillableCost(f *float64) *MaintenanceEntryUpdateOne {
-	if f != nil {
-		meuo.SetCost(*f)
+func (_u *MaintenanceEntryUpdateOne) SetNillableCost(v *float64) *MaintenanceEntryUpdateOne {
+	if v != nil {
+		_u.SetCost(*v)
 	}
-	return meuo
+	return _u
 }
 
-// AddCost adds f to the "cost" field.
-func (meuo *MaintenanceEntryUpdateOne) AddCost(f float64) *MaintenanceEntryUpdateOne {
-	meuo.mutation.AddCost(f)
-	return meuo
+// AddCost adds value to the "cost" field.
+func (_u *MaintenanceEntryUpdateOne) AddCost(v float64) *MaintenanceEntryUpdateOne {
+	_u.mutation.AddCost(v)
+	return _u
 }
 
 // SetItem sets the "item" edge to the Item entity.
-func (meuo *MaintenanceEntryUpdateOne) SetItem(i *Item) *MaintenanceEntryUpdateOne {
-	return meuo.SetItemID(i.ID)
+func (_u *MaintenanceEntryUpdateOne) SetItem(v *Item) *MaintenanceEntryUpdateOne {
+	return _u.SetItemID(v.ID)
 }
 
 // Mutation returns the MaintenanceEntryMutation object of the builder.
-func (meuo *MaintenanceEntryUpdateOne) Mutation() *MaintenanceEntryMutation {
-	return meuo.mutation
+func (_u *MaintenanceEntryUpdateOne) Mutation() *MaintenanceEntryMutation {
+	return _u.mutation
 }
 
 // ClearItem clears the "item" edge to the Item entity.
-func (meuo *MaintenanceEntryUpdateOne) ClearItem() *MaintenanceEntryUpdateOne {
-	meuo.mutation.ClearItem()
-	return meuo
+func (_u *MaintenanceEntryUpdateOne) ClearItem() *MaintenanceEntryUpdateOne {
+	_u.mutation.ClearItem()
+	return _u
 }
 
 // Where appends a list predicates to the MaintenanceEntryUpdate builder.
-func (meuo *MaintenanceEntryUpdateOne) Where(ps ...predicate.MaintenanceEntry) *MaintenanceEntryUpdateOne {
-	meuo.mutation.Where(ps...)
-	return meuo
+func (_u *MaintenanceEntryUpdateOne) Where(ps ...predicate.MaintenanceEntry) *MaintenanceEntryUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (meuo *MaintenanceEntryUpdateOne) Select(field string, fields ...string) *MaintenanceEntryUpdateOne {
-	meuo.fields = append([]string{field}, fields...)
-	return meuo
+func (_u *MaintenanceEntryUpdateOne) Select(field string, fields ...string) *MaintenanceEntryUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated MaintenanceEntry entity.
-func (meuo *MaintenanceEntryUpdateOne) Save(ctx context.Context) (*MaintenanceEntry, error) {
-	meuo.defaults()
-	return withHooks(ctx, meuo.sqlSave, meuo.mutation, meuo.hooks)
+func (_u *MaintenanceEntryUpdateOne) Save(ctx context.Context) (*MaintenanceEntry, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (meuo *MaintenanceEntryUpdateOne) SaveX(ctx context.Context) *MaintenanceEntry {
-	node, err := meuo.Save(ctx)
+func (_u *MaintenanceEntryUpdateOne) SaveX(ctx context.Context) *MaintenanceEntry {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -466,55 +466,55 @@ func (meuo *MaintenanceEntryUpdateOne) SaveX(ctx context.Context) *MaintenanceEn
 }
 
 // Exec executes the query on the entity.
-func (meuo *MaintenanceEntryUpdateOne) Exec(ctx context.Context) error {
-	_, err := meuo.Save(ctx)
+func (_u *MaintenanceEntryUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (meuo *MaintenanceEntryUpdateOne) ExecX(ctx context.Context) {
-	if err := meuo.Exec(ctx); err != nil {
+func (_u *MaintenanceEntryUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (meuo *MaintenanceEntryUpdateOne) defaults() {
-	if _, ok := meuo.mutation.UpdatedAt(); !ok {
+func (_u *MaintenanceEntryUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
 		v := maintenanceentry.UpdateDefaultUpdatedAt()
-		meuo.mutation.SetUpdatedAt(v)
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (meuo *MaintenanceEntryUpdateOne) check() error {
-	if v, ok := meuo.mutation.Name(); ok {
+func (_u *MaintenanceEntryUpdateOne) check() error {
+	if v, ok := _u.mutation.Name(); ok {
 		if err := maintenanceentry.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "MaintenanceEntry.name": %w`, err)}
 		}
 	}
-	if v, ok := meuo.mutation.Description(); ok {
+	if v, ok := _u.mutation.Description(); ok {
 		if err := maintenanceentry.DescriptionValidator(v); err != nil {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "MaintenanceEntry.description": %w`, err)}
 		}
 	}
-	if meuo.mutation.ItemCleared() && len(meuo.mutation.ItemIDs()) > 0 {
+	if _u.mutation.ItemCleared() && len(_u.mutation.ItemIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "MaintenanceEntry.item"`)
 	}
 	return nil
 }
 
-func (meuo *MaintenanceEntryUpdateOne) sqlSave(ctx context.Context) (_node *MaintenanceEntry, err error) {
-	if err := meuo.check(); err != nil {
+func (_u *MaintenanceEntryUpdateOne) sqlSave(ctx context.Context) (_node *MaintenanceEntry, err error) {
+	if err := _u.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(maintenanceentry.Table, maintenanceentry.Columns, sqlgraph.NewFieldSpec(maintenanceentry.FieldID, field.TypeUUID))
-	id, ok := meuo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "MaintenanceEntry.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := meuo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, maintenanceentry.FieldID)
 		for _, f := range fields {
@@ -526,44 +526,44 @@ func (meuo *MaintenanceEntryUpdateOne) sqlSave(ctx context.Context) (_node *Main
 			}
 		}
 	}
-	if ps := meuo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := meuo.mutation.UpdatedAt(); ok {
+	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(maintenanceentry.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := meuo.mutation.Date(); ok {
+	if value, ok := _u.mutation.Date(); ok {
 		_spec.SetField(maintenanceentry.FieldDate, field.TypeTime, value)
 	}
-	if meuo.mutation.DateCleared() {
+	if _u.mutation.DateCleared() {
 		_spec.ClearField(maintenanceentry.FieldDate, field.TypeTime)
 	}
-	if value, ok := meuo.mutation.ScheduledDate(); ok {
+	if value, ok := _u.mutation.ScheduledDate(); ok {
 		_spec.SetField(maintenanceentry.FieldScheduledDate, field.TypeTime, value)
 	}
-	if meuo.mutation.ScheduledDateCleared() {
+	if _u.mutation.ScheduledDateCleared() {
 		_spec.ClearField(maintenanceentry.FieldScheduledDate, field.TypeTime)
 	}
-	if value, ok := meuo.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(maintenanceentry.FieldName, field.TypeString, value)
 	}
-	if value, ok := meuo.mutation.Description(); ok {
+	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(maintenanceentry.FieldDescription, field.TypeString, value)
 	}
-	if meuo.mutation.DescriptionCleared() {
+	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(maintenanceentry.FieldDescription, field.TypeString)
 	}
-	if value, ok := meuo.mutation.Cost(); ok {
+	if value, ok := _u.mutation.Cost(); ok {
 		_spec.SetField(maintenanceentry.FieldCost, field.TypeFloat64, value)
 	}
-	if value, ok := meuo.mutation.AddedCost(); ok {
+	if value, ok := _u.mutation.AddedCost(); ok {
 		_spec.AddField(maintenanceentry.FieldCost, field.TypeFloat64, value)
 	}
-	if meuo.mutation.ItemCleared() {
+	if _u.mutation.ItemCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -576,7 +576,7 @@ func (meuo *MaintenanceEntryUpdateOne) sqlSave(ctx context.Context) (_node *Main
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := meuo.mutation.ItemIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ItemIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -592,10 +592,10 @@ func (meuo *MaintenanceEntryUpdateOne) sqlSave(ctx context.Context) (_node *Main
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &MaintenanceEntry{config: meuo.config}
+	_node = &MaintenanceEntry{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, meuo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{maintenanceentry.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -603,6 +603,6 @@ func (meuo *MaintenanceEntryUpdateOne) sqlSave(ctx context.Context) (_node *Main
 		}
 		return nil, err
 	}
-	meuo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

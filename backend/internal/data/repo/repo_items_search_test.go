@@ -3,18 +3,18 @@ package repo
 import (
 	"testing"
 
-	"github.com/sysadminsmedia/homebox/backend/pkgs/textutils"
 	"github.com/stretchr/testify/assert"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/textutils"
 )
 
 func TestItemsRepository_AccentInsensitiveSearch(t *testing.T) {
 	// Test cases for accent-insensitive search
 	testCases := []struct {
-		name                string
-		itemName            string
-		searchQuery         string
-		shouldMatch         bool
-		description         string
+		name        string
+		itemName    string
+		searchQuery string
+		shouldMatch bool
+		description string
 	}{
 		{
 			name:        "Spanish accented item, search without accents",
@@ -155,25 +155,25 @@ func TestItemsRepository_AccentInsensitiveSearch(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			// Test the normalization logic used in the repository
 			normalizedSearch := textutils.NormalizeSearchQuery(tc.searchQuery)
-			
+
 			// This simulates what happens in the repository
 			// The original search would find exact matches (case-insensitive)
 			// The normalized search would find accent-insensitive matches
-			
+
 			// Test that our normalization works as expected
 			if tc.shouldMatch {
 				// If it should match, then either the original query should match
 				// or the normalized query should match when applied to the stored data
 				assert.NotEqual(t, "", normalizedSearch, "Normalized search should not be empty")
-				
+
 				// The key insight is that we're searching with both the original and normalized queries
 				// So "electrónica" will be found when searching for "electronica" because:
 				// 1. Original search: "electronica" doesn't match "electrónica"
 				// 2. Normalized search: "electronica" matches the normalized version
-				t.Logf("✓ %s: Item '%s' should be found with search '%s' (normalized: '%s')", 
+				t.Logf("✓ %s: Item '%s' should be found with search '%s' (normalized: '%s')",
 					tc.description, tc.itemName, tc.searchQuery, normalizedSearch)
 			} else {
-				t.Logf("✗ %s: Item '%s' should NOT be found with search '%s' (normalized: '%s')", 
+				t.Logf("✗ %s: Item '%s' should NOT be found with search '%s' (normalized: '%s')",
 					tc.description, tc.itemName, tc.searchQuery, normalizedSearch)
 			}
 		})

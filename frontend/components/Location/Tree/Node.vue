@@ -22,6 +22,13 @@
 
   const state = useTreeState(props.treeId);
 
+  const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
+
+  const sortedChildren = computed(() => {
+    const children = props.item.children ?? [];
+    return [...children].sort((a, b) => collator.compare(a.name, b.name));
+  });
+
   const openRef = computed({
     get() {
       return state.value[nodeHash.value] ?? false;
@@ -66,7 +73,7 @@
       <NuxtLink class="text-lg hover:underline" :to="link" @click.stop>{{ item.name }} </NuxtLink>
     </div>
     <div v-if="openRef" class="ml-4">
-      <LocationTreeNode v-for="child in item.children" :key="child.id" :item="child" :tree-id="treeId" />
+      <LocationTreeNode v-for="child in sortedChildren" :key="child.id" :item="child" :tree-id="treeId" />
     </div>
   </div>
 </template>

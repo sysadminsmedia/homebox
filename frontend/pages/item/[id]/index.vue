@@ -7,9 +7,18 @@
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPlus from "~icons/mdi/plus";
   import MdiMinus from "~icons/mdi/minus";
-  import MdiContentCopy from "~icons/mdi/content-copy";
   import MdiDelete from "~icons/mdi/delete";
+  import MdiPlusBoxMultipleOutline from "~icons/mdi/plus-box-multiple-outline";
+  import MdiContentSaveEdit from "~icons/mdi/content-save-edit";
+  import MdiDotsVertical from "~icons/mdi/dots-vertical";
   import { Separator } from "@/components/ui/separator";
+  import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+  } from "@/components/ui/dropdown-menu";
   import {
     Breadcrumb,
     BreadcrumbItem,
@@ -478,22 +487,28 @@
     return resp.data;
   });
 
-  const items = computedAsync(async () => {
-    if (!item.value) {
-      return [];
+  const { data: items, refresh: refreshItemList } = useAsyncData(
+    () => itemId.value + "_item_list",
+    async () => {
+      if (!itemId.value) {
+        return [];
+      }
+
+      const resp = await api.items.getAll({
+        parentIds: [itemId.value],
+      });
+
+      if (resp.error) {
+        toast.error(t("items.toast.failed_load_items"));
+        return [];
+      }
+
+      return resp.data.items;
+    },
+    {
+      watch: [itemId],
     }
-
-    const resp = await api.items.getAll({
-      parentIds: [item.value.id],
-    });
-
-    if (resp.error) {
-      toast.error(t("items.toast.failed_load_items"));
-      return [];
-    }
-
-    return resp.data.items;
-  });
+  );
 
   async function duplicateItem(settings?: DuplicateSettings) {
     if (!item.value) {
@@ -548,6 +563,53 @@
     }
     toast.success(t("items.toast.item_deleted"));
     navigateTo("/home");
+  }
+
+  async function saveAsTemplate() {
+    if (!item.value) {
+      return;
+    }
+
+    const NIL_UUID = "00000000-0000-0000-0000-000000000000";
+
+    // Create template from item data
+    const templateData = {
+      name: `Template: ${item.value.name}`,
+      description: "",
+      notes: "",
+      defaultName: item.value.name,
+      defaultDescription: item.value.description || "",
+      defaultQuantity: item.value.quantity,
+      defaultInsured: item.value.insured,
+      defaultManufacturer: item.value.manufacturer || "",
+      defaultModelNumber: item.value.modelNumber || "",
+      defaultLifetimeWarranty: item.value.lifetimeWarranty,
+      defaultWarrantyDetails: item.value.warrantyDetails || "",
+      defaultLocationId: item.value.location?.id || "",
+      defaultLabelIds: item.value.labels?.map(l => l.id) || [],
+      includeWarrantyFields: !!(
+        item.value.warrantyDetails ||
+        item.value.lifetimeWarranty ||
+        item.value.warrantyExpires
+      ),
+      includePurchaseFields: !!(item.value.purchaseFrom || item.value.purchasePrice || item.value.purchaseTime),
+      includeSoldFields: !!(item.value.soldTo || item.value.soldPrice || item.value.soldTime),
+      fields: item.value.fields.map(field => ({
+        id: NIL_UUID,
+        name: field.name,
+        type: "text",
+        textValue: field.textValue || "",
+      })),
+    };
+
+    const { data, error } = await api.templates.create(templateData);
+    if (error) {
+      toast.error(t("components.template.toast.create_failed"));
+      return;
+    }
+
+    toast.success(t("components.template.toast.saved_as_template", { name: templateData.name }));
+    navigateTo(`/template/${data.id}`);
   }
 
   async function createSubitem() {
@@ -634,7 +696,7 @@
                 </div>
               </div>
             </div>
-            <div class="ml-auto mt-2 flex flex-wrap items-center justify-between gap-3">
+            <div class="ml-auto mt-2 flex flex-wrap items-center justify-between gap-2">
               <LabelMaker
                 v-if="typeof item.assetId === 'string' && item.assetId != ''"
                 :id="item.assetId"
@@ -645,14 +707,30 @@
                 <MdiPlus />
                 <span class="hidden md:inline">{{ $t("global.create_subitem") }}</span>
               </Button>
-              <Button class="w-9 md:w-auto" :aria-label="$t('global.duplicate')" @click="handleDuplicateClick">
-                <MdiContentCopy />
-                <span class="hidden md:inline">{{ $t("global.duplicate") }}</span>
-              </Button>
-              <Button variant="destructive" class="w-9 md:w-auto" :aria-label="$t('global.delete')" @click="deleteItem">
-                <MdiDelete />
-                <span class="hidden md:inline">{{ $t("global.delete") }}</span>
-              </Button>
+
+              <!-- More actions dropdown -->
+              <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                  <Button variant="outline" size="icon" :aria-label="$t('global.more_actions')">
+                    <MdiDotsVertical class="size-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" class="w-48">
+                  <DropdownMenuItem @click="handleDuplicateClick">
+                    <MdiPlusBoxMultipleOutline class="mr-2 size-4" />
+                    {{ $t("global.duplicate") }}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem @click="saveAsTemplate">
+                    <MdiContentSaveEdit class="mr-2 size-4" />
+                    {{ $t("components.template.save_as_template") }}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem class="text-destructive focus:text-destructive" @click="deleteItem">
+                    <MdiDelete class="mr-2 size-4" />
+                    {{ $t("global.delete") }}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </header>
@@ -787,7 +865,7 @@
     </section>
 
     <section v-if="items && items.length > 0" class="mt-6">
-      <ItemViewSelectable :items="items" />
+      <ItemViewSelectable :items="items" @refresh="refreshItemList" />
     </section>
   </BaseContainer>
 </template>

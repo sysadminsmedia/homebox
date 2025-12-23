@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/unified-signatures */
 import { computed, type ComputedRef } from "vue";
 import { createContext } from "reka-ui";
 import { useMagicKeys, useActiveElement } from "@vueuse/core";
-import type { BarcodeProduct } from "~~/lib/api/types/data-contracts";
+import type { BarcodeProduct, ItemSummary, MaintenanceEntry, MaintenanceEntryWithDetails } from "~~/lib/api/types/data-contracts";
 
 export enum DialogID {
   AttachmentEdit = "attachment-edit",
@@ -11,6 +10,7 @@ export enum DialogID {
   CreateLocation = "create-location",
   CreateLabel = "create-label",
   CreateNotifier = "create-notifier",
+  CreateTemplate = "create-template",
   DuplicateSettings = "duplicate-settings",
   DuplicateTemporarySettings = "duplicate-temporary-settings",
   EditMaintenance = "edit-maintenance",
@@ -24,6 +24,8 @@ export enum DialogID {
   PageQRCode = "page-qr-code",
   UpdateLabel = "update-label",
   UpdateLocation = "update-location",
+  UpdateTemplate = "update-template",
+  ItemChangeDetails = "item-table-updater",
 }
 
 /**
@@ -50,6 +52,16 @@ export type DialogParamsMap = {
   };
   [DialogID.CreateItem]?: { product?: BarcodeProduct };
   [DialogID.ProductImport]?: { barcode?: string };
+  [DialogID.EditMaintenance]:
+    | { type: "create"; itemId: string | string[] }
+    | { type: "update"; maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails }
+    | { type: "duplicate"; maintenanceEntry: MaintenanceEntry | MaintenanceEntryWithDetails; itemId: string };
+  [DialogID.ItemChangeDetails]: {
+    items: ItemSummary[];
+    changeLocation?: boolean;
+    addLabels?: boolean;
+    removeLabels?: boolean;
+  };
 };
 
 /**
@@ -57,6 +69,8 @@ export type DialogParamsMap = {
  */
 export type DialogResultMap = {
   [DialogID.ItemImage]?: { action: "delete"; id: string };
+  [DialogID.EditMaintenance]?: boolean;
+  [DialogID.ItemChangeDetails]?: boolean;
 };
 
 /** Helpers to split IDs by requirement */

@@ -25,179 +25,179 @@ type ItemFieldUpdate struct {
 }
 
 // Where appends a list predicates to the ItemFieldUpdate builder.
-func (ifu *ItemFieldUpdate) Where(ps ...predicate.ItemField) *ItemFieldUpdate {
-	ifu.mutation.Where(ps...)
-	return ifu
+func (_u *ItemFieldUpdate) Where(ps ...predicate.ItemField) *ItemFieldUpdate {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (ifu *ItemFieldUpdate) SetUpdatedAt(t time.Time) *ItemFieldUpdate {
-	ifu.mutation.SetUpdatedAt(t)
-	return ifu
+func (_u *ItemFieldUpdate) SetUpdatedAt(v time.Time) *ItemFieldUpdate {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetName sets the "name" field.
-func (ifu *ItemFieldUpdate) SetName(s string) *ItemFieldUpdate {
-	ifu.mutation.SetName(s)
-	return ifu
+func (_u *ItemFieldUpdate) SetName(v string) *ItemFieldUpdate {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (ifu *ItemFieldUpdate) SetNillableName(s *string) *ItemFieldUpdate {
-	if s != nil {
-		ifu.SetName(*s)
+func (_u *ItemFieldUpdate) SetNillableName(v *string) *ItemFieldUpdate {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return ifu
+	return _u
 }
 
 // SetDescription sets the "description" field.
-func (ifu *ItemFieldUpdate) SetDescription(s string) *ItemFieldUpdate {
-	ifu.mutation.SetDescription(s)
-	return ifu
+func (_u *ItemFieldUpdate) SetDescription(v string) *ItemFieldUpdate {
+	_u.mutation.SetDescription(v)
+	return _u
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (ifu *ItemFieldUpdate) SetNillableDescription(s *string) *ItemFieldUpdate {
-	if s != nil {
-		ifu.SetDescription(*s)
+func (_u *ItemFieldUpdate) SetNillableDescription(v *string) *ItemFieldUpdate {
+	if v != nil {
+		_u.SetDescription(*v)
 	}
-	return ifu
+	return _u
 }
 
 // ClearDescription clears the value of the "description" field.
-func (ifu *ItemFieldUpdate) ClearDescription() *ItemFieldUpdate {
-	ifu.mutation.ClearDescription()
-	return ifu
+func (_u *ItemFieldUpdate) ClearDescription() *ItemFieldUpdate {
+	_u.mutation.ClearDescription()
+	return _u
 }
 
 // SetType sets the "type" field.
-func (ifu *ItemFieldUpdate) SetType(i itemfield.Type) *ItemFieldUpdate {
-	ifu.mutation.SetType(i)
-	return ifu
+func (_u *ItemFieldUpdate) SetType(v itemfield.Type) *ItemFieldUpdate {
+	_u.mutation.SetType(v)
+	return _u
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (ifu *ItemFieldUpdate) SetNillableType(i *itemfield.Type) *ItemFieldUpdate {
-	if i != nil {
-		ifu.SetType(*i)
+func (_u *ItemFieldUpdate) SetNillableType(v *itemfield.Type) *ItemFieldUpdate {
+	if v != nil {
+		_u.SetType(*v)
 	}
-	return ifu
+	return _u
 }
 
 // SetTextValue sets the "text_value" field.
-func (ifu *ItemFieldUpdate) SetTextValue(s string) *ItemFieldUpdate {
-	ifu.mutation.SetTextValue(s)
-	return ifu
+func (_u *ItemFieldUpdate) SetTextValue(v string) *ItemFieldUpdate {
+	_u.mutation.SetTextValue(v)
+	return _u
 }
 
 // SetNillableTextValue sets the "text_value" field if the given value is not nil.
-func (ifu *ItemFieldUpdate) SetNillableTextValue(s *string) *ItemFieldUpdate {
-	if s != nil {
-		ifu.SetTextValue(*s)
+func (_u *ItemFieldUpdate) SetNillableTextValue(v *string) *ItemFieldUpdate {
+	if v != nil {
+		_u.SetTextValue(*v)
 	}
-	return ifu
+	return _u
 }
 
 // ClearTextValue clears the value of the "text_value" field.
-func (ifu *ItemFieldUpdate) ClearTextValue() *ItemFieldUpdate {
-	ifu.mutation.ClearTextValue()
-	return ifu
+func (_u *ItemFieldUpdate) ClearTextValue() *ItemFieldUpdate {
+	_u.mutation.ClearTextValue()
+	return _u
 }
 
 // SetNumberValue sets the "number_value" field.
-func (ifu *ItemFieldUpdate) SetNumberValue(i int) *ItemFieldUpdate {
-	ifu.mutation.ResetNumberValue()
-	ifu.mutation.SetNumberValue(i)
-	return ifu
+func (_u *ItemFieldUpdate) SetNumberValue(v int) *ItemFieldUpdate {
+	_u.mutation.ResetNumberValue()
+	_u.mutation.SetNumberValue(v)
+	return _u
 }
 
 // SetNillableNumberValue sets the "number_value" field if the given value is not nil.
-func (ifu *ItemFieldUpdate) SetNillableNumberValue(i *int) *ItemFieldUpdate {
-	if i != nil {
-		ifu.SetNumberValue(*i)
+func (_u *ItemFieldUpdate) SetNillableNumberValue(v *int) *ItemFieldUpdate {
+	if v != nil {
+		_u.SetNumberValue(*v)
 	}
-	return ifu
+	return _u
 }
 
-// AddNumberValue adds i to the "number_value" field.
-func (ifu *ItemFieldUpdate) AddNumberValue(i int) *ItemFieldUpdate {
-	ifu.mutation.AddNumberValue(i)
-	return ifu
+// AddNumberValue adds value to the "number_value" field.
+func (_u *ItemFieldUpdate) AddNumberValue(v int) *ItemFieldUpdate {
+	_u.mutation.AddNumberValue(v)
+	return _u
 }
 
 // ClearNumberValue clears the value of the "number_value" field.
-func (ifu *ItemFieldUpdate) ClearNumberValue() *ItemFieldUpdate {
-	ifu.mutation.ClearNumberValue()
-	return ifu
+func (_u *ItemFieldUpdate) ClearNumberValue() *ItemFieldUpdate {
+	_u.mutation.ClearNumberValue()
+	return _u
 }
 
 // SetBooleanValue sets the "boolean_value" field.
-func (ifu *ItemFieldUpdate) SetBooleanValue(b bool) *ItemFieldUpdate {
-	ifu.mutation.SetBooleanValue(b)
-	return ifu
+func (_u *ItemFieldUpdate) SetBooleanValue(v bool) *ItemFieldUpdate {
+	_u.mutation.SetBooleanValue(v)
+	return _u
 }
 
 // SetNillableBooleanValue sets the "boolean_value" field if the given value is not nil.
-func (ifu *ItemFieldUpdate) SetNillableBooleanValue(b *bool) *ItemFieldUpdate {
-	if b != nil {
-		ifu.SetBooleanValue(*b)
+func (_u *ItemFieldUpdate) SetNillableBooleanValue(v *bool) *ItemFieldUpdate {
+	if v != nil {
+		_u.SetBooleanValue(*v)
 	}
-	return ifu
+	return _u
 }
 
 // SetTimeValue sets the "time_value" field.
-func (ifu *ItemFieldUpdate) SetTimeValue(t time.Time) *ItemFieldUpdate {
-	ifu.mutation.SetTimeValue(t)
-	return ifu
+func (_u *ItemFieldUpdate) SetTimeValue(v time.Time) *ItemFieldUpdate {
+	_u.mutation.SetTimeValue(v)
+	return _u
 }
 
 // SetNillableTimeValue sets the "time_value" field if the given value is not nil.
-func (ifu *ItemFieldUpdate) SetNillableTimeValue(t *time.Time) *ItemFieldUpdate {
-	if t != nil {
-		ifu.SetTimeValue(*t)
+func (_u *ItemFieldUpdate) SetNillableTimeValue(v *time.Time) *ItemFieldUpdate {
+	if v != nil {
+		_u.SetTimeValue(*v)
 	}
-	return ifu
+	return _u
 }
 
 // SetItemID sets the "item" edge to the Item entity by ID.
-func (ifu *ItemFieldUpdate) SetItemID(id uuid.UUID) *ItemFieldUpdate {
-	ifu.mutation.SetItemID(id)
-	return ifu
+func (_u *ItemFieldUpdate) SetItemID(id uuid.UUID) *ItemFieldUpdate {
+	_u.mutation.SetItemID(id)
+	return _u
 }
 
 // SetNillableItemID sets the "item" edge to the Item entity by ID if the given value is not nil.
-func (ifu *ItemFieldUpdate) SetNillableItemID(id *uuid.UUID) *ItemFieldUpdate {
+func (_u *ItemFieldUpdate) SetNillableItemID(id *uuid.UUID) *ItemFieldUpdate {
 	if id != nil {
-		ifu = ifu.SetItemID(*id)
+		_u = _u.SetItemID(*id)
 	}
-	return ifu
+	return _u
 }
 
 // SetItem sets the "item" edge to the Item entity.
-func (ifu *ItemFieldUpdate) SetItem(i *Item) *ItemFieldUpdate {
-	return ifu.SetItemID(i.ID)
+func (_u *ItemFieldUpdate) SetItem(v *Item) *ItemFieldUpdate {
+	return _u.SetItemID(v.ID)
 }
 
 // Mutation returns the ItemFieldMutation object of the builder.
-func (ifu *ItemFieldUpdate) Mutation() *ItemFieldMutation {
-	return ifu.mutation
+func (_u *ItemFieldUpdate) Mutation() *ItemFieldMutation {
+	return _u.mutation
 }
 
 // ClearItem clears the "item" edge to the Item entity.
-func (ifu *ItemFieldUpdate) ClearItem() *ItemFieldUpdate {
-	ifu.mutation.ClearItem()
-	return ifu
+func (_u *ItemFieldUpdate) ClearItem() *ItemFieldUpdate {
+	_u.mutation.ClearItem()
+	return _u
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (ifu *ItemFieldUpdate) Save(ctx context.Context) (int, error) {
-	ifu.defaults()
-	return withHooks(ctx, ifu.sqlSave, ifu.mutation, ifu.hooks)
+func (_u *ItemFieldUpdate) Save(ctx context.Context) (int, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (ifu *ItemFieldUpdate) SaveX(ctx context.Context) int {
-	affected, err := ifu.Save(ctx)
+func (_u *ItemFieldUpdate) SaveX(ctx context.Context) int {
+	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -205,44 +205,44 @@ func (ifu *ItemFieldUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (ifu *ItemFieldUpdate) Exec(ctx context.Context) error {
-	_, err := ifu.Save(ctx)
+func (_u *ItemFieldUpdate) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ifu *ItemFieldUpdate) ExecX(ctx context.Context) {
-	if err := ifu.Exec(ctx); err != nil {
+func (_u *ItemFieldUpdate) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (ifu *ItemFieldUpdate) defaults() {
-	if _, ok := ifu.mutation.UpdatedAt(); !ok {
+func (_u *ItemFieldUpdate) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
 		v := itemfield.UpdateDefaultUpdatedAt()
-		ifu.mutation.SetUpdatedAt(v)
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (ifu *ItemFieldUpdate) check() error {
-	if v, ok := ifu.mutation.Name(); ok {
+func (_u *ItemFieldUpdate) check() error {
+	if v, ok := _u.mutation.Name(); ok {
 		if err := itemfield.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "ItemField.name": %w`, err)}
 		}
 	}
-	if v, ok := ifu.mutation.Description(); ok {
+	if v, ok := _u.mutation.Description(); ok {
 		if err := itemfield.DescriptionValidator(v); err != nil {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "ItemField.description": %w`, err)}
 		}
 	}
-	if v, ok := ifu.mutation.GetType(); ok {
+	if v, ok := _u.mutation.GetType(); ok {
 		if err := itemfield.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "ItemField.type": %w`, err)}
 		}
 	}
-	if v, ok := ifu.mutation.TextValue(); ok {
+	if v, ok := _u.mutation.TextValue(); ok {
 		if err := itemfield.TextValueValidator(v); err != nil {
 			return &ValidationError{Name: "text_value", err: fmt.Errorf(`ent: validator failed for field "ItemField.text_value": %w`, err)}
 		}
@@ -250,55 +250,55 @@ func (ifu *ItemFieldUpdate) check() error {
 	return nil
 }
 
-func (ifu *ItemFieldUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := ifu.check(); err != nil {
-		return n, err
+func (_u *ItemFieldUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+	if err := _u.check(); err != nil {
+		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(itemfield.Table, itemfield.Columns, sqlgraph.NewFieldSpec(itemfield.FieldID, field.TypeUUID))
-	if ps := ifu.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := ifu.mutation.UpdatedAt(); ok {
+	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(itemfield.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := ifu.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(itemfield.FieldName, field.TypeString, value)
 	}
-	if value, ok := ifu.mutation.Description(); ok {
+	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(itemfield.FieldDescription, field.TypeString, value)
 	}
-	if ifu.mutation.DescriptionCleared() {
+	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(itemfield.FieldDescription, field.TypeString)
 	}
-	if value, ok := ifu.mutation.GetType(); ok {
+	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(itemfield.FieldType, field.TypeEnum, value)
 	}
-	if value, ok := ifu.mutation.TextValue(); ok {
+	if value, ok := _u.mutation.TextValue(); ok {
 		_spec.SetField(itemfield.FieldTextValue, field.TypeString, value)
 	}
-	if ifu.mutation.TextValueCleared() {
+	if _u.mutation.TextValueCleared() {
 		_spec.ClearField(itemfield.FieldTextValue, field.TypeString)
 	}
-	if value, ok := ifu.mutation.NumberValue(); ok {
+	if value, ok := _u.mutation.NumberValue(); ok {
 		_spec.SetField(itemfield.FieldNumberValue, field.TypeInt, value)
 	}
-	if value, ok := ifu.mutation.AddedNumberValue(); ok {
+	if value, ok := _u.mutation.AddedNumberValue(); ok {
 		_spec.AddField(itemfield.FieldNumberValue, field.TypeInt, value)
 	}
-	if ifu.mutation.NumberValueCleared() {
+	if _u.mutation.NumberValueCleared() {
 		_spec.ClearField(itemfield.FieldNumberValue, field.TypeInt)
 	}
-	if value, ok := ifu.mutation.BooleanValue(); ok {
+	if value, ok := _u.mutation.BooleanValue(); ok {
 		_spec.SetField(itemfield.FieldBooleanValue, field.TypeBool, value)
 	}
-	if value, ok := ifu.mutation.TimeValue(); ok {
+	if value, ok := _u.mutation.TimeValue(); ok {
 		_spec.SetField(itemfield.FieldTimeValue, field.TypeTime, value)
 	}
-	if ifu.mutation.ItemCleared() {
+	if _u.mutation.ItemCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -311,7 +311,7 @@ func (ifu *ItemFieldUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := ifu.mutation.ItemIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ItemIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -327,7 +327,7 @@ func (ifu *ItemFieldUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	if n, err = sqlgraph.UpdateNodes(ctx, ifu.driver, _spec); err != nil {
+	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{itemfield.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -335,8 +335,8 @@ func (ifu *ItemFieldUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		return 0, err
 	}
-	ifu.mutation.done = true
-	return n, nil
+	_u.mutation.done = true
+	return _node, nil
 }
 
 // ItemFieldUpdateOne is the builder for updating a single ItemField entity.
@@ -348,186 +348,186 @@ type ItemFieldUpdateOne struct {
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (ifuo *ItemFieldUpdateOne) SetUpdatedAt(t time.Time) *ItemFieldUpdateOne {
-	ifuo.mutation.SetUpdatedAt(t)
-	return ifuo
+func (_u *ItemFieldUpdateOne) SetUpdatedAt(v time.Time) *ItemFieldUpdateOne {
+	_u.mutation.SetUpdatedAt(v)
+	return _u
 }
 
 // SetName sets the "name" field.
-func (ifuo *ItemFieldUpdateOne) SetName(s string) *ItemFieldUpdateOne {
-	ifuo.mutation.SetName(s)
-	return ifuo
+func (_u *ItemFieldUpdateOne) SetName(v string) *ItemFieldUpdateOne {
+	_u.mutation.SetName(v)
+	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (ifuo *ItemFieldUpdateOne) SetNillableName(s *string) *ItemFieldUpdateOne {
-	if s != nil {
-		ifuo.SetName(*s)
+func (_u *ItemFieldUpdateOne) SetNillableName(v *string) *ItemFieldUpdateOne {
+	if v != nil {
+		_u.SetName(*v)
 	}
-	return ifuo
+	return _u
 }
 
 // SetDescription sets the "description" field.
-func (ifuo *ItemFieldUpdateOne) SetDescription(s string) *ItemFieldUpdateOne {
-	ifuo.mutation.SetDescription(s)
-	return ifuo
+func (_u *ItemFieldUpdateOne) SetDescription(v string) *ItemFieldUpdateOne {
+	_u.mutation.SetDescription(v)
+	return _u
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (ifuo *ItemFieldUpdateOne) SetNillableDescription(s *string) *ItemFieldUpdateOne {
-	if s != nil {
-		ifuo.SetDescription(*s)
+func (_u *ItemFieldUpdateOne) SetNillableDescription(v *string) *ItemFieldUpdateOne {
+	if v != nil {
+		_u.SetDescription(*v)
 	}
-	return ifuo
+	return _u
 }
 
 // ClearDescription clears the value of the "description" field.
-func (ifuo *ItemFieldUpdateOne) ClearDescription() *ItemFieldUpdateOne {
-	ifuo.mutation.ClearDescription()
-	return ifuo
+func (_u *ItemFieldUpdateOne) ClearDescription() *ItemFieldUpdateOne {
+	_u.mutation.ClearDescription()
+	return _u
 }
 
 // SetType sets the "type" field.
-func (ifuo *ItemFieldUpdateOne) SetType(i itemfield.Type) *ItemFieldUpdateOne {
-	ifuo.mutation.SetType(i)
-	return ifuo
+func (_u *ItemFieldUpdateOne) SetType(v itemfield.Type) *ItemFieldUpdateOne {
+	_u.mutation.SetType(v)
+	return _u
 }
 
 // SetNillableType sets the "type" field if the given value is not nil.
-func (ifuo *ItemFieldUpdateOne) SetNillableType(i *itemfield.Type) *ItemFieldUpdateOne {
-	if i != nil {
-		ifuo.SetType(*i)
+func (_u *ItemFieldUpdateOne) SetNillableType(v *itemfield.Type) *ItemFieldUpdateOne {
+	if v != nil {
+		_u.SetType(*v)
 	}
-	return ifuo
+	return _u
 }
 
 // SetTextValue sets the "text_value" field.
-func (ifuo *ItemFieldUpdateOne) SetTextValue(s string) *ItemFieldUpdateOne {
-	ifuo.mutation.SetTextValue(s)
-	return ifuo
+func (_u *ItemFieldUpdateOne) SetTextValue(v string) *ItemFieldUpdateOne {
+	_u.mutation.SetTextValue(v)
+	return _u
 }
 
 // SetNillableTextValue sets the "text_value" field if the given value is not nil.
-func (ifuo *ItemFieldUpdateOne) SetNillableTextValue(s *string) *ItemFieldUpdateOne {
-	if s != nil {
-		ifuo.SetTextValue(*s)
+func (_u *ItemFieldUpdateOne) SetNillableTextValue(v *string) *ItemFieldUpdateOne {
+	if v != nil {
+		_u.SetTextValue(*v)
 	}
-	return ifuo
+	return _u
 }
 
 // ClearTextValue clears the value of the "text_value" field.
-func (ifuo *ItemFieldUpdateOne) ClearTextValue() *ItemFieldUpdateOne {
-	ifuo.mutation.ClearTextValue()
-	return ifuo
+func (_u *ItemFieldUpdateOne) ClearTextValue() *ItemFieldUpdateOne {
+	_u.mutation.ClearTextValue()
+	return _u
 }
 
 // SetNumberValue sets the "number_value" field.
-func (ifuo *ItemFieldUpdateOne) SetNumberValue(i int) *ItemFieldUpdateOne {
-	ifuo.mutation.ResetNumberValue()
-	ifuo.mutation.SetNumberValue(i)
-	return ifuo
+func (_u *ItemFieldUpdateOne) SetNumberValue(v int) *ItemFieldUpdateOne {
+	_u.mutation.ResetNumberValue()
+	_u.mutation.SetNumberValue(v)
+	return _u
 }
 
 // SetNillableNumberValue sets the "number_value" field if the given value is not nil.
-func (ifuo *ItemFieldUpdateOne) SetNillableNumberValue(i *int) *ItemFieldUpdateOne {
-	if i != nil {
-		ifuo.SetNumberValue(*i)
+func (_u *ItemFieldUpdateOne) SetNillableNumberValue(v *int) *ItemFieldUpdateOne {
+	if v != nil {
+		_u.SetNumberValue(*v)
 	}
-	return ifuo
+	return _u
 }
 
-// AddNumberValue adds i to the "number_value" field.
-func (ifuo *ItemFieldUpdateOne) AddNumberValue(i int) *ItemFieldUpdateOne {
-	ifuo.mutation.AddNumberValue(i)
-	return ifuo
+// AddNumberValue adds value to the "number_value" field.
+func (_u *ItemFieldUpdateOne) AddNumberValue(v int) *ItemFieldUpdateOne {
+	_u.mutation.AddNumberValue(v)
+	return _u
 }
 
 // ClearNumberValue clears the value of the "number_value" field.
-func (ifuo *ItemFieldUpdateOne) ClearNumberValue() *ItemFieldUpdateOne {
-	ifuo.mutation.ClearNumberValue()
-	return ifuo
+func (_u *ItemFieldUpdateOne) ClearNumberValue() *ItemFieldUpdateOne {
+	_u.mutation.ClearNumberValue()
+	return _u
 }
 
 // SetBooleanValue sets the "boolean_value" field.
-func (ifuo *ItemFieldUpdateOne) SetBooleanValue(b bool) *ItemFieldUpdateOne {
-	ifuo.mutation.SetBooleanValue(b)
-	return ifuo
+func (_u *ItemFieldUpdateOne) SetBooleanValue(v bool) *ItemFieldUpdateOne {
+	_u.mutation.SetBooleanValue(v)
+	return _u
 }
 
 // SetNillableBooleanValue sets the "boolean_value" field if the given value is not nil.
-func (ifuo *ItemFieldUpdateOne) SetNillableBooleanValue(b *bool) *ItemFieldUpdateOne {
-	if b != nil {
-		ifuo.SetBooleanValue(*b)
+func (_u *ItemFieldUpdateOne) SetNillableBooleanValue(v *bool) *ItemFieldUpdateOne {
+	if v != nil {
+		_u.SetBooleanValue(*v)
 	}
-	return ifuo
+	return _u
 }
 
 // SetTimeValue sets the "time_value" field.
-func (ifuo *ItemFieldUpdateOne) SetTimeValue(t time.Time) *ItemFieldUpdateOne {
-	ifuo.mutation.SetTimeValue(t)
-	return ifuo
+func (_u *ItemFieldUpdateOne) SetTimeValue(v time.Time) *ItemFieldUpdateOne {
+	_u.mutation.SetTimeValue(v)
+	return _u
 }
 
 // SetNillableTimeValue sets the "time_value" field if the given value is not nil.
-func (ifuo *ItemFieldUpdateOne) SetNillableTimeValue(t *time.Time) *ItemFieldUpdateOne {
-	if t != nil {
-		ifuo.SetTimeValue(*t)
+func (_u *ItemFieldUpdateOne) SetNillableTimeValue(v *time.Time) *ItemFieldUpdateOne {
+	if v != nil {
+		_u.SetTimeValue(*v)
 	}
-	return ifuo
+	return _u
 }
 
 // SetItemID sets the "item" edge to the Item entity by ID.
-func (ifuo *ItemFieldUpdateOne) SetItemID(id uuid.UUID) *ItemFieldUpdateOne {
-	ifuo.mutation.SetItemID(id)
-	return ifuo
+func (_u *ItemFieldUpdateOne) SetItemID(id uuid.UUID) *ItemFieldUpdateOne {
+	_u.mutation.SetItemID(id)
+	return _u
 }
 
 // SetNillableItemID sets the "item" edge to the Item entity by ID if the given value is not nil.
-func (ifuo *ItemFieldUpdateOne) SetNillableItemID(id *uuid.UUID) *ItemFieldUpdateOne {
+func (_u *ItemFieldUpdateOne) SetNillableItemID(id *uuid.UUID) *ItemFieldUpdateOne {
 	if id != nil {
-		ifuo = ifuo.SetItemID(*id)
+		_u = _u.SetItemID(*id)
 	}
-	return ifuo
+	return _u
 }
 
 // SetItem sets the "item" edge to the Item entity.
-func (ifuo *ItemFieldUpdateOne) SetItem(i *Item) *ItemFieldUpdateOne {
-	return ifuo.SetItemID(i.ID)
+func (_u *ItemFieldUpdateOne) SetItem(v *Item) *ItemFieldUpdateOne {
+	return _u.SetItemID(v.ID)
 }
 
 // Mutation returns the ItemFieldMutation object of the builder.
-func (ifuo *ItemFieldUpdateOne) Mutation() *ItemFieldMutation {
-	return ifuo.mutation
+func (_u *ItemFieldUpdateOne) Mutation() *ItemFieldMutation {
+	return _u.mutation
 }
 
 // ClearItem clears the "item" edge to the Item entity.
-func (ifuo *ItemFieldUpdateOne) ClearItem() *ItemFieldUpdateOne {
-	ifuo.mutation.ClearItem()
-	return ifuo
+func (_u *ItemFieldUpdateOne) ClearItem() *ItemFieldUpdateOne {
+	_u.mutation.ClearItem()
+	return _u
 }
 
 // Where appends a list predicates to the ItemFieldUpdate builder.
-func (ifuo *ItemFieldUpdateOne) Where(ps ...predicate.ItemField) *ItemFieldUpdateOne {
-	ifuo.mutation.Where(ps...)
-	return ifuo
+func (_u *ItemFieldUpdateOne) Where(ps ...predicate.ItemField) *ItemFieldUpdateOne {
+	_u.mutation.Where(ps...)
+	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (ifuo *ItemFieldUpdateOne) Select(field string, fields ...string) *ItemFieldUpdateOne {
-	ifuo.fields = append([]string{field}, fields...)
-	return ifuo
+func (_u *ItemFieldUpdateOne) Select(field string, fields ...string) *ItemFieldUpdateOne {
+	_u.fields = append([]string{field}, fields...)
+	return _u
 }
 
 // Save executes the query and returns the updated ItemField entity.
-func (ifuo *ItemFieldUpdateOne) Save(ctx context.Context) (*ItemField, error) {
-	ifuo.defaults()
-	return withHooks(ctx, ifuo.sqlSave, ifuo.mutation, ifuo.hooks)
+func (_u *ItemFieldUpdateOne) Save(ctx context.Context) (*ItemField, error) {
+	_u.defaults()
+	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (ifuo *ItemFieldUpdateOne) SaveX(ctx context.Context) *ItemField {
-	node, err := ifuo.Save(ctx)
+func (_u *ItemFieldUpdateOne) SaveX(ctx context.Context) *ItemField {
+	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -535,44 +535,44 @@ func (ifuo *ItemFieldUpdateOne) SaveX(ctx context.Context) *ItemField {
 }
 
 // Exec executes the query on the entity.
-func (ifuo *ItemFieldUpdateOne) Exec(ctx context.Context) error {
-	_, err := ifuo.Save(ctx)
+func (_u *ItemFieldUpdateOne) Exec(ctx context.Context) error {
+	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ifuo *ItemFieldUpdateOne) ExecX(ctx context.Context) {
-	if err := ifuo.Exec(ctx); err != nil {
+func (_u *ItemFieldUpdateOne) ExecX(ctx context.Context) {
+	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (ifuo *ItemFieldUpdateOne) defaults() {
-	if _, ok := ifuo.mutation.UpdatedAt(); !ok {
+func (_u *ItemFieldUpdateOne) defaults() {
+	if _, ok := _u.mutation.UpdatedAt(); !ok {
 		v := itemfield.UpdateDefaultUpdatedAt()
-		ifuo.mutation.SetUpdatedAt(v)
+		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (ifuo *ItemFieldUpdateOne) check() error {
-	if v, ok := ifuo.mutation.Name(); ok {
+func (_u *ItemFieldUpdateOne) check() error {
+	if v, ok := _u.mutation.Name(); ok {
 		if err := itemfield.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "ItemField.name": %w`, err)}
 		}
 	}
-	if v, ok := ifuo.mutation.Description(); ok {
+	if v, ok := _u.mutation.Description(); ok {
 		if err := itemfield.DescriptionValidator(v); err != nil {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "ItemField.description": %w`, err)}
 		}
 	}
-	if v, ok := ifuo.mutation.GetType(); ok {
+	if v, ok := _u.mutation.GetType(); ok {
 		if err := itemfield.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "ItemField.type": %w`, err)}
 		}
 	}
-	if v, ok := ifuo.mutation.TextValue(); ok {
+	if v, ok := _u.mutation.TextValue(); ok {
 		if err := itemfield.TextValueValidator(v); err != nil {
 			return &ValidationError{Name: "text_value", err: fmt.Errorf(`ent: validator failed for field "ItemField.text_value": %w`, err)}
 		}
@@ -580,17 +580,17 @@ func (ifuo *ItemFieldUpdateOne) check() error {
 	return nil
 }
 
-func (ifuo *ItemFieldUpdateOne) sqlSave(ctx context.Context) (_node *ItemField, err error) {
-	if err := ifuo.check(); err != nil {
+func (_u *ItemFieldUpdateOne) sqlSave(ctx context.Context) (_node *ItemField, err error) {
+	if err := _u.check(); err != nil {
 		return _node, err
 	}
 	_spec := sqlgraph.NewUpdateSpec(itemfield.Table, itemfield.Columns, sqlgraph.NewFieldSpec(itemfield.FieldID, field.TypeUUID))
-	id, ok := ifuo.mutation.ID()
+	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ItemField.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
-	if fields := ifuo.fields; len(fields) > 0 {
+	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
 		_spec.Node.Columns = append(_spec.Node.Columns, itemfield.FieldID)
 		for _, f := range fields {
@@ -602,50 +602,50 @@ func (ifuo *ItemFieldUpdateOne) sqlSave(ctx context.Context) (_node *ItemField, 
 			}
 		}
 	}
-	if ps := ifuo.mutation.predicates; len(ps) > 0 {
+	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
 				ps[i](selector)
 			}
 		}
 	}
-	if value, ok := ifuo.mutation.UpdatedAt(); ok {
+	if value, ok := _u.mutation.UpdatedAt(); ok {
 		_spec.SetField(itemfield.FieldUpdatedAt, field.TypeTime, value)
 	}
-	if value, ok := ifuo.mutation.Name(); ok {
+	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(itemfield.FieldName, field.TypeString, value)
 	}
-	if value, ok := ifuo.mutation.Description(); ok {
+	if value, ok := _u.mutation.Description(); ok {
 		_spec.SetField(itemfield.FieldDescription, field.TypeString, value)
 	}
-	if ifuo.mutation.DescriptionCleared() {
+	if _u.mutation.DescriptionCleared() {
 		_spec.ClearField(itemfield.FieldDescription, field.TypeString)
 	}
-	if value, ok := ifuo.mutation.GetType(); ok {
+	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(itemfield.FieldType, field.TypeEnum, value)
 	}
-	if value, ok := ifuo.mutation.TextValue(); ok {
+	if value, ok := _u.mutation.TextValue(); ok {
 		_spec.SetField(itemfield.FieldTextValue, field.TypeString, value)
 	}
-	if ifuo.mutation.TextValueCleared() {
+	if _u.mutation.TextValueCleared() {
 		_spec.ClearField(itemfield.FieldTextValue, field.TypeString)
 	}
-	if value, ok := ifuo.mutation.NumberValue(); ok {
+	if value, ok := _u.mutation.NumberValue(); ok {
 		_spec.SetField(itemfield.FieldNumberValue, field.TypeInt, value)
 	}
-	if value, ok := ifuo.mutation.AddedNumberValue(); ok {
+	if value, ok := _u.mutation.AddedNumberValue(); ok {
 		_spec.AddField(itemfield.FieldNumberValue, field.TypeInt, value)
 	}
-	if ifuo.mutation.NumberValueCleared() {
+	if _u.mutation.NumberValueCleared() {
 		_spec.ClearField(itemfield.FieldNumberValue, field.TypeInt)
 	}
-	if value, ok := ifuo.mutation.BooleanValue(); ok {
+	if value, ok := _u.mutation.BooleanValue(); ok {
 		_spec.SetField(itemfield.FieldBooleanValue, field.TypeBool, value)
 	}
-	if value, ok := ifuo.mutation.TimeValue(); ok {
+	if value, ok := _u.mutation.TimeValue(); ok {
 		_spec.SetField(itemfield.FieldTimeValue, field.TypeTime, value)
 	}
-	if ifuo.mutation.ItemCleared() {
+	if _u.mutation.ItemCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -658,7 +658,7 @@ func (ifuo *ItemFieldUpdateOne) sqlSave(ctx context.Context) (_node *ItemField, 
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if nodes := ifuo.mutation.ItemIDs(); len(nodes) > 0 {
+	if nodes := _u.mutation.ItemIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -674,10 +674,10 @@ func (ifuo *ItemFieldUpdateOne) sqlSave(ctx context.Context) (_node *ItemField, 
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &ItemField{config: ifuo.config}
+	_node = &ItemField{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
-	if err = sqlgraph.UpdateNode(ctx, ifuo.driver, _spec); err != nil {
+	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{itemfield.Label}
 		} else if sqlgraph.IsConstraintError(err) {
@@ -685,6 +685,6 @@ func (ifuo *ItemFieldUpdateOne) sqlSave(ctx context.Context) (_node *ItemField, 
 		}
 		return nil, err
 	}
-	ifuo.mutation.done = true
+	_u.mutation.done = true
 	return _node, nil
 }

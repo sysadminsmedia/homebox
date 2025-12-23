@@ -8,6 +8,7 @@ export const useLocationStore = defineStore("locations", {
     Locations: null as LocationOutCount[] | null,
     client: useUserApi(),
     tree: null as TreeItem[] | null,
+    refreshLocationsPromise: null as Promise<void> | null,
   }),
   getters: {
     /**
@@ -29,20 +30,20 @@ export const useLocationStore = defineStore("locations", {
       return state.parents ?? [];
     },
     allLocations(state): LocationOutCount[] {
-      if (state.Locations === null) {
-        this.client.locations.getAll({ filterChildren: false }).then(result => {
-          if (result.error) {
-            console.error(result.error);
-            return;
-          }
-
-          this.Locations = result.data;
-        });
-      }
       return state.Locations ?? [];
     },
   },
   actions: {
+    async ensureLocationsFetched() {
+      if (this.Locations !== null) {
+        return;
+      }
+
+      if (this.refreshLocationsPromise === null) {
+        this.refreshLocationsPromise = this.refreshChildren().then(() => {});
+      }
+      await this.refreshLocationsPromise;
+    },
     async refreshParents(): ReturnType<LocationsApi["getAll"]> {
       const result = await this.client.locations.getAll({ filterChildren: true });
       if (result.error) {

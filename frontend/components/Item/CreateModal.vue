@@ -1,8 +1,18 @@
 <template>
   <BaseModal :dialog-id="DialogID.CreateItem" :title="$t('components.item.create_modal.title')">
     <template #header-actions>
-      <div class="flex">
+      <div class="flex gap-2">
         <TooltipProvider :delay-duration="0">
+          <!-- Template selector button -->
+          <Tooltip>
+            <TooltipTrigger>
+              <TemplateSelector v-model="selectedTemplate" compact @template-selected="handleTemplateSelected" />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{{ $t("components.template.apply_template") }}</p>
+            </TooltipContent>
+          </Tooltip>
+
           <ButtonGroup>
             <Tooltip>
               <TooltipTrigger>
@@ -29,8 +39,94 @@
       </div>
     </template>
 
-    <form class="flex flex-col gap-2" @submit.prevent="create()">
+    <form class="flex min-w-0 flex-col gap-2" @submit.prevent="create()">
       <LocationSelector v-model="form.location" />
+
+      <!-- Template Info Display - Collapsible banner with distinct styling -->
+      <div v-if="templateData" class="rounded-lg border-l-4 border-l-primary bg-primary/5 p-3">
+        <div class="flex items-start justify-between gap-2">
+          <div class="flex flex-1 items-start gap-2">
+            <MdiFileDocumentOutline class="mt-0.5 size-4 shrink-0 text-primary" />
+            <div class="flex-1">
+              <h4 class="text-sm font-medium text-foreground">
+                {{ $t("components.template.using_template", { name: templateData.name }) }}
+              </h4>
+              <button
+                type="button"
+                class="mt-1 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                @click="showTemplateDetails = !showTemplateDetails"
+              >
+                <span v-if="!showTemplateDetails">{{ $t("components.template.show_defaults") }}</span>
+                <span v-else>{{ $t("components.template.hide_defaults") }}</span>
+                <MdiChevronDown class="size-4 transition-transform" :class="{ 'rotate-180': showTemplateDetails }" />
+              </button>
+            </div>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            class="size-7 shrink-0"
+            :aria-label="$t('components.item.create_modal.clear_template')"
+            @click="clearTemplate"
+          >
+            <MdiClose class="size-4" />
+          </Button>
+        </div>
+
+        <!-- Collapsible details section -->
+        <div v-if="showTemplateDetails" class="mt-3 border-t border-primary/20 pt-3">
+          <div class="flex flex-col gap-2 text-xs text-muted-foreground">
+            <p v-if="templateData.description" class="text-foreground/80">{{ templateData.description }}</p>
+            <div class="grid grid-cols-2 gap-x-4 gap-y-1">
+              <div v-if="templateData.defaultName">
+                <span class="font-medium">{{ $t("global.name") }}:</span> {{ templateData.defaultName }}
+              </div>
+              <div>
+                <span class="font-medium">{{ $t("global.quantity") }}:</span> {{ templateData.defaultQuantity }}
+              </div>
+              <div>
+                <span class="font-medium">{{ $t("global.insured") }}:</span>
+                {{ templateData.defaultInsured ? $t("global.yes") : $t("global.no") }}
+              </div>
+              <div v-if="templateData.defaultManufacturer">
+                <span class="font-medium">{{ $t("components.template.form.manufacturer") }}:</span>
+                {{ templateData.defaultManufacturer }}
+              </div>
+              <div v-if="templateData.defaultModelNumber">
+                <span class="font-medium">{{ $t("components.template.form.model_number") }}:</span>
+                {{ templateData.defaultModelNumber }}
+              </div>
+              <div v-if="templateData.defaultLifetimeWarranty">
+                <span class="font-medium">{{ $t("components.template.form.lifetime_warranty") }}:</span>
+                {{ $t("global.yes") }}
+              </div>
+              <div v-if="templateData.defaultLocation">
+                <span class="font-medium">{{ $t("components.template.form.location") }}:</span>
+                {{ templateData.defaultLocation.name }}
+              </div>
+            </div>
+            <div v-if="templateData.defaultLabels && templateData.defaultLabels.length > 0" class="mt-1">
+              <span class="font-medium">{{ $t("global.labels") }}:</span>
+              {{ templateData.defaultLabels.map((l: any) => l.name).join(", ") }}
+            </div>
+            <div v-if="templateData.defaultDescription" class="mt-1">
+              <p class="font-medium">{{ $t("components.template.form.item_description") }}:</p>
+              <p class="ml-2">{{ templateData.defaultDescription }}</p>
+            </div>
+            <div v-if="templateData.fields && templateData.fields.length > 0" class="mt-1">
+              <p class="font-medium">{{ $t("components.template.form.custom_fields") }}:</p>
+              <ul class="ml-4 flex list-none flex-col gap-1">
+                <li v-for="field in templateData.fields" :key="field.id">
+                  <span class="font-medium">{{ field.name }}:</span>
+                  <span> {{ field.textValue || $t("components.template.empty_value") }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <ItemSelector
         v-if="subItemCreate"
         v-model="parent"
@@ -71,7 +167,7 @@
             ref="fileInput"
             class="absolute left-0 top-0 size-full cursor-pointer opacity-0"
             type="file"
-            accept="image/png,image/jpeg,image/gif,image/avif,image/webp;capture=camera"
+            accept="image/png,image/jpeg,image/gif,image/avif,image/webp,android/force-camera-workaround"
             multiple
             @change="previewImage"
           />
@@ -177,7 +273,7 @@
   import BaseModal from "@/components/App/CreateModal.vue";
   import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
-  import type { ItemCreate, LocationOut } from "~~/lib/api/types/data-contracts";
+  import type { ItemCreate, ItemTemplateOut, ItemTemplateSummary, LocationOut } from "~~/lib/api/types/data-contracts";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
   import MdiBarcode from "~icons/mdi/barcode";
@@ -188,10 +284,14 @@
   import MdiRotateClockwise from "~icons/mdi/rotate-clockwise";
   import MdiStarOutline from "~icons/mdi/star-outline";
   import MdiStar from "~icons/mdi/star";
+  import MdiFileDocumentOutline from "~icons/mdi/file-document-outline";
+  import MdiChevronDown from "~icons/mdi/chevron-down";
+  import MdiClose from "~icons/mdi/close";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
   import LabelSelector from "~/components/Label/Selector.vue";
   import ItemSelector from "~/components/Item/Selector.vue";
+  import TemplateSelector from "~/components/Template/Selector.vue";
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";
   import LocationSelector from "~/components/Location/Selector.vue";
   import FormTextField from "~/components/Form/TextField.vue";
@@ -248,8 +348,13 @@
 
   const nameInput = ref<HTMLInputElement | null>(null);
 
+  const LAST_TEMPLATE_KEY = "homebox:lastUsedTemplate";
+
   const loading = ref(false);
   const focused = ref(false);
+  const selectedTemplate = ref<ItemTemplateSummary | null>(null);
+  const templateData = ref<ItemTemplateOut | null>(null);
+  const showTemplateDetails = ref(false);
   const form = reactive({
     location: locations.value && locations.value.length > 0 ? locations.value[0] : ({} as LocationOut),
     parentId: null,
@@ -260,6 +365,94 @@
     labels: [] as string[],
     photos: [] as PhotoPreview[],
   });
+
+  async function handleTemplateSelected(template: ItemTemplateSummary | null) {
+    if (!template) {
+      // Template was deselected, clear template data and remove from storage
+      templateData.value = null;
+      form.quantity = 1;
+      localStorage.removeItem(LAST_TEMPLATE_KEY);
+      return;
+    }
+
+    // Load full template details
+    const { data, error } = await api.templates.get(template.id);
+    if (error || !data) {
+      toast.error(t("components.template.toast.load_failed"));
+      return;
+    }
+
+    // Store template data for display and item creation
+    templateData.value = data;
+
+    // Pre-fill form with template defaults
+    form.quantity = data.defaultQuantity;
+    if (data.defaultName) {
+      form.name = data.defaultName;
+    }
+    if (data.defaultDescription) {
+      form.description = data.defaultDescription;
+    }
+    // Pre-fill location if template has one and current form doesn't
+    if (data.defaultLocation && !form.location?.id) {
+      const found = locations.value.find(l => l.id === data.defaultLocation!.id);
+      if (found) {
+        form.location = found;
+      }
+    }
+    // Pre-fill labels from template
+    if (data.defaultLabels && data.defaultLabels.length > 0) {
+      form.labels = data.defaultLabels.map(l => l.id);
+    }
+
+    // Save template ID to localStorage for persistence
+    localStorage.setItem(LAST_TEMPLATE_KEY, template.id);
+
+    toast.success(t("components.template.toast.applied", { name: data.name }));
+  }
+
+  async function restoreLastTemplate() {
+    const lastTemplateId = localStorage.getItem(LAST_TEMPLATE_KEY);
+    if (!lastTemplateId) return;
+
+    // Load the template details
+    const { data, error } = await api.templates.get(lastTemplateId);
+    if (error || !data) {
+      // Template might have been deleted, clear the stored ID
+      localStorage.removeItem(LAST_TEMPLATE_KEY);
+      return;
+    }
+
+    // Set the template
+    selectedTemplate.value = { id: data.id, name: data.name, description: data.description } as ItemTemplateSummary;
+    templateData.value = data;
+    form.quantity = data.defaultQuantity;
+    if (data.defaultName) {
+      form.name = data.defaultName;
+    }
+    if (data.defaultDescription) {
+      form.description = data.defaultDescription;
+    }
+    // Pre-fill location if template has one
+    if (data.defaultLocation) {
+      const found = locations.value.find(l => l.id === data.defaultLocation!.id);
+      if (found) {
+        form.location = found;
+      }
+    }
+    // Pre-fill labels from template
+    if (data.defaultLabels && data.defaultLabels.length > 0) {
+      form.labels = data.defaultLabels.map(l => l.id);
+    }
+  }
+
+  function clearTemplate() {
+    selectedTemplate.value = null;
+    templateData.value = null;
+    showTemplateDetails.value = false;
+    form.quantity = 1;
+    localStorage.removeItem(LAST_TEMPLATE_KEY);
+  }
 
   watch(
     parent,
@@ -364,6 +557,9 @@
       if (labelId.value) {
         form.labels = labels.value.filter(l => l.id === labelId.value).map(l => l.id);
       }
+
+      // Restore last used template if available
+      await restoreLastTemplate();
     });
 
     onUnmounted(cleanup);
@@ -384,16 +580,36 @@
 
     if (shift?.value) close = false;
 
-    const out: ItemCreate = {
-      parentId: form.parentId,
-      name: form.name,
-      quantity: form.quantity,
-      description: form.description,
-      locationId: form.location.id as string,
-      labelIds: form.labels,
-    };
+    let error, data;
 
-    const { error, data } = await api.items.create(out);
+    // If a template is selected, use the template creation endpoint
+    if (templateData.value) {
+      const templateRequest = {
+        name: form.name,
+        description: form.description,
+        locationId: form.location.id as string,
+        labelIds: form.labels,
+        quantity: form.quantity,
+      };
+
+      const result = await api.templates.createItem(templateData.value.id, templateRequest);
+      error = result.error;
+      data = result.data;
+    } else {
+      // Normal item creation without template
+      const out: ItemCreate = {
+        parentId: form.parentId,
+        name: form.name,
+        quantity: form.quantity,
+        description: form.description,
+        locationId: form.location.id as string,
+        labelIds: form.labels,
+      };
+
+      const result = await api.items.create(out);
+      error = result.error;
+      data = result.data;
+    }
 
     if (error) {
       loading.value = false;
@@ -434,6 +650,9 @@
     form.color = "";
     form.photos = [];
     form.labels = [];
+    selectedTemplate.value = null;
+    templateData.value = null;
+    showTemplateDetails.value = false;
     focused.value = false;
     loading.value = false;
 
