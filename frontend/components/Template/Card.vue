@@ -58,7 +58,7 @@
       defaultModelNumber: fullTemplate.defaultModelNumber,
       defaultLifetimeWarranty: fullTemplate.defaultLifetimeWarranty,
       defaultWarrantyDetails: fullTemplate.defaultWarrantyDetails,
-      defaultLocationId: fullTemplate.defaultLocation?.id ?? "",
+      defaultLocationId: fullTemplate.defaultLocation?.id ?? null,
       defaultLabelIds: fullTemplate.defaultLabels?.map(l => l.id) || [],
       includeWarrantyFields: fullTemplate.includeWarrantyFields,
       includePurchaseFields: fullTemplate.includePurchaseFields,
