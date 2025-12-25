@@ -11,6 +11,9 @@
   import MdiPlusBoxMultipleOutline from "~icons/mdi/plus-box-multiple-outline";
   import MdiContentSaveEdit from "~icons/mdi/content-save-edit";
   import MdiDotsVertical from "~icons/mdi/dots-vertical";
+  import MdiPrinter from "~icons/mdi/printer";
+  import MdiPrinterPos from "~icons/mdi/printer-pos";
+  import MdiLoading from "~icons/mdi/loading";
   import { Separator } from "@/components/ui/separator";
   import {
     DropdownMenu,
@@ -39,6 +42,7 @@
   import LabelChip from "~/components/Label/Chip.vue";
   import DateTime from "~/components/global/DateTime.vue";
   import LabelMaker from "~/components/global/LabelMaker.vue";
+  import LabelTemplatePrintDialog from "~/components/LabelTemplate/PrintDialog.vue";
   import Markdown from "~/components/global/Markdown.vue";
   import BaseCard from "@/components/Base/Card.vue";
   import CopyText from "@/components/global/CopyText.vue";
@@ -60,6 +64,28 @@
 
   const itemId = computed<string>(() => route.params.id as string);
   const preferences = useViewPreferences();
+
+  // Quick Print functionality
+  const { isQuickPrintAvailable, quickPrintItems } = useQuickPrint();
+  const isQuickPrinting = ref(false);
+
+  async function handleQuickPrint() {
+    if (!item.value) return;
+    isQuickPrinting.value = true;
+    try {
+      const success = await quickPrintItems([item.value.id]);
+      if (success) {
+        toast.success(t("items.quick_print_success"));
+      } else {
+        // Fallback to dialog if defaults not configured
+        openDialog(DialogID.PrintLabelTemplate, { params: { itemIds: [item.value.id] } });
+      }
+    } catch {
+      toast.error(t("items.quick_print_failed"));
+    } finally {
+      isQuickPrinting.value = false;
+    }
+  }
 
   const temporaryDuplicateSettings = ref<DuplicateSettings>({
     copyMaintenance: preferences.value.duplicateSettings.copyMaintenance,
@@ -630,6 +656,7 @@
     <Title>{{ item.name }}</Title>
 
     <ItemImageDialog />
+    <LabelTemplatePrintDialog />
     <Dialog :dialog-id="DialogID.DuplicateTemporarySettings">
       <DialogContent>
         <DialogHeader>
@@ -703,6 +730,18 @@
                 type="asset"
               />
               <LabelMaker v-else :id="item.id" type="item" />
+              <Button
+                v-if="isQuickPrintAvailable"
+                variant="outline"
+                class="w-9 md:w-auto"
+                :disabled="isQuickPrinting"
+                :aria-label="$t('items.quick_print')"
+                @click="handleQuickPrint"
+              >
+                <MdiLoading v-if="isQuickPrinting" class="animate-spin" />
+                <MdiPrinterPos v-else />
+                <span class="hidden md:inline">{{ $t("items.quick_print") }}</span>
+              </Button>
               <Button class="w-9 md:w-auto" :aria-label="$t('global.create_subitem')" @click="createSubitem">
                 <MdiPlus />
                 <span class="hidden md:inline">{{ $t("global.create_subitem") }}</span>
@@ -723,6 +762,17 @@
                   <DropdownMenuItem @click="saveAsTemplate">
                     <MdiContentSaveEdit class="mr-2 size-4" />
                     {{ $t("components.template.save_as_template") }}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem v-if="isQuickPrintAvailable" :disabled="isQuickPrinting" @click="handleQuickPrint">
+                    <MdiLoading v-if="isQuickPrinting" class="mr-2 size-4 animate-spin" />
+                    <MdiPrinterPos v-else class="mr-2 size-4" />
+                    {{ $t("items.quick_print") }}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    @click="openDialog(DialogID.PrintLabelTemplate, { params: { itemIds: [item.id] } })"
+                  >
+                    <MdiPrinter class="mr-2 size-4" />
+                    {{ $t("items.print_custom_label") }}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem class="text-destructive focus:text-destructive" @click="deleteItem">

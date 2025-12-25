@@ -37,6 +37,10 @@ const (
 	EdgeNotifiers = "notifiers"
 	// EdgeItemTemplates holds the string denoting the item_templates edge name in mutations.
 	EdgeItemTemplates = "item_templates"
+	// EdgeLabelTemplates holds the string denoting the label_templates edge name in mutations.
+	EdgeLabelTemplates = "label_templates"
+	// EdgePrinters holds the string denoting the printers edge name in mutations.
+	EdgePrinters = "printers"
 	// Table holds the table name of the group in the database.
 	Table = "groups"
 	// UsersTable is the table that holds the users relation/edge.
@@ -88,6 +92,20 @@ const (
 	ItemTemplatesInverseTable = "item_templates"
 	// ItemTemplatesColumn is the table column denoting the item_templates relation/edge.
 	ItemTemplatesColumn = "group_item_templates"
+	// LabelTemplatesTable is the table that holds the label_templates relation/edge.
+	LabelTemplatesTable = "label_templates"
+	// LabelTemplatesInverseTable is the table name for the LabelTemplate entity.
+	// It exists in this package in order to avoid circular dependency with the "labeltemplate" package.
+	LabelTemplatesInverseTable = "label_templates"
+	// LabelTemplatesColumn is the table column denoting the label_templates relation/edge.
+	LabelTemplatesColumn = "group_label_templates"
+	// PrintersTable is the table that holds the printers relation/edge.
+	PrintersTable = "printers"
+	// PrintersInverseTable is the table name for the Printer entity.
+	// It exists in this package in order to avoid circular dependency with the "printer" package.
+	PrintersInverseTable = "printers"
+	// PrintersColumn is the table column denoting the printers relation/edge.
+	PrintersColumn = "group_printers"
 )
 
 // Columns holds all SQL columns for group fields.
@@ -249,6 +267,34 @@ func ByItemTemplates(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newItemTemplatesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByLabelTemplatesCount orders the results by label_templates count.
+func ByLabelTemplatesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newLabelTemplatesStep(), opts...)
+	}
+}
+
+// ByLabelTemplates orders the results by label_templates terms.
+func ByLabelTemplates(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newLabelTemplatesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByPrintersCount orders the results by printers count.
+func ByPrintersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newPrintersStep(), opts...)
+	}
+}
+
+// ByPrinters orders the results by printers terms.
+func ByPrinters(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPrintersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newUsersStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -296,5 +342,19 @@ func newItemTemplatesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(ItemTemplatesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, ItemTemplatesTable, ItemTemplatesColumn),
+	)
+}
+func newLabelTemplatesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(LabelTemplatesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, LabelTemplatesTable, LabelTemplatesColumn),
+	)
+}
+func newPrintersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PrintersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, PrintersTable, PrintersColumn),
 	)
 }

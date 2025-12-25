@@ -48,9 +48,13 @@ type GroupEdges struct {
 	Notifiers []*Notifier `json:"notifiers,omitempty"`
 	// ItemTemplates holds the value of the item_templates edge.
 	ItemTemplates []*ItemTemplate `json:"item_templates,omitempty"`
+	// LabelTemplates holds the value of the label_templates edge.
+	LabelTemplates []*LabelTemplate `json:"label_templates,omitempty"`
+	// Printers holds the value of the printers edge.
+	Printers []*Printer `json:"printers,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [7]bool
+	loadedTypes [9]bool
 }
 
 // UsersOrErr returns the Users value or an error if the edge
@@ -114,6 +118,24 @@ func (e GroupEdges) ItemTemplatesOrErr() ([]*ItemTemplate, error) {
 		return e.ItemTemplates, nil
 	}
 	return nil, &NotLoadedError{edge: "item_templates"}
+}
+
+// LabelTemplatesOrErr returns the LabelTemplates value or an error if the edge
+// was not loaded in eager-loading.
+func (e GroupEdges) LabelTemplatesOrErr() ([]*LabelTemplate, error) {
+	if e.loadedTypes[7] {
+		return e.LabelTemplates, nil
+	}
+	return nil, &NotLoadedError{edge: "label_templates"}
+}
+
+// PrintersOrErr returns the Printers value or an error if the edge
+// was not loaded in eager-loading.
+func (e GroupEdges) PrintersOrErr() ([]*Printer, error) {
+	if e.loadedTypes[8] {
+		return e.Printers, nil
+	}
+	return nil, &NotLoadedError{edge: "printers"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -218,6 +240,16 @@ func (_m *Group) QueryNotifiers() *NotifierQuery {
 // QueryItemTemplates queries the "item_templates" edge of the Group entity.
 func (_m *Group) QueryItemTemplates() *ItemTemplateQuery {
 	return NewGroupClient(_m.config).QueryItemTemplates(_m)
+}
+
+// QueryLabelTemplates queries the "label_templates" edge of the Group entity.
+func (_m *Group) QueryLabelTemplates() *LabelTemplateQuery {
+	return NewGroupClient(_m.config).QueryLabelTemplates(_m)
+}
+
+// QueryPrinters queries the "printers" edge of the Group entity.
+func (_m *Group) QueryPrinters() *PrinterQuery {
+	return NewGroupClient(_m.config).QueryPrinters(_m)
 }
 
 // Update returns a builder for updating this Group.

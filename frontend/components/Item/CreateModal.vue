@@ -39,7 +39,7 @@
       </div>
     </template>
 
-    <form class="flex flex-col gap-2" @submit.prevent="create()">
+    <form class="flex min-w-0 flex-col gap-2" @submit.prevent="create()">
       <LocationSelector v-model="form.location" />
 
       <!-- Template Info Display - Collapsible banner with distinct styling -->

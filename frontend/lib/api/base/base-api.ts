@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { Requests } from "../../requests";
-import { route } from ".";
 
 const ZERO_DATE = "0001-01-01T00:00:00Z";
 
@@ -73,11 +72,10 @@ export class BaseAPI {
   }
 
   // if an attachmentToken is present, it will be added to URL as a query param
-  // this is done with a simple appending of the query param to the URL. If your
-  // URL already has a query param, this will not work.
   authURL(url: string): string {
     if (this.attachmentToken) {
-      return route(url, { access_token: this.attachmentToken });
+      const separator = url.includes("?") ? "&" : "?";
+      return `${url}${separator}access_token=${encodeURIComponent(this.attachmentToken)}`;
     }
     return url;
   }

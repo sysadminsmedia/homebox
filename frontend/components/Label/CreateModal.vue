@@ -1,6 +1,6 @@
 <template>
   <BaseModal :dialog-id="DialogID.CreateLabel" :title="$t('components.label.create_modal.title')">
-    <form class="flex flex-col gap-2" @submit.prevent="create()">
+    <form class="flex min-w-0 flex-col gap-2" @submit.prevent="create()">
       <FormTextField
         v-model="form.name"
         :trigger-focus="focused"

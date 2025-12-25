@@ -14,9 +14,11 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemfield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/labeltemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/printer"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
@@ -450,6 +452,77 @@ func init() {
 	labelDescID := labelMixinFields0[0].Descriptor()
 	// label.DefaultID holds the default value on creation for the id field.
 	label.DefaultID = labelDescID.Default.(func() uuid.UUID)
+	labeltemplateMixin := schema.LabelTemplate{}.Mixin()
+	labeltemplateMixinFields0 := labeltemplateMixin[0].Fields()
+	_ = labeltemplateMixinFields0
+	labeltemplateMixinFields1 := labeltemplateMixin[1].Fields()
+	_ = labeltemplateMixinFields1
+	labeltemplateFields := schema.LabelTemplate{}.Fields()
+	_ = labeltemplateFields
+	// labeltemplateDescCreatedAt is the schema descriptor for created_at field.
+	labeltemplateDescCreatedAt := labeltemplateMixinFields0[1].Descriptor()
+	// labeltemplate.DefaultCreatedAt holds the default value on creation for the created_at field.
+	labeltemplate.DefaultCreatedAt = labeltemplateDescCreatedAt.Default.(func() time.Time)
+	// labeltemplateDescUpdatedAt is the schema descriptor for updated_at field.
+	labeltemplateDescUpdatedAt := labeltemplateMixinFields0[2].Descriptor()
+	// labeltemplate.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	labeltemplate.DefaultUpdatedAt = labeltemplateDescUpdatedAt.Default.(func() time.Time)
+	// labeltemplate.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	labeltemplate.UpdateDefaultUpdatedAt = labeltemplateDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// labeltemplateDescName is the schema descriptor for name field.
+	labeltemplateDescName := labeltemplateMixinFields1[0].Descriptor()
+	// labeltemplate.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	labeltemplate.NameValidator = func() func(string) error {
+		validators := labeltemplateDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// labeltemplateDescDescription is the schema descriptor for description field.
+	labeltemplateDescDescription := labeltemplateMixinFields1[1].Descriptor()
+	// labeltemplate.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	labeltemplate.DescriptionValidator = labeltemplateDescDescription.Validators[0].(func(string) error)
+	// labeltemplateDescWidth is the schema descriptor for width field.
+	labeltemplateDescWidth := labeltemplateFields[0].Descriptor()
+	// labeltemplate.DefaultWidth holds the default value on creation for the width field.
+	labeltemplate.DefaultWidth = labeltemplateDescWidth.Default.(float64)
+	// labeltemplateDescHeight is the schema descriptor for height field.
+	labeltemplateDescHeight := labeltemplateFields[1].Descriptor()
+	// labeltemplate.DefaultHeight holds the default value on creation for the height field.
+	labeltemplate.DefaultHeight = labeltemplateDescHeight.Default.(float64)
+	// labeltemplateDescPreset is the schema descriptor for preset field.
+	labeltemplateDescPreset := labeltemplateFields[2].Descriptor()
+	// labeltemplate.PresetValidator is a validator for the "preset" field. It is called by the builders before save.
+	labeltemplate.PresetValidator = labeltemplateDescPreset.Validators[0].(func(string) error)
+	// labeltemplateDescIsShared is the schema descriptor for is_shared field.
+	labeltemplateDescIsShared := labeltemplateFields[3].Descriptor()
+	// labeltemplate.DefaultIsShared holds the default value on creation for the is_shared field.
+	labeltemplate.DefaultIsShared = labeltemplateDescIsShared.Default.(bool)
+	// labeltemplateDescOutputFormat is the schema descriptor for output_format field.
+	labeltemplateDescOutputFormat := labeltemplateFields[5].Descriptor()
+	// labeltemplate.DefaultOutputFormat holds the default value on creation for the output_format field.
+	labeltemplate.DefaultOutputFormat = labeltemplateDescOutputFormat.Default.(string)
+	// labeltemplateDescDpi is the schema descriptor for dpi field.
+	labeltemplateDescDpi := labeltemplateFields[6].Descriptor()
+	// labeltemplate.DefaultDpi holds the default value on creation for the dpi field.
+	labeltemplate.DefaultDpi = labeltemplateDescDpi.Default.(int)
+	// labeltemplateDescMediaType is the schema descriptor for media_type field.
+	labeltemplateDescMediaType := labeltemplateFields[7].Descriptor()
+	// labeltemplate.MediaTypeValidator is a validator for the "media_type" field. It is called by the builders before save.
+	labeltemplate.MediaTypeValidator = labeltemplateDescMediaType.Validators[0].(func(string) error)
+	// labeltemplateDescID is the schema descriptor for id field.
+	labeltemplateDescID := labeltemplateMixinFields0[0].Descriptor()
+	// labeltemplate.DefaultID holds the default value on creation for the id field.
+	labeltemplate.DefaultID = labeltemplateDescID.Default.(func() uuid.UUID)
 	locationMixin := schema.Location{}.Mixin()
 	locationMixinFields0 := locationMixin[0].Fields()
 	_ = locationMixinFields0
@@ -597,6 +670,103 @@ func init() {
 	notifierDescID := notifierMixinFields0[0].Descriptor()
 	// notifier.DefaultID holds the default value on creation for the id field.
 	notifier.DefaultID = notifierDescID.Default.(func() uuid.UUID)
+	printerMixin := schema.Printer{}.Mixin()
+	printerMixinFields0 := printerMixin[0].Fields()
+	_ = printerMixinFields0
+	printerMixinFields1 := printerMixin[1].Fields()
+	_ = printerMixinFields1
+	printerFields := schema.Printer{}.Fields()
+	_ = printerFields
+	// printerDescCreatedAt is the schema descriptor for created_at field.
+	printerDescCreatedAt := printerMixinFields0[1].Descriptor()
+	// printer.DefaultCreatedAt holds the default value on creation for the created_at field.
+	printer.DefaultCreatedAt = printerDescCreatedAt.Default.(func() time.Time)
+	// printerDescUpdatedAt is the schema descriptor for updated_at field.
+	printerDescUpdatedAt := printerMixinFields0[2].Descriptor()
+	// printer.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	printer.DefaultUpdatedAt = printerDescUpdatedAt.Default.(func() time.Time)
+	// printer.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	printer.UpdateDefaultUpdatedAt = printerDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// printerDescName is the schema descriptor for name field.
+	printerDescName := printerMixinFields1[0].Descriptor()
+	// printer.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	printer.NameValidator = func() func(string) error {
+		validators := printerDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// printerDescDescription is the schema descriptor for description field.
+	printerDescDescription := printerMixinFields1[1].Descriptor()
+	// printer.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	printer.DescriptionValidator = printerDescDescription.Validators[0].(func(string) error)
+	// printerDescAddress is the schema descriptor for address field.
+	printerDescAddress := printerFields[1].Descriptor()
+	// printer.AddressValidator is a validator for the "address" field. It is called by the builders before save.
+	printer.AddressValidator = func() func(string) error {
+		validators := printerDescAddress.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(address string) error {
+			for _, fn := range fns {
+				if err := fn(address); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// printerDescIsDefault is the schema descriptor for is_default field.
+	printerDescIsDefault := printerFields[2].Descriptor()
+	// printer.DefaultIsDefault holds the default value on creation for the is_default field.
+	printer.DefaultIsDefault = printerDescIsDefault.Default.(bool)
+	// printerDescLabelWidthMm is the schema descriptor for label_width_mm field.
+	printerDescLabelWidthMm := printerFields[3].Descriptor()
+	// printer.LabelWidthMmValidator is a validator for the "label_width_mm" field. It is called by the builders before save.
+	printer.LabelWidthMmValidator = printerDescLabelWidthMm.Validators[0].(func(float64) error)
+	// printerDescLabelHeightMm is the schema descriptor for label_height_mm field.
+	printerDescLabelHeightMm := printerFields[4].Descriptor()
+	// printer.LabelHeightMmValidator is a validator for the "label_height_mm" field. It is called by the builders before save.
+	printer.LabelHeightMmValidator = printerDescLabelHeightMm.Validators[0].(func(float64) error)
+	// printerDescDpi is the schema descriptor for dpi field.
+	printerDescDpi := printerFields[5].Descriptor()
+	// printer.DefaultDpi holds the default value on creation for the dpi field.
+	printer.DefaultDpi = printerDescDpi.Default.(int)
+	// printer.DpiValidator is a validator for the "dpi" field. It is called by the builders before save.
+	printer.DpiValidator = func() func(int) error {
+		validators := printerDescDpi.Validators
+		fns := [...]func(int) error{
+			validators[0].(func(int) error),
+			validators[1].(func(int) error),
+		}
+		return func(dpi int) error {
+			for _, fn := range fns {
+				if err := fn(dpi); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// printerDescMediaType is the schema descriptor for media_type field.
+	printerDescMediaType := printerFields[6].Descriptor()
+	// printer.MediaTypeValidator is a validator for the "media_type" field. It is called by the builders before save.
+	printer.MediaTypeValidator = printerDescMediaType.Validators[0].(func(string) error)
+	// printerDescID is the schema descriptor for id field.
+	printerDescID := printerMixinFields0[0].Descriptor()
+	// printer.DefaultID holds the default value on creation for the id field.
+	printer.DefaultID = printerDescID.Default.(func() uuid.UUID)
 	templatefieldMixin := schema.TemplateField{}.Mixin()
 	templatefieldMixinFields0 := templatefieldMixin[0].Fields()
 	_ = templatefieldMixinFields0

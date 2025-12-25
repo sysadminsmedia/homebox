@@ -15,13 +15,13 @@ import (
 
 // HandleUserRegistration godoc
 //
-//	@Summary	Register New User
-//	@Tags		User
-//	@Produce	json
-//	@Param		payload	body	services.UserRegistration	true	"User Data"
-//	@Success	204
-//  @Failure    403 {string} string "Local login is not enabled"
-//	@Router		/v1/users/register [Post]
+//		@Summary	Register New User
+//		@Tags		User
+//		@Produce	json
+//		@Param		payload	body	services.UserRegistration	true	"User Data"
+//		@Success	204
+//	 @Failure    403 {string} string "Local login is not enabled"
+//		@Router		/v1/users/register [Post]
 func (ctrl *V1Controller) HandleUserRegistration() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		// Forbidden if local login is not enabled

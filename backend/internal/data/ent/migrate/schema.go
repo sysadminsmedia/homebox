@@ -320,6 +320,61 @@ var (
 			},
 		},
 	}
+	// LabelTemplatesColumns holds the columns for the "label_templates" table.
+	LabelTemplatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 255},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "width", Type: field.TypeFloat64, Default: 62},
+		{Name: "height", Type: field.TypeFloat64, Default: 29},
+		{Name: "preset", Type: field.TypeString, Nullable: true, Size: 50},
+		{Name: "is_shared", Type: field.TypeBool, Default: false},
+		{Name: "canvas_data", Type: field.TypeJSON, Nullable: true},
+		{Name: "output_format", Type: field.TypeString, Default: "png"},
+		{Name: "dpi", Type: field.TypeInt, Default: 300},
+		{Name: "media_type", Type: field.TypeString, Nullable: true, Size: 50},
+		{Name: "group_label_templates", Type: field.TypeUUID},
+		{Name: "owner_id", Type: field.TypeUUID},
+	}
+	// LabelTemplatesTable holds the schema information for the "label_templates" table.
+	LabelTemplatesTable = &schema.Table{
+		Name:       "label_templates",
+		Columns:    LabelTemplatesColumns,
+		PrimaryKey: []*schema.Column{LabelTemplatesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "label_templates_groups_label_templates",
+				Columns:    []*schema.Column{LabelTemplatesColumns[13]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "label_templates_users_label_templates",
+				Columns:    []*schema.Column{LabelTemplatesColumns[14]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "labeltemplate_name",
+				Unique:  false,
+				Columns: []*schema.Column{LabelTemplatesColumns[3]},
+			},
+			{
+				Name:    "labeltemplate_is_shared",
+				Unique:  false,
+				Columns: []*schema.Column{LabelTemplatesColumns[8]},
+			},
+			{
+				Name:    "labeltemplate_preset",
+				Unique:  false,
+				Columns: []*schema.Column{LabelTemplatesColumns[7]},
+			},
+		},
+	}
 	// LocationsColumns holds the columns for the "locations" table.
 	LocationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -429,6 +484,55 @@ var (
 			},
 		},
 	}
+	// PrintersColumns holds the columns for the "printers" table.
+	PrintersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 255},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "printer_type", Type: field.TypeEnum, Enums: []string{"ipp", "cups", "brother_raster"}, Default: "ipp"},
+		{Name: "address", Type: field.TypeString, Size: 512},
+		{Name: "is_default", Type: field.TypeBool, Default: false},
+		{Name: "label_width_mm", Type: field.TypeFloat64, Nullable: true},
+		{Name: "label_height_mm", Type: field.TypeFloat64, Nullable: true},
+		{Name: "dpi", Type: field.TypeInt, Default: 300},
+		{Name: "media_type", Type: field.TypeString, Nullable: true, Size: 100},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"online", "offline", "unknown"}, Default: "unknown"},
+		{Name: "last_status_check", Type: field.TypeTime, Nullable: true},
+		{Name: "group_printers", Type: field.TypeUUID},
+	}
+	// PrintersTable holds the schema information for the "printers" table.
+	PrintersTable = &schema.Table{
+		Name:       "printers",
+		Columns:    PrintersColumns,
+		PrimaryKey: []*schema.Column{PrintersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "printers_groups_printers",
+				Columns:    []*schema.Column{PrintersColumns[14]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "printer_name",
+				Unique:  false,
+				Columns: []*schema.Column{PrintersColumns[3]},
+			},
+			{
+				Name:    "printer_is_default",
+				Unique:  false,
+				Columns: []*schema.Column{PrintersColumns[7]},
+			},
+			{
+				Name:    "printer_printer_type",
+				Unique:  false,
+				Columns: []*schema.Column{PrintersColumns[5]},
+			},
+		},
+	}
 	// TemplateFieldsColumns holds the columns for the "template_fields" table.
 	TemplateFieldsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -527,9 +631,11 @@ var (
 		ItemFieldsTable,
 		ItemTemplatesTable,
 		LabelsTable,
+		LabelTemplatesTable,
 		LocationsTable,
 		MaintenanceEntriesTable,
 		NotifiersTable,
+		PrintersTable,
 		TemplateFieldsTable,
 		UsersTable,
 		LabelItemsTable,
@@ -549,11 +655,14 @@ func init() {
 	ItemTemplatesTable.ForeignKeys[0].RefTable = GroupsTable
 	ItemTemplatesTable.ForeignKeys[1].RefTable = LocationsTable
 	LabelsTable.ForeignKeys[0].RefTable = GroupsTable
+	LabelTemplatesTable.ForeignKeys[0].RefTable = GroupsTable
+	LabelTemplatesTable.ForeignKeys[1].RefTable = UsersTable
 	LocationsTable.ForeignKeys[0].RefTable = GroupsTable
 	LocationsTable.ForeignKeys[1].RefTable = LocationsTable
 	MaintenanceEntriesTable.ForeignKeys[0].RefTable = ItemsTable
 	NotifiersTable.ForeignKeys[0].RefTable = GroupsTable
 	NotifiersTable.ForeignKeys[1].RefTable = UsersTable
+	PrintersTable.ForeignKeys[0].RefTable = GroupsTable
 	TemplateFieldsTable.ForeignKeys[0].RefTable = ItemTemplatesTable
 	UsersTable.ForeignKeys[0].RefTable = GroupsTable
 	LabelItemsTable.ForeignKeys[0].RefTable = LabelsTable

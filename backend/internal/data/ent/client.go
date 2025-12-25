@@ -25,9 +25,11 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemfield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/labeltemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/printer"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
@@ -55,12 +57,16 @@ type Client struct {
 	ItemTemplate *ItemTemplateClient
 	// Label is the client for interacting with the Label builders.
 	Label *LabelClient
+	// LabelTemplate is the client for interacting with the LabelTemplate builders.
+	LabelTemplate *LabelTemplateClient
 	// Location is the client for interacting with the Location builders.
 	Location *LocationClient
 	// MaintenanceEntry is the client for interacting with the MaintenanceEntry builders.
 	MaintenanceEntry *MaintenanceEntryClient
 	// Notifier is the client for interacting with the Notifier builders.
 	Notifier *NotifierClient
+	// Printer is the client for interacting with the Printer builders.
+	Printer *PrinterClient
 	// TemplateField is the client for interacting with the TemplateField builders.
 	TemplateField *TemplateFieldClient
 	// User is the client for interacting with the User builders.
@@ -85,9 +91,11 @@ func (c *Client) init() {
 	c.ItemField = NewItemFieldClient(c.config)
 	c.ItemTemplate = NewItemTemplateClient(c.config)
 	c.Label = NewLabelClient(c.config)
+	c.LabelTemplate = NewLabelTemplateClient(c.config)
 	c.Location = NewLocationClient(c.config)
 	c.MaintenanceEntry = NewMaintenanceEntryClient(c.config)
 	c.Notifier = NewNotifierClient(c.config)
+	c.Printer = NewPrinterClient(c.config)
 	c.TemplateField = NewTemplateFieldClient(c.config)
 	c.User = NewUserClient(c.config)
 }
@@ -191,9 +199,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ItemField:            NewItemFieldClient(cfg),
 		ItemTemplate:         NewItemTemplateClient(cfg),
 		Label:                NewLabelClient(cfg),
+		LabelTemplate:        NewLabelTemplateClient(cfg),
 		Location:             NewLocationClient(cfg),
 		MaintenanceEntry:     NewMaintenanceEntryClient(cfg),
 		Notifier:             NewNotifierClient(cfg),
+		Printer:              NewPrinterClient(cfg),
 		TemplateField:        NewTemplateFieldClient(cfg),
 		User:                 NewUserClient(cfg),
 	}, nil
@@ -224,9 +234,11 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ItemField:            NewItemFieldClient(cfg),
 		ItemTemplate:         NewItemTemplateClient(cfg),
 		Label:                NewLabelClient(cfg),
+		LabelTemplate:        NewLabelTemplateClient(cfg),
 		Location:             NewLocationClient(cfg),
 		MaintenanceEntry:     NewMaintenanceEntryClient(cfg),
 		Notifier:             NewNotifierClient(cfg),
+		Printer:              NewPrinterClient(cfg),
 		TemplateField:        NewTemplateFieldClient(cfg),
 		User:                 NewUserClient(cfg),
 	}, nil
@@ -259,8 +271,8 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Attachment, c.AuthRoles, c.AuthTokens, c.Group, c.GroupInvitationToken,
-		c.Item, c.ItemField, c.ItemTemplate, c.Label, c.Location, c.MaintenanceEntry,
-		c.Notifier, c.TemplateField, c.User,
+		c.Item, c.ItemField, c.ItemTemplate, c.Label, c.LabelTemplate, c.Location,
+		c.MaintenanceEntry, c.Notifier, c.Printer, c.TemplateField, c.User,
 	} {
 		n.Use(hooks...)
 	}
@@ -271,8 +283,8 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Attachment, c.AuthRoles, c.AuthTokens, c.Group, c.GroupInvitationToken,
-		c.Item, c.ItemField, c.ItemTemplate, c.Label, c.Location, c.MaintenanceEntry,
-		c.Notifier, c.TemplateField, c.User,
+		c.Item, c.ItemField, c.ItemTemplate, c.Label, c.LabelTemplate, c.Location,
+		c.MaintenanceEntry, c.Notifier, c.Printer, c.TemplateField, c.User,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -299,12 +311,16 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.ItemTemplate.mutate(ctx, m)
 	case *LabelMutation:
 		return c.Label.mutate(ctx, m)
+	case *LabelTemplateMutation:
+		return c.LabelTemplate.mutate(ctx, m)
 	case *LocationMutation:
 		return c.Location.mutate(ctx, m)
 	case *MaintenanceEntryMutation:
 		return c.MaintenanceEntry.mutate(ctx, m)
 	case *NotifierMutation:
 		return c.Notifier.mutate(ctx, m)
+	case *PrinterMutation:
+		return c.Printer.mutate(ctx, m)
 	case *TemplateFieldMutation:
 		return c.TemplateField.mutate(ctx, m)
 	case *UserMutation:
@@ -1006,6 +1022,38 @@ func (c *GroupClient) QueryItemTemplates(_m *Group) *ItemTemplateQuery {
 			sqlgraph.From(group.Table, group.FieldID, id),
 			sqlgraph.To(itemtemplate.Table, itemtemplate.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, group.ItemTemplatesTable, group.ItemTemplatesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryLabelTemplates queries the label_templates edge of a Group.
+func (c *GroupClient) QueryLabelTemplates(_m *Group) *LabelTemplateQuery {
+	query := (&LabelTemplateClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, id),
+			sqlgraph.To(labeltemplate.Table, labeltemplate.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.LabelTemplatesTable, group.LabelTemplatesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryPrinters queries the printers edge of a Group.
+func (c *GroupClient) QueryPrinters(_m *Group) *PrinterQuery {
+	query := (&PrinterClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, id),
+			sqlgraph.To(printer.Table, printer.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.PrintersTable, group.PrintersColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil
@@ -1943,6 +1991,171 @@ func (c *LabelClient) mutate(ctx context.Context, m *LabelMutation) (Value, erro
 	}
 }
 
+// LabelTemplateClient is a client for the LabelTemplate schema.
+type LabelTemplateClient struct {
+	config
+}
+
+// NewLabelTemplateClient returns a client for the LabelTemplate from the given config.
+func NewLabelTemplateClient(c config) *LabelTemplateClient {
+	return &LabelTemplateClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `labeltemplate.Hooks(f(g(h())))`.
+func (c *LabelTemplateClient) Use(hooks ...Hook) {
+	c.hooks.LabelTemplate = append(c.hooks.LabelTemplate, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `labeltemplate.Intercept(f(g(h())))`.
+func (c *LabelTemplateClient) Intercept(interceptors ...Interceptor) {
+	c.inters.LabelTemplate = append(c.inters.LabelTemplate, interceptors...)
+}
+
+// Create returns a builder for creating a LabelTemplate entity.
+func (c *LabelTemplateClient) Create() *LabelTemplateCreate {
+	mutation := newLabelTemplateMutation(c.config, OpCreate)
+	return &LabelTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of LabelTemplate entities.
+func (c *LabelTemplateClient) CreateBulk(builders ...*LabelTemplateCreate) *LabelTemplateCreateBulk {
+	return &LabelTemplateCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *LabelTemplateClient) MapCreateBulk(slice any, setFunc func(*LabelTemplateCreate, int)) *LabelTemplateCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &LabelTemplateCreateBulk{err: fmt.Errorf("calling to LabelTemplateClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*LabelTemplateCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &LabelTemplateCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for LabelTemplate.
+func (c *LabelTemplateClient) Update() *LabelTemplateUpdate {
+	mutation := newLabelTemplateMutation(c.config, OpUpdate)
+	return &LabelTemplateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *LabelTemplateClient) UpdateOne(_m *LabelTemplate) *LabelTemplateUpdateOne {
+	mutation := newLabelTemplateMutation(c.config, OpUpdateOne, withLabelTemplate(_m))
+	return &LabelTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *LabelTemplateClient) UpdateOneID(id uuid.UUID) *LabelTemplateUpdateOne {
+	mutation := newLabelTemplateMutation(c.config, OpUpdateOne, withLabelTemplateID(id))
+	return &LabelTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for LabelTemplate.
+func (c *LabelTemplateClient) Delete() *LabelTemplateDelete {
+	mutation := newLabelTemplateMutation(c.config, OpDelete)
+	return &LabelTemplateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *LabelTemplateClient) DeleteOne(_m *LabelTemplate) *LabelTemplateDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *LabelTemplateClient) DeleteOneID(id uuid.UUID) *LabelTemplateDeleteOne {
+	builder := c.Delete().Where(labeltemplate.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &LabelTemplateDeleteOne{builder}
+}
+
+// Query returns a query builder for LabelTemplate.
+func (c *LabelTemplateClient) Query() *LabelTemplateQuery {
+	return &LabelTemplateQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeLabelTemplate},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a LabelTemplate entity by its id.
+func (c *LabelTemplateClient) Get(ctx context.Context, id uuid.UUID) (*LabelTemplate, error) {
+	return c.Query().Where(labeltemplate.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *LabelTemplateClient) GetX(ctx context.Context, id uuid.UUID) *LabelTemplate {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryGroup queries the group edge of a LabelTemplate.
+func (c *LabelTemplateClient) QueryGroup(_m *LabelTemplate) *GroupQuery {
+	query := (&GroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(labeltemplate.Table, labeltemplate.FieldID, id),
+			sqlgraph.To(group.Table, group.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, labeltemplate.GroupTable, labeltemplate.GroupColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryOwner queries the owner edge of a LabelTemplate.
+func (c *LabelTemplateClient) QueryOwner(_m *LabelTemplate) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(labeltemplate.Table, labeltemplate.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, labeltemplate.OwnerTable, labeltemplate.OwnerColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *LabelTemplateClient) Hooks() []Hook {
+	return c.hooks.LabelTemplate
+}
+
+// Interceptors returns the client interceptors.
+func (c *LabelTemplateClient) Interceptors() []Interceptor {
+	return c.inters.LabelTemplate
+}
+
+func (c *LabelTemplateClient) mutate(ctx context.Context, m *LabelTemplateMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&LabelTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&LabelTemplateUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&LabelTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&LabelTemplateDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown LabelTemplate mutation op: %q", m.Op())
+	}
+}
+
 // LocationClient is a client for the Location schema.
 type LocationClient struct {
 	config
@@ -2454,6 +2667,155 @@ func (c *NotifierClient) mutate(ctx context.Context, m *NotifierMutation) (Value
 	}
 }
 
+// PrinterClient is a client for the Printer schema.
+type PrinterClient struct {
+	config
+}
+
+// NewPrinterClient returns a client for the Printer from the given config.
+func NewPrinterClient(c config) *PrinterClient {
+	return &PrinterClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `printer.Hooks(f(g(h())))`.
+func (c *PrinterClient) Use(hooks ...Hook) {
+	c.hooks.Printer = append(c.hooks.Printer, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `printer.Intercept(f(g(h())))`.
+func (c *PrinterClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Printer = append(c.inters.Printer, interceptors...)
+}
+
+// Create returns a builder for creating a Printer entity.
+func (c *PrinterClient) Create() *PrinterCreate {
+	mutation := newPrinterMutation(c.config, OpCreate)
+	return &PrinterCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Printer entities.
+func (c *PrinterClient) CreateBulk(builders ...*PrinterCreate) *PrinterCreateBulk {
+	return &PrinterCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PrinterClient) MapCreateBulk(slice any, setFunc func(*PrinterCreate, int)) *PrinterCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PrinterCreateBulk{err: fmt.Errorf("calling to PrinterClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PrinterCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PrinterCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Printer.
+func (c *PrinterClient) Update() *PrinterUpdate {
+	mutation := newPrinterMutation(c.config, OpUpdate)
+	return &PrinterUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PrinterClient) UpdateOne(_m *Printer) *PrinterUpdateOne {
+	mutation := newPrinterMutation(c.config, OpUpdateOne, withPrinter(_m))
+	return &PrinterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PrinterClient) UpdateOneID(id uuid.UUID) *PrinterUpdateOne {
+	mutation := newPrinterMutation(c.config, OpUpdateOne, withPrinterID(id))
+	return &PrinterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Printer.
+func (c *PrinterClient) Delete() *PrinterDelete {
+	mutation := newPrinterMutation(c.config, OpDelete)
+	return &PrinterDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PrinterClient) DeleteOne(_m *Printer) *PrinterDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PrinterClient) DeleteOneID(id uuid.UUID) *PrinterDeleteOne {
+	builder := c.Delete().Where(printer.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PrinterDeleteOne{builder}
+}
+
+// Query returns a query builder for Printer.
+func (c *PrinterClient) Query() *PrinterQuery {
+	return &PrinterQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePrinter},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Printer entity by its id.
+func (c *PrinterClient) Get(ctx context.Context, id uuid.UUID) (*Printer, error) {
+	return c.Query().Where(printer.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PrinterClient) GetX(ctx context.Context, id uuid.UUID) *Printer {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryGroup queries the group edge of a Printer.
+func (c *PrinterClient) QueryGroup(_m *Printer) *GroupQuery {
+	query := (&GroupClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(printer.Table, printer.FieldID, id),
+			sqlgraph.To(group.Table, group.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, printer.GroupTable, printer.GroupColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *PrinterClient) Hooks() []Hook {
+	return c.hooks.Printer
+}
+
+// Interceptors returns the client interceptors.
+func (c *PrinterClient) Interceptors() []Interceptor {
+	return c.inters.Printer
+}
+
+func (c *PrinterClient) mutate(ctx context.Context, m *PrinterMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PrinterCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PrinterUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PrinterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PrinterDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Printer mutation op: %q", m.Op())
+	}
+}
+
 // TemplateFieldClient is a client for the TemplateField schema.
 type TemplateFieldClient struct {
 	config
@@ -2759,6 +3121,22 @@ func (c *UserClient) QueryNotifiers(_m *User) *NotifierQuery {
 	return query
 }
 
+// QueryLabelTemplates queries the label_templates edge of a User.
+func (c *UserClient) QueryLabelTemplates(_m *User) *LabelTemplateQuery {
+	query := (&LabelTemplateClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(labeltemplate.Table, labeltemplate.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.LabelTemplatesTable, user.LabelTemplatesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -2788,12 +3166,12 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 type (
 	hooks struct {
 		Attachment, AuthRoles, AuthTokens, Group, GroupInvitationToken, Item, ItemField,
-		ItemTemplate, Label, Location, MaintenanceEntry, Notifier, TemplateField,
-		User []ent.Hook
+		ItemTemplate, Label, LabelTemplate, Location, MaintenanceEntry, Notifier,
+		Printer, TemplateField, User []ent.Hook
 	}
 	inters struct {
 		Attachment, AuthRoles, AuthTokens, Group, GroupInvitationToken, Item, ItemField,
-		ItemTemplate, Label, Location, MaintenanceEntry, Notifier, TemplateField,
-		User []ent.Interceptor
+		ItemTemplate, Label, LabelTemplate, Location, MaintenanceEntry, Notifier,
+		Printer, TemplateField, User []ent.Interceptor
 	}
 )

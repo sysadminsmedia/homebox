@@ -21,9 +21,11 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemfield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/labeltemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/printer"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
@@ -95,9 +97,11 @@ func checkColumn(t, c string) error {
 			itemfield.Table:            itemfield.ValidColumn,
 			itemtemplate.Table:         itemtemplate.ValidColumn,
 			label.Table:                label.ValidColumn,
+			labeltemplate.Table:        labeltemplate.ValidColumn,
 			location.Table:             location.ValidColumn,
 			maintenanceentry.Table:     maintenanceentry.ValidColumn,
 			notifier.Table:             notifier.ValidColumn,
+			printer.Table:              printer.ValidColumn,
 			templatefield.Table:        templatefield.ValidColumn,
 			user.Table:                 user.ValidColumn,
 		})

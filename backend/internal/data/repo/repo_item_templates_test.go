@@ -249,7 +249,7 @@ func TestItemTemplatesRepository_CreateWithLocation(t *testing.T) {
 
 	// Create template with location
 	data := templateFactory()
-	data.DefaultLocationID = &loc.ID
+	data.DefaultLocationID = loc.ID
 
 	template, err := tRepos.ItemTemplates.Create(context.Background(), tGroup.ID, data)
 	require.NoError(t, err)
@@ -311,7 +311,7 @@ func TestItemTemplatesRepository_UpdateRemoveLocation(t *testing.T) {
 
 	// Create template with location
 	data := templateFactory()
-	data.DefaultLocationID = &loc.ID
+	data.DefaultLocationID = loc.ID
 
 	template, err := tRepos.ItemTemplates.Create(context.Background(), tGroup.ID, data)
 	require.NoError(t, err)
@@ -323,7 +323,7 @@ func TestItemTemplatesRepository_UpdateRemoveLocation(t *testing.T) {
 		ID:                template.ID,
 		Name:              template.Name,
 		DefaultQuantity:   &qty,
-		DefaultLocationID: nil, // Remove location
+		DefaultLocationID: uuid.Nil, // Remove location
 	}
 
 	updated, err := tRepos.ItemTemplates.Update(context.Background(), tGroup.ID, updateData)

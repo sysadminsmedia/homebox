@@ -40,6 +40,10 @@ func (_m *Label) GetID() uuid.UUID {
 	return _m.ID
 }
 
+func (_m *LabelTemplate) GetID() uuid.UUID {
+	return _m.ID
+}
+
 func (_m *Location) GetID() uuid.UUID {
 	return _m.ID
 }
@@ -49,6 +53,10 @@ func (_m *MaintenanceEntry) GetID() uuid.UUID {
 }
 
 func (_m *Notifier) GetID() uuid.UUID {
+	return _m.ID
+}
+
+func (_m *Printer) GetID() uuid.UUID {
 	return _m.ID
 }
 

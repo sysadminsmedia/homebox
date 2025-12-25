@@ -49,6 +49,8 @@ func (Group) Edges() []ent.Edge {
 		owned("invitation_tokens", GroupInvitationToken.Type),
 		owned("notifiers", Notifier.Type),
 		owned("item_templates", ItemTemplate.Type),
+		owned("label_templates", LabelTemplate.Type),
+		owned("printers", Printer.Type),
 		// $scaffold_edge
 	}
 }

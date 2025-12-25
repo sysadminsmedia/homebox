@@ -56,9 +56,11 @@ type UserEdges struct {
 	AuthTokens []*AuthTokens `json:"auth_tokens,omitempty"`
 	// Notifiers holds the value of the notifiers edge.
 	Notifiers []*Notifier `json:"notifiers,omitempty"`
+	// LabelTemplates holds the value of the label_templates edge.
+	LabelTemplates []*LabelTemplate `json:"label_templates,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // GroupOrErr returns the Group value or an error if the edge
@@ -88,6 +90,15 @@ func (e UserEdges) NotifiersOrErr() ([]*Notifier, error) {
 		return e.Notifiers, nil
 	}
 	return nil, &NotLoadedError{edge: "notifiers"}
+}
+
+// LabelTemplatesOrErr returns the LabelTemplates value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) LabelTemplatesOrErr() ([]*LabelTemplate, error) {
+	if e.loadedTypes[3] {
+		return e.LabelTemplates, nil
+	}
+	return nil, &NotLoadedError{edge: "label_templates"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -228,6 +239,11 @@ func (_m *User) QueryAuthTokens() *AuthTokensQuery {
 // QueryNotifiers queries the "notifiers" edge of the User entity.
 func (_m *User) QueryNotifiers() *NotifierQuery {
 	return NewUserClient(_m.config).QueryNotifiers(_m)
+}
+
+// QueryLabelTemplates queries the "label_templates" edge of the User entity.
+func (_m *User) QueryLabelTemplates() *LabelTemplateQuery {
+	return NewUserClient(_m.config).QueryLabelTemplates(_m)
 }
 
 // Update returns a builder for updating this User.
