@@ -557,6 +557,15 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrint() errchain.HandlerFunc {
 			CanvasData: template.CanvasData,
 		}
 
+		// Re-validate printer address for defense-in-depth (prevents SSRF if DB is compromised)
+		if err := printer.ValidatePrinterAddress(printerOut.Address, ctrl.config.Printer.AllowPublicAddresses); err != nil {
+			return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
+				Success:     false,
+				Message:     "Printer address validation failed: " + err.Error(),
+				PrinterName: printerOut.Name,
+			})
+		}
+
 		// Create printer client
 		printerClient, err := printer.NewPrinterClient(printer.PrinterType(printerOut.PrinterType), printerOut.Address)
 		if err != nil {
@@ -908,6 +917,15 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrintLocations() errchain.HandlerF
 			Height:     template.Height,
 			DPI:        template.DPI,
 			CanvasData: template.CanvasData,
+		}
+
+		// Re-validate printer address for defense-in-depth (prevents SSRF if DB is compromised)
+		if err := printer.ValidatePrinterAddress(printerOut.Address, ctrl.config.Printer.AllowPublicAddresses); err != nil {
+			return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
+				Success:     false,
+				Message:     "Printer address validation failed: " + err.Error(),
+				PrinterName: printerOut.Name,
+			})
 		}
 
 		// Create printer client

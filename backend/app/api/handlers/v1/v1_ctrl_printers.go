@@ -163,6 +163,15 @@ func (ctrl *V1Controller) HandlePrintersStatus() errchain.HandlerFunc {
 			return PrinterStatusResponse{}, err
 		}
 
+		// Re-validate printer address for defense-in-depth (prevents SSRF if DB is compromised)
+		if err := printer.ValidatePrinterAddress(p.Address, ctrl.config.Printer.AllowPublicAddresses); err != nil {
+			return PrinterStatusResponse{
+				Status:      "invalid",
+				Message:     "Printer address failed validation: " + err.Error(),
+				SupportsIPP: false,
+			}, nil
+		}
+
 		// Create printer client
 		client, err := printer.NewPrinterClient(printer.PrinterType(p.PrinterType), p.Address)
 		if err != nil {
@@ -234,6 +243,14 @@ func (ctrl *V1Controller) HandlePrintersTest() errchain.HandlerFunc {
 		p, err := ctrl.repo.Printers.GetOne(r.Context(), auth.GID, id)
 		if err != nil {
 			return err
+		}
+
+		// Re-validate printer address for defense-in-depth (prevents SSRF if DB is compromised)
+		if err := printer.ValidatePrinterAddress(p.Address, ctrl.config.Printer.AllowPublicAddresses); err != nil {
+			return server.JSON(w, http.StatusOK, PrinterTestResponse{
+				Success: false,
+				Message: "Printer address failed validation: " + err.Error(),
+			})
 		}
 
 		// Create printer client
