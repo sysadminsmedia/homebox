@@ -8,6 +8,7 @@ import (
 	"image/png"
 
 	"codeberg.org/go-pdf/fpdf"
+	"github.com/rs/zerolog/log"
 )
 
 // PDFPageSize represents common paper sizes
@@ -88,6 +89,9 @@ func (r *TemplateRenderer) renderPDFWithSheetLayout(template *TemplateData, item
 	if len(items) == 0 {
 		return nil, fmt.Errorf("at least one item is required")
 	}
+	if layout.Columns <= 0 || layout.Rows <= 0 {
+		return nil, fmt.Errorf("sheet layout must have positive columns (%d) and rows (%d)", layout.Columns, layout.Rows)
+	}
 
 	// Create PDF with custom page size matching the sheet
 	pdf := fpdf.NewCustom(&fpdf.InitType{
@@ -104,6 +108,7 @@ func (r *TemplateRenderer) renderPDFWithSheetLayout(template *TemplateData, item
 	labelHeight := template.Height
 
 	// Render labels page by page
+	skipped := 0
 	for i, item := range items {
 		// Add new page if needed
 		if i%labelsPerPage == 0 {
@@ -124,12 +129,16 @@ func (r *TemplateRenderer) renderPDFWithSheetLayout(template *TemplateData, item
 			Template: template,
 		})
 		if err != nil {
+			log.Warn().Err(err).Int("index", i).Msg("failed to render label template, skipping")
+			skipped++
 			continue
 		}
 
 		// Decode PNG
 		img, err := png.Decode(bytes.NewReader(imgData))
 		if err != nil {
+			log.Warn().Err(err).Int("index", i).Msg("failed to decode rendered PNG, skipping")
+			skipped++
 			continue
 		}
 
@@ -141,6 +150,10 @@ func (r *TemplateRenderer) renderPDFWithSheetLayout(template *TemplateData, item
 		pdf.ImageOptions(imgName, x, y, labelWidth, labelHeight, false, fpdf.ImageOptions{ImageType: "PNG"}, 0, "")
 
 		_ = img
+	}
+
+	if skipped > 0 {
+		log.Warn().Int("skipped", skipped).Int("total", len(items)).Msg("some labels were skipped during PDF generation")
 	}
 
 	// Output PDF to buffer
@@ -169,6 +182,9 @@ func (r *TemplateRenderer) renderLocationsPDFWithSheetLayout(template *TemplateD
 	if len(locations) == 0 {
 		return nil, fmt.Errorf("at least one location is required")
 	}
+	if layout.Columns <= 0 || layout.Rows <= 0 {
+		return nil, fmt.Errorf("sheet layout must have positive columns (%d) and rows (%d)", layout.Columns, layout.Rows)
+	}
 
 	// Create PDF with custom page size matching the sheet
 	pdf := fpdf.NewCustom(&fpdf.InitType{
@@ -185,6 +201,7 @@ func (r *TemplateRenderer) renderLocationsPDFWithSheetLayout(template *TemplateD
 	labelHeight := template.Height
 
 	// Render labels page by page
+	skipped := 0
 	for i, location := range locations {
 		// Add new page if needed
 		if i%labelsPerPage == 0 {
@@ -205,12 +222,16 @@ func (r *TemplateRenderer) renderLocationsPDFWithSheetLayout(template *TemplateD
 			Template: template,
 		})
 		if err != nil {
+			log.Warn().Err(err).Int("index", i).Msg("failed to render location label template, skipping")
+			skipped++
 			continue
 		}
 
 		// Decode PNG
 		img, err := png.Decode(bytes.NewReader(imgData))
 		if err != nil {
+			log.Warn().Err(err).Int("index", i).Msg("failed to decode rendered PNG, skipping")
+			skipped++
 			continue
 		}
 
@@ -222,6 +243,10 @@ func (r *TemplateRenderer) renderLocationsPDFWithSheetLayout(template *TemplateD
 		pdf.ImageOptions(imgName, x, y, labelWidth, labelHeight, false, fpdf.ImageOptions{ImageType: "PNG"}, 0, "")
 
 		_ = img
+	}
+
+	if skipped > 0 {
+		log.Warn().Int("skipped", skipped).Int("total", len(locations)).Msg("some location labels were skipped during PDF generation")
 	}
 
 	// Output PDF to buffer
