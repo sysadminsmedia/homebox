@@ -1,4 +1,6 @@
 -- +goose Up
+-- +goose no transaction
+PRAGMA foreign_keys=OFF;
 -- SQLite doesn't support ALTER COLUMN directly, so we need to recreate the table
 -- Create a temporary table with the new schema
 CREATE TABLE users_temp (
@@ -30,3 +32,4 @@ ALTER TABLE users_temp RENAME TO users;
 
 -- Recreate the unique index
 CREATE UNIQUE INDEX users_email_key on users (email);
+PRAGMA foreign_keys=ON;
