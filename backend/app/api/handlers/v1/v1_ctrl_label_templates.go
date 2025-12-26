@@ -975,11 +975,13 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrintLocations() errchain.HandlerF
 
 		var lastJobID int
 		labelsPrinted := 0
+		labelsSkipped := 0
 
 		for _, printLoc := range locationsToPrint {
 			loc, err := ctrl.getLocationWithCount(r.Context(), auth.GID, printLoc.ID)
 			if err != nil {
 				log.Warn().Err(err).Str("locationID", printLoc.ID.String()).Msg("failed to fetch location for printing")
+				labelsSkipped++
 				continue
 			}
 
@@ -993,6 +995,7 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrintLocations() errchain.HandlerF
 			})
 			if err != nil {
 				log.Warn().Err(err).Str("locationID", printLoc.ID.String()).Str("locationName", loc.Name).Msg("failed to render location label for printing")
+				labelsSkipped++
 				continue
 			}
 
@@ -1011,6 +1014,7 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrintLocations() errchain.HandlerF
 				urfData, err := printer.ConvertPNGToURF(pngData, dpi)
 				if err != nil {
 					log.Warn().Err(err).Str("locationID", printLoc.ID.String()).Str("locationName", loc.Name).Msg("failed to convert location label to URF format")
+					labelsSkipped++
 					continue
 				}
 				printData = urfData
@@ -1051,10 +1055,15 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrintLocations() errchain.HandlerF
 			})
 		}
 
+		message := fmt.Sprintf("Successfully sent %d location label(s) to printer", labelsPrinted)
+		if labelsSkipped > 0 {
+			message = fmt.Sprintf("Sent %d location label(s) to printer (%d skipped due to errors)", labelsPrinted, labelsSkipped)
+		}
+
 		return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
 			Success:     true,
 			JobID:       lastJobID,
-			Message:     fmt.Sprintf("Successfully sent %d location label(s) to printer", labelsPrinted),
+			Message:     message,
 			LabelCount:  labelsPrinted,
 			PrinterName: printerOut.Name,
 		})

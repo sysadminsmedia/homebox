@@ -495,6 +495,9 @@ func (r *TemplateRenderer) RenderToSheet(template *TemplateData, items []*ItemDa
 	if len(items) == 0 {
 		return nil, fmt.Errorf("at least one item is required")
 	}
+	if layout.Columns <= 0 || layout.Rows <= 0 {
+		return nil, fmt.Errorf("sheet layout must have positive columns (%d) and rows (%d)", layout.Columns, layout.Rows)
+	}
 
 	// Calculate sheet dimensions in pixels (use 300 DPI for high quality)
 	sheetDPI := 300
@@ -587,6 +590,9 @@ func (r *TemplateRenderer) RenderToSheets(template *TemplateData, items []*ItemD
 	}
 	if len(items) == 0 {
 		return nil, fmt.Errorf("at least one item is required")
+	}
+	if layout.Columns <= 0 || layout.Rows <= 0 {
+		return nil, fmt.Errorf("sheet layout must have positive columns (%d) and rows (%d)", layout.Columns, layout.Rows)
 	}
 
 	labelsPerPage := layout.Columns * layout.Rows

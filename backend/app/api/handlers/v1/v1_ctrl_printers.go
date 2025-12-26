@@ -235,6 +235,13 @@ func (ctrl *V1Controller) HandlePrintersTest() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		auth := services.NewContext(r.Context())
 
+		// Parse optional request body
+		var body PrinterTestRequest
+		if err := server.Decode(r, &body); err != nil {
+			// Ignore decode errors - body is optional
+			body = PrinterTestRequest{}
+		}
+
 		idParam := r.PathValue("id")
 		id, err := uuid.Parse(idParam)
 		if err != nil {
@@ -266,9 +273,15 @@ func (ctrl *V1Controller) HandlePrintersTest() errchain.HandlerFunc {
 		// Create a simple test label (1x1 inch white PNG)
 		testData := createTestLabelPNG()
 
+		// Use custom message if provided, otherwise use default
+		docName := "HomeBox Test Print"
+		if body.Message != "" {
+			docName = body.Message
+		}
+
 		// Send test print
 		result, err := client.Print(r.Context(), &printer.PrintJob{
-			DocumentName: "HomeBox Test Print",
+			DocumentName: docName,
 			ContentType:  "image/png",
 			Data:         testData,
 			Copies:       1,
