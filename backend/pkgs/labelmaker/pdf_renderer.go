@@ -7,7 +7,7 @@ import (
 	"image/draw"
 	"image/png"
 
-	"github.com/go-pdf/fpdf"
+	"codeberg.org/go-pdf/fpdf"
 )
 
 // PDFPageSize represents common paper sizes
