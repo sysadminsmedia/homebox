@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/disintegration/imaging"
+	"github.com/anthonynsimon/bild/transform"
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
 	"github.com/google/uuid"
@@ -575,8 +575,8 @@ func (r *TemplateRenderer) renderTextRotated(img *image.RGBA, elem CanvasElement
 	}
 
 	// Rotate the temporary image
-	// Fabric.js uses clockwise rotation, imaging.Rotate uses counter-clockwise
-	rotatedImg := imaging.Rotate(tempImg, -elem.Angle, color.Transparent)
+	// Fabric.js uses clockwise rotation, bild's transform.Rotate uses counter-clockwise
+	rotatedImg := transform.Rotate(tempImg, -elem.Angle, nil)
 
 	// Get rotated image dimensions and composite onto main image
 	rotatedBounds := rotatedImg.Bounds()
