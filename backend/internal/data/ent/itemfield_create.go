@@ -23,162 +23,162 @@ type ItemFieldCreate struct {
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (ifc *ItemFieldCreate) SetCreatedAt(t time.Time) *ItemFieldCreate {
-	ifc.mutation.SetCreatedAt(t)
-	return ifc
+func (_c *ItemFieldCreate) SetCreatedAt(v time.Time) *ItemFieldCreate {
+	_c.mutation.SetCreatedAt(v)
+	return _c
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (ifc *ItemFieldCreate) SetNillableCreatedAt(t *time.Time) *ItemFieldCreate {
-	if t != nil {
-		ifc.SetCreatedAt(*t)
+func (_c *ItemFieldCreate) SetNillableCreatedAt(v *time.Time) *ItemFieldCreate {
+	if v != nil {
+		_c.SetCreatedAt(*v)
 	}
-	return ifc
+	return _c
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (ifc *ItemFieldCreate) SetUpdatedAt(t time.Time) *ItemFieldCreate {
-	ifc.mutation.SetUpdatedAt(t)
-	return ifc
+func (_c *ItemFieldCreate) SetUpdatedAt(v time.Time) *ItemFieldCreate {
+	_c.mutation.SetUpdatedAt(v)
+	return _c
 }
 
 // SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (ifc *ItemFieldCreate) SetNillableUpdatedAt(t *time.Time) *ItemFieldCreate {
-	if t != nil {
-		ifc.SetUpdatedAt(*t)
+func (_c *ItemFieldCreate) SetNillableUpdatedAt(v *time.Time) *ItemFieldCreate {
+	if v != nil {
+		_c.SetUpdatedAt(*v)
 	}
-	return ifc
+	return _c
 }
 
 // SetName sets the "name" field.
-func (ifc *ItemFieldCreate) SetName(s string) *ItemFieldCreate {
-	ifc.mutation.SetName(s)
-	return ifc
+func (_c *ItemFieldCreate) SetName(v string) *ItemFieldCreate {
+	_c.mutation.SetName(v)
+	return _c
 }
 
 // SetDescription sets the "description" field.
-func (ifc *ItemFieldCreate) SetDescription(s string) *ItemFieldCreate {
-	ifc.mutation.SetDescription(s)
-	return ifc
+func (_c *ItemFieldCreate) SetDescription(v string) *ItemFieldCreate {
+	_c.mutation.SetDescription(v)
+	return _c
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (ifc *ItemFieldCreate) SetNillableDescription(s *string) *ItemFieldCreate {
-	if s != nil {
-		ifc.SetDescription(*s)
+func (_c *ItemFieldCreate) SetNillableDescription(v *string) *ItemFieldCreate {
+	if v != nil {
+		_c.SetDescription(*v)
 	}
-	return ifc
+	return _c
 }
 
 // SetType sets the "type" field.
-func (ifc *ItemFieldCreate) SetType(i itemfield.Type) *ItemFieldCreate {
-	ifc.mutation.SetType(i)
-	return ifc
+func (_c *ItemFieldCreate) SetType(v itemfield.Type) *ItemFieldCreate {
+	_c.mutation.SetType(v)
+	return _c
 }
 
 // SetTextValue sets the "text_value" field.
-func (ifc *ItemFieldCreate) SetTextValue(s string) *ItemFieldCreate {
-	ifc.mutation.SetTextValue(s)
-	return ifc
+func (_c *ItemFieldCreate) SetTextValue(v string) *ItemFieldCreate {
+	_c.mutation.SetTextValue(v)
+	return _c
 }
 
 // SetNillableTextValue sets the "text_value" field if the given value is not nil.
-func (ifc *ItemFieldCreate) SetNillableTextValue(s *string) *ItemFieldCreate {
-	if s != nil {
-		ifc.SetTextValue(*s)
+func (_c *ItemFieldCreate) SetNillableTextValue(v *string) *ItemFieldCreate {
+	if v != nil {
+		_c.SetTextValue(*v)
 	}
-	return ifc
+	return _c
 }
 
 // SetNumberValue sets the "number_value" field.
-func (ifc *ItemFieldCreate) SetNumberValue(i int) *ItemFieldCreate {
-	ifc.mutation.SetNumberValue(i)
-	return ifc
+func (_c *ItemFieldCreate) SetNumberValue(v int) *ItemFieldCreate {
+	_c.mutation.SetNumberValue(v)
+	return _c
 }
 
 // SetNillableNumberValue sets the "number_value" field if the given value is not nil.
-func (ifc *ItemFieldCreate) SetNillableNumberValue(i *int) *ItemFieldCreate {
-	if i != nil {
-		ifc.SetNumberValue(*i)
+func (_c *ItemFieldCreate) SetNillableNumberValue(v *int) *ItemFieldCreate {
+	if v != nil {
+		_c.SetNumberValue(*v)
 	}
-	return ifc
+	return _c
 }
 
 // SetBooleanValue sets the "boolean_value" field.
-func (ifc *ItemFieldCreate) SetBooleanValue(b bool) *ItemFieldCreate {
-	ifc.mutation.SetBooleanValue(b)
-	return ifc
+func (_c *ItemFieldCreate) SetBooleanValue(v bool) *ItemFieldCreate {
+	_c.mutation.SetBooleanValue(v)
+	return _c
 }
 
 // SetNillableBooleanValue sets the "boolean_value" field if the given value is not nil.
-func (ifc *ItemFieldCreate) SetNillableBooleanValue(b *bool) *ItemFieldCreate {
-	if b != nil {
-		ifc.SetBooleanValue(*b)
+func (_c *ItemFieldCreate) SetNillableBooleanValue(v *bool) *ItemFieldCreate {
+	if v != nil {
+		_c.SetBooleanValue(*v)
 	}
-	return ifc
+	return _c
 }
 
 // SetTimeValue sets the "time_value" field.
-func (ifc *ItemFieldCreate) SetTimeValue(t time.Time) *ItemFieldCreate {
-	ifc.mutation.SetTimeValue(t)
-	return ifc
+func (_c *ItemFieldCreate) SetTimeValue(v time.Time) *ItemFieldCreate {
+	_c.mutation.SetTimeValue(v)
+	return _c
 }
 
 // SetNillableTimeValue sets the "time_value" field if the given value is not nil.
-func (ifc *ItemFieldCreate) SetNillableTimeValue(t *time.Time) *ItemFieldCreate {
-	if t != nil {
-		ifc.SetTimeValue(*t)
+func (_c *ItemFieldCreate) SetNillableTimeValue(v *time.Time) *ItemFieldCreate {
+	if v != nil {
+		_c.SetTimeValue(*v)
 	}
-	return ifc
+	return _c
 }
 
 // SetID sets the "id" field.
-func (ifc *ItemFieldCreate) SetID(u uuid.UUID) *ItemFieldCreate {
-	ifc.mutation.SetID(u)
-	return ifc
+func (_c *ItemFieldCreate) SetID(v uuid.UUID) *ItemFieldCreate {
+	_c.mutation.SetID(v)
+	return _c
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (ifc *ItemFieldCreate) SetNillableID(u *uuid.UUID) *ItemFieldCreate {
-	if u != nil {
-		ifc.SetID(*u)
+func (_c *ItemFieldCreate) SetNillableID(v *uuid.UUID) *ItemFieldCreate {
+	if v != nil {
+		_c.SetID(*v)
 	}
-	return ifc
+	return _c
 }
 
 // SetItemID sets the "item" edge to the Item entity by ID.
-func (ifc *ItemFieldCreate) SetItemID(id uuid.UUID) *ItemFieldCreate {
-	ifc.mutation.SetItemID(id)
-	return ifc
+func (_c *ItemFieldCreate) SetItemID(id uuid.UUID) *ItemFieldCreate {
+	_c.mutation.SetItemID(id)
+	return _c
 }
 
 // SetNillableItemID sets the "item" edge to the Item entity by ID if the given value is not nil.
-func (ifc *ItemFieldCreate) SetNillableItemID(id *uuid.UUID) *ItemFieldCreate {
+func (_c *ItemFieldCreate) SetNillableItemID(id *uuid.UUID) *ItemFieldCreate {
 	if id != nil {
-		ifc = ifc.SetItemID(*id)
+		_c = _c.SetItemID(*id)
 	}
-	return ifc
+	return _c
 }
 
 // SetItem sets the "item" edge to the Item entity.
-func (ifc *ItemFieldCreate) SetItem(i *Item) *ItemFieldCreate {
-	return ifc.SetItemID(i.ID)
+func (_c *ItemFieldCreate) SetItem(v *Item) *ItemFieldCreate {
+	return _c.SetItemID(v.ID)
 }
 
 // Mutation returns the ItemFieldMutation object of the builder.
-func (ifc *ItemFieldCreate) Mutation() *ItemFieldMutation {
-	return ifc.mutation
+func (_c *ItemFieldCreate) Mutation() *ItemFieldMutation {
+	return _c.mutation
 }
 
 // Save creates the ItemField in the database.
-func (ifc *ItemFieldCreate) Save(ctx context.Context) (*ItemField, error) {
-	ifc.defaults()
-	return withHooks(ctx, ifc.sqlSave, ifc.mutation, ifc.hooks)
+func (_c *ItemFieldCreate) Save(ctx context.Context) (*ItemField, error) {
+	_c.defaults()
+	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (ifc *ItemFieldCreate) SaveX(ctx context.Context) *ItemField {
-	v, err := ifc.Save(ctx)
+func (_c *ItemFieldCreate) SaveX(ctx context.Context) *ItemField {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -186,91 +186,91 @@ func (ifc *ItemFieldCreate) SaveX(ctx context.Context) *ItemField {
 }
 
 // Exec executes the query.
-func (ifc *ItemFieldCreate) Exec(ctx context.Context) error {
-	_, err := ifc.Save(ctx)
+func (_c *ItemFieldCreate) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ifc *ItemFieldCreate) ExecX(ctx context.Context) {
-	if err := ifc.Exec(ctx); err != nil {
+func (_c *ItemFieldCreate) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (ifc *ItemFieldCreate) defaults() {
-	if _, ok := ifc.mutation.CreatedAt(); !ok {
+func (_c *ItemFieldCreate) defaults() {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
 		v := itemfield.DefaultCreatedAt()
-		ifc.mutation.SetCreatedAt(v)
+		_c.mutation.SetCreatedAt(v)
 	}
-	if _, ok := ifc.mutation.UpdatedAt(); !ok {
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		v := itemfield.DefaultUpdatedAt()
-		ifc.mutation.SetUpdatedAt(v)
+		_c.mutation.SetUpdatedAt(v)
 	}
-	if _, ok := ifc.mutation.BooleanValue(); !ok {
+	if _, ok := _c.mutation.BooleanValue(); !ok {
 		v := itemfield.DefaultBooleanValue
-		ifc.mutation.SetBooleanValue(v)
+		_c.mutation.SetBooleanValue(v)
 	}
-	if _, ok := ifc.mutation.TimeValue(); !ok {
+	if _, ok := _c.mutation.TimeValue(); !ok {
 		v := itemfield.DefaultTimeValue()
-		ifc.mutation.SetTimeValue(v)
+		_c.mutation.SetTimeValue(v)
 	}
-	if _, ok := ifc.mutation.ID(); !ok {
+	if _, ok := _c.mutation.ID(); !ok {
 		v := itemfield.DefaultID()
-		ifc.mutation.SetID(v)
+		_c.mutation.SetID(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (ifc *ItemFieldCreate) check() error {
-	if _, ok := ifc.mutation.CreatedAt(); !ok {
+func (_c *ItemFieldCreate) check() error {
+	if _, ok := _c.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "ItemField.created_at"`)}
 	}
-	if _, ok := ifc.mutation.UpdatedAt(); !ok {
+	if _, ok := _c.mutation.UpdatedAt(); !ok {
 		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "ItemField.updated_at"`)}
 	}
-	if _, ok := ifc.mutation.Name(); !ok {
+	if _, ok := _c.mutation.Name(); !ok {
 		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "ItemField.name"`)}
 	}
-	if v, ok := ifc.mutation.Name(); ok {
+	if v, ok := _c.mutation.Name(); ok {
 		if err := itemfield.NameValidator(v); err != nil {
 			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "ItemField.name": %w`, err)}
 		}
 	}
-	if v, ok := ifc.mutation.Description(); ok {
+	if v, ok := _c.mutation.Description(); ok {
 		if err := itemfield.DescriptionValidator(v); err != nil {
 			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "ItemField.description": %w`, err)}
 		}
 	}
-	if _, ok := ifc.mutation.GetType(); !ok {
+	if _, ok := _c.mutation.GetType(); !ok {
 		return &ValidationError{Name: "type", err: errors.New(`ent: missing required field "ItemField.type"`)}
 	}
-	if v, ok := ifc.mutation.GetType(); ok {
+	if v, ok := _c.mutation.GetType(); ok {
 		if err := itemfield.TypeValidator(v); err != nil {
 			return &ValidationError{Name: "type", err: fmt.Errorf(`ent: validator failed for field "ItemField.type": %w`, err)}
 		}
 	}
-	if v, ok := ifc.mutation.TextValue(); ok {
+	if v, ok := _c.mutation.TextValue(); ok {
 		if err := itemfield.TextValueValidator(v); err != nil {
 			return &ValidationError{Name: "text_value", err: fmt.Errorf(`ent: validator failed for field "ItemField.text_value": %w`, err)}
 		}
 	}
-	if _, ok := ifc.mutation.BooleanValue(); !ok {
+	if _, ok := _c.mutation.BooleanValue(); !ok {
 		return &ValidationError{Name: "boolean_value", err: errors.New(`ent: missing required field "ItemField.boolean_value"`)}
 	}
-	if _, ok := ifc.mutation.TimeValue(); !ok {
+	if _, ok := _c.mutation.TimeValue(); !ok {
 		return &ValidationError{Name: "time_value", err: errors.New(`ent: missing required field "ItemField.time_value"`)}
 	}
 	return nil
 }
 
-func (ifc *ItemFieldCreate) sqlSave(ctx context.Context) (*ItemField, error) {
-	if err := ifc.check(); err != nil {
+func (_c *ItemFieldCreate) sqlSave(ctx context.Context) (*ItemField, error) {
+	if err := _c.check(); err != nil {
 		return nil, err
 	}
-	_node, _spec := ifc.createSpec()
-	if err := sqlgraph.CreateNode(ctx, ifc.driver, _spec); err != nil {
+	_node, _spec := _c.createSpec()
+	if err := sqlgraph.CreateNode(ctx, _c.driver, _spec); err != nil {
 		if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -283,57 +283,57 @@ func (ifc *ItemFieldCreate) sqlSave(ctx context.Context) (*ItemField, error) {
 			return nil, err
 		}
 	}
-	ifc.mutation.id = &_node.ID
-	ifc.mutation.done = true
+	_c.mutation.id = &_node.ID
+	_c.mutation.done = true
 	return _node, nil
 }
 
-func (ifc *ItemFieldCreate) createSpec() (*ItemField, *sqlgraph.CreateSpec) {
+func (_c *ItemFieldCreate) createSpec() (*ItemField, *sqlgraph.CreateSpec) {
 	var (
-		_node = &ItemField{config: ifc.config}
+		_node = &ItemField{config: _c.config}
 		_spec = sqlgraph.NewCreateSpec(itemfield.Table, sqlgraph.NewFieldSpec(itemfield.FieldID, field.TypeUUID))
 	)
-	if id, ok := ifc.mutation.ID(); ok {
+	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
-	if value, ok := ifc.mutation.CreatedAt(); ok {
+	if value, ok := _c.mutation.CreatedAt(); ok {
 		_spec.SetField(itemfield.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
-	if value, ok := ifc.mutation.UpdatedAt(); ok {
+	if value, ok := _c.mutation.UpdatedAt(); ok {
 		_spec.SetField(itemfield.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
-	if value, ok := ifc.mutation.Name(); ok {
+	if value, ok := _c.mutation.Name(); ok {
 		_spec.SetField(itemfield.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
-	if value, ok := ifc.mutation.Description(); ok {
+	if value, ok := _c.mutation.Description(); ok {
 		_spec.SetField(itemfield.FieldDescription, field.TypeString, value)
 		_node.Description = value
 	}
-	if value, ok := ifc.mutation.GetType(); ok {
+	if value, ok := _c.mutation.GetType(); ok {
 		_spec.SetField(itemfield.FieldType, field.TypeEnum, value)
 		_node.Type = value
 	}
-	if value, ok := ifc.mutation.TextValue(); ok {
+	if value, ok := _c.mutation.TextValue(); ok {
 		_spec.SetField(itemfield.FieldTextValue, field.TypeString, value)
 		_node.TextValue = value
 	}
-	if value, ok := ifc.mutation.NumberValue(); ok {
+	if value, ok := _c.mutation.NumberValue(); ok {
 		_spec.SetField(itemfield.FieldNumberValue, field.TypeInt, value)
 		_node.NumberValue = value
 	}
-	if value, ok := ifc.mutation.BooleanValue(); ok {
+	if value, ok := _c.mutation.BooleanValue(); ok {
 		_spec.SetField(itemfield.FieldBooleanValue, field.TypeBool, value)
 		_node.BooleanValue = value
 	}
-	if value, ok := ifc.mutation.TimeValue(); ok {
+	if value, ok := _c.mutation.TimeValue(); ok {
 		_spec.SetField(itemfield.FieldTimeValue, field.TypeTime, value)
 		_node.TimeValue = value
 	}
-	if nodes := ifc.mutation.ItemIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.ItemIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
@@ -361,16 +361,16 @@ type ItemFieldCreateBulk struct {
 }
 
 // Save creates the ItemField entities in the database.
-func (ifcb *ItemFieldCreateBulk) Save(ctx context.Context) ([]*ItemField, error) {
-	if ifcb.err != nil {
-		return nil, ifcb.err
+func (_c *ItemFieldCreateBulk) Save(ctx context.Context) ([]*ItemField, error) {
+	if _c.err != nil {
+		return nil, _c.err
 	}
-	specs := make([]*sqlgraph.CreateSpec, len(ifcb.builders))
-	nodes := make([]*ItemField, len(ifcb.builders))
-	mutators := make([]Mutator, len(ifcb.builders))
-	for i := range ifcb.builders {
+	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
+	nodes := make([]*ItemField, len(_c.builders))
+	mutators := make([]Mutator, len(_c.builders))
+	for i := range _c.builders {
 		func(i int, root context.Context) {
-			builder := ifcb.builders[i]
+			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*ItemFieldMutation)
@@ -384,11 +384,11 @@ func (ifcb *ItemFieldCreateBulk) Save(ctx context.Context) ([]*ItemField, error)
 				var err error
 				nodes[i], specs[i] = builder.createSpec()
 				if i < len(mutators)-1 {
-					_, err = mutators[i+1].Mutate(root, ifcb.builders[i+1].mutation)
+					_, err = mutators[i+1].Mutate(root, _c.builders[i+1].mutation)
 				} else {
 					spec := &sqlgraph.BatchCreateSpec{Nodes: specs}
 					// Invoke the actual operation on the latest mutation in the chain.
-					if err = sqlgraph.BatchCreate(ctx, ifcb.driver, spec); err != nil {
+					if err = sqlgraph.BatchCreate(ctx, _c.driver, spec); err != nil {
 						if sqlgraph.IsConstraintError(err) {
 							err = &ConstraintError{msg: err.Error(), wrap: err}
 						}
@@ -408,7 +408,7 @@ func (ifcb *ItemFieldCreateBulk) Save(ctx context.Context) ([]*ItemField, error)
 		}(i, ctx)
 	}
 	if len(mutators) > 0 {
-		if _, err := mutators[0].Mutate(ctx, ifcb.builders[0].mutation); err != nil {
+		if _, err := mutators[0].Mutate(ctx, _c.builders[0].mutation); err != nil {
 			return nil, err
 		}
 	}
@@ -416,8 +416,8 @@ func (ifcb *ItemFieldCreateBulk) Save(ctx context.Context) ([]*ItemField, error)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (ifcb *ItemFieldCreateBulk) SaveX(ctx context.Context) []*ItemField {
-	v, err := ifcb.Save(ctx)
+func (_c *ItemFieldCreateBulk) SaveX(ctx context.Context) []*ItemField {
+	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -425,14 +425,14 @@ func (ifcb *ItemFieldCreateBulk) SaveX(ctx context.Context) []*ItemField {
 }
 
 // Exec executes the query.
-func (ifcb *ItemFieldCreateBulk) Exec(ctx context.Context) error {
-	_, err := ifcb.Save(ctx)
+func (_c *ItemFieldCreateBulk) Exec(ctx context.Context) error {
+	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (ifcb *ItemFieldCreateBulk) ExecX(ctx context.Context) {
-	if err := ifcb.Exec(ctx); err != nil {
+func (_c *ItemFieldCreateBulk) ExecX(ctx context.Context) {
+	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }

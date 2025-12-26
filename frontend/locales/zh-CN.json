@@ -138,16 +138,51 @@
                 "searching": "搜索中…"
             },
             "view": {
+                "change_details": {
+                    "add_labels": "添加标签",
+                    "failed_to_update_item": "更新项目失败",
+                    "remove_labels": "删除标签",
+                    "title": "更改项目详细信息"
+                },
                 "selectable": {
                     "card": "卡片模式",
                     "items": "物品",
                     "no_items": "没有可展示的物品",
+                    "select_all": "全选",
+                    "select_card": "选定卡片",
+                    "select_row": "选定行",
                     "table": "表格模式"
                 },
                 "table": {
+                    "dropdown": {
+                        "actions": "动作",
+                        "change_labels": "更改标签",
+                        "change_labels_success": "标签已更改",
+                        "change_location": "更改位置",
+                        "change_location_success": "位置已更改",
+                        "create_maintenance_item": "为物品创建维护项目",
+                        "create_maintenance_selected": "为所选物品创建维护项目",
+                        "create_maintenance_success": "已创建维护项目",
+                        "delete_confirmation": "您确定要删除所选物品吗？此操作无法撤消。",
+                        "delete_item": "删除物品",
+                        "delete_selected": "删除选中的物品",
+                        "download_csv": "下载表格（CSV格式）",
+                        "download_json": "下载表格（JSON格式）",
+                        "duplicate_item": "复制物品",
+                        "duplicate_selected": "复制所选物品",
+                        "error_deleting": "删除物品出错",
+                        "error_duplicating": "复制物品出错",
+                        "open_menu": "打开菜单",
+                        "open_multi_tab_warning": "出于安全原因，默认情况下浏览器不允许一次打开多个选项卡，要更改此设置，请按照文档进行操作：",
+                        "toggle_expand": "展开/折叠",
+                        "view_item": "查看物品",
+                        "view_items": "查看物品"
+                    },
                     "headers": "页眉",
                     "page": "页",
+                    "quick_actions": "启用 快速操作&选择",
                     "rows_per_page": "每页行数",
+                    "selected_rows": "{selected} / {total} 行被选中。",
                     "table_settings": "表格设置",
                     "view_item": "查看项目"
                 }
@@ -232,6 +267,7 @@
         "name": "名称",
         "navigate": "导航",
         "password": "密码",
+        "preview": "预览",
         "quantity": "数量",
         "read_docs": "查阅文档",
         "return_home": "回到主页",
@@ -292,6 +328,18 @@
         "description": "说明",
         "details": "详情",
         "drag_and_drop": "将文件拖拽到此或点击添加文件",
+        "duplicate": {
+            "copy_attachments": "复制附件",
+            "copy_custom_fields": "复制自定义字段",
+            "copy_maintenance": "复制维护项目",
+            "custom_prefix": "复制前缀",
+            "enable_custom_prefix": "启用自定义前缀",
+            "override_instructions": "单击复制按钮时按住shift键以覆盖这些设置。",
+            "prefix": "复制于 ",
+            "prefix_instructions": "该前缀将被添加到重复物品名称的开头。前缀末尾将会加上一个空格，以便在前缀和项名称之间有空格分隔。",
+            "temporary_title": "临时设置",
+            "title": "复制设置"
+        },
         "edit": {
             "edit_attachment_dialog": {
                 "attachment_title": "附件标题",
@@ -300,7 +348,8 @@
                 "primary_photo_sub": "此项仅适用于照片。只有一张可以设为封面。如果选择此选项，若有，则当前封面将被替换。",
                 "select_type": "选择类型",
                 "title": "附件编辑"
-            }
+            },
+            "view_image": "查看图片"
         },
         "edit_details": "编辑详情",
         "field_selector": "字段选择",
@@ -398,6 +447,7 @@
         "update_label": "更新标签"
     },
     "languages": {
+        "bs-BA": "波斯尼亚语（波斯尼亚和黑塞哥维那）",
         "ca": "加泰罗尼亚语",
         "cs-CZ": "捷克语",
         "de": "德语",
@@ -425,6 +475,7 @@
         "th-TH": "泰语",
         "tr": "土耳其语",
         "uk-UA": "乌克兰语",
+        "vi-VN": "越南语",
         "zh-CN": "中文（简体）",
         "zh-HK": "中文（香港）",
         "zh-MO": "中文（澳门）",
@@ -512,6 +563,7 @@
         "group_settings_sub": "共享组设置。您可能需要刷新浏览器来让某些设置生效。",
         "inactive": "未启用",
         "language": "语言",
+        "legacy_image_fit": "{currentValue, select, true {禁用旧版适合：适合条形码的图像} false {启用旧版适合：裁剪以图像} other {未命中}}",
         "new_password": "新密码",
         "no_notifiers": "尚未配置通知器",
         "no_override": "没有预算",

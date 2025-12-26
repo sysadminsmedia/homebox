@@ -89,7 +89,7 @@ func (*Label) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the Label fields.
-func (l *Label) assignValues(columns []string, values []any) error {
+func (_m *Label) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -99,47 +99,47 @@ func (l *Label) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
-				l.ID = *value
+				_m.ID = *value
 			}
 		case label.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
-				l.CreatedAt = value.Time
+				_m.CreatedAt = value.Time
 			}
 		case label.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
-				l.UpdatedAt = value.Time
+				_m.UpdatedAt = value.Time
 			}
 		case label.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
-				l.Name = value.String
+				_m.Name = value.String
 			}
 		case label.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
-				l.Description = value.String
+				_m.Description = value.String
 			}
 		case label.FieldColor:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field color", values[i])
 			} else if value.Valid {
-				l.Color = value.String
+				_m.Color = value.String
 			}
 		case label.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field group_labels", values[i])
 			} else if value.Valid {
-				l.group_labels = new(uuid.UUID)
-				*l.group_labels = *value.S.(*uuid.UUID)
+				_m.group_labels = new(uuid.UUID)
+				*_m.group_labels = *value.S.(*uuid.UUID)
 			}
 		default:
-			l.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -147,57 +147,57 @@ func (l *Label) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the Label.
 // This includes values selected through modifiers, order, etc.
-func (l *Label) Value(name string) (ent.Value, error) {
-	return l.selectValues.Get(name)
+func (_m *Label) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // QueryGroup queries the "group" edge of the Label entity.
-func (l *Label) QueryGroup() *GroupQuery {
-	return NewLabelClient(l.config).QueryGroup(l)
+func (_m *Label) QueryGroup() *GroupQuery {
+	return NewLabelClient(_m.config).QueryGroup(_m)
 }
 
 // QueryItems queries the "items" edge of the Label entity.
-func (l *Label) QueryItems() *ItemQuery {
-	return NewLabelClient(l.config).QueryItems(l)
+func (_m *Label) QueryItems() *ItemQuery {
+	return NewLabelClient(_m.config).QueryItems(_m)
 }
 
 // Update returns a builder for updating this Label.
 // Note that you need to call Label.Unwrap() before calling this method if this Label
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (l *Label) Update() *LabelUpdateOne {
-	return NewLabelClient(l.config).UpdateOne(l)
+func (_m *Label) Update() *LabelUpdateOne {
+	return NewLabelClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the Label entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (l *Label) Unwrap() *Label {
-	_tx, ok := l.config.driver.(*txDriver)
+func (_m *Label) Unwrap() *Label {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: Label is not a transactional entity")
 	}
-	l.config.driver = _tx.drv
-	return l
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (l *Label) String() string {
+func (_m *Label) String() string {
 	var builder strings.Builder
 	builder.WriteString("Label(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", l.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("created_at=")
-	builder.WriteString(l.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
-	builder.WriteString(l.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(_m.UpdatedAt.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("name=")
-	builder.WriteString(l.Name)
+	builder.WriteString(_m.Name)
 	builder.WriteString(", ")
 	builder.WriteString("description=")
-	builder.WriteString(l.Description)
+	builder.WriteString(_m.Description)
 	builder.WriteString(", ")
 	builder.WriteString("color=")
-	builder.WriteString(l.Color)
+	builder.WriteString(_m.Color)
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -246,6 +246,56 @@ var (
 			},
 		},
 	}
+	// ItemTemplatesColumns holds the columns for the "item_templates" table.
+	ItemTemplatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 255},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "notes", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "default_quantity", Type: field.TypeInt, Default: 1},
+		{Name: "default_insured", Type: field.TypeBool, Default: false},
+		{Name: "default_name", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "default_description", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "default_manufacturer", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "default_model_number", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "default_lifetime_warranty", Type: field.TypeBool, Default: false},
+		{Name: "default_warranty_details", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "include_warranty_fields", Type: field.TypeBool, Default: false},
+		{Name: "include_purchase_fields", Type: field.TypeBool, Default: false},
+		{Name: "include_sold_fields", Type: field.TypeBool, Default: false},
+		{Name: "default_label_ids", Type: field.TypeJSON, Nullable: true},
+		{Name: "group_item_templates", Type: field.TypeUUID},
+		{Name: "item_template_location", Type: field.TypeUUID, Nullable: true},
+	}
+	// ItemTemplatesTable holds the schema information for the "item_templates" table.
+	ItemTemplatesTable = &schema.Table{
+		Name:       "item_templates",
+		Columns:    ItemTemplatesColumns,
+		PrimaryKey: []*schema.Column{ItemTemplatesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "item_templates_groups_item_templates",
+				Columns:    []*schema.Column{ItemTemplatesColumns[18]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "item_templates_locations_location",
+				Columns:    []*schema.Column{ItemTemplatesColumns[19]},
+				RefColumns: []*schema.Column{LocationsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "itemtemplate_name",
+				Unique:  false,
+				Columns: []*schema.Column{ItemTemplatesColumns[3]},
+			},
+		},
+	}
 	// LabelsColumns holds the columns for the "labels" table.
 	LabelsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -379,6 +429,31 @@ var (
 			},
 		},
 	}
+	// TemplateFieldsColumns holds the columns for the "template_fields" table.
+	TemplateFieldsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 255},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "type", Type: field.TypeEnum, Enums: []string{"text"}},
+		{Name: "text_value", Type: field.TypeString, Nullable: true, Size: 500},
+		{Name: "item_template_fields", Type: field.TypeUUID, Nullable: true},
+	}
+	// TemplateFieldsTable holds the schema information for the "template_fields" table.
+	TemplateFieldsTable = &schema.Table{
+		Name:       "template_fields",
+		Columns:    TemplateFieldsColumns,
+		PrimaryKey: []*schema.Column{TemplateFieldsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "template_fields_item_templates_fields",
+				Columns:    []*schema.Column{TemplateFieldsColumns[7]},
+				RefColumns: []*schema.Column{ItemTemplatesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -386,11 +461,13 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Size: 255},
 		{Name: "email", Type: field.TypeString, Unique: true, Size: 255},
-		{Name: "password", Type: field.TypeString, Size: 255},
+		{Name: "password", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "is_superuser", Type: field.TypeBool, Default: false},
 		{Name: "superuser", Type: field.TypeBool, Default: false},
 		{Name: "role", Type: field.TypeEnum, Enums: []string{"user", "owner"}, Default: "user"},
 		{Name: "activated_on", Type: field.TypeTime, Nullable: true},
+		{Name: "oidc_issuer", Type: field.TypeString, Nullable: true},
+		{Name: "oidc_subject", Type: field.TypeString, Nullable: true},
 		{Name: "group_users", Type: field.TypeUUID},
 	}
 	// UsersTable holds the schema information for the "users" table.
@@ -401,9 +478,16 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "users_groups_users",
-				Columns:    []*schema.Column{UsersColumns[10]},
+				Columns:    []*schema.Column{UsersColumns[12]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
 				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "user_oidc_issuer_oidc_subject",
+				Unique:  true,
+				Columns: []*schema.Column{UsersColumns[10], UsersColumns[11]},
 			},
 		},
 	}
@@ -441,10 +525,12 @@ var (
 		GroupInvitationTokensTable,
 		ItemsTable,
 		ItemFieldsTable,
+		ItemTemplatesTable,
 		LabelsTable,
 		LocationsTable,
 		MaintenanceEntriesTable,
 		NotifiersTable,
+		TemplateFieldsTable,
 		UsersTable,
 		LabelItemsTable,
 	}
@@ -460,12 +546,15 @@ func init() {
 	ItemsTable.ForeignKeys[1].RefTable = ItemsTable
 	ItemsTable.ForeignKeys[2].RefTable = LocationsTable
 	ItemFieldsTable.ForeignKeys[0].RefTable = ItemsTable
+	ItemTemplatesTable.ForeignKeys[0].RefTable = GroupsTable
+	ItemTemplatesTable.ForeignKeys[1].RefTable = LocationsTable
 	LabelsTable.ForeignKeys[0].RefTable = GroupsTable
 	LocationsTable.ForeignKeys[0].RefTable = GroupsTable
 	LocationsTable.ForeignKeys[1].RefTable = LocationsTable
 	MaintenanceEntriesTable.ForeignKeys[0].RefTable = ItemsTable
 	NotifiersTable.ForeignKeys[0].RefTable = GroupsTable
 	NotifiersTable.ForeignKeys[1].RefTable = UsersTable
+	TemplateFieldsTable.ForeignKeys[0].RefTable = ItemTemplatesTable
 	UsersTable.ForeignKeys[0].RefTable = GroupsTable
 	LabelItemsTable.ForeignKeys[0].RefTable = LabelsTable
 	LabelItemsTable.ForeignKeys[1].RefTable = ItemsTable

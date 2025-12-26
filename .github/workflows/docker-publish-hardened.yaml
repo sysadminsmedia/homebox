@@ -96,13 +96,13 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392
         with:
-          image: ghcr.io/amitie10g/binfmt:latest
+          image: ghcr.io/sysadminsmedia/binfmt:latest
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435
         with:
           driver-opts: |
-            image=ghcr.io/amitie10g/buildkit:master
+            image=ghcr.io/sysadminsmedia/buildkit:master
 
       - name: Build and push by digest
         id: build
@@ -119,10 +119,18 @@ jobs:
             VERSION=${{ github.ref_name }}
             COMMIT=${{ github.sha }}
             BUILD_TIME=${{ env.BUILD_TIME }}
-          provenance: true
+          provenance: mode=max
           sbom: true
           annotations: ${{ steps.meta.outputs.annotations }}
-          
+
+      - name: Attest platform-specific images
+        uses: actions/attest-build-provenance@v1
+        if: github.event_name != 'pull_request'
+        with:
+          subject-name: ${{ env.GHCR_REPO }}
+          subject-digest: ${{ steps.build.outputs.digest }}
+          push-to-registry: true
+
       - name: Export digest
         run: |
           mkdir -p /tmp/digests
@@ -174,7 +182,7 @@ jobs:
         uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435
         with:
           driver-opts: |
-            image=ghcr.io/amitie10g/buildkit:master
+            image=ghcr.io/sysadminsmedia/buildkit:master
 
       - name: Docker meta
         id: meta
@@ -197,13 +205,45 @@ jobs:
         id: push-ghcr
         working-directory: /tmp/digests
         run: |
+          set -euo pipefail
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.GHCR_REPO }}@sha256:%s ' *)
+            $(printf '${{ env.GHCR_REPO }}@sha256:%s ' *) 2>&1 | tee /tmp/push-ghcr.out
+          digest=$(grep -oE 'sha256:[a-f0-9]{64}' /tmp/push-ghcr.out | head -n1 || true)
+          if [ -z "$digest" ]; then
+            echo "No digest found in imagetools output:"
+            cat /tmp/push-ghcr.out
+            exit 1
+          fi
+          echo "digest=$digest" >> $GITHUB_OUTPUT
+
+      - name: Attest GHCR images
+        uses: actions/attest-build-provenance@v1
+        if: github.event_name != 'pull_request'
+        with:
+          subject-name: ${{ env.GHCR_REPO }}
+          subject-digest: ${{ steps.push-ghcr.outputs.digest }}
+          push-to-registry: true
 
       - name: Create manifest list and push Dockerhub
         id: push-dockerhub
         working-directory: /tmp/digests
         if: (github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/'))
         run: |
+          set -euo pipefail
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-            $(printf '${{ env.DOCKERHUB_REPO }}@sha256:%s ' *)
+            $(printf '${{ env.DOCKERHUB_REPO }}@sha256:%s ' *) 2>&1 | tee /tmp/push-dockerhub.out
+          digest=$(grep -oE 'sha256:[a-f0-9]{64}' /tmp/push-dockerhub.out | head -n1 || true)
+          if [ -z "$digest" ]; then
+            echo "No digest found in imagetools output:"
+            cat /tmp/push-dockerhub.out
+            exit 1
+          fi
+          echo "digest=$digest" >> $GITHUB_OUTPUT
+
+      - name: Attest Dockerhub images
+        uses: actions/attest-build-provenance@v1
+        if: (github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/'))
+        with:
+          subject-name: docker.io/${{ env.DOCKERHUB_REPO }}
+          subject-digest: ${{ steps.push-dockerhub.outputs.digest }}
+          push-to-registry: true

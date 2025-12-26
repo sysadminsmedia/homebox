@@ -67,7 +67,7 @@ func (*AuthRoles) scanValues(columns []string) ([]any, error) {
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
 // to the AuthRoles fields.
-func (ar *AuthRoles) assignValues(columns []string, values []any) error {
+func (_m *AuthRoles) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
@@ -78,22 +78,22 @@ func (ar *AuthRoles) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			ar.ID = int(value.Int64)
+			_m.ID = int(value.Int64)
 		case authroles.FieldRole:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field role", values[i])
 			} else if value.Valid {
-				ar.Role = authroles.Role(value.String)
+				_m.Role = authroles.Role(value.String)
 			}
 		case authroles.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field auth_tokens_roles", values[i])
 			} else if value.Valid {
-				ar.auth_tokens_roles = new(uuid.UUID)
-				*ar.auth_tokens_roles = *value.S.(*uuid.UUID)
+				_m.auth_tokens_roles = new(uuid.UUID)
+				*_m.auth_tokens_roles = *value.S.(*uuid.UUID)
 			}
 		default:
-			ar.selectValues.Set(columns[i], values[i])
+			_m.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
@@ -101,40 +101,40 @@ func (ar *AuthRoles) assignValues(columns []string, values []any) error {
 
 // Value returns the ent.Value that was dynamically selected and assigned to the AuthRoles.
 // This includes values selected through modifiers, order, etc.
-func (ar *AuthRoles) Value(name string) (ent.Value, error) {
-	return ar.selectValues.Get(name)
+func (_m *AuthRoles) Value(name string) (ent.Value, error) {
+	return _m.selectValues.Get(name)
 }
 
 // QueryToken queries the "token" edge of the AuthRoles entity.
-func (ar *AuthRoles) QueryToken() *AuthTokensQuery {
-	return NewAuthRolesClient(ar.config).QueryToken(ar)
+func (_m *AuthRoles) QueryToken() *AuthTokensQuery {
+	return NewAuthRolesClient(_m.config).QueryToken(_m)
 }
 
 // Update returns a builder for updating this AuthRoles.
 // Note that you need to call AuthRoles.Unwrap() before calling this method if this AuthRoles
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (ar *AuthRoles) Update() *AuthRolesUpdateOne {
-	return NewAuthRolesClient(ar.config).UpdateOne(ar)
+func (_m *AuthRoles) Update() *AuthRolesUpdateOne {
+	return NewAuthRolesClient(_m.config).UpdateOne(_m)
 }
 
 // Unwrap unwraps the AuthRoles entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (ar *AuthRoles) Unwrap() *AuthRoles {
-	_tx, ok := ar.config.driver.(*txDriver)
+func (_m *AuthRoles) Unwrap() *AuthRoles {
+	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
 		panic("ent: AuthRoles is not a transactional entity")
 	}
-	ar.config.driver = _tx.drv
-	return ar
+	_m.config.driver = _tx.drv
+	return _m
 }
 
 // String implements the fmt.Stringer.
-func (ar *AuthRoles) String() string {
+func (_m *AuthRoles) String() string {
 	var builder strings.Builder
 	builder.WriteString("AuthRoles(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", ar.ID))
+	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("role=")
-	builder.WriteString(fmt.Sprintf("%v", ar.Role))
+	builder.WriteString(fmt.Sprintf("%v", _m.Role))
 	builder.WriteByte(')')
 	return builder.String()
 }

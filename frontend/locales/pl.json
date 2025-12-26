@@ -134,19 +134,55 @@
             "selector": {
                 "no_results": "Brak rezultatów",
                 "placeholder": "Wybierz…",
-                "search_placeholder": "Wpisz, aby wyszukać…"
+                "search_placeholder": "Wpisz, aby wyszukać…",
+                "searching": "Szukam…"
             },
             "view": {
+                "change_details": {
+                    "add_labels": "Dodaj etykiety",
+                    "failed_to_update_item": "Nie udało się zaktualizować danych przedmiotu",
+                    "remove_labels": "Usuń etykiety",
+                    "title": "Zmień dane przedmiotu"
+                },
                 "selectable": {
                     "card": "Karta",
                     "items": "Przedmioty",
                     "no_items": "Brak przedmiotów do wyświetlenia",
+                    "select_all": "Zaznacz wszystko",
+                    "select_card": "Zaznacz kartę",
+                    "select_row": "Zaznacz wiersz",
                     "table": "Tabela"
                 },
                 "table": {
+                    "dropdown": {
+                        "actions": "Akcje",
+                        "change_labels": "Zmień etykiety tekstowe:",
+                        "change_labels_success": "Zmieniono etykiety",
+                        "change_location": "Zmień lokalizację",
+                        "change_location_success": "Oznaczenie lokalizacji zmienione",
+                        "create_maintenance_item": "Utwórz wpis konserwacyjny dla pozycji",
+                        "create_maintenance_selected": "Utwórz wpis konserwacyjny dla wybranych elementów",
+                        "create_maintenance_success": "Utworzono wpis(y) dot. konserwacji",
+                        "delete_confirmation": "Czy na pewno chcesz usunąć wybrane przedmioty? Tej czynności nie można cofnąć.",
+                        "delete_item": "Usuń przedmiot",
+                        "delete_selected": "Usuń zaznaczone przedmioty",
+                        "download_csv": "Pobierz tabelę jako CSV",
+                        "download_json": "Pobierz tabelę jako JSON",
+                        "duplicate_item": "Duplikuj pozycję",
+                        "duplicate_selected": "Powiel wybrane przedmioty",
+                        "error_deleting": "Bląd usuwania przedmiotu",
+                        "error_duplicating": "Problem podczas duplikowania pozycji",
+                        "open_menu": "Otwórz menu",
+                        "open_multi_tab_warning": "Ze względów bezpieczeństwa przeglądarki domyślnie nie zezwalają na jednoczesne otwieranie wielu kart. Aby to zmienić, postępuj zgodnie z dokumentacją:",
+                        "toggle_expand": "Włącz/wyłącz rozwiń",
+                        "view_item": "Pokaż przedmiot",
+                        "view_items": "Pokaż przedmioty"
+                    },
                     "headers": "Nagłówki",
                     "page": "Strona",
+                    "quick_actions": "Aktywuj Szybkie Akcje i Zaznaczenie",
                     "rows_per_page": "Ilość wierszy na stronę",
+                    "selected_rows": "Zaznaczono {selected} z {total} wierszy.",
                     "table_settings": "Ustawienia Tabeli",
                     "view_item": "Zobacz przedmiot"
                 }
@@ -231,6 +267,7 @@
         "name": "Nazwa",
         "navigate": "Nawiguj",
         "password": "Hasło",
+        "preview": "Podgląd",
         "quantity": "Ilość",
         "read_docs": "Przeczytaj dokumentację",
         "return_home": "Powrót do strony głównej",
@@ -292,7 +329,16 @@
         "details": "Szczegóły",
         "drag_and_drop": "Przeciągnij i upuść pliki tutaj lub kliknij, aby wybrać pliki",
         "duplicate": {
-            "prefix": "Kopia z "
+            "copy_attachments": "Kopiuj załączniki",
+            "copy_custom_fields": "Kopiuj pola niestandardowe",
+            "copy_maintenance": "Kopiuj konserwację",
+            "custom_prefix": "Kopiuj prefiks",
+            "enable_custom_prefix": "Włącz niestandardowy prefiks",
+            "override_instructions": "Aby zastąpić te ustawienia, przytrzymaj klawisz Shift podczas klikania przycisku duplikowania.",
+            "prefix": "Kopia z ",
+            "prefix_instructions": "Ten prefiks zostanie dodany na początku nazwy duplikatu. Dodaj spację na końcu prefiksu, aby dodać spację między prefiksem a nazwą elementu.",
+            "temporary_title": "Ustawienia tymczasowe",
+            "title": "Duplikuj ustawienia"
         },
         "edit": {
             "edit_attachment_dialog": {
@@ -302,7 +348,8 @@
                 "primary_photo_sub": "Ta opcja jest dostępna tylko dla zdjęć. Tylko jedno zdjęcie może być zdjęciem głównym. Po wybraniu tej opcji, bieżące zdjęcie główne (jeśli takie istnieje) zostanie odznaczone.",
                 "select_type": "Wybierz typ",
                 "title": "Edycja załącznika"
-            }
+            },
+            "view_image": "Zobacz obraz"
         },
         "edit_details": "Edytuj szczegóły",
         "field_selector": "Selektor pól",

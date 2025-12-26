@@ -94,6 +94,7 @@
                 "open_new_tab": "Otevřít na nové kartě"
             },
             "create_modal": {
+                "clear_template": "Vymazat šablonu",
                 "delete_photo": "Smazat fotku",
                 "item_description": "Popis položky",
                 "item_name": "Jméno položky",
@@ -134,19 +135,55 @@
             "selector": {
                 "no_results": "Nebyly nalezeny žádné výsledky",
                 "placeholder": "Vyberte…",
-                "search_placeholder": "Pište pro vyhledávání…"
+                "search_placeholder": "Pište pro vyhledávání…",
+                "searching": "Hledám…"
             },
             "view": {
+                "change_details": {
+                    "add_labels": "Přidat štítky",
+                    "failed_to_update_item": "Aktualizace položky se nezdařila",
+                    "remove_labels": "Odebrat štítky",
+                    "title": "Změnit podrobnosti o položce"
+                },
                 "selectable": {
                     "card": "Karta",
                     "items": "Položky",
                     "no_items": "Žádné položky k zobrazení",
+                    "select_all": "Vybrat vše",
+                    "select_card": "Vybrat kartu",
+                    "select_row": "Vyberte řádek",
                     "table": "Tabulka"
                 },
                 "table": {
+                    "dropdown": {
+                        "actions": "Akce",
+                        "change_labels": "Změnit štítky",
+                        "change_labels_success": "Štítky změněny",
+                        "change_location": "Změnit umístění",
+                        "change_location_success": "Umístění bylo změněno",
+                        "create_maintenance_item": "Vytvořit záznam údržby pro položku",
+                        "create_maintenance_selected": "Vytvořit záznam údržby pro vybrané položky",
+                        "create_maintenance_success": "Vytvořené záznamy údržby",
+                        "delete_confirmation": "Opravdu chcete smazat vybrané položky? Tuto akci nelze vrátit zpět.",
+                        "delete_item": "Odstranit položku",
+                        "delete_selected": "Smazat vybrané položky",
+                        "download_csv": "Stáhnout tabulku jako CSV",
+                        "download_json": "Stáhnout tabulku jako JSON",
+                        "duplicate_item": "Duplikovat tuto položku",
+                        "duplicate_selected": "Duplikovat vybrané položky",
+                        "error_deleting": "Chyba při mazání položky",
+                        "error_duplicating": "Chyba při duplikování položky",
+                        "open_menu": "Otevřít menu",
+                        "open_multi_tab_warning": "Z bezpečnostních důvodů prohlížeče ve výchozím nastavení neumožňují otevření více karet najednou. Chcete-li to změnit, postupujte podle dokumentace:",
+                        "toggle_expand": "Přepnout rozbalit",
+                        "view_item": "Zobrazit položku",
+                        "view_items": "Zobrazit položky"
+                    },
                     "headers": "Záhlaví",
                     "page": "Stránka",
+                    "quick_actions": "Povolit rychlé akce a výběr",
                     "rows_per_page": "Řádků na stránku",
+                    "selected_rows": "{selected} z {total} řádků vybráno.",
                     "table_settings": "Nastavení tabulky",
                     "view_item": "Zobrazit položku"
                 }
@@ -193,6 +230,65 @@
         "quick_menu": {
             "no_results": "Nebyly nalezeny žádné výsledky.",
             "shortcut_hint": "Pomocí číselných tlačítek rychle vyberte akci."
+        },
+        "template": {
+            "apply_template": "Použít šablonu",
+            "card": {
+                "delete": "Smazat šablonu",
+                "duplicate": "Duplikovat šablonu",
+                "edit": "Upravit šablonu"
+            },
+            "confirm_delete": "Smazat tuto šablonu?",
+            "create_modal": {
+                "title": "Vytvořit šablonu"
+            },
+            "detail": {
+                "default_values": "Výchozí hodnoty",
+                "updated": "Aktualizováno"
+            },
+            "edit_modal": {
+                "title": "Upravit šablonu"
+            },
+            "empty_value": "(prázdné)",
+            "form": {
+                "custom_fields": "Vlastní pole",
+                "default_item_values": "Výchozí hodnoty položek",
+                "default_location": "Výchozí umístění",
+                "default_value": "Výchozí hodnota",
+                "field_name": "Název pole",
+                "item_description": "Popis položky",
+                "item_name": "Název položky",
+                "lifetime_warranty": "Doživotní záruka",
+                "location": "Umístění",
+                "manufacturer": "Výrobce",
+                "model_number": "Číslo modelu",
+                "no_custom_fields": "Žádná vlastní pole.",
+                "template_description": "Popis šablony",
+                "template_name": "Název šablony"
+            },
+            "hide_defaults": "Skrýt výchozí hodnoty",
+            "save_as_template": "Uložit jako šablonu",
+            "selector": {
+                "label": "Šablona (volitelné)",
+                "not_found": "Nenalezena žádná šablona",
+                "search": "Vyhledávání šablon…",
+                "select": "Vyberte šablonu…"
+            },
+            "show_defaults": "Zobrazit výchozí hodnoty",
+            "toast": {
+                "applied": "Šablona „{name}“ použita",
+                "create_failed": "Nepodařilo se vytvořit šablonu",
+                "created": "Šablona vytvořena",
+                "delete_failed": "Nepodařilo se odstranit šablonu",
+                "deleted": "Šablona smazána",
+                "duplicate_failed": "Nepodařilo se duplikovat šablonu",
+                "duplicated": "Šablona duplikována jako „{name}“",
+                "load_failed": "Nepodařilo se načíst podrobnosti šablony",
+                "saved_as_template": "Položka uložena jako šablona „{name}“",
+                "update_failed": "Nepodařilo se aktualizovat šablonu",
+                "updated": "Šablona aktualizována"
+            },
+            "using_template": "Používání šablony: {name}"
         }
     },
     "errors": {
@@ -230,7 +326,9 @@
         "maintenance": "Údržba",
         "name": "Jméno",
         "navigate": "Navigovat",
+        "no": "Ne",
         "password": "Heslo",
+        "preview": "Náhled",
         "quantity": "Množství",
         "read_docs": "Přečtěte si dokumentaci",
         "return_home": "Zpět domů",
@@ -243,7 +341,8 @@
         "updating": "Aktualizuji",
         "value": "Hodnota",
         "version": "Verze: { version }",
-        "welcome": "Vítejte, { username }"
+        "welcome": "Vítejte, { username }",
+        "yes": "Ano"
     },
     "home": {
         "labels": "Štítky",
@@ -260,6 +359,7 @@
         "dont_join_group": "Nechcete se přidat do skupiny?",
         "joining_group": "Přidáváte se do existující skupiny!",
         "login": "Přihlásit se",
+        "or": "nebo",
         "register": "Registrovat se",
         "remember_me": "Zapamatovat si mě",
         "set_email": "Jaký je váš email?",
@@ -271,6 +371,14 @@
             "invalid_email": "Neplatná e-mailová adresa",
             "invalid_email_password": "Neplatný e-mail nebo heslo",
             "login_success": "Úspěšně přihlášen",
+            "oidc_access_denied": "Přístup odepřen: Váš účet nemá požadovanou roli/členství ve skupině",
+            "oidc_auth_failed": "OIDC ověření selhalo",
+            "oidc_invalid_response": "Byla přijata neplatná odpověď OIDC",
+            "oidc_provider_error": "Poskytovatel OIDC vrátil chybu",
+            "oidc_security_error": "Chyba zabezpečení OIDC – možný útok CSRF",
+            "oidc_session_expired": "OIDC relace vypršela",
+            "oidc_token_expired": "Token OIDC vypršel",
+            "oidc_token_invalid": "Podpis tokenu OIDC je neplatný",
             "problem_registering": "Problém s registrací uživatele",
             "user_registered": "Uživatel registrován"
         }
@@ -507,7 +615,14 @@
         "profile": "Profil",
         "scanner": "Skener",
         "search": "Vyhledávání",
+        "templates": "Šablony",
         "tools": "Nástroje"
+    },
+    "pages": {
+        "templates": {
+            "no_templates": "Zatím žádné šablony.",
+            "title": "Šablony"
+        }
     },
     "profile": {
         "active": "Aktivní",
@@ -526,6 +641,7 @@
         "group_settings_sub": "Nastavení sdílené skupiny. Je možné, že bude nutné obnovit prohlížeč, aby se některá nastavení použila.",
         "inactive": "Neaktivní",
         "language": "Jazyk",
+        "legacy_image_fit": "{ currentValue, select, true {Zakázat starší přizpůsobení: přizpůsobit obrázek s pruhy} false {Povolit starší přizpůsobení: vyplnit obrázek oříznutím} other {Not Hit}}",
         "new_password": "Nové heslo",
         "no_notifiers": "Nejsou nakonfigurováni žádní oznamovatelé",
         "no_override": "Žádné přepsání",

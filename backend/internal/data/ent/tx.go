@@ -26,6 +26,8 @@ type Tx struct {
 	Item *ItemClient
 	// ItemField is the client for interacting with the ItemField builders.
 	ItemField *ItemFieldClient
+	// ItemTemplate is the client for interacting with the ItemTemplate builders.
+	ItemTemplate *ItemTemplateClient
 	// Label is the client for interacting with the Label builders.
 	Label *LabelClient
 	// Location is the client for interacting with the Location builders.
@@ -34,6 +36,8 @@ type Tx struct {
 	MaintenanceEntry *MaintenanceEntryClient
 	// Notifier is the client for interacting with the Notifier builders.
 	Notifier *NotifierClient
+	// TemplateField is the client for interacting with the TemplateField builders.
+	TemplateField *TemplateFieldClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -174,10 +178,12 @@ func (tx *Tx) init() {
 	tx.GroupInvitationToken = NewGroupInvitationTokenClient(tx.config)
 	tx.Item = NewItemClient(tx.config)
 	tx.ItemField = NewItemFieldClient(tx.config)
+	tx.ItemTemplate = NewItemTemplateClient(tx.config)
 	tx.Label = NewLabelClient(tx.config)
 	tx.Location = NewLocationClient(tx.config)
 	tx.MaintenanceEntry = NewMaintenanceEntryClient(tx.config)
 	tx.Notifier = NewNotifierClient(tx.config)
+	tx.TemplateField = NewTemplateFieldClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 

@@ -93,6 +93,18 @@ func (f ItemFieldFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ItemFieldMutation", m)
 }
 
+// The ItemTemplateFunc type is an adapter to allow the use of ordinary
+// function as ItemTemplate mutator.
+type ItemTemplateFunc func(context.Context, *ent.ItemTemplateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ItemTemplateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ItemTemplateMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ItemTemplateMutation", m)
+}
+
 // The LabelFunc type is an adapter to allow the use of ordinary
 // function as Label mutator.
 type LabelFunc func(context.Context, *ent.LabelMutation) (ent.Value, error)
@@ -139,6 +151,18 @@ func (f NotifierFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.NotifierMutation", m)
+}
+
+// The TemplateFieldFunc type is an adapter to allow the use of ordinary
+// function as TemplateField mutator.
+type TemplateFieldFunc func(context.Context, *ent.TemplateFieldMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TemplateFieldFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.TemplateFieldMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TemplateFieldMutation", m)
 }
 
 // The UserFunc type is an adapter to allow the use of ordinary
