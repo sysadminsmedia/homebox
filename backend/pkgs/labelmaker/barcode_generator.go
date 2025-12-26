@@ -25,7 +25,6 @@ const (
 	BarcodeEAN13      BarcodeFormat = "ean13"
 	BarcodeEAN8       BarcodeFormat = "ean8"
 	BarcodeUPCA       BarcodeFormat = "upca"
-	BarcodeUPCE       BarcodeFormat = "upce"
 )
 
 // BarcodeOptions contains configuration for barcode generation
@@ -70,8 +69,6 @@ func GenerateBarcode(format BarcodeFormat, content string, opts BarcodeOptions) 
 		bc, err = generateEAN8(content)
 	case BarcodeUPCA:
 		bc, err = generateUPCA(content)
-	case BarcodeUPCE:
-		bc, err = generateUPCE(content)
 	default:
 		return nil, fmt.Errorf("unsupported barcode format: %s", format)
 	}
@@ -144,23 +141,6 @@ func generateUPCA(content string) (barcode.Barcode, error) {
 	return ean.Encode(content)
 }
 
-// generateUPCE creates a UPC-E barcode
-// WARNING: True UPC-E encoding is not available in the barcode library.
-// This implementation approximates UPC-E by encoding as EAN-8, which produces
-// a similar compact barcode but will NOT scan as a valid UPC-E barcode.
-// For production use requiring true UPC-E, consider using UPC-A instead.
-func generateUPCE(content string) (barcode.Barcode, error) {
-	// UPC-E requires exactly 6, 7, or 8 digits
-	if len(content) < 6 || len(content) > 8 {
-		return nil, fmt.Errorf("UPC-E requires 6-8 digits, got %d", len(content))
-	}
-	// Pad to 8 digits for EAN-8 encoding
-	for len(content) < 7 {
-		content = "0" + content
-	}
-	return ean.Encode(content)
-}
-
 // GetSupportedFormats returns a list of all supported barcode formats
 func GetSupportedFormats() []BarcodeFormat {
 	return []BarcodeFormat{
@@ -171,7 +151,6 @@ func GetSupportedFormats() []BarcodeFormat {
 		BarcodeEAN13,
 		BarcodeEAN8,
 		BarcodeUPCA,
-		BarcodeUPCE,
 	}
 }
 
@@ -251,14 +230,6 @@ func GetBarcodeFormatInfo() []BarcodeFormatInfo {
 			Description: "Universal Product Code, 12-digit numeric barcode",
 			Is2D:        false,
 			MaxLength:   12,
-			ContentType: ContentTypeNumeric,
-		},
-		{
-			Format:      BarcodeUPCE,
-			Name:        "UPC-E (Approximated)",
-			Description: "Compact 8-digit barcode. Note: Encoded as EAN-8, may not scan as true UPC-E",
-			Is2D:        false,
-			MaxLength:   8,
 			ContentType: ContentTypeNumeric,
 		},
 	}
