@@ -527,6 +527,7 @@ func (r *TemplateRenderer) RenderToSheet(template *TemplateData, items []*ItemDa
 	}
 
 	// Render and place each label
+	skipped := 0
 	for i := 0; i < numLabels; i++ {
 		col := i % layout.Columns
 		row := i / layout.Columns
@@ -541,12 +542,16 @@ func (r *TemplateRenderer) RenderToSheet(template *TemplateData, items []*ItemDa
 			Template: template,
 		})
 		if err != nil {
-			continue // Skip labels that fail to render
+			log.Warn().Err(err).Int("index", i).Msg("failed to render label for sheet, skipping")
+			skipped++
+			continue
 		}
 
 		// Decode the label PNG
 		labelImg, err := png.Decode(bytes.NewReader(labelData))
 		if err != nil {
+			log.Warn().Err(err).Int("index", i).Msg("failed to decode label PNG for sheet, skipping")
+			skipped++
 			continue
 		}
 
@@ -568,6 +573,10 @@ func (r *TemplateRenderer) RenderToSheet(template *TemplateData, items []*ItemDa
 		// Draw label onto sheet
 		destRect := image.Rect(x, y, x+labelWidthPx, y+labelHeightPx)
 		draw.Draw(sheetImg, destRect, labelImg, labelImg.Bounds().Min, draw.Over)
+	}
+
+	if skipped > 0 {
+		log.Warn().Int("skipped", skipped).Int("total", numLabels).Msg("some labels were skipped during sheet generation")
 	}
 
 	// Encode to PNG
