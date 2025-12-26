@@ -454,6 +454,9 @@ func renderLabelsPNGSheet(w http.ResponseWriter, renderer *labelmaker.TemplateRe
 	// Return the first sheet (could be extended to return ZIP for multiple sheets)
 	w.Header().Set("Content-Type", "image/png")
 	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=labels-sheet-%d.png", len(items)))
+	if len(sheets) > 1 {
+		w.Header().Set("X-Labels-Warning", fmt.Sprintf("Only returning first sheet of %d. Use PDF format for all sheets.", len(sheets)))
+	}
 	_, err = w.Write(sheets[0])
 	return err
 }
@@ -601,11 +604,13 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrint() errchain.HandlerFunc {
 
 		var lastJobID int
 		labelsPrinted := 0
+		labelsSkipped := 0
 
 		for _, printItem := range itemsToPrint {
 			item, err := ctrl.repo.Items.GetOneByGroup(r.Context(), auth.GID, printItem.ID)
 			if err != nil {
 				log.Warn().Err(err).Str("itemID", printItem.ID.String()).Msg("failed to fetch item for printing")
+				labelsSkipped++
 				continue
 			}
 
@@ -618,6 +623,7 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrint() errchain.HandlerFunc {
 			})
 			if err != nil {
 				log.Warn().Err(err).Str("itemID", printItem.ID.String()).Str("itemName", item.Name).Msg("failed to render label for printing")
+				labelsSkipped++
 				continue
 			}
 
@@ -638,6 +644,7 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrint() errchain.HandlerFunc {
 				urfData, err := printer.ConvertPNGToURF(pngData, dpi)
 				if err != nil {
 					log.Warn().Err(err).Str("itemID", printItem.ID.String()).Str("itemName", item.Name).Msg("failed to convert label to URF format")
+					labelsSkipped++
 					continue
 				}
 				printData = urfData
@@ -678,10 +685,15 @@ func (ctrl *V1Controller) HandleLabelTemplatesPrint() errchain.HandlerFunc {
 			})
 		}
 
+		message := fmt.Sprintf("Successfully sent %d label(s) to printer", labelsPrinted)
+		if labelsSkipped > 0 {
+			message = fmt.Sprintf("Sent %d label(s) to printer (%d skipped due to errors)", labelsPrinted, labelsSkipped)
+		}
+
 		return server.JSON(w, http.StatusOK, LabelTemplatePrintResponse{
 			Success:     true,
 			JobID:       lastJobID,
-			Message:     fmt.Sprintf("Successfully sent %d label(s) to printer", labelsPrinted),
+			Message:     message,
 			LabelCount:  labelsPrinted,
 			PrinterName: printerOut.Name,
 		})

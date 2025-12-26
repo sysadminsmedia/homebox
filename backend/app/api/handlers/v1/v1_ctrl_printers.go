@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/server"
+	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/adapters"
@@ -319,7 +320,9 @@ func createTestLabelPNG() []byte {
 
 	// Encode to PNG
 	var buf bytes.Buffer
-	_ = png.Encode(&buf, img)
+	if err := png.Encode(&buf, img); err != nil {
+		log.Error().Err(err).Msg("failed to encode test pattern PNG")
+	}
 	return buf.Bytes()
 }
 

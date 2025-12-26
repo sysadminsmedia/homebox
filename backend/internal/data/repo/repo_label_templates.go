@@ -27,7 +27,7 @@ type (
 		IsShared     bool                   `json:"isShared"`
 		CanvasData   map[string]interface{} `json:"canvasData"`
 		OutputFormat string                 `json:"outputFormat"        validate:"oneof=png pdf"`
-		DPI          int                    `json:"dpi"                 validate:"gte=72,lte=600"`
+		DPI          int                    `json:"dpi"                 validate:"gte=72,lte=1200"`
 		MediaType    *string                `json:"mediaType,omitempty" extensions:"x-nullable"`
 	}
 
@@ -41,7 +41,7 @@ type (
 		IsShared     bool                   `json:"isShared"`
 		CanvasData   map[string]interface{} `json:"canvasData"`
 		OutputFormat string                 `json:"outputFormat"        validate:"oneof=png pdf"`
-		DPI          int                    `json:"dpi"                 validate:"gte=72,lte=600"`
+		DPI          int                    `json:"dpi"                 validate:"gte=72,lte=1200"`
 		MediaType    *string                `json:"mediaType,omitempty" extensions:"x-nullable"`
 	}
 

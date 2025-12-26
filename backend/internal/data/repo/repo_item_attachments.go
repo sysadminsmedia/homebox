@@ -101,7 +101,17 @@ func ToItemAttachment(attachment *ent.Attachment) ItemAttachment {
 // This ensures consistent path separators for blob storage which expects forward slashes
 func normalizePath(path string) string {
 	path = strings.ReplaceAll(path, "\\", "/")
-	return strings.Trim(path, "/")
+	path = strings.Trim(path, "/")
+
+	// Validate against path traversal sequences for defense-in-depth
+	for _, segment := range strings.Split(path, "/") {
+		if segment == ".." {
+			log.Warn().Str("path", path).Msg("path traversal attempt detected")
+			return ""
+		}
+	}
+
+	return path
 }
 
 func (r *AttachmentRepo) path(gid uuid.UUID, hash string) string {
