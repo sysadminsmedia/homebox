@@ -153,7 +153,7 @@ Options:
 ### HBOX_WEB_HOST examples
 
 | Value                       | Notes                                                      |
-|-----------------------------|------------------------------------------------------------|
+| --------------------------- | ---------------------------------------------------------- |
 | 0.0.0.0                     | Visible all interfaces (default behaviour)                 |
 | 127.0.0.1                   | Only visible on same host                                  |
 | 100.64.0.1                  | Only visible on a specific interface (e.g., VPN in a VPS). |
@@ -187,6 +187,7 @@ the webserver (Caddy) can access it. Other processes/containers on the host
 cannot connect to Homebox directly, bypassing the webserver.
 
 File: homebox.socket
+
 ```systemd
 # /usr/local/lib/systemd/system/homebox.socket
 [Unit]
@@ -202,6 +203,7 @@ WantedBy=sockets.target
 ```
 
 File: homebox.service
+
 ```systemd
 # /usr/local/lib/systemd/system/homebox.service
 [Unit]
@@ -222,6 +224,7 @@ CapabilityBoundingSet=
 RestrictNamespaces=true
 SystemCallFilter=@system-service
 ```
+
 Usage:
 
 ```bash

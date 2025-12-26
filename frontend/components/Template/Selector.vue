@@ -38,6 +38,14 @@
               </div>
             </CommandItem>
           </CommandGroup>
+          <CommandSeparator v-if="value" />
+          <CommandGroup v-if="value">
+            <CommandItem v-if="value" value="clear-selection" @select="clearSelection">
+              <div class="flex w-full">
+                {{ $t("components.template.selector.clear") }}
+              </div>
+            </CommandItem>
+          </CommandGroup>
         </CommandList>
       </Command>
     </PopoverContent>
@@ -79,6 +87,13 @@
                 </div>
               </CommandItem>
             </CommandGroup>
+            <CommandSeparator />
+            <CommandItem v-if="value" value="clear-selection" @select="clearSelection">
+              <X :class="cn('mr-2 h-4 w-4')" />
+              <div class="flex w-full">
+                <span class="text-destructive">{{ $t("components.template.selector.clear") }}</span>
+              </div>
+            </CommandItem>
           </CommandList>
         </Command>
       </PopoverContent>
@@ -87,10 +102,18 @@
 </template>
 
 <script setup lang="ts">
-  import { Check, ChevronsUpDown } from "lucide-vue-next";
+  import { Check, ChevronsUpDown, X } from "lucide-vue-next";
   import fuzzysort from "fuzzysort";
   import { Button } from "~/components/ui/button";
-  import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "~/components/ui/command";
+  import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+    CommandSeparator,
+  } from "~/components/ui/command";
   import { Label } from "~/components/ui/label";
   import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
   import { cn } from "~/lib/utils";
@@ -129,6 +152,13 @@
       value.value = null;
       emit("template-selected", null);
     }
+    open.value = false;
+  }
+
+  function clearSelection() {
+    value.value = null;
+    emit("template-selected", null);
+    search.value = "";
     open.value = false;
   }
 
