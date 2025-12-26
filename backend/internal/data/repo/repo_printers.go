@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
@@ -192,15 +193,29 @@ func (r *PrintersRepository) GetDefault(ctx context.Context, gid uuid.UUID) (Pri
 
 // Create creates a new printer
 func (r *PrintersRepository) Create(ctx context.Context, gid uuid.UUID, data PrinterCreate) (PrinterOut, error) {
-	// If this printer is set as default, clear any existing default
+	// Use a transaction to ensure atomicity when setting default printer
+	tx, err := r.db.Tx(ctx)
+	if err != nil {
+		return PrinterOut{}, err
+	}
+	committed := false
+	defer func() {
+		if !committed {
+			if err := tx.Rollback(); err != nil {
+				log.Warn().Err(err).Msg("failed to rollback transaction during printer creation")
+			}
+		}
+	}()
+
+	// If this printer is set as default, clear any existing default within transaction
 	if data.IsDefault {
-		err := r.clearDefault(ctx, gid)
+		err := r.clearDefaultTx(ctx, tx, gid)
 		if err != nil {
 			return PrinterOut{}, err
 		}
 	}
 
-	q := r.db.Printer.Create().
+	q := tx.Printer.Create().
 		SetName(data.Name).
 		SetDescription(data.Description).
 		SetPrinterType(printer.PrinterType(data.PrinterType)).
@@ -224,6 +239,11 @@ func (r *PrintersRepository) Create(ctx context.Context, gid uuid.UUID, data Pri
 		return PrinterOut{}, err
 	}
 
+	if err := tx.Commit(); err != nil {
+		return PrinterOut{}, err
+	}
+	committed = true
+
 	r.publishMutationEvent(gid)
 	return mapPrinterOut(p), nil
 }
@@ -242,15 +262,29 @@ func (r *PrintersRepository) Update(ctx context.Context, gid uuid.UUID, data Pri
 		return PrinterOut{}, err
 	}
 
-	// If this printer is being set as default, clear any existing default
+	// Use a transaction to ensure atomicity when setting default printer
+	tx, err := r.db.Tx(ctx)
+	if err != nil {
+		return PrinterOut{}, err
+	}
+	committed := false
+	defer func() {
+		if !committed {
+			if err := tx.Rollback(); err != nil {
+				log.Warn().Err(err).Msg("failed to rollback transaction during printer update")
+			}
+		}
+	}()
+
+	// If this printer is being set as default, clear any existing default within transaction
 	if data.IsDefault && !p.IsDefault {
-		err := r.clearDefault(ctx, gid)
+		err := r.clearDefaultTx(ctx, tx, gid)
 		if err != nil {
 			return PrinterOut{}, err
 		}
 	}
 
-	updateQ := p.Update().
+	updateQ := tx.Printer.UpdateOneID(p.ID).
 		SetName(data.Name).
 		SetDescription(data.Description).
 		SetPrinterType(printer.PrinterType(data.PrinterType)).
@@ -278,6 +312,11 @@ func (r *PrintersRepository) Update(ctx context.Context, gid uuid.UUID, data Pri
 	if err != nil {
 		return PrinterOut{}, err
 	}
+
+	if err := tx.Commit(); err != nil {
+		return PrinterOut{}, err
+	}
+	committed = true
 
 	r.publishMutationEvent(gid)
 	return r.GetOne(ctx, gid, p.ID)
@@ -357,6 +396,19 @@ func (r *PrintersRepository) UpdateStatus(ctx context.Context, gid, id uuid.UUID
 // clearDefault clears the default flag from all printers in the group
 func (r *PrintersRepository) clearDefault(ctx context.Context, gid uuid.UUID) error {
 	_, err := r.db.Printer.Update().
+		Where(
+			printer.HasGroupWith(group.ID(gid)),
+			printer.IsDefault(true),
+		).
+		SetIsDefault(false).
+		Save(ctx)
+
+	return err
+}
+
+// clearDefaultTx clears the default flag within a transaction
+func (r *PrintersRepository) clearDefaultTx(ctx context.Context, tx *ent.Tx, gid uuid.UUID) error {
+	_, err := tx.Printer.Update().
 		Where(
 			printer.HasGroupWith(group.ID(gid)),
 			printer.IsDefault(true),
