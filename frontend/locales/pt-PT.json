@@ -7,7 +7,7 @@
                 "shift": "Shift"
             },
             "import_dialog": {
-                "change_warning": "O comportamento para importações com import_refs existente foi alterado. Se um import_ref estiver presente \nno ficheiro CSV, o item será atualizado com os valores do ficheiro CSV.",
+                "change_warning": "O comportamento para importações com import_refs existente foi alterado. Se um import_ref estiver presente no ficheiro CSV, \no item será atualizado com os valores do ficheiro CSV.",
                 "description": "Importe um ficheiro CSV contendo os seus itens, etiquetas e localizações. Consulte a documentação para mais \ninformações sobre o formato necessário.",
                 "title": "Importar Ficheiro CSV",
                 "toast": {
@@ -23,6 +23,13 @@
                 "new_version_available": "Nova Versão Disponível",
                 "new_version_available_link": "Clique aqui para ver as notas da versão"
             }
+        },
+        "color_selector": {
+            "clear": "Limpar cor",
+            "color": "Cor",
+            "no_color": "Sem cor",
+            "no_color_selected": "Nenhuma cor selecionada",
+            "randomize": "Cor aleatória"
         },
         "form": {
             "password": {
@@ -93,6 +100,8 @@
                 "item_photo": "Foto do Item 📷",
                 "item_quantity": "Quantidade do Item",
                 "parent_item": "Item Principal",
+                "product_tooltip_input_barcode": "Preenchimento automático com um código de barras fornecido manualmente",
+                "product_tooltip_scan_barcode": "Preenchimento automático com um código de barras da 📷",
                 "rotate_photo": "Rodar foto",
                 "set_as_primary_photo": "Definir como foto { isPrimary, select, true {não-} false {} other {}}principal",
                 "title": "Criar Item",
@@ -108,33 +117,72 @@
                     "some_photos_failed": "{count, plural, =0 {Sem fotos para carregar.} =1 {1 foto falhou ao carregar.} other {Algumas fotos falharam ao carregar.}}",
                     "upload_failed": "Falha ao carregar foto: { photoName }",
                     "upload_success": "{count, plural, =0 {Sem fotos carregadas.} =1 {Foto carregada com sucesso.} other {Todas as fotos foram carregadas com sucesso.}}",
-                    "uploading_photos": "{count, plural, =0 {Sem fotos para carregar} =1 {A carregar 1 foto...} other {A carregar {count} fotos...}}"
+                    "uploading_photos": "{count, plural, =0 {Sem fotos para carregar} =1 {A carregar 1 foto…} other {A carregar {count} fotos…}}"
                 },
                 "upload_photos": "Carregar Fotos",
                 "uploaded": "Foto Carregada"
             },
             "product_import": {
                 "barcode": "Código de Barras do Produto",
-                "error_not_found": "Nenhum produto encontrado com código de barras.",
+                "db_source": "Fonte DB",
+                "error_exception": "Ocorreu uma exceção ao recuperar o código de barras do item: ",
+                "error_invalid_barcode": "Código de barras fornecido inválido",
+                "error_not_found": "Nenhum produto encontrado com código de barras fornecido.",
                 "search_item": "Pesquisar produto",
                 "title": "Importar produto"
             },
             "selector": {
                 "no_results": "Nenhum Resultado Encontrado",
                 "placeholder": "Selecionar…",
-                "search_placeholder": "Escreva para pesquisar…"
+                "search_placeholder": "Escreva para pesquisar…",
+                "searching": "A procurar…"
             },
             "view": {
+                "change_details": {
+                    "add_labels": "Adicionar Labels",
+                    "failed_to_update_item": "Falha ao atualizar o artigo",
+                    "remove_labels": "Remover Rótulos",
+                    "title": "Alterar Detalhes do Item"
+                },
                 "selectable": {
                     "card": "Cartão",
                     "items": "Itens",
                     "no_items": "Sem Itens para Exibir",
+                    "select_all": "Selecionar Tudo",
+                    "select_card": "Selecionar Cartão",
+                    "select_row": "Selecionar Linha",
                     "table": "Tabela"
                 },
                 "table": {
+                    "dropdown": {
+                        "actions": "Ações",
+                        "change_labels": "Alterar etiquetas",
+                        "change_labels_success": "Etiquetas alteradas",
+                        "change_location": "Alterar Localização",
+                        "change_location_success": "Localização alterada",
+                        "create_maintenance_item": "Criar entrada de manutenção para o item",
+                        "create_maintenance_selected": "Criar entrada de manutenção para itens selecionados",
+                        "create_maintenance_success": "Entrada(s) de Manutenção Criada(s)",
+                        "delete_confirmation": "Tem a certeza de que pretende eliminar o(s) item(s) selecionado(s)? Esta ação não pode ser desfeita.",
+                        "delete_item": "Eliminar Item",
+                        "delete_selected": "Eliminar Items Selecionados",
+                        "download_csv": "Transferir Tabela como CSV",
+                        "download_json": "Transferir Tabela como JSON",
+                        "duplicate_item": "Duplicar item",
+                        "duplicate_selected": "Duplicar Itens Selecionados",
+                        "error_deleting": "Erro ao eliminar item",
+                        "error_duplicating": "Erro ao duplicar item",
+                        "open_menu": "Abrir menu",
+                        "open_multi_tab_warning": "Por razões de segurança, os navegadores não permitem que vários separadores sejam abertos de uma só vez por padrão. Para alterar isso, siga a documentação:",
+                        "toggle_expand": "Alternar Expandir",
+                        "view_item": "Ver item",
+                        "view_items": "Ver items"
+                    },
                     "headers": "Cabeçalhos",
                     "page": "Página",
+                    "quick_actions": "Ativar Ações Rápidas e Seleção",
                     "rows_per_page": "Linhas por página",
+                    "selected_rows": "{selected} de {total} linha(s) selecionada(s).",
                     "table_settings": "Definições da Tabela",
                     "view_item": "Ver item"
                 }
@@ -142,6 +190,7 @@
         },
         "label": {
             "create_modal": {
+                "label_color": "Cor da Etiqueta",
                 "label_description": "Descrição da Etiqueta",
                 "label_name": "Nome da Etiqueta",
                 "title": "Criar Etiqueta",
@@ -182,6 +231,9 @@
             "shortcut_hint": "Use as teclas numéricas para selecionar rapidamente uma ação."
         }
     },
+    "errors": {
+        "api_failure": "Falha na chamada da API de back-end: "
+    },
     "global": {
         "add": "Adicionar",
         "archived": "Arquivado",
@@ -215,6 +267,7 @@
         "name": "Nome",
         "navigate": "Navegar",
         "password": "Palavra-passe",
+        "preview": "Pré-visualização",
         "quantity": "Quantidade",
         "read_docs": "Ler a Documentação",
         "return_home": "Voltar à Página Inicial",
@@ -275,6 +328,18 @@
         "description": "Descrição",
         "details": "Detalhes",
         "drag_and_drop": "Arraste e largue ficheiros aqui ou clique para selecionar ficheiros",
+        "duplicate": {
+            "copy_attachments": "Copiar Anexos",
+            "copy_custom_fields": "Copiar Campos Personalizados",
+            "copy_maintenance": "Copiar Manutenção",
+            "custom_prefix": "Copiar Prefixo",
+            "enable_custom_prefix": "Ativar Prefixo Personalizado",
+            "override_instructions": "Segure shift ao clicar no botão duplicar para substituir estas configurações.",
+            "prefix": "Cópia de ",
+            "prefix_instructions": "Este prefixo será adicionado ao início do nome do item duplicado. Inclua um espaço no fim do prefixo para adicionar um espaço entre o prefixo e o nome do item.",
+            "temporary_title": "Definições Temporárias",
+            "title": "Duplicar Definições"
+        },
         "edit": {
             "edit_attachment_dialog": {
                 "attachment_title": "Título do Anexo",
@@ -283,7 +348,8 @@
                 "primary_photo_sub": "Esta opção só está disponível para fotos. Apenas uma foto pode ser principal. Ao selecionar esta, a atual será desmarcada.",
                 "select_type": "Selecionar um tipo",
                 "title": "Editar Anexo"
-            }
+            },
+            "view_image": "Ver Imagem"
         },
         "edit_details": "Editar Detalhes",
         "field_selector": "Seletor de Campo",
@@ -381,6 +447,7 @@
         "update_label": "Atualizar Etiqueta"
     },
     "languages": {
+        "bs-BA": "Bósnio (Bósnia e Herzegovina)",
         "ca": "Catalão",
         "cs-CZ": "Checo",
         "da-DK": "Dinamarquês",
@@ -411,6 +478,7 @@
         "th-TH": "Tailandês",
         "tr": "Turco",
         "uk-UA": "Ucraniano",
+        "vi-VN": "Vietnamita",
         "zh-CN": "Chinês (Simplificado)",
         "zh-HK": "Chinês (Hong Kong)",
         "zh-MO": "Chinês (Macau)",
@@ -495,6 +563,7 @@
         "group_settings_sub": "Definições Partilhadas do Grupo. Pode ser necessário atualizar a página para aplicar algumas definições.",
         "inactive": "Inativo",
         "language": "Idioma",
+        "legacy_image_fit": "{ currentValue, select, true {Desativar ajuste herdado: ajustar imagem com barras} false {Ativar ajuste herdado: preencher imagem com recorte} other {Not Hit}}",
         "new_password": "Nova Palavra-passe",
         "no_notifiers": "Nenhum notificador configurado",
         "no_override": "Sem substituição",
@@ -557,6 +626,8 @@
         }
     },
     "scanner": {
+        "barcode_detected_message": "código de barras do produto detectado",
+        "barcode_fetch_data": "Buscar dados do produto",
         "error": "Ocorreu um erro ao digitalizar",
         "invalid_url": "URL de código de barras inválido",
         "no_sources": "Sem fontes de vídeo disponíveis",
@@ -568,6 +639,10 @@
     "tools": {
         "actions": "Ações de Inventário",
         "actions_set": {
+            "create_missing_thumbnails": "Criar miniaturas em falta",
+            "create_missing_thumbnails_button": "Criar miniaturas",
+            "create_missing_thumbnails_confirm": "Tem a certeza que pretende criar miniaturas em falta? Esta ação poderá demorar e não pode ser colocada em pausa.",
+            "create_missing_thumbnails_sub": "Cria miniaturas para todos os anexos que são suportados pela configuração atual. Isto é útil para anexos que foram enviados antes do lançamento da v0.20.0 de Homebox. Isto não irá substituir as miniaturas existentes, apenas irá criar umas novas para anexos que não têm miniatura. Por favor note que as miniaturas são criadas em segundo plano e podem demorar a finalizar.",
             "ensure_ids": "Garantir IDs dos Ativos",
             "ensure_ids_button": "Garantir IDs dos Ativos",
             "ensure_ids_confirm": "Tem a certeza de que deseja garantir que todos os ativos têm um ID? Isto pode demorar e não pode ser desfeito.",
@@ -608,6 +683,7 @@
         "reports_sub": "Gerar diferentes relatórios para o seu inventário.",
         "toast": {
             "asset_success": "{ results } ativos foram atualizados.",
+            "failed_create_missing_thumbnails": "Falha ao criar miniaturas em falta.",
             "failed_ensure_ids": "Falha ao garantir IDs dos ativos.",
             "failed_ensure_import_refs": "Falha ao garantir referências de importação.",
             "failed_set_primary_photos": "Falha ao definir fotos principais.",

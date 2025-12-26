@@ -187,7 +187,7 @@
                 "select_location": "Vyberte miesto"
             },
             "tree": {
-                "no_locations": "Nie sú k dispozícii žiadne miesta. Pridajte nové miesta kliknutím na\n `<`span class=\"link-primary\"`>`Vytvoriť`<`/span`>` na navigačnej lište."
+                "no_locations": "Nie sú k dispozícii žiadne miesta. Pridajte nové miesta kliknutím na\n '<span class=\"link-primary\">'Vytvoriť'</span>' na navigačnej lište."
             }
         },
         "quick_menu": {

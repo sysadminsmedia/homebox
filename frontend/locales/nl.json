@@ -94,6 +94,7 @@
                 "open_new_tab": "Openen in een nieuw tabblad"
             },
             "create_modal": {
+                "clear_template": "Template wissen",
                 "delete_photo": "Foto verwijderen",
                 "item_description": "Artikelomschrijving",
                 "item_name": "Artikelnaam",
@@ -138,16 +139,51 @@
                 "searching": "Zoeken…"
             },
             "view": {
+                "change_details": {
+                    "add_labels": "Voeg labels toe",
+                    "failed_to_update_item": "Bijwerken van item mislukt",
+                    "remove_labels": "Verwijder labels",
+                    "title": "Itemgegevens wijzigen"
+                },
                 "selectable": {
                     "card": "Kaart",
                     "items": "Objecten",
                     "no_items": "Geen objecten om te tonen",
+                    "select_all": "Alles selecteren",
+                    "select_card": "Selecteer kaart",
+                    "select_row": "Rij selecteren",
                     "table": "Tabel"
                 },
                 "table": {
+                    "dropdown": {
+                        "actions": "Acties",
+                        "change_labels": "Labels wijzigen",
+                        "change_labels_success": "Labels gewijzigd",
+                        "change_location": "Locatie wijzigen",
+                        "change_location_success": "Locatie gewijzigd",
+                        "create_maintenance_item": "Onderhoudsinvoer aanmaken voor item",
+                        "create_maintenance_selected": "Onderhoudsinvoer aanmaken voor geselecteerde items",
+                        "create_maintenance_success": "Onderhoudsinvoeren aangemaakt",
+                        "delete_confirmation": "Weet u zeker dat u de geselecteerde items wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
+                        "delete_item": "Item verwijderen",
+                        "delete_selected": "Geselecteerde items verwijderen",
+                        "download_csv": "Download tabel als CSV",
+                        "download_json": "Download tabel als JSON",
+                        "duplicate_item": "Dupliceer item",
+                        "duplicate_selected": "Geselecteerde items dupliceren",
+                        "error_deleting": "Fout bij verwijderen item",
+                        "error_duplicating": "Fout bij dupliceren van item",
+                        "open_menu": "Open menu",
+                        "open_multi_tab_warning": "Om veiligheidsredenen staan browsers standaard niet toe dat meerdere tabbladen tegelijk worden geopend. Volg de documentatie om dit te wijzigen:",
+                        "toggle_expand": "Uitvouwen in-/uitschakelen",
+                        "view_item": "Bekijk item",
+                        "view_items": "Bekijk items"
+                    },
                     "headers": "Kopteksten",
                     "page": "Pagina",
+                    "quick_actions": "Snelle acties en selectie inschakelen",
                     "rows_per_page": "Rijen per pagina",
+                    "selected_rows": "{selected} van {total} rijen geselecteerd.",
                     "table_settings": "Tabel instellingen",
                     "view_item": "Toon Item"
                 }
@@ -194,6 +230,65 @@
         "quick_menu": {
             "no_results": "Geen resultaten gevonden.",
             "shortcut_hint": "Gebruik de numerieke toetsen om snel een actie te selecteren."
+        },
+        "template": {
+            "apply_template": "Template toepassen",
+            "card": {
+                "delete": "Template verwijderen",
+                "duplicate": "Template dupliceren",
+                "edit": "Template bewerken"
+            },
+            "confirm_delete": "Deze template verwijderen?",
+            "create_modal": {
+                "title": "Template maken"
+            },
+            "detail": {
+                "default_values": "Standaardinstellingen",
+                "updated": "Bijgewerkt"
+            },
+            "edit_modal": {
+                "title": "Template bewerken"
+            },
+            "empty_value": "(leeg)",
+            "form": {
+                "custom_fields": "Aangepaste velden",
+                "default_item_values": "Standaardwaarden item",
+                "default_location": "Standaard locatie",
+                "default_value": "Standaard waarde",
+                "field_name": "Veldnaam",
+                "item_description": "Artikelomschrijving",
+                "item_name": "Artikelnaam",
+                "lifetime_warranty": "Levenslange garantie",
+                "location": "Locatie",
+                "manufacturer": "Fabrikant",
+                "model_number": "Modelnummer",
+                "no_custom_fields": "Geen aangepaste velden.",
+                "template_description": "Template beschrijving",
+                "template_name": "Template naam"
+            },
+            "hide_defaults": "Standaard verbergen",
+            "save_as_template": "Opslaan als Template",
+            "selector": {
+                "label": "Template (Optioneel)",
+                "not_found": "Geen template gevonden",
+                "search": "Templates zoeken…",
+                "select": "Template selecteren…"
+            },
+            "show_defaults": "Standaard weergeven",
+            "toast": {
+                "applied": "Template \"{name}\" toegepast",
+                "create_failed": "Template aanmaken mislukt",
+                "created": "Template aangemaakt",
+                "delete_failed": "Template verwijderen mislukt",
+                "deleted": "Template verwijderd",
+                "duplicate_failed": "Template dupliceren mislukt",
+                "duplicated": "Template gedupliceerd als \"{name}\"",
+                "load_failed": "Template details laden mislukt",
+                "saved_as_template": "Item opgeslagen als template \"{name}\"",
+                "update_failed": "Template bijwerken mislukt",
+                "updated": "Template bijgewerkt"
+            },
+            "using_template": "Gebruik template: {name}"
         }
     },
     "errors": {
@@ -231,7 +326,9 @@
         "maintenance": "Onderhoud",
         "name": "Naam",
         "navigate": "Navigeer",
+        "no": "Nee",
         "password": "Wachtwoord",
+        "preview": "Preview",
         "quantity": "Aantal",
         "read_docs": "Lees de documentatie",
         "return_home": "Terug naar startpagina",
@@ -244,7 +341,8 @@
         "updating": "Aan het updaten",
         "value": "Waarde",
         "version": "Versie: { version }",
-        "welcome": "Welkom, { username }"
+        "welcome": "Welkom, { username }",
+        "yes": "Ja"
     },
     "home": {
         "labels": "Labels",
@@ -261,6 +359,7 @@
         "dont_join_group": "Wil je je niet bij een groep aansluiten?",
         "joining_group": "Je sluit je aan bij een bestaande groep!",
         "login": "Log in",
+        "or": "of",
         "register": "Registreer",
         "remember_me": "Onthoud mij",
         "set_email": "Wat is je mailadres?",
@@ -272,6 +371,14 @@
             "invalid_email": "Ongeldig e-mailadres",
             "invalid_email_password": "Ongeldig e-mailadres of wachtwoord",
             "login_success": "Aangemeld",
+            "oidc_access_denied": "Toegang geweigerd: uw account heeft niet de vereiste rol/groepslidmaatschap",
+            "oidc_auth_failed": "OIDC authenticatie mislukt",
+            "oidc_invalid_response": "Ongeldig OIDC-antwoord ontvangen",
+            "oidc_provider_error": "OIDC-provider heeft een fout geretourneerd",
+            "oidc_security_error": "OIDC-beveiligingsfout - mogelijke CSRF-aanval",
+            "oidc_session_expired": "OIDC sessie is verlopen",
+            "oidc_token_expired": "OIDC token is verlopen",
+            "oidc_token_invalid": "OIDC token signature is ongeldig",
             "problem_registering": "Probleem bij het registreren van de gebruiker",
             "user_registered": "Gebruiker geregistreerd"
         }
@@ -508,7 +615,14 @@
         "profile": "Profiel",
         "scanner": "Scanner",
         "search": "Zoeken",
+        "templates": "Templates",
         "tools": "Hulpmiddelen"
+    },
+    "pages": {
+        "templates": {
+            "no_templates": "Nog geen templates.",
+            "title": "Templates"
+        }
     },
     "profile": {
         "active": "Actief",
@@ -527,6 +641,7 @@
         "group_settings_sub": "Gedeelde groepsinstellingen. Mogelijk moet u uw browser vernieuwen om sommige instellingen toe te passen.",
         "inactive": "Inactief",
         "language": "Taal",
+        "legacy_image_fit": "{ currentValue, select, true {Legacy fit uitschakelen: afbeelding aanpassen met balken} false {Legacy fit inschakelen: afbeelding vullen met bijsnijden} other {Overig}}",
         "new_password": "Nieuw Wachtwoord",
         "no_notifiers": "Geen melders geconfigureerd",
         "no_override": "Niet overschrijven",

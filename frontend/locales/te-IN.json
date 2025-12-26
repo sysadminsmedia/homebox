@@ -1,0 +1,15 @@
+{
+    "components": {
+        "color_selector": {
+            "color": "రంగు",
+            "no_color_selected": "ఏ రంగునూ ఎంచుకోలేదు"
+        },
+        "global": {
+            "copy_text": {
+                "documentation": "విషయ వ్యక్తీకరణ",
+                "failed_to_copy": "వచనాన్ని క్లిప్ ‌ బోర్డ్ ‌ కు కాపీ చేయడంలో విఫలమైంది",
+                "https_required": "ఎందుకంటే HTTPS అవసరం"
+            }
+        }
+    }
+}

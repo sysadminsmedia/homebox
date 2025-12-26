@@ -94,6 +94,7 @@
                 "open_new_tab": "Abrir en nueva pestaña"
             },
             "create_modal": {
+                "clear_template": "Vaciar Plantilla",
                 "delete_photo": "Eliminar foto",
                 "item_description": "Descripción del artículo",
                 "item_name": "Nombre del artículo",
@@ -127,26 +128,62 @@
                 "db_source": "Fuente de la base de datos",
                 "error_exception": "Se ha producido una excepción al recuperar el código de barras del artículo: ",
                 "error_invalid_barcode": "Código de barras proporcionado no válido",
-                "error_not_found": "No se ha encontrado ningún producto con código de barras.",
+                "error_not_found": "No se ha encontrado ningún producto con el código de barras proporcionado.",
                 "search_item": "Buscar producto",
                 "title": "Importar producto"
             },
             "selector": {
                 "no_results": "Resultados No Encontrados",
                 "placeholder": "Seleccionar…",
-                "search_placeholder": "Escribe para buscar…"
+                "search_placeholder": "Escribe para buscar…",
+                "searching": "Buscando…"
             },
             "view": {
+                "change_details": {
+                    "add_labels": "Añadir etiquetas",
+                    "failed_to_update_item": "No se pudo actualizar el artículo",
+                    "remove_labels": "Eliminar etiquetas",
+                    "title": "Cambiar detalles del artículo"
+                },
                 "selectable": {
                     "card": "Tarjeta",
                     "items": "Elementos",
                     "no_items": "No hay elementos para mostrar",
+                    "select_all": "Seleccionar todo",
+                    "select_card": "Seleccionar tarjeta",
+                    "select_row": "Seleccionar fila",
                     "table": "Tabla"
                 },
                 "table": {
+                    "dropdown": {
+                        "actions": "Acciones",
+                        "change_labels": "Cambiar etiquetas",
+                        "change_labels_success": "Etiquetas cambiadas",
+                        "change_location": "Cambiar ubicación",
+                        "change_location_success": "Ubicación cambiada",
+                        "create_maintenance_item": "Crear entrada de mantenimiento para el elemento",
+                        "create_maintenance_selected": "Crear entrada de mantenimiento para los elementos seleccionados",
+                        "create_maintenance_success": "Entradas de mantenimiento creadas",
+                        "delete_confirmation": "¿Está seguro de que desea eliminar los elementos seleccionados? Esta acción no se puede deshacer.",
+                        "delete_item": "Borrar elemento",
+                        "delete_selected": "Borrar los elementos seleccionados",
+                        "download_csv": "Descargar tabla como CSV",
+                        "download_json": "Descargar tabla como JSON",
+                        "duplicate_item": "Duplicar Elemento",
+                        "duplicate_selected": "Duplicar Elementos Seleccionados",
+                        "error_deleting": "Error al borrar el elemento",
+                        "error_duplicating": "Error al duplicar el elemento",
+                        "open_menu": "Abrir menú",
+                        "open_multi_tab_warning": "Por razones de seguridad, los navegadores no permiten abrir varias pestañas a la vez de forma predeterminada. Para cambiar esto, siga la documentación:",
+                        "toggle_expand": "Alternar Expandir",
+                        "view_item": "Ver elemento",
+                        "view_items": "Ver elementos"
+                    },
                     "headers": "Encabezados",
                     "page": "Página",
+                    "quick_actions": "Habilitar \"Acciones Rápidas y Selección\"",
                     "rows_per_page": "Filas por página",
+                    "selected_rows": "{selected} de {total} filas seleccionadas.",
                     "table_settings": "Configuración de Tabla",
                     "view_item": "Ver Elemento"
                 }
@@ -193,6 +230,65 @@
         "quick_menu": {
             "no_results": "Sin resultados.",
             "shortcut_hint": "Usa las teclas numéricas para seleccionar rápidamente una acción."
+        },
+        "template": {
+            "apply_template": "Aplicar una plantilla",
+            "card": {
+                "delete": "Eliminar Plantilla",
+                "duplicate": "Duplicar plantilla",
+                "edit": "Editar plantilla"
+            },
+            "confirm_delete": "¿Eliminar esta plantilla?",
+            "create_modal": {
+                "title": "Crear Plantilla"
+            },
+            "detail": {
+                "default_values": "Valores Predeterminados",
+                "updated": "Actualizado"
+            },
+            "edit_modal": {
+                "title": "Editar Plantilla"
+            },
+            "empty_value": "(vacío)",
+            "form": {
+                "custom_fields": "Campos Personalizados",
+                "default_item_values": "Valores Predeterminados de Elementos",
+                "default_location": "Ubicación Predeterminada",
+                "default_value": "Valor Predeterminado",
+                "field_name": "Nombre del Campo",
+                "item_description": "Descripción del Elemento",
+                "item_name": "Nombre del Elemento",
+                "lifetime_warranty": "Garantía de por vida",
+                "location": "Ubicación",
+                "manufacturer": "Fabricante",
+                "model_number": "Número de Modelo",
+                "no_custom_fields": "Sin campos personalizados.",
+                "template_description": "Descripción de la Plantilla",
+                "template_name": "Nombre de la Plantilla"
+            },
+            "hide_defaults": "Ocultar valores predeterminados",
+            "save_as_template": "Guardar como Plantilla",
+            "selector": {
+                "label": "Plantilla (Opcional)",
+                "not_found": "No se ha encontrado ninguna plantilla",
+                "search": "Buscar plantillas…",
+                "select": "Seleccionar plantilla…"
+            },
+            "show_defaults": "Mostrar valores predeterminados",
+            "toast": {
+                "applied": "Plantilla \"{name}\" aplicada",
+                "create_failed": "No se pudo crear la plantilla",
+                "created": "Plantilla creada",
+                "delete_failed": "No se ha podido eliminar la plantilla",
+                "deleted": "Plantilla eliminada",
+                "duplicate_failed": "No se pudo duplicar la plantilla",
+                "duplicated": "Plantilla duplicada como \"{name}\"",
+                "load_failed": "No se han podido cargar los detalles de la plantilla",
+                "saved_as_template": "Elemento guardado como plantilla \"{name}\"",
+                "update_failed": "No se ha podido actualizar la plantilla",
+                "updated": "Plantilla actualizada"
+            },
+            "using_template": "Usando plantilla: {name}"
         }
     },
     "errors": {
@@ -230,7 +326,9 @@
         "maintenance": "Mantenimiento",
         "name": "Nombre",
         "navigate": "Navegar",
+        "no": "No",
         "password": "Contraseña",
+        "preview": "Vista previa",
         "quantity": "Cantidad",
         "read_docs": "Lee la Documentación",
         "return_home": "Regresar a Inicio",
@@ -243,7 +341,8 @@
         "updating": "Actualizando",
         "value": "Valor",
         "version": "Versión: { version }",
-        "welcome": "Bienvenido/a, { username }"
+        "welcome": "Bienvenido/a, { username }",
+        "yes": "Sí"
     },
     "home": {
         "labels": "Etiquetas",
@@ -260,6 +359,7 @@
         "dont_join_group": "¿No quieres unirte a un grupo?",
         "joining_group": "¡Te estás uniendo a un grupo existente!",
         "login": "Iniciar sesión",
+        "or": "o",
         "register": "Registrarse",
         "remember_me": "Recuérdame",
         "set_email": "¿Cuál es tu email?",
@@ -271,6 +371,14 @@
             "invalid_email": "Dirección de correo electrónico no válida",
             "invalid_email_password": "E-mail y/o contraseña no válido",
             "login_success": "Sesión iniciada correctamente",
+            "oidc_access_denied": "Acceso denegado: Tu cuenta no tiene el rol/pertenencia al grupo requerido",
+            "oidc_auth_failed": "Autenticación OIDC fallida",
+            "oidc_invalid_response": "Se recibió una respuesta OIDC no válida",
+            "oidc_provider_error": "El proveedor OIDC devolvió un error",
+            "oidc_security_error": "Error de seguridad OIDC - posible ataque CSRF",
+            "oidc_session_expired": "La sesión OIDC ha caducado",
+            "oidc_token_expired": "El token OIDC ha caducado",
+            "oidc_token_invalid": "La firma del token OIDC no es válida",
             "problem_registering": "Problema al registrar al usuario",
             "user_registered": "Usuario registrado"
         }
@@ -291,6 +399,18 @@
         "description": "Descripción",
         "details": "Detalles",
         "drag_and_drop": "Arrastra y suelta los archivos aquí o selecciona los archivos",
+        "duplicate": {
+            "copy_attachments": "Copiar Adjuntos",
+            "copy_custom_fields": "Copiar Campos Personalizados",
+            "copy_maintenance": "Copiar Mantenimiento",
+            "custom_prefix": "Copiar Prefijo",
+            "enable_custom_prefix": "Habilitar Prefijo Personalizado",
+            "override_instructions": "Mantén pulsada la tecla Mayús mientras haces clic en el botón Duplicar para anular estos ajustes.",
+            "prefix": "Copia de ",
+            "prefix_instructions": "Este prefijo se añadirá al principio del nombre del elemento duplicado. Incluye un espacio al final del prefijo para añadir un espacio entre el prefijo y el nombre del elemento.",
+            "temporary_title": "Configuración temporal",
+            "title": "Configuración Duplicados"
+        },
         "edit": {
             "edit_attachment_dialog": {
                 "attachment_title": "Título del Adjunto",
@@ -299,7 +419,8 @@
                 "primary_photo_sub": "Esta opción sólo está disponible para las fotos. Sólo puede haber una foto principal. Si seleccionas esta opción, la foto principal actual, si existe, se deseleccionará.",
                 "select_type": "Seleccionar un tipo",
                 "title": "Editar Adjunto"
-            }
+            },
+            "view_image": "Ver imagen"
         },
         "edit_details": "Editar detalles",
         "field_selector": "Selector de Campo",
@@ -397,6 +518,7 @@
         "update_label": "Actualizar Etiqueta"
     },
     "languages": {
+        "bs-BA": "Bosnio (Bosnia y Herzegovina)",
         "ca": "Catalán",
         "cs-CZ": "Checo",
         "de": "Alemán",
@@ -423,6 +545,7 @@
         "th-TH": "Tailandés",
         "tr": "Turco",
         "uk-UA": "Ucraniano",
+        "vi-VN": "Vietnamita",
         "zh-CN": "Chino (Simplificado)",
         "zh-HK": "Chino (Hong Kong)",
         "zh-MO": "Chino (Macao)",
@@ -492,7 +615,14 @@
         "profile": "Perfil",
         "scanner": "Escáner",
         "search": "Buscar",
+        "templates": "Plantillas",
         "tools": "Herramientas"
+    },
+    "pages": {
+        "templates": {
+            "no_templates": "Aún no hay plantillas.",
+            "title": "Plantillas"
+        }
     },
     "profile": {
         "active": "Activo",
@@ -511,6 +641,7 @@
         "group_settings_sub": "Configuración de Grupo Compartido. Es posible que tengas que actualizar tu navegador para que se apliquen algunos ajustes.",
         "inactive": "Inactivo",
         "language": "Idioma",
+        "legacy_image_fit": "{ currentValue, select, true {Disable Legacy Fit: Fit Image with Bars} false {Enable Legacy Fit: Fill Image with Crop} other {Not Hit}}",
         "new_password": "Nueva Contraseña",
         "no_notifiers": "No hay notificadores configurados",
         "no_override": "No reemplazar",
@@ -550,7 +681,7 @@
             "generate_page": "Generar Página",
             "input_placeholder": "Escribe aquí",
             "instruction_1": "El Generador de Etiquetas Homebox es una herramienta que para ayudarte a imprimir etiquetas para tu inventario Homebox. Están pensadas para\n ser etiquetas de impresión anticipada para que puedas imprimir muchas etiquetas y tenerlas listas para usarlas",
-            "instruction_2": "Como tal, estas etiquetas funcionan imprimiendo un código QR de URL e información ID de Activo en una etiqueta. Si has desactivadod\n ID de Activo en la configuración de tu Homebox, puedes seguir utilizando esta herramienta, pero los IDs de Activo no harán referencia a ningún elemento",
+            "instruction_2": "Como tal, estas etiquetas funcionan imprimiendo un código QR de URL e información ID de Activo en una etiqueta. Si has desactivado\n ID de Activo en la configuración de tu Homebox, puedes seguir utilizando esta herramienta, pero los IDs de Activo no harán referencia a ningún elemento",
             "instruction_3": "Esta función se encuentra en las primeras etapas de desarrollo y puede cambiar en futuras versiones. Si tienes algún comentario, indícalo\n en la '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'Discusión de GitHub'</a>'",
             "label_height": "Altura de la Etiqueta",
             "label_width": "Ancho de la Etiqueta",
