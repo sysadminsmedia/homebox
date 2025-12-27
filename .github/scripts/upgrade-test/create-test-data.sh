@@ -31,7 +31,7 @@ api_call() {
             "$API_URL$endpoint")
     fi
 
-    # Validate if the response is valid JSON
+    # Validate response is proper JSON
     if ! echo "$response" | jq '.' > /dev/null 2>&1; then
         echo "Invalid API response for $endpoint: $response" >&2
         exit 1
@@ -40,17 +40,25 @@ api_call() {
     echo "$response"
 }
 
-# Function to initialize test data storage
+# Function to initialize the test data JSON file
 initialize_test_data() {
-    echo "Initializing test data file: $TEST_DATA_FILE"
+    echo "Initializing test data JSON file: $TEST_DATA_FILE"
     if [ -f "$TEST_DATA_FILE" ]; then
-        echo "Found existing test data file. Removing..."
+        echo "Removing existing test data file..."
         rm -f "$TEST_DATA_FILE"
     fi
-    echo "{\"users\":[],\"locations\":[],\"labels\":[],\"notifiers\":[],\"items\":[]}" > "$TEST_DATA_FILE"
+    echo "{\"users\":[],\"locations\":[],\"labels\":[],\"items\":[],\"attachments\":[],\"notifiers\":[]}" > "$TEST_DATA_FILE"
 }
 
-# Function to register a user and get token
+# Function to add content to JSON data file
+add_to_test_data() {
+    local key=$1
+    local value=$2
+
+    jq --argjson data "$value" ".${key} += [\$data]" "$TEST_DATA_FILE" > "${TEST_DATA_FILE}.tmp" && mv "${TEST_DATA_FILE}.tmp" "$TEST_DATA_FILE"
+}
+
+# Register a user and get their auth token
 register_user() {
     local email=$1
     local name=$2
@@ -58,88 +66,88 @@ register_user() {
     local group_token=$4
 
     echo "Registering user: $email"
-
     local payload="{\"email\":\"$email\",\"name\":\"$name\",\"password\":\"$password\""
     if [ -n "$group_token" ]; then
         payload="$payload,\"groupToken\":\"$group_token\""
     fi
     payload="$payload}"
 
-    local response
-    response=$(api_call "POST" "/users/register" "$payload")
-    echo "$response"
+    api_call "POST" "/users/register" "$payload"
 }
 
-# Function to append user data to TEST_DATA_FILE
-store_user() {
-    local email=$1
-    local password=$2
-    local token=$3
-    local group=$4
-
-    jq --arg email "$email" \
-       --arg password "$password" \
-       --arg token "$token" \
-       --arg group "$group" \
-       '.users += [{"email":$email, "password":$password, "token":$token, "group":$group}]' \
-       "$TEST_DATA_FILE" > "${TEST_DATA_FILE}.tmp" && mv "${TEST_DATA_FILE}.tmp" "$TEST_DATA_FILE"
-}
-
-# Initialize the test data file
+# Main logic for creating test data
 initialize_test_data
 
-# Step 1: Register the first user and create the first group
-echo "=== Step 1: Create first group with 5 users ==="
-user1_response=$(register_user "user1@homebox.test" "User One" "TestPassword123!")
-user1_token=$(echo "$user1_response" | jq -r '.token // empty')
-group_token=$(echo "$user1_response" | jq -r '.group.inviteToken // empty')
+# Group 1: Create 5 users
+echo "=== Creating Group 1 Users ==="
+group1_user1_response=$(register_user "user1@homebox.test" "User One" "password123")
+group1_user1_token=$(echo "$group1_user1_response" | jq -r '.token // empty')
+group1_invite_token=$(echo "$group1_user1_response" | jq -r '.group.inviteToken // empty')
 
-if [ -z "$user1_token" ]; then
-    echo "Failed to register first user"
-    echo "Response: $user1_response"
+if [ -z "$group1_user1_token" ]; then
+    echo "Failed to register the first group user" >&2
     exit 1
 fi
+add_to_test_data "users" "{\"email\": \"user1@homebox.test\", \"token\": \"$group1_user1_token\", \"group\": 1}"
 
-# Store the first user
-store_user "user1@homebox.test" "TestPassword123!" "$user1_token" "1"
-
-# Register 4 more users in the same group
-for i in {2..5}; do
-    echo "Registering user$i in group 1..."
-    user_response=$(register_user "user${i}@homebox.test" "User $i" "TestPassword123!" "$group_token")
-    user_token=$(echo "$user_response" | jq -r '.token // empty')
-    if [ -z "$user_token" ]; then
-        echo "Failed to register user$i"
-        echo "Response: $user_response"
-    else
-        store_user "user${i}@homebox.test" "TestPassword123!" "$user_token" "1"
-    fi
+# Add 4 more users to the same group
+for user in 2 3 4 5; do
+    response=$(register_user "user$user@homebox.test" "User $user" "password123" "$group1_invite_token")
+    token=$(echo "$response" | jq -r '.token // empty')
+    add_to_test_data "users" "{\"email\": \"user$user@homebox.test\", \"token\": \"$token\", \"group\": 1}"
 done
 
-# Step 2: Create second group with 2 users
-echo "=== Step 2: Create second group with 2 users ==="
-user6_response=$(register_user "user6@homebox.test" "User Six" "TestPassword123!")
-user6_token=$(echo "$user6_response" | jq -r '.token // empty')
-group2_token=$(echo "$user6_response" | jq -r '.group.inviteToken // empty')
+# Group 2: Create 2 users
+echo "=== Creating Group 2 Users ==="
+group2_user1_response=$(register_user "user6@homebox.test" "User Six" "password123")
+group2_user1_token=$(echo "$group2_user1_response" | jq -r '.token // empty')
+group2_invite_token=$(echo "$group2_user1_response" | jq -r '.group.inviteToken // empty')
+add_to_test_data "users" "{\"email\": \"user6@homebox.test\", \"token\": \"$group2_user1_token\", \"group\": 2}"
 
-if [ -z "$user6_token" ]; then
-    echo "Failed to register user6"
-    echo "Response: $user6_response"
-    exit 1
-fi
+response=$(register_user "user7@homebox.test" "User Seven" "password123" "$group2_invite_token")
+group2_user2_token=$(echo "$response" | jq -r '.token // empty')
+add_to_test_data "users" "{\"email\": \"user7@homebox.test\", \"token\": \"$group2_user2_token\", \"group\": 2}"
 
-# Store user6
-store_user "user6@homebox.test" "TestPassword123!" "$user6_token" "2"
+# Create Locations
+echo "=== Creating Locations ==="
+group1_locations=()
+group1_locations+=("$(api_call "POST" "/locations" "{ \"name\": \"Living Room\", \"description\": \"Family area\" }" "$group1_user1_token")")
+group1_locations+=("$(api_call "POST" "/locations" "{ \"name\": \"Garage\", \"description\": \"Storage area\" }" "$group1_user1_token")")
+group2_locations=()
+group2_locations+=("$(api_call "POST" "/locations" "{ \"name\": \"Office\", \"description\": \"Workspace\" }" "$group2_user1_token")")
 
-user7_response=$(register_user "user7@homebox.test" "User Seven" "TestPassword123!" "$group2_token")
-user7_token=$(echo "$user7_response" | jq -r '.token // empty')
-if [ -z "$user7_token" ]; then
-    echo "Failed to register user7"
-    echo "Response: $user7_response"
-else
-    store_user "user7@homebox.test" "TestPassword123!" "$user7_token" "2"
-fi
+# Add Locations to Test Data
+for loc in "${group1_locations[@]}"; do
+    loc_id=$(echo "$loc" | jq -r '.id // empty')
+    add_to_test_data "locations" "{\"id\": \"$loc_id\", \"group\": 1}"
+done
 
-# Final Step: Log the created users for debugging
-echo "=== Users Created ==="
-cat "$TEST_DATA_FILE" | jq '.users'
+for loc in "${group2_locations[@]}"; do
+    loc_id=$(echo "$loc" | jq -r '.id // empty')
+    add_to_test_data "locations" "{\"id\": \"$loc_id\", \"group\": 2}"
+done
+
+# Create Labels
+echo "=== Creating Labels ==="
+label1=$(api_call "POST" "/labels" "{ \"name\": \"Electronics\", \"description\": \"Devices\" }" "$group1_user1_token")
+add_to_test_data "labels" "$label1"
+
+label2=$(api_call "POST" "/labels" "{ \"name\": \"Important\", \"description\": \"High Priority\" }" "$group1_user1_token")
+add_to_test_data "labels" "$label2"
+
+# Create Items and Attachments
+echo "=== Creating Items and Attachments ==="
+item1=$(api_call "POST" "/items" "{ \"name\": \"Laptop\", \"description\": \"Work laptop\", \"locationId\": \"$(echo ${group1_locations[0]} | jq -r '.id // empty')\" }" "$group1_user1_token")
+item1_id=$(echo "$item1" | jq -r '.id // empty')
+add_to_test_data "items" "{\"id\": \"$item1_id\", \"group\": 1}"
+
+attachment1=$(api_call "POST" "/items/$item1_id/attachments" "" "$group1_user1_token")
+add_to_test_data "attachments" "{\"id\": \"$(echo $attachment1 | jq -r '.id // empty')\", \"itemId\": \"$item1_id\"}"
+
+# Create Test Notifier
+echo "=== Creating Notifiers ==="
+notifier=$(api_call "POST" "/notifiers" "{ \"name\": \"TESTING\", \"url\": \"https://example.com/webhook\", \"isActive\": true }" "$group1_user1_token")
+add_to_test_data "notifiers" "$notifier"
+
+echo "=== Test Data Creation Complete ==="
+cat "$TEST_DATA_FILE" | jq
