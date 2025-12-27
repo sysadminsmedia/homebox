@@ -735,11 +735,7 @@
             "zero_datetimes": "Poner a cero las horas de los artículos",
             "zero_datetimes_button": "Poner a cero las horas de los artículos",
             "zero_datetimes_confirm": "¿Estás seguro de que deseas restablecer todos los valores de fecha y hora? Esto puede tardar un tiempo y no se puede deshacer.",
-            "zero_datetimes_sub": "Restablece el valor de la hora para todos los campos de fecha/hora en tu inventario al principio de esa fecha. Esto se hace para corregir un error que se introdujo al principio del desarrollo de la aplicación, que causó que el valor de la hora se almacenase con la fecha, lo cual produjo problemas al mostrar valores precisos del campo. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Ver el issue #236 de GitHub para más detalles.'</a>'",
-            "wipe_inventory": "Wipe Inventory",
-            "wipe_inventory_button": "Wipe Inventory",
-            "wipe_inventory_confirm": "Are you sure you want to wipe your entire inventory? This will delete all items and cannot be undone.",
-            "wipe_inventory_sub": "Permanently deletes all items in your inventory. This action is irreversible and will remove all item data including attachments and photos."
+            "zero_datetimes_sub": "Restablece el valor de la hora para todos los campos de fecha/hora en tu inventario al principio de esa fecha. Esto se hace para corregir un error que se introdujo al principio del desarrollo de la aplicación, que causó que el valor de la hora se almacenase con la fecha, lo cual produjo problemas al mostrar valores precisos del campo. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Ver el issue #236 de GitHub para más detalles.'</a>'"
         },
         "actions_sub": "Aplica Acciones a tu inventario de forma masiva. Estas acciones son irreversibles. '<b>'Ten Cuidado.'</b>'",
         "import_export": "Importar/Exportar",
@@ -769,9 +765,7 @@
             "failed_ensure_ids": "Error al asegurar los ID de los activos.",
             "failed_ensure_import_refs": "Error al asegurar las ref. de importación.",
             "failed_set_primary_photos": "No se han podido establecer las fotos principales.",
-            "failed_zero_datetimes": "Error al restablecer los valores de fecha y hora.",
-            "failed_wipe_inventory": "Failed to wipe inventory.",
-            "wipe_inventory_success": "Successfully wiped inventory. { results } items deleted."
+            "failed_zero_datetimes": "Error al restablecer los valores de fecha y hora."
         }
     }
 }

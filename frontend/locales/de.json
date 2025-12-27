@@ -735,11 +735,7 @@
             "zero_datetimes": "Leeren der Datum & Zeiten der Elemente",
             "zero_datetimes_button": "Gegenstands-Datum/Zeit zurücksetzen",
             "zero_datetimes_confirm": "Möchten Sie wirklich alle Datums- und Zeitwerte zurücksetzen? Dies kann einige Zeit dauern und kann nicht rückgängig gemacht werden.",
-            "zero_datetimes_sub": "Setzt den Zeitwert für alle Datums-Zeit-Felder in Ihrem Inventar auf den Anfang des Datums zurück. Damit wird ein Fehler behoben, der zu Beginn der Entwicklung der Website eingeführt wurde und dazu führte, dass das Datum zusammen mit der Uhrzeit gespeichert wurde, was zu Problemen bei der Anzeige von genauen Werten in Datumsfeldern führte. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'",
-            "wipe_inventory": "Wipe Inventory",
-            "wipe_inventory_button": "Wipe Inventory",
-            "wipe_inventory_confirm": "Are you sure you want to wipe your entire inventory? This will delete all items and cannot be undone.",
-            "wipe_inventory_sub": "Permanently deletes all items in your inventory. This action is irreversible and will remove all item data including attachments and photos."
+            "zero_datetimes_sub": "Setzt den Zeitwert für alle Datums-Zeit-Felder in Ihrem Inventar auf den Anfang des Datums zurück. Damit wird ein Fehler behoben, der zu Beginn der Entwicklung der Website eingeführt wurde und dazu führte, dass das Datum zusammen mit der Uhrzeit gespeichert wurde, was zu Problemen bei der Anzeige von genauen Werten in Datumsfeldern führte. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'"
         },
         "actions_sub": "Aktionen in großen Mengen auf das Inventar anwenden. Diese Aktionen sind unumkehrbar. '<b>'Sei vorsichtig.'</b>'",
         "import_export": "Import/Export",
@@ -769,9 +765,7 @@
             "failed_ensure_ids": "Fehler beim sichern von Asset-IDs.",
             "failed_ensure_import_refs": "Fehler beim Sicherstellen der Import-Referenzen.",
             "failed_set_primary_photos": "Das Festlegen der primären Fotos ist fehlgeschlagen.",
-            "failed_zero_datetimes": "Datums- und Uhrzeitwerte konnten nicht zurückgesetzt werden.",
-            "failed_wipe_inventory": "Failed to wipe inventory.",
-            "wipe_inventory_success": "Successfully wiped inventory. { results } items deleted."
+            "failed_zero_datetimes": "Datums- und Uhrzeitwerte konnten nicht zurückgesetzt werden."
         }
     }
 }

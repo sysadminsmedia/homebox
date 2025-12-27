@@ -735,11 +735,7 @@
             "zero_datetimes": "Nul item Datum Tijden",
             "zero_datetimes_button": "Nul item Datum Tijden",
             "zero_datetimes_confirm": "Weet u zeker dat u alle datum- en tijdwaarden opnieuw wilt instellen? Dit kan even duren en kan niet ongedaan worden gemaakt.",
-            "zero_datetimes_sub": "Hiermee stelt u de tijdwaarde voor alle datum-/tijdvelden in uw voorraad in op het begin van de datum. Dit is een oplossing voor een fout in de applicatie geïntroduceerd in het begin van de ontwikkeling waarbij de tijd waarde verkeerd werd opgeslagen. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Zie Github Issue #236 voor alle details.'</a>'",
-            "wipe_inventory": "Wipe Inventory",
-            "wipe_inventory_button": "Wipe Inventory",
-            "wipe_inventory_confirm": "Are you sure you want to wipe your entire inventory? This will delete all items and cannot be undone.",
-            "wipe_inventory_sub": "Permanently deletes all items in your inventory. This action is irreversible and will remove all item data including attachments and photos."
+            "zero_datetimes_sub": "Hiermee stelt u de tijdwaarde voor alle datum-/tijdvelden in uw voorraad in op het begin van de datum. Dit is een oplossing voor een fout in de applicatie geïntroduceerd in het begin van de ontwikkeling waarbij de tijd waarde verkeerd werd opgeslagen. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Zie Github Issue #236 voor alle details.'</a>'"
         },
         "actions_sub": "Acties in bulk toepassen op je inventaris. Deze zijn onomkeerbaar '<b>'Wees voorzichtig.'</b>'",
         "import_export": "Importeer/Exporteer",
@@ -769,9 +765,7 @@
             "failed_ensure_ids": "Item-ID's aanmaken mislukt.",
             "failed_ensure_import_refs": "Import refs aanmaken mislukt.",
             "failed_set_primary_photos": "Primaire foto's instellen mislukt.",
-            "failed_zero_datetimes": "Datum- en tijdwaarden resetten mislukt.",
-            "failed_wipe_inventory": "Failed to wipe inventory.",
-            "wipe_inventory_success": "Successfully wiped inventory. { results } items deleted."
+            "failed_zero_datetimes": "Datum- en tijdwaarden resetten mislukt."
         }
     }
 }

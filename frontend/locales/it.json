@@ -656,11 +656,7 @@
             "zero_datetimes": "Azzera Data e Orario articolo",
             "zero_datetimes_button": "Azzera Date e Ora articolo",
             "zero_datetimes_confirm": "Sei sicuro di voler reimpostare tutti i valori di data e ora? Questa operazione potrebbe richiedere tempo e non può essere annullata.",
-            "zero_datetimes_sub": "Reimposta il valore dell'ora per tutti i campi data e ora dell'inventario all'inizio della data. Questo è per correggere un bug che è stato introdotto all'inizio dello sviluppo del sito che ha causato il valore di orario memorizzato con il tempo che ha causato problemi con i campi data visualizzazione dei valori esatti. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Vedi Github Issue #236 per maggiori dettagli.'</a>'",
-            "wipe_inventory": "Wipe Inventory",
-            "wipe_inventory_button": "Wipe Inventory",
-            "wipe_inventory_confirm": "Are you sure you want to wipe your entire inventory? This will delete all items and cannot be undone.",
-            "wipe_inventory_sub": "Permanently deletes all items in your inventory. This action is irreversible and will remove all item data including attachments and photos."
+            "zero_datetimes_sub": "Reimposta il valore dell'ora per tutti i campi data e ora dell'inventario all'inizio della data. Questo è per correggere un bug che è stato introdotto all'inizio dello sviluppo del sito che ha causato il valore di orario memorizzato con il tempo che ha causato problemi con i campi data visualizzazione dei valori esatti. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Vedi Github Issue #236 per maggiori dettagli.'</a>'"
         },
         "actions_sub": "Applica Azioni massive al tuo inventario. Questo sono azioni irreversibili. '<b>'Presta attenzione.'</b>'",
         "import_export": "Importa/Esporta",
@@ -690,9 +686,7 @@
             "failed_ensure_ids": "Impossibile garantire gli ID degli asset.",
             "failed_ensure_import_refs": "Impossibile garantire i riferimenti di importazione.",
             "failed_set_primary_photos": "Impossibile configurare le foto pricipali.",
-            "failed_zero_datetimes": "Impossibile reimpostare i valori di data e ora.",
-            "failed_wipe_inventory": "Failed to wipe inventory.",
-            "wipe_inventory_success": "Successfully wiped inventory. { results } items deleted."
+            "failed_zero_datetimes": "Impossibile reimpostare i valori di data e ora."
         }
     }
 }

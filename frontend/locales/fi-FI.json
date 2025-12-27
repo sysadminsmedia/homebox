@@ -386,11 +386,7 @@
             "set_primary_photo_sub": "Homebox versiossa v0.10.0 ensisijainen kuvakenttä lisättiin tyypin kuva liitteisiin. Tämä toiminto asettaa ensisijaiseksi kuvakentäksi tietokannan liitteet-taulukon ensimmäisen kuvan, jos sitä ei ole jo asetettu. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Katso GitHub PR #576\" </a>\"",
             "zero_datetimes": "Nolla Kohteen Päivämääräajat",
             "zero_datetimes_button": "Nolla Kohteen Päivämääräajat",
-            "zero_datetimes_sub": "Palauttaa varastosi kaikkien päivämääräkenttien aika-arvon päivämäärän alkuun. Tämän tarkoituksena on korjata virhe, joka otettiin käyttöön varhaisessa vaiheessa sivuston kehitystä, joka aiheutti aika-arvon tallentamisen ajan kanssa, joka aiheutti ongelmia päivämääräkentissä, jotka näyttävät tarkkoja arvoja. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Katso Github Ongelma #236 lisää yksityiskohtia.'</a>'",
-            "wipe_inventory": "Wipe Inventory",
-            "wipe_inventory_button": "Wipe Inventory",
-            "wipe_inventory_confirm": "Are you sure you want to wipe your entire inventory? This will delete all items and cannot be undone.",
-            "wipe_inventory_sub": "Permanently deletes all items in your inventory. This action is irreversible and will remove all item data including attachments and photos."
+            "zero_datetimes_sub": "Palauttaa varastosi kaikkien päivämääräkenttien aika-arvon päivämäärän alkuun. Tämän tarkoituksena on korjata virhe, joka otettiin käyttöön varhaisessa vaiheessa sivuston kehitystä, joka aiheutti aika-arvon tallentamisen ajan kanssa, joka aiheutti ongelmia päivämääräkentissä, jotka näyttävät tarkkoja arvoja. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Katso Github Ongelma #236 lisää yksityiskohtia.'</a>'"
         },
         "actions_sub": "Käytä toimintoja varastoon irtotavarana. Nämä ovat peruuttamattomia toimia. '<b>'Ole varovainen.</b>'",
         "import_export": "Tuo/Vie",

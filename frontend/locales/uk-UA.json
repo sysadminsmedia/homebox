@@ -445,11 +445,7 @@
             "set_primary_photo_sub": "У версії v0.10.0 Homebox до вкладень типу photo було додано поле зображення. Ця дія встановить основною фотографією першу картинку, що ви додали до предметів, якщо вона ще не встановлена. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Див. GitHub PR #576'</a>'",
             "zero_datetimes": "Обнулити дати предметів",
             "zero_datetimes_button": "Обнулити дати предметів",
-            "zero_datetimes_sub": "Ця клавіша скидає значення \"час\" для усіх полів типу \"дата\" у списку ваших предметів. Користуйтеся для виправлення багу, що був доданий на початку розробки, і який псував збереження часу, що призводило до некоректного відображення.'<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Більше даних на GitHub, #236 проблема.'</a>'",
-            "wipe_inventory": "Wipe Inventory",
-            "wipe_inventory_button": "Wipe Inventory",
-            "wipe_inventory_confirm": "Are you sure you want to wipe your entire inventory? This will delete all items and cannot be undone.",
-            "wipe_inventory_sub": "Permanently deletes all items in your inventory. This action is irreversible and will remove all item data including attachments and photos."
+            "zero_datetimes_sub": "Ця клавіша скидає значення \"час\" для усіх полів типу \"дата\" у списку ваших предметів. Користуйтеся для виправлення багу, що був доданий на початку розробки, і який псував збереження часу, що призводило до некоректного відображення.'<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Більше даних на GitHub, #236 проблема.'</a>'"
         },
         "actions_sub": "Дії для роботи з усіма предметами одразу. Процес незворотній.'<b>'Будьте обережні.'</b>'",
         "import_export": "Імопрт/Експорт",

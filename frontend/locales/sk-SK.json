@@ -619,11 +619,7 @@
             "zero_datetimes": "Vynulovať dátum a čas položiek",
             "zero_datetimes_button": "Vynulovať dátum a čas položiek",
             "zero_datetimes_confirm": "Naozaj chcete resetovať všetky hodnoty dátumu a času? Toto môže chvíľu trvať a akcia sa nedá odvolať.",
-            "zero_datetimes_sub": "Obnoví hodnotu času pre všetky polia dátumu a času vo vašom inventári na začiatok dátumu. Ide o opravu chyby, ktorá bola zavedená na začiatku vývoja stránky a ktorá spôsobila, že sa hodnota času uložila s časom, čo spôsobilo problémy s poliami dátumu zobrazujúcimi presné hodnoty. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'",
-            "wipe_inventory": "Wipe Inventory",
-            "wipe_inventory_button": "Wipe Inventory",
-            "wipe_inventory_confirm": "Are you sure you want to wipe your entire inventory? This will delete all items and cannot be undone.",
-            "wipe_inventory_sub": "Permanently deletes all items in your inventory. This action is irreversible and will remove all item data including attachments and photos."
+            "zero_datetimes_sub": "Obnoví hodnotu času pre všetky polia dátumu a času vo vašom inventári na začiatok dátumu. Ide o opravu chyby, ktorá bola zavedená na začiatku vývoja stránky a ktorá spôsobila, že sa hodnota času uložila s časom, čo spôsobilo problémy s poliami dátumu zobrazujúcimi presné hodnoty. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'"
         },
         "actions_sub": "Hromadne použite akcie na svoj inventár. Tieto akcie nie je možné odvolať. '<b>'Buďte opatrní.'</b>'",
         "import_export": "Import/export",
@@ -653,9 +649,7 @@
             "failed_ensure_ids": "Nepodarilo sa zaistiť ID aktív.",
             "failed_ensure_import_refs": "Nepodarilo sa zaistiť import referencií.",
             "failed_set_primary_photos": "Nepodarilo sa nastaviť primárne fotografie.",
-            "failed_zero_datetimes": "Nepodarilo sa obnoviť hodnoty dátumu a času.",
-            "failed_wipe_inventory": "Failed to wipe inventory.",
-            "wipe_inventory_success": "Successfully wiped inventory. { results } items deleted."
+            "failed_zero_datetimes": "Nepodarilo sa obnoviť hodnoty dátumu a času."
         }
     }
 }

@@ -588,11 +588,7 @@
             "zero_datetimes": "Null ut objektdatotider",
             "zero_datetimes_button": "Null ut objektdatotider",
             "zero_datetimes_confirm": "Er du sikker på at du vil tilbakestille alle dato- og tidsverdier? Dette kan ta en stund og kan ikke angres.",
-            "zero_datetimes_sub": "Nullstiller tidsverdien for alle datotid-felter i inventaret til starten av datoen. Dette er for å fikse en bug som ble tidlig introdusert i utviklingen av siden, og forårsaket at tidsverdien ble lagret sammen med tidspunktet, noe som skapte problemer for datofelt som skulle vise korrekte verdier. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Jfr. Github Issue #236 for flere detaljer.'</a>'",
-            "wipe_inventory": "Wipe Inventory",
-            "wipe_inventory_button": "Wipe Inventory",
-            "wipe_inventory_confirm": "Are you sure you want to wipe your entire inventory? This will delete all items and cannot be undone.",
-            "wipe_inventory_sub": "Permanently deletes all items in your inventory. This action is irreversible and will remove all item data including attachments and photos."
+            "zero_datetimes_sub": "Nullstiller tidsverdien for alle datotid-felter i inventaret til starten av datoen. Dette er for å fikse en bug som ble tidlig introdusert i utviklingen av siden, og forårsaket at tidsverdien ble lagret sammen med tidspunktet, noe som skapte problemer for datofelt som skulle vise korrekte verdier. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Jfr. Github Issue #236 for flere detaljer.'</a>'"
         },
         "actions_sub": "Utfør massehandlinger for inventaret ditt. Disse handlingene er irreversible. '<b>'Vær forsiktig.'</b>'",
         "import_export": "Importer/Eksporter",
@@ -622,9 +618,7 @@
             "failed_ensure_ids": "Kunne ikke verifisere eiendels-ID-er.",
             "failed_ensure_import_refs": "Kunne ikke verifisere importreferanser.",
             "failed_set_primary_photos": "Kunne ikke angi primære bilder.",
-            "failed_zero_datetimes": "Kunne ikke tilbakestille dato- og tidsverdier.",
-            "failed_wipe_inventory": "Failed to wipe inventory.",
-            "wipe_inventory_success": "Successfully wiped inventory. { results } items deleted."
+            "failed_zero_datetimes": "Kunne ikke tilbakestille dato- og tidsverdier."
         }
     }
 }
