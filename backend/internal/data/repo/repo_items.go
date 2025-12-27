@@ -820,7 +820,9 @@ func (e *ItemsRepository) WipeInventory(ctx context.Context, gid uuid.UUID) (int
 	}
 
 	deleted := 0
-	// Delete each item using DeleteByGroup to ensure proper cleanup
+	// Delete each item with its attachments
+	// Note: We manually delete attachments and items instead of calling DeleteByGroup
+	// to continue processing remaining items even if some deletions fail
 	for _, itm := range items {
 		// Delete all attachments first
 		for _, att := range itm.Edges.Attachments {
@@ -840,9 +842,11 @@ func (e *ItemsRepository) WipeInventory(ctx context.Context, gid uuid.UUID) (int
 			).Exec(ctx)
 		if err != nil {
 			log.Err(err).Str("item_id", itm.ID.String()).Msg("failed to delete item during wipe inventory")
+			// Skip to next item without incrementing counter
 			continue
 		}
 
+		// Only increment counter if deletion succeeded
 		deleted++
 	}
 
