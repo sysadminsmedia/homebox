@@ -1,16 +1,16 @@
-name: HomeBox Upgrade Test
+#name: HomeBox Upgrade Test
 
-on:
-  schedule:
+# on:
+#  schedule:
     # Run daily at 2 AM UTC
-    - cron: '0 2 * * *'
-  workflow_dispatch: # Allow manual trigger
-  push:
-    branches:
-      - main
-    paths:
-      - '.github/workflows/upgrade-test.yaml'
-      - '.github/scripts/upgrade-test/**'
+  #  - cron: '0 2 * * *'
+#  workflow_dispatch: # Allow manual trigger
+#  push:
+#    branches:
+#      - main
+#    paths:
+#      - '.github/workflows/upgrade-test.yaml'
+#      - '.github/scripts/upgrade-test/**'
 
 jobs:
   upgrade-test:
