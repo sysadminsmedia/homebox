@@ -11,12 +11,15 @@ export type DuplicateSettings = {
   copyPrefixOverride: string | null;
 };
 
+export type DarkModePreference = "auto" | "light" | "dark";
+
 export type LocationViewPreferences = {
   showDetails: boolean;
   showEmpty: boolean;
   editorAdvancedView: boolean;
   itemDisplayView: ViewType;
   theme: DaisyTheme;
+  darkMode: DarkModePreference;
   itemsPerTablePage: number;
   tableHeaders?: {
     value: keyof ItemSummary;
@@ -46,6 +49,7 @@ export function useViewPreferences(): Ref<LocationViewPreferences> {
       editorAdvancedView: false,
       itemDisplayView: "card",
       theme: "homebox",
+      darkMode: "auto",
       itemsPerTablePage: 10,
       displayLegacyHeader: false,
       legacyImageFit: false,
