@@ -24,6 +24,9 @@ test.describe("HomeBox Upgrade Verification", () => {
       await page.goto("/");
       await expect(page).toHaveURL("/");
 
+      // Wait for login form to be ready
+      await page.waitForSelector("input[type='text']", { state: "visible" });
+      
       // Fill in login form
       await page.fill("input[type='text']", user.email);
       await page.fill("input[type='password']", user.password);
@@ -34,13 +37,9 @@ test.describe("HomeBox Upgrade Verification", () => {
 
       console.log(`✓ User ${user.email} logged in successfully`);
 
-      // Log out
-      // Look for profile/user menu and click logout
-      await page.waitForTimeout(1000);
-      
       // Navigate back to login for next user
       await page.goto("/");
-      await page.waitForTimeout(500);
+      await page.waitForSelector("input[type='text']", { state: "visible" });
     }
   });
 
@@ -85,16 +84,15 @@ test.describe("HomeBox Upgrade Verification", () => {
     await page.click("button[type='submit']");
     await expect(page).toHaveURL("/home", { timeout: 10000 });
 
-    // Navigate to locations page
-    // Look for navigation links
-    await page.waitForTimeout(2000);
+    // Wait for page to load
+    await page.waitForSelector("body", { state: "visible" });
     
     // Try to find locations link in navigation
     const locationsLink = page.locator("a[href*='location'], button:has-text('Locations')").first();
     
     if (await locationsLink.count() > 0) {
       await locationsLink.click();
-      await page.waitForTimeout(1000);
+      await page.waitForLoadState("networkidle");
 
       // Check if locations are displayed
       // The exact structure depends on the UI, but we should see location names
@@ -120,14 +118,14 @@ test.describe("HomeBox Upgrade Verification", () => {
     await page.click("button[type='submit']");
     await expect(page).toHaveURL("/home", { timeout: 10000 });
 
-    await page.waitForTimeout(2000);
+    await page.waitForSelector("body", { state: "visible" });
 
     // Try to find labels link in navigation
     const labelsLink = page.locator("a[href*='label'], button:has-text('Labels')").first();
     
     if (await labelsLink.count() > 0) {
       await labelsLink.click();
-      await page.waitForTimeout(1000);
+      await page.waitForLoadState("networkidle");
 
       const pageContent = await page.textContent("body");
       
@@ -151,7 +149,7 @@ test.describe("HomeBox Upgrade Verification", () => {
     await page.click("button[type='submit']");
     await expect(page).toHaveURL("/home", { timeout: 10000 });
 
-    await page.waitForTimeout(2000);
+    await page.waitForSelector("body", { state: "visible" });
 
     // Navigate to items list
     // This might be the home page or a separate items page
@@ -159,7 +157,7 @@ test.describe("HomeBox Upgrade Verification", () => {
     
     if (await itemsLink.count() > 0) {
       await itemsLink.click();
-      await page.waitForTimeout(1000);
+      await page.waitForLoadState("networkidle");
     }
 
     const pageContent = await page.textContent("body");
@@ -181,7 +179,7 @@ test.describe("HomeBox Upgrade Verification", () => {
     await page.click("button[type='submit']");
     await expect(page).toHaveURL("/home", { timeout: 10000 });
 
-    await page.waitForTimeout(2000);
+    await page.waitForSelector("body", { state: "visible" });
 
     // Navigate to settings or profile
     // Notifiers are typically in settings
@@ -189,14 +187,14 @@ test.describe("HomeBox Upgrade Verification", () => {
     
     if (await settingsLink.count() > 0) {
       await settingsLink.click();
-      await page.waitForTimeout(1000);
+      await page.waitForLoadState("networkidle");
 
       // Look for notifiers section
       const notifiersLink = page.locator("a:has-text('Notif'), button:has-text('Notif')").first();
       
       if (await notifiersLink.count() > 0) {
         await notifiersLink.click();
-        await page.waitForTimeout(1000);
+        await page.waitForLoadState("networkidle");
 
         const pageContent = await page.textContent("body");
         
@@ -223,19 +221,19 @@ test.describe("HomeBox Upgrade Verification", () => {
     await page.click("button[type='submit']");
     await expect(page).toHaveURL("/home", { timeout: 10000 });
 
-    await page.waitForTimeout(2000);
+    await page.waitForSelector("body", { state: "visible" });
 
     // Search for "Laptop Computer" which should have attachments
     const searchInput = page.locator("input[type='search'], input[placeholder*='Search']").first();
     
     if (await searchInput.count() > 0) {
       await searchInput.fill("Laptop Computer");
-      await page.waitForTimeout(1000);
+      await page.waitForLoadState("networkidle");
 
       // Click on the laptop item
       const laptopItem = page.locator("text=Laptop Computer").first();
       await laptopItem.click();
-      await page.waitForTimeout(1000);
+      await page.waitForLoadState("networkidle");
 
       // Look for attachments section
       const pageContent = await page.textContent("body");
@@ -257,12 +255,12 @@ test.describe("HomeBox Upgrade Verification", () => {
       const itemsLink = page.locator("a[href*='item'], button:has-text('Items')").first();
       if (await itemsLink.count() > 0) {
         await itemsLink.click();
-        await page.waitForTimeout(1000);
+        await page.waitForLoadState("networkidle");
         
         const laptopLink = page.locator("text=Laptop Computer").first();
         if (await laptopLink.count() > 0) {
           await laptopLink.click();
-          await page.waitForTimeout(1000);
+          await page.waitForLoadState("networkidle");
           
           const pageContent = await page.textContent("body");
           const hasAttachments = 
@@ -289,7 +287,7 @@ test.describe("HomeBox Upgrade Verification", () => {
     await page.click("button[type='submit']");
     await expect(page).toHaveURL("/home", { timeout: 10000 });
 
-    await page.waitForTimeout(2000);
+    await page.waitForSelector("body", { state: "visible" });
 
     // Look for theme toggle (usually a sun/moon icon or settings)
     // Common selectors for theme toggles
@@ -306,6 +304,7 @@ test.describe("HomeBox Upgrade Verification", () => {
 
       // Click theme toggle
       await themeToggle.click();
+      // Wait for theme change to complete
       await page.waitForTimeout(500);
 
       // Get theme state after toggle
@@ -321,7 +320,7 @@ test.describe("HomeBox Upgrade Verification", () => {
       
       if (await settingsLink.count() > 0) {
         await settingsLink.click();
-        await page.waitForTimeout(1000);
+        await page.waitForLoadState("networkidle");
 
         const themeOption = page.locator("select[name*='theme'], button:has-text('Theme')").first();
         
@@ -348,7 +347,7 @@ test.describe("HomeBox Upgrade Verification", () => {
     await page.click("button[type='submit']");
     await expect(page).toHaveURL("/home", { timeout: 10000 });
 
-    await page.waitForTimeout(2000);
+    await page.waitForSelector("body", { state: "visible" });
 
     // Check that we have the expected number of items for group 1 (5 items)
     const pageContent = await page.textContent("body");
@@ -376,7 +375,7 @@ test.describe("HomeBox Upgrade Verification", () => {
     await page.click("button[type='submit']");
     await expect(page).toHaveURL("/home", { timeout: 10000 });
 
-    await page.waitForTimeout(2000);
+    await page.waitForSelector("body", { state: "visible" });
 
     const pageContent = await page.textContent("body");
     

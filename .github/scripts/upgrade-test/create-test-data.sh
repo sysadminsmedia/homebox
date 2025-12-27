@@ -18,21 +18,31 @@ api_call() {
     local data=$3
     local token=$4
     
-    local curl_cmd="curl -s -X $method"
-    
     if [ -n "$token" ]; then
-        curl_cmd="$curl_cmd -H 'Authorization: Bearer $token'"
+        if [ -n "$data" ]; then
+            curl -s -X "$method" \
+                -H "Authorization: Bearer $token" \
+                -H "Content-Type: application/json" \
+                -d "$data" \
+                "$API_URL$endpoint"
+        else
+            curl -s -X "$method" \
+                -H "Authorization: Bearer $token" \
+                -H "Content-Type: application/json" \
+                "$API_URL$endpoint"
+        fi
+    else
+        if [ -n "$data" ]; then
+            curl -s -X "$method" \
+                -H "Content-Type: application/json" \
+                -d "$data" \
+                "$API_URL$endpoint"
+        else
+            curl -s -X "$method" \
+                -H "Content-Type: application/json" \
+                "$API_URL$endpoint"
+        fi
     fi
-    
-    curl_cmd="$curl_cmd -H 'Content-Type: application/json'"
-    
-    if [ -n "$data" ]; then
-        curl_cmd="$curl_cmd -d '$data'"
-    fi
-    
-    curl_cmd="$curl_cmd $API_URL$endpoint"
-    
-    eval $curl_cmd
 }
 
 # Function to register a user and get token
