@@ -50,33 +50,39 @@ func setupDatabaseURL(cfg *config.Config) (string, error) {
 			return "", fmt.Errorf("failed to create SQLite database directory: %w", err)
 		}
 	case config.DriverPostgres:
-		databaseURL = fmt.Sprintf("host=%s port=%s dbname=%s sslmode=%s", cfg.Database.Host, cfg.Database.Port, cfg.Database.Database, cfg.Database.SslMode)
-		if cfg.Database.Username != "" {
-			databaseURL += fmt.Sprintf(" user=%s", cfg.Database.Username)
-		}
-		if cfg.Database.Password != "" {
-			databaseURL += fmt.Sprintf(" password=%s", cfg.Database.Password)
-		}
-		if cfg.Database.SslRootCert != "" {
-			if _, err := os.Stat(cfg.Database.SslRootCert); err != nil {
-				log.Error().Err(err).Str("path", cfg.Database.SslRootCert).Msg("SSL root certificate file is not accessible")
-				return "", fmt.Errorf("SSL root certificate file is not accessible: %w", err)
+		// Priority 1: Use connection string if provided
+		if cfg.Database.ConnString != "" {
+			databaseURL = cfg.Database.ConnString
+		} else {
+			// Priority 2: Fall back to individual fields
+			databaseURL = fmt.Sprintf("host=%s port=%s dbname=%s sslmode=%s", cfg.Database.Host, cfg.Database.Port, cfg.Database.Database, cfg.Database.SslMode)
+			if cfg.Database.Username != "" {
+				databaseURL += fmt.Sprintf(" user=%s", cfg.Database.Username)
 			}
-			databaseURL += fmt.Sprintf(" sslrootcert=%s", cfg.Database.SslRootCert)
-		}
-		if cfg.Database.SslCert != "" {
-			if _, err := os.Stat(cfg.Database.SslCert); err != nil {
-				log.Error().Err(err).Str("path", cfg.Database.SslCert).Msg("SSL certificate file is not accessible")
-				return "", fmt.Errorf("SSL certificate file is not accessible: %w", err)
+			if cfg.Database.Password != "" {
+				databaseURL += fmt.Sprintf(" password=%s", cfg.Database.Password)
 			}
-			databaseURL += fmt.Sprintf(" sslcert=%s", cfg.Database.SslCert)
-		}
-		if cfg.Database.SslKey != "" {
-			if _, err := os.Stat(cfg.Database.SslKey); err != nil {
-				log.Error().Err(err).Str("path", cfg.Database.SslKey).Msg("SSL key file is not accessible")
-				return "", fmt.Errorf("SSL key file is not accessible: %w", err)
+			if cfg.Database.SslRootCert != "" {
+				if _, err := os.Stat(cfg.Database.SslRootCert); err != nil {
+					log.Error().Err(err).Str("path", cfg.Database.SslRootCert).Msg("SSL root certificate file is not accessible")
+					return "", fmt.Errorf("SSL root certificate file is not accessible: %w", err)
+				}
+				databaseURL += fmt.Sprintf(" sslrootcert=%s", cfg.Database.SslRootCert)
 			}
-			databaseURL += fmt.Sprintf(" sslkey=%s", cfg.Database.SslKey)
+			if cfg.Database.SslCert != "" {
+				if _, err := os.Stat(cfg.Database.SslCert); err != nil {
+					log.Error().Err(err).Str("path", cfg.Database.SslCert).Msg("SSL certificate file is not accessible")
+					return "", fmt.Errorf("SSL certificate file is not accessible: %w", err)
+				}
+				databaseURL += fmt.Sprintf(" sslcert=%s", cfg.Database.SslCert)
+			}
+			if cfg.Database.SslKey != "" {
+				if _, err := os.Stat(cfg.Database.SslKey); err != nil {
+					log.Error().Err(err).Str("path", cfg.Database.SslKey).Msg("SSL key file is not accessible")
+					return "", fmt.Errorf("SSL key file is not accessible: %w", err)
+				}
+				databaseURL += fmt.Sprintf(" sslkey=%s", cfg.Database.SslKey)
+			}
 		}
 	default:
 		log.Error().Str("driver", cfg.Database.Driver).Msg("unsupported database driver")

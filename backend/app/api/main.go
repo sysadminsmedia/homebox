@@ -125,15 +125,10 @@ func run(cfg *config.Config) error {
 		log.Error().
 			Err(err).
 			Str("driver", strings.ToLower(cfg.Database.Driver)).
-			Str("host", cfg.Database.Host).
-			Str("port", cfg.Database.Port).
-			Str("database", cfg.Database.Database).
-			Msg("failed opening connection to {driver} database at {host}:{port}/{database}")
-		return fmt.Errorf("failed opening connection to %s database at %s:%s/%s: %w",
+			Str("database_url", databaseURL).
+			Msg("failed opening connection to {driver} database")
+		return fmt.Errorf("failed opening connection to %s database: %w",
 			strings.ToLower(cfg.Database.Driver),
-			cfg.Database.Host,
-			cfg.Database.Port,
-			cfg.Database.Database,
 			err,
 		)
 	}
