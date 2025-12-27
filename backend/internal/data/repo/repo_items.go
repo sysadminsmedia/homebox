@@ -125,6 +125,7 @@ type (
 		Quantity   *int        `json:"quantity,omitempty" extensions:"x-nullable,x-omitempty"`
 		ImportRef  *string     `json:"-,omitempty"        extensions:"x-nullable,x-omitempty"`
 		LocationID uuid.UUID   `json:"locationId"         extensions:"x-nullable,x-omitempty"`
+		ParentID   uuid.UUID   `json:"parentID"           extensions:"x-nullable,x-omitempty"`
 		LabelIDs   []uuid.UUID `json:"labelIds"           extensions:"x-nullable,x-omitempty"`
 	}
 
@@ -998,6 +999,10 @@ func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data Ite
 
 	if data.LocationID != uuid.Nil {
 		q.SetLocationID(data.LocationID)
+	}
+
+	if data.ParentID != uuid.Nil {
+		q.SetParentID(data.ParentID)
 	}
 
 	err = q.Exec(ctx)

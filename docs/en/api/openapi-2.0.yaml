@@ -1020,6 +1020,10 @@ definitions:
         type: string
         x-nullable: true
         x-omitempty: true
+      parentID:
+        type: string
+        x-nullable: true
+        x-omitempty: true
       quantity:
         type: integer
         x-nullable: true
@@ -1084,32 +1088,40 @@ definitions:
       defaultDescription:
         maxLength: 1000
         type: string
+        x-nullable: true
       defaultInsured:
         type: boolean
       defaultLabelIds:
         items:
           type: string
         type: array
+        x-nullable: true
       defaultLifetimeWarranty:
         type: boolean
       defaultLocationId:
         description: Default location and labels
         type: string
+        x-nullable: true
       defaultManufacturer:
         maxLength: 255
         type: string
+        x-nullable: true
       defaultModelNumber:
         maxLength: 255
         type: string
+        x-nullable: true
       defaultName:
         maxLength: 255
         type: string
+        x-nullable: true
       defaultQuantity:
         description: Default values for items
         type: integer
+        x-nullable: true
       defaultWarrantyDetails:
         maxLength: 1000
         type: string
+        x-nullable: true
       description:
         maxLength: 1000
         type: string
@@ -1205,32 +1217,40 @@ definitions:
       defaultDescription:
         maxLength: 1000
         type: string
+        x-nullable: true
       defaultInsured:
         type: boolean
       defaultLabelIds:
         items:
           type: string
         type: array
+        x-nullable: true
       defaultLifetimeWarranty:
         type: boolean
       defaultLocationId:
         description: Default location and labels
         type: string
+        x-nullable: true
       defaultManufacturer:
         maxLength: 255
         type: string
+        x-nullable: true
       defaultModelNumber:
         maxLength: 255
         type: string
+        x-nullable: true
       defaultName:
         maxLength: 255
         type: string
+        x-nullable: true
       defaultQuantity:
         description: Default values for items
         type: integer
+        x-nullable: true
       defaultWarrantyDetails:
         maxLength: 1000
         type: string
+        x-nullable: true
       description:
         maxLength: 1000
         type: string
