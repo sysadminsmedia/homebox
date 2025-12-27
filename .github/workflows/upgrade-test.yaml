@@ -17,6 +17,9 @@ jobs:
     name: Test Upgrade Path
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    permissions:
+      contents: read        # Read repository contents
+      packages: read        # Pull Docker images from GHCR
     
     steps:
       - name: Checkout repository
