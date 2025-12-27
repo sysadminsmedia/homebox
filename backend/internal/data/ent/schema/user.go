@@ -19,7 +19,6 @@ type User struct {
 func (User) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixins.BaseMixin{},
-		GroupMixin{ref: "users"},
 	}
 }
 
@@ -54,6 +53,10 @@ func (User) Fields() []ent.Field {
 		field.String("oidc_subject").
 			Optional().
 			Nillable(),
+		// default_group_id is the user's primary tenant/group
+		field.UUID("default_group_id", uuid.UUID{}).
+			Optional().
+			Nillable(),
 	}
 }
 
@@ -66,6 +69,7 @@ func (User) Indexes() []ent.Index {
 // Edges of the User.
 func (User) Edges() []ent.Edge {
 	return []ent.Edge{
+		edge.To("groups", Group.Type),
 		edge.To("auth_tokens", AuthTokens.Type).
 			Annotations(entsql.Annotation{
 				OnDelete: entsql.Cascade,

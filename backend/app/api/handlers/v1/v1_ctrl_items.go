@@ -339,7 +339,7 @@ func (ctrl *V1Controller) HandleItemsImport() errchain.HandlerFunc {
 
 		user := services.UseUserCtx(r.Context())
 
-		_, err = ctrl.svc.Items.CsvImport(r.Context(), user.GroupID, file)
+		_, err = ctrl.svc.Items.CsvImport(r.Context(), user.DefaultGroupID, file)
 		if err != nil {
 			log.Err(err).Msg("failed to import items")
 			return validate.NewRequestError(err, http.StatusInternalServerError)

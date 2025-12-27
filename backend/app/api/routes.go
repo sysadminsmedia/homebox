@@ -82,6 +82,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 
 		userMW := []errchain.Middleware{
 			a.mwAuthToken,
+			a.mwTenant,
 			a.mwRoles(RoleModeOr, authroles.RoleUser.String()),
 		}
 

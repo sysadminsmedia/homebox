@@ -313,7 +313,7 @@ func TestItemRepository_GetAllCustomFields(t *testing.T) {
 
 	// Test getting all values from field
 	{
-		results, err := tRepos.Items.GetAllCustomFieldValues(context.Background(), tUser.GroupID, names[0])
+		results, err := tRepos.Items.GetAllCustomFieldValues(context.Background(), tUser.DefaultGroupID, names[0])
 
 		require.NoError(t, err)
 		assert.ElementsMatch(t, values[:1], results)
@@ -397,5 +397,3 @@ func TestItemsRepository_DeleteByGroupWithAttachments(t *testing.T) {
 	_, err = tRepos.Attachments.Get(context.Background(), tGroup.ID, attachment.ID)
 	require.Error(t, err)
 }
-
-
