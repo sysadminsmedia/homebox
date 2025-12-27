@@ -108,7 +108,7 @@ func run(cfg *config.Config) error {
 		return err
 	}
 
-	if strings.ToLower(cfg.Database.Driver) == "postgres" {
+	if strings.ToLower(cfg.Database.Driver) == config.DriverPostgres {
 		if !validatePostgresSSLMode(cfg.Database.SslMode) {
 			log.Error().Str("sslmode", cfg.Database.SslMode).Msg("invalid sslmode")
 			return fmt.Errorf("invalid sslmode: %s", cfg.Database.SslMode)
