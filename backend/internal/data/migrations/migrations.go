@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/rs/zerolog/log"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 )
 
 //go:embed all:postgres
@@ -21,9 +22,9 @@ var sqliteFiles embed.FS
 // embedded file system containing the migration files for the specified dialect.
 func Migrations(dialect string) (embed.FS, error) {
 	switch dialect {
-	case "postgres":
+	case config.DriverPostgres:
 		return postgresFiles, nil
-	case "sqlite3":
+	case config.DriverSqlite3:
 		return sqliteFiles, nil
 	default:
 		log.Error().Str("dialect", dialect).Msg("unknown sql dialect")

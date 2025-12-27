@@ -41,7 +41,7 @@ func setupStorageDir(cfg *config.Config) error {
 func setupDatabaseURL(cfg *config.Config) (string, error) {
 	databaseURL := ""
 	switch strings.ToLower(cfg.Database.Driver) {
-	case "sqlite3":
+	case config.DriverSqlite3:
 		databaseURL = cfg.Database.SqlitePath
 		dbFilePath := strings.Split(cfg.Database.SqlitePath, "?")[0]
 		dbDir := filepath.Dir(dbFilePath)
@@ -49,7 +49,7 @@ func setupDatabaseURL(cfg *config.Config) (string, error) {
 			log.Error().Err(err).Str("path", dbDir).Msg("failed to create SQLite database directory")
 			return "", fmt.Errorf("failed to create SQLite database directory: %w", err)
 		}
-	case "postgres":
+	case config.DriverPostgres:
 		databaseURL = fmt.Sprintf("host=%s port=%s dbname=%s sslmode=%s", cfg.Database.Host, cfg.Database.Port, cfg.Database.Database, cfg.Database.SslMode)
 		if cfg.Database.Username != "" {
 			databaseURL += fmt.Sprintf(" user=%s", cfg.Database.Username)

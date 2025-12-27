@@ -1,7 +1,8 @@
 package config
 
 const (
-	DriverSqlite3 = "sqlite3"
+	DriverSqlite3  = "sqlite3"
+	DriverPostgres = "postgres"
 )
 
 type Storage struct {
