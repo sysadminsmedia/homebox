@@ -106,6 +106,11 @@ func OidcSubject(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldOidcSubject, v))
 }
 
+// DefaultGroupID applies equality check predicate on the "default_group_id" field. It's identical to DefaultGroupIDEQ.
+func DefaultGroupID(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldDefaultGroupID, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
@@ -631,21 +636,71 @@ func OidcSubjectContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldOidcSubject, v))
 }
 
-// HasGroup applies the HasEdge predicate on the "group" edge.
-func HasGroup() predicate.User {
+// DefaultGroupIDEQ applies the EQ predicate on the "default_group_id" field.
+func DefaultGroupIDEQ(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldDefaultGroupID, v))
+}
+
+// DefaultGroupIDNEQ applies the NEQ predicate on the "default_group_id" field.
+func DefaultGroupIDNEQ(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldDefaultGroupID, v))
+}
+
+// DefaultGroupIDIn applies the In predicate on the "default_group_id" field.
+func DefaultGroupIDIn(vs ...uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldIn(FieldDefaultGroupID, vs...))
+}
+
+// DefaultGroupIDNotIn applies the NotIn predicate on the "default_group_id" field.
+func DefaultGroupIDNotIn(vs ...uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldDefaultGroupID, vs...))
+}
+
+// DefaultGroupIDGT applies the GT predicate on the "default_group_id" field.
+func DefaultGroupIDGT(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldGT(FieldDefaultGroupID, v))
+}
+
+// DefaultGroupIDGTE applies the GTE predicate on the "default_group_id" field.
+func DefaultGroupIDGTE(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldDefaultGroupID, v))
+}
+
+// DefaultGroupIDLT applies the LT predicate on the "default_group_id" field.
+func DefaultGroupIDLT(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldLT(FieldDefaultGroupID, v))
+}
+
+// DefaultGroupIDLTE applies the LTE predicate on the "default_group_id" field.
+func DefaultGroupIDLTE(v uuid.UUID) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldDefaultGroupID, v))
+}
+
+// DefaultGroupIDIsNil applies the IsNil predicate on the "default_group_id" field.
+func DefaultGroupIDIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldDefaultGroupID))
+}
+
+// DefaultGroupIDNotNil applies the NotNil predicate on the "default_group_id" field.
+func DefaultGroupIDNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldDefaultGroupID))
+}
+
+// HasGroups applies the HasEdge predicate on the "groups" edge.
+func HasGroups() predicate.User {
 	return predicate.User(func(s *sql.Selector) {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, GroupTable, GroupColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, GroupsTable, GroupsColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
 }
 
-// HasGroupWith applies the HasEdge predicate on the "group" edge with a given conditions (other predicates).
-func HasGroupWith(preds ...predicate.Group) predicate.User {
+// HasGroupsWith applies the HasEdge predicate on the "groups" edge with a given conditions (other predicates).
+func HasGroupsWith(preds ...predicate.Group) predicate.User {
 	return predicate.User(func(s *sql.Selector) {
-		step := newGroupStep()
+		step := newGroupsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

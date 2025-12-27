@@ -14,7 +14,7 @@ type GroupService struct {
 
 func (svc *GroupService) UpdateGroup(ctx Context, data repo.GroupUpdate) (repo.Group, error) {
 	if data.Name == "" {
-		data.Name = ctx.User.GroupName
+		return repo.Group{}, errors.New("group name cannot be empty")
 	}
 
 	if data.Currency == "" {

@@ -27,7 +27,7 @@ type UserQuery struct {
 	order          []user.OrderOption
 	inters         []Interceptor
 	predicates     []predicate.User
-	withGroup      *GroupQuery
+	withGroups     *GroupQuery
 	withAuthTokens *AuthTokensQuery
 	withNotifiers  *NotifierQuery
 	withFKs        bool
@@ -67,8 +67,8 @@ func (_q *UserQuery) Order(o ...user.OrderOption) *UserQuery {
 	return _q
 }
 
-// QueryGroup chains the current query on the "group" edge.
-func (_q *UserQuery) QueryGroup() *GroupQuery {
+// QueryGroups chains the current query on the "groups" edge.
+func (_q *UserQuery) QueryGroups() *GroupQuery {
 	query := (&GroupClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
@@ -81,7 +81,7 @@ func (_q *UserQuery) QueryGroup() *GroupQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(group.Table, group.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, user.GroupTable, user.GroupColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.GroupsTable, user.GroupsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -325,7 +325,7 @@ func (_q *UserQuery) Clone() *UserQuery {
 		order:          append([]user.OrderOption{}, _q.order...),
 		inters:         append([]Interceptor{}, _q.inters...),
 		predicates:     append([]predicate.User{}, _q.predicates...),
-		withGroup:      _q.withGroup.Clone(),
+		withGroups:     _q.withGroups.Clone(),
 		withAuthTokens: _q.withAuthTokens.Clone(),
 		withNotifiers:  _q.withNotifiers.Clone(),
 		// clone intermediate query.
@@ -334,14 +334,14 @@ func (_q *UserQuery) Clone() *UserQuery {
 	}
 }
 
-// WithGroup tells the query-builder to eager-load the nodes that are connected to
-// the "group" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *UserQuery) WithGroup(opts ...func(*GroupQuery)) *UserQuery {
+// WithGroups tells the query-builder to eager-load the nodes that are connected to
+// the "groups" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithGroups(opts ...func(*GroupQuery)) *UserQuery {
 	query := (&GroupClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	_q.withGroup = query
+	_q.withGroups = query
 	return _q
 }
 
@@ -447,14 +447,11 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
 		loadedTypes = [3]bool{
-			_q.withGroup != nil,
+			_q.withGroups != nil,
 			_q.withAuthTokens != nil,
 			_q.withNotifiers != nil,
 		}
 	)
-	if _q.withGroup != nil {
-		withFKs = true
-	}
 	if withFKs {
 		_spec.Node.Columns = append(_spec.Node.Columns, user.ForeignKeys...)
 	}
@@ -476,9 +473,10 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := _q.withGroup; query != nil {
-		if err := _q.loadGroup(ctx, query, nodes, nil,
-			func(n *User, e *Group) { n.Edges.Group = e }); err != nil {
+	if query := _q.withGroups; query != nil {
+		if err := _q.loadGroups(ctx, query, nodes,
+			func(n *User) { n.Edges.Groups = []*Group{} },
+			func(n *User, e *Group) { n.Edges.Groups = append(n.Edges.Groups, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -499,35 +497,34 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	return nodes, nil
 }
 
-func (_q *UserQuery) loadGroup(ctx context.Context, query *GroupQuery, nodes []*User, init func(*User), assign func(*User, *Group)) error {
-	ids := make([]uuid.UUID, 0, len(nodes))
-	nodeids := make(map[uuid.UUID][]*User)
+func (_q *UserQuery) loadGroups(ctx context.Context, query *GroupQuery, nodes []*User, init func(*User), assign func(*User, *Group)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*User)
 	for i := range nodes {
-		if nodes[i].group_users == nil {
-			continue
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
 		}
-		fk := *nodes[i].group_users
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
 	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(group.IDIn(ids...))
+	query.withFKs = true
+	query.Where(predicate.Group(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.GroupsColumn), fks...))
+	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
 	}
 	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
+		fk := n.user_groups
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_groups" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "group_users" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected referenced foreign-key "user_groups" returned %v for node %v`, *fk, n.ID)
 		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
+		assign(node, n)
 	}
 	return nil
 }

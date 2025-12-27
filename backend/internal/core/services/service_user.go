@@ -81,12 +81,12 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 
 	hashed, _ := hasher.HashPassword(data.Password)
 	usrCreate := repo.UserCreate{
-		Name:        data.Name,
-		Email:       data.Email,
-		Password:    &hashed,
-		IsSuperuser: false,
-		GroupID:     group.ID,
-		IsOwner:     creatingGroup,
+		Name:           data.Name,
+		Email:          data.Email,
+		Password:       &hashed,
+		IsSuperuser:    false,
+		DefaultGroupID: group.ID,
+		IsOwner:        creatingGroup,
 	}
 
 	usr, err := svc.repos.Users.Create(ctx, usrCreate)
@@ -99,7 +99,7 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 	if creatingGroup {
 		log.Debug().Msg("creating default labels")
 		for _, label := range defaultLabels() {
-			_, err := svc.repos.Labels.Create(ctx, usr.GroupID, label)
+			_, err := svc.repos.Labels.Create(ctx, usr.DefaultGroupID, label)
 			if err != nil {
 				return repo.UserOut{}, err
 			}
@@ -107,7 +107,7 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 
 		log.Debug().Msg("creating default locations")
 		for _, location := range defaultLocations() {
-			_, err := svc.repos.Locations.Create(ctx, usr.GroupID, location)
+			_, err := svc.repos.Locations.Create(ctx, usr.DefaultGroupID, location)
 			if err != nil {
 				return repo.UserOut{}, err
 			}
@@ -287,12 +287,12 @@ func (svc *UserService) registerOIDCUser(ctx context.Context, issuer, subject, e
 	}
 
 	usrCreate := repo.UserCreate{
-		Name:        name,
-		Email:       email,
-		Password:    nil,
-		IsSuperuser: false,
-		GroupID:     group.ID,
-		IsOwner:     true,
+		Name:           name,
+		Email:          email,
+		Password:       nil,
+		IsSuperuser:    false,
+		DefaultGroupID: group.ID,
+		IsOwner:        true,
 	}
 
 	entUser, err := svc.repos.Users.CreateWithOIDC(ctx, usrCreate, issuer, subject)

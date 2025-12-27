@@ -162,6 +162,20 @@ func (_c *UserCreate) SetNillableOidcSubject(v *string) *UserCreate {
 	return _c
 }
 
+// SetDefaultGroupID sets the "default_group_id" field.
+func (_c *UserCreate) SetDefaultGroupID(v uuid.UUID) *UserCreate {
+	_c.mutation.SetDefaultGroupID(v)
+	return _c
+}
+
+// SetNillableDefaultGroupID sets the "default_group_id" field if the given value is not nil.
+func (_c *UserCreate) SetNillableDefaultGroupID(v *uuid.UUID) *UserCreate {
+	if v != nil {
+		_c.SetDefaultGroupID(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *UserCreate) SetID(v uuid.UUID) *UserCreate {
 	_c.mutation.SetID(v)
@@ -176,15 +190,19 @@ func (_c *UserCreate) SetNillableID(v *uuid.UUID) *UserCreate {
 	return _c
 }
 
-// SetGroupID sets the "group" edge to the Group entity by ID.
-func (_c *UserCreate) SetGroupID(id uuid.UUID) *UserCreate {
-	_c.mutation.SetGroupID(id)
+// AddGroupIDs adds the "groups" edge to the Group entity by IDs.
+func (_c *UserCreate) AddGroupIDs(ids ...uuid.UUID) *UserCreate {
+	_c.mutation.AddGroupIDs(ids...)
 	return _c
 }
 
-// SetGroup sets the "group" edge to the Group entity.
-func (_c *UserCreate) SetGroup(v *Group) *UserCreate {
-	return _c.SetGroupID(v.ID)
+// AddGroups adds the "groups" edges to the Group entity.
+func (_c *UserCreate) AddGroups(v ...*Group) *UserCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddGroupIDs(ids...)
 }
 
 // AddAuthTokenIDs adds the "auth_tokens" edge to the AuthTokens entity by IDs.
@@ -321,9 +339,6 @@ func (_c *UserCreate) check() error {
 			return &ValidationError{Name: "role", err: fmt.Errorf(`ent: validator failed for field "User.role": %w`, err)}
 		}
 	}
-	if len(_c.mutation.GroupIDs()) == 0 {
-		return &ValidationError{Name: "group", err: errors.New(`ent: missing required edge "User.group"`)}
-	}
 	return nil
 }
 
@@ -403,12 +418,16 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldOidcSubject, field.TypeString, value)
 		_node.OidcSubject = &value
 	}
-	if nodes := _c.mutation.GroupIDs(); len(nodes) > 0 {
+	if value, ok := _c.mutation.DefaultGroupID(); ok {
+		_spec.SetField(user.FieldDefaultGroupID, field.TypeUUID, value)
+		_node.DefaultGroupID = &value
+	}
+	if nodes := _c.mutation.GroupsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   user.GroupTable,
-			Columns: []string{user.GroupColumn},
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.GroupsTable,
+			Columns: []string{user.GroupsColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
@@ -417,7 +436,6 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.group_users = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.AuthTokensIDs(); len(nodes) > 0 {

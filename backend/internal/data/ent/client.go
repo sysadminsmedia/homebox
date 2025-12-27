@@ -2711,15 +2711,15 @@ func (c *UserClient) GetX(ctx context.Context, id uuid.UUID) *User {
 	return obj
 }
 
-// QueryGroup queries the group edge of a User.
-func (c *UserClient) QueryGroup(_m *User) *GroupQuery {
+// QueryGroups queries the groups edge of a User.
+func (c *UserClient) QueryGroups(_m *User) *GroupQuery {
 	query := (&GroupClient{config: c.config}).Query()
 	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
 		id := _m.ID
 		step := sqlgraph.NewStep(
 			sqlgraph.From(user.Table, user.FieldID, id),
 			sqlgraph.To(group.Table, group.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, user.GroupTable, user.GroupColumn),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.GroupsTable, user.GroupsColumn),
 		)
 		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
 		return fromV, nil

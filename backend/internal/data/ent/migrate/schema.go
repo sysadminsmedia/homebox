@@ -98,12 +98,21 @@ var (
 		{Name: "updated_at", Type: field.TypeTime},
 		{Name: "name", Type: field.TypeString, Size: 255},
 		{Name: "currency", Type: field.TypeString, Default: "usd"},
+		{Name: "user_groups", Type: field.TypeUUID, Nullable: true},
 	}
 	// GroupsTable holds the schema information for the "groups" table.
 	GroupsTable = &schema.Table{
 		Name:       "groups",
 		Columns:    GroupsColumns,
 		PrimaryKey: []*schema.Column{GroupsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "groups_users_groups",
+				Columns:    []*schema.Column{GroupsColumns[5]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// GroupInvitationTokensColumns holds the columns for the "group_invitation_tokens" table.
 	GroupInvitationTokensColumns = []*schema.Column{
@@ -468,7 +477,8 @@ var (
 		{Name: "activated_on", Type: field.TypeTime, Nullable: true},
 		{Name: "oidc_issuer", Type: field.TypeString, Nullable: true},
 		{Name: "oidc_subject", Type: field.TypeString, Nullable: true},
-		{Name: "group_users", Type: field.TypeUUID},
+		{Name: "default_group_id", Type: field.TypeUUID, Nullable: true},
+		{Name: "group_users", Type: field.TypeUUID, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -478,9 +488,9 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "users_groups_users",
-				Columns:    []*schema.Column{UsersColumns[12]},
+				Columns:    []*schema.Column{UsersColumns[13]},
 				RefColumns: []*schema.Column{GroupsColumns[0]},
-				OnDelete:   schema.Cascade,
+				OnDelete:   schema.SetNull,
 			},
 		},
 		Indexes: []*schema.Index{
@@ -541,6 +551,7 @@ func init() {
 	AttachmentsTable.ForeignKeys[1].RefTable = ItemsTable
 	AuthRolesTable.ForeignKeys[0].RefTable = AuthTokensTable
 	AuthTokensTable.ForeignKeys[0].RefTable = UsersTable
+	GroupsTable.ForeignKeys[0].RefTable = UsersTable
 	GroupInvitationTokensTable.ForeignKeys[0].RefTable = GroupsTable
 	ItemsTable.ForeignKeys[0].RefTable = GroupsTable
 	ItemsTable.ForeignKeys[1].RefTable = ItemsTable

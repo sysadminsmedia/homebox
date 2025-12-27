@@ -14,6 +14,7 @@ type contextKeys struct {
 var (
 	ContextUser      = &contextKeys{name: "User"}
 	ContextUserToken = &contextKeys{name: "UserToken"}
+	ContextTenant    = &contextKeys{name: "Tenant"}
 )
 
 type Context struct {
@@ -33,10 +34,14 @@ type Context struct {
 // This extracts the users from the context and embeds it into the ServiceContext struct
 func NewContext(ctx context.Context) Context {
 	user := UseUserCtx(ctx)
+	gid := UseTenantCtx(ctx)
+	if gid == uuid.Nil && user != nil {
+		gid = user.DefaultGroupID
+	}
 	return Context{
 		Context: ctx,
 		UID:     user.ID,
-		GID:     user.GroupID,
+		GID:     gid,
 		User:    user,
 	}
 }
@@ -63,4 +68,18 @@ func UseTokenCtx(ctx context.Context) string {
 		return val.(string)
 	}
 	return ""
+}
+
+// UseTenantCtx is a helper function that returns the tenant group ID from the context.
+// Returns uuid.Nil if not set.
+func UseTenantCtx(ctx context.Context) uuid.UUID {
+	if val := ctx.Value(ContextTenant); val != nil {
+		return val.(uuid.UUID)
+	}
+	return uuid.Nil
+}
+
+// SetTenantCtx is a helper function that sets the ContextTenant in the context.
+func SetTenantCtx(ctx context.Context, tenantID uuid.UUID) context.Context {
+	return context.WithValue(ctx, ContextTenant, tenantID)
 }
