@@ -1,16 +1,16 @@
-#name: HomeBox Upgrade Test
+name: HomeBox Upgrade Test
 
-# on:
-#  schedule:
+on:
+  schedule:
     # Run daily at 2 AM UTC
-  #  - cron: '0 2 * * *'
-#  workflow_dispatch: # Allow manual trigger
-#  push:
-#    branches:
-#      - main
-#    paths:
-#      - '.github/workflows/upgrade-test.yaml'
-#      - '.github/scripts/upgrade-test/**'
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Allow manual trigger
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/upgrade-test.yaml'
+      - '.github/scripts/upgrade-test/**'
 
 jobs:
   upgrade-test:
@@ -22,11 +22,13 @@ jobs:
       packages: read        # Pull Docker images from GHCR
     
     steps:
+      # Step 1: Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
+      # Step 2: Setup dependencies (Node.js, Docker, pnpm, Playwright)
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
       
@@ -45,15 +47,18 @@ jobs:
           cd frontend
           pnpm install
           pnpm exec playwright install --with-deps chromium
-      
-      - name: Create test data directory
+
+      # Step 3: Create /tmp data directories and prepare environment
+      - name: Create test data directories
         run: |
           mkdir -p /tmp/homebox-data-old
           mkdir -p /tmp/homebox-data-new
           chmod -R 777 /tmp/homebox-data-old
           chmod -R 777 /tmp/homebox-data-new
-      
-      # Step 1: Pull and deploy latest stable version
+          echo "Directories created:"
+          ls -la /tmp/
+
+      # Step 4: Pull and start the stable HomeBox image
       - name: Pull latest stable HomeBox image
         run: |
           docker pull ghcr.io/sysadminsmedia/homebox:latest
@@ -74,7 +79,7 @@ jobs:
           timeout 60 bash -c 'until curl -f http://localhost:7745/api/v1/status; do sleep 2; done'
           echo "HomeBox stable version is ready"
       
-      # Step 2: Create test data
+      # Step 5: Run the test data creation script and validate output
       - name: Create test data
         run: |
           chmod +x .github/scripts/upgrade-test/create-test-data.sh
@@ -85,7 +90,7 @@ jobs:
       - name: Verify initial data creation
         run: |
           echo "Verifying test data was created..."
-          # Check if database file exists and has content
+          # Check if the database file exists and contains valid users
           if [ -f /tmp/homebox-data-old/homebox.db ]; then
             ls -lh /tmp/homebox-data-old/homebox.db
             echo "Database file exists"
@@ -93,13 +98,15 @@ jobs:
             echo "Database file not found!"
             exit 1
           fi
-      
+          cat /tmp/test-users.json | jq '.users' || echo "Test users file not created properly!"
+
+      # Step 6: Stop the HomeBox stable version
       - name: Stop old HomeBox instance
         run: |
           docker stop homebox-old
           docker rm homebox-old
-      
-      # Step 3: Build latest version from main branch
+
+      # Step 7: Build HomeBox from the main branch
       - name: Build HomeBox from main branch
         run: |
           docker build \
@@ -109,8 +116,8 @@ jobs:
             -t homebox:test \
             -f Dockerfile \
             .
-      
-      # Step 4: Copy data and start new version
+
+      # Step 8: Run the new version on copied test data
       - name: Copy data to new location
         run: |
           cp -r /tmp/homebox-data-old/* /tmp/homebox-data-new/
@@ -131,8 +138,8 @@ jobs:
           # Wait for the service to be ready
           timeout 60 bash -c 'until curl -f http://localhost:7745/api/v1/status; do sleep 2; done'
           echo "HomeBox new version is ready"
-      
-      # Step 5: Run verification tests with Playwright
+
+      # Step 9: Verification tests using Playwright
       - name: Run verification tests
         run: |
           cd frontend
@@ -144,7 +151,7 @@ jobs:
             test/upgrade/upgrade-verification.spec.ts
         env:
           HOMEBOX_URL: http://localhost:7745
-      
+
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
         if: always()
@@ -152,7 +159,7 @@ jobs:
           name: playwright-report-upgrade-test
           path: frontend/playwright-report/
           retention-days: 30
-      
+
       - name: Upload test traces
         uses: actions/upload-artifact@v4
         if: always()
@@ -160,8 +167,9 @@ jobs:
           name: playwright-traces
           path: frontend/test-results/
           retention-days: 7
-      
-      - name: Collect logs on failure
+
+      # Step 10: Cleanup resources
+      - name: Collect Docker logs
         if: failure()
         run: |
           echo "=== Docker logs for new version ==="
