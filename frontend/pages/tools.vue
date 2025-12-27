@@ -90,6 +90,12 @@
             <div v-html="DOMPurify.sanitize($t('tools.actions_set.create_missing_thumbnails_sub'))" />
             <template #button> {{ $t("tools.actions_set.create_missing_thumbnails_button") }} </template>
           </DetailAction>
+          <DetailAction @action="wipeInventory">
+            <template #title> {{ $t("tools.actions_set.wipe_inventory") }} </template>
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-html="DOMPurify.sanitize($t('tools.actions_set.wipe_inventory_sub'))" />
+            <template #button> {{ $t("tools.actions_set.wipe_inventory_button") }} </template>
+          </DetailAction>
         </div>
       </BaseCard>
     </BaseContainer>
@@ -219,6 +225,23 @@
     }
 
     toast.success(t("tools.toast.asset_success", { results: result.data.completed }));
+  }
+
+  async function wipeInventory() {
+    const { isCanceled } = await confirm.open(t("tools.actions_set.wipe_inventory_confirm"));
+
+    if (isCanceled) {
+      return;
+    }
+
+    const result = await api.actions.wipeInventory();
+
+    if (result.error) {
+      toast.error(t("tools.toast.failed_wipe_inventory"));
+      return;
+    }
+
+    toast.success(t("tools.toast.wipe_inventory_success", { results: result.data.completed }));
   }
 </script>
 

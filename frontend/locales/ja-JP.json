@@ -607,7 +607,11 @@
             "zero_datetimes": "アイテムに設定された日時を消去",
             "zero_datetimes_button": "操作を実行",
             "zero_datetimes_confirm": "すべてアイテムの日付と時刻の値をリセットします。'<br>'件数によっては時間がかかる場合があり、元に戻すことはできません。",
-            "zero_datetimes_sub": "全てのアイテムの'<b>'日付をリセット'</b>'します。'<br>'これは、初期(v0.8.0 / 2023-02-18以前)に発生したバグの修正に必要です。日付が適切に表示されなくなるといった問題が発生している場合に限り、実行してください。'<br>'バグが発生していない場合は実行は不要です。'<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'詳しくはこちらをご覧ください (GitHub Issue #236)'</a>'"
+            "zero_datetimes_sub": "全てのアイテムの'<b>'日付をリセット'</b>'します。'<br>'これは、初期(v0.8.0 / 2023-02-18以前)に発生したバグの修正に必要です。日付が適切に表示されなくなるといった問題が発生している場合に限り、実行してください。'<br>'バグが発生していない場合は実行は不要です。'<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'詳しくはこちらをご覧ください (GitHub Issue #236)'</a>'",
+            "wipe_inventory": "Wipe Inventory",
+            "wipe_inventory_button": "Wipe Inventory",
+            "wipe_inventory_confirm": "Are you sure you want to wipe your entire inventory? This will delete all items and cannot be undone.",
+            "wipe_inventory_sub": "Permanently deletes all items in your inventory. This action is irreversible and will remove all item data including attachments and photos."
         },
         "actions_sub": "以下の機能は、すべてのアイテムのデータに影響を与えます。'<b>'これらの操作を元に戻すことはできません。'</b>'",
         "import_export": "インポート / エクスポート (CSV形式)",
@@ -637,7 +641,9 @@
             "failed_ensure_ids": "Asset IDの確認に失敗しました。",
             "failed_ensure_import_refs": "import_ref の確認に失敗しました。",
             "failed_set_primary_photos": "サムネイルの設定に失敗しました。",
-            "failed_zero_datetimes": "日時のリセットに失敗しました。"
+            "failed_zero_datetimes": "日時のリセットに失敗しました。",
+            "failed_wipe_inventory": "Failed to wipe inventory.",
+            "wipe_inventory_success": "Successfully wiped inventory. { results } items deleted."
         }
     }
 }

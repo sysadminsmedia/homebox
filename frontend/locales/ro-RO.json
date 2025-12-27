@@ -380,7 +380,11 @@
             "set_primary_photo_sub": "În versiunea v0.10.0 a Homebox, câmpul de imagine primară a fost adăugat la atașamentele de tip fotografie. Această acțiune va seta câmpul de imagine primară la prima imagine din matricea de atașamente din baza de date, dacă acest lucru nu este facut deja. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Vezi GitHub PR #576'</a>'",
             "zero_datetimes": "Zero articol Data Ore",
             "zero_datetimes_button": "Zero articol Data Ore",
-            "zero_datetimes_sub": "Resetează valoarea de timp pentru toate câmpurile de dată și oră din inventar la începutul datei. Acesta este un fix pentru un bug care a fost introdus la începutul dezvoltării și care a cauzat valoarea timpului să fie stocată cu timpul ceea ce a provocat probleme cu afișarea corectă a câmpurilor de dată. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Vezi Github Issue #236 pentru mai multe detalii.'</a>'"
+            "zero_datetimes_sub": "Resetează valoarea de timp pentru toate câmpurile de dată și oră din inventar la începutul datei. Acesta este un fix pentru un bug care a fost introdus la începutul dezvoltării și care a cauzat valoarea timpului să fie stocată cu timpul ceea ce a provocat probleme cu afișarea corectă a câmpurilor de dată. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Vezi Github Issue #236 pentru mai multe detalii.'</a>'",
+            "wipe_inventory": "Wipe Inventory",
+            "wipe_inventory_button": "Wipe Inventory",
+            "wipe_inventory_confirm": "Are you sure you want to wipe your entire inventory? This will delete all items and cannot be undone.",
+            "wipe_inventory_sub": "Permanently deletes all items in your inventory. This action is irreversible and will remove all item data including attachments and photos."
         },
         "actions_sub": "Aplicați acțiuni în inventar în bloc. Aceste acțiuni sunt ireversibile. '<b>'Procedați cu atenție.'</b>'",
         "import_export": "Import/Export",

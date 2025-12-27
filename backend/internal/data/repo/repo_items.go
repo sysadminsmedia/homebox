@@ -809,6 +809,51 @@ func (e *ItemsRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID) 
 	return err
 }
 
+func (e *ItemsRepository) WipeInventory(ctx context.Context, gid uuid.UUID) (int, error) {
+	// Get all items for the group
+	items, err := e.db.Item.Query().
+		Where(item.HasGroupWith(group.ID(gid))).
+		WithAttachments().
+		All(ctx)
+	if err != nil {
+		return 0, err
+	}
+
+	deleted := 0
+	// Delete each item with its attachments
+	// Note: We manually delete attachments and items instead of calling DeleteByGroup
+	// to continue processing remaining items even if some deletions fail
+	for _, itm := range items {
+		// Delete all attachments first
+		for _, att := range itm.Edges.Attachments {
+			err := e.attachments.Delete(ctx, gid, itm.ID, att.ID)
+			if err != nil {
+				log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during wipe inventory")
+				// Continue with other attachments even if one fails
+			}
+		}
+
+		// Delete the item
+		_, err = e.db.Item.
+			Delete().
+			Where(
+				item.ID(itm.ID),
+				item.HasGroupWith(group.ID(gid)),
+			).Exec(ctx)
+		if err != nil {
+			log.Err(err).Str("item_id", itm.ID.String()).Msg("failed to delete item during wipe inventory")
+			// Skip to next item without incrementing counter
+			continue
+		}
+
+		// Only increment counter if deletion succeeded
+		deleted++
+	}
+
+	e.publishMutationEvent(gid)
+	return deleted, nil
+}
+
 func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data ItemUpdate) (ItemOut, error) {
 	q := e.db.Item.Update().Where(item.ID(data.ID), item.HasGroupWith(group.ID(gid))).
 		SetName(data.Name).

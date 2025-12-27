@@ -657,7 +657,11 @@
             "zero_datetimes": "Noll objekt datumtider",
             "zero_datetimes_button": "Noll objekt datumtider",
             "zero_datetimes_confirm": "Är du säker på att du vill återställa alla datum- och tidsvärden? Detta kan ta en stund och kan inte ångras.",
-            "zero_datetimes_sub": "Återstället tidsvärdet för alla datumtidsfält i ditt lager till början av datumet. Detta är för att fixa en bugg som upptäcktes tidigare i utvecklingen på sidan som orsakade tidsvärden att bli sparade med tid, vilket orsakade problem med datum fält att visa korrekta värden. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Se Github Issue #236 för mer information.'</a>'"
+            "zero_datetimes_sub": "Återstället tidsvärdet för alla datumtidsfält i ditt lager till början av datumet. Detta är för att fixa en bugg som upptäcktes tidigare i utvecklingen på sidan som orsakade tidsvärden att bli sparade med tid, vilket orsakade problem med datum fält att visa korrekta värden. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Se Github Issue #236 för mer information.'</a>'",
+            "wipe_inventory": "Wipe Inventory",
+            "wipe_inventory_button": "Wipe Inventory",
+            "wipe_inventory_confirm": "Are you sure you want to wipe your entire inventory? This will delete all items and cannot be undone.",
+            "wipe_inventory_sub": "Permanently deletes all items in your inventory. This action is irreversible and will remove all item data including attachments and photos."
         },
         "actions_sub": "Utför åtgärder på dina objekt i bulk. Dessa är oåterkalleliga. '<b>'Var försiktig.'</b>'",
         "import_export": "Import/Export",
@@ -687,7 +691,9 @@
             "failed_ensure_ids": "Det gick inte att säkerställa tillgångs-ID.",
             "failed_ensure_import_refs": "Det gick inte att säkerställa importreferenser.",
             "failed_set_primary_photos": "Det gick inte att ställa in primära foton.",
-            "failed_zero_datetimes": "Det gick inte att återställa datum- och tidsvärden."
+            "failed_zero_datetimes": "Det gick inte att återställa datum- och tidsvärden.",
+            "failed_wipe_inventory": "Failed to wipe inventory.",
+            "wipe_inventory_success": "Successfully wiped inventory. { results } items deleted."
         }
     }
 }

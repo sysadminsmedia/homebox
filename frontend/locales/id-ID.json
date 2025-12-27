@@ -458,7 +458,11 @@
             "set_primary_photo_sub": "Pada Homebox versi 0.10.0, kolom gambar utama ditambahkan ke lampiran bertipe foto. Ini akan mengatur kolom gambar utama ke gambar pertama dalam lampiran di database, jika belum diatur. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'See GitHub PR #576'</a>'",
             "zero_datetimes": "Format Waktu Kosong",
             "zero_datetimes_button": "Format Waktu Kosong",
-            "zero_datetimes_sub": "Mengatur ulang nilai waktu untuk semua bidang tanggal dan waktu di inventaris Anda ke awal tanggal. Ini untuk memperbaiki bug yang muncul di awal pengembangan situs yang menyebabkan nilai waktu disimpan bersama waktu, yang mengakibatkan masalah pada tampilan nilai tanggal yang akurat. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'"
+            "zero_datetimes_sub": "Mengatur ulang nilai waktu untuk semua bidang tanggal dan waktu di inventaris Anda ke awal tanggal. Ini untuk memperbaiki bug yang muncul di awal pengembangan situs yang menyebabkan nilai waktu disimpan bersama waktu, yang mengakibatkan masalah pada tampilan nilai tanggal yang akurat. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'",
+            "wipe_inventory": "Wipe Inventory",
+            "wipe_inventory_button": "Wipe Inventory",
+            "wipe_inventory_confirm": "Are you sure you want to wipe your entire inventory? This will delete all items and cannot be undone.",
+            "wipe_inventory_sub": "Permanently deletes all items in your inventory. This action is irreversible and will remove all item data including attachments and photos."
         },
         "actions_sub": "Terapkan tindakan ke inventaris Anda secara massal. Tindakan ini tidak dapat diurungkan. <b>Hati-hati.</b>",
         "import_export": "Impor/Ekspor",
