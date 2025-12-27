@@ -1,155 +1,94 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
-import { v4 as uuidv4 } from 'uuid'; // For generating unique invite IDs
+  import { useI18n } from "vue-i18n";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Card } from '@/components/ui/card'; // Assuming you have a Card component
-import { Badge } from '@/components/ui/badge'; // Assuming you have a Badge component
-import {
-  Calendar as CalendarIcon,
-  PlusCircle,
-  Trash,
-} from 'lucide-vue-next'; // Icons
-import { Calendar } from '@/components/ui/calendar';
-import { format } from 'date-fns';
+  import { api, type User as MockUser, type Invite as MockInvite } from "~/mock/collections";
 
-const { t } = useI18n();
+  import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+  // Popover removed from invite UI; no longer importing
+  import { Button, ButtonGroup } from "@/components/ui/button";
+  import { Label } from "@/components/ui/label";
+  import { Input } from "@/components/ui/input";
+  import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+  import { Card } from "@/components/ui/card"; // Assuming you have a Card component
+  import { Badge } from "@/components/ui/badge"; // Assuming you have a Badge component
+  import { PlusCircle, Trash } from "lucide-vue-next"; // Icons
+  import { format } from "date-fns";
+  import CopyText from "@/components/global/CopyText.vue";
+  import BaseContainer from "@/components/Base/Container.vue";
+  import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
+  import { useDialog } from "~/components/ui/dialog-provider";
+  import { DialogID } from "~/components/ui/dialog-provider/utils";
+  const { openDialog } = useDialog();
 
-definePageMeta({
-  middleware: ['auth'],
-});
-useHead({
-  title: 'HomeBox | ' + t('menu.maintenance'),
-});
+  const { t } = useI18n();
 
-interface User {
-  username: string;
-  id: string;
-  role: 'owner' | 'admin' | 'editor' | 'viewer';
-  lastActive: string;
-  added: string;
-}
+  definePageMeta({
+    middleware: ["auth"],
+  });
+  useHead({
+    title: "HomeBox | " + t("menu.maintenance"),
+  });
 
-interface Invite {
-  id: string;
-  code: string;
-  expiresAt: Date | null;
-  maxUses: number | null;
-  uses: number;
-}
+  // Use centralized mock data / fake API
+  const users = ref<MockUser[]>(api.getUsers());
+  const invites = ref<MockInvite[]>(api.getInvites());
 
-const users = ref<User[]>([
-  {
-    username: 'tonya',
-    id: '1',
-    role: 'owner',
-    lastActive: '12 hours ago',
-    added: '13 hours ago',
-  },
-  {
-    username: 'steve',
-    id: '2',
-    role: 'admin',
-    lastActive: '1 day ago',
-    added: '2 days ago',
-  },
-  {
-    username: 'bob',
-    id: '3',
-    role: 'editor',
-    lastActive: '30 minutes ago',
-    added: '5 hours ago',
-  },
-  {
-    username: 'john',
-    id: '4',
-    role: 'viewer',
-    lastActive: '2 hours ago',
-    added: '1 day ago',
-  },
-]);
+  // Current collection context (this page shows a single collection)
+  // For now use the first mock collection as the active collection
+  const currentCollectionId = api.getCollections()[0]?.id ?? "";
 
-const invites = ref<Invite[]>([
-  {
-    id: uuidv4(),
-    code: 'ABCDEF',
-    expiresAt: null,
-    maxUses: null,
-    uses: 0,
-  },
-  {
-    id: uuidv4(),
-    code: 'GHIJKL',
-    expiresAt: new Date(new Date().setDate(new Date().getDate() + 7)), // Expires in 7 days
-    maxUses: 5,
-    uses: 2,
-  },
-]);
+  // New invite email input
+  // (declared below with invite inputs)
 
-const newInviteExpiresAt = ref<Date | null>(null);
-const newInviteMaxUses = ref<number | null>(null);
+  // Settings state
+  const collectionName = ref<string>("Personal Inventory");
+  const saved = ref(false);
 
-const page = ref(1);
+  // invite inputs (moved to dialog)
 
-const roles = ['owner', 'admin', 'editor', 'viewer'];
+  const page = ref(1);
 
-function handleRoleChange(userId: string, newRole: string) {
-  const userIndex = users.value.findIndex((user) => user.id === userId);
-  if (userIndex !== -1) {
-    users.value[userIndex].role = newRole as
-      | 'owner'
-      | 'admin'
-      | 'editor'
-      | 'viewer';
+  const roles = ["owner", "admin", "editor", "viewer"];
+
+  function inviteUrl(code: string) {
+    if (typeof window === "undefined") return "";
+    return `${window.location.origin}?token=${code}`;
   }
-}
 
-function handleRemoveUser(userId: string) {
-  users.value = users.value.filter((user) => user.id !== userId);
-}
+  function getMembershipRole(user: MockUser) {
+    const mem = user.collections.find(c => c.id === currentCollectionId);
+    return mem?.role ?? "viewer";
+  }
 
-function generateInviteCode() {
-  return Math.random().toString(36).substring(2, 8).toUpperCase();
-}
+  function roleVariant(role: string) {
+    return role === "owner" ? "default" : role === "admin" ? "secondary" : "outline";
+  }
 
-function createNewInvite() {
-  const newInvite: Invite = {
-    id: uuidv4(),
-    code: generateInviteCode(),
-    expiresAt: newInviteExpiresAt.value,
-    maxUses: newInviteMaxUses.value,
-    uses: 0,
-  };
-  invites.value.push(newInvite);
-  newInviteExpiresAt.value = null;
-  newInviteMaxUses.value = null;
-}
+  function handleRoleChange(userId: string, newRole: unknown) {
+    // Update the role for this user specific to the current collection
+    const roleStr = String(newRole || "viewer");
+    api.addUserToCollection(userId, currentCollectionId, roleStr as MockUser["collections"][number]["role"]);
+    users.value = api.getUsers();
+  }
 
-function deleteInvite(inviteId: string) {
-  invites.value = invites.value.filter((invite) => invite.id !== inviteId);
-}
+  function handleRemoveUser(userId: string) {
+    api.deleteUser(userId);
+    users.value = api.getUsers();
+  }
+
+  // Invite creation now handled by dialog component; keep helper removed.
+
+  function deleteInvite(inviteId: string) {
+    api.deleteInvite(inviteId);
+    invites.value = api.getInvites();
+  }
+
+  function saveSettings() {
+    // Stub: persist settings to API when implemented
+    console.log("Saving collection settings", collectionName.value);
+    saved.value = true;
+    setTimeout(() => (saved.value = false), 2000);
+  }
 </script>
 
 <template>
@@ -157,112 +96,68 @@ function deleteInvite(inviteId: string) {
     <BaseContainer class="flex flex-col gap-4">
       <BaseSectionHeader> Collection Settings </BaseSectionHeader>
       <ButtonGroup>
-        <Button
-          size="sm"
-          :variant="page == 1 ? 'default' : 'outline'"
-          @click="page = 1"
-        >
-          Users
-        </Button>
-        <Button
-          size="sm"
-          :variant="page == 2 ? 'default' : 'outline'"
-          @click="page = 2"
-        >
-          Invites
-        </Button>
-        <Button
-          size="sm"
-          :variant="page == 3 ? 'default' : 'outline'"
-          @click="page = 3"
-        >
-          Settings
-        </Button>
+        <Button size="sm" :variant="page == 1 ? 'default' : 'outline'" @click="page = 1"> Users </Button>
+        <Button size="sm" :variant="page == 2 ? 'default' : 'outline'" @click="page = 2"> Invites </Button>
+        <Button size="sm" :variant="page == 3 ? 'default' : 'outline'" @click="page = 3"> Settings </Button>
       </ButtonGroup>
 
-      <Card v-if="page == 1" class="p-4 m-4">
+      <Card v-if="page == 1" class="">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Username</TableHead>
+              <TableHead>Name</TableHead>
               <TableHead>Role</TableHead>
-              <TableHead>Last Active</TableHead>
-              <TableHead>Added</TableHead>
-              <TableHead class="text-right">Actions</TableHead>
+              <TableHead>Joined</TableHead>
+              <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             <TableRow v-for="user in users" :key="user.id">
               <TableCell class="font-medium">
-                {{ user.username }}
+                {{ user.name }}
               </TableCell>
               <TableCell>
-                <Badge
-                  :variant="
-                    user.role === 'owner'
-                      ? 'default'
-                      : user.role === 'admin'
-                        ? 'secondary'
-                        : 'outline'
-                  "
+                <Select
+                  :model-value="getMembershipRole(user)"
+                  @update:model-value="newRole => handleRoleChange(user.id, newRole)"
                 >
-                  {{ user.role }}
-                </Badge>
-              </TableCell>
-              <TableCell>{{ user.lastActive }}</TableCell>
-              <TableCell>{{ user.added }}</TableCell>
-              <TableCell class="text-right">
-                <Popover>
-                  <PopoverTrigger as-child>
-                    <Button size="sm" variant="outline"> Edit </Button>
-                  </PopoverTrigger>
-                  <PopoverContent class="w-48">
-                    <div class="grid gap-4">
-                      <div class="space-y-2">
-                        <h4 class="font-medium leading-none">Edit User</h4>
-                        <p class="text-sm text-muted-foreground">
-                          {{ user.username }}
-                        </p>
-                      </div>
-                      <div class="grid gap-2">
-                        <Label for="role">Role</Label>
-                        <Select
-                          :model-value="user.role"
-                          @update:model-value="
-                            (newRole) => handleRoleChange(user.id, newRole)
-                          "
+                  <SelectTrigger>
+                    <span class="flex items-center">
+                      <Badge class="whitespace-nowrap" :variant="roleVariant(getMembershipRole(user))">{{
+                        getMembershipRole(user)
+                      }}</Badge>
+                    </span>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem v-for="role in roles" :key="role" :value="role">
+                      <div class="flex w-full items-center justify-between">
+                        <Badge
+                          class="whitespace-nowrap"
+                          :variant="role === 'owner' ? 'default' : role === 'admin' ? 'secondary' : 'outline'"
                         >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a role" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem
-                              v-for="role in roles"
-                              :key="role"
-                              :value="role"
-                            >
-                              {{ role }}
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
+                          {{ role }}
+                        </Badge>
                       </div>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        @click="handleRemoveUser(user.id)"
-                      >
-                        Remove User
-                      </Button>
-                    </div>
-                  </PopoverContent>
-                </Popover>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </TableCell>
+              <TableCell>
+                {{ (user as any).created_at ? format(new Date((user as any).created_at), "PPP") : "-" }}
+              </TableCell>
+              <TableCell class="text-right">
+                <div class="flex w-full items-center justify-end gap-2">
+                  <Button variant="destructive" size="icon" @click="handleRemoveUser(user.id)">
+                    <Trash class="size-4" />
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           </TableBody>
         </Table>
       </Card>
 
-      <Card v-if="page == 2" class="p-4 m-4">
+      <Card v-if="page == 2" class="p-4">
         <div class="flex flex-col gap-4">
           <h3 class="text-lg font-semibold">Existing Invites</h3>
           <Table>
@@ -272,33 +167,22 @@ function deleteInvite(inviteId: string) {
                 <TableHead>Expires</TableHead>
                 <TableHead>Max Uses</TableHead>
                 <TableHead>Uses</TableHead>
-                <TableHead class="text-right">Actions</TableHead>
+                <TableHead class="text-right"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               <TableRow v-for="invite in invites" :key="invite.id">
-                <TableCell class="font-medium">
-                  {{ invite.code }}
-                </TableCell>
-                <TableCell>
-                  {{
-                    invite.expiresAt
-                      ? format(invite.expiresAt, 'PPP')
-                      : 'Never'
-                  }}
-                </TableCell>
-                <TableCell>
-                  {{ invite.maxUses !== null ? invite.maxUses : 'Unlimited' }}
-                </TableCell>
-                <TableCell>{{ invite.uses }}</TableCell>
-                <TableCell class="text-right">
-                  <Button
-                    variant="destructive"
-                    size="icon"
-                    @click="deleteInvite(invite.id)"
-                  >
-                    <Trash class="w-4 h-4" />
-                  </Button>
+                <TableCell class="font-medium">{{ invite.id }}</TableCell>
+                <TableCell>{{ invite.expires_at ? format(new Date(invite.expires_at), "PPP") : "Never" }}</TableCell>
+                <TableCell>{{ invite.max_uses ?? "∞" }}</TableCell>
+                <TableCell>{{ invite.uses ?? 0 }}</TableCell>
+                <TableCell class="w-max">
+                  <div class="flex items-center justify-end gap-2">
+                    <CopyText :text="inviteUrl(invite.id)" />
+                    <Button variant="destructive" size="icon" @click="deleteInvite(invite.id)">
+                      <Trash class="size-4" />
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -306,56 +190,35 @@ function deleteInvite(inviteId: string) {
 
           <hr class="my-4" />
 
-          <h3 class="text-lg font-semibold">Create New Invite</h3>
-          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <div class="flex flex-col gap-2">
-              <Label for="new-invite-max-uses">Max Uses (optional)</Label>
-              <Input
-                id="new-invite-max-uses"
-                type="number"
-                v-model.number="newInviteMaxUses"
-                placeholder="Unlimited"
-              />
-            </div>
-            <div class="flex flex-col gap-2">
-              <Label for="new-invite-expires-at">Expires At (optional)</Label>
-              <Popover>
-                <PopoverTrigger as-child>
-                  <Button
-                    variant="outline"
-                    class="w-full justify-start text-left font-normal"
-                    :class="
-                      !newInviteExpiresAt && 'text-muted-foreground'
-                    "
-                  >
-                    <CalendarIcon class="mr-2 h-4 w-4" />
-                    {{
-                      newInviteExpiresAt
-                        ? format(newInviteExpiresAt, 'PPP')
-                        : 'Pick a date'
-                    }}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent class="w-auto p-0">
-                  <Calendar v-model:model-value="newInviteExpiresAt" />
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div class="flex items-end">
-              <Button @click="createNewInvite" class="w-full">
-                <PlusCircle class="mr-2 w-4 h-4" /> Generate Invite
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold">Create New Invite</h3>
+            <div class="w-56">
+              <Button
+                class="w-full"
+                @click="openDialog(DialogID.CreateInvite, { onClose: () => (invites.value = api.getInvites()) })"
+              >
+                <PlusCircle class="mr-2 size-4" /> Generate Invite
               </Button>
             </div>
           </div>
         </div>
       </Card>
 
-      <Card v-if="page == 3" class="p-4 m-4">
+      <Card v-if="page == 3" class="p-4">
         <h3 class="text-lg font-semibold">Collection Settings</h3>
-        <p class="text-muted-foreground">
-          This is where you would configure general collection settings.
-        </p>
-        <!-- Add your settings forms/components here -->
+
+        <div class="mt-4 grid items-end gap-4 md:grid-cols-2">
+          <div class="flex flex-col gap-2">
+            <Label for="collection-name">Name</Label>
+            <Input id="collection-name" v-model="collectionName" placeholder="Collection name" />
+          </div>
+
+          <div class="flex items-end">
+            <Button class="w-full" @click="saveSettings">Save</Button>
+          </div>
+        </div>
+
+        <p v-if="saved" class="mt-3 text-sm text-green-600">Saved</p>
       </Card>
     </BaseContainer>
   </div>

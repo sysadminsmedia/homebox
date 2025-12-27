@@ -8,6 +8,7 @@
     <ModalConfirm />
     <OutdatedModal v-if="status" :status="status" />
     <ItemCreateModal />
+    <CreateInviteModal />
     <LabelCreateModal />
     <LocationCreateModal />
     <ItemBarcodeModal />
@@ -24,7 +25,8 @@
               <AppLogo />
             </div>
           </NuxtLink>
-          <!-- <AppOrgSelector v-model:model-value="selectedOrg" /> -->
+          <AppCollectionSelector v-model:model-value="selectedCollectionId" />
+
           <DropdownMenu>
             <DropdownMenuTrigger as-child>
               <SidebarMenuButton
@@ -86,19 +88,6 @@
                   <span>{{ $t("menu.scanner") }}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  :class="{
-                    'text-nowrap': typeof locale === 'string' && locale.startsWith('zh-'),
-                  }"
-                  :tooltip="$t('menu.scanner')"
-                  @click.prevent="openDialog('scanner')"
-                >
-                  <MdiAccount />
-                  <span>Collection Settings</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>
@@ -134,7 +123,7 @@
           >
             <div class="flex h-1/2 items-center gap-2 sm:h-auto">
               <div>
-              <SidebarTrigger variant="default" />
+                <SidebarTrigger variant="default" />
               </div>
               <!-- <div>
               <Button size="icon">
@@ -145,7 +134,6 @@
                 <AppHeaderText class="h-6" />
               </NuxtLink>
               <!-- <AppOrgSelector v-model:model-value="selectedOrg" /> -->
-
             </div>
             <div class="sm:grow" />
             <!-- <div class="flex items-center">
@@ -246,13 +234,15 @@
   import LabelCreateModal from "~/components/Label/CreateModal.vue";
   import LocationCreateModal from "~/components/Location/CreateModal.vue";
   import ItemBarcodeModal from "~/components/Item/BarcodeModal.vue";
+  import CreateInviteModal from "~/components/Admin/CreateInviteModal.vue";
   import AppQuickMenuModal from "~/components/App/QuickMenuModal.vue";
   import AppScannerModal from "~/components/App/ScannerModal.vue";
   import AppLogo from "~/components/App/Logo.vue";
   import AppHeaderDecor from "~/components/App/HeaderDecor.vue";
   import AppHeaderText from "~/components/App/HeaderText.vue";
+  import AppCollectionSelector from "~/components/App/CollectionSelector.vue";
 
-  const selectedOrg = ref<any>();
+  const selectedCollectionId = ref<string>("c1");
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
@@ -373,19 +363,26 @@
       name: computed(() => t("menu.maintenance")),
       to: "/maintenance",
     },
-    // {
-    //   icon: MdiAccount,
-    //   id: 5,
-    //   active: computed(() => route.path === "/profile"),
-    //   name: computed(() => t("menu.profile")),
-    //   to: "/profile",
-    // },
+    {
+      icon: MdiAccount,
+      id: 5,
+      active: computed(() => route.path === "/profile"),
+      name: computed(() => t("menu.profile")),
+      to: "/profile",
+    },
     {
       icon: MdiCog,
       id: 6,
       active: computed(() => route.path === "/tools"),
       name: computed(() => t("menu.tools")),
       to: "/tools",
+    },
+    {
+      icon: MdiAccount,
+      id: 7,
+      active: computed(() => route.path === "/admin"),
+      name: computed(() => t("menu.admin")),
+      to: "/admin",
     },
   ];
 
@@ -433,36 +430,6 @@
 
   const authCtx = useAuthContext();
   const api = useUserApi();
-
-  const checkAuth = async () => {
-    try {
-      // await api.user.self();
-    } catch (err) {
-      console.log(err);
-      // if (!authCtx.isAuthorized()) {
-      //   console.log("Not authorised, redirecting to login");
-      //   await navigateTo("/");
-      // }
-    }
-  };
-
-  onMounted(() => {
-    checkAuth();
-  });
-
-  onMounted(() => {
-    const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        checkAuth();
-      }
-    };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    onUnmounted(() => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    });
-  });
 
   async function logout() {
     await authCtx.logout(api);

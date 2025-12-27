@@ -1,56 +1,30 @@
+<!-- TODO:
+  - make collection on hover show role and colour based on role 
+-->
+
 <script setup lang="ts">
   import { ref, computed } from "vue";
   import { useI18n } from "vue-i18n";
   import { useConfirm } from "~/composables/use-confirm";
   import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, TableEmpty } from "~/components/ui/table";
   import { Button } from "~/components/ui/button";
+  import { Card } from "@/components/ui/card";
+  import BaseContainer from "@/components/Base/Container.vue";
+  import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiDelete from "~icons/mdi/delete";
-  import MdiAccountMultiple from "~icons/mdi/account-multiple";
-  import MdiOpenInNew from "~icons/mdi/open-in-new";
-  import MdiCheck from "~icons/mdi/check";
+  // import MdiOpenInNew from "~icons/mdi/open-in-new";
+  // Badge component for collections display
+  import { Badge } from "@/components/ui/badge";
+  import UserFormDialog from "@/components/Admin/UserFormDialog.vue";
 
-  type Group = { id: string; name: string; ownerName?: string };
+  import { api, type Collection as MockCollection, type User } from "~/mock/collections";
 
-  type User = {
-    id: string;
-    name: string;
-    email: string;
-    role: "admin" | "user" | string;
-    // password_set indicates whether the user has a local password
-    password_set?: boolean;
-    group?: Group | null;
-    oidc_subject?: string | null;
-    oidc_issuer?: string | null;
-  };
+  // api.getCollections returns collections augmented with `count` and the current user's `role`
+  type CollectionSummary = MockCollection & { count: number; role: User["collections"][number]["role"] };
 
-  // Mock groups (group.name is the owner's name per your request)
-  const groups = ref<Group[]>([
-    { id: "g1", name: "Alice Admin" },
-    { id: "g2", name: "Owner Two" },
-  ]);
-
-  const users = ref<User[]>([
-    {
-      id: "1",
-      name: "Alice Admin",
-      email: "alice@example.com",
-      role: "admin",
-      password_set: true,
-      group: groups.value[0],
-    },
-    {
-      id: "2",
-      name: "Bob User",
-      email: "bob@example.com",
-      role: "user",
-      password_set: true,
-      group: groups.value[0],
-      oidc_subject: "bob-sub",
-      oidc_issuer: "https://oidc.example.com",
-    },
-    { id: "3", name: "Charlie", email: "charlie@example.com", role: "user", password_set: false, group: null },
-  ]);
+  const collections = ref<CollectionSummary[]>(api.getCollections() as CollectionSummary[]);
+  const users = ref<User[]>(api.getUsers());
 
   const query = ref("");
   const filtered = computed(() => {
@@ -64,33 +38,32 @@
   const editing = ref<User | null>(null);
   const showForm = ref(false);
   const newPassword = ref("");
-  const editingGroupId = ref<string | null>(null);
+  const editingCollectionIds = ref<string[]>([]);
   const confirm = useConfirm();
   const { t } = useI18n();
 
-  const isEditingExisting = computed(() => editing.value !== null && users.value.some(u => u.id === editing.value!.id));
-
-  const editingIsAdmin = computed({
-    get: () => editing.value?.role === "admin",
-    set: (v: boolean) => {
-      if (!editing.value) return;
-      editing.value.role = v ? "admin" : "user";
-    },
-  });
+  // editing state handled in dialog component; role toggle logic applied on save
 
   // helper to compute auth type for display
   // authType removed — not used in the template
 
+  function authType(u: User) {
+    const parts: string[] = [];
+    if (u.password_set) parts.push("Password");
+    if (u.oidc_subject) parts.push("OIDC");
+    return parts.length ? parts.join(" & ") : "None";
+  }
+
   function openAdd() {
-    editing.value = { id: String(Date.now()), name: "", email: "", role: "user", password_set: false, group: null };
+    editing.value = { id: String(Date.now()), name: "", email: "", role: "user", password_set: false, collections: [] };
     newPassword.value = "";
-    editingGroupId.value = null;
+    editingCollectionIds.value = [];
     showForm.value = true;
   }
 
   function openEdit(u: User) {
     editing.value = { ...u };
-    editingGroupId.value = u.group?.id ?? null;
+    editingCollectionIds.value = (u.collections ?? []).map(c => c.id);
     newPassword.value = "";
     showForm.value = true;
   }
@@ -105,20 +78,29 @@
       return;
     }
 
-    const idx = users.value.findIndex(x => x.id === editing.value!.id);
-    if (idx >= 0) {
-      // apply password flag if new password was set locally
-      if (newPassword.value && editing.value) editing.value.password_set = true;
-      // apply group selection object
-      if (editing.value) {
-        editing.value.group = groups.value.find(g => g.id === editingGroupId.value) ?? null;
-      }
-      users.value.splice(idx, 1, { ...editing.value });
+    // apply password flag if new password was set locally
+    if (newPassword.value && editing.value) editing.value.password_set = true;
+
+    const existing = api.getUser(editing.value.id);
+    if (existing) {
+      // update only scalar fields; collections are managed via the add/remove API
+      const updated = {
+        ...existing,
+        name: editing.value.name,
+        email: editing.value.email,
+        role: editing.value.role,
+        password_set: editing.value.password_set,
+      } as User;
+      api.updateUser(updated);
     } else {
-      if (newPassword.value && editing.value) editing.value.password_set = true;
-      if (editing.value) editing.value.group = groups.value.find(g => g.id === editingGroupId.value) ?? null;
-      users.value.unshift({ ...editing.value });
+      // create user without collections first, then add memberships
+      const toCreate = { ...editing.value, collections: [] } as User;
+      const created = api.addUser(toCreate);
+      editingCollectionIds.value.forEach(id => api.addUserToCollection(created.id, id, "viewer"));
     }
+
+    // refresh local cache
+    users.value = api.getUsers();
 
     editing.value = null;
     showForm.value = false;
@@ -136,31 +118,48 @@
     });
     if (isCanceled) return;
 
-    users.value = users.value.filter(x => x.id !== u.id);
+    api.deleteUser(u.id);
+    users.value = api.getUsers();
     // TODO: call backend API to delete user when available
   }
 
   // no more toggleActive; active is not used
+
+  function collectionName(id: string) {
+    const col = collections.value.find(c => c.id === id);
+    return col ? col.name : id;
+  }
+
+  function onUpdateEditing(val: User | null) {
+    editing.value = val;
+  }
+
+  function onUpdateEditingCollectionIds(val: string[]) {
+    editingCollectionIds.value = val;
+  }
+
+  function onUpdateNewPassword(val: string) {
+    newPassword.value = val;
+  }
 </script>
 
 <template>
-  <div class="mx-auto max-w-6xl p-6">
-    <header class="mb-6 flex items-center justify-between">
-      <h1 class="text-2xl font-semibold">{{ t("global.details") }} - Administration</h1>
-      <div class="flex items-center gap-3">
-        <input v-model="query" :placeholder="t('global.search')" class="rounded border px-3 py-2" />
-        <Button @click="openAdd">{{ t("global.add") }}</Button>
+  <BaseContainer class="flex flex-col gap-4">
+    <BaseSectionHeader>
+      <span>User Management</span>
+      <div class="ml-auto">
+        <Button @click="openAdd">Add User</Button>
       </div>
-    </header>
+    </BaseSectionHeader>
 
-    <section>
+    <Card class="p-0">
       <Table class="w-full">
         <TableHeader>
           <TableRow>
             <TableHead>{{ t("global.name") }}</TableHead>
             <TableHead>{{ t("global.email") }}</TableHead>
-            <TableHead>Role</TableHead>
-            <TableHead>Group</TableHead>
+            <TableHead>Is Admin</TableHead>
+            <TableHead>Collections</TableHead>
             <TableHead class="w-32 text-center">Auth</TableHead>
             <TableHead class="w-40 text-center">{{ t("global.details") }}</TableHead>
           </TableRow>
@@ -171,21 +170,21 @@
             <TableRow v-for="u in filtered" :key="u.id">
               <TableCell>{{ u.name }}</TableCell>
               <TableCell>{{ u.email }}</TableCell>
-              <TableCell class="flex items-center gap-2">
-                <MdiCheck v-if="u.role === 'admin'" class="size-4 text-green-600" />
-                <span v-if="u.role === 'admin'">admin</span>
-                <span v-else>-</span>
+              <TableCell class="text-center">
+                <span class="font-medium">{{ u.role === "admin" ? "Yes" : "No" }}</span>
               </TableCell>
               <TableCell>
-                <div class="flex items-center gap-2">
-                  <MdiAccountMultiple class="size-4" />
-                  <span>{{ u.group?.name ?? "-" }}</span>
+                <div class="flex flex-wrap items-center gap-2">
+                  <template v-if="u.collections && u.collections.length">
+                    <Badge v-for="c in u.collections" :key="c.id" class="whitespace-nowrap"
+                      >{{ collectionName(c.id) }}<span class="ml-1 text-xs opacity-60">({{ c.role }})</span></Badge
+                    >
+                  </template>
+                  <span v-else class="text-muted-foreground">-</span>
                 </div>
               </TableCell>
               <TableCell class="text-center">
-                <span v-if="u.oidc_subject" :title="u.oidc_issuer || u.oidc_subject">
-                  <MdiOpenInNew class="inline-block size-4" />
-                </span>
+                <span>{{ authType(u) }}</span>
               </TableCell>
               <TableCell class="text-right">
                 <div class="flex justify-end gap-2">
@@ -213,48 +212,21 @@
           </template>
         </TableBody>
       </Table>
-    </section>
+    </Card>
 
-    <!-- Add / Edit form modal (simple) -->
-    <div v-if="showForm" class="fixed inset-0 z-40 flex items-center justify-center bg-black/40">
-      <div class="w-full max-w-md rounded bg-white p-6 shadow-lg">
-        <h2 class="mb-4 text-lg font-medium">{{ isEditingExisting ? t("global.edit") : t("global.add") }}</h2>
-        <div class="space-y-3">
-          <label class="block">
-            <div class="mb-1 text-sm">{{ t("global.name") }}</div>
-            <input v-model="editing!.name" class="w-full rounded border px-3 py-2" />
-          </label>
-          <label class="block">
-            <div class="mb-1 text-sm">{{ t("global.email") }}</div>
-            <input v-model="editing!.email" class="w-full rounded border px-3 py-2" />
-          </label>
-          <label class="flex items-center gap-2">
-            <input v-model="editingIsAdmin" type="checkbox" />
-            <span class="text-sm">Admin</span>
-          </label>
-          <label class="block">
-            <div class="mb-1 text-sm">Password</div>
-            <input
-              v-model="newPassword"
-              type="password"
-              placeholder="Leave blank to keep"
-              class="w-full rounded border px-3 py-2"
-            />
-          </label>
-          <label class="block">
-            <div class="mb-1 text-sm">Group</div>
-            <select v-model="editingGroupId" class="w-full rounded border px-3 py-2">
-              <option :value="null">-</option>
-              <option v-for="g in groups" :key="g.id" :value="g.id">{{ g.name }}</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="mt-4 flex justify-end gap-2">
-          <Button variant="outline" @click="cancelForm">{{ t("global.cancel") }}</Button>
-          <Button @click="saveUser">{{ t("global.save") }}</Button>
-        </div>
-      </div>
-    </div>
-  </div>
+    <!-- Add / Edit form modal (moved to component) -->
+    <UserFormDialog
+      v-model="showForm"
+      :editing="editing"
+      :collections="collections"
+      :editing-collection-ids="editingCollectionIds"
+      :new-password="newPassword"
+      @update:editing="onUpdateEditing"
+      @update:editing-collection-ids="onUpdateEditingCollectionIds"
+      @update:new-password="onUpdateNewPassword"
+      @save="saveUser"
+      @cancel="cancelForm"
+      @collections-changed="() => (collections = api.getCollections())"
+    />
+  </BaseContainer>
 </template>
