@@ -434,7 +434,7 @@
   const authCtx = useAuthContext();
   const api = useUserApi();
 
-const checkAuth = async () => {
+  const checkAuth = async () => {
     try {
       // await api.user.self();
     } catch (err) {
