@@ -1,3 +1,12 @@
+/**
+ * HomeBox Upgrade Verification Tests
+ *
+ * NOTE: These tests are ONLY meant to run in the upgrade-test workflow.
+ * They require test data to be pre-created by the create-test-data.sh script.
+ * These tests are stored in test/upgrade/ (not test/e2e/) to prevent them
+ * from running during normal E2E test runs.
+ */
+
 import { expect, test } from "@playwright/test";
 import * as fs from "fs";
 

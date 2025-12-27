@@ -141,7 +141,7 @@ jobs:
           pnpm exec playwright test \
             -c ./test/playwright.config.ts \
             --project=chromium \
-            test/e2e/upgrade-verification.spec.ts
+            test/upgrade/upgrade-verification.spec.ts
         env:
           HOMEBOX_URL: http://localhost:7745
       

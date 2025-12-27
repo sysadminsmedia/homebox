@@ -179,7 +179,7 @@ TEST_DATA_FILE=/tmp/test-users.json \
 E2E_BASE_URL=http://localhost:7745 \
 pnpm exec playwright test \
   --project=chromium \
-  test/e2e/upgrade-verification.spec.ts
+  test/upgrade/upgrade-verification.spec.ts
 
 # Cleanup
 docker stop homebox-test
@@ -248,7 +248,7 @@ Potential improvements:
 
 - `.github/workflows/upgrade-test.yaml` - Main workflow definition
 - `.github/scripts/upgrade-test/create-test-data.sh` - Data generation script
-- `frontend/test/e2e/upgrade-verification.spec.ts` - Playwright verification tests
+- `frontend/test/upgrade/upgrade-verification.spec.ts` - Playwright verification tests
 - `.github/workflows/e2e-partial.yaml` - Standard E2E test workflow (for reference)
 
 ## Support
