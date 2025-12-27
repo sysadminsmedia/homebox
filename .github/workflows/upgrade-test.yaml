@@ -105,7 +105,7 @@ jobs:
           docker build \
             --build-arg VERSION=main \
             --build-arg COMMIT=${{ github.sha }} \
-            --build-arg BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+            --build-arg BUILD_TIME="$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
             -t homebox:test \
             -f Dockerfile \
             .
