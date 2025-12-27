@@ -31,4 +31,10 @@ export class ActionsAPI extends BaseAPI {
       url: route("/actions/create-missing-thumbnails"),
     });
   }
+
+  wipeInventory() {
+    return this.http.post<void, ActionAmountResult>({
+      url: route("/actions/wipe-inventory"),
+    });
+  }
 }

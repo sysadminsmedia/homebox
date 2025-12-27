@@ -657,7 +657,11 @@
             "zero_datetimes": "Zerar Datas e Horas dos Itens",
             "zero_datetimes_button": "Zerar Datas e Horas dos Itens",
             "zero_datetimes_confirm": "Tem a certeza de que deseja repor todos os valores de data e hora? Isto pode demorar e não pode ser desfeito.",
-            "zero_datetimes_sub": "Repõe o valor da hora de todos os campos de data/hora do inventário para o início do dia. Isto corrige um erro inicial no site que causava problemas na apresentação correta das datas. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Ver Issue #236 no GitHub para mais detalhes.'</a>'"
+            "zero_datetimes_sub": "Repõe o valor da hora de todos os campos de data/hora do inventário para o início do dia. Isto corrige um erro inicial no site que causava problemas na apresentação correta das datas. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Ver Issue #236 no GitHub para mais detalhes.'</a>'",
+            "wipe_inventory": "Wipe Inventory",
+            "wipe_inventory_button": "Wipe Inventory",
+            "wipe_inventory_confirm": "Are you sure you want to wipe your entire inventory? This will delete all items and cannot be undone.",
+            "wipe_inventory_sub": "Permanently deletes all items in your inventory. This action is irreversible and will remove all item data including attachments and photos."
         },
         "actions_sub": "Aplicar Ações em Massa no inventário. Estas ações são irreversíveis. '<b>'Tenha cuidado.'</b>'",
         "import_export": "Importar/Exportar",
@@ -687,7 +691,9 @@
             "failed_ensure_ids": "Falha ao garantir IDs dos ativos.",
             "failed_ensure_import_refs": "Falha ao garantir referências de importação.",
             "failed_set_primary_photos": "Falha ao definir fotos principais.",
-            "failed_zero_datetimes": "Falha ao repor datas e horas."
+            "failed_zero_datetimes": "Falha ao repor datas e horas.",
+            "failed_wipe_inventory": "Failed to wipe inventory.",
+            "wipe_inventory_success": "Successfully wiped inventory. { results } items deleted."
         }
     }
 }

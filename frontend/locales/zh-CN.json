@@ -657,7 +657,11 @@
             "zero_datetimes": "重置所有项目的日期与时间",
             "zero_datetimes_button": "重置所有项目的日期与时间",
             "zero_datetimes_confirm": "您确定要重置所有日期和时间值吗？这可能需要一段时间，并且无法撤消。",
-            "zero_datetimes_sub": "将库存中所有日期时间字段的值重置为开始日期。这是为了修复在网站开发早期出现的一个错误，该错误导致自定义时间值保存时，日期会出现偏移的问题。 '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'详细问题请参考 Github Issue #236 '</a>'"
+            "zero_datetimes_sub": "将库存中所有日期时间字段的值重置为开始日期。这是为了修复在网站开发早期出现的一个错误，该错误导致自定义时间值保存时，日期会出现偏移的问题。 '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'详细问题请参考 Github Issue #236 '</a>'",
+            "wipe_inventory": "Wipe Inventory",
+            "wipe_inventory_button": "Wipe Inventory",
+            "wipe_inventory_confirm": "Are you sure you want to wipe your entire inventory? This will delete all items and cannot be undone.",
+            "wipe_inventory_sub": "Permanently deletes all items in your inventory. This action is irreversible and will remove all item data including attachments and photos."
         },
         "actions_sub": "将操作批量应用于您的库存。这些操作都是不可逆转的，'<b> '三思而后行！'</b>'",
         "import_export": "导入/导出",
@@ -687,7 +691,9 @@
             "failed_ensure_ids": "无法确认资产ID。",
             "failed_ensure_import_refs": "无法确认导入参考。",
             "failed_set_primary_photos": "无法设置封面。",
-            "failed_zero_datetimes": "无法重置日期和时间值。"
+            "failed_zero_datetimes": "无法重置日期和时间值。",
+            "failed_wipe_inventory": "Failed to wipe inventory.",
+            "wipe_inventory_success": "Successfully wiped inventory. { results } items deleted."
         }
     }
 }

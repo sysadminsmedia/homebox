@@ -94,3 +94,16 @@ func (ctrl *V1Controller) HandleSetPrimaryPhotos() errchain.HandlerFunc {
 func (ctrl *V1Controller) HandleCreateMissingThumbnails() errchain.HandlerFunc {
 	return actionHandlerFactory("create missing thumbnails", ctrl.repo.Attachments.CreateMissingThumbnails)
 }
+
+// HandleWipeInventory godoc
+//
+//	@Summary		Wipe Inventory
+//	@Description	Deletes all items in the inventory
+//	@Tags			Actions
+//	@Produce		json
+//	@Success		200	{object}	ActionAmountResult
+//	@Router			/v1/actions/wipe-inventory [Post]
+//	@Security		Bearer
+func (ctrl *V1Controller) HandleWipeInventory() errchain.HandlerFunc {
+	return actionHandlerFactory("wipe inventory", ctrl.repo.Items.WipeInventory)
+}

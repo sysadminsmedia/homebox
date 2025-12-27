@@ -620,7 +620,11 @@
             "set_primary_photo_sub": "Homebox'un v0.10.0 sürümünde, fotoğraf türündeki ekler için birincil görüntü alanı eklendi. Bu işlem, veritabanındaki ekler dizisindeki ilk görüntüyü, eğer zaten ayarlanmamışsa, birincil görüntü alanı olarak ayarlayacaktır. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'GitHub #576'yı Gör'</a>",
             "zero_datetimes": "Sıfır Öğesi Tarih Saatleri",
             "zero_datetimes_button": "Sıfır Öğe Tarih Saatleri",
-            "zero_datetimes_sub": "Tarih saat alanlarındaki tüm zaman değerlerini en baştaki tarihe sıfırlar. Bu, sitenin geliştirilmesi sırasında erken aşamalarda ortaya çıkan ve zaman değerinin saklanmasına neden olan bir hatayı düzeltmek içindir; bu da tarih alanlarının doğru değerler göstermesinde sorunlara yol açıyordu. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Daha fazla bilgi için Github Sorunu #236'ya Bakın.'</a>'"
+            "zero_datetimes_sub": "Tarih saat alanlarındaki tüm zaman değerlerini en baştaki tarihe sıfırlar. Bu, sitenin geliştirilmesi sırasında erken aşamalarda ortaya çıkan ve zaman değerinin saklanmasına neden olan bir hatayı düzeltmek içindir; bu da tarih alanlarının doğru değerler göstermesinde sorunlara yol açıyordu. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Daha fazla bilgi için Github Sorunu #236'ya Bakın.'</a>'",
+            "wipe_inventory": "Wipe Inventory",
+            "wipe_inventory_button": "Wipe Inventory",
+            "wipe_inventory_confirm": "Are you sure you want to wipe your entire inventory? This will delete all items and cannot be undone.",
+            "wipe_inventory_sub": "Permanently deletes all items in your inventory. This action is irreversible and will remove all item data including attachments and photos."
         },
         "actions_sub": "Envanterinize toplu olarak işlemler uygulayın. Bu işlemler geri alınamaz. '<b>'Dikkatli olun.'</b>",
         "import_export": "İçe Aktar/Dışa Aktar",
