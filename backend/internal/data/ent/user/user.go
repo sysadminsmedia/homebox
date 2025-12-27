@@ -44,6 +44,8 @@ const (
 	EdgeAuthTokens = "auth_tokens"
 	// EdgeNotifiers holds the string denoting the notifiers edge name in mutations.
 	EdgeNotifiers = "notifiers"
+	// EdgeLabelTemplates holds the string denoting the label_templates edge name in mutations.
+	EdgeLabelTemplates = "label_templates"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// GroupTable is the table that holds the group relation/edge.
@@ -67,6 +69,13 @@ const (
 	NotifiersInverseTable = "notifiers"
 	// NotifiersColumn is the table column denoting the notifiers relation/edge.
 	NotifiersColumn = "user_id"
+	// LabelTemplatesTable is the table that holds the label_templates relation/edge.
+	LabelTemplatesTable = "label_templates"
+	// LabelTemplatesInverseTable is the table name for the LabelTemplate entity.
+	// It exists in this package in order to avoid circular dependency with the "labeltemplate" package.
+	LabelTemplatesInverseTable = "label_templates"
+	// LabelTemplatesColumn is the table column denoting the label_templates relation/edge.
+	LabelTemplatesColumn = "owner_id"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -250,6 +259,20 @@ func ByNotifiers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newNotifiersStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByLabelTemplatesCount orders the results by label_templates count.
+func ByLabelTemplatesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newLabelTemplatesStep(), opts...)
+	}
+}
+
+// ByLabelTemplates orders the results by label_templates terms.
+func ByLabelTemplates(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newLabelTemplatesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newGroupStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -269,5 +292,12 @@ func newNotifiersStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(NotifiersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, NotifiersTable, NotifiersColumn),
+	)
+}
+func newLabelTemplatesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(LabelTemplatesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, LabelTemplatesTable, LabelTemplatesColumn),
 	)
 }

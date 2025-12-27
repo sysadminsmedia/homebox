@@ -9,6 +9,7 @@ export enum DialogID {
   CreateItem = "create-item",
   CreateLocation = "create-location",
   CreateLabel = "create-label",
+  CreateLabelTemplate = "create-label-template",
   CreateNotifier = "create-notifier",
   CreateTemplate = "create-template",
   DuplicateSettings = "duplicate-settings",
@@ -18,11 +19,13 @@ export enum DialogID {
   ItemImage = "item-image",
   ItemTableSettings = "item-table-settings",
   PrintLabel = "print-label",
+  PrintLabelTemplate = "print-label-template",
   ProductImport = "product-import",
   QuickMenu = "quick-menu",
   Scanner = "scanner",
   PageQRCode = "page-qr-code",
   UpdateLabel = "update-label",
+  UpdateLabelTemplate = "update-label-template",
   UpdateLocation = "update-location",
   UpdateTemplate = "update-template",
   ItemChangeDetails = "item-table-updater",
@@ -61,6 +64,13 @@ export type DialogParamsMap = {
     changeLocation?: boolean;
     addLabels?: boolean;
     removeLabels?: boolean;
+  };
+  [DialogID.PrintLabelTemplate]: {
+    itemIds?: string[];
+    locationIds?: string[];
+  };
+  [DialogID.UpdateLabelTemplate]: {
+    templateId: string;
   };
 };
 

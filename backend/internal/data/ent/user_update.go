@@ -14,6 +14,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/labeltemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
@@ -229,6 +230,21 @@ func (_u *UserUpdate) AddNotifiers(v ...*Notifier) *UserUpdate {
 	return _u.AddNotifierIDs(ids...)
 }
 
+// AddLabelTemplateIDs adds the "label_templates" edge to the LabelTemplate entity by IDs.
+func (_u *UserUpdate) AddLabelTemplateIDs(ids ...uuid.UUID) *UserUpdate {
+	_u.mutation.AddLabelTemplateIDs(ids...)
+	return _u
+}
+
+// AddLabelTemplates adds the "label_templates" edges to the LabelTemplate entity.
+func (_u *UserUpdate) AddLabelTemplates(v ...*LabelTemplate) *UserUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddLabelTemplateIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_u *UserUpdate) Mutation() *UserMutation {
 	return _u.mutation
@@ -280,6 +296,27 @@ func (_u *UserUpdate) RemoveNotifiers(v ...*Notifier) *UserUpdate {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveNotifierIDs(ids...)
+}
+
+// ClearLabelTemplates clears all "label_templates" edges to the LabelTemplate entity.
+func (_u *UserUpdate) ClearLabelTemplates() *UserUpdate {
+	_u.mutation.ClearLabelTemplates()
+	return _u
+}
+
+// RemoveLabelTemplateIDs removes the "label_templates" edge to LabelTemplate entities by IDs.
+func (_u *UserUpdate) RemoveLabelTemplateIDs(ids ...uuid.UUID) *UserUpdate {
+	_u.mutation.RemoveLabelTemplateIDs(ids...)
+	return _u
+}
+
+// RemoveLabelTemplates removes "label_templates" edges to LabelTemplate entities.
+func (_u *UserUpdate) RemoveLabelTemplates(v ...*LabelTemplate) *UserUpdate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveLabelTemplateIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -519,6 +556,51 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if _u.mutation.LabelTemplatesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LabelTemplatesTable,
+			Columns: []string{user.LabelTemplatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(labeltemplate.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedLabelTemplatesIDs(); len(nodes) > 0 && !_u.mutation.LabelTemplatesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LabelTemplatesTable,
+			Columns: []string{user.LabelTemplatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(labeltemplate.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.LabelTemplatesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LabelTemplatesTable,
+			Columns: []string{user.LabelTemplatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(labeltemplate.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -736,6 +818,21 @@ func (_u *UserUpdateOne) AddNotifiers(v ...*Notifier) *UserUpdateOne {
 	return _u.AddNotifierIDs(ids...)
 }
 
+// AddLabelTemplateIDs adds the "label_templates" edge to the LabelTemplate entity by IDs.
+func (_u *UserUpdateOne) AddLabelTemplateIDs(ids ...uuid.UUID) *UserUpdateOne {
+	_u.mutation.AddLabelTemplateIDs(ids...)
+	return _u
+}
+
+// AddLabelTemplates adds the "label_templates" edges to the LabelTemplate entity.
+func (_u *UserUpdateOne) AddLabelTemplates(v ...*LabelTemplate) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.AddLabelTemplateIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (_u *UserUpdateOne) Mutation() *UserMutation {
 	return _u.mutation
@@ -787,6 +884,27 @@ func (_u *UserUpdateOne) RemoveNotifiers(v ...*Notifier) *UserUpdateOne {
 		ids[i] = v[i].ID
 	}
 	return _u.RemoveNotifierIDs(ids...)
+}
+
+// ClearLabelTemplates clears all "label_templates" edges to the LabelTemplate entity.
+func (_u *UserUpdateOne) ClearLabelTemplates() *UserUpdateOne {
+	_u.mutation.ClearLabelTemplates()
+	return _u
+}
+
+// RemoveLabelTemplateIDs removes the "label_templates" edge to LabelTemplate entities by IDs.
+func (_u *UserUpdateOne) RemoveLabelTemplateIDs(ids ...uuid.UUID) *UserUpdateOne {
+	_u.mutation.RemoveLabelTemplateIDs(ids...)
+	return _u
+}
+
+// RemoveLabelTemplates removes "label_templates" edges to LabelTemplate entities.
+func (_u *UserUpdateOne) RemoveLabelTemplates(v ...*LabelTemplate) *UserUpdateOne {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _u.RemoveLabelTemplateIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -1049,6 +1167,51 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(notifier.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if _u.mutation.LabelTemplatesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LabelTemplatesTable,
+			Columns: []string{user.LabelTemplatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(labeltemplate.FieldID, field.TypeUUID),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.RemovedLabelTemplatesIDs(); len(nodes) > 0 && !_u.mutation.LabelTemplatesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LabelTemplatesTable,
+			Columns: []string{user.LabelTemplatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(labeltemplate.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := _u.mutation.LabelTemplatesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LabelTemplatesTable,
+			Columns: []string{user.LabelTemplatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(labeltemplate.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

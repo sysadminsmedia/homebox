@@ -1112,6 +1112,469 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/label-templates": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Get All Label Templates",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.LabelTemplateSummary"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Create Label Template",
+                "parameters": [
+                    {
+                        "description": "Template Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.LabelTemplateCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.LabelTemplateOut"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/barcode-formats": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Get Supported Barcode Formats",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/labelmaker.BarcodeFormatInfo"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/presets": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Get Label Size Presets",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/labelmaker.LabelPreset"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Get Label Template",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.LabelTemplateOut"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Update Label Template",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Template Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.LabelTemplateUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.LabelTemplateOut"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Delete Label Template",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}/duplicate": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Duplicate Label Template",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.LabelTemplateOut"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}/preview": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "image/png"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Preview Label Template",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}/print": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Print Labels Directly to Printer",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Print request",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.LabelTemplatePrintRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.LabelTemplatePrintResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}/print-locations": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Print Location Labels Directly to Printer",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Print request",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.LabelTemplatePrintLocationsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.LabelTemplatePrintResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}/render": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "image/png",
+                    "application/pdf"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Render Label for Items",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Items to render",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.LabelTemplateRenderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/label-templates/{id}/render-locations": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "image/png",
+                    "application/pdf"
+                ],
+                "tags": [
+                    "Label Templates"
+                ],
+                "summary": "Render Label for Locations",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Template ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Locations to render",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.LabelTemplateRenderLocationsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/labelmaker/assets/{id}": {
             "get": {
                 "security": [
@@ -1849,6 +2312,298 @@ const docTemplate = `{
                 "responses": {
                     "204": {
                         "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/v1/printers": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Printers"
+                ],
+                "summary": "Get All Printers",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.PrinterSummary"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Printers"
+                ],
+                "summary": "Create Printer",
+                "parameters": [
+                    {
+                        "description": "Printer Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.PrinterCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/repo.PrinterOut"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/printers/media-types": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Printers"
+                ],
+                "summary": "Get Brother Media Types",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/v1.BrotherMediaInfo"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/printers/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Printers"
+                ],
+                "summary": "Get Printer",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Printer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.PrinterOut"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Printers"
+                ],
+                "summary": "Update Printer",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Printer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Printer Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.PrinterUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.PrinterOut"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Printers"
+                ],
+                "summary": "Delete Printer",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Printer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/v1/printers/{id}/set-default": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Printers"
+                ],
+                "summary": "Set Default Printer",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Printer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/v1/printers/{id}/status": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Printers"
+                ],
+                "summary": "Get Printer Status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Printer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.PrinterStatusResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/printers/{id}/test": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Printers"
+                ],
+                "summary": "Test Print",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Printer ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Test options",
+                        "name": "payload",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/v1.PrinterTestRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.PrinterTestResponse"
+                        }
                     }
                 }
             }
@@ -2730,6 +3485,13 @@ const docTemplate = `{
                         "$ref": "#/definitions/ent.Item"
                     }
                 },
+                "label_templates": {
+                    "description": "LabelTemplates holds the value of the label_templates edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.LabelTemplate"
+                    }
+                },
                 "labels": {
                     "description": "Labels holds the value of the labels edge.",
                     "type": "array",
@@ -2749,6 +3511,13 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/ent.Notifier"
+                    }
+                },
+                "printers": {
+                    "description": "Printers holds the value of the printers edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Printer"
                     }
                 },
                 "users": {
@@ -3233,6 +4002,97 @@ const docTemplate = `{
                 }
             }
         },
+        "ent.LabelTemplate": {
+            "type": "object",
+            "properties": {
+                "canvas_data": {
+                    "description": "Fabric.js compatible canvas JSON",
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description holds the value of the \"description\" field.",
+                    "type": "string"
+                },
+                "dpi": {
+                    "description": "Output DPI for rendering",
+                    "type": "integer"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the LabelTemplateQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.LabelTemplateEdges"
+                        }
+                    ]
+                },
+                "height": {
+                    "description": "Label height in mm",
+                    "type": "number"
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "is_shared": {
+                    "description": "Whether template is shared with group",
+                    "type": "boolean"
+                },
+                "media_type": {
+                    "description": "Brother media type like 'DK-22251' for direct printing",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "output_format": {
+                    "description": "Output format: png, pdf",
+                    "type": "string"
+                },
+                "owner_id": {
+                    "description": "User who created this template",
+                    "type": "string"
+                },
+                "preset": {
+                    "description": "Preset size key like 'brother_dk2205'",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                },
+                "width": {
+                    "description": "Label width in mm",
+                    "type": "number"
+                }
+            }
+        },
+        "ent.LabelTemplateEdges": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                },
+                "owner": {
+                    "description": "Owner holds the value of the owner edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.User"
+                        }
+                    ]
+                }
+            }
+        },
         "ent.Location": {
             "type": "object",
             "properties": {
@@ -3425,6 +4285,96 @@ const docTemplate = `{
                 }
             }
         },
+        "ent.Printer": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "description": "IPP URI (ipp://host:port/path) or CUPS printer name",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description holds the value of the \"description\" field.",
+                    "type": "string"
+                },
+                "dpi": {
+                    "description": "Printer DPI for optimal rendering",
+                    "type": "integer"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the PrinterQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.PrinterEdges"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "is_default": {
+                    "description": "Whether this is the default label printer",
+                    "type": "boolean"
+                },
+                "label_height_mm": {
+                    "description": "Expected label height in mm for validation",
+                    "type": "number"
+                },
+                "label_width_mm": {
+                    "description": "Expected label width in mm for validation",
+                    "type": "number"
+                },
+                "last_status_check": {
+                    "description": "When status was last verified",
+                    "type": "string"
+                },
+                "media_type": {
+                    "description": "Media type identifier for IPP (e.g., 'labels')",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "printer_type": {
+                    "description": "Type of printer connection",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/github_com_sysadminsmedia_homebox_backend_internal_data_ent_printer.PrinterType"
+                        }
+                    ]
+                },
+                "status": {
+                    "description": "Cached printer status",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/printer.Status"
+                        }
+                    ]
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.PrinterEdges": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                }
+            }
+        },
         "ent.TemplateField": {
             "type": "object",
             "properties": {
@@ -3562,6 +4512,13 @@ const docTemplate = `{
                         }
                     ]
                 },
+                "label_templates": {
+                    "description": "LabelTemplates holds the value of the label_templates edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.LabelTemplate"
+                    }
+                },
                 "notifiers": {
                     "description": "Notifiers holds the value of the notifiers edge.",
                     "type": "array",
@@ -3570,6 +4527,21 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "github_com_sysadminsmedia_homebox_backend_internal_data_ent_printer.PrinterType": {
+            "type": "string",
+            "enum": [
+                "ipp",
+                "ipp",
+                "cups",
+                "brother_raster"
+            ],
+            "x-enum-varnames": [
+                "DefaultPrinterType",
+                "PrinterTypeIpp",
+                "PrinterTypeCups",
+                "PrinterTypeBrotherRaster"
+            ]
         },
         "itemfield.Type": {
             "type": "string",
@@ -3584,6 +4556,174 @@ const docTemplate = `{
                 "TypeNumber",
                 "TypeBoolean",
                 "TypeTime"
+            ]
+        },
+        "labelmaker.BarcodeFormat": {
+            "type": "string",
+            "enum": [
+                "qr",
+                "code128",
+                "code39",
+                "datamatrix",
+                "ean13",
+                "ean8",
+                "upca",
+                "upce"
+            ],
+            "x-enum-varnames": [
+                "BarcodeQR",
+                "BarcodeCode128",
+                "BarcodeCode39",
+                "BarcodeDataMatrix",
+                "BarcodeEAN13",
+                "BarcodeEAN8",
+                "BarcodeUPCA",
+                "BarcodeUPCE"
+            ]
+        },
+        "labelmaker.BarcodeFormatInfo": {
+            "type": "object",
+            "properties": {
+                "contentType": {
+                    "description": "What kind of content this format supports",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/labelmaker.ContentType"
+                        }
+                    ]
+                },
+                "description": {
+                    "type": "string"
+                },
+                "format": {
+                    "$ref": "#/definitions/labelmaker.BarcodeFormat"
+                },
+                "is2D": {
+                    "type": "boolean"
+                },
+                "maxLength": {
+                    "description": "0 means variable/unlimited",
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "labelmaker.ContentType": {
+            "type": "string",
+            "enum": [
+                "any",
+                "alphanumeric",
+                "numeric"
+            ],
+            "x-enum-comments": {
+                "ContentTypeAlphanumeric": "Letters, numbers, limited symbols",
+                "ContentTypeAny": "Can encode any text (URLs, names, etc.)",
+                "ContentTypeNumeric": "Digits only"
+            },
+            "x-enum-descriptions": [
+                "Can encode any text (URLs, names, etc.)",
+                "Letters, numbers, limited symbols",
+                "Digits only"
+            ],
+            "x-enum-varnames": [
+                "ContentTypeAny",
+                "ContentTypeAlphanumeric",
+                "ContentTypeNumeric"
+            ]
+        },
+        "labelmaker.LabelPreset": {
+            "type": "object",
+            "properties": {
+                "brand": {
+                    "type": "string"
+                },
+                "continuous": {
+                    "description": "Whether this is continuous tape",
+                    "type": "boolean"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "height": {
+                    "description": "Height in mm",
+                    "type": "number"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sheetLayout": {
+                    "description": "Sheet layout information (for Avery-style sheet labels)\nIf SheetLayout is set, labels are arranged on a printable sheet",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/labelmaker.SheetLayout"
+                        }
+                    ]
+                },
+                "twoColor": {
+                    "description": "Whether this supports two-color printing (black/red)",
+                    "type": "boolean"
+                },
+                "width": {
+                    "description": "Width in mm",
+                    "type": "number"
+                }
+            }
+        },
+        "labelmaker.SheetLayout": {
+            "type": "object",
+            "properties": {
+                "columns": {
+                    "description": "Number of labels across",
+                    "type": "integer"
+                },
+                "gutterH": {
+                    "description": "Horizontal gap between labels in mm",
+                    "type": "number"
+                },
+                "gutterV": {
+                    "description": "Vertical gap between labels in mm",
+                    "type": "number"
+                },
+                "marginLeft": {
+                    "description": "Left margin in mm",
+                    "type": "number"
+                },
+                "marginTop": {
+                    "description": "Top margin in mm",
+                    "type": "number"
+                },
+                "pageHeight": {
+                    "description": "Sheet height in mm (e.g., 279.4 for Letter, 297 for A4)",
+                    "type": "number"
+                },
+                "pageWidth": {
+                    "description": "Sheet width in mm (e.g., 215.9 for Letter, 210 for A4)",
+                    "type": "number"
+                },
+                "rows": {
+                    "description": "Number of labels down",
+                    "type": "integer"
+                }
+            }
+        },
+        "printer.Status": {
+            "type": "string",
+            "enum": [
+                "unknown",
+                "online",
+                "offline",
+                "unknown"
+            ],
+            "x-enum-varnames": [
+                "DefaultStatus",
+                "StatusOnline",
+                "StatusOffline",
+                "StatusUnknown"
             ]
         },
         "repo.BarcodeProduct": {
@@ -4486,6 +5626,199 @@ const docTemplate = `{
                 }
             }
         },
+        "repo.LabelTemplateCreate": {
+            "type": "object",
+            "required": [
+                "height",
+                "name",
+                "width"
+            ],
+            "properties": {
+                "canvasData": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "dpi": {
+                    "type": "integer",
+                    "maximum": 600,
+                    "minimum": 72
+                },
+                "height": {
+                    "type": "number"
+                },
+                "isShared": {
+                    "type": "boolean"
+                },
+                "mediaType": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "outputFormat": {
+                    "type": "string",
+                    "enum": [
+                        "png",
+                        "pdf"
+                    ]
+                },
+                "preset": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "width": {
+                    "type": "number"
+                }
+            }
+        },
+        "repo.LabelTemplateOut": {
+            "type": "object",
+            "properties": {
+                "canvasData": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "dpi": {
+                    "type": "integer"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isOwner": {
+                    "type": "boolean"
+                },
+                "isShared": {
+                    "type": "boolean"
+                },
+                "mediaType": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "outputFormat": {
+                    "type": "string"
+                },
+                "ownerId": {
+                    "type": "string"
+                },
+                "preset": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "width": {
+                    "type": "number"
+                }
+            }
+        },
+        "repo.LabelTemplateSummary": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isOwner": {
+                    "type": "boolean"
+                },
+                "isShared": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "preset": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "width": {
+                    "type": "number"
+                }
+            }
+        },
+        "repo.LabelTemplateUpdate": {
+            "type": "object",
+            "required": [
+                "height",
+                "name",
+                "width"
+            ],
+            "properties": {
+                "canvasData": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "dpi": {
+                    "type": "integer",
+                    "maximum": 600,
+                    "minimum": 72
+                },
+                "height": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isShared": {
+                    "type": "boolean"
+                },
+                "mediaType": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "outputFormat": {
+                    "type": "string",
+                    "enum": [
+                        "png",
+                        "pdf"
+                    ]
+                },
+                "preset": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "width": {
+                    "type": "number"
+                }
+            }
+        },
         "repo.LocationCreate": {
             "type": "object",
             "properties": {
@@ -4795,6 +6128,201 @@ const docTemplate = `{
                 }
             }
         },
+        "repo.PrinterCreate": {
+            "type": "object",
+            "required": [
+                "address",
+                "name",
+                "printerType"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string",
+                    "maxLength": 512,
+                    "minLength": 1
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "dpi": {
+                    "type": "integer",
+                    "maximum": 1200,
+                    "minimum": 72
+                },
+                "isDefault": {
+                    "type": "boolean"
+                },
+                "labelHeightMm": {
+                    "type": "number",
+                    "x-nullable": true
+                },
+                "labelWidthMm": {
+                    "type": "number",
+                    "x-nullable": true
+                },
+                "mediaType": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "printerType": {
+                    "type": "string",
+                    "enum": [
+                        "ipp",
+                        "cups",
+                        "brother_raster"
+                    ]
+                }
+            }
+        },
+        "repo.PrinterOut": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "dpi": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isDefault": {
+                    "type": "boolean"
+                },
+                "labelHeightMm": {
+                    "type": "number"
+                },
+                "labelWidthMm": {
+                    "type": "number"
+                },
+                "lastStatusCheck": {
+                    "type": "string"
+                },
+                "mediaType": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "printerType": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.PrinterSummary": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "dpi": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isDefault": {
+                    "type": "boolean"
+                },
+                "labelHeightMm": {
+                    "type": "number"
+                },
+                "labelWidthMm": {
+                    "type": "number"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "printerType": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.PrinterUpdate": {
+            "type": "object",
+            "required": [
+                "address",
+                "name",
+                "printerType"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string",
+                    "maxLength": 512,
+                    "minLength": 1
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "dpi": {
+                    "type": "integer",
+                    "maximum": 1200,
+                    "minimum": 72
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isDefault": {
+                    "type": "boolean"
+                },
+                "labelHeightMm": {
+                    "type": "number",
+                    "x-nullable": true
+                },
+                "labelWidthMm": {
+                    "type": "number",
+                    "x-nullable": true
+                },
+                "mediaType": {
+                    "type": "string",
+                    "x-nullable": true
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                },
+                "printerType": {
+                    "type": "string",
+                    "enum": [
+                        "ipp",
+                        "cups",
+                        "brother_raster"
+                    ]
+                }
+            }
+        },
         "repo.TemplateField": {
             "type": "object",
             "properties": {
@@ -5044,6 +6572,30 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.BrotherMediaInfo": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "isContinuous": {
+                    "type": "boolean"
+                },
+                "lengthMm": {
+                    "description": "0 for continuous",
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "twoColor": {
+                    "type": "boolean"
+                },
+                "widthMm": {
+                    "type": "integer"
+                }
+            }
+        },
         "v1.Build": {
             "type": "object",
             "properties": {
@@ -5137,6 +6689,168 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.LabelPrintItem": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "description": "Number of copies for this item",
+                    "type": "integer"
+                }
+            }
+        },
+        "v1.LabelPrintLocation": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "description": "Number of copies for this location",
+                    "type": "integer"
+                }
+            }
+        },
+        "v1.LabelTemplatePrintLocationsRequest": {
+            "type": "object",
+            "properties": {
+                "copies": {
+                    "description": "Default copies per label",
+                    "type": "integer"
+                },
+                "locationIds": {
+                    "description": "Simple list (1 copy each)",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "locations": {
+                    "description": "Locations with individual quantities",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.LabelPrintLocation"
+                    }
+                },
+                "printerId": {
+                    "description": "If nil, uses default printer",
+                    "type": "string"
+                }
+            }
+        },
+        "v1.LabelTemplatePrintRequest": {
+            "type": "object",
+            "properties": {
+                "copies": {
+                    "description": "Default copies per label (used if item.quantity is 0)",
+                    "type": "integer"
+                },
+                "itemIds": {
+                    "description": "Simple list (1 copy each) - for backward compatibility",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "items": {
+                    "description": "Items with individual quantities",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.LabelPrintItem"
+                    }
+                },
+                "printerId": {
+                    "description": "If nil, uses default printer",
+                    "type": "string"
+                }
+            }
+        },
+        "v1.LabelTemplatePrintResponse": {
+            "type": "object",
+            "properties": {
+                "jobId": {
+                    "type": "integer"
+                },
+                "labelCount": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "printerName": {
+                    "type": "string"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "v1.LabelTemplateRenderLocationsRequest": {
+            "type": "object",
+            "required": [
+                "locationIds"
+            ],
+            "properties": {
+                "format": {
+                    "description": "\"png\" or \"pdf\", defaults to \"png\"",
+                    "type": "string"
+                },
+                "locationIds": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "pageSize": {
+                    "description": "\"Letter\", \"A4\", or \"Custom\" for PDF",
+                    "type": "string"
+                },
+                "showCutGuides": {
+                    "description": "Draw light borders around labels for cutting",
+                    "type": "boolean"
+                }
+            }
+        },
+        "v1.LabelTemplateRenderRequest": {
+            "type": "object",
+            "required": [
+                "itemIds"
+            ],
+            "properties": {
+                "canvasData": {
+                    "description": "Optional: canvas data for live preview (overrides saved template)",
+                    "type": "string"
+                },
+                "format": {
+                    "description": "\"png\" or \"pdf\", defaults to \"png\"",
+                    "type": "string"
+                },
+                "itemIds": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "pageSize": {
+                    "description": "\"Letter\", \"A4\", or \"Custom\" for PDF",
+                    "type": "string"
+                },
+                "showCutGuides": {
+                    "description": "Draw light borders around labels for cutting",
+                    "type": "boolean"
+                }
+            }
+        },
         "v1.LoginForm": {
             "type": "object",
             "properties": {
@@ -5166,6 +6880,48 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "enabled": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "v1.PrinterStatusResponse": {
+            "type": "object",
+            "properties": {
+                "mediaReady": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "supportsIpp": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "v1.PrinterTestRequest": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.PrinterTestResponse": {
+            "type": "object",
+            "properties": {
+                "jobId": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "success": {
                     "type": "boolean"
                 }
             }

@@ -153,6 +153,32 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Delete("/templates/{id}", chain.ToHandlerFunc(v1Ctrl.HandleItemTemplatesDelete(), userMW...))
 		r.Post("/templates/{id}/create-item", chain.ToHandlerFunc(v1Ctrl.HandleItemTemplatesCreateItem(), userMW...))
 
+		// Label Templates
+		r.Get("/label-templates", chain.ToHandlerFunc(v1Ctrl.HandleLabelTemplatesGetAll(), userMW...))
+		r.Post("/label-templates", chain.ToHandlerFunc(v1Ctrl.HandleLabelTemplatesCreate(), userMW...))
+		r.Get("/label-templates/presets", chain.ToHandlerFunc(v1Ctrl.HandleLabelTemplatesPresets(), userMW...))
+		r.Get("/label-templates/barcode-formats", chain.ToHandlerFunc(v1Ctrl.HandleLabelTemplatesBarcodeFormats(), userMW...))
+		r.Get("/label-templates/{id}", chain.ToHandlerFunc(v1Ctrl.HandleLabelTemplatesGet(), userMW...))
+		r.Put("/label-templates/{id}", chain.ToHandlerFunc(v1Ctrl.HandleLabelTemplatesUpdate(), userMW...))
+		r.Delete("/label-templates/{id}", chain.ToHandlerFunc(v1Ctrl.HandleLabelTemplatesDelete(), userMW...))
+		r.Post("/label-templates/{id}/duplicate", chain.ToHandlerFunc(v1Ctrl.HandleLabelTemplatesDuplicate(), userMW...))
+		r.Get("/label-templates/{id}/preview", chain.ToHandlerFunc(v1Ctrl.HandleLabelTemplatesPreview(), userMW...))
+		r.Post("/label-templates/{id}/render", chain.ToHandlerFunc(v1Ctrl.HandleLabelTemplatesRender(), userMW...))
+		r.Post("/label-templates/{id}/print", chain.ToHandlerFunc(v1Ctrl.HandleLabelTemplatesPrint(), userMW...))
+		r.Post("/label-templates/{id}/render-locations", chain.ToHandlerFunc(v1Ctrl.HandleLabelTemplatesRenderLocations(), userMW...))
+		r.Post("/label-templates/{id}/print-locations", chain.ToHandlerFunc(v1Ctrl.HandleLabelTemplatesPrintLocations(), userMW...))
+
+		// Printers
+		r.Get("/printers", chain.ToHandlerFunc(v1Ctrl.HandlePrintersGetAll(), userMW...))
+		r.Post("/printers", chain.ToHandlerFunc(v1Ctrl.HandlePrintersCreate(), userMW...))
+		r.Get("/printers/media-types", chain.ToHandlerFunc(v1Ctrl.HandlePrintersMediaTypes(), userMW...))
+		r.Get("/printers/{id}", chain.ToHandlerFunc(v1Ctrl.HandlePrintersGet(), userMW...))
+		r.Put("/printers/{id}", chain.ToHandlerFunc(v1Ctrl.HandlePrintersUpdate(), userMW...))
+		r.Delete("/printers/{id}", chain.ToHandlerFunc(v1Ctrl.HandlePrintersDelete(), userMW...))
+		r.Post("/printers/{id}/set-default", chain.ToHandlerFunc(v1Ctrl.HandlePrintersSetDefault(), userMW...))
+		r.Get("/printers/{id}/status", chain.ToHandlerFunc(v1Ctrl.HandlePrintersStatus(), userMW...))
+		r.Post("/printers/{id}/test", chain.ToHandlerFunc(v1Ctrl.HandlePrintersTest(), userMW...))
+
 		// Maintenance
 		r.Get("/maintenance", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceGetAll(), userMW...))
 		r.Put("/maintenance/{id}", chain.ToHandlerFunc(v1Ctrl.HandleMaintenanceEntryUpdate(), userMW...))

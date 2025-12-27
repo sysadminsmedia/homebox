@@ -2,6 +2,9 @@ package repo
 
 import (
 	"context"
+	"database/sql"
+	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -176,6 +179,51 @@ func (r *LocationRepository) Get(ctx context.Context, id uuid.UUID) (LocationOut
 
 func (r *LocationRepository) GetOneByGroup(ctx context.Context, gid, id uuid.UUID) (LocationOut, error) {
 	return r.getOne(ctx, location.ID(id), location.HasGroupWith(group.ID(gid)))
+}
+
+// GetOneByGroupWithCount returns a single location with its item count
+func (r *LocationRepository) GetOneByGroupWithCount(ctx context.Context, gid, id uuid.UUID) (LocationOutCount, error) {
+	query := `--sql
+		SELECT
+			id,
+			name,
+			description,
+			created_at,
+			updated_at,
+			(
+				SELECT
+					SUM(items.quantity)
+				FROM
+					items
+				WHERE
+					items.location_items = locations.id
+					AND items.archived = false
+			) as item_count
+		FROM
+			locations
+		WHERE
+			locations.group_locations = $1
+			AND locations.id = $2
+`
+
+	row := r.db.Sql().QueryRowContext(ctx, query, gid, id)
+
+	var ct LocationOutCount
+	var maybeCount *int
+
+	err := row.Scan(&ct.ID, &ct.Name, &ct.Description, &ct.CreatedAt, &ct.UpdatedAt, &maybeCount)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return LocationOutCount{}, fmt.Errorf("location not found: %s", id.String())
+		}
+		return LocationOutCount{}, err
+	}
+
+	if maybeCount != nil {
+		ct.ItemCount = *maybeCount
+	}
+
+	return ct, nil
 }
 
 func (r *LocationRepository) Create(ctx context.Context, gid uuid.UUID, data LocationCreate) (LocationOut, error) {

@@ -12,6 +12,8 @@ import { NotifiersAPI } from "./classes/notifiers";
 import { MaintenanceAPI } from "./classes/maintenance";
 import { ProductAPI } from "./classes/product";
 import { TemplatesApi } from "./classes/templates";
+import { LabelTemplatesApi } from "./classes/label-templates";
+import { PrintersApi } from "./classes/printers";
 import type { Requests } from "~~/lib/requests";
 
 export class UserClient extends BaseAPI {
@@ -19,6 +21,8 @@ export class UserClient extends BaseAPI {
   labels: LabelsApi;
   items: ItemsApi;
   templates: TemplatesApi;
+  labelTemplates: LabelTemplatesApi;
+  printers: PrintersApi;
   maintenance: MaintenanceAPI;
   group: GroupApi;
   user: UserApi;
@@ -36,6 +40,8 @@ export class UserClient extends BaseAPI {
     this.labels = new LabelsApi(requests);
     this.items = new ItemsApi(requests, attachmentToken);
     this.templates = new TemplatesApi(requests);
+    this.labelTemplates = new LabelTemplatesApi(requests, attachmentToken);
+    this.printers = new PrintersApi(requests);
     this.maintenance = new MaintenanceAPI(requests);
     this.group = new GroupApi(requests);
     this.user = new UserApi(requests);

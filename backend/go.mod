@@ -5,8 +5,11 @@ go 1.24.0
 toolchain go1.24.3
 
 require (
+	codeberg.org/go-pdf/fpdf v0.11.1
 	entgo.io/ent v0.14.5
+	github.com/anthonynsimon/bild v0.14.0
 	github.com/ardanlabs/conf/v3 v3.10.0
+	github.com/boombuler/barcode v1.1.0
 	github.com/containrrr/shoutrrr v0.8.0
 	github.com/coreos/go-oidc/v3 v3.17.0
 	github.com/evanoberholster/imagemeta v0.3.1
@@ -24,6 +27,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/mattn/go-sqlite3 v1.14.32
 	github.com/olahol/melody v1.4.0
+	github.com/phin1x/go-ipp v1.6.1
 	github.com/pkg/errors v0.9.1
 	github.com/pressly/goose/v3 v3.26.0
 	github.com/rs/zerolog v1.34.0

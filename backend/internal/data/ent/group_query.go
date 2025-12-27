@@ -18,9 +18,11 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/labeltemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/printer"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -38,6 +40,8 @@ type GroupQuery struct {
 	withInvitationTokens *GroupInvitationTokenQuery
 	withNotifiers        *NotifierQuery
 	withItemTemplates    *ItemTemplateQuery
+	withLabelTemplates   *LabelTemplateQuery
+	withPrinters         *PrinterQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -221,6 +225,50 @@ func (_q *GroupQuery) QueryItemTemplates() *ItemTemplateQuery {
 			sqlgraph.From(group.Table, group.FieldID, selector),
 			sqlgraph.To(itemtemplate.Table, itemtemplate.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, group.ItemTemplatesTable, group.ItemTemplatesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryLabelTemplates chains the current query on the "label_templates" edge.
+func (_q *GroupQuery) QueryLabelTemplates() *LabelTemplateQuery {
+	query := (&LabelTemplateClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, selector),
+			sqlgraph.To(labeltemplate.Table, labeltemplate.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.LabelTemplatesTable, group.LabelTemplatesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPrinters chains the current query on the "printers" edge.
+func (_q *GroupQuery) QueryPrinters() *PrinterQuery {
+	query := (&PrinterClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(group.Table, group.FieldID, selector),
+			sqlgraph.To(printer.Table, printer.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, group.PrintersTable, group.PrintersColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -427,6 +475,8 @@ func (_q *GroupQuery) Clone() *GroupQuery {
 		withInvitationTokens: _q.withInvitationTokens.Clone(),
 		withNotifiers:        _q.withNotifiers.Clone(),
 		withItemTemplates:    _q.withItemTemplates.Clone(),
+		withLabelTemplates:   _q.withLabelTemplates.Clone(),
+		withPrinters:         _q.withPrinters.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -510,6 +560,28 @@ func (_q *GroupQuery) WithItemTemplates(opts ...func(*ItemTemplateQuery)) *Group
 	return _q
 }
 
+// WithLabelTemplates tells the query-builder to eager-load the nodes that are connected to
+// the "label_templates" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *GroupQuery) WithLabelTemplates(opts ...func(*LabelTemplateQuery)) *GroupQuery {
+	query := (&LabelTemplateClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withLabelTemplates = query
+	return _q
+}
+
+// WithPrinters tells the query-builder to eager-load the nodes that are connected to
+// the "printers" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *GroupQuery) WithPrinters(opts ...func(*PrinterQuery)) *GroupQuery {
+	query := (&PrinterClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withPrinters = query
+	return _q
+}
+
 // GroupBy is used to group vertices by one or more fields/columns.
 // It is often used with aggregate functions, like: count, max, mean, min, sum.
 //
@@ -588,7 +660,7 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 	var (
 		nodes       = []*Group{}
 		_spec       = _q.querySpec()
-		loadedTypes = [7]bool{
+		loadedTypes = [9]bool{
 			_q.withUsers != nil,
 			_q.withLocations != nil,
 			_q.withItems != nil,
@@ -596,6 +668,8 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 			_q.withInvitationTokens != nil,
 			_q.withNotifiers != nil,
 			_q.withItemTemplates != nil,
+			_q.withLabelTemplates != nil,
+			_q.withPrinters != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -664,6 +738,20 @@ func (_q *GroupQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Group,
 		if err := _q.loadItemTemplates(ctx, query, nodes,
 			func(n *Group) { n.Edges.ItemTemplates = []*ItemTemplate{} },
 			func(n *Group, e *ItemTemplate) { n.Edges.ItemTemplates = append(n.Edges.ItemTemplates, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withLabelTemplates; query != nil {
+		if err := _q.loadLabelTemplates(ctx, query, nodes,
+			func(n *Group) { n.Edges.LabelTemplates = []*LabelTemplate{} },
+			func(n *Group, e *LabelTemplate) { n.Edges.LabelTemplates = append(n.Edges.LabelTemplates, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withPrinters; query != nil {
+		if err := _q.loadPrinters(ctx, query, nodes,
+			func(n *Group) { n.Edges.Printers = []*Printer{} },
+			func(n *Group, e *Printer) { n.Edges.Printers = append(n.Edges.Printers, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -881,6 +969,68 @@ func (_q *GroupQuery) loadItemTemplates(ctx context.Context, query *ItemTemplate
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "group_item_templates" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *GroupQuery) loadLabelTemplates(ctx context.Context, query *LabelTemplateQuery, nodes []*Group, init func(*Group), assign func(*Group, *LabelTemplate)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Group)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.LabelTemplate(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(group.LabelTemplatesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.group_label_templates
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "group_label_templates" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "group_label_templates" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *GroupQuery) loadPrinters(ctx context.Context, query *PrinterQuery, nodes []*Group, init func(*Group), assign func(*Group, *Printer)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*Group)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.Printer(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(group.PrintersColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.group_printers
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "group_printers" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "group_printers" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

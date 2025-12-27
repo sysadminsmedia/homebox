@@ -15,6 +15,7 @@ export default [
         text: 'Users Guide',
         items: [
             {text: 'Organizing Items', link: '/en/user-guide/organizing-items'},
+            {text: 'Label Templates', link: '/en/user-guide/label-templates'},
             {text: 'Tips and Tricks', link: '/en/user-guide/tips-tricks'},
         ]
     },

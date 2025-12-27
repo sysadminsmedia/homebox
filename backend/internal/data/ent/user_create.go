@@ -13,6 +13,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/labeltemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
@@ -215,6 +216,21 @@ func (_c *UserCreate) AddNotifiers(v ...*Notifier) *UserCreate {
 		ids[i] = v[i].ID
 	}
 	return _c.AddNotifierIDs(ids...)
+}
+
+// AddLabelTemplateIDs adds the "label_templates" edge to the LabelTemplate entity by IDs.
+func (_c *UserCreate) AddLabelTemplateIDs(ids ...uuid.UUID) *UserCreate {
+	_c.mutation.AddLabelTemplateIDs(ids...)
+	return _c
+}
+
+// AddLabelTemplates adds the "label_templates" edges to the LabelTemplate entity.
+func (_c *UserCreate) AddLabelTemplates(v ...*LabelTemplate) *UserCreate {
+	ids := make([]uuid.UUID, len(v))
+	for i := range v {
+		ids[i] = v[i].ID
+	}
+	return _c.AddLabelTemplateIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -445,6 +461,22 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(notifier.FieldID, field.TypeUUID),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := _c.mutation.LabelTemplatesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.LabelTemplatesTable,
+			Columns: []string{user.LabelTemplatesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(labeltemplate.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

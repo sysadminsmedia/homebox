@@ -15,6 +15,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/labeltemplate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
@@ -23,14 +24,15 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx            *QueryContext
-	order          []user.OrderOption
-	inters         []Interceptor
-	predicates     []predicate.User
-	withGroup      *GroupQuery
-	withAuthTokens *AuthTokensQuery
-	withNotifiers  *NotifierQuery
-	withFKs        bool
+	ctx                *QueryContext
+	order              []user.OrderOption
+	inters             []Interceptor
+	predicates         []predicate.User
+	withGroup          *GroupQuery
+	withAuthTokens     *AuthTokensQuery
+	withNotifiers      *NotifierQuery
+	withLabelTemplates *LabelTemplateQuery
+	withFKs            bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -126,6 +128,28 @@ func (_q *UserQuery) QueryNotifiers() *NotifierQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(notifier.Table, notifier.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.NotifiersTable, user.NotifiersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryLabelTemplates chains the current query on the "label_templates" edge.
+func (_q *UserQuery) QueryLabelTemplates() *LabelTemplateQuery {
+	query := (&LabelTemplateClient{config: _q.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := _q.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := _q.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(labeltemplate.Table, labeltemplate.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.LabelTemplatesTable, user.LabelTemplatesColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -320,14 +344,15 @@ func (_q *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:         _q.config,
-		ctx:            _q.ctx.Clone(),
-		order:          append([]user.OrderOption{}, _q.order...),
-		inters:         append([]Interceptor{}, _q.inters...),
-		predicates:     append([]predicate.User{}, _q.predicates...),
-		withGroup:      _q.withGroup.Clone(),
-		withAuthTokens: _q.withAuthTokens.Clone(),
-		withNotifiers:  _q.withNotifiers.Clone(),
+		config:             _q.config,
+		ctx:                _q.ctx.Clone(),
+		order:              append([]user.OrderOption{}, _q.order...),
+		inters:             append([]Interceptor{}, _q.inters...),
+		predicates:         append([]predicate.User{}, _q.predicates...),
+		withGroup:          _q.withGroup.Clone(),
+		withAuthTokens:     _q.withAuthTokens.Clone(),
+		withNotifiers:      _q.withNotifiers.Clone(),
+		withLabelTemplates: _q.withLabelTemplates.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
@@ -364,6 +389,17 @@ func (_q *UserQuery) WithNotifiers(opts ...func(*NotifierQuery)) *UserQuery {
 		opt(query)
 	}
 	_q.withNotifiers = query
+	return _q
+}
+
+// WithLabelTemplates tells the query-builder to eager-load the nodes that are connected to
+// the "label_templates" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *UserQuery) WithLabelTemplates(opts ...func(*LabelTemplateQuery)) *UserQuery {
+	query := (&LabelTemplateClient{config: _q.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	_q.withLabelTemplates = query
 	return _q
 }
 
@@ -446,10 +482,11 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		nodes       = []*User{}
 		withFKs     = _q.withFKs
 		_spec       = _q.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			_q.withGroup != nil,
 			_q.withAuthTokens != nil,
 			_q.withNotifiers != nil,
+			_q.withLabelTemplates != nil,
 		}
 	)
 	if _q.withGroup != nil {
@@ -493,6 +530,13 @@ func (_q *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := _q.loadNotifiers(ctx, query, nodes,
 			func(n *User) { n.Edges.Notifiers = []*Notifier{} },
 			func(n *User, e *Notifier) { n.Edges.Notifiers = append(n.Edges.Notifiers, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := _q.withLabelTemplates; query != nil {
+		if err := _q.loadLabelTemplates(ctx, query, nodes,
+			func(n *User) { n.Edges.LabelTemplates = []*LabelTemplate{} },
+			func(n *User, e *LabelTemplate) { n.Edges.LabelTemplates = append(n.Edges.LabelTemplates, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -587,6 +631,37 @@ func (_q *UserQuery) loadNotifiers(ctx context.Context, query *NotifierQuery, no
 		node, ok := nodeids[fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "user_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (_q *UserQuery) loadLabelTemplates(ctx context.Context, query *LabelTemplateQuery, nodes []*User, init func(*User), assign func(*User, *LabelTemplate)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uuid.UUID]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(labeltemplate.FieldOwnerID)
+	}
+	query.Where(predicate.LabelTemplate(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.LabelTemplatesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.OwnerID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "owner_id" returned %v for node %v`, fk, n.ID)
 		}
 		assign(node, n)
 	}

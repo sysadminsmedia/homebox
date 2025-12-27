@@ -31,6 +31,8 @@ export type LocationViewPreferences = {
   quickActions: {
     enabled: boolean;
   };
+  // Label template preferences
+  defaultTemplateId: string | null;
 };
 
 /**
@@ -61,6 +63,7 @@ export function useViewPreferences(): Ref<LocationViewPreferences> {
       quickActions: {
         enabled: true,
       },
+      defaultTemplateId: null,
     },
     { mergeDefaults: true }
   );

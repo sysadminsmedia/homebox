@@ -189,6 +189,11 @@ definitions:
         items:
           $ref: '#/definitions/ent.Item'
         type: array
+      label_templates:
+        description: LabelTemplates holds the value of the label_templates edge.
+        items:
+          $ref: '#/definitions/ent.LabelTemplate'
+        type: array
       labels:
         description: Labels holds the value of the labels edge.
         items:
@@ -203,6 +208,11 @@ definitions:
         description: Notifiers holds the value of the notifiers edge.
         items:
           $ref: '#/definitions/ent.Notifier'
+        type: array
+      printers:
+        description: Printers holds the value of the printers edge.
+        items:
+          $ref: '#/definitions/ent.Printer'
         type: array
       users:
         description: Users holds the value of the users edge.
@@ -544,6 +554,69 @@ definitions:
           $ref: '#/definitions/ent.Item'
         type: array
     type: object
+  ent.LabelTemplate:
+    properties:
+      canvas_data:
+        additionalProperties: true
+        description: Fabric.js compatible canvas JSON
+        type: object
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      description:
+        description: Description holds the value of the "description" field.
+        type: string
+      dpi:
+        description: Output DPI for rendering
+        type: integer
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.LabelTemplateEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the LabelTemplateQuery when eager-loading is set.
+      height:
+        description: Label height in mm
+        type: number
+      id:
+        description: ID of the ent.
+        type: string
+      is_shared:
+        description: Whether template is shared with group
+        type: boolean
+      media_type:
+        description: Brother media type like 'DK-22251' for direct printing
+        type: string
+      name:
+        description: Name holds the value of the "name" field.
+        type: string
+      output_format:
+        description: 'Output format: png, pdf'
+        type: string
+      owner_id:
+        description: User who created this template
+        type: string
+      preset:
+        description: Preset size key like 'brother_dk2205'
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+      width:
+        description: Label width in mm
+        type: number
+    type: object
+  ent.LabelTemplateEdges:
+    properties:
+      group:
+        allOf:
+        - $ref: '#/definitions/ent.Group'
+        description: Group holds the value of the group edge.
+      owner:
+        allOf:
+        - $ref: '#/definitions/ent.User'
+        description: Owner holds the value of the owner edge.
+    type: object
   ent.Location:
     properties:
       created_at:
@@ -673,6 +746,66 @@ definitions:
         - $ref: '#/definitions/ent.User'
         description: User holds the value of the user edge.
     type: object
+  ent.Printer:
+    properties:
+      address:
+        description: IPP URI (ipp://host:port/path) or CUPS printer name
+        type: string
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      description:
+        description: Description holds the value of the "description" field.
+        type: string
+      dpi:
+        description: Printer DPI for optimal rendering
+        type: integer
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.PrinterEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the PrinterQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: string
+      is_default:
+        description: Whether this is the default label printer
+        type: boolean
+      label_height_mm:
+        description: Expected label height in mm for validation
+        type: number
+      label_width_mm:
+        description: Expected label width in mm for validation
+        type: number
+      last_status_check:
+        description: When status was last verified
+        type: string
+      media_type:
+        description: Media type identifier for IPP (e.g., 'labels')
+        type: string
+      name:
+        description: Name holds the value of the "name" field.
+        type: string
+      printer_type:
+        allOf:
+        - $ref: '#/definitions/github_com_sysadminsmedia_homebox_backend_internal_data_ent_printer.PrinterType'
+        description: Type of printer connection
+      status:
+        allOf:
+        - $ref: '#/definitions/printer.Status'
+        description: Cached printer status
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
+  ent.PrinterEdges:
+    properties:
+      group:
+        allOf:
+        - $ref: '#/definitions/ent.Group'
+        description: Group holds the value of the group edge.
+    type: object
   ent.TemplateField:
     properties:
       created_at:
@@ -765,12 +898,29 @@ definitions:
         allOf:
         - $ref: '#/definitions/ent.Group'
         description: Group holds the value of the group edge.
+      label_templates:
+        description: LabelTemplates holds the value of the label_templates edge.
+        items:
+          $ref: '#/definitions/ent.LabelTemplate'
+        type: array
       notifiers:
         description: Notifiers holds the value of the notifiers edge.
         items:
           $ref: '#/definitions/ent.Notifier'
         type: array
     type: object
+  github_com_sysadminsmedia_homebox_backend_internal_data_ent_printer.PrinterType:
+    enum:
+    - ipp
+    - ipp
+    - cups
+    - brother_raster
+    type: string
+    x-enum-varnames:
+    - DefaultPrinterType
+    - PrinterTypeIpp
+    - PrinterTypeCups
+    - PrinterTypeBrotherRaster
   itemfield.Type:
     enum:
     - text
@@ -783,6 +933,130 @@ definitions:
     - TypeNumber
     - TypeBoolean
     - TypeTime
+  labelmaker.BarcodeFormat:
+    enum:
+    - qr
+    - code128
+    - code39
+    - datamatrix
+    - ean13
+    - ean8
+    - upca
+    - upce
+    type: string
+    x-enum-varnames:
+    - BarcodeQR
+    - BarcodeCode128
+    - BarcodeCode39
+    - BarcodeDataMatrix
+    - BarcodeEAN13
+    - BarcodeEAN8
+    - BarcodeUPCA
+    - BarcodeUPCE
+  labelmaker.BarcodeFormatInfo:
+    properties:
+      contentType:
+        allOf:
+        - $ref: '#/definitions/labelmaker.ContentType'
+        description: What kind of content this format supports
+      description:
+        type: string
+      format:
+        $ref: '#/definitions/labelmaker.BarcodeFormat'
+      is2D:
+        type: boolean
+      maxLength:
+        description: 0 means variable/unlimited
+        type: integer
+      name:
+        type: string
+    type: object
+  labelmaker.ContentType:
+    enum:
+    - any
+    - alphanumeric
+    - numeric
+    type: string
+    x-enum-comments:
+      ContentTypeAlphanumeric: Letters, numbers, limited symbols
+      ContentTypeAny: Can encode any text (URLs, names, etc.)
+      ContentTypeNumeric: Digits only
+    x-enum-descriptions:
+    - Can encode any text (URLs, names, etc.)
+    - Letters, numbers, limited symbols
+    - Digits only
+    x-enum-varnames:
+    - ContentTypeAny
+    - ContentTypeAlphanumeric
+    - ContentTypeNumeric
+  labelmaker.LabelPreset:
+    properties:
+      brand:
+        type: string
+      continuous:
+        description: Whether this is continuous tape
+        type: boolean
+      description:
+        type: string
+      height:
+        description: Height in mm
+        type: number
+      key:
+        type: string
+      name:
+        type: string
+      sheetLayout:
+        allOf:
+        - $ref: '#/definitions/labelmaker.SheetLayout'
+        description: |-
+          Sheet layout information (for Avery-style sheet labels)
+          If SheetLayout is set, labels are arranged on a printable sheet
+      twoColor:
+        description: Whether this supports two-color printing (black/red)
+        type: boolean
+      width:
+        description: Width in mm
+        type: number
+    type: object
+  labelmaker.SheetLayout:
+    properties:
+      columns:
+        description: Number of labels across
+        type: integer
+      gutterH:
+        description: Horizontal gap between labels in mm
+        type: number
+      gutterV:
+        description: Vertical gap between labels in mm
+        type: number
+      marginLeft:
+        description: Left margin in mm
+        type: number
+      marginTop:
+        description: Top margin in mm
+        type: number
+      pageHeight:
+        description: Sheet height in mm (e.g., 279.4 for Letter, 297 for A4)
+        type: number
+      pageWidth:
+        description: Sheet width in mm (e.g., 215.9 for Letter, 210 for A4)
+        type: number
+      rows:
+        description: Number of labels down
+        type: integer
+    type: object
+  printer.Status:
+    enum:
+    - unknown
+    - online
+    - offline
+    - unknown
+    type: string
+    x-enum-varnames:
+    - DefaultStatus
+    - StatusOnline
+    - StatusOffline
+    - StatusUnknown
   repo.BarcodeProduct:
     properties:
       barcode:
@@ -1404,6 +1678,141 @@ definitions:
       updatedAt:
         type: string
     type: object
+  repo.LabelTemplateCreate:
+    properties:
+      canvasData:
+        additionalProperties: true
+        type: object
+      description:
+        maxLength: 1000
+        type: string
+      dpi:
+        maximum: 600
+        minimum: 72
+        type: integer
+      height:
+        type: number
+      isShared:
+        type: boolean
+      mediaType:
+        type: string
+        x-nullable: true
+      name:
+        maxLength: 255
+        minLength: 1
+        type: string
+      outputFormat:
+        enum:
+        - png
+        - pdf
+        type: string
+      preset:
+        type: string
+        x-nullable: true
+      width:
+        type: number
+    required:
+    - height
+    - name
+    - width
+    type: object
+  repo.LabelTemplateOut:
+    properties:
+      canvasData:
+        additionalProperties: true
+        type: object
+      createdAt:
+        type: string
+      description:
+        type: string
+      dpi:
+        type: integer
+      height:
+        type: number
+      id:
+        type: string
+      isOwner:
+        type: boolean
+      isShared:
+        type: boolean
+      mediaType:
+        type: string
+      name:
+        type: string
+      outputFormat:
+        type: string
+      ownerId:
+        type: string
+      preset:
+        type: string
+      updatedAt:
+        type: string
+      width:
+        type: number
+    type: object
+  repo.LabelTemplateSummary:
+    properties:
+      createdAt:
+        type: string
+      description:
+        type: string
+      height:
+        type: number
+      id:
+        type: string
+      isOwner:
+        type: boolean
+      isShared:
+        type: boolean
+      name:
+        type: string
+      preset:
+        type: string
+      updatedAt:
+        type: string
+      width:
+        type: number
+    type: object
+  repo.LabelTemplateUpdate:
+    properties:
+      canvasData:
+        additionalProperties: true
+        type: object
+      description:
+        maxLength: 1000
+        type: string
+      dpi:
+        maximum: 600
+        minimum: 72
+        type: integer
+      height:
+        type: number
+      id:
+        type: string
+      isShared:
+        type: boolean
+      mediaType:
+        type: string
+        x-nullable: true
+      name:
+        maxLength: 255
+        minLength: 1
+        type: string
+      outputFormat:
+        enum:
+        - png
+        - pdf
+        type: string
+      preset:
+        type: string
+        x-nullable: true
+      width:
+        type: number
+    required:
+    - height
+    - name
+    - width
+    type: object
   repo.LocationCreate:
     properties:
       description:
@@ -1611,6 +2020,144 @@ definitions:
       total:
         type: integer
     type: object
+  repo.PrinterCreate:
+    properties:
+      address:
+        maxLength: 512
+        minLength: 1
+        type: string
+      description:
+        maxLength: 1000
+        type: string
+      dpi:
+        maximum: 1200
+        minimum: 72
+        type: integer
+      isDefault:
+        type: boolean
+      labelHeightMm:
+        type: number
+        x-nullable: true
+      labelWidthMm:
+        type: number
+        x-nullable: true
+      mediaType:
+        type: string
+        x-nullable: true
+      name:
+        maxLength: 255
+        minLength: 1
+        type: string
+      printerType:
+        enum:
+        - ipp
+        - cups
+        - brother_raster
+        type: string
+    required:
+    - address
+    - name
+    - printerType
+    type: object
+  repo.PrinterOut:
+    properties:
+      address:
+        type: string
+      createdAt:
+        type: string
+      description:
+        type: string
+      dpi:
+        type: integer
+      id:
+        type: string
+      isDefault:
+        type: boolean
+      labelHeightMm:
+        type: number
+      labelWidthMm:
+        type: number
+      lastStatusCheck:
+        type: string
+      mediaType:
+        type: string
+      name:
+        type: string
+      printerType:
+        type: string
+      status:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  repo.PrinterSummary:
+    properties:
+      address:
+        type: string
+      createdAt:
+        type: string
+      description:
+        type: string
+      dpi:
+        type: integer
+      id:
+        type: string
+      isDefault:
+        type: boolean
+      labelHeightMm:
+        type: number
+      labelWidthMm:
+        type: number
+      name:
+        type: string
+      printerType:
+        type: string
+      status:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  repo.PrinterUpdate:
+    properties:
+      address:
+        maxLength: 512
+        minLength: 1
+        type: string
+      description:
+        maxLength: 1000
+        type: string
+      dpi:
+        maximum: 1200
+        minimum: 72
+        type: integer
+      id:
+        type: string
+      isDefault:
+        type: boolean
+      labelHeightMm:
+        type: number
+        x-nullable: true
+      labelWidthMm:
+        type: number
+        x-nullable: true
+      mediaType:
+        type: string
+        x-nullable: true
+      name:
+        maxLength: 255
+        minLength: 1
+        type: string
+      printerType:
+        enum:
+        - ipp
+        - cups
+        - brother_raster
+        type: string
+    required:
+    - address
+    - name
+    - printerType
+    type: object
   repo.TemplateField:
     properties:
       id:
@@ -1774,6 +2321,22 @@ definitions:
       completed:
         type: integer
     type: object
+  v1.BrotherMediaInfo:
+    properties:
+      id:
+        type: string
+      isContinuous:
+        type: boolean
+      lengthMm:
+        description: 0 for continuous
+        type: integer
+      name:
+        type: string
+      twoColor:
+        type: boolean
+      widthMm:
+        type: integer
+    type: object
   v1.Build:
     properties:
       buildTime:
@@ -1836,6 +2399,118 @@ definitions:
     - locationId
     - name
     type: object
+  v1.LabelPrintItem:
+    properties:
+      id:
+        type: string
+      quantity:
+        description: Number of copies for this item
+        type: integer
+    required:
+    - id
+    type: object
+  v1.LabelPrintLocation:
+    properties:
+      id:
+        type: string
+      quantity:
+        description: Number of copies for this location
+        type: integer
+    required:
+    - id
+    type: object
+  v1.LabelTemplatePrintLocationsRequest:
+    properties:
+      copies:
+        description: Default copies per label
+        type: integer
+      locationIds:
+        description: Simple list (1 copy each)
+        items:
+          type: string
+        type: array
+      locations:
+        description: Locations with individual quantities
+        items:
+          $ref: '#/definitions/v1.LabelPrintLocation'
+        type: array
+      printerId:
+        description: If nil, uses default printer
+        type: string
+    type: object
+  v1.LabelTemplatePrintRequest:
+    properties:
+      copies:
+        description: Default copies per label (used if item.quantity is 0)
+        type: integer
+      itemIds:
+        description: Simple list (1 copy each) - for backward compatibility
+        items:
+          type: string
+        type: array
+      items:
+        description: Items with individual quantities
+        items:
+          $ref: '#/definitions/v1.LabelPrintItem'
+        type: array
+      printerId:
+        description: If nil, uses default printer
+        type: string
+    type: object
+  v1.LabelTemplatePrintResponse:
+    properties:
+      jobId:
+        type: integer
+      labelCount:
+        type: integer
+      message:
+        type: string
+      printerName:
+        type: string
+      success:
+        type: boolean
+    type: object
+  v1.LabelTemplateRenderLocationsRequest:
+    properties:
+      format:
+        description: '"png" or "pdf", defaults to "png"'
+        type: string
+      locationIds:
+        items:
+          type: string
+        minItems: 1
+        type: array
+      pageSize:
+        description: '"Letter", "A4", or "Custom" for PDF'
+        type: string
+      showCutGuides:
+        description: Draw light borders around labels for cutting
+        type: boolean
+    required:
+    - locationIds
+    type: object
+  v1.LabelTemplateRenderRequest:
+    properties:
+      canvasData:
+        description: 'Optional: canvas data for live preview (overrides saved template)'
+        type: string
+      format:
+        description: '"png" or "pdf", defaults to "png"'
+        type: string
+      itemIds:
+        items:
+          type: string
+        minItems: 1
+        type: array
+      pageSize:
+        description: '"Letter", "A4", or "Custom" for PDF'
+        type: string
+      showCutGuides:
+        description: Draw light borders around labels for cutting
+        type: boolean
+    required:
+    - itemIds
+    type: object
   v1.LoginForm:
     properties:
       password:
@@ -1856,6 +2531,33 @@ definitions:
       buttonText:
         type: string
       enabled:
+        type: boolean
+    type: object
+  v1.PrinterStatusResponse:
+    properties:
+      mediaReady:
+        items:
+          type: string
+        type: array
+      message:
+        type: string
+      status:
+        type: string
+      supportsIpp:
+        type: boolean
+    type: object
+  v1.PrinterTestRequest:
+    properties:
+      message:
+        type: string
+    type: object
+  v1.PrinterTestResponse:
+    properties:
+      jobId:
+        type: integer
+      message:
+        type: string
+      success:
         type: boolean
     type: object
   v1.TokenResponse:
@@ -2560,6 +3262,290 @@ paths:
       summary: Import Items
       tags:
       - Items
+  /v1/label-templates:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repo.LabelTemplateSummary'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get All Label Templates
+      tags:
+      - Label Templates
+    post:
+      parameters:
+      - description: Template Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.LabelTemplateCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.LabelTemplateOut'
+      security:
+      - Bearer: []
+      summary: Create Label Template
+      tags:
+      - Label Templates
+  /v1/label-templates/{id}:
+    delete:
+      parameters:
+      - description: Template ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Delete Label Template
+      tags:
+      - Label Templates
+    get:
+      parameters:
+      - description: Template ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.LabelTemplateOut'
+      security:
+      - Bearer: []
+      summary: Get Label Template
+      tags:
+      - Label Templates
+    put:
+      parameters:
+      - description: Template ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Template Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.LabelTemplateUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.LabelTemplateOut'
+      security:
+      - Bearer: []
+      summary: Update Label Template
+      tags:
+      - Label Templates
+  /v1/label-templates/{id}/duplicate:
+    post:
+      parameters:
+      - description: Template ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.LabelTemplateOut'
+      security:
+      - Bearer: []
+      summary: Duplicate Label Template
+      tags:
+      - Label Templates
+  /v1/label-templates/{id}/preview:
+    get:
+      parameters:
+      - description: Template ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - image/png
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+      security:
+      - Bearer: []
+      summary: Preview Label Template
+      tags:
+      - Label Templates
+  /v1/label-templates/{id}/print:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Template ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Print request
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/v1.LabelTemplatePrintRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.LabelTemplatePrintResponse'
+      security:
+      - Bearer: []
+      summary: Print Labels Directly to Printer
+      tags:
+      - Label Templates
+  /v1/label-templates/{id}/print-locations:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Template ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Print request
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/v1.LabelTemplatePrintLocationsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.LabelTemplatePrintResponse'
+      security:
+      - Bearer: []
+      summary: Print Location Labels Directly to Printer
+      tags:
+      - Label Templates
+  /v1/label-templates/{id}/render:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Template ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Items to render
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/v1.LabelTemplateRenderRequest'
+      produces:
+      - image/png
+      - application/pdf
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+      security:
+      - Bearer: []
+      summary: Render Label for Items
+      tags:
+      - Label Templates
+  /v1/label-templates/{id}/render-locations:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Template ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Locations to render
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/v1.LabelTemplateRenderLocationsRequest'
+      produces:
+      - image/png
+      - application/pdf
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+      security:
+      - Bearer: []
+      summary: Render Label for Locations
+      tags:
+      - Label Templates
+  /v1/label-templates/barcode-formats:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/labelmaker.BarcodeFormatInfo'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get Supported Barcode Formats
+      tags:
+      - Label Templates
+  /v1/label-templates/presets:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/labelmaker.LabelPreset'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get Label Size Presets
+      tags:
+      - Label Templates
   /v1/labelmaker/assets/{id}:
     get:
       parameters:
@@ -3012,6 +3998,183 @@ paths:
       summary: Test Notifier
       tags:
       - Notifiers
+  /v1/printers:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repo.PrinterSummary'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get All Printers
+      tags:
+      - Printers
+    post:
+      parameters:
+      - description: Printer Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.PrinterCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.PrinterOut'
+      security:
+      - Bearer: []
+      summary: Create Printer
+      tags:
+      - Printers
+  /v1/printers/{id}:
+    delete:
+      parameters:
+      - description: Printer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Delete Printer
+      tags:
+      - Printers
+    get:
+      parameters:
+      - description: Printer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.PrinterOut'
+      security:
+      - Bearer: []
+      summary: Get Printer
+      tags:
+      - Printers
+    put:
+      parameters:
+      - description: Printer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Printer Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.PrinterUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.PrinterOut'
+      security:
+      - Bearer: []
+      summary: Update Printer
+      tags:
+      - Printers
+  /v1/printers/{id}/set-default:
+    post:
+      parameters:
+      - description: Printer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Set Default Printer
+      tags:
+      - Printers
+  /v1/printers/{id}/status:
+    get:
+      parameters:
+      - description: Printer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.PrinterStatusResponse'
+      security:
+      - Bearer: []
+      summary: Get Printer Status
+      tags:
+      - Printers
+  /v1/printers/{id}/test:
+    post:
+      parameters:
+      - description: Printer ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Test options
+        in: body
+        name: payload
+        schema:
+          $ref: '#/definitions/v1.PrinterTestRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.PrinterTestResponse'
+      security:
+      - Bearer: []
+      summary: Test Print
+      tags:
+      - Printers
+  /v1/printers/media-types:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/v1.BrotherMediaInfo'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get Brother Media Types
+      tags:
+      - Printers
   /v1/products/search-from-barcode:
     get:
       parameters:

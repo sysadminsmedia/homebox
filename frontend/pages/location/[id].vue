@@ -7,6 +7,8 @@
   import MdiPackageVariant from "~icons/mdi/package-variant";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiDelete from "~icons/mdi/delete";
+  import MdiLabel from "~icons/mdi/label";
+  import MdiPrinterPos from "~icons/mdi/printer-pos";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { Card } from "@/components/ui/card";
@@ -142,6 +144,32 @@
       watch: [locationId],
     }
   );
+
+  // Quick Print functionality
+  const { isQuickPrintAvailable, quickPrintLocations } = useQuickPrint();
+  const isQuickPrinting = ref(false);
+
+  async function handleQuickPrint() {
+    isQuickPrinting.value = true;
+    try {
+      const success = await quickPrintLocations([locationId.value]);
+      if (success) {
+        toast.success(t("locations.quick_print_success"));
+      } else {
+        // Fallback to dialog if defaults not configured
+        openDialog(DialogID.PrintLabelTemplate, { params: { locationIds: [locationId.value] } });
+      }
+    } catch {
+      toast.error(t("locations.quick_print_failed"));
+    } finally {
+      isQuickPrinting.value = false;
+    }
+  }
+
+  // Open the template-based print dialog for this location
+  function openPrintLabelTemplate() {
+    openDialog(DialogID.PrintLabelTemplate, { params: { locationIds: [locationId.value] } });
+  }
 </script>
 
 <template>
@@ -219,6 +247,20 @@
             </div>
             <div class="ml-auto mt-2 flex flex-wrap items-center justify-between gap-3">
               <LabelMaker :id="location.id" type="location" />
+              <Button
+                v-if="isQuickPrintAvailable"
+                variant="outline"
+                :disabled="isQuickPrinting"
+                @click="handleQuickPrint"
+              >
+                <MdiLoading v-if="isQuickPrinting" class="mr-1 size-4 animate-spin" />
+                <MdiPrinterPos v-else class="mr-1 size-4" />
+                {{ $t("locations.quick_print") }}
+              </Button>
+              <Button variant="outline" @click="openPrintLabelTemplate">
+                <MdiLabel class="mr-1 size-4" />
+                {{ $t("locations.print_label_template") }}
+              </Button>
               <Button @click="openUpdate">
                 <MdiPencil name="mdi-pencil" />
                 {{ $t("global.edit") }}
