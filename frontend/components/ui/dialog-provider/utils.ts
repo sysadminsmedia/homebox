@@ -30,6 +30,7 @@ export enum DialogID {
   UpdateLabel = "update-label",
   UpdateLocation = "update-location",
   CreateInvite = "create-invite",
+  EditUser = "edit-user",
   UpdateTemplate = "update-template",
   ItemChangeDetails = "item-table-updater",
 }
@@ -57,6 +58,7 @@ export type DialogParamsMap = {
     attachmentId: string;
   };
   [DialogID.CreateItem]?: { product?: BarcodeProduct };
+  [DialogID.EditUser]?: { userId?: string };
   [DialogID.ProductImport]?: { barcode?: string };
   [DialogID.EditMaintenance]:
     | { type: "create"; itemId: string | string[] }
@@ -78,6 +80,7 @@ export type DialogResultMap = {
   [DialogID.EditMaintenance]?: boolean;
   [DialogID.CreateInvite]?: boolean;
   [DialogID.ItemChangeDetails]?: boolean;
+  [DialogID.EditUser]?: boolean;
 };
 
 /** Helpers to split IDs by requirement */

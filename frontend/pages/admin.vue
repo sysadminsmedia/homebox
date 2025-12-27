@@ -13,10 +13,15 @@
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiDelete from "~icons/mdi/delete";
+  import MdiCheck from "~icons/mdi/check";
+  import MdiClose from "~icons/mdi/close";
   // import MdiOpenInNew from "~icons/mdi/open-in-new";
   // Badge component for collections display
   import { Badge } from "@/components/ui/badge";
+  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
   import UserFormDialog from "@/components/Admin/UserFormDialog.vue";
+  import { useDialog } from "@/components/ui/dialog-provider";
+  import { DialogID } from "@/components/ui/dialog-provider/utils";
 
   import { api, type Collection as MockCollection, type User } from "~/mock/collections";
 
@@ -35,10 +40,7 @@
     });
   });
 
-  const editing = ref<User | null>(null);
-  const showForm = ref(false);
-  const newPassword = ref("");
-  const editingCollectionIds = ref<string[]>([]);
+  const { openDialog } = useDialog();
   const confirm = useConfirm();
   const { t } = useI18n();
 
@@ -55,61 +57,26 @@
   }
 
   function openAdd() {
-    editing.value = { id: String(Date.now()), name: "", email: "", role: "user", password_set: false, collections: [] };
-    newPassword.value = "";
-    editingCollectionIds.value = [];
-    showForm.value = true;
+    openDialog(DialogID.EditUser, {
+      onClose: result => {
+        if (result) {
+          users.value = api.getUsers();
+          collections.value = api.getCollections();
+        }
+      },
+    });
   }
 
   function openEdit(u: User) {
-    editing.value = { ...u };
-    editingCollectionIds.value = (u.collections ?? []).map(c => c.id);
-    newPassword.value = "";
-    showForm.value = true;
-  }
-
-  function saveUser() {
-    if (!editing.value) return;
-    // basic validation
-    if (!editing.value.name.trim() || !editing.value.email.trim()) {
-      // keep UX simple: alert for now
-      // Replace with a nicer notification component when available
-      alert("Name and email are required");
-      return;
-    }
-
-    // apply password flag if new password was set locally
-    if (newPassword.value && editing.value) editing.value.password_set = true;
-
-    const existing = api.getUser(editing.value.id);
-    if (existing) {
-      // update only scalar fields; collections are managed via the add/remove API
-      const updated = {
-        ...existing,
-        name: editing.value.name,
-        email: editing.value.email,
-        role: editing.value.role,
-        password_set: editing.value.password_set,
-      } as User;
-      api.updateUser(updated);
-    } else {
-      // create user without collections first, then add memberships
-      const toCreate = { ...editing.value, collections: [] } as User;
-      const created = api.addUser(toCreate);
-      editingCollectionIds.value.forEach(id => api.addUserToCollection(created.id, id, "viewer"));
-    }
-
-    // refresh local cache
-    users.value = api.getUsers();
-
-    editing.value = null;
-    showForm.value = false;
-    // TODO: call backend API to persist changes when available
-  }
-
-  function cancelForm() {
-    editing.value = null;
-    showForm.value = false;
+    openDialog(DialogID.EditUser, {
+      params: { userId: u.id },
+      onClose: result => {
+        if (result) {
+          users.value = api.getUsers();
+          collections.value = api.getCollections();
+        }
+      },
+    });
   }
 
   async function confirmDelete(u: User) {
@@ -130,17 +97,13 @@
     return col ? col.name : id;
   }
 
-  function onUpdateEditing(val: User | null) {
-    editing.value = val;
+  function roleVariant(role: string | undefined) {
+    if (role === "owner") return "default";
+    if (role === "admin") return "secondary";
+    return "outline";
   }
 
-  function onUpdateEditingCollectionIds(val: string[]) {
-    editingCollectionIds.value = val;
-  }
-
-  function onUpdateNewPassword(val: string) {
-    newPassword.value = val;
-  }
+  // dialog handles editing state now via dialog provider
 </script>
 
 <template>
@@ -156,12 +119,12 @@
       <Table class="w-full">
         <TableHeader>
           <TableRow>
-            <TableHead>{{ t("global.name") }}</TableHead>
-            <TableHead>{{ t("global.email") }}</TableHead>
-            <TableHead>Is Admin</TableHead>
-            <TableHead>Collections</TableHead>
-            <TableHead class="w-32 text-center">Auth</TableHead>
-            <TableHead class="w-40 text-center">{{ t("global.details") }}</TableHead>
+            <TableHead class="min-w-[160px]">{{ t("global.name") }}</TableHead>
+            <TableHead class="min-w-[220px]">{{ t("global.email") }}</TableHead>
+            <TableHead class="min-w-[96px] text-center">Is Admin</TableHead>
+            <TableHead class="min-w-[220px]">Collections</TableHead>
+            <TableHead class="min-w-[96px] text-center">{{ t("global.details") }}</TableHead>
+            <TableHead class="w-40 text-center"></TableHead>
           </TableRow>
         </TableHeader>
 
@@ -170,24 +133,40 @@
             <TableRow v-for="u in filtered" :key="u.id">
               <TableCell>{{ u.name }}</TableCell>
               <TableCell>{{ u.email }}</TableCell>
-              <TableCell class="text-center">
-                <span class="font-medium">{{ u.role === "admin" ? "Yes" : "No" }}</span>
+              <TableCell class="text-center align-middle">
+                <div class="flex size-full items-center justify-center font-medium">
+                  <MdiCheck v-if="u.role === 'admin'" class="text-primary" />
+                  <MdiClose v-else class="text-destructive" />
+                </div>
               </TableCell>
               <TableCell>
                 <div class="flex flex-wrap items-center gap-2">
                   <template v-if="u.collections && u.collections.length">
-                    <Badge v-for="c in u.collections" :key="c.id" class="whitespace-nowrap"
-                      >{{ collectionName(c.id) }}<span class="ml-1 text-xs opacity-60">({{ c.role }})</span></Badge
-                    >
+                    <TooltipProvider :delay-duration="0">
+                      <template v-for="c in u.collections" :key="c.id">
+                        <Tooltip>
+                          <TooltipTrigger as-child>
+                            <Badge class="whitespace-nowrap" :variant="roleVariant(c.role)">{{
+                              collectionName(c.id)
+                            }}</Badge>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p class="text-sm">{{ c.role }}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </template>
+                    </TooltipProvider>
                   </template>
                   <span v-else class="text-muted-foreground">-</span>
                 </div>
               </TableCell>
-              <TableCell class="text-center">
-                <span>{{ authType(u) }}</span>
+              <TableCell class="text-center align-middle">
+                <div class="flex size-full items-center justify-center">
+                  <span>{{ authType(u) }}</span>
+                </div>
               </TableCell>
-              <TableCell class="text-right">
-                <div class="flex justify-end gap-2">
+              <TableCell class="text-right align-middle">
+                <div class="flex size-full items-center justify-end gap-2">
                   <Button size="icon" variant="outline" class="size-8" :title="t('global.edit')" @click="openEdit(u)">
                     <MdiPencil class="size-4" />
                   </Button>
@@ -215,18 +194,6 @@
     </Card>
 
     <!-- Add / Edit form modal (moved to component) -->
-    <UserFormDialog
-      v-model="showForm"
-      :editing="editing"
-      :collections="collections"
-      :editing-collection-ids="editingCollectionIds"
-      :new-password="newPassword"
-      @update:editing="onUpdateEditing"
-      @update:editing-collection-ids="onUpdateEditingCollectionIds"
-      @update:new-password="onUpdateNewPassword"
-      @save="saveUser"
-      @cancel="cancelForm"
-      @collections-changed="() => (collections = api.getCollections())"
-    />
+    <UserFormDialog />
   </BaseContainer>
 </template>
