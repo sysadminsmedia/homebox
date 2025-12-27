@@ -375,7 +375,9 @@ test.describe("HomeBox Upgrade Verification", () => {
 
     // Verify at least that the page loaded and shows some content
     expect(pageContent).toBeTruthy();
-    expect(pageContent.length).toBeGreaterThan(100);
+    if (pageContent) {
+      expect(pageContent.length).toBeGreaterThan(100);
+    }
   });
 
   test("verify second group users and data isolation", async ({ page }) => {
