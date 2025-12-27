@@ -1,0 +1,46 @@
+name: Issue Gatekeeper
+on:
+  issues:
+    types: [ opened ]
+
+jobs:
+  check-permissions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify Internal Template Use
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const actor = context.payload.sender.login;
+            
+            // 1. Get user permission level
+            const { data: perms } = await github.rest.repos.getCollaboratorPermissionLevel({
+              owner,
+              repo,
+              username: actor
+            });
+
+            const isMember = ['admin', 'write'].includes(perms.permission);
+            const body = context.payload.issue.body || "";
+
+            // 2. Check if they used the internal template (or if the issue is blank)
+            // We detect this by checking for our specific template string or the 'internal' label
+            const usedInternal = context.payload.issue.labels.some(l => l.name === 'internal');
+
+            if (usedInternal && !isMember) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body: `@${actor}, the "Internal" template is restricted to project members. Please use one of the standard bug or feature templates for this repository.`
+              });
+            
+              await github.rest.issues.update({
+                owner,
+                repo,
+                issue_number,
+                state: 'closed'
+              });
+            }
