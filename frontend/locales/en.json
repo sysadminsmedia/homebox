@@ -521,11 +521,13 @@
         "update_label": "Update Label"
     },
     "languages": {
+        "ar-AA": "Arabic",
         "bs-BA": "Bosnian (Bosnia and Herzegovina)",
         "ca": "Catalan",
         "cs-CZ": "Czech",
         "da-DK": "Danish",
         "de": "German",
+        "el-GR": "Greek (Greece)",
         "en": "English",
         "es": "Spanish",
         "fi-FI": "Finnish",
@@ -549,6 +551,7 @@
         "sq-AL": "Albanian",
         "sv": "Swedish",
         "ta-IN": "Tamil",
+        "te-IN": "Telugu (India)",
         "th-TH": "Thai",
         "tr": "Turkish",
         "uk-UA": "Ukrainian",
