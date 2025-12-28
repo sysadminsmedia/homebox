@@ -57,7 +57,7 @@ describe("first time user workflow (register, login, join group)", () => {
     const client2 = factories.client.user(loginData.token);
     const { data: user2 } = await client2.user.self();
 
-    user2.item.groupName = user1.item.groupName;
+    expect(user2.item.defaultGroupId).toBe(user1.item.defaultGroupId);
 
     // Cleanup User 2
     const { response: deleteResp } = await client2.user.delete();

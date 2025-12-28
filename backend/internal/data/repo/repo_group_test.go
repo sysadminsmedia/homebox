@@ -4,12 +4,13 @@ import (
 	"context"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func Test_Group_Create(t *testing.T) {
-	g, err := tRepos.Groups.GroupCreate(context.Background(), "test")
+	g, err := tRepos.Groups.GroupCreate(context.Background(), "test", uuid.Nil)
 
 	require.NoError(t, err)
 	assert.Equal(t, "test", g.Name)
@@ -21,7 +22,7 @@ func Test_Group_Create(t *testing.T) {
 }
 
 func Test_Group_Update(t *testing.T) {
-	g, err := tRepos.Groups.GroupCreate(context.Background(), "test")
+	g, err := tRepos.Groups.GroupCreate(context.Background(), "test", uuid.Nil)
 	require.NoError(t, err)
 
 	g, err = tRepos.Groups.GroupUpdate(context.Background(), g.ID, GroupUpdate{
