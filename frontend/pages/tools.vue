@@ -131,7 +131,7 @@
 
   const api = useUserApi();
   const confirm = useConfirm();
-  
+
   // Fetch status to check for demo mode
   const pubApi = usePublicApi();
   const { data: status } = useAsyncData(async () => {
@@ -240,24 +240,24 @@
       await confirm.open(t("tools.demo_mode_error.wipe_inventory"));
       return;
     }
-    
+
     openDialog(DialogID.WipeInventory, {
-      onClose: async (result) => {
+      onClose: async result => {
         if (!result) {
           return;
         }
-        
+
         const apiResult = await api.actions.wipeInventory({
           wipeLabels: result.wipeLabels,
           wipeLocations: result.wipeLocations,
           wipeMaintenance: result.wipeMaintenance,
         });
-        
+
         if (apiResult.error) {
           toast.error(t("tools.toast.failed_wipe_inventory"));
           return;
         }
-        
+
         toast.success(t("tools.toast.wipe_inventory_success", { results: apiResult.data.completed }));
       },
     });
