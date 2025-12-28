@@ -82,12 +82,14 @@
   const wipeLabels = ref(false);
   const wipeLocations = ref(false);
   const wipeMaintenance = ref(false);
+  const isConfirming = ref(false);
 
   registerOpenDialogCallback(DialogID.WipeInventory, () => {
     dialog.value = true;
     wipeLabels.value = false;
     wipeLocations.value = false;
     wipeMaintenance.value = false;
+    isConfirming.value = false;
   });
 
   watch(
@@ -103,7 +105,7 @@
   );
 
   function handleOpenChange(open: boolean) {
-    if (!open) {
+    if (!open && !isConfirming.value) {
       close();
     }
   }
@@ -114,12 +116,13 @@
   }
 
   function confirm() {
-    dialog.value = false;
+    isConfirming.value = true;
     const result = {
       wipeLabels: wipeLabels.value,
       wipeLocations: wipeLocations.value,
       wipeMaintenance: wipeMaintenance.value,
     };
+    dialog.value = false;
     closeDialog(DialogID.WipeInventory, result);
   }
 </script>
