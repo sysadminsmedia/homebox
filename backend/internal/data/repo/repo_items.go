@@ -857,6 +857,7 @@ func (e *ItemsRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wipe
 			log.Err(err).Msg("failed to delete labels during wipe inventory")
 		} else {
 			log.Info().Int("count", labelCount).Msg("deleted labels during wipe inventory")
+			deleted += labelCount
 		}
 	}
 
@@ -867,6 +868,7 @@ func (e *ItemsRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wipe
 			log.Err(err).Msg("failed to delete locations during wipe inventory")
 		} else {
 			log.Info().Int("count", locationCount).Msg("deleted locations during wipe inventory")
+			deleted += locationCount
 		}
 	}
 
