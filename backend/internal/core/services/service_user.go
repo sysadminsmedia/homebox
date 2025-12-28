@@ -98,8 +98,8 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 	// Create the default labels and locations for the group.
 	if creatingGroup {
 		log.Debug().Msg("creating default labels")
-		for _, label := range defaultLabels() {
-			_, err := svc.repos.Labels.Create(ctx, usr.GroupID, label)
+		for _, label := range defaultTags() {
+			_, err := svc.repos.Tags.Create(ctx, usr.GroupID, label)
 			if err != nil {
 				return repo.UserOut{}, err
 			}
@@ -301,8 +301,8 @@ func (svc *UserService) registerOIDCUser(ctx context.Context, issuer, subject, e
 	}
 
 	log.Debug().Str("issuer", issuer).Str("subject", subject).Msg("creating default labels for OIDC user")
-	for _, label := range defaultLabels() {
-		_, err := svc.repos.Labels.Create(ctx, group.ID, label)
+	for _, label := range defaultTags() {
+		_, err := svc.repos.Tags.Create(ctx, group.ID, label)
 		if err != nil {
 			log.Err(err).Msg("Failed to create default label")
 		}

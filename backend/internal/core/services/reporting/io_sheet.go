@@ -172,9 +172,9 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, gid uuid.
 
 		locString := fromPathSlice(locPaths)
 
-		labelString := make([]string, len(item.Labels))
+		labelString := make([]string, len(item.Tags))
 
-		for i, l := range item.Labels {
+		for i, l := range item.Tags {
 			labelString[i] = l.Name
 		}
 

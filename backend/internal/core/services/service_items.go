@@ -113,7 +113,7 @@ func (svc *ItemService) CsvImport(ctx context.Context, gid uuid.UUID, data io.Re
 
 	labelMap := make(map[string]uuid.UUID)
 	{
-		labels, err := svc.repo.Labels.GetAll(ctx, gid)
+		labels, err := svc.repo.Tags.GetAll(ctx, gid)
 		if err != nil {
 			return 0, err
 		}
@@ -192,7 +192,7 @@ func (svc *ItemService) CsvImport(ctx context.Context, gid uuid.UUID, data io.Re
 
 			id, ok := labelMap[label]
 			if !ok {
-				newLabel, err := svc.repo.Labels.Create(ctx, gid, repo.LabelCreate{Name: label})
+				newLabel, err := svc.repo.Tags.Create(ctx, gid, repo.TagCreate{Name: label})
 				if err != nil {
 					return 0, err
 				}

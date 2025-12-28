@@ -106,7 +106,7 @@ type ItemTemplateCreateItemRequest struct {
 	Name        string      `json:"name"        validate:"required,min=1,max=255"`
 	Description string      `json:"description" validate:"max=1000"`
 	LocationID  uuid.UUID   `json:"locationId"  validate:"required"`
-	LabelIDs    []uuid.UUID `json:"labelIds"`
+	TagIDs    []uuid.UUID `json:"labelIds"`
 	Quantity    *int        `json:"quantity"`
 }
 
@@ -150,7 +150,7 @@ func (ctrl *V1Controller) HandleItemTemplatesCreateItem() errchain.HandlerFunc {
 			Description:      body.Description,
 			Quantity:         quantity,
 			LocationID:       body.LocationID,
-			LabelIDs:         body.LabelIDs,
+			TagIDs:         body.TagIDs,
 			Insured:          template.DefaultInsured,
 			Manufacturer:     template.DefaultManufacturer,
 			ModelNumber:      template.DefaultModelNumber,

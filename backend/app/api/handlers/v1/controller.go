@@ -222,7 +222,7 @@ func (ctrl *V1Controller) HandleCacheWS() errchain.HandlerFunc {
 		}
 	}
 
-	ctrl.bus.Subscribe(eventbus.EventLabelMutation, factory("label.mutation"))
+	ctrl.bus.Subscribe(eventbus.EventTagMutation, factory("label.mutation"))
 	ctrl.bus.Subscribe(eventbus.EventLocationMutation, factory("location.mutation"))
 	ctrl.bus.Subscribe(eventbus.EventItemMutation, factory("item.mutation"))
 
