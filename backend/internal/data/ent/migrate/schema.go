@@ -296,30 +296,6 @@ var (
 			},
 		},
 	}
-	// LabelsColumns holds the columns for the "labels" table.
-	LabelsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeUUID},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "updated_at", Type: field.TypeTime},
-		{Name: "name", Type: field.TypeString, Size: 255},
-		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
-		{Name: "color", Type: field.TypeString, Nullable: true, Size: 255},
-		{Name: "group_labels", Type: field.TypeUUID},
-	}
-	// LabelsTable holds the schema information for the "labels" table.
-	LabelsTable = &schema.Table{
-		Name:       "labels",
-		Columns:    LabelsColumns,
-		PrimaryKey: []*schema.Column{LabelsColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "labels_groups_labels",
-				Columns:    []*schema.Column{LabelsColumns[6]},
-				RefColumns: []*schema.Column{GroupsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
-	}
 	// LocationsColumns holds the columns for the "locations" table.
 	LocationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -429,6 +405,30 @@ var (
 			},
 		},
 	}
+	// TagsColumns holds the columns for the "tags" table.
+	TagsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+		{Name: "name", Type: field.TypeString, Size: 255},
+		{Name: "description", Type: field.TypeString, Nullable: true, Size: 1000},
+		{Name: "color", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "group_tags", Type: field.TypeUUID},
+	}
+	// TagsTable holds the schema information for the "tags" table.
+	TagsTable = &schema.Table{
+		Name:       "tags",
+		Columns:    TagsColumns,
+		PrimaryKey: []*schema.Column{TagsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "tags_groups_tags",
+				Columns:    []*schema.Column{TagsColumns[6]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// TemplateFieldsColumns holds the columns for the "template_fields" table.
 	TemplateFieldsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUUID},
@@ -491,26 +491,26 @@ var (
 			},
 		},
 	}
-	// LabelItemsColumns holds the columns for the "label_items" table.
-	LabelItemsColumns = []*schema.Column{
-		{Name: "label_id", Type: field.TypeUUID},
+	// TagItemsColumns holds the columns for the "tag_items" table.
+	TagItemsColumns = []*schema.Column{
+		{Name: "tag_id", Type: field.TypeUUID},
 		{Name: "item_id", Type: field.TypeUUID},
 	}
-	// LabelItemsTable holds the schema information for the "label_items" table.
-	LabelItemsTable = &schema.Table{
-		Name:       "label_items",
-		Columns:    LabelItemsColumns,
-		PrimaryKey: []*schema.Column{LabelItemsColumns[0], LabelItemsColumns[1]},
+	// TagItemsTable holds the schema information for the "tag_items" table.
+	TagItemsTable = &schema.Table{
+		Name:       "tag_items",
+		Columns:    TagItemsColumns,
+		PrimaryKey: []*schema.Column{TagItemsColumns[0], TagItemsColumns[1]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "label_items_label_id",
-				Columns:    []*schema.Column{LabelItemsColumns[0]},
-				RefColumns: []*schema.Column{LabelsColumns[0]},
+				Symbol:     "tag_items_tag_id",
+				Columns:    []*schema.Column{TagItemsColumns[0]},
+				RefColumns: []*schema.Column{TagsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
-				Symbol:     "label_items_item_id",
-				Columns:    []*schema.Column{LabelItemsColumns[1]},
+				Symbol:     "tag_items_item_id",
+				Columns:    []*schema.Column{TagItemsColumns[1]},
 				RefColumns: []*schema.Column{ItemsColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -526,13 +526,13 @@ var (
 		ItemsTable,
 		ItemFieldsTable,
 		ItemTemplatesTable,
-		LabelsTable,
 		LocationsTable,
 		MaintenanceEntriesTable,
 		NotifiersTable,
+		TagsTable,
 		TemplateFieldsTable,
 		UsersTable,
-		LabelItemsTable,
+		TagItemsTable,
 	}
 )
 
@@ -548,14 +548,14 @@ func init() {
 	ItemFieldsTable.ForeignKeys[0].RefTable = ItemsTable
 	ItemTemplatesTable.ForeignKeys[0].RefTable = GroupsTable
 	ItemTemplatesTable.ForeignKeys[1].RefTable = LocationsTable
-	LabelsTable.ForeignKeys[0].RefTable = GroupsTable
 	LocationsTable.ForeignKeys[0].RefTable = GroupsTable
 	LocationsTable.ForeignKeys[1].RefTable = LocationsTable
 	MaintenanceEntriesTable.ForeignKeys[0].RefTable = ItemsTable
 	NotifiersTable.ForeignKeys[0].RefTable = GroupsTable
 	NotifiersTable.ForeignKeys[1].RefTable = UsersTable
+	TagsTable.ForeignKeys[0].RefTable = GroupsTable
 	TemplateFieldsTable.ForeignKeys[0].RefTable = ItemTemplatesTable
 	UsersTable.ForeignKeys[0].RefTable = GroupsTable
-	LabelItemsTable.ForeignKeys[0].RefTable = LabelsTable
-	LabelItemsTable.ForeignKeys[1].RefTable = ItemsTable
+	TagItemsTable.ForeignKeys[0].RefTable = TagsTable
+	TagItemsTable.ForeignKeys[1].RefTable = ItemsTable
 }

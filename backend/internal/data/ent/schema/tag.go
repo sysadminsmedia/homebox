@@ -7,21 +7,21 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
 )
 
-// Label holds the schema definition for the Label entity.
-type Label struct {
+// Tag holds the schema definition for the Tag entity.
+type Tag struct {
 	ent.Schema
 }
 
-func (Label) Mixin() []ent.Mixin {
+func (Tag) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		mixins.BaseMixin{},
 		mixins.DetailsMixin{},
-		GroupMixin{ref: "labels"},
+		GroupMixin{ref: "tags"},
 	}
 }
 
-// Fields of the Label.
-func (Label) Fields() []ent.Field {
+// Fields of the Tag.
+func (Tag) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("color").
 			MaxLen(255).
@@ -29,8 +29,8 @@ func (Label) Fields() []ent.Field {
 	}
 }
 
-// Edges of the Label.
-func (Label) Edges() []ent.Edge {
+// Edges of the Tag.
+func (Tag) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("items", Item.Type),
 	}
