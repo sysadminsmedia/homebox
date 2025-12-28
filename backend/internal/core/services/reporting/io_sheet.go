@@ -114,8 +114,8 @@ func (s *IOSheet) Read(data io.Reader) error {
 				v, _ = repo.ParseAssetID(val)
 			case reflect.TypeOf(LocationString{}):
 				v = parseLocationString(val)
-			case reflect.TypeOf(LabelString{}):
-				v = parseLabelString(val)
+			case reflect.TypeOf(TagString{}):
+				v = parseTagString(val)
 			}
 
 			log.Debug().
@@ -172,10 +172,10 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, gid uuid.
 
 		locString := fromPathSlice(locPaths)
 
-		labelString := make([]string, len(item.Labels))
+		tagString := make([]string, len(item.Tags))
 
-		for i, l := range item.Labels {
-			labelString[i] = l.Name
+		for i, l := range item.Tags {
+			tagString[i] = l.Name
 		}
 
 		url := generateItemURL(item, hbURL)
@@ -194,7 +194,7 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, gid uuid.
 		s.Rows[i] = ExportCSVRow{
 			// fill struct
 			Location: locString,
-			LabelStr: labelString,
+			TagStr:   tagString,
 
 			ImportRef:   item.ImportRef,
 			AssetID:     item.AssetID,
@@ -311,8 +311,8 @@ func (s *IOSheet) CSV() ([][]string, error) {
 				v = val.Interface().(repo.AssetID).String()
 			case reflect.TypeOf(LocationString{}):
 				v = val.Interface().(LocationString).String()
-			case reflect.TypeOf(LabelString{}):
-				v = val.Interface().(LabelString).String()
+			case reflect.TypeOf(TagString{}):
+				v = val.Interface().(TagString).String()
 			default:
 				log.Debug().Str("type", field.Type.String()).Msg("unknown type")
 			}

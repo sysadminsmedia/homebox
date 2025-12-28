@@ -11,7 +11,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 )
 
@@ -79,7 +79,7 @@ type (
 		TotalUsers        int     `json:"totalUsers"`
 		TotalItems        int     `json:"totalItems"`
 		TotalLocations    int     `json:"totalLocations"`
-		TotalLabels       int     `json:"totalLabels"`
+		TotalTags       int     `json:"totalTags"`
 		TotalItemPrice    float64 `json:"totalItemPrice"`
 		TotalWithWarranty int     `json:"totalWithWarranty"`
 	}
@@ -131,21 +131,21 @@ func (r *GroupRepository) StatsLocationsByPurchasePrice(ctx context.Context, gid
 	return v, err
 }
 
-func (r *GroupRepository) StatsLabelsByPurchasePrice(ctx context.Context, gid uuid.UUID) ([]TotalsByOrganizer, error) {
+func (r *GroupRepository) StatsTagsByPurchasePrice(ctx context.Context, gid uuid.UUID) ([]TotalsByOrganizer, error) {
 	var v []TotalsByOrganizer
 
-	err := r.db.Label.Query().
+	err := r.db.Tag.Query().
 		Where(
-			label.HasGroupWith(group.ID(gid)),
+			tag.HasGroupWith(group.ID(gid)),
 		).
-		GroupBy(label.FieldID, label.FieldName).
+		GroupBy(tag.FieldID, tag.FieldName).
 		Aggregate(func(sq *sql.Selector) string {
 			itemTable := sql.Table(item.Table)
 
-			jt := sql.Table(label.ItemsTable)
+			jt := sql.Table(tag.ItemsTable)
 
-			sq.Join(jt).On(sq.C(label.FieldID), jt.C(label.ItemsPrimaryKey[0]))
-			sq.Join(itemTable).On(jt.C(label.ItemsPrimaryKey[1]), itemTable.C(item.FieldID))
+			sq.Join(jt).On(sq.C(tag.FieldID), jt.C(tag.ItemsPrimaryKey[0]))
+			sq.Join(itemTable).On(jt.C(tag.ItemsPrimaryKey[1]), itemTable.C(item.FieldID))
 
 			return sql.As(sql.Sum(itemTable.C(item.FieldPurchasePrice)), "total")
 		}).
@@ -226,7 +226,7 @@ func (r *GroupRepository) StatsGroup(ctx context.Context, gid uuid.UUID) (GroupS
             (SELECT COUNT(*) FROM users WHERE group_users = $2) AS total_users,
             (SELECT COUNT(*) FROM items WHERE group_items = $2 AND items.archived = false) AS total_items,
             (SELECT COUNT(*) FROM locations WHERE group_locations = $2) AS total_locations,
-            (SELECT COUNT(*) FROM labels WHERE group_labels = $2) AS total_labels,
+            (SELECT COUNT(*) FROM tags WHERE group_tags = $2) AS total_tags,
             (SELECT SUM(purchase_price*quantity) FROM items WHERE group_items = $2 AND items.archived = false) AS total_item_price,
             (SELECT COUNT(*)
                 FROM items
@@ -241,7 +241,7 @@ func (r *GroupRepository) StatsGroup(ctx context.Context, gid uuid.UUID) (GroupS
 	var maybeTotalItemPrice *float64
 	var maybeTotalWithWarranty *int
 
-	err := row.Scan(&stats.TotalUsers, &stats.TotalItems, &stats.TotalLocations, &stats.TotalLabels, &maybeTotalItemPrice, &maybeTotalWithWarranty)
+	err := row.Scan(&stats.TotalUsers, &stats.TotalItems, &stats.TotalLocations, &stats.TotalTags, &maybeTotalItemPrice, &maybeTotalWithWarranty)
 	if err != nil {
 		return GroupStatistics{}, err
 	}
