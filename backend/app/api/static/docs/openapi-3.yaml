@@ -309,6 +309,55 @@ paths:
       responses:
         "204":
           description: No Content
+  "/v1/groups/{id}/members":
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Get All Group Members
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/repo.UserOut"
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Add User to Group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/v1.GroupMemberAdd"
+        description: User ID
+        required: true
+      responses:
+        "204":
+          description: No Content
+  "/v1/groups/{id}/members/{user_id}":
+    delete:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Remove User from Group
+      parameters:
+        - description: User ID
+          name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
   /v1/items:
     get:
       security:
@@ -3477,6 +3526,13 @@ components:
           type: integer
           maximum: 100
           minimum: 1
+    v1.GroupMemberAdd:
+      type: object
+      required:
+        - userId
+      properties:
+        userId:
+          type: string
     v1.ItemAttachmentToken:
       type: object
       properties:

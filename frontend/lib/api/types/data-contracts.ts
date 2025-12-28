@@ -1121,6 +1121,10 @@ export interface GroupInvitationCreate {
   uses: number;
 }
 
+export interface GroupMemberAdd {
+  userId: string;
+}
+
 export interface ItemAttachmentToken {
   token: string;
 }

@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
@@ -21,6 +22,10 @@ type (
 		Token     string    `json:"token"`
 		ExpiresAt time.Time `json:"expiresAt"`
 		Uses      int       `json:"uses"`
+	}
+
+	GroupMemberAdd struct {
+		UserID uuid.UUID `json:"userId" validate:"required"`
 	}
 )
 
@@ -168,4 +173,59 @@ func (ctrl *V1Controller) HandleGroupInvitationsGetAll() errchain.HandlerFunc {
 	}
 
 	return adapters.Command(fn, http.StatusOK)
+}
+
+// HandleGroupMembersGetAll godoc
+//
+//	@Summary	Get All Group Members
+//	@Tags		Group
+//	@Produce	json
+//	@Success	200	{object}	[]repo.UserOut
+//	@Router		/v1/groups/{id}/members [Get]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleGroupMembersGetAll() errchain.HandlerFunc {
+	fn := func(r *http.Request) ([]repo.UserOut, error) {
+		auth := services.NewContext(r.Context())
+		return ctrl.repo.Users.GetUsersByGroupID(auth, auth.GID)
+	}
+
+	return adapters.Command(fn, http.StatusOK)
+}
+
+// HandleGroupMemberAdd godoc
+//
+//	@Summary	Add User to Group
+//	@Tags		Group
+//	@Produce	json
+//	@Param		payload	body		GroupMemberAdd	true	"User ID"
+//	@Success	204
+//	@Router		/v1/groups/{id}/members [Post]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleGroupMemberAdd() errchain.HandlerFunc {
+	fn := func(r *http.Request, body GroupMemberAdd) (any, error) {
+		auth := services.NewContext(r.Context())
+		err := ctrl.svc.Group.AddMember(auth, body.UserID)
+		return nil, err
+	}
+
+	return adapters.Action(fn, http.StatusNoContent)
+}
+
+// HandleGroupMemberRemove godoc
+//
+//	@Summary	Remove User from Group
+//	@Tags		Group
+//	@Produce	json
+//	@Param		user_id	path		string	true	"User ID"
+//	@Success	204
+//	@Router		/v1/groups/{id}/members/{user_id} [Delete]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleGroupMemberRemove() errchain.HandlerFunc {
+	fn := func(r *http.Request, userID uuid.UUID) (any, error) {
+		auth := services.NewContext(r.Context())
+		err := ctrl.svc.Group.RemoveMember(auth, userID)
+		return nil, err
+	}
+
+	return adapters.CommandID("user_id", fn, http.StatusNoContent)
 }

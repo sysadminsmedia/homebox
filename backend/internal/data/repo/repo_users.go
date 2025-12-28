@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -205,4 +206,11 @@ func (r *UserRepository) GetOneOIDC(ctx context.Context, issuer, subject string)
 		Where(user.OidcIssuerEQ(issuer), user.OidcSubjectEQ(subject)).
 		WithGroups().
 		Only(ctx))
+}
+
+func (r *UserRepository) GetUsersByGroupID(ctx context.Context, gid uuid.UUID) ([]UserOut, error) {
+	return mapUsersOutErr(r.db.User.Query().
+		WithGroups().
+		Where(user.HasGroupsWith(group.ID(gid))).
+		All(ctx))
 }

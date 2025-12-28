@@ -4,6 +4,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/pkgs/hasher"
 )
@@ -49,4 +50,20 @@ func (svc *GroupService) NewInvitation(ctx Context, uses int, expiresAt time.Tim
 	}
 
 	return token.Raw, nil
+}
+
+func (svc *GroupService) AddMember(ctx Context, userID uuid.UUID) error {
+	if userID == uuid.Nil {
+		return errors.New("user ID cannot be empty")
+	}
+
+	return svc.repos.Groups.AddMember(ctx.Context, ctx.GID, userID)
+}
+
+func (svc *GroupService) RemoveMember(ctx Context, userID uuid.UUID) error {
+	if userID == uuid.Nil {
+		return errors.New("user ID cannot be empty")
+	}
+
+	return svc.repos.Groups.RemoveMember(ctx.Context, ctx.GID, userID)
 }

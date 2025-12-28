@@ -329,3 +329,11 @@ func (r *GroupRepository) InvitationPurge(ctx context.Context) (amount int, err 
 
 	return q.Exec(ctx)
 }
+
+func (r *GroupRepository) AddMember(ctx context.Context, groupID, userID uuid.UUID) error {
+	return r.db.Group.UpdateOneID(groupID).AddUserIDs(userID).Exec(ctx)
+}
+
+func (r *GroupRepository) RemoveMember(ctx context.Context, groupID, userID uuid.UUID) error {
+	return r.db.Group.UpdateOneID(groupID).RemoveUserIDs(userID).Exec(ctx)
+}

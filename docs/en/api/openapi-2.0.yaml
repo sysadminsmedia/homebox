@@ -719,6 +719,9 @@ definitions:
       created_at:
         description: CreatedAt holds the value of the "created_at" field.
         type: string
+      default_group_id:
+        description: DefaultGroupID holds the value of the "default_group_id" field.
+        type: string
       edges:
         allOf:
         - $ref: '#/definitions/ent.UserEdges'
@@ -761,10 +764,11 @@ definitions:
         items:
           $ref: '#/definitions/ent.AuthTokens'
         type: array
-      group:
-        allOf:
-        - $ref: '#/definitions/ent.Group'
-        description: Group holds the value of the group edge.
+      groups:
+        description: Groups holds the value of the groups edge.
+        items:
+          $ref: '#/definitions/ent.Group'
+        type: array
       notifiers:
         description: Notifiers holds the value of the notifiers edge.
         items:
@@ -827,6 +831,17 @@ definitions:
         type: string
       updatedAt:
         type: string
+    type: object
+  repo.GroupInvitation:
+    properties:
+      expiresAt:
+        type: string
+      group:
+        $ref: '#/definitions/repo.Group'
+      id:
+        type: string
+      uses:
+        type: integer
     type: object
   repo.GroupStatistics:
     properties:
@@ -1660,12 +1675,14 @@ definitions:
     type: object
   repo.UserOut:
     properties:
+      defaultGroupId:
+        type: string
       email:
         type: string
-      groupId:
-        type: string
-      groupName:
-        type: string
+      groupIds:
+        items:
+          type: string
+        type: array
       id:
         type: string
       isOwner:
@@ -1809,6 +1826,13 @@ definitions:
         type: integer
     required:
     - uses
+    type: object
+  v1.GroupMemberAdd:
+    properties:
+      userId:
+        type: string
+    required:
+    - userId
     type: object
   v1.ItemAttachmentToken:
     properties:
@@ -2032,10 +2056,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/repo.Group'
+            items:
+              $ref: '#/definitions/repo.Group'
+            type: array
       security:
       - Bearer: []
-      summary: Get Group
+      summary: Get All Groups
       tags:
       - Group
     put:
@@ -2058,7 +2084,106 @@ paths:
       summary: Update Group
       tags:
       - Group
+  /v1/groups/{id}:
+    delete:
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Delete Group
+      tags:
+      - Group
+    post:
+      parameters:
+      - description: Group Name
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.Group'
+      security:
+      - Bearer: []
+      summary: Create Group
+      tags:
+      - Group
+  /v1/groups/{id}/members:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repo.UserOut'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get All Group Members
+      tags:
+      - Group
+    post:
+      parameters:
+      - description: User ID
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/v1.GroupMemberAdd'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Add User to Group
+      tags:
+      - Group
+  /v1/groups/{id}/members/{user_id}:
+    delete:
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Remove User from Group
+      tags:
+      - Group
   /v1/groups/invitations:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repo.GroupInvitation'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get All Group Invitations
+      tags:
+      - Group
     post:
       parameters:
       - description: User Data
