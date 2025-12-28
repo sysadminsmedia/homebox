@@ -1,5 +1,11 @@
 name: Pull Request CI
 
+permissions:
+  contents: read
+  actions: read
+  checks: write
+  pull-requests: write
+
 on:
   pull_request:
     branches:
