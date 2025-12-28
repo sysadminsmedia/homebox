@@ -8,7 +8,7 @@
   import { Button, ButtonGroup } from "@/components/ui/button";
   import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
-  import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import { Card } from "@/components/ui/card"; // Assuming you have a Card component
   import { Badge } from "@/components/ui/badge"; // Assuming you have a Badge component
   import { PlusCircle, Trash } from "lucide-vue-next"; // Icons
@@ -18,6 +18,10 @@
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import { useDialog } from "~/components/ui/dialog-provider";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
+
+  import { toast } from "@/components/ui/sonner";
+  import { fmtCurrencyAsync } from "~/composables/utils";
+  import { getLocaleCode } from "~/composables/use-formatters";
   const { openDialog } = useDialog();
 
   const { t } = useI18n();
@@ -42,7 +46,48 @@
 
   // Settings state
   const collectionName = ref<string>("Personal Inventory");
-  const saved = ref(false);
+
+  // Currency / format moved here from profile (previously named "group settings")
+
+  const userApi = useUserApi();
+
+  const currencies = computedAsync(async () => {
+    const resp = await userApi.group.currencies();
+    if (resp.error) {
+      toast.error("Failed to load currencies");
+      return [];
+    }
+
+    return resp.data;
+  });
+
+  const currency = ref({ code: "USD", name: "United States Dollar", local: "en-US", symbol: "$", decimals: 2 });
+  const currencyExample = ref("$1,000.00");
+
+  // load current group/collection settings so we can sync name and currency
+  const { data: group } = useAsyncData(async () => {
+    const { data } = await userApi.group.get();
+    return data;
+  });
+
+  // Sync initial values from group
+  watch(group, () => {
+    if (!group.value) return;
+    collectionName.value = group.value.name || collectionName.value;
+    const found = currencies.value?.find((c: { code: string }) => c.code === group.value?.currency);
+    if (found) currency.value = found;
+  });
+
+  // Update example when currency changes
+  watch(
+    currency,
+    async () => {
+      if (currency.value) {
+        currencyExample.value = await fmtCurrencyAsync(1000, currency.value.code, getLocaleCode());
+      }
+    },
+    { immediate: true }
+  );
 
   // invite inputs (moved to dialog)
 
@@ -84,10 +129,27 @@
   }
 
   function saveSettings() {
-    // Stub: persist settings to API when implemented
-    console.log("Saving collection settings", collectionName.value);
-    saved.value = true;
-    setTimeout(() => (saved.value = false), 2000);
+    // Persist collection (group) settings
+    (async () => {
+      try {
+        const { error } = await userApi.group.update({ name: collectionName.value, currency: currency.value.code });
+        if (error) {
+          toast.error("Failed to save collection settings");
+          return;
+        }
+
+        // refresh handled by parent route data; no explicit refresh here
+        toast.success("Collection settings saved");
+      } catch (e) {
+        toast.error("Failed to save collection settings");
+      }
+    })();
+  }
+
+  function handleCurrencySelect(value: unknown) {
+    const code = String(value ?? "");
+    const newCurrency = currencies.value?.find((c: { code: string }) => c.code === code);
+    if (newCurrency) currency.value = newCurrency;
   }
 </script>
 
@@ -195,7 +257,7 @@
             <div class="w-56">
               <Button
                 class="w-full"
-                @click="openDialog(DialogID.CreateInvite, { onClose: () => (invites.value = api.getInvites()) })"
+                @click="openDialog(DialogID.CreateInvite, { onClose: () => (invites = api.getInvites()) })"
               >
                 <PlusCircle class="mr-2 size-4" /> Generate Invite
               </Button>
@@ -207,18 +269,31 @@
       <Card v-if="page == 3" class="p-4">
         <h3 class="text-lg font-semibold">Collection Settings</h3>
 
-        <div class="mt-4 grid items-end gap-4 md:grid-cols-2">
+        <div class="mt-4 flex flex-col gap-4">
           <div class="flex flex-col gap-2">
             <Label for="collection-name">Name</Label>
             <Input id="collection-name" v-model="collectionName" placeholder="Collection name" />
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <Label for="currency">{{ $t("profile.currency_format") }}</Label>
+            <Select id="currency" :model-value="currency.code" @update:model-value="handleCurrencySelect">
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem v-for="c in currencies" :key="c.code" :value="c.code">
+                  {{ c.name }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <p class="m-2 text-sm">{{ $t("profile.example") }}: {{ currencyExample }}</p>
           </div>
 
           <div class="flex items-end">
             <Button class="w-full" @click="saveSettings">Save</Button>
           </div>
         </div>
-
-        <p v-if="saved" class="mt-3 text-sm text-green-600">Saved</p>
       </Card>
     </BaseContainer>
   </div>
