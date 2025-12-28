@@ -248,7 +248,7 @@
         }
 
         const apiResult = await api.actions.wipeInventory({
-          wipeLabels: result.wipeLabels,
+          wipeTags: result.wipeTags,
           wipeLocations: result.wipeLocations,
           wipeMaintenance: result.wipeMaintenance,
         });

@@ -31,12 +31,12 @@ test.describe("Wipe Inventory E2E Test", () => {
     await expect(page.locator("text=Wipe Inventory").first()).toBeVisible();
 
     // Verify all checkboxes are present
-    await expect(page.locator("input#wipe-labels-checkbox")).toBeVisible();
+    await expect(page.locator("input#wipe-tags-checkbox")).toBeVisible();
     await expect(page.locator("input#wipe-locations-checkbox")).toBeVisible();
     await expect(page.locator("input#wipe-maintenance-checkbox")).toBeVisible();
 
     // Verify labels for checkboxes
-    await expect(page.locator("label[for='wipe-labels-checkbox']")).toBeVisible();
+    await expect(page.locator("label[for='wipe-tags-checkbox']")).toBeVisible();
     await expect(page.locator("label[for='wipe-locations-checkbox']")).toBeVisible();
     await expect(page.locator("label[for='wipe-maintenance-checkbox']")).toBeVisible();
 
@@ -52,13 +52,13 @@ test.describe("Wipe Inventory E2E Test", () => {
     console.log("✅ Screenshot saved: wipe-inventory-modal-initial.png");
 
     // Check all three options
-    await page.check("input#wipe-labels-checkbox");
+    await page.check("input#wipe-tags-checkbox");
     await page.check("input#wipe-locations-checkbox");
     await page.check("input#wipe-maintenance-checkbox");
     await page.waitForTimeout(500);
 
     // Verify checkboxes are checked
-    await expect(page.locator("input#wipe-labels-checkbox")).toBeChecked();
+    await expect(page.locator("input#wipe-tags-checkbox")).toBeChecked();
     await expect(page.locator("input#wipe-locations-checkbox")).toBeChecked();
     await expect(page.locator("input#wipe-maintenance-checkbox")).toBeChecked();
 
@@ -89,7 +89,7 @@ test.describe("Wipe Inventory E2E Test", () => {
 
     console.log("✅ Test completed successfully!");
     console.log("✅ Wipe Inventory dialog opened correctly");
-    console.log("✅ All three options (labels, locations, maintenance) are available");
+    console.log("✅ All three options (tags, locations, maintenance) are available");
     console.log("✅ Confirm button triggers the action");
     console.log("✅ Dialog closes after confirmation");
   });

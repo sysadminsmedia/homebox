@@ -99,7 +99,7 @@ func (ctrl *V1Controller) HandleCreateMissingThumbnails() errchain.HandlerFunc {
 
 // WipeInventoryOptions represents the options for wiping inventory
 type WipeInventoryOptions struct {
-	WipeLabels      bool `json:"wipeLabels"`
+	WipeTags      bool `json:"wipeTags"`
 	WipeLocations   bool `json:"wipeLocations"`
 	WipeMaintenance bool `json:"wipeMaintenance"`
 }
@@ -132,13 +132,13 @@ func (ctrl *V1Controller) HandleWipeInventory() errchain.HandlerFunc {
 		if err := server.Decode(r, &options); err != nil {
 			// If no body provided, use default (false for all)
 			options = WipeInventoryOptions{
-				WipeLabels:      false,
+				WipeTags:      false,
 				WipeLocations:   false,
 				WipeMaintenance: false,
 			}
 		}
 		
-		totalCompleted, err := ctrl.repo.Items.WipeInventory(ctx, ctx.GID, options.WipeLabels, options.WipeLocations, options.WipeMaintenance)
+		totalCompleted, err := ctrl.repo.Items.WipeInventory(ctx, ctx.GID, options.WipeTags, options.WipeLocations, options.WipeMaintenance)
 		if err != nil {
 			log.Err(err).Str("action_ref", "wipe inventory").Msg("failed to run action")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
@@ -146,7 +146,7 @@ func (ctrl *V1Controller) HandleWipeInventory() errchain.HandlerFunc {
 		
 		// Publish mutation events for wiped resources
 		if ctrl.bus != nil {
-			if options.WipeLabels {
+			if options.WipeTags {
 				ctrl.bus.Publish(eventbus.EventLabelMutation, eventbus.GroupMutationEvent{GID: ctx.GID})
 			}
 			if options.WipeLocations {

@@ -39,8 +39,8 @@ export function statCardData(api: UserClient) {
         type: "number",
       },
       {
-        label: t("home.total_labels"),
-        value: statistics.value?.totalLabels || 0,
+        label: t("home.total_tags"),
+        value: statistics.value?.totalTags || 0,
         type: "number",
       },
     ] as StatCard[];

@@ -9,7 +9,7 @@
     <OutdatedModal v-if="status" :status="status" />
     <ItemCreateModal />
     <WipeInventoryDialog />
-    <LabelCreateModal />
+    <TagCreateModal />
     <LocationCreateModal />
     <ItemBarcodeModal />
     <AppQuickMenuModal :actions="quickMenuActions" />
@@ -172,7 +172,7 @@
 <script lang="ts" setup>
   import { useI18n } from "vue-i18n";
   import DOMPurify from "dompurify";
-  import { useLabelStore } from "~~/stores/labels";
+  import { useTagStore } from "~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
 
   import MdiHome from "~icons/mdi/home";
@@ -219,7 +219,7 @@
   import ItemCreateModal from "~/components/Item/CreateModal.vue";
   import WipeInventoryDialog from "~/components/WipeInventoryDialog.vue";
 
-  import LabelCreateModal from "~/components/Label/CreateModal.vue";
+  import TagCreateModal from "~/components/Tag/CreateModal.vue";
   import LocationCreateModal from "~/components/Location/CreateModal.vue";
   import ItemBarcodeModal from "~/components/Item/BarcodeModal.vue";
   import AppQuickMenuModal from "~/components/App/QuickMenuModal.vue";
@@ -303,9 +303,9 @@
     },
     {
       id: 2,
-      name: computed(() => t("menu.create_label")),
+      name: computed(() => t("menu.create_tag")),
       shortcut: "Shift+2",
-      dialogId: DialogID.CreateLabel,
+      dialogId: DialogID.CreateTag,
     },
   ];
 
@@ -377,8 +377,8 @@
     })),
   ]);
 
-  const labelStore = useLabelStore();
-  labelStore.ensureAllLabelsFetched();
+  const tagStore = useTagStore();
+  tagStore.ensureAllTagsFetched();
 
   const locationStore = useLocationStore();
   locationStore.ensureLocationsFetched();
@@ -388,8 +388,8 @@
     locationStore.refreshTree();
   });
 
-  onServerEvent(ServerEvent.LabelMutation, () => {
-    labelStore.refresh();
+  onServerEvent(ServerEvent.TagMutation, () => {
+    tagStore.refresh();
   });
 
   onServerEvent(ServerEvent.LocationMutation, () => {
