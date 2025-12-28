@@ -719,6 +719,9 @@ definitions:
       created_at:
         description: CreatedAt holds the value of the "created_at" field.
         type: string
+      default_group_id:
+        description: DefaultGroupID holds the value of the "default_group_id" field.
+        type: string
       edges:
         allOf:
         - $ref: '#/definitions/ent.UserEdges'
@@ -761,10 +764,11 @@ definitions:
         items:
           $ref: '#/definitions/ent.AuthTokens'
         type: array
-      group:
-        allOf:
-        - $ref: '#/definitions/ent.Group'
-        description: Group holds the value of the group edge.
+      groups:
+        description: Groups holds the value of the groups edge.
+        items:
+          $ref: '#/definitions/ent.Group'
+        type: array
       notifiers:
         description: Notifiers holds the value of the notifiers edge.
         items:
@@ -1660,12 +1664,14 @@ definitions:
     type: object
   repo.UserOut:
     properties:
+      defaultGroupId:
+        type: string
       email:
         type: string
-      groupId:
-        type: string
-      groupName:
-        type: string
+      groupIds:
+        items:
+          type: string
+        type: array
       id:
         type: string
       isOwner:
@@ -1867,6 +1873,15 @@ definitions:
       token:
         type: string
     type: object
+  v1.WipeInventoryOptions:
+    properties:
+      wipeLabels:
+        type: boolean
+      wipeLocations:
+        type: boolean
+      wipeMaintenance:
+        type: boolean
+    type: object
   v1.Wrapped:
     properties:
       item: {}
@@ -1945,6 +1960,27 @@ paths:
       security:
       - Bearer: []
       summary: Set Primary Photos
+      tags:
+      - Actions
+  /v1/actions/wipe-inventory:
+    post:
+      description: Deletes all items in the inventory
+      parameters:
+      - description: Wipe options
+        in: body
+        name: options
+        schema:
+          $ref: '#/definitions/v1.WipeInventoryOptions'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ActionAmountResult'
+      security:
+      - Bearer: []
+      summary: Wipe Inventory
       tags:
       - Actions
   /v1/actions/zero-item-time-fields:

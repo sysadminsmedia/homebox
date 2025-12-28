@@ -508,6 +508,8 @@ export interface EntUser {
   activated_on: string;
   /** CreatedAt holds the value of the "created_at" field. */
   created_at: string;
+  /** DefaultGroupID holds the value of the "default_group_id" field. */
+  default_group_id: string;
   /**
    * Edges holds the relations/edges for other nodes in the graph.
    * The values are being populated by the UserQuery when eager-loading is set.
@@ -536,8 +538,8 @@ export interface EntUser {
 export interface EntUserEdges {
   /** AuthTokens holds the value of the auth_tokens edge. */
   auth_tokens: EntAuthTokens[];
-  /** Group holds the value of the group edge. */
-  group: EntGroup;
+  /** Groups holds the value of the groups edge. */
+  groups: EntGroup[];
   /** Notifiers holds the value of the notifiers edge. */
   notifiers: EntNotifier[];
 }
@@ -1027,9 +1029,9 @@ export interface TreeItem {
 }
 
 export interface UserOut {
+  defaultGroupId: string;
   email: string;
-  groupId: string;
-  groupName: string;
+  groupIds: string[];
   id: string;
   isOwner: boolean;
   isSuperuser: boolean;
@@ -1148,6 +1150,12 @@ export interface TokenResponse {
   attachmentToken: string;
   expiresAt: Date | string;
   token: string;
+}
+
+export interface WipeInventoryOptions {
+  wipeLabels: boolean;
+  wipeLocations: boolean;
+  wipeMaintenance: boolean;
 }
 
 export interface Wrapped {

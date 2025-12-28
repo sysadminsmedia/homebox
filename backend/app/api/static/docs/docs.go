@@ -118,6 +118,41 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/actions/wipe-inventory": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Deletes all items in the inventory",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Actions"
+                ],
+                "summary": "Wipe Inventory",
+                "parameters": [
+                    {
+                        "description": "Wipe options",
+                        "name": "options",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/v1.WipeInventoryOptions"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ActionAmountResult"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/actions/zero-item-time-fields": {
             "post": {
                 "security": [
@@ -3494,6 +3529,10 @@ const docTemplate = `{
                     "description": "CreatedAt holds the value of the \"created_at\" field.",
                     "type": "string"
                 },
+                "default_group_id": {
+                    "description": "DefaultGroupID holds the value of the \"default_group_id\" field.",
+                    "type": "string"
+                },
                 "edges": {
                     "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the UserQuery when eager-loading is set.",
                     "allOf": [
@@ -3554,13 +3593,12 @@ const docTemplate = `{
                         "$ref": "#/definitions/ent.AuthTokens"
                     }
                 },
-                "group": {
-                    "description": "Group holds the value of the group edge.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.Group"
-                        }
-                    ]
+                "groups": {
+                    "description": "Groups holds the value of the groups edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Group"
+                    }
                 },
                 "notifiers": {
                     "description": "Notifiers holds the value of the notifiers edge.",
@@ -4871,14 +4909,17 @@ const docTemplate = `{
         "repo.UserOut": {
             "type": "object",
             "properties": {
+                "defaultGroupId": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
-                "groupId": {
-                    "type": "string"
-                },
-                "groupName": {
-                    "type": "string"
+                "groupIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "id": {
                     "type": "string"
@@ -5181,6 +5222,20 @@ const docTemplate = `{
                 },
                 "token": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.WipeInventoryOptions": {
+            "type": "object",
+            "properties": {
+                "wipeLabels": {
+                    "type": "boolean"
+                },
+                "wipeLocations": {
+                    "type": "boolean"
+                },
+                "wipeMaintenance": {
+                    "type": "boolean"
                 }
             }
         },
