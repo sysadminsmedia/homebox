@@ -15,28 +15,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
         with:
           fetch-depth: 0
 
       - name: Install Task
-        uses: arduino/setup-task@v1
+        uses: arduino/setup-task@b91d5d2c96a56797b48ac1e0e89220bf64044611
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c
         with:
-          go-version: "1.23"
+          go-version: "1.24"
           cache-dependency-path: backend/go.mod
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f
         with:
           node-version: lts/*
 
-      - uses: pnpm/action-setup@v3.0.0
-        with:
-          version: 9.12.2
+      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
 
       - name: Install dependencies
         run: pnpm install
@@ -49,7 +47,7 @@ jobs:
       - name: Run E2E Tests
         run: task test:e2e -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         name: Upload partial Playwright report
         if: ${{ !cancelled() }}
         with:
@@ -64,20 +62,18 @@ jobs:
     name: Merge Playwright Reports
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+      - uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f
         with:
           node-version: lts/*
-      - uses: pnpm/action-setup@v3.0.0
-        with:
-          version: 9.12.2
+      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
 
       - name: Install dependencies
         run: pnpm install
         working-directory: frontend
 
       - name: Download blob reports from GitHub Actions Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
           path: frontend/all-blob-reports
           pattern: blob-report-*
@@ -88,7 +84,7 @@ jobs:
         working-directory: frontend
 
       - name: Upload HTML report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: html-report--attempt-${{ github.run_attempt }}
           path: frontend/playwright-report
