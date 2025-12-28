@@ -228,20 +228,25 @@
   }
 
   async function wipeInventory() {
-    const { isCanceled } = await confirm.open(t("tools.actions_set.wipe_inventory_confirm"));
-
-    if (isCanceled) {
-      return;
-    }
-
-    const result = await api.actions.wipeInventory();
-
-    if (result.error) {
-      toast.error(t("tools.toast.failed_wipe_inventory"));
-      return;
-    }
-
-    toast.success(t("tools.toast.wipe_inventory_success", { results: result.data.completed }));
+    openDialog(DialogID.WipeInventory, {
+      onClose: async (result) => {
+        if (!result) {
+          return;
+        }
+        
+        const apiResult = await api.actions.wipeInventory({
+          wipeLabels: result.wipeLabels,
+          wipeLocations: result.wipeLocations,
+        });
+        
+        if (apiResult.error) {
+          toast.error(t("tools.toast.failed_wipe_inventory"));
+          return;
+        }
+        
+        toast.success(t("tools.toast.wipe_inventory_success", { results: apiResult.data.completed }));
+      },
+    });
   }
 </script>
 

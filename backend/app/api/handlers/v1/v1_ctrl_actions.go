@@ -96,12 +96,19 @@ func (ctrl *V1Controller) HandleCreateMissingThumbnails() errchain.HandlerFunc {
 	return actionHandlerFactory("create missing thumbnails", ctrl.repo.Attachments.CreateMissingThumbnails)
 }
 
+// WipeInventoryOptions represents the options for wiping inventory
+type WipeInventoryOptions struct {
+	WipeLabels    bool `json:"wipeLabels"`
+	WipeLocations bool `json:"wipeLocations"`
+}
+
 // HandleWipeInventory godoc
 //
 //	@Summary		Wipe Inventory
 //	@Description	Deletes all items in the inventory
 //	@Tags			Actions
 //	@Produce		json
+//	@Param			options	body	WipeInventoryOptions	false	"Wipe options"
 //	@Success		200	{object}	ActionAmountResult
 //	@Router			/v1/actions/wipe-inventory [Post]
 //	@Security		Bearer
@@ -111,6 +118,29 @@ func (ctrl *V1Controller) HandleWipeInventory() errchain.HandlerFunc {
 			return validate.NewRequestError(errors.New("wipe inventory is not allowed in demo mode"), http.StatusForbidden)
 		}
 		
-		return actionHandlerFactory("wipe inventory", ctrl.repo.Items.WipeInventory)(w, r)
+		ctx := services.NewContext(r.Context())
+		
+		// Check if user is owner
+		if !ctx.User.IsOwner {
+			return validate.NewRequestError(errors.New("only group owners can wipe inventory"), http.StatusForbidden)
+		}
+		
+		// Parse options from request body
+		var options WipeInventoryOptions
+		if err := server.Decode(r, &options); err != nil {
+			// If no body provided, use default (false for both)
+			options = WipeInventoryOptions{
+				WipeLabels:    false,
+				WipeLocations: false,
+			}
+		}
+		
+		totalCompleted, err := ctrl.repo.Items.WipeInventory(ctx, ctx.GID, options.WipeLabels, options.WipeLocations)
+		if err != nil {
+			log.Err(err).Str("action_ref", "wipe inventory").Msg("failed to run action")
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+		
+		return server.JSON(w, http.StatusOK, ActionAmountResult{Completed: totalCompleted})
 	}
 }

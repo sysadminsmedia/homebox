@@ -809,7 +809,7 @@ func (e *ItemsRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID) 
 	return err
 }
 
-func (e *ItemsRepository) WipeInventory(ctx context.Context, gid uuid.UUID) (int, error) {
+func (e *ItemsRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wipeLabels bool, wipeLocations bool) (int, error) {
 	// Get all items for the group
 	items, err := e.db.Item.Query().
 		Where(item.HasGroupWith(group.ID(gid))).
@@ -848,6 +848,26 @@ func (e *ItemsRepository) WipeInventory(ctx context.Context, gid uuid.UUID) (int
 
 		// Only increment counter if deletion succeeded
 		deleted++
+	}
+
+	// Wipe labels if requested
+	if wipeLabels {
+		labelCount, err := e.db.Label.Delete().Where(label.HasGroupWith(group.ID(gid))).Exec(ctx)
+		if err != nil {
+			log.Err(err).Msg("failed to delete labels during wipe inventory")
+		} else {
+			log.Info().Int("count", labelCount).Msg("deleted labels during wipe inventory")
+		}
+	}
+
+	// Wipe locations if requested
+	if wipeLocations {
+		locationCount, err := e.db.Location.Delete().Where(location.HasGroupWith(group.ID(gid))).Exec(ctx)
+		if err != nil {
+			log.Err(err).Msg("failed to delete locations during wipe inventory")
+		} else {
+			log.Info().Int("count", locationCount).Msg("deleted locations during wipe inventory")
+		}
 	}
 
 	e.publishMutationEvent(gid)

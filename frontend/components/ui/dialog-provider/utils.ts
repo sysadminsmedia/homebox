@@ -26,6 +26,7 @@ export enum DialogID {
   UpdateLocation = "update-location",
   UpdateTemplate = "update-template",
   ItemChangeDetails = "item-table-updater",
+  WipeInventory = "wipe-inventory",
 }
 
 /**
@@ -71,6 +72,7 @@ export type DialogResultMap = {
   [DialogID.ItemImage]?: { action: "delete"; id: string };
   [DialogID.EditMaintenance]?: boolean;
   [DialogID.ItemChangeDetails]?: boolean;
+  [DialogID.WipeInventory]?: { wipeLabels: boolean; wipeLocations: boolean };
 };
 
 /** Helpers to split IDs by requirement */
