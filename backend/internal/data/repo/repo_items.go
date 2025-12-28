@@ -809,7 +809,7 @@ func (e *ItemsRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID) 
 	return err
 }
 
-func (e *ItemsRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wipeLabels bool, wipeLocations bool) (int, error) {
+func (e *ItemsRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wipeLabels bool, wipeLocations bool, wipeMaintenance bool) (int, error) {
 	// Get all items for the group
 	items, err := e.db.Item.Query().
 		Where(item.HasGroupWith(group.ID(gid))).
@@ -869,6 +869,20 @@ func (e *ItemsRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wipe
 		} else {
 			log.Info().Int("count", locationCount).Msg("deleted locations during wipe inventory")
 			deleted += locationCount
+		}
+	}
+
+	// Wipe maintenance records if requested
+	if wipeMaintenance {
+		// Maintenance entries are linked to items, so we query by items in the group
+		maintenanceCount, err := e.db.MaintenanceEntry.Delete().
+			Where(maintenanceentry.HasItemWith(item.HasGroupWith(group.ID(gid)))).
+			Exec(ctx)
+		if err != nil {
+			log.Err(err).Msg("failed to delete maintenance entries during wipe inventory")
+		} else {
+			log.Info().Int("count", maintenanceCount).Msg("deleted maintenance entries during wipe inventory")
+			deleted += maintenanceCount
 		}
 	}
 

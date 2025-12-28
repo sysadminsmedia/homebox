@@ -740,6 +740,7 @@
             "wipe_inventory_confirm": "Are you sure you want to wipe your entire inventory? This will delete all items and cannot be undone.",
             "wipe_inventory_labels": "Also wipe all labels (tags)",
             "wipe_inventory_locations": "Also wipe all locations",
+            "wipe_inventory_maintenance": "Also wipe all maintenance records",
             "wipe_inventory_note": "Note: Only group owners can perform this action.",
             "wipe_inventory_sub": "Permanently deletes all items in your inventory. This action is irreversible and will remove all item data including attachments and photos.",
             "zero_datetimes": "Zero Item Date Times",
@@ -749,7 +750,7 @@
         },
         "actions_sub": "Apply Actions to your inventory in bulk. These are irreversible actions. '<b>'Be careful.'</b>'",
         "demo_mode_error": {
-            "wipe_inventory": "Inventory, labels and locations cannot be wiped whilst Homebox is in demo mode. Please ensure that you are not in demo mode and try again."
+            "wipe_inventory": "Inventory, labels, locations and maintenance records cannot be wiped whilst Homebox is in demo mode. Please ensure that you are not in demo mode and try again."
         },
         "import_export": "Import/Export",
         "import_export_set": {

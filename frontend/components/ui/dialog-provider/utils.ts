@@ -72,7 +72,7 @@ export type DialogResultMap = {
   [DialogID.ItemImage]?: { action: "delete"; id: string };
   [DialogID.EditMaintenance]?: boolean;
   [DialogID.ItemChangeDetails]?: boolean;
-  [DialogID.WipeInventory]?: { wipeLabels: boolean; wipeLocations: boolean };
+  [DialogID.WipeInventory]?: { wipeLabels: boolean; wipeLocations: boolean; wipeMaintenance: boolean };
 };
 
 /** Helpers to split IDs by requirement */

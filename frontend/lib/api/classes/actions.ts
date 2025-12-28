@@ -32,8 +32,8 @@ export class ActionsAPI extends BaseAPI {
     });
   }
 
-  wipeInventory(options?: { wipeLabels?: boolean; wipeLocations?: boolean }) {
-    return this.http.post<{ wipeLabels?: boolean; wipeLocations?: boolean }, ActionAmountResult>({
+  wipeInventory(options?: { wipeLabels?: boolean; wipeLocations?: boolean; wipeMaintenance?: boolean }) {
+    return this.http.post<{ wipeLabels?: boolean; wipeLocations?: boolean; wipeMaintenance?: boolean }, ActionAmountResult>({
       url: route("/actions/wipe-inventory"),
       body: options || {},
     });

@@ -250,6 +250,7 @@
         const apiResult = await api.actions.wipeInventory({
           wipeLabels: result.wipeLabels,
           wipeLocations: result.wipeLocations,
+          wipeMaintenance: result.wipeMaintenance,
         });
         
         if (apiResult.error) {

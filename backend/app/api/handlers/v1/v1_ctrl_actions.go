@@ -98,8 +98,9 @@ func (ctrl *V1Controller) HandleCreateMissingThumbnails() errchain.HandlerFunc {
 
 // WipeInventoryOptions represents the options for wiping inventory
 type WipeInventoryOptions struct {
-	WipeLabels    bool `json:"wipeLabels"`
-	WipeLocations bool `json:"wipeLocations"`
+	WipeLabels      bool `json:"wipeLabels"`
+	WipeLocations   bool `json:"wipeLocations"`
+	WipeMaintenance bool `json:"wipeMaintenance"`
 }
 
 // HandleWipeInventory godoc
@@ -128,14 +129,15 @@ func (ctrl *V1Controller) HandleWipeInventory() errchain.HandlerFunc {
 		// Parse options from request body
 		var options WipeInventoryOptions
 		if err := server.Decode(r, &options); err != nil {
-			// If no body provided, use default (false for both)
+			// If no body provided, use default (false for all)
 			options = WipeInventoryOptions{
-				WipeLabels:    false,
-				WipeLocations: false,
+				WipeLabels:      false,
+				WipeLocations:   false,
+				WipeMaintenance: false,
 			}
 		}
 		
-		totalCompleted, err := ctrl.repo.Items.WipeInventory(ctx, ctx.GID, options.WipeLabels, options.WipeLocations)
+		totalCompleted, err := ctrl.repo.Items.WipeInventory(ctx, ctx.GID, options.WipeLabels, options.WipeLocations, options.WipeMaintenance)
 		if err != nil {
 			log.Err(err).Str("action_ref", "wipe inventory").Msg("failed to run action")
 			return validate.NewRequestError(err, http.StatusInternalServerError)

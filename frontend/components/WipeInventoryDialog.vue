@@ -32,6 +32,18 @@
             {{ $t("tools.actions_set.wipe_inventory_locations") }}
           </label>
         </div>
+        
+        <div class="flex items-center space-x-2">
+          <input
+            id="wipe-maintenance-checkbox"
+            v-model="wipeMaintenance"
+            type="checkbox"
+            class="h-4 w-4 rounded border-gray-300"
+          />
+          <label for="wipe-maintenance-checkbox" class="text-sm font-medium cursor-pointer">
+            {{ $t("tools.actions_set.wipe_inventory_maintenance") }}
+          </label>
+        </div>
       </div>
       
       <p class="text-sm text-gray-600">
@@ -57,13 +69,15 @@
   const dialog = ref(false);
   const wipeLabels = ref(false);
   const wipeLocations = ref(false);
+  const wipeMaintenance = ref(false);
   
-  let onCloseCallback: ((result?: { wipeLabels: boolean; wipeLocations: boolean } | undefined) => void) | undefined;
+  let onCloseCallback: ((result?: { wipeLabels: boolean; wipeLocations: boolean; wipeMaintenance: boolean } | undefined) => void) | undefined;
   
-  registerOpenDialogCallback(DialogID.WipeInventory, (params?: { onClose?: (result?: { wipeLabels: boolean; wipeLocations: boolean } | undefined) => void }) => {
+  registerOpenDialogCallback(DialogID.WipeInventory, (params?: { onClose?: (result?: { wipeLabels: boolean; wipeLocations: boolean; wipeMaintenance: boolean } | undefined) => void }) => {
     dialog.value = true;
     wipeLabels.value = false;
     wipeLocations.value = false;
+    wipeMaintenance.value = false;
     onCloseCallback = params?.onClose;
   });
   
@@ -78,6 +92,7 @@
     const result = {
       wipeLabels: wipeLabels.value,
       wipeLocations: wipeLocations.value,
+      wipeMaintenance: wipeMaintenance.value,
     };
     closeDialog(DialogID.WipeInventory, result);
     onCloseCallback?.(result);
