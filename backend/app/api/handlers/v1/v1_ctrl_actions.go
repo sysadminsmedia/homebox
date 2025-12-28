@@ -105,5 +105,11 @@ func (ctrl *V1Controller) HandleCreateMissingThumbnails() errchain.HandlerFunc {
 //	@Router			/v1/actions/wipe-inventory [Post]
 //	@Security		Bearer
 func (ctrl *V1Controller) HandleWipeInventory() errchain.HandlerFunc {
-	return actionHandlerFactory("wipe inventory", ctrl.repo.Items.WipeInventory)
+	return func(w http.ResponseWriter, r *http.Request) error {
+		if ctrl.isDemo {
+			return validate.NewRequestError(errors.New("wipe inventory is not allowed in demo mode"), http.StatusForbidden)
+		}
+		
+		return actionHandlerFactory("wipe inventory", ctrl.repo.Items.WipeInventory)(w, r)
+	}
 }
