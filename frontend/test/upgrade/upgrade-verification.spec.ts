@@ -145,17 +145,17 @@ test.describe("HomeBox Upgrade Verification", () => {
     await page.waitForSelector("body", { state: "visible" });
 
     // Try to find tags link in navigation
-    const labelsLink = page.locator("a[href*='tag'], button:has-text('Labels')").first();
+    const tagsLink = page.locator("a[href*='tag'], button:has-text('Tags')").first();
 
-    if ((await labelsLink.count()) > 0) {
-      await labelsLink.click();
+    if ((await tagsLink.count()) > 0) {
+      await tagsLink.click();
       await page.waitForLoadState("networkidle");
 
       const pageContent = await page.textContent("body");
 
       // Verify some of our test tags exist
       expect(pageContent).toContain("Electronics");
-      console.log("✓ Labels verified");
+      console.log("✓ Tags verified");
     } else {
       console.log("! Could not find tags navigation - skipping detailed check");
     }
@@ -317,7 +317,7 @@ test.describe("HomeBox Upgrade Verification", () => {
     // Common selectors for theme toggles
     const themeToggle = page
       .locator(
-        "button[aria-tag*='theme'], button[aria-tag*='Theme'], " +
+        "button[aria-label*='theme'], button[aria-label*='Theme'], " +
           "button:has-text('Dark'), button:has-text('Light'), " +
           "[data-theme-toggle], .theme-toggle"
       )

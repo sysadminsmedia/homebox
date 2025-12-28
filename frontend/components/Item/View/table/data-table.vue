@@ -197,7 +197,7 @@
                   :model-value="table.getColumn(colId)?.getIsVisible()"
                   @update:model-value="toggleHeader(colId)"
                 />
-                <tag class="text-sm" :for="colId"> {{ $t(`items.${camelToSnakeCase(colId)}`) }} </tag>
+                <label class="text-sm" :for="colId"> {{ $t(`items.${camelToSnakeCase(colId)}`) }} </label>
               </div>
             </div>
           </div>

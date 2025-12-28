@@ -542,10 +542,10 @@
             v-model="editState.primary"
             :tag="$t('items.edit.edit_attachment_dialog.primary_photo')"
           />
-          <tag class="cursor-pointer text-sm" for="primary">
+          <label class="cursor-pointer text-sm" for="primary">
             <span class="font-semibold">{{ $t("items.edit.edit_attachment_dialog.primary_photo") }}</span>
             {{ $t("items.edit.edit_attachment_dialog.primary_photo_sub") }}
-          </tag>
+          </label>
         </div>
 
         <DialogFooter>

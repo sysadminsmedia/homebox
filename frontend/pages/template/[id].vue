@@ -10,7 +10,7 @@
   import { Button } from "@/components/ui/button";
   import { Separator } from "@/components/ui/separator";
   import { Switch } from "@/components/ui/switch";
-  import { Label } from "@/components/ui/tag";
+  import { Label } from "@/components/ui/label";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
   import FormTextField from "~/components/Form/TextField.vue";
   import FormTextArea from "~/components/Form/TextArea.vue";
