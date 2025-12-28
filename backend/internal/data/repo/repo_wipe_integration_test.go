@@ -14,7 +14,7 @@ import (
 // TestWipeInventory_Integration tests the complete wipe inventory flow
 func TestWipeInventory_Integration(t *testing.T) {
 	// Create test data: locations, labels, items with maintenance
-	
+
 	// 1. Create locations
 	loc1, err := tRepos.Locations.Create(context.Background(), tGroup.ID, LocationCreate{
 		Name:        "Test Garage",
