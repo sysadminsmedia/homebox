@@ -131,6 +131,13 @@
 
   const api = useUserApi();
   const confirm = useConfirm();
+  
+  // Fetch status to check for demo mode
+  const pubApi = usePublicApi();
+  const { data: status } = useAsyncData(async () => {
+    const { data } = await pubApi.status();
+    return data;
+  });
 
   function getBillOfMaterials() {
     const url = api.reports.billOfMaterialsURL();
@@ -228,6 +235,12 @@
   }
 
   async function wipeInventory() {
+    // Check if in demo mode
+    if (status.value?.demo) {
+      await confirm.open(t("tools.demo_mode_error.wipe_inventory"));
+      return;
+    }
+    
     openDialog(DialogID.WipeInventory, {
       onClose: async (result) => {
         if (!result) {
