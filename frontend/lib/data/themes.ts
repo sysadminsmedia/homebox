@@ -31,125 +31,125 @@ export type DaisyTheme =
   | "winter";
 
 export type ThemeOption = {
-  tag: string;
+  label: string;
   value: DaisyTheme;
 };
 
 export const themes: ThemeOption[] = [
   {
-    tag: "Homebox",
+    label: "Homebox",
     value: "homebox",
   },
   {
-    tag: "Garden",
+    label: "Garden",
     value: "garden",
   },
   {
-    tag: "Light",
+    label: "Light",
     value: "light",
   },
   {
-    tag: "Cupcake",
+    label: "Cupcake",
     value: "cupcake",
   },
   {
-    tag: "Bumblebee",
+    label: "Bumblebee",
     value: "bumblebee",
   },
   {
-    tag: "Emerald",
+    label: "Emerald",
     value: "emerald",
   },
   {
-    tag: "Corporate",
+    label: "Corporate",
     value: "corporate",
   },
   {
-    tag: "Synthwave",
+    label: "Synthwave",
     value: "synthwave",
   },
   {
-    tag: "Retro",
+    label: "Retro",
     value: "retro",
   },
   {
-    tag: "Cyberpunk",
+    label: "Cyberpunk",
     value: "cyberpunk",
   },
   {
-    tag: "Valentine",
+    label: "Valentine",
     value: "valentine",
   },
   {
-    tag: "Halloween",
+    label: "Halloween",
     value: "halloween",
   },
   {
-    tag: "Forest",
+    label: "Forest",
     value: "forest",
   },
   {
-    tag: "Aqua",
+    label: "Aqua",
     value: "aqua",
   },
   {
-    tag: "Lofi",
+    label: "Lofi",
     value: "lofi",
   },
   {
-    tag: "Pastel",
+    label: "Pastel",
     value: "pastel",
   },
   {
-    tag: "Fantasy",
+    label: "Fantasy",
     value: "fantasy",
   },
   {
-    tag: "Wireframe",
+    label: "Wireframe",
     value: "wireframe",
   },
   {
-    tag: "Black",
+    label: "Black",
     value: "black",
   },
   {
-    tag: "Luxury",
+    label: "Luxury",
     value: "luxury",
   },
   {
-    tag: "Dracula",
+    label: "Dracula",
     value: "dracula",
   },
   {
-    tag: "Cmyk",
+    label: "Cmyk",
     value: "cmyk",
   },
   {
-    tag: "Autumn",
+    label: "Autumn",
     value: "autumn",
   },
   {
-    tag: "Business",
+    label: "Business",
     value: "business",
   },
   {
-    tag: "Acid",
+    label: "Acid",
     value: "acid",
   },
   {
-    tag: "Lemonade",
+    label: "Lemonade",
     value: "lemonade",
   },
   {
-    tag: "Night",
+    label: "Night",
     value: "night",
   },
   {
-    tag: "Coffee",
+    label: "Coffee",
     value: "coffee",
   },
   {
-    tag: "Winter",
+    label: "Winter",
     value: "winter",
   },
 ];

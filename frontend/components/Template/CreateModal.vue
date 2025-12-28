@@ -40,7 +40,7 @@
           v-model="form.defaultLocationObject"
           :label="$t('components.template.form.default_location')"
         />
-        <LabelSelector v-model="form.defaultLabelIds" :tags="tags ?? []" />
+        <TagSelector v-model="form.defaultLabelIds" :tags="tags ?? []" />
         <div class="flex items-center gap-4">
           <div class="flex items-center gap-2">
             <Switch id="defaultInsured" v-model:checked="form.defaultInsured" />
@@ -105,7 +105,7 @@
   import { Switch } from "@/components/ui/switch";
   import { Label } from "@/components/ui/label";
   import LocationSelector from "~/components/Location/Selector.vue";
-  import LabelSelector from "~/components/Label/Selector.vue";
+  import LabelSelector from "~/components/Tag/TagSelector.vue";
   import { useTagStore } from "~~/stores/tags";
   import type { LocationSummary } from "~~/lib/api/types/data-contracts";
 

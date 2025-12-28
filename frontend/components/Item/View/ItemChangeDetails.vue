@@ -8,7 +8,7 @@
   import MdiLoading from "~icons/mdi/loading";
   import { toast } from "~/components/ui/sonner";
   import { useI18n } from "vue-i18n";
-  import LabelSelector from "~/components/Label/Selector.vue";
+  import LabelSelector from "~/components/Tag/TagSelector.vue";
 
   const { closeDialog, registerOpenDialogCallback } = useDialog();
 
@@ -146,13 +146,13 @@
         <DialogTitle>{{ $t("components.item.view.change_details.title") }}</DialogTitle>
       </DialogHeader>
       <LocationSelector v-if="enabled.changeLocation" v-model="newLocation" />
-      <LabelSelector
+      <TagSelector
         v-if="enabled.addLabels"
         v-model="addLabels"
         :tags="availableToAddLabels"
         :name="$t('components.item.view.change_details.add_tags')"
       />
-      <LabelSelector
+      <TagSelector
         v-if="enabled.removeLabels"
         v-model="removeLabels"
         :tags="availableToRemoveLabels"

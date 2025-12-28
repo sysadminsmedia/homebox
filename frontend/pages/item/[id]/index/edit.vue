@@ -4,7 +4,7 @@
   import { toast } from "@/components/ui/sonner";
   import type { ItemAttachment, ItemField, ItemOut, ItemUpdate } from "~~/lib/api/types/data-contracts";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
-  import { useTagStore } from "~~/stores/tags";
+  import { useTagStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
   import MdiLoading from "~icons/mdi/loading";
   import MdiDelete from "~icons/mdi/delete";
@@ -27,7 +27,7 @@
   import FormCheckbox from "~/components/Form/Checkbox.vue";
   import LocationSelector from "~/components/Location/Selector.vue";
   import ItemSelector from "~/components/Item/Selector.vue";
-  import LabelSelector from "~/components/Label/Selector.vue";
+  import LabelSelector from "~/components/Tag/TagSelector.vue";
   import BaseCard from "@/components/Base/Card.vue";
   import { Card } from "~/components/ui/card";
   import DropZone from "~/components/global/DropZone.vue";
@@ -49,8 +49,8 @@
   const locationStore = useLocationStore();
   const locations = computed(() => locationStore.allLocations);
 
-  const labelStore = useTagStore();
-  const tags = computed(() => labelStore.tags);
+  const tagStore = useTagStore();
+  const tags = computed(() => tagStore.tags);
 
   const {
     data: nullableItem,
@@ -79,13 +79,13 @@
     return data;
   });
 
-  const item = ref<ItemOut & { tagIds: string[] }>(null as never);
+  const item = ref<ItemOut & { labelIds: string[] }>(null as never);
 
   watchEffect(() => {
     if (nullableItem.value) {
       item.value = {
         ...nullableItem.value,
-        tagIds: nullableItem.value.tags.map(l => l.id) ?? [],
+        labelIds: nullableItem.value.labels.map(l => l.id) ?? [],
       };
     }
   });
@@ -121,7 +121,7 @@
     const payload: ItemUpdate = {
       ...item.value,
       locationId: item.value.location?.id,
-      tagIds: item.value.tagIds,
+      labelIds: item.value.labelIds,
       parentId: parent.value ? parent.value.id : null,
       assetId: item.value.assetId,
       purchasePrice,
@@ -151,7 +151,7 @@
 
   type TextFormField = {
     type: "text" | "textarea" | "markdown";
-    tag: string;
+    label: string;
     ref: NonNullableStringKeys<ItemOut>;
     maxLength?: number;
     minLength?: number;
@@ -159,19 +159,19 @@
 
   type NumberFormField = {
     type: "number";
-    tag: string;
+    label: string;
     ref: NonNullableNumberKeys<ItemOut> | NonNullableStringKeys<ItemOut>;
   };
 
   interface BoolFormField {
     type: "checkbox";
-    tag: string;
+    label: string;
     ref: BooleanKeys<ItemOut>;
   }
 
   type DateFormField = {
     type: "date";
-    tag: string;
+    label: string;
     ref: DateKeys<ItemOut>;
   };
 
@@ -180,59 +180,59 @@
   const mainFields: FormField[] = [
     {
       type: "text",
-      tag: "items.name",
+      label: "items.name",
       ref: "name",
       maxLength: 255,
       minLength: 1,
     },
     {
       type: "number",
-      tag: "items.quantity",
+      label: "items.quantity",
       ref: "quantity",
     },
     {
       type: "markdown",
-      tag: "items.description",
+      label: "items.description",
       ref: "description",
       maxLength: 1000,
     },
     {
       type: "text",
-      tag: "items.serial_number",
+      label: "items.serial_number",
       ref: "serialNumber",
       maxLength: 255,
     },
     {
       type: "text",
-      tag: "items.model_number",
+      label: "items.model_number",
       ref: "modelNumber",
       maxLength: 255,
     },
     {
       type: "text",
-      tag: "items.manufacturer",
+      label: "items.manufacturer",
       ref: "manufacturer",
       maxLength: 255,
     },
     {
       type: "markdown",
-      tag: "items.notes",
+      label: "items.notes",
       ref: "notes",
       maxLength: 1000,
     },
     {
       type: "checkbox",
-      tag: "items.insured",
+      label: "items.insured",
       ref: "insured",
     },
     {
       type: "checkbox",
-      tag: "items.archived",
+      label: "items.archived",
       ref: "archived",
     },
     {
       type: "text",
-      tag: "items.asset_id",
+      label: "items.asset_id",
       ref: "assetId",
     },
   ];
@@ -240,18 +240,18 @@
   const purchaseFields: FormField[] = [
     {
       type: "text",
-      tag: "items.purchased_from",
+      label: "items.purchased_from",
       ref: "purchaseFrom",
       maxLength: 255,
     },
     {
       type: "number",
-      tag: "items.purchase_price",
+      label: "items.purchase_price",
       ref: "purchasePrice",
     },
     {
       type: "date",
-      tag: "items.purchase_date",
+      label: "items.purchase_date",
       ref: "purchaseTime",
     },
   ];
@@ -259,17 +259,17 @@
   const warrantyFields: FormField[] = [
     {
       type: "checkbox",
-      tag: "items.lifetime_warranty",
+      label: "items.lifetime_warranty",
       ref: "lifetimeWarranty",
     },
     {
       type: "date",
-      tag: "items.warranty_expires",
+      label: "items.warranty_expires",
       ref: "warrantyExpires",
     },
     {
       type: "textarea",
-      tag: "items.warranty_details",
+      label: "items.warranty_details",
       ref: "warrantyDetails",
       maxLength: 1000,
     },
@@ -278,18 +278,18 @@
   const soldFields: FormField[] = [
     {
       type: "text",
-      tag: "items.sold_to",
+      label: "items.sold_to",
       ref: "soldTo",
       maxLength: 255,
     },
     {
       type: "number",
-      tag: "items.sold_price",
+      label: "items.sold_price",
       ref: "soldPrice",
     },
     {
       type: "date",
-      tag: "items.sold_at",
+      label: "items.sold_at",
       ref: "soldTime",
     },
   ];
@@ -486,7 +486,7 @@
     const payload: ItemUpdate = {
       ...item.value,
       locationId: item.value.location?.id,
-      tagIds: item.value.tagIds,
+      labelIds: item.value.labelIds,
       parentId: parent.value ? parent.value.id : null,
       assetId: item.value.assetId,
     };
@@ -604,7 +604,7 @@
               <Label class="px-1">{{ $t("items.sync_child_locations") }}</Label>
               <Switch v-model="item.syncChildItemsLocations" @update:model-value="syncChildItemsLocations()" />
             </div>
-            <LabelSelector v-model="item.tagIds" :tags="tags" />
+            <TagSelector v-model="item.tagIds" :tags="tags" />
           </div>
 
           <div class="border-t sm:p-0">
@@ -666,7 +666,7 @@
               :key="`field-${idx}`"
               class="grid grid-cols-2 gap-2 pt-4 md:grid-cols-4"
             >
-              <!-- <FormSelect v-model:value="field.type" tag="Field Type" :items="fieldTypes" value-key="value" /> -->
+              <!-- <FormSelect v-model:value="field.type" label="Field Type" :items="fieldTypes" value-key="value" /> -->
               <FormTextField v-model="field.name" :label="$t('global.name')" />
               <div class="col-span-3 flex items-end">
                 <FormTextField v-model="field.textValue" :label="$t('global.value')" :max-length="500" />

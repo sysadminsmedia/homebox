@@ -1,7 +1,7 @@
 <template>
   <div v-if="!inline" class="flex w-full flex-col gap-1.5">
     <Label :for="id" class="flex w-full px-1">
-      <span>{{ tag }}</span>
+      <span>{{ label }}</span>
       <span class="grow" />
       <span :class="{ 'text-destructive': isLengthInvalid }">
         {{ lengthIndicator }}
@@ -17,7 +17,7 @@
   </div>
   <div v-else class="sm:grid sm:grid-cols-4 sm:items-start sm:gap-4">
     <Label :for="id" class="flex w-full px-1 py-2">
-      <span>{{ tag }}</span>
+      <span>{{ label }}</span>
       <span class="grow" />
       <span :class="{ 'text-destructive': isLengthInvalid }">
         {{ lengthIndicator }}
@@ -36,11 +36,11 @@
 
 <script lang="ts" setup>
   import { computed } from "vue";
-  import { Label } from "~/components/ui/tag";
+  import { Label } from "~/components/ui/label";
   import { Textarea } from "~/components/ui/textarea";
 
   const props = defineProps({
-    tag: {
+    label: {
       type: String,
       required: true,
     },

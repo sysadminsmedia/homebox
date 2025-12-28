@@ -36,7 +36,7 @@
   import ItemImageDialog from "~/components/Item/ImageDialog.vue";
   import ItemDuplicateSettings from "~/components/Item/DuplicateSettings.vue";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-  import LabelChip from "~/components/Label/Chip.vue";
+  import LabelChip from "~/components/Tag/TagChip.vue";
   import DateTime from "~/components/global/DateTime.vue";
   import LabelMaker from "~/components/global/LabelMaker.vue";
   import Markdown from "~/components/global/Markdown.vue";
@@ -684,7 +684,7 @@
                 {{ item ? item.name : "" }}
               </h1>
               <div class="flex flex-wrap gap-2 pb-1">
-                <LabelChip v-for="label in item?.labels || []" :key="label.id" :label="label" size="sm" />
+                <TagChip v-for="label in item?.labels || []" :key="label.id" :label="label" size="sm" />
               </div>
               <div class="flex flex-wrap gap-1 text-wrap text-xs">
                 <div>

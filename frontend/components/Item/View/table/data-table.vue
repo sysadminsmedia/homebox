@@ -18,7 +18,7 @@
   import MdiArrowDown from "~icons/mdi/arrow-down";
   import MdiArrowUp from "~icons/mdi/arrow-up";
   import Checkbox from "~/components/ui/checkbox/Checkbox.vue";
-  import Label from "~/components/ui/tag/Label.vue";
+  import Label from "~/components/ui/label/Label.vue";
   import type { ItemSummary } from "~/lib/api/types/data-contracts";
 
   import TableView from "./table-view.vue";

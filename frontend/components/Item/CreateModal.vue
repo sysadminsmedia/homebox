@@ -153,7 +153,7 @@
         :label="$t('components.item.create_modal.item_description')"
         :max-length="1000"
       />
-      <LabelSelector v-model="form.tags" :tags="tags ?? []" />
+      <TagSelector v-model="form.tags" :tags="tags ?? []" />
       <div class="flex w-full flex-col gap-1.5">
         <Label for="image-create-photo" class="flex w-full px-1">
           {{ $t("components.item.create_modal.item_photo") }}
@@ -289,7 +289,7 @@
   import MdiClose from "~icons/mdi/close";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
   import { useDialog, useDialogHotkey } from "~/components/ui/dialog-provider";
-  import LabelSelector from "~/components/Label/Selector.vue";
+  import LabelSelector from "~/components/Tag/TagSelector.vue";
   import ItemSelector from "~/components/Item/Selector.vue";
   import TemplateSelector from "~/components/Template/Selector.vue";
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "~/components/ui/tooltip";

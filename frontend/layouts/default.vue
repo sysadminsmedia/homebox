@@ -9,7 +9,7 @@
     <OutdatedModal v-if="status" :status="status" />
     <ItemCreateModal />
     <WipeInventoryDialog />
-    <LabelCreateModal />
+    <TagCreateModal />
     <LocationCreateModal />
     <ItemBarcodeModal />
     <AppQuickMenuModal :actions="quickMenuActions" />
@@ -219,7 +219,7 @@
   import ItemCreateModal from "~/components/Item/CreateModal.vue";
   import WipeInventoryDialog from "~/components/WipeInventoryDialog.vue";
 
-  import LabelCreateModal from "~/components/Label/CreateModal.vue";
+  import LabelCreateModal from "~/components/Tag/TagCreateModal.vue";
   import LocationCreateModal from "~/components/Location/CreateModal.vue";
   import ItemBarcodeModal from "~/components/Item/BarcodeModal.vue";
   import AppQuickMenuModal from "~/components/App/QuickMenuModal.vue";

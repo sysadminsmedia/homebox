@@ -865,14 +865,14 @@ func (e *ItemsRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wipe
 		deleted++
 	}
 
-	// Wipe labels if requested
+	// Wipe tags if requested
 	if wipeLabels {
-		labelCount, err := e.db.Label.Delete().Where(label.HasGroupWith(group.ID(gid))).Exec(ctx)
+		tagCount, err := e.db.Tag.Delete().Where(tag.HasGroupWith(group.ID(gid))).Exec(ctx)
 		if err != nil {
-			log.Err(err).Msg("failed to delete labels during wipe inventory")
+			log.Err(err).Msg("failed to delete tags during wipe inventory")
 		} else {
-			log.Info().Int("count", labelCount).Msg("deleted labels during wipe inventory")
-			deleted += labelCount
+			log.Info().Int("count", tagCount).Msg("deleted tags during wipe inventory")
+			deleted += tagCount
 		}
 	}
 

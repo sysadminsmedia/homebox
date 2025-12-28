@@ -18,7 +18,7 @@
   import DateTime from "~/components/global/DateTime.vue";
   import Markdown from "~/components/global/Markdown.vue";
   import LocationSelector from "~/components/Location/Selector.vue";
-  import LabelSelector from "~/components/Label/Selector.vue";
+  import LabelSelector from "~/components/Tag/TagSelector.vue";
   import { useTagStore } from "~~/stores/tags";
   import type { LocationOut } from "~~/lib/api/types/data-contracts";
 
@@ -31,8 +31,8 @@
   const api = useUserApi();
   const confirm = useConfirm();
 
-  const labelStore = useTagStore();
-  const tags = computed(() => labelStore.tags);
+  const tagStore = useTagStore();
+  const tags = computed(() => tagStore.tags);
 
   const templateId = computed<string>(() => route.params.id as string);
 
@@ -193,7 +193,7 @@
             v-model="updateData.defaultLocation"
             :label="$t('components.template.form.default_location')"
           />
-          <LabelSelector v-model="updateData.defaultLabelIds" :tags="tags ?? []" />
+          <TagSelector v-model="updateData.defaultLabelIds" :tags="tags ?? []" />
           <div class="flex items-center gap-4">
             <div class="flex items-center gap-2">
               <Switch id="editInsured" v-model:checked="updateData.defaultInsured" />

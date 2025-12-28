@@ -51,9 +51,9 @@
     </PopoverContent>
   </Popover>
 
-  <!-- Full mode: tag + full-width button -->
+  <!-- Full mode: label + full-width button -->
   <div v-else class="flex flex-col gap-1">
-    <Label :for="id" class="px-1">{{ $t("components.template.selector.tag") }}</Label>
+    <Label :for="id" class="px-1">{{ $t("components.template.selector.label") }}</Label>
 
     <Popover v-model:open="open">
       <PopoverTrigger as-child>
@@ -114,7 +114,7 @@
     CommandList,
     CommandSeparator,
   } from "~/components/ui/command";
-  import { Label } from "~/components/ui/tag";
+  import { Label } from "~/components/ui/label";
   import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
   import { cn } from "~/lib/utils";
   import type { ItemTemplateSummary } from "~~/lib/api/types/data-contracts";

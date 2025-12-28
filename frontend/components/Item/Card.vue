@@ -69,7 +69,7 @@
         </TooltipProvider>
         <Markdown class="mb-2 line-clamp-3 text-ellipsis" :source="item.description" />
         <div class="-mr-1 mt-auto flex flex-wrap justify-end gap-2">
-          <LabelChip v-for="tag in itemLabels" :key="tag.id" :label="tag" size="sm" />
+          <TagChip v-for="tag in itemTags" :key="tag.id" :tag="tag" size="sm" />
         </div>
       </div>
     </NuxtLink>
@@ -103,7 +103,7 @@
     }
   });
 
-  const itemLabels = computed(() => {
+  const itemTags = computed(() => {
     return props.item.tags || [];
   });
 

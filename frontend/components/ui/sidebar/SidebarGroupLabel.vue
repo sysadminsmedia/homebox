@@ -13,7 +13,7 @@
 
 <template>
   <Primitive
-    data-sidebar="group-tag"
+    data-sidebar="group-label"
     :as="as"
     :as-child="asChild"
     :class="

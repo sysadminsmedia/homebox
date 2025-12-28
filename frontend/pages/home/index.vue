@@ -10,7 +10,7 @@
   import StatCard from "~/components/global/StatCard/StatCard.vue";
   import ItemCard from "~/components/Item/Card.vue";
   import LocationCard from "~/components/Location/Card.vue";
-  import LabelChip from "~/components/Label/Chip.vue";
+  import LabelChip from "~/components/Tag/TagChip.vue";
   import Table from "~/components/Item/View/Table.vue";
 
   const { t } = useI18n();
@@ -28,8 +28,8 @@
   const locationStore = useLocationStore();
   const locations = computed(() => locationStore.parentLocations);
 
-  const labelsStore = useTagStore();
-  const tags = computed(() => labelsStore.tags);
+  const tagsStore = useTagStore();
+  const tags = computed(() => tagsStore.tags);
 
   const itemTable = itemsTable(api);
   const stats = statCardData(api);
@@ -69,7 +69,7 @@
         <Subtitle> {{ $t("home.tags") }} </Subtitle>
         <p v-if="tags.length === 0" class="ml-2 text-sm">{{ $t("tags.no_results") }}</p>
         <div v-else class="flex flex-wrap gap-4">
-          <LabelChip v-for="tag in tags" :key="tag.id" size="lg" :tag="tag" class="shadow-md" />
+          <TagChip v-for="tag in tags" :key="tag.id" size="lg" :tag="tag" class="shadow-md" />
         </div>
       </section>
     </BaseContainer>

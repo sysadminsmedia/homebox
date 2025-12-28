@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { computed, onMounted } from "vue";
   import { useI18n } from "vue-i18n";
-  import { Label } from "~/components/ui/tag";
+  import { Label } from "~/components/ui/label";
   import { Button } from "~/components/ui/button";
   import MdiClose from "~icons/mdi/close";
   import MdiDiceMultiple from "~icons/mdi/dice-multiple";
@@ -14,7 +14,7 @@
       required: false,
       default: "",
     },
-    tag: {
+    label: {
       type: String,
       default: "",
     },
@@ -72,7 +72,7 @@
 <template>
   <div v-if="!inline" class="flex w-full flex-col gap-1.5">
     <Label :for="id" class="flex w-full px-1">
-      <span>{{ tag }}</span>
+      <span>{{ label }}</span>
     </Label>
     <div class="flex items-center gap-2">
       <span
@@ -113,7 +113,7 @@
   </div>
   <div v-else class="sm:grid sm:grid-cols-4 sm:items-start sm:gap-4">
     <Label class="flex w-full px-1 py-2" :for="id">
-      <span>{{ tag }}</span>
+      <span>{{ label }}</span>
     </Label>
     <div class="col-span-3 mt-2 flex items-center gap-2">
       <span

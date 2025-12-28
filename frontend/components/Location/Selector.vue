@@ -65,7 +65,7 @@
   import fuzzysort from "fuzzysort";
   import { Button } from "~/components/ui/button";
   import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "~/components/ui/command";
-  import { Label } from "~/components/ui/tag";
+  import { Label } from "~/components/ui/label";
   import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
   import { cn } from "~/lib/utils";
   import type { LocationSummary } from "~~/lib/api/types/data-contracts";
