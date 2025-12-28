@@ -1,4 +1,7 @@
 -- +goose Up
+-- +goose no transaction
+-- Turn off foreign key constraints because otherwise we'll wipe notifiers out of the database when dropping the older users table
+PRAGMA foreign_keys=OFF;
 -- Create user_groups junction table for M:M relationship
 CREATE TABLE IF NOT EXISTS user_groups (
     user_id UUID NOT NULL,
@@ -62,44 +65,4 @@ ALTER TABLE users_new RENAME TO users;
 CREATE UNIQUE INDEX IF NOT EXISTS users_email_key ON users(email);
 CREATE UNIQUE INDEX IF NOT EXISTS users_oidc_issuer_subject_key ON users(oidc_issuer, oidc_subject);
 
--- +goose Down
--- Recreate the old schema
-CREATE TABLE users_old (
-    id UUID NOT NULL,
-    created_at DATETIME NOT NULL,
-    updated_at DATETIME NOT NULL,
-    name TEXT NOT NULL,
-    email TEXT NOT NULL UNIQUE,
-    password TEXT,
-    is_superuser BOOLEAN NOT NULL DEFAULT false,
-    superuser BOOLEAN NOT NULL DEFAULT false,
-    role TEXT NOT NULL DEFAULT 'user',
-    activated_on DATETIME,
-    oidc_issuer TEXT,
-    oidc_subject TEXT,
-    group_users UUID NOT NULL,
-    PRIMARY KEY (id),
-    CONSTRAINT users_groups_users FOREIGN KEY (group_users) REFERENCES groups(id) ON DELETE CASCADE,
-    UNIQUE (oidc_issuer, oidc_subject)
-);
-
--- Copy data back, using the first group from user_groups
-INSERT INTO users_old (
-    id, created_at, updated_at, name, email, password, is_superuser, superuser, role,
-    activated_on, oidc_issuer, oidc_subject, group_users
-)
-SELECT
-    u.id, u.created_at, u.updated_at, u.name, u.email, u.password, u.is_superuser, u.superuser, u.role,
-    u.activated_on, u.oidc_issuer, u.oidc_subject, COALESCE(u.default_group_id, (SELECT group_id FROM user_groups WHERE user_id = u.id LIMIT 1))
-FROM users u;
-
-DROP INDEX IF EXISTS users_email_key;
-DROP INDEX IF EXISTS users_oidc_issuer_subject_key;
-DROP TABLE users;
-ALTER TABLE users_old RENAME TO users;
-
-CREATE UNIQUE INDEX IF NOT EXISTS users_email_key ON users(email);
-CREATE UNIQUE INDEX IF NOT EXISTS users_oidc_issuer_subject_key ON users(oidc_issuer, oidc_subject);
-
-DROP TABLE IF EXISTS user_groups;
-
+PRAGMA foreign_keys=ON;
