@@ -2,6 +2,7 @@ package v1
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	"github.com/google/uuid"
