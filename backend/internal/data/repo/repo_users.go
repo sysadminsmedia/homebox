@@ -20,7 +20,7 @@ type (
 		Name           string    `json:"name"`
 		Email          string    `json:"email"`
 		Password       *string   `json:"password"`
-		IsSuperuser    bool      `json:"isSuperuser"`
+		IsSuperuser    bool      `json:"isSuperUser"`
 		DefaultGroupID uuid.UUID `json:"defaultGroupID"`
 		IsOwner        bool      `json:"isOwner"`
 	}
@@ -91,6 +91,13 @@ func (r *UserRepository) GetOneEmail(ctx context.Context, email string) (UserOut
 	return mapUserOutErr(r.db.User.Query().
 		Where(user.EmailEqualFold(email)).
 		WithGroups().
+		Only(ctx),
+	)
+}
+
+func (r *UserRepository) GetOneEmailNoEdges(ctx context.Context, email string) (UserOut, error) {
+	return mapUserOutErr(r.db.User.Query().
+		Where(user.EmailEqualFold(email)).
 		Only(ctx),
 	)
 }

@@ -369,3 +369,30 @@ func (svc *UserService) ChangePassword(ctx Context, current string, new string) 
 
 	return true
 }
+
+func (svc *UserService) EnsureUserPassword(ctx context.Context, email, password string) error {
+	usr, err := svc.repos.Users.GetOneEmailNoEdges(ctx, email)
+	if err != nil {
+		return err
+	}
+	match := false
+	if usr.PasswordHash != "" {
+		match, _ = hasher.CheckPasswordHash(password, usr.PasswordHash)
+	}
+	if !match {
+		hash, herr := hasher.HashPassword(password)
+		if herr != nil {
+			return herr
+		}
+		if cerr := svc.repos.Users.ChangePassword(ctx, usr.ID, hash); cerr != nil {
+			return cerr
+		}
+	}
+	return nil
+}
+
+// ExistsByEmail returns true if a user with the given email exists.
+func (svc *UserService) ExistsByEmail(ctx context.Context, email string) bool {
+	_, err := svc.repos.Users.GetOneEmailNoEdges(ctx, email)
+	return err == nil
+}

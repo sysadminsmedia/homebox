@@ -42,7 +42,8 @@ func (Group) Edges() []ent.Edge {
 	}
 
 	return []ent.Edge{
-		edge.To("users", User.Type),
+		// Use edge.From + Ref("groups") to model M:M between users and groups via junction table
+		edge.From("users", User.Type).Ref("groups"),
 		owned("locations", Location.Type),
 		owned("items", Item.Type),
 		owned("labels", Label.Type),

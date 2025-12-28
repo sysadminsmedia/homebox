@@ -223,7 +223,7 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 func (r *GroupRepository) StatsGroup(ctx context.Context, gid uuid.UUID) (GroupStatistics, error) {
 	q := `
 		SELECT
-            (SELECT COUNT(*) FROM users WHERE group_users = $2) AS total_users,
+            (SELECT COUNT(*) FROM user_groups WHERE group_id = $2) AS total_users,
             (SELECT COUNT(*) FROM items WHERE group_items = $2 AND items.archived = false) AS total_items,
             (SELECT COUNT(*) FROM locations WHERE group_locations = $2) AS total_locations,
             (SELECT COUNT(*) FROM labels WHERE group_labels = $2) AS total_labels,

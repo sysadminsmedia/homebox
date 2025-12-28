@@ -17,9 +17,9 @@ import (
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleBillOfMaterialsExport() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
-		actor := services.UseUserCtx(r.Context())
+		tenant := services.UseTenantCtx(r.Context())
 
-		csv, err := ctrl.svc.Items.ExportBillOfMaterialsCSV(r.Context(), actor.DefaultGroupID)
+		csv, err := ctrl.svc.Items.ExportBillOfMaterialsCSV(r.Context(), tenant)
 		if err != nil {
 			return err
 		}

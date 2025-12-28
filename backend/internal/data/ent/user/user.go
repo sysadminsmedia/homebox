@@ -48,13 +48,11 @@ const (
 	EdgeNotifiers = "notifiers"
 	// Table holds the table name of the user in the database.
 	Table = "users"
-	// GroupsTable is the table that holds the groups relation/edge.
-	GroupsTable = "groups"
+	// GroupsTable is the table that holds the groups relation/edge. The primary key declared below.
+	GroupsTable = "user_groups"
 	// GroupsInverseTable is the table name for the Group entity.
 	// It exists in this package in order to avoid circular dependency with the "group" package.
 	GroupsInverseTable = "groups"
-	// GroupsColumn is the table column denoting the groups relation/edge.
-	GroupsColumn = "user_groups"
 	// AuthTokensTable is the table that holds the auth_tokens relation/edge.
 	AuthTokensTable = "auth_tokens"
 	// AuthTokensInverseTable is the table name for the AuthTokens entity.
@@ -88,21 +86,16 @@ var Columns = []string{
 	FieldDefaultGroupID,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "users"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"group_users",
-}
+var (
+	// GroupsPrimaryKey and GroupsColumn2 are the table columns denoting the
+	// primary key for the groups relation (M2M).
+	GroupsPrimaryKey = []string{"user_id", "group_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -269,7 +262,7 @@ func newGroupsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(GroupsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, GroupsTable, GroupsColumn),
+		sqlgraph.Edge(sqlgraph.M2M, false, GroupsTable, GroupsPrimaryKey...),
 	)
 }
 func newAuthTokensStep() *sqlgraph.Step {
