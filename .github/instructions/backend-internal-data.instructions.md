@@ -1,3 +1,8 @@
+---
+applyTo: 'backend/internal/data/**/*'
+---
+
+
 # Backend Data Layer Instructions (`/backend/internal/data/`)
 
 ## Overview

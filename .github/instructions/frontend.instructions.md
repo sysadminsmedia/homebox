@@ -1,3 +1,8 @@
+---
+applyTo: 'frontend/**/*'
+---
+
+
 # Frontend Components & Pages Instructions (`/frontend/`)
 
 ## Overview

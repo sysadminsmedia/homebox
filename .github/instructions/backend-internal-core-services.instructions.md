@@ -1,3 +1,7 @@
+---
+applyTo: '/backend/internal/core/services/**/*'
+---
+
 # Backend Services Layer Instructions (`/backend/internal/core/services/`)
 
 ## Overview

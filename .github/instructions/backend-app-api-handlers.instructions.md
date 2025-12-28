@@ -1,3 +1,7 @@
+---
+applyTo: '/backend/app/api/handlers/**/*'
+---
+
 # Backend API Handlers Instructions (`/backend/app/api/handlers/v1/`)
 
 ## Overview
