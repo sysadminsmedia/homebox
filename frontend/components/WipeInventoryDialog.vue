@@ -54,9 +54,9 @@
         <AlertDialogCancel @click="close">
           {{ $t("global.cancel") }}
         </AlertDialogCancel>
-        <AlertDialogAction @click="confirm">
+        <Button @click="confirm">
           {{ $t("global.confirm") }}
-        </AlertDialogAction>
+        </Button>
       </AlertDialogFooter>
     </AlertDialogContent>
   </AlertDialog>
@@ -67,7 +67,6 @@
   import { useDialog } from "~/components/ui/dialog-provider";
   import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -75,6 +74,7 @@
     AlertDialogHeader,
     AlertDialogTitle,
   } from "@/components/ui/alert-dialog";
+  import { Button } from "@/components/ui/button";
 
   const { registerOpenDialogCallback, closeDialog, addAlert, removeAlert } = useDialog();
 
@@ -82,14 +82,12 @@
   const wipeLabels = ref(false);
   const wipeLocations = ref(false);
   const wipeMaintenance = ref(false);
-  const isConfirming = ref(false);
 
   registerOpenDialogCallback(DialogID.WipeInventory, () => {
     dialog.value = true;
     wipeLabels.value = false;
     wipeLocations.value = false;
     wipeMaintenance.value = false;
-    isConfirming.value = false;
   });
 
   watch(
@@ -105,7 +103,7 @@
   );
 
   function handleOpenChange(open: boolean) {
-    if (!open && !isConfirming.value) {
+    if (!open) {
       close();
     }
   }
@@ -116,7 +114,6 @@
   }
 
   function confirm() {
-    isConfirming.value = true;
     const result = {
       wipeLabels: wipeLabels.value,
       wipeLocations: wipeLocations.value,
