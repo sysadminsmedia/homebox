@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -34,7 +35,7 @@ func bootstrap() {
 		ctx = context.Background()
 	)
 
-	tGroup, err = tRepos.Groups.GroupCreate(ctx, "test-group")
+	tGroup, err = tRepos.Groups.GroupCreate(ctx, "test-group", uuid.Nil)
 	if err != nil {
 		log.Fatal(err)
 	}

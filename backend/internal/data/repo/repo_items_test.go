@@ -465,7 +465,7 @@ func TestItemsRepository_WipeInventory(t *testing.T) {
 	t.Run("wipe all including labels, locations, and maintenance", func(t *testing.T) {
 		deleted, err := tRepos.Items.WipeInventory(context.Background(), tGroup.ID, true, true, true)
 		require.NoError(t, err)
-		assert.Greater(t, deleted, 0, "Should have deleted at least some entities")
+		assert.Positive(t, deleted, "Should have deleted at least some entities")
 
 		// Verify items are deleted
 		_, err = tRepos.Items.GetOneByGroup(context.Background(), tGroup.ID, item1.ID)
@@ -532,7 +532,7 @@ func TestItemsRepository_WipeInventory_OnlyItems(t *testing.T) {
 	// Test: Wipe inventory with only items (no labels, locations, or maintenance)
 	deleted, err := tRepos.Items.WipeInventory(context.Background(), tGroup.ID, false, false, false)
 	require.NoError(t, err)
-	assert.Greater(t, deleted, 0, "Should have deleted at least the item")
+	assert.Positive(t, deleted, "Should have deleted at least the item")
 
 	// Verify item is deleted
 	_, err = tRepos.Items.GetOneByGroup(context.Background(), tGroup.ID, item.ID)
@@ -555,4 +555,3 @@ func TestItemsRepository_WipeInventory_OnlyItems(t *testing.T) {
 	_ = tRepos.Labels.DeleteByGroup(context.Background(), tGroup.ID, label.ID)
 	_ = tRepos.Locations.delete(context.Background(), loc.ID)
 }
-
