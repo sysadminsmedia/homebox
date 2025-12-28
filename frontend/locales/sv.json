@@ -67,7 +67,7 @@
                 "years": "år",
                 "yesterday": "igår"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "Skriv ut från webbläsare",
                 "confirm_description": "Är du säker på att du vill skriva ut den här etiketten?",
                 "download": "Ladda ner etikett",
@@ -139,9 +139,9 @@
             },
             "view": {
                 "change_details": {
-                    "add_labels": "Lägg till etiketter",
+                    "add_tags": "Lägg till etiketter",
                     "failed_to_update_item": "Det gick inte att uppdatera",
-                    "remove_labels": "Ta bort etiketter",
+                    "remove_tags": "Ta bort etiketter",
                     "title": "Ändra artikeldetaljer"
                 },
                 "selectable": {
@@ -156,8 +156,8 @@
                 "table": {
                     "dropdown": {
                         "actions": "Funktioner",
-                        "change_labels": "Ändra etiketter",
-                        "change_labels_success": "Etiketter ändrade",
+                        "change_tags": "Ändra etiketter",
+                        "change_tags_success": "Etiketter ändrade",
                         "change_location": "Ändra plats",
                         "change_location_success": "Plats ändrad",
                         "create_maintenance_item": "Skapa underhållspost för objekt",
@@ -188,21 +188,21 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_color": "Etikettfärg",
-                "label_description": "Etikettbeskrivning",
-                "label_name": "Etikettnamm",
+                "tag_color": "Etikettfärg",
+                "tag_description": "Etikettbeskrivning",
+                "tag_name": "Etikettnamm",
                 "title": "Skapa etikett",
                 "toast": {
                     "already_creating": "Skapar redan en etikett",
                     "create_failed": "Det gick inte att skapa etiketten",
                     "create_success": "Etikett skapad",
-                    "label_name_too_long": "Etikettnamnet får inte vara längre än 50 tecken"
+                    "tag_name_too_long": "Etikettnamnet får inte vara längre än 50 tecken"
                 }
             },
             "selector": {
-                "select_labels": "Välj etiketter"
+                "select_tags": "Välj etiketter"
             }
         },
         "location": {
@@ -260,7 +260,7 @@
         "insured": "Försäkrad",
         "items": "Föremål",
         "join_discord": "Gå med i Discord",
-        "labels": "Etiketter",
+        "tags": "Etiketter",
         "loading": "Laddar…",
         "locations": "Platser",
         "maintenance": "Underhåll",
@@ -283,12 +283,12 @@
         "welcome": "Välkommen, { username }"
     },
     "home": {
-        "labels": "Etiketter",
+        "tags": "Etiketter",
         "quick_statistics": "Snabb statistik",
         "recently_added": "Nyligen tillagda",
         "storage_locations": "Förvaringsplatser",
         "total_items": "Totalt antal objekt",
-        "total_labels": "Totalt antal etiketter",
+        "total_tags": "Totalt antal etiketter",
         "total_locations": "Totalt antal platser",
         "total_value": "Totalt Värde"
     },
@@ -366,7 +366,7 @@
         "manufacturer": "Tillverkare",
         "model_number": "Modellnummer",
         "name": "Namn",
-        "negate_labels": "Negera valda etiketter",
+        "negate_tags": "Negera valda etiketter",
         "next_page": "Nästa sida",
         "no_attachments": "Inga bilagor hittades",
         "no_results": "Inga föremål hittades",
@@ -434,17 +434,17 @@
         "warranty_details": "Garantidetaljer",
         "warranty_expires": "Garantin upphör"
     },
-    "labels": {
-        "label_delete_confirm": "Är du säker på att du vill ta bort den här etiketten? Det går inte att ångra den här åtgärden.",
+    "tags": {
+        "tag_delete_confirm": "Är du säker på att du vill ta bort den här etiketten? Det går inte att ångra den här åtgärden.",
         "no_results": "Inga etiketter hittades",
         "toast": {
-            "failed_delete_label": "Det gick inte att ta bort etiketten",
-            "failed_load_label": "Det gick inte att ladda etiketten",
-            "failed_update_label": "Det gick inte att uppdatera etiketten",
-            "label_deleted": "Etikett raderad",
-            "label_updated": "Etikett uppdaterad"
+            "failed_delete_tag": "Det gick inte att ta bort etiketten",
+            "failed_load_tag": "Det gick inte att ladda etiketten",
+            "failed_update_tag": "Det gick inte att uppdatera etiketten",
+            "tag_deleted": "Etikett raderad",
+            "tag_updated": "Etikett uppdaterad"
         },
-        "update_label": "Uppdatera etikett"
+        "update_tag": "Uppdatera etikett"
     },
     "languages": {
         "bs-BA": "Bosniska (Bosnien och Hercegovina)",
@@ -536,7 +536,7 @@
     },
     "menu": {
         "create_item": "Artikel / Tillgång",
-        "create_label": "Etikett",
+        "create_tag": "Etikett",
         "create_location": "Plats",
         "home": "Hem",
         "locations": "Platser",
@@ -595,18 +595,18 @@
         "user_profile_sub": "Bjud in användare och hantera ditt konto."
     },
     "reports": {
-        "label_generator": {
+        "tag_generator": {
             "asset_end": "Tillgångens slutdatum",
             "asset_start": "Tillgångens start",
             "base_url": "Bas-URL",
-            "bordered_labels": "Inramade etiketter",
+            "bordered_tags": "Inramade etiketter",
             "generate_page": "Generera sida",
             "input_placeholder": "Skriv här",
             "instruction_1": "Homebox Label Generator är ett verktyg som hjälper dig att skriva ut etiketter för ditt Homebox-inventering. Dessa är skapade\nför att skrivas ut i förväg så att de är redo att användas",
             "instruction_2": "Dessa etiketter fungerar då så att en QR-kod med en URL och ett objekt-ID skrivs ut på etiketten. Om du har stängt av\nObjekt-ID i dina Homebox.inställningar kan du fortfarande använda verktyget men då kommer Objekt-ID:t inte att hänvisa till något objekt",
             "instruction_3": "Den här funktionen befinner sig i ett tidigt utvecklingsstadium och kan komma att ändras i framtida versioner. Om du har feedback, vänligen\n ange den i<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub-diskussionen'</a>\"",
-            "label_height": "Etiketthöjd",
-            "label_width": "Etikettbredd",
+            "tag_height": "Etiketthöjd",
+            "tag_width": "Etikettbredd",
             "measure_type": "Måttyp",
             "page_bottom_padding": "Utfyllnad i sidans botten",
             "page_height": "Sidhöjd",
@@ -673,9 +673,9 @@
         "import_export_sub": "Importera och exportera ditt lager till och från en CSV-fil. Detta är användbart för att migrera din inventering till en ny instans av Homebox.",
         "reports": "Rapporter",
         "reports_set": {
-            "asset_labels": "Tillgångs-ID-etiketter",
-            "asset_labels_button": "Etikett Generator",
-            "asset_labels_sub": "Skapar en utskrivbar PDF med etiketter för en rad tillgångs-ID. Dessa är inte specifikt bundna till ditt lager, varför du kan skriva ut etiketterna i förväg och använda dem i ditt lager i ett senare skede.",
+            "asset_tags": "Tillgångs-ID-etiketter",
+            "asset_tags_button": "Etikett Generator",
+            "asset_tags_sub": "Skapar en utskrivbar PDF med etiketter för en rad tillgångs-ID. Dessa är inte specifikt bundna till ditt lager, varför du kan skriva ut etiketterna i förväg och använda dem i ditt lager i ett senare skede.",
             "bill_of_materials": "Materialförteckning",
             "bill_of_materials_button": "Skapa materialförteckning",
             "bill_of_materials_sub": "Genererar en CSV-fil (kommaseparerade värden) som kan importeras till ett kalkylprogram. Detta är en summering av ditt lager med grund saker och pris information."

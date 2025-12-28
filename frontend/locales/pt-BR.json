@@ -67,7 +67,7 @@
                 "years": "anos",
                 "yesterday": "ontem"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "Imprimir a partir do Navegador",
                 "confirm_description": "Tem certeza de que deseja imprimir esta etiqueta?",
                 "download": "Baixar Rótulo",
@@ -140,9 +140,9 @@
             },
             "view": {
                 "change_details": {
-                    "add_labels": "Adicionar Etiquetas",
+                    "add_tags": "Adicionar Etiquetas",
                     "failed_to_update_item": "Falha ao atualizar item",
-                    "remove_labels": "Remover Etiquetas",
+                    "remove_tags": "Remover Etiquetas",
                     "title": "Alterar detalhes do item"
                 },
                 "selectable": {
@@ -157,8 +157,8 @@
                 "table": {
                     "dropdown": {
                         "actions": "Ações",
-                        "change_labels": "Trocar etiquetas",
-                        "change_labels_success": "Etiquetas alteradas",
+                        "change_tags": "Trocar etiquetas",
+                        "change_tags_success": "Etiquetas alteradas",
                         "change_location": "Trocar localização",
                         "change_location_success": "Localização alterada",
                         "create_maintenance_item": "Criar entrada de manutenção para o item",
@@ -189,21 +189,21 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_color": "Cor do Rótulo",
-                "label_description": "Descrição da Texto",
-                "label_name": "Nome da Etiqueta",
+                "tag_color": "Cor do Rótulo",
+                "tag_description": "Descrição da Texto",
+                "tag_name": "Nome da Etiqueta",
                 "title": "Criar etiqueta",
                 "toast": {
                     "already_creating": "Etiqueta já criada",
                     "create_failed": "Não foi possível criar etiqueta",
                     "create_success": "Etiqueta criada",
-                    "label_name_too_long": "Nome da etiqueta não deve ultrapassar 50 caracteres"
+                    "tag_name_too_long": "Nome da etiqueta não deve ultrapassar 50 caracteres"
                 }
             },
             "selector": {
-                "select_labels": "Selecionar Etiquetas"
+                "select_tags": "Selecionar Etiquetas"
             }
         },
         "location": {
@@ -265,7 +265,7 @@
                 "template_name": "Nome do template"
             },
             "selector": {
-                "label": "Template (opcional)",
+                "tag": "Template (opcional)",
                 "not_found": "Nenhum template encontrado",
                 "search": "Procurando templates…",
                 "select": "Selecionar template…"
@@ -309,7 +309,7 @@
         "insured": "Segurado",
         "items": "Items",
         "join_discord": "Junte-se ao Discord",
-        "labels": "Etiquetas",
+        "tags": "Etiquetas",
         "loading": "Carregando…",
         "locations": "Locais",
         "maintenance": "Manutenção",
@@ -332,12 +332,12 @@
         "welcome": "Bem-vindo, {username}"
     },
     "home": {
-        "labels": "Etiquetas",
+        "tags": "Etiquetas",
         "quick_statistics": "Estatísticas Rápidas",
         "recently_added": "Adicionados Recentemente",
         "storage_locations": "Locais de Armazenamento",
         "total_items": "Itens Totais",
-        "total_labels": "Etiquetas Totais",
+        "total_tags": "Etiquetas Totais",
         "total_locations": "Locais Totais",
         "total_value": "Valor Total"
     },
@@ -415,7 +415,7 @@
         "manufacturer": "Fabricante",
         "model_number": "Modelo",
         "name": "Nome",
-        "negate_labels": "Negar Rótulos Selecionados",
+        "negate_tags": "Negar Rótulos Selecionados",
         "next_page": "Próxima página",
         "no_attachments": "Nenhum anexo encontrado",
         "no_results": "Nenhum Item Encontrado",
@@ -483,17 +483,17 @@
         "warranty_details": "Detalhes da Garantia",
         "warranty_expires": "Garantia Expira Em"
     },
-    "labels": {
-        "label_delete_confirm": "Tem certeza de que deseja excluir este marcador? Esta ação não pode ser desfeita.",
+    "tags": {
+        "tag_delete_confirm": "Tem certeza de que deseja excluir este marcador? Esta ação não pode ser desfeita.",
         "no_results": "Nenhuma etiqueta encontrada",
         "toast": {
-            "failed_delete_label": "Falha ao deletar etiqueta",
-            "failed_load_label": "Falha ao deletar rótulo",
-            "failed_update_label": "Falha ao deletar rótulo",
-            "label_deleted": "Rótulo excluído",
-            "label_updated": "Rótulo atualizado"
+            "failed_delete_tag": "Falha ao deletar etiqueta",
+            "failed_load_tag": "Falha ao deletar rótulo",
+            "failed_update_tag": "Falha ao deletar rótulo",
+            "tag_deleted": "Rótulo excluído",
+            "tag_updated": "Rótulo atualizado"
         },
-        "update_label": "Atualizar Etiqueta"
+        "update_tag": "Atualizar Etiqueta"
     },
     "languages": {
         "bs-BA": "Bósnio (Bósnia e Herzegovina)",
@@ -585,7 +585,7 @@
     },
     "menu": {
         "create_item": "Item / Ativo",
-        "create_label": "Etiqueta",
+        "create_tag": "Etiqueta",
         "create_location": "Local",
         "home": "Início",
         "locations": "Locais",
@@ -644,18 +644,18 @@
         "user_profile_sub": "Convide usuários e gerencie sua conta."
     },
     "reports": {
-        "label_generator": {
+        "tag_generator": {
             "asset_end": "Fim do Ativo",
             "asset_start": "Inicio do Ativo",
             "base_url": "URL Base",
-            "bordered_labels": "Etiquetas com bordas",
+            "bordered_tags": "Etiquetas com bordas",
             "generate_page": "Gerando Página",
             "input_placeholder": "Digite aqui",
             "instruction_1": "O Gerador de Etiquetas Homebox é uma ferramenta para ajudar você a imprimir etiquetas para o seu inventário Homebox. Elas são projetadas para\nserem etiquetas de impressão antecipada, para que você possa imprimir várias etiquetas e tê-las prontas para aplicar",
             "instruction_2": "Dessa forma, essas etiquetas funcionam imprimindo um código QR de URL e informações de AssetID em uma etiqueta. Se você desativou\nos AssetIDs nas configurações do seu Homebox, ainda poderá usar esta ferramenta, mas os AssetIDs não farão referência a nenhum item",
             "instruction_3": "Este recurso está em estágios iniciais de desenvolvimento e pode mudar em versões futuras. Se você tiver algum feedback,\nfaça-o na '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'Discussão do GitHub'</a>'",
-            "label_height": "Altura da Etiqueta",
-            "label_width": "Largura da Etiqueta",
+            "tag_height": "Altura da Etiqueta",
+            "tag_width": "Largura da Etiqueta",
             "measure_type": "Tipo da Medida",
             "page_bottom_padding": "Espaçamento inferior da página",
             "page_height": "Altura da Página",
@@ -722,9 +722,9 @@
         "import_export_sub": "Importar e exportar seu inventário de ou para um arquivo CSV. Isso é útil para migrar o seu inventário para uma nova instância do Homebox.",
         "reports": "Relatórios",
         "reports_set": {
-            "asset_labels": "Etiquetas de ID de ativo",
-            "asset_labels_button": "Gerador de etiquetas",
-            "asset_labels_sub": "Gera um PDF imprimível das etiquetas no intervalo de ID de Ativo. Essas não são específicas do seu inventário, então você pode imprimir elas antes e aplicar no seu inventário depois quando receber os items.",
+            "asset_tags": "Etiquetas de ID de ativo",
+            "asset_tags_button": "Gerador de etiquetas",
+            "asset_tags_sub": "Gera um PDF imprimível das etiquetas no intervalo de ID de Ativo. Essas não são específicas do seu inventário, então você pode imprimir elas antes e aplicar no seu inventário depois quando receber os items.",
             "bill_of_materials": "Lista de Materiais",
             "bill_of_materials_button": "Gerar Lista de Materiais",
             "bill_of_materials_sub": "Gera um arquivo CSV (Valores Separados por Vírgula) que pode ser importado para um programa de planilha. Esse é um sumário do seu inventário com informações básicas dos itens e dos preços."

@@ -10,7 +10,7 @@
   import { Button } from "@/components/ui/button";
   import { Separator } from "@/components/ui/separator";
   import { Switch } from "@/components/ui/switch";
-  import { Label } from "@/components/ui/label";
+  import { Label } from "@/components/ui/tag";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
   import FormTextField from "~/components/Form/TextField.vue";
   import FormTextArea from "~/components/Form/TextArea.vue";
@@ -19,7 +19,7 @@
   import Markdown from "~/components/global/Markdown.vue";
   import LocationSelector from "~/components/Location/Selector.vue";
   import LabelSelector from "~/components/Label/Selector.vue";
-  import { useLabelStore } from "~~/stores/labels";
+  import { useTagStore } from "~~/stores/tags";
   import type { LocationOut } from "~~/lib/api/types/data-contracts";
 
   definePageMeta({
@@ -31,8 +31,8 @@
   const api = useUserApi();
   const confirm = useConfirm();
 
-  const labelStore = useLabelStore();
-  const labels = computed(() => labelStore.labels);
+  const labelStore = useTagStore();
+  const tags = computed(() => labelStore.tags);
 
   const templateId = computed<string>(() => route.params.id as string);
 
@@ -149,12 +149,12 @@
         <FormTextField
           v-model="updateData.name"
           :autofocus="true"
-          :label="$t('components.template.form.template_name')"
+          :tag="$t('components.template.form.template_name')"
           :max-length="255"
         />
         <FormTextArea
           v-model="updateData.description"
-          :label="$t('components.template.form.template_description')"
+          :tag="$t('components.template.form.template_description')"
           :max-length="1000"
         />
 
@@ -163,37 +163,37 @@
         <div class="grid gap-2">
           <FormTextField
             v-model="updateData.defaultName"
-            :label="$t('components.template.form.item_name')"
+            :tag="$t('components.template.form.item_name')"
             :max-length="255"
           />
           <FormTextArea
             v-model="updateData.defaultDescription"
-            :label="$t('components.template.form.item_description')"
+            :tag="$t('components.template.form.item_description')"
             :max-length="1000"
           />
           <div class="grid grid-cols-2 gap-2">
             <FormTextField
               v-model.number="updateData.defaultQuantity"
-              :label="$t('global.quantity')"
+              :tag="$t('global.quantity')"
               type="number"
               :min="1"
             />
             <FormTextField
               v-model="updateData.defaultModelNumber"
-              :label="$t('components.template.form.model_number')"
+              :tag="$t('components.template.form.model_number')"
               :max-length="255"
             />
           </div>
           <FormTextField
             v-model="updateData.defaultManufacturer"
-            :label="$t('components.template.form.manufacturer')"
+            :tag="$t('components.template.form.manufacturer')"
             :max-length="255"
           />
           <LocationSelector
             v-model="updateData.defaultLocation"
-            :label="$t('components.template.form.default_location')"
+            :tag="$t('components.template.form.default_location')"
           />
-          <LabelSelector v-model="updateData.defaultLabelIds" :labels="labels ?? []" />
+          <LabelSelector v-model="updateData.defaultLabelIds" :tags="tags ?? []" />
           <div class="flex items-center gap-4">
             <div class="flex items-center gap-2">
               <Switch id="editInsured" v-model:checked="updateData.defaultInsured" />
@@ -223,13 +223,13 @@
           <div v-for="(field, idx) in updateData.fields" :key="idx" class="flex items-end gap-2">
             <FormTextField
               v-model="field.name"
-              :label="$t('components.template.form.field_name')"
+              :tag="$t('components.template.form.field_name')"
               :max-length="255"
               class="flex-1"
             />
             <FormTextField
               v-model="field.textValue"
-              :label="$t('components.template.form.default_value')"
+              :tag="$t('components.template.form.default_value')"
               class="flex-1"
             />
             <Button type="button" size="icon" variant="ghost" @click="updateData.fields.splice(idx, 1)">
@@ -305,7 +305,7 @@
               <dd>{{ template.defaultLocation.name }}</dd>
             </div>
             <div v-if="template.defaultLabels && template.defaultLabels.length > 0" class="flex justify-between">
-              <dt class="text-muted-foreground">{{ $t("global.labels") }}</dt>
+              <dt class="text-muted-foreground">{{ $t("global.tags") }}</dt>
               <dd>{{ template.defaultLabels.map(l => l.name).join(", ") }}</dd>
             </div>
             <div class="flex justify-between">

@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-1">
     <Label :for="id" class="px-1">
-      {{ label }}
+      {{ tag }}
     </Label>
     <Popover v-model:open="open">
       <PopoverTrigger as-child>
@@ -17,7 +17,7 @@
               v-if="value"
               type="button"
               class="shrink-0 rounded p-1 hover:bg-primary/20"
-              :aria-label="t('components.item.selector.clear')"
+              :aria-tag="t('components.item.selector.clear')"
               @click.stop.prevent="clearSelection"
             >
               <X class="size-4" />
@@ -63,7 +63,7 @@
   import { useI18n } from "vue-i18n";
   import { Button } from "~/components/ui/button";
   import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "~/components/ui/command";
-  import { Label } from "~/components/ui/label";
+  import { Label } from "~/components/ui/tag";
   import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
   import { cn } from "~/lib/utils";
 
@@ -74,7 +74,7 @@
   };
 
   interface Props {
-    label?: string;
+    tag?: string;
     modelValue?: string | ItemsObject | null | undefined;
     items?: ItemsObject[] | string[];
     itemText?: string;
@@ -90,7 +90,7 @@
 
   const emit = defineEmits(["update:modelValue", "update:search"]);
   const props = withDefaults(defineProps<Props>(), {
-    label: "",
+    tag: "",
     modelValue: "",
     items: () => [],
     itemText: "text",

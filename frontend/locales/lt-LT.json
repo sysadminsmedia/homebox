@@ -43,7 +43,7 @@
                 "years": "metai",
                 "yesterday": "vakar"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "Spausdinti iš naršyklės",
                 "confirm_description": "Ar tikrai norite atspausdinti šią etiketę?",
                 "download": "Atsisiųsti Etiketę",

@@ -23,7 +23,7 @@
           <div class="col-start-1 row-start-2 bg-sidebar" />
           <div class="col-start-1 row-start-3 bg-background-accent" />
           <div class="col-span-4 col-start-2 row-span-3 row-start-1 flex flex-col gap-1 bg-background p-2">
-            <div class="font-bold">{{ theme.label }}</div>
+            <div class="font-bold">{{ theme.tag }}</div>
             <div class="flex flex-wrap gap-1">
               <div class="flex size-5 items-center justify-center rounded bg-primary lg:size-6">
                 <div class="text-sm font-bold text-primary-foreground">A</div>

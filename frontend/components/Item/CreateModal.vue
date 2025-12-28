@@ -67,7 +67,7 @@
             variant="ghost"
             size="icon"
             class="size-7 shrink-0"
-            :aria-label="$t('components.item.create_modal.clear_template')"
+            :aria-tag="$t('components.item.create_modal.clear_template')"
             @click="clearTemplate"
           >
             <MdiClose class="size-4" />
@@ -107,7 +107,7 @@
               </div>
             </div>
             <div v-if="templateData.defaultLabels && templateData.defaultLabels.length > 0" class="mt-1">
-              <span class="font-medium">{{ $t("global.labels") }}:</span>
+              <span class="font-medium">{{ $t("global.tags") }}:</span>
               {{ templateData.defaultLabels.map((l: any) => l.name).join(", ") }}
             </div>
             <div v-if="templateData.defaultDescription" class="mt-1">
@@ -131,7 +131,7 @@
         v-if="subItemCreate"
         v-model="parent"
         v-model:search="query"
-        :label="$t('components.item.create_modal.parent_item')"
+        :tag="$t('components.item.create_modal.parent_item')"
         :items="results"
         item-text="name"
         no-results-text="Type to search..."
@@ -143,17 +143,17 @@
         v-model="form.name"
         :trigger-focus="focused"
         :autofocus="true"
-        :label="$t('components.item.create_modal.item_name')"
+        :tag="$t('components.item.create_modal.item_name')"
         :max-length="255"
         :min-length="1"
       />
-      <FormTextField v-model="form.quantity" :label="$t('components.item.create_modal.item_quantity')" type="number" />
+      <FormTextField v-model="form.quantity" :tag="$t('components.item.create_modal.item_quantity')" type="number" />
       <FormTextArea
         v-model="form.description"
-        :label="$t('components.item.create_modal.item_description')"
+        :tag="$t('components.item.create_modal.item_description')"
         :max-length="1000"
       />
-      <LabelSelector v-model="form.labels" :labels="labels ?? []" />
+      <LabelSelector v-model="form.tags" :tags="tags ?? []" />
       <div class="flex w-full flex-col gap-1.5">
         <Label for="image-create-photo" class="flex w-full px-1">
           {{ $t("components.item.create_modal.item_photo") }}
@@ -271,10 +271,10 @@
   import { toast } from "@/components/ui/sonner";
   import { Button, ButtonGroup } from "~/components/ui/button";
   import BaseModal from "@/components/App/CreateModal.vue";
-  import { Label } from "@/components/ui/label";
+  import { Label } from "@/components/ui/tag";
   import { Input } from "@/components/ui/input";
   import type { ItemCreate, ItemTemplateOut, ItemTemplateSummary, LocationOut } from "~~/lib/api/types/data-contracts";
-  import { useLabelStore } from "~~/stores/labels";
+  import { useTagStore } from "~~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
   import MdiBarcode from "~icons/mdi/barcode";
   import MdiBarcodeScan from "~icons/mdi/barcode-scan";
@@ -314,8 +314,8 @@
   const locationsStore = useLocationStore();
   const locations = computed(() => locationsStore.allLocations);
 
-  const labelStore = useLabelStore();
-  const labels = computed(() => labelStore.labels);
+  const labelStore = useTagStore();
+  const tags = computed(() => labelStore.tags);
 
   const route = useRoute();
   const router = useRouter();
@@ -325,8 +325,8 @@
   const subItemCreateParam = useRouteQuery("subItemCreate", "n");
   const subItemCreate = ref();
 
-  const labelId = computed(() => {
-    if (route.fullPath.includes("/label/")) {
+  const tagId = computed(() => {
+    if (route.fullPath.includes("/tag/")) {
       return route.params.id;
     }
     return null;
@@ -362,7 +362,7 @@
     quantity: 1,
     description: "",
     color: "",
-    labels: [] as string[],
+    tags: [] as string[],
     photos: [] as PhotoPreview[],
   });
 
@@ -400,9 +400,9 @@
         form.location = found;
       }
     }
-    // Pre-fill labels from template
+    // Pre-fill tags from template
     if (data.defaultLabels && data.defaultLabels.length > 0) {
-      form.labels = data.defaultLabels.map(l => l.id);
+      form.tags = data.defaultLabels.map(l => l.id);
     }
 
     // Save template ID to localStorage for persistence
@@ -440,9 +440,9 @@
         form.location = found;
       }
     }
-    // Pre-fill labels from template
+    // Pre-fill tags from template
     if (data.defaultLabels && data.defaultLabels.length > 0) {
-      form.labels = data.defaultLabels.map(l => l.id);
+      form.tags = data.defaultLabels.map(l => l.id);
     }
   }
 
@@ -554,8 +554,8 @@
         }
       }
 
-      if (labelId.value) {
-        form.labels = labels.value.filter(l => l.id === labelId.value).map(l => l.id);
+      if (tagId.value) {
+        form.tags = tags.value.filter(l => l.id === tagId.value).map(l => l.id);
       }
 
       // Restore last used template if available
@@ -588,7 +588,7 @@
         name: form.name,
         description: form.description,
         locationId: form.location.id as string,
-        labelIds: form.labels,
+        tagIds: form.tags,
         quantity: form.quantity,
       };
 
@@ -603,7 +603,7 @@
         quantity: form.quantity,
         description: form.description,
         locationId: form.location.id as string,
-        labelIds: form.labels,
+        tagIds: form.tags,
       };
 
       const result = await api.items.create(out);
@@ -649,7 +649,7 @@
     form.description = "";
     form.color = "";
     form.photos = [];
-    form.labels = [];
+    form.tags = [];
     selectedTemplate.value = null;
     templateData.value = null;
     showTemplateDetails.value = false;

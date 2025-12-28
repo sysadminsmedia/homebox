@@ -2,7 +2,7 @@
   import { useI18n } from "vue-i18n";
   import { statCardData } from "./statistics";
   import { itemsTable } from "./table";
-  import { useLabelStore } from "~~/stores/labels";
+  import { useTagStore } from "~~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
   import BaseContainer from "@/components/Base/Container.vue";
   import BaseCard from "@/components/Base/Card.vue";
@@ -28,8 +28,8 @@
   const locationStore = useLocationStore();
   const locations = computed(() => locationStore.parentLocations);
 
-  const labelsStore = useLabelStore();
-  const labels = computed(() => labelsStore.labels);
+  const labelsStore = useTagStore();
+  const tags = computed(() => labelsStore.tags);
 
   const itemTable = itemsTable(api);
   const stats = statCardData(api);
@@ -41,7 +41,7 @@
       <section>
         <Subtitle> {{ $t("home.quick_statistics") }} </Subtitle>
         <div class="grid grid-cols-2 gap-2 md:grid-cols-4 md:gap-6">
-          <StatCard v-for="(stat, i) in stats" :key="i" :title="stat.label" :value="stat.value" :type="stat.type" />
+          <StatCard v-for="(stat, i) in stats" :key="i" :title="stat.tag" :value="stat.value" :type="stat.type" />
         </div>
       </section>
 
@@ -66,10 +66,10 @@
       </section>
 
       <section>
-        <Subtitle> {{ $t("home.labels") }} </Subtitle>
-        <p v-if="labels.length === 0" class="ml-2 text-sm">{{ $t("labels.no_results") }}</p>
+        <Subtitle> {{ $t("home.tags") }} </Subtitle>
+        <p v-if="tags.length === 0" class="ml-2 text-sm">{{ $t("tags.no_results") }}</p>
         <div v-else class="flex flex-wrap gap-4">
-          <LabelChip v-for="label in labels" :key="label.id" size="lg" :label="label" class="shadow-md" />
+          <LabelChip v-for="tag in tags" :key="tag.id" size="lg" :tag="tag" class="shadow-md" />
         </div>
       </section>
     </BaseContainer>

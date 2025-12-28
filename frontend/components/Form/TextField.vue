@@ -1,7 +1,7 @@
 <template>
   <div v-if="!inline" class="flex w-full flex-col gap-1.5">
     <Label :for="id" class="flex w-full px-1">
-      <span> {{ label }} </span>
+      <span> {{ tag }} </span>
       <span class="grow" />
       <span
         :class="{
@@ -25,7 +25,7 @@
   </div>
   <div v-else class="sm:grid sm:grid-cols-4 sm:items-start sm:gap-4">
     <Label class="flex w-full px-1 py-2" :for="id">
-      <span> {{ label }} </span>
+      <span> {{ tag }} </span>
       <span class="grow" />
       <span
         :class="{
@@ -49,10 +49,10 @@
 </template>
 
 <script lang="ts" setup>
-  import { Label } from "~/components/ui/label";
+  import { Label } from "~/components/ui/tag";
   import { Input } from "~/components/ui/input";
   const props = defineProps({
-    label: {
+    tag: {
       type: String,
       default: "",
     },

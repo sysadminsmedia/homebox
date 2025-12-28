@@ -67,7 +67,7 @@
                 "years": "leta",
                 "yesterday": "včeraj"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "Tiskanje iz brskalnika",
                 "confirm_description": "Ali ste prepričani, da želite natisniti to etiketo?",
                 "download": "Prenesi nalepko",
@@ -141,21 +141,21 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_color": "Barva oznake",
-                "label_description": "Opis nalepke",
-                "label_name": "Ime nalepke",
+                "tag_color": "Barva oznake",
+                "tag_description": "Opis nalepke",
+                "tag_name": "Ime nalepke",
                 "title": "Ustvari oznako",
                 "toast": {
                     "already_creating": "Že v ustvarjanju oznake",
                     "create_failed": "Oznake ni bilo mogoče ustvariti",
                     "create_success": "Oznaka je ustvarjena",
-                    "label_name_too_long": "Ime oznake ne sme biti daljše od 50 znakov"
+                    "tag_name_too_long": "Ime oznake ne sme biti daljše od 50 znakov"
                 }
             },
             "selector": {
-                "select_labels": "Izberi oznake"
+                "select_tags": "Izberi oznake"
             }
         },
         "location": {
@@ -210,7 +210,7 @@
         "insured": "Zavarovano",
         "items": "Predmeti",
         "join_discord": "Pridruži se na Discord",
-        "labels": "Oznake",
+        "tags": "Oznake",
         "loading": "Nalaganje...",
         "locations": "Lokacije",
         "maintenance": "Vzdrževanje",
@@ -232,12 +232,12 @@
         "welcome": "Dobrodošel, { username }"
     },
     "home": {
-        "labels": "Oznake",
+        "tags": "Oznake",
         "quick_statistics": "Hitra statistika",
         "recently_added": "Nedavno dodano",
         "storage_locations": "Lokacije shramb",
         "total_items": "Predmetov skupaj",
-        "total_labels": "Skupaj oznak",
+        "total_tags": "Skupaj oznak",
         "total_locations": "Skupaj lokacij",
         "total_value": "Skupna vrednost"
     },
@@ -302,7 +302,7 @@
         "manufacturer": "Proizvajalec",
         "model_number": "Številka modela",
         "name": "Naziv",
-        "negate_labels": "Negiraj izbrane oznake",
+        "negate_tags": "Negiraj izbrane oznake",
         "next_page": "Naslednja stran",
         "no_attachments": "Ni najdenih prilog",
         "no_results": "Ni najdenih predmetov",
@@ -370,17 +370,17 @@
         "warranty_details": "Podrobnosti o garanciji",
         "warranty_expires": "Garancija poteče"
     },
-    "labels": {
-        "label_delete_confirm": "Ali ste prepričani, da želite izbrisati to oznako? Tega ni mogoče razveljaviti.",
+    "tags": {
+        "tag_delete_confirm": "Ali ste prepričani, da želite izbrisati to oznako? Tega ni mogoče razveljaviti.",
         "no_results": "Ni najdenih oznak",
         "toast": {
-            "failed_delete_label": "Brisanje oznake ni uspelo",
-            "failed_load_label": "Oznake ni bilo mogoče naložiti",
-            "failed_update_label": "Oznake ni bilo mogoče posodobiti",
-            "label_deleted": "Oznaka izbrisana",
-            "label_updated": "Oznaka posodobljena"
+            "failed_delete_tag": "Brisanje oznake ni uspelo",
+            "failed_load_tag": "Oznake ni bilo mogoče naložiti",
+            "failed_update_tag": "Oznake ni bilo mogoče posodobiti",
+            "tag_deleted": "Oznaka izbrisana",
+            "tag_updated": "Oznaka posodobljena"
         },
-        "update_label": "Posodobitev oznake"
+        "update_tag": "Posodobitev oznake"
     },
     "languages": {
         "ca": "katalonščina",
@@ -470,7 +470,7 @@
     },
     "menu": {
         "create_item": "Predmet / Sredstvo",
-        "create_label": "Oznaka",
+        "create_tag": "Oznaka",
         "create_location": "Lokacija",
         "home": "Domov",
         "locations": "Lokacije",
@@ -528,18 +528,18 @@
         "user_profile_sub": "Povabite uporabnike in upravljajte svoj račun."
     },
     "reports": {
-        "label_generator": {
+        "tag_generator": {
             "asset_end": "Končno sredstvo",
             "asset_start": "Začetno sredstvo",
             "base_url": "Osnovni URL",
-            "bordered_labels": "Nalepke z obrobo",
+            "bordered_tags": "Nalepke z obrobo",
             "generate_page": "Generiraj stran",
             "input_placeholder": "Vnesite tukaj",
             "instruction_1": "Homebox Generator Nalepk je orodje za pomoč pri tiskanju nalepk za vaš Homebox inventar. Te so namenjene za\n tisk vnaprej, da imate več nalepk pripravljenih za uporabo",
             "instruction_2": "Te nalepke delujejo z uporabo URL naslovne QR kode in ID sredstva na nalepki. Če ste onemogočili\nIDje sredstev v vaših Homebox nastavitvah lahko to orodje še vedno uporabljate, vendar se IDji sredstev ne bodo nanašali na noben predmet",
             "instruction_3": "Ta funkcija je v zgodnjih stopnjah razvoja in se lahko spremeni v prihodnjih verzijah. Če želite podati mnenje \nga prosimo podajte v '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub razpravah'</a>'",
-            "label_height": "Višina nalepke",
-            "label_width": "Širina nalepke",
+            "tag_height": "Višina nalepke",
+            "tag_width": "Širina nalepke",
             "measure_type": "Merska enota",
             "page_bottom_padding": "Spodnja obroba strani",
             "page_height": "Višina strani",
@@ -604,9 +604,9 @@
         "import_export_sub": "Uvozite in izvozite svoj inventar v in iz datoteke CSV. To je uporabno za selitev vašega inventarja v novo namestitev Homeboxa.",
         "reports": "Poročila",
         "reports_set": {
-            "asset_labels": "Oznake ID-jev sredstev",
-            "asset_labels_button": "Generator etiket",
-            "asset_labels_sub": "Ustvari natisljiv PDF z nalepkami za vrsto ID-jev sredstev. Te niso specifične za vaš inventar, zato lahko nalepke natisnete vnaprej in jih uporabite v svojem inventarju, ko jih prejmete.",
+            "asset_tags": "Oznake ID-jev sredstev",
+            "asset_tags_button": "Generator etiket",
+            "asset_tags_sub": "Ustvari natisljiv PDF z nalepkami za vrsto ID-jev sredstev. Te niso specifične za vaš inventar, zato lahko nalepke natisnete vnaprej in jih uporabite v svojem inventarju, ko jih prejmete.",
             "bill_of_materials": "Kosovnica",
             "bill_of_materials_button": "Ustvari kosovnico",
             "bill_of_materials_sub": "Ustvari datoteko CSV (vrednosti, ločene z vejico), ki jo je mogoče uvoziti v program za preglednice. To je povzetek vaše zaloge z osnovnimi informacijami o izdelkih in cenah."

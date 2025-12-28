@@ -8,7 +8,7 @@
             },
             "import_dialog": {
                 "change_warning": "Ada perubahan pada logika impor untuk data dengan import_ref yang sudah ada.  Jika sebuah import_ref ditemukan di file CSV,\ndata tersebut akan diperbarui menggunakan nilai-nilai yang ada di file CSV.",
-                "description": "Impor file CSV yang berisi item, label, dan lokasi Anda. Lihat dokumentasi untuk informasi lebih lanjut mengenai\nformat yang diperlukan.",
+                "description": "Impor file CSV yang berisi item, tag, dan lokasi Anda. Lihat dokumentasi untuk informasi lebih lanjut mengenai\nformat yang diperlukan.",
                 "title": "Impor CSV",
                 "toast": {
                     "import_failed": "Impor gagal. Silahkan coba kembali beberapa saat lagi.",
@@ -67,16 +67,16 @@
                 "years": "tahun",
                 "yesterday": "kemaren"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "Cetak dari Browser",
-                "confirm_description": "Anda yakin ingin mencetak label ini?",
+                "confirm_description": "Anda yakin ingin mencetak tag ini?",
                 "download": "Unduh Label",
                 "print": "Cetak Label",
                 "server_print": "Cetak di Server",
                 "titles": "Label",
                 "toast": {
                     "load_status_failed": "Gagal memuat status",
-                    "print_failed": "Gagal mencetak label",
+                    "print_failed": "Gagal mencetak tag",
                     "print_success": "Label telah  dicetak"
                 }
             },
@@ -123,28 +123,28 @@
                 },
                 "table": {
                     "dropdown": {
-                        "change_labels_success": "Label Diubah"
+                        "change_tags_success": "Label Diubah"
                     },
                     "page": "Halaman",
                     "rows_per_page": "Baris per halaman"
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_color": "Warna label",
-                "label_description": "Deskripsi label",
-                "label_name": "Nama Label",
-                "title": "Buat label",
+                "tag_color": "Warna tag",
+                "tag_description": "Deskripsi tag",
+                "tag_name": "Nama Label",
+                "title": "Buat tag",
                 "toast": {
-                    "already_creating": "Sudah membuat label",
-                    "create_failed": "Tidak dapat membuat label",
+                    "already_creating": "Sudah membuat tag",
+                    "create_failed": "Tidak dapat membuat tag",
                     "create_success": "Label telah dibuat",
-                    "label_name_too_long": "Nama label tidak boleh lebih dari 50 karakter"
+                    "tag_name_too_long": "Nama tag tidak boleh lebih dari 50 karakter"
                 }
             },
             "selector": {
-                "select_labels": "Pilih Label"
+                "select_tags": "Pilih Label"
             }
         },
         "location": {
@@ -202,7 +202,7 @@
         "insured": "Diasuransikan",
         "items": "Barang",
         "join_discord": "Bergabunglah dengan Discord",
-        "labels": "Label",
+        "tags": "Label",
         "loading": "Memuat…",
         "locations": "Lokasi",
         "maintenance": "Perbaikan",
@@ -224,12 +224,12 @@
         "welcome": "Selamat datang, { username }"
     },
     "home": {
-        "labels": "Label",
+        "tags": "Label",
         "quick_statistics": "Ikhtisar Statistik",
         "recently_added": "Baru Ditambahkan",
         "storage_locations": "Lokasi Penyimpanan",
         "total_items": "Jumlah Item",
-        "total_labels": "Total Label",
+        "total_tags": "Total Label",
         "total_locations": "Total Lokasi",
         "total_value": "Total Nilai"
     },
@@ -295,7 +295,7 @@
         "manufacturer": "Pabrikan/Produsen",
         "model_number": "Nomor Model",
         "name": "Nama",
-        "negate_labels": "Negasikan Label yang Dipilih",
+        "negate_tags": "Negasikan Label yang Dipilih",
         "next_page": "Halaman Berikutnya",
         "no_results": "Item tidak ditemukan",
         "notes": "Catatan",
@@ -324,9 +324,9 @@
         "sold_details": "Detail Penjualan",
         "sold_price": "Harga Jual",
         "sold_to": "Dijual Kepada",
-        "tip_1": "Filter untuk lokasi dan label bekerja dengan operasi 'OR'. Artinya, jika Anda memilih lebih dari satu filter, hanya satu\nfilter yang harus cocok agar data ditampilkan.",
+        "tip_1": "Filter untuk lokasi dan tag bekerja dengan operasi 'OR'. Artinya, jika Anda memilih lebih dari satu filter, hanya satu\nfilter yang harus cocok agar data ditampilkan.",
         "tip_2": "Pencarian yang diawali dengan '#'' akan meminta ID aset (contoh '#000 -001 ')",
-        "tip_3": "Filter untuk lokasi dan label bekerja dengan operasi 'OR'. Artinya, jika Anda memilih lebih dari satu filter, hanya satu\nfilter yang harus cocok agar data ditampilkan.",
+        "tip_3": "Filter untuk lokasi dan tag bekerja dengan operasi 'OR'. Artinya, jika Anda memilih lebih dari satu filter, hanya satu\nfilter yang harus cocok agar data ditampilkan.",
         "tips": "Anjuran",
         "tips_sub": "Tips Pencarian",
         "updated_at": "Diperbarui pada",
@@ -334,9 +334,9 @@
         "warranty_details": "Rincian Garansi",
         "warranty_expires": "Garansi Kedaluwarsa"
     },
-    "labels": {
+    "tags": {
         "no_results": "Tidak Ditemukan Label",
-        "update_label": "Perbarui Label"
+        "update_tag": "Perbarui Label"
     },
     "languages": {
         "ca": "Catalan",
@@ -407,7 +407,7 @@
     },
     "menu": {
         "create_item": "Item / Aset",
-        "create_label": "Label",
+        "create_tag": "Label",
         "create_location": "Lokasi",
         "home": "Beranda",
         "locations": "Lokasi",
@@ -473,9 +473,9 @@
         "import_export_sub": "Impor dan ekspor inventaris Anda ke dan dari file CSV. Ini berguna untuk memigrasikan inventaris Anda ke instance Homebox yang baru.",
         "reports": "Laporan",
         "reports_set": {
-            "asset_labels": "Label ID Aset",
-            "asset_labels_button": "Generator Label",
-            "asset_labels_sub": "Menghasilkan label dalam PDF yang dapat dicetak untuk ID Aset. Label ini tidak spesifik untuk inventaris Anda, jadi Anda dapat mencetaknya terlebih dahulu dan menempelkannya ke inventaris Anda saat Anda menerimanya.",
+            "asset_tags": "Label ID Aset",
+            "asset_tags_button": "Generator Label",
+            "asset_tags_sub": "Menghasilkan tag dalam PDF yang dapat dicetak untuk ID Aset. Label ini tidak spesifik untuk inventaris Anda, jadi Anda dapat mencetaknya terlebih dahulu dan menempelkannya ke inventaris Anda saat Anda menerimanya.",
             "bill_of_materials": "Daftar Komponen",
             "bill_of_materials_button": "Download Daftar Inventaris",
             "bill_of_materials_sub": "Menghasilkan file CSV (Comma Separated Values) yang dapat diimpor ke program spreadsheet. Ini adalah ringkasan inventaris Anda dengan info dasar beserta harganya."

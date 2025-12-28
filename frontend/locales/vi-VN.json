@@ -67,7 +67,7 @@
                 "years": "năm",
                 "yesterday": "hôm qua"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "In ra giấy qua trình duyệt",
                 "confirm_description": "Bạn có chắc muốn in nhãn này?",
                 "download": "Tải về Nhãn",

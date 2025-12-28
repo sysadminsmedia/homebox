@@ -2,7 +2,7 @@ import { useI18n } from "vue-i18n";
 import type { UserClient } from "~~/lib/api/user";
 
 type StatCard = {
-  label: string;
+  tag: string;
   value: number;
   type: "currency" | "number";
 };
@@ -24,22 +24,22 @@ export function statCardData(api: UserClient) {
   return computed(() => {
     return [
       {
-        label: t("home.total_value"),
+        tag: t("home.total_value"),
         value: statistics.value?.totalItemPrice || 0,
         type: "currency",
       },
       {
-        label: t("home.total_items"),
+        tag: t("home.total_items"),
         value: statistics.value?.totalItems || 0,
         type: "number",
       },
       {
-        label: t("home.total_locations"),
+        tag: t("home.total_locations"),
         value: statistics.value?.totalLocations || 0,
         type: "number",
       },
       {
-        label: t("home.total_labels"),
+        tag: t("home.total_tags"),
         value: statistics.value?.totalLabels || 0,
         type: "number",
       },

@@ -45,7 +45,7 @@
                 "years": "年",
                 "yesterday": "昨天"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "從瀏覽器列印",
                 "confirm_description": "您確定要列印此標籤嗎？",
                 "download": "下載標籤",
@@ -72,7 +72,7 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
                 "title": "新增標籤"
             }
@@ -94,7 +94,7 @@
         "github": "GitHub項目",
         "items": "項目",
         "join_discord": "加入Discord",
-        "labels": "標籤",
+        "tags": "標籤",
         "locations": "地點",
         "name": "名字",
         "password": "密碼",
@@ -126,7 +126,7 @@
         "first": "第一項",
         "include_archive": "包括存檔項目",
         "last": "最後一項",
-        "negate_labels": "取消選定的標籤",
+        "negate_tags": "取消選定的標籤",
         "next_page": "下一頁",
         "no_results": "沒有找到項目",
         "options": "選項",

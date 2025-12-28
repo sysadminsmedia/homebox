@@ -67,7 +67,7 @@
                 "years": "年",
                 "yesterday": "昨日"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "印刷画面を開く",
                 "confirm_description": "この管理ラベルを印刷しますか？",
                 "download": "画像として保存",
@@ -153,21 +153,21 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_color": "ラベルの色",
-                "label_description": "ラベルの説明",
-                "label_name": "ラベル名",
+                "tag_color": "ラベルの色",
+                "tag_description": "ラベルの説明",
+                "tag_name": "ラベル名",
                 "title": "ラベルの追加",
                 "toast": {
                     "already_creating": "既に同じラベルがあります",
                     "create_failed": "ラベルを作成できませんでした",
                     "create_success": "ラベルを作成しました",
-                    "label_name_too_long": "ラベル名は50文字以内で入力してください"
+                    "tag_name_too_long": "ラベル名は50文字以内で入力してください"
                 }
             },
             "selector": {
-                "select_labels": "ラベルを選択"
+                "select_tags": "ラベルを選択"
             }
         },
         "location": {
@@ -225,7 +225,7 @@
         "insured": "保険適用",
         "items": "アイテム",
         "join_discord": "Discordサーバーへの参加",
-        "labels": "ラベル",
+        "tags": "ラベル",
         "loading": "読込中…",
         "locations": "ロケーション",
         "maintenance": "メンテナンス情報",
@@ -247,12 +247,12 @@
         "welcome": "{ username } でログイン中"
     },
     "home": {
-        "labels": "ラベル",
+        "tags": "ラベル",
         "quick_statistics": "統計",
         "recently_added": "最近の追加",
         "storage_locations": "ロケーション",
         "total_items": "アイテム数",
-        "total_labels": "合計ラベル数",
+        "total_tags": "合計ラベル数",
         "total_locations": "合計ロケーション数",
         "total_value": "合計金額"
     },
@@ -317,7 +317,7 @@
         "manufacturer": "製造・販売者",
         "model_number": "型番",
         "name": "名称",
-        "negate_labels": "選択されたラベルを除外",
+        "negate_tags": "選択されたラベルを除外",
         "next_page": "次の ページ",
         "no_attachments": "添付ファイルはありません",
         "no_results": "一致する項目はありません",
@@ -385,17 +385,17 @@
         "warranty_details": "保証に関する情報",
         "warranty_expires": "保証期間"
     },
-    "labels": {
-        "label_delete_confirm": "このラベルを削除しますか？元に戻すことはできません。",
+    "tags": {
+        "tag_delete_confirm": "このラベルを削除しますか？元に戻すことはできません。",
         "no_results": "一致するラベルはありません",
         "toast": {
-            "failed_delete_label": "ラベルの削除に失敗しました",
-            "failed_load_label": "ラベルの読み込みに失敗しました",
-            "failed_update_label": "ラベルの更新に失敗しました",
-            "label_deleted": "ラベルが削除されました",
-            "label_updated": "ラベル設定が更新されました"
+            "failed_delete_tag": "ラベルの削除に失敗しました",
+            "failed_load_tag": "ラベルの読み込みに失敗しました",
+            "failed_update_tag": "ラベルの更新に失敗しました",
+            "tag_deleted": "ラベルが削除されました",
+            "tag_updated": "ラベル設定が更新されました"
         },
-        "update_label": "ラベル設定の変更"
+        "update_tag": "ラベル設定の変更"
     },
     "languages": {
         "bs-BA": "ボスニア語 (Bosnia and Herzegovina)",
@@ -487,7 +487,7 @@
     },
     "menu": {
         "create_item": "アイテム",
-        "create_label": "ラベル",
+        "create_tag": "ラベル",
         "create_location": "場所",
         "home": "ホーム",
         "locations": "ロケーション",
@@ -545,18 +545,18 @@
         "user_profile_sub": "アカウントの管理やユーザーの招待など"
     },
     "reports": {
-        "label_generator": {
+        "tag_generator": {
             "asset_end": "Asset ID 印刷終了位置 (このIDは含みません)",
             "asset_start": "Asset ID 印刷開始位置 (このIDを含みます)",
             "base_url": "QRコードのURL (通常変更する必要はありません。URL見本を参照し設定してください。)",
-            "bordered_labels": "ラベルの境界線を印刷",
+            "bordered_tags": "ラベルの境界線を印刷",
             "generate_page": "印刷プレビューを取得",
             "input_placeholder": "ここに入力",
             "instruction_1": "Homebox ラベルジェネレーターは、Homeboxに登録されたアイテムの管理シールを印刷するツールです。\nシールはアイテムを登録する前に印刷できるため、事前に大量作成することが可能です！",
             "instruction_2": "シールには、HomeboxのQRコードやAsset IDを印刷できます。\nAsset IDを無効にしている場合でもこのツールは使用できますが、Asset IDを利用してアイテムページを開く機能などは利用できません。",
             "instruction_3": "この機能はまだ開発中であり、今後の更新で改修される可能性があります。\nバグ情報や機能提案がある方は、ぜひ'<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHubディスカッションに投稿をお願いします。'</a>'",
-            "label_height": "シール 高さ",
-            "label_width": "シール 横幅",
+            "tag_height": "シール 高さ",
+            "tag_width": "シール 横幅",
             "measure_type": "メジャータイプ",
             "page_bottom_padding": "用紙 下余白",
             "page_height": "用紙サイズ 高さ",
@@ -565,7 +565,7 @@
             "page_top_padding": "用紙 上余白",
             "page_width": "用紙サイズ 横幅",
             "qr_code_example": "QRコード URL見本",
-            "tip_1": "この機能の既定値は、'<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 label sheets'</a>'と適合する値になっています。\nそれ以外のシートを使用する場合は、必ず設定を調整する必要があります。",
+            "tip_1": "この機能の既定値は、'<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 tag sheets'</a>'と適合する値になっています。\nそれ以外のシートを使用する場合は、必ず設定を調整する必要があります。",
             "tip_2": "シールをカスタマイズする場合、寸法はインチ単位で設定してください。\n5260シートも、既定値が寸法と一致しないことがあります。\n'<br>' '<b>'試行錯誤が必要になることを覚悟してください。'<u>'必ず寸法や印刷位置の検証を行ってから、シール用紙に印刷してください。'</u>' '</b>'",
             "tip_3": "印刷時は、以下のことに気を付けてください\n'<ol><li>'余白を0 または なし に設定する\n'</li><li>'拡大率を100%に設定する\n'</li><li>'両面印刷を無効にする\n'</li><li>'ページを印刷する前に必ずテスト印刷をする\n'</li><li>'たくさんの紙くずが発生することを覚悟する",
             "tips": "仕様",
@@ -623,9 +623,9 @@
         "import_export_sub": "登録されたアイテムをCSVファイルにインポートおよびエクスポートします。Homeboxのソフトウェアを切り替える場合などに便利です。",
         "reports": "レポート",
         "reports_set": {
-            "asset_labels": "【Beta】アイテム管理シールの作成",
-            "asset_labels_button": "【BETA】作成ページに移動",
-            "asset_labels_sub": "アイテムの管理などに使用できるラベルシールを印刷可能なPDFファイル形式で出力する機能です。'<br>'まだ使用されていないAsset IDと対応するQRコードのみを印刷し、新しいものを買ったときなどに手書きして使用することも可能です。'<br>'これらはまだ開発の初期段階にあり、正常に機能しないまたは全く機能しないなど致命的な不具合が残っている可能性があります。",
+            "asset_tags": "【Beta】アイテム管理シールの作成",
+            "asset_tags_button": "【BETA】作成ページに移動",
+            "asset_tags_sub": "アイテムの管理などに使用できるラベルシールを印刷可能なPDFファイル形式で出力する機能です。'<br>'まだ使用されていないAsset IDと対応するQRコードのみを印刷し、新しいものを買ったときなどに手書きして使用することも可能です。'<br>'これらはまだ開発の初期段階にあり、正常に機能しないまたは全く機能しないなど致命的な不具合が残っている可能性があります。",
             "bill_of_materials": "部品表",
             "bill_of_materials_button": "部品表(BOM)を生成する",
             "bill_of_materials_sub": "CSV形式のファイルを出力します。基本的なアイテム情報と価格情報を含むアイテムの概要が含まれています。'<br>'UTF-8形式で出力されるため、Microsoft OfficeのExcelで開くと文字化けする恐れがあります。"

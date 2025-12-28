@@ -197,7 +197,7 @@ describe("templates lifecycle (create, update, delete)", () => {
   });
 });
 
-describe("templates with location and labels", () => {
+describe("templates with location and tags", () => {
   test("user should be able to create a template with a default location", async () => {
     const api = await sharedUserClient();
 
@@ -222,31 +222,31 @@ describe("templates with location and labels", () => {
     await api.locations.delete(location.id);
   });
 
-  test("user should be able to create a template with default labels", async () => {
+  test("user should be able to create a template with default tags", async () => {
     const api = await sharedUserClient();
 
     // First create some labels
-    const { response: label1Response, data: label1 } = await api.labels.create(factories.label());
-    expect(label1Response.status).toBe(201);
+    const { response: tag1Response, data: tag1 } = await api.tags.create(factories.tag());
+    expect(tag1Response.status).toBe(201);
 
-    const { response: label2Response, data: label2 } = await api.labels.create(factories.label());
-    expect(label2Response.status).toBe(201);
+    const { response: tag2Response, data: tag2 } = await api.tags.create(factories.tag());
+    expect(tag2Response.status).toBe(201);
 
     // Create template with labels
     const templateData = factories.template();
-    templateData.defaultLabelIds = [label1.id, label2.id];
+    templateData.defaultLabelIds = [tag1.id, tag2.id];
 
     const { response, data } = await api.templates.create(templateData);
 
     expect(response.status).toBe(201);
     expect(data.defaultLabels).toHaveLength(2);
-    expect(data.defaultLabels.map(l => l.id)).toContain(label1.id);
-    expect(data.defaultLabels.map(l => l.id)).toContain(label2.id);
+    expect(data.defaultLabels.map(l => l.id)).toContain(tag1.id);
+    expect(data.defaultLabels.map(l => l.id)).toContain(tag2.id);
 
     // Cleanup
     await api.templates.delete(data.id);
-    await api.labels.delete(label1.id);
-    await api.labels.delete(label2.id);
+    await api.tags.delete(tag1.id);
+    await api.tags.delete(tag2.id);
   });
 
   test("user should be able to update template to remove location", async () => {

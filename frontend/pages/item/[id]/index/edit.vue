@@ -4,7 +4,7 @@
   import { toast } from "@/components/ui/sonner";
   import type { ItemAttachment, ItemField, ItemOut, ItemUpdate } from "~~/lib/api/types/data-contracts";
   import { AttachmentTypes } from "~~/lib/api/types/non-generated";
-  import { useLabelStore } from "~~/stores/labels";
+  import { useTagStore } from "~~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
   import MdiLoading from "~icons/mdi/loading";
   import MdiDelete from "~icons/mdi/delete";
@@ -18,7 +18,7 @@
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
   import { Switch } from "@/components/ui/switch";
-  import { Label } from "@/components/ui/label";
+  import { Label } from "@/components/ui/tag";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
   import FormTextField from "~/components/Form/TextField.vue";
   import FormTextArea from "~/components/Form/TextArea.vue";
@@ -49,8 +49,8 @@
   const locationStore = useLocationStore();
   const locations = computed(() => locationStore.allLocations);
 
-  const labelStore = useLabelStore();
-  const labels = computed(() => labelStore.labels);
+  const labelStore = useTagStore();
+  const tags = computed(() => labelStore.tags);
 
   const {
     data: nullableItem,
@@ -79,13 +79,13 @@
     return data;
   });
 
-  const item = ref<ItemOut & { labelIds: string[] }>(null as never);
+  const item = ref<ItemOut & { tagIds: string[] }>(null as never);
 
   watchEffect(() => {
     if (nullableItem.value) {
       item.value = {
         ...nullableItem.value,
-        labelIds: nullableItem.value.labels.map(l => l.id) ?? [],
+        tagIds: nullableItem.value.tags.map(l => l.id) ?? [],
       };
     }
   });
@@ -121,7 +121,7 @@
     const payload: ItemUpdate = {
       ...item.value,
       locationId: item.value.location?.id,
-      labelIds: item.value.labelIds,
+      tagIds: item.value.tagIds,
       parentId: parent.value ? parent.value.id : null,
       assetId: item.value.assetId,
       purchasePrice,
@@ -151,7 +151,7 @@
 
   type TextFormField = {
     type: "text" | "textarea" | "markdown";
-    label: string;
+    tag: string;
     ref: NonNullableStringKeys<ItemOut>;
     maxLength?: number;
     minLength?: number;
@@ -159,19 +159,19 @@
 
   type NumberFormField = {
     type: "number";
-    label: string;
+    tag: string;
     ref: NonNullableNumberKeys<ItemOut> | NonNullableStringKeys<ItemOut>;
   };
 
   interface BoolFormField {
     type: "checkbox";
-    label: string;
+    tag: string;
     ref: BooleanKeys<ItemOut>;
   }
 
   type DateFormField = {
     type: "date";
-    label: string;
+    tag: string;
     ref: DateKeys<ItemOut>;
   };
 
@@ -180,59 +180,59 @@
   const mainFields: FormField[] = [
     {
       type: "text",
-      label: "items.name",
+      tag: "items.name",
       ref: "name",
       maxLength: 255,
       minLength: 1,
     },
     {
       type: "number",
-      label: "items.quantity",
+      tag: "items.quantity",
       ref: "quantity",
     },
     {
       type: "markdown",
-      label: "items.description",
+      tag: "items.description",
       ref: "description",
       maxLength: 1000,
     },
     {
       type: "text",
-      label: "items.serial_number",
+      tag: "items.serial_number",
       ref: "serialNumber",
       maxLength: 255,
     },
     {
       type: "text",
-      label: "items.model_number",
+      tag: "items.model_number",
       ref: "modelNumber",
       maxLength: 255,
     },
     {
       type: "text",
-      label: "items.manufacturer",
+      tag: "items.manufacturer",
       ref: "manufacturer",
       maxLength: 255,
     },
     {
       type: "markdown",
-      label: "items.notes",
+      tag: "items.notes",
       ref: "notes",
       maxLength: 1000,
     },
     {
       type: "checkbox",
-      label: "items.insured",
+      tag: "items.insured",
       ref: "insured",
     },
     {
       type: "checkbox",
-      label: "items.archived",
+      tag: "items.archived",
       ref: "archived",
     },
     {
       type: "text",
-      label: "items.asset_id",
+      tag: "items.asset_id",
       ref: "assetId",
     },
   ];
@@ -240,18 +240,18 @@
   const purchaseFields: FormField[] = [
     {
       type: "text",
-      label: "items.purchased_from",
+      tag: "items.purchased_from",
       ref: "purchaseFrom",
       maxLength: 255,
     },
     {
       type: "number",
-      label: "items.purchase_price",
+      tag: "items.purchase_price",
       ref: "purchasePrice",
     },
     {
       type: "date",
-      label: "items.purchase_date",
+      tag: "items.purchase_date",
       ref: "purchaseTime",
     },
   ];
@@ -259,17 +259,17 @@
   const warrantyFields: FormField[] = [
     {
       type: "checkbox",
-      label: "items.lifetime_warranty",
+      tag: "items.lifetime_warranty",
       ref: "lifetimeWarranty",
     },
     {
       type: "date",
-      label: "items.warranty_expires",
+      tag: "items.warranty_expires",
       ref: "warrantyExpires",
     },
     {
       type: "textarea",
-      label: "items.warranty_details",
+      tag: "items.warranty_details",
       ref: "warrantyDetails",
       maxLength: 1000,
     },
@@ -278,18 +278,18 @@
   const soldFields: FormField[] = [
     {
       type: "text",
-      label: "items.sold_to",
+      tag: "items.sold_to",
       ref: "soldTo",
       maxLength: 255,
     },
     {
       type: "number",
-      label: "items.sold_price",
+      tag: "items.sold_price",
       ref: "soldPrice",
     },
     {
       type: "date",
-      label: "items.sold_at",
+      tag: "items.sold_at",
       ref: "soldTime",
     },
   ];
@@ -486,7 +486,7 @@
     const payload: ItemUpdate = {
       ...item.value,
       locationId: item.value.location?.id,
-      labelIds: item.value.labelIds,
+      tagIds: item.value.tagIds,
       parentId: parent.value ? parent.value.id : null,
       assetId: item.value.assetId,
     };
@@ -522,7 +522,7 @@
           <DialogTitle>{{ $t("items.edit.edit_attachment_dialog.title") }}</DialogTitle>
         </DialogHeader>
 
-        <FormTextField v-model="editState.title" :label="$t('items.edit.edit_attachment_dialog.attachment_title')" />
+        <FormTextField v-model="editState.title" :tag="$t('items.edit.edit_attachment_dialog.attachment_title')" />
         <div>
           <Label for="attachment-type"> {{ $t("items.edit.edit_attachment_dialog.attachment_type") }} </Label>
           <Select id="attachment-type" v-model:model-value="editState.type">
@@ -540,12 +540,12 @@
           <Checkbox
             id="primary"
             v-model="editState.primary"
-            :label="$t('items.edit.edit_attachment_dialog.primary_photo')"
+            :tag="$t('items.edit.edit_attachment_dialog.primary_photo')"
           />
-          <label class="cursor-pointer text-sm" for="primary">
+          <tag class="cursor-pointer text-sm" for="primary">
             <span class="font-semibold">{{ $t("items.edit.edit_attachment_dialog.primary_photo") }}</span>
             {{ $t("items.edit.edit_attachment_dialog.primary_photo_sub") }}
-          </label>
+          </tag>
         </div>
 
         <DialogFooter>
@@ -593,7 +593,7 @@
               v-model:search="query"
               :items="results"
               item-text="name"
-              :label="$t('items.parent_item')"
+              :tag="$t('items.parent_item')"
               no-results-text="Type to search..."
               :exclude-items="[item]"
               :is-loading="isLoading"
@@ -604,7 +604,7 @@
               <Label class="px-1">{{ $t("items.sync_child_locations") }}</Label>
               <Switch v-model="item.syncChildItemsLocations" @update:model-value="syncChildItemsLocations()" />
             </div>
-            <LabelSelector v-model="item.labelIds" :labels="labels" />
+            <LabelSelector v-model="item.tagIds" :tags="tags" />
           </div>
 
           <div class="border-t sm:p-0">
@@ -613,7 +613,7 @@
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -621,14 +621,14 @@
                 <MarkdownEditor
                   v-else-if="field.type === 'markdown'"
                   v-model="item[field.ref]"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
                 />
                 <FormTextField
                   v-else-if="field.type === 'text'"
                   v-model="item[field.ref]"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   inline
                   type="text"
                   :max-length="field.maxLength"
@@ -638,19 +638,19 @@
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   inline
                 />
                 <FormDatePicker
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   inline
                 />
                 <FormCheckbox
                   v-else-if="field.type === 'checkbox'"
                   v-model="item[field.ref]"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   inline
                 />
               </div>
@@ -666,10 +666,10 @@
               :key="`field-${idx}`"
               class="grid grid-cols-2 gap-2 pt-4 md:grid-cols-4"
             >
-              <!-- <FormSelect v-model:value="field.type" label="Field Type" :items="fieldTypes" value-key="value" /> -->
-              <FormTextField v-model="field.name" :label="$t('global.name')" />
+              <!-- <FormSelect v-model:value="field.type" tag="Field Type" :items="fieldTypes" value-key="value" /> -->
+              <FormTextField v-model="field.name" :tag="$t('global.name')" />
               <div class="col-span-3 flex items-end">
-                <FormTextField v-model="field.textValue" :label="$t('global.value')" :max-length="500" />
+                <FormTextField v-model="field.textValue" :tag="$t('global.value')" :max-length="500" />
                 <Tooltip>
                   <TooltipTrigger as-child>
                     <Button size="icon" variant="destructive" class="ml-2" @click="item.fields.splice(idx, 1)">
@@ -782,7 +782,7 @@
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -790,7 +790,7 @@
                 <FormTextField
                   v-else-if="field.type === 'text'"
                   v-model="item[field.ref]"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -799,19 +799,19 @@
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   inline
                 />
                 <FormDatePicker
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   inline
                 />
                 <FormCheckbox
                   v-else-if="field.type === 'checkbox'"
                   v-model="item[field.ref]"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   inline
                 />
               </div>
@@ -829,7 +829,7 @@
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -837,7 +837,7 @@
                 <FormTextField
                   v-else-if="field.type === 'text'"
                   v-model="item[field.ref]"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -846,19 +846,19 @@
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   inline
                 />
                 <FormDatePicker
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   inline
                 />
                 <FormCheckbox
                   v-else-if="field.type === 'checkbox'"
                   v-model="item[field.ref]"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   inline
                 />
               </div>
@@ -876,7 +876,7 @@
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -884,7 +884,7 @@
                 <FormTextField
                   v-else-if="field.type === 'text'"
                   v-model="item[field.ref]"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -893,19 +893,19 @@
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   inline
                 />
                 <FormDatePicker
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   inline
                 />
                 <FormCheckbox
                   v-else-if="field.type === 'checkbox'"
                   v-model="item[field.ref]"
-                  :label="$t(field.label)"
+                  :tag="$t(field.tag)"
                   inline
                 />
               </div>

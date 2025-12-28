@@ -6,7 +6,7 @@ import { factories } from "../factories";
 type ImportObj = {
   [`HB.import_ref`]: string;
   [`HB.location`]: string;
-  [`HB.labels`]: string;
+  [`HB.tags`]: string;
   [`HB.quantity`]: number;
   [`HB.name`]: string;
   [`HB.description`]: string;
@@ -40,7 +40,7 @@ function importFileGenerator(entries: number): ImportObj[] {
 
   const pick = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)];
 
-  const labels = faker.word.words(5).split(" ").join(";");
+  const tags = faker.word.words(5).split(" ").join(";");
   const locations = faker.word.words(3).split(" ");
 
   const half = Math.floor(entries / 2);
@@ -52,7 +52,7 @@ function importFileGenerator(entries: number): ImportObj[] {
     imports.push({
       [`HB.import_ref`]: faker.database.mongodbObjectId(),
       [`HB.location`]: pick(locations),
-      [`HB.labels`]: labels,
+      [`HB.tags`]: tags,
       [`HB.quantity`]: Number(faker.number.int(2)),
       [`HB.name`]: faker.word.words(3),
       [`HB.description`]: "",
@@ -103,12 +103,12 @@ describe("group related statistics tests", () => {
     expect(setupResp.status).toBe(204);
 
     for (const item of imports) {
-      const labels = item[`HB.labels`].split(";");
-      for (const label of labels) {
-        if (labelData[label]) {
-          labelData[label] += item[`HB.purchase_price`];
+      const tags = item[`HB.tags`].split(";");
+      for (const tag of tags) {
+        if (labelData[tag]) {
+          labelData[tag] += item[`HB.purchase_price`];
         } else {
-          labelData[label] = item[`HB.purchase_price`];
+          labelData[tag] = item[`HB.purchase_price`];
         }
       }
 
@@ -133,11 +133,11 @@ describe("group related statistics tests", () => {
   });
 
   test("Validate Labels Statistics", async () => {
-    const { status, data } = await api().stats.labels();
+    const { status, data } = await api().stats.tags();
     expect(status).toBe(200);
 
-    for (const label of data) {
-      expect(label.total).toEqual(labelData[label.name]);
+    for (const tag of data) {
+      expect(tag.total).toEqual(labelData[tag.name]);
     }
   });
 

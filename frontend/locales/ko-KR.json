@@ -50,7 +50,7 @@
                 "years": "년",
                 "yesterday": "어제"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "브라우저에서 인쇄"
             },
             "page_qr_code": {

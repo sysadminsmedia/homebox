@@ -16,7 +16,7 @@
               v-if="value"
               type="button"
               class="shrink-0 rounded p-1 hover:bg-primary/20"
-              :aria-label="$t('components.location.selector.clear')"
+              :aria-tag="$t('components.location.selector.clear')"
               @click.stop.prevent="clearSelection"
             >
               <X class="size-4" />
@@ -65,7 +65,7 @@
   import fuzzysort from "fuzzysort";
   import { Button } from "~/components/ui/button";
   import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "~/components/ui/command";
-  import { Label } from "~/components/ui/label";
+  import { Label } from "~/components/ui/tag";
   import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
   import { cn } from "~/lib/utils";
   import type { LocationSummary } from "~~/lib/api/types/data-contracts";

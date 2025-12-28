@@ -67,7 +67,7 @@
                 "years": "rokov",
                 "yesterday": "včera"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "Tlač z prehliadača",
                 "confirm_description": "Naozaj chcete vytlačiť tento štítok?",
                 "download": "Stiahnuť štítok",
@@ -152,21 +152,21 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_color": "Farba štítku",
-                "label_description": "Popis štítku",
-                "label_name": "Názov štítku",
+                "tag_color": "Farba štítku",
+                "tag_description": "Popis štítku",
+                "tag_name": "Názov štítku",
                 "title": "Vytvoriť štítok",
                 "toast": {
                     "already_creating": "Štítok sa už vytvára",
                     "create_failed": "Nepodarilo sa vytvoriť štítok",
                     "create_success": "Štítok bol vytvorený",
-                    "label_name_too_long": "Názov štítku nesmie byť dlhší ako 50 znakov"
+                    "tag_name_too_long": "Názov štítku nesmie byť dlhší ako 50 znakov"
                 }
             },
             "selector": {
-                "select_labels": "Výber značiek"
+                "select_tags": "Výber značiek"
             }
         },
         "location": {
@@ -224,7 +224,7 @@
         "insured": "Poistené",
         "items": "Položky",
         "join_discord": "Pripojte sa k Discordu",
-        "labels": "Štítky",
+        "tags": "Štítky",
         "loading": "Načítam…",
         "locations": "Miesta",
         "maintenance": "Údržba",
@@ -246,12 +246,12 @@
         "welcome": "Vitajte, { username }"
     },
     "home": {
-        "labels": "Štítky",
+        "tags": "Štítky",
         "quick_statistics": "Rýchla štatistika",
         "recently_added": "Nedávno pridané",
         "storage_locations": "Skladovacie miesta",
         "total_items": "Celkový počet položiek",
-        "total_labels": "Celkový počet štítkov",
+        "total_tags": "Celkový počet štítkov",
         "total_locations": "Celkový počet miest",
         "total_value": "Celková hodnota"
     },
@@ -329,7 +329,7 @@
         "manufacturer": "Výrobca",
         "model_number": "Číslo modelu",
         "name": "Názov",
-        "negate_labels": "Negovať vybrané označenia",
+        "negate_tags": "Negovať vybrané označenia",
         "next_page": "Ďalšia strana",
         "no_attachments": "Neboli nájdené žiadne prílohy",
         "no_results": "Nenašli sa žiadne položky",
@@ -397,17 +397,17 @@
         "warranty_details": "Podrobnosti o záruke",
         "warranty_expires": "Záruka vyprší"
     },
-    "labels": {
-        "label_delete_confirm": "Naozaj chcete odstrániť tento štítok? Túto akciu nie je možné odvolať.",
+    "tags": {
+        "tag_delete_confirm": "Naozaj chcete odstrániť tento štítok? Túto akciu nie je možné odvolať.",
         "no_results": "Nenašli sa žiadne štítky",
         "toast": {
-            "failed_delete_label": "Nepodarilo sa odstrániť štítok",
-            "failed_load_label": "Štítok sa nepodarilo načítať",
-            "failed_update_label": "Štítok sa nepodarilo aktualizovať",
-            "label_deleted": "Štítok bol odstránený",
-            "label_updated": "Štítok bol aktualizovaný"
+            "failed_delete_tag": "Nepodarilo sa odstrániť štítok",
+            "failed_load_tag": "Štítok sa nepodarilo načítať",
+            "failed_update_tag": "Štítok sa nepodarilo aktualizovať",
+            "tag_deleted": "Štítok bol odstránený",
+            "tag_updated": "Štítok bol aktualizovaný"
         },
-        "update_label": "Aktualizovať štítok"
+        "update_tag": "Aktualizovať štítok"
     },
     "languages": {
         "bs-BA": "Bosniačtina (Bosna a Hercegovina)",
@@ -499,7 +499,7 @@
     },
     "menu": {
         "create_item": "Položka / Aktívum",
-        "create_label": "Štítok",
+        "create_tag": "Štítok",
         "create_location": "Miesto",
         "home": "Domov",
         "locations": "Miesta",
@@ -557,18 +557,18 @@
         "user_profile_sub": "Pozvite používateľov a spravujte svoj účet."
     },
     "reports": {
-        "label_generator": {
+        "tag_generator": {
             "asset_end": "Koniec aktíva",
             "asset_start": "Začiatok aktíva",
             "base_url": "Základná časť URL adresy",
-            "bordered_labels": "Ohraničené štítky",
+            "bordered_tags": "Ohraničené štítky",
             "generate_page": "Generovať stranu",
             "input_placeholder": "Píšte sem",
             "instruction_1": "Generátor štítkov Homebox je nástroj, ktorý vám pomôže vytlačiť štítky pre inventár Homeboxu. Tie sú určené na\n to, aby ste mohli vytlačiť viacero štítkov naraz a mať ich pripravených vopred",
             "instruction_2": "Tieto štítky fungujú tak, že sa na štítok vytlačí QR kód URL adresy a informácia AssetID. Ak ste v nastaveniach Homeboxu\n AssetID zakázali, môžete tento nástroj i naďalej používať, ale AssetIT nebude odkazovať na žiadnu položku",
             "instruction_3": "Táto funkcia je v ranej fáze vývoja a v budúcich verziách sa môže zmeniť, ak máte spätnú väzbu, podeľte sa s ňou, prosím,\n v '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'Diskusii na GitHube'</a>'",
-            "label_height": "Výška štítka",
-            "label_width": "Šírka štítku",
+            "tag_height": "Výška štítka",
+            "tag_width": "Šírka štítku",
             "measure_type": "Typ merania",
             "page_bottom_padding": "Odsadenie strany zospodu",
             "page_height": "Výška strany",
@@ -635,9 +635,9 @@
         "import_export_sub": "Importujte a exportujte svoj inventár do a zo súboru CSV. To je užitočné pri migrácii inventára do novej inštancie Homeboxu.",
         "reports": "Správy",
         "reports_set": {
-            "asset_labels": "Identifikačné štítky položiek",
-            "asset_labels_button": "Generátor štítkov",
-            "asset_labels_sub": "Generuje tlačiteľné PDF štítkov pre rad Asset ID. Tieto nie sú špecifické pre váš inventár, takže štítky si môžete vytlačiť vopred a aplikovať ich na váš inventár, keď ich dostanete.",
+            "asset_tags": "Identifikačné štítky položiek",
+            "asset_tags_button": "Generátor štítkov",
+            "asset_tags_sub": "Generuje tlačiteľné PDF štítkov pre rad Asset ID. Tieto nie sú špecifické pre váš inventár, takže štítky si môžete vytlačiť vopred a aplikovať ich na váš inventár, keď ich dostanete.",
             "bill_of_materials": "Súpis položiek",
             "bill_of_materials_button": "Generovať kusovník",
             "bill_of_materials_sub": "Vygeneruje súbor CSV (Comma Separated Values), ktorý možno importovať do tabuľkového procesora. Toto je súhrn vášho inventára so základnými informáciami o položkách a cenách."

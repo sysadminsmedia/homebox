@@ -45,7 +45,7 @@
                 "years": "vite",
                 "yesterday": "dje"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "Printo nga shfletuesi",
                 "confirm_description": "Je i sigurt që dëshiron ta printosh këtë etiketë?",
                 "download": "Shkarko etiketën",
@@ -79,10 +79,10 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_description": "Përshkrimi i etiketës",
-                "label_name": "Emri i etiketës",
+                "tag_description": "Përshkrimi i etiketës",
+                "tag_name": "Emri i etiketës",
                 "title": "Krijo etiketë"
             }
         },
@@ -119,7 +119,7 @@
         "github": "Projekt Github",
         "items": "Artikuj",
         "join_discord": "Bashkoju Discord",
-        "labels": "Etiketa",
+        "tags": "Etiketa",
         "locations": "Vendndodhjet",
         "maintenance": "Mirëmbajtja",
         "name": "Emri",
@@ -136,11 +136,11 @@
         "welcome": "Mirë se erdhe, { username }"
     },
     "home": {
-        "labels": "Etiketa",
+        "tags": "Etiketa",
         "quick_statistics": "Statistika të shpejta",
         "recently_added": "U shtua së fundmi",
         "storage_locations": "Vendndodhjet e magazinimit",
         "total_items": "Totali i Artikujve",
-        "total_labels": "Totali i etiketave"
+        "total_tags": "Totali i etiketave"
     }
 }

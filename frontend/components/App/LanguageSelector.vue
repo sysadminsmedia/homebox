@@ -2,7 +2,7 @@
   import { computed } from "vue";
   import * as Locales from "date-fns/locale";
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-  import { Label } from "@/components/ui/label";
+  import { Label } from "@/components/ui/tag";
   import { fmtDate } from "~~/composables/use-formatters";
   import { useViewPreferences } from "~~/composables/use-preferences";
 

@@ -67,7 +67,7 @@
                 "years": "年",
                 "yesterday": "昨天"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "在浏览器内打印",
                 "confirm_description": "确定要打印这个标签吗？",
                 "download": "下载标签",
@@ -139,9 +139,9 @@
             },
             "view": {
                 "change_details": {
-                    "add_labels": "添加标签",
+                    "add_tags": "添加标签",
                     "failed_to_update_item": "更新项目失败",
-                    "remove_labels": "删除标签",
+                    "remove_tags": "删除标签",
                     "title": "更改项目详细信息"
                 },
                 "selectable": {
@@ -156,8 +156,8 @@
                 "table": {
                     "dropdown": {
                         "actions": "动作",
-                        "change_labels": "更改标签",
-                        "change_labels_success": "标签已更改",
+                        "change_tags": "更改标签",
+                        "change_tags_success": "标签已更改",
                         "change_location": "更改位置",
                         "change_location_success": "位置已更改",
                         "create_maintenance_item": "为物品创建维护项目",
@@ -188,21 +188,21 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_color": "标签颜色",
-                "label_description": "标签说明",
-                "label_name": "标签名称",
+                "tag_color": "标签颜色",
+                "tag_description": "标签说明",
+                "tag_name": "标签名称",
                 "title": "创建标签",
                 "toast": {
                     "already_creating": "正在创建标签",
                     "create_failed": "无法创建标签",
                     "create_success": "标签已创建",
-                    "label_name_too_long": "标签名称不能超过50个字符"
+                    "tag_name_too_long": "标签名称不能超过50个字符"
                 }
             },
             "selector": {
-                "select_labels": "选择标签"
+                "select_tags": "选择标签"
             }
         },
         "location": {
@@ -260,7 +260,7 @@
         "insured": "已投保",
         "items": "物品",
         "join_discord": "加入Discord讨论",
-        "labels": "标签",
+        "tags": "标签",
         "loading": "加载中…",
         "locations": "位置",
         "maintenance": "维护",
@@ -283,12 +283,12 @@
         "welcome": "欢迎，{username}"
     },
     "home": {
-        "labels": "标签",
+        "tags": "标签",
         "quick_statistics": "快速统计",
         "recently_added": "最近加入",
         "storage_locations": "存放位置",
         "total_items": "项目总量",
-        "total_labels": "标签总量",
+        "total_tags": "标签总量",
         "total_locations": "位置数量",
         "total_value": "价值总和"
     },
@@ -366,7 +366,7 @@
         "manufacturer": "制造商",
         "model_number": "型号",
         "name": "名称",
-        "negate_labels": "取消选中的标签",
+        "negate_tags": "取消选中的标签",
         "next_page": "下一页",
         "no_attachments": "没有找到附件",
         "no_results": "没有可显示的物品",
@@ -434,17 +434,17 @@
         "warranty_details": "保修详情",
         "warranty_expires": "保修持续到"
     },
-    "labels": {
-        "label_delete_confirm": "确定删除此标签吗？此操作无法撤回。",
+    "tags": {
+        "tag_delete_confirm": "确定删除此标签吗？此操作无法撤回。",
         "no_results": "未找到标签",
         "toast": {
-            "failed_delete_label": "删除标签失败",
-            "failed_load_label": "加载标签失败",
-            "failed_update_label": "更新标签失败",
-            "label_deleted": "已删除标签",
-            "label_updated": "标签已更新"
+            "failed_delete_tag": "删除标签失败",
+            "failed_load_tag": "加载标签失败",
+            "failed_update_tag": "更新标签失败",
+            "tag_deleted": "已删除标签",
+            "tag_updated": "标签已更新"
         },
-        "update_label": "更新标签"
+        "update_tag": "更新标签"
     },
     "languages": {
         "bs-BA": "波斯尼亚语（波斯尼亚和黑塞哥维那）",
@@ -536,7 +536,7 @@
     },
     "menu": {
         "create_item": "物品/资产",
-        "create_label": "标签",
+        "create_tag": "标签",
         "create_location": "位置",
         "home": "主页",
         "locations": "位置",
@@ -595,18 +595,18 @@
         "user_profile_sub": "邀请用户共同管理您的资产。"
     },
     "reports": {
-        "label_generator": {
+        "tag_generator": {
             "asset_end": "结束编号",
             "asset_start": "开始编号",
             "base_url": "默认地址",
-            "bordered_labels": "标签边框",
+            "bordered_tags": "标签边框",
             "generate_page": "生成标签页",
             "input_placeholder": "在此输入",
             "instruction_1": "Homebox 标签生成器是一款用于帮助您为 Homebox 库存打印标签的工具。旨在用于\n预先打印标签，这样您就可以一次性打印出多张标签，随时备用并贴在物品上",
             "instruction_2": "因此，这些标签的工作方式是在标签上打印一个 URL 的二维码以及资产ID信息。\n如果您在Homebox设置中禁用了资产ID，您仍然可以使用此工具，但这些资产编号将不会对应任何物品",
             "instruction_3": "此功能处于早期开发阶段，可能会在未来版本中发生变化，如果您有反馈，请\n在'<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub讨论'</a>'中提供",
-            "label_height": "标签高度",
-            "label_width": "标签宽度",
+            "tag_height": "标签高度",
+            "tag_width": "标签宽度",
             "measure_type": "长度单位",
             "page_bottom_padding": "底部页边距",
             "page_height": "页面高度",
@@ -673,9 +673,9 @@
         "import_export_sub": "按CSV格式导入和导出您的库存。在将库存迁移到Homebox的新实例时非常有用。",
         "reports": "报告",
         "reports_set": {
-            "asset_labels": "资产ID标签",
-            "asset_labels_button": "标签生成器",
-            "asset_labels_sub": "为资产ID标签生成可打印PDF。这些标签并不特定于您的库存，因此您可以提前打印标签，并在收到标签时将其应用于您的仓库。",
+            "asset_tags": "资产ID标签",
+            "asset_tags_button": "标签生成器",
+            "asset_tags_sub": "为资产ID标签生成可打印PDF。这些标签并不特定于您的库存，因此您可以提前打印标签，并在收到标签时将其应用于您的仓库。",
             "bill_of_materials": "物料清单",
             "bill_of_materials_button": "生成物料清单",
             "bill_of_materials_sub": "生成可以导入的CSV电子表格文件（使用逗号分隔值）。这是您的库存摘要，包括基本商品和定价信息。"

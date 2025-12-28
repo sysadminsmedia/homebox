@@ -67,7 +67,7 @@
                 "years": "anni",
                 "yesterday": "ieri"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "Stampa dal Browser",
                 "confirm_description": "Sei sicuro di voler stampare questa etichetta?",
                 "download": "Scarica l'etichetta",
@@ -139,9 +139,9 @@
             },
             "view": {
                 "change_details": {
-                    "add_labels": "Aggiungi Etichette",
+                    "add_tags": "Aggiungi Etichette",
                     "failed_to_update_item": "Aggiornamento oggetto fallito",
-                    "remove_labels": "Rimuovi Etichette",
+                    "remove_tags": "Rimuovi Etichette",
                     "title": "Modifica Dettaglio Oggetto"
                 },
                 "selectable": {
@@ -156,8 +156,8 @@
                 "table": {
                     "dropdown": {
                         "actions": "Azioni",
-                        "change_labels": "Cambia etichette",
-                        "change_labels_success": "Etichette cambiate",
+                        "change_tags": "Cambia etichette",
+                        "change_tags_success": "Etichette cambiate",
                         "change_location": "Cambia posizione",
                         "change_location_success": "Posizione cambiata",
                         "create_maintenance_item": "Inserisci Manutenzione per l'elemento",
@@ -188,21 +188,21 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_color": "Colore Etichetta",
-                "label_description": "Descrizione Etichetta",
-                "label_name": "Nome Etichetta",
+                "tag_color": "Colore Etichetta",
+                "tag_description": "Descrizione Etichetta",
+                "tag_name": "Nome Etichetta",
                 "title": "Crea Etichetta",
                 "toast": {
                     "already_creating": "Creazione di un'etichetta già in corso",
                     "create_failed": "Impossibile creare l'etichetta",
                     "create_success": "Etichetta creata",
-                    "label_name_too_long": "Il nome non deve contenere più di 50 caratteri"
+                    "tag_name_too_long": "Il nome non deve contenere più di 50 caratteri"
                 }
             },
             "selector": {
-                "select_labels": "Seleziona etichette"
+                "select_tags": "Seleziona etichette"
             }
         },
         "location": {
@@ -260,7 +260,7 @@
         "insured": "Assicurato",
         "items": "Articoli",
         "join_discord": "Unisciti a Discord",
-        "labels": "Etichette",
+        "tags": "Etichette",
         "loading": "Caricamento…",
         "locations": "Posizioni",
         "maintenance": "Manutenzione",
@@ -283,12 +283,12 @@
         "welcome": "Benvenuto, { username }"
     },
     "home": {
-        "labels": "Etichette",
+        "tags": "Etichette",
         "quick_statistics": "Statistiche rapide",
         "recently_added": "Aggiunti di recente",
         "storage_locations": "Ubicazioni di magazzino",
         "total_items": "Articoli totali",
-        "total_labels": "Etichette totali",
+        "total_tags": "Etichette totali",
         "total_locations": "Ubicazioni totali",
         "total_value": "Valore totale"
     },
@@ -366,7 +366,7 @@
         "manufacturer": "Marca",
         "model_number": "Numero modello",
         "name": "Nome",
-        "negate_labels": "Negare Etichette Selezionate",
+        "negate_tags": "Negare Etichette Selezionate",
         "next_page": "Pagina Successiva",
         "no_attachments": "Nessun allegato trovato",
         "no_results": "Nessun Articolo Trovato",
@@ -434,17 +434,17 @@
         "warranty_details": "Dettagli garanzia",
         "warranty_expires": "La garanzia scade il"
     },
-    "labels": {
-        "label_delete_confirm": "Sei sicuro di voler eliminare questa etichetta? Questa azione non può essere annullata.",
+    "tags": {
+        "tag_delete_confirm": "Sei sicuro di voler eliminare questa etichetta? Questa azione non può essere annullata.",
         "no_results": "Nessuna etichetta trovata",
         "toast": {
-            "failed_delete_label": "Impossibile cancellare l'etichetta",
-            "failed_load_label": "Impossibile caricare l'etichetta",
-            "failed_update_label": "Impossibile aggiornare l'etichetta",
-            "label_deleted": "Etichetta cancellata",
-            "label_updated": "Etichetta aggiornata"
+            "failed_delete_tag": "Impossibile cancellare l'etichetta",
+            "failed_load_tag": "Impossibile caricare l'etichetta",
+            "failed_update_tag": "Impossibile aggiornare l'etichetta",
+            "tag_deleted": "Etichetta cancellata",
+            "tag_updated": "Etichetta aggiornata"
         },
-        "update_label": "Aggiorna etichetta"
+        "update_tag": "Aggiorna etichetta"
     },
     "languages": {
         "bs-BA": "Bosniaco (Bosnia ed Erzegovina)",
@@ -536,7 +536,7 @@
     },
     "menu": {
         "create_item": "Articolo / Asset",
-        "create_label": "Etichetta",
+        "create_tag": "Etichetta",
         "create_location": "Ubicazione",
         "home": "Home",
         "locations": "Posizioni",
@@ -594,18 +594,18 @@
         "user_profile_sub": "Invita utenti e gestisci il tuo account."
     },
     "reports": {
-        "label_generator": {
+        "tag_generator": {
             "asset_end": "Fine Asset",
             "asset_start": "Inizio Asset",
             "base_url": "URL base",
-            "bordered_labels": "Etichette con bordo",
+            "bordered_tags": "Etichette con bordo",
             "generate_page": "Genera Pagina",
             "input_placeholder": "Scrivi qui",
             "instruction_1": "Il Generatore di Etichette di Homebox è uno strumento che ti aiuta a stampare le etichette per il tuo inventario Homebox. Sono pensate come etichette da\nstampare in anticipo, così potrai stamparne molte e averle pronte da applicare",
             "instruction_2": "Queste etichette funzionano stampando un codice QR con un URL e le informazioni dell’AssetID sull’etichetta. Se hai disabilitato\n gli AssetID nelle impostazioni di Homebox, puoi comunque usare questo strumento, ma gli AssetID non faranno riferimento a nessun elemento",
             "instruction_3": "Questa funzione è nelle fasi iniziali di sviluppo e potrebbe cambiare nelle versioni future. Se hai suggerimenti,\n ti invitiamo a condividerli nella '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">Discussione GitHub</a>'",
-            "label_height": "Altezza dell'etichetta",
-            "label_width": "Larghezza dell'etichetta",
+            "tag_height": "Altezza dell'etichetta",
+            "tag_width": "Larghezza dell'etichetta",
             "measure_type": "Tipo di misurazione",
             "page_bottom_padding": "Margine inferiore della pagina",
             "page_height": "Altezza della pagina",
@@ -672,9 +672,9 @@
         "import_export_sub": "Importa ed esporta il tuo inventario da e verso un file CSV. Questo è utile per migrare il tuo inventario verso una nuova istanza di Homebox.",
         "reports": "Rapporti",
         "reports_set": {
-            "asset_labels": "Etichette ID risorsa",
-            "asset_labels_button": "Generatore di etichette",
-            "asset_labels_sub": "Genera una etichetta PDF stampabile per un gruppo di ID Risorsa. Le etichette non sono specifiche per il tuo inventario così puoi stamparle in anticipo ed applicarle al tuo inventario quando lo ricevi.",
+            "asset_tags": "Etichette ID risorsa",
+            "asset_tags_button": "Generatore di etichette",
+            "asset_tags_sub": "Genera una etichetta PDF stampabile per un gruppo di ID Risorsa. Le etichette non sono specifiche per il tuo inventario così puoi stamparle in anticipo ed applicarle al tuo inventario quando lo ricevi.",
             "bill_of_materials": "Distinta base",
             "bill_of_materials_button": "Genera BOM",
             "bill_of_materials_sub": "Genera un file CSV (Valori Separati dalla Virgola) che può essere importato in un foglio di calcolo. Questo è un sommario del tuo inventario con informazioni di base su articoli e prezzi."

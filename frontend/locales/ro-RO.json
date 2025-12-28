@@ -55,7 +55,7 @@
                 "years": "ani",
                 "yesterday": "ieri"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "Imprimare din browser",
                 "confirm_description": "Sigur doriți să imprimați această etichetă?",
                 "download": "Descărcare etichetă",
@@ -110,10 +110,10 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_description": "Descrierea etichetei",
-                "label_name": "Nume eticheta",
+                "tag_description": "Descrierea etichetei",
+                "tag_name": "Nume eticheta",
                 "title": "Crează Etichetă"
             }
         },
@@ -152,7 +152,7 @@
         "insured": "Asigurat",
         "items": "Articole",
         "join_discord": "Vino pe Discord",
-        "labels": "Etichete",
+        "tags": "Etichete",
         "locations": "Locații",
         "maintenance": "Mentenanță",
         "name": "Nume",
@@ -168,12 +168,12 @@
         "welcome": "Bun venit, { username }"
     },
     "home": {
-        "labels": "Etichete",
+        "tags": "Etichete",
         "quick_statistics": "Statistici rapide",
         "recently_added": "Adăugat recent",
         "storage_locations": "Locații de depozitare",
         "total_items": "Total articole",
-        "total_labels": "Număr total etichete",
+        "total_tags": "Număr total etichete",
         "total_locations": "Total locații",
         "total_value": "Valoare totală"
     },
@@ -219,7 +219,7 @@
         "manufacturer": "Producător",
         "model_number": "Număr model",
         "name": "Nume",
-        "negate_labels": "Neagă Etichetele Selectate",
+        "negate_tags": "Neagă Etichetele Selectate",
         "next_page": "Următoarea Pagină",
         "no_results": "Nu s-au găsit articole",
         "notes": "Notițe",
@@ -256,9 +256,9 @@
         "warranty_details": "Detalii Garanție",
         "warranty_expires": "Garanția expiră"
     },
-    "labels": {
+    "tags": {
         "no_results": "Nu s-au găsit Etichete",
-        "update_label": "Actualizare etichetă"
+        "update_tag": "Actualizare etichetă"
     },
     "languages": {
         "ca": "Catalană",
@@ -329,7 +329,7 @@
     },
     "menu": {
         "create_item": "Articol / Activ",
-        "create_label": "Etichetă",
+        "create_tag": "Etichetă",
         "create_location": "Locație",
         "home": "Acasă",
         "locations": "Locații",
@@ -395,9 +395,9 @@
         "import_export_sub": "Importați și exportați inventarul într-un fișier CSV. Acest lucru este util atunci când se migrează inventarul către o instanță nouă de Homebox.",
         "reports": "Rapoarte",
         "reports_set": {
-            "asset_labels": "Etichete de identificare a activului",
-            "asset_labels_button": "Generator de etichete",
-            "asset_labels_sub": "Generează un PDF imprimabil conținând etichete pentru o serie de ID-uri de activ. Acestea nu sunt specifice inventarului tău așadar etichetele se pot imprima din timp și se pot aplica ulterior.",
+            "asset_tags": "Etichete de identificare a activului",
+            "asset_tags_button": "Generator de etichete",
+            "asset_tags_sub": "Generează un PDF imprimabil conținând etichete pentru o serie de ID-uri de activ. Acestea nu sunt specifice inventarului tău așadar etichetele se pot imprima din timp și se pot aplica ulterior.",
             "bill_of_materials": "Lista Materialelor",
             "bill_of_materials_button": "Generează BOM",
             "bill_of_materials_sub": "Generează un fișier CSV (Valori separate prin virgulă) care poate fi importat într-un program de foi de calcul. Acesta este un sumar ar inventarului cu informații minimale legate de articole și prețuri."

@@ -67,7 +67,7 @@
                 "years": "anos",
                 "yesterday": "ontem"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "Imprimir a partir do Navegador",
                 "confirm_description": "Tem a certeza de que deseja imprimir esta etiqueta?",
                 "download": "Transferir Etiqueta",
@@ -139,9 +139,9 @@
             },
             "view": {
                 "change_details": {
-                    "add_labels": "Adicionar Labels",
+                    "add_tags": "Adicionar Labels",
                     "failed_to_update_item": "Falha ao atualizar o artigo",
-                    "remove_labels": "Remover Rótulos",
+                    "remove_tags": "Remover Rótulos",
                     "title": "Alterar Detalhes do Item"
                 },
                 "selectable": {
@@ -156,8 +156,8 @@
                 "table": {
                     "dropdown": {
                         "actions": "Ações",
-                        "change_labels": "Alterar etiquetas",
-                        "change_labels_success": "Etiquetas alteradas",
+                        "change_tags": "Alterar etiquetas",
+                        "change_tags_success": "Etiquetas alteradas",
                         "change_location": "Alterar Localização",
                         "change_location_success": "Localização alterada",
                         "create_maintenance_item": "Criar entrada de manutenção para o item",
@@ -188,21 +188,21 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_color": "Cor da Etiqueta",
-                "label_description": "Descrição da Etiqueta",
-                "label_name": "Nome da Etiqueta",
+                "tag_color": "Cor da Etiqueta",
+                "tag_description": "Descrição da Etiqueta",
+                "tag_name": "Nome da Etiqueta",
                 "title": "Criar Etiqueta",
                 "toast": {
                     "already_creating": "Já está a criar uma etiqueta",
                     "create_failed": "Não foi possível criar etiqueta",
                     "create_success": "Etiqueta criada",
-                    "label_name_too_long": "O nome da etiqueta não pode ter mais de 50 caracteres"
+                    "tag_name_too_long": "O nome da etiqueta não pode ter mais de 50 caracteres"
                 }
             },
             "selector": {
-                "select_labels": "Selecionar Etiquetas"
+                "select_tags": "Selecionar Etiquetas"
             }
         },
         "location": {
@@ -260,7 +260,7 @@
         "insured": "Com seguro",
         "items": "Itens",
         "join_discord": "Junte-se ao Discord",
-        "labels": "Etiquetas",
+        "tags": "Etiquetas",
         "loading": "A Carregar…",
         "locations": "Localizações",
         "maintenance": "Manutenção",
@@ -283,12 +283,12 @@
         "welcome": "Bem-vindo, { username }"
     },
     "home": {
-        "labels": "Etiquetas",
+        "tags": "Etiquetas",
         "quick_statistics": "Estatísticas Rápidas",
         "recently_added": "Recentemente Adicionados",
         "storage_locations": "Localizações de Armazenamento",
         "total_items": "Total de Itens",
-        "total_labels": "Total de Etiquetas",
+        "total_tags": "Total de Etiquetas",
         "total_locations": "Total de Localizações",
         "total_value": "Valor Total"
     },
@@ -366,7 +366,7 @@
         "manufacturer": "Fabricante",
         "model_number": "Número do Modelo",
         "name": "Nome",
-        "negate_labels": "Anular Etiquetas Selecionadas",
+        "negate_tags": "Anular Etiquetas Selecionadas",
         "next_page": "Próxima Página",
         "no_attachments": "Sem anexos encontrados",
         "no_results": "Nenhum Item Encontrado",
@@ -434,17 +434,17 @@
         "warranty_details": "Detalhes da Garantia",
         "warranty_expires": "Garantia expira a"
     },
-    "labels": {
-        "label_delete_confirm": "Tem a certeza de que deseja eliminar esta etiqueta? Esta ação não pode ser desfeita.",
+    "tags": {
+        "tag_delete_confirm": "Tem a certeza de que deseja eliminar esta etiqueta? Esta ação não pode ser desfeita.",
         "no_results": "Nenhuma Etiqueta Encontrada",
         "toast": {
-            "failed_delete_label": "Falha ao eliminar etiqueta",
-            "failed_load_label": "Falha ao carregar etiqueta",
-            "failed_update_label": "Falha ao atualizar etiqueta",
-            "label_deleted": "Etiqueta eliminada",
-            "label_updated": "Etiqueta atualizada"
+            "failed_delete_tag": "Falha ao eliminar etiqueta",
+            "failed_load_tag": "Falha ao carregar etiqueta",
+            "failed_update_tag": "Falha ao atualizar etiqueta",
+            "tag_deleted": "Etiqueta eliminada",
+            "tag_updated": "Etiqueta atualizada"
         },
-        "update_label": "Atualizar Etiqueta"
+        "update_tag": "Atualizar Etiqueta"
     },
     "languages": {
         "bs-BA": "Bósnio (Bósnia e Herzegovina)",
@@ -536,7 +536,7 @@
     },
     "menu": {
         "create_item": "Item / Ativo",
-        "create_label": "Etiqueta",
+        "create_tag": "Etiqueta",
         "create_location": "Localização",
         "home": "Início",
         "locations": "Localizações",
@@ -595,18 +595,18 @@
         "user_profile_sub": "Convide utilizadores e faça a gestão da sua conta."
     },
     "reports": {
-        "label_generator": {
+        "tag_generator": {
             "asset_end": "Fim do Ativo",
             "asset_start": "Início do Ativo",
             "base_url": "URL Base",
-            "bordered_labels": "Etiquetas com Contorno",
+            "bordered_tags": "Etiquetas com Contorno",
             "generate_page": "Gerar Página",
             "input_placeholder": "Escreva aqui",
             "instruction_1": "O Gerador de Etiquetas Homebox é uma ferramenta para ajudar a imprimir etiquetas para o seu inventário Homebox.\n Estas etiquetas são preparadas antecipadamente para poder imprimi-las em quantidade e aplicá-las depois",
             "instruction_2": "Assim, estas etiquetas funcionam imprimindo um código QR com o URL e informação do AssetID na etiqueta. \n Se desativou os AssetIDs nas definições do Homebox, ainda pode usar esta ferramenta, mas os AssetIDs não irão referenciar nenhum item",
             "instruction_3": "Esta funcionalidade está em fase inicial de desenvolvimento e pode mudar em futuras versões. \nSe tiver sugestões, envie através da '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'Discussão no GitHub'</a>'",
-            "label_height": "Altura da Etiqueta",
-            "label_width": "Largura da Etiqueta",
+            "tag_height": "Altura da Etiqueta",
+            "tag_width": "Largura da Etiqueta",
             "measure_type": "Tipo de Medida",
             "page_bottom_padding": "Margem Inferior da Página",
             "page_height": "Altura da Página",
@@ -673,9 +673,9 @@
         "import_export_sub": "Importar e exportar o seu inventário de/para um ficheiro CSV. Útil para migração entre instâncias do Homebox.",
         "reports": "Relatórios",
         "reports_set": {
-            "asset_labels": "Etiquetas de ID do Ativo",
-            "asset_labels_button": "Gerador de Etiquetas",
-            "asset_labels_sub": "Gera um PDF imprimível de etiquetas para um conjunto de IDs de Activos. Estas não são específicas do seu inventário por isso pode imprimi-las com antecedência e aplicar as mesmas ao inventário quando o receber.",
+            "asset_tags": "Etiquetas de ID do Ativo",
+            "asset_tags_button": "Gerador de Etiquetas",
+            "asset_tags_sub": "Gera um PDF imprimível de etiquetas para um conjunto de IDs de Activos. Estas não são específicas do seu inventário por isso pode imprimi-las com antecedência e aplicar as mesmas ao inventário quando o receber.",
             "bill_of_materials": "Lista de Materiais",
             "bill_of_materials_button": "Gerar Lista de Materiais",
             "bill_of_materials_sub": "Gera um ficheiro CSV (Valores Separados por Vírgulas) que pode ser importado para uma folha de cálculo. Isto é um resumo do seu inventário com a informação do item e do preço."

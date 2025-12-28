@@ -8,7 +8,7 @@
             },
             "import_dialog": {
                 "change_warning": "Behavior for imports with existing import_refs has changed. If an import_ref is present in the CSV file, the \nitem will be updated with the values in the CSV file.",
-                "description": "Import a CSV file containing your items, labels, and locations. See documentation for more information on the \nrequired format.",
+                "description": "Import a CSV file containing your items, tags, and locations. See documentation for more information on the \nrequired format.",
                 "title": "Import CSV File",
                 "toast": {
                     "import_failed": "Import failed. Please try again later.",
@@ -67,16 +67,16 @@
                 "years": "years",
                 "yesterday": "yesterday"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "Print from Browser",
-                "confirm_description": "Are you sure you want to print this label?",
+                "confirm_description": "Are you sure you want to print this tag?",
                 "download": "Download Label",
-                "print": "Print label",
+                "print": "Print tag",
                 "server_print": "Print on Server",
                 "titles": "Labels",
                 "toast": {
                     "load_status_failed": "Failed to load status",
-                    "print_failed": "Failed to print label",
+                    "print_failed": "Failed to print tag",
                     "print_success": "Label printed"
                 }
             },
@@ -141,9 +141,9 @@
             },
             "view": {
                 "change_details": {
-                    "add_labels": "Add Labels",
+                    "add_tags": "Add Labels",
                     "failed_to_update_item": "Failed to update item",
-                    "remove_labels": "Remove Labels",
+                    "remove_tags": "Remove Labels",
                     "title": "Change Item Details"
                 },
                 "selectable": {
@@ -158,8 +158,8 @@
                 "table": {
                     "dropdown": {
                         "actions": "Actions",
-                        "change_labels": "Change Labels",
-                        "change_labels_success": "Labels Changed",
+                        "change_tags": "Change Labels",
+                        "change_tags_success": "Labels Changed",
                         "change_location": "Change Location",
                         "change_location_success": "Location Changed",
                         "create_maintenance_item": "Create Maintenance Entry for Item",
@@ -190,21 +190,21 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_color": "Label Color",
-                "label_description": "Label Description",
-                "label_name": "Label Name",
+                "tag_color": "Label Color",
+                "tag_description": "Label Description",
+                "tag_name": "Label Name",
                 "title": "Create Label",
                 "toast": {
-                    "already_creating": "Already creating a label",
-                    "create_failed": "Couldn't create label",
+                    "already_creating": "Already creating a tag",
+                    "create_failed": "Couldn't create tag",
                     "create_success": "Label created",
-                    "label_name_too_long": "Label name must not be longer than 50 characters"
+                    "tag_name_too_long": "Label name must not be longer than 50 characters"
                 }
             },
             "selector": {
-                "select_labels": "Select Labels"
+                "select_tags": "Select Labels"
             }
         },
         "location": {
@@ -271,7 +271,7 @@
             "hide_defaults": "Hide defaults",
             "save_as_template": "Save as Template",
             "selector": {
-                "label": "Template (Optional)",
+                "tag": "Template (Optional)",
                 "not_found": "No template found",
                 "search": "Search templates...",
                 "select": "Select template...",
@@ -323,7 +323,7 @@
         "insured": "Insured",
         "items": "Items",
         "join_discord": "Join the Discord",
-        "labels": "Labels",
+        "tags": "Tags",
         "loading": "Loading…",
         "locations": "Locations",
         "maintenance": "Maintenance",
@@ -348,12 +348,12 @@
         "yes": "Yes"
     },
     "home": {
-        "labels": "Labels",
+        "tags": "Tags",
         "quick_statistics": "Quick Statistics",
         "recently_added": "Recently Added",
         "storage_locations": "Storage Locations",
         "total_items": "Total Items",
-        "total_labels": "Total Labels",
+        "total_tags": "Total Labels",
         "total_locations": "Total Locations",
         "total_value": "Total Value"
     },
@@ -440,7 +440,7 @@
         "manufacturer": "Manufacturer",
         "model_number": "Model Number",
         "name": "Name",
-        "negate_labels": "Negate Selected Labels",
+        "negate_tags": "Negate Selected Labels",
         "next_page": "Next Page",
         "no_attachments": "No attachments found",
         "no_results": "No Items Found",
@@ -472,7 +472,7 @@
         "sold_price": "Sold Price",
         "sold_to": "Sold To",
         "sync_child_locations": "Sync child items' locations",
-        "tip_1": "Location and label filters use the 'OR' operation. If more than one is selected only one will be\n required for a match.",
+        "tip_1": "Location and tag filters use the 'OR' operation. If more than one is selected only one will be\n required for a match.",
         "tip_2": "Searches prefixed with '#'' will query for a asset ID (example '#000-001')",
         "tip_3": "Field filters use the 'OR' operation. If more than one is selected only one will be required for a\n match.",
         "tips": "Tips",
@@ -508,17 +508,17 @@
         "warranty_details": "Warranty Details",
         "warranty_expires": "Warranty Expires"
     },
-    "labels": {
-        "label_delete_confirm": "Are you sure you want to delete this label? This action cannot be undone.",
-        "no_results": "No Labels Found",
+    "tags": {
+        "tag_delete_confirm": "Are you sure you want to delete this tag? This action cannot be undone.",
+        "no_results": "No Tags Found",
         "toast": {
-            "failed_delete_label": "Failed to delete label",
-            "failed_load_label": "Failed to load label",
-            "failed_update_label": "Failed to update label",
-            "label_deleted": "Label deleted",
-            "label_updated": "Label updated"
+            "failed_delete_tag": "Failed to delete tag",
+            "failed_load_tag": "Failed to load tag",
+            "failed_update_tag": "Failed to update tag",
+            "tag_deleted": "Label deleted",
+            "tag_updated": "Label updated"
         },
-        "update_label": "Update Label"
+        "update_tag": "Update Label"
     },
     "languages": {
         "bs-BA": "Bosnian (Bosnia and Herzegovina)",
@@ -610,7 +610,7 @@
     },
     "menu": {
         "create_item": "Item / Asset",
-        "create_label": "Label",
+        "create_tag": "Label",
         "create_location": "Location",
         "home": "Home",
         "locations": "Locations",
@@ -676,18 +676,18 @@
         "user_profile_sub": "Invite users, and manage your account."
     },
     "reports": {
-        "label_generator": {
+        "tag_generator": {
             "asset_end": "Asset End",
             "asset_start": "Asset Start",
             "base_url": "Base URL",
-            "bordered_labels": "Bordered Labels",
+            "bordered_tags": "Bordered Labels",
             "generate_page": "Generate Page",
             "input_placeholder": "Type here",
-            "instruction_1": "The Homebox Label Generator is a tool to help you print labels for your Homebox inventory. These are intended to\n be print-ahead labels so you can print many labels and have them ready to apply",
-            "instruction_2": "As such, these labels work by printing a URL QR Code and AssetID information on a label. If you've disabled\n AssetID's in your Homebox settings, you can still use this tool, but the AssetID's won't reference any item",
+            "instruction_1": "The Homebox Label Generator is a tool to help you print tags for your Homebox inventory. These are intended to\n be print-ahead tags so you can print many tags and have them ready to apply",
+            "instruction_2": "As such, these tags work by printing a URL QR Code and AssetID information on a tag. If you've disabled\n AssetID's in your Homebox settings, you can still use this tool, but the AssetID's won't reference any item",
             "instruction_3": "This feature is in early development stages and may change in future releases, if you have feedback please\n provide it in the '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub Discussion'</a>'",
-            "label_height": "Label Height",
-            "label_width": "Label Width",
+            "tag_height": "Label Height",
+            "tag_width": "Label Width",
             "measure_type": "Measure Type",
             "page_bottom_padding": "Page Bottom Padding",
             "page_height": "Page Height",
@@ -696,7 +696,7 @@
             "page_top_padding": "Page Top Padding",
             "page_width": "Page Width",
             "qr_code_example": "QR Code Example",
-            "tip_1": "The defaults here are setup for the\n '<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 label sheets'</a>'. If you're using a different sheet,\n you'll need to adjust the settings to match your sheet.",
+            "tip_1": "The defaults here are setup for the\n '<a href=\"https://www.avery.com/templates/5260\">'Avery 5260 tag sheets'</a>'. If you're using a different sheet,\n you'll need to adjust the settings to match your sheet.",
             "tip_2": "If you're customizing your sheet the dimensions are in inches. When building the 5260 sheet, I found that the\n dimensions used in their template, did not match what was needed to print within the boxes.\n '<b>'Be prepared for some trial and error.'</b>'",
             "tip_3": "When printing be sure to:\n '<ol><li>'Set the margins to 0 or None'</li><li>'Set the scaling to 100%'</li><li>'Disable double-sided printing'</li><li>'Print a test page before printing multiple pages'</li></ol>'",
             "tips": "Tips",
@@ -754,9 +754,9 @@
         "import_export_sub": "Import and export your inventory to and from a CSV file. This is useful for migrating your inventory to a new instance of Homebox.",
         "reports": "Reports",
         "reports_set": {
-            "asset_labels": "Asset ID Labels",
-            "asset_labels_button": "Label Generator",
-            "asset_labels_sub": "Generates a printable PDF of labels for a range of Asset ID. These are not specific to your inventory so you are able to print labels ahead of time and apply them to your inventory when you receive them.",
+            "asset_tags": "Asset ID Labels",
+            "asset_tags_button": "Label Generator",
+            "asset_tags_sub": "Generates a printable PDF of tags for a range of Asset ID. These are not specific to your inventory so you are able to print tags ahead of time and apply them to your inventory when you receive them.",
             "bill_of_materials": "Bill of Materials",
             "bill_of_materials_button": "Generate BOM",
             "bill_of_materials_sub": "Generates a CSV (Comma Separated Values) file that can be imported into a spreadsheet program. This is a summary of your inventory with basic item and pricing information."

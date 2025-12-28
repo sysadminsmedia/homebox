@@ -67,7 +67,7 @@
                 "years": "évek",
                 "yesterday": "tegnap"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "Nyomtatás böngészőből",
                 "confirm_description": "Biztosan ki szeretnéd nyomtatni ezt a címkét?",
                 "download": "Címke letöltése",
@@ -152,21 +152,21 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_color": "Címke színe",
-                "label_description": "Címke leírása",
-                "label_name": "Címke neve",
+                "tag_color": "Címke színe",
+                "tag_description": "Címke leírása",
+                "tag_name": "Címke neve",
                 "title": "Címke létrehozása",
                 "toast": {
                     "already_creating": "Címke létrehozása már folyamatban",
                     "create_failed": "Sikertelen címke létrehozás",
                     "create_success": "Címke létrehozva",
-                    "label_name_too_long": "A címke neve nem lehet hosszabb 50 karakternél"
+                    "tag_name_too_long": "A címke neve nem lehet hosszabb 50 karakternél"
                 }
             },
             "selector": {
-                "select_labels": "Címkék kiválasztása"
+                "select_tags": "Címkék kiválasztása"
             }
         },
         "location": {
@@ -224,7 +224,7 @@
         "insured": "Biztosítva",
         "items": "Tételek",
         "join_discord": "Csatlakozz a Discordhoz",
-        "labels": "Címkék",
+        "tags": "Címkék",
         "loading": "Betöltés…",
         "locations": "Helyek",
         "maintenance": "Karbantartás",
@@ -246,12 +246,12 @@
         "welcome": "Üdv, { username }"
     },
     "home": {
-        "labels": "Címkék",
+        "tags": "Címkék",
         "quick_statistics": "Gyors statisztika",
         "recently_added": "Nemrég hozzáadott",
         "storage_locations": "Tárolási helyek",
         "total_items": "Összes tétel",
-        "total_labels": "Összes címke",
+        "total_tags": "Összes címke",
         "total_locations": "Összes hely",
         "total_value": "Teljes érték"
     },
@@ -316,7 +316,7 @@
         "manufacturer": "Gyártó",
         "model_number": "Modellszám",
         "name": "Név",
-        "negate_labels": "Címkeválasztás negálása",
+        "negate_tags": "Címkeválasztás negálása",
         "next_page": "Következő oldal",
         "no_attachments": "Nem található melléklet",
         "no_results": "Egy elem sem található",
@@ -384,17 +384,17 @@
         "warranty_details": "Garancia részletei",
         "warranty_expires": "Garancia vége"
     },
-    "labels": {
-        "label_delete_confirm": "Biztos vagy benne, hogy törölni szeretnéd ezt a címkét? A művelet nem visszafordítható.",
+    "tags": {
+        "tag_delete_confirm": "Biztos vagy benne, hogy törölni szeretnéd ezt a címkét? A művelet nem visszafordítható.",
         "no_results": "Nem található címke",
         "toast": {
-            "failed_delete_label": "Címke törlése sikertelen",
-            "failed_load_label": "Címke betöltése sikertelen",
-            "failed_update_label": "Címke frissítése sikertelen",
-            "label_deleted": "Címke törölve",
-            "label_updated": "Címke frissítve"
+            "failed_delete_tag": "Címke törlése sikertelen",
+            "failed_load_tag": "Címke betöltése sikertelen",
+            "failed_update_tag": "Címke frissítése sikertelen",
+            "tag_deleted": "Címke törölve",
+            "tag_updated": "Címke frissítve"
         },
-        "update_label": "Címke módosítása"
+        "update_tag": "Címke módosítása"
     },
     "languages": {
         "ca": "Katalán",
@@ -484,7 +484,7 @@
     },
     "menu": {
         "create_item": "Tétel / Eszköz",
-        "create_label": "Címke",
+        "create_tag": "Címke",
         "create_location": "Hely",
         "home": "Kezdőlap",
         "locations": "Helyek",
@@ -542,18 +542,18 @@
         "user_profile_sub": "Hívj meg felhasználókat, és kezeld a fiókodat."
     },
     "reports": {
-        "label_generator": {
+        "tag_generator": {
             "asset_end": "Utolsó eszköz",
             "asset_start": "Első eszköz",
             "base_url": "Alap URL",
-            "bordered_labels": "Keretes címkék",
+            "bordered_tags": "Keretes címkék",
             "generate_page": "Oldal létrehozása",
             "input_placeholder": "Írj ide",
             "instruction_1": "A Homebox Label Generator egy olyan eszköz, amely segít a Homebox-leltár címkéinek nyomtatásában. Ezeket előre\n kinyomtathatod, hogy bármikor felragaszthass egy új, még használatlan címkét",
             "instruction_2": "Ezek a címkék ezért úgy működnek, hogy egy URL QR-kódot és eszközazonosítót nyomtatnak egy címkére. Ha kikapcsoltad\n az eszközazonosítókat a Homebox beállításokban, akkor is használhatod ezt az eszközt, de nem mutat majd az eszközazonosító semmilyen tételre",
             "instruction_3": "Ez a funkció korai fejlesztési szakaszban van, és a jövőbeli kiadásokban változhat, ha visszajelzésed van, kérlek\nírd meg nekünk a '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub vitafórumon'</a>'",
-            "label_height": "Címke magassága",
-            "label_width": "Címke szélessége",
+            "tag_height": "Címke magassága",
+            "tag_width": "Címke szélessége",
             "measure_type": "Mértékegység",
             "page_bottom_padding": "Oldal alsó margója",
             "page_height": "Oldal magassága",
@@ -620,9 +620,9 @@
         "import_export_sub": "Készlet importálása és exportálása CSV-fájlba és CSV-fájlból. Ez hasznos lehet a készleted átmozgatásához a Homebox egy új példányába.",
         "reports": "Jelentések",
         "reports_set": {
-            "asset_labels": "Eszközazonosító címkék",
-            "asset_labels_button": "Címkegenerátor",
-            "asset_labels_sub": "Nyomtatható PDF-fájlt hoz létre, amely címkéket tartalmaz eszközazonosítók egy meghatározott tartományához. Ezek nem készletspecifikusak, így előre is kinyomtathatod a címkéket, és később felviheted a készleted beérkező tételeire.",
+            "asset_tags": "Eszközazonosító címkék",
+            "asset_tags_button": "Címkegenerátor",
+            "asset_tags_sub": "Nyomtatható PDF-fájlt hoz létre, amely címkéket tartalmaz eszközazonosítók egy meghatározott tartományához. Ezek nem készletspecifikusak, így előre is kinyomtathatod a címkéket, és később felviheted a készleted beérkező tételeire.",
             "bill_of_materials": "Anyagjegyzék",
             "bill_of_materials_button": "Jegyzék létrehozása",
             "bill_of_materials_sub": "Létrehoz egy CSV (vesszővel elválasztott értékek) fájlt, amely importálható egy táblázatkezelő programba. Ez a készleted összesítése a tételek alap és árra vonatkozó információival."

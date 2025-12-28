@@ -23,7 +23,7 @@ interface TestUser {
 interface TestData {
   users?: TestUser[];
   locations?: Record<string, string[]>;
-  labels?: Record<string, string[]>;
+  tags?: Record<string, string[]>;
   items?: Record<string, string[]>;
   notifiers?: Record<string, string[]>;
 }
@@ -130,7 +130,7 @@ test.describe("HomeBox Upgrade Verification", () => {
     }
   });
 
-  test("verify labels are present", async ({ page }) => {
+  test("verify tags are present", async ({ page }) => {
     const firstUser = testData.users?.[0];
     if (!firstUser) {
       throw new Error("No users found in test data");
@@ -144,8 +144,8 @@ test.describe("HomeBox Upgrade Verification", () => {
 
     await page.waitForSelector("body", { state: "visible" });
 
-    // Try to find labels link in navigation
-    const labelsLink = page.locator("a[href*='label'], button:has-text('Labels')").first();
+    // Try to find tags link in navigation
+    const labelsLink = page.locator("a[href*='tag'], button:has-text('Labels')").first();
 
     if ((await labelsLink.count()) > 0) {
       await labelsLink.click();
@@ -153,11 +153,11 @@ test.describe("HomeBox Upgrade Verification", () => {
 
       const pageContent = await page.textContent("body");
 
-      // Verify some of our test labels exist
+      // Verify some of our test tags exist
       expect(pageContent).toContain("Electronics");
       console.log("✓ Labels verified");
     } else {
-      console.log("! Could not find labels navigation - skipping detailed check");
+      console.log("! Could not find tags navigation - skipping detailed check");
     }
   });
 
@@ -317,7 +317,7 @@ test.describe("HomeBox Upgrade Verification", () => {
     // Common selectors for theme toggles
     const themeToggle = page
       .locator(
-        "button[aria-label*='theme'], button[aria-label*='Theme'], " +
+        "button[aria-tag*='theme'], button[aria-tag*='Theme'], " +
           "button:has-text('Dark'), button:has-text('Light'), " +
           "[data-theme-toggle], .theme-toggle"
       )

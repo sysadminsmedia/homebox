@@ -67,7 +67,7 @@
                 "years": "roky",
                 "yesterday": "včera"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "Tisknout z prohlížeče",
                 "confirm_description": "Opravdu chcete tento štítek vytisknout?",
                 "download": "Stáhnout štítek",
@@ -140,9 +140,9 @@
             },
             "view": {
                 "change_details": {
-                    "add_labels": "Přidat štítky",
+                    "add_tags": "Přidat štítky",
                     "failed_to_update_item": "Aktualizace položky se nezdařila",
-                    "remove_labels": "Odebrat štítky",
+                    "remove_tags": "Odebrat štítky",
                     "title": "Změnit podrobnosti o položce"
                 },
                 "selectable": {
@@ -157,8 +157,8 @@
                 "table": {
                     "dropdown": {
                         "actions": "Akce",
-                        "change_labels": "Změnit štítky",
-                        "change_labels_success": "Štítky změněny",
+                        "change_tags": "Změnit štítky",
+                        "change_tags_success": "Štítky změněny",
                         "change_location": "Změnit umístění",
                         "change_location_success": "Umístění bylo změněno",
                         "create_maintenance_item": "Vytvořit záznam údržby pro položku",
@@ -189,21 +189,21 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_color": "Barva štítku",
-                "label_description": "Popis štítku",
-                "label_name": "Název štítku",
+                "tag_color": "Barva štítku",
+                "tag_description": "Popis štítku",
+                "tag_name": "Název štítku",
                 "title": "Vytvořit štítek",
                 "toast": {
                     "already_creating": "Již vytváříte štítek",
                     "create_failed": "Nepodařilo se vytvořit štítek",
                     "create_success": "Štítek vytvořen",
-                    "label_name_too_long": "Název štítku nesmí být delší než 50 znaků"
+                    "tag_name_too_long": "Název štítku nesmí být delší než 50 znaků"
                 }
             },
             "selector": {
-                "select_labels": "Vybrat štítky"
+                "select_tags": "Vybrat štítky"
             }
         },
         "location": {
@@ -269,7 +269,7 @@
             "hide_defaults": "Skrýt výchozí hodnoty",
             "save_as_template": "Uložit jako šablonu",
             "selector": {
-                "label": "Šablona (volitelné)",
+                "tag": "Šablona (volitelné)",
                 "not_found": "Nenalezena žádná šablona",
                 "search": "Vyhledávání šablon…",
                 "select": "Vyberte šablonu…"
@@ -320,7 +320,7 @@
         "insured": "Pojištěné",
         "items": "Položky",
         "join_discord": "Připojte se na Discord",
-        "labels": "Štítky",
+        "tags": "Štítky",
         "loading": "Načítání…",
         "locations": "Lokality",
         "maintenance": "Údržba",
@@ -345,12 +345,12 @@
         "yes": "Ano"
     },
     "home": {
-        "labels": "Štítky",
+        "tags": "Štítky",
         "quick_statistics": "Rychlé informace",
         "recently_added": "Nedávno přidané",
         "storage_locations": "Úložné lokace",
         "total_items": "Celkových položek",
-        "total_labels": "Celkových štítků",
+        "total_tags": "Celkových štítků",
         "total_locations": "Celkových lokací",
         "total_value": "Celková hodnota"
     },
@@ -437,7 +437,7 @@
         "manufacturer": "Výrobce",
         "model_number": "Číslo modelu",
         "name": "Název",
-        "negate_labels": "Prohodit vybrané štítky",
+        "negate_tags": "Prohodit vybrané štítky",
         "next_page": "Další stránka",
         "no_attachments": "Nebyly nalezeny žádné přílohy",
         "no_results": "Nebyly nalezeny žádné položky",
@@ -505,17 +505,17 @@
         "warranty_details": "Detaily záruky",
         "warranty_expires": "Expirace záruky"
     },
-    "labels": {
-        "label_delete_confirm": "Opravdu chcete tento štítek odstranit? Tuto akci nelze vrátit zpět.",
+    "tags": {
+        "tag_delete_confirm": "Opravdu chcete tento štítek odstranit? Tuto akci nelze vrátit zpět.",
         "no_results": "Žádné štítky nebyly nalezeny",
         "toast": {
-            "failed_delete_label": "Nepodařilo se odstranit štítek",
-            "failed_load_label": "Nepodařilo se načíst štítek",
-            "failed_update_label": "Nepodařilo se aktualizovat štítek",
-            "label_deleted": "Štítek odstraněn",
-            "label_updated": "Štítek aktualizován"
+            "failed_delete_tag": "Nepodařilo se odstranit štítek",
+            "failed_load_tag": "Nepodařilo se načíst štítek",
+            "failed_update_tag": "Nepodařilo se aktualizovat štítek",
+            "tag_deleted": "Štítek odstraněn",
+            "tag_updated": "Štítek aktualizován"
         },
-        "update_label": "Aktualizovat štítek"
+        "update_tag": "Aktualizovat štítek"
     },
     "languages": {
         "bs-BA": "Bosňština (Bosna a Hercegovina)",
@@ -607,7 +607,7 @@
     },
     "menu": {
         "create_item": "Položka",
-        "create_label": "Štítek",
+        "create_tag": "Štítek",
         "create_location": "Lokace",
         "home": "Domů",
         "locations": "Lokality",
@@ -673,18 +673,18 @@
         "user_profile_sub": "Pozvěte uživatele a spravujte svůj účet."
     },
     "reports": {
-        "label_generator": {
+        "tag_generator": {
             "asset_end": "Konec majetku",
             "asset_start": "Počáteční stav majetku",
             "base_url": "Základní adresa URL",
-            "bordered_labels": "Ohraničené štítky",
+            "bordered_tags": "Ohraničené štítky",
             "generate_page": "Vygenerovat stránku",
             "input_placeholder": "Zadejte zde",
             "instruction_1": "Generátor štítků Homebox je nástroj, který vám pomůže vytisknout štítky pro inventář Homebox. Ty jsou určeny k\n tomu být štítky pro tisk předem, abyste mohli vytisknout mnoho štítků a mít je připravené k použití",
             "instruction_2": "Tyto štítky fungují tak, že na štítek vytisknou kód URL QR a informace AssetID. Pokud jste zakázali AssetID\n v nastavení Homeboxu, můžete tento nástroj stále používat, ale AssetID nebude odkazovat na žádnou položku",
             "instruction_3": "Tato funkce je v rané fázi vývoje a v budoucích verzích se může změnit, pokud máte zpětnou vazbu, uveďte ji prosím\n do ' <a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'Diskuze na GitHubu'</a>'",
-            "label_height": "Výška štítku",
-            "label_width": "Šířka štítku",
+            "tag_height": "Výška štítku",
+            "tag_width": "Šířka štítku",
             "measure_type": "Typ měření",
             "page_bottom_padding": "Odsazení stránky odspod",
             "page_height": "Výška stránky",
@@ -751,9 +751,9 @@
         "import_export_sub": "Import a export inventáře do souboru CSV a ze souboru CSV. To je užitečné při migraci inventáře do nové instance Homeboxu.",
         "reports": "Zprávy",
         "reports_set": {
-            "asset_labels": "Identifikační štítky majetku",
-            "asset_labels_button": "Generátor štítků",
-            "asset_labels_sub": "Generuje tisknutelné PDF štítky pro řadu ID majetku. Ty nejsou specifické pro Váš inventář, takže si můžete štítky vytisknout dopředu a použít je na inventář, až je obdržíte.",
+            "asset_tags": "Identifikační štítky majetku",
+            "asset_tags_button": "Generátor štítků",
+            "asset_tags_sub": "Generuje tisknutelné PDF štítky pro řadu ID majetku. Ty nejsou specifické pro Váš inventář, takže si můžete štítky vytisknout dopředu a použít je na inventář, až je obdržíte.",
             "bill_of_materials": "Soupis materiálů",
             "bill_of_materials_button": "Generovat kusovník",
             "bill_of_materials_sub": "Vytvoří soubor CSV (Comma Separated Values), který lze importovat do tabulkového procesoru. Jedná se o souhrn vašich zásob se základními informacemi o položkách a cenách."

@@ -45,7 +45,7 @@
                 "years": "年",
                 "yesterday": "昨天"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "从浏览器打印",
                 "confirm_description": "请确认您是否要打印该标签？",
                 "download": "下载标签",
@@ -79,10 +79,10 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_description": "标签详情",
-                "label_name": "标签名",
+                "tag_description": "标签详情",
+                "tag_name": "标签名",
                 "title": "新增標籤"
             }
         },
@@ -116,7 +116,7 @@
         "github": "GitHub項目",
         "items": "項目",
         "join_discord": "加入Discord",
-        "labels": "標籤",
+        "tags": "標籤",
         "locations": "地點",
         "maintenance": "维护",
         "name": "名字",
@@ -133,12 +133,12 @@
         "welcome": "歡迎，{ username }"
     },
     "home": {
-        "labels": "标签",
+        "tags": "标签",
         "quick_statistics": "快速统计",
         "recently_added": "最近添加",
         "storage_locations": "存储地址",
         "total_items": "目标数量",
-        "total_labels": "标签总数",
+        "total_tags": "标签总数",
         "total_locations": "位置总数"
     },
     "index": {
@@ -179,7 +179,7 @@
         "manufacturer": "制造商",
         "model_number": "模型序号",
         "name": "名字",
-        "negate_labels": "取消選定的標籤",
+        "negate_tags": "取消選定的標籤",
         "next_page": "下一頁",
         "no_results": "沒有找到項目",
         "notes": "笔记",

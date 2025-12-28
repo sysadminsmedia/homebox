@@ -3,7 +3,7 @@
   import { Button } from "@/components/ui/button";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
-  import type { ItemPatch, ItemSummary, LabelOut, LocationSummary } from "~/lib/api/types/data-contracts";
+  import type { ItemPatch, ItemSummary, TagOut, LocationSummary } from "~/lib/api/types/data-contracts";
   import LocationSelector from "~/components/Location/Selector.vue";
   import MdiLoading from "~icons/mdi/loading";
   import { toast } from "~/components/ui/sonner";
@@ -14,9 +14,9 @@
 
   const api = useUserApi();
   const { t } = useI18n();
-  const labelStore = useLabelStore();
+  const labelStore = useTagStore();
 
-  const allLabels = computed(() => labelStore.labels);
+  const allLabels = computed(() => labelStore.tags);
 
   const items = ref<ItemSummary[]>([]);
   const saving = ref(false);
@@ -31,15 +31,15 @@
   const addLabels = ref<string[]>([]);
   const removeLabels = ref<string[]>([]);
 
-  const availableToAddLabels = ref<LabelOut[]>([]);
-  const availableToRemoveLabels = ref<LabelOut[]>([]);
+  const availableToAddLabels = ref<TagOut[]>([]);
+  const availableToRemoveLabels = ref<TagOut[]>([]);
 
   const intersectLabelIds = (items: ItemSummary[]): string[] => {
     if (items.length === 0) return [];
     const counts = new Map<string, number>();
     for (const it of items) {
       const seen = new Set<string>();
-      for (const l of it.labels || []) seen.add(l.id);
+      for (const l of it.tags || []) seen.add(l.id);
       for (const id of seen) counts.set(id, (counts.get(id) || 0) + 1);
     }
     return [...counts.entries()].filter(([_, c]) => c === items.length).map(([id]) => id);
@@ -47,7 +47,7 @@
 
   const unionLabelIds = (items: ItemSummary[]): string[] => {
     const s = new Set<string>();
-    for (const it of items) for (const l of it.labels || []) s.add(l.id);
+    for (const it of items) for (const l of it.tags || []) s.add(l.id);
     return Array.from(s);
   };
 
@@ -102,7 +102,7 @@
           patch.locationId = location!.id;
         }
 
-        let currentLabels = item.labels.map(l => l.id);
+        let currentLabels = item.tags.map(l => l.id);
 
         if (enabled.addLabels) {
           currentLabels = currentLabels.concat(labelsToAdd);
@@ -113,7 +113,7 @@
         }
 
         if (enabled.addLabels || enabled.removeLabels) {
-          patch.labelIds = Array.from(new Set(currentLabels));
+          patch.tagIds = Array.from(new Set(currentLabels));
         }
 
         const { error, data } = await api.items.patch(item.id, patch);
@@ -149,14 +149,14 @@
       <LabelSelector
         v-if="enabled.addLabels"
         v-model="addLabels"
-        :labels="availableToAddLabels"
-        :name="$t('components.item.view.change_details.add_labels')"
+        :tags="availableToAddLabels"
+        :name="$t('components.item.view.change_details.add_tags')"
       />
       <LabelSelector
         v-if="enabled.removeLabels"
         v-model="removeLabels"
-        :labels="availableToRemoveLabels"
-        :name="$t('components.item.view.change_details.remove_labels')"
+        :tags="availableToRemoveLabels"
+        :name="$t('components.item.view.change_details.remove_tags')"
       />
       <DialogFooter>
         <Button type="submit" :disabled="saving || (enabled.changeLocation && !newLocation)" @click="save">

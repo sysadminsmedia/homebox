@@ -1,20 +1,20 @@
 <template>
-  <BaseModal :dialog-id="DialogID.CreateLabel" :title="$t('components.label.create_modal.title')">
+  <BaseModal :dialog-id="DialogID.CreateLabel" :title="$t('components.tag.create_modal.title')">
     <form class="flex min-w-0 flex-col gap-2" @submit.prevent="create()">
       <FormTextField
         v-model="form.name"
         :trigger-focus="focused"
         :autofocus="true"
-        :label="$t('components.label.create_modal.label_name')"
+        :tag="$t('components.tag.create_modal.tag_name')"
         :max-length="50"
         :min-length="1"
       />
       <FormTextArea
         v-model="form.description"
-        :label="$t('components.label.create_modal.label_description')"
+        :tag="$t('components.tag.create_modal.tag_description')"
         :max-length="1000"
       />
-      <ColorSelector v-model="form.color" :label="$t('components.label.create_modal.label_color')" :show-hex="true" />
+      <ColorSelector v-model="form.color" :tag="$t('components.tag.create_modal.tag_color')" :show-hex="true" />
       <div class="mt-4 flex flex-row-reverse">
         <ButtonGroup>
           <Button :disabled="loading" type="submit">{{ $t("global.create") }}</Button>
@@ -65,11 +65,11 @@
 
   async function create(close = true) {
     if (loading.value) {
-      toast.error(t("components.label.create_modal.toast.already_creating"));
+      toast.error(t("components.tag.create_modal.toast.already_creating"));
       return;
     }
     if (form.name.length > 50) {
-      toast.error(t("components.label.create_modal.toast.label_name_too_long"));
+      toast.error(t("components.tag.create_modal.toast.tag_name_too_long"));
       return;
     }
 
@@ -77,20 +77,20 @@
 
     if (shift?.value) close = false;
 
-    const { error, data } = await api.labels.create(form);
+    const { error, data } = await api.tags.create(form);
 
     if (error) {
-      toast.error(t("components.label.create_modal.toast.create_failed"));
+      toast.error(t("components.tag.create_modal.toast.create_failed"));
       loading.value = false;
       return;
     }
 
-    toast.success(t("components.label.create_modal.toast.create_success"));
+    toast.success(t("components.tag.create_modal.toast.create_success"));
     reset();
 
     if (close) {
       closeDialog(DialogID.CreateLabel);
-      navigateTo(`/label/${data.id}`);
+      navigateTo(`/tag/${data.id}`);
     }
   }
 </script>

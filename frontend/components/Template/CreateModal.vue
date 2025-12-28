@@ -4,43 +4,43 @@
       <FormTextField
         v-model="form.name"
         :autofocus="true"
-        :label="$t('components.template.form.template_name')"
+        :tag="$t('components.template.form.template_name')"
         :max-length="255"
         :min-length="1"
       />
       <FormTextArea
         v-model="form.description"
-        :label="$t('components.template.form.template_description')"
+        :tag="$t('components.template.form.template_description')"
         :max-length="1000"
       />
 
       <Separator class="my-2" />
       <h3 class="text-sm font-medium">{{ $t("components.template.form.default_item_values") }}</h3>
       <div class="flex min-w-0 flex-col gap-2">
-        <FormTextField v-model="form.defaultName" :label="$t('components.template.form.item_name')" :max-length="255" />
+        <FormTextField v-model="form.defaultName" :tag="$t('components.template.form.item_name')" :max-length="255" />
         <FormTextArea
           v-model="form.defaultDescription"
-          :label="$t('components.template.form.item_description')"
+          :tag="$t('components.template.form.item_description')"
           :max-length="1000"
         />
         <div class="grid grid-cols-2 gap-2">
-          <FormTextField v-model.number="form.defaultQuantity" :label="$t('global.quantity')" type="number" :min="1" />
+          <FormTextField v-model.number="form.defaultQuantity" :tag="$t('global.quantity')" type="number" :min="1" />
           <FormTextField
             v-model="form.defaultModelNumber"
-            :label="$t('components.template.form.model_number')"
+            :tag="$t('components.template.form.model_number')"
             :max-length="255"
           />
         </div>
         <FormTextField
           v-model="form.defaultManufacturer"
-          :label="$t('components.template.form.manufacturer')"
+          :tag="$t('components.template.form.manufacturer')"
           :max-length="255"
         />
         <LocationSelector
           v-model="form.defaultLocationObject"
-          :label="$t('components.template.form.default_location')"
+          :tag="$t('components.template.form.default_location')"
         />
-        <LabelSelector v-model="form.defaultLabelIds" :labels="labels ?? []" />
+        <LabelSelector v-model="form.defaultLabelIds" :tags="tags ?? []" />
         <div class="flex items-center gap-4">
           <div class="flex items-center gap-2">
             <Switch id="defaultInsured" v-model:checked="form.defaultInsured" />
@@ -67,13 +67,13 @@
         <div v-for="(field, idx) in form.fields" :key="idx" class="flex items-end gap-2">
           <FormTextField
             v-model="field.name"
-            :label="$t('components.template.form.field_name')"
+            :tag="$t('components.template.form.field_name')"
             :max-length="255"
             class="flex-1"
           />
           <FormTextField
             v-model="field.textValue"
-            :label="$t('components.template.form.default_value')"
+            :tag="$t('components.template.form.default_value')"
             class="flex-1"
           />
           <Button type="button" size="icon" variant="ghost" @click="form.fields.splice(idx, 1)">
@@ -103,17 +103,17 @@
   import { Button } from "~/components/ui/button";
   import { Separator } from "@/components/ui/separator";
   import { Switch } from "@/components/ui/switch";
-  import { Label } from "@/components/ui/label";
+  import { Label } from "@/components/ui/tag";
   import LocationSelector from "~/components/Location/Selector.vue";
   import LabelSelector from "~/components/Label/Selector.vue";
-  import { useLabelStore } from "~~/stores/labels";
+  import { useTagStore } from "~~/stores/tags";
   import type { LocationSummary } from "~~/lib/api/types/data-contracts";
 
   const emit = defineEmits<{ created: [] }>();
   const { closeDialog } = useDialog();
 
-  const labelStore = useLabelStore();
-  const labels = computed(() => labelStore.labels);
+  const labelStore = useTagStore();
+  const tags = computed(() => labelStore.tags);
 
   const loading = ref(false);
   const form = reactive({

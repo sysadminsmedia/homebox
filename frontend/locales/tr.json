@@ -67,7 +67,7 @@
                 "years": "yıl",
                 "yesterday": "dün"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "Tarayıcıdan Yazdır",
                 "confirm_description": "Bu etiketi yazdırmak istediğinizden emin misiniz?",
                 "download": "Etiketi İndir",
@@ -139,9 +139,9 @@
             },
             "view": {
                 "change_details": {
-                    "add_labels": "Etiket Ekle",
+                    "add_tags": "Etiket Ekle",
                     "failed_to_update_item": "Ürün güncellemesi başarısız oldu",
-                    "remove_labels": "Etiket Sil",
+                    "remove_tags": "Etiket Sil",
                     "title": "Ürün detaylarını değiştir"
                 },
                 "selectable": {
@@ -156,8 +156,8 @@
                 "table": {
                     "dropdown": {
                         "actions": "Eylemler",
-                        "change_labels": "Etiket Değiştir",
-                        "change_labels_success": "Etiket Değişti",
+                        "change_tags": "Etiket Değiştir",
+                        "change_tags_success": "Etiket Değişti",
                         "change_location": "Bölge Değiştir",
                         "change_location_success": "Bölge Değişti",
                         "create_maintenance_item": "Ürün için Bakım Girişi Oluştur",
@@ -188,21 +188,21 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_color": "Etiket Rengi",
-                "label_description": "Etiket Açıklaması",
-                "label_name": "Etiket Adı",
+                "tag_color": "Etiket Rengi",
+                "tag_description": "Etiket Açıklaması",
+                "tag_name": "Etiket Adı",
                 "title": "Etiket oluştur",
                 "toast": {
                     "already_creating": "Zaten bir etiket oluşturuluyor",
                     "create_failed": "Etiket oluşturulamadı",
                     "create_success": "Etiket oluşturuldu",
-                    "label_name_too_long": "Etiket adı 50 karakterden uzun olmamalıdır"
+                    "tag_name_too_long": "Etiket adı 50 karakterden uzun olmamalıdır"
                 }
             },
             "selector": {
-                "select_labels": "Etiketleri Seçin"
+                "select_tags": "Etiketleri Seçin"
             }
         },
         "location": {
@@ -260,7 +260,7 @@
         "insured": "Sigortalı",
         "items": "Öğeler",
         "join_discord": "Discord'a Katılın",
-        "labels": "Etiketler",
+        "tags": "Etiketler",
         "loading": "Yükleniyor…",
         "locations": "Konumlar",
         "maintenance": "Bakım",
@@ -283,12 +283,12 @@
         "welcome": "Hoşgeldin, { username }"
     },
     "home": {
-        "labels": "Etiket",
+        "tags": "Etiket",
         "quick_statistics": "Hızlı İstatistikler",
         "recently_added": "Yakında Eklendi",
         "storage_locations": "Saklama Konumları",
         "total_items": "Toplam Ürün",
-        "total_labels": "Toplam Etiket",
+        "total_tags": "Toplam Etiket",
         "total_locations": "Toplam Konum",
         "total_value": "Toplam Değer"
     },
@@ -366,7 +366,7 @@
         "manufacturer": "Üretici",
         "model_number": "Model Numarası",
         "name": "İsim",
-        "negate_labels": "Seçili Etiketleri Yoksay",
+        "negate_tags": "Seçili Etiketleri Yoksay",
         "next_page": "Sonraki Sayfa",
         "no_attachments": "Ek bulunamadı",
         "no_results": "Öğe Bulunamadı",
@@ -433,17 +433,17 @@
         "warranty_details": "Garanti Bilgileri",
         "warranty_expires": "Garanti Bitiş Tarihi"
     },
-    "labels": {
-        "label_delete_confirm": "Bu etiketi silmek istediğinizden emin misiniz? Bu eylem geri alınamaz.",
+    "tags": {
+        "tag_delete_confirm": "Bu etiketi silmek istediğinizden emin misiniz? Bu eylem geri alınamaz.",
         "no_results": "Etiket Bulunamadı",
         "toast": {
-            "failed_delete_label": "Etiket silinemedi",
-            "failed_load_label": "Etiket yüklenemedi",
-            "failed_update_label": "Etiket güncellenemedi",
-            "label_deleted": "Etiket silindi",
-            "label_updated": "Etiket güncellendi"
+            "failed_delete_tag": "Etiket silinemedi",
+            "failed_load_tag": "Etiket yüklenemedi",
+            "failed_update_tag": "Etiket güncellenemedi",
+            "tag_deleted": "Etiket silindi",
+            "tag_updated": "Etiket güncellendi"
         },
-        "update_label": "Etiket Güncelle"
+        "update_tag": "Etiket Güncelle"
     },
     "languages": {
         "bs-BA": "Boşnakça",
@@ -535,7 +535,7 @@
     },
     "menu": {
         "create_item": "Öğe / Varlık",
-        "create_label": "Etiket",
+        "create_tag": "Etiket",
         "create_location": "Konum",
         "home": "Ev",
         "locations": "Konumlar",
@@ -585,10 +585,10 @@
         "user_profile_sub": "Kullanıcıları davet edin ve hesabınızı yönetin."
     },
     "reports": {
-        "label_generator": {
+        "tag_generator": {
             "generate_page": "Sayfayı Oluştur",
-            "label_height": "Etiket Yüksekliği",
-            "label_width": "Etiket Genişliği",
+            "tag_height": "Etiket Yüksekliği",
+            "tag_width": "Etiket Genişliği",
             "page_height": "Sayfa Yüksekliği",
             "tips": "İpuçları",
             "title": "Etiket Oluşturucu",
@@ -635,9 +635,9 @@
         "import_export_sub": "Envanterinizi bir CSV dosyasına içe ve dışa aktarın. Bu, envanterinizi yeni bir Homebox örneğine taşımak için faydalıdır.",
         "reports": "Raporlar",
         "reports_set": {
-            "asset_labels": "Varlık Kimlik Etiketleri",
-            "asset_labels_button": "Etiket Oluşturucu",
-            "asset_labels_sub": "Bir dizi Varlık Kimliği için yazdırılabilir bir PDF etiketleri oluşturur. Bu etiketler envanterinize özgü değildir, bu nedenle etiketleri önceden yazdırabilir ve onları aldığınızda envanterinize uygulayabilirsiniz.",
+            "asset_tags": "Varlık Kimlik Etiketleri",
+            "asset_tags_button": "Etiket Oluşturucu",
+            "asset_tags_sub": "Bir dizi Varlık Kimliği için yazdırılabilir bir PDF etiketleri oluşturur. Bu etiketler envanterinize özgü değildir, bu nedenle etiketleri önceden yazdırabilir ve onları aldığınızda envanterinize uygulayabilirsiniz.",
             "bill_of_materials": "Malzeme Listesi",
             "bill_of_materials_button": "Malzeme Listesi Oluştur",
             "bill_of_materials_sub": "Bir elektronik tablo programına içe aktarılabilen bir CSV (Virgülle Ayrılmış Değerler) dosyası oluşturur. Bu, envanterinizin temel öğe ve fiyat bilgileriyle birlikte bir özetidir."

@@ -1,7 +1,7 @@
 export enum ServerEvent {
   LocationMutation = "location.mutation",
   ItemMutation = "item.mutation",
-  LabelMutation = "label.mutation",
+  LabelMutation = "tag.mutation",
 }
 
 export type EventMessage = {

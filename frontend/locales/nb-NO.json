@@ -67,7 +67,7 @@
                 "years": "år",
                 "yesterday": "i går"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "Skriv ut fra nettleser",
                 "confirm_description": "Er du sikker på at du vil skrive ut denne etiketten?",
                 "download": "Last ned etikett",
@@ -141,21 +141,21 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_color": "Farge på etikett",
-                "label_description": "Merkelappbeskrivelse",
-                "label_name": "Merkelappnavn",
+                "tag_color": "Farge på etikett",
+                "tag_description": "Merkelappbeskrivelse",
+                "tag_name": "Merkelappnavn",
                 "title": "Opprett merkelapp",
                 "toast": {
                     "already_creating": "Opprettelse av etikett pågår allerede",
                     "create_failed": "Kunne ikke opprette etikett",
                     "create_success": "Etikett opprettet",
-                    "label_name_too_long": "Etikettnavn kan ikke overstige 50 tegn"
+                    "tag_name_too_long": "Etikettnavn kan ikke overstige 50 tegn"
                 }
             },
             "selector": {
-                "select_labels": "Velg etikett"
+                "select_tags": "Velg etikett"
             }
         },
         "location": {
@@ -210,7 +210,7 @@
         "insured": "Forsikret",
         "items": "Objekter",
         "join_discord": "Bli med på Discord",
-        "labels": "Merkelapper",
+        "tags": "Merkelapper",
         "loading": "Laster...",
         "locations": "Lokasjoner",
         "maintenance": "Vedlikehold",
@@ -232,12 +232,12 @@
         "welcome": "Velkommen, { username }"
     },
     "home": {
-        "labels": "Merkelapper",
+        "tags": "Merkelapper",
         "quick_statistics": "Rask statistikk",
         "recently_added": "Nylig lagt til",
         "storage_locations": "Oppbevaringslokasjoner",
         "total_items": "Antall objekter",
-        "total_labels": "Antall merkelapper",
+        "total_tags": "Antall merkelapper",
         "total_locations": "Antall lokasjoner",
         "total_value": "Total verdi"
     },
@@ -302,7 +302,7 @@
         "manufacturer": "Produsent",
         "model_number": "Modellnummer",
         "name": "Navn",
-        "negate_labels": "Se bort fra valgte merkelapper",
+        "negate_tags": "Se bort fra valgte merkelapper",
         "next_page": "Neste side",
         "no_attachments": "Ingen vedlegg funnet",
         "no_results": "Ingenting funnet",
@@ -370,17 +370,17 @@
         "warranty_details": "Garantidetaljer",
         "warranty_expires": "Garanti utløper"
     },
-    "labels": {
-        "label_delete_confirm": "Er du sikker på at du vil slette denne etiketten? Denne handlingen kan ikke angres.",
+    "tags": {
+        "tag_delete_confirm": "Er du sikker på at du vil slette denne etiketten? Denne handlingen kan ikke angres.",
         "no_results": "Ingen merkelapper funnet",
         "toast": {
-            "failed_delete_label": "Kunne ikke slette etikett",
-            "failed_load_label": "Kunne ikke laste inn etikett",
-            "failed_update_label": "Kunne ikke oppdatere etikett",
-            "label_deleted": "Etikett slettet",
-            "label_updated": "Etikett oppdatert"
+            "failed_delete_tag": "Kunne ikke slette etikett",
+            "failed_load_tag": "Kunne ikke laste inn etikett",
+            "failed_update_tag": "Kunne ikke oppdatere etikett",
+            "tag_deleted": "Etikett slettet",
+            "tag_updated": "Etikett oppdatert"
         },
-        "update_label": "Oppdater merkelapp"
+        "update_tag": "Oppdater merkelapp"
     },
     "languages": {
         "ca": "Katalansk",
@@ -470,7 +470,7 @@
     },
     "menu": {
         "create_item": "Objekt",
-        "create_label": "Merkelapp",
+        "create_tag": "Merkelapp",
         "create_location": "Lokasjon",
         "home": "Hjem",
         "locations": "Lokasjoner",
@@ -528,18 +528,18 @@
         "user_profile_sub": "Inviter brukere og behandle kontoen din."
     },
     "reports": {
-        "label_generator": {
+        "tag_generator": {
             "asset_end": "Avslutning av eiendel",
             "asset_start": "Oppstart av eiendel",
             "base_url": "Basis-URL",
-            "bordered_labels": "Kantede etiketter",
+            "bordered_tags": "Kantede etiketter",
             "generate_page": "Generer side",
             "input_placeholder": "Skriv her",
             "instruction_1": "Homebox Label Generator er et verktøy som hjelper deg med å skrive ut etiketter for Homebox-oversikten din. Disse er ment\n som forhåndsutskrevne etiketter, slik at du kan skrive ut mange etiketter og ha dem klare til bruk",
             "instruction_2": "Etikettene fungerer ved å skrive ut en QR-kode med URL og AssetID-informasjon på etiketten. Hvis du har deaktivert\n AssetID-er i Homebox-innstillingene dine, kan du fortsatt bruke dette verktøyet, men AssetID-ene vil da ikke vise til noen gjenstand",
             "instruction_3": "Denne funksjonen er i en tidlig utviklingsfase og kan endres i fremtidige versjoner. Hvis du har tilbakemeldinger,\n vennligst legg dem inn i '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub-diskusjonen'</a>'",
-            "label_height": "Etiketthøyde",
-            "label_width": "Etikettbredde",
+            "tag_height": "Etiketthøyde",
+            "tag_width": "Etikettbredde",
             "measure_type": "Måltype",
             "page_bottom_padding": "Bunnmarg på siden",
             "page_height": "Sidehøyde",
@@ -604,9 +604,9 @@
         "import_export_sub": "Importer og eksporter inventaret ditt til og fra CSV-format. Dette er nyttig for å flytte inventaret ditt til en ny instans av Homebox.",
         "reports": "Rapporter",
         "reports_set": {
-            "asset_labels": "Asset-ID-merkelapper",
-            "asset_labels_button": "Merkelappgenerator",
-            "asset_labels_sub": "Genererer en utskrivbar PDF-fil for merkelapper for en serie Asset-Ider. Disse er ikke spesifikke for ditt inventar, så du kan lage og skrive ut merkelapper før de trengs og feste dem til inventaret ditt når det kommer.",
+            "asset_tags": "Asset-ID-merkelapper",
+            "asset_tags_button": "Merkelappgenerator",
+            "asset_tags_sub": "Genererer en utskrivbar PDF-fil for merkelapper for en serie Asset-Ider. Disse er ikke spesifikke for ditt inventar, så du kan lage og skrive ut merkelapper før de trengs og feste dem til inventaret ditt når det kommer.",
             "bill_of_materials": "Liste over materialer",
             "bill_of_materials_button": "Opprett liste over materialer",
             "bill_of_materials_sub": "Genererer en CSV (kommaseparerte verdier)-fil som kan importeres til et regnearkprogram. Dette er et sammendrag av inventaret ditt med grunnleggende objekt- og prisinformasjon."

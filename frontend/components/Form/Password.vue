@@ -1,6 +1,6 @@
 <template>
   <div class="relative">
-    <FormTextField v-model="value" :placeholder="localizedPlaceholder" :label="localizedLabel" :type="inputType" />
+    <FormTextField v-model="value" :placeholder="localizedPlaceholder" :tag="localizedLabel" :type="inputType" />
     <TooltipProvider :delay-duration="0">
       <Tooltip>
         <TooltipTrigger as-child>
@@ -28,7 +28,7 @@
   type Props = {
     modelValue: string;
     placeholder?: string;
-    label: string;
+    tag: string;
   };
 
   const props = defineProps<Props>();
@@ -36,7 +36,7 @@
   const [hide, toggle] = useToggle(true);
 
   const localizedPlaceholder = computed(() => props.placeholder ?? t("global.password"));
-  const localizedLabel = computed(() => props.label ?? t("global.password"));
+  const localizedLabel = computed(() => props.tag ?? t("global.password"));
 
   const inputType = computed(() => {
     return hide.value ? "password" : "text";

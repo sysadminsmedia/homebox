@@ -2,15 +2,15 @@
   import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import { Input } from "~/components/ui/input";
-  import type { ItemSummary, LabelSummary, LocationOutCount } from "~~/lib/api/types/data-contracts";
-  import { useLabelStore } from "~~/stores/labels";
+  import type { ItemSummary, TagSummary, LocationOutCount } from "~~/lib/api/types/data-contracts";
+  import { useTagStore } from "~~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
   import MdiLoading from "~icons/mdi/loading";
   import MdiMagnify from "~icons/mdi/magnify";
   import MdiDelete from "~icons/mdi/delete";
   import { Button } from "@/components/ui/button";
   import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-  import { Label } from "@/components/ui/label";
+  import { Label } from "@/components/ui/tag";
   import { Switch } from "@/components/ui/switch";
   import { Separator } from "@/components/ui/separator";
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -106,7 +106,7 @@
     }
 
     if (qLab) {
-      selectedLabels.value = labels.value.filter(l => qLab.value.includes(l.id));
+      selectedLabels.value = tags.value.filter(l => qLab.value.includes(l.id));
     }
 
     queryParamsInitialized.value = true;
@@ -142,11 +142,11 @@
 
   const locations = computed(() => locationsStore.allLocations);
 
-  const labelStore = useLabelStore();
-  const labels = computed(() => labelStore.labels);
+  const labelStore = useTagStore();
+  const tags = computed(() => labelStore.tags);
 
   const selectedLocations = ref<LocationOutCount[]>([]);
-  const selectedLabels = ref<LabelSummary[]>([]);
+  const selectedLabels = ref<TagSummary[]>([]);
 
   const locIDs = computed(() => selectedLocations.value.map(l => l.id));
   const labIDs = computed(() => selectedLabels.value.map(l => l.id));
@@ -301,7 +301,7 @@
     const { data, error } = await api.items.getAll({
       q: query.value || "",
       locations: locIDs.value,
-      labels: labIDs.value,
+      tags: labIDs.value,
       negateLabels: negateLabels.value,
       onlyWithoutPhoto: onlyWithoutPhoto.value,
       onlyWithPhoto: onlyWithPhoto.value,
@@ -379,7 +379,7 @@
 
 <template>
   <BaseContainer>
-    <div v-if="locations && labels">
+    <div v-if="locations && tags">
       <div class="flex flex-wrap items-end gap-4 md:flex-nowrap">
         <div class="w-full">
           <Input v-model:model-value="query" :placeholder="$t('global.search')" class="h-12" />
@@ -395,8 +395,8 @@
       </div>
 
       <div class="flex w-full flex-wrap gap-2 py-2 md:flex-nowrap">
-        <SearchFilter v-model="selectedLocations" :label="$t('global.locations')" :options="locationFlatTree" />
-        <SearchFilter v-model="selectedLabels" :label="$t('global.labels')" :options="labels" />
+        <SearchFilter v-model="selectedLocations" :tag="$t('global.locations')" :options="locationFlatTree" />
+        <SearchFilter v-model="selectedLabels" :tag="$t('global.tags')" :options="tags" />
         <Popover>
           <PopoverTrigger as-child>
             <Button size="sm" variant="outline"> {{ $t("items.options") }}</Button>
@@ -415,7 +415,7 @@
             <Label class="flex cursor-pointer items-center">
               <Switch v-model="negateLabels" class="ml-auto" />
               <div class="grow" />
-              {{ $t("items.negate_labels") }}
+              {{ $t("items.negate_tags") }}
             </Label>
             <Label class="flex cursor-pointer items-center">
               <Switch v-model="onlyWithoutPhoto" class="ml-auto" />

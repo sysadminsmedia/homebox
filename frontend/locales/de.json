@@ -67,7 +67,7 @@
                 "years": "Jahre",
                 "yesterday": "Gestern"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "Aus dem Browser drucken",
                 "confirm_description": "Möchten Sie dieses Etikett wirklich drucken?",
                 "download": "Etikett herunterladen",
@@ -140,9 +140,9 @@
             },
             "view": {
                 "change_details": {
-                    "add_labels": "Labels hinzufügen",
+                    "add_tags": "Labels hinzufügen",
                     "failed_to_update_item": "Artikel konnte nicht aktualisiert werden",
-                    "remove_labels": "Labels entfernen",
+                    "remove_tags": "Labels entfernen",
                     "title": "Artikeldetails ändern"
                 },
                 "selectable": {
@@ -157,8 +157,8 @@
                 "table": {
                     "dropdown": {
                         "actions": "Aktionen",
-                        "change_labels": "Labels ändern",
-                        "change_labels_success": "Etiketten geändert",
+                        "change_tags": "Labels ändern",
+                        "change_tags_success": "Etiketten geändert",
                         "change_location": "Standort ändern",
                         "change_location_success": "Standort geändert",
                         "create_maintenance_item": "Wartungsposten für Artikel erstellen",
@@ -189,21 +189,21 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_color": "Label-Farbe",
-                "label_description": "Label-Beschreibung",
-                "label_name": "Label-Name",
+                "tag_color": "Label-Farbe",
+                "tag_description": "Label-Beschreibung",
+                "tag_name": "Label-Name",
                 "title": "Label erstellen",
                 "toast": {
                     "already_creating": "Label wird bereits erstellt",
                     "create_failed": "Label konnte nicht erstellt werden",
                     "create_success": "Label erstellt",
-                    "label_name_too_long": "Name des Labels darf nicht länger als 50 Zeichen sein"
+                    "tag_name_too_long": "Name des Labels darf nicht länger als 50 Zeichen sein"
                 }
             },
             "selector": {
-                "select_labels": "Labels auswählen"
+                "select_tags": "Labels auswählen"
             }
         },
         "location": {
@@ -269,7 +269,7 @@
             "hide_defaults": "Standardwerte ausblenden",
             "save_as_template": "Als Vorlage speichern",
             "selector": {
-                "label": "Vorlage (optional)",
+                "tag": "Vorlage (optional)",
                 "not_found": "Keine Vorlage gefunden",
                 "search": "Vorlagen suchen…",
                 "select": "Vorlage auswählen…"
@@ -320,7 +320,7 @@
         "insured": "Versichert",
         "items": "Gegenstände",
         "join_discord": "Discord beitreten",
-        "labels": "Labels",
+        "tags": "Labels",
         "loading": "Wird geladen…",
         "locations": "Lagerorte",
         "maintenance": "Wartung",
@@ -345,12 +345,12 @@
         "yes": "Ja"
     },
     "home": {
-        "labels": "Labels",
+        "tags": "Labels",
         "quick_statistics": "Schnelle Statistiken",
         "recently_added": "Kürzlich hinzugefügt",
         "storage_locations": "Lagerstandorte",
         "total_items": "Gesamtanzahl Elemente",
-        "total_labels": "Gesamtanzahl Label",
+        "total_tags": "Gesamtanzahl Label",
         "total_locations": "Gesamtanzahl Standorte",
         "total_value": "Gesamtwert"
     },
@@ -437,7 +437,7 @@
         "manufacturer": "Hersteller",
         "model_number": "Modelnummer",
         "name": "Name",
-        "negate_labels": "Ausgewählte Etiketten negieren",
+        "negate_tags": "Ausgewählte Etiketten negieren",
         "next_page": "Nächste Seite",
         "no_attachments": "Kein Anhang gefunden",
         "no_results": "Keine Elemente gefunden",
@@ -505,17 +505,17 @@
         "warranty_details": "Garantiedetails",
         "warranty_expires": "Garantie läuft ab am"
     },
-    "labels": {
-        "label_delete_confirm": "Sind Sie sicher, dass Sie das Label löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "tags": {
+        "tag_delete_confirm": "Sind Sie sicher, dass Sie das Label löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
         "no_results": "Keine Labels gefunden",
         "toast": {
-            "failed_delete_label": "Löschen des Labels ist fehlgeschlagen",
-            "failed_load_label": "Laden des Labels ist fehlgeschlagen",
-            "failed_update_label": "Aktualisieren des Labels ist fehlgeschlagen",
-            "label_deleted": "Label wurde gelöscht",
-            "label_updated": "Label wurde aktualisiert"
+            "failed_delete_tag": "Löschen des Labels ist fehlgeschlagen",
+            "failed_load_tag": "Laden des Labels ist fehlgeschlagen",
+            "failed_update_tag": "Aktualisieren des Labels ist fehlgeschlagen",
+            "tag_deleted": "Label wurde gelöscht",
+            "tag_updated": "Label wurde aktualisiert"
         },
-        "update_label": "Label aktualisieren"
+        "update_tag": "Label aktualisieren"
     },
     "languages": {
         "bs-BA": "Bosnisch (Bosnien und Herzegowina)",
@@ -607,7 +607,7 @@
     },
     "menu": {
         "create_item": "Artikel / Objekt",
-        "create_label": "Label",
+        "create_tag": "Label",
         "create_location": "Standort",
         "home": "Home",
         "locations": "Lagerorte",
@@ -673,18 +673,18 @@
         "user_profile_sub": "Lade Benutzer ein und verwalte dein Konto."
     },
     "reports": {
-        "label_generator": {
+        "tag_generator": {
             "asset_end": "Ende der Anlage",
             "asset_start": "Beginn der Anlage",
             "base_url": "Basis URL",
-            "bordered_labels": "Etiketten mit Rand",
+            "bordered_tags": "Etiketten mit Rand",
             "generate_page": "Seite erstellen",
             "input_placeholder": "Hier eingeben",
             "instruction_1": "Der Homebox-Etikettengenerator ist ein Tool, mit dem Sie Etiketten für Ihr Homebox-Inventar drucken können. Diese dienen dazu,\nEtiketten im Voraus drucken, sodass Sie viele Etiketten drucken und zum Anbringen bereithalten können",
             "instruction_2": "Diese Etiketten funktionieren, indem sie einen URL-QR-Code und AssetID-Informationen auf ein Etikett drucken. Falls Sie AssetID's\nin Ihren Homebox-Einstellungen deaktiviert haben, können Sie dieses Tool weiterhin verwenden, aber die AssetIDs verweisen nicht auf Artikel",
             "instruction_3": "Diese Funktion ist in einer frühen Entwicklungsphase und kann sich in zukünftigen Versionen ändern. Wenn Sie Feedback geben möchten, können Sie das hier tun:\n '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub Discussion'</a>'",
-            "label_height": "Etikettenhöhe",
-            "label_width": "Etikettenbreite",
+            "tag_height": "Etikettenhöhe",
+            "tag_width": "Etikettenbreite",
             "measure_type": "Art der Messung",
             "page_bottom_padding": "Abstand am Seitenende",
             "page_height": "Seitenhöhe",
@@ -751,9 +751,9 @@
         "import_export_sub": "Importieren und exportieren Sie Ihren Lagerbestand in und aus einer CSV-Datei. Dies ist nützlich zum migrieren ihres Inventars zu einer neuen Instanz von Homebox.",
         "reports": "Berichte",
         "reports_set": {
-            "asset_labels": "Inventar-ID-Etiketten",
-            "asset_labels_button": "Etiketten-Generator",
-            "asset_labels_sub": "Erzeugt eine druckbare PDF-Datei mit Etiketten für eine Reihe von Asset-IDs. Diese sind nicht spezifisch für deine Inventargegenstände, so dass du die Etiketten im Voraus ausdrucken und bei Erhalt auf deinen Inventargegenständen anbringen kannst.",
+            "asset_tags": "Inventar-ID-Etiketten",
+            "asset_tags_button": "Etiketten-Generator",
+            "asset_tags_sub": "Erzeugt eine druckbare PDF-Datei mit Etiketten für eine Reihe von Asset-IDs. Diese sind nicht spezifisch für deine Inventargegenstände, so dass du die Etiketten im Voraus ausdrucken und bei Erhalt auf deinen Inventargegenständen anbringen kannst.",
             "bill_of_materials": "Stücklisten",
             "bill_of_materials_button": "Stückliste generieren",
             "bill_of_materials_sub": "Generiert eine CSV-Datei (Comma Separated Values), die in ein Tabellenkalkulationsprogramm importiert werden kann. Diese ist eine Zusammenfasung ihres Inventars mit einfachen Elementen- und Preisinformationen."

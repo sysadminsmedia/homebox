@@ -41,7 +41,7 @@
             </SelectTrigger>
             <SelectContent>
               <SelectItem v-for="source in sources" :key="source.deviceId" :value="source.deviceId">
-                {{ source.label }}
+                {{ source.tag }}
               </SelectItem>
             </SelectContent>
           </Select>
@@ -110,7 +110,7 @@
 
       if (devices.length > 0) {
         for (let i = 0; i < devices.length; i++) {
-          if (devices[i]!.label.toLowerCase().includes("back")) {
+          if (devices[i]!.tag.toLowerCase().includes("back")) {
             selectedSource.value = devices[i]!.deviceId;
           }
         }

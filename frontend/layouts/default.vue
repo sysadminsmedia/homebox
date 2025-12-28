@@ -8,7 +8,7 @@
     <ModalConfirm />
     <OutdatedModal v-if="status" :status="status" />
     <ItemCreateModal />
-    <LabelCreateModal />
+    <TagCreateModal />
     <LocationCreateModal />
     <ItemBarcodeModal />
     <AppQuickMenuModal :actions="quickMenuActions" />
@@ -171,7 +171,7 @@
 <script lang="ts" setup>
   import { useI18n } from "vue-i18n";
   import DOMPurify from "dompurify";
-  import { useLabelStore } from "~~/stores/labels";
+  import { useTagStore } from "~~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
 
   import MdiHome from "~icons/mdi/home";
@@ -217,7 +217,7 @@
   import OutdatedModal from "~/components/App/OutdatedModal.vue";
   import ItemCreateModal from "~/components/Item/CreateModal.vue";
 
-  import LabelCreateModal from "~/components/Label/CreateModal.vue";
+  import TagCreateModal from "~/components/Label/CreateModal.vue";
   import LocationCreateModal from "~/components/Location/CreateModal.vue";
   import ItemBarcodeModal from "~/components/Item/BarcodeModal.vue";
   import AppQuickMenuModal from "~/components/App/QuickMenuModal.vue";
@@ -301,7 +301,7 @@
     },
     {
       id: 2,
-      name: computed(() => t("menu.create_label")),
+      name: computed(() => t("menu.create_tag")),
       shortcut: "Shift+2",
       dialogId: DialogID.CreateLabel,
     },
@@ -375,7 +375,7 @@
     })),
   ]);
 
-  const labelStore = useLabelStore();
+  const labelStore = useTagStore();
   labelStore.ensureAllLabelsFetched();
 
   const locationStore = useLocationStore();

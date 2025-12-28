@@ -16,7 +16,7 @@
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-  import { Label } from "@/components/ui/label";
+  import { Label } from "@/components/ui/tag";
   import { badgeVariants } from "@/components/ui/badge";
   import LanguageSelector from "~/components/App/LanguageSelector.vue";
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -347,11 +347,11 @@
 
         <FormPassword
           v-model="passwordChange.current"
-          :label="$t('profile.current_password')"
+          :tag="$t('profile.current_password')"
           placeholder=""
           class="mb-2"
         />
-        <FormPassword v-model="passwordChange.new" :label="$t('profile.new_password')" placeholder="" />
+        <FormPassword v-model="passwordChange.new" :tag="$t('profile.new_password')" placeholder="" />
         <PasswordScore v-model:valid="passwordChange.isValid" :password="passwordChange.new" />
 
         <form @submit.prevent="changePassword">
@@ -373,10 +373,10 @@
 
         <form @submit.prevent="createNotifier">
           <template v-if="notifier">
-            <FormTextField v-model="notifier.name" :label="$t('global.name')" class="mb-2" />
-            <FormTextField v-model="notifier.url" :label="$t('profile.url')" class="mb-2" />
+            <FormTextField v-model="notifier.name" :tag="$t('global.name')" class="mb-2" />
+            <FormTextField v-model="notifier.url" :tag="$t('profile.url')" class="mb-2" />
             <div class="max-w-[100px]">
-              <FormCheckbox v-model="notifier.isActive" :label="$t('profile.enabled')" />
+              <FormCheckbox v-model="notifier.isActive" :tag="$t('profile.enabled')" />
             </div>
           </template>
           <div class="mt-4 flex justify-between gap-2">

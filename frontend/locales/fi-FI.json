@@ -45,7 +45,7 @@
                 "years": "vuotiaat",
                 "yesterday": "eilen"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "Tulosta selaimesta",
                 "confirm_description": "Haluatko varmasti tulostaa tämän tarran?",
                 "download": "Lataa Tarra",
@@ -85,14 +85,14 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_description": "Etiketin Kuvaus",
-                "label_name": "Etiketin Nimi",
+                "tag_description": "Etiketin Kuvaus",
+                "tag_name": "Etiketin Nimi",
                 "title": "Luo Tarra"
             },
             "selector": {
-                "select_labels": "Valitse Tarrat"
+                "select_tags": "Valitse Tarrat"
             }
         },
         "location": {
@@ -139,7 +139,7 @@
         "insured": "Vakuuttaa",
         "items": "Erä",
         "join_discord": "Liity Discord",
-        "labels": "Tarra",
+        "tags": "Tarra",
         "locations": "Sijainti",
         "maintenance": "Huolto",
         "name": "Nimi",
@@ -157,12 +157,12 @@
         "welcome": "Tervetuloa, { username }"
     },
     "home": {
-        "labels": "Tarra",
+        "tags": "Tarra",
         "quick_statistics": "Nopeat Tilastot",
         "recently_added": "Äskettäin Lisätty",
         "storage_locations": "Varastointipaikat",
         "total_items": "Erät Yhteensä",
-        "total_labels": "Tarrat Yhteensä",
+        "total_tags": "Tarrat Yhteensä",
         "total_locations": "Toimipaikat Yhteensä",
         "total_value": "Kokonaisarvo"
     },
@@ -205,7 +205,7 @@
         "manufacturer": "Valmistaja",
         "model_number": "Mallinumero",
         "name": "Nimi",
-        "negate_labels": "Poista Valitut Nimilaput",
+        "negate_tags": "Poista Valitut Nimilaput",
         "next_page": "Seuraava Sivu",
         "no_results": "Kohteita Ei Löytynyt",
         "notes": "Huomautus",
@@ -244,9 +244,9 @@
         "warranty_details": "Takuun Tiedot",
         "warranty_expires": "Takuu Päättyy"
     },
-    "labels": {
+    "tags": {
         "no_results": "Tarroja Ei Löytynyt",
-        "update_label": "Päivitä Nimiö"
+        "update_tag": "Päivitä Nimiö"
     },
     "languages": {
         "ca": "Katalaani",
@@ -326,7 +326,7 @@
     },
     "menu": {
         "create_item": "Erä / Saamiset",
-        "create_label": "Etiketti",
+        "create_tag": "Etiketti",
         "create_location": "Paikka",
         "home": "Koti",
         "locations": "Paikat",
@@ -401,9 +401,9 @@
         "import_export_sub": "Tuo ja vie varastosi CSV-tiedostoon ja siitä. Tämä on hyödyllistä siirrettäessä varastosi uuteen Homebox ilmentymään.",
         "reports": "Raportit",
         "reports_set": {
-            "asset_labels": "Omaisuuserien ID-tarrat",
-            "asset_labels_button": "Etikettigeneraattori",
-            "asset_labels_sub": "Luo tulostettavan PDF-tiedoston etiketeistä tietyille omaisuuserätunnisteille. Tarrat eivät koske vain omaisuusluetteloasi, joten voit tulostaa tarrat etukäteen ja kiinnittää ne omaisuusluetteloosi, kun saat ne.",
+            "asset_tags": "Omaisuuserien ID-tarrat",
+            "asset_tags_button": "Etikettigeneraattori",
+            "asset_tags_sub": "Luo tulostettavan PDF-tiedoston etiketeistä tietyille omaisuuserätunnisteille. Tarrat eivät koske vain omaisuusluetteloasi, joten voit tulostaa tarrat etukäteen ja kiinnittää ne omaisuusluetteloosi, kun saat ne.",
             "bill_of_materials": "Materiaaliluettelo",
             "bill_of_materials_button": "Luo BOM",
             "bill_of_materials_sub": "Luo CSV-tiedoston (pilkulla erotetut arvot), joka voidaan tuoda taulukkolaskentaohjelmaan. Tämä on yhteenveto varastostasi, jossa on perustuotteet ja hintatiedot."

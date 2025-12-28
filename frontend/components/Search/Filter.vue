@@ -2,7 +2,7 @@
   <Popover>
     <PopoverTrigger as-child>
       <Button size="sm" variant="outline" class="group/filter">
-        {{ label }} {{ len }}
+        {{ tag }} {{ len }}
         <MdiChevronDown class="transition-transform group-data-[state=open]/filter:rotate-180" />
       </Button>
     </PopoverTrigger>
@@ -47,10 +47,10 @@
   import { Button } from "@/components/ui/button";
   import { Checkbox } from "@/components/ui/checkbox";
   import { Input } from "@/components/ui/input";
-  import { Label } from "@/components/ui/label";
+  import { Label } from "@/components/ui/tag";
 
   type Props = {
-    label?: string;
+    tag?: string;
     options: {
       name: string;
       id: string;
@@ -68,7 +68,7 @@
 
   const emit = defineEmits(["update:modelValue"]);
   const props = withDefaults(defineProps<Props>(), {
-    label: "",
+    tag: "",
     modelValue: () => [],
   });
 

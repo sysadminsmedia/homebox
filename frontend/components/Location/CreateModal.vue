@@ -8,13 +8,13 @@
         :trigger-focus="focused"
         :autofocus="true"
         :required="true"
-        :label="$t('components.location.create_modal.location_name')"
+        :tag="$t('components.location.create_modal.location_name')"
         :max-length="255"
         :min-length="1"
       />
       <FormTextArea
         v-model="form.description"
-        :label="$t('components.location.create_modal.location_description')"
+        :tag="$t('components.location.create_modal.location_description')"
         :max-length="1000"
       />
       <div class="mt-4 flex flex-row-reverse">

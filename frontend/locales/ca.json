@@ -48,7 +48,7 @@
                 "years": "anys",
                 "yesterday": "ahir"
             },
-            "label_maker": {
+            "tag_maker": {
                 "server_print": "Imprimeix al servidor",
                 "titles": "Etiquetes",
                 "toast": {
@@ -81,10 +81,10 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_description": "Descripció de l'etiqueta",
-                "label_name": "Nom de l'etiqueta",
+                "tag_description": "Descripció de l'etiqueta",
+                "tag_name": "Nom de l'etiqueta",
                 "title": "Crea una etiqueta"
             }
         },
@@ -118,7 +118,7 @@
         "github": "Projecte de GitHub",
         "items": "Articles",
         "join_discord": "Uniu-vos a Discord",
-        "labels": "Etiquetes",
+        "tags": "Etiquetes",
         "locations": "Ubicacions",
         "maintenance": "Manteniment",
         "name": "Nom",
@@ -134,12 +134,12 @@
         "welcome": "Us donem la benvinguda, { username }"
     },
     "home": {
-        "labels": "Etiquetes",
+        "tags": "Etiquetes",
         "quick_statistics": "Estadístiques ràpides",
         "recently_added": "Afegit recentment",
         "storage_locations": "Ubicacions d'emmagatzematge",
         "total_items": "Articles totals",
-        "total_labels": "Total d'etiquetes",
+        "total_tags": "Total d'etiquetes",
         "total_locations": "Ubicacions totals",
         "total_value": "Valor total"
     },
@@ -182,7 +182,7 @@
         "manufacturer": "Fabricant",
         "model_number": "Número de model",
         "name": "Nom",
-        "negate_labels": "Nega les etiquetes seleccionades",
+        "negate_tags": "Nega les etiquetes seleccionades",
         "next_page": "Pàgina següent",
         "no_results": "No s'ha trobat cap element",
         "notes": "Notes",
@@ -219,9 +219,9 @@
         "warranty_details": "Detalls de la garantia",
         "warranty_expires": "La garantia caduca"
     },
-    "labels": {
+    "tags": {
         "no_results": "No s'han trobat etiquetes",
-        "update_label": "Actualitza l'etiqueta"
+        "update_tag": "Actualitza l'etiqueta"
     },
     "languages": {
         "ca": "Català",
@@ -292,7 +292,7 @@
     },
     "menu": {
         "create_item": "Article / Actiu",
-        "create_label": "Etiqueta",
+        "create_tag": "Etiqueta",
         "create_location": "Ubicació",
         "home": "Inici",
         "locations": "Ubicacions",
@@ -350,8 +350,8 @@
         "import_export_sub": "Importa i exporta l'inventari amb un fitxer CSV. És útil per a migracions d'inventari a una nova instància de Homebox.",
         "reports": "Informes",
         "reports_set": {
-            "asset_labels": "Etiquetes d'identificador de recurs",
-            "asset_labels_button": "Generador d'etiquetes",
+            "asset_tags": "Etiquetes d'identificador de recurs",
+            "asset_tags_button": "Generador d'etiquetes",
             "bill_of_materials": "Llista de materials",
             "bill_of_materials_button": "Genera llista de materials"
         },

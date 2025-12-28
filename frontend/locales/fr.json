@@ -67,7 +67,7 @@
                 "years": "années",
                 "yesterday": "hier"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "Imprimer à partir du navigateur",
                 "confirm_description": "Êtes-vous certain de vouloir imprimer cette étiquette ?",
                 "download": "Télécharger l’étiquette",
@@ -153,21 +153,21 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_color": "Couleur de l'étiquette",
-                "label_description": "Description de l'étiquette",
-                "label_name": "Nom de l'étiquette",
+                "tag_color": "Couleur de l'étiquette",
+                "tag_description": "Description de l'étiquette",
+                "tag_name": "Nom de l'étiquette",
                 "title": "Créer une étiquette",
                 "toast": {
                     "already_creating": "Déjà en train de créer une étiquette",
                     "create_failed": "Impossible de créer l'étiquette",
                     "create_success": "Étiquette créée",
-                    "label_name_too_long": "Le nom de l'étiquette ne peut pas dépasser 50 caractères"
+                    "tag_name_too_long": "Le nom de l'étiquette ne peut pas dépasser 50 caractères"
                 }
             },
             "selector": {
-                "select_labels": "Sélectionnez les étiquettes"
+                "select_tags": "Sélectionnez les étiquettes"
             }
         },
         "location": {
@@ -225,7 +225,7 @@
         "insured": "Assuré",
         "items": "Articles",
         "join_discord": "Rejoindre le Discord",
-        "labels": "Étiquettes",
+        "tags": "Étiquettes",
         "loading": "Chargement…",
         "locations": "Emplacements",
         "maintenance": "Maintenance",
@@ -248,12 +248,12 @@
         "welcome": "Bienvenue, { username }"
     },
     "home": {
-        "labels": "Étiquettes",
+        "tags": "Étiquettes",
         "quick_statistics": "Statistiques rapides",
         "recently_added": "Ajoutés récemment",
         "storage_locations": "Emplacements de stockage",
         "total_items": "Total d'objets",
-        "total_labels": "Total d'étiquettes",
+        "total_tags": "Total d'étiquettes",
         "total_locations": "Total d'emplacements",
         "total_value": "Valeur totale"
     },
@@ -331,7 +331,7 @@
         "manufacturer": "Fabricant",
         "model_number": "Numéro de modèle",
         "name": "Nom",
-        "negate_labels": "Négliger les étiquettes sélectionnées",
+        "negate_tags": "Négliger les étiquettes sélectionnées",
         "next_page": "Page suivante",
         "no_attachments": "Aucune pièce jointe trouvée",
         "no_results": "Aucun élément trouvé",
@@ -399,17 +399,17 @@
         "warranty_details": "Détails de la garantie",
         "warranty_expires": "Expiration de la garantie"
     },
-    "labels": {
-        "label_delete_confirm": "Êtes-vous certain de vouloir supprimer cette étiquette ? Cette action ne peut pas être annulée.",
+    "tags": {
+        "tag_delete_confirm": "Êtes-vous certain de vouloir supprimer cette étiquette ? Cette action ne peut pas être annulée.",
         "no_results": "Aucune étiquette trouvée",
         "toast": {
-            "failed_delete_label": "Échec de la suppression de l'étiquette",
-            "failed_load_label": "Échec du chargement de l'étiquette",
-            "failed_update_label": "Échec de la mise à jour de l'étiquette",
-            "label_deleted": "Étiquette supprimée",
-            "label_updated": "Étiquette mise à jour"
+            "failed_delete_tag": "Échec de la suppression de l'étiquette",
+            "failed_load_tag": "Échec du chargement de l'étiquette",
+            "failed_update_tag": "Échec de la mise à jour de l'étiquette",
+            "tag_deleted": "Étiquette supprimée",
+            "tag_updated": "Étiquette mise à jour"
         },
-        "update_label": "Mettre à jour l'étiquette"
+        "update_tag": "Mettre à jour l'étiquette"
     },
     "languages": {
         "bs-BA": "Bosnie (Bosnie-Herzégovine)",
@@ -501,7 +501,7 @@
     },
     "menu": {
         "create_item": "Article / Ressource",
-        "create_label": "Étiquette",
+        "create_tag": "Étiquette",
         "create_location": "Emplacement",
         "home": "Accueil",
         "locations": "Emplacements",
@@ -559,18 +559,18 @@
         "user_profile_sub": "Gérez votre compte et invitez des utilisateurs."
     },
     "reports": {
-        "label_generator": {
+        "tag_generator": {
             "asset_end": "Fin de la ressource",
             "asset_start": "Début de la ressource",
             "base_url": "URL de base",
-            "bordered_labels": "Étiquettes avec bords",
+            "bordered_tags": "Étiquettes avec bords",
             "generate_page": "Générer page",
             "input_placeholder": "Tapez ici",
             "instruction_1": "Le générateur d'étiquettes Homebox est un outil pour vous aider à imprimer des étiquettes pour votre inventaire Homebox. Celles-ci sont destinées à\n être des étiquettes pré-imprimées vous permettant d'en imprimer beaucoup à l'avance et de les avoir prêtes à être appliquées",
             "instruction_2": "En tant que telles, ces étiquettes fonctionnent en imprimant un code QR d'URL et des informations d'ID de Ressource sur une étiquette. Si vous avez désactivé\n les ID de Ressource dans vos paramètres Homebox, vous pouvez quand même utiliser cet outil, mais les ID de Ressource ne référenceront aucun article",
             "instruction_3": "Cette fonctionnalité en est aux premiers stades de développement et peut changer dans les versions futures, si vous avez du feedback, veuillez\n le fournir dans la '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\"> 'Discussion GitHub'</a>'",
-            "label_height": "Hauteur de l'étiquette",
-            "label_width": "Largeur de l’étiquette",
+            "tag_height": "Hauteur de l'étiquette",
+            "tag_width": "Largeur de l’étiquette",
             "measure_type": "Type de mesure",
             "page_bottom_padding": "Marge du bas de la page",
             "page_height": "Hauteur de la page",
@@ -637,9 +637,9 @@
         "import_export_sub": "Importez et exportez votre inventaire vers et depuis un fichier CSV. Ceci est utile pour migrer votre inventaire vers une nouvelle instance de Homebox.",
         "reports": "Rapports",
         "reports_set": {
-            "asset_labels": "Étiquettes d’ID de ressource",
-            "asset_labels_button": "Générateur d'étiquettes",
-            "asset_labels_sub": "Génère un fichier PDF imprimable pour une plage d'identifiants d'actifs. Ils ne sont pas spécifiques à votre inventaire donc vous pouvez les imprimer en avance et les appliquer à votre inventaire par la suite.",
+            "asset_tags": "Étiquettes d’ID de ressource",
+            "asset_tags_button": "Générateur d'étiquettes",
+            "asset_tags_sub": "Génère un fichier PDF imprimable pour une plage d'identifiants d'actifs. Ils ne sont pas spécifiques à votre inventaire donc vous pouvez les imprimer en avance et les appliquer à votre inventaire par la suite.",
             "bill_of_materials": "Nomenclature",
             "bill_of_materials_button": "Générer une nomenclature",
             "bill_of_materials_sub": "Génère un fichier CSV (valeurs séparées par des virgules) qui peut être importé dans un tableur. Il s'agit d'un aperçu de votre inventaire contenant les informations essentielles."

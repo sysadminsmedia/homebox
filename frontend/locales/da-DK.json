@@ -67,11 +67,11 @@
                 "years": "år",
                 "yesterday": "i går"
             },
-            "label_maker": {
+            "tag_maker": {
                 "browser_print": "Print fra Browser",
-                "confirm_description": "Er du sikker på du vil printe denne label?",
-                "download": "Hent label",
-                "print": "Print label",
+                "confirm_description": "Er du sikker på du vil printe denne tag?",
+                "download": "Hent tag",
+                "print": "Print tag",
                 "server_print": "Print på Server",
                 "titles": "Labels",
                 "toast": {
@@ -139,9 +139,9 @@
             },
             "view": {
                 "change_details": {
-                    "add_labels": "Tilføj etiketter",
+                    "add_tags": "Tilføj etiketter",
                     "failed_to_update_item": "Kunne ikke opdatere elementet",
-                    "remove_labels": "Fjern Etiketter",
+                    "remove_tags": "Fjern Etiketter",
                     "title": "Skift elementoplysninger"
                 },
                 "selectable": {
@@ -156,8 +156,8 @@
                 "table": {
                     "dropdown": {
                         "actions": "Handlinger",
-                        "change_labels": "Skift etiketter",
-                        "change_labels_success": "Etiketter ændret",
+                        "change_tags": "Skift etiketter",
+                        "change_tags_success": "Etiketter ændret",
                         "change_location": "Skift placering",
                         "change_location_success": "Placering ændret",
                         "create_maintenance_item": "Opret vedligeholdelsespost for vare",
@@ -188,21 +188,21 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_color": "Etiketfarve",
-                "label_description": "Etiketbeskrivelse",
-                "label_name": "Etiketnavn",
-                "title": "Opret label",
+                "tag_color": "Etiketfarve",
+                "tag_description": "Etiketbeskrivelse",
+                "tag_name": "Etiketnavn",
+                "title": "Opret tag",
                 "toast": {
                     "already_creating": "Allerede oprettet en etiket",
                     "create_failed": "Kunne ikke oprette etiket",
                     "create_success": "Etiket oprettet",
-                    "label_name_too_long": "Etiketnavnet må ikke være længere end 50 tegn"
+                    "tag_name_too_long": "Etiketnavnet må ikke være længere end 50 tegn"
                 }
             },
             "selector": {
-                "select_labels": "Vælg Etiketter"
+                "select_tags": "Vælg Etiketter"
             }
         },
         "location": {
@@ -260,7 +260,7 @@
         "insured": "Forsikret",
         "items": "Genstande",
         "join_discord": "Deltag i vores Discord",
-        "labels": "Etiketter",
+        "tags": "Etiketter",
         "loading": "Indlæser…",
         "locations": "Lokationer",
         "maintenance": "Opretholdelse",
@@ -283,12 +283,12 @@
         "welcome": "Velkommen, { username }"
     },
     "home": {
-        "labels": "Etiketter",
+        "tags": "Etiketter",
         "quick_statistics": "Hurtige Statistikker",
         "recently_added": "Nyligt Tilføjet",
         "storage_locations": "Opbevaringslokationer",
         "total_items": "Totale Genstande",
-        "total_labels": "Totale Etiketter",
+        "total_tags": "Totale Etiketter",
         "total_locations": "Totale Lokationer",
         "total_value": "Total Værdi"
     },
@@ -366,7 +366,7 @@
         "manufacturer": "Producent",
         "model_number": "Modelnummer",
         "name": "Navn",
-        "negate_labels": "Ophæv valgte etiketter",
+        "negate_tags": "Ophæv valgte etiketter",
         "next_page": "Næste side",
         "no_attachments": "Ingen vedhæftede filer fundet",
         "no_results": "Ingen elementer fundet",
@@ -434,17 +434,17 @@
         "warranty_details": "Oplysninger om garanti",
         "warranty_expires": "Garantien udløber"
     },
-    "labels": {
-        "label_delete_confirm": "Er du sikker på, at du vil slette denne etiket? Denne handling kan ikke fortrydes.",
+    "tags": {
+        "tag_delete_confirm": "Er du sikker på, at du vil slette denne etiket? Denne handling kan ikke fortrydes.",
         "no_results": "Ingen etiketter fundet",
         "toast": {
-            "failed_delete_label": "Etiketten kunne ikke slettes",
-            "failed_load_label": "Etiketten kunne ikke indlæses",
-            "failed_update_label": "Etiketten kunne ikke opdateres",
-            "label_deleted": "Etiket slettet",
-            "label_updated": "Etiket opdateret"
+            "failed_delete_tag": "Etiketten kunne ikke slettes",
+            "failed_load_tag": "Etiketten kunne ikke indlæses",
+            "failed_update_tag": "Etiketten kunne ikke opdateres",
+            "tag_deleted": "Etiket slettet",
+            "tag_updated": "Etiket opdateret"
         },
-        "update_label": "Opdater etiket"
+        "update_tag": "Opdater etiket"
     },
     "languages": {
         "bs-BA": "Bosnisk (Bosnien-Hercegovina)",
@@ -536,7 +536,7 @@
     },
     "menu": {
         "create_item": "Vare/aktiv",
-        "create_label": "Label",
+        "create_tag": "Label",
         "create_location": "Lokalitet",
         "home": "Hjem",
         "locations": "Lokationer",
@@ -595,18 +595,18 @@
         "user_profile_sub": "Inviter brugere, og administrer din konto."
     },
     "reports": {
-        "label_generator": {
+        "tag_generator": {
             "asset_end": "Aktivets slut",
             "asset_start": "Aktivets start",
             "base_url": "Base URL",
-            "bordered_labels": "Etiketter med kant",
+            "bordered_tags": "Etiketter med kant",
             "generate_page": "Generer side",
             "input_placeholder": "Skriv her",
             "instruction_1": "Homebox Label Generator er et værktøj, der hjælper dig med at udskrive etiketter til dit Homebox-lager. Disse er beregnet til\nat være etiketter, der kan udskrives på forhånd, så du kan udskrive mange etiketter og have dem klar til påsætning.",
             "instruction_2": "Disse etiketter fungerer derfor ved at udskrive en URL, QR-kode og AssetID-oplysninger på en etiket. Hvis du har deaktiveret\nAssetID'er i dine Homebox-indstillinger, kan du stadig bruge dette værktøj, men AssetID'erne vil ikke referere til nogen varer.",
             "instruction_3": "Denne funktion er i de tidlige udviklingsfaser og kan ændres i fremtidige udgivelser. Hvis du har feedback, bedes\ndu give den i '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub-diskussionen'</a>'",
-            "label_height": "Etikethøjde",
-            "label_width": "Etiketbredde",
+            "tag_height": "Etikethøjde",
+            "tag_width": "Etiketbredde",
             "measure_type": "Målingstype",
             "page_bottom_padding": "Sidebundspolstring",
             "page_height": "Sidehøjde",
@@ -673,9 +673,9 @@
         "import_export_sub": "Importér og eksporter din lagerbeholdning til og fra en CSV-fil. Dette er nyttigt til at migrere dit lager til en ny forekomst af Homebox.",
         "reports": "Rapporter",
         "reports_set": {
-            "asset_labels": "Etiketter for aktiv-id",
-            "asset_labels_button": "Etiket generator",
-            "asset_labels_sub": "Genererer en PDF-fil, der kan udskrives, med etiketter til en række aktiv-id'er. Disse er ikke specifikke for din beholdning, så du er i stand til at udskrive etiketter på forhånd og anvende dem på din beholdning, når du modtager dem.",
+            "asset_tags": "Etiketter for aktiv-id",
+            "asset_tags_button": "Etiket generator",
+            "asset_tags_sub": "Genererer en PDF-fil, der kan udskrives, med etiketter til en række aktiv-id'er. Disse er ikke specifikke for din beholdning, så du er i stand til at udskrive etiketter på forhånd og anvende dem på din beholdning, når du modtager dem.",
             "bill_of_materials": "Stykliste",
             "bill_of_materials_button": "Generer stykliste",
             "bill_of_materials_sub": "Genererer en CSV-fil (kommaseparerede værdier), der kan importeres til et regnearksprogram. Dette er en oversigt over din beholdning med grundlæggende vare- og prisoplysninger."
