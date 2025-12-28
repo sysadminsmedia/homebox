@@ -2,10 +2,11 @@ package services
 
 import (
 	"context"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 	"log"
 	"os"
 	"testing"
+
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
 
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/currencies"
@@ -40,11 +41,11 @@ func bootstrap() {
 
 	password := fk.Str(10)
 	tUser, err = tRepos.Users.Create(ctx, repo.UserCreate{
-		Name:        fk.Str(10),
-		Email:       fk.Email(),
-		Password:    &password,
-		IsSuperuser: fk.Bool(),
-		GroupID:     tGroup.ID,
+		Name:           fk.Str(10),
+		Email:          fk.Email(),
+		Password:       &password,
+		IsSuperuser:    fk.Bool(),
+		DefaultGroupID: tGroup.ID,
 	})
 	if err != nil {
 		log.Fatal(err)
