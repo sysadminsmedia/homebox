@@ -24,6 +24,18 @@ func (svc *GroupService) UpdateGroup(ctx Context, data repo.GroupUpdate) (repo.G
 	return svc.repos.Groups.GroupUpdate(ctx.Context, ctx.GID, data)
 }
 
+func (svc *GroupService) CreateGroup(ctx Context, name string) (repo.Group, error) {
+	if name == "" {
+		return repo.Group{}, errors.New("group name cannot be empty")
+	}
+
+	return svc.repos.Groups.GroupCreate(ctx.Context, name, ctx.UID)
+}
+
+func (svc *GroupService) DeleteGroup(ctx Context) error {
+	return svc.repos.Groups.GroupDelete(ctx.Context, ctx.GID)
+}
+
 func (svc *GroupService) NewInvitation(ctx Context, uses int, expiresAt time.Time) (string, error) {
 	token := hasher.GenerateToken()
 

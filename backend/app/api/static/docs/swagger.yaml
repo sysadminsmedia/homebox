@@ -832,6 +832,17 @@ definitions:
       updatedAt:
         type: string
     type: object
+  repo.GroupInvitation:
+    properties:
+      expiresAt:
+        type: string
+      group:
+        $ref: '#/definitions/repo.Group'
+      id:
+        type: string
+      uses:
+        type: integer
+    type: object
   repo.GroupStatistics:
     properties:
       totalItemPrice:
@@ -2038,10 +2049,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/repo.Group'
+            items:
+              $ref: '#/definitions/repo.Group'
+            type: array
       security:
       - Bearer: []
-      summary: Get Group
+      summary: Get All Groups
       tags:
       - Group
     put:
@@ -2064,7 +2077,54 @@ paths:
       summary: Update Group
       tags:
       - Group
+  /v1/groups/{id}:
+    delete:
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Delete Group
+      tags:
+      - Group
+    post:
+      parameters:
+      - description: Group Name
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.Group'
+      security:
+      - Bearer: []
+      summary: Create Group
+      tags:
+      - Group
   /v1/groups/invitations:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repo.GroupInvitation'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get All Group Invitations
+      tags:
+      - Group
     post:
       parameters:
       - description: User Data

@@ -252,10 +252,15 @@ func (r *GroupRepository) StatsGroup(ctx context.Context, gid uuid.UUID) (GroupS
 	return stats, nil
 }
 
-func (r *GroupRepository) GroupCreate(ctx context.Context, name string) (Group, error) {
-	return r.groupMapper.MapErr(r.db.Group.Create().
-		SetName(name).
-		Save(ctx))
+func (r *GroupRepository) GroupCreate(ctx context.Context, name string, userID uuid.UUID) (Group, error) {
+	createQuery := r.db.Group.Create().SetName(name)
+
+	// Only link user if a valid user ID is provided
+	if userID != uuid.Nil {
+		createQuery = createQuery.AddUserIDs(userID)
+	}
+
+	return r.groupMapper.MapErr(createQuery.Save(ctx))
 }
 
 func (r *GroupRepository) GroupUpdate(ctx context.Context, id uuid.UUID, data GroupUpdate) (Group, error) {
@@ -271,11 +276,27 @@ func (r *GroupRepository) GroupByID(ctx context.Context, id uuid.UUID) (Group, e
 	return r.groupMapper.MapErr(r.db.Group.Get(ctx, id))
 }
 
+func (r *GroupRepository) GroupDelete(ctx context.Context, id uuid.UUID) error {
+	return r.db.Group.DeleteOneID(id).Exec(ctx)
+}
+
 func (r *GroupRepository) InvitationGet(ctx context.Context, token []byte) (GroupInvitation, error) {
 	return r.invitationMapper.MapErr(r.db.GroupInvitationToken.Query().
 		Where(groupinvitationtoken.Token(token)).
 		WithGroup().
 		Only(ctx))
+}
+
+func (r *GroupRepository) InvitationGetAll(ctx context.Context, groupID uuid.UUID) ([]GroupInvitation, error) {
+	invitations, err := r.db.GroupInvitationToken.Query().
+		Where(groupinvitationtoken.HasGroupWith(group.ID(groupID))).
+		WithGroup().
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.invitationMapper.MapEach(invitations), nil
 }
 
 func (r *GroupRepository) InvitationCreate(ctx context.Context, groupID uuid.UUID, invite GroupInvitationCreate) (GroupInvitation, error) {

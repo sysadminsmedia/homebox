@@ -572,6 +572,13 @@ export interface Group {
   updatedAt: Date | string;
 }
 
+export interface GroupInvitation {
+  expiresAt: Date | string;
+  group: Group;
+  id: string;
+  uses: number;
+}
+
 export interface GroupStatistics {
   totalItemPrice: number;
   totalItems: number;

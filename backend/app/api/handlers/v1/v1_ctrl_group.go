@@ -95,3 +95,77 @@ func (ctrl *V1Controller) HandleGroupInvitationsCreate() errchain.HandlerFunc {
 
 	return adapters.Action(fn, http.StatusCreated)
 }
+
+// HandleGroupsGetAll godoc
+//
+//	@Summary	Get All Groups
+//	@Tags		Group
+//	@Produce	json
+//	@Success	200	{object}	[]repo.Group
+//	@Router		/v1/groups [Get]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleGroupsGetAll() errchain.HandlerFunc {
+	fn := func(r *http.Request) ([]repo.Group, error) {
+		auth := services.NewContext(r.Context())
+		return ctrl.repo.Groups.GetAllGroups(auth)
+	}
+
+	return adapters.Command(fn, http.StatusOK)
+}
+
+// HandleGroupCreate godoc
+//
+//	@Summary	Create Group
+//	@Tags		Group
+//	@Produce	json
+//	@Param		name	body		string	true	"Group Name"
+//	@Success	201		{object}	repo.Group
+//	@Router		/v1/groups/{id} [Post]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleGroupCreate() errchain.HandlerFunc {
+	type CreateRequest struct {
+		Name string `json:"name" validate:"required"`
+	}
+
+	fn := func(r *http.Request, body CreateRequest) (repo.Group, error) {
+		auth := services.NewContext(r.Context())
+		return ctrl.svc.Group.CreateGroup(auth, body.Name)
+	}
+
+	return adapters.Action(fn, http.StatusCreated)
+}
+
+// HandleGroupDelete godoc
+//
+//	@Summary	Delete Group
+//	@Tags		Group
+//	@Produce	json
+//	@Success	204
+//	@Router		/v1/groups/{id} [Delete]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleGroupDelete() errchain.HandlerFunc {
+	fn := func(r *http.Request) (any, error) {
+		auth := services.NewContext(r.Context())
+		err := ctrl.svc.Group.DeleteGroup(auth)
+		return nil, err
+	}
+
+	return adapters.Command(fn, http.StatusNoContent)
+}
+
+// HandleGroupInvitationsGetAll godoc
+//
+//	@Summary	Get All Group Invitations
+//	@Tags		Group
+//	@Produce	json
+//	@Success	200	{object}	[]repo.GroupInvitation
+//	@Router		/v1/groups/invitations [Get]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleGroupInvitationsGetAll() errchain.HandlerFunc {
+	fn := func(r *http.Request) ([]repo.GroupInvitation, error) {
+		auth := services.NewContext(r.Context())
+		return ctrl.repo.Groups.InvitationGetAll(auth, auth.GID)
+	}
+
+	return adapters.Command(fn, http.StatusOK)
+}

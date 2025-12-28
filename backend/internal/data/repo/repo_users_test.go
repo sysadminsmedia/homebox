@@ -89,7 +89,7 @@ func TestUserRepo_GetAll(t *testing.T) {
 
 				// Check groups are loaded
 				assert.NotEqual(t, uuid.Nil, usr2.DefaultGroupID)
-				assert.Greater(t, len(usr2.GroupIDs), 0)
+				assert.NotEmpty(t, usr2.GroupIDs)
 			}
 		}
 	}

@@ -242,14 +242,17 @@
                 "tags": [
                     "Group"
                 ],
-                "summary": "Get Group",
+                "summary": "Get All Groups",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/repo.Group"
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/repo.Group"
+                                    }
                                 }
                             }
                         }
@@ -292,6 +295,32 @@
             }
         },
         "/v1/groups/invitations": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Get All Group Invitations",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/repo.GroupInvitation"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -447,6 +476,58 @@
                                 }
                             }
                         }
+                    }
+                }
+            }
+        },
+        "/v1/groups/{id}": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Create Group",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "description": "Group Name",
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/repo.Group"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Delete Group",
+                "responses": {
+                    "204": {
+                        "description": "No Content"
                     }
                 }
             }
@@ -3887,6 +3968,23 @@
                     },
                     "updatedAt": {
                         "type": "string"
+                    }
+                }
+            },
+            "repo.GroupInvitation": {
+                "type": "object",
+                "properties": {
+                    "expiresAt": {
+                        "type": "string"
+                    },
+                    "group": {
+                        "$ref": "#/components/schemas/repo.Group"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "uses": {
+                        "type": "integer"
                     }
                 }
             },
