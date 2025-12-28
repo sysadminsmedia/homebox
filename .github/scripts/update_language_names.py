@@ -6,10 +6,9 @@ Only adds languages with >=80% completion to en.json.
 """
 import json
 import logging
-import os
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 import requests
 from babel import Locale, UnknownLocaleError
