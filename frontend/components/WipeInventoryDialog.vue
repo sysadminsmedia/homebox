@@ -83,24 +83,12 @@
   const wipeLocations = ref(false);
   const wipeMaintenance = ref(false);
 
-  let onCloseCallback:
-    | ((result?: { wipeLabels: boolean; wipeLocations: boolean; wipeMaintenance: boolean } | undefined) => void)
-    | undefined;
-
-  registerOpenDialogCallback(
-    DialogID.WipeInventory,
-    (params?: {
-      onClose?: (
-        result?: { wipeLabels: boolean; wipeLocations: boolean; wipeMaintenance: boolean } | undefined
-      ) => void;
-    }) => {
-      dialog.value = true;
-      wipeLabels.value = false;
-      wipeLocations.value = false;
-      wipeMaintenance.value = false;
-      onCloseCallback = params?.onClose;
-    }
-  );
+  registerOpenDialogCallback(DialogID.WipeInventory, () => {
+    dialog.value = true;
+    wipeLabels.value = false;
+    wipeLocations.value = false;
+    wipeMaintenance.value = false;
+  });
 
   watch(
     dialog,
@@ -123,7 +111,6 @@
   function close() {
     dialog.value = false;
     closeDialog(DialogID.WipeInventory, undefined);
-    onCloseCallback?.(undefined);
   }
 
   function confirm() {
@@ -134,6 +121,5 @@
       wipeMaintenance: wipeMaintenance.value,
     };
     closeDialog(DialogID.WipeInventory, result);
-    onCloseCallback?.(result);
   }
 </script>
