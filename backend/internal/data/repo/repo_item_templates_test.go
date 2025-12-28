@@ -285,7 +285,7 @@ func TestItemTemplatesRepository_CreateWithLabels(t *testing.T) {
 	// Create template with labels
 	data := templateFactory()
 	labelIDs := []uuid.UUID{label1.ID, label2.ID}
-	data.DefaultLabelIDs = &labelIDs
+	data.DefaultTagIDs = &labelIDs
 
 	template, err := tRepos.ItemTemplates.Create(context.Background(), tGroup.ID, data)
 	require.NoError(t, err)

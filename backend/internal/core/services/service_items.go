@@ -262,7 +262,7 @@ func (svc *ItemService) CsvImport(ctx context.Context, gid uuid.UUID, data io.Re
 				Description: row.Description,
 				AssetID:     effAID,
 				LocationID:  locationID,
-				LabelIDs:    labelIds,
+				TagIDs:      labelIds,
 			}
 
 			item, err = svc.repo.Items.Create(ctx, gid, newItem)
@@ -291,7 +291,7 @@ func (svc *ItemService) CsvImport(ctx context.Context, gid uuid.UUID, data io.Re
 
 		updateItem := repo.ItemUpdate{
 			ID:         item.ID,
-			LabelIDs:   labelIds,
+			TagIDs:     labelIds,
 			LocationID: locationID,
 
 			Name:        row.Name,

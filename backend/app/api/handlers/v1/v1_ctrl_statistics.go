@@ -29,18 +29,18 @@ func (ctrl *V1Controller) HandleGroupStatisticsLocations() errchain.HandlerFunc 
 	return adapters.Command(fn, http.StatusOK)
 }
 
-// HandleGroupStatisticsLabels godoc
+// HandleGroupStatisticsTags godoc
 //
-//	@Summary	Get Label Statistics
+//	@Summary	Get Tag Statistics
 //	@Tags		Statistics
 //	@Produce	json
 //	@Success	200	{object}	[]repo.TotalsByOrganizer
-//	@Router		/v1/groups/statistics/labels [GET]
+//	@Router		/v1/groups/statistics/tags [GET]
 //	@Security	Bearer
-func (ctrl *V1Controller) HandleGroupStatisticsLabels() errchain.HandlerFunc {
+func (ctrl *V1Controller) HandleGroupStatisticsTags() errchain.HandlerFunc {
 	fn := func(r *http.Request) ([]repo.TotalsByOrganizer, error) {
 		auth := services.NewContext(r.Context())
-		return ctrl.repo.Groups.StatsLabelsByPurchasePrice(auth, auth.GID)
+		return ctrl.repo.Groups.StatsTagsByPurchasePrice(auth, auth.GID)
 	}
 
 	return adapters.Command(fn, http.StatusOK)

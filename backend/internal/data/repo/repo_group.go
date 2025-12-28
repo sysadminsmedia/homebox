@@ -11,7 +11,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 )
 
@@ -131,21 +131,21 @@ func (r *GroupRepository) StatsLocationsByPurchasePrice(ctx context.Context, gid
 	return v, err
 }
 
-func (r *GroupRepository) StatsLabelsByPurchasePrice(ctx context.Context, gid uuid.UUID) ([]TotalsByOrganizer, error) {
+func (r *GroupRepository) StatsTagsByPurchasePrice(ctx context.Context, gid uuid.UUID) ([]TotalsByOrganizer, error) {
 	var v []TotalsByOrganizer
 
-	err := r.db.Label.Query().
+	err := r.db.Tag.Query().
 		Where(
-			label.HasGroupWith(group.ID(gid)),
+			tag.HasGroupWith(group.ID(gid)),
 		).
-		GroupBy(label.FieldID, label.FieldName).
+		GroupBy(tag.FieldID, tag.FieldName).
 		Aggregate(func(sq *sql.Selector) string {
 			itemTable := sql.Table(item.Table)
 
-			jt := sql.Table(label.ItemsTable)
+			jt := sql.Table(tag.ItemsTable)
 
-			sq.Join(jt).On(sq.C(label.FieldID), jt.C(label.ItemsPrimaryKey[0]))
-			sq.Join(itemTable).On(jt.C(label.ItemsPrimaryKey[1]), itemTable.C(item.FieldID))
+			sq.Join(jt).On(sq.C(tag.FieldID), jt.C(tag.ItemsPrimaryKey[0]))
+			sq.Join(itemTable).On(jt.C(tag.ItemsPrimaryKey[1]), itemTable.C(item.FieldID))
 
 			return sql.As(sql.Sum(itemTable.C(item.FieldPurchasePrice)), "total")
 		}).
