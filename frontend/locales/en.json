@@ -542,8 +542,8 @@
         "nb-NO": "Norwegian Bokmål (norsk bokmål)",
         "nl": "Dutch (Nederlands)",
         "pl": "Polish (polski)",
-        "pt-BR": "Portuguese — Brazil (português)",
-        "pt-PT": "Portuguese — Portugal (português)",
+        "pt-BR": "Portuguese - Brazil (português)",
+        "pt-PT": "Portuguese - Portugal (português)",
         "ro-RO": "Romanian (română)",
         "ru": "Russian (русский)",
         "sk-SK": "Slovak (slovenčina)",
@@ -556,10 +556,10 @@
         "tr": "Turkish (Türkçe)",
         "uk-UA": "Ukrainian (українська)",
         "vi-VN": "Vietnamese (Tiếng Việt)",
-        "zh-CN": "Chinese — Simplified (中文)",
-        "zh-HK": "Chinese — Hong Kong (中文)",
-        "zh-MO": "Chinese — Macau (中文)",
-        "zh-TW": "Chinese — Traditional (中文)"
+        "zh-CN": "Chinese - Simplified (中文)",
+        "zh-HK": "Chinese - Hong Kong (中文)",
+        "zh-MO": "Chinese - Macau (中文)",
+        "zh-TW": "Chinese - Traditional (中文)"
     },
     "locations": {
         "child_locations": "Child Locations",
