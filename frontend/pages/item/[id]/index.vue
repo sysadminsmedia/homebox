@@ -115,7 +115,9 @@
       return;
     }
 
-    item.value.quantity = newQuantity;
+    if (resp.data) {
+      item.value = resp.data;
+    }
   }
 
   type FilteredAttachments = {
