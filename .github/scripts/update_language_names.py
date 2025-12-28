@@ -106,6 +106,7 @@ def fetch_weblate_translations() -> Optional[Dict[str, Dict]]:
 def get_language_name_from_babel(locale_code: str) -> Optional[str]:
     """
     Get the language name using Babel in format "English (Native)".
+    Special handling for variants that need disambiguation (Portuguese, Chinese).
     
     Args:
         locale_code: Language/locale code (e.g., 'en', 'pt-BR', 'zh-CN')
@@ -129,6 +130,28 @@ def get_language_name_from_babel(locale_code: str) -> Optional[str]:
         
         if not english_name:
             return None
+        
+        # Special handling for Portuguese variants (distinguish Brazil vs Portugal)
+        if locale_code == 'pt-BR':
+            native_base = native_name.split('(')[0].strip() if '(' in native_name else native_name
+            return f"Portuguese — Brazil ({native_base})"
+        elif locale_code == 'pt-PT':
+            native_base = native_name.split('(')[0].strip() if '(' in native_name else native_name
+            return f"Portuguese — Portugal ({native_base})"
+        
+        # Special handling for Chinese variants (distinguish Simplified/Traditional and regions)
+        if locale_code == 'zh-CN':
+            native_base = native_name.split('(')[0].strip() if '(' in native_name else native_name
+            return f"Chinese — Simplified ({native_base})"
+        elif locale_code == 'zh-TW':
+            native_base = native_name.split('(')[0].strip() if '(' in native_name else native_name
+            return f"Chinese — Traditional ({native_base})"
+        elif locale_code == 'zh-HK':
+            native_base = native_name.split('(')[0].strip() if '(' in native_name else native_name
+            return f"Chinese — Hong Kong ({native_base})"
+        elif locale_code == 'zh-MO':
+            native_base = native_name.split('(')[0].strip() if '(' in native_name else native_name
+            return f"Chinese — Macau ({native_base})"
         
         # Format: "English (Native)" if native name differs and is available
         if native_name and native_name != english_name:
