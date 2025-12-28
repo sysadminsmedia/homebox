@@ -1,0 +1,148 @@
+const g = id => document.getElementById(id);
+const css = ".dragging{background-color:lightblue;}"
+          +"dialog{padding:10px;text-align:center;}"
+          +"dialog button{margin:2px 4px 2px 4px}"
+          +"dialog span{font-weight: 600;}"
+          +".ghost{position:fixed;pointer-events:none;}";
+
+const styleSheet = document.createElement("style")
+document.head.appendChild(Object.assign(styleSheet,{type:"text/css",innerText:css}))
+
+function runAfterNuxtSettles(callback, delay = 500) {
+    let timeout;
+    const observer = new MutationObserver(() => {
+        // Every time Nuxt changes the DOM, we reset the timer
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            if(!dragging) callback();
+        }, delay);
+    });
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+    });
+}
+runAfterNuxtSettles(maketree);
+let headH = 0;
+let leaves = null;
+function maketree(){
+  headH = document.querySelector('.sticky').getBoundingClientRect().height;
+  lt = document.querySelectorAll("a.text-lg");
+  if(!leaves||leaves.length!=lt.length||lt.length==0) leaves = lt;
+  for( l of leaves) {
+      l.dataset.tipo = l.getAttribute('href').split('/')[1];
+      l.dataset.id = l.getAttribute('href').split('/')[2];
+      l.draggable=false;
+  }
+  console.log("tree updated");
+}
+
+async function getLocation(id){
+  url = "/api/v1/locations/"+id;
+  const response = await fetch(url); 
+  return response.json();
+}
+
+async function move(k,o,t,n){
+  const url = "/api/v1/"+k+"s/"+o;
+  if(k=='location'){
+    const check = await getLocation(t);
+    if(check.parent && check.parent.id==o) return;
+  }
+  const dia = g('dia');
+  const confirm = await new Promise((resolve) => {
+    dia.showModal();
+    dia.onclose = () => resolve(dia.returnValue === 'yes');
+  });
+  if(!confirm) return;
+  const updatedData = {id:o,name:n};
+  if(k=="item") updatedData.locationId = t;
+  else updatedData.parentId = t;
+  fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json;',
+    },
+    body: JSON.stringify(updatedData),
+  })
+  .then((response) => response.json())
+  .then(() => location.reload())
+  .catch((error) => console.error('Error:', error));
+}
+
+let dragged = null, ghost = null;
+let offsetX = offsetY = 0;
+let dragging = false;
+const scr_marg = 60, scr_spd = 12;   // autoScroll params
+
+let dia = document.createElement('dialog');
+dia.classList.add('shadow','rounded-md');
+dia.id="dia";
+dia.innerHTML= '<form method="dialog">' +
+  '<p>' +
+  ' Move <span id="movable"> </span> to <span id="target"> </span>?' +
+  '</p>' +
+  '<button class="button bg-primary rounded-md shadow text-primary-foreground size-9" value="yes">Yes</button>' +
+  '<button class="button bg-destructive rounded-md shadow size-9" onclick="g(\'dia\').close()">No</button>' +
+  '</form>';
+document.body.appendChild(dia);
+
+function moveGhost(e) {
+  ghost.style.left = (e.clientX - offsetX) + "px";
+  ghost.style.top  = (e.clientY - offsetY) + "px";
+}
+function autoScroll(e) {
+  const y = e.clientY;
+  const h = window.innerHeight;
+  let delta = 0;
+  if (y < scr_marg + headH ) delta = -scr_spd * (1 - y / (scr_marg+headH));
+  else if (y > h - scr_marg ) delta = scr_spd * (1 - (h - y) / scr_marg);
+  if (delta !== 0) window.scrollBy(0, delta);
+}
+
+document.addEventListener("selectstart", e => {
+  if (dragged) e.preventDefault();
+});
+
+document.addEventListener("click", e => {
+  if(!dragging) return;
+  e.preventDefault();
+  dragging = false;
+}, true);
+
+document.addEventListener("pointerdown", e => {
+  const a = e.target.closest("a");
+  if (!a||!a.dataset.id) return;
+  dragged = a;
+});
+
+document.addEventListener("pointermove", e => {
+  if(!dragged) return;
+  if(!ghost){
+    dragging = true;
+    const r = dragged.getBoundingClientRect();
+    offsetX = e.clientX - r.left;
+    offsetY = e.clientY - r.top;
+    dragged.classList.add("dragging");
+    ghost = dragged.cloneNode(true);
+    ghost.classList.add("ghost");
+    document.body.appendChild(ghost);
+  }
+  moveGhost(e);
+  autoScroll(e);
+});
+
+document.addEventListener("pointerup", e => {
+  if (!dragged) return;
+  ghost = ghost?.remove();
+  const target = document.elementFromPoint(e.clientX, e.clientY).closest("a");
+  if (target && target !== dragged && target.dataset.tipo=='location') {
+    const r = target.getBoundingClientRect();
+    const y = e.clientY - r.top;
+    g('movable').innerText=dragged.innerText;
+    g('target').innerText=target.innerText;
+    move( dragged.dataset.tipo, dragged.dataset.id, target.dataset.id, dragged.innerText );
+  }
+  dragged.classList.remove("dragging");
+  dragged = null;
+});
