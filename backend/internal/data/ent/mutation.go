@@ -7097,8 +7097,8 @@ type ItemTemplateMutation struct {
 	include_warranty_fields   *bool
 	include_purchase_fields   *bool
 	include_sold_fields       *bool
-	default_label_ids         *[]uuid.UUID
-	appenddefault_label_ids   []uuid.UUID
+	default_tag_ids           *[]uuid.UUID
+	appenddefault_tag_ids     []uuid.UUID
 	clearedFields             map[string]struct{}
 	group                     *uuid.UUID
 	clearedgroup              bool
@@ -7903,69 +7903,69 @@ func (m *ItemTemplateMutation) ResetIncludeSoldFields() {
 	m.include_sold_fields = nil
 }
 
-// SetDefaultLabelIds sets the "default_label_ids" field.
-func (m *ItemTemplateMutation) SetDefaultLabelIds(u []uuid.UUID) {
-	m.default_label_ids = &u
-	m.appenddefault_label_ids = nil
+// SetDefaultTagIds sets the "default_tag_ids" field.
+func (m *ItemTemplateMutation) SetDefaultTagIds(u []uuid.UUID) {
+	m.default_tag_ids = &u
+	m.appenddefault_tag_ids = nil
 }
 
-// DefaultLabelIds returns the value of the "default_label_ids" field in the mutation.
-func (m *ItemTemplateMutation) DefaultLabelIds() (r []uuid.UUID, exists bool) {
-	v := m.default_label_ids
+// DefaultTagIds returns the value of the "default_tag_ids" field in the mutation.
+func (m *ItemTemplateMutation) DefaultTagIds() (r []uuid.UUID, exists bool) {
+	v := m.default_tag_ids
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldDefaultLabelIds returns the old "default_label_ids" field's value of the ItemTemplate entity.
+// OldDefaultTagIds returns the old "default_tag_ids" field's value of the ItemTemplate entity.
 // If the ItemTemplate object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ItemTemplateMutation) OldDefaultLabelIds(ctx context.Context) (v []uuid.UUID, err error) {
+func (m *ItemTemplateMutation) OldDefaultTagIds(ctx context.Context) (v []uuid.UUID, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDefaultLabelIds is only allowed on UpdateOne operations")
+		return v, errors.New("OldDefaultTagIds is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDefaultLabelIds requires an ID field in the mutation")
+		return v, errors.New("OldDefaultTagIds requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDefaultLabelIds: %w", err)
+		return v, fmt.Errorf("querying old value for OldDefaultTagIds: %w", err)
 	}
-	return oldValue.DefaultLabelIds, nil
+	return oldValue.DefaultTagIds, nil
 }
 
-// AppendDefaultLabelIds adds u to the "default_label_ids" field.
-func (m *ItemTemplateMutation) AppendDefaultLabelIds(u []uuid.UUID) {
-	m.appenddefault_label_ids = append(m.appenddefault_label_ids, u...)
+// AppendDefaultTagIds adds u to the "default_tag_ids" field.
+func (m *ItemTemplateMutation) AppendDefaultTagIds(u []uuid.UUID) {
+	m.appenddefault_tag_ids = append(m.appenddefault_tag_ids, u...)
 }
 
-// AppendedDefaultLabelIds returns the list of values that were appended to the "default_label_ids" field in this mutation.
-func (m *ItemTemplateMutation) AppendedDefaultLabelIds() ([]uuid.UUID, bool) {
-	if len(m.appenddefault_label_ids) == 0 {
+// AppendedDefaultTagIds returns the list of values that were appended to the "default_tag_ids" field in this mutation.
+func (m *ItemTemplateMutation) AppendedDefaultTagIds() ([]uuid.UUID, bool) {
+	if len(m.appenddefault_tag_ids) == 0 {
 		return nil, false
 	}
-	return m.appenddefault_label_ids, true
+	return m.appenddefault_tag_ids, true
 }
 
-// ClearDefaultLabelIds clears the value of the "default_label_ids" field.
-func (m *ItemTemplateMutation) ClearDefaultLabelIds() {
-	m.default_label_ids = nil
-	m.appenddefault_label_ids = nil
-	m.clearedFields[itemtemplate.FieldDefaultLabelIds] = struct{}{}
+// ClearDefaultTagIds clears the value of the "default_tag_ids" field.
+func (m *ItemTemplateMutation) ClearDefaultTagIds() {
+	m.default_tag_ids = nil
+	m.appenddefault_tag_ids = nil
+	m.clearedFields[itemtemplate.FieldDefaultTagIds] = struct{}{}
 }
 
-// DefaultLabelIdsCleared returns if the "default_label_ids" field was cleared in this mutation.
-func (m *ItemTemplateMutation) DefaultLabelIdsCleared() bool {
-	_, ok := m.clearedFields[itemtemplate.FieldDefaultLabelIds]
+// DefaultTagIdsCleared returns if the "default_tag_ids" field was cleared in this mutation.
+func (m *ItemTemplateMutation) DefaultTagIdsCleared() bool {
+	_, ok := m.clearedFields[itemtemplate.FieldDefaultTagIds]
 	return ok
 }
 
-// ResetDefaultLabelIds resets all changes to the "default_label_ids" field.
-func (m *ItemTemplateMutation) ResetDefaultLabelIds() {
-	m.default_label_ids = nil
-	m.appenddefault_label_ids = nil
-	delete(m.clearedFields, itemtemplate.FieldDefaultLabelIds)
+// ResetDefaultTagIds resets all changes to the "default_tag_ids" field.
+func (m *ItemTemplateMutation) ResetDefaultTagIds() {
+	m.default_tag_ids = nil
+	m.appenddefault_tag_ids = nil
+	delete(m.clearedFields, itemtemplate.FieldDefaultTagIds)
 }
 
 // SetGroupID sets the "group" edge to the Group entity by id.
@@ -8183,8 +8183,8 @@ func (m *ItemTemplateMutation) Fields() []string {
 	if m.include_sold_fields != nil {
 		fields = append(fields, itemtemplate.FieldIncludeSoldFields)
 	}
-	if m.default_label_ids != nil {
-		fields = append(fields, itemtemplate.FieldDefaultLabelIds)
+	if m.default_tag_ids != nil {
+		fields = append(fields, itemtemplate.FieldDefaultTagIds)
 	}
 	return fields
 }
@@ -8226,8 +8226,8 @@ func (m *ItemTemplateMutation) Field(name string) (ent.Value, bool) {
 		return m.IncludePurchaseFields()
 	case itemtemplate.FieldIncludeSoldFields:
 		return m.IncludeSoldFields()
-	case itemtemplate.FieldDefaultLabelIds:
-		return m.DefaultLabelIds()
+	case itemtemplate.FieldDefaultTagIds:
+		return m.DefaultTagIds()
 	}
 	return nil, false
 }
@@ -8269,8 +8269,8 @@ func (m *ItemTemplateMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldIncludePurchaseFields(ctx)
 	case itemtemplate.FieldIncludeSoldFields:
 		return m.OldIncludeSoldFields(ctx)
-	case itemtemplate.FieldDefaultLabelIds:
-		return m.OldDefaultLabelIds(ctx)
+	case itemtemplate.FieldDefaultTagIds:
+		return m.OldDefaultTagIds(ctx)
 	}
 	return nil, fmt.Errorf("unknown ItemTemplate field %s", name)
 }
@@ -8392,12 +8392,12 @@ func (m *ItemTemplateMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetIncludeSoldFields(v)
 		return nil
-	case itemtemplate.FieldDefaultLabelIds:
+	case itemtemplate.FieldDefaultTagIds:
 		v, ok := value.([]uuid.UUID)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetDefaultLabelIds(v)
+		m.SetDefaultTagIds(v)
 		return nil
 	}
 	return fmt.Errorf("unknown ItemTemplate field %s", name)
@@ -8465,8 +8465,8 @@ func (m *ItemTemplateMutation) ClearedFields() []string {
 	if m.FieldCleared(itemtemplate.FieldDefaultWarrantyDetails) {
 		fields = append(fields, itemtemplate.FieldDefaultWarrantyDetails)
 	}
-	if m.FieldCleared(itemtemplate.FieldDefaultLabelIds) {
-		fields = append(fields, itemtemplate.FieldDefaultLabelIds)
+	if m.FieldCleared(itemtemplate.FieldDefaultTagIds) {
+		fields = append(fields, itemtemplate.FieldDefaultTagIds)
 	}
 	return fields
 }
@@ -8503,8 +8503,8 @@ func (m *ItemTemplateMutation) ClearField(name string) error {
 	case itemtemplate.FieldDefaultWarrantyDetails:
 		m.ClearDefaultWarrantyDetails()
 		return nil
-	case itemtemplate.FieldDefaultLabelIds:
-		m.ClearDefaultLabelIds()
+	case itemtemplate.FieldDefaultTagIds:
+		m.ClearDefaultTagIds()
 		return nil
 	}
 	return fmt.Errorf("unknown ItemTemplate nullable field %s", name)
@@ -8562,8 +8562,8 @@ func (m *ItemTemplateMutation) ResetField(name string) error {
 	case itemtemplate.FieldIncludeSoldFields:
 		m.ResetIncludeSoldFields()
 		return nil
-	case itemtemplate.FieldDefaultLabelIds:
-		m.ResetDefaultLabelIds()
+	case itemtemplate.FieldDefaultTagIds:
+		m.ResetDefaultTagIds()
 		return nil
 	}
 	return fmt.Errorf("unknown ItemTemplate field %s", name)

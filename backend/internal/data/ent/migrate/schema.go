@@ -265,7 +265,7 @@ var (
 		{Name: "include_warranty_fields", Type: field.TypeBool, Default: false},
 		{Name: "include_purchase_fields", Type: field.TypeBool, Default: false},
 		{Name: "include_sold_fields", Type: field.TypeBool, Default: false},
-		{Name: "default_label_ids", Type: field.TypeJSON, Nullable: true},
+		{Name: "default_tag_ids", Type: field.TypeJSON, Nullable: true},
 		{Name: "group_item_templates", Type: field.TypeUUID},
 		{Name: "item_template_location", Type: field.TypeUUID, Nullable: true},
 	}

@@ -167,7 +167,7 @@ func TestItemsRepository_Delete(t *testing.T) {
 
 func TestItemsRepository_Update_Labels(t *testing.T) {
 	entity := useItems(t, 1)[0]
-	labels := useLabels(t, 3)
+	labels := useTags(t, 3)
 
 	labelsIDs := []uuid.UUID{labels[0].ID, labels[1].ID, labels[2].ID}
 
@@ -210,14 +210,14 @@ func TestItemsRepository_Update_Labels(t *testing.T) {
 				ID:         entity.ID,
 				Name:       entity.Name,
 				LocationID: entity.Location.ID,
-				LabelIDs:   tt.args.labelIds,
+				TagIDs:   tt.args.labelIds,
 			}
 
 			updated, err := tRepos.Items.UpdateByGroup(context.Background(), tGroup.ID, updateData)
 			require.NoError(t, err)
-			assert.Len(t, tt.want, len(updated.Labels))
+			assert.Len(t, tt.want, len(updated.Tags))
 
-			for _, label := range updated.Labels {
+			for _, label := range updated.Tags {
 				assert.Contains(t, tt.want, label.ID)
 			}
 		})
@@ -234,7 +234,7 @@ func TestItemsRepository_Update(t *testing.T) {
 		Name:             entity.Name,
 		LocationID:       entity.Location.ID,
 		SerialNumber:     fk.Str(10),
-		LabelIDs:         nil,
+		TagIDs:         nil,
 		ModelNumber:      fk.Str(10),
 		Manufacturer:     fk.Str(10),
 		PurchaseTime:     types.DateFromTime(time.Now()),

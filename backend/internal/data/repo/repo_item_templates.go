@@ -10,7 +10,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 )
 
@@ -122,7 +122,7 @@ type (
 
 		// Default location and labels
 		DefaultLocation *TemplateLocationSummary `json:"defaultLocation"`
-		DefaultLabels   []TemplateTagSummary   `json:"defaultTags"`
+		DefaultTags     []TemplateTagSummary   `json:"defaultTags"`
 
 		// Metadata flags
 		IncludeWarrantyFields bool `json:"includeWarrantyFields"`
@@ -177,15 +177,15 @@ func (r *ItemTemplatesRepository) mapTemplateOut(ctx context.Context, template *
 		}
 	}
 
-	// Fetch labels from database using stored IDs
-	labels := make([]TemplateTagSummary, 0)
-	if len(template.DefaultLabelIds) > 0 {
-		labelEntities, err := r.db.Label.Query().
-			Where(label.IDIn(template.DefaultLabelIds...)).
+	// Fetch tags from database using stored IDs
+	tags := make([]TemplateTagSummary, 0)
+	if len(template.DefaultTagIds) > 0 {
+		tagEntities, err := r.db.Tag.Query().
+			Where(tag.IDIn(template.DefaultTagIds...)).
 			All(ctx)
 		if err == nil {
-			for _, l := range labelEntities {
-				labels = append(labels, TemplateTagSummary{
+			for _, l := range tagEntities {
+				tags = append(tags, TemplateTagSummary{
 					ID:   l.ID,
 					Name: l.Name,
 				})
@@ -209,7 +209,7 @@ func (r *ItemTemplatesRepository) mapTemplateOut(ctx context.Context, template *
 		DefaultLifetimeWarranty: template.DefaultLifetimeWarranty,
 		DefaultWarrantyDetails:  template.DefaultWarrantyDetails,
 		DefaultLocation:         location,
-		DefaultLabels:           labels,
+		DefaultTags:             tags,
 		IncludeWarrantyFields:   template.IncludeWarrantyFields,
 		IncludePurchaseFields:   template.IncludePurchaseFields,
 		IncludeSoldFields:       template.IncludeSoldFields,
@@ -286,7 +286,7 @@ func (r *ItemTemplatesRepository) Create(ctx context.Context, gid uuid.UUID, dat
 	}
 	// Set default label IDs (stored as JSON)
 	if data.DefaultTagIDs != nil && len(*data.DefaultTagIDs) > 0 {
-		q.SetDefaultLabelIds(*data.DefaultTagIDs)
+		q.SetDefaultTagIds(*data.DefaultTagIDs)
 	}
 
 	template, err := q.Save(ctx)
@@ -353,9 +353,9 @@ func (r *ItemTemplatesRepository) Update(ctx context.Context, gid uuid.UUID, dat
 
 	// Update default label IDs (stored as JSON)
 	if data.DefaultTagIDs != nil && len(*data.DefaultTagIDs) > 0 {
-		updateQ.SetDefaultLabelIds(*data.DefaultTagIDs)
+		updateQ.SetDefaultTagIds(*data.DefaultTagIDs)
 	} else {
-		updateQ.ClearDefaultLabelIds()
+		updateQ.ClearDefaultTagIds()
 	}
 
 	_, err = updateQ.Save(ctx)

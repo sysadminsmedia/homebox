@@ -504,7 +504,7 @@ func (e *ItemsRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q Ite
 	}
 
 	qb = qb.
-		WithLabel().
+		WithTag().
 		WithLocation().
 		WithAttachments(func(aq *ent.AttachmentQuery) {
 			aq.Where(
@@ -549,7 +549,7 @@ func (e *ItemsRepository) QueryByAssetID(ctx context.Context, gid uuid.UUID, ass
 
 	items, err := mapItemsSummaryErr(
 		qb.Order(ent.Asc(item.FieldName)).
-			WithLabel().
+			WithTag().
 			WithLocation().
 			All(ctx),
 	)
@@ -569,7 +569,7 @@ func (e *ItemsRepository) QueryByAssetID(ctx context.Context, gid uuid.UUID, ass
 func (e *ItemsRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]ItemOut, error) {
 	return mapItemsOutErr(e.db.Item.Query().
 		Where(item.HasGroupWith(group.ID(gid))).
-		WithLabel().
+		WithTag().
 		WithLocation().
 		WithFields().
 		All(ctx))

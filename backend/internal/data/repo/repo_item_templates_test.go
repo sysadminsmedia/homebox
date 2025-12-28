@@ -265,21 +265,21 @@ func TestItemTemplatesRepository_CreateWithLocation(t *testing.T) {
 
 func TestItemTemplatesRepository_CreateWithLabels(t *testing.T) {
 	// Create some labels
-	label1, err := tRepos.Labels.Create(context.Background(), tGroup.ID, LabelCreate{
+	label1, err := tRepos.Tags.Create(context.Background(), tGroup.ID, TagCreate{
 		Name:        fk.Str(10),
 		Description: fk.Str(50),
 	})
 	require.NoError(t, err)
 
-	label2, err := tRepos.Labels.Create(context.Background(), tGroup.ID, LabelCreate{
+	label2, err := tRepos.Tags.Create(context.Background(), tGroup.ID, TagCreate{
 		Name:        fk.Str(10),
 		Description: fk.Str(50),
 	})
 	require.NoError(t, err)
 
 	t.Cleanup(func() {
-		_ = tRepos.Labels.delete(context.Background(), label1.ID)
-		_ = tRepos.Labels.delete(context.Background(), label2.ID)
+		_ = tRepos.Tags.delete(context.Background(), label1.ID)
+		_ = tRepos.Tags.delete(context.Background(), label2.ID)
 	})
 
 	// Create template with labels
@@ -290,7 +290,7 @@ func TestItemTemplatesRepository_CreateWithLabels(t *testing.T) {
 	template, err := tRepos.ItemTemplates.Create(context.Background(), tGroup.ID, data)
 	require.NoError(t, err)
 
-	assert.Len(t, template.DefaultLabels, 2)
+	assert.Len(t, template.DefaultTags, 2)
 
 	// Cleanup
 	err = tRepos.ItemTemplates.Delete(context.Background(), tGroup.ID, template.ID)
