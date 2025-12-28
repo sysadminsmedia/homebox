@@ -3,18 +3,18 @@
   import Markdown from "@/components/global/Markdown.vue";
   import { Checkbox } from "@/components/ui/checkbox";
   import { Textarea } from "@/components/ui/textarea";
-  import { Label } from "@/components/ui/tag";
+  import { Label } from "@/components/ui/label";
 
   const props = withDefaults(
     defineProps<{
       modelValue?: string | null;
-      tag?: string | null;
+      label?: string | null;
       maxLength?: number;
       minLength?: number;
     }>(),
     {
       modelValue: null,
-      tag: null,
+      label: null,
       maxLength: -1,
       minLength: -1,
     }
@@ -60,7 +60,7 @@
     <div class="mb-2 grid grid-cols-1 items-center gap-2 md:grid-cols-4">
       <div class="min-w-0">
         <Label :for="id" class="flex min-w-0 items-center gap-2 px-1">
-          <span class="truncate" :title="props.tag ?? ''">{{ props.tag }}</span>
+          <span class="truncate" :title="props.label ?? ''">{{ props.label }}</span>
           <span class="grow" />
           <span class="ml-2 text-sm" :class="{ 'text-destructive': isLengthInvalid }">{{ lengthIndicator }}</span>
         </Label>

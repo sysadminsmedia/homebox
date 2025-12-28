@@ -271,7 +271,7 @@
   import { toast } from "@/components/ui/sonner";
   import { Button, ButtonGroup } from "~/components/ui/button";
   import BaseModal from "@/components/App/CreateModal.vue";
-  import { Label } from "@/components/ui/tag";
+  import { Label } from "@/components/ui/label";
   import { Input } from "@/components/ui/input";
   import type { ItemCreate, ItemTemplateOut, ItemTemplateSummary, LocationOut } from "~~/lib/api/types/data-contracts";
   import { useTagStore } from "~~/stores/tags";

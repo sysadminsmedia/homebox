@@ -28,7 +28,7 @@
   type Props = {
     modelValue: string;
     placeholder?: string;
-    tag: string;
+    label: string;
   };
 
   const props = defineProps<Props>();
@@ -36,7 +36,7 @@
   const [hide, toggle] = useToggle(true);
 
   const localizedPlaceholder = computed(() => props.placeholder ?? t("global.password"));
-  const localizedLabel = computed(() => props.tag ?? t("global.password"));
+  const localizedLabel = computed(() => props.label ?? t("global.password"));
 
   const inputType = computed(() => {
     return hide.value ? "password" : "text";

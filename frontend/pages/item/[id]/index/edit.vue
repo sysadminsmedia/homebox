@@ -18,7 +18,7 @@
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
   import { Switch } from "@/components/ui/switch";
-  import { Label } from "@/components/ui/tag";
+  import { Label } from "@/components/ui/label";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
   import FormTextField from "~/components/Form/TextField.vue";
   import FormTextArea from "~/components/Form/TextArea.vue";
@@ -613,7 +613,7 @@
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -621,14 +621,14 @@
                 <MarkdownEditor
                   v-else-if="field.type === 'markdown'"
                   v-model="item[field.ref]"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
                 />
                 <FormTextField
                   v-else-if="field.type === 'text'"
                   v-model="item[field.ref]"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   inline
                   type="text"
                   :max-length="field.maxLength"
@@ -638,19 +638,19 @@
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormDatePicker
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormCheckbox
                   v-else-if="field.type === 'checkbox'"
                   v-model="item[field.ref]"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   inline
                 />
               </div>
@@ -782,7 +782,7 @@
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -790,7 +790,7 @@
                 <FormTextField
                   v-else-if="field.type === 'text'"
                   v-model="item[field.ref]"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -799,19 +799,19 @@
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormDatePicker
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormCheckbox
                   v-else-if="field.type === 'checkbox'"
                   v-model="item[field.ref]"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   inline
                 />
               </div>
@@ -829,7 +829,7 @@
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -837,7 +837,7 @@
                 <FormTextField
                   v-else-if="field.type === 'text'"
                   v-model="item[field.ref]"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -846,19 +846,19 @@
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormDatePicker
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormCheckbox
                   v-else-if="field.type === 'checkbox'"
                   v-model="item[field.ref]"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   inline
                 />
               </div>
@@ -876,7 +876,7 @@
                 <FormTextArea
                   v-if="field.type === 'textarea'"
                   v-model="item[field.ref]"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -884,7 +884,7 @@
                 <FormTextField
                   v-else-if="field.type === 'text'"
                   v-model="item[field.ref]"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   inline
                   :max-length="field.maxLength"
                   :min-length="field.minLength"
@@ -893,19 +893,19 @@
                   v-else-if="field.type === 'number'"
                   v-model.number="item[field.ref]"
                   type="number"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormDatePicker
                   v-else-if="field.type === 'date'"
                   v-model="item[field.ref]"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   inline
                 />
                 <FormCheckbox
                   v-else-if="field.type === 'checkbox'"
                   v-model="item[field.ref]"
-                  :label="$t(field.tag)"
+                  :label="$t(field.label)"
                   inline
                 />
               </div>

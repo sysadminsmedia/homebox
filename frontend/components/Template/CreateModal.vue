@@ -103,7 +103,7 @@
   import { Button } from "~/components/ui/button";
   import { Separator } from "@/components/ui/separator";
   import { Switch } from "@/components/ui/switch";
-  import { Label } from "@/components/ui/tag";
+  import { Label } from "@/components/ui/label";
   import LocationSelector from "~/components/Location/Selector.vue";
   import LabelSelector from "~/components/Label/Selector.vue";
   import { useTagStore } from "~~/stores/tags";

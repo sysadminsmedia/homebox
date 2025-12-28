@@ -13,7 +13,7 @@
   import VueDatePicker from "@vuepic/vue-datepicker";
   import "@vuepic/vue-datepicker/dist/main.css";
   import * as datelib from "~/lib/datelib/datelib";
-  import { Label } from "@/components/ui/tag";
+  import { Label } from "@/components/ui/label";
   import { darkThemes } from "~/lib/data/themes";
 
   const emit = defineEmits(["update:modelValue", "update:text"]);

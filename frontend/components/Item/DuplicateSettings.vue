@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { Input } from "@/components/ui/input";
   import { Switch } from "@/components/ui/switch";
-  import { Label } from "@/components/ui/tag";
+  import { Label } from "@/components/ui/label";
   import type { DuplicateSettings } from "~/composables/use-preferences";
 
   type Props = {

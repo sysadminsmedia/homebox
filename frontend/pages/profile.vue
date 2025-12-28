@@ -16,7 +16,7 @@
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-  import { Label } from "@/components/ui/tag";
+  import { Label } from "@/components/ui/label";
   import { badgeVariants } from "@/components/ui/badge";
   import LanguageSelector from "~/components/App/LanguageSelector.vue";
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
