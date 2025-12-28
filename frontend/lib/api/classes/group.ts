@@ -15,16 +15,16 @@ export class GroupApi extends BaseAPI {
     });
   }
 
-  update(data: GroupUpdate) {
+  update(data: GroupUpdate, groupId?: string) {
     return this.http.put<GroupUpdate, Group>({
-      url: route("/groups"),
+      url: route(`/groups/${groupId || ""}`),
       body: data,
     });
   }
 
-  get() {
+  get(groupId?: string) {
     return this.http.get<Group>({
-      url: route("/groups"),
+      url: route(`/groups/${groupId || ""}`),
     });
   }
 
