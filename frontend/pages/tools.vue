@@ -90,6 +90,12 @@
             <div v-html="DOMPurify.sanitize($t('tools.actions_set.create_missing_thumbnails_sub'))" />
             <template #button> {{ $t("tools.actions_set.create_missing_thumbnails_button") }} </template>
           </DetailAction>
+          <DetailAction @action="wipeInventory">
+            <template #title> {{ $t("tools.actions_set.wipe_inventory") }} </template>
+            <!-- eslint-disable-next-line vue/no-v-html -->
+            <div v-html="DOMPurify.sanitize($t('tools.actions_set.wipe_inventory_sub'))" />
+            <template #button> {{ $t("tools.actions_set.wipe_inventory_button") }} </template>
+          </DetailAction>
         </div>
       </BaseCard>
     </BaseContainer>
@@ -125,6 +131,13 @@
 
   const api = useUserApi();
   const confirm = useConfirm();
+
+  // Fetch status to check for demo mode
+  const pubApi = usePublicApi();
+  const { data: status } = useAsyncData(async () => {
+    const { data } = await pubApi.status();
+    return data;
+  });
 
   function getBillOfMaterials() {
     const url = api.reports.billOfMaterialsURL();
@@ -219,6 +232,35 @@
     }
 
     toast.success(t("tools.toast.asset_success", { results: result.data.completed }));
+  }
+
+  async function wipeInventory() {
+    // Check if in demo mode
+    if (status.value?.demo) {
+      await confirm.open(t("tools.demo_mode_error.wipe_inventory"));
+      return;
+    }
+
+    openDialog(DialogID.WipeInventory, {
+      onClose: async result => {
+        if (!result) {
+          return;
+        }
+
+        const apiResult = await api.actions.wipeInventory({
+          wipeLabels: result.wipeLabels,
+          wipeLocations: result.wipeLocations,
+          wipeMaintenance: result.wipeMaintenance,
+        });
+
+        if (apiResult.error) {
+          toast.error(t("tools.toast.failed_wipe_inventory"));
+          return;
+        }
+
+        toast.success(t("tools.toast.wipe_inventory_success", { results: apiResult.data.completed }));
+      },
+    });
   }
 </script>
 
