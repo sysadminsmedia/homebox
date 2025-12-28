@@ -1,5 +1,11 @@
 name: Go Build/Test
 
+permissions:
+  contents: read
+  actions: read
+  checks: write
+  pull-requests: write
+
 on:
   workflow_call:
 
