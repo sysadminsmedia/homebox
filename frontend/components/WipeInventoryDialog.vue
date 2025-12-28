@@ -54,9 +54,9 @@
         <AlertDialogCancel @click="close">
           {{ $t("global.cancel") }}
         </AlertDialogCancel>
-        <AlertDialogAction @click="confirm">
+        <Button @click="confirm">
           {{ $t("global.confirm") }}
-        </AlertDialogAction>
+        </Button>
       </AlertDialogFooter>
     </AlertDialogContent>
   </AlertDialog>
@@ -67,7 +67,6 @@
   import { useDialog } from "~/components/ui/dialog-provider";
   import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -75,6 +74,7 @@
     AlertDialogHeader,
     AlertDialogTitle,
   } from "@/components/ui/alert-dialog";
+  import { Button } from "@/components/ui/button";
 
   const { registerOpenDialogCallback, closeDialog, addAlert, removeAlert } = useDialog();
 
@@ -82,25 +82,15 @@
   const wipeLabels = ref(false);
   const wipeLocations = ref(false);
   const wipeMaintenance = ref(false);
+  const isConfirming = ref(false);
 
-  let onCloseCallback:
-    | ((result?: { wipeLabels: boolean; wipeLocations: boolean; wipeMaintenance: boolean } | undefined) => void)
-    | undefined;
-
-  registerOpenDialogCallback(
-    DialogID.WipeInventory,
-    (params?: {
-      onClose?: (
-        result?: { wipeLabels: boolean; wipeLocations: boolean; wipeMaintenance: boolean } | undefined
-      ) => void;
-    }) => {
-      dialog.value = true;
-      wipeLabels.value = false;
-      wipeLocations.value = false;
-      wipeMaintenance.value = false;
-      onCloseCallback = params?.onClose;
-    }
-  );
+  registerOpenDialogCallback(DialogID.WipeInventory, () => {
+    dialog.value = true;
+    wipeLabels.value = false;
+    wipeLocations.value = false;
+    wipeMaintenance.value = false;
+    isConfirming.value = false;
+  });
 
   watch(
     dialog,
@@ -115,7 +105,7 @@
   );
 
   function handleOpenChange(open: boolean) {
-    if (!open) {
+    if (!open && !isConfirming.value) {
       close();
     }
   }
@@ -123,17 +113,17 @@
   function close() {
     dialog.value = false;
     closeDialog(DialogID.WipeInventory, undefined);
-    onCloseCallback?.(undefined);
   }
 
   function confirm() {
-    dialog.value = false;
+    isConfirming.value = true;
     const result = {
       wipeLabels: wipeLabels.value,
       wipeLocations: wipeLocations.value,
       wipeMaintenance: wipeMaintenance.value,
     };
     closeDialog(DialogID.WipeInventory, result);
-    onCloseCallback?.(result);
+    dialog.value = false;
+    isConfirming.value = false;
   }
 </script>

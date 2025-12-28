@@ -116,6 +116,41 @@
                 }
             }
         },
+        "/v1/actions/wipe-inventory": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Deletes all items in the inventory",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Actions"
+                ],
+                "summary": "Wipe Inventory",
+                "parameters": [
+                    {
+                        "description": "Wipe options",
+                        "name": "options",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/v1.WipeInventoryOptions"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ActionAmountResult"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/actions/zero-item-time-fields": {
             "post": {
                 "security": [
@@ -4032,7 +4067,8 @@
             "properties": {
                 "defaultDescription": {
                     "type": "string",
-                    "maxLength": 1000
+                    "maxLength": 1000,
+                    "x-nullable": true
                 },
                 "defaultInsured": {
                     "type": "boolean"
@@ -4041,34 +4077,41 @@
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "x-nullable": true
                 },
                 "defaultLifetimeWarranty": {
                     "type": "boolean"
                 },
                 "defaultLocationId": {
                     "description": "Default location and labels",
-                    "type": "string"
+                    "type": "string",
+                    "x-nullable": true
                 },
                 "defaultManufacturer": {
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "x-nullable": true
                 },
                 "defaultModelNumber": {
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "x-nullable": true
                 },
                 "defaultName": {
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "x-nullable": true
                 },
                 "defaultQuantity": {
                     "description": "Default values for items",
-                    "type": "integer"
+                    "type": "integer",
+                    "x-nullable": true
                 },
                 "defaultWarrantyDetails": {
                     "type": "string",
-                    "maxLength": 1000
+                    "maxLength": 1000,
+                    "x-nullable": true
                 },
                 "description": {
                     "type": "string",
@@ -4209,7 +4252,8 @@
             "properties": {
                 "defaultDescription": {
                     "type": "string",
-                    "maxLength": 1000
+                    "maxLength": 1000,
+                    "x-nullable": true
                 },
                 "defaultInsured": {
                     "type": "boolean"
@@ -4218,34 +4262,41 @@
                     "type": "array",
                     "items": {
                         "type": "string"
-                    }
+                    },
+                    "x-nullable": true
                 },
                 "defaultLifetimeWarranty": {
                     "type": "boolean"
                 },
                 "defaultLocationId": {
                     "description": "Default location and labels",
-                    "type": "string"
+                    "type": "string",
+                    "x-nullable": true
                 },
                 "defaultManufacturer": {
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "x-nullable": true
                 },
                 "defaultModelNumber": {
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "x-nullable": true
                 },
                 "defaultName": {
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "x-nullable": true
                 },
                 "defaultQuantity": {
                     "description": "Default values for items",
-                    "type": "integer"
+                    "type": "integer",
+                    "x-nullable": true
                 },
                 "defaultWarrantyDetails": {
                     "type": "string",
-                    "maxLength": 1000
+                    "maxLength": 1000,
+                    "x-nullable": true
                 },
                 "description": {
                     "type": "string",
@@ -5163,6 +5214,20 @@
                 },
                 "token": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.WipeInventoryOptions": {
+            "type": "object",
+            "properties": {
+                "wipeLabels": {
+                    "type": "boolean"
+                },
+                "wipeLocations": {
+                    "type": "boolean"
+                },
+                "wipeMaintenance": {
+                    "type": "boolean"
                 }
             }
         },

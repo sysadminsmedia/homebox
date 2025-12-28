@@ -10,6 +10,7 @@ import (
 	"github.com/hay-kot/httpkit/server"
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
+	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
 
@@ -141,6 +142,16 @@ func (ctrl *V1Controller) HandleWipeInventory() errchain.HandlerFunc {
 		if err != nil {
 			log.Err(err).Str("action_ref", "wipe inventory").Msg("failed to run action")
 			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+		
+		// Publish mutation events for wiped resources
+		if ctrl.bus != nil {
+			if options.WipeLabels {
+				ctrl.bus.Publish(eventbus.EventLabelMutation, eventbus.GroupMutationEvent{GID: ctx.GID})
+			}
+			if options.WipeLocations {
+				ctrl.bus.Publish(eventbus.EventLocationMutation, eventbus.GroupMutationEvent{GID: ctx.GID})
+			}
 		}
 		
 		return server.JSON(w, http.StatusOK, ActionAmountResult{Completed: totalCompleted})
