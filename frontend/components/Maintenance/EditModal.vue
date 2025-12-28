@@ -8,11 +8,11 @@
       </DialogHeader>
 
       <form class="flex flex-col gap-2" @submit.prevent="dispatchFormSubmit">
-        <FormTextField v-model="entry.name" autofocus :tag="$t('maintenance.modal.entry_name')" />
-        <DatePicker v-model="entry.completedDate" :tag="$t('maintenance.modal.completed_date')" />
-        <DatePicker v-model="entry.scheduledDate" :tag="$t('maintenance.modal.scheduled_date')" />
-        <FormTextArea v-model="entry.description" :tag="$t('maintenance.modal.notes')" />
-        <FormTextField v-model="entry.cost" autofocus :tag="$t('maintenance.modal.cost')" />
+        <FormTextField v-model="entry.name" autofocus :label="$t('maintenance.modal.entry_name')" />
+        <DatePicker v-model="entry.completedDate" :label="$t('maintenance.modal.completed_date')" />
+        <DatePicker v-model="entry.scheduledDate" :label="$t('maintenance.modal.scheduled_date')" />
+        <FormTextArea v-model="entry.description" :label="$t('maintenance.modal.notes')" />
+        <FormTextField v-model="entry.cost" autofocus :label="$t('maintenance.modal.cost')" />
 
         <DialogFooter>
           <Button type="submit">

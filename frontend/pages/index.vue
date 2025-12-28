@@ -302,15 +302,15 @@
                   </CardTitle>
                 </CardHeader>
                 <CardContent class="flex flex-col gap-2">
-                  <FormTextField v-model="email" :tag="$t('index.set_email')" data-testid="email-input" />
-                  <FormTextField v-model="username" :tag="$t('index.set_name')" data-testid="name-input" />
+                  <FormTextField v-model="email" :label="$t('index.set_email')" data-testid="email-input" />
+                  <FormTextField v-model="username" :label="$t('index.set_name')" data-testid="name-input" />
                   <div v-if="!(groupToken == '')" class="pb-1 pt-4 text-center">
                     <p>{{ $t("index.joining_group") }}</p>
                     <button type="button" class="text-xs underline" @click="groupToken = ''">
                       {{ $t("index.dont_join_group") }}
                     </button>
                   </div>
-                  <FormPassword v-model="password" :tag="$t('index.set_password')" data-testid="password-input" />
+                  <FormPassword v-model="password" :label="$t('index.set_password')" data-testid="password-input" />
                   <PasswordScore v-model:valid="canRegister" :password="password" />
                 </CardContent>
                 <CardFooter>
@@ -346,10 +346,10 @@
                       <b>{{ $t("global.password") }}</b> demo
                     </p>
                   </template>
-                  <FormTextField v-model="email" :tag="$t('global.email')" />
-                  <FormPassword v-model="loginPassword" :tag="$t('global.password')" />
+                  <FormTextField v-model="email" :label="$t('global.email')" />
+                  <FormPassword v-model="loginPassword" :label="$t('global.password')" />
                   <div class="max-w-[140px]">
-                    <FormCheckbox v-model="remember" :tag="$t('index.remember_me')" />
+                    <FormCheckbox v-model="remember" :label="$t('index.remember_me')" />
                   </div>
                 </CardContent>
                 <CardFooter class="flex flex-col gap-2">

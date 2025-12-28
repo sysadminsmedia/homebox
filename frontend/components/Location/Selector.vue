@@ -16,7 +16,7 @@
               v-if="value"
               type="button"
               class="shrink-0 rounded p-1 hover:bg-primary/20"
-              :aria-tag="$t('components.location.selector.clear')"
+              :aria-label="$t('components.location.selector.clear')"
               @click.stop.prevent="clearSelection"
             >
               <X class="size-4" />

@@ -67,7 +67,7 @@
             variant="ghost"
             size="icon"
             class="size-7 shrink-0"
-            :aria-tag="$t('components.item.create_modal.clear_template')"
+            :aria-label="$t('components.item.create_modal.clear_template')"
             @click="clearTemplate"
           >
             <MdiClose class="size-4" />
@@ -131,7 +131,7 @@
         v-if="subItemCreate"
         v-model="parent"
         v-model:search="query"
-        :tag="$t('components.item.create_modal.parent_item')"
+        :label="$t('components.item.create_modal.parent_item')"
         :items="results"
         item-text="name"
         no-results-text="Type to search..."
@@ -143,14 +143,14 @@
         v-model="form.name"
         :trigger-focus="focused"
         :autofocus="true"
-        :tag="$t('components.item.create_modal.item_name')"
+        :label="$t('components.item.create_modal.item_name')"
         :max-length="255"
         :min-length="1"
       />
-      <FormTextField v-model="form.quantity" :tag="$t('components.item.create_modal.item_quantity')" type="number" />
+      <FormTextField v-model="form.quantity" :label="$t('components.item.create_modal.item_quantity')" type="number" />
       <FormTextArea
         v-model="form.description"
-        :tag="$t('components.item.create_modal.item_description')"
+        :label="$t('components.item.create_modal.item_description')"
         :max-length="1000"
       />
       <LabelSelector v-model="form.tags" :tags="tags ?? []" />

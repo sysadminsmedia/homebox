@@ -395,8 +395,8 @@
       </div>
 
       <div class="flex w-full flex-wrap gap-2 py-2 md:flex-nowrap">
-        <SearchFilter v-model="selectedLocations" :tag="$t('global.locations')" :options="locationFlatTree" />
-        <SearchFilter v-model="selectedLabels" :tag="$t('global.tags')" :options="tags" />
+        <SearchFilter v-model="selectedLocations" :label="$t('global.locations')" :options="locationFlatTree" />
+        <SearchFilter v-model="selectedLabels" :label="$t('global.tags')" :options="tags" />
         <Popover>
           <PopoverTrigger as-child>
             <Button size="sm" variant="outline"> {{ $t("items.options") }}</Button>

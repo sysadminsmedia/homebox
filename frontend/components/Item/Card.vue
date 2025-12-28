@@ -4,7 +4,7 @@
       <Checkbox
         class="size-5 bg-accent hover:bg-background-accent"
         :model-value="tableRow.getIsSelected()"
-        :aria-tag="$t('components.item.view.selectable.select_card')"
+        :aria-label="$t('components.item.view.selectable.select_card')"
         @update:model-value="tableRow.toggleSelected()"
       />
     </div>
@@ -69,7 +69,7 @@
         </TooltipProvider>
         <Markdown class="mb-2 line-clamp-3 text-ellipsis" :source="item.description" />
         <div class="-mr-1 mt-auto flex flex-wrap justify-end gap-2">
-          <LabelChip v-for="tag in itemLabels" :key="tag.id" :tag="tag" size="sm" />
+          <LabelChip v-for="tag in itemLabels" :key="tag.id" :label="tag" size="sm" />
         </div>
       </div>
     </NuxtLink>

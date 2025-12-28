@@ -13,7 +13,7 @@
 <template>
   <button
     data-sidebar="rail"
-    aria-tag="Toggle Sidebar"
+    aria-label="Toggle Sidebar"
     :tabindex="-1"
     title="Toggle Sidebar"
     :class="

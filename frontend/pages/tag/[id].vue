@@ -136,18 +136,18 @@
         <FormTextField
           v-model="updateData.name"
           :autofocus="true"
-          :tag="$t('components.tag.create_modal.tag_name')"
+          :label="$t('components.tag.create_modal.tag_name')"
           :max-length="255"
           :min-length="1"
         />
         <FormTextArea
           v-model="updateData.description"
-          :tag="$t('components.tag.create_modal.tag_description')"
+          :label="$t('components.tag.create_modal.tag_description')"
           :max-length="1000"
         />
         <ColorSelector
           v-model="updateData.color"
-          :tag="$t('components.tag.create_modal.tag_color')"
+          :label="$t('components.tag.create_modal.tag_color')"
           :show-hex="true"
           :starting-color="tag.color"
         />

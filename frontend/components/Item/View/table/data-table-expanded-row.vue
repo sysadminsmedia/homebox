@@ -35,7 +35,7 @@
         </NuxtLink>
       </Badge>
       <div class="flex flex-wrap gap-2">
-        <LabelChip v-for="tag in item.tags" :key="tag.id" :tag="tag" size="sm" />
+        <LabelChip v-for="tag in item.tags" :key="tag.id" :label="tag" size="sm" />
       </div>
       <p class="whitespace-pre-line break-words text-sm text-muted-foreground">
         {{ item.description || $t("components.item.no_description") }}

@@ -1,6 +1,6 @@
 <template>
   <div class="relative">
-    <FormTextField v-model="value" :placeholder="localizedPlaceholder" :tag="localizedLabel" :type="inputType" />
+    <FormTextField v-model="value" :placeholder="localizedPlaceholder" :label="localizedLabel" :type="inputType" />
     <TooltipProvider :delay-duration="0">
       <Tooltip>
         <TooltipTrigger as-child>

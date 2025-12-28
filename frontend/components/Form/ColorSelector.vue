@@ -78,7 +78,7 @@
       <span
         :style="swatchStyle"
         class="inline-block cursor-pointer rounded-full border ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-        :aria-tag="`${t('components.color_selector.color')}: ${modelValue || t('components.color_selector.no_color_selected')}`"
+        :aria-label="`${t('components.color_selector.color')}: ${modelValue || t('components.color_selector.no_color_selected')}`"
         role="button"
         tabindex="0"
         @click="($refs.colorInput as HTMLInputElement).click()"
@@ -92,7 +92,7 @@
           variant="outline"
           size="sm"
           class="size-6 p-0"
-          :aria-tag="t('components.color_selector.randomize')"
+          :aria-label="t('components.color_selector.randomize')"
           @click="randomizeColor"
         >
           <MdiDiceMultiple class="size-3" />
@@ -102,7 +102,7 @@
           variant="outline"
           size="sm"
           class="size-6 p-0"
-          :aria-tag="t('components.color_selector.clear')"
+          :aria-label="t('components.color_selector.clear')"
           @click="clearColor"
         >
           <MdiClose class="size-3" />
@@ -119,7 +119,7 @@
       <span
         :style="swatchStyle"
         class="inline-block cursor-pointer rounded-full border ring-offset-background focus:outline-none focus:outline-primary focus:ring-2 focus:ring-ring focus:ring-offset-2"
-        :aria-tag="`${t('components.color_selector.color')}: ${modelValue || t('components.color_selector.no_color_selected')}`"
+        :aria-label="`${t('components.color_selector.color')}: ${modelValue || t('components.color_selector.no_color_selected')}`"
         role="button"
         tabindex="0"
         @click="($refs.colorInput as HTMLInputElement).click()"
@@ -133,7 +133,7 @@
           variant="outline"
           size="sm"
           class="size-6 p-0"
-          :aria-tag="t('components.color_selector.randomize')"
+          :aria-label="t('components.color_selector.randomize')"
           @click="randomizeColor"
         >
           <MdiDiceMultiple class="size-3" />
@@ -143,7 +143,7 @@
           variant="outline"
           size="sm"
           class="size-6 p-0"
-          :aria-tag="t('components.color_selector.clear')"
+          :aria-label="t('components.color_selector.clear')"
           @click="clearColor"
         >
           <MdiClose class="size-3" />

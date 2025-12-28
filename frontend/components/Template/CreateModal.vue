@@ -4,41 +4,41 @@
       <FormTextField
         v-model="form.name"
         :autofocus="true"
-        :tag="$t('components.template.form.template_name')"
+        :label="$t('components.template.form.template_name')"
         :max-length="255"
         :min-length="1"
       />
       <FormTextArea
         v-model="form.description"
-        :tag="$t('components.template.form.template_description')"
+        :label="$t('components.template.form.template_description')"
         :max-length="1000"
       />
 
       <Separator class="my-2" />
       <h3 class="text-sm font-medium">{{ $t("components.template.form.default_item_values") }}</h3>
       <div class="flex min-w-0 flex-col gap-2">
-        <FormTextField v-model="form.defaultName" :tag="$t('components.template.form.item_name')" :max-length="255" />
+        <FormTextField v-model="form.defaultName" :label="$t('components.template.form.item_name')" :max-length="255" />
         <FormTextArea
           v-model="form.defaultDescription"
-          :tag="$t('components.template.form.item_description')"
+          :label="$t('components.template.form.item_description')"
           :max-length="1000"
         />
         <div class="grid grid-cols-2 gap-2">
-          <FormTextField v-model.number="form.defaultQuantity" :tag="$t('global.quantity')" type="number" :min="1" />
+          <FormTextField v-model.number="form.defaultQuantity" :label="$t('global.quantity')" type="number" :min="1" />
           <FormTextField
             v-model="form.defaultModelNumber"
-            :tag="$t('components.template.form.model_number')"
+            :label="$t('components.template.form.model_number')"
             :max-length="255"
           />
         </div>
         <FormTextField
           v-model="form.defaultManufacturer"
-          :tag="$t('components.template.form.manufacturer')"
+          :label="$t('components.template.form.manufacturer')"
           :max-length="255"
         />
         <LocationSelector
           v-model="form.defaultLocationObject"
-          :tag="$t('components.template.form.default_location')"
+          :label="$t('components.template.form.default_location')"
         />
         <LabelSelector v-model="form.defaultLabelIds" :tags="tags ?? []" />
         <div class="flex items-center gap-4">
@@ -67,13 +67,13 @@
         <div v-for="(field, idx) in form.fields" :key="idx" class="flex items-end gap-2">
           <FormTextField
             v-model="field.name"
-            :tag="$t('components.template.form.field_name')"
+            :label="$t('components.template.form.field_name')"
             :max-length="255"
             class="flex-1"
           />
           <FormTextField
             v-model="field.textValue"
-            :tag="$t('components.template.form.default_value')"
+            :label="$t('components.template.form.default_value')"
             class="flex-1"
           />
           <Button type="button" size="icon" variant="ghost" @click="form.fields.splice(idx, 1)">

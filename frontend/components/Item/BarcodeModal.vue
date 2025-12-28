@@ -19,7 +19,7 @@
           v-model="barcode"
           :disabled="searching"
           class="w-[30%]"
-          :tag="$t('components.item.product_import.barcode')"
+          :label="$t('components.item.product_import.barcode')"
           @keyup.enter="retrieveProductInfo(barcode)"
         />
         <Button

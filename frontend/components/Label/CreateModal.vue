@@ -5,16 +5,16 @@
         v-model="form.name"
         :trigger-focus="focused"
         :autofocus="true"
-        :tag="$t('components.tag.create_modal.tag_name')"
+        :label="$t('components.tag.create_modal.tag_name')"
         :max-length="50"
         :min-length="1"
       />
       <FormTextArea
         v-model="form.description"
-        :tag="$t('components.tag.create_modal.tag_description')"
+        :label="$t('components.tag.create_modal.tag_description')"
         :max-length="1000"
       />
-      <ColorSelector v-model="form.color" :tag="$t('components.tag.create_modal.tag_color')" :show-hex="true" />
+      <ColorSelector v-model="form.color" :label="$t('components.tag.create_modal.tag_color')" :show-hex="true" />
       <div class="mt-4 flex flex-row-reverse">
         <ButtonGroup>
           <Button :disabled="loading" type="submit">{{ $t("global.create") }}</Button>
