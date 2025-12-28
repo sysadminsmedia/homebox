@@ -1084,32 +1084,40 @@ definitions:
       defaultDescription:
         maxLength: 1000
         type: string
+        x-nullable: true
       defaultInsured:
         type: boolean
       defaultLabelIds:
         items:
           type: string
         type: array
+        x-nullable: true
       defaultLifetimeWarranty:
         type: boolean
       defaultLocationId:
         description: Default location and labels
         type: string
+        x-nullable: true
       defaultManufacturer:
         maxLength: 255
         type: string
+        x-nullable: true
       defaultModelNumber:
         maxLength: 255
         type: string
+        x-nullable: true
       defaultName:
         maxLength: 255
         type: string
+        x-nullable: true
       defaultQuantity:
         description: Default values for items
         type: integer
+        x-nullable: true
       defaultWarrantyDetails:
         maxLength: 1000
         type: string
+        x-nullable: true
       description:
         maxLength: 1000
         type: string
@@ -1205,32 +1213,40 @@ definitions:
       defaultDescription:
         maxLength: 1000
         type: string
+        x-nullable: true
       defaultInsured:
         type: boolean
       defaultLabelIds:
         items:
           type: string
         type: array
+        x-nullable: true
       defaultLifetimeWarranty:
         type: boolean
       defaultLocationId:
         description: Default location and labels
         type: string
+        x-nullable: true
       defaultManufacturer:
         maxLength: 255
         type: string
+        x-nullable: true
       defaultModelNumber:
         maxLength: 255
         type: string
+        x-nullable: true
       defaultName:
         maxLength: 255
         type: string
+        x-nullable: true
       defaultQuantity:
         description: Default values for items
         type: integer
+        x-nullable: true
       defaultWarrantyDetails:
         maxLength: 1000
         type: string
+        x-nullable: true
       description:
         maxLength: 1000
         type: string
@@ -1851,6 +1867,15 @@ definitions:
       token:
         type: string
     type: object
+  v1.WipeInventoryOptions:
+    properties:
+      wipeLabels:
+        type: boolean
+      wipeLocations:
+        type: boolean
+      wipeMaintenance:
+        type: boolean
+    type: object
   v1.Wrapped:
     properties:
       item: {}
@@ -1929,6 +1954,27 @@ paths:
       security:
       - Bearer: []
       summary: Set Primary Photos
+      tags:
+      - Actions
+  /v1/actions/wipe-inventory:
+    post:
+      description: Deletes all items in the inventory
+      parameters:
+      - description: Wipe options
+        in: body
+        name: options
+        schema:
+          $ref: '#/definitions/v1.WipeInventoryOptions'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ActionAmountResult'
+      security:
+      - Bearer: []
+      summary: Wipe Inventory
       tags:
       - Actions
   /v1/actions/zero-item-time-fields:

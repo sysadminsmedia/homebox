@@ -118,6 +118,41 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/actions/wipe-inventory": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Deletes all items in the inventory",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Actions"
+                ],
+                "summary": "Wipe Inventory",
+                "parameters": [
+                    {
+                        "description": "Wipe options",
+                        "name": "options",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/v1.WipeInventoryOptions"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ActionAmountResult"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/actions/zero-item-time-fields": {
             "post": {
                 "security": [
@@ -5181,6 +5216,20 @@ const docTemplate = `{
                 },
                 "token": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.WipeInventoryOptions": {
+            "type": "object",
+            "properties": {
+                "wipeLabels": {
+                    "type": "boolean"
+                },
+                "wipeLocations": {
+                    "type": "boolean"
+                },
+                "wipeMaintenance": {
+                    "type": "boolean"
                 }
             }
         },
