@@ -124,5 +124,6 @@
     };
     closeDialog(DialogID.WipeInventory, result);
     dialog.value = false;
+    isConfirming.value = false;
   }
 </script>
