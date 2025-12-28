@@ -57,7 +57,7 @@ jobs:
           ACTIONS_STEP_DEBUG: true
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
       - name: Prepare
         run: |
@@ -124,7 +124,7 @@ jobs:
           annotations: ${{ steps.meta.outputs.annotations }}
 
       - name: Attest platform-specific images
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@00014ed6ed5efc5b1ab7f7f34a39eb55d41aa4f8
         if: github.event_name != 'pull_request'
         with:
           subject-name: ${{ env.GHCR_REPO }}
@@ -217,7 +217,7 @@ jobs:
           echo "digest=$digest" >> $GITHUB_OUTPUT
 
       - name: Attest GHCR images
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@00014ed6ed5efc5b1ab7f7f34a39eb55d41aa4f8
         if: github.event_name != 'pull_request'
         with:
           subject-name: ${{ env.GHCR_REPO }}
@@ -241,7 +241,7 @@ jobs:
           echo "digest=$digest" >> $GITHUB_OUTPUT
 
       - name: Attest Dockerhub images
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@00014ed6ed5efc5b1ab7f7f34a39eb55d41aa4f8
         if: (github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/'))
         with:
           subject-name: docker.io/${{ env.DOCKERHUB_REPO }}
