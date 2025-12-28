@@ -5,6 +5,7 @@
   import { useLocationStore } from "~~/stores/locations";
   import MdiLoading from "~icons/mdi/loading";
   import MdiPackageVariant from "~icons/mdi/package-variant";
+  import MdiPlus from "~icons/mdi/plus";
   import MdiPencil from "~icons/mdi/pencil";
   import MdiDelete from "~icons/mdi/delete";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -95,6 +96,10 @@
     updateData.name = location.value?.name || "";
     updateData.description = location.value?.description || "";
     openDialog(DialogID.UpdateLocation);
+  }
+
+  function openCreateItem() {
+    openDialog(DialogID.CreateItem);
   }
 
   async function update() {
@@ -219,6 +224,10 @@
             </div>
             <div class="ml-auto mt-2 flex flex-wrap items-center justify-between gap-3">
               <LabelMaker :id="location.id" type="location" />
+              <Button @click="openCreateItem">
+                <MdiPlus name="mdi-plus" />
+                {{ $t("components.item.create_modal.title") }}
+              </Button>
               <Button @click="openUpdate">
                 <MdiPencil name="mdi-pencil" />
                 {{ $t("global.edit") }}
