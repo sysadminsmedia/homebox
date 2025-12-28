@@ -481,48 +481,6 @@
 
       <BaseCard>
         <template #title>
-          <BaseSectionHeader class="pb-0">
-            <MdiAccountMultiple class="-mt-1 mr-2" />
-            <span> {{ $t("profile.group_settings") }} </span>
-            <template #description>
-              {{ $t("profile.group_settings_sub") }}
-            </template>
-          </BaseSectionHeader>
-        </template>
-
-        <div v-if="group && currencies && currencies.length > 0" class="p-5 pt-0">
-          <Label for="currency"> {{ $t("profile.currency_format") }} </Label>
-          <Select
-            id="currency"
-            :model-value="currency.code"
-            @update:model-value="
-              event => {
-                const newCurrency = currencies?.find(c => c.code === event);
-                if (newCurrency) {
-                  currency = newCurrency;
-                }
-              }
-            "
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem v-for="c in currencies" :key="c.code" :value="c.code">
-                {{ c.name }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-          <p class="m-2 text-sm">{{ $t("profile.example") }}: {{ currencyExample }}</p>
-
-          <div class="mt-4">
-            <Button variant="secondary" size="sm" @click="updateGroup"> {{ $t("profile.update_group") }} </Button>
-          </div>
-        </div>
-      </BaseCard>
-
-      <BaseCard>
-        <template #title>
           <BaseSectionHeader>
             <MdiFill class="mr-2" />
             <span> {{ $t("profile.theme_settings") }} </span>
