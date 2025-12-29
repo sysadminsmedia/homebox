@@ -68,7 +68,7 @@ linters:
       - builtin$
       - examples$
 issues:
-  fix: true
+  fix: false
 formatters:
   enable:
     - gofmt
