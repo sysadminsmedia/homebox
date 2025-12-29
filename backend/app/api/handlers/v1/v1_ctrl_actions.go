@@ -147,7 +147,7 @@ func (ctrl *V1Controller) HandleWipeInventory() errchain.HandlerFunc {
 		// Publish mutation events for wiped resources
 		if ctrl.bus != nil {
 			if options.WipeTags {
-				ctrl.bus.Publish(eventbus.EventLabelMutation, eventbus.GroupMutationEvent{GID: ctx.GID})
+				ctrl.bus.Publish(eventbus.EventTagMutation, eventbus.GroupMutationEvent{GID: ctx.GID})
 			}
 			if options.WipeLocations {
 				ctrl.bus.Publish(eventbus.EventLocationMutation, eventbus.GroupMutationEvent{GID: ctx.GID})

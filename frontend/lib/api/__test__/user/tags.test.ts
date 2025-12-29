@@ -4,7 +4,7 @@ import type { UserClient } from "../../user";
 import { factories } from "../factories";
 import { sharedUserClient } from "../test-utils";
 
-describe("locations lifecycle (create, update, delete)", () => {
+describe("tags lifecycle (create, update, delete)", () => {
   /**
    * useTag sets up a tag resource for testing, and returns a function
    * that can be used to delete the tag from the backend server.

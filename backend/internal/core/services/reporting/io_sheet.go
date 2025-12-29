@@ -41,6 +41,54 @@ func (s *IOSheet) indexHeaders() {
 	}
 }
 
+// primaryCSVTag returns the primary header name from a csv struct tag which
+// may contain alternatives separated by '|'. For example: "HB.tags|HB.labels"
+// will return "HB.tags".
+func primaryCSVTag(tag string) string {
+	if tag == "" {
+		return ""
+	}
+	if i := strings.Index(tag, "|"); i >= 0 {
+		return strings.TrimSpace(tag[:i])
+	}
+	return tag
+}
+
+// csvTagAlternatives splits a tag with alternatives separated by '|'.
+func csvTagAlternatives(tag string) []string {
+	if tag == "" {
+		return nil
+	}
+	parts := strings.Split(tag, "|")
+	for i := range parts {
+		parts[i] = strings.TrimSpace(parts[i])
+	}
+	return parts
+}
+
+// findColumnForTag tries to find a column index for a csv tag. The tag may
+// contain multiple alternatives separated by '|'. It will return the first
+// matching column index it finds.
+func (s *IOSheet) findColumnForTag(tag string) (int, bool) {
+	if s.index == nil {
+		s.indexHeaders()
+	}
+
+	// Try primary tag first and then alternatives.
+	alts := csvTagAlternatives(tag)
+	if len(alts) == 0 {
+		return s.GetColumn(tag)
+	}
+
+	for _, t := range alts {
+		if col, ok := s.GetColumn(t); ok {
+			return col, true
+		}
+	}
+
+	return 0, false
+}
+
 func (s *IOSheet) GetColumn(str string) (col int, ok bool) {
 	if s.index == nil {
 		s.indexHeaders()
@@ -88,7 +136,7 @@ func (s *IOSheet) Read(data io.Reader) error {
 				continue
 			}
 
-			col, ok := s.GetColumn(tag)
+			col, ok := s.findColumnForTag(tag)
 			if !ok {
 				continue
 			}
@@ -238,7 +286,7 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, gid uuid.
 
 	st := reflect.TypeOf(ExportCSVRow{})
 
-	// Write headers
+	// Write headers (use the primary tag when alternatives are provided)
 	for i := 0; i < st.NumField(); i++ {
 		field := st.Field(i)
 		tag := field.Tag.Get("csv")
@@ -246,7 +294,7 @@ func (s *IOSheet) ReadItems(ctx context.Context, items []repo.ItemOut, gid uuid.
 			continue
 		}
 
-		s.headers = append(s.headers, tag)
+		s.headers = append(s.headers, primaryCSVTag(tag))
 	}
 
 	for _, h := range customHeaders {
@@ -285,7 +333,7 @@ func (s *IOSheet) CSV() ([][]string, error) {
 				continue
 			}
 
-			col, ok := s.GetColumn(tag)
+			col, ok := s.findColumnForTag(tag)
 			if !ok {
 				continue
 			}
