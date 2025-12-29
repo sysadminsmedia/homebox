@@ -72,6 +72,7 @@ issues:
 formatters:
   enable:
     - gofmt
+    - swaggo
   exclusions:
     generated: lax
     paths:
