@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS tags (
 			on delete cascade
 );
 
-INSERT INTO tags_temp(id, created_at, updated_at, name, description, color, group_tags)
+INSERT INTO tags(id, created_at, updated_at, name, description, color, group_tags)
 SELECT id, created_at, updated_at, name, description, color, group_labels FROM labels;
 
 DROP TABLE labels;
