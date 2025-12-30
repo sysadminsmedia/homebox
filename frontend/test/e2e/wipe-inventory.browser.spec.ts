@@ -1,129 +1,182 @@
+import type { Page } from "@playwright/test";
 import { expect, test } from "@playwright/test";
 
-test.describe("Wipe Inventory E2E Test", () => {
-  test.beforeEach(async ({ page }) => {
-    // Login as demo user (owner with permissions)
-    await page.goto("/");
-    await page.fill("input[type='text']", "demo@example.com");
-    await page.fill("input[type='password']", "demo");
-    await page.click("button[type='submit']");
-    await expect(page).toHaveURL("/home");
+const STATUS_ROUTE = "**/api/v1/status";
+const WIPE_ROUTE = "**/api/v1/actions/wipe-inventory";
+
+const buildStatusResponse = (demo: boolean) => ({
+  allowRegistration: true,
+  build: { buildTime: new Date().toISOString(), commit: "test", version: "v0.0.0" },
+  demo,
+  health: true,
+  labelPrinting: false,
+  latest: { date: new Date().toISOString(), version: "v0.0.0" },
+  message: "",
+  oidc: { allowLocal: true, autoRedirect: false, buttonText: "", enabled: false },
+  title: "Homebox",
+  versions: [],
+});
+
+async function mockStatus(page: Page, demo: boolean) {
+  await page.route(STATUS_ROUTE, route => {
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(buildStatusResponse(demo)),
+    });
+  });
+}
+
+async function login(page: Page, email = "demo@example.com", password = "demo") {
+  await page.goto("/home");
+  await expect(page).toHaveURL("/");
+  await page.fill("input[type='text']", email);
+  await page.fill("input[type='password']", password);
+  await page.click("button[type='submit']");
+  await expect(page).toHaveURL("/home");
+}
+
+async function openWipeInventory(page: Page) {
+  await page.goto("/tools");
+  await page.waitForLoadState("networkidle");
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+
+  const wipeButton = page.getByRole("button", { name: "Wipe Inventory" }).last();
+  await expect(wipeButton).toBeVisible();
+  await wipeButton.click();
+}
+
+test.describe("Wipe Inventory", () => {
+  test("shows demo mode warning without wipe options", async ({ page }) => {
+    await mockStatus(page, true);
+    await login(page);
+    await openWipeInventory(page);
+
+    await expect(
+      page.getByText(
+        "Inventory, labels, locations and maintenance records cannot be wiped whilst Homebox is in demo mode.",
+        { exact: false }
+      )
+    ).toBeVisible();
+
+    await expect(page.locator("input#wipe-labels-checkbox")).toHaveCount(0);
+    await expect(page.locator("input#wipe-locations-checkbox")).toHaveCount(0);
+    await expect(page.locator("input#wipe-maintenance-checkbox")).toHaveCount(0);
   });
 
-  test("should open wipe inventory dialog with all options", async ({ page }) => {
-    // Navigate to Tools page
-    await page.goto("/tools");
-    await page.waitForLoadState("networkidle");
-
-    // Scroll to the bottom where wipe inventory is located
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-    await page.waitForTimeout(500);
-
-    // Find and click the Wipe Inventory button
-    const wipeButton = page.locator("button", { hasText: "Wipe Inventory" }).last();
-    await expect(wipeButton).toBeVisible();
-    await wipeButton.click();
-
-    // Wait for dialog to appear
-    await page.waitForTimeout(1000);
-
-    // Verify dialog title is visible
-    await expect(page.locator("text=Wipe Inventory").first()).toBeVisible();
-
-    // Verify all checkboxes are present
-    await expect(page.locator("input#wipe-tags-checkbox")).toBeVisible();
-    await expect(page.locator("input#wipe-locations-checkbox")).toBeVisible();
-    await expect(page.locator("input#wipe-maintenance-checkbox")).toBeVisible();
-
-    // Verify labels for checkboxes
-    await expect(page.locator("label[for='wipe-tags-checkbox']")).toBeVisible();
-    await expect(page.locator("label[for='wipe-locations-checkbox']")).toBeVisible();
-    await expect(page.locator("label[for='wipe-maintenance-checkbox']")).toBeVisible();
-
-    // Verify both Cancel and Confirm buttons are present
-    await expect(page.locator("button", { hasText: "Cancel" })).toBeVisible();
-    const confirmButton = page.locator("button", { hasText: "Confirm" });
-    await expect(confirmButton).toBeVisible();
-
-    // Take screenshot of the modal
-    await page.screenshot({
-      path: "/tmp/playwright-logs/wipe-inventory-modal-initial.png",
+  test.describe("production mode", () => {
+    test.beforeEach(async ({ page }) => {
+      await mockStatus(page, false);
+      await login(page);
     });
-    console.log("✅ Screenshot saved: wipe-inventory-modal-initial.png");
 
-    // Check all three options
-    await page.check("input#wipe-tags-checkbox");
-    await page.check("input#wipe-locations-checkbox");
-    await page.check("input#wipe-maintenance-checkbox");
-    await page.waitForTimeout(500);
+    test("renders wipe options and submits all flags", async ({ page }) => {
+      await page.route(WIPE_ROUTE, route => {
+        route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ completed: 0 }) });
+      });
 
-    // Verify checkboxes are checked
-    await expect(page.locator("input#wipe-tags-checkbox")).toBeChecked();
-    await expect(page.locator("input#wipe-locations-checkbox")).toBeChecked();
-    await expect(page.locator("input#wipe-maintenance-checkbox")).toBeChecked();
+      await openWipeInventory(page);
+      await expect(page.getByText("Wipe Inventory").first()).toBeVisible();
 
-    // Take screenshot with all options checked
-    await page.screenshot({
-      path: "/tmp/playwright-logs/wipe-inventory-modal-options-checked.png",
+      const labels = page.locator("input#wipe-labels-checkbox");
+      const locations = page.locator("input#wipe-locations-checkbox");
+      const maintenance = page.locator("input#wipe-maintenance-checkbox");
+
+      await expect(labels).toBeVisible();
+      await expect(locations).toBeVisible();
+      await expect(maintenance).toBeVisible();
+
+      await labels.check();
+      await locations.check();
+      await maintenance.check();
+
+      const requestPromise = page.waitForRequest(WIPE_ROUTE);
+      await page.getByRole("button", { name: "Confirm" }).last().click();
+      const request = await requestPromise;
+
+      expect(request.postDataJSON()).toEqual({
+        wipeLabels: true,
+        wipeLocations: true,
+        wipeMaintenance: true,
+      });
+
+      await expect(page.locator("[role='status']").first()).toBeVisible();
     });
-    console.log("✅ Screenshot saved: wipe-inventory-modal-options-checked.png");
 
-    // Click Confirm button
-    await confirmButton.click();
-    await page.waitForTimeout(2000);
+    test("blocks wipe attempts from non-owners", async ({ page }) => {
+      await page.route(WIPE_ROUTE, route => {
+        route.fulfill({
+          status: 403,
+          contentType: "application/json",
+          body: JSON.stringify({ message: "forbidden" }),
+        });
+      });
 
-    // Wait for the dialog to close (verify button is no longer visible)
-    await expect(confirmButton).not.toBeVisible({ timeout: 5000 });
+      await openWipeInventory(page);
 
-    // Check for success toast notification
-    // The toast should contain text about items being deleted
-    const toastLocator = page.locator("[role='status'], [class*='toast'], [class*='sonner']");
-    await expect(toastLocator.first()).toBeVisible({ timeout: 10000 });
+      const requestPromise = page.waitForRequest(WIPE_ROUTE);
+      await page.getByRole("button", { name: "Confirm" }).last().click();
+      await requestPromise;
 
-    // Take screenshot of the page after confirmation
-    await page.screenshot({
-      path: "/tmp/playwright-logs/after-wipe-confirmation.png",
-      fullPage: true,
+      await expect(page.getByText("Failed to wipe inventory.")).toBeVisible();
     });
-    console.log("✅ Screenshot saved: after-wipe-confirmation.png");
 
-    console.log("✅ Test completed successfully!");
-    console.log("✅ Wipe Inventory dialog opened correctly");
-    console.log("✅ All three options (tags, locations, maintenance) are available");
-    console.log("✅ Confirm button triggers the action");
-    console.log("✅ Dialog closes after confirmation");
-  });
+    const checkboxCases = [
+      {
+        name: "labels only",
+        selection: { labels: true, locations: false, maintenance: false },
+      },
+      {
+        name: "locations only",
+        selection: { labels: false, locations: true, maintenance: false },
+      },
+      {
+        name: "maintenance only",
+        selection: { labels: false, locations: false, maintenance: true },
+      },
+    ];
 
-  test("should cancel wipe inventory operation", async ({ page }) => {
-    // Navigate to Tools page
-    await page.goto("/tools");
-    await page.waitForLoadState("networkidle");
+    for (const scenario of checkboxCases) {
+      test(`submits correct flags when ${scenario.name} is selected`, async ({ page }) => {
+        await page.route(WIPE_ROUTE, route => {
+          route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ completed: 0 }) });
+        });
 
-    // Scroll to wipe inventory section
-    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-    await page.waitForTimeout(500);
+        await openWipeInventory(page);
+        await expect(page.getByText("Wipe Inventory").first()).toBeVisible();
 
-    // Click Wipe Inventory button
-    const wipeButton = page.locator("button", { hasText: "Wipe Inventory" }).last();
-    await wipeButton.click();
-    await page.waitForTimeout(1000);
+        const labels = page.locator("input#wipe-labels-checkbox");
+        const locations = page.locator("input#wipe-locations-checkbox");
+        const maintenance = page.locator("input#wipe-maintenance-checkbox");
 
-    // Verify dialog is open
-    await expect(page.locator("text=Wipe Inventory").first()).toBeVisible();
+        if (scenario.selection.labels) {
+          await labels.check();
+        } else {
+          await labels.uncheck();
+        }
 
-    // Click Cancel button
-    const cancelButton = page.locator("button", { hasText: "Cancel" });
-    await cancelButton.click();
-    await page.waitForTimeout(1000);
+        if (scenario.selection.locations) {
+          await locations.check();
+        } else {
+          await locations.uncheck();
+        }
 
-    // Verify dialog is closed
-    await expect(page.locator("text=Wipe Inventory").first()).not.toBeVisible({ timeout: 5000 });
+        if (scenario.selection.maintenance) {
+          await maintenance.check();
+        } else {
+          await maintenance.uncheck();
+        }
 
-    // Take screenshot after cancel
-    await page.screenshot({
-      path: "/tmp/playwright-logs/after-cancel.png",
-    });
-    console.log("✅ Screenshot saved: after-cancel.png");
-    console.log("✅ Cancel button works correctly");
+        const requestPromise = page.waitForRequest(WIPE_ROUTE);
+        await page.getByRole("button", { name: "Confirm" }).last().click();
+        const request = await requestPromise;
+
+        expect(request.postDataJSON()).toEqual({
+          wipeLabels: scenario.selection.labels,
+          wipeLocations: scenario.selection.locations,
+          wipeMaintenance: scenario.selection.maintenance,
+        });
+      });
+    }
   });
 });
