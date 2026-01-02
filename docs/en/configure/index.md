@@ -30,6 +30,7 @@ aside: false
 | HBOX_MAILER_PASSWORD                    |                                                                            | email password to use                                                                                                                                                                     |
 | HBOX_MAILER_FROM                        |                                                                            | email from address to use                                                                                                                                                                 |
 | HBOX_DATABASE_DRIVER                    | sqlite3                                                                    | sets the correct database type (`sqlite3` or `postgres`)                                                                                                                                  |
+| HBOX_DATABASE_CONN_STRING               |                                                                            | PostgreSQL connection string (takes priority over individual fields). Supports URL format (`postgres://user:pass@host:port/db?sslmode=...`) |
 | HBOX_DATABASE_SQLITE_PATH               | ./.data/homebox.db?_pragma=busy_timeout=999&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite | sets the directory path for Sqlite                                                                                                                                                        |
 | HBOX_DATABASE_HOST                      |                                                                            | sets the hostname for a postgres database                                                                                                                                                 |
 | HBOX_DATABASE_PORT                      |                                                                            | sets the port for a postgres database                                                                                                                                                     |
@@ -76,9 +77,10 @@ aside: false
 ```sh
 Options:
       --barcode-token-barcodespider         <string>                                                                                                               
-      --database-database                   <string>                                                                                                               
-      --database-driver                     <string>    (default: sqlite3)                                                                                         
-      --database-host                       <string>                                                                                                               
+      --database-conn-string                <string>
+      --database-database                   <string>
+      --database-driver                     <string>    (default: sqlite3)
+      --database-host                       <string>
       --database-password                   <string>                                                                                                               
       --database-port                       <string>                                                                                                               
       --database-pub-sub-conn-string        <string>    (default: mem://{{ .Topic }})                                                                              

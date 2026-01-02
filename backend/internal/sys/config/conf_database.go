@@ -13,6 +13,7 @@ type Storage struct {
 
 type Database struct {
 	Driver           string `yaml:"driver"             conf:"default:sqlite3"`
+	ConnString       string `yaml:"conn_string"`
 	Username         string `yaml:"username"`
 	Password         string `yaml:"password"`
 	Host             string `yaml:"host"`
