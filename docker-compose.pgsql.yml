@@ -19,7 +19,6 @@ services:
       - HBOX_DATABASE_HOST=db
       - HBOX_DATABASE_PORT=5432
       - HBOX_DATABASE_USERNAME=homebox
-      - HBOX_DATABASE_USER=homebox
       - HBOX_DATABASE_PASSWORD=homebox
       - HBOX_DATABASE_DATABASE=homebox
       - HBOX_DATABASE_SSL_MODE=disable
