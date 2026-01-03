@@ -162,6 +162,31 @@ LOAD_VOLUME=(-v "${TMP_LOAD_FILE}:${TMP_LOAD_CONTAINER_PATH}:ro")
 
 echo -e "${GREEN}Starting Homebox SQLite to Postgres Migration...${NC}"
 
+wait_for_homebox() {
+  local timeout_seconds=120
+  local interval=3
+  local waited=0
+
+  while (( waited < timeout_seconds )); do
+    if docker logs "$HOMEBOX_CONTAINER_ID" 2>&1 | grep -q "$HOMEBOX_WAIT_TEXT"; then
+      return 0
+    fi
+
+    local status
+    status=$(docker inspect -f '{{.State.Status}}' "$HOMEBOX_CONTAINER_ID")
+    if [[ "$status" == "exited" || "$status" == "dead" ]]; then
+      echo -e "${RED}Homebox exited before reporting readiness.${NC}"
+      return 1
+    fi
+
+    sleep "$interval"
+    waited=$((waited + interval))
+  done
+
+  echo -e "${RED}Timed out waiting for Homebox readiness logs.${NC}"
+  return 1
+}
+
 echo -e "${GREEN}1. Ensuring Docker services are running...${NC}"
 docker compose stop "$HOMEBOX_SERVICE" >/dev/null || true
 docker compose up -d "$DB_SERVICE"
@@ -185,7 +210,7 @@ HOMEBOX_CONTAINER_ID=$(docker compose run -d --rm \
   "$HOMEBOX_SERVICE")
 
 echo "Waiting for Homebox to finish migrations and start..."
-if ! timeout 90s bash -c "docker logs -f $HOMEBOX_CONTAINER_ID | grep -m 1 \"$HOMEBOX_WAIT_TEXT\"" ; then
+if ! wait_for_homebox ; then
   echo -e "${RED}Homebox failed to start or timed out.${NC}"
   docker stop "$HOMEBOX_CONTAINER_ID" >/dev/null || true
   exit 1
