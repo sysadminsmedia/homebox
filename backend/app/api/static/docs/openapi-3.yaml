@@ -1597,7 +1597,8 @@ paths:
                   - type: object
                     properties:
                       item:
-                        $ref: "#/components/schemas/schema.UserSettings"
+                        type: object
+                        additionalProperties: true
     put:
       security:
         - Bearer: []
@@ -1608,7 +1609,8 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/schema.UserSettings"
+              type: object
+              additionalProperties: true
         description: Settings Data
         required: true
       responses:
@@ -1622,7 +1624,8 @@ paths:
                   - type: object
                     properties:
                       item:
-                        $ref: "#/components/schemas/schema.UserSettings"
+                        type: object
+                        additionalProperties: true
 servers:
   - url: https://demo.homebox.software/api
   - url: http://demo.homebox.software/api
@@ -2397,8 +2400,8 @@ components:
             - $ref: "#/components/schemas/user.Role"
         settings:
           description: Settings holds the value of the "settings" field.
-          allOf:
-            - $ref: "#/components/schemas/schema.UserSettings"
+          type: object
+          additionalProperties: true
         superuser:
           description: Superuser holds the value of the "superuser" field.
           type: boolean
@@ -3361,44 +3364,6 @@ components:
           type: string
         value:
           type: number
-    schema.DuplicateSettings:
-      type: object
-      properties:
-        copyAttachments:
-          type: boolean
-        copyCustomFields:
-          type: boolean
-        copyMaintenance:
-          type: boolean
-        copyPrefixOverride:
-          type: string
-    schema.UserSettings:
-      type: object
-      properties:
-        displayLegacyHeader:
-          type: boolean
-        duplicateSettings:
-          $ref: "#/components/schemas/schema.DuplicateSettings"
-        editorAdvancedView:
-          type: boolean
-        itemDisplayView:
-          type: string
-        itemsPerPage:
-          type: integer
-        itemsPerTablePage:
-          type: integer
-        language:
-          type: string
-        locale:
-          type: string
-        overrideFormatLocale:
-          type: string
-        showDetails:
-          type: boolean
-        showEmpty:
-          type: boolean
-        theme:
-          type: string
     services.Latest:
       type: object
       properties:

@@ -25,7 +25,6 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
@@ -12584,7 +12583,7 @@ type UserMutation struct {
 	activated_on       *time.Time
 	oidc_issuer        *string
 	oidc_subject       *string
-	settings           *schema.UserSettings
+	settings           *map[string]interface{}
 	clearedFields      map[string]struct{}
 	group              *uuid.UUID
 	clearedgroup       bool
@@ -13152,12 +13151,12 @@ func (m *UserMutation) ResetOidcSubject() {
 }
 
 // SetSettings sets the "settings" field.
-func (m *UserMutation) SetSettings(ss schema.UserSettings) {
-	m.settings = &ss
+func (m *UserMutation) SetSettings(value map[string]interface{}) {
+	m.settings = &value
 }
 
 // Settings returns the value of the "settings" field in the mutation.
-func (m *UserMutation) Settings() (r schema.UserSettings, exists bool) {
+func (m *UserMutation) Settings() (r map[string]interface{}, exists bool) {
 	v := m.settings
 	if v == nil {
 		return
@@ -13168,7 +13167,7 @@ func (m *UserMutation) Settings() (r schema.UserSettings, exists bool) {
 // OldSettings returns the old "settings" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldSettings(ctx context.Context) (v schema.UserSettings, err error) {
+func (m *UserMutation) OldSettings(ctx context.Context) (v map[string]interface{}, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldSettings is only allowed on UpdateOne operations")
 	}
@@ -13570,7 +13569,7 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		m.SetOidcSubject(v)
 		return nil
 	case user.FieldSettings:
-		v, ok := value.(schema.UserSettings)
+		v, ok := value.(map[string]interface{})
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

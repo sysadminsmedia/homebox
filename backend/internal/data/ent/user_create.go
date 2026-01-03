@@ -14,7 +14,6 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -164,16 +163,8 @@ func (_c *UserCreate) SetNillableOidcSubject(v *string) *UserCreate {
 }
 
 // SetSettings sets the "settings" field.
-func (_c *UserCreate) SetSettings(v schema.UserSettings) *UserCreate {
+func (_c *UserCreate) SetSettings(v map[string]interface{}) *UserCreate {
 	_c.mutation.SetSettings(v)
-	return _c
-}
-
-// SetNillableSettings sets the "settings" field if the given value is not nil.
-func (_c *UserCreate) SetNillableSettings(v *schema.UserSettings) *UserCreate {
-	if v != nil {
-		_c.SetSettings(*v)
-	}
 	return _c
 }
 

@@ -5,7 +5,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -177,14 +176,14 @@ func (r *UserRepository) ChangePassword(ctx context.Context, uid uuid.UUID, pw s
 	return r.db.User.UpdateOneID(uid).SetPassword(pw).Exec(ctx)
 }
 
-func (r *UserRepository) SetSettings(ctx context.Context, uid uuid.UUID, settings schema.UserSettings) error {
+func (r *UserRepository) SetSettings(ctx context.Context, uid uuid.UUID, settings map[string]interface{}) error {
 	return r.db.User.UpdateOneID(uid).SetSettings(settings).Exec(ctx)
 }
 
-func (r *UserRepository) GetSettings(ctx context.Context, uid uuid.UUID) (schema.UserSettings, error) {
+func (r *UserRepository) GetSettings(ctx context.Context, uid uuid.UUID) (map[string]interface{}, error) {
 	usr, err := r.db.User.Get(ctx, uid)
 	if err != nil {
-		return schema.UserSettings{}, err
+		return nil, err
 	}
 	return usr.Settings, nil
 }

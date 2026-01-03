@@ -2511,7 +2511,8 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "item": {
-                                            "$ref": "#/definitions/schema.UserSettings"
+                                            "type": "object",
+                                            "additionalProperties": true
                                         }
                                     }
                                 }
@@ -2540,7 +2541,8 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/schema.UserSettings"
+                            "type": "object",
+                            "additionalProperties": true
                         }
                     }
                 ],
@@ -2556,7 +2558,8 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "item": {
-                                            "$ref": "#/definitions/schema.UserSettings"
+                                            "type": "object",
+                                            "additionalProperties": true
                                         }
                                     }
                                 }
@@ -3652,11 +3655,8 @@ const docTemplate = `{
                 },
                 "settings": {
                     "description": "Settings holds the value of the \"settings\" field.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/schema.UserSettings"
-                        }
-                    ]
+                    "type": "object",
+                    "additionalProperties": true
                 },
                 "superuser": {
                     "description": "Superuser holds the value of the \"superuser\" field.",
@@ -5069,64 +5069,6 @@ const docTemplate = `{
                 },
                 "value": {
                     "type": "number"
-                }
-            }
-        },
-        "schema.DuplicateSettings": {
-            "type": "object",
-            "properties": {
-                "copyAttachments": {
-                    "type": "boolean"
-                },
-                "copyCustomFields": {
-                    "type": "boolean"
-                },
-                "copyMaintenance": {
-                    "type": "boolean"
-                },
-                "copyPrefixOverride": {
-                    "type": "string"
-                }
-            }
-        },
-        "schema.UserSettings": {
-            "type": "object",
-            "properties": {
-                "displayLegacyHeader": {
-                    "type": "boolean"
-                },
-                "duplicateSettings": {
-                    "$ref": "#/definitions/schema.DuplicateSettings"
-                },
-                "editorAdvancedView": {
-                    "type": "boolean"
-                },
-                "itemDisplayView": {
-                    "type": "string"
-                },
-                "itemsPerPage": {
-                    "type": "integer"
-                },
-                "itemsPerTablePage": {
-                    "type": "integer"
-                },
-                "language": {
-                    "type": "string"
-                },
-                "locale": {
-                    "type": "string"
-                },
-                "overrideFormatLocale": {
-                    "type": "string"
-                },
-                "showDetails": {
-                    "type": "boolean"
-                },
-                "showEmpty": {
-                    "type": "boolean"
-                },
-                "theme": {
-                    "type": "string"
                 }
             }
         },

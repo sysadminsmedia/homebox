@@ -12,7 +12,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -44,7 +43,7 @@ type User struct {
 	// OidcSubject holds the value of the "oidc_subject" field.
 	OidcSubject *string `json:"oidc_subject,omitempty"`
 	// Settings holds the value of the "settings" field.
-	Settings schema.UserSettings `json:"settings,omitempty"`
+	Settings map[string]interface{} `json:"settings,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`

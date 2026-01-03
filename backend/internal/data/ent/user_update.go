@@ -16,7 +16,6 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -190,16 +189,8 @@ func (_u *UserUpdate) ClearOidcSubject() *UserUpdate {
 }
 
 // SetSettings sets the "settings" field.
-func (_u *UserUpdate) SetSettings(v schema.UserSettings) *UserUpdate {
+func (_u *UserUpdate) SetSettings(v map[string]interface{}) *UserUpdate {
 	_u.mutation.SetSettings(v)
-	return _u
-}
-
-// SetNillableSettings sets the "settings" field if the given value is not nil.
-func (_u *UserUpdate) SetNillableSettings(v *schema.UserSettings) *UserUpdate {
-	if v != nil {
-		_u.SetSettings(*v)
-	}
 	return _u
 }
 
@@ -723,16 +714,8 @@ func (_u *UserUpdateOne) ClearOidcSubject() *UserUpdateOne {
 }
 
 // SetSettings sets the "settings" field.
-func (_u *UserUpdateOne) SetSettings(v schema.UserSettings) *UserUpdateOne {
+func (_u *UserUpdateOne) SetSettings(v map[string]interface{}) *UserUpdateOne {
 	_u.mutation.SetSettings(v)
-	return _u
-}
-
-// SetNillableSettings sets the "settings" field if the given value is not nil.
-func (_u *UserUpdateOne) SetNillableSettings(v *schema.UserSettings) *UserUpdateOne {
-	if v != nil {
-		_u.SetSettings(*v)
-	}
 	return _u
 }
 

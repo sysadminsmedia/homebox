@@ -2691,7 +2691,8 @@
                                             "type": "object",
                                             "properties": {
                                                 "item": {
-                                                    "$ref": "#/components/schemas/schema.UserSettings"
+                                                    "type": "object",
+                                                    "additionalProperties": true
                                                 }
                                             }
                                         }
@@ -2716,7 +2717,8 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/schema.UserSettings"
+                                "type": "object",
+                                "additionalProperties": true
                             }
                         }
                     },
@@ -2737,7 +2739,8 @@
                                             "type": "object",
                                             "properties": {
                                                 "item": {
-                                                    "$ref": "#/components/schemas/schema.UserSettings"
+                                                    "type": "object",
+                                                    "additionalProperties": true
                                                 }
                                             }
                                         }
@@ -3852,11 +3855,8 @@
                     },
                     "settings": {
                         "description": "Settings holds the value of the \"settings\" field.",
-                        "allOf": [
-                            {
-                                "$ref": "#/components/schemas/schema.UserSettings"
-                            }
-                        ]
+                        "type": "object",
+                        "additionalProperties": true
                     },
                     "superuser": {
                         "description": "Superuser holds the value of the \"superuser\" field.",
@@ -5269,64 +5269,6 @@
                     },
                     "value": {
                         "type": "number"
-                    }
-                }
-            },
-            "schema.DuplicateSettings": {
-                "type": "object",
-                "properties": {
-                    "copyAttachments": {
-                        "type": "boolean"
-                    },
-                    "copyCustomFields": {
-                        "type": "boolean"
-                    },
-                    "copyMaintenance": {
-                        "type": "boolean"
-                    },
-                    "copyPrefixOverride": {
-                        "type": "string"
-                    }
-                }
-            },
-            "schema.UserSettings": {
-                "type": "object",
-                "properties": {
-                    "displayLegacyHeader": {
-                        "type": "boolean"
-                    },
-                    "duplicateSettings": {
-                        "$ref": "#/components/schemas/schema.DuplicateSettings"
-                    },
-                    "editorAdvancedView": {
-                        "type": "boolean"
-                    },
-                    "itemDisplayView": {
-                        "type": "string"
-                    },
-                    "itemsPerPage": {
-                        "type": "integer"
-                    },
-                    "itemsPerTablePage": {
-                        "type": "integer"
-                    },
-                    "language": {
-                        "type": "string"
-                    },
-                    "locale": {
-                        "type": "string"
-                    },
-                    "overrideFormatLocale": {
-                        "type": "string"
-                    },
-                    "showDetails": {
-                        "type": "boolean"
-                    },
-                    "showEmpty": {
-                        "type": "boolean"
-                    },
-                    "theme": {
-                        "type": "string"
                     }
                 }
             },

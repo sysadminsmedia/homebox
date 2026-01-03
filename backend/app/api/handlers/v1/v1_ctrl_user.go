@@ -9,20 +9,19 @@ import (
 	"github.com/hay-kot/httpkit/server"
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
 )
 
 // HandleUserRegistration godoc
 //
-//	@Summary	Register New User
-//	@Tags		User
-//	@Produce	json
-//	@Param		payload	body	services.UserRegistration	true	"User Data"
-//	@Success	204
-//  @Failure    403 {string} string "Local login is not enabled"
-//	@Router		/v1/users/register [Post]
+//		@Summary	Register New User
+//		@Tags		User
+//		@Produce	json
+//		@Param		payload	body	services.UserRegistration	true	"User Data"
+//		@Success	204
+//	 @Failure    403 {string} string "Local login is not enabled"
+//		@Router		/v1/users/register [Post]
 func (ctrl *V1Controller) HandleUserRegistration() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		// Forbidden if local login is not enabled
@@ -127,7 +126,7 @@ func (ctrl *V1Controller) HandleUserSelfDelete() errchain.HandlerFunc {
 //	@Summary	Get user settings
 //	@Tags		User
 //	@Produce	json
-//	@Success	200	{object}	Wrapped{item=schema.UserSettings}
+//	@Success	200	{object}	Wrapped{item=map[string]interface{}}
 //	@Router		/v1/users/self/settings [GET]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleUserSelfSettingsGet() errchain.HandlerFunc {
@@ -148,15 +147,15 @@ func (ctrl *V1Controller) HandleUserSelfSettingsGet() errchain.HandlerFunc {
 //	@Summary	Update user settings
 //	@Tags		User
 //	@Produce	json
-//	@Success	200	{object}	Wrapped{item=schema.UserSettings}
+//	@Success	200	{object}	Wrapped{item=map[string]interface{}}
 //	@Router		/v1/users/self/settings [PUT]
-//	@Param		payload	body	schema.UserSettings	true	"Settings Data"
+//	@Param		payload	body	map[string]interface{}	true	"Settings Data"
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleUserSelfSettingsUpdate() errchain.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) error {
 		// Cap body to prevent DOS via large payloads.
 		r.Body = http.MaxBytesReader(w, r.Body, 64*1024)
-		var settings schema.UserSettings
+		var settings map[string]interface{}
 		if err := server.Decode(r, &settings); err != nil {
 			log.Err(err).Msg("failed to decode user settings data")
 			return validate.NewRequestError(err, http.StatusBadRequest)
@@ -176,6 +175,7 @@ func (ctrl *V1Controller) HandleUserSelfSettingsUpdate() errchain.HandlerFunc {
 		return server.JSON(w, http.StatusOK, Wrap(newSettings))
 	}
 }
+
 type (
 	ChangePassword struct {
 		Current string `json:"current,omitempty"`
