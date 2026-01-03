@@ -1,7 +1,12 @@
 import { computed, type ComputedRef } from "vue";
 import { createContext } from "reka-ui";
 import { useMagicKeys, useActiveElement } from "@vueuse/core";
-import type { BarcodeProduct, ItemSummary, MaintenanceEntry, MaintenanceEntryWithDetails } from "~~/lib/api/types/data-contracts";
+import type {
+  BarcodeProduct,
+  ItemSummary,
+  MaintenanceEntry,
+  MaintenanceEntryWithDetails,
+} from "~~/lib/api/types/data-contracts";
 
 export enum DialogID {
   AttachmentEdit = "attachment-edit",
@@ -9,6 +14,7 @@ export enum DialogID {
   CreateItem = "create-item",
   CreateLocation = "create-location",
   CreateLabel = "create-label",
+  CreateCollection = "create-collection",
   CreateNotifier = "create-notifier",
   CreateTemplate = "create-template",
   DuplicateSettings = "duplicate-settings",

@@ -28,6 +28,18 @@ export class GroupApi extends BaseAPI {
     });
   }
 
+  create(name: string) {
+    return this.http.post<
+      {
+        name: string;
+      },
+      Group
+    >({
+      url: route("/groups"),
+      body: { name },
+    });
+  }
+
   currencies() {
     return this.http.get<CurrenciesCurrency[]>({
       url: route("/currencies"),

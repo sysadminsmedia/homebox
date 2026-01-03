@@ -292,6 +292,26 @@
                 "updated": "Template updated"
             },
             "using_template": "Using template: {name}"
+        },
+        "collection": {
+            "selector": {
+                "select_collection": "Select Collection",
+                "collection_settings": "Collection Settings",
+                "create_collection": "Create New Collection",
+                "join_collection": "Join Existing Collection",
+                "no_collection_found": "No collection found",
+                "your_collections": "Your Collections"
+            },
+            "create_modal": {
+                "title": "Create Collection",
+                "name_label": "Collection Name",
+                "toast": {
+                    "already_creating": "Already creating a collection",
+                    "create_failed": "Failed to create collection",
+                    "create_success": "Collection created",
+                    "please_enter_name": "Please enter a collection name"
+                }
+            }
         }
     },
     "errors": {

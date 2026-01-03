@@ -14,6 +14,7 @@
     <ItemBarcodeModal />
     <AppQuickMenuModal :actions="quickMenuActions" />
     <AppScannerModal />
+    <CollectionCreateModal />
     <SidebarProvider :default-open="sidebarState">
       <Sidebar collapsible="icon">
         <SidebarHeader class="items-center">
@@ -25,6 +26,9 @@
               <AppLogo />
             </div>
           </NuxtLink>
+
+          <CollectionSelector />
+
           <DropdownMenu>
             <DropdownMenuTrigger as-child>
               <SidebarMenuButton
@@ -227,6 +231,8 @@
   import AppLogo from "~/components/App/Logo.vue";
   import AppHeaderDecor from "~/components/App/HeaderDecor.vue";
   import AppHeaderText from "~/components/App/HeaderText.vue";
+  import CollectionSelector from "~/components/Collection/Selector.vue";
+  import CollectionCreateModal from "~/components/Collection/CreateModal.vue";
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
@@ -382,6 +388,9 @@
 
   const locationStore = useLocationStore();
   locationStore.ensureLocationsFetched();
+
+  const collectionStore = useCollectionStore();
+  collectionStore.load();
 
   onMounted(() => {
     locationStore.refreshParents();

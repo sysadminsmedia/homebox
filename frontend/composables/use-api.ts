@@ -30,8 +30,14 @@ export function usePublicApi(): PublicApi {
 
 export function useUserApi(): UserClient {
   const authCtx = useAuthContext();
+  const prefs = useViewPreferences();
 
-  const requests = new Requests("", "", {});
+  const headers: Record<string, string> = {};
+  if (prefs?.value?.collectionId) {
+    headers["X-Tenant"] = prefs.value.collectionId;
+  }
+
+  const requests = new Requests("", "", headers);
   requests.addResponseInterceptor(logger);
   requests.addResponseInterceptor(r => {
     if (r.status === 401) {
