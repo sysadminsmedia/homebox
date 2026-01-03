@@ -5,15 +5,15 @@
 @layer base {
   :root,.homebox {
     --background: 0 0% 100%;
-    --background-accent: 0 0% 81%;
+    --background-accent: 0 0% 99%;
     --foreground: 0 0% 20%;
     --primary: 139 16% 43%;
     --primary-foreground: 139 100% 89%;
-    --secondary: 77 8% 17%;
-    --secondary-foreground: 76 18% 83%;
+    --secondary: 139 12% 92%;
+    --secondary-foreground: 139 16% 25%;
     --accent: 97 37% 93%;
     --accent-foreground: 97 31% 19%;
-    --muted: 0 0% 90%;
+    --muted: 0 0% 96%;
     --muted-foreground: 0 0% 20%;
     --card: 0 0% 100%;
     --card-foreground: 0 0% 20%;
@@ -21,20 +21,55 @@
     --popover-foreground: 0 0% 20%;
     --destructive: 0 91% 71%;
     --destructive-foreground: 0 100% 14%;
-    --input: 0 0% 81%;
-    --border: 0 0% 81%;
+    --input: 0 0% 96%;
+    --border: 0 0% 90%;
     --ring: 139 16% 43%;
-    --sidebar-background: 0 0% 90%;
+    --sidebar-background: 0 0% 97%;
     --sidebar-foreground: 0 0% 20%;
     --sidebar-primary: 139 16% 43%;
     --sidebar-primary-foreground: 139 100% 89%;
-    --sidebar-accent: 0 0% 81%;
+    --sidebar-accent: 0 0% 93%;
     --sidebar-accent-foreground: 0 0% 20%;
-    --sidebar-border: 0 0% 81%;
-    --sidebar-ring: 0 0% 81%;
+    --sidebar-border: 0 0% 85%;
+    --sidebar-ring: 0 0% 85%;
 
     --radius: 0.5rem;
-}
+  }
+
+  /* Dark mode variant for homebox theme */
+  .homebox[data-theme="homebox"][data-dark-mode="dark"],
+  .homebox[data-theme="homebox"].dark {
+    --background: 0 0% 6%;
+    --background-accent: 0 0% 10%;
+    --foreground: 0 0% 90%;
+    --primary: 139 25% 55%;
+    --primary-foreground: 139 100% 10%;
+    --secondary: 77 8% 17%;
+    --secondary-foreground: 76 18% 83%;
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 88%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 85%;
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 90%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 90%;
+    --destructive: 0 91% 71%;
+    --destructive-foreground: 0 100% 14%;
+    --input: 0 0% 10%;
+    --border: 0 0% 16%;
+    --ring: 139 25% 55%;
+    --sidebar-background: 0 0% 5%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 139 25% 55%;
+    --sidebar-primary-foreground: 139 100% 10%;
+    --sidebar-accent: 0 0% 12%;
+    --sidebar-accent-foreground: 0 0% 88%;
+    --sidebar-border: 0 0% 16%;
+    --sidebar-ring: 0 0% 16%;
+
+    --radius: 0.5rem;
+  }
 
   /*
   * The below themes are based on the daisyUI themes which are licensed under the MIT License.
