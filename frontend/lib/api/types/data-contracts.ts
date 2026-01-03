@@ -648,9 +648,10 @@ export interface ItemOut {
   /** Extras */
   notes: string;
   parent?: ItemSummary | null;
+  /** Purchase */
   purchaseFrom: string;
   purchasePrice: number;
-  /** Purchase */
+  purchasePricePerMonth: number;
   purchaseTime: Date | string;
   quantity: number;
   serialNumber: string;
