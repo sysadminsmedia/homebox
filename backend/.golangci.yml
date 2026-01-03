@@ -10,6 +10,7 @@ linters:
     - errcheck
     - errorlint
     - exhaustive
+    - forbidigo
     - gochecknoinits
     - goconst
     - gocritic
@@ -41,6 +42,11 @@ linters:
                 details.
     exhaustive:
       default-signifies-exhaustive: true
+    forbidigo:
+      forbid:
+        - pattern: ^log\.Fatal.*$
+          msg: Do not use log.Fatal - return errors instead
+      analyze-types: true
     goconst:
       min-len: 5
       min-occurrences: 5
@@ -67,11 +73,16 @@ linters:
       - third_party$
       - builtin$
       - examples$
+    rules:
+      - path: '(.+)_test\.go'
+        linters:
+          - forbidigo
 issues:
-  fix: true
+  fix: false
 formatters:
   enable:
     - gofmt
+    - swaggo
   exclusions:
     generated: lax
     paths:

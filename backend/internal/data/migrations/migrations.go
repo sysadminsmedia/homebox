@@ -31,5 +31,4 @@ func Migrations(dialect string) (embed.FS, error) {
 		return embed.FS{}, fmt.Errorf("unknown sql dialect: %s", dialect)
 	}
 	// This should never get hit, but just in case
-	return sqliteFiles, nil
 }
