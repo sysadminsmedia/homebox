@@ -170,8 +170,13 @@ func (a *app) mwTenant(next errchain.Handler) errchain.Handler {
 
 		tenantID := user.DefaultGroupID
 
-		// Check for X-Tenant header
-		if tenantHeader := r.Header.Get("X-Tenant"); tenantHeader != "" {
+		// Check for X-Tenant header or tenant query parameter
+		tenantHeader := r.Header.Get("X-Tenant")
+		if tenantHeader == "" {
+			tenantHeader = r.URL.Query().Get("tenant")
+		}
+
+		if tenantHeader != "" {
 			parsedTenantID, err := uuid.Parse(tenantHeader)
 			if err != nil {
 				return validate.NewRequestError(errors.New("invalid X-Tenant header format"), http.StatusBadRequest)
