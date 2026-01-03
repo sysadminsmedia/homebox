@@ -2,7 +2,7 @@ LOAD DATABASE
      FROM {{SQLITE_URI}}
      INTO {{POSTGRES_URI}}
 
- EXCLUDING TABLE NAMES MATCHING ~ 'goose_db_version'
+ EXCLUDING TABLE NAMES LIKE 'goose_db_version'
 
  WITH data only,
       truncate,
