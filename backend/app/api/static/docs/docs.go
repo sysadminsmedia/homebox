@@ -407,8 +407,11 @@ const docTemplate = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content"
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.GroupAcceptInvitationResponse"
+                        }
                     }
                 }
             },
@@ -5350,6 +5353,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "new": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.GroupAcceptInvitationResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "name": {
                     "type": "string"
                 }
             }

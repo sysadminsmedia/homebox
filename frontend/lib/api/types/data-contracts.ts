@@ -1106,6 +1106,11 @@ export interface ChangePassword {
   new: string;
 }
 
+export interface GroupAcceptInvitationResponse {
+  id: string;
+  name: string;
+}
+
 export interface GroupInvitation {
   expiresAt: Date | string;
   token: string;

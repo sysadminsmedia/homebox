@@ -243,8 +243,12 @@ paths:
           schema:
             type: string
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1.GroupAcceptInvitationResponse"
     delete:
       security:
         - Bearer: []
@@ -3538,6 +3542,13 @@ components:
         current:
           type: string
         new:
+          type: string
+    v1.GroupAcceptInvitationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
           type: string
     v1.GroupInvitation:
       type: object

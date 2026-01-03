@@ -1807,6 +1807,13 @@ definitions:
       new:
         type: string
     type: object
+  v1.GroupAcceptInvitationResponse:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
   v1.GroupInvitation:
     properties:
       expiresAt:
@@ -2232,8 +2239,10 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.GroupAcceptInvitationResponse'
       security:
       - Bearer: []
       summary: Accept Group Invitation
