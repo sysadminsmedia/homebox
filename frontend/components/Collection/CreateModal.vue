@@ -59,12 +59,12 @@
 
   async function create(close = true) {
     if (loading.value) {
-      toast.error(t("components.collection.create_modal.toast.already_creating") as string);
+      toast.error(t("components.collection.create_modal.toast.already_creating"));
       return;
     }
 
     if (!form.name || form.name.trim().length === 0) {
-      toast.error(t("components.collection.create_modal.toast.please_enter_name") as string);
+      toast.error(t("components.collection.create_modal.toast.please_enter_name"));
       return;
     }
 
@@ -76,12 +76,12 @@
 
     if (error) {
       loading.value = false;
-      toast.error(t("components.collection.create_modal.toast.create_failed") as string);
+      toast.error(t("components.collection.create_modal.toast.create_failed"));
       return;
     }
 
     if (data) {
-      toast.success(t("components.collection.create_modal.toast.create_success") as string);
+      toast.success(t("components.collection.create_modal.toast.create_success"));
     }
 
     form.name = "";

@@ -15,6 +15,7 @@
     <AppQuickMenuModal :actions="quickMenuActions" />
     <AppScannerModal />
     <CollectionCreateModal />
+    <CollectionJoinModal />
     <SidebarProvider :default-open="sidebarState">
       <Sidebar collapsible="icon">
         <SidebarHeader class="items-center">
@@ -233,6 +234,7 @@
   import AppHeaderText from "~/components/App/HeaderText.vue";
   import CollectionSelector from "~/components/Collection/Selector.vue";
   import CollectionCreateModal from "~/components/Collection/CreateModal.vue";
+  import CollectionJoinModal from "~/components/Collection/JoinModal.vue";
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");

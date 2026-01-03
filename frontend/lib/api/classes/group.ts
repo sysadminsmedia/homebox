@@ -2,6 +2,7 @@ import { BaseAPI, route } from "../base";
 import type {
   CurrenciesCurrency,
   Group,
+  GroupAcceptInvitationResponse,
   GroupInvitation,
   GroupInvitationCreate,
   GroupUpdate,
@@ -12,6 +13,12 @@ export class GroupApi extends BaseAPI {
     return this.http.post<GroupInvitationCreate, GroupInvitation>({
       url: route("/groups/invitations"),
       body: data,
+    });
+  }
+
+  acceptInvitation(id: string) {
+    return this.http.post<null, GroupAcceptInvitationResponse>({
+      url: route(`/groups/invitations/${id}`),
     });
   }
 

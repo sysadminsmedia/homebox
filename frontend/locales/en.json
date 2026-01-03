@@ -311,6 +311,19 @@
                     "create_success": "Collection created",
                     "please_enter_name": "Please enter a collection name"
                 }
+            },
+            "join_modal": {
+                "title": "Join Collection",
+                "invite_code_label": "Collection Invite Code",
+                "join": "Join Collection",
+                "no_invite_code_create_one": "No invite code? Create a new collection instead",
+                "invites_should_look_like": "Invites should look like:",
+                "toast": {
+                    "already_joining": "Already joining a collection",
+                    "join_failed": "Failed to join collection",
+                    "join_success": "Collection joined",
+                    "please_enter_valid_join_code": "Please enter a valid collection invite code"
+                }
             }
         }
     },

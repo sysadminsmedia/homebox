@@ -33,12 +33,6 @@
     >
       <Command :ignore-filter="true">
         <CommandGroup>
-          <CommandItem as-child value="collection-settings">
-            <NuxtLink to="/collection" class="flex w-full items-center">
-              <Settings class="mr-2 size-4" />
-              {{ t("components.collection.selector.collection_settings") }}
-            </NuxtLink>
-          </CommandItem>
           <CommandItem
             value="create-collection"
             @select="
@@ -49,8 +43,21 @@
           >
             <Plus class="mr-2 size-4" /> {{ t("components.collection.selector.create_collection") }}
           </CommandItem>
-          <CommandItem value="join-collection" @select="() => {}">
+          <CommandItem
+            value="join-collection"
+            @select="
+              () => {
+                openDialog(DialogID.JoinCollection);
+              }
+            "
+          >
             <Plus class="mr-2 size-4" /> {{ t("components.collection.selector.join_collection") }}
+          </CommandItem>
+          <CommandItem as-child value="collection-settings">
+            <NuxtLink to="/collection" class="flex w-full items-center">
+              <Settings class="mr-2 size-4" />
+              {{ t("components.collection.selector.collection_settings") }}
+            </NuxtLink>
           </CommandItem>
         </CommandGroup>
         <CommandInput v-model="search" placeholder="Search collections..." :display-value="_ => ''" />

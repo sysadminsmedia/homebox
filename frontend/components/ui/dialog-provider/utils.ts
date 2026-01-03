@@ -15,6 +15,7 @@ export enum DialogID {
   CreateLocation = "create-location",
   CreateLabel = "create-label",
   CreateCollection = "create-collection",
+  JoinCollection = "join-collection",
   CreateNotifier = "create-notifier",
   CreateTemplate = "create-template",
   DuplicateSettings = "duplicate-settings",
