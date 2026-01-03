@@ -76,6 +76,13 @@ jobs:
           images: |
             name=${{ env.DOCKERHUB_REPO }},enable=${{ github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/') }}
             name=${{ env.GHCR_REPO }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=schedule,pattern=nightly
 
       - name: Login to Docker Hub
         uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1
