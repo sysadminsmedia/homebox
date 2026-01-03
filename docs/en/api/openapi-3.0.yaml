@@ -172,6 +172,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/repo.Group"
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Create Group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+        description: Group Name
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/repo.Group"
   /v1/groups/invitations:
     get:
       security:
@@ -280,26 +300,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/repo.ValueOverTime"
   "/v1/groups/{id}":
-    post:
-      security:
-        - Bearer: []
-      tags:
-        - Group
-      summary: Create Group
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: string
-        description: Group Name
-        required: true
-      responses:
-        "201":
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/repo.Group"
     delete:
       security:
         - Bearer: []

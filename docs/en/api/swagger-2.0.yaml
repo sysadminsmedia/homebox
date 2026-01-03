@@ -2064,6 +2064,26 @@ paths:
       summary: Get All Groups
       tags:
       - Group
+    post:
+      parameters:
+      - description: Group Name
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/repo.Group'
+      security:
+      - Bearer: []
+      summary: Create Group
+      tags:
+      - Group
     put:
       parameters:
       - description: User Data
@@ -2094,26 +2114,6 @@ paths:
       security:
       - Bearer: []
       summary: Delete Group
-      tags:
-      - Group
-    post:
-      parameters:
-      - description: Group Name
-        in: body
-        name: name
-        required: true
-        schema:
-          type: string
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/repo.Group'
-      security:
-      - Bearer: []
-      summary: Create Group
       tags:
       - Group
   /v1/groups/{id}/members:
