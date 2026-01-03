@@ -323,6 +323,22 @@ func (r *GroupRepository) InvitationUpdate(ctx context.Context, id uuid.UUID, us
 	return err
 }
 
+func (r *GroupRepository) InvitationDelete(ctx context.Context, groupID uuid.UUID, id uuid.UUID) error {
+	n, err := r.db.GroupInvitationToken.Delete().
+		Where(
+			groupinvitationtoken.ID(id),
+			groupinvitationtoken.HasGroupWith(group.ID(groupID)),
+		).
+		Exec(ctx)
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		return &ent.NotFoundError{}
+	}
+	return nil
+}
+
 // InvitationPurge removes all expired invitations or those that have been used up.
 // It returns the number of deleted invitations.
 func (r *GroupRepository) InvitationPurge(ctx context.Context) (amount int, err error) {

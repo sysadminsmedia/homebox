@@ -228,6 +228,39 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/v1.GroupInvitation"
+  "/v1/groups/invitations/{id}":
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Accept Group Invitation
+      parameters:
+        - description: Invitation Token
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+    delete:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Delete Group Invitation
+      parameters:
+        - description: Invitation ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
   /v1/groups/statistics:
     get:
       security:

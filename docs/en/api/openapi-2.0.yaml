@@ -2204,6 +2204,41 @@ paths:
       summary: Create Group Invitation
       tags:
       - Group
+  /v1/groups/invitations/{id}:
+    delete:
+      parameters:
+      - description: Invitation ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Delete Group Invitation
+      tags:
+      - Group
+    post:
+      parameters:
+      - description: Invitation Token
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Accept Group Invitation
+      tags:
+      - Group
   /v1/groups/statistics:
     get:
       produces:

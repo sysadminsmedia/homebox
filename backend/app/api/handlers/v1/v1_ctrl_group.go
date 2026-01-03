@@ -1,11 +1,14 @@
 package v1
 
 import (
+	"errors"
 	"net/http"
 	"time"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
+	"github.com/hay-kot/httpkit/server"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
@@ -228,4 +231,49 @@ func (ctrl *V1Controller) HandleGroupMemberRemove() errchain.HandlerFunc {
 	}
 
 	return adapters.CommandID("user_id", fn, http.StatusNoContent)
+}
+
+// HandleGroupInvitationsDelete godoc
+//
+//	@Summary	Delete Group Invitation
+//	@Tags		Group
+//	@Produce	json
+//	@Param		id	path	string	true	"Invitation ID"
+//	@Success	204
+//	@Router		/v1/groups/invitations/{id} [Delete]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleGroupInvitationsDelete() errchain.HandlerFunc {
+	fn := func(r *http.Request, id uuid.UUID) (any, error) {
+		auth := services.NewContext(r.Context())
+		err := ctrl.svc.Group.DeleteInvitation(auth, id)
+		return nil, err
+	}
+
+	return adapters.CommandID("id", fn, http.StatusNoContent)
+}
+
+// HandleGroupInvitationsAccept godoc
+//
+//	@Summary	Accept Group Invitation
+//	@Tags		Group
+//	@Produce	json
+//	@Param		id	path	string	true	"Invitation Token"
+//	@Success	204
+//	@Router		/v1/groups/invitations/{id} [Post]
+//	@Security	Bearer
+func (ctrl *V1Controller) HandleGroupInvitationsAccept() errchain.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		token := chi.URLParam(r, "id")
+		if token == "" {
+			return validate.NewRequestError(errors.New("token is required"), http.StatusBadRequest)
+		}
+
+		auth := services.NewContext(r.Context())
+		err := ctrl.svc.Group.AcceptInvitation(auth, token)
+		if err != nil {
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+
+		return server.JSON(w, http.StatusNoContent, nil)
+	}
 }
