@@ -33,8 +33,8 @@ func defaultLocations() []repo.LocationCreate {
 	}
 }
 
-func defaultLabels() []repo.LabelCreate {
-	return []repo.LabelCreate{
+func defaultTags() []repo.TagCreate {
+	return []repo.TagCreate{
 		{
 			Name: "Appliances",
 		},

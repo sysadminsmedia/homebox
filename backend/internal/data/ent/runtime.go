@@ -13,11 +13,11 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemfield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemtemplate"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/templatefield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
@@ -403,53 +403,6 @@ func init() {
 	itemtemplateDescID := itemtemplateMixinFields0[0].Descriptor()
 	// itemtemplate.DefaultID holds the default value on creation for the id field.
 	itemtemplate.DefaultID = itemtemplateDescID.Default.(func() uuid.UUID)
-	labelMixin := schema.Label{}.Mixin()
-	labelMixinFields0 := labelMixin[0].Fields()
-	_ = labelMixinFields0
-	labelMixinFields1 := labelMixin[1].Fields()
-	_ = labelMixinFields1
-	labelFields := schema.Label{}.Fields()
-	_ = labelFields
-	// labelDescCreatedAt is the schema descriptor for created_at field.
-	labelDescCreatedAt := labelMixinFields0[1].Descriptor()
-	// label.DefaultCreatedAt holds the default value on creation for the created_at field.
-	label.DefaultCreatedAt = labelDescCreatedAt.Default.(func() time.Time)
-	// labelDescUpdatedAt is the schema descriptor for updated_at field.
-	labelDescUpdatedAt := labelMixinFields0[2].Descriptor()
-	// label.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	label.DefaultUpdatedAt = labelDescUpdatedAt.Default.(func() time.Time)
-	// label.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	label.UpdateDefaultUpdatedAt = labelDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// labelDescName is the schema descriptor for name field.
-	labelDescName := labelMixinFields1[0].Descriptor()
-	// label.NameValidator is a validator for the "name" field. It is called by the builders before save.
-	label.NameValidator = func() func(string) error {
-		validators := labelDescName.Validators
-		fns := [...]func(string) error{
-			validators[0].(func(string) error),
-			validators[1].(func(string) error),
-		}
-		return func(name string) error {
-			for _, fn := range fns {
-				if err := fn(name); err != nil {
-					return err
-				}
-			}
-			return nil
-		}
-	}()
-	// labelDescDescription is the schema descriptor for description field.
-	labelDescDescription := labelMixinFields1[1].Descriptor()
-	// label.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
-	label.DescriptionValidator = labelDescDescription.Validators[0].(func(string) error)
-	// labelDescColor is the schema descriptor for color field.
-	labelDescColor := labelFields[0].Descriptor()
-	// label.ColorValidator is a validator for the "color" field. It is called by the builders before save.
-	label.ColorValidator = labelDescColor.Validators[0].(func(string) error)
-	// labelDescID is the schema descriptor for id field.
-	labelDescID := labelMixinFields0[0].Descriptor()
-	// label.DefaultID holds the default value on creation for the id field.
-	label.DefaultID = labelDescID.Default.(func() uuid.UUID)
 	locationMixin := schema.Location{}.Mixin()
 	locationMixinFields0 := locationMixin[0].Fields()
 	_ = locationMixinFields0
@@ -597,6 +550,53 @@ func init() {
 	notifierDescID := notifierMixinFields0[0].Descriptor()
 	// notifier.DefaultID holds the default value on creation for the id field.
 	notifier.DefaultID = notifierDescID.Default.(func() uuid.UUID)
+	tagMixin := schema.Tag{}.Mixin()
+	tagMixinFields0 := tagMixin[0].Fields()
+	_ = tagMixinFields0
+	tagMixinFields1 := tagMixin[1].Fields()
+	_ = tagMixinFields1
+	tagFields := schema.Tag{}.Fields()
+	_ = tagFields
+	// tagDescCreatedAt is the schema descriptor for created_at field.
+	tagDescCreatedAt := tagMixinFields0[1].Descriptor()
+	// tag.DefaultCreatedAt holds the default value on creation for the created_at field.
+	tag.DefaultCreatedAt = tagDescCreatedAt.Default.(func() time.Time)
+	// tagDescUpdatedAt is the schema descriptor for updated_at field.
+	tagDescUpdatedAt := tagMixinFields0[2].Descriptor()
+	// tag.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	tag.DefaultUpdatedAt = tagDescUpdatedAt.Default.(func() time.Time)
+	// tag.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	tag.UpdateDefaultUpdatedAt = tagDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// tagDescName is the schema descriptor for name field.
+	tagDescName := tagMixinFields1[0].Descriptor()
+	// tag.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	tag.NameValidator = func() func(string) error {
+		validators := tagDescName.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(name string) error {
+			for _, fn := range fns {
+				if err := fn(name); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	// tagDescDescription is the schema descriptor for description field.
+	tagDescDescription := tagMixinFields1[1].Descriptor()
+	// tag.DescriptionValidator is a validator for the "description" field. It is called by the builders before save.
+	tag.DescriptionValidator = tagDescDescription.Validators[0].(func(string) error)
+	// tagDescColor is the schema descriptor for color field.
+	tagDescColor := tagFields[0].Descriptor()
+	// tag.ColorValidator is a validator for the "color" field. It is called by the builders before save.
+	tag.ColorValidator = tagDescColor.Validators[0].(func(string) error)
+	// tagDescID is the schema descriptor for id field.
+	tagDescID := tagMixinFields0[0].Descriptor()
+	// tag.DefaultID holds the default value on creation for the id field.
+	tag.DefaultID = tagDescID.Default.(func() uuid.UUID)
 	templatefieldMixin := schema.TemplateField{}.Mixin()
 	templatefieldMixinFields0 := templatefieldMixin[0].Fields()
 	_ = templatefieldMixinFields0

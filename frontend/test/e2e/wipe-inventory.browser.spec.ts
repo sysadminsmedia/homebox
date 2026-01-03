@@ -54,12 +54,12 @@ test.describe("Wipe Inventory", () => {
 
     await expect(
       page.getByText(
-        "Inventory, labels, locations and maintenance records cannot be wiped whilst Homebox is in demo mode.",
+        "Inventory, tags, locations and maintenance records cannot be wiped whilst Homebox is in demo mode.",
         { exact: false }
       )
     ).toBeVisible();
 
-    await expect(page.locator("input#wipe-labels-checkbox")).toHaveCount(0);
+    await expect(page.locator("input#wipe-tags-checkbox")).toHaveCount(0);
     await expect(page.locator("input#wipe-locations-checkbox")).toHaveCount(0);
     await expect(page.locator("input#wipe-maintenance-checkbox")).toHaveCount(0);
   });
@@ -78,15 +78,15 @@ test.describe("Wipe Inventory", () => {
       await openWipeInventory(page);
       await expect(page.getByText("Wipe Inventory").first()).toBeVisible();
 
-      const labels = page.locator("input#wipe-labels-checkbox");
+      const tags = page.locator("input#wipe-tags-checkbox");
       const locations = page.locator("input#wipe-locations-checkbox");
       const maintenance = page.locator("input#wipe-maintenance-checkbox");
 
-      await expect(labels).toBeVisible();
+      await expect(tags).toBeVisible();
       await expect(locations).toBeVisible();
       await expect(maintenance).toBeVisible();
 
-      await labels.check();
+      await tags.check();
       await locations.check();
       await maintenance.check();
 
@@ -95,7 +95,7 @@ test.describe("Wipe Inventory", () => {
       const request = await requestPromise;
 
       expect(request.postDataJSON()).toEqual({
-        wipeLabels: true,
+        wipeTags: true,
         wipeLocations: true,
         wipeMaintenance: true,
       });
@@ -123,16 +123,16 @@ test.describe("Wipe Inventory", () => {
 
     const checkboxCases = [
       {
-        name: "labels only",
-        selection: { labels: true, locations: false, maintenance: false },
+        name: "tags only",
+        selection: { tags: true, locations: false, maintenance: false },
       },
       {
         name: "locations only",
-        selection: { labels: false, locations: true, maintenance: false },
+        selection: { tags: false, locations: true, maintenance: false },
       },
       {
         name: "maintenance only",
-        selection: { labels: false, locations: false, maintenance: true },
+        selection: { tags: false, locations: false, maintenance: true },
       },
     ];
 
@@ -145,14 +145,14 @@ test.describe("Wipe Inventory", () => {
         await openWipeInventory(page);
         await expect(page.getByText("Wipe Inventory").first()).toBeVisible();
 
-        const labels = page.locator("input#wipe-labels-checkbox");
+        const tags = page.locator("input#wipe-tags-checkbox");
         const locations = page.locator("input#wipe-locations-checkbox");
         const maintenance = page.locator("input#wipe-maintenance-checkbox");
 
-        if (scenario.selection.labels) {
-          await labels.check();
+        if (scenario.selection.tags) {
+          await tags.check();
         } else {
-          await labels.uncheck();
+          await tags.uncheck();
         }
 
         if (scenario.selection.locations) {
@@ -172,7 +172,7 @@ test.describe("Wipe Inventory", () => {
         const request = await requestPromise;
 
         expect(request.postDataJSON()).toEqual({
-          wipeLabels: scenario.selection.labels,
+          wipeTags: scenario.selection.tags,
           wipeLocations: scenario.selection.locations,
           wipeMaintenance: scenario.selection.maintenance,
         });

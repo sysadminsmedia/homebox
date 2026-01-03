@@ -205,25 +205,25 @@
       >
         {{ t("components.item.view.table.dropdown.change_location") }}
       </DropdownMenuItem>
-      <!-- change labels -->
+      <!-- change tags -->
       <DropdownMenuItem
         @click="
           openDialog(DialogID.ItemChangeDetails, {
             params: {
               items: multi ? multi.items.map(row => row.original) : [item!],
-              addLabels: true,
-              removeLabels: true,
+              addTags: true,
+              removeTags: true,
             },
             onClose: result => {
               if (result) {
-                toast.success(t('components.item.view.table.dropdown.change_labels_success'));
+                toast.success(t('components.item.view.table.dropdown.change_tags_success'));
                 resetSelection();
               }
             },
           })
         "
       >
-        {{ t("components.item.view.table.dropdown.change_labels") }}
+        {{ t("components.item.view.table.dropdown.change_tags") }}
       </DropdownMenuItem>
       <!-- maintenance -->
       <DropdownMenuItem

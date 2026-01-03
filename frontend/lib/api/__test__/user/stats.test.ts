@@ -6,7 +6,7 @@ import { factories } from "../factories";
 type ImportObj = {
   [`HB.import_ref`]: string;
   [`HB.location`]: string;
-  [`HB.labels`]: string;
+  [`HB.tags`]: string;
   [`HB.quantity`]: number;
   [`HB.name`]: string;
   [`HB.description`]: string;
@@ -40,7 +40,7 @@ function importFileGenerator(entries: number): ImportObj[] {
 
   const pick = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)];
 
-  const labels = faker.word.words(5).split(" ").join(";");
+  const tags = faker.word.words(5).split(" ").join(";");
   const locations = faker.word.words(3).split(" ");
 
   const half = Math.floor(entries / 2);
@@ -52,7 +52,7 @@ function importFileGenerator(entries: number): ImportObj[] {
     imports.push({
       [`HB.import_ref`]: faker.database.mongodbObjectId(),
       [`HB.location`]: pick(locations),
-      [`HB.labels`]: labels,
+      [`HB.tags`]: tags,
       [`HB.quantity`]: Number(faker.number.int(2)),
       [`HB.name`]: faker.word.words(3),
       [`HB.description`]: "",
@@ -78,7 +78,7 @@ function importFileGenerator(entries: number): ImportObj[] {
 
 describe("group related statistics tests", () => {
   const TOTAL_ITEMS = 30;
-  const labelData: Record<string, number> = {};
+  const tagData: Record<string, number> = {};
   const locationData: Record<string, number> = {};
 
   let tAPI: UserClient | undefined;
@@ -103,12 +103,12 @@ describe("group related statistics tests", () => {
     expect(setupResp.status).toBe(204);
 
     for (const item of imports) {
-      const labels = item[`HB.labels`].split(";");
-      for (const label of labels) {
-        if (labelData[label]) {
-          labelData[label] += item[`HB.purchase_price`];
+      const tags = item[`HB.tags`].split(";");
+      for (const tag of tags) {
+        if (tagData[tag]) {
+          tagData[tag] += item[`HB.purchase_price`];
         } else {
-          labelData[label] = item[`HB.purchase_price`];
+          tagData[tag] = item[`HB.purchase_price`];
         }
       }
 
@@ -126,18 +126,18 @@ describe("group related statistics tests", () => {
     expect(status).toBe(200);
 
     expect(data.totalItems).toEqual(TOTAL_ITEMS);
-    expect(data.totalLabels).toEqual(11); // default + new
+    expect(data.totalTags).toEqual(11); // default + new
     expect(data.totalLocations).toEqual(11); // default + new
     expect(data.totalUsers).toEqual(1);
     expect(data.totalWithWarranty).toEqual(Math.floor(TOTAL_ITEMS / 2));
   });
 
-  test("Validate Labels Statistics", async () => {
-    const { status, data } = await api().stats.labels();
+  test("Validate Tags Statistics", async () => {
+    const { status, data } = await api().stats.tags();
     expect(status).toBe(200);
 
-    for (const label of data) {
-      expect(label.total).toEqual(labelData[label.name]);
+    for (const tag of data) {
+      expect(tag.total).toEqual(tagData[tag.name]);
     }
   });
 

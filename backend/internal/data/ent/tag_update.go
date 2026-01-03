@@ -14,37 +14,37 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 )
 
-// LabelUpdate is the builder for updating Label entities.
-type LabelUpdate struct {
+// TagUpdate is the builder for updating Tag entities.
+type TagUpdate struct {
 	config
 	hooks    []Hook
-	mutation *LabelMutation
+	mutation *TagMutation
 }
 
-// Where appends a list predicates to the LabelUpdate builder.
-func (_u *LabelUpdate) Where(ps ...predicate.Label) *LabelUpdate {
+// Where appends a list predicates to the TagUpdate builder.
+func (_u *TagUpdate) Where(ps ...predicate.Tag) *TagUpdate {
 	_u.mutation.Where(ps...)
 	return _u
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (_u *LabelUpdate) SetUpdatedAt(v time.Time) *LabelUpdate {
+func (_u *TagUpdate) SetUpdatedAt(v time.Time) *TagUpdate {
 	_u.mutation.SetUpdatedAt(v)
 	return _u
 }
 
 // SetName sets the "name" field.
-func (_u *LabelUpdate) SetName(v string) *LabelUpdate {
+func (_u *TagUpdate) SetName(v string) *TagUpdate {
 	_u.mutation.SetName(v)
 	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (_u *LabelUpdate) SetNillableName(v *string) *LabelUpdate {
+func (_u *TagUpdate) SetNillableName(v *string) *TagUpdate {
 	if v != nil {
 		_u.SetName(*v)
 	}
@@ -52,13 +52,13 @@ func (_u *LabelUpdate) SetNillableName(v *string) *LabelUpdate {
 }
 
 // SetDescription sets the "description" field.
-func (_u *LabelUpdate) SetDescription(v string) *LabelUpdate {
+func (_u *TagUpdate) SetDescription(v string) *TagUpdate {
 	_u.mutation.SetDescription(v)
 	return _u
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (_u *LabelUpdate) SetNillableDescription(v *string) *LabelUpdate {
+func (_u *TagUpdate) SetNillableDescription(v *string) *TagUpdate {
 	if v != nil {
 		_u.SetDescription(*v)
 	}
@@ -66,19 +66,19 @@ func (_u *LabelUpdate) SetNillableDescription(v *string) *LabelUpdate {
 }
 
 // ClearDescription clears the value of the "description" field.
-func (_u *LabelUpdate) ClearDescription() *LabelUpdate {
+func (_u *TagUpdate) ClearDescription() *TagUpdate {
 	_u.mutation.ClearDescription()
 	return _u
 }
 
 // SetColor sets the "color" field.
-func (_u *LabelUpdate) SetColor(v string) *LabelUpdate {
+func (_u *TagUpdate) SetColor(v string) *TagUpdate {
 	_u.mutation.SetColor(v)
 	return _u
 }
 
 // SetNillableColor sets the "color" field if the given value is not nil.
-func (_u *LabelUpdate) SetNillableColor(v *string) *LabelUpdate {
+func (_u *TagUpdate) SetNillableColor(v *string) *TagUpdate {
 	if v != nil {
 		_u.SetColor(*v)
 	}
@@ -86,30 +86,30 @@ func (_u *LabelUpdate) SetNillableColor(v *string) *LabelUpdate {
 }
 
 // ClearColor clears the value of the "color" field.
-func (_u *LabelUpdate) ClearColor() *LabelUpdate {
+func (_u *TagUpdate) ClearColor() *TagUpdate {
 	_u.mutation.ClearColor()
 	return _u
 }
 
 // SetGroupID sets the "group" edge to the Group entity by ID.
-func (_u *LabelUpdate) SetGroupID(id uuid.UUID) *LabelUpdate {
+func (_u *TagUpdate) SetGroupID(id uuid.UUID) *TagUpdate {
 	_u.mutation.SetGroupID(id)
 	return _u
 }
 
 // SetGroup sets the "group" edge to the Group entity.
-func (_u *LabelUpdate) SetGroup(v *Group) *LabelUpdate {
+func (_u *TagUpdate) SetGroup(v *Group) *TagUpdate {
 	return _u.SetGroupID(v.ID)
 }
 
 // AddItemIDs adds the "items" edge to the Item entity by IDs.
-func (_u *LabelUpdate) AddItemIDs(ids ...uuid.UUID) *LabelUpdate {
+func (_u *TagUpdate) AddItemIDs(ids ...uuid.UUID) *TagUpdate {
 	_u.mutation.AddItemIDs(ids...)
 	return _u
 }
 
 // AddItems adds the "items" edges to the Item entity.
-func (_u *LabelUpdate) AddItems(v ...*Item) *LabelUpdate {
+func (_u *TagUpdate) AddItems(v ...*Item) *TagUpdate {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
@@ -117,31 +117,31 @@ func (_u *LabelUpdate) AddItems(v ...*Item) *LabelUpdate {
 	return _u.AddItemIDs(ids...)
 }
 
-// Mutation returns the LabelMutation object of the builder.
-func (_u *LabelUpdate) Mutation() *LabelMutation {
+// Mutation returns the TagMutation object of the builder.
+func (_u *TagUpdate) Mutation() *TagMutation {
 	return _u.mutation
 }
 
 // ClearGroup clears the "group" edge to the Group entity.
-func (_u *LabelUpdate) ClearGroup() *LabelUpdate {
+func (_u *TagUpdate) ClearGroup() *TagUpdate {
 	_u.mutation.ClearGroup()
 	return _u
 }
 
 // ClearItems clears all "items" edges to the Item entity.
-func (_u *LabelUpdate) ClearItems() *LabelUpdate {
+func (_u *TagUpdate) ClearItems() *TagUpdate {
 	_u.mutation.ClearItems()
 	return _u
 }
 
 // RemoveItemIDs removes the "items" edge to Item entities by IDs.
-func (_u *LabelUpdate) RemoveItemIDs(ids ...uuid.UUID) *LabelUpdate {
+func (_u *TagUpdate) RemoveItemIDs(ids ...uuid.UUID) *TagUpdate {
 	_u.mutation.RemoveItemIDs(ids...)
 	return _u
 }
 
 // RemoveItems removes "items" edges to Item entities.
-func (_u *LabelUpdate) RemoveItems(v ...*Item) *LabelUpdate {
+func (_u *TagUpdate) RemoveItems(v ...*Item) *TagUpdate {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
@@ -150,13 +150,13 @@ func (_u *LabelUpdate) RemoveItems(v ...*Item) *LabelUpdate {
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
-func (_u *LabelUpdate) Save(ctx context.Context) (int, error) {
+func (_u *TagUpdate) Save(ctx context.Context) (int, error) {
 	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (_u *LabelUpdate) SaveX(ctx context.Context) int {
+func (_u *TagUpdate) SaveX(ctx context.Context) int {
 	affected, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -165,54 +165,54 @@ func (_u *LabelUpdate) SaveX(ctx context.Context) int {
 }
 
 // Exec executes the query.
-func (_u *LabelUpdate) Exec(ctx context.Context) error {
+func (_u *TagUpdate) Exec(ctx context.Context) error {
 	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_u *LabelUpdate) ExecX(ctx context.Context) {
+func (_u *TagUpdate) ExecX(ctx context.Context) {
 	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *LabelUpdate) defaults() {
+func (_u *TagUpdate) defaults() {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
-		v := label.UpdateDefaultUpdatedAt()
+		v := tag.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (_u *LabelUpdate) check() error {
+func (_u *TagUpdate) check() error {
 	if v, ok := _u.mutation.Name(); ok {
-		if err := label.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Label.name": %w`, err)}
+		if err := tag.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Tag.name": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.Description(); ok {
-		if err := label.DescriptionValidator(v); err != nil {
-			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Label.description": %w`, err)}
+		if err := tag.DescriptionValidator(v); err != nil {
+			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Tag.description": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.Color(); ok {
-		if err := label.ColorValidator(v); err != nil {
-			return &ValidationError{Name: "color", err: fmt.Errorf(`ent: validator failed for field "Label.color": %w`, err)}
+		if err := tag.ColorValidator(v); err != nil {
+			return &ValidationError{Name: "color", err: fmt.Errorf(`ent: validator failed for field "Tag.color": %w`, err)}
 		}
 	}
 	if _u.mutation.GroupCleared() && len(_u.mutation.GroupIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Label.group"`)
+		return errors.New(`ent: clearing a required unique edge "Tag.group"`)
 	}
 	return nil
 }
 
-func (_u *LabelUpdate) sqlSave(ctx context.Context) (_node int, err error) {
+func (_u *TagUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(label.Table, label.Columns, sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(tag.Table, tag.Columns, sqlgraph.NewFieldSpec(tag.FieldID, field.TypeUUID))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -221,29 +221,29 @@ func (_u *LabelUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		}
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(label.FieldUpdatedAt, field.TypeTime, value)
+		_spec.SetField(tag.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := _u.mutation.Name(); ok {
-		_spec.SetField(label.FieldName, field.TypeString, value)
+		_spec.SetField(tag.FieldName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.Description(); ok {
-		_spec.SetField(label.FieldDescription, field.TypeString, value)
+		_spec.SetField(tag.FieldDescription, field.TypeString, value)
 	}
 	if _u.mutation.DescriptionCleared() {
-		_spec.ClearField(label.FieldDescription, field.TypeString)
+		_spec.ClearField(tag.FieldDescription, field.TypeString)
 	}
 	if value, ok := _u.mutation.Color(); ok {
-		_spec.SetField(label.FieldColor, field.TypeString, value)
+		_spec.SetField(tag.FieldColor, field.TypeString, value)
 	}
 	if _u.mutation.ColorCleared() {
-		_spec.ClearField(label.FieldColor, field.TypeString)
+		_spec.ClearField(tag.FieldColor, field.TypeString)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   label.GroupTable,
-			Columns: []string{label.GroupColumn},
+			Table:   tag.GroupTable,
+			Columns: []string{tag.GroupColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
@@ -255,8 +255,8 @@ func (_u *LabelUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   label.GroupTable,
-			Columns: []string{label.GroupColumn},
+			Table:   tag.GroupTable,
+			Columns: []string{tag.GroupColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
@@ -271,8 +271,8 @@ func (_u *LabelUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   label.ItemsTable,
-			Columns: label.ItemsPrimaryKey,
+			Table:   tag.ItemsTable,
+			Columns: tag.ItemsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
@@ -284,8 +284,8 @@ func (_u *LabelUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   label.ItemsTable,
-			Columns: label.ItemsPrimaryKey,
+			Table:   tag.ItemsTable,
+			Columns: tag.ItemsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
@@ -300,8 +300,8 @@ func (_u *LabelUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   label.ItemsTable,
-			Columns: label.ItemsPrimaryKey,
+			Table:   tag.ItemsTable,
+			Columns: tag.ItemsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
@@ -314,7 +314,7 @@ func (_u *LabelUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{label.Label}
+			err = &NotFoundError{tag.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -324,28 +324,28 @@ func (_u *LabelUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	return _node, nil
 }
 
-// LabelUpdateOne is the builder for updating a single Label entity.
-type LabelUpdateOne struct {
+// TagUpdateOne is the builder for updating a single Tag entity.
+type TagUpdateOne struct {
 	config
 	fields   []string
 	hooks    []Hook
-	mutation *LabelMutation
+	mutation *TagMutation
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (_u *LabelUpdateOne) SetUpdatedAt(v time.Time) *LabelUpdateOne {
+func (_u *TagUpdateOne) SetUpdatedAt(v time.Time) *TagUpdateOne {
 	_u.mutation.SetUpdatedAt(v)
 	return _u
 }
 
 // SetName sets the "name" field.
-func (_u *LabelUpdateOne) SetName(v string) *LabelUpdateOne {
+func (_u *TagUpdateOne) SetName(v string) *TagUpdateOne {
 	_u.mutation.SetName(v)
 	return _u
 }
 
 // SetNillableName sets the "name" field if the given value is not nil.
-func (_u *LabelUpdateOne) SetNillableName(v *string) *LabelUpdateOne {
+func (_u *TagUpdateOne) SetNillableName(v *string) *TagUpdateOne {
 	if v != nil {
 		_u.SetName(*v)
 	}
@@ -353,13 +353,13 @@ func (_u *LabelUpdateOne) SetNillableName(v *string) *LabelUpdateOne {
 }
 
 // SetDescription sets the "description" field.
-func (_u *LabelUpdateOne) SetDescription(v string) *LabelUpdateOne {
+func (_u *TagUpdateOne) SetDescription(v string) *TagUpdateOne {
 	_u.mutation.SetDescription(v)
 	return _u
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (_u *LabelUpdateOne) SetNillableDescription(v *string) *LabelUpdateOne {
+func (_u *TagUpdateOne) SetNillableDescription(v *string) *TagUpdateOne {
 	if v != nil {
 		_u.SetDescription(*v)
 	}
@@ -367,19 +367,19 @@ func (_u *LabelUpdateOne) SetNillableDescription(v *string) *LabelUpdateOne {
 }
 
 // ClearDescription clears the value of the "description" field.
-func (_u *LabelUpdateOne) ClearDescription() *LabelUpdateOne {
+func (_u *TagUpdateOne) ClearDescription() *TagUpdateOne {
 	_u.mutation.ClearDescription()
 	return _u
 }
 
 // SetColor sets the "color" field.
-func (_u *LabelUpdateOne) SetColor(v string) *LabelUpdateOne {
+func (_u *TagUpdateOne) SetColor(v string) *TagUpdateOne {
 	_u.mutation.SetColor(v)
 	return _u
 }
 
 // SetNillableColor sets the "color" field if the given value is not nil.
-func (_u *LabelUpdateOne) SetNillableColor(v *string) *LabelUpdateOne {
+func (_u *TagUpdateOne) SetNillableColor(v *string) *TagUpdateOne {
 	if v != nil {
 		_u.SetColor(*v)
 	}
@@ -387,30 +387,30 @@ func (_u *LabelUpdateOne) SetNillableColor(v *string) *LabelUpdateOne {
 }
 
 // ClearColor clears the value of the "color" field.
-func (_u *LabelUpdateOne) ClearColor() *LabelUpdateOne {
+func (_u *TagUpdateOne) ClearColor() *TagUpdateOne {
 	_u.mutation.ClearColor()
 	return _u
 }
 
 // SetGroupID sets the "group" edge to the Group entity by ID.
-func (_u *LabelUpdateOne) SetGroupID(id uuid.UUID) *LabelUpdateOne {
+func (_u *TagUpdateOne) SetGroupID(id uuid.UUID) *TagUpdateOne {
 	_u.mutation.SetGroupID(id)
 	return _u
 }
 
 // SetGroup sets the "group" edge to the Group entity.
-func (_u *LabelUpdateOne) SetGroup(v *Group) *LabelUpdateOne {
+func (_u *TagUpdateOne) SetGroup(v *Group) *TagUpdateOne {
 	return _u.SetGroupID(v.ID)
 }
 
 // AddItemIDs adds the "items" edge to the Item entity by IDs.
-func (_u *LabelUpdateOne) AddItemIDs(ids ...uuid.UUID) *LabelUpdateOne {
+func (_u *TagUpdateOne) AddItemIDs(ids ...uuid.UUID) *TagUpdateOne {
 	_u.mutation.AddItemIDs(ids...)
 	return _u
 }
 
 // AddItems adds the "items" edges to the Item entity.
-func (_u *LabelUpdateOne) AddItems(v ...*Item) *LabelUpdateOne {
+func (_u *TagUpdateOne) AddItems(v ...*Item) *TagUpdateOne {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
@@ -418,31 +418,31 @@ func (_u *LabelUpdateOne) AddItems(v ...*Item) *LabelUpdateOne {
 	return _u.AddItemIDs(ids...)
 }
 
-// Mutation returns the LabelMutation object of the builder.
-func (_u *LabelUpdateOne) Mutation() *LabelMutation {
+// Mutation returns the TagMutation object of the builder.
+func (_u *TagUpdateOne) Mutation() *TagMutation {
 	return _u.mutation
 }
 
 // ClearGroup clears the "group" edge to the Group entity.
-func (_u *LabelUpdateOne) ClearGroup() *LabelUpdateOne {
+func (_u *TagUpdateOne) ClearGroup() *TagUpdateOne {
 	_u.mutation.ClearGroup()
 	return _u
 }
 
 // ClearItems clears all "items" edges to the Item entity.
-func (_u *LabelUpdateOne) ClearItems() *LabelUpdateOne {
+func (_u *TagUpdateOne) ClearItems() *TagUpdateOne {
 	_u.mutation.ClearItems()
 	return _u
 }
 
 // RemoveItemIDs removes the "items" edge to Item entities by IDs.
-func (_u *LabelUpdateOne) RemoveItemIDs(ids ...uuid.UUID) *LabelUpdateOne {
+func (_u *TagUpdateOne) RemoveItemIDs(ids ...uuid.UUID) *TagUpdateOne {
 	_u.mutation.RemoveItemIDs(ids...)
 	return _u
 }
 
 // RemoveItems removes "items" edges to Item entities.
-func (_u *LabelUpdateOne) RemoveItems(v ...*Item) *LabelUpdateOne {
+func (_u *TagUpdateOne) RemoveItems(v ...*Item) *TagUpdateOne {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
@@ -450,27 +450,27 @@ func (_u *LabelUpdateOne) RemoveItems(v ...*Item) *LabelUpdateOne {
 	return _u.RemoveItemIDs(ids...)
 }
 
-// Where appends a list predicates to the LabelUpdate builder.
-func (_u *LabelUpdateOne) Where(ps ...predicate.Label) *LabelUpdateOne {
+// Where appends a list predicates to the TagUpdate builder.
+func (_u *TagUpdateOne) Where(ps ...predicate.Tag) *TagUpdateOne {
 	_u.mutation.Where(ps...)
 	return _u
 }
 
 // Select allows selecting one or more fields (columns) of the returned entity.
 // The default is selecting all fields defined in the entity schema.
-func (_u *LabelUpdateOne) Select(field string, fields ...string) *LabelUpdateOne {
+func (_u *TagUpdateOne) Select(field string, fields ...string) *TagUpdateOne {
 	_u.fields = append([]string{field}, fields...)
 	return _u
 }
 
-// Save executes the query and returns the updated Label entity.
-func (_u *LabelUpdateOne) Save(ctx context.Context) (*Label, error) {
+// Save executes the query and returns the updated Tag entity.
+func (_u *TagUpdateOne) Save(ctx context.Context) (*Tag, error) {
 	_u.defaults()
 	return withHooks(ctx, _u.sqlSave, _u.mutation, _u.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (_u *LabelUpdateOne) SaveX(ctx context.Context) *Label {
+func (_u *TagUpdateOne) SaveX(ctx context.Context) *Tag {
 	node, err := _u.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -479,67 +479,67 @@ func (_u *LabelUpdateOne) SaveX(ctx context.Context) *Label {
 }
 
 // Exec executes the query on the entity.
-func (_u *LabelUpdateOne) Exec(ctx context.Context) error {
+func (_u *TagUpdateOne) Exec(ctx context.Context) error {
 	_, err := _u.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_u *LabelUpdateOne) ExecX(ctx context.Context) {
+func (_u *TagUpdateOne) ExecX(ctx context.Context) {
 	if err := _u.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (_u *LabelUpdateOne) defaults() {
+func (_u *TagUpdateOne) defaults() {
 	if _, ok := _u.mutation.UpdatedAt(); !ok {
-		v := label.UpdateDefaultUpdatedAt()
+		v := tag.UpdateDefaultUpdatedAt()
 		_u.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (_u *LabelUpdateOne) check() error {
+func (_u *TagUpdateOne) check() error {
 	if v, ok := _u.mutation.Name(); ok {
-		if err := label.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Label.name": %w`, err)}
+		if err := tag.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Tag.name": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.Description(); ok {
-		if err := label.DescriptionValidator(v); err != nil {
-			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Label.description": %w`, err)}
+		if err := tag.DescriptionValidator(v); err != nil {
+			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Tag.description": %w`, err)}
 		}
 	}
 	if v, ok := _u.mutation.Color(); ok {
-		if err := label.ColorValidator(v); err != nil {
-			return &ValidationError{Name: "color", err: fmt.Errorf(`ent: validator failed for field "Label.color": %w`, err)}
+		if err := tag.ColorValidator(v); err != nil {
+			return &ValidationError{Name: "color", err: fmt.Errorf(`ent: validator failed for field "Tag.color": %w`, err)}
 		}
 	}
 	if _u.mutation.GroupCleared() && len(_u.mutation.GroupIDs()) > 0 {
-		return errors.New(`ent: clearing a required unique edge "Label.group"`)
+		return errors.New(`ent: clearing a required unique edge "Tag.group"`)
 	}
 	return nil
 }
 
-func (_u *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error) {
+func (_u *TagUpdateOne) sqlSave(ctx context.Context) (_node *Tag, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(label.Table, label.Columns, sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID))
+	_spec := sqlgraph.NewUpdateSpec(tag.Table, tag.Columns, sqlgraph.NewFieldSpec(tag.FieldID, field.TypeUUID))
 	id, ok := _u.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Label.id" for update`)}
+		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Tag.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
 	if fields := _u.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, label.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, tag.FieldID)
 		for _, f := range fields {
-			if !label.ValidColumn(f) {
+			if !tag.ValidColumn(f) {
 				return nil, &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 			}
-			if f != label.FieldID {
+			if f != tag.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, f)
 			}
 		}
@@ -552,29 +552,29 @@ func (_u *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error)
 		}
 	}
 	if value, ok := _u.mutation.UpdatedAt(); ok {
-		_spec.SetField(label.FieldUpdatedAt, field.TypeTime, value)
+		_spec.SetField(tag.FieldUpdatedAt, field.TypeTime, value)
 	}
 	if value, ok := _u.mutation.Name(); ok {
-		_spec.SetField(label.FieldName, field.TypeString, value)
+		_spec.SetField(tag.FieldName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.Description(); ok {
-		_spec.SetField(label.FieldDescription, field.TypeString, value)
+		_spec.SetField(tag.FieldDescription, field.TypeString, value)
 	}
 	if _u.mutation.DescriptionCleared() {
-		_spec.ClearField(label.FieldDescription, field.TypeString)
+		_spec.ClearField(tag.FieldDescription, field.TypeString)
 	}
 	if value, ok := _u.mutation.Color(); ok {
-		_spec.SetField(label.FieldColor, field.TypeString, value)
+		_spec.SetField(tag.FieldColor, field.TypeString, value)
 	}
 	if _u.mutation.ColorCleared() {
-		_spec.ClearField(label.FieldColor, field.TypeString)
+		_spec.ClearField(tag.FieldColor, field.TypeString)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   label.GroupTable,
-			Columns: []string{label.GroupColumn},
+			Table:   tag.GroupTable,
+			Columns: []string{tag.GroupColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
@@ -586,8 +586,8 @@ func (_u *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error)
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   label.GroupTable,
-			Columns: []string{label.GroupColumn},
+			Table:   tag.GroupTable,
+			Columns: []string{tag.GroupColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
@@ -602,8 +602,8 @@ func (_u *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error)
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   label.ItemsTable,
-			Columns: label.ItemsPrimaryKey,
+			Table:   tag.ItemsTable,
+			Columns: tag.ItemsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
@@ -615,8 +615,8 @@ func (_u *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error)
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   label.ItemsTable,
-			Columns: label.ItemsPrimaryKey,
+			Table:   tag.ItemsTable,
+			Columns: tag.ItemsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
@@ -631,8 +631,8 @@ func (_u *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error)
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   label.ItemsTable,
-			Columns: label.ItemsPrimaryKey,
+			Table:   tag.ItemsTable,
+			Columns: tag.ItemsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
@@ -643,12 +643,12 @@ func (_u *LabelUpdateOne) sqlSave(ctx context.Context) (_node *Label, err error)
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
-	_node = &Label{config: _u.config}
+	_node = &Tag{config: _u.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
 	if err = sqlgraph.UpdateNode(ctx, _u.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{label.Label}
+			err = &NotFoundError{tag.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}

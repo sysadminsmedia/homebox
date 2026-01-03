@@ -11,11 +11,11 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 )
 
-// Label is the model entity for the Label schema.
-type Label struct {
+// Tag is the model entity for the Tag schema.
+type Tag struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uuid.UUID `json:"id,omitempty"`
@@ -30,14 +30,14 @@ type Label struct {
 	// Color holds the value of the "color" field.
 	Color string `json:"color,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the LabelQuery when eager-loading is set.
-	Edges        LabelEdges `json:"edges"`
-	group_labels *uuid.UUID
+	// The values are being populated by the TagQuery when eager-loading is set.
+	Edges        TagEdges `json:"edges"`
+	group_tags   *uuid.UUID
 	selectValues sql.SelectValues
 }
 
-// LabelEdges holds the relations/edges for other nodes in the graph.
-type LabelEdges struct {
+// TagEdges holds the relations/edges for other nodes in the graph.
+type TagEdges struct {
 	// Group holds the value of the group edge.
 	Group *Group `json:"group,omitempty"`
 	// Items holds the value of the items edge.
@@ -49,7 +49,7 @@ type LabelEdges struct {
 
 // GroupOrErr returns the Group value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
-func (e LabelEdges) GroupOrErr() (*Group, error) {
+func (e TagEdges) GroupOrErr() (*Group, error) {
 	if e.Group != nil {
 		return e.Group, nil
 	} else if e.loadedTypes[0] {
@@ -60,7 +60,7 @@ func (e LabelEdges) GroupOrErr() (*Group, error) {
 
 // ItemsOrErr returns the Items value or an error if the edge
 // was not loaded in eager-loading.
-func (e LabelEdges) ItemsOrErr() ([]*Item, error) {
+func (e TagEdges) ItemsOrErr() ([]*Item, error) {
 	if e.loadedTypes[1] {
 		return e.Items, nil
 	}
@@ -68,17 +68,17 @@ func (e LabelEdges) ItemsOrErr() ([]*Item, error) {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*Label) scanValues(columns []string) ([]any, error) {
+func (*Tag) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case label.FieldName, label.FieldDescription, label.FieldColor:
+		case tag.FieldName, tag.FieldDescription, tag.FieldColor:
 			values[i] = new(sql.NullString)
-		case label.FieldCreatedAt, label.FieldUpdatedAt:
+		case tag.FieldCreatedAt, tag.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case label.FieldID:
+		case tag.FieldID:
 			values[i] = new(uuid.UUID)
-		case label.ForeignKeys[0]: // group_labels
+		case tag.ForeignKeys[0]: // group_tags
 			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
@@ -88,55 +88,55 @@ func (*Label) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the Label fields.
-func (_m *Label) assignValues(columns []string, values []any) error {
+// to the Tag fields.
+func (_m *Tag) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case label.FieldID:
+		case tag.FieldID:
 			if value, ok := values[i].(*uuid.UUID); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value != nil {
 				_m.ID = *value
 			}
-		case label.FieldCreatedAt:
+		case tag.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
 			} else if value.Valid {
 				_m.CreatedAt = value.Time
 			}
-		case label.FieldUpdatedAt:
+		case tag.FieldUpdatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				_m.UpdatedAt = value.Time
 			}
-		case label.FieldName:
+		case tag.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
 				_m.Name = value.String
 			}
-		case label.FieldDescription:
+		case tag.FieldDescription:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field description", values[i])
 			} else if value.Valid {
 				_m.Description = value.String
 			}
-		case label.FieldColor:
+		case tag.FieldColor:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field color", values[i])
 			} else if value.Valid {
 				_m.Color = value.String
 			}
-		case label.ForeignKeys[0]:
+		case tag.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
-				return fmt.Errorf("unexpected type %T for field group_labels", values[i])
+				return fmt.Errorf("unexpected type %T for field group_tags", values[i])
 			} else if value.Valid {
-				_m.group_labels = new(uuid.UUID)
-				*_m.group_labels = *value.S.(*uuid.UUID)
+				_m.group_tags = new(uuid.UUID)
+				*_m.group_tags = *value.S.(*uuid.UUID)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -145,44 +145,44 @@ func (_m *Label) assignValues(columns []string, values []any) error {
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the Label.
+// Value returns the ent.Value that was dynamically selected and assigned to the Tag.
 // This includes values selected through modifiers, order, etc.
-func (_m *Label) Value(name string) (ent.Value, error) {
+func (_m *Tag) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
-// QueryGroup queries the "group" edge of the Label entity.
-func (_m *Label) QueryGroup() *GroupQuery {
-	return NewLabelClient(_m.config).QueryGroup(_m)
+// QueryGroup queries the "group" edge of the Tag entity.
+func (_m *Tag) QueryGroup() *GroupQuery {
+	return NewTagClient(_m.config).QueryGroup(_m)
 }
 
-// QueryItems queries the "items" edge of the Label entity.
-func (_m *Label) QueryItems() *ItemQuery {
-	return NewLabelClient(_m.config).QueryItems(_m)
+// QueryItems queries the "items" edge of the Tag entity.
+func (_m *Tag) QueryItems() *ItemQuery {
+	return NewTagClient(_m.config).QueryItems(_m)
 }
 
-// Update returns a builder for updating this Label.
-// Note that you need to call Label.Unwrap() before calling this method if this Label
+// Update returns a builder for updating this Tag.
+// Note that you need to call Tag.Unwrap() before calling this method if this Tag
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (_m *Label) Update() *LabelUpdateOne {
-	return NewLabelClient(_m.config).UpdateOne(_m)
+func (_m *Tag) Update() *TagUpdateOne {
+	return NewTagClient(_m.config).UpdateOne(_m)
 }
 
-// Unwrap unwraps the Label entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the Tag entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (_m *Label) Unwrap() *Label {
+func (_m *Tag) Unwrap() *Tag {
 	_tx, ok := _m.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: Label is not a transactional entity")
+		panic("ent: Tag is not a transactional entity")
 	}
 	_m.config.driver = _tx.drv
 	return _m
 }
 
 // String implements the fmt.Stringer.
-func (_m *Label) String() string {
+func (_m *Tag) String() string {
 	var builder strings.Builder
-	builder.WriteString("Label(")
+	builder.WriteString("Tag(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", _m.ID))
 	builder.WriteString("created_at=")
 	builder.WriteString(_m.CreatedAt.Format(time.ANSIC))
@@ -202,5 +202,5 @@ func (_m *Label) String() string {
 	return builder.String()
 }
 
-// Labels is a parsable slice of Label.
-type Labels []*Label
+// Tags is a parsable slice of Tag.
+type Tags []*Tag

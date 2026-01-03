@@ -29,8 +29,8 @@ const (
 	EdgeLocations = "locations"
 	// EdgeItems holds the string denoting the items edge name in mutations.
 	EdgeItems = "items"
-	// EdgeLabels holds the string denoting the labels edge name in mutations.
-	EdgeLabels = "labels"
+	// EdgeTags holds the string denoting the tags edge name in mutations.
+	EdgeTags = "tags"
 	// EdgeInvitationTokens holds the string denoting the invitation_tokens edge name in mutations.
 	EdgeInvitationTokens = "invitation_tokens"
 	// EdgeNotifiers holds the string denoting the notifiers edge name in mutations.
@@ -60,13 +60,13 @@ const (
 	ItemsInverseTable = "items"
 	// ItemsColumn is the table column denoting the items relation/edge.
 	ItemsColumn = "group_items"
-	// LabelsTable is the table that holds the labels relation/edge.
-	LabelsTable = "labels"
-	// LabelsInverseTable is the table name for the Label entity.
-	// It exists in this package in order to avoid circular dependency with the "label" package.
-	LabelsInverseTable = "labels"
-	// LabelsColumn is the table column denoting the labels relation/edge.
-	LabelsColumn = "group_labels"
+	// TagsTable is the table that holds the tags relation/edge.
+	TagsTable = "tags"
+	// TagsInverseTable is the table name for the Tag entity.
+	// It exists in this package in order to avoid circular dependency with the "tag" package.
+	TagsInverseTable = "tags"
+	// TagsColumn is the table column denoting the tags relation/edge.
+	TagsColumn = "group_tags"
 	// InvitationTokensTable is the table that holds the invitation_tokens relation/edge.
 	InvitationTokensTable = "group_invitation_tokens"
 	// InvitationTokensInverseTable is the table name for the GroupInvitationToken entity.
@@ -194,17 +194,17 @@ func ByItems(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByLabelsCount orders the results by labels count.
-func ByLabelsCount(opts ...sql.OrderTermOption) OrderOption {
+// ByTagsCount orders the results by tags count.
+func ByTagsCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newLabelsStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newTagsStep(), opts...)
 	}
 }
 
-// ByLabels orders the results by labels terms.
-func ByLabels(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByTags orders the results by tags terms.
+func ByTags(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newLabelsStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newTagsStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -270,11 +270,11 @@ func newItemsStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, ItemsTable, ItemsColumn),
 	)
 }
-func newLabelsStep() *sqlgraph.Step {
+func newTagsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(LabelsInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, LabelsTable, LabelsColumn),
+		sqlgraph.To(TagsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, TagsTable, TagsColumn),
 	)
 }
 func newInvitationTokensStep() *sqlgraph.Step {

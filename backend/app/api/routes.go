@@ -97,7 +97,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Get("/groups/statistics", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatistics(), userMW...))
 		r.Get("/groups/statistics/purchase-price", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatisticsPriceOverTime(), userMW...))
 		r.Get("/groups/statistics/locations", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatisticsLocations(), userMW...))
-		r.Get("/groups/statistics/labels", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatisticsLabels(), userMW...))
+		r.Get("/groups/statistics/tags", chain.ToHandlerFunc(v1Ctrl.HandleGroupStatisticsTags(), userMW...))
 
 		// TODO: I don't like /groups being the URL for users
 		r.Get("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupGet(), userMW...))
@@ -117,11 +117,11 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Put("/locations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleLocationUpdate(), userMW...))
 		r.Delete("/locations/{id}", chain.ToHandlerFunc(v1Ctrl.HandleLocationDelete(), userMW...))
 
-		r.Get("/labels", chain.ToHandlerFunc(v1Ctrl.HandleLabelsGetAll(), userMW...))
-		r.Post("/labels", chain.ToHandlerFunc(v1Ctrl.HandleLabelsCreate(), userMW...))
-		r.Get("/labels/{id}", chain.ToHandlerFunc(v1Ctrl.HandleLabelGet(), userMW...))
-		r.Put("/labels/{id}", chain.ToHandlerFunc(v1Ctrl.HandleLabelUpdate(), userMW...))
-		r.Delete("/labels/{id}", chain.ToHandlerFunc(v1Ctrl.HandleLabelDelete(), userMW...))
+		r.Get("/tags", chain.ToHandlerFunc(v1Ctrl.HandleTagsGetAll(), userMW...))
+		r.Post("/tags", chain.ToHandlerFunc(v1Ctrl.HandleTagsCreate(), userMW...))
+		r.Get("/tags/{id}", chain.ToHandlerFunc(v1Ctrl.HandleTagGet(), userMW...))
+		r.Put("/tags/{id}", chain.ToHandlerFunc(v1Ctrl.HandleTagUpdate(), userMW...))
+		r.Delete("/tags/{id}", chain.ToHandlerFunc(v1Ctrl.HandleTagDelete(), userMW...))
 
 		r.Get("/items", chain.ToHandlerFunc(v1Ctrl.HandleItemsGetAll(), userMW...))
 		r.Post("/items", chain.ToHandlerFunc(v1Ctrl.HandleItemsCreate(), userMW...))

@@ -346,33 +346,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/groups/statistics/labels": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Statistics"
-                ],
-                "summary": "Get Label Statistics",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/repo.TotalsByOrganizer"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/v1/groups/statistics/locations": {
             "get": {
                 "security": [
@@ -438,6 +411,33 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/groups/statistics/tags": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Statistics"
+                ],
+                "summary": "Get Tags Statistics",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.TotalsByOrganizer"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/v1/items": {
             "get": {
                 "security": [
@@ -477,8 +477,8 @@ const docTemplate = `{
                             "type": "string"
                         },
                         "collectionFormat": "multi",
-                        "description": "label Ids",
-                        "name": "labels",
+                        "description": "tags Ids",
+                        "name": "tags",
                         "in": "query"
                     },
                     {
@@ -1264,158 +1264,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/labels": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Labels"
-                ],
-                "summary": "Get All Labels",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/repo.LabelOut"
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Labels"
-                ],
-                "summary": "Create Label",
-                "parameters": [
-                    {
-                        "description": "Label Data",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/repo.LabelCreate"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/repo.LabelSummary"
-                        }
-                    }
-                }
-            }
-        },
-        "/v1/labels/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Labels"
-                ],
-                "summary": "Get Label",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Label ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/repo.LabelOut"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Labels"
-                ],
-                "summary": "Update Label",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Label ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/repo.LabelOut"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "Bearer": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Labels"
-                ],
-                "summary": "Delete Label",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Label ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
-                    }
-                }
-            }
-        },
         "/v1/locations": {
             "get": {
                 "security": [
@@ -1994,6 +1842,158 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/v1.APISummary"
                         }
+                    }
+                }
+            }
+        },
+        "/v1/tags": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tags"
+                ],
+                "summary": "Get All Tags",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.TagOut"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tags"
+                ],
+                "summary": "Create Tag",
+                "parameters": [
+                    {
+                        "description": "Tag Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/repo.TagCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.TagSummary"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/tags/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tags"
+                ],
+                "summary": "Get Tag",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Tag ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.TagOut"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tags"
+                ],
+                "summary": "Update Tag",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Tag ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/repo.TagOut"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tags"
+                ],
+                "summary": "Delete Tag",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Tag ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
                     }
                 }
             }
@@ -2765,13 +2765,6 @@ const docTemplate = `{
                         "$ref": "#/definitions/ent.Item"
                     }
                 },
-                "labels": {
-                    "description": "Labels holds the value of the labels edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.Label"
-                    }
-                },
                 "locations": {
                     "description": "Locations holds the value of the locations edge.",
                     "type": "array",
@@ -2784,6 +2777,13 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/ent.Notifier"
+                    }
+                },
+                "tags": {
+                    "description": "Tags holds the value of the tags edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Tag"
                     }
                 },
                 "users": {
@@ -2993,13 +2993,6 @@ const docTemplate = `{
                         }
                     ]
                 },
-                "label": {
-                    "description": "Label holds the value of the label edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.Label"
-                    }
-                },
                 "location": {
                     "description": "Location holds the value of the location edge.",
                     "allOf": [
@@ -3022,6 +3015,13 @@ const docTemplate = `{
                             "$ref": "#/definitions/ent.Item"
                         }
                     ]
+                },
+                "tag": {
+                    "description": "Tag holds the value of the tag edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Tag"
+                    }
                 }
             }
         },
@@ -3110,13 +3110,6 @@ const docTemplate = `{
                     "description": "DefaultInsured holds the value of the \"default_insured\" field.",
                     "type": "boolean"
                 },
-                "default_label_ids": {
-                    "description": "Default label IDs for items created from this template",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "default_lifetime_warranty": {
                     "description": "DefaultLifetimeWarranty holds the value of the \"default_lifetime_warranty\" field.",
                     "type": "boolean"
@@ -3136,6 +3129,13 @@ const docTemplate = `{
                 "default_quantity": {
                     "description": "DefaultQuantity holds the value of the \"default_quantity\" field.",
                     "type": "integer"
+                },
+                "default_tag_ids": {
+                    "description": "Default tag IDs for items created from this template",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "default_warranty_details": {
                     "description": "DefaultWarrantyDetails holds the value of the \"default_warranty_details\" field.",
@@ -3208,63 +3208,6 @@ const docTemplate = `{
                             "$ref": "#/definitions/ent.Location"
                         }
                     ]
-                }
-            }
-        },
-        "ent.Label": {
-            "type": "object",
-            "properties": {
-                "color": {
-                    "description": "Color holds the value of the \"color\" field.",
-                    "type": "string"
-                },
-                "created_at": {
-                    "description": "CreatedAt holds the value of the \"created_at\" field.",
-                    "type": "string"
-                },
-                "description": {
-                    "description": "Description holds the value of the \"description\" field.",
-                    "type": "string"
-                },
-                "edges": {
-                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the LabelQuery when eager-loading is set.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.LabelEdges"
-                        }
-                    ]
-                },
-                "id": {
-                    "description": "ID of the ent.",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "Name holds the value of the \"name\" field.",
-                    "type": "string"
-                },
-                "updated_at": {
-                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
-                    "type": "string"
-                }
-            }
-        },
-        "ent.LabelEdges": {
-            "type": "object",
-            "properties": {
-                "group": {
-                    "description": "Group holds the value of the group edge.",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ent.Group"
-                        }
-                    ]
-                },
-                "items": {
-                    "description": "Items holds the value of the items edge.",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/ent.Item"
-                    }
                 }
             }
         },
@@ -3457,6 +3400,63 @@ const docTemplate = `{
                             "$ref": "#/definitions/ent.User"
                         }
                     ]
+                }
+            }
+        },
+        "ent.Tag": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "description": "Color holds the value of the \"color\" field.",
+                    "type": "string"
+                },
+                "created_at": {
+                    "description": "CreatedAt holds the value of the \"created_at\" field.",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "Description holds the value of the \"description\" field.",
+                    "type": "string"
+                },
+                "edges": {
+                    "description": "Edges holds the relations/edges for other nodes in the graph.\nThe values are being populated by the TagQuery when eager-loading is set.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.TagEdges"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "ID of the ent.",
+                    "type": "string"
+                },
+                "name": {
+                    "description": "Name holds the value of the \"name\" field.",
+                    "type": "string"
+                },
+                "updated_at": {
+                    "description": "UpdatedAt holds the value of the \"updated_at\" field.",
+                    "type": "string"
+                }
+            }
+        },
+        "ent.TagEdges": {
+            "type": "object",
+            "properties": {
+                "group": {
+                    "description": "Group holds the value of the group edge.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ent.Group"
+                        }
+                    ]
+                },
+                "items": {
+                    "description": "Items holds the value of the items edge.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ent.Item"
+                    }
                 }
             }
         },
@@ -3698,10 +3698,10 @@ const docTemplate = `{
                 "totalItems": {
                     "type": "integer"
                 },
-                "totalLabels": {
+                "totalLocations": {
                     "type": "integer"
                 },
-                "totalLocations": {
+                "totalTags": {
                     "type": "integer"
                 },
                 "totalUsers": {
@@ -3779,12 +3779,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 1000
                 },
-                "labelIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "locationId": {
                     "description": "Edges",
                     "type": "string"
@@ -3800,6 +3794,12 @@ const docTemplate = `{
                 },
                 "quantity": {
                     "type": "integer"
+                },
+                "tagIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -3864,12 +3864,6 @@ const docTemplate = `{
                 },
                 "insured": {
                     "type": "boolean"
-                },
-                "labels": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/repo.LabelSummary"
-                    }
                 },
                 "lifetimeWarranty": {
                     "description": "Warranty",
@@ -3939,6 +3933,12 @@ const docTemplate = `{
                 "syncChildItemsLocations": {
                     "type": "boolean"
                 },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.TagSummary"
+                    }
+                },
                 "thumbnailId": {
                     "type": "string",
                     "x-nullable": true,
@@ -3961,14 +3961,6 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "labelIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "x-nullable": true,
-                    "x-omitempty": true
-                },
                 "locationId": {
                     "type": "string",
                     "x-nullable": true,
@@ -3976,6 +3968,14 @@ const docTemplate = `{
                 },
                 "quantity": {
                     "type": "integer",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
+                "tagIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
                     "x-nullable": true,
                     "x-omitempty": true
                 }
@@ -4022,12 +4022,6 @@ const docTemplate = `{
                 "insured": {
                     "type": "boolean"
                 },
-                "labels": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/repo.LabelSummary"
-                    }
-                },
                 "location": {
                     "description": "Edges",
                     "allOf": [
@@ -4050,6 +4044,12 @@ const docTemplate = `{
                 "soldTime": {
                     "description": "Sale details",
                     "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.TagSummary"
+                    }
                 },
                 "thumbnailId": {
                     "type": "string",
@@ -4075,18 +4075,11 @@ const docTemplate = `{
                 "defaultInsured": {
                     "type": "boolean"
                 },
-                "defaultLabelIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "x-nullable": true
-                },
                 "defaultLifetimeWarranty": {
                     "type": "boolean"
                 },
                 "defaultLocationId": {
-                    "description": "Default location and labels",
+                    "description": "Default location and tags",
                     "type": "string",
                     "x-nullable": true
                 },
@@ -4108,6 +4101,13 @@ const docTemplate = `{
                 "defaultQuantity": {
                     "description": "Default values for items",
                     "type": "integer",
+                    "x-nullable": true
+                },
+                "defaultTagIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
                     "x-nullable": true
                 },
                 "defaultWarrantyDetails": {
@@ -4159,17 +4159,11 @@ const docTemplate = `{
                 "defaultInsured": {
                     "type": "boolean"
                 },
-                "defaultLabels": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/repo.TemplateLabelSummary"
-                    }
-                },
                 "defaultLifetimeWarranty": {
                     "type": "boolean"
                 },
                 "defaultLocation": {
-                    "description": "Default location and labels",
+                    "description": "Default location and tags",
                     "allOf": [
                         {
                             "$ref": "#/definitions/repo.TemplateLocationSummary"
@@ -4188,6 +4182,12 @@ const docTemplate = `{
                 "defaultQuantity": {
                     "description": "Default values for items",
                     "type": "integer"
+                },
+                "defaultTags": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/repo.TemplateTagSummary"
+                    }
                 },
                 "defaultWarrantyDetails": {
                     "type": "string"
@@ -4260,18 +4260,11 @@ const docTemplate = `{
                 "defaultInsured": {
                     "type": "boolean"
                 },
-                "defaultLabelIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "x-nullable": true
-                },
                 "defaultLifetimeWarranty": {
                     "type": "boolean"
                 },
                 "defaultLocationId": {
-                    "description": "Default location and labels",
+                    "description": "Default location and tags",
                     "type": "string",
                     "x-nullable": true
                 },
@@ -4293,6 +4286,13 @@ const docTemplate = `{
                 "defaultQuantity": {
                     "description": "Default values for items",
                     "type": "integer",
+                    "x-nullable": true
+                },
+                "defaultTagIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
                     "x-nullable": true
                 },
                 "defaultWarrantyDetails": {
@@ -4374,12 +4374,6 @@ const docTemplate = `{
                 "insured": {
                     "type": "boolean"
                 },
-                "labelIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "lifetimeWarranty": {
                     "description": "Warranty",
                     "type": "boolean"
@@ -4447,76 +4441,16 @@ const docTemplate = `{
                 "syncChildItemsLocations": {
                     "type": "boolean"
                 },
+                "tagIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "warrantyDetails": {
                     "type": "string"
                 },
                 "warrantyExpires": {
-                    "type": "string"
-                }
-            }
-        },
-        "repo.LabelCreate": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "color": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string",
-                    "maxLength": 1000
-                },
-                "name": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "minLength": 1
-                }
-            }
-        },
-        "repo.LabelOut": {
-            "type": "object",
-            "properties": {
-                "color": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "repo.LabelSummary": {
-            "type": "object",
-            "properties": {
-                "color": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updatedAt": {
                     "type": "string"
                 }
             }
@@ -4830,6 +4764,72 @@ const docTemplate = `{
                 }
             }
         },
+        "repo.TagCreate": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "color": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                }
+            }
+        },
+        "repo.TagOut": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.TagSummary": {
+            "type": "object",
+            "properties": {
+                "color": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "repo.TemplateField": {
             "type": "object",
             "properties": {
@@ -4847,7 +4847,7 @@ const docTemplate = `{
                 }
             }
         },
-        "repo.TemplateLabelSummary": {
+        "repo.TemplateLocationSummary": {
             "type": "object",
             "properties": {
                 "id": {
@@ -4858,7 +4858,7 @@ const docTemplate = `{
                 }
             }
         },
-        "repo.TemplateLocationSummary": {
+        "repo.TemplateTagSummary": {
             "type": "object",
             "properties": {
                 "id": {
@@ -5153,12 +5153,6 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 1000
                 },
-                "labelIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
                 "locationId": {
                     "type": "string"
                 },
@@ -5169,6 +5163,12 @@ const docTemplate = `{
                 },
                 "quantity": {
                     "type": "integer"
+                },
+                "tagIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -5222,13 +5222,13 @@ const docTemplate = `{
         "v1.WipeInventoryOptions": {
             "type": "object",
             "properties": {
-                "wipeLabels": {
-                    "type": "boolean"
-                },
                 "wipeLocations": {
                     "type": "boolean"
                 },
                 "wipeMaintenance": {
+                    "type": "boolean"
+                },
+                "wipeTags": {
                     "type": "boolean"
                 }
             }

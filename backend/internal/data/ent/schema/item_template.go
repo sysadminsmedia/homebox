@@ -86,10 +86,10 @@ func (ItemTemplate) Fields() []ent.Field {
 			Comment("Whether to include sold fields in items created from this template"),
 
 		// ------------------------------------
-		// Default labels (stored as JSON array of UUIDs to allow reuse across templates)
-		field.JSON("default_label_ids", []uuid.UUID{}).
+		// Default tags (stored as JSON array of UUIDs to allow reuse across templates)
+		field.JSON("default_tag_ids", []uuid.UUID{}).
 			Optional().
-			Comment("Default label IDs for items created from this template"),
+			Comment("Default tag IDs for items created from this template"),
 	}
 }
 

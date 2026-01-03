@@ -1,4 +1,4 @@
-import type { ItemSummary, LabelSummary, LocationSummary } from "~~/lib/api/types/data-contracts";
+import type { ItemSummary, TagSummary, LocationSummary } from "~~/lib/api/types/data-contracts";
 import type { UserClient } from "~~/lib/api/user";
 
 type SearchOptions = {
@@ -8,7 +8,7 @@ type SearchOptions = {
 export function useItemSearch(client: UserClient, opts?: SearchOptions) {
   const query = ref("");
   const locations = ref<LocationSummary[]>([]);
-  const labels = ref<LabelSummary[]>([]);
+  const tags = ref<TagSummary[]>([]);
   const results = ref<ItemSummary[]>([]);
   const includeArchived = ref(false);
   const isLoading = ref(false);
@@ -26,12 +26,12 @@ export function useItemSearch(client: UserClient, opts?: SearchOptions) {
     isLoading.value = true;
     try {
       const locIds = locations.value.map(l => l.id);
-      const labelIds = labels.value.map(l => l.id);
+      const tagIds = tags.value.map(t => t.id);
 
       const { data, error } = await client.items.getAll({
         q: searchQuery,
         locations: locIds,
-        labels: labelIds,
+        tags: tagIds,
         includeArchived: includeArchived.value,
       });
 
@@ -85,7 +85,7 @@ export function useItemSearch(client: UserClient, opts?: SearchOptions) {
     query,
     results,
     locations,
-    labels,
+    tags,
     isLoading,
     triggerSearch,
   };

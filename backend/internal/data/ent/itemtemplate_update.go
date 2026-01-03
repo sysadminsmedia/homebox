@@ -284,21 +284,21 @@ func (_u *ItemTemplateUpdate) SetNillableIncludeSoldFields(v *bool) *ItemTemplat
 	return _u
 }
 
-// SetDefaultLabelIds sets the "default_label_ids" field.
-func (_u *ItemTemplateUpdate) SetDefaultLabelIds(v []uuid.UUID) *ItemTemplateUpdate {
-	_u.mutation.SetDefaultLabelIds(v)
+// SetDefaultTagIds sets the "default_tag_ids" field.
+func (_u *ItemTemplateUpdate) SetDefaultTagIds(v []uuid.UUID) *ItemTemplateUpdate {
+	_u.mutation.SetDefaultTagIds(v)
 	return _u
 }
 
-// AppendDefaultLabelIds appends value to the "default_label_ids" field.
-func (_u *ItemTemplateUpdate) AppendDefaultLabelIds(v []uuid.UUID) *ItemTemplateUpdate {
-	_u.mutation.AppendDefaultLabelIds(v)
+// AppendDefaultTagIds appends value to the "default_tag_ids" field.
+func (_u *ItemTemplateUpdate) AppendDefaultTagIds(v []uuid.UUID) *ItemTemplateUpdate {
+	_u.mutation.AppendDefaultTagIds(v)
 	return _u
 }
 
-// ClearDefaultLabelIds clears the value of the "default_label_ids" field.
-func (_u *ItemTemplateUpdate) ClearDefaultLabelIds() *ItemTemplateUpdate {
-	_u.mutation.ClearDefaultLabelIds()
+// ClearDefaultTagIds clears the value of the "default_tag_ids" field.
+func (_u *ItemTemplateUpdate) ClearDefaultTagIds() *ItemTemplateUpdate {
+	_u.mutation.ClearDefaultTagIds()
 	return _u
 }
 
@@ -550,16 +550,16 @@ func (_u *ItemTemplateUpdate) sqlSave(ctx context.Context) (_node int, err error
 	if value, ok := _u.mutation.IncludeSoldFields(); ok {
 		_spec.SetField(itemtemplate.FieldIncludeSoldFields, field.TypeBool, value)
 	}
-	if value, ok := _u.mutation.DefaultLabelIds(); ok {
-		_spec.SetField(itemtemplate.FieldDefaultLabelIds, field.TypeJSON, value)
+	if value, ok := _u.mutation.DefaultTagIds(); ok {
+		_spec.SetField(itemtemplate.FieldDefaultTagIds, field.TypeJSON, value)
 	}
-	if value, ok := _u.mutation.AppendedDefaultLabelIds(); ok {
+	if value, ok := _u.mutation.AppendedDefaultTagIds(); ok {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, itemtemplate.FieldDefaultLabelIds, value)
+			sqljson.Append(u, itemtemplate.FieldDefaultTagIds, value)
 		})
 	}
-	if _u.mutation.DefaultLabelIdsCleared() {
-		_spec.ClearField(itemtemplate.FieldDefaultLabelIds, field.TypeJSON)
+	if _u.mutation.DefaultTagIdsCleared() {
+		_spec.ClearField(itemtemplate.FieldDefaultTagIds, field.TypeJSON)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -935,21 +935,21 @@ func (_u *ItemTemplateUpdateOne) SetNillableIncludeSoldFields(v *bool) *ItemTemp
 	return _u
 }
 
-// SetDefaultLabelIds sets the "default_label_ids" field.
-func (_u *ItemTemplateUpdateOne) SetDefaultLabelIds(v []uuid.UUID) *ItemTemplateUpdateOne {
-	_u.mutation.SetDefaultLabelIds(v)
+// SetDefaultTagIds sets the "default_tag_ids" field.
+func (_u *ItemTemplateUpdateOne) SetDefaultTagIds(v []uuid.UUID) *ItemTemplateUpdateOne {
+	_u.mutation.SetDefaultTagIds(v)
 	return _u
 }
 
-// AppendDefaultLabelIds appends value to the "default_label_ids" field.
-func (_u *ItemTemplateUpdateOne) AppendDefaultLabelIds(v []uuid.UUID) *ItemTemplateUpdateOne {
-	_u.mutation.AppendDefaultLabelIds(v)
+// AppendDefaultTagIds appends value to the "default_tag_ids" field.
+func (_u *ItemTemplateUpdateOne) AppendDefaultTagIds(v []uuid.UUID) *ItemTemplateUpdateOne {
+	_u.mutation.AppendDefaultTagIds(v)
 	return _u
 }
 
-// ClearDefaultLabelIds clears the value of the "default_label_ids" field.
-func (_u *ItemTemplateUpdateOne) ClearDefaultLabelIds() *ItemTemplateUpdateOne {
-	_u.mutation.ClearDefaultLabelIds()
+// ClearDefaultTagIds clears the value of the "default_tag_ids" field.
+func (_u *ItemTemplateUpdateOne) ClearDefaultTagIds() *ItemTemplateUpdateOne {
+	_u.mutation.ClearDefaultTagIds()
 	return _u
 }
 
@@ -1231,16 +1231,16 @@ func (_u *ItemTemplateUpdateOne) sqlSave(ctx context.Context) (_node *ItemTempla
 	if value, ok := _u.mutation.IncludeSoldFields(); ok {
 		_spec.SetField(itemtemplate.FieldIncludeSoldFields, field.TypeBool, value)
 	}
-	if value, ok := _u.mutation.DefaultLabelIds(); ok {
-		_spec.SetField(itemtemplate.FieldDefaultLabelIds, field.TypeJSON, value)
+	if value, ok := _u.mutation.DefaultTagIds(); ok {
+		_spec.SetField(itemtemplate.FieldDefaultTagIds, field.TypeJSON, value)
 	}
-	if value, ok := _u.mutation.AppendedDefaultLabelIds(); ok {
+	if value, ok := _u.mutation.AppendedDefaultTagIds(); ok {
 		_spec.AddModifier(func(u *sql.UpdateBuilder) {
-			sqljson.Append(u, itemtemplate.FieldDefaultLabelIds, value)
+			sqljson.Append(u, itemtemplate.FieldDefaultTagIds, value)
 		})
 	}
-	if _u.mutation.DefaultLabelIdsCleared() {
-		_spec.ClearField(itemtemplate.FieldDefaultLabelIds, field.TypeJSON)
+	if _u.mutation.DefaultTagIdsCleared() {
+		_spec.ClearField(itemtemplate.FieldDefaultTagIds, field.TypeJSON)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -13,24 +13,24 @@ import (
 	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 )
 
-// LabelCreate is the builder for creating a Label entity.
-type LabelCreate struct {
+// TagCreate is the builder for creating a Tag entity.
+type TagCreate struct {
 	config
-	mutation *LabelMutation
+	mutation *TagMutation
 	hooks    []Hook
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (_c *LabelCreate) SetCreatedAt(v time.Time) *LabelCreate {
+func (_c *TagCreate) SetCreatedAt(v time.Time) *TagCreate {
 	_c.mutation.SetCreatedAt(v)
 	return _c
 }
 
 // SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (_c *LabelCreate) SetNillableCreatedAt(v *time.Time) *LabelCreate {
+func (_c *TagCreate) SetNillableCreatedAt(v *time.Time) *TagCreate {
 	if v != nil {
 		_c.SetCreatedAt(*v)
 	}
@@ -38,13 +38,13 @@ func (_c *LabelCreate) SetNillableCreatedAt(v *time.Time) *LabelCreate {
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (_c *LabelCreate) SetUpdatedAt(v time.Time) *LabelCreate {
+func (_c *TagCreate) SetUpdatedAt(v time.Time) *TagCreate {
 	_c.mutation.SetUpdatedAt(v)
 	return _c
 }
 
 // SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (_c *LabelCreate) SetNillableUpdatedAt(v *time.Time) *LabelCreate {
+func (_c *TagCreate) SetNillableUpdatedAt(v *time.Time) *TagCreate {
 	if v != nil {
 		_c.SetUpdatedAt(*v)
 	}
@@ -52,19 +52,19 @@ func (_c *LabelCreate) SetNillableUpdatedAt(v *time.Time) *LabelCreate {
 }
 
 // SetName sets the "name" field.
-func (_c *LabelCreate) SetName(v string) *LabelCreate {
+func (_c *TagCreate) SetName(v string) *TagCreate {
 	_c.mutation.SetName(v)
 	return _c
 }
 
 // SetDescription sets the "description" field.
-func (_c *LabelCreate) SetDescription(v string) *LabelCreate {
+func (_c *TagCreate) SetDescription(v string) *TagCreate {
 	_c.mutation.SetDescription(v)
 	return _c
 }
 
 // SetNillableDescription sets the "description" field if the given value is not nil.
-func (_c *LabelCreate) SetNillableDescription(v *string) *LabelCreate {
+func (_c *TagCreate) SetNillableDescription(v *string) *TagCreate {
 	if v != nil {
 		_c.SetDescription(*v)
 	}
@@ -72,13 +72,13 @@ func (_c *LabelCreate) SetNillableDescription(v *string) *LabelCreate {
 }
 
 // SetColor sets the "color" field.
-func (_c *LabelCreate) SetColor(v string) *LabelCreate {
+func (_c *TagCreate) SetColor(v string) *TagCreate {
 	_c.mutation.SetColor(v)
 	return _c
 }
 
 // SetNillableColor sets the "color" field if the given value is not nil.
-func (_c *LabelCreate) SetNillableColor(v *string) *LabelCreate {
+func (_c *TagCreate) SetNillableColor(v *string) *TagCreate {
 	if v != nil {
 		_c.SetColor(*v)
 	}
@@ -86,13 +86,13 @@ func (_c *LabelCreate) SetNillableColor(v *string) *LabelCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *LabelCreate) SetID(v uuid.UUID) *LabelCreate {
+func (_c *TagCreate) SetID(v uuid.UUID) *TagCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
 
 // SetNillableID sets the "id" field if the given value is not nil.
-func (_c *LabelCreate) SetNillableID(v *uuid.UUID) *LabelCreate {
+func (_c *TagCreate) SetNillableID(v *uuid.UUID) *TagCreate {
 	if v != nil {
 		_c.SetID(*v)
 	}
@@ -100,24 +100,24 @@ func (_c *LabelCreate) SetNillableID(v *uuid.UUID) *LabelCreate {
 }
 
 // SetGroupID sets the "group" edge to the Group entity by ID.
-func (_c *LabelCreate) SetGroupID(id uuid.UUID) *LabelCreate {
+func (_c *TagCreate) SetGroupID(id uuid.UUID) *TagCreate {
 	_c.mutation.SetGroupID(id)
 	return _c
 }
 
 // SetGroup sets the "group" edge to the Group entity.
-func (_c *LabelCreate) SetGroup(v *Group) *LabelCreate {
+func (_c *TagCreate) SetGroup(v *Group) *TagCreate {
 	return _c.SetGroupID(v.ID)
 }
 
 // AddItemIDs adds the "items" edge to the Item entity by IDs.
-func (_c *LabelCreate) AddItemIDs(ids ...uuid.UUID) *LabelCreate {
+func (_c *TagCreate) AddItemIDs(ids ...uuid.UUID) *TagCreate {
 	_c.mutation.AddItemIDs(ids...)
 	return _c
 }
 
 // AddItems adds the "items" edges to the Item entity.
-func (_c *LabelCreate) AddItems(v ...*Item) *LabelCreate {
+func (_c *TagCreate) AddItems(v ...*Item) *TagCreate {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
@@ -125,19 +125,19 @@ func (_c *LabelCreate) AddItems(v ...*Item) *LabelCreate {
 	return _c.AddItemIDs(ids...)
 }
 
-// Mutation returns the LabelMutation object of the builder.
-func (_c *LabelCreate) Mutation() *LabelMutation {
+// Mutation returns the TagMutation object of the builder.
+func (_c *TagCreate) Mutation() *TagMutation {
 	return _c.mutation
 }
 
-// Save creates the Label in the database.
-func (_c *LabelCreate) Save(ctx context.Context) (*Label, error) {
+// Save creates the Tag in the database.
+func (_c *TagCreate) Save(ctx context.Context) (*Tag, error) {
 	_c.defaults()
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (_c *LabelCreate) SaveX(ctx context.Context) *Label {
+func (_c *TagCreate) SaveX(ctx context.Context) *Tag {
 	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -146,67 +146,67 @@ func (_c *LabelCreate) SaveX(ctx context.Context) *Label {
 }
 
 // Exec executes the query.
-func (_c *LabelCreate) Exec(ctx context.Context) error {
+func (_c *TagCreate) Exec(ctx context.Context) error {
 	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_c *LabelCreate) ExecX(ctx context.Context) {
+func (_c *TagCreate) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *LabelCreate) defaults() {
+func (_c *TagCreate) defaults() {
 	if _, ok := _c.mutation.CreatedAt(); !ok {
-		v := label.DefaultCreatedAt()
+		v := tag.DefaultCreatedAt()
 		_c.mutation.SetCreatedAt(v)
 	}
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		v := label.DefaultUpdatedAt()
+		v := tag.DefaultUpdatedAt()
 		_c.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := _c.mutation.ID(); !ok {
-		v := label.DefaultID()
+		v := tag.DefaultID()
 		_c.mutation.SetID(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
-func (_c *LabelCreate) check() error {
+func (_c *TagCreate) check() error {
 	if _, ok := _c.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Label.created_at"`)}
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "Tag.created_at"`)}
 	}
 	if _, ok := _c.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Label.updated_at"`)}
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "Tag.updated_at"`)}
 	}
 	if _, ok := _c.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Label.name"`)}
+		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "Tag.name"`)}
 	}
 	if v, ok := _c.mutation.Name(); ok {
-		if err := label.NameValidator(v); err != nil {
-			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Label.name": %w`, err)}
+		if err := tag.NameValidator(v); err != nil {
+			return &ValidationError{Name: "name", err: fmt.Errorf(`ent: validator failed for field "Tag.name": %w`, err)}
 		}
 	}
 	if v, ok := _c.mutation.Description(); ok {
-		if err := label.DescriptionValidator(v); err != nil {
-			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Label.description": %w`, err)}
+		if err := tag.DescriptionValidator(v); err != nil {
+			return &ValidationError{Name: "description", err: fmt.Errorf(`ent: validator failed for field "Tag.description": %w`, err)}
 		}
 	}
 	if v, ok := _c.mutation.Color(); ok {
-		if err := label.ColorValidator(v); err != nil {
-			return &ValidationError{Name: "color", err: fmt.Errorf(`ent: validator failed for field "Label.color": %w`, err)}
+		if err := tag.ColorValidator(v); err != nil {
+			return &ValidationError{Name: "color", err: fmt.Errorf(`ent: validator failed for field "Tag.color": %w`, err)}
 		}
 	}
 	if len(_c.mutation.GroupIDs()) == 0 {
-		return &ValidationError{Name: "group", err: errors.New(`ent: missing required edge "Label.group"`)}
+		return &ValidationError{Name: "group", err: errors.New(`ent: missing required edge "Tag.group"`)}
 	}
 	return nil
 }
 
-func (_c *LabelCreate) sqlSave(ctx context.Context) (*Label, error) {
+func (_c *TagCreate) sqlSave(ctx context.Context) (*Tag, error) {
 	if err := _c.check(); err != nil {
 		return nil, err
 	}
@@ -229,41 +229,41 @@ func (_c *LabelCreate) sqlSave(ctx context.Context) (*Label, error) {
 	return _node, nil
 }
 
-func (_c *LabelCreate) createSpec() (*Label, *sqlgraph.CreateSpec) {
+func (_c *TagCreate) createSpec() (*Tag, *sqlgraph.CreateSpec) {
 	var (
-		_node = &Label{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(label.Table, sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID))
+		_node = &Tag{config: _c.config}
+		_spec = sqlgraph.NewCreateSpec(tag.Table, sqlgraph.NewFieldSpec(tag.FieldID, field.TypeUUID))
 	)
 	if id, ok := _c.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = &id
 	}
 	if value, ok := _c.mutation.CreatedAt(); ok {
-		_spec.SetField(label.FieldCreatedAt, field.TypeTime, value)
+		_spec.SetField(tag.FieldCreatedAt, field.TypeTime, value)
 		_node.CreatedAt = value
 	}
 	if value, ok := _c.mutation.UpdatedAt(); ok {
-		_spec.SetField(label.FieldUpdatedAt, field.TypeTime, value)
+		_spec.SetField(tag.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
 	if value, ok := _c.mutation.Name(); ok {
-		_spec.SetField(label.FieldName, field.TypeString, value)
+		_spec.SetField(tag.FieldName, field.TypeString, value)
 		_node.Name = value
 	}
 	if value, ok := _c.mutation.Description(); ok {
-		_spec.SetField(label.FieldDescription, field.TypeString, value)
+		_spec.SetField(tag.FieldDescription, field.TypeString, value)
 		_node.Description = value
 	}
 	if value, ok := _c.mutation.Color(); ok {
-		_spec.SetField(label.FieldColor, field.TypeString, value)
+		_spec.SetField(tag.FieldColor, field.TypeString, value)
 		_node.Color = value
 	}
 	if nodes := _c.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
 			Inverse: true,
-			Table:   label.GroupTable,
-			Columns: []string{label.GroupColumn},
+			Table:   tag.GroupTable,
+			Columns: []string{tag.GroupColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(group.FieldID, field.TypeUUID),
@@ -272,15 +272,15 @@ func (_c *LabelCreate) createSpec() (*Label, *sqlgraph.CreateSpec) {
 		for _, k := range nodes {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
-		_node.group_labels = &nodes[0]
+		_node.group_tags = &nodes[0]
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := _c.mutation.ItemsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: false,
-			Table:   label.ItemsTable,
-			Columns: label.ItemsPrimaryKey,
+			Table:   tag.ItemsTable,
+			Columns: tag.ItemsPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(item.FieldID, field.TypeUUID),
@@ -294,27 +294,27 @@ func (_c *LabelCreate) createSpec() (*Label, *sqlgraph.CreateSpec) {
 	return _node, _spec
 }
 
-// LabelCreateBulk is the builder for creating many Label entities in bulk.
-type LabelCreateBulk struct {
+// TagCreateBulk is the builder for creating many Tag entities in bulk.
+type TagCreateBulk struct {
 	config
 	err      error
-	builders []*LabelCreate
+	builders []*TagCreate
 }
 
-// Save creates the Label entities in the database.
-func (_c *LabelCreateBulk) Save(ctx context.Context) ([]*Label, error) {
+// Save creates the Tag entities in the database.
+func (_c *TagCreateBulk) Save(ctx context.Context) ([]*Tag, error) {
 	if _c.err != nil {
 		return nil, _c.err
 	}
 	specs := make([]*sqlgraph.CreateSpec, len(_c.builders))
-	nodes := make([]*Label, len(_c.builders))
+	nodes := make([]*Tag, len(_c.builders))
 	mutators := make([]Mutator, len(_c.builders))
 	for i := range _c.builders {
 		func(i int, root context.Context) {
 			builder := _c.builders[i]
 			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
-				mutation, ok := m.(*LabelMutation)
+				mutation, ok := m.(*TagMutation)
 				if !ok {
 					return nil, fmt.Errorf("unexpected mutation type %T", m)
 				}
@@ -357,7 +357,7 @@ func (_c *LabelCreateBulk) Save(ctx context.Context) ([]*Label, error) {
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (_c *LabelCreateBulk) SaveX(ctx context.Context) []*Label {
+func (_c *TagCreateBulk) SaveX(ctx context.Context) []*Tag {
 	v, err := _c.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -366,13 +366,13 @@ func (_c *LabelCreateBulk) SaveX(ctx context.Context) []*Label {
 }
 
 // Exec executes the query.
-func (_c *LabelCreateBulk) Exec(ctx context.Context) error {
+func (_c *TagCreateBulk) Exec(ctx context.Context) error {
 	_, err := _c.Save(ctx)
 	return err
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_c *LabelCreateBulk) ExecX(ctx context.Context) {
+func (_c *TagCreateBulk) ExecX(ctx context.Context) {
 	if err := _c.Exec(ctx); err != nil {
 		panic(err)
 	}

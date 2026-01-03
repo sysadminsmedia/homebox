@@ -3,51 +3,51 @@
   import { Button } from "@/components/ui/button";
   import { useDialog } from "@/components/ui/dialog-provider";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
-  import type { ItemPatch, ItemSummary, LabelOut, LocationSummary } from "~/lib/api/types/data-contracts";
+  import type { ItemPatch, ItemSummary, TagOut, LocationSummary } from "~/lib/api/types/data-contracts";
   import LocationSelector from "~/components/Location/Selector.vue";
   import MdiLoading from "~icons/mdi/loading";
   import { toast } from "~/components/ui/sonner";
   import { useI18n } from "vue-i18n";
-  import LabelSelector from "~/components/Label/Selector.vue";
+  import TagSelector from "~/components/Tag/Selector.vue";
 
   const { closeDialog, registerOpenDialogCallback } = useDialog();
 
   const api = useUserApi();
   const { t } = useI18n();
-  const labelStore = useLabelStore();
+  const tagStore = useTagStore();
 
-  const allLabels = computed(() => labelStore.labels);
+  const allTags = computed(() => tagStore.tags);
 
   const items = ref<ItemSummary[]>([]);
   const saving = ref(false);
 
   const enabled = reactive({
     changeLocation: false,
-    addLabels: false,
-    removeLabels: false,
+    addTags: false,
+    removeTags: false,
   });
 
   const newLocation = ref<LocationSummary | null>(null);
-  const addLabels = ref<string[]>([]);
-  const removeLabels = ref<string[]>([]);
+  const addTags = ref<string[]>([]);
+  const removeTags = ref<string[]>([]);
 
-  const availableToAddLabels = ref<LabelOut[]>([]);
-  const availableToRemoveLabels = ref<LabelOut[]>([]);
+  const availableToAddTags = ref<TagOut[]>([]);
+  const availableToRemoveTags = ref<TagOut[]>([]);
 
-  const intersectLabelIds = (items: ItemSummary[]): string[] => {
+  const intersectTagIds = (items: ItemSummary[]): string[] => {
     if (items.length === 0) return [];
     const counts = new Map<string, number>();
     for (const it of items) {
       const seen = new Set<string>();
-      for (const l of it.labels || []) seen.add(l.id);
+      for (const l of it.tags || []) seen.add(l.id);
       for (const id of seen) counts.set(id, (counts.get(id) || 0) + 1);
     }
     return [...counts.entries()].filter(([_, c]) => c === items.length).map(([id]) => id);
   };
 
-  const unionLabelIds = (items: ItemSummary[]): string[] => {
+  const unionTagIds = (items: ItemSummary[]): string[] => {
     const s = new Set<string>();
-    for (const it of items) for (const l of it.labels || []) s.add(l.id);
+    for (const it of items) for (const l of it.tags || []) s.add(l.id);
     return Array.from(s);
   };
 
@@ -55,8 +55,8 @@
     const cleanup = registerOpenDialogCallback(DialogID.ItemChangeDetails, params => {
       items.value = params.items;
       enabled.changeLocation = params.changeLocation ?? false;
-      enabled.addLabels = params.addLabels ?? false;
-      enabled.removeLabels = params.removeLabels ?? false;
+      enabled.addTags = params.addTags ?? false;
+      enabled.removeTags = params.removeTags ?? false;
 
       if (params.changeLocation && params.items.length > 0) {
         // if all locations are the same then set the current location to said location
@@ -68,14 +68,14 @@
         }
       }
 
-      if (params.addLabels && params.items.length > 0) {
-        const intersection = intersectLabelIds(params.items);
-        availableToAddLabels.value = allLabels.value.filter(l => !intersection.includes(l.id));
+      if (params.addTags && params.items.length > 0) {
+        const intersection = intersectTagIds(params.items);
+        availableToAddTags.value = allTags.value.filter(l => !intersection.includes(l.id));
       }
 
-      if (params.removeLabels && params.items.length > 0) {
-        const union = unionLabelIds(params.items);
-        availableToRemoveLabels.value = allLabels.value.filter(l => union.includes(l.id));
+      if (params.removeTags && params.items.length > 0) {
+        const union = unionTagIds(params.items);
+        availableToRemoveTags.value = allTags.value.filter(l => union.includes(l.id));
       }
     });
 
@@ -84,8 +84,8 @@
 
   const save = async () => {
     const location = newLocation.value;
-    const labelsToAdd = addLabels.value;
-    const labelsToRemove = removeLabels.value;
+    const tagsToAdd = addTags.value;
+    const tagsToRemove = removeTags.value;
     if (!items.value.length || (enabled.changeLocation && !location)) {
       return;
     }
@@ -102,18 +102,18 @@
           patch.locationId = location!.id;
         }
 
-        let currentLabels = item.labels.map(l => l.id);
+        let currentTags = item.tags.map(l => l.id);
 
-        if (enabled.addLabels) {
-          currentLabels = currentLabels.concat(labelsToAdd);
+        if (enabled.addTags) {
+          currentTags = currentTags.concat(tagsToAdd);
         }
 
-        if (enabled.removeLabels) {
-          currentLabels = currentLabels.filter(l => !labelsToRemove.includes(l));
+        if (enabled.removeTags) {
+          currentTags = currentTags.filter(l => !tagsToRemove.includes(l));
         }
 
-        if (enabled.addLabels || enabled.removeLabels) {
-          patch.labelIds = Array.from(new Set(currentLabels));
+        if (enabled.addTags || enabled.removeTags) {
+          patch.tagIds = Array.from(new Set(currentTags));
         }
 
         const { error, data } = await api.items.patch(item.id, patch);
@@ -128,13 +128,13 @@
 
     closeDialog(DialogID.ItemChangeDetails, true);
     enabled.changeLocation = false;
-    enabled.addLabels = false;
-    enabled.removeLabels = false;
+    enabled.addTags = false;
+    enabled.removeTags = false;
     items.value = [];
-    addLabels.value = [];
-    removeLabels.value = [];
-    availableToAddLabels.value = [];
-    availableToRemoveLabels.value = [];
+    addTags.value = [];
+    removeTags.value = [];
+    availableToAddTags.value = [];
+    availableToRemoveTags.value = [];
     saving.value = false;
   };
 </script>
@@ -146,17 +146,17 @@
         <DialogTitle>{{ $t("components.item.view.change_details.title") }}</DialogTitle>
       </DialogHeader>
       <LocationSelector v-if="enabled.changeLocation" v-model="newLocation" />
-      <LabelSelector
-        v-if="enabled.addLabels"
-        v-model="addLabels"
-        :labels="availableToAddLabels"
-        :name="$t('components.item.view.change_details.add_labels')"
+      <TagSelector
+        v-if="enabled.addTags"
+        v-model="addTags"
+        :tags="availableToAddTags"
+        :name="$t('components.item.view.change_details.add_tags')"
       />
-      <LabelSelector
-        v-if="enabled.removeLabels"
-        v-model="removeLabels"
-        :labels="availableToRemoveLabels"
-        :name="$t('components.item.view.change_details.remove_labels')"
+      <TagSelector
+        v-if="enabled.removeTags"
+        v-model="removeTags"
+        :tags="availableToRemoveTags"
+        :name="$t('components.item.view.change_details.remove_tags')"
       />
       <DialogFooter>
         <Button type="submit" :disabled="saving || (enabled.changeLocation && !newLocation)" @click="save">

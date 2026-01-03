@@ -15,9 +15,9 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemfield"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 )
 
 // ItemCreate is the builder for creating a Item entity.
@@ -414,19 +414,19 @@ func (_c *ItemCreate) AddChildren(v ...*Item) *ItemCreate {
 	return _c.AddChildIDs(ids...)
 }
 
-// AddLabelIDs adds the "label" edge to the Label entity by IDs.
-func (_c *ItemCreate) AddLabelIDs(ids ...uuid.UUID) *ItemCreate {
-	_c.mutation.AddLabelIDs(ids...)
+// AddTagIDs adds the "tag" edge to the Tag entity by IDs.
+func (_c *ItemCreate) AddTagIDs(ids ...uuid.UUID) *ItemCreate {
+	_c.mutation.AddTagIDs(ids...)
 	return _c
 }
 
-// AddLabel adds the "label" edges to the Label entity.
-func (_c *ItemCreate) AddLabel(v ...*Label) *ItemCreate {
+// AddTag adds the "tag" edges to the Tag entity.
+func (_c *ItemCreate) AddTag(v ...*Tag) *ItemCreate {
 	ids := make([]uuid.UUID, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
-	return _c.AddLabelIDs(ids...)
+	return _c.AddTagIDs(ids...)
 }
 
 // SetLocationID sets the "location" edge to the Location entity by ID.
@@ -838,15 +838,15 @@ func (_c *ItemCreate) createSpec() (*Item, *sqlgraph.CreateSpec) {
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
-	if nodes := _c.mutation.LabelIDs(); len(nodes) > 0 {
+	if nodes := _c.mutation.TagIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2M,
 			Inverse: true,
-			Table:   item.LabelTable,
-			Columns: item.LabelPrimaryKey,
+			Table:   item.TagTable,
+			Columns: item.TagPrimaryKey,
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(label.FieldID, field.TypeUUID),
+				IDSpec: sqlgraph.NewFieldSpec(tag.FieldID, field.TypeUUID),
 			},
 		}
 		for _, k := range nodes {

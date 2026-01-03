@@ -36,7 +36,7 @@
   import ItemImageDialog from "~/components/Item/ImageDialog.vue";
   import ItemDuplicateSettings from "~/components/Item/DuplicateSettings.vue";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-  import LabelChip from "~/components/Label/Chip.vue";
+  import TagChip from "~/components/Tag/Chip.vue";
   import DateTime from "~/components/global/DateTime.vue";
   import LabelMaker from "~/components/global/LabelMaker.vue";
   import Markdown from "~/components/global/Markdown.vue";
@@ -588,7 +588,7 @@
       defaultLifetimeWarranty: item.value.lifetimeWarranty,
       defaultWarrantyDetails: item.value.warrantyDetails || "",
       defaultLocationId: item.value.location?.id || "",
-      defaultLabelIds: item.value.labels?.map(l => l.id) || [],
+      defaultTagIds: item.value.tags?.map(l => l.id) || [],
       includeWarrantyFields: !!(
         item.value.warrantyDetails ||
         item.value.lifetimeWarranty ||
@@ -684,7 +684,7 @@
                 {{ item ? item.name : "" }}
               </h1>
               <div class="flex flex-wrap gap-2 pb-1">
-                <LabelChip v-for="label in item?.labels || []" :key="label.id" :label="label" size="sm" />
+                <TagChip v-for="tag in item?.tags || []" :key="tag.id" :tag="tag" size="sm" />
               </div>
               <div class="flex flex-wrap gap-1 text-wrap text-xs">
                 <div>

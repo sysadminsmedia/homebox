@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script to create test data in HomeBox for upgrade testing
-# This script creates users, items, attachments, notifiers, locations, and labels
+# This script creates users, items, attachments, notifiers, locations, and tags
 
 set -e
 
@@ -128,19 +128,19 @@ create_location() {
     echo "$response"
 }
 
-# Function to create a label
-create_label() {
+# Function to create a tag
+create_tag() {
     local token=$1
     local name=$2
     local description=$3
     
-    echo "Creating label: $name" >&2
+    echo "Creating tag: $name" >&2
     
     local response=$(curl -s -X POST \
         -H "Authorization: Bearer $token" \
         -H "Content-Type: application/json" \
         -d "{\"name\":\"$name\",\"description\":\"$description\"}" \
-        "$API_URL/labels")
+        "$API_URL/tags")
     
     echo "$response"
 }
@@ -297,27 +297,27 @@ jq --arg loc1 "$location1_id" \
    '.locations = {"group1":[$loc1,$loc2],"group2":[$loc3]}' \
    "$TEST_DATA_FILE" > "$TEST_DATA_FILE.tmp" && mv "$TEST_DATA_FILE.tmp" "$TEST_DATA_FILE"
 
-echo "=== Step 4: Create labels for each group ==="
+echo "=== Step 4: Create tags for each group ==="
 
-# Create labels for group 1
-label1=$(create_label "$user1_token" "Electronics" "Electronic devices")
-label1_id=$(echo "$label1" | jq -r '.id // empty')
-echo "Created label: Electronics (ID: $label1_id)"
+# Create tags for group 1
+tag1=$(create_tag "$user1_token" "Electronics" "Electronic devices")
+tag1_id=$(echo "$tag1" | jq -r '.id // empty')
+echo "Created tag: Electronics (ID: $tag1_id)"
 
-label2=$(create_label "$user1_token" "Important" "High priority items")
-label2_id=$(echo "$label2" | jq -r '.id // empty')
-echo "Created label: Important (ID: $label2_id)"
+tag2=$(create_tag "$user1_token" "Important" "High priority items")
+tag2_id=$(echo "$tag2" | jq -r '.id // empty')
+echo "Created tag: Important (ID: $tag2_id)"
 
-# Create label for group 2
-label3=$(create_label "$user6_token" "Work Equipment" "Items for work")
-label3_id=$(echo "$label3" | jq -r '.id // empty')
-echo "Created label: Work Equipment (ID: $label3_id)"
+# Create tag for group 2
+tag3=$(create_tag "$user6_token" "Work Equipment" "Items for work")
+tag3_id=$(echo "$tag3" | jq -r '.id // empty')
+echo "Created tag: Work Equipment (ID: $tag3_id)"
 
-# Store labels
-jq --arg lab1 "$label1_id" \
-   --arg lab2 "$label2_id" \
-   --arg lab3 "$label3_id" \
-   '.labels = {"group1":[$lab1,$lab2],"group2":[$lab3]}' \
+# Store tags
+jq --arg tag1 "$tag1_id" \
+   --arg tag2 "$tag2_id" \
+   --arg tag3 "$tag3_id" \
+   '.tags = {"group1":[$tag1,$tag2],"group2":[$tag3]}' \
    "$TEST_DATA_FILE" > "$TEST_DATA_FILE.tmp" && mv "$TEST_DATA_FILE.tmp" "$TEST_DATA_FILE"
 
 echo "=== Step 5: Create test notifier ==="
@@ -400,7 +400,7 @@ echo "Test data file saved to: $TEST_DATA_FILE"
 echo "Summary:"
 echo "  - Users created: 7 (5 in group 1, 2 in group 2)"
 echo "  - Locations created: 3"
-echo "  - Labels created: 3"
+echo "  - Tags created: 3"
 echo "  - Notifiers created: 1"
 echo "  - Items created: 7"
 echo "  - Attachments created: 7"

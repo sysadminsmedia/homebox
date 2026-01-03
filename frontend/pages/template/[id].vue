@@ -18,8 +18,8 @@
   import DateTime from "~/components/global/DateTime.vue";
   import Markdown from "~/components/global/Markdown.vue";
   import LocationSelector from "~/components/Location/Selector.vue";
-  import LabelSelector from "~/components/Label/Selector.vue";
-  import { useLabelStore } from "~~/stores/labels";
+  import TagSelector from "~/components/Tag/Selector.vue";
+  import { useTagStore } from "~/stores/tags";
   import type { LocationOut } from "~~/lib/api/types/data-contracts";
 
   definePageMeta({
@@ -31,8 +31,8 @@
   const api = useUserApi();
   const confirm = useConfirm();
 
-  const labelStore = useLabelStore();
-  const labels = computed(() => labelStore.labels);
+  const tagStore = useTagStore();
+  const tags = computed(() => tagStore.tags);
 
   const templateId = computed<string>(() => route.params.id as string);
 
@@ -76,7 +76,7 @@
     defaultLifetimeWarranty: false,
     defaultWarrantyDetails: "",
     defaultLocation: null as LocationOut | null,
-    defaultLabelIds: [] as string[],
+    defaultTagIds: [] as string[],
     includeWarrantyFields: false,
     includePurchaseFields: false,
     includeSoldFields: false,
@@ -99,7 +99,7 @@
       defaultLifetimeWarranty: template.value.defaultLifetimeWarranty,
       defaultWarrantyDetails: template.value.defaultWarrantyDetails,
       defaultLocation: template.value.defaultLocation ?? null,
-      defaultLabelIds: template.value.defaultLabels?.map(l => l.id) ?? [],
+      defaultTagIds: template.value.defaultTags?.map(l => l.id) ?? [],
       includeWarrantyFields: template.value.includeWarrantyFields,
       includePurchaseFields: template.value.includePurchaseFields,
       includeSoldFields: template.value.includeSoldFields,
@@ -193,7 +193,7 @@
             v-model="updateData.defaultLocation"
             :label="$t('components.template.form.default_location')"
           />
-          <LabelSelector v-model="updateData.defaultLabelIds" :labels="labels ?? []" />
+          <TagSelector v-model="updateData.defaultTagIds" :tags="tags ?? []" />
           <div class="flex items-center gap-4">
             <div class="flex items-center gap-2">
               <Switch id="editInsured" v-model:checked="updateData.defaultInsured" />
@@ -304,9 +304,9 @@
               <dt class="text-muted-foreground">{{ $t("components.template.form.location") }}</dt>
               <dd>{{ template.defaultLocation.name }}</dd>
             </div>
-            <div v-if="template.defaultLabels && template.defaultLabels.length > 0" class="flex justify-between">
-              <dt class="text-muted-foreground">{{ $t("global.labels") }}</dt>
-              <dd>{{ template.defaultLabels.map(l => l.name).join(", ") }}</dd>
+            <div v-if="template.defaultTags && template.defaultTags.length > 0" class="flex justify-between">
+              <dt class="text-muted-foreground">{{ $t("global.tags") }}</dt>
+              <dd>{{ template.defaultTags.map(t => t.name).join(", ") }}</dd>
             </div>
             <div class="flex justify-between">
               <dt class="text-muted-foreground">{{ $t("global.insured") }}</dt>
