@@ -39,11 +39,15 @@ export function useUserApi(): UserClient {
 
   const requests = new Requests("", "", headers);
   requests.addResponseInterceptor(logger);
-  requests.addResponseInterceptor(r => {
+  requests.addResponseInterceptor(async r => {
     if (r.status === 401) {
       console.error("unauthorized request, invalidating session");
       authCtx.invalidateSession();
       navigateTo("/");
+    }
+
+    if (r.status === 403 && (await r.json()).error === "user does not have access to the requested tenant") {
+      prefs.value.collectionId = null;
     }
   });
 

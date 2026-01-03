@@ -35,9 +35,7 @@ export const useCollectionStore = defineStore("collection", {
         const { data: allGroups } = await api.group.get();
 
         const available = Array.isArray(allGroups)
-          ? (allGroups as Array<{ id: string; name: string }>)
-              .filter(g => (user.groupIds || []).includes(g.id))
-              .map(g => ({ id: g.id, name: g.name }))
+          ? (allGroups as Array<{ id: string; name: string }>).map(g => ({ id: g.id, name: g.name }))
           : [];
 
         this.collections = available;
