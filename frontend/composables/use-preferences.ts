@@ -26,6 +26,7 @@ export type LocationViewPreferences = {
   legacyImageFit: boolean;
   language?: string;
   overrideFormatLocale?: string;
+  collectionId?: string | null;
   duplicateSettings: DuplicateSettings;
   shownMultiTabWarning: boolean;
   quickActions: {
@@ -47,6 +48,7 @@ export function useViewPreferences(): Ref<LocationViewPreferences> {
       itemDisplayView: "card",
       theme: "homebox",
       itemsPerTablePage: 10,
+      collectionId: null,
       displayLegacyHeader: false,
       legacyImageFit: false,
       language: null,

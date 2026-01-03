@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 	"time"
 
@@ -64,7 +65,7 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 	case "":
 		log.Debug().Msg("creating new group")
 		creatingGroup = true
-		group, err = svc.repos.Groups.GroupCreate(ctx, "Home")
+		group, err = svc.repos.Groups.GroupCreate(ctx, fmt.Sprintf("%ss' Home", data.Name), uuid.Nil)
 		if err != nil {
 			log.Err(err).Msg("Failed to create group")
 			return repo.UserOut{}, err
@@ -81,12 +82,12 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 
 	hashed, _ := hasher.HashPassword(data.Password)
 	usrCreate := repo.UserCreate{
-		Name:        data.Name,
-		Email:       data.Email,
-		Password:    &hashed,
-		IsSuperuser: false,
-		GroupID:     group.ID,
-		IsOwner:     creatingGroup,
+		Name:           data.Name,
+		Email:          data.Email,
+		Password:       &hashed,
+		IsSuperuser:    false,
+		DefaultGroupID: group.ID,
+		IsOwner:        creatingGroup,
 	}
 
 	usr, err := svc.repos.Users.Create(ctx, usrCreate)
@@ -99,7 +100,7 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 	if creatingGroup {
 		log.Debug().Msg("creating default labels")
 		for _, label := range defaultLabels() {
-			_, err := svc.repos.Labels.Create(ctx, usr.GroupID, label)
+			_, err := svc.repos.Labels.Create(ctx, usr.DefaultGroupID, label)
 			if err != nil {
 				return repo.UserOut{}, err
 			}
@@ -107,7 +108,7 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 
 		log.Debug().Msg("creating default locations")
 		for _, location := range defaultLocations() {
-			_, err := svc.repos.Locations.Create(ctx, usr.GroupID, location)
+			_, err := svc.repos.Locations.Create(ctx, usr.DefaultGroupID, location)
 			if err != nil {
 				return repo.UserOut{}, err
 			}
@@ -280,19 +281,19 @@ func (svc *UserService) LoginOIDC(ctx context.Context, issuer, subject, email, n
 
 // registerOIDCUser creates a new user for OIDC authentication with issuer+subject identity.
 func (svc *UserService) registerOIDCUser(ctx context.Context, issuer, subject, email, name string) (repo.UserOut, error) {
-	group, err := svc.repos.Groups.GroupCreate(ctx, "Home")
+	group, err := svc.repos.Groups.GroupCreate(ctx, "Home", uuid.Nil)
 	if err != nil {
 		log.Err(err).Msg("Failed to create group for OIDC user")
 		return repo.UserOut{}, err
 	}
 
 	usrCreate := repo.UserCreate{
-		Name:        name,
-		Email:       email,
-		Password:    nil,
-		IsSuperuser: false,
-		GroupID:     group.ID,
-		IsOwner:     true,
+		Name:           name,
+		Email:          email,
+		Password:       nil,
+		IsSuperuser:    false,
+		DefaultGroupID: group.ID,
+		IsOwner:        true,
 	}
 
 	entUser, err := svc.repos.Users.CreateWithOIDC(ctx, usrCreate, issuer, subject)
@@ -368,4 +369,31 @@ func (svc *UserService) ChangePassword(ctx Context, current string, new string) 
 	}
 
 	return true
+}
+
+func (svc *UserService) EnsureUserPassword(ctx context.Context, email, password string) error {
+	usr, err := svc.repos.Users.GetOneEmailNoEdges(ctx, email)
+	if err != nil {
+		return err
+	}
+	match := false
+	if usr.PasswordHash != "" {
+		match, _ = hasher.CheckPasswordHash(password, usr.PasswordHash)
+	}
+	if !match {
+		hash, herr := hasher.HashPassword(password)
+		if herr != nil {
+			return herr
+		}
+		if cerr := svc.repos.Users.ChangePassword(ctx, usr.ID, hash); cerr != nil {
+			return cerr
+		}
+	}
+	return nil
+}
+
+// ExistsByEmail returns true if a user with the given email exists.
+func (svc *UserService) ExistsByEmail(ctx context.Context, email string) bool {
+	_, err := svc.repos.Users.GetOneEmailNoEdges(ctx, email)
+	return err == nil
 }

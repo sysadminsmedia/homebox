@@ -43,18 +43,18 @@ type (
 		Notes       string `json:"notes"       validate:"max=1000"`
 
 		// Default values for items
-		DefaultQuantity         *int    `json:"defaultQuantity,omitempty" extensions:"x-nullable"`
+		DefaultQuantity         *int    `json:"defaultQuantity,omitempty"        extensions:"x-nullable"`
 		DefaultInsured          bool    `json:"defaultInsured"`
-		DefaultName             *string `json:"defaultName,omitempty"   extensions:"x-nullable"          validate:"omitempty,max=255"`
-		DefaultDescription      *string `json:"defaultDescription,omitempty"   extensions:"x-nullable"   validate:"omitempty,max=1000"`
-		DefaultManufacturer     *string `json:"defaultManufacturer,omitempty" extensions:"x-nullable"    validate:"omitempty,max=255"`
-		DefaultModelNumber      *string `json:"defaultModelNumber,omitempty"  extensions:"x-nullable"    validate:"omitempty,max=255"`
+		DefaultName             *string `json:"defaultName,omitempty"            validate:"omitempty,max=255"  extensions:"x-nullable"`
+		DefaultDescription      *string `json:"defaultDescription,omitempty"     validate:"omitempty,max=1000" extensions:"x-nullable"`
+		DefaultManufacturer     *string `json:"defaultManufacturer,omitempty"    validate:"omitempty,max=255"  extensions:"x-nullable"`
+		DefaultModelNumber      *string `json:"defaultModelNumber,omitempty"     validate:"omitempty,max=255"  extensions:"x-nullable"`
 		DefaultLifetimeWarranty bool    `json:"defaultLifetimeWarranty"`
-		DefaultWarrantyDetails  *string `json:"defaultWarrantyDetails,omitempty" extensions:"x-nullable" validate:"omitempty,max=1000"`
+		DefaultWarrantyDetails  *string `json:"defaultWarrantyDetails,omitempty" validate:"omitempty,max=1000" extensions:"x-nullable"`
 
 		// Default location and labels
 		DefaultLocationID uuid.UUID    `json:"defaultLocationId,omitempty" extensions:"x-nullable"`
-		DefaultLabelIDs   *[]uuid.UUID `json:"defaultLabelIds,omitempty" extensions:"x-nullable"`
+		DefaultLabelIDs   *[]uuid.UUID `json:"defaultLabelIds,omitempty"   extensions:"x-nullable"`
 
 		// Metadata flags
 		IncludeWarrantyFields bool `json:"includeWarrantyFields"`
@@ -72,18 +72,18 @@ type (
 		Notes       string    `json:"notes"       validate:"max=1000"`
 
 		// Default values for items
-		DefaultQuantity         *int    `json:"defaultQuantity,omitempty" extensions:"x-nullable"`
+		DefaultQuantity         *int    `json:"defaultQuantity,omitempty"        extensions:"x-nullable"`
 		DefaultInsured          bool    `json:"defaultInsured"`
-		DefaultName             *string `json:"defaultName,omitempty"   extensions:"x-nullable"          validate:"omitempty,max=255"`
-		DefaultDescription      *string `json:"defaultDescription,omitempty"   extensions:"x-nullable"   validate:"omitempty,max=1000"`
-		DefaultManufacturer     *string `json:"defaultManufacturer,omitempty" extensions:"x-nullable"    validate:"omitempty,max=255"`
-		DefaultModelNumber      *string `json:"defaultModelNumber,omitempty"  extensions:"x-nullable"    validate:"omitempty,max=255"`
+		DefaultName             *string `json:"defaultName,omitempty"            validate:"omitempty,max=255"  extensions:"x-nullable"`
+		DefaultDescription      *string `json:"defaultDescription,omitempty"     validate:"omitempty,max=1000" extensions:"x-nullable"`
+		DefaultManufacturer     *string `json:"defaultManufacturer,omitempty"    validate:"omitempty,max=255"  extensions:"x-nullable"`
+		DefaultModelNumber      *string `json:"defaultModelNumber,omitempty"     validate:"omitempty,max=255"  extensions:"x-nullable"`
 		DefaultLifetimeWarranty bool    `json:"defaultLifetimeWarranty"`
-		DefaultWarrantyDetails  *string `json:"defaultWarrantyDetails,omitempty" extensions:"x-nullable" validate:"omitempty,max=1000"`
+		DefaultWarrantyDetails  *string `json:"defaultWarrantyDetails,omitempty" validate:"omitempty,max=1000" extensions:"x-nullable"`
 
 		// Default location and labels
 		DefaultLocationID uuid.UUID    `json:"defaultLocationId,omitempty" extensions:"x-nullable"`
-		DefaultLabelIDs   *[]uuid.UUID `json:"defaultLabelIds,omitempty" extensions:"x-nullable"`
+		DefaultLabelIDs   *[]uuid.UUID `json:"defaultLabelIds,omitempty"   extensions:"x-nullable"`
 
 		// Metadata flags
 		IncludeWarrantyFields bool `json:"includeWarrantyFields"`

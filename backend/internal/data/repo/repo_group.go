@@ -13,6 +13,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
 type GroupRepository struct {
@@ -105,8 +106,12 @@ type (
 	}
 )
 
-func (r *GroupRepository) GetAllGroups(ctx context.Context) ([]Group, error) {
-	return r.groupMapper.MapEachErr(r.db.Group.Query().All(ctx))
+func (r *GroupRepository) GetAllGroups(ctx context.Context, userID uuid.UUID) ([]Group, error) {
+	q := r.db.Group.Query()
+	if userID != uuid.Nil {
+		q.Where(group.HasUsersWith(user.ID(userID)))
+	}
+	return r.groupMapper.MapEachErr(q.All(ctx))
 }
 
 func (r *GroupRepository) StatsLocationsByPurchasePrice(ctx context.Context, gid uuid.UUID) ([]TotalsByOrganizer, error) {
@@ -223,7 +228,7 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 func (r *GroupRepository) StatsGroup(ctx context.Context, gid uuid.UUID) (GroupStatistics, error) {
 	q := `
 		SELECT
-            (SELECT COUNT(*) FROM users WHERE group_users = $2) AS total_users,
+            (SELECT COUNT(*) FROM user_groups WHERE group_id = $2) AS total_users,
             (SELECT COUNT(*) FROM items WHERE group_items = $2 AND items.archived = false) AS total_items,
             (SELECT COUNT(*) FROM locations WHERE group_locations = $2) AS total_locations,
             (SELECT COUNT(*) FROM labels WHERE group_labels = $2) AS total_labels,
@@ -252,10 +257,15 @@ func (r *GroupRepository) StatsGroup(ctx context.Context, gid uuid.UUID) (GroupS
 	return stats, nil
 }
 
-func (r *GroupRepository) GroupCreate(ctx context.Context, name string) (Group, error) {
-	return r.groupMapper.MapErr(r.db.Group.Create().
-		SetName(name).
-		Save(ctx))
+func (r *GroupRepository) GroupCreate(ctx context.Context, name string, userID uuid.UUID) (Group, error) {
+	createQuery := r.db.Group.Create().SetName(name)
+
+	// Only link user if a valid user ID is provided
+	if userID != uuid.Nil {
+		createQuery = createQuery.AddUserIDs(userID)
+	}
+
+	return r.groupMapper.MapErr(createQuery.Save(ctx))
 }
 
 func (r *GroupRepository) GroupUpdate(ctx context.Context, id uuid.UUID, data GroupUpdate) (Group, error) {
@@ -271,11 +281,27 @@ func (r *GroupRepository) GroupByID(ctx context.Context, id uuid.UUID) (Group, e
 	return r.groupMapper.MapErr(r.db.Group.Get(ctx, id))
 }
 
+func (r *GroupRepository) GroupDelete(ctx context.Context, id uuid.UUID) error {
+	return r.db.Group.DeleteOneID(id).Exec(ctx)
+}
+
 func (r *GroupRepository) InvitationGet(ctx context.Context, token []byte) (GroupInvitation, error) {
 	return r.invitationMapper.MapErr(r.db.GroupInvitationToken.Query().
 		Where(groupinvitationtoken.Token(token)).
 		WithGroup().
 		Only(ctx))
+}
+
+func (r *GroupRepository) InvitationGetAll(ctx context.Context, groupID uuid.UUID) ([]GroupInvitation, error) {
+	invitations, err := r.db.GroupInvitationToken.Query().
+		Where(groupinvitationtoken.HasGroupWith(group.ID(groupID))).
+		WithGroup().
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.invitationMapper.MapEach(invitations), nil
 }
 
 func (r *GroupRepository) InvitationCreate(ctx context.Context, groupID uuid.UUID, invite GroupInvitationCreate) (GroupInvitation, error) {
@@ -297,6 +323,22 @@ func (r *GroupRepository) InvitationUpdate(ctx context.Context, id uuid.UUID, us
 	return err
 }
 
+func (r *GroupRepository) InvitationDelete(ctx context.Context, groupID uuid.UUID, id uuid.UUID) error {
+	n, err := r.db.GroupInvitationToken.Delete().
+		Where(
+			groupinvitationtoken.ID(id),
+			groupinvitationtoken.HasGroupWith(group.ID(groupID)),
+		).
+		Exec(ctx)
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		return &ent.NotFoundError{}
+	}
+	return nil
+}
+
 // InvitationPurge removes all expired invitations or those that have been used up.
 // It returns the number of deleted invitations.
 func (r *GroupRepository) InvitationPurge(ctx context.Context) (amount int, err error) {
@@ -307,4 +349,12 @@ func (r *GroupRepository) InvitationPurge(ctx context.Context) (amount int, err 
 	))
 
 	return q.Exec(ctx)
+}
+
+func (r *GroupRepository) AddMember(ctx context.Context, groupID, userID uuid.UUID) error {
+	return r.db.Group.UpdateOneID(groupID).AddUserIDs(userID).Exec(ctx)
+}
+
+func (r *GroupRepository) RemoveMember(ctx context.Context, groupID, userID uuid.UUID) error {
+	return r.db.Group.UpdateOneID(groupID).RemoveUserIDs(userID).Exec(ctx)
 }

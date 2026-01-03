@@ -10,7 +10,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -41,17 +40,18 @@ type User struct {
 	OidcIssuer *string `json:"oidc_issuer,omitempty"`
 	// OidcSubject holds the value of the "oidc_subject" field.
 	OidcSubject *string `json:"oidc_subject,omitempty"`
+	// DefaultGroupID holds the value of the "default_group_id" field.
+	DefaultGroupID *uuid.UUID `json:"default_group_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
-	group_users  *uuid.UUID
 	selectValues sql.SelectValues
 }
 
 // UserEdges holds the relations/edges for other nodes in the graph.
 type UserEdges struct {
-	// Group holds the value of the group edge.
-	Group *Group `json:"group,omitempty"`
+	// Groups holds the value of the groups edge.
+	Groups []*Group `json:"groups,omitempty"`
 	// AuthTokens holds the value of the auth_tokens edge.
 	AuthTokens []*AuthTokens `json:"auth_tokens,omitempty"`
 	// Notifiers holds the value of the notifiers edge.
@@ -61,15 +61,13 @@ type UserEdges struct {
 	loadedTypes [3]bool
 }
 
-// GroupOrErr returns the Group value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e UserEdges) GroupOrErr() (*Group, error) {
-	if e.Group != nil {
-		return e.Group, nil
-	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: group.Label}
+// GroupsOrErr returns the Groups value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) GroupsOrErr() ([]*Group, error) {
+	if e.loadedTypes[0] {
+		return e.Groups, nil
 	}
-	return nil, &NotLoadedError{edge: "group"}
+	return nil, &NotLoadedError{edge: "groups"}
 }
 
 // AuthTokensOrErr returns the AuthTokens value or an error if the edge
@@ -95,6 +93,8 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case user.FieldDefaultGroupID:
+			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		case user.FieldIsSuperuser, user.FieldSuperuser:
 			values[i] = new(sql.NullBool)
 		case user.FieldName, user.FieldEmail, user.FieldPassword, user.FieldRole, user.FieldOidcIssuer, user.FieldOidcSubject:
@@ -103,8 +103,6 @@ func (*User) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullTime)
 		case user.FieldID:
 			values[i] = new(uuid.UUID)
-		case user.ForeignKeys[0]: // group_users
-			values[i] = &sql.NullScanner{S: new(uuid.UUID)}
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -195,12 +193,12 @@ func (_m *User) assignValues(columns []string, values []any) error {
 				_m.OidcSubject = new(string)
 				*_m.OidcSubject = value.String
 			}
-		case user.ForeignKeys[0]:
+		case user.FieldDefaultGroupID:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
-				return fmt.Errorf("unexpected type %T for field group_users", values[i])
+				return fmt.Errorf("unexpected type %T for field default_group_id", values[i])
 			} else if value.Valid {
-				_m.group_users = new(uuid.UUID)
-				*_m.group_users = *value.S.(*uuid.UUID)
+				_m.DefaultGroupID = new(uuid.UUID)
+				*_m.DefaultGroupID = *value.S.(*uuid.UUID)
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -215,9 +213,9 @@ func (_m *User) Value(name string) (ent.Value, error) {
 	return _m.selectValues.Get(name)
 }
 
-// QueryGroup queries the "group" edge of the User entity.
-func (_m *User) QueryGroup() *GroupQuery {
-	return NewUserClient(_m.config).QueryGroup(_m)
+// QueryGroups queries the "groups" edge of the User entity.
+func (_m *User) QueryGroups() *GroupQuery {
+	return NewUserClient(_m.config).QueryGroups(_m)
 }
 
 // QueryAuthTokens queries the "auth_tokens" edge of the User entity.
@@ -287,6 +285,11 @@ func (_m *User) String() string {
 	if v := _m.OidcSubject; v != nil {
 		builder.WriteString("oidc_subject=")
 		builder.WriteString(*v)
+	}
+	builder.WriteString(", ")
+	if v := _m.DefaultGroupID; v != nil {
+		builder.WriteString("default_group_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteByte(')')
 	return builder.String()

@@ -313,7 +313,7 @@ func TestItemRepository_GetAllCustomFields(t *testing.T) {
 
 	// Test getting all values from field
 	{
-		results, err := tRepos.Items.GetAllCustomFieldValues(context.Background(), tUser.GroupID, names[0])
+		results, err := tRepos.Items.GetAllCustomFieldValues(context.Background(), tUser.DefaultGroupID, names[0])
 
 		require.NoError(t, err)
 		assert.ElementsMatch(t, values[:1], results)
@@ -400,33 +400,33 @@ func TestItemsRepository_DeleteByGroupWithAttachments(t *testing.T) {
 
 func TestItemsRepository_WipeInventory(t *testing.T) {
 	// Create test data: items, labels, locations, and maintenance entries
-	
+
 	// Create locations
 	loc1, err := tRepos.Locations.Create(context.Background(), tGroup.ID, LocationCreate{
 		Name:        "Test Location 1",
 		Description: "Test location for wipe test",
 	})
 	require.NoError(t, err)
-	
+
 	loc2, err := tRepos.Locations.Create(context.Background(), tGroup.ID, LocationCreate{
 		Name:        "Test Location 2",
 		Description: "Another test location",
 	})
 	require.NoError(t, err)
-	
+
 	// Create labels
 	label1, err := tRepos.Labels.Create(context.Background(), tGroup.ID, LabelCreate{
 		Name:        "Test Label 1",
 		Description: "Test label for wipe test",
 	})
 	require.NoError(t, err)
-	
+
 	label2, err := tRepos.Labels.Create(context.Background(), tGroup.ID, LabelCreate{
 		Name:        "Test Label 2",
 		Description: "Another test label",
 	})
 	require.NoError(t, err)
-	
+
 	// Create items
 	item1, err := tRepos.Items.Create(context.Background(), tGroup.ID, ItemCreate{
 		Name:        "Test Item 1",
@@ -435,7 +435,7 @@ func TestItemsRepository_WipeInventory(t *testing.T) {
 		LabelIDs:    []uuid.UUID{label1.ID},
 	})
 	require.NoError(t, err)
-	
+
 	item2, err := tRepos.Items.Create(context.Background(), tGroup.ID, ItemCreate{
 		Name:        "Test Item 2",
 		Description: "Another test item",
@@ -443,7 +443,7 @@ func TestItemsRepository_WipeInventory(t *testing.T) {
 		LabelIDs:    []uuid.UUID{label2.ID},
 	})
 	require.NoError(t, err)
-	
+
 	// Create maintenance entries for items
 	_, err = tRepos.MaintEntry.Create(context.Background(), item1.ID, MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(time.Now()),
@@ -452,7 +452,7 @@ func TestItemsRepository_WipeInventory(t *testing.T) {
 		Cost:          100.0,
 	})
 	require.NoError(t, err)
-	
+
 	_, err = tRepos.MaintEntry.Create(context.Background(), item2.ID, MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(time.Now()),
 		Name:          "Test Maintenance 2",
@@ -460,40 +460,40 @@ func TestItemsRepository_WipeInventory(t *testing.T) {
 		Cost:          200.0,
 	})
 	require.NoError(t, err)
-	
+
 	// Test 1: Wipe inventory with all options enabled
 	t.Run("wipe all including labels, locations, and maintenance", func(t *testing.T) {
 		deleted, err := tRepos.Items.WipeInventory(context.Background(), tGroup.ID, true, true, true)
 		require.NoError(t, err)
-		assert.Greater(t, deleted, 0, "Should have deleted at least some entities")
-		
+		assert.Positive(t, deleted, "Should have deleted at least some entities")
+
 		// Verify items are deleted
 		_, err = tRepos.Items.GetOneByGroup(context.Background(), tGroup.ID, item1.ID)
 		require.Error(t, err, "Item 1 should be deleted")
-		
+
 		_, err = tRepos.Items.GetOneByGroup(context.Background(), tGroup.ID, item2.ID)
 		require.Error(t, err, "Item 2 should be deleted")
-		
+
 		// Verify maintenance entries are deleted (query by item ID, should return empty)
 		maint1List, err := tRepos.MaintEntry.GetMaintenanceByItemID(context.Background(), tGroup.ID, item1.ID, MaintenanceFilters{})
 		require.NoError(t, err)
 		assert.Empty(t, maint1List, "Maintenance entry 1 should be deleted")
-		
+
 		maint2List, err := tRepos.MaintEntry.GetMaintenanceByItemID(context.Background(), tGroup.ID, item2.ID, MaintenanceFilters{})
 		require.NoError(t, err)
 		assert.Empty(t, maint2List, "Maintenance entry 2 should be deleted")
-		
+
 		// Verify labels are deleted
 		_, err = tRepos.Labels.GetOneByGroup(context.Background(), tGroup.ID, label1.ID)
 		require.Error(t, err, "Label 1 should be deleted")
-		
+
 		_, err = tRepos.Labels.GetOneByGroup(context.Background(), tGroup.ID, label2.ID)
 		require.Error(t, err, "Label 2 should be deleted")
-		
+
 		// Verify locations are deleted
 		_, err = tRepos.Locations.Get(context.Background(), loc1.ID)
 		require.Error(t, err, "Location 1 should be deleted")
-		
+
 		_, err = tRepos.Locations.Get(context.Background(), loc2.ID)
 		require.Error(t, err, "Location 2 should be deleted")
 	})
@@ -506,13 +506,13 @@ func TestItemsRepository_WipeInventory_OnlyItems(t *testing.T) {
 		Description: "Test location for wipe test",
 	})
 	require.NoError(t, err)
-	
+
 	label, err := tRepos.Labels.Create(context.Background(), tGroup.ID, LabelCreate{
 		Name:        "Test Label",
 		Description: "Test label for wipe test",
 	})
 	require.NoError(t, err)
-	
+
 	item, err := tRepos.Items.Create(context.Background(), tGroup.ID, ItemCreate{
 		Name:        "Test Item",
 		Description: "Test item for wipe test",
@@ -520,7 +520,7 @@ func TestItemsRepository_WipeInventory_OnlyItems(t *testing.T) {
 		LabelIDs:    []uuid.UUID{label.ID},
 	})
 	require.NoError(t, err)
-	
+
 	_, err = tRepos.MaintEntry.Create(context.Background(), item.ID, MaintenanceEntryCreate{
 		CompletedDate: types.DateFromTime(time.Now()),
 		Name:          "Test Maintenance",
@@ -528,31 +528,30 @@ func TestItemsRepository_WipeInventory_OnlyItems(t *testing.T) {
 		Cost:          100.0,
 	})
 	require.NoError(t, err)
-	
+
 	// Test: Wipe inventory with only items (no labels, locations, or maintenance)
 	deleted, err := tRepos.Items.WipeInventory(context.Background(), tGroup.ID, false, false, false)
 	require.NoError(t, err)
-	assert.Greater(t, deleted, 0, "Should have deleted at least the item")
-	
+	assert.Positive(t, deleted, "Should have deleted at least the item")
+
 	// Verify item is deleted
 	_, err = tRepos.Items.GetOneByGroup(context.Background(), tGroup.ID, item.ID)
 	require.Error(t, err, "Item should be deleted")
-	
+
 	// Verify maintenance entry is deleted due to cascade
 	maintList, err := tRepos.MaintEntry.GetMaintenanceByItemID(context.Background(), tGroup.ID, item.ID, MaintenanceFilters{})
 	require.NoError(t, err)
 	assert.Empty(t, maintList, "Maintenance entry should be cascade deleted with item")
-	
+
 	// Verify label still exists
 	_, err = tRepos.Labels.GetOneByGroup(context.Background(), tGroup.ID, label.ID)
 	require.NoError(t, err, "Label should still exist")
-	
+
 	// Verify location still exists
 	_, err = tRepos.Locations.Get(context.Background(), loc.ID)
 	require.NoError(t, err, "Location should still exist")
-	
+
 	// Cleanup
 	_ = tRepos.Labels.DeleteByGroup(context.Background(), tGroup.ID, label.ID)
 	_ = tRepos.Locations.delete(context.Background(), loc.ID)
 }
-
