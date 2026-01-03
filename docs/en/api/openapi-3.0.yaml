@@ -1579,6 +1579,50 @@ paths:
       responses:
         "204":
           description: No Content
+  /v1/users/self/settings:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - User
+      summary: Get user settings
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/v1.Wrapped"
+                  - type: object
+                    properties:
+                      item:
+                        $ref: "#/components/schemas/schema.UserSettings"
+    put:
+      security:
+        - Bearer: []
+      tags:
+        - User
+      summary: Update user settings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/schema.UserSettings"
+        description: Settings Data
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/v1.Wrapped"
+                  - type: object
+                    properties:
+                      item:
+                        $ref: "#/components/schemas/schema.UserSettings"
 servers:
   - url: https://demo.homebox.software/api
   - url: http://demo.homebox.software/api
@@ -2351,6 +2395,10 @@ components:
           description: Role holds the value of the "role" field.
           allOf:
             - $ref: "#/components/schemas/user.Role"
+        settings:
+          description: Settings holds the value of the "settings" field.
+          allOf:
+            - $ref: "#/components/schemas/schema.UserSettings"
         superuser:
           description: Superuser holds the value of the "superuser" field.
           type: boolean
@@ -3313,6 +3361,44 @@ components:
           type: string
         value:
           type: number
+    schema.DuplicateSettings:
+      type: object
+      properties:
+        copyAttachments:
+          type: boolean
+        copyCustomFields:
+          type: boolean
+        copyMaintenance:
+          type: boolean
+        copyPrefixOverride:
+          type: string
+    schema.UserSettings:
+      type: object
+      properties:
+        displayLegacyHeader:
+          type: boolean
+        duplicateSettings:
+          $ref: "#/components/schemas/schema.DuplicateSettings"
+        editorAdvancedView:
+          type: boolean
+        itemDisplayView:
+          type: string
+        itemsPerPage:
+          type: integer
+        itemsPerTablePage:
+          type: integer
+        language:
+          type: string
+        locale:
+          type: string
+        overrideFormatLocale:
+          type: string
+        showDetails:
+          type: boolean
+        showEmpty:
+          type: boolean
+        theme:
+          type: string
     services.Latest:
       type: object
       properties:

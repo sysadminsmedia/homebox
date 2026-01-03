@@ -2484,6 +2484,87 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v1/users/self/settings": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get user settings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/v1.Wrapped"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "item": {
+                                            "$ref": "#/definitions/schema.UserSettings"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update user settings",
+                "parameters": [
+                    {
+                        "description": "Settings Data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schema.UserSettings"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/v1.Wrapped"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "item": {
+                                            "$ref": "#/definitions/schema.UserSettings"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -3566,6 +3647,14 @@ const docTemplate = `{
                     "allOf": [
                         {
                             "$ref": "#/definitions/user.Role"
+                        }
+                    ]
+                },
+                "settings": {
+                    "description": "Settings holds the value of the \"settings\" field.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/schema.UserSettings"
                         }
                     ]
                 },
@@ -4980,6 +5069,64 @@ const docTemplate = `{
                 },
                 "value": {
                     "type": "number"
+                }
+            }
+        },
+        "schema.DuplicateSettings": {
+            "type": "object",
+            "properties": {
+                "copyAttachments": {
+                    "type": "boolean"
+                },
+                "copyCustomFields": {
+                    "type": "boolean"
+                },
+                "copyMaintenance": {
+                    "type": "boolean"
+                },
+                "copyPrefixOverride": {
+                    "type": "string"
+                }
+            }
+        },
+        "schema.UserSettings": {
+            "type": "object",
+            "properties": {
+                "displayLegacyHeader": {
+                    "type": "boolean"
+                },
+                "duplicateSettings": {
+                    "$ref": "#/definitions/schema.DuplicateSettings"
+                },
+                "editorAdvancedView": {
+                    "type": "boolean"
+                },
+                "itemDisplayView": {
+                    "type": "string"
+                },
+                "itemsPerPage": {
+                    "type": "integer"
+                },
+                "itemsPerTablePage": {
+                    "type": "integer"
+                },
+                "language": {
+                    "type": "string"
+                },
+                "locale": {
+                    "type": "string"
+                },
+                "overrideFormatLocale": {
+                    "type": "string"
+                },
+                "showDetails": {
+                    "type": "boolean"
+                },
+                "showEmpty": {
+                    "type": "boolean"
+                },
+                "theme": {
+                    "type": "string"
                 }
             }
         },

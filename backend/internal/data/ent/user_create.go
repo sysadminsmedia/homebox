@@ -14,6 +14,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/authtokens"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -158,6 +159,20 @@ func (_c *UserCreate) SetOidcSubject(v string) *UserCreate {
 func (_c *UserCreate) SetNillableOidcSubject(v *string) *UserCreate {
 	if v != nil {
 		_c.SetOidcSubject(*v)
+	}
+	return _c
+}
+
+// SetSettings sets the "settings" field.
+func (_c *UserCreate) SetSettings(v schema.UserSettings) *UserCreate {
+	_c.mutation.SetSettings(v)
+	return _c
+}
+
+// SetNillableSettings sets the "settings" field if the given value is not nil.
+func (_c *UserCreate) SetNillableSettings(v *schema.UserSettings) *UserCreate {
+	if v != nil {
+		_c.SetSettings(*v)
 	}
 	return _c
 }
@@ -402,6 +417,10 @@ func (_c *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.OidcSubject(); ok {
 		_spec.SetField(user.FieldOidcSubject, field.TypeString, value)
 		_node.OidcSubject = &value
+	}
+	if value, ok := _c.mutation.Settings(); ok {
+		_spec.SetField(user.FieldSettings, field.TypeJSON, value)
+		_node.Settings = value
 	}
 	if nodes := _c.mutation.GroupIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

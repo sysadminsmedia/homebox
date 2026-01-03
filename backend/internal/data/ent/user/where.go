@@ -631,6 +631,16 @@ func OidcSubjectContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldOidcSubject, v))
 }
 
+// SettingsIsNil applies the IsNil predicate on the "settings" field.
+func SettingsIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldSettings))
+}
+
+// SettingsNotNil applies the NotNil predicate on the "settings" field.
+func SettingsNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldSettings))
+}
+
 // HasGroup applies the HasEdge predicate on the "group" edge.
 func HasGroup() predicate.User {
 	return predicate.User(func(s *sql.Selector) {

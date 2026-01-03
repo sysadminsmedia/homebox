@@ -16,6 +16,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
@@ -185,6 +186,26 @@ func (_u *UserUpdate) SetNillableOidcSubject(v *string) *UserUpdate {
 // ClearOidcSubject clears the value of the "oidc_subject" field.
 func (_u *UserUpdate) ClearOidcSubject() *UserUpdate {
 	_u.mutation.ClearOidcSubject()
+	return _u
+}
+
+// SetSettings sets the "settings" field.
+func (_u *UserUpdate) SetSettings(v schema.UserSettings) *UserUpdate {
+	_u.mutation.SetSettings(v)
+	return _u
+}
+
+// SetNillableSettings sets the "settings" field if the given value is not nil.
+func (_u *UserUpdate) SetNillableSettings(v *schema.UserSettings) *UserUpdate {
+	if v != nil {
+		_u.SetSettings(*v)
+	}
+	return _u
+}
+
+// ClearSettings clears the value of the "settings" field.
+func (_u *UserUpdate) ClearSettings() *UserUpdate {
+	_u.mutation.ClearSettings()
 	return _u
 }
 
@@ -399,6 +420,12 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.OidcSubjectCleared() {
 		_spec.ClearField(user.FieldOidcSubject, field.TypeString)
+	}
+	if value, ok := _u.mutation.Settings(); ok {
+		_spec.SetField(user.FieldSettings, field.TypeJSON, value)
+	}
+	if _u.mutation.SettingsCleared() {
+		_spec.ClearField(user.FieldSettings, field.TypeJSON)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -695,6 +722,26 @@ func (_u *UserUpdateOne) ClearOidcSubject() *UserUpdateOne {
 	return _u
 }
 
+// SetSettings sets the "settings" field.
+func (_u *UserUpdateOne) SetSettings(v schema.UserSettings) *UserUpdateOne {
+	_u.mutation.SetSettings(v)
+	return _u
+}
+
+// SetNillableSettings sets the "settings" field if the given value is not nil.
+func (_u *UserUpdateOne) SetNillableSettings(v *schema.UserSettings) *UserUpdateOne {
+	if v != nil {
+		_u.SetSettings(*v)
+	}
+	return _u
+}
+
+// ClearSettings clears the value of the "settings" field.
+func (_u *UserUpdateOne) ClearSettings() *UserUpdateOne {
+	_u.mutation.ClearSettings()
+	return _u
+}
+
 // SetGroupID sets the "group" edge to the Group entity by ID.
 func (_u *UserUpdateOne) SetGroupID(id uuid.UUID) *UserUpdateOne {
 	_u.mutation.SetGroupID(id)
@@ -936,6 +983,12 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	}
 	if _u.mutation.OidcSubjectCleared() {
 		_spec.ClearField(user.FieldOidcSubject, field.TypeString)
+	}
+	if value, ok := _u.mutation.Settings(); ok {
+		_spec.SetField(user.FieldSettings, field.TypeJSON, value)
+	}
+	if _u.mutation.SettingsCleared() {
+		_spec.ClearField(user.FieldSettings, field.TypeJSON)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{

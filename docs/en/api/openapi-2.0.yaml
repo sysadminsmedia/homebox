@@ -3457,8 +3457,7 @@ paths:
             - $ref: '#/definitions/v1.Wrapped'
             - properties:
                 item:
-                  additionalProperties: true
-                  type: object
+                  $ref: '#/definitions/schema.UserSettings'
               type: object
       security:
       - Bearer: []
@@ -3472,8 +3471,7 @@ paths:
         name: payload
         required: true
         schema:
-          additionalProperties: true
-          type: object
+          $ref: '#/definitions/schema.UserSettings'
       produces:
       - application/json
       responses:
@@ -3484,12 +3482,11 @@ paths:
             - $ref: '#/definitions/v1.Wrapped'
             - properties:
                 item:
-                  additionalProperties: true
-                  type: object
+                  $ref: '#/definitions/schema.UserSettings'
               type: object
       security:
       - Bearer: []
-      summary: Get user settings
+      summary: Update user settings
       tags:
       - User
 schemes:
