@@ -172,7 +172,7 @@ type (
 		// Purchase
 		PurchaseTime          types.Date `json:"purchaseTime"`
 		PurchaseFrom          string     `json:"purchaseFrom"`
-		PurchasePricePerMonth float64 	 `json:"purchasePricePerMonth"`
+		PurchasePricePerMonth float64    `json:"purchasePricePerMonth"`
 
 		// Sold
 		SoldTime  types.Date `json:"soldTime"`
@@ -268,14 +268,22 @@ func mapFields(fields []*ent.ItemField) []ItemField {
 
 // countMonths calculates the number of complete months between two time.Time values.
 func countMonths(start, end time.Time) int {
-    yearDiff := end.Year() - start.Year()
-    monthDiff := int(end.Month()) - int(start.Month())
-    totalMonths := yearDiff*12 + monthDiff
-    // Adjust for cases where the end day is before the start day in the month
-    if end.Day() < start.Day() {
-        totalMonths--
-    }
-    return totalMonths
+	// Start after end? Doesn't make sense. Handle with care.
+	if start.After(end) {
+		return 0
+	}
+	yearDiff := end.Year() - start.Year()
+	monthDiff := int(end.Month()) - int(start.Month())
+	totalMonths := yearDiff*12 + monthDiff
+	// Adjust for cases where the end day is before the start day in the month
+	if end.Day() < start.Day() {
+		totalMonths--
+	}
+	// Double check to avoid start after end.
+	if totalMonths < 0 {
+		return 0
+	}
+	return totalMonths
 }
 
 func mapItemOut(item *ent.Item) ItemOut {
@@ -319,8 +327,8 @@ func mapItemOut(item *ent.Item) ItemOut {
 		Manufacturer: item.Manufacturer,
 
 		// Purchase
-		PurchaseTime: types.DateFromTime(item.PurchaseTime),
-		PurchaseFrom: item.PurchaseFrom,
+		PurchaseTime:          types.DateFromTime(item.PurchaseTime),
+		PurchaseFrom:          item.PurchaseFrom,
 		PurchasePricePerMonth: pppm,
 
 		// Sold
