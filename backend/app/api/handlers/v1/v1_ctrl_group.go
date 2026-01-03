@@ -30,6 +30,11 @@ type (
 	GroupMemberAdd struct {
 		UserID uuid.UUID `json:"userId" validate:"required"`
 	}
+
+	GroupAcceptInvitationResponse struct {
+		ID   uuid.UUID `json:"id"`
+		Name string    `json:"name"`
+	}
 )
 
 // HandleGroupGet godoc
@@ -258,7 +263,7 @@ func (ctrl *V1Controller) HandleGroupInvitationsDelete() errchain.HandlerFunc {
 //	@Tags		Group
 //	@Produce	json
 //	@Param		id	path	string	true	"Invitation Token"
-//	@Success	204
+//	@Success	200	{object}	GroupAcceptInvitationResponse
 //	@Router		/v1/groups/invitations/{id} [Post]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleGroupInvitationsAccept() errchain.HandlerFunc {
@@ -269,11 +274,14 @@ func (ctrl *V1Controller) HandleGroupInvitationsAccept() errchain.HandlerFunc {
 		}
 
 		auth := services.NewContext(r.Context())
-		err := ctrl.svc.Group.AcceptInvitation(auth, token)
+		group, err := ctrl.svc.Group.AcceptInvitation(auth, token)
 		if err != nil {
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
-		return server.JSON(w, http.StatusNoContent, nil)
+		return server.JSON(w, http.StatusOK, GroupAcceptInvitationResponse{
+			ID:   group.ID,
+			Name: group.Name,
+		})
 	}
 }

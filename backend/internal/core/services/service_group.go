@@ -76,24 +76,29 @@ func (svc *GroupService) DeleteInvitation(ctx Context, id uuid.UUID) error {
 	return svc.repos.Groups.InvitationDelete(ctx.Context, ctx.GID, id)
 }
 
-func (svc *GroupService) AcceptInvitation(ctx Context, token string) error {
+func (svc *GroupService) AcceptInvitation(ctx Context, token string) (repo.Group, error) {
 	hashedToken := hasher.HashToken(token)
 	invitation, err := svc.repos.Groups.InvitationGet(ctx.Context, hashedToken)
 	if err != nil {
-		return err
+		return repo.Group{}, err
 	}
 
 	if invitation.ExpiresAt.Before(time.Now()) {
-		return errors.New("invitation expired")
+		return repo.Group{}, errors.New("invitation expired")
 	}
 	if invitation.Uses <= 0 {
-		return errors.New("invitation used up")
+		return repo.Group{}, errors.New("invitation used up")
 	}
 
 	err = svc.repos.Groups.AddMember(ctx.Context, invitation.Group.ID, ctx.UID)
 	if err != nil {
-		return err
+		return repo.Group{}, err
 	}
 
-	return svc.repos.Groups.InvitationUpdate(ctx.Context, invitation.ID, invitation.Uses-1)
+	err = svc.repos.Groups.InvitationUpdate(ctx.Context, invitation.ID, invitation.Uses-1)
+	if err != nil {
+		return repo.Group{}, err
+	}
+
+	return invitation.Group, nil
 }
