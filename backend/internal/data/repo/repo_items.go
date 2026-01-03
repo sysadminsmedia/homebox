@@ -306,10 +306,11 @@ func mapItemOut(item *ent.Item) ItemOut {
 	// Purchase price per month := purchase price / age in month.
 	// If age unknown -> purchase price per month = purchase price.
 	var pppm float64
-	if item.PurchaseTime.IsZero() {
+	months := countMonths(item.PurchaseTime, time.Now())
+	if item.PurchaseTime.IsZero() || months <= 0 {
 		pppm = item.PurchasePrice
 	} else {
-		pppm = item.PurchasePrice / float64(countMonths(item.PurchaseTime, time.Now()))
+		pppm = item.PurchasePrice / float64(months)
 	}
 
 	return ItemOut{
