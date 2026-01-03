@@ -226,7 +226,7 @@
                 "clear": "Clear Location Selection"
             },
             "tree": {
-                "no_locations": "No locations available. Add new locations through the\n '<span class=\"link-primary\">'Create'</span>' button on the navigation bar."
+                "no_locations": "No locations available. Use the Create button to add a new location."
             }
         },
         "quick_menu": {
