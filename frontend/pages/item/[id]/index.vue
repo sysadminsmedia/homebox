@@ -380,6 +380,11 @@
         type: "currency",
       },
       {
+        name: "items.purchase_price_per_month",
+        text: String(item.value?.purchasePricePerMonth) || "",
+        type: "currency",
+      },
+      {
         name: "items.purchase_date",
         text: item.value?.purchaseTime || "",
         type: "date",

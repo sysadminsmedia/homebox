@@ -457,6 +457,7 @@
         "purchase_date": "Purchase Date",
         "purchase_details": "Purchase Details",
         "purchase_price": "Purchase Price",
+        "purchase_price_per_month": "Purchase Price per Month",
         "purchased_from": "Purchased From",
         "quantity": "Quantity",
         "query_id": "Querying Asset ID Number: { id }",
