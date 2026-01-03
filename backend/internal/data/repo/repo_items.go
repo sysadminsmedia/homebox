@@ -275,6 +275,18 @@ func countMonths(start, end time.Time) int {
 	return totalMonths
 }
 
+// countMonths calculates the number of complete months between two time.Time values.
+func countMonths(start, end time.Time) int {
+    yearDiff := end.Year() - start.Year()
+    monthDiff := int(end.Month()) - int(start.Month())
+    totalMonths := yearDiff*12 + monthDiff
+    // Adjust for cases where the end day is before the start day in the month
+    if end.Day() < start.Day() {
+        totalMonths--
+    }
+    return totalMonths
+}
+
 func mapItemOut(item *ent.Item) ItemOut {
 	var attachments []ItemAttachment
 	if item.Edges.Attachments != nil {
