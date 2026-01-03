@@ -35,9 +35,6 @@ services:
       - POSTGRES_USER=homebox
       - POSTGRES_PASSWORD=homebox
       - POSTGRES_DB=homebox
-      # Use trust authentication for migration compatibility with pgloader
-      # You can remove this after migration to use default SCRAM-SHA-256
-      - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -49,11 +46,8 @@ services:
   migration:
     image: fridus/pgloader:latest
     profiles: ["tools"]
-    environment:
-      - POSTGRES_PASSWORD=homebox
     volumes:
       - ./data:/data
-      - ./utils/homebox.load:/homebox.load
     depends_on:
       - db
 
