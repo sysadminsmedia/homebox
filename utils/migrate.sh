@@ -134,31 +134,16 @@ if [[ -n "$SQLITE_HOST_PATH" ]]; then
 fi
 
 if [[ -z "$POSTGRES_URI" ]]; then
-  POSTGRES_URI="postgresql://${PG_USER}:${PG_PASSWORD}@${PG_HOST}:${PG_PORT}/${PG_DATABASE}"
+  POSTGRES_URI="postgresql://${PG_HOST}:${PG_PORT}/${PG_DATABASE}"
 fi
-
-escape_sed() {
-  printf '%s' "$1" | sed -e 's/[\/&]/\\&/g'
-}
 
 if [[ ! -f "$SCRIPT_DIR/homebox.load" ]]; then
   echo -e "${RED}Error: homebox.load template not found in $SCRIPT_DIR${NC}"
   exit 1
 fi
 
-TMP_LOAD_FILE="$(mktemp)"
-cleanup() {
-  rm -f "$TMP_LOAD_FILE"
-}
-trap cleanup EXIT
-
-sed \
-  -e "s/{{SQLITE_URI}}/$(escape_sed "$SQLITE_URI")/g" \
-  -e "s/{{POSTGRES_URI}}/$(escape_sed "$POSTGRES_URI")/g" \
-  "$SCRIPT_DIR/homebox.load" > "$TMP_LOAD_FILE"
-
 TMP_LOAD_CONTAINER_PATH="/tmp/homebox.load"
-LOAD_VOLUME=(-v "${TMP_LOAD_FILE}:${TMP_LOAD_CONTAINER_PATH}:ro")
+LOAD_VOLUME=(-v "${SCRIPT_DIR}/homebox.load:${TMP_LOAD_CONTAINER_PATH}:ro")
 
 echo -e "${GREEN}Starting Homebox SQLite to Postgres Migration...${NC}"
 
@@ -223,8 +208,19 @@ echo -e "${GREEN}5. Starting data migration...${NC}"
 docker compose run --rm \
   "${SQLITE_EXTRA_VOLUMES[@]}" \
   "${LOAD_VOLUME[@]}" \
+  -e SQLITE_URI="$SQLITE_URI" \
+  -e POSTGRES_URI="$POSTGRES_URI" \
+  -e PGPASSWORD="$PG_PASSWORD" \
+  -e PGUSER="$PG_USER" \
   "$MIGRATION_SERVICE" \
   pgloader "$TMP_LOAD_CONTAINER_PATH"
+
+MIGRATION_EXIT_CODE=$?
+
+if [ "$MIGRATION_EXIT_CODE" -ne 0 ]; then
+  echo -e "${RED}Migration failed with exit code ${MIGRATION_EXIT_CODE}.${NC}"
+  exit "$MIGRATION_EXIT_CODE"
+fi
 
 echo -e "${GREEN}Migration complete!${NC}"
 echo "You can now update your docker-compose.yml to use Postgres permanently."
