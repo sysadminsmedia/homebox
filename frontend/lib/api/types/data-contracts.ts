@@ -527,6 +527,8 @@ export interface EntUser {
   oidc_subject: string;
   /** Role holds the value of the "role" field. */
   role: UserRole;
+  /** Settings holds the value of the "settings" field. */
+  settings: Record<string, any>;
   /** Superuser holds the value of the "superuser" field. */
   superuser: boolean;
   /** UpdatedAt holds the value of the "updated_at" field. */

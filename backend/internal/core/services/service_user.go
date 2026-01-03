@@ -369,3 +369,11 @@ func (svc *UserService) ChangePassword(ctx Context, current string, new string) 
 
 	return true
 }
+
+func (svc *UserService) GetSettings(ctx context.Context, uid uuid.UUID) (map[string]interface{}, error) {
+	return svc.repos.Users.GetSettings(ctx, uid)
+}
+
+func (svc *UserService) SetSettings(ctx context.Context, uid uuid.UUID, settings map[string]interface{}) error {
+	return svc.repos.Users.SetSettings(ctx, uid, settings)
+}

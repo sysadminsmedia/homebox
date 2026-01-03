@@ -747,6 +747,10 @@ definitions:
         allOf:
         - $ref: '#/definitions/user.Role'
         description: Role holds the value of the "role" field.
+      settings:
+        additionalProperties: true
+        description: Settings holds the value of the "settings" field.
+        type: object
       superuser:
         description: Superuser holds the value of the "superuser" field.
         type: boolean
@@ -3401,6 +3405,53 @@ paths:
       security:
       - Bearer: []
       summary: Update Account
+      tags:
+      - User
+  /v1/users/self/settings:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/v1.Wrapped'
+            - properties:
+                item:
+                  additionalProperties: true
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Get user settings
+      tags:
+      - User
+    put:
+      parameters:
+      - description: Settings Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/v1.Wrapped'
+            - properties:
+                item:
+                  additionalProperties: true
+                  type: object
+              type: object
+      security:
+      - Bearer: []
+      summary: Update user settings
       tags:
       - User
 schemes:

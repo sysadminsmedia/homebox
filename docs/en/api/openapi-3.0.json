@@ -2665,6 +2665,92 @@
                     }
                 }
             }
+        },
+        "/v1/users/self/settings": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Get user settings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/v1.Wrapped"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "item": {
+                                                    "type": "object",
+                                                    "additionalProperties": true
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "Update user settings",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "additionalProperties": true
+                            }
+                        }
+                    },
+                    "description": "Settings Data",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        {
+                                            "$ref": "#/components/schemas/v1.Wrapped"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "item": {
+                                                    "type": "object",
+                                                    "additionalProperties": true
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "servers": [
@@ -3766,6 +3852,11 @@
                                 "$ref": "#/components/schemas/user.Role"
                             }
                         ]
+                    },
+                    "settings": {
+                        "description": "Settings holds the value of the \"settings\" field.",
+                        "type": "object",
+                        "additionalProperties": true
                     },
                     "superuser": {
                         "description": "Superuser holds the value of the \"superuser\" field.",

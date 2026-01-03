@@ -176,6 +176,18 @@ func (r *UserRepository) ChangePassword(ctx context.Context, uid uuid.UUID, pw s
 	return r.db.User.UpdateOneID(uid).SetPassword(pw).Exec(ctx)
 }
 
+func (r *UserRepository) SetSettings(ctx context.Context, uid uuid.UUID, settings map[string]interface{}) error {
+	return r.db.User.UpdateOneID(uid).SetSettings(settings).Exec(ctx)
+}
+
+func (r *UserRepository) GetSettings(ctx context.Context, uid uuid.UUID) (map[string]interface{}, error) {
+	usr, err := r.db.User.Get(ctx, uid)
+	if err != nil {
+		return nil, err
+	}
+	return usr.Settings, nil
+}
+
 func (r *UserRepository) SetOIDCIdentity(ctx context.Context, uid uuid.UUID, issuer, subject string) error {
 	return r.db.User.UpdateOneID(uid).SetOidcIssuer(issuer).SetOidcSubject(subject).Exec(ctx)
 }

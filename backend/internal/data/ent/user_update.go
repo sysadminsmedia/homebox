@@ -188,6 +188,18 @@ func (_u *UserUpdate) ClearOidcSubject() *UserUpdate {
 	return _u
 }
 
+// SetSettings sets the "settings" field.
+func (_u *UserUpdate) SetSettings(v map[string]interface{}) *UserUpdate {
+	_u.mutation.SetSettings(v)
+	return _u
+}
+
+// ClearSettings clears the value of the "settings" field.
+func (_u *UserUpdate) ClearSettings() *UserUpdate {
+	_u.mutation.ClearSettings()
+	return _u
+}
+
 // SetGroupID sets the "group" edge to the Group entity by ID.
 func (_u *UserUpdate) SetGroupID(id uuid.UUID) *UserUpdate {
 	_u.mutation.SetGroupID(id)
@@ -399,6 +411,12 @@ func (_u *UserUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.OidcSubjectCleared() {
 		_spec.ClearField(user.FieldOidcSubject, field.TypeString)
+	}
+	if value, ok := _u.mutation.Settings(); ok {
+		_spec.SetField(user.FieldSettings, field.TypeJSON, value)
+	}
+	if _u.mutation.SettingsCleared() {
+		_spec.ClearField(user.FieldSettings, field.TypeJSON)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -695,6 +713,18 @@ func (_u *UserUpdateOne) ClearOidcSubject() *UserUpdateOne {
 	return _u
 }
 
+// SetSettings sets the "settings" field.
+func (_u *UserUpdateOne) SetSettings(v map[string]interface{}) *UserUpdateOne {
+	_u.mutation.SetSettings(v)
+	return _u
+}
+
+// ClearSettings clears the value of the "settings" field.
+func (_u *UserUpdateOne) ClearSettings() *UserUpdateOne {
+	_u.mutation.ClearSettings()
+	return _u
+}
+
 // SetGroupID sets the "group" edge to the Group entity by ID.
 func (_u *UserUpdateOne) SetGroupID(id uuid.UUID) *UserUpdateOne {
 	_u.mutation.SetGroupID(id)
@@ -936,6 +966,12 @@ func (_u *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) {
 	}
 	if _u.mutation.OidcSubjectCleared() {
 		_spec.ClearField(user.FieldOidcSubject, field.TypeString)
+	}
+	if value, ok := _u.mutation.Settings(); ok {
+		_spec.SetField(user.FieldSettings, field.TypeJSON, value)
+	}
+	if _u.mutation.SettingsCleared() {
+		_spec.ClearField(user.FieldSettings, field.TypeJSON)
 	}
 	if _u.mutation.GroupCleared() {
 		edge := &sqlgraph.EdgeSpec{

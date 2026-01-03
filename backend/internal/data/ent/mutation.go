@@ -12583,6 +12583,7 @@ type UserMutation struct {
 	activated_on       *time.Time
 	oidc_issuer        *string
 	oidc_subject       *string
+	settings           *map[string]interface{}
 	clearedFields      map[string]struct{}
 	group              *uuid.UUID
 	clearedgroup       bool
@@ -13149,6 +13150,55 @@ func (m *UserMutation) ResetOidcSubject() {
 	delete(m.clearedFields, user.FieldOidcSubject)
 }
 
+// SetSettings sets the "settings" field.
+func (m *UserMutation) SetSettings(value map[string]interface{}) {
+	m.settings = &value
+}
+
+// Settings returns the value of the "settings" field in the mutation.
+func (m *UserMutation) Settings() (r map[string]interface{}, exists bool) {
+	v := m.settings
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSettings returns the old "settings" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldSettings(ctx context.Context) (v map[string]interface{}, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSettings is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSettings requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSettings: %w", err)
+	}
+	return oldValue.Settings, nil
+}
+
+// ClearSettings clears the value of the "settings" field.
+func (m *UserMutation) ClearSettings() {
+	m.settings = nil
+	m.clearedFields[user.FieldSettings] = struct{}{}
+}
+
+// SettingsCleared returns if the "settings" field was cleared in this mutation.
+func (m *UserMutation) SettingsCleared() bool {
+	_, ok := m.clearedFields[user.FieldSettings]
+	return ok
+}
+
+// ResetSettings resets all changes to the "settings" field.
+func (m *UserMutation) ResetSettings() {
+	m.settings = nil
+	delete(m.clearedFields, user.FieldSettings)
+}
+
 // SetGroupID sets the "group" edge to the Group entity by id.
 func (m *UserMutation) SetGroupID(id uuid.UUID) {
 	m.group = &id
@@ -13330,7 +13380,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -13364,6 +13414,9 @@ func (m *UserMutation) Fields() []string {
 	if m.oidc_subject != nil {
 		fields = append(fields, user.FieldOidcSubject)
 	}
+	if m.settings != nil {
+		fields = append(fields, user.FieldSettings)
+	}
 	return fields
 }
 
@@ -13394,6 +13447,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.OidcIssuer()
 	case user.FieldOidcSubject:
 		return m.OidcSubject()
+	case user.FieldSettings:
+		return m.Settings()
 	}
 	return nil, false
 }
@@ -13425,6 +13480,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldOidcIssuer(ctx)
 	case user.FieldOidcSubject:
 		return m.OldOidcSubject(ctx)
+	case user.FieldSettings:
+		return m.OldSettings(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -13511,6 +13568,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetOidcSubject(v)
 		return nil
+	case user.FieldSettings:
+		v, ok := value.(map[string]interface{})
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSettings(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -13553,6 +13617,9 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldOidcSubject) {
 		fields = append(fields, user.FieldOidcSubject)
 	}
+	if m.FieldCleared(user.FieldSettings) {
+		fields = append(fields, user.FieldSettings)
+	}
 	return fields
 }
 
@@ -13578,6 +13645,9 @@ func (m *UserMutation) ClearField(name string) error {
 		return nil
 	case user.FieldOidcSubject:
 		m.ClearOidcSubject()
+		return nil
+	case user.FieldSettings:
+		m.ClearSettings()
 		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
@@ -13619,6 +13689,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldOidcSubject:
 		m.ResetOidcSubject()
+		return nil
+	case user.FieldSettings:
+		m.ResetSettings()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

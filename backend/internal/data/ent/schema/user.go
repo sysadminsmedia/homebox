@@ -54,6 +54,8 @@ func (User) Fields() []ent.Field {
 		field.String("oidc_subject").
 			Optional().
 			Nillable(),
+		field.JSON("settings", map[string]interface{}{}).
+			Optional(),
 	}
 }
 
