@@ -98,8 +98,8 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 
 		// Group management endpoints
 		r.Get("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupsGetAll(), userMW...))
+		r.Post("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupCreate(), userMW...))
 		r.Get("/groups/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupGet(), userMW...))
-		r.Post("/groups/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupCreate(), userMW...))
 		r.Put("/groups/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupUpdate(), userMW...))
 		r.Delete("/groups/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupDelete(), userMW...))
 

@@ -30,6 +30,10 @@ func (svc *GroupService) CreateGroup(ctx Context, name string) (repo.Group, erro
 		return repo.Group{}, errors.New("group name cannot be empty")
 	}
 
+	if ctx.UID == uuid.Nil {
+		return repo.Group{}, errors.New("user ID cannot be empty when creating a group")
+	}
+
 	return svc.repos.Groups.GroupCreate(ctx.Context, name, ctx.UID)
 }
 

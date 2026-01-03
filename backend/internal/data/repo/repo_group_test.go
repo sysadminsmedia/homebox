@@ -21,6 +21,29 @@ func Test_Group_Create(t *testing.T) {
 	assert.Equal(t, g.ID, foundGroup.ID)
 }
 
+func Test_Group_Create_WithUser(t *testing.T) {
+	// Create a test user first
+	password := "password123"
+	user, err := tRepos.Users.Create(context.Background(), UserCreate{
+		Name:           "test_user",
+		Email:          "test_group_user@example.com",
+		Password:       &password,
+		DefaultGroupID: tGroup.ID,
+	})
+	require.NoError(t, err)
+
+	// Create a group with the user
+	g, err := tRepos.Groups.GroupCreate(context.Background(), "test_group_with_user", user.ID)
+	require.NoError(t, err)
+	assert.Equal(t, "test_group_with_user", g.Name)
+
+	// Verify the user is a member of the group
+	members, err := tRepos.Users.GetUsersByGroupID(context.Background(), g.ID)
+	require.NoError(t, err)
+	assert.Len(t, members, 1, "Group should have exactly one member")
+	assert.Equal(t, user.ID, members[0].ID, "The member should be the user who created the group")
+}
+
 func Test_Group_Update(t *testing.T) {
 	g, err := tRepos.Groups.GroupCreate(context.Background(), "test", uuid.Nil)
 	require.NoError(t, err)

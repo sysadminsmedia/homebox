@@ -13,6 +13,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
 type GroupRepository struct {
@@ -105,8 +106,12 @@ type (
 	}
 )
 
-func (r *GroupRepository) GetAllGroups(ctx context.Context) ([]Group, error) {
-	return r.groupMapper.MapEachErr(r.db.Group.Query().All(ctx))
+func (r *GroupRepository) GetAllGroups(ctx context.Context, userID uuid.UUID) ([]Group, error) {
+	q := r.db.Group.Query()
+	if userID != uuid.Nil {
+		q.Where(group.HasUsersWith(user.ID(userID)))
+	}
+	return r.groupMapper.MapEachErr(q.All(ctx))
 }
 
 func (r *GroupRepository) StatsLocationsByPurchasePrice(ctx context.Context, gid uuid.UUID) ([]TotalsByOrganizer, error) {

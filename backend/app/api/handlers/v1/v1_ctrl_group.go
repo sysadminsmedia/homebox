@@ -112,7 +112,7 @@ func (ctrl *V1Controller) HandleGroupInvitationsCreate() errchain.HandlerFunc {
 func (ctrl *V1Controller) HandleGroupsGetAll() errchain.HandlerFunc {
 	fn := func(r *http.Request) ([]repo.Group, error) {
 		auth := services.NewContext(r.Context())
-		return ctrl.repo.Groups.GetAllGroups(auth)
+		return ctrl.repo.Groups.GetAllGroups(auth, auth.UID)
 	}
 
 	return adapters.Command(fn, http.StatusOK)
@@ -125,7 +125,7 @@ func (ctrl *V1Controller) HandleGroupsGetAll() errchain.HandlerFunc {
 //	@Produce	json
 //	@Param		name	body		string	true	"Group Name"
 //	@Success	201		{object}	repo.Group
-//	@Router		/v1/groups/{id} [Post]
+//	@Router		/v1/groups [Post]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleGroupCreate() errchain.HandlerFunc {
 	type CreateRequest struct {
