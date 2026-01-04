@@ -391,9 +391,6 @@
   const locationStore = useLocationStore();
   locationStore.ensureLocationsFetched();
 
-  const collectionStore = useCollectionStore();
-  collectionStore.load();
-
   onMounted(() => {
     locationStore.refreshParents();
     locationStore.refreshTree();

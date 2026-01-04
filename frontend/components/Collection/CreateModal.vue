@@ -31,6 +31,8 @@
   import { useDialog } from "~/components/ui/dialog-provider";
   import FormTextField from "~/components/Form/TextField.vue";
   import { Button, ButtonGroup } from "~/components/ui/button";
+  import { useUserApi } from "~/composables/use-api";
+  import { useCollections } from "~/composables/use-collections";
 
   const { t } = useI18n();
 
@@ -42,9 +44,8 @@
   const form = reactive({ name: "" });
 
   const api = useUserApi();
+  const collections = useCollections();
   const { shift } = useMagicKeys();
-
-  const collectionStore = useCollectionStore();
 
   watch(
     () => activeDialog.value,
@@ -91,13 +92,13 @@
       closeDialog(DialogID.CreateCollection);
       if (data) {
         const createdId = data.id;
-
-        collectionStore.set(createdId);
+        collections.set(createdId);
         // reload page to reflect new collection
         window.location.reload();
       }
     } else {
-      collectionStore.load();
+      // refresh global collections list
+      await collections.load();
     }
   }
 </script>
