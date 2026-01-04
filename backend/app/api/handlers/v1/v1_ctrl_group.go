@@ -275,7 +275,7 @@ func (ctrl *V1Controller) HandleGroupInvitationsAccept() errchain.HandlerFunc {
 		auth := services.NewContext(r.Context())
 		group, err := ctrl.svc.Group.AcceptInvitation(auth, token)
 		if err != nil {
-			if errors.Is(err, services.ErrUserAlreadyInGroup) {
+			if errors.Is(err, errors.New("user already a member of this group")) {
 				return GroupAcceptInvitationResponse{}, validate.NewRequestError(err, http.StatusBadRequest)
 			}
 			return GroupAcceptInvitationResponse{}, err
