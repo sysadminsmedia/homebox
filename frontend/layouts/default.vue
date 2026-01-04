@@ -365,9 +365,9 @@
     {
       icon: MdiCog,
       id: 6,
-      active: computed(() => route.path === "/tools"),
-      name: computed(() => t("menu.tools")),
-      to: "/tools",
+      active: computed(() => route.path.includes("/collection")),
+      name: computed(() => t("menu.collection_options")),
+      to: "/collection/members",
     },
   ];
 

@@ -296,7 +296,6 @@
         "collection": {
             "selector": {
                 "select_collection": "Select Collection",
-                "collection_settings": "Collection Settings",
                 "create_collection": "Create New Collection",
                 "join_collection": "Join Existing Collection",
                 "no_collection_found": "No collection found",
@@ -652,7 +651,7 @@
         "scanner": "Scanner",
         "search": "Search",
         "templates": "Templates",
-        "tools": "Tools"
+        "collection_options": "Collection Options"
     },
     "pages": {
         "templates": {
@@ -815,6 +814,15 @@
             "failed_wipe_inventory": "Failed to wipe inventory.",
             "failed_zero_datetimes": "Failed to reset date and time values.",
             "wipe_inventory_success": "Successfully wiped inventory. { results } items deleted."
+        }
+    },
+    "collection": {
+        "manage_collection": "Manage Collection",
+        "tabs": {
+            "members": "Members",
+            "invites": "Invites",
+            "settings": "Settings",
+            "tools": "Tools"
         }
     }
 }

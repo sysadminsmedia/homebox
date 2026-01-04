@@ -51,13 +51,7 @@
               }
             "
           >
-            <Plus class="mr-2 size-4" /> {{ t("components.collection.selector.join_collection") }}
-          </CommandItem>
-          <CommandItem as-child value="collection-settings">
-            <NuxtLink to="/collection" class="flex w-full items-center">
-              <Settings class="mr-2 size-4" />
-              {{ t("components.collection.selector.collection_settings") }}
-            </NuxtLink>
+            <UserPlus class="mr-2 size-4" /> {{ t("components.collection.selector.join_collection") }}
           </CommandItem>
         </CommandGroup>
         <CommandInput v-model="search" placeholder="Search collections..." :display-value="_ => ''" />
@@ -86,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-  import { Check, ChevronsUpDown, Plus, Settings } from "lucide-vue-next";
+  import { Check, ChevronsUpDown, Plus, UserPlus } from "lucide-vue-next";
   import MdiHomeGroup from "~icons/mdi/home-group";
   import fuzzysort from "fuzzysort";
   import { Button } from "~/components/ui/button";
