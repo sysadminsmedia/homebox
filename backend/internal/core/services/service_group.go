@@ -90,6 +90,14 @@ func (svc *GroupService) AcceptInvitation(ctx Context, token string) (repo.Group
 		return repo.Group{}, errors.New("invitation used up")
 	}
 
+	isMember, err := svc.repos.Groups.IsMember(ctx.Context, invitation.Group.ID, ctx.UID)
+	if err != nil {
+		return repo.Group{}, err
+	}
+	if isMember {
+		return repo.Group{}, errors.New("user already a member of this group")
+	}
+
 	err = svc.repos.Groups.AddMember(ctx.Context, invitation.Group.ID, ctx.UID)
 	if err != nil {
 		return repo.Group{}, err

@@ -351,6 +351,12 @@ func (r *GroupRepository) InvitationPurge(ctx context.Context) (amount int, err 
 	return q.Exec(ctx)
 }
 
+func (r *GroupRepository) IsMember(ctx context.Context, groupID, userID uuid.UUID) (bool, error) {
+	return r.db.Group.Query().
+		Where(group.ID(groupID), group.HasUsersWith(user.ID(userID))).
+		Exist(ctx)
+}
+
 func (r *GroupRepository) AddMember(ctx context.Context, groupID, userID uuid.UUID) error {
 	return r.db.Group.UpdateOneID(groupID).AddUserIDs(userID).Exec(ctx)
 }

@@ -8,7 +8,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
-	"github.com/hay-kot/httpkit/server"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/validate"
@@ -267,21 +266,23 @@ func (ctrl *V1Controller) HandleGroupInvitationsDelete() errchain.HandlerFunc {
 //	@Router		/v1/groups/invitations/{id} [Post]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleGroupInvitationsAccept() errchain.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) error {
+	fn := func(r *http.Request) (GroupAcceptInvitationResponse, error) {
 		token := chi.URLParam(r, "id")
 		if token == "" {
-			return validate.NewRequestError(errors.New("token is required"), http.StatusBadRequest)
+			return GroupAcceptInvitationResponse{}, validate.NewRequestError(errors.New("token is required"), http.StatusBadRequest)
 		}
 
 		auth := services.NewContext(r.Context())
 		group, err := ctrl.svc.Group.AcceptInvitation(auth, token)
 		if err != nil {
-			return validate.NewRequestError(err, http.StatusInternalServerError)
+			if errors.Is(err, services.ErrUserAlreadyInGroup) {
+				return GroupAcceptInvitationResponse{}, validate.NewRequestError(err, http.StatusBadRequest)
+			}
+			return GroupAcceptInvitationResponse{}, err
 		}
 
-		return server.JSON(w, http.StatusOK, GroupAcceptInvitationResponse{
-			ID:   group.ID,
-			Name: group.Name,
-		})
+		return GroupAcceptInvitationResponse{ID: group.ID, Name: group.Name}, nil
 	}
+
+	return adapters.Command(fn, http.StatusOK)
 }

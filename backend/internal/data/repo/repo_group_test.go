@@ -70,3 +70,29 @@ func Test_Group_Update(t *testing.T) {
 	assert.Equal(t, 1, stats.TotalUsers)
 	assert.Equal(t, 1, stats.TotalLocations)
 }*/
+
+func Test_Group_IsMember(t *testing.T) {
+	ctx := context.Background()
+
+	group, err := tRepos.Groups.GroupCreate(ctx, "member-check", uuid.Nil)
+	require.NoError(t, err)
+
+	user := userFactory()
+	user.DefaultGroupID = group.ID
+	createdUser, err := tRepos.Users.Create(ctx, user)
+	require.NoError(t, err)
+
+	// Newly created user is added to default group in Create()
+	isMember, err := tRepos.Groups.IsMember(ctx, group.ID, createdUser.ID)
+	require.NoError(t, err)
+	assert.True(t, isMember)
+
+	otherUser := userFactory()
+	otherUser.DefaultGroupID = tGroup.ID
+	createdOther, err := tRepos.Users.Create(ctx, otherUser)
+	require.NoError(t, err)
+
+	isMember, err = tRepos.Groups.IsMember(ctx, group.ID, createdOther.ID)
+	require.NoError(t, err)
+	assert.False(t, isMember)
+}
