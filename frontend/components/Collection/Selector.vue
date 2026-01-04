@@ -93,7 +93,7 @@
   import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "~/components/ui/command";
   import { Popover, PopoverContent, PopoverTrigger } from "~/components/ui/popover";
   import { cn } from "~/lib/utils";
-  import { ref, computed, watch } from "vue";
+  import { ref, computed, watch, onMounted } from "vue";
   import { useSidebar } from "@/components/ui/sidebar/utils";
   import { useI18n } from "vue-i18n";
   import { DialogID } from "@/components/ui/dialog-provider/utils";
@@ -103,18 +103,15 @@
 
   const { t } = useI18n();
 
-  const collectionStore = useCollectionStore();
-
   const open = ref(false);
   const search = ref("");
 
-  const collectionsList = computed(() => collectionStore.collections);
-  const selectedCollection = computed(() => collectionStore.selectedCollection);
+  const { collections, selectedCollection, load, set } = useCollections();
+  const collectionsList = computed(() => collections.value);
 
   function selectCollection(collection: CollectionSummary) {
     if (selectedCollection.value?.id !== collection.id) {
-      collectionStore.set(collection.id);
-      console.log(collection);
+      set(collection.id);
       window.location.reload();
     }
     open.value = false;
@@ -136,4 +133,8 @@
       }
     }
   );
+
+  onMounted(() => {
+    load();
+  });
 </script>

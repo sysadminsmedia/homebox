@@ -39,6 +39,8 @@
   import FormTextField from "~/components/Form/TextField.vue";
   import { Button } from "~/components/ui/button";
   import { Badge } from "~/components/ui/badge";
+  import { useUserApi } from "~/composables/use-api";
+  import { useCollections } from "~/composables/use-collections";
 
   const { t } = useI18n();
 
@@ -50,8 +52,7 @@
   const form = reactive({ inviteCode: "" });
 
   const api = useUserApi();
-
-  const collectionStore = useCollectionStore();
+  const collections = useCollections();
 
   const domain = window.location.protocol + "//" + window.location.host;
 
@@ -107,8 +108,7 @@
     closeDialog(DialogID.CreateCollection);
     if (data) {
       const joinedId = data.id;
-
-      collectionStore.set(joinedId);
+      collections.set(joinedId);
       // reload page to reflect joined collection
       window.location.reload();
     }
