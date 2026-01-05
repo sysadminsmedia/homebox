@@ -16,6 +16,7 @@
     <AppScannerModal />
     <CollectionCreateModal />
     <CollectionJoinModal />
+    <CollectionInviteCreateModal />
     <SidebarProvider :default-open="sidebarState">
       <Sidebar collapsible="icon">
         <SidebarHeader class="items-center">
@@ -235,6 +236,7 @@
   import CollectionSelector from "~/components/Collection/Selector.vue";
   import CollectionCreateModal from "~/components/Collection/CreateModal.vue";
   import CollectionJoinModal from "~/components/Collection/JoinModal.vue";
+  import CollectionInviteCreateModal from "~/components/Collection/InviteCreateModal.vue";
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");

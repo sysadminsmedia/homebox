@@ -3,6 +3,7 @@ import { createContext } from "reka-ui";
 import { useMagicKeys, useActiveElement } from "@vueuse/core";
 import type {
   BarcodeProduct,
+  GroupInvitation,
   ItemSummary,
   MaintenanceEntry,
   MaintenanceEntryWithDetails,
@@ -15,6 +16,7 @@ export enum DialogID {
   CreateLocation = "create-location",
   CreateLabel = "create-label",
   CreateCollection = "create-collection",
+  CreateGroupInvite = "create-group-invite",
   JoinCollection = "join-collection",
   CreateNotifier = "create-notifier",
   CreateTemplate = "create-template",
@@ -80,6 +82,7 @@ export type DialogResultMap = {
   [DialogID.EditMaintenance]?: boolean;
   [DialogID.ItemChangeDetails]?: boolean;
   [DialogID.WipeInventory]?: { wipeLabels: boolean; wipeLocations: boolean; wipeMaintenance: boolean };
+  [DialogID.CreateGroupInvite]?: GroupInvitation;
 };
 
 /** Helpers to split IDs by requirement */

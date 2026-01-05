@@ -5,7 +5,9 @@ import type {
   GroupAcceptInvitationResponse,
   GroupInvitation,
   GroupInvitationCreate,
+  GroupMemberAdd,
   GroupUpdate,
+  UserOut,
 } from "../types/data-contracts";
 
 export class GroupApi extends BaseAPI {
@@ -19,6 +21,46 @@ export class GroupApi extends BaseAPI {
   acceptInvitation(id: string) {
     return this.http.post<null, GroupAcceptInvitationResponse>({
       url: route(`/groups/invitations/${id}`),
+    });
+  }
+
+  getInvitations() {
+    return this.http.get<GroupInvitation[]>({
+      url: route("/groups/invitations"),
+    });
+  }
+
+  deleteInvitation(id: string) {
+    return this.http.delete<void>({
+      url: route(`/groups/invitations/${id}`),
+    });
+  }
+
+  /**
+   * Get all members of the current (or specified) group.
+   */
+  getMembers(groupId?: string) {
+    return this.http.get<UserOut[]>({
+      url: route(`/groups/${groupId || ""}/members`),
+    });
+  }
+
+  /**
+   * Add a user to the current (or specified) group.
+   */
+  addMember(data: GroupMemberAdd, groupId?: string) {
+    return this.http.post<GroupMemberAdd, void>({
+      url: route(`/groups/${groupId || ""}/members`),
+      body: data,
+    });
+  }
+
+  /**
+   * Remove a user from the current (or specified) group.
+   */
+  removeMember(userId: string, groupId?: string) {
+    return this.http.delete<void>({
+      url: route(`/groups/${groupId || ""}/members/${userId}`),
     });
   }
 
