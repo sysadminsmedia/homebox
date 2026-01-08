@@ -191,7 +191,7 @@ func (ctrl *V1Controller) HandleGroupInvitationsGetAll() errchain.HandlerFunc {
 //	@Router		/v1/groups/{id}/members [Get]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleGroupMembersGetAll() errchain.HandlerFunc {
-	fn := func(r *http.Request) ([]repo.UserOut, error) {
+	fn := func(r *http.Request) ([]repo.UserSummary, error) {
 		auth := services.NewContext(r.Context())
 		return ctrl.repo.Users.GetUsersByGroupID(auth, auth.GID)
 	}

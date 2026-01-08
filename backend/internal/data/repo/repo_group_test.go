@@ -41,7 +41,7 @@ func Test_Group_Create_WithUser(t *testing.T) {
 	members, err := tRepos.Users.GetUsersByGroupID(context.Background(), g.ID)
 	require.NoError(t, err)
 	assert.Len(t, members, 1, "Group should have exactly one member")
-	assert.Equal(t, user.ID, members[0].ID, "The member should be the user who created the group")
+	assert.Equal(t, user.Name, members[0].Name, "The member should be the user who created the group")
 }
 
 func Test_Group_Update(t *testing.T) {

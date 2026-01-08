@@ -43,11 +43,18 @@ type (
 		OidcIssuer     *string     `json:"oidcIssuer"`
 		OidcSubject    *string     `json:"oidcSubject"`
 	}
+
+	UserSummary struct {
+		Name    string `json:"name"`
+		Email   string `json:"email"`
+		IsOwner bool   `json:"isOwner"`
+	}
 )
 
 var (
-	mapUserOutErr  = mapTErrFunc(mapUserOut)
-	mapUsersOutErr = mapTEachErrFunc(mapUserOut)
+	mapUserOutErr      = mapTErrFunc(mapUserOut)
+	mapUsersOutErr     = mapTEachErrFunc(mapUserOut)
+	mapUsersSummaryErr = mapTEachErrFunc(mapUserSummary)
 )
 
 func mapUserOut(user *ent.User) UserOut {
@@ -78,6 +85,14 @@ func mapUserOut(user *ent.User) UserOut {
 		IsOwner:        user.Role == "owner",
 		OidcIssuer:     user.OidcIssuer,
 		OidcSubject:    user.OidcSubject,
+	}
+}
+
+func mapUserSummary(user *ent.User) UserSummary {
+	return UserSummary{
+		Name:    user.Name,
+		Email:   user.Email,
+		IsOwner: user.Role == "owner",
 	}
 }
 
@@ -208,9 +223,8 @@ func (r *UserRepository) GetOneOIDC(ctx context.Context, issuer, subject string)
 		Only(ctx))
 }
 
-func (r *UserRepository) GetUsersByGroupID(ctx context.Context, gid uuid.UUID) ([]UserOut, error) {
-	return mapUsersOutErr(r.db.User.Query().
-		WithGroups().
+func (r *UserRepository) GetUsersByGroupID(ctx context.Context, gid uuid.UUID) ([]UserSummary, error) {
+	return mapUsersSummaryErr(r.db.User.Query().
 		Where(user.HasGroupsWith(group.ID(gid))).
 		All(ctx))
 }
