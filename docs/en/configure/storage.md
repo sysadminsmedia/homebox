@@ -22,7 +22,7 @@ Optionally, you can also set `AWS_SESSION_TOKEN` if you are using temporary cred
 
 ### AWS S3
 
-You can use S3 storage by setting the `HBOX_STORAGE_CONN_STRING` to `s3://my-bucket?region=region-name&awssdk=v2`.
+You can use S3 storage by setting the `HBOX_STORAGE_CONN_STRING` to `s3://my-bucket?region=region-name`.
 
 In this case, the `HBOX_STORAGE_PREFIX_PATH` can be used to set a "prefix" for the storage. This "prefix" comes after
 the bucket name in the connection string.
@@ -30,19 +30,19 @@ the bucket name in the connection string.
 ### S3-Compatible Storage
 
 You can also use S3-compatible storage by setting the `HBOX_STORAGE_CONN_STRING` to
-`s3://my-bucket?awssdk=v2&endpoint=http://my-s3-compatible-endpoint.tld&disable_https=true&s3ForcePathStyle=true`.
+`s3://my-bucket?endpoint=http://my-s3-compatible-endpoint.tld&disable_https=true&use_path_style=true`.
 
 This allows you to connect to S3-compatible services like MinIO, DigitalOcean Spaces, or any other service that supports
-the S3 API. Configure the `disable_https`, `s3ForcePathStyle`, and `endpoint` parameters as needed for your specific
+the S3 API. Configure the `disable_https`, `use_path_style`, and `endpoint` parameters as needed for your specific
 service.
 
 #### Tested S3-Compatible Storage
 
 | Service             | Working | Connection String                                                                                                        |
 |---------------------|---------|--------------------------------------------------------------------------------------------------------------------------|
-| MinIO               | Yes     | `s3://my-bucket?awssdk=v2&endpoint=http://minio:9000&disable_https=true&s3ForcePathStyle=true`                              |
-| Cloudflare R2       | Yes     | `s3://my-bucket?awssdk=v2&endpoint=https://<account-id>.r2.cloudflarestorage.com&disable_https=false&s3ForcePathStyle=true` |
-| Backblaze B2        | Yes     | `s3://my-bucket?awssdk=v2&endpoint=https://s3.us-west-004.backblazeb2.com&disable_https=false&s3ForcePathStyle=true`        |
+| MinIO               | Yes     | `s3://my-bucket?endpoint=http://minio:9000&disable_https=true&use_path_style=true`                              |
+| Cloudflare R2       | Yes     | `s3://my-bucket?endpoint=https://<account-id>.r2.cloudflarestorage.com&disable_https=false&use_path_style=true` |
+| Backblaze B2        | Yes     | `s3://my-bucket?endpoint=https://s3.us-west-004.backblazeb2.com&disable_https=false&use_path_style=true`        |
 
 ::: info
 If you know of any other S3-compatible storage that works with Homebox, please let us know or create a pull request to update the table.
@@ -53,16 +53,18 @@ If you know of any other S3-compatible storage that works with Homebox, please l
 Additionally, the parameters in the URL can be used to configure specific S3 settings:
 
 - `region`: The AWS region where the bucket is located.
-- `awssdk`: The version of the AWS SDK to use (e.g., `v2`). (We highly recommend using `v2` for better performance and
-  features.)
 - `endpoint`: The custom endpoint for S3-compatible storage services.
-- `s3ForcePathStyle`: Whether to force path-style access (set to `true` or `false`).
+- `use_path_style`: Whether to force path-style access (set to `true` or `false`).
 - `disable_https`: Whether to disable SSL (set to `true` or `false`).
 - `sseType`: The server-side encryption type (e.g., `AES256` or `aws:kms` or `aws:kms:dsse`).
 - `kmskeyid`: The KMS key ID for server-side encryption.
 - `fips`: Whether to use FIPS endpoints (set to `true` or `false`).
 - `dualstack`: Whether to use dual-stack endpoints (set to `true` or `false`).
 - `accelerate`: Whether to use S3 Transfer Acceleration (set to `true` or `false`).
+- `request_checksum_calculation`: If checksum calculations should be made (set to `when_supported` or `when_required`)
+- `response_checksum_validation`: If checksums should be validated (set to `when_supported` or `when_required`)
+- `hostname_immutable`: Make the hostname immutable, only works if endpoint is also set (set to `true` or `false`).
+- `rate_limiter_capacity`: A integer value configures the capacity of a token bucket used in client-side rate limits. If no value is set, the client-side rate limiting is disabled. See https://aws.github.io/aws-sdk-go-v2/docs/configuring-sdk/retries-timeouts/#client-side-rate-limiting.
 
 
 ## Google Cloud Storage
