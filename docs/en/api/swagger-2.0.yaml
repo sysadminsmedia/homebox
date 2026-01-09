@@ -1867,6 +1867,15 @@ definitions:
       token:
         type: string
     type: object
+  v1.WipeInventoryOptions:
+    properties:
+      wipeLabels:
+        type: boolean
+      wipeLocations:
+        type: boolean
+      wipeMaintenance:
+        type: boolean
+    type: object
   v1.Wrapped:
     properties:
       item: {}
@@ -1945,6 +1954,27 @@ paths:
       security:
       - Bearer: []
       summary: Set Primary Photos
+      tags:
+      - Actions
+  /v1/actions/wipe-inventory:
+    post:
+      description: Deletes all items in the inventory
+      parameters:
+      - description: Wipe options
+        in: body
+        name: options
+        schema:
+          $ref: '#/definitions/v1.WipeInventoryOptions'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.ActionAmountResult'
+      security:
+      - Bearer: []
+      summary: Wipe Inventory
       tags:
       - Actions
   /v1/actions/zero-item-time-fields:

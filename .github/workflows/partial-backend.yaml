@@ -1,5 +1,11 @@
 name: Go Build/Test
 
+permissions:
+  contents: read
+  actions: read
+  checks: write
+  pull-requests: write
+
 on:
   workflow_call:
 
@@ -7,21 +13,21 @@ jobs:
   Go:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@4dc6199c7b1a012772edbd06daecab0f50c9053c
         with:
           go-version: "1.24"
           cache-dependency-path: backend/go.mod
 
       - name: Install Task
-        uses: arduino/setup-task@v1
+        uses: arduino/setup-task@b91d5d2c96a56797b48ac1e0e89220bf64044611
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v7
+        uses: golangci/golangci-lint-action@1e7e51e771db61008b38414a730f564565cf7c20
         with:
           # Optional: version of golangci-lint to use in form of v1.2 or v1.2.3 or `latest` to use the latest version
           version: latest

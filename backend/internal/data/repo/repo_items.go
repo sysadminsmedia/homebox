@@ -809,6 +809,88 @@ func (e *ItemsRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID) 
 	return err
 }
 
+func (e *ItemsRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wipeLabels bool, wipeLocations bool, wipeMaintenance bool) (int, error) {
+	deleted := 0
+
+	// Wipe maintenance records if requested
+	// IMPORTANT: Must delete maintenance records BEFORE items since they are linked to items
+	if wipeMaintenance {
+		maintenanceCount, err := e.db.MaintenanceEntry.Delete().
+			Where(maintenanceentry.HasItemWith(item.HasGroupWith(group.ID(gid)))).
+			Exec(ctx)
+		if err != nil {
+			log.Err(err).Msg("failed to delete maintenance entries during wipe inventory")
+		} else {
+			log.Info().Int("count", maintenanceCount).Msg("deleted maintenance entries during wipe inventory")
+			deleted += maintenanceCount
+		}
+	}
+
+	// Get all items for the group
+	items, err := e.db.Item.Query().
+		Where(item.HasGroupWith(group.ID(gid))).
+		WithAttachments().
+		All(ctx)
+	if err != nil {
+		return 0, err
+	}
+
+	// Delete each item with its attachments
+	// Note: We manually delete attachments and items instead of calling DeleteByGroup
+	// to continue processing remaining items even if some deletions fail
+	for _, itm := range items {
+		// Delete all attachments first
+		for _, att := range itm.Edges.Attachments {
+			err := e.attachments.Delete(ctx, gid, itm.ID, att.ID)
+			if err != nil {
+				log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during wipe inventory")
+				// Continue with other attachments even if one fails
+			}
+		}
+
+		// Delete the item
+		_, err = e.db.Item.
+			Delete().
+			Where(
+				item.ID(itm.ID),
+				item.HasGroupWith(group.ID(gid)),
+			).Exec(ctx)
+		if err != nil {
+			log.Err(err).Str("item_id", itm.ID.String()).Msg("failed to delete item during wipe inventory")
+			// Skip to next item without incrementing counter
+			continue
+		}
+
+		// Only increment counter if deletion succeeded
+		deleted++
+	}
+
+	// Wipe labels if requested
+	if wipeLabels {
+		labelCount, err := e.db.Label.Delete().Where(label.HasGroupWith(group.ID(gid))).Exec(ctx)
+		if err != nil {
+			log.Err(err).Msg("failed to delete labels during wipe inventory")
+		} else {
+			log.Info().Int("count", labelCount).Msg("deleted labels during wipe inventory")
+			deleted += labelCount
+		}
+	}
+
+	// Wipe locations if requested
+	if wipeLocations {
+		locationCount, err := e.db.Location.Delete().Where(location.HasGroupWith(group.ID(gid))).Exec(ctx)
+		if err != nil {
+			log.Err(err).Msg("failed to delete locations during wipe inventory")
+		} else {
+			log.Info().Int("count", locationCount).Msg("deleted locations during wipe inventory")
+			deleted += locationCount
+		}
+	}
+
+	e.publishMutationEvent(gid)
+	return deleted, nil
+}
+
 func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data ItemUpdate) (ItemOut, error) {
 	q := e.db.Item.Update().Where(item.ID(data.ID), item.HasGroupWith(group.ID(gid))).
 		SetName(data.Name).

@@ -226,7 +226,7 @@
                 "clear": "Clear Location Selection"
             },
             "tree": {
-                "no_locations": "No locations available. Add new locations through the\n '<span class=\"link-primary\">'Create'</span>' button on the navigation bar."
+                "no_locations": "No locations available. Use the Create button to add a new location."
             }
         },
         "quick_menu": {
@@ -735,12 +735,23 @@
             "set_primary_photo_button": "Set Primary Photo",
             "set_primary_photo_confirm": "Are you sure you want to set primary photos? This can take a while and cannot be undone.",
             "set_primary_photo_sub": "In version v0.10.0 of Homebox, the primary image field was added to attachments of type photo. This action will set the primary image field to the first image in the attachments array in the database, if it is not already set. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'See GitHub PR #576'</a>'",
+            "wipe_inventory": "Wipe Inventory",
+            "wipe_inventory_button": "Wipe Inventory",
+            "wipe_inventory_confirm": "Are you sure you want to wipe your entire inventory? This will delete all items and cannot be undone.",
+            "wipe_inventory_labels": "Also wipe all labels (tags)",
+            "wipe_inventory_locations": "Also wipe all locations",
+            "wipe_inventory_maintenance": "Also wipe all maintenance records",
+            "wipe_inventory_note": "Note: Only group owners can perform this action.",
+            "wipe_inventory_sub": "Permanently deletes all items in your inventory. This action is irreversible and will remove all item data including attachments and photos.",
             "zero_datetimes": "Zero Item Date Times",
             "zero_datetimes_button": "Zero Item Date Times",
             "zero_datetimes_confirm": "Are you sure you want to reset all date and time values? This can take a while and cannot be undone.",
             "zero_datetimes_sub": "Resets the time value for all date time fields in your inventory to the beginning of the date. This is to fix a bug that was introduced early on in the development of the site that caused the time value to be stored with the time which caused issues with date fields displaying accurate values. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'See Github Issue #236 for more details.'</a>'"
         },
         "actions_sub": "Apply Actions to your inventory in bulk. These are irreversible actions. '<b>'Be careful.'</b>'",
+        "demo_mode_error": {
+            "wipe_inventory": "Inventory, labels, locations and maintenance records cannot be wiped whilst Homebox is in demo mode. Please ensure that you are not in demo mode and try again."
+        },
         "import_export": "Import/Export",
         "import_export_set": {
             "export": "Export Inventory",
@@ -768,7 +779,9 @@
             "failed_ensure_ids": "Failed to ensure asset IDs.",
             "failed_ensure_import_refs": "Failed to ensure import refs.",
             "failed_set_primary_photos": "Failed to set primary photos.",
-            "failed_zero_datetimes": "Failed to reset date and time values."
+            "failed_wipe_inventory": "Failed to wipe inventory.",
+            "failed_zero_datetimes": "Failed to reset date and time values.",
+            "wipe_inventory_success": "Successfully wiped inventory. { results } items deleted."
         }
     }
 }
