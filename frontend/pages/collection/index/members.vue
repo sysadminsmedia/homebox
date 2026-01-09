@@ -5,7 +5,7 @@
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
   import MdiDelete from "~icons/mdi/delete";
   import { toast } from "@/components/ui/sonner";
-  import type { UserUpdate } from "~~/lib/api/types/data-contracts";
+  import type { UserSummary } from "~~/lib/api/types/data-contracts";
 
   definePageMeta({
     middleware: ["auth"],
@@ -17,7 +17,7 @@
   const confirm = useConfirm();
 
   const loading = ref(true);
-  const members = ref<UserUpdate[]>([]);
+  const members = ref<UserSummary[]>([]);
   const error = ref<string | null>(null);
   const removing = ref<Record<string, boolean>>({});
 
@@ -49,7 +49,7 @@
     }
   };
 
-  const handleRemove = async (user: UserUpdate) => {
+  const handleRemove = async (user: UserSummary) => {
     if (!user?.id) return;
 
     if (isLastMember.value && user.id === currentUserId.value) {
@@ -97,8 +97,8 @@
         {{ $t("collection.members.empty") }}
       </div>
 
-      <div v-else class="rounded-md border bg-card">
-        <Table class="w-full">
+      <div v-else class="scroll-bg overflow-x-auto rounded-md border bg-card">
+        <Table class="min-w-[480px]">
           <TableHeader>
             <TableRow>
               <TableHead>{{ $t("collection.members.name") }}</TableHead>

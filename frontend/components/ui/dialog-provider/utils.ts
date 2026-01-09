@@ -72,6 +72,8 @@ export type DialogParamsMap = {
     addLabels?: boolean;
     removeLabels?: boolean;
   };
+  [DialogID.CreateCollection]?: { redirectTo?: string };
+  [DialogID.JoinCollection]?: { redirectTo?: string };
 };
 
 /**

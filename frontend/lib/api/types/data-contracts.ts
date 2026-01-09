@@ -1047,6 +1047,13 @@ export interface UserOut {
   oidcSubject: string;
 }
 
+export interface UserSummary {
+  email: string;
+  id: string;
+  isOwner: boolean;
+  name: string;
+}
+
 export interface UserUpdate {
   email: string;
   name: string;

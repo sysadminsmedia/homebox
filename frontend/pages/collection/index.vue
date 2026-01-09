@@ -12,7 +12,7 @@
   import MdiWrench from "~icons/mdi/wrench";
   import MdiLogout from "~icons/mdi/logout";
   import MdiDelete from "~icons/mdi/delete";
-  import type { UserUpdate } from "~/lib/api/types/data-contracts";
+  import type { UserSummary } from "~/lib/api/types/data-contracts";
 
   definePageMeta({
     middleware: ["auth"],
@@ -62,7 +62,7 @@
 
   const { selectedCollection, load: reloadCollections } = useCollections();
 
-  const members = ref<Array<UserUpdate>>([]);
+  const members = ref<Array<UserSummary>>([]);
   const membersLoading = ref(false);
   const actionLoading = ref(false);
 
@@ -70,7 +70,11 @@
 
   const membersCount = computed(() => members.value.length);
 
-  const isOnlyMember = computed(() => membersCount.value === 1 && members.value[0]?.id === currentUserId.value);
+  const isOnlyMember = computed(() => {
+    if (membersCount.value !== 1 || !currentUserId.value) return false;
+    const member = members.value[0];
+    return Boolean(member && member.id && member.id === currentUserId.value);
+  });
   const isActionDisabled = computed(() => !selectedCollection.value || membersLoading.value || actionLoading.value);
 
   const loadMembers = async () => {
@@ -87,7 +91,7 @@
         toast.error(msg);
         members.value = [];
       } else {
-        members.value = Array.isArray(res.data) ? (res.data as Array<{ id: string }>) : [];
+        members.value = Array.isArray(res.data) ? (res.data as Array<UserSummary>) : [];
       }
     } catch (e) {
       const msg = (e as Error).message ?? String(e);

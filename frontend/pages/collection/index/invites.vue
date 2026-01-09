@@ -157,8 +157,8 @@
         {{ $t("collection.no_invites") }}
       </div>
 
-      <div v-else class="rounded-md border bg-card">
-        <Table class="w-full">
+      <div v-else class="scroll-bg overflow-x-auto rounded-md border bg-card">
+        <Table class="min-w-[640px]">
           <TableHeader>
             <TableRow>
               <TableHead>{{ $t("collection.invite_token") }}</TableHead>

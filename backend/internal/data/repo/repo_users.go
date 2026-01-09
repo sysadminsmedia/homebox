@@ -45,9 +45,10 @@ type (
 	}
 
 	UserSummary struct {
-		Name    string `json:"name"`
-		Email   string `json:"email"`
-		IsOwner bool   `json:"isOwner"`
+		Name    string    `json:"name"`
+		Email   string    `json:"email"`
+		IsOwner bool      `json:"isOwner"`
+		ID      uuid.UUID `json:"id"`
 	}
 )
 
@@ -93,6 +94,7 @@ func mapUserSummary(user *ent.User) UserSummary {
 		Name:    user.Name,
 		Email:   user.Email,
 		IsOwner: user.Role == "owner",
+		ID:      user.ID,
 	}
 }
 

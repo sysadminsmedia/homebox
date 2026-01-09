@@ -601,7 +601,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/repo.UserOut"
+                                "$ref": "#/definitions/repo.UserSummary"
                             }
                         }
                     }
@@ -5184,6 +5184,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "oidcSubject": {
+                    "type": "string"
+                }
+            }
+        },
+        "repo.UserSummary": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isOwner": {
+                    "type": "boolean"
+                },
+                "name": {
                     "type": "string"
                 }
             }

@@ -1696,6 +1696,17 @@ definitions:
       oidcSubject:
         type: string
     type: object
+  repo.UserSummary:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      isOwner:
+        type: boolean
+      name:
+        type: string
+    type: object
   repo.UserUpdate:
     properties:
       email:
@@ -2132,7 +2143,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/repo.UserOut'
+              $ref: '#/definitions/repo.UserSummary'
             type: array
       security:
       - Bearer: []

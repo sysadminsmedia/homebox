@@ -44,7 +44,7 @@
 
   const { t } = useI18n();
 
-  const { activeDialog, closeDialog, openDialog } = useDialog();
+  const { activeDialog, closeDialog, openDialog, registerOpenDialogCallback } = useDialog();
 
   const loading = ref(false);
   const focused = ref(false);
@@ -55,6 +55,16 @@
   const collections = useCollections();
 
   const domain = window.location.protocol + "//" + window.location.host;
+
+  const redirectTo = ref("");
+
+  onMounted(() => {
+    const cleanup = registerOpenDialogCallback(DialogID.JoinCollection, params => {
+      redirectTo.value = params?.redirectTo || "";
+    });
+
+    onUnmounted(cleanup);
+  });
 
   watch(
     () => activeDialog.value,
@@ -105,12 +115,16 @@
     form.inviteCode = "";
     loading.value = false;
 
-    closeDialog(DialogID.CreateCollection);
+    closeDialog(DialogID.JoinCollection);
     if (data) {
       const joinedId = data.id;
       collections.set(joinedId);
-      // reload page to reflect joined collection
-      window.location.reload();
+      if (redirectTo.value === "") {
+        // reload page to reflect joined collection
+        window.location.reload();
+      } else {
+        window.location.href = redirectTo.value;
+      }
     }
   }
 </script>

@@ -614,7 +614,7 @@
                                 "schema": {
                                     "type": "array",
                                     "items": {
-                                        "$ref": "#/components/schemas/repo.UserOut"
+                                        "$ref": "#/components/schemas/repo.UserSummary"
                                     }
                                 }
                             }
@@ -5380,6 +5380,23 @@
                         "type": "string"
                     },
                     "oidcSubject": {
+                        "type": "string"
+                    }
+                }
+            },
+            "repo.UserSummary": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "isOwner": {
+                        "type": "boolean"
+                    },
+                    "name": {
                         "type": "string"
                     }
                 }

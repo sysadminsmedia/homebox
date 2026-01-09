@@ -1,6 +1,7 @@
 import { ref, computed } from "vue";
 import { useUserApi } from "~/composables/use-api";
 import { useViewPreferences } from "~/composables/use-preferences";
+import { useRoute, navigateTo } from "#imports";
 
 export type CollectionSummary = {
   id: string;
@@ -30,6 +31,16 @@ export const useCollections = () => {
 
       collections.value = available;
 
+      try {
+        const route = useRoute();
+        if (collections.value.length === 0) {
+          if (import.meta.client && route.path !== "/no-collections") {
+            void navigateTo("/no-collections");
+          }
+        }
+      } catch (e) {
+        console.error("Navigation error in useCollections:", e);
+      }
       const prefId = prefs.value.collectionId ?? null;
       if (prefId && collections.value.find(c => c.id === prefId)) {
         selectedId.value = prefId;

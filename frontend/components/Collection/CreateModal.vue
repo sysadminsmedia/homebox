@@ -36,7 +36,7 @@
 
   const { t } = useI18n();
 
-  const { activeDialog, closeDialog } = useDialog();
+  const { activeDialog, closeDialog, registerOpenDialogCallback } = useDialog();
 
   const loading = ref(false);
   const focused = ref(false);
@@ -46,6 +46,16 @@
   const api = useUserApi();
   const collections = useCollections();
   const { shift } = useMagicKeys();
+
+  const redirectTo = ref("");
+
+  onMounted(() => {
+    const cleanup = registerOpenDialogCallback(DialogID.CreateCollection, params => {
+      redirectTo.value = params?.redirectTo || "";
+    });
+
+    onUnmounted(cleanup);
+  });
 
   watch(
     () => activeDialog.value,
@@ -93,8 +103,12 @@
       if (data) {
         const createdId = data.id;
         collections.set(createdId);
-        // reload page to reflect new collection
-        window.location.reload();
+        if (redirectTo.value === "") {
+          // reload page to reflect new collection
+          window.location.reload();
+        } else {
+          window.location.href = redirectTo.value;
+        }
       }
     } else {
       // refresh global collections list

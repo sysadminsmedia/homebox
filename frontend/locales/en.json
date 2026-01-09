@@ -831,6 +831,12 @@
     },
     "collection": {
         "manage_collection": "Manage Collection",
+        "no_collections": {
+            "title": "Join Collections Found",
+            "message": "It looks like you're not part of a collection. Create a new collection for your things, or join one you've been invited to.",
+            "create": "Create a new collection",
+            "join": "Join an existing collection"
+        },
         "tabs": {
             "members": "Members",
             "invites": "Invites",

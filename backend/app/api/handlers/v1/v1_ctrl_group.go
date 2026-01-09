@@ -187,7 +187,7 @@ func (ctrl *V1Controller) HandleGroupInvitationsGetAll() errchain.HandlerFunc {
 //	@Summary	Get All Group Members
 //	@Tags		Group
 //	@Produce	json
-//	@Success	200	{object}	[]repo.UserOut
+//	@Success	200	{object}	[]repo.UserSummary
 //	@Router		/v1/groups/{id}/members [Get]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleGroupMembersGetAll() errchain.HandlerFunc {
