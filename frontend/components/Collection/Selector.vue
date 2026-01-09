@@ -62,7 +62,11 @@
             </NuxtLink>
           </CommandItem>
         </CommandGroup>
-        <CommandInput v-model="search" placeholder="Search collections..." :display-value="_ => ''" />
+        <CommandInput
+          v-model="search"
+          :placeholder="t('components.collection.selector.search_collections')"
+          :display-value="_ => ''"
+        />
         <CommandEmpty>{{ t("components.collection.selector.no_collection_found") }}</CommandEmpty>
         <CommandList>
           <CommandGroup :heading="t('components.collection.selector.your_collections')">

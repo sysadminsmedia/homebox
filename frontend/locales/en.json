@@ -300,7 +300,8 @@
                 "join_collection": "Join Existing Collection",
                 "no_collection_found": "No collection found",
                 "your_collections": "Your Collections",
-                "collection_options": "Collection Options"
+                "collection_options": "Collection Options",
+                "search_collections": "Search Collections..."
             },
             "create_modal": {
                 "title": "Create Collection",

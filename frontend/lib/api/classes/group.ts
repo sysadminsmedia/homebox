@@ -11,6 +11,9 @@ import type {
 } from "../types/data-contracts";
 
 export class GroupApi extends BaseAPI {
+  /**
+   * Create a new invitation for the current group.
+   */
   createInvitation(data: GroupInvitationCreate) {
     return this.http.post<GroupInvitationCreate, GroupInvitation>({
       url: route("/groups/invitations"),
@@ -18,18 +21,27 @@ export class GroupApi extends BaseAPI {
     });
   }
 
+  /**
+   * Accept an invitation.
+   */
   acceptInvitation(id: string) {
     return this.http.post<null, GroupAcceptInvitationResponse>({
       url: route(`/groups/invitations/${id}`),
     });
   }
 
+  /**
+   * Get all invitations for the current group.
+   */
   getInvitations() {
     return this.http.get<GroupInvitation[]>({
       url: route("/groups/invitations"),
     });
   }
 
+  /**
+   * Delete an invitation by ID.
+   */
   deleteInvitation(id: string) {
     return this.http.delete<void>({
       url: route(`/groups/invitations/${id}`),
@@ -64,6 +76,9 @@ export class GroupApi extends BaseAPI {
     });
   }
 
+  /**
+   * Update a user's role in the current (or specified) group.
+   */
   update(data: GroupUpdate, groupId?: string) {
     return this.http.put<GroupUpdate, Group>({
       url: route(`/groups/${groupId || ""}`),
@@ -71,12 +86,18 @@ export class GroupApi extends BaseAPI {
     });
   }
 
+  /**
+   * Get a group by ID, if no ID is provided, get the current group.
+   */
   get(groupId?: string) {
     return this.http.get<Group>({
       url: route(`/groups/${groupId || ""}`),
     });
   }
 
+  /**
+   * Create a new group with the given name.
+   */
   create(name: string) {
     return this.http.post<
       {
@@ -89,12 +110,18 @@ export class GroupApi extends BaseAPI {
     });
   }
 
+  /**
+   * Delete a group by ID.
+   */
   delete(groupId: string) {
     return this.http.delete<void>({
       url: route(`/groups/${groupId}`),
     });
   }
 
+  /**
+   * Get all currencies.
+   */
   currencies() {
     return this.http.get<CurrenciesCurrency[]>({
       url: route("/currencies"),
