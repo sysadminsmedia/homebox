@@ -1,5 +1,5 @@
 <template>
-  <BaseModal :dialog-id="DialogID.CreateGroupInvite" :title="$t('profile.gen_invite')" :hide-footer="true">
+  <BaseModal :dialog-id="DialogID.CreateGroupInvite" :title="$t('collection.create_invite')" :hide-footer="true">
     <form class="flex min-w-0 flex-col gap-4" @submit.prevent="create">
       <FormTextField
         v-model="form.uses"

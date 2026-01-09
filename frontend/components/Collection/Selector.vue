@@ -6,7 +6,7 @@
         role="combobox"
         :aria-expanded="open"
         :size="sidebar.state.value === 'collapsed' ? 'icon' : undefined"
-        :class="sidebar.state.value === 'collapsed' ? 'size-10' : 'w-full justify-between'"
+        :class="sidebar.state.value === 'collapsed' ? 'size-10' : 'w-full justify-between drop-shadow-md'"
         aria-label="Collections"
         title="Collections"
       >
@@ -37,6 +37,7 @@
             value="create-collection"
             @select="
               () => {
+                open = false;
                 openDialog(DialogID.CreateCollection);
               }
             "
@@ -47,11 +48,18 @@
             value="join-collection"
             @select="
               () => {
+                open = false;
                 openDialog(DialogID.JoinCollection);
               }
             "
           >
             <UserPlus class="mr-2 size-4" /> {{ t("components.collection.selector.join_collection") }}
+          </CommandItem>
+          <CommandItem as-child value="collection-settings">
+            <NuxtLink to="/collection/members" class="flex w-full items-center" @click="open = false">
+              <Settings class="mr-2 size-4" />
+              {{ t("components.collection.selector.collection_options") }}
+            </NuxtLink>
           </CommandItem>
         </CommandGroup>
         <CommandInput v-model="search" placeholder="Search collections..." :display-value="_ => ''" />
@@ -80,7 +88,7 @@
 </template>
 
 <script setup lang="ts">
-  import { Check, ChevronsUpDown, Plus, UserPlus } from "lucide-vue-next";
+  import { Check, ChevronsUpDown, Plus, UserPlus, Settings } from "lucide-vue-next";
   import MdiHomeGroup from "~icons/mdi/home-group";
   import fuzzysort from "fuzzysort";
   import { Button } from "~/components/ui/button";

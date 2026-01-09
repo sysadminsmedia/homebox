@@ -7,7 +7,7 @@ import type {
   GroupInvitationCreate,
   GroupMemberAdd,
   GroupUpdate,
-  UserOut,
+  UserUpdate,
 } from "../types/data-contracts";
 
 export class GroupApi extends BaseAPI {
@@ -40,7 +40,7 @@ export class GroupApi extends BaseAPI {
    * Get all members of the current (or specified) group.
    */
   getMembers(groupId?: string) {
-    return this.http.get<UserOut[]>({
+    return this.http.get<UserUpdate[]>({
       url: route(`/groups/${groupId || ""}/members`),
     });
   }
@@ -86,6 +86,12 @@ export class GroupApi extends BaseAPI {
     >({
       url: route("/groups"),
       body: { name },
+    });
+  }
+
+  delete(groupId: string) {
+    return this.http.delete<void>({
+      url: route(`/groups/${groupId}`),
     });
   }
 

@@ -299,7 +299,8 @@
                 "create_collection": "Create New Collection",
                 "join_collection": "Join Existing Collection",
                 "no_collection_found": "No collection found",
-                "your_collections": "Your Collections"
+                "your_collections": "Your Collections",
+                "collection_options": "Collection Options"
             },
             "create_modal": {
                 "title": "Create Collection",
@@ -678,7 +679,6 @@
         "display_legacy_header": "{ currentValue, select, true {Disable Legacy Header} false {Enable Legacy Header} other {Not Hit}}",
         "enabled": "Enabled",
         "example": "Example",
-        "gen_invite": "Generate Invite Link",
         "group_settings": "Group Settings",
         "group_settings_sub": "Shared Group Settings. You may need to refresh your browser for some settings to apply.",
         "inactive": "Inactive",
@@ -838,13 +838,22 @@
             "notifiers": "Notifiers",
             "tools": "Tools"
         },
+        "leave_collection": "Leave Collection",
+        "delete_collection": "Delete Collection",
+        "leave_confirm": "Are you sure you want to leave this collection?",
+        "delete_confirm": "Are you sure you want to delete this collection? This action cannot be undone.",
+        "left_collection": "You have left the collection.",
+        "deleted_collection": "Collection deleted.",
         "invites": "Invites",
         "no_invites": "No invites",
         "invite_token": "Token",
         "expires_at": "Expires",
         "uses": "Uses",
+        "invite_token_warning": "Invite tokens are only shown once. Copy the link now; you will not be able to view this token again after leaving or refreshing this page.",
+        "invite_token_hidden": "No longer visible",
         "invites_delete_confirm": "Are you sure you want to delete this invite?",
-        "remaining_uses": "Remaining uses",
+        "create_invite": "Create Invite",
+        "copy_invite": "Copy Invite Link",
         "remaining_uses": "Remaining uses",
         "members": {
             "cannot_remove_last": "You cannot remove the last member.",

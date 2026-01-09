@@ -34,7 +34,16 @@
   const removing = ref<Record<string, boolean>>({});
 
   const allInvites = computed<Invitation[]>(() => {
-    return [...localInvites.value, ...invites.value];
+    const now = Date.now();
+
+    const isActive = (inv: Invitation) => {
+      if (!inv.expiresAt) return true;
+
+      const expiresAtTime = new Date(inv.expiresAt).getTime();
+      return Number.isFinite(expiresAtTime) && expiresAtTime > now;
+    };
+
+    return [...localInvites.value.filter(isActive), ...invites.value.filter(isActive)];
   });
 
   const loadInvites = async () => {
@@ -114,22 +123,36 @@
 <template>
   <div class="space-y-4">
     <Teleport to="#collection-header-actions" defer>
-      <Button
-        variant="outline"
-        size="icon"
-        :aria-label="$t('profile.gen_invite')"
-        :disabled="loading"
-        @click="handleOpenCreate"
-      >
-        <MdiPlus class="size-4" />
-      </Button>
+      <TooltipProvider :delay-duration="0">
+        <Tooltip>
+          <TooltipTrigger as-child>
+            <Button
+              class="size-8"
+              variant="outline"
+              size="icon"
+              :aria-label="$t('collection.create_invite')"
+              :disabled="loading"
+              @click="handleOpenCreate"
+            >
+              <MdiPlus class="size-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            {{ $t("collection.create_invite") }}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </Teleport>
 
     <div v-if="loading" class="rounded-md border bg-card p-4 text-sm text-muted-foreground">
       {{ $t("global.loading") }}
     </div>
 
-    <div v-else>
+    <div v-else class="space-y-3">
+      <div v-if="localInvites.length" class="rounded-md bg-secondary p-3 text-xs font-bold text-secondary-foreground">
+        {{ $t("collection.invite_token_warning") }}
+      </div>
+
       <div v-if="!allInvites.length" class="rounded-md border bg-card p-4 text-sm text-muted-foreground">
         {{ $t("collection.no_invites") }}
       </div>
@@ -147,7 +170,14 @@
           <TableBody>
             <TableRow v-for="inv in allInvites" :key="inv.id || inv.token">
               <TableCell>
-                <span class="break-all font-mono text-xs">{{ inv.token }}</span>
+                <span class="break-all font-mono text-xs">
+                  <template v-if="inv.token">
+                    {{ inv.token }}
+                  </template>
+                  <span v-else class="font-sans text-muted-foreground">
+                    {{ $t("collection.invite_token_hidden") }}
+                  </span>
+                </span>
               </TableCell>
               <TableCell>
                 {{ new Date(inv.expiresAt).toLocaleString() }}
@@ -157,7 +187,12 @@
               </TableCell>
               <TableCell>
                 <div class="ml-auto flex items-center gap-2">
-                  <CopyText v-if="inv.token" :text="`${baseUrl}?token=${inv.token}`" :icon-size="16" />
+                  <CopyText
+                    v-if="inv.token"
+                    :text="`${baseUrl}?token=${inv.token}`"
+                    :icon-size="16"
+                    :tooltip="$t('collection.copy_invite')"
+                  />
                   <TooltipProvider :delay-duration="0">
                     <Tooltip>
                       <TooltipTrigger as-child>

@@ -19,7 +19,7 @@
         </div>
       </div>
 
-      <Button class="mt-2" variant="outline" @click="openDialog(DialogID.CreateCollection)">
+      <Button type="button" class="mt-2" variant="outline" @click="openDialog(DialogID.CreateCollection)">
         {{ $t("components.collection.join_modal.no_invite_code_create_one") }}
       </Button>
 

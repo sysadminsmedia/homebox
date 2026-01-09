@@ -5,7 +5,7 @@
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
   import MdiDelete from "~icons/mdi/delete";
   import { toast } from "@/components/ui/sonner";
-  import type { UserOut } from "~~/lib/api/types/data-contracts";
+  import type { UserUpdate } from "~~/lib/api/types/data-contracts";
 
   definePageMeta({
     middleware: ["auth"],
@@ -17,7 +17,7 @@
   const confirm = useConfirm();
 
   const loading = ref(true);
-  const members = ref<UserOut[]>([]);
+  const members = ref<UserUpdate[]>([]);
   const error = ref<string | null>(null);
   const removing = ref<Record<string, boolean>>({});
 
@@ -49,7 +49,7 @@
     }
   };
 
-  const handleRemove = async (user: UserOut) => {
+  const handleRemove = async (user: UserUpdate) => {
     if (!user?.id) return;
 
     if (isLastMember.value && user.id === currentUserId.value) {
