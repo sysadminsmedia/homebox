@@ -73,11 +73,8 @@ ENV HBOX_STORAGE_PREFIX_PATH=data
 ENV HBOX_DATABASE_SQLITE_PATH=/data/homebox.db?_pragma=busy_timeout=2000&_pragma=journal_mode=WAL&_fk=1&_time_format=sqlite
 
 # Install necessary runtime dependencies
-RUN apk --no-cache add ca-certificates wget && \
+RUN apk --no-cache add ca-certificates wget mosquitto-clients && \
     if [ "$TARGETARCH" != "arm" ] || [ "$TARGETARCH" != "riscv64" ]; then apk --no-cache add libwebp libavif libheif libjxl; fi
-
-# Install MQTT
-RUN apk add --no-cache mosquitto-clients
 
 # Create application directory and copy over built Go binary
 RUN mkdir /app
