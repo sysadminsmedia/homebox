@@ -11,6 +11,8 @@ import icon from 'astro-icon';
 import starlightSidebarTopics from 'starlight-sidebar-topics';
 import cloudflare from '@astrojs/cloudflare';
 
+import tailwindcss from '@tailwindcss/vite';
+
 // https://astro.build/config
 export default defineConfig({
   experimental: {
@@ -160,9 +162,16 @@ export default defineConfig({
           label: 'Deutsch',
         },
       },
+      customCss: [
+        './src/styles/global.css',
+      ]
     }),
     icon(),
   ],
 
   adapter: cloudflare(),
+
+  vite: {
+    plugins: [tailwindcss()],
+  },
 });

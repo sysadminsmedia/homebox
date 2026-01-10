@@ -1,0 +1,27 @@
+@layer base, starlight, nova, theme, components, utilities;
+
+@import '@astrojs/starlight-tailwind';
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+@theme {
+	  /* Your preferred text font. Starlight uses a system font stack by default. */
+  --font-sans: 'Atkinson Hyperlegible';
+  /* Your preferred code font. Starlight uses system monospace fonts by default. */
+  --font-mono: 'IBM Plex Mono';
+
+		/* Generated accent color palettes. */
+	--color-accent-200: #c0ccc3;
+	--color-accent-600: #51745c;
+	--color-accent-900: #27362c;
+	--color-accent-950: #1d2720;
+	/* Generated gray color palettes. */
+	--color-gray-100: #f6f6f5;
+	--color-gray-200: #edeeea;
+	--color-gray-300: #c1c3be;
+	--color-gray-400: #8a8d84;
+	--color-gray-500: #575951;
+	--color-gray-700: #373932;
+	--color-gray-800: #262821;
+	--color-gray-900: #181915;
+}
