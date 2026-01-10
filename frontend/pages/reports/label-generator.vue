@@ -515,7 +515,11 @@
           </div>
           <div class="ml-2 flex flex-col justify-center">
             <div class="font-bold">{{ item.assetID }}</div>
-            <div v-if="getHomeBoxLineText(item)" class="text-xs font-light italic">
+            <div
+              v-if="getHomeBoxLineText(item)"
+              class="text-xs"
+              :class="{ 'font-light italic': getHomeBoxLineText(item) !== labelBlankLine }"
+            >
               {{ getHomeBoxLineText(item) }}
             </div>
             <div class="overflow-hidden text-wrap text-xs">{{ item.name }}</div>
