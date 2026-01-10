@@ -17,7 +17,7 @@
     layout: false,
   });
   useHead({
-    title: "Homebox | " + t("reports.label_generator.title"),
+    title: "HomeBox | " + t("reports.label_generator.title"),
   });
 
   const api = useUserApi();
@@ -341,7 +341,7 @@
   <div class="print:hidden">
     <Toaster />
     <div class="container prose mx-auto max-w-4xl p-4 pt-6">
-      <h1>Homebox {{ $t("reports.label_generator.title") }}</h1>
+      <h1>HomeBox {{ $t("reports.label_generator.title") }}</h1>
       <p>
         {{ $t("reports.label_generator.instruction_1") }}
       </p>
@@ -489,7 +489,7 @@
               v-if="replaceHomeboxBehavior === $t('reports.label_generator.replace_homebox_behavior_show_homebox')"
               class="text-xs font-light italic"
             >
-              Homebox
+              HomeBox
             </div>
             <div
               v-else-if="
