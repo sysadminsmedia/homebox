@@ -1,0 +1,74 @@
+---
+title: Homebox
+description: A simple home inventory management software
+template: splash # Remove or comment out this line to display the site sidebar on this page.
+hero:
+  tagline: A simple home inventory management software
+  image:
+    file: ../../../assets/lilbox.svg
+  actions:
+    - text: Get Started
+      link: /en/quick-start/
+      icon: right-arrow
+    - text: Try it out
+      link: https://demo.homebox.software
+      icon: external
+      variant: minimal
+---
+
+import { CardGrid } from '@astrojs/starlight/components';
+import Card from './src/components/Card.astro';
+
+## What Is Homebox?
+Homebox is the inventory and organization system built for the Home User! With a focus on simplicity and ease of use,
+Homebox is the perfect solution for your home inventory, organization, and management needs. While developing this project,
+We've tried to keep the following principles in mind:
+
+- _Simple_ - Homebox is designed to be simple and easy to use. No complicated setup or configuration required. Use either
+a single docker container, or deploy yourself by compiling the binary for your platform of choice.
+- _Blazingly Fast_ - Homebox is written in Go, which makes it extremely fast and requires minimal resources to deploy.
+In general idle memory usage is less than 50MB for the whole container.
+- _Portable_ - Homebox is designed to be portable and run on anywhere. We use SQLite and an embedded Web UI to make it easy
+to deploy, use, and backup. However, a Postgres backend is also supported for larger installations.
+
+## What Does Homebox Have?
+
+<CardGrid stagger>
+	<Card title="Collections" icon="material-symbols:home-work">
+		Homebox supports multiple "collections" per instance. Making it easy to track inventories with different groups
+        of people and locations.
+	</Card>
+	<Card title="Change page layout" icon="material-symbols:edit-document">
+		Delete `template: splash` in `src/content/docs/index.mdx` to display a
+		sidebar on this page.
+	</Card>
+	<Card title="Add new content" icon="material-symbols:add">
+		Add Markdown or MDX files to `src/content/docs` to create new pages.
+	</Card>
+	<Card title="Configure your site" icon="material-symbols:settings">
+		Edit your `sidebar` and other config in `astro.config.mjs`.
+	</Card>
+	<Card title="Read the docs" icon="material-symbols:book-5">
+		Learn more in [the Starlight Docs](https://starlight.astro.build/).
+	</Card>
+</CardGrid>
+
+## Why Note Use Something Else?
+There are a lot of great inventory management systems out there, but none of them really fit our needs as a home user.
+Snipe-IT is a fantastic product that has so many robust features and management options which makes it easy to become
+overwhelmed and confused. We wanted something that was simple and easy to use that didn't require a lot of cognitive
+overhead to manage. I primarily built this to organize my IoT devices and save my warranty and documentation information
+in a central, searchable location.
+
+### Spreadsheet
+That's a fair point. If your needs can be fulfilled by a Spreadsheet, We'd suggest using that instead.
+We've found spreadsheets get pretty unwieldy when you have a lot of data, and it's hard to keep track of what's where.
+We also wanted to be able to search and filter my data in a more robust way than a spreadsheet can provide.
+We also wanted to leave the door open for more advanced features in the future like maintenance logs, moving label generators, and more.
+
+### Snipe-IT
+Snipe-It is the gold standard for IT management. If your use-case is to manage consumables and IT physical infrastructure,
+We highly suggest you look at Snipe-It over Homebox, it's just more purpose built for that use case. Homebox is, in contrast,
+purpose built for the home user, which means that we try to focus on keeping things simple and easy to use.
+Lowering the friction for creating items and managing them is a key goal of Homebox which means you lose out on some of
+the more advanced features. In most cases, this is a good trade-off.

@@ -1,0 +1,28 @@
+{
+  "name": "homebox-docs",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^12.6.12",
+    "@astrojs/starlight": "^0.36.3",
+    "astro": "^5.6.1",
+    "astro-icon": "^1.1.5",
+    "sharp": "^0.34.2",
+    "starlight-changelogs": "^0.3.0",
+    "starlight-github-alerts": "^0.1.1",
+    "starlight-openapi": "^0.21.1",
+    "starlight-theme-nova": "^0.10.0"
+  },
+  "devDependencies": {
+    "@iconify-json/material-symbols": "^1.2.51",
+    "@iconify-json/simple-icons": "^1.2.65",
+    "wrangler": "^4.58.0"
+  }
+}

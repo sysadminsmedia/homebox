@@ -1,4 +1,0 @@
-/*
-  X-Frame-Options: DENY
-  X-Content-Type-Options: nosniff
-  Content-Security-Policy: default-src 'self'; script-src 'report-sample' 'unsafe-inline' 'self' https://a.sysadmins.zone/js/embed.host.js https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015 https://unpkg.com/@stoplight/elements/web-components.min.js; style-src 'report-sample' 'unsafe-inline' 'self' https://unpkg.com; object-src 'none'; base-uri 'self'; connect-src 'self' https://raw.githubusercontent.com https://demo.homebox.software; font-src 'self'; frame-src 'self' https://a.sysadmins.zone; img-src 'self' data: http://translate.sysadminsmedia.com; manifest-src 'self'; media-src 'self'; worker-src 'none';

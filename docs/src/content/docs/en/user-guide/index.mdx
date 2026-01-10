@@ -1,0 +1,49 @@
+---
+title: User Guide
+---
+
+# User Guide
+
+```js "function" ins="foo" del="bar"
+function test() {
+  const foo = 'bar'
+}
+```
+
+```js {2}
+function test() {
+  const foo = 'bar'
+  a != b
+}
+```
+
+```diff lang="js"
+  function test() {
+-   const foo = 'bar'
++   const foo = 'baz'
+  }
+```
+
+```bash title="Build something…"
+pnpm run build
+```
+
+```js
+// test.js
+const foo = 'bar'
+```
+
+```astro title="example.astro" {"1. Keep the existing icon.":5-6} del={"2. Remove the button.":8-9} ins={"3. Add a link.":11-12}
+---
+import { Icon } from '@astrojs/starlight/components';
+---
+
+
+<Icon name="seti:lock" />
+
+
+<button type="button">Login</button>
+
+
+<a href="/login/">Login</a>
+```
