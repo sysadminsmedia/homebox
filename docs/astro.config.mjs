@@ -1,4 +1,3 @@
-// @ts-check
 import {defineConfig} from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightThemeNova from 'starlight-theme-nova'
@@ -20,7 +19,7 @@ export default defineConfig({
 
     prefetch: {
         prefetchAll: true,
-        defaultStrategy: 'viewport',
+        defaultStrategy: 'hover',
     },
 
     site: 'https://homebox.software',
@@ -84,7 +83,8 @@ export default defineConfig({
                     {label: 'Getting Started', slug: 'contribute/getting-started'},
                     {label: 'Bounty Program', slug: 'contribute/bounty-program'},
                     {label: 'Development', autogenerate: {directory: 'contribute/development'}},
-                    {label: 'Translations', autogenerate: {directory: 'contribute/translate'}}
+                    {label: 'Translations', autogenerate: {directory: 'contribute/translate'}},
+                    {label: 'Documentation', autogenerate: {directory: 'contribute/documentation'}}
                 ]
             },
             ...makeChangelogsSidebarLinks([{
