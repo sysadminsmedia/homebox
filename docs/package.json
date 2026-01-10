@@ -18,6 +18,7 @@
     "starlight-changelogs": "^0.3.0",
     "starlight-github-alerts": "^0.1.1",
     "starlight-openapi": "^0.21.1",
+    "starlight-sidebar-topics": "^0.6.2",
     "starlight-theme-nova": "^0.10.0"
   },
   "devDependencies": {
