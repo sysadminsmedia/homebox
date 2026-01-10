@@ -1,0 +1,30 @@
+---
+title: Get Started
+---
+
+You will need several tools and dependencies to work on Homebox.
+- [Go](https://go.dev/dl/)
+- [NodeJS](https://nodejs.org/en/download/)
+- [PNPM](https://pnpm.io/installation)
+- [Task](https://taskfile.dev/#/installation)
+
+Once you have these tools and dependencies installed, you can run `task setup` to install package dependencies and the remaining
+required tools.
+
+Homebox is split into two parts:
+- Backend
+- Frontend
+
+## Backend
+The backend is written in Go and is located in the `backend` directory. The backend is a REST API that exposes
+all of the functionality of Homebox. The backend is responsible for managing the database, handling authentication,
+and serving the frontend. It can also be used by 3rd party applications to interact with Homebox.
+
+Extensive backend documentation can be found in the [backend topic](/en/contribute/development/backend).
+
+## Frontend
+The frontend is written in VueJS with Vite and Nuxt and is located in the `frontend` directory. The frontend is a
+ single-page application that provides a user interface for interacting with Homebox. It is built on top of the
+[Homebox API](/docs/api).
+
+Extensive frontend documentation can be found in the [frontend topic](/en/contribute/development/frontend).
