@@ -8,6 +8,7 @@
     <ModalConfirm />
     <OutdatedModal v-if="status" :status="status" />
     <ItemCreateModal />
+    <WipeInventoryDialog />
     <LabelCreateModal />
     <LocationCreateModal />
     <ItemBarcodeModal />
@@ -216,6 +217,7 @@
   import ModalConfirm from "~/components/ModalConfirm.vue";
   import OutdatedModal from "~/components/App/OutdatedModal.vue";
   import ItemCreateModal from "~/components/Item/CreateModal.vue";
+  import WipeInventoryDialog from "~/components/WipeInventoryDialog.vue";
 
   import LabelCreateModal from "~/components/Label/CreateModal.vue";
   import LocationCreateModal from "~/components/Location/CreateModal.vue";

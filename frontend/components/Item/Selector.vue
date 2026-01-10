@@ -6,12 +6,25 @@
     <Popover v-model:open="open">
       <PopoverTrigger as-child>
         <Button :id="id" variant="outline" role="combobox" :aria-expanded="open" class="w-full justify-between">
-          <span>
+          <span class="truncate text-left">
             <slot name="display" v-bind="{ item: value }">
               {{ displayValue(value) || localizedPlaceholder }}
             </slot>
           </span>
-          <ChevronsUpDown class="ml-2 size-4 shrink-0 opacity-50" />
+
+          <span class="ml-2 flex items-center">
+            <button
+              v-if="value"
+              type="button"
+              class="shrink-0 rounded p-1 hover:bg-primary/20"
+              :aria-label="t('components.item.selector.clear')"
+              @click.stop.prevent="clearSelection"
+            >
+              <X class="size-4" />
+            </button>
+
+            <ChevronsUpDown class="ml-2 size-4 shrink-0 opacity-50" />
+          </span>
         </Button>
       </PopoverTrigger>
       <PopoverContent class="w-[--reka-popper-anchor-width] p-0">
@@ -44,7 +57,7 @@
 
 <script setup lang="ts">
   import { computed, ref, watch } from "vue";
-  import { Check, ChevronsUpDown } from "lucide-vue-next";
+  import { Check, ChevronsUpDown, X } from "lucide-vue-next";
   import fuzzysort from "fuzzysort";
   import { useVModel } from "@vueuse/core";
   import { useI18n } from "vue-i18n";
@@ -171,6 +184,12 @@
     } else {
       value.value = item;
     }
+    open.value = false;
+  }
+
+  function clearSelection() {
+    value.value = null;
+    search.value = "";
     open.value = false;
   }
 

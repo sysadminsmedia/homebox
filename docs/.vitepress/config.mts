@@ -43,6 +43,7 @@ export default defineConfig({
     nav: [
       { text: 'API Docs', link: '/en/api' },
       { text: 'Demo', link: 'https://demo.homebox.software' },
+      { text: 'Blog', link: 'https://sysadminsjournal.com/tag/homebox/' }
     ],
 
     sidebar: {

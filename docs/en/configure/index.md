@@ -73,137 +73,6 @@ aside: false
 | HBOX_THUMBNAIL_HEIGHT                   | 500                                                                        | height for generated thumbnails in pixels                                                                                                                                                 |
 | HBOX_BARCODE_TOKEN_BARCODESPIDER        |                                                                            | API token for BarcodeSpider.com service used for barcode product lookups. If not set, barcode product lookups will not be performed.                                                 |    
 
-### HBOX_WEB_HOST examples
-
-| Value                       | Notes                                                      |
-|-----------------------------|------------------------------------------------------------|
-| 0.0.0.0                     | Visible all interfaces (default behaviour)                 |
-| 127.0.0.1                   | Only visible on same host                                  |
-| 100.64.0.1                  | Only visible on a specific interface (e.g., VPN in a VPS). |
-| unix?path=/run/homebox.sock | Listen on unix socket at specified path                    |
-| sysd?name=homebox.socket    | Listen on systemd socket                                   |
-
-For unix and systemd socket address syntax and available options, see the [anyhttp address-syntax documentation](https://pkg.go.dev/go.balki.me/anyhttp#readme-address-syntax).
-
-#### Private network example
-
-Below example starts homebox in an isolated network. The process cannot make
-any external requests (including check for newer release) and thus more secure.
-
-```bash
-❯ sudo systemd-run --property=PrivateNetwork=yes --uid $UID --pty --same-dir --wait --collect homebox --web-host "unix?path=/run/user/$UID/homebox.sock"
-Running as unit: run-p74482-i74483.service
-Press ^] three times within 1s to disconnect TTY.
-2025/07/11 22:33:29 goose: no migrations to run. current version: 20250706190000
-10:33PM INF ../../../go/src/app/app/api/handlers/v1/v1_ctrl_auth.go:98 > registering auth provider name=local
-10:33PM INF ../../../go/src/app/app/api/main.go:275 > Server is running on unix?path=/run/user/1000/homebox.sock
-10:33PM ERR ../../../go/src/app/app/api/main.go:403 > failed to get latest github release error="failed to make latest version request: Get \"https://api.github.com/repos/sysadminsmedia/homebox/releases/l
-atest\": dial tcp: lookup api.github.com on [::1]:53: read udp [::1]:50951->[::1]:53: read: connection refused"
-10:33PM INF ../../../go/src/app/internal/web/mid/logger.go:36 > request received method=GET path=/ rid=hname/PoXyRgt6ol-000001
-10:33PM INF ../../../go/src/app/internal/web/mid/logger.go:41 > request finished method=GET path=/ rid=hname/PoXyRgt6ol-000001 status=0
-```
-
-#### Systemd socket example
-
-In the example below, Homebox listens on a systemd socket securely so that only
-the webserver (Caddy) can access it. Other processes/containers on the host
-cannot connect to Homebox directly, bypassing the webserver.
-
-File: homebox.socket
-```systemd
-# /usr/local/lib/systemd/system/homebox.socket
-[Unit]
-Description=Homebox socket
-
-[Socket]
-ListenStream=/run/homebox.sock
-SocketGroup=caddy
-SocketMode=0660
-
-[Install]
-WantedBy=sockets.target
-```
-
-File: homebox.service
-```systemd
-# /usr/local/lib/systemd/system/homebox.service
-[Unit]
-Description=Homebox
-After=network.target
-Documentation=https://homebox.software
-
-[Service]
-DynamicUser=yes
-StateDirectory=homebox
-Environment=HBOX_WEB_HOST=sysd?name=homebox.socket
-WorkingDirectory=/var/lib/homebox
-
-ExecStart=/usr/local/bin/homebox
-
-NoNewPrivileges=yes
-CapabilityBoundingSet=
-RestrictNamespaces=true
-SystemCallFilter=@system-service
-```
-Usage:
-
-```bash
-systemctl start homebox.socket
-```
-
-::: warning Security Considerations
-For postgreSQL in production:
-
-- Do not use the default `postgres` user
-- Do not use the default `postgres` database
-- Always use a strong unique password
-- Always use SSL (`sslmode=require` or `sslmode=verify-full`)
-- Consider using a connection pooler like `pgbouncer`
-
-For SQLite in production:
-
-- Secure file permissions for the database file (e.g. `chmod 600`)
-- Use a secure directory for the database file
-- Use a secure backup strategy
-- Monitor the file size and consider using a different database for large installations
-  :::
-
-## OIDC Configuration
-
-HomeBox supports OpenID Connect (OIDC) authentication, allowing users to login using external identity providers like Keycloak, Authentik, Google, Microsoft, etc.
-
-### Basic OIDC Setup
-
-1. **Enable OIDC**: Set `HBOX_OIDC_ENABLED=true`
-2. **Provider Configuration**: Set the required provider details:
-   - `HBOX_OIDC_ISSUER_URL`: Your OIDC provider's issuer URL
-   - `HBOX_OIDC_CLIENT_ID`: Client ID from your OIDC provider
-   - `HBOX_OIDC_CLIENT_SECRET`: Client secret from your OIDC provider
-
-3. **Configure Redirect URI**: In your OIDC provider, set the redirect URI to:
-   `https://your-homebox-domain.example.com/api/v1/users/login/oidc/callback`
-
-### Advanced OIDC Configuration
-
-- **Group Authorization**: Use `HBOX_OIDC_ALLOWED_GROUPS` to restrict access to specific groups
-- **Custom Claims**: Configure `HBOX_OIDC_GROUP_CLAIM`, `HBOX_OIDC_EMAIL_CLAIM`, and `HBOX_OIDC_NAME_CLAIM` if your provider uses different claim names
-- **Auto Redirect to OIDC**: Set `HBOX_OIDC_AUTO_REDIRECT=true` to automatically redirect users directly to OIDC
-- **Local Login**: Set `HBOX_OPTIONS_ALLOW_LOCAL_LOGIN=false` to completely disable username/password login
-- **Email Verification**: Set `HBOX_OIDC_VERIFY_EMAIL=true` to require email verification from the OIDC provider
-
-### Security Considerations
-
-::: warning OIDC Security
-- Store `HBOX_OIDC_CLIENT_SECRET` securely (use environment variables, not config files)
-- Use HTTPS for production deployments
-- Configure proper redirect URIs in your OIDC provider
-- Consider setting `HBOX_OIDC_ALLOWED_GROUPS` for group-based access control
-:::
-
-::: tip CLI Arguments
-If you're deploying without docker you can use command line arguments to configure the application. Run `homebox --help`
-for more information.
-
 ```sh
 Options:
       --barcode-token-barcodespider         <string>                                                                                                               
@@ -279,5 +148,106 @@ Options:
       --web-read-timeout                    <duration>  (default: 10s)                                                                                             
       --web-write-timeout                   <duration>  (default: 10s)                                                                                         
 ```
-
 :::
+
+### HBOX_WEB_HOST examples
+
+| Value                       | Notes                                                      |
+| --------------------------- | ---------------------------------------------------------- |
+| 0.0.0.0                     | Visible all interfaces (default behaviour)                 |
+| 127.0.0.1                   | Only visible on same host                                  |
+| 100.64.0.1                  | Only visible on a specific interface (e.g., VPN in a VPS). |
+| unix?path=/run/homebox.sock | Listen on unix socket at specified path                    |
+| sysd?name=homebox.socket    | Listen on systemd socket                                   |
+
+For unix and systemd socket address syntax and available options, see the [anyhttp address-syntax documentation](https://pkg.go.dev/go.balki.me/anyhttp#readme-address-syntax).
+
+#### Private network example
+
+Below example starts homebox in an isolated network. The process cannot make
+any external requests (including check for newer release) and thus more secure.
+
+```bash
+❯ sudo systemd-run --property=PrivateNetwork=yes --uid $UID --pty --same-dir --wait --collect homebox --web-host "unix?path=/run/user/$UID/homebox.sock"
+Running as unit: run-p74482-i74483.service
+Press ^] three times within 1s to disconnect TTY.
+2025/07/11 22:33:29 goose: no migrations to run. current version: 20250706190000
+10:33PM INF ../../../go/src/app/app/api/handlers/v1/v1_ctrl_auth.go:98 > registering auth provider name=local
+10:33PM INF ../../../go/src/app/app/api/main.go:275 > Server is running on unix?path=/run/user/1000/homebox.sock
+10:33PM ERR ../../../go/src/app/app/api/main.go:403 > failed to get latest github release error="failed to make latest version request: Get \"https://api.github.com/repos/sysadminsmedia/homebox/releases/l
+atest\": dial tcp: lookup api.github.com on [::1]:53: read udp [::1]:50951->[::1]:53: read: connection refused"
+10:33PM INF ../../../go/src/app/internal/web/mid/logger.go:36 > request received method=GET path=/ rid=hname/PoXyRgt6ol-000001
+10:33PM INF ../../../go/src/app/internal/web/mid/logger.go:41 > request finished method=GET path=/ rid=hname/PoXyRgt6ol-000001 status=0
+```
+
+#### Systemd socket example
+
+In the example below, Homebox listens on a systemd socket securely so that only
+the webserver (Caddy) can access it. Other processes/containers on the host
+cannot connect to Homebox directly, bypassing the webserver.
+
+File: homebox.socket
+
+```systemd
+# /usr/local/lib/systemd/system/homebox.socket
+[Unit]
+Description=Homebox socket
+
+[Socket]
+ListenStream=/run/homebox.sock
+SocketGroup=caddy
+SocketMode=0660
+
+[Install]
+WantedBy=sockets.target
+```
+
+File: homebox.service
+
+```systemd
+# /usr/local/lib/systemd/system/homebox.service
+[Unit]
+Description=Homebox
+After=network.target
+Documentation=https://homebox.software
+
+[Service]
+DynamicUser=yes
+StateDirectory=homebox
+Environment=HBOX_WEB_HOST=sysd?name=homebox.socket
+WorkingDirectory=/var/lib/homebox
+
+ExecStart=/usr/local/bin/homebox
+
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+RestrictNamespaces=true
+SystemCallFilter=@system-service
+```
+
+Usage:
+
+```bash
+systemctl start homebox.socket
+```
+
+::: warning Security Considerations
+For postgreSQL in production:
+
+- Do not use the default `postgres` user
+- Do not use the default `postgres` database
+- Always use a strong unique password
+- Always use SSL (`sslmode=require` or `sslmode=verify-full`)
+- Consider using a connection pooler like `pgbouncer`
+
+For SQLite in production:
+
+- Secure file permissions for the database file (e.g. `chmod 600`)
+- Use a secure directory for the database file
+- Use a secure backup strategy
+- Monitor the file size and consider using a different database for large installations
+  :::
+
+## OIDC Configuration
+
+For configuring OpenID Connect (OIDC) authentication, refer to the [OIDC Configuration Guide](/en/configure/oidc).

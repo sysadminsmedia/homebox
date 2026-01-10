@@ -98,7 +98,7 @@
 
   const saving = ref(false);
 
-  async function saveItem() {
+  async function saveItem(redirect: boolean) {
     if (!item.value.location?.id) {
       toast.error(t("items.toast.failed_save_no_location"));
       return;
@@ -139,7 +139,9 @@
     }
 
     toast.success(t("items.toast.item_saved"));
-    navigateTo("/item/" + itemId.value);
+    if (redirect) {
+      navigateTo("/item/" + itemId.value);
+    }
   }
 
   type NonNullableStringKeys<T> = Extract<keyof T, keyof { [K in keyof T as T[K] extends string ? K : never]: any }>;
@@ -339,6 +341,8 @@
 
     toast.success(t("items.toast.attachment_uploaded"));
 
+    await saveItem(false);
+
     item.value.attachments = data.attachments;
   }
 
@@ -432,13 +436,13 @@
     // Cmd + S
     if (e.metaKey && e.key === "s") {
       e.preventDefault();
-      await saveItem();
+      await saveItem(false);
     }
 
     // Ctrl + S
     if (e.ctrlKey && e.key === "s") {
       e.preventDefault();
-      await saveItem();
+      await saveItem(false);
     }
   }
 
@@ -573,7 +577,7 @@
             <TooltipContent>{{ $t("items.show_advanced_view_options") }}</TooltipContent>
           </Tooltip>
         </TooltipProvider>
-        <Button size="sm" :disabled="saving" @click="saveItem">
+        <Button size="sm" :disabled="saving" @click="saveItem(true)">
           <MdiLoading v-if="saving" class="animate-spin" />
           <MdiContentSaveOutline v-else />
           {{ $t("global.save") }}

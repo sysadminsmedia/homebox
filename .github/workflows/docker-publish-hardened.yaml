@@ -33,7 +33,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     permissions:
       contents: read
       packages: write
@@ -43,10 +43,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform:
-          - linux/amd64
-          - linux/arm64
-          - linux/arm/v7
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-latest
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
 
     steps:
       - name: Enable Debug Logs
@@ -56,7 +57,7 @@ jobs:
           ACTIONS_STEP_DEBUG: true
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
 
       - name: Prepare
         run: |
@@ -77,6 +78,15 @@ jobs:
           images: |
             name=${{ env.DOCKERHUB_REPO }},enable=${{ github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/') }}
             name=${{ env.GHCR_REPO }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=schedule,pattern=nightly
+          flavor: |
+            suffix=-hardened,onlatest=true
 
       - name: Login to Docker Hub
         uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1
@@ -123,7 +133,7 @@ jobs:
           annotations: ${{ steps.meta.outputs.annotations }}
 
       - name: Attest platform-specific images
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@00014ed6ed5efc5b1ab7f7f34a39eb55d41aa4f8
         if: github.event_name != 'pull_request'
         with:
           subject-name: ${{ env.GHCR_REPO }}
@@ -216,7 +226,7 @@ jobs:
           echo "digest=$digest" >> $GITHUB_OUTPUT
 
       - name: Attest GHCR images
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@00014ed6ed5efc5b1ab7f7f34a39eb55d41aa4f8
         if: github.event_name != 'pull_request'
         with:
           subject-name: ${{ env.GHCR_REPO }}
@@ -240,7 +250,7 @@ jobs:
           echo "digest=$digest" >> $GITHUB_OUTPUT
 
       - name: Attest Dockerhub images
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest-build-provenance@00014ed6ed5efc5b1ab7f7f34a39eb55d41aa4f8
         if: (github.event_name == 'schedule' || startsWith(github.ref, 'refs/tags/'))
         with:
           subject-name: docker.io/${{ env.DOCKERHUB_REPO }}

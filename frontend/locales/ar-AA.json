@@ -1,0 +1,14 @@
+{
+    "components": {
+        "app": {
+            "create_modal": {
+                "createAndAddAnother": "استخدم المفتاحين {shiftKey} + {enterKey} للحفظ و إضافة عنصر جديد.",
+                "enter": "إدخال",
+                "shift": "عالي"
+            },
+            "import_dialog": {
+                "change_warning": "تم تغيير آلية الإستيراد بتواجد العمود import_refs. عند تواجد العمود import_refs في ملف الـCSV،\nسيتم تحديث محتوى العناصر عن طريق القيم المتوفرة في ملف الـCSV."
+            }
+        }
+    }
+}

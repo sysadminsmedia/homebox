@@ -67,6 +67,27 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/v1.ActionAmountResult"
+  /v1/actions/wipe-inventory:
+    post:
+      security:
+        - Bearer: []
+      description: Deletes all items in the inventory
+      tags:
+        - Actions
+      summary: Wipe Inventory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/v1.WipeInventoryOptions"
+        description: Wipe options
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1.ActionAmountResult"
   /v1/actions/zero-item-time-fields:
     post:
       security:
@@ -3449,6 +3470,15 @@ components:
           type: string
         token:
           type: string
+    v1.WipeInventoryOptions:
+      type: object
+      properties:
+        wipeLabels:
+          type: boolean
+        wipeLocations:
+          type: boolean
+        wipeMaintenance:
+          type: boolean
     v1.Wrapped:
       type: object
       properties:

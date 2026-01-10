@@ -53,7 +53,7 @@ type (
 		DefaultWarrantyDetails  *string `json:"defaultWarrantyDetails,omitempty" extensions:"x-nullable" validate:"omitempty,max=1000"`
 
 		// Default location and labels
-		DefaultLocationID *uuid.UUID   `json:"defaultLocationId,omitempty" extensions:"x-nullable"`
+		DefaultLocationID uuid.UUID    `json:"defaultLocationId,omitempty" extensions:"x-nullable"`
 		DefaultLabelIDs   *[]uuid.UUID `json:"defaultLabelIds,omitempty" extensions:"x-nullable"`
 
 		// Metadata flags
@@ -82,7 +82,7 @@ type (
 		DefaultWarrantyDetails  *string `json:"defaultWarrantyDetails,omitempty" extensions:"x-nullable" validate:"omitempty,max=1000"`
 
 		// Default location and labels
-		DefaultLocationID *uuid.UUID   `json:"defaultLocationId,omitempty" extensions:"x-nullable"`
+		DefaultLocationID uuid.UUID    `json:"defaultLocationId,omitempty" extensions:"x-nullable"`
 		DefaultLabelIDs   *[]uuid.UUID `json:"defaultLabelIds,omitempty" extensions:"x-nullable"`
 
 		// Metadata flags
@@ -262,6 +262,7 @@ func (r *ItemTemplatesRepository) GetOne(ctx context.Context, gid uuid.UUID, id 
 
 // Create creates a new template
 func (r *ItemTemplatesRepository) Create(ctx context.Context, gid uuid.UUID, data ItemTemplateCreate) (ItemTemplateOut, error) {
+	// Set up create builder
 	q := r.db.ItemTemplate.Create().
 		SetName(data.Name).
 		SetDescription(data.Description).
@@ -277,9 +278,12 @@ func (r *ItemTemplatesRepository) Create(ctx context.Context, gid uuid.UUID, dat
 		SetIncludeWarrantyFields(data.IncludeWarrantyFields).
 		SetIncludePurchaseFields(data.IncludePurchaseFields).
 		SetIncludeSoldFields(data.IncludeSoldFields).
-		SetGroupID(gid).
-		SetNillableLocationID(data.DefaultLocationID)
+		SetGroupID(gid)
 
+	// If a default location was provided (uuid != Nil) set it, otherwise leave empty
+	if data.DefaultLocationID != uuid.Nil {
+		q.SetLocationID(data.DefaultLocationID)
+	}
 	// Set default label IDs (stored as JSON)
 	if data.DefaultLabelIDs != nil && len(*data.DefaultLabelIDs) > 0 {
 		q.SetDefaultLabelIds(*data.DefaultLabelIDs)
@@ -340,9 +344,9 @@ func (r *ItemTemplatesRepository) Update(ctx context.Context, gid uuid.UUID, dat
 		SetIncludePurchaseFields(data.IncludePurchaseFields).
 		SetIncludeSoldFields(data.IncludeSoldFields)
 
-	// Update location
-	if data.DefaultLocationID != nil {
-		updateQ.SetLocationID(*data.DefaultLocationID)
+	// Update location: set when provided (not uuid.Nil), otherwise clear
+	if data.DefaultLocationID != uuid.Nil {
+		updateQ.SetLocationID(data.DefaultLocationID)
 	} else {
 		updateQ.ClearLocation()
 	}

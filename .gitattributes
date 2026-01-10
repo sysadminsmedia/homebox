@@ -1,3 +1,4 @@
-backend/internal/data/ent/** linguist-generated=true
-backend/internal/data/ent/schema/** linguist-generated=false
-frontend/lib/api/types/** linguist-generated=true
+backend/internal/data/ent/** linguist-generated
+backend/internal/data/ent/schema/** -linguist-generated
+frontend/lib/api/types/** linguist-generated
+docs/** linguist-documentation

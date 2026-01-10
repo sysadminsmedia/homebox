@@ -108,7 +108,7 @@
                 "select_location": "Valitse sijainti"
             },
             "tree": {
-                "no_locations": "Sijainteja ei ole saatavilla. Lisää uusia sijainteja\n '<'span class=\" link-primary \"`>`Luo`<`/span`> ' - painike navigointipalkissa."
+                "no_locations": "Sijainteja ei ole saatavilla. Lisää uusia sijainteja\n '<span class=\"link-primary\">'Luo'</span>' - painike navigointipalkissa."
             }
         },
         "quick_menu": {
