@@ -7,7 +7,10 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "docs:dev": "astro dev",
+    "docs:build": "astro build --outDir ./.vitepress/dist",
+    "docs:preview": "astro preview"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.12",
