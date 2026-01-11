@@ -2085,12 +2085,10 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/repo.Group'
-            type: array
+            $ref: '#/definitions/repo.Group'
       security:
       - Bearer: []
-      summary: Get All Groups
+      summary: Get Group
       tags:
       - Group
     post:
@@ -2131,6 +2129,22 @@ paths:
       security:
       - Bearer: []
       summary: Update Group
+      tags:
+      - Group
+  /v1/groups/all:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repo.Group'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get All Groups
       tags:
       - Group
   /v1/groups/invitations:

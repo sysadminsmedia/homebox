@@ -142,16 +142,14 @@ paths:
         - Bearer: []
       tags:
         - Group
-      summary: Get All Groups
+      summary: Get Group
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/repo.Group"
+                $ref: "#/components/schemas/repo.Group"
     put:
       security:
         - Bearer: []
@@ -201,6 +199,22 @@ paths:
       responses:
         "204":
           description: No Content
+  /v1/groups/all:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Get All Groups
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/repo.Group"
   /v1/groups/invitations:
     get:
       security:

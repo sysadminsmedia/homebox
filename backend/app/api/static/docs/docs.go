@@ -243,15 +243,12 @@ const docTemplate = `{
                 "tags": [
                     "Group"
                 ],
-                "summary": "Get All Groups",
+                "summary": "Get Group",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/repo.Group"
-                            }
+                            "$ref": "#/definitions/repo.Group"
                         }
                     }
                 }
@@ -338,6 +335,33 @@ const docTemplate = `{
                 "responses": {
                     "204": {
                         "description": "No Content"
+                    }
+                }
+            }
+        },
+        "/v1/groups/all": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Group"
+                ],
+                "summary": "Get All Groups",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/repo.Group"
+                            }
+                        }
                     }
                 }
             }
