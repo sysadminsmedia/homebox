@@ -110,6 +110,10 @@ export default defineConfig({
                                             slug: 'contribute/bounty-program',
                                         },
                                         {
+                                            label: 'Code of Conduct',
+                                            slug: 'contribute/code-of-conduct',
+                                        },
+                                        {
                                             label: 'Development',
                                             autogenerate: { directory: 'contribute/development' },
                                         },
