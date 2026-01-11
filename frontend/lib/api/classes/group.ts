@@ -159,7 +159,7 @@ export class GroupApi extends BaseAPI {
         }
       : undefined;
     return this.http.delete<void>({
-      url: route(`/groups/${groupId || ""}`),
+      url: route(`/groups`),
       headers,
     });
   }
