@@ -33,6 +33,7 @@ export default defineConfig({
         starlight({
             components: {
                 SocialIcons: './src/components/SocialIcon.astro',
+                SiteTitle: './src/components/SiteTitle.astro',
             },
             logo: {
                 src: './src/assets/lilbox.svg',
@@ -44,10 +45,10 @@ export default defineConfig({
             lastUpdated: true,
             plugins: [
                 starlightThemeNova({
-                    nav: [
-                        { label: 'Demos', href: 'https://demo.homebox.software' },
-                        { label: 'API Docs', href: '/api' },
-                    ],
+                    // nav: [
+                    //     { label: 'Demos', href: 'https://demo.homebox.software' },
+                    //     { label: 'API Docs', href: '/api' },
+                    // ],
                 }),
                 starlightGitHubAlerts(),
                 starlightChangelogs(),

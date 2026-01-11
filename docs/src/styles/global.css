@@ -25,3 +25,8 @@
 	--color-gray-800: #262821;
 	--color-gray-900: #181915;
 }
+
+.nova-page-frame-header, .nova-header .nova-icon-button, .nova-header select {
+	background-color: var(--color-gray-900);
+	color: var(--color-gray-200);
+}
