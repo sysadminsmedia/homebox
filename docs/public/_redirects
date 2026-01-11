@@ -7,4 +7,3 @@
 
 # This goes at the end if no other redirects match
 / /en 302
-/* /en/:splat 302
