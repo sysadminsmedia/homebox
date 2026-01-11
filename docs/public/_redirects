@@ -1,0 +1,10 @@
+# Example german redirect
+# / /de 302 Language=de
+# /* /de/:splat 302 Language=de
+
+# Fix API going to wrong URL
+/:lang/api/* /api/:splat 302
+
+# This goes at the end if no other redirects match
+/ /en 302
+/* /en/:splat 302

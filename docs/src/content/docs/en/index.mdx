@@ -1,7 +1,7 @@
 ---
 title: Homebox
 description: A simple home inventory management software
-template: splash # Remove or comment out this line to display the site sidebar on this page.
+template: splash
 hero:
   tagline: A simple home inventory management software
   image:
@@ -38,22 +38,20 @@ to deploy, use, and backup. However, a Postgres backend is also supported for la
 		Homebox supports multiple "collections" per instance. Making it easy to track inventories with different groups
         of people and locations.
 	</Card>
-	<Card title="Change page layout" icon="material-symbols:edit-document">
-		Delete `template: splash` in `src/content/docs/index.mdx` to display a
-		sidebar on this page.
+	<Card title="Templates" icon="material-symbols:edit-document">
+		Homebox supports item templates, which allow you to define common fields and default values for common items. This
+        makes it easy to create new items with consistent fields.
 	</Card>
-	<Card title="Add new content" icon="material-symbols:add">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
+	<Card title="OIDC SSO" icon="material-symbols:family-group">
+		Homebox supports OpenID Connect (OIDC) Single Sign-On (SSO) for easy authentication with your existing identity
+        provider. No paid plans or expensive add-ons required. Security for all, free of charge.
 	</Card>
-	<Card title="Configure your site" icon="material-symbols:settings">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
-	</Card>
-	<Card title="Read the docs" icon="material-symbols:book-5">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
+	<Card title="Reporting" icon="material-symbols:book-5">
+		Export Bills of Materials (BOMs) and generate QR codes for items.
 	</Card>
 </CardGrid>
 
-## Why Note Use Something Else?
+## Why Not Use Something Else?
 There are a lot of great inventory management systems out there, but none of them really fit our needs as a home user.
 Snipe-IT is a fantastic product that has so many robust features and management options which makes it easy to become
 overwhelmed and confused. We wanted something that was simple and easy to use that didn't require a lot of cognitive

@@ -19,6 +19,12 @@ export default defineConfig({
         contentIntellisense: true,
         clientPrerender: true,
         chromeDevtoolsWorkspace: true,
+        csp: {
+            algorithm: 'SHA-384',
+            directives: [
+                "img-src 'self' data: https://translate.sysadminsmedia.com;"
+            ]
+        }
     },
 
     prefetch: {
@@ -172,13 +178,13 @@ export default defineConfig({
                 useThemedSelectionColors: true,
                 minSyntaxHighlightingColorContrast: 5.0, // Ensure minimum contrast is at least .5 units higher than WCAG 2.2 AA
                 shiki: { // We set the languages we actually use to try to reduce bundle sizes
-                    bundledLangs: ['bash', 'typescript', 'javascript', 'json', 'yaml', 'go', 'systemd', 'vue', 'vue-html', 'astro', 'css'],
+                    bundledLangs: ['bash', 'typescript', 'javascript', 'json', 'yaml', 'go', 'systemd', 'vue', 'vue-html', 'astro', 'css', 'sql'],
                 }
             }
         }),
         icon({
             include: { // Specify which icons to include in the final bundle (reduce bundle size)
-                'material-symbols': ['home-work', 'edit-document', 'add', 'settings', 'book-5'],
+                'material-symbols': ['home-work', 'edit-document', 'family-group', 'settings', 'book-5'],
                 'simple-icons': ['discord', 'github', 'lemmy', 'reddit', 'mastodon'],
             }
         }),
