@@ -172,7 +172,7 @@ export default defineConfig({
         icon(),
     ],
 
-    adapter: cloudflare(),
+    //adapter: cloudflare(),
 
     vite: {
         plugins: [tailwindcss()],
