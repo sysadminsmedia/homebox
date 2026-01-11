@@ -1,27 +1,33 @@
-import {defineConfig} from 'astro/config';
+// @ts-check
+import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
-import starlightThemeNova from 'starlight-theme-nova'
-import starlightChangelogs, {makeChangelogsSidebarLinks} from 'starlight-changelogs'
-import starlightOpenAPI, {openAPISidebarGroups} from 'starlight-openapi'
-import starlightGitHubAlerts from 'starlight-github-alerts'
+import starlightThemeNova from 'starlight-theme-nova';
+import starlightChangelogs, {
+  makeChangelogsSidebarLinks,
+} from 'starlight-changelogs';
+import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi';
+import starlightGitHubAlerts from 'starlight-github-alerts';
 import starlightAutoDrafts from 'starlight-auto-drafts'
-import icon from 'astro-icon';
 
+import icon from 'astro-icon';
+import starlightSidebarTopics from 'starlight-sidebar-topics';
 import cloudflare from '@astrojs/cloudflare';
+
+import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-    experimental: {
-        svgo: true,
-        contentIntellisense: true,
-        clientPrerender: true,
-        chromeDevtoolsWorkspace: true,
-    },
+  experimental: {
+    svgo: true,
+    contentIntellisense: true,
+    clientPrerender: true,
+    chromeDevtoolsWorkspace: true,
+  },
 
-    prefetch: {
-        prefetchAll: true,
-        defaultStrategy: 'hover',
-    },
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: 'hover',
+  },
 
     site: 'https://homebox.software',
 
@@ -46,11 +52,11 @@ export default defineConfig({
             }),
             starlightGitHubAlerts(),
             starlightChangelogs(),
+            startlightAutoDrafts(),
             starlightOpenAPI([{
                 base: 'api',
                 schema: 'https://raw.githubusercontent.com/sysadminsmedia/homebox/refs/heads/main/docs/en/api/openapi-3.0.json',
-            }]),
-            starlightAutoDrafts()
+            }])
         ],
         title: 'Homebox',
         defaultLocale: 'en',
@@ -98,5 +104,9 @@ export default defineConfig({
         ],
     }), icon()],
 
-    adapter: cloudflare(),
+  adapter: cloudflare(),
+
+  vite: {
+    plugins: [tailwindcss()],
+  },
 });
