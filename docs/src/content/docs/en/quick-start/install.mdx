@@ -1,3 +1,189 @@
 ---
 title: Install
 ---
+
+
+import {TabItem, Tabs} from '@astrojs/starlight/components';
+
+There are two main ways to run Homebox.
+
+1. As a Docker container
+2. Using the correct executable for your platform by downloading it from the [releases page](https://github.com/sysadminsmedia/homebox/releases)
+
+> [!NOTE]
+> The application can be configured using environment variables. You can find a list of all the available options in the [configuration](/en/quick-start/configure/) section.
+
+> [!TIP]
+> We highly recommend using Docker for production deployments. It's easy to setup and it's secure by default. We also
+> provide a couple of images with additional security. Additionally, it's the primary way we run Homebox demos and testing.
+
+----
+
+## Docker
+The following instructions assume you have Docker installed on your machine.
+
+The official image is `ghcr.io/sysadminsmedia/homebox:latest`. For each image there are 3 tags, respectively the regular
+tag, the `$tag-rootless` and `$tag-hardened`. The rootless tag is a regular image but with the user `homebox` created.
+The hardened tag is a distroless image and contains no shells or utilities.
+
+> [!WARNING]
+> If you want to use MQTT you must use the regular or rootless image. The hardened image does not contain the MQTT
+> client.
+
+### Docker Run
+Great for testing the application, but not recommended for production deployments. Checkout the docker compose example below for a production deployment.
+
+<Tabs>
+    <TabItem label="Regular">
+        ```bash
+        # Run the container
+        docker run -d --name homebox --restart unless-stopped \
+        --public 3100:7745 --env HBOX_OPTIONS_ALLOW_ANALYTICS=false \
+        --volume /path/to/data/folder:/data \
+        ghcr.io/sysadminsmedia/homebox:latest
+        ```
+    </TabItem>
+    <TabItem label="Rootless">
+        ```bash
+        # When using rootless you must ensure the data folder has the correct permissions
+        mkdir -p /path/to/data/folder
+        chown 65532:65532 -R /path/to/data/folder
+        # --------
+        # Run the container
+        docker run -d --name homebox --restart unless-stopped \
+        --public 3100:7745 --env HBOX_OPTIONS_ALLOW_ANALYTICS=false \
+        --volume /path/to/data/folder:/data \
+        ghcr.io/sysadminsmedia/homebox:latest-rootless
+        ```
+    </TabItem>
+    <TabItem label="Hardened">
+        ```bash
+        # When using hardened you must ensure the data folder has the correct permissions
+        mkdir -p /path/to/data/folder
+        chown 65532:65532 -R /path/to/data/folder
+        # --------
+        # Run the container
+        docker run -d --name homebox --restart unless-stopped \
+        --public 3100:7745 --env HBOX_OPTIONS_ALLOW_ANALYTICS=false \
+        --volume /path/to/data/folder:/data \
+        ghcr.io/sysadminsmedia/homebox:latest-hardened
+        ```
+    </TabItem>
+</Tabs>
+
+### Docker Compose
+1. Create a `compose.yml` file with the following contents:
+
+<Tabs>
+    <TabItem label="Regular">
+        ```yaml title="compose.yml"
+        services:
+            homebox:
+                image: ghcr.io/sysadminsmedia/homebox:latest
+                restart: always
+                environment:
+                    - HBOX_LOG_LEVEL=info
+                    - HBOX_LOG_FORMAT=text
+                    - HBOX_WEB_MAX_UPLOAD_SIZE=10
+                    # Please consider allowing analytics to help us improve Homebox (basic computer information, no personal data)
+                    - HBOX_OPTIONS_ALLOW_ANALYTICS=false
+                volumes:
+                    - homebox-data:/data/
+                ports:
+                    - 3100:7745
+
+        volumes:
+            homebox-data:
+                driver: local
+        ```
+    </TabItem>
+    <TabItem label="Rootless">
+        ```yaml title="compose.yml"
+        services:
+            homebox:
+                image: ghcr.io/sysadminsmedia/homebox:latest-rootless
+                restart: always
+                environment:
+                    - HBOX_LOG_LEVEL=info
+                    - HBOX_LOG_FORMAT=text
+                    - HBOX_WEB_MAX_UPLOAD_SIZE=10
+                    # Please consider allowing analytics to help us improve Homebox (basic computer information, no personal data)
+                    - HBOX_OPTIONS_ALLOW_ANALYTICS=false
+                volumes:
+                    - homebox-data:/data/
+                ports:
+                    - 3100:7745
+
+        volumes:
+            homebox-data:
+                driver: local
+        ```
+
+        > [!NOTE]
+        > If you want to use a bind mount instead of a volume, you will need to `chown` the chosen directory in advance to
+        > the `65532` user (as shown in the Docker run example above)
+    </TabItem>
+    <TabItem label="Hardened">
+        ```yaml title="compose.yml"
+        services:
+            homebox:
+                image: ghcr.io/sysadminsmedia/homebox:latest-hardened
+                restart: always
+                environment:
+                    - HBOX_LOG_LEVEL=info
+                    - HBOX_LOG_FORMAT=text
+                    - HBOX_WEB_MAX_UPLOAD_SIZE=10
+                    # Please consider allowing analytics to help us improve Homebox (basic computer information, no personal data)
+                    - HBOX_OPTIONS_ALLOW_ANALYTICS=false
+                volumes:
+                    - homebox-data:/data/
+                ports:
+                    - 3100:7745
+
+        volumes:
+            homebox-data:
+                driver: local
+        ```
+
+        > [!CAUTION]
+        > The hardened image does not contain the MQTT client.
+
+        > [!NOTE]
+        > If you want to use a bind mount instead of a volume, you will need to `chown` the chosen directory in advance to
+        > the `65532` user (as shown in the Docker run example above)
+    </TabItem>
+</Tabs>
+
+> [!WARNING]
+> If you previously set up docker compose with the `HBOX_WEB_READ_TIMEOUT`, `HBOX_WEB_WRITE_TIMEOUT` or `HBOX_WEB_IDLE_TIMEOUT` environment variables,
+> with the hay-kot image, please note that you will need to add an `s` for seconds or `m` for minutes to the end of the integers.
+> A dependency update removed the default sections, and it now requires them to be explicitly set.
+
+2. While in the same directory as the `compose.yml` file, run `docker compose up -d` to start the container.
+3. Navigate to `http://server.local.ip.address:3100` to access the Homebox web interface. (Replace with the correct IP address)
+
+## Binaries
+We supply a wide range of binaries for different platforms and CPU architectures.
+
+### Windows
+1. Download the latest version from the [releases page](https://github.com/sysadminsmedia/homebox/releases).
+2. Extract the archive and run `homebox.exe`.
+3. The web interface will be available at `http://localhost:7745` by default. Access the page by navigating to
+`http://server.local.ip.address:7745/` (replace with the right ip address)
+
+### macOS
+1. Download the latest version from the [releases page](https://github.com/sysadminsmedia/homebox/releases). (Use
+`homebox_Darwin_x86_64.tar.gz` for Intel-based macs and `homebox_Darwin_arm64.tar.gz` for Apple Silicon)
+2. Extract the archive and run `./homebox` from a terminal.
+3. The web interface will be available at `http://localhost:7745` by default. Access the page by navigating to
+`http://server.local.ip.address:7745/` (replace with the right ip address)
+
+### Linux
+1. Download the latest version from the [releases page](https://github.com/sysadminsmedia/homebox/releases).
+2. Extract the archive and run `./homebox` from a terminal.
+3. The web interface will be available at `http://localhost:7745` by default. Access the page by navigating to
+`http://server.local.ip.address:7745/` (replace with the right ip address)
+
+> [!NOTE]
+> RISC-V binaries are experimental and not recommended for production deployments. Use at your own risk. Please provide feedback
+> on the [discussions page](https://github.com/sysadminsmedia/homebox/discussions) if you encounter any issues.

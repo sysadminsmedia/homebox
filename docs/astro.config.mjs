@@ -89,10 +89,12 @@ export default defineConfig({
                                 },
                                 {
                                     label: 'Advanced',
+                                    collapsed: true,
                                     autogenerate: { directory: 'advanced' },
                                 },
                                 {
                                     label: 'Contributing',
+                                    collapsed: true,
                                     items: [
                                         {
                                             label: 'Getting Started',
