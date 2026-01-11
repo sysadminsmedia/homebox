@@ -114,7 +114,7 @@ func (ctrl *V1Controller) HandleGroupInvitationsCreate() errchain.HandlerFunc {
 //	@Tags		Group
 //	@Produce	json
 //	@Success	200	{object}	[]repo.Group
-//	@Router		/v1/groups [Get]
+//	@Router		/v1/groups/all [Get]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleGroupsGetAll() errchain.HandlerFunc {
 	fn := func(r *http.Request) ([]repo.Group, error) {

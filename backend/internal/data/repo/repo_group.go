@@ -295,17 +295,18 @@ func (r *GroupRepository) GroupDelete(ctx context.Context, id uuid.UUID) error {
 		Where(item.HasGroupWith(group.ID(id))).
 		WithGroup().
 		WithAttachments().
-		Only(ctx)
+		All(ctx)
 	if err != nil {
 		return err
 	}
 
-	// Delete all attachments (and their files) before deleting the item
-	for _, att := range itm.Edges.Attachments {
-		err := r.attachments.Delete(ctx, id, att.ID)
-		if err != nil {
-			log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during item deletion")
-			// Continue with other attachments even if one fails
+	// Delete all attachments (and their files) before deleting the items
+	for _, it := range itm {
+		for _, att := range it.Edges.Attachments {
+			if err := r.attachments.Delete(ctx, id, att.ID); err != nil {
+				log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during item deletion")
+				// Continue with other attachments even if one fails
+			}
 		}
 	}
 

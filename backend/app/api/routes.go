@@ -97,10 +97,10 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		r.Put("/users/self/change-password", chain.ToHandlerFunc(v1Ctrl.HandleUserSelfChangePassword(), userMW...))
 
 		// Group management endpoints
-		r.Get("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupsGetAll(), userMW...))
+		r.Get("/groups/all", chain.ToHandlerFunc(v1Ctrl.HandleGroupsGetAll(), userMW...))
 		r.Post("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupCreate(), userMW...))
-		r.Get("/groups/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupGet(), userMW...))
-		r.Put("/groups/{id}", chain.ToHandlerFunc(v1Ctrl.HandleGroupUpdate(), userMW...))
+		r.Get("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupGet(), userMW...))
+		r.Put("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupUpdate(), userMW...))
 		r.Delete("/groups", chain.ToHandlerFunc(v1Ctrl.HandleGroupDelete(), userMW...))
 
 		r.Get("/groups/members", chain.ToHandlerFunc(v1Ctrl.HandleGroupMembersGetAll(), userMW...))

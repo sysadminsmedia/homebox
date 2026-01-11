@@ -88,7 +88,11 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 		group = token.Group
 	}
 
-	hashed, _ := hasher.HashPassword(data.Password)
+	hashed, err := hasher.HashPassword(data.Password)
+	if err != nil {
+		log.Err(err).Msg("Failed to hash password")
+		return repo.UserOut{}, err
+	}
 	usrCreate := repo.UserCreate{
 		Name:           data.Name,
 		Email:          data.Email,
