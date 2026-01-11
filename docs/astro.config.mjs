@@ -52,7 +52,7 @@ export default defineConfig({
             }),
             starlightGitHubAlerts(),
             starlightChangelogs(),
-            startlightAutoDrafts(),
+            starlightAutoDrafts(),
             starlightOpenAPI([{
                 base: 'api',
                 schema: 'https://raw.githubusercontent.com/sysadminsmedia/homebox/refs/heads/main/docs/en/api/openapi-3.0.json',
