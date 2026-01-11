@@ -52,8 +52,14 @@ export class GroupApi extends BaseAPI {
    * Get all members of the current (or specified) group.
    */
   getMembers(groupId?: string) {
+    const headers = groupId
+      ? {
+          "X-Tenant": groupId,
+        }
+      : undefined;
     return this.http.get<UserSummary[]>({
-      url: route(`/groups/${groupId || ""}/members`),
+      url: route(`/groups/members`),
+      headers,
     });
   }
 
@@ -61,8 +67,14 @@ export class GroupApi extends BaseAPI {
    * Add a user to the current (or specified) group.
    */
   addMember(data: GroupMemberAdd, groupId?: string) {
+    const headers = groupId
+      ? {
+          "X-Tenant": groupId,
+        }
+      : undefined;
     return this.http.post<GroupMemberAdd, void>({
-      url: route(`/groups/${groupId || ""}/members`),
+      url: route(`/groups/members`),
+      headers,
       body: data,
     });
   }
@@ -71,17 +83,29 @@ export class GroupApi extends BaseAPI {
    * Remove a user from the current (or specified) group.
    */
   removeMember(userId: string, groupId?: string) {
+    const headers = groupId
+      ? {
+          "X-Tenant": groupId,
+        }
+      : undefined;
     return this.http.delete<void>({
-      url: route(`/groups/${groupId || ""}/members/${userId}`),
+      url: route(`/groups/members/${userId}`),
+      headers,
     });
   }
 
   /**
-   * Update a user's role in the current (or specified) group.
+   * Update group name and currency.
    */
   update(data: GroupUpdate, groupId?: string) {
+    const headers = groupId
+      ? {
+          "X-Tenant": groupId,
+        }
+      : undefined;
     return this.http.put<GroupUpdate, Group>({
-      url: route(`/groups/${groupId || ""}`),
+      url: route(`/groups`),
+      headers,
       body: data,
     });
   }
@@ -90,8 +114,23 @@ export class GroupApi extends BaseAPI {
    * Get a group by ID, if no ID is provided, get the current group.
    */
   get(groupId?: string) {
+    const headers = groupId
+      ? {
+          "X-Tenant": groupId,
+        }
+      : undefined;
     return this.http.get<Group>({
-      url: route(`/groups/${groupId || ""}`),
+      url: route(`/groups`),
+      headers,
+    });
+  }
+
+  /**
+   * Get all groups the user is a member of.
+   */
+  getAll() {
+    return this.http.get<Group[]>({
+      url: route("/groups/all"),
     });
   }
 
@@ -111,11 +150,17 @@ export class GroupApi extends BaseAPI {
   }
 
   /**
-   * Delete a group by ID.
+   * Delete a group by ID, if no ID is provided, delete the current group.
    */
-  delete(groupId: string) {
+  delete(groupId?: string) {
+    const headers = groupId
+      ? {
+          "X-Tenant": groupId,
+        }
+      : undefined;
     return this.http.delete<void>({
-      url: route(`/groups/${groupId}`),
+      url: route(`/groups/${groupId || ""}`),
+      headers,
     });
   }
 

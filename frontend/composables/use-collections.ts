@@ -24,7 +24,7 @@ export const useCollections = () => {
       const { data: userResp } = await api.user.self();
       const user = userResp?.item;
 
-      const { data: allGroups } = await api.group.get();
+      const { data: allGroups } = await api.group.getAll();
       const available = Array.isArray(allGroups)
         ? (allGroups as Array<{ id: string; name: string }>).map(g => ({ id: g.id, name: g.name }))
         : [];
