@@ -9,7 +9,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "docs:dev": "astro dev",
-    "docs:build": "astro build --outDir ./.vitepress/dist",
+    "docs:build": "astro build",
     "docs:preview": "astro preview"
   },
   "dependencies": {
