@@ -2,9 +2,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightThemeNova from 'starlight-theme-nova';
-import starlightChangelogs, {
-    makeChangelogsSidebarLinks,
-} from 'starlight-changelogs';
+import starlightChangelogs, { makeChangelogsSidebarLinks } from 'starlight-changelogs';
 import starlightOpenAPI, { openAPISidebarGroups } from 'starlight-openapi';
 import starlightGitHubAlerts from 'starlight-github-alerts';
 import icon from 'astro-icon';
@@ -14,6 +12,7 @@ import cloudflare from '@astrojs/cloudflare';
 import tailwindcss from "@tailwindcss/vite";
 
 // https://astro.build/config
+// @ts-ignore
 export default defineConfig({
     experimental: {
         svgo: true,
@@ -28,7 +27,6 @@ export default defineConfig({
     },
 
     site: 'https://homebox.software',
-
     integrations: [
         starlight({
             components: {
@@ -168,9 +166,22 @@ export default defineConfig({
             },
             customCss: [
                 './src/styles/global.css',
-            ]
+            ],
+            expressiveCode: {
+                removeUnusedThemes: true, // Try to reduce bundle size by removing unused themes
+                useThemedSelectionColors: true,
+                minSyntaxHighlightingColorContrast: 5.0, // Ensure minimum contrast is at least .5 units higher than WCAG 2.2 AA
+                shiki: { // We set the languages we actually use to try to reduce bundle sizes
+                    bundledLangs: ['bash', 'typescript', 'javascript', 'json', 'yaml', 'go', 'systemd', 'vue', 'vue-html', 'astro', 'css'],
+                }
+            }
         }),
-        icon(),
+        icon({
+            include: { // Specify which icons to include in the final bundle (reduce bundle size)
+                'material-symbols': ['home-work', 'edit-document', 'add', 'settings', 'book-5'],
+                'simple-icons': ['discord', 'github', 'lemmy', 'reddit', 'mastodon'],
+            }
+        }),
     ],
 
     //adapter: cloudflare(),
