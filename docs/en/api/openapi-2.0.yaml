@@ -2067,6 +2067,17 @@ paths:
       tags:
       - Base
   /v1/groups:
+    delete:
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Delete Group
+      tags:
+      - Group
     get:
       produces:
       - application/json
@@ -2120,70 +2131,6 @@ paths:
       security:
       - Bearer: []
       summary: Update Group
-      tags:
-      - Group
-  /v1/groups/{id}:
-    delete:
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No Content
-      security:
-      - Bearer: []
-      summary: Delete Group
-      tags:
-      - Group
-  /v1/groups/{id}/members:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/repo.UserSummary'
-            type: array
-      security:
-      - Bearer: []
-      summary: Get All Group Members
-      tags:
-      - Group
-    post:
-      parameters:
-      - description: User ID
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/v1.GroupMemberAdd'
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No Content
-      security:
-      - Bearer: []
-      summary: Add User to Group
-      tags:
-      - Group
-  /v1/groups/{id}/members/{user_id}:
-    delete:
-      parameters:
-      - description: User ID
-        in: path
-        name: user_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No Content
-      security:
-      - Bearer: []
-      summary: Remove User from Group
       tags:
       - Group
   /v1/groups/invitations:
@@ -2257,6 +2204,58 @@ paths:
       security:
       - Bearer: []
       summary: Accept Group Invitation
+      tags:
+      - Group
+  /v1/groups/members:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repo.UserSummary'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get All Group Members
+      tags:
+      - Group
+    post:
+      parameters:
+      - description: User ID
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/v1.GroupMemberAdd'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Add User to Group
+      tags:
+      - Group
+  /v1/groups/members/{user_id}:
+    delete:
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Remove User from Group
       tags:
       - Group
   /v1/groups/statistics:

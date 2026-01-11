@@ -77,6 +77,14 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 			log.Err(err).Msg("Failed to get invitation token")
 			return repo.UserOut{}, err
 		}
+
+		if token.ExpiresAt.Before(time.Now()) {
+			return repo.UserOut{}, errors.New("invitation expired")
+		}
+		if token.Uses <= 0 {
+			return repo.UserOut{}, errors.New("invitation used up")
+		}
+
 		group = token.Group
 	}
 
@@ -118,7 +126,7 @@ func (svc *UserService) RegisterUser(ctx context.Context, data UserRegistration)
 	// Decrement the invitation token if it was used.
 	if token.ID != uuid.Nil {
 		log.Debug().Msg("decrementing invitation token")
-		err = svc.repos.Groups.InvitationUpdate(ctx, token.ID, token.Uses-1)
+		err = svc.repos.Groups.InvitationDecrement(ctx, token.ID)
 		if err != nil {
 			log.Err(err).Msg("Failed to update invitation token")
 			return repo.UserOut{}, err
@@ -371,6 +379,8 @@ func (svc *UserService) ChangePassword(ctx Context, current string, new string) 
 	return true
 }
 
+// EnsureUserPassword ensures that the user with the given email has the specified password. If the password does not match, it updates the user's password to the new value.
+// WARNING: This method bypasses normal checks, it should only be used for demos and/or superuser level administrative processes.
 func (svc *UserService) EnsureUserPassword(ctx context.Context, email, password string) error {
 	usr, err := svc.repos.Users.GetOneEmailNoEdges(ctx, email)
 	if err != nil {

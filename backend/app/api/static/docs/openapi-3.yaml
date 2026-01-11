@@ -192,6 +192,15 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/repo.Group"
+    delete:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Delete Group
+      responses:
+        "204":
+          description: No Content
   /v1/groups/invitations:
     get:
       security:
@@ -258,6 +267,55 @@ paths:
       parameters:
         - description: Invitation ID
           name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+  /v1/groups/members:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Get All Group Members
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/repo.UserSummary"
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Add User to Group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/v1.GroupMemberAdd"
+        description: User ID
+        required: true
+      responses:
+        "204":
+          description: No Content
+  "/v1/groups/members/{user_id}":
+    delete:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Remove User from Group
+      parameters:
+        - description: User ID
+          name: user_id
           in: path
           required: true
           schema:
@@ -336,65 +394,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/repo.ValueOverTime"
-  "/v1/groups/{id}":
-    delete:
-      security:
-        - Bearer: []
-      tags:
-        - Group
-      summary: Delete Group
-      responses:
-        "204":
-          description: No Content
-  "/v1/groups/{id}/members":
-    get:
-      security:
-        - Bearer: []
-      tags:
-        - Group
-      summary: Get All Group Members
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/repo.UserSummary"
-    post:
-      security:
-        - Bearer: []
-      tags:
-        - Group
-      summary: Add User to Group
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/v1.GroupMemberAdd"
-        description: User ID
-        required: true
-      responses:
-        "204":
-          description: No Content
-  "/v1/groups/{id}/members/{user_id}":
-    delete:
-      security:
-        - Bearer: []
-      tags:
-        - Group
-      summary: Remove User from Group
-      parameters:
-        - description: User ID
-          name: user_id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "204":
-          description: No Content
   /v1/items:
     get:
       security:

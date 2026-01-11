@@ -35,12 +35,18 @@ type Context struct {
 func NewContext(ctx context.Context) Context {
 	user := UseUserCtx(ctx)
 	gid := UseTenantCtx(ctx)
-	if gid == uuid.Nil && user != nil {
-		gid = user.DefaultGroupID
+
+	var uid uuid.UUID
+	if user != nil {
+		uid = user.ID
+		if gid == uuid.Nil {
+			gid = user.DefaultGroupID
+		}
 	}
+
 	return Context{
 		Context: ctx,
-		UID:     user.ID,
+		UID:     uid,
 		GID:     gid,
 		User:    user,
 	}

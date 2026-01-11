@@ -153,7 +153,7 @@ func (ctrl *V1Controller) HandleGroupCreate() errchain.HandlerFunc {
 //	@Tags		Group
 //	@Produce	json
 //	@Success	204
-//	@Router		/v1/groups/{id} [Delete]
+//	@Router		/v1/groups [Delete]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleGroupDelete() errchain.HandlerFunc {
 	fn := func(r *http.Request) (any, error) {
@@ -188,7 +188,7 @@ func (ctrl *V1Controller) HandleGroupInvitationsGetAll() errchain.HandlerFunc {
 //	@Tags		Group
 //	@Produce	json
 //	@Success	200	{object}	[]repo.UserSummary
-//	@Router		/v1/groups/{id}/members [Get]
+//	@Router		/v1/groups/members [Get]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleGroupMembersGetAll() errchain.HandlerFunc {
 	fn := func(r *http.Request) ([]repo.UserSummary, error) {
@@ -206,7 +206,7 @@ func (ctrl *V1Controller) HandleGroupMembersGetAll() errchain.HandlerFunc {
 //	@Produce	json
 //	@Param		payload	body		GroupMemberAdd	true	"User ID"
 //	@Success	204
-//	@Router		/v1/groups/{id}/members [Post]
+//	@Router		/v1/groups/members [Post]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleGroupMemberAdd() errchain.HandlerFunc {
 	fn := func(r *http.Request, body GroupMemberAdd) (any, error) {
@@ -225,7 +225,7 @@ func (ctrl *V1Controller) HandleGroupMemberAdd() errchain.HandlerFunc {
 //	@Produce	json
 //	@Param		user_id	path		string	true	"User ID"
 //	@Success	204
-//	@Router		/v1/groups/{id}/members/{user_id} [Delete]
+//	@Router		/v1/groups/members/{user_id} [Delete]
 //	@Security	Bearer
 func (ctrl *V1Controller) HandleGroupMemberRemove() errchain.HandlerFunc {
 	fn := func(r *http.Request, userID uuid.UUID) (any, error) {

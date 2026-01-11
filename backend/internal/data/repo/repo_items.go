@@ -757,7 +757,7 @@ func (e *ItemsRepository) Delete(ctx context.Context, id uuid.UUID) error {
 
 	// Delete all attachments (and their files) before deleting the item
 	for _, att := range itm.Edges.Attachments {
-		err := e.attachments.Delete(ctx, gid, id, att.ID)
+		err := e.attachments.Delete(ctx, gid, att.ID)
 		if err != nil {
 			log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during item deletion")
 			// Continue with other attachments even if one fails
@@ -788,7 +788,7 @@ func (e *ItemsRepository) DeleteByGroup(ctx context.Context, gid, id uuid.UUID) 
 
 	// Delete all attachments (and their files) before deleting the item
 	for _, att := range itm.Edges.Attachments {
-		err := e.attachments.Delete(ctx, gid, id, att.ID)
+		err := e.attachments.Delete(ctx, gid, att.ID)
 		if err != nil {
 			log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during item deletion")
 			// Continue with other attachments even if one fails
@@ -841,7 +841,7 @@ func (e *ItemsRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wipe
 	for _, itm := range items {
 		// Delete all attachments first
 		for _, att := range itm.Edges.Attachments {
-			err := e.attachments.Delete(ctx, gid, itm.ID, att.ID)
+			err := e.attachments.Delete(ctx, gid, att.ID)
 			if err != nil {
 				log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during wipe inventory")
 				// Continue with other attachments even if one fails

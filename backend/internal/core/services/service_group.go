@@ -78,35 +78,5 @@ func (svc *GroupService) DeleteInvitation(ctx Context, id uuid.UUID) error {
 
 func (svc *GroupService) AcceptInvitation(ctx Context, token string) (repo.Group, error) {
 	hashedToken := hasher.HashToken(token)
-	invitation, err := svc.repos.Groups.InvitationGet(ctx.Context, hashedToken)
-	if err != nil {
-		return repo.Group{}, err
-	}
-
-	if invitation.ExpiresAt.Before(time.Now()) {
-		return repo.Group{}, errors.New("invitation expired")
-	}
-	if invitation.Uses <= 0 {
-		return repo.Group{}, errors.New("invitation used up")
-	}
-
-	isMember, err := svc.repos.Groups.IsMember(ctx.Context, invitation.Group.ID, ctx.UID)
-	if err != nil {
-		return repo.Group{}, err
-	}
-	if isMember {
-		return repo.Group{}, errors.New("user already a member of this group")
-	}
-
-	err = svc.repos.Groups.AddMember(ctx.Context, invitation.Group.ID, ctx.UID)
-	if err != nil {
-		return repo.Group{}, err
-	}
-
-	err = svc.repos.Groups.InvitationUpdate(ctx.Context, invitation.ID, invitation.Uses-1)
-	if err != nil {
-		return repo.Group{}, err
-	}
-
-	return invitation.Group, nil
+	return svc.repos.Groups.InvitationAccept(ctx.Context, hashedToken, ctx.UID)
 }
