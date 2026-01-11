@@ -4,6 +4,7 @@ import starlightThemeNova from 'starlight-theme-nova'
 import starlightChangelogs, {makeChangelogsSidebarLinks} from 'starlight-changelogs'
 import starlightOpenAPI, {openAPISidebarGroups} from 'starlight-openapi'
 import starlightGitHubAlerts from 'starlight-github-alerts'
+import starlightAutoDrafts from 'starlight-auto-drafts'
 import icon from 'astro-icon';
 
 import cloudflare from '@astrojs/cloudflare';
@@ -48,7 +49,8 @@ export default defineConfig({
             starlightOpenAPI([{
                 base: 'api',
                 schema: 'https://raw.githubusercontent.com/sysadminsmedia/homebox/refs/heads/main/docs/en/api/openapi-3.0.json',
-            }])
+            }]),
+            starlightAutoDrafts()
         ],
         title: 'Homebox',
         defaultLocale: 'en',
