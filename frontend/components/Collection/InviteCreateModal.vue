@@ -1,13 +1,7 @@
 <template>
   <BaseModal :dialog-id="DialogID.CreateGroupInvite" :title="$t('collection.create_invite')" :hide-footer="true">
     <form class="flex min-w-0 flex-col gap-4" @submit.prevent="create">
-      <FormTextField
-        v-model="form.uses"
-        :label="$t('collection.uses')"
-        type="number"
-        :required="true"
-        :min-length="1"
-      />
+      <FormTextField v-model="form.uses" :label="$t('collection.uses')" type="number" :required="true" />
 
       <div class="flex w-full flex-col gap-1.5">
         <Label class="cursor-pointer">{{ $t("collection.expires_at") }}</Label>
@@ -50,11 +44,9 @@
   const api = useUserApi();
 
   const loading = ref(false);
-  const form = reactive<{ uses: number; expiresAt: Date | null; noLimitUses: boolean; noExpiry: boolean }>({
+  const form = reactive<{ uses: number; expiresAt: Date | null }>({
     uses: 1,
     expiresAt: defaultExpiry(),
-    noLimitUses: false,
-    noExpiry: false,
   });
 
   const isDark = useIsThemeInList(darkThemes);
@@ -71,8 +63,6 @@
       if (active && active === DialogID.CreateGroupInvite) {
         form.uses = 1;
         form.expiresAt = defaultExpiry();
-        form.noLimitUses = false;
-        form.noExpiry = false;
         loading.value = false;
       }
     }
@@ -83,44 +73,26 @@
       return;
     }
 
-    let uses: number;
-    if (form.noLimitUses) {
-      uses = 100;
-    } else {
-      const parsedUses = Number(form.uses ?? 0);
-      if (!Number.isFinite(parsedUses) || parsedUses < 1 || parsedUses > 100) {
-        toast.error(t("components.collection.invite_create_modal.toast.invalid_uses"));
-        return;
-      }
-      uses = parsedUses;
+    const parsedUses = Number(form.uses ?? 0);
+    if (!Number.isFinite(parsedUses) || parsedUses < 1 || parsedUses > 100) {
+      toast.error(t("components.collection.invite_create_modal.toast.invalid_uses"));
+      return;
+    }
+    const uses = parsedUses;
+
+    if (!form.expiresAt) {
+      toast.error(t("components.collection.invite_create_modal.toast.invalid_expiry_missing"));
+      return;
     }
 
-    let expiresAtToSend: Date;
-    if (form.noExpiry) {
-      const now = new Date();
-      expiresAtToSend = new Date(
-        now.getFullYear() + 100,
-        now.getMonth(),
-        now.getDate(),
-        now.getHours(),
-        now.getMinutes(),
-        now.getSeconds()
-      );
-    } else {
-      if (!form.expiresAt) {
-        toast.error(t("components.collection.invite_create_modal.toast.invalid_expiry_missing"));
-        return;
-      }
-
-      const now = new Date();
-      const exp = new Date(form.expiresAt);
-      if (exp.getTime() <= now.getTime()) {
-        toast.error(t("components.collection.invite_create_modal.toast.invalid_expiry_past"));
-        return;
-      }
-
-      expiresAtToSend = exp;
+    const now = new Date();
+    const exp = new Date(form.expiresAt);
+    if (exp.getTime() <= now.getTime()) {
+      toast.error(t("components.collection.invite_create_modal.toast.invalid_expiry_past"));
+      return;
     }
+
+    const expiresAtToSend: Date = exp;
 
     loading.value = true;
 

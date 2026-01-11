@@ -202,8 +202,9 @@
             <div>
               <h1 class="text-2xl">
                 {{
-                  t("collection.manage_collection") + " - " + selectedCollection?.name ||
-                  t("components.collection.selector.select_collection")
+                  selectedCollection?.name
+                    ? t("collection.manage_collection") + " - " + selectedCollection.name
+                    : t("global.loading")
                 }}
               </h1>
             </div>

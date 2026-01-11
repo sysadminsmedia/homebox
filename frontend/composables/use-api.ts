@@ -46,8 +46,24 @@ export function useUserApi(): UserClient {
       navigateTo("/");
     }
 
-    if (r.status === 403 && (await r.json()).error === "user does not have access to the requested tenant") {
-      prefs.value.collectionId = null;
+    if (r.status === 403) {
+      try {
+        const contentType = r.headers.get("Content-Type") ?? "";
+        if (!contentType.startsWith("application/json")) {
+          return;
+        }
+
+        const body = (await r.json().catch(() => null)) as { error?: string } | null;
+
+        if (body?.error === "user does not have access to the requested tenant") {
+          if (prefs?.value) {
+            prefs.value.collectionId = null;
+          }
+        }
+      } catch {
+        // ignore parsing errors to avoid breaking the interceptor chain
+        console.log("failed to parse 403 response body");
+      }
     }
   });
 
