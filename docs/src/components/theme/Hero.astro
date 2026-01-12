@@ -1,32 +1,38 @@
 ---
-import { Image } from 'astro:assets'
-import { PAGE_TITLE_ID } from './constants'
-import LinkButton from './LinkButton.astro'
+import { Image } from 'astro:assets';
+import { PAGE_TITLE_ID } from './constants';
+import LinkButton from './LinkButton.astro';
 // Minimal local types to avoid importing from the theme package directly.
 // We only type the bits this component consumes.
 type StarlightAction = {
-  attrs?: Record<string, any>
-  icon?: { name?: string; html?: string }
-  link?: string | URL
-  text?: string
-  variant?: 'primary' | 'secondary' | 'minimal'
-}
+  attrs?: Record<string, any>;
+  icon?: { name?: string; html?: string };
+  link?: string | URL;
+  text?: string;
+  variant?: 'primary' | 'secondary' | 'minimal';
+};
 
 type StarlightHero = {
-  title?: string
-  tagline?: string
-  image?: any
-  actions?: StarlightAction[]
-}
+  title?: string;
+  tagline?: string;
+  image?: any;
+  actions?: StarlightAction[];
+};
 
 type StarlightRouteEntryData = {
-  title?: string
-  hero?: StarlightHero
-}
+  title?: string;
+  hero?: StarlightHero;
+};
 
-const data = (Astro.locals.starlightRoute?.entry?.data as StarlightRouteEntryData) || {}
+const data =
+  (Astro.locals.starlightRoute?.entry?.data as StarlightRouteEntryData) || {};
 
-const { title = data.title, tagline, image, actions = [] } = (data.hero || {}) as StarlightHero
+const {
+  title = data.title,
+  tagline,
+  image,
+  actions = [],
+} = (data.hero || {}) as StarlightHero;
 
 const imageAttrs = {
   loading: 'eager' as const,
@@ -34,71 +40,120 @@ const imageAttrs = {
   width: 400,
   height: 400,
   alt: image?.alt || '',
-}
+};
 
 // Get image source - supports single image or dark/light variants
-let heroImage: any | undefined
-let rawHtml: string | undefined
+let heroImage: any | undefined;
+let rawHtml: string | undefined;
 if (image) {
   if ('file' in image) {
-    heroImage = image.file
+    heroImage = image.file;
   } else if ('dark' in image) {
     // Use dark image as the single image (works for both modes)
-    heroImage = image.dark
+    heroImage = image.dark;
   } else if ('html' in image) {
-    rawHtml = image.html
+    rawHtml = image.html;
   }
 }
 ---
 
-<div class="grid items-center gap-8 pb-12 md:[grid-template-columns:3fr_2fr] md:gap-12 md:py-20 lg:py-28">
-  {heroImage && (
-    <Image
-      src={heroImage}
-      {...imageAttrs}
-      class="mx-auto w-[min(80%,22rem)] md:w-full md:max-w-[20rem] lg:max-w-[24rem] object-contain md:order-2 drop-shadow-xl"
-    />
-  )}
-  {rawHtml && <div class="hero-html mx-auto w-[min(80%,22rem)] md:w-full md:max-w-[24rem] md:order-2" set:html={rawHtml} />}
-
-  <div class="flex flex-col gap-8 text-center md:text-left md:justify-center">
-    <div class="flex flex-col gap-5 items-center md:items-start">
-      <h1
-        id={PAGE_TITLE_ID}
-        data-page-title
-        class="text-4xl sm:text-5xl lg:text-6xl leading-[1.1] font-bold text-[var(--color-foreground)] max-w-[20ch] tracking-tight"
-        set:html={title}
-      />
-      {tagline && (
-        <p
-          class="text-lg md:text-xl text-[var(--color-muted-foreground)] max-w-[45ch] leading-relaxed"
-          set:html={tagline}
+<div class="flex flex-col gap-12 pb-0 md:py-0 lg:py-0">
+  <!-- Hero Section -->
+  <div
+    class="grid items-center gap-8 md:[grid-template-columns:1fr_1fr] md:gap-12"
+  >
+    <div class="flex flex-col gap-8 text-center md:text-left md:justify-center">
+      <div class="flex flex-col gap-5 items-center md:items-start">
+        <h1
+          id={PAGE_TITLE_ID}
+          data-page-title
+          class="text-4xl sm:text-5xl lg:text-6xl leading-[1.1] font-bold text-[var(--color-foreground)] max-w-[20ch] tracking-tight"
+          set:html={title}
         />
-      )}
+        {
+          tagline && (
+            <p
+              class="text-lg md:text-xl text-[var(--color-muted-foreground)] max-w-[45ch] leading-relaxed"
+              set:html={tagline}
+            />
+          )
+        }
+      </div>
+
+      {
+        actions.length > 0 && (
+          <div class="flex flex-wrap gap-4 justify-center md:justify-start">
+            {actions.map(
+              ({
+                attrs: { class: className, ...attrs } = {},
+                icon,
+                link: href,
+                text,
+                variant,
+              }) => (
+                <LinkButton
+                  href={href ?? '#'}
+                  variant={variant}
+                  icon={icon?.name as any}
+                  class={className}
+                  {...attrs}
+                >
+                  {text}
+                  {icon?.html && <Fragment set:html={icon.html} />}
+                </LinkButton>
+              )
+            )}
+          </div>
+        )
+      }
     </div>
 
-    {actions.length > 0 && (
-      <div class="flex flex-wrap gap-4 justify-center md:justify-start">
-        {actions.map(({
-          attrs: { class: className, ...attrs } = {},
-          icon,
-          link: href,
-          text,
-          variant,
-        }) => (
-          <LinkButton
-            href={href ?? '#'}
-            variant={variant}
-            icon={icon?.name as any}
-            class={className}
-            {...attrs}
-          >
-            {text}
-            {icon?.html && <Fragment set:html={icon.html} />}
-          </LinkButton>
-        ))}
+    {
+      heroImage && (
+        <Image
+          src={heroImage}
+          {...imageAttrs}
+          class="mx-auto w-[min(90%,24rem)] md:w-full object-contain drop-shadow-xl"
+        />
+      )
+    }
+    {
+      rawHtml && (
+        <div
+          class="hero-html mx-auto w-[min(90%,24rem)] md:w-full"
+          set:html={rawHtml}
+        />
+      )
+    }
+  </div>
+
+  <!-- Quick Features Section -->
+  <div
+    class="grid grid-cols-2 md:grid-cols-4 gap-4 py-8 border-y border-[var(--color-border)]"
+  >
+    <div class="flex flex-col items-center text-center gap-2">
+      <div class="text-2xl md:text-3xl font-bold text-[var(--color-primary)]">
+        100%
       </div>
-    )}
+      <p class="text-sm text-[var(--color-muted-foreground)]">Open Source</p>
+    </div>
+    <div class="flex flex-col items-center text-center gap-2">
+      <div class="text-2xl md:text-3xl font-bold text-[var(--color-primary)]">
+        &lt;50MB
+      </div>
+      <p class="text-sm text-[var(--color-muted-foreground)]">Memory Usage</p>
+    </div>
+    <div class="flex flex-col items-center text-center gap-2">
+      <div class="text-2xl md:text-3xl font-bold text-[var(--color-primary)]">
+        No Cost
+      </div>
+      <p class="text-sm text-[var(--color-muted-foreground)]">Forever Free</p>
+    </div>
+    <div class="flex flex-col items-center text-center gap-2">
+      <div class="text-2xl md:text-3xl font-bold text-[var(--color-primary)]">
+        Self-Hosted
+      </div>
+      <p class="text-sm text-[var(--color-muted-foreground)]">Full Control</p>
+    </div>
   </div>
 </div>
-

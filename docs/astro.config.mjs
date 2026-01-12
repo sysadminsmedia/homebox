@@ -196,7 +196,7 @@ export default defineConfig({
         }),
         icon({
             include: { // Specify which icons to include in the final bundle (reduce bundle size)
-                'material-symbols': ['home-work', 'edit-document', 'family-group', 'settings', 'book-5'],
+                'material-symbols': ['home-work', 'edit-document', 'family-group', 'settings', 'book-5', 'flash-on', 'lock', 'package', 'folder-open', 'label'],
                 'simple-icons': ['discord', 'github', 'lemmy', 'reddit', 'mastodon'],
             }
         }),
