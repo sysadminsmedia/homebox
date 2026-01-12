@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import { PAGE_TITLE_ID } from './constants';
 import LinkButton from './LinkButton.astro';
+import SiteTitle from './SiteTitle.astro';
 // Minimal local types to avoid importing from the theme package directly.
 // We only type the bits this component consumes.
 type StarlightAction = {
@@ -68,8 +69,14 @@ if (image) {
           id={PAGE_TITLE_ID}
           data-page-title
           class="text-4xl sm:text-5xl lg:text-6xl leading-[1.1] font-bold text-[var(--color-foreground)] max-w-[20ch] tracking-tight"
-          set:html={title}
-        />
+        >
+          {title === 'HomeBox' && (
+            <SiteTitle theme="light" />
+          )}
+          {title !== 'HomeBox' && (
+            <span set:html={title} />
+          )}
+        </h1>
         {
           tagline && (
             <p
@@ -125,35 +132,5 @@ if (image) {
         />
       )
     }
-  </div>
-
-  <!-- Quick Features Section -->
-  <div
-    class="grid grid-cols-2 md:grid-cols-4 gap-4 py-8 border-y border-[var(--color-border)]"
-  >
-    <div class="flex flex-col items-center text-center gap-2">
-      <div class="text-2xl md:text-3xl font-bold text-[var(--color-primary)]">
-        100%
-      </div>
-      <p class="text-sm text-[var(--color-muted-foreground)]">Open Source</p>
-    </div>
-    <div class="flex flex-col items-center text-center gap-2">
-      <div class="text-2xl md:text-3xl font-bold text-[var(--color-primary)]">
-        &lt;50MB
-      </div>
-      <p class="text-sm text-[var(--color-muted-foreground)]">Memory Usage</p>
-    </div>
-    <div class="flex flex-col items-center text-center gap-2">
-      <div class="text-2xl md:text-3xl font-bold text-[var(--color-primary)]">
-        No Cost
-      </div>
-      <p class="text-sm text-[var(--color-muted-foreground)]">Forever Free</p>
-    </div>
-    <div class="flex flex-col items-center text-center gap-2">
-      <div class="text-2xl md:text-3xl font-bold text-[var(--color-primary)]">
-        Self-Hosted
-      </div>
-      <p class="text-sm text-[var(--color-muted-foreground)]">Full Control</p>
-    </div>
   </div>
 </div>
