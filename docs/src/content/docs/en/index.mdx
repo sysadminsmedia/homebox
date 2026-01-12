@@ -21,52 +21,54 @@ import Card from '../../../components/Card.astro';
 
 ## What Is Homebox?
 Homebox is the inventory and organization system built for the Home User! With a focus on simplicity and ease of use,
-Homebox is the perfect solution for your home inventory, organization, and management needs. While developing this project,
-We've tried to keep the following principles in mind:
+Homebox is the perfect solution for your home inventory, organisation, and management needs.
 
-- _Simple_ - Homebox is designed to be simple and easy to use. No complicated setup or configuration required. Use either
-a single docker container, or deploy yourself by compiling the binary for your platform of choice.
-- _Blazingly Fast_ - Homebox is written in Go, which makes it extremely fast and requires minimal resources to deploy.
-In general idle memory usage is less than 50MB for the whole container.
-- _Portable_ - Homebox is designed to be portable and run on anywhere. We use SQLite and an embedded Web UI to make it easy
-to deploy, use, and backup. However, a Postgres backend is also supported for larger installations.
-
-## What Does Homebox Have?
+## Why Choose Homebox?
 
 <CardGrid stagger>
-	<Card title="Collections" icon="material-symbols:home-work">
-		Homebox supports multiple "collections" per instance. Making it easy to track inventories with different groups
-        of people and locations.
+	<Card title="Simple & Intuitive" icon="material-symbols:home-work">
+		No complicated setup or learning curve. Start organizing your items in minutes, not hours. Everything is designed 
+        with home users in mind.
 	</Card>
-	<Card title="Templates" icon="material-symbols:edit-document">
-		Homebox supports item templates, which allow you to define common fields and default values for common items. This
-        makes it easy to create new items with consistent fields.
+	<Card title="Blazingly Fast" icon="material-symbols:flash-on">
+		Built in Go with minimal resource usage. Runs efficiently even on modest hardware, using less than 50MB of memory at idle.
 	</Card>
-	<Card title="OIDC SSO" icon="material-symbols:family-group">
-		Homebox supports OpenID Connect (OIDC) Single Sign-On (SSO) for easy authentication with your existing identity
-        provider. No paid plans or expensive add-ons required. Security for all, free of charge.
+	<Card title="Complete Privacy" icon="material-symbols:lock">
+		Self-hosted on your own infrastructure. Your data stays yours. No cloud sync, no third-party access, no surprise price increases.
 	</Card>
-	<Card title="Reporting" icon="material-symbols:book-5">
-		Export Bills of Materials (BOMs) and generate QR codes for items.
+	<Card title="Portable" icon="material-symbols:package">
+		Deploy anywhere - Docker, bare metal, or any platform. Use SQLite for simplicity or Postgres for larger installations. Full backup compatibility.
+	</Card>
+	<Card title="Multi-Collection Support" icon="material-symbols:folder-open">
+		Manage multiple separate inventories within one instance. Perfect for tracking items across different groups, households, or locations.
+	</Card>
+	<Card title="Smart Organization" icon="material-symbols:label">
+		Templates for consistency, labels for organization, locations for hierarchy. Everything you need to keep things tidy and searchable.
 	</Card>
 </CardGrid>
 
+## What You Can Do With Homebox
+
+### Core Features
+- **Track Everything** - Add items with custom fields, photos, serial numbers, and metadata
+- **Location Tracking** - Organize items by location with visual hierarchy
+- **Smart Search** - Quickly find items with powerful search and filtering
+- **Item Templates** - Create reusable templates with default fields and values
+- **Label Management** - Tag and organize items with flexible labels
+- **QR Codes** - Generate QR codes for quick item lookup
+- **Bill of Materials** - Export comprehensive BOMs for your inventory
+
+### Power User Features
+- **OIDC SSO** - Integrate with your existing identity provider (Active Directory, Okta, etc.)
+- **Multi-User Support** - Share collections with family, colleagues, or roommates
+- **Import/Export** - CSV support for bulk operations
+- **API** - Full REST API for integrations and automation
+- **Health Checks** - Built-in health endpoints for monitoring
+
 ## Why Not Use Something Else?
-There are a lot of great inventory management systems out there, but none of them really fit our needs as a home user.
-Snipe-IT is a fantastic product that has so many robust features and management options which makes it easy to become
-overwhelmed and confused. We wanted something that was simple and easy to use that didn't require a lot of cognitive
-overhead to manage. I primarily built this to organize my IoT devices and save my warranty and documentation information
-in a central, searchable location.
 
 ### Spreadsheet
-That's a fair point. If your needs can be fulfilled by a Spreadsheet, We'd suggest using that instead.
-We've found spreadsheets get pretty unwieldy when you have a lot of data, and it's hard to keep track of what's where.
-We also wanted to be able to search and filter my data in a more robust way than a spreadsheet can provide.
-We also wanted to leave the door open for more advanced features in the future like maintenance logs, moving label generators, and more.
+Spreadsheets work fine for small inventories, but become unwieldy with lots of data. You lose out on search capabilities, can't easily attach photos or documents, and sharing becomes complicated. Spreadsheets also don't support features like location hierarchies, templates, or QR codes.
 
 ### Snipe-IT
-Snipe-It is the gold standard for IT management. If your use-case is to manage consumables and IT physical infrastructure,
-We highly suggest you look at Snipe-It over Homebox, it's just more purpose built for that use case. Homebox is, in contrast,
-purpose built for the home user, which means that we try to focus on keeping things simple and easy to use.
-Lowering the friction for creating items and managing them is a key goal of Homebox which means you lose out on some of
-the more advanced features. In most cases, this is a good trade-off.
+Snipe-IT is enterprise-grade IT asset management - fantastic if you're managing hundreds of IT devices across an organization. But for home users, it's overkill. You'll spend more time configuring than organizing. HomeBox is purpose-built for home users: simpler, faster, and designed for the way you actually manage your stuff.
