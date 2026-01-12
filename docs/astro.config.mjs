@@ -19,12 +19,12 @@ export default defineConfig({
         contentIntellisense: true,
         clientPrerender: true,
         chromeDevtoolsWorkspace: true,
-        csp: {
+        /*csp: {
             algorithm: 'SHA-384',
             directives: [
                 "img-src 'self' data: https://translate.sysadminsmedia.com;"
             ]
-        }
+        } Turn this off for now while we work on things, sort it later*/
     },
 
     prefetch: {
