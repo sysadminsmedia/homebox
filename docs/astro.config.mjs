@@ -36,8 +36,16 @@ export default defineConfig({
     integrations: [
         starlight({
             components: {
-                SocialIcons: './src/components/SocialIcon.astro',
-                SiteTitle: './src/components/SiteTitle.astro',
+                SocialIcons: './src/components/theme/SocialIcon.astro',
+                SiteTitle: './src/components/theme/SiteTitle.astro',
+                Header: './src/components/theme/Header.astro',
+                PageFrame: './src/components/theme/PageFrame.astro',
+                Pagination: './src/components/theme/Pagination.astro',
+                MobileMenuToggle: './src/components/theme/MobileMenuToggle.astro',
+                Search: './src/components/theme/Search.astro',
+                ThemeSelect: './src/components/theme/ThemeSelect.astro',
+                TwoColumnContent: './src/components/theme/TwoColumnContent.astro',
+                Hero: './src/components/theme/Hero.astro',
             },
             logo: {
                 src: './src/assets/lilbox.svg',
@@ -59,7 +67,7 @@ export default defineConfig({
                 starlightAutoDrafts(),
                 starlightOpenAPI([
                     {
-                        base: 'api',
+                        base: 'en/api',
                         schema:
                             'https://raw.githubusercontent.com/sysadminsmedia/homebox/refs/heads/main/docs/en/api/openapi-3.0.json',
                     },

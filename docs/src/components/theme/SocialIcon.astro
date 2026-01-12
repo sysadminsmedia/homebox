@@ -1,6 +1,6 @@
 ---
 import { Icon } from 'astro-icon/components'
-import { socialLinks } from '../social'
+import { socialLinks } from '../../social'
 
 type SocialLink = {
     label: string
@@ -16,7 +16,7 @@ const links = socialLinks as SocialLink[]
     links.length > 0 && (
     <>
         {links.map(({ label, href, icon }) => (
-                <a href={href} rel="me" class="nova-icon-button">
+                <a href={href} rel="me" class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-[var(--color-header-foreground)] hover:text-white hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
                     <span class="sr-only">{label}</span>
                     <Icon name={icon} size="1rem" color="currentColor" />
                 </a>

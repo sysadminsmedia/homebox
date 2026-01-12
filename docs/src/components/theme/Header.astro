@@ -1,0 +1,34 @@
+---
+const { hasSidebar } = Astro.locals.starlightRoute;
+
+import LanguageSelect from 'starlight-theme-nova/components/LanguageSelect.astro';
+import Search from './Search.astro';
+import SiteTitle from './SiteTitle.astro';
+import SocialIcons from './SocialIcon.astro';
+import ThemeSelect from './ThemeSelect.astro';
+import MobileMenuToggle from './MobileMenuToggle.astro';
+---
+
+<header class="flex items-center gap-3 h-full justify-between">
+  <div class="p-3 min-w-0 flex overflow-hidden">
+    <SiteTitle />
+  </div>
+
+  <div class="flex flex-1 max-w-[18rem]">
+    <Search />
+  </div>
+
+  <div class="hidden md:flex items-center gap-1 ml-2">
+    <SocialIcons />
+    <LanguageSelect />
+    <ThemeSelect />
+  </div>
+
+  {
+    hasSidebar && (
+      <div class="flex md:hidden items-center gap-1 ml-2">
+        <MobileMenuToggle />
+      </div>
+    )
+  }
+</header>

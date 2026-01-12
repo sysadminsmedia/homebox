@@ -1,0 +1,24 @@
+<nova-mobile-menu-toggle
+  class="print:hidden w-8 h-8 inline-flex items-center justify-center rounded-lg p-2 text-[var(--color-header-foreground)] hover:text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-colors"
+  aria-label={Astro.locals.t('menuButton.accessibleLabel')}
+  aria-controls="starlight__sidebar"
+>
+  <span class="icon-open w-full h-full" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-full h-full" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  </span>
+
+  <span class="icon-close w-full h-full" aria-hidden="true">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-full h-full" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 6L6 18M6 6l12 12" />
+    </svg>
+  </span>
+
+</nova-mobile-menu-toggle>
+
+<script>
+  import { register } from './mobile-menu-toggle';
+
+  register();
+</script>

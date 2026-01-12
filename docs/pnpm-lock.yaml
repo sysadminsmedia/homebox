@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@aria-ui/core':
+        specifier: ^0.0.22
+        version: 0.0.22
       '@astrojs/cloudflare':
         specifier: ^12.6.12
         version: 12.6.12(@types/node@24.10.1)(astro@5.16.8(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)(rollup@4.53.3)(typescript@5.9.3))(jiti@2.6.1)(lightningcss@1.30.2)
@@ -26,6 +29,9 @@ importers:
       astro-icon:
         specifier: ^1.1.5
         version: 1.1.5
+      astro-theme-toggle:
+        specifier: ^0.8.0
+        version: 0.8.0
       sharp:
         specifier: ^0.34.2
         version: 0.34.5

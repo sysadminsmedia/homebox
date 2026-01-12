@@ -1,0 +1,45 @@
+---
+import type { StarlightIcon } from '@astrojs/starlight/types'
+import type { HTMLAttributes } from 'astro/types'
+import LinkButtonIcon from './LinkButtonIcon.astro'
+
+interface Props extends Omit<HTMLAttributes<'a'>, 'href'> {
+  href: string | URL
+  icon?: StarlightIcon | undefined
+  iconPlacement?: 'start' | 'end' | undefined
+  variant?: 'primary' | 'secondary' | 'minimal'
+}
+
+const {
+  class: className,
+  icon,
+  iconPlacement = 'end',
+  variant = 'primary',
+  ...attrs
+} = Astro.props
+
+const base =
+  'group inline-flex items-center gap-2 rounded-lg font-medium no-underline transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[var(--color-ring)] focus:ring-offset-2'
+let variantClasses = ''
+
+if (variant === 'primary') {
+  variantClasses =
+    'bg-[var(--color-primary)] text-[var(--color-primary-foreground)] hover:bg-[var(--color-primary)]/90 px-4 py-2.5 shadow-sm'
+} else if (variant === 'secondary') {
+  variantClasses =
+    'bg-[var(--color-secondary)] text-[var(--color-secondary-foreground)] hover:bg-[var(--color-secondary)]/90 px-4 py-2.5 shadow-sm'
+} else if (variant === 'minimal') {
+  variantClasses =
+    'bg-transparent text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-muted)] px-3 py-2'
+}
+
+const classAttr = [base, variantClasses, className].filter(Boolean).join(' ')
+---
+
+<span class="not-content">
+  <a class={classAttr} {...attrs}>
+    {icon && iconPlacement === 'start' && <LinkButtonIcon icon={icon} />}
+    <slot />
+    {icon && iconPlacement === 'end' && <LinkButtonIcon icon={icon} />}
+  </a>
+</span>

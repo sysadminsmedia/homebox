@@ -5,28 +5,120 @@
 @import 'tailwindcss/utilities.css' layer(utilities);
 
 @theme {
-	  /* Your preferred text font. Starlight uses a system font stack by default. */
+  /* Your preferred text font. Starlight uses a system font stack by default. */
   --font-sans: 'Atkinson Hyperlegible';
   /* Your preferred code font. Starlight uses system monospace fonts by default. */
   --font-mono: 'IBM Plex Mono';
 
-		/* Generated accent color palettes. */
-	--color-accent-200: #c0ccc3;
-	--color-accent-600: #51745c;
-	--color-accent-900: #27362c;
-	--color-accent-950: #1d2720;
-	/* Generated gray color palettes. */
-	--color-gray-100: #f6f6f5;
-	--color-gray-200: #edeeea;
-	--color-gray-300: #c1c3be;
-	--color-gray-400: #8a8d84;
-	--color-gray-500: #575951;
-	--color-gray-700: #373932;
-	--color-gray-800: #262821;
-	--color-gray-900: #181915;
+  /* HomeBox Theme Colors - Light mode (matching frontend) */
+  --color-background: hsl(0 0% 100%);
+  --color-background-accent: hsl(0 0% 81%);
+  --color-foreground: hsl(0 0% 20%);
+  --color-primary: hsl(139 16% 43%);
+  --color-primary-foreground: hsl(139 100% 89%);
+  --color-secondary: hsl(77 8% 17%);
+  --color-secondary-foreground: hsl(76 18% 83%);
+  --color-accent: hsl(97 37% 93%);
+  --color-accent-foreground: hsl(97 31% 19%);
+  --color-muted: hsl(0 0% 90%);
+  --color-muted-foreground: hsl(0 0% 40%);
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(0 0% 20%);
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(0 0% 20%);
+  --color-destructive: hsl(0 91% 71%);
+  --color-destructive-foreground: hsl(0 100% 14%);
+  --color-input: hsl(0 0% 81%);
+  --color-border: hsl(0 0% 81%);
+  --color-ring: hsl(139 16% 43%);
+  --color-sidebar: hsl(0 0% 96%);
+  --color-sidebar-foreground: hsl(0 0% 20%);
+  --color-sidebar-primary: hsl(139 16% 43%);
+  --color-sidebar-primary-foreground: hsl(139 100% 89%);
+  --color-sidebar-accent: hsl(0 0% 90%);
+  --color-sidebar-accent-foreground: hsl(0 0% 20%);
+  --color-sidebar-border: hsl(0 0% 81%);
+  --color-sidebar-ring: hsl(0 0% 81%);
+  /* Header/navbar color - using secondary */
+  --color-header: hsl(77 8% 17%);
+  --color-header-foreground: hsl(60 15% 95%);
+
+  /* Starlight gray color palettes - aligned with frontend */
+  --color-gray-100: hsl(60 3% 96%);
+  --color-gray-200: hsl(60 4% 93%);
+  --color-gray-300: hsl(70 4% 75%);
+  --color-gray-400: hsl(72 5% 53%);
+  --color-gray-500: hsl(75 6% 34%);
+  --color-gray-700: hsl(75 10% 21%);
+  --color-gray-800: hsl(75 14% 14%);
+  --color-gray-900: hsl(75 18% 8%);
+
+  /* Starlight accent color palettes - using primary green */
+  --color-accent-200: hsl(139 16% 75%);
+  --color-accent-600: hsl(139 16% 43%);
+  --color-accent-900: hsl(139 16% 25%);
+  --color-accent-950: hsl(139 16% 15%);
+
+  --radius: 0.5rem;
 }
 
-.nova-page-frame-header, .nova-header .nova-icon-button, .nova-header select {
-	background-color: var(--color-gray-900);
-	color: var(--color-gray-200);
+/* Dark mode overrides */
+:root[data-theme="dark"] {
+  --color-background: hsl(75 14% 10%);
+  --color-background-accent: hsl(75 10% 18%);
+  --color-foreground: hsl(60 20% 95%);
+  --color-primary: hsl(139 25% 60%);
+  --color-primary-foreground: hsl(139 16% 10%);
+  --color-secondary: hsl(76 18% 90%);
+  --color-secondary-foreground: hsl(77 8% 17%);
+  --color-accent: hsl(97 20% 25%);
+  --color-accent-foreground: hsl(97 30% 90%);
+  --color-muted: hsl(75 10% 18%);
+  --color-muted-foreground: hsl(60 10% 80%);
+  --color-card: hsl(75 14% 12%);
+  --color-card-foreground: hsl(60 20% 95%);
+  --color-popover: hsl(75 14% 12%);
+  --color-popover-foreground: hsl(60 20% 95%);
+  --color-destructive: hsl(0 72% 51%);
+  --color-destructive-foreground: hsl(0 100% 95%);
+  --color-input: hsl(75 10% 25%);
+  --color-border: hsl(75 10% 25%);
+  --color-ring: hsl(139 25% 60%);
+  --color-sidebar: hsl(75 14% 8%);
+  --color-sidebar-foreground: hsl(60 20% 95%);
+  --color-sidebar-primary: hsl(139 25% 60%);
+  --color-sidebar-primary-foreground: hsl(139 16% 10%);
+  --color-sidebar-accent: hsl(75 10% 18%);
+  --color-sidebar-accent-foreground: hsl(60 20% 95%);
+  --color-sidebar-border: hsl(75 10% 25%);
+  --color-sidebar-ring: hsl(75 10% 25%);
+  /* Header stays dark in dark mode */
+  --color-header: hsl(75 14% 8%);
+  --color-header-foreground: hsl(60 20% 95%);
+
+  /* Dark mode gray palette - inverted for proper contrast */
+  --color-gray-100: hsl(75 18% 8%);
+  --color-gray-200: hsl(75 14% 14%);
+  --color-gray-300: hsl(75 10% 21%);
+  --color-gray-400: hsl(75 6% 45%);
+  --color-gray-500: hsl(72 5% 65%);
+  --color-gray-700: hsl(70 6% 85%);
+  --color-gray-800: hsl(60 10% 92%);
+  --color-gray-900: hsl(60 15% 97%);
+}
+
+/* Override Starlight select colors in header for proper contrast */
+header {
+  --sl-color-gray-1: var(--color-header-foreground);
+  --sl-color-gray-2: hsl(60 15% 100%);
+}
+
+/* Improve dark mode general text contrast - make muted text more readable */
+:root[data-theme="dark"] {
+  --sl-color-text: hsl(100 40% 94%);
+  --sl-color-gray-1: hsl(100 40% 94%);
+  --sl-color-gray-2: hsl(100 40% 94%);
+  --sl-color-gray-3: hsl(100 25% 85%);
+  /* Ensure sidebar links are visible */
+  --sl-color-hairline: hsl(75 10% 25%);
 }
