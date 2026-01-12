@@ -17,6 +17,13 @@ HomeBox supports OpenID Connect (OIDC) authentication, allowing users to login u
    - If you have set `HBOX_OPTIONS_HOSTNAME` ensure it uses only the hostname, without the protocol (not `https://` or `http://`)
 3. **Configure Redirect URI**: Set the redirect URI in your OIDC provider to `https://yourhomebox.example.com/api/v1/users/login/oidc/callback`
 
+> [!TIP]
+> To get the exact issuer URL from your OIDC provider, you can go to the `.well-known/openid-configuration` endpoint.
+> So if the provider is `https://auth.example.com`, the well-known URL would be `https://auth.example.com/.well-known/openid-configuration`.
+> The well-known URL will have a `issuer` key with the exact issuer URL that Homebox requires to function.
+>
+> Check the documentation of your OIDC provider to get the exact well-known URL.
+
 ## Advanced Configuration
 - **Group Authorization**: Use `HBOX_OIDC_ALLOWED_GROUPS` to restrict access to certain groups. (e.g. `HBOX_OIDC_ALLOWED_GROUPS=admins,developers`)
     - Some providers require the `groups` scope to be enabled. Include it in `HBOX_OIDC_SCOPES` if necessary. (e.g. `HBOX_OIDC_SCOPES=openid profile email groups`)
