@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -41,6 +42,8 @@ type User struct {
 	OidcIssuer *string `json:"oidc_issuer,omitempty"`
 	// OidcSubject holds the value of the "oidc_subject" field.
 	OidcSubject *string `json:"oidc_subject,omitempty"`
+	// Settings holds the value of the "settings" field.
+	Settings map[string]interface{} `json:"settings,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -95,6 +98,8 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case user.FieldSettings:
+			values[i] = new([]byte)
 		case user.FieldIsSuperuser, user.FieldSuperuser:
 			values[i] = new(sql.NullBool)
 		case user.FieldName, user.FieldEmail, user.FieldPassword, user.FieldRole, user.FieldOidcIssuer, user.FieldOidcSubject:
@@ -195,6 +200,14 @@ func (_m *User) assignValues(columns []string, values []any) error {
 				_m.OidcSubject = new(string)
 				*_m.OidcSubject = value.String
 			}
+		case user.FieldSettings:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field settings", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.Settings); err != nil {
+					return fmt.Errorf("unmarshal field settings: %w", err)
+				}
+			}
 		case user.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullScanner); !ok {
 				return fmt.Errorf("unexpected type %T for field group_users", values[i])
@@ -288,6 +301,9 @@ func (_m *User) String() string {
 		builder.WriteString("oidc_subject=")
 		builder.WriteString(*v)
 	}
+	builder.WriteString(", ")
+	builder.WriteString("settings=")
+	builder.WriteString(fmt.Sprintf("%v", _m.Settings))
 	builder.WriteByte(')')
 	return builder.String()
 }

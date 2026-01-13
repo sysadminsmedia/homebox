@@ -38,6 +38,8 @@ const (
 	FieldOidcIssuer = "oidc_issuer"
 	// FieldOidcSubject holds the string denoting the oidc_subject field in the database.
 	FieldOidcSubject = "oidc_subject"
+	// FieldSettings holds the string denoting the settings field in the database.
+	FieldSettings = "settings"
 	// EdgeGroup holds the string denoting the group edge name in mutations.
 	EdgeGroup = "group"
 	// EdgeAuthTokens holds the string denoting the auth_tokens edge name in mutations.
@@ -83,6 +85,7 @@ var Columns = []string{
 	FieldActivatedOn,
 	FieldOidcIssuer,
 	FieldOidcSubject,
+	FieldSettings,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "users"
