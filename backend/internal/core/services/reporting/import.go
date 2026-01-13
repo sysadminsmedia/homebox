@@ -39,12 +39,17 @@ func determineSeparator(data []byte) (rune, error) {
 	}
 }
 
+// separatorDetectionBufferSize is the buffer size for reading CSV headers
+// to detect the separator (comma vs tab)
+const separatorDetectionBufferSize = 4096
+
 // readRawCsv reads a CSV file and returns the raw data as a 2D string array
 // It determines the separator used in the CSV file and returns an error if
 // it could not be determined
 func readRawCsv(r io.Reader) ([][]string, error) {
 	// Buffer for reading the first line to detect separator
-	firstLineBuffer := make([]byte, 4096) // Read up to 4KB for first line
+	// We read up to 4KB which should be more than enough for any header row
+	firstLineBuffer := make([]byte, separatorDetectionBufferSize)
 	n, err := io.ReadFull(r, firstLineBuffer)
 	if err != nil && err != io.ErrUnexpectedEOF && err != io.EOF {
 		return nil, err

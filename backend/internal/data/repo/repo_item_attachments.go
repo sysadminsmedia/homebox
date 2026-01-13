@@ -754,8 +754,8 @@ func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, d
 	// Prepare for the hashing of the file contents
 	hashOut := make([]byte, 32)
 
-	// Use a buffer to store content while we hash it
-	// We need the full content for both hashing and upload
+	// Use a buffer to store content for blake3 key derivation and storage
+	// While buffering, we compute MD5 and blake3 hashes in parallel for efficiency
 	buf := new(bytes.Buffer)
 	
 	// Create hash writers
@@ -771,11 +771,11 @@ func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, d
 		return UploadResult{}, err
 	}
 	
-	// Now the buffer contains all the data, and hashes are computed
+	// Now the buffer contains all the data, and streaming hashes are computed
 	contentBytes := buf.Bytes()
 
 	// Derive the blake3 key using the group ID as context
-	// We still need to use DeriveKey which requires the full content
+	// Note: DeriveKey requires the full content buffer (not streaming)
 	blake3.DeriveKey(itemGroup.ID.String(), contentBytes, hashOut)
 
 	// Write the file to the blob storage bucket which might be a local file system or cloud storage
