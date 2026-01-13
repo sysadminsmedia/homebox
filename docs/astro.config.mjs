@@ -135,6 +135,19 @@ export default defineConfig({
                                         },
                                     ],
                                 },
+                                {
+                                    label: 'Analytics',
+                                    items: [
+                                        {
+                                            label: 'Purpose & Data',
+                                            slug: 'analytics',
+                                        },
+                                        {
+                                            label: 'Privacy Policy',
+                                            slug: 'analytics/privacy',
+                                        }
+                                    ]
+                                }
                             ],
                         },
                         {
