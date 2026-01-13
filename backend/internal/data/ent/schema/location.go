@@ -4,6 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
+	"entgo.io/ent/schema/index"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/schema/mixins"
 )
 
@@ -17,6 +18,13 @@ func (Location) Mixin() []ent.Mixin {
 		mixins.BaseMixin{},
 		mixins.DetailsMixin{},
 		GroupMixin{ref: "locations"},
+	}
+}
+
+func (Location) Indexes() []ent.Index {
+	return []ent.Index{
+		// Index on name for sorting and searching
+		index.Fields("name"),
 	}
 }
 

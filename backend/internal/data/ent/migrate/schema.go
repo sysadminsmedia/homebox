@@ -349,6 +349,13 @@ var (
 				OnDelete:   schema.SetNull,
 			},
 		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "location_name",
+				Unique:  false,
+				Columns: []*schema.Column{LocationsColumns[3]},
+			},
+		},
 	}
 	// MaintenanceEntriesColumns holds the columns for the "maintenance_entries" table.
 	MaintenanceEntriesColumns = []*schema.Column{

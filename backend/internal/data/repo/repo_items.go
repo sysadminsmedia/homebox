@@ -333,7 +333,9 @@ func (e *ItemsRepository) getOneTx(ctx context.Context, tx *ent.Tx, where ...pre
 		WithLocation().
 		WithGroup().
 		WithParent().
-		WithAttachments().
+		WithAttachments(func(aq *ent.AttachmentQuery) {
+			aq.WithThumbnail()
+		}).
 		Only(ctx),
 	)
 }
