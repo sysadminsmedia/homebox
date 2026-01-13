@@ -43,19 +43,23 @@ func determineSeparator(data []byte) (rune, error) {
 // It determines the separator used in the CSV file and returns an error if
 // it could not be determined
 func readRawCsv(r io.Reader) ([][]string, error) {
-	data, err := io.ReadAll(r)
+	// Buffer for reading the first line to detect separator
+	firstLineBuffer := make([]byte, 4096) // Read up to 4KB for first line
+	n, err := io.ReadFull(r, firstLineBuffer)
+	if err != nil && err != io.ErrUnexpectedEOF && err != io.EOF {
+		return nil, err
+	}
+	firstLineBuffer = firstLineBuffer[:n]
+
+	// Determine separator from first line
+	sep, err := determineSeparator(firstLineBuffer)
 	if err != nil {
 		return nil, err
 	}
 
-	reader := csv.NewReader(bytes.NewReader(data))
-
-	// Determine separator
-	sep, err := determineSeparator(data)
-	if err != nil {
-		return nil, err
-	}
-
+	// Create a multi-reader combining what we already read and the rest
+	combinedReader := io.MultiReader(bytes.NewReader(firstLineBuffer), r)
+	reader := csv.NewReader(combinedReader)
 	reader.Comma = sep
 
 	return reader.ReadAll()

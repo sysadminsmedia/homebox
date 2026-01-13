@@ -530,7 +530,10 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 	}
 
 	log.Debug().Msg("reading original file content")
-	contentBytes, err := io.ReadAll(origFile)
+	// Use LimitReader as a safety measure to prevent reading more than 100MB
+	// even if the stat size is incorrect or tampered
+	limitedReader := io.LimitReader(origFile, 100*1024*1024)
+	contentBytes, err := io.ReadAll(limitedReader)
 	if err != nil {
 		err := tx.Rollback()
 		if err != nil {
