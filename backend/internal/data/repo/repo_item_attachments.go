@@ -754,19 +754,28 @@ func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, d
 	// Prepare for the hashing of the file contents
 	hashOut := make([]byte, 32)
 
-	// Read all content into a buffer
+	// Use a buffer to store content while we hash it
+	// We need the full content for both hashing and upload
 	buf := new(bytes.Buffer)
-	_, err := io.Copy(buf, doc.Content)
+	
+	// Create hash writers
+	blake3Hasher := blake3.New()
+	md5Hasher := md5.New()
+	
+	// Use MultiWriter to write to buffer and both hashers simultaneously
+	multiWriter := io.MultiWriter(buf, blake3Hasher, md5Hasher)
+	
+	_, err := io.Copy(multiWriter, doc.Content)
 	if err != nil {
 		log.Err(err).Msg("failed to read file content")
 		return UploadResult{}, err
 	}
-	// Now the buffer contains all the data, use it for hashing
+	
+	// Now the buffer contains all the data, and hashes are computed
 	contentBytes := buf.Bytes()
 
-	// We use blake3 to generate a hash of the file contents, the group ID is used as context to ensure unique hashes
-	// for the same file across different groups to reduce the chance of collisions
-	// additionally, the hash can be used to validate the file contents if needed
+	// Derive the blake3 key using the group ID as context
+	// We still need to use DeriveKey which requires the full content
 	blake3.DeriveKey(itemGroup.ID.String(), contentBytes, hashOut)
 
 	// Write the file to the blob storage bucket which might be a local file system or cloud storage
@@ -781,16 +790,11 @@ func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, d
 			log.Err(err).Msg("failed to close bucket")
 		}
 	}(bucket)
-	md5hash := md5.New()
-	_, err = md5hash.Write(contentBytes)
-	if err != nil {
-		log.Err(err).Msg("failed to generate MD5 hash for storage")
-		return UploadResult{}, err
-	}
+	
 	contentType := http.DetectContentType(contentBytes[:min(512, len(contentBytes))])
 	options := &blob.WriterOptions{
 		ContentType: contentType,
-		ContentMD5:  md5hash.Sum(nil),
+		ContentMD5:  md5Hasher.Sum(nil),
 	}
 	relativePath := r.path(itemGroup.ID, fmt.Sprintf("%x", hashOut))
 	fullPath := r.fullPath(relativePath)
