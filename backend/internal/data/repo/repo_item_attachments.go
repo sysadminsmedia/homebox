@@ -239,7 +239,7 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 	}
 
 	// Upload the file to the storage bucket
-	path, err := r.UploadFile(ctx, itemGroup, doc)
+	uploadResult, err := r.UploadFile(ctx, itemGroup, doc)
 	if err != nil {
 		if rollbackErr := tx.Rollback(); rollbackErr != nil {
 			return nil, rollbackErr
@@ -247,18 +247,8 @@ func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemC
 		return nil, err
 	}
 
-	limitedReader := io.LimitReader(doc.Content, 1024*128)
-	file, err := io.ReadAll(limitedReader)
-	if err != nil {
-		log.Err(err).Msg("failed to read file content")
-		err = tx.Rollback()
-		if err != nil {
-			return nil, err
-		}
-		return nil, err
-	}
-	bldr = bldr.SetMimeType(http.DetectContentType(file[:min(512, len(file))]))
-	bldr = bldr.SetPath(path)
+	bldr = bldr.SetMimeType(uploadResult.ContentType)
+	bldr = bldr.SetPath(uploadResult.Path)
 
 	attachmentDb, err := bldr.Save(ctx)
 	if err != nil {
@@ -564,6 +554,17 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 		}
 	}
 
+	// Pre-read orientation once for all image types that support it
+	// This avoids re-decoding the metadata for each image type
+	var orientation uint16 = 1 // Default orientation
+	if contentType != "image/avif" && contentType != "image/jxl" {
+		imageMeta, err := imagemeta.Decode(bytes.NewReader(contentBytes))
+		if err == nil {
+			orientation = uint16(imageMeta.Orientation)
+		}
+		// If error, just use default orientation (1)
+	}
+
 	switch {
 	case isImageFile(contentType):
 		log.Debug().Msg("creating thumbnail for image file")
@@ -577,18 +578,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
-		log.Debug().Msg("reading original file orientation")
-		imageMeta, err := imagemeta.Decode(bytes.NewReader(contentBytes))
-		if err != nil {
-			log.Err(err).Msg("failed to decode original file content")
-			err := tx.Rollback()
-			if err != nil {
-				return err
-			}
-			return err
-		}
-		orientation := uint16(imageMeta.Orientation)
-		thumbnailPath, err := r.processThumbnailFromImage(ctx, groupId, img, title, orientation)
+		uploadResult, err := r.processThumbnailFromImage(ctx, groupId, img, title, orientation)
 		if err != nil {
 			err := tx.Rollback()
 			if err != nil {
@@ -596,7 +586,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
-		att.SetPath(thumbnailPath)
+		att.SetPath(uploadResult.Path)
 	case contentType == "image/webp":
 		log.Debug().Msg("creating thumbnail for webp file")
 		img, err := webp.Decode(bytes.NewReader(contentBytes))
@@ -608,18 +598,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
-		log.Debug().Msg("reading original file orientation")
-		imageMeta, err := imagemeta.Decode(bytes.NewReader(contentBytes))
-		if err != nil {
-			log.Err(err).Msg("failed to decode original file content")
-			err := tx.Rollback()
-			if err != nil {
-				return err
-			}
-			return err
-		}
-		orientation := uint16(imageMeta.Orientation)
-		thumbnailPath, err := r.processThumbnailFromImage(ctx, groupId, img, title, orientation)
+		uploadResult, err := r.processThumbnailFromImage(ctx, groupId, img, title, orientation)
 		if err != nil {
 			err := tx.Rollback()
 			if err != nil {
@@ -627,7 +606,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
-		att.SetPath(thumbnailPath)
+		att.SetPath(uploadResult.Path)
 	case contentType == "image/avif":
 		log.Debug().Msg("creating thumbnail for avif file")
 		img, err := avif.Decode(bytes.NewReader(contentBytes))
@@ -639,7 +618,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
-		thumbnailPath, err := r.processThumbnailFromImage(ctx, groupId, img, title, uint16(1))
+		uploadResult, err := r.processThumbnailFromImage(ctx, groupId, img, title, uint16(1))
 		if err != nil {
 			err := tx.Rollback()
 			if err != nil {
@@ -647,7 +626,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
-		att.SetPath(thumbnailPath)
+		att.SetPath(uploadResult.Path)
 	case contentType == "image/heic" || contentType == "image/heif":
 		log.Debug().Msg("creating thumbnail for heic file")
 		img, err := heic.Decode(bytes.NewReader(contentBytes))
@@ -659,18 +638,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
-		log.Debug().Msg("reading original file orientation")
-		imageMeta, err := imagemeta.Decode(bytes.NewReader(contentBytes))
-		if err != nil {
-			log.Err(err).Msg("failed to decode original file content")
-			err := tx.Rollback()
-			if err != nil {
-				return err
-			}
-			return err
-		}
-		orientation := uint16(imageMeta.Orientation)
-		thumbnailPath, err := r.processThumbnailFromImage(ctx, groupId, img, title, orientation)
+		uploadResult, err := r.processThumbnailFromImage(ctx, groupId, img, title, orientation)
 		if err != nil {
 			err := tx.Rollback()
 			if err != nil {
@@ -678,7 +646,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
-		att.SetPath(thumbnailPath)
+		att.SetPath(uploadResult.Path)
 	case contentType == "image/jxl":
 		log.Debug().Msg("creating thumbnail for jpegxl file")
 		img, err := jpegxl.Decode(bytes.NewReader(contentBytes))
@@ -690,7 +658,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
-		thumbnailPath, err := r.processThumbnailFromImage(ctx, groupId, img, title, uint16(1))
+		uploadResult, err := r.processThumbnailFromImage(ctx, groupId, img, title, uint16(1))
 		if err != nil {
 			err := tx.Rollback()
 			if err != nil {
@@ -698,7 +666,7 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 			}
 			return err
 		}
-		att.SetPath(thumbnailPath)
+		att.SetPath(uploadResult.Path)
 	default:
 		return fmt.Errorf("file type %s is not supported for thumbnail creation or document thumnails disabled", title)
 	}
@@ -773,7 +741,13 @@ func (r *AttachmentRepo) CreateMissingThumbnails(ctx context.Context, groupId uu
 	return count, nil
 }
 
-func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, doc ItemCreateAttachment) (string, error) {
+// UploadResult contains the results of uploading a file
+type UploadResult struct {
+	Path        string
+	ContentType string
+}
+
+func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, doc ItemCreateAttachment) (UploadResult, error) {
 	// Prepare for the hashing of the file contents
 	hashOut := make([]byte, 32)
 
@@ -782,7 +756,7 @@ func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, d
 	_, err := io.Copy(buf, doc.Content)
 	if err != nil {
 		log.Err(err).Msg("failed to read file content")
-		return "", err
+		return UploadResult{}, err
 	}
 	// Now the buffer contains all the data, use it for hashing
 	contentBytes := buf.Bytes()
@@ -796,7 +770,7 @@ func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, d
 	bucket, err := blob.OpenBucket(ctx, r.GetConnString())
 	if err != nil {
 		log.Err(err).Msg("failed to open bucket")
-		return "", err
+		return UploadResult{}, err
 	}
 	defer func(bucket *blob.Bucket) {
 		err := bucket.Close()
@@ -808,7 +782,7 @@ func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, d
 	_, err = md5hash.Write(contentBytes)
 	if err != nil {
 		log.Err(err).Msg("failed to generate MD5 hash for storage")
-		return "", err
+		return UploadResult{}, err
 	}
 	contentType := http.DetectContentType(contentBytes[:min(512, len(contentBytes))])
 	options := &blob.WriterOptions{
@@ -820,10 +794,13 @@ func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, d
 	err = bucket.WriteAll(ctx, fullPath, contentBytes, options)
 	if err != nil {
 		log.Err(err).Msg("failed to write file to bucket")
-		return "", err
+		return UploadResult{}, err
 	}
 
-	return relativePath, nil
+	return UploadResult{
+		Path:        relativePath,
+		ContentType: contentType,
+	}, nil
 }
 
 func isImageFile(mimetype string) bool {
@@ -864,7 +841,7 @@ func calculateThumbnailDimensions(origWidth, origHeight, maxWidth, maxHeight int
 
 // processThumbnailFromImage handles the common thumbnail processing logic after image decoding
 // Returns the thumbnail file path or an error
-func (r *AttachmentRepo) processThumbnailFromImage(ctx context.Context, groupId uuid.UUID, img image.Image, title string, orientation uint16) (string, error) {
+func (r *AttachmentRepo) processThumbnailFromImage(ctx context.Context, groupId uuid.UUID, img image.Image, title string, orientation uint16) (UploadResult, error) {
 	bounds := img.Bounds()
 	// Apply EXIF orientation if needed
 	if orientation > 1 {
@@ -878,7 +855,7 @@ func (r *AttachmentRepo) processThumbnailFromImage(ctx context.Context, groupId 
 	buf := new(bytes.Buffer)
 	err := webp.Encode(buf, dst, webp.Options{Quality: 80, Lossless: false})
 	if err != nil {
-		return "", err
+		return UploadResult{}, err
 	}
 	contentBytes := buf.Bytes()
 	log.Debug().Msg("uploading thumbnail file")
@@ -886,17 +863,17 @@ func (r *AttachmentRepo) processThumbnailFromImage(ctx context.Context, groupId 
 	// Get the group for uploading the thumbnail
 	group, err := r.db.Group.Get(ctx, groupId)
 	if err != nil {
-		return "", err
+		return UploadResult{}, err
 	}
 
-	thumbnailFile, err := r.UploadFile(ctx, group, ItemCreateAttachment{
+	uploadResult, err := r.UploadFile(ctx, group, ItemCreateAttachment{
 		Title:   fmt.Sprintf("%s-thumb", title),
 		Content: bytes.NewReader(contentBytes),
 	})
 	if err != nil {
 		log.Err(err).Msg("failed to upload thumbnail file")
-		return "", err
+		return UploadResult{}, err
 	}
 
-	return thumbnailFile, nil
+	return uploadResult, nil
 }
