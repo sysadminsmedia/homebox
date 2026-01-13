@@ -944,19 +944,18 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 	}
 
 	if data.SyncChildItemsLocations {
-		children, err := e.db.Item.Query().Where(item.ID(data.ID)).QueryChildren().All(ctx)
+		children, err := e.db.Item.Query().
+			Where(item.ID(data.ID)).
+			QueryChildren().
+			WithLocation().
+			All(ctx)
 		if err != nil {
 			return ItemOut{}, err
 		}
 		location := data.LocationID
 
 		for _, child := range children {
-			childLocation, err := child.QueryLocation().First(ctx)
-			if err != nil {
-				return ItemOut{}, err
-			}
-
-			if location != childLocation.ID {
+			if child.Edges.Location == nil || location != child.Edges.Location.ID {
 				err = child.Update().SetLocationID(location).Exec(ctx)
 				if err != nil {
 					return ItemOut{}, err
@@ -1129,16 +1128,16 @@ func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data Ite
 			return err
 		}
 		if itemEnt.SyncChildItemsLocations {
-			children, err := tx.Item.Query().Where(item.ID(id), item.HasGroupWith(group.ID(gid))).QueryChildren().All(ctx)
+			children, err := tx.Item.Query().
+				Where(item.ID(id), item.HasGroupWith(group.ID(gid))).
+				QueryChildren().
+				WithLocation().
+				All(ctx)
 			if err != nil {
 				return err
 			}
 			for _, child := range children {
-				childLocation, err := child.QueryLocation().First(ctx)
-				if err != nil {
-					return err
-				}
-				if data.LocationID != childLocation.ID {
+				if child.Edges.Location == nil || data.LocationID != child.Edges.Location.ID {
 					err = child.Update().SetLocationID(data.LocationID).Exec(ctx)
 					if err != nil {
 						return err
