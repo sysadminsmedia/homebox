@@ -1,49 +1,26 @@
 ---
-title: User Guide
+title: Getting Started
 ---
 
-# User Guide
+import { Steps } from '@astrojs/starlight/components'
 
-```js "function" ins="foo" del="bar"
-function test() {
-  const foo = 'bar'
-}
-```
+You've installed, and managed to get to the Homebox login page. Now what?
 
-```js {2}
-function test() {
-  const foo = 'bar'
-  a != b
-}
-```
+## Registering Your Account
+To get started with Homebox, you'll need to create an account. Follow these steps:
 
-```diff lang="js"
-  function test() {
--   const foo = 'bar'
-+   const foo = 'baz'
-  }
-```
+<Steps>
+1. Click on the "Register" button on the login page.
+2. Fill in the required information, including your username, email address, and password.
+3. Submit the registration form to create your account.
+</Steps>
 
-```bash title="Build something…"
-pnpm run build
-```
+## Logging In
+Once you've registered, you can log in to your Homebox account:
+<Steps>
+1. Enter your username and password on the login page.
+2. Click the "Login" button to access your dashboard.
+</Steps>
 
-```js
-// test.js
-const foo = 'bar'
-```
-
-```astro title="example.astro" {"1. Keep the existing icon.":5-6} del={"2. Remove the button.":8-9} ins={"3. Add a link.":11-12}
----
-import { Icon } from '@astrojs/starlight/components';
----
-
-
-<Icon name="seti:lock" />
-
-
-<button type="button">Login</button>
-
-
-<a href="/login/">Login</a>
-```
+Once logged in, you'll see that your part of a default Collection called "<Name>'s Collection". You can start adding
+ Locations and Items right away!
