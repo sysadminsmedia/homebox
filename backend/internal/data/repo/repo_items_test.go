@@ -313,7 +313,7 @@ func TestItemRepository_GetAllCustomFields(t *testing.T) {
 
 	// Test getting all values from field
 	{
-		results, err := tRepos.Items.GetAllCustomFieldValues(context.Background(), tUser.GroupID, names[0])
+		results, err := tRepos.Items.GetAllCustomFieldValues(context.Background(), tUser.DefaultGroupID, names[0])
 
 		require.NoError(t, err)
 		assert.ElementsMatch(t, values[:1], results)
@@ -400,7 +400,6 @@ func TestItemsRepository_DeleteByGroupWithAttachments(t *testing.T) {
 
 func TestItemsRepository_WipeInventory(t *testing.T) {
 	// Create test data: items, tags, locations, and maintenance entries
-
 	// Create locations
 	loc1, err := tRepos.Locations.Create(context.Background(), tGroup.ID, LocationCreate{
 		Name:        "Test Location 1",
@@ -465,8 +464,7 @@ func TestItemsRepository_WipeInventory(t *testing.T) {
 	t.Run("wipe all including tags, locations, and maintenance", func(t *testing.T) {
 		deleted, err := tRepos.Items.WipeInventory(context.Background(), tGroup.ID, true, true, true)
 		require.NoError(t, err)
-		assert.Greater(t, deleted, 0, "Should have deleted at least some entities")
-
+		assert.Positive(t, deleted, "Should have deleted at least some entities")
 		// Verify items are deleted
 		_, err = tRepos.Items.GetOneByGroup(context.Background(), tGroup.ID, item1.ID)
 		require.Error(t, err, "Item 1 should be deleted")
@@ -489,7 +487,6 @@ func TestItemsRepository_WipeInventory(t *testing.T) {
 
 		_, err = tRepos.Tags.GetOneByGroup(context.Background(), tGroup.ID, tag2.ID)
 		require.Error(t, err, "Tag 2 should be deleted")
-
 		// Verify locations are deleted
 		_, err = tRepos.Locations.Get(context.Background(), loc1.ID)
 		require.Error(t, err, "Location 1 should be deleted")
@@ -532,8 +529,7 @@ func TestItemsRepository_WipeInventory_OnlyItems(t *testing.T) {
 	// Test: Wipe inventory with only items (no tags, locations, or maintenance)
 	deleted, err := tRepos.Items.WipeInventory(context.Background(), tGroup.ID, false, false, false)
 	require.NoError(t, err)
-	assert.Greater(t, deleted, 0, "Should have deleted at least the item")
-
+	assert.Positive(t, deleted, "Should have deleted at least the item")
 	// Verify item is deleted
 	_, err = tRepos.Items.GetOneByGroup(context.Background(), tGroup.ID, item.ID)
 	require.Error(t, err, "Item should be deleted")
@@ -546,7 +542,6 @@ func TestItemsRepository_WipeInventory_OnlyItems(t *testing.T) {
 	// Verify tag still exists
 	_, err = tRepos.Tags.GetOneByGroup(context.Background(), tGroup.ID, tag.ID)
 	require.NoError(t, err, "Tag should still exist")
-
 	// Verify location still exists
 	_, err = tRepos.Locations.Get(context.Background(), loc.ID)
 	require.NoError(t, err, "Location should still exist")
@@ -555,3 +550,4 @@ func TestItemsRepository_WipeInventory_OnlyItems(t *testing.T) {
 	_ = tRepos.Tags.DeleteByGroup(context.Background(), tGroup.ID, tag.ID)
 	_ = tRepos.Locations.delete(context.Background(), loc.ID)
 }
+

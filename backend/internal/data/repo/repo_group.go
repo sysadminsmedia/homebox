@@ -2,23 +2,28 @@ package repo
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 )
 
 type GroupRepository struct {
 	db               *ent.Client
 	groupMapper      MapFunc[*ent.Group, Group]
 	invitationMapper MapFunc[*ent.GroupInvitationToken, GroupInvitation]
+	attachments      *AttachmentRepo
 }
 
 func NewGroupRepository(db *ent.Client) *GroupRepository {
@@ -105,8 +110,12 @@ type (
 	}
 )
 
-func (r *GroupRepository) GetAllGroups(ctx context.Context) ([]Group, error) {
-	return r.groupMapper.MapEachErr(r.db.Group.Query().All(ctx))
+func (r *GroupRepository) GetAllGroups(ctx context.Context, userID uuid.UUID) ([]Group, error) {
+	q := r.db.Group.Query()
+	if userID != uuid.Nil {
+		q.Where(group.HasUsersWith(user.ID(userID)))
+	}
+	return r.groupMapper.MapEachErr(q.All(ctx))
 }
 
 func (r *GroupRepository) StatsLocationsByPurchasePrice(ctx context.Context, gid uuid.UUID) ([]TotalsByOrganizer, error) {
@@ -223,7 +232,7 @@ func (r *GroupRepository) StatsPurchasePrice(ctx context.Context, gid uuid.UUID,
 func (r *GroupRepository) StatsGroup(ctx context.Context, gid uuid.UUID) (GroupStatistics, error) {
 	q := `
 		SELECT
-            (SELECT COUNT(*) FROM users WHERE group_users = $2) AS total_users,
+            (SELECT COUNT(*) FROM user_groups WHERE group_id = $2) AS total_users,
             (SELECT COUNT(*) FROM items WHERE group_items = $2 AND items.archived = false) AS total_items,
             (SELECT COUNT(*) FROM locations WHERE group_locations = $2) AS total_locations,
             (SELECT COUNT(*) FROM tags WHERE group_tags = $2) AS total_tags,
@@ -252,10 +261,15 @@ func (r *GroupRepository) StatsGroup(ctx context.Context, gid uuid.UUID) (GroupS
 	return stats, nil
 }
 
-func (r *GroupRepository) GroupCreate(ctx context.Context, name string) (Group, error) {
-	return r.groupMapper.MapErr(r.db.Group.Create().
-		SetName(name).
-		Save(ctx))
+func (r *GroupRepository) GroupCreate(ctx context.Context, name string, userID uuid.UUID) (Group, error) {
+	createQuery := r.db.Group.Create().SetName(name)
+
+	// Only link user if a valid user ID is provided
+	if userID != uuid.Nil {
+		createQuery = createQuery.AddUserIDs(userID)
+	}
+
+	return r.groupMapper.MapErr(createQuery.Save(ctx))
 }
 
 func (r *GroupRepository) GroupUpdate(ctx context.Context, id uuid.UUID, data GroupUpdate) (Group, error) {
@@ -271,11 +285,79 @@ func (r *GroupRepository) GroupByID(ctx context.Context, id uuid.UUID) (Group, e
 	return r.groupMapper.MapErr(r.db.Group.Get(ctx, id))
 }
 
+func (r *GroupRepository) GroupDelete(ctx context.Context, id uuid.UUID) error {
+	tx, err := r.db.Tx(ctx)
+	if err != nil {
+		return err
+	}
+
+	itm, err := tx.Item.Query().
+		Where(item.HasGroupWith(group.ID(id))).
+		WithGroup().
+		WithAttachments().
+		All(ctx)
+	if err != nil {
+		return err
+	}
+
+	// Delete all attachments (and their files) before deleting the items
+	for _, it := range itm {
+		for _, att := range it.Edges.Attachments {
+			if err := r.attachments.Delete(ctx, id, att.ID); err != nil {
+				log.Err(err).Str("attachment_id", att.ID.String()).Msg("failed to delete attachment during item deletion")
+				// Continue with other attachments even if one fails
+			}
+		}
+	}
+
+	// Delete all items from the database
+	if _, err := tx.Item.Delete().
+		Where(item.HasGroupWith(group.ID(id))).
+		Exec(ctx); err != nil {
+		if rerr := tx.Rollback(); rerr != nil {
+			log.Error().Err(rerr).Msg("failed to rollback transaction")
+		}
+		return err
+	}
+
+	// Delete any associated notifiers
+	if _, err := tx.Notifier.Delete().
+		Where(notifier.HasGroupWith(group.ID(id))).
+		Exec(ctx); err != nil {
+		if rerr := tx.Rollback(); rerr != nil {
+			log.Error().Err(rerr).Msg("failed to rollback transaction")
+		}
+		return err
+	}
+
+	// Delete the group
+	if err := tx.Group.DeleteOneID(id).Exec(ctx); err != nil {
+		if rerr := tx.Rollback(); rerr != nil {
+			log.Error().Err(rerr).Msg("failed to rollback transaction")
+		}
+		return err
+	}
+
+	return tx.Commit()
+}
+
 func (r *GroupRepository) InvitationGet(ctx context.Context, token []byte) (GroupInvitation, error) {
 	return r.invitationMapper.MapErr(r.db.GroupInvitationToken.Query().
 		Where(groupinvitationtoken.Token(token)).
 		WithGroup().
 		Only(ctx))
+}
+
+func (r *GroupRepository) InvitationGetAll(ctx context.Context, groupID uuid.UUID) ([]GroupInvitation, error) {
+	invitations, err := r.db.GroupInvitationToken.Query().
+		Where(groupinvitationtoken.HasGroupWith(group.ID(groupID))).
+		WithGroup().
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return r.invitationMapper.MapEach(invitations), nil
 }
 
 func (r *GroupRepository) InvitationCreate(ctx context.Context, groupID uuid.UUID, invite GroupInvitationCreate) (GroupInvitation, error) {
@@ -297,6 +379,22 @@ func (r *GroupRepository) InvitationUpdate(ctx context.Context, id uuid.UUID, us
 	return err
 }
 
+func (r *GroupRepository) InvitationDelete(ctx context.Context, groupID uuid.UUID, id uuid.UUID) error {
+	n, err := r.db.GroupInvitationToken.Delete().
+		Where(
+			groupinvitationtoken.ID(id),
+			groupinvitationtoken.HasGroupWith(group.ID(groupID)),
+		).
+		Exec(ctx)
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		return &ent.NotFoundError{}
+	}
+	return nil
+}
+
 // InvitationPurge removes all expired invitations or those that have been used up.
 // It returns the number of deleted invitations.
 func (r *GroupRepository) InvitationPurge(ctx context.Context) (amount int, err error) {
@@ -307,4 +405,121 @@ func (r *GroupRepository) InvitationPurge(ctx context.Context) (amount int, err 
 	))
 
 	return q.Exec(ctx)
+}
+
+func (r *GroupRepository) IsMember(ctx context.Context, groupID, userID uuid.UUID) (bool, error) {
+	return r.db.Group.Query().
+		Where(group.ID(groupID), group.HasUsersWith(user.ID(userID))).
+		Exist(ctx)
+}
+
+func (r *GroupRepository) AddMember(ctx context.Context, groupID, userID uuid.UUID) error {
+	return r.db.Group.UpdateOneID(groupID).AddUserIDs(userID).Exec(ctx)
+}
+
+func (r *GroupRepository) RemoveMember(ctx context.Context, groupID, userID uuid.UUID) error {
+	return r.db.Group.UpdateOneID(groupID).RemoveUserIDs(userID).Exec(ctx)
+}
+
+func (r *GroupRepository) InvitationDecrement(ctx context.Context, id uuid.UUID) error {
+	n, err := r.db.GroupInvitationToken.Update().
+		Where(
+			groupinvitationtoken.ID(id),
+			groupinvitationtoken.UsesGT(0),
+		).
+		AddUses(-1).
+		Save(ctx)
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		return fmt.Errorf("invitation used up")
+	}
+	return nil
+}
+
+func (r *GroupRepository) InvitationAccept(ctx context.Context, token []byte, userID uuid.UUID) (Group, error) {
+	tx, err := r.db.Tx(ctx)
+	if err != nil {
+		return Group{}, err
+	}
+
+	// 1. Get invitation
+	invitation, err := tx.GroupInvitationToken.Query().
+		Where(groupinvitationtoken.Token(token)).
+		WithGroup().
+		Only(ctx)
+	if err != nil {
+		if err := tx.Rollback(); err != nil {
+			log.Warn().Err(err).Msg("failed to rollback transaction")
+		}
+		return Group{}, err
+	}
+
+	// 2. Checks
+	if invitation.ExpiresAt.Before(time.Now()) {
+		if err := tx.Rollback(); err != nil {
+			log.Warn().Err(err).Msg("failed to rollback transaction")
+		}
+		return Group{}, fmt.Errorf("invitation expired")
+	}
+	if invitation.Uses <= 0 {
+		if err := tx.Rollback(); err != nil {
+			log.Warn().Err(err).Msg("failed to rollback transaction")
+		}
+		return Group{}, fmt.Errorf("invitation used up")
+	}
+
+	// 3. Check membership
+	isMember, err := tx.Group.Query().
+		Where(group.ID(invitation.Edges.Group.ID), group.HasUsersWith(user.ID(userID))).
+		Exist(ctx)
+	if err != nil {
+		if err := tx.Rollback(); err != nil {
+			log.Warn().Err(err).Msg("failed to rollback transaction")
+		}
+		return Group{}, err
+	}
+	if isMember {
+		if err := tx.Rollback(); err != nil {
+			log.Warn().Err(err).Msg("failed to rollback transaction")
+		}
+		return Group{}, fmt.Errorf("user already a member of this group")
+	}
+
+	// 4. Add member
+	err = tx.Group.UpdateOneID(invitation.Edges.Group.ID).AddUserIDs(userID).Exec(ctx)
+	if err != nil {
+		if err := tx.Rollback(); err != nil {
+			log.Warn().Err(err).Msg("failed to rollback transaction")
+		}
+		return Group{}, err
+	}
+
+	// 5. Decrement uses atomically
+	n, err := tx.GroupInvitationToken.Update().
+		Where(
+			groupinvitationtoken.ID(invitation.ID),
+			groupinvitationtoken.UsesGT(0),
+		).
+		AddUses(-1).
+		Save(ctx)
+	if err != nil {
+		if err := tx.Rollback(); err != nil {
+			log.Warn().Err(err).Msg("failed to rollback transaction")
+		}
+		return Group{}, err
+	}
+	if n == 0 {
+		if err := tx.Rollback(); err != nil {
+			log.Warn().Err(err).Msg("failed to rollback transaction")
+		}
+		return Group{}, fmt.Errorf("invitation used up")
+	}
+
+	if err := tx.Commit(); err != nil {
+		return Group{}, err
+	}
+
+	return r.groupMapper.Map(invitation.Edges.Group), nil
 }

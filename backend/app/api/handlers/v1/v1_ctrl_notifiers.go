@@ -22,7 +22,8 @@ import (
 func (ctrl *V1Controller) HandleGetUserNotifiers() errchain.HandlerFunc {
 	fn := func(r *http.Request, _ struct{}) ([]repo.NotifierOut, error) {
 		user := services.UseUserCtx(r.Context())
-		return ctrl.repo.Notifiers.GetByUser(r.Context(), user.ID)
+		tenant := services.UseTenantCtx(r.Context())
+		return ctrl.repo.Notifiers.GetByUser(r.Context(), user.ID, tenant)
 	}
 
 	return adapters.Query(fn, http.StatusOK)

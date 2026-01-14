@@ -30,14 +30,40 @@ export function usePublicApi(): PublicApi {
 
 export function useUserApi(): UserClient {
   const authCtx = useAuthContext();
+  const prefs = useViewPreferences();
 
-  const requests = new Requests("", "", {});
+  const headers: Record<string, string> = {};
+  if (prefs?.value?.collectionId) {
+    headers["X-Tenant"] = prefs.value.collectionId;
+  }
+
+  const requests = new Requests("", "", headers);
   requests.addResponseInterceptor(logger);
-  requests.addResponseInterceptor(r => {
+  requests.addResponseInterceptor(async r => {
     if (r.status === 401) {
       console.error("unauthorized request, invalidating session");
       authCtx.invalidateSession();
       navigateTo("/");
+    }
+
+    if (r.status === 403) {
+      try {
+        const contentType = r.headers.get("Content-Type") ?? "";
+        if (!contentType.startsWith("application/json")) {
+          return;
+        }
+
+        const body = (await r.json().catch(() => null)) as { error?: string } | null;
+
+        if (body?.error === "user does not have access to the requested tenant") {
+          if (prefs?.value) {
+            prefs.value.collectionId = null;
+          }
+        }
+      } catch {
+        // ignore parsing errors to avoid breaking the interceptor chain
+        console.log("failed to parse 403 response body");
+      }
     }
   });
 

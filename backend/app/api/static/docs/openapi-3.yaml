@@ -170,7 +170,67 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/repo.Group"
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Create Group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/v1.CreateRequest"
+        description: Create group request
+        required: true
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/repo.Group"
+    delete:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Delete Group
+      responses:
+        "204":
+          description: No Content
+  /v1/groups/all:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Get All Groups
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/repo.Group"
   /v1/groups/invitations:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Get All Group Invitations
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/repo.GroupInvitation"
     post:
       security:
         - Bearer: []
@@ -191,6 +251,92 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/v1.GroupInvitation"
+  "/v1/groups/invitations/{id}":
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Accept Group Invitation
+      parameters:
+        - description: Invitation Token
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/v1.GroupAcceptInvitationResponse"
+    delete:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Delete Group Invitation
+      parameters:
+        - description: Invitation ID
+          name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+  /v1/groups/members:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Get All Group Members
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/repo.UserSummary"
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Add User to Group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/v1.GroupMemberAdd"
+        description: User ID
+        required: true
+      responses:
+        "204":
+          description: No Content
+  "/v1/groups/members/{user_id}":
+    delete:
+      security:
+        - Bearer: []
+      tags:
+        - Group
+      summary: Remove User from Group
+      parameters:
+        - description: User ID
+          name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
   /v1/groups/statistics:
     get:
       security:
@@ -2322,6 +2468,9 @@ components:
         created_at:
           description: CreatedAt holds the value of the "created_at" field.
           type: string
+        default_group_id:
+          description: DefaultGroupID holds the value of the "default_group_id" field.
+          type: string
         edges:
           description: >-
             Edges holds the relations/edges for other nodes in the graph.
@@ -2365,10 +2514,11 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ent.AuthTokens"
-        group:
-          description: Group holds the value of the group edge.
-          allOf:
-            - $ref: "#/components/schemas/ent.Group"
+        groups:
+          description: Groups holds the value of the groups edge.
+          type: array
+          items:
+            $ref: "#/components/schemas/ent.Group"
         notifiers:
           description: Notifiers holds the value of the notifiers edge.
           type: array
@@ -2431,6 +2581,17 @@ components:
           type: string
         updatedAt:
           type: string
+    repo.GroupInvitation:
+      type: object
+      properties:
+        expiresAt:
+          type: string
+        group:
+          $ref: "#/components/schemas/repo.Group"
+        id:
+          type: string
+        uses:
+          type: integer
     repo.GroupStatistics:
       type: object
       properties:
@@ -3264,12 +3425,14 @@ components:
     repo.UserOut:
       type: object
       properties:
+        defaultGroupId:
+          type: string
         email:
           type: string
-        groupId:
-          type: string
-        groupName:
-          type: string
+        groupIds:
+          type: array
+          items:
+            type: string
         id:
           type: string
         isOwner:
@@ -3281,6 +3444,17 @@ components:
         oidcIssuer:
           type: string
         oidcSubject:
+          type: string
+    repo.UserSummary:
+      type: object
+      properties:
+        email:
+          type: string
+        id:
+          type: string
+        isOwner:
+          type: boolean
+        name:
           type: string
     repo.UserUpdate:
       type: object
@@ -3393,6 +3567,20 @@ components:
           type: string
         new:
           type: string
+    v1.CreateRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+    v1.GroupAcceptInvitationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
     v1.GroupInvitation:
       type: object
       properties:
@@ -3413,6 +3601,13 @@ components:
           type: integer
           maximum: 100
           minimum: 1
+    v1.GroupMemberAdd:
+      type: object
+      required:
+        - userId
+      properties:
+        userId:
+          type: string
     v1.ItemAttachmentToken:
       type: object
       properties:

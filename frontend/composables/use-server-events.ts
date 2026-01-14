@@ -1,3 +1,6 @@
+import { useViewPreferences } from "./use-preferences";
+import { watch } from "vue";
+
 export enum ServerEvent {
   LocationMutation = "location.mutation",
   ItemMutation = "item.mutation",
@@ -9,6 +12,8 @@ export type EventMessage = {
 };
 
 let socket: WebSocket | null = null;
+let currentTenantId: string | null = null;
+let watcherSetup = false;
 
 const listeners = new Map<ServerEvent, (() => void)[]>();
 
@@ -22,7 +27,12 @@ function connect(onmessage: (m: EventMessage) => void) {
 
   const host = dev ? window.location.host.replace("3000", "7745") : window.location.host;
 
-  const ws = new WebSocket(`${protocol}://${host}/api/v1/ws/events`);
+  let url = `${protocol}://${host}/api/v1/ws/events`;
+  if (currentTenantId) {
+    url += `?tenant=${currentTenantId}`;
+  }
+
+  const ws = new WebSocket(url);
 
   ws.onopen = () => {
     console.debug("connected to server");
@@ -57,6 +67,28 @@ function connect(onmessage: (m: EventMessage) => void) {
 }
 
 export function onServerEvent(event: ServerEvent, callback: () => void) {
+  const prefs = useViewPreferences();
+  currentTenantId = prefs.value.collectionId || null;
+
+  if (!watcherSetup) {
+    watch(
+      () => prefs.value.collectionId,
+      newId => {
+        currentTenantId = newId || null;
+        if (socket) {
+          socket.onclose = null;
+          socket.close();
+          socket = null;
+          connect(e => {
+            console.debug("received event", e);
+            listeners.get(e.event)?.forEach(c => c());
+          });
+        }
+      }
+    );
+    watcherSetup = true;
+  }
+
   if (socket === null) {
     connect(e => {
       console.debug("received event", e);

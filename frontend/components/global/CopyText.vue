@@ -1,25 +1,34 @@
 <template>
-  <Button size="icon" variant="outline" class="relative" @click="copyText">
-    <div
-      :data-copied="copied"
-      class="group absolute inset-0 flex items-center justify-center transition-transform duration-300 data-[copied=true]:rotate-[360deg]"
-    >
-      <MdiContentCopy
-        class="group-data-[copied=true]:hidden"
-        :style="{
-          height: `${iconSize}px`,
-          width: `${iconSize}px`,
-        }"
-      />
-      <MdiClipboard
-        class="hidden group-data-[copied=true]:block"
-        :style="{
-          height: `${iconSize}px`,
-          width: `${iconSize}px`,
-        }"
-      />
-    </div>
-  </Button>
+  <TooltipProvider :delay-duration="0">
+    <Tooltip>
+      <TooltipTrigger as-child>
+        <Button size="icon" variant="outline" class="relative" @click="copyText">
+          <div
+            :data-copied="copied"
+            class="group absolute inset-0 flex items-center justify-center transition-transform duration-300 data-[copied=true]:rotate-[360deg]"
+          >
+            <MdiContentCopy
+              class="group-data-[copied=true]:hidden"
+              :style="{
+                height: `${iconSize}px`,
+                width: `${iconSize}px`,
+              }"
+            />
+            <MdiClipboard
+              class="hidden group-data-[copied=true]:block"
+              :style="{
+                height: `${iconSize}px`,
+                width: `${iconSize}px`,
+              }"
+            />
+          </div>
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent v-if="tooltip">
+        {{ tooltip }}
+      </TooltipContent>
+    </Tooltip>
+  </TooltipProvider>
 
   <AlertDialog v-model:open="copyError">
     <AlertDialogContent>
@@ -60,6 +69,7 @@
     AlertDialogTitle,
   } from "@/components/ui/alert-dialog";
   import { Button } from "@/components/ui/button";
+  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
   const props = defineProps({
     text: {
@@ -69,6 +79,10 @@
     iconSize: {
       type: Number as () => number,
       default: 20,
+    },
+    tooltip: {
+      type: String as () => string,
+      default: "",
     },
   });
 

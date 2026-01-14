@@ -1,7 +1,7 @@
 <template>
   <div>
     <AppImportDialog />
-    <BaseContainer class="flex flex-col gap-4">
+    <BaseContainer class="m-0 flex flex-col gap-4 px-0">
       <BaseCard>
         <template #title>
           <BaseSectionHeader>
@@ -131,25 +131,23 @@
 
   const api = useUserApi();
   const confirm = useConfirm();
-
-  // Fetch status to check for demo mode
   const pubApi = usePublicApi();
   const { data: status } = useAsyncData(async () => {
     const { data } = await pubApi.status();
     return data;
   });
 
-  function getBillOfMaterials() {
+  const getBillOfMaterials = () => {
     const url = api.reports.billOfMaterialsURL();
     window.open(url, "_blank");
-  }
+  };
 
-  function getExportCSV() {
+  const getExportCSV = () => {
     const url = api.items.exportURL();
     window.open(url, "_blank");
-  }
+  };
 
-  async function ensureAssetIDs() {
+  const ensureAssetIDs = async () => {
     const { isCanceled } = await confirm.open(t("tools.actions_set.ensure_ids_confirm"));
 
     if (isCanceled) {
@@ -164,9 +162,9 @@
     }
 
     toast.success(t("tools.toast.asset_success", { results: result.data.completed }));
-  }
+  };
 
-  async function createMissingThumbnails() {
+  const createMissingThumbnails = async () => {
     const { isCanceled } = await confirm.open(t("tools.actions_set.create_missing_thumbnails_confirm"));
 
     if (isCanceled) {
@@ -181,9 +179,9 @@
     }
 
     toast.success(t("tools.toast.asset_success", { results: result.data.completed }));
-  }
+  };
 
-  async function ensureImportRefs() {
+  const ensureImportRefs = async () => {
     const { isCanceled } = await confirm.open(t("tools.import_export_set.import_ref_confirm"));
 
     if (isCanceled) {
@@ -198,9 +196,9 @@
     }
 
     toast.success(t("tools.toast.asset_success", { results: result.data.completed }));
-  }
+  };
 
-  async function resetItemDateTimes() {
+  const resetItemDateTimes = async () => {
     const { isCanceled } = await confirm.open(t("tools.actions_set.zero_datetimes_confirm"));
 
     if (isCanceled) {
@@ -215,9 +213,9 @@
     }
 
     toast.success(t("tools.toast.asset_success", { results: result.data.completed }));
-  }
+  };
 
-  async function setPrimaryPhotos() {
+  const setPrimaryPhotos = async () => {
     const { isCanceled } = await confirm.open(t("tools.actions_set.set_primary_photo_confirm"));
 
     if (isCanceled) {
@@ -232,10 +230,9 @@
     }
 
     toast.success(t("tools.toast.asset_success", { results: result.data.completed }));
-  }
+  };
 
-  async function wipeInventory() {
-    // Check if in demo mode
+  const wipeInventory = async () => {
     if (status.value?.demo) {
       await confirm.open(t("tools.demo_mode_error.wipe_inventory"));
       return;
@@ -261,7 +258,5 @@
         toast.success(t("tools.toast.wipe_inventory_success", { results: apiResult.data.completed }));
       },
     });
-  }
+  };
 </script>
-
-<style scoped></style>

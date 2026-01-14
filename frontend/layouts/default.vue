@@ -14,6 +14,9 @@
     <ItemBarcodeModal />
     <AppQuickMenuModal :actions="quickMenuActions" />
     <AppScannerModal />
+    <CollectionCreateModal />
+    <CollectionJoinModal />
+    <CollectionInviteCreateModal />
     <SidebarProvider :default-open="sidebarState">
       <Sidebar collapsible="icon">
         <SidebarHeader class="items-center">
@@ -25,10 +28,13 @@
               <AppLogo />
             </div>
           </NuxtLink>
+
+          <CollectionSelector />
+
           <DropdownMenu>
             <DropdownMenuTrigger as-child>
               <SidebarMenuButton
-                class="flex justify-center bg-primary text-primary-foreground shadow hover:bg-primary/90 group-data-[collapsible=icon]:justify-start"
+                class="flex justify-center bg-primary text-primary-foreground drop-shadow-md hover:bg-primary/90 active:bg-primary/90 active:text-primary-foreground group-data-[collapsible=icon]:justify-start"
                 :tooltip="$t('global.create')"
                 hotkey="Shortcut: Ctrl+`"
               >
@@ -227,6 +233,10 @@
   import AppLogo from "~/components/App/Logo.vue";
   import AppHeaderDecor from "~/components/App/HeaderDecor.vue";
   import AppHeaderText from "~/components/App/HeaderText.vue";
+  import CollectionSelector from "~/components/Collection/Selector.vue";
+  import CollectionCreateModal from "~/components/Collection/CreateModal.vue";
+  import CollectionJoinModal from "~/components/Collection/JoinModal.vue";
+  import CollectionInviteCreateModal from "~/components/Collection/InviteCreateModal.vue";
 
   const { t, locale } = useI18n();
   const username = computed(() => authCtx.user?.name || "User");
@@ -357,9 +367,9 @@
     {
       icon: MdiCog,
       id: 6,
-      active: computed(() => route.path === "/tools"),
-      name: computed(() => t("menu.tools")),
-      to: "/tools",
+      active: computed(() => route.path.includes("/collection")),
+      name: computed(() => t("menu.collection_options")),
+      to: "/collection/members",
     },
   ];
 

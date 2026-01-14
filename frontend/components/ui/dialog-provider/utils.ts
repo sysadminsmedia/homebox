@@ -1,7 +1,13 @@
 import { computed, type ComputedRef } from "vue";
 import { createContext } from "reka-ui";
 import { useMagicKeys, useActiveElement } from "@vueuse/core";
-import type { BarcodeProduct, ItemSummary, MaintenanceEntry, MaintenanceEntryWithDetails } from "~~/lib/api/types/data-contracts";
+import type {
+  BarcodeProduct,
+  GroupInvitation,
+  ItemSummary,
+  MaintenanceEntry,
+  MaintenanceEntryWithDetails,
+} from "~~/lib/api/types/data-contracts";
 
 export enum DialogID {
   AttachmentEdit = "attachment-edit",
@@ -9,6 +15,9 @@ export enum DialogID {
   CreateItem = "create-item",
   CreateLocation = "create-location",
   CreateTag = "create-tag",
+  CreateCollection = "create-collection",
+  CreateGroupInvite = "create-group-invite",
+  JoinCollection = "join-collection",
   CreateNotifier = "create-notifier",
   CreateTemplate = "create-template",
   DuplicateSettings = "duplicate-settings",
@@ -63,6 +72,8 @@ export type DialogParamsMap = {
     addTags?: boolean;
     removeTags?: boolean;
   };
+  [DialogID.CreateCollection]?: { redirectTo?: string };
+  [DialogID.JoinCollection]?: { redirectTo?: string };
 };
 
 /**
@@ -73,6 +84,7 @@ export type DialogResultMap = {
   [DialogID.EditMaintenance]?: boolean;
   [DialogID.ItemChangeDetails]?: boolean;
   [DialogID.WipeInventory]?: { wipeTags: boolean; wipeLocations: boolean; wipeMaintenance: boolean };
+  [DialogID.CreateGroupInvite]?: GroupInvitation;
 };
 
 /** Helpers to split IDs by requirement */
