@@ -77,7 +77,8 @@ export class BaseAPI {
   // URL already has a query param, this will not work.
   authURL(url: string): string {
     if (this.attachmentToken) {
-      return route(url, { access_token: this.attachmentToken });
+      const { selectedId } = useCollections();
+      return route(url, { access_token: this.attachmentToken, tenant: selectedId.value });
     }
     return url;
   }

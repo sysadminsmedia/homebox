@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
 	v1 "github.com/sysadminsmedia/homebox/backend/app/api/handlers/v1"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
@@ -149,6 +150,56 @@ func (a *app) mwAuthToken(next errchain.Handler) errchain.Handler {
 		}
 
 		r = r.WithContext(services.SetUserCtx(r.Context(), &usr, requestToken))
+		return next.ServeHTTP(w, r)
+	})
+}
+
+// mwTenant is a middleware that will parse the X-Tenant header and validate the user has access
+// to the requested tenant. If no header is provided, the user's default group is used.
+//
+// WARNING: This middleware _MUST_ be called after mwAuthToken
+func (a *app) mwTenant(next errchain.Handler) errchain.Handler {
+	return errchain.HandlerFunc(func(w http.ResponseWriter, r *http.Request) error {
+		ctx := r.Context()
+
+		// Get the user from context (set by mwAuthToken)
+		user := services.UseUserCtx(ctx)
+		if user == nil {
+			return validate.NewRequestError(errors.New("user context not found"), http.StatusInternalServerError)
+		}
+
+		tenantID := user.DefaultGroupID
+
+		// Check for X-Tenant header or tenant query parameter
+		tenantHeader := r.Header.Get("X-Tenant")
+		if tenantHeader == "" {
+			tenantHeader = r.URL.Query().Get("tenant")
+		}
+
+		if tenantHeader != "" {
+			parsedTenantID, err := uuid.Parse(tenantHeader)
+			if err != nil {
+				return validate.NewRequestError(errors.New("invalid X-Tenant header format"), http.StatusBadRequest)
+			}
+
+			// Validate user has access to the requested tenant
+			hasAccess := false
+			for _, gid := range user.GroupIDs {
+				if gid == parsedTenantID {
+					hasAccess = true
+					break
+				}
+			}
+
+			if !hasAccess {
+				return validate.NewRequestError(errors.New("user does not have access to the requested tenant"), http.StatusForbidden)
+			}
+
+			tenantID = parsedTenantID
+		}
+
+		// Set the tenant in context
+		r = r.WithContext(services.SetTenantCtx(ctx, tenantID))
 		return next.ServeHTTP(w, r)
 	})
 }

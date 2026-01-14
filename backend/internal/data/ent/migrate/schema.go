@@ -475,21 +475,13 @@ var (
 		{Name: "activated_on", Type: field.TypeTime, Nullable: true},
 		{Name: "oidc_issuer", Type: field.TypeString, Nullable: true},
 		{Name: "oidc_subject", Type: field.TypeString, Nullable: true},
-		{Name: "group_users", Type: field.TypeUUID},
+		{Name: "default_group_id", Type: field.TypeUUID, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
 		Name:       "users",
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "users_groups_users",
-				Columns:    []*schema.Column{UsersColumns[12]},
-				RefColumns: []*schema.Column{GroupsColumns[0]},
-				OnDelete:   schema.Cascade,
-			},
-		},
 		Indexes: []*schema.Index{
 			{
 				Name:    "user_oidc_issuer_oidc_subject",
@@ -523,6 +515,31 @@ var (
 			},
 		},
 	}
+	// UserGroupsColumns holds the columns for the "user_groups" table.
+	UserGroupsColumns = []*schema.Column{
+		{Name: "user_id", Type: field.TypeUUID},
+		{Name: "group_id", Type: field.TypeUUID},
+	}
+	// UserGroupsTable holds the schema information for the "user_groups" table.
+	UserGroupsTable = &schema.Table{
+		Name:       "user_groups",
+		Columns:    UserGroupsColumns,
+		PrimaryKey: []*schema.Column{UserGroupsColumns[0], UserGroupsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "user_groups_user_id",
+				Columns:    []*schema.Column{UserGroupsColumns[0]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "user_groups_group_id",
+				Columns:    []*schema.Column{UserGroupsColumns[1]},
+				RefColumns: []*schema.Column{GroupsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AttachmentsTable,
@@ -540,6 +557,7 @@ var (
 		TemplateFieldsTable,
 		UsersTable,
 		LabelItemsTable,
+		UserGroupsTable,
 	}
 )
 
@@ -562,7 +580,8 @@ func init() {
 	NotifiersTable.ForeignKeys[0].RefTable = GroupsTable
 	NotifiersTable.ForeignKeys[1].RefTable = UsersTable
 	TemplateFieldsTable.ForeignKeys[0].RefTable = ItemTemplatesTable
-	UsersTable.ForeignKeys[0].RefTable = GroupsTable
 	LabelItemsTable.ForeignKeys[0].RefTable = LabelsTable
 	LabelItemsTable.ForeignKeys[1].RefTable = ItemsTable
+	UserGroupsTable.ForeignKeys[0].RefTable = UsersTable
+	UserGroupsTable.ForeignKeys[1].RefTable = GroupsTable
 }

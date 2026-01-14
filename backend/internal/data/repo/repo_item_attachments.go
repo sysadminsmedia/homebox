@@ -120,17 +120,17 @@ func (r *AttachmentRepo) fullPath(relativePath string) string {
 	// Normalize path separators to forward slashes for blob storage
 	// The blob library expects forward slashes in keys regardless of OS
 	normalizedRelativePath := normalizePath(relativePath)
-	
+
 	// Always use forward slashes when joining paths for blob storage
 	if r.storage.PrefixPath == "" {
 		return normalizedRelativePath
 	}
 	normalizedPrefix := normalizePath(r.storage.PrefixPath)
-	
+
 	if normalizedPrefix == "" {
 		return normalizedRelativePath
 	}
-	
+
 	return fmt.Sprintf("%s/%s", normalizedPrefix, normalizedRelativePath)
 }
 
@@ -392,7 +392,7 @@ func (r *AttachmentRepo) Update(ctx context.Context, gid uuid.UUID, id uuid.UUID
 	return r.Get(ctx, gid, updatedAttachment.ID)
 }
 
-func (r *AttachmentRepo) Delete(ctx context.Context, gid uuid.UUID, itemId uuid.UUID, id uuid.UUID) error {
+func (r *AttachmentRepo) Delete(ctx context.Context, gid uuid.UUID, id uuid.UUID) error {
 	// Validate that the attachment belongs to the specified group
 	doc, err := r.db.Attachment.Query().
 		Where(
