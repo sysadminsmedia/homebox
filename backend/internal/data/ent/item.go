@@ -60,6 +60,8 @@ type Item struct {
 	PurchaseFrom string `json:"purchase_from,omitempty"`
 	// PurchasePrice holds the value of the "purchase_price" field.
 	PurchasePrice float64 `json:"purchase_price,omitempty"`
+	// PurchasePricePerMonth is calculated based on "PurchasePrice" and "PurchaseTime".
+	PurchasePricePerMonth float64 `json:"purchase_price_per_month,omitempty"`
 	// SoldTime holds the value of the "sold_time" field.
 	SoldTime time.Time `json:"sold_time,omitempty"`
 	// SoldTo holds the value of the "sold_to" field.
