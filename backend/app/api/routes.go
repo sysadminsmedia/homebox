@@ -188,6 +188,7 @@ func (a *app) mountRoutes(r *chi.Mux, chain *errchain.ErrChain, repos *repo.AllR
 		// Asset-Like endpoints
 		assetMW := []errchain.Middleware{
 			a.mwAuthToken,
+			a.mwTenant,
 			a.mwRoles(RoleModeOr, authroles.RoleUser.String(), authroles.RoleAttachments.String()),
 		}
 

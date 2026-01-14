@@ -304,11 +304,11 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "type": "string"
+                                "$ref": "#/components/schemas/v1.CreateRequest"
                             }
                         }
                     },
-                    "description": "Group Name",
+                    "description": "Create group request",
                     "required": true
                 },
                 "responses": {
@@ -5589,6 +5589,17 @@
                         "type": "string"
                     },
                     "new": {
+                        "type": "string"
+                    }
+                }
+            },
+            "v1.CreateRequest": {
+                "type": "object",
+                "required": [
+                    "name"
+                ],
+                "properties": {
+                    "name": {
                         "type": "string"
                     }
                 }

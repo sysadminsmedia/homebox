@@ -301,12 +301,12 @@ const docTemplate = `{
                 "summary": "Create Group",
                 "parameters": [
                     {
-                        "description": "Group Name",
-                        "name": "name",
+                        "description": "Create group request",
+                        "name": "payload",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/v1.CreateRequest"
                         }
                     }
                 ],
@@ -5392,6 +5392,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "new": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.CreateRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
                     "type": "string"
                 }
             }

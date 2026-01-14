@@ -16,7 +16,7 @@ import (
 func TestAttachmentRepo_Create(t *testing.T) {
 	item := useItems(t, 1)[0]
 
-	ids := []uuid.UUID{item.ID}
+	var ids []uuid.UUID
 	t.Cleanup(func() {
 		for _, id := range ids {
 			_ = tRepos.Attachments.Delete(context.Background(), tGroup.ID, id)

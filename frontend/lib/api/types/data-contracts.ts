@@ -1113,6 +1113,10 @@ export interface ChangePassword {
   new: string;
 }
 
+export interface CreateRequest {
+  name: string;
+}
+
 export interface GroupAcceptInvitationResponse {
   id: string;
   name: string;

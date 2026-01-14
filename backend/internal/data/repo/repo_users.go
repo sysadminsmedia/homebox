@@ -191,6 +191,10 @@ func (r *UserRepository) Update(ctx context.Context, id uuid.UUID, data UserUpda
 	return err
 }
 
+func (r *UserRepository) UpdateDefaultGroup(ctx context.Context, id uuid.UUID, groupID uuid.UUID) error {
+	return r.db.User.UpdateOneID(id).SetDefaultGroupID(groupID).Exec(ctx)
+}
+
 func (r *UserRepository) Delete(ctx context.Context, id uuid.UUID) error {
 	_, err := r.db.User.Delete().Where(user.ID(id)).Exec(ctx)
 	return err

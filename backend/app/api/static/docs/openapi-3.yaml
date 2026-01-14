@@ -180,8 +180,8 @@ paths:
         content:
           application/json:
             schema:
-              type: string
-        description: Group Name
+              $ref: "#/components/schemas/v1.CreateRequest"
+        description: Create group request
         required: true
       responses:
         "201":
@@ -3566,6 +3566,13 @@ components:
         current:
           type: string
         new:
+          type: string
+    v1.CreateRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
           type: string
     v1.GroupAcceptInvitationResponse:
       type: object

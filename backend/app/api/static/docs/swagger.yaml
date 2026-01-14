@@ -1818,6 +1818,13 @@ definitions:
       new:
         type: string
     type: object
+  v1.CreateRequest:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
   v1.GroupAcceptInvitationResponse:
     properties:
       id:
@@ -2093,12 +2100,12 @@ paths:
       - Group
     post:
       parameters:
-      - description: Group Name
+      - description: Create group request
         in: body
-        name: name
+        name: payload
         required: true
         schema:
-          type: string
+          $ref: '#/definitions/v1.CreateRequest'
       produces:
       - application/json
       responses:
