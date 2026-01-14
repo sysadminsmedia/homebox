@@ -121,11 +121,15 @@ type (
 	}
 
 	ItemPatch struct {
-		ID         uuid.UUID   `json:"id"`
-		Quantity   *int        `json:"quantity,omitempty" extensions:"x-nullable,x-omitempty"`
-		ImportRef  *string     `json:"-,omitempty"        extensions:"x-nullable,x-omitempty"`
-		LocationID uuid.UUID   `json:"locationId"         extensions:"x-nullable,x-omitempty"`
-		LabelIDs   []uuid.UUID `json:"labelIds"           extensions:"x-nullable,x-omitempty"`
+		ID          uuid.UUID   `json:"id"`
+		Name        *string     `json:"name,omitempty"        extensions:"x-nullable,x-omitempty"`
+		Description *string     `json:"description,omitempty" extensions:"x-nullable,x-omitempty"`
+		Notes       *string     `json:"notes,omitempty"       extensions:"x-nullable,x-omitempty"`
+		Quantity    *int        `json:"quantity,omitempty"    extensions:"x-nullable,x-omitempty"`
+		ImportRef   *string     `json:"-,omitempty"           extensions:"x-nullable,x-omitempty"`
+		LocationID  uuid.UUID   `json:"locationId"            extensions:"x-nullable,x-omitempty"`
+		LabelIDs    []uuid.UUID `json:"labelIds"              extensions:"x-nullable,x-omitempty"`
+		Fields      []ItemField `json:"fields,omitempty"      extensions:"x-nullable,x-omitempty"`
 	}
 
 	ItemSummary struct {
@@ -955,7 +959,7 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 			}
 
 			if location != childLocation.ID {
-				err = child.Update().SetLocationID(location).Exec(ctx)
+				err = e.db.Item.Update().Where(item.ID(child.ID)).SetLocationID(location).Exec(ctx)
 				if err != nil {
 					return ItemOut{}, err
 				}
@@ -1050,6 +1054,103 @@ func (e *ItemsRepository) GetAllZeroImportRef(ctx context.Context, gid uuid.UUID
 	return ids, nil
 }
 
+func (e *ItemsRepository) patchLabels(ctx context.Context, tx *ent.Tx, gid, id uuid.UUID, labelIDs []uuid.UUID) error {
+	currentLabels, err := tx.Item.Query().Where(item.ID(id), item.HasGroupWith(group.ID(gid))).QueryLabel().All(ctx)
+	if err != nil {
+		return err
+	}
+	set := newIDSet(currentLabels)
+
+	addLabels := []uuid.UUID{}
+	for _, l := range labelIDs {
+		if set.Contains(l) {
+			set.Remove(l)
+		} else {
+			addLabels = append(addLabels, l)
+		}
+	}
+
+	if len(addLabels) > 0 {
+		if err := tx.Item.Update().
+			Where(item.ID(id), item.HasGroupWith(group.ID(gid))).
+			AddLabelIDs(addLabels...).
+			Exec(ctx); err != nil {
+			return err
+		}
+	}
+	if set.Len() > 0 {
+		if err := tx.Item.Update().
+			Where(item.ID(id), item.HasGroupWith(group.ID(gid))).
+			RemoveLabelIDs(set.Slice()...).
+			Exec(ctx); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (e *ItemsRepository) patchSyncChildLocations(ctx context.Context, tx *ent.Tx, gid, id, locationID uuid.UUID) error {
+	itemEnt, err := tx.Item.Query().Where(item.ID(id), item.HasGroupWith(group.ID(gid))).Only(ctx)
+	if err != nil {
+		return err
+	}
+	if !itemEnt.SyncChildItemsLocations {
+		return nil
+	}
+
+	children, err := tx.Item.Query().Where(item.ID(id), item.HasGroupWith(group.ID(gid))).QueryChildren().All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, child := range children {
+		childLocation, err := child.QueryLocation().First(ctx)
+		if err != nil {
+			return err
+		}
+		if locationID != childLocation.ID {
+			err = tx.Item.Update().Where(item.ID(child.ID)).SetLocationID(locationID).Exec(ctx)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func (e *ItemsRepository) patchCustomFields(ctx context.Context, tx *ent.Tx, id uuid.UUID, fields []ItemField) error {
+	for _, f := range fields {
+		if f.ID == uuid.Nil {
+			_, err := tx.ItemField.Create().
+				SetItemID(id).
+				SetType(itemfield.Type(f.Type)).
+				SetName(f.Name).
+				SetTextValue(f.TextValue).
+				SetNumberValue(f.NumberValue).
+				SetBooleanValue(f.BooleanValue).
+				Save(ctx)
+			if err != nil {
+				return fmt.Errorf("failed to create field %s: %w", f.Name, err)
+			}
+		} else {
+			_, err := tx.ItemField.Update().
+				Where(
+					itemfield.ID(f.ID),
+					itemfield.HasItemWith(item.ID(id)),
+				).
+				SetType(itemfield.Type(f.Type)).
+				SetName(f.Name).
+				SetTextValue(f.TextValue).
+				SetNumberValue(f.NumberValue).
+				SetBooleanValue(f.BooleanValue).
+				Save(ctx)
+			if err != nil {
+				return fmt.Errorf("failed to update field %s: %w", f.Name, err)
+			}
+		}
+	}
+	return nil
+}
+
 func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data ItemPatch) error {
 	tx, err := e.db.Tx(ctx)
 	if err != nil {
@@ -1070,6 +1171,18 @@ func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data Ite
 			item.HasGroupWith(group.ID(gid)),
 		)
 
+	if data.Name != nil {
+		q.SetName(*data.Name)
+	}
+
+	if data.Description != nil {
+		q.SetDescription(*data.Description)
+	}
+
+	if data.Notes != nil {
+		q.SetNotes(*data.Notes)
+	}
+
 	if data.ImportRef != nil {
 		q.SetImportRef(*data.ImportRef)
 	}
@@ -1088,61 +1201,20 @@ func (e *ItemsRepository) Patch(ctx context.Context, gid, id uuid.UUID, data Ite
 	}
 
 	if data.LabelIDs != nil {
-		currentLabels, err := tx.Item.Query().Where(item.ID(id), item.HasGroupWith(group.ID(gid))).QueryLabel().All(ctx)
-		if err != nil {
+		if err := e.patchLabels(ctx, tx, gid, id, data.LabelIDs); err != nil {
 			return err
-		}
-		set := newIDSet(currentLabels)
-
-		addLabels := []uuid.UUID{}
-		for _, l := range data.LabelIDs {
-			if set.Contains(l) {
-				set.Remove(l)
-			} else {
-				addLabels = append(addLabels, l)
-			}
-		}
-
-		if len(addLabels) > 0 {
-			if err := tx.Item.Update().
-				Where(item.ID(id), item.HasGroupWith(group.ID(gid))).
-				AddLabelIDs(addLabels...).
-				Exec(ctx); err != nil {
-				return err
-			}
-		}
-		if set.Len() > 0 {
-			if err := tx.Item.Update().
-				Where(item.ID(id), item.HasGroupWith(group.ID(gid))).
-				RemoveLabelIDs(set.Slice()...).
-				Exec(ctx); err != nil {
-				return err
-			}
 		}
 	}
 
 	if data.LocationID != uuid.Nil {
-		itemEnt, err := tx.Item.Query().Where(item.ID(id), item.HasGroupWith(group.ID(gid))).Only(ctx)
-		if err != nil {
+		if err := e.patchSyncChildLocations(ctx, tx, gid, id, data.LocationID); err != nil {
 			return err
 		}
-		if itemEnt.SyncChildItemsLocations {
-			children, err := tx.Item.Query().Where(item.ID(id), item.HasGroupWith(group.ID(gid))).QueryChildren().All(ctx)
-			if err != nil {
-				return err
-			}
-			for _, child := range children {
-				childLocation, err := child.QueryLocation().First(ctx)
-				if err != nil {
-					return err
-				}
-				if data.LocationID != childLocation.ID {
-					err = child.Update().SetLocationID(data.LocationID).Exec(ctx)
-					if err != nil {
-						return err
-					}
-				}
-			}
+	}
+
+	if len(data.Fields) > 0 {
+		if err := e.patchCustomFields(ctx, tx, id, data.Fields); err != nil {
+			return err
 		}
 	}
 
