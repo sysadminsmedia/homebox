@@ -959,7 +959,7 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, data
 			}
 
 			if location != childLocation.ID {
-				err = child.Update().SetLocationID(location).Exec(ctx)
+				err = e.db.Item.Update().Where(item.ID(child.ID)).SetLocationID(location).Exec(ctx)
 				if err != nil {
 					return ItemOut{}, err
 				}
