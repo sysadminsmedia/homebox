@@ -4246,6 +4246,11 @@ const docTemplate = `{
                     "x-nullable": true,
                     "x-omitempty": true
                 },
+                "parentID": {
+                    "type": "string",
+                    "x-nullable": true,
+                    "x-omitempty": true
+                },
                 "quantity": {
                     "type": "integer",
                     "x-nullable": true,

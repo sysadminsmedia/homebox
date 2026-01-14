@@ -679,6 +679,7 @@ export interface ItemPatch {
   id: string;
   labelIds?: string[] | null;
   locationId?: string | null;
+  parentID?: string | null;
   quantity?: number | null;
 }
 
