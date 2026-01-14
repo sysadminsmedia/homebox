@@ -45,7 +45,6 @@
   const auth = useAuthContext();
 
   const details = computed(() => {
-    console.log(auth.user);
     return [
       {
         name: "global.name",
