@@ -18,6 +18,9 @@
   import BaseCard from "@/components/Base/Card.vue";
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import DetailsSection from "@/components/global/DetailsSection/DetailsSection.vue";
+  import CopyText from "@/components/global/CopyText.vue";
+  import DateTime from "@/components/global/DateTime.vue";
+  import PasswordScore from "~/components/global/PasswordScore.vue";
 
   const { t } = useI18n();
 
