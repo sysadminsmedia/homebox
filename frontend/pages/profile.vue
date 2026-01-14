@@ -2,36 +2,22 @@
   import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import type { Detail } from "~~/components/global/DetailsSection/types";
-  import type { CurrenciesCurrency, NotifierCreate, NotifierOut } from "~~/lib/api/types/data-contracts";
   import MdiLoading from "~icons/mdi/loading";
   import MdiAccount from "~icons/mdi/account";
-  import MdiMegaphone from "~icons/mdi/megaphone";
   import MdiDelete from "~icons/mdi/delete";
   import MdiFill from "~icons/mdi/fill";
-  import MdiPencil from "~icons/mdi/pencil";
-  import MdiAccountMultiple from "~icons/mdi/account-multiple";
-  import { getLocaleCode } from "~/composables/use-formatters";
-  import { fmtCurrencyAsync } from "~/composables/utils";
   import { Button } from "@/components/ui/button";
   import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
   import { useDialog } from "@/components/ui/dialog-provider";
-  import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-  import { Label } from "@/components/ui/label";
-  import { badgeVariants } from "@/components/ui/badge";
   import LanguageSelector from "~/components/App/LanguageSelector.vue";
-  import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
   import { DialogID } from "~/components/ui/dialog-provider/utils";
   import ThemePicker from "~/components/App/ThemePicker.vue";
   import ItemDuplicateSettings from "~/components/Item/DuplicateSettings.vue";
   import FormPassword from "~/components/Form/Password.vue";
-  import FormCheckbox from "~/components/Form/Checkbox.vue";
-  import FormTextField from "~/components/Form/TextField.vue";
   import BaseContainer from "@/components/Base/Container.vue";
   import BaseCard from "@/components/Base/Card.vue";
   import BaseSectionHeader from "@/components/Base/SectionHeader.vue";
   import DetailsSection from "@/components/global/DetailsSection/DetailsSection.vue";
-  import CopyText from "@/components/global/CopyText.vue";
-  import DateTime from "@/components/global/DateTime.vue";
   import PasswordScore from "~/components/global/PasswordScore.vue";
 
   const { t } = useI18n();
@@ -48,16 +34,6 @@
 
   const { openDialog, closeDialog } = useDialog();
 
-  const currencies = computedAsync(async () => {
-    const resp = await api.group.currencies();
-    if (resp.error) {
-      toast.error(t("profile.toast.failed_get_currencies"));
-      return [];
-    }
-
-    return resp.data;
-  });
-
   const preferences = useViewPreferences();
   function setDisplayHeader() {
     preferences.value.displayLegacyHeader = !preferences.value.displayLegacyHeader;
@@ -66,74 +42,9 @@
     preferences.value.legacyImageFit = !preferences.value.legacyImageFit;
   }
 
-  // Currency Selection
-  const currency = ref<CurrenciesCurrency>({
-    code: "USD",
-    name: "United States Dollar",
-    local: "en-US",
-    symbol: "$",
-    decimals: 2,
-  });
-  watch(currency, () => {
-    if (group.value) {
-      group.value.currency = currency.value.code;
-    }
-  });
-
-  const currencyExample = ref("$1,000.00");
-
-  // Update currency example when currency changes
-  watch(
-    currency,
-    async () => {
-      if (currency.value) {
-        currencyExample.value = await fmtCurrencyAsync(1000, currency.value.code, getLocaleCode());
-      }
-    },
-    { immediate: true }
-  );
-
-  const { data: group } = useAsyncData(async () => {
-    const { data } = await api.group.get();
-    return data;
-  });
-
-  // Sync Initial Currency
-  watch(group, () => {
-    if (!group.value) {
-      return;
-    }
-
-    // @ts-expect-error - typescript is stupid, it should know group.value is not null
-    const found = currencies.value.find(c => c.code === group.value.currency);
-    if (found) {
-      currency.value = found;
-    }
-  });
-
-  async function updateGroup() {
-    if (!group.value) {
-      return;
-    }
-
-    const { data, error } = await api.group.update({
-      name: group.value.name,
-      currency: group.value.currency,
-    });
-
-    if (error) {
-      toast.error(t("profile.toast.failed_update_group"));
-      return;
-    }
-
-    group.value = data;
-    toast.success(t("profile.toast.group_updated"));
-  }
-
   const auth = useAuthContext();
 
   const details = computed(() => {
-    console.log(auth.user);
     return [
       {
         name: "global.name",
@@ -164,28 +75,6 @@
     toast.error(t("profile.toast.failed_delete_account"));
   }
 
-  const token = ref("");
-  const tokenUrl = computed(() => {
-    if (!window) {
-      return "";
-    }
-
-    return `${window.location.origin}?token=${token.value}`;
-  });
-
-  async function generateToken() {
-    const date = new Date();
-
-    const { response, data } = await api.group.createInvitation({
-      expiresAt: new Date(date.setDate(date.getDate() + 7)),
-      uses: 1,
-    });
-
-    if (response?.status === 201) {
-      token.value = data.token;
-    }
-  }
-
   const passwordChange = reactive({
     loading: false,
     current: "",
@@ -212,117 +101,6 @@
     passwordChange.new = "";
     passwordChange.current = "";
     passwordChange.loading = false;
-  }
-
-  // ===========================================================
-  // Notifiers
-
-  const notifiers = useAsyncData(async () => {
-    const { data } = await api.notifiers.getAll();
-
-    return data;
-  });
-
-  const targetID = ref("");
-  const notifier = ref<NotifierCreate | null>(null);
-
-  function openNotifierDialog(v: NotifierOut | null) {
-    if (v) {
-      targetID.value = v.id;
-      notifier.value = {
-        name: v.name,
-        url: v.url,
-        isActive: v.isActive,
-      };
-    } else {
-      notifier.value = {
-        name: "",
-        url: "",
-        isActive: true,
-      };
-    }
-
-    openDialog(DialogID.CreateNotifier);
-  }
-
-  async function createNotifier() {
-    if (!notifier.value) {
-      return;
-    }
-
-    if (targetID.value) {
-      await editNotifier();
-      return;
-    }
-
-    const result = await api.notifiers.create({
-      name: notifier.value.name,
-      url: notifier.value.url || "",
-      isActive: notifier.value.isActive,
-    });
-
-    if (result.error) {
-      toast.error(t("profile.toast.failed_create_notifier"));
-    }
-
-    notifier.value = null;
-    closeDialog(DialogID.CreateNotifier);
-
-    await notifiers.refresh();
-  }
-
-  async function editNotifier() {
-    if (!notifier.value) {
-      return;
-    }
-
-    const result = await api.notifiers.update(targetID.value, {
-      name: notifier.value.name,
-      url: notifier.value.url || "",
-      isActive: notifier.value.isActive,
-    });
-
-    if (result.error) {
-      toast.error(t("profile.toast.failed_update_notifier"));
-    }
-
-    notifier.value = null;
-    closeDialog(DialogID.CreateNotifier);
-    targetID.value = "";
-
-    await notifiers.refresh();
-  }
-
-  async function deleteNotifier(id: string) {
-    const result = await confirm.open(t("profile.delete_notifier_confirm"));
-
-    if (result.isCanceled) {
-      return;
-    }
-
-    const { error } = await api.notifiers.delete(id);
-
-    if (error) {
-      toast.error(t("profile.toast.failed_delete_notifier"));
-      return;
-    }
-
-    await notifiers.refresh();
-  }
-
-  async function testNotifier() {
-    if (!notifier.value) {
-      return;
-    }
-
-    const { error } = await api.notifiers.test(notifier.value.url);
-
-    if (error) {
-      toast.error(t("profile.toast.failed_test_notifier"));
-      return;
-    }
-
-    toast.success(t("profile.toast.notifier_test_success"));
   }
 </script>
 
@@ -366,33 +144,6 @@
       </DialogContent>
     </Dialog>
 
-    <Dialog :dialog-id="DialogID.CreateNotifier">
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle> {{ $t("profile.notifier_modal", { type: notifier != null }) }} </DialogTitle>
-        </DialogHeader>
-
-        <form @submit.prevent="createNotifier">
-          <template v-if="notifier">
-            <FormTextField v-model="notifier.name" :label="$t('global.name')" class="mb-2" />
-            <FormTextField v-model="notifier.url" :label="$t('profile.url')" class="mb-2" />
-            <div class="max-w-[100px]">
-              <FormCheckbox v-model="notifier.isActive" :label="$t('profile.enabled')" />
-            </div>
-          </template>
-          <div class="mt-4 flex justify-between gap-2">
-            <DialogFooter class="flex w-full">
-              <Button variant="secondary" :disabled="!(notifier && notifier.url)" type="button" @click="testNotifier">
-                {{ $t("profile.test") }}
-              </Button>
-              <div class="grow" />
-              <Button type="submit"> {{ $t("global.submit") }} </Button>
-            </DialogFooter>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
-
     <BaseContainer class="flex flex-col gap-4">
       <BaseCard>
         <template #title>
@@ -410,118 +161,42 @@
             <Button variant="secondary" size="sm" @click="openDialog(DialogID.ChangePassword)">
               {{ $t("profile.change_password") }}
             </Button>
-            <Button variant="secondary" size="sm" @click="generateToken"> {{ $t("profile.gen_invite") }} </Button>
             <Button variant="secondary" size="sm" @click="openDialog(DialogID.DuplicateSettings)">
               {{ $t("items.duplicate.title") }}
             </Button>
-          </div>
-          <div v-if="token" class="flex items-center gap-2 pl-1 pt-4">
-            <CopyText :text="tokenUrl" />
-            {{ tokenUrl }}
-          </div>
-          <div v-if="token" class="flex items-center gap-2 pl-1 pt-4">
-            <CopyText :text="token" />
-            {{ token }}
           </div>
         </div>
         <LanguageSelector />
       </BaseCard>
 
+      <!-- TODO: Remove this notice once users are familiar with the collection-based settings. -->
       <BaseCard>
         <template #title>
           <BaseSectionHeader>
-            <MdiMegaphone class="-mt-1 mr-2" />
-            <span> {{ $t("profile.notifiers") }} </span>
-            <template #description> {{ $t("profile.notifiers_sub") }} </template>
-          </BaseSectionHeader>
-        </template>
-
-        <div v-if="notifiers.data.value" class="mx-4 divide-y rounded-md border">
-          <p v-if="notifiers.data.value.length === 0" class="p-2 text-center text-sm">
-            {{ $t("profile.no_notifiers") }}
-          </p>
-          <article v-for="n in notifiers.data.value" v-else :key="n.id" class="p-2">
-            <div class="flex flex-wrap items-center gap-2">
-              <p class="mr-auto text-lg">{{ n.name }}</p>
-              <TooltipProvider :delay-duration="0" class="flex justify-end gap-2">
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Button variant="destructive" size="icon" @click="deleteNotifier(n.id)">
-                      <MdiDelete />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent> {{ $t("global.delete") }} </TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <Button variant="outline" size="icon" @click="openNotifierDialog(n)">
-                      <MdiPencil />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent> {{ $t("global.edit") }} </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-            <div class="flex flex-wrap justify-between py-1 text-sm">
-              <p>
-                <span v-if="n.isActive" :class="badgeVariants()"> {{ $t("profile.active") }} </span>
-                <span v-else :class="badgeVariants({ variant: 'destructive' })"> {{ $t("profile.inactive") }} </span>
-              </p>
-              <p>
-                {{ $t("global.created") }}
-                <DateTime format="relative" datetime-type="time" :date="n.createdAt" />
-              </p>
-            </div>
-          </article>
-        </div>
-
-        <div class="p-4">
-          <Button variant="secondary" size="sm" @click="openNotifierDialog"> {{ $t("global.create") }} </Button>
-        </div>
-      </BaseCard>
-
-      <BaseCard>
-        <template #title>
-          <BaseSectionHeader class="pb-0">
-            <MdiAccountMultiple class="-mt-1 mr-2" />
-            <span> {{ $t("profile.group_settings") }} </span>
+            <span> {{ $t("profile.moved_notice_title") }} </span>
             <template #description>
-              {{ $t("profile.group_settings_sub") }}
+              {{ $t("profile.moved_notice_description") }}
             </template>
           </BaseSectionHeader>
         </template>
 
-        <div v-if="group && currencies && currencies.length > 0" class="p-5 pt-0">
-          <Label for="currency"> {{ $t("profile.currency_format") }} </Label>
-          <Select
-            id="currency"
-            :model-value="currency.code"
-            @update:model-value="
-              event => {
-                const newCurrency = currencies?.find(c => c.code === event);
-                if (newCurrency) {
-                  currency = newCurrency;
-                }
-              }
-            "
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem v-for="c in currencies" :key="c.code" :value="c.code">
-                {{ c.name }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
-          <p class="m-2 text-sm">{{ $t("profile.example") }}: {{ currencyExample }}</p>
-
-          <div class="mt-4">
-            <Button variant="secondary" size="sm" @click="updateGroup"> {{ $t("profile.update_group") }} </Button>
+        <div class="space-y-2 px-4 pb-4 text-sm text-muted-foreground">
+          <p>
+            {{ $t("profile.moved_notice_body") }}
+          </p>
+          <div class="flex flex-wrap gap-2">
+            <NuxtLink to="/collection/settings" class="text-primary underline">
+              {{ $t("profile.moved_notice_link_settings") }}
+            </NuxtLink>
+            <NuxtLink to="/collection/notifiers" class="text-primary underline">
+              {{ $t("profile.moved_notice_link_notifiers") }}
+            </NuxtLink>
+            <NuxtLink to="/collection/invites" class="text-primary underline">
+              {{ $t("profile.moved_notice_link_invites") }}
+            </NuxtLink>
           </div>
         </div>
       </BaseCard>
-
       <BaseCard>
         <template #title>
           <BaseSectionHeader>

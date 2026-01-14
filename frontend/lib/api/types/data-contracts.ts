@@ -508,6 +508,8 @@ export interface EntUser {
   activated_on: string;
   /** CreatedAt holds the value of the "created_at" field. */
   created_at: string;
+  /** DefaultGroupID holds the value of the "default_group_id" field. */
+  default_group_id: string;
   /**
    * Edges holds the relations/edges for other nodes in the graph.
    * The values are being populated by the UserQuery when eager-loading is set.
@@ -536,8 +538,8 @@ export interface EntUser {
 export interface EntUserEdges {
   /** AuthTokens holds the value of the auth_tokens edge. */
   auth_tokens: EntAuthTokens[];
-  /** Group holds the value of the group edge. */
-  group: EntGroup;
+  /** Groups holds the value of the groups edge. */
+  groups: EntGroup[];
   /** Notifiers holds the value of the notifiers edge. */
   notifiers: EntNotifier[];
 }
@@ -568,6 +570,13 @@ export interface Group {
   id: string;
   name: string;
   updatedAt: Date | string;
+}
+
+export interface GroupInvitation {
+  expiresAt: Date | string;
+  group: Group;
+  id: string;
+  uses: number;
 }
 
 export interface GroupStatistics {
@@ -1028,15 +1037,22 @@ export interface TreeItem {
 }
 
 export interface UserOut {
+  defaultGroupId: string;
   email: string;
-  groupId: string;
-  groupName: string;
+  groupIds: string[];
   id: string;
   isOwner: boolean;
   isSuperuser: boolean;
   name: string;
   oidcIssuer: string;
   oidcSubject: string;
+}
+
+export interface UserSummary {
+  email: string;
+  id: string;
+  isOwner: boolean;
+  name: string;
 }
 
 export interface UserUpdate {
@@ -1098,6 +1114,15 @@ export interface ChangePassword {
   new: string;
 }
 
+export interface CreateRequest {
+  name: string;
+}
+
+export interface GroupAcceptInvitationResponse {
+  id: string;
+  name: string;
+}
+
 export interface GroupInvitation {
   expiresAt: Date | string;
   token: string;
@@ -1111,6 +1136,10 @@ export interface GroupInvitationCreate {
    * @max 100
    */
   uses: number;
+}
+
+export interface GroupMemberAdd {
+  userId: string;
 }
 
 export interface ItemAttachmentToken {
