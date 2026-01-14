@@ -292,6 +292,47 @@
                 "updated": "Template updated"
             },
             "using_template": "Using template: {name}"
+        },
+        "collection": {
+            "selector": {
+                "select_collection": "Select Collection",
+                "create_collection": "Create New Collection",
+                "join_collection": "Join Existing Collection",
+                "no_collection_found": "No collection found",
+                "your_collections": "Your Collections",
+                "collection_options": "Collection Options",
+                "search_collections": "Search Collections..."
+            },
+            "create_modal": {
+                "title": "Create Collection",
+                "name_label": "Collection Name",
+                "toast": {
+                    "already_creating": "Already creating a collection",
+                    "create_failed": "Failed to create collection",
+                    "create_success": "Collection created",
+                    "please_enter_name": "Please enter a collection name"
+                }
+            },
+            "join_modal": {
+                "title": "Join Collection",
+                "invite_code_label": "Collection Invite Code",
+                "join": "Join Collection",
+                "no_invite_code_create_one": "No invite code? Create a new collection instead",
+                "invites_should_look_like": "Invites should look like:",
+                "toast": {
+                    "already_joining": "Already joining a collection",
+                    "join_failed": "Failed to join collection",
+                    "join_success": "Collection joined",
+                    "please_enter_valid_join_code": "Please enter a valid collection invite code"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_uses": "Uses must be a number between 1 and 100.",
+                    "invalid_expiry_missing": "Please choose an expiration date and time.",
+                    "invalid_expiry_past": "Expiration date must be in the future."
+                }
+            }
         }
     },
     "errors": {
@@ -619,7 +660,7 @@
         "scanner": "Scanner",
         "search": "Search",
         "templates": "Templates",
-        "tools": "Tools"
+        "collection_options": "Collection Options"
     },
     "pages": {
         "templates": {
@@ -639,7 +680,6 @@
         "display_legacy_header": "{ currentValue, select, true {Disable Legacy Header} false {Enable Legacy Header} other {Not Hit}}",
         "enabled": "Enabled",
         "example": "Example",
-        "gen_invite": "Generate Invite Link",
         "group_settings": "Group Settings",
         "group_settings_sub": "Shared Group Settings. You may need to refresh your browser for some settings to apply.",
         "inactive": "Inactive",
@@ -673,7 +713,13 @@
         "update_language": "Update Language",
         "url": "URL",
         "user_profile": "User Profile",
-        "user_profile_sub": "Invite users, and manage your account."
+        "user_profile_sub": "Invite users, and manage your account.",
+        "moved_notice_title": "Looking for notifiers, invites, or currency settings?",
+        "moved_notice_description": "These settings are now managed per collection.",
+        "moved_notice_body": "Notifiers, invites, and currency settings have been moved to the collection pages.",
+        "moved_notice_link_settings": "Collection currency settings",
+        "moved_notice_link_notifiers": "Collection notifiers",
+        "moved_notice_link_invites": "Collection invites"
     },
     "reports": {
         "label_generator": {
@@ -789,6 +835,50 @@
             "failed_wipe_inventory": "Failed to wipe inventory.",
             "failed_zero_datetimes": "Failed to reset date and time values.",
             "wipe_inventory_success": "Successfully wiped inventory. { results } items deleted."
+        }
+    },
+    "collection": {
+        "manage_collection": "Manage Collection",
+        "no_collections": {
+            "title": "No Collections Found",
+            "message": "It looks like you're not part of a collection. Create a new collection for your things, or join one you've been invited to.",
+            "create": "Create a new collection",
+            "join": "Join an existing collection"
+        },
+        "tabs": {
+            "members": "Members",
+            "invites": "Invites",
+            "settings": "Settings",
+            "notifiers": "Notifiers",
+            "tools": "Tools"
+        },
+        "leave_collection": "Leave Collection",
+        "delete_collection": "Delete Collection",
+        "leave_confirm": "Are you sure you want to leave this collection?",
+        "delete_confirm": "Are you sure you want to delete this collection? This action cannot be undone.",
+        "left_collection": "You have left the collection.",
+        "deleted_collection": "Collection deleted.",
+        "invites": "Invites",
+        "no_invites": "No invites",
+        "invite_token": "Token",
+        "expires_at": "Expires",
+        "uses": "Uses",
+        "invite_token_warning": "Invite tokens are only shown once. Copy the link now; you will not be able to view this token again after leaving or refreshing this page.",
+        "invite_token_hidden": "No longer visible",
+        "invites_delete_confirm": "Are you sure you want to delete this invite?",
+        "create_invite": "Create Invite",
+        "copy_invite": "Copy Invite Link",
+        "remaining_uses": "Remaining uses",
+        "members": {
+            "cannot_remove_last": "You cannot remove the last member.",
+            "removed": "Member removed",
+            "remove_confirm": "Are you sure you want to remove this member?",
+            "empty": "No members in this collection yet.",
+            "name": "Name",
+            "email": "Email",
+            "role": "Role",
+            "owner": "Owner",
+            "member": "Member"
         }
     }
 }
