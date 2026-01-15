@@ -81,7 +81,7 @@ type (
 		DefaultLifetimeWarranty bool    `json:"defaultLifetimeWarranty"`
 		DefaultWarrantyDetails  *string `json:"defaultWarrantyDetails,omitempty" validate:"omitempty,max=1000" extensions:"x-nullable"`
 
-		// Default location and labels
+		// Default location and tags
 		DefaultLocationID uuid.UUID    `json:"defaultLocationId,omitempty" extensions:"x-nullable"`
 		DefaultTagIDs     *[]uuid.UUID `json:"defaultTagIds,omitempty"   extensions:"x-nullable"`
 
