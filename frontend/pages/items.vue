@@ -2,8 +2,8 @@
   import { useI18n } from "vue-i18n";
   import { toast } from "@/components/ui/sonner";
   import { Input } from "~/components/ui/input";
-  import type { ItemSummary, LabelSummary, LocationOutCount } from "~~/lib/api/types/data-contracts";
-  import { useLabelStore } from "~~/stores/labels";
+  import type { ItemSummary, TagSummary, LocationOutCount } from "~~/lib/api/types/data-contracts";
+  import { useTagStore } from "~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
   import MdiLoading from "~icons/mdi/loading";
   import MdiMagnify from "~icons/mdi/magnify";
@@ -84,12 +84,12 @@
   const query = useOptionalRouteQuery("q", "");
   const includeArchived = useOptionalRouteQuery("archived", false);
   const fieldSelector = useOptionalRouteQuery("fieldSelector", false);
-  const negateLabels = useOptionalRouteQuery("negateLabels", false);
+  const negateTags = useOptionalRouteQuery("negateTags", false);
   const onlyWithoutPhoto = useOptionalRouteQuery("onlyWithoutPhoto", false);
   const onlyWithPhoto = useOptionalRouteQuery("onlyWithPhoto", false);
   const orderBy = useOptionalRouteQuery("orderBy", "name");
   const qLoc = useOptionalRouteQuery("loc", []);
-  const qLab = useOptionalRouteQuery("lab", []);
+  const qTag = useOptionalRouteQuery("tag", []);
 
   const preferences = useViewPreferences();
   const pageSize = computed(() => preferences.value.itemsPerTablePage);
@@ -100,13 +100,13 @@
   onMounted(async () => {
     loading.value = true;
     searchLocked.value = true;
-    await Promise.all([locationsStore.ensureLocationsFetched(), labelStore.ensureAllLabelsFetched()]);
+    await Promise.all([locationsStore.ensureLocationsFetched(), tagStore.ensureAllTagsFetched()]);
     if (qLoc) {
       selectedLocations.value = locations.value.filter(l => qLoc.value.includes(l.id));
     }
 
-    if (qLab) {
-      selectedLabels.value = labels.value.filter(l => qLab.value.includes(l.id));
+    if (qTag) {
+      selectedTags.value = tags.value.filter(l => qTag.value.includes(l.id));
     }
 
     queryParamsInitialized.value = true;
@@ -124,7 +124,7 @@
     }
 
     // trigger search if no changes
-    if (!qLab && !qLoc) {
+    if (!qTag && !qLoc) {
       search();
     }
 
@@ -142,14 +142,14 @@
 
   const locations = computed(() => locationsStore.allLocations);
 
-  const labelStore = useLabelStore();
-  const labels = computed(() => labelStore.labels);
+  const tagStore = useTagStore();
+  const tags = computed(() => tagStore.tags);
 
   const selectedLocations = ref<LocationOutCount[]>([]);
-  const selectedLabels = ref<LabelSummary[]>([]);
+  const selectedTags = ref<TagSummary[]>([]);
 
   const locIDs = computed(() => selectedLocations.value.map(l => l.id));
-  const labIDs = computed(() => selectedLabels.value.map(l => l.id));
+  const tagIDs = computed(() => selectedTags.value.map(l => l.id));
 
   function parseAssetIDString(d: string) {
     d = d.replace(/"/g, "").replace(/-/g, "");
@@ -201,7 +201,7 @@
     }
   });
 
-  watch(negateLabels, (newV, oldV) => {
+  watch(negateTags, (newV, oldV) => {
     if (newV !== oldV) {
       search();
     }
@@ -265,14 +265,14 @@
     const push_query: Record<string, string | string[] | number | boolean | undefined> = {
       archived: includeArchived.value,
       fieldSelector: fieldSelector.value,
-      negateLabels: negateLabels.value,
+      negateTags: negateTags.value,
       onlyWithoutPhoto: onlyWithoutPhoto.value,
       onlyWithPhoto: onlyWithPhoto.value,
       orderBy: orderBy.value,
       page: page.value,
       q: query.value,
       loc: locIDs.value,
-      lab: labIDs.value,
+      tag: tagIDs.value,
       fields: fields,
     };
 
@@ -301,8 +301,8 @@
     const { data, error } = await api.items.getAll({
       q: query.value || "",
       locations: locIDs.value,
-      labels: labIDs.value,
-      negateLabels: negateLabels.value,
+      tags: tagIDs.value,
+      negateTags: negateTags.value,
       onlyWithoutPhoto: onlyWithoutPhoto.value,
       onlyWithPhoto: onlyWithPhoto.value,
       includeArchived: includeArchived.value,
@@ -337,7 +337,7 @@
     initialSearch.value = false;
   }
 
-  watchDebounced([page, pageSize, query, selectedLabels, selectedLocations], search, { debounce: 250, maxWait: 1000 });
+  watchDebounced([page, pageSize, query, selectedTags, selectedLocations], search, { debounce: 250, maxWait: 1000 });
 
   async function submit() {
     // Set URL Params
@@ -379,7 +379,7 @@
 
 <template>
   <BaseContainer>
-    <div v-if="locations && labels">
+    <div v-if="locations && tags">
       <div class="flex flex-wrap items-end gap-4 md:flex-nowrap">
         <div class="w-full">
           <Input v-model:model-value="query" :placeholder="$t('global.search')" class="h-12" />
@@ -396,7 +396,7 @@
 
       <div class="flex w-full flex-wrap gap-2 py-2 md:flex-nowrap">
         <SearchFilter v-model="selectedLocations" :label="$t('global.locations')" :options="locationFlatTree" />
-        <SearchFilter v-model="selectedLabels" :label="$t('global.labels')" :options="labels" />
+        <SearchFilter v-model="selectedTags" :label="$t('global.tags')" :options="tags" />
         <Popover>
           <PopoverTrigger as-child>
             <Button size="sm" variant="outline"> {{ $t("items.options") }}</Button>
@@ -413,9 +413,9 @@
               {{ $t("items.field_selector") }}
             </Label>
             <Label class="flex cursor-pointer items-center">
-              <Switch v-model="negateLabels" class="ml-auto" />
+              <Switch v-model="negateTags" class="ml-auto" />
               <div class="grow" />
-              {{ $t("items.negate_labels") }}
+              {{ $t("items.negate_tags") }}
             </Label>
             <Label class="flex cursor-pointer items-center">
               <Switch v-model="onlyWithoutPhoto" class="ml-auto" />

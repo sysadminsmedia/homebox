@@ -18,7 +18,7 @@ backend/internal/data/
 │   │   ├── item.go         # Item entity schema
 │   │   ├── user.go         # User entity schema
 │   │   ├── location.go     # Location entity schema
-│   │   ├── label.go        # Label entity schema
+│   │   ├── tag.go          # Tag entity schema
 │   │   └── mixins/         # Reusable schema mixins
 │   ├── *.go                # Generated entity code
 │   └── migrate/            # Generated migrations
@@ -57,7 +57,7 @@ func (Item) Fields() []ent.Field {
 func (Item) Edges() []ent.Edge {
     return []ent.Edge{
         edge.From("location", Location.Type).Ref("items").Unique(),
-        edge.From("labels", Label.Type).Ref("items"),
+        edge.From("tags", Tag.Type).Ref("items"),
     }
 }
 
@@ -143,7 +143,7 @@ Repositories typically implement:
 ```go
 items, err := r.db.Item.Query().
     WithLocation().        // Load location edge
-    WithLabels().          // Load labels edge
+    WithTags().            // Load tags edge
     WithChildren().        // Load child items
     Where(item.GroupIDEQ(gid)).
     All(ctx)

@@ -13,7 +13,7 @@ import (
 
 // TestWipeInventory_Integration tests the complete wipe inventory flow
 func TestWipeInventory_Integration(t *testing.T) {
-	// Create test data: locations, labels, items with maintenance
+	// Create test data: locations, tags, items with maintenance
 
 	// 1. Create locations
 	loc1, err := tRepos.Locations.Create(context.Background(), tGroup.ID, LocationCreate{
@@ -28,16 +28,16 @@ func TestWipeInventory_Integration(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	// 2. Create labels
-	label1, err := tRepos.Labels.Create(context.Background(), tGroup.ID, LabelCreate{
+	// 2. Create tags
+	tag1, err := tRepos.Tags.Create(context.Background(), tGroup.ID, TagCreate{
 		Name:        "Test Electronics",
-		Description: "Electronics label",
+		Description: "Electronics tag",
 	})
 	require.NoError(t, err)
 
-	label2, err := tRepos.Labels.Create(context.Background(), tGroup.ID, LabelCreate{
+	tag2, err := tRepos.Tags.Create(context.Background(), tGroup.ID, TagCreate{
 		Name:        "Test Tools",
-		Description: "Tools label",
+		Description: "Tools tag",
 	})
 	require.NoError(t, err)
 
@@ -46,7 +46,7 @@ func TestWipeInventory_Integration(t *testing.T) {
 		Name:        "Test Laptop",
 		Description: "Work laptop",
 		LocationID:  loc1.ID,
-		LabelIDs:    []uuid.UUID{label1.ID},
+		TagIDs:    []uuid.UUID{tag1.ID},
 	})
 	require.NoError(t, err)
 
@@ -54,7 +54,7 @@ func TestWipeInventory_Integration(t *testing.T) {
 		Name:        "Test Drill",
 		Description: "Power drill",
 		LocationID:  loc2.ID,
-		LabelIDs:    []uuid.UUID{label2.ID},
+		TagIDs:    []uuid.UUID{tag2.ID},
 	})
 	require.NoError(t, err)
 
@@ -62,7 +62,7 @@ func TestWipeInventory_Integration(t *testing.T) {
 		Name:        "Test Monitor",
 		Description: "Computer monitor",
 		LocationID:  loc1.ID,
-		LabelIDs:    []uuid.UUID{label1.ID},
+		TagIDs:    []uuid.UUID{tag1.ID},
 	})
 	require.NoError(t, err)
 
@@ -120,13 +120,12 @@ func TestWipeInventory_Integration(t *testing.T) {
 	require.NoError(t, err)
 	assert.Empty(t, maint1After, "Item 1 maintenance records should be deleted")
 
-	// 10. Verify labels are deleted
-	_, err = tRepos.Labels.GetOneByGroup(context.Background(), tGroup.ID, label1.ID)
-	require.Error(t, err, "Label 1 should be deleted")
+	// 10. Verify tags are deleted
+	_, err = tRepos.Tags.GetOneByGroup(context.Background(), tGroup.ID, tag1.ID)
+	require.Error(t, err, "Tag 1 should be deleted")
 
-	_, err = tRepos.Labels.GetOneByGroup(context.Background(), tGroup.ID, label2.ID)
-	require.Error(t, err, "Label 2 should be deleted")
-
+	_, err = tRepos.Tags.GetOneByGroup(context.Background(), tGroup.ID, tag2.ID)
+	require.Error(t, err, "Tag 2 should be deleted")
 	// 11. Verify locations are deleted
 	_, err = tRepos.Locations.Get(context.Background(), loc1.ID)
 	require.Error(t, err, "Location 1 should be deleted")
@@ -144,9 +143,9 @@ func TestWipeInventory_SelectiveWipe(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	label, err := tRepos.Labels.Create(context.Background(), tGroup.ID, LabelCreate{
+	tag, err := tRepos.Tags.Create(context.Background(), tGroup.ID, TagCreate{
 		Name:        "Test Important",
-		Description: "Important label",
+		Description: "Important tag",
 	})
 	require.NoError(t, err)
 
@@ -154,7 +153,7 @@ func TestWipeInventory_SelectiveWipe(t *testing.T) {
 		Name:        "Test Computer",
 		Description: "Desktop computer",
 		LocationID:  loc.ID,
-		LabelIDs:    []uuid.UUID{label.ID},
+		TagIDs:    []uuid.UUID{tag.ID},
 	})
 	require.NoError(t, err)
 
@@ -166,7 +165,7 @@ func TestWipeInventory_SelectiveWipe(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	// Test: Wipe only items (keep labels and locations)
+	// Test: Wipe only items (keep tags and locations)
 	deleted, err := tRepos.Items.WipeInventory(context.Background(), tGroup.ID, false, false, false)
 	require.NoError(t, err)
 	assert.Positive(t, deleted, "Should have deleted at least items")
@@ -180,15 +179,14 @@ func TestWipeInventory_SelectiveWipe(t *testing.T) {
 	require.NoError(t, err)
 	assert.Empty(t, maintList, "Maintenance should be cascade deleted")
 
-	// Verify label still exists
-	_, err = tRepos.Labels.GetOneByGroup(context.Background(), tGroup.ID, label.ID)
-	require.NoError(t, err, "Label should still exist")
-
+	// Verify tag still exists
+	_, err = tRepos.Tags.GetOneByGroup(context.Background(), tGroup.ID, tag.ID)
+	require.NoError(t, err, "Tag should still exist")
 	// Verify location still exists
 	_, err = tRepos.Locations.Get(context.Background(), loc.ID)
 	require.NoError(t, err, "Location should still exist")
 
 	// Cleanup
-	_ = tRepos.Labels.DeleteByGroup(context.Background(), tGroup.ID, label.ID)
+	_ = tRepos.Tags.DeleteByGroup(context.Background(), tGroup.ID, tag.ID)
 	_ = tRepos.Locations.delete(context.Background(), loc.ID)
 }

@@ -6,7 +6,7 @@ Using the CSV import is the recommended way for adding items to the database. It
 
 **Current Limitations**
 
- - Imports only support importing items, locations, and labels
+ - Imports only support importing items, locations, and tags
  - Imports and Exports do not support attachments. Attachments must be uploaded after import
  - CSV Exports do not support nested path exports (e.g. `Home / Office / Desk`) and will only export the Items direct parent, (though imports _do_ support nested paths)
  - Cannot specify item-to-item relationships (e.g. `Item A` is a child of `Item B`)
@@ -40,9 +40,9 @@ Specifying import refs also allows you to update existing items via the CSV impo
 
    * Supports Path Separators for nested locations (e.g. `Home / Office / Desk`)
 
-`HB.labels`
+`HB.tags`
 
-:   List of labels to apply to the item separated by a `;` can be existing or new labels.
+:   List of tags to apply to the item separated by a `;` can be existing or new tags.
 
 `HB.field.{field_name}` (e.g. `HB.field.Serial Number`)
 

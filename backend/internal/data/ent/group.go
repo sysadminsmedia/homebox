@@ -40,8 +40,8 @@ type GroupEdges struct {
 	Locations []*Location `json:"locations,omitempty"`
 	// Items holds the value of the items edge.
 	Items []*Item `json:"items,omitempty"`
-	// Labels holds the value of the labels edge.
-	Labels []*Label `json:"labels,omitempty"`
+	// Tags holds the value of the tags edge.
+	Tags []*Tag `json:"tags,omitempty"`
 	// InvitationTokens holds the value of the invitation_tokens edge.
 	InvitationTokens []*GroupInvitationToken `json:"invitation_tokens,omitempty"`
 	// Notifiers holds the value of the notifiers edge.
@@ -80,13 +80,13 @@ func (e GroupEdges) ItemsOrErr() ([]*Item, error) {
 	return nil, &NotLoadedError{edge: "items"}
 }
 
-// LabelsOrErr returns the Labels value or an error if the edge
+// TagsOrErr returns the Tags value or an error if the edge
 // was not loaded in eager-loading.
-func (e GroupEdges) LabelsOrErr() ([]*Label, error) {
+func (e GroupEdges) TagsOrErr() ([]*Tag, error) {
 	if e.loadedTypes[3] {
-		return e.Labels, nil
+		return e.Tags, nil
 	}
-	return nil, &NotLoadedError{edge: "labels"}
+	return nil, &NotLoadedError{edge: "tags"}
 }
 
 // InvitationTokensOrErr returns the InvitationTokens value or an error if the edge
@@ -200,9 +200,9 @@ func (_m *Group) QueryItems() *ItemQuery {
 	return NewGroupClient(_m.config).QueryItems(_m)
 }
 
-// QueryLabels queries the "labels" edge of the Group entity.
-func (_m *Group) QueryLabels() *LabelQuery {
-	return NewGroupClient(_m.config).QueryLabels(_m)
+// QueryTags queries the "tags" edge of the Group entity.
+func (_m *Group) QueryTags() *TagQuery {
+	return NewGroupClient(_m.config).QueryTags(_m)
 }
 
 // QueryInvitationTokens queries the "invitation_tokens" edge of the Group entity.

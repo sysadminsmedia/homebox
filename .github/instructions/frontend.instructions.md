@@ -16,7 +16,7 @@ frontend/
 ├── components/              # Vue components (auto-imported)
 │   ├── Item/               # Item-related components
 │   ├── Location/           # Location components
-│   ├── Label/              # Label components
+│   ├── Tag/                # Tag components
 │   ├── Form/               # Form components
 │   └── ui/                 # Shadcn-vue UI components
 ├── pages/                  # File-based routes (auto-routing)
