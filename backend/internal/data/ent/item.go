@@ -87,8 +87,8 @@ type ItemEdges struct {
 	Parent *Item `json:"parent,omitempty"`
 	// Children holds the value of the children edge.
 	Children []*Item `json:"children,omitempty"`
-	// Label holds the value of the label edge.
-	Label []*Label `json:"label,omitempty"`
+	// Tag holds the value of the tag edge.
+	Tag []*Tag `json:"tag,omitempty"`
 	// Location holds the value of the location edge.
 	Location *Location `json:"location,omitempty"`
 	// Fields holds the value of the fields edge.
@@ -133,13 +133,13 @@ func (e ItemEdges) ChildrenOrErr() ([]*Item, error) {
 	return nil, &NotLoadedError{edge: "children"}
 }
 
-// LabelOrErr returns the Label value or an error if the edge
+// TagOrErr returns the Tag value or an error if the edge
 // was not loaded in eager-loading.
-func (e ItemEdges) LabelOrErr() ([]*Label, error) {
+func (e ItemEdges) TagOrErr() ([]*Tag, error) {
 	if e.loadedTypes[3] {
-		return e.Label, nil
+		return e.Tag, nil
 	}
-	return nil, &NotLoadedError{edge: "label"}
+	return nil, &NotLoadedError{edge: "tag"}
 }
 
 // LocationOrErr returns the Location value or an error if the edge
@@ -417,9 +417,9 @@ func (_m *Item) QueryChildren() *ItemQuery {
 	return NewItemClient(_m.config).QueryChildren(_m)
 }
 
-// QueryLabel queries the "label" edge of the Item entity.
-func (_m *Item) QueryLabel() *LabelQuery {
-	return NewItemClient(_m.config).QueryLabel(_m)
+// QueryTag queries the "tag" edge of the Item entity.
+func (_m *Item) QueryTag() *TagQuery {
+	return NewItemClient(_m.config).QueryTag(_m)
 }
 
 // QueryLocation queries the "location" edge of the Item entity.

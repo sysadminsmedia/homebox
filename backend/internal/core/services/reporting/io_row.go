@@ -15,7 +15,7 @@ type ExportItemFields struct {
 type ExportCSVRow struct {
 	ImportRef string         `csv:"HB.import_ref"`
 	Location  LocationString `csv:"HB.location"`
-	LabelStr  LabelString    `csv:"HB.labels"`
+	TagStr    TagString      `csv:"HB.tags|HB.labels"`
 	AssetID   repo.AssetID   `csv:"HB.asset_id"`
 	Archived  bool           `csv:"HB.archived"`
 	URL       string         `csv:"HB.url"`
@@ -48,20 +48,20 @@ type ExportCSVRow struct {
 
 // ============================================================================
 
-// LabelString is a string slice that is used to represent a list of labels.
+// TagString is a string slice that is used to represent a list of tags.
 //
-// For example, a list of labels "Important; Work" would be represented as a
-// LabelString with the following values:
+// For example, a list of tags "Important; Work" would be represented as a
+// TagString with the following values:
 //
-//	LabelString{"Important", "Work"}
-type LabelString []string
+//	TagString{"Important", "Work"}
+type TagString []string
 
-func parseLabelString(s string) LabelString {
+func parseTagString(s string) TagString {
 	v, _ := parseSeparatedString(s, ";")
 	return v
 }
 
-func (ls LabelString) String() string {
+func (ls TagString) String() string {
 	return strings.Join(ls, "; ")
 }
 

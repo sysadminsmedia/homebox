@@ -1,4 +1,4 @@
-HB.name,HB.asset_id,HB.location,HB.labels
+HB.name,HB.asset_id,HB.location,HB.tags
 Item 1,1,Path / To / Location 1,L1 ; L2 ; L3
 Item 2,000-002,Path /To/ Location 2,L1;L2;L3
 Item 3,1000-003,Path / To /Location 3  ,   L1;L2;   L3

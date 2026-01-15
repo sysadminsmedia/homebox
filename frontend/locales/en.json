@@ -141,9 +141,9 @@
             },
             "view": {
                 "change_details": {
-                    "add_labels": "Add Labels",
+                    "add_tags": "Add Tags",
                     "failed_to_update_item": "Failed to update item",
-                    "remove_labels": "Remove Labels",
+                    "remove_tags": "Remove Tags",
                     "title": "Change Item Details"
                 },
                 "selectable": {
@@ -158,8 +158,8 @@
                 "table": {
                     "dropdown": {
                         "actions": "Actions",
-                        "change_labels": "Change Labels",
-                        "change_labels_success": "Labels Changed",
+                        "change_tags": "Change Tags",
+                        "change_tags_success": "Tags Changed",
                         "change_location": "Change Location",
                         "change_location_success": "Location Changed",
                         "create_maintenance_item": "Create Maintenance Entry for Item",
@@ -190,21 +190,21 @@
                 }
             }
         },
-        "label": {
+        "tag": {
             "create_modal": {
-                "label_color": "Label Color",
-                "label_description": "Label Description",
-                "label_name": "Label Name",
-                "title": "Create Label",
+                "tag_color": "Tag Color",
+                "tag_description": "Tag Description",
+                "tag_name": "Tag Name",
+                "title": "Create Tag",
                 "toast": {
-                    "already_creating": "Already creating a label",
-                    "create_failed": "Couldn't create label",
-                    "create_success": "Label created",
-                    "label_name_too_long": "Label name must not be longer than 50 characters"
+                    "already_creating": "Already creating a tag",
+                    "create_failed": "Couldn't create tag",
+                    "create_success": "Tag created",
+                    "tag_name_too_long": "Tag name must not be longer than 50 characters"
                 }
             },
             "selector": {
-                "select_labels": "Select Labels"
+                "select_tags": "Select Tags"
             }
         },
         "location": {
@@ -364,7 +364,7 @@
         "insured": "Insured",
         "items": "Items",
         "join_discord": "Join the Discord",
-        "labels": "Labels",
+        "tags": "Tags",
         "loading": "Loading…",
         "locations": "Locations",
         "maintenance": "Maintenance",
@@ -389,12 +389,12 @@
         "yes": "Yes"
     },
     "home": {
-        "labels": "Labels",
+        "tags": "Tags",
         "quick_statistics": "Quick Statistics",
         "recently_added": "Recently Added",
         "storage_locations": "Storage Locations",
         "total_items": "Total Items",
-        "total_labels": "Total Labels",
+        "total_tags": "Total Tags",
         "total_locations": "Total Locations",
         "total_value": "Total Value"
     },
@@ -481,7 +481,7 @@
         "manufacturer": "Manufacturer",
         "model_number": "Model Number",
         "name": "Name",
-        "negate_labels": "Negate Selected Labels",
+        "negate_tags": "Negate Selected Tags",
         "next_page": "Next Page",
         "no_attachments": "No attachments found",
         "no_results": "No Items Found",
@@ -514,7 +514,7 @@
         "sold_price": "Sold Price",
         "sold_to": "Sold To",
         "sync_child_locations": "Sync child items' locations",
-        "tip_1": "Location and label filters use the 'OR' operation. If more than one is selected only one will be\n required for a match.",
+        "tip_1": "Location and tag filters use the 'OR' operation. If more than one is selected only one will be\n required for a match.",
         "tip_2": "Searches prefixed with '#'' will query for a asset ID (example '#000-001')",
         "tip_3": "Field filters use the 'OR' operation. If more than one is selected only one will be required for a\n match.",
         "tips": "Tips",
@@ -550,17 +550,17 @@
         "warranty_details": "Warranty Details",
         "warranty_expires": "Warranty Expires"
     },
-    "labels": {
-        "label_delete_confirm": "Are you sure you want to delete this label? This action cannot be undone.",
-        "no_results": "No Labels Found",
+    "tags": {
+        "tag_delete_confirm": "Are you sure you want to delete this tag? This action cannot be undone.",
+        "no_results": "No Tags Found",
         "toast": {
-            "failed_delete_label": "Failed to delete label",
-            "failed_load_label": "Failed to load label",
-            "failed_update_label": "Failed to update label",
-            "label_deleted": "Label deleted",
-            "label_updated": "Label updated"
+            "failed_delete_tag": "Failed to delete tag",
+            "failed_load_tag": "Failed to load tag",
+            "failed_update_tag": "Failed to update tag",
+            "tag_deleted": "Tag deleted",
+            "tag_updated": "Tag updated"
         },
-        "update_label": "Update Label"
+        "update_tag": "Update Tag"
     },
     "languages": {
         "bs-BA": "Bosnian (Bosnia and Herzegovina)",
@@ -652,7 +652,7 @@
     },
     "menu": {
         "create_item": "Item / Asset",
-        "create_label": "Label",
+        "create_tag": "Tag",
         "create_location": "Location",
         "home": "Home",
         "locations": "Locations",
@@ -792,7 +792,7 @@
             "wipe_inventory": "Wipe Inventory",
             "wipe_inventory_button": "Wipe Inventory",
             "wipe_inventory_confirm": "Are you sure you want to wipe your entire inventory? This will delete all items and cannot be undone.",
-            "wipe_inventory_labels": "Also wipe all labels (tags)",
+            "wipe_inventory_tags": "Also wipe all tags",
             "wipe_inventory_locations": "Also wipe all locations",
             "wipe_inventory_maintenance": "Also wipe all maintenance records",
             "wipe_inventory_note": "Note: Only group owners can perform this action.",
@@ -804,7 +804,7 @@
         },
         "actions_sub": "Apply Actions to your inventory in bulk. These are irreversible actions. '<b>'Be careful.'</b>'",
         "demo_mode_error": {
-            "wipe_inventory": "Inventory, labels, locations and maintenance records cannot be wiped whilst Homebox is in demo mode. Please ensure that you are not in demo mode and try again."
+            "wipe_inventory": "Inventory, tags, locations and maintenance records cannot be wiped whilst Homebox is in demo mode. Please ensure that you are not in demo mode and try again."
         },
         "import_export": "Import/Export",
         "import_export_set": {
