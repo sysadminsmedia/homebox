@@ -573,8 +573,8 @@ func init() {
 	NotifiersTable.ForeignKeys[1].RefTable = UsersTable
 	TagsTable.ForeignKeys[0].RefTable = GroupsTable
 	TemplateFieldsTable.ForeignKeys[0].RefTable = ItemTemplatesTable
+	TagItemsTable.ForeignKeys[0].RefTable = TagsTable
+	TagItemsTable.ForeignKeys[1].RefTable = ItemsTable
 	UserGroupsTable.ForeignKeys[0].RefTable = UsersTable
 	UserGroupsTable.ForeignKeys[1].RefTable = GroupsTable
-	LabelItemsTable.ForeignKeys[0].RefTable = LabelsTable
-	LabelItemsTable.ForeignKeys[1].RefTable = ItemsTable
 }

@@ -293,7 +293,7 @@ func (svc *UserService) LoginOIDC(ctx context.Context, issuer, subject, email, n
 
 // registerOIDCUser creates a new user for OIDC authentication with issuer+subject identity.
 func (svc *UserService) registerOIDCUser(ctx context.Context, issuer, subject, email, name string) (repo.UserOut, error) {
-	group, err := svc.repos.Groups.GroupCreate(ctx, "Home")
+	group, err := svc.repos.Groups.GroupCreate(ctx, "Home", uuid.Nil)
 	if err != nil {
 		log.Err(err).Msg("Failed to create group for OIDC user")
 		return repo.UserOut{}, err
