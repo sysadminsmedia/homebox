@@ -784,7 +784,7 @@ export interface ItemTemplateUpdate {
   defaultDescription?: string | null;
   defaultInsured: boolean;
   defaultLifetimeWarranty: boolean;
-  /** Default location and tags */
+  /** Default location and labels */
   defaultLocationId?: string | null;
   /** @maxLength 255 */
   defaultManufacturer?: string | null;
