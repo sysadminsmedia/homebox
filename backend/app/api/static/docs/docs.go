@@ -4536,7 +4536,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "defaultLocationId": {
-                    "description": "Default location and labels",
+                    "description": "Default location and tags",
                     "type": "string",
                     "x-nullable": true
                 },

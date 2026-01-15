@@ -2986,7 +2986,7 @@ components:
         defaultLifetimeWarranty:
           type: boolean
         defaultLocationId:
-          description: Default location and labels
+          description: Default location and tags
           type: string
           nullable: true
         defaultManufacturer:
