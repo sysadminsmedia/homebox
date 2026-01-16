@@ -2,12 +2,15 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
 	"strings"
 	"time"
 
+	"entgo.io/ent/dialect"
+	entsql "entgo.io/ent/dialect/sql"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/pressly/goose/v3"
@@ -28,7 +31,7 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
 	"go.balki.me/anyhttp"
 
-	_ "github.com/lib/pq"
+	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/postgres"
 	_ "github.com/sysadminsmedia/homebox/backend/internal/data/migrations/sqlite3"
 	_ "github.com/sysadminsmedia/homebox/backend/pkgs/cgofreesqlite"
@@ -55,6 +58,24 @@ func build() string {
 	}
 
 	return fmt.Sprintf("%s, commit %s, built at %s", version, short, buildTime)
+}
+
+func openEntDriver(driverName, databaseURL string, opts ...ent.Option) (*ent.Client, error) {
+	switch driverName {
+	case config.DriverPostgres:
+		db, err := sql.Open("pgx", databaseURL)
+		if err != nil {
+			return nil, err
+		}
+		drv := entsql.OpenDB(dialect.Postgres, db)
+		return ent.NewClient(append(opts, ent.Driver(drv))...), nil
+
+	case config.DriverSqlite3:
+		return ent.Open(driverName, databaseURL, opts...)
+
+	default:
+		return nil, fmt.Errorf("unsupported driver: %s", driverName)
+	}
 }
 
 func validatePostgresSSLMode(sslMode string) bool {
@@ -120,20 +141,15 @@ func run(cfg *config.Config) error {
 		return err
 	}
 
-	c, err := ent.Open(strings.ToLower(cfg.Database.Driver), databaseURL)
+	c, err := openEntDriver(strings.ToLower(cfg.Database.Driver), databaseURL)
 	if err != nil {
 		log.Error().
 			Err(err).
 			Str("driver", strings.ToLower(cfg.Database.Driver)).
-			Str("host", cfg.Database.Host).
-			Str("port", cfg.Database.Port).
-			Str("database", cfg.Database.Database).
-			Msg("failed opening connection to {driver} database at {host}:{port}/{database}")
-		return fmt.Errorf("failed opening connection to %s database at %s:%s/%s: %w",
+			Str("database_url", databaseURL).
+			Msg("failed opening connection to {driver} database")
+		return fmt.Errorf("failed opening connection to %s database: %w",
 			strings.ToLower(cfg.Database.Driver),
-			cfg.Database.Host,
-			cfg.Database.Port,
-			cfg.Database.Database,
 			err,
 		)
 	}

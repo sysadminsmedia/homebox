@@ -79,6 +79,8 @@ tasks:
       HBOX_DATABASE_HOST: localhost
       HBOX_DATABASE_PORT: 5432
       HBOX_DATABASE_SSL_MODE: disable
+      # Alternative: Use HBOX_DATABASE_CONN_STRING instead of individual fields
+      # HBOX_DATABASE_CONN_STRING: "postgres://homebox:homebox@localhost:5432/homebox?sslmode=disable"
     desc: Starts the backend api server with postgresql (depends on generate task)
     dir: backend
     deps:
@@ -202,6 +204,8 @@ tasks:
       HBOX_DATABASE_HOST: 127.0.0.1
       HBOX_DATABASE_PORT: 5432
       HBOX_DATABASE_SSL_MODE: disable
+      # Alternative: Use HBOX_DATABASE_CONN_STRING instead of individual fields
+      # HBOX_DATABASE_CONN_STRING: "postgres://homebox:homebox@127.0.0.1:5432/homebox?sslmode=disable"
     desc: Runs end-to-end test on a live server with postgresql (only for use in CI)
     cmds:
       - cd backend && go build ./app/api
