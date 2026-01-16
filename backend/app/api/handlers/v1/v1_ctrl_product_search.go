@@ -273,9 +273,13 @@ func (ctrl *V1Controller) HandleProductSearchFromBarcode(conf config.BarcodeAPIC
 			res, err := client.Get(p.ImageURL)
 			if err != nil {
 				log.Warn().Msg("Cannot fetch image for URL: " + p.ImageURL + ": " + err.Error())
+				// On error, res may be nil; skip to next product to avoid nil dereference
+				continue
 			}
 
+			// Ensure body is closed for successful responses
 			defer func() {
+				// res is non-nil here; merge any close error
 				err = errors.Join(err, res.Body.Close())
 			}()
 
