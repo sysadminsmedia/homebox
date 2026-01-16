@@ -7,7 +7,7 @@ This document describes the automated upgrade testing workflow for HomeBox.
 The upgrade test workflow is designed to ensure data integrity and functionality when upgrading HomeBox from one version to another. It automatically:
 
 1. Deploys a stable version of HomeBox
-2. Creates test data (users, items, locations, labels, notifiers, attachments)
+2. Creates test data (users, items, locations, tags, notifiers, attachments)
 3. Upgrades to the latest version from the main branch
 4. Verifies all data and functionality remain intact
 
@@ -42,7 +42,7 @@ The workflow creates comprehensive test data using the `create-test-data.sh` scr
 - **Group 1**: Living Room, Garage
 - **Group 2**: Home Office
 
-#### Labels
+#### Tags
 - **Group 1**: Electronics, Important
 - **Group 2**: Work Equipment
 
@@ -68,7 +68,7 @@ The workflow creates comprehensive test data using the `create-test-data.sh` scr
 The Playwright test suite (`upgrade-verification.spec.ts`) verifies:
 
 - ✅ **User Authentication**: All 7 users can log in with their credentials
-- ✅ **Data Persistence**: All items, locations, and labels are present
+- ✅ **Data Persistence**: All items, locations, and tags are present
 - ✅ **Attachments**: File attachments are correctly associated with items
 - ✅ **Notifiers**: The "TESTING" notifier is still configured
 - ✅ **UI Functionality**: Version display, theme switching work correctly
@@ -93,7 +93,7 @@ The setup script generates a JSON file at `/tmp/test-users.json` containing:
     "group1": ["location-id-1", "location-id-2"],
     "group2": ["location-id-3"]
   },
-  "labels": {...},
+  "tags": {...},
   "items": {...},
   "notifiers": {...}
 }

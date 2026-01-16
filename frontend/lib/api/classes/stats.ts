@@ -28,9 +28,9 @@ export class StatsAPI extends BaseAPI {
     });
   }
 
-  labels() {
+  tags() {
     return this.http.get<TotalsByOrganizer[]>({
-      url: route("/groups/statistics/labels"),
+      url: route("/groups/statistics/tags"),
     });
   }
 

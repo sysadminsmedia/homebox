@@ -69,8 +69,8 @@ const (
 	EdgeParent = "parent"
 	// EdgeChildren holds the string denoting the children edge name in mutations.
 	EdgeChildren = "children"
-	// EdgeLabel holds the string denoting the label edge name in mutations.
-	EdgeLabel = "label"
+	// EdgeTag holds the string denoting the tag edge name in mutations.
+	EdgeTag = "tag"
 	// EdgeLocation holds the string denoting the location edge name in mutations.
 	EdgeLocation = "location"
 	// EdgeFields holds the string denoting the fields edge name in mutations.
@@ -96,11 +96,11 @@ const (
 	ChildrenTable = "items"
 	// ChildrenColumn is the table column denoting the children relation/edge.
 	ChildrenColumn = "item_children"
-	// LabelTable is the table that holds the label relation/edge. The primary key declared below.
-	LabelTable = "label_items"
-	// LabelInverseTable is the table name for the Label entity.
-	// It exists in this package in order to avoid circular dependency with the "label" package.
-	LabelInverseTable = "labels"
+	// TagTable is the table that holds the tag relation/edge. The primary key declared below.
+	TagTable = "tag_items"
+	// TagInverseTable is the table name for the Tag entity.
+	// It exists in this package in order to avoid circular dependency with the "tag" package.
+	TagInverseTable = "tags"
 	// LocationTable is the table that holds the location relation/edge.
 	LocationTable = "items"
 	// LocationInverseTable is the table name for the Location entity.
@@ -169,9 +169,9 @@ var ForeignKeys = []string{
 }
 
 var (
-	// LabelPrimaryKey and LabelColumn2 are the table columns denoting the
-	// primary key for the label relation (M2M).
-	LabelPrimaryKey = []string{"label_id", "item_id"}
+	// TagPrimaryKey and TagColumn2 are the table columns denoting the
+	// primary key for the tag relation (M2M).
+	TagPrimaryKey = []string{"tag_id", "item_id"}
 )
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -390,17 +390,17 @@ func ByChildren(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	}
 }
 
-// ByLabelCount orders the results by label count.
-func ByLabelCount(opts ...sql.OrderTermOption) OrderOption {
+// ByTagCount orders the results by tag count.
+func ByTagCount(opts ...sql.OrderTermOption) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newLabelStep(), opts...)
+		sqlgraph.OrderByNeighborsCount(s, newTagStep(), opts...)
 	}
 }
 
-// ByLabel orders the results by label terms.
-func ByLabel(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+// ByTag orders the results by tag terms.
+func ByTag(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newLabelStep(), append([]sql.OrderTerm{term}, terms...)...)
+		sqlgraph.OrderByNeighborTerms(s, newTagStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
 
@@ -473,11 +473,11 @@ func newChildrenStep() *sqlgraph.Step {
 		sqlgraph.Edge(sqlgraph.O2M, false, ChildrenTable, ChildrenColumn),
 	)
 }
-func newLabelStep() *sqlgraph.Step {
+func newTagStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(LabelInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2M, true, LabelTable, LabelPrimaryKey...),
+		sqlgraph.To(TagInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, TagTable, TagPrimaryKey...),
 	)
 }
 func newLocationStep() *sqlgraph.Step {
