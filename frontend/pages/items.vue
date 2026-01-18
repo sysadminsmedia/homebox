@@ -231,6 +231,15 @@
     }
   });
 
+  watch(
+    () => useRoute().query.q,
+    (newV, oldV) => {
+      if (newV !== oldV) {
+        query.value = (newV as string) || "";
+      }
+    }
+  );
+
   async function fetchValues(field: string): Promise<string[]> {
     if (fieldValuesCache.value[field]) {
       return fieldValuesCache.value[field];
