@@ -92,39 +92,38 @@
 
     saving.value = true;
 
-    await Promise.allSettled(
-      items.value.map(async item => {
-        const patch: ItemPatch = {
-          id: item.id,
-        };
+    // Process items sequentially to avoid database locking issues with concurrent write transactions
+    for (const item of items.value) {
+      const patch: ItemPatch = {
+        id: item.id,
+      };
 
-        if (enabled.changeLocation) {
-          patch.locationId = location!.id;
-        }
+      if (enabled.changeLocation) {
+        patch.locationId = location!.id;
+      }
 
-        let currentTags = item.tags.map(l => l.id);
+      let currentTags = item.tags.map(l => l.id);
 
-        if (enabled.addTags) {
-          currentTags = currentTags.concat(tagsToAdd);
-        }
+      if (enabled.addTags) {
+        currentTags = currentTags.concat(tagsToAdd);
+      }
 
-        if (enabled.removeTags) {
-          currentTags = currentTags.filter(l => !tagsToRemove.includes(l));
-        }
+      if (enabled.removeTags) {
+        currentTags = currentTags.filter(l => !tagsToRemove.includes(l));
+      }
 
-        if (enabled.addTags || enabled.removeTags) {
-          patch.tagIds = Array.from(new Set(currentTags));
-        }
+      if (enabled.addTags || enabled.removeTags) {
+        patch.tagIds = Array.from(new Set(currentTags));
+      }
 
-        const { error, data } = await api.items.patch(item.id, patch);
+      const { error, data } = await api.items.patch(item.id, patch);
 
-        if (error) {
-          console.error("failed to update item", item.id, data);
-          toast.error(t("components.item.view.change_details.failed_to_update_item"));
-          return;
-        }
-      })
-    );
+      if (error) {
+        console.error("failed to update item", item.id, data);
+        toast.error(t("components.item.view.change_details.failed_to_update_item"));
+        continue;
+      }
+    }
 
     closeDialog(DialogID.ItemChangeDetails, true);
     enabled.changeLocation = false;
