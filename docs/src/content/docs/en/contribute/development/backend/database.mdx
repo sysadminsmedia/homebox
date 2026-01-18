@@ -1,0 +1,682 @@
+---
+title: Database & ORM
+---
+
+import { FileTree, Tabs, TabItem, Aside, Steps } from '@astrojs/starlight/components';
+
+Homebox uses a **two-layer database architecture**: [Ent ORM](#ent-orm) for schema definition and queries, and [Goose migrations](#database-migrations) for schema synchronization across multiple database engines.
+
+Homebox supports two different database engines:
+- **SQLite3** - Default, lightweight, bundled with the application
+- **PostgreSQL** - Production-grade, enterprise-ready
+
+This means we maintain separate migration files for each database engine to ensure compatibility.
+
+## Ent ORM
+
+[Ent](https://entgo.io/) is a modern Go ORM that provides type-safe database access through code generation. All database entities are defined in schema files that automatically generate query builders, mutations, and type-safe accessors.
+
+<Aside type="note">
+Ent generates code automatically from schema definitions. You **should not** manually edit generated files like `*_create.go`, `*_update.go`, or `*_query.go`.
+</Aside>
+
+### Directory Structure
+
+<FileTree>
+    - backend/
+      - internal/
+        - data/
+          - ent/
+            - schema/
+              - mixins/
+                - base_mixin.go (common fields like ID, createdAt, updatedAt)
+                - details_mixin.go (description, name fields)
+                - ...other mixins...
+              - item.go (Item entity definition)
+              - label.go (Label entity definition)
+              - location.go (Location entity definition)
+              - user.go (User entity definition)
+              - group.go (Group entity definition)
+              - ...other entity schemas...
+            - (auto-generated files)
+              - item.go
+              - item_create.go
+              - item_update.go
+              - item_query.go
+              - ...other auto-generated files...
+            - client.go (database client)
+            - migrate/ (schema migration hooks)
+          - repo/
+            - repos_all.go (repository container)
+            - repo_items.go (Items repository)
+            - repo_labels.go (Labels repository)
+            - ...other repositories...
+</FileTree>
+
+### Entity Schemas
+
+Entity schemas define the database structure, fields, edges (relationships), and indexes. They live in `backend/internal/data/ent/schema/`.
+
+#### Simple Entity Example
+
+```go title="backend/internal/data/ent/schema/label.go"
+package schema
+
+import (
+	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
+	"entgo.io/ent/schema/field"
+)
+
+// Label holds the schema definition for the Label entity.
+type Label struct {
+	ent.Schema
+}
+
+func (Label) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixins.BaseMixin{},        // Adds ID, CreatedAt, UpdatedAt
+		mixins.DetailsMixin{},     // Adds Name, Description
+		GroupMixin{ref: "labels"}, // Multi-tenancy support
+	}
+}
+
+// Fields of the Label.
+func (Label) Fields() []ent.Field {
+	return []ent.Field{
+		field.String("color").
+			MaxLen(255).
+			Optional(),
+	}
+}
+
+// Edges of the Label.
+func (Label) Edges() []ent.Edge {
+	return []ent.Edge{
+		edge.To("items", Item.Type),
+	}
+}
+```
+
+#### Complex Entity Example with Indexes
+
+```go title="backend/internal/data/ent/schema/item.go"
+package schema
+
+import (
+	"entgo.io/ent"
+	"entgo.io/ent/schema/edge"
+	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
+)
+
+type Item struct {
+	ent.Schema
+}
+
+func (Item) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixins.BaseMixin{},
+		mixins.DetailsMixin{},
+		GroupMixin{ref: "items"},
+	}
+}
+
+// Add database indexes for frequently queried fields
+func (Item) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("name"),
+		index.Fields("serial_number"),
+		index.Fields("asset_id"),
+		index.Fields("archived"),
+	}
+}
+
+func (Item) Fields() []ent.Field {
+	return []ent.Field{
+		field.String("serial_number").
+			MaxLen(255).
+			Optional(),
+		field.String("model_number").
+			MaxLen(255).
+			Optional(),
+		field.Int("quantity").
+			Default(1),
+		field.Bool("insured").
+			Default(false),
+		field.Bool("archived").
+			Default(false),
+		field.Int("asset_id").
+			Default(0),
+	}
+}
+
+func (Item) Edges() []ent.Edge {
+	return []ent.Edge{
+		edge.From("group", Group.Type).
+			Ref("items").
+			Required().
+			OnDelete(ent.Cascade),
+		edge.From("location", Location.Type).
+			Ref("items"),
+		edge.To("labels", Label.Type),
+		edge.To("attachments", Attachment.Type),
+		edge.To("fields", ItemField.Type),
+	}
+}
+```
+
+### Field Types
+
+Common ent field types and their usage:
+
+| Type | Method | Notes |
+|------|--------|-------|
+| String | `field.String()` | Use `.MaxLen()` to set database constraints |
+| Integer | `field.Int()` or `field.Int64()` | Use `.Default()` for default values |
+| Boolean | `field.Bool()` | Use `.Default()` for default values |
+| Float | `field.Float()` or `field.Float64()` | Decimals and floating point numbers |
+| Time | `field.Time()` | Use `.Default(time.Now)` for timestamps |
+| UUID | `field.UUID()` | Requires google/uuid package |
+| JSON | `field.JSON()` | Flexible JSON storage |
+| Enum | `field.Enum()` | Strongly-typed enumerations |
+
+### Edges (Relationships)
+
+Edges define relationships between entities:
+
+```go
+// One-to-Many relationship
+edge.To("items", Item.Type)                    // Forward edge
+edge.From("items", Item.Type).Ref("location") // Backward reference
+
+// Required relationship with cascade delete
+edge.From("group", Group.Type).
+	Ref("items").
+	Required().
+	OnDelete(ent.Cascade)
+
+// Optional relationship
+edge.To("labels", Label.Type)
+```
+
+### Mixins
+
+Mixins reduce boilerplate by sharing common fields across multiple entities:
+
+```go title="backend/internal/data/ent/schema/mixins/base_mixin.go"
+// BaseMixin adds ID, CreatedAt, UpdatedAt to all entities
+type BaseMixin struct {
+	mixin.Schema
+}
+
+func (BaseMixin) Fields() []ent.Field {
+	return []ent.Field{
+		field.UUID("id", uuid.UUID{}).
+			Default(uuid.New).
+			StorageKey("id").
+			Immutable(),
+		field.Time("created_at").
+			Default(time.Now).
+			Immutable(),
+		field.Time("updated_at").
+			Default(time.Now).
+			UpdateDefault(time.Now),
+	}
+}
+```
+
+### After Modifying Schemas
+
+<Aside type="caution">
+After modifying any schema files, you **MUST** regenerate ent code:
+
+```bash
+task generate
+```
+
+This regenerates all the `*_create.go`, `*_update.go`, `*_query.go` files and updates type information.
+</Aside>
+
+### Querying with Ent
+
+All ent queries go through the generated query builders. Repositories wrap these for cleaner APIs:
+
+<Tabs>
+  <TabItem label="Query Examples">
+```go
+// Get a single user by ID
+user, err := client.User.Get(ctx, userID)
+
+// Get all items for a group with relationships
+items, err := client.Item.Query().
+	Where(item.GroupID(groupID)).
+	WithLabels().
+	WithLocation().
+	All(ctx)
+
+// Count items
+count, err := client.Item.Query().
+	Where(item.GroupID(groupID)).
+	Count(ctx)
+
+// Query with filters
+items, err := client.Item.Query().
+	Where(
+		item.And(
+			item.GroupID(groupID),
+			item.Archived(false),
+			item.NameContains("search term"),
+		),
+	).
+	All(ctx)
+
+// Pagination
+items, err := client.Item.Query().
+	Where(item.GroupID(groupID)).
+	Offset(page * pageSize).
+	Limit(pageSize).
+	All(ctx)
+```
+  </TabItem>
+  <TabItem label="Repository Pattern">
+```go
+// Repositories wrap ent queries for cleaner API
+type ItemsRepository struct {
+	db *ent.Client
+}
+
+func (r *ItemsRepository) GetOneByGroup(ctx context.Context, groupID, itemID uuid.UUID) (ItemOut, error) {
+	item, err := r.db.Item.Query().
+		Where(
+			item.And(
+				item.GroupID(groupID),
+				item.ID(itemID),
+			),
+		).
+		WithLabels().
+		WithLocation().
+		Only(ctx)
+
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return ItemOut{}, nil // Return zero value for not found
+		}
+		return ItemOut{}, err
+	}
+
+	return mapItemOut(item), nil
+}
+```
+  </TabItem>
+</Tabs>
+
+### Creating & Updating
+
+Ent provides type-safe builders for mutations:
+
+<Tabs>
+  <TabItem label="Create">
+```go
+item, err := client.Item.Create().
+	SetName("Laptop").
+	SetQuantity(1).
+	SetArchived(false).
+	SetGroupID(groupID).
+	SetLocationID(locationID).
+	AddLabelIDs(labelIDs...).
+	Save(ctx)
+```
+  </TabItem>
+  <TabItem label="Update">
+```go
+item, err := client.Item.UpdateOneID(itemID).
+	SetName("Updated Name").
+	SetQuantity(2).
+	Save(ctx)
+```
+  </TabItem>
+  <TabItem label="Delete">
+```go
+err := client.Item.DeleteOneID(itemID).Exec(ctx)
+```
+  </TabItem>
+</Tabs>
+
+## Database Migrations
+
+[Goose](https://pressly.github.io/goose/documentation/annotations/) manages schema migrations. Migrations are version-controlled and executed automatically when the server starts.
+
+<Aside type="danger">
+**Ent does not generate migrations automatically** when you modify schemas and run `task generate`. You will need to understand how migrations work to make changes to the database schema.
+</Aside>
+
+### Migration Structure
+
+Migrations live in `backend/internal/data/migrations` with separate subdirectories for each database engine:
+
+<FileTree>
+    - backend/
+      - internal/
+        - data/
+          - migrations/
+            - postgres/
+              - 20220929052825_init.sql
+              - 20241226183416_sync_children.go
+              - ...
+            - sqlite3/
+              - 20220929052821_init.sql
+              - 20241226183418_sync_children.go
+              - ...
+</FileTree>
+
+### General Migration Best Practices
+
+1. **Naming Convention** - Use format `YYYYMMDDHHMMSS_description.ext`
+2. **Dual Engine Support** - Create migrations for both PostgreSQL and SQLite3 unless change is engine-specific
+3. **Data Preservation** - Never use migrations that cause data loss
+4. **Data Migration** - Use explicit column names: `INSERT INTO table SELECT column1, column2 FROM table2` (never `SELECT *`)
+5. **Unique Versions** - Migration versions must be unique globally across both engine directories (Goose limitation)
+6. **No Down Migrations** - We don't use reversible migrations; all are one-way
+7. **Thorough Testing** - Test migrations on both database engines before merging
+
+### SQL Migrations
+
+SQL migrations are simple SQL files with `-- +goose Up` annotations. They're the preferred approach for most schema changes.
+
+#### Structure
+
+```sql title="backend/internal/data/migrations/sqlite3/20220929052821_init.sql"
+-- +goose Up
+-- +goose StatementBegin
+CREATE TABLE IF NOT EXISTS users (
+    id TEXT PRIMARY KEY,
+    email TEXT UNIQUE NOT NULL,
+    name TEXT NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+-- +goose StatementEnd
+
+-- +goose Down
+-- This migration cannot be reversed
+```
+
+#### SQLite3 Special Considerations
+
+SQLite3 has limited ALTER TABLE support, requiring more boilerplate:
+
+<Aside type="caution">
+When adding columns to existing tables in SQLite3:
+
+1. Use `PRAGMA foreign_keys = OFF` before modifications to parent tables
+2. Add `-- +goose no transaction` after `-- +goose Up` to disable automatic transactions
+3. Failure to disable foreign keys will result in data loss
+
+```sql
+-- +goose Up
+-- +goose no transaction
+PRAGMA foreign_keys = OFF;
+
+ALTER TABLE items ADD COLUMN sync_child_items_locations BOOLEAN DEFAULT FALSE;
+
+PRAGMA foreign_keys = ON;
+
+-- +goose Down
+-- (cannot reverse)
+```
+</Aside>
+
+#### PostgreSQL Migrations
+
+PostgreSQL migrations are generally straightforward with full ALTER TABLE support:
+
+```sql title="backend/internal/data/migrations/postgres/20220929052825_init.sql"
+-- +goose Up
+CREATE TABLE IF NOT EXISTS users (
+    id uuid PRIMARY KEY,
+    email TEXT UNIQUE NOT NULL,
+    name TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- +goose Down
+-- (cannot reverse)
+```
+
+### Go Migrations
+
+Go migrations are used for complex operations (data transformations, conditional logic). They're more powerful but harder to maintain than SQL migrations.
+
+<Aside type="caution">
+Use Go migrations **only when SQL is insufficient**. They're harder to test and maintain.
+</Aside>
+
+#### Structure
+
+```go title="backend/internal/data/migrations/sqlite3/20241226183418_sync_children.go"
+package sqlite3
+
+import (
+	"context"
+	"database/sql"
+	"fmt"
+
+	"github.com/pressly/goose/v3"
+)
+
+//nolint:gochecknoinits
+func init() {
+	goose.AddMigrationContext(Up20241226183418, Down20241226183418)
+}
+
+func Up20241226183418(ctx context.Context, tx *sql.Tx) error {
+	// Check if the column already exists
+	columnName := "sync_child_items_locations"
+	query := `
+		SELECT name
+		FROM pragma_table_info('items')
+		WHERE name = 'sync_child_items_locations';
+	`
+	err := tx.QueryRowContext(ctx, query).Scan(&columnName)
+	if err == nil {
+		// Column already exists, skip migration
+		return nil
+	}
+
+	// Add the column if it doesn't exist
+	_, err = tx.ExecContext(ctx, `
+		ALTER TABLE items ADD COLUMN sync_child_items_locations BOOLEAN DEFAULT FALSE;
+	`)
+	if err != nil {
+		return fmt.Errorf("failed to add column: %w", err)
+	}
+
+	return nil
+}
+
+func Down20241226183418(ctx context.Context, tx *sql.Tx) error {
+	// This migration is a no-op for SQLite (cannot reverse)
+	return nil
+}
+```
+
+## Adding a New Entity
+
+<Steps>
+
+1. **Create the Schema File**
+
+   Create a new file in `backend/internal/data/ent/schema/`:
+
+   ```go title="backend/internal/data/ent/schema/myentity.go"
+   package schema
+
+   import (
+       "entgo.io/ent"
+       "entgo.io/ent/schema/edge"
+       "entgo.io/ent/schema/field"
+   )
+
+   type MyEntity struct {
+       ent.Schema
+   }
+
+   func (MyEntity) Mixin() []ent.Mixin {
+       return []ent.Mixin{
+           mixins.BaseMixin{},
+           mixins.DetailsMixin{},
+           GroupMixin{ref: "myentities"},
+       }
+   }
+
+   func (MyEntity) Fields() []ent.Field {
+       return []ent.Field{
+           field.String("custom_field").MaxLen(255),
+       }
+   }
+
+   func (MyEntity) Edges() []ent.Edge {
+       return []ent.Edge{
+           edge.From("group", Group.Type).
+               Ref("myentities").
+               Required().
+               OnDelete(ent.Cascade),
+       }
+   }
+   ```
+
+2. **Generate Ent Code**
+
+   ```bash
+   task generate
+   ```
+
+   This will:
+   - Generate all `*_create.go`, `*_update.go`, `*_query.go` files
+   - Create migration files for both database engines
+   - Update TypeScript types for the frontend
+
+3. **Review Generated Migrations**
+
+   Create the appropraite migrations for **both** SQLite and Postgres based upon your changes to the schema.
+
+4. **Create Repository**
+
+   Create `backend/internal/data/repo/repo_myentities.go`:
+
+   ```go
+   package repo
+
+   import (
+       "context"
+       "github.com/google/uuid"
+       "github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+       "github.com/sysadminsmedia/homebox/backend/internal/data/ent/myentity"
+   )
+
+   type MyEntitiesRepository struct {
+       db *ent.Client
+   }
+
+   func (r *MyEntitiesRepository) GetAll(ctx context.Context, groupID uuid.UUID) ([]MyEntitySummary, error) {
+       entities, err := r.db.MyEntity.Query().
+           Where(myentity.GroupID(groupID)).
+           All(ctx)
+       if err != nil {
+           return nil, err
+       }
+       return mapMyEntitySummaries(entities), nil
+   }
+   ```
+
+5. **Register Repository**
+
+   Add to `backend/internal/data/repo/repos_all.go`:
+
+   ```go
+   type AllRepos struct {
+       // ... existing fields ...
+       MyEntities *MyEntitiesRepository
+   }
+
+   func New(db *ent.Client, ...) *AllRepos {
+       return &AllRepos{
+           // ... existing repos ...
+           MyEntities: &MyEntitiesRepository{db},
+       }
+   }
+   ```
+
+6. **Create Handlers**
+
+   Add handlers in `backend/app/api/handlers/v1/` as documented in the [API Handlers guide](/en/contribute/development/backend/api-handlers/).
+
+7. **Test**
+
+   ```bash
+   task go:test
+   ```
+
+</Steps>
+
+## Common Patterns
+
+### Multi-Tenancy (Group Scoping)
+
+All entities use the `GroupMixin` to ensure data isolation between groups:
+
+```go
+// Always scope queries to the user's group
+items, err := repo.Items.QueryByGroup(ctx, auth.GID, query)
+
+// This is enforced in the repository layer
+func (r *ItemsRepository) GetAll(ctx context.Context, groupID uuid.UUID) ([]ItemOut, error) {
+	items, err := r.db.Item.Query().
+		Where(item.GroupID(groupID)). // ← ALWAYS filter by groupID
+		All(ctx)
+	// ...
+}
+```
+
+### Soft Deletes
+
+Some entities support soft deletes with an `archived` field instead of hard deletion:
+
+```go
+// Mark as archived instead of deleting
+item, err := repo.Items.Update(ctx, ItemUpdate{
+	ID:       itemID,
+	Archived: true,
+})
+
+// Query excludes archived by default
+items, err := repo.Items.GetAll(ctx, groupID)
+```
+
+### Cascading Deletes
+
+Parent-child relationships use `OnDelete(ent.Cascade)`:
+
+```go
+edge.From("group", Group.Type).
+	Ref("items").
+	Required().
+	OnDelete(ent.Cascade), // ← Deleting group deletes all items
+```
+
+## Useful Commands
+
+```bash
+task generate          # Regenerate ent code and migrations
+task go:test          # Run database tests
+task go:lint          # Check for issues
+task go:run          # Run with SQLite3
+task go:run:postgres # Run with PostgreSQL
+```
+
+## Next Steps
+
+- Learn how to use [API Handlers](/en/contribute/development/backend/api-handlers/) to expose entities via HTTP
+- Review existing repositories in `backend/internal/data/repo/` for patterns

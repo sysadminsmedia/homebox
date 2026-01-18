@@ -1,10 +1,14 @@
+
 ---
 title: Get Started
 ---
 
-import { Steps } from '@astrojs/starlight/components'
+import {Steps, Tabs, TabItem, Aside} from '@astrojs/starlight/components'
+import {Icon} from "astro-icon/components";
 
-Our documentation uses Starlight with MDX pages. If you want to contribute to the documentation, follow these steps to get started:
+Our documentation uses [Starlight](https://starlight.astro.build/) with [Astro](https://astro.build/) and MDX pages. This guide will help you get started with contributing to the documentation.
+
+## Initial Setup
 
 <Steps>
     1. Fork our repository on GitHub. (You can click the edit button on the bottom left of this page to do this.)
@@ -12,4 +16,332 @@ Our documentation uses Starlight with MDX pages. If you want to contribute to th
     3. `cd` into the `docs` directory and run `pnpm install`.
     4. Run `pnpm run dev` to start the development server.
 </Steps>
+
+## Development Server
+
+Once you've installed dependencies, you can start the development server:
+
+```bash
+pnpm run dev
+```
+
+The documentation site will be available at `http://localhost:3000`. The development server automatically reloads when you make changes to files.
+
+## Project Structure
+
+The documentation follows a standard Astro/Starlight structure:
+
+- **`src/`** - Source files for the documentation
+  - **`content/docs/`** - Documentation pages organized by language (e.g., `en/`, `es/`)
+  - **`components/`** - Reusable Astro components and custom theme overrides
+  - **`assets/`** - Images, SVGs, and other static assets
+  - **`content.config.ts`** - Content collections configuration
+- **`public/`** - Static files served as-is
+- **`astro.config.mjs`** - Astro configuration with Starlight and plugin settings
+
+## Writing Documentation
+
+### File Format
+
+Documentation pages are written in MDX (Markdown with JSX support). Create new files in the appropriate directory under `src/content/docs/en/` (or other language codes).
+
+### Frontmatter
+
+Every documentation page must start with frontmatter that defines metadata:
+
+```markdown
+---
+title: Page Title
+description: A brief description of the page
+sidebar:
+  order: 1
+---
+```
+
+Common frontmatter options:
+- **`title`** - Page title (required)
+- **`description`** - Meta description for SEO
+- **`sidebar`** - Sidebar configuration (order, label, etc.)
+- **`draft`** - Set to `true` to hide the page from navigation
+
+### Using Starlight Components
+
+Starlight provides several built-in components you can use in your MDX:
+
+#### Steps
+
+Use the `<Steps>` component for numbered instructions:
+
+```jsx
+import { Steps } from '@astrojs/starlight/components'
+
+<Steps>
+    1. First step here
+    2. Second step here
+    3. Third step here
+</Steps>
+```
+##### Output
+<Steps>
+    1. First step here
+    2. Second step here
+    3. Third step here
+</Steps>
+
+#### Tabs
+
+Use the `<Tabs>` component to show content in tabs:
+
+```jsx
+import { Tabs, TabItem } from '@astrojs/starlight/components'
+
+<Tabs>
+    <TabItem label="Option A">
+        Content for Option A
+    </TabItem>
+    <TabItem label="Option B">
+        Content for Option B
+    </TabItem>
+</Tabs>
+```
+
+###### Output
+<Tabs>
+    <TabItem label="Option A">
+        Content for Option A
+    </TabItem>
+    <TabItem label="Option B">
+        Content for Option B
+    </TabItem>
+</Tabs>
+
+#### Aside (Notes, Tips, Warnings)
+
+Use the `<Aside>` component for callout boxes:
+
+```jsx
+import { Aside } from '@astrojs/starlight/components'
+
+<Aside type="note">
+    This is a note with additional information.
+</Aside>
+
+<Aside type="tip">
+    This is a helpful tip.
+</Aside>
+
+<Aside type="caution">
+    This is a caution or warning.
+</Aside>
+
+<Aside type="danger">
+    This is critical information.
+</Aside>
+```
+
+##### Output
+<Aside type="note">
+    This is a note with additional information.
+</Aside>
+
+<Aside type="tip">
+    This is a helpful tip.
+</Aside>
+
+<Aside type="caution">
+    This is a caution or warning.
+</Aside>
+
+<Aside type="danger">
+    This is critical information.
+</Aside>
+
+You can also use the Github-style alert syntax:
+
+```markdown
+> [!Note]
+> This is a note with additional information.
+
+> [!Tip]
+> This is a helpful tip.
+
+> [!Important]
+> This is a caution or warning.
+
+> [!Caution]
+> This is critical information.
+```
+
+##### Output
+> [!Note]
+> This is a note with additional information.
+
+> [!Tip]
+> This is a helpful tip.
+
+> [!Important]
+> This is important information.
+
+> [!Caution]
+> This is a caution or warning.
+
+#### Code Blocks
+
+Use standard Markdown code blocks with syntax highlighting:
+
+````markdown
+```bash
+pnpm run dev
+```
+
+```javascript
+const greeting = "Hello, World!";
+console.log(greeting);
+```
+````
+
+##### Output
+```bash
+pnpm run dev
+```
+
+```javascript
+const greeting = "Hello, World!";
+console.log(greeting);
+```
+
+You can add filename and highlight specific lines:
+
+````markdown
+```javascript title="src/components/MyComponent.astro" {2,4}
+const greeting = "Hello";
+const name = "World";
+console.log(greeting, name);
+```
+````
+##### Output
+```javascript title="src/components/MyComponent.astro" {2,4}
+const greeting = "Hello";
+const name = "World";
+console.log(greeting, name);
+```
+
+#### Icons
+
+Use the `<Icon />` component from `astro-icon` to add icons:
+
+```jsx
+import { Icon } from 'astro-icon/components'
+
+<Icon name="simple-icons:github" />
+```
+
+##### Output
+<Icon name="simple-icons:github" />
+
+> [!Note]
+> The Icons must be added to the `astro.config.mjs` file to be rendered. We force this to reduce the bundle size of the documentation.
+
+### Images and Assets
+
+Store images in `src/assets/` and reference them in your MDX:
+
+```jsx
+import { Image } from 'astro:assets'
+import myImage from '../../../assets/my-image.png'
+
+<Image src={myImage} alt="Description of the image" />
+```
+
+Or use relative image paths:
+
+```markdown
+![Alt text](../../../assets/my-image.png)
+```
+
+## Navigation and Sidebar
+
+The sidebar is automatically generated based on the file structure and frontmatter. To customize the sidebar order, use the `sidebar.order` property in frontmatter:
+
+```yaml
+---
+title: My Page
+sidebar:
+  order: 1
+---
+```
+
+For grouping pages into sections, organize them in subdirectories. The sidebar will automatically group files by directory.
+
+## Localization
+
+Our documentation supports multiple languages. Each language has its own directory under `src/content/docs/`:
+
+- `en/` - English
+- `es/` - Spanish
+- `fr/` - French
+- And many others...
+
+To add documentation in another language, create a new language directory and follow the same structure as the English documentation. Use the language code (e.g., `de` for German) as the directory name.
+
+You can read more about localizing the documentation in our [documentation translation guide](/en/contribute/translate/documentation/).
+
+## Plugins and Extensions
+
+Our Starlight setup includes several plugins:
+
+- **starlight-theme-nova** - Custom theme styling
+- **starlight-github-alerts** - GitHub-style alerts support
+- **starlight-changelogs** - Changelog management
+- **starlight-openapi** - OpenAPI documentation integration
+- **starlight-sidebar-topics** - Sidebar organization
+
+These plugins provide additional features and customization options.
+
+## Building and Deployment
+
+To build the documentation for production:
+
+```bash
+pnpm run build
+```
+
+To preview the production build locally:
+
+```bash
+pnpm run preview
+```
+
+The built site will be in the `dist/` directory.
+
+## Best Practices
+
+- **Keep it clear and concise** - Use short sentences and clear language
+- **Use examples** - Provide code examples and real-world use cases
+- **Add metadata** - Always include proper frontmatter with descriptions
+- **Check links** - Ensure all internal and external links are valid
+- **Use appropriate components** - Leverage Starlight components for better readability
+- **Consistent formatting** - Follow the existing documentation style
+- **Mobile-friendly** - Starlight is responsive by default, but test on mobile
+- **Preview changes** - Use the dev server to preview your changes before committing
+
+## Styling with Tailwind CSS
+
+The documentation uses Tailwind CSS through `@astrojs/starlight-tailwind`. Custom CSS can be added in `src/styles/` and imported in your MDX files or Astro components.
+
+## Troubleshooting
+
+### Dev server not starting
+- Make sure you've run `pnpm install` in the `docs` directory
+- Check that port 3000 is not in use
+- Try deleting `node_modules/` and `.astro/` and reinstalling
+
+### Changes not reflecting
+- The dev server should auto-reload, but try stopping and restarting it
+- Clear your browser cache if styles aren't updating
+
+### Build errors
+- Check for syntax errors in MDX files
+- Ensure all imports are correct
+- Run `pnpm run build` to see full error messages
 
