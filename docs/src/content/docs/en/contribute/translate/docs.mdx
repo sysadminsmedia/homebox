@@ -36,7 +36,7 @@ Additionally, under the `starlightSidebarTopics` config, in the items section yo
 ```js
 starlightSidebarTopics([
     {
-        label: 'Documentation',
+        label: { en: 'Documentation', es: 'Documentación' },
         link: '/quick-start/',
         icon: 'open-book',
         items: [
@@ -53,8 +53,7 @@ starlightSidebarTopics([
                     ...
 ```
 
-This will need to be repeated for all labels, except the main core objects (Documentation, API, etc.),
- unfortunately, those items are not translatable at this time.
+This will need to be repeated for all labels
 
 Note that sidebar menu items that are generated from the folder contents will be translated via the `title` attribute of frontmatter.
 

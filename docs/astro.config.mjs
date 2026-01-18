@@ -75,7 +75,7 @@ export default defineConfig({
                 starlightSidebarTopics(
                     [
                         {
-                            label: 'Documentation',
+                            label: { en: 'Documentation' },
                             link: '/quick-start/',
                             icon: 'open-book',
                             items: [
@@ -107,6 +107,10 @@ export default defineConfig({
                                 },
                                 {
                                     label: 'Contributing',
+                                    badge: {
+                                        text: 'WIP',
+                                        variant: 'caution'
+                                    },
                                     collapsed: true,
                                     items: [
                                         {
@@ -151,7 +155,7 @@ export default defineConfig({
                             ],
                         },
                         {
-                            label: 'Changelogs',
+                            label: { en: 'Changelogs' },
                             link: '/changelog/',
                             icon: 'information',
                             items: makeChangelogsSidebarLinks([
@@ -163,19 +167,19 @@ export default defineConfig({
                             ]),
                         },
                         {
-                            label: 'API',
+                            label: { en: 'API Reference' },
                             // TODO: the api link is broken bc this links to /en/api/ not /api/
                             link: '/api/',
                             icon: 'forward-slash',
                             items: openAPISidebarGroups,
                         },
                         {
-                            label: 'Demo',
+                            label: { en: 'Demo' },
                             link: 'https://demo.homebox.software',
                             icon: 'puzzle',
                         },
                         {
-                            label: 'Blog',
+                            label: { en: 'Blog' },
                             link: 'https://blog.homebox.software',
                             icon: 'document',
                         },
@@ -190,10 +194,7 @@ export default defineConfig({
             locales: {
                 en: {
                     label: 'English',
-                },
-                de: {
-                    label: 'Deutsch',
-                },
+                }
             },
             customCss: [
                 './src/styles/global.css',
