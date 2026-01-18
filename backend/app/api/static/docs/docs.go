@@ -5424,6 +5424,9 @@ const docTemplate = `{
                 "expiresAt": {
                     "type": "string"
                 },
+                "id": {
+                    "type": "string"
+                },
                 "token": {
                     "type": "string"
                 },
