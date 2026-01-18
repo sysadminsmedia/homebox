@@ -1125,6 +1125,7 @@ export interface GroupAcceptInvitationResponse {
 
 export interface GroupInvitation {
   expiresAt: Date | string;
+  id: string;
   token: string;
   uses: number;
 }

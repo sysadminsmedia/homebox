@@ -41,19 +41,19 @@ func (svc *GroupService) DeleteGroup(ctx Context) error {
 	return svc.repos.Groups.GroupDelete(ctx.Context, ctx.GID)
 }
 
-func (svc *GroupService) NewInvitation(ctx Context, uses int, expiresAt time.Time) (string, error) {
+func (svc *GroupService) NewInvitation(ctx Context, uses int, expiresAt time.Time) (repo.GroupInvitation, string, error) {
 	token := hasher.GenerateToken()
 
-	_, err := svc.repos.Groups.InvitationCreate(ctx, ctx.GID, repo.GroupInvitationCreate{
+	invitation, err := svc.repos.Groups.InvitationCreate(ctx, ctx.GID, repo.GroupInvitationCreate{
 		Token:     token.Hash,
 		Uses:      uses,
 		ExpiresAt: expiresAt,
 	})
 	if err != nil {
-		return "", err
+		return repo.GroupInvitation{}, "", err
 	}
 
-	return token.Raw, nil
+	return invitation, token.Raw, nil
 }
 
 func (svc *GroupService) AddMember(ctx Context, userID uuid.UUID) error {
