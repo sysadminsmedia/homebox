@@ -31,6 +31,7 @@
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
+    "@iconify-json/fluent-emoji-flat": "^1.2.5",
     "@iconify-json/material-symbols": "^1.2.51",
     "@iconify-json/simple-icons": "^1.2.65",
     "rollup-plugin-visualizer": "^6.0.5",

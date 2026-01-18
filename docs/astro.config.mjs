@@ -111,7 +111,7 @@ export default defineConfig({
                                     items: [
                                         {
                                             label: 'Getting Started',
-                                            slug: 'contribute/getting-started',
+                                            slug: 'contribute',
                                         },
                                         {
                                             label: 'Bounty Program',
@@ -211,6 +211,7 @@ export default defineConfig({
             include: { // Specify which icons to include in the final bundle (reduce bundle size)
                 'material-symbols': ['home-work', 'edit-document', 'family-group', 'settings', 'book-5', 'flash-on', 'lock', 'package', 'folder-open', 'label'],
                 'simple-icons': ['discord', 'github', 'lemmy', 'reddit', 'mastodon'],
+                'fluent-emoji-flat': ['label'],
             }
         }),
     ],
