@@ -130,34 +130,36 @@
       return;
     }
 
-    await Promise.allSettled(
-      ids.map(id =>
-        api.items.delete(id).catch(err => {
-          toast.error(t("components.item.view.table.dropdown.error_deleting"));
-          console.error(err);
-        })
-      )
-    );
+    // Process deletions sequentially to avoid database locking issues with concurrent write transactions
+    for (const id of ids) {
+      try {
+        await api.items.delete(id);
+      } catch (err) {
+        toast.error(t("components.item.view.table.dropdown.error_deleting"));
+        console.error(err);
+      }
+    }
 
     resetSelection();
   };
 
   const duplicateItems = async (ids: string[]) => {
-    await Promise.allSettled(
-      ids.map(id =>
-        api.items
-          .duplicate(id, {
-            copyMaintenance: preferences.value.duplicateSettings.copyMaintenance,
-            copyAttachments: preferences.value.duplicateSettings.copyAttachments,
-            copyCustomFields: preferences.value.duplicateSettings.copyCustomFields,
-            copyPrefix: preferences.value.duplicateSettings.copyPrefixOverride ?? t("items.duplicate.prefix"),
-          })
-          .catch(err => {
-            toast.error(t("components.item.view.table.dropdown.error_duplicating"));
-            console.error(err);
-          })
-      )
-    );
+    // Process items sequentially to avoid database locking issues
+    // SQLite (and other single-writer databases) can experience lock contention
+    // when multiple transactions try to write simultaneously
+    for (const id of ids) {
+      try {
+        await api.items.duplicate(id, {
+          copyMaintenance: preferences.value.duplicateSettings.copyMaintenance,
+          copyAttachments: preferences.value.duplicateSettings.copyAttachments,
+          copyCustomFields: preferences.value.duplicateSettings.copyCustomFields,
+          copyPrefix: preferences.value.duplicateSettings.copyPrefixOverride ?? t("items.duplicate.prefix"),
+        });
+      } catch (err) {
+        toast.error(t("components.item.view.table.dropdown.error_duplicating"));
+        console.error(err);
+      }
+    }
 
     resetSelection();
   };
