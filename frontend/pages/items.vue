@@ -414,31 +414,31 @@
             <Label class="flex cursor-pointer items-center">
               <Switch v-model="includeArchived" class="ml-auto" />
               <div class="grow" />
-              {{ $t("items.include_archive") }}
+              <span class="text-right"> {{ $t("items.include_archive") }} </span>
             </Label>
             <Label class="flex cursor-pointer items-center">
               <Switch v-model="fieldSelector" class="ml-auto" />
               <div class="grow" />
-              {{ $t("items.field_selector") }}
+              <span class="text-right"> {{ $t("items.field_selector") }} </span>
             </Label>
             <Label class="flex cursor-pointer items-center">
               <Switch v-model="negateTags" class="ml-auto" />
               <div class="grow" />
-              {{ $t("items.negate_tags") }}
+              <span class="text-right"> {{ $t("items.negate_tags") }} </span>
             </Label>
             <Label class="flex cursor-pointer items-center">
               <Switch v-model="onlyWithoutPhoto" class="ml-auto" />
               <div class="grow" />
-              {{ $t("items.only_without_photo") }}
+              <span class="text-right"> {{ $t("items.only_without_photo") }} </span>
             </Label>
             <Label class="flex cursor-pointer items-center">
               <Switch v-model="onlyWithPhoto" class="ml-auto" />
               <div class="grow" />
-              {{ $t("items.only_with_photo") }}
+              <span class="text-right"> {{ $t("items.only_with_photo") }} </span>
             </Label>
             <Label class="flex cursor-pointer flex-col gap-2">
               <span class="text-right">
-                {{ $t("items.order_by") }}
+                <span class="text-right"> {{ $t("items.order_by") }} </span>
               </span>
 
               <Select v-model="orderBy">
