@@ -222,19 +222,25 @@
                 </div>
               </div>
             </div>
-            <div class="ml-auto mt-2 flex flex-wrap items-center justify-between gap-3">
+            <div class="ml-auto mt-2 flex flex-wrap items-center justify-between gap-2">
               <LabelMaker :id="location.id" type="location" />
-              <Button @click="openCreateItem">
+              <Button @click="openCreateItem" class="w-9 md:w-auto">
                 <MdiPlus name="mdi-plus" />
-                {{ $t("components.item.create_modal.title") }}
+                <span class="hidden md:inline">
+                  {{ $t("components.item.create_modal.title") }}
+                </span>
               </Button>
-              <Button @click="openUpdate">
+              <Button @click="openUpdate" class="w-9 md:w-auto">
                 <MdiPencil name="mdi-pencil" />
-                {{ $t("global.edit") }}
+                <span class="hidden md:inline">
+                  {{ $t("global.edit") }}
+                </span>
               </Button>
-              <Button variant="destructive" @click="confirmDelete()">
+              <Button variant="destructive" @click="confirmDelete()" class="w-9 md:w-auto">
                 <MdiDelete name="mdi-delete" />
-                {{ $t("global.delete") }}
+                <span class="hidden md:inline">
+                  {{ $t("global.delete") }}
+                </span>
               </Button>
             </div>
           </div>
