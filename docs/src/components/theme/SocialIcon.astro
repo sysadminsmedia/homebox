@@ -9,18 +9,43 @@ type SocialLink = {
 }
 
 const links = socialLinks as SocialLink[]
-
 ---
 
-{
-    links.length > 0 && (
-    <>
-        {links.map(({ label, href, icon }) => (
-                <a href={href} rel="me" class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-[var(--color-header-foreground)] hover:text-white hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]">
-                    <span class="sr-only">{label}</span>
-                    <Icon name={icon} size="1rem" color="currentColor" />
-                </a>
-        ))}
-    </>
-        )
-    }
+{links.length > 0 && (
+  <>
+    {links.map(({ label, href, icon }) => (
+      <a href={href} rel="me" class="social-link" title={label}>
+        <span class="sr-only">{label}</span>
+        <Icon name={icon} size="1rem" class="social-icon" />
+      </a>
+    ))}
+  </>
+)}
+
+<style>
+  .social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    color: var(--color-header-foreground);
+    transition: all 150ms ease-in-out;
+    outline: none;
+  }
+
+  .social-link:hover {
+    color: white;
+    background-color: rgb(255 255 255 / 0.1);
+  }
+
+  .social-link:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .social-icon {
+    display: inline-block;
+  }
+</style>

@@ -38,13 +38,6 @@ export default defineConfig({
             components: {
                 SocialIcons: './src/components/theme/SocialIcon.astro',
                 SiteTitle: './src/components/theme/SiteTitle.astro',
-                Header: './src/components/theme/Header.astro',
-                PageFrame: './src/components/theme/PageFrame.astro',
-                Pagination: './src/components/theme/Pagination.astro',
-                MobileMenuToggle: './src/components/theme/MobileMenuToggle.astro',
-                Search: './src/components/theme/Search.astro',
-                ThemeSelect: './src/components/theme/ThemeSelect.astro',
-                TwoColumnContent: './src/components/theme/TwoColumnContent.astro',
                 Hero: './src/components/theme/Hero.astro',
             },
             logo: {

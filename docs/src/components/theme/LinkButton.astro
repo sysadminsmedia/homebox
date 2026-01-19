@@ -17,29 +17,63 @@ const {
   variant = 'primary',
   ...attrs
 } = Astro.props
-
-const base =
-  'group inline-flex items-center gap-2 rounded-lg font-medium no-underline transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[var(--color-ring)] focus:ring-offset-2'
-let variantClasses = ''
-
-if (variant === 'primary') {
-  variantClasses =
-    'bg-[var(--color-primary)] text-[var(--color-primary-foreground)] hover:bg-[var(--color-primary)]/90 px-4 py-2.5 shadow-sm'
-} else if (variant === 'secondary') {
-  variantClasses =
-    'bg-[var(--color-secondary)] text-[var(--color-secondary-foreground)] hover:bg-[var(--color-secondary)]/90 px-4 py-2.5 shadow-sm'
-} else if (variant === 'minimal') {
-  variantClasses =
-    'bg-transparent text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)] hover:bg-[var(--color-muted)] px-3 py-2'
-}
-
-const classAttr = [base, variantClasses, className].filter(Boolean).join(' ')
 ---
 
 <span class="not-content">
-  <a class={classAttr} {...attrs}>
+  <a class={['link-button', `variant-${variant}`, className].filter(Boolean).join(' ')} data-icon-placement={iconPlacement} {...attrs}>
     {icon && iconPlacement === 'start' && <LinkButtonIcon icon={icon} />}
     <slot />
     {icon && iconPlacement === 'end' && <LinkButtonIcon icon={icon} />}
   </a>
 </span>
+
+<style>
+  .link-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 150ms ease-in-out;
+    outline: none;
+  }
+
+  .link-button:focus {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  .variant-primary {
+    background-color: var(--color-primary);
+    color: var(--color-primary-foreground);
+    padding: 0.625rem 1rem;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+  }
+
+  .variant-primary:hover {
+    background-color: hsl(139 16% 38%);
+  }
+
+  .variant-secondary {
+    background-color: var(--color-secondary);
+    color: var(--color-secondary-foreground);
+    padding: 0.625rem 1rem;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+  }
+
+  .variant-secondary:hover {
+    background-color: hsl(77 8% 22%);
+  }
+
+  .variant-minimal {
+    background-color: transparent;
+    color: var(--color-muted-foreground);
+    padding: 0.5rem 0.75rem;
+  }
+
+  .variant-minimal:hover {
+    color: var(--color-foreground);
+    background-color: var(--color-muted);
+  }
+</style>

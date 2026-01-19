@@ -5,12 +5,11 @@
 @import 'tailwindcss/utilities.css' layer(utilities);
 
 @theme {
-  /* Your preferred text font. Starlight uses a system font stack by default. */
+  /* Fonts */
   --font-sans: 'Atkinson Hyperlegible';
-  /* Your preferred code font. Starlight uses system monospace fonts by default. */
   --font-mono: 'IBM Plex Mono';
 
-  /* HomeBox Theme Colors - Light mode (matching frontend) */
+  /* HomeBox Theme Colors - Light mode */
   --color-background: hsl(0 0% 100%);
   --color-background-accent: hsl(0 0% 81%);
   --color-foreground: hsl(0 0% 20%);
@@ -39,11 +38,10 @@
   --color-sidebar-accent-foreground: hsl(0 0% 20%);
   --color-sidebar-border: hsl(0 0% 81%);
   --color-sidebar-ring: hsl(0 0% 81%);
-  /* Header/navbar color - using secondary */
   --color-header: hsl(77 8% 17%);
   --color-header-foreground: hsl(60 15% 95%);
 
-  /* Starlight gray color palettes - aligned with frontend */
+  /* Starlight gray palette - aligned with frontend */
   --color-gray-100: hsl(60 3% 96%);
   --color-gray-200: hsl(60 4% 93%);
   --color-gray-300: hsl(70 4% 75%);
@@ -53,7 +51,7 @@
   --color-gray-800: hsl(75 14% 14%);
   --color-gray-900: hsl(75 18% 8%);
 
-  /* Starlight accent color palettes - using primary green */
+  /* Starlight accent palette - using primary green */
   --color-accent-200: hsl(139 16% 75%);
   --color-accent-600: hsl(139 16% 43%);
   --color-accent-900: hsl(139 16% 25%);
@@ -62,7 +60,29 @@
   --radius: 0.5rem;
 }
 
-/* Dark mode overrides */
+/* LIGHT MODE - STARLIGHT OVERRIDES (Header should be dark (secondary color) in light mode) */
+
+:root {
+  --sl-color-bg-nav: hsl(77 8% 17%);
+}
+
+/* Mobile TOC should have light background in light mode, not dark nav bg */
+:root:not([data-theme="dark"]) mobile-starlight-toc nav {
+  background-color: hsl(0 0% 100%) !important;
+}
+
+:root:not([data-theme="dark"]) mobile-starlight-toc .toggle {
+  background-color: hsl(0 0% 100%) !important;
+  color: hsl(0 0% 20%) !important;
+  border-color: hsl(0 0% 81%) !important;
+}
+
+:root:not([data-theme="dark"]) mobile-starlight-toc .dropdown {
+  background-color: hsl(0 0% 100%) !important;
+  border-color: hsl(0 0% 70%) !important;
+}
+
+/* Dark mode */
 :root[data-theme="dark"] {
   --color-background: hsl(75 14% 10%);
   --color-background-accent: hsl(75 10% 18%);
@@ -92,11 +112,9 @@
   --color-sidebar-accent-foreground: hsl(60 20% 95%);
   --color-sidebar-border: hsl(75 10% 25%);
   --color-sidebar-ring: hsl(75 10% 25%);
-  /* Header stays dark in dark mode */
   --color-header: hsl(75 14% 8%);
   --color-header-foreground: hsl(60 20% 95%);
 
-  /* Dark mode gray palette - inverted for proper contrast */
   --color-gray-100: hsl(75 18% 8%);
   --color-gray-200: hsl(75 14% 14%);
   --color-gray-300: hsl(75 10% 21%);
@@ -107,18 +125,207 @@
   --color-gray-900: hsl(60 15% 97%);
 }
 
-/* Override Starlight select colors in header for proper contrast */
-header {
-  --sl-color-gray-1: var(--color-header-foreground);
-  --sl-color-gray-2: hsl(60 15% 100%);
+/* HEADER TEXT STYLING (for both modes) */
+
+.header,
+.header a,
+.header button,
+.header select,
+.header svg,
+.header label {
+  color: hsl(60 15% 95%) !important;
 }
 
-/* Improve dark mode general text contrast - make muted text more readable */
+.header select,
+.header starlight-theme-select select {
+  background-color: rgba(255 255 255 / 0.12) !important;
+  border-color: rgba(255 255 255 / 0.2) !important;
+  color: hsl(60 15% 95%) !important;
+}
+
+.header select:hover,
+.header starlight-theme-select select:hover {
+  background-color: rgba(255 255 255 / 0.2) !important;
+}
+
+.header site-search kbd {
+  background-color: rgba(255 255 255 / 0.2) !important;
+  color: hsl(60 15% 95%) !important;
+  border-color: rgba(255 255 255 / 0.3) !important;
+}
+
+/* Dark mode - better contrast for search kbd */
+:root[data-theme="dark"] site-search kbd {
+  background-color: rgba(0 0 0 / 0.3) !important;
+  color: hsl(60 20% 95%) !important;
+}
+
+/* Light mode - theme select needs better visibility on dark header */
+:root:not([data-theme="dark"]) .header select,
+:root:not([data-theme="dark"]) .header starlight-theme-select select {
+  background-color: rgba(255 255 255 / 0.15) !important;
+  border-color: rgba(255 255 255 / 0.3) !important;
+}
+
+:root:not([data-theme="dark"]) .header select:hover,
+:root:not([data-theme="dark"]) .header starlight-theme-select select:hover {
+  background-color: rgba(255 255 255 / 0.25) !important;
+  border-color: rgba(255 255 255 / 0.4) !important;
+}
+
+/* LIGHT MODE SPECIFIC FIXES */
+
+/* LIGHT MODE - SIDEBAR */
+
+/* Sidebar links hover */
+:root:not([data-theme="dark"]) .sidebar-content a:hover {
+  background-color: hsl(139 16% 90%) !important;
+  color: hsl(139 16% 30%) !important;
+}
+
+/* Sidebar group buttons (like "Getting Started") - solid hover background */
+:root:not([data-theme="dark"]) .sidebar-content details > summary:hover {
+  background-color: hsl(139 16% 90%) !important;
+}
+
+/* Header theme switcher */
+astro-theme-toggle {
+  color: #F4F4F4;
+}
+
+/* Mobile header buttons */
+@media (max-width: calc(-0.1px + 50rem)) {
+  .nova-search-button, nova-mobile-menu-toggle {
+    color: #F4F4F4;
+  }
+}
+
+/* DARK MODE - ROOT VARIABLES */
+
 :root[data-theme="dark"] {
-  --sl-color-text: hsl(100 40% 94%);
-  --sl-color-gray-1: hsl(100 40% 94%);
-  --sl-color-gray-2: hsl(100 40% 94%);
-  --sl-color-gray-3: hsl(100 25% 85%);
-  /* Ensure sidebar links are visible */
-  --sl-color-hairline: hsl(75 10% 25%);
+  /* Override Starlight dark mode colors */
+  --sl-color-bg: hsl(75 14% 10%);
+  --sl-color-bg-nav: hsl(75 14% 8%);
+  --sl-color-bg-sidebar: hsl(75 14% 8%);
+  --sl-color-bg-inline-code: hsl(75 14% 18%);
+  
+  --sl-color-hairline: hsl(75 10% 22%);
+  --sl-color-hairline-light: hsl(75 10% 18%);
+  --sl-color-hairline-shade: hsl(75 10% 15%);
+  
+  --sl-color-text: hsl(60 20% 95%);
+  --sl-color-text-accent: hsl(139 25% 70%);
+  
+  --sl-color-white: hsl(60 20% 95%);
+  --sl-color-black: hsl(75 14% 8%);
+  
+  --sl-color-accent-low: hsl(139 20% 18%);
+  --sl-color-accent: hsl(139 25% 55%);
+  --sl-color-accent-high: hsl(139 30% 80%);
+}
+
+/* DARK MODE - SIDEBAR */
+
+:root[data-theme="dark"] .sidebar-pane {
+  background-color: hsl(75 14% 8%) !important;
+}
+
+:root[data-theme="dark"] #starlight__sidebar {
+  background-color: hsl(75 14% 8%) !important;
+}
+
+:root[data-theme="dark"] .sidebar-content {
+  background-color: hsl(75 14% 8%) !important;
+}
+
+/* Sidebar text in dark mode - make it lighter */
+:root[data-theme="dark"] .sidebar-content a {
+  color: hsl(60 10% 75%) !important;
+}
+
+/* Active page in sidebar - accent text, NO background change to avoid same-color issue */
+:root[data-theme="dark"] .sidebar-content a[aria-current="page"] {
+  color: hsl(139 30% 65%) !important;
+  font-weight: 600;
+  background-color: transparent !important;
+}
+
+/* Sidebar links hover in dark mode */
+:root[data-theme="dark"] .sidebar-content a:hover {
+  background-color: hsl(75 10% 15%) !important;
+  color: hsl(60 15% 90%) !important;
+}
+
+/* Sidebar group buttons hover in dark mode */
+:root[data-theme="dark"] .sidebar-content details > summary:hover {
+  background-color: hsl(75 10% 15%) !important;
+}
+
+/* DARK MODE - CODE BLOCKS */
+
+:root[data-theme="dark"] .expressive-code,
+:root[data-theme="dark"] .expressive-code .frame {
+  background-color: hsl(75 14% 12%) !important;
+  border-color: hsl(75 10% 18%) !important;
+}
+
+:root[data-theme="dark"] .expressive-code pre {
+  background-color: hsl(75 14% 12%) !important;
+}
+
+:root[data-theme="dark"] .expressive-code .header,
+:root[data-theme="dark"] .expressive-code figcaption {
+  background-color: hsl(75 14% 14%) !important;
+  border-color: hsl(75 10% 20%) !important;
+  color: hsl(60 15% 85%) !important;
+}
+
+:root[data-theme="dark"] .expressive-code .title {
+  color: hsl(60 15% 85%) !important;
+  background-color: hsl(75 14% 12%);
+}
+
+/* Inline code */
+:root[data-theme="dark"] :not(pre) > code {
+  background-color: hsl(75 14% 18%) !important;
+}
+
+/* DARK MODE - STEPS COMPONENT */
+
+:root[data-theme="dark"] .sl-steps > li::before {
+  background-color: hsl(139 25% 50%) !important;
+  color: hsl(75 14% 8%) !important;
+}
+
+/* DARK MODE - MOBILE TOC */
+
+:root[data-theme="dark"] mobile-starlight-toc {
+  background-color: hsl(75 14% 10%) !important;
+}
+
+:root[data-theme="dark"] mobile-starlight-toc > summary {
+  background-color: hsl(75 14% 10%) !important;
+  border-color: hsl(75 10% 20%) !important;
+}
+
+:root[data-theme="dark"] mobile-starlight-toc .toggle {
+  background-color: hsl(75 14% 8%) !important;
+  color: hsl(60 20% 95%) !important;
+  border-color: hsl(75 10% 25%) !important;
+}
+
+:root[data-theme="dark"] mobile-starlight-toc > nav {
+  background-color: hsl(75 14% 10%) !important;
+  border-color: hsl(75 10% 30%) !important;
+}
+
+:root[data-theme="dark"] mobile-starlight-toc .dropdown {
+  background-color: hsl(75 14% 8%) !important;
+  border-color: hsl(75 10% 35%) !important;
+}
+
+/* DARK MODE - RIGHT SIDEBAR / TOC */
+
+:root[data-theme="dark"] .right-sidebar {
+  background-color: hsl(75 14% 10%) !important;
 }
