@@ -329,3 +329,9 @@ astro-theme-toggle {
 :root[data-theme="dark"] .right-sidebar {
   background-color: hsl(75 14% 10%) !important;
 }
+
+/* DARK MODE - Changelog */
+
+:root[data-theme="dark"] .sl-changelogs-version-list-icon {
+  color: hsl(75 14% 10%) !important;
+}
