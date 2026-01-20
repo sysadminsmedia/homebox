@@ -27,11 +27,11 @@ export default defineNuxtConfig({
   },
 
   // Runtime config for OpenTelemetry
+  // Note: otelEnabled is determined automatically by querying the backend status endpoint.
+  // When the backend has telemetry enabled, the frontend will automatically enable it.
   runtimeConfig: {
     public: {
       // OpenTelemetry configuration (can be overridden by environment variables)
-      // NUXT_PUBLIC_OTEL_ENABLED, NUXT_PUBLIC_OTEL_SERVICE_NAME, etc.
-      otelEnabled: process.env.NUXT_PUBLIC_OTEL_ENABLED || "false",
       otelServiceName: process.env.NUXT_PUBLIC_OTEL_SERVICE_NAME || "homebox-frontend",
       otelServiceVersion: process.env.NUXT_PUBLIC_OTEL_SERVICE_VERSION || "1.0.0",
       otelSampleRate: process.env.NUXT_PUBLIC_OTEL_SAMPLE_RATE || "1.0",

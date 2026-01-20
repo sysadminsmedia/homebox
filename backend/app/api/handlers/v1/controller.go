@@ -98,6 +98,7 @@ type (
 		AllowRegistration bool            `json:"allowRegistration"`
 		LabelPrinting     bool            `json:"labelPrinting"`
 		OIDC              OIDCStatus      `json:"oidc"`
+		Telemetry         TelemetryStatus `json:"telemetry"`
 	}
 
 	OIDCStatus struct {
@@ -105,6 +106,10 @@ type (
 		ButtonText   string `json:"buttonText,omitempty"`
 		AutoRedirect bool   `json:"autoRedirect,omitempty"`
 		AllowLocal   bool   `json:"allowLocal"`
+	}
+
+	TelemetryStatus struct {
+		Enabled bool `json:"enabled"`
 	}
 )
 
@@ -161,6 +166,9 @@ func (ctrl *V1Controller) HandleBase(ready ReadyFunc, build Build) errchain.Hand
 				ButtonText:   ctrl.config.OIDC.ButtonText,
 				AutoRedirect: ctrl.config.OIDC.AutoRedirect,
 				AllowLocal:   ctrl.config.Options.AllowLocalLogin,
+			},
+			Telemetry: TelemetryStatus{
+				Enabled: ctrl.config.OTel.Enabled,
 			},
 		})
 	}

@@ -1094,6 +1094,7 @@ export interface APISummary {
   latest: Latest;
   message: string;
   oidc: OIDCStatus;
+  telemetry: TelemetryStatus;
   title: string;
   versions: string[];
 }
@@ -1171,6 +1172,10 @@ export interface OIDCStatus {
   allowLocal: boolean;
   autoRedirect: boolean;
   buttonText: string;
+  enabled: boolean;
+}
+
+export interface TelemetryStatus {
   enabled: boolean;
 }
 
