@@ -48,6 +48,10 @@ type TelemetryPayload struct {
 	Spans              []FrontendSpan         `json:"spans"`
 }
 
+// MaxTelemetryPayloadSize is the maximum size of telemetry payloads accepted by the proxy.
+// This prevents denial-of-service attacks through excessively large payloads.
+const MaxTelemetryPayloadSize = 1024 * 1024 // 1MB
+
 // ProxyHandler handles telemetry data from the frontend.
 // This creates new spans in the backend that represent frontend activity,
 // allowing for distributed tracing across the full stack.
@@ -64,8 +68,8 @@ func (p *Provider) ProxyHandler() http.HandlerFunc {
 			return
 		}
 
-		// Read and parse the payload
-		body, err := io.ReadAll(io.LimitReader(r.Body, 1024*1024)) // 1MB limit
+		// Read and parse the payload with size limit
+		body, err := io.ReadAll(io.LimitReader(r.Body, MaxTelemetryPayloadSize))
 		if err != nil {
 			log.Error().Err(err).Msg("failed to read telemetry payload")
 			http.Error(w, "Failed to read request body", http.StatusBadRequest)

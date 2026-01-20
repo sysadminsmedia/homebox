@@ -20,10 +20,8 @@ export interface OTelConfig {
   enabled: boolean;
   serviceName: string;
   serviceVersion: string;
-  // If true, sends telemetry through the backend proxy
+  // Always use backend proxy for frontend telemetry (required for authentication)
   useBackendProxy: boolean;
-  // Endpoint for direct OTLP export (when not using backend proxy)
-  endpoint?: string;
   // Sampling rate (0.0 to 1.0)
   sampleRate: number;
   // Enable console logging for debugging
@@ -185,19 +183,8 @@ export function initializeOTel(config: Partial<OTelConfig> = {}): void {
     resource,
   });
 
-  // Configure exporter
-  let exporter: SpanExporter;
-  if (finalConfig.useBackendProxy) {
-    exporter = new BackendProxyExporter("/api/v1/telemetry", finalConfig.debug);
-  } else if (finalConfig.endpoint) {
-    // Use OTLP HTTP exporter for direct export
-    // Dynamic import to avoid bundling when not used
-    console.warn("[OTel] Direct OTLP export not implemented, using backend proxy");
-    exporter = new BackendProxyExporter("/api/v1/telemetry", finalConfig.debug);
-  } else {
-    console.warn("[OTel] No exporter configured, tracing disabled");
-    return;
-  }
+  // Configure exporter - always use backend proxy for authentication
+  const exporter: SpanExporter = new BackendProxyExporter("/api/v1/telemetry", finalConfig.debug);
 
   // Use batch processor for better performance
   provider.addSpanProcessor(new BatchSpanProcessor(exporter));
@@ -211,7 +198,9 @@ export function initializeOTel(config: Partial<OTelConfig> = {}): void {
   registerInstrumentations({
     instrumentations: [
       new FetchInstrumentation({
-        propagateTraceHeaderCorsUrls: [/.*/], // Propagate to all URLs
+        // Only propagate trace headers to same-origin requests to prevent leaking
+        // trace information to external domains. The pattern matches the current origin.
+        propagateTraceHeaderCorsUrls: [new RegExp(`^${window.location.origin}`)],
         clearTimingResources: true,
         applyCustomAttributesOnSpan: (span, request) => {
           // Add custom attributes to fetch spans
