@@ -60,6 +60,13 @@
   --radius: 0.5rem;
 }
 
+/* GLOBAL OVERRIDES FOR STARLIGHT COMPONENTS */
+@media(min-width: 800px) {
+  :root {
+    --sl-content-width: 96%;
+  }
+}
+
 /* LIGHT MODE - STARLIGHT OVERRIDES (Header should be dark (secondary color) in light mode) */
 
 :root {
