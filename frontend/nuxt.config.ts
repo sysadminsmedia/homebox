@@ -26,6 +26,19 @@ export default defineNuxtConfig({
     config: {},
   },
 
+  // Runtime config for OpenTelemetry
+  runtimeConfig: {
+    public: {
+      // OpenTelemetry configuration (can be overridden by environment variables)
+      // NUXT_PUBLIC_OTEL_ENABLED, NUXT_PUBLIC_OTEL_SERVICE_NAME, etc.
+      otelEnabled: process.env.NUXT_PUBLIC_OTEL_ENABLED || "false",
+      otelServiceName: process.env.NUXT_PUBLIC_OTEL_SERVICE_NAME || "homebox-frontend",
+      otelServiceVersion: process.env.NUXT_PUBLIC_OTEL_SERVICE_VERSION || "1.0.0",
+      otelSampleRate: process.env.NUXT_PUBLIC_OTEL_SAMPLE_RATE || "1.0",
+      otelDebug: process.env.NUXT_PUBLIC_OTEL_DEBUG || "false",
+    },
+  },
+
   nitro: {
     devProxy: {
       "/api": {
