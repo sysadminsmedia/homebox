@@ -12,6 +12,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/pressly/goose/v3"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/otel"
 
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/graceful"
@@ -102,8 +103,17 @@ func run(cfg *config.Config) error {
 	app.setupLogger()
 
 	// =========================================================================
+	// Initialize OpenTelemetry
+	otelProvider, err := otel.NewProvider(context.Background(), &cfg.OTel, version)
+	if err != nil {
+		log.Error().Err(err).Msg("failed to initialize OpenTelemetry")
+		return fmt.Errorf("failed to initialize OpenTelemetry: %w", err)
+	}
+	app.otel = otelProvider
+
+	// =========================================================================
 	// Initialize Database & Repos
-	err := setupStorageDir(cfg)
+	err = setupStorageDir(cfg)
 	if err != nil {
 		return err
 	}
@@ -120,22 +130,36 @@ func run(cfg *config.Config) error {
 		return err
 	}
 
-	c, err := ent.Open(strings.ToLower(cfg.Database.Driver), databaseURL)
-	if err != nil {
-		log.Error().
-			Err(err).
-			Str("driver", strings.ToLower(cfg.Database.Driver)).
-			Str("host", cfg.Database.Host).
-			Str("port", cfg.Database.Port).
-			Str("database", cfg.Database.Database).
-			Msg("failed opening connection to {driver} database at {host}:{port}/{database}")
-		return fmt.Errorf("failed opening connection to %s database at %s:%s/%s: %w",
-			strings.ToLower(cfg.Database.Driver),
-			cfg.Database.Host,
-			cfg.Database.Port,
-			cfg.Database.Database,
-			err,
-		)
+	// Open database with optional OpenTelemetry instrumentation
+	var c *ent.Client
+	if otelProvider.DatabaseTracingEnabled() {
+		entDriver, err := otelProvider.OpenEntDriver(strings.ToLower(cfg.Database.Driver), databaseURL)
+		if err != nil {
+			log.Error().
+				Err(err).
+				Str("driver", strings.ToLower(cfg.Database.Driver)).
+				Msg("failed to open instrumented database connection")
+			return fmt.Errorf("failed to open instrumented database connection: %w", err)
+		}
+		c = ent.NewClient(ent.Driver(entDriver))
+	} else {
+		c, err = ent.Open(strings.ToLower(cfg.Database.Driver), databaseURL)
+		if err != nil {
+			log.Error().
+				Err(err).
+				Str("driver", strings.ToLower(cfg.Database.Driver)).
+				Str("host", cfg.Database.Host).
+				Str("port", cfg.Database.Port).
+				Str("database", cfg.Database.Database).
+				Msg("failed opening connection to {driver} database at {host}:{port}/{database}")
+			return fmt.Errorf("failed opening connection to %s database at %s:%s/%s: %w",
+				strings.ToLower(cfg.Database.Driver),
+				cfg.Database.Host,
+				cfg.Database.Port,
+				cfg.Database.Database,
+				err,
+			)
+		}
 	}
 
 	migrationsFs, err := migrations.Migrations(strings.ToLower(cfg.Database.Driver))
@@ -184,6 +208,12 @@ func run(cfg *config.Config) error {
 	logger := log.With().Caller().Logger()
 
 	router := chi.NewMux()
+
+	// Add OpenTelemetry HTTP middleware if enabled
+	if otelProvider.IsEnabled() && cfg.OTel.EnableHTTPTracing {
+		router.Use(otelProvider.HTTPMiddleware("homebox"))
+	}
+
 	router.Use(
 		middleware.RequestID,
 		middleware.RealIP,
@@ -197,6 +227,16 @@ func run(cfg *config.Config) error {
 	app.mountRoutes(router, chain, app.repos)
 
 	runner := graceful.NewRunner()
+
+	// Add OpenTelemetry shutdown
+	if otelProvider.IsEnabled() {
+		runner.AddFunc("otel-shutdown", func(ctx context.Context) error {
+			<-ctx.Done()
+			shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+			return otelProvider.Shutdown(shutdownCtx)
+		})
+	}
 
 	runner.AddFunc("server", func(ctx context.Context) error {
 		httpserver := http.Server{
