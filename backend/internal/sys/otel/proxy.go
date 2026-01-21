@@ -1,7 +1,9 @@
 package otel
 
 import (
+	"bytes"
 	"context"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -10,9 +12,13 @@ import (
 	"time"
 
 	"github.com/rs/zerolog/log"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/codes"
-	"go.opentelemetry.io/otel/trace"
+	collogspb "go.opentelemetry.io/proto/otlp/collector/trace/v1"
+	commonpb "go.opentelemetry.io/proto/otlp/common/v1"
+	resourcepb "go.opentelemetry.io/proto/otlp/resource/v1"
+	tracepb "go.opentelemetry.io/proto/otlp/trace/v1"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/proto"
 )
 
 // FrontendSpan represents a span sent from the frontend.
@@ -53,7 +59,7 @@ type TelemetryPayload struct {
 const MaxTelemetryPayloadSize = 1024 * 1024 // 1MB
 
 // ProxyHandler handles telemetry data from the frontend.
-// This creates new spans in the backend that represent frontend activity,
+// This forwards frontend telemetry data to the configured OTLP endpoint,
 // allowing for distributed tracing across the full stack.
 func (p *Provider) ProxyHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -89,125 +95,325 @@ func (p *Provider) ProxyHandler() http.HandlerFunc {
 			return
 		}
 
-		// Process the spans
-		processed := 0
-		for _, span := range payload.Spans {
-			if err := p.processSpan(r.Context(), span, payload.ResourceAttributes); err != nil {
-				log.Warn().Err(err).Str("span", span.Name).Msg("failed to process span")
-				continue
-			}
-			processed++
+		// Forward the spans to the OTLP endpoint
+		if err := p.forwardToOTLP(r.Context(), payload); err != nil {
+			log.Error().Err(err).Msg("failed to forward telemetry to OTLP endpoint")
+			http.Error(w, "Failed to forward telemetry", http.StatusInternalServerError)
+			return
 		}
 
 		// Return success
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusAccepted)
 		_ = json.NewEncoder(w).Encode(map[string]interface{}{
-			"processed": processed,
+			"processed": len(payload.Spans),
 			"total":     len(payload.Spans),
 		})
 	}
 }
 
-// processSpan processes a single frontend span and creates a corresponding backend span.
-func (p *Provider) processSpan(ctx context.Context, span FrontendSpan, resourceAttrs map[string]interface{}) error {
-	tracer := p.Tracer("frontend")
-
-	// Parse span kind
-	spanKind := trace.SpanKindInternal
-	switch strings.ToLower(span.Kind) {
-	case "client":
-		spanKind = trace.SpanKindClient
-	case "server":
-		spanKind = trace.SpanKindServer
-	case "producer":
-		spanKind = trace.SpanKindProducer
-	case "consumer":
-		spanKind = trace.SpanKindConsumer
+// forwardToOTLP converts frontend spans to OTLP format and forwards them to the configured endpoint.
+func (p *Provider) forwardToOTLP(ctx context.Context, payload TelemetryPayload) error {
+	// Create an OTLP client based on configuration
+	client, err := p.createProxyClient(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to create OTLP client: %w", err)
 	}
-
-	// Convert timestamps
-	startTime := time.UnixMilli(span.StartTime)
-	endTime := time.UnixMilli(span.EndTime)
-
-	// Build attributes
-	attrs := make([]attribute.KeyValue, 0)
-	attrs = append(attrs, attribute.String("span.origin", "frontend"))
-	attrs = append(attrs, attribute.String("frontend.trace_id", span.TraceID))
-	attrs = append(attrs, attribute.String("frontend.span_id", span.SpanID))
-	if span.ParentSpanID != "" {
-		attrs = append(attrs, attribute.String("frontend.parent_span_id", span.ParentSpanID))
-	}
-
-	// Add span attributes
-	for k, v := range span.Attributes {
-		attrs = append(attrs, attributeFromInterface("frontend."+k, v))
-	}
-
-	// Add resource attributes
-	for k, v := range resourceAttrs {
-		attrs = append(attrs, attributeFromInterface("frontend.resource."+k, v))
-	}
-
-	// Create the span
-	_, backendSpan := tracer.Start(ctx, "frontend: "+span.Name,
-		trace.WithSpanKind(spanKind),
-		trace.WithTimestamp(startTime),
-		trace.WithAttributes(attrs...),
-	)
-
-	// Add events
-	for _, event := range span.Events {
-		eventAttrs := make([]attribute.KeyValue, 0)
-		for k, v := range event.Attributes {
-			eventAttrs = append(eventAttrs, attributeFromInterface(k, v))
+	defer func() {
+		if shutdownErr := client.Shutdown(ctx); shutdownErr != nil {
+			log.Warn().Err(shutdownErr).Msg("failed to shutdown OTLP client")
 		}
-		backendSpan.AddEvent(event.Name,
-			trace.WithTimestamp(time.UnixMilli(event.Time)),
-			trace.WithAttributes(eventAttrs...),
-		)
+	}()
+
+	// Convert frontend spans to OTLP protobuf spans
+	otlpSpans, err := p.convertToOTLPSpans(payload)
+	if err != nil {
+		return fmt.Errorf("failed to convert spans to OTLP format: %w", err)
 	}
 
-	// Set status
-	if span.Status != nil {
-		switch strings.ToLower(span.Status.Code) {
-		case "error":
-			backendSpan.SetStatus(codes.Error, span.Status.Message)
-		case "ok":
-			backendSpan.SetStatus(codes.Ok, span.Status.Message)
-		}
+	// Upload the spans to the OTLP endpoint
+	if err := client.UploadTraces(ctx, otlpSpans); err != nil {
+		return fmt.Errorf("failed to upload traces: %w", err)
 	}
-
-	// End the span with the correct end time
-	backendSpan.End(trace.WithTimestamp(endTime))
 
 	return nil
 }
 
-// attributeFromInterface converts an interface value to an OpenTelemetry attribute.
-func attributeFromInterface(key string, value interface{}) attribute.KeyValue {
+// otlpClient provides a unified interface for OTLP trace uploading
+type otlpClient interface {
+	UploadTraces(ctx context.Context, protoSpans []*tracepb.ResourceSpans) error
+	Shutdown(ctx context.Context) error
+}
+
+// grpcClient wraps the gRPC OTLP client
+type grpcClient struct {
+	client collogspb.TraceServiceClient
+	conn   *grpc.ClientConn
+}
+
+func (c *grpcClient) UploadTraces(ctx context.Context, protoSpans []*tracepb.ResourceSpans) error {
+	req := &collogspb.ExportTraceServiceRequest{
+		ResourceSpans: protoSpans,
+	}
+	_, err := c.client.Export(ctx, req)
+	return err
+}
+
+func (c *grpcClient) Shutdown(_ context.Context) error {
+	if c.conn != nil {
+		return c.conn.Close()
+	}
+	return nil
+}
+
+// httpClient wraps the HTTP OTLP client
+type httpClient struct {
+	client  *http.Client
+	url     string
+	headers map[string]string
+}
+
+func (c *httpClient) UploadTraces(ctx context.Context, protoSpans []*tracepb.ResourceSpans) error {
+	req := &collogspb.ExportTraceServiceRequest{
+		ResourceSpans: protoSpans,
+	}
+
+	// Marshal to protobuf
+	data, err := proto.Marshal(req)
+	if err != nil {
+		return fmt.Errorf("failed to marshal protobuf: %w", err)
+	}
+
+	// Create HTTP request
+	httpReq, err := http.NewRequestWithContext(ctx, "POST", c.url, bytes.NewReader(data))
+	if err != nil {
+		return fmt.Errorf("failed to create HTTP request: %w", err)
+	}
+
+	httpReq.Header.Set("Content-Type", "application/x-protobuf")
+	for k, v := range c.headers {
+		httpReq.Header.Set(k, v)
+	}
+
+	// Send request
+	resp, err := c.client.Do(httpReq)
+	if err != nil {
+		return fmt.Errorf("failed to send HTTP request: %w", err)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("HTTP request failed with status %d: %s", resp.StatusCode, string(body))
+	}
+
+	return nil
+}
+
+func (c *httpClient) Shutdown(_ context.Context) error {
+	// HTTP client doesn't need explicit shutdown
+	return nil
+}
+
+// createProxyClient creates an OTLP client for forwarding frontend spans.
+func (p *Provider) createProxyClient(_ context.Context) (otlpClient, error) {
+	headers := parseHeaders(p.cfg.Headers)
+
+	switch strings.ToLower(p.cfg.Protocol) {
+	case "http":
+		scheme := "https"
+		if p.cfg.Insecure {
+			scheme = "http"
+		}
+		url := fmt.Sprintf("%s://%s/v1/traces", scheme, p.cfg.Endpoint)
+
+		return &httpClient{
+			client:  &http.Client{Timeout: 30 * time.Second},
+			url:     url,
+			headers: headers,
+		}, nil
+
+	case "grpc", "":
+		dialOpts := []grpc.DialOption{}
+		if p.cfg.Insecure {
+			dialOpts = append(dialOpts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		}
+
+		conn, err := grpc.NewClient(p.cfg.Endpoint, dialOpts...)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create gRPC client: %w", err)
+		}
+
+		client := collogspb.NewTraceServiceClient(conn)
+		return &grpcClient{
+			client: client,
+			conn:   conn,
+		}, nil
+
+	default:
+		return nil, fmt.Errorf("unsupported OTLP protocol: %s", p.cfg.Protocol)
+	}
+}
+
+// convertToOTLPSpans converts frontend spans to OTLP protobuf format
+func (p *Provider) convertToOTLPSpans(payload TelemetryPayload) ([]*tracepb.ResourceSpans, error) {
+	// Group spans by resource (in our case, all frontend spans share the same resource)
+	serviceName := p.cfg.ServiceName + "-frontend"
+
+	resourceAttrs := make([]*commonpb.KeyValue, 0)
+	resourceAttrs = append(resourceAttrs, &commonpb.KeyValue{
+		Key:   "service.name",
+		Value: &commonpb.AnyValue{Value: &commonpb.AnyValue_StringValue{StringValue: serviceName}},
+	})
+
+	for k, v := range payload.ResourceAttributes {
+		resourceAttrs = append(resourceAttrs, convertAttributeToProto(k, v))
+	}
+
+	// Convert all spans
+	otlpSpans := make([]*tracepb.Span, 0, len(payload.Spans))
+	for _, frontendSpan := range payload.Spans {
+		otlpSpan, err := convertSpanToProto(frontendSpan)
+		if err != nil {
+			log.Warn().Err(err).Str("span", frontendSpan.Name).Msg("failed to convert span, skipping")
+			continue
+		}
+		otlpSpans = append(otlpSpans, otlpSpan)
+	}
+
+	if len(otlpSpans) == 0 {
+		return nil, fmt.Errorf("no valid spans to export")
+	}
+
+	// Create the resource spans structure
+	resourceSpans := []*tracepb.ResourceSpans{
+		{
+			Resource: &resourcepb.Resource{
+				Attributes: resourceAttrs,
+			},
+			ScopeSpans: []*tracepb.ScopeSpans{
+				{
+					Scope: &commonpb.InstrumentationScope{
+						Name:    serviceName,
+						Version: p.cfg.ServiceVersion,
+					},
+					Spans: otlpSpans,
+				},
+			},
+		},
+	}
+
+	return resourceSpans, nil
+}
+
+// convertSpanToProto converts a single frontend span to OTLP protobuf format
+func convertSpanToProto(frontendSpan FrontendSpan) (*tracepb.Span, error) {
+	// Parse trace ID
+	traceID, err := hex.DecodeString(frontendSpan.TraceID)
+	if err != nil {
+		return nil, fmt.Errorf("invalid trace ID: %w", err)
+	}
+
+	// Parse span ID
+	spanID, err := hex.DecodeString(frontendSpan.SpanID)
+	if err != nil {
+		return nil, fmt.Errorf("invalid span ID: %w", err)
+	}
+
+	// Parse parent span ID if present
+	var parentSpanID []byte
+	if frontendSpan.ParentSpanID != "" {
+		parentSpanID, err = hex.DecodeString(frontendSpan.ParentSpanID)
+		if err != nil {
+			return nil, fmt.Errorf("invalid parent span ID: %w", err)
+		}
+	}
+
+	// Convert span kind
+	spanKind := tracepb.Span_SPAN_KIND_INTERNAL
+	switch strings.ToLower(frontendSpan.Kind) {
+	case "client":
+		spanKind = tracepb.Span_SPAN_KIND_CLIENT
+	case "server":
+		spanKind = tracepb.Span_SPAN_KIND_SERVER
+	case "producer":
+		spanKind = tracepb.Span_SPAN_KIND_PRODUCER
+	case "consumer":
+		spanKind = tracepb.Span_SPAN_KIND_CONSUMER
+	}
+
+	// Convert attributes
+	attrs := make([]*commonpb.KeyValue, 0, len(frontendSpan.Attributes))
+	for k, v := range frontendSpan.Attributes {
+		attrs = append(attrs, convertAttributeToProto(k, v))
+	}
+
+	// Convert events
+	events := make([]*tracepb.Span_Event, 0, len(frontendSpan.Events))
+	for _, event := range frontendSpan.Events {
+		eventAttrs := make([]*commonpb.KeyValue, 0, len(event.Attributes))
+		for k, v := range event.Attributes {
+			eventAttrs = append(eventAttrs, convertAttributeToProto(k, v))
+		}
+		events = append(events, &tracepb.Span_Event{
+			TimeUnixNano: uint64(event.Time * 1000000), // Convert milliseconds to nanoseconds
+			Name:         event.Name,
+			Attributes:   eventAttrs,
+		})
+	}
+
+	// Convert status
+	status := &tracepb.Status{
+		Code: tracepb.Status_STATUS_CODE_UNSET,
+	}
+	if frontendSpan.Status != nil {
+		switch strings.ToLower(frontendSpan.Status.Code) {
+		case "ok":
+			status.Code = tracepb.Status_STATUS_CODE_OK
+			status.Message = frontendSpan.Status.Message
+		case "error":
+			status.Code = tracepb.Status_STATUS_CODE_ERROR
+			status.Message = frontendSpan.Status.Message
+		}
+	}
+
+	return &tracepb.Span{
+		TraceId:           traceID,
+		SpanId:            spanID,
+		ParentSpanId:      parentSpanID,
+		Name:              frontendSpan.Name,
+		Kind:              spanKind,
+		StartTimeUnixNano: uint64(frontendSpan.StartTime * 1000000), // Convert milliseconds to nanoseconds
+		EndTimeUnixNano:   uint64(frontendSpan.EndTime * 1000000),   // Convert milliseconds to nanoseconds
+		Attributes:        attrs,
+		Events:            events,
+		Status:            status,
+	}, nil
+}
+
+// convertAttributeToProto converts an attribute to OTLP protobuf format
+func convertAttributeToProto(key string, value interface{}) *commonpb.KeyValue {
+	var anyValue *commonpb.AnyValue
+
 	switch v := value.(type) {
 	case string:
-		return attribute.String(key, v)
+		anyValue = &commonpb.AnyValue{Value: &commonpb.AnyValue_StringValue{StringValue: v}}
 	case int:
-		return attribute.Int(key, v)
+		anyValue = &commonpb.AnyValue{Value: &commonpb.AnyValue_IntValue{IntValue: int64(v)}}
 	case int64:
-		return attribute.Int64(key, v)
+		anyValue = &commonpb.AnyValue{Value: &commonpb.AnyValue_IntValue{IntValue: v}}
 	case float64:
-		return attribute.Float64(key, v)
+		anyValue = &commonpb.AnyValue{Value: &commonpb.AnyValue_DoubleValue{DoubleValue: v}}
 	case bool:
-		return attribute.Bool(key, v)
-	case []string:
-		return attribute.StringSlice(key, v)
-	case []int:
-		return attribute.IntSlice(key, v)
-	case []int64:
-		return attribute.Int64Slice(key, v)
-	case []float64:
-		return attribute.Float64Slice(key, v)
-	case []bool:
-		return attribute.BoolSlice(key, v)
+		anyValue = &commonpb.AnyValue{Value: &commonpb.AnyValue_BoolValue{BoolValue: v}}
 	default:
-		return attribute.String(key, fmt.Sprintf("%v", v))
+		anyValue = &commonpb.AnyValue{Value: &commonpb.AnyValue_StringValue{StringValue: fmt.Sprintf("%v", v)}}
+	}
+
+	return &commonpb.KeyValue{
+		Key:   key,
+		Value: anyValue,
 	}
 }
