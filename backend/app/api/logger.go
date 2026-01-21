@@ -6,6 +6,7 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
+	appotel "github.com/sysadminsmedia/homebox/backend/internal/sys/otel"
 )
 
 // setupLogger initializes the zerolog config
@@ -24,4 +25,23 @@ func (a *app) setupLogger() {
 	} else {
 		zerolog.SetGlobalLevel(level)
 	}
+}
+
+// setupOtelZerologBridge wires zerolog to emit OTel logs if enabled.
+func (a *app) setupOtelZerologBridge() {
+	if a == nil || a.otel == nil || !a.otel.IsEnabled() {
+		return
+	}
+	cfg := a.otel.Config()
+	if cfg == nil || !cfg.EnableLogging {
+		return
+	}
+
+	lp := a.otel.LoggerProvider()
+	hook := appotel.NewZerologOTelHook(lp, cfg.ServiceName)
+	if hook == nil {
+		return
+	}
+
+	log.Logger = log.Logger.Hook(hook)
 }

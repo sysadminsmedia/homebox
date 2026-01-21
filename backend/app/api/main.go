@@ -111,6 +111,9 @@ func run(cfg *config.Config) error {
 	}
 	app.otel = otelProvider
 
+	// Wire zerolog to OTel logs if enabled
+	app.setupOtelZerologBridge()
+
 	// =========================================================================
 	// Initialize Database & Repos
 	err = setupStorageDir(cfg)
