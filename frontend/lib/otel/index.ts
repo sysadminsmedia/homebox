@@ -8,7 +8,7 @@ import type { SpanExporter, ReadableSpan } from "@opentelemetry/sdk-trace-web";
 import { ZoneContextManager } from "@opentelemetry/context-zone";
 import { registerInstrumentations } from "@opentelemetry/instrumentation";
 import { FetchInstrumentation } from "@opentelemetry/instrumentation-fetch";
-import { Resource } from "@opentelemetry/resources";
+import { resourceFromAttributes } from "@opentelemetry/resources";
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from "@opentelemetry/semantic-conventions";
 import type { Span, Attributes } from "@opentelemetry/api";
 import { trace, context, propagation, SpanKind, SpanStatusCode } from "@opentelemetry/api";
@@ -173,21 +173,22 @@ export function initializeOTel(config: Partial<OTelConfig> = {}): void {
   }
 
   // Create resource with service information
-  const resource = new Resource({
+  const resource = resourceFromAttributes({
     [ATTR_SERVICE_NAME]: finalConfig.serviceName,
     [ATTR_SERVICE_VERSION]: finalConfig.serviceVersion,
-  });
-
-  // Create the trace provider
-  provider = new WebTracerProvider({
-    resource,
   });
 
   // Configure exporter - always use backend proxy for authentication
   const exporter: SpanExporter = new BackendProxyExporter("/api/v1/telemetry", finalConfig.debug);
 
   // Use batch processor for better performance
-  provider.addSpanProcessor(new BatchSpanProcessor(exporter));
+  const batchProcessor = new BatchSpanProcessor(exporter);
+
+  // Create the trace provider with span processor
+  provider = new WebTracerProvider({
+    resource,
+    spanProcessors: [batchProcessor],
+  });
 
   // Register the provider globally
   provider.register({
