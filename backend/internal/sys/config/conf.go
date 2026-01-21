@@ -31,7 +31,7 @@ type Config struct {
 	LabelMaker LabelMakerConf `yaml:"labelmaker"`
 	Thumbnail  Thumbnail      `yaml:"thumbnail"`
 	Barcode    BarcodeAPIConf `yaml:"barcode"`
-	OTel       OTelConfig     `yaml:"otel"`
+	Otel       OTelConfig     `yaml:"otel"`
 }
 
 type Options struct {

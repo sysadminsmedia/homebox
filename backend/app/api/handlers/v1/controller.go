@@ -168,7 +168,7 @@ func (ctrl *V1Controller) HandleBase(ready ReadyFunc, build Build) errchain.Hand
 				AllowLocal:   ctrl.config.Options.AllowLocalLogin,
 			},
 			Telemetry: TelemetryStatus{
-				Enabled: ctrl.config.OTel.Enabled,
+				Enabled: ctrl.config.Otel.Enabled,
 			},
 		})
 	}

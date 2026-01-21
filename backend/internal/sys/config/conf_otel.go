@@ -15,7 +15,8 @@ type OTelConfig struct {
 	// Exporter specifies the exporter type: "otlp", "stdout", or "none"
 	Exporter string `yaml:"exporter" conf:"default:otlp"`
 
-	// Endpoint is the OTLP exporter endpoint (e.g., "localhost:4317" for gRPC or "localhost:4318" for HTTP)
+	// Endpoint is the OTLP exporter endpoint (e.g., "localhost:4317" for gRPC or "http://localhost:4318" for HTTP)
+	// The full address including port should be specified
 	Endpoint string `yaml:"endpoint"`
 
 	// Protocol specifies the OTLP protocol: "grpc" or "http"

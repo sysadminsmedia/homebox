@@ -79,18 +79,13 @@ func NewProvider(ctx context.Context, cfg *config.OTelConfig, buildVersion strin
 		serviceVersion = buildVersion
 	}
 
-	res, err := resource.Merge(
-		resource.Default(),
-		resource.NewWithAttributes(
-			semconv.SchemaURL,
-			semconv.ServiceName(cfg.ServiceName),
-			semconv.ServiceVersion(serviceVersion),
-			attribute.String("deployment.environment", getEnvironment()),
-		),
+	// Note: we don't merge with resource.Default() to avoid schema URL conflicts
+	res := resource.NewWithAttributes(
+		semconv.SchemaURL,
+		semconv.ServiceName(cfg.ServiceName),
+		semconv.ServiceVersion(serviceVersion),
+		attribute.String("deployment.environment", getEnvironment()),
 	)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create resource: %w", err)
-	}
 
 	// Create exporter based on configuration
 	exporter, err := createExporter(ctx, cfg)
@@ -221,8 +216,8 @@ func parseHeaders(headerStr string) map[string]string {
 }
 
 // getEnvironment returns the current deployment environment.
+// ...existing code...
 func getEnvironment() string {
-	// This could be enhanced to read from config or environment
 	return "production"
 }
 

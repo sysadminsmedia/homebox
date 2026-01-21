@@ -104,7 +104,7 @@ func run(cfg *config.Config) error {
 
 	// =========================================================================
 	// Initialize OpenTelemetry
-	otelProvider, err := otel.NewProvider(context.Background(), &cfg.OTel, version)
+	otelProvider, err := otel.NewProvider(context.Background(), &cfg.Otel, version)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to initialize OpenTelemetry")
 		return fmt.Errorf("failed to initialize OpenTelemetry: %w", err)
@@ -210,7 +210,7 @@ func run(cfg *config.Config) error {
 	router := chi.NewMux()
 
 	// Add OpenTelemetry HTTP middleware if enabled
-	if otelProvider.IsEnabled() && cfg.OTel.EnableHTTPTracing {
+	if otelProvider.IsEnabled() && cfg.Otel.EnableHTTPTracing {
 		router.Use(otelProvider.HTTPMiddleware("homebox"))
 	}
 
