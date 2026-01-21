@@ -100,11 +100,12 @@ func NewProvider(ctx context.Context, cfg *config.OTelConfig, buildVersion strin
 
 	// Configure sampler
 	var sampler sdktrace.Sampler
-	if cfg.SampleRate >= 1.0 {
+	switch {
+	case cfg.SampleRate >= 1.0:
 		sampler = sdktrace.AlwaysSample()
-	} else if cfg.SampleRate <= 0 {
+	case cfg.SampleRate <= 0:
 		sampler = sdktrace.NeverSample()
-	} else {
+	default:
 		sampler = sdktrace.TraceIDRatioBased(cfg.SampleRate)
 	}
 

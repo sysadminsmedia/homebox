@@ -75,7 +75,12 @@ func (p *Provider) ProxyHandler() http.HandlerFunc {
 			http.Error(w, "Failed to read request body", http.StatusBadRequest)
 			return
 		}
-		defer r.Body.Close()
+		defer func(Body io.ReadCloser) {
+			err := Body.Close()
+			if err != nil {
+				log.Error().Err(err).Msg("failed to close telemetry payload body")
+			}
+		}(r.Body)
 
 		var payload TelemetryPayload
 		if err := json.Unmarshal(body, &payload); err != nil {
