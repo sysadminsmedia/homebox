@@ -31,6 +31,15 @@ type OTelConfig struct {
 	// SampleRate is the sampling rate for traces (0.0 to 1.0, where 1.0 means all traces)
 	SampleRate float64 `yaml:"sample_rate" conf:"default:1.0"`
 
+	// EnableMetrics enables OpenTelemetry metrics collection
+	EnableMetrics bool `yaml:"enable_metrics" conf:"default:true"`
+
+	// MetricsInterval is the interval at which metrics are exported (e.g., "15s", "1m")
+	MetricsInterval string `yaml:"metrics_interval" conf:"default:15s"`
+
+	// EnableLogging enables OpenTelemetry logging
+	EnableLogging bool `yaml:"enable_logging" conf:"default:true"`
+
 	// EnableDatabaseTracing enables tracing for database operations
 	EnableDatabaseTracing bool `yaml:"enable_database_tracing" conf:"default:true"`
 
