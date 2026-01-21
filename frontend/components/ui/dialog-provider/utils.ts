@@ -14,7 +14,7 @@ export enum DialogID {
   ChangePassword = "changePassword",
   CreateItem = "create-item",
   CreateLocation = "create-location",
-  CreateLabel = "create-label",
+  CreateTag = "create-tag",
   CreateCollection = "create-collection",
   CreateGroupInvite = "create-group-invite",
   JoinCollection = "join-collection",
@@ -31,7 +31,7 @@ export enum DialogID {
   QuickMenu = "quick-menu",
   Scanner = "scanner",
   PageQRCode = "page-qr-code",
-  UpdateLabel = "update-label",
+  UpdateTag = "update-tag",
   UpdateLocation = "update-location",
   UpdateTemplate = "update-template",
   ItemChangeDetails = "item-table-updater",
@@ -69,8 +69,8 @@ export type DialogParamsMap = {
   [DialogID.ItemChangeDetails]: {
     items: ItemSummary[];
     changeLocation?: boolean;
-    addLabels?: boolean;
-    removeLabels?: boolean;
+    addTags?: boolean;
+    removeTags?: boolean;
   };
   [DialogID.CreateCollection]?: { redirectTo?: string };
   [DialogID.JoinCollection]?: { redirectTo?: string };
@@ -83,7 +83,7 @@ export type DialogResultMap = {
   [DialogID.ItemImage]?: { action: "delete"; id: string };
   [DialogID.EditMaintenance]?: boolean;
   [DialogID.ItemChangeDetails]?: boolean;
-  [DialogID.WipeInventory]?: { wipeLabels: boolean; wipeLocations: boolean; wipeMaintenance: boolean };
+  [DialogID.WipeInventory]?: { wipeTags: boolean; wipeLocations: boolean; wipeMaintenance: boolean };
   [DialogID.CreateGroupInvite]?: GroupInvitation;
 };
 

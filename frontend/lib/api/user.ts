@@ -1,6 +1,6 @@
 import { BaseAPI } from "./base";
 import { ItemsApi } from "./classes/items";
-import { LabelsApi } from "./classes/labels";
+import { TagsApi } from "./classes/tags";
 import { LocationsApi } from "./classes/locations";
 import { GroupApi } from "./classes/group";
 import { UserApi } from "./classes/users";
@@ -16,7 +16,7 @@ import type { Requests } from "~~/lib/requests";
 
 export class UserClient extends BaseAPI {
   locations: LocationsApi;
-  labels: LabelsApi;
+  tags: TagsApi;
   items: ItemsApi;
   templates: TemplatesApi;
   maintenance: MaintenanceAPI;
@@ -33,7 +33,7 @@ export class UserClient extends BaseAPI {
     super(requests, attachmentToken);
 
     this.locations = new LocationsApi(requests);
-    this.labels = new LabelsApi(requests);
+    this.tags = new TagsApi(requests);
     this.items = new ItemsApi(requests, attachmentToken);
     this.templates = new TemplatesApi(requests);
     this.maintenance = new MaintenanceAPI(requests);

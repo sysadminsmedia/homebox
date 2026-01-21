@@ -17,7 +17,7 @@
   });
 
   type Invitation = GroupInvitation & { id: string; group?: Group };
-  type InvitationResult = GroupInvitation & { id?: string; group?: Group };
+  type InvitationResult = GroupInvitation & { id: string; group?: Group };
 
   const { t } = useI18n();
 
@@ -60,6 +60,7 @@
         toast.error(msg);
       } else {
         invites.value = (res.data || []) as Invitation[];
+        console.log("Loaded invites:", invites.value);
       }
     } catch (e) {
       const msg = (e as Error).message ?? String(e);
@@ -76,10 +77,10 @@
       onClose: (result?: InvitationResult) => {
         if (!result) return;
 
-        const localId = result.id || `local-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        console.log("Created invite:", result);
+
         const localInvite: Invitation = {
           ...(result as InvitationResult),
-          id: localId,
         };
 
         localInvites.value = [localInvite, ...localInvites.value];

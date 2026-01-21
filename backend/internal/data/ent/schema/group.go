@@ -46,7 +46,7 @@ func (Group) Edges() []ent.Edge {
 		edge.From("users", User.Type).Ref("groups"),
 		owned("locations", Location.Type),
 		owned("items", Item.Type),
-		owned("labels", Label.Type),
+		owned("tags", Tag.Type),
 		owned("invitation_tokens", GroupInvitationToken.Type),
 		owned("notifiers", Notifier.Type),
 		owned("item_templates", ItemTemplate.Type),

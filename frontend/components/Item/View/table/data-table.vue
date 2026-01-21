@@ -161,6 +161,13 @@
 
     persistHeaders();
   };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  watch(() => pagination.value.pageIndex, scrollToTop);
+  watch(() => props.externalPagination?.page, scrollToTop);
 </script>
 
 <template>
@@ -225,6 +232,14 @@
       </DialogContent>
     </Dialog>
     <BaseCard v-if="props.view === 'table'">
+      <div v-if="!props.disableControls" class="border-b p-3">
+        <DataTableControls
+          :table="table"
+          :pagination="pagination"
+          :data-length="data.length"
+          :external-pagination="externalPagination"
+        />
+      </div>
       <div>
         <TableView :table="table" :columns="columns" />
       </div>
@@ -238,6 +253,14 @@
       </div>
     </BaseCard>
     <div v-else>
+      <div v-if="!props.disableControls" class="pb-2">
+        <DataTableControls
+          :table="table"
+          :pagination="pagination"
+          :data-length="data.length"
+          :external-pagination="externalPagination"
+        />
+      </div>
       <CardView :table="table" :location-flat-tree="locationFlatTree" @refresh="$emit('refresh')" />
       <div v-if="!props.disableControls" class="pt-2">
         <DataTableControls

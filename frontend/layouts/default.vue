@@ -9,7 +9,7 @@
     <OutdatedModal v-if="status" :status="status" />
     <ItemCreateModal />
     <WipeInventoryDialog />
-    <LabelCreateModal />
+    <TagCreateModal />
     <LocationCreateModal />
     <ItemBarcodeModal />
     <AppQuickMenuModal :actions="quickMenuActions" />
@@ -65,19 +65,63 @@
         <SidebarContent>
           <SidebarGroup>
             <SidebarMenu>
-              <SidebarMenuItem v-for="n in nav" :key="n.id">
-                <SidebarMenuLink
-                  :href="n.to"
-                  :class="{
-                    'bg-accent text-accent-foreground': n.active?.value,
-                    'text-nowrap': typeof locale === 'string' && locale.startsWith('zh-'),
-                  }"
-                  :tooltip="n.name.value"
-                >
-                  <component :is="n.icon" />
-                  <span>{{ n.name.value }}</span>
-                </SidebarMenuLink>
-              </SidebarMenuItem>
+              <template v-for="n in nav" :key="n.id">
+                <SidebarMenuItem v-if="!n.collapsible" :key="n.id">
+                  <SidebarMenuLink
+                    :href="n.to"
+                    :class="{
+                      'bg-accent text-accent-foreground': n.active?.value,
+                      'text-nowrap': typeof locale === 'string' && locale.startsWith('zh-'),
+                    }"
+                    :tooltip="n.name.value"
+                  >
+                    <component :is="n.icon" />
+                    <span>{{ n.name.value }}</span>
+                  </SidebarMenuLink>
+                </SidebarMenuItem>
+
+                <Collapsible v-else default-open class="group/collapsible">
+                  <SidebarMenuItem>
+                    <SidebarMenuItem class="flex gap-1">
+                      <SidebarMenuLink
+                        :href="n.to"
+                        :class="{
+                          'bg-accent text-accent-foreground': n.active?.value,
+                          'text-nowrap': typeof locale === 'string' && locale.startsWith('zh-'),
+                        }"
+                        :tooltip="n.name.value"
+                      >
+                        <component :is="n.icon" />
+                        <span>{{ n.name.value }}</span>
+                      </SidebarMenuLink>
+                      <CollapsibleTrigger as-child>
+                        <SidebarMenuButton class="flex size-12 items-center justify-center">
+                          <MdiChevronRight
+                            class="transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
+                          />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                    </SidebarMenuItem>
+                    <CollapsibleContent>
+                      <SidebarMenuSub>
+                        <SidebarMenuSubItem v-for="c in n.collapsible" :key="c.id">
+                          <SidebarMenuLink
+                            :href="c.to"
+                            :class="{
+                              'bg-accent text-accent-foreground': c.active?.value,
+                              'text-nowrap': typeof locale === 'string' && locale.startsWith('zh-'),
+                              'h-min py-0': true,
+                            }"
+                            :tooltip="c.name.value"
+                          >
+                            <span>{{ c.name.value }}</span>
+                          </SidebarMenuLink>
+                        </SidebarMenuSubItem>
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  </SidebarMenuItem>
+                </Collapsible>
+              </template>
 
               <!-- makes scanner accessible easily if using legacy header -->
               <SidebarMenuItem v-if="preferences.displayLegacyHeader">
@@ -178,7 +222,7 @@
 <script lang="ts" setup>
   import { useI18n } from "vue-i18n";
   import DOMPurify from "dompurify";
-  import { useLabelStore } from "~~/stores/labels";
+  import { useTagStore } from "~/stores/tags";
   import { useLocationStore } from "~~/stores/locations";
 
   import MdiHome from "~icons/mdi/home";
@@ -191,6 +235,7 @@
   import MdiPlus from "~icons/mdi/plus";
   import MdiLogout from "~icons/mdi/logout";
   import MdiFileDocumentMultiple from "~icons/mdi/file-document-multiple";
+  import MdiChevronRight from "~icons/mdi/chevron-right";
 
   import {
     Sidebar,
@@ -201,6 +246,8 @@
     SidebarHeader,
     SidebarInset,
     SidebarMenu,
+    SidebarMenuSub,
+    SidebarMenuSubItem,
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarMenuLink,
@@ -214,6 +261,7 @@
     DropdownMenuItem,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu";
+  import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
   import { Shortcut } from "~/components/ui/shortcut";
   import { useDialog } from "~/components/ui/dialog-provider";
   import { Input } from "~/components/ui/input";
@@ -225,7 +273,7 @@
   import ItemCreateModal from "~/components/Item/CreateModal.vue";
   import WipeInventoryDialog from "~/components/WipeInventoryDialog.vue";
 
-  import LabelCreateModal from "~/components/Label/CreateModal.vue";
+  import TagCreateModal from "~/components/Tag/CreateModal.vue";
   import LocationCreateModal from "~/components/Location/CreateModal.vue";
   import ItemBarcodeModal from "~/components/Item/BarcodeModal.vue";
   import AppQuickMenuModal from "~/components/App/QuickMenuModal.vue";
@@ -313,15 +361,27 @@
     },
     {
       id: 2,
-      name: computed(() => t("menu.create_label")),
+      name: computed(() => t("menu.create_tag")),
       shortcut: "Shift+2",
-      dialogId: DialogID.CreateLabel,
+      dialogId: DialogID.CreateTag,
     },
   ];
 
   const route = useRoute();
 
-  const nav = [
+  const nav: {
+    icon: Component;
+    active: ComputedRef<boolean>;
+    id: number;
+    name: ComputedRef<string>;
+    to: string;
+    collapsible?: {
+      active: ComputedRef<boolean>;
+      id: number;
+      name: ComputedRef<string>;
+      to: string;
+    }[];
+  }[] = [
     {
       icon: MdiHome,
       active: computed(() => route.path === "/home"),
@@ -368,8 +428,40 @@
       icon: MdiCog,
       id: 6,
       active: computed(() => route.path.includes("/collection")),
-      name: computed(() => t("menu.collection_options")),
+      name: computed(() => t("menu.collection")),
       to: "/collection/members",
+      collapsible: [
+        {
+          id: 61,
+          active: computed(() => route.path === "/collection/members"),
+          name: computed(() => t("collection.tabs.members")),
+          to: "/collection/members",
+        },
+        {
+          id: 62,
+          active: computed(() => route.path === "/collection/invites"),
+          name: computed(() => t("collection.tabs.invites")),
+          to: "/collection/invites",
+        },
+        {
+          id: 63,
+          active: computed(() => route.path === "/collection/notifiers"),
+          name: computed(() => t("collection.tabs.notifiers")),
+          to: "/collection/notifiers",
+        },
+        {
+          id: 64,
+          active: computed(() => route.path === "/collection/settings"),
+          name: computed(() => t("collection.tabs.settings")),
+          to: "/collection/settings",
+        },
+        {
+          id: 65,
+          active: computed(() => route.path === "/collection/tools"),
+          name: computed(() => t("collection.tabs.tools")),
+          to: "/collection/tools",
+        },
+      ],
     },
   ];
 
@@ -387,8 +479,8 @@
     })),
   ]);
 
-  const labelStore = useLabelStore();
-  labelStore.ensureAllLabelsFetched();
+  const tagStore = useTagStore();
+  tagStore.ensureAllTagsFetched();
 
   const locationStore = useLocationStore();
   locationStore.ensureLocationsFetched();
@@ -398,8 +490,8 @@
     locationStore.refreshTree();
   });
 
-  onServerEvent(ServerEvent.LabelMutation, () => {
-    labelStore.refresh();
+  onServerEvent(ServerEvent.TagMutation, () => {
+    tagStore.refresh();
   });
 
   onServerEvent(ServerEvent.LocationMutation, () => {

@@ -21,6 +21,7 @@ type (
 	}
 
 	GroupInvitation struct {
+		ID        uuid.UUID `json:"id"`
 		Token     string    `json:"token"`
 		ExpiresAt time.Time `json:"expiresAt"`
 		Uses      int       `json:"uses"`
@@ -100,13 +101,17 @@ func (ctrl *V1Controller) HandleGroupInvitationsCreate() errchain.HandlerFunc {
 
 		auth := services.NewContext(r.Context())
 
-		token, err := ctrl.svc.Group.NewInvitation(auth, body.Uses, body.ExpiresAt)
+		invitation, token, err := ctrl.svc.Group.NewInvitation(auth, body.Uses, body.ExpiresAt)
+		if err != nil {
+			return GroupInvitation{}, err
+		}
 
 		return GroupInvitation{
+			ID:        invitation.ID,
 			Token:     token,
-			ExpiresAt: body.ExpiresAt,
-			Uses:      body.Uses,
-		}, err
+			ExpiresAt: invitation.ExpiresAt,
+			Uses:      invitation.Uses,
+		}, nil
 	}
 
 	return adapters.Action(fn, http.StatusCreated)

@@ -189,11 +189,6 @@ definitions:
         items:
           $ref: '#/definitions/ent.Item'
         type: array
-      labels:
-        description: Labels holds the value of the labels edge.
-        items:
-          $ref: '#/definitions/ent.Label'
-        type: array
       locations:
         description: Locations holds the value of the locations edge.
         items:
@@ -203,6 +198,11 @@ definitions:
         description: Notifiers holds the value of the notifiers edge.
         items:
           $ref: '#/definitions/ent.Notifier'
+        type: array
+      tags:
+        description: Tags holds the value of the tags edge.
+        items:
+          $ref: '#/definitions/ent.Tag'
         type: array
       users:
         description: Users holds the value of the users edge.
@@ -352,11 +352,6 @@ definitions:
         allOf:
         - $ref: '#/definitions/ent.Group'
         description: Group holds the value of the group edge.
-      label:
-        description: Label holds the value of the label edge.
-        items:
-          $ref: '#/definitions/ent.Label'
-        type: array
       location:
         allOf:
         - $ref: '#/definitions/ent.Location'
@@ -371,6 +366,11 @@ definitions:
         allOf:
         - $ref: '#/definitions/ent.Item'
         description: Parent holds the value of the parent edge.
+      tag:
+        description: Tag holds the value of the tag edge.
+        items:
+          $ref: '#/definitions/ent.Tag'
+        type: array
     type: object
   ent.ItemField:
     properties:
@@ -430,11 +430,6 @@ definitions:
       default_insured:
         description: DefaultInsured holds the value of the "default_insured" field.
         type: boolean
-      default_label_ids:
-        description: Default label IDs for items created from this template
-        items:
-          type: string
-        type: array
       default_lifetime_warranty:
         description: DefaultLifetimeWarranty holds the value of the "default_lifetime_warranty"
           field.
@@ -452,6 +447,11 @@ definitions:
       default_quantity:
         description: DefaultQuantity holds the value of the "default_quantity" field.
         type: integer
+      default_tag_ids:
+        description: Default tag IDs for items created from this template
+        items:
+          type: string
+        type: array
       default_warranty_details:
         description: DefaultWarrantyDetails holds the value of the "default_warranty_details"
           field.
@@ -504,45 +504,6 @@ definitions:
         allOf:
         - $ref: '#/definitions/ent.Location'
         description: Location holds the value of the location edge.
-    type: object
-  ent.Label:
-    properties:
-      color:
-        description: Color holds the value of the "color" field.
-        type: string
-      created_at:
-        description: CreatedAt holds the value of the "created_at" field.
-        type: string
-      description:
-        description: Description holds the value of the "description" field.
-        type: string
-      edges:
-        allOf:
-        - $ref: '#/definitions/ent.LabelEdges'
-        description: |-
-          Edges holds the relations/edges for other nodes in the graph.
-          The values are being populated by the LabelQuery when eager-loading is set.
-      id:
-        description: ID of the ent.
-        type: string
-      name:
-        description: Name holds the value of the "name" field.
-        type: string
-      updated_at:
-        description: UpdatedAt holds the value of the "updated_at" field.
-        type: string
-    type: object
-  ent.LabelEdges:
-    properties:
-      group:
-        allOf:
-        - $ref: '#/definitions/ent.Group'
-        description: Group holds the value of the group edge.
-      items:
-        description: Items holds the value of the items edge.
-        items:
-          $ref: '#/definitions/ent.Item'
-        type: array
     type: object
   ent.Location:
     properties:
@@ -672,6 +633,45 @@ definitions:
         allOf:
         - $ref: '#/definitions/ent.User'
         description: User holds the value of the user edge.
+    type: object
+  ent.Tag:
+    properties:
+      color:
+        description: Color holds the value of the "color" field.
+        type: string
+      created_at:
+        description: CreatedAt holds the value of the "created_at" field.
+        type: string
+      description:
+        description: Description holds the value of the "description" field.
+        type: string
+      edges:
+        allOf:
+        - $ref: '#/definitions/ent.TagEdges'
+        description: |-
+          Edges holds the relations/edges for other nodes in the graph.
+          The values are being populated by the TagQuery when eager-loading is set.
+      id:
+        description: ID of the ent.
+        type: string
+      name:
+        description: Name holds the value of the "name" field.
+        type: string
+      updated_at:
+        description: UpdatedAt holds the value of the "updated_at" field.
+        type: string
+    type: object
+  ent.TagEdges:
+    properties:
+      group:
+        allOf:
+        - $ref: '#/definitions/ent.Group'
+        description: Group holds the value of the group edge.
+      items:
+        description: Items holds the value of the items edge.
+        items:
+          $ref: '#/definitions/ent.Item'
+        type: array
     type: object
   ent.TemplateField:
     properties:
@@ -849,9 +849,9 @@ definitions:
         type: number
       totalItems:
         type: integer
-      totalLabels:
-        type: integer
       totalLocations:
+        type: integer
+      totalTags:
         type: integer
       totalUsers:
         type: integer
@@ -900,10 +900,6 @@ definitions:
       description:
         maxLength: 1000
         type: string
-      labelIds:
-        items:
-          type: string
-        type: array
       locationId:
         description: Edges
         type: string
@@ -916,6 +912,10 @@ definitions:
         x-nullable: true
       quantity:
         type: integer
+      tagIds:
+        items:
+          type: string
+        type: array
     required:
     - name
     type: object
@@ -961,10 +961,6 @@ definitions:
         x-omitempty: true
       insured:
         type: boolean
-      labels:
-        items:
-          $ref: '#/definitions/repo.LabelSummary'
-        type: array
       lifetimeWarranty:
         description: Warranty
         type: boolean
@@ -1010,6 +1006,10 @@ definitions:
         type: string
       syncChildItemsLocations:
         type: boolean
+      tags:
+        items:
+          $ref: '#/definitions/repo.TagSummary'
+        type: array
       thumbnailId:
         type: string
         x-nullable: true
@@ -1025,18 +1025,18 @@ definitions:
     properties:
       id:
         type: string
-      labelIds:
-        items:
-          type: string
-        type: array
-        x-nullable: true
-        x-omitempty: true
       locationId:
         type: string
         x-nullable: true
         x-omitempty: true
       quantity:
         type: integer
+        x-nullable: true
+        x-omitempty: true
+      tagIds:
+        items:
+          type: string
+        type: array
         x-nullable: true
         x-omitempty: true
     type: object
@@ -1068,10 +1068,6 @@ definitions:
         x-omitempty: true
       insured:
         type: boolean
-      labels:
-        items:
-          $ref: '#/definitions/repo.LabelSummary'
-        type: array
       location:
         allOf:
         - $ref: '#/definitions/repo.LocationSummary'
@@ -1087,6 +1083,10 @@ definitions:
       soldTime:
         description: Sale details
         type: string
+      tags:
+        items:
+          $ref: '#/definitions/repo.TagSummary'
+        type: array
       thumbnailId:
         type: string
         x-nullable: true
@@ -1102,15 +1102,10 @@ definitions:
         x-nullable: true
       defaultInsured:
         type: boolean
-      defaultLabelIds:
-        items:
-          type: string
-        type: array
-        x-nullable: true
       defaultLifetimeWarranty:
         type: boolean
       defaultLocationId:
-        description: Default location and labels
+        description: Default location and tags
         type: string
         x-nullable: true
       defaultManufacturer:
@@ -1128,6 +1123,11 @@ definitions:
       defaultQuantity:
         description: Default values for items
         type: integer
+        x-nullable: true
+      defaultTagIds:
+        items:
+          type: string
+        type: array
         x-nullable: true
       defaultWarrantyDetails:
         maxLength: 1000
@@ -1166,16 +1166,12 @@ definitions:
         type: string
       defaultInsured:
         type: boolean
-      defaultLabels:
-        items:
-          $ref: '#/definitions/repo.TemplateLabelSummary'
-        type: array
       defaultLifetimeWarranty:
         type: boolean
       defaultLocation:
         allOf:
         - $ref: '#/definitions/repo.TemplateLocationSummary'
-        description: Default location and labels
+        description: Default location and tags
       defaultManufacturer:
         type: string
       defaultModelNumber:
@@ -1185,6 +1181,10 @@ definitions:
       defaultQuantity:
         description: Default values for items
         type: integer
+      defaultTags:
+        items:
+          $ref: '#/definitions/repo.TemplateTagSummary'
+        type: array
       defaultWarrantyDetails:
         type: string
       description:
@@ -1231,15 +1231,10 @@ definitions:
         x-nullable: true
       defaultInsured:
         type: boolean
-      defaultLabelIds:
-        items:
-          type: string
-        type: array
-        x-nullable: true
       defaultLifetimeWarranty:
         type: boolean
       defaultLocationId:
-        description: Default location and labels
+        description: Default location and tags
         type: string
         x-nullable: true
       defaultManufacturer:
@@ -1257,6 +1252,11 @@ definitions:
       defaultQuantity:
         description: Default values for items
         type: integer
+        x-nullable: true
+      defaultTagIds:
+        items:
+          type: string
+        type: array
         x-nullable: true
       defaultWarrantyDetails:
         maxLength: 1000
@@ -1314,10 +1314,6 @@ definitions:
         type: string
       insured:
         type: boolean
-      labelIds:
-        items:
-          type: string
-        type: array
       lifetimeWarranty:
         description: Warranty
         type: boolean
@@ -1368,56 +1364,16 @@ definitions:
         type: string
       syncChildItemsLocations:
         type: boolean
+      tagIds:
+        items:
+          type: string
+        type: array
       warrantyDetails:
         type: string
       warrantyExpires:
         type: string
     required:
     - name
-    type: object
-  repo.LabelCreate:
-    properties:
-      color:
-        type: string
-      description:
-        maxLength: 1000
-        type: string
-      name:
-        maxLength: 255
-        minLength: 1
-        type: string
-    required:
-    - name
-    type: object
-  repo.LabelOut:
-    properties:
-      color:
-        type: string
-      createdAt:
-        type: string
-      description:
-        type: string
-      id:
-        type: string
-      name:
-        type: string
-      updatedAt:
-        type: string
-    type: object
-  repo.LabelSummary:
-    properties:
-      color:
-        type: string
-      createdAt:
-        type: string
-      description:
-        type: string
-      id:
-        type: string
-      name:
-        type: string
-      updatedAt:
-        type: string
     type: object
   repo.LocationCreate:
     properties:
@@ -1626,6 +1582,50 @@ definitions:
       total:
         type: integer
     type: object
+  repo.TagCreate:
+    properties:
+      color:
+        type: string
+      description:
+        maxLength: 1000
+        type: string
+      name:
+        maxLength: 255
+        minLength: 1
+        type: string
+    required:
+    - name
+    type: object
+  repo.TagOut:
+    properties:
+      color:
+        type: string
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  repo.TagSummary:
+    properties:
+      color:
+        type: string
+      createdAt:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
   repo.TemplateField:
     properties:
       id:
@@ -1637,14 +1637,14 @@ definitions:
       type:
         type: string
     type: object
-  repo.TemplateLabelSummary:
+  repo.TemplateLocationSummary:
     properties:
       id:
         type: string
       name:
         type: string
     type: object
-  repo.TemplateLocationSummary:
+  repo.TemplateTagSummary:
     properties:
       id:
         type: string
@@ -1836,6 +1836,8 @@ definitions:
     properties:
       expiresAt:
         type: string
+      id:
+        type: string
       token:
         type: string
       uses:
@@ -1869,10 +1871,6 @@ definitions:
       description:
         maxLength: 1000
         type: string
-      labelIds:
-        items:
-          type: string
-        type: array
       locationId:
         type: string
       name:
@@ -1881,6 +1879,10 @@ definitions:
         type: string
       quantity:
         type: integer
+      tagIds:
+        items:
+          type: string
+        type: array
     required:
     - locationId
     - name
@@ -1918,11 +1920,11 @@ definitions:
     type: object
   v1.WipeInventoryOptions:
     properties:
-      wipeLabels:
-        type: boolean
       wipeLocations:
         type: boolean
       wipeMaintenance:
+        type: boolean
+      wipeTags:
         type: boolean
     type: object
   v1.Wrapped:
@@ -2293,22 +2295,6 @@ paths:
       summary: Get Group Statistics
       tags:
       - Statistics
-  /v1/groups/statistics/labels:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/repo.TotalsByOrganizer'
-            type: array
-      security:
-      - Bearer: []
-      summary: Get Label Statistics
-      tags:
-      - Statistics
   /v1/groups/statistics/locations:
     get:
       produces:
@@ -2348,6 +2334,22 @@ paths:
       summary: Get Purchase Price Statistics
       tags:
       - Statistics
+  /v1/groups/statistics/tags:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repo.TotalsByOrganizer'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get Tags Statistics
+      tags:
+      - Statistics
   /v1/items:
     get:
       parameters:
@@ -2364,11 +2366,11 @@ paths:
         name: pageSize
         type: integer
       - collectionFormat: multi
-        description: label Ids
+        description: tags Ids
         in: query
         items:
           type: string
-        name: labels
+        name: tags
         type: array
       - collectionFormat: multi
         description: location Ids
@@ -2862,98 +2864,6 @@ paths:
       summary: Get Location label
       tags:
       - Locations
-  /v1/labels:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/repo.LabelOut'
-            type: array
-      security:
-      - Bearer: []
-      summary: Get All Labels
-      tags:
-      - Labels
-    post:
-      parameters:
-      - description: Label Data
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/repo.LabelCreate'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/repo.LabelSummary'
-      security:
-      - Bearer: []
-      summary: Create Label
-      tags:
-      - Labels
-  /v1/labels/{id}:
-    delete:
-      parameters:
-      - description: Label ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No Content
-      security:
-      - Bearer: []
-      summary: Delete Label
-      tags:
-      - Labels
-    get:
-      parameters:
-      - description: Label ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/repo.LabelOut'
-      security:
-      - Bearer: []
-      summary: Get Label
-      tags:
-      - Labels
-    put:
-      parameters:
-      - description: Label ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/repo.LabelOut'
-      security:
-      - Bearer: []
-      summary: Update Label
-      tags:
-      - Labels
   /v1/locations:
     get:
       parameters:
@@ -3308,6 +3218,98 @@ paths:
       summary: Application Info
       tags:
       - Base
+  /v1/tags:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/repo.TagOut'
+            type: array
+      security:
+      - Bearer: []
+      summary: Get All Tags
+      tags:
+      - Tags
+    post:
+      parameters:
+      - description: Tag Data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/repo.TagCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.TagSummary'
+      security:
+      - Bearer: []
+      summary: Create Tag
+      tags:
+      - Tags
+  /v1/tags/{id}:
+    delete:
+      parameters:
+      - description: Tag ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      security:
+      - Bearer: []
+      summary: Delete Tag
+      tags:
+      - Tags
+    get:
+      parameters:
+      - description: Tag ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.TagOut'
+      security:
+      - Bearer: []
+      summary: Get Tag
+      tags:
+      - Tags
+    put:
+      parameters:
+      - description: Tag ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/repo.TagOut'
+      security:
+      - Bearer: []
+      summary: Update Tag
+      tags:
+      - Tags
   /v1/templates:
     get:
       produces:

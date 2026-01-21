@@ -56,7 +56,14 @@ export function useUserApi(): UserClient {
         const body = (await r.json().catch(() => null)) as { error?: string } | null;
 
         if (body?.error === "user does not have access to the requested tenant") {
-          if (prefs?.value) {
+          console.log("user does not have access to the requested tenant");
+          if (window.location.pathname == "/") {
+            // do nothing
+            console.log("at root path, ignoring collectionId to prevent infinite redirect loop");
+          } else if (!prefs?.value?.collectionId) {
+            console.log("no collectionId set, ignoring");
+          } else {
+            console.log("clearing collectionId");
             prefs.value.collectionId = null;
           }
         }

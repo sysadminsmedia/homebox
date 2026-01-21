@@ -1,6 +1,6 @@
 # Organizing Your Items
 
-Homebox allows you to organize your items using locations and labels.
+Homebox allows you to organize your items using locations and tags.
 
 ## Items
 
@@ -10,7 +10,7 @@ To create an item, click on the Create button in the main menu, the select Item 
 - Parent Location (Required) - The location in which the item is stored
 - Item Name (Required) - Name of the item
 - Item Description (Optional) - Description of the item
-- Labels (Optional) - Here, you can add as many Labels to the item as you like for further organization
+- Tags (Optional) - Here, you can add as many Tags to the item as you like for further organization
 - Photo (Optional) - Allows you to add a photo of the item. Additional photos can be added after the item has been created.
 
 ::: details Additional Fields
@@ -63,18 +63,18 @@ Locations have 3 parameters:
 
 To view all locations and the items stored in them, select Locations in the main menu.
 
-## Labels
+## Tags
 
-Labels allow you to organize items independently of location. For example, you might have electronic devices all over your house. What if you wanted to see a list of every Electronic Device you own without having to go through every single location?
+Tags allow you to organize items independently of location. For example, you might have electronic devices all over your house. What if you wanted to see a list of every Electronic Device you own without having to go through every single location?
 
-Labels enable this. In the example above, if you tag all electronic devices with the "Electronics" label when you create them, you can easily see the list of all your Electronics by going to the related page.
+Tags enable this. In the example above, if you tag all electronic devices with the "Electronics" tag when you create them, you can easily see the list of all your Electronics by going to the related page.
 
-To create a Label, click the Create button in the menu, then select Label. Labels have the following parameters:
+To create a Tag, click the Create button in the menu, then select Tag. Tags have the following parameters:
 - Name
 - Description (Optional)
 
-To see all items related to a specific label (or specific combination of labels): 
-- From the Home page, scroll to the bottom and select the Label you want to see.
-- Alternatively, navigate to the Search page and use the Labels dropdown to filter by one or more labels. 
+To see all items related to a specific tag (or specific combination of tags):
+- From the Home page, scroll to the bottom and select the Tag you want to see.
+- Alternatively, navigate to the Search page and use the Tags dropdown to filter by one or more tags.
 
-Items can have as many labels as you wish. The example above is only one example of how labels can be used for organization. Experiment with what labels work best for you!
+Items can have as many tags as you wish. The example above is only one example of how tags can be used for organization. Experiment with what tags work best for you!

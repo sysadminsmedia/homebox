@@ -33,6 +33,12 @@
         const ctx = useAuthContext();
         if (ctx.isAuthorized()) {
           return "/home";
+        } else {
+          console.log("Logged out, clearing collectionId preference");
+          const prefs = useViewPreferences();
+          if (prefs.value.collectionId) {
+            prefs.value.collectionId = null;
+          }
         }
       },
     ],
