@@ -140,9 +140,7 @@
             },
             "view": {
                 "change_details": {
-                    "add_labels": "Adicionar Etiquetas",
                     "failed_to_update_item": "Falha ao atualizar item",
-                    "remove_labels": "Remover Etiquetas",
                     "title": "Alterar detalhes do item"
                 },
                 "selectable": {
@@ -157,8 +155,6 @@
                 "table": {
                     "dropdown": {
                         "actions": "Ações",
-                        "change_labels": "Trocar etiquetas",
-                        "change_labels_success": "Etiquetas alteradas",
                         "change_location": "Trocar localização",
                         "change_location_success": "Localização alterada",
                         "create_maintenance_item": "Criar entrada de manutenção para o item",
@@ -187,23 +183,6 @@
                     "table_settings": "Configurações da Tabela",
                     "view_item": "Visualizar item"
                 }
-            }
-        },
-        "label": {
-            "create_modal": {
-                "label_color": "Cor do Rótulo",
-                "label_description": "Descrição da Texto",
-                "label_name": "Nome da Etiqueta",
-                "title": "Criar etiqueta",
-                "toast": {
-                    "already_creating": "Etiqueta já criada",
-                    "create_failed": "Não foi possível criar etiqueta",
-                    "create_success": "Etiqueta criada",
-                    "label_name_too_long": "Nome da etiqueta não deve ultrapassar 50 caracteres"
-                }
-            },
-            "selector": {
-                "select_labels": "Selecionar Etiquetas"
             }
         },
         "location": {
@@ -309,7 +288,6 @@
         "insured": "Segurado",
         "items": "Items",
         "join_discord": "Junte-se ao Discord",
-        "labels": "Etiquetas",
         "loading": "Carregando…",
         "locations": "Locais",
         "maintenance": "Manutenção",
@@ -332,12 +310,10 @@
         "welcome": "Bem-vindo, {username}"
     },
     "home": {
-        "labels": "Etiquetas",
         "quick_statistics": "Estatísticas Rápidas",
         "recently_added": "Adicionados Recentemente",
         "storage_locations": "Locais de Armazenamento",
         "total_items": "Itens Totais",
-        "total_labels": "Etiquetas Totais",
         "total_locations": "Locais Totais",
         "total_value": "Valor Total"
     },
@@ -415,7 +391,6 @@
         "manufacturer": "Fabricante",
         "model_number": "Modelo",
         "name": "Nome",
-        "negate_labels": "Negar Rótulos Selecionados",
         "next_page": "Próxima página",
         "no_attachments": "Nenhum anexo encontrado",
         "no_results": "Nenhum Item Encontrado",
@@ -482,18 +457,6 @@
         "warranty": "Garantia",
         "warranty_details": "Detalhes da Garantia",
         "warranty_expires": "Garantia Expira Em"
-    },
-    "labels": {
-        "label_delete_confirm": "Tem certeza de que deseja excluir este marcador? Esta ação não pode ser desfeita.",
-        "no_results": "Nenhuma etiqueta encontrada",
-        "toast": {
-            "failed_delete_label": "Falha ao deletar etiqueta",
-            "failed_load_label": "Falha ao deletar rótulo",
-            "failed_update_label": "Falha ao deletar rótulo",
-            "label_deleted": "Rótulo excluído",
-            "label_updated": "Rótulo atualizado"
-        },
-        "update_label": "Atualizar Etiqueta"
     },
     "languages": {
         "bs-BA": "Bósnio (Bósnia e Herzegovina)",
@@ -585,15 +548,13 @@
     },
     "menu": {
         "create_item": "Item / Ativo",
-        "create_label": "Etiqueta",
         "create_location": "Local",
         "home": "Início",
         "locations": "Locais",
         "maintenance": "Manutenção",
         "profile": "Perfil",
         "scanner": "Scanner",
-        "search": "Buscar",
-        "tools": "Ferramentas"
+        "search": "Buscar"
     },
     "profile": {
         "active": "Ativo",
@@ -607,7 +568,6 @@
         "display_legacy_header": "{ currentValue, select, true {Desativar cabeçalho legado} false {Ativar cabeçalho legado} other {Não atingido}}",
         "enabled": "Ativado",
         "example": "Exemplo",
-        "gen_invite": "Gerar link de convite",
         "group_settings": "Definições do grupo",
         "group_settings_sub": "Configurações de Grupo Compartilhado. É possível que tenha que recarregar a página para que alguns ajustes sejam aplicados.",
         "inactive": "Inativo",

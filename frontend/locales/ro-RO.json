@@ -2,6 +2,7 @@
     "components": {
         "app": {
             "create_modal": {
+                "createAndAddAnother": "Folosește {shiftKey} + {enterKey} pentru a crea și a adăuga din nou.",
                 "shift": "Shift"
             },
             "import_dialog": {
@@ -9,7 +10,9 @@
                 "description": "Importă un fișier CSV care conține toate obiectele, etichetele și locațiile tale. \nCitește documentația pentru mai multe informații privind format-ul necesar.",
                 "title": "Importă fișier CSV",
                 "toast": {
-                    "import_success": "Import cu succes!"
+                    "import_failed": "Importul a eșuat. Te rog, încearcă din nou mai târziu.",
+                    "import_success": "Import cu succes!",
+                    "please_select_file": "Te rog, selecteaza un fisier pentru a importa."
                 }
             },
             "outdated": {
@@ -21,8 +24,10 @@
             }
         },
         "color_selector": {
+            "clear": "Elimina culoarea",
             "color": "Culoare",
-            "no_color": "Fara culoare"
+            "no_color": "Fara culoare",
+            "no_color_selected": "Nici o culoare selectata"
         },
         "global": {
             "copy_text": {
@@ -110,13 +115,6 @@
                 }
             }
         },
-        "label": {
-            "create_modal": {
-                "label_description": "Descrierea etichetei",
-                "label_name": "Nume eticheta",
-                "title": "Crează Etichetă"
-            }
-        },
         "location": {
             "create_modal": {
                 "location_description": "Descriere locatie",
@@ -152,7 +150,6 @@
         "insured": "Asigurat",
         "items": "Articole",
         "join_discord": "Vino pe Discord",
-        "labels": "Etichete",
         "locations": "Locații",
         "maintenance": "Mentenanță",
         "name": "Nume",
@@ -168,12 +165,10 @@
         "welcome": "Bun venit, { username }"
     },
     "home": {
-        "labels": "Etichete",
         "quick_statistics": "Statistici rapide",
         "recently_added": "Adăugat recent",
         "storage_locations": "Locații de depozitare",
         "total_items": "Total articole",
-        "total_labels": "Număr total etichete",
         "total_locations": "Total locații",
         "total_value": "Valoare totală"
     },
@@ -219,7 +214,6 @@
         "manufacturer": "Producător",
         "model_number": "Număr model",
         "name": "Nume",
-        "negate_labels": "Neagă Etichetele Selectate",
         "next_page": "Următoarea Pagină",
         "no_results": "Nu s-au găsit articole",
         "notes": "Notițe",
@@ -255,10 +249,6 @@
         "warranty": "Garanție",
         "warranty_details": "Detalii Garanție",
         "warranty_expires": "Garanția expiră"
-    },
-    "labels": {
-        "no_results": "Nu s-au găsit Etichete",
-        "update_label": "Actualizare etichetă"
     },
     "languages": {
         "ca": "Catalană",
@@ -329,14 +319,12 @@
     },
     "menu": {
         "create_item": "Articol / Activ",
-        "create_label": "Etichetă",
         "create_location": "Locație",
         "home": "Acasă",
         "locations": "Locații",
         "maintenance": "Mentenanță",
         "profile": "Profil",
-        "search": "Caută",
-        "tools": "Unelte"
+        "search": "Caută"
     },
     "profile": {
         "active": "Activ",
@@ -347,7 +335,6 @@
         "delete_account_sub": "Ștergeți contul și toate datele asociate acestuia. Această acțiune nu poate fi revocată.",
         "enabled": "Activat",
         "example": "Exemplu",
-        "gen_invite": "Generează Link Invitație",
         "group_settings": "Setări Grup",
         "group_settings_sub": "Setări Grup Partajare. Este posibil să fie nevoie să reîncărcați browser-ul pentru aplicarea unor setări.",
         "inactive": "Inactiv",

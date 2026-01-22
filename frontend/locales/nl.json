@@ -1,4 +1,48 @@
 {
+    "collection": {
+        "copy_invite": "Kopieer uitnodiginslink",
+        "create_invite": "Uitnodiging aanmaken",
+        "delete_collection": "Collectie wissen",
+        "delete_confirm": "Bent u zeker dat u deze collectie wilt verwijderen? Deze actie kan niet ongedaan gemaakt worden.",
+        "deleted_collection": "Collectie gewist.",
+        "expires_at": "Verloopt",
+        "invite_token": "Token",
+        "invite_token_hidden": "Niet langer zicthbaar",
+        "invite_token_warning": "Uitnodigingstokens worden slechts één keer weergegeven. Kopieer de link nu; u kunt deze token niet meer bekijken nadat u deze pagina hebt verlaten of vernieuwd.",
+        "invites": "Uitnodigingen",
+        "invites_delete_confirm": "Weet u zeker dat u deze uitnodiging wilt verwijderen?",
+        "leave_collection": "Collectie verlaten",
+        "leave_confirm": "Weet u zeker dat u deze collectie wilt verlaten?",
+        "left_collection": "U heeft de collectie verlaten.",
+        "manage_collection": "Collectie beheren",
+        "members": {
+            "cannot_remove_last": "U kunt het laatste lid niet verwijderen.",
+            "email": "E-mail",
+            "empty": "Nog geen leden in deze collectie.",
+            "member": "Lid",
+            "name": "Naam",
+            "owner": "Eigenaar",
+            "remove_confirm": "Weet je zeker dat je dit lid wilt verwijderen?",
+            "removed": "Lid verwijderd",
+            "role": "Rol"
+        },
+        "no_collections": {
+            "create": "Maak een nieuwe collectie aan",
+            "join": "Neem deel aan een bestaande collectie",
+            "message": "Het lijkt erop dat je geen deel uitmaakt van een collectie. Maak een nieuwe collectie aan voor je spullen, of neem deel aan een collectie waarvoor je uitgenodigd bent.",
+            "title": "Geen collecties gevonden"
+        },
+        "no_invites": "Geen uitnodigingen",
+        "remaining_uses": "Resterende toepassingen",
+        "tabs": {
+            "invites": "Uitnodigingen",
+            "members": "Leden",
+            "notifiers": "Notificaties",
+            "settings": "Instellingen",
+            "tools": "Hulpmiddelen"
+        },
+        "uses": "Toepassingen"
+    },
     "components": {
         "app": {
             "create_modal": {
@@ -22,6 +66,47 @@
                 "latest_version": "Nieuwste versie",
                 "new_version_available": "Nieuwe Versie Beschikbaar",
                 "new_version_available_link": "Klik hier om de release notes te bekijken"
+            }
+        },
+        "collection": {
+            "create_modal": {
+                "name_label": "Collectie naam",
+                "title": "Collectie maken",
+                "toast": {
+                    "already_creating": "Een collectie wordt al aangemaakt",
+                    "create_failed": "Aanmaken van collectie mislukt",
+                    "create_success": "Collectie aangemaakt",
+                    "please_enter_name": "Vul a.u.b. een collectie naam in"
+                }
+            },
+            "invite_create_modal": {
+                "toast": {
+                    "invalid_expiry_missing": "Kies een vervaldatum en -tijd.",
+                    "invalid_expiry_past": "Vervaldatum moet in de toekomst liggen.",
+                    "invalid_uses": "Toepassingen moet een getal tussen 0 en 100 zijn."
+                }
+            },
+            "join_modal": {
+                "invite_code_label": "Collectie-uitnodigingscode",
+                "invites_should_look_like": "Uitnodigingen moeten er als volgt uitzien:",
+                "join": "Deelnemen aan collectie",
+                "no_invite_code_create_one": "Geen uitnodigingscode? Maak in plaats daarvan een nieuwe collectie aan",
+                "title": "Deelnemen aan collectie",
+                "toast": {
+                    "already_joining": "Reeds toegevoegd aan een collectie",
+                    "join_failed": "Deelnemen aan collectie mislukt",
+                    "join_success": "Aangesloten bij collectie",
+                    "please_enter_valid_join_code": "Voer een geldige uitnodigingscode voor de collectie in"
+                }
+            },
+            "selector": {
+                "collection_options": "Collectie Opties",
+                "create_collection": "Nieuwe collectie maken",
+                "join_collection": "Deelnemen aan bestaande collectie",
+                "no_collection_found": "Geen collectie gevonden",
+                "search_collections": "Collecties zoeken...",
+                "select_collection": "Collectie selecteren",
+                "your_collections": "Uw collecties"
             }
         },
         "color_selector": {
@@ -133,6 +218,7 @@
                 "title": "Importeer product"
             },
             "selector": {
+                "clear": "Wis item selectie",
                 "no_results": "Geen resultaten gevonden",
                 "placeholder": "Selecteer…",
                 "search_placeholder": "Type om te zoeken…",
@@ -140,9 +226,9 @@
             },
             "view": {
                 "change_details": {
-                    "add_labels": "Voeg labels toe",
+                    "add_tags": "Labels toevoegen",
                     "failed_to_update_item": "Bijwerken van item mislukt",
-                    "remove_labels": "Verwijder labels",
+                    "remove_tags": "Labels verwijderen",
                     "title": "Itemgegevens wijzigen"
                 },
                 "selectable": {
@@ -157,10 +243,10 @@
                 "table": {
                     "dropdown": {
                         "actions": "Acties",
-                        "change_labels": "Labels wijzigen",
-                        "change_labels_success": "Labels gewijzigd",
                         "change_location": "Locatie wijzigen",
                         "change_location_success": "Locatie gewijzigd",
+                        "change_tags": "Labels wijzigen",
+                        "change_tags_success": "Labels veranderd",
                         "create_maintenance_item": "Onderhoudsinvoer aanmaken voor item",
                         "create_maintenance_selected": "Onderhoudsinvoer aanmaken voor geselecteerde items",
                         "create_maintenance_success": "Onderhoudsinvoeren aangemaakt",
@@ -189,23 +275,6 @@
                 }
             }
         },
-        "label": {
-            "create_modal": {
-                "label_color": "Label kleur",
-                "label_description": "Label beschrijving",
-                "label_name": "Label naam",
-                "title": "Maak label",
-                "toast": {
-                    "already_creating": "Al een label aan het maken",
-                    "create_failed": "Kon label niet aanmaken",
-                    "create_success": "Label aangemaakt",
-                    "label_name_too_long": "Labelnaam mag niet langer zijn dan 50 tekens"
-                }
-            },
-            "selector": {
-                "select_labels": "Labels selecteren"
-            }
-        },
         "location": {
             "create_modal": {
                 "location_description": "Locatie omschrijving",
@@ -218,18 +287,36 @@
                 }
             },
             "selector": {
+                "clear": "Wis Locatie Selectie",
                 "no_location_found": "Geen locatie gevonden",
                 "parent_location": "Hoofd locatie",
                 "search_location": "Zoek locaties",
                 "select_location": "Selecteer een locatie"
             },
             "tree": {
-                "no_locations": "Geen locaties beschikbaar. Voeg een nieuwe locatie toe\n via de' <span class=\"link-primary\">'Creeer'</span>' knop op het navigatie menu."
+                "no_locations": "Geen locaties beschikbaar. Gebruik de Maak knop om een nieuwe locatie toe te voegen."
             }
         },
         "quick_menu": {
             "no_results": "Geen resultaten gevonden.",
             "shortcut_hint": "Gebruik de numerieke toetsen om snel een actie te selecteren."
+        },
+        "tag": {
+            "create_modal": {
+                "tag_color": "Label Kleur",
+                "tag_description": "Labelbeschrijving",
+                "tag_name": "tag naam",
+                "title": "Label Aanmaken",
+                "toast": {
+                    "already_creating": "Een label wordt al aangemaakt",
+                    "create_failed": "Kan tag niet aanmaken",
+                    "create_success": "Tag aangemaakt",
+                    "tag_name_too_long": "Labelnaam mag niet langer zijn dan 50 tekens"
+                }
+            },
+            "selector": {
+                "select_tags": "Label selecteren"
+            }
         },
         "template": {
             "apply_template": "Template toepassen",
@@ -269,10 +356,11 @@
             "hide_defaults": "Standaard verbergen",
             "save_as_template": "Opslaan als Template",
             "selector": {
+                "clear": "Wis Template Selectie",
                 "label": "Template (Optioneel)",
                 "not_found": "Geen template gevonden",
-                "search": "Templates zoeken…",
-                "select": "Template selecteren…"
+                "search": "Templates zoeken...",
+                "select": "Template selecteren..."
             },
             "show_defaults": "Standaard weergeven",
             "toast": {
@@ -314,13 +402,12 @@
         "follow_dev": "Volg de ontwikkelaar",
         "footer": {
             "api_link": "'<a href=\"https://homebox.software/en/api/\" target=\"_blank\">'API'</a>'",
-            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/{ version }\" target=\"_blank\"'>' Versie: { version } Build: { build } '</a>'"
+            "version_link": "'<'a href=\"https://github.com/sysadminsmedia/homebox/releases/tag/v{ version }\" target=\"_blank\"'>' Versie: { version } Build: { build } '</a>'"
         },
         "github": "GitHub Project",
         "insured": "Verzekerd",
         "items": "artikelen",
         "join_discord": "Sluit je aan bij de Discord",
-        "labels": "Labels",
         "loading": "Bezig met laden…",
         "locations": "Locaties",
         "maintenance": "Onderhoud",
@@ -336,6 +423,7 @@
         "search": "Zoeken",
         "sign_out": "Log uit",
         "submit": "Indienen",
+        "tags": "Labels",
         "unknown": "Onbekend",
         "update": "Bijwerken",
         "updating": "Aan het updaten",
@@ -345,13 +433,13 @@
         "yes": "Ja"
     },
     "home": {
-        "labels": "Labels",
         "quick_statistics": "Snelle statistieken",
         "recently_added": "Recent toegevoegd",
         "storage_locations": "Opslaglocaties",
+        "tags": "Labels",
         "total_items": "Totale items",
-        "total_labels": "Totaal aantal labels",
         "total_locations": "Totaal aantal locaties",
+        "total_tags": "Totaal aantal labels",
         "total_value": "Totale Waarde"
     },
     "index": {
@@ -437,7 +525,7 @@
         "manufacturer": "Fabrikant",
         "model_number": "Modelnummer",
         "name": "Naam",
-        "negate_labels": "Negeer Geselecteerde Labels",
+        "negate_tags": "Geselecteerde tags negeren",
         "next_page": "Volgende pagina",
         "no_attachments": "Geen bijlagen gevonden",
         "no_results": "Geen Items Gevonden",
@@ -504,18 +592,6 @@
         "warranty": "Garantie",
         "warranty_details": "Garantiedetails",
         "warranty_expires": "Garantie vervalt"
-    },
-    "labels": {
-        "label_delete_confirm": "Bent u zeker dat u dit label wil verwijderen? Deze actie kan niet ongedaan gemaakt worden.",
-        "no_results": "Geen labels gevonden",
-        "toast": {
-            "failed_delete_label": "Label verwijderen mislukt",
-            "failed_load_label": "Laden label mislukt",
-            "failed_update_label": "Label bijwerken mislukt",
-            "label_deleted": "Label verwijderd",
-            "label_updated": "Label bijgewerkt"
-        },
-        "update_label": "Etiket bijwerken"
     },
     "languages": {
         "bs-BA": "Bosnisch (Bosnië en Herzegovina)",
@@ -606,17 +682,17 @@
         "total_entries": "Totaal aantal invoeren"
     },
     "menu": {
+        "collection": "Collectie",
         "create_item": "Artikel / Object",
-        "create_label": "Label",
         "create_location": "Locatie",
+        "create_tag": "Label",
         "home": "Home",
         "locations": "Locaties",
         "maintenance": "Onderhoud",
         "profile": "Profiel",
         "scanner": "Scanner",
         "search": "Zoeken",
-        "templates": "Templates",
-        "tools": "Hulpmiddelen"
+        "templates": "Templates"
     },
     "pages": {
         "templates": {
@@ -636,12 +712,17 @@
         "display_legacy_header": "{ currentValue, select, true {Legacy Header uitschakelen} false {Legacy Header inschakelen} other {Overig}}",
         "enabled": "Ingeschakeld",
         "example": "Voorbeeld",
-        "gen_invite": "Genereer Uitnodigingslink",
         "group_settings": "Groepsinstellingen",
         "group_settings_sub": "Gedeelde groepsinstellingen. Mogelijk moet u uw browser vernieuwen om sommige instellingen toe te passen.",
         "inactive": "Inactief",
         "language": "Taal",
         "legacy_image_fit": "{ currentValue, select, true {Legacy fit uitschakelen: afbeelding aanpassen met balken} false {Legacy fit inschakelen: afbeelding vullen met bijsnijden} other {Overig}}",
+        "moved_notice_body": "Notificaties, uitnodigingen en valuta-instellingen zijn verplaatst naar de collectiepagina's.",
+        "moved_notice_description": "Deze instellingen worden nu per collectie beheerd.",
+        "moved_notice_link_invites": "Uitnodigingen collectie",
+        "moved_notice_link_notifiers": "Notificaties collectie",
+        "moved_notice_link_settings": "Valuta-instellingen collectie",
+        "moved_notice_title": "Op zoek naar notificaties, uitnodigingen of valuta-instellingen?",
         "new_password": "Nieuw Wachtwoord",
         "no_notifiers": "Geen melders geconfigureerd",
         "no_override": "Niet overschrijven",
@@ -680,8 +761,8 @@
             "bordered_labels": "Omrande labels",
             "generate_page": "Pagina genereren",
             "input_placeholder": "Typ hier",
-            "instruction_1": "De Homebox Label Generator is een hulpmiddel om u te helpen bij het afdrukken van labels voor uw Homebox-inventaris.\nDeze zijn bedoeld om op voorhand te printen zodat je een voorraad hebt en deze klaar zijn om te gebruiken",
-            "instruction_2": "Als zodanig werken deze labels door een URL QR-code en item-ID-informatie op een label af te drukken. Als je item-ID's\nhebt uitgeschakeld in je Homebox-instellingen, kun je deze tool nog steeds gebruiken, maar zullen de item-ID's niet verwijzen naar een item",
+            "instruction_1": "De HomeBox Label Generator is een hulpmiddel om u te helpen bij het afdrukken van labels voor uw HomeBox-inventaris.\nDeze zijn bedoeld om op voorhand te printen zodat je een voorraad hebt en deze klaar zijn om te gebruiken",
+            "instruction_2": "Als zodanig werken deze labels door een URL QR-code en item-ID-informatie op een label af te drukken. Als je item-ID's\nhebt uitgeschakeld in je HomeBox-instellingen, kun je deze tool nog steeds gebruiken, maar zullen de item-ID's niet verwijzen naar een item",
             "instruction_3": "Deze functie bevindt zich in een vroege ontwikkelingsfase en kan in toekomstige releases veranderen. Als je feedback hebt, geef\n deze dan op in de '<a href=\"https://github.com/sysadminsmedia/homebox/discussions/53\">'GitHub-discussie'</a>'",
             "label_height": "Label hoogte",
             "label_width": "Label breedte",
@@ -693,6 +774,13 @@
             "page_top_padding": "Top padding",
             "page_width": "Pagina breedte",
             "qr_code_example": "Voorbeeld QR Code",
+            "replace_homebox_behavior": "Vervang \"HomeBox\" tekstgedrag",
+            "replace_homebox_behavior_always_replace": "Vervang \"HomeBox\" altijd",
+            "replace_homebox_behavior_item_no_location": "Vervang \"HomeBox\" wanneer item geen locatie heeft",
+            "replace_homebox_behavior_item_no_name": "Vervang \"HomeBox\" wanneer item geen naam heeft",
+            "replace_homebox_behavior_item_no_name_no_location": "Vervang \"HomeBox\" wanneer het item geen naam en geen locatie heeft",
+            "replace_homebox_behavior_show_homebox": "Toon \"HomeBox\"",
+            "replace_homebox_text": "Vervangende tekst",
             "tip_1": "De standaardinstellingen hier zijn ingesteld voor de\n '<a href=\"https://www.avery.com/templates/5260\">'Avery 5260-labelbladen'</a>'. Als je een ander vel gebruikt,\nmoet je de instellingen aanpassen aan jouw type vel.",
             "tip_2": "Als je het vel aanpast zijn de afmetingen in inch. Bij het maken van een 5260 vel, heb ik ontdekt dat de\nafmetingen in hun template niet overeen komen om te printen in de vakken.\n'<b>'Hou rekening met wat trial en error.'</b>'",
             "tip_3": "Let op bij het afdrukken:\n'<ol><li>'Stel de marges in op 0 of Geen'</li><li>'Zet de schaal op 100%'</li><li>'Dubbelzijdig afdrukken uitschakelen'</li><li>'Druk een testpagina af voordat u meerdere pagina's afdrukt'</li></ol>'",
@@ -714,6 +802,18 @@
         "title": "Scanner",
         "unsupported": "Mediastream-API wordt niet ondersteund zonder HTTPS"
     },
+    "tags": {
+        "no_results": "Geen labels gevonden",
+        "tag_delete_confirm": "Bent u zeker dat u dit label wil verwijderen? Deze actie kan niet ongedaan gemaakt worden.",
+        "toast": {
+            "failed_delete_tag": "Label verwijderen mislukt",
+            "failed_load_tag": "Label laden mislukt",
+            "failed_update_tag": "Bijwerken label mislukt",
+            "tag_deleted": "Label verwijderd",
+            "tag_updated": "Label bijgewerkt"
+        },
+        "update_tag": "Label bijwerken"
+    },
     "tools": {
         "actions": "Acties inventariseren",
         "actions_set": {
@@ -732,12 +832,23 @@
             "set_primary_photo_button": "Hoofdfoto instellen",
             "set_primary_photo_confirm": "Weet u zeker dat u primaire foto's wilt instellen? Dit kan even duren en kan niet ongedaan worden gemaakt.",
             "set_primary_photo_sub": "In versie v0.10.0 van Homebox is het primaire afbeeldingsveld toegevoegd aan bijlagen van het type foto. Deze actie zet de primaire afbeelding naar de eerste afbeelding in de database, indien deze nog niet ingesteld is. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/pull/576\">'Zie GitHub PR #576'</a>'",
+            "wipe_inventory": "Inventaris wissen",
+            "wipe_inventory_button": "Inventaris wissen",
+            "wipe_inventory_confirm": "Weet je zeker dat je je volledige inventaris wilt wissen? Hiermee worden alle items verwijderd, dit kan niet ongedaan worden gemaakt.",
+            "wipe_inventory_locations": "Ook alle locaties wissen",
+            "wipe_inventory_maintenance": "Ook alle onderhoudsdossiers wissen",
+            "wipe_inventory_note": "Opmerking: alleen groepseigenaren kunnen deze actie uitvoeren.",
+            "wipe_inventory_sub": "Verwijdert permanent alle items in je inventaris. Deze actie kan niet ongedaan gemaakt worden en verwijdert alle itemgegevens, inclusief bijlagen en foto's.",
+            "wipe_inventory_tags": "Ook alle labels wissen",
             "zero_datetimes": "Nul item Datum Tijden",
             "zero_datetimes_button": "Nul item Datum Tijden",
             "zero_datetimes_confirm": "Weet u zeker dat u alle datum- en tijdwaarden opnieuw wilt instellen? Dit kan even duren en kan niet ongedaan worden gemaakt.",
             "zero_datetimes_sub": "Hiermee stelt u de tijdwaarde voor alle datum-/tijdvelden in uw voorraad in op het begin van de datum. Dit is een oplossing voor een fout in de applicatie geïntroduceerd in het begin van de ontwikkeling waarbij de tijd waarde verkeerd werd opgeslagen. '<a class=\"link\" href=\"https://github.com/hay-kot/homebox/issues/236\" target=\"_blank\">'Zie Github Issue #236 voor alle details.'</a>'"
         },
         "actions_sub": "Acties in bulk toepassen op je inventaris. Deze zijn onomkeerbaar '<b>'Wees voorzichtig.'</b>'",
+        "demo_mode_error": {
+            "wipe_inventory": "Inventaris, labels, locaties en onderhoudsrecords kunnen niet worden gewist terwijl Homebox zich in de demomodus bevindt. Zorg ervoor dat u niet in de demomodus bent en probeer het opnieuw."
+        },
         "import_export": "Importeer/Exporteer",
         "import_export_set": {
             "export": "Exporteer voorraad",
@@ -752,7 +863,7 @@
         "reports": "Rapportages",
         "reports_set": {
             "asset_labels": "Labels voor item-ID",
-            "asset_labels_button": "Etiket Generator",
+            "asset_labels_button": "Label Generator",
             "asset_labels_sub": "Genereert een afdrukbare PDF met labels voor een reeks Asset ID's. Deze zijn niet specifiek voor de voorraad dus kun je deze van te voren printen en gebruiken wanneer je voorraad ontvangt.",
             "bill_of_materials": "Materiaallijst",
             "bill_of_materials_button": "BOM genereren",
@@ -765,7 +876,9 @@
             "failed_ensure_ids": "Item-ID's aanmaken mislukt.",
             "failed_ensure_import_refs": "Import refs aanmaken mislukt.",
             "failed_set_primary_photos": "Primaire foto's instellen mislukt.",
-            "failed_zero_datetimes": "Datum- en tijdwaarden resetten mislukt."
+            "failed_wipe_inventory": "Inventaris wissen mislukt.",
+            "failed_zero_datetimes": "Datum- en tijdwaarden resetten mislukt.",
+            "wipe_inventory_success": "Inventaris succesvol gewist. { results } items verwijderd."
         }
     }
 }
