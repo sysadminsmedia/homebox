@@ -19,6 +19,8 @@ type OTelConfig struct {
 	// The full address including port should be specified
 	Endpoint string `yaml:"endpoint"`
 
+	PathPrefix string `yaml:"path_prefix"`
+
 	// Protocol specifies the OTLP protocol: "grpc" or "http"
 	Protocol string `yaml:"protocol" conf:"default:grpc"`
 

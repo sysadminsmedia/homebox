@@ -299,12 +299,8 @@ func createOTLPExporter(ctx context.Context, cfg *config.OTelConfig) (*otlptrace
 	case "http":
 		opts := []otlptracehttp.Option{}
 		if cfg.Endpoint != "" {
-			host, path := parseEndpoint(cfg.Endpoint)
-			opts = append(opts, otlptracehttp.WithEndpoint(host))
-			if path != "" {
-				// Custom base path - append the standard OTLP trace path
-				opts = append(opts, otlptracehttp.WithURLPath(path+"/v1/traces"))
-			}
+			opts = append(opts, otlptracehttp.WithEndpoint(cfg.Endpoint))
+			opts = append(opts, otlptracehttp.WithURLPath(cfg.PathPrefix+"/v1/traces"))
 		}
 		if cfg.Insecure {
 			opts = append(opts, otlptracehttp.WithInsecure())
@@ -358,12 +354,8 @@ func createOTLPMetricExporter(ctx context.Context, cfg *config.OTelConfig) (sdkm
 	case "http":
 		opts := []otlpmetrichttp.Option{}
 		if cfg.Endpoint != "" {
-			host, path := parseEndpoint(cfg.Endpoint)
-			opts = append(opts, otlpmetrichttp.WithEndpoint(host))
-			if path != "" {
-				// Custom base path - append the standard OTLP metrics path
-				opts = append(opts, otlpmetrichttp.WithURLPath(path+"/v1/metrics"))
-			}
+			opts = append(opts, otlpmetrichttp.WithEndpoint(cfg.Endpoint))
+			opts = append(opts, otlpmetrichttp.WithURLPath(cfg.PathPrefix+"/v1/metrics"))
 		}
 		if cfg.Insecure {
 			opts = append(opts, otlpmetrichttp.WithInsecure())
@@ -416,12 +408,8 @@ func createOTLPLogExporter(ctx context.Context, cfg *config.OTelConfig) (sdklog.
 	case "http":
 		opts := []otlploghttp.Option{}
 		if cfg.Endpoint != "" {
-			host, path := parseEndpoint(cfg.Endpoint)
-			opts = append(opts, otlploghttp.WithEndpoint(host))
-			if path != "" {
-				// Custom base path - append the standard OTLP logs path
-				opts = append(opts, otlploghttp.WithURLPath(path+"/v1/logs"))
-			}
+			opts = append(opts, otlploghttp.WithEndpoint(cfg.Endpoint))
+			opts = append(opts, otlploghttp.WithURLPath(cfg.PathPrefix+"/v1/logs"))
 		}
 		if cfg.Insecure {
 			opts = append(opts, otlploghttp.WithInsecure())
