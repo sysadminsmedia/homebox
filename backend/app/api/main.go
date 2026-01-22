@@ -8,25 +8,27 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/pressly/goose/v3"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/otel"
-
-	"github.com/hay-kot/httpkit/errchain"
-	"github.com/hay-kot/httpkit/graceful"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
-	"github.com/rs/zerolog/pkgerrors"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/currencies"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/migrations"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/repo"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/analytics"
 	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/otel"
 	"github.com/sysadminsmedia/homebox/backend/internal/web/mid"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/hay-kot/httpkit/errchain"
+	"github.com/hay-kot/httpkit/graceful"
+	"github.com/pressly/goose/v3"
+	"github.com/riandyrn/otelchi"
+	otelchimetric "github.com/riandyrn/otelchi/metric"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/pkgerrors"
 	"go.balki.me/anyhttp"
 
 	_ "github.com/lib/pq"
@@ -51,8 +53,8 @@ var (
 
 func build() string {
 	short := commit
-	if len(short) > 7 {
-		short = short[:7]
+	if len(commit) > 7 {
+		short = commit[:7]
 	}
 
 	return fmt.Sprintf("%s, commit %s, built at %s", version, short, buildTime)
@@ -165,6 +167,17 @@ func run(cfg *config.Config) error {
 		}
 	}
 
+	// Ensure database is closed if we return early before runner starts
+	// This flag will be set to true once the runner takes over cleanup responsibility
+	dbCleanupHandled := false
+	defer func() {
+		if !dbCleanupHandled {
+			if err := c.Close(); err != nil {
+				log.Error().Err(err).Msg("failed to close database connection during cleanup")
+			}
+		}
+	}()
+
 	migrationsFs, err := migrations.Migrations(strings.ToLower(cfg.Database.Driver))
 	if err != nil {
 		return fmt.Errorf("failed to get migrations for %s: %w", strings.ToLower(cfg.Database.Driver), err)
@@ -188,7 +201,7 @@ func run(cfg *config.Config) error {
 		return err
 	}
 
-	currencies, err := currencies.CollectionCurrencies(collectFuncs...)
+	currencyData, err := currencies.CollectionCurrencies(collectFuncs...)
 	if err != nil {
 		log.Error().
 			Err(err).
@@ -202,7 +215,7 @@ func run(cfg *config.Config) error {
 	app.services = services.New(
 		app.repos,
 		services.WithAutoIncrementAssetID(cfg.Options.AutoIncrementAssetID),
-		services.WithCurrencies(currencies),
+		services.WithCurrencies(currencyData),
 	)
 
 	// =========================================================================
@@ -212,9 +225,14 @@ func run(cfg *config.Config) error {
 
 	router := chi.NewMux()
 
-	// Add OpenTelemetry HTTP middleware if enabled
 	if otelProvider.IsEnabled() && cfg.Otel.EnableHTTPTracing {
-		router.Use(otelProvider.HTTPMiddleware("homebox"))
+		otelChiBaseCfg := otelchimetric.NewBaseConfig(cfg.Otel.ServiceName, otelchimetric.WithMeterProvider(otelProvider.MeterProvider()))
+		router.Use(
+			otelchi.Middleware(cfg.Otel.ServiceName, otelchi.WithChiRoutes(router)),
+			otelchimetric.NewResponseSizeBytes(otelChiBaseCfg),
+			otelchimetric.NewRequestInFlight(otelChiBaseCfg),
+			otelchimetric.NewResponseSizeBytes(otelChiBaseCfg),
+		)
 	}
 
 	router.Use(
@@ -230,6 +248,13 @@ func run(cfg *config.Config) error {
 	app.mountRoutes(router, chain, app.repos)
 
 	runner := graceful.NewRunner()
+
+	// Add database shutdown
+	runner.AddFunc("database-shutdown", func(ctx context.Context) error {
+		<-ctx.Done()
+		log.Info().Msg("closing database connection")
+		return c.Close()
+	})
 
 	// Add OpenTelemetry shutdown
 	if otelProvider.IsEnabled() {
@@ -257,6 +282,11 @@ func run(cfg *config.Config) error {
 
 		listener, addrType, addrCfg, err := anyhttp.GetListener(cfg.Web.Host)
 		if err == nil {
+			defer func() {
+				if err := listener.Close(); err != nil {
+					log.Error().Err(err).Msg("failed to close listener")
+				}
+			}()
 			switch addrType {
 			case anyhttp.SystemdFD:
 				sysdCfg := addrCfg.(*anyhttp.SysdConfig)
@@ -302,5 +332,7 @@ func run(cfg *config.Config) error {
 		}))
 	}
 
+	// Mark that database cleanup is now handled by the runner's shutdown func
+	dbCleanupHandled = true
 	return runner.Start(context.Background())
 }

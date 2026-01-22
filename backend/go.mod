@@ -25,6 +25,7 @@ require (
 	github.com/olahol/melody v1.4.0
 	github.com/pkg/errors v0.9.1
 	github.com/pressly/goose/v3 v3.26.0
+	github.com/riandyrn/otelchi v0.12.2
 	github.com/rs/zerolog v1.34.0
 	github.com/shirou/gopsutil/v4 v4.25.12
 	github.com/skip2/go-qrcode v0.0.0-20200617195104-da1b6568686e
