@@ -148,9 +148,17 @@ func NewProvider(ctx context.Context, cfg *config.OTelConfig, buildVersion strin
 		sampler = sdktrace.TraceIDRatioBased(cfg.SampleRate)
 	}
 
+	// Create batch processor with span filtering
+	batchProcessor := sdktrace.NewBatchSpanProcessor(traceExporter)
+	// We ignore these spans because they create unneeded noise and extra data we don't need
+	ignoredSpans := []string{
+		"gocloud.dev/pubsub.driver.Subscription.ReceiveBatch",
+	}
+	filteredProcessor := newSpanFilterProcessor(batchProcessor, ignoredSpans)
+
 	// Create trace provider
 	tp = sdktrace.NewTracerProvider(
-		sdktrace.WithBatcher(traceExporter),
+		sdktrace.WithSpanProcessor(filteredProcessor),
 		sdktrace.WithResource(res),
 		sdktrace.WithSampler(sdktrace.ParentBased(sampler)),
 	)
@@ -501,4 +509,42 @@ func (e *noopLogExporter) ForceFlush(_ context.Context) error {
 
 func (e *noopLogExporter) Shutdown(_ context.Context) error {
 	return nil
+}
+
+// spanFilterProcessor wraps a SpanProcessor and filters spans based on their name.
+type spanFilterProcessor struct {
+	next         sdktrace.SpanProcessor
+	ignoredSpans map[string]bool
+}
+
+// newSpanFilterProcessor creates a new span filter processor that wraps another processor.
+func newSpanFilterProcessor(next sdktrace.SpanProcessor, ignoredSpans []string) sdktrace.SpanProcessor {
+	ignored := make(map[string]bool, len(ignoredSpans))
+	for _, span := range ignoredSpans {
+		ignored[span] = true
+	}
+	return &spanFilterProcessor{
+		next:         next,
+		ignoredSpans: ignored,
+	}
+}
+
+func (s *spanFilterProcessor) OnStart(parent context.Context, span sdktrace.ReadWriteSpan) {
+	if !s.ignoredSpans[span.Name()] {
+		s.next.OnStart(parent, span)
+	}
+}
+
+func (s *spanFilterProcessor) OnEnd(span sdktrace.ReadOnlySpan) {
+	if !s.ignoredSpans[span.Name()] {
+		s.next.OnEnd(span)
+	}
+}
+
+func (s *spanFilterProcessor) Shutdown(ctx context.Context) error {
+	return s.next.Shutdown(ctx)
+}
+
+func (s *spanFilterProcessor) ForceFlush(ctx context.Context) error {
+	return s.next.ForceFlush(ctx)
 }

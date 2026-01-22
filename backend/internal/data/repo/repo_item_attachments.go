@@ -14,22 +14,23 @@ import (
 	"strings"
 	"time"
 
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
+	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
+	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
+
 	"github.com/evanoberholster/imagemeta"
 	"github.com/gen2brain/avif"
 	"github.com/gen2brain/heic"
 	"github.com/gen2brain/jpegxl"
 	"github.com/gen2brain/webp"
-	"github.com/rs/zerolog/log"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
-	"github.com/sysadminsmedia/homebox/backend/internal/sys/config"
-	"github.com/sysadminsmedia/homebox/backend/pkgs/utils"
-	"github.com/zeebo/blake3"
-	"golang.org/x/image/draw"
-
 	"github.com/google/uuid"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
+	"github.com/rs/zerolog/log"
+	"github.com/zeebo/blake3"
+	"go.opentelemetry.io/otel"
+	"golang.org/x/image/draw"
 
 	"gocloud.dev/blob"
 	_ "gocloud.dev/blob/azureblob"
@@ -162,6 +163,9 @@ func (r *AttachmentRepo) GetConnString() string {
 }
 
 func (r *AttachmentRepo) Create(ctx context.Context, itemID uuid.UUID, doc ItemCreateAttachment, typ attachment.Type, primary bool) (*ent.Attachment, error) {
+	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.Create")
+	defer span.End()
+
 	tx, err := r.db.Tx(ctx)
 	if err != nil {
 		return nil, err
@@ -377,6 +381,9 @@ func (r *AttachmentRepo) Update(ctx context.Context, gid uuid.UUID, id uuid.UUID
 }
 
 func (r *AttachmentRepo) Delete(ctx context.Context, gid uuid.UUID, id uuid.UUID) error {
+	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.Delete")
+	defer span.End()
+
 	// Validate that the attachment belongs to the specified group
 	doc, err := r.db.Attachment.Query().
 		Where(
@@ -453,6 +460,9 @@ func (r *AttachmentRepo) Rename(ctx context.Context, gid uuid.UUID, id uuid.UUID
 
 //nolint:gocyclo
 func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmentId uuid.UUID, title string, path string) error {
+	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.CreateThumbnail")
+	defer span.End()
+
 	log.Debug().Msg("starting thumbnail creation")
 	tx, err := r.db.Tx(ctx)
 	if err != nil {
@@ -696,6 +706,9 @@ func (r *AttachmentRepo) CreateThumbnail(ctx context.Context, groupId, attachmen
 }
 
 func (r *AttachmentRepo) CreateMissingThumbnails(ctx context.Context, groupId uuid.UUID) (int, error) {
+	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.CreateMissingThumbnails")
+	defer span.End()
+
 	attachments, err := r.db.Attachment.Query().
 		Where(
 			attachment.HasItemWith(item.HasGroupWith(group.ID(groupId))),
@@ -751,6 +764,9 @@ type UploadResult struct {
 }
 
 func (r *AttachmentRepo) UploadFile(ctx context.Context, itemGroup *ent.Group, doc ItemCreateAttachment) (UploadResult, error) {
+	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.UploadFile")
+	defer span.End()
+
 	// Prepare for the hashing of the file contents
 	hashOut := make([]byte, 32)
 
@@ -849,16 +865,24 @@ func calculateThumbnailDimensions(origWidth, origHeight, maxWidth, maxHeight int
 // processThumbnailFromImage handles the common thumbnail processing logic after image decoding
 // Returns the thumbnail file path or an error
 func (r *AttachmentRepo) processThumbnailFromImage(ctx context.Context, groupId uuid.UUID, img image.Image, title string, orientation uint16) (UploadResult, error) {
+	ctx, span := otel.Tracer("data").Start(ctx, "repo.AttachmentRepo.processThumbnailFromImage")
+	defer span.End()
+
 	bounds := img.Bounds()
+
+	span.AddEvent("applying EXIF orientation")
 	// Apply EXIF orientation if needed
 	if orientation > 1 {
 		img = utils.ApplyOrientation(img, orientation)
 		bounds = img.Bounds()
 	}
+
+	span.AddEvent("resizing image")
 	newWidth, newHeight := calculateThumbnailDimensions(bounds.Dx(), bounds.Dy(), r.thumbnail.Width, r.thumbnail.Height)
 	dst := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
 	draw.CatmullRom.Scale(dst, dst.Rect, img, img.Bounds(), draw.Over, nil)
 
+	span.AddEvent("encoding thumbnail as webp")
 	buf := new(bytes.Buffer)
 	err := webp.Encode(buf, dst, webp.Options{Quality: 80, Lossless: false})
 	if err != nil {
