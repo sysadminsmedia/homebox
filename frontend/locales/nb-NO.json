@@ -141,23 +141,6 @@
                 }
             }
         },
-        "label": {
-            "create_modal": {
-                "label_color": "Farge på etikett",
-                "label_description": "Merkelappbeskrivelse",
-                "label_name": "Merkelappnavn",
-                "title": "Opprett merkelapp",
-                "toast": {
-                    "already_creating": "Opprettelse av etikett pågår allerede",
-                    "create_failed": "Kunne ikke opprette etikett",
-                    "create_success": "Etikett opprettet",
-                    "label_name_too_long": "Etikettnavn kan ikke overstige 50 tegn"
-                }
-            },
-            "selector": {
-                "select_labels": "Velg etikett"
-            }
-        },
         "location": {
             "create_modal": {
                 "location_description": "Lokasjonsbeskrivelse",
@@ -210,7 +193,6 @@
         "insured": "Forsikret",
         "items": "Objekter",
         "join_discord": "Bli med på Discord",
-        "labels": "Merkelapper",
         "loading": "Laster...",
         "locations": "Lokasjoner",
         "maintenance": "Vedlikehold",
@@ -232,12 +214,10 @@
         "welcome": "Velkommen, { username }"
     },
     "home": {
-        "labels": "Merkelapper",
         "quick_statistics": "Rask statistikk",
         "recently_added": "Nylig lagt til",
         "storage_locations": "Oppbevaringslokasjoner",
         "total_items": "Antall objekter",
-        "total_labels": "Antall merkelapper",
         "total_locations": "Antall lokasjoner",
         "total_value": "Total verdi"
     },
@@ -302,7 +282,6 @@
         "manufacturer": "Produsent",
         "model_number": "Modellnummer",
         "name": "Navn",
-        "negate_labels": "Se bort fra valgte merkelapper",
         "next_page": "Neste side",
         "no_attachments": "Ingen vedlegg funnet",
         "no_results": "Ingenting funnet",
@@ -369,18 +348,6 @@
         "warranty": "Garanti",
         "warranty_details": "Garantidetaljer",
         "warranty_expires": "Garanti utløper"
-    },
-    "labels": {
-        "label_delete_confirm": "Er du sikker på at du vil slette denne etiketten? Denne handlingen kan ikke angres.",
-        "no_results": "Ingen merkelapper funnet",
-        "toast": {
-            "failed_delete_label": "Kunne ikke slette etikett",
-            "failed_load_label": "Kunne ikke laste inn etikett",
-            "failed_update_label": "Kunne ikke oppdatere etikett",
-            "label_deleted": "Etikett slettet",
-            "label_updated": "Etikett oppdatert"
-        },
-        "update_label": "Oppdater merkelapp"
     },
     "languages": {
         "ca": "Katalansk",
@@ -470,15 +437,13 @@
     },
     "menu": {
         "create_item": "Objekt",
-        "create_label": "Merkelapp",
         "create_location": "Lokasjon",
         "home": "Hjem",
         "locations": "Lokasjoner",
         "maintenance": "Vedlikehold",
         "profile": "Profil",
         "scanner": "Skanner",
-        "search": "Søk",
-        "tools": "Verktøy"
+        "search": "Søk"
     },
     "profile": {
         "active": "Aktiv",
@@ -492,7 +457,6 @@
         "display_legacy_header": "{ currentValue, select, true {Deaktiver eldre topptekst} false {Aktiver eldre topptekst} other {Ikke aktuelt}}",
         "enabled": "Aktivert",
         "example": "Eksempel",
-        "gen_invite": "Opprett invitasjonslenke",
         "group_settings": "Gruppeinnstillinger",
         "group_settings_sub": "Delte gruppeinnstillinger. Du må muligens laste inn siden på nytt for at noen endringer skal aktiveres.",
         "inactive": "Inaktiv",

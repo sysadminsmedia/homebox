@@ -81,13 +81,6 @@
                 }
             }
         },
-        "label": {
-            "create_modal": {
-                "label_description": "Descripció de l'etiqueta",
-                "label_name": "Nom de l'etiqueta",
-                "title": "Crea una etiqueta"
-            }
-        },
         "location": {
             "create_modal": {
                 "location_description": "Descripció de la ubicació",
@@ -118,7 +111,6 @@
         "github": "Projecte de GitHub",
         "items": "Articles",
         "join_discord": "Uniu-vos a Discord",
-        "labels": "Etiquetes",
         "locations": "Ubicacions",
         "maintenance": "Manteniment",
         "name": "Nom",
@@ -134,12 +126,10 @@
         "welcome": "Us donem la benvinguda, { username }"
     },
     "home": {
-        "labels": "Etiquetes",
         "quick_statistics": "Estadístiques ràpides",
         "recently_added": "Afegit recentment",
         "storage_locations": "Ubicacions d'emmagatzematge",
         "total_items": "Articles totals",
-        "total_labels": "Total d'etiquetes",
         "total_locations": "Ubicacions totals",
         "total_value": "Valor total"
     },
@@ -182,7 +172,6 @@
         "manufacturer": "Fabricant",
         "model_number": "Número de model",
         "name": "Nom",
-        "negate_labels": "Nega les etiquetes seleccionades",
         "next_page": "Pàgina següent",
         "no_results": "No s'ha trobat cap element",
         "notes": "Notes",
@@ -218,10 +207,6 @@
         "warranty": "Garantia",
         "warranty_details": "Detalls de la garantia",
         "warranty_expires": "La garantia caduca"
-    },
-    "labels": {
-        "no_results": "No s'han trobat etiquetes",
-        "update_label": "Actualitza l'etiqueta"
     },
     "languages": {
         "ca": "Català",
@@ -292,14 +277,12 @@
     },
     "menu": {
         "create_item": "Article / Actiu",
-        "create_label": "Etiqueta",
         "create_location": "Ubicació",
         "home": "Inici",
         "locations": "Ubicacions",
         "maintenance": "Manteniment",
         "profile": "Perfil",
-        "search": "Cerca",
-        "tools": "Eines"
+        "search": "Cerca"
     },
     "profile": {
         "active": "Actiu",
@@ -310,7 +293,6 @@
         "delete_account_sub": "Elimina el compte i totes les dades associades. Aquesta acció no es pot desfer.",
         "enabled": "Habilitat",
         "example": "Exemple",
-        "gen_invite": "Genera un enllaç d'invitació",
         "group_settings": "Configuració del grup",
         "group_settings_sub": "Configuració del grup compartit. És possible que hàgiu d'actualitzar la pàgina per aplicar la configuració.",
         "inactive": "Inactiu",

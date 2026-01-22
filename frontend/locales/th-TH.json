@@ -139,7 +139,6 @@
         "insured": "ประกัน",
         "items": "รายการ",
         "join_discord": "เข้าร่วม Discord",
-        "labels": "ป้ายกำกับ",
         "locations": "สถานที่",
         "maintenance": "การบำรุงรักษา",
         "name": "ชื่อ",
@@ -157,12 +156,10 @@
         "welcome": "ยินดีต้อนรับ, { username }"
     },
     "home": {
-        "labels": "ป้ายกำกับ",
         "quick_statistics": "ข้อมูลสถิติเบื้องต้น",
         "recently_added": "เพิ่มล่าสุด",
         "storage_locations": "สถานที่จัดเก็บ",
         "total_items": "รายการทั้งหมด",
-        "total_labels": "ป้ายกำกำทั้งหมด",
         "total_locations": "สถานที่ทั้งหมด",
         "total_value": "ราคาทั้งหมด"
     },

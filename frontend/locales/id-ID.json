@@ -122,29 +122,9 @@
                     "table": "Tabel"
                 },
                 "table": {
-                    "dropdown": {
-                        "change_labels_success": "Label Diubah"
-                    },
                     "page": "Halaman",
                     "rows_per_page": "Baris per halaman"
                 }
-            }
-        },
-        "label": {
-            "create_modal": {
-                "label_color": "Warna label",
-                "label_description": "Deskripsi label",
-                "label_name": "Nama Label",
-                "title": "Buat label",
-                "toast": {
-                    "already_creating": "Sudah membuat label",
-                    "create_failed": "Tidak dapat membuat label",
-                    "create_success": "Label telah dibuat",
-                    "label_name_too_long": "Nama label tidak boleh lebih dari 50 karakter"
-                }
-            },
-            "selector": {
-                "select_labels": "Pilih Label"
             }
         },
         "location": {
@@ -202,7 +182,6 @@
         "insured": "Diasuransikan",
         "items": "Barang",
         "join_discord": "Bergabunglah dengan Discord",
-        "labels": "Label",
         "loading": "Memuat…",
         "locations": "Lokasi",
         "maintenance": "Perbaikan",
@@ -224,12 +203,10 @@
         "welcome": "Selamat datang, { username }"
     },
     "home": {
-        "labels": "Label",
         "quick_statistics": "Ikhtisar Statistik",
         "recently_added": "Baru Ditambahkan",
         "storage_locations": "Lokasi Penyimpanan",
         "total_items": "Jumlah Item",
-        "total_labels": "Total Label",
         "total_locations": "Total Lokasi",
         "total_value": "Total Nilai"
     },
@@ -295,7 +272,6 @@
         "manufacturer": "Pabrikan/Produsen",
         "model_number": "Nomor Model",
         "name": "Nama",
-        "negate_labels": "Negasikan Label yang Dipilih",
         "next_page": "Halaman Berikutnya",
         "no_results": "Item tidak ditemukan",
         "notes": "Catatan",
@@ -333,10 +309,6 @@
         "warranty": "Garansi",
         "warranty_details": "Rincian Garansi",
         "warranty_expires": "Garansi Kedaluwarsa"
-    },
-    "labels": {
-        "no_results": "Tidak Ditemukan Label",
-        "update_label": "Perbarui Label"
     },
     "languages": {
         "ca": "Catalan",
@@ -407,14 +379,12 @@
     },
     "menu": {
         "create_item": "Item / Aset",
-        "create_label": "Label",
         "create_location": "Lokasi",
         "home": "Beranda",
         "locations": "Lokasi",
         "maintenance": "Pemeliharaan",
         "profile": "Profil",
-        "search": "Cari",
-        "tools": "Tools"
+        "search": "Cari"
     },
     "profile": {
         "active": "Aktif",
@@ -425,7 +395,6 @@
         "delete_account_sub": "Hapus akun Anda dan semua data terkait.",
         "enabled": "Tersedia",
         "example": "Contoh",
-        "gen_invite": "Buat Tautan Undangan",
         "group_settings": "Pengaturan Grup",
         "group_settings_sub": "Pengaturan Grup Bersama. Anda mungkin perlu me-refresh browser Anda agar beberapa pengaturan diterapkan.",
         "inactive": "Tidak Aktif",

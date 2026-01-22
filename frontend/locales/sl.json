@@ -141,23 +141,6 @@
                 }
             }
         },
-        "label": {
-            "create_modal": {
-                "label_color": "Barva oznake",
-                "label_description": "Opis nalepke",
-                "label_name": "Ime nalepke",
-                "title": "Ustvari oznako",
-                "toast": {
-                    "already_creating": "Že v ustvarjanju oznake",
-                    "create_failed": "Oznake ni bilo mogoče ustvariti",
-                    "create_success": "Oznaka je ustvarjena",
-                    "label_name_too_long": "Ime oznake ne sme biti daljše od 50 znakov"
-                }
-            },
-            "selector": {
-                "select_labels": "Izberi oznake"
-            }
-        },
         "location": {
             "create_modal": {
                 "location_description": "Opis lokacije",
@@ -210,7 +193,6 @@
         "insured": "Zavarovano",
         "items": "Predmeti",
         "join_discord": "Pridruži se na Discord",
-        "labels": "Oznake",
         "loading": "Nalaganje...",
         "locations": "Lokacije",
         "maintenance": "Vzdrževanje",
@@ -232,12 +214,10 @@
         "welcome": "Dobrodošel, { username }"
     },
     "home": {
-        "labels": "Oznake",
         "quick_statistics": "Hitra statistika",
         "recently_added": "Nedavno dodano",
         "storage_locations": "Lokacije shramb",
         "total_items": "Predmetov skupaj",
-        "total_labels": "Skupaj oznak",
         "total_locations": "Skupaj lokacij",
         "total_value": "Skupna vrednost"
     },
@@ -302,7 +282,6 @@
         "manufacturer": "Proizvajalec",
         "model_number": "Številka modela",
         "name": "Naziv",
-        "negate_labels": "Negiraj izbrane oznake",
         "next_page": "Naslednja stran",
         "no_attachments": "Ni najdenih prilog",
         "no_results": "Ni najdenih predmetov",
@@ -369,18 +348,6 @@
         "warranty": "Garancija",
         "warranty_details": "Podrobnosti o garanciji",
         "warranty_expires": "Garancija poteče"
-    },
-    "labels": {
-        "label_delete_confirm": "Ali ste prepričani, da želite izbrisati to oznako? Tega ni mogoče razveljaviti.",
-        "no_results": "Ni najdenih oznak",
-        "toast": {
-            "failed_delete_label": "Brisanje oznake ni uspelo",
-            "failed_load_label": "Oznake ni bilo mogoče naložiti",
-            "failed_update_label": "Oznake ni bilo mogoče posodobiti",
-            "label_deleted": "Oznaka izbrisana",
-            "label_updated": "Oznaka posodobljena"
-        },
-        "update_label": "Posodobitev oznake"
     },
     "languages": {
         "ca": "katalonščina",
@@ -470,15 +437,13 @@
     },
     "menu": {
         "create_item": "Predmet / Sredstvo",
-        "create_label": "Oznaka",
         "create_location": "Lokacija",
         "home": "Domov",
         "locations": "Lokacije",
         "maintenance": "Vzdrževanje",
         "profile": "Profil",
         "scanner": "Optični bralnik",
-        "search": "Iskanje",
-        "tools": "Orodja"
+        "search": "Iskanje"
     },
     "profile": {
         "active": "Aktivno",
@@ -492,7 +457,6 @@
         "display_legacy_header": "{ currentValue, select, true {Onemogoči staro glavo strani} false {Omogoči staro glavo strani} other {Ni pritisnjeno}}",
         "enabled": "Omogočeno",
         "example": "Primer",
-        "gen_invite": "Ustvari povezavo povabila",
         "group_settings": "Nastavitve skupine",
         "group_settings_sub": "Nastavitve skupine v skupni rabi. Morda boste morali osvežiti brskalnik, da bodo nekatere nastavitve veljale.",
         "inactive": "Neaktivno",

@@ -1,1 +1,100 @@
-{}
+{
+    "components": {
+        "app": {
+            "create_modal": {
+                "enter": "Enter",
+                "shift": "Shift"
+            },
+            "import_dialog": {
+                "title": "Importéier CSV File"
+            },
+            "outdated": {
+                "current_version": "Dës Versioun",
+                "latest_version": "Läscht Versioun",
+                "new_version_available": "Nei Versioun do",
+                "new_version_available_link": "Klick hei fir d'Release Notes ze kucken"
+            }
+        },
+        "color_selector": {
+            "clear": "Faarw läschen",
+            "color": "Faarw",
+            "no_color": "Keng Faarw",
+            "no_color_selected": "Keng Faarw ausgewielt",
+            "randomize": "Zoufälleg Faarw"
+        },
+        "global": {
+            "copy_text": {
+                "documentation": "Dokumentatioun",
+                "failed_to_copy": "Konnt den Text net op de Clipboard kopéieren",
+                "https_required": "well HTTPS gebraucht gëtt",
+                "learn_more": "Léier méi an eisem"
+            },
+            "date_time": {
+                "ago": "{0} hier",
+                "days": "Deeg",
+                "hour": "Stonn",
+                "hours": "Stonnen",
+                "in": "an {0}",
+                "just-now": "lo just",
+                "last-month": "läschte Mount",
+                "last-week": "läscht Woch",
+                "last-year": "läscht Joer",
+                "minute": "Minutt",
+                "minutes": "Minutten",
+                "months": "Méint",
+                "next-month": "nächste Mount",
+                "next-week": "nächst Woch",
+                "next-year": "nächst Joer",
+                "second": "Sekonn",
+                "seconds": "Sekonnen",
+                "tomorrow": "Mar",
+                "week": "Woch",
+                "weeks": "Wochen",
+                "years": "Joeren",
+                "yesterday": "Gëschter"
+            },
+            "label_maker": {
+                "browser_print": "Aus dem Browser printen",
+                "confirm_description": "Bass de sécher dat s du dës Etiquette printe wëlls ?"
+            }
+        },
+        "item": {
+            "create_modal": {
+                "item_description": "Artikelbeschreiwung",
+                "item_name": "Artikelnumm",
+                "item_photo": "Artikelphoto 📷",
+                "item_quantity": "Artikelunzuel",
+                "product_tooltip_input_barcode": "Automatesch fëlle mat manuellem Barcode",
+                "product_tooltip_scan_barcode": "Fëlle mat Barcode vum 📷",
+                "rotate_photo": "Foto dréinen",
+                "set_as_primary_photo": "Setz als { isPrimary, select, true {non-} false {} other {}}Primärfoto",
+                "title": "Artikel erstellen",
+                "toast": {
+                    "create_failed": "Konnt den Artikel net erstellen",
+                    "create_success": "Artikel erstallt",
+                    "failed_load_parent": "Elterenartikel ass net gelueden - wielt w.e.g. manuell",
+                    "no_canvas_support": "Äre Browser ënnerstëtzt keng Canvas Operatiounen",
+                    "please_select_location": "Wielt w.e.g. eng Plaz.",
+                    "rotate_failed": "Konnt d'Bild net dréinen: { error }",
+                    "rotate_process_failed": "Konnt dat gedréinte Bild net verschaffen",
+                    "some_photos_failed": "{count, plural, =0 {Keng Fotoe fir erop ze lueden.} =1 {1 Fehler beim eroplueden.} other {E puer Fotoen konnten net eropgeluede ginn.}}",
+                    "upload_failed": "Foto net eropgelueden: { photoName }",
+                    "upload_success": "{count, plural, =0 {Keng Fotoenerop gelueden.} =1 {Foto erfollegräich eropgelueden.} other {All Fotoen erfollegräich eropgelueden.}}",
+                    "uploading_photos": "{count, plural, =0 {Keng Fotoe fir erop ze lueden} =1 { 1 Foto eroplueden…} other {{count} Fotoen eroplueden…}}"
+                },
+                "upload_photos": "Fotoen eroplueden",
+                "uploaded": "Foto eropgelueden"
+            },
+            "product_import": {
+                "barcode": "Barcode vum Artikel",
+                "db_source": "DB Quell"
+            }
+        }
+    },
+    "tools": {
+        "toast": {
+            "failed_wipe_inventory": "Inventaire net geläscht.",
+            "failed_zero_datetimes": "Konnt den Datum an d'Zäitwäerter net zrécksetzen."
+        }
+    }
+}
