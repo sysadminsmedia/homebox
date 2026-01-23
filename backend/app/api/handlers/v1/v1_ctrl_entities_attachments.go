@@ -212,7 +212,7 @@ func (ctrl *V1Controller) handleEntityAttachmentsHandler(w http.ResponseWriter, 
 
 	// Delete Attachment Handler
 	case http.MethodDelete:
-		err = ctrl.svc.Items.AttachmentDelete(r.Context(), ctx.GID, ID, attachmentID)
+		err = ctrl.svc.Items.AttachmentDelete(r.Context(), ctx.GID, attachmentID)
 		if err != nil {
 			log.Err(err).Msg("failed to delete attachment")
 			return validate.NewRequestError(err, http.StatusInternalServerError)

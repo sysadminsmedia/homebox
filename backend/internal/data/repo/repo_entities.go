@@ -6,8 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
-	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
@@ -15,10 +13,13 @@ import (
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
+
+	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 )
 
 type EntitiesRepository struct {
@@ -38,8 +39,8 @@ type (
 		Search           string       `json:"search"`
 		AssetID          AssetID      `json:"assetId"`
 		LocationIDs      []uuid.UUID  `json:"locationIds"`
-		LabelIDs         []uuid.UUID  `json:"labelIds"`
-		NegateLabels     bool         `json:"negateLabels"`
+		TagIDs           []uuid.UUID  `json:"labelIds"`
+		NegateTags       bool         `json:"negateTags"`
 		OnlyWithoutPhoto bool         `json:"onlyWithoutPhoto"`
 		OnlyWithPhoto    bool         `json:"onlyWithPhoto"`
 		ParentItemIDs    []uuid.UUID  `json:"parentIds"`
@@ -77,7 +78,7 @@ type (
 
 		// Edges
 		LocationID uuid.UUID   `json:"locationId"`
-		LabelIDs   []uuid.UUID `json:"labelIds"`
+		TagIDs     []uuid.UUID `json:"labelIds"`
 	}
 
 	EntityUpdate struct {
@@ -94,7 +95,7 @@ type (
 
 		// Edges
 		LocationID uuid.UUID   `json:"locationId"`
-		LabelIDs   []uuid.UUID `json:"labelIds"`
+		TagIDs     []uuid.UUID `json:"labelIds"`
 
 		// Identifications
 		SerialNumber string `json:"serialNumber"`
@@ -145,7 +146,7 @@ type (
 
 		// Edges
 		Location *LocationSummary `json:"location,omitempty" extensions:"x-nullable,x-omitempty"`
-		Labels   []LabelSummary   `json:"labels"`
+		Tags     []TagSummary     `json:"labels"`
 
 		ImageID     *uuid.UUID `json:"imageId,omitempty"     extensions:"x-nullable,x-omitempty"`
 		ThumbnailId *uuid.UUID `json:"thumbnailId,omitempty" extensions:"x-nullable,x-omitempty"`
@@ -224,9 +225,9 @@ func mapEntitySummary(item *ent.Entity) EntitySummary {
 		location = &loc
 	}
 
-	labels := make([]LabelSummary, len(item.Edges.Label))
-	if item.Edges.Label != nil {
-		labels = mapEach(item.Edges.Label, mapLabelSummary)
+	labels := make([]TagSummary, len(item.Edges.Tag))
+	if item.Edges.Tag != nil {
+		labels = mapEach(item.Edges.Tag, mapTagSummary)
 	}
 
 	var imageID *uuid.UUID
@@ -269,7 +270,7 @@ func mapEntitySummary(item *ent.Entity) EntitySummary {
 
 		// Edges
 		Location: location,
-		Labels:   labels,
+		Tags:     labels,
 
 		// Warranty
 		Insured:     item.Insured,
@@ -358,7 +359,7 @@ func (e *EntitiesRepository) getOne(ctx context.Context, where ...predicate.Enti
 
 	return mapEntityOutErr(q.
 		WithFields().
-		WithLabel().
+		WithTag().
 		WithLocation().
 		WithGroup().
 		WithParent().
@@ -444,16 +445,16 @@ func (e *EntitiesRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q 
 	//  - one of the selected fields key/value matches
 	var andPredicates []predicate.Entity
 	{
-		if len(q.LabelIDs) > 0 {
-			labelPredicates := make([]predicate.Entity, 0, len(q.LabelIDs))
-			for _, l := range q.LabelIDs {
-				if !q.NegateLabels {
-					labelPredicates = append(labelPredicates, entity.HasLabelWith(label.ID(l)))
+		if len(q.TagIDs) > 0 {
+			labelPredicates := make([]predicate.Entity, 0, len(q.TagIDs))
+			for _, l := range q.TagIDs {
+				if !q.NegateTags {
+					labelPredicates = append(labelPredicates, entity.HasTagWith(tag.ID(l)))
 				} else {
-					labelPredicates = append(labelPredicates, entity.Not(entity.HasLabelWith(label.ID(l))))
+					labelPredicates = append(labelPredicates, entity.Not(entity.HasTagWith(tag.ID(l))))
 				}
 			}
-			if !q.NegateLabels {
+			if !q.NegateTags {
 				andPredicates = append(andPredicates, entity.Or(labelPredicates...))
 			} else {
 				andPredicates = append(andPredicates, entity.And(labelPredicates...))
@@ -531,7 +532,7 @@ func (e *EntitiesRepository) QueryByGroup(ctx context.Context, gid uuid.UUID, q 
 	}
 
 	qb = qb.
-		WithLabel().
+		WithTag().
 		WithLocation().
 		WithType().
 		WithAttachments(func(aq *ent.AttachmentQuery) {
@@ -578,7 +579,7 @@ func (e *EntitiesRepository) QueryByAssetID(ctx context.Context, gid uuid.UUID, 
 
 	items, err := mapEntitiesSummaryErr(
 		qb.Order(ent.Asc(entity.FieldName)).
-			WithLabel().
+			WithTag().
 			WithLocation().
 			WithType().
 			All(ctx),
@@ -595,11 +596,11 @@ func (e *EntitiesRepository) QueryByAssetID(ctx context.Context, gid uuid.UUID, 
 	}, nil
 }
 
-// GetAll returns all the items in the database with the Labels and Locations eager loaded.
+// GetAll returns all the items in the database with the Tags and Locations eager loaded.
 func (e *EntitiesRepository) GetAll(ctx context.Context, gid uuid.UUID) ([]EntityOut, error) {
 	return mapEntitiesOutErr(e.db.Entity.Query().
 		Where(entity.HasGroupWith(group.ID(gid)), entity.HasTypeWith(entitytype.IsLocationEQ(false))).
-		WithLabel().
+		WithTag().
 		WithLocation().
 		WithFields().
 		WithType().
@@ -660,8 +661,8 @@ func (e *EntitiesRepository) Create(ctx context.Context, gid uuid.UUID, data Ent
 		q.SetParentID(data.ParentID)
 	}
 
-	if len(data.LabelIDs) > 0 {
-		q.AddLabelIDs(data.LabelIDs...)
+	if len(data.TagIDs) > 0 {
+		q.AddTagIDs(data.TagIDs...)
 	}
 
 	result, err := q.Save(ctx)
@@ -724,23 +725,23 @@ func (e *EntitiesRepository) UpdateByGroup(ctx context.Context, gid uuid.UUID, d
 		SetTypeID(data.EntityType).
 		SetSyncChildEntitiesLocations(data.SyncChildItemsLocations)
 
-	currentLabels, err := e.db.Entity.Query().Where(entity.ID(data.ID), entity.HasTypeWith(entitytype.IsLocationEQ(false))).QueryLabel().All(ctx)
+	currentTags, err := e.db.Entity.Query().Where(entity.ID(data.ID), entity.HasTypeWith(entitytype.IsLocationEQ(false))).QueryTag().All(ctx)
 	if err != nil {
 		return EntityOut{}, err
 	}
 
-	set := newIDSet(currentLabels)
+	set := newIDSet(currentTags)
 
-	for _, l := range data.LabelIDs {
+	for _, l := range data.TagIDs {
 		if set.Contains(l) {
 			set.Remove(l)
 			continue
 		}
-		q.AddLabelIDs(l)
+		q.AddTagIDs(l)
 	}
 
 	if set.Len() > 0 {
-		q.RemoveLabelIDs(set.Slice()...)
+		q.RemoveTagIDs(set.Slice()...)
 	}
 
 	if data.ParentID != uuid.Nil {
@@ -1131,12 +1132,12 @@ func (e *EntitiesRepository) Duplicate(ctx context.Context, gid, id uuid.UUID, o
 	}
 
 	// Add labels
-	if len(originalItem.Labels) > 0 {
-		labelIDs := make([]uuid.UUID, len(originalItem.Labels))
-		for i, label := range originalItem.Labels {
+	if len(originalItem.Tags) > 0 {
+		labelIDs := make([]uuid.UUID, len(originalItem.Tags))
+		for i, label := range originalItem.Tags {
 			labelIDs[i] = label.ID
 		}
-		itemBuilder.AddLabelIDs(labelIDs...)
+		itemBuilder.AddTagIDs(labelIDs...)
 	}
 
 	_, err = itemBuilder.Save(ctx)

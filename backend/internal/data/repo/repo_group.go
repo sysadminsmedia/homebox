@@ -6,21 +6,19 @@ import (
 	"strings"
 	"time"
 
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/groupinvitationtoken"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/notifier"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/user"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 )
 
 type GroupRepository struct {
@@ -88,7 +86,7 @@ type (
 		TotalUsers        int     `json:"totalUsers"`
 		TotalItems        int     `json:"totalItems"`
 		TotalLocations    int     `json:"totalLocations"`
-		TotalTags       int     `json:"totalTags"`
+		TotalTags         int     `json:"totalTags"`
 		TotalItemPrice    float64 `json:"totalItemPrice"`
 		TotalWithWarranty int     `json:"totalWithWarranty"`
 	}
@@ -296,7 +294,7 @@ func (r *GroupRepository) GroupDelete(ctx context.Context, id uuid.UUID) error {
 		return err
 	}
 
-	itm, err := tx.Item.Query().
+	itm, err := tx.Entity.Query().
 		Where(item.HasGroupWith(group.ID(id))).
 		WithGroup().
 		WithAttachments().
@@ -316,7 +314,7 @@ func (r *GroupRepository) GroupDelete(ctx context.Context, id uuid.UUID) error {
 	}
 
 	// Delete all items from the database
-	if _, err := tx.Item.Delete().
+	if _, err := tx.Entity.Delete().
 		Where(item.HasGroupWith(group.ID(id))).
 		Exec(ctx); err != nil {
 		if rerr := tx.Rollback(); rerr != nil {

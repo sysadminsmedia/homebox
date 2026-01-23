@@ -5,25 +5,21 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/rs/zerolog/log"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
-
-	"github.com/google/uuid"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entity"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entityfield"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/entitytype"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/group"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/item"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/itemfield"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/location"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/maintenanceentry"
-	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/label"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/predicate"
+	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/tag"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/types"
+
+	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 )
 
 type ItemsRepository struct {
@@ -838,7 +834,7 @@ func (e *ItemsRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wipe
 	// IMPORTANT: Must delete maintenance records BEFORE items since they are linked to items
 	if wipeMaintenance {
 		maintenanceCount, err := e.db.MaintenanceEntry.Delete().
-			Where(maintenanceentry.HasItemWith(item.HasGroupWith(group.ID(gid)))).
+			Where(maintenanceentry.HasEntityWith(entity.HasGroupWith(group.ID(gid)))).
 			Exec(ctx)
 		if err != nil {
 			log.Err(err).Msg("failed to delete maintenance entries during wipe inventory")
@@ -849,7 +845,7 @@ func (e *ItemsRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wipe
 	}
 
 	// Get all items for the group
-	items, err := e.db.Item.Query().
+	items, err := e.db.Entity.Query().
 		Where(item.HasGroupWith(group.ID(gid))).
 		WithAttachments().
 		All(ctx)
@@ -871,11 +867,11 @@ func (e *ItemsRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wipe
 		}
 
 		// Delete the item
-		_, err = e.db.Item.
+		_, err = e.db.Entity.
 			Delete().
 			Where(
-				item.ID(itm.ID),
-				item.HasGroupWith(group.ID(gid)),
+				entity.ID(itm.ID),
+				entity.HasGroupWith(group.ID(gid)),
 			).Exec(ctx)
 		if err != nil {
 			log.Err(err).Str("item_id", itm.ID.String()).Msg("failed to delete item during wipe inventory")
@@ -900,7 +896,7 @@ func (e *ItemsRepository) WipeInventory(ctx context.Context, gid uuid.UUID, wipe
 
 	// Wipe locations if requested
 	if wipeLocations {
-		locationCount, err := e.db.Location.Delete().Where(location.HasGroupWith(group.ID(gid))).Exec(ctx)
+		locationCount, err := e.db.Entity.Delete().Where(entity.HasGroupWith(group.ID(gid))).Exec(ctx)
 		if err != nil {
 			log.Err(err).Msg("failed to delete locations during wipe inventory")
 		} else {
