@@ -436,13 +436,13 @@
     // Cmd + S
     if (e.metaKey && e.key === "s") {
       e.preventDefault();
-      await saveItem(false);
+      await saveItem(!e.shiftKey);
     }
 
     // Ctrl + S
     if (e.ctrlKey && e.key === "s") {
       e.preventDefault();
-      await saveItem(false);
+      await saveItem(!e.shiftKey);
     }
   }
 
