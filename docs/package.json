@@ -17,6 +17,8 @@
     "@astrojs/cloudflare": "^12.6.12",
     "@astrojs/starlight": "^0.36.3",
     "@astrojs/starlight-tailwind": "^4.0.2",
+    "@fontsource-variable/atkinson-hyperlegible-mono": "^5.2.5",
+    "@fontsource-variable/atkinson-hyperlegible-next": "^5.2.6",
     "@tailwindcss/vite": "^4.1.18",
     "astro": "^5.16.8",
     "astro-icon": "^1.1.5",
